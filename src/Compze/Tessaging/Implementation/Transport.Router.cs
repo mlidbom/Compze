@@ -5,6 +5,7 @@ using Compze.Core.Refactoring.Naming.Internal;
 using Compze.Core.Tessaging.Public;
 using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
 using Compze.Tessaging.Implementation.Transport.Client.Abstractions;
+using Compze.Utilities.SystemCE.ReflectionCE;
 using Compze.Utilities.Threading;
 using Compze.Utilities.Threading.ResourceAccess;
 
@@ -12,7 +13,7 @@ namespace Compze.Tessaging.Implementation;
 
 partial class RoutingTransportClient
 {
-   class InboxConnectionRouter(ITypeMapper typeMapper)
+   class Router(ITypeMapper typeMapper)
    {
       readonly MonitorCE _monitor = MonitorCE.WithDefaultTimeout();
       readonly ITypeMapper _typeMapper = typeMapper;
@@ -31,13 +32,13 @@ partial class RoutingTransportClient
          {
             if(_typeMapper.TryGetType(typeId, out var tessageType))
             {
-               if(IsRemoteTevent(tessageType))
+               if(tessageType.IsAssignableTo<IExactlyOnceTevent>())
                {
                   teventSubscribers.Add((tessageType, inboxConnection));
-               } else if(IsRemoteTommand(tessageType))
+               } else if(tessageType.IsAssignableTo<IRemotableTommand>())
                {
                   tommandHandlerRoutes.Add(tessageType, inboxConnection);
-               } else if(IsRemoteTuery(tessageType))
+               } else if(tessageType.IsAssignableTo<IRemotableTuery<object>>())
                {
                   tueryHandlerRoutes.Add(tessageType, inboxConnection);
                } else
@@ -89,9 +90,5 @@ partial class RoutingTransportClient
 
          return subscriberConnections;
       }
-
-      static bool IsRemoteTommand(Type type) => typeof(IRemotableTommand).IsAssignableFrom(type);
-      static bool IsRemoteTevent(Type type) => typeof(IExactlyOnceTevent).IsAssignableFrom(type);
-      static bool IsRemoteTuery(Type type) => typeof(IRemotableTuery<object>).IsAssignableFrom(type);
    }
 }

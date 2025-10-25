@@ -36,7 +36,7 @@ partial class RoutingTransportClient : IRoutingTransportClient, IDisposable
       _typeMapper = typeMapper;
       _serializer = serializer;
       _remoteApiTransportClient = remoteApiTransportClient;
-      _inboxConnectionRouter = new InboxConnectionRouter(typeMapper);
+      _router = new Router(typeMapper);
    }
 
    readonly ITessagesInFlightTracker _tessagesInFlightTracker;
@@ -45,7 +45,7 @@ partial class RoutingTransportClient : IRoutingTransportClient, IDisposable
    readonly IRemoteApiTransportClient _remoteApiTransportClient;
 
    bool _running = false;
-   readonly InboxConnectionRouter _inboxConnectionRouter;
+   readonly Router _router;
    IReadOnlyDictionary<EndpointId, IInboxConnection> _inboxConnections = new Dictionary<EndpointId, IInboxConnection>();
 
    public async Task ConnectAsync(HttpEndPointAddress remoteEndpointAddress)
@@ -57,33 +57,33 @@ partial class RoutingTransportClient : IRoutingTransportClient, IDisposable
 
       OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _inboxConnections, clientConnection.EndpointInformation.Id, clientConnection);
 
-      _inboxConnectionRouter.RegisterRoutes(clientConnection, clientConnection.EndpointInformation.HandledTessageTypes);
+      _router.RegisterRoutes(clientConnection, clientConnection.EndpointInformation.HandledTessageTypes);
    }
 
    public IInboxConnection ConnectionToHandlerFor(IRemotableTommand tommand) =>
-      AssertRunning().then(() => _inboxConnectionRouter.ConnectionToHandlerFor(tommand));
+      AssertRunning().then(() => _router.ConnectionToHandlerFor(tommand));
 
    public IReadOnlyList<IInboxConnection> SubscriberConnectionsFor(IExactlyOnceTevent tevent) =>
-      AssertRunning().then(() => _inboxConnectionRouter.SubscriberConnectionsFor(tevent));
+      AssertRunning().then(() => _router.SubscriberConnectionsFor(tevent));
 
    public async Task PostAsync(IAtMostOnceHypermediaTommand atMostOnceTommand)
    {
       AssertRunning();
-      var connection = _inboxConnectionRouter.ConnectionToHandlerFor(atMostOnceTommand);
+      var connection = _router.ConnectionToHandlerFor(atMostOnceTommand);
       await connection.PostAsync(atMostOnceTommand).caf();
    }
 
    public async Task<TTommandResult> PostAsync<TTommandResult>(IAtMostOnceTommand<TTommandResult> atMostOnceTommand)
    {
       AssertRunning();
-      var connection = _inboxConnectionRouter.ConnectionToHandlerFor(atMostOnceTommand);
+      var connection = _router.ConnectionToHandlerFor(atMostOnceTommand);
       return await connection.PostAsync(atMostOnceTommand).caf();
    }
 
    public async Task<TTueryResult> GetAsync<TTueryResult>(IRemotableTuery<TTueryResult> tuery)
    {
       AssertRunning();
-      var connection = _inboxConnectionRouter.ConnectionToHandlerFor(tuery);
+      var connection = _router.ConnectionToHandlerFor(tuery);
       return await connection.GetAsync(tuery).caf();
    }
 

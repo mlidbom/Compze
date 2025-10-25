@@ -38,7 +38,7 @@ partial class CallMatchingHandlersInRegistrationOrderTeventDispatcher<TTevent> w
       RegistrationBuilder ForGenericTevent<THandledTevent>(Action<THandledTevent> handler) where THandledTevent : ITevent
       {
          TessageTypeInspector.AssertValidForSubscription(typeof(THandledTevent));
-         if(typeof(THandledTevent).Is<IWrapperTevent<ITevent>>()) throw new Exception($"Handlers of type {typeof(IWrapperTevent<>).Name} must be registered through the {nameof(ForWrapped)} method.");
+         if(typeof(THandledTevent).IsAssignableTo<IWrapperTevent<ITevent>>()) throw new Exception($"Handlers of type {typeof(IWrapperTevent<>).Name} must be registered through the {nameof(ForWrapped)} method.");
          _owner._handlers.Add(new RegisteredHandler<THandledTevent>(handler));
          _owner._totalHandlers++;
          return this;

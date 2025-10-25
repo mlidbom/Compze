@@ -33,7 +33,7 @@ partial class TessageTypeInspector
 
       Monitor.Update(() =>
       {
-         if(!type.Is<ITevent>()) throw new Exception($"You can only subscribe to subtypes of {typeof(ITevent).GetFullNameCompilable()}");
+         if(!type.IsAssignableTo<ITevent>()) throw new Exception($"You can only subscribe to subtypes of {typeof(ITevent).GetFullNameCompilable()}");
          if(!type.IsInterface) throw new Exception($"{type.GetFullNameCompilable()} is not an interface. You can only subscribe to tevent interfaces because as soon as you subscribe to classes you loose the guarantees of semantic routing since classes do not support multiple inheritance.");
          AssertTypeIsValidInternal(type);
          OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _successfullyInspectedSubscribableTypes, type);
@@ -103,12 +103,12 @@ partial class TessageTypeInspector
    {
       internal override void AssertFulfilledBy(Type type)
       {
-         if(type.Is<IWrapperTevent<ITevent>>())
+         if(type.IsAssignableTo<IWrapperTevent<ITevent>>())
          {
             var allInterfaces = type.GetInterfaces().ToList();
             if(type.IsInterface) allInterfaces.Add(type);
 
-            var wrapperInterfacesImplemented = allInterfaces.Where(@interface => @interface.Is<IWrapperTevent<ITevent>>()).ToArray();
+            var wrapperInterfacesImplemented = allInterfaces.Where(@interface => @interface.IsAssignableTo<IWrapperTevent<ITevent>>()).ToArray();
             var nonGeneric = wrapperInterfacesImplemented.FirstOrDefault(@interface => !@interface.IsGenericType);
             if(nonGeneric != null) throw new TessageTypeDesignViolationException($"{nonGeneric.GetFullNameCompilable()} implements {typeof(IWrapperTevent<>).GetFullNameCompilable()} but is not generic. This means that routing based on the covariance of the wrapping type is impossible and thus semantic routing breaks down.");
 
