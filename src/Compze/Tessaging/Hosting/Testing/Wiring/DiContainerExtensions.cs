@@ -1,8 +1,8 @@
 using System;
+using Compze.Core.DocumentDb.Wiring;
 using Compze.Core.Refactoring.Naming.Internal.Implementation;
 using Compze.Core.Time.Public;
 using Compze.Core.Wiring.Testing.Internal;
-using Compze.DocumentDb.Wiring;
 using Compze.Tessaging.Implementation;
 using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
 using Compze.Tessaging.Teventive.TeventStore.Wiring;

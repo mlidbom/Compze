@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <NsDepCopConfig IsEnabled="true"
-                InheritanceDepth="3">
+                InheritanceDepth="10">
 
 
 	<!--todo: review. Maybe it should be in core?-->

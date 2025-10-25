@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <NsDepCopConfig IsEnabled="true"
-                InheritanceDepth="1">
+                InheritanceDepth="10">
 
 
 	<Allowed From="*" To="Newtonsoft.Json.*"/>
