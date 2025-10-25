@@ -1,15 +1,22 @@
 using Compze.Core.Refactoring.Naming.Internal;
 using Compze.Core.Serialization.Internal;
+using Compze.Serialization.Newtonsoft.Private;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 
 namespace Compze.Serialization.Newtonsoft.DocumentDb;
 
-class DocumentDbSerializer : RenamingSupportingJsonSerializer, IDocumentDbSerializer
+static class NewtonsoftDocumentDbSerializerRegistrar
 {
-   DocumentDbSerializer(ITypeMapper typeMapper) : base(RenamingAndNonPublicMembersSupportingJSONSettings.TeventStore, typeMapper) {}
+   internal static IComponentRegistrar NewtonsoftDocumentDbSerializer(this IComponentRegistrar registrar) =>
+      DocumentDb.NewtonsoftDocumentDbSerializer.RegisterWith(registrar);
+}
 
-   public static void RegisterWith(IComponentRegistrar registrar)
+class NewtonsoftDocumentDbSerializer : RenamingSupportingJsonSerializer, IDocumentDbSerializer
+{
+   public static IComponentRegistrar RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<IDocumentDbSerializer>()
-                                     .CreatedBy((ITypeMapper typeMapper) => new DocumentDbSerializer(typeMapper)));
+                                     .CreatedBy((ITypeMapper typeMapper) => new NewtonsoftDocumentDbSerializer(typeMapper)));
+
+   NewtonsoftDocumentDbSerializer(ITypeMapper typeMapper) : base(RenamingAndNonPublicMembersSupportingJSONSettings.TeventStore, typeMapper) {}
 }

@@ -85,7 +85,7 @@ class ServerEndpointBuilder : IEndpointBuilder
       }
 
       //Transport
-      register.RemotableTessageSerializer()
+      register.NewtonSoftRemotableTessageSerializer()
               .Transport()
               .RemoteHypermediaNavigator()
               .HttpClientFactoryCE()

@@ -1,10 +1,9 @@
 using System;
 using Compze.Core.Refactoring.Naming.Internal;
 using Compze.Core.Serialization.Internal;
-using Compze.Serialization.Newtonsoft.TeventStore;
 using Newtonsoft.Json;
 
-namespace Compze.Serialization.Newtonsoft;
+namespace Compze.Serialization.Newtonsoft.Private;
 
 class RenamingSupportingJsonSerializer : IJsonSerializer
 {

@@ -17,7 +17,7 @@ namespace Compze.Tests.Unit.Internals.Serialization;
 
 public class NewtonSoftTeventStoreTeventSerializerTests : UniversalTestBase
 {
-   readonly ITeventStoreSerializer _teventSerializer = new TeventStoreSerializer(TypeMapper.Instance);
+   readonly ITeventStoreSerializer _teventSerializer = new NewtonsoftTeventStoreSerializer(TypeMapper.Instance);
 
    public class TestTevent : TaggregateTevent
    {

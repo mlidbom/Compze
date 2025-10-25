@@ -43,7 +43,7 @@ public static class TeventStoreRegistrar
       Teventive.TeventStore.TeventStore.RegisterWith(registrar, migrations);
 
       return registrar.Register(TaggregateTypeValidator.RegisterWith,
-                                TeventStoreSerializer.RegisterWith,
+                                it => NewtonsoftTeventStoreSerializer.RegisterWith(it),
                                 TeventCache.RegisterWith,
                                 TeventStoreUpdater.RegisterWith);
    }

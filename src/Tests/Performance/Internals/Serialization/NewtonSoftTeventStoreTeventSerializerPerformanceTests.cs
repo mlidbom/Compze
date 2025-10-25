@@ -16,7 +16,7 @@ namespace Compze.Tests.Performance.Internals.Serialization;
 
 public class NewtonSoftTeventStoreTeventSerializerPerformanceTests : UniversalTestBase
 {
-   static ITeventStoreSerializer _teventSerializer = new TeventStoreSerializer(TypeMapper.Instance);
+   static ITeventStoreSerializer _teventSerializer = new NewtonsoftTeventStoreSerializer(TypeMapper.Instance);
    
 
    [XF] public void Should_roundtrip_simple_tevent_1000_times_in_25_milliseconds()
@@ -54,7 +54,7 @@ public class NewtonSoftTeventStoreTeventSerializerPerformanceTests : UniversalTe
                                                     taggregateVersion: 2,
                                                     utcTimeStamp: DateTime.Now + 1.Minutes())).ToList();
 
-      var settings = TeventStoreSerializer.JsonSettings;
+      var settings = NewtonsoftTeventStoreSerializer.JsonSettings;
 
       //Warmup
       _teventSerializer.Deserialize(typeof(TestTevent), _teventSerializer.Serialize(tevents.First()));
