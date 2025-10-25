@@ -20,7 +20,4 @@
     <None Include="Tessaging\_docs\**\*.cs" />
     <Content Include="Tessaging\_docs\**\*.md" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Tessaging\Teventive\EventStore\Query\Models\SelfGeneratingQueryModels\Internal\" />
-  </ItemGroup>
 </Project>
