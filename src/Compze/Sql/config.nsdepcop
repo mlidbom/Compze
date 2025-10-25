@@ -18,5 +18,7 @@
 	<Allowed From="Compze.Sql.?.Tessaging.*"
             To="Compze.Core.Tessaging.Internal.SqlLayer.*"/>
 
+	<Allowed From="Compze.Sql.?.TEventStore.*"
+            To="Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.*"/>
 
 </NsDepCopConfig>

@@ -6,7 +6,7 @@ using System.Numerics;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.SystemCE.LinqCE;
 
-namespace Compze.Sql.Common.TEventStore.Abstractions;
+namespace Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions;
 
 public readonly struct ReadOrder : IComparable<ReadOrder>, IEquatable<ReadOrder>
 {

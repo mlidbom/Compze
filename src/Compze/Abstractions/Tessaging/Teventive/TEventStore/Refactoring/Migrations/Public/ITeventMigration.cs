@@ -1,7 +1,7 @@
 using System;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 
-namespace Compze.Core.Tessaging.Teventive.TEventStore.Refactoring.Migrations.Public;
+namespace Compze.Core.Tessaging.Teventive.TeventStore.Refactoring.Migrations.Public;
 
 ///<summary>Defines an identity for migration of tevents into other tevents. Creates </summary>
 public interface ITeventMigration

@@ -1,5 +1,5 @@
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
-using Compze.Core.Tessaging.Teventive.TEventStore.Refactoring.Migrations.Public;
+using Compze.Core.Tessaging.Teventive.TeventStore.Refactoring.Migrations.Public;
 using Compze.Utilities.SystemCE;
 
 namespace Compze.Tessaging.Teventive.TeventStore.Refactoring.Migrations;

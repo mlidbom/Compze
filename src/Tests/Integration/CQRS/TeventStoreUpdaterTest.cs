@@ -9,7 +9,7 @@ using Compze.Core.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Core.Tessaging.Public;
 using Compze.Core.Tessaging.Teventive.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
-using Compze.Core.Tessaging.Teventive.TEventStore.Public;
+using Compze.Core.Tessaging.Teventive.TeventStore.Public;
 using Compze.Core.Wiring.Testing.Internal;
 using FluentAssertions;
 using JetBrains.Annotations;

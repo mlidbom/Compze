@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Compze.Sql.Common.TEventStore.Abstractions;
+namespace Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions;
 
 public interface ITeventStoreSqlLayer
 {

@@ -1,4 +1,4 @@
-using Compze.Sql.Common.TEventStore.Abstractions;
+using Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions;
 using Compze.Sql.MySql.SystemExtensions;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;

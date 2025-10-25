@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlTypes;
 using System.Linq;
+using Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions;
 using Compze.Sql.Common;
-using Compze.Sql.Common.TEventStore.Abstractions;
 using Microsoft.Data.SqlClient;
-using Tevent = Compze.Sql.Common.TEventStore.TeventTableSchemaStrings;
+using Tevent = Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.TeventTableSchemaStrings;
 
 namespace Compze.Sql.MicrosoftSql.TEventStore;
 

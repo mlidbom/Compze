@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Transactions;
+using Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions;
 using Compze.Sql.Common;
-using Compze.Sql.Common.TEventStore.Abstractions;
 using Npgsql;
 using NpgsqlTypes;
-using Tevent = Compze.Sql.Common.TEventStore.TeventTableSchemaStrings;
+using Tevent = Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.TeventTableSchemaStrings;
 
 namespace Compze.Sql.PostgreSql.TEventStore;
 

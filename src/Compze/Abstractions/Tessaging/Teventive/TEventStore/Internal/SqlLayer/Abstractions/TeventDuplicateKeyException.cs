@@ -1,6 +1,6 @@
 using System;
 
-namespace Compze.Sql.Common.TEventStore.Abstractions;
+namespace Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions;
 
 public class TeventDuplicateKeyException(Exception sqlException) : Exception("""
                                                                             A duplicate key exception occurred while persisting new tevents. 

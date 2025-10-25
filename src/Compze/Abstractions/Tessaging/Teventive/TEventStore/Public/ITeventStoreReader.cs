@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Compze.Core.Tessaging.Teventive.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 
-namespace Compze.Core.Tessaging.Teventive.TEventStore.Public;
+namespace Compze.Core.Tessaging.Teventive.TeventStore.Public;
 
 public interface ITeventStoreReader
 {

@@ -6,5 +6,10 @@
    <Allowed From="Compze.Tessaging.Hosting.AspNetCore.*"
             To="Microsoft.AspNetCore.*" />
 
+	<Allowed From="Compze.Tessaging.Hosting.AspNetCore.*"
+            To="Microsoft.Extensions.Logging.*" />
 
+	<Allowed From="Compze.Tessaging.Hosting.AspNetCore.*"
+            To="Microsoft.Extensions.DependencyInjection.*" />
+   
 </NsDepCopConfig>
