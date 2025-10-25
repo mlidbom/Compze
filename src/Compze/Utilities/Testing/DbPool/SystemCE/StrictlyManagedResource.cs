@@ -1,10 +1,7 @@
 using System;
 using System.Diagnostics;
-using Compze.Abstractions.Configuration.Internal;
-using Compze.Common.Configuration;
 using Compze.Utilities.Logging;
 using Compze.Utilities.SystemCE;
-using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
 using Compze.Utilities.Threading.ResourceAccess;
 
@@ -12,6 +9,8 @@ namespace Compze.Utilities.Testing.DbPool.SystemCE;
 
 static class StrictlyManagedResources
 {
+   // ReSharper disable once FieldCanBeMadeReadOnly.Global
+   public static bool CollectStackTracesByDefault = false;
    internal static bool LoggingTemporarilySuppressed = false;
 
    internal static void SuppressLoggingWhileExecuting(Action action)
@@ -21,21 +20,6 @@ static class StrictlyManagedResources
          action();
       }
    }
-
-   public static readonly string CollectStackTracesForAllStrictlyManagedResourcesConfigurationParameterName =
-      ExpressionUtil.ExtractMemberPath(() => CollectStackTracesForAllStrictlyManagedResources);
-
-   public static readonly bool CollectStackTracesForAllStrictlyManagedResources =
-      AppSettingsJsonConfigurationParameterProvider.Instance.GetBoolean(CollectStackTracesForAllStrictlyManagedResourcesConfigurationParameterName,
-                                                                        valueIfMissing: false);
-
-   public static bool CollectStackTracesFor<TManagedResource>()
-      => AppSettingsJsonConfigurationParameterProvider.Instance.GetBoolean(ConfigurationParamaterNameFor<TManagedResource>(),
-                                                                           valueIfMissing: false);
-
-   static string ConfigurationParamaterNameFor<TManagedResource>() => ConfigurationParamaterNameFor(typeof(TManagedResource));
-
-   public static string ConfigurationParamaterNameFor(Type instanceType) => $"{instanceType.FullName}.CollectStackTraces";
 }
 
 ///<summary>
@@ -62,17 +46,18 @@ interface IStrictlyManagedResource : IDisposable;
 ///}
 /// </code>
 ///</example>
-class StrictlyManagedResource<TManagedResource> : IStrictlyManagedResource where TManagedResource : class, IStrictlyManagedResource
+sealed class StrictlyManagedResource<TManagedResource> : IStrictlyManagedResource where TManagedResource : class, IStrictlyManagedResource
 {
    // ReSharper disable once StaticMemberInGenericType
    static readonly MonitorCE StaticMonitor = MonitorCE.WithDefaultTimeout();
-   public static bool CollectStackTracesByDefault = StrictlyManagedResources.CollectStackTracesFor<TManagedResource>();
    readonly bool _collectStackTraces;
+   // ReSharper disable once StaticMemberInGenericType
+   public static bool CollectStackTracesByDefault = StrictlyManagedResources.CollectStackTracesByDefault;
 
    public StrictlyManagedResource(bool forceStackTraceCollection = false, bool needsFileInfo = false, TManagedResource? instance = null)
    {
       _instance = instance;
-      _collectStackTraces = forceStackTraceCollection || CollectStackTracesByDefault || StrictlyManagedResources.CollectStackTracesForAllStrictlyManagedResources;
+      _collectStackTraces = forceStackTraceCollection || StrictlyManagedResources.CollectStackTracesByDefault;
       if(_collectStackTraces)
       {
          ReservationCallStack = new StackTrace(fNeedFileInfo: needsFileInfo).ToString();
@@ -84,7 +69,7 @@ class StrictlyManagedResource<TManagedResource> : IStrictlyManagedResource where
    bool _disposed;
    readonly TManagedResource? _instance;
 
-   public virtual void Dispose()
+   public void Dispose()
    {
       GC.SuppressFinalize(this);
       _disposed = true;
@@ -180,8 +165,8 @@ class StrictlyManagedResourceWasFinalizedException(Type instanceType, string? re
                """
             : $"""
                No allocation stack trace collected. 
-               Set configuration value: {StrictlyManagedResources.ConfigurationParamaterNameFor(instanceType)} to "true" to collect allocation stack traces for this type.
-               Set configuration value: {StrictlyManagedResources.CollectStackTracesForAllStrictlyManagedResourcesConfigurationParameterName} to "true" to collect allocation stack traces for all types.
+               Set {instanceType.FullName}.{nameof(StrictlyManagedResources.CollectStackTracesByDefault)} == true to collect allocation stack traces for this type.
+               Set: {nameof(StrictlyManagedResources)}.{nameof(StrictlyManagedResources.CollectStackTracesByDefault)} == true to collect allocation stack traces for all strictly managed resources.
                Please note that this will decrease performance and should only be set while debugging resource leaks.
                """;
 }
