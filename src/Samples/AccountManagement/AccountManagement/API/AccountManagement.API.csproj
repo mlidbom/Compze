@@ -21,13 +21,14 @@
       </EmbeddedResource>
    </ItemGroup>
    <ItemGroup>
-      <PackageReference Include="CommunityToolkit.Diagnostics" Version="8.4.0" />
-   </ItemGroup>
-   <ItemGroup>
       <InternalsVisibleTo Include="AccountManagement.Server" />
    </ItemGroup>
    <ItemGroup>
       <ProjectReference Include="..\..\..\..\Compze\Tessaging\Compze.Tessaging.csproj" />
       <ProjectReference Include="..\..\..\..\Compze\Abstractions\Compze.Core.csproj" />
+   </ItemGroup>
+   <ItemGroup>
+      <PackageReference Include="CommunityToolkit.Diagnostics" Version="8.4.0" />
+      <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
    </ItemGroup>
 </Project>
