@@ -13,18 +13,6 @@ namespace Compze.Tests.Infrastructure;
 /// </summary>
 public static class TestFixtureHelper
 {
-   public static void PerformTeardown()
-   {
-      try
-      {
-         Log.CloseAndFlushAsync().AsTask().GetAwaiter().GetResult();
-      }
-      catch
-      {
-         // ignore: really nothing we can do here;
-      }
-   }
-
    public static void SetupSerilog(ILogEventEnricher? testEnricher)
    {
       var config = new LoggerConfiguration()
