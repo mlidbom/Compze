@@ -3,12 +3,12 @@ using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace Compze.Serialization.Newtonsoft;
+namespace Compze.Serialization.Newtonsoft.TeventStore;
 
-class IgnoreTaggregateTeventDeclaredPropertiesBecauseTheyAreAlreadyStoredInSql : IncludeMembersWithPrivateSettersResolver
+class IgnoreTaggregateTeventDeclaredPropertiesBecauseTheyAreAlreadyStoredInSqlResolver : IncludeMembersWithPrivateSettersResolver
 {
-   public new static readonly IgnoreTaggregateTeventDeclaredPropertiesBecauseTheyAreAlreadyStoredInSql Instance = new();
-   IgnoreTaggregateTeventDeclaredPropertiesBecauseTheyAreAlreadyStoredInSql() {}
+   public new static readonly IgnoreTaggregateTeventDeclaredPropertiesBecauseTheyAreAlreadyStoredInSqlResolver Instance = new();
+   IgnoreTaggregateTeventDeclaredPropertiesBecauseTheyAreAlreadyStoredInSqlResolver() {}
 
    protected override JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization)
    {

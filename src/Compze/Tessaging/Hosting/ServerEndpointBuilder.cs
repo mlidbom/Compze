@@ -4,6 +4,7 @@ using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Core.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Core.Time.Public;
 using Compze.Serialization.Newtonsoft;
+using Compze.Serialization.Newtonsoft.Tessaging;
 using Compze.Tessaging.Configuration;
 using Compze.Tessaging.Implementation;
 using Compze.Tessaging.Implementation.Abstractions;

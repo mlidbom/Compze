@@ -28,8 +28,8 @@ namespace Compze.Utilities.Testing.DbPool.SystemCE.ThreadingCE;
        bool _disposed;
        readonly bool _usePersistentFile;
 
-       static string Serialize(ReferenceCountingWrapper instance) => JsonConvert.SerializeObject(instance, Formatting.Indented, JsonSettings.JsonSerializerSettings);
-       static ReferenceCountingWrapper Deserialize(string serialized) => JsonConvert.DeserializeObject<ReferenceCountingWrapper>(serialized, JsonSettings.JsonSerializerSettings).NotNull();
+       static string Serialize(ReferenceCountingWrapper instance) => JsonConvert.SerializeObject(instance, Formatting.Indented, RenamingAndNonPublicMembersSupportingJSONSettings.Default);
+       static ReferenceCountingWrapper Deserialize(string serialized) => JsonConvert.DeserializeObject<ReferenceCountingWrapper>(serialized, RenamingAndNonPublicMembersSupportingJSONSettings.Default).NotNull();
 
        internal static MachineWideSharedObject<TObject> For(string name, bool usePersistentFile = false) => new(name, usePersistentFile);
 

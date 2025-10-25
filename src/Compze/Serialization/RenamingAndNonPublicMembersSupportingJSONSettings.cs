@@ -1,3 +1,4 @@
+using Compze.Serialization.Newtonsoft.TeventStore;
 using Newtonsoft.Json;
 
 #pragma warning disable CA2326 //Todo about this resides elsewhere search for CA2326 to find it
@@ -5,9 +6,9 @@ using Newtonsoft.Json;
 
 namespace Compze.Serialization.Newtonsoft;
 
-static class JsonSettings
+static class RenamingAndNonPublicMembersSupportingJSONSettings
 {
-   internal static readonly JsonSerializerSettings JsonSerializerSettings =
+   internal static readonly JsonSerializerSettings Default =
       new()
       {
          TypeNameHandling = TypeNameHandling.Auto,
@@ -15,12 +16,14 @@ static class JsonSettings
          ContractResolver = IncludeMembersWithPrivateSettersResolver.Instance
       };
 
-   public static readonly JsonSerializerSettings SqlTeventStoreSerializerSettings =
+   internal static JsonSerializerSettings DocumentDb => Default;
+
+   public static readonly JsonSerializerSettings TeventStore =
       new()
       {
          TypeNameHandling = TypeNameHandling.Auto,
          ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
-         ContractResolver = IgnoreTaggregateTeventDeclaredPropertiesBecauseTheyAreAlreadyStoredInSql.Instance
+         ContractResolver = IgnoreTaggregateTeventDeclaredPropertiesBecauseTheyAreAlreadyStoredInSqlResolver.Instance
       };
 
 }
