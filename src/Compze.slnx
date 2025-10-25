@@ -13,8 +13,6 @@
   <Folder Name="/Compze/Abstractions/">
     <Project Path="Compze/Abstractions/Compze.Abstractions.csproj" />
   </Folder>
-  <Folder Name="/Compze/Common/">
-  </Folder>
   <Folder Name="/Compze/DocumentDb/">
     <Project Path="Compze/Sql/DocumentDb/Compze.DocumentDb.csproj" />
   </Folder>
@@ -33,8 +31,6 @@
   </Folder>
   <Folder Name="/Compze/Tessaging/Hosting/">
     <Project Path="Compze/Tessaging/Hosting/AspNetCore/Compze.Tessaging.Hosting.AspNetCore.csproj" />
-  </Folder>
-  <Folder Name="/Compze/Tessaging/Hosting/Testing/">
     <Project Path="Compze/Tessaging/Hosting/Testing/Compze.Tessaging.Hosting.Testing.csproj" />
   </Folder>
   <Folder Name="/Compze/Tessaging/Teventive/">

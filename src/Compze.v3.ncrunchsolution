@@ -22,7 +22,7 @@
       <Value>ComponentCombinations\ComponentCombination.cs:Compze\Utilities\Testing\XUnit\Compze.Utilities.Testing.XUnit.csproj-85</Value>
       <Value>ComponentCombinations\ComponentCombinationTestCase.cs:Compze\Utilities\Testing\XUnit\Compze.Utilities.Testing.XUnit.csproj-64</Value>
       <Value>Hosting\Endpoint.cs:Compze\Tessaging\Compze.Tessaging.csproj-120</Value>
-      <Value>Hosting\EndpointHost.cs:Compze\Tessaging\Compze.Tessaging.csproj-91</Value>
+      <Value>Hosting\EndpointHost.cs:Compze\Tessaging\Compze.Tessaging.csproj-90</Value>
       <Value>Hosting\TestingEndpointHostBase.cs:Compze\Tessaging\Compze.Tessaging.csproj-82</Value>
       <Value>Functional\Unit.cs:Compze\Utilities\Compze.Utilities.csproj-27</Value>
       <Value>SystemCE\LinqCE\EnumerableCE.ForEach.cs:Compze\Utilities\Compze.Utilities.csproj-26</Value>

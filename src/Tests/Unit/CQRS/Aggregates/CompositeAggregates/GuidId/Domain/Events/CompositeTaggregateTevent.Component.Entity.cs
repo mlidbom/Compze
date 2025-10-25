@@ -1,6 +1,5 @@
 using System;
 using Compze.Abstractions.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
-using Compze.Tessaging.Teventive;
 using JetBrains.Annotations;
 
 // ReSharper disable MemberHidesStaticFromOuterClass

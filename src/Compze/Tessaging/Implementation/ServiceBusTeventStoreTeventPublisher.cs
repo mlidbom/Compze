@@ -1,5 +1,4 @@
 using Compze.Abstractions.Tessaging.Teventive.Infrastructure.Validation;
-using Compze.Abstractions.Tessaging.Teventive.Public;
 using Compze.Abstractions.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Abstractions.Tessaging.Teventive.TEventStore.Internal;
 using Compze.Tessaging.Implementation.Abstractions;

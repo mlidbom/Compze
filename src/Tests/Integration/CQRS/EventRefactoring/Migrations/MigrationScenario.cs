@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Compze.Abstractions.Tessaging.Teventive.TEventStore.Refactoring.Migrations.Public;
-using Compze.Tessaging.Teventive.TeventStore.Refactoring.Migrations;
 
 namespace Compze.Tests.Integration.CQRS.TeventRefactoring.Migrations;
 

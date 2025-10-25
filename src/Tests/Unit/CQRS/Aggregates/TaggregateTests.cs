@@ -4,7 +4,6 @@ using Compze.Abstractions.Tessaging.Teventive.Public;
 using Compze.Abstractions.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public;
 using Compze.Abstractions.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Abstractions.Time.Testing.Public;
-using Compze.Tessaging.Teventive;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.SystemCE.ReactiveCE;
 using Compze.Utilities.Testing.XUnit.BDD;

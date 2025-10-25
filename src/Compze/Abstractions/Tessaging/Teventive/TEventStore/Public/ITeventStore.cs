@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Compze.Abstractions.Tessaging.Teventive.Public;
 using Compze.Abstractions.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 
 namespace Compze.Abstractions.Tessaging.Teventive.TEventStore.Public;

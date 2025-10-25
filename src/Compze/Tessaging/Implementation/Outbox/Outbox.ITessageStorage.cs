@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Compze.Abstractions.Tessaging.Hosting.Public;
 using Compze.Abstractions.Tessaging.Public;
-using Compze.Abstractions.Tessaging.Transport.Internal;
 using Compze.Sql.Common.Tessaging;
 
 namespace Compze.Tessaging.Implementation.Outbox;

@@ -4,7 +4,6 @@ using AccountManagement.Domain.Tevents;
 using AccountManagement.UI;
 using AccountManagement.UI.QueryModels;
 using Compze.Abstractions.Tessaging.Hosting.Public;
-using Compze.Abstractions.Tessaging.Transport.Internal;
 using Compze.DocumentDb.Wiring;
 using Compze.Sql.MicrosoftSql;
 using Compze.Sql.MicrosoftSql.DocumentDb.Wiring;

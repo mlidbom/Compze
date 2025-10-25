@@ -1,4 +1,3 @@
-using Compze.Abstractions.Tessaging.Teventive.Public;
 using Compze.Abstractions.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 
 // ReSharper disable All

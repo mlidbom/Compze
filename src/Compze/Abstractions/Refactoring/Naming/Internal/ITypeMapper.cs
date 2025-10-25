@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using Compze.Abstractions.Time;
 using Compze.Utilities.Functional;
 
 namespace Compze.Abstractions.Refactoring.Naming.Internal;

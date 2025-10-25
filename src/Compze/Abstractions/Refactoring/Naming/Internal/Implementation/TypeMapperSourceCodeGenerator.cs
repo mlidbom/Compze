@@ -5,7 +5,6 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 using Compze.Abstractions.Refactoring.Naming.Internal;
-using Compze.Abstractions.Time;
 using Compze.Utilities.SystemCE.ReflectionCE;
 
 namespace Compze.Common.Refactoring.Naming;

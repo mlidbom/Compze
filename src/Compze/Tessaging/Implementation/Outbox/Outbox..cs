@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using System.Transactions;
 using Compze.Abstractions.Tessaging.Hosting.Public;
 using Compze.Abstractions.Tessaging.Public;
-using Compze.Abstractions.Tessaging.Transport.Internal;
 using Compze.Tessaging.Implementation.Abstractions;
 using Compze.Tessaging.Implementation.Transport.Client.Abstractions;
 using Compze.Tessaging.SystemCE.ThreadingCE;

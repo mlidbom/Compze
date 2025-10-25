@@ -7,7 +7,6 @@ using CommunityToolkit.Diagnostics;
 using Compze.Abstractions.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public;
 using Compze.Abstractions.Tessaging.Typermedia.Public;
 using Compze.Abstractions.Time.Public;
-using Compze.Tessaging.Teventive;
 using Compze.Utilities.Functional;
 
 namespace AccountManagement.Domain;
