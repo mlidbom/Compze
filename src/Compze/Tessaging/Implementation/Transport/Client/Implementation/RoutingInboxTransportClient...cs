@@ -8,7 +8,7 @@ using Compze.Core.Tessaging.Public;
 using Compze.Core.Tessaging.Transport.Internal;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Tessaging.Implementation.Transport.Client.Abstractions;
-using Compze.Tessaging.Implementation.Transport.Client.Http;
+using Compze.Tessaging.Implementation.Transport.Client.Implementation.Http;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
@@ -17,7 +17,7 @@ using Compze.Utilities.SystemCE;
 using Compze.Utilities.Threading;
 using Compze.Utilities.Threading.TasksCE;
 
-namespace Compze.Tessaging.Implementation;
+namespace Compze.Tessaging.Implementation.Transport.Client.Implementation;
 
 static class TransportRegistrar
 {

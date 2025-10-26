@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Compze.Core.Tessaging.Public;
 using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
+using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
@@ -99,30 +100,30 @@ partial class Inbox
             Func<object, object?> CreateTessageTask() =>
                TransportTessage.TessageTypeEnum switch
                {
-                  Implementation.TransportTessage.TransportTessageType.ExactlyOnceTevent => tessage =>
+                  Transport.Abstractions.TransportTessage.TransportTessageType.ExactlyOnceTevent => tessage =>
                   {
                      var teventHandlers = _handlerRegistry.GetTeventHandlers(tessage.GetType());
                      teventHandlers.ForEach(handler => handler((IExactlyOnceTevent)tessage));
                      return null;
                   },
-                  Implementation.TransportTessage.TransportTessageType.AtMostOnceTommandWithReturnValue => tessage =>
+                  Transport.Abstractions.TransportTessage.TransportTessageType.AtMostOnceTommandWithReturnValue => tessage =>
                   {
                      var tommandHandler = _handlerRegistry.GetTommandHandlerWithReturnValue(tessage.GetType());
                      return tommandHandler((IAtMostOnceHypermediaTommand)tessage);
                   },
-                  Implementation.TransportTessage.TransportTessageType.AtMostOnceTommand => tessage =>
+                  Transport.Abstractions.TransportTessage.TransportTessageType.AtMostOnceTommand => tessage =>
                   {
                      var tommandHandler = _handlerRegistry.GetTommandHandler(tessage.GetType());
                      tommandHandler((IAtMostOnceHypermediaTommand)tessage);
                      return unit.Value; //Todo:Properly handle tommands with and without return values
                   },
-                  Implementation.TransportTessage.TransportTessageType.ExactlyOnceTommand => tessage =>
+                  Transport.Abstractions.TransportTessage.TransportTessageType.ExactlyOnceTommand => tessage =>
                   {
                      var tommandHandler = _handlerRegistry.GetTommandHandler(tessage.GetType());
                      tommandHandler((IExactlyOnceTommand)tessage);
                      return unit.Value;//Todo:Properly handle tommands with and without return values
                   },
-                  Implementation.TransportTessage.TransportTessageType.NonTransactionalTuery => actualTessage =>
+                  Transport.Abstractions.TransportTessage.TransportTessageType.NonTransactionalTuery => actualTessage =>
                   {
                      var tueryHandler = _handlerRegistry.GetTueryHandler(actualTessage.GetType());
                      //todo: Double dispatch instead of casting?

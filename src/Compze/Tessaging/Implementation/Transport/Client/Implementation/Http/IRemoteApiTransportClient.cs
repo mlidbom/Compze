@@ -1,8 +1,9 @@
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Compze.Tessaging.Implementation.Transport.Abstractions;
 
-namespace Compze.Tessaging.Implementation.Transport.Client.Http;
+namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Http;
 
 interface IHttpApiTransportClient
 {

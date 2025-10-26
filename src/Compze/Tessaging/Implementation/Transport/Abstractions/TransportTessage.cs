@@ -4,7 +4,7 @@ using Compze.Core.Serialization.Internal;
 using Compze.Core.Tessaging.Public;
 using Compze.Utilities.Contracts;
 
-namespace Compze.Tessaging.Implementation;
+namespace Compze.Tessaging.Implementation.Transport.Abstractions;
 
 static class TransportTessage
 {

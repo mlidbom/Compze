@@ -9,7 +9,7 @@ using Compze.Utilities.SystemCE.ReflectionCE;
 using Compze.Utilities.Threading;
 using Compze.Utilities.Threading.ResourceAccess;
 
-namespace Compze.Tessaging.Implementation;
+namespace Compze.Tessaging.Implementation.Transport.Client.Implementation;
 
 partial class RoutingInboxTransportClient
 {

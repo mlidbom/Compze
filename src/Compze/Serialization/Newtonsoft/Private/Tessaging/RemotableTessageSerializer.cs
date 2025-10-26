@@ -24,7 +24,7 @@ class NewtonsoftRemotableTessageSerializer : IRemotableTessageSerializer
    NewtonsoftRemotableTessageSerializer(ITypeMapper typeMapper) => _serializer = new RenamingSupportingJsonSerializer(RenamingAndNonPublicMembersSupportingJsonSettings.Tessaging, typeMapper);
 
    public string SerializeResponse(object response) => _serializer.Serialize(response);
-   public object DeserializeResponse(Type responseType, string json) => _serializer.Deserialize(responseType, json);
+   public TResponse DeserializeResponse<TResponse>(string json) => (TResponse)_serializer.Deserialize(typeof(TResponse), json);
 
    public string SerializeTessage(IRemotableTessage tessage) => _serializer.Serialize(tessage);
    public IRemotableTessage DeserializeTessage(Type tessageType, string json) => (IRemotableTessage)_serializer.Deserialize(tessageType, json);

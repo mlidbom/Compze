@@ -1,4 +1,4 @@
-namespace Compze.Tessaging.Implementation.Transport.Client.Http;
+namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Http;
 
 static class HttpConstants
 {

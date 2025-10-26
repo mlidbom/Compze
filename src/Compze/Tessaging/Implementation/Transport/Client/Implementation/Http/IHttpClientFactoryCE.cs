@@ -3,7 +3,7 @@ using System.Net.Http;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 
-namespace Compze.Tessaging.Implementation.Transport.Client.Http;
+namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Http;
 
 interface IHttpClientFactoryCE
 {

@@ -10,7 +10,7 @@ using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Tessaging.Implementation.Transport.Client.Abstractions;
 using Compze.Utilities.Threading.TasksCE;
 
-namespace Compze.Tessaging.Implementation.Transport.Client.Http;
+namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Http;
 
 class HttpApiEndpointClient(
    IHttpApiTransportClient httpApiTransportClient,

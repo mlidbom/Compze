@@ -3,11 +3,12 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Compze.Core.Serialization.Internal;
 using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
+using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Threading.TasksCE;
 
-namespace Compze.Tessaging.Implementation.Transport.Client.Http;
+namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Http;
 
 static class HttpApiTransportClientRegistrar
 {
@@ -35,7 +36,7 @@ class HttpApiTransportClient : IHttpApiTransportClient
       var response = await PostAsync(tessage, realTessage, requestUri).caf();
 
       var resultJson = await response.Content.ReadAsStringAsync().caf();
-      var result = (TResult)_serializer.DeserializeResponse(typeof(TResult), resultJson);
+      var result = _serializer.DeserializeResponse<TResult>(resultJson);
       return result;
    }
 
