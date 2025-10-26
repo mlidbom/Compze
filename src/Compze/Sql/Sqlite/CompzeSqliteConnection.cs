@@ -88,7 +88,7 @@ internal interface ICompzeSqliteConnection : IPoolableConnection, ICompzeDbConne
          {
             _disposed = true;
             Assert.State.Is(_transaction == null, () => "Transaction should have been completed (committed or rolled back) before disposing the connection");
-            await Connection.DisposeAsync();
+            await Connection.DisposeAsync().caf();
          }
       }
    }
