@@ -15,6 +15,7 @@
       <ProjectReference Include="..\..\..\Sql\MySql\Compze.Sql.MySql.csproj" />
       <ProjectReference Include="..\..\..\Sql\Sqlite\Compze.Sql.Sqlite.csproj" />
       <ProjectReference Include="..\..\..\Abstractions\Compze.Core.csproj" />
+      <ProjectReference Include="..\AspNetCore\Compze.Tessaging.Hosting.AspNetCore.csproj" />
    </ItemGroup>
    <ItemGroup>
       <PackageReference Include="FluentAssertions" Version="8.7.1" />
