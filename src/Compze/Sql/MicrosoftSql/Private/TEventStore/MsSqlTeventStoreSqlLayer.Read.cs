@@ -10,9 +10,10 @@ using Tevent = Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Tev
 
 namespace Compze.Sql.MicrosoftSql.Private.TEventStore;
 
-partial class MsSqlTeventStoreSqlLayer(MsSqlTeventStoreConnectionManager connectionManager) : ITeventStoreSqlLayer
+partial class MsSqlTeventStoreSqlLayer(MsSqlTeventStoreConnectionManager connectionManager, MsSqlSqlLayerSchemaManager schemaManager) : ITeventStoreSqlLayer
 {
    readonly MsSqlTeventStoreConnectionManager _connectionManager = connectionManager;
+   readonly MsSqlSqlLayerSchemaManager _schemaManager = schemaManager;
 
    static string CreateSelectClause(bool takeWriteLock) => InternalSelect(takeWriteLock: takeWriteLock);
    static string CreateSelectTopClause(int top, bool takeWriteLock) => InternalSelect(top: top, takeWriteLock: takeWriteLock);

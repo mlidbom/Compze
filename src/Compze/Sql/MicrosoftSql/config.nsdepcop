@@ -12,4 +12,7 @@
 	<Allowed From="Compze.Sql.MicrosoftSql.Wiring"
             To="Compze.Core.*.Internal.SqlLayer.*"/>
 
+	<Allowed From="Compze.Sql.MicrosoftSql.Private"
+            To="Compze.Sql.MicrosoftSql.Private.?"/>
+
 </NsDepCopConfig>

@@ -8,9 +8,10 @@ using TessageTable = Compze.Core.Tessaging.Internal.SqlLayer.IServiceBusSqlLayer
 
 namespace Compze.Sql.MicrosoftSql.Private.Tessaging;
 
-partial class MsSqlInboxSqlLayer(IMsSqlConnectionPool connectionFactory) : IServiceBusSqlLayer.IInboxSqlLayer
+partial class MsSqlInboxSqlLayer(IMsSqlConnectionPool connectionFactory, MsSqlSqlLayerSchemaManager schemaManager) : IServiceBusSqlLayer.IInboxSqlLayer
 {
    readonly IMsSqlConnectionPool _connectionFactory = connectionFactory;
+   readonly MsSqlSqlLayerSchemaManager _schemaManager = schemaManager;
 
    public IServiceBusSqlLayer.SaveTessageResult SaveTessage(Guid tessageId, Guid typeId, string serializedTessage)
    {
@@ -100,5 +101,5 @@ partial class MsSqlInboxSqlLayer(IMsSqlConnectionPool connectionFactory) : IServ
                                                      .ExecuteNonQuery());
    }
 
-   public async Task InitAsync() => await SchemaManager.EnsureTablesExistAsync(_connectionFactory).caf();
+   public async Task InitAsync() => await _schemaManager.EnsureTablesExistAsync().caf();
 }

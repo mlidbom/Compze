@@ -2,16 +2,23 @@ using System.Threading.Tasks;
 using Compze.Sql.MicrosoftSql.Private.DocumentDb;
 using Compze.Sql.MicrosoftSql.Private.Tessaging;
 using Compze.Sql.MicrosoftSql.Private.TEventStore;
-using Compze.Utilities.SystemCE;
+using Compze.Utilities.DependencyInjection;
+using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE.TransactionsCE;
-using Compze.Utilities.Threading.ResourceAccess;
 using Compze.Utilities.Threading.TasksCE;
 
 namespace Compze.Sql.MicrosoftSql.Private;
 
 class MsSqlSqlLayerSchemaManager(IMsSqlConnectionPool connectionPool)
 {
-   readonly MonitorCE _monitor = MonitorCE.WithTimeout(5.Seconds());
+   internal static IComponentRegistrar RegisterWith(IComponentRegistrar registrar)
+   {
+      if(registrar.Container().IsRegistered<MsSqlSqlLayerSchemaManager>())
+         return registrar;
+      return registrar.Register(Singleton.For<MsSqlSqlLayerSchemaManager>()
+                                         .CreatedBy((IMsSqlConnectionPool connectionPool) => new MsSqlSqlLayerSchemaManager(connectionPool)));
+   }
+
    bool _initialized = false;
    readonly IMsSqlConnectionPool _connectionPool = connectionPool;
 
@@ -19,27 +26,21 @@ class MsSqlSqlLayerSchemaManager(IMsSqlConnectionPool connectionPool)
    {
       if(!_initialized)
       {
-         using(_monitor.TakeUpdateLock())
+         await TransactionScopeCe.SuppressAmbientAsync(async () =>
          {
-            if(!_initialized)
-            {
-               await TransactionScopeCe.SuppressAmbientAsync(async () =>
-               {
-                  await _connectionPool.ExecuteNonQueryAsync($"""
+            await _connectionPool.ExecuteNonQueryAsync($"""
 
-                                                              {MsSqlDocumentDbSqlLayer.SchemaCreationSql}
+                                                        {MsSqlDocumentDbSqlLayer.SchemaCreationSql}
 
-                                                              {MsSqlInboxSqlLayer.SchemaCreationSql}
+                                                        {MsSqlInboxSqlLayer.SchemaCreationSql}
 
-                                                              {MsSqlOutboxSqlLayer.SchemaCreationSql}
+                                                        {MsSqlOutboxSqlLayer.SchemaCreationSql}
 
-                                                              {MsSqlTeventStoreSqlLayer.SchemaCreationSql}
+                                                        {MsSqlTeventStoreSqlLayer.SchemaCreationSql}
 
-                                                              """).caf();
-               });
-               _initialized = true;
-            }
-         }
+                                                        """).caf();
+         }).caf();
+         _initialized = true;
       }
    }
 

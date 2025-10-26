@@ -1,4 +1,3 @@
-using Compze.Sql.MicrosoftSql.Private.DbPool;
 using Compze.Utilities.DependencyInjection.Abstractions;
 
 namespace Compze.Sql.MicrosoftSql.Wiring;

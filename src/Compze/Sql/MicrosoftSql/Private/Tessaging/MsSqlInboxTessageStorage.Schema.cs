@@ -1,6 +1,3 @@
-using System.Threading.Tasks;
-using Compze.Utilities.SystemCE.TransactionsCE;
-using Compze.Utilities.Threading.TasksCE;
 using Tessage = Compze.Core.Tessaging.Internal.SqlLayer.IServiceBusSqlLayer.InboxTessageDatabaseSchemaStrings;
 
 namespace Compze.Sql.MicrosoftSql.Private.Tessaging;
@@ -32,13 +29,4 @@ partial class MsSqlInboxSqlLayer
        END
 
        """;
-
-   static class SchemaManager
-   {
-      public static async Task EnsureTablesExistAsync(IMsSqlConnectionPool connectionFactory) =>
-         await TransactionScopeCe.SuppressAmbientAsync(async () =>
-                                                          //Performance: Why is the TessageId not the primary key? Are we worried about performance loss because of fragmentation because of non-sequential Guids? Is there a (performant and truly reliable) sequential-guid-generator we could use? How does it not being the clustered index impact row vs page etc locking?
-                                                          await connectionFactory.ExecuteNonQueryAsync(
-                                                             SchemaCreationSql).caf()).caf();
-   }
 }

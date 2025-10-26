@@ -10,7 +10,6 @@ using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE;
-using Compze.Utilities.Threading.ResourceAccess;
 using Microsoft.Data.SqlClient;
 using Schema = Compze.Core.DocumentDb.Internal.SqlLayer.IDocumentDbSqlLayer.DocumentTableSchemaStrings;
 
@@ -21,15 +20,14 @@ partial class MsSqlDocumentDbSqlLayer : IDocumentDbSqlLayer
    internal static IComponentRegistrar RegisterWith(IComponentRegistrar registrar) =>
       registrar.Register(
          Singleton.For<IDocumentDbSqlLayer>()
-                  .CreatedBy((IMsSqlConnectionPool connectionProvider) => new MsSqlDocumentDbSqlLayer(connectionProvider)));
+                  .CreatedBy((IMsSqlConnectionPool connectionProvider, MsSqlSqlLayerSchemaManager schemaManager) => new MsSqlDocumentDbSqlLayer(connectionProvider, schemaManager)));
 
    readonly IMsSqlConnectionPool _connectionPool;
-   readonly SchemaManager _schemaManager;
-   bool _initialized;
+   readonly MsSqlSqlLayerSchemaManager _schemaManager;
 
-   MsSqlDocumentDbSqlLayer(IMsSqlConnectionPool connectionPool)
+   MsSqlDocumentDbSqlLayer(IMsSqlConnectionPool connectionPool, MsSqlSqlLayerSchemaManager schemaManager)
    {
-      _schemaManager = new SchemaManager(connectionPool);
+      _schemaManager = schemaManager;
       _connectionPool = connectionPool;
    }
 
@@ -131,14 +129,5 @@ partial class MsSqlDocumentDbSqlLayer : IDocumentDbSqlLayer
 
    static string UseUpdateLock(bool useUpdateLock) => useUpdateLock ? "With(UPDLOCK, ROWLOCK)" : "";
 
-   readonly MonitorCE _monitor = MonitorCE.WithDefaultTimeout();
-
-   void EnsureInitialized() => _monitor.Update(() =>
-   {
-      if(!_initialized)
-      {
-         _schemaManager.EnsureInitialized();
-         _initialized = true;
-      }
-   });
+   void EnsureInitialized() => _schemaManager.EnsureTablesExist();
 }

@@ -4,14 +4,16 @@ using System.Threading.Tasks;
 using Compze.Core.Tessaging.Internal.SqlLayer;
 using Compze.Sql.Common;
 using Compze.Utilities.SystemCE.LinqCE;
+using Compze.Utilities.Threading.TasksCE;
 using TessageTable = Compze.Core.Tessaging.Internal.SqlLayer.IServiceBusSqlLayer.OutboxTessagesDatabaseSchemaStrings;
 using DispatchingTable = Compze.Core.Tessaging.Internal.SqlLayer.IServiceBusSqlLayer.OutboxTessageDispatchingTableSchemaStrings;
 
 namespace Compze.Sql.MicrosoftSql.Private.Tessaging;
 
-partial class MsSqlOutboxSqlLayer(IMsSqlConnectionPool connectionFactory) : IServiceBusSqlLayer.IOutboxSqlLayer
+partial class MsSqlOutboxSqlLayer(IMsSqlConnectionPool connectionFactory, MsSqlSqlLayerSchemaManager schemaManager) : IServiceBusSqlLayer.IOutboxSqlLayer
 {
    readonly IMsSqlConnectionPool _connectionFactory = connectionFactory;
+   readonly MsSqlSqlLayerSchemaManager _schemaManager = schemaManager;
 
    public void SaveTessage(IServiceBusSqlLayer.OutboxTessageWithReceivers tessageWithReceivers)
    {
@@ -137,5 +139,5 @@ partial class MsSqlOutboxSqlLayer(IMsSqlConnectionPool connectionFactory) : ISer
          });
    }
 
-   public Task InitAsync() => SchemaManager.EnsureTablesExistAsync(_connectionFactory);
+   public async Task InitAsync() => await _schemaManager.EnsureTablesExistAsync().caf();
 }

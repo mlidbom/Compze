@@ -1,5 +1,3 @@
-using Compze.Sql.Common;
-using Compze.Utilities.SystemCE.TransactionsCE;
 using Tevent = Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.TeventTableSchemaStrings;
 
 namespace Compze.Sql.MicrosoftSql.Private.TEventStore;
@@ -47,17 +45,5 @@ partial class MsSqlTeventStoreSqlLayer
 
        """;
 
-   bool _initialized;
-
-   public void SetupSchemaIfDatabaseUnInitialized() => TransactionScopeCe.SuppressAmbient(() =>
-   {
-      if(!_initialized)
-      {
-         _connectionManager.UseCommand(suppressTransactionWarning: true,
-                                       command => command.ExecuteNonQuery(
-                                          SchemaCreationSql));
-
-         _initialized = true;
-      }
-   });
+   public void SetupSchemaIfDatabaseUnInitialized() => _schemaManager.EnsureTablesExist();
 }

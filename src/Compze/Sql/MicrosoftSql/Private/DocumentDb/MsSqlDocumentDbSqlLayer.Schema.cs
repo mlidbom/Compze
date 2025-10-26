@@ -1,5 +1,3 @@
-using Compze.Utilities.SystemCE.TransactionsCE;
-using Compze.Utilities.Threading.ResourceAccess;
 using Document = Compze.Core.DocumentDb.Internal.SqlLayer.IDocumentDbSqlLayer.DocumentTableSchemaStrings;
 
 namespace Compze.Sql.MicrosoftSql.Private.DocumentDb;
@@ -27,24 +25,4 @@ partial class MsSqlDocumentDbSqlLayer
        END
 
        """;
-
-   class SchemaManager(IMsSqlConnectionPool connectionPool)
-   {
-      readonly MonitorCE _monitor = MonitorCE.WithDefaultTimeout();
-      bool _initialized = false;
-      readonly IMsSqlConnectionPool _connectionPool = connectionPool;
-
-      internal void EnsureInitialized() => _monitor.Update(() =>
-      {
-         if(!_initialized)
-         {
-            TransactionScopeCe.SuppressAmbient(() =>
-            {
-               _connectionPool.ExecuteNonQuery(SchemaCreationSql);
-            });
-         }
-
-         _initialized = true;
-      });
-   }
 }
