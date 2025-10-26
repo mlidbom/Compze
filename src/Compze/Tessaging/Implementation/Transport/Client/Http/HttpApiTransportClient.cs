@@ -3,7 +3,6 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Compze.Core.Serialization.Internal;
 using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
-using Compze.Tessaging.Implementation.Transport.Client.Abstractions;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Threading.TasksCE;
@@ -12,7 +11,7 @@ namespace Compze.Tessaging.Implementation.Transport.Client.Http;
 
 static class HttpApiTransportClientRegistrar
 {
-   internal static IComponentRegistrar HttpApiClient(this IComponentRegistrar registrar)
+   internal static IComponentRegistrar HttpApiTransportClient(this IComponentRegistrar registrar)
       => registrar.Register(Http.HttpApiTransportClient.RegisterWith);
 }
 
@@ -22,12 +21,12 @@ class HttpApiTransportClient : IHttpApiTransportClient
       => registrar.Register(Singleton.For<IHttpApiTransportClient>()
                                      .CreatedBy((IHttpClientFactoryCE factory, IRemotableTessageSerializer serializer) => new HttpApiTransportClient(factory, serializer)));
 
-   readonly IHttpClientFactoryCE _clientFactory;
+   readonly IHttpClientFactoryCE _httpClientFactory;
    readonly IRemotableTessageSerializer _serializer;
 
-   HttpApiTransportClient(IHttpClientFactoryCE clientFactory, IRemotableTessageSerializer serializer)
+   HttpApiTransportClient(IHttpClientFactoryCE httpClientFactory, IRemotableTessageSerializer serializer)
    {
-      _clientFactory = clientFactory;
+      _httpClientFactory = httpClientFactory;
       _serializer = serializer;
    }
 
@@ -42,12 +41,12 @@ class HttpApiTransportClient : IHttpApiTransportClient
 
    public async Task<HttpResponseMessage> PostAsync(TransportTessage.OutGoing tessage, object realTessage, Uri requestUri)
    {
-      using var it = _clientFactory.CreateClient();
+      using var httpClient = _httpClientFactory.CreateClient();
 
       var content = new StringContent(tessage.Body);
       content.Headers.Add(HttpConstants.Headers.TessageId, tessage.Id.ToString());
       content.Headers.Add(HttpConstants.Headers.PayLoadTypeId, tessage.Type.GuidValue.ToString());
-      var response = await it.PostAsync(requestUri, content).caf();
+      var response = await httpClient.PostAsync(requestUri, content).caf();
       if(!response.IsSuccessStatusCode)
       {
          var problemDetails = await ProblemDetails.FromResponse(response).caf();

@@ -86,7 +86,7 @@ class ServerEndpointBuilder : IEndpointBuilder
       register.Transport()
               .RemoteHypermediaNavigator()
               .HttpClientFactoryCE()
-              .HttpApiClient();
+              .HttpApiTransportClient();
 
       Container.Register(Singleton.For<ITessagesInFlightTracker>().CreatedBy(() => _globalStateTracker));
 
