@@ -44,7 +44,11 @@ class MemoryTransportMessagePoster : ITransportMessagePoster
          switch(tessage.TessageTypeEnum)
          {
             case TransportTessage.TransportTessageType.AtMostOnceTommandWithReturnValue:
-               return (await endpoint.ServiceLocator.Resolve<IInbox>().Receive(incomingTessage).caf()).NotNull().CastTo<TResult>();
+               return (await endpoint.ServiceLocator
+                                     .Resolve<IInbox>()
+                                     .Receive(incomingTessage).caf())
+                     .NotNull()
+                     .CastTo<TResult>();
             case TransportTessage.TransportTessageType.NonTransactionalTuery:
                return (await endpoint.ServiceLocator
                                      .Resolve<Inbox.HandlerExecutionEngine>()
@@ -77,11 +81,7 @@ class MemoryTransportMessagePoster : ITransportMessagePoster
          switch(tessage.TessageTypeEnum)
          {
             case TransportTessage.TransportTessageType.ExactlyOnceTevent:
-               await endpoint.ServiceLocator.Resolve<IInbox>().Receive(incomingTessage).caf();
-               return;
             case TransportTessage.TransportTessageType.AtMostOnceTommand:
-               await endpoint.ServiceLocator.Resolve<IInbox>().Receive(incomingTessage).caf();
-               return;
             case TransportTessage.TransportTessageType.ExactlyOnceTommand:
                await endpoint.ServiceLocator.Resolve<IInbox>().Receive(incomingTessage).caf();
                return;
