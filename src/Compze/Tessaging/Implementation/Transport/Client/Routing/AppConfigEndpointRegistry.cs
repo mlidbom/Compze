@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Compze.Core.Configuration.Internal;
-using Compze.Core.Tessaging.Transport.Internal;
+using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Tessaging.Implementation.Transport.Client.Routing.Abstractions;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Routing;
@@ -13,7 +13,7 @@ class AppConfigEndpointRegistry(IConfigurationParameterProvider settingsProvider
    readonly IConfigurationParameterProvider _settingsProvider = settingsProvider;
 #pragma warning restore CA1823
 
-   public IEnumerable<EndPointAddress> ServerEndpoints => throw new NotImplementedException();
+   public IEnumerable<IEndpoint> ServerEndpoints => throw new NotImplementedException();
    // var configurationValue = _settingsProvider.GetString("ServerEndpoints");
    // var addresses = configurationValue.Split(';')
    //                                   .Select(stringValue => stringValue.Trim())

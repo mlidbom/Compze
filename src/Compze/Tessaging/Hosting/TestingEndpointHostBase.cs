@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Compze.Core.Refactoring.Naming.Internal.Implementation;
 using Compze.Core.Tessaging.Hosting.Public;
-using Compze.Core.Tessaging.Transport.Internal;
 using Compze.Tessaging.Implementation.Transport;
 using Compze.Tessaging.Implementation.Transport.Client.Routing.Abstractions;
 using Compze.Utilities.DependencyInjection.Abstractions;
@@ -20,8 +19,7 @@ public class TestingEndpointHostBase : EndpointHost, ITestingEndpointHost, IEndp
    public TestingEndpointHostBase(IComponentRegistrar registrar, Func<IComponentRegistrar, IDependencyInjectionContainer> containerFactory) : base(registrar, containerFactory) => 
       TessagesInFlightTracker = new TessagesInFlightTracker(TypeMapper.Instance);
 
-   public IEnumerable<EndPointAddress> ServerEndpoints => Endpoints.Where(it => it.Address is not null)
-                                                                   .Select(it => it.Address!)
+   public IEnumerable<IEndpoint> ServerEndpoints => Endpoints.Where(it => it.Address is not null)
                                                                    .ToList();
 
    void WaitForEndpointsToBeAtRest(TimeSpan? timeoutOverride = null) => Endpoints.ForEach(endpoint => endpoint.AwaitNoTessagesInFlight(timeoutOverride));
