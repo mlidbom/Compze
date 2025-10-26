@@ -33,67 +33,19 @@ class MemoryTransportMessagePoster : ITransportMessagePoster
 
    public async Task<TResult> PostAsync<TResult>(TransportTessage.OutGoing tessage, object realTessage, EndPointAddress endPointAddress)
    {
-      var endpoint = _endpointRegistry.ServerEndpoints
-                                      .Single(it => it.Address == endPointAddress);
-      var incomingTessage = tessage.ToIncoming();
-      try
-      {
-         if(!endpoint.ServiceLocator.Resolve<MemoryInboxTransportServer>().Running)
-            throw new Exception("Transport is not running");
-
-         switch(tessage.TessageTypeEnum)
-         {
-            case TransportTessage.TransportTessageType.AtMostOnceTommandWithReturnValue:
-               return (await endpoint.ServiceLocator
-                                     .Resolve<IInbox>()
-                                     .Receive(incomingTessage).caf())
-                     .NotNull()
-                     .CastTo<TResult>();
-            case TransportTessage.TransportTessageType.NonTransactionalTuery:
-               return (await endpoint.ServiceLocator
-                                     .Resolve<Inbox.HandlerExecutionEngine>()
-                                     .Enqueue(incomingTessage).caf())
-                     .NotNull()
-                     .CastTo<TResult>();
-            case TransportTessage.TransportTessageType.ExactlyOnceTevent:
-            case TransportTessage.TransportTessageType.AtMostOnceTommand:
-            case TransportTessage.TransportTessageType.ExactlyOnceTommand:
-            default:
-               throw new ArgumentOutOfRangeException();
-         }
-      }
-      catch(Exception ex)
-      {
-         throw new TessageDispatchingFailedException(ex.ToString());
-      }
+      return await _endpointRegistry.ServerEndpoints
+                                    .Single(it => it.Address == endPointAddress)
+                                    .ServiceLocator
+                                    .Resolve<MemoryInboxTransportServer>()
+                                    .PostAsync<TResult>(tessage, realTessage, endPointAddress).caf();
    }
 
    public async Task PostAsync(TransportTessage.OutGoing tessage, object realTessage, EndPointAddress endPointAddress)
    {
-      var endpoint = _endpointRegistry.ServerEndpoints
-                                      .Single(it => it.Address.NotNull().Uri == endPointAddress.Uri);
-      var incomingTessage = tessage.ToIncoming();
-      try
-      {
-         if(!endpoint.ServiceLocator.Resolve<MemoryInboxTransportServer>().Running)
-            throw new Exception("Transport is not running");
-
-         switch(tessage.TessageTypeEnum)
-         {
-            case TransportTessage.TransportTessageType.ExactlyOnceTevent:
-            case TransportTessage.TransportTessageType.AtMostOnceTommand:
-            case TransportTessage.TransportTessageType.ExactlyOnceTommand:
-               await endpoint.ServiceLocator.Resolve<IInbox>().Receive(incomingTessage).caf();
-               return;
-            case TransportTessage.TransportTessageType.AtMostOnceTommandWithReturnValue:
-            case TransportTessage.TransportTessageType.NonTransactionalTuery:
-            default:
-               throw new ArgumentOutOfRangeException();
-         }
-      }
-      catch(Exception ex)
-      {
-         throw new TessageDispatchingFailedException(ex.ToString());
-      }
+      await _endpointRegistry.ServerEndpoints
+                                      .Single(it => it.Address.NotNull().Uri == endPointAddress.Uri)
+                                      .ServiceLocator
+                                      .Resolve<MemoryInboxTransportServer>()
+                                      .PostAsync(tessage, realTessage, endPointAddress).caf();
    }
 }
