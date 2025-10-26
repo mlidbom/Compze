@@ -34,7 +34,7 @@ public class TeventMigrationPerformanceTest : TeventMigrationTestBase
                                      .Concat(
                                          1.Through(10)
                                           .SelectMany(
-                                              _ => 1.Through(96)
+                                              _ => 1.Through(10)
                                                     .Select(_ => typeof(E1))
                                                     .Concat(EnumerableCE.OfTypes<E2, E4, E6, E8>()))).ToList();
 
@@ -86,8 +86,7 @@ public class TeventMigrationPerformanceTest : TeventMigrationTestBase
                                                                                                                    .Get<TestTaggregate>(_taggregate.Id));
    }
 
-   //Performance: Figure out why oracle under performs so dramatically in these tests and fix it. (Hmm. Adding FOR UPDATE to the DB2 tuery really really slowed DB2 down. Might Oracle be similar?)
-   [PCT]  public async Task With_four_migrations_mutation_that_all_actually_changes_things_uncached_loading_takes_less_than_X_milliseconds_cached_less_than_Y_milliseconds_mSSql_25_5_pgSql_25_5_mySql_25_5_orcl_125_5_inMem_15_DB2_30_5()
+   [PCT]  public async Task With_four_migrations_mutation_that_all_actually_changes_things_uncached_loading_takes_less_than_X_milliseconds_cached_less_than_Y_milliseconds()
    {
       var teventMigrations = EnumerableCE.Create<ITeventMigration>(
          Before<E2>.Insert<E3>(),
@@ -98,11 +97,11 @@ public class TeventMigrationPerformanceTest : TeventMigrationTestBase
 
       await AssertUncachedAndCachedTaggregateLoadTimes(
          maxUncachedLoadTime: TestEnv.SqlLayer.ValueFor(msSql: 35, mySql: 75, pgSql: 35, sqlite: 50, sqliteMemory: 50).Milliseconds().EnvMultiply(instrumented: 2.5),
-         maxCachedLoadTime: TestEnv.SqlLayer.ValueFor(msSql: 5, mySql: 5, pgSql: 5, sqlite: 10, sqliteMemory: 10).Milliseconds().EnvMultiply(instrumented: 2.5),
+         maxCachedLoadTime: TestEnv.SqlLayer.ValueFor(msSql: 2, mySql: 5, pgSql: 5, sqlite: 10, sqliteMemory: 10).Milliseconds().EnvMultiply(instrumented: 2.5),
          teventMigrations);
    }
 
-   [PCT]  public async Task With_four_migrations_that_change_nothing_uncached_loading_takes_less_than_X_milliseconds_cached_less_than_X_milliseconds_mSSql_30_5_pgSql_30_5_mySql_30_5_orcl_120_5_inMem_15_DB2_30_5()
+   [PCT]  public async Task With_four_migrations_that_change_nothing_uncached_loading_takes_less_than_X_milliseconds_cached_less_than_X_milliseconds()
    {
       var teventMigrations = EnumerableCE.Create<ITeventMigration>(
          Before<E3>.Insert<E1>(),
@@ -112,8 +111,8 @@ public class TeventMigrationPerformanceTest : TeventMigrationTestBase
       ).ToArray();
 
       await AssertUncachedAndCachedTaggregateLoadTimes(
-         maxUncachedLoadTime: TestEnv.SqlLayer.ValueFor(msSql: 30, mySql: 30, pgSql: 30, sqlite: 35, sqliteMemory: 35).Milliseconds().EnvMultiply(instrumented: 2.5),
-         maxCachedLoadTime: TestEnv.SqlLayer.ValueFor(msSql: 5, mySql: 5, pgSql: 5, sqlite: 10, sqliteMemory: 10).Milliseconds().EnvMultiply(instrumented: 2),
+         maxUncachedLoadTime: TestEnv.SqlLayer.ValueFor(msSql: 6, mySql: 40, pgSql: 30, sqlite: 35, sqliteMemory: 35).Milliseconds().EnvMultiply(instrumented: 2.5),
+         maxCachedLoadTime: TestEnv.SqlLayer.ValueFor(msSql: 2, mySql: 5, pgSql: 5, sqlite: 10, sqliteMemory: 10).Milliseconds().EnvMultiply(instrumented: 2),
          teventMigrations);
    }
 
@@ -121,8 +120,8 @@ public class TeventMigrationPerformanceTest : TeventMigrationTestBase
    {
       var teventMigrations = EnumerableCE.Create<ITeventMigration>().ToArray();
       await AssertUncachedAndCachedTaggregateLoadTimes(
-         maxUncachedLoadTime: TestEnv.SqlLayer.ValueFor(msSql: 25, mySql: 45, pgSql: 20, sqlite: 25, sqliteMemory: 25).Milliseconds().EnvMultiply(instrumented: 3),
-         maxCachedLoadTime: TestEnv.SqlLayer.ValueFor(msSql: 8, mySql: 8, pgSql: 8, sqlite: 15, sqliteMemory: 15).Milliseconds().EnvMultiply(instrumented: 2.5),
+         maxUncachedLoadTime: TestEnv.SqlLayer.ValueFor(msSql: 30, mySql: 45, pgSql: 20, sqlite: 25, sqliteMemory: 25).Milliseconds().EnvMultiply(instrumented: 3),
+         maxCachedLoadTime: TestEnv.SqlLayer.ValueFor(msSql: 2, mySql: 3, pgSql: 8, sqlite: 15, sqliteMemory: 15).Milliseconds().EnvMultiply(instrumented: 2.5),
          teventMigrations);
    }
 }

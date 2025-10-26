@@ -29,7 +29,7 @@ public static class TestFixtureHelper
                          .WriteTo.Console(formatProvider: CultureInfo.InvariantCulture)
                          .CreateLogger();
 
-      CompzeLogger.LogLevel = LogLevel.Error;
+      CompzeLogger.LogLevel = LogLevel.Warning;
       CompzeLogger.LoggerFactoryMethod = SerilogLogger.Create;
    }
 

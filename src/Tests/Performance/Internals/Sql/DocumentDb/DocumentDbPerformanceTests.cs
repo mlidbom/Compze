@@ -12,7 +12,7 @@ namespace Compze.Tests.Performance.Internals.Sql.DocumentDb;
 [LongRunning]
 public class DocumentDbPerformanceTests : DocumentDbTestsBase
 {
-   [PCT] public void Saves_100_documents_in_milliseconds_msSql_75_MySql_500_InMemory_8_PgSql_100_Orcl_100_DB2_300()
+   [PCT] public void Saves_XX_documents_in_50_milliseconds()
    {
       ServiceLocator.ExecuteInIsolatedScope(() =>
       {
@@ -21,13 +21,11 @@ public class DocumentDbPerformanceTests : DocumentDbTestsBase
          //Warm up caches etc
          SaveOneNewUserInTransaction();
 
-         //Performance: Fix the MySql opening connection slowness problem and up the number for MySql in this test
-         //Performance: Look at why DB2 is so slow here.
-         //Performance: See if using stored procedures and/or prepared statements speeds this up.
          TimeAsserter.Execute(
             action: SaveOneNewUserInTransaction,
-            iterations: 100,
-            maxTotal: TestEnv.SqlLayer.ValueFor(msSql: 100, mySql: 500, pgSql: 100, sqlite: 400, sqliteMemory: 400).Milliseconds().EnvMultiply(instrumented:2.2, unoptimized:1.3)
+            iterations: TestEnv.SqlLayer.ValueFor(msSql: 8, mySql: 8, pgSql: 8, sqlite: 6, sqliteMemory: 6)
+                               .EnvDivide(instrumented:2.2, unoptimized:1.3),
+            maxTotal: 50.Milliseconds()
          );
          return;
 

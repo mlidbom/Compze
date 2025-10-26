@@ -10,6 +10,7 @@ using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.Utilities.Functional;
 using Compze.Utilities.Testing.DbPool;
 
 namespace Compze.Tests.Common.Testing.Sql;
@@ -26,7 +27,9 @@ public abstract class DbPoolTestBase : UniversalTestBase
       Pool = ResolvePool();
    }
 
-   protected IServiceLocator CreateServiceLocator() => TestEnv.DIContainer.CreateServiceLocatorForTesting(_ => {});
+   protected static IServiceLocator CreateServiceLocator() => TestEnv.DIContainer.CreateEmpty()
+                                                                     .mutate(it => it.Register().CurrentTestsDbPoolIfNotCloneContainer())
+                                                                     .ServiceLocator;
 
    protected override async Task DisposeAsyncInternal() => await _serviceLocator.DisposeAsync();
 
