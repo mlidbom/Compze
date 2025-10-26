@@ -129,5 +129,5 @@ partial class MsSqlDocumentDbSqlLayer : IDocumentDbSqlLayer
 
    static string UseUpdateLock(bool useUpdateLock) => useUpdateLock ? "With(UPDLOCK, ROWLOCK)" : "";
 
-   void EnsureInitialized() => _schemaManager.EnsureTablesExist();
+   void EnsureInitialized() => _schemaManager.EnsureSchemaInitialized();
 }

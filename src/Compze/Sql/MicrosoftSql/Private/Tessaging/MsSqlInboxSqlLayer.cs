@@ -101,5 +101,5 @@ partial class MsSqlInboxSqlLayer(IMsSqlConnectionPool connectionFactory, MsSqlSq
                                                      .ExecuteNonQuery());
    }
 
-   public async Task InitAsync() => await _schemaManager.EnsureTablesExistAsync().caf();
+   public async Task InitAsync() => await _schemaManager.EnsureSchemaInitializedAsync().caf();
 }

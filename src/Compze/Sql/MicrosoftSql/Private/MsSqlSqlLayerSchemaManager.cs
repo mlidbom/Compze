@@ -22,7 +22,7 @@ class MsSqlSqlLayerSchemaManager(IMsSqlConnectionPool connectionPool)
    bool _initialized = false;
    readonly IMsSqlConnectionPool _connectionPool = connectionPool;
 
-   public async Task EnsureTablesExistAsync()
+   public async Task EnsureSchemaInitializedAsync()
    {
       if(!_initialized)
       {
@@ -44,5 +44,5 @@ class MsSqlSqlLayerSchemaManager(IMsSqlConnectionPool connectionPool)
       }
    }
 
-   public void EnsureTablesExist() => EnsureTablesExistAsync().Wait();
+   public void EnsureSchemaInitialized() => EnsureSchemaInitializedAsync().Wait();
 }

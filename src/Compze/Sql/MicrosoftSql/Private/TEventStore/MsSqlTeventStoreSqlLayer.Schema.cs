@@ -45,5 +45,5 @@ partial class MsSqlTeventStoreSqlLayer
 
        """;
 
-   public void SetupSchemaIfDatabaseUnInitialized() => _schemaManager.EnsureTablesExist();
+   public void SetupSchemaIfDatabaseUnInitialized() => _schemaManager.EnsureSchemaInitialized();
 }

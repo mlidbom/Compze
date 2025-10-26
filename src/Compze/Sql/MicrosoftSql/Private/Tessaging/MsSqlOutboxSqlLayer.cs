@@ -139,5 +139,5 @@ partial class MsSqlOutboxSqlLayer(IMsSqlConnectionPool connectionFactory, MsSqlS
          });
    }
 
-   public async Task InitAsync() => await _schemaManager.EnsureTablesExistAsync().caf();
+   public async Task InitAsync() => await _schemaManager.EnsureSchemaInitializedAsync().caf();
 }
