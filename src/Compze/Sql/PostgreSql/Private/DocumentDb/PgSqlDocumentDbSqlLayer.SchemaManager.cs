@@ -16,24 +16,22 @@ partial class PgSqlDocumentDbSqlLayer
       {
          if(!_initialized)
          {
-            TransactionScopeCe.SuppressAmbientAndExecuteInNewTransaction(() =>
-            {
-               _connectionPool.PrepareAndExecuteNonQuery($"""
+            TransactionScopeCe.SuppressAmbient(() => _connectionPool.ExecuteNonQuery(
+                                                  $"""
 
-                                                          CREATE TABLE IF NOT EXISTS {Document.TableName} 
-                                                          (
-                                                              {Document.Id}          VARCHAR(500)                NOT NULL,
-                                                              {Document.ValueTypeId} UUID                        NOT NULL,
-                                                              {Document.Created}     TIMESTAMP with time zone    NOT NULL,
-                                                              {Document.Updated}     TIMESTAMP with time zone    NOT NULL,
-                                                              {Document.Value}       TEXT                        NOT NULL,
-                                                          
-                                                              PRIMARY KEY ({Document.Id}, {Document.ValueTypeId})
-                                                          )
+                                                   CREATE TABLE IF NOT EXISTS {Document.TableName} 
+                                                   (
+                                                       {Document.Id}          VARCHAR(500)                NOT NULL,
+                                                       {Document.ValueTypeId} UUID                        NOT NULL,
+                                                       {Document.Created}     TIMESTAMP with time zone    NOT NULL,
+                                                       {Document.Updated}     TIMESTAMP with time zone    NOT NULL,
+                                                       {Document.Value}       TEXT                        NOT NULL,
+
+                                                       PRIMARY KEY ({Document.Id}, {Document.ValueTypeId})
+                                                   )
 
 
-                                                          """);
-            });
+                                                   """));
          }
 
          _initialized = true;
