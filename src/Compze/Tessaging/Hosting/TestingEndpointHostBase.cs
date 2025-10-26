@@ -17,7 +17,7 @@ public abstract class TestingEndpointHostBase : EndpointHost, ITestingEndpointHo
 {
    readonly List<Exception> _expectedExceptions = [];
 
-   protected TestingEndpointHostBase(IComponentRegistrar registrar, Func<IComponentRegistrar, IDependencyInjectionContainer> containerFactory) : base(registrar, containerFactory) => 
+   protected TestingEndpointHostBase(IComponentRegistrar registrar, Func<IDependencyInjectionContainer> containerFactory) : base(registrar, containerFactory) => 
       TessagesInFlightTracker = new TessagesInFlightTracker(TypeMapper.Instance);
 
    public IEnumerable<IEndpoint> ServerEndpoints => Endpoints.Where(it => it.Address is not null)

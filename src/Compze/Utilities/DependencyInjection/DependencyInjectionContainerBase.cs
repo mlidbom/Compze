@@ -12,9 +12,9 @@ public abstract class DependencyInjectionContainerBase : IDependencyInjectionCon
    readonly List<ComponentRegistration> _registeredComponents = [];
    readonly IComponentRegistrar _registrar;
 
-   protected DependencyInjectionContainerBase(IComponentRegistrar registrar)
+   protected DependencyInjectionContainerBase(IComponentRegistrar? registrar)
    {
-      _registrar = registrar;
+      _registrar = registrar ?? new ComponentRegistrar();
       _registrar.SetContainer(this);
    }
 

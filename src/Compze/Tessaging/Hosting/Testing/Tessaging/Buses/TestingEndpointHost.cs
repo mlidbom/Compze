@@ -7,7 +7,7 @@ namespace Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 
 public class TestingEndpointHost : TestingEndpointHostBase
 {
-   public TestingEndpointHost(IComponentRegistrar registrar, IDependencyInjectionContainer rootContainer) : base(registrar, _ => rootContainer.Clone()) {}
+   public TestingEndpointHost(IComponentRegistrar registrar, IDependencyInjectionContainer rootContainer) : base(registrar, rootContainer.Clone) {}
 
    public static ITestingEndpointHost Create(IDependencyInjectionContainer rootContainer)
       => new TestingEndpointHost(new TestingComponentRegistrar(), rootContainer);

@@ -19,7 +19,7 @@ public sealed class MicrosoftDependencyInjectionContainer : DependencyInjectionC
 
    readonly AsyncLocal<IServiceScope?> _scopeCache = new();
 
-   public MicrosoftDependencyInjectionContainer(IComponentRegistrar register) : base(register) =>
+   public MicrosoftDependencyInjectionContainer(IComponentRegistrar? register = null) : base(register) =>
       _services = new ServiceCollection();
 
    protected override IDependencyInjectionContainer RegisterInContainer(ComponentRegistration[] registrations)
