@@ -1,4 +1,3 @@
-using Compze.Sql.MicrosoftSql.Private.DocumentDb;
 using Compze.Utilities.DependencyInjection.Abstractions;
 
 namespace Compze.Sql.MicrosoftSql.Wiring;

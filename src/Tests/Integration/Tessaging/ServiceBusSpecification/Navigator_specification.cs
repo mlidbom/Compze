@@ -7,10 +7,7 @@ using Compze.Core.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Core.Tessaging.Public;
 using Compze.Core.Tessaging.Typermedia.Public;
 using Compze.Tessaging.Hosting;
-using Compze.Tessaging.Hosting.AspNetCore.Wiring;
-using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
-using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
 using FluentAssertions;
@@ -28,7 +25,7 @@ public class Navigator_specification : UniversalTestBase
    {
       var tueryResults = new List<UserResource>();
 
-      _host = TestingEndpointHost.Create(registrar => TestEnv.DIContainer.CreateWithServiceLocatorAndCurrentTestsPluggableComponents());
+      _host = TestingEndpointHost.Create();
 
       _host.RegisterEndpoint(
          "Backend",

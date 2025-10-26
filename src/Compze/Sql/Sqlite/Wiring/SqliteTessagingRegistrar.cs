@@ -1,5 +1,4 @@
 using Compze.Core.Tessaging.Internal.SqlLayer;
-using Compze.Sql.Sqlite.Private;
 using Compze.Sql.Sqlite.Private.Tessaging;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;

@@ -1,5 +1,4 @@
 using Compze.Core.DocumentDb.Internal.SqlLayer;
-using Compze.Sql.Sqlite.Private;
 using Compze.Sql.Sqlite.Private.DocumentDb;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;

@@ -1,10 +1,8 @@
 using System;
 using Compze.Core.Wiring.Testing.Internal;
-using Compze.Sql.MicrosoftSql.Private.DbPool;
 using Compze.Sql.MicrosoftSql.Wiring;
 using Compze.Sql.MySql.Wiring;
 using Compze.Sql.PostgreSql.Wiring;
-using Compze.Sql.Sqlite.Private.DbPool;
 using Compze.Sql.Sqlite.Wiring;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE;

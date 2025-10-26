@@ -4,10 +4,7 @@ using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Core.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Core.Tessaging.Public;
 using Compze.Core.Tessaging.Typermedia.Public;
-using Compze.Tessaging.Hosting.AspNetCore.Wiring;
-using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
-using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tests.Infrastructure;
 
 namespace Compze.Tests.Performance.Internals.Tessaging.Hypermedia;
@@ -22,7 +19,7 @@ public abstract class PerformanceTestBase : UniversalTestBase
 
    protected PerformanceTestBase()
    {
-      Host = TestingEndpointHost.Create(registrar => TestEnv.DIContainer.CreateWithServiceLocatorAndCurrentTestsPluggableComponents());
+      Host = TestingEndpointHost.Create();
       ServerEndpoint = Host.RegisterEndpoint(
          "Backend",
          new EndpointId(Guid.Parse("DDD0A67C-D2A2-4197-9AF8-38B6AEDF8FA7")),

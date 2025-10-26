@@ -12,7 +12,6 @@ using Compze.Utilities.DependencyInjection.Microsoft;
 using Compze.Utilities.DependencyInjection.SimpleInjector;
 using Compze.Utilities.Functional;
 using Compze.Utilities.Logging;
-using Compze.Utilities.SystemCE;
 using JetBrains.Annotations;
 
 namespace Compze.Tessaging.Hosting.Testing.Wiring;

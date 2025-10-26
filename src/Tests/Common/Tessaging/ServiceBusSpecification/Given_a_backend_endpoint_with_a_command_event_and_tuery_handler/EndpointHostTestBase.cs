@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Core.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Core.Tessaging.Typermedia.Public;
-using Compze.Tessaging.Hosting.AspNetCore.Wiring;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tessaging.Teventive.TeventStore.Wiring;
 using Compze.Tessaging.TyperMediaApi.EventStore;
@@ -89,9 +88,6 @@ public abstract class EndpointHostTestBase : UniversalTestBase
          new EndpointId(Guid.Parse("DDD0A67C-D2A2-4197-9AF8-38B6AEDF8FA6")),
          builder =>
          {
-            builder.Container.Register()
-                   .CurrentTestsPluggableComponents("DDD0A67C-D2A2-4197-9AF8-38B6AEDF8FA6");
-
             builder.RegisterTeventStore()
                    .HandleTaggregate<MyTaggregate, MyTaggregateTevent.IRoot>();
 
@@ -125,12 +121,10 @@ public abstract class EndpointHostTestBase : UniversalTestBase
                                              new EndpointId(Guid.Parse("E72924D3-5279-44B5-B20D-D682E537672B")),
                                              builder =>
                                              {
-                                                builder.Container.Register()
-                                                       .CurrentTestsPluggableComponents("E72924D3-5279-44B5-B20D-D682E537672B");
                                                 builder.RegisterHandlers.ForTevent((MyTaggregateTevent.IRoot _) => MyRemoteTaggregateTeventHandlerThreadGate.AwaitPassThrough());
                                              });
 
-      ClientEndpoint = Host.RegisterClientEndpointForRegisteredEndpoints(builder => builder.Container.Register().CurrentTestsPluggableComponents());
+      ClientEndpoint = Host.RegisterClientEndpointForRegisteredEndpoints();
    }
 
    protected async Task StartHostAsync()
