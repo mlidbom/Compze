@@ -28,7 +28,6 @@ class PgSqlSqlLayerSchemaManager(IPgSqlConnectionPool connectionPool)
    {
       await TransactionScopeCe.SuppressAmbientAsync(async () =>
       {
-         //todo: test if running them in parallel is faster
          await _connectionPool.ExecuteNonQueryAsync($"""
 
                                                      {PgSqlDocumentDbSqlLayer.SchemaCreationSql}
