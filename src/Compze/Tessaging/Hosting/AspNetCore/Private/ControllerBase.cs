@@ -30,6 +30,6 @@ abstract class ControllerBase(IRemotableTessageSerializer serializer, ITypeMappe
       using var reader = new StreamReader(HttpContext.Request.Body);
       var tueryJson = await reader.ReadToEndAsync().caf();
 
-      return new TransportTessage.InComing(tueryJson, typeId, [], tessageId, _typeMapper, Serializer);
+      return new TransportTessage.InComing(tueryJson, typeId, tessageId, _typeMapper, Serializer);
    }
 }

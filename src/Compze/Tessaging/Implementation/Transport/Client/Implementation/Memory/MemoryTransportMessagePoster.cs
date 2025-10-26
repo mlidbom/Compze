@@ -4,7 +4,12 @@ using Compze.Tessaging.Implementation.Transport.Client.Routing.Abstractions;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
+using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
+using Compze.Tessaging.Implementation.TessageHandling.Inbox;
+using Compze.Utilities.SystemCE;
+using Compze.Utilities.Threading.TasksCE;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Memory;
 
@@ -27,26 +32,47 @@ class MemoryTransportMessagePoster : ITransportMessagePoster
 
    public async Task<TResult> PostAsync<TResult>(TransportTessage.OutGoing tessage, object realTessage, EndPointAddress endPointAddress)
    {
+      var endpoint = _endpointRegistry.ServerEndpoints
+                                      .Single(it => it.Address.NotNull().Uri == endPointAddress.Uri);
+      var incomingTessage = tessage.ToIncoming();
       switch(tessage.TessageTypeEnum)
       {
-         case TransportTessage.TransportTessageType.ExactlyOnceTevent:
-            break;
-         case TransportTessage.TransportTessageType.AtMostOnceTommand:
-            break;
          case TransportTessage.TransportTessageType.AtMostOnceTommandWithReturnValue:
-            break;
-         case TransportTessage.TransportTessageType.ExactlyOnceTommand:
-            break;
+            return (await endpoint.ServiceLocator
+                                  .Resolve<Inbox.HandlerExecutionEngine>()
+                                  .Enqueue(incomingTessage).caf())
+                  .NotNull()
+                  .CastTo<TResult>();
          case TransportTessage.TransportTessageType.NonTransactionalTuery:
-            break;
+            return (await endpoint.ServiceLocator
+                                  .Resolve<IInbox>()
+                                  .Receive(incomingTessage).caf())
+                  .NotNull()
+                  .CastTo<TResult>();
+         case TransportTessage.TransportTessageType.ExactlyOnceTevent:
+         case TransportTessage.TransportTessageType.AtMostOnceTommand:
+         case TransportTessage.TransportTessageType.ExactlyOnceTommand:
          default:
             throw new ArgumentOutOfRangeException();
       }
-
-      throw new NotImplementedException();
    }
 
-   public async Task PostAsync(TransportTessage.OutGoing tessage, object realTessage, EndPointAddress endPointAddress) =>
-      throw new NotImplementedException("");
-
+   public async Task PostAsync(TransportTessage.OutGoing tessage, object realTessage, EndPointAddress endPointAddress)
+   {
+      var endpoint = _endpointRegistry.ServerEndpoints
+                                      .Single(it => it.Address.NotNull().Uri == endPointAddress.Uri);
+      var incomingTessage = tessage.ToIncoming();
+      switch(tessage.TessageTypeEnum)
+      {
+         case TransportTessage.TransportTessageType.ExactlyOnceTevent:
+         case TransportTessage.TransportTessageType.AtMostOnceTommand:
+            await endpoint.ServiceLocator.Resolve<IInbox>().Receive(incomingTessage).caf();
+            return;
+         case TransportTessage.TransportTessageType.ExactlyOnceTommand:
+         case TransportTessage.TransportTessageType.AtMostOnceTommandWithReturnValue:
+         case TransportTessage.TransportTessageType.NonTransactionalTuery:
+         default:
+            throw new ArgumentOutOfRangeException();
+      }
+   }
 }
