@@ -5,7 +5,8 @@ namespace Compze.Sql.MySql.Wiring;
 static class MySqlSqlLayersRegistrar
 {
    public static IComponentRegistrar MySqlSqlLayers(this IComponentRegistrar registrar) =>
-      registrar.MySqlDocumentDbSqlLayer().
+      registrar.MySqlSqlLayerSchemaManager()
+               .MySqlDocumentDbSqlLayer().
                 MySqlTessagingSqlLayer().
                 MySqlTeventStoreSqlLayer();
 }

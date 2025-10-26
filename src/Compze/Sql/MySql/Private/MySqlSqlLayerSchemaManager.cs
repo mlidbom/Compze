@@ -1,0 +1,49 @@
+using System.Threading.Tasks;
+using Compze.Sql.MySql.Private.DocumentDb;
+using Compze.Sql.MySql.Private.Tessaging;
+using Compze.Sql.MySql.Private.TEventStore;
+using Compze.Utilities.DependencyInjection;
+using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.Utilities.SystemCE.TransactionsCE;
+using Compze.Utilities.Threading.TasksCE;
+
+namespace Compze.Sql.MySql.Private;
+
+class MySqlSqlLayerSchemaManager(IMySqlConnectionPool connectionPool)
+{
+   internal static IComponentRegistrar RegisterWith(IComponentRegistrar registrar)
+   {
+      if(registrar.Container().IsRegistered<MySqlSqlLayerSchemaManager>())
+         return registrar;
+      return registrar.Register(Singleton.For<MySqlSqlLayerSchemaManager>()
+                                         .CreatedBy((IMySqlConnectionPool connectionPool) => new MySqlSqlLayerSchemaManager(connectionPool)));
+   }
+
+   bool _initialized = false;
+   readonly IMySqlConnectionPool _connectionPool = connectionPool;
+
+   public async Task EnsureSchemaInitializedAsync()
+   {
+      if(!_initialized)
+      {
+         await TransactionScopeCe.SuppressAmbientAsync(async () =>
+         {
+            //todo: test if running them in parallel is faster
+            await _connectionPool.ExecuteNonQueryAsync($"""
+
+                                                        {MySqlDocumentDbSqlLayer.SchemaCreationSql}
+
+                                                        {MySqlInboxSqlLayer.SchemaCreationSql}
+
+                                                        {MySqlOutboxSqlLayer.SchemaCreationSql}
+
+                                                        {MySqlTeventStoreSqlLayer.SchemaCreationSql}
+
+                                                        """).caf();
+         }).caf();
+         _initialized = true;
+      }
+   }
+
+   public void EnsureSchemaInitialized() => EnsureSchemaInitializedAsync().Wait();
+}
