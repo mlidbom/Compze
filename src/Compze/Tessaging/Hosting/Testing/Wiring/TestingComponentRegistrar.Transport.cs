@@ -26,19 +26,4 @@ public static class TestingComponentRegistrarTransport
             throw new ArgumentOutOfRangeException();
       }
    }
-
-   public static IComponentRegistrar CurrentTestsTransportMessagePoster(this IComponentRegistrar @this)
-   {
-      switch(TestEnv.Transport)
-      {
-         case Transport.AspNetCore:
-            return @this
-                  .HttpClientFactoryCE()
-                  .HttpApiTransportClient();
-         case Transport.Memory:
-            return @this.MemoryApiTransportClient();
-         default:
-            throw new ArgumentOutOfRangeException();
-      }
-   }
 }
