@@ -15,12 +15,12 @@ namespace Compze.Sql.PostgreSql.Private.DocumentDb;
 partial class PgSqlDocumentDbSqlLayer : IDocumentDbSqlLayer
 {
    readonly IPgSqlConnectionPool _connectionPool;
-   readonly SchemaManager _schemaManager;
+   readonly PgSqlSqlLayerSchemaManager _schemaManager;
    bool _initialized;
 
-   internal PgSqlDocumentDbSqlLayer(IPgSqlConnectionPool connectionPool)
+   internal PgSqlDocumentDbSqlLayer(IPgSqlConnectionPool connectionPool, PgSqlSqlLayerSchemaManager schemaManager)
    {
-      _schemaManager = new SchemaManager(connectionPool);
+      _schemaManager = schemaManager;
       _connectionPool = connectionPool;
    }
 
@@ -137,13 +137,5 @@ partial class PgSqlDocumentDbSqlLayer : IDocumentDbSqlLayer
    // ReSharper disable once UnusedParameter.Local
    static string UseUpdateLock(bool _) => "";// useUpdateLock ? "With(UPDLOCK, ROWLOCK)" : "";
 
-   readonly MonitorCE _monitor = MonitorCE.WithDefaultTimeout();
-   void EnsureInitialized() => _monitor.Update(() =>
-   {
-      if(!_initialized)
-      {
-         _schemaManager.EnsureInitialized();
-         _initialized = true;
-      }
-   });
+   void EnsureInitialized() => _schemaManager.EnsureSchemaInitialized();
 }

@@ -4,15 +4,17 @@ using System.Threading.Tasks;
 using Compze.Core.Tessaging.Internal.SqlLayer;
 using Compze.Sql.Common;
 using Compze.Utilities.SystemCE.LinqCE;
+using Compze.Utilities.Threading.TasksCE;
 using NpgsqlTypes;
 using TessageTable = Compze.Core.Tessaging.Internal.SqlLayer.IServiceBusSqlLayer.OutboxTessagesDatabaseSchemaStrings;
 using DispatchingTable = Compze.Core.Tessaging.Internal.SqlLayer.IServiceBusSqlLayer.OutboxTessageDispatchingTableSchemaStrings;
 
 namespace Compze.Sql.PostgreSql.Private.Tessaging;
 
-partial class PgSqlOutboxSqlLayer(IPgSqlConnectionPool connectionFactory) : IServiceBusSqlLayer.IOutboxSqlLayer
+partial class PgSqlOutboxSqlLayer(IPgSqlConnectionPool connectionFactory, PgSqlSqlLayerSchemaManager schemaManager) : IServiceBusSqlLayer.IOutboxSqlLayer
 {
    readonly IPgSqlConnectionPool _connectionFactory = connectionFactory;
+   readonly PgSqlSqlLayerSchemaManager _schemaManager = schemaManager;
 
    public void SaveTessage(IServiceBusSqlLayer.OutboxTessageWithReceivers tessageWithReceivers)
    {
@@ -143,5 +145,5 @@ partial class PgSqlOutboxSqlLayer(IPgSqlConnectionPool connectionFactory) : ISer
          });
    }
 
-   public Task InitAsync() => SchemaManager.EnsureTablesExistAsync(_connectionFactory);
+   public async Task InitAsync() => await _schemaManager.EnsureSchemaInitializedAsync().caf();
 }

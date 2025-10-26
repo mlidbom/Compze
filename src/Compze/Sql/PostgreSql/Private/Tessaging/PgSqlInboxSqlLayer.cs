@@ -8,9 +8,10 @@ using TessageTable =  Compze.Core.Tessaging.Internal.SqlLayer.IServiceBusSqlLaye
 
 namespace Compze.Sql.PostgreSql.Private.Tessaging;
 
-partial class PgSqlInboxSqlLayer(IPgSqlConnectionPool connectionFactory) : IServiceBusSqlLayer.IInboxSqlLayer
+partial class PgSqlInboxSqlLayer(IPgSqlConnectionPool connectionFactory, PgSqlSqlLayerSchemaManager schemaManager) : IServiceBusSqlLayer.IInboxSqlLayer
 {
    readonly IPgSqlConnectionPool _connectionFactory = connectionFactory;
+   readonly PgSqlSqlLayerSchemaManager _schemaManager = schemaManager;
 
    public IServiceBusSqlLayer.SaveTessageResult SaveTessage(Guid tessageId, Guid typeId, string serializedTessage)
    {
@@ -105,5 +106,5 @@ partial class PgSqlInboxSqlLayer(IPgSqlConnectionPool connectionFactory) : IServ
                    .ExecuteNonQuery());
    }
 
-   public async Task InitAsync() => await SchemaManager.EnsureTablesExistAsync(_connectionFactory).caf();
+   public async Task InitAsync() => await _schemaManager.EnsureSchemaInitializedAsync().caf();
 }

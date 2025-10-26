@@ -10,9 +10,10 @@ using Tevent = Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Tev
 
 namespace Compze.Sql.PostgreSql.Private.TEventStore;
 
-partial class PgSqlTeventStoreSqlLayer(PgSqlTeventStoreConnectionManager connectionManager) : ITeventStoreSqlLayer
+partial class PgSqlTeventStoreSqlLayer(PgSqlTeventStoreConnectionManager connectionManager,PgSqlSqlLayerSchemaManager schemaManager) : ITeventStoreSqlLayer
 {
    readonly PgSqlTeventStoreConnectionManager _connectionManager = connectionManager;
+   readonly PgSqlSqlLayerSchemaManager _schemaManager = schemaManager;
 
    static string CreateSelectClause() => InternalSelect();
 

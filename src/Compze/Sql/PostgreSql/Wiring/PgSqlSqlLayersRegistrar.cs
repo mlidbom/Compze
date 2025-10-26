@@ -5,7 +5,8 @@ namespace Compze.Sql.PostgreSql.Wiring;
 static class PgSqlSqlLayersRegistrar
 {
    public static IComponentRegistrar PgSqlSqlLayers(this IComponentRegistrar registrar) =>
-      registrar.PgSqlDocumentDbSqlLayer().
-                PgSqlTessagingSqlLayer().
-                PgSqlTeventStoreSqlLayer();
+      registrar.PgSqlSqlLayerSchemaManager()
+               .PgSqlDocumentDbSqlLayer()
+               .PgSqlTessagingSqlLayer()
+               .PgSqlTeventStoreSqlLayer();
 }
