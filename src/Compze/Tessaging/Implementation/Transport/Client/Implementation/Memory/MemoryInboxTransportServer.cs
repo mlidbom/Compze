@@ -26,14 +26,13 @@ class MemoryInboxTransportServer : IInboxTransportServer
    public ValueTask DisposeAsync() => ValueTask.CompletedTask;
    public Task StartAsync()
    {
-      //Assert.State.Is(!Running);
+      Assert.State.Is(!Running);
       Running = true;
       return Task.CompletedTask;
    }
 
    public Task StopAsync()
    {
-      //Assert.State.Is(Running);
       Running = false;
       return Task.CompletedTask;
    }
