@@ -16,7 +16,6 @@ public static class TestingComponentRegistrarTransport
 
    public static IComponentRegistrar CurrentTestsTransport(this TestingComponentRegistrar @this)
    {
-      @this.DbPoolIfNotAlreadyRegistered();
       switch(TestEnv.Transport)
       {
          case Transport.AspNetCore:
