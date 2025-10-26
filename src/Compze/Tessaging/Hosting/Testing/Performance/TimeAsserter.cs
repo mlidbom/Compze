@@ -14,7 +14,7 @@ static class TimeAsserter
    const int MaxTriesLimit = 40;
    const int MaxTriesDefault = 10;
 
-   public static bool VerboseMode { get; set; } = false;
+   public static bool VerboseMode { get; set; } = true;
    static ILogger Log => CompzeLogger.For(typeof(TimeAsserter));
 
    public static StopwatchCE.TimedExecutionSummary Execute([InstantHandle] Action action,
