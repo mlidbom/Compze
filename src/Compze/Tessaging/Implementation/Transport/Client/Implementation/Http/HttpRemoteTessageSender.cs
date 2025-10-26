@@ -12,14 +12,14 @@ using Compze.Utilities.Threading.TasksCE;
 namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Http;
 
 class HttpExactlyOnceTessageSender(
-   IHttpTransportMessagePoster httpTransportMessagePoster,
+   ITransportMessagePoster transportMessagePoster,
    EndPointAddress remoteAddress,
    ITypeMapper typeMapper,
    IRemotableTessageSerializer serializer,
    ITessagesInFlightTracker tessagesInFlightTracker,
    EndpointId remoteEndpointId) : IExactlyOnceTessageSender
 {
-   readonly IHttpTransportMessagePoster _transportMessagePoster = httpTransportMessagePoster;
+   readonly ITransportMessagePoster _transportMessagePoster = transportMessagePoster;
    readonly ITypeMapper _typeMapper = typeMapper;
    readonly IRemotableTessageSerializer _serializer = serializer;
    readonly ITessagesInFlightTracker _tessagesInFlightTracker = tessagesInFlightTracker;

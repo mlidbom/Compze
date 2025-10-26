@@ -29,22 +29,22 @@ static class TransportRegistrar
 partial class RoutingInboxClient : IRoutingInboxClient, IDisposable
 {
    internal static void RegisterWith(IComponentRegistrar registrar)
-      => registrar.Register(Singleton.For<IRoutingInboxClient>().CreatedBy((ITessagesInFlightTracker tessagesInFlightTracker, ITypeMapper typeMapper, IRemotableTessageSerializer serializer, IHttpTransportMessagePoster httpTransportMessagePoster)
-                                                                     => new RoutingInboxClient(tessagesInFlightTracker, typeMapper, serializer, httpTransportMessagePoster)));
+      => registrar.Register(Singleton.For<IRoutingInboxClient>().CreatedBy((ITessagesInFlightTracker tessagesInFlightTracker, ITypeMapper typeMapper, IRemotableTessageSerializer serializer, ITransportMessagePoster transportMessagePoster)
+                                                                     => new RoutingInboxClient(tessagesInFlightTracker, typeMapper, serializer, transportMessagePoster)));
 
-   RoutingInboxClient(ITessagesInFlightTracker tessagesInFlightTracker, ITypeMapper typeMapper, IRemotableTessageSerializer serializer, IHttpTransportMessagePoster httpTransportMessagePoster)
+   RoutingInboxClient(ITessagesInFlightTracker tessagesInFlightTracker, ITypeMapper typeMapper, IRemotableTessageSerializer serializer, ITransportMessagePoster transportMessagePoster)
    {
       _tessagesInFlightTracker = tessagesInFlightTracker;
       _typeMapper = typeMapper;
       _serializer = serializer;
-      _httpTransportMessagePoster = httpTransportMessagePoster;
+      _transportMessagePoster = transportMessagePoster;
       _inboxConnectionRouter = new InboxConnectionRouter(typeMapper);
    }
 
    readonly ITessagesInFlightTracker _tessagesInFlightTracker;
    readonly ITypeMapper _typeMapper;
    readonly IRemotableTessageSerializer _serializer;
-   readonly IHttpTransportMessagePoster _httpTransportMessagePoster;
+   readonly ITransportMessagePoster _transportMessagePoster;
 
    bool _running = false;
    readonly InboxConnectionRouter _inboxConnectionRouter;
@@ -53,7 +53,7 @@ partial class RoutingInboxClient : IRoutingInboxClient, IDisposable
    public async Task ConnectAsync(EndPointAddress remoteEndpointAddress)
    {
       AssertRunning();
-      var clientConnection = new Outbox.Outbox.InboxConnection(_tessagesInFlightTracker, remoteEndpointAddress, _typeMapper, _serializer, _httpTransportMessagePoster);
+      var clientConnection = new Outbox.Outbox.InboxConnection(_tessagesInFlightTracker, remoteEndpointAddress, _typeMapper, _serializer, _transportMessagePoster);
 
       await clientConnection.InitAsync().caf();
 

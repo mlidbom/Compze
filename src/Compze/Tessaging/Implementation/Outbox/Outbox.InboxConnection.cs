@@ -18,7 +18,7 @@ partial class Outbox
       EndPointAddress remoteAddress,
       ITypeMapper typeMapper,
       IRemotableTessageSerializer serializer,
-      IHttpTransportMessagePoster httpTransportMessagePoster) : IInboxConnection
+      ITransportMessagePoster transportMessagePoster) : IInboxConnection
    {
       TessageTypesInternal.EndpointInformation? _endpointInformation = null;
       IRemoteApiEndpointClient? _remoteApiClient;
@@ -27,7 +27,7 @@ partial class Outbox
       readonly EndPointAddress _remoteAddress = remoteAddress;
       readonly ITypeMapper _typeMapper = typeMapper;
       readonly IRemotableTessageSerializer _serializer = serializer;
-      readonly IHttpTransportMessagePoster _httpTransportMessagePoster = httpTransportMessagePoster;
+      readonly ITransportMessagePoster _transportMessagePoster = transportMessagePoster;
 
       public TessageTypesInternal.EndpointInformation EndpointInformation => _endpointInformation!;
 
@@ -40,8 +40,8 @@ partial class Outbox
 
       internal async Task InitAsync()
       {
-         (_remoteApiClient, _endpointInformation) = await HttpApiEndpointClient.BootstrapConnectionToEndpoint(_httpTransportMessagePoster, _remoteAddress, _typeMapper, _serializer, _tessagesInFlightTracker).caf();
-         _tessageSender = new HttpExactlyOnceTessageSender(_httpTransportMessagePoster, _remoteAddress, _typeMapper, _serializer, _tessagesInFlightTracker, _endpointInformation.Id);
+         (_remoteApiClient, _endpointInformation) = await HttpApiEndpointClient.BootstrapConnectionToEndpoint(_transportMessagePoster, _remoteAddress, _typeMapper, _serializer, _tessagesInFlightTracker).caf();
+         _tessageSender = new HttpExactlyOnceTessageSender(_transportMessagePoster, _remoteAddress, _typeMapper, _serializer, _tessagesInFlightTracker, _endpointInformation.Id);
       }
 
       public void Dispose() {}
