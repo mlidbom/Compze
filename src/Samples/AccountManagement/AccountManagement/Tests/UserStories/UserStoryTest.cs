@@ -6,6 +6,7 @@ using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tests.Infrastructure;
+using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Threading.TasksCE;
 
 namespace AccountManagement.UserStories;
@@ -18,13 +19,7 @@ public abstract class UserStoryTest : UniversalTestBase
 
    protected UserStoryTest()
    {
-      Host = TestingEndpointHost.Create(registrar =>
-      {
-         var container = TestEnv.DIContainer.CreateWithServiceLocatorAndSerializer();
-         container.Register()
-                  .CurrentTestsPluggableComponents();
-         return container;
-      });
+      Host = TestingEndpointHost.Create(registrar => TestEnv.DIContainer.CreateWithServiceLocatorAndCurrentTestsPluggableComponents());
       new AccountManagementServerDomainBootstrapper().RegisterWith(Host);
       _clientEndpoint = Host.RegisterClientEndpoint(setup:AccountApi.RegisterWithClientEndpoint);
    }

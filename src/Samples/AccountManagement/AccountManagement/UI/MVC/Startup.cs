@@ -22,7 +22,7 @@ public class Startup
    public Startup(IConfiguration configuration)
    {
       Configuration = configuration;
-      _host = EndpointHost.Production.Create(registrar => TestEnv.DIContainer.CreateWithServiceLocatorAndSerializer());
+      _host = EndpointHost.Production.Create(registrar => TestEnv.DIContainer.CreateWithServiceLocatorAndCurrentTestsPluggableComponents());
       _clientEndpoint = _host.RegisterClientEndpoint(AccountApi.RegisterWithClientEndpoint);
 
    }

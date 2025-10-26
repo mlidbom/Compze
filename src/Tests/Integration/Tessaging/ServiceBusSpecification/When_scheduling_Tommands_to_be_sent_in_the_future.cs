@@ -27,15 +27,13 @@ public class When_scheduling_tommands_to_be_sent_in_the_future : UniversalTestBa
 
    public When_scheduling_tommands_to_be_sent_in_the_future()
    {
-      _host = TestingEndpointHost.Create(registrar => TestEnv.DIContainer.CreateWithServiceLocatorAndSerializer());
+      _host = TestingEndpointHost.Create(registrar => TestEnv.DIContainer.CreateWithServiceLocatorAndCurrentTestsPluggableComponents());
       _receivedTommandGate = ThreadGate.CreateOpenWithTimeout(1.Seconds());
       _endpoint = _host.RegisterEndpoint(
          "endpoint",
          new EndpointId(Guid.Parse("17ED9DF9-33A8-4DF8-B6EC-6ED97AB2030B")),
          builder =>
          {
-            builder.Container.Register()
-                   .CurrentTestsPluggableComponents();
             builder.RegisterHandlers.ForTommand<ScheduledTommand>(_ => _receivedTommandGate.AwaitPassThrough());
          });
    }

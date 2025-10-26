@@ -15,7 +15,7 @@ public class LifestyleValidationTests : UniversalTestBase
    public void Should_throw_when_singleton_depends_on_scoped_service()
    {
       IComponentRegistrar registrar = new TestingComponentRegistrar();
-      var container = TestEnv.DIContainer.CreateWithServiceLocatorAndSerializer();
+      var container = TestEnv.DIContainer.CreateWithServiceLocatorAndCurrentTestsPluggableComponents();
 
       var exception = Invoking(() =>
       {
@@ -34,7 +34,7 @@ public class LifestyleValidationTests : UniversalTestBase
    public void Should_allow_singleton_depending_on_singleton()
    {
       IComponentRegistrar registrar = new TestingComponentRegistrar();
-      var container = TestEnv.DIContainer.CreateWithServiceLocatorAndSerializer();
+      var container = TestEnv.DIContainer.CreateWithServiceLocatorAndCurrentTestsPluggableComponents();
 
       container.Register(
          Singleton.For<ISingletonDependency>().CreatedBy(() => new SingletonDependency()),

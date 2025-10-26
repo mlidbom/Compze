@@ -27,15 +27,11 @@ public class TaskRunnerExceptionHandlingTests : UniversalTestBase, IAsyncLifetim
 
    public TaskRunnerExceptionHandlingTests()
    {
-      _host = TestingEndpointHost.Create(registrar => TestEnv.DIContainer.CreateWithServiceLocatorAndSerializer());
+      _host = TestingEndpointHost.Create(registrar => TestEnv.DIContainer.CreateWithServiceLocatorAndCurrentTestsPluggableComponents());
       var endpoint = _host.RegisterEndpoint(
          "endpoint",
          new EndpointId(Guid.Parse("A1B2C3D4-E5F6-4748-9ABC-DEF012345678")),
-         builder =>
-         {
-            builder.Container.Register()
-                   .CurrentTestsPluggableComponents();
-         });
+         builder => {});
 
       _taskRunner = endpoint.ServiceLocator.Resolve<ITaskRunner>();
    }

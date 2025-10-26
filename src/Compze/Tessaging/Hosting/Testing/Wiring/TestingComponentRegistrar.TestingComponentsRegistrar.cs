@@ -11,6 +11,7 @@ public static class TestingComponentRegistrarTestingComponentsRegistrar
 
    public static IComponentRegistrar CurrentTestsPluggableComponents(this IComponentRegistrar register, string connectionStringName) =>
       register.CastTo<TestingComponentRegistrar>()
+              .CurrentTestsSerializer()
               .CurrentTestsTransport()
               .CurrentTestsConfiguredSqlLayer(connectionStringName);
 }

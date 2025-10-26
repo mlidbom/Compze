@@ -11,10 +11,8 @@ public class TestingEndpointHost(IComponentRegistrar registrar, Func<IComponentR
    public static ITestingEndpointHost Create(Func<IComponentRegistrar, IDependencyInjectionContainer> containerFactory)
       => new TestingEndpointHost(new TestingComponentRegistrar(), containerFactory);
 
-   public override IEndpoint RegisterClientEndpointForRegisteredEndpoints() =>
-      RegisterClientEndpoint(builder =>
-      {
-         builder.Container.Register()
-                .CurrentTestsTransportMessagePoster();
-      });
+   public override IEndpoint RegisterClientEndpointForRegisteredEndpoints(Action<IEndpointBuilder>? setup = null) => RegisterClientEndpoint(builder =>
+   {
+      setup?.Invoke(builder);
+   });
 }

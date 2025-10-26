@@ -14,6 +14,7 @@ using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.SystemCE.CollectionsCE.ConcurrentCE;
 using Compze.Tests.Infrastructure.XUnit;
+using Compze.Utilities.DependencyInjection.Abstractions;
 using FluentAssertions;
 using FluentAssertions.Extensions;
 
@@ -30,13 +31,7 @@ public class PerformanceTest : UniversalTestBase
 
    protected override async Task InitializeAsyncInternal()
    {
-      _host = TestingEndpointHost.Create(registrar =>
-      {
-         var container = TestEnv.DIContainer.CreateWithServiceLocatorAndSerializer();
-         container.Register()
-                  .CurrentTestsPluggableComponents();
-         return container;
-      });
+      _host = TestingEndpointHost.Create(registrar => TestEnv.DIContainer.CreateWithServiceLocatorAndCurrentTestsPluggableComponents());
       new AccountManagementServerDomainBootstrapper().RegisterWith(_host);
       _clientEndpoint = _host.RegisterClientEndpoint(setup: AccountApi.RegisterWithClientEndpoint);
       _scenarioApi = new AccountScenarioApi(_clientEndpoint);

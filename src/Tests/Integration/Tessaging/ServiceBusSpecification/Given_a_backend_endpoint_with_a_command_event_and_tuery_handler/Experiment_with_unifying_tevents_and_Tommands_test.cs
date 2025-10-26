@@ -39,15 +39,13 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
 
    public Experiment_with_unifying_tevents_and_tommands_test()
    {
-      _host = TestingEndpointHost.Create(registrar => TestEnv.DIContainer.CreateWithServiceLocatorAndSerializer());
+      _host = TestingEndpointHost.Create(registrar => TestEnv.DIContainer.CreateWithServiceLocatorAndCurrentTestsPluggableComponents());
 
       _userManagementDomainEndpoint = _host.RegisterEndpoint(
          "UserManagement.Domain",
          new EndpointId(Guid.Parse("A4A2BA96-8D82-47AC-8A1B-38476C7B5D5D")),
          builder =>
          {
-            builder.Container.Register()
-                   .CurrentTestsPluggableComponents();
             builder.Container.Register().TeventStore(builder.Configuration.ConnectionStringName);
 
             builder.RegisterHandlers

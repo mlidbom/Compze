@@ -28,15 +28,13 @@ public class Navigator_specification : UniversalTestBase
    {
       var tueryResults = new List<UserResource>();
 
-      _host = TestingEndpointHost.Create(registrar => TestEnv.DIContainer.CreateWithServiceLocatorAndSerializer());
+      _host = TestingEndpointHost.Create(registrar => TestEnv.DIContainer.CreateWithServiceLocatorAndCurrentTestsPluggableComponents());
 
       _host.RegisterEndpoint(
          "Backend",
          new EndpointId(Guid.Parse("3A1B6A8C-D232-476C-A15A-9C8295413210")),
          builder =>
          {
-            builder.Container.Register()
-                   .CurrentTestsPluggableComponents();
             builder.RegisterHandlers
                    .ForTuery((GetUserTuery tuery) => tueryResults.Single(result => result.Name == tuery.Name))
                    .ForTuery((UserApiStartPageTuery _) => new UserApiStartPage())

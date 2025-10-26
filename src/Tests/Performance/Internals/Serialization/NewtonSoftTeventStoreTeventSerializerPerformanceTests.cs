@@ -22,7 +22,7 @@ public class TeventStoreTeventSerializerPerformanceTests : UniversalTestBase
 
    public TeventStoreTeventSerializerPerformanceTests()
    {
-      _container = TestEnv.DIContainer.CreateWithServiceLocatorAndSerializer();
+      _container = TestEnv.DIContainer.CreateWithServiceLocatorAndCurrentTestsPluggableComponents();
       _container.Register().TypeMapper();
       _teventSerializer = _container.ServiceLocator.Resolve<ITeventStoreSerializer>();
    }

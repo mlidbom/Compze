@@ -22,14 +22,12 @@ public abstract class PerformanceTestBase : UniversalTestBase
 
    protected PerformanceTestBase()
    {
-      Host = TestingEndpointHost.Create(registrar => TestEnv.DIContainer.CreateWithServiceLocatorAndSerializer());
+      Host = TestingEndpointHost.Create(registrar => TestEnv.DIContainer.CreateWithServiceLocatorAndCurrentTestsPluggableComponents());
       ServerEndpoint = Host.RegisterEndpoint(
          "Backend",
          new EndpointId(Guid.Parse("DDD0A67C-D2A2-4197-9AF8-38B6AEDF8FA7")),
          builder =>
          {
-            builder.Container.Register()
-                   .CurrentTestsPluggableComponents();
             builder.RegisterHandlers
                    .ForTuery((MyRemoteTuery _) => new MyTueryResult())
                    .ForTuery((MyLocalStrictlyLocalTuery _) => new MyTueryResult());

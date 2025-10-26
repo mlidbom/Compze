@@ -19,7 +19,7 @@ public class DuplicateRegistrationTests : UniversalTestBase
    [PCT]
    public void Registering_same_singleton_service_twice_throws_InvalidOperationException()
    {
-      var container = TestEnv.DIContainer.CreateWithServiceLocatorAndSerializer();
+      var container = TestEnv.DIContainer.CreateWithServiceLocatorAndCurrentTestsPluggableComponents();
 
       container.Register(Singleton.For<ITestService>().CreatedBy(() => new TestService()));
 
@@ -34,7 +34,7 @@ public class DuplicateRegistrationTests : UniversalTestBase
    [PCT]
    public void Registering_same_scoped_service_twice_throws_InvalidOperationException()
    {
-      var container = TestEnv.DIContainer.CreateWithServiceLocatorAndSerializer();
+      var container = TestEnv.DIContainer.CreateWithServiceLocatorAndCurrentTestsPluggableComponents();
 
       container.Register(Scoped.For<ITestService>().CreatedBy(() => new TestService()));
 
@@ -49,7 +49,7 @@ public class DuplicateRegistrationTests : UniversalTestBase
    [PCT]
    public void Registering_service_with_multiple_service_types_then_reregistering_one_throws_InvalidOperationException()
    {
-      var container = TestEnv.DIContainer.CreateWithServiceLocatorAndSerializer();
+      var container = TestEnv.DIContainer.CreateWithServiceLocatorAndCurrentTestsPluggableComponents();
 
       container.Register(
          Singleton.For<ITestService, ITestService2>()
@@ -66,7 +66,7 @@ public class DuplicateRegistrationTests : UniversalTestBase
    [PCT]
    public void Can_register_different_service_types_successfully()
    {
-      var container = TestEnv.DIContainer.CreateWithServiceLocatorAndSerializer();
+      var container = TestEnv.DIContainer.CreateWithServiceLocatorAndCurrentTestsPluggableComponents();
 
       container.Register(Singleton.For<ITestService>().CreatedBy(() => new TestService()));
 

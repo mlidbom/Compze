@@ -48,7 +48,7 @@ public abstract class EndpointHostTestBase : UniversalTestBase
 
    protected EndpointHostTestBase()
    {
-      _rootContainer = TestEnv.DIContainer.CreateWithServiceLocatorAndSerializer();
+      _rootContainer = TestEnv.DIContainer.CreateWithServiceLocator();
       _rootContainer.Register()
                     .CurrentTestsDbPoolIfNotAlreadyRegistered();
 
@@ -90,8 +90,7 @@ public abstract class EndpointHostTestBase : UniversalTestBase
          builder =>
          {
             builder.Container.Register()
-                   .CurrentTestsTransport()
-                   .CurrentTestsConfiguredSqlLayer("DDD0A67C-D2A2-4197-9AF8-38B6AEDF8FA6");
+                   .CurrentTestsPluggableComponents("DDD0A67C-D2A2-4197-9AF8-38B6AEDF8FA6");
 
             builder.RegisterTeventStore()
                    .HandleTaggregate<MyTaggregate, MyTaggregateTevent.IRoot>();
@@ -127,12 +126,11 @@ public abstract class EndpointHostTestBase : UniversalTestBase
                                              builder =>
                                              {
                                                 builder.Container.Register()
-                                                       .CurrentTestsTransport()
-                                                       .CurrentTestsConfiguredSqlLayer("E72924D3-5279-44B5-B20D-D682E537672B");
+                                                       .CurrentTestsPluggableComponents("E72924D3-5279-44B5-B20D-D682E537672B");
                                                 builder.RegisterHandlers.ForTevent((MyTaggregateTevent.IRoot _) => MyRemoteTaggregateTeventHandlerThreadGate.AwaitPassThrough());
                                              });
 
-      ClientEndpoint = Host.RegisterClientEndpointForRegisteredEndpoints();
+      ClientEndpoint = Host.RegisterClientEndpointForRegisteredEndpoints(builder => builder.Container.Register().CurrentTestsPluggableComponents());
    }
 
    protected async Task StartHostAsync()

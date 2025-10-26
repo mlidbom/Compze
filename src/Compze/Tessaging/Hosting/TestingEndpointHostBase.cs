@@ -32,7 +32,7 @@ public abstract class TestingEndpointHostBase : EndpointHost, ITestingEndpointHo
       return RegisterEndpoint(name, endpointId, setup);
    }
 
-   public abstract IEndpoint RegisterClientEndpointForRegisteredEndpoints();
+   public abstract IEndpoint RegisterClientEndpointForRegisteredEndpoints(Action<IEndpointBuilder>? setup = null);
 
    public TException AssertThrown<TException>() where TException : Exception
    {
