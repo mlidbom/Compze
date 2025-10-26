@@ -5,7 +5,6 @@ using Compze.Tessaging.Implementation.Transport.Client.Implementation.Http;
 using Compze.Tessaging.Implementation.Transport.Client.Implementation.Memory;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE;
-using Compze.Utilities.Testing.DbPool;
 
 namespace Compze.Tessaging.Hosting.Testing.Wiring;
 
