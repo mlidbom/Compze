@@ -75,13 +75,7 @@ public abstract class EndpointHostTestBase : UniversalTestBase
 
    void InitializeHost()
    {
-      IDependencyInjectionContainer CreateCloneContainerWithParentContainerKeepingTheDbPoolAliveAfterChildContainersAreDisposed()
-      {
-         var clone = _rootContainer.Clone();
-         return clone;
-      }
-
-      Host = TestingEndpointHost.Create(x => CreateCloneContainerWithParentContainerKeepingTheDbPoolAliveAfterChildContainersAreDisposed());
+      Host = TestingEndpointHost.Create(x => _rootContainer.Clone());
 
       BackendEndPoint = Host.RegisterEndpoint(
          "Backend",
