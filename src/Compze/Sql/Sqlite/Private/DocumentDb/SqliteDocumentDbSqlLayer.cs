@@ -18,7 +18,6 @@ internal partial class SqliteDocumentDbSqlLayer : IDocumentDbSqlLayer
 {
    readonly ISqliteConnectionPool _connectionPool;
    readonly SqliteSqlLayerSchemaManager _schemaManager;
-   bool _initialized;
 
    internal SqliteDocumentDbSqlLayer(ISqliteConnectionPool connectionPool, SqliteSqlLayerSchemaManager schemaManager)
    {

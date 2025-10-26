@@ -74,7 +74,7 @@ class OutboxRetryPoller : IDisposable
          _running = false;
          this.Log().Info("Stopping OutboxRetryPoller...");
          _cancellationTokenSource.Cancel();
-         _pollerThread?.Join(TimeSpan.FromSeconds(5)); // Give it time to finish the current iteration
+         _pollerThread!.Join(TimeSpan.FromSeconds(5)); // Give it time to finish the current iteration
          _cancellationTokenSource.Dispose();
       }
    }

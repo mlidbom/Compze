@@ -26,6 +26,7 @@ class SqliteSqlLayerSchemaManager(ISqliteConnectionPool connectionPool)
    {
       if(!_initialized)
       {
+         _initialized = true;
          await TransactionScopeCe.SuppressAmbientAsync(async () =>
          {
             //todo: test if running them in parallel is faster
@@ -41,7 +42,6 @@ class SqliteSqlLayerSchemaManager(ISqliteConnectionPool connectionPool)
 
                                                         """).caf();
          }).caf();
-         _initialized = true;
       }
    }
 

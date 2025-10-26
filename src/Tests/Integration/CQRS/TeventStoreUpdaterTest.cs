@@ -286,7 +286,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
    }
 
    [PCT]
-   public void DeletingAnTaggregateDoesNotPrteventTeventsFromItFromBeingRaised()
+   public void DeletingAnTaggregateDoesNotPreventTeventsFromItFromBeingRaised()
    {
       var user1 = new User();
       user1.Register("email1@email.se", "password", Guid.NewGuid());

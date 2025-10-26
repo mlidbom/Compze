@@ -43,12 +43,14 @@ internal interface ICompzeSqliteConnection : IPoolableConnection, ICompzeDbConne
 
       public void Open()
       {
+         Assert.State.IsNotDisposed(_disposed, this);
          Connection.Open();
          _transactionParticipant.EnsureEnlistedInAnyAmbientTransaction();
       }
 
       public async Task OpenAsync()
       {
+         Assert.State.IsNotDisposed(_disposed, this);
          await Connection.OpenAsync().caf();
          _transactionParticipant.EnsureEnlistedInAnyAmbientTransaction();
       }
@@ -57,6 +59,7 @@ internal interface ICompzeSqliteConnection : IPoolableConnection, ICompzeDbConne
 
       public SqliteCommand CreateCommand()
       {
+         Assert.State.IsNotDisposed(_disposed, this);
          _transactionParticipant.EnsureEnlistedInAnyAmbientTransaction();
 
          var command = Connection.CreateCommand();
@@ -68,16 +71,25 @@ internal interface ICompzeSqliteConnection : IPoolableConnection, ICompzeDbConne
          return command;
       }
 
+      bool _disposed = false;
       public void Dispose()
       {
-         Assert.State.Is(_transaction == null, () => "Transaction should have been completed (committed or rolled back) before disposing the connection");
-         Connection.Dispose();
+         if(!_disposed)
+         {
+            _disposed = true;
+            Assert.State.Is(_transaction == null, () => "Transaction should have been completed (committed or rolled back) before disposing the connection");
+            Connection.Dispose();
+         }
       }
 
-      public ValueTask DisposeAsync()
+      public async ValueTask DisposeAsync()
       {
-         Assert.State.Is(_transaction == null, () => "Transaction should have been completed (committed or rolled back) before disposing the connection");
-         return Connection.DisposeAsync();
+         if(!_disposed)
+         {
+            _disposed = true;
+            Assert.State.Is(_transaction == null, () => "Transaction should have been completed (committed or rolled back) before disposing the connection");
+            await Connection.DisposeAsync();
+         }
       }
    }
 }
