@@ -3,7 +3,7 @@ using Compze.Utilities.Functional;
 
 namespace Compze.Utilities.SystemCE;
 
-static class VoidCEExtensions
+static class UnitExtensions
 {
    internal static Func<TParam, unit> AsUnitFunc<TParam>(this Action<TParam> @this) =>
       param =>

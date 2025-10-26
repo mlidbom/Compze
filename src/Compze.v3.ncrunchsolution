@@ -43,6 +43,20 @@
       <Value>Implementation\Outbox\Outbox.InboxConnection.cs:Compze\Tessaging\Compze.Tessaging.csproj-45</Value>
       <Value>Implementation\Transport\Client\Implementation\Memory\MemoryInboxTransportServer.cs:Compze\Tessaging\Compze.Tessaging.csproj-88</Value>
       <Value>Implementation\Transport\Client\Implementation\Memory\MemoryTransportMessagePoster.cs:Compze\Tessaging\Compze.Tessaging.csproj-32</Value>
+      <Value>Threading\ResourceAccess\MonitorCE.Functional.Awaiting.cs:Compze\Utilities\Compze.Utilities.csproj-58</Value>
+      <Value>Threading\Testing\ThreadGate.cs:Compze\Utilities\Compze.Utilities.csproj-51</Value>
+      <Value>Threading\Testing\ThreadGateExtensions.cs:Compze\Utilities\Compze.Utilities.csproj-22</Value>
+      <Value>Implementation\Transport\Client\Implementation\Universal\ApiEndpointClient.cs:Compze\Tessaging\Compze.Tessaging.csproj-63</Value>
+      <Value>Implementation\Transport\Client\Implementation\Universal\RoutingInboxClient .cs:Compze\Tessaging\Compze.Tessaging.csproj-62</Value>
+      <Value>Tessaging\Buses\TestingHostExtensions.cs:Compze\Tessaging\Hosting\Testing\Compze.Tessaging.Hosting.Testing.csproj-11</Value>
+      <Value>Tessaging\ServiceBusSpecification\Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler\EndpointHostTestBase.cs:Tests\Common\Compze.Tests.Common.csproj-127</Value>
+      <Value>ComponentCombinations\ComponentCombination.cs:Compze\Utilities\Testing\XUnit\Compze.Utilities.Testing.XUnit.csproj-79</Value>
+      <Value>ComponentCombinations\ComponentCombinationTestCase.cs:Compze\Utilities\Testing\XUnit\Compze.Utilities.Testing.XUnit.csproj-55</Value>
+      <Value>ComponentCombinations\ComponentCombinationTestCase.cs:Compze\Utilities\Testing\XUnit\Compze.Utilities.Testing.XUnit.csproj-57</Value>
+      <Value>Threading\ResourceAccess\MonitorCE.Functional..cs:Compze\Utilities\Compze.Utilities.csproj-20</Value>
+      <Value>Hosting\EndpointHost.cs:Compze\Tessaging\Compze.Tessaging.csproj-35</Value>
+      <Value>SystemCE\LazyCE.cs:Compze\Utilities\Compze.Utilities.csproj-12</Value>
+      <Value>SystemCE\ThreadingCE\MachineWideSingleThreaded.cs:Compze\Utilities\Testing\DbPool\Compze.Utilities.Testing.DbPool.csproj-54</Value>
     </HotSpotsLineExclusionList>
     <MSpecEnabled>False</MSpecEnabled>
     <NUnit3Enabled>False</NUnit3Enabled>
