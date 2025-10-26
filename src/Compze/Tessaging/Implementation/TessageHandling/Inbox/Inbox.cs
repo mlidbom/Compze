@@ -46,7 +46,7 @@ static class InboxRegistrar
       _transportServer = transportServer;
    }
 
-   public HttpEndPointAddress Address => new(uri: _transportServer.Address);
+   public EndPointAddress Address => new(uri: _transportServer.Address);
 
    public async Task StartAsync()
    {

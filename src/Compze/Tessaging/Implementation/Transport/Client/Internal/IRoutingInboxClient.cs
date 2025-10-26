@@ -7,7 +7,7 @@ namespace Compze.Tessaging.Implementation.Transport.Client.Internal;
 
 interface IRoutingInboxClient
 {
-    Task ConnectAsync(HttpEndPointAddress remoteEndpointAddress);
+    Task ConnectAsync(EndPointAddress remoteEndpointAddress);
     void Start();
     void Stop();
 

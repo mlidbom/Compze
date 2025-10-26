@@ -6,7 +6,7 @@ namespace Compze.Tessaging.Implementation.TessageHandling.Abstractions;
 
 interface IInbox
 {
-   HttpEndPointAddress Address { get; }
+   EndPointAddress Address { get; }
    Task StartAsync();
    Task StopAsync();
 

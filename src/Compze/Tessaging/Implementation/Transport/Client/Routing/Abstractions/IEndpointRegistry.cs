@@ -5,5 +5,5 @@ namespace Compze.Tessaging.Implementation.Transport.Client.Routing.Abstractions;
 
 interface IEndpointRegistry
 {
-    IEnumerable<HttpEndPointAddress> ServerEndpoints { get; }
+    IEnumerable<EndPointAddress> ServerEndpoints { get; }
 }

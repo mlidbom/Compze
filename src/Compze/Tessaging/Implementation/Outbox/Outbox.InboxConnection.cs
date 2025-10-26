@@ -15,7 +15,7 @@ partial class Outbox
 {
    internal class InboxConnection(
       ITessagesInFlightTracker tessagesInFlightTracker,
-      HttpEndPointAddress remoteAddress,
+      EndPointAddress remoteAddress,
       ITypeMapper typeMapper,
       IRemotableTessageSerializer serializer,
       IHttpTransportMessagePoster httpTransportMessagePoster) : IInboxConnection
@@ -24,7 +24,7 @@ partial class Outbox
       IRemoteApiEndpointClient? _remoteApiClient;
       IExactlyOnceTessageSender? _tessageSender;
       readonly ITessagesInFlightTracker _tessagesInFlightTracker = tessagesInFlightTracker;
-      readonly HttpEndPointAddress _remoteAddress = remoteAddress;
+      readonly EndPointAddress _remoteAddress = remoteAddress;
       readonly ITypeMapper _typeMapper = typeMapper;
       readonly IRemotableTessageSerializer _serializer = serializer;
       readonly IHttpTransportMessagePoster _httpTransportMessagePoster = httpTransportMessagePoster;

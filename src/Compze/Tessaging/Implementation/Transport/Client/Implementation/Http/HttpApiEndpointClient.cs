@@ -14,7 +14,7 @@ namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Http;
 
 class HttpApiEndpointClient(
    IHttpTransportMessagePoster httpTransportMessagePoster,
-   HttpEndPointAddress remoteAddress,
+   EndPointAddress remoteAddress,
    ITypeMapper typeMapper,
    IRemotableTessageSerializer serializer,
    ITessagesInFlightTracker tessagesInFlightTracker,
@@ -38,18 +38,18 @@ class HttpApiEndpointClient(
    {
       var outGoingTessage = TransportTessage.OutGoing.Create(tommand, _typeMapper, _serializer);
       _tessagesInFlightTracker.SendingTessageOnTransport(outGoingTessage, _remoteEndpointId);
-      await _httpTransportMessagePoster.PostAsync(outGoingTessage, tommand, new Uri($"{_remoteAddress}{HttpConstants.Routes.Typermedia.TommandNoResult}")).caf();
+      await _httpTransportMessagePoster.PostAsync(outGoingTessage, tommand, new Uri(_remoteAddress, HttpConstants.Routes.Typermedia.TommandNoResult)).caf();
    }
 
    public async Task<TResult> GetAsync<TResult>(IRemotableTuery<TResult> tuery)
    {
       var tessage = TransportTessage.OutGoing.Create(tuery, _typeMapper, _serializer);
       _tessagesInFlightTracker.SendingTessageOnTransport(tessage, _remoteEndpointId);
-      return await _httpTransportMessagePoster.PostAsync<TResult>(tessage, tuery, new Uri($"{_remoteAddress}{HttpConstants.Routes.Typermedia.Tuery}")).caf();
+      return await _httpTransportMessagePoster.PostAsync<TResult>(tessage, tuery, new Uri(_remoteAddress, HttpConstants.Routes.Typermedia.Tuery)).caf();
    }
 
    internal static async Task<(HttpApiEndpointClient, TessageTypesInternal.EndpointInformation)> BootstrapConnectionToEndpoint(IHttpTransportMessagePoster httpTransportMessagePoster,
-                                                                                                                               HttpEndPointAddress remoteAddress,
+                                                                                                                               EndPointAddress remoteAddress,
                                                                                                                                ITypeMapper typeMapper,
                                                                                                                                IRemotableTessageSerializer serializer,
                                                                                                                                ITessagesInFlightTracker tessagesInFlightTracker)
@@ -60,7 +60,7 @@ class HttpApiEndpointClient(
                                      .PostAsync<TessageTypesInternal.EndpointInformation>(
                                          endpointInformationTueryTessage,
                                          endpointInformationTuery,
-                                         new Uri($"{remoteAddress.Uri}{HttpConstants.Routes.Typermedia.Tuery}")).caf();
+                                         new Uri(remoteAddress.Uri, HttpConstants.Routes.Typermedia.Tuery)).caf();
       return (new HttpApiEndpointClient(httpTransportMessagePoster, remoteAddress, typeMapper, serializer, tessagesInFlightTracker, endpointInformation.Id), endpointInformation);
    }
 }

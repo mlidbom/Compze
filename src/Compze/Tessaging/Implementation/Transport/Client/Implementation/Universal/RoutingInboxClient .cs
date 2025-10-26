@@ -50,7 +50,7 @@ partial class RoutingInboxClient : IRoutingInboxClient, IDisposable
    readonly InboxConnectionRouter _inboxConnectionRouter;
    IReadOnlyDictionary<EndpointId, IInboxConnection> _inboxConnections = new Dictionary<EndpointId, IInboxConnection>();
 
-   public async Task ConnectAsync(HttpEndPointAddress remoteEndpointAddress)
+   public async Task ConnectAsync(EndPointAddress remoteEndpointAddress)
    {
       AssertRunning();
       var clientConnection = new Outbox.Outbox.InboxConnection(_tessagesInFlightTracker, remoteEndpointAddress, _typeMapper, _serializer, _httpTransportMessagePoster);
