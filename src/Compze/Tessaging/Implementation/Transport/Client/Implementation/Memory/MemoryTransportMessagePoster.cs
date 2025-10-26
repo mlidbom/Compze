@@ -34,7 +34,7 @@ class MemoryTransportMessagePoster : ITransportMessagePoster
    public async Task<TResult> PostAsync<TResult>(TransportTessage.OutGoing tessage, object realTessage, EndPointAddress endPointAddress)
    {
       var endpoint = _endpointRegistry.ServerEndpoints
-                                      .Single(it => it.Address.NotNull().Uri == endPointAddress.Uri);
+                                      .Single(it => it.Address == endPointAddress);
       var incomingTessage = tessage.ToIncoming();
       try
       {
