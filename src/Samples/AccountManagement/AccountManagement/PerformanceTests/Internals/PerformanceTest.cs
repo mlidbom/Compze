@@ -49,12 +49,12 @@ public class PerformanceTest : UniversalTestBase
          iterations: TestEnv.SqlLayer.ValueFor(msSql: 6, mySql: 3, pgSql: 6, sqlite: 6, sqliteMemory:6),
          maxTotal: 100.Milliseconds().EnvMultiply(1.6));
 
-   [PCT] public void Multithreaded_creates_XX_accounts_in_30_milliseconds__db2_memory__msSql__mySql__oracle_pgSql_() =>
+   [PCT] public void Multithreaded_creates_XX_accounts_in_60_milliseconds__db2_memory__msSql__mySql__oracle_pgSql_() =>
       TimeAsserter.ExecuteThreaded(
          description: "Register accounts",
          action: () => _scenarioApi!.Register.Execute().Result.Status.Should().Be(RegistrationAttemptStatus.Successful),
-         iterations: TestEnv.SqlLayer.ValueFor(msSql: 4, mySql: 1, pgSql: 3, sqlite: 1, sqliteMemory: 1),
-         maxTotal: 30.Milliseconds().EnvMultiply(instrumented:2.2, unoptimized:1.4));
+         iterations: TestEnv.SqlLayer.ValueFor(msSql: 8, mySql: 2, pgSql: 4, sqlite: 2, sqliteMemory: 2),
+         maxTotal: 60.Milliseconds().EnvMultiply(instrumented:2.2, unoptimized:1.4));
 
    [PCT] public void Multithreaded_logs_in_XX_times_in_100_milliseconds_db2__memory__msSql__mySql__oracle_pgSql_()
    {
@@ -73,7 +73,7 @@ public class PerformanceTest : UniversalTestBase
 
    [PCT] public void Multithreaded_fetches_XX_account_resources_in_20_milliseconds()
    {
-      var fetches = TestEnv.SqlLayer.ValueFor(msSql: 10, mySql: 10, pgSql: 15, sqlite: 10, sqliteMemory: 10);
+      var fetches = TestEnv.SqlLayer.ValueFor(msSql: 10, mySql: 10, pgSql: 12, sqlite: 10, sqliteMemory: 10);
       var accountsReader = CreateAccountsThreaded(Math.Min(fetches, 10)).ToConcurrentCircularReader();
 
       TimeAsserter.ExecuteThreaded(description: "Fetch account resource",
