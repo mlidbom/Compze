@@ -7,6 +7,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
+using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
 using Compze.Tessaging.Implementation.TessageHandling.Inbox;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.TransactionsCE;
@@ -36,21 +37,28 @@ class MemoryTransportMessagePoster : ITransportMessagePoster
       var endpoint = _endpointRegistry.ServerEndpoints
                                       .Single(it => it.Address.NotNull().Uri == endPointAddress.Uri);
       var incomingTessage = tessage.ToIncoming();
-      switch(tessage.TessageTypeEnum)
+      try
       {
-         case TransportTessage.TransportTessageType.AtMostOnceTommandWithReturnValue:
-            return (await endpoint.ServiceLocator.Resolve<IInbox>().Receive(incomingTessage).caf()).NotNull().CastTo<TResult>();
-         case TransportTessage.TransportTessageType.NonTransactionalTuery:
-            return (await endpoint.ServiceLocator
-                                  .Resolve<Inbox.HandlerExecutionEngine>()
-                                  .Enqueue(incomingTessage).caf())
-                  .NotNull()
-                  .CastTo<TResult>();
-         case TransportTessage.TransportTessageType.ExactlyOnceTevent:
-         case TransportTessage.TransportTessageType.AtMostOnceTommand:
-         case TransportTessage.TransportTessageType.ExactlyOnceTommand:
-         default:
-            throw new ArgumentOutOfRangeException();
+         switch(tessage.TessageTypeEnum)
+         {
+            case TransportTessage.TransportTessageType.AtMostOnceTommandWithReturnValue:
+               return (await endpoint.ServiceLocator.Resolve<IInbox>().Receive(incomingTessage).caf()).NotNull().CastTo<TResult>();
+            case TransportTessage.TransportTessageType.NonTransactionalTuery:
+               return (await endpoint.ServiceLocator
+                                     .Resolve<Inbox.HandlerExecutionEngine>()
+                                     .Enqueue(incomingTessage).caf())
+                     .NotNull()
+                     .CastTo<TResult>();
+            case TransportTessage.TransportTessageType.ExactlyOnceTevent:
+            case TransportTessage.TransportTessageType.AtMostOnceTommand:
+            case TransportTessage.TransportTessageType.ExactlyOnceTommand:
+            default:
+               throw new ArgumentOutOfRangeException();
+         }
+      }
+      catch(Exception ex)
+      {
+         throw new TessageDispatchingFailedException(ex.ToString());
       }
    }
 
@@ -59,17 +67,24 @@ class MemoryTransportMessagePoster : ITransportMessagePoster
       var endpoint = _endpointRegistry.ServerEndpoints
                                       .Single(it => it.Address.NotNull().Uri == endPointAddress.Uri);
       var incomingTessage = tessage.ToIncoming();
-      switch(tessage.TessageTypeEnum)
+      try
       {
-         case TransportTessage.TransportTessageType.ExactlyOnceTevent:
-         case TransportTessage.TransportTessageType.AtMostOnceTommand:
-            await endpoint.ServiceLocator.Resolve<IInbox>().Receive(incomingTessage).caf();
-            return;
-         case TransportTessage.TransportTessageType.ExactlyOnceTommand:
-         case TransportTessage.TransportTessageType.AtMostOnceTommandWithReturnValue:
-         case TransportTessage.TransportTessageType.NonTransactionalTuery:
-         default:
-            throw new ArgumentOutOfRangeException();
+         switch(tessage.TessageTypeEnum)
+         {
+            case TransportTessage.TransportTessageType.ExactlyOnceTevent:
+            case TransportTessage.TransportTessageType.AtMostOnceTommand:
+               await endpoint.ServiceLocator.Resolve<IInbox>().Receive(incomingTessage).caf();
+               return;
+            case TransportTessage.TransportTessageType.ExactlyOnceTommand:
+            case TransportTessage.TransportTessageType.AtMostOnceTommandWithReturnValue:
+            case TransportTessage.TransportTessageType.NonTransactionalTuery:
+            default:
+               throw new ArgumentOutOfRangeException();
+         }
+      }
+      catch(Exception ex)
+      {
+         throw new TessageDispatchingFailedException(ex.ToString());
       }
    }
 }
