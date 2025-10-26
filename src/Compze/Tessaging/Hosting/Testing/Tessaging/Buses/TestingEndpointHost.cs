@@ -18,7 +18,7 @@ public class TestingEndpointHost : TestingEndpointHostBase
                                id,
                                builder =>
                                {
-                                  //Endpoints need a consistent connection string or things go belly up when restarting the host and such so this cannot be delegated to the tests.
+                                  //Endpoints need a consistent connection string or things go belly up when creating a new host with a new container.
                                   builder.Container.Register()
                                          .CurrentTestsPluggableComponents(connectionStringName: id.ToString());
 
