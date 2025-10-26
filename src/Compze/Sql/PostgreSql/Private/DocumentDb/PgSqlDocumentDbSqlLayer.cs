@@ -16,7 +16,6 @@ partial class PgSqlDocumentDbSqlLayer : IDocumentDbSqlLayer
 {
    readonly IPgSqlConnectionPool _connectionPool;
    readonly PgSqlSqlLayerSchemaManager _schemaManager;
-   bool _initialized;
 
    internal PgSqlDocumentDbSqlLayer(IPgSqlConnectionPool connectionPool, PgSqlSqlLayerSchemaManager schemaManager)
    {

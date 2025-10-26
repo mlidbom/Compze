@@ -16,7 +16,6 @@ internal partial class MySqlDocumentDbSqlLayer : IDocumentDbSqlLayer
 {
    readonly IMySqlConnectionPool _connectionPool;
    readonly MySqlSqlLayerSchemaManager _schemaManager;
-   bool _initialized;
 
    internal MySqlDocumentDbSqlLayer(IMySqlConnectionPool connectionPool, MySqlSqlLayerSchemaManager schemaManager)
    {

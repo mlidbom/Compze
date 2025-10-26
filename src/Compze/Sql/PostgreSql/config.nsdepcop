@@ -15,4 +15,7 @@
    <Allowed From="Compze.Sql.PostgreSql.Wiring"
             To="Compze.Core.*.Internal.SqlLayer.*"/>
 
+	<Allowed From="Compze.Sql.PostgreSql.Private"
+            To="Compze.Sql.PostgreSql.Private.?"/>
+
 </NsDepCopConfig>
