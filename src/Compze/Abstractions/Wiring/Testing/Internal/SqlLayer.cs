@@ -4,7 +4,7 @@ namespace Compze.Core.Wiring.Testing.Internal;
 
 public enum SqlLayer
 {
-   MicrosoftSqlServer,
+   MsSql,
    MySql,
    PostgreSql,
    Sqlite,

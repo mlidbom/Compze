@@ -22,7 +22,7 @@ public class PluggableComponentsTheoryTests : UniversalTestBase
 
       // Verify the values are valid parsed enums (not relying on default check since MicrosoftSqlServer happens to be 0)
       TestEnv.SqlLayer.Should().BeOneOf(
-         SqlLayer.MicrosoftSqlServer,
+         SqlLayer.MsSql,
          SqlLayer.MySql,
          SqlLayer.PostgreSql,
          SqlLayer.Sqlite,
@@ -42,7 +42,7 @@ public class PluggableComponentsTheoryTests : UniversalTestBase
       // Verify the value matches the current sql layer
       var expectedValue = TestEnv.SqlLayer switch
       {
-         SqlLayer.MicrosoftSqlServer => "SQL Server",
+         SqlLayer.MsSql => "SQL Server",
          SqlLayer.MySql              => "MySQL",
          SqlLayer.PostgreSql         => "PostgreSQL",
          SqlLayer.Sqlite             => "SQLite",
@@ -72,7 +72,7 @@ public class PluggableComponentsTheoryTests : UniversalTestBase
       // Verify it matches expected value
       var expected = TestEnv.SqlLayer switch
       {
-         SqlLayer.MicrosoftSqlServer => System.TimeSpan.FromSeconds(5),
+         SqlLayer.MsSql => System.TimeSpan.FromSeconds(5),
          SqlLayer.MySql              => System.TimeSpan.FromSeconds(10),
          SqlLayer.PostgreSql         => System.TimeSpan.FromSeconds(7),
          SqlLayer.Sqlite             => System.TimeSpan.FromSeconds(6),

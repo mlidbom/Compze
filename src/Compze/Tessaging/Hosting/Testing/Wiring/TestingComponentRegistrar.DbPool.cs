@@ -28,7 +28,7 @@ public static class TestingComponentRegistrarDbPool
       @this.DbPool();
       switch(TestEnv.SqlLayer)
       {
-         case SqlLayer.MicrosoftSqlServer:
+         case SqlLayer.MsSql:
             return @this.MsSqlDbPoolSqlLayer();
          case SqlLayer.MySql:
             return @this.MySqlDbPoolSqlLayer();

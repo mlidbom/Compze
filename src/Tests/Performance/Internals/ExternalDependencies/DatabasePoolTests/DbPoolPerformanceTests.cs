@@ -115,7 +115,7 @@ public class DbPoolPerformanceTests : DbPoolTestBase
 
       switch(TestEnv.SqlLayer)
       {
-         case SqlLayer.MicrosoftSqlServer:
+         case SqlLayer.MsSql:
             var msSqlConnectionProvider = IMsSqlConnectionPool.CreateInstance(pool.ConnectionStringFor(reservationName));
             useConnection = () => msSqlConnectionProvider.UseConnection(_ => {});
             break;

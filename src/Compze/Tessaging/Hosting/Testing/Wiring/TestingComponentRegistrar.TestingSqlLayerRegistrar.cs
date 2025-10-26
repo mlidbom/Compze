@@ -22,7 +22,7 @@ public static class TestingComponentRegistrarTestingSqlLayerRegistrar
    {
       switch(TestEnv.SqlLayer)
       {
-         case SqlLayer.MicrosoftSqlServer:
+         case SqlLayer.MsSql:
             return @this.MsSqlConnectionPool(connectionStringName)
                         .MsSqlSqlLayers();
          case SqlLayer.MySql:

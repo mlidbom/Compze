@@ -40,7 +40,7 @@ public abstract class DbPoolTestBase : UniversalTestBase
    {
       switch(TestEnv.SqlLayer)
       {
-         case SqlLayer.MicrosoftSqlServer:
+         case SqlLayer.MsSql:
             UseMsSqlConnection(pool.ConnectionStringFor(connectionString), func);
             break;
          case SqlLayer.PostgreSql:

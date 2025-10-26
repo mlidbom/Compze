@@ -17,7 +17,7 @@ public static class SqlLayerExtensions
    {
       return sqlLayer switch
       {
-         SqlLayer.MicrosoftSqlServer => msSql,
+         SqlLayer.MsSql => msSql,
          SqlLayer.MySql              => mySql,
          SqlLayer.PostgreSql         => pgSql,
          SqlLayer.Sqlite             => sqlite,
