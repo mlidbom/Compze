@@ -36,8 +36,7 @@ public class Navigator_specification : UniversalTestBase
          builder =>
          {
             builder.Container.Register()
-                   .CurrentTestsTransport()
-                   .CurrentTestsConfiguredSqlLayer();
+                   .CurrentTestsPluggableComponents();
             builder.RegisterHandlers
                    .ForTuery((GetUserTuery tuery) => tueryResults.Single(result => result.Name == tuery.Name))
                    .ForTuery((UserApiStartPageTuery _) => new UserApiStartPage())

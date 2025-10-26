@@ -17,8 +17,7 @@ public class SetupTest : UniversalTestBase
       {
          var container = TestEnv.DIContainer.CreateWithServiceLocatorAndSerializer();
          container.Register()
-                  .CurrentTestsConfiguredSqlLayer()
-                  .CurrentTestsTransport();
+                  .CurrentTestsPluggableComponents();
          return container;
       });
       new AccountManagementServerDomainBootstrapper().RegisterWith(host);

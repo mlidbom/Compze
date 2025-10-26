@@ -35,8 +35,7 @@ public class When_scheduling_tommands_to_be_sent_in_the_future : UniversalTestBa
          builder =>
          {
             builder.Container.Register()
-                   .CurrentTestsTransport()
-                   .CurrentTestsConfiguredSqlLayer();
+                   .CurrentTestsPluggableComponents();
             builder.RegisterHandlers.ForTommand<ScheduledTommand>(_ => _receivedTommandGate.AwaitPassThrough());
          });
    }

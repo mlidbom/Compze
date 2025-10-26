@@ -34,8 +34,7 @@ public class TaskRunnerExceptionHandlingTests : UniversalTestBase, IAsyncLifetim
          builder =>
          {
             builder.Container.Register()
-                   .CurrentTestsTransport()
-                   .CurrentTestsConfiguredSqlLayer();
+                   .CurrentTestsPluggableComponents();
          });
 
       _taskRunner = endpoint.ServiceLocator.Resolve<ITaskRunner>();

@@ -18,7 +18,7 @@ public static class TestingComponentRegistrarTestingSqlLayerRegistrar
       register.CastTo<TestingComponentRegistrar>()
               .CurrentTestsConfiguredSqlLayer(connectionStringName);
 
-   public static IComponentRegistrar CurrentTestsConfiguredSqlLayer(this TestingComponentRegistrar @this, string connectionStringName)
+   static IComponentRegistrar CurrentTestsConfiguredSqlLayer(this TestingComponentRegistrar @this, string connectionStringName)
    {
       switch(TestEnv.SqlLayer)
       {

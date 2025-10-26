@@ -42,7 +42,7 @@ public static class DiContainerExtensions
                .TimeSource()
                .TypeMapper()
                .DummyConfigurationParameterProvider()
-               .CurrentTestsConfiguredSqlLayer()
+               .CurrentTestsPluggableComponents()
                .TessageHandlerRegistry()
                .InMemoryTeventStoreTeventPublisher();
       setup(container.Register());

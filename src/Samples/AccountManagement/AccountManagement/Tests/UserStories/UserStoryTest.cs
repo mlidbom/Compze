@@ -22,8 +22,7 @@ public abstract class UserStoryTest : UniversalTestBase
       {
          var container = TestEnv.DIContainer.CreateWithServiceLocatorAndSerializer();
          container.Register()
-                  .CurrentTestsConfiguredSqlLayer()
-                  .CurrentTestsTransport();
+                  .CurrentTestsPluggableComponents();
          return container;
       });
       new AccountManagementServerDomainBootstrapper().RegisterWith(Host);

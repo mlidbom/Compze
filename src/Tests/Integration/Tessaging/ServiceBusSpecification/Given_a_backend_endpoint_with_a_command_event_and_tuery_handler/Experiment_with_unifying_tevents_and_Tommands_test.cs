@@ -47,8 +47,7 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
          builder =>
          {
             builder.Container.Register()
-                   .CurrentTestsTransport()
-                   .CurrentTestsConfiguredSqlLayer();
+                   .CurrentTestsPluggableComponents();
             builder.Container.Register().TeventStore(builder.Configuration.ConnectionStringName);
 
             builder.RegisterHandlers
