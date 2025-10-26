@@ -10,7 +10,6 @@ using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
 using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
 using Compze.Tessaging.Implementation.TessageHandling.Inbox;
 using Compze.Utilities.SystemCE;
-using Compze.Utilities.SystemCE.TransactionsCE;
 using Compze.Utilities.Threading.TasksCE;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Memory;
@@ -72,12 +71,18 @@ class MemoryTransportMessagePoster : ITransportMessagePoster
          switch(tessage.TessageTypeEnum)
          {
             case TransportTessage.TransportTessageType.ExactlyOnceTevent:
+               await endpoint.ServiceLocator.Resolve<IInbox>().Receive(incomingTessage).caf();
+               return;
             case TransportTessage.TransportTessageType.AtMostOnceTommand:
                await endpoint.ServiceLocator.Resolve<IInbox>().Receive(incomingTessage).caf();
                return;
             case TransportTessage.TransportTessageType.ExactlyOnceTommand:
+               await endpoint.ServiceLocator.Resolve<IInbox>().Receive(incomingTessage).caf();
+               return;
             case TransportTessage.TransportTessageType.AtMostOnceTommandWithReturnValue:
+               throw new ArgumentOutOfRangeException();
             case TransportTessage.TransportTessageType.NonTransactionalTuery:
+               throw new ArgumentOutOfRangeException();
             default:
                throw new ArgumentOutOfRangeException();
          }
