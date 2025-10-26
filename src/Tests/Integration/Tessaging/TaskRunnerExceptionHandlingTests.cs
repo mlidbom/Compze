@@ -15,7 +15,7 @@ using Xunit;
 
 namespace Compze.Tests.Integration.Tessaging;
 
-public class TaskRunnerExceptionHandlingTests : UniversalTestBase, IAsyncLifetime
+public class TaskRunnerExceptionHandlingTests : UniversalTestBase
 {
 #pragma warning disable CA2213 // Disposable fields should be disposed
     readonly ITestingEndpointHost _host;
@@ -34,6 +34,7 @@ public class TaskRunnerExceptionHandlingTests : UniversalTestBase, IAsyncLifetim
    }
 
    protected override async Task InitializeAsyncInternal() => await _host.StartAsync();
+   protected override async Task DisposeAsyncInternal() => await _host.DisposeAsync();
 
    [PCT]
    public async Task Should_throw_taggregate_exception_on_dispose_when_background_task_throws()
