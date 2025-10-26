@@ -12,7 +12,7 @@ partial class PgSqlInboxSqlLayer
    static class SchemaManager
    {
       public static async Task EnsureTablesExistAsync(IPgSqlConnectionPool connectionFactory) =>
-         TransactionScopeCe.SuppressAmbientAsync(async () =>
+         await TransactionScopeCe.SuppressAmbientAsync(async () =>
                                                     await connectionFactory.PrepareAndExecuteNonQueryAsync(
                                                        $"""
                                                             CREATE TABLE IF NOT EXISTS {Tessage.TableName}

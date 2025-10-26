@@ -16,34 +16,32 @@ partial class PgSqlOutboxSqlLayer
          await TransactionScopeCe.SuppressAmbientAsync(async () => await connectionFactory.PrepareAndExecuteNonQueryAsync(
                                                                       $"""
 
+                                                                       CREATE TABLE IF NOT EXISTS {Tessage.TableName}
+                                                                       (
+                                                                         {Tessage.GeneratedId}       bigint GENERATED ALWAYS AS IDENTITY NOT NULL,
+                                                                         {Tessage.TypeIdGuidValue}   {PgSqlGuidType}                     NOT NULL,
+                                                                         {Tessage.TessageId}         {PgSqlGuidType}                     NOT NULL,
+                                                                         {Tessage.SerializedTessage} TEXT                                NOT NULL,
 
-                                                                           CREATE TABLE IF NOT EXISTS {Tessage.TableName}
-                                                                           (
-                                                                               {Tessage.GeneratedId}       bigint GENERATED ALWAYS AS IDENTITY NOT NULL,
-                                                                               {Tessage.TypeIdGuidValue}   {PgSqlGuidType}                     NOT NULL,
-                                                                               {Tessage.TessageId}         {PgSqlGuidType}                     NOT NULL,
-                                                                               {Tessage.SerializedTessage} TEXT                                NOT NULL,
+                                                                         PRIMARY KEY ({Tessage.GeneratedId}),
 
-                                                                               PRIMARY KEY ({Tessage.GeneratedId}),
-
-                                                                               CONSTRAINT IX_{Tessage.TableName}_Unique_{Tessage.TessageId} UNIQUE ( {Tessage.TessageId} )
-                                                                           );
-
-
-                                                                          CREATE TABLE  IF NOT EXISTS {Dispatch.TableName}
-                                                                          (
-                                                                              {Dispatch.TessageId}        {PgSqlGuidType} NOT NULL,
-                                                                              {Dispatch.EndpointId}       {PgSqlGuidType} NOT NULL,
-                                                                              {Dispatch.IsReceived}       boolean         NOT NULL,
-                                                                              {Dispatch.RetryCount}       integer         NOT NULL DEFAULT 0,
-                                                                              {Dispatch.LastAttemptTime}  timestamptz     NULL,
-                                                                              {Dispatch.FailureReason}    TEXT            NULL,
+                                                                         CONSTRAINT IX_{Tessage.TableName}_Unique_{Tessage.TessageId} UNIQUE ( {Tessage.TessageId} )
+                                                                       );
 
 
-                                                                              PRIMARY KEY ( {Dispatch.TessageId}, {Dispatch.EndpointId}),
-                                                                               FOREIGN KEY ({Dispatch.TessageId}) REFERENCES {Tessage.TableName} ({Tessage.TessageId})
-                                                                           );
+                                                                       CREATE TABLE  IF NOT EXISTS {Dispatch.TableName}
+                                                                       (
+                                                                        {Dispatch.TessageId}        {PgSqlGuidType} NOT NULL,
+                                                                        {Dispatch.EndpointId}       {PgSqlGuidType} NOT NULL,
+                                                                        {Dispatch.IsReceived}       boolean         NOT NULL,
+                                                                        {Dispatch.RetryCount}       integer         NOT NULL DEFAULT 0,
+                                                                        {Dispatch.LastAttemptTime}  timestamptz     NULL,
+                                                                        {Dispatch.FailureReason}    TEXT            NULL,
 
+
+                                                                        PRIMARY KEY ( {Dispatch.TessageId}, {Dispatch.EndpointId}),
+                                                                         FOREIGN KEY ({Dispatch.TessageId}) REFERENCES {Tessage.TableName} ({Tessage.TessageId})
+                                                                       );
 
                                                                        """).caf()).caf();
    }
