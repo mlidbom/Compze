@@ -80,9 +80,7 @@ class MemoryTransportMessagePoster : ITransportMessagePoster
                await endpoint.ServiceLocator.Resolve<IInbox>().Receive(incomingTessage).caf();
                return;
             case TransportTessage.TransportTessageType.AtMostOnceTommandWithReturnValue:
-               throw new ArgumentOutOfRangeException();
             case TransportTessage.TransportTessageType.NonTransactionalTuery:
-               throw new ArgumentOutOfRangeException();
             default:
                throw new ArgumentOutOfRangeException();
          }
