@@ -30,7 +30,7 @@ class RpcController : ControllerBase
                  IInbox inbox,
                  Inbox.HandlerExecutionEngine handlerExecutionEngine) : base(serializer, typeMapper, inbox, handlerExecutionEngine) {}
 
-   [HttpPost(HttpConstants.Routes.Rpc.Tuery)]
+   [HttpPost(HttpConstants.Routes.Typermedia.Tuery)]
    public async Task<IActionResult> Tuery()
    {
       var incomingTessage = await CreateIncomingTessage().caf();
@@ -48,7 +48,7 @@ class RpcController : ControllerBase
       }
    }
 
-   [HttpPost(HttpConstants.Routes.Rpc.TommandWithResult)]
+   [HttpPost(HttpConstants.Routes.Typermedia.TommandWithResult)]
    public async Task<IActionResult> TommandWithResult()
    {
       var incomingTessage = await CreateIncomingTessage().caf();
@@ -65,7 +65,7 @@ class RpcController : ControllerBase
       }
    }
 
-   [HttpPost(HttpConstants.Routes.Rpc.TommandNoResult)]
+   [HttpPost(HttpConstants.Routes.Typermedia.TommandNoResult)]
    public async Task<IActionResult> TommandWithNoResult()
    {
       var incomingTessage = await CreateIncomingTessage().caf();
