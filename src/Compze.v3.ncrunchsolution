@@ -40,6 +40,9 @@
       <Value>Threading\TasksCE\TaskUnit.cs:Compze\Utilities\Compze.Utilities.csproj-11</Value>
       <Value>Hosting\EndpointHost.cs:Compze\Tessaging\Compze.Tessaging.csproj-63</Value>
       <Value>Implementation\TessageHandling\Dispatching\TessageHandlerRegistry.cs:Compze\Tessaging\Compze.Tessaging.csproj-105</Value>
+      <Value>Implementation\Outbox\Outbox.InboxConnection.cs:Compze\Tessaging\Compze.Tessaging.csproj-45</Value>
+      <Value>Implementation\Transport\Client\Implementation\Memory\MemoryInboxTransportServer.cs:Compze\Tessaging\Compze.Tessaging.csproj-88</Value>
+      <Value>Implementation\Transport\Client\Implementation\Memory\MemoryTransportMessagePoster.cs:Compze\Tessaging\Compze.Tessaging.csproj-32</Value>
     </HotSpotsLineExclusionList>
     <MSpecEnabled>False</MSpecEnabled>
     <NUnit3Enabled>False</NUnit3Enabled>
