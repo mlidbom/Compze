@@ -8,6 +8,8 @@ public static class TransactionScopeCe
 {
    public static void SuppressAmbientAndExecuteInNewTransaction(Action action) => SuppressAmbient(() => Execute(action));
 
+   public static void Execute([InstantHandle] Action action, TransactionScopeOption option = TransactionScopeOption.Required) => Execute(action.AsUnitFunc(), option);
+
    public static void SuppressAmbient(Action action) => Execute(action, TransactionScopeOption.Suppress);
 
    public static TResult Execute<TResult>([InstantHandle] Func<TResult> action, TransactionScopeOption option = TransactionScopeOption.Required)
@@ -19,7 +21,5 @@ public static class TransactionScopeCe
       transactionScope.Complete();
       return result;
    }
-
-   public static void Execute([InstantHandle] Action action, TransactionScopeOption option = TransactionScopeOption.Required) => Execute(action.AsUnitFunc(), option);
 
 }
