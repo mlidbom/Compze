@@ -51,22 +51,6 @@ static class TransportTessage
          Client = client;
          TessageId = tessageId;
       }
-
-      static TransportTessageType GetTessageTypeEnum(Type tessageType)
-      {
-         if(typeof(IRemotableTuery<object>).IsAssignableFrom(tessageType))
-            return TransportTessageType.NonTransactionalTuery;
-         if(typeof(IAtMostOnceTommand<object>).IsAssignableFrom(tessageType))
-            return TransportTessageType.AtMostOnceTommandWithReturnValue;
-         if(typeof(IAtMostOnceHypermediaTommand).IsAssignableFrom(tessageType))
-            return TransportTessageType.AtMostOnceTommand;
-         else if(typeof(IExactlyOnceTevent).IsAssignableFrom(tessageType))
-            return TransportTessageType.ExactlyOnceTevent;
-         if(typeof(IExactlyOnceTommand).IsAssignableFrom(tessageType))
-            return TransportTessageType.ExactlyOnceTommand;
-         else
-            throw new ArgumentOutOfRangeException();
-      }
    }
 
    internal class OutGoing
@@ -76,20 +60,38 @@ static class TransportTessage
 
       internal readonly TypeId Type;
       internal readonly string Body;
+      internal readonly TransportTessageType TessageTypeEnum;
 
       public static OutGoing Create(IRemotableTessage tessage, ITypeMapper typeMapper, IRemotableTessageSerializer serializer)
       {
          var tessageId = (tessage as IAtMostOnceTessage)?.TessageId ?? Guid.CreateVersion7();
          var body = serializer.SerializeTessage(tessage);
-         return new OutGoing(typeMapper.GetId(tessage.GetType()), tessageId, body, tessage is IExactlyOnceTessage);
+         return new OutGoing(typeMapper.GetId(tessage.GetType()), tessage.GetType(), tessageId, body, tessage is IExactlyOnceTessage);
       }
 
-      OutGoing(TypeId type, Guid id, string body, bool isExactlyOnceDeliveryTessage)
+      OutGoing(TypeId typeId, Type type, Guid id, string body, bool isExactlyOnceDeliveryTessage)
       {
          IsExactlyOnceDeliveryTessage = isExactlyOnceDeliveryTessage;
-         Type = type;
+         Type = typeId;
          Id = id;
          Body = body;
+         TessageTypeEnum = GetTessageTypeEnum(type);
       }
+   }
+
+   static TransportTessageType GetTessageTypeEnum(Type tessageType)
+   {
+      if(typeof(IRemotableTuery<object>).IsAssignableFrom(tessageType))
+         return TransportTessageType.NonTransactionalTuery;
+      if(typeof(IAtMostOnceTommand<object>).IsAssignableFrom(tessageType))
+         return TransportTessageType.AtMostOnceTommandWithReturnValue;
+      if(typeof(IAtMostOnceHypermediaTommand).IsAssignableFrom(tessageType))
+         return TransportTessageType.AtMostOnceTommand;
+      else if(typeof(IExactlyOnceTevent).IsAssignableFrom(tessageType))
+         return TransportTessageType.ExactlyOnceTevent;
+      if(typeof(IExactlyOnceTommand).IsAssignableFrom(tessageType))
+         return TransportTessageType.ExactlyOnceTommand;
+      else
+         throw new ArgumentOutOfRangeException();
    }
 }

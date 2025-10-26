@@ -40,6 +40,25 @@ class HttpTransportMessagePoster : ITransportMessagePoster
       return result;
    }
 
+   static string RelativeUriForMessage(TransportTessage.OutGoing message)
+   {
+      switch(message.TessageTypeEnum)
+      {
+         case TransportTessage.TransportTessageType.ExactlyOnceTevent:
+            return HttpConstants.Routes.Tessaging.Tevent;
+         case TransportTessage.TransportTessageType.AtMostOnceTommand:
+            return HttpConstants.Routes.Typermedia.TommandNoResult;
+         case TransportTessage.TransportTessageType.AtMostOnceTommandWithReturnValue:
+            return HttpConstants.Routes.Typermedia.TommandWithResult;
+         case TransportTessage.TransportTessageType.ExactlyOnceTommand:
+            return HttpConstants.Routes.Tessaging.Tommand;
+         case TransportTessage.TransportTessageType.NonTransactionalTuery:
+            return HttpConstants.Routes.Typermedia.Tuery;
+         default:
+            throw new ArgumentOutOfRangeException();
+      }
+   }
+
    public async Task PostAsync(TransportTessage.OutGoing tessage, object realTessage, Uri requestUri) =>
       await PostAsyncInternal(tessage, realTessage, requestUri).caf();
 

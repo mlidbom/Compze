@@ -1,11 +1,9 @@
 using System;
-using System.Net.Http;
 using System.Threading.Tasks;
-using Compze.Core.Serialization.Internal;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
+using Compze.Tessaging.Implementation.Transport.Client.Routing.Abstractions;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
-using Compze.Utilities.Threading.TasksCE;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Memory;
 
@@ -19,25 +17,35 @@ class MemoryTransportMessagePoster : ITransportMessagePoster
 {
    internal static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<ITransportMessagePoster>()
-                                     .CreatedBy((IRemotableTessageSerializer serializer) => new MemoryTransportMessagePoster(serializer)));
+                                     .CreatedBy((IEndpointRegistry endpointRegistry) => new MemoryTransportMessagePoster(endpointRegistry)));
 
-   readonly IRemotableTessageSerializer _serializer;
+   readonly IEndpointRegistry _endpointRegistry;
 
-   MemoryTransportMessagePoster(IRemotableTessageSerializer serializer) =>
-      _serializer = serializer;
+   MemoryTransportMessagePoster(IEndpointRegistry registry) =>
+      _endpointRegistry = registry;
 
    public async Task<TResult> PostAsync<TResult>(TransportTessage.OutGoing tessage, object realTessage, Uri requestUri)
    {
-      var response = await PostAsyncInternal(tessage, realTessage, requestUri).caf();
+      switch(tessage.TessageTypeEnum)
+      {
+         case TransportTessage.TransportTessageType.ExactlyOnceTevent:
+            break;
+         case TransportTessage.TransportTessageType.AtMostOnceTommand:
+            break;
+         case TransportTessage.TransportTessageType.AtMostOnceTommandWithReturnValue:
+            break;
+         case TransportTessage.TransportTessageType.ExactlyOnceTommand:
+            break;
+         case TransportTessage.TransportTessageType.NonTransactionalTuery:
+            break;
+         default:
+            throw new ArgumentOutOfRangeException();
+      }
 
-      var resultJson = await response.Content.ReadAsStringAsync().caf();
-      var result = _serializer.DeserializeResponse<TResult>(resultJson);
-      return result;
+      throw new NotImplementedException();
    }
 
    public async Task PostAsync(TransportTessage.OutGoing tessage, object realTessage, Uri requestUri) =>
-      await PostAsyncInternal(tessage, realTessage, requestUri).caf();
-
-   async Task<HttpResponseMessage> PostAsyncInternal(TransportTessage.OutGoing tessage, object realTessage, Uri requestUri) =>
       throw new NotImplementedException("");
+
 }
