@@ -75,7 +75,7 @@ public abstract class EndpointHostTestBase : UniversalTestBase
 
    void InitializeHost()
    {
-      Host = TestingEndpointHost.Create(x => _rootContainer.Clone());
+      Host = TestingEndpointHost.Create(_rootContainer);
 
       BackendEndPoint = Host.RegisterEndpoint(
          "Backend",

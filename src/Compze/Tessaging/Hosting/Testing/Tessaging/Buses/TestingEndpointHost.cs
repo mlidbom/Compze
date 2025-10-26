@@ -5,10 +5,12 @@ using Compze.Utilities.DependencyInjection.Abstractions;
 
 namespace Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 
-public class TestingEndpointHost(IComponentRegistrar registrar, Func<IComponentRegistrar, IDependencyInjectionContainer> containerFactory) : TestingEndpointHostBase(registrar, containerFactory)
+public class TestingEndpointHost : TestingEndpointHostBase
 {
-   public static ITestingEndpointHost Create(Func<IComponentRegistrar, IDependencyInjectionContainer>? containerFactory = null)
-      => new TestingEndpointHost(new TestingComponentRegistrar(), containerFactory ?? (registrar => TestEnv.DIContainer.CreateWithServiceLocator()));
+   public TestingEndpointHost(IComponentRegistrar registrar, IDependencyInjectionContainer rootContainer) : base(registrar, _ => rootContainer.Clone()) {}
+
+   public static ITestingEndpointHost Create(IDependencyInjectionContainer rootContainer)
+      => new TestingEndpointHost(new TestingComponentRegistrar(), rootContainer);
 
 
    public override IEndpoint RegisterEndpoint(string name, EndpointId id, Action<IEndpointBuilder> setup)

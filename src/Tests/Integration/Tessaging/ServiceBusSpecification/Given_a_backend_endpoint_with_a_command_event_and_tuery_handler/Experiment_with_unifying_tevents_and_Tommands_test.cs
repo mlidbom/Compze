@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Core.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Core.Tessaging.Public;
@@ -10,13 +6,19 @@ using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.Public;
 using Compze.Core.Tessaging.Typermedia.Public;
 using Compze.Core.Time.Public;
+using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.Tessaging.Teventive.TeventStore.Wiring;
 using Compze.Tests.Infrastructure;
+using Compze.Tests.Infrastructure.XUnit;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
-using Compze.Tests.Infrastructure.XUnit;
 using FluentAssertions;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Compze.Tessaging.Hosting.Testing.Wiring;
 
 // ReSharper disable MemberCanBeInternal for testing
 // ReSharper disable InconsistentNaming for testing
@@ -36,7 +38,7 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
 
    public Experiment_with_unifying_tevents_and_tommands_test()
    {
-      _host = TestingEndpointHost.Create();
+      _host = TestingEndpointHost.Create(TestEnv.DIContainer.CreateWithServiceLocator());
 
       _userManagementDomainEndpoint = _host.RegisterEndpoint(
          "UserManagement.Domain",
