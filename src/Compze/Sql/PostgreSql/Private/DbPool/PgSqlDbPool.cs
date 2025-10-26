@@ -13,15 +13,10 @@ namespace Compze.Sql.PostgreSql.Private.DbPool;
 
 sealed class PgSqlDbPoolSqlLayer : IDbPoolSqlLayer
 {
-   internal static IComponentRegistrar RegisterWith(IComponentRegistrar registrar)
-   {
-      if(registrar.Container().IsRegistered<IDbPoolSqlLayer>())
-         return registrar;
-
-      return registrar.Register(Singleton.For<IDbPoolSqlLayer>()
-                                         .CreatedBy(() => new PgSqlDbPoolSqlLayer())
-                                         .DelegateToParentServiceLocatorWhenCloning());
-   }
+   internal static IComponentRegistrar RegisterWith(IComponentRegistrar registrar) =>
+      registrar.Register(Singleton.For<IDbPoolSqlLayer>()
+                                  .CreatedBy(() => new PgSqlDbPoolSqlLayer())
+                                  .DelegateToParentServiceLocatorWhenCloning());
 
    readonly IPgSqlConnectionPool _masterConnectionPool;
 

@@ -10,15 +10,10 @@ namespace Compze.Sql.Sqlite.Private.DbPool;
 
 class SqliteMemoryDbPoolSqlLayer : IDbPoolSqlLayer
 {
-   internal static IComponentRegistrar RegisterWith(IComponentRegistrar registrar)
-   {
-      if(registrar.Container().IsRegistered<IDbPoolSqlLayer>())
-         return registrar;
-
-      return registrar.Register(Singleton.For<IDbPoolSqlLayer>()
-                                         .CreatedBy(() => new SqliteMemoryDbPoolSqlLayer())
-                                         .DelegateToParentServiceLocatorWhenCloning());
-   }
+   internal static IComponentRegistrar RegisterWith(IComponentRegistrar registrar) =>
+      registrar.Register(Singleton.For<IDbPoolSqlLayer>()
+                                  .CreatedBy(() => new SqliteMemoryDbPoolSqlLayer())
+                                  .DelegateToParentServiceLocatorWhenCloning());
 
    // Keep one connection open per database to prtevent the in-memory database from disappearing when the last connection is closed
    readonly IThreadShared<IDictionary<string, SqliteConnection>> _keepInMemoryDatabaseAliveConnections = IThreadShared.WithDefaultTimeout(new Dictionary<string, SqliteConnection>());

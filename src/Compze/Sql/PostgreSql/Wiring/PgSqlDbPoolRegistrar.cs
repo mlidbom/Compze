@@ -5,6 +5,6 @@ namespace Compze.Sql.PostgreSql.Wiring;
 
 static class PgSqlDbPoolRegistrar
 {
-   public static IComponentRegistrar PgSqlDbPoolSqlLayerIfNotAlreadyRegistered(this IComponentRegistrar registrar) =>
-      PgSqlDbPoolSqlLayer.RegisterWith(registrar);
+   public static IComponentRegistrar PgSqlDbPoolSqlLayer(this IComponentRegistrar registrar) =>
+      Private.DbPool.PgSqlDbPoolSqlLayer.RegisterWith(registrar);
 }

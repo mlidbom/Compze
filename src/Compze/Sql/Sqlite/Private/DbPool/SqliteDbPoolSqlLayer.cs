@@ -12,15 +12,10 @@ namespace Compze.Sql.Sqlite.Private.DbPool;
 
 class SqliteDbPoolSqlLayer : IDbPoolSqlLayer
 {
-   internal static IComponentRegistrar RegisterWith(IComponentRegistrar registrar)
-   {
-      if(registrar.Container().IsRegistered<IDbPoolSqlLayer>())
-         return registrar;
-
-      return registrar.Register(Singleton.For<IDbPoolSqlLayer>()
-                                         .CreatedBy(() => new SqliteDbPoolSqlLayer())
-                                         .DelegateToParentServiceLocatorWhenCloning());
-   }
+   internal static IComponentRegistrar RegisterWith(IComponentRegistrar registrar) =>
+      registrar.Register(Singleton.For<IDbPoolSqlLayer>()
+                                  .CreatedBy(() => new SqliteDbPoolSqlLayer())
+                                  .DelegateToParentServiceLocatorWhenCloning());
 
    readonly string _baseDirectory;
 

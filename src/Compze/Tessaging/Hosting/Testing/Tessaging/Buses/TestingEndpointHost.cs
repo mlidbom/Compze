@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.Utilities.Functional;
 using Compze.Utilities.Threading.TasksCE;
 
 namespace Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
@@ -17,7 +18,8 @@ public class TestingEndpointHost : TestingEndpointHostBase
 
    public static ITestingEndpointHost Create(IDependencyInjectionContainer? rootContainer = null)
    {
-      var usedContainer = rootContainer ?? TestEnv.DIContainer.CreateWithServiceLocator();
+      var usedContainer = rootContainer ?? TestEnv.DIContainer.CreateWithServiceLocator()
+                                                  .mutate(it => it.Register().CurrentTestsDbPoolIfNotCloneContainer());
 
 
       var host = new TestingEndpointHost(new TestingComponentRegistrar(), usedContainer);

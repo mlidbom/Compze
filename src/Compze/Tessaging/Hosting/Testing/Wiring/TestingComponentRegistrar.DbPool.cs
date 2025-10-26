@@ -12,24 +12,32 @@ namespace Compze.Tessaging.Hosting.Testing.Wiring;
 
 public static class TestingComponentRegistrarDbPool
 {
-   public static IComponentRegistrar CurrentTestsDbPoolIfNotAlreadyRegistered(this IComponentRegistrar register) => 
-      register.CastTo<TestingComponentRegistrar>().CurrentTestsDbPoolIfNotAlreadyRegistered();
+   public static IComponentRegistrar CurrentTestsDbPoolIfNotCloneContainer(this IComponentRegistrar register) =>
+      register.CastTo<TestingComponentRegistrar>().CurrentTestsDbPoolIfNotCloneContainer();
 
-   public static IComponentRegistrar CurrentTestsDbPoolIfNotAlreadyRegistered(this TestingComponentRegistrar @this)
+   public static IComponentRegistrar CurrentTestsDbPoolIfNotCloneContainer(this TestingComponentRegistrar @this)
    {
-      @this.DbPoolIfNotAlreadyRegistered();
+      if(@this.Container().IsClone())
+      {
+         if(!@this.Container().IsRegistered<DbPool>())
+            throw new Exception("The DbPool must be registered in the root container before any cloning. You cannot register it directly in a cloned container");
+
+         return @this;
+      }
+
+      @this.DbPool();
       switch(TestEnv.SqlLayer)
       {
          case SqlLayer.MicrosoftSqlServer:
-            return @this.MsSqlDbPoolSqlLayerIfNotAlreadyRegistered();
+            return @this.MsSqlDbPoolSqlLayer();
          case SqlLayer.MySql:
-            return @this.MySqlDbPoolSqlLayerIfNotAlreadyRegistered();
+            return @this.MySqlDbPoolSqlLayer();
          case SqlLayer.PostgreSql:
-            return @this.PgSqlDbPoolSqlLayerIfNotAlreadyRegistered();
+            return @this.PgSqlDbPoolSqlLayer();
          case SqlLayer.Sqlite:
-            return @this.SqliteDbPoolSqlLayerIfNotAlreadyRegistered();
+            return @this.SqliteDbPoolSqlLayer();
          case SqlLayer.SqliteMemory:
-            return  @this.SqliteMemoryDbPoolSqlLayerIfNotAlreadyRegistered();
+            return @this.SqliteMemoryDbPoolSqlLayer();
          default:
             throw new ArgumentOutOfRangeException();
       }

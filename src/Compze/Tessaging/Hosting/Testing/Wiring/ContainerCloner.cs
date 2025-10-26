@@ -11,6 +11,9 @@ namespace Compze.Tessaging.Hosting.Testing.Wiring;
 
 static class ContainerCloner
 {
+   class ContainerIsClonedMarkerClass
+   {}
+
    static readonly IReadOnlyList<Type> TypesThatAreFacadesForTheContainer = EnumerableCE.OfTypes<IDependencyInjectionContainer, IServiceLocator, SimpleInjectorDependencyInjectionContainer>()
                                                                                         .ToList();
 
@@ -37,10 +40,14 @@ static class ContainerCloner
 
       cloneContainer.Register(Singleton.For<IServiceLocator>().CreatedBy(() => cloneContainer.ServiceLocator));
 
+      cloneContainer.Register(Singleton.For<ContainerIsClonedMarkerClass>().Instance(new ContainerIsClonedMarkerClass()));
+
       sourceContainer.RegisteredComponents()
                      .Where(component => TypesThatAreFacadesForTheContainer.None(facadeForTheContainer => component.ServiceTypes.Contains(facadeForTheContainer)))
                      .ForEach(action: componentRegistration => cloneContainer.Register(componentRegistration.CreateCloneRegistration(sourceServiceLocator)));
 
       return cloneContainer;
    }
+
+   public static bool IsClone(this IDependencyInjectionContainer @this) => @this.IsRegistered<ContainerIsClonedMarkerClass>();
 }

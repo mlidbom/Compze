@@ -8,15 +8,10 @@ namespace Compze.Sql.MicrosoftSql.Private.DbPool;
 
 class MsSqlDbPoolSqlLayer : IDbPoolSqlLayer
 {
-   internal static IComponentRegistrar RegisterWith(IComponentRegistrar registrar)
-   {
-      if(registrar.Container().IsRegistered<IDbPoolSqlLayer>())
-         return registrar;
-
-      return registrar.Register(Singleton.For<IDbPoolSqlLayer>()
-                                         .CreatedBy(() => new MsSqlDbPoolSqlLayer())
-                                         .DelegateToParentServiceLocatorWhenCloning());
-   }
+   internal static IComponentRegistrar RegisterWith(IComponentRegistrar registrar) =>
+      registrar.Register(Singleton.For<IDbPoolSqlLayer>()
+                                  .CreatedBy(() => new MsSqlDbPoolSqlLayer())
+                                  .DelegateToParentServiceLocatorWhenCloning());
 
    readonly string _masterConnectionString;
    readonly IMsSqlConnectionPool _masterConnectionPool;

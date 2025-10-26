@@ -5,6 +5,6 @@ namespace Compze.Sql.Sqlite.Wiring;
 
 public static class SqliteDbPoolSqlLayerRegistrar
 {
-   public static IComponentRegistrar SqliteDbPoolSqlLayerIfNotAlreadyRegistered(this IComponentRegistrar registrar) =>
-      SqliteDbPoolSqlLayer.RegisterWith(registrar);
+   public static IComponentRegistrar SqliteDbPoolSqlLayer(this IComponentRegistrar registrar) =>
+      Private.DbPool.SqliteDbPoolSqlLayer.RegisterWith(registrar);
 }

@@ -10,15 +10,10 @@ namespace Compze.Sql.MySql.Private.DbPool;
 
 sealed class MySqlDbPoolSqlLayer : IDbPoolSqlLayer
 {
-   internal static IComponentRegistrar RegisterWith(IComponentRegistrar registrar)
-   {
-      if(registrar.Container().IsRegistered<IDbPoolSqlLayer>())
-         return registrar;
-
-      return registrar.Register(Singleton.For<IDbPoolSqlLayer>()
-                                         .CreatedBy(() => new MySqlDbPoolSqlLayer())
-                                         .DelegateToParentServiceLocatorWhenCloning());
-   }
+   internal static IComponentRegistrar RegisterWith(IComponentRegistrar registrar) =>
+      registrar.Register(Singleton.For<IDbPoolSqlLayer>()
+                                  .CreatedBy(() => new MySqlDbPoolSqlLayer())
+                                  .DelegateToParentServiceLocatorWhenCloning());
 
    readonly IMySqlConnectionPool _masterConnectionPool;
 

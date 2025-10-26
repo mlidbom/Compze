@@ -49,7 +49,7 @@ public abstract class EndpointHostTestBase : UniversalTestBase
    protected EndpointHostTestBase()
    {
       _rootContainer = TestEnv.DIContainer.CreateWithServiceLocator()
-                              .mutate(it => it.Register().CurrentTestsDbPoolIfNotAlreadyRegistered());
+                              .mutate(it => it.Register().CurrentTestsDbPoolIfNotCloneContainer());
 
       AllGates =
       [
