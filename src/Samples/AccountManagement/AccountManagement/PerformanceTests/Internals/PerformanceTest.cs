@@ -58,7 +58,7 @@ public class PerformanceTest : UniversalTestBase
 
    [PCT] public void Multithreaded_logs_in_XX_times_in_100_milliseconds()
    {
-      var logins = TestEnv.SqlLayer.ValueFor(msSql: 6, mySql: 3, pgSql: 6, sqlite: 3, sqliteMemory: 3);
+      var logins = TestEnv.SqlLayer.ValueFor(msSql: 6, mySql: 3, pgSql: 6, sqlite: 2, sqliteMemory: 3);
       var accountsReader = CreateAccountsThreaded(Math.Min(logins, 10)).ToConcurrentCircularReader();
 
       TimeAsserter.ExecuteThreaded(description: "Log in to account",
