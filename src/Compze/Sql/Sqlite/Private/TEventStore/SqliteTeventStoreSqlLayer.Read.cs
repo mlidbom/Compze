@@ -8,9 +8,10 @@ using Tevent = Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Tev
 
 namespace Compze.Sql.Sqlite.Private.TEventStore;
 
-partial class SqliteTeventStoreSqlLayer(SqliteTeventStoreConnectionManager connectionManager) : ITeventStoreSqlLayer
+partial class SqliteTeventStoreSqlLayer(SqliteTeventStoreConnectionManager connectionManager, SqliteSqlLayerSchemaManager schemaManager) : ITeventStoreSqlLayer
 {
    readonly SqliteTeventStoreConnectionManager _connectionManager = connectionManager;
+   readonly SqliteSqlLayerSchemaManager _schemaManager = schemaManager;
 
    static string CreateSelectClause() => InternalSelect();
 

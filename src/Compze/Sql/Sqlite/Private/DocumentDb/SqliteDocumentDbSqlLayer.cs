@@ -17,12 +17,12 @@ namespace Compze.Sql.Sqlite.Private.DocumentDb;
 internal partial class SqliteDocumentDbSqlLayer : IDocumentDbSqlLayer
 {
    readonly ISqliteConnectionPool _connectionPool;
-   readonly SchemaManager _schemaManager;
+   readonly SqliteSqlLayerSchemaManager _schemaManager;
    bool _initialized;
 
-   internal SqliteDocumentDbSqlLayer(ISqliteConnectionPool connectionPool)
+   internal SqliteDocumentDbSqlLayer(ISqliteConnectionPool connectionPool, SqliteSqlLayerSchemaManager schemaManager)
    {
-      _schemaManager = new SchemaManager(connectionPool);
+      _schemaManager = schemaManager;
       _connectionPool = connectionPool;
    }
 
@@ -129,13 +129,5 @@ internal partial class SqliteDocumentDbSqlLayer : IDocumentDbSqlLayer
 
    static string TypeInClause(IReadOnlySet<Guid> acceptableTypeIds) => Assert.Argument.Is(acceptableTypeIds.Any()).then("IN( '" + acceptableTypeIds.Select(guid => guid.ToString()).Join("', '") + "')\n");
 
-   readonly MonitorCE _monitor = MonitorCE.WithDefaultTimeout();
-   void EnsureInitialized() => _monitor.Update(() =>
-   {
-      if(!_initialized)
-      {
-         _schemaManager.EnsureInitialized();
-         _initialized = true;
-      }
-   });
+   void EnsureInitialized() => _schemaManager.EnsureSchemaInitialized();
 }

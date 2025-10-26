@@ -10,9 +10,10 @@ using DispatchingTable = Compze.Core.Tessaging.Internal.SqlLayer.IServiceBusSqlL
 
 namespace Compze.Sql.Sqlite.Private.Tessaging;
 
-partial class SqliteOutboxSqlLayer(ISqliteConnectionPool connectionFactory) : IServiceBusSqlLayer.IOutboxSqlLayer
+partial class SqliteOutboxSqlLayer(ISqliteConnectionPool connectionFactory, SqliteSqlLayerSchemaManager schemaManager) : IServiceBusSqlLayer.IOutboxSqlLayer
 {
    readonly ISqliteConnectionPool _connectionFactory = connectionFactory;
+   readonly SqliteSqlLayerSchemaManager _schemaManager = schemaManager;
 
    public void SaveTessage(IServiceBusSqlLayer.OutboxTessageWithReceivers tessageWithReceivers)
    {
@@ -137,5 +138,5 @@ partial class SqliteOutboxSqlLayer(ISqliteConnectionPool connectionFactory) : IS
          });
    }
 
-   public Task InitAsync() => SchemaManager.EnsureTablesExistAsync(_connectionFactory);
+   public async Task InitAsync() => await _schemaManager.EnsureSchemaInitializedAsync();
 }

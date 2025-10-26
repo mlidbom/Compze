@@ -5,7 +5,8 @@ namespace Compze.Sql.Sqlite.Wiring;
 public static class SqliteSqlLayersRegistrar
 {
    public static IComponentRegistrar SqliteDSqliteSqlLayers(this IComponentRegistrar registrar) =>
-      registrar.SqliteDocumentDbSqlLayer().
-                SqliteTessagingSqlLayer().
-                SqliteTeventStoreSqlLayer();
+      registrar.SqliteSqlLayerSchemaManager()
+               .SqliteDocumentDbSqlLayer()
+               .SqliteTessagingSqlLayer()
+               .SqliteTeventStoreSqlLayer();
 }

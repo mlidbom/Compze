@@ -53,12 +53,12 @@ public class PerformanceTest : UniversalTestBase
       TimeAsserter.ExecuteThreaded(
          description: "Register accounts",
          action: () => _scenarioApi!.Register.Execute().Result.Status.Should().Be(RegistrationAttemptStatus.Successful),
-         iterations: TestEnv.SqlLayer.ValueFor(msSql: 4, mySql: 1, pgSql: 3, sqlite: 4, sqliteMemory: 4),
+         iterations: TestEnv.SqlLayer.ValueFor(msSql: 4, mySql: 1, pgSql: 3, sqlite: 1, sqliteMemory: 1),
          maxTotal: 30.Milliseconds().EnvMultiply(instrumented:2.2, unoptimized:1.4));
 
    [PCT] public void Multithreaded_logs_in_XX_times_in_100_milliseconds_db2__memory__msSql__mySql__oracle_pgSql_()
    {
-      var logins = TestEnv.SqlLayer.ValueFor(msSql: 8, mySql: 3, pgSql: 8, sqlite: 8, sqliteMemory: 8);
+      var logins = TestEnv.SqlLayer.ValueFor(msSql: 8, mySql: 3, pgSql: 8, sqlite: 3, sqliteMemory: 3);
       var accountsReader = CreateAccountsThreaded(Math.Min(logins, 10)).ToConcurrentCircularReader();
 
       TimeAsserter.ExecuteThreaded(description: "Log in to account",

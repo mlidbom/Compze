@@ -1,4 +1,5 @@
 using Compze.Core.Tessaging.Internal.SqlLayer;
+using Compze.Sql.Sqlite.Private;
 using Compze.Sql.Sqlite.Private.Tessaging;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
@@ -9,8 +10,9 @@ public static class SqliteTessagingRegistrar
 {
    public static IComponentRegistrar SqliteTessagingSqlLayer(this IComponentRegistrar registrar) =>
       registrar.Register(
-         Singleton.For<IServiceBusSqlLayer.IOutboxSqlLayer>()
-                  .CreatedBy((ISqliteConnectionPool endpointSqlConnection) => new SqliteOutboxSqlLayer(endpointSqlConnection)),
-         Singleton.For<IServiceBusSqlLayer.IInboxSqlLayer>()
-                  .CreatedBy((ISqliteConnectionPool endpointSqlConnection) => new SqliteInboxSqlLayer(endpointSqlConnection)));
+                   Singleton.For<IServiceBusSqlLayer.IOutboxSqlLayer>()
+                            .CreatedBy((ISqliteConnectionPool endpointSqlConnection, SqliteSqlLayerSchemaManager schemaManager) => new SqliteOutboxSqlLayer(endpointSqlConnection, schemaManager)),
+                   Singleton.For<IServiceBusSqlLayer.IInboxSqlLayer>()
+                            .CreatedBy((ISqliteConnectionPool endpointSqlConnection, SqliteSqlLayerSchemaManager schemaManager) => new SqliteInboxSqlLayer(endpointSqlConnection, schemaManager)))
+               .SqliteSqlLayerSchemaManager();
 }
