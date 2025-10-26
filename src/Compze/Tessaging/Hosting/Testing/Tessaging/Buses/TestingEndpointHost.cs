@@ -34,12 +34,11 @@ public class TestingEndpointHost : TestingEndpointHostBase
 
    protected override async ValueTask DisposeAsync(bool disposing)
    {
+      await base.DisposeAsync(disposing).caf();
       if(_ownedContainer != null)
       {
          await _ownedContainer.DisposeAsync();
       }
-
-      await base.DisposeAsync(disposing).caf();
    }
 
    public override IEndpoint RegisterEndpoint(string name, EndpointId id, Action<IEndpointBuilder> setup)
