@@ -34,7 +34,7 @@ public static class TransactionScopeCe
       using var transactionScope = new TransactionScope(option,
                                                         new TransactionOptions { IsolationLevel = IsolationLevel.Serializable },
                                                         TransactionScopeAsyncFlowOption.Enabled);
-      await action();
+      await action().caf();
       transactionScope.Complete();
    }
 
@@ -47,7 +47,7 @@ public static class TransactionScopeCe
       using var transactionScope = new TransactionScope(option,
                                                         new TransactionOptions { IsolationLevel = IsolationLevel.Serializable },
                                                         TransactionScopeAsyncFlowOption.Enabled);
-      var result = await action();
+      var result = await action().caf();
       transactionScope.Complete();
       return result;
    }
