@@ -23,20 +23,20 @@ class HttpExactlyOnceTessageSender(
    readonly ITypeMapper _typeMapper = typeMapper;
    readonly IRemotableTessageSerializer _serializer = serializer;
    readonly ITessagesInFlightTracker _tessagesInFlightTracker = tessagesInFlightTracker;
-   readonly Uri _remoteAddress = remoteAddress.Uri;
+   readonly EndPointAddress _remoteAddress = remoteAddress;
    readonly EndpointId _remoteEndpointId = remoteEndpointId;
 
    public async Task SendAsync(IExactlyOnceTommand tommand)
    {
       var outGoingTessage = TransportTessage.OutGoing.Create(tommand, _typeMapper, _serializer);
       _tessagesInFlightTracker.SendingTessageOnTransport(outGoingTessage, _remoteEndpointId);
-      await _transportMessagePoster.PostAsync(outGoingTessage, tommand, new Uri(_remoteAddress, HttpConstants.Routes.Tessaging.Tommand)).caf();
+      await _transportMessagePoster.PostAsync(outGoingTessage, tommand, _remoteAddress).caf();
    }
 
    public async Task SendAsync(IExactlyOnceTevent tevent)
    {
       var tessage = TransportTessage.OutGoing.Create(tevent, _typeMapper, _serializer);
       _tessagesInFlightTracker.SendingTessageOnTransport(tessage, _remoteEndpointId);
-      await _transportMessagePoster.PostAsync(tessage, tevent, new Uri(_remoteAddress, HttpConstants.Routes.Tessaging.Tevent)).caf();
+      await _transportMessagePoster.PostAsync(tessage, tevent, _remoteAddress).caf();
    }
 }

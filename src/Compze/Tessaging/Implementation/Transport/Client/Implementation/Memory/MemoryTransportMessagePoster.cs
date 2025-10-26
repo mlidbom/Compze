@@ -1,9 +1,10 @@
-using System;
-using System.Threading.Tasks;
+using Compze.Core.Tessaging.Transport.Internal;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Tessaging.Implementation.Transport.Client.Routing.Abstractions;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
+using System;
+using System.Threading.Tasks;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Memory;
 
@@ -24,7 +25,7 @@ class MemoryTransportMessagePoster : ITransportMessagePoster
    MemoryTransportMessagePoster(IEndpointRegistry registry) =>
       _endpointRegistry = registry;
 
-   public async Task<TResult> PostAsync<TResult>(TransportTessage.OutGoing tessage, object realTessage, Uri requestUri)
+   public async Task<TResult> PostAsync<TResult>(TransportTessage.OutGoing tessage, object realTessage, EndPointAddress endPointAddress)
    {
       switch(tessage.TessageTypeEnum)
       {
@@ -45,7 +46,7 @@ class MemoryTransportMessagePoster : ITransportMessagePoster
       throw new NotImplementedException();
    }
 
-   public async Task PostAsync(TransportTessage.OutGoing tessage, object realTessage, Uri requestUri) =>
+   public async Task PostAsync(TransportTessage.OutGoing tessage, object realTessage, EndPointAddress endPointAddress) =>
       throw new NotImplementedException("");
 
 }

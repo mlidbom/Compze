@@ -2,6 +2,7 @@ using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Compze.Core.Serialization.Internal;
+using Compze.Core.Tessaging.Transport.Internal;
 using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Utilities.DependencyInjection;
@@ -31,16 +32,16 @@ class HttpTransportMessagePoster : ITransportMessagePoster
       _serializer = serializer;
    }
 
-   public async Task<TResult> PostAsync<TResult>(TransportTessage.OutGoing tessage, object realTessage, Uri requestUri)
+   public async Task<TResult> PostAsync<TResult>(TransportTessage.OutGoing tessage, object realTessage, EndPointAddress endPointAddress)
    {
-      var response = await PostAsyncInternal(tessage, realTessage, requestUri).caf();
+      var response = await PostAsyncInternal(tessage, realTessage, new Uri(endPointAddress.Uri, GetRelativeUriForTessage(tessage))).caf();
 
       var resultJson = await response.Content.ReadAsStringAsync().caf();
       var result = _serializer.DeserializeResponse<TResult>(resultJson);
       return result;
    }
 
-   static string RelativeUriForMessage(TransportTessage.OutGoing message)
+   static string GetRelativeUriForTessage(TransportTessage.OutGoing message)
    {
       switch(message.TessageTypeEnum)
       {
@@ -59,8 +60,8 @@ class HttpTransportMessagePoster : ITransportMessagePoster
       }
    }
 
-   public async Task PostAsync(TransportTessage.OutGoing tessage, object realTessage, Uri requestUri) =>
-      await PostAsyncInternal(tessage, realTessage, requestUri).caf();
+   public async Task PostAsync(TransportTessage.OutGoing tessage, object realTessage, EndPointAddress endPointAddress) =>
+      await PostAsyncInternal(tessage, realTessage, new Uri(endPointAddress.Uri, GetRelativeUriForTessage(tessage))).caf();
 
    async Task<HttpResponseMessage> PostAsyncInternal(TransportTessage.OutGoing tessage, object realTessage, Uri requestUri)
    {
