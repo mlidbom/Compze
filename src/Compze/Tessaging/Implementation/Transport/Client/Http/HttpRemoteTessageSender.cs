@@ -11,15 +11,15 @@ using Compze.Utilities.Threading.TasksCE;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Http;
 
-class HttpRemoteTessageSender(
-   IRemoteApiTransportClient remoteApiTransportClient,
+class HttpExactlyOnceTessageSender(
+   IHttpApiTransportClient httpApiTransportClient,
    HttpEndPointAddress remoteAddress,
    ITypeMapper typeMapper,
    IRemotableTessageSerializer serializer,
    ITessagesInFlightTracker tessagesInFlightTracker,
-   EndpointId remoteEndpointId) : IRemoteTessageSender
+   EndpointId remoteEndpointId) : IExactlyOnceTessageSender
 {
-   readonly IRemoteApiTransportClient _transportClient = remoteApiTransportClient;
+   readonly IHttpApiTransportClient _transportClient = httpApiTransportClient;
    readonly ITypeMapper _typeMapper = typeMapper;
    readonly IRemotableTessageSerializer _serializer = serializer;
    readonly ITessagesInFlightTracker _tessagesInFlightTracker = tessagesInFlightTracker;

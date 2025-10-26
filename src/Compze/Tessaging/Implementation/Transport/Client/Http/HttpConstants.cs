@@ -4,7 +4,7 @@ static class HttpConstants
 {
    internal static class Routes
    {
-      internal static class Rpc
+      internal static class Typermedia
       {
          internal const string TommandNoResult = "/internal/rpc/tommand-no-result";
          internal const string Tuery = "/internal/rpc/tuery";

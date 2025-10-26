@@ -16,10 +16,10 @@ static class HttpApiTransportClientRegistrar
       => registrar.Register(Http.HttpApiTransportClient.RegisterWith);
 }
 
-class HttpApiTransportClient : IRemoteApiTransportClient
+class HttpApiTransportClient : IHttpApiTransportClient
 {
    internal static void RegisterWith(IComponentRegistrar registrar)
-      => registrar.Register(Singleton.For<IRemoteApiTransportClient>()
+      => registrar.Register(Singleton.For<IHttpApiTransportClient>()
                                      .CreatedBy((IHttpClientFactoryCE factory, IRemotableTessageSerializer serializer) => new HttpApiTransportClient(factory, serializer)));
 
    readonly IHttpClientFactoryCE _clientFactory;

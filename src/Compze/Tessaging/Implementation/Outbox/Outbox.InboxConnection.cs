@@ -13,16 +13,16 @@ namespace Compze.Tessaging.Implementation.Outbox;
 
 partial class Outbox
 {
-   internal class InboxConnection(ITessagesInFlightTracker tessagesInFlightTracker, HttpEndPointAddress remoteAddress, ITypeMapper typeMapper, IRemotableTessageSerializer serializer, IRemoteApiTransportClient remoteApiTransportClient) : IInboxConnection
+   internal class InboxConnection(ITessagesInFlightTracker tessagesInFlightTracker, HttpEndPointAddress remoteAddress, ITypeMapper typeMapper, IRemotableTessageSerializer serializer, IHttpApiTransportClient httpApiTransportClient) : IInboxConnection
    {
       TessageTypesInternal.EndpointInformation? _endpointInformation = null;
       IRemoteApiEndpointClient? _remoteApiClient;
-      IRemoteTessageSender? _tessageSender;
+      IExactlyOnceTessageSender? _tessageSender;
       readonly ITessagesInFlightTracker _tessagesInFlightTracker = tessagesInFlightTracker;
       readonly HttpEndPointAddress _remoteAddress = remoteAddress;
       readonly ITypeMapper _typeMapper = typeMapper;
       readonly IRemotableTessageSerializer _serializer = serializer;
-      readonly IRemoteApiTransportClient _remoteApiTransportClient = remoteApiTransportClient;
+      readonly IHttpApiTransportClient _httpApiTransportClient = httpApiTransportClient;
 
       public TessageTypesInternal.EndpointInformation EndpointInformation => _endpointInformation!;
 
@@ -35,8 +35,8 @@ partial class Outbox
 
       internal async Task InitAsync()
       {
-         (_remoteApiClient, _endpointInformation) = await HttpApiEndpointClient.BootstrapConnectionToEndpoint(_remoteApiTransportClient, _remoteAddress, _typeMapper, _serializer, _tessagesInFlightTracker).caf();
-         _tessageSender = new HttpRemoteTessageSender(_remoteApiTransportClient, _remoteAddress, _typeMapper, _serializer, _tessagesInFlightTracker, _endpointInformation.Id);
+         (_remoteApiClient, _endpointInformation) = await HttpApiEndpointClient.BootstrapConnectionToEndpoint(_httpApiTransportClient, _remoteAddress, _typeMapper, _serializer, _tessagesInFlightTracker).caf();
+         _tessageSender = new HttpExactlyOnceTessageSender(_httpApiTransportClient, _remoteAddress, _typeMapper, _serializer, _tessagesInFlightTracker, _endpointInformation.Id);
       }
 
       public void Dispose() {}

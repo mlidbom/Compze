@@ -8,6 +8,7 @@ using Compze.Core.Tessaging.Public;
 using Compze.Core.Tessaging.Transport.Internal;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Tessaging.Implementation.Transport.Client.Abstractions;
+using Compze.Tessaging.Implementation.Transport.Client.Http;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
@@ -27,22 +28,22 @@ static class TransportRegistrar
 partial class RoutingInboxTransportClient : IRoutingInboxTransportClient, IDisposable
 {
    internal static void RegisterWith(IComponentRegistrar registrar)
-      => registrar.Register(Singleton.For<IRoutingInboxTransportClient>().CreatedBy((ITessagesInFlightTracker tessagesInFlightTracker, ITypeMapper typeMapper, IRemotableTessageSerializer serializer, IRemoteApiTransportClient remoteApiTransportClient)
-                                                                     => new RoutingInboxTransportClient(tessagesInFlightTracker, typeMapper, serializer, remoteApiTransportClient)));
+      => registrar.Register(Singleton.For<IRoutingInboxTransportClient>().CreatedBy((ITessagesInFlightTracker tessagesInFlightTracker, ITypeMapper typeMapper, IRemotableTessageSerializer serializer, IHttpApiTransportClient httpApiTransportClient)
+                                                                     => new RoutingInboxTransportClient(tessagesInFlightTracker, typeMapper, serializer, httpApiTransportClient)));
 
-   RoutingInboxTransportClient(ITessagesInFlightTracker tessagesInFlightTracker, ITypeMapper typeMapper, IRemotableTessageSerializer serializer, IRemoteApiTransportClient remoteApiTransportClient)
+   RoutingInboxTransportClient(ITessagesInFlightTracker tessagesInFlightTracker, ITypeMapper typeMapper, IRemotableTessageSerializer serializer, IHttpApiTransportClient httpApiTransportClient)
    {
       _tessagesInFlightTracker = tessagesInFlightTracker;
       _typeMapper = typeMapper;
       _serializer = serializer;
-      _remoteApiTransportClient = remoteApiTransportClient;
+      _httpApiTransportClient = httpApiTransportClient;
       _router = new Router(typeMapper);
    }
 
    readonly ITessagesInFlightTracker _tessagesInFlightTracker;
    readonly ITypeMapper _typeMapper;
    readonly IRemotableTessageSerializer _serializer;
-   readonly IRemoteApiTransportClient _remoteApiTransportClient;
+   readonly IHttpApiTransportClient _httpApiTransportClient;
 
    bool _running = false;
    readonly Router _router;
@@ -51,7 +52,7 @@ partial class RoutingInboxTransportClient : IRoutingInboxTransportClient, IDispo
    public async Task ConnectAsync(HttpEndPointAddress remoteEndpointAddress)
    {
       AssertRunning();
-      var clientConnection = new Outbox.Outbox.InboxConnection(_tessagesInFlightTracker, remoteEndpointAddress, _typeMapper, _serializer, _remoteApiTransportClient);
+      var clientConnection = new Outbox.Outbox.InboxConnection(_tessagesInFlightTracker, remoteEndpointAddress, _typeMapper, _serializer, _httpApiTransportClient);
 
       await clientConnection.InitAsync().caf();
 
