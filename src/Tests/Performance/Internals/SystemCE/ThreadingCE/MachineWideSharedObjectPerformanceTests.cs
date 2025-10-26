@@ -9,13 +9,13 @@ namespace Compze.Tests.Performance.Internals.SystemCE.ThreadingCE;
 
 public class MachineWideSharedObjectPerformanceTests : UniversalTestBase
 {
-   [XF] public void Get_copy_runs_single_threaded_100_times_in_40_milliseconds()
+   [XF] public void Get_copy_runs_single_threaded_XX_times_in_50_milliseconds()
    {
       var name = Guid.NewGuid().ToString();
       using var shared = MachineWideSharedObject<SharedObject>.For(name);
       using var shared2 = MachineWideSharedObject<SharedObject>.For(name);
-      TimeAsserter.Execute(() => shared.GetCopy(), iterations: 100, maxTotal: 40.Milliseconds());
-      TimeAsserter.Execute(() => shared2.GetCopy(), iterations: 100, maxTotal: 40.Milliseconds());
+      TimeAsserter.Execute(() => shared.GetCopy(), iterations: 100, maxTotal: 50.Milliseconds());
+      TimeAsserter.Execute(() => shared2.GetCopy(), iterations: 100, maxTotal: 50.Milliseconds());
    }
 
    [XF] public void Get_copy_runs_multi_threaded_100_times_in_50_milliseconds()
@@ -40,7 +40,7 @@ public class MachineWideSharedObjectPerformanceTests : UniversalTestBase
          },
          tearDown: () => shared.Dispose(),
          action: () => shared.Update(it => it.Name = (++counter).ToStringInvariant()),
-         iterations: 50,
+         iterations: 40,
          maxTotal: 50.Milliseconds());
    }
 

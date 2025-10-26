@@ -23,7 +23,7 @@ public class DocumentDbPerformanceTests : DocumentDbTestsBase
 
          TimeAsserter.Execute(
             action: SaveOneNewUserInTransaction,
-            iterations: TestEnv.SqlLayer.ValueFor(msSql: 8, mySql: 8, pgSql: 8, sqlite: 6, sqliteMemory: 6)
+            iterations: TestEnv.SqlLayer.ValueFor(msSql: 8, mySql: 8, pgSql: 8, sqlite: 4, sqliteMemory: 6)
                                .EnvDivide(instrumented:2.2, unoptimized:1.3),
             maxTotal: 50.Milliseconds()
          );

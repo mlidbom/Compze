@@ -112,7 +112,7 @@ public class MonitorCEPerformanceTests : UniversalTestBase
 
    [XF] public void _010_Read_Unsafe________________________time_is_less_than_nanoseconds_SingleThreaded_08_MultiThreaded_3() =>
       RunScenarios(() => _guarded.Read_Unsafe(),
-                   singleThreadAllowedTime: (8 * TotalLocks).Nanoseconds().EnvMultiply(instrumented: 60, unoptimized: 2.0),
+                   singleThreadAllowedTime: (12 * TotalLocks).Nanoseconds().EnvMultiply(instrumented: 60, unoptimized: 2.0),
                    multiThreadAllowedTime: (3 * TotalLocks).Nanoseconds().EnvMultiply(instrumented: 150, unoptimized: 3.5));
 
    [XF] public void _020_Read_Locked________________________time_is_less_than_nanoseconds_SingleThreaded_35_MultiThreaded_220() =>

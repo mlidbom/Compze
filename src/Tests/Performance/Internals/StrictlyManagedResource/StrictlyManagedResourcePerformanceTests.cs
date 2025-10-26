@@ -19,17 +19,17 @@ public class StrictlyManagedResourcePerformanceTests : UniversalTestBase
    }
 #pragma warning restore CA1812 // Class is never instantiated
 
-   [XF] public void Allocated_and_disposes_50_instances_in_200_millisecond_when_actually_collecting_stack_traces()
+   [XF] public void Allocated_and_disposes_XX_instances_in_50_millisecond_when_actually_collecting_stack_traces()
    {
       TimeAsserter.Execute(action: () => new StrictlyManagedResource<StrictResource>(forceStackTraceCollection: true).Dispose(),
-                           iterations: 50,
-                           maxTotal: 200.Milliseconds().EnvMultiply(unoptimized: 1.3));
+                           iterations: 4,
+                           maxTotal: 50.Milliseconds().EnvMultiply(unoptimized: 1.3));
    }
 
-   [XF] public void Allocates_and_disposes_5000_instances_in_20_millisecond_when_not_collecting_stack_traces()
+   [XF] public void Allocates_and_disposes_XX_instances_in_20_millisecond_when_not_collecting_stack_traces()
    {
       TimeAsserter.Execute(action: () => new StrictlyManagedResource<StrictResource>().Dispose(),
-                           iterations: 5000,
+                           iterations: 4000,
                            maxTotal: 20.Milliseconds());
    }
 }

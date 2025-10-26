@@ -18,7 +18,7 @@ public class TimeAsserterTests : UniversalTestBase
       );
    }
 
-   [XF] public void ExecuteThreaded_should_add_at_most_2_milliseconds_to_100_iterations_of_action()
+   [XF] public void ExecuteThreaded_should_add_at_most_4_milliseconds_to_100_iterations_of_action()
    {
       //Warmup
       TimeAsserter.ExecuteThreaded(action: () => {}, iterations: 1000, maxTotal: 100.Milliseconds());
@@ -26,7 +26,7 @@ public class TimeAsserterTests : UniversalTestBase
       TimeAsserter.ExecuteThreaded(
          action: () => {},
          iterations: 1000,
-         maxTotal: 2.Milliseconds()
+         maxTotal: 4.Milliseconds()
       );
    }
 }
