@@ -123,7 +123,7 @@ public class DbPoolPerformanceTests : DbPoolTestBase
             var mySqlConnectionProvider = IMySqlConnectionPool.CreateInstance(pool.ConnectionStringFor(reservationName));
             useConnection = () => mySqlConnectionProvider.UseConnection(_ => {});
             break;
-         case SqlLayer.PostgreSql:
+         case SqlLayer.PgSql:
             var pgSqlConnectionProvider = IPgSqlConnectionPool.CreateInstance(pool.ConnectionStringFor(reservationName));
             useConnection = () => pgSqlConnectionProvider.UseConnection(_ => {});
             break;

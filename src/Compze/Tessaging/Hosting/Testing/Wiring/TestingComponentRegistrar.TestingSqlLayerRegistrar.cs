@@ -28,7 +28,7 @@ public static class TestingComponentRegistrarTestingSqlLayerRegistrar
          case SqlLayer.MySql:
             return @this.MySqlConnectionPool(connectionStringName)
                         .MySqlSqlLayers();
-         case SqlLayer.PostgreSql:
+         case SqlLayer.PgSql:
             return @this.PgSqlConnectionPoolIfNotAlreadyRegistered(connectionStringName)
                         .PgSqlSqlLayers();
          case SqlLayer.Sqlite:

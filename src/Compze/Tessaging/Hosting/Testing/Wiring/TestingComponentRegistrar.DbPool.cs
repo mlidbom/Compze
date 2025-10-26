@@ -32,7 +32,7 @@ public static class TestingComponentRegistrarDbPool
             return @this.MsSqlDbPoolSqlLayer();
          case SqlLayer.MySql:
             return @this.MySqlDbPoolSqlLayer();
-         case SqlLayer.PostgreSql:
+         case SqlLayer.PgSql:
             return @this.PgSqlDbPoolSqlLayer();
          case SqlLayer.Sqlite:
             return @this.SqliteDbPoolSqlLayer();

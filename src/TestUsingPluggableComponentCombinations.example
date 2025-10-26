@@ -4,25 +4,25 @@
 //Empty/Whitespace lines are ignored
 
 #MsSql:Microsoft:Newtonsoft:AspNetCore
-#PostgreSql:Microsoft:Newtonsoft:AspNetCore
+#PgSql:Microsoft:Newtonsoft:AspNetCore
 #MySql:Microsoft:Newtonsoft:AspNetCore
 #Sqlite:Microsoft:Newtonsoft:AspNetCore
 SqliteMemory:Microsoft:Newtonsoft:AspNetCore
 
 #MsSql:SimpleInjector:Newtonsoft:AspNetCore
-#PostgreSql:SimpleInjector:Newtonsoft:AspNetCore
+#PgSql:SimpleInjector:Newtonsoft:AspNetCore
 #MySql:SimpleInjector:Newtonsoft:AspNetCore
 #Sqlite:SimpleInjector:Newtonsoft:AspNetCore
 #SqliteMemory:SimpleInjector:Newtonsoft:AspNetCore
 
 #MsSql:Microsoft:Newtonsoft:Memory
-#PostgreSql:Microsoft:Newtonsoft:Memory
+#PgSql:Microsoft:Newtonsoft:Memory
 #MySql:Microsoft:Newtonsoft:Memory
 #Sqlite:Microsoft:Newtonsoft:Memory
 #SqliteMemory:Microsoft:Newtonsoft:Memory
 
 #MsSql:SimpleInjector:Newtonsoft:Memory
-#PostgreSql:SimpleInjector:Newtonsoft:Memory
+#PgSql:SimpleInjector:Newtonsoft:Memory
 #MySql:SimpleInjector:Newtonsoft:Memory
 #Sqlite:SimpleInjector:Newtonsoft:Memory
 #SqliteMemory:SimpleInjector:Newtonsoft:Memory

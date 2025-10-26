@@ -19,7 +19,7 @@ public static class SqlLayerExtensions
       {
          SqlLayer.MsSql => msSql,
          SqlLayer.MySql              => mySql,
-         SqlLayer.PostgreSql         => pgSql,
+         SqlLayer.PgSql         => pgSql,
          SqlLayer.Sqlite             => sqlite,
          SqlLayer.SqliteMemory       => sqliteMemory,
          _                           => throw new ArgumentOutOfRangeException(nameof(sqlLayer), sqlLayer, $"Unsupported sql layer: {sqlLayer}")

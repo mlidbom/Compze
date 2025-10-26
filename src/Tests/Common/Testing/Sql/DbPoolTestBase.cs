@@ -43,7 +43,7 @@ public abstract class DbPoolTestBase : UniversalTestBase
          case SqlLayer.MsSql:
             UseMsSqlConnection(pool.ConnectionStringFor(connectionString), func);
             break;
-         case SqlLayer.PostgreSql:
+         case SqlLayer.PgSql:
             UsePgSqlConnection(pool.ConnectionStringFor(connectionString), func);
             break;
          case SqlLayer.MySql:

@@ -24,7 +24,7 @@ public class PluggableComponentsTheoryTests : UniversalTestBase
       TestEnv.SqlLayer.Should().BeOneOf(
          SqlLayer.MsSql,
          SqlLayer.MySql,
-         SqlLayer.PostgreSql,
+         SqlLayer.PgSql,
          SqlLayer.Sqlite,
          SqlLayer.SqliteMemory
       );
@@ -44,7 +44,7 @@ public class PluggableComponentsTheoryTests : UniversalTestBase
       {
          SqlLayer.MsSql => "SQL Server",
          SqlLayer.MySql              => "MySQL",
-         SqlLayer.PostgreSql         => "PostgreSQL",
+         SqlLayer.PgSql         => "PostgreSQL",
          SqlLayer.Sqlite             => "SQLite",
          SqlLayer.SqliteMemory       => "SQLiteMemory",
          _                                         => throw new System.Exception($"Unexpected sql layer: {TestEnv.SqlLayer}")
@@ -74,7 +74,7 @@ public class PluggableComponentsTheoryTests : UniversalTestBase
       {
          SqlLayer.MsSql => System.TimeSpan.FromSeconds(5),
          SqlLayer.MySql              => System.TimeSpan.FromSeconds(10),
-         SqlLayer.PostgreSql         => System.TimeSpan.FromSeconds(7),
+         SqlLayer.PgSql         => System.TimeSpan.FromSeconds(7),
          SqlLayer.Sqlite             => System.TimeSpan.FromSeconds(6),
          SqlLayer.SqliteMemory       => System.TimeSpan.FromSeconds(6),
          _                                         => throw new System.Exception($"Unexpected sql layer: {TestEnv.SqlLayer}")
