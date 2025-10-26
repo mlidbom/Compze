@@ -11,14 +11,11 @@ public abstract class ComponentRegistration
 {
    internal readonly MonitorCE Monitor = MonitorCE.WithDefaultTimeout();
    internal Guid Id { get; } = Guid.NewGuid();
-   internal IEnumerable<Type> ServiceTypes { get; }
+   internal IReadOnlySet<Type> ServiceTypes { get; }
    internal InstantiationSpec InstantiationSpec { get; }
    internal Lifestyle Lifestyle { get; }
    internal IReadOnlyList<Type> DependencyTypes { get; }
    internal bool ProvidesService(Type service) => ServiceTypes.Contains(service);
-    internal abstract int ComponentIndex { get; }
-
-   internal readonly int[] ServiceTypeIndexes;
 
    internal ComponentRegistration(Lifestyle lifestyle,
                                   IEnumerable<Type> serviceTypes,
@@ -27,12 +24,11 @@ public abstract class ComponentRegistration
    {
       serviceTypes = serviceTypes.ToList();
 
-      ServiceTypeIndexes = serviceTypes.Select(ServiceTypeIndex.For).ToArray();
       Assert.Argument.Is(
          lifestyle == Lifestyle.Singleton || instantiationSpec.SingletonInstance == null,
          () => $"{nameof(InstantiationSpec.SingletonInstance)} registrations must be {nameof(Lifestyle.Singleton)}s");
 
-      ServiceTypes = serviceTypes;
+      ServiceTypes = serviceTypes.ToHashSet();
       InstantiationSpec = instantiationSpec;
       Lifestyle = lifestyle;
       DependencyTypes = dependencyTypes.ToList();
@@ -55,8 +51,6 @@ public class ComponentRegistration<TService> : ComponentRegistration where TServ
       ShouldDelegateToParentWhenCloning = true;
       return this;
    }
-
-   internal override int ComponentIndex => ServiceTypeIndex.ForService<TService>.Index;
 
    internal override ComponentRegistration CreateCloneRegistration(IServiceLocator currentLocator)
    {

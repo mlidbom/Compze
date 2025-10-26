@@ -57,6 +57,14 @@
       <Value>Hosting\EndpointHost.cs:Compze\Tessaging\Compze.Tessaging.csproj-35</Value>
       <Value>SystemCE\LazyCE.cs:Compze\Utilities\Compze.Utilities.csproj-12</Value>
       <Value>SystemCE\ThreadingCE\MachineWideSingleThreaded.cs:Compze\Utilities\Testing\DbPool\Compze.Utilities.Testing.DbPool.csproj-54</Value>
+      <Value>Functional\Unit.cs:Compze\Utilities\Compze.Utilities.csproj-27</Value>
+      <Value>SystemCE\LinqCE\EnumerableCE.ForEach.cs:Compze\Utilities\Compze.Utilities.csproj-26</Value>
+      <Value>ComponentCombinations\ComponentCombination.cs:Compze\Utilities\Testing\XUnit\Compze.Utilities.Testing.XUnit.csproj-85</Value>
+      <Value>ComponentCombinations\ComponentCombinationTestCase.cs:Compze\Utilities\Testing\XUnit\Compze.Utilities.Testing.XUnit.csproj-64</Value>
+      <Value>Tessaging\ServiceBusSpecification\Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler\EndpointHostTestBase.cs:Tests\Common\Compze.Tests.Common.csproj-66</Value>
+      <Value>UniversalTestBase.cs:Tests\Infrastructure\Compze.Tests.Infrastructure.csproj-29</Value>
+      <Value>Abstractions\IComposableDbConnection.cs:Compze\Sql\Common\Compze.Sql.Common.csproj-47</Value>
+      <Value>Abstractions\IDbConnectionPool.cs:Compze\Sql\Common\Compze.Sql.Common.csproj-25</Value>
     </HotSpotsLineExclusionList>
     <MSpecEnabled>False</MSpecEnabled>
     <NUnit3Enabled>False</NUnit3Enabled>
