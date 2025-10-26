@@ -1,11 +1,12 @@
-using System.Threading.Tasks;
 using Compze.Sql.Sqlite.Private.DocumentDb;
 using Compze.Sql.Sqlite.Private.Tessaging;
 using Compze.Sql.Sqlite.Private.TEventStore;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.TransactionsCE;
 using Compze.Utilities.Threading.TasksCE;
+using System.Threading.Tasks;
 
 namespace Compze.Sql.Sqlite.Private;
 
@@ -19,31 +20,28 @@ class SqliteSqlLayerSchemaManager(ISqliteConnectionPool connectionPool)
                                          .CreatedBy((ISqliteConnectionPool connectionPool) => new SqliteSqlLayerSchemaManager(connectionPool)));
    }
 
-   bool _initialized = false;
    readonly ISqliteConnectionPool _connectionPool = connectionPool;
 
-   public async Task EnsureSchemaInitializedAsync()
+   readonly RunOnce _runOnce = new();
+
+   public async Task EnsureSchemaInitializedAsync() => await _runOnce.RunIfFirstCallAsync(async () =>
    {
-      if(!_initialized)
+      await TransactionScopeCe.SuppressAmbientAsync(async () =>
       {
-         _initialized = true;
-         await TransactionScopeCe.SuppressAmbientAsync(async () =>
-         {
-            //todo: test if running them in parallel is faster
-            await _connectionPool.ExecuteNonQueryAsync($"""
+         //todo: test if running them in parallel is faster
+         await _connectionPool.ExecuteNonQueryAsync($"""
 
-                                                        {SqliteDocumentDbSqlLayer.SchemaCreationSql}
+                                                     {SqliteDocumentDbSqlLayer.SchemaCreationSql}
 
-                                                        {SqliteInboxSqlLayer.SchemaCreationSql}
+                                                     {SqliteInboxSqlLayer.SchemaCreationSql}
 
-                                                        {SqliteOutboxSqlLayer.SchemaCreationSql}
+                                                     {SqliteOutboxSqlLayer.SchemaCreationSql}
 
-                                                        {SqliteTeventStoreSqlLayer.SchemaCreationSql}
+                                                     {SqliteTeventStoreSqlLayer.SchemaCreationSql}
 
-                                                        """).caf();
-         }).caf();
-      }
-   }
+                                                     """).caf();
+      }).caf();
+   }).caf();
 
    public void EnsureSchemaInitialized() => EnsureSchemaInitializedAsync().Wait();
 }

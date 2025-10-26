@@ -4,6 +4,7 @@ using Compze.Sql.MySql.Private.Tessaging;
 using Compze.Sql.MySql.Private.TEventStore;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.TransactionsCE;
 using Compze.Utilities.Threading.TasksCE;
 
@@ -19,31 +20,27 @@ class MySqlSqlLayerSchemaManager(IMySqlConnectionPool connectionPool)
                                          .CreatedBy((IMySqlConnectionPool connectionPool) => new MySqlSqlLayerSchemaManager(connectionPool)));
    }
 
-   bool _initialized = false;
    readonly IMySqlConnectionPool _connectionPool = connectionPool;
 
-   public async Task EnsureSchemaInitializedAsync()
+   readonly RunOnce _runOnce = new();
+
+   public async Task EnsureSchemaInitializedAsync() => await _runOnce.RunIfFirstCallAsync(async () =>
    {
-      if(!_initialized)
+      await TransactionScopeCe.SuppressAmbientAsync(async () =>
       {
-         _initialized = true;
-         await TransactionScopeCe.SuppressAmbientAsync(async () =>
-         {
-            //todo: test if running them in parallel is faster
-            await _connectionPool.ExecuteNonQueryAsync($"""
+         await _connectionPool.ExecuteNonQueryAsync($"""
 
-                                                        {MySqlDocumentDbSqlLayer.SchemaCreationSql}
+                                                     {MySqlDocumentDbSqlLayer.SchemaCreationSql}
 
-                                                        {MySqlInboxSqlLayer.SchemaCreationSql}
+                                                     {MySqlInboxSqlLayer.SchemaCreationSql}
 
-                                                        {MySqlOutboxSqlLayer.SchemaCreationSql}
+                                                     {MySqlOutboxSqlLayer.SchemaCreationSql}
 
-                                                        {MySqlTeventStoreSqlLayer.SchemaCreationSql}
+                                                     {MySqlTeventStoreSqlLayer.SchemaCreationSql}
 
-                                                        """).caf();
-         }).caf();
-      }
-   }
+                                                     """).caf();
+      }).caf();
+   }).caf();
 
    public void EnsureSchemaInitialized() => EnsureSchemaInitializedAsync().Wait();
 }

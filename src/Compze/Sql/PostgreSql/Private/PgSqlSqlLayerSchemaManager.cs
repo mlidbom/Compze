@@ -1,11 +1,12 @@
-using System.Threading.Tasks;
 using Compze.Sql.PostgreSql.Private.DocumentDb;
 using Compze.Sql.PostgreSql.Private.Tessaging;
 using Compze.Sql.PostgreSql.Private.TEventStore;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.TransactionsCE;
 using Compze.Utilities.Threading.TasksCE;
+using System.Threading.Tasks;
 
 namespace Compze.Sql.PostgreSql.Private;
 
@@ -19,31 +20,28 @@ class PgSqlSqlLayerSchemaManager(IPgSqlConnectionPool connectionPool)
                                          .CreatedBy((IPgSqlConnectionPool connectionPool) => new PgSqlSqlLayerSchemaManager(connectionPool)));
    }
 
-   bool _initialized = false;
    readonly IPgSqlConnectionPool _connectionPool = connectionPool;
 
-   public async Task EnsureSchemaInitializedAsync()
+   readonly RunOnce _runOnce = new();
+
+   public async Task EnsureSchemaInitializedAsync() => await _runOnce.RunIfFirstCallAsync(async () =>
    {
-      if(!_initialized)
+      await TransactionScopeCe.SuppressAmbientAsync(async () =>
       {
-         _initialized = true;
-         await TransactionScopeCe.SuppressAmbientAsync(async () =>
-         {
-            //todo: test if running them in parallel is faster
-            await _connectionPool.ExecuteNonQueryAsync($"""
+         //todo: test if running them in parallel is faster
+         await _connectionPool.ExecuteNonQueryAsync($"""
 
-                                                        {PgSqlDocumentDbSqlLayer.SchemaCreationSql}
+                                                     {PgSqlDocumentDbSqlLayer.SchemaCreationSql}
 
-                                                        {PgSqlInboxSqlLayer.SchemaCreationSql}
+                                                     {PgSqlInboxSqlLayer.SchemaCreationSql}
 
-                                                        {PgSqlOutboxSqlLayer.SchemaCreationSql}
+                                                     {PgSqlOutboxSqlLayer.SchemaCreationSql}
 
-                                                        {PgSqlTeventStoreSqlLayer.SchemaCreationSql}
+                                                     {PgSqlTeventStoreSqlLayer.SchemaCreationSql}
 
-                                                        """).caf();
-         }).caf();
-      }
-   }
+                                                     """).caf();
+      }).caf();
+   }).caf();
 
    public void EnsureSchemaInitialized() => EnsureSchemaInitializedAsync().Wait();
 }

@@ -1,11 +1,12 @@
-using System.Threading.Tasks;
 using Compze.Sql.MicrosoftSql.Private.DocumentDb;
 using Compze.Sql.MicrosoftSql.Private.Tessaging;
 using Compze.Sql.MicrosoftSql.Private.TEventStore;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.TransactionsCE;
 using Compze.Utilities.Threading.TasksCE;
+using System.Threading.Tasks;
 
 namespace Compze.Sql.MicrosoftSql.Private;
 
@@ -19,31 +20,29 @@ class MsSqlSqlLayerSchemaManager(IMsSqlConnectionPool connectionPool)
                                          .CreatedBy((IMsSqlConnectionPool connectionPool) => new MsSqlSqlLayerSchemaManager(connectionPool)));
    }
 
-   bool _initialized = false;
    readonly IMsSqlConnectionPool _connectionPool = connectionPool;
 
-   public async Task EnsureSchemaInitializedAsync()
+   readonly RunOnce _runOnce = new();
+
+   public async Task EnsureSchemaInitializedAsync() => await _runOnce.RunIfFirstCallAsync(async () =>
    {
-      if(!_initialized)
+      await TransactionScopeCe.SuppressAmbientAsync(async () =>
       {
-         _initialized = true;
-         await TransactionScopeCe.SuppressAmbientAsync(async () =>
-         {
-            //todo: test if running them in parallel is faster
-            await _connectionPool.ExecuteNonQueryAsync($"""
+         //todo: test if running them in parallel is faster
+         await _connectionPool.ExecuteNonQueryAsync(
+            $"""
 
-                                                        {MsSqlDocumentDbSqlLayer.SchemaCreationSql}
+             {MsSqlDocumentDbSqlLayer.SchemaCreationSql}
 
-                                                        {MsSqlInboxSqlLayer.SchemaCreationSql}
+             {MsSqlInboxSqlLayer.SchemaCreationSql}
 
-                                                        {MsSqlOutboxSqlLayer.SchemaCreationSql}
+             {MsSqlOutboxSqlLayer.SchemaCreationSql}
 
-                                                        {MsSqlTeventStoreSqlLayer.SchemaCreationSql}
+             {MsSqlTeventStoreSqlLayer.SchemaCreationSql}
 
-                                                        """).caf();
-         }).caf();
-      }
-   }
+             """).caf();
+      }).caf();
+   }).caf();
 
    public void EnsureSchemaInitialized() => EnsureSchemaInitializedAsync().Wait();
 }
