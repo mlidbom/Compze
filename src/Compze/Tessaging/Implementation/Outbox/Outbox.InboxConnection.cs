@@ -13,7 +13,12 @@ namespace Compze.Tessaging.Implementation.Outbox;
 
 partial class Outbox
 {
-   internal class InboxConnection(ITessagesInFlightTracker tessagesInFlightTracker, HttpEndPointAddress remoteAddress, ITypeMapper typeMapper, IRemotableTessageSerializer serializer, IHttpApiTransportClient httpApiTransportClient) : IInboxConnection
+   internal class InboxConnection(
+      ITessagesInFlightTracker tessagesInFlightTracker,
+      HttpEndPointAddress remoteAddress,
+      ITypeMapper typeMapper,
+      IRemotableTessageSerializer serializer,
+      IHttpApiTransportClient httpApiTransportClient) : IInboxConnection
    {
       TessageTypesInternal.EndpointInformation? _endpointInformation = null;
       IRemoteApiEndpointClient? _remoteApiClient;
