@@ -16,7 +16,7 @@ partial class MySqlDocumentDbSqlLayer
       {
          if(!_initialized)
          {
-            TransactionScopeCe.SuppressAmbientAndExecuteInNewTransaction(() =>
+            TransactionScopeCe.SuppressAmbient(() =>
             {
                _connectionPool.ExecuteNonQuery($"""
 
