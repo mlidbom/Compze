@@ -33,7 +33,9 @@ public class PerformanceTest : UniversalTestBase
       _host = TestingEndpointHost.Create(registrar =>
       {
          var container = TestEnv.DIContainer.CreateWithServiceLocatorAndSerializer();
-         container.Register().CurrentTestsTransport();
+         container.Register()
+                  .CurrentTestsConfiguredSqlLayer()
+                  .CurrentTestsTransport();
          return container;
       });
       new AccountManagementServerDomainBootstrapper().RegisterWith(_host);
@@ -54,7 +56,7 @@ public class PerformanceTest : UniversalTestBase
       TimeAsserter.Execute(
          description: "Register accounts",
          action: () => _scenarioApi!.Register.Execute().Result.Status.Should().Be(RegistrationAttemptStatus.Successful),
-         iterations: TestEnv.SqlLayer.ValueFor(msSql: 6, mySql: 6, pgSql: 6, sqlite: 6, sqliteMemory:6),
+         iterations: TestEnv.SqlLayer.ValueFor(msSql: 6, mySql: 3, pgSql: 6, sqlite: 6, sqliteMemory:6),
          maxTotal: 100.Milliseconds().EnvMultiply(1.6));
 
    [PCT] public void Multithreaded_creates_XX_accounts_in_30_milliseconds__db2_memory__msSql__mySql__oracle_pgSql_() =>

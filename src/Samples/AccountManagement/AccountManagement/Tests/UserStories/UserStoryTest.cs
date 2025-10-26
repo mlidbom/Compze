@@ -21,7 +21,9 @@ public abstract class UserStoryTest : UniversalTestBase
       Host = TestingEndpointHost.Create(registrar =>
       {
          var container = TestEnv.DIContainer.CreateWithServiceLocatorAndSerializer();
-         container.Register().CurrentTestsTransport();
+         container.Register()
+                  .CurrentTestsConfiguredSqlLayer()
+                  .CurrentTestsTransport();
          return container;
       });
       new AccountManagementServerDomainBootstrapper().RegisterWith(Host);

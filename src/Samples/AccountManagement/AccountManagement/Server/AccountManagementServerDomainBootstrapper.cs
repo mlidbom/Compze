@@ -26,11 +26,6 @@ public class AccountManagementServerDomainBootstrapper
 
    static void RegisterDomainComponents(IEndpointBuilder builder)
    {
-      var connectionStringName = builder.Configuration.ConnectionStringName;
-      var register = builder.Container.Register();
-      register.MsSqlConnectionPool(connectionStringName)
-              .MsSqlSqlLayers();
-
       builder.RegisterTeventStore()
              .HandleTaggregate<Account, AccountTevent.Root>();
 

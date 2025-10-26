@@ -19,19 +19,19 @@ partial class SqliteTeventStoreSqlLayer
                                                                            CREATE TABLE IF NOT EXISTS {Tevent.TableName}
                                                                            (
                                                                                {Tevent.InsertionOrder}          INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-                                                                               {Tevent.TaggregateId}             TEXT                              NOT NULL,  
+                                                                               {Tevent.TaggregateId}            TEXT                              NOT NULL,  
                                                                                {Tevent.UtcTimeStamp}            INTEGER                           NOT NULL,   
-                                                                               {Tevent.TeventType}               TEXT                              NOT NULL,    
-                                                                               {Tevent.Tevent}                   TEXT                              NOT NULL,
-                                                                               {Tevent.TeventId}                 TEXT                              NOT NULL UNIQUE,
+                                                                               {Tevent.TeventType}              TEXT                              NOT NULL,    
+                                                                               {Tevent.Tevent}                  TEXT                              NOT NULL,
+                                                                               {Tevent.TeventId}                TEXT                              NOT NULL UNIQUE,
                                                                                {Tevent.InsertedVersion}         INTEGER                           NOT NULL,
                                                                                {Tevent.SqlInsertTimeStamp}      INTEGER                           NOT NULL DEFAULT 0,
                                                                                {Tevent.ReadOrderIntegerPart}    INTEGER                           NOT NULL,    
                                                                                {Tevent.ReadOrderFractionPart}   INTEGER                           NOT NULL,    
                                                                                {Tevent.EffectiveVersion}        INTEGER                           NOT NULL,
-                                                                               {Tevent.TargetTevent}             TEXT                              NULL,
+                                                                               {Tevent.TargetTevent}            TEXT                              NULL,
                                                                                {Tevent.RefactoringType}         INTEGER                           NULL,
-                                                                       
+
                                                                                UNIQUE ({Tevent.TaggregateId}, {Tevent.InsertedVersion}),
                                                                                UNIQUE ({Tevent.ReadOrderIntegerPart}, {Tevent.ReadOrderFractionPart}),
                                                                                FOREIGN KEY ( {Tevent.TargetTevent} ) 
@@ -56,5 +56,3 @@ partial class SqliteTeventStoreSqlLayer
       }
    });
 }
-
-

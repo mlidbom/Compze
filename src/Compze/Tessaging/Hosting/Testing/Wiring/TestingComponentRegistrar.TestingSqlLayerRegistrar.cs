@@ -1,15 +1,8 @@
 using System;
 using Compze.Core.Wiring.Testing.Internal;
-using Compze.Sql.MicrosoftSql;
-using Compze.Sql.MicrosoftSql.Private.Tessaging;
-using Compze.Sql.MicrosoftSql.Private.TEventStore;
 using Compze.Sql.MicrosoftSql.Wiring;
-using Compze.Sql.MySql.Private;
 using Compze.Sql.MySql.Wiring;
-using Compze.Sql.PostgreSql;
 using Compze.Sql.PostgreSql.Wiring;
-using Compze.Sql.Sqlite;
-using Compze.Sql.Sqlite.Private;
 using Compze.Sql.Sqlite.Wiring;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE;
