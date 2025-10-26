@@ -102,6 +102,7 @@ class ServerEndpointBuilder : IEndpointBuilder
                  .InProcessHypermediaNavigator();
 
          Container.Register(
+            Singleton.For<EndpointId>().Instance(Configuration.Id),
             Singleton.For<IDependencyInjectionContainer>().Instance(Container),
             Singleton.For<EndpointConfiguration>().Instance(Configuration),
             Singleton.For<ITessageHandlerRegistry, ITessageHandlerRegistrar>().Instance(_registry)

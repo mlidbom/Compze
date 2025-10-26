@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
 using Compze.Tessaging.Implementation.TessageHandling.Inbox;
 using Compze.Utilities.SystemCE;
+using Compze.Utilities.SystemCE.TransactionsCE;
 using Compze.Utilities.Threading.TasksCE;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Memory;
@@ -38,15 +39,11 @@ class MemoryTransportMessagePoster : ITransportMessagePoster
       switch(tessage.TessageTypeEnum)
       {
          case TransportTessage.TransportTessageType.AtMostOnceTommandWithReturnValue:
+            return (await endpoint.ServiceLocator.Resolve<IInbox>().Receive(incomingTessage).caf()).NotNull().CastTo<TResult>();
+         case TransportTessage.TransportTessageType.NonTransactionalTuery:
             return (await endpoint.ServiceLocator
                                   .Resolve<Inbox.HandlerExecutionEngine>()
                                   .Enqueue(incomingTessage).caf())
-                  .NotNull()
-                  .CastTo<TResult>();
-         case TransportTessage.TransportTessageType.NonTransactionalTuery:
-            return (await endpoint.ServiceLocator
-                                  .Resolve<IInbox>()
-                                  .Receive(incomingTessage).caf())
                   .NotNull()
                   .CastTo<TResult>();
          case TransportTessage.TransportTessageType.ExactlyOnceTevent:
@@ -66,7 +63,7 @@ class MemoryTransportMessagePoster : ITransportMessagePoster
       {
          case TransportTessage.TransportTessageType.ExactlyOnceTevent:
          case TransportTessage.TransportTessageType.AtMostOnceTommand:
-            await endpoint.ServiceLocator.Resolve<IInbox>().Receive(incomingTessage).caf();
+            await TaskCE.Run(async () => await TransactionScopeCe.SuppressAmbientAsync(async () => await endpoint.ServiceLocator.Resolve<IInbox>().Receive(incomingTessage).caf()).caf()).caf();
             return;
          case TransportTessage.TransportTessageType.ExactlyOnceTommand:
          case TransportTessage.TransportTessageType.AtMostOnceTommandWithReturnValue:
