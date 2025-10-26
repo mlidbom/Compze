@@ -10,7 +10,7 @@ namespace Compze.Tessaging.Hosting.Testing.Performance;
 sealed class DeferredConsoleWriter : IDisposable
 {
    // ReSharper disable once MemberCanBePrivate.Global
-   public bool VerboseMode { get; set; } = true;
+   public bool VerboseMode { get; set; } = false;
    class Buffer
    {
       internal readonly StringBuilder Content = new();
