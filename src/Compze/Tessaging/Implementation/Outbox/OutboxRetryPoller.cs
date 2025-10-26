@@ -7,7 +7,7 @@ using Compze.Core.Serialization.Internal;
 using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Core.Tessaging.Internal.SqlLayer;
 using Compze.Core.Tessaging.Public;
-using Compze.Tessaging.Implementation.Transport.Client.Abstractions;
+using Compze.Tessaging.Implementation.Transport.Client.Internal;
 using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.DependencyInjection;
@@ -23,15 +23,15 @@ class OutboxRetryPoller : IDisposable
    internal static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<OutboxRetryPoller>()
                                      .CreatedBy((Outbox.ITessageStorage tessageStorage,
-                                                 IRoutingInboxTransportClient routingInboxTransportClient,
+                                                 IRoutingInboxClient routingInboxClient,
                                                  ITypeMapper typeMapper,
                                                  IRemotableTessageSerializer serializer,
                                                  ITaskRunner taskRunner,
                                                  IBackgroundExceptionReporter exceptionReporter)
-                                                   => new OutboxRetryPoller(tessageStorage, routingInboxTransportClient, typeMapper, serializer, taskRunner, exceptionReporter)));
+                                                   => new OutboxRetryPoller(tessageStorage, routingInboxClient, typeMapper, serializer, taskRunner, exceptionReporter)));
 
    readonly Outbox.ITessageStorage _tessageStorage;
-   readonly IRoutingInboxTransportClient _routingInboxTransportClient;
+   readonly IRoutingInboxClient _routingInboxClient;
    readonly ITypeMapper _typeMapper;
    readonly IRemotableTessageSerializer _serializer;
    readonly ITaskRunner _taskRunner;
@@ -42,14 +42,14 @@ class OutboxRetryPoller : IDisposable
    static readonly TimeSpan TessageAgeThatIsConsideredFailed = TimeSpan.FromSeconds(5);
 
    OutboxRetryPoller(Outbox.ITessageStorage tessageStorage,
-                     IRoutingInboxTransportClient routingInboxTransportClient,
+                     IRoutingInboxClient routingInboxClient,
                      ITypeMapper typeMapper,
                      IRemotableTessageSerializer serializer,
                      ITaskRunner taskRunner,
                      IBackgroundExceptionReporter exceptionReporter)
    {
       _tessageStorage = tessageStorage;
-      _routingInboxTransportClient = routingInboxTransportClient;
+      _routingInboxClient = routingInboxClient;
       _typeMapper = typeMapper;
       _serializer = serializer;
       _taskRunner = taskRunner;
@@ -140,7 +140,7 @@ class OutboxRetryPoller : IDisposable
          {
             case IExactlyOnceTevent exactlyOnceTevent:
             {
-               var connections = _routingInboxTransportClient.SubscriberConnectionsFor(exactlyOnceTevent);
+               var connections = _routingInboxClient.SubscriberConnectionsFor(exactlyOnceTevent);
                connection = connections.FirstOrDefault(c => c.EndpointInformation.Id.GuidValue == endpointId)
                          ?? throw new InvalidOperationException($"No subscriber connection found for endpoint {endpointId}");
                sendTask = connection.SendAsync(exactlyOnceTevent);
@@ -148,7 +148,7 @@ class OutboxRetryPoller : IDisposable
             }
             case IExactlyOnceTommand exactlyOnceTommand:
             {
-               connection = _routingInboxTransportClient.ConnectionToHandlerFor(exactlyOnceTommand);
+               connection = _routingInboxClient.ConnectionToHandlerFor(exactlyOnceTommand);
                if(connection.EndpointInformation.Id.GuidValue != endpointId)
                {
                   throw new InvalidOperationException($"Tommand routing changed - expected endpoint {endpointId}, got {connection.EndpointInformation.Id.GuidValue}");

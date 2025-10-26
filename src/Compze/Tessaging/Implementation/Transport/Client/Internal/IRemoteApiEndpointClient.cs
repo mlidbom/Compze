@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using Compze.Core.Tessaging.Public;
 
-namespace Compze.Tessaging.Implementation.Transport.Client.Abstractions;
+namespace Compze.Tessaging.Implementation.Transport.Client.Internal;
 
 ///<summary>A client to one specific API endpoint</summary>
 interface IRemoteApiEndpointClient

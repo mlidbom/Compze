@@ -5,7 +5,7 @@ using System.Transactions;
 using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Core.Tessaging.Public;
 using Compze.Tessaging.Implementation.Abstractions;
-using Compze.Tessaging.Implementation.Transport.Client.Abstractions;
+using Compze.Tessaging.Implementation.Transport.Client.Internal;
 using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.DependencyInjection;
@@ -27,23 +27,23 @@ partial class Outbox : IOutbox
    internal static void RegisterWith(IComponentRegistrar registrar)
    {
       registrar.Register(Singleton.For<IOutbox>()
-                                  .CreatedBy((EndpointConfiguration configuration, IRoutingInboxTransportClient routingInboxTransportClient, ITessageStorage tessageStorage, IBackgroundExceptionReporter exceptionReporter, OutboxRetryPoller retryPoller)
-                                                => new Outbox(routingInboxTransportClient, tessageStorage, configuration, exceptionReporter, retryPoller)));
+                                  .CreatedBy((EndpointConfiguration configuration, IRoutingInboxClient routingInboxClient, ITessageStorage tessageStorage, IBackgroundExceptionReporter exceptionReporter, OutboxRetryPoller retryPoller)
+                                                => new Outbox(routingInboxClient, tessageStorage, configuration, exceptionReporter, retryPoller)));
       registrar.Register(TessageStorage.RegisterWith);
       registrar.Register(OutboxRetryPoller.RegisterWith);
    }
 
    readonly ITessageStorage _storage;
    readonly EndpointConfiguration _configuration;
-   readonly IRoutingInboxTransportClient _routingInboxTransportClient;
+   readonly IRoutingInboxClient _routingInboxClient;
    readonly IBackgroundExceptionReporter _exceptionReporter;
    readonly OutboxRetryPoller _retryPoller;
 
-   Outbox(IRoutingInboxTransportClient routingInboxTransportClient, ITessageStorage tessageStorage, EndpointConfiguration configuration, IBackgroundExceptionReporter exceptionReporter, OutboxRetryPoller retryPoller)
+   Outbox(IRoutingInboxClient routingInboxClient, ITessageStorage tessageStorage, EndpointConfiguration configuration, IBackgroundExceptionReporter exceptionReporter, OutboxRetryPoller retryPoller)
    {
       _storage = tessageStorage;
       _configuration = configuration;
-      _routingInboxTransportClient = routingInboxTransportClient;
+      _routingInboxClient = routingInboxClient;
       _exceptionReporter = exceptionReporter;
       _retryPoller = retryPoller;
    }
@@ -51,7 +51,7 @@ partial class Outbox : IOutbox
    public void PublishTransactionally(IExactlyOnceTevent exactlyOnceTevent)
    {
       Assert.State.NotNull(Transaction.Current);
-      var connections = _routingInboxTransportClient.SubscriberConnectionsFor(exactlyOnceTevent)
+      var connections = _routingInboxClient.SubscriberConnectionsFor(exactlyOnceTevent)
                                   .Where(connection => connection.EndpointInformation.Id != _configuration.Id)
                                   .ToArray(); //We dispatch tevents to ourselves synchronously so don't go doing it again here.;
 
@@ -69,7 +69,7 @@ partial class Outbox : IOutbox
    public void SendTransactionally(IExactlyOnceTommand exactlyOnceTommand)
    {
       Assert.State.NotNull(Transaction.Current);
-      var connection = _routingInboxTransportClient.ConnectionToHandlerFor(exactlyOnceTommand);
+      var connection = _routingInboxClient.ConnectionToHandlerFor(exactlyOnceTommand);
 
       _storage.SaveTessage(exactlyOnceTommand, connection.EndpointInformation.Id);
 

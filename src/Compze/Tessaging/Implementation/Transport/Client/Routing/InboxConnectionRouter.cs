@@ -4,7 +4,7 @@ using System.Linq;
 using Compze.Core.Refactoring.Naming.Internal;
 using Compze.Core.Tessaging.Public;
 using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
-using Compze.Tessaging.Implementation.Transport.Client.Abstractions;
+using Compze.Tessaging.Implementation.Transport.Client.Internal;
 using Compze.Utilities.SystemCE.ReflectionCE;
 using Compze.Utilities.Threading;
 using Compze.Utilities.Threading.ResourceAccess;

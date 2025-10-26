@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Compze.Core.Tessaging.Public;
 using Compze.Tessaging.Implementation.Abstractions;
 
-namespace Compze.Tessaging.Implementation.Transport.Client.Abstractions;
+namespace Compze.Tessaging.Implementation.Transport.Client.Internal;
 
 interface IInboxConnection : IDisposable
 {

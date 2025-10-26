@@ -7,8 +7,8 @@ using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Core.Tessaging.Public;
 using Compze.Core.Tessaging.Transport.Internal;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
-using Compze.Tessaging.Implementation.Transport.Client.Abstractions;
 using Compze.Tessaging.Implementation.Transport.Client.Implementation.Http;
+using Compze.Tessaging.Implementation.Transport.Client.Internal;
 using Compze.Tessaging.Implementation.Transport.Client.Routing;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.DependencyInjection;
@@ -18,21 +18,21 @@ using Compze.Utilities.SystemCE;
 using Compze.Utilities.Threading;
 using Compze.Utilities.Threading.TasksCE;
 
-namespace Compze.Tessaging.Implementation.Transport.Client.Implementation;
+namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Universal;
 
 static class TransportRegistrar
 {
    internal static IComponentRegistrar Transport(this IComponentRegistrar registrar)
-      => registrar.Register(RoutingInboxTransportClient.RegisterWith);
+      => registrar.Register(RoutingInboxClient.RegisterWith);
 }
 
-partial class RoutingInboxTransportClient : IRoutingInboxTransportClient, IDisposable
+partial class RoutingInboxClient : IRoutingInboxClient, IDisposable
 {
    internal static void RegisterWith(IComponentRegistrar registrar)
-      => registrar.Register(Singleton.For<IRoutingInboxTransportClient>().CreatedBy((ITessagesInFlightTracker tessagesInFlightTracker, ITypeMapper typeMapper, IRemotableTessageSerializer serializer, IHttpApiTransportClient httpApiTransportClient)
-                                                                     => new RoutingInboxTransportClient(tessagesInFlightTracker, typeMapper, serializer, httpApiTransportClient)));
+      => registrar.Register(Singleton.For<IRoutingInboxClient>().CreatedBy((ITessagesInFlightTracker tessagesInFlightTracker, ITypeMapper typeMapper, IRemotableTessageSerializer serializer, IHttpApiTransportClient httpApiTransportClient)
+                                                                     => new RoutingInboxClient(tessagesInFlightTracker, typeMapper, serializer, httpApiTransportClient)));
 
-   RoutingInboxTransportClient(ITessagesInFlightTracker tessagesInFlightTracker, ITypeMapper typeMapper, IRemotableTessageSerializer serializer, IHttpApiTransportClient httpApiTransportClient)
+   RoutingInboxClient(ITessagesInFlightTracker tessagesInFlightTracker, ITypeMapper typeMapper, IRemotableTessageSerializer serializer, IHttpApiTransportClient httpApiTransportClient)
    {
       _tessagesInFlightTracker = tessagesInFlightTracker;
       _typeMapper = typeMapper;

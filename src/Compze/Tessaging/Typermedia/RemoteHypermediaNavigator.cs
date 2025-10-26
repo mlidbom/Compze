@@ -2,7 +2,7 @@ using System.Threading.Tasks;
 using Compze.Core.Tessaging.Public;
 using Compze.Core.Tessaging.Teventive.Infrastructure.Validation;
 using Compze.Core.Tessaging.Typermedia.Public;
-using Compze.Tessaging.Implementation.Transport.Client.Abstractions;
+using Compze.Tessaging.Implementation.Transport.Client.Internal;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Threading.TasksCE;
@@ -22,17 +22,17 @@ static class RemoteHypermediaNavigatorRegistrar
 {
    internal static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Scoped.For<IRemoteHypermediaNavigator>()
-                                  .CreatedBy((IRoutingInboxTransportClient routingInboxTransportClient) => new RemoteHypermediaNavigator(routingInboxTransportClient)));
+                                  .CreatedBy((IRoutingInboxClient routingInboxClient) => new RemoteHypermediaNavigator(routingInboxClient)));
 
-   readonly IRoutingInboxTransportClient _routingInboxTransportClient;
-   public RemoteHypermediaNavigator(IRoutingInboxTransportClient routingInboxTransportClient) => _routingInboxTransportClient = routingInboxTransportClient;
+   readonly IRoutingInboxClient _routingInboxClient;
+   public RemoteHypermediaNavigator(IRoutingInboxClient routingInboxClient) => _routingInboxClient = routingInboxClient;
 
    public void Post(IAtMostOnceHypermediaTommand tommand) => PostAsync(tommand).WaitUnwrappingException();
 
    public Task PostAsync(IAtMostOnceHypermediaTommand tommand)
    {
       TessageInspector.AssertValidToSendRemote(tommand);
-      return _routingInboxTransportClient.PostAsync(tommand);
+      return _routingInboxClient.PostAsync(tommand);
    }
 
    public TResult Post<TResult>(IAtMostOnceTommand<TResult> tommand) => PostAsync(tommand).ResultUnwrappingException();
@@ -40,7 +40,7 @@ static class RemoteHypermediaNavigatorRegistrar
    public Task<TResult> PostAsync<TResult>(IAtMostOnceTommand<TResult> tommand)
    {
       TessageInspector.AssertValidToSendRemote(tommand);
-      return _routingInboxTransportClient.PostAsync(tommand);
+      return _routingInboxClient.PostAsync(tommand);
    }
 
    public async Task<TResult> GetAsync<TResult>(IRemotableTuery<TResult> tuery)
@@ -52,7 +52,7 @@ static class RemoteHypermediaNavigatorRegistrar
       return await GetAsyncAfterFastPathOptimization(tuery).caf();
    }
 
-   async Task<TResult> GetAsyncAfterFastPathOptimization<TResult>(IRemotableTuery<TResult> tuery) => await _routingInboxTransportClient.GetAsync(tuery).caf();
+   async Task<TResult> GetAsyncAfterFastPathOptimization<TResult>(IRemotableTuery<TResult> tuery) => await _routingInboxClient.GetAsync(tuery).caf();
 
    TResult IRemoteHypermediaNavigator.Get<TResult>(IRemotableTuery<TResult> tuery) => GetAsync(tuery).ResultUnwrappingException();
 }

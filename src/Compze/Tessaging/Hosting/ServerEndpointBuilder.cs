@@ -11,9 +11,10 @@ using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
 using Compze.Tessaging.Implementation.Outbox;
 using Compze.Tessaging.Implementation.TessageHandling.Inbox;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
-using Compze.Tessaging.Implementation.Transport.Client.Abstractions;
 using Compze.Tessaging.Implementation.Transport.Client.Implementation;
 using Compze.Tessaging.Implementation.Transport.Client.Implementation.Http;
+using Compze.Tessaging.Implementation.Transport.Client.Implementation.Universal;
+using Compze.Tessaging.Implementation.Transport.Client.Internal;
 using Compze.Tessaging.Implementation.Transport.Client.Routing;
 using Compze.Tessaging.Implementation.Transport.Client.Routing.Abstractions;
 using Compze.Tessaging.SystemCE.ThreadingCE;
@@ -46,7 +47,7 @@ class ServerEndpointBuilder : IEndpointBuilder
       var serviceLocator = Container.ServiceLocator;
       var endpoint = new Endpoint(serviceLocator,
                                   serviceLocator.Resolve<ITessagesInFlightTracker>(),
-                                  serviceLocator.Resolve<IRoutingInboxTransportClient>(),
+                                  serviceLocator.Resolve<IRoutingInboxClient>(),
                                   serviceLocator.Resolve<IEndpointRegistry>(),
                                   Configuration);
       _builtSuccessfully = true;

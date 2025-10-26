@@ -3,9 +3,9 @@ using System.Threading.Tasks;
 using Compze.Core.Tessaging.Public;
 using Compze.Core.Tessaging.Transport.Internal;
 
-namespace Compze.Tessaging.Implementation.Transport.Client.Abstractions;
+namespace Compze.Tessaging.Implementation.Transport.Client.Internal;
 
-interface IRoutingInboxTransportClient
+interface IRoutingInboxClient
 {
     Task ConnectAsync(HttpEndPointAddress remoteEndpointAddress);
     void Start();
