@@ -16,7 +16,7 @@ partial class SqliteDocumentDbSqlLayer
       {
          if(!_initialized)
          {
-            TransactionScopeCe.SuppressAmbientAndExecuteInNewTransaction(() =>
+            TransactionScopeCe.SuppressAmbient(() =>
             {
                _connectionPool.ExecuteNonQuery($"""
 

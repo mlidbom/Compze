@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
+using Compze.Utilities.SystemCE.TransactionsCE;
 using Compze.Utilities.Threading.TasksCE;
-using Tessage =  Compze.Core.Tessaging.Internal.SqlLayer.IServiceBusSqlLayer.InboxTessageDatabaseSchemaStrings;
+using Tessage = Compze.Core.Tessaging.Internal.SqlLayer.IServiceBusSqlLayer.InboxTessageDatabaseSchemaStrings;
 
 namespace Compze.Sql.Sqlite.Private.Tessaging;
 
@@ -8,24 +9,23 @@ partial class SqliteInboxSqlLayer
 {
    static class SchemaManager
    {
-      public static async Task EnsureTablesExistAsync(ISqliteConnectionPool connectionFactory)
-      {
-         await connectionFactory.ExecuteNonQueryAsync($"""
+      public static async Task EnsureTablesExistAsync(ISqliteConnectionPool connectionFactory) =>
+         await TransactionScopeCe.SuppressAmbientAsync(async () =>
+                                                          await connectionFactory.ExecuteNonQueryAsync($"""
 
-                                            CREATE TABLE IF NOT EXISTS {Tessage.TableName}
-                                            (
-                                                {Tessage.GeneratedId}         INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-                                                {Tessage.TypeId}              TEXT                              NOT NULL,
-                                                {Tessage.TessageId}           TEXT                              NOT NULL UNIQUE,
-                                                {Tessage.Status}              INTEGER                           NOT NULL,
-                                                {Tessage.Body}                TEXT                              NOT NULL,
-                                                {Tessage.ExceptionCount}      INTEGER                           NOT NULL DEFAULT 0,
-                                                {Tessage.ExceptionType}       TEXT                              NULL,
-                                                {Tessage.ExceptionStackTrace} TEXT                              NULL,
-                                                {Tessage.ExceptionTessage}    TEXT                              NULL
-                                            )
+                                                                                                        CREATE TABLE IF NOT EXISTS {Tessage.TableName}
+                                                                                                        (
+                                                                                                            {Tessage.GeneratedId}         INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                                                                                                            {Tessage.TypeId}              TEXT                              NOT NULL,
+                                                                                                            {Tessage.TessageId}           TEXT                              NOT NULL UNIQUE,
+                                                                                                            {Tessage.Status}              INTEGER                           NOT NULL,
+                                                                                                            {Tessage.Body}                TEXT                              NOT NULL,
+                                                                                                            {Tessage.ExceptionCount}      INTEGER                           NOT NULL DEFAULT 0,
+                                                                                                            {Tessage.ExceptionType}       TEXT                              NULL,
+                                                                                                            {Tessage.ExceptionStackTrace} TEXT                              NULL,
+                                                                                                            {Tessage.ExceptionTessage}    TEXT                              NULL
+                                                                                                        )
 
-                                            """).caf();
-      }
+                                                                                                        """).caf()).caf();
    }
 }
