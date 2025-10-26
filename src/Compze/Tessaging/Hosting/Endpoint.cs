@@ -8,7 +8,7 @@ using Compze.Tessaging.Implementation.Abstractions;
 using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Tessaging.Implementation.Transport.Client.Abstractions;
-using Compze.Tessaging.Implementation.Transport.Routing.Abstractions;
+using Compze.Tessaging.Implementation.Transport.Client.Routing.Abstractions;
 using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Threading.TasksCE;

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Compze.Core.Tessaging.Transport.Internal;
 
-namespace Compze.Tessaging.Implementation.Transport.Routing.Abstractions;
+namespace Compze.Tessaging.Implementation.Transport.Client.Routing.Abstractions;
 
 interface IEndpointRegistry
 {

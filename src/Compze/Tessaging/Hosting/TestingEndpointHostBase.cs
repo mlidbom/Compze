@@ -6,7 +6,7 @@ using Compze.Core.Refactoring.Naming.Internal.Implementation;
 using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Core.Tessaging.Transport.Internal;
 using Compze.Tessaging.Implementation.Transport;
-using Compze.Tessaging.Implementation.Transport.Routing.Abstractions;
+using Compze.Tessaging.Implementation.Transport.Client.Routing.Abstractions;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
