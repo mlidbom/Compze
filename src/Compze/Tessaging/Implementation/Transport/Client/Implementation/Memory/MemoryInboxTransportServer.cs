@@ -9,6 +9,8 @@ using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using System;
 using System.Threading.Tasks;
+using Compze.Core.Refactoring.Naming.Internal;
+using Compze.Core.Serialization.Internal;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.Threading.TasksCE;
 
@@ -18,16 +20,20 @@ static class MemoryInboxTransportServerRegistrar
 {
    internal static IComponentRegistrar MemoryTransport(this IComponentRegistrar registrar) =>
       registrar.Register(Singleton.For<IInboxTransportServer, MemoryInboxTransportServer>()
-                                  .CreatedBy((EndpointId endpointId, IServiceLocator serviceLocator) => new MemoryInboxTransportServer(endpointId, serviceLocator)));
+                                  .CreatedBy((EndpointId endpointId, ITypeMapper typeMapper, IRemotableTessageSerializer serializer, IServiceLocator serviceLocator) => new MemoryInboxTransportServer(endpointId, typeMapper, serializer, serviceLocator)));
 }
 
 class MemoryInboxTransportServer : IInboxTransportServer
 {
+   readonly ITypeMapper _typeMapper;
+   readonly IRemotableTessageSerializer _serializer;
    readonly LazyCE<IInbox> _inbox;
    readonly LazyCE<Inbox.HandlerExecutionEngine> _engine;
 
-   internal MemoryInboxTransportServer(EndpointId endpointId, IServiceLocator serviceLocator)
+   internal MemoryInboxTransportServer(EndpointId endpointId, ITypeMapper typeMapper, IRemotableTessageSerializer serializer, IServiceLocator serviceLocator)
    {
+      _typeMapper = typeMapper;
+      _serializer = serializer;
       _inbox = new LazyCE<IInbox>(serviceLocator.Resolve<IInbox>);
       _engine = new LazyCE<Inbox.HandlerExecutionEngine>(serviceLocator.Resolve<Inbox.HandlerExecutionEngine>);;
       Address = new Uri($"memory://{endpointId.GuidValue.ToString()}");
@@ -53,7 +59,7 @@ class MemoryInboxTransportServer : IInboxTransportServer
 
    public async Task<TResult> PostAsync<TResult>(TransportTessage.OutGoing tessage, object realTessage, EndPointAddress endPointAddress)
    {
-      var incomingTessage = tessage.ToIncoming();
+      var incomingTessage = new TransportTessage.InComing(tessage.Body, tessage.Type, tessage.Id, _typeMapper, _serializer);
       try
       {
          if(!Running)
@@ -84,7 +90,7 @@ class MemoryInboxTransportServer : IInboxTransportServer
 
    public async Task PostAsync(TransportTessage.OutGoing tessage, object realTessage, EndPointAddress endPointAddress)
    {
-      var incomingTessage = tessage.ToIncoming();
+      var incomingTessage = new TransportTessage.InComing(tessage.Body, tessage.Type, tessage.Id, _typeMapper, _serializer);
       try
       {
          if(!Running)

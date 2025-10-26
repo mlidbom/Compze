@@ -53,8 +53,6 @@ static class TransportTessage
 
    internal class OutGoing
    {
-      public ITypeMapper TypeMapper { get; }
-      public IRemotableTessageSerializer Serializer { get; }
       public bool IsExactlyOnceDeliveryTessage { get; }
       public readonly Guid Id;
 
@@ -66,22 +64,17 @@ static class TransportTessage
       {
          var tessageId = (tessage as IAtMostOnceTessage)?.TessageId ?? Guid.CreateVersion7();
          var body = serializer.SerializeTessage(tessage);
-         return new OutGoing(typeMapper, serializer, typeMapper.GetId(tessage.GetType()), tessage.GetType(), tessageId, body, tessage is IExactlyOnceTessage);
+         return new OutGoing(typeMapper.GetId(tessage.GetType()), tessage.GetType(), tessageId, body, tessage is IExactlyOnceTessage);
       }
 
-      OutGoing(ITypeMapper typeMapper, IRemotableTessageSerializer serializer, TypeId typeId, Type type, Guid id, string body, bool isExactlyOnceDeliveryTessage)
+      OutGoing(TypeId typeId, Type type, Guid id, string body, bool isExactlyOnceDeliveryTessage)
       {
-         TypeMapper = typeMapper;
-         Serializer = serializer;
          IsExactlyOnceDeliveryTessage = isExactlyOnceDeliveryTessage;
          Type = typeId;
          Id = id;
          Body = body;
          TessageTypeEnum = GetTessageTypeEnum(type);
       }
-
-      internal InComing ToIncoming() =>
-         new(Body, Type, Id, TypeMapper, Serializer);
    }
 
    static TransportTessageType GetTessageTypeEnum(Type tessageType)
