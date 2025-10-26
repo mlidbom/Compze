@@ -90,7 +90,7 @@ public abstract class EndpointHostTestBase : UniversalTestBase
          builder =>
          {
             builder.Container.Register()
-                   .AspNetCoreTransport()
+                   .CurrentTestsTransport()
                    .CurrentTestsConfiguredSqlLayer("DDD0A67C-D2A2-4197-9AF8-38B6AEDF8FA6");
 
             builder.RegisterTeventStore()
@@ -127,7 +127,7 @@ public abstract class EndpointHostTestBase : UniversalTestBase
                                              builder =>
                                              {
                                                 builder.Container.Register()
-                                                       .AspNetCoreTransport()
+                                                       .CurrentTestsTransport()
                                                        .CurrentTestsConfiguredSqlLayer("E72924D3-5279-44B5-B20D-D682E537672B");
                                                 builder.RegisterHandlers.ForTevent((MyTaggregateTevent.IRoot _) => MyRemoteTaggregateTeventHandlerThreadGate.AwaitPassThrough());
                                              });

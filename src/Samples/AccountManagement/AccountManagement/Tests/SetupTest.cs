@@ -13,7 +13,12 @@ public class SetupTest : UniversalTestBase
 {
    [PCT] public async Task TestSetup()
    {
-      var host = TestingEndpointHost.Create(registrar => TestEnv.DIContainer.CreateWithServiceLocatorAndSerializer());
+      var host = TestingEndpointHost.Create(registrar =>
+      {
+         var container = TestEnv.DIContainer.CreateWithServiceLocatorAndSerializer();
+         container.Register().CurrentTestsTransport();
+         return container;
+      });
       new AccountManagementServerDomainBootstrapper().RegisterWith(host);
       host.RegisterClientEndpoint(setup: AccountApi.RegisterWithClientEndpoint);
       await host.StartAsync().caf();

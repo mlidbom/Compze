@@ -34,7 +34,7 @@ public class TaskRunnerExceptionHandlingTests : UniversalTestBase, IAsyncLifetim
          builder =>
          {
             builder.Container.Register()
-                   .AspNetCoreTransport()
+                   .CurrentTestsTransport()
                    .CurrentTestsConfiguredSqlLayer();
          });
 

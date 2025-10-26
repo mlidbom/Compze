@@ -13,7 +13,7 @@ using Compze.Utilities.Threading.TasksCE;
 
 namespace Compze.Tessaging.Hosting;
 
-public class TestingEndpointHostBase : EndpointHost, ITestingEndpointHost, IEndpointRegistry
+public abstract class TestingEndpointHostBase : EndpointHost, ITestingEndpointHost, IEndpointRegistry
 {
    readonly List<Exception> _expectedExceptions = [];
    public TestingEndpointHostBase(IComponentRegistrar registrar, Func<IComponentRegistrar, IDependencyInjectionContainer> containerFactory) : base(registrar, containerFactory) => 
@@ -32,8 +32,7 @@ public class TestingEndpointHostBase : EndpointHost, ITestingEndpointHost, IEndp
       return RegisterEndpoint(name, endpointId, setup);
    }
 
-   public IEndpoint RegisterClientEndpointForRegisteredEndpoints() =>
-      RegisterClientEndpoint(_ => {});
+   public abstract IEndpoint RegisterClientEndpointForRegisteredEndpoints();
 
    public TException AssertThrown<TException>() where TException : Exception
    {

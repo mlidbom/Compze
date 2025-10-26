@@ -29,7 +29,7 @@ public abstract class PerformanceTestBase : UniversalTestBase
          builder =>
          {
             builder.Container.Register()
-                   .AspNetCoreTransport()
+                   .CurrentTestsTransport()
                    .CurrentTestsConfiguredSqlLayer();
             builder.RegisterHandlers
                    .ForTuery((MyRemoteTuery _) => new MyTueryResult())

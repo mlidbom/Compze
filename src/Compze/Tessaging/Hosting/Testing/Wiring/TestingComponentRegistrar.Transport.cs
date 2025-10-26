@@ -18,11 +18,25 @@ public static class TestingComponentRegistrarTransport
       switch(TestEnv.Transport)
       {
          case Transport.AspNetCore:
-            return @this.AspNetCoreTransport()
-                        .HttpApiTransportClient();
+            return @this.AspNetCoreTransport();
          case Transport.Memory:
             return @this.MemoryTransport()
                         .MemoryApiTransportClient();
+         default:
+            throw new ArgumentOutOfRangeException();
+      }
+   }
+
+   public static IComponentRegistrar CurrentTestsTransportMessagePoster(this IComponentRegistrar @this)
+   {
+      switch(TestEnv.Transport)
+      {
+         case Transport.AspNetCore:
+            return @this
+                  .HttpClientFactoryCE()
+                  .HttpApiTransportClient();
+         case Transport.Memory:
+            return @this.MemoryApiTransportClient();
          default:
             throw new ArgumentOutOfRangeException();
       }

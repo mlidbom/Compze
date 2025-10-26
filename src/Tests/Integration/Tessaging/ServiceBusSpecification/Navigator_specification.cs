@@ -36,7 +36,7 @@ public class Navigator_specification : UniversalTestBase
          builder =>
          {
             builder.Container.Register()
-                   .AspNetCoreTransport()
+                   .CurrentTestsTransport()
                    .CurrentTestsConfiguredSqlLayer();
             builder.RegisterHandlers
                    .ForTuery((GetUserTuery tuery) => tueryResults.Single(result => result.Name == tuery.Name))

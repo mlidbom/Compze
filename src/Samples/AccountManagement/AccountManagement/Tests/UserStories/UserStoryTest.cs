@@ -18,7 +18,12 @@ public abstract class UserStoryTest : UniversalTestBase
 
    protected UserStoryTest()
    {
-      Host = TestingEndpointHost.Create(runMode => TestEnv.DIContainer.CreateWithServiceLocatorAndSerializer());
+      Host = TestingEndpointHost.Create(registrar =>
+      {
+         var container = TestEnv.DIContainer.CreateWithServiceLocatorAndSerializer();
+         container.Register().CurrentTestsTransport();
+         return container;
+      });
       new AccountManagementServerDomainBootstrapper().RegisterWith(Host);
       _clientEndpoint = Host.RegisterClientEndpoint(setup:AccountApi.RegisterWithClientEndpoint);
    }
