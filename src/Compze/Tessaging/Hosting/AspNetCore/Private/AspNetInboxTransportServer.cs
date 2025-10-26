@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Compze.Core.Tessaging.Transport.Internal;
@@ -32,7 +33,7 @@ class AspNetInboxTransportServer : IInboxTransportServer
       _serviceLocator = serviceLocator;
    }
 
-   public string Address => _webApplication!.Urls.First();
+   public Uri Address => new Uri(_webApplication!.Urls.First());
 
    public async Task StartAsync() => _webApplication = await StartServerAsync().caf();
 

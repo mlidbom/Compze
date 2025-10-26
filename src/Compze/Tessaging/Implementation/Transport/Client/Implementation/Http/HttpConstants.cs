@@ -6,15 +6,15 @@ static class HttpConstants
    {
       internal static class Typermedia
       {
-         internal const string TommandNoResult = "/internal/rpc/tommand-no-result";
-         internal const string Tuery = "/internal/rpc/tuery";
-         internal const string TommandWithResult = "/internal/rpc/tommand-with-result";
+         internal const string TommandNoResult = "internal/rpc/tommand-no-result";
+         internal const string Tuery = "internal/rpc/tuery";
+         internal const string TommandWithResult = "internal/rpc/tommand-with-result";
       }
 
       internal static class Tessaging
       {
-         internal const string Tevent = "/internal/tessaging/tevent";
-         internal const string Tommand = "/internal/tessaging/tommand";
+         internal const string Tevent = "internal/tessaging/tevent";
+         internal const string Tommand = "internal/tessaging/tommand";
       }
    }
 

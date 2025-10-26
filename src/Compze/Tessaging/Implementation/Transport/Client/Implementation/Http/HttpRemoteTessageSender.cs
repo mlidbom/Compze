@@ -23,7 +23,7 @@ class HttpExactlyOnceTessageSender(
    readonly ITypeMapper _typeMapper = typeMapper;
    readonly IRemotableTessageSerializer _serializer = serializer;
    readonly ITessagesInFlightTracker _tessagesInFlightTracker = tessagesInFlightTracker;
-   readonly string _remoteAddress = remoteAddress.AspNetAddress;
+   readonly Uri _remoteAddress = remoteAddress.Uri;
    readonly EndpointId _remoteEndpointId = remoteEndpointId;
 
    public async Task SendAsync(IExactlyOnceTommand tommand)
