@@ -3,7 +3,6 @@ using Compze.Core.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Core.Tessaging.Public;
 using Compze.Core.Time.Public;
 using Compze.Tessaging.Hosting;
-using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
@@ -12,7 +11,6 @@ using FluentAssertions;
 using FluentAssertions.Extensions;
 using System;
 using System.Threading.Tasks;
-using Compze.Tessaging.Hosting.Testing.Wiring;
 
 namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification;
 
@@ -25,7 +23,7 @@ public class When_scheduling_tommands_to_be_sent_in_the_future : UniversalTestBa
 
    public When_scheduling_tommands_to_be_sent_in_the_future()
    {
-      _host = TestingEndpointHost.Create(TestEnv.DIContainer.CreateWithServiceLocator());
+      _host = TestingEndpointHost.Create();
       _receivedTommandGate = ThreadGate.CreateOpenWithTimeout(1.Seconds());
       _endpoint = _host.RegisterEndpoint(
          "endpoint",

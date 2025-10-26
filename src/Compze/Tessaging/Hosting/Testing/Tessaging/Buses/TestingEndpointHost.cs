@@ -1,17 +1,44 @@
 using System;
+using System.Threading.Tasks;
 using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.Utilities.Threading.TasksCE;
 
 namespace Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 
 public class TestingEndpointHost : TestingEndpointHostBase
 {
-   public TestingEndpointHost(IComponentRegistrar registrar, IDependencyInjectionContainer rootContainer) : base(registrar, rootContainer.Clone) {}
+   IDependencyInjectionContainer? _ownedContainer = null;
+   public TestingEndpointHost(IComponentRegistrar registrar, IDependencyInjectionContainer rootContainer) : base(registrar, rootContainer.Clone)
+   {
 
-   public static ITestingEndpointHost Create(IDependencyInjectionContainer rootContainer)
-      => new TestingEndpointHost(new TestingComponentRegistrar(), rootContainer);
+   }
 
+   public static ITestingEndpointHost Create(IDependencyInjectionContainer? rootContainer = null)
+   {
+      var usedContainer = rootContainer ?? TestEnv.DIContainer.CreateWithServiceLocator();
+
+
+      var host = new TestingEndpointHost(new TestingComponentRegistrar(), usedContainer);
+
+      if(rootContainer == null)
+      {
+         host._ownedContainer = usedContainer;
+      }
+
+      return host;
+   }
+
+   protected override async ValueTask DisposeAsync(bool disposing)
+   {
+      if(_ownedContainer != null)
+      {
+         await _ownedContainer.DisposeAsync();
+      }
+
+      await base.DisposeAsync(disposing).caf();
+   }
 
    public override IEndpoint RegisterEndpoint(string name, EndpointId id, Action<IEndpointBuilder> setup)
       => base.RegisterEndpoint(name,

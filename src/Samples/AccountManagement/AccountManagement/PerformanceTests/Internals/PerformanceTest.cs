@@ -7,7 +7,6 @@ using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Performance;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
-using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.SystemCE.CollectionsCE.ConcurrentCE;
 using Compze.Tests.Infrastructure.XUnit;
@@ -28,7 +27,7 @@ public class PerformanceTest : UniversalTestBase
 
    protected override async Task InitializeAsyncInternal()
    {
-      _host = TestingEndpointHost.Create(TestEnv.DIContainer.CreateWithServiceLocator());
+      _host = TestingEndpointHost.Create();
       new AccountManagementServerDomainBootstrapper().RegisterWith(_host);
       _clientEndpoint = _host.RegisterClientEndpoint(setup: AccountApi.RegisterWithClientEndpoint);
       _scenarioApi = new AccountScenarioApi(_clientEndpoint);

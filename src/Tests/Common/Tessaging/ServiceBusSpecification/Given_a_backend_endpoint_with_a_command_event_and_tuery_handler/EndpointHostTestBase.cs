@@ -14,6 +14,7 @@ using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tessaging.Teventive.TeventStore.Wiring;
 using Compze.Tessaging.TyperMediaApi.EventStore;
 using Compze.Tests.Infrastructure;
+using Compze.Utilities.Functional;
 
 // ReSharper disable ClassNeverInstantiated.Global
 // ReSharper disable InconsistentNaming for testing
@@ -47,9 +48,8 @@ public abstract class EndpointHostTestBase : UniversalTestBase
 
    protected EndpointHostTestBase()
    {
-      _rootContainer = TestEnv.DIContainer.CreateWithServiceLocator();
-      _rootContainer.Register()
-                    .CurrentTestsDbPoolIfNotAlreadyRegistered();
+      _rootContainer = TestEnv.DIContainer.CreateWithServiceLocator()
+                              .mutate(it => it.Register().CurrentTestsDbPoolIfNotAlreadyRegistered());
 
       AllGates =
       [
