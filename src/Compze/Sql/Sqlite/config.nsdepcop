@@ -12,5 +12,8 @@
 
    <Allowed From="Compze.Sql.Sqlite.Wiring"
             To="Compze.Core.*.Internal.SqlLayer.*"/>
-	
+
+   <Allowed From="Compze.Sql.Sqlite.Private"
+            To="	Compze.Sql.Sqlite.Private.?"/>
+
 </NsDepCopConfig>
