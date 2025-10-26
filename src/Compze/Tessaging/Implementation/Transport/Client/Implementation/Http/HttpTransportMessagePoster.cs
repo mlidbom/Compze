@@ -33,14 +33,17 @@ class TransportMessagePoster : ITransportMessagePoster
 
    public async Task<TResult> PostAsync<TResult>(TransportTessage.OutGoing tessage, object realTessage, Uri requestUri)
    {
-      var response = await PostAsync(tessage, realTessage, requestUri).caf();
+      var response = await PostAsyncInternal(tessage, realTessage, requestUri).caf();
 
       var resultJson = await response.Content.ReadAsStringAsync().caf();
       var result = _serializer.DeserializeResponse<TResult>(resultJson);
       return result;
    }
 
-   public async Task<HttpResponseMessage> PostAsync(TransportTessage.OutGoing tessage, object realTessage, Uri requestUri)
+   public async Task PostAsync(TransportTessage.OutGoing tessage, object realTessage, Uri requestUri) =>
+      await PostAsyncInternal(tessage, realTessage, requestUri).caf();
+
+   async Task<HttpResponseMessage> PostAsyncInternal(TransportTessage.OutGoing tessage, object realTessage, Uri requestUri)
    {
       using var httpClient = _httpClientFactory.CreateClient();
 
