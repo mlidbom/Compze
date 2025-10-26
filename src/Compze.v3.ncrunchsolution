@@ -29,11 +29,10 @@
       <Value>Threading\TasksCE\TaskCE.Run.cs:Compze\Utilities\Compze.Utilities.csproj-26</Value>
       <Value>Hosting\EndpointRequestExecutor.cs:Compze\Tessaging\Compze.Tessaging.csproj-33</Value>
       <Value>Tessaging\Typermedia\Public\NavigationSpecification.cs:Compze\Abstractions\Compze.Core.csproj-27</Value>
-      <Value>SystemCE\TransactionsCE\TransactionScopeCE.cs:Compze\Utilities\Compze.Utilities.csproj-22</Value>
       <Value>Threading\TasksCE\TaskCE.SyncShim.cs:Compze\Utilities\Compze.Utilities.csproj-15</Value>
       <Value>Hosting\EndpointRequestExecutor.cs:Compze\Tessaging\Compze.Tessaging.csproj-22</Value>
       <Value>DbConnectionPool.Pools.cs:Compze\Sql\Common\Compze.Sql.Common.csproj-75</Value>
-      <Value>Hosting\Endpoint.cs:Compze\Tessaging\Compze.Tessaging.csproj-88</Value>
+      <Value>Hosting\Endpoint.cs:Compze\Tessaging\Compze.Tessaging.csproj-89</Value>
       <Value>Hosting\EndpointHost.cs:Compze\Tessaging\Compze.Tessaging.csproj-71</Value>
       <Value>Implementation\Outbox\Outbox..cs:Compze\Tessaging\Compze.Tessaging.csproj-110</Value>
       <Value>Abstractions\IComposableDbConnection.cs:Compze\Sql\Common\Compze.Sql.Common.csproj-43</Value>
