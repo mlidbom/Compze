@@ -38,6 +38,9 @@ class MemoryTransportMessagePoster : ITransportMessagePoster
       var incomingTessage = tessage.ToIncoming();
       try
       {
+         if(!endpoint.ServiceLocator.Resolve<MemoryInboxTransportServer>().Running)
+            throw new Exception("Transport is not running");
+
          switch(tessage.TessageTypeEnum)
          {
             case TransportTessage.TransportTessageType.AtMostOnceTommandWithReturnValue:
@@ -68,6 +71,9 @@ class MemoryTransportMessagePoster : ITransportMessagePoster
       var incomingTessage = tessage.ToIncoming();
       try
       {
+         if(!endpoint.ServiceLocator.Resolve<MemoryInboxTransportServer>().Running)
+            throw new Exception("Transport is not running");
+
          switch(tessage.TessageTypeEnum)
          {
             case TransportTessage.TransportTessageType.ExactlyOnceTevent:
