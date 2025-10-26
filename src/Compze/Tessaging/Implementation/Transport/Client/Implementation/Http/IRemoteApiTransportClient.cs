@@ -5,7 +5,7 @@ using Compze.Tessaging.Implementation.Transport.Abstractions;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Http;
 
-interface IHttpApiTransportClient
+interface IHttpTransportMessagePoster
 {
    Task<TResult> PostAsync<TResult>(TransportTessage.OutGoing tessage, object realTessage, Uri requestUri);
    Task<HttpResponseMessage> PostAsync(TransportTessage.OutGoing tessage, object realTessage, Uri requestUri);

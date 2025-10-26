@@ -13,14 +13,14 @@ using Compze.Utilities.Threading.TasksCE;
 namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Http;
 
 class HttpApiEndpointClient(
-   IHttpApiTransportClient httpApiTransportClient,
+   IHttpTransportMessagePoster httpTransportMessagePoster,
    HttpEndPointAddress remoteAddress,
    ITypeMapper typeMapper,
    IRemotableTessageSerializer serializer,
    ITessagesInFlightTracker tessagesInFlightTracker,
    EndpointId remoteEndpointId) : IRemoteApiEndpointClient
 {
-   readonly IHttpApiTransportClient _transportClient = httpApiTransportClient;
+   readonly IHttpTransportMessagePoster _transportMessagePoster = httpTransportMessagePoster;
    readonly ITypeMapper _typeMapper = typeMapper;
    readonly IRemotableTessageSerializer _serializer = serializer;
    readonly ITessagesInFlightTracker _tessagesInFlightTracker = tessagesInFlightTracker;
@@ -31,24 +31,24 @@ class HttpApiEndpointClient(
    {
       var tessage = TransportTessage.OutGoing.Create(tommand, _typeMapper, _serializer);
       _tessagesInFlightTracker.SendingTessageOnTransport(tessage, _remoteEndpointId);
-      return await _transportClient.PostAsync<TResult>(tessage, tommand, new Uri($"{_remoteAddress}{HttpConstants.Routes.Typermedia.TommandWithResult}")).caf();
+      return await _transportMessagePoster.PostAsync<TResult>(tessage, tommand, new Uri($"{_remoteAddress}{HttpConstants.Routes.Typermedia.TommandWithResult}")).caf();
    }
 
    public async Task PostAsync(IAtMostOnceHypermediaTommand tommand)
    {
       var outGoingTessage = TransportTessage.OutGoing.Create(tommand, _typeMapper, _serializer);
       _tessagesInFlightTracker.SendingTessageOnTransport(outGoingTessage, _remoteEndpointId);
-      await _transportClient.PostAsync(outGoingTessage, tommand, new Uri($"{_remoteAddress}{HttpConstants.Routes.Typermedia.TommandNoResult}")).caf();
+      await _transportMessagePoster.PostAsync(outGoingTessage, tommand, new Uri($"{_remoteAddress}{HttpConstants.Routes.Typermedia.TommandNoResult}")).caf();
    }
 
    public async Task<TResult> GetAsync<TResult>(IRemotableTuery<TResult> tuery)
    {
       var tessage = TransportTessage.OutGoing.Create(tuery, _typeMapper, _serializer);
       _tessagesInFlightTracker.SendingTessageOnTransport(tessage, _remoteEndpointId);
-      return await _transportClient.PostAsync<TResult>(tessage, tuery, new Uri($"{_remoteAddress}{HttpConstants.Routes.Typermedia.Tuery}")).caf();
+      return await _transportMessagePoster.PostAsync<TResult>(tessage, tuery, new Uri($"{_remoteAddress}{HttpConstants.Routes.Typermedia.Tuery}")).caf();
    }
 
-   internal static async Task<(HttpApiEndpointClient, TessageTypesInternal.EndpointInformation)> BootstrapConnectionToEndpoint(IHttpApiTransportClient httpApiTransportClient,
+   internal static async Task<(HttpApiEndpointClient, TessageTypesInternal.EndpointInformation)> BootstrapConnectionToEndpoint(IHttpTransportMessagePoster httpTransportMessagePoster,
                                                                                                                                HttpEndPointAddress remoteAddress,
                                                                                                                                ITypeMapper typeMapper,
                                                                                                                                IRemotableTessageSerializer serializer,
@@ -56,11 +56,11 @@ class HttpApiEndpointClient(
    {
       var endpointInformationTuery = new TessageTypesInternal.EndpointInformationTuery();
       var endpointInformationTueryTessage = TransportTessage.OutGoing.Create(endpointInformationTuery, typeMapper, serializer);
-      var endpointInformation = await httpApiTransportClient
+      var endpointInformation = await httpTransportMessagePoster
                                      .PostAsync<TessageTypesInternal.EndpointInformation>(
                                          endpointInformationTueryTessage,
                                          endpointInformationTuery,
                                          new Uri($"{remoteAddress.AspNetAddress}{HttpConstants.Routes.Typermedia.Tuery}")).caf();
-      return (new HttpApiEndpointClient(httpApiTransportClient, remoteAddress, typeMapper, serializer, tessagesInFlightTracker, endpointInformation.Id), endpointInformation);
+      return (new HttpApiEndpointClient(httpTransportMessagePoster, remoteAddress, typeMapper, serializer, tessagesInFlightTracker, endpointInformation.Id), endpointInformation);
    }
 }
