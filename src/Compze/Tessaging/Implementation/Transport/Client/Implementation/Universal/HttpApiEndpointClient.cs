@@ -7,12 +7,13 @@ using Compze.Core.Tessaging.Public;
 using Compze.Core.Tessaging.Transport.Internal;
 using Compze.Tessaging.Implementation.Abstractions;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
+using Compze.Tessaging.Implementation.Transport.Client.Implementation.Http;
 using Compze.Tessaging.Implementation.Transport.Client.Internal;
 using Compze.Utilities.Threading.TasksCE;
 
-namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Http;
+namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Universal;
 
-class HttpApiEndpointClient(
+class ApiEndpointClient(
    ITransportMessagePoster transportMessagePoster,
    EndPointAddress remoteAddress,
    ITypeMapper typeMapper,
@@ -48,7 +49,7 @@ class HttpApiEndpointClient(
       return await _transportMessagePoster.PostAsync<TResult>(tessage, tuery, new Uri(_remoteAddress, HttpConstants.Routes.Typermedia.Tuery)).caf();
    }
 
-   internal static async Task<(HttpApiEndpointClient, TessageTypesInternal.EndpointInformation)> BootstrapConnectionToEndpoint(ITransportMessagePoster transportMessagePoster,
+   internal static async Task<(ApiEndpointClient, TessageTypesInternal.EndpointInformation)> BootstrapConnectionToEndpoint(ITransportMessagePoster transportMessagePoster,
                                                                                                                                EndPointAddress remoteAddress,
                                                                                                                                ITypeMapper typeMapper,
                                                                                                                                IRemotableTessageSerializer serializer,
@@ -61,6 +62,6 @@ class HttpApiEndpointClient(
                                          endpointInformationTueryTessage,
                                          endpointInformationTuery,
                                          new Uri(remoteAddress.Uri, HttpConstants.Routes.Typermedia.Tuery)).caf();
-      return (new HttpApiEndpointClient(transportMessagePoster, remoteAddress, typeMapper, serializer, tessagesInFlightTracker, endpointInformation.Id), endpointInformation);
+      return (new ApiEndpointClient(transportMessagePoster, remoteAddress, typeMapper, serializer, tessagesInFlightTracker, endpointInformation.Id), endpointInformation);
    }
 }

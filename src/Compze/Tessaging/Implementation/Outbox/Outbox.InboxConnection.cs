@@ -6,6 +6,7 @@ using Compze.Core.Tessaging.Transport.Internal;
 using Compze.Tessaging.Implementation.Abstractions;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Tessaging.Implementation.Transport.Client.Implementation.Http;
+using Compze.Tessaging.Implementation.Transport.Client.Implementation.Universal;
 using Compze.Tessaging.Implementation.Transport.Client.Internal;
 using Compze.Utilities.Threading.TasksCE;
 
@@ -40,7 +41,7 @@ partial class Outbox
 
       internal async Task InitAsync()
       {
-         (_remoteApiClient, _endpointInformation) = await HttpApiEndpointClient.BootstrapConnectionToEndpoint(_transportMessagePoster, _remoteAddress, _typeMapper, _serializer, _tessagesInFlightTracker).caf();
+         (_remoteApiClient, _endpointInformation) = await ApiEndpointClient.BootstrapConnectionToEndpoint(_transportMessagePoster, _remoteAddress, _typeMapper, _serializer, _tessagesInFlightTracker).caf();
          _tessageSender = new HttpExactlyOnceTessageSender(_transportMessagePoster, _remoteAddress, _typeMapper, _serializer, _tessagesInFlightTracker, _endpointInformation.Id);
       }
 

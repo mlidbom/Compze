@@ -13,19 +13,19 @@ namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Http;
 static class HttpApiTransportClientRegistrar
 {
    internal static IComponentRegistrar HttpApiTransportClient(this IComponentRegistrar registrar)
-      => registrar.Register(Http.TransportMessagePoster.RegisterWith);
+      => registrar.Register(Http.HttpTransportMessagePoster.RegisterWith);
 }
 
-class TransportMessagePoster : ITransportMessagePoster
+class HttpTransportMessagePoster : ITransportMessagePoster
 {
    internal static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<ITransportMessagePoster>()
-                                     .CreatedBy((IHttpClientFactoryCE factory, IRemotableTessageSerializer serializer) => new TransportMessagePoster(factory, serializer)));
+                                     .CreatedBy((IHttpClientFactoryCE factory, IRemotableTessageSerializer serializer) => new HttpTransportMessagePoster(factory, serializer)));
 
    readonly IHttpClientFactoryCE _httpClientFactory;
    readonly IRemotableTessageSerializer _serializer;
 
-   TransportMessagePoster(IHttpClientFactoryCE httpClientFactory, IRemotableTessageSerializer serializer)
+   HttpTransportMessagePoster(IHttpClientFactoryCE httpClientFactory, IRemotableTessageSerializer serializer)
    {
       _httpClientFactory = httpClientFactory;
       _serializer = serializer;
