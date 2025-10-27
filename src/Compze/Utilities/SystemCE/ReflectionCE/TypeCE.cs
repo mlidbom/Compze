@@ -75,29 +75,27 @@ static class TypeCE
 
    public static bool InHerits(this Type @this, Type baseClass) =>
       baseClass.IsGenericTypeDefinition
-         ? @this.TryGetGenericBaseClass(baseClass) is not null
-         : @this.ListBaseTypes().Any(it => it == baseClass);
+         ? @this.InheritsFromGenericBaseClassDefinition(baseClass)
+         : @this.ClassInheritanceChain().Any(it => it == baseClass);
 
    public static Type GetGenericBaseClass(this Type @this, Type genericBaseClass) =>
-      @this.TryGetGenericBaseClass(genericBaseClass) ?? throw new Exception($"{@this.FullName} does not inherit from {genericBaseClass.FullName}");
+      @this.TryGetGenericBaseClassDefinition(genericBaseClass) ?? throw new Exception($"{@this.FullName} does not inherit from {genericBaseClass.FullName}");
 
-   public static Type? TryGetGenericBaseClass(this Type @this, Type genericBaseClass) =>
-      @this.ListGenericBaseClasses()
+   public static Type? TryGetGenericBaseClassDefinition(this Type @this, Type genericBaseClass) =>
+      @this.GenericBaseClassGenericTypeDefinitions()
            .SingleOrDefault(it => it == genericBaseClass);
 
-   public static IEnumerable<Type> ListGenericBaseClasses(this Type @this) =>
-      @this.ListBaseTypes()
-           .Where(it => it.IsGenericType)
+   public static IEnumerable<Type> GenericBaseClasses(this Type @this) =>
+      @this.ClassInheritanceChain()
+           .Where(it => it.IsGenericType);
+
+   public static IEnumerable<Type> GenericBaseClassGenericTypeDefinitions(this Type @this) =>
+      @this.GenericBaseClasses()
            .Select(it => it.GetGenericTypeDefinition());
 
-   public static IEnumerable<Type> ListBaseTypes(this Type @this)
-   {
-      while(@this.BaseType != null)
-      {
-         yield return @this.BaseType;
-         @this = @this.BaseType;
-      }
-   }
+   public static bool InheritsFromGenericBaseClassDefinition(this Type @this, Type genericBaseClass) =>
+      @this.GenericBaseClassGenericTypeDefinitions()
+           .Any(it => it == genericBaseClass);
 
    public static bool IsOpenGenericType(this Type type) => type.ContainsGenericParameters;
 
