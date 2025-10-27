@@ -17,5 +17,5 @@ class NewtonsoftDocumentDbSerializer : RenamingSupportingJsonSerializer, IDocume
       => registrar.Register(Singleton.For<IDocumentDbSerializer>()
                                      .CreatedBy((ITypeMapper typeMapper) => new NewtonsoftDocumentDbSerializer(typeMapper)));
 
-   NewtonsoftDocumentDbSerializer(ITypeMapper typeMapper) : base(RenamingAndNonPublicMembersSupportingJsonSettings.TeventStore, typeMapper) {}
+   NewtonsoftDocumentDbSerializer(ITypeMapper typeMapper) : base(RenamingAndNonPublicMembersSupportingJsonSettings.DocumentDb, typeMapper) {}
 }

@@ -1,6 +1,8 @@
 using Compze.Serialization.Newtonsoft.Private;
+using Compze.Serialization.Newtonsoft.Private.PrimitiveWrappers;
 using Compze.Serialization.Newtonsoft.Private.TeventStore;
 using Newtonsoft.Json;
+using System.Collections.Generic;
 
 #pragma warning disable CA2326 //Todo about this resides elsewhere search for CA2326 to find it
 #pragma warning disable CA2327 //Todo about this resides elsewhere search for CA2326 to find it
@@ -14,6 +16,7 @@ static class RenamingAndNonPublicMembersSupportingJsonSettings
       {
          TypeNameHandling = TypeNameHandling.Auto,
          ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
+         Converters = new List<JsonConverter> { new EntityIdConverter() },
          ContractResolver = IncludeMembersWithPrivateSettersResolver.Instance
       };
 
@@ -24,9 +27,10 @@ static class RenamingAndNonPublicMembersSupportingJsonSettings
    public static readonly JsonSerializerSettings TeventStore =
       new()
       {
-         TypeNameHandling = TypeNameHandling.Auto,
-         ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
-         ContractResolver = IgnoreTaggregateTeventDeclaredPropertiesBecauseTheyAreAlreadyStoredInSqlResolver.Instance
+         TypeNameHandling = Default.TypeNameHandling,
+         ConstructorHandling = Default.ConstructorHandling,
+         Converters = Default.Converters,
+         ContractResolver = IgnoreTaggregateTeventDeclaredPropertiesBecauseTheyAreAlreadyStoredInSqlResolver.Instance,
       };
 
 }
