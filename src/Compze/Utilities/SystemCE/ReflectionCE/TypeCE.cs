@@ -42,12 +42,26 @@ static class TypeCE
 
       if(implemented.IsGenericTypeDefinition)
       {
-         return
-            me.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == implemented);
+         return me.ImplementsGenericInterface(implemented);
       }
 
       return me.GetInterfaces().Contains(implemented);
    }
+
+   public static Type GetGenericInterface(this Type @this, Type implementedGenericInterface) =>
+      @this.ListGenericInterfaces(implementedGenericInterface).Single();
+
+   public static IEnumerable<Type> ListGenericInterfaces(this Type @this, Type genericInterface)
+   {
+      return @this.ListGenericInterfaces()
+                  .Where(it => it.GetGenericTypeDefinition() == genericInterface);
+   }
+
+   public static IEnumerable<Type> ListGenericInterfaces(this Type @this) =>
+      @this.GetInterfaces().Where(it => it.IsGenericType);
+
+   public static bool ImplementsGenericInterface(this Type @this, Type implementedGenericInterface) =>
+      @this.ListGenericInterfaces(implementedGenericInterface).Any();
 
    public static IEnumerable<Type> ClassInheritanceChain(this Type me)
    {

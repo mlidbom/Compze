@@ -53,7 +53,7 @@ public interface IRemotableCreateMyOwnResultTuery<out TResult> : IRemotableTuery
 /// The <see cref="Id"/> must be maintained when binding a tommand to a UI or the guarantee will be lost.</summary>
 public interface IAtMostOnceTessage : IRemotableTessage, IMustBeHandledTransactionally
 {
-   //Refactor: We should use a custom type for TessageIds. Likely a record struct.
+   //Refactor: We should use a custom type for TessageIds. Likely a readonly record struct.
    ///<summary>Used by the infrastructure to guarantee that the same tessage is never delivered more than once. Must be generated when the tessage is created and then NEVER modified. Must be maintained when binding a tommand in a UI etc.</summary>
    Guid Id { get; }
 }

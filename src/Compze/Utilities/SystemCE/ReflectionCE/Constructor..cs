@@ -17,7 +17,7 @@ public static partial class Constructor
          static Func<TInstance> CreateInstanceFactory() =>
             typeof(IStaticInstancePropertySingleton<TInstance>).IsAssignableFrom(typeof(TInstance))
                ? CompileStaticInstancePropertyDelegate()
-               : Compile.ForReturnType<TInstance>().DefaultConstructor();
+               : Compile.ForType<TInstance>().DefaultConstructor();
 
          static PropertyInfo? ImplicitImplementationProperty() => typeof(TInstance).GetProperties(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
                                                                                    .SingleOrDefault(prop => prop.Name == nameof(IStaticInstancePropertySingleton<TInstance>.Instance) && prop.PropertyType == typeof(TInstance));
@@ -44,7 +44,7 @@ public static partial class Constructor
 
       internal static class WithArguments<TArgument1>
       {
-         internal static readonly Func<TArgument1, TInstance> Instance = Compile.ForReturnType<TInstance>().WithArguments<TArgument1>();
+         internal static readonly Func<TArgument1, TInstance> Instance = Compile.ForType<TInstance>().WithArguments<TArgument1>();
       }
    }
 
