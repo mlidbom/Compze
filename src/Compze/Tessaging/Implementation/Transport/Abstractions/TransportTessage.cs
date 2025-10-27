@@ -26,7 +26,7 @@ static class TransportTessage
          {
             _tessage = _serializer.DeserializeTessage(_tessageType, Body);
 
-            Assert.State.Is(_tessage is not IExactlyOnceTessage actualTessage || TessageId == actualTessage.TessageId);
+            Assert.State.Is(_tessage is not IExactlyOnceTessage actualTessage || TessageId == actualTessage.Id);
          }
 
          return _tessage;
@@ -54,7 +54,7 @@ static class TransportTessage
 
       public static OutGoing Create(IRemotableTessage tessage, ITypeMapper typeMapper, IRemotableTessageSerializer serializer)
       {
-         var tessageId = (tessage as IAtMostOnceTessage)?.TessageId ?? Guid.CreateVersion7();
+         var tessageId = (tessage as IAtMostOnceTessage)?.Id ?? Guid.CreateVersion7();
          var body = serializer.SerializeTessage(tessage);
          return new OutGoing(typeMapper.GetId(tessage.GetType()), tessage.GetType(), tessageId, body, tessage is IExactlyOnceTessage, tessage, typeMapper, serializer);
       }
@@ -63,7 +63,7 @@ static class TransportTessage
       {
          IsExactlyOnceDeliveryTessage = isExactlyOnceDeliveryTessage;
          Type = typeId;
-         TessageId = (tessage as IAtMostOnceTessage)?.TessageId ?? Guid.CreateVersion7();
+         TessageId = (tessage as IAtMostOnceTessage)?.Id ?? Guid.CreateVersion7();
          Body = body;
          TessageTypeEnum = type.TransportTessageType();
       }

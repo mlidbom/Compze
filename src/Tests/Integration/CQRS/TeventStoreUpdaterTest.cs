@@ -478,7 +478,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
          _teventSpy.DispatchedTessages.Count().Should().Be(18);
 
          var dispatchedTevents = _teventSpy.DispatchedTessages.OfType<ITaggregateTevent>().ToList();
-         dispatchedTevents.Select(e => e.TessageId).Distinct().Count().Should().Be(18);
+         dispatchedTevents.Select(e => e.Id).Distinct().Count().Should().Be(18);
 
          var allPersistedTevents = _serviceLocator.TeventStore().ListAllTeventsForTestingPurposesAbsolutelyNotUsableForARealTeventStoreOfAnySize();
          TeventStorageTestHelper.StripSteventhDecimalPointFromSecondFractionOnUtcUpdateTime(dispatchedTevents);

@@ -96,7 +96,7 @@ public class Navigator_specification : UniversalTestBase
       public static RegisterUserTommand Create(string name) => new()
                                                                {
                                                                   Name = name,
-                                                                  TessageId = Guid.CreateVersion7()
+                                                                  Id = Guid.CreateVersion7()
                                                                };
 
       public string Name { get; private set; } = "";

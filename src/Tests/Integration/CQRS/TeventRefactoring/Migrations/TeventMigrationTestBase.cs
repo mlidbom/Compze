@@ -221,7 +221,7 @@ public abstract class TeventMigrationTestBase : UniversalTestBase
                             config => config.PreferringRuntimeMemberTypes()
                                             .WithStrictOrdering()
                                             .ComparingByMembers<TaggregateTevent>()
-                                            .Excluding(@tevent => @tevent.TessageId));
+                                            .Excluding(@tevent => @tevent.Id));
       }
       catch(Exception)
       {

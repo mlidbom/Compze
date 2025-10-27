@@ -53,7 +53,7 @@ public class TessageTypeInspector_throws_TessageTypeDesignViolationException_if_
 #pragma warning disable CA1812 //uninstantiated class 
       internal class AtMostOnceTommandSettingTessageIdInDefaultConstructor : IAtMostOnceTypermediaTommand
       {
-         public Guid TessageId { get; } = Guid.NewGuid();
+         public Guid Id { get; } = Guid.NewGuid();
       }
 #pragma warning restore CA1812 //uninstantiated class 
 

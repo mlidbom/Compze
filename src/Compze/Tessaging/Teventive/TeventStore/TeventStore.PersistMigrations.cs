@@ -128,14 +128,14 @@ partial class TeventStore
    void FixManualVersions(TaggregateTeventWithRefactoringInformation[] originalHistory, TaggregateTevent[] newHistory, IReadOnlyList<List<TeventDataRow>> refactorings)
    {
       var versionUpdates = new List<VersionSpecification>();
-      var replacedOrRemoved = originalHistory.Where(it => newHistory.None(@tevent => @tevent.TessageId == it.Tevent.TessageId)).ToList();
-      versionUpdates.AddRange(replacedOrRemoved.Select(it => new VersionSpecification(it.Tevent.TessageId, -it.StorageInformation.EffectiveVersion)));
+      var replacedOrRemoved = originalHistory.Where(it => newHistory.None(@tevent => @tevent.Id == it.Tevent.Id)).ToList();
+      versionUpdates.AddRange(replacedOrRemoved.Select(it => new VersionSpecification(it.Tevent.Id, -it.StorageInformation.EffectiveVersion)));
 
-      var replacedOrRemoved2 = refactorings.SelectMany(it =>it).Where(it => newHistory.None(@tevent => @tevent.TessageId == it.TeventId));
+      var replacedOrRemoved2 = refactorings.SelectMany(it =>it).Where(it => newHistory.None(@tevent => @tevent.Id == it.TeventId));
       versionUpdates.AddRange(replacedOrRemoved2.Select(it => new VersionSpecification(it.TeventId, -it.StorageInformation.EffectiveVersion)));
 
       //Performance: Filter out rows where the new value equals the old value. We don't want to go updating every tevent in every refactored taggregate if only a few, or none, have actually changed.
-      versionUpdates.AddRange(newHistory.Select((it , index) => new VersionSpecification(it.TessageId, index + 1)));
+      versionUpdates.AddRange(newHistory.Select((it , index) => new VersionSpecification(it.Id, index + 1)));
 
       _sqlLayer.UpdateEffectiveVersions(versionUpdates);
    }
@@ -149,7 +149,7 @@ partial class TeventStore
          var loaded = loadedTaggregateHistory[index];
          Assert.Result
                .Is(inMemory.TaggregateId == loaded.TaggregateId)
-               .Is(inMemory.TessageId == loaded.TessageId)
+               .Is(inMemory.Id == loaded.Id)
                .Is(inMemory.TaggregateVersion == loaded.TaggregateVersion)
                .Is(inMemory.UtcTimeStamp == loaded.UtcTimeStamp)
                .Is(inMemory.GetType() == loaded.GetType())

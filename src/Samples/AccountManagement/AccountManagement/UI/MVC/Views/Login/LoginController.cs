@@ -20,7 +20,7 @@ public class LoginController(IRemoteTypermediaNavigator remoteApiNavigator) : Co
       }
 
       ModelState.AddModelError("Something", "Login Failed");
-      ModelState.Remove((AccountResource.Tommand.LogIn model) => model.TessageId);
+      ModelState.Remove((AccountResource.Tommand.LogIn model) => model.Id);
       loginTommand.ReplaceDeduplicationId();
       return View("LoginForm", loginTommand);
    }

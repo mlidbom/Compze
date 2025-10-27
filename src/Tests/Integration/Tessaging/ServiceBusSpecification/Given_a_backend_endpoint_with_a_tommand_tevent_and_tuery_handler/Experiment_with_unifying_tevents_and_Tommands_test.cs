@@ -105,7 +105,7 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
 
          RegisterUserTommand() : base(DeduplicationIdHandling.Reuse) {}
 
-         internal static RegisterUserTommand Create() => new() { TessageId = Guid.CreateVersion7() };
+         internal static RegisterUserTommand Create() => new() { Id = Guid.CreateVersion7() };
       }
    }
 

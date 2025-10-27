@@ -6,5 +6,5 @@ namespace Compze.Tessaging.Teventive.TeventStore;
 static class TaggregateTeventDataConverter
 {
    internal static TaggregateTeventData ToTaggregateTeventData(this ITaggregateTevent @this) =>
-      new TaggregateTeventData(@this.TessageId, @this.TaggregateVersion, @this.TaggregateId, @this.UtcTimeStamp);
+      new TaggregateTeventData(@this.Id, @this.TaggregateVersion, @this.TaggregateId, @this.UtcTimeStamp);
 }
