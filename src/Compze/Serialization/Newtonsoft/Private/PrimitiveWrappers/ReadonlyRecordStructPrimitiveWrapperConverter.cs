@@ -28,7 +28,7 @@ public class EntityIdConverter : JsonConverter
       _handlesType.GetOrAdd(serializedType,
                             potentialWrapperType =>
                                !potentialWrapperType.IsAbstract &&
-                               potentialWrapperType.Implements(typeof(IEntityId<>)));
+                               potentialWrapperType.InHerits(typeof(EntityId<>)));
 
    public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
    {
@@ -54,7 +54,7 @@ public class EntityIdConverter : JsonConverter
                                                  {
                                                     return new LazyCE<WrappedTypeHelpers>(() =>
                                                     {
-                                                       var wrappedPrimitiveType = wrapperType.GetGenericInterface(typeof(IEntityId<>))
+                                                       var wrappedPrimitiveType = wrapperType.GetGenericBaseClass(typeof(EntityId<>))
                                                                                              .GetGenericArguments()[0];
                                                        var constructor = (Func<object, object>)Constructor.Compile.ForType(typeToRead).WithArgumentTypes(wrappedPrimitiveType);
                                                        return new WrappedTypeHelpers(wrappedPrimitiveType, constructor);

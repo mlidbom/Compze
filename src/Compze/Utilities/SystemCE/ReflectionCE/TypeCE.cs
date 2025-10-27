@@ -73,6 +73,27 @@ static class TypeCE
       }
    }
 
+   public static bool InHerits(this Type @this, Type baseClass) =>
+      @this.ListBaseTypes().Any(it => it == baseClass);
+
+   public static Type GetGenericBaseClass(this Type @this, Type genericBaseClass) =>
+      @this.TryGetGenericBaseClass(genericBaseClass) ?? throw new Exception($"{@this.FullName} does not inherit from {genericBaseClass.FullName}");
+
+   public static Type? TryGetGenericBaseClass(this Type @this, Type genericBaseClass) =>
+      @this.ListGenericBaseClasses().SingleOrDefault(it => it == genericBaseClass);
+
+   public static IEnumerable<Type> ListGenericBaseClasses(this Type @this) =>
+      @this.ListBaseTypes().Where(it => it.IsGenericType);
+
+   public static IEnumerable<Type> ListBaseTypes(this Type @this)
+   {
+      while(@this.BaseType != null)
+      {
+         yield return @this.BaseType;
+         @this = @this.BaseType;
+      }
+   }
+
    public static bool IsOpenGenericType(this Type type) => type.ContainsGenericParameters;
 
    public static bool Is<TOther>(this object @this) => @this is TOther;
