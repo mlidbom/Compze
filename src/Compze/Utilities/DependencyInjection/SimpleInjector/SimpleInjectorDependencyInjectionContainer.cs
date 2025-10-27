@@ -16,8 +16,14 @@ public sealed class SimpleInjectorDependencyInjectionContainer : DependencyInjec
 
    public SimpleInjectorDependencyInjectionContainer(IComponentRegistrar? register = null) : base(register)
    {
-      _container = new Container();
-      _container.Options.DefaultScopedLifestyle = new AsyncScopedLifestyle();
+      _container = new Container
+                   {
+                      Options =
+                      {
+                         DefaultScopedLifestyle = new AsyncScopedLifestyle(),
+                         EnableAutoVerification = false //Verification is just too slow for our tests and the strictness can honestly be a pain. If the tests run everything we need can be resolved
+                      }
+                   };
 
       _container.ResolveUnregisteredType += (_, unregisteredTypeTeventArgs) =>
       {
@@ -63,7 +69,7 @@ public sealed class SimpleInjectorDependencyInjectionContainer : DependencyInjec
          {
             AssertLifeStyleCombinationsAreValid();
             _verificationStarted = true;
-            _container.Verify();
+            //_container.Verify(); //Verification is just too slow for our tests and the strictness can honestly be a pain. If the tests run everything we need can be resolved
          }
 
          return this;

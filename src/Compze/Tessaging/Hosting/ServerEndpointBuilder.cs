@@ -1,3 +1,5 @@
+using System;
+using System.Threading.Tasks;
 using Compze.Core.Configuration.Internal;
 using Compze.Core.Refactoring.Naming.Internal.Implementation;
 using Compze.Core.Tessaging.Hosting.Public;
@@ -20,12 +22,13 @@ using Compze.Tessaging.Typermedia;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE;
+using Compze.Utilities.Threading.TasksCE;
 
 // ReSharper disable ImplicitlyCapturedClosure it is very much intentional :)
 
 namespace Compze.Tessaging.Hosting;
 
-class ServerEndpointBuilder : IEndpointBuilder
+class ServerEndpointBuilder : IEndpointBuilder, IAsyncDisposable, IDisposable
 {
    bool _builtSuccessfully;
 
@@ -111,15 +114,17 @@ class ServerEndpointBuilder : IEndpointBuilder
 
    bool _disposed;
 
-   public void Dispose()
+   public async ValueTask DisposeAsync()
    {
       if(!_disposed)
       {
          _disposed = true;
          if(!_builtSuccessfully)
          {
-            Container.Dispose();
+            await Container.DisposeAsync().caf();
          }
       }
    }
+
+   public void Dispose() => DisposeAsync().WaitUnwrappingException();
 }
