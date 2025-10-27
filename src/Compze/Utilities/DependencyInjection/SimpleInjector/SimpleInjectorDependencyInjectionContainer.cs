@@ -22,7 +22,7 @@ public sealed class SimpleInjectorDependencyInjectionContainer : DependencyInjec
                       Options =
                       {
                          DefaultScopedLifestyle = new AsyncScopedLifestyle(),
-                         EnableAutoVerification = false //Verification is just too slow for our tests and the strictness can honestly be a pain. If the tests run everything we need can be resolved and invalid lifestyle combinations we check for ourselves
+                         EnableAutoVerification = false //Verification is just too slow for our tests and the really important checks we do ourselves
                       }
                    };
 
@@ -66,7 +66,7 @@ public sealed class SimpleInjectorDependencyInjectionContainer : DependencyInjec
       get
       {
          _runVerifications.RunIfFirstCall(AssertLifeStyleCombinationsAreValid);
-         //_container.Verify(); //Verification is just too slow for our tests and the strictness can honestly be a pain. If the tests run everything we need can be resolved and invalid lifestyle combinations we check for ourselves
+         //_container.Verify(); //Verification is just too slow for our tests and the really important checks we do ourselves
          return this;
       }
    }
