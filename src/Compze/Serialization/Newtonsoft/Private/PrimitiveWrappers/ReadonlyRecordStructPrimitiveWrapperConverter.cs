@@ -61,7 +61,9 @@ public class EntityIdConverter : JsonConverter
                                                     });
                                                  }).Value;
 
-      var primitiveValue = serializer.Deserialize(reader, helpers.WrappedType).NotNull();
-      return helpers.Construct(primitiveValue);
+      var primitiveValue = serializer.Deserialize(reader, helpers.WrappedType);
+      return primitiveValue != null
+                ? helpers.Construct(primitiveValue)
+                : null;
    }
 }
