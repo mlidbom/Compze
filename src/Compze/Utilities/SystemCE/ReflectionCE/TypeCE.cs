@@ -75,7 +75,7 @@ static class TypeCE
 
    public static bool InHerits(this Type @this, Type baseClass) =>
       baseClass.IsGenericTypeDefinition
-         ? @this.InheritsFromGenericBaseClassDefinition(baseClass)
+         ? @this.InheritsFromGenericClassDefinition(baseClass)
          : @this.ClassInheritanceChain().Any(it => it == baseClass);
 
    public static Type GetGenericBaseClass(this Type @this, Type genericBaseClassTypeDefinition) =>
@@ -93,7 +93,7 @@ static class TypeCE
       @this.GenericBaseClasses()
            .Select(it => it.GetGenericTypeDefinition());
 
-   public static bool InheritsFromGenericBaseClassDefinition(this Type @this, Type genericBaseClass) =>
+   public static bool InheritsFromGenericClassDefinition(this Type @this, Type genericBaseClass) =>
       @this.GenericBaseClassGenericTypeDefinitions()
            .Any(it => it == genericBaseClass);
 
