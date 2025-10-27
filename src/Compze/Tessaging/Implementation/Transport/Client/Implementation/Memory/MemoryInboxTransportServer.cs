@@ -20,20 +20,16 @@ static class MemoryInboxTransportServerRegistrar
 {
    internal static IComponentRegistrar MemoryTransport(this IComponentRegistrar registrar) =>
       registrar.Register(Singleton.For<IInboxTransportServer, MemoryInboxTransportServer>()
-                                  .CreatedBy((EndpointId endpointId, ITypeMapper typeMapper, IRemotableTessageSerializer serializer, IServiceLocator serviceLocator) => new MemoryInboxTransportServer(endpointId, typeMapper, serializer, serviceLocator)));
+                                  .CreatedBy((EndpointId endpointId, ITypeMapper typeMapper, IRemotableTessageSerializer serializer, IServiceLocator serviceLocator) => new MemoryInboxTransportServer(endpointId, serviceLocator)));
 }
 
 class MemoryInboxTransportServer : IInboxTransportServer
 {
-   readonly ITypeMapper _typeMapper;
-   readonly IRemotableTessageSerializer _serializer;
    readonly LazyCE<IInbox> _inbox;
    readonly LazyCE<Inbox.HandlerExecutionEngine> _engine;
 
-   internal MemoryInboxTransportServer(EndpointId endpointId, ITypeMapper typeMapper, IRemotableTessageSerializer serializer, IServiceLocator serviceLocator)
+   internal MemoryInboxTransportServer(EndpointId endpointId, IServiceLocator serviceLocator)
    {
-      _typeMapper = typeMapper;
-      _serializer = serializer;
       _inbox = new LazyCE<IInbox>(serviceLocator.Resolve<IInbox>);
       _engine = new LazyCE<Inbox.HandlerExecutionEngine>(serviceLocator.Resolve<Inbox.HandlerExecutionEngine>);;
       Address = new Uri($"memory://{endpointId.GuidValue.ToString()}");
