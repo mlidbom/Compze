@@ -35,12 +35,12 @@ static class RemoteHypermediaNavigatorRegistrar
       return _routingInboxClient.PostAsync(tommand);
    }
 
-   public TResult Post<TResult>(IAtMostOnceTypermediaTommand<TResult> tommand) => PostAsync(tommand).ResultUnwrappingException();
+   public TResult Post<TResult>(IAtMostOnceTommand<TResult> typermediaTommand) => PostAsync(typermediaTommand).ResultUnwrappingException();
 
-   public Task<TResult> PostAsync<TResult>(IAtMostOnceTypermediaTommand<TResult> tommand)
+   public Task<TResult> PostAsync<TResult>(IAtMostOnceTommand<TResult> typermediaTommand)
    {
-      TessageInspector.AssertValidToSendRemote(tommand);
-      return _routingInboxClient.PostAsync(tommand);
+      TessageInspector.AssertValidToSendRemote(typermediaTommand);
+      return _routingInboxClient.PostAsync(typermediaTommand);
    }
 
    public async Task<TResult> GetAsync<TResult>(IRemotableTuery<TResult> tuery)

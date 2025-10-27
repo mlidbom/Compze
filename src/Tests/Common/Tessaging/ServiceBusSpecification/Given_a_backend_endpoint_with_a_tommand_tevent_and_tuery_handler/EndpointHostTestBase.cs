@@ -104,7 +104,7 @@ public abstract class EndpointHostTestBase : UniversalTestBase
                        TueryHandlerThreadGate.AwaitPassThrough();
                        return new MyTueryResult();
                     })
-                   .ForTommandWithResult((MyAtMostOnceTommandWithResult _) =>
+                   .ForTommandWithResult((MyAtMostOnceTypermediaTommandWithResult _) =>
                     {
                        TommandHandlerWithResultThreadGate.AwaitPassThrough();
                        return new MyTommandResult();

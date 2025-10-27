@@ -12,7 +12,7 @@ public partial class AccountResource
 {
    public static partial class Tommand
    {
-      public partial class Register() : TessageTypes.Remotable.AtMostOnce.AtMostOnceTommand<Register.RegistrationAttemptResult>(DeduplicationIdHandling.Reuse), IValidatableObject
+      public partial class Register() : TessageTypes.Remotable.AtMostOnce.AtMostOnceTypermediaTommand<Register.RegistrationAttemptResult>(DeduplicationIdHandling.Reuse), IValidatableObject
       {
          public static Register Create() => new()
                                             {

@@ -35,7 +35,7 @@ partial class Outbox
       public async Task SendAsync(IExactlyOnceTevent tevent) => await _tessageSender!.SendAsync(tevent).caf();
       public async Task SendAsync(IExactlyOnceTommand tommand) => await _tessageSender!.SendAsync(tommand).caf();
 
-      public async Task<TTommandResult> PostAsync<TTommandResult>(IAtMostOnceTypermediaTommand<TTommandResult> tommand) => await _remoteApiClient!.PostAsync(tommand).caf();
+      public async Task<TTommandResult> PostAsync<TTommandResult>(IAtMostOnceTommand<TTommandResult> typermediaTommand) => await _remoteApiClient!.PostAsync(typermediaTommand).caf();
       public async Task PostAsync(IAtMostOnceTypermediaTommand tommand) => await _remoteApiClient!.PostAsync(tommand).caf();
       public async Task<TTueryResult> GetAsync<TTueryResult>(IRemotableTuery<TTueryResult> tuery) => await _remoteApiClient!.GetAsync(tuery).caf();
 

@@ -4,29 +4,27 @@ using System;
 
 namespace Compze.Core.Tessaging.Public;
 
+//Note that we do not handle messages that don't encode meaning and routing through types, that is: IMessage.
+//That's why ITessage is the ultimate root of our hierarchy of meaning, not IMessage
 public interface ITessage;
+public interface ITevent : ITessage;
+public interface ITommand : ITessage;
+public interface IFireAndForgetTommand : ITommand;
 
+//Transactional behavior marker interfaces
 public interface IMustBeSentTransactionally : ITessage;
 public interface IMustBeHandledTransactionally : ITessage;
 public interface IMustBeSentAndHandledTransactionally : IMustBeSentTransactionally, IMustBeHandledTransactionally;
-
 public interface ICannotBeSentRemotelyFromWithinTransaction : ITessage;
-public interface IRequireAResponse : ICannotBeSentRemotelyFromWithinTransaction;
-public interface ITypermediaTessage : IRequireAResponse;
-public interface IHasReturnValue<out TResult> : ITypermediaTessage;
-public interface ITevent : ITessage;
-public interface IWrapperTevent<out TTevent> : ITevent //Todo: IWrapperTevent name is not great...
-   where TTevent : ITevent
-{
-   TTevent Tevent { get; }
-}
-public interface ITommand : ITessage;
-public interface ITommand<out TResult> : ITommand, IHasReturnValue<TResult>;
 
-///<summary>An instructs the receiver to return a result based upon the data in the tuery.</summary>
-public interface ITuery<out TResult> : IHasReturnValue<TResult>;
 
-///<summary>Many resources in a hypermedia API do not actually need access to backend data. The data in the tuery is sufficient to create the result. For such queries implement this interface. That way no network roundtrip is required to perform the tuery. Greatly enhancing performance</summary>
+//Typermedia
+public interface ITypermediaTessage : ICannotBeSentRemotelyFromWithinTransaction;
+public interface ITyperMediaTessage<out TResult> : ITypermediaTessage;
+public interface ITommand<out TResult> : ITommand, ITyperMediaTessage<TResult>;
+public interface ITuery<out TResult> : ITyperMediaTessage<TResult>;
+
+///<summary>Many resources in a hypermedia API do not actually need access to backend data. The data in the tuery is sufficient to create the result. For such queries implement this interface. That way no network roundtrip is required to perform the tuery.</summary>
 public interface ICreateMyOwnResultTuery<out TResult> : ITuery<TResult>
 {
    TResult CreateResult();
@@ -60,7 +58,7 @@ public interface IAtMostOnceTessage : IRemotableTessage, IMustBeHandledTransacti
    Guid Id { get; }
 }
 public interface IAtMostOnceTypermediaTommand : IAtMostOnceTessage, IRemotableTommand, ITypermediaTessage;
-public interface IAtMostOnceTypermediaTommand<out TResult> : IAtMostOnceTypermediaTommand, IRemotableTommand<TResult>;
+public interface IAtMostOnceTommand<out TResult> : IAtMostOnceTypermediaTommand, IRemotableTommand<TResult>;
 
 
 //Todo: IRequireTransactionalReceiver seems too restrictive. Surely things such as maintaining in-memory caches, monitoring/debugging tooling etc should be allowed to listen transiently to tevents without the full exactly once delivery overhead?
@@ -68,6 +66,12 @@ public interface IAtMostOnceTypermediaTommand<out TResult> : IAtMostOnceTypermed
 public interface IExactlyOnceTessage : IMustBeSentAndHandledTransactionally, IAtMostOnceTessage;
 public interface IExactlyOnceTevent : IRemotableTevent, IExactlyOnceTessage;
 public interface IExactlyOnceTommand : IRemotableTommand, IExactlyOnceTessage;
+
+public interface IWrapperTevent<out TTevent> : ITevent //Todo: IWrapperTevent name is not great...
+   where TTevent : ITevent
+{
+   TTevent Tevent { get; }
+}
 
 public interface IExactlyOnceWrapperTevent<out TTeventInterface> : IWrapperTevent<TTeventInterface>
    where TTeventInterface : IExactlyOnceTevent

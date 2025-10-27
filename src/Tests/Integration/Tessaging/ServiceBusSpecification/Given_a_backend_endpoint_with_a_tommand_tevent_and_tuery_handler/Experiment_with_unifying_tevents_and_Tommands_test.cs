@@ -48,10 +48,10 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
             builder.RegisterHandlers
                    .ForTevent((UserTevent.IUserRegistered _) => {})
                    .ForTuery((GetUserTuery tuery, ITeventStoreReader teventReader) => new UserResource(teventReader.GetHistory(tuery.UserId)))
-                   .ForTommandWithResult((UserRegistrarTommand.RegisterUserTommand tommand, ITeventStoreUpdater store) =>
+                   .ForTommandWithResult((UserRegistrarTommand.RegisterUserTypermediaTommand typermediaTommand, ITeventStoreUpdater store) =>
                     {
-                       store.Save(UserTaggregate.Register(tommand));
-                       return new RegisterUserResult(tommand.UserId);
+                       store.Save(UserTaggregate.Register(typermediaTommand));
+                       return new RegisterUserResult(typermediaTommand.UserId);
                     });
          });
 
@@ -99,13 +99,13 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
 
    public static class UserRegistrarTommand
    {
-      public class RegisterUserTommand : TessageTypes.Remotable.AtMostOnce.AtMostOnceTommand<RegisterUserResult>
+      public class RegisterUserTypermediaTommand : TessageTypes.Remotable.AtMostOnce.AtMostOnceTypermediaTommand<RegisterUserResult>
       {
          public Guid UserId { get; private set; } = Guid.NewGuid();
 
-         RegisterUserTommand() : base(DeduplicationIdHandling.Reuse) {}
+         RegisterUserTypermediaTommand() : base(DeduplicationIdHandling.Reuse) {}
 
-         internal static RegisterUserTommand Create() => new() { Id = Guid.CreateVersion7() };
+         internal static RegisterUserTypermediaTommand Create() => new() { Id = Guid.CreateVersion7() };
       }
    }
 
@@ -140,7 +140,7 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
          => RegisterTeventAppliers()
            .IgnoreUnhandled<UserRegistrarTevent.IRoot>();
 
-      internal static RegisterUserResult RegisterUser(IRemoteTypermediaNavigator navigator) => UserRegistrarTommand.RegisterUserTommand.Create().PostOn(navigator);
+      internal static RegisterUserResult RegisterUser(IRemoteTypermediaNavigator navigator) => UserRegistrarTommand.RegisterUserTypermediaTommand.Create().PostOn(navigator);
    }
 
    public class UserTaggregate : Taggregate<UserTaggregate, UserTevent.IRoot, UserTevent.Implementation.Root>
@@ -149,10 +149,10 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
          => RegisterTeventAppliers()
            .IgnoreUnhandled<UserTevent.IRoot>();
 
-      internal static UserTaggregate Register(UserRegistrarTommand.RegisterUserTommand tommand)
+      internal static UserTaggregate Register(UserRegistrarTommand.RegisterUserTypermediaTommand typermediaTommand)
       {
          var registered = new UserTaggregate();
-         registered.Publish(new UserTevent.Implementation.UserRegisteredTevent(tommand.UserId));
+         registered.Publish(new UserTevent.Implementation.UserRegisteredTevent(typermediaTommand.UserId));
          return registered;
       }
    }

@@ -13,7 +13,7 @@ public class Failure_tests : EndpointHostTestBase
    [PCT] public async Task If_tommand_handler_with_result_throws_awaiting_SendAsync_throws()
    {
       TommandHandlerWithResultThreadGate.ThrowPostPassThrough(_thrownException);
-      await FluentActions.Invoking(async () => await ClientEndpoint.ExecuteClientRequestAsync(async session => await session.PostAsync(MyAtMostOnceTommandWithResult.Create())))
+      await FluentActions.Invoking(async () => await ClientEndpoint.ExecuteClientRequestAsync(async session => await session.PostAsync(MyAtMostOnceTypermediaTommandWithResult.Create())))
                    .Should().ThrowAsync<Exception>();
    }
 

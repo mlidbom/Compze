@@ -19,7 +19,7 @@ static class TessageTypeTranslator
       //typermedia
       if(tessageType.Is<IRemotableTuery<object>>())
          return Abstractions.TransportTessageType.TyperMediaTuery;
-      if(tessageType.Is<IAtMostOnceTypermediaTommand<object>>())
+      if(tessageType.Is<IAtMostOnceTommand<object>>())
          return Abstractions.TransportTessageType.TypermediaAtMostOnceTommandWithReturnValue;
       if(tessageType.Is<IAtMostOnceTypermediaTommand>())
          return Abstractions.TransportTessageType.TypermediaAtMostOnceTommand;
@@ -40,7 +40,7 @@ static class TessageTypeTranslator
          case Abstractions.TransportTessageType.TypermediaAtMostOnceTommand:
             return typeof(IAtMostOnceTypermediaTommand);
          case Abstractions.TransportTessageType.TypermediaAtMostOnceTommandWithReturnValue:
-            return typeof(IAtMostOnceTypermediaTommand<object>);
+            return typeof(IAtMostOnceTommand<object>);
          case Abstractions.TransportTessageType.TyperMediaTuery:
             return typeof(IRemotableTuery<object>);
          case Abstractions.TransportTessageType.Invalid:

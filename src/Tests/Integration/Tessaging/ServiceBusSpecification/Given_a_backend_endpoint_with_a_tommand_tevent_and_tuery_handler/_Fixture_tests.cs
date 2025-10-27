@@ -23,7 +23,7 @@ public class EndpointHostTest_Tests : EndpointHostTestBase
    [PCT]  public async Task If_tommand_handler_with_result_throws_disposing_host_throws_AggregateException_containing_the_thrown_exception_and_SendAsync_throws_TessageDispatchingFailedException()
    {
       TommandHandlerWithResultThreadGate.ThrowPostPassThrough(_thrownException);
-      await FluentActions.Invoking(async () => await ClientEndpoint.ExecuteClientRequest(async session => await session.PostAsync(MyAtMostOnceTommandWithResult.Create())))
+      await FluentActions.Invoking(async () => await ClientEndpoint.ExecuteClientRequest(async session => await session.PostAsync(MyAtMostOnceTypermediaTommandWithResult.Create())))
                          .Should().ThrowAsync<TessageDispatchingFailedException>();
 
       await AssertDisposingHostThrowsAggregateExceptionHierarchyContainingThrownExceptionAsANonAggregateException();

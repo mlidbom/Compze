@@ -71,10 +71,10 @@ public static class TessageTypes
             public void ReplaceDeduplicationId() => _deduplicationId = Guid.CreateVersion7();
          }
 
-         public class AtMostOnceTommand<TResult> : AtMostOnceTypermediaTommand, IAtMostOnceTypermediaTommand<TResult>
+         public class AtMostOnceTypermediaTommand<TResult> : AtMostOnceTypermediaTommand, IAtMostOnceTommand<TResult>
          {
             ///<summary>It is important not to set a default value if we are binding values in a UI. That would make it very easy to accidentally break the At most once guarantee. That is why you must pass the enum value here so that we can know what is happening.</summary>
-            protected AtMostOnceTommand(DeduplicationIdHandling scenario) : base(scenario) {}
+            protected AtMostOnceTypermediaTommand(DeduplicationIdHandling scenario) : base(scenario) {}
          }
       }
 

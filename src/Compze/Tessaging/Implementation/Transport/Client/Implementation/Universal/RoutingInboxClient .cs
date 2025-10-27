@@ -75,11 +75,11 @@ partial class RoutingInboxClient : IRoutingInboxClient, IDisposable
       await connection.PostAsync(atMostOnceTommand).caf();
    }
 
-   public async Task<TTommandResult> PostAsync<TTommandResult>(IAtMostOnceTypermediaTommand<TTommandResult> atMostOnceTommand)
+   public async Task<TTommandResult> PostAsync<TTommandResult>(IAtMostOnceTommand<TTommandResult> atMostOnceTypermediaTommand)
    {
       AssertRunning();
-      var connection = _inboxConnectionRouter.ConnectionToHandlerFor(atMostOnceTommand);
-      return await connection.PostAsync(atMostOnceTommand).caf();
+      var connection = _inboxConnectionRouter.ConnectionToHandlerFor(atMostOnceTypermediaTommand);
+      return await connection.PostAsync(atMostOnceTypermediaTommand).caf();
    }
 
    public async Task<TTueryResult> GetAsync<TTueryResult>(IRemotableTuery<TTueryResult> tuery)

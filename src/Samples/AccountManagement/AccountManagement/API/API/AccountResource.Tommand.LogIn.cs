@@ -11,7 +11,7 @@ public partial class AccountResource
 {
    public static partial class Tommand
    {
-      public partial class LogIn() : TessageTypes.Remotable.AtMostOnce.AtMostOnceTommand<LogIn.LoginAttemptResult>(DeduplicationIdHandling.Reuse)
+      public partial class LogIn() : TessageTypes.Remotable.AtMostOnce.AtMostOnceTypermediaTommand<LogIn.LoginAttemptResult>(DeduplicationIdHandling.Reuse)
       {
          public static LogIn Create() => new() {Id = Guid.CreateVersion7()};
 

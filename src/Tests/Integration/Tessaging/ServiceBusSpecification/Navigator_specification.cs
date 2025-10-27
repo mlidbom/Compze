@@ -35,10 +35,10 @@ public class Navigator_specification : UniversalTestBase
             builder.RegisterHandlers
                    .ForTuery((GetUserTuery tuery) => tueryResults.Single(result => result.Name == tuery.Name))
                    .ForTuery((UserApiStartPageTuery _) => new UserApiStartPage())
-                   .ForTommandWithResult((RegisterUserTommand tommand, IServiceBusSession _) =>
+                   .ForTommandWithResult((RegisterUserTypermediaTommand typermediaTommand, IServiceBusSession _) =>
                     {
-                       tueryResults.Add(new UserResource(tommand.Name));
-                       return new UserRegisteredConfirmationResource(tommand.Name);
+                       tueryResults.Add(new UserResource(typermediaTommand.Name));
+                       return new UserRegisteredConfirmationResource(typermediaTommand.Name);
                     });
          });
 
@@ -51,7 +51,7 @@ public class Navigator_specification : UniversalTestBase
 
    [PCT]  public void Can_get_tommand_result()
    {
-      var tommandResult1 = _clientEndpoint.ExecuteClientRequest(navigator => navigator.Post(RegisterUserTommand.Create("new-user-name")));
+      var tommandResult1 = _clientEndpoint.ExecuteClientRequest(navigator => navigator.Post(RegisterUserTypermediaTommand.Create("new-user-name")));
       tommandResult1.Name.Should().Be("new-user-name");
    }
 
@@ -76,7 +76,7 @@ public class Navigator_specification : UniversalTestBase
    protected internal class UserApiStartPage
    {
       public static UserApiStartPageTuery Self => new();
-      public RegisterUserTommand RegisterUser(string userName) => RegisterUserTommand.Create(userName);
+      public RegisterUserTypermediaTommand RegisterUser(string userName) => RegisterUserTypermediaTommand.Create(userName);
    }
 
    protected internal class GetUserTuery(string name) : TessageTypes.Remotable.NonTransactional.Queries.Tuery<UserResource>
@@ -89,11 +89,11 @@ public class Navigator_specification : UniversalTestBase
       public string Name { get; private set; } = name;
    }
 
-   protected internal class RegisterUserTommand : TessageTypes.Remotable.AtMostOnce.AtMostOnceTommand<UserRegisteredConfirmationResource>
+   protected internal class RegisterUserTypermediaTommand : TessageTypes.Remotable.AtMostOnce.AtMostOnceTypermediaTommand<UserRegisteredConfirmationResource>
    {
-      RegisterUserTommand() : base(DeduplicationIdHandling.Reuse) {}
+      RegisterUserTypermediaTommand() : base(DeduplicationIdHandling.Reuse) {}
 
-      public static RegisterUserTommand Create(string name) => new()
+      public static RegisterUserTypermediaTommand Create(string name) => new()
                                                                {
                                                                   Name = name,
                                                                   Id = Guid.CreateVersion7()

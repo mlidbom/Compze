@@ -18,10 +18,10 @@ namespace Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_
 
 public class MyTommandResult;
 
-public class MyAtMostOnceTommandWithResult : TessageTypes.Remotable.AtMostOnce.AtMostOnceTommand<MyTommandResult>
+public class MyAtMostOnceTypermediaTommandWithResult : TessageTypes.Remotable.AtMostOnce.AtMostOnceTypermediaTommand<MyTommandResult>
 {
-   MyAtMostOnceTommandWithResult() : base(DeduplicationIdHandling.Reuse) {}
-   public static MyAtMostOnceTommandWithResult Create() => new() {Id = Guid.CreateVersion7()};
+   MyAtMostOnceTypermediaTommandWithResult() : base(DeduplicationIdHandling.Reuse) {}
+   public static MyAtMostOnceTypermediaTommandWithResult Create() => new() {Id = Guid.CreateVersion7()};
 }
 
 public class MyTueryResult;
