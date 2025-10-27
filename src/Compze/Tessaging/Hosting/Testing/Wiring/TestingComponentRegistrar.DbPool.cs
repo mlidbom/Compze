@@ -1,9 +1,9 @@
 using System;
 using Compze.Core.Wiring.Testing.Internal;
-using Compze.Sql.MicrosoftSql.DbPool;
-using Compze.Sql.MySql.DbPool;
-using Compze.Sql.PostgreSql.DbPool;
-using Compze.Sql.Sqlite.DbPool;
+using Compze.Sql.MicrosoftSql.Wiring;
+using Compze.Sql.MySql.Wiring;
+using Compze.Sql.PostgreSql.Wiring;
+using Compze.Sql.Sqlite.Wiring;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.Testing.DbPool;
@@ -12,24 +12,32 @@ namespace Compze.Tessaging.Hosting.Testing.Wiring;
 
 public static class TestingComponentRegistrarDbPool
 {
-   public static IComponentRegistrar CurrentTestsDbPoolIfNotAlreadyRegistered(this IComponentRegistrar register) => 
-      register.CastTo<TestingComponentRegistrar>().CurrentTestsDbPoolIfNotAlreadyRegistered();
+   public static IComponentRegistrar CurrentTestsDbPoolIfNotCloneContainer(this IComponentRegistrar register) =>
+      register.CastTo<TestingComponentRegistrar>().CurrentTestsDbPoolIfNotCloneContainer();
 
-   public static IComponentRegistrar CurrentTestsDbPoolIfNotAlreadyRegistered(this TestingComponentRegistrar @this)
+   public static IComponentRegistrar CurrentTestsDbPoolIfNotCloneContainer(this TestingComponentRegistrar @this)
    {
-      @this.DbPoolIfNotAlreadyRegistered();
+      if(@this.Container().IsClone())
+      {
+         if(!@this.Container().IsRegistered<DbPool>())
+            throw new Exception("The DbPool must be registered in the root container before any cloning. You cannot register it directly in a cloned container");
+
+         return @this;
+      }
+
+      @this.DbPool();
       switch(TestEnv.SqlLayer)
       {
-         case SqlLayer.MicrosoftSqlServer:
-            return @this.MsSqlDbPoolSqlLayerIfNotAlreadyRegistered();
+         case SqlLayer.MsSql:
+            return @this.MsSqlDbPoolSqlLayer();
          case SqlLayer.MySql:
-            return @this.MySqlDbPoolSqlLayerIfNotAlreadyRegistered();
-         case SqlLayer.PostgreSql:
-            return @this.PgSqlDbPoolSqlLayerIfNotAlreadyRegistered();
+            return @this.MySqlDbPoolSqlLayer();
+         case SqlLayer.PgSql:
+            return @this.PgSqlDbPoolSqlLayer();
          case SqlLayer.Sqlite:
-            return @this.SqliteDbPoolSqlLayerIfNotAlreadyRegistered();
+            return @this.SqliteDbPoolSqlLayer();
          case SqlLayer.SqliteMemory:
-            return  @this.SqliteMemoryDbPoolSqlLayerIfNotAlreadyRegistered();
+            return @this.SqliteMemoryDbPoolSqlLayer();
          default:
             throw new ArgumentOutOfRangeException();
       }

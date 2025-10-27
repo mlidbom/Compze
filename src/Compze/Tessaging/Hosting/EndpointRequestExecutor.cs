@@ -20,15 +20,15 @@ public static class EndpointRequestExecutor
 
 
    //Urgent: Most of these ExecuteClientRequests are very suspect. Are they really endpoint actions or something about pure clients? What is a "client endpoint"?
-   public static void ExecuteClientRequest(this IEndpoint @this, Action<IRemoteHypermediaNavigator> request) => @this.ServiceLocator.ExecuteInIsolatedScope(() => request(@this.ServiceLocator.Resolve<IRemoteHypermediaNavigator>()));
-   public static TResult ExecuteClientRequest<TResult>(this IEndpoint @this, Func<IRemoteHypermediaNavigator, TResult> request) => @this.ServiceLocator.ExecuteInIsolatedScope(() => request(@this.ServiceLocator.Resolve<IRemoteHypermediaNavigator>()));
-   public static async Task<TResult> ExecuteClientRequestAsync<TResult>(this IEndpoint @this, Func<IRemoteHypermediaNavigator, Task<TResult>> request) =>
-      await @this.ServiceLocator.ExecuteInIsolatedScopeAsync(async () => await request(@this.ServiceLocator.Resolve<IRemoteHypermediaNavigator>()).caf()).caf();
+   public static void ExecuteClientRequest(this IEndpoint @this, Action<IRemoteTypermediaNavigator> request) => @this.ServiceLocator.ExecuteInIsolatedScope(() => request(@this.ServiceLocator.Resolve<IRemoteTypermediaNavigator>()));
+   public static TResult ExecuteClientRequest<TResult>(this IEndpoint @this, Func<IRemoteTypermediaNavigator, TResult> request) => @this.ServiceLocator.ExecuteInIsolatedScope(() => request(@this.ServiceLocator.Resolve<IRemoteTypermediaNavigator>()));
+   public static async Task<TResult> ExecuteClientRequestAsync<TResult>(this IEndpoint @this, Func<IRemoteTypermediaNavigator, Task<TResult>> request) =>
+      await @this.ServiceLocator.ExecuteInIsolatedScopeAsync(async () => await request(@this.ServiceLocator.Resolve<IRemoteTypermediaNavigator>()).caf()).caf();
 
    public static async Task ExecuteClientRequestAsync(this IEndpoint endpoint, Func<Task> request) =>await endpoint.ServiceLocator.ExecuteInIsolatedScopeAsync(async () => await request().caf()).caf();
 
-   public static async Task ExecuteClientRequestAsync(this IEndpoint endpoint, Func<IRemoteHypermediaNavigator, Task> request) =>
-      await endpoint.ServiceLocator.ExecuteInIsolatedScopeAsync(async () => await request(endpoint.ServiceLocator.Resolve<IRemoteHypermediaNavigator>()).caf()).caf();
+   public static async Task ExecuteClientRequestAsync(this IEndpoint endpoint, Func<IRemoteTypermediaNavigator, Task> request) =>
+      await endpoint.ServiceLocator.ExecuteInIsolatedScopeAsync(async () => await request(endpoint.ServiceLocator.Resolve<IRemoteTypermediaNavigator>()).caf()).caf();
 
    //Leverage the manual implementations above to enable running navigation specifications as requests
    public static TResult ExecuteClientRequest<TResult>(this IEndpoint @this, NavigationSpecification<TResult> navigation) => @this.ExecuteClientRequest(navigation.NavigateOn);

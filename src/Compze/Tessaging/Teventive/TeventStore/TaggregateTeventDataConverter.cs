@@ -1,10 +1,10 @@
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
-using Compze.Sql.Common.TEventStore.Abstractions;
+using Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions;
 
 namespace Compze.Tessaging.Teventive.TeventStore;
 
 static class TaggregateTeventDataConverter
 {
    internal static TaggregateTeventData ToTaggregateTeventData(this ITaggregateTevent @this) =>
-      new TaggregateTeventData(@this.TessageId, @this.TaggregateVersion, @this.TaggregateId, @this.UtcTimeStamp);
+      new TaggregateTeventData(@this.Id, @this.TaggregateVersion, @this.TaggregateId, @this.UtcTimeStamp);
 }

@@ -12,4 +12,6 @@ public record EndpointId
       Assert.Argument.Is(guidValue != Guid.Empty);
       GuidValue = guidValue;
    }
+
+   public override string ToString() => GuidValue.ToString();
 }

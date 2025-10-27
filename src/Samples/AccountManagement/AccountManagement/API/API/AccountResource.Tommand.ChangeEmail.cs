@@ -10,7 +10,7 @@ public partial class AccountResource
 {
    public static partial class Tommand
    {
-      public class ChangeEmail : TessageTypes.Remotable.AtMostOnce.AtMostOnceHypermediaTommand
+      public class ChangeEmail : TessageTypes.Remotable.AtMostOnce.AtMostOnceTypermediaTommand
       {
          [JsonConstructor]public ChangeEmail(Guid accountId, string email) : base(DeduplicationIdHandling.Reuse)
          {

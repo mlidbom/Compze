@@ -11,9 +11,6 @@
     <Project Path="Compze/Abstractions/Compze.Core.csproj" />
     <Project Path="Compze/Utilities/Compze.Utilities.csproj" />
   </Folder>
-  <Folder Name="/Compze/DocumentDb/">
-    <Project Path="Compze/Sql/DocumentDb/Compze.DocumentDb.csproj" />
-  </Folder>
   <Folder Name="/Compze/Serialization/">
     <Project Path="Compze/Serialization/Newtonsoft/Compze.Serialization.Newtonsoft.csproj" />
   </Folder>
@@ -44,7 +41,7 @@
   <Folder Name="/_Samples/" />
   <Folder Name="/_Samples/AccountManagement/">
     <Project Path="Samples/AccountManagement/AccountManagement/API/AccountManagement.API.csproj" />
-    <Project Path="Samples/AccountManagement/AccountManagement/Domain/Events/AccountManagement.Domain.Events.csproj" />
+    <Project Path="Samples/AccountManagement/AccountManagement/Domain/Events/AccountManagement.Domain.Tevents.csproj" />
     <Project Path="Samples/AccountManagement/AccountManagement/Server/AccountManagement.Server.csproj" />
     <Project Path="Samples/AccountManagement/AccountManagement/UI/MVC/AccountManagement.UI.MVC.csproj" />
   </Folder>

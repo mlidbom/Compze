@@ -14,7 +14,7 @@ namespace AccountManagement.UI;
 static class AccountUIAdapter
 {
    public static void Login(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTommandWithResult(
-      (AccountResource.Tommand.LogIn logIn, IInProcessHypermediaNavigator navigator) =>
+      (AccountResource.Tommand.LogIn logIn, IInProcessTypermediaNavigator navigator) =>
       {
          var email = Email.Parse(logIn.Email);
 
@@ -33,15 +33,15 @@ static class AccountUIAdapter
       });
 
    internal static void ChangePassword(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTommand(
-      (AccountResource.Tommand.ChangePassword tommand, IInProcessHypermediaNavigator navigator) =>
+      (AccountResource.Tommand.ChangePassword tommand, IInProcessTypermediaNavigator navigator) =>
          navigator.Execute(InternalApi.Queries.GetForUpdate(tommand.AccountId)).ChangePassword(tommand.OldPassword, new Password(tommand.NewPassword)));
 
    internal static void ChangeEmail(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTommand(
-      (AccountResource.Tommand.ChangeEmail tommand, IInProcessHypermediaNavigator navigator) =>
+      (AccountResource.Tommand.ChangeEmail tommand, IInProcessTypermediaNavigator navigator) =>
          navigator.Execute(InternalApi.Queries.GetForUpdate(tommand.AccountId)).ChangeEmail(Email.Parse(tommand.Email)));
 
    internal static void Register(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTommandWithResult(
-      (AccountResource.Tommand.Register tommand, IInProcessHypermediaNavigator bus) =>
+      (AccountResource.Tommand.Register tommand, IInProcessTypermediaNavigator bus) =>
       {
          var (status, account) = Account.Register(tommand.AccountId, Email.Parse(tommand.Email), new Password(tommand.Password), bus);
          return status switch
@@ -53,6 +53,6 @@ static class AccountUIAdapter
       });
 
    internal static void GetById(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery(
-      (TessageTypes.Remotable.NonTransactional.Queries.EntityLink<AccountResource> accountTuery, IInProcessHypermediaNavigator navigator)
+      (TessageTypes.Remotable.NonTransactional.Queries.EntityLink<AccountResource> accountTuery, IInProcessTypermediaNavigator navigator)
          => new AccountResource(navigator.Execute(InternalApi.AccountQueryModel.Queries.Get(accountTuery.EntityId))));
 }

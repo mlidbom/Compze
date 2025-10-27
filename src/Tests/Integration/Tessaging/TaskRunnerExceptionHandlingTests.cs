@@ -1,24 +1,21 @@
-using System;
-using System.Threading.Tasks;
 using Compze.Core.Tessaging.Hosting.Public;
-using Compze.Tessaging.Hosting.AspNetCore.Wiring;
-using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
-using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Tests.Infrastructure;
+using Compze.Tests.Infrastructure.XUnit;
 using Compze.Utilities.Functional;
 using Compze.Utilities.Logging;
-using Compze.Tests.Infrastructure.XUnit;
 using Compze.Utilities.Threading.TasksCE;
 using Compze.Utilities.Threading.Testing;
 using FluentAssertions;
 using FluentAssertions.Extensions;
+using System;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Compze.Tests.Integration.Tessaging;
 
-public class TaskRunnerExceptionHandlingTests : UniversalTestBase, IAsyncLifetime
+public class TaskRunnerExceptionHandlingTests : UniversalTestBase
 {
 #pragma warning disable CA2213 // Disposable fields should be disposed
     readonly ITestingEndpointHost _host;
@@ -27,21 +24,17 @@ public class TaskRunnerExceptionHandlingTests : UniversalTestBase, IAsyncLifetim
 
    public TaskRunnerExceptionHandlingTests()
    {
-      _host = TestingEndpointHost.Create(registrar => TestEnv.DIContainer.CreateWithServiceLocatorAndSerializer());
+      _host = TestingEndpointHost.Create();
       var endpoint = _host.RegisterEndpoint(
          "endpoint",
          new EndpointId(Guid.Parse("A1B2C3D4-E5F6-4748-9ABC-DEF012345678")),
-         builder =>
-         {
-            builder.Container.Register()
-                   .AspNetCoreTransport()
-                   .CurrentTestsConfiguredSqlLayer();
-         });
+         builder => {});
 
       _taskRunner = endpoint.ServiceLocator.Resolve<ITaskRunner>();
    }
 
    protected override async Task InitializeAsyncInternal() => await _host.StartAsync();
+   protected override async Task DisposeAsyncInternal() => await _host.DisposeAsync();
 
    [PCT]
    public async Task Should_throw_taggregate_exception_on_dispose_when_background_task_throws()

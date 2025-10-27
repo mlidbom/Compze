@@ -46,7 +46,7 @@ class AccountQueryModel : SelfGeneratingQueryModel<AccountQueryModel, AccountTev
       public static void RegisterHandlers(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => Get(registrar);
 
       static void Get(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery(
-         (TessageTypes.StrictlyLocal.Queries.EntityLink<AccountQueryModel> tuery, IInProcessHypermediaNavigator navigator) =>
+         (TessageTypes.StrictlyLocal.Queries.EntityLink<AccountQueryModel> tuery, IInProcessTypermediaNavigator navigator) =>
             new AccountQueryModel(navigator.Execute(new TeventStoreApi().Queries.GetHistory<AccountTevent.Root>(tuery.EntityId))));
    }
 }

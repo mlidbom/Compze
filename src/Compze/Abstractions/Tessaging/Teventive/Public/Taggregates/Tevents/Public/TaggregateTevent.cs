@@ -6,7 +6,7 @@ public abstract class TaggregateTevent() : IMutableTaggregateTevent
 {
     protected TaggregateTevent(Guid taggregateId) : this() => TaggregateId = taggregateId;
 
-    public Guid TessageId { get; private set; } = Guid.CreateVersion7();
+    public Guid Id { get; private set; } = Guid.CreateVersion7();
     public int TaggregateVersion { get; private set; }
     public Guid TaggregateId { get; private set; }
     public DateTime UtcTimeStamp { get; private set; } = DateTime.UtcNow; //Todo: Should use time source.
@@ -15,6 +15,6 @@ public abstract class TaggregateTevent() : IMutableTaggregateTevent
     void IMutableTaggregateTevent.SetTaggregateIdInternal(Guid taggregateId) => TaggregateId = taggregateId;
     void IMutableTaggregateTevent.SetTaggregateVersionInternal(int taggregateVersion) => TaggregateVersion = taggregateVersion;
     void IMutableTaggregateTevent.SetUtcTimeStampInternal(DateTime utcTimeStamp) => UtcTimeStamp = utcTimeStamp;
-    void IMutableTaggregateTevent.SetTessageIdInternal(Guid tessageId) => TessageId = tessageId;
+    void IMutableTaggregateTevent.SetTessageIdInternal(Guid tessageId) => Id = tessageId;
 #pragma warning restore CA1033
 }

@@ -52,6 +52,7 @@ static partial class TaskCE
       throw new Exception("Impossible!");
    }
 
-   internal static Task ContinueAsynchronouslyOnDefaultScheduler(this Task @this, Action<Task> continuation, TaskContinuationOptions options = TaskContinuationOptions.RunContinuationsAsynchronously) =>
-      @this.ContinueWith(continuation, CancellationToken.None, options, TaskScheduler.Default);
+   ///<summary>Task.ContinueWith may run the continuation synchronously on the calling thread, causing all kinds of havoc. This simply guarantees that this does not happen.</summary>
+   internal static Task ContinueWithAsynchronously(this Task @this, Action<Task> continuation) =>
+      @this.ContinueWith(continuation, CancellationToken.None, TaskContinuationOptions.RunContinuationsAsynchronously, TaskScheduler.Default);
 }

@@ -7,7 +7,7 @@ namespace Compze.Tests.Infrastructure.XUnit;
 public sealed class PCTAttribute(
    [CallerFilePath] string? sourceFilePath = null,
    [CallerLineNumber] int sourceLineNumber = -1)
-   : ComponentCombinationsTheoryAttribute<SqlLayer, DIContainer, Serializer>(
+   : ComponentCombinationsTheoryAttribute<SqlLayer, DIContainer, Serializer, Transport>(
       configurationFileName: "TestUsingPluggableComponentCombinations",
       useTestMethodArgument: false,
       sourceFilePath: sourceFilePath,

@@ -1,6 +1,6 @@
 using System;
 
-namespace Compze.Core.Tessaging.Teventive.TEventStore.QueryModels.Generators.Public;
+namespace Compze.Core.Tessaging.Teventive.TeventStore.QueryModels.Generators.Public;
 
 class NoSuchDocumentException : ArgumentOutOfRangeException
 {

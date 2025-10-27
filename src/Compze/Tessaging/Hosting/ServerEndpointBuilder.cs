@@ -1,3 +1,5 @@
+using System;
+using System.Threading.Tasks;
 using Compze.Core.Configuration.Internal;
 using Compze.Core.Refactoring.Naming.Internal.Implementation;
 using Compze.Core.Tessaging.Hosting.Public;
@@ -11,21 +13,22 @@ using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
 using Compze.Tessaging.Implementation.Outbox;
 using Compze.Tessaging.Implementation.TessageHandling.Inbox;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
-using Compze.Tessaging.Implementation.Transport.Client.Abstractions;
-using Compze.Tessaging.Implementation.Transport.Client.Http;
-using Compze.Tessaging.Implementation.Transport.Routing;
-using Compze.Tessaging.Implementation.Transport.Routing.Abstractions;
+using Compze.Tessaging.Implementation.Transport.Client.Implementation.Universal;
+using Compze.Tessaging.Implementation.Transport.Client.Internal;
+using Compze.Tessaging.Implementation.Transport.Client.Routing;
+using Compze.Tessaging.Implementation.Transport.Client.Routing.Abstractions;
 using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Tessaging.Typermedia;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE;
+using Compze.Utilities.Threading.TasksCE;
 
 // ReSharper disable ImplicitlyCapturedClosure it is very much intentional :)
 
 namespace Compze.Tessaging.Hosting;
 
-class ServerEndpointBuilder : IEndpointBuilder
+class ServerEndpointBuilder : IEndpointBuilder, IAsyncDisposable, IDisposable
 {
    bool _builtSuccessfully;
 
@@ -45,7 +48,7 @@ class ServerEndpointBuilder : IEndpointBuilder
       var serviceLocator = Container.ServiceLocator;
       var endpoint = new Endpoint(serviceLocator,
                                   serviceLocator.Resolve<ITessagesInFlightTracker>(),
-                                  serviceLocator.Resolve<ITransportClient>(),
+                                  serviceLocator.Resolve<IRoutingInboxClient>(),
                                   serviceLocator.Resolve<IEndpointRegistry>(),
                                   Configuration);
       _builtSuccessfully = true;
@@ -84,9 +87,7 @@ class ServerEndpointBuilder : IEndpointBuilder
 
       //Transport
       register.Transport()
-              .RemoteHypermediaNavigator()
-              .HttpClientFactoryCE()
-              .HttpApiClient();
+              .RemoteHypermediaNavigator();
 
       Container.Register(Singleton.For<ITessagesInFlightTracker>().CreatedBy(() => _globalStateTracker));
 
@@ -103,6 +104,7 @@ class ServerEndpointBuilder : IEndpointBuilder
                  .InProcessHypermediaNavigator();
 
          Container.Register(
+            Singleton.For<EndpointId>().Instance(Configuration.Id),
             Singleton.For<IDependencyInjectionContainer>().Instance(Container),
             Singleton.For<EndpointConfiguration>().Instance(Configuration),
             Singleton.For<ITessageHandlerRegistry, ITessageHandlerRegistrar>().Instance(_registry)
@@ -112,15 +114,17 @@ class ServerEndpointBuilder : IEndpointBuilder
 
    bool _disposed;
 
-   public void Dispose()
+   public async ValueTask DisposeAsync()
    {
       if(!_disposed)
       {
          _disposed = true;
          if(!_builtSuccessfully)
          {
-            Container.Dispose();
+            await Container.DisposeAsync().caf();
          }
       }
    }
+
+   public void Dispose() => DisposeAsync().WaitUnwrappingException();
 }

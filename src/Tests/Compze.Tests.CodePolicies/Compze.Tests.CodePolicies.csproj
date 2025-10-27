@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
    <PropertyGroup>
       <TargetFramework>net9.0</TargetFramework>
       <Nullable>enable</Nullable>
@@ -13,7 +13,6 @@
       <ProjectReference Include="..\..\Compze\Abstractions\Compze.Core.csproj" />
       <ProjectReference Include="..\..\Compze\Serialization\Newtonsoft\Compze.Serialization.Newtonsoft.csproj" />
       <ProjectReference Include="..\..\Compze\Sql\Common\Compze.Sql.Common.csproj" />
-      <ProjectReference Include="..\..\Compze\Sql\DocumentDb\Compze.DocumentDb.csproj" />
       <ProjectReference Include="..\..\Compze\Sql\MicrosoftSql\Compze.Sql.MicrosoftSql.csproj" />
       <ProjectReference Include="..\..\Compze\Sql\MySql\Compze.Sql.MySql.csproj" />
       <ProjectReference Include="..\..\Compze\Sql\PostgreSql\Compze.Sql.PostgreSql.csproj" />

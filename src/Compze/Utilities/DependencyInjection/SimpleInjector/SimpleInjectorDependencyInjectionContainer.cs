@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.Threading.TasksCE;
 using SimpleInjector;
@@ -14,10 +15,16 @@ public sealed class SimpleInjectorDependencyInjectionContainer : DependencyInjec
 {
    readonly Container _container;
 
-   public SimpleInjectorDependencyInjectionContainer(IComponentRegistrar register) : base(register)
+   public SimpleInjectorDependencyInjectionContainer(IComponentRegistrar? register = null) : base(register)
    {
-      _container = new Container();
-      _container.Options.DefaultScopedLifestyle = new AsyncScopedLifestyle();
+      _container = new Container
+                   {
+                      Options =
+                      {
+                         DefaultScopedLifestyle = new AsyncScopedLifestyle(),
+                         EnableAutoVerification = false //Verification is just too slow for our tests and the really important checks we do ourselves
+                      }
+                   };
 
       _container.ResolveUnregisteredType += (_, unregisteredTypeTeventArgs) =>
       {
@@ -53,18 +60,13 @@ public sealed class SimpleInjectorDependencyInjectionContainer : DependencyInjec
       return this;
    }
 
-   bool _verificationStarted;
-
+   readonly RunOnce _runVerifications = new RunOnce();
    public override IServiceLocator ServiceLocator
    {
       get
       {
-         if(!_verificationStarted)
-         {
-            _verificationStarted = true;
-            _container.Verify();
-         }
-
+         _runVerifications.RunIfFirstCall(AssertLifeStyleCombinationsAreValid);
+         //_container.Verify(); //Verification is just too slow for our tests and the really important checks we do ourselves
          return this;
       }
    }

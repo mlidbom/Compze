@@ -1,0 +1,58 @@
+using System.Threading.Tasks;
+using Compze.Core.Tessaging.Public;
+using Compze.Core.Tessaging.Teventive.Infrastructure.Validation;
+using Compze.Core.Tessaging.Typermedia.Public;
+using Compze.Tessaging.Implementation.Transport.Client.Internal;
+using Compze.Utilities.DependencyInjection;
+using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.Utilities.Threading.TasksCE;
+using JetBrains.Annotations;
+
+namespace Compze.Tessaging.Typermedia;
+
+
+static class RemoteHypermediaNavigatorRegistrar
+{
+   internal static IComponentRegistrar RemoteHypermediaNavigator(this IComponentRegistrar registrar)
+      => registrar.Register(Typermedia.RemoteTypermediaNavigator.RegisterWith);
+}
+
+//Todo: Build a pipeline to handle things like tommand validation, caching layers etc. Don't explicitly check for rules and optimization here with duplication across the class.
+[UsedImplicitly] class RemoteTypermediaNavigator : IRemoteTypermediaNavigator
+{
+   internal static void RegisterWith(IComponentRegistrar registrar)
+      => registrar.Register(Scoped.For<IRemoteTypermediaNavigator>()
+                                  .CreatedBy((IRoutingInboxClient routingInboxClient) => new RemoteTypermediaNavigator(routingInboxClient)));
+
+   readonly IRoutingInboxClient _routingInboxClient;
+   public RemoteTypermediaNavigator(IRoutingInboxClient routingInboxClient) => _routingInboxClient = routingInboxClient;
+
+   public void Post(IAtMostOnceTypermediaTommand tommand) => PostAsync(tommand).WaitUnwrappingException();
+
+   public Task PostAsync(IAtMostOnceTypermediaTommand tommand)
+   {
+      TessageInspector.AssertValidToSendRemote(tommand);
+      return _routingInboxClient.PostAsync(tommand);
+   }
+
+   public TResult Post<TResult>(IAtMostOnceTommand<TResult> typermediaTommand) => PostAsync(typermediaTommand).ResultUnwrappingException();
+
+   public Task<TResult> PostAsync<TResult>(IAtMostOnceTommand<TResult> typermediaTommand)
+   {
+      TessageInspector.AssertValidToSendRemote(typermediaTommand);
+      return _routingInboxClient.PostAsync(typermediaTommand);
+   }
+
+   public async Task<TResult> GetAsync<TResult>(IRemotableTuery<TResult> tuery)
+   {
+      TessageInspector.AssertValidToSendRemote(tuery);
+      if(tuery is ICreateMyOwnResultTuery<TResult> selfCreating)
+         return await Task.FromResult(selfCreating.CreateResult()).caf();
+
+      return await GetAsyncAfterFastPathOptimization(tuery).caf();
+   }
+
+   async Task<TResult> GetAsyncAfterFastPathOptimization<TResult>(IRemotableTuery<TResult> tuery) => await _routingInboxClient.GetAsync(tuery).caf();
+
+   TResult IRemoteTypermediaNavigator.Get<TResult>(IRemotableTuery<TResult> tuery) => GetAsync(tuery).ResultUnwrappingException();
+}

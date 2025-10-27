@@ -19,7 +19,7 @@ public sealed class MicrosoftDependencyInjectionContainer : DependencyInjectionC
 
    readonly AsyncLocal<IServiceScope?> _scopeCache = new();
 
-   public MicrosoftDependencyInjectionContainer(IComponentRegistrar register) : base(register) =>
+   public MicrosoftDependencyInjectionContainer(IComponentRegistrar? register = null) : base(register) =>
       _services = new ServiceCollection();
 
    protected override IDependencyInjectionContainer RegisterInContainer(ComponentRegistration[] registrations)
@@ -54,7 +54,12 @@ public sealed class MicrosoftDependencyInjectionContainer : DependencyInjectionC
    {
       get
       {
-         _serviceProvider ??= _services.BuildServiceProvider(new ServiceProviderOptions { ValidateOnBuild = true, ValidateScopes = true });
+         if(_serviceProvider == null)
+         {
+            AssertLifeStyleCombinationsAreValid();
+            _serviceProvider = _services.BuildServiceProvider(new ServiceProviderOptions { ValidateOnBuild = true, ValidateScopes = true });
+         }
+
          return this;
       }
    }

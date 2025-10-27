@@ -7,10 +7,11 @@ using Compze.Tessaging.Implementation;
 using Compze.Tessaging.Implementation.Abstractions;
 using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
-using Compze.Tessaging.Implementation.Transport.Client.Abstractions;
-using Compze.Tessaging.Implementation.Transport.Routing.Abstractions;
+using Compze.Tessaging.Implementation.Transport.Client.Internal;
+using Compze.Tessaging.Implementation.Transport.Client.Routing.Abstractions;
 using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.Utilities.SystemCE;
 using Compze.Utilities.Threading.TasksCE;
 using static Compze.Utilities.Contracts.Assert;
 
@@ -31,14 +32,14 @@ class Endpoint : IEndpoint
 
    public Endpoint(IServiceLocator serviceLocator,
                    ITessagesInFlightTracker globalStateTracker,
-                   ITransportClient transportClient,
+                   IRoutingInboxClient routingInboxClient,
                    IEndpointRegistry endpointRegistry,
                    EndpointConfiguration configuration)
    {
       Argument.NotNull(serviceLocator).NotNull(configuration);
       ServiceLocator = serviceLocator;
       _globalStateTracker = globalStateTracker;
-      _transportClient = transportClient;
+      _routingInboxClient = routingInboxClient;
       _configuration = configuration;
       _endpointRegistry = endpointRegistry;
    }
@@ -46,9 +47,9 @@ class Endpoint : IEndpoint
    public EndpointId Id => _configuration.Id;
    public IServiceLocator ServiceLocator { get; }
 
-   public HttpEndPointAddress? Address => _serverComponents?.Inbox.Address;
+   public EndPointAddress? Address => _serverComponents?.Inbox.Address;
    readonly ITessagesInFlightTracker _globalStateTracker;
-   readonly ITransportClient _transportClient;
+   readonly IRoutingInboxClient _routingInboxClient;
    readonly IEndpointRegistry _endpointRegistry;
 
    ServerComponents? _serverComponents;
@@ -64,9 +65,9 @@ class Endpoint : IEndpoint
 
       RunSanityChecks();
 
-      _transportClient.Start();
+      _routingInboxClient.Start();
 
-      //todo: find cleaner way of handling what an endpoint supports
+      //todo: find cleaner way of getting a TyperMedia navigator than pretending to be an endpoint.
       if(!_configuration.IsPureClientEndpoint)
       {
          _serverComponents = new ServerComponents(ServiceLocator.Resolve<TommandScheduler>(), ServiceLocator.Resolve<IInbox>(), ServiceLocator.Resolve<IOutbox>());
@@ -79,8 +80,8 @@ class Endpoint : IEndpoint
    {
       State.Is(!_isSending);
       _isSending = true;
-      var serverEndpoints = _endpointRegistry.ServerEndpoints.ToHashSet();
-      await Task.WhenAll(serverEndpoints.Select(address => _transportClient.ConnectAsync(address))).caf();
+      var serverEndpoints = _endpointRegistry.ServerEndpoints.Select(it => it.Address.NotNull()).ToHashSet();
+      await Task.WhenAll(serverEndpoints.Select(address => _routingInboxClient.ConnectAsync(address))).caf();
       if(_serverComponents != null)
       {
          await Task.WhenAll(_serverComponents.Outbox.StartAsync()).caf();
@@ -116,7 +117,7 @@ class Endpoint : IEndpoint
             await _serverComponents.Inbox.StopAsync().caf();
          }
 
-         _transportClient.Stop();
+         _routingInboxClient.Stop();
       }
    }
 

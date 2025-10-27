@@ -22,7 +22,7 @@ public class Startup
    public Startup(IConfiguration configuration)
    {
       Configuration = configuration;
-      _host = EndpointHost.Production.Create(registrar => TestEnv.DIContainer.CreateWithServiceLocatorAndSerializer());
+      _host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateWithServiceLocatorAndCurrentTestsPluggableComponents());
       _clientEndpoint = _host.RegisterClientEndpoint(AccountApi.RegisterWithClientEndpoint);
 
    }
@@ -36,7 +36,7 @@ public class Startup
       services.AddMvc();
 
       _host.Start();
-      services.AddScoped(_ => _clientEndpoint.ServiceLocator.Resolve<IRemoteHypermediaNavigator>());
+      services.AddScoped(_ => _clientEndpoint.ServiceLocator.Resolve<IRemoteTypermediaNavigator>());
    }
 
    // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

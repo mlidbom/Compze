@@ -9,7 +9,7 @@ using Compze.Core.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Core.Tessaging.Public;
 using Compze.Core.Tessaging.Teventive.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
-using Compze.Core.Tessaging.Teventive.TEventStore.Public;
+using Compze.Core.Tessaging.Teventive.TeventStore.Public;
 using Compze.Core.Wiring.Testing.Internal;
 using FluentAssertions;
 using JetBrains.Annotations;
@@ -286,7 +286,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
    }
 
    [PCT]
-   public void DeletingAnTaggregateDoesNotPrteventTeventsFromItFromBeingRaised()
+   public void DeletingAnTaggregateDoesNotPreventTeventsFromItFromBeingRaised()
    {
       var user1 = new User();
       user1.Register("email1@email.se", "password", Guid.NewGuid());
@@ -478,7 +478,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
          _teventSpy.DispatchedTessages.Count().Should().Be(18);
 
          var dispatchedTevents = _teventSpy.DispatchedTessages.OfType<ITaggregateTevent>().ToList();
-         dispatchedTevents.Select(e => e.TessageId).Distinct().Count().Should().Be(18);
+         dispatchedTevents.Select(e => e.Id).Distinct().Count().Should().Be(18);
 
          var allPersistedTevents = _serviceLocator.TeventStore().ListAllTeventsForTestingPurposesAbsolutelyNotUsableForARealTeventStoreOfAnySize();
          TeventStorageTestHelper.StripSteventhDecimalPointFromSecondFractionOnUtcUpdateTime(dispatchedTevents);

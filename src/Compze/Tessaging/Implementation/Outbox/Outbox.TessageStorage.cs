@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 using Compze.Core.Refactoring.Naming.Internal;
 using Compze.Core.Serialization.Internal;
 using Compze.Core.Tessaging.Hosting.Public;
+using Compze.Core.Tessaging.Internal.SqlLayer;
 using Compze.Core.Tessaging.Public;
-using Compze.Sql.Common.Tessaging;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Logging;
@@ -39,7 +39,7 @@ partial class Outbox
       {
          var outboxTessageWithReceivers = new IServiceBusSqlLayer.OutboxTessageWithReceivers(_serializer.SerializeTessage(tessage),
                                                                                              _typeMapper.GetId(tessage.GetType()).GuidValue,
-                                                                                             tessage.TessageId,
+                                                                                             tessage.Id,
                                                                                              receiverEndpointIds.Select(it => it.GuidValue));
 
          _sqlLayer.SaveTessage(outboxTessageWithReceivers);

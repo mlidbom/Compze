@@ -21,4 +21,6 @@ public static partial class TestEnv
    public static SqlLayer SqlLayer => GetComponents().SqlLayer;
 
    public static DIContainer DIContainer => GetComponents().DiContainer;
+
+   public static Transport Transport => GetComponents().Transport;
 }

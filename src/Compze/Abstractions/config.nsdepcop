@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <NsDepCopConfig IsEnabled="true"
-                InheritanceDepth="1">
+                InheritanceDepth="10">
 
 
    <Allowed From="Compze.Core.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public"
@@ -13,6 +13,12 @@
    <Allowed From="Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public"
             To="Compze.Core.Tessaging.Teventive.Infrastructure" />
 
+   <Allowed From="Compze.Core.DocumentDb.Wiring"
+            To="Compze.Core.DocumentDb.Private" />
+
+	<Allowed From="Compze.Core.DocumentDb.Private"
+            To="Compze.Core.DocumentDb.Infrastructure" />
+
 	<!--todo: review these-->
 	<Allowed From="Compze.Core.Tessaging.Teventive.Infrastructure.Validation"
             To="Compze.Core.Tessaging.Typermedia.Infrastructure.Validation" />
@@ -22,6 +28,9 @@
 
 	<Allowed From="Compze.Core.Tessaging.Teventive.Internal.Implementation"
             To="Compze.Core.Tessaging.Teventive.Infrastructure.Validation" />
+
+	<Allowed From="Compze.Core.DocumentDb.Private"
+            To="Compze.Core.Sql.Infrastructure" />
 
 	<!--todo: Remove this-->
    <Allowed From="Compze.Core.Tessaging.Hosting.Public"

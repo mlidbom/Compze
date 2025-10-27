@@ -16,7 +16,7 @@ static class NewtonsoftTeventStoreSerializerRegistrar
 
 class NewtonsoftTeventStoreSerializer : ITeventStoreSerializer
 {
-   internal static readonly JsonSerializerSettings JsonSettings = Newtonsoft.RenamingAndNonPublicMembersSupportingJSONSettings.TeventStore;
+   internal static readonly JsonSerializerSettings JsonSettings = Newtonsoft.RenamingAndNonPublicMembersSupportingJsonSettings.TeventStore;
 
    readonly RenamingSupportingJsonSerializer _serializer;
 

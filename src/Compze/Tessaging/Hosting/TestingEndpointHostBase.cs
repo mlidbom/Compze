@@ -4,9 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Compze.Core.Refactoring.Naming.Internal.Implementation;
 using Compze.Core.Tessaging.Hosting.Public;
-using Compze.Core.Tessaging.Transport.Internal;
 using Compze.Tessaging.Implementation.Transport;
-using Compze.Tessaging.Implementation.Transport.Routing.Abstractions;
+using Compze.Tessaging.Implementation.Transport.Client.Routing.Abstractions;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
@@ -14,28 +13,19 @@ using Compze.Utilities.Threading.TasksCE;
 
 namespace Compze.Tessaging.Hosting;
 
-public class TestingEndpointHostBase : EndpointHost, ITestingEndpointHost, IEndpointRegistry
+public abstract class TestingEndpointHostBase : EndpointHost, ITestingEndpointHost, IEndpointRegistry
 {
    readonly List<Exception> _expectedExceptions = [];
-   public TestingEndpointHostBase(IComponentRegistrar registrar, Func<IComponentRegistrar, IDependencyInjectionContainer> containerFactory) : base(registrar, containerFactory) => 
+
+   protected TestingEndpointHostBase(IComponentRegistrar registrar, Func<IDependencyInjectionContainer> containerFactory) : base(registrar, containerFactory) => 
       TessagesInFlightTracker = new TessagesInFlightTracker(TypeMapper.Instance);
 
-   public IEnumerable<HttpEndPointAddress> ServerEndpoints => Endpoints.Where(it => it.Address is not null)
-                                                                   .Select(it => it.Address!)
+   public IEnumerable<IEndpoint> ServerEndpoints => Endpoints.Where(it => it.Address is not null)
                                                                    .ToList();
 
    void WaitForEndpointsToBeAtRest(TimeSpan? timeoutOverride = null) => Endpoints.ForEach(endpoint => endpoint.AwaitNoTessagesInFlight(timeoutOverride));
 
-   public IEndpoint RegisterTestingEndpoint(string? name = null, EndpointId? id = null, Action<IEndpointBuilder>? setup = null)
-   {
-      var endpointId = id ?? new EndpointId(Guid.NewGuid());
-      name ??= $"TestingEndpoint-{endpointId.GuidValue}";
-      setup ??= _ => {};
-      return RegisterEndpoint(name, endpointId, setup);
-   }
-
-   public IEndpoint RegisterClientEndpointForRegisteredEndpoints() =>
-      RegisterClientEndpoint(_ => {});
+   public abstract IEndpoint RegisterClientEndpointForRegisteredEndpoints(Action<IEndpointBuilder>? setup = null);
 
    public TException AssertThrown<TException>() where TException : Exception
    {

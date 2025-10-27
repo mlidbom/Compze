@@ -5,6 +5,7 @@ public class EndpointConfiguration
    internal string Name { get; }
    internal EndpointId Id { get; }
    public string ConnectionStringName { get; }
+   //todo: find cleaner way of getting a TyperMedia navigator than pretending to be an endpoint.
    internal bool IsPureClientEndpoint { get; }
 
 

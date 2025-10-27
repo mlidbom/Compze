@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Compze.Core.Public;
 
-namespace Compze.Core.Tessaging.Teventive.TEventStore.QueryModels.Generators.Public;
+namespace Compze.Core.Tessaging.Teventive.TeventStore.QueryModels.Generators.Public;
 
 public interface IQueryModelReader
 {

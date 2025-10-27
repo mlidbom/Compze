@@ -61,6 +61,8 @@ static class TypeCE
 
    public static bool IsOpenGenericType(this Type type) => type.ContainsGenericParameters;
 
+   public static bool Is<TOther>(this object @this) => @this is TOther;
+
    public static bool Is<TOther>(this Type @this) => typeof(TOther).IsAssignableFrom(@this);
 
    public static string GetFullNameCompilable(this Type @this)

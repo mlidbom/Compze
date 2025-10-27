@@ -6,18 +6,18 @@ namespace Compze.Core.Tessaging.Typermedia.Public;
 
 public static class NavigationSpecificationTessageExtensions
 {
-   public static NavigationSpecification Post(this IAtMostOnceHypermediaTommand tommand) => NavigationSpecification.Post(tommand);
+   public static NavigationSpecification Post(this IAtMostOnceTypermediaTommand tommand) => NavigationSpecification.Post(tommand);
 
-   public static NavigationSpecification<TResult> Post<TResult>(this IAtMostOnceTommand<TResult> tommand) => NavigationSpecification.Post(tommand);
+   public static NavigationSpecification<TResult> Post<TResult>(this IAtMostOnceTommand<TResult> typermediaTommand) => NavigationSpecification.Post(typermediaTommand);
 
    public static NavigationSpecification<TResult> Get<TResult>(this IRemotableTuery<TResult> tuery) => NavigationSpecification.Get(tuery);
 
 
-   public static TResult PostOn<TResult>(this IAtMostOnceTommand<TResult> tommand, IRemoteHypermediaNavigator bus) => NavigationSpecification.Post(tommand).NavigateOn(bus);
+   public static TResult PostOn<TResult>(this IAtMostOnceTommand<TResult> typermediaTommand, IRemoteTypermediaNavigator bus) => NavigationSpecification.Post(typermediaTommand).NavigateOn(bus);
 
-   public static TResult GetOn<TResult>(this IRemotableTuery<TResult> tuery, IRemoteHypermediaNavigator bus) => NavigationSpecification.Get(tuery).NavigateOn(bus);
+   public static TResult GetOn<TResult>(this IRemotableTuery<TResult> tuery, IRemoteTypermediaNavigator bus) => NavigationSpecification.Get(tuery).NavigateOn(bus);
 
-   public static TResult Navigate<TResult>(this IRemoteHypermediaNavigator navigator, NavigationSpecification<TResult> navigationSpecification) => navigationSpecification.NavigateOn(navigator);
+   public static TResult Navigate<TResult>(this IRemoteTypermediaNavigator navigator, NavigationSpecification<TResult> navigationSpecification) => navigationSpecification.NavigateOn(navigator);
 
-   public static async Task<TResult> NavigateAsync<TResult>(this IRemoteHypermediaNavigator navigator, NavigationSpecification<TResult> navigationSpecification) => await navigationSpecification.NavigateOnAsync(navigator).caf();
+   public static async Task<TResult> NavigateAsync<TResult>(this IRemoteTypermediaNavigator navigator, NavigationSpecification<TResult> navigationSpecification) => await navigationSpecification.NavigateOnAsync(navigator).caf();
 }

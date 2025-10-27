@@ -12,9 +12,9 @@ public abstract class DependencyInjectionContainerBase : IDependencyInjectionCon
    readonly List<ComponentRegistration> _registeredComponents = [];
    readonly IComponentRegistrar _registrar;
 
-   protected DependencyInjectionContainerBase(IComponentRegistrar registrar)
+   protected DependencyInjectionContainerBase(IComponentRegistrar? registrar)
    {
-      _registrar = registrar;
+      _registrar = registrar ?? new ComponentRegistrar();
       _registrar.SetContainer(this);
    }
 
@@ -25,7 +25,6 @@ public abstract class DependencyInjectionContainerBase : IDependencyInjectionCon
    {
       ValidateNoDuplicateRegistrations(registrations);
       _registeredComponents.AddRange(registrations);
-      AssertLifeStyleCombinationsAreValid();
       return RegisterInContainer(registrations);
    }
 
@@ -47,7 +46,7 @@ public abstract class DependencyInjectionContainerBase : IDependencyInjectionCon
       }
    }
 
-   void AssertLifeStyleCombinationsAreValid()
+   protected void AssertLifeStyleCombinationsAreValid()
    {
       _registeredComponents.Where(it => it.Lifestyle == Lifestyle.Singleton)
                            .ForEach(singleton =>

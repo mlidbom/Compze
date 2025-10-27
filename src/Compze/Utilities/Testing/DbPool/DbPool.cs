@@ -21,21 +21,16 @@ namespace Compze.Utilities.Testing.DbPool;
 
 static class DbPoolRegistrar
 {
-   public static IComponentRegistrar DbPoolIfNotAlreadyRegistered(this IComponentRegistrar registrar) =>
-      DbPool.RegisterWithIfNotAlreadyRegistered(registrar);
+   public static IComponentRegistrar DbPool(this IComponentRegistrar registrar) =>
+      Testing.DbPool.DbPool.RegisterWith(registrar);
 }
 
 public partial class DbPool : StrictlyManagedResourceBase<DbPool>
 {
-   internal static IComponentRegistrar RegisterWithIfNotAlreadyRegistered(IComponentRegistrar registrar)
-   {
-      if(registrar.Container().IsRegistered<DbPool>())
-         return registrar;
-
-      return registrar.Register(Singleton.For<DbPool>()
-                                         .CreatedBy((IDbPoolSqlLayer sqlLayer) => new DbPool(sqlLayer))
-                                         .DelegateToParentServiceLocatorWhenCloning());
-   }
+   internal static IComponentRegistrar RegisterWith(IComponentRegistrar registrar) =>
+      registrar.Register(Singleton.For<DbPool>()
+                                  .CreatedBy((IDbPoolSqlLayer sqlLayer) => new DbPool(sqlLayer))
+                                  .DelegateToParentServiceLocatorWhenCloning());
 
    readonly IDbPoolSqlLayer _sqlLayer;
    protected readonly MachineWideSharedObject<SharedState> MachineWideState;
@@ -52,7 +47,7 @@ public partial class DbPool : StrictlyManagedResourceBase<DbPool>
 
    readonly MonitorCE _guard = MonitorCE.WithTimeout(30.Seconds());
    readonly Guid _poolId = Guid.NewGuid();
-   protected IReadOnlyList<DbPoolDatabase> _transientCache = new List<DbPoolDatabase>();
+   IReadOnlyList<DbPoolDatabase> _transientCache = new List<DbPoolDatabase>();
 
    static ILogger _log = CompzeLogger.For<DbPool>();
 

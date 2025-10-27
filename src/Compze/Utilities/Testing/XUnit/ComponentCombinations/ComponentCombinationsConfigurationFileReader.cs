@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE;
 
 namespace Compze.Utilities.Testing.XUnit.ComponentCombinations;
@@ -31,7 +32,8 @@ static class ComponentCombinationsConfigurationFileReader
         .SelectMany(it => it.ExpandWildcardsIntoConcretePermutations())
         .OrderBy(it => it.ToString())
         .DistinctBy(it => it.ToString())
-        .ToList();
+        .ToList()
+        .assert(it => it.Any(), it => "found no configured component combinations");
 
    static string[] ReadFileLines(string fileName)
    {

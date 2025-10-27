@@ -3,7 +3,6 @@ using Compze.Core.Refactoring.Naming.Internal.Implementation;
 using Compze.Core.Serialization.Internal;
 using Compze.Core.Tessaging.Teventive.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
-using Compze.Serialization.Newtonsoft;
 using Compze.Serialization.Newtonsoft.Private.TeventStore;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.SystemCE;
@@ -82,7 +81,7 @@ public class NewtonSoftTeventStoreTeventSerializerTests : UniversalTestBase
                                                     .PreferringRuntimeMemberTypes()
                                                     .ComparingByMembers<TaggregateTevent>()
                                                     .Excluding(@tevent => @tevent.UtcTimeStamp)//Timestamp is defaulted in the constructor used by serialization.
-                                                    .Excluding(@tevent => @tevent.TessageId)
+                                                    .Excluding(@tevent => @tevent.Id)
       );
    }
 }

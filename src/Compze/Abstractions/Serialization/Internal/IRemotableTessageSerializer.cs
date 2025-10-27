@@ -9,5 +9,5 @@ interface IRemotableTessageSerializer
    IRemotableTessage DeserializeTessage(Type tessageType, string json);
 
    string SerializeResponse(object response);
-   object DeserializeResponse(Type responseType, string json);
+   TResponse DeserializeResponse<TResponse>(string json);
 }

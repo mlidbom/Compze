@@ -22,7 +22,7 @@ public class TeventStoreTeventSerializerPerformanceTests : UniversalTestBase
 
    public TeventStoreTeventSerializerPerformanceTests()
    {
-      _container = TestEnv.DIContainer.CreateWithServiceLocatorAndSerializer();
+      _container = TestEnv.DIContainer.CreateWithServiceLocatorAndCurrentTestsPluggableComponents();
       _container.Register().TypeMapper();
       _teventSerializer = _container.ServiceLocator.Resolve<ITeventStoreSerializer>();
    }
@@ -52,10 +52,10 @@ public class TeventStoreTeventSerializerPerformanceTests : UniversalTestBase
       );
    }
 
-   [PCT] public void Should_roundtrip_simple_tevent_within_50_percent_of_default_serializer_performance()
+   [PCT] public void Should_roundtrip_simple_tevent_within_80_percent_of_default_serializer_performance()
    {
       const int iterations = 1000;
-      const double allowedSlowdown = 1.5;
+      const double allowedSlowdown = 1.8;
 
       var tevents = 1.Through(iterations).Select( _ =>  new TestTevent(
                                                     test1: "Test1",

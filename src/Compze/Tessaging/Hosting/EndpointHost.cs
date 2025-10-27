@@ -17,11 +17,11 @@ namespace Compze.Tessaging.Hosting;
 public class EndpointHost : IEndpointHost
 {
    readonly IComponentRegistrar _registrar;
-   readonly Func<IComponentRegistrar, IDependencyInjectionContainer> _containerFactory;
+   readonly Func<IDependencyInjectionContainer> _containerFactory;
    protected IList<IEndpoint> Endpoints { get; } = [];
    internal ITessagesInFlightTracker TessagesInFlightTracker;
 
-   protected EndpointHost(IComponentRegistrar registrar, Func<IComponentRegistrar, IDependencyInjectionContainer> containerFactory)
+   protected EndpointHost(IComponentRegistrar registrar, Func<IDependencyInjectionContainer> containerFactory)
    {
       _registrar = registrar;
       _containerFactory = containerFactory;
@@ -30,14 +30,14 @@ public class EndpointHost : IEndpointHost
 
    public static class Production
    {
-      public static IEndpointHost Create(Func<IComponentRegistrar, IDependencyInjectionContainer> containerFactory) => new EndpointHost(new ComponentRegistrar(), containerFactory);
+      public static IEndpointHost Create(Func<IDependencyInjectionContainer> containerFactory) => new EndpointHost(new ComponentRegistrar(), containerFactory);
    }
 
    public virtual IEndpoint RegisterEndpoint(string name, EndpointId id, Action<IEndpointBuilder> setup) => InternalRegisterEndpoint(new EndpointConfiguration(name, id, isPureClientEndpoint: false), setup);
 
    IEndpoint InternalRegisterEndpoint(EndpointConfiguration configuration, Action<IEndpointBuilder> setup)
    {
-      using var builder = new ServerEndpointBuilder(this, TessagesInFlightTracker, _containerFactory(_registrar), configuration);
+      using var builder = new ServerEndpointBuilder(this, TessagesInFlightTracker, _containerFactory(), configuration);
       setup(builder);
 
       var endpoint = builder.Build();
@@ -50,7 +50,7 @@ public class EndpointHost : IEndpointHost
                                                                            id: new EndpointId(Guid.Parse("D4C869D2-68EF-469C-A5D6-37FCF2EC152A")),
                                                                            isPureClientEndpoint: true);
 
-   public IEndpoint RegisterClientEndpoint(Action<IEndpointBuilder> setup) => InternalRegisterEndpoint(ClientEndpointConfiguration, setup);
+   public virtual IEndpoint RegisterClientEndpoint(Action<IEndpointBuilder> setup) => InternalRegisterEndpoint(ClientEndpointConfiguration, setup);
 
    bool _isStarted;
 

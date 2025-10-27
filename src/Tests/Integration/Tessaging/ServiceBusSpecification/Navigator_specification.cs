@@ -1,19 +1,16 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Core.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Core.Tessaging.Public;
 using Compze.Core.Tessaging.Typermedia.Public;
 using Compze.Tessaging.Hosting;
-using Compze.Tessaging.Hosting.AspNetCore.Wiring;
-using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
-using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
 using FluentAssertions;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 // ReSharper disable MemberCanBeMadeStatic.Local
 
@@ -28,23 +25,20 @@ public class Navigator_specification : UniversalTestBase
    {
       var tueryResults = new List<UserResource>();
 
-      _host = TestingEndpointHost.Create(registrar => TestEnv.DIContainer.CreateWithServiceLocatorAndSerializer());
+      _host = TestingEndpointHost.Create();
 
       _host.RegisterEndpoint(
          "Backend",
          new EndpointId(Guid.Parse("3A1B6A8C-D232-476C-A15A-9C8295413210")),
          builder =>
          {
-            builder.Container.Register()
-                   .AspNetCoreTransport()
-                   .CurrentTestsConfiguredSqlLayer();
             builder.RegisterHandlers
                    .ForTuery((GetUserTuery tuery) => tueryResults.Single(result => result.Name == tuery.Name))
                    .ForTuery((UserApiStartPageTuery _) => new UserApiStartPage())
-                   .ForTommandWithResult((RegisterUserTommand tommand, IServiceBusSession _) =>
+                   .ForTommandWithResult((RegisterUserTypermediaTommand typermediaTommand, IServiceBusSession _) =>
                     {
-                       tueryResults.Add(new UserResource(tommand.Name));
-                       return new UserRegisteredConfirmationResource(tommand.Name);
+                       tueryResults.Add(new UserResource(typermediaTommand.Name));
+                       return new UserRegisteredConfirmationResource(typermediaTommand.Name);
                     });
          });
 
@@ -57,7 +51,7 @@ public class Navigator_specification : UniversalTestBase
 
    [PCT]  public void Can_get_tommand_result()
    {
-      var tommandResult1 = _clientEndpoint.ExecuteClientRequest(navigator => navigator.Post(RegisterUserTommand.Create("new-user-name")));
+      var tommandResult1 = _clientEndpoint.ExecuteClientRequest(navigator => navigator.Post(RegisterUserTypermediaTommand.Create("new-user-name")));
       tommandResult1.Name.Should().Be("new-user-name");
    }
 
@@ -82,7 +76,7 @@ public class Navigator_specification : UniversalTestBase
    protected internal class UserApiStartPage
    {
       public static UserApiStartPageTuery Self => new();
-      public RegisterUserTommand RegisterUser(string userName) => RegisterUserTommand.Create(userName);
+      public RegisterUserTypermediaTommand RegisterUser(string userName) => RegisterUserTypermediaTommand.Create(userName);
    }
 
    protected internal class GetUserTuery(string name) : TessageTypes.Remotable.NonTransactional.Queries.Tuery<UserResource>
@@ -95,14 +89,14 @@ public class Navigator_specification : UniversalTestBase
       public string Name { get; private set; } = name;
    }
 
-   protected internal class RegisterUserTommand : TessageTypes.Remotable.AtMostOnce.AtMostOnceTommand<UserRegisteredConfirmationResource>
+   protected internal class RegisterUserTypermediaTommand : TessageTypes.Remotable.AtMostOnce.AtMostOnceTypermediaTommand<UserRegisteredConfirmationResource>
    {
-      RegisterUserTommand() : base(DeduplicationIdHandling.Reuse) {}
+      RegisterUserTypermediaTommand() : base(DeduplicationIdHandling.Reuse) {}
 
-      public static RegisterUserTommand Create(string name) => new()
+      public static RegisterUserTypermediaTommand Create(string name) => new()
                                                                {
                                                                   Name = name,
-                                                                  TessageId = Guid.CreateVersion7()
+                                                                  Id = Guid.CreateVersion7()
                                                                };
 
       public string Name { get; private set; } = "";

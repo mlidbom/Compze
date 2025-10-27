@@ -70,7 +70,7 @@ abstract partial class DbConnectionManager<TConnection, TCommand>
       public virtual async Task<TResult> UseConnectionAsync<TResult>(Func<TConnection, Task<TResult>> func)
       {
          var connection = await OpenConnectionAsync().caf();
-         //makes sure DisposeAsync is called without capturing sync context. We can't do it inline because then connection would be ConfiguredAsyncDisposable, not TConnection!
+         //makes sure DisposeAsync is called without capturing sync context. We can't do it inline because then connection would be ConfiguredAsyncDisposable, not TConnection
          await using var _ = connection.caf();
          return await func(connection).caf();
       }

@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 namespace Compze.Serialization.Newtonsoft;
 
-static class RenamingAndNonPublicMembersSupportingJSONSettings
+static class RenamingAndNonPublicMembersSupportingJsonSettings
 {
    internal static readonly JsonSerializerSettings Default =
       new()
@@ -18,6 +18,8 @@ static class RenamingAndNonPublicMembersSupportingJSONSettings
       };
 
    internal static JsonSerializerSettings DocumentDb => Default;
+
+   internal static JsonSerializerSettings Tessaging => Default;
 
    public static readonly JsonSerializerSettings TeventStore =
       new()

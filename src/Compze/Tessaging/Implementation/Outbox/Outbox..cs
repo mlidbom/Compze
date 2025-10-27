@@ -5,7 +5,7 @@ using System.Transactions;
 using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Core.Tessaging.Public;
 using Compze.Tessaging.Implementation.Abstractions;
-using Compze.Tessaging.Implementation.Transport.Client.Abstractions;
+using Compze.Tessaging.Implementation.Transport.Client.Internal;
 using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.DependencyInjection;
@@ -27,23 +27,23 @@ partial class Outbox : IOutbox
    internal static void RegisterWith(IComponentRegistrar registrar)
    {
       registrar.Register(Singleton.For<IOutbox>()
-                                  .CreatedBy((EndpointConfiguration configuration, ITransportClient transportClient, ITessageStorage tessageStorage, IBackgroundExceptionReporter exceptionReporter, OutboxRetryPoller retryPoller)
-                                                => new Outbox(transportClient, tessageStorage, configuration, exceptionReporter, retryPoller)));
+                                  .CreatedBy((EndpointConfiguration configuration, IRoutingInboxClient routingInboxClient, ITessageStorage tessageStorage, IBackgroundExceptionReporter exceptionReporter, OutboxRetryPoller retryPoller)
+                                                => new Outbox(routingInboxClient, tessageStorage, configuration, exceptionReporter, retryPoller)));
       registrar.Register(TessageStorage.RegisterWith);
       registrar.Register(OutboxRetryPoller.RegisterWith);
    }
 
    readonly ITessageStorage _storage;
    readonly EndpointConfiguration _configuration;
-   readonly ITransportClient _transportClient;
+   readonly IRoutingInboxClient _routingInboxClient;
    readonly IBackgroundExceptionReporter _exceptionReporter;
    readonly OutboxRetryPoller _retryPoller;
 
-   Outbox(ITransportClient transportClient, ITessageStorage tessageStorage, EndpointConfiguration configuration, IBackgroundExceptionReporter exceptionReporter, OutboxRetryPoller retryPoller)
+   Outbox(IRoutingInboxClient routingInboxClient, ITessageStorage tessageStorage, EndpointConfiguration configuration, IBackgroundExceptionReporter exceptionReporter, OutboxRetryPoller retryPoller)
    {
       _storage = tessageStorage;
       _configuration = configuration;
-      _transportClient = transportClient;
+      _routingInboxClient = routingInboxClient;
       _exceptionReporter = exceptionReporter;
       _retryPoller = retryPoller;
    }
@@ -51,35 +51,32 @@ partial class Outbox : IOutbox
    public void PublishTransactionally(IExactlyOnceTevent exactlyOnceTevent)
    {
       Assert.State.NotNull(Transaction.Current);
-      var connections = _transportClient.SubscriberConnectionsFor(exactlyOnceTevent)
+      var connections = _routingInboxClient.SubscriberConnectionsFor(exactlyOnceTevent)
                                   .Where(connection => connection.EndpointInformation.Id != _configuration.Id)
                                   .ToArray(); //We dispatch tevents to ourselves synchronously so don't go doing it again here.;
 
-      //Urgent: bug. Our traceability thinking does not allow just discarding this tessage.But removing this if statement breaks a lot of tests that uses endpoint wiring but do not start an endpoint.
-      if(connections.Length != 0)
-      {
-         var teventHandlerEndpointIds = connections.Select(connection => connection.EndpointInformation.Id).ToArray();
-         _storage.SaveTessage(exactlyOnceTevent, teventHandlerEndpointIds);
 
-         Transaction.Current.OnCommittedSuccessfully(() => connections.ForEach(subscriberConnection =>
-         {
-            subscriberConnection.SendAsync(exactlyOnceTevent)
-                                .ContinueAsynchronouslyOnDefaultScheduler(task => HandleDeliveryTaskResults(task, subscriberConnection.EndpointInformation.Id, exactlyOnceTevent.TessageId));
-         }));
-      }
+      var teventHandlerEndpointIds = connections.Select(connection => connection.EndpointInformation.Id).ToArray();
+      _storage.SaveTessage(exactlyOnceTevent, teventHandlerEndpointIds);
+
+      Transaction.Current.OnCommittedSuccessfully(() => connections.ForEach(subscriberConnection =>
+      {
+         subscriberConnection.SendAsync(exactlyOnceTevent)
+                             .ContinueWithAsynchronously(task => HandleDeliveryTaskResults(task, subscriberConnection.EndpointInformation.Id, exactlyOnceTevent.Id));
+      }));
    }
 
    public void SendTransactionally(IExactlyOnceTommand exactlyOnceTommand)
    {
       Assert.State.NotNull(Transaction.Current);
-      var connection = _transportClient.ConnectionToHandlerFor(exactlyOnceTommand);
+      var connection = _routingInboxClient.ConnectionToHandlerFor(exactlyOnceTommand);
 
       _storage.SaveTessage(exactlyOnceTommand, connection.EndpointInformation.Id);
 
       Transaction.Current.OnCommittedSuccessfully(() =>
       {
          connection.SendAsync(exactlyOnceTommand)
-                   .ContinueAsynchronouslyOnDefaultScheduler(task => HandleDeliveryTaskResults(task, connection.EndpointInformation.Id, exactlyOnceTommand.TessageId));
+                   .ContinueWithAsynchronously(task => HandleDeliveryTaskResults(task, connection.EndpointInformation.Id, exactlyOnceTommand.Id));
       });
    }
 
@@ -100,15 +97,6 @@ partial class Outbox : IOutbox
    }
 
    bool _running = false;
-
-   public async Task StopAsync()
-   {
-      Assert.State.Is(_running);
-      _running = false;
-      _retryPoller.Stop();
-      await Task.CompletedTask.caf();
-   }
-
    public async Task StartAsync()
    {
       Assert.State.Is(!_running);
@@ -120,5 +108,13 @@ partial class Outbox : IOutbox
       }
 
       _running = true;
+   }
+
+   public async Task StopAsync()
+   {
+      Assert.State.Is(_running);
+      _running = false;
+      _retryPoller.Stop();
+      await Task.CompletedTask.caf();
    }
 }

@@ -1,0 +1,17 @@
+using System;
+using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.Utilities.SystemCE;
+
+namespace Compze.Tessaging.Hosting.Testing.Wiring;
+
+public static class TestingComponentRegistrarTestingComponentsRegistrar
+{
+   public static IComponentRegistrar CurrentTestsPluggableComponents(this IComponentRegistrar register) =>
+      register.CurrentTestsPluggableComponents(Guid.NewGuid().ToString());
+
+   public static IComponentRegistrar CurrentTestsPluggableComponents(this IComponentRegistrar register, string connectionStringName) =>
+      register.CastTo<TestingComponentRegistrar>()
+              .CurrentTestsSerializer()
+              .CurrentTestsTransport()
+              .CurrentTestsConfiguredSqlLayer(connectionStringName);
+}

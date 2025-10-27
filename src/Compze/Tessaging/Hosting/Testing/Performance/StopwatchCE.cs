@@ -10,6 +10,8 @@ using JetBrains.Annotations;
 
 namespace Compze.Tessaging.Hosting.Testing.Performance;
 
+//ncrunch: no coverage start
+
 ///<summary>Extensions to the Stopwatch class and related functionality.</summary>
 static class StopwatchCE
 {

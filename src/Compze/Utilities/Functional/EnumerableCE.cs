@@ -1,20 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Compze.Utilities.Contracts;
 
 namespace Compze.Utilities.Functional;
 
-public static class EnumerableCE
+static class EnumerableCE
 {
-   public static IEnumerable<T> Create<T>(params T[] values)
-   {
-      Assert.Argument.NotNull(values);
-      return values;
-   }
-
    ///<summary>Returns a sequence of types matching the supplied type arguments</summary>
-   public static IEnumerable<Type> OfTypes<T1>() => Create(typeof(T1));
+   public static IEnumerable<Type> OfTypes<T1>() =>
+      [typeof(T1)];
 
    ///<summary>Returns a sequence of types matching the supplied type arguments</summary>
    public static IEnumerable<Type> OfTypes<T1, T2>() => OfTypes<T1>().Append(typeof(T2));

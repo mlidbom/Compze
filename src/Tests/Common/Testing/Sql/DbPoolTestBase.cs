@@ -3,13 +3,14 @@ using System.Threading.Tasks;
 using Compze.Core.Wiring.Testing.Internal;
 using Compze.Sql.Common.Abstractions;
 using Compze.Sql.MicrosoftSql;
-using Compze.Sql.MySql.SystemExtensions;
+using Compze.Sql.MySql;
 using Compze.Sql.PostgreSql;
 using Compze.Sql.Sqlite;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.Utilities.Functional;
 using Compze.Utilities.Testing.DbPool;
 
 namespace Compze.Tests.Common.Testing.Sql;
@@ -26,7 +27,9 @@ public abstract class DbPoolTestBase : UniversalTestBase
       Pool = ResolvePool();
    }
 
-   protected IServiceLocator CreateServiceLocator() => TestEnv.DIContainer.CreateServiceLocatorForTesting(_ => {});
+   protected static IServiceLocator CreateServiceLocator() => TestEnv.DIContainer.CreateEmpty()
+                                                                     .mutate(it => it.Register().CurrentTestsDbPoolIfNotCloneContainer())
+                                                                     .ServiceLocator;
 
    protected override async Task DisposeAsyncInternal() => await _serviceLocator.DisposeAsync();
 
@@ -37,10 +40,10 @@ public abstract class DbPoolTestBase : UniversalTestBase
    {
       switch(TestEnv.SqlLayer)
       {
-         case SqlLayer.MicrosoftSqlServer:
+         case SqlLayer.MsSql:
             UseMsSqlConnection(pool.ConnectionStringFor(connectionString), func);
             break;
-         case SqlLayer.PostgreSql:
+         case SqlLayer.PgSql:
             UsePgSqlConnection(pool.ConnectionStringFor(connectionString), func);
             break;
          case SqlLayer.MySql:

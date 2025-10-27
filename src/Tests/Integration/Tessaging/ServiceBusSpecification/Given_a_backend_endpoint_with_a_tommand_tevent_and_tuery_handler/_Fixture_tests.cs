@@ -1,0 +1,58 @@
+using System;
+using System.Threading.Tasks;
+using Compze.Tessaging.Hosting;
+using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
+using Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
+using Compze.Tests.Infrastructure.XUnit;
+using Compze.Utilities.Threading.Testing;
+using FluentAssertions;
+
+// ReSharper disable InconsistentNaming
+
+namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
+
+public class EndpointHostTest_Tests : EndpointHostTestBase
+{
+   [PCT]  public async Task If_tommand_handler_throws_disposing_host_throws_AggregateException_containing_the_thrown_exception()
+   {
+      MyExactlyOnceTommandHandlerThreadGate.ThrowPostPassThrough(_thrownException);
+      RemoteEndpoint.ExecuteServerRequestInTransaction(session => session.Send(new MyExactlyOnceTommand()));
+      await AssertDisposingHostThrowsAggregateExceptionHierarchyContainingThrownExceptionAsANonAggregateException();
+   }
+
+   [PCT]  public async Task If_tommand_handler_with_result_throws_disposing_host_throws_AggregateException_containing_the_thrown_exception_and_SendAsync_throws_TessageDispatchingFailedException()
+   {
+      TommandHandlerWithResultThreadGate.ThrowPostPassThrough(_thrownException);
+      await FluentActions.Invoking(async () => await ClientEndpoint.ExecuteClientRequest(async session => await session.PostAsync(MyAtMostOnceTypermediaTommandWithResult.Create())))
+                         .Should().ThrowAsync<TessageDispatchingFailedException>();
+
+      await AssertDisposingHostThrowsAggregateExceptionHierarchyContainingThrownExceptionAsANonAggregateException();
+   }
+
+   [PCT]  public async Task If_tevent_handler_throws_disposing_host_throws_AggregateException_containing_the_thrown_exception()
+   {
+      MyRemoteTaggregateTeventHandlerThreadGate.ThrowPostPassThrough(_thrownException);
+      ClientEndpoint.ExecuteClientRequest(session => session.Post(MyCreateTaggregateTommand.Create()));
+      await AssertDisposingHostThrowsAggregateExceptionHierarchyContainingThrownExceptionAsANonAggregateException();
+   }
+
+   [PCT]  public async Task If_tuery_handler_throws_disposing_host_throws_AggregateException_containing_the_thrown_exception_and_SendAsync_throws_TessageDispatchingFailedException()
+   {
+      TueryHandlerThreadGate.ThrowPostPassThrough(_thrownException);
+      await FluentActions.Invoking(() => ClientEndpoint.ExecuteClientRequest(session => session.GetAsync(new MyTuery())))
+                         .Should().ThrowAsync<TessageDispatchingFailedException>();
+
+      await AssertDisposingHostThrowsAggregateExceptionHierarchyContainingThrownExceptionAsANonAggregateException();
+   }
+
+   async Task AssertDisposingHostThrowsAggregateExceptionHierarchyContainingThrownExceptionAsANonAggregateException()
+   {
+      var exception = (await FluentActions.Invoking(async Task () => await Host.DisposeAsync())
+                                          .Should().ThrowAsync<AggregateException>()).Which;
+      var rootExceptions = exception.Flatten().InnerExceptions;
+      rootExceptions.Should().Contain(_thrownException);
+   }
+
+   readonly IntentionalException _thrownException = new();
+   class IntentionalException : Exception;
+}

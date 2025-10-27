@@ -1,0 +1,47 @@
+using Compze.Sql.MicrosoftSql.Private.DocumentDb;
+using Compze.Sql.MicrosoftSql.Private.Tessaging;
+using Compze.Sql.MicrosoftSql.Private.TEventStore;
+using Compze.Utilities.DependencyInjection;
+using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.Utilities.SystemCE;
+using Compze.Utilities.SystemCE.TransactionsCE;
+using Compze.Utilities.Threading.TasksCE;
+using System.Threading.Tasks;
+
+namespace Compze.Sql.MicrosoftSql.Private;
+
+class MsSqlSqlLayerSchemaManager(IMsSqlConnectionPool connectionPool)
+{
+   internal static IComponentRegistrar RegisterWith(IComponentRegistrar registrar)
+   {
+      if(registrar.Container().IsRegistered<MsSqlSqlLayerSchemaManager>())
+         return registrar;
+      return registrar.Register(Singleton.For<MsSqlSqlLayerSchemaManager>()
+                                         .CreatedBy((IMsSqlConnectionPool connectionPool) => new MsSqlSqlLayerSchemaManager(connectionPool)));
+   }
+
+   readonly IMsSqlConnectionPool _connectionPool = connectionPool;
+
+   readonly RunOnce _runOnce = new();
+
+   public async Task EnsureSchemaInitializedAsync() => await _runOnce.RunIfFirstCallAsync(async () =>
+   {
+      await TransactionScopeCe.SuppressAmbientAsync(async () =>
+      {
+         await _connectionPool.ExecuteNonQueryAsync(
+            $"""
+
+             {MsSqlDocumentDbSqlLayer.SchemaCreationSql}
+
+             {MsSqlInboxSqlLayer.SchemaCreationSql}
+
+             {MsSqlOutboxSqlLayer.SchemaCreationSql}
+
+             {MsSqlTeventStoreSqlLayer.SchemaCreationSql}
+
+             """).caf();
+      }).caf();
+   }).caf();
+
+   public void EnsureSchemaInitialized() => EnsureSchemaInitializedAsync().Wait();
+}

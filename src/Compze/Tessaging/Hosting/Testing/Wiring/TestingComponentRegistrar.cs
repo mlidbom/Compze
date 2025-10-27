@@ -2,16 +2,14 @@ using System;
 using System.Collections.Generic;
 using Compze.Core.Time.Public;
 using Compze.Core.Time.Testing.Public;
-using Compze.Core.Wiring.Testing.Internal;
-using Compze.Serialization.Newtonsoft.Wiring;
 using Compze.Sql.MicrosoftSql;
-using Compze.Sql.MicrosoftSql.DbPool;
-using Compze.Sql.MySql.DbPool;
-using Compze.Sql.MySql.SystemExtensions;
+using Compze.Sql.MicrosoftSql.Wiring;
+using Compze.Sql.MySql;
+using Compze.Sql.MySql.Wiring;
 using Compze.Sql.PostgreSql;
-using Compze.Sql.PostgreSql.DbPool;
+using Compze.Sql.PostgreSql.Wiring;
 using Compze.Sql.Sqlite;
-using Compze.Sql.Sqlite.DbPool;
+using Compze.Sql.Sqlite.Wiring;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Testing.DbPool;
@@ -58,8 +56,7 @@ public class TestingComponentRegistrar : ComponentRegistrar
    {
       readonly IComponentRegistrar _registrar = registrar;
 
-      public IComponentRegistrar Register(string connectionStringName) => _registrar.DbPoolIfNotAlreadyRegistered()
-                                                                                    .MsSqlDbPoolSqlLayerIfNotAlreadyRegistered()
+      public IComponentRegistrar Register(string connectionStringName) => _registrar.CurrentTestsDbPoolIfNotCloneContainer()
                                                                                     .Register(
                                                                                         Singleton.For<IMsSqlConnectionPool>()
                                                                                                  .CreatedBy((DbPool dbPool) =>
@@ -70,8 +67,7 @@ public class TestingComponentRegistrar : ComponentRegistrar
    {
       readonly IComponentRegistrar _registrar = registrar;
 
-      public IComponentRegistrar Register(string connectionStringName) => _registrar.DbPoolIfNotAlreadyRegistered()
-                                                                                    .MySqlDbPoolSqlLayerIfNotAlreadyRegistered()
+      public IComponentRegistrar Register(string connectionStringName) => _registrar.CurrentTestsDbPoolIfNotCloneContainer()
                                                                                     .Register(
                                                                                         Singleton.For<IMySqlConnectionPool>()
                                                                                                  .CreatedBy((DbPool dbPool) =>
@@ -82,8 +78,7 @@ public class TestingComponentRegistrar : ComponentRegistrar
    {
       readonly IComponentRegistrar _registrar = registrar;
 
-      public IComponentRegistrar Register(string connectionStringName) => _registrar.DbPoolIfNotAlreadyRegistered()
-                                                                                    .PgSqlDbPoolSqlLayerIfNotAlreadyRegistered()
+      public IComponentRegistrar Register(string connectionStringName) => _registrar.CurrentTestsDbPoolIfNotCloneContainer()
                                                                                     .Register(
                                                                                         Singleton.For<IPgSqlConnectionPool>()
                                                                                                  .CreatedBy((DbPool pool) => IPgSqlConnectionPool.CreateInstance1(() => pool.ConnectionStringFor(connectionStringName))));
@@ -93,8 +88,7 @@ public class TestingComponentRegistrar : ComponentRegistrar
    {
       readonly IComponentRegistrar _registrar = registrar;
 
-      public IComponentRegistrar Register(string connectionStringName) => _registrar.DbPoolIfNotAlreadyRegistered()
-                                                                                    .SqliteDbPoolSqlLayerIfNotAlreadyRegistered()
+      public IComponentRegistrar Register(string connectionStringName) => _registrar.CurrentTestsDbPoolIfNotCloneContainer()
                                                                                     .Register(
                                                                                         Singleton.For<ISqliteConnectionPool>()
                                                                                                  .CreatedBy((DbPool pool) => ISqliteConnectionPool.CreateInstance(() => pool.ConnectionStringFor(connectionStringName))));
@@ -104,8 +98,7 @@ public class TestingComponentRegistrar : ComponentRegistrar
    {
       readonly IComponentRegistrar _registrar = registrar;
 
-      public IComponentRegistrar Register(string connectionStringName) => _registrar.DbPoolIfNotAlreadyRegistered()
-                                                                                    .SqliteMemoryDbPoolSqlLayerIfNotAlreadyRegistered()
+      public IComponentRegistrar Register(string connectionStringName) => _registrar.CurrentTestsDbPoolIfNotCloneContainer()
                                                                                     .Register(
                                                                                         Singleton.For<ISqliteConnectionPool>()
                                                                                                  .CreatedBy((DbPool pool) => ISqliteConnectionPool.CreateInstance(() => pool.ConnectionStringFor(connectionStringName))));

@@ -1,12 +1,17 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
    <PropertyGroup>
       <TargetFramework>net9.0</TargetFramework>
       <Nullable>enable</Nullable>
    </PropertyGroup>
    <ItemGroup>
-      <ProjectReference Include="..\..\..\Sql\Common\Compze.Sql.Common.csproj" />
       <ProjectReference Include="..\..\Compze.Tessaging.csproj" />
       <ProjectReference Include="..\..\..\Utilities\Compze.Utilities.csproj" />
       <ProjectReference Include="..\..\..\Abstractions\Compze.Core.csproj" />
    </ItemGroup>
+	<ItemGroup>
+      <PackageReference Include="NsDepCop" Version="2.6.0">
+         <PrivateAssets>all</PrivateAssets>
+         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+	</ItemGroup>
 </Project>

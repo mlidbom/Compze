@@ -53,6 +53,5 @@ public class AccountApi : IStaticInstancePropertySingleton<AccountApi>
    ///<summary>This method ensures that the client endpoints has everything it needs to use the services in this API. Type mappings etc. Teventually we will probably be setting up pipeline components such as custom caches etc here.</summary>
    public static void RegisterWithClientEndpoint(IEndpointBuilder builder)
    {
-      // No longer using InMemory sql layer - clients should configure their own sql
    }
 }

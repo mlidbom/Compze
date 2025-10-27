@@ -1,8 +1,8 @@
 using System;
+using Compze.Core.DocumentDb.Wiring;
 using Compze.Core.Refactoring.Naming.Internal.Implementation;
 using Compze.Core.Time.Public;
 using Compze.Core.Wiring.Testing.Internal;
-using Compze.DocumentDb.Wiring;
 using Compze.Tessaging.Implementation;
 using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
 using Compze.Tessaging.Teventive.TeventStore.Wiring;
@@ -10,22 +10,28 @@ using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.DependencyInjection.Microsoft;
 using Compze.Utilities.DependencyInjection.SimpleInjector;
+using Compze.Utilities.Functional;
 using Compze.Utilities.Logging;
-using Compze.Utilities.SystemCE;
 using JetBrains.Annotations;
 
 namespace Compze.Tessaging.Hosting.Testing.Wiring;
 
 public static class DiContainerExtensions
 {
-   public static IDependencyInjectionContainer CreateWithServiceLocatorAndSerializer(this DIContainer @this)
-   {
-      var container = @this.CreateEmpty();
-      container.Register().CastTo<TestingComponentRegistrar>()
-               .CurrentTestsSerializer();
-      container.Register(Singleton.For<IServiceLocator>().CreatedBy(() => container.ServiceLocator));
-      return container;
-   }
+   public static IDependencyInjectionContainer CreateWithServiceLocator(this DIContainer @this) =>
+      @this.CreateEmpty()
+           .mutate(it => it.Register(Singleton.For<IServiceLocator>()
+                                              .CreatedBy(() => it.ServiceLocator)));
+
+   public static IDependencyInjectionContainer CreateWithServiceLocatorAndCurrentTestsPluggableComponents(this DIContainer @this) =>
+      @this.CreateWithCurrentTestsPluggableComponents()
+           .mutate(it => it.Register(Singleton.For<IServiceLocator>()
+                                              .CreatedBy(() => it.ServiceLocator)));
+
+   public static IDependencyInjectionContainer CreateWithCurrentTestsPluggableComponents(this DIContainer @this) =>
+      @this.CreateEmpty()
+           .mutate(it => it.Register()
+                           .CurrentTestsPluggableComponents());
 
    public static IDependencyInjectionContainer CreateEmpty(this DIContainer @this) =>
       @this switch
@@ -37,12 +43,11 @@ public static class DiContainerExtensions
 
    public static IServiceLocator CreateServiceLocatorForTesting(this DIContainer @this, [InstantHandle] Action<IComponentRegistrar> setup)
    {
-      var container = @this.CreateWithServiceLocatorAndSerializer();
+      var container = @this.CreateWithServiceLocatorAndCurrentTestsPluggableComponents();
       container.Register()
                .TimeSource()
                .TypeMapper()
                .DummyConfigurationParameterProvider()
-               .CurrentTestsConfiguredSqlLayer()
                .TessageHandlerRegistry()
                .InMemoryTeventStoreTeventPublisher();
       setup(container.Register());

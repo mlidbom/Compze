@@ -122,17 +122,17 @@ partial class TessageTypeInspector
    {
       internal override void AssertFulfilledBy(Type type)
       {
-         if(type.Implements<IAtMostOnceHypermediaTommand>())
+         if(type.Implements<IAtMostOnceTypermediaTommand>())
          {
             if(Constructor.HasDefaultConstructor(type))
             {
-               var instance = (IAtMostOnceHypermediaTommand)Constructor.CreateInstance(type);
-               if(instance.TessageId != Guid.Empty)
+               var instance = (IAtMostOnceTypermediaTommand)Constructor.CreateInstance(type);
+               if(instance.Id != Guid.Empty)
                {
                   throw new TessageTypeDesignViolationException($"""
-                                                                 The default constructor of {type.GetFullNameCompilable()} sets {nameof(IAtMostOnceTessage)}.{nameof(IAtMostOnceTessage.TessageId)} to a value other than Guid.Empty.
-                                                                 Since {type.GetFullNameCompilable()} is an {typeof(IAtMostOnceHypermediaTommand).GetFullNameCompilable()} this is very likely to break the exactly once guarantee.
-                                                                 For instance: If you bind this tommand in a web UI and forget to bind the {nameof(IAtMostOnceTessage.TessageId)} then the infrastructure will be unable to realize that this is NOT the correct originally created {nameof(IAtMostOnceTessage.TessageId)}.
+                                                                 The default constructor of {type.GetFullNameCompilable()} sets {nameof(IAtMostOnceTessage)}.{nameof(IAtMostOnceTessage.Id)} to a value other than Guid.Empty.
+                                                                 Since {type.GetFullNameCompilable()} is an {typeof(IAtMostOnceTypermediaTommand).GetFullNameCompilable()} this is very likely to break the exactly once guarantee.
+                                                                 For instance: If you bind this tommand in a web UI and forget to bind the {nameof(IAtMostOnceTessage.Id)} then the infrastructure will be unable to realize that this is NOT the correct originally created {nameof(IAtMostOnceTessage.Id)}.
                                                                  This in turn means that if your user clicks multiple times the tommand may well be both sent and handled multiple times. Thus breaking the exactly once guarantee. The same thing if a Single Page Application receives an HTTP timeout and retries the tommand. 
                                                                  And another example: If you make the setter private many serialization technologies will not be able to maintain the value of the property. But since you used this constructor the property will have a value. A new one each time the instance is deserialized. Again breaking the at most once guarantee.
 

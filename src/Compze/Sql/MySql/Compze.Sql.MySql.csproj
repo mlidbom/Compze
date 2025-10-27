@@ -9,5 +9,9 @@
    </ItemGroup>
    <ItemGroup>
       <PackageReference Include="MySql.Data" Version="9.4.0" />
+      <PackageReference Include="NsDepCop" Version="2.6.0">
+         <PrivateAssets>all</PrivateAssets>
+         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
    </ItemGroup>
 </Project>

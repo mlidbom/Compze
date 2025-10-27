@@ -5,8 +5,8 @@ using Compze.Core.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Core.Tessaging.Public;
 using Compze.Core.Tessaging.Teventive.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
-using Compze.Core.Tessaging.Teventive.TEventStore.Public;
-using Newtonsoft.Json;
+using Compze.Core.Tessaging.Teventive.TeventStore.Public;
+// ReSharper disable MemberCanBePrivate.Global they are public so that serializers work
 
 namespace Compze.Tessaging.TyperMediaApi.EventStore;
 
@@ -16,44 +16,52 @@ public partial class TeventStoreApi
    {
       public class TaggregateLink<TTaggregate> : TessageTypes.StrictlyLocal.Queries.StrictlyLocalTuery<TaggregateLink<TTaggregate>, TTaggregate> where TTaggregate : class, ITaggregate
       {
-         [JsonConstructor] internal TaggregateLink(Guid id) => Id = id;
-         [JsonProperty] Guid Id { get; }
+         [Obsolete("for serializer", error: true)]
+         public TaggregateLink() {}
 
-         internal static void RegisterHandler(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery(
-            (TaggregateLink<TTaggregate> tuery, ITeventStoreUpdater updater) => updater.Get<TTaggregate>(tuery.Id));
+         internal TaggregateLink(Guid id) => Id = id;
+         public Guid Id { get; private set; }
+
+         internal static void RegisterHandler(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery((TaggregateLink<TTaggregate> tuery, ITeventStoreUpdater updater) => updater.Get<TTaggregate>(tuery.Id));
       }
 
       public class GetTaggregateHistory<TTevent> : TessageTypes.StrictlyLocal.Queries.StrictlyLocalTuery<GetTaggregateHistory<TTevent>, IEnumerable<TTevent>> where TTevent : ITaggregateTevent
       {
-         [JsonConstructor] internal GetTaggregateHistory(Guid id) => Id = id;
-         [JsonProperty] Guid Id { get; }
+         [Obsolete("for serializer", error: true)]
+         public GetTaggregateHistory() {}
 
-         internal static void RegisterHandler(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery(
-            (GetTaggregateHistory<TTevent> tuery, ITeventStoreReader reader) => reader.GetHistory(tuery.Id).Cast<TTevent>());
+         internal GetTaggregateHistory(Guid id) => Id = id;
+         public Guid Id { get; private set; }
+
+         internal static void RegisterHandler(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery((GetTaggregateHistory<TTevent> tuery, ITeventStoreReader reader) => reader.GetHistory(tuery.Id).Cast<TTevent>());
       }
 
       public class GetReadonlyCopyOfTaggregate<TTaggregate> : TessageTypes.StrictlyLocal.Queries.StrictlyLocalTuery<GetReadonlyCopyOfTaggregate<TTaggregate>, TTaggregate> where TTaggregate : class, ITaggregate
       {
-         [JsonConstructor] internal GetReadonlyCopyOfTaggregate(Guid id) => Id = id;
-         [JsonProperty] Guid Id { get; }
+         [Obsolete("for serializer", error: true)]
+         public GetReadonlyCopyOfTaggregate() {}
 
-         internal static void RegisterHandler(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery(
-            (GetReadonlyCopyOfTaggregate<TTaggregate> tuery, ITeventStoreReader reader) => reader.GetReadonlyCopy<TTaggregate>(tuery.Id));
+         internal GetReadonlyCopyOfTaggregate(Guid id) => Id = id;
+         public Guid Id { get; private set; }
+
+         internal static void RegisterHandler(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery((GetReadonlyCopyOfTaggregate<TTaggregate> tuery, ITeventStoreReader reader) => reader.GetReadonlyCopy<TTaggregate>(tuery.Id));
       }
 
       public class GetReadonlyCopyOfTaggregateVersion<TTaggregate> : TessageTypes.StrictlyLocal.Queries.StrictlyLocalTuery<GetReadonlyCopyOfTaggregateVersion<TTaggregate>, TTaggregate> where TTaggregate : class, ITaggregate
       {
-         [JsonConstructor] internal GetReadonlyCopyOfTaggregateVersion(Guid id, int version)
+         [Obsolete("for serializer", error: true)]
+         public GetReadonlyCopyOfTaggregateVersion() {}
+
+         internal GetReadonlyCopyOfTaggregateVersion(Guid id, int version)
          {
             Id = id;
             Version = version;
          }
 
-         [JsonProperty] Guid Id { get; }
-         [JsonProperty] int Version { get; }
+         public Guid Id { get; private set; }
+         public int Version { get; private set; }
 
-         internal static void RegisterHandler(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery(
-            (GetReadonlyCopyOfTaggregateVersion<TTaggregate> tuery, ITeventStoreReader reader) => reader.GetReadonlyCopyOfVersion<TTaggregate>(tuery.Id, tuery.Version));
+         internal static void RegisterHandler(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery((GetReadonlyCopyOfTaggregateVersion<TTaggregate> tuery, ITeventStoreReader reader) => reader.GetReadonlyCopyOfVersion<TTaggregate>(tuery.Id, tuery.Version));
       }
    }
 
@@ -62,11 +70,10 @@ public partial class TeventStoreApi
       public class SaveTaggregate<TTaggregate> : TessageTypes.StrictlyLocal.Tommands.StrictlyLocalTommand
          where TTaggregate : class, ITaggregate
       {
-         [JsonConstructor] internal SaveTaggregate(TTaggregate entity) => Entity = entity;
-         TTaggregate Entity { get; }
+         internal SaveTaggregate(TTaggregate entity) => Entity = entity;
+         public TTaggregate Entity { get; private set; }
 
-         internal static void RegisterHandler(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTommand(
-            (SaveTaggregate<TTaggregate> tommand, ITeventStoreUpdater updater) => updater.Save(tommand.Entity));
+         internal static void RegisterHandler(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTommand((SaveTaggregate<TTaggregate> tommand, ITeventStoreUpdater updater) => updater.Save(tommand.Entity));
       }
    }
 

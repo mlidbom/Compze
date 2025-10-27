@@ -1,21 +1,9 @@
 using System;
 using Compze.Core.Wiring.Testing.Internal;
-using Compze.Sql.MicrosoftSql;
-using Compze.Sql.MicrosoftSql.DocumentDb.Wiring;
-using Compze.Sql.MicrosoftSql.Tessaging;
-using Compze.Sql.MicrosoftSql.TEventStore;
-using Compze.Sql.MySql.DocumentDb.Wiring;
-using Compze.Sql.MySql.SystemExtensions;
-using Compze.Sql.MySql.Tessaging;
-using Compze.Sql.MySql.TEventStore;
-using Compze.Sql.PostgreSql;
-using Compze.Sql.PostgreSql.DocumentDb.Wiring;
-using Compze.Sql.PostgreSql.Tessaging;
-using Compze.Sql.PostgreSql.TEventStore;
-using Compze.Sql.Sqlite;
-using Compze.Sql.Sqlite.DocumentDb.Wiring;
-using Compze.Sql.Sqlite.Tessaging;
-using Compze.Sql.Sqlite.TEventStore;
+using Compze.Sql.MicrosoftSql.Wiring;
+using Compze.Sql.MySql.Wiring;
+using Compze.Sql.PostgreSql.Wiring;
+using Compze.Sql.Sqlite.Wiring;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE;
 
@@ -30,36 +18,25 @@ public static class TestingComponentRegistrarTestingSqlLayerRegistrar
       register.CastTo<TestingComponentRegistrar>()
               .CurrentTestsConfiguredSqlLayer(connectionStringName);
 
-   public static IComponentRegistrar CurrentTestsConfiguredSqlLayer(this TestingComponentRegistrar @this, string connectionStringName)
+   static IComponentRegistrar CurrentTestsConfiguredSqlLayer(this TestingComponentRegistrar @this, string connectionStringName)
    {
       switch(TestEnv.SqlLayer)
       {
-         case SqlLayer.MicrosoftSqlServer:
+         case SqlLayer.MsSql:
             return @this.MsSqlConnectionPool(connectionStringName)
-                        .MsSqlDocumentDb()
-                        .MsSqlTeventStore()
-                        .MsSqlTessaging();
+                        .MsSqlSqlLayers();
          case SqlLayer.MySql:
             return @this.MySqlConnectionPool(connectionStringName)
-                        .MySqlDocumentDb()
-                        .MySqlTeventStore()
-                        .MySqlTessaging();
-         case SqlLayer.PostgreSql:
+                        .MySqlSqlLayers();
+         case SqlLayer.PgSql:
             return @this.PgSqlConnectionPoolIfNotAlreadyRegistered(connectionStringName)
-                        .PgSqlDocumentDb()
-                        .PgSqlTeventStore()
-                        .PgSqlTessaging();
-
+                        .PgSqlSqlLayers();
          case SqlLayer.Sqlite:
             return @this.SqliteConnectionPool(connectionStringName)
-                        .SqliteDocumentDb()
-                        .SqliteTeventStore()
-                        .SqliteTessaging();
+                        .SqliteDSqliteSqlLayers();
          case SqlLayer.SqliteMemory:
             return @this.SqliteMemoryConnectionPool(connectionStringName)
-                        .SqliteDocumentDb()
-                        .SqliteTeventStore()
-                        .SqliteTessaging();
+                        .SqliteDSqliteSqlLayers();
          default:
             throw new ArgumentOutOfRangeException();
       }

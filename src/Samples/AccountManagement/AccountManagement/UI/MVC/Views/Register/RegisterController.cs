@@ -7,9 +7,9 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace AccountManagement.UI.MVC.Views.Register;
 
-public class RegisterController(IRemoteHypermediaNavigator remoteApiNavigator) : ControllerBase
+public class RegisterController(IRemoteTypermediaNavigator remoteApiNavigator) : ControllerBase
 {
-   readonly IRemoteHypermediaNavigator _bus = remoteApiNavigator;
+   readonly IRemoteTypermediaNavigator _bus = remoteApiNavigator;
 
    public IActionResult Register(AccountResource.Tommand.Register registrationTommand)
    {
@@ -22,7 +22,7 @@ public class RegisterController(IRemoteHypermediaNavigator remoteApiNavigator) :
             return View("ValidateYourEmail", result.RegisteredAccount);
          case RegistrationAttemptStatus.EmailAlreadyRegistered:
             ModelState.AddModelError((AccountResource.Tommand.Register model) => model.Email, "Email is already registered");
-            ModelState.Remove((AccountResource.Tommand.Register model) => model.TessageId);
+            ModelState.Remove((AccountResource.Tommand.Register model) => model.Id);
             registrationTommand.ReplaceDeduplicationId();
             return View("RegistrationForm", registrationTommand);
          default:

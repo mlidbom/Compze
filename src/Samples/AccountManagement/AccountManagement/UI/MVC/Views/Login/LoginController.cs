@@ -5,9 +5,9 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace AccountManagement.UI.MVC.Views.Login;
 
-public class LoginController(IRemoteHypermediaNavigator remoteApiNavigator) : ControllerBase
+public class LoginController(IRemoteTypermediaNavigator remoteApiNavigator) : ControllerBase
 {
-   readonly IRemoteHypermediaNavigator _bus = remoteApiNavigator;
+   readonly IRemoteTypermediaNavigator _bus = remoteApiNavigator;
 
    public IActionResult Login(AccountResource.Tommand.LogIn loginTommand)
    {
@@ -20,7 +20,7 @@ public class LoginController(IRemoteHypermediaNavigator remoteApiNavigator) : Co
       }
 
       ModelState.AddModelError("Something", "Login Failed");
-      ModelState.Remove((AccountResource.Tommand.LogIn model) => model.TessageId);
+      ModelState.Remove((AccountResource.Tommand.LogIn model) => model.Id);
       loginTommand.ReplaceDeduplicationId();
       return View("LoginForm", loginTommand);
    }

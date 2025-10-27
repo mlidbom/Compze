@@ -1,8 +1,8 @@
 using System;
 using System.Threading.Tasks;
 using Compze.Core.Tessaging.Hosting.Public;
+using Compze.Core.Tessaging.Internal.SqlLayer;
 using Compze.Core.Tessaging.Transport.Internal;
-using Compze.Sql.Common.Tessaging;
 using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Tessaging.SystemCE.ThreadingCE;
@@ -46,7 +46,7 @@ static class InboxRegistrar
       _transportServer = transportServer;
    }
 
-   public HttpEndPointAddress Address => new(aspNetAddress: _transportServer.Address);
+   public EndPointAddress Address => new(uri: _transportServer.Address);
 
    public async Task StartAsync()
    {

@@ -12,5 +12,9 @@
       <PackageReference Include="JetBrains.Annotations" Version="2025.2.2" />
       <PackageReference Include="System.Threading.AccessControl" Version="9.0.9" />
       <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+      <PackageReference Include="NsDepCop" Version="2.6.0">
+         <PrivateAssets>all</PrivateAssets>
+         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
    </ItemGroup>
 </Project>

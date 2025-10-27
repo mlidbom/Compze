@@ -3,14 +3,26 @@
 //Format is PersistenceLayer:DIContainer. Comment out the ones you do not want with #. 
 //Empty/Whitespace lines are ignored
 
-#MicrosoftSqlServer:Microsoft:Newtonsoft
-#PostgreSql:Microsoft:Newtonsoft
-#MySql:Microsoft:Newtonsoft
-#Sqlite:Microsoft:Newtonsoft
-SqliteMemory:Microsoft:Newtonsoft
+#MsSql:Microsoft:Newtonsoft:Memory
+#PgSql:Microsoft:Newtonsoft:Memory
+#MySql:Microsoft:Newtonsoft:Memory
+#Sqlite:Microsoft:Newtonsoft:Memory
+SqliteMemory:Microsoft:Newtonsoft:Memory
 
-#MicrosoftSqlServer:SimpleInjector:Newtonsoft
-#PostgreSql:SimpleInjector:Newtonsoft
-#MySql:SimpleInjector:Newtonsoft
-#Sqlite:SimpleInjector:Newtonsoft
-#SqliteMemory:SimpleInjector:Newtonsoft
+#MsSql:SimpleInjector:Newtonsoft:Memory
+#PgSql:SimpleInjector:Newtonsoft:Memory
+#MySql:SimpleInjector:Newtonsoft:Memory
+#Sqlite:SimpleInjector:Newtonsoft:Memory
+#SqliteMemory:SimpleInjector:Newtonsoft:Memory
+
+#MsSql:Microsoft:Newtonsoft:AspNetCore
+#PgSql:Microsoft:Newtonsoft:AspNetCore
+#MySql:Microsoft:Newtonsoft:AspNetCore
+#Sqlite:Microsoft:Newtonsoft:AspNetCore
+#SqliteMemory:Microsoft:Newtonsoft:AspNetCore
+
+#MsSql:SimpleInjector:Newtonsoft:AspNetCore
+#PgSql:SimpleInjector:Newtonsoft:AspNetCore
+#MySql:SimpleInjector:Newtonsoft:AspNetCore
+#Sqlite:SimpleInjector:Newtonsoft:AspNetCore
+#SqliteMemory:SimpleInjector:Newtonsoft:AspNetCore

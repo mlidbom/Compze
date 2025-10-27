@@ -1,10 +1,10 @@
 using System;
 using System.Threading;
 using AccountManagement.Domain.Tevents;
+using Compze.Core.DocumentDb;
 using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Core.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Core.Tessaging.Typermedia.Public;
-using Compze.DocumentDb;
 using Compze.Tessaging.Teventive.TeventStore.QueryModels.SelfGeneratingQueryModels;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.Functional;
@@ -39,7 +39,7 @@ static class AccountStatistics
    }
 
    static void MaintainStatisticsWhenRelevantTeventsAreReceived(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTevent(
-      (AccountTevent.Root @tevent, IInProcessHypermediaNavigator navigator, StatisticsSingletonInitializer initializer) =>
+      (AccountTevent.Root @tevent, IInProcessTypermediaNavigator navigator, StatisticsSingletonInitializer initializer) =>
       {
          initializer.EnsureInitialized(navigator);
 
@@ -61,7 +61,7 @@ static class AccountStatistics
       readonly Lock _lock = new Lock();
       bool _isInitialized;
       readonly DocumentDbApi _documentDbApi = new();
-      public void EnsureInitialized(IInProcessHypermediaNavigator navigator)
+      public void EnsureInitialized(IInProcessTypermediaNavigator navigator)
       {
          lock(_lock)
          {
