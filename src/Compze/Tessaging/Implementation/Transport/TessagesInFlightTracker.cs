@@ -43,7 +43,7 @@ class TessagesInFlightTracker(ITypeMapper typeMapper) : ITessagesInFlightTracker
 
       public void SendingTessageOnTransport(TransportTessage.OutGoing transportTessage, EndpointId remoteEndpointId)
       {
-         var inFlightTessage = TrackedTessages.GetOrAdd(transportTessage.Id, () => new InFlightTessage());
+         var inFlightTessage = TrackedTessages.GetOrAdd(transportTessage.TessageId, () => new InFlightTessage());
          inFlightTessage.EndpointDeliveryStatus[remoteEndpointId] = false;
       }
 
