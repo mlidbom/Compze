@@ -60,8 +60,6 @@ public sealed class SimpleInjectorDependencyInjectionContainer : DependencyInjec
       return this;
    }
 
-   bool _verificationStarted;
-
    readonly RunOnce _runVerifications = new RunOnce();
    public override IServiceLocator ServiceLocator
    {
