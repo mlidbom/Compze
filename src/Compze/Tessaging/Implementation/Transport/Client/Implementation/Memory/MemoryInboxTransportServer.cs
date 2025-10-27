@@ -57,15 +57,14 @@ class MemoryInboxTransportServer : IInboxTransportServer
       return Task.CompletedTask;
    }
 
-   public async Task<TResult> PostAsync<TResult>(TransportTessage.OutGoing tessage, object realTessage, EndPointAddress endPointAddress)
+   public async Task<TResult> PostAsync<TResult>(TransportTessage.InComing incomingTessage)
    {
-      var incomingTessage = new TransportTessage.InComing(tessage.Body, tessage.Type, tessage.Id, _typeMapper, _serializer);
       try
       {
          if(!Running)
             throw new Exception("Transport is not running");
 
-         switch(tessage.TessageTypeEnum)
+         switch(incomingTessage.TessageTypeEnum)
          {
             case TransportTessage.TransportTessageType.AtMostOnceTommandWithReturnValue:
                return (await _inbox.Value.Receive(incomingTessage).caf())
@@ -88,15 +87,14 @@ class MemoryInboxTransportServer : IInboxTransportServer
       }
    }
 
-   public async Task PostAsync(TransportTessage.OutGoing tessage, object realTessage, EndPointAddress endPointAddress)
+   public async Task PostAsync(TransportTessage.InComing incomingTessage)
    {
-      var incomingTessage = new TransportTessage.InComing(tessage.Body, tessage.Type, tessage.Id, _typeMapper, _serializer);
       try
       {
          if(!Running)
             throw new Exception("Transport is not running");
 
-         switch(tessage.TessageTypeEnum)
+         switch(incomingTessage.TessageTypeEnum)
          {
             case TransportTessage.TransportTessageType.ExactlyOnceTevent:
             case TransportTessage.TransportTessageType.AtMostOnceTommand:
