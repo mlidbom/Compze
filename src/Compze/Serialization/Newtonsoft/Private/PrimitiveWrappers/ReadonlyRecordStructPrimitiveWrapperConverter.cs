@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Concurrent;
-using Compze.Utilities.GenericAbstractions.Wrappers;
+using Compze.Utilities.GenericAbstractions;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
 using Newtonsoft.Json;
@@ -25,13 +25,11 @@ public class ReadOnlyRecordStructPrimitiveWrapperConverter : JsonConverter
    readonly ConcurrentDictionary<Type, LazyCE<WrappedTypeHelpers>> _wrappedTypeHelpers = new();
 
    public override bool CanConvert(Type serializedType) =>
-      _handlesType.GetOrAdd(serializedType, potentialWrapperType => potentialWrapperType.Implements(typeof(IReadonlyRecordStructPrimitiveWrapper<>)));
+      _handlesType.GetOrAdd(serializedType, potentialWrapperType => potentialWrapperType.Implements(typeof(IEntityId<>)));
 
    public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer) =>
       serializer.Serialize(writer,
-                           value
-                             .NotNull(() => $"{typeof(IReadonlyRecordStructPrimitiveWrapper<>).Name} must be readonly record structs, yet this instance is null")
-                             .CastTo<IStructValueWrapper>().UntypedValue);
+                           value.CastTo<IUntypedEntityId>().UntypedPrimitiveValue);
 
    public override object? ReadJson(JsonReader reader,
                                     Type typeToRead,
@@ -43,10 +41,7 @@ public class ReadOnlyRecordStructPrimitiveWrapperConverter : JsonConverter
                                                  {
                                                     return new LazyCE<WrappedTypeHelpers>(() =>
                                                     {
-                                                       if(!wrapperType.IsValueType)
-                                                          throw new Exception($"""{typeof(IReadonlyRecordStructPrimitiveWrapper<>).Name} must be readonly record structs, yet {wrapperType.FullName} is not a value type""");
-
-                                                       var wrappedPrimitiveType = wrapperType.GetGenericInterface(typeof(IReadonlyRecordStructPrimitiveWrapper<>))
+                                                       var wrappedPrimitiveType = wrapperType.GetGenericInterface(typeof(IEntityId<>))
                                                                                              .GetGenericArguments()[0];
                                                        var constructor = (Func<object, object>)Constructor.Compile.ForType(typeToRead).WithArgumentTypes(wrappedPrimitiveType);
                                                        return new WrappedTypeHelpers(wrappedPrimitiveType, constructor);
