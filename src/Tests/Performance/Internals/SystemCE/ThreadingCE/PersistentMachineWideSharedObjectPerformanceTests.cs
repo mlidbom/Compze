@@ -12,12 +12,16 @@ public class PersistentMachineWideSharedObjectPerformanceTests : UniversalTestBa
    public PersistentMachineWideSharedObjectPerformanceTests()
    {
       var name = Guid.NewGuid().ToString();
-      _shared = MachineWideSharedObject<SharedObject>.For(name, usePersistentFile: true);
+      _shared = MachineWideSharedObject<SharedObject>.TransientFor(name);
    }
 
    readonly MachineWideSharedObject<SharedObject> _shared;
 
-   protected override void DisposeInternal() => _shared.Dispose();
+   protected override void DisposeInternal()
+   {
+      _shared.Dispose();
+      _shared.DeleteFile();
+   }
 
    [XF] public void Get_copy_runs_single_threaded_XX_times_in_50_milliseconds()
       => TimeAsserter.Execute(() => _shared.GetCopy(), iterations: 100, maxTotal: 50.Milliseconds());

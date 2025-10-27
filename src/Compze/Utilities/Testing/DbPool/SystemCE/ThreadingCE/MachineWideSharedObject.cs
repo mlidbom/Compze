@@ -31,7 +31,9 @@ namespace Compze.Utilities.Testing.DbPool.SystemCE.ThreadingCE;
        static string Serialize(ReferenceCountingWrapper instance) => JsonConvert.SerializeObject(instance, Formatting.Indented, RenamingAndNonPublicMembersSupportingJsonSettings.Default);
        static ReferenceCountingWrapper Deserialize(string serialized) => JsonConvert.DeserializeObject<ReferenceCountingWrapper>(serialized, RenamingAndNonPublicMembersSupportingJsonSettings.Default).NotNull();
 
-       internal static MachineWideSharedObject<TObject> For(string name, bool usePersistentFile = false) => new(name, usePersistentFile);
+       internal static MachineWideSharedObject<TObject> PersistentFor(string name) => new(name, true);
+
+       internal static MachineWideSharedObject<TObject> TransientFor(string name) => new(name, false);
 
        MachineWideSharedObject(string name, bool usePersistentFile)
        {
@@ -50,6 +52,9 @@ namespace Compze.Utilities.Testing.DbPool.SystemCE.ThreadingCE;
                      : new ReferenceCountingWrapper());
           });
        }
+
+
+       internal void DeleteFile() => File.Delete(_filePath);
 
        internal TObject Update(Action<TObject> action) => _synchronizer.Execute(() =>
        {
@@ -100,7 +105,7 @@ namespace Compze.Utilities.Testing.DbPool.SystemCE.ThreadingCE;
                 wrapper.References--;
                 if(wrapper.References <= 0 && !_usePersistentFile)
                 {
-                   File.Delete(_filePath);
+                   DeleteFile();
                 } else
                 {
                    Save(wrapper);
