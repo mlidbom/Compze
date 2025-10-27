@@ -81,9 +81,9 @@ static class TypeCE
    public static Type GetGenericBaseClass(this Type @this, Type genericBaseClassTypeDefinition) =>
       @this.TryGetGenericBaseClass(genericBaseClassTypeDefinition) ?? throw new Exception($"{@this.FullName} does not inherit from {genericBaseClassTypeDefinition.FullName}");
 
-   public static Type? TryGetGenericBaseClass(this Type @this, Type genericBaseClass) =>
+   public static Type? TryGetGenericBaseClass(this Type @this, Type genericBaseClassTypeDefinition) =>
       @this.GenericBaseClasses()
-           .SingleOrDefault(it => it.GetGenericTypeDefinition() == genericBaseClass);
+           .SingleOrDefault(it => it.GetGenericTypeDefinition() == genericBaseClassTypeDefinition);
 
    public static IEnumerable<Type> GenericBaseClasses(this Type @this) =>
       @this.ClassInheritanceChain()
