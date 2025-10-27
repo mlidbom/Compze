@@ -5,20 +5,13 @@ using Newtonsoft.Json.Serialization;
 
 namespace Compze.Serialization.Newtonsoft.Private.TeventStore;
 
-class IgnoreTaggregateTeventDeclaredPropertiesBecauseTheyAreAlreadyStoredInSqlResolver : IncludeMembersWithPrivateSettersResolver
+class IgnoreTaggregateTeventDeclaredPropertiesBecauseTheyAreAlreadyStoredInSql : IJsonPropertyModifier
 {
-   public new static readonly IgnoreTaggregateTeventDeclaredPropertiesBecauseTheyAreAlreadyStoredInSqlResolver Instance = new();
-   IgnoreTaggregateTeventDeclaredPropertiesBecauseTheyAreAlreadyStoredInSqlResolver() {}
-
-   protected override JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization)
+   public void ModifyProperty(JsonProperty property, MemberInfo memberInfo, MemberSerialization memberSerialization)
    {
-      var property = base.CreateProperty(member, memberSerialization);
-
       if(property.DeclaringType == typeof(TaggregateTevent))
       {
          property.Ignored = true;
       }
-
-      return property;
    }
 }
