@@ -17,4 +17,12 @@ class RunOnce
          await action().caf();
       }
    }
+
+   public void RunIfFirstCall(Action action)
+   {
+      if(IsFirstCall())
+      {
+         action();
+      }
+   }
 }
