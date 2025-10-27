@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 namespace Compze.Serialization.Newtonsoft.Private.PrimitiveWrappers;
 
-public class ReadOnlyRecordStructPrimitiveWrapperConverter : JsonConverter
+public class EntityIdConverter : JsonConverter
 {
    class WrappedTypeHelpers
    {
@@ -25,17 +25,30 @@ public class ReadOnlyRecordStructPrimitiveWrapperConverter : JsonConverter
    readonly ConcurrentDictionary<Type, LazyCE<WrappedTypeHelpers>> _wrappedTypeHelpers = new();
 
    public override bool CanConvert(Type serializedType) =>
-      _handlesType.GetOrAdd(serializedType, potentialWrapperType => potentialWrapperType.Implements(typeof(IEntityId<>)));
+      _handlesType.GetOrAdd(serializedType,
+                            potentialWrapperType =>
+                               !potentialWrapperType.IsAbstract &&
+                               potentialWrapperType.Implements(typeof(IEntityId<>)));
 
-   public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer) =>
-      serializer.Serialize(writer,
-                           value.CastTo<IUntypedEntityId>().UntypedPrimitiveValue);
+   public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
+   {
+      if(value == null)
+      {
+         writer.WriteNull();
+      } else
+      {
+         serializer.Serialize(writer, value.CastTo<IUntypedEntityId>().UntypedPrimitiveValue);
+      }
+   }
 
    public override object? ReadJson(JsonReader reader,
                                     Type typeToRead,
                                     object? existingValue,
                                     JsonSerializer serializer)
    {
+      if(reader.TokenType == JsonToken.Null)
+         return null;
+
       var helpers = _wrappedTypeHelpers.GetOrAdd(typeToRead,
                                                  wrapperType =>
                                                  {
