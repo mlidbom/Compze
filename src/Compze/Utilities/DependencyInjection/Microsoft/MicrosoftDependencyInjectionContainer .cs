@@ -54,7 +54,12 @@ public sealed class MicrosoftDependencyInjectionContainer : DependencyInjectionC
    {
       get
       {
-         _serviceProvider ??= _services.BuildServiceProvider(new ServiceProviderOptions { ValidateOnBuild = true, ValidateScopes = true });
+         if(_serviceProvider == null)
+         {
+            AssertLifeStyleCombinationsAreValid();
+            _serviceProvider = _services.BuildServiceProvider(new ServiceProviderOptions { ValidateOnBuild = true, ValidateScopes = true });
+         }
+
          return this;
       }
    }

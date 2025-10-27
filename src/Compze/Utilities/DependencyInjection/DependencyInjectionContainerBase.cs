@@ -25,7 +25,6 @@ public abstract class DependencyInjectionContainerBase : IDependencyInjectionCon
    {
       ValidateNoDuplicateRegistrations(registrations);
       _registeredComponents.AddRange(registrations);
-      AssertLifeStyleCombinationsAreValid();
       return RegisterInContainer(registrations);
    }
 
@@ -47,7 +46,7 @@ public abstract class DependencyInjectionContainerBase : IDependencyInjectionCon
       }
    }
 
-   void AssertLifeStyleCombinationsAreValid()
+   protected void AssertLifeStyleCombinationsAreValid()
    {
       _registeredComponents.Where(it => it.Lifestyle == Lifestyle.Singleton)
                            .ForEach(singleton =>

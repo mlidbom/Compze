@@ -19,10 +19,10 @@ public class LifestyleValidationTests : UniversalTestBase
 
       var exception = Invoking(() =>
       {
-         container.Register(
+         var locator = container.Register(
             Scoped.For<IScopedService>().CreatedBy(() => new ScopedService()),
             Singleton.For<ISingletonService>().CreatedBy((IScopedService scoped) => new SingletonServiceDependingOnScoped(scoped))
-         );
+         ).ServiceLocator;
       }).Should().Throw<InvalidLifeStyleCombinationException>().Which;
 
       exception.Message.Should().Contain("Invalid lifestyle combination");

@@ -61,6 +61,7 @@ public sealed class SimpleInjectorDependencyInjectionContainer : DependencyInjec
       {
          if(!_verificationStarted)
          {
+            AssertLifeStyleCombinationsAreValid();
             _verificationStarted = true;
             _container.Verify();
          }
