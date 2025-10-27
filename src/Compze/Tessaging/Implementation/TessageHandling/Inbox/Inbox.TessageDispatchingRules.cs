@@ -11,7 +11,7 @@ partial class Inbox
    {
       public bool CanBeDispatched(IExecutingTessagesSnapshot executing, TransportTessage.InComing candidateTessage)
       {
-         if(candidateTessage.TessageTypeEnum != TransportTessage.TransportTessageType.NonTransactionalTuery) return true;
+         if(candidateTessage.TessageTypeEnum != TransportTessageType.TyperMediaTuery) return true;
 
          return executing.AtMostOnceTommands.None() && executing.ExactlyOnceTommands.None() && executing.ExactlyOnceTevents.None();
       }
@@ -21,7 +21,7 @@ partial class Inbox
    {
       public bool CanBeDispatched(IExecutingTessagesSnapshot executing, TransportTessage.InComing candidateTessage)
       {
-         if(candidateTessage.TessageTypeEnum == TransportTessage.TransportTessageType.NonTransactionalTuery) return true;
+         if(candidateTessage.TessageTypeEnum == TransportTessageType.TyperMediaTuery) return true;
 
          return executing.AtMostOnceTommands.None() && executing.ExactlyOnceTommands.None() && executing.ExactlyOnceTevents.None();
       }

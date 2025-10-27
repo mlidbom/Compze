@@ -30,13 +30,13 @@ class InboxConnectionRouter(ITypeMapper typeMapper)
       {
          if(_typeMapper.TryGetType(typeId, out var tessageType))
          {
-            if(tessageType.IsAssignableTo<IExactlyOnceTevent>())
+            if(tessageType.Is<IExactlyOnceTevent>())
             {
                teventSubscribers.Add((tessageType, inboxConnection));
-            } else if(tessageType.IsAssignableTo<IRemotableTommand>())
+            } else if(tessageType.Is<IRemotableTommand>())
             {
                tommandHandlerRoutes.Add(tessageType, inboxConnection);
-            } else if(tessageType.IsAssignableTo<IRemotableTuery<object>>())
+            } else if(tessageType.Is<IRemotableTuery<object>>())
             {
                tueryHandlerRoutes.Add(tessageType, inboxConnection);
             } else

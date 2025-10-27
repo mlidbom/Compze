@@ -30,14 +30,14 @@ public class MyExactlyOnceTevent : TaggregateTevent, IMyExactlyOnceTevent;
 public interface IMyExactlyOnceTevent : ITaggregateTevent;
 public class MyExactlyOnceTommand : TessageTypes.Remotable.ExactlyOnce.Tommand;
 
-public class MyUpdateTaggregateTommand : TessageTypes.Remotable.AtMostOnce.AtMostOnceHypermediaTommand
+public class MyUpdateTaggregateTommand : TessageTypes.Remotable.AtMostOnce.AtMostOnceTypermediaTommand
 {
    [UsedImplicitly] MyUpdateTaggregateTommand() : base(DeduplicationIdHandling.Reuse) {}
    public MyUpdateTaggregateTommand(Guid taggregateId) : base(DeduplicationIdHandling.Create) => TaggregateId = taggregateId;
    public Guid TaggregateId { get; private set; }
 }
 
-public class MyCreateTaggregateTommand : TessageTypes.Remotable.AtMostOnce.AtMostOnceHypermediaTommand
+public class MyCreateTaggregateTommand : TessageTypes.Remotable.AtMostOnce.AtMostOnceTypermediaTommand
 {
    MyCreateTaggregateTommand() : base(DeduplicationIdHandling.Reuse) {}
 
@@ -60,7 +60,7 @@ public class MyTaggregate : Taggregate<MyTaggregate, MyTaggregateTevent.IRoot, M
 
    public void Update() => Publish(new MyTaggregateTevent.Implementation.Updated());
 
-   public static void Create(Guid id, IInProcessHypermediaNavigator bus)
+   public static void Create(Guid id, IInProcessTypermediaNavigator bus)
    {
       var created = new MyTaggregate();
       created.Publish(new MyTaggregateTevent.Implementation.Created(id));

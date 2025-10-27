@@ -95,17 +95,17 @@ partial class Inbox
 
                switch(dispatchable.TransportTessage.TessageTypeEnum)
                {
-                  case TransportTessage.TransportTessageType.ExactlyOnceTevent:
+                  case TransportTessageType.ExactlyOnceTevent:
                      _executingExactlyOnceTevents.Add(dispatchable.TransportTessage);
                      break;
-                  case TransportTessage.TransportTessageType.AtMostOnceTommandWithReturnValue:
-                  case TransportTessage.TransportTessageType.AtMostOnceTommand:
+                  case TransportTessageType.TypermediaAtMostOnceTommandWithReturnValue:
+                  case TransportTessageType.TypermediaAtMostOnceTommand:
                      _executingAtMostOnceTommands.Add(dispatchable.TransportTessage);
                      break;
-                  case TransportTessage.TransportTessageType.ExactlyOnceTommand:
+                  case TransportTessageType.ExactlyOnceTommand:
                      _executingExactlyOnceTommands.Add(dispatchable.TransportTessage);
                      break;
-                  case TransportTessage.TransportTessageType.NonTransactionalTuery:
+                  case TransportTessageType.TyperMediaTuery:
                      _executingNonTransactionalQueries.Add(dispatchable.TransportTessage);
                      break;
                   default:
@@ -122,17 +122,17 @@ partial class Inbox
 
                switch(doneExecuting.TransportTessage.TessageTypeEnum)
                {
-                  case TransportTessage.TransportTessageType.ExactlyOnceTevent:
+                  case TransportTessageType.ExactlyOnceTevent:
                      _executingExactlyOnceTevents.Remove(doneExecuting.TransportTessage);
                      break;
-                  case TransportTessage.TransportTessageType.AtMostOnceTommandWithReturnValue:
-                  case TransportTessage.TransportTessageType.AtMostOnceTommand:
+                  case TransportTessageType.TypermediaAtMostOnceTommandWithReturnValue:
+                  case TransportTessageType.TypermediaAtMostOnceTommand:
                      _executingAtMostOnceTommands.Remove(doneExecuting.TransportTessage);
                      break;
-                  case TransportTessage.TransportTessageType.ExactlyOnceTommand:
+                  case TransportTessageType.ExactlyOnceTommand:
                      _executingExactlyOnceTommands.Remove(doneExecuting.TransportTessage);
                      break;
-                  case TransportTessage.TransportTessageType.NonTransactionalTuery:
+                  case TransportTessageType.TyperMediaTuery:
                      _executingNonTransactionalQueries.Remove(doneExecuting.TransportTessage);
                      break;
                   default:

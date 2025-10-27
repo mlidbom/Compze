@@ -13,7 +13,7 @@ namespace AccountManagement.Domain;
    static DocumentDbApi DocumentDb => new();
 
    internal static void UpdateMappingWhenEmailChanges(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTevent(
-      (AccountTevent.PropertyUpdated.Email emailUpdated, IInProcessHypermediaNavigator navigator) =>
+      (AccountTevent.PropertyUpdated.Email emailUpdated, IInProcessTypermediaNavigator navigator) =>
       {
          if(emailUpdated.TaggregateVersion > 1)
          {
@@ -26,7 +26,7 @@ namespace AccountManagement.Domain;
       });
 
    internal static void TryGetAccountByEmail(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery(
-      (InternalApi.Tuery.TryGetByEmailTuery tuery, IInProcessHypermediaNavigator navigator) =>
+      (InternalApi.Tuery.TryGetByEmailTuery tuery, IInProcessTypermediaNavigator navigator) =>
          navigator.Execute(DocumentDb.Queries.TryGet<AccountLink>(tuery.Email.StringValue)) is Some<AccountLink> accountLink
             ? Option.Some(navigator.Execute(accountLink.Value))
             : Option.None<Account>());

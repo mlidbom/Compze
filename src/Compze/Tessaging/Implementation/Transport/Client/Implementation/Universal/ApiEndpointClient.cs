@@ -26,14 +26,14 @@ class ApiEndpointClient(
    readonly EndPointAddress _remoteAddress = remoteAddress;
    readonly EndpointId _remoteEndpointId = remoteEndpointId;
 
-   public async Task<TResult> PostAsync<TResult>(IAtMostOnceTommand<TResult> tommand)
+   public async Task<TResult> PostAsync<TResult>(IAtMostOnceTypermediaTommand<TResult> tommand)
    {
       var tessage = TransportTessage.OutGoing.Create(tommand, _typeMapper, _serializer);
       _tessagesInFlightTracker.SendingTessageOnTransport(tessage, _remoteEndpointId);
       return await _transportMessagePoster.PostAsync<TResult>(tessage, tommand, _remoteAddress).caf();
    }
 
-   public async Task PostAsync(IAtMostOnceHypermediaTommand tommand)
+   public async Task PostAsync(IAtMostOnceTypermediaTommand tommand)
    {
       var outGoingTessage = TransportTessage.OutGoing.Create(tommand, _typeMapper, _serializer);
       _tessagesInFlightTracker.SendingTessageOnTransport(outGoingTessage, _remoteEndpointId);

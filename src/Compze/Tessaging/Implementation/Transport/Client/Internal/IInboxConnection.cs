@@ -11,7 +11,7 @@ interface IInboxConnection : IDisposable
     Task SendAsync(IExactlyOnceTevent tevent);
     Task SendAsync(IExactlyOnceTommand tommand);
 
-    Task PostAsync(IAtMostOnceHypermediaTommand tommand);
-    Task<TTommandResult> PostAsync<TTommandResult>(IAtMostOnceTommand<TTommandResult> tommand);
+    Task PostAsync(IAtMostOnceTypermediaTommand tommand);
+    Task<TTommandResult> PostAsync<TTommandResult>(IAtMostOnceTypermediaTommand<TTommandResult> tommand);
     Task<TTueryResult> GetAsync<TTueryResult>(IRemotableTuery<TTueryResult> tuery);
 }

@@ -45,15 +45,15 @@ class HttpTransportMessagePoster : ITransportMessagePoster
    {
       switch(message.TessageTypeEnum)
       {
-         case TransportTessage.TransportTessageType.ExactlyOnceTevent:
+         case TransportTessageType.ExactlyOnceTevent:
             return HttpConstants.Routes.Tessaging.Tevent;
-         case TransportTessage.TransportTessageType.AtMostOnceTommand:
+         case TransportTessageType.TypermediaAtMostOnceTommand:
             return HttpConstants.Routes.Typermedia.TommandNoResult;
-         case TransportTessage.TransportTessageType.AtMostOnceTommandWithReturnValue:
+         case TransportTessageType.TypermediaAtMostOnceTommandWithReturnValue:
             return HttpConstants.Routes.Typermedia.TommandWithResult;
-         case TransportTessage.TransportTessageType.ExactlyOnceTommand:
+         case TransportTessageType.ExactlyOnceTommand:
             return HttpConstants.Routes.Tessaging.Tommand;
-         case TransportTessage.TransportTessageType.NonTransactionalTuery:
+         case TransportTessageType.TyperMediaTuery:
             return HttpConstants.Routes.Typermedia.Tuery;
          default:
             throw new ArgumentOutOfRangeException();

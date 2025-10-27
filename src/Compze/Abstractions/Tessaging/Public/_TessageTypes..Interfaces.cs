@@ -12,8 +12,8 @@ public interface IMustBeSentAndHandledTransactionally : IMustBeSentTransactional
 
 public interface ICannotBeSentRemotelyFromWithinTransaction : ITessage;
 public interface IRequireAResponse : ICannotBeSentRemotelyFromWithinTransaction;
-public interface IHypermediaTessage : IRequireAResponse;
-public interface IHasReturnValue<out TResult> : IHypermediaTessage;
+public interface ITypermediaTessage : IRequireAResponse;
+public interface IHasReturnValue<out TResult> : ITypermediaTessage;
 public interface ITevent : ITessage;
 public interface IWrapperTevent<out TTevent> : ITevent //Todo: IWrapperTevent name is not great...
    where TTevent : ITevent
@@ -56,8 +56,8 @@ public interface IAtMostOnceTessage : IRemotableTessage, IMustBeHandledTransacti
    ///<summary>Used by the infrastructure to guarantee that the same tessage is never delivered more than once. Must be generated when the tessage is created and then NEVER modified. Must be maintained when binding a tommand in a UI etc.</summary>
    Guid TessageId { get; }
 }
-public interface IAtMostOnceHypermediaTommand : IAtMostOnceTessage, IRemotableTommand, IHypermediaTessage;
-public interface IAtMostOnceTommand<out TResult> : IAtMostOnceHypermediaTommand, IRemotableTommand<TResult>;
+public interface IAtMostOnceTypermediaTommand : IAtMostOnceTessage, IRemotableTommand, ITypermediaTessage;
+public interface IAtMostOnceTypermediaTommand<out TResult> : IAtMostOnceTypermediaTommand, IRemotableTommand<TResult>;
 
 
 //Todo: IRequireTransactionalReceiver seems too restrictive. Surely things such as maintaining in-memory caches, monitoring/debugging tooling etc should be allowed to listen transiently to tevents without the full exactly once delivery overhead?

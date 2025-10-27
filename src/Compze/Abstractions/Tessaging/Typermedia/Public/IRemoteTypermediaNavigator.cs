@@ -3,13 +3,13 @@ using Compze.Core.Tessaging.Public;
 
 namespace Compze.Core.Tessaging.Typermedia.Public;
 
-public interface IRemoteHypermediaNavigator
+public interface IRemoteTypermediaNavigator
 {
-   Task PostAsync(IAtMostOnceHypermediaTommand tommand);
-   void Post(IAtMostOnceHypermediaTommand tommand);
+   Task PostAsync(IAtMostOnceTypermediaTommand tommand);
+   void Post(IAtMostOnceTypermediaTommand tommand);
 
-   Task<TResult> PostAsync<TResult>(IAtMostOnceTommand<TResult> tommand);
-   TResult Post<TResult>(IAtMostOnceTommand<TResult> tommand);
+   Task<TResult> PostAsync<TResult>(IAtMostOnceTypermediaTommand<TResult> tommand);
+   TResult Post<TResult>(IAtMostOnceTypermediaTommand<TResult> tommand);
 
    ///<summary>Gets the result of a handler somewhere on the bus handling the <paramref name="tuery"/></summary>
    Task<TResult> GetAsync<TResult>(IRemotableTuery<TResult> tuery);

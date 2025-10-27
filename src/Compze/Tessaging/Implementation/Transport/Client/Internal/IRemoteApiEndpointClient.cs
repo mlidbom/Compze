@@ -7,6 +7,6 @@ namespace Compze.Tessaging.Implementation.Transport.Client.Internal;
 interface IRemoteApiEndpointClient
 {
    Task<TResult> GetAsync<TResult>(IRemotableTuery<TResult> tuery);
-   Task<TResult> PostAsync<TResult>(IAtMostOnceTommand<TResult> tommand);
-   Task PostAsync(IAtMostOnceHypermediaTommand tommand);
+   Task<TResult> PostAsync<TResult>(IAtMostOnceTypermediaTommand<TResult> tommand);
+   Task PostAsync(IAtMostOnceTypermediaTommand tommand);
 }

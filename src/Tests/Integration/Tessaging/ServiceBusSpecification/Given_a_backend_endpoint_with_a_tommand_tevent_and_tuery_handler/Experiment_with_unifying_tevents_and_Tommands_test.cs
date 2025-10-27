@@ -32,7 +32,7 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
    readonly IEndpoint _clientEndpoint;
    readonly IEndpoint _userManagementDomainEndpoint;
 
-   IRemoteHypermediaNavigator RemoteNavigator => _clientEndpoint.ServiceLocator.Resolve<IRemoteHypermediaNavigator>();
+   IRemoteTypermediaNavigator RemoteNavigator => _clientEndpoint.ServiceLocator.Resolve<IRemoteTypermediaNavigator>();
 
    public Experiment_with_unifying_tevents_and_tommands_test()
    {
@@ -71,7 +71,7 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
 
    [PCT] public void Can_register_user_and_fetch_user_resource()
    {
-      var registrationResult = _userDomainServiceLocator.ExecuteInIsolatedScope(() => UserRegistrarTaggregate.RegisterUser(_userDomainServiceLocator.Resolve<IRemoteHypermediaNavigator>()));
+      var registrationResult = _userDomainServiceLocator.ExecuteInIsolatedScope(() => UserRegistrarTaggregate.RegisterUser(_userDomainServiceLocator.Resolve<IRemoteTypermediaNavigator>()));
 
       var user = _clientEndpoint.ServiceLocator.ExecuteInIsolatedScope(() => RemoteNavigator.Get(registrationResult.UserLink));
 
@@ -140,7 +140,7 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
          => RegisterTeventAppliers()
            .IgnoreUnhandled<UserRegistrarTevent.IRoot>();
 
-      internal static RegisterUserResult RegisterUser(IRemoteHypermediaNavigator navigator) => UserRegistrarTommand.RegisterUserTommand.Create().PostOn(navigator);
+      internal static RegisterUserResult RegisterUser(IRemoteTypermediaNavigator navigator) => UserRegistrarTommand.RegisterUserTommand.Create().PostOn(navigator);
    }
 
    public class UserTaggregate : Taggregate<UserTaggregate, UserTevent.IRoot, UserTevent.Implementation.Root>

@@ -68,14 +68,14 @@ partial class RoutingInboxClient : IRoutingInboxClient, IDisposable
    public IReadOnlyList<IInboxConnection> SubscriberConnectionsFor(IExactlyOnceTevent tevent) =>
       AssertRunning().then(() => _inboxConnectionRouter.SubscriberConnectionsFor(tevent));
 
-   public async Task PostAsync(IAtMostOnceHypermediaTommand atMostOnceTommand)
+   public async Task PostAsync(IAtMostOnceTypermediaTommand atMostOnceTommand)
    {
       AssertRunning();
       var connection = _inboxConnectionRouter.ConnectionToHandlerFor(atMostOnceTommand);
       await connection.PostAsync(atMostOnceTommand).caf();
    }
 
-   public async Task<TTommandResult> PostAsync<TTommandResult>(IAtMostOnceTommand<TTommandResult> atMostOnceTommand)
+   public async Task<TTommandResult> PostAsync<TTommandResult>(IAtMostOnceTypermediaTommand<TTommandResult> atMostOnceTommand)
    {
       AssertRunning();
       var connection = _inboxConnectionRouter.ConnectionToHandlerFor(atMostOnceTommand);

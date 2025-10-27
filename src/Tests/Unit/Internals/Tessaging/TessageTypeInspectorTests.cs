@@ -51,7 +51,7 @@ public class TessageTypeInspector_throws_TessageTypeDesignViolationException_if_
       [XF] public void Forbids_and_requires_transactional_sender() => AssertInvalidForSending<IForbidAndRequireTransactionalSender>();
 
 #pragma warning disable CA1812 //uninstantiated class 
-      internal class AtMostOnceTommandSettingTessageIdInDefaultConstructor : IAtMostOnceHypermediaTommand
+      internal class AtMostOnceTommandSettingTessageIdInDefaultConstructor : IAtMostOnceTypermediaTommand
       {
          public Guid TessageId { get; } = Guid.NewGuid();
       }

@@ -6,17 +6,9 @@ using Compze.Utilities.Contracts;
 
 namespace Compze.Tessaging.Implementation.Transport.Abstractions;
 
+//todo: split out TyperMediaTransportTessage
 static class TransportTessage
 {
-   internal enum TransportTessageType
-   {
-      ExactlyOnceTevent,
-      AtMostOnceTommand,
-      AtMostOnceTommandWithReturnValue,
-      ExactlyOnceTommand,
-      NonTransactionalTuery
-   }
-
    internal class InComing
    {
       internal readonly Guid TessageId;
@@ -46,7 +38,7 @@ static class TransportTessage
          Body = body;
          TessageTypeId = tessageTypeId;
          _tessageType = typeMapper.GetType(tessageTypeId);
-         TessageTypeEnum = GetTessageTypeEnum(_tessageType);
+         TessageTypeEnum = _tessageType.TransportTessageType();
          TessageId = tessageId;
       }
    }
@@ -73,23 +65,7 @@ static class TransportTessage
          Type = typeId;
          Id = id;
          Body = body;
-         TessageTypeEnum = GetTessageTypeEnum(type);
+         TessageTypeEnum = type.TransportTessageType();
       }
-   }
-
-   static TransportTessageType GetTessageTypeEnum(Type tessageType)
-   {
-      if(typeof(IRemotableTuery<object>).IsAssignableFrom(tessageType))
-         return TransportTessageType.NonTransactionalTuery;
-      if(typeof(IAtMostOnceTommand<object>).IsAssignableFrom(tessageType))
-         return TransportTessageType.AtMostOnceTommandWithReturnValue;
-      if(typeof(IAtMostOnceHypermediaTommand).IsAssignableFrom(tessageType))
-         return TransportTessageType.AtMostOnceTommand;
-      else if(typeof(IExactlyOnceTevent).IsAssignableFrom(tessageType))
-         return TransportTessageType.ExactlyOnceTevent;
-      if(typeof(IExactlyOnceTommand).IsAssignableFrom(tessageType))
-         return TransportTessageType.ExactlyOnceTommand;
-      else
-         throw new ArgumentOutOfRangeException();
    }
 }

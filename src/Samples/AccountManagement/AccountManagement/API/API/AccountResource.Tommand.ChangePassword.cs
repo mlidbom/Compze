@@ -11,7 +11,7 @@ public partial class AccountResource
 {
    public static partial class Tommand
    {
-      public class ChangePassword : TessageTypes.Remotable.AtMostOnce.AtMostOnceHypermediaTommand, IValidatableObject
+      public class ChangePassword : TessageTypes.Remotable.AtMostOnce.AtMostOnceTypermediaTommand, IValidatableObject
       {
          [UsedImplicitly] public ChangePassword() : base(DeduplicationIdHandling.Reuse) {}
          public ChangePassword(Guid accountId):base(DeduplicationIdHandling.Create) => AccountId = accountId;

@@ -87,12 +87,12 @@ public abstract class EndpointHostTestBase : UniversalTestBase
 
             builder.RegisterHandlers
                    .ForTommand((MyExactlyOnceTommand _) => MyExactlyOnceTommandHandlerThreadGate.AwaitPassThrough())
-                   .ForTommand((MyCreateTaggregateTommand tommand, IInProcessHypermediaNavigator navigator) =>
+                   .ForTommand((MyCreateTaggregateTommand tommand, IInProcessTypermediaNavigator navigator) =>
                     {
                        MyCreateTaggregateTommandHandlerThreadGate.AwaitPassThrough();
                        MyTaggregate.Create(tommand.TaggregateId, navigator);
                     })
-                   .ForTommand((MyUpdateTaggregateTommand tommand, IInProcessHypermediaNavigator navigator) =>
+                   .ForTommand((MyUpdateTaggregateTommand tommand, IInProcessTypermediaNavigator navigator) =>
                     {
                        MyUpdateTaggregateTommandHandlerThreadGate.AwaitPassThrough();
                        navigator.Execute(new TeventStoreApi().Queries.GetForUpdate<MyTaggregate>(tommand.TaggregateId)).Update();

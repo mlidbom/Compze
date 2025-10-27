@@ -12,7 +12,7 @@ public class Async_behavior_test : EndpointHostTestBase
       TueryHandlerThreadGate.Close();
 
       using var _ = ClientEndpoint.ServiceLocator.BeginScope();
-      var session = ClientEndpoint.ServiceLocator.Resolve<IRemoteHypermediaNavigator>();
+      var session = ClientEndpoint.ServiceLocator.Resolve<IRemoteTypermediaNavigator>();
       var tuery = session.GetAsync(new MyTuery());
       TueryHandlerThreadGate.Open();
       await tuery;

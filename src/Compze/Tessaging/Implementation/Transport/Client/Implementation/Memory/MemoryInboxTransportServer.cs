@@ -62,17 +62,17 @@ class MemoryInboxTransportServer : IInboxTransportServer
 
          switch(incomingTessage.TessageTypeEnum)
          {
-            case TransportTessage.TransportTessageType.AtMostOnceTommandWithReturnValue:
+            case TransportTessageType.TypermediaAtMostOnceTommandWithReturnValue:
                return (await _inbox.Value.Receive(incomingTessage).caf())
                      .NotNull()
                      .CastTo<TResult>();
-            case TransportTessage.TransportTessageType.NonTransactionalTuery:
+            case TransportTessageType.TyperMediaTuery:
                return (await _engine.Value.Enqueue(incomingTessage).caf())
                      .NotNull()
                      .CastTo<TResult>();
-            case TransportTessage.TransportTessageType.ExactlyOnceTevent:
-            case TransportTessage.TransportTessageType.AtMostOnceTommand:
-            case TransportTessage.TransportTessageType.ExactlyOnceTommand:
+            case TransportTessageType.ExactlyOnceTevent:
+            case TransportTessageType.TypermediaAtMostOnceTommand:
+            case TransportTessageType.ExactlyOnceTommand:
             default:
                throw new ArgumentOutOfRangeException();
          }
@@ -92,13 +92,13 @@ class MemoryInboxTransportServer : IInboxTransportServer
 
          switch(incomingTessage.TessageTypeEnum)
          {
-            case TransportTessage.TransportTessageType.ExactlyOnceTevent:
-            case TransportTessage.TransportTessageType.AtMostOnceTommand:
-            case TransportTessage.TransportTessageType.ExactlyOnceTommand:
+            case TransportTessageType.ExactlyOnceTevent:
+            case TransportTessageType.TypermediaAtMostOnceTommand:
+            case TransportTessageType.ExactlyOnceTommand:
                await _inbox.Value.Receive(incomingTessage).caf();
                return;
-            case TransportTessage.TransportTessageType.AtMostOnceTommandWithReturnValue:
-            case TransportTessage.TransportTessageType.NonTransactionalTuery:
+            case TransportTessageType.TypermediaAtMostOnceTommandWithReturnValue:
+            case TransportTessageType.TyperMediaTuery:
             default:
                throw new ArgumentOutOfRangeException();
          }
