@@ -17,20 +17,17 @@ static class RenamingAndNonPublicMembersSupportingJsonSettings
          TypeNameHandling = TypeNameHandling.Auto,
          ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
          Converters = new List<JsonConverter> { new EntityIdConverter() },
-         ContractResolver = IncludeMembersWithPrivateSettersResolver.Instance
+         ContractResolver = new CompositeContractResolver(new IncludeMembersWithPrivateSetters())
       };
 
-   internal static JsonSerializerSettings DocumentDb => Default;
+   internal static readonly JsonSerializerSettings DocumentDb = Default;
 
-   internal static JsonSerializerSettings Tessaging => Default;
+   internal static readonly JsonSerializerSettings Tessaging = Default;
 
    public static readonly JsonSerializerSettings TeventStore =
-      new()
+      new(Default)
       {
-         TypeNameHandling = Default.TypeNameHandling,
-         ConstructorHandling = Default.ConstructorHandling,
-         Converters = Default.Converters,
-         ContractResolver = IgnoreTaggregateTeventDeclaredPropertiesBecauseTheyAreAlreadyStoredInSqlResolver.Instance,
+         ContractResolver = new CompositeContractResolver(new IncludeMembersWithPrivateSetters(),
+                                                          new IgnoreTaggregateTeventDeclaredPropertiesBecauseTheyAreAlreadyStoredInSql())
       };
-
 }
