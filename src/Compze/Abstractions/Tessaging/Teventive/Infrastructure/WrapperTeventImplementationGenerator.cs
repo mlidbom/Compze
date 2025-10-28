@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
-using System.Reflection.Emit;
 using Compze.Core.Tessaging.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Utilities.SystemCE;
@@ -60,7 +60,6 @@ static class WrapperTeventImplementationGenerator
       var closedWrapperImplementationType = openWrapperImplementationType.MakeGenericType(wrappedTeventType);
 
       var constructorArgumentTypes = new[] { wrappedTeventType };
-      var creatorFunctionArgumentTypes = new[] { typeof(ITevent) };
 
       var constructor = closedWrapperImplementationType.GetConstructor(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance, binder: null, types: constructorArgumentTypes, modifiers: null);
       if(constructor == null)
@@ -68,14 +67,12 @@ static class WrapperTeventImplementationGenerator
          throw new Exception($"Expected to find a constructor with the signature: [private|protected|public] {closedWrapperTeventType.GetFullNameCompilable()}({DescribeParameterList(constructorArgumentTypes)})");
       }
 
-      var constructorCallMethod = new DynamicMethod(name: $"Generated_constructor_for_{closedWrapperTeventType.Name}", returnType: closedWrapperTeventType, parameterTypes: creatorFunctionArgumentTypes, owner: closedWrapperImplementationType);
-      var ilGenerator = constructorCallMethod.GetILGenerator();
-      ilGenerator.Emit(OpCodes.Ldarg_0);
-      ilGenerator.Emit(OpCodes.Castclass, wrappedTeventType);
-      ilGenerator.Emit(OpCodes.Newobj, constructor);
-      ilGenerator.Emit(OpCodes.Ret);
-
-      return (Func<ITevent, IWrapperTevent<ITevent>>)constructorCallMethod.CreateDelegate(typeof(Func<ITevent, IWrapperTevent<ITevent>>));
+      var parameter = Expression.Parameter(typeof(ITevent), "tevent");
+      var castParameter = Expression.Convert(parameter, wrappedTeventType);
+      var constructorCall = Expression.New(constructor, castParameter);
+      var lambda = Expression.Lambda<Func<ITevent, IWrapperTevent<ITevent>>>(constructorCall, parameter);
+      
+      return lambda.Compile();
    }
 
    static Type CreateGenericWrapperTeventImplementationClass(Type wrapperTeventType)
