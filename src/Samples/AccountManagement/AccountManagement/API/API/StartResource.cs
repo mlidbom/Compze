@@ -7,7 +7,7 @@ namespace AccountManagement.API;
 {
    public TommandsResource TommandsResources { get; private set; } = new();
 
-   public TueriesResource Queries { get; private set; } = new();
+   public TueriesResource Tueries { get; private set; } = new();
 
 #pragma warning disable CA1724 // Type names should not match namespaces
    public class TueriesResource

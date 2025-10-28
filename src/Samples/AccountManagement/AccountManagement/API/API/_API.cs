@@ -34,7 +34,7 @@ public class AccountApi : IStaticInstancePropertySingleton<AccountApi>
 
    public class TuerySection
    {
-      static readonly NavigationSpecification<StartResource.TueriesResource> Queries = Instance.Start.Select(start => start.Queries);
+      static readonly NavigationSpecification<StartResource.TueriesResource> Queries = Instance.Start.Select(start => start.Tueries);
 
       public NavigationSpecification<AccountResource> AccountById(Guid accountId) => Queries.Get(queries => queries.AccountById.WithId(accountId));
    }
