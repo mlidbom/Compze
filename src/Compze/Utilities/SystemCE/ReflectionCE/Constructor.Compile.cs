@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Reflection.Emit;
 
 namespace Compze.Utilities.SystemCE.ReflectionCE;
 
@@ -50,15 +49,11 @@ public static partial class Constructor
                throw new Exception($"Expected to find a constructor with the signature: [private|protected|public] {instanceType.GetFullNameCompilable()}({DescribeParameterList(constructorArgumentTypes)})");
             }
 
-            var constructorCallMethod = new DynamicMethod(name: $"Generated_constructor_for_{instanceType.Name}", returnType: instanceType, parameterTypes: constructorArgumentTypes, owner: instanceType);
-            var ilGenerator = constructorCallMethod.GetILGenerator();
-            for(var argumentIndex = 0; argumentIndex < constructorArgumentTypes.Length; argumentIndex++)
-            {
-               ilGenerator.Emit(OpCodes.Ldarg, argumentIndex);
-            }
-            ilGenerator.Emit(OpCodes.Newobj, constructor);
-            ilGenerator.Emit(OpCodes.Ret);
-            return constructorCallMethod.CreateDelegate(delegateType);
+            var parameters = constructorArgumentTypes.Select((type, index) => Expression.Parameter(type, $"argument_{index}")).ToArray();
+            var constructorCall = Expression.New(constructor, parameters);
+            var lambda = Expression.Lambda(delegateType, constructorCall, parameters);
+
+            return lambda.Compile();
          }
 
          static string DescribeParameterList(IEnumerable<Type> parameterTypes) => parameterTypes.Select(parameterType => parameterType.FullNameNotNull()).Join(", ");
