@@ -1,32 +1,22 @@
-using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
-using Newtonsoft.Json;
 using System;
 using System.IO;
 using System.Text;
-using Compze.Serialization.Newtonsoft.Private;
+using Compze.Core.Serialization.Internal.DbPool;
+using Compze.Serialization.Newtonsoft.Private.DbPool;
 
 namespace Compze.Utilities.Testing.DbPool.SystemCE.ThreadingCE;
 
 public abstract class MachineWideSharedObject
 {
    protected static readonly string DataFolder = CompzeTempFolder.EnsureFolderExists("SharedFiles");
-   internal abstract void Delete();
 }
 
 public sealed class MachineWideSharedObject<TObject> : MachineWideSharedObject where TObject : class, new()
 {
-   static readonly JsonSerializerSettings JsonSettings = new()
-                                                         {
-                                                            ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
-                                                            ContractResolver = IncludeMembersWithPrivateSettersResolver.Instance
-                                                         };
-
    readonly string _filePath;
    readonly MutexCE _synchronizer;
-
-   static string Serialize(TObject instance) => JsonConvert.SerializeObject(instance, Formatting.Indented, JsonSettings);
-   static TObject Deserialize(string serialized) => JsonConvert.DeserializeObject<TObject>(serialized, JsonSettings).NotNull();
+   readonly ISharedObjectSerializer<TObject> _serializer = new NewtonsoftSharedObjectSerializer<TObject>();
 
    internal static MachineWideSharedObject<TObject> For(string name) => new(name);
 
@@ -51,11 +41,11 @@ public sealed class MachineWideSharedObject<TObject> : MachineWideSharedObject w
 
    internal TObject GetCopy() => _synchronizer.ExecuteWithLock(Load);
 
-   internal override void Delete() => File.Delete(_filePath);
+   internal void Delete() => File.Delete(_filePath);
 
    void Save(TObject instance)
    {
-      var json = Serialize(instance);
+      var json = _serializer.Serialize(instance);
       File.WriteAllText(_filePath, json, Encoding.UTF8);
    }
 
@@ -72,7 +62,7 @@ public sealed class MachineWideSharedObject<TObject> : MachineWideSharedObject w
       var json = File.ReadAllText(_filePath, Encoding.UTF8);
       try
       {
-         return Deserialize(json);
+         return _serializer.Deserialize(json);
       }
       catch(Exception exception)
       {
