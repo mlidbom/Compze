@@ -59,7 +59,7 @@ namespace Compze.Tests.Unit.Internals.Serialization
 
          var json = DocumentSerializer.Serialize(original);
 
-         var roundTripped = (Root)DocumentSerializer.Deserialize(typeof(Root), json);
+         var roundTripped = DocumentSerializer.Deserialize<Root>(json);
 
          roundTripped.Should().BeStrictlyEquivalentTo(original);
       }

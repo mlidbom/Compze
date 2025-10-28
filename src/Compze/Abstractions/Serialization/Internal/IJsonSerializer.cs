@@ -8,4 +8,5 @@ interface IJsonSerializer
    // We should also inject the serializer, not instantiate it manually.
    string Serialize(object instance);
    object Deserialize(Type type, string json);
+   TObject Deserialize<TObject>(string json) => (TObject)Deserialize(typeof(TObject), json);
 }
