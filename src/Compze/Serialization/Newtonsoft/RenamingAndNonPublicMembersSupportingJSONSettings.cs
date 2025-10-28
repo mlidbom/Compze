@@ -16,7 +16,7 @@ static class RenamingAndNonPublicMembersSupportingJsonSettings
       {
          TypeNameHandling = TypeNameHandling.Auto,
          ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
-         Converters = new List<JsonConverter> { new EntityIdConverter() },
+         Converters = new List<JsonConverter> { new PrimitiveValueWrapperConverter() },
          ContractResolver = new CompositeContractResolver(new IncludeMembersWithPrivateSetters())
       };
 

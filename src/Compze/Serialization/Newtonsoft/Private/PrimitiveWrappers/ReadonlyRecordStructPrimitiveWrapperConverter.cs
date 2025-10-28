@@ -1,13 +1,13 @@
 using System;
 using System.Collections.Concurrent;
-using Compze.Utilities.GenericAbstractions;
+using Compze.Core.Public.Infrastructure;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
 using Newtonsoft.Json;
 
 namespace Compze.Serialization.Newtonsoft.Private.PrimitiveWrappers;
 
-public class EntityIdConverter : JsonConverter
+public class PrimitiveValueWrapperConverter : JsonConverter
 {
    class WrappedTypeHelpers
    {
@@ -28,7 +28,7 @@ public class EntityIdConverter : JsonConverter
       _handlesType.GetOrAdd(serializedType,
                             potentialWrapperType =>
                                !potentialWrapperType.IsAbstract &&
-                               potentialWrapperType.InHerits(typeof(EntityId<>)));
+                               potentialWrapperType.InHerits(typeof(ValueWrapper<>)));
 
    public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
    {
@@ -37,7 +37,7 @@ public class EntityIdConverter : JsonConverter
          writer.WriteNull();
       } else
       {
-         serializer.Serialize(writer, value.CastTo<IUntypedEntityId>().UntypedPrimitiveValue);
+         serializer.Serialize(writer, value.CastTo<ISingleUntypedPrimitiveValueWrapper>().UntypedPrimitiveValue);
       }
    }
 
@@ -54,7 +54,7 @@ public class EntityIdConverter : JsonConverter
                                                  {
                                                     return new LazyCE<WrappedTypeHelpers>(() =>
                                                     {
-                                                       var wrappedPrimitiveType = wrapperType.GetGenericBaseClass(typeof(EntityId<>))
+                                                       var wrappedPrimitiveType = wrapperType.GetGenericBaseClass(typeof(ValueWrapper<>))
                                                                                              .GetGenericArguments()[0];
                                                        var constructor = (Func<object, object>)Constructor.Compile.ForType(typeToRead).WithArgumentTypes(wrappedPrimitiveType);
                                                        return new WrappedTypeHelpers(wrappedPrimitiveType, constructor);
