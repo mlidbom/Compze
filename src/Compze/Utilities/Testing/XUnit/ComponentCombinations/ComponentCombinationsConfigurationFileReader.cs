@@ -10,13 +10,22 @@ namespace Compze.Utilities.Testing.XUnit.ComponentCombinations;
 
 static class ComponentCombinationsConfigurationFileReader
 {
-   static readonly ConcurrentDictionary<string, IReadOnlyList<ComponentCombination>> PermutationsCache = new();
+   static readonly ConcurrentDictionary<string, IReadOnlyList<ComponentCombination>> CombinationsCache = new();
 
-   public static IReadOnlyList<ComponentCombination> GetPermutations(string configurationFileName, Type[] componentEnumTypes)
+   public static IReadOnlyList<ComponentCombination> GetCombinations(string configurationFileName, Type[] componentEnumTypes, int? onlyConsiderComponentIndex = null)
    {
-      return PermutationsCache.GetOrAdd(
+      var combinations = CombinationsCache.GetOrAdd(
          configurationFileName,
          fileName => ReadFile(componentEnumTypes, fileName));
+
+      if(onlyConsiderComponentIndex is {} index)
+      {
+         return combinations
+               .DistinctBy(it => it.Components[index])
+               .ToList();
+      }
+
+      return combinations;
    }
 
    const string Comment = "//";

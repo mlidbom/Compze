@@ -53,7 +53,7 @@
       <Value>Threading\ResourceAccess\MonitorCE.Functional..cs:Compze\Utilities\Compze.Utilities.csproj-20</Value>
       <Value>Hosting\EndpointHost.cs:Compze\Tessaging\Compze.Tessaging.csproj-35</Value>
       <Value>SystemCE\LazyCE.cs:Compze\Utilities\Compze.Utilities.csproj-12</Value>
-      <Value>SystemCE\ThreadingCE\MachineWideSingleThreaded.cs:Compze\Utilities\Testing\DbPool\Compze.Utilities.Testing.DbPool.csproj-54</Value>
+      <Value>SystemCE\ThreadingCE\MachineWideSingleThreaded.cs:Compze\Utilities\Testing\DbPool\Compze.Utilities.Testing.DbPool.csproj-22</Value>
       <Value>Functional\Unit.cs:Compze\Utilities\Compze.Utilities.csproj-27</Value>
       <Value>SystemCE\LinqCE\EnumerableCE.ForEach.cs:Compze\Utilities\Compze.Utilities.csproj-26</Value>
       <Value>ComponentCombinations\ComponentCombination.cs:Compze\Utilities\Testing\XUnit\Compze.Utilities.Testing.XUnit.csproj-85</Value>

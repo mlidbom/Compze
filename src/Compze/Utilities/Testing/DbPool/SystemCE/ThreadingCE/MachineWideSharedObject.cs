@@ -1,113 +1,80 @@
 using System;
 using System.IO;
 using System.Text;
-using Compze.Serialization.Newtonsoft;
-using Compze.Utilities.Contracts;
-using Compze.Utilities.Functional;
-using Compze.Utilities.SystemCE;
-using Compze.Utilities.SystemCE.LinqCE;
-using Newtonsoft.Json;
+using Compze.Core.Serialization.Internal.DbPool;
+using Compze.Utilities.SystemCE.IOCE;
 
 namespace Compze.Utilities.Testing.DbPool.SystemCE.ThreadingCE;
 
-    public class MachineWideSharedObject
-    {
-       protected static readonly string DataFolder = CompzeTempFolder.EnsureFolderExists("SharedFiles");
-    }
+public abstract class MachineWideSharedObject
+{
+   protected static readonly string DataFolder = CompzeTempFolder.EnsureFolderExists("SharedFiles");
+}
 
-    public sealed class MachineWideSharedObject<TObject> : MachineWideSharedObject, IDisposable where TObject : new()
-    {
-       class ReferenceCountingWrapper
-       {
-          public int References { get; set; } = 1;
-          public TObject Object { get; set; } = new();
-       }
+public sealed class MachineWideSharedObject<TObject> : MachineWideSharedObject where TObject : class, new()
+{
+   readonly string _filePath;
+   readonly MutexCE _synchronizer;
+   readonly ISharedObjectSerializer _serializer;
 
-       readonly string _filePath;
-       readonly MachineWideSingleThreaded _synchronizer;
-       bool _disposed;
-       readonly bool _usePersistentFile;
+   internal static MachineWideSharedObject<TObject> For(string name, ISharedObjectSerializer serializer) => new(name, serializer);
 
-       static string Serialize(ReferenceCountingWrapper instance) => JsonConvert.SerializeObject(instance, Formatting.Indented, RenamingAndNonPublicMembersSupportingJsonSettings.Default);
-       static ReferenceCountingWrapper Deserialize(string serialized) => JsonConvert.DeserializeObject<ReferenceCountingWrapper>(serialized, RenamingAndNonPublicMembersSupportingJsonSettings.Default).NotNull();
+   MachineWideSharedObject(string name, ISharedObjectSerializer serializer)
+   {
+      _serializer = serializer;
+      var fileName = PathCE.ReplaceInvalidCharactersWith(name, '_');
+      _filePath = Path.Combine(DataFolder, fileName);
+      _synchronizer = MutexCE.ForMutexNamed(fileName);
+      _synchronizer.ExecuteWithLock(EnsureFileExists);
+   }
 
-       internal static MachineWideSharedObject<TObject> For(string name, bool usePersistentFile = false) => new(name, usePersistentFile);
+   internal TObject Update(Action<TObject> action) => _synchronizer.ExecuteWithLock(() =>
+   {
+      var instance = Load();
+      action(instance);
+      Save(instance);
+      return instance;
+   });
 
-       MachineWideSharedObject(string name, bool usePersistentFile)
-       {
-          var fileName = $"Compze_{name}";
-          // ReSharper disable once AccessToModifiedClosure
-          Path.GetInvalidFileNameChars().ForEach(invalidChar => fileName = fileName.Replace(invalidChar, '_'));
+   internal TObject GetCopy() => _synchronizer.ExecuteWithLock(Load);
 
-          _usePersistentFile = usePersistentFile;
-          _filePath = Path.Combine(DataFolder, fileName);
-          _synchronizer = MachineWideSingleThreaded.For($"{fileName}_mutex");
+   internal void Delete() => File.Delete(_filePath);
 
-          _synchronizer.Execute(() =>
-          {
-             Save(File.Exists(_filePath)
-                     ? Load().mutate(it => it.References++)
-                     : new ReferenceCountingWrapper());
-          });
-       }
+   void Save(TObject instance)
+   {
+      var json = _serializer.Serialize(instance);
+      File.WriteAllText(_filePath, json, Encoding.UTF8);
+   }
 
-       internal TObject Update(Action<TObject> action) => _synchronizer.Execute(() =>
-       {
-          Assert.State.IsNotDisposed(_disposed, this);
-          var wrapper = Load();
-          action(wrapper.Object);
-          Save(wrapper);
-          return wrapper.Object;
-       });
+   void EnsureFileExists()
+   {
+      if(!File.Exists(_filePath))
+      {
+         Save(new TObject());
+      }
+   }
 
-       internal TObject GetCopy() => Assert.State.IsNotDisposed(_disposed, this)
-                                           .then(() => _synchronizer.Execute(() => Load().Object));
+   TObject Load()
+   {
+      var json = File.ReadAllText(_filePath, Encoding.UTF8);
+      try
+      {
+         return _serializer.Deserialize<TObject>(json);
+      }
+      catch(Exception exception)
+      {
+         File.Delete(_filePath);
+         EnsureFileExists();
+         throw new Exception($"""
 
-       void Save(ReferenceCountingWrapper wrapper)
-       {
-          var json = Serialize(wrapper);
-          File.WriteAllText(_filePath, json, Encoding.UTF8);
-       }
+                              Failed to deserialize object from file {_filePath}
+                              Deleted the corrupt file and replaced it with the content of a default {typeof(TObject).FullName}.
+                              The file content was: 
 
-       ReferenceCountingWrapper Load()
-       {
-          var json = File.ReadAllText(_filePath, Encoding.UTF8);
-          try
-          {
-             return Deserialize(json);
-          }
-          catch(Exception exception)
-          {
-             File.Delete(_filePath);
-             throw new Exception($"""
-                                  
-                                  Failed to deserialize object from file {_filePath}
-                                  Deleted the apparently corrupt file.
-                                  The file content was: 
-                                  
-                                  {json}
-                                   
-                                  """, exception);
-          }
-       }
-
-       public void Dispose() => _synchronizer.Execute(() =>
-       {
-          if(!_disposed)
-          {
-             {
-                var wrapper = Load();
-                wrapper.References--;
-                if(wrapper.References <= 0 && !_usePersistentFile)
-                {
-                   File.Delete(_filePath);
-                } else
-                {
-                   Save(wrapper);
-                }
-             }
-          }
-
-          _disposed = true;
-       });
-    }
+                              {json}
+                               
+                              """,
+                             exception);
+      }
+   }
+}
