@@ -14,7 +14,7 @@ static class CompzeTempFolder
    static readonly string DefaultPath = SPath.Combine(SPath.GetTempPath(), "Compze_TEMP");
    static readonly string Path = EnsureFolderExists();
 
-   internal static string EnsureFolderExists(string folderName) => MachineWideLock.Execute(() =>
+   internal static string EnsureFolderExists(string folderName) => MachineWideLock.ExecuteWithLock(() =>
    {
       var folder = SPath.Combine(Path, folderName);
       if(!Directory.Exists(folder))
@@ -27,7 +27,7 @@ static class CompzeTempFolder
 
    static string EnsureFolderExists()
    {
-      return MachineWideLock.Execute(() =>
+      return MachineWideLock.ExecuteWithLock(() =>
       {
          if(!Directory.Exists(DefaultPath))
          {
