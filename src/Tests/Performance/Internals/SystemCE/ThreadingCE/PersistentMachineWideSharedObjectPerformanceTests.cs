@@ -17,11 +17,7 @@ public class PersistentMachineWideSharedObjectPerformanceTests : UniversalTestBa
 
    readonly MachineWideSharedObject<SharedObject> _shared;
 
-   protected override void DisposeInternal()
-   {
-      _shared.Dispose();
-      MachineWideSharedObject<SharedObject>.Delete(_shared);
-   }
+   protected override void DisposeInternal() => MachineWideSharedObject<SharedObject>.Delete(_shared);
 
    [XF] public void Get_copy_runs_single_threaded_XX_times_in_50_milliseconds()
       => TimeAsserter.Execute(() => _shared.GetCopy(), iterations: 100, maxTotal: 50.Milliseconds());

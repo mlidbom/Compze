@@ -21,9 +21,10 @@ namespace Compze.Tests.Unit.Internals.SystemCE.ThreadingCE;
    public string Name { get; set; } = "Default";
 }
 
- public class MachineWideSharedObjectTests : UniversalTestBase
+public class MachineWideSharedObjectTests : UniversalTestBase
 {
    readonly List<MachineWideSharedObject<SharedObject>> _created = new();
+
    MachineWideSharedObject<SharedObject> CreateAndDeleteFileWhenTestCompletes(string name)
    {
       var created = MachineWideSharedObject<SharedObject>.For(name);
@@ -36,7 +37,7 @@ namespace Compze.Tests.Unit.Internals.SystemCE.ThreadingCE;
    [XF] public void Create()
    {
       var name = Guid.NewGuid().ToString();
-      using var shared = CreateAndDeleteFileWhenTestCompletes(name);
+      var shared = CreateAndDeleteFileWhenTestCompletes(name);
       var test = shared.GetCopy();
 
       test.Name.Should().Be("Default");
@@ -45,7 +46,7 @@ namespace Compze.Tests.Unit.Internals.SystemCE.ThreadingCE;
    [XF] public void Create_update_and_get()
    {
       var name = Guid.NewGuid().ToString();
-      using var shared = CreateAndDeleteFileWhenTestCompletes(name);
+      var shared = CreateAndDeleteFileWhenTestCompletes(name);
       var value = shared.GetCopy();
 
       value.Name.Should().Be("Default");
@@ -62,8 +63,8 @@ namespace Compze.Tests.Unit.Internals.SystemCE.ThreadingCE;
    [XF] public void Two_instances_with_same_name_share_data()
    {
       var name = Guid.NewGuid().ToString();
-      using var shared1 = CreateAndDeleteFileWhenTestCompletes(name);
-      using var shared2 = CreateAndDeleteFileWhenTestCompletes(name);
+      var shared1 = CreateAndDeleteFileWhenTestCompletes(name);
+      var shared2 = CreateAndDeleteFileWhenTestCompletes(name);
       var test1 = shared1.GetCopy();
       var test2 = shared2.GetCopy();
 
@@ -80,26 +81,21 @@ namespace Compze.Tests.Unit.Internals.SystemCE.ThreadingCE;
       test1.Name.Should().Be("Updated");
    }
 
-
    [XF] public void Persistent_Once_all_instance_are_disposed_data_is_retained()
    {
       const string name = "40BD77DF-7C32-4B28-9A49-DA2CE202CC4F";
       var newName = Guid.NewGuid().ToString();
       MachineWideSharedObject<SharedObject> shared2;
-      using(var shared = CreateAndDeleteFileWhenTestCompletes(name))
-      {
-         shared.Update(it => it.Name = newName).Name.Should().Be(newName);
-         shared2 = CreateAndDeleteFileWhenTestCompletes(name);
-         shared.GetCopy().Name.Should().Be(newName);
-      }
+      var shared = CreateAndDeleteFileWhenTestCompletes(name);
+
+      shared.Update(it => it.Name = newName).Name.Should().Be(newName);
+      shared2 = CreateAndDeleteFileWhenTestCompletes(name);
+      shared.GetCopy().Name.Should().Be(newName);
 
       shared2.GetCopy().Name.Should().Be(newName);
-      shared2.Dispose();
 
-      using(var shared = CreateAndDeleteFileWhenTestCompletes(name))
-      {
-         shared.GetCopy().Name.Should().Be(newName);
-      }
+      shared = CreateAndDeleteFileWhenTestCompletes(name);
+      shared.GetCopy().Name.Should().Be(newName);
    }
 
    [XF] public async Task Update_blocks_GetCopy_and_Update_from_both_same_and_other_instances()
@@ -111,16 +107,17 @@ namespace Compze.Tests.Unit.Internals.SystemCE.ThreadingCE;
       var conflictingGetCopySectionSameInstance = GatedCodeSection.WithTimeout(timeout);
       var conflictingGetCopySectionOtherInstance = GatedCodeSection.WithTimeout(timeout);
 
-      IList<IGatedCodeSection> conflictingSections = [
-                                                        conflictingUpdateSectionSameInstance,
-                                                        conflictingUpdateSectionOtherInstance,
-                                                        conflictingGetCopySectionSameInstance,
-                                                        conflictingGetCopySectionOtherInstance
-                                                     ];
+      IList<IGatedCodeSection> conflictingSections =
+      [
+         conflictingUpdateSectionSameInstance,
+         conflictingUpdateSectionOtherInstance,
+         conflictingGetCopySectionSameInstance,
+         conflictingGetCopySectionOtherInstance
+      ];
 
       var name = Guid.NewGuid().ToString();
-      using var shared1 = CreateAndDeleteFileWhenTestCompletes(name);
-      using var shared2 = CreateAndDeleteFileWhenTestCompletes(name);
+      var shared1 = CreateAndDeleteFileWhenTestCompletes(name);
+      var shared2 = CreateAndDeleteFileWhenTestCompletes(name);
       // ReSharper disable AccessToDisposedClosure
       var tasks = Task.WhenAll(
          TaskCE.Run(() => shared1.Update(_ => { updateGate.AwaitPassThrough(); })),

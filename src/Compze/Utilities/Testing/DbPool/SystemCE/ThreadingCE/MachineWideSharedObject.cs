@@ -15,7 +15,7 @@ namespace Compze.Utilities.Testing.DbPool.SystemCE.ThreadingCE;
        protected static readonly string DataFolder = CompzeTempFolder.EnsureFolderExists("SharedFiles");
     }
 
-    public sealed class MachineWideSharedObject<TObject> : MachineWideSharedObject, IDisposable where TObject : new()
+    public sealed class MachineWideSharedObject<TObject> : MachineWideSharedObject where TObject : new()
     {
        class ReferenceCountingWrapper
        {
@@ -25,8 +25,6 @@ namespace Compze.Utilities.Testing.DbPool.SystemCE.ThreadingCE;
 
        readonly string _filePath;
        readonly MachineWideSingleThreaded _synchronizer;
-       bool _disposed;
-       readonly bool _usePersistentFile;
 
        static string Serialize(ReferenceCountingWrapper instance) => JsonConvert.SerializeObject(instance, Formatting.Indented, RenamingAndNonPublicMembersSupportingJsonSettings.Default);
        static ReferenceCountingWrapper Deserialize(string serialized) => JsonConvert.DeserializeObject<ReferenceCountingWrapper>(serialized, RenamingAndNonPublicMembersSupportingJsonSettings.Default).NotNull();
@@ -39,7 +37,6 @@ namespace Compze.Utilities.Testing.DbPool.SystemCE.ThreadingCE;
           // ReSharper disable once AccessToModifiedClosure
           Path.GetInvalidFileNameChars().ForEach(invalidChar => fileName = fileName.Replace(invalidChar, '_'));
 
-          _usePersistentFile = true;
           _filePath = Path.Combine(DataFolder, fileName);
           _synchronizer = MachineWideSingleThreaded.For($"{fileName}_mutex");
 
@@ -56,15 +53,13 @@ namespace Compze.Utilities.Testing.DbPool.SystemCE.ThreadingCE;
 
        internal TObject Update(Action<TObject> action) => _synchronizer.Execute(() =>
        {
-          Assert.State.IsNotDisposed(_disposed, this);
           var wrapper = Load();
           action(wrapper.Object);
           Save(wrapper);
           return wrapper.Object;
        });
 
-       internal TObject GetCopy() => Assert.State.IsNotDisposed(_disposed, this)
-                                           .then(() => _synchronizer.Execute(() => Load().Object));
+       internal TObject GetCopy() => _synchronizer.Execute(() => Load().Object);
 
        void Save(ReferenceCountingWrapper wrapper)
        {
@@ -93,26 +88,6 @@ namespace Compze.Utilities.Testing.DbPool.SystemCE.ThreadingCE;
                                   """, exception);
           }
        }
-
-       public void Dispose() => _synchronizer.Execute(() =>
-       {
-          if(!_disposed)
-          {
-             {
-                var wrapper = Load();
-                wrapper.References--;
-                if(wrapper.References <= 0 && !_usePersistentFile)
-                {
-                   DeleteFile();
-                } else
-                {
-                   Save(wrapper);
-                }
-             }
-          }
-
-          _disposed = true;
-       });
 
        internal static void Delete(MachineWideSharedObject<TObject> obj) => obj.DeleteFile();
     }

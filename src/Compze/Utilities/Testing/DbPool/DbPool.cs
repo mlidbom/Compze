@@ -105,6 +105,5 @@ public partial class DbPool : StrictlyManagedResourceBase<DbPool>
       base.Dispose();
       _sqlLayer.Dispose(_transientCache);
       MachineWideState.Update(machineWide => machineWide.ReleaseReservationsFor(_poolId));
-      MachineWideState.Dispose();
    }
 }
