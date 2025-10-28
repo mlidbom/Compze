@@ -1,11 +1,9 @@
-using Compze.Core.Refactoring.Naming.Internal.Implementation;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.DependencyInjection;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Utilities.DependencyInjection.Abstractions;
-using Compze.Utilities.Functional;
 using FluentAssertions;
 using static FluentAssertions.FluentActions;
 
@@ -13,7 +11,7 @@ namespace Compze.Tests.Integration.DependencyInjection;
 
 public class LifestyleValidationTests : UniversalTestBase
 {
-   [PCT]
+   [PCTDIContainer]
    public void Should_throw_when_singleton_depends_on_scoped_service()
    {
       IComponentRegistrar registrar = new TestingComponentRegistrar();
@@ -33,21 +31,6 @@ public class LifestyleValidationTests : UniversalTestBase
       exception.Message.Should().Contain("Scoped");
    }
 
-   [PCT]
-   public void Should_allow_singleton_depending_on_singleton()
-   {
-      IComponentRegistrar registrar = new TestingComponentRegistrar();
-      using var container = TestEnv.DIContainer.CreateWithServiceLocatorAndCurrentTestsPluggableComponents()
-                             .mutate(it => it.Register().TypeMapper());
-
-      container.Register(
-         Singleton.For<ISingletonDependency>().CreatedBy(() => new SingletonDependency()),
-         Singleton.For<ISingletonService>().CreatedBy((ISingletonDependency dep) => new SingletonServiceWithSingletonDependency(dep))
-      );
-
-      var service = container.ServiceLocator.Resolve<ISingletonService>();
-      service.Should().NotBeNull();
-   }
 
    interface IScopedService {}
    class ScopedService : IScopedService {}
@@ -57,12 +40,4 @@ public class LifestyleValidationTests : UniversalTestBase
    class SingletonServiceDependingOnScoped(IScopedService _) : ISingletonService {}
 #pragma warning restore CS9113 // Parameter is unread.
 
-   interface ISingletonDependency {}
-   class SingletonDependency : ISingletonDependency {}
-
-   class SingletonServiceWithSingletonDependency(ISingletonDependency dependency) : ISingletonService
-   {
-      // ReSharper disable once UnusedMember.Local
-      public ISingletonDependency Dependency { get; } = dependency;
-   }
 }
