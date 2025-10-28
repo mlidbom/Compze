@@ -2,7 +2,6 @@ using System;
 using System.IO;
 using System.Text;
 using Compze.Serialization.Newtonsoft;
-using Compze.Utilities.Contracts;
 using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
@@ -10,9 +9,10 @@ using Newtonsoft.Json;
 
 namespace Compze.Utilities.Testing.DbPool.SystemCE.ThreadingCE;
 
-    public class MachineWideSharedObject
+    public abstract class MachineWideSharedObject
     {
        protected static readonly string DataFolder = CompzeTempFolder.EnsureFolderExists("SharedFiles");
+       internal abstract void Delete();
     }
 
     public sealed class MachineWideSharedObject<TObject> : MachineWideSharedObject where TObject : new()
@@ -49,7 +49,7 @@ namespace Compze.Utilities.Testing.DbPool.SystemCE.ThreadingCE;
        }
 
 
-       void DeleteFile() => File.Delete(_filePath);
+       internal override void Delete() => File.Delete(_filePath);
 
        internal TObject Update(Action<TObject> action) => _synchronizer.Execute(() =>
        {
@@ -88,6 +88,4 @@ namespace Compze.Utilities.Testing.DbPool.SystemCE.ThreadingCE;
                                   """, exception);
           }
        }
-
-       internal static void Delete(MachineWideSharedObject<TObject> obj) => obj.DeleteFile();
     }

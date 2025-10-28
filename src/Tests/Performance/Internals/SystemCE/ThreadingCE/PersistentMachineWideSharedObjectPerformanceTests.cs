@@ -9,15 +9,9 @@ namespace Compze.Tests.Performance.Internals.SystemCE.ThreadingCE;
 
 public class PersistentMachineWideSharedObjectPerformanceTests : UniversalTestBase
 {
-   public PersistentMachineWideSharedObjectPerformanceTests()
-   {
-      var name = Guid.NewGuid().ToString();
-      _shared = MachineWideSharedObject<SharedObject>.For(name);
-   }
+   readonly MachineWideSharedObject<SharedObject> _shared = MachineWideSharedObject<SharedObject>.For(Guid.NewGuid().ToString());
 
-   readonly MachineWideSharedObject<SharedObject> _shared;
-
-   protected override void DisposeInternal() => MachineWideSharedObject<SharedObject>.Delete(_shared);
+   protected override void DisposeInternal() => _shared.Delete();
 
    [XF] public void Get_copy_runs_single_threaded_XX_times_in_50_milliseconds()
       => TimeAsserter.Execute(() => _shared.GetCopy(), iterations: 100, maxTotal: 50.Milliseconds());

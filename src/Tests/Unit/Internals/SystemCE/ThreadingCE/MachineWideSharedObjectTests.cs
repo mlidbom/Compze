@@ -32,7 +32,7 @@ public class MachineWideSharedObjectTests : UniversalTestBase
       return created;
    }
 
-   protected override void DisposeInternal() => _created.ForEach(MachineWideSharedObject<SharedObject>.Delete);
+   protected override void DisposeInternal() => _created.ForEach(obj => obj.Delete());
 
    [XF] public void Create()
    {

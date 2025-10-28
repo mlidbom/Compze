@@ -18,7 +18,7 @@ public class MachineWideSharedObjectPerformanceTests : UniversalTestBase
       return created;
    }
 
-   protected override void DisposeInternal() => _created.ForEach(MachineWideSharedObject<SharedObject>.Delete);
+   protected override void DisposeInternal() => _created.ForEach(obj => obj.Delete());
 
    [XF] public void Get_copy_runs_single_threaded_XX_times_in_50_milliseconds()
    {
