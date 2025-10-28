@@ -18,7 +18,7 @@ namespace Compze.Tests.Unit.Internals.Serialization
 {
    public class WhenSerializingTypesWithValueWrapperMembers : SerializerTest
    {
-      [PCTSerializer] public void SerializedDataIs() =>
+      [PCTSerializer] public void SerializedDataContainsOnlyTheWrappedValue() =>
          Root.Create()
              ._(DocumentSerializer.Serialize)
              .Must()
