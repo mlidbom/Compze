@@ -3,7 +3,7 @@ using Compze.Utilities.Functional;
 
 namespace Compze.Utilities.Threading;
 
-static class ActionExtensions
+public static class ActionExtensions
 {
    internal static Func<TParam, unit> AsUnitFunc<TParam>(this Action<TParam> @this) =>
       param =>
@@ -18,12 +18,4 @@ static class ActionExtensions
          @this();
          return unit.Value;
       };
-}
-
-static class Throw<TException> where TException : Exception, new()
-{
-   internal static unit If(bool condition) => unit.From(() =>
-   {
-      if(condition) throw new TException();
-   });
 }
