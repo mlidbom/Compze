@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using Compze.Core.Serialization.Internal.DbPool;
 using Compze.Sql.Common.DbPool;
 using Compze.Utilities.DependencyInjection;
 
@@ -29,7 +30,7 @@ public partial class DbPool : StrictlyManagedResourceBase<DbPool>
 {
    internal static IComponentRegistrar RegisterWith(IComponentRegistrar registrar) =>
       registrar.Register(Singleton.For<DbPool>()
-                                  .CreatedBy((IDbPoolSqlLayer sqlLayer) => new DbPool(sqlLayer))
+                                  .CreatedBy((IDbPoolSqlLayer sqlLayer, ISharedObjectSerializer serializer) => new DbPool(sqlLayer, serializer))
                                   .DelegateToParentServiceLocatorWhenCloning());
 
    readonly IDbPoolSqlLayer _sqlLayer;
@@ -37,12 +38,12 @@ public partial class DbPool : StrictlyManagedResourceBase<DbPool>
    static TimeSpan _reservationLength;
    internal const int NumberOfDatabases = 50;
 
-   internal DbPool(IDbPoolSqlLayer sqlLayer) : base(forceStackTraceAllocation: false)
+   internal DbPool(IDbPoolSqlLayer sqlLayer, ISharedObjectSerializer serializer) : base(forceStackTraceAllocation: false)
    {
       _sqlLayer = sqlLayer;
       _reservationLength = System.Diagnostics.Debugger.IsAttached ? 10.Minutes() : 65.Seconds();
 
-      MachineWideState = MachineWideSharedObject<DbPoolState>.For(sqlLayer.GetType().GetFullNameCompilable().ReplaceInvariant(".", "_"));
+      MachineWideState = MachineWideSharedObject<DbPoolState>.For(sqlLayer.GetType().GetFullNameCompilable().ReplaceInvariant(".", "_"), serializer);
    }
 
    readonly MonitorCE _guard = MonitorCE.WithTimeout(30.Seconds());

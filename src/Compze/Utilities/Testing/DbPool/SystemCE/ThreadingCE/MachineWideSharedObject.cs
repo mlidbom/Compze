@@ -2,7 +2,6 @@ using System;
 using System.IO;
 using System.Text;
 using Compze.Core.Serialization.Internal.DbPool;
-using Compze.Serialization.Newtonsoft.Private.DbPool;
 using Compze.Utilities.SystemCE.IOCE;
 
 namespace Compze.Utilities.Testing.DbPool.SystemCE.ThreadingCE;
@@ -16,12 +15,13 @@ public sealed class MachineWideSharedObject<TObject> : MachineWideSharedObject w
 {
    readonly string _filePath;
    readonly MutexCE _synchronizer;
-   readonly ISharedObjectSerializer _serializer = new NewtonsoftSharedObjectSerializer();
+   readonly ISharedObjectSerializer _serializer;
 
-   internal static MachineWideSharedObject<TObject> For(string name) => new(name);
+   internal static MachineWideSharedObject<TObject> For(string name, ISharedObjectSerializer serializer) => new(name, serializer);
 
-   MachineWideSharedObject(string name)
+   MachineWideSharedObject(string name, ISharedObjectSerializer serializer)
    {
+      _serializer = serializer;
       var fileName = PathCE.ReplaceInvalidCharactersWith(name, '_');
       _filePath = Path.Combine(DataFolder, fileName);
       _synchronizer = MutexCE.ForMutexNamed(fileName);

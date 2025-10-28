@@ -28,7 +28,8 @@ public abstract class DbPoolTestBase : UniversalTestBase
    }
 
    protected static IServiceLocator CreateServiceLocator() => TestEnv.DIContainer.CreateEmpty()
-                                                                     .mutate(it => it.Register().CurrentTestsDbPoolIfNotCloneContainer())
+                                                                     .mutate(it => it.Register()
+                                                                                     .CurrentTestsDbPoolIfNotCloneContainer())
                                                                      .ServiceLocator;
 
    protected override async Task DisposeAsyncInternal() => await _serviceLocator.DisposeAsync();

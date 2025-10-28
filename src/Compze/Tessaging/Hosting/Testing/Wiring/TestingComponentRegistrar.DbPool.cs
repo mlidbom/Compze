@@ -25,6 +25,8 @@ public static class TestingComponentRegistrarDbPool
          return @this;
       }
 
+      @this.CurrentTestsSerializersIfNotClonedContainer();
+
       @this.DbPool();
       switch(TestEnv.SqlLayer)
       {

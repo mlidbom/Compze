@@ -8,11 +8,14 @@ namespace Compze.Tessaging.Hosting.Testing.Wiring;
 
 public static class TestingComponentRegistrarSerializer
 {
-   public static IComponentRegistrar CurrentTestsSerializer(this IComponentRegistrar register) =>
-      register.CastTo<TestingComponentRegistrar>().CurrentTestsSerializers();
+   public static IComponentRegistrar CurrentTestsSerializersIfNotClonedContainer(this IComponentRegistrar register) =>
+      register.CastTo<TestingComponentRegistrar>().CurrentTestsSerializersIfNotClonedContainer();
 
-   public static IComponentRegistrar CurrentTestsSerializers(this TestingComponentRegistrar @this)
+   public static IComponentRegistrar CurrentTestsSerializersIfNotClonedContainer(this TestingComponentRegistrar @this)
    {
+      if(@this.Container().IsClone())
+         return @this;
+
       switch(TestEnv.Serializer)
       {
          case Serializer.Newtonsoft:
