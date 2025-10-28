@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Reflection.Emit;
 
@@ -13,19 +14,29 @@ public static partial class Constructor
       internal static CompilerBuilder<TTypeToConstruct> ForType<TTypeToConstruct>() => new();
       internal static CompilerBuilder<object> ForType(Type typeToConstruct) => new(typeToConstruct);
 
-
       internal class CompilerBuilder<TInstance>
       {
          readonly Type _typeToConstruct;
          internal CompilerBuilder(Type typeToConstruct) => _typeToConstruct = typeToConstruct;
 
-         internal CompilerBuilder() : this(typeof(TInstance))
-         {
-         }
+         internal CompilerBuilder() : this(typeof(TInstance)) {}
 
-         internal Delegate WithArgumentTypes(Type argument1Type) => CompileForSignature(typeof(Func<,>).MakeGenericType(argument1Type, _typeToConstruct));
+         Delegate WithArgumentTypes(Type argument1Type) => CompileForSignature(typeof(Func<,>).MakeGenericType(argument1Type, _typeToConstruct));
          internal Func<TInstance> DefaultConstructor() => (Func<TInstance>)CompileForSignature(typeof(Func<>).MakeGenericType(_typeToConstruct));
          internal Func<TArgument1, TInstance> WithArguments<TArgument1>() => (Func<TArgument1, TInstance>)WithArgumentTypes(typeof(TArgument1));
+
+         internal Func<object, object> WithArgumentTypesAsObjectFunc(Type argument1Type)
+         {
+            var constructor = WithArgumentTypes(argument1Type);
+
+            var parameter = Expression.Parameter(typeof(object), "arg");
+            var parameterCastToCorrectType = Expression.Convert(parameter, argument1Type);
+            var constructorInvocation = Expression.Invoke(Expression.Constant(constructor), parameterCastToCorrectType);
+            var castReturnValueToObject = Expression.Convert(constructorInvocation, typeof(object));
+            var lambdaForWholeSequence = Expression.Lambda<Func<object, object>>(castReturnValueToObject, parameter);
+
+            return lambdaForWholeSequence.Compile();
+         }
 
          static Delegate CompileForSignature(Type delegateType)
          {
@@ -34,14 +45,14 @@ public static partial class Constructor
             var constructorArgumentTypes = delegateTypeGenericArgumentTypes[..^1];
 
             var constructor = instanceType.GetConstructor(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance, binder: null, types: constructorArgumentTypes, modifiers: null);
-            if (constructor == null)
+            if(constructor == null)
             {
                throw new Exception($"Expected to find a constructor with the signature: [private|protected|public] {instanceType.GetFullNameCompilable()}({DescribeParameterList(constructorArgumentTypes)})");
             }
 
-            var constructorCallMethod = new DynamicMethod(name:$"Generated_constructor_for_{instanceType.Name}", returnType: instanceType, parameterTypes: constructorArgumentTypes, owner: instanceType);
+            var constructorCallMethod = new DynamicMethod(name: $"Generated_constructor_for_{instanceType.Name}", returnType: instanceType, parameterTypes: constructorArgumentTypes, owner: instanceType);
             var ilGenerator = constructorCallMethod.GetILGenerator();
-            for (var argumentIndex = 0; argumentIndex < constructorArgumentTypes.Length; argumentIndex++)
+            for(var argumentIndex = 0; argumentIndex < constructorArgumentTypes.Length; argumentIndex++)
             {
                ilGenerator.Emit(OpCodes.Ldarg, argumentIndex);
             }

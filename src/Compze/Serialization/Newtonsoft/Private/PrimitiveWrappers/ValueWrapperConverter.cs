@@ -11,10 +11,10 @@ public class ValueWrapperConverter : JsonConverter
 {
    class WrappedTypeHelpers
    {
-      public WrappedTypeHelpers(Type wrappedType, Delegate construct)
+      public WrappedTypeHelpers(Type wrappedType, Func<object, object> construct)
       {
          WrappedType = wrappedType;
-         Construct = wrapped =>  construct.DynamicInvoke(wrapped).NotNull();
+         Construct = construct;
       }
 
       public Type WrappedType { get; init; }
@@ -56,7 +56,9 @@ public class ValueWrapperConverter : JsonConverter
                                                     {
                                                        var wrappedPrimitiveType = wrapperType.GetGenericBaseClass(typeof(ValueWrapper<>))
                                                                                              .GetGenericArguments()[0];
-                                                       var constructor = Constructor.Compile.ForType(typeToRead).WithArgumentTypes(wrappedPrimitiveType);
+                                                       var constructor = Constructor.Compile.ForType(typeToRead)
+                                                                                            .WithArgumentTypesAsObjectFunc(wrappedPrimitiveType);
+                                                       
                                                        return new WrappedTypeHelpers(wrappedPrimitiveType, constructor);
                                                     });
                                                  }).Value;
