@@ -34,14 +34,14 @@ public class AccountApi : IStaticInstancePropertySingleton<AccountApi>
 
    public class TuerySection
    {
-      static readonly NavigationSpecification<StartResource.Tuery> Queries = Instance.Start.Select(start => start.Queries);
+      static readonly NavigationSpecification<StartResource.TueriesResource> Queries = Instance.Start.Select(start => start.Queries);
 
       public NavigationSpecification<AccountResource> AccountById(Guid accountId) => Queries.Get(queries => queries.AccountById.WithId(accountId));
    }
 
    public class TommandsSection
    {
-      static NavigationSpecification<StartResource.Tommand> Tommands => Instance.Start.Select(start => start.Tommands);
+      static NavigationSpecification<StartResource.TommandsResource> Tommands => Instance.Start.Select(start => start.TommandsResources);
 
       public NavigationSpecification<AccountResource.Tommand.Register> Register() => Tommands.Select(tommands => tommands.Register);
       public NavigationSpecification<AccountResource.Tommand.Register.RegistrationAttemptResult> Register(Guid accountId, string email, string password) => Tommands.Post(tommands => tommands.Register.WithValues(accountId, email, password));
