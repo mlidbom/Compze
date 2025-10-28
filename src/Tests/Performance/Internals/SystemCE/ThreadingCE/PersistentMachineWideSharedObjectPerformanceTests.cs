@@ -28,15 +28,15 @@ public class PersistentMachineWideSharedObjectPerformanceTests : UniversalTestBa
       _shared.Delete();
    }
 
-   [PCT] public void Get_copy_runs_single_threaded_XX_times_in_50_milliseconds()
+   [PCTSerializer] public void Get_copy_runs_single_threaded_XX_times_in_50_milliseconds()
       => TimeAsserter.Execute(() => _shared.GetCopy(), iterations: 100, maxTotal: 50.Milliseconds());
 
-   [PCT] public void Get_copy_runs_multi_threaded_XX_times_in_50_milliseconds() =>
+   [PCTSerializer] public void Get_copy_runs_multi_threaded_XX_times_in_50_milliseconds() =>
       TimeAsserter.ExecuteThreaded(() => _shared.GetCopy(), iterations: 100, maxTotal: 50.Milliseconds());
 
-   [PCT] public void Update_runs_single_threaded_XX_times_in_50_milliseconds() =>
+   [PCTSerializer] public void Update_runs_single_threaded_XX_times_in_50_milliseconds() =>
       TimeAsserter.Execute(() => _shared.Update(it => it.Name = ""), iterations: 30, maxTotal: 50.Milliseconds(), maxTries: 10);
 
-   [PCT] public void Update_runs_multi_threaded_60_times_in_80_milliseconds() =>
+   [PCTSerializer] public void Update_runs_multi_threaded_60_times_in_80_milliseconds() =>
       TimeAsserter.ExecuteThreaded(() => _shared.Update(it => it.Name = ""), iterations: 60, maxTotal: 100.Milliseconds(), maxTries: 10);
 }

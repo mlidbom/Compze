@@ -9,7 +9,6 @@ using Compze.Tests.Infrastructure.XUnit;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.Testing.DbPool.SystemCE.ThreadingCE;
-using Compze.Utilities.Testing.XUnit.BDD;
 
 namespace Compze.Tests.Performance.Internals.SystemCE.ThreadingCE;
 
@@ -40,7 +39,7 @@ public class MachineWideSharedObjectPerformanceTests : UniversalTestBase
    }
 
 
-   [PCT] public void Get_copy_runs_single_threaded_XX_times_in_50_milliseconds()
+   [PCTSerializer] public void Get_copy_runs_single_threaded_XX_times_in_50_milliseconds()
    {
       var name = Guid.NewGuid().ToString();
       var shared = CreateAndDeleteFileWhenTestCompletes(name);
@@ -49,7 +48,7 @@ public class MachineWideSharedObjectPerformanceTests : UniversalTestBase
       TimeAsserter.Execute(() => shared2.GetCopy(), iterations: 100, maxTotal: 50.Milliseconds());
    }
 
-   [PCT] public void Get_copy_runs_multi_threaded_80_times_in_50_milliseconds()
+   [PCTSerializer] public void Get_copy_runs_multi_threaded_80_times_in_50_milliseconds()
    {
       var name = Guid.NewGuid().ToString();
       var shared = CreateAndDeleteFileWhenTestCompletes(name);
@@ -58,7 +57,7 @@ public class MachineWideSharedObjectPerformanceTests : UniversalTestBase
       TimeAsserter.ExecuteThreaded(() => shared2.GetCopy(), iterations: 80, maxTotal: 50.Milliseconds());
    }
 
-   [PCT] public void Update_runs_single_threaded_XX_times_in_50_milliseconds()
+   [PCTSerializer] public void Update_runs_single_threaded_XX_times_in_50_milliseconds()
    {
       MachineWideSharedObject<SharedObject> shared = null!;
       var counter = 0;
@@ -74,7 +73,7 @@ public class MachineWideSharedObjectPerformanceTests : UniversalTestBase
          maxTotal: 50.Milliseconds());
    }
 
-   [PCT] public void Update_runs_multi_threaded_XX_times_in_50_milliseconds()
+   [PCTSerializer] public void Update_runs_multi_threaded_XX_times_in_50_milliseconds()
    {
       MachineWideSharedObject<SharedObject> shared = null!;
       var counter = 0;

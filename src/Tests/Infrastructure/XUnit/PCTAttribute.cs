@@ -2,15 +2,32 @@ using System.Runtime.CompilerServices;
 using Compze.Core.Wiring.Testing.Internal;
 using Compze.Utilities.Testing.XUnit.ComponentCombinations;
 
+// ReSharper disable ExplicitCallerInfoArgument
+
 namespace Compze.Tests.Infrastructure.XUnit;
 
-public sealed class PCTAttribute(
+public class PCTAttribute(
    [CallerFilePath] string? sourceFilePath = null,
    [CallerLineNumber] int sourceLineNumber = -1)
    : ComponentCombinationsTheoryAttribute<SqlLayer, DIContainer, Serializer, Transport>(
       configurationFileName: "TestUsingPluggableComponentCombinations",
       useTestMethodArgument: false,
       sourceFilePath: sourceFilePath,
-      sourceLineNumber: sourceLineNumber)
+      sourceLineNumber: sourceLineNumber) {}
+
+public sealed class PCTSerializerAttribute : PCTAttribute
 {
+   public PCTSerializerAttribute([CallerFilePath] string? sourceFilePath = null,
+                                 [CallerLineNumber] int sourceLineNumber = -1) : base(sourceFilePath: sourceFilePath,
+                                                                                      sourceLineNumber: sourceLineNumber) =>
+      OnlyConsider = typeof(Serializer);
+}
+
+// ReSharper disable once InconsistentNaming
+public sealed class PCTDIContainerAttribute : PCTAttribute
+{
+   public PCTDIContainerAttribute([CallerFilePath] string? sourceFilePath = null,
+                                  [CallerLineNumber] int sourceLineNumber = -1) : base(sourceFilePath: sourceFilePath,
+                                                                                       sourceLineNumber: sourceLineNumber) =>
+      OnlyConsider = typeof(DIContainer);
 }

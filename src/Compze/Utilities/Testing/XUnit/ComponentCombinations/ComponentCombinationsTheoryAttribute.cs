@@ -19,6 +19,7 @@ public abstract class ComponentCombinationsTheoryAttribute :
    public bool UseTestMethodArgument { get; }
    public object[]? Skipped { get; init; }
    public string[]? SkipReasons { get; init; }
+   public Type? OnlyConsider { get; init; }
 
    readonly Type[] _componentEnumTypes;
    readonly string _configurationFileName;
@@ -54,6 +55,9 @@ public abstract class ComponentCombinationsTheoryAttribute :
 
       if(Skipped?.Length != SkipReasons?.Length)
          return "Number of skipped components must match number of skip reasons";
+
+      if(OnlyConsider != null && !_componentEnumTypes.Contains(OnlyConsider))
+         return $"{nameof(OnlyConsider)} is not one of the component types";
 
       return null;
    }
@@ -97,7 +101,7 @@ public abstract class ComponentCombinationsTheoryAttribute :
       try
       {
          var combinations = ComponentCombinationsConfigurationFileReader
-                           .GetCombinations(_configurationFileName, _componentEnumTypes)
+                           .GetCombinations(_configurationFileName, _componentEnumTypes, OnlyConsiderComponentIndex)
                            .Select(ITheoryDataRow (combination) => new TheoryDataRow(combination) // Pass combination object as argument
                                                                    {
                                                                       Skip = SkipComponentSpecifications.SkippedComponentFor(combination)?.ToString()
@@ -113,6 +117,10 @@ public abstract class ComponentCombinationsTheoryAttribute :
             ]);
       }
    }
+
+   int? OnlyConsiderComponentIndex => OnlyConsider == null
+                                         ? null
+                                         : _componentEnumTypes.ToList().IndexOf(OnlyConsider);
 
    public bool SupportsDiscoveryEnumeration() => true;
 }
