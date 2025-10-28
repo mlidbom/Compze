@@ -1,4 +1,9 @@
 using System.Collections.Generic;
+using System.Linq;
+using Compze.Tests.Infrastructure.XUnit;
+using Compze.Tests.Unit.Internals.Serialization.OriginalTypes;
+using Compze.Utilities.Functional;
+using FluentAssertions;
 
 // ReSharper disable UnusedMember.Global
 
@@ -9,48 +14,68 @@ using System.Collections.Generic;
 
 namespace Compze.Tests.Unit.Internals.Serialization
 {
+   public class WhenSerializingTypeWithPolymorphicMembers : SerializerTest
+   {
+      [PCTSerializer] public void SerializedDataDoesNotContainTypeNames()
+      {
+         var root = Root.Create();
+
+         var serialized = DocumentSerializer.Serialize(root);
+         var typeNames = EnumerableCE.OfTypes<TypeA, TypeB, BaseTypeA, Root>()
+                                     .Select(it => it.Name);
+
+         foreach(var typeName in typeNames)
+         {
+            serialized.Should().NotContain(typeName);
+         }
+      }
+
+      [PCTSerializer] public void RoundTrippedObjectIsIdenticalToOriginal()
+      {
+         var root = Root.Create();
+
+         var json = DocumentSerializer.Serialize(root);
+
+         var roundTripped = (Root)DocumentSerializer.Deserialize(typeof(Root), json);
+
+         roundTripped.ListOfAType[0] = new TypeB();
+
+         roundTripped.Should()
+                     .BeEquivalentTo(root);
+      }
+   }
+
    namespace OriginalTypes
    {
-      class BaseTypeA;
+      class BaseTypeA
+      {
+         public BaseTypeA() => Value = GetType().Name.ToLower();
+         string Value { get; set; }
+      }
 
       class TypeA : BaseTypeA
       {
-         internal static TypeA Create() => new() { TypeAName = typeof(TypeA).FullName };
-
-         public string? TypeAName { get; set; }
-
-         public class TypeAA : TypeA
-         {
-            public new static TypeA Create() => new TypeAA { TypeAAName = typeof(TypeAA).FullName };
-            public string? TypeAAName { get; set; }
-         }
+         public class TypeAA : TypeA {}
       }
 
       class TypeB : BaseTypeA
       {
-         internal static TypeB Create() => new() { TypeBName = typeof(TypeB).FullName };
-         public string? TypeBName { get; set; }
-
-         public class TypeBB : TypeB
-         {
-            public new static TypeBB Create() => new() { TypeBBName = typeof(TypeBB).FullName };
-            public string? TypeBBName { get; set; }
-         }
+         public class TypeBB : TypeB {}
       }
 
       class Root
       {
          internal static Root Create() => new()
                                           {
-                                             TypeA = OriginalTypes.TypeA.Create(),
-                                             TypeB = OriginalTypes.TypeB.Create(),
-                                             ListOfTypeA = [OriginalTypes.TypeA.Create(), OriginalTypes.TypeB.Create(), OriginalTypes.TypeA.TypeAA.Create(), OriginalTypes.TypeB.TypeBB.Create()]
+                                             ATypeProperty = new TypeA(),
+                                             BTypeProperty = new TypeB(),
+                                             ListOfAType = [new TypeA(), new TypeB(), new TypeA.TypeAA(), new TypeB.TypeBB()]
                                           };
 
-         public BaseTypeA? TypeA { get; set; }
-         public BaseTypeA? TypeB { get; set; }
+         public BaseTypeA? ATypeProperty { get; set; }
+         public BaseTypeA? BTypeProperty { get; set; }
 
-         public List<BaseTypeA>? ListOfTypeA { get; set; }
+         public List<BaseTypeA> ListOfAType { get; set; }
       }
    }
 }

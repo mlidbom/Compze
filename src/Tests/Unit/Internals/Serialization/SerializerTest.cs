@@ -10,16 +10,17 @@ namespace Compze.Tests.Unit.Internals.Serialization;
 
 public class SerializerTest : UniversalTestBase
 {
-   internal readonly ITeventStoreSerializer TeventSerializer;
-   protected readonly IDependencyInjectionContainer Container;
+   internal ITeventStoreSerializer TeventSerializer => _container.ServiceLocator.Resolve<ITeventStoreSerializer>();
+   internal IDocumentDbSerializer DocumentSerializer => _container.ServiceLocator.Resolve<IDocumentDbSerializer>();
 
-   public SerializerTest()
+   readonly IDependencyInjectionContainer _container;
+
+   protected SerializerTest()
    {
-      Container = TestEnv.DIContainer
+      _container = TestEnv.DIContainer
                          .CreateWithCurrentTestsPluggableComponents()
                          .mutate(it => it.Register().TypeMapper());
-      TeventSerializer = Container.ServiceLocator.Resolve<ITeventStoreSerializer>();
    }
 
-   protected override void DisposeInternal() => Container.Dispose();
+   protected override void DisposeInternal() => _container.Dispose();
 }
