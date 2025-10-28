@@ -10,7 +10,7 @@ using SPath = Path;
 ///<summary>Manages the Temp folder in a machine wide thread safe manner.</summary>
 static class CompzeTempFolder
 {
-   static readonly MachineWideSingleThreaded MachineWideLock = MachineWideSingleThreaded.For(nameof(CompzeTempFolder));
+   static readonly MutexCE MachineWideLock = MutexCE.ForMutexNamed(nameof(CompzeTempFolder));
    static readonly string DefaultPath = SPath.Combine(SPath.GetTempPath(), "Compze_TEMP");
    static readonly string Path = EnsureFolderExists();
 

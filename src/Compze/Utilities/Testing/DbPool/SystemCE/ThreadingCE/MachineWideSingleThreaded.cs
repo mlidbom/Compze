@@ -5,16 +5,14 @@ using JetBrains.Annotations;
 
 namespace Compze.Utilities.Testing.DbPool.SystemCE.ThreadingCE;
 
-class MachineWideSingleThreaded
+class MutexCE
 {
    readonly Mutex _mutex;
 
-   MachineWideSingleThreaded(string lockId)
-   {
-      var globalMutexId = $@"Global\{lockId}";
-
-      _mutex = Mutex.TryOpenExisting(globalMutexId, out var mutex) ? mutex : new Mutex(initiallyOwned: false, name: globalMutexId);
-   }
+   MutexCE(string mutexName) =>
+      _mutex = Mutex.TryOpenExisting(mutexName, out var mutex)
+                  ? mutex
+                  : new Mutex(initiallyOwned: false, name: mutexName);
 
    internal void ExecuteWithLock([InstantHandle] Action action) => ExecuteWithLock(action.AsUnitFunc());
 
@@ -31,7 +29,5 @@ class MachineWideSingleThreaded
       }
    }
 
-   internal static MachineWideSingleThreaded For(string name) => new(name);
+   internal static MutexCE ForMutexNamed(string name) => new(name);
 }
-
-class MutexCE {}

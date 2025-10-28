@@ -17,7 +17,7 @@ public abstract class MachineWideSharedObject
 public sealed class MachineWideSharedObject<TObject> : MachineWideSharedObject where TObject : class, new()
 {
    readonly string _filePath;
-   readonly MachineWideSingleThreaded _synchronizer;
+   readonly MutexCE _synchronizer;
 
    static string Serialize(TObject instance) => JsonConvert.SerializeObject(instance, Formatting.Indented, RenamingAndNonPublicMembersSupportingJsonSettings.Default);
    static TObject Deserialize(string serialized) => JsonConvert.DeserializeObject<TObject>(serialized, RenamingAndNonPublicMembersSupportingJsonSettings.Default).NotNull();
@@ -31,7 +31,7 @@ public sealed class MachineWideSharedObject<TObject> : MachineWideSharedObject w
       Path.GetInvalidFileNameChars().ForEach(invalidChar => fileName = fileName.Replace(invalidChar, '_'));
 
       _filePath = Path.Combine(DataFolder, fileName);
-      _synchronizer = MachineWideSingleThreaded.For($"{fileName}_mutex");
+      _synchronizer = MutexCE.ForMutexNamed($"{fileName}_mutex");
       _synchronizer.ExecuteWithLock(EnsureFileExists);
    }
 
