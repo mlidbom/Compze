@@ -1,9 +1,9 @@
-using Compze.Utilities.SystemCE.LinqCE;
 using System;
 using System.IO;
 using System.Text;
 using Compze.Core.Serialization.Internal.DbPool;
 using Compze.Serialization.Newtonsoft.Private.DbPool;
+using Compze.Utilities.SystemCE.IOCE;
 
 namespace Compze.Utilities.Testing.DbPool.SystemCE.ThreadingCE;
 
@@ -16,18 +16,15 @@ public sealed class MachineWideSharedObject<TObject> : MachineWideSharedObject w
 {
    readonly string _filePath;
    readonly MutexCE _synchronizer;
-   readonly ISharedObjectSerializer<TObject> _serializer = new NewtonsoftSharedObjectSerializer<TObject>();
+   readonly ISharedObjectSerializer _serializer = new NewtonsoftSharedObjectSerializer();
 
    internal static MachineWideSharedObject<TObject> For(string name) => new(name);
 
    MachineWideSharedObject(string name)
    {
-      var fileName = name;
-      // ReSharper disable once AccessToModifiedClosure
-      Path.GetInvalidFileNameChars().ForEach(invalidChar => fileName = fileName.Replace(invalidChar, '_'));
-
+      var fileName = PathCE.ReplaceInvalidCharactersWith(name, '_');
       _filePath = Path.Combine(DataFolder, fileName);
-      _synchronizer = MutexCE.ForMutexNamed($"{fileName}_mutex");
+      _synchronizer = MutexCE.ForMutexNamed(fileName);
       _synchronizer.ExecuteWithLock(EnsureFileExists);
    }
 
@@ -62,7 +59,7 @@ public sealed class MachineWideSharedObject<TObject> : MachineWideSharedObject w
       var json = File.ReadAllText(_filePath, Encoding.UTF8);
       try
       {
-         return _serializer.Deserialize(json);
+         return _serializer.Deserialize<TObject>(json);
       }
       catch(Exception exception)
       {

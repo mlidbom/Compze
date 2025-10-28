@@ -1,8 +1,7 @@
 namespace Compze.Core.Serialization.Internal.DbPool;
 
-interface ISharedObjectSerializer<TShared>
-   where TShared : class
+interface ISharedObjectSerializer
 {
-   string Serialize(TShared instance);
-   TShared Deserialize(string json);
+   string Serialize(object instance);
+   TShared Deserialize<TShared>(string json) where TShared : class;
 }

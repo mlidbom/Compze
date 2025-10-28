@@ -1,18 +1,26 @@
 using Compze.Core.Serialization.Internal.DbPool;
+using Compze.Utilities.DependencyInjection;
+using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE;
 using Newtonsoft.Json;
 
 namespace Compze.Serialization.Newtonsoft.Private.DbPool;
 
-class NewtonsoftSharedObjectSerializer<TShared> : ISharedObjectSerializer<TShared>
-   where TShared : class
+class NewtonsoftSharedObjectSerializer : ISharedObjectSerializer
 {
+   internal static void RegisterWith(IComponentRegistrar registrar)
+      => registrar.Register(Singleton.For<ISharedObjectSerializer>()
+                                     .CreatedBy(() => new NewtonsoftSharedObjectSerializer()));
+
    static readonly JsonSerializerSettings JsonSettings = JsonSettings = new JsonSerializerSettings
                                                                         {
                                                                            ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
                                                                            ContractResolver = IncludeMembersWithPrivateSettersResolver.Instance
                                                                         };
 
-   public string Serialize(TShared instance) => JsonConvert.SerializeObject(instance, Formatting.Indented, JsonSettings);
-   public TShared Deserialize(string serialized) => JsonConvert.DeserializeObject<TShared>(serialized, JsonSettings).NotNull();
+   public string Serialize(object instance) => JsonConvert.SerializeObject(instance, Formatting.Indented, JsonSettings);
+
+   public TShared Deserialize<TShared>(string serialized)
+      where TShared : class =>
+      JsonConvert.DeserializeObject<TShared>(serialized, JsonSettings).NotNull();
 }
