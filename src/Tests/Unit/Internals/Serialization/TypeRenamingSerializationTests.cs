@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Compze.Tests.Infrastructure.FluentAssertionsExtensions;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Tests.Unit.Internals.Serialization.OriginalTypes;
 using Compze.Utilities.Functional;
@@ -38,10 +39,7 @@ namespace Compze.Tests.Unit.Internals.Serialization
 
          var roundTripped = (Root)DocumentSerializer.Deserialize(typeof(Root), json);
 
-         roundTripped.ListOfAType[0] = new TypeB();
-
-         roundTripped.Should()
-                     .BeEquivalentTo(root);
+         roundTripped.Should().BeStrictlyEquivalentTo(root);
       }
    }
 
@@ -49,7 +47,7 @@ namespace Compze.Tests.Unit.Internals.Serialization
    {
       class BaseTypeA
       {
-         public BaseTypeA() => Value = GetType().Name.ToLower();
+         public BaseTypeA() => Value = GetType().Name.ToUpperInvariant();
          string Value { get; set; }
       }
 
@@ -75,7 +73,7 @@ namespace Compze.Tests.Unit.Internals.Serialization
          public BaseTypeA? ATypeProperty { get; set; }
          public BaseTypeA? BTypeProperty { get; set; }
 
-         public List<BaseTypeA> ListOfAType { get; set; }
+         public List<BaseTypeA> ListOfAType { get; set; } = [];
       }
    }
 }
