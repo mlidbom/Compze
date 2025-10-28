@@ -6,9 +6,15 @@ using Newtonsoft.Json;
 
 namespace Compze.Serialization.Newtonsoft.Private.DbPool;
 
+static class NewtonsoftSharedObjectSerializerRegistrar
+{
+   internal static IComponentRegistrar NewtonsoftSharedObjectSerializer(this IComponentRegistrar registrar) =>
+      DbPool.NewtonsoftSharedObjectSerializer.RegisterWith(registrar);
+}
+
 class NewtonsoftSharedObjectSerializer : ISharedObjectSerializer
 {
-   internal static void RegisterWith(IComponentRegistrar registrar)
+   internal static IComponentRegistrar RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<ISharedObjectSerializer>()
                                      .CreatedBy(() => new NewtonsoftSharedObjectSerializer()));
 
