@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Compze.Tests.Infrastructure.Fluent;
 using Compze.Tests.Infrastructure.FluentAssertionsExtensions;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Tests.Unit.Internals.Serialization.OriginalTypes;
@@ -17,29 +18,50 @@ namespace Compze.Tests.Unit.Internals.Serialization
 {
    public class WhenSerializingTypeWithPolymorphicMembers : SerializerTest
    {
-      [PCTSerializer] public void SerializedDataDoesNotContainTypeNames()
-      {
-         var root = Root.Create();
-
-         var serialized = DocumentSerializer.Serialize(root);
-         var typeNames = EnumerableCE.OfTypes<TypeA, TypeB, BaseTypeA, Root>()
-                                     .Select(it => it.Name);
-
-         foreach(var typeName in typeNames)
-         {
-            serialized.Should().NotContain(typeName);
-         }
-      }
+      [PCTSerializer] public void SerializedDataIs() =>
+         Root.Create()
+             ._(DocumentSerializer.Serialize)
+             .Should()
+             .Be("""
+                    {
+                      "ATypeProperty": {
+                        "$type": "645544b7-e56c-4e3c-81cd-149e9be90bd7",
+                        "Value": "Compze.Tests.Unit.Internals.Serialization.OriginalTypes.TypeA"
+                      },
+                      "BTypeProperty": {
+                        "$type": "acd2c07a-d3d1-4217-9e71-b13c2775e86d",
+                        "Value": "Compze.Tests.Unit.Internals.Serialization.OriginalTypes.TypeB"
+                      },
+                      "ListOfAType": [
+                        {
+                          "$type": "645544b7-e56c-4e3c-81cd-149e9be90bd7",
+                          "Value": "Compze.Tests.Unit.Internals.Serialization.OriginalTypes.TypeA"
+                        },
+                        {
+                          "$type": "acd2c07a-d3d1-4217-9e71-b13c2775e86d",
+                          "Value": "Compze.Tests.Unit.Internals.Serialization.OriginalTypes.TypeB"
+                        },
+                        {
+                          "$type": "f583784b-29d2-499b-a205-59ea6ef57cb3",
+                          "Value": "Compze.Tests.Unit.Internals.Serialization.OriginalTypes.TypeA+TypeAA"
+                        },
+                        {
+                          "$type": "d65a7c6a-eeb5-485a-a86a-cd4ac8ca99cf",
+                          "Value": "Compze.Tests.Unit.Internals.Serialization.OriginalTypes.TypeB+TypeBB"
+                        }
+                      ]
+                    }
+                    """);
 
       [PCTSerializer] public void RoundTrippedObjectIsIdenticalToOriginal()
       {
-         var root = Root.Create();
+         var original = Root.Create();
 
-         var json = DocumentSerializer.Serialize(root);
+         var json = DocumentSerializer.Serialize(original);
 
          var roundTripped = (Root)DocumentSerializer.Deserialize(typeof(Root), json);
 
-         roundTripped.Should().BeStrictlyEquivalentTo(root);
+         roundTripped.Should().BeStrictlyEquivalentTo(original);
       }
    }
 
@@ -47,8 +69,9 @@ namespace Compze.Tests.Unit.Internals.Serialization
    {
       class BaseTypeA
       {
-         public BaseTypeA() => Value = GetType().Name.ToUpperInvariant();
-         string Value { get; set; }
+         //Use the full type name to ensure that our code does not get confused by the types containing properties containing the type names.
+         public BaseTypeA() => Value = GetType().FullName!;
+         public string Value { get; private set; }
       }
 
       class TypeA : BaseTypeA
