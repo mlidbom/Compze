@@ -21,8 +21,8 @@ namespace Compze.Tests.Unit.Internals.Serialization
       [PCTSerializer] public void SerializedDataIs() =>
          Root.Create()
              ._(DocumentSerializer.Serialize)
-             .Should()
-             .Be("""
+             .Must()
+             .Equal("""
                     {
                       "ATypeProperty": {
                         "$type": "645544b7-e56c-4e3c-81cd-149e9be90bd7",

@@ -31,7 +31,7 @@ public class Example
       //instantiate a concrete version.
       var wrapperTeventIUserTevent = genericWrapperTeventType.MakeGenericType(typeof(IUserTevent));
 
-      var constructor = (Func<IUserTevent, IUserWrapperTevent<IUserTevent>>)Constructor.Compile.ForType(wrapperTeventIUserTevent).WithArgumentTypes(typeof(IUserTevent));
+      var constructor = (Func<IUserTevent, IUserWrapperTevent<IUserTevent>>)Constructor.Compile.ForType(wrapperTeventIUserTevent).WithArguments<IUserTevent>();
 
       var userTevent = new UserTevent();
       var instance = constructor(userTevent);
