@@ -8,9 +8,8 @@ namespace Compze.Serialization.Newtonsoft.Private;
 class IncludeMembersWithPrivateSettersResolver : DefaultContractResolver, IStaticInstancePropertySingleton<IncludeMembersWithPrivateSettersResolver>
 {
    public static IncludeMembersWithPrivateSettersResolver Instance { get; } = new();
-   protected IncludeMembersWithPrivateSettersResolver()
-   {
-   }
+
+   IncludeMembersWithPrivateSettersResolver() {}
 
    protected override JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization)
    {
