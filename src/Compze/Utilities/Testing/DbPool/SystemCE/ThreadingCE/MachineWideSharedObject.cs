@@ -33,7 +33,7 @@ namespace Compze.Utilities.Testing.DbPool.SystemCE.ThreadingCE;
 
        MachineWideSharedObject(string name)
        {
-          var fileName = $"Compze_{name}";
+          var fileName = name;
           // ReSharper disable once AccessToModifiedClosure
           Path.GetInvalidFileNameChars().ForEach(invalidChar => fileName = fileName.Replace(invalidChar, '_'));
 
