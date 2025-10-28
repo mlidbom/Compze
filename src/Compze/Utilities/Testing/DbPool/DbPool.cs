@@ -42,7 +42,7 @@ public partial class DbPool : StrictlyManagedResourceBase<DbPool>
       _sqlLayer = sqlLayer;
       _reservationLength = System.Diagnostics.Debugger.IsAttached ? 10.Minutes() : 65.Seconds();
 
-      MachineWideState = MachineWideSharedObject<SharedState>.PersistentFor(sqlLayer.GetType().GetFullNameCompilable().ReplaceInvariant(".", "_"));
+      MachineWideState = MachineWideSharedObject<SharedState>.For(sqlLayer.GetType().GetFullNameCompilable().ReplaceInvariant(".", "_"));
    }
 
    readonly MonitorCE _guard = MonitorCE.WithTimeout(30.Seconds());

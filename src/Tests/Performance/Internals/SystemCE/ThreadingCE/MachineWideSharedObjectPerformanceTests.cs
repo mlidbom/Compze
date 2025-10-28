@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Compze.Tessaging.Hosting.Testing.Performance;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.SystemCE;
@@ -9,11 +10,21 @@ namespace Compze.Tests.Performance.Internals.SystemCE.ThreadingCE;
 
 public class MachineWideSharedObjectPerformanceTests : UniversalTestBase
 {
+   readonly List<MachineWideSharedObject<SharedObject>> _created = new();
+   MachineWideSharedObject<SharedObject> CreateAndDeleteFileWhenTestCompletes(string name)
+   {
+      var created = MachineWideSharedObject<SharedObject>.For(name);
+      _created.Add(created);
+      return created;
+   }
+
+   protected override void DisposeInternal() => _created.ForEach(MachineWideSharedObject<SharedObject>.Delete);
+
    [XF] public void Get_copy_runs_single_threaded_XX_times_in_50_milliseconds()
    {
       var name = Guid.NewGuid().ToString();
-      using var shared = MachineWideSharedObject<SharedObject>.TransientFor(name);
-      using var shared2 = MachineWideSharedObject<SharedObject>.TransientFor(name);
+      using var shared = CreateAndDeleteFileWhenTestCompletes(name);
+      using var shared2 = CreateAndDeleteFileWhenTestCompletes(name);
       TimeAsserter.Execute(() => shared.GetCopy(), iterations: 100, maxTotal: 50.Milliseconds());
       TimeAsserter.Execute(() => shared2.GetCopy(), iterations: 100, maxTotal: 50.Milliseconds());
    }
@@ -21,8 +32,8 @@ public class MachineWideSharedObjectPerformanceTests : UniversalTestBase
    [XF] public void Get_copy_runs_multi_threaded_80_times_in_50_milliseconds()
    {
       var name = Guid.NewGuid().ToString();
-      using var shared = MachineWideSharedObject<SharedObject>.TransientFor(name);
-      using var shared2 = MachineWideSharedObject<SharedObject>.TransientFor(name);
+      using var shared = CreateAndDeleteFileWhenTestCompletes(name);
+      using var shared2 = CreateAndDeleteFileWhenTestCompletes(name);
       TimeAsserter.ExecuteThreaded(() => shared.GetCopy(), iterations: 80, maxTotal: 50.Milliseconds());
       TimeAsserter.ExecuteThreaded(() => shared2.GetCopy(), iterations: 80, maxTotal: 50.Milliseconds());
    }
@@ -36,7 +47,7 @@ public class MachineWideSharedObjectPerformanceTests : UniversalTestBase
          setup: () =>
          {
             counter = 0;
-            shared = MachineWideSharedObject<SharedObject>.TransientFor(Guid.NewGuid().ToString());
+            shared = CreateAndDeleteFileWhenTestCompletes(Guid.NewGuid().ToString());
          },
          tearDown: () => shared.Dispose(),
          action: () => shared.Update(it => it.Name = (++counter).ToStringInvariant()),
@@ -53,7 +64,7 @@ public class MachineWideSharedObjectPerformanceTests : UniversalTestBase
          setup: () =>
          {
             counter = 0;
-            shared = MachineWideSharedObject<SharedObject>.TransientFor(Guid.NewGuid().ToString());
+            shared = CreateAndDeleteFileWhenTestCompletes(Guid.NewGuid().ToString());
          },
          tearDown: () => shared.Dispose(),
          action: () => shared.Update(it => it.Name = (++counter).ToStringInvariant()),

@@ -31,17 +31,15 @@ namespace Compze.Utilities.Testing.DbPool.SystemCE.ThreadingCE;
        static string Serialize(ReferenceCountingWrapper instance) => JsonConvert.SerializeObject(instance, Formatting.Indented, RenamingAndNonPublicMembersSupportingJsonSettings.Default);
        static ReferenceCountingWrapper Deserialize(string serialized) => JsonConvert.DeserializeObject<ReferenceCountingWrapper>(serialized, RenamingAndNonPublicMembersSupportingJsonSettings.Default).NotNull();
 
-       internal static MachineWideSharedObject<TObject> PersistentFor(string name) => new(name, true);
+       internal static MachineWideSharedObject<TObject> For(string name) => new(name);
 
-       internal static MachineWideSharedObject<TObject> TransientFor(string name) => new(name, false);
-
-       MachineWideSharedObject(string name, bool usePersistentFile)
+       MachineWideSharedObject(string name)
        {
           var fileName = $"Compze_{name}";
           // ReSharper disable once AccessToModifiedClosure
           Path.GetInvalidFileNameChars().ForEach(invalidChar => fileName = fileName.Replace(invalidChar, '_'));
 
-          _usePersistentFile = usePersistentFile;
+          _usePersistentFile = true;
           _filePath = Path.Combine(DataFolder, fileName);
           _synchronizer = MachineWideSingleThreaded.For($"{fileName}_mutex");
 
@@ -54,7 +52,7 @@ namespace Compze.Utilities.Testing.DbPool.SystemCE.ThreadingCE;
        }
 
 
-       internal void DeleteFile() => File.Delete(_filePath);
+       void DeleteFile() => File.Delete(_filePath);
 
        internal TObject Update(Action<TObject> action) => _synchronizer.Execute(() =>
        {
@@ -115,4 +113,6 @@ namespace Compze.Utilities.Testing.DbPool.SystemCE.ThreadingCE;
 
           _disposed = true;
        });
+
+       internal static void Delete(MachineWideSharedObject<TObject> obj) => obj.DeleteFile();
     }

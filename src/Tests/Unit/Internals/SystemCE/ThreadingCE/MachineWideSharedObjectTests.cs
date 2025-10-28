@@ -23,10 +23,20 @@ namespace Compze.Tests.Unit.Internals.SystemCE.ThreadingCE;
 
  public class MachineWideSharedObjectTests : UniversalTestBase
 {
+   readonly List<MachineWideSharedObject<SharedObject>> _created = new();
+   MachineWideSharedObject<SharedObject> CreateAndDeleteFileWhenTestCompletes(string name)
+   {
+      var created = MachineWideSharedObject<SharedObject>.For(name);
+      _created.Add(created);
+      return created;
+   }
+
+   protected override void DisposeInternal() => _created.ForEach(MachineWideSharedObject<SharedObject>.Delete);
+
    [XF] public void Create()
    {
       var name = Guid.NewGuid().ToString();
-      using var shared = MachineWideSharedObject<SharedObject>.TransientFor(name);
+      using var shared = CreateAndDeleteFileWhenTestCompletes(name);
       var test = shared.GetCopy();
 
       test.Name.Should().Be("Default");
@@ -35,7 +45,7 @@ namespace Compze.Tests.Unit.Internals.SystemCE.ThreadingCE;
    [XF] public void Create_update_and_get()
    {
       var name = Guid.NewGuid().ToString();
-      using var shared = MachineWideSharedObject<SharedObject>.TransientFor(name);
+      using var shared = CreateAndDeleteFileWhenTestCompletes(name);
       var value = shared.GetCopy();
 
       value.Name.Should().Be("Default");
@@ -52,8 +62,8 @@ namespace Compze.Tests.Unit.Internals.SystemCE.ThreadingCE;
    [XF] public void Two_instances_with_same_name_share_data()
    {
       var name = Guid.NewGuid().ToString();
-      using var shared1 = MachineWideSharedObject<SharedObject>.TransientFor(name);
-      using var shared2 = MachineWideSharedObject<SharedObject>.TransientFor(name);
+      using var shared1 = CreateAndDeleteFileWhenTestCompletes(name);
+      using var shared2 = CreateAndDeleteFileWhenTestCompletes(name);
       var test1 = shared1.GetCopy();
       var test2 = shared2.GetCopy();
 
@@ -70,50 +80,26 @@ namespace Compze.Tests.Unit.Internals.SystemCE.ThreadingCE;
       test1.Name.Should().Be("Updated");
    }
 
-   [XF] public void Non_persistent_Once_all_instance_are_disposed_data_is_gone()
-   {
-      var name = Guid.NewGuid().ToString();
-      MachineWideSharedObject<SharedObject> shared2;
-      using(var shared = MachineWideSharedObject<SharedObject>.TransientFor(name))
-      {
-         shared.Update(it => it.Name = "New").Name.Should().Be("New");
-         shared2 = MachineWideSharedObject<SharedObject>.TransientFor(name);
-         shared.GetCopy().Name.Should().Be("New");
-      }
-
-      shared2.GetCopy().Name.Should().Be("New");
-      shared2.Dispose();
-
-      using(var shared = MachineWideSharedObject<SharedObject>.TransientFor(name))
-      {
-         shared.GetCopy().Name.Should().Be("Default");
-      }
-   }
 
    [XF] public void Persistent_Once_all_instance_are_disposed_data_is_retained()
    {
       const string name = "40BD77DF-7C32-4B28-9A49-DA2CE202CC4F";
       var newName = Guid.NewGuid().ToString();
       MachineWideSharedObject<SharedObject> shared2;
-      var cleanup = new List<MachineWideSharedObject<SharedObject>>();
-      using(var shared = MachineWideSharedObject<SharedObject>.PersistentFor(name))
+      using(var shared = CreateAndDeleteFileWhenTestCompletes(name))
       {
          shared.Update(it => it.Name = newName).Name.Should().Be(newName);
-         shared2 = MachineWideSharedObject<SharedObject>.PersistentFor(name);
+         shared2 = CreateAndDeleteFileWhenTestCompletes(name);
          shared.GetCopy().Name.Should().Be(newName);
-         cleanup.AddRange(shared, shared2);
       }
 
       shared2.GetCopy().Name.Should().Be(newName);
       shared2.Dispose();
 
-      using(var shared = MachineWideSharedObject<SharedObject>.PersistentFor(name))
+      using(var shared = CreateAndDeleteFileWhenTestCompletes(name))
       {
          shared.GetCopy().Name.Should().Be(newName);
-         cleanup.Add(shared);
       }
-
-      cleanup.ForEach(it => it.DeleteFile());
    }
 
    [XF] public async Task Update_blocks_GetCopy_and_Update_from_both_same_and_other_instances()
@@ -133,8 +119,8 @@ namespace Compze.Tests.Unit.Internals.SystemCE.ThreadingCE;
                                                      ];
 
       var name = Guid.NewGuid().ToString();
-      using var shared1 = MachineWideSharedObject<SharedObject>.TransientFor(name);
-      using var shared2 = MachineWideSharedObject<SharedObject>.TransientFor(name);
+      using var shared1 = CreateAndDeleteFileWhenTestCompletes(name);
+      using var shared2 = CreateAndDeleteFileWhenTestCompletes(name);
       // ReSharper disable AccessToDisposedClosure
       var tasks = Task.WhenAll(
          TaskCE.Run(() => shared1.Update(_ => { updateGate.AwaitPassThrough(); })),

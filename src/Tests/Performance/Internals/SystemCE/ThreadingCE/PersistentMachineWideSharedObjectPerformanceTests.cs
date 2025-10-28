@@ -12,7 +12,7 @@ public class PersistentMachineWideSharedObjectPerformanceTests : UniversalTestBa
    public PersistentMachineWideSharedObjectPerformanceTests()
    {
       var name = Guid.NewGuid().ToString();
-      _shared = MachineWideSharedObject<SharedObject>.TransientFor(name);
+      _shared = MachineWideSharedObject<SharedObject>.For(name);
    }
 
    readonly MachineWideSharedObject<SharedObject> _shared;
@@ -20,7 +20,7 @@ public class PersistentMachineWideSharedObjectPerformanceTests : UniversalTestBa
    protected override void DisposeInternal()
    {
       _shared.Dispose();
-      _shared.DeleteFile();
+      MachineWideSharedObject<SharedObject>.Delete(_shared);
    }
 
    [XF] public void Get_copy_runs_single_threaded_XX_times_in_50_milliseconds()
