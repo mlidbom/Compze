@@ -1,10 +1,10 @@
-using System;
-using System.IO;
-using System.Text;
-using Compze.Serialization.Newtonsoft;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
 using Newtonsoft.Json;
+using System;
+using System.IO;
+using System.Text;
+using Compze.Serialization.Newtonsoft.Private;
 
 namespace Compze.Utilities.Testing.DbPool.SystemCE.ThreadingCE;
 
@@ -16,11 +16,16 @@ public abstract class MachineWideSharedObject
 
 public sealed class MachineWideSharedObject<TObject> : MachineWideSharedObject where TObject : class, new()
 {
+   static readonly JsonSerializerSettings JsonSettings = new()
+                                         {
+                                           ContractResolver = IncludeMembersWithPrivateSettersResolver.Instance
+                                         };
+
    readonly string _filePath;
    readonly MutexCE _synchronizer;
 
-   static string Serialize(TObject instance) => JsonConvert.SerializeObject(instance, Formatting.Indented, RenamingAndNonPublicMembersSupportingJsonSettings.Default);
-   static TObject Deserialize(string serialized) => JsonConvert.DeserializeObject<TObject>(serialized, RenamingAndNonPublicMembersSupportingJsonSettings.Default).NotNull();
+   static string Serialize(TObject instance) => JsonConvert.SerializeObject(instance, Formatting.Indented, JsonSettings);
+   static TObject Deserialize(string serialized) => JsonConvert.DeserializeObject<TObject>(serialized, JsonSettings).NotNull();
 
    internal static MachineWideSharedObject<TObject> For(string name) => new(name);
 
