@@ -17,9 +17,10 @@ public abstract class MachineWideSharedObject
 public sealed class MachineWideSharedObject<TObject> : MachineWideSharedObject where TObject : class, new()
 {
    static readonly JsonSerializerSettings JsonSettings = new()
-                                         {
-                                           ContractResolver = IncludeMembersWithPrivateSettersResolver.Instance
-                                         };
+                                                         {
+                                                            ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
+                                                            ContractResolver = IncludeMembersWithPrivateSettersResolver.Instance
+                                                         };
 
    readonly string _filePath;
    readonly MutexCE _synchronizer;
