@@ -10,7 +10,7 @@ public partial class DocumentDbApi
 {
    public partial class TueryApi
    {
-      public class GetDocumentForUpdate<TDocument> : TessageTypes.StrictlyLocal.Queries.StrictlyLocalTuery<GetDocumentForUpdate<TDocument>, TDocument>
+      public class GetDocumentForUpdate<TDocument> : TessageTypes.StrictlyLocal.Tueries.StrictlyLocalTuery<GetDocumentForUpdate<TDocument>, TDocument>
       {
          internal GetDocumentForUpdate(Guid id) => Id = id;
          Guid Id { get; set; }
@@ -19,7 +19,7 @@ public partial class DocumentDbApi
             (GetDocumentForUpdate<TDocument> tuery, IDocumentDbUpdater updater) => updater.GetForUpdate<TDocument>(tuery.Id));
       }
 
-      public class TryGetDocument<TDocument> : TessageTypes.StrictlyLocal.Queries.StrictlyLocalTuery<TryGetDocument<TDocument>, Option<TDocument>>
+      public class TryGetDocument<TDocument> : TessageTypes.StrictlyLocal.Tueries.StrictlyLocalTuery<TryGetDocument<TDocument>, Option<TDocument>>
       {
          internal TryGetDocument(string id) => Id = id;
          string Id { get; set; }
@@ -28,7 +28,7 @@ public partial class DocumentDbApi
             (TryGetDocument<TDocument> tuery, IDocumentDbReader updater) => updater.TryGet<TDocument>(tuery.Id, out var document) ? Option.Some(document) : Option.None<TDocument>());
       }
 
-      public class GetReadonlyCopyOfDocument<TDocument> : TessageTypes.StrictlyLocal.Queries.StrictlyLocalTuery<GetReadonlyCopyOfDocument<TDocument>, TDocument>
+      public class GetReadonlyCopyOfDocument<TDocument> : TessageTypes.StrictlyLocal.Tueries.StrictlyLocalTuery<GetReadonlyCopyOfDocument<TDocument>, TDocument>
       {
          internal GetReadonlyCopyOfDocument(Guid id) => Id = id;
          Guid Id { get; set; }

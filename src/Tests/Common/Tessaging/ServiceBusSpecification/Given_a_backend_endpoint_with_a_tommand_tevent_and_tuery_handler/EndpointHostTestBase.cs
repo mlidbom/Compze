@@ -95,7 +95,7 @@ public abstract class EndpointHostTestBase : UniversalTestBase
                    .ForTommand((MyUpdateTaggregateTommand tommand, IInProcessTypermediaNavigator navigator) =>
                     {
                        MyUpdateTaggregateTommandHandlerThreadGate.AwaitPassThrough();
-                       navigator.Execute(new TeventStoreApi().Queries.GetForUpdate<MyTaggregate>(tommand.TaggregateId)).Update();
+                       navigator.Execute(new TeventStoreApi().Tueries.GetForUpdate<MyTaggregate>(tommand.TaggregateId)).Update();
                     })
                    .ForTevent((IMyExactlyOnceTevent _) => TeventHandlerThreadGate.AwaitPassThrough())
                    .ForTevent((MyTaggregateTevent.IRoot _) => MyLocalTaggregateTeventHandlerThreadGate.AwaitPassThrough())

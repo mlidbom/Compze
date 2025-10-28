@@ -10,13 +10,13 @@ namespace AccountManagement.API;
 
 /// <summary>
 /// This class provides the ability to use type safe API navigation from a type that does not run on .Net. For instance via Typescript in browser.
-/// We generate typescript interfaces for each of the resources exposed via the Queries and tommands ultimately reachable through the Start Tuery.
+/// We generate typescript interfaces for each of the resources exposed via the Tueries and tommands ultimately reachable through the Start Tuery.
 /// A generic browser type can then be used to navigate the whole API remotely.
 /// For .Net clients the next class in this file is a far more convenient way to consume the API.
 /// </summary>
 public static class AccountWebClientApi
 {
-   public static TessageTypes.Remotable.NonTransactional.Queries.NewableResultLink<StartResource> Start => new();
+   public static TessageTypes.Remotable.NonTransactional.Tueries.NewableResultLink<StartResource> Start => new();
 }
 
 
@@ -34,9 +34,9 @@ public class AccountApi : IStaticInstancePropertySingleton<AccountApi>
 
    public class TuerySection
    {
-      static readonly NavigationSpecification<StartResource.TueriesResource> Queries = Instance.Start.Select(start => start.Tueries);
+      static readonly NavigationSpecification<StartResource.TueriesResource> Tueries = Instance.Start.Select(start => start.Tueries);
 
-      public NavigationSpecification<AccountResource> AccountById(Guid accountId) => Queries.Get(queries => queries.AccountById.WithId(accountId));
+      public NavigationSpecification<AccountResource> AccountById(Guid accountId) => Tueries.Get(queries => queries.AccountById.WithId(accountId));
    }
 
    public class TommandsSection

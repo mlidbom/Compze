@@ -37,7 +37,7 @@ public abstract class PerformanceTestBase : UniversalTestBase
 
    protected override async Task DisposeAsyncInternal() => await Host.DisposeAsync();
 
-   protected internal class MyRemoteTuery : TessageTypes.Remotable.NonTransactional.Queries.Tuery<MyTueryResult>;
-   protected internal class MyLocalStrictlyLocalTuery : TessageTypes.StrictlyLocal.Queries.StrictlyLocalTuery<MyLocalStrictlyLocalTuery, MyTueryResult>;
+   protected internal class MyRemoteTuery : TessageTypes.Remotable.NonTransactional.Tueries.Tuery<MyTueryResult>;
+   protected internal class MyLocalStrictlyLocalTuery : TessageTypes.StrictlyLocal.Tueries.StrictlyLocalTuery<MyLocalStrictlyLocalTuery, MyTueryResult>;
    protected internal class MyTueryResult;
 }

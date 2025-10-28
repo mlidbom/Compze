@@ -7,7 +7,7 @@ namespace Compze.Tessaging.Implementation.TessageHandling.Inbox;
 
 partial class Inbox
 {
-   class QueriesExecuteAfterAllTommandsAndTeventsAreDone : ITessageDispatchingRule
+   class TueriesExecuteAfterAllTommandsAndTeventsAreDone : ITessageDispatchingRule
    {
       public bool CanBeDispatched(IExecutingTessagesSnapshot executing, TransportTessage.InComing candidateTessage)
       {

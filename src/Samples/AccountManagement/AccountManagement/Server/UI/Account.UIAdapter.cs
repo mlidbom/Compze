@@ -18,7 +18,7 @@ static class AccountUIAdapter
       {
          var email = Email.Parse(logIn.Email);
 
-         if(navigator.Execute(InternalApi.Queries.TryGetByEmail(email)) is Some<Account> account)
+         if(navigator.Execute(InternalApi.Tueries.TryGetByEmail(email)) is Some<Account> account)
          {
             return account.Value.Login(logIn.Password) switch
             {
@@ -34,11 +34,11 @@ static class AccountUIAdapter
 
    internal static void ChangePassword(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTommand(
       (AccountResource.Tommand.ChangePassword tommand, IInProcessTypermediaNavigator navigator) =>
-         navigator.Execute(InternalApi.Queries.GetForUpdate(tommand.AccountId)).ChangePassword(tommand.OldPassword, new Password(tommand.NewPassword)));
+         navigator.Execute(InternalApi.Tueries.GetForUpdate(tommand.AccountId)).ChangePassword(tommand.OldPassword, new Password(tommand.NewPassword)));
 
    internal static void ChangeEmail(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTommand(
       (AccountResource.Tommand.ChangeEmail tommand, IInProcessTypermediaNavigator navigator) =>
-         navigator.Execute(InternalApi.Queries.GetForUpdate(tommand.AccountId)).ChangeEmail(Email.Parse(tommand.Email)));
+         navigator.Execute(InternalApi.Tueries.GetForUpdate(tommand.AccountId)).ChangeEmail(Email.Parse(tommand.Email)));
 
    internal static void Register(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTommandWithResult(
       (AccountResource.Tommand.Register tommand, IInProcessTypermediaNavigator bus) =>
@@ -53,6 +53,6 @@ static class AccountUIAdapter
       });
 
    internal static void GetById(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery(
-      (TessageTypes.Remotable.NonTransactional.Queries.EntityLink<AccountResource> accountTuery, IInProcessTypermediaNavigator navigator)
-         => new AccountResource(navigator.Execute(InternalApi.AccountQueryModel.Queries.Get(accountTuery.EntityId))));
+      (TessageTypes.Remotable.NonTransactional.Tueries.EntityLink<AccountResource> accountTuery, IInProcessTypermediaNavigator navigator)
+         => new AccountResource(navigator.Execute(InternalApi.AccountQueryModel.Tueries.Get(accountTuery.EntityId))));
 }

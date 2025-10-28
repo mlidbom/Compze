@@ -8,7 +8,7 @@ namespace Compze.Tessaging.TyperMediaApi.EventStore;
 
 public partial class TeventStoreApi
 {
-   public TueryApi Queries => new();
+   public TueryApi Tueries => new();
    public TommandApi Tommands => new();
 
    public partial class TueryApi

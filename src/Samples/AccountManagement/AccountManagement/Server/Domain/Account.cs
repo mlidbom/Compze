@@ -52,7 +52,7 @@ class Account : Taggregate<Account, AccountTevent.Root, AccountTevent.Implementa
       Guard.IsNotDefault(accountId);Guard.IsNotNull(email);Guard.IsNotNull(password);
 
       //The email is the unique identifier for logging into the account so duplicates are forbidden.
-      if(navigator.Execute(InternalApi.Queries.TryGetByEmail(email)) is Some<Account>)
+      if(navigator.Execute(InternalApi.Tueries.TryGetByEmail(email)) is Some<Account>)
       {
          return (RegistrationAttemptStatus.EmailAlreadyRegistered, null);
       }

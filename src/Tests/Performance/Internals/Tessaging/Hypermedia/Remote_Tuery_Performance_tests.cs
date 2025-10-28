@@ -9,7 +9,7 @@ using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Tests.Infrastructure.XUnit;
-using CreatesItsOwnResultTuery = Compze.Core.Tessaging.Public.TessageTypes.Remotable.NonTransactional.Queries.NewableResultLink<Compze.Tests.Performance.Internals.Tessaging.Hypermedia.PerformanceTestBase.MyTueryResult>;
+using CreatesItsOwnResultTuery = Compze.Core.Tessaging.Public.TessageTypes.Remotable.NonTransactional.Tueries.NewableResultLink<Compze.Tests.Performance.Internals.Tessaging.Hypermedia.PerformanceTestBase.MyTueryResult>;
 
 namespace Compze.Tests.Performance.Internals.Tessaging.Hypermedia;
 

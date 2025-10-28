@@ -11,13 +11,13 @@ public static class TessageTypes
 {
    public static class StrictlyLocal
    {
-      public static class Queries
+      public static class Tueries
       {
 #pragma warning disable CA1724 //Class name conflicts with namespace name.
          public abstract class StrictlyLocalTuery<TTuery, TResult> : IStrictlyLocalTuery<TTuery, TResult> where TTuery : StrictlyLocalTuery<TTuery, TResult>;
 #pragma warning restore CA1724 //
 
-         public sealed class EntityLink<TResult>(Guid entityId) : StrictlyLocal.Queries.StrictlyLocalTuery<EntityLink<TResult>, TResult>
+         public sealed class EntityLink<TResult>(Guid entityId) : StrictlyLocal.Tueries.StrictlyLocalTuery<EntityLink<TResult>, TResult>
             where TResult : IHasPersistentIdentity<Guid>
          {
             public Guid EntityId { get; private set; } = entityId;
@@ -80,13 +80,13 @@ public static class TessageTypes
 
       public static class NonTransactional
       {
-         public static class Queries
+         public static class Tueries
          {
 #pragma warning disable CA1724 //Class name conflicts with namespace name.
             public abstract class Tuery<TResult> : IRemotableTuery<TResult>;
 #pragma warning restore CA1724 //Class name conflicts with namespace name.
 
-            public class EntityLink<TResult> : Remotable.NonTransactional.Queries.Tuery<TResult> where TResult : IHasPersistentIdentity<Guid>
+            public class EntityLink<TResult> : Remotable.NonTransactional.Tueries.Tuery<TResult> where TResult : IHasPersistentIdentity<Guid>
             {
                public EntityLink() {}
                public EntityLink(Guid entityId) => EntityId = entityId;

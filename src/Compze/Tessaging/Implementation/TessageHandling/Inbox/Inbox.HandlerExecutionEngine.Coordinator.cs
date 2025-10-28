@@ -58,7 +58,7 @@ partial class Inbox
             public IReadOnlyList<TransportTessage.InComing> AtMostOnceTommands => _executingAtMostOnceTommands;
             public IReadOnlyList<TransportTessage.InComing> ExactlyOnceTommands => _executingExactlyOnceTommands;
             public IReadOnlyList<TransportTessage.InComing> ExactlyOnceTevents => _executingExactlyOnceTevents;
-            public IReadOnlyList<TransportTessage.InComing> ExecutingNonTransactionalQueries => _executingNonTransactionalQueries;
+            public IReadOnlyList<TransportTessage.InComing> ExecutingNonTransactionalTueries => _executingNonTransactionalTueries;
 
             readonly List<HandlerExecutionTask> _tessagesWaitingToExecute = [];
 
@@ -106,7 +106,7 @@ partial class Inbox
                      _executingExactlyOnceTommands.Add(dispatchable.TransportTessage);
                      break;
                   case TransportTessageType.TyperMediaTuery:
-                     _executingNonTransactionalQueries.Add(dispatchable.TransportTessage);
+                     _executingNonTransactionalTueries.Add(dispatchable.TransportTessage);
                      break;
                   default:
                      throw new ArgumentOutOfRangeException();
@@ -133,7 +133,7 @@ partial class Inbox
                      _executingExactlyOnceTommands.Remove(doneExecuting.TransportTessage);
                      break;
                   case TransportTessageType.TyperMediaTuery:
-                     _executingNonTransactionalQueries.Remove(doneExecuting.TransportTessage);
+                     _executingNonTransactionalTueries.Remove(doneExecuting.TransportTessage);
                      break;
                   default:
                      throw new ArgumentOutOfRangeException();
@@ -146,7 +146,7 @@ partial class Inbox
             readonly List<TransportTessage.InComing> _executingExactlyOnceTommands = [];
             readonly List<TransportTessage.InComing> _executingAtMostOnceTommands = [];
             readonly List<TransportTessage.InComing> _executingExactlyOnceTevents = [];
-            readonly List<TransportTessage.InComing> _executingNonTransactionalQueries = [];
+            readonly List<TransportTessage.InComing> _executingNonTransactionalTueries = [];
          }
       }
    }

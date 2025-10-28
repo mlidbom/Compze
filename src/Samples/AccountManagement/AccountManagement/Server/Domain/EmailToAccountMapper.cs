@@ -17,17 +17,17 @@ namespace AccountManagement.Domain;
       {
          if(emailUpdated.TaggregateVersion > 1)
          {
-            var previousAccountVersion = navigator.Execute(InternalApi.Queries.GetReadOnlyCopyOfVersion(emailUpdated.TaggregateId, emailUpdated.TaggregateVersion - 1));
+            var previousAccountVersion = navigator.Execute(InternalApi.Tueries.GetReadOnlyCopyOfVersion(emailUpdated.TaggregateId, emailUpdated.TaggregateVersion - 1));
             navigator.Execute(DocumentDb.Tommands.Delete<AccountLink>(previousAccountVersion.Email.StringValue));
          }
 
          var newEmail = emailUpdated.Email;
-         navigator.Execute(DocumentDb.Tommands.Save(newEmail.StringValue, InternalApi.Queries.GetForUpdate(emailUpdated.TaggregateId)));
+         navigator.Execute(DocumentDb.Tommands.Save(newEmail.StringValue, InternalApi.Tueries.GetForUpdate(emailUpdated.TaggregateId)));
       });
 
    internal static void TryGetAccountByEmail(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery(
       (InternalApi.Tuery.TryGetByEmailTuery tuery, IInProcessTypermediaNavigator navigator) =>
-         navigator.Execute(DocumentDb.Queries.TryGet<AccountLink>(tuery.Email.StringValue)) is Some<AccountLink> accountLink
+         navigator.Execute(DocumentDb.Tueries.TryGet<AccountLink>(tuery.Email.StringValue)) is Some<AccountLink> accountLink
             ? Option.Some(navigator.Execute(accountLink.Value))
             : Option.None<Account>());
 }
