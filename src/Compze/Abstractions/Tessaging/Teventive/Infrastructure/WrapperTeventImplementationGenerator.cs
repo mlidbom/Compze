@@ -71,7 +71,7 @@ static class WrapperTeventImplementationGenerator
       var castParameter = Expression.Convert(parameter, wrappedTeventType);
       var constructorCall = Expression.New(constructor, castParameter);
       var lambda = Expression.Lambda<Func<ITevent, IWrapperTevent<ITevent>>>(constructorCall, parameter);
-      
+
       return lambda.Compile();
    }
 
