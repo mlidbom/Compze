@@ -42,8 +42,8 @@ static class WrapperTeventImplementationGenerator
    public static IWrapperTevent<TWrappedTevent> WrapTevent<TWrappedTevent>(TWrappedTevent theTevent) where TWrappedTevent : ITevent =>
       WrapperConstructorCache<IWrapperTevent<TWrappedTevent>, TWrappedTevent>.Constructor(theTevent);
 
-   // Todo: The fact that we can wrap like this, without the types of the wrapping tevents, does that not also mean that we could, teventually, receive tevents on the bus without having the type information for all the wrapping tevents to deserialize to?
-   // Note the teventually though! This is not a priority, but certainly something to keep in mind. If we can dig out just the inner tevent and wrap it like this, a listening endpoint need only know
+   // Todo: The fact that we can wrap like this, without the types of the wrapping tevents, does that not also mean that we could, eventually, receive tevents on the bus without having the type information for all the wrapping tevents to deserialize to?
+   // Note the eventually though! This is not a priority, but certainly something to keep in mind. If we can dig out just the inner tevent and wrap it like this, a listening endpoint need only know
    // the types for the inner tevent that it listens to, not the types in which it is wrapped. Just a heads up so we don't remove this strange code when we implement taggregates more cleanly. This still has great potential...
    public static Func<ITevent, IWrapperTevent<ITevent>> ConstructorFor(Type wrappedTeventType) =>
       Monitor.DoubleCheckedLocking(
