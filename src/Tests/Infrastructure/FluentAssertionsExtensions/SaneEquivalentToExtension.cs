@@ -24,9 +24,9 @@ public static class BeEquivalentToExtensions
                                                                                          params object[] becauseArgs) =>
       should.BeEquivalentTo(expected, AddStrictOptionsToCallerConfig(config), because, becauseArgs);
 
-   static Func<EquivalencyOptions<T>, EquivalencyOptions<T>> AddStrictOptionsToCallerConfig<T>(Func<EquivalencyOptions<T>, EquivalencyOptions<T>>? callerConfig) =>
+   static Func<EquivalencyOptions<T>, EquivalencyOptions<T>> AddStrictOptionsToCallerConfig<T>(Func<EquivalencyOptions<T>, EquivalencyOptions<T>>? config) =>
       options => options.PreferringRuntimeMemberTypes()
                         .WithStrictTyping()
                         .WithStrictOrdering()
-                        ._(callerConfig ??= config => config);
+                        ._(config ??= it => it);
 }
