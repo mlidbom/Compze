@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Compze.Utilities.Functional;
 using FluentAssertions;
 using FluentAssertions.Collections;
 using FluentAssertions.Equivalency;
@@ -23,11 +24,9 @@ public static class BeEquivalentToExtensions
                                                                                          params object[] becauseArgs) =>
       should.BeEquivalentTo(expected, AddStrictOptionsToCallerConfig(config), because, becauseArgs);
 
-   static Func<EquivalencyOptions<T>, EquivalencyOptions<T>> AddStrictOptionsToCallerConfig<T>(Func<EquivalencyOptions<T>, EquivalencyOptions<T>>? callerConfig)
-   {
-      callerConfig = callerConfig ?? (config => config);
-      return options => callerConfig(options.PreferringRuntimeMemberTypes()
-                                            .WithStrictTyping()
-                                            .WithStrictOrdering());
-   }
+   static Func<EquivalencyOptions<T>, EquivalencyOptions<T>> AddStrictOptionsToCallerConfig<T>(Func<EquivalencyOptions<T>, EquivalencyOptions<T>>? callerConfig) =>
+      options => options.PreferringRuntimeMemberTypes()
+                        .WithStrictTyping()
+                        .WithStrictOrdering()
+                        ._(callerConfig ??= config => config);
 }
