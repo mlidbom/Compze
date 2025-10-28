@@ -4,6 +4,8 @@ using Compze.Utilities.Testing.XUnit.ComponentCombinations;
 
 // ReSharper disable ExplicitCallerInfoArgument
 
+#pragma warning disable CA1813 //We create inheritable attributes. So shoot us.
+
 namespace Compze.Tests.Infrastructure.XUnit;
 
 public class PCTAttribute(

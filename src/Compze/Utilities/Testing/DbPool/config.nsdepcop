@@ -14,4 +14,8 @@
 	<Allowed From="Compze.Utilities.Testing.DbPool.*"
             To="Newtonsoft.Json" />
 
+	<Allowed From="Compze.Utilities.Testing.DbPool.*"
+            To="Compze.Core.Serialization.Internal.DbPool" />
+
+
 </NsDepCopConfig>

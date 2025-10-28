@@ -4,8 +4,10 @@
                 InheritanceDepth="10">
 
 
-	<Allowed From="*" To="Newtonsoft.Json.*"/>
-   <Allowed From="*" To="Compze.Serialization.Newtonsoft.Private.*"/>
+   <Allowed From="*" To="Newtonsoft.Json.*" />
+   <Allowed From="*" To="Compze.Serialization.Newtonsoft.Private.*" />
 
+   <Allowed From="Compze.Serialization.Newtonsoft.Private.PrimitiveWrappers" 
+			To="Compze.Core.Public.Infrastructure" />
 
 </NsDepCopConfig>
