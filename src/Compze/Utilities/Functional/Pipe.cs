@@ -35,9 +35,12 @@ public static class Pipe
    public static TResult _<TThis, TResult>(this TThis it, Func<TThis, TResult> func) => func(it);
 
    ///<summary>Mutates <paramref name="it"/> using <paramref name="mutate"/> and returns <paramref name="it"/></summary>
-   public static T mutate<T>(this T it, Action<T> mutate)
+   public static T mutate<T>(this T it, Action<T> mutate) => it.tap(mutate);
+
+   ///<summary>Passes <paramref name="it"/> to <paramref name="tap"/> and returns <paramref name="it"/></summary>
+   public static T tap<T>(this T it, Action<T> tap)
    {
-      mutate(it);
+      tap(it);
       return it;
    }
 
