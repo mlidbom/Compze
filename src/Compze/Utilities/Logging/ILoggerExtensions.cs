@@ -16,7 +16,7 @@ static class LevelLoggerExtensions
            .then(new Disposable(() => @this.Log($"Exiting {message}")));
 
    public static IDisposable LogMethodExecutionTime(this ILevelLogger @this, [CallerMemberName] string message = "")
-      => Stopwatch.StartNew().select(it => new Disposable(() => @this.Log($"Executed {message} in {it.Elapsed}")));
+      => Stopwatch.StartNew()._(it => new Disposable(() => @this.Log($"Executed {message} in {it.Elapsed}")));
 
    public static IDisposable LogEntryExit(this ILevelLogger @this, string message = "") =>
       @this.Log($"Entering {message}")
