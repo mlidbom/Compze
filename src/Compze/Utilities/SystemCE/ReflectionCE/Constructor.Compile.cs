@@ -24,7 +24,7 @@ public static partial class Constructor
          internal Func<TInstance> DefaultConstructor() => (Func<TInstance>)CompileForSignature(typeof(Func<>).MakeGenericType(_typeToConstruct));
          internal Func<TArgument1, TInstance> WithArguments<TArgument1>() => (Func<TArgument1, TInstance>)WithArgumentTypes(typeof(TArgument1));
 
-         internal Func<object, object> WithArgumentTypesAsObjectFunc(Type argument1Type)
+         internal Func<object, object> WithArgument(Type argument1Type)
          {
             var constructor = WithArgumentTypes(argument1Type);
 
@@ -50,6 +50,7 @@ public static partial class Constructor
             }
 
             var parameters = constructorArgumentTypes.Select((type, index) => Expression.Parameter(type, $"argument_{index}")).ToArray();
+            // ReSharper disable once CoVariantArrayConversion
             var constructorCall = Expression.New(constructor, parameters);
             var lambda = Expression.Lambda(delegateType, constructorCall, parameters);
 

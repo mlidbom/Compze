@@ -57,8 +57,8 @@ public class ValueWrapperConverter : JsonConverter
                                                        var wrappedPrimitiveType = wrapperType.GetGenericBaseClass(typeof(ValueWrapper<>))
                                                                                              .GetGenericArguments()[0];
                                                        var constructor = Constructor.Compile.ForType(typeToRead)
-                                                                                            .WithArgumentTypesAsObjectFunc(wrappedPrimitiveType);
-                                                       
+                                                                                            .WithArgument(wrappedPrimitiveType);
+
                                                        return new WrappedTypeHelpers(wrappedPrimitiveType, constructor);
                                                     });
                                                  }).Value;
