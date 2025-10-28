@@ -10,11 +10,11 @@ namespace Compze.Utilities.Testing.XUnit.ComponentCombinations;
 
 static class ComponentCombinationsConfigurationFileReader
 {
-   static readonly ConcurrentDictionary<string, IReadOnlyList<ComponentCombination>> PermutationsCache = new();
+   static readonly ConcurrentDictionary<string, IReadOnlyList<ComponentCombination>> CombinationsCache = new();
 
    public static IReadOnlyList<ComponentCombination> GetCombinations(string configurationFileName, Type[] componentEnumTypes)
    {
-      return PermutationsCache.GetOrAdd(
+      return CombinationsCache.GetOrAdd(
          configurationFileName,
          fileName => ReadFile(componentEnumTypes, fileName));
    }
