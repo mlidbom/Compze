@@ -97,7 +97,7 @@ public abstract class ComponentCombinationsTheoryAttribute :
       try
       {
          var combinations = ComponentCombinationsConfigurationFileReader
-                           .GetPermutations(_configurationFileName, _componentEnumTypes)
+                           .GetCombinations(_configurationFileName, _componentEnumTypes)
                            .Select(ITheoryDataRow (combination) => new TheoryDataRow(combination) // Pass combination object as argument
                                                                    {
                                                                       Skip = SkipComponentSpecifications.SkippedComponentFor(combination)?.ToString()

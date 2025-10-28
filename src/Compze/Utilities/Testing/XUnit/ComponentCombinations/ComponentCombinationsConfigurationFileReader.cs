@@ -12,7 +12,7 @@ static class ComponentCombinationsConfigurationFileReader
 {
    static readonly ConcurrentDictionary<string, IReadOnlyList<ComponentCombination>> PermutationsCache = new();
 
-   public static IReadOnlyList<ComponentCombination> GetPermutations(string configurationFileName, Type[] componentEnumTypes)
+   public static IReadOnlyList<ComponentCombination> GetCombinations(string configurationFileName, Type[] componentEnumTypes)
    {
       return PermutationsCache.GetOrAdd(
          configurationFileName,
