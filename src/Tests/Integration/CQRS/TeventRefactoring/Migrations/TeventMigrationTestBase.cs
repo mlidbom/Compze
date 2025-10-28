@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Compze.Core.Tessaging.Teventive.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.Refactoring.Migrations.Public;
@@ -17,6 +18,7 @@ using Compze.Tests.Infrastructure.FluentAssertionsExtensions;
 using Compze.Tests.Infrastructure.Serialization;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
 using FluentAssertions;
 using FluentAssertions.Extensions;
@@ -51,7 +53,7 @@ public abstract class TeventMigrationTestBase : UniversalTestBase
       {
          foreach(var migrationScenario in scenarios)
          {
-            timeSource.FreezeAtUtcTime(timeSource.UtcNow + 1.Hours()); //No time collision between scenarios please.
+            timeSource.FreezeAtUtcTime(timeSource.UtcNow + FluentTimeSpanExtensions.Hours(1)); //No time collision between scenarios please.
             migrations = migrationScenario.Migrations.ToList();
             await RunScenarioWithTeventStoreType(migrationScenario, serviceLocator, migrations, scenarioIndex++, writer);
          }
@@ -99,7 +101,7 @@ public abstract class TeventMigrationTestBase : UniversalTestBase
       expected.ForEach(e => writer.WriteLine($"      {e}"));
       writer.WriteLine();
 
-      timeSource.FreezeAtUtcTime(timeSource.UtcNow + 1.Hours()); //Bump clock to ensure that times will be be wrong unless the time from the original tevents are used..
+      timeSource.FreezeAtUtcTime(timeSource.UtcNow + FluentTimeSpanExtensions.Hours(1)); //Bump clock to ensure that times will be be wrong unless the time from the original tevents are used..
 
       serviceLocator.ExecuteTransactionInIsolatedScope(() => serviceLocator.Resolve<ITeventStoreUpdater>()
                                                                            .Save(initialTaggregate));
@@ -207,9 +209,7 @@ public abstract class TeventMigrationTestBase : UniversalTestBase
       try
       {
          migratedHistory.Should()
-                        .BeStrictlyEquivalentTo(expected,
-                                                config => config.ComparingByMembers<TaggregateTevent>()
-                                                                .Excluding(@tevent => @tevent.Id));
+                        .BeStrictlyEquivalentTo(expected, config => config.Excluding(@tevent => @tevent.Id));
       }
       catch(Exception)
       {
