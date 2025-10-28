@@ -16,12 +16,12 @@ public class Tuery_policies : EndpointHostTestBase
 
       TueryHandlerThreadGate.Close();
 
-      var queriesResults = Task.WhenAll(1.Through(5)
+      var tueriesResults = Task.WhenAll(1.Through(5)
                                          .Select(_ => ClientEndpoint.ExecuteClientRequestAsync(navigator => navigator.GetAsync(myTuery))));
 
       TueryHandlerThreadGate.AwaitQueueLengthEqualTo(length: 5);
       TueryHandlerThreadGate.Open();
 
-      await queriesResults;
+      await tueriesResults;
    }
 }

@@ -17,7 +17,7 @@ class TessagesInFlightTracker(ITypeMapper typeMapper) : ITessagesInFlightTracker
 
    public IReadOnlyList<Exception> GetExceptions() => _implementation.Update(implementation => implementation.GetExceptions());
 
-   //performance: Do we care about queries here? Could we exclude them and lessen the contention a lot?
+   //performance: Do we care about tueries here? Could we exclude them and lessen the contention a lot?
    public void SendingTessageOnTransport(TransportTessage.OutGoing transportTessage, EndpointId remoteEndpointId) =>
       _implementation.Update(implementation => implementation.SendingTessageOnTransport(transportTessage, remoteEndpointId));
 

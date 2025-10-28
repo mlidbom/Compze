@@ -24,7 +24,7 @@ public interface ITyperMediaTessage<out TResult> : ITypermediaTessage;
 public interface ITommand<out TResult> : ITommand, ITyperMediaTessage<TResult>;
 public interface ITuery<out TResult> : ITyperMediaTessage<TResult>;
 
-///<summary>Many resources in a hypermedia API do not actually need access to backend data. The data in the tuery is sufficient to create the result. For such queries implement this interface. That way no network roundtrip is required to perform the tuery.</summary>
+///<summary>Many resources in a hypermedia API do not actually need access to backend data. The data in the tuery is sufficient to create the result. For such tueries implement this interface. That way no network roundtrip is required to perform the tuery.</summary>
 public interface ICreateMyOwnResultTuery<out TResult> : ITuery<TResult>
 {
    TResult CreateResult();
