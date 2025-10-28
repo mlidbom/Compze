@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 namespace Compze.Serialization.Newtonsoft.Private.PrimitiveWrappers;
 
-public class PrimitiveValueWrapperConverter : JsonConverter
+public class ValueWrapperConverter : JsonConverter
 {
    class WrappedTypeHelpers
    {
