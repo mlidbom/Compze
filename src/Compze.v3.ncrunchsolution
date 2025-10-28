@@ -4,7 +4,65 @@
     <FrameworkUtilisationTypeForGallio>Disabled</FrameworkUtilisationTypeForGallio>
     <FrameworkUtilisationTypeForMSTest>Disabled</FrameworkUtilisationTypeForMSTest>
     <FrameworkUtilisationTypeForNUnit2>Disabled</FrameworkUtilisationTypeForNUnit2>
-    <HotSpotsLineExclusionList />
+    <HotSpotsLineExclusionList>
+      <Value>SystemCE\ThreadingCE\TaskRunner.cs:Compze\Tessaging\Compze.Tessaging.csproj-57</Value>
+      <Value>Abstractions\IDbConnectionPool.cs:Compze\Sql\Common\Compze.Sql.Common.csproj-37</Value>
+      <Value>Implementation\TessageHandling\Inbox\Inbox.HandlerExecutionEngine..cs:Compze\Tessaging\Compze.Tessaging.csproj-40</Value>
+      <Value>Implementation\TessageHandling\Inbox\Inbox.HandlerExecutionEngine.Coordinator.cs:Compze\Tessaging\Compze.Tessaging.csproj-32</Value>
+      <Value>Threading\ResourceAccess\MonitorCE.Functional.Awaiting.cs:Compze\Utilities\Compze.Utilities.csproj-17</Value>
+      <Value>Threading\ResourceAccess\MonitorCE.Functional.Awaiting.cs:Compze\Utilities\Compze.Utilities.csproj-19</Value>
+      <Value>Threading\ResourceAccess\MonitorCE.Functional.Awaiting.cs:Compze\Utilities\Compze.Utilities.csproj-23</Value>
+      <Value>Threading\ResourceAccess\MonitorCE.Functional.Awaiting.cs:Compze\Utilities\Compze.Utilities.csproj-41</Value>
+      <Value>Threading\ResourceAccess\MonitorCE.Functional.Awaiting.cs:Compze\Utilities\Compze.Utilities.csproj-65</Value>
+      <Value>Threading\ResourceAccess\ThreadShared.cs:Compze\Utilities\Compze.Utilities.csproj-34</Value>
+      <Value>Implementation\Outbox\OutboxRetryPoller.cs:Compze\Tessaging\Compze.Tessaging.csproj-102</Value>
+      <Value>DependencyInjection\TransactionalExtensions.cs:Compze\Utilities\Compze.Utilities.csproj-31</Value>
+      <Value>DbConnectionPool.Pools.cs:Compze\Sql\Common\Compze.Sql.Common.csproj-66</Value>
+      <Value>IMsSqlConnectionPool.cs:Compze\Sql\MicrosoftSql\Compze.Sql.MicrosoftSql.csproj-33</Value>
+      <Value>Abstractions\IComposableDbConnection.cs:Compze\Sql\Common\Compze.Sql.Common.csproj-26</Value>
+      <Value>Implementation\TessageHandling\Dispatching\TessageHandlerRegistry.cs:Compze\Tessaging\Compze.Tessaging.csproj-172</Value>
+      <Value>Tessaging\Hosting\TessageHandling\Registration\Public\TessageHandlerRegistrarWithDependencyInjectionSupport.TueryHandlers.cs:Compze\Abstractions\Compze.Core.csproj-20</Value>
+      <Value>Implementation\TessageHandling\Inbox\Inbox.HandlerExecutionEngine.Coordinator.QueuedTessage.cs:Compze\Tessaging\Compze.Tessaging.csproj-46</Value>
+      <Value>SystemCE\ThreadingCE\TaskRunner.cs:Compze\Tessaging\Compze.Tessaging.csproj-40</Value>
+      <Value>Threading\InternalExtensions.cs:Compze\Utilities\Compze.Utilities.csproj-17</Value>
+      <Value>Threading\TasksCE\TaskCE.Run.cs:Compze\Utilities\Compze.Utilities.csproj-26</Value>
+      <Value>Hosting\EndpointRequestExecutor.cs:Compze\Tessaging\Compze.Tessaging.csproj-33</Value>
+      <Value>Threading\TasksCE\TaskCE.SyncShim.cs:Compze\Utilities\Compze.Utilities.csproj-15</Value>
+      <Value>DbConnectionPool.Pools.cs:Compze\Sql\Common\Compze.Sql.Common.csproj-75</Value>
+      <Value>Hosting\Endpoint.cs:Compze\Tessaging\Compze.Tessaging.csproj-89</Value>
+      <Value>Hosting\EndpointHost.cs:Compze\Tessaging\Compze.Tessaging.csproj-71</Value>
+      <Value>Implementation\Outbox\Outbox..cs:Compze\Tessaging\Compze.Tessaging.csproj-110</Value>
+      <Value>Abstractions\IComposableDbConnection.cs:Compze\Sql\Common\Compze.Sql.Common.csproj-43</Value>
+      <Value>Threading\TasksCE\TaskCEExceptionHandling.cs:Compze\Utilities\Compze.Utilities.csproj-21</Value>
+      <Value>Threading\TasksCE\TaskUnit.cs:Compze\Utilities\Compze.Utilities.csproj-11</Value>
+      <Value>Hosting\EndpointHost.cs:Compze\Tessaging\Compze.Tessaging.csproj-63</Value>
+      <Value>Implementation\TessageHandling\Dispatching\TessageHandlerRegistry.cs:Compze\Tessaging\Compze.Tessaging.csproj-105</Value>
+      <Value>Implementation\Outbox\Outbox.InboxConnection.cs:Compze\Tessaging\Compze.Tessaging.csproj-45</Value>
+      <Value>Implementation\Transport\Client\Implementation\Memory\MemoryInboxTransportServer.cs:Compze\Tessaging\Compze.Tessaging.csproj-83</Value>
+      <Value>Implementation\Transport\Client\Implementation\Memory\MemoryTransportMessagePoster.cs:Compze\Tessaging\Compze.Tessaging.csproj-41</Value>
+      <Value>Threading\ResourceAccess\MonitorCE.Functional.Awaiting.cs:Compze\Utilities\Compze.Utilities.csproj-58</Value>
+      <Value>Threading\Testing\ThreadGate.cs:Compze\Utilities\Compze.Utilities.csproj-51</Value>
+      <Value>Threading\Testing\ThreadGateExtensions.cs:Compze\Utilities\Compze.Utilities.csproj-22</Value>
+      <Value>Implementation\Transport\Client\Implementation\Universal\ApiEndpointClient.cs:Compze\Tessaging\Compze.Tessaging.csproj-63</Value>
+      <Value>Implementation\Transport\Client\Implementation\Universal\RoutingInboxClient .cs:Compze\Tessaging\Compze.Tessaging.csproj-62</Value>
+      <Value>Tessaging\Buses\TestingHostExtensions.cs:Compze\Tessaging\Hosting\Testing\Compze.Tessaging.Hosting.Testing.csproj-11</Value>
+      <Value>Tessaging\ServiceBusSpecification\Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler\EndpointHostTestBase.cs:Tests\Common\Compze.Tests.Common.csproj-127</Value>
+      <Value>ComponentCombinations\ComponentCombination.cs:Compze\Utilities\Testing\XUnit\Compze.Utilities.Testing.XUnit.csproj-79</Value>
+      <Value>ComponentCombinations\ComponentCombinationTestCase.cs:Compze\Utilities\Testing\XUnit\Compze.Utilities.Testing.XUnit.csproj-55</Value>
+      <Value>ComponentCombinations\ComponentCombinationTestCase.cs:Compze\Utilities\Testing\XUnit\Compze.Utilities.Testing.XUnit.csproj-57</Value>
+      <Value>Threading\ResourceAccess\MonitorCE.Functional..cs:Compze\Utilities\Compze.Utilities.csproj-20</Value>
+      <Value>Hosting\EndpointHost.cs:Compze\Tessaging\Compze.Tessaging.csproj-35</Value>
+      <Value>SystemCE\LazyCE.cs:Compze\Utilities\Compze.Utilities.csproj-12</Value>
+      <Value>SystemCE\ThreadingCE\MachineWideSingleThreaded.cs:Compze\Utilities\Testing\DbPool\Compze.Utilities.Testing.DbPool.csproj-22</Value>
+      <Value>Functional\Unit.cs:Compze\Utilities\Compze.Utilities.csproj-27</Value>
+      <Value>SystemCE\LinqCE\EnumerableCE.ForEach.cs:Compze\Utilities\Compze.Utilities.csproj-26</Value>
+      <Value>ComponentCombinations\ComponentCombination.cs:Compze\Utilities\Testing\XUnit\Compze.Utilities.Testing.XUnit.csproj-85</Value>
+      <Value>ComponentCombinations\ComponentCombinationTestCase.cs:Compze\Utilities\Testing\XUnit\Compze.Utilities.Testing.XUnit.csproj-64</Value>
+      <Value>Tessaging\ServiceBusSpecification\Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler\EndpointHostTestBase.cs:Tests\Common\Compze.Tests.Common.csproj-66</Value>
+      <Value>UniversalTestBase.cs:Tests\Infrastructure\Compze.Tests.Infrastructure.csproj-29</Value>
+      <Value>Abstractions\IComposableDbConnection.cs:Compze\Sql\Common\Compze.Sql.Common.csproj-47</Value>
+      <Value>Abstractions\IDbConnectionPool.cs:Compze\Sql\Common\Compze.Sql.Common.csproj-25</Value>
+    </HotSpotsLineExclusionList>
     <MSpecEnabled>False</MSpecEnabled>
     <NUnit3Enabled>False</NUnit3Enabled>
     <RdiConfigured>True</RdiConfigured>

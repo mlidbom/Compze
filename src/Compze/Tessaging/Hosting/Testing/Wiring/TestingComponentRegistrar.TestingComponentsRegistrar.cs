@@ -10,8 +10,6 @@ public static class TestingComponentRegistrarTestingComponentsRegistrar
       register.CurrentTestsPluggableComponents(Guid.NewGuid().ToString());
 
    public static IComponentRegistrar CurrentTestsPluggableComponents(this IComponentRegistrar register, string connectionStringName) =>
-      register.CastTo<TestingComponentRegistrar>()
-              .CurrentTestsSerializer()
-              .CurrentTestsTransport()
+      register.CurrentTestsTransport()
               .CurrentTestsConfiguredSqlLayer(connectionStringName);
 }

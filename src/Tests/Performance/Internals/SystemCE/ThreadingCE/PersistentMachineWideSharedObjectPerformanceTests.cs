@@ -1,37 +1,42 @@
-using System;
+using Compze.Core.Serialization.Internal.DbPool;
+using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Performance;
+using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tests.Infrastructure;
+using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.Testing.DbPool.SystemCE.ThreadingCE;
-using Compze.Utilities.Testing.XUnit.BDD;
+using System;
+using Compze.Tests.Infrastructure.XUnit;
 
 namespace Compze.Tests.Performance.Internals.SystemCE.ThreadingCE;
 
 public class PersistentMachineWideSharedObjectPerformanceTests : UniversalTestBase
 {
+   readonly IServiceLocator _serviceLocator;
+   readonly MachineWideSharedObject<SharedObject> _shared;
+
    public PersistentMachineWideSharedObjectPerformanceTests()
    {
-      var name = Guid.NewGuid().ToString();
-      _shared = MachineWideSharedObject<SharedObject>.TransientFor(name);
+      _serviceLocator = TestEnv.DIContainer.CreateWithServiceLocatorAndCurrentTestsPluggableComponents().ServiceLocator;
+      _shared = MachineWideSharedObject<SharedObject>.For(Guid.NewGuid().ToString(), _serviceLocator.Resolve<ISharedObjectSerializer>());
    }
-
-   readonly MachineWideSharedObject<SharedObject> _shared;
 
    protected override void DisposeInternal()
    {
-      _shared.Dispose();
-      _shared.DeleteFile();
+      _serviceLocator.Dispose();
+      _shared.Delete();
    }
 
-   [XF] public void Get_copy_runs_single_threaded_XX_times_in_50_milliseconds()
+   [PCTSerializer] public void Get_copy_runs_single_threaded_XX_times_in_50_milliseconds()
       => TimeAsserter.Execute(() => _shared.GetCopy(), iterations: 100, maxTotal: 50.Milliseconds());
 
-   [XF] public void Get_copy_runs_multi_threaded_XX_times_in_50_milliseconds() =>
+   [PCTSerializer] public void Get_copy_runs_multi_threaded_XX_times_in_50_milliseconds() =>
       TimeAsserter.ExecuteThreaded(() => _shared.GetCopy(), iterations: 100, maxTotal: 50.Milliseconds());
 
-   [XF] public void Update_runs_single_threaded_XX_times_in_50_milliseconds() =>
+   [PCTSerializer] public void Update_runs_single_threaded_XX_times_in_50_milliseconds() =>
       TimeAsserter.Execute(() => _shared.Update(it => it.Name = ""), iterations: 30, maxTotal: 50.Milliseconds(), maxTries: 10);
 
-   [XF] public void Update_runs_multi_threaded_60_times_in_80_milliseconds() =>
+   [PCTSerializer] public void Update_runs_multi_threaded_60_times_in_80_milliseconds() =>
       TimeAsserter.ExecuteThreaded(() => _shared.Update(it => it.Name = ""), iterations: 60, maxTotal: 100.Milliseconds(), maxTries: 10);
 }

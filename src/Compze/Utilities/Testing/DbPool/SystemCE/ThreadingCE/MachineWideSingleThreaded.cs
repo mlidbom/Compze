@@ -1,54 +1,22 @@
 using System;
-using System.Collections.Generic;
-using System.Security.AccessControl;
-using System.Security.Principal;
 using System.Threading;
 using Compze.Utilities.SystemCE;
-using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
-using Compze.Utilities.Threading.ResourceAccess;
 using JetBrains.Annotations;
 
 namespace Compze.Utilities.Testing.DbPool.SystemCE.ThreadingCE;
 
-class MachineWideSingleThreaded
+class MutexCE
 {
-   static readonly IThreadShared<Dictionary<string, Mutex>> Cache = IThreadShared.WithDefaultTimeout(new Dictionary<string, Mutex>());
-
    readonly Mutex _mutex;
-   MachineWideSingleThreaded(string lockId)
-   {
-      var lockId1 = $@"Global\{lockId}";
 
-      _mutex = Cache.Update(cache => cache.GetOrAdd(lockId1,
-                                                    () =>
-                                                    {
-                                                       try
-                                                       {
-                                                          var existing = Mutex.OpenExisting(lockId1);
-                                                          return existing;
-                                                       }
-                                                       catch
-                                                       {
-                                                          //Todo: This code actually runs NCrunch coverage reveals. That is worrying. Will this run on non-windows platforms?
-                                                          var mutex = new Mutex(initiallyOwned: false, name: lockId1);
+   MutexCE(string mutexName) =>
+      _mutex = Mutex.TryOpenExisting(mutexName, out var mutex)
+                  ? mutex
+                  : new Mutex(initiallyOwned: false, name: mutexName);
 
-                                                          if(OperatingSystem.IsWindows())
-                                                          {
-                                                             var mutexSecurity = new MutexSecurity();
-                                                             mutexSecurity.AddAccessRule(new MutexAccessRule(new SecurityIdentifier(WellKnownSidType.WorldSid, null),
-                                                                                                             MutexRights.FullControl,
-                                                                                                             AccessControlType.Allow));
-                                                             mutex.SetAccessControl(mutexSecurity);
-                                                          }
+   internal void ExecuteWithLock([InstantHandle] Action action) => ExecuteWithLock(action.AsUnitFunc());
 
-                                                          return mutex;
-                                                       }
-                                                    }));
-   }
-
-   internal void Execute([InstantHandle] Action action) => Execute(action.AsUnitFunc());
-
-   internal TResult Execute<TResult>([InstantHandle] Func<TResult> func)
+   internal TResult ExecuteWithLock<TResult>([InstantHandle] Func<TResult> func)
    {
       try
       {
@@ -61,5 +29,5 @@ class MachineWideSingleThreaded
       }
    }
 
-   internal static MachineWideSingleThreaded For(string name) => new(name);
+   internal static MutexCE ForMutexNamed(string name) => new(name);
 }
