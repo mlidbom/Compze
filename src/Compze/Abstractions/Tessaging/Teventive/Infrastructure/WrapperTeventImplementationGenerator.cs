@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
-using System.Reflection.Emit;
 using Compze.Core.Tessaging.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Utilities.SystemCE;
@@ -18,7 +18,7 @@ namespace Compze.Core.Tessaging.Teventive.Infrastructure;
 
 static class WrapperTeventImplementationGenerator
 {
-   static IReadOnlyDictionary<Type, Func<ITevent, IWrapperTevent<ITevent>>> _wrapperConstructors = new Dictionary<Type, Func<ITevent, IWrapperTevent<ITevent>>>();
+   static IReadOnlyDictionary<Type, Func<ITevent, IPublisherTypeIdentifyingTevent<ITevent>>> _wrapperConstructors = new Dictionary<Type, Func<ITevent, IPublisherTypeIdentifyingTevent<ITevent>>>();
    static IReadOnlyDictionary<Type, Type> _createdWrapperTypes = new Dictionary<Type, Type>();
 
    static string DescribeParameterList(IEnumerable<Type> parameterTypes) => parameterTypes.Select(parameterType => parameterType.FullNameNotNull()).Join(", ");
@@ -26,41 +26,40 @@ static class WrapperTeventImplementationGenerator
    static readonly MonitorCE Monitor = MonitorCE.WithDefaultTimeout();
 
    static class WrapperConstructorCache<TWrapperTevent, TWrappedTevent>
-      where TWrapperTevent : IWrapperTevent<TWrappedTevent>
+      where TWrapperTevent : IPublisherTypeIdentifyingTevent<TWrappedTevent>
       where TWrappedTevent : ITevent
    {
-      static readonly Func<ITevent, IWrapperTevent<ITevent>> UntypedConstructor = Monitor.Update(() => CreateConstructorFor(typeof(TWrappedTevent)));
+      static readonly Func<ITevent, IPublisherTypeIdentifyingTevent<ITevent>> UntypedConstructor = Monitor.Update(() => CreateConstructorFor(typeof(TWrappedTevent)));
 
-      internal static readonly Func<TWrappedTevent, IWrapperTevent<TWrappedTevent>> Constructor = @tevent => (IWrapperTevent<TWrappedTevent>)UntypedConstructor(@tevent);
+      internal static readonly Func<TWrappedTevent, IPublisherTypeIdentifyingTevent<TWrappedTevent>> Constructor = tevent => (IPublisherTypeIdentifyingTevent<TWrappedTevent>)UntypedConstructor(tevent);
    }
 
    public static TWrapperTevent WrapTevent<TWrapperTevent, TWrappedTevent>(TWrappedTevent theTevent)
-      where TWrapperTevent : IWrapperTevent<TWrappedTevent>
+      where TWrapperTevent : IPublisherTypeIdentifyingTevent<TWrappedTevent>
       where TWrappedTevent : ITevent =>
       (TWrapperTevent)WrapperConstructorCache<TWrapperTevent, TWrappedTevent>.Constructor(theTevent);
 
-   public static IWrapperTevent<TWrappedTevent> WrapTevent<TWrappedTevent>(TWrappedTevent theTevent) where TWrappedTevent : ITevent =>
-      WrapperConstructorCache<IWrapperTevent<TWrappedTevent>, TWrappedTevent>.Constructor(theTevent);
+   public static IPublisherTypeIdentifyingTevent<TWrappedTevent> WrapTevent<TWrappedTevent>(TWrappedTevent theTevent) where TWrappedTevent : ITevent =>
+      WrapperConstructorCache<IPublisherTypeIdentifyingTevent<TWrappedTevent>, TWrappedTevent>.Constructor(theTevent);
 
-   // Todo: The fact that we can wrap like this, without the types of the wrapping tevents, does that not also mean that we could, teventually, receive tevents on the bus without having the type information for all the wrapping tevents to deserialize to?
-   // Note the teventually though! This is not a priority, but certainly something to keep in mind. If we can dig out just the inner tevent and wrap it like this, a listening endpoint need only know
-   // the types for the inner tevent that it listens to, not the types in which it is wrapped. Just a heads up so we don't remove this strange code when we implement taggregates more cleanly. This still has great potential...
-   public static Func<ITevent, IWrapperTevent<ITevent>> ConstructorFor(Type wrappedTeventType) =>
+   // Todo: The fact that we can wrap like this, without the types of the wrapping tevents, does that not also mean that we could, eventually, receive tevents on the bus without having the type information for all the wrapping tevents to deserialize to?
+   // Note the eventually though! This is not a priority, but certainly something to keep in mind. If we can dig out just the inner tevent and wrap it like this, a listening endpoint need only know
+   // the types for the inner tevent that it listens to, not the types in which it is wrapped. Just a heads-up so we don't remove this strange code when we implement taggregates more cleanly. This still has great potential...
+   public static Func<ITevent, IPublisherTypeIdentifyingTevent<ITevent>> ConstructorFor(Type wrappedTeventType) =>
       Monitor.DoubleCheckedLocking(
          unlockedTryGetValue: () => _wrapperConstructors.GetValueOrDefault(wrappedTeventType),
          lockedSetValue: () => OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _wrapperConstructors, wrappedTeventType, CreateConstructorFor(wrappedTeventType))
       );
 
-   static Func<ITevent, IWrapperTevent<ITevent>> CreateConstructorFor(Type wrappedTeventType)
+   static Func<ITevent, IPublisherTypeIdentifyingTevent<ITevent>> CreateConstructorFor(Type wrappedTeventType)
    {
-      var openWrapperTeventType = typeof(IWrapperTevent<>);
+      var openWrapperTeventType = typeof(IPublisherTypeIdentifyingTevent<>);
       var closedWrapperTeventType = openWrapperTeventType.MakeGenericType(wrappedTeventType);
 
       var openWrapperImplementationType = CreateGenericWrapperTeventImplementationClass(openWrapperTeventType);
       var closedWrapperImplementationType = openWrapperImplementationType.MakeGenericType(wrappedTeventType);
 
       var constructorArgumentTypes = new[] { wrappedTeventType };
-      var creatorFunctionArgumentTypes = new[] { typeof(ITevent) };
 
       var constructor = closedWrapperImplementationType.GetConstructor(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance, binder: null, types: constructorArgumentTypes, modifiers: null);
       if(constructor == null)
@@ -68,14 +67,12 @@ static class WrapperTeventImplementationGenerator
          throw new Exception($"Expected to find a constructor with the signature: [private|protected|public] {closedWrapperTeventType.GetFullNameCompilable()}({DescribeParameterList(constructorArgumentTypes)})");
       }
 
-      var constructorCallMethod = new DynamicMethod(name: $"Generated_constructor_for_{closedWrapperTeventType.Name}", returnType: closedWrapperTeventType, parameterTypes: creatorFunctionArgumentTypes, owner: closedWrapperImplementationType);
-      var ilGenerator = constructorCallMethod.GetILGenerator();
-      ilGenerator.Emit(OpCodes.Ldarg_0);
-      ilGenerator.Emit(OpCodes.Castclass, wrappedTeventType);
-      ilGenerator.Emit(OpCodes.Newobj, constructor);
-      ilGenerator.Emit(OpCodes.Ret);
+      var parameter = Expression.Parameter(typeof(ITevent), "tevent");
+      var castParameter = Expression.Convert(parameter, wrappedTeventType);
+      var constructorCall = Expression.New(constructor, castParameter);
+      var lambda = Expression.Lambda<Func<ITevent, IPublisherTypeIdentifyingTevent<ITevent>>>(constructorCall, parameter);
 
-      return (Func<ITevent, IWrapperTevent<ITevent>>)constructorCallMethod.CreateDelegate(typeof(Func<ITevent, IWrapperTevent<ITevent>>));
+      return lambda.Compile();
    }
 
    static Type CreateGenericWrapperTeventImplementationClass(Type wrapperTeventType)
@@ -87,9 +84,9 @@ static class WrapperTeventImplementationGenerator
 
       if(!wrapperTeventType.IsInterface) throw new ArgumentException("Must be an interface", $"{nameof(wrapperTeventType)}");
 
-      if(wrapperTeventType != typeof(IWrapperTevent<>)
-      && wrapperTeventType.GetInterfaces().All(iface => iface != typeof(IWrapperTevent<>).MakeGenericType(wrapperTeventType.GetGenericArguments()[0])))
-         throw new ArgumentException($"Must implement {typeof(IWrapperTevent<>).FullName}", $"{nameof(wrapperTeventType)}");
+      if(wrapperTeventType != typeof(IPublisherTypeIdentifyingTevent<>)
+      && wrapperTeventType.GetInterfaces().All(iface => iface != typeof(IPublisherTypeIdentifyingTevent<>).MakeGenericType(wrapperTeventType.GetGenericArguments()[0])))
+         throw new ArgumentException($"Must implement {typeof(IPublisherTypeIdentifyingTevent<>).FullName}", $"{nameof(wrapperTeventType)}");
 
       var wrappedTeventType = wrapperTeventType.GetGenericArguments()[0];
 
@@ -107,7 +104,7 @@ static class WrapperTeventImplementationGenerator
 
          wrappedTeventTypeParameter.SetInterfaceConstraints(requiredTeventInterface);
 
-         var (wrappedTeventField, _) = wrapperTeventBuilder.ImplementProperty(nameof(IWrapperTevent<ITaggregateTevent>.Tevent), wrappedTeventTypeParameter);
+         var (wrappedTeventField, _) = wrapperTeventBuilder.ImplementProperty(nameof(IPublisherTypeIdentifyingTevent<ITaggregateTevent>.Tevent), wrappedTeventTypeParameter);
 
          wrapperTeventBuilder.ImplementConstructor(wrappedTeventField);
 

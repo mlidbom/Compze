@@ -209,7 +209,7 @@ public abstract class TeventMigrationTestBase : UniversalTestBase
       try
       {
          migratedHistory.Should()
-                        .BeStrictlyEquivalentTo(expected, config => config.Excluding(@tevent => @tevent.Id));
+                        .BeStrictlyEquivalentTo(expected, config => config.Excluding(tevent => tevent.Id));
       }
       catch(Exception)
       {

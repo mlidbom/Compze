@@ -5,12 +5,12 @@ namespace Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 
 static class WrapperTevent
 {
-   public static IWrapperTevent<ITevent> WrapTevent(ITevent theTevent) =>
+   public static IPublisherTypeIdentifyingTevent<ITevent> WrapTevent(ITevent theTevent) =>
       WrapperTeventImplementationGenerator.ConstructorFor(theTevent.GetType()).Invoke(theTevent);
 }
 
-public class WrapperTevent<TTeventInterface>(TTeventInterface @tevent) : IWrapperTevent<TTeventInterface>
+public class PublisherTypeIdentifyingTevent<TTeventInterface>(TTeventInterface tevent) : IPublisherTypeIdentifyingTevent<TTeventInterface>
    where TTeventInterface : ITevent
 {
-   public TTeventInterface Tevent { get; } = @tevent;
+   public TTeventInterface Tevent { get; } = tevent;
 }

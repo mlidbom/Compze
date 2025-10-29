@@ -10,7 +10,7 @@ public interface IMutableTeventDispatcher<in TTevent> : ITeventDispatcher<TTeven
    ITeventHandlerRegistrar<TTevent> Register();
 
    ///<summary>Returns true if this dispatcher has any handlers that would handle the given tevent.</summary>
-   bool Handles(TTevent @tevent);
+   bool Handles(TTevent tevent);
 
    static IMutableTeventDispatcher<TTevent> New() => new CallMatchingHandlersInRegistrationOrderTeventDispatcher<TTevent>();
 }

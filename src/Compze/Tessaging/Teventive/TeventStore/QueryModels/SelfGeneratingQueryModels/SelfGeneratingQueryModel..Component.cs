@@ -13,7 +13,7 @@ public abstract partial class SelfGeneratingQueryModel<TQueryModel,  TTaggregate
    {
       readonly IMutableTeventDispatcher<TComponentTevent> _teventAppliersTeventDispatcher = IMutableTeventDispatcher<TComponentTevent>.New();
 
-      void ApplyTevent(TComponentTevent @tevent) => _teventAppliersTeventDispatcher.Dispatch(@tevent);
+      void ApplyTevent(TComponentTevent tevent) => _teventAppliersTeventDispatcher.Dispatch(tevent);
 
       protected Component(TQueryModel queryModel)
          : this(

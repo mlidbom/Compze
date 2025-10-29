@@ -11,14 +11,15 @@ static class TeventDispatcherAsserter
    {
       readonly IMutableTeventDispatcher<TDispatcherRootTevent> _dispatcher = dispatcher;
 
-      public RouteAssertion<TDispatcherRootTevent> Tevent<TPublishedTevent>(TPublishedTevent @tevent) where TPublishedTevent : TDispatcherRootTevent => new(_dispatcher, @tevent);
+      public WrappedRouteAssertion<TDispatcherRootTevent> WrappedTevent<TPublishedTevent>(TPublishedTevent tevent) where TPublishedTevent : IPublisherTypeIdentifyingTevent<TDispatcherRootTevent> => new(_dispatcher, tevent);
+      public RouteAssertion<TDispatcherRootTevent> Tevent<TPublishedTevent>(TPublishedTevent tevent) where TPublishedTevent : TDispatcherRootTevent => new(_dispatcher, tevent);
    }
 
-   internal class RouteAssertion<TDispatcherRootTevent>(IMutableTeventDispatcher<TDispatcherRootTevent> dispatcher, TDispatcherRootTevent @tevent)
+   internal class RouteAssertion<TDispatcherRootTevent>(IMutableTeventDispatcher<TDispatcherRootTevent> dispatcher, TDispatcherRootTevent tevent)
       where TDispatcherRootTevent : class, ITevent
    {
       readonly IMutableTeventDispatcher<TDispatcherRootTevent> _dispatcher = dispatcher;
-      readonly TDispatcherRootTevent _tevent = @tevent;
+      readonly TDispatcherRootTevent _tevent = tevent;
 
       public void DispatchesTo<THandlerTevent>()
          where THandlerTevent : TDispatcherRootTevent
@@ -30,8 +31,18 @@ static class TeventDispatcherAsserter
          callCount.Should().Be(1, "Tessage was not dispatched to handler.");
       }
 
+      public void DispatchesToGeneric<THandlerTevent>()
+         where THandlerTevent : ITevent
+      {
+         var callCount = 0;
+         _dispatcher.Register().IgnoreAllUnhandled();
+         _dispatcher.Register().ForGenericTevent((THandlerTevent _) => callCount++);
+         _dispatcher.Dispatch(_tevent);
+         callCount.Should().Be(1, "Tessage was not dispatched to handler.");
+      }
+
       public void DispatchesToWrapped<THandlerTevent>()
-         where THandlerTevent : IWrapperTevent<TDispatcherRootTevent>
+         where THandlerTevent : IPublisherTypeIdentifyingTevent<TDispatcherRootTevent>
       {
          var callCount = 0;
          _dispatcher.Register().IgnoreAllUnhandled();
@@ -40,8 +51,75 @@ static class TeventDispatcherAsserter
          callCount.Should().Be(1, "Tessage was not dispatched to handler.");
       }
 
+      public void DispatchesToWrappedGeneric<THandlerTevent>()
+         where THandlerTevent : IPublisherTypeIdentifyingTevent<ITevent>
+      {
+         var callCount = 0;
+         _dispatcher.Register().IgnoreAllUnhandled();
+         _dispatcher.Register().ForWrappedGeneric((THandlerTevent _) => callCount++);
+         _dispatcher.Dispatch(_tevent);
+         callCount.Should().Be(1, "Tessage was not dispatched to handler.");
+      }
+
       public void DoesNotDispatchToWrapped<THandlerTevent>()
-         where THandlerTevent : IWrapperTevent<TDispatcherRootTevent>
+         where THandlerTevent : IPublisherTypeIdentifyingTevent<TDispatcherRootTevent>
+      {
+         var callCount = 0;
+         _dispatcher.Register().IgnoreAllUnhandled();
+         _dispatcher.Register().ForWrapped((THandlerTevent _) => callCount++);
+         _dispatcher.Dispatch(_tevent);
+         callCount.Should().Be(0, "Tessage was dispatched to handler.");
+      }
+   }
+
+   internal class WrappedRouteAssertion<TDispatcherRootTevent>(IMutableTeventDispatcher<TDispatcherRootTevent> dispatcher, IPublisherTypeIdentifyingTevent<TDispatcherRootTevent> tevent)
+      where TDispatcherRootTevent : class, ITevent
+   {
+      readonly IMutableTeventDispatcher<TDispatcherRootTevent> _dispatcher = dispatcher;
+      readonly IPublisherTypeIdentifyingTevent<TDispatcherRootTevent> _tevent = tevent;
+
+      public void DispatchesTo<THandlerTevent>()
+         where THandlerTevent : TDispatcherRootTevent
+      {
+         var callCount = 0;
+         _dispatcher.Register().IgnoreAllUnhandled();
+         _dispatcher.Register().For((THandlerTevent _) => callCount++);
+         _dispatcher.Dispatch(_tevent);
+         callCount.Should().Be(1, "Tessage was not dispatched to handler.");
+      }
+
+      public void DispatchesToGeneric<THandlerTevent>()
+         where THandlerTevent : ITevent
+      {
+         var callCount = 0;
+         _dispatcher.Register().IgnoreAllUnhandled();
+         _dispatcher.Register().ForGenericTevent((THandlerTevent _) => callCount++);
+         _dispatcher.Dispatch(_tevent);
+         callCount.Should().Be(1, "Tessage was not dispatched to handler.");
+      }
+
+      public void DispatchesToWrapped<THandlerTevent>()
+         where THandlerTevent : IPublisherTypeIdentifyingTevent<TDispatcherRootTevent>
+      {
+         var callCount = 0;
+         _dispatcher.Register().IgnoreAllUnhandled();
+         _dispatcher.Register().ForWrapped((THandlerTevent _) => callCount++);
+         _dispatcher.Dispatch(_tevent);
+         callCount.Should().Be(1, "Tessage was not dispatched to handler.");
+      }
+
+      public void DispatchesToWrappedGeneric<THandlerTevent>()
+         where THandlerTevent : IPublisherTypeIdentifyingTevent<ITevent>
+      {
+         var callCount = 0;
+         _dispatcher.Register().IgnoreAllUnhandled();
+         _dispatcher.Register().ForWrappedGeneric((THandlerTevent _) => callCount++);
+         _dispatcher.Dispatch(_tevent);
+         callCount.Should().Be(1, "Tessage was not dispatched to handler.");
+      }
+
+      public void DoesNotDispatchToWrapped<THandlerTevent>()
+         where THandlerTevent : IPublisherTypeIdentifyingTevent<TDispatcherRootTevent>
       {
          var callCount = 0;
          _dispatcher.Register().IgnoreAllUnhandled();

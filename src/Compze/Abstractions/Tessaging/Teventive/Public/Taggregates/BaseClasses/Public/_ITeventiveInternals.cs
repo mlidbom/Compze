@@ -9,6 +9,6 @@ public interface ITeventiveInternals<in TTevent, in TTeventImplementation>
     where TTevent : class, ITaggregateTevent
 {
     [Obsolete(ObsoleteMessage.ForInternalUseOnly)] void PublishInternal(TTeventImplementation theTevent);
-    [Obsolete(ObsoleteMessage.ForInternalUseOnly)] void ApplyTeventInternal(TTevent @tevent);
+    [Obsolete(ObsoleteMessage.ForInternalUseOnly)] void ApplyTeventInternal(TTevent tevent);
     [Obsolete(ObsoleteMessage.ForInternalUseOnly)] ITeventHandlerRegistrar<TTevent> RegisterTeventAppliersInternal();
 }

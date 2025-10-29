@@ -41,18 +41,18 @@ public abstract class TeventiveEntity<TParent,
            .For<TEntityCreatedTevent>(e => _id = IdGetterSetter.GetId(e));
     }
 
-    protected override void Publish(TEntityTeventImplementation @tevent)
+    protected override void Publish(TEntityTeventImplementation tevent)
     {
-        var id = IdGetterSetter.GetId(@tevent);
+        var id = IdGetterSetter.GetId(tevent);
         if(Equals(id, default(TEntityId)))
         {
-            IdGetterSetter.SetEntityId(@tevent, Id);
+            IdGetterSetter.SetEntityId(tevent, Id);
         } else if(!Equals(id, Id))
         {
             throw new Exception($"Attempted to raise tevent with EntityId: {id} from within entity with EntityId: {Id}");
         }
 
-        base.Publish(@tevent);
+        base.Publish(tevent);
     }
 
     // ReSharper disable once UnusedMember.Global todo: write tests.

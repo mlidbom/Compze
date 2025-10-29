@@ -4,29 +4,29 @@ namespace Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstract
 
 public class TeventDataRow
 {
-   public TeventDataRow(TaggregateTeventData @tevent, TaggregateTeventStorageInformation storageInformation, Guid teventType, string teventAsJson)
+   public TeventDataRow(TaggregateTeventData tevent, TaggregateTeventStorageInformation storageInformation, Guid teventType, string teventAsJson)
    {
       TeventJson = teventAsJson;
       TeventType = teventType;
 
-      TeventId = @tevent.TessageId;
-      TaggregateVersion = @tevent.TaggregateVersion;
-      TaggregateId = @tevent.TaggregateId;
-      UtcTimeStamp = @tevent.UtcTimeStamp;
+      TeventId = tevent.TessageId;
+      TaggregateVersion = tevent.TaggregateVersion;
+      TaggregateId = tevent.TaggregateId;
+      UtcTimeStamp = tevent.UtcTimeStamp;
 
       StorageInformation = storageInformation;
    }
 
    public TeventDataRow(TeventInsertionSpecification specification, Guid typeId, string teventAsJson)
    {
-      var @tevent = specification.Tevent;
+      var tevent = specification.Tevent;
       TeventJson = teventAsJson;
       TeventType = typeId;
 
-      TeventId = @tevent.TessageId;
-      TaggregateVersion = @tevent.TaggregateVersion;
-      TaggregateId = @tevent.TaggregateId;
-      UtcTimeStamp = @tevent.UtcTimeStamp;
+      TeventId = tevent.TessageId;
+      TaggregateVersion = tevent.TaggregateVersion;
+      TaggregateId = tevent.TaggregateId;
+      UtcTimeStamp = tevent.UtcTimeStamp;
 
       StorageInformation = new TaggregateTeventStorageInformation
                            {

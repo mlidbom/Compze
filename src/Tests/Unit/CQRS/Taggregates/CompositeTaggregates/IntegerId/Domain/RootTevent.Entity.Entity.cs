@@ -40,8 +40,8 @@ static partial class RootTevent
                [UsedImplicitly] public new class IdGetterSetter : Root, IGetSetTaggregateEntityTeventEntityId<int, Root, IRoot>
 #pragma warning restore CA1812
                {
-                  public void SetEntityId(Root @tevent, int id) => @tevent.NestedEntityId = id;
-                  public int GetId(IRoot @tevent) => @tevent.NestedEntityId;
+                  public void SetEntityId(Root tevent, int id) => tevent.NestedEntityId = id;
+                  public int GetId(IRoot tevent) => tevent.NestedEntityId;
                }
             }
 

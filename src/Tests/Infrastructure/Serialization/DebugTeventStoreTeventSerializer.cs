@@ -33,5 +33,5 @@ static class DebugTeventStoreTeventSerializer
          Error = (_, err) => err.ErrorContext.Handled = true
       };
 
-   public static string Serialize(object @tevent, Formatting formatting) => JsonConvert.SerializeObject(@tevent, formatting, JsonSettings);
+   public static string Serialize(object tevent, Formatting formatting) => JsonConvert.SerializeObject(tevent, formatting, JsonSettings);
 }

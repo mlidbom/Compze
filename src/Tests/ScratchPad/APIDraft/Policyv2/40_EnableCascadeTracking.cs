@@ -15,7 +15,7 @@ public class EnableCascadeTracking
                                                   //It also makes it possible to get an overview of the structure of a complete endpoint in one place.
                                                   Policy.Publishes<IAccountTevent>()),
 
-         TeventHandler.For<AccountCreatedTevent>("A5A1DF35-982C-4962-A7DA-C98AC88633C0",@tevent => {},
+         TeventHandler.For<AccountCreatedTevent>("A5A1DF35-982C-4962-A7DA-C98AC88633C0",tevent => {},
                                                //Being explicit about which tommands might be sent let's the bus reason about possible cascade effects easily and thus guarantee consistency for tueries.
                                                //It also makes it possible to get an overview of the structure of a complete endpoint in one place.
                                                Policy.Sends<SendAccountRegistrationWelcomeEmailTommand>()

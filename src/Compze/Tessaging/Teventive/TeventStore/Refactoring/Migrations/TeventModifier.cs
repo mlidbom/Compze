@@ -74,7 +74,7 @@ class TeventModifier(Action<IReadOnlyList<TeventModifier.RefactoredTevent>> teve
 
       }
 
-      _replacementTevents = replacementTevents.Select(@tevent => new RefactoredTevent(@tevent, new TaggregateTeventStorageInformation())).ToArray();
+      _replacementTevents = replacementTevents.Select(tevent => new RefactoredTevent(tevent, new TaggregateTeventStorageInformation())).ToArray();
 
       _replacementTevents.ForEach(
          (e, index) =>
@@ -122,7 +122,7 @@ class TeventModifier(Action<IReadOnlyList<TeventModifier.RefactoredTevent>> teve
    {
       AssertNoPriorModificationsHaveBeenMade();
 
-      _insertedTevents = insert.Select(@tevent => new RefactoredTevent(@tevent, new TaggregateTeventStorageInformation())).ToArray();
+      _insertedTevents = insert.Select(tevent => new RefactoredTevent(tevent, new TaggregateTeventStorageInformation())).ToArray();
 
 #pragma warning disable CS0618 // Type or member is obsolete
         if (_inspectedTevent is EndOfTaggregateHistoryTeventPlaceHolder)
@@ -153,7 +153,7 @@ class TeventModifier(Action<IReadOnlyList<TeventModifier.RefactoredTevent>> teve
                ((IMutableTaggregateTevent)e.NewTevent).SetUtcTimeStampInternal(_inspectedTevent.UtcTimeStamp);
             });
       }
-      CurrentNode.ValuesFrom().ForEach((@tevent, _) => ((IMutableTaggregateTevent)@tevent).SetTaggregateVersionInternal(@tevent.TaggregateVersion + _insertedTevents.Length));
+      CurrentNode.ValuesFrom().ForEach((tevent, _) => ((IMutableTaggregateTevent)tevent).SetTaggregateVersionInternal(tevent.TaggregateVersion + _insertedTevents.Length));
 
       CurrentNode.AddBefore(insert);
       _teventsAddedCallback.Invoke(_insertedTevents);

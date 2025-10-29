@@ -32,7 +32,7 @@ public partial class SelfGeneratingQueryModel<TQueryModel, TTaggregateTevent> : 
       _teventDispatcher.Dispatch(theTevent);
    }
 
-   public bool HandlesTevent(TTaggregateTevent @tevent) => _teventDispatcher.Handles(@tevent);
+   public bool HandlesTevent(TTaggregateTevent tevent) => _teventDispatcher.Handles(tevent);
 
    public void LoadFromHistory(IEnumerable<ITaggregateTevent> history)
    {

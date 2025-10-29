@@ -3,7 +3,15 @@ using Compze.Core.Tessaging.Public;
 
 namespace Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 
-public interface ITaggregateWrapperTevent<out TTeventInterface> : IExactlyOnceWrapperTevent<TTeventInterface>
+///<summary>
+/// When different aggregates publish events of the same type it is impossible to distinguish the publisher by that event's type alone.
+/// To ensure that the type of the published event, as a whole, is always a unique type, each taggregate automatically wraps their events
+/// in events of this type.
+///
+/// * For example when taggregates inherit each other, or uses a reusable ** tomponent or tentity.
+/// ** Not exclusive to this taggregate
+/// </summary>
+public interface ITaggregateTypeIdentifyingTevent<out TTeventInterface> : IExactlyOncePublisherTypeIdentifyingTevent<TTeventInterface>
    where TTeventInterface : ITaggregateTevent;
 
 public interface ITaggregateTevent : IExactlyOnceTevent

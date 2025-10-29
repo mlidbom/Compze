@@ -24,12 +24,12 @@ public abstract class TeventiveComponent<TParent,
     TParent _parent;
 
 #pragma warning disable CA1033 //These method should NOT clutter the public interface of this class they are unsafe.
-    void ITeventiveInternals<TComponentTevent, TComponentTeventImplementation>.ApplyTeventInternal(TComponentTevent @tevent) => ApplyTevent(@tevent);
-    void ITeventiveInternals<TComponentTevent, TComponentTeventImplementation>.PublishInternal(TComponentTeventImplementation @tevent) => Publish(@tevent);
+    void ITeventiveInternals<TComponentTevent, TComponentTeventImplementation>.ApplyTeventInternal(TComponentTevent tevent) => ApplyTevent(tevent);
+    void ITeventiveInternals<TComponentTevent, TComponentTeventImplementation>.PublishInternal(TComponentTeventImplementation tevent) => Publish(tevent);
     ITeventHandlerRegistrar<TComponentTevent> ITeventiveInternals<TComponentTevent, TComponentTeventImplementation>.RegisterTeventAppliersInternal() => RegisterTeventAppliers();
 #pragma warning restore CA1033 //These method should NOT clutter the public interface of this class they are unsafe.
 
-   void ApplyTevent(TComponentTevent @tevent) => _teventAppliersTeventDispatcher.Dispatch(@tevent);
+   void ApplyTevent(TComponentTevent tevent) => _teventAppliersTeventDispatcher.Dispatch(tevent);
 
     protected TeventiveComponent(TParent parent, bool registerTeventAppliers = true)
     {
@@ -44,7 +44,7 @@ public abstract class TeventiveComponent<TParent,
     }
 
 #pragma warning disable CS0618 // This is just the type of infrastructure code the method is for
-    protected virtual void Publish(TComponentTeventImplementation @tevent) => _parent.PublishInternal(@tevent);
+    protected virtual void Publish(TComponentTeventImplementation tevent) => _parent.PublishInternal(tevent);
 #pragma warning restore CS0618
 
     public abstract class Component<TEcComponent,

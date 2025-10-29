@@ -31,12 +31,11 @@ partial class CallMatchingHandlersInRegistrationOrderTeventDispatcher<TTevent> :
    public ITeventHandlerRegistrar<TTevent> Register() => new RegistrationBuilder(this);
 
 
-   public void Dispatch(TTevent evt)
-   {
-      //Urgent: Wrapping here seems arguable at best.
-      var wrapped = evt as IWrapperTevent<ITevent>
-                 ?? WrapperTevent.WrapTevent(evt);
+   //Urgent: Wrapping here seems arguable at best.
+   public void Dispatch(TTevent evt) => Dispatch((IPublisherTypeIdentifyingTevent<TTevent>)WrapperTevent.WrapTevent(evt));
 
+   public void Dispatch(IPublisherTypeIdentifyingTevent<TTevent> wrapped)
+   {
       var handlers = GetHandlers(wrapped.GetType());
       for(var i = 0; i < handlers.Length; i++)
       {
@@ -44,7 +43,7 @@ partial class CallMatchingHandlersInRegistrationOrderTeventDispatcher<TTevent> :
       }
    }
 
-   public bool Handles(TTevent @tevent) => GetHandlers(@tevent.GetType(), validateHandlerExists: false).Any();
+   public bool Handles(TTevent tevent) => GetHandlers(tevent.GetType(), validateHandlerExists: false).Any();
 
    Action<ITevent>[] GetHandlers(Type type, bool validateHandlerExists = true)
    {

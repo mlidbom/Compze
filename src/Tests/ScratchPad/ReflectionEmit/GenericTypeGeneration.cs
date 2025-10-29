@@ -15,7 +15,7 @@ using FluentAssertions;
 
 namespace Compze.Tests.ScratchPad.ReflectionEmit;
 
-public interface IUserWrapperTevent<out TWrappedUserTevent> : IWrapperTevent<TWrappedUserTevent>
+public interface IUserPublisherTypeIdentifyingTevent<out TWrappedUserTevent> : IPublisherTypeIdentifyingTevent<TWrappedUserTevent>
    where TWrappedUserTevent : IUserTevent;
 
 public interface IUserTevent : ITevent;
@@ -26,12 +26,12 @@ public class Example
 {
    [XF] public void BuildWrapperTeventType()
    {
-      var genericWrapperTeventType = CreateGenericWrapperTeventType(typeof(IUserWrapperTevent<>));
+      var genericWrapperTeventType = CreateGenericWrapperTeventType(typeof(IUserPublisherTypeIdentifyingTevent<>));
 
       //instantiate a concrete version.
       var wrapperTeventIUserTevent = genericWrapperTeventType.MakeGenericType(typeof(IUserTevent));
 
-      var constructor = (Func<IUserTevent, IUserWrapperTevent<IUserTevent>>)Constructor.Compile.ForType(wrapperTeventIUserTevent).WithArguments<IUserTevent>();
+      var constructor = (Func<IUserTevent, IUserPublisherTypeIdentifyingTevent<IUserTevent>>)Constructor.Compile.ForType(wrapperTeventIUserTevent).WithArguments<IUserTevent>();
 
       var userTevent = new UserTevent();
       var instance = constructor(userTevent);
@@ -57,8 +57,8 @@ public class Example
          }
 
          if(!wrapperTeventType.IsInterface) throw new ArgumentException("Must be an interface", $"{nameof(wrapperTeventType)}");
-         if(wrapperTeventType.GetInterfaces().All(iface => iface != typeof(IWrapperTevent<>).MakeGenericType(wrapperTeventType.GetGenericArguments()[0])))
-            throw new ArgumentException($"Must implement {typeof(IWrapperTevent<>).FullName}", $"{nameof(wrapperTeventType)}");
+         if(wrapperTeventType.GetInterfaces().All(iface => iface != typeof(IPublisherTypeIdentifyingTevent<>).MakeGenericType(wrapperTeventType.GetGenericArguments()[0])))
+            throw new ArgumentException($"Must implement {typeof(IPublisherTypeIdentifyingTevent<>).FullName}", $"{nameof(wrapperTeventType)}");
 
          var wrappedTeventType = wrapperTeventType.GetGenericArguments()[0];
 
@@ -76,7 +76,7 @@ public class Example
 
             wrappedTeventTypeParameter.SetInterfaceConstraints(requiredTeventInterface);
 
-            var (wrappedTeventField, _) = wrapperTeventBuilder.ImplementProperty(nameof(IWrapperTevent<ITaggregateTevent>.Tevent), wrappedTeventTypeParameter);
+            var (wrappedTeventField, _) = wrapperTeventBuilder.ImplementProperty(nameof(IPublisherTypeIdentifyingTevent<ITaggregateTevent>.Tevent), wrappedTeventTypeParameter);
 
             wrapperTeventBuilder.ImplementConstructor(wrappedTeventField);
 

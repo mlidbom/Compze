@@ -13,7 +13,7 @@ public class BasicHandlerRegistration
          TommandHandler.For<CreateAccountTommand>("17893552-D533-4A59-A177-63EAF3B7B07E", tommand => {}),
 
          //Tevent handlers
-         TeventHandler.For<AccountCreatedTevent>("2E8642CA-6C60-4B91-A92E-54AD3753E7F2", @tevent => {})
+         TeventHandler.For<AccountCreatedTevent>("2E8642CA-6C60-4B91-A92E-54AD3753E7F2", tevent => {})
       );
    }
 }

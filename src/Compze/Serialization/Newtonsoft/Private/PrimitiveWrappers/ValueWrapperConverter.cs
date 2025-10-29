@@ -24,8 +24,8 @@ public class ValueWrapperConverter : JsonConverter
    readonly ConcurrentDictionary<Type, bool> _handlesType = new();
    readonly ConcurrentDictionary<Type, LazyCE<WrappedTypeHelpers>> _wrappedTypeHelpers = new();
 
-   public override bool CanConvert(Type serializedType) =>
-      _handlesType.GetOrAdd(serializedType,
+   public override bool CanConvert(Type objectType) =>
+      _handlesType.GetOrAdd(objectType,
                             potentialWrapperType =>
                                !potentialWrapperType.IsAbstract &&
                                potentialWrapperType.InHerits(typeof(ValueWrapper<>)));
@@ -42,21 +42,21 @@ public class ValueWrapperConverter : JsonConverter
    }
 
    public override object? ReadJson(JsonReader reader,
-                                    Type typeToRead,
+                                    Type objectType,
                                     object? existingValue,
                                     JsonSerializer serializer)
    {
       if(reader.TokenType == JsonToken.Null)
          return null;
 
-      var helpers = _wrappedTypeHelpers.GetOrAdd(typeToRead,
+      var helpers = _wrappedTypeHelpers.GetOrAdd(objectType,
                                                  wrapperType =>
                                                  {
                                                     return new LazyCE<WrappedTypeHelpers>(() =>
                                                     {
                                                        var wrappedPrimitiveType = wrapperType.GetGenericBaseClass(typeof(ValueWrapper<>))
                                                                                              .GetGenericArguments()[0];
-                                                       var constructor = Constructor.Compile.ForType(typeToRead)
+                                                       var constructor = Constructor.Compile.ForType(objectType)
                                                                                             .WithArgument(wrappedPrimitiveType);
 
                                                        return new WrappedTypeHelpers(wrappedPrimitiveType, constructor);

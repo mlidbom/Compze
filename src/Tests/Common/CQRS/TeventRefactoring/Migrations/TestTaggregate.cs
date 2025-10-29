@@ -49,9 +49,9 @@ namespace Compze.Tests.Common.CQRS.TeventRefactoring.Migrations
 #pragma warning restore 618
             }
 
-            foreach (var @tevent in tevents)
+            foreach (var tevent in tevents)
             {
-                base.Publish(@tevent);
+                base.Publish(tevent);
             }
         }
 

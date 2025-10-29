@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -46,6 +48,15 @@ public static partial class Constructor
       {
          internal static readonly Func<TArgument1, TInstance> Instance = Compile.ForType<TInstance>().WithArguments<TArgument1>();
       }
+   }
+
+   internal static class ForGenericType<TGenericType>
+   {
+      // ReSharper disable once StaticMemberInGenericType
+      static readonly ConcurrentDictionary<Type, Func<object, object>> Cache = new();
+
+      internal static Func<object, object> WithArgument(Type argumentType) =>
+         Cache.GetOrAdd(argumentType, _ => Compile.ForGenericType<TGenericType>().WithArgument(argumentType));
    }
 
    internal static bool HasDefaultConstructor(Type type) => type.GetConstructor(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, Type.EmptyTypes, null) != null;

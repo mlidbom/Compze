@@ -102,12 +102,12 @@ class TeventCache : IDisposable, ITeventCache
       {
          if(InsertedVersionToTaggregateVersionOffset > 0)
          {
-            return new TeventInsertionSpecification(@tevent: tevent.ToTaggregateTeventData(),
+            return new TeventInsertionSpecification(tevent: tevent.ToTaggregateTeventData(),
                                                    insertedVersion: tevent.TaggregateVersion + InsertedVersionToTaggregateVersionOffset,
                                                    effectiveVersion:tevent.TaggregateVersion);
          } else
          {
-            return new TeventInsertionSpecification(@tevent:tevent.ToTaggregateTeventData());
+            return new TeventInsertionSpecification(tevent:tevent.ToTaggregateTeventData());
          }
       }
    }

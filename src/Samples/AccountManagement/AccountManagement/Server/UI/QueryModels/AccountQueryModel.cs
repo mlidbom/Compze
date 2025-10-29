@@ -21,8 +21,8 @@ class AccountQueryModel : SelfGeneratingQueryModel<AccountQueryModel, AccountTev
    AccountQueryModel(IEnumerable<AccountTevent.Root> tevents)
    {
       RegisterTeventAppliers()
-        .For<AccountTevent.PropertyUpdated.Email>(@tevent => Email = @tevent.Email)
-        .For<AccountTevent.PropertyUpdated.Password>(@tevent => Password = @tevent.Password)
+        .For<AccountTevent.PropertyUpdated.Email>(tevent => Email = tevent.Email)
+        .For<AccountTevent.PropertyUpdated.Password>(tevent => Password = tevent.Password)
         .IgnoreUnhandled<AccountTevent.LoginAttempted>();
 
       LoadFromHistory(tevents);
