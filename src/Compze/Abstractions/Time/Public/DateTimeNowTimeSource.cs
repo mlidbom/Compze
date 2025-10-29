@@ -3,7 +3,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE;
+using Compze.Utilities.SystemCE.ActionFuncHarmonization;
+using Compze.Utilities.Threading;
+using Compze.Utilities.Threading.TasksCE;
 
 namespace Compze.Core.Time.Public;
 
@@ -26,7 +30,6 @@ static class TimeSourceRegistrar
    }
 }
 
-
 public static class UtcTimeSource
 {
    static readonly IUtcTimeTimeSource TimeSource = DateTimeNowTimeSource.Instance;
@@ -35,33 +38,23 @@ public static class UtcTimeSource
 
    static readonly ThreadLocal<IUtcTimeTimeSource?> Override = new();
 
+   public static unit WithOverride<TResult>(IUtcTimeTimeSource theOverride, Action action) =>
+      WithOverride(theOverride, action.AsUnitFunc());
 
-   public static TResult WithOverride<TResult>(IUtcTimeTimeSource theOverride, Func<TResult> action)
-   {
-      using(ScopedChange.Enter(() => Override.Value = theOverride, () => Override.Value = null))
-      {
-         return action();
-      }
-   }
+   public static TResult WithOverride<TResult>(IUtcTimeTimeSource theOverride, Func<TResult> action) =>
+      WithOverrideAsync(theOverride, action.AsAsync()).Result;
+
+   public static async Task<unit> WithOverrideAsync(IUtcTimeTimeSource theOverride, Func<Task> action) =>
+      await WithOverrideAsync(theOverride, action.AsUnitFunc());
 
    public static async Task<TResult> WithOverrideAsync<TResult>(IUtcTimeTimeSource theOverride, Func<Task<TResult>> action)
    {
-      using(ScopedChange.Enter(() => Override.Value = theOverride, () => Override.Value = null))
+      var current = Override.Value;
+      using(ScopedChange.Enter(() => Override.Value = theOverride, () => Override.Value = current))
       {
-         return await action();
+         return await action().caf();
       }
    }
-
-
-   public static async Task WithOverrideAsync(IUtcTimeTimeSource theOverride, Func<Task> action)
-   {
-      using(ScopedChange.Enter(() => Override.Value = theOverride, () => Override.Value = null))
-      {
-         await action();
-      }
-   }
-
-
 }
 
 ///<summary>Simply returns DateTime.Now or DateTime.UtcNow</summary>
@@ -70,6 +63,7 @@ public class DateTimeNowTimeSource : IUtcTimeTimeSource
    public static IComponentRegistrar RegisterWith(IComponentRegistrar register)
       => register.Register(Singleton.For<IUtcTimeTimeSource>()
                                     .CreatedBy(() => new DateTimeNowTimeSource()));
+
    ///<summary>Returns an instance.</summary>
    public static readonly DateTimeNowTimeSource Instance = new();
 
