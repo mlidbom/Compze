@@ -26,7 +26,12 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
 
     static Taggregate() => TaggregateTypeValidator<TTaggregate, TTaggregateTeventImplementation, TTaggregateTevent>.AssertStaticStructureIsValid();
 
-    static Func<TTaggregateTevent, TWrapperTeventImplementation> WrapperConstructor = Constructor.For<TWrapperTeventImplementation>.WithArguments<TTaggregateTevent>.Instance;
+    static TWrapperTeventInterface WrapperConstructor(TTaggregateTevent @event)
+    {
+       var constructor = Constructor.Compile.ForGenericType<TWrapperTeventImplementation>().WithArgument(@event.GetType());
+       var created = constructor(@event);
+       return (TWrapperTeventInterface)created;
+    }
 
     //Yes Guid.Empty. Id should be assigned by an action, and it should be obvious that the taggregate in invalid until that happens
     protected Taggregate(IUtcTimeTimeSource timeSource) : base(Guid.Empty)
@@ -99,7 +104,7 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
             }
 
             Version = theTevent.TaggregateVersion;
-            _teventAppliersDispatcher.Dispatch(theTevent);
+            _teventAppliersDispatcher.Dispatch(WrapperConstructor(theTevent));
         }
     }
 

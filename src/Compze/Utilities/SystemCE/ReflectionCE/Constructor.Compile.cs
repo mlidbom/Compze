@@ -12,6 +12,30 @@ public static partial class Constructor
    {
       internal static CompilerBuilder<TTypeToConstruct> ForType<TTypeToConstruct>() => new();
       internal static CompilerBuilder<object> ForType(Type typeToConstruct) => new(typeToConstruct);
+      internal static GenericCompilerBuilder<TGenericType> ForGenericType<TGenericType>() => new();
+
+      internal class GenericCompilerBuilder<TGenericType>
+      {
+         internal Func<object, object> WithArgument(Type argumentType)
+         {
+            var genericTypeDefinition = typeof(TGenericType).GetGenericTypeDefinition();
+            var constructedType = genericTypeDefinition.MakeGenericType(argumentType);
+            
+            var constructor = constructedType.GetConstructor(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance, binder: null, types: [argumentType], modifiers: null);
+            if(constructor == null)
+            {
+               throw new Exception($"Expected to find a constructor with the signature: [private|protected|public] {constructedType.GetFullNameCompilable()}({argumentType.FullNameNotNull()})");
+            }
+
+            var parameter = Expression.Parameter(typeof(object), "arg");
+            var parameterCastToCorrectType = Expression.Convert(parameter, argumentType);
+            var constructorCall = Expression.New(constructor, parameterCastToCorrectType);
+            var castReturnValueToObject = Expression.Convert(constructorCall, typeof(object));
+            var lambda = Expression.Lambda<Func<object, object>>(castReturnValueToObject, parameter);
+
+            return lambda.Compile();
+         }
+      }
 
       internal class CompilerBuilder<TInstance>
       {
