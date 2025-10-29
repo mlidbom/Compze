@@ -72,7 +72,7 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
          ApplyTevent(theTevent);
          _unCommittedTevents.Add(theTevent);
          _teventsPublishedDuringCurrentPublishCallIncludingReentrantCallsFromTeventHandlers.Add(theTevent);
-         _teventHandlersDispatcher.Dispatch(theTevent);
+         _teventHandlersDispatcher.Dispatch(WrapEvent(theTevent));
       }
 
       if(_reentrancyLevel == 0)
