@@ -11,7 +11,10 @@ namespace Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 /// ** Not exclusive to that taggregate
 /// </summary>
 public interface ITaggregateTypeIdentifyingTevent<out TTeventInterface> : IExactlyOncePublisherTypeIdentifyingTevent<TTeventInterface>
-   where TTeventInterface : ITaggregateTevent;
+   where TTeventInterface : ITaggregateTevent
+{
+
+}
 
 public interface ITaggregateTevent : IExactlyOnceTevent
 {

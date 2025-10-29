@@ -32,7 +32,7 @@ partial class CallMatchingHandlersInRegistrationOrderTeventDispatcher<TTevent> :
 
 
    //Urgent: Wrapping here seems arguable at best.
-   public void Dispatch(TTevent evt) => Dispatch((IPublisherTypeIdentifyingTevent<TTevent>)WrapperTevent.WrapTevent(evt));
+   public void Dispatch(TTevent evt) => Dispatch((IPublisherTypeIdentifyingTevent<TTevent>)PublisherTypeIdentifyingTevent.WrapTevent(evt));
 
    public void Dispatch(IPublisherTypeIdentifyingTevent<TTevent> wrapped)
    {
