@@ -9,23 +9,10 @@ using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.ReactiveCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
-using JetBrains.Annotations;
 
 namespace Compze.Core.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public;
 
-//Urgent:[Obsolete("Only here to let things compile while inheritors migrate to the version with 5 type parameters")]. Really? If you don't intend to inherit from the Taggregate, what good is it to set the last two type parameters to anything else?
-public class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeventImplementation> : Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeventImplementation, ITaggregateWrapperTevent<TTaggregateTevent>, TaggregateWrapperTevent<TTaggregateTevent>>
-    where TTaggregate : Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeventImplementation>
-    where TTaggregateTevent : class, ITaggregateTevent
-    where TTaggregateTeventImplementation : TaggregateTevent, TTaggregateTevent
-{
-    [Obsolete("Only for infrastructure", true)]
-    protected Taggregate() : this(DateTimeNowTimeSource.Instance) {}
-
-    protected Taggregate(IUtcTimeTimeSource timeSource) : base(timeSource) {}
-}
-
-public class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeventImplementation, TWrapperTeventInterface, TWrapperTeventImplementation> :
+public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeventImplementation, TWrapperTeventInterface, TWrapperTeventImplementation> :
     VersionedPersistentEntity<TTaggregate>,
     ITaggregate<TTaggregateTevent>,
     ITeventiveInternals<TTaggregateTevent, TTaggregateTeventImplementation>
@@ -142,39 +129,4 @@ public class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeventImpleme
         AssertInvariantsAreMet();
     }
 #pragma warning restore CA1033
-
-    public abstract class Component<TComponent, TComponentTeventImplementation, TComponentTevent>
-        : TeventiveComponent<TTaggregate, TTaggregateTevent, TTaggregateTeventImplementation, TComponent, TComponentTevent, TComponentTeventImplementation>
-        where TComponentTevent : class, TTaggregateTevent
-        where TComponentTeventImplementation : TTaggregateTeventImplementation, TComponentTevent
-        where TComponent : Component<TComponent, TComponentTeventImplementation, TComponentTevent>
-    {
-        protected Component(TTaggregate parent) : base(parent) {}
-    }
-
-    [UsedImplicitly(ImplicitUseKindFlags.InstantiatedWithFixedConstructorSignature)]
-    public abstract class Entity<TEntity, TEntityId, TEntityTeventImplementation, TEntityTevent, TEntityCreatedTevent, TEntityTeventIdGetterSetter>
-        : TeventiveEntity<TTaggregate, TTaggregateTevent, TTaggregateTeventImplementation, TEntity, TEntityId, TEntityTeventImplementation, TEntityTevent, TEntityCreatedTevent, TEntityTeventIdGetterSetter>
-        where TEntityId : struct
-        where TEntityTevent : class, TTaggregateTevent
-        where TEntityTeventImplementation : TTaggregateTeventImplementation, TEntityTevent
-        where TEntityCreatedTevent : TEntityTevent
-        where TEntity : Entity<TEntity, TEntityId, TEntityTeventImplementation, TEntityTevent, TEntityCreatedTevent, TEntityTeventIdGetterSetter>
-        where TEntityTeventIdGetterSetter : IGetSetTaggregateEntityTeventEntityId<TEntityId, TEntityTeventImplementation, TEntityTevent>
-    {
-        protected Entity(TTaggregate taggregate) : base(taggregate) {}
-    }
-
-    public abstract class RemovableEntity<TEntity, TEntityId, TEntityTeventImplementation, TEntityTevent, TEntityCreatedTevent, TEntityRemovedTevent, TEntityTeventIdGetterSetter>
-        : TeventiveRemovableEntity<TTaggregate, TTaggregateTevent, TTaggregateTeventImplementation, TEntity, TEntityId, TEntityTevent, TEntityTeventImplementation, TEntityCreatedTevent, TEntityRemovedTevent, TEntityTeventIdGetterSetter>
-        where TEntityId : struct
-        where TEntityTevent : class, TTaggregateTevent
-        where TEntityTeventImplementation : TTaggregateTeventImplementation, TEntityTevent
-        where TEntityCreatedTevent : TEntityTevent
-        where TEntityRemovedTevent : TEntityTevent
-        where TEntity : RemovableEntity<TEntity, TEntityId, TEntityTeventImplementation, TEntityTevent, TEntityCreatedTevent, TEntityRemovedTevent, TEntityTeventIdGetterSetter>
-        where TEntityTeventIdGetterSetter : IGetSetTaggregateEntityTeventEntityId<TEntityId, TEntityTeventImplementation, TEntityTevent>
-    {
-        protected RemovableEntity(TTaggregate taggregate) : base(taggregate) {}
-    }
 }
