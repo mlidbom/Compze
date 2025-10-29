@@ -1,6 +1,10 @@
+using Compze.Core.Tessaging.Public;
+
 namespace Compze.Core.Tessaging.Teventive.Public;
 
 public interface ITeventDispatcher<in TTevent>
+   where TTevent : ITevent
 {
    void Dispatch(TTevent evt);
+   void Dispatch(IWrapperTevent<TTevent> evt);
 }

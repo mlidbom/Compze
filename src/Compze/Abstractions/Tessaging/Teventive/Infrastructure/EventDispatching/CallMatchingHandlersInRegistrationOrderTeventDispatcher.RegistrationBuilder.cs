@@ -23,14 +23,6 @@ partial class CallMatchingHandlersInRegistrationOrderTeventDispatcher<TTevent> w
       ///<summary>Registers a for any tevent that implements THandledTevent. All matching handlers will be called in the order they were registered.</summary>
       RegistrationBuilder For<THandledTevent>(Action<THandledTevent> handler) where THandledTevent : TTevent => ForGenericTevent(handler);
 
-      RegistrationBuilder ForWrapped<TWrapperTevent>(Action<TWrapperTevent> handler) where TWrapperTevent : IWrapperTevent<TTevent>
-      {
-         TessageTypeInspector.AssertValidForSubscription(typeof(TWrapperTevent));
-         _owner._handlers.Add(new RegisteredWrappedHandler<TWrapperTevent>(handler));
-         _owner._totalHandlers++;
-         return this;
-      }
-
       ///<summary>Lets you register handlers for tevent interfaces that may be defined outside of the tevent hierarchy you specify with TTevent.
       /// Useful for listening to generic tevents such as ITaggregateCreatedTevent or ITaggregateDeletedTevent
       /// Be aware that the concrete tevent received MUST still actually inherit TTevent or there will be an InvalidCastException
@@ -40,6 +32,22 @@ partial class CallMatchingHandlersInRegistrationOrderTeventDispatcher<TTevent> w
          TessageTypeInspector.AssertValidForSubscription(typeof(THandledTevent));
          if(typeof(THandledTevent).Is<IWrapperTevent<ITevent>>()) throw new Exception($"Handlers of type {typeof(IWrapperTevent<>).Name} must be registered through the {nameof(ForWrapped)} method.");
          _owner._handlers.Add(new RegisteredHandler<THandledTevent>(handler));
+         _owner._totalHandlers++;
+         return this;
+      }
+
+      RegistrationBuilder ForWrappedGeneric<TWrapperTevent>(Action<TWrapperTevent> handler) where TWrapperTevent : IWrapperTevent<ITevent>
+      {
+         TessageTypeInspector.AssertValidForSubscription(typeof(TWrapperTevent));
+         _owner._handlers.Add(new RegisteredWrappedHandler<TWrapperTevent>(handler));
+         _owner._totalHandlers++;
+         return this;
+      }
+
+      RegistrationBuilder ForWrapped<TWrapperTevent>(Action<TWrapperTevent> handler) where TWrapperTevent : IWrapperTevent<TTevent>
+      {
+         TessageTypeInspector.AssertValidForSubscription(typeof(TWrapperTevent));
+         _owner._handlers.Add(new RegisteredWrappedHandler<TWrapperTevent>(handler));
          _owner._totalHandlers++;
          return this;
       }
@@ -73,5 +81,6 @@ partial class CallMatchingHandlersInRegistrationOrderTeventDispatcher<TTevent> w
       ITeventHandlerRegistrar<TTevent> ITeventHandlerRegistrar<TTevent>.IgnoreUnhandled<THandledTevent>() => IgnoreUnhandled<THandledTevent>();
       ITeventHandlerRegistrar<TTevent> ITeventHandlerRegistrar<TTevent>.For<THandledTevent>(Action<THandledTevent> handler) => For(handler);
       ITeventHandlerRegistrar<TTevent> ITeventHandlerRegistrar<TTevent>.ForWrapped<TWrapperTevent>(Action<TWrapperTevent> handler) => ForWrapped(handler);
+      ITeventHandlerRegistrar<TTevent> ITeventHandlerRegistrar<TTevent>.ForWrappedGeneric<TWrapperTevent>(Action<TWrapperTevent> handler) => ForWrappedGeneric(handler);
    }
 }

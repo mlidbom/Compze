@@ -41,6 +41,15 @@ partial class CallMatchingHandlersInRegistrationOrderTeventDispatcher<TTevent> :
       }
    }
 
+   public void Dispatch(IWrapperTevent<TTevent> wrapped)
+   {
+      var handlers = GetHandlers(wrapped.GetType());
+      for(var i = 0; i < handlers.Length; i++)
+      {
+         handlers[i](wrapped);
+      }
+   }
+
    public void Dispatch(TTevent evt)
    {
       //Urgent: Wrapping here seems arguable at best.

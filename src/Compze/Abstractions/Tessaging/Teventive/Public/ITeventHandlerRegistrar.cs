@@ -12,6 +12,9 @@ public interface ITeventHandlerRegistrar<in TTevent>
    ITeventHandlerRegistrar<TTevent> ForWrapped<TWrapperTevent>(Action<TWrapperTevent> handler)
       where TWrapperTevent : IWrapperTevent<TTevent>;
 
+   ITeventHandlerRegistrar<TTevent> ForWrappedGeneric<TWrapperTevent>(Action<TWrapperTevent> handler)
+      where TWrapperTevent : IWrapperTevent<ITevent>;
+
    ///<summary>Lets you register handlers for tevent interfaces that may be defined outside of the tevent hierarchy you specify with TTevent.
    /// Useful for listening to generic tevents such as ITaggregateCreatedTevent or ITaggregateDeletedTevent
    /// Be aware that the concrete tevent received MUST still actually inherit TTevent or there will be an InvalidCastException
