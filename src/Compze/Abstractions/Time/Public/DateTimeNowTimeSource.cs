@@ -31,12 +31,12 @@ public static class UtcTimeSource
 {
    static readonly IUtcTimeTimeSource TimeSource = DateTimeNowTimeSource.Instance;
 
-   public static DateTime UtcNow => Override?.Value?.Invoke() ?? TimeSource.UtcNow;
+   public static DateTime UtcNow => Override?.Value?.UtcNow ?? TimeSource.UtcNow;
 
-   static readonly ThreadLocal<Func<DateTime>?> Override = new();
+   static readonly ThreadLocal<IUtcTimeTimeSource?> Override = new();
 
 
-   public static TResult WithOverride<TResult>(Func<DateTime> theOverride, Func<TResult> action)
+   public static TResult WithOverride<TResult>(IUtcTimeTimeSource theOverride, Func<TResult> action)
    {
       using(ScopedChange.Enter(() => Override.Value = theOverride, () => Override.Value = null))
       {
@@ -44,7 +44,7 @@ public static class UtcTimeSource
       }
    }
 
-   public static async Task<TResult> WithOverrideAsync<TResult>(Func<DateTime> theOverride, Func<Task<TResult>> action)
+   public static async Task<TResult> WithOverrideAsync<TResult>(IUtcTimeTimeSource theOverride, Func<Task<TResult>> action)
    {
       using(ScopedChange.Enter(() => Override.Value = theOverride, () => Override.Value = null))
       {
