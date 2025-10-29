@@ -68,11 +68,11 @@ public interface IExactlyOnceTevent : IRemotableTevent, IExactlyOnceTessage;
 public interface IExactlyOnceTommand : IRemotableTommand, IExactlyOnceTessage;
 
 ///<summary>
-/// When different types publish events of the same type it is impossible to distinguish the publisher by that event's type alone.
-/// To ensure that the type of the published event, as a whole, is always a unique type, each publishing type wraps their events
-/// in events of this type.
+/// When different types publish tevents of the same type it is impossible to distinguish the publisher by that tevent alone.
+/// To ensure any tevent can be subscribed to each teventive wraps their tevents in tevents of this type.
 ///
-/// * For example when taggregates inherit each other, or uses a reusable teventive component or entity.
+/// * For example when taggregates inherit each other, or uses a reusable** tomponent or tentity.
+/// ** Not exclusive to that taggregate
 /// </summary>
 public interface IPublisherTypeIdentifyingTevent<out TTevent> : ITevent //Todo: IWrapperTevent name is not great...
    where TTevent : ITevent
@@ -81,11 +81,11 @@ public interface IPublisherTypeIdentifyingTevent<out TTevent> : ITevent //Todo: 
 }
 
 ///<summary>
-/// When different types publish events of the same type it is impossible to distinguish the publisher by that event's type alone.
-/// To ensure that the type of the published event, as a whole, is always a unique type, each publishing type wraps their events
-/// in events of this type.
+/// When different types publish tevents of the same type it is impossible to distinguish the publisher by that tevent alone.
+/// To ensure any tevent can be subscribed to each teventive wraps their tevents in tevents of this type.
 ///
-/// * For example when taggregates inherit each other, or uses a reusable teventive component or entity.
+/// * For example when taggregates inherit each other, or uses a reusable** tomponent or tentity.
+/// ** Not exclusive to that taggregate
 /// </summary>
 public interface IExactlyOncePublisherTypeIdentifyingTevent<out TTeventInterface> : IPublisherTypeIdentifyingTevent<TTeventInterface>
    where TTeventInterface : IExactlyOnceTevent
