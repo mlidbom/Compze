@@ -8,6 +8,7 @@ using Compze.Utilities.Contracts;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.ReactiveCE;
+using Compze.Utilities.SystemCE.ReflectionCE;
 using JetBrains.Annotations;
 
 namespace Compze.Core.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public;
@@ -37,6 +38,8 @@ public class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeventImpleme
     IUtcTimeTimeSource TimeSource { get; set; }
 
     static Taggregate() => TaggregateTypeValidator<TTaggregate, TTaggregateTeventImplementation, TTaggregateTevent>.AssertStaticStructureIsValid();
+
+    static Func<TTaggregateTevent, TWrapperTeventImplementation> WrapperConstructor = Constructor.For<TWrapperTeventImplementation>.WithArguments<TTaggregateTevent>.Instance;
 
     //Yes Guid.Empty. Id should be assigned by an action, and it should be obvious that the taggregate in invalid until that happens
     protected Taggregate(IUtcTimeTimeSource timeSource) : base(Guid.Empty)
