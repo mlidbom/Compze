@@ -1,13 +1,14 @@
-using System;
-using System.Collections.Generic;
 using Compze.Core.Tessaging.Teventive.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
+using Compze.Core.Time.Public;
 using Compze.Core.Time.Testing.Public;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.SystemCE.ReactiveCE;
 using Compze.Utilities.Testing.XUnit.BDD;
 using FluentAssertions;
+using System;
+using System.Collections.Generic;
 
 namespace Compze.Tests.Unit.CQRS.Taggregates;
 
@@ -56,7 +57,8 @@ public class TaggregateTests : UniversalTestBase
    [XF]
    public void When_Raising_tevent_that_triggers_another_tevent_both_tevents_are_outputted_on_the_observable_only_after_the_triggered_tevent_and_in_the_raised_order()
    {
-      var taggregate = new CascadingTeventsTaggregate();
+
+      var taggregate = UtcTimeSource.WithOverride(TestingTimeSource.FrozenUtcNow(), () => new CascadingTeventsTaggregate());
       var receivedTevents = new List<ITaggregateTevent>();
       using(((ITaggregate)taggregate).TeventStream.Subscribe(tevent =>
             {
