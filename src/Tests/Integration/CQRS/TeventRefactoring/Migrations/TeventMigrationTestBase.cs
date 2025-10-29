@@ -19,6 +19,7 @@ using Compze.Tests.Infrastructure.FluentAssertionsExtensions;
 using Compze.Tests.Infrastructure.Serialization;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
 using FluentAssertions;
@@ -54,9 +55,15 @@ public abstract class TeventMigrationTestBase : UniversalTestBase
       {
          foreach(var migrationScenario in scenarios)
          {
-            timeSource.FreezeAtUtcTime(timeSource.UtcNow + FluentTimeSpanExtensions.Hours(1)); //No time collision between scenarios please.
-            migrations = migrationScenario.Migrations.ToList();
-            await RunScenarioWithTeventStoreType(migrationScenario, serviceLocator, migrations, scenarioIndex++, writer);
+            await UtcTimeSource.WithOverrideAsync(
+               TestingTimeSource.FrozenAtUtcTime(UtcTimeSource.UtcNow + FluentTimeSpanExtensions.Hours(1)),
+               async () =>
+               {
+                  timeSource.FreezeAtUtcTime(timeSource.UtcNow + FluentTimeSpanExtensions.Hours(1)); //No time collision between scenarios please.
+                  migrations = migrationScenario.Migrations.ToList();
+                  await RunScenarioWithTeventStoreType(migrationScenario, serviceLocator, migrations, scenarioIndex++, writer);
+                  return unit.Value;
+               });
          }
 
          // If we got here without exception, mark as success
@@ -86,10 +93,10 @@ public abstract class TeventMigrationTestBase : UniversalTestBase
 
       writer.WriteLine($"\n########Running Scenario {indexOfScenarioInBatch}");
 
-      var original = UtcTimeSource.WithOverride(TestingTimeSource.FrozenUtcNow(), () => 
+      var original = UtcTimeSource.WithOverride(TestingTimeSource.FrozenUtcNow(),
+                                                () =>
                                                    TestTaggregate.FromTevents(TestingTimeSource.FrozenUtcNow(), scenario.TaggregateId, scenario.OriginalHistory)
-                                                                                                      .History.ToList());
-
+                                                                 .History.ToList());
 
       writer.WriteLine("Original History: ");
       original.ForEach(e => writer.WriteLine($"      {e}"));
