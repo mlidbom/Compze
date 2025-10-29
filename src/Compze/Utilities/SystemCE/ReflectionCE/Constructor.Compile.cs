@@ -50,6 +50,7 @@ public static partial class Constructor
             }
 
             var parameters = constructorArgumentTypes.Select((type, index) => Expression.Parameter(type, $"argument_{index}")).ToArray();
+            // ReSharper disable once CoVariantArrayConversion
             var constructorCall = Expression.New(constructor, parameters);
             var lambda = Expression.Lambda(delegateType, constructorCall, parameters);
 
