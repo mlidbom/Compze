@@ -53,6 +53,15 @@ public static class UtcTimeSource
    }
 
 
+   public static async Task WithOverrideAsync(IUtcTimeTimeSource theOverride, Func<Task> action)
+   {
+      using(ScopedChange.Enter(() => Override.Value = theOverride, () => Override.Value = null))
+      {
+         await action();
+      }
+   }
+
+
 }
 
 ///<summary>Simply returns DateTime.Now or DateTime.UtcNow</summary>
