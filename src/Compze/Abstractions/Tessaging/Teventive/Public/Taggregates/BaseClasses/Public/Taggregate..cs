@@ -17,7 +17,7 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
    ITaggregate<TTaggregateTevent>,
    ITeventiveInternals<TTaggregateTevent, TTaggregateTeventImplementation>
    where TWrapperTeventImplementation : TWrapperTeventInterface
-   where TWrapperTeventInterface : ITaggregateTypeIdentifyingTevent<TTaggregateTevent>
+   where TWrapperTeventInterface : ITaggregateIdentifyingTevent<TTaggregateTevent>
    where TTaggregate : Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeventImplementation, TWrapperTeventInterface, TWrapperTeventImplementation>
    where TTaggregateTevent : class, ITaggregateTevent
    where TTaggregateTeventImplementation : TaggregateTevent, TTaggregateTevent

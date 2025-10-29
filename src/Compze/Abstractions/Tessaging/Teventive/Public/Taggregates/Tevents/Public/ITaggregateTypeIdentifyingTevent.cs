@@ -3,7 +3,7 @@ using Compze.Core.Tessaging.Public;
 
 namespace Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 
-public interface ITaggregateTypeIdentifyingTevent<out TTeventInterface> : IExactlyOncePublisherTypeIdentifyingTevent<TTeventInterface>
+public interface ITaggregateIdentifyingTevent<out TTeventInterface> : IExactlyOncePublisherIdentifyingTevent<TTeventInterface>
    where TTeventInterface : ITaggregateTevent
 {
 

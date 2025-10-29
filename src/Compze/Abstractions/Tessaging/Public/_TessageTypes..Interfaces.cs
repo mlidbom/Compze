@@ -74,19 +74,19 @@ public interface IExactlyOnceTommand : IRemotableTommand, IExactlyOnceTessage;
 /// * For example when taggregates inherit each other, or uses a reusable** tomponent or tentity.
 /// ** Not exclusive to that taggregate
 /// </summary>
-public interface IPublisherTypeIdentifyingTevent<out TTevent> : ITevent //Todo: IWrapperTevent name is not great...
+public interface IPublisherIdentifyingTevent<out TTevent> : ITevent
    where TTevent : ITevent
 {
    TTevent Tevent { get; }
 }
 
-public interface IRemotablePublisherTypeIdentifyingTevent<out TTeventInterface> : IPublisherTypeIdentifyingTevent<TTeventInterface>, IRemotableTevent
+public interface IRemotablePublisherIdentifyingTevent<out TTeventInterface> : IPublisherIdentifyingTevent<TTeventInterface>, IRemotableTevent
    where TTeventInterface : IExactlyOnceTevent
 {
 }
 
 
-public interface IExactlyOncePublisherTypeIdentifyingTevent<out TTeventInterface> : IRemotablePublisherTypeIdentifyingTevent<TTeventInterface>, IExactlyOnceTevent
+public interface IExactlyOncePublisherIdentifyingTevent<out TTeventInterface> : IRemotablePublisherIdentifyingTevent<TTeventInterface>, IExactlyOnceTevent
    where TTeventInterface : IExactlyOnceTevent
 {
    Guid IAtMostOnceTessage.Id => Tevent.Id;

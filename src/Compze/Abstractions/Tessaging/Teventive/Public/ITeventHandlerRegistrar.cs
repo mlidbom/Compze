@@ -10,10 +10,10 @@ public interface ITeventHandlerRegistrar<in TTevent>
    ITeventHandlerRegistrar<TTevent> For<THandledTevent>(Action<THandledTevent> handler) where THandledTevent : TTevent;
 
    ITeventHandlerRegistrar<TTevent> ForWrapped<TWrapperTevent>(Action<TWrapperTevent> handler)
-      where TWrapperTevent : IPublisherTypeIdentifyingTevent<TTevent>;
+      where TWrapperTevent : IPublisherIdentifyingTevent<TTevent>;
 
    ITeventHandlerRegistrar<TTevent> ForWrappedGeneric<TWrapperTevent>(Action<TWrapperTevent> handler)
-      where TWrapperTevent : IPublisherTypeIdentifyingTevent<ITevent>;
+      where TWrapperTevent : IPublisherIdentifyingTevent<ITevent>;
 
    ///<summary>Lets you register handlers for tevent interfaces that may be defined outside of the tevent hierarchy you specify with TTevent.
    /// Useful for listening to generic tevents such as ITaggregateCreatedTevent or ITaggregateDeletedTevent
