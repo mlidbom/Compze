@@ -8,27 +8,7 @@ namespace Compze.Tests.Unit.CQRS.TeventHandling;
 
 public class MutableTeventDispatcher_WrappedTeventsTests : UniversalTestBase
 {
-   interface IUserWrapperTevent<out TTevent> : IWrapperTevent<TTevent> where TTevent : IUserTevent;
-   class UserWrapperTevent<TTevent>(TTevent @tevent) : WrapperTevent<TTevent>(@tevent), IUserWrapperTevent<TTevent>
-      where TTevent : IUserTevent;
-
-   interface IUserTevent : ITaggregateTevent;
-   interface IUserCreatedTevent : IUserTevent;
-   class UserCreatedTevent : TaggregateTevent, IUserCreatedTevent;
-
-
-   interface IAdminUserWrapperTevent<out TTevent> : IUserWrapperTevent<TTevent> where TTevent : IUserTevent;
-   class AdminUserWrapperTevent<TTevent>(TTevent @tevent) : UserWrapperTevent<TTevent>(@tevent), IAdminUserWrapperTevent<TTevent>
-      where TTevent : IUserTevent;
-
-   interface IAdminUserTevent : IUserTevent;
-   interface IAdminUserCreatedTevent : IAdminUserTevent, IUserCreatedTevent;
-   class AdminUserCreatedTevent : TaggregateTevent, IAdminUserCreatedTevent;
-
-
-   IMutableTeventDispatcher<ITevent> _dispatcher;
-   
-   public MutableTeventDispatcher_WrappedTeventsTests() => _dispatcher = IMutableTeventDispatcher<ITevent>.New();
+   readonly IMutableTeventDispatcher<ITevent> _dispatcher = IMutableTeventDispatcher<ITevent>.New();
 
    public class Publishing_UserCreatedTevent : MutableTeventDispatcher_WrappedTeventsTests
    {
@@ -134,4 +114,21 @@ public class MutableTeventDispatcher_WrappedTeventsTests : UniversalTestBase
          [XF] public void IAdminUserWrapperTevent_of_IAdminUserCreatedTevent() => AssertAdminUserWrapperTevent_of_AdminUserCreatedTevent().DispatchesToWrapped<IUserWrapperTevent<IAdminUserCreatedTevent>>();
       }
    }
+
+   interface IUserWrapperTevent<out TTevent> : IWrapperTevent<TTevent> where TTevent : IUserTevent;
+   class UserWrapperTevent<TTevent>(TTevent @tevent) : WrapperTevent<TTevent>(@tevent), IUserWrapperTevent<TTevent>
+      where TTevent : IUserTevent;
+
+   interface IUserTevent : ITaggregateTevent;
+   interface IUserCreatedTevent : IUserTevent;
+   class UserCreatedTevent : TaggregateTevent, IUserCreatedTevent;
+
+
+   interface IAdminUserWrapperTevent<out TTevent> : IUserWrapperTevent<TTevent> where TTevent : IUserTevent;
+   class AdminUserWrapperTevent<TTevent>(TTevent @tevent) : UserWrapperTevent<TTevent>(@tevent), IAdminUserWrapperTevent<TTevent>
+      where TTevent : IUserTevent;
+
+   interface IAdminUserTevent : IUserTevent;
+   interface IAdminUserCreatedTevent : IAdminUserTevent, IUserCreatedTevent;
+   class AdminUserCreatedTevent : TaggregateTevent, IAdminUserCreatedTevent;
 }
