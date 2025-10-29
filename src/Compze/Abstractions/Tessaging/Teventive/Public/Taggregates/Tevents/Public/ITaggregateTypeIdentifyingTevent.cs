@@ -3,13 +3,6 @@ using Compze.Core.Tessaging.Public;
 
 namespace Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 
-///<summary>
-/// When different taggregates publish tevents of the same type it is impossible to distinguish the publisher by that tevent alone.
-/// To ensure any tevent can be subscribed to, taggregate automatically wrap their tevents in tevents of this type.
-///
-/// * For example when taggregates inherit each other, or uses a reusable** tomponent or tentity.
-/// ** Not exclusive to that taggregate
-/// </summary>
 public interface ITaggregateTypeIdentifyingTevent<out TTeventInterface> : IExactlyOncePublisherTypeIdentifyingTevent<TTeventInterface>
    where TTeventInterface : ITaggregateTevent
 {

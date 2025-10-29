@@ -32,7 +32,7 @@ public interface ICreateMyOwnResultTuery<out TResult> : ITuery<TResult>
 
 //Note that when you look at a strictly local tessage you have guarantees about its behavior that you don't have looking at just tessage with the absence of an explicit IRemotable declaration.
 //The concrete types implementing the interfaces might have been remotable, making for lost guarantees.
-//With the strictly local message types we can implement behavioral guarantees in frameworks.
+//With the strictly local message types we can implement behavioral guarantees in frameworks, forbidding nonsensical combinations.
 public interface IStrictlyLocalTessage;
 public interface IStrictlyLocalTevent : ITevent, IStrictlyLocalTessage;
 public interface IStrictlyLocalTommand : ITommand, IMustBeSentTransactionally, IStrictlyLocalTessage;
@@ -42,8 +42,8 @@ public interface IStrictlyLocalTuery<TTuery, out TResult> : ITuery<TResult>, ISt
 public interface IRemotableTessage : ITessage;
 public interface IRemotableTevent : IRemotableTessage, ITevent;
 public interface IRemotableTommand : ITommand, IRemotableTessage;
-public interface IRemotableTommand<out TResult> : IRemotableTommand, ITommand<TResult>;
-public interface IRemotableTuery<out TResult> : IRemotableTessage, ITuery<TResult>;
+public interface IRemotableTommand<out TResult> : ITommand<TResult>, IRemotableTommand;
+public interface IRemotableTuery<out TResult> : ITuery<TResult>, IRemotableTessage;
 
 //Clients that are not .NET types need to send the query to the closest .NET endpoint before that will bounce the result back.
 public interface IRemotableCreateMyOwnResultTuery<out TResult> : IRemotableTuery<TResult>, ICreateMyOwnResultTuery<TResult>;
@@ -80,14 +80,14 @@ public interface IPublisherTypeIdentifyingTevent<out TTevent> : ITevent //Todo: 
    TTevent Tevent { get; }
 }
 
-///<summary>
-/// When different types publish tevents of the same type it is impossible to distinguish the publisher by that tevent alone.
-/// To ensure any tevent can be subscribed to each teventive wraps their tevents in tevents of this type.
-///
-/// * For example when taggregates inherit each other, or uses a reusable** tomponent or tentity.
-/// ** Not exclusive to that taggregate
-/// </summary>
-public interface IExactlyOncePublisherTypeIdentifyingTevent<out TTeventInterface> : IPublisherTypeIdentifyingTevent<TTeventInterface>
+public interface IRemotablePublisherTypeIdentifyingTevent<out TTeventInterface> : IPublisherTypeIdentifyingTevent<TTeventInterface>, IRemotableTevent
    where TTeventInterface : IExactlyOnceTevent
 {
+}
+
+
+public interface IExactlyOncePublisherTypeIdentifyingTevent<out TTeventInterface> : IRemotablePublisherTypeIdentifyingTevent<TTeventInterface>, IExactlyOnceTevent
+   where TTeventInterface : IExactlyOnceTevent
+{
+   Guid IAtMostOnceTessage.Id => Tevent.Id;
 }
