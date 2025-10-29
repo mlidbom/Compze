@@ -36,15 +36,9 @@ partial class CallMatchingHandlersInRegistrationOrderTeventDispatcher<TTevent> w
          return this;
       }
 
-      RegistrationBuilder ForWrappedGeneric<TWrapperTevent>(Action<TWrapperTevent> handler) where TWrapperTevent : IWrapperTevent<ITevent>
-      {
-         TessageTypeInspector.AssertValidForSubscription(typeof(TWrapperTevent));
-         _owner._handlers.Add(new RegisteredWrappedHandler<TWrapperTevent>(handler));
-         _owner._totalHandlers++;
-         return this;
-      }
+      RegistrationBuilder ForWrapped<TWrapperTevent>(Action<TWrapperTevent> handler) where TWrapperTevent : IWrapperTevent<TTevent> => ForWrappedGeneric(handler);
 
-      RegistrationBuilder ForWrapped<TWrapperTevent>(Action<TWrapperTevent> handler) where TWrapperTevent : IWrapperTevent<TTevent>
+      RegistrationBuilder ForWrappedGeneric<TWrapperTevent>(Action<TWrapperTevent> handler) where TWrapperTevent : IWrapperTevent<ITevent>
       {
          TessageTypeInspector.AssertValidForSubscription(typeof(TWrapperTevent));
          _owner._handlers.Add(new RegisteredWrappedHandler<TWrapperTevent>(handler));
