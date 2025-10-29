@@ -8,8 +8,8 @@ using static FluentAssertions.FluentActions;
 
 namespace Compze.Tests.Unit.Internals.Tessaging;
 
-interface INonGenericWrapperTevent : IWrapperTevent<ITevent>;
-interface INonCovariantTypeParameterWrapperTevent : IWrapperTevent<ITevent>;
+interface INonGenericPublisherTypeIdentifyingTevent : IPublisherTypeIdentifyingTevent<ITevent>;
+interface INonCovariantTypeParameterPublisherTypeIdentifyingTevent : IPublisherTypeIdentifyingTevent<ITevent>;
 
 public class TessageTypeInspector_throws_TessageTypeDesignViolationException_if_ : UniversalTestBase
 {
@@ -20,9 +20,9 @@ public class TessageTypeInspector_throws_TessageTypeDesignViolationException_if_
    {
       public class Type_implements_Wrapper_tevent_interface_but_ : UniversalTestBase
       {
-         [XF] public void Is_not_generic() => AssertInvalidForSubscription<INonGenericWrapperTevent>();
+         [XF] public void Is_not_generic() => AssertInvalidForSubscription<INonGenericPublisherTypeIdentifyingTevent>();
 
-         [XF] public void Does_not_have_a_covariant_type_parameter() => AssertInvalidForSubscription<INonCovariantTypeParameterWrapperTevent>();
+         [XF] public void Does_not_have_a_covariant_type_parameter() => AssertInvalidForSubscription<INonCovariantTypeParameterPublisherTypeIdentifyingTevent>();
       }
    }
 
@@ -30,9 +30,9 @@ public class TessageTypeInspector_throws_TessageTypeDesignViolationException_if_
    {
       public class Type_implements_Wrapper_tevent_interface_but_ : UniversalTestBase
       {
-         [XF] public void Is_not_generic() => AssertInvalidForSubscription<INonGenericWrapperTevent>();
+         [XF] public void Is_not_generic() => AssertInvalidForSubscription<INonGenericPublisherTypeIdentifyingTevent>();
 
-         [XF] public void Does_not_have_a_covariant_type_parameter() => AssertInvalidForSubscription<INonCovariantTypeParameterWrapperTevent>();
+         [XF] public void Does_not_have_a_covariant_type_parameter() => AssertInvalidForSubscription<INonCovariantTypeParameterPublisherTypeIdentifyingTevent>();
       }
 
       interface INotTessage;

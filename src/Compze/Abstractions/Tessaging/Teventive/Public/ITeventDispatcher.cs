@@ -6,5 +6,5 @@ public interface ITeventDispatcher<in TTevent>
    where TTevent : ITevent
 {
    void Dispatch(TTevent evt);
-   void Dispatch(IWrapperTevent<TTevent> evt);
+   void Dispatch(IPublisherTypeIdentifyingTevent<TTevent> evt);
 }

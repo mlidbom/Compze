@@ -29,9 +29,9 @@ partial class CallMatchingHandlersInRegistrationOrderTeventDispatcher<TTevent> w
          if(typeof(THandledTevent).IsAssignableFrom(teventType))
          {
             return tevent => _handler((THandledTevent)tevent);
-         } else if(teventType.Is<IWrapperTevent<THandledTevent>>())
+         } else if(teventType.Is<IPublisherTypeIdentifyingTevent<THandledTevent>>())
          {
-            return tevent => _handler(((IWrapperTevent<THandledTevent>)tevent).Tevent);
+            return tevent => _handler(((IPublisherTypeIdentifyingTevent<THandledTevent>)tevent).Tevent);
          } else
          {
             return null;
@@ -39,7 +39,7 @@ partial class CallMatchingHandlersInRegistrationOrderTeventDispatcher<TTevent> w
       }
    }
 
-   class RegisteredWrappedHandler<THandledWrapperTevent>(Action<THandledWrapperTevent> handler) : RegisteredHandler where THandledWrapperTevent : IWrapperTevent<ITevent>
+   class RegisteredWrappedHandler<THandledWrapperTevent>(Action<THandledWrapperTevent> handler) : RegisteredHandler where THandledWrapperTevent : IPublisherTypeIdentifyingTevent<ITevent>
    {
       readonly Action<THandledWrapperTevent> _handler = handler;
 

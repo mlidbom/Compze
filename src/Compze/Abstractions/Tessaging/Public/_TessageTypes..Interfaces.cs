@@ -67,13 +67,27 @@ public interface IExactlyOnceTessage : IMustBeSentAndHandledTransactionally, IAt
 public interface IExactlyOnceTevent : IRemotableTevent, IExactlyOnceTessage;
 public interface IExactlyOnceTommand : IRemotableTommand, IExactlyOnceTessage;
 
-public interface IWrapperTevent<out TTevent> : ITevent //Todo: IWrapperTevent name is not great...
+///<summary>
+/// When different types publish events of the same type it is impossible to distinguish the publisher by that event's type alone.
+/// To ensure that the type of the published event, as a whole, is always a unique type, each publishing type wraps their events
+/// in events of this type.
+///
+/// * For example when taggregates inherit each other, or uses a reusable teventive component or entity.
+/// </summary>
+public interface IPublisherTypeIdentifyingTevent<out TTevent> : ITevent //Todo: IWrapperTevent name is not great...
    where TTevent : ITevent
 {
    TTevent Tevent { get; }
 }
 
-public interface IExactlyOnceWrapperTevent<out TTeventInterface> : IWrapperTevent<TTeventInterface>
+///<summary>
+/// When different types publish events of the same type it is impossible to distinguish the publisher by that event's type alone.
+/// To ensure that the type of the published event, as a whole, is always a unique type, each publishing type wraps their events
+/// in events of this type.
+///
+/// * For example when taggregates inherit each other, or uses a reusable teventive component or entity.
+/// </summary>
+public interface IExactlyOncePublisherTypeIdentifyingTevent<out TTeventInterface> : IPublisherTypeIdentifyingTevent<TTeventInterface>
    where TTeventInterface : IExactlyOnceTevent
 {
 }

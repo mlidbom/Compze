@@ -30,15 +30,15 @@ partial class CallMatchingHandlersInRegistrationOrderTeventDispatcher<TTevent> w
       RegistrationBuilder ForGenericTevent<THandledTevent>(Action<THandledTevent> handler) where THandledTevent : ITevent
       {
          TessageTypeInspector.AssertValidForSubscription(typeof(THandledTevent));
-         if(typeof(THandledTevent).Is<IWrapperTevent<ITevent>>()) throw new Exception($"Handlers of type {typeof(IWrapperTevent<>).Name} must be registered through the {nameof(ForWrapped)} method.");
+         if(typeof(THandledTevent).Is<IPublisherTypeIdentifyingTevent<ITevent>>()) throw new Exception($"Handlers of type {typeof(IPublisherTypeIdentifyingTevent<>).Name} must be registered through the {nameof(ForWrapped)} method.");
          _owner._handlers.Add(new RegisteredHandler<THandledTevent>(handler));
          _owner._totalHandlers++;
          return this;
       }
 
-      RegistrationBuilder ForWrapped<TWrapperTevent>(Action<TWrapperTevent> handler) where TWrapperTevent : IWrapperTevent<TTevent> => ForWrappedGeneric(handler);
+      RegistrationBuilder ForWrapped<TWrapperTevent>(Action<TWrapperTevent> handler) where TWrapperTevent : IPublisherTypeIdentifyingTevent<TTevent> => ForWrappedGeneric(handler);
 
-      RegistrationBuilder ForWrappedGeneric<TWrapperTevent>(Action<TWrapperTevent> handler) where TWrapperTevent : IWrapperTevent<ITevent>
+      RegistrationBuilder ForWrappedGeneric<TWrapperTevent>(Action<TWrapperTevent> handler) where TWrapperTevent : IPublisherTypeIdentifyingTevent<ITevent>
       {
          TessageTypeInspector.AssertValidForSubscription(typeof(TWrapperTevent));
          _owner._handlers.Add(new RegisteredWrappedHandler<TWrapperTevent>(handler));
@@ -49,7 +49,7 @@ partial class CallMatchingHandlersInRegistrationOrderTeventDispatcher<TTevent> w
       RegistrationBuilder BeforeHandlers(Action<TTevent> runBeforeHandlers)
       {
          //Urgent: fix this. Use the registered handler classes above
-         _owner._runBeforeHandlers.Add(e => runBeforeHandlers(((IWrapperTevent<TTevent>)e).Tevent));
+         _owner._runBeforeHandlers.Add(e => runBeforeHandlers(((IPublisherTypeIdentifyingTevent<TTevent>)e).Tevent));
          _owner._totalHandlers++;
          return this;
       }
@@ -57,14 +57,14 @@ partial class CallMatchingHandlersInRegistrationOrderTeventDispatcher<TTevent> w
       RegistrationBuilder AfterHandlers(Action<TTevent> runAfterHandlers)
       {
          //Urgent: fix this
-         _owner._runAfterHandlers.Add(e => runAfterHandlers(((IWrapperTevent<TTevent>)e).Tevent));
+         _owner._runAfterHandlers.Add(e => runAfterHandlers(((IPublisherTypeIdentifyingTevent<TTevent>)e).Tevent));
          return this;
       }
 
       RegistrationBuilder IgnoreUnhandled<T>() where T : ITevent
       {
          _owner._ignoredTevents.Add(typeof(T));                //Urgent: Remove?
-         _owner._ignoredTevents.Add(typeof(IWrapperTevent<T>)); //urgent: Is this correct?
+         _owner._ignoredTevents.Add(typeof(IPublisherTypeIdentifyingTevent<T>)); //urgent: Is this correct?
          _owner._totalHandlers++;
          return this;
       }
