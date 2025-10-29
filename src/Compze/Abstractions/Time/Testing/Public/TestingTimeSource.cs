@@ -26,9 +26,6 @@ public class TestingTimeSource : IUtcTimeTimeSource
    TestingTimeSource() {}
 
    ///<summary>Returns a time source that will continually return the time that it was created at as the current time.</summary>
-   internal static TestingTimeSource FollowingSystemClock => new();
-
-   ///<summary>Returns a time source that will continually return the time that it was created at as the current time.</summary>
    public static TestingTimeSource FrozenUtcNow() => new()
                                                      {
                                                         _freezeAt = DateTime.UtcNow
