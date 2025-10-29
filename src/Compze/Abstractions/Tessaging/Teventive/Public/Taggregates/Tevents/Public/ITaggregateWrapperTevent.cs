@@ -4,7 +4,7 @@ using Compze.Core.Tessaging.Public;
 namespace Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 
 ///<summary>
-/// When different aggregates publish events of the same type it is impossible to distinguish the publisher by that event's type alone.
+/// When different taggregates publish events of the same type it is impossible to distinguish the publisher by that event's type alone.
 /// To ensure that the type of the published event, as a whole, is always a unique type, each taggregate automatically wraps their events
 /// in events of this type.
 ///
