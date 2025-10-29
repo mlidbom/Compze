@@ -11,12 +11,12 @@ public class EnableCascadeTracking
       var endpoint = new Endpoint(
          //Tommand handlers
          TommandHandler.For<CreateAccountTommand>("17893552-D533-4A59-A177-63EAF3B7B07E", tommand => {},
-                                                  //Being explicit about which tevents might be published let's the bus reason about possible cascade effects easily and thus guarantee consistency for queries.
+                                                  //Being explicit about which tevents might be published let's the bus reason about possible cascade effects easily and thus guarantee consistency for tueries.
                                                   //It also makes it possible to get an overview of the structure of a complete endpoint in one place.
                                                   Policy.Publishes<IAccountTevent>()),
 
          TeventHandler.For<AccountCreatedTevent>("A5A1DF35-982C-4962-A7DA-C98AC88633C0",@tevent => {},
-                                               //Being explicit about which tommands might be sent let's the bus reason about possible cascade effects easily and thus guarantee consistency for queries.
+                                               //Being explicit about which tommands might be sent let's the bus reason about possible cascade effects easily and thus guarantee consistency for tueries.
                                                //It also makes it possible to get an overview of the structure of a complete endpoint in one place.
                                                Policy.Sends<SendAccountRegistrationWelcomeEmailTommand>()
          )

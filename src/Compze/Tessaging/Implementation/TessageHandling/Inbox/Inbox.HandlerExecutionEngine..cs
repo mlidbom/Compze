@@ -26,11 +26,12 @@ partial class Inbox
 
       readonly IReadOnlyList<ITessageDispatchingRule> _dispatchingRules =
       [
-         new QueriesExecuteAfterAllTommandsAndTeventsAreDone(),
+         new TueriesExecuteAfterAllTommandsAndTeventsAreDone(),
          new TommandsAndTeventHandlersDoNotRunInParallelWithEachOtherInTheSameEndpoint()
       ];
 
       readonly Coordinator _coordinator = new(globalStateTracker, taskRunner, storage, serviceLocator, handlerRegistry, endpointId);
+      readonly ITaskRunner _taskRunner = taskRunner;
 
       internal Task<object?> Enqueue(TransportTessage.InComing transportTessage) => _coordinator.EnqueueTessageTask(transportTessage);
 
@@ -46,7 +47,7 @@ partial class Inbox
 
       public void Start()
       {
-         _awaitDispatchableTessageThread = taskRunner.RunOnNamedThread(
+         _awaitDispatchableTessageThread = _taskRunner.RunOnNamedThread(
             nameof(AwaitDispatchableTessageThreadLoop),
             AwaitDispatchableTessageThreadLoop,
             ThreadPriority.AboveNormal);

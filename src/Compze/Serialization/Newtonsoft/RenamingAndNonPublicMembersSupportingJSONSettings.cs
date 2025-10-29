@@ -1,6 +1,8 @@
 using Compze.Serialization.Newtonsoft.Private;
+using Compze.Serialization.Newtonsoft.Private.PrimitiveWrappers;
 using Compze.Serialization.Newtonsoft.Private.TeventStore;
 using Newtonsoft.Json;
+using System.Collections.Generic;
 
 #pragma warning disable CA2326 //Todo about this resides elsewhere search for CA2326 to find it
 #pragma warning disable CA2327 //Todo about this resides elsewhere search for CA2326 to find it
@@ -14,19 +16,18 @@ static class RenamingAndNonPublicMembersSupportingJsonSettings
       {
          TypeNameHandling = TypeNameHandling.Auto,
          ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
-         ContractResolver = IncludeMembersWithPrivateSettersResolver.Instance
+         Converters = new List<JsonConverter> { new ValueWrapperConverter() },
+         ContractResolver = new CompositeContractResolver(new IncludeMembersWithPrivateSetters())
       };
 
-   internal static JsonSerializerSettings DocumentDb => Default;
+   internal static readonly JsonSerializerSettings DocumentDb = Default;
 
-   internal static JsonSerializerSettings Tessaging => Default;
+   internal static readonly JsonSerializerSettings Tessaging = Default;
 
    public static readonly JsonSerializerSettings TeventStore =
-      new()
+      new(Default)
       {
-         TypeNameHandling = TypeNameHandling.Auto,
-         ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
-         ContractResolver = IgnoreTaggregateTeventDeclaredPropertiesBecauseTheyAreAlreadyStoredInSqlResolver.Instance
+         ContractResolver = new CompositeContractResolver(new IncludeMembersWithPrivateSetters(),
+                                                          new IgnoreTaggregateTeventDeclaredPropertiesBecauseTheyAreAlreadyStoredInSql())
       };
-
 }

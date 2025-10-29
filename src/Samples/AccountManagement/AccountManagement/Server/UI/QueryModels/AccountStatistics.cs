@@ -45,7 +45,7 @@ static class AccountStatistics
 
          if(new SingletonStatisticsQueryModel().HandlesTevent(@tevent))
          {
-            navigator.Execute(new DocumentDbApi().Queries.GetForUpdate<SingletonStatisticsQueryModel>(SingletonStatisticsQueryModel.StaticId))
+            navigator.Execute(new DocumentDbApi().Tueries.GetForUpdate<SingletonStatisticsQueryModel>(SingletonStatisticsQueryModel.StaticId))
                      .ApplyTevent(@tevent);
          }
       });
@@ -68,7 +68,7 @@ static class AccountStatistics
             if(!_isInitialized)
             {
                _isInitialized = true;
-               if(navigator.Execute(_documentDbApi.Queries.TryGet<SingletonStatisticsQueryModel>(SingletonStatisticsQueryModel.StaticId)) is None<SingletonStatisticsQueryModel>)
+               if(navigator.Execute(_documentDbApi.Tueries.TryGet<SingletonStatisticsQueryModel>(SingletonStatisticsQueryModel.StaticId)) is None<SingletonStatisticsQueryModel>)
                {
                   navigator.Execute(_documentDbApi.Tommands.Save(new SingletonStatisticsQueryModel()));
                }

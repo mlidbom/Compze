@@ -42,12 +42,26 @@ static class TypeCE
 
       if(implemented.IsGenericTypeDefinition)
       {
-         return
-            me.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == implemented);
+         return me.ImplementsGenericInterface(implemented);
       }
 
       return me.GetInterfaces().Contains(implemented);
    }
+
+   public static Type GetGenericInterface(this Type @this, Type implementedGenericInterface) =>
+      @this.ListGenericInterfaces(implementedGenericInterface).Single();
+
+   public static IEnumerable<Type> ListGenericInterfaces(this Type @this, Type genericInterface)
+   {
+      return @this.ListGenericInterfaces()
+                  .Where(it => it.GetGenericTypeDefinition() == genericInterface);
+   }
+
+   public static IEnumerable<Type> ListGenericInterfaces(this Type @this) =>
+      @this.GetInterfaces().Where(it => it.IsGenericType);
+
+   public static bool ImplementsGenericInterface(this Type @this, Type implementedGenericInterface) =>
+      @this.ListGenericInterfaces(implementedGenericInterface).Any();
 
    public static IEnumerable<Type> ClassInheritanceChain(this Type me)
    {
@@ -58,6 +72,30 @@ static class TypeCE
          current = current.BaseType;
       }
    }
+
+   public static bool InHerits(this Type @this, Type baseClass) =>
+      baseClass.IsGenericTypeDefinition
+         ? @this.InheritsFromGenericClassDefinition(baseClass)
+         : @this.ClassInheritanceChain().Any(it => it == baseClass);
+
+   public static Type GetGenericBaseClass(this Type @this, Type genericBaseClassTypeDefinition) =>
+      @this.TryGetGenericBaseClass(genericBaseClassTypeDefinition) ?? throw new Exception($"{@this.FullName} does not inherit from {genericBaseClassTypeDefinition.FullName}");
+
+   public static Type? TryGetGenericBaseClass(this Type @this, Type genericBaseClassTypeDefinition) =>
+      @this.GenericBaseClasses()
+           .SingleOrDefault(it => it.GetGenericTypeDefinition() == genericBaseClassTypeDefinition);
+
+   public static IEnumerable<Type> GenericBaseClasses(this Type @this) =>
+      @this.ClassInheritanceChain()
+           .Where(it => it.IsGenericType);
+
+   public static IEnumerable<Type> GenericBaseClassGenericTypeDefinitions(this Type @this) =>
+      @this.GenericBaseClasses()
+           .Select(it => it.GetGenericTypeDefinition());
+
+   public static bool InheritsFromGenericClassDefinition(this Type @this, Type genericBaseClass) =>
+      @this.GenericBaseClassGenericTypeDefinitions()
+           .Any(it => it == genericBaseClass);
 
    public static bool IsOpenGenericType(this Type type) => type.ContainsGenericParameters;
 

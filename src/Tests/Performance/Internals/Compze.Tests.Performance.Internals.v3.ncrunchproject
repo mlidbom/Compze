@@ -1,5 +1,6 @@
 ﻿<ProjectConfiguration>
   <Settings>
+    <HiddenComponentWarnings />
     <XUnit3Enabled>True</XUnit3Enabled>
   </Settings>
 </ProjectConfiguration>

@@ -157,7 +157,7 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
       }
    }
 
-   public class GetUserTuery(Guid userId) : TessageTypes.Remotable.NonTransactional.Queries.Tuery<UserResource>
+   public class GetUserTuery(Guid userId) : TessageTypes.Remotable.NonTransactional.Tueries.Tuery<UserResource>
    {
       public Guid UserId { get; private set; } = userId;
    }

@@ -19,8 +19,18 @@ namespace Compze.Utilities.Functional;
 /// </summary>
 public static class Pipe
 {
-   ///<summary>Takes the first value, applies <see cref="transform"/> and return the resulting value.</summary>
-   public static TResult select<TValue, TResult>(this TValue it, Func<TValue, TResult> transform) => transform(it);
+   ///<summary>passes <paramref name="it"/> to <paramref name="func"/> and returns the result. It is the pipe forward operator that is missing in C#. If you start using it, soon ._( will become the missing operator in your mind.</summary>
+   public static TResult _<TThis, TResult>(this TThis it, Func<TThis, TResult> func) => func(it);
+
+   ///<summary>Passes <paramref name="it"/> to <paramref name="tap"/> and returns <paramref name="it"/></summary>
+   public static T tap<T>(this T it, Action<T> tap)
+   {
+      tap(it);
+      return it;
+   }
+
+   ///<summary>Mutates <paramref name="it"/> using <paramref name="mutate"/> and returns <paramref name="it"/></summary>
+   public static T mutate<T>(this T it, Action<T> mutate) => it.tap(mutate);
 
    ///<summary> Returns <paramref name="value"/>, ignoring the previous value.  Useful for chaining calls where a constant value is needed.</summary>
    public static TResult then<TValue, TResult>(this TValue _, TResult value) => value;
@@ -31,16 +41,6 @@ public static class Pipe
    ///<summary> Executes <paramref name="action"/>, ignoring the previous value, and returns a <see cref="unit"/>.  Useful for chaining statements that return void.</summary>
    public static unit then<TValue>(this TValue _, Action action) => Functional.unit.From(action);
 
-   ///<summary>passes <paramref name="it"/> to <paramref name="func"/> and returns the result. It is the pipe forward operator that is missing in C#. If you start using it, soon ._( will become the missing operator in your mind.</summary>
-   public static TResult _<TThis, TResult>(this TThis it, Func<TThis, TResult> func) => func(it);
-
-   ///<summary>Mutates <paramref name="it"/> using <paramref name="mutate"/> and returns <paramref name="it"/></summary>
-   public static T mutate<T>(this T it, Action<T> mutate)
-   {
-      mutate(it);
-      return it;
-   }
-
    ///<summary>Throws Exception if <paramref name="predicate"/> returns false when applied to <paramref name="it"/> otherwise returns <paramref name="it"/></summary>
    public static T assert<T>(this T it, Predicate<T> predicate, Func<T, string> tessageFactory) =>
       it.assert(predicate, () => new Exception(tessageFactory(it)));
@@ -48,7 +48,8 @@ public static class Pipe
    ///<summary>Throws <paramref name="exceptionFactory"/>() if <paramref name="predicate"/> returns false when applied to <paramref name="it"/> otherwise returns <paramref name="it"/></summary>
    public static T assert<T>(this T it, Predicate<T> predicate, Func<Exception> exceptionFactory)
    {
-      if(!predicate(it)) throw exceptionFactory();
+      if(!predicate(it))
+         throw exceptionFactory();
       return it;
    }
 

@@ -37,16 +37,16 @@ class AccountQueryModel : SelfGeneratingQueryModel<AccountQueryModel, AccountTev
    // ReSharper disable MemberCanBeMadeStatic.Global fluent composable APIs and statics do not mix
    internal class Api
    {
-      internal Tuery Queries => new();
+      internal Tuery Tueries => new();
       internal class Tuery
       {
-         public TessageTypes.StrictlyLocal.Queries.EntityLink<AccountQueryModel> Get(Guid id) => new(id);
+         public TessageTypes.StrictlyLocal.Tueries.EntityLink<AccountQueryModel> Get(Guid id) => new(id);
       }
 
       public static void RegisterHandlers(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => Get(registrar);
 
       static void Get(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery(
-         (TessageTypes.StrictlyLocal.Queries.EntityLink<AccountQueryModel> tuery, IInProcessTypermediaNavigator navigator) =>
-            new AccountQueryModel(navigator.Execute(new TeventStoreApi().Queries.GetHistory<AccountTevent.Root>(tuery.EntityId))));
+         (TessageTypes.StrictlyLocal.Tueries.EntityLink<AccountQueryModel> tuery, IInProcessTypermediaNavigator navigator) =>
+            new AccountQueryModel(navigator.Execute(new TeventStoreApi().Tueries.GetHistory<AccountTevent.Root>(tuery.EntityId))));
    }
 }

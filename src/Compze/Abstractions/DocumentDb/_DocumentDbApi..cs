@@ -7,7 +7,7 @@ namespace Compze.Core.DocumentDb;
 
 public partial class DocumentDbApi
 {
-   public TueryApi Queries => new();
+   public TueryApi Tueries => new();
    public Tommand Tommands => new();
 
    public partial class TueryApi

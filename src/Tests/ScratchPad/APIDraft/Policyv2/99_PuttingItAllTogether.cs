@@ -29,7 +29,7 @@ public class PuttingItAllTogether
             "17893552-D533-4A59-A177-63EAF3B7B07E",
             tommand => { },
             defaultTommandHandlerPolicies,
-            //Being explicit about which tevents might be published let's the bus reason about possible cascade effects easily and thus guarantee consistency for queries.
+            //Being explicit about which tevents might be published let's the bus reason about possible cascade effects easily and thus guarantee consistency for tueries.
             //It also makes it possible to get an overview of the structure of a complete endpoint in one place.
             Policy.Publishes<IAccountTevent>(),
             //This handler must wait until there are no tessages queued to any handler with policy:
@@ -56,7 +56,7 @@ public class PuttingItAllTogether
             "A5A1DF35-982C-4962-A7DA-C98AC88633C0",
             @tevent => { },
             defaultTeventHandlerPolicies,
-            //Being explicit about which tommands might be sent let's the bus reason about possible cascade effects easily and thus guarantee consistency for queries.
+            //Being explicit about which tommands might be sent let's the bus reason about possible cascade effects easily and thus guarantee consistency for tueries.
             //It also makes it possible to get an overview of the structure of a complete endpoint in one place.
             Policy.Sends<SendAccountRegistrationWelcomeEmailTommand>()
          ),

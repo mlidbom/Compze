@@ -6,10 +6,10 @@ namespace Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
 
 static class ReadonlyCollectionsCE
 {
-   public static Dictionary<TKey, TValue> AddToCopy<TKey, TValue>(this IReadOnlyDictionary<TKey, TValue> @this, TKey key, TValue value) where TKey : notnull => new(@this) {{key, value}};
+   public static Dictionary<TKey, TValue> AddToCopy<TKey, TValue>(this IReadOnlyDictionary<TKey, TValue> @this, TKey key, TValue value) where TKey : notnull => new(@this) { { key, value } };
 
    public static Dictionary<TKey, TValue> AddRangeToCopy<TKey, TValue>(this IReadOnlyDictionary<TKey, TValue> @this, IEnumerable<KeyValuePair<TKey, TValue>> range) where TKey : notnull =>
-      new Dictionary<TKey, TValue>(@this).mutate(me => CollectionCE.AddRange(me, range));
+      new Dictionary<TKey, TValue>(@this).mutate(me => me.AddRange(range));
 
    public static List<T> AddToCopy<T>(this IReadOnlyList<T> @this, T item) => [..@this, item];
 

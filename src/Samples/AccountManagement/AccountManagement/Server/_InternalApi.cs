@@ -13,7 +13,7 @@ namespace AccountManagement;
 static class InternalApi
 {
    static TeventStoreApi TeventStore => new TeventStoreApi();
-   internal static Tuery Queries => new();
+   internal static Tuery Tueries => new();
    internal static Tommand Tommands => new();
    internal static AccountQueryModel.Api AccountQueryModel => new();
 
@@ -21,11 +21,11 @@ static class InternalApi
    {
       internal TryGetByEmailTuery TryGetByEmail(Email email) => new(email);
 
-      internal TeventStoreApi.TueryApi.TaggregateLink<Account> GetForUpdate(Guid id) => TeventStore.Queries.GetForUpdate<Account>(id);
+      internal TeventStoreApi.TueryApi.TaggregateLink<Account> GetForUpdate(Guid id) => TeventStore.Tueries.GetForUpdate<Account>(id);
 
-      internal TeventStoreApi.TueryApi.GetReadonlyCopyOfTaggregate<Account> GetReadOnlyCopy(Guid id) => TeventStore.Queries.GetReadOnlyCopy<Account>(id);
+      internal TeventStoreApi.TueryApi.GetReadonlyCopyOfTaggregate<Account> GetReadOnlyCopy(Guid id) => TeventStore.Tueries.GetReadOnlyCopy<Account>(id);
 
-      internal TeventStoreApi.TueryApi.GetReadonlyCopyOfTaggregateVersion<Account> GetReadOnlyCopyOfVersion(Guid id, int version) => TeventStore.Queries.GetReadOnlyCopyOfVersion<Account>(id, version);
+      internal TeventStoreApi.TueryApi.GetReadonlyCopyOfTaggregateVersion<Account> GetReadOnlyCopyOfVersion(Guid id, int version) => TeventStore.Tueries.GetReadOnlyCopyOfVersion<Account>(id, version);
 
       internal class TryGetByEmailTuery : IStrictlyLocalTuery<TryGetByEmailTuery, Option<Account>>
       {

@@ -25,7 +25,7 @@ public class MyAtMostOnceTypermediaTommandWithResult : TessageTypes.Remotable.At
 }
 
 public class MyTueryResult;
-public class MyTuery : TessageTypes.Remotable.NonTransactional.Queries.Tuery<MyTueryResult>;
+public class MyTuery : TessageTypes.Remotable.NonTransactional.Tueries.Tuery<MyTueryResult>;
 public class MyExactlyOnceTevent : TaggregateTevent, IMyExactlyOnceTevent;
 public interface IMyExactlyOnceTevent : ITaggregateTevent;
 public class MyExactlyOnceTommand : TessageTypes.Remotable.ExactlyOnce.Tommand;
