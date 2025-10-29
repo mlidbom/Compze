@@ -40,7 +40,7 @@ public interface IStrictlyLocalTommand<out TResult> : ITommand<TResult>, IStrict
 public interface IStrictlyLocalTuery<TTuery, out TResult> : ITuery<TResult>, IStrictlyLocalTessage where TTuery : IStrictlyLocalTuery<TTuery, TResult>;
 
 public interface IRemotableTessage : ITessage;
-public interface IRemotableTevent : IRemotableTessage, ITevent;
+public interface IRemotableTevent : ITevent, IRemotableTessage;
 public interface IRemotableTommand : ITommand, IRemotableTessage;
 public interface IRemotableTommand<out TResult> : ITommand<TResult>, IRemotableTommand;
 public interface IRemotableTuery<out TResult> : ITuery<TResult>, IRemotableTessage;
