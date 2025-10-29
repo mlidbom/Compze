@@ -96,7 +96,7 @@ namespace Compze.Tessaging.Teventive.TeventStore;
          SingleTaggregateInstanceTeventStreamMutator.AssertMigrationsAreIdempotent(_migrationFactories, newTaggregateHistory);
       }
 
-      var maxSeenInsertedVersion = newHistoryFromSqlLayer.Max(@tevent => @tevent.StorageInformation.InsertedVersion);
+      var maxSeenInsertedVersion = newHistoryFromSqlLayer.Max(tevent => tevent.StorageInformation.InsertedVersion);
       TaggregateHistoryValidator.ValidateHistory(taggregateId, newTaggregateHistory);
       _cache.Store(taggregateId, new TeventCache.Entry(tevents: newTaggregateHistory, maxSeenInsertedVersion: maxSeenInsertedVersion));
 
@@ -105,14 +105,14 @@ namespace Compze.Tessaging.Teventive.TeventStore;
 
    TaggregateTevent HydrateTevent(TeventDataRow teventDataRowRow)
    {
-      var @tevent = (TaggregateTevent)_serializer.Deserialize(teventType: _typeMapper.GetType(new TypeId(teventDataRowRow.TeventType)), json: teventDataRowRow.TeventJson);
+      var tevent = (TaggregateTevent)_serializer.Deserialize(teventType: _typeMapper.GetType(new TypeId(teventDataRowRow.TeventType)), json: teventDataRowRow.TeventJson);
 #pragma warning disable CS0618 // Type or member is obsolete
-      ((IMutableTaggregateTevent)@tevent).SetTaggregateIdInternal(teventDataRowRow.TaggregateId);
-      ((IMutableTaggregateTevent)@tevent).SetTaggregateVersionInternal(teventDataRowRow.TaggregateVersion);
-      ((IMutableTaggregateTevent)@tevent).SetTessageIdInternal(teventDataRowRow.TeventId);
-      ((IMutableTaggregateTevent)@tevent).SetUtcTimeStampInternal(teventDataRowRow.UtcTimeStamp);
+      ((IMutableTaggregateTevent)tevent).SetTaggregateIdInternal(teventDataRowRow.TaggregateId);
+      ((IMutableTaggregateTevent)tevent).SetTaggregateVersionInternal(teventDataRowRow.TaggregateVersion);
+      ((IMutableTaggregateTevent)tevent).SetTessageIdInternal(teventDataRowRow.TeventId);
+      ((IMutableTaggregateTevent)tevent).SetUtcTimeStampInternal(teventDataRowRow.UtcTimeStamp);
 #pragma warning restore CS0618 // Type or member is obsolete
-      return @tevent;
+      return tevent;
    }
 
    TaggregateTeventWithRefactoringInformation[] GetTaggregateTeventsFromSqlLayer(Guid taggregateId, bool takeWriteLock, int startAfterInsertedVersion = 0)
@@ -122,7 +122,7 @@ namespace Compze.Tessaging.Teventive.TeventStore;
                           .Select(it => new TaggregateTeventWithRefactoringInformation(HydrateTevent(it), it.StorageInformation))
                           .ToArray();
 
-   static bool IsRefactoringTevent(TaggregateTeventWithRefactoringInformation @tevent) => @tevent.StorageInformation.RefactoringInformation != null;
+   static bool IsRefactoringTevent(TaggregateTeventWithRefactoringInformation tevent) => tevent.StorageInformation.RefactoringInformation != null;
 
    IEnumerable<ITaggregateTevent> StreamTevents(int batchSize)
    {
@@ -157,10 +157,10 @@ namespace Compze.Tessaging.Teventive.TeventStore;
       }
 
       var cacheEntry = _cache.Get(taggregateId);
-      var specifications = taggregateTevents.Select(@tevent => cacheEntry.CreateInsertionSpecificationForNewTevent(@tevent)).ToArray();
+      var specifications = taggregateTevents.Select(tevent => cacheEntry.CreateInsertionSpecificationForNewTevent(tevent)).ToArray();
 
       var teventRows = taggregateTevents
-                     .Select(@tevent => new TeventDataRow(specification: cacheEntry.CreateInsertionSpecificationForNewTevent(@tevent), _typeMapper.GetId(@tevent.GetType()).GuidValue, teventAsJson: _serializer.Serialize((TaggregateTevent)@tevent)))
+                     .Select(tevent => new TeventDataRow(specification: cacheEntry.CreateInsertionSpecificationForNewTevent(tevent), _typeMapper.GetId(tevent.GetType()).GuidValue, teventAsJson: _serializer.Serialize((TaggregateTevent)tevent)))
                      .ToList();
 
       teventRows.ForEach(it => it.StorageInformation.EffectiveVersion = it.TaggregateVersion);

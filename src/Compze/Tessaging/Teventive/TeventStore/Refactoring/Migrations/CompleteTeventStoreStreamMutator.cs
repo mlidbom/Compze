@@ -21,14 +21,14 @@ abstract class CompleteTeventStoreStreamMutator
 
       public IEnumerable<TaggregateTevent> Mutate(IEnumerable<TaggregateTevent> teventStream)
       {
-         foreach(var @tevent in teventStream)
+         foreach(var tevent in teventStream)
          {
-            var version = _taggregateVersions.GetOrAddDefault(@tevent.TaggregateId) + 1;
-            _taggregateVersions[@tevent.TaggregateId] = version;
+            var version = _taggregateVersions.GetOrAddDefault(tevent.TaggregateId) + 1;
+            _taggregateVersions[tevent.TaggregateId] = version;
 #pragma warning disable CS0618 // Type or member is obsolete
-            ((IMutableTaggregateTevent)@tevent).SetTaggregateVersionInternal(version);
+            ((IMutableTaggregateTevent)tevent).SetTaggregateVersionInternal(version);
 #pragma warning restore CS0618 // Type or member is obsolete
-            yield return @tevent;
+            yield return tevent;
          }
       }
    }
@@ -40,12 +40,12 @@ abstract class CompleteTeventStoreStreamMutator
 
       public IEnumerable<TaggregateTevent> Mutate(IEnumerable<TaggregateTevent> teventStream)
       {
-         foreach(var @tevent in teventStream)
+         foreach(var tevent in teventStream)
          {
             var mutatedTevents = _taggregateMutatorsCache.GetOrAdd(
-               @tevent.TaggregateId,
-               () => SingleTaggregateInstanceTeventStreamMutator.Create(@tevent, _teventMigrationFactories)
-            ).Mutate(@tevent);
+               tevent.TaggregateId,
+               () => SingleTaggregateInstanceTeventStreamMutator.Create(tevent, _teventMigrationFactories)
+            ).Mutate(tevent);
 
             foreach(var mutatedTevent in mutatedTevents)
             {

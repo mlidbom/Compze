@@ -41,8 +41,8 @@ static partial class CompositeTaggregateTevent
                [UsedImplicitly] public new class IdGetterSetter : Root, IGetSetTaggregateEntityTeventEntityId<Guid, Root, IRoot>
 #pragma warning restore CA1812
                {
-                  public void SetEntityId(Root @tevent, Guid id) => @tevent.NestedEntityId = id;
-                  public Guid GetId(IRoot @tevent) => @tevent.NestedEntityId;
+                  public void SetEntityId(Root tevent, Guid id) => tevent.NestedEntityId = id;
+                  public Guid GetId(IRoot tevent) => tevent.NestedEntityId;
                }
             }
 

@@ -43,7 +43,7 @@ partial class CallMatchingHandlersInRegistrationOrderTeventDispatcher<TTevent> :
       }
    }
 
-   public bool Handles(TTevent @tevent) => GetHandlers(@tevent.GetType(), validateHandlerExists: false).Any();
+   public bool Handles(TTevent tevent) => GetHandlers(tevent.GetType(), validateHandlerExists: false).Any();
 
    Action<ITevent>[] GetHandlers(Type type, bool validateHandlerExists = true)
    {

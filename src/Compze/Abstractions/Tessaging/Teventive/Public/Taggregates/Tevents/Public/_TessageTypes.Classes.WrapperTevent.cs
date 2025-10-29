@@ -9,8 +9,8 @@ static class WrapperTevent
       WrapperTeventImplementationGenerator.ConstructorFor(theTevent.GetType()).Invoke(theTevent);
 }
 
-public class WrapperTevent<TTeventInterface>(TTeventInterface @tevent) : IWrapperTevent<TTeventInterface>
+public class WrapperTevent<TTeventInterface>(TTeventInterface tevent) : IWrapperTevent<TTeventInterface>
    where TTeventInterface : ITevent
 {
-   public TTeventInterface Tevent { get; } = @tevent;
+   public TTeventInterface Tevent { get; } = tevent;
 }

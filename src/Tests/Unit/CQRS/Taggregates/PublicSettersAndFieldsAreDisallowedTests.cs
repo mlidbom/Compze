@@ -49,8 +49,8 @@ public class PublicSettersAndFieldsAreDisallowedTests : UniversalTestBase
             [UsedImplicitly] public class GetterSetter : IGetSetTaggregateEntityTeventEntityId<Guid, Root, IRoot>
 #pragma warning restore CA1812
             {
-               public Guid GetId(IRoot @tevent) => throw new Exception();
-               public void SetEntityId(Root @tevent, Guid id) => throw new Exception();
+               public Guid GetId(IRoot tevent) => throw new Exception();
+               public void SetEntityId(Root tevent, Guid id) => throw new Exception();
             }
          }
 

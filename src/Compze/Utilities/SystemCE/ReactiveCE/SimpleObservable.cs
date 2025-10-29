@@ -12,11 +12,11 @@ class SimpleObservable<TTevent> : IObservable<TTevent>
    readonly IThreadShared<HashSet<IObserver<TTevent>>> _observerCollection = IThreadShared.WithDefaultTimeout<HashSet<IObserver<TTevent>>>();
 
    ///<summary>Calls <see cref="IObserver{T}.OnNext"/> for each subscribed observer.</summary>
-   public void OnNext(TTevent @tevent)
+   public void OnNext(TTevent tevent)
    {
-      Argument.NotNull(@tevent);
+      Argument.NotNull(tevent);
 
-      _observerCollection.Update(it => it.ForEach(observer => observer.OnNext(@tevent)));
+      _observerCollection.Update(it => it.ForEach(observer => observer.OnNext(tevent)));
    }
 
    /// <inheritdoc />

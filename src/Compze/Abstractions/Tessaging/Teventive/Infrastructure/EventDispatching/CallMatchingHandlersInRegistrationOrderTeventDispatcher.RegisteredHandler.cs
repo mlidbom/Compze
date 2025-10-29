@@ -28,10 +28,10 @@ partial class CallMatchingHandlersInRegistrationOrderTeventDispatcher<TTevent> w
       {
          if(typeof(THandledTevent).IsAssignableFrom(teventType))
          {
-            return @tevent => _handler((THandledTevent)@tevent);
+            return tevent => _handler((THandledTevent)tevent);
          } else if(teventType.Is<IWrapperTevent<THandledTevent>>())
          {
-            return @tevent => _handler(((IWrapperTevent<THandledTevent>)@tevent).Tevent);
+            return tevent => _handler(((IWrapperTevent<THandledTevent>)tevent).Tevent);
          } else
          {
             return null;
@@ -45,7 +45,7 @@ partial class CallMatchingHandlersInRegistrationOrderTeventDispatcher<TTevent> w
 
       internal override Action<ITevent>? TryCreateHandlerFor(Type teventType) =>
          typeof(THandledWrapperTevent).IsAssignableFrom(teventType)
-            ? @tevent => _handler((THandledWrapperTevent)@tevent)
+            ? tevent => _handler((THandledWrapperTevent)tevent)
             : null;
    }
 }

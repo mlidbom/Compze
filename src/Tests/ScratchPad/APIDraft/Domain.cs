@@ -21,7 +21,7 @@ class AccountTueryHandler
 
 class AccountQueryModelUpdater
 {
-   public void Handle(AccountCreatedTevent @tevent) { }
+   public void Handle(AccountCreatedTevent tevent) { }
 }
 
 class AccountTommandHandler
@@ -32,6 +32,6 @@ class AccountTommandHandler
 class AccountController
 {
    public string Handle(GetAccountTuery tuery) => string.Empty;
-   public void Handle(AccountCreatedTevent @tevent) { }
+   public void Handle(AccountCreatedTevent tevent) { }
    public void Handle(CreateAccountTommand tommand) { }
 }

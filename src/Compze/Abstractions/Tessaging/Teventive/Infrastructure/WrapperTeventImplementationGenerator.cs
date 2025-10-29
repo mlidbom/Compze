@@ -31,7 +31,7 @@ static class WrapperTeventImplementationGenerator
    {
       static readonly Func<ITevent, IWrapperTevent<ITevent>> UntypedConstructor = Monitor.Update(() => CreateConstructorFor(typeof(TWrappedTevent)));
 
-      internal static readonly Func<TWrappedTevent, IWrapperTevent<TWrappedTevent>> Constructor = @tevent => (IWrapperTevent<TWrappedTevent>)UntypedConstructor(@tevent);
+      internal static readonly Func<TWrappedTevent, IWrapperTevent<TWrappedTevent>> Constructor = tevent => (IWrapperTevent<TWrappedTevent>)UntypedConstructor(tevent);
    }
 
    public static TWrapperTevent WrapTevent<TWrapperTevent, TWrappedTevent>(TWrappedTevent theTevent)

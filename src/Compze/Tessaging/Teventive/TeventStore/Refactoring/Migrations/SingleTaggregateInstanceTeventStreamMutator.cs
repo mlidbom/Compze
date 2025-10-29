@@ -80,7 +80,7 @@ class SingleTaggregateInstanceTeventStreamMutator : ISingleTaggregateInstanceTev
    {
       return EnumerableCE.Create(new EndOfTaggregateHistoryTeventPlaceHolder(_taggregateId, _taggregateVersion))
                          .SelectMany(Mutate)
-                         .Where(@tevent => @tevent.GetType() != typeof(EndOfTaggregateHistoryTeventPlaceHolder));
+                         .Where(tevent => tevent.GetType() != typeof(EndOfTaggregateHistoryTeventPlaceHolder));
    }
 
    public static TaggregateTevent[] MutateCompleteTaggregateHistory
@@ -122,10 +122,10 @@ class SingleTaggregateInstanceTeventStreamMutator : ISingleTaggregateInstanceTev
 
       for(var teventIndex = 0; teventIndex < tevents.Length; teventIndex++)
       {
-         var @tevent = tevents[teventIndex];
+         var tevent = tevents[teventIndex];
          for(var migratorIndex = 0; migratorIndex < migrators.Length; migratorIndex++)
          {
-            migrators[migratorIndex].MigrateTevent(@tevent, AssertMigrationsAreIdempotentTeventModifier.Instance);
+            migrators[migratorIndex].MigrateTevent(tevent, AssertMigrationsAreIdempotentTeventModifier.Instance);
          }
       }
    }

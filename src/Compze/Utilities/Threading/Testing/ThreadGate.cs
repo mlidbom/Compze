@@ -127,11 +127,11 @@ public class ThreadGate : IThreadGate
       Log($"Entering {method}");
       return new Disposable(() => _monitor.Update(() => Log($"Exiting  {method}")));
 
-      void Log(string @tevent)
+      void Log(string tevent)
       {
          if(!_enableLogging) return;
 
-         var tessage = $"{@tevent} {this}";
+         var tessage = $"{tevent} {this}";
          Console.WriteLine(tessage);
       }
    });

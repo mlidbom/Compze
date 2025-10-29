@@ -48,13 +48,13 @@ public class PuttingItAllTogether
          //Tevent handlers
          TeventHandler.For<AccountCreatedTevent>(
             "2E8642CA-6C60-4B91-A92E-54AD3753E7F2",
-            @tevent => { },
+            tevent => { },
             defaultTeventHandlerPolicies,
             Policy.Updates<AccountReadModel>.WithCurrentTessageTaggregateId()),
 
          TeventHandler.For<AccountCreatedTevent>(
             "A5A1DF35-982C-4962-A7DA-C98AC88633C0",
-            @tevent => { },
+            tevent => { },
             defaultTeventHandlerPolicies,
             //Being explicit about which tommands might be sent let's the bus reason about possible cascade effects easily and thus guarantee consistency for tueries.
             //It also makes it possible to get an overview of the structure of a complete endpoint in one place.
@@ -63,7 +63,7 @@ public class PuttingItAllTogether
 
          TeventHandler.For<AccountCreatedTevent>(
             "E59B41A3-BF32-4B7A-B497-F29E3AF42D42",
-            @tevent => { },
+            tevent => { },
             defaultTeventHandlerPolicies,
             //(Deprecated. See: Policy.RequiresUpToDate above. )
             //This denormalizer keeps a domain read model up to date. For the domain to work reliably it needs to be executed within the triggering transaction.
@@ -71,10 +71,10 @@ public class PuttingItAllTogether
             Policy.Updates<EmailToAccountLookupModel>.WithId(new ExtractEmailFromEmailUpdatedTevent())),
 
          //Delegate to container registered component to handle the tevent.
-         TeventHandler.For("6E0EA0E6-67DB-4D25-AFE5-99E67130773D", (AccountCreatedTevent @tevent, AccountController controller) => controller.Handle(@tevent)),
+         TeventHandler.For("6E0EA0E6-67DB-4D25-AFE5-99E67130773D", (AccountCreatedTevent tevent, AccountController controller) => controller.Handle(tevent)),
 
          //Generic parameter injection. Actually the same thing as the example above..
-         TeventHandler.For("85966417-20B9-4373-9A4B-8398ECA86429", (AccountCreatedTevent @tevent, AccountController dependency1, ISomeDependency dependency2) => { })
+         TeventHandler.For("85966417-20B9-4373-9A4B-8398ECA86429", (AccountCreatedTevent tevent, AccountController dependency1, ISomeDependency dependency2) => { })
       );
    }
 }

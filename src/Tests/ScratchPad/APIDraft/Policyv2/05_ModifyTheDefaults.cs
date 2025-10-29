@@ -30,7 +30,7 @@ public class ModifyTheDefaults
          TommandHandler.For<SendAccountRegistrationWelcomeEmailTommand>("76773E2F-9E44-4150-8C3C-8A4FC93899C3", tommand => {}, Policy.NoRestrictions),
 
          //Tevent handlers
-         TeventHandler.For<AccountCreatedTevent>("2E8642CA-6C60-4B91-A92E-54AD3753E7F2", @tevent => {}, defaultTeventHandlerPolicies)
+         TeventHandler.For<AccountCreatedTevent>("2E8642CA-6C60-4B91-A92E-54AD3753E7F2", tevent => {}, defaultTeventHandlerPolicies)
       );
    }
 }

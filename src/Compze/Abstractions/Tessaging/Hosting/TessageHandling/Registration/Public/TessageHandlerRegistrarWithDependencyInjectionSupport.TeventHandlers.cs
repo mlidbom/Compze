@@ -18,7 +18,7 @@ public static partial class TessageHandlerRegistrarWithDependencyInjectionSuppor
       Action<TTevent, TDependency1> handler) where TTevent : ITevent
                                             where TDependency1 : class
    {
-      @this.Register.ForTevent<TTevent>(@tevent => handler(@tevent, @this.Resolve<TDependency1>()));
+      @this.Register.ForTevent<TTevent>(tevent => handler(tevent, @this.Resolve<TDependency1>()));
       return @this;
    }
 
@@ -28,7 +28,7 @@ public static partial class TessageHandlerRegistrarWithDependencyInjectionSuppor
                                                           where TDependency1 : class
                                                           where TDependency2 : class
    {
-      @this.Register.ForTevent<TTevent>(@tevent => handler(@tevent, @this.Resolve<TDependency1>(), @this.Resolve<TDependency2>()));
+      @this.Register.ForTevent<TTevent>(tevent => handler(tevent, @this.Resolve<TDependency1>(), @this.Resolve<TDependency2>()));
       return @this;
    }
 
@@ -39,7 +39,7 @@ public static partial class TessageHandlerRegistrarWithDependencyInjectionSuppor
                                                                         where TDependency2 : class
                                                                         where TDependency3 : class
    {
-      @this.Register.ForTevent<TTevent>(@tevent => handler(@tevent, @this.Resolve<TDependency1>(), @this.Resolve<TDependency2>(), @this.Resolve<TDependency3>()));
+      @this.Register.ForTevent<TTevent>(tevent => handler(tevent, @this.Resolve<TDependency1>(), @this.Resolve<TDependency2>(), @this.Resolve<TDependency3>()));
       return @this;
    }
 
@@ -51,7 +51,7 @@ public static partial class TessageHandlerRegistrarWithDependencyInjectionSuppor
                                                                                       where TDependency3 : class
                                                                                       where TDependency4 : class
    {
-      @this.Register.ForTevent<TTevent>(@tevent => handler(@tevent, @this.Resolve<TDependency1>(), @this.Resolve<TDependency2>(), @this.Resolve<TDependency3>(), @this.Resolve<TDependency4>()));
+      @this.Register.ForTevent<TTevent>(tevent => handler(tevent, @this.Resolve<TDependency1>(), @this.Resolve<TDependency2>(), @this.Resolve<TDependency3>(), @this.Resolve<TDependency4>()));
       return @this;
    }
 
@@ -64,7 +64,7 @@ public static partial class TessageHandlerRegistrarWithDependencyInjectionSuppor
                                                                                                     where TDependency4 : class
                                                                                                     where TDependency5 : class
    {
-      @this.Register.ForTevent<TTevent>(@tevent => handler(@tevent, @this.Resolve<TDependency1>(), @this.Resolve<TDependency2>(), @this.Resolve<TDependency3>(), @this.Resolve<TDependency4>(), @this.Resolve<TDependency5>()));
+      @this.Register.ForTevent<TTevent>(tevent => handler(tevent, @this.Resolve<TDependency1>(), @this.Resolve<TDependency2>(), @this.Resolve<TDependency3>(), @this.Resolve<TDependency4>(), @this.Resolve<TDependency5>()));
       return @this;
    }
 
@@ -78,7 +78,7 @@ public static partial class TessageHandlerRegistrarWithDependencyInjectionSuppor
                                                                                                                   where TDependency5 : class
                                                                                                                   where TDependency6 : class
    {
-      @this.Register.ForTevent<TTevent>(@tevent => handler(@tevent, @this.Resolve<TDependency1>(), @this.Resolve<TDependency2>(), @this.Resolve<TDependency3>(), @this.Resolve<TDependency4>(), @this.Resolve<TDependency5>(), @this.Resolve<TDependency6>()));
+      @this.Register.ForTevent<TTevent>(tevent => handler(tevent, @this.Resolve<TDependency1>(), @this.Resolve<TDependency2>(), @this.Resolve<TDependency3>(), @this.Resolve<TDependency4>(), @this.Resolve<TDependency5>(), @this.Resolve<TDependency6>()));
       return @this;
    }
 
@@ -93,7 +93,7 @@ public static partial class TessageHandlerRegistrarWithDependencyInjectionSuppor
                                                                                                                                 where TDependency6 : class
                                                                                                                                 where TDependency7 : class
    {
-      @this.Register.ForTevent<TTevent>(@tevent => handler(@tevent, @this.Resolve<TDependency1>(), @this.Resolve<TDependency2>(), @this.Resolve<TDependency3>(), @this.Resolve<TDependency4>(), @this.Resolve<TDependency5>(), @this.Resolve<TDependency6>(), @this.Resolve<TDependency7>()));
+      @this.Register.ForTevent<TTevent>(tevent => handler(tevent, @this.Resolve<TDependency1>(), @this.Resolve<TDependency2>(), @this.Resolve<TDependency3>(), @this.Resolve<TDependency4>(), @this.Resolve<TDependency5>(), @this.Resolve<TDependency6>(), @this.Resolve<TDependency7>()));
       return @this;
    }
 
@@ -109,7 +109,7 @@ public static partial class TessageHandlerRegistrarWithDependencyInjectionSuppor
                                                                                                                                               where TDependency7 : class
                                                                                                                                               where TDependency8 : class
    {
-      @this.Register.ForTevent<TTevent>(@tevent => handler(@tevent, @this.Resolve<TDependency1>(), @this.Resolve<TDependency2>(), @this.Resolve<TDependency3>(), @this.Resolve<TDependency4>(), @this.Resolve<TDependency5>(), @this.Resolve<TDependency6>(), @this.Resolve<TDependency7>(), @this.Resolve<TDependency8>()));
+      @this.Register.ForTevent<TTevent>(tevent => handler(tevent, @this.Resolve<TDependency1>(), @this.Resolve<TDependency2>(), @this.Resolve<TDependency3>(), @this.Resolve<TDependency4>(), @this.Resolve<TDependency5>(), @this.Resolve<TDependency6>(), @this.Resolve<TDependency7>(), @this.Resolve<TDependency8>()));
       return @this;
    }
 
@@ -126,7 +126,7 @@ public static partial class TessageHandlerRegistrarWithDependencyInjectionSuppor
                                                                                                                                                             where TDependency8 : class
                                                                                                                                                             where TDependency9 : class
    {
-      @this.Register.ForTevent<TTevent>(@tevent => handler(@tevent, @this.Resolve<TDependency1>(), @this.Resolve<TDependency2>(), @this.Resolve<TDependency3>(), @this.Resolve<TDependency4>(), @this.Resolve<TDependency5>(), @this.Resolve<TDependency6>(), @this.Resolve<TDependency7>(), @this.Resolve<TDependency8>(), @this.Resolve<TDependency9>()));
+      @this.Register.ForTevent<TTevent>(tevent => handler(tevent, @this.Resolve<TDependency1>(), @this.Resolve<TDependency2>(), @this.Resolve<TDependency3>(), @this.Resolve<TDependency4>(), @this.Resolve<TDependency5>(), @this.Resolve<TDependency6>(), @this.Resolve<TDependency7>(), @this.Resolve<TDependency8>(), @this.Resolve<TDependency9>()));
       return @this;
    }
 }

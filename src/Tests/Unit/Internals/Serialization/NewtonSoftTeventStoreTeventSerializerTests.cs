@@ -42,8 +42,8 @@ public class NewtonSoftTeventStoreTeventSerializerTests : SerializerTest
                                            config => config
                                                     .PreferringRuntimeMemberTypes()
                                                     .ComparingByMembers<TaggregateTevent>()
-                                                    .Excluding(@tevent => @tevent.UtcTimeStamp)//Timestamp is defaulted in the constructor used by serialization.
-                                                    .Excluding(@tevent => @tevent.Id)
+                                                    .Excluding(tevent => tevent.UtcTimeStamp)//Timestamp is defaulted in the constructor used by serialization.
+                                                    .Excluding(tevent => tevent.Id)
       );
    }
 

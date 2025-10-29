@@ -22,7 +22,7 @@ public class HandlerDependencies
 
          TeventHandler.For<AccountCreatedTevent>(
             "E59B41A3-BF32-4B7A-B497-F29E3AF42D42",
-            @tevent => {},
+            tevent => {},
             Policy.Updates<EmailToAccountLookupModel>.WithId(new ExtractEmailFromEmailUpdatedTevent()))//Maybe use a lambda for extraction here instead of forcing a separate class?
       );
    }

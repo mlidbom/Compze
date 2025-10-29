@@ -78,7 +78,7 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
       if(_reentrancyLevel == 0)
       {
          AssertInvariantsAreMet(); //It is allowed to enter a temporarily invalid state that will be corrected by new tevents published by tevent handlers. So we only check invariants once this tevent has been fully published including tevents published by handlers of the original tevent.
-         foreach(var @tevent in _teventsPublishedDuringCurrentPublishCallIncludingReentrantCallsFromTeventHandlers) _teventStream.OnNext(@tevent);
+         foreach(var tevent in _teventsPublishedDuringCurrentPublishCallIncludingReentrantCallsFromTeventHandlers) _teventStream.OnNext(tevent);
          _teventsPublishedDuringCurrentPublishCallIncludingReentrantCallsFromTeventHandlers.Clear();
       }
 

@@ -116,7 +116,7 @@ public class MutableTeventDispatcher_WrappedTeventsTests : UniversalTestBase
    }
 
    interface IUserWrapperTevent<out TTevent> : IWrapperTevent<TTevent> where TTevent : IUserTevent;
-   class UserWrapperTevent<TTevent>(TTevent @tevent) : WrapperTevent<TTevent>(@tevent), IUserWrapperTevent<TTevent>
+   class UserWrapperTevent<TTevent>(TTevent tevent) : WrapperTevent<TTevent>(tevent), IUserWrapperTevent<TTevent>
       where TTevent : IUserTevent;
 
    interface IUserTevent : ITaggregateTevent;
@@ -125,7 +125,7 @@ public class MutableTeventDispatcher_WrappedTeventsTests : UniversalTestBase
 
 
    interface IAdminUserWrapperTevent<out TTevent> : IUserWrapperTevent<TTevent> where TTevent : IUserTevent;
-   class AdminUserWrapperTevent<TTevent>(TTevent @tevent) : UserWrapperTevent<TTevent>(@tevent), IAdminUserWrapperTevent<TTevent>
+   class AdminUserWrapperTevent<TTevent>(TTevent tevent) : UserWrapperTevent<TTevent>(tevent), IAdminUserWrapperTevent<TTevent>
       where TTevent : IUserTevent;
 
    interface IAdminUserTevent : IUserTevent;

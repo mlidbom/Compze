@@ -45,7 +45,7 @@ partial class TeventStore
 
                   var original = GetTaggregateTeventsFromSqlLayer(taggregateId: taggregateId, takeWriteLock: true);
 
-                  var highestSeenVersion = original.Max(@tevent => @tevent.StorageInformation.InsertedVersion) + 1;
+                  var highestSeenVersion = original.Max(tevent => tevent.StorageInformation.InsertedVersion) + 1;
 
                   var updatedTaggregatesBeforeMigrationOfThisTaggregate = updatedTaggregates;
 
@@ -63,7 +63,7 @@ partial class TeventStore
                         });
 
                         refactorings.Add(newTevents
-                                        .Select(it => new TeventDataRow(@tevent: it.NewTevent.ToTaggregateTeventData(),
+                                        .Select(it => new TeventDataRow(tevent: it.NewTevent.ToTaggregateTeventData(),
                                                                           it.StorageInformation,
                                                                           _typeMapper.GetId(it.NewTevent.GetType()).GuidValue,
                                                                           teventAsJson: _serializer.Serialize(it.NewTevent)))
@@ -128,10 +128,10 @@ partial class TeventStore
    void FixManualVersions(TaggregateTeventWithRefactoringInformation[] originalHistory, TaggregateTevent[] newHistory, IReadOnlyList<List<TeventDataRow>> refactorings)
    {
       var versionUpdates = new List<VersionSpecification>();
-      var replacedOrRemoved = originalHistory.Where(it => newHistory.None(@tevent => @tevent.Id == it.Tevent.Id)).ToList();
+      var replacedOrRemoved = originalHistory.Where(it => newHistory.None(tevent => tevent.Id == it.Tevent.Id)).ToList();
       versionUpdates.AddRange(replacedOrRemoved.Select(it => new VersionSpecification(it.Tevent.Id, -it.StorageInformation.EffectiveVersion)));
 
-      var replacedOrRemoved2 = refactorings.SelectMany(it =>it).Where(it => newHistory.None(@tevent => @tevent.Id == it.TeventId));
+      var replacedOrRemoved2 = refactorings.SelectMany(it =>it).Where(it => newHistory.None(tevent => tevent.Id == it.TeventId));
       versionUpdates.AddRange(replacedOrRemoved2.Select(it => new VersionSpecification(it.TeventId, -it.StorageInformation.EffectiveVersion)));
 
       //Performance: Filter out rows where the new value equals the old value. We don't want to go updating every tevent in every refactored taggregate if only a few, or none, have actually changed.

@@ -39,14 +39,14 @@ static class AccountStatistics
    }
 
    static void MaintainStatisticsWhenRelevantTeventsAreReceived(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTevent(
-      (AccountTevent.Root @tevent, IInProcessTypermediaNavigator navigator, StatisticsSingletonInitializer initializer) =>
+      (AccountTevent.Root tevent, IInProcessTypermediaNavigator navigator, StatisticsSingletonInitializer initializer) =>
       {
          initializer.EnsureInitialized(navigator);
 
-         if(new SingletonStatisticsQueryModel().HandlesTevent(@tevent))
+         if(new SingletonStatisticsQueryModel().HandlesTevent(tevent))
          {
             navigator.Execute(new DocumentDbApi().Tueries.GetForUpdate<SingletonStatisticsQueryModel>(SingletonStatisticsQueryModel.StaticId))
-                     .ApplyTevent(@tevent);
+                     .ApplyTevent(tevent);
          }
       });
 

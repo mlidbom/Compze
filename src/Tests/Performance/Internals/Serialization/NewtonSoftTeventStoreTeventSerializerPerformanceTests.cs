@@ -31,7 +31,7 @@ public class TeventStoreTeventSerializerPerformanceTests : UniversalTestBase
 
    [PCT] public void Should_roundtrip_simple_tevent_1000_times_in_25_milliseconds()
    {
-      var @tevent = new TestTevent(
+      var tevent = new TestTevent(
          test1: "Test1",
          test2: "Test2",
          taggregateId: Guid.NewGuid(),
@@ -39,12 +39,12 @@ public class TeventStoreTeventSerializerPerformanceTests : UniversalTestBase
          utcTimeStamp: DateTime.Now + 1.Minutes());
 
       //Warmup
-      _teventSerializer.Deserialize(typeof(TestTevent), _teventSerializer.Serialize(@tevent));
+      _teventSerializer.Deserialize(typeof(TestTevent), _teventSerializer.Serialize(tevent));
 
       TimeAsserter.Execute(
          () =>
          {
-            var teventJson = _teventSerializer.Serialize(@tevent);
+            var teventJson = _teventSerializer.Serialize(tevent);
             _teventSerializer.Deserialize(typeof(TestTevent), teventJson);
          },
          iterations:1000,
