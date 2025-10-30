@@ -44,7 +44,7 @@ public interface IEntity : IEntity<Guid>;
 /// you will be as prepared to leverage such future support as possible.
 /// </summary>
 /// <typeparam name="TId"></typeparam>
-public interface IHasAlternativeId<out TId>
+public interface IHasAlternativeId<TId> where TId : IEquatable<TId>
 {
-    TId AlternativeId { get; }
+    EntityId<TId> AlternativeId { get; }
 }
