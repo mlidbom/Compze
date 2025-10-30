@@ -21,6 +21,7 @@ using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE;
+using Compze.Utilities.SystemCE.ActionFuncHarmonization;
 using Compze.Utilities.SystemCE.LinqCE;
 using FluentAssertions;
 using FluentAssertions.Extensions;
@@ -114,7 +115,7 @@ public abstract class TeventMigrationTestBase : UniversalTestBase
 
       await UtcTimeSource.WithOverrideAsync(
          TestingTimeSource.FrozenAtUtcTime(UtcTimeSource.UtcNow + FluentTimeSpanExtensions.Hours(1)),
-         async () =>
+         Func.From(async () =>
          {
             timeSource.FreezeAtUtcTime(timeSource.UtcNow + FluentTimeSpanExtensions.Hours(1)); //Bump clock to ensure that times will be be wrong unless the time from the original tevents are used..
 
@@ -202,7 +203,7 @@ public abstract class TeventMigrationTestBase : UniversalTestBase
                                                                                                                  .ListAllTeventsForTestingPurposesAbsolutelyNotUsableForARealTeventStoreOfAnySize()
                                                                                                                  .ToList());
             AssertStreamsAreIdentical(expectedCompleteTeventStoreStream, streamedTevents, "Streaming all tevents in store", writer);
-         });
+         }));
    }
 
    protected static void ClearCache(IServiceLocator serviceLocator)

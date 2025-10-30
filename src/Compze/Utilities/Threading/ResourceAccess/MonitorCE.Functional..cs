@@ -16,7 +16,7 @@ public partial class MonitorCE
       using(TakeReadLock()) return func();
    }
 
-   public unit Update(Action action) => Update(action.AsUnitFunc());
+   public unit Update(Action action) => Update(action.AsFunc());
 
    public T Update<T>(Func<T> func)
    {
