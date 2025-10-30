@@ -13,7 +13,7 @@ public class DummyTimeSourceTests : UniversalTestBase
    [XF]
    public void Now_should_return_within_100_millisecond_of_datetime_UtcNow()
    {
-      TestingTimeSource.FrozenAtUtcNow().Run(() =>
+      TestingTimeSourceStatic.FrozenAtUtcNow().Run(() =>
       {
          Math.Abs((UtcTimeSource.UtcNow - DateTime.UtcNow).TotalMilliseconds).Should().BeLessThan(100);
       });
@@ -24,7 +24,7 @@ public class DummyTimeSourceTests : UniversalTestBase
    public void FromUtcTime_returns_an_instance_with_UtcTime_equal_to_supplied_value()
    {
       var utcNow = DateTime.UtcNow;
-      TestingTimeSource.FrozenAtUtc(utcNow).Run(() =>
+      TestingTimeSourceStatic.FrozenAtUtc(utcNow).Run(() =>
       {
          UtcTimeSource.UtcNow.Should().Be(utcNow);
       });
@@ -34,7 +34,7 @@ public class DummyTimeSourceTests : UniversalTestBase
    public void Passing_a_parsed_date_to_FromUtcTime_results_in_UtcNow_being_that_date()
    {
       var dateTime = DateTime.Parse("2001-01-01 00:00", CultureInfo.InvariantCulture).ToUniversalTime();
-      TestingTimeSource.FrozenAtUtc("2001-01-01 00:00").Run(() =>
+      TestingTimeSourceStatic.FrozenAtUtc("2001-01-01 00:00").Run(() =>
       {
          UtcTimeSource.UtcNow.Should().Be(dateTime);
       });

@@ -48,7 +48,7 @@ public abstract class TeventMigrationTestBase : UniversalTestBase
       IList<ITeventMigration> migrations = new List<ITeventMigration>();
       var serviceLocator = CreateServiceLocatorForTeventStoreType(() => migrations.ToArray());
       await using var locator = serviceLocator;
-      await TestingTimeSource.FrozenAtUtc("2001-01-01 12:00").RunAsync(
+      await TestingTimeSourceStatic.FrozenAtUtc("2001-01-01 12:00").RunAsync(
          async () =>
          {
             var scenarioIndex = 1;
@@ -57,7 +57,7 @@ public abstract class TeventMigrationTestBase : UniversalTestBase
             {
                foreach(var migrationScenario in scenarios)
                {
-                  await TestingTimeSource.FrozenAtUtc(UtcTimeSource.UtcNow + FluentTimeSpanExtensions.Hours(1)).RunAsync(
+                  await TestingTimeSourceStatic.FrozenAtUtc(UtcTimeSource.UtcNow + FluentTimeSpanExtensions.Hours(1)).RunAsync(
                      async () =>
                      {
                         migrations = migrationScenario.Migrations.ToList();
@@ -92,7 +92,7 @@ public abstract class TeventMigrationTestBase : UniversalTestBase
 
       writer.WriteLine($"\n########Running Scenario {indexOfScenarioInBatch}");
 
-      var original = TestingTimeSource.FrozenAtUtcNow()
+      var original = TestingTimeSourceStatic.FrozenAtUtcNow()
                                       .Run(() =>
                                               TestTaggregate.FromTevents(scenario.TaggregateId, scenario.OriginalHistory)
                                                             .History.ToList());
@@ -111,7 +111,7 @@ public abstract class TeventMigrationTestBase : UniversalTestBase
       expected.ForEach(e => writer.WriteLine($"      {e}"));
       writer.WriteLine();
 
-      await TestingTimeSource.FrozenAtUtc(UtcTimeSource.UtcNow + FluentTimeSpanExtensions.Hours(1)).RunAsync(
+      await TestingTimeSourceStatic.FrozenAtUtc(UtcTimeSource.UtcNow + FluentTimeSpanExtensions.Hours(1)).RunAsync(
          async () =>
          {
             serviceLocator.ExecuteTransactionInIsolatedScope(() => serviceLocator.Resolve<ITeventStoreUpdater>()

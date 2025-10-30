@@ -1,5 +1,6 @@
 using System;
 using System.Threading;
+using Compze.Core.Time.Testing.Public;
 
 namespace Compze.Core.Time.Public;
 
@@ -10,4 +11,5 @@ public static class UtcTimeSource
    public static DateTime UtcNow => Override?.Value?.UtcNow ?? TimeSource.UtcNow;
 
    internal static readonly ThreadLocal<IUtcTimeTimeSource?> Override = new();
+   public static TestingTimeSourceAdapter Test => TestingTimeSourceAdapter.Instance;
 }
