@@ -50,7 +50,7 @@ class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
       _usageGuard.EnsureAccessValid();
       if(!DoTryGet(taggregateId, out TTaggregate? result))
       {
-         throw new TaggregateNotFoundException(taggregateId.PrimitiveValue);
+         throw new TaggregateNotFoundException(taggregateId);
       }
 
       return result;
@@ -63,19 +63,19 @@ class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
       return DoTryGet(taggregateId, out taggregate);
    }
 
-   public TTaggregate GetReadonlyCopy<TTaggregate>(TaggregateId taggregateId) where TTaggregate : class, ITaggregate => LoadSpecificVersionInternal<TTaggregate>(taggregateId.PrimitiveValue, int.MaxValue, verifyVersion: false);
+   public TTaggregate GetReadonlyCopy<TTaggregate>(TaggregateId taggregateId) where TTaggregate : class, ITaggregate => LoadSpecificVersionInternal<TTaggregate>(taggregateId, int.MaxValue, verifyVersion: false);
 
-   public TTaggregate GetReadonlyCopyOfVersion<TTaggregate>(TaggregateId taggregateId, int version) where TTaggregate : class, ITaggregate => LoadSpecificVersionInternal<TTaggregate>(taggregateId.PrimitiveValue, version);
+   public TTaggregate GetReadonlyCopyOfVersion<TTaggregate>(TaggregateId taggregateId, int version) where TTaggregate : class, ITaggregate => LoadSpecificVersionInternal<TTaggregate>(taggregateId, version);
 
    // ReSharper disable once ParameterOnlyUsedForPreconditionCheck.Local
-   TTaggregate LoadSpecificVersionInternal<TTaggregate>(Guid taggregateId, int version, bool verifyVersion = true) where TTaggregate : ITaggregate
+   TTaggregate LoadSpecificVersionInternal<TTaggregate>(TaggregateId taggregateId, int version, bool verifyVersion = true) where TTaggregate : ITaggregate
    {
       _taggregateTypeValidator.AssertIsValid<TTaggregate>();
       Argument.IsGreaterThan(version, 0);
 
       _usageGuard.EnsureAccessValid();
 
-      var history = GetHistory(new TaggregateId(taggregateId));
+      var history = GetHistory(taggregateId);
       if(history.None())
       {
          throw new TaggregateNotFoundException(taggregateId);

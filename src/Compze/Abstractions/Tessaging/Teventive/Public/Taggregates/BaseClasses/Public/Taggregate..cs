@@ -29,8 +29,8 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
                                           .WithArgument(@event.GetType())
                                           .Invoke(@event);
 
-   //Yes Guid.Empty. Id should be assigned by an action, and it should be obvious that the taggregate in invalid until that happens
-   protected Taggregate() : this(null)
+   //Yes null. Id should be assigned by an action, and it should be obvious that the taggregate in invalid until that happens. It's a bit ugly to declare Id as non-null, but a null value will never escape the property due to contract validation
+   protected Taggregate() : this(null!)
    {
    }
 
