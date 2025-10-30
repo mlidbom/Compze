@@ -32,7 +32,7 @@ internal partial class MySqlOutboxSqlLayer(IMySqlConnectionPool connectionFactor
 
                    """)
               .AddParameter(TessageTable.TessageId, tessageWithReceivers.TessageId.PrimitiveValue)
-              .AddParameter(TessageTable.TypeIdGuidValue, tessageWithReceivers.TypeIdGuidValue)
+              .AddParameter(TessageTable.TypeIdGuidValue, tessageWithReceivers.TypeId.PrimitiveValue)
                //performance: Like with the tevent store, keep all framework properties out of the JSON and put it into separate columns instead. For tevents. Reuse a pre-serialized instance from the persisting to the tevent store.
               .AddMediumTextParameter(TessageTable.SerializedTessage, tessageWithReceivers.SerializedTessage)
               .AddParameter(DispatchingTable.IsReceived, 0);

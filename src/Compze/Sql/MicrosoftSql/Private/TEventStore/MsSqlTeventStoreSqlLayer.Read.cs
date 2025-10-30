@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.SqlTypes;
 using System.Linq;
 using Compze.Core.Public;
+using Compze.Core.Refactoring.Naming.Internal;
 using Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions;
 using Compze.Sql.Common;
 using Microsoft.Data.SqlClient;
@@ -34,7 +35,7 @@ partial class MsSqlTeventStoreSqlLayer(MsSqlTeventStoreConnectionManager connect
    }
 
    static TeventDataRow ReadDataRow(SqlDataReader teventReader) => new(
-      teventType: teventReader.GetGuid(0),
+      teventType: new TypeId(teventReader.GetGuid(0)),
       teventJson: teventReader.GetString(1),
       teventId: new TessageId(teventReader.GetGuid(4)),
       taggregateVersion: teventReader.GetInt32(3),

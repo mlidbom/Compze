@@ -1,4 +1,5 @@
 using Compze.Core.Public;
+using Compze.Core.Refactoring.Naming.Internal;
 using Compze.Core.Tessaging.Internal.SqlLayer;
 using Compze.Sql.Common;
 using Compze.Utilities.Contracts;
@@ -14,7 +15,7 @@ partial class PgSqlInboxSqlLayer(IPgSqlConnectionPool connectionFactory, PgSqlSq
    readonly IPgSqlConnectionPool _connectionFactory = connectionFactory;
    readonly PgSqlSqlLayerSchemaManager _schemaManager = schemaManager;
 
-   public IServiceBusSqlLayer.SaveTessageResult SaveTessage(TessageId tessageId, Guid typeId, string serializedTessage)
+   public IServiceBusSqlLayer.SaveTessageResult SaveTessage(TessageId tessageId, TypeId typeId, string serializedTessage)
    {
       return _connectionFactory.UseCommand(
          command =>
@@ -30,7 +31,7 @@ partial class PgSqlInboxSqlLayer(IPgSqlConnectionPool connectionFactory, PgSqlSq
 
                    """)
               .AddParameter(TessageTable.TessageId, tessageId.PrimitiveValue)
-              .AddParameter(TessageTable.TypeId, typeId)
+              .AddParameter(TessageTable.TypeId, typeId.PrimitiveValue)
                //performance: Like with the tevent store, keep all framework properties out of the JSON and put it into separate columns instead. For tevents. Reuse a pre-serialized instance from the persisting to the tevent store.
               .AddMediumTextParameter(TessageTable.Body, serializedTessage)
               .PrepareStatement()

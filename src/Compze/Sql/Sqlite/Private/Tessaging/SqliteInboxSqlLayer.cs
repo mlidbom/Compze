@@ -1,4 +1,5 @@
 using Compze.Core.Public;
+using Compze.Core.Refactoring.Naming.Internal;
 using Compze.Core.Tessaging.Internal.SqlLayer;
 using Compze.Sql.Common;
 using Compze.Utilities.Contracts;
@@ -14,7 +15,7 @@ partial class SqliteInboxSqlLayer(ISqliteConnectionPool connectionFactory, Sqlit
    readonly ISqliteConnectionPool _connectionFactory = connectionFactory;
    readonly SqliteSqlLayerSchemaManager _schemaManager = schemaManager;
 
-   public IServiceBusSqlLayer.SaveTessageResult SaveTessage(TessageId tessageId, Guid typeId, string serializedTessage)
+   public IServiceBusSqlLayer.SaveTessageResult SaveTessage(TessageId tessageId, TypeId typeId, string serializedTessage)
    {
       return _connectionFactory.UseCommand(
          command =>

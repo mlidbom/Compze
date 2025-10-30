@@ -291,7 +291,7 @@ class TypeMapper : ITypeMapper
          if(TypeIdToTypeMap.TryGetValue(typeId, out var existingType))
          {
             if(existingType == type) return;
-            throw new Exception($"Attempted to map TypeId:{typeId.GuidValue} to: {type.FullName}, but it is already mapped to Type: {existingType.FullName}");
+            throw new Exception($"Attempted to map TypeId:{typeId} to: {type.FullName}, but it is already mapped to Type: {existingType.FullName}");
          }
 
          AssertTypeValidForMapping(type);

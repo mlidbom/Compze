@@ -22,7 +22,7 @@ class RenamingDecorator(ITypeMapper typeMapper)
       var type = Type.GetType(match.Groups[1].Value);
       var typeId = _typeMapper.GetId(type!);
       return $"""
-              "$type": "{typeId.GuidValue}"
+              "$type": "{typeId}"
               """;
    }
 

@@ -48,7 +48,7 @@ partial class PgSqlTeventStoreSqlLayer
                                          """)
                                     .AddParameter(Tevent.TaggregateId, data.TaggregateId.PrimitiveValue)
                                     .AddParameter(Tevent.InsertedVersion, data.StorageInformation.InsertedVersion)
-                                    .AddParameter(Tevent.TeventType, data.TeventType)
+                                    .AddParameter(Tevent.TeventType, data.TeventType.PrimitiveValue)
                                     .AddParameter(Tevent.TeventId, data.TeventId.PrimitiveValue)
                                     .AddTimestampWithTimeZone(Tevent.UtcTimeStamp, data.UtcTimeStamp)
                                     .AddMediumTextParameter(Tevent.Tevent, data.TeventJson)

@@ -38,7 +38,7 @@ static class TypeMapperSourceCodeGenerator
       foreach(var type in typesToMap)
       {
          var guid = existingMappings.TryGetValue(type, out var typeId)
-                       ? typeId.GuidValue.ToString()
+                       ? typeId.ToString()
                        : Guid.NewGuid().ToString();
          code.AppendLine(CultureInfo.InvariantCulture, $"      map(new Guid(\"{guid}\"), typeof({type.GetFullNameCompilable()}));");
       }

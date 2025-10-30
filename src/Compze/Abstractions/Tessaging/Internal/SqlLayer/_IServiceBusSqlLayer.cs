@@ -1,4 +1,5 @@
 using Compze.Core.Public;
+using Compze.Core.Refactoring.Naming.Internal;
 using Compze.Core.Tessaging.Hosting.Public;
 using System;
 using System.Collections.Generic;
@@ -33,17 +34,17 @@ interface IServiceBusSqlLayer
 
    interface IInboxSqlLayer
    {
-      SaveTessageResult SaveTessage(TessageId tessageId, Guid typeId, string serializedTessage);
+      SaveTessageResult SaveTessage(TessageId tessageId, TypeId typeId, string serializedTessage);
       void MarkAsSucceeded(TessageId tessageId);
       int RecordException(TessageId tessageId, string exceptionStackTrace, string exceptionTessage, string exceptionType);
       int MarkAsFailed(TessageId tessageId);
       Task InitAsync();
    }
 
-   class OutboxTessageWithReceivers(string serializedTessage, Guid typeIdGuidValue, TessageId tessageId, IEnumerable<EndpointId> receiverEndpointIds)
+   class OutboxTessageWithReceivers(string serializedTessage, TypeId typeId, TessageId tessageId, IEnumerable<EndpointId> receiverEndpointIds)
    {
       public string SerializedTessage { get; } = serializedTessage;
-      public Guid TypeIdGuidValue { get; } = typeIdGuidValue;
+      public TypeId TypeId { get; } = typeId;
       public TessageId TessageId { get; } = tessageId;
       public IEnumerable<EndpointId> ReceiverEndpointIds { get; } = receiverEndpointIds.ToList();
    }

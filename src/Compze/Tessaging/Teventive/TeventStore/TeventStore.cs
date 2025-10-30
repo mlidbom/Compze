@@ -106,7 +106,7 @@ namespace Compze.Tessaging.Teventive.TeventStore;
 
    TaggregateTevent HydrateTevent(TeventDataRow teventDataRowRow)
    {
-      var tevent = (TaggregateTevent)_serializer.Deserialize(teventType: _typeMapper.GetType(new TypeId(teventDataRowRow.TeventType)), json: teventDataRowRow.TeventJson);
+      var tevent = (TaggregateTevent)_serializer.Deserialize(teventType: _typeMapper.GetType(teventDataRowRow.TeventType), json: teventDataRowRow.TeventJson);
 #pragma warning disable CS0618 // Type or member is obsolete
       ((IMutableTaggregateTevent)tevent).SetTaggregateIdInternal(teventDataRowRow.TaggregateId);
       ((IMutableTaggregateTevent)tevent).SetTaggregateVersionInternal(teventDataRowRow.TaggregateVersion);
@@ -161,7 +161,7 @@ namespace Compze.Tessaging.Teventive.TeventStore;
       var specifications = taggregateTevents.Select(tevent => cacheEntry.CreateInsertionSpecificationForNewTevent(tevent)).ToArray();
 
       var teventRows = taggregateTevents
-                     .Select(tevent => new TeventDataRow(specification: cacheEntry.CreateInsertionSpecificationForNewTevent(tevent), _typeMapper.GetId(tevent.GetType()).GuidValue, teventAsJson: _serializer.Serialize((TaggregateTevent)tevent)))
+                     .Select(tevent => new TeventDataRow(specification: cacheEntry.CreateInsertionSpecificationForNewTevent(tevent), _typeMapper.GetId(tevent.GetType()), teventAsJson: _serializer.Serialize((TaggregateTevent)tevent)))
                      .ToList();
 
       teventRows.ForEach(it => it.StorageInformation.EffectiveVersion = it.TaggregateVersion);

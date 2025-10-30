@@ -40,7 +40,7 @@ partial class MySqlTeventStoreSqlLayer
                                          """)
                                     .AddParameter(Tevent.TaggregateId, data.TaggregateId.PrimitiveValue)
                                     .AddParameter(Tevent.InsertedVersion, data.StorageInformation.InsertedVersion)
-                                    .AddParameter(Tevent.TeventType, data.TeventType)
+                                    .AddParameter(Tevent.TeventType, data.TeventType.PrimitiveValue)
                                     .AddParameter(Tevent.TeventId, data.TeventId.PrimitiveValue)
                                     .AddDateTime2Parameter(Tevent.UtcTimeStamp, data.UtcTimeStamp)
                                     .AddMediumTextParameter(Tevent.Tevent, data.TeventJson)
