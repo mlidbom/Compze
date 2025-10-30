@@ -268,7 +268,7 @@ public class TeventMigrationTest : TeventMigrationTestBase
             var serviceLocator = CreateServiceLocatorForTeventStoreType(() => migrations);
             toDispose.Add(serviceLocator);
 
-            var id = new TaggregateId(Guid.Parse("00000000-0000-0000-0000-000000000001"));
+            var id = new TaggregateId();
 
             UtcTimeSource.Test.FrozenAtUtc("2001-01-01 12:00").Run(() =>
             {
@@ -347,7 +347,7 @@ public class TeventMigrationTest : TeventMigrationTestBase
             var serviceLocator = CreateServiceLocatorForTeventStoreType(() => migrations);
             toDispose.Add(serviceLocator);
 
-            var id = new TaggregateId(Guid.Parse("00000000-0000-0000-0000-000000000001"));
+            var id = new TaggregateId();
 
             UtcTimeSource.Test.FrozenAtUtc("2001-01-01 12:00").Run(() =>
             {
@@ -432,7 +432,7 @@ public class TeventMigrationTest : TeventMigrationTestBase
             var serviceLocator = CreateServiceLocatorForTeventStoreType(() => migrations);
             toDispose.Add(serviceLocator);
 
-            var id = new TaggregateId(Guid.Parse("00000000-0000-0000-0000-000000000001"));
+            var id = new TaggregateId();
 
             UtcTimeSource.Test.FrozenAtUtc("2001-01-01 12:00").Run(() =>
             {
@@ -490,7 +490,7 @@ public class TeventMigrationTest : TeventMigrationTestBase
             toDispose.Add(serviceLocator);
             UtcTimeSource.Test.FrozenAtUtc("2001-01-01 12:00").Run(() =>
             {
-               var id = new TaggregateId(Guid.Parse("00000000-0000-0000-0000-000000000001"));
+               var id = new TaggregateId();
                var initialTaggregate = TestTaggregate.FromTevents(id, EnumerableCE.OfTypes<Ec1, E1>());
                var expectedHistoryAfterFirstMigration = TestTaggregate.FromTevents(id, EnumerableCE.OfTypes<Ec1, E2, E1>()).History;
                var expectedHistoryAfterSecondMigration = TestTaggregate.FromTevents(id, EnumerableCE.OfTypes<Ec1, E2, E3, E1>()).History;
@@ -543,7 +543,7 @@ public class TeventMigrationTest : TeventMigrationTestBase
             toDispose.Add(serviceLocator);
             UtcTimeSource.Test.FrozenAtUtc("2001-01-01 12:00").Run(() =>
             {
-               var id = new TaggregateId(Guid.Parse("00000000-0000-0000-0000-000000000001"));
+               var id = new TaggregateId();
                var initialTaggregate = TestTaggregate.FromTevents(id, EnumerableCE.OfTypes<Ec1, E1>());
                var expectedHistoryAfterFirstMigration = TestTaggregate.FromTevents(id, EnumerableCE.OfTypes<Ec1, E1, E2>()).History;
                var expectedHistoryAfterSecondMigration = TestTaggregate.FromTevents(id, EnumerableCE.OfTypes<Ec1, E1, E3, E2>()).History;
@@ -605,7 +605,7 @@ public class TeventMigrationTest : TeventMigrationTestBase
          var otherProcessServiceLocator = serviceLocator.Clone();
          await using var processServiceLocator = otherProcessServiceLocator;
 
-         var id = new TaggregateId(Guid.Parse("00000000-0000-0000-0000-000000000001"));
+         var id = new TaggregateId();
 
          var taggregate = TestTaggregate.FromTevents(
             id,

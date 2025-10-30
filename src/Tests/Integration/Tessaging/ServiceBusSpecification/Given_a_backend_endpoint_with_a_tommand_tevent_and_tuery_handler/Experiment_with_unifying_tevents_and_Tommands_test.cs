@@ -121,13 +121,13 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
             protected Root(TaggregateId taggregateId) : base(taggregateId) {}
          }
 
-         public class Created() : Root(UserRegistrarTaggregate.SingleId), ITaggregateCreatedTevent;
+         public class Created() : Root(UserRegistrarTaggregate.SingletonId), ITaggregateCreatedTevent;
       }
    }
 
    public class UserRegistrarTaggregate : Taggregate<UserRegistrarTaggregate, UserRegistrarTevent.IRoot, UserRegistrarTevent.Implementation.Root>
    {
-      internal static TaggregateId SingleId = new TaggregateId(Guid.Parse("5C400DD9-50FB-40C7-8A13-265005588AED"));
+      internal static readonly TaggregateId SingletonId = new(Guid.Parse("5C400DD9-50FB-40C7-8A13-265005588AED"));
 
       internal static UserRegistrarTaggregate Create()
       {
