@@ -8,7 +8,7 @@ namespace Compze.Core.Public;
 /// </summary>
 // ReSharper disable once NotResolvedInText
 [DebuggerDisplay("{GetType().Name} Id={Id}")]
-public class Entity<TEntity> : Entity<TEntity, Guid>, IEntity, IEquatable<TEntity> where TEntity : Entity<TEntity>
+public class Entity<TEntity> : Entity<TEntity, Guid>, IEntity where TEntity : Entity<TEntity>
 {
    /// <summary>Creates an instance using the supplied <paramref name="id"/> as the Id.</summary>
    protected Entity(Guid id) : base(new EntityId(id)) {}
