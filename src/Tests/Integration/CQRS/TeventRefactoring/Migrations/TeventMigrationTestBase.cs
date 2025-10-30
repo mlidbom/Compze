@@ -64,7 +64,7 @@ public abstract class TeventMigrationTestBase : UniversalTestBase
                      TestingTimeSource.FrozenAtUtcTime(UtcTimeSource.UtcNow + FluentTimeSpanExtensions.Hours(1)),
                      async () =>
                      {
-                        timeSource.FreezeAtUtcTime(timeSource.UtcNow + FluentTimeSpanExtensions.Hours(1)); //No time collision between scenarios please.
+                        timeSource.FreezeAtUtcTime(UtcTimeSource.UtcNow + FluentTimeSpanExtensions.Hours(1)); //No time collision between scenarios please.
                         migrations = migrationScenario.Migrations.ToList();
                         await RunScenarioWithTeventStoreType(migrationScenario, serviceLocator, migrations, scenarioIndex++, writer);
                         return unit.Value;
@@ -122,7 +122,7 @@ public abstract class TeventMigrationTestBase : UniversalTestBase
          TestingTimeSource.FrozenAtUtcTime(UtcTimeSource.UtcNow + FluentTimeSpanExtensions.Hours(1)),
          async () =>
          {
-            timeSource.FreezeAtUtcTime(timeSource.UtcNow + FluentTimeSpanExtensions.Hours(1)); //Bump clock to ensure that times will be be wrong unless the time from the original tevents are used..
+            timeSource.FreezeAtUtcTime(UtcTimeSource.UtcNow + FluentTimeSpanExtensions.Hours(1)); //Bump clock to ensure that times will be be wrong unless the time from the original tevents are used..
 
             serviceLocator.ExecuteTransactionInIsolatedScope(() => serviceLocator.Resolve<ITeventStoreUpdater>()
                                                                                  .Save(initialTaggregate));

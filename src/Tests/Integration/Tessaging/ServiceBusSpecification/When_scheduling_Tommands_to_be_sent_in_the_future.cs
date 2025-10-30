@@ -46,7 +46,7 @@ public class When_scheduling_tommands_to_be_sent_in_the_future : UniversalTestBa
 
    [PCT]  public void Tessages_whose_due_time_has_passed_are_delivered()
    {
-      var now = _timeSource.UtcNow;
+      var now = UtcTimeSource.UtcNow;
       var inOneHour = new ScheduledTommand();
 
       _endpoint.ExecuteServerRequestInTransaction(session => session.ScheduleSend(now + .2.Seconds(), inOneHour));
@@ -56,7 +56,7 @@ public class When_scheduling_tommands_to_be_sent_in_the_future : UniversalTestBa
 
    [PCT]  public void Tessages_whose_due_time_have_not_passed_are_not_delivered()
    {
-      var now = _timeSource.UtcNow;
+      var now = UtcTimeSource.UtcNow;
       var inOneHour = new ScheduledTommand();
       _endpoint.ExecuteServerRequestInTransaction(session => session.ScheduleSend(now + 2.Seconds(), inOneHour));
 

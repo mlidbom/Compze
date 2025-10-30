@@ -57,7 +57,7 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
       {
 #pragma warning disable CS0618 // Type or member is obsolete
          ((IMutableTaggregateTevent)theTevent).SetTaggregateVersionInternal(Version + 1);
-         ((IMutableTaggregateTevent)theTevent).SetUtcTimeStampInternal(TimeSource.UtcNow);
+         ((IMutableTaggregateTevent)theTevent).SetUtcTimeStampInternal(UtcTimeSource.UtcNow);
          if(Version == 0)
          {
             if(theTevent is not ITaggregateCreatedTevent) throw new Exception($"The first published tevent {theTevent.GetType()} did not implement {nameof(ITaggregateCreatedTevent)}. The first tevent an taggregate publishes must always implement {nameof(ITaggregateCreatedTevent)}.");

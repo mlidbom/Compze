@@ -68,7 +68,7 @@ class DocumentDb : IDocumentDb
       var idString = GetIdString(id);
       var serializedDocument = _serializer.Serialize(value);
 
-      _sqlLayer.Add(new IDocumentDbSqlLayer.WriteRow(id: idString, serializedDocument: serializedDocument, updateTime: _timeSource.UtcNow, typeId: _typeMapper.GetId(value.GetType()).GuidValue));
+      _sqlLayer.Add(new IDocumentDbSqlLayer.WriteRow(id: idString, serializedDocument: serializedDocument, updateTime: UtcTimeSource.UtcNow, typeId: _typeMapper.GetId(value.GetType()).GuidValue));
 
       persistentValues.GetOrAddDefault(value.GetType())[idString] = serializedDocument;
    }
@@ -94,7 +94,7 @@ class DocumentDb : IDocumentDb
       values = values.ToList();
 
       var toUpdate = new List<IDocumentDbSqlLayer.WriteRow>();
-      var now = _timeSource.UtcNow;
+      var now = UtcTimeSource.UtcNow;
       foreach(var item in values)
       {
          var serializedDocument = _serializer.Serialize(item.Value);

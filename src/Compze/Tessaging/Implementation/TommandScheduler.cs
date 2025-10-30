@@ -45,7 +45,7 @@ class TommandScheduler(IOutbox transport, IUtcTimeTimeSource timeSource, ITaskRu
 
    public void Schedule(DateTime sendAt, IExactlyOnceTommand tessage) => _guard.Update(() =>
    {
-      if(_timeSource.UtcNow > sendAt.ToUniversalTimeSafely())
+      if(UtcTimeSource.UtcNow > sendAt.ToUniversalTimeSafely())
          throw new InvalidOperationException(message: "You cannot schedule a queuedTessageInformation to be sent in the past.");
 
       var scheduledTommand = new ScheduledTommand(sendAt, tessage);
@@ -55,7 +55,7 @@ class TommandScheduler(IOutbox transport, IUtcTimeTimeSource timeSource, ITaskRu
 
    void SendDueTommands() => _guard.Update(() => _scheduledTessages.RemoveWhere(HasPassedSendTime).ForEach(Send));
 
-   bool HasPassedSendTime(ScheduledTommand tessage) => _timeSource.UtcNow >= tessage.SendAt;
+   bool HasPassedSendTime(ScheduledTommand tessage) => UtcTimeSource.UtcNow >= tessage.SendAt;
 
    const string SendTaskName = $"{nameof(TommandScheduler)}_Send";
    void Send(ScheduledTommand scheduledTommand) => _taskRunner.Run(SendTaskName, () => TransactionScopeCe.Execute(() => _transport.SendTransactionally(scheduledTommand.Tommand)));
