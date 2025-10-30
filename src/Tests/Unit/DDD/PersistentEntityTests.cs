@@ -9,9 +9,9 @@ namespace Compze.Tests.Unit.DDD;
 
 #pragma warning disable CA1508 //Avoid dead conditional code
 
-public class PersistentEntityTests : UniversalTestBase
+public class EntityTests : UniversalTestBase
 {
-   class Person : PersistentEntity<Person>
+   class Person : Entity<Person>
    {
       public Person()
       {

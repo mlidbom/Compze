@@ -142,8 +142,8 @@ public class DocumentDbTests : DocumentDbTestsBase
     [PCT]
     public void CallingSaveWithAnInterfaceAsTypeParameterDoesNotExplode()
     {
-        IPersistentEntity user1 = new User { Email = "user1" };
-        IPersistentEntity user2 = new User { Email = "user2" };
+        IEntity user1 = new User { Email = "user1" };
+        IEntity user2 = new User { Email = "user2" };
 
         UseInTransactionalScope((reader, updater) =>
         {
@@ -507,8 +507,8 @@ public class DocumentDbTests : DocumentDbTestsBase
 
         UseInTransactionalScope((_, updater) =>
         {
-            updater.Save<IPersistentEntity>(user);
-            updater.Save<IPersistentEntity>(dog);
+            updater.Save<IEntity>(user);
+            updater.Save<IEntity>(dog);
         });
 
         UseInScope(reader =>

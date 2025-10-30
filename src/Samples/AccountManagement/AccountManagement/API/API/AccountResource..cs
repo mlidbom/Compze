@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 
 namespace AccountManagement.API;
 
-public partial class AccountResource : PersistentEntity<AccountResource>
+public partial class AccountResource : Entity<AccountResource>
 {
 #pragma warning disable IDE0051 // Remove unused private members
    [JsonConstructor]AccountResource(Email email, Password password, AccountTommands tommands)

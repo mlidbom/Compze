@@ -7,7 +7,7 @@ namespace Compze.Core.Public;
 /// <summary>
 /// Base class for any class that considers equality to be that the Ids for two instances are the same,
 /// this includes transient entities that exists only in memory and thus this class does not carry the <see cref="Guid"/> only
-/// Ids requirement of <see cref="IPersistentEntity"/>.
+/// Ids requirement of <see cref="IEntity"/>.
 /// 
 /// It provides implementations of  <see cref="object.Equals(object)"/>, <see cref="object.GetHashCode"/>, and <see cref="IEquatable{T}"/>.
 /// 
