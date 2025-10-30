@@ -13,7 +13,7 @@ using Compze.Utilities.SystemCE.ReflectionCE;
 namespace Compze.Core.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public;
 
 public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeventImplementation, TWrapperTeventInterface, TWrapperTeventImplementation> :
-   VersionedEentity<TTaggregate>,
+   VersionedEntity<TTaggregate>,
    ITaggregate<TTaggregateTevent>,
    ITeventiveInternals<TTaggregateTevent, TTaggregateTeventImplementation>
    where TWrapperTeventImplementation : TWrapperTeventInterface

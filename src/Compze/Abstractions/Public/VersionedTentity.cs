@@ -3,14 +3,14 @@ using System;
 namespace Compze.Core.Public;
 
 ///<summary>Base class for persistent entities with versioning information</summary>
-public class VersionedEentity<T> : Entity<T> where T : VersionedEentity<T>
+public class VersionedEntity<T> : Entity<T> where T : VersionedEntity<T>
 {
    /// <summary>Creates an instance using the supplied <paramref name="id"/> as the Id.</summary>
-   protected VersionedEentity(Guid id):base(new EntityId(id))
+   protected VersionedEntity(Guid id):base(new EntityId(id))
    {
    }
 
-   protected VersionedEentity(TentityId id):base(id)
+   protected VersionedEntity(TentityId id):base(id)
    {
    }
 

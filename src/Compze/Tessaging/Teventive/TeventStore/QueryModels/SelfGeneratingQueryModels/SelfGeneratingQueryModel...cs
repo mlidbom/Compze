@@ -8,7 +8,7 @@ using Compze.Utilities.SystemCE.LinqCE;
 
 namespace Compze.Tessaging.Teventive.TeventStore.QueryModels.SelfGeneratingQueryModels;
 
-public partial class SelfGeneratingQueryModel<TQueryModel, TTaggregateTevent> : VersionedEentity<TQueryModel>
+public partial class SelfGeneratingQueryModel<TQueryModel, TTaggregateTevent> : VersionedEntity<TQueryModel>
    where TQueryModel : SelfGeneratingQueryModel<TQueryModel, TTaggregateTevent>
    where TTaggregateTevent : class, ITaggregateTevent
 {
