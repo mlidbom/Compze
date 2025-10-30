@@ -1,8 +1,5 @@
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
 using System.Reflection;
 using static Compze.Utilities.Contracts.Assert;
 
@@ -14,34 +11,7 @@ public static partial class Constructor
    {
       internal static class DefaultConstructor
       {
-         internal static readonly Func<TInstance> Instance = CreateInstanceFactory();
-
-         static Func<TInstance> CreateInstanceFactory() =>
-            typeof(IStaticInstancePropertySingleton<TInstance>).IsAssignableFrom(typeof(TInstance))
-               ? CompileStaticInstancePropertyDelegate()
-               : Compile.ForType<TInstance>().DefaultConstructor();
-
-         static PropertyInfo? ImplicitImplementationProperty() => typeof(TInstance).GetProperties(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
-                                                                                   .SingleOrDefault(prop => prop.Name == nameof(IStaticInstancePropertySingleton<TInstance>.Instance) && prop.PropertyType == typeof(TInstance));
-
-         static PropertyInfo ExplicitImplementationProperty()
-         {
-            // When a class uses explicit interface implementation, the property name includes the full interface name
-            return typeof(TInstance)
-                  .GetProperties(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
-                  .SingleOrDefault(prop =>
-                                      prop.Name.Contains(nameof(IStaticInstancePropertySingleton<TInstance>), StringComparison.Ordinal) &&
-                                      prop.Name.Contains(nameof(IStaticInstancePropertySingleton<TInstance>.Instance), StringComparison.Ordinal) &&
-                                      prop.PropertyType == typeof(TInstance))
-                  .NotNull(() => $"This should be impossible, but it seems {typeof(TInstance).FullName} does not implement {typeof(IStaticInstancePropertySingleton<TInstance>).FullName}");
-         }
-
-         static Func<TInstance> CompileStaticInstancePropertyDelegate()
-         {
-            var instanceProperty = ImplicitImplementationProperty() ?? ExplicitImplementationProperty();
-
-            return Expression.Lambda<Func<TInstance>>(Expression.Property(null, instanceProperty)).Compile();
-         }
+         internal static readonly Func<TInstance> Instance = Compile.DefaultInstanceFactory<TInstance>();
       }
 
       internal static class WithArguments<TArgument1>

@@ -10,6 +10,34 @@ public static partial class Constructor
 {
    internal static class Compile
    {
+      internal static Func<TInstance> DefaultInstanceFactory<TInstance>() =>
+         typeof(IStaticInstancePropertySingleton<TInstance>).IsAssignableFrom(typeof(TInstance))
+            ? CompileStaticInstancePropertyDelegate<TInstance>()
+            : Compile.ForType<TInstance>().DefaultConstructor();
+
+      static PropertyInfo? ImplicitImplementationProperty<TInstance>() => typeof(TInstance).GetProperties(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
+                                                                                          .SingleOrDefault(prop => prop.Name == nameof(IStaticInstancePropertySingleton<TInstance>.Instance) && prop.PropertyType == typeof(TInstance));
+
+      static PropertyInfo ExplicitImplementationProperty<TInstance>()
+      {
+         // When a class uses explicit interface implementation, the property name includes the full interface name
+         return typeof(TInstance)
+               .GetProperties(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
+               .SingleOrDefault(prop =>
+                                   prop.Name.Contains(nameof(IStaticInstancePropertySingleton<TInstance>), StringComparison.Ordinal) &&
+                                   prop.Name.Contains(nameof(IStaticInstancePropertySingleton<TInstance>.Instance), StringComparison.Ordinal) &&
+                                   prop.PropertyType == typeof(TInstance))
+               .NotNull(() => $"This should be impossible, but it seems {typeof(TInstance).FullName} does not implement {typeof(IStaticInstancePropertySingleton<TInstance>).FullName}");
+      }
+
+      static Func<TInstance> CompileStaticInstancePropertyDelegate<TInstance>()
+      {
+         var instanceProperty = ImplicitImplementationProperty<TInstance>() ?? ExplicitImplementationProperty<TInstance>();
+
+         return Expression.Lambda<Func<TInstance>>(Expression.Property(null, instanceProperty)).Compile();
+      }
+
+
       internal static CompilerBuilder<TTypeToConstruct> ForType<TTypeToConstruct>() => new();
       internal static CompilerBuilder<object> ForType(Type typeToConstruct) => new(typeToConstruct);
       internal static GenericCompilerBuilder<TGenericType> ForGenericType<TGenericType>() => new();
