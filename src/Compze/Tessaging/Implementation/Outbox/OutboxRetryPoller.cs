@@ -142,7 +142,7 @@ class OutboxRetryPoller : IDisposable
             case IExactlyOnceTevent exactlyOnceTevent:
             {
                var connections = _routingInboxClient.SubscriberConnectionsFor(exactlyOnceTevent);
-               connection = connections.FirstOrDefault(c => c.EndpointInformation.Id.PrimitiveValue == endpointId)
+               connection = connections.FirstOrDefault(c => c.EndpointInformation.Id.PrimitiveValue == endpointId.PrimitiveValue)
                          ?? throw new InvalidOperationException($"No subscriber connection found for endpoint {endpointId}");
                sendTask = connection.SendAsync(exactlyOnceTevent);
                break;
@@ -150,7 +150,7 @@ class OutboxRetryPoller : IDisposable
             case IExactlyOnceTommand exactlyOnceTommand:
             {
                connection = _routingInboxClient.ConnectionToHandlerFor(exactlyOnceTommand);
-               if(connection.EndpointInformation.Id.PrimitiveValue != endpointId)
+               if(connection.EndpointInformation.Id.PrimitiveValue != endpointId.PrimitiveValue)
                {
                   throw new InvalidOperationException($"Tommand routing changed - expected endpoint {endpointId}, got {connection.EndpointInformation.Id.PrimitiveValue}");
                }
@@ -173,7 +173,7 @@ class OutboxRetryPoller : IDisposable
       }
    }
 
-   void HandleRetryResult(Task completedSendTask, TessageId tessageId, Guid endpointId) => _exceptionReporter.RunSwallowingAndReportingAnyExceptions(() =>
+   void HandleRetryResult(Task completedSendTask, TessageId tessageId, EndpointId endpointId) => _exceptionReporter.RunSwallowingAndReportingAnyExceptions(() =>
    {
       if(!_running)
          return; //We have shut down and storage may no longer be available/working. The recovery mechanisms will take care of this tessage after restart.
@@ -191,10 +191,10 @@ class OutboxRetryPoller : IDisposable
       } else
       {
          this.Log().Info($"Successfully delivered tessage {tessageId} to endpoint {endpointId}");
-         _tessageStorage.MarkAsReceived(tessageId, new EndpointId(endpointId));
+         _tessageStorage.MarkAsReceived(tessageId, endpointId);
       }
    });
 
-   void RecordFailure(TessageId tessageId, Guid endpointId, Exception? exception) =>
-      _tessageStorage.RecordDeliveryFailure(tessageId, new EndpointId(endpointId), exception);
+   void RecordFailure(TessageId tessageId, EndpointId endpointId, Exception? exception) =>
+      _tessageStorage.RecordDeliveryFailure(tessageId, endpointId, exception);
 }

@@ -1,4 +1,5 @@
 using Compze.Core.Public;
+using Compze.Core.Tessaging.Hosting.Public;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,8 +13,8 @@ interface IServiceBusSqlLayer
    interface IOutboxSqlLayer
    {
       void SaveTessage(OutboxTessageWithReceivers tessageWithReceivers);
-      MarkAsReceivedResult MarkAsReceived(TessageId tessageId, Guid endpointId);
-      void RecordDeliveryFailure(TessageId tessageId, Guid endpointId, string failureReason);
+      MarkAsReceivedResult MarkAsReceived(TessageId tessageId, EndpointId endpointId);
+      void RecordDeliveryFailure(TessageId tessageId, EndpointId endpointId, string failureReason);
       IReadOnlyList<UndeliveredTessage> GetUndeliveredTessages(TimeSpan olderThan);
       Task InitAsync();
    }
@@ -39,20 +40,20 @@ interface IServiceBusSqlLayer
       Task InitAsync();
    }
 
-   class OutboxTessageWithReceivers(string serializedTessage, Guid typeIdGuidValue, TessageId tessageId, IEnumerable<Guid> receiverEndpointIds)
+   class OutboxTessageWithReceivers(string serializedTessage, Guid typeIdGuidValue, TessageId tessageId, IEnumerable<EndpointId> receiverEndpointIds)
    {
       public string SerializedTessage { get; } = serializedTessage;
       public Guid TypeIdGuidValue { get; } = typeIdGuidValue;
       public TessageId TessageId { get; } = tessageId;
-      public IEnumerable<Guid> ReceiverEndpointIds { get; } = receiverEndpointIds.ToList();
+      public IEnumerable<EndpointId> ReceiverEndpointIds { get; } = receiverEndpointIds.ToList();
    }
 
-   class UndeliveredTessage(TessageId tessageId, Guid typeIdGuid, string serializedTessage, Guid targetEndpointId, int retryCount, DateTime? lastAttemptTime)
+   class UndeliveredTessage(TessageId tessageId, Guid typeIdGuid, string serializedTessage, EndpointId targetEndpointId, int retryCount, DateTime? lastAttemptTime)
    {
       public TessageId TessageId { get; } = tessageId;
       public Guid TypeIdGuid { get; } = typeIdGuid;
       public string SerializedTessage { get; } = serializedTessage;
-      public Guid TargetEndpointId { get; } = targetEndpointId;
+      public EndpointId TargetEndpointId { get; } = targetEndpointId;
       public int RetryCount { get; } = retryCount;
       public DateTime? LastAttemptTime { get; } = lastAttemptTime;
    }

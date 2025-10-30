@@ -1,4 +1,5 @@
 using Compze.Core.Public;
+using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Core.Tessaging.Internal.SqlLayer;
 using Compze.Sql.Common;
 using Compze.Utilities.SystemCE.LinqCE;
@@ -45,7 +46,7 @@ partial class PgSqlOutboxSqlLayer(IPgSqlConnectionPool connectionFactory, PgSqlS
                                                             ({DispatchingTable.TessageId},  {DispatchingTable.EndpointId},          {DispatchingTable.IsReceived}) 
                                                     VALUES (@{DispatchingTable.TessageId}, @{DispatchingTable.EndpointId}_{index}, @{DispatchingTable.IsReceived});
 
-                                                """).AddParameter($"{DispatchingTable.EndpointId}_{index}", endpointId));
+                                                """).AddParameter($"{DispatchingTable.EndpointId}_{index}", endpointId.PrimitiveValue));
 
             command
               .PrepareStatement() //Even though the count above will differ it will probably not have too many variations for preparing the statement to be quite beneficial.
@@ -53,7 +54,7 @@ partial class PgSqlOutboxSqlLayer(IPgSqlConnectionPool connectionFactory, PgSqlS
          });
    }
 
-   public IServiceBusSqlLayer.MarkAsReceivedResult MarkAsReceived(TessageId tessageId, Guid endpointId)
+   public IServiceBusSqlLayer.MarkAsReceivedResult MarkAsReceived(TessageId tessageId, EndpointId endpointId)
    {
       var affectedRows = _connectionFactory.UseCommand(
          command => command
@@ -68,7 +69,7 @@ partial class PgSqlOutboxSqlLayer(IPgSqlConnectionPool connectionFactory, PgSqlS
 
                         """)
                    .AddParameter(DispatchingTable.TessageId, tessageId.PrimitiveValue)
-                   .AddParameter(DispatchingTable.EndpointId, endpointId)
+                   .AddParameter(DispatchingTable.EndpointId, endpointId.PrimitiveValue)
                    .PrepareStatement()
                    .ExecuteNonQuery());
 
@@ -77,7 +78,7 @@ partial class PgSqlOutboxSqlLayer(IPgSqlConnectionPool connectionFactory, PgSqlS
                 : IServiceBusSqlLayer.MarkAsReceivedResult.WasAlreadyMarked;
    }
 
-   public void RecordDeliveryFailure(TessageId tessageId, Guid endpointId, string failureReason)
+   public void RecordDeliveryFailure(TessageId tessageId, EndpointId endpointId, string failureReason)
    {
       _connectionFactory.UseCommand(
          command => command
@@ -93,7 +94,7 @@ partial class PgSqlOutboxSqlLayer(IPgSqlConnectionPool connectionFactory, PgSqlS
 
                         """)
                    .AddParameter(DispatchingTable.TessageId, tessageId.PrimitiveValue)
-                   .AddParameter(DispatchingTable.EndpointId, endpointId)
+                   .AddParameter(DispatchingTable.EndpointId, endpointId.PrimitiveValue)
                    .AddTimestampWithTimeZone(DispatchingTable.LastAttemptTime, DateTime.UtcNow)
                    .AddMediumTextParameter(DispatchingTable.FailureReason, failureReason)
                    .PrepareStatement()
@@ -137,7 +138,7 @@ partial class PgSqlOutboxSqlLayer(IPgSqlConnectionPool connectionFactory, PgSqlS
                   tessageId: new TessageId(reader.GetGuid(0)),
                   typeIdGuid: reader.GetGuid(1),
                   serializedTessage: reader.GetString(2),
-                  targetEndpointId: reader.GetGuid(3),
+                  targetEndpointId: new EndpointId(reader.GetGuid(3)),
                   retryCount: reader.GetInt32(4),
                   lastAttemptTime: reader.IsDBNull(5) ? null : reader.GetDateTime(5)));
             }

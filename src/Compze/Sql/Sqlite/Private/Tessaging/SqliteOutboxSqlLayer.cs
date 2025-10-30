@@ -1,4 +1,5 @@
 using Compze.Core.Public;
+using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Core.Tessaging.Internal.SqlLayer;
 using Compze.Sql.Common;
 using Compze.Utilities.SystemCE.LinqCE;
@@ -50,7 +51,7 @@ partial class SqliteOutboxSqlLayer(ISqliteConnectionPool connectionFactory, Sqli
          });
    }
 
-   public IServiceBusSqlLayer.MarkAsReceivedResult MarkAsReceived(TessageId tessageId, Guid endpointId)
+   public IServiceBusSqlLayer.MarkAsReceivedResult MarkAsReceived(TessageId tessageId, EndpointId endpointId)
    {
       var affectedRows = _connectionFactory.UseCommand(
          command => command
@@ -73,7 +74,7 @@ partial class SqliteOutboxSqlLayer(ISqliteConnectionPool connectionFactory, Sqli
                 : IServiceBusSqlLayer.MarkAsReceivedResult.WasAlreadyMarked;
    }
 
-   public void RecordDeliveryFailure(TessageId tessageId, Guid endpointId, string failureReason)
+   public void RecordDeliveryFailure(TessageId tessageId, EndpointId endpointId, string failureReason)
    {
       _connectionFactory.UseCommand(
          command => command
@@ -131,7 +132,7 @@ partial class SqliteOutboxSqlLayer(ISqliteConnectionPool connectionFactory, Sqli
                   tessageId: new TessageId(Guid.Parse(reader.GetString(0))),
                   typeIdGuid: Guid.Parse(reader.GetString(1)),
                   serializedTessage: reader.GetString(2),
-                  targetEndpointId: Guid.Parse(reader.GetString(3)),
+                  targetEndpointId: new EndpointId(Guid.Parse(reader.GetString(3))),
                   retryCount: reader.GetInt32(4),
                   lastAttemptTime: reader.IsDBNull(5) ? null : DateTime.Parse(reader.GetString(5), CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind)));
             }

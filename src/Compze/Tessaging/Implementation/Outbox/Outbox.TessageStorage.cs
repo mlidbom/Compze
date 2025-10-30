@@ -41,15 +41,14 @@ partial class Outbox
          var outboxTessageWithReceivers = new IServiceBusSqlLayer.OutboxTessageWithReceivers(_serializer.SerializeTessage(tessage),
                                                                                              _typeMapper.GetId(tessage.GetType()).GuidValue,
                                                                                              tessage.Id,
-                                                                                             receiverEndpointIds.Select(it => it.PrimitiveValue));
+                                                                                             receiverEndpointIds);
 
          _sqlLayer.SaveTessage(outboxTessageWithReceivers);
       }
 
       public void MarkAsReceived(TessageId tessageId, EndpointId receiverId)
       {
-         var endpointIdGuidValue = receiverId.PrimitiveValue;
-         var result = _sqlLayer.MarkAsReceived(tessageId, endpointIdGuidValue);
+         var result = _sqlLayer.MarkAsReceived(tessageId, receiverId);
 
          if(result == IServiceBusSqlLayer.MarkAsReceivedResult.WasAlreadyMarked)
          {
@@ -63,7 +62,7 @@ partial class Outbox
                                 ? $"{exception.GetType().Name}: {exception.Message}\n{exception.StackTrace}"
                                 : "Unknown failure";
 
-         _sqlLayer.RecordDeliveryFailure(tessageId, receiverId.PrimitiveValue, failureReason);
+         _sqlLayer.RecordDeliveryFailure(tessageId, receiverId, failureReason);
       }
 
       public IReadOnlyList<IServiceBusSqlLayer.UndeliveredTessage> GetUndeliveredTessages(TimeSpan olderThan) =>
