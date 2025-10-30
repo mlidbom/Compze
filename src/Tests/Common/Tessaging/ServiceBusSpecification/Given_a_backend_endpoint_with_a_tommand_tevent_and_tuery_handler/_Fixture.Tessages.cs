@@ -81,11 +81,11 @@ public static class MyTaggregateTevent
       public class Root : TaggregateTevent, IRoot
       {
          protected Root() {}
-         protected Root(TaggregateId taggregateId) : base(taggregateId) {}
+         protected Root(TaggregateId accountId) : base(accountId) {}
       }
 
       // ReSharper disable once MemberHidesStaticFromOuterClass
-      public class Created(TaggregateId taggregateId) : Root(taggregateId), MyTaggregateTevent.Created;
+      public class Created(TaggregateId accountId) : Root(accountId), MyTaggregateTevent.Created;
 
       // ReSharper disable once MemberHidesStaticFromOuterClass
       public class Updated : Root, MyTaggregateTevent.Updated;

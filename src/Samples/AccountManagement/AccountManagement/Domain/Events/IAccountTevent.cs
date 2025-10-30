@@ -1,3 +1,4 @@
+using Compze.Core.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 
 // ReSharper disable MemberHidesStaticFromOuterClass
@@ -8,7 +9,7 @@ namespace AccountManagement.Domain.Tevents;
 
 public static partial class AccountTevent
 {
-   public interface Root : ITaggregateTevent;
+   public interface Root : ITaggregateTevent {}
 
    public interface Created : Root, ITaggregateCreatedTevent;
       //Used in multiple places by the infrastructure and clients. Things WILL BREAK without this.

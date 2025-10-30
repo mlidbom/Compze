@@ -1,5 +1,6 @@
 using AccountManagement.Domain;
 using AccountManagement.Domain.Passwords;
+using Compze.Core.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public;
 using Newtonsoft.Json;
 
@@ -15,6 +16,8 @@ public partial class AccountResource : TaggregateViewModel<AccountResource>
       Password = password;
       Tommands = tommands;
    }
+
+   public override AccountId Id => new AccountId(base.Id.PrimitiveValue);
 
    //Todo: this conversion smells
    internal AccountResource(IAccountResourceData account) : base(account.Id)

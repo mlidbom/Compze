@@ -19,7 +19,7 @@ public static partial class AccountTevent
       public abstract class Root : TaggregateTevent, AccountTevent.Root
       {
          protected Root() {}
-         protected Root(TaggregateId taggregateId) : base(taggregateId) {}
+         protected Root(AccountId accountId) : base(accountId) {}
       }
 
       public class UserRegistered : Root, AccountTevent.UserRegistered
@@ -37,7 +37,7 @@ public static partial class AccountTevent
          /// Once again we are saved from doing work here by using value objects for <see cref="Email"/> and <see cref="Password"/>
          /// The base class will ensure that the GUID is not empty.
          /// </summary>
-         public UserRegistered(TaggregateId accountId, Email email, Password password) : base(accountId)
+         public UserRegistered(AccountId accountId, Email email, Password password) : base(accountId)
          {
             Guard.IsNotNull(email);
             Guard.IsNotNull(password);

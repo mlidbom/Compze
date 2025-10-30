@@ -1,4 +1,5 @@
 using AccountManagement.API.ValidationAttributes;
+using AccountManagement.Domain;
 using Compze.Core.Public;
 using Compze.Core.Tessaging.Public;
 using Newtonsoft.Json;
@@ -12,15 +13,15 @@ public partial class AccountResource
    {
       public class ChangeEmail : TessageTypes.Remotable.AtMostOnce.AtMostOnceTypermediaTommand
       {
-         [JsonConstructor]public ChangeEmail(TaggregateId accountId, string email) : base()
+         [JsonConstructor]public ChangeEmail(AccountId accountId, string email) : base()
          {
             AccountId = accountId;
             Email = email;
          }
 
-         internal ChangeEmail(TaggregateId accountId):base() => AccountId = accountId;
+         internal ChangeEmail(AccountId accountId):base() => AccountId = accountId;
 
-         [Required] [TaggregateId] public TaggregateId AccountId { get; set; }
+         [Required] [TaggregateId] public AccountId AccountId { get; set; }
          [Required] [Email] public string Email { get; set; } = string.Empty;
 
          public ChangeEmail WithEmail(string email) => new(AccountId)
