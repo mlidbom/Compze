@@ -1,8 +1,10 @@
 using Compze.Core.Serialization.Internal.DbPool;
+using Compze.Serialization.Newtonsoft.Private.PrimitiveWrappers;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE;
 using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace Compze.Serialization.Newtonsoft.Private.DbPool;
 
@@ -21,6 +23,7 @@ class NewtonsoftSharedObjectSerializer : ISharedObjectSerializer
    static readonly JsonSerializerSettings JsonSettings = JsonSettings = new JsonSerializerSettings
                                                                         {
                                                                            ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
+                                                                           Converters = new List<JsonConverter> { new ValueWrapperConverter() },
                                                                            ContractResolver = IncludeMembersWithPrivateSettersResolver.Instance
                                                                         };
 

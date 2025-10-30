@@ -15,7 +15,7 @@ public class DbPoolDatabase
    public bool IsClean { get; private set; } = true;
    public DateTime ReservationExpirationTime { get; private set; } = DateTime.MinValue;
    public string ReservationName { get; private set; } = string.Empty;
-   public Guid ReservedByPoolId { get; private set; } = Guid.Empty;
+   public DbPoolId? ReservedByPoolId { get; private set; } = null;
 
    internal string Name => $"{PoolDatabaseNamePrefix}{Id:0000}";
 
@@ -37,7 +37,7 @@ public class DbPoolDatabase
       IsReserved = false;
       IsClean = false;
       ReservationName = string.Empty;
-      ReservedByPoolId = Guid.Empty;
+      ReservedByPoolId = null;
       return this;
    }
 
@@ -48,9 +48,9 @@ public class DbPoolDatabase
       return this;
    }
 
-   internal DbPoolDatabase Reserve(string reservationName, Guid poolId, TimeSpan reservationLength)
+   internal DbPoolDatabase Reserve(string reservationName, DbPoolId poolId, TimeSpan reservationLength)
    {
-      Assert.State.Is(!IsReserved).Is(poolId != Guid.Empty);
+      Assert.State.Is(!IsReserved);
 
       IsReserved = true;
       ReservationName = reservationName;

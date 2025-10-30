@@ -143,9 +143,6 @@ class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
       _store.Dispose();
    }
 
-   public override string ToString() => $"{_id}: {GetType().FullName}";
-   readonly Guid _id = Guid.NewGuid();
-
    public IReadOnlyList<ITaggregateTevent> GetHistory(TaggregateId taggregateId) => GetHistoryInternal(taggregateId, takeWriteLock: false);
 
    IReadOnlyList<ITaggregateTevent> GetHistoryInternal(TaggregateId taggregateId, bool takeWriteLock) =>
