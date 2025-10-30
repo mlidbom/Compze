@@ -612,13 +612,8 @@ public class DocumentDbTests : DocumentDbTestsBase
     }
 
     [PCT]
-    public void ThrowsExceptionIfYouTryToSaveAnIHasPersistentIdentityWithNoId()
-    {
-        var user1 = new User(Guid.Empty);
-
-        UseInTransactionalScope((_, updater) => updater.Invoking(it => it.Save(user1))
-                                                       .Should().Throw<Exception>());
-    }
+    public void ThrowsExceptionIfYouTryToCreateAnIHasPersistentIdentityWithNoId() => 
+       Invoking(() => new User(Guid.Empty)).Should().Throw<Exception>();
 
     [PCT]
     public void GetByIdsShouldReturnOnlyMatchingResultEvenWhenMoreResultsAreInTheCache()

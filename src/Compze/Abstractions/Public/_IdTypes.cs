@@ -5,10 +5,9 @@ using Compze.Utilities.Functional;
 
 namespace Compze.Core.Public;
 
-public class EntityId<TPrimitive>(TPrimitive primitiveValue) : ValueWrapper<TPrimitive>(IsEmptyValue(primitiveValue).then(primitiveValue))
+public class EntityId<TPrimitive>(TPrimitive primitiveValue) : ValueWrapper<TPrimitive>(Assert.Argument.Is(!Equals(primitiveValue, default(TPrimitive))).then(primitiveValue))
    where TPrimitive : IEquatable<TPrimitive>
 {
-   static bool IsEmptyValue(TPrimitive value) => Equals(value, default(TPrimitive));
 }
 
 public class EntityId : EntityId<Guid>
