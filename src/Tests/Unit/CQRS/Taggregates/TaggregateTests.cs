@@ -53,28 +53,26 @@ public class TaggregateTests : UniversalTestBase
    [XF]
    public void When_Raising_tevent_that_triggers_another_tevent_both_tevents_are_outputted_on_the_observable_only_after_the_triggered_tevent_and_in_the_raised_order()
    {
-      UtcTimeSource.WithOverride(
-         TestingTimeSource.FrozenUtcNow(),
-         () =>
+      TestingTimeSource.FrozenAtUtcNow().Run(() =>
+      {
+         var taggregate = new CascadingTeventsTaggregate();
+         var receivedTevents = new List<ITaggregateTevent>();
+         using(((ITaggregate)taggregate).TeventStream.Subscribe(tevent =>
+               {
+                  receivedTevents.Add(tevent);
+                  taggregate.TriggeringTeventApplied.Should()
+                            .BeTrue();
+                  taggregate.TriggeredTeventApplied.Should()
+                            .BeTrue();
+               }))
          {
-            var taggregate = new CascadingTeventsTaggregate();
-            var receivedTevents = new List<ITaggregateTevent>();
-            using(((ITaggregate)taggregate).TeventStream.Subscribe(tevent =>
-                  {
-                     receivedTevents.Add(tevent);
-                     taggregate.TriggeringTeventApplied.Should()
-                               .BeTrue();
-                     taggregate.TriggeredTeventApplied.Should()
-                               .BeTrue();
-                  }))
-            {
-               taggregate.RaiseTriggeringTevent();
-            }
+            taggregate.RaiseTriggeringTevent();
+         }
 
-            receivedTevents.Count.Should().Be(2);
-            receivedTevents[0].GetType().Should().Be<TriggeringTevent>();
-            receivedTevents[1].GetType().Should().Be<TriggeredTevent>();
-         });
+         receivedTevents.Count.Should().Be(2);
+         receivedTevents[0].GetType().Should().Be<TriggeringTevent>();
+         receivedTevents[1].GetType().Should().Be<TriggeredTevent>();
+      });
    }
 
    class CascadingTeventsTaggregate : Taggregate<CascadingTeventsTaggregate, ITaggregateTevent, TaggregateTevent>

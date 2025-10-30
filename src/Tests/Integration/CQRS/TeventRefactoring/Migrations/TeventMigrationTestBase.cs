@@ -48,8 +48,7 @@ public abstract class TeventMigrationTestBase : UniversalTestBase
       IList<ITeventMigration> migrations = new List<ITeventMigration>();
       var serviceLocator = CreateServiceLocatorForTeventStoreType(() => migrations.ToArray());
       await using var locator = serviceLocator;
-      await UtcTimeSource.WithOverrideAsync(
-         TestingTimeSource.FrozenUtc("2001-01-01 12:00"),
+      await TestingTimeSource.FrozenAtUtc("2001-01-01 12:00").RunAsync(
          async () =>
          {
             var scenarioIndex = 1;
@@ -58,8 +57,7 @@ public abstract class TeventMigrationTestBase : UniversalTestBase
             {
                foreach(var migrationScenario in scenarios)
                {
-                  await UtcTimeSource.WithOverrideAsync(
-                     TestingTimeSource.FrozenUtc(UtcTimeSource.UtcNow + FluentTimeSpanExtensions.Hours(1)),
+                  await TestingTimeSource.FrozenAtUtc(UtcTimeSource.UtcNow + FluentTimeSpanExtensions.Hours(1)).RunAsync(
                      async () =>
                      {
                         migrations = migrationScenario.Migrations.ToList();
@@ -94,10 +92,10 @@ public abstract class TeventMigrationTestBase : UniversalTestBase
 
       writer.WriteLine($"\n########Running Scenario {indexOfScenarioInBatch}");
 
-      var original = UtcTimeSource.WithOverride(TestingTimeSource.FrozenUtcNow(),
-                                                () =>
-                                                   TestTaggregate.FromTevents(scenario.TaggregateId, scenario.OriginalHistory)
-                                                                 .History.ToList());
+      var original = TestingTimeSource.FrozenAtUtcNow()
+                                      .Run(() =>
+                                              TestTaggregate.FromTevents(scenario.TaggregateId, scenario.OriginalHistory)
+                                                            .History.ToList());
 
       writer.WriteLine("Original History: ");
       original.ForEach(e => writer.WriteLine($"      {e}"));
@@ -113,8 +111,7 @@ public abstract class TeventMigrationTestBase : UniversalTestBase
       expected.ForEach(e => writer.WriteLine($"      {e}"));
       writer.WriteLine();
 
-      await UtcTimeSource.WithOverrideAsync(
-         TestingTimeSource.FrozenUtc(UtcTimeSource.UtcNow + FluentTimeSpanExtensions.Hours(1)),
+      await TestingTimeSource.FrozenAtUtc(UtcTimeSource.UtcNow + FluentTimeSpanExtensions.Hours(1)).RunAsync(
          async () =>
          {
             serviceLocator.ExecuteTransactionInIsolatedScope(() => serviceLocator.Resolve<ITeventStoreUpdater>()

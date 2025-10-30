@@ -40,8 +40,8 @@ public class TeventMigrationPerformanceTest : TeventMigrationTestBase
                                                     .Concat(EnumerableCE.OfTypes<E2, E4, E6, E8>()))).ToList();
 
 
-      _taggregate = UtcTimeSource.WithOverride(TestingTimeSource.FrozenUtcNow(), () =>
-                                                  TestTaggregate.FromTevents(Guid.NewGuid(), historyTypes));
+      _taggregate = TestingTimeSource.FrozenAtUtcNow()
+                                     .Run(() => TestTaggregate.FromTevents(Guid.NewGuid(), historyTypes));
       _history = _taggregate.History.Cast<TaggregateTevent>().ToList();
 
       _currentMigrations = Enumerable.Empty<ITeventMigration>().ToList();
