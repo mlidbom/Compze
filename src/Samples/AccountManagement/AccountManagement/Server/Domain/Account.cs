@@ -50,7 +50,7 @@ class Account : Taggregate<Account, AccountTevent.Root, AccountTevent.Implementa
    {
       //Ensure that it is impossible to call with invalid arguments.
       //Since all domain types should ensure that it is impossible to create a non-default value that is invalid we only have to disallow default values.
-      accountId.AssertNotEmpty();Guard.IsNotNull(email);Guard.IsNotNull(password);
+      Guard.IsNotNull(email);Guard.IsNotNull(password);
 
       //The email is the unique identifier for logging into the account so duplicates are forbidden.
       if(navigator.Execute(InternalApi.Tueries.TryGetByEmail(email)) is Some<Account>)

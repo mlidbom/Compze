@@ -5,12 +5,12 @@ using Compze.Utilities.Functional;
 
 namespace Compze.Core.Public;
 
-public class EntityId<TPrimitive>(TPrimitive primitiveValue) : ValueWrapper<TPrimitive>(primitiveValue)
+public class EntityId<TPrimitive>(TPrimitive primitiveValue) : ValueWrapper<TPrimitive>(IsEmptyValue(primitiveValue).then(primitiveValue))
    where TPrimitive : IEquatable<TPrimitive>
 {
    //urgent: should not allow empty at all. We need to handle uninitialized Ids some other way
    public bool IsEmpty => Equals(PrimitiveValue, default(TPrimitive));
-   public unit AssertNotEmpty() => Assert.Invariant.Is(!IsEmpty).then(unit.Value);
+   static bool IsEmptyValue(TPrimitive value) => Equals(value, default(TPrimitive));
 }
 
 public class EntityId : EntityId<Guid>

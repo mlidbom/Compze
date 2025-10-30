@@ -5,5 +5,5 @@ namespace AccountManagement.API.ValidationAttributes;
 
 public sealed class TaggregateIdAttribute : ValidationAttributeBase
 {
-   protected override bool InternalIsValid(object value) => (value is TaggregateId { IsEmpty: false });
+   protected override bool InternalIsValid(object value) => value is TaggregateId;
 }
