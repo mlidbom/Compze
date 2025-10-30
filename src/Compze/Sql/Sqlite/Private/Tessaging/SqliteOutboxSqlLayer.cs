@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Threading.Tasks;
+using Compze.Core.Refactoring.Naming.Internal;
 using DispatchingTable = Compze.Core.Tessaging.Internal.SqlLayer.IServiceBusSqlLayer.OutboxTessageDispatchingTableSchemaStrings;
 using TessageTable = Compze.Core.Tessaging.Internal.SqlLayer.IServiceBusSqlLayer.OutboxTessagesDatabaseSchemaStrings;
 
@@ -130,7 +131,7 @@ partial class SqliteOutboxSqlLayer(ISqliteConnectionPool connectionFactory, Sqli
             {
                tessages.Add(new IServiceBusSqlLayer.UndeliveredTessage(
                   tessageId: new TessageId(Guid.Parse(reader.GetString(0))),
-                  typeIdGuid: Guid.Parse(reader.GetString(1)),
+                  typeId: new TypeId(Guid.Parse(reader.GetString(1))),
                   serializedTessage: reader.GetString(2),
                   targetEndpointId: new EndpointId(Guid.Parse(reader.GetString(3))),
                   retryCount: reader.GetInt32(4),

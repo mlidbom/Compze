@@ -129,7 +129,7 @@ class OutboxRetryPoller : IDisposable
 
       try
       {
-         var tessageTypeId = new TypeId(undeliveredTessage.TypeIdGuid);
+         var tessageTypeId = undeliveredTessage.TypeId;
          var tessageType = _typeMapper.GetType(tessageTypeId);
          var tessage = _serializer.DeserializeTessage(tessageType, undeliveredTessage.SerializedTessage);
 

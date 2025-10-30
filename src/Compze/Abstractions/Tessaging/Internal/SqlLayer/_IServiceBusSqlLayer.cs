@@ -49,10 +49,10 @@ interface IServiceBusSqlLayer
       public IEnumerable<EndpointId> ReceiverEndpointIds { get; } = receiverEndpointIds.ToList();
    }
 
-   class UndeliveredTessage(TessageId tessageId, Guid typeIdGuid, string serializedTessage, EndpointId targetEndpointId, int retryCount, DateTime? lastAttemptTime)
+   class UndeliveredTessage(TessageId tessageId, TypeId typeId, string serializedTessage, EndpointId targetEndpointId, int retryCount, DateTime? lastAttemptTime)
    {
       public TessageId TessageId { get; } = tessageId;
-      public Guid TypeIdGuid { get; } = typeIdGuid;
+      public TypeId TypeId { get; } = typeId;
       public string SerializedTessage { get; } = serializedTessage;
       public EndpointId TargetEndpointId { get; } = targetEndpointId;
       public int RetryCount { get; } = retryCount;
