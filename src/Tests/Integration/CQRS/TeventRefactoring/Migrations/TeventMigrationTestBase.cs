@@ -48,33 +48,38 @@ public abstract class TeventMigrationTestBase : UniversalTestBase
       IList<ITeventMigration> migrations = new List<ITeventMigration>();
       var serviceLocator = CreateServiceLocatorForTeventStoreType(() => migrations.ToArray());
       await using var locator = serviceLocator;
-      var timeSource = serviceLocator.Resolve<TestingTimeSource>();
-      timeSource.FreezeAtUtcTime("2001-02-02 01:01:01.011111");
-      var scenarioIndex = 1;
-
-      try
-      {
-         foreach(var migrationScenario in scenarios)
+      await UtcTimeSource.WithOverrideAsync(
+         TestingTimeSource.FrozenAtUtcTime("2001-01-01 12:00"),
+         async () =>
          {
-            await UtcTimeSource.WithOverrideAsync(
-               TestingTimeSource.FrozenAtUtcTime(UtcTimeSource.UtcNow + FluentTimeSpanExtensions.Hours(1)),
-               async () =>
-               {
-                  timeSource.FreezeAtUtcTime(timeSource.UtcNow + FluentTimeSpanExtensions.Hours(1)); //No time collision between scenarios please.
-                  migrations = migrationScenario.Migrations.ToList();
-                  await RunScenarioWithTeventStoreType(migrationScenario, serviceLocator, migrations, scenarioIndex++, writer);
-                  return unit.Value;
-               });
-         }
+            var timeSource = serviceLocator.Resolve<TestingTimeSource>();
+            timeSource.FreezeAtUtcTime("2001-02-02 01:01:01.011111");
+            var scenarioIndex = 1;
 
-         // If we got here without exception, mark as success
-         writer.TestSucceeded();
-      }
-      catch(Exception ex) when(expectedException != null && expectedException.IsInstanceOfType(ex))
-      {
-         writer.TestSucceeded();
-         throw; // Re-throw so the test framework can verify it
-      }
+            try
+            {
+               foreach(var migrationScenario in scenarios)
+               {
+                  await UtcTimeSource.WithOverrideAsync(
+                     TestingTimeSource.FrozenAtUtcTime(UtcTimeSource.UtcNow + FluentTimeSpanExtensions.Hours(1)),
+                     async () =>
+                     {
+                        timeSource.FreezeAtUtcTime(timeSource.UtcNow + FluentTimeSpanExtensions.Hours(1)); //No time collision between scenarios please.
+                        migrations = migrationScenario.Migrations.ToList();
+                        await RunScenarioWithTeventStoreType(migrationScenario, serviceLocator, migrations, scenarioIndex++, writer);
+                        return unit.Value;
+                     });
+               }
+
+               // If we got here without exception, mark as success
+               writer.TestSucceeded();
+            }
+            catch(Exception ex) when(expectedException != null && expectedException.IsInstanceOfType(ex))
+            {
+               writer.TestSucceeded();
+               throw; // Re-throw so the test framework can verify it
+            }
+         });
       // Any other exception will bubble up without calling TestSucceeded(), so output will be shown
    }
 
