@@ -16,7 +16,7 @@ public static partial class Constructor
             : Compile.ForType<TInstance>().DefaultConstructor();
 
       static PropertyInfo? ImplicitImplementationProperty<TInstance>() => typeof(TInstance).GetProperties(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
-                                                                                          .SingleOrDefault(prop => prop.Name == nameof(IStaticInstancePropertySingleton<TInstance>.Instance) && prop.PropertyType == typeof(TInstance));
+                                                                                           .SingleOrDefault(prop => prop.Name == nameof(IStaticInstancePropertySingleton<TInstance>.Instance) && prop.PropertyType == typeof(TInstance));
 
       static PropertyInfo ExplicitImplementationProperty<TInstance>()
       {
@@ -37,7 +37,6 @@ public static partial class Constructor
          return Expression.Lambda<Func<TInstance>>(Expression.Property(null, instanceProperty)).Compile();
       }
 
-
       internal static CompilerBuilder<TTypeToConstruct> ForType<TTypeToConstruct>() => new();
       internal static CompilerBuilder<object> ForType(Type typeToConstruct) => new(typeToConstruct);
       internal static GenericCompilerBuilder<TGenericType> ForGenericType<TGenericType>() => new();
@@ -48,7 +47,7 @@ public static partial class Constructor
          {
             var genericTypeDefinition = typeof(TGenericType).GetGenericTypeDefinition();
             var constructedType = genericTypeDefinition.MakeGenericType(argumentType);
-            
+
             var constructor = constructedType.GetConstructor(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance, binder: null, types: [argumentType], modifiers: null);
             if(constructor == null)
             {
