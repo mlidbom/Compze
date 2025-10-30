@@ -49,7 +49,7 @@ public abstract class TeventMigrationTestBase : UniversalTestBase
       var serviceLocator = CreateServiceLocatorForTeventStoreType(() => migrations.ToArray());
       await using var locator = serviceLocator;
       await UtcTimeSource.WithOverrideAsync(
-         TestingTimeSource.FrozenAtUtcTime("2001-01-01 12:00"),
+         TestingTimeSource.FrozenUtc("2001-01-01 12:00"),
          async () =>
          {
             var scenarioIndex = 1;
@@ -59,7 +59,7 @@ public abstract class TeventMigrationTestBase : UniversalTestBase
                foreach(var migrationScenario in scenarios)
                {
                   await UtcTimeSource.WithOverrideAsync(
-                     TestingTimeSource.FrozenAtUtcTime(UtcTimeSource.UtcNow + FluentTimeSpanExtensions.Hours(1)),
+                     TestingTimeSource.FrozenUtc(UtcTimeSource.UtcNow + FluentTimeSpanExtensions.Hours(1)),
                      async () =>
                      {
                         migrations = migrationScenario.Migrations.ToList();
@@ -114,7 +114,7 @@ public abstract class TeventMigrationTestBase : UniversalTestBase
       writer.WriteLine();
 
       await UtcTimeSource.WithOverrideAsync(
-         TestingTimeSource.FrozenAtUtcTime(UtcTimeSource.UtcNow + FluentTimeSpanExtensions.Hours(1)),
+         TestingTimeSource.FrozenUtc(UtcTimeSource.UtcNow + FluentTimeSpanExtensions.Hours(1)),
          async () =>
          {
             serviceLocator.ExecuteTransactionInIsolatedScope(() => serviceLocator.Resolve<ITeventStoreUpdater>()

@@ -24,19 +24,24 @@ public class TestingTimeSource : IUtcTimeTimeSource
                                                      };
 
    ///<summary>Returns a time source that will forever return <param name="utcTime"> as the current time.</param></summary>
-   public static TestingTimeSource FrozenAtUtcTime(DateTime utcTime) => new()
+   public static TestingTimeSource FrozenUtc(DateTime utcTime) => new()
                                                                         {
                                                                            _freezeAt = DateTime.SpecifyKind(utcTime, DateTimeKind.Utc)
                                                                         };
 
-   public static TestingTimeSource FrozenAtUtcTime(string time) => FrozenAtUtcTime(DateTime.Parse(time, CultureInfo.InvariantCulture).ToUniversalTime());
+   public static TestingTimeSource FrozenUtc(string time) => FrozenUtc(DateTime.Parse(time, CultureInfo.InvariantCulture).ToUniversalTime());
 
 
    ///<summary>Gets the current UTC time.</summary>
    public DateTime UtcNow => _freezeAt ?? DateTimeNowTimeSource.Instance.UtcNow;
 
 
-   class Overrider(IUtcTimeTimeSource theOverride)
+
+   public TimeSourceOverride FrozenAtUtcNow() => new TimeSourceOverride(FrozenUtcNow());
+   public TimeSourceOverride FrozenAtUtc(DateTime time) => new TimeSourceOverride(FrozenUtc(time));
+   public TimeSourceOverride FrozenAtUtc(string time) => new TimeSourceOverride(FrozenUtc(time));
+
+   public class TimeSourceOverride(IUtcTimeTimeSource theOverride)
    {
       readonly IUtcTimeTimeSource _theOverride = theOverride;
 

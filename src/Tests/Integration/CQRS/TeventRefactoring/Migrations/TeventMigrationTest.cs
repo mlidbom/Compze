@@ -272,7 +272,7 @@ public class TeventMigrationTest : TeventMigrationTestBase
             var id = Guid.Parse("00000000-0000-0000-0000-000000000001");
 
             UtcTimeSource.WithOverride(
-               TestingTimeSource.FrozenAtUtcTime("2001-01-01 12:00"),
+               TestingTimeSource.FrozenUtc("2001-01-01 12:00"),
                () =>
                {
                   var taggregate = TestTaggregate.FromTevents(id, EnumerableCE.OfTypes<Ec1, E1, E2, E3, E4>());
@@ -353,7 +353,7 @@ public class TeventMigrationTest : TeventMigrationTestBase
             var id = Guid.Parse("00000000-0000-0000-0000-000000000001");
 
             UtcTimeSource.WithOverride(
-               TestingTimeSource.FrozenAtUtcTime("2001-01-01 12:00"),
+               TestingTimeSource.FrozenUtc("2001-01-01 12:00"),
                () =>
                {
                   var taggregate = TestTaggregate.FromTevents(id, EnumerableCE.OfTypes<Ec1, E1, E2, E3, E4>());
@@ -440,7 +440,7 @@ public class TeventMigrationTest : TeventMigrationTestBase
             var id = Guid.Parse("00000000-0000-0000-0000-000000000001");
 
             UtcTimeSource.WithOverride(
-               TestingTimeSource.FrozenAtUtcTime("2001-01-01 12:00"),
+               TestingTimeSource.FrozenUtc("2001-01-01 12:00"),
                () =>
                {
                   var initialTaggregate = TestTaggregate.FromTevents(id, EnumerableCE.OfTypes<Ec1, E1>());
@@ -496,7 +496,7 @@ public class TeventMigrationTest : TeventMigrationTestBase
             var serviceLocator = CreateServiceLocatorForTeventStoreType(() => migrations);
             toDispose.Add(serviceLocator);
             UtcTimeSource.WithOverride(
-               TestingTimeSource.FrozenAtUtcTime("2001-01-01 12:00"),
+               TestingTimeSource.FrozenUtc("2001-01-01 12:00"),
                () =>
                {
                   var id = Guid.Parse("00000000-0000-0000-0000-000000000001");
@@ -551,7 +551,7 @@ public class TeventMigrationTest : TeventMigrationTestBase
             var serviceLocator = CreateServiceLocatorForTeventStoreType(() => migrations);
             toDispose.Add(serviceLocator);
             UtcTimeSource.WithOverride(
-               TestingTimeSource.FrozenAtUtcTime("2001-01-01 12:00"),
+               TestingTimeSource.FrozenUtc("2001-01-01 12:00"),
                () =>
                {
                   var id = Guid.Parse("00000000-0000-0000-0000-000000000001");
