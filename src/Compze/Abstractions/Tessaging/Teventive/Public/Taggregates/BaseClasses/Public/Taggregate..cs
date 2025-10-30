@@ -71,7 +71,7 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
             ((IMutableTaggregateTevent)theTevent).SetTaggregateVersionInternal(1);
          } else
          {
-            if(theTevent.TaggregateId is not null && theTevent.TaggregateId.IsEmpty && theTevent.TaggregateId != Id) throw new ArgumentOutOfRangeException($"Tried to raise tevent for Taggregated: {theTevent.TaggregateId} from Taggregate with Id: {Id}.");
+            if(theTevent.TaggregateId is not null && theTevent.TaggregateId != Id) throw new ArgumentOutOfRangeException($"Tried to raise tevent for Taggregated: {theTevent.TaggregateId} from Taggregate with Id: {Id}.");
             ((IMutableTaggregateTevent)theTevent).SetTaggregateIdInternal(Id);
          }
 #pragma warning restore CS0618 // Type or member is obsolete
