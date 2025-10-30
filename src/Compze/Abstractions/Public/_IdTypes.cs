@@ -8,8 +8,6 @@ namespace Compze.Core.Public;
 public class EntityId<TPrimitive>(TPrimitive primitiveValue) : ValueWrapper<TPrimitive>(IsEmptyValue(primitiveValue).then(primitiveValue))
    where TPrimitive : IEquatable<TPrimitive>
 {
-   //urgent: should not allow empty at all. We need to handle uninitialized Ids some other way
-   public bool IsEmpty => Equals(PrimitiveValue, default(TPrimitive));
    static bool IsEmptyValue(TPrimitive value) => Equals(value, default(TPrimitive));
 }
 

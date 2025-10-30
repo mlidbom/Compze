@@ -5,6 +5,7 @@ using Compze.Core.Public;
 using Compze.Core.Tessaging.Teventive.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
+using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
 
 // ReSharper disable ClassNeverInstantiated.Global
@@ -39,22 +40,7 @@ namespace Compze.Tests.Common.CQRS.TeventRefactoring.Migrations
 
    public class TestTaggregate : Taggregate<TestTaggregate, IRootTevent, RootTevent>
    {
-      public void Publish(params RootTevent[] tevents)
-      {
-#pragma warning disable CS0618 // Type or member is obsolete
-         // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
-         if(GetIdBypassContractValidation() is not null && GetIdBypassContractValidation().IsEmpty && tevents.First().TaggregateId.IsEmpty)
-         {
-            Id = new TaggregateId();
-            tevents.Cast<IMutableTaggregateTevent>().First().SetTaggregateIdInternal(Id);
-         }
-#pragma warning restore CS0618 // Type or member is obsolete
-
-         foreach(var tevent in tevents)
-         {
-            base.Publish(tevent);
-         }
-      }
+      public void Publish(params RootTevent[] tevents) => tevents.ForEach(base.Publish);
 
       public TestTaggregate() => SetupAppliers();
 
