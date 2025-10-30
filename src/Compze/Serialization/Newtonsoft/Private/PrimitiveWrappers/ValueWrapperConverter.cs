@@ -34,6 +34,7 @@ public class ValueWrapperConverter : JsonConverter
    {
       if(value == null)
       {
+         //todo: ncrunch claims we never hit this line, but the DbPool serializes null DbPoolDatabase.ReservedByPoolId all the time. What's up with that?
          writer.WriteNull();
       } else
       {
