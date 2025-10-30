@@ -1,4 +1,3 @@
-using System;
 using Compze.Core.Public;
 
 namespace Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions;

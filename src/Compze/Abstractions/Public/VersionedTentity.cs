@@ -1,5 +1,3 @@
-using System;
-
 namespace Compze.Core.Public;
 
 ///<summary>Base class for persistent entities with versioning information</summary>

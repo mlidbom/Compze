@@ -5,7 +5,6 @@ using Compze.Core.Public;
 using Compze.Core.Tessaging.Public;
 using Compze.Tessaging.TyperMediaApi.EventStore;
 using Compze.Utilities.Functional;
-using System;
 
 // ReSharper disable MemberCanBeMadeStatic.Global we want _composable_ fluent APIs which does not happen with static members since we need instances to compose the API.
 

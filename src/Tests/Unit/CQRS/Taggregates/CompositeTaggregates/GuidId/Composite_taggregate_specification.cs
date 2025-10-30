@@ -6,7 +6,6 @@ using Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId.QueryModels
 using Compze.Utilities.SystemCE.ReactiveCE;
 using Compze.Utilities.Testing.XUnit.BDD;
 using FluentAssertions;
-using System;
 
 // ReSharper disable InconsistentNaming
 // ReSharper disable ImplicitlyCapturedClosure

@@ -5,7 +5,6 @@ using Compze.Sql.Common;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE;
-using Compze.Utilities.Threading.ResourceAccess;
 using Microsoft.Data.Sqlite;
 using System;
 using System.Collections.Generic;

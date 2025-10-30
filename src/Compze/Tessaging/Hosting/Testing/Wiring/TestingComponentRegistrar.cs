@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Compze.Core.Time.Public;
-using Compze.Core.Time.Testing.Public;
 using Compze.Sql.MicrosoftSql;
 using Compze.Sql.MicrosoftSql.Wiring;
 using Compze.Sql.MySql;

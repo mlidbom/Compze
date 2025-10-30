@@ -1,4 +1,3 @@
-using Compze.Sql.PostgreSql.Private.DbPool;
 using Compze.Utilities.DependencyInjection.Abstractions;
 
 namespace Compze.Sql.PostgreSql.Wiring;

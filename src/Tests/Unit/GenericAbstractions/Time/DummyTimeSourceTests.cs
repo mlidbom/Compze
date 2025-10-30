@@ -1,7 +1,6 @@
 using System;
 using System.Globalization;
 using Compze.Core.Time.Public;
-using Compze.Core.Time.Testing.Public;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.Testing.XUnit.BDD;
 using FluentAssertions;

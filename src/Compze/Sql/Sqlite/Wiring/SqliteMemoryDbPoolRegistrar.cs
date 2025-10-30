@@ -1,4 +1,3 @@
-using Compze.Sql.Sqlite.Private.DbPool;
 using Compze.Utilities.DependencyInjection.Abstractions;
 
 namespace Compze.Sql.Sqlite.Wiring;

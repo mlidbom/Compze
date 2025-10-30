@@ -3,7 +3,6 @@ using Compze.Core.DocumentDb.Internal.SqlLayer.Exceptions;
 using Compze.Core.Refactoring.Naming.Internal;
 using Compze.Sql.Common;
 using Compze.Utilities.SystemCE;
-using Compze.Utilities.Threading.ResourceAccess;
 using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;

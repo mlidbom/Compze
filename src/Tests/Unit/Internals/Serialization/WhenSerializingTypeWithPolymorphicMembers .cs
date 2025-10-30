@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using Compze.Tests.Infrastructure.Fluent;
 using Compze.Tests.Infrastructure.FluentAssertionsExtensions;
 using Compze.Tests.Infrastructure.XUnit;

@@ -3,7 +3,6 @@ using CommunityToolkit.Diagnostics;
 using Compze.Core.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Newtonsoft.Json;
-using System;
 
 // ReSharper disable MemberHidesStaticFromOuterClass
 // ReSharper disable InconsistentNaming

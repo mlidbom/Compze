@@ -2,7 +2,6 @@ using AccountManagement.API.ValidationAttributes;
 using Compze.Core.Public;
 using Compze.Core.Tessaging.Public;
 using Newtonsoft.Json;
-using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace AccountManagement.API;
