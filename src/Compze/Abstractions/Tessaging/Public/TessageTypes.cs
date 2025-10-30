@@ -17,10 +17,10 @@ public static class TessageTypes
          public abstract class StrictlyLocalTuery<TTuery, TResult> : IStrictlyLocalTuery<TTuery, TResult> where TTuery : StrictlyLocalTuery<TTuery, TResult>;
 #pragma warning restore CA1724 //
 
-         public sealed class EntityLink<TResult>(Guid entityId) : StrictlyLocal.Tueries.StrictlyLocalTuery<EntityLink<TResult>, TResult>
+         public sealed class EntityLink<TResult>(EntityId entityId) : StrictlyLocal.Tueries.StrictlyLocalTuery<EntityLink<TResult>, TResult>
             where TResult : IEntity<Guid>
          {
-            public Guid EntityId { get; private set; } = entityId;
+            public EntityId EntityId { get; private set; } = entityId;
          }
       }
 

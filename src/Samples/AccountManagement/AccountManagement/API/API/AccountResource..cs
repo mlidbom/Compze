@@ -16,7 +16,8 @@ public partial class AccountResource : Entity<AccountResource>
       Tommands = tommands;
    }
 
-   internal AccountResource(IAccountResourceData account) : base(account.Id)
+   //Todo: this conversion smells
+   internal AccountResource(IAccountResourceData account) : base(account.Id.PrimitiveValue)
    {
       Tommands = new AccountTommands(this);
       Email = account.Email;

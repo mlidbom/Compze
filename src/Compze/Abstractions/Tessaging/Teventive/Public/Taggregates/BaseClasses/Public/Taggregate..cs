@@ -13,7 +13,7 @@ using Compze.Utilities.SystemCE.ReflectionCE;
 namespace Compze.Core.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public;
 
 public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeventImplementation, TWrapperTeventInterface, TWrapperTeventImplementation> :
-   VersionedEntity<TTaggregate>,
+   VersionedEentity<TTaggregate>,
    ITaggregate<TTaggregateTevent>,
    ITeventiveInternals<TTaggregateTevent, TTaggregateTeventImplementation>
    where TWrapperTeventImplementation : TWrapperTeventInterface
@@ -30,11 +30,20 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
                                           .Invoke(@event);
 
    //Yes Guid.Empty. Id should be assigned by an action, and it should be obvious that the taggregate in invalid until that happens
-   protected Taggregate() : base(Guid.Empty)
+   protected Taggregate() : this(new TaggregateId(Guid.Empty))
+   {
+   }
+
+
+   protected Taggregate(TaggregateId id) : base(id)
    {
       Assert.Argument.Is(typeof(TTaggregateTevent).IsInterface);
       _teventHandlersDispatcher.Register().IgnoreUnhandled<TTaggregateTevent>();
    }
+
+   TentityId ITentity.Id => Id;
+
+   public override TaggregateId Id => (TaggregateId)base.Id;
 
    readonly List<ITaggregateTevent> _unCommittedTevents = [];
    readonly IMutableTeventDispatcher<TTaggregateTevent> _teventAppliersDispatcher = IMutableTeventDispatcher<TTaggregateTevent>.New();
@@ -61,8 +70,8 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
             ((IMutableTaggregateTevent)theTevent).SetTaggregateVersionInternal(1);
          } else
          {
-            if(theTevent.TaggregateId != Guid.Empty && theTevent.TaggregateId != Id) throw new ArgumentOutOfRangeException($"Tried to raise tevent for Taggregated: {theTevent.TaggregateId} from Taggregate with Id: {Id}.");
-            ((IMutableTaggregateTevent)theTevent).SetTaggregateIdInternal(Id);
+            if(theTevent.TaggregateId != Guid.Empty && theTevent.TaggregateId != Id.PrimitiveValue) throw new ArgumentOutOfRangeException($"Tried to raise tevent for Taggregated: {theTevent.TaggregateId} from Taggregate with Id: {Id}.");
+            ((IMutableTaggregateTevent)theTevent).SetTaggregateIdInternal(Id.PrimitiveValue);
          }
 #pragma warning restore CS0618 // Type or member is obsolete
          ApplyTevent(theTevent);
@@ -92,9 +101,7 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
       {
          if(theTevent is ITaggregateCreatedTevent)
          {
-#pragma warning disable 618 // Reviewed OK: This is the one place where we are quite sure that calling this obsolete method is correct.
-            SetIdBeVerySureYouKnowWhatYouAreDoing(theTevent.TaggregateId);
-#pragma warning restore 618
+            base.Id = new TaggregateId(theTevent.TaggregateId);
          }
 
          Version = theTevent.TaggregateVersion;

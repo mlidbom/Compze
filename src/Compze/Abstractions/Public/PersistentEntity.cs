@@ -11,13 +11,26 @@ namespace Compze.Core.Public;
 public class Entity<TEntity> : Entity<TEntity, Guid>, IEntity, IEquatable<TEntity> where TEntity : Entity<TEntity>
 {
     /// <summary>Creates an instance using the supplied <paramref name="id"/> as the Id.</summary>
-    protected Entity(Guid id):base(id)
+    protected Entity(Guid id):base(new EntityId(id))
+    {
+    }
+
+    /// <summary>Creates an instance using the supplied <paramref name="id"/> as the Id.</summary>
+    protected Entity(EntityId id):base(id)
     {
     }
 
     /// <summary>Creates a new instance with an automatically generated Id</summary>
-    protected Entity():base(Guid.NewGuid())
+    protected Entity():base(new EntityId())
     {
+    }
+
+    EntityId<Guid> IEntity<Guid>.Id => Id;
+
+    public new virtual EntityId Id
+    {
+       get => (EntityId)base.Id;
+       protected set => base.Id = value;
     }
 
     ///<summary>True if both instances have the same ID</summary>

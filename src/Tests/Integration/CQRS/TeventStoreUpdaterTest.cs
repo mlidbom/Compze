@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Transactions;
+using Compze.Core.Public;
 using Compze.Core.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Core.Tessaging.Public;
 using Compze.Core.Tessaging.Teventive.Public;
@@ -70,7 +71,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
    [PCT]
    public void WhenFetchingTaggregateThatDoesNotExistNoSuchAggregateExceptionIsThrown()
    {
-      UseInTransactionalScope(session => FluentActions.Invoking(() => session.Get<User>(Guid.NewGuid()))
+      UseInTransactionalScope(session => FluentActions.Invoking(() => session.Get<User>(new TaggregateId()))
                                                       .Should().Throw<ArgumentOutOfRangeException>());
    }
 
@@ -113,11 +114,11 @@ public class TeventStoreUpdaterTest : UniversalTestBase
       updater = updater.NotNull();
       reader = reader.NotNull();
 
-      FluentActions.Invoking(() => updater.Get<User>(Guid.NewGuid())).Should().Throw<MultiThreadedUseException>();
+      FluentActions.Invoking(() => updater.Get<User>(new TaggregateId())).Should().Throw<MultiThreadedUseException>();
       FluentActions.Invoking(() => updater.Dispose()).Should().Throw<MultiThreadedUseException>();
-      FluentActions.Invoking(() => reader.GetReadonlyCopyOfVersion<User>(Guid.NewGuid(), 1)).Should().Throw<MultiThreadedUseException>();
+      FluentActions.Invoking(() => reader.GetReadonlyCopyOfVersion<User>(new TaggregateId(), 1)).Should().Throw<MultiThreadedUseException>();
       FluentActions.Invoking(() => updater.Save(new User())).Should().Throw<MultiThreadedUseException>();
-      FluentActions.Invoking(() => updater.TryGet(Guid.NewGuid(), out User? _)).Should().Throw<MultiThreadedUseException>();
+      FluentActions.Invoking(() => updater.TryGet(new TaggregateId(), out User? _)).Should().Throw<MultiThreadedUseException>();
    }
 
    [PCT]
@@ -342,11 +343,11 @@ public class TeventStoreUpdaterTest : UniversalTestBase
    [PCT]
    public void When_fetching_history_from_the_same_instance_after_updating_an_taggregate_the_fetched_history_includes_the_new_tevents()
    {
-      var userId = Guid.NewGuid();
+      var userId = new TaggregateId();
       UseInTransactionalScope(session =>
       {
          var user = new User();
-         user.Register("test@email.com", "Password1", userId);
+         user.Register("test@email.com", "Password1", userId.PrimitiveValue);
          session.Save(user);
       });
 
@@ -366,12 +367,12 @@ public class TeventStoreUpdaterTest : UniversalTestBase
    [PCT]
    public void When_deleting_and_then_fetching_an_taggregates_history_the_history_should_be_gone()
    {
-      var userId = Guid.NewGuid();
+      var userId = new TaggregateId();
 
       UseInTransactionalScope(session =>
       {
          var user = new User();
-         user.Register("test@email.com", "Password1", userId);
+         user.Register("test@email.com", "Password1", userId.PrimitiveValue);
          session.Save(user);
       });
 
@@ -387,12 +388,12 @@ public class TeventStoreUpdaterTest : UniversalTestBase
    [PCT]
    public void When_fetching_and_deleting_an_taggregate_then_fetching_history_again_the_history_should_be_gone()
    {
-      var userId = Guid.NewGuid();
+      var userId = new TaggregateId();
 
       UseInTransactionalScope(session =>
       {
          var user = new User();
-         user.Register("test@email.com", "Password1", userId);
+         user.Register("test@email.com", "Password1", userId.PrimitiveValue);
          session.Save(user);
       });
 

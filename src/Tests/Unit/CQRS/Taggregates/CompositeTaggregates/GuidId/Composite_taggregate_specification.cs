@@ -36,8 +36,8 @@ public static partial class Composite_taggregate_specification
 
       [XF] public void Taggregate_name_is_root() => _taggregate.Name.Should().Be("root");
       [XF] public void Tuery_model_name_is_root() => _queryModel.Name.Should().Be("root");
-      [XF] public void Taggregate_id_is_the_supplied_id() => _taggregate.Id.Should().Be(_taggregateId);
-      [XF] public void QueryModel_id_is_the_supplied_id() => _queryModel.Id.Should().Be(_taggregateId);
+      [XF] public void Taggregate_id_is_the_supplied_id() => _taggregate.Id.PrimitiveValue.Should().Be(_taggregateId);
+      [XF] public void QueryModel_id_is_the_supplied_id() => _queryModel.Id.PrimitiveValue.Should().Be(_taggregateId);
 
       [XF] public void Taggregate_Component_Component_tests()
       {

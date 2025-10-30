@@ -36,7 +36,8 @@ class Account : Taggregate<Account, AccountTevent.Root, AccountTevent.Implementa
    {
       Guard.IsNotNull(Email);
       Guard.IsNotNull(Password);
-      Guard.IsNotDefault(Id);
+      Guard.IsNotNull(Id);
+      Guard.IsNotDefault(Id.PrimitiveValue);
    }
 
    /// <summary><para>Used when a user manually creates an account themselves.</para>

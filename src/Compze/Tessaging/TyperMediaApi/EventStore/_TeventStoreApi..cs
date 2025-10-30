@@ -1,4 +1,5 @@
 using System;
+using Compze.Core.Public;
 using Compze.Core.Tessaging.Teventive.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 
@@ -22,7 +23,8 @@ public partial class TeventStoreApi
       public GetReadonlyCopyOfTaggregateVersion<TTaggregate> GetReadOnlyCopyOfVersion<TTaggregate>(Guid id, int version) where TTaggregate : class, ITaggregate =>
          new(id, version);
 
-      public GetTaggregateHistory<TTevent> GetHistory<TTevent>(Guid id) where TTevent : ITaggregateTevent =>
+      //Todo: should be aggregateId
+      public GetTaggregateHistory<TTevent> GetHistory<TTevent>(EntityId id) where TTevent : ITaggregateTevent =>
          new(id);
    }
 

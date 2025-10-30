@@ -5,6 +5,7 @@ using AccountManagement.Domain;
 using AccountManagement.Domain.Tevents;
 using AccountManagement.Domain.Passwords;
 using CommunityToolkit.Diagnostics;
+using Compze.Core.Public;
 using Compze.Core.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Core.Tessaging.Public;
 using Compze.Core.Tessaging.Typermedia.Public;
@@ -40,7 +41,7 @@ class AccountQueryModel : SelfGeneratingQueryModel<AccountQueryModel, AccountTev
       internal Tuery Tueries => new();
       internal class Tuery
       {
-         public TessageTypes.StrictlyLocal.Tueries.EntityLink<AccountQueryModel> Get(Guid id) => new(id);
+         public TessageTypes.StrictlyLocal.Tueries.EntityLink<AccountQueryModel> Get(Guid id) => new(new EntityId(id));
       }
 
       public static void RegisterHandlers(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => Get(registrar);

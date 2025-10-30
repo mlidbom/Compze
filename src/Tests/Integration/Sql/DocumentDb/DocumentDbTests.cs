@@ -55,9 +55,9 @@ public class DocumentDbTests : DocumentDbTestsBase
     [PCT]
     public void GetAllWithIdsReturnsAsManyResultsAsPassedIds()
     {
-        var ids = 1.Through(9).Select(index => Guid.Parse($"00000000-0000-0000-0000-00000000000{index}")).ToArray();
+        var ids = 1.Through(9).Select(index => new EntityId(Guid.Parse($"00000000-0000-0000-0000-00000000000{index}"))).ToArray();
 
-        var users = ids.Select(id => new User(id)).ToArray();
+        var users = ids.Select(id => new User(id.PrimitiveValue)).ToArray();
 
         UseInTransactionalScope((_, updater) => users.ForEach(user => updater.Save(user)));
 
@@ -71,17 +71,17 @@ public class DocumentDbTests : DocumentDbTestsBase
     public void GetAllWithIdsThrowsNoSuchDocumentExceptionExceptionIfAnyIdIsMissing()
     {
         var ids = 1.Through(9)
-                   .Select(index => Guid.Parse($"00000000-0000-0000-0000-00000000000{index}"))
+                   .Select(index => new EntityId(Guid.Parse($"00000000-0000-0000-0000-00000000000{index}")))
                    .ToArray();
 
-        var users = ids.Select(id => new User(id))
+        var users = ids.Select(id => new User(id.PrimitiveValue))
                        .ToArray();
 
         UseInTransactionalScope((_, updater) => users.ForEach(user => updater.Save(user)));
 
         UseInScope(reader => Invoking(
                       () => reader.GetAll<User>(ids.Take(5)
-                                                   .Append(Guid.Parse("00000000-0000-0000-0000-000000000099"))
+                                                   .Append(new EntityId(Guid.Parse("00000000-0000-0000-0000-000000000099")))
                                                    .ToArray())
                                   // ReSharper disable once ReturnValueOfPureMethodIsNotUsed
                                   .ToArray()).Should().Throw<ArgumentOutOfRangeException>());
@@ -91,9 +91,9 @@ public class DocumentDbTests : DocumentDbTestsBase
     [PCT]
     public void GetAllWithIdsReturnsTheSameInstanceForAnyPreviouslyFetchedDocuments()
     {
-        var ids = 1.Through(9).Select(index => Guid.Parse($"00000000-0000-0000-0000-00000000000{index}")).ToArray();
+        var ids = 1.Through(9).Select(index => new EntityId(Guid.Parse($"00000000-0000-0000-0000-00000000000{index}"))).ToArray();
 
-        var users = ids.Select(id => new User(id)).ToArray();
+        var users = ids.Select(id => new User(id.PrimitiveValue)).ToArray();
 
         UseInTransactionalScope((_, updater) => users.ForEach(user => updater.Save(user)));
 
@@ -406,11 +406,11 @@ public class DocumentDbTests : DocumentDbTestsBase
     {
         UseInTransactionalScope((_, updater) =>
         {
-            var lassie = new Dog { Id = Guid.NewGuid() };
+            var lassie = new Dog { Id = new EntityId(Guid.NewGuid()) };
             updater.Save(lassie);
         });
 
-        var buster = new Dog { Id = Guid.NewGuid() };
+        var buster = new Dog { Id = new EntityId(Guid.NewGuid()) };
         UseInTransactionalScope((_, updater) => Invoking(() => updater.Delete(buster)).Should().Throw<ArgumentOutOfRangeException>());
     }
 
@@ -531,8 +531,8 @@ public class DocumentDbTests : DocumentDbTestsBase
         {
             updater.Save(new User());
             updater.Save(new User());
-            updater.Save(new Dog { Id = Guid.NewGuid() });
-            updater.Save(new Dog { Id = Guid.NewGuid() });
+            updater.Save(new Dog { Id = new EntityId(Guid.NewGuid()) });
+            updater.Save(new Dog { Id = new EntityId(Guid.NewGuid()) });
         });
 
         using (ServiceLocator.BeginScope())
@@ -646,7 +646,7 @@ public class DocumentDbTests : DocumentDbTestsBase
 
         var user1 = new User(userid1);
         var user2 = new User(userid2);
-        var dog = new Dog { Id = Guid.Parse("00000000-0000-0000-0000-000000000010") };
+        var dog = new Dog { Id = new EntityId(Guid.Parse("00000000-0000-0000-0000-000000000010")) };
 
         UseInTransactionalScope((_, updater) =>
         {
@@ -678,7 +678,7 @@ public class DocumentDbTests : DocumentDbTestsBase
 
         var user1 = new User(userid1);
         var user2 = new User(userid2);
-        var dog = new Dog { Id = Guid.Parse("00000000-0000-0000-0000-000000000010") };
+        var dog = new Dog { Id = new EntityId(Guid.Parse("00000000-0000-0000-0000-000000000010")) };
 
         UseInTransactionalScope((_, updater) =>
         {
@@ -778,7 +778,7 @@ public class DocumentDbTests : DocumentDbTestsBase
 
         await InsertUsersInOtherDocumentDb(userId);
 
-        UseInScope(reader => reader.GetAll<User>([userId])
+        UseInScope(reader => reader.GetAll<User>([new EntityId(userId)])
                                    .Count()
                                    .Should()
                                    .Be(1));

@@ -43,7 +43,7 @@ partial class DocumentDbSession : IDocumentDbSession
 
       public bool TryGet<TValue>(object key, [MaybeNullWhen(false)] out TValue document) => Guarded.TryGet(key, out document);
 
-      public IEnumerable<T> GetAll<T>(IEnumerable<Guid> ids) where T : IEntity<Guid> => Guarded.GetAll<T>(ids);
+      public IEnumerable<T> GetAll<T>(IEnumerable<EntityId<Guid>> ids) where T : IEntity<Guid> => Guarded.GetAll<T>(ids);
 
       public IEnumerable<T> GetAll<T>() where T : IEntity<Guid> => Guarded.GetAll<T>();
 
@@ -112,11 +112,11 @@ partial class DocumentDbSession : IDocumentDbSession
    public virtual TValue GetForUpdate<TValue>(object key) =>
       GetInternal<TValue>(key, useUpdateLock: true);
 
-   public IEnumerable<TValue> GetAll<TValue>(IEnumerable<Guid> ids) where TValue : IEntity<Guid>
+   public IEnumerable<TValue> GetAll<TValue>(IEnumerable<EntityId<Guid>> ids) where TValue : IEntity<Guid>
    {
       var idSet = ids.ToHashSet(); //Avoid multiple enumerations.
 
-      var stored = _backingStore.GetAll<TValue>(idSet);
+      var stored = _backingStore.GetAll<TValue>(idSet.Select(id => id.PrimitiveValue));
 
       stored.Where(document => !_entitiesByIdAndType.Contains(typeof(TValue), document.Id))
             .ForEach(unloadedDocument => OnInitialLoad(unloadedDocument.Id, unloadedDocument));

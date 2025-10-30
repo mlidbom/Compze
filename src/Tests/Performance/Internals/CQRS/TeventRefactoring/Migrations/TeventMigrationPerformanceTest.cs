@@ -1,3 +1,4 @@
+using Compze.Core.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.Refactoring.Migrations.Public;
@@ -41,7 +42,7 @@ public class TeventMigrationPerformanceTest : TeventMigrationTestBase
 
 
       _taggregate = UtcTimeSource.Test.FrozenAtUtcNow()
-                                     .Run(() => TestTaggregate.FromTevents(Guid.NewGuid(), historyTypes));
+                                     .Run(() => TestTaggregate.FromTevents(new TaggregateId(Guid.NewGuid()), historyTypes));
       _history = _taggregate.History.Cast<TaggregateTevent>().ToList();
 
       _currentMigrations = Enumerable.Empty<ITeventMigration>().ToList();

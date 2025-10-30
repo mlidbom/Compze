@@ -1,20 +1,34 @@
 using System;
 using Compze.Core.Public.Infrastructure;
-using Compze.Utilities.Contracts;
-using Compze.Utilities.Functional;
 
 namespace Compze.Core.Public;
 
 public class EntityId<TPrimitive>(TPrimitive primitiveValue) : ValueWrapper<TPrimitive>(primitiveValue)
    where TPrimitive : IEquatable<TPrimitive> {}
 
-public class EntityId(Guid primitiveValue) : EntityId<Guid>(Assert.Argument.Is(primitiveValue != Guid.Empty).then(primitiveValue)) {}
+public class EntityId : EntityId<Guid>
+{
+   public EntityId(Guid id) : base(id) {}
+   public EntityId() : base(Guid.NewGuid()) {}
+}
 
 public class TentityId<TPrimitive>(TPrimitive primitiveValue) : EntityId<TPrimitive>(primitiveValue)
-   where TPrimitive : IEquatable<TPrimitive> {}
+   where TPrimitive : IEquatable<TPrimitive>
+{
 
-public class TentityId(Guid primitiveValue) : TentityId<Guid>(primitiveValue) {}
-public class TaggregateId(Guid id) : TentityId(id) {}
+}
+
+public class TentityId : EntityId
+{
+   public TentityId(Guid id) : base(id) {}
+   public TentityId() : base(Guid.NewGuid()) {}
+}
+
+public class TaggregateId : TentityId
+{
+   public TaggregateId(Guid id) : base(id) {}
+   public TaggregateId() : base(Guid.NewGuid()) {}
+}
 
 public class TessageId : TentityId
 {

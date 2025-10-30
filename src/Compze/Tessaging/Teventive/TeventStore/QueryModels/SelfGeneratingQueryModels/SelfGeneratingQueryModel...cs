@@ -8,7 +8,7 @@ using Compze.Utilities.SystemCE.LinqCE;
 
 namespace Compze.Tessaging.Teventive.TeventStore.QueryModels.SelfGeneratingQueryModels;
 
-public partial class SelfGeneratingQueryModel<TQueryModel, TTaggregateTevent> : VersionedEntity<TQueryModel>
+public partial class SelfGeneratingQueryModel<TQueryModel, TTaggregateTevent> : VersionedEentity<TQueryModel>
    where TQueryModel : SelfGeneratingQueryModel<TQueryModel, TTaggregateTevent>
    where TTaggregateTevent : class, ITaggregateTevent
 {
@@ -23,9 +23,7 @@ public partial class SelfGeneratingQueryModel<TQueryModel, TTaggregateTevent> : 
    {
       if(theTevent is ITaggregateCreatedTevent)
       {
-#pragma warning disable 618 //Reviewed OK: This is precisely the type of internal code this is supposed to use this "obsolete" method.
-         SetIdBeVerySureYouKnowWhatYouAreDoing(theTevent.TaggregateId);
-#pragma warning restore 618
+         Id = new TentityId(theTevent.TaggregateId);
       }
 
       Version = theTevent.TaggregateVersion;

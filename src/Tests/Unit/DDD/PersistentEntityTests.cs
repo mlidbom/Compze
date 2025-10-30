@@ -33,7 +33,7 @@ public class EntityTests : UniversalTestBase
    public void IntstanceEqualsOtherInstanceWithSameId()
    {
       var lhs = new Person();
-      var rhs = new Person(lhs.Id);
+      var rhs = new Person(lhs.Id.PrimitiveValue);
       AssertAreEqual(lhs, rhs);
    }
 
@@ -49,7 +49,7 @@ public class EntityTests : UniversalTestBase
    public void IntstancesWithSameIdHasSameHashCode()
    {
       var lhs = new Person();
-      var rhs = new Person(lhs.Id);
+      var rhs = new Person(lhs.Id.PrimitiveValue);
       lhs.GetHashCode().Should().Be(rhs.GetHashCode());
       (lhs.GetHashCode() == rhs.GetHashCode()).Should().BeTrue();
    }

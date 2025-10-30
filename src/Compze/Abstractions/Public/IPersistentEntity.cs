@@ -1,4 +1,5 @@
 using System;
+using System.Security.Cryptography;
 
 namespace Compze.Core.Public;
 
@@ -34,7 +35,23 @@ namespace Compze.Core.Public;
 /// Guids enable guaranteed traceability of entities. Search for a Guid in a log, database, or code, and you
 /// are guaranteed to find all references to that entity and ONLY to that entity, a major advantage when debugging.
 /// </summary>
-public interface IEntity : IEntity<Guid>;
+public interface IEntity : IEntity<Guid>
+{
+   EntityId<Guid> IEntity<Guid>.Id => Id;
+   new EntityId Id { get; }
+}
+
+public interface ITentity<TId> : IEntity<TId> where TId : IEquatable<TId>
+{
+   EntityId<TId> IEntity<TId>.Id => Id;
+   new TentityId<TId> Id { get; }
+}
+
+public interface ITentity : ITentity<Guid>
+{
+   TentityId<Guid> ITentity<Guid>.Id => new TentityId<Guid>(Id.PrimitiveValue);
+   new TentityId Id { get; }
+}
 
 /// <summary>
 /// Given the <see cref="Guid"/> IDs only constraint of <see cref="IEntity"/>, we provide this interface

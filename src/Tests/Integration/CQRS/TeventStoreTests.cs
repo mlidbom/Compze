@@ -1,3 +1,4 @@
+using Compze.Core.Public;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tests.Infrastructure;
@@ -85,13 +86,13 @@ public class TeventStoreTests : UniversalTestBase
                                                 });
 
       TransactionScopeCe.Execute(() => taggregatesWithTevents.ForEach(it => TeventStore.SaveSingleTaggregateTevents(it.Value)));
-      var toRemove = taggregatesWithTevents[2][0]
-        .TaggregateId;
+      var toRemove = new TaggregateId(taggregatesWithTevents[2][0]
+        .TaggregateId);
       taggregatesWithTevents.Remove(2);
 
       TransactionScopeCe.Execute(() => TeventStore.DeleteTaggregate(toRemove));
 
-      taggregatesWithTevents.Select(kvp => TeventStore.GetTaggregateHistory(kvp.Value[0].TaggregateId))
+      taggregatesWithTevents.Select(kvp => TeventStore.GetTaggregateHistory(new TaggregateId(kvp.Value[0].TaggregateId)))
                           .ForEach(stream => stream.Should().HaveCount(10));
 
       TeventStore.GetTaggregateHistory(toRemove)

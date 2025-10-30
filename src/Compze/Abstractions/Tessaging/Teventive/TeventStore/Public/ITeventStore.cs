@@ -1,17 +1,18 @@
 using System;
 using System.Collections.Generic;
+using Compze.Core.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 
 namespace Compze.Core.Tessaging.Teventive.TeventStore.Public;
 
 public interface ITeventStore : IDisposable
 {
-   IReadOnlyList<ITaggregateTevent> GetTaggregateHistoryForUpdate(Guid id);
-   IReadOnlyList<ITaggregateTevent> GetTaggregateHistory(Guid id);
+   IReadOnlyList<ITaggregateTevent> GetTaggregateHistoryForUpdate(TaggregateId id);
+   IReadOnlyList<ITaggregateTevent> GetTaggregateHistory(TaggregateId id);
    void SaveSingleTaggregateTevents(IReadOnlyList<ITaggregateTevent> tevents);
    //todo: Utilize C# 8 asynchronous streams.
    void StreamTevents(int batchSize, Action<IReadOnlyList<ITaggregateTevent>> handleTevents);
-   void DeleteTaggregate(Guid taggregateId);
+   void DeleteTaggregate(TaggregateId taggregateId);
    void PersistMigrations();
 
    ///<summary>The passed <paramref name="teventType"/> filters the taggregate Ids so that only ids of taggregates that are created by an tevent that inherits from <paramref name="teventType"/> are returned.</summary>

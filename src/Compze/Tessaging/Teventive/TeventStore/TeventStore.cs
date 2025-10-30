@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Compze.Core.Public;
 using Compze.Core.Refactoring.Naming.Internal;
 using Compze.Core.Serialization.Internal;
 using Compze.Core.Tessaging.Teventive.Public;
@@ -50,9 +51,9 @@ namespace Compze.Tessaging.Teventive.TeventStore;
       _sqlLayer = sqlLayer;
    }
 
-   public IReadOnlyList<ITaggregateTevent> GetTaggregateHistoryForUpdate(Guid taggregateId) => GetTaggregateHistoryInternal(taggregateId: taggregateId, takeWriteLock: true);
+   public IReadOnlyList<ITaggregateTevent> GetTaggregateHistoryForUpdate(TaggregateId taggregateId) => GetTaggregateHistoryInternal(taggregateId: taggregateId.PrimitiveValue, takeWriteLock: true);
 
-   public IReadOnlyList<ITaggregateTevent> GetTaggregateHistory(Guid taggregateId) => GetTaggregateHistoryInternal(taggregateId, takeWriteLock: false);
+   public IReadOnlyList<ITaggregateTevent> GetTaggregateHistory(TaggregateId taggregateId) => GetTaggregateHistoryInternal(taggregateId.PrimitiveValue, takeWriteLock: false);
 
    IReadOnlyList<ITaggregateTevent> GetTaggregateHistoryInternal(Guid taggregateId, bool takeWriteLock)
    {
@@ -178,12 +179,12 @@ namespace Compze.Tessaging.Teventive.TeventStore;
                                         maxSeenInsertedVersion: specifications.Max(specification => specification.InsertedVersion)));
    }
 
-   public void DeleteTaggregate(Guid taggregateId)
+   public void DeleteTaggregate(TaggregateId taggregateId)
    {
       _usageGuard.EnsureAccessValid();
       _sqlLayer.SetupSchemaIfDatabaseUnInitialized();
-      _cache.Remove(taggregateId);
-      _sqlLayer.DeleteTaggregate(taggregateId);
+      _cache.Remove(taggregateId.PrimitiveValue);
+      _sqlLayer.DeleteTaggregate(taggregateId.PrimitiveValue);
    }
 
    public IEnumerable<Guid> StreamTaggregateIdsInCreationOrder(Type? teventBaseType = null)

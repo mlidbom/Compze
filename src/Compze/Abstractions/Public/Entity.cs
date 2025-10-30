@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using Compze.Utilities.Contracts;
+using Compze.Utilities.Functional;
 
 namespace Compze.Core.Public;
 
@@ -18,28 +19,28 @@ namespace Compze.Core.Public;
 [DebuggerDisplay("{" + nameof(ToString) + "()}")]
 public class Entity<TEntity, TKey> : IEquatable<TEntity>, IEntity<TKey>
    where TEntity : Entity<TEntity, TKey>
-   where TKey: struct
+   where TKey: IEquatable<TKey>
 {
    ///<summary>Construct an instance with <param name="id"> as the <see cref="Id"/></param>.</summary>
-   protected Entity(TKey id) => _id = id;
+   protected Entity(EntityId<TKey> id) => _id = id;
 
-   TKey _id;
+   EntityId<TKey> _id;
 
    /// <inheritdoc />
-   public virtual TKey Id
+   public virtual EntityId<TKey> Id
    {
-      get => Assert.Result.ReturnNotDefault(_id);
-      private set => _id = Assert.Argument.ReturnNotDefault(value);
+      get => Assert.Result.Is(!Equals(_id.PrimitiveValue, default(TKey))).then(_id);
+      protected set => _id = Assert.Argument.NotNull(value).then(value);
    }
 
    ///<summary>Sets the id of the instance. Should probably never be used except by infrastructure code.</summary>
    [Obsolete(ObsoleteMessage.ForInternalUseOnly)]
-   protected void SetIdBeVerySureYouKnowWhatYouAreDoing(TKey id) => Id = id;
+   protected void SetIdBeVerySureYouKnowWhatYouAreDoing(EntityId<TKey> id) => Id = id;
 
    ///<summary>Gets the id of the instance bypassing contract validation. Should probably never be used except by infrastructure code.</summary>
    [Obsolete(ObsoleteMessage.ForInternalUseOnly)]
 #pragma warning disable CA1024 //No matter what the analyzer might think, this is not a good property.
-   protected TKey GetIdBypassContractValidation() => _id;
+   protected EntityId<TKey> GetIdBypassContractValidation() => _id;
 #pragma warning restore CA1024
 
    /// <summary>
