@@ -8,6 +8,7 @@ using Compze.Core.Public;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tests.Common.Sql.DocumentDb;
 using Compze.Tests.Infrastructure;
+using Compze.Tests.Infrastructure.FluentAssertionsExtensions;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
@@ -583,8 +584,8 @@ public class DocumentDbTests : DocumentDbTestsBase
 
         UseInScope(reader =>
         {
-            reader.Get<Person>(user1.Id).Should().Be(user1);
-            reader.Get<Person>(person1.Id).Should().Be(person1);
+            reader.Get<Person>(user1.Id).Should().BeStrictlyEquivalentTo(user1);
+            reader.Get<Person>(person1.Id).Should().BeStrictlyEquivalentTo(person1);
         });
     }
 
@@ -602,11 +603,11 @@ public class DocumentDbTests : DocumentDbTestsBase
 
         using (ServiceLocator.BeginScope())
         {
-            var people = ServiceLocator.DocumentDbBulkReader().GetAll<Person>().ToList();
+            var people = ServiceLocator.DocumentDbBulkReader().GetAll<Person>().Select(it => it.Id).ToHashSet();
 
             people.Should().HaveCount(2);
-            people.Should().Contain(user1);
-            people.Should().Contain(person1);
+            people.Should().Contain(user1.Id);
+            people.Should().Contain(person1.Id);
         }
     }
 

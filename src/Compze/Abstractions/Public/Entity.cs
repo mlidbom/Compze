@@ -17,7 +17,7 @@ namespace Compze.Core.Public;
 /// 
 /// </summary>
 [DebuggerDisplay("{" + nameof(ToString) + "()}")]
-public class Entity<TEntity, TKey> : IEquatable<TEntity>, IEntity<TKey>
+public class Entity<TEntity, TKey> : IEntity<TKey>
    where TEntity : Entity<TEntity, TKey>
    where TKey: IEquatable<TKey>
 {
@@ -43,34 +43,6 @@ public class Entity<TEntity, TKey> : IEquatable<TEntity>, IEntity<TKey>
    protected EntityId<TKey> GetIdBypassContractValidation() => _id;
 #pragma warning restore CA1024
 
-   /// <summary>
-   /// Implements equals using persistent reference semantics.
-   /// If two instances have the same Id, Equals will return true.
-   /// </summary>
-   public virtual bool Equals(TEntity? other) => other is not null && other.Id.Equals(Id);
-
-   /// <summary>
-   /// Implements equals using persistent reference semantics.
-   /// If two instances have the same Id, Equals will return true.
-   /// </summary>
-   public override bool Equals(object? obj) => obj is TEntity actualOther && Equals(actualOther);
-
-   /// <inheritdoc />
-   public override int GetHashCode() => Id.GetHashCode();
-
-   ///<summary>True if both instances have the same ID</summary>
-   public static bool operator ==(Entity<TEntity, TKey>? lhs, Entity<TEntity, TKey>? rhs)
-   {
-      if (ReferenceEquals(lhs, rhs))
-      {
-         return true;
-      }
-
-      return lhs is not null && lhs.Equals(rhs);
-   }
-
-   ///<summary>True if both instances do not have the same ID</summary>
-   public static bool operator !=(Entity<TEntity, TKey> lhs, Entity<TEntity, TKey> rhs) => !(lhs == rhs);
 
    ///<summary>Returns a string similar to: MyType:MyId</summary>
    public override string ToString() => $"{GetType().Name}:{Id}";

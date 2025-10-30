@@ -30,28 +30,11 @@ public class EntityTests : UniversalTestBase
    }
 
    [XF]
-   public void IntstanceEqualsOtherInstanceWithSameId()
-   {
-      var lhs = new Person();
-      var rhs = new Person(lhs.Id.PrimitiveValue);
-      AssertAreEqual(lhs, rhs);
-   }
-
-   [XF]
    public void IntstanceNotEqualToinstanceWithOtherId()
    {
       var lhs = new Person(Guid.NewGuid());
       var rhs = new Person(Guid.NewGuid());
       AssertAreNotEqual(lhs, rhs);
-   }
-
-   [XF]
-   public void IntstancesWithSameIdHasSameHashCode()
-   {
-      var lhs = new Person();
-      var rhs = new Person(lhs.Id.PrimitiveValue);
-      lhs.GetHashCode().Should().Be(rhs.GetHashCode());
-      (lhs.GetHashCode() == rhs.GetHashCode()).Should().BeTrue();
    }
 
 
