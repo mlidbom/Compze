@@ -271,7 +271,7 @@ public class TeventMigrationTest : TeventMigrationTestBase
 
             var id = Guid.Parse("00000000-0000-0000-0000-000000000001");
 
-            TestingTimeSourceStatic.FrozenAtUtc("2001-01-01 12:00").Run(() =>
+            UtcTimeSource.Test.FrozenAtUtc("2001-01-01 12:00").Run(() =>
             {
                var taggregate = TestTaggregate.FromTevents(id, EnumerableCE.OfTypes<Ec1, E1, E2, E3, E4>());
                var initialHistory = taggregate.History;
@@ -350,7 +350,7 @@ public class TeventMigrationTest : TeventMigrationTestBase
 
             var id = Guid.Parse("00000000-0000-0000-0000-000000000001");
 
-            TestingTimeSourceStatic.FrozenAtUtc("2001-01-01 12:00").Run(() =>
+            UtcTimeSource.Test.FrozenAtUtc("2001-01-01 12:00").Run(() =>
             {
                var taggregate = TestTaggregate.FromTevents(id, EnumerableCE.OfTypes<Ec1, E1, E2, E3, E4>());
                var initialHistory = taggregate.History;
@@ -435,7 +435,7 @@ public class TeventMigrationTest : TeventMigrationTestBase
 
             var id = Guid.Parse("00000000-0000-0000-0000-000000000001");
 
-            TestingTimeSourceStatic.FrozenAtUtc("2001-01-01 12:00").Run(() =>
+            UtcTimeSource.Test.FrozenAtUtc("2001-01-01 12:00").Run(() =>
             {
                var initialTaggregate = TestTaggregate.FromTevents(id, EnumerableCE.OfTypes<Ec1, E1>());
 
@@ -489,7 +489,7 @@ public class TeventMigrationTest : TeventMigrationTestBase
          {
             var serviceLocator = CreateServiceLocatorForTeventStoreType(() => migrations);
             toDispose.Add(serviceLocator);
-            TestingTimeSourceStatic.FrozenAtUtc("2001-01-01 12:00").Run(() =>
+            UtcTimeSource.Test.FrozenAtUtc("2001-01-01 12:00").Run(() =>
             {
                var id = Guid.Parse("00000000-0000-0000-0000-000000000001");
                var initialTaggregate = TestTaggregate.FromTevents(id, EnumerableCE.OfTypes<Ec1, E1>());
@@ -542,7 +542,7 @@ public class TeventMigrationTest : TeventMigrationTestBase
          {
             var serviceLocator = CreateServiceLocatorForTeventStoreType(() => migrations);
             toDispose.Add(serviceLocator);
-            TestingTimeSourceStatic.FrozenAtUtc("2001-01-01 12:00").Run(() =>
+            UtcTimeSource.Test.FrozenAtUtc("2001-01-01 12:00").Run(() =>
             {
                var id = Guid.Parse("00000000-0000-0000-0000-000000000001");
                var initialTaggregate = TestTaggregate.FromTevents(id, EnumerableCE.OfTypes<Ec1, E1>());
