@@ -1,9 +1,10 @@
-using System;
-using System.Threading.Tasks;
+using Compze.Core.Public;
 using Compze.Core.Tessaging.Internal.SqlLayer;
 using Compze.Sql.Common;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.Threading.TasksCE;
+using System;
+using System.Threading.Tasks;
 using TessageTable =  Compze.Core.Tessaging.Internal.SqlLayer.IServiceBusSqlLayer.InboxTessageDatabaseSchemaStrings;
 
 namespace Compze.Sql.MySql.Private.Tessaging;
@@ -13,7 +14,7 @@ internal partial class MySqlInboxSqlLayer(IMySqlConnectionPool connectionFactory
    readonly IMySqlConnectionPool _connectionFactory = connectionFactory;
    readonly MySqlSqlLayerSchemaManager _schemaManager = schemaManager;
 
-   public IServiceBusSqlLayer.SaveTessageResult SaveTessage(Guid tessageId, Guid typeId, string serializedTessage)
+   public IServiceBusSqlLayer.SaveTessageResult SaveTessage(TessageId tessageId, Guid typeId, string serializedTessage)
    {
       return _connectionFactory.UseCommand(
          command =>
@@ -28,7 +29,7 @@ internal partial class MySqlInboxSqlLayer(IMySqlConnectionPool connectionFactory
                    ON DUPLICATE KEY UPDATE {TessageTable.TessageId} = {TessageTable.TessageId}
 
                    """)
-              .AddParameter(TessageTable.TessageId, tessageId)
+              .AddParameter(TessageTable.TessageId, tessageId.PrimitiveValue)
               .AddParameter(TessageTable.TypeId, typeId)
                //performance: Like with the tevent store, keep all framework properties out of the JSON and put it into separate columns instead. For tevents. Reuse a pre-serialized instance from the persisting to the tevent store.
               .AddMediumTextParameter(TessageTable.Body, serializedTessage)
@@ -40,7 +41,7 @@ internal partial class MySqlInboxSqlLayer(IMySqlConnectionPool connectionFactory
          });
    }
 
-   public void MarkAsSucceeded(Guid tessageId)
+   public void MarkAsSucceeded(TessageId tessageId)
    {
       _connectionFactory.UseCommand(
          command =>
@@ -55,7 +56,7 @@ internal partial class MySqlInboxSqlLayer(IMySqlConnectionPool connectionFactory
                                        AND {TessageTable.Status} = {(int)InboxTessageStatus.UnHandled}
 
                                    """)
-                              .AddParameter(TessageTable.TessageId, tessageId)
+                              .AddParameter(TessageTable.TessageId, tessageId.PrimitiveValue)
                               .ExecuteNonQuery();
 
             Assert.Result.Is(affectedRows == 1);
@@ -63,7 +64,7 @@ internal partial class MySqlInboxSqlLayer(IMySqlConnectionPool connectionFactory
          });
    }
 
-   public int RecordException(Guid tessageId, string exceptionStackTrace, string exceptionTessage, string exceptionType)
+   public int RecordException(TessageId tessageId, string exceptionStackTrace, string exceptionTessage, string exceptionType)
    {
       return _connectionFactory.UseCommand(
          command => command
@@ -79,14 +80,14 @@ internal partial class MySqlInboxSqlLayer(IMySqlConnectionPool connectionFactory
                         WHERE {TessageTable.TessageId} = @{TessageTable.TessageId}
 
                         """)
-                   .AddParameter(TessageTable.TessageId, tessageId)
+                   .AddParameter(TessageTable.TessageId, tessageId.PrimitiveValue)
                    .AddMediumTextParameter(TessageTable.ExceptionStackTrace, exceptionStackTrace)
                    .AddMediumTextParameter(TessageTable.ExceptionTessage, exceptionTessage)
                    .AddVarcharParameter(TessageTable.ExceptionType, 500, exceptionType)
                    .ExecuteNonQuery());
    }
 
-   public int MarkAsFailed(Guid tessageId)
+   public int MarkAsFailed(TessageId tessageId)
    {
       return _connectionFactory.UseCommand(
          command => command
@@ -98,7 +99,7 @@ internal partial class MySqlInboxSqlLayer(IMySqlConnectionPool connectionFactory
                         WHERE {TessageTable.TessageId} = @{TessageTable.TessageId}
                             AND {TessageTable.Status} = {(int)InboxTessageStatus.UnHandled}
                         """)
-                   .AddParameter(TessageTable.TessageId, tessageId)
+                   .AddParameter(TessageTable.TessageId, tessageId.PrimitiveValue)
                    .ExecuteNonQuery());
    }
 

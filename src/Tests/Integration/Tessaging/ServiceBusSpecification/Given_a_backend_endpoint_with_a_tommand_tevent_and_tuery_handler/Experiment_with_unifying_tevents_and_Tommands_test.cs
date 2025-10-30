@@ -17,6 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Compze.Core.Public;
 
 // ReSharper disable MemberCanBeInternal for testing
 // ReSharper disable InconsistentNaming for testing
@@ -103,9 +104,9 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
       {
          public Guid UserId { get; private set; } = Guid.NewGuid();
 
-         RegisterUserTypermediaTommand() : base(DeduplicationIdHandling.Reuse) {}
+         RegisterUserTypermediaTommand() {}
 
-         internal static RegisterUserTypermediaTommand Create() => new() { Id = Guid.CreateVersion7() };
+         internal static RegisterUserTypermediaTommand Create() => new() { Id = new TessageId() };
       }
    }
 

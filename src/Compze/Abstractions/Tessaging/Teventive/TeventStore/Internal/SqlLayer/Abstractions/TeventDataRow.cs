@@ -1,4 +1,5 @@
 using System;
+using Compze.Core.Public;
 
 namespace Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions;
 
@@ -35,7 +36,7 @@ public class TeventDataRow
                            };
    }
 
-   public TeventDataRow(Guid teventType, string teventJson, Guid teventId, int taggregateVersion, Guid taggregateId, DateTime utcTimeStamp, TaggregateTeventStorageInformation storageInformation)
+   public TeventDataRow(Guid teventType, string teventJson, TessageId teventId, int taggregateVersion, Guid taggregateId, DateTime utcTimeStamp, TaggregateTeventStorageInformation storageInformation)
    {
       TeventType = teventType;
       TeventJson = teventJson;
@@ -49,7 +50,7 @@ public class TeventDataRow
 
    public Guid TeventType { get; private set; }
    public string TeventJson { get; private set; }
-   public Guid TeventId { get; private set; }
+   public TessageId TeventId { get; private set; }
    public int TaggregateVersion { get; private set; }
 
    public Guid TaggregateId { get; private set; }

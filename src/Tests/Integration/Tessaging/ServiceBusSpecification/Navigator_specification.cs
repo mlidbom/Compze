@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Compze.Core.Public;
 
 // ReSharper disable MemberCanBeMadeStatic.Local
 
@@ -91,12 +92,12 @@ public class Navigator_specification : UniversalTestBase
 
    protected internal class RegisterUserTypermediaTommand : TessageTypes.Remotable.AtMostOnce.AtMostOnceTypermediaTommand<UserRegisteredConfirmationResource>
    {
-      RegisterUserTypermediaTommand() : base(DeduplicationIdHandling.Reuse) {}
+      RegisterUserTypermediaTommand() {}
 
       public static RegisterUserTypermediaTommand Create(string name) => new()
                                                                {
                                                                   Name = name,
-                                                                  Id = Guid.CreateVersion7()
+                                                                  Id = new TessageId()
                                                                };
 
       public string Name { get; private set; } = "";

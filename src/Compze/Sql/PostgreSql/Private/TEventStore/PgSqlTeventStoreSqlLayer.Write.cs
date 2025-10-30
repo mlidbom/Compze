@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Compze.Core.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions;
 using Compze.Sql.Common;
 using Compze.Utilities.Contracts;
@@ -48,12 +49,12 @@ partial class PgSqlTeventStoreSqlLayer
                                     .AddParameter(Tevent.TaggregateId, data.TaggregateId)
                                     .AddParameter(Tevent.InsertedVersion, data.StorageInformation.InsertedVersion)
                                     .AddParameter(Tevent.TeventType, data.TeventType)
-                                    .AddParameter(Tevent.TeventId, data.TeventId)
+                                    .AddParameter(Tevent.TeventId, data.TeventId.PrimitiveValue)
                                     .AddTimestampWithTimeZone(Tevent.UtcTimeStamp, data.UtcTimeStamp)
                                     .AddMediumTextParameter(Tevent.Tevent, data.TeventJson)
                                     .AddParameter(Tevent.ReadOrder, NpgsqlDbType.Varchar, data.StorageInformation.ReadOrder?.ToString() ?? new ReadOrder().ToString())
                                     .AddParameter(Tevent.EffectiveVersion, NpgsqlDbType.Integer, data.StorageInformation.EffectiveVersion)
-                                    .AddNullableParameter(Tevent.TargetTevent, NpgsqlDbType.Uuid, data.StorageInformation.RefactoringInformation?.TargetTevent)
+                                    .AddNullableParameter(Tevent.TargetTevent, NpgsqlDbType.Uuid, data.StorageInformation.RefactoringInformation?.TargetTevent.PrimitiveValue)
                                     .AddNullableParameter(Tevent.RefactoringType, NpgsqlDbType.Smallint, data.StorageInformation.RefactoringInformation?.RefactoringType == null ? null : (byte?)data.StorageInformation.RefactoringInformation.RefactoringType)
                                     .PrepareStatement()
                                     .ExecuteNonQuery());
@@ -76,7 +77,7 @@ partial class PgSqlTeventStoreSqlLayer
       _connectionManager.UseConnection(connection => connection.ExecuteNonQuery(commandText));
    }
 
-   public TeventNeighborhood LoadTeventNeighborHood(Guid teventId)
+   public TeventNeighborhood LoadTeventNeighborHood(TessageId teventId)
    {
       const string lockHintToMinimizeRiskOfDeadlocksByTakingUpdateLockOnInitialRead = "";
 
@@ -97,7 +98,7 @@ partial class PgSqlTeventStoreSqlLayer
          {
             command.CommandText = selectStatement;
 
-            command.AddParameter(Tevent.TeventId, teventId);
+            command.AddParameter(Tevent.TeventId, teventId.PrimitiveValue);
             using var reader = command.PrepareStatement()
                                       .ExecuteReader();
             reader.Read();

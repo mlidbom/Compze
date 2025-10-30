@@ -1,9 +1,10 @@
-using System;
-using System.Threading.Tasks;
+using Compze.Core.Public;
 using Compze.Core.Tessaging.Internal.SqlLayer;
 using Compze.Sql.Common;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.Threading.TasksCE;
+using System;
+using System.Threading.Tasks;
 using TessageTable =  Compze.Core.Tessaging.Internal.SqlLayer.IServiceBusSqlLayer.InboxTessageDatabaseSchemaStrings;
 
 namespace Compze.Sql.Sqlite.Private.Tessaging;
@@ -13,7 +14,7 @@ partial class SqliteInboxSqlLayer(ISqliteConnectionPool connectionFactory, Sqlit
    readonly ISqliteConnectionPool _connectionFactory = connectionFactory;
    readonly SqliteSqlLayerSchemaManager _schemaManager = schemaManager;
 
-   public IServiceBusSqlLayer.SaveTessageResult SaveTessage(Guid tessageId, Guid typeId, string serializedTessage)
+   public IServiceBusSqlLayer.SaveTessageResult SaveTessage(TessageId tessageId, Guid typeId, string serializedTessage)
    {
       return _connectionFactory.UseCommand(
          command =>
@@ -39,7 +40,7 @@ partial class SqliteInboxSqlLayer(ISqliteConnectionPool connectionFactory, Sqlit
          });
    }
 
-   public void MarkAsSucceeded(Guid tessageId)
+   public void MarkAsSucceeded(TessageId tessageId)
    {
       _connectionFactory.UseCommand(
          command =>
@@ -62,7 +63,7 @@ partial class SqliteInboxSqlLayer(ISqliteConnectionPool connectionFactory, Sqlit
          });
    }
 
-   public int RecordException(Guid tessageId, string exceptionStackTrace, string exceptionTessage, string exceptionType)
+   public int RecordException(TessageId tessageId, string exceptionStackTrace, string exceptionTessage, string exceptionType)
    {
       return _connectionFactory.UseCommand(
          command => command
@@ -85,7 +86,7 @@ partial class SqliteInboxSqlLayer(ISqliteConnectionPool connectionFactory, Sqlit
                    .ExecuteNonQuery());
    }
 
-   public int MarkAsFailed(Guid tessageId)
+   public int MarkAsFailed(TessageId tessageId)
    {
       return _connectionFactory.UseCommand(
          command => command

@@ -13,8 +13,8 @@ public partial class AccountResource
    {
       public class ChangePassword : TessageTypes.Remotable.AtMostOnce.AtMostOnceTypermediaTommand, IValidatableObject
       {
-         [UsedImplicitly] public ChangePassword() : base(DeduplicationIdHandling.Reuse) {}
-         public ChangePassword(Guid accountId):base(DeduplicationIdHandling.Create) => AccountId = accountId;
+         [UsedImplicitly] public ChangePassword() : base() {}
+         public ChangePassword(Guid accountId):base() => AccountId = accountId;
 
          [Required] [EntityId] public Guid AccountId { get; set; }
          [Required] public string OldPassword { get; set; } = string.Empty;

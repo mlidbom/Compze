@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using AccountManagement.API.ValidationAttributes;
+using Compze.Core.Public;
 using Compze.Core.Tessaging.Public;
 using JetBrains.Annotations;
 // ReSharper disable MemberCanBeMadeStatic.Global Because we want these members to be accessed through the fluent API we don't want to make them static.
@@ -12,12 +13,12 @@ public partial class AccountResource
 {
    public static partial class Tommand
    {
-      public partial class Register() : TessageTypes.Remotable.AtMostOnce.AtMostOnceTypermediaTommand<Register.RegistrationAttemptResult>(DeduplicationIdHandling.Reuse), IValidatableObject
+      public partial class Register() : TessageTypes.Remotable.AtMostOnce.AtMostOnceTypermediaTommand<Register.RegistrationAttemptResult>(), IValidatableObject
       {
          public static Register Create() => new()
                                             {
                                                AccountId = Guid.NewGuid(),
-                                               Id = Guid.CreateVersion7()
+                                               Id = new TessageId()
                                             };
 
          //Note the use of a custom validation attributes.
@@ -36,7 +37,7 @@ public partial class AccountResource
 
          internal Register WithValues(Guid accountId, string email, string password) => new()
                                                                                         {
-                                                                                           Id = Guid.CreateVersion7(),
+                                                                                           Id = new TessageId(),
                                                                                            AccountId = accountId,
                                                                                            Email = email,
                                                                                            Password = password

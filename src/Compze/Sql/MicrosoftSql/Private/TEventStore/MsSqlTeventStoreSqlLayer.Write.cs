@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlTypes;
 using System.Linq;
+using Compze.Core.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions;
 using Compze.Sql.Common;
 using Compze.Utilities.Contracts;
@@ -44,13 +45,13 @@ partial class MsSqlTeventStoreSqlLayer
                                     .AddParameter(Tevent.TaggregateId, SqlDbType.UniqueIdentifier, data.TaggregateId)
                                     .AddParameter(Tevent.InsertedVersion, data.StorageInformation.InsertedVersion)
                                     .AddParameter(Tevent.TeventType, data.TeventType)
-                                    .AddParameter(Tevent.TeventId, data.TeventId)
+                                    .AddParameter(Tevent.TeventId, data.TeventId.PrimitiveValue)
                                     .AddDateTime2Parameter(Tevent.UtcTimeStamp, data.UtcTimeStamp)
                                     .AddNVarcharMaxParameter(Tevent.Tevent, data.TeventJson)
 
                                     .AddParameter(Tevent.ReadOrder, SqlDbType.Decimal, data.StorageInformation.ReadOrder?.ToSqlDecimal() ?? new SqlDecimal(0))
                                     .AddParameter(Tevent.EffectiveVersion, SqlDbType.Int, data.StorageInformation.EffectiveVersion)
-                                    .AddNullableParameter(Tevent.TargetTevent, SqlDbType.UniqueIdentifier, data.StorageInformation.RefactoringInformation?.TargetTevent)
+                                    .AddNullableParameter(Tevent.TargetTevent, SqlDbType.UniqueIdentifier, data.StorageInformation.RefactoringInformation?.TargetTevent.PrimitiveValue)
                                     .AddNullableParameter(Tevent.RefactoringType, SqlDbType.TinyInt, data.StorageInformation.RefactoringInformation?.RefactoringType == null ? null : (byte?)data.StorageInformation.RefactoringInformation.RefactoringType)
                                     .ExecuteNonQuery());
             }
@@ -72,7 +73,7 @@ partial class MsSqlTeventStoreSqlLayer
 
    }
 
-   public TeventNeighborhood LoadTeventNeighborHood(Guid teventId)
+   public TeventNeighborhood LoadTeventNeighborHood(TessageId teventId)
    {
 
 
@@ -93,7 +94,7 @@ partial class MsSqlTeventStoreSqlLayer
          command =>
          {
             command.CommandText = selectStatement;
-            command.Parameters.Add(new SqlParameter(Tevent.TeventId, SqlDbType.UniqueIdentifier) {Value = teventId});
+            command.Parameters.Add(new SqlParameter(Tevent.TeventId, SqlDbType.UniqueIdentifier) {Value = teventId.PrimitiveValue});
             using var reader = command.ExecuteReader();
             reader.Read();
 

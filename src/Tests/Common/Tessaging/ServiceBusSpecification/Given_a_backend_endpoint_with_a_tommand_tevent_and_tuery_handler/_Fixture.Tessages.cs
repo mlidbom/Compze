@@ -1,4 +1,5 @@
 using System;
+using Compze.Core.Public;
 using Compze.Core.Tessaging.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
@@ -20,8 +21,8 @@ public class MyTommandResult;
 
 public class MyAtMostOnceTypermediaTommandWithResult : TessageTypes.Remotable.AtMostOnce.AtMostOnceTypermediaTommand<MyTommandResult>
 {
-   MyAtMostOnceTypermediaTommandWithResult() : base(DeduplicationIdHandling.Reuse) {}
-   public static MyAtMostOnceTypermediaTommandWithResult Create() => new() {Id = Guid.CreateVersion7()};
+   MyAtMostOnceTypermediaTommandWithResult() : base() {}
+   public static MyAtMostOnceTypermediaTommandWithResult Create() => new() {Id = new TessageId()};
 }
 
 public class MyTueryResult;
@@ -32,18 +33,18 @@ public class MyExactlyOnceTommand : TessageTypes.Remotable.ExactlyOnce.Tommand;
 
 public class MyUpdateTaggregateTommand : TessageTypes.Remotable.AtMostOnce.AtMostOnceTypermediaTommand
 {
-   [UsedImplicitly] MyUpdateTaggregateTommand() : base(DeduplicationIdHandling.Reuse) {}
-   public MyUpdateTaggregateTommand(Guid taggregateId) : base(DeduplicationIdHandling.Create) => TaggregateId = taggregateId;
+   [UsedImplicitly] MyUpdateTaggregateTommand(){}
+   public MyUpdateTaggregateTommand(Guid taggregateId) => TaggregateId = taggregateId;
    public Guid TaggregateId { get; private set; }
 }
 
 public class MyCreateTaggregateTommand : TessageTypes.Remotable.AtMostOnce.AtMostOnceTypermediaTommand
 {
-   MyCreateTaggregateTommand() : base(DeduplicationIdHandling.Reuse) {}
+   MyCreateTaggregateTommand() {}
 
    public static MyCreateTaggregateTommand Create() => new()
                                                       {
-                                                         Id = Guid.CreateVersion7(),
+                                                         Id = new TessageId(),
                                                          TaggregateId = Guid.NewGuid()
                                                       };
 

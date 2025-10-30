@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Compze.Core.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions;
 using Compze.Sql.Common;
 using Microsoft.Data.Sqlite;
@@ -31,7 +32,7 @@ partial class SqliteTeventStoreSqlLayer(SqliteTeventStoreConnectionManager conne
    static TeventDataRow ReadDataRow(SqliteDataReader teventReader) => new(
       teventType: Guid.Parse(teventReader.GetString(0)),
       teventJson: teventReader.GetString(1),
-      teventId: Guid.Parse(teventReader.GetString(4)),
+      teventId: new TessageId(Guid.Parse(teventReader.GetString(4))),
       taggregateVersion: teventReader.GetInt32(3),
       taggregateId: Guid.Parse(teventReader.GetString(2)),
       // DateTime stored as Ticks (INTEGER) for full precision
@@ -43,9 +44,9 @@ partial class SqliteTeventStoreSqlLayer(SqliteTeventStoreConnectionManager conne
                              EffectiveVersion = teventReader.GetInt32(3),
                              RefactoringInformation = (teventReader.IsDBNull(7) ? (Guid?)null : Guid.Parse(teventReader.GetString(7)), teventReader.IsDBNull(8) ? (int?)null : teventReader.GetInt32(8))switch
                              {
-                                (null, null)              => null,
-                                ({} targetTevent, {} type) => new TaggregateTeventRefactoringInformation(targetTevent, (TaggregateTeventRefactoringType)type),
-                                _                         => throw new Exception("Should not be possible to get here")
+                                (null, null)               => null,
+                                ({} targetTevent, {} type) => new TaggregateTeventRefactoringInformation(new TessageId(targetTevent), (TaggregateTeventRefactoringType)type),
+                                _                          => throw new Exception("Should not be possible to get here")
                              }
                           }
    );

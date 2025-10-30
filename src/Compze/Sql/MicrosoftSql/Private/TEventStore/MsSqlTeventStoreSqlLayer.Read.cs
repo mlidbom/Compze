@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlTypes;
 using System.Linq;
+using Compze.Core.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions;
 using Compze.Sql.Common;
 using Microsoft.Data.SqlClient;
@@ -35,7 +36,7 @@ partial class MsSqlTeventStoreSqlLayer(MsSqlTeventStoreConnectionManager connect
    static TeventDataRow ReadDataRow(SqlDataReader teventReader) => new(
       teventType: teventReader.GetGuid(0),
       teventJson: teventReader.GetString(1),
-      teventId: teventReader.GetGuid(4),
+      teventId: new TessageId(teventReader.GetGuid(4)),
       taggregateVersion: teventReader.GetInt32(3),
       taggregateId: teventReader.GetGuid(2),
       //Without this the datetime will be DateTimeKind.Unspecified and will not convert correctly into Local time....
@@ -49,7 +50,7 @@ partial class MsSqlTeventStoreSqlLayer(MsSqlTeventStoreConnectionManager connect
                              {
                                 (null, null) => null,
                                 // ReSharper disable PatternAlwaysOfType
-                                (Guid targetTevent, byte type) => new TaggregateTeventRefactoringInformation(targetTevent, (TaggregateTeventRefactoringType)type),
+                                (Guid targetTevent, byte type) => new TaggregateTeventRefactoringInformation(new TessageId(targetTevent), (TaggregateTeventRefactoringType)type),
                                 // ReSharper restore PatternAlwaysOfType
                                 _ => throw new Exception("Should not be possible to get here")
                              }

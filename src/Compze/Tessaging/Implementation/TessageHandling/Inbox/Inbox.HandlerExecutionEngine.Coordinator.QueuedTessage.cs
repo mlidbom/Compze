@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using Compze.Core.Public;
 using Compze.Core.Tessaging.Public;
 using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
@@ -30,7 +31,7 @@ partial class Inbox
             readonly ITessageHandlerRegistry _handlerRegistry;
 
             internal Task<object?> Task => _taskCompletionSource.Task;
-            public Guid TessageId { get; }
+            public TessageId TessageId { get; }
 
             const string ExecuteTaskName = $"{nameof(HandlerExecutionTask)}_{nameof(Execute)}";
             public void Execute()

@@ -19,7 +19,7 @@ public abstract class ValueWrapper<TValue>(TValue primitiveValue) : IEquatable<V
                                             && Equals((ValueWrapper<TValue>)obj);
 
    public override int GetHashCode() => PrimitiveValue.GetHashCode();
-   public override string? ToString() => PrimitiveValue.ToString();
+   public override string ToString() => PrimitiveValue.ToString() ?? "";
 
    public static bool operator ==(ValueWrapper<TValue>? left, ValueWrapper<TValue>? right) => Equals(left, right);
    public static bool operator !=(ValueWrapper<TValue>? left, ValueWrapper<TValue>? right) => !Equals(left, right);

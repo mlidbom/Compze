@@ -1,7 +1,4 @@
-using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
+using Compze.Core.Public;
 using Compze.Core.Refactoring.Naming.Internal;
 using Compze.Core.Serialization.Internal;
 using Compze.Core.Tessaging.Hosting.Public;
@@ -15,6 +12,10 @@ using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Logging;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.Threading.TasksCE;
+using System;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Compze.Tessaging.Implementation.Outbox;
 
@@ -172,7 +173,7 @@ class OutboxRetryPoller : IDisposable
       }
    }
 
-   void HandleRetryResult(Task completedSendTask, Guid tessageId, Guid endpointId) => _exceptionReporter.RunSwallowingAndReportingAnyExceptions(() =>
+   void HandleRetryResult(Task completedSendTask, TessageId tessageId, Guid endpointId) => _exceptionReporter.RunSwallowingAndReportingAnyExceptions(() =>
    {
       if(!_running)
          return; //We have shut down and storage may no longer be available/working. The recovery mechanisms will take care of this tessage after restart.
@@ -194,6 +195,6 @@ class OutboxRetryPoller : IDisposable
       }
    });
 
-   void RecordFailure(Guid tessageId, Guid endpointId, Exception? exception) =>
+   void RecordFailure(TessageId tessageId, Guid endpointId, Exception? exception) =>
       _tessageStorage.RecordDeliveryFailure(tessageId, new EndpointId(endpointId), exception);
 }

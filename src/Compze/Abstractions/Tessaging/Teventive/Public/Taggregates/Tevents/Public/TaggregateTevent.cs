@@ -1,4 +1,5 @@
 using System;
+using Compze.Core.Public;
 
 namespace Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 
@@ -6,7 +7,7 @@ public abstract class TaggregateTevent() : IMutableTaggregateTevent
 {
     protected TaggregateTevent(Guid taggregateId) : this() => TaggregateId = taggregateId;
 
-    public Guid Id { get; private set; } = Guid.CreateVersion7();
+    public TessageId Id { get; private set; } = new TessageId();
     public int TaggregateVersion { get; private set; }
     public Guid TaggregateId { get; private set; }
     public DateTime UtcTimeStamp { get; private set; } = DateTime.UtcNow; //Todo: Should use time source.
@@ -15,6 +16,6 @@ public abstract class TaggregateTevent() : IMutableTaggregateTevent
     void IMutableTaggregateTevent.SetTaggregateIdInternal(Guid taggregateId) => TaggregateId = taggregateId;
     void IMutableTaggregateTevent.SetTaggregateVersionInternal(int taggregateVersion) => TaggregateVersion = taggregateVersion;
     void IMutableTaggregateTevent.SetUtcTimeStampInternal(DateTime utcTimeStamp) => UtcTimeStamp = utcTimeStamp;
-    void IMutableTaggregateTevent.SetTessageIdInternal(Guid tessageId) => Id = tessageId;
+    void IMutableTaggregateTevent.SetTessageIdInternal(TessageId tessageId) => Id = tessageId;
 #pragma warning restore CA1033
 }

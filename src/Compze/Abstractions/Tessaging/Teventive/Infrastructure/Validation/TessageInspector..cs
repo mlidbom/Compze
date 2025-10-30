@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Transactions;
+using Compze.Core.Public;
 using Compze.Core.Tessaging.Public;
 using Compze.Core.Tessaging.Typermedia.Infrastructure.Validation;
 using Compze.Utilities.SystemCE.LinqCE;
@@ -28,7 +29,7 @@ static partial class TessageInspector
             throw new MissingTransactionException(tessage);
          case ICannotBeSentRemotelyFromWithinTransaction when Transaction.Current != null:
             throw new TransactionPresentException(tessage);
-         case IAtMostOnceTessage atMostOnce when atMostOnce.Id == Guid.Empty:
+         case IAtMostOnceTessage atMostOnce when atMostOnce.Id == null:
             throw new MissingTessageIdException(tessage);
       }
 #pragma warning restore IDE0010

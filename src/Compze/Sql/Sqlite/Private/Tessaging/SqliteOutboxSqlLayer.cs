@@ -1,13 +1,14 @@
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Threading.Tasks;
+using Compze.Core.Public;
 using Compze.Core.Tessaging.Internal.SqlLayer;
 using Compze.Sql.Common;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.Threading.TasksCE;
-using TessageTable = Compze.Core.Tessaging.Internal.SqlLayer.IServiceBusSqlLayer.OutboxTessagesDatabaseSchemaStrings;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Threading.Tasks;
 using DispatchingTable = Compze.Core.Tessaging.Internal.SqlLayer.IServiceBusSqlLayer.OutboxTessageDispatchingTableSchemaStrings;
+using TessageTable = Compze.Core.Tessaging.Internal.SqlLayer.IServiceBusSqlLayer.OutboxTessagesDatabaseSchemaStrings;
 
 namespace Compze.Sql.Sqlite.Private.Tessaging;
 
@@ -49,7 +50,7 @@ partial class SqliteOutboxSqlLayer(ISqliteConnectionPool connectionFactory, Sqli
          });
    }
 
-   public IServiceBusSqlLayer.MarkAsReceivedResult MarkAsReceived(Guid tessageId, Guid endpointId)
+   public IServiceBusSqlLayer.MarkAsReceivedResult MarkAsReceived(TessageId tessageId, Guid endpointId)
    {
       var affectedRows = _connectionFactory.UseCommand(
          command => command
@@ -72,7 +73,7 @@ partial class SqliteOutboxSqlLayer(ISqliteConnectionPool connectionFactory, Sqli
                 : IServiceBusSqlLayer.MarkAsReceivedResult.WasAlreadyMarked;
    }
 
-   public void RecordDeliveryFailure(Guid tessageId, Guid endpointId, string failureReason)
+   public void RecordDeliveryFailure(TessageId tessageId, Guid endpointId, string failureReason)
    {
       _connectionFactory.UseCommand(
          command => command
@@ -127,7 +128,7 @@ partial class SqliteOutboxSqlLayer(ISqliteConnectionPool connectionFactory, Sqli
             while(reader.Read())
             {
                tessages.Add(new IServiceBusSqlLayer.UndeliveredTessage(
-                  tessageId: Guid.Parse(reader.GetString(0)),
+                  tessageId: new TessageId(Guid.Parse(reader.GetString(0))),
                   typeIdGuid: Guid.Parse(reader.GetString(1)),
                   serializedTessage: reader.GetString(2),
                   targetEndpointId: Guid.Parse(reader.GetString(3)),

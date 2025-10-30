@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Compze.Core.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions;
 using Compze.Sql.Common;
 using MySql.Data.MySqlClient;
@@ -36,7 +37,7 @@ internal partial class MySqlTeventStoreSqlLayer(MySqlTeventStoreConnectionManage
       return new TeventDataRow(
          teventType: teventReader.GetGuid(0),
          teventJson: teventReader.GetString(1),
-         teventId: teventReader.GetGuid(4),
+         teventId: new TessageId(teventReader.GetGuid(4)),
          taggregateVersion: teventReader.GetInt32(3),
          taggregateId: teventReader.GetGuid(2),
          //Without this the datetime will be DateTimeKind.Unspecified and will not convert correctly into Local time....
@@ -50,7 +51,7 @@ internal partial class MySqlTeventStoreSqlLayer(MySqlTeventStoreConnectionManage
                                 {
                                    (null, null) => null,
                                    // ReSharper disable PatternAlwaysOfType
-                                   (Guid targetTevent, sbyte type) => new TaggregateTeventRefactoringInformation(targetTevent, (TaggregateTeventRefactoringType)type),
+                                   (Guid targetTevent, sbyte type) => new TaggregateTeventRefactoringInformation(new TessageId(targetTevent), (TaggregateTeventRefactoringType)type),
                                    // ReSharper restore PatternAlwaysOfType
                                    _ => throw new Exception("Should not be possible to get here")
                                 }

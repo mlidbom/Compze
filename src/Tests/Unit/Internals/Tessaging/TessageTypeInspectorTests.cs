@@ -1,4 +1,5 @@
 using System;
+using Compze.Core.Public;
 using Compze.Core.Tessaging.Public;
 using Compze.Core.Tessaging.Teventive.Infrastructure.Validation;
 using Compze.Tests.Infrastructure;
@@ -49,14 +50,5 @@ public class TessageTypeInspector_throws_TessageTypeDesignViolationException_if_
 
       interface IForbidAndRequireTransactionalSender : IMustBeSentTransactionally, ICannotBeSentRemotelyFromWithinTransaction;
       [XF] public void Forbids_and_requires_transactional_sender() => AssertInvalidForSending<IForbidAndRequireTransactionalSender>();
-
-#pragma warning disable CA1812 //uninstantiated class 
-      internal class AtMostOnceTommandSettingTessageIdInDefaultConstructor : IAtMostOnceTypermediaTommand
-      {
-         public Guid Id { get; } = Guid.NewGuid();
-      }
-#pragma warning restore CA1812 //uninstantiated class 
-
-      [XF] public void Is_at_most_once_tommand_and_sets_TessageId_in_defaultConstructor() => AssertInvalidForSending<AtMostOnceTommandSettingTessageIdInDefaultConstructor>();
    }
 }

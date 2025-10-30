@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Compze.Core.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions;
 using Compze.Sql.Common;
 using Compze.Utilities.Contracts;
@@ -40,13 +41,13 @@ partial class MySqlTeventStoreSqlLayer
                                     .AddParameter(Tevent.TaggregateId, data.TaggregateId)
                                     .AddParameter(Tevent.InsertedVersion, data.StorageInformation.InsertedVersion)
                                     .AddParameter(Tevent.TeventType, data.TeventType)
-                                    .AddParameter(Tevent.TeventId, data.TeventId)
+                                    .AddParameter(Tevent.TeventId, data.TeventId.PrimitiveValue)
                                     .AddDateTime2Parameter(Tevent.UtcTimeStamp, data.UtcTimeStamp)
                                     .AddMediumTextParameter(Tevent.Tevent, data.TeventJson)
 
                                     .AddParameter(Tevent.ReadOrder, MySqlDbType.VarChar, data.StorageInformation.ReadOrder?.ToString() ?? ReadOrder.Zero.ToString())
                                     .AddParameter(Tevent.EffectiveVersion, MySqlDbType.Int32, data.StorageInformation.EffectiveVersion)
-                                    .AddNullableParameter(Tevent.TargetTevent, MySqlDbType.VarChar, data.StorageInformation.RefactoringInformation?.TargetTevent)
+                                    .AddNullableParameter(Tevent.TargetTevent, MySqlDbType.VarChar, data.StorageInformation.RefactoringInformation?.TargetTevent.PrimitiveValue)
                                     .AddNullableParameter(Tevent.RefactoringType, MySqlDbType.Byte, data.StorageInformation.RefactoringInformation?.RefactoringType == null ? null : (byte?)data.StorageInformation.RefactoringInformation.RefactoringType)
                                     .ExecuteNonQuery());
             }
@@ -68,7 +69,7 @@ partial class MySqlTeventStoreSqlLayer
 
    }
 
-   public TeventNeighborhood LoadTeventNeighborHood(Guid teventId)
+   public TeventNeighborhood LoadTeventNeighborHood(TessageId teventId)
    {
       //var lockHintToMinimizeRiskOfDeadlocksByTakingUpdateLockOnInitialRead = "With(UPDLOCK, READCOMMITTED, ROWLOCK)";
       const string lockHintToMinimizeRiskOfDeadlocksByTakingUpdateLockOnInitialRead = "";
@@ -89,7 +90,7 @@ partial class MySqlTeventStoreSqlLayer
          {
             command.CommandText = selectStatement;
 
-            command.Parameters.Add(new MySqlParameter(Tevent.TeventId, MySqlDbType.Guid) { Value = teventId });
+            command.Parameters.Add(new MySqlParameter(Tevent.TeventId, MySqlDbType.Guid) { Value = teventId.PrimitiveValue });
             using var reader = command.ExecuteReader();
             reader.Read();
 

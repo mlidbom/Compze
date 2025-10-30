@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Compze.Core.Public;
 
 namespace Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions;
 
@@ -14,5 +15,5 @@ public interface ITeventStoreSqlLayer
    void DeleteTaggregate(Guid taggregateId);
    void UpdateEffectiveVersions(IReadOnlyList<VersionSpecification> versions);
 
-   TeventNeighborhood LoadTeventNeighborHood(Guid teventId);
+   TeventNeighborhood LoadTeventNeighborHood(TessageId teventId);
 }

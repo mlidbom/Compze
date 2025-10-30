@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Compze.Core.Public;
 using Compze.Core.Refactoring.Naming.Internal;
 using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Tessaging.Implementation.Abstractions;
@@ -35,7 +36,7 @@ class TessagesInFlightTracker(ITypeMapper typeMapper) : ITessagesInFlightTracker
    class NonThreadSafeImplementation(ITypeMapper typeMapper)
    {
       readonly ITypeMapper _typeMapper = typeMapper;
-      internal readonly Dictionary<Guid, InFlightTessage> TrackedTessages = [];
+      internal readonly Dictionary<TessageId, InFlightTessage> TrackedTessages = [];
 
       readonly List<Exception> _busExceptions = [];
 
