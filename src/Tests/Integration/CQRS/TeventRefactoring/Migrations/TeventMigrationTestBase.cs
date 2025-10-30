@@ -115,7 +115,7 @@ public abstract class TeventMigrationTestBase : UniversalTestBase
 
       await UtcTimeSource.WithOverrideAsync(
          TestingTimeSource.FrozenAtUtcTime(UtcTimeSource.UtcNow + FluentTimeSpanExtensions.Hours(1)),
-         Func.From(async () =>
+         async () =>
          {
             timeSource.FreezeAtUtcTime(timeSource.UtcNow + FluentTimeSpanExtensions.Hours(1)); //Bump clock to ensure that times will be be wrong unless the time from the original tevents are used..
 
@@ -203,7 +203,7 @@ public abstract class TeventMigrationTestBase : UniversalTestBase
                                                                                                                  .ListAllTeventsForTestingPurposesAbsolutelyNotUsableForARealTeventStoreOfAnySize()
                                                                                                                  .ToList());
             AssertStreamsAreIdentical(expectedCompleteTeventStoreStream, streamedTevents, "Streaming all tevents in store", writer);
-         }));
+         });
    }
 
    protected static void ClearCache(IServiceLocator serviceLocator)

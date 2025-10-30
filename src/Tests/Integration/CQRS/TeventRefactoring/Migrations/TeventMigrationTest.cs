@@ -15,6 +15,7 @@ using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.TransactionsCE;
 using Compze.Tests.Infrastructure.XUnit;
+using Compze.Utilities.SystemCE.ActionFuncHarmonization;
 using FluentAssertions;
 
 // ReSharper disable AccessToDisposedClosure
@@ -269,58 +270,63 @@ public class TeventMigrationTest : TeventMigrationTestBase
 
             var id = Guid.Parse("00000000-0000-0000-0000-000000000001");
 
-            serviceLocator.Resolve<TestingTimeSource>().FreezeAtUtcTime("2001-01-01 12:00");
+            UtcTimeSource.WithOverride(
+               TestingTimeSource.FrozenAtUtcTime("2001-01-01 12:00"),
+               () =>
+               {
+                  serviceLocator.Resolve<TestingTimeSource>().FreezeAtUtcTime("2001-01-01 12:00");
 
-            var taggregate = TestTaggregate.FromTevents(serviceLocator.Resolve<IUtcTimeTimeSource>(), id, EnumerableCE.OfTypes<Ec1, E1, E2, E3, E4>());
-            var initialHistory = taggregate.History;
+                  var taggregate = TestTaggregate.FromTevents(serviceLocator.Resolve<IUtcTimeTimeSource>(), id, EnumerableCE.OfTypes<Ec1, E1, E2, E3, E4>());
+                  var initialHistory = taggregate.History;
 
-            ITeventStoreUpdater Session() => serviceLocator.Resolve<ITeventStoreUpdater>();
-            ITeventStore TeventStore() => serviceLocator.Resolve<ITeventStore>();
+                  ITeventStoreUpdater Session() => serviceLocator.Resolve<ITeventStoreUpdater>();
+                  ITeventStore TeventStore() => serviceLocator.Resolve<ITeventStore>();
 
-            var firstSavedHistory = serviceLocator.ExecuteTransactionInIsolatedScope(() =>
-            {
-               Session().Save(taggregate);
-               return Session().Get<TestTaggregate>(id).History;
-            });
+                  var firstSavedHistory = serviceLocator.ExecuteTransactionInIsolatedScope(() =>
+                  {
+                     Session().Save(taggregate);
+                     return Session().Get<TestTaggregate>(id).History;
+                  });
 
-            AssertStreamsAreIdentical(initialHistory, firstSavedHistory, "first saved history", writer);
+                  AssertStreamsAreIdentical(initialHistory, firstSavedHistory, "first saved history", writer);
 
-            migrations = [Replace<E1>.With<E5>()];
-            ClearCache(serviceLocator);
+                  migrations = [Replace<E1>.With<E5>()];
+                  ClearCache(serviceLocator);
 
-            var migratedHistory = serviceLocator.ExecuteTransactionInIsolatedScope(() => Session().Get<TestTaggregate>(id).History);
-            var expectedAfterReplacingE1WithE5 =
-               TestTaggregate.FromTevents(serviceLocator.Resolve<IUtcTimeTimeSource>(), id, EnumerableCE.OfTypes<Ec1, E5, E2, E3, E4>()).History;
-            AssertStreamsAreIdentical(expected: expectedAfterReplacingE1WithE5, migratedHistory: migratedHistory, descriptionOfHistory: "migrated history", writer);
+                  var migratedHistory = serviceLocator.ExecuteTransactionInIsolatedScope(() => Session().Get<TestTaggregate>(id).History);
+                  var expectedAfterReplacingE1WithE5 =
+                     TestTaggregate.FromTevents(serviceLocator.Resolve<IUtcTimeTimeSource>(), id, EnumerableCE.OfTypes<Ec1, E5, E2, E3, E4>()).History;
+                  AssertStreamsAreIdentical(expected: expectedAfterReplacingE1WithE5, migratedHistory: migratedHistory, descriptionOfHistory: "migrated history", writer);
 
-            var historyAfterPersistingButBeforeReload = serviceLocator.ExecuteInIsolatedScope(() =>
-            {
-               TeventStore().PersistMigrations();
-               return TransactionScopeCe.Execute(() => Session().Get<TestTaggregate>(id).History);
-            });
+                  var historyAfterPersistingButBeforeReload = serviceLocator.ExecuteInIsolatedScope(() =>
+                  {
+                     TeventStore().PersistMigrations();
+                     return TransactionScopeCe.Execute(() => Session().Get<TestTaggregate>(id).History);
+                  });
 
-            AssertStreamsAreIdentical(expected: expectedAfterReplacingE1WithE5, migratedHistory: historyAfterPersistingButBeforeReload, descriptionOfHistory: "migrated, persisted", writer);
+                  AssertStreamsAreIdentical(expected: expectedAfterReplacingE1WithE5, migratedHistory: historyAfterPersistingButBeforeReload, descriptionOfHistory: "migrated, persisted", writer);
 
-            var historyAfterPersistingAndReloading = serviceLocator.ExecuteTransactionInIsolatedScope(() => Session().Get<TestTaggregate>(id).History);
-            AssertStreamsAreIdentical(expected: expectedAfterReplacingE1WithE5, migratedHistory: historyAfterPersistingAndReloading, descriptionOfHistory: "migrated, persisted, reloaded", writer);
+                  var historyAfterPersistingAndReloading = serviceLocator.ExecuteTransactionInIsolatedScope(() => Session().Get<TestTaggregate>(id).History);
+                  AssertStreamsAreIdentical(expected: expectedAfterReplacingE1WithE5, migratedHistory: historyAfterPersistingAndReloading, descriptionOfHistory: "migrated, persisted, reloaded", writer);
 
-            migrations = [Replace<E2>.With<E6>()];
+                  migrations = [Replace<E2>.With<E6>()];
 
-            toDispose.Add(serviceLocator = serviceLocator.Clone());
+                  toDispose.Add(serviceLocator = serviceLocator.Clone());
 
-            migratedHistory = serviceLocator.ExecuteTransactionInIsolatedScope(() => Session().Get<TestTaggregate>(id).History);
-            var expectedAfterReplacingE2WithE6 = TestTaggregate.FromTevents(serviceLocator.Resolve<IUtcTimeTimeSource>(), id, EnumerableCE.OfTypes<Ec1, E5, E6, E3, E4>()).History;
-            AssertStreamsAreIdentical(expected: expectedAfterReplacingE2WithE6, migratedHistory: migratedHistory, descriptionOfHistory: "migrated history", writer);
+                  migratedHistory = serviceLocator.ExecuteTransactionInIsolatedScope(() => Session().Get<TestTaggregate>(id).History);
+                  var expectedAfterReplacingE2WithE6 = TestTaggregate.FromTevents(serviceLocator.Resolve<IUtcTimeTimeSource>(), id, EnumerableCE.OfTypes<Ec1, E5, E6, E3, E4>()).History;
+                  AssertStreamsAreIdentical(expected: expectedAfterReplacingE2WithE6, migratedHistory: migratedHistory, descriptionOfHistory: "migrated history", writer);
 
-            historyAfterPersistingButBeforeReload = serviceLocator.ExecuteInIsolatedScope(() =>
-            {
-               TeventStore().PersistMigrations();
-               return TransactionScopeCe.Execute(() => Session().Get<TestTaggregate>(id).History);
-            });
+                  historyAfterPersistingButBeforeReload = serviceLocator.ExecuteInIsolatedScope(() =>
+                  {
+                     TeventStore().PersistMigrations();
+                     return TransactionScopeCe.Execute(() => Session().Get<TestTaggregate>(id).History);
+                  });
 
-            AssertStreamsAreIdentical(expected: expectedAfterReplacingE2WithE6, migratedHistory: historyAfterPersistingButBeforeReload, descriptionOfHistory: "migrated, persisted", writer);
-            historyAfterPersistingAndReloading = serviceLocator.ExecuteTransactionInIsolatedScope(() => Session().Get<TestTaggregate>(id).History);
-            AssertStreamsAreIdentical(expected: expectedAfterReplacingE2WithE6, migratedHistory: historyAfterPersistingAndReloading, descriptionOfHistory: "migrated, persisted, reloaded", writer);
+                  AssertStreamsAreIdentical(expected: expectedAfterReplacingE2WithE6, migratedHistory: historyAfterPersistingButBeforeReload, descriptionOfHistory: "migrated, persisted", writer);
+                  historyAfterPersistingAndReloading = serviceLocator.ExecuteTransactionInIsolatedScope(() => Session().Get<TestTaggregate>(id).History);
+                  AssertStreamsAreIdentical(expected: expectedAfterReplacingE2WithE6, migratedHistory: historyAfterPersistingAndReloading, descriptionOfHistory: "migrated, persisted, reloaded", writer);
+               });
          }
          finally
          {

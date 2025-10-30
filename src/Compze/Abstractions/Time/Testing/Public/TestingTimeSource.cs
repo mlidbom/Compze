@@ -37,6 +37,8 @@ public class TestingTimeSource : IUtcTimeTimeSource
                                                                            _freezeAt = DateTime.SpecifyKind(utcTime, DateTimeKind.Utc)
                                                                         };
 
+   public static TestingTimeSource FrozenAtUtcTime(string time) => FrozenAtUtcTime(DateTime.Parse(time, CultureInfo.InvariantCulture).ToUniversalTime());
+
    public void FreezeAtUtcTime(DateTime time) => _freezeAt = time.ToUniversalTimeSafely();
 
    public void FreezeAtUtcTime(string time) => FreezeAtUtcTime(DateTime.Parse(time, CultureInfo.InvariantCulture).ToUniversalTime());
