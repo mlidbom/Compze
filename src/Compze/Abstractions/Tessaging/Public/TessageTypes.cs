@@ -71,7 +71,10 @@ public static class TessageTypes
 
             public class EntityLink<TResult> : Remotable.NonTransactional.Tueries.Tuery<TResult> where TResult : IEntity<Guid>
             {
-               public EntityLink() {}
+               [Obsolete("Used by serializer", error:true)]
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+               public EntityLink() : base() {}
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
                public EntityLink(EntityId entityId) => EntityId = entityId;
                public EntityLink<TResult> WithId(EntityId id) => new(id);
                public EntityId EntityId { get; private set; }

@@ -1,3 +1,4 @@
+using Compze.Core.Public;
 using Compze.Core.Tessaging.Public;
 using JetBrains.Annotations;
 
@@ -13,7 +14,7 @@ namespace AccountManagement.API;
    public class TueriesResource
 #pragma warning restore CA1724 // Type names should not match namespaces
    {
-      public TessageTypes.Remotable.NonTransactional.Tueries.EntityLink<AccountResource> AccountById { get; private set; } = new();
+      public TessageTypes.Remotable.NonTransactional.Tueries.EntityLink<AccountResource> AccountById(TaggregateId accountId) => new(accountId);
    }
 
    public class TommandsResource

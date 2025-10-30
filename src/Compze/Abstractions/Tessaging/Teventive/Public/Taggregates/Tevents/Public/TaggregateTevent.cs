@@ -1,5 +1,6 @@
 using System;
 using Compze.Core.Public;
+using Compze.Core.Time.Public;
 
 namespace Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 
@@ -9,8 +10,8 @@ public abstract class TaggregateTevent() : IMutableTaggregateTevent
 
     public TessageId Id { get; private set; } = new TessageId();
     public int TaggregateVersion { get; private set; }
-    public TaggregateId TaggregateId { get; private set; }
-    public DateTime UtcTimeStamp { get; private set; } = DateTime.UtcNow; //Todo: Should use time source.
+    public TaggregateId TaggregateId { get; private set; } = null!; //We are being sneaky here, it is actually never allowed to be null, but the aggregate root class needs it to be null at first, and guarantees that it never escapes from it while still null.
+    public DateTime UtcTimeStamp { get; private set; } = UtcTimeSource.UtcNow;
 
 #pragma warning disable CA1033 // We do not want these methods as part of the public interface of TaggregateTevent.
     void IMutableTaggregateTevent.SetTaggregateIdInternal(TaggregateId taggregateId) => TaggregateId = taggregateId;

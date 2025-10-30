@@ -14,7 +14,10 @@ public partial class AccountResource
    {
       public class ChangePassword : TessageTypes.Remotable.AtMostOnce.AtMostOnceTypermediaTommand, IValidatableObject
       {
-         [UsedImplicitly] public ChangePassword() : base() {}
+         [Obsolete("Used by serializer", error:true)]
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+         public ChangePassword() : base() {}
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
          public ChangePassword(TaggregateId accountId):base() => AccountId = accountId;
 
          [Required] [TaggregateId] public TaggregateId AccountId { get; set; }

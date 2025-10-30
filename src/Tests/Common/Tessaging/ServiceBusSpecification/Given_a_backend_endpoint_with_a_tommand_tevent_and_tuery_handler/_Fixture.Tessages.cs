@@ -33,20 +33,24 @@ public class MyExactlyOnceTommand : TessageTypes.Remotable.ExactlyOnce.Tommand;
 
 public class MyUpdateTaggregateTommand : TessageTypes.Remotable.AtMostOnce.AtMostOnceTypermediaTommand
 {
-   [UsedImplicitly] MyUpdateTaggregateTommand(){}
+   [Obsolete("Used by serializer", error:true)]
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+   public MyUpdateTaggregateTommand() {}
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
    public MyUpdateTaggregateTommand(TaggregateId taggregateId) => TaggregateId = taggregateId;
    public TaggregateId TaggregateId { get; private set; }
 }
 
 public class MyCreateTaggregateTommand : TessageTypes.Remotable.AtMostOnce.AtMostOnceTypermediaTommand
 {
-   MyCreateTaggregateTommand() {}
+   [Obsolete("Used by serializer", error:true)]
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+   public MyCreateTaggregateTommand() {}
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 
-   public static MyCreateTaggregateTommand Create() => new()
-                                                      {
-                                                         Id = new TessageId(),
-                                                         TaggregateId = new TaggregateId()
-                                                      };
+   public MyCreateTaggregateTommand(TaggregateId taggregateId):base(taggregateId.PrimitiveValue) => TaggregateId = taggregateId;
+
+   public static MyCreateTaggregateTommand Create() => new(new TaggregateId());
 
    public TaggregateId TaggregateId { get; set; }
 }
