@@ -8,7 +8,7 @@ namespace Compze.Tests.Common.Sql.DocumentDb;
 
 public class Dog : IEntity
 {
-   public EntityId Id { get; set; } = new(Guid.NewGuid());
+   public EntityId Id { get; set; } = new();
    public string Name { get; [UsedImplicitly] set; } = "John Doe Doggy";
 }
 

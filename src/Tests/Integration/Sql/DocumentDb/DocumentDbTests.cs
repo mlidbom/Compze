@@ -407,11 +407,11 @@ public class DocumentDbTests : DocumentDbTestsBase
     {
         UseInTransactionalScope((_, updater) =>
         {
-            var lassie = new Dog { Id = new EntityId(Guid.NewGuid()) };
+            var lassie = new Dog { Id = new EntityId() };
             updater.Save(lassie);
         });
 
-        var buster = new Dog { Id = new EntityId(Guid.NewGuid()) };
+        var buster = new Dog { Id = new EntityId() };
         UseInTransactionalScope((_, updater) => Invoking(() => updater.Delete(buster)).Should().Throw<ArgumentOutOfRangeException>());
     }
 
@@ -532,8 +532,8 @@ public class DocumentDbTests : DocumentDbTestsBase
         {
             updater.Save(new User());
             updater.Save(new User());
-            updater.Save(new Dog { Id = new EntityId(Guid.NewGuid()) });
-            updater.Save(new Dog { Id = new EntityId(Guid.NewGuid()) });
+            updater.Save(new Dog { Id = new EntityId() });
+            updater.Save(new Dog { Id = new EntityId() });
         });
 
         using (ServiceLocator.BeginScope())

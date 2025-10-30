@@ -30,7 +30,7 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
                                           .Invoke(@event);
 
    //Yes Guid.Empty. Id should be assigned by an action, and it should be obvious that the taggregate in invalid until that happens
-   protected Taggregate() : this(new TaggregateId(Guid.Empty))
+   protected Taggregate() : this(null)
    {
    }
 

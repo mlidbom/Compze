@@ -42,7 +42,8 @@ namespace Compze.Tests.Common.CQRS.TeventRefactoring.Migrations
       public void Publish(params RootTevent[] tevents)
       {
 #pragma warning disable CS0618 // Type or member is obsolete
-         if(GetIdBypassContractValidation().IsEmpty && tevents.First().TaggregateId.IsEmpty)
+         // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+         if(GetIdBypassContractValidation() is not null && GetIdBypassContractValidation().IsEmpty && tevents.First().TaggregateId.IsEmpty)
          {
             Id = new TaggregateId();
             tevents.Cast<IMutableTaggregateTevent>().First().SetTaggregateIdInternal(Id);
