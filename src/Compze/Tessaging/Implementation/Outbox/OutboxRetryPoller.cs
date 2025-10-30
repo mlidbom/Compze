@@ -142,7 +142,7 @@ class OutboxRetryPoller : IDisposable
             case IExactlyOnceTevent exactlyOnceTevent:
             {
                var connections = _routingInboxClient.SubscriberConnectionsFor(exactlyOnceTevent);
-               connection = connections.FirstOrDefault(c => c.EndpointInformation.Id.PrimitiveValue == endpointId.PrimitiveValue)
+               connection = connections.FirstOrDefault(c => c.EndpointInformation.Id == endpointId)
                          ?? throw new InvalidOperationException($"No subscriber connection found for endpoint {endpointId}");
                sendTask = connection.SendAsync(exactlyOnceTevent);
                break;
@@ -150,9 +150,9 @@ class OutboxRetryPoller : IDisposable
             case IExactlyOnceTommand exactlyOnceTommand:
             {
                connection = _routingInboxClient.ConnectionToHandlerFor(exactlyOnceTommand);
-               if(connection.EndpointInformation.Id.PrimitiveValue != endpointId.PrimitiveValue)
+               if(connection.EndpointInformation.Id != endpointId)
                {
-                  throw new InvalidOperationException($"Tommand routing changed - expected endpoint {endpointId}, got {connection.EndpointInformation.Id.PrimitiveValue}");
+                  throw new InvalidOperationException($"Tommand routing changed - expected endpoint {endpointId}, got {connection.EndpointInformation.Id}");
                }
 
                sendTask = connection.SendAsync(exactlyOnceTommand);
