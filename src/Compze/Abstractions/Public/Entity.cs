@@ -16,7 +16,7 @@ namespace Compze.Core.Public;
 /// 
 /// </summary>
 [DebuggerDisplay("{" + nameof(ToString) + "()}")]
-public class Entity<TEntity, TKey> : IEquatable<TEntity>, IHasPersistentIdentity<TKey>
+public class Entity<TEntity, TKey> : IEquatable<TEntity>, IEntity<TKey>
    where TEntity : Entity<TEntity, TKey>
    where TKey: struct
 {

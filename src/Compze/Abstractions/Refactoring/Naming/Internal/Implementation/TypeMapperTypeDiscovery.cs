@@ -137,6 +137,6 @@ static class TypeMapperTypeDiscovery
 
       // Map if it's an ITessage or implements IHasPersistentIdentity<>
       return typeof(IRemotableTessage).IsAssignableFrom(type) ||
-             type.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IHasPersistentIdentity<>));
+             type.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IEntity<>));
    }
 }

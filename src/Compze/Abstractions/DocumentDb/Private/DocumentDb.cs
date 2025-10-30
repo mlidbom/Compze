@@ -116,14 +116,14 @@ class DocumentDb : IDocumentDb
       return storedList.Select(Deserialize<TDocument>);
    }
 
-   public IEnumerable<TDocument> GetAll<TDocument>(IEnumerable<Guid> ids) where TDocument : IHasPersistentIdentity<Guid>
+   public IEnumerable<TDocument> GetAll<TDocument>(IEnumerable<Guid> ids) where TDocument : IEntity<Guid>
    {
       var storedList = _sqlLayer.GetAll(ids, AcceptableTypeIds<TDocument>());
 
       return storedList.Select(Deserialize<TDocument>);
    }
 
-   public IEnumerable<Guid> GetAllIds<T>() where T : IHasPersistentIdentity<Guid> => _sqlLayer.GetAllIds(AcceptableTypeIds<T>());
+   public IEnumerable<Guid> GetAllIds<T>() where T : IEntity<Guid> => _sqlLayer.GetAllIds(AcceptableTypeIds<T>());
 
    [return: NotNull] TDocument Deserialize<TDocument>(IDocumentDbSqlLayer.ReadRow stored) =>
       (TDocument)Assert.Result.ReturnNotNull(_serializer.Deserialize(GetTypeFromId(new TypeId(stored.TypeId)), stored.SerializedDocument));

@@ -34,7 +34,7 @@ namespace Compze.Core.Public;
 /// Guids enable guaranteed traceability of entities. Search for a Guid in a log, database, or code, and you
 /// are guaranteed to find all references to that entity and ONLY to that entity, a major advantage when debugging.
 /// </summary>
-public interface IPersistentEntity : IHasPersistentIdentity<Guid>;
+public interface IPersistentEntity : IEntity<Guid>;
 
 /// <summary>
 /// Given the <see cref="Guid"/> IDs only constraint of <see cref="IPersistentEntity"/>, we provide this interface

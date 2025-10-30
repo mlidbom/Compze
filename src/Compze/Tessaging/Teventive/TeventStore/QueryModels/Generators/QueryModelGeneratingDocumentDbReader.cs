@@ -105,7 +105,7 @@ public class QueryModelGeneratingQueryModelReader : IVersioningQueryModelReader
                                                                             ? VersionedGeneratorsForDocumentType<TDocument>().Any()
                                                                             : GetGeneratorsForDocumentType<TDocument>().Any();
 
-   public virtual IEnumerable<TValue> GetAll<TValue>(IEnumerable<Guid> ids) where TValue : IHasPersistentIdentity<Guid>
+   public virtual IEnumerable<TValue> GetAll<TValue>(IEnumerable<Guid> ids) where TValue : IEntity<Guid>
    {
       _usageGuard.EnsureAccessValid();
       return ids.Select(id => Get<TValue>(id)).ToList();

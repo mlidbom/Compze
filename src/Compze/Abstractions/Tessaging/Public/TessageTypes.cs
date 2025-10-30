@@ -18,7 +18,7 @@ public static class TessageTypes
 #pragma warning restore CA1724 //
 
          public sealed class EntityLink<TResult>(Guid entityId) : StrictlyLocal.Tueries.StrictlyLocalTuery<EntityLink<TResult>, TResult>
-            where TResult : IHasPersistentIdentity<Guid>
+            where TResult : IEntity<Guid>
          {
             public Guid EntityId { get; private set; } = entityId;
          }
@@ -63,7 +63,7 @@ public static class TessageTypes
             public abstract class Tuery<TResult> : IRemotableTuery<TResult>;
 #pragma warning restore CA1724 //Class name conflicts with namespace name.
 
-            public class EntityLink<TResult> : Remotable.NonTransactional.Tueries.Tuery<TResult> where TResult : IHasPersistentIdentity<Guid>
+            public class EntityLink<TResult> : Remotable.NonTransactional.Tueries.Tuery<TResult> where TResult : IEntity<Guid>
             {
                public EntityLink() {}
                public EntityLink(Guid entityId) => EntityId = entityId;

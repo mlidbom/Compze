@@ -43,11 +43,11 @@ partial class DocumentDbSession : IDocumentDbSession
 
       public bool TryGet<TValue>(object key, [MaybeNullWhen(false)] out TValue document) => Guarded.TryGet(key, out document);
 
-      public IEnumerable<T> GetAll<T>(IEnumerable<Guid> ids) where T : IHasPersistentIdentity<Guid> => Guarded.GetAll<T>(ids);
+      public IEnumerable<T> GetAll<T>(IEnumerable<Guid> ids) where T : IEntity<Guid> => Guarded.GetAll<T>(ids);
 
-      public IEnumerable<T> GetAll<T>() where T : IHasPersistentIdentity<Guid> => Guarded.GetAll<T>();
+      public IEnumerable<T> GetAll<T>() where T : IEntity<Guid> => Guarded.GetAll<T>();
 
-      public IEnumerable<Guid> GetAllIds<T>() where T : IHasPersistentIdentity<Guid> => Guarded.GetAllIds<T>();
+      public IEnumerable<Guid> GetAllIds<T>() where T : IEntity<Guid> => Guarded.GetAllIds<T>();
 
       public TValue GetForUpdate<TValue>(object key) => Guarded.GetForUpdate<TValue>(key);
 
@@ -55,9 +55,9 @@ partial class DocumentDbSession : IDocumentDbSession
 
       public void Delete<TEntity>(object id) => Guarded.Delete<TEntity>(id);
 
-      public void Save<TEntity>(TEntity entity) where TEntity : IHasPersistentIdentity<Guid> => Guarded.Save(entity);
+      public void Save<TEntity>(TEntity entity) where TEntity : IEntity<Guid> => Guarded.Save(entity);
 
-      public void Delete<TEntity>(TEntity entity) where TEntity : IHasPersistentIdentity<Guid> => Guarded.Delete(entity);
+      public void Delete<TEntity>(TEntity entity) where TEntity : IEntity<Guid> => Guarded.Delete(entity);
    }
 
    readonly EntitiesByIdAndTypeCache _entitiesByIdAndType = new();
@@ -112,7 +112,7 @@ partial class DocumentDbSession : IDocumentDbSession
    public virtual TValue GetForUpdate<TValue>(object key) =>
       GetInternal<TValue>(key, useUpdateLock: true);
 
-   public IEnumerable<TValue> GetAll<TValue>(IEnumerable<Guid> ids) where TValue : IHasPersistentIdentity<Guid>
+   public IEnumerable<TValue> GetAll<TValue>(IEnumerable<Guid> ids) where TValue : IEntity<Guid>
    {
       var idSet = ids.ToHashSet(); //Avoid multiple enumerations.
 
@@ -161,7 +161,7 @@ partial class DocumentDbSession : IDocumentDbSession
       documentItem.CommitChangesToBackingStore();
    }
 
-   public virtual void Save<TEntity>(TEntity entity) where TEntity : IHasPersistentIdentity<Guid>
+   public virtual void Save<TEntity>(TEntity entity) where TEntity : IEntity<Guid>
    {
       if(entity.Id.Equals(Guid.Empty))
       {
@@ -171,7 +171,7 @@ partial class DocumentDbSession : IDocumentDbSession
       Save(entity.Id, entity);
    }
 
-   public virtual void Delete<TEntity>(TEntity entity) where TEntity : IHasPersistentIdentity<Guid> => Delete<TEntity>(entity.Id);
+   public virtual void Delete<TEntity>(TEntity entity) where TEntity : IEntity<Guid> => Delete<TEntity>(entity.Id);
 
    public virtual void Delete<T>(object id)
    {
@@ -187,7 +187,7 @@ partial class DocumentDbSession : IDocumentDbSession
       documentItem.CommitChangesToBackingStore();
    }
 
-   public virtual IEnumerable<T> GetAll<T>() where T : IHasPersistentIdentity<Guid>
+   public virtual IEnumerable<T> GetAll<T>() where T : IEntity<Guid>
    {
       var stored = _backingStore.GetAll<T>();
       stored.Where(document => !_entitiesByIdAndType.Contains(typeof(T), document.Id))
@@ -195,7 +195,7 @@ partial class DocumentDbSession : IDocumentDbSession
       return _entitiesByIdAndType.GetAll().Select(pair => pair.Value).OfType<T>();
    }
 
-   public IEnumerable<Guid> GetAllIds<T>() where T : IHasPersistentIdentity<Guid> => _backingStore.GetAllIds<T>();
+   public IEnumerable<Guid> GetAllIds<T>() where T : IEntity<Guid> => _backingStore.GetAllIds<T>();
 
    public virtual void Dispose() {}
 
