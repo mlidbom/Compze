@@ -66,7 +66,8 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
          if(Version == 0)
          {
             if(theTevent is not ITaggregateCreatedTevent) throw new Exception($"The first published tevent {theTevent.GetType()} did not implement {nameof(ITaggregateCreatedTevent)}. The first tevent an taggregate publishes must always implement {nameof(ITaggregateCreatedTevent)}.");
-            if(theTevent.TaggregateId.IsEmpty) throw new Exception($"{nameof(ITaggregateTevent.TaggregateId)} was empty in {nameof(ITaggregateCreatedTevent)}");
+            if(theTevent.TaggregateId is null)
+               throw new Exception($"{nameof(ITaggregateTevent.TaggregateId)} was null in {nameof(ITaggregateCreatedTevent)}");
             ((IMutableTaggregateTevent)theTevent).SetTaggregateVersionInternal(1);
          } else
          {
