@@ -46,7 +46,7 @@ partial class PgSqlTeventStoreSqlLayer
 
 
                                          """)
-                                    .AddParameter(Tevent.TaggregateId, data.TaggregateId)
+                                    .AddParameter(Tevent.TaggregateId, data.TaggregateId.PrimitiveValue)
                                     .AddParameter(Tevent.InsertedVersion, data.StorageInformation.InsertedVersion)
                                     .AddParameter(Tevent.TeventType, data.TeventType)
                                     .AddParameter(Tevent.TeventId, data.TeventId.PrimitiveValue)
@@ -114,13 +114,13 @@ partial class PgSqlTeventStoreSqlLayer
       return Assert.Result.NotNull(neighborhood).then(neighborhood);
    }
 
-   public void DeleteTaggregate(Guid taggregateId)
+   public void DeleteTaggregate(TaggregateId taggregateId)
    {
       _connectionManager.UseCommand(
          command =>
          {
             command.SetCommandText($"DELETE FROM {Tevent.TableName} /*With(ROWLOCK)*/ WHERE {Tevent.TaggregateId} = @{Tevent.TaggregateId};")
-                   .AddParameter(Tevent.TaggregateId, taggregateId)
+                   .AddParameter(Tevent.TaggregateId, taggregateId.PrimitiveValue)
                    .PrepareStatement()
                    .ExecuteNonQuery();
          });

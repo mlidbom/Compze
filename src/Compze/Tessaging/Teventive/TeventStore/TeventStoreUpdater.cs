@@ -25,7 +25,7 @@ class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
    readonly ITeventStoreTeventPublisher _teventStoreTeventPublisher;
    readonly ITeventStore _store;
    readonly ITaggregateTypeValidator _taggregateTypeValidator;
-   readonly IDictionary<Guid, ITaggregate> _idMap = new Dictionary<Guid, ITaggregate>();
+   readonly IDictionary<TaggregateId, ITaggregate> _idMap = new Dictionary<TaggregateId, ITaggregate>();
    readonly IUsageGuard _usageGuard;
    readonly List<IDisposable> _disposableResources = [];
 
@@ -49,7 +49,7 @@ class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
    {
       _taggregateTypeValidator.AssertIsValid<TTaggregate>();
       _usageGuard.EnsureAccessValid();
-      if(!DoTryGet(taggregateId.PrimitiveValue, out TTaggregate? result))
+      if(!DoTryGet(taggregateId, out TTaggregate? result))
       {
          throw new TaggregateNotFoundException(taggregateId.PrimitiveValue);
       }
@@ -61,7 +61,7 @@ class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
    {
       _taggregateTypeValidator.AssertIsValid<TTaggregate>();
       _usageGuard.EnsureAccessValid();
-      return DoTryGet(taggregateId.PrimitiveValue, out taggregate);
+      return DoTryGet(taggregateId, out taggregate);
    }
 
    public TTaggregate GetReadonlyCopy<TTaggregate>(TaggregateId taggregateId) where TTaggregate : class, ITaggregate => LoadSpecificVersionInternal<TTaggregate>(taggregateId.PrimitiveValue, int.MaxValue, verifyVersion: false);
@@ -114,7 +114,7 @@ class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
          tevents.ForEach(_teventStoreTeventPublisher.Publish);
       });
 
-      _idMap.Add(taggregate.Id.PrimitiveValue, taggregate);
+      _idMap.Add(taggregate.Id, taggregate);
 
       _disposableResources.Add(taggregate.TeventStream.Subscribe(OnTaggregateTevent));
    }
@@ -134,7 +134,7 @@ class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
    public void Delete(TaggregateId taggregateId)
    {
       _store.DeleteTaggregate(taggregateId);
-      _idMap.Remove(taggregateId.PrimitiveValue);
+      _idMap.Remove(taggregateId);
    }
 
    public void Dispose()
@@ -147,14 +147,14 @@ class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
    public override string ToString() => $"{_id}: {GetType().FullName}";
    readonly Guid _id = Guid.NewGuid();
 
-   public IReadOnlyList<ITaggregateTevent> GetHistory(TaggregateId taggregateId) => GetHistoryInternal(taggregateId.PrimitiveValue, takeWriteLock: false);
+   public IReadOnlyList<ITaggregateTevent> GetHistory(TaggregateId taggregateId) => GetHistoryInternal(taggregateId, takeWriteLock: false);
 
-   IReadOnlyList<ITaggregateTevent> GetHistoryInternal(Guid taggregateId, bool takeWriteLock) =>
+   IReadOnlyList<ITaggregateTevent> GetHistoryInternal(TaggregateId taggregateId, bool takeWriteLock) =>
       takeWriteLock
-         ? _store.GetTaggregateHistoryForUpdate(new TaggregateId(taggregateId))
-         : _store.GetTaggregateHistory(new TaggregateId(taggregateId));
+         ? _store.GetTaggregateHistoryForUpdate(taggregateId)
+         : _store.GetTaggregateHistory(taggregateId);
 
-   bool DoTryGet<TTaggregate>(Guid taggregateId, [NotNullWhen(true)] out TTaggregate? taggregate) where TTaggregate : class, ITaggregate
+   bool DoTryGet<TTaggregate>(TaggregateId taggregateId, [NotNullWhen(true)] out TTaggregate? taggregate) where TTaggregate : class, ITaggregate
    {
       if(_idMap.TryGetValue(taggregateId, out var teventStored))
       {

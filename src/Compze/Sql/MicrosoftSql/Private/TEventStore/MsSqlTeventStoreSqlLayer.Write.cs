@@ -109,7 +109,7 @@ partial class MsSqlTeventStoreSqlLayer
       return Assert.Result.NotNull(neighborhood).then(neighborhood);
    }
 
-   public void DeleteTaggregate(Guid taggregateId)
+   public void DeleteTaggregate(TaggregateId taggregateId)
    {
       _connectionManager.UseCommand(
          command =>

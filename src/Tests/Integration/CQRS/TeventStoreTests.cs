@@ -21,7 +21,7 @@ interface ISomeTevent : ITaggregateTevent;
 
 class SomeTevent : TaggregateTevent, ISomeTevent
 {
-   public SomeTevent(Guid taggregateId, int version) : base(taggregateId)
+   public SomeTevent(TaggregateId taggregateId, int version) : base(taggregateId)
    {
 #pragma warning disable CS0618 // Type or member is obsolete
       ((IMutableTaggregateTevent)this).SetTaggregateVersionInternal(version);
@@ -40,7 +40,7 @@ public class TeventStoreTests : UniversalTestBase
    [PCT]
    public void StreamTeventsSinceReturnsWholeTeventLogWhenFromTeventIdIsNull() => _serviceLocator.ExecuteInIsolatedScope(() =>
    {
-      var taggregateId = Guid.NewGuid();
+      var taggregateId = new TaggregateId();
       TransactionScopeCe.Execute(() => TeventStore.SaveSingleTaggregateTevents(1.Through(10)
                                                                              .Select(i => new SomeTevent(taggregateId, i)).ToList()));
       var stream = TeventStore.ListAllTeventsForTestingPurposesAbsolutelyNotUsableForARealTeventStoreOfAnySize();
@@ -54,7 +54,7 @@ public class TeventStoreTests : UniversalTestBase
    {
       const int batchSize = 100;
       const int moreTeventsThanTheBatchSizeForStreamingTevents = batchSize + 10;
-      var taggregateId = Guid.NewGuid();
+      var taggregateId = new TaggregateId();
 
       TransactionScopeCe.Execute(() => TeventStore.SaveSingleTaggregateTevents(1.Through(moreTeventsThanTheBatchSizeForStreamingTevents)
                                                                              .Select(i => new SomeTevent(taggregateId, i)).ToList()));
@@ -79,20 +79,19 @@ public class TeventStoreTests : UniversalTestBase
                                   .ToDictionary(i => i,
                                                 _ =>
                                                 {
-                                                   var taggregateId = Guid.NewGuid();
+                                                   var taggregateId = new TaggregateId();
                                                    return 1.Through(10)
                                                            .Select(j => new SomeTevent(taggregateId, j))
                                                            .ToList();
                                                 });
 
       TransactionScopeCe.Execute(() => taggregatesWithTevents.ForEach(it => TeventStore.SaveSingleTaggregateTevents(it.Value)));
-      var toRemove = new TaggregateId(taggregatesWithTevents[2][0]
-        .TaggregateId);
+      var toRemove = taggregatesWithTevents[2][0].TaggregateId;
       taggregatesWithTevents.Remove(2);
 
       TransactionScopeCe.Execute(() => TeventStore.DeleteTaggregate(toRemove));
 
-      taggregatesWithTevents.Select(kvp => TeventStore.GetTaggregateHistory(new TaggregateId(kvp.Value[0].TaggregateId)))
+      taggregatesWithTevents.Select(kvp => TeventStore.GetTaggregateHistory(kvp.Value[0].TaggregateId))
                           .ForEach(stream => stream.Should().HaveCount(10));
 
       TeventStore.GetTaggregateHistory(toRemove)
@@ -107,7 +106,7 @@ public class TeventStoreTests : UniversalTestBase
                                   .ToDictionary(i => i,
                                                 _ =>
                                                 {
-                                                   var taggregateId = Guid.NewGuid();
+                                                   var taggregateId = new TaggregateId();
                                                    return 1.Through(10)
                                                            .Select(j => new SomeTevent(taggregateId, j))
                                                            .ToList();
@@ -128,7 +127,7 @@ public class TeventStoreTests : UniversalTestBase
                                   .ToDictionary(i => i,
                                                 _ =>
                                                 {
-                                                   var taggregateId = Guid.NewGuid();
+                                                   var taggregateId = new TaggregateId();
                                                    return 1.Through(10)
                                                            .Select(j => new SomeTevent(taggregateId, j))
                                                            .ToList();
@@ -149,7 +148,7 @@ public class TeventStoreTests : UniversalTestBase
       var teventStore = _serviceLocator.TeventStore();
 
       var user = new User();
-      user.Register("email@email.se", "password", Guid.NewGuid());
+      user.Register("email@email.se", "password", new TaggregateId());
 
       using(new TransactionScope())
       {
@@ -171,7 +170,7 @@ public class TeventStoreTests : UniversalTestBase
       {
          var teventStore = serviceLocator.TeventStore();
 
-         user.Register("email@email.se", "password", Guid.NewGuid());
+         user.Register("email@email.se", "password", new TaggregateId());
 
          TransactionScopeCe.Execute(() =>
          {

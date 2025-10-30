@@ -1,4 +1,4 @@
-using System;
+using Compze.Core.Public;
 using Compze.Core.Tessaging.Teventive.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Tests.Infrastructure.XUnit;
@@ -6,6 +6,7 @@ using Compze.Utilities.SystemCE;
 using FluentAssertions;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
+using System;
 
 namespace Compze.Tests.Unit.Internals.Serialization;
 
@@ -17,7 +18,7 @@ public class NewtonSoftTeventStoreTeventSerializerTests : SerializerTest
       var teventWithAllValuesSet = new TestTevent(
          test1: "Test1",
          test2: "Test2",
-         taggregateId:  Guid.NewGuid(),
+         taggregateId:  new TaggregateId(),
          taggregateVersion:  2,
          utcTimeStamp: DateTime.Now + 1.Minutes());
 
@@ -59,7 +60,7 @@ public class NewtonSoftTeventStoreTeventSerializerTests : SerializerTest
          string test1,
          string test2,
          int taggregateVersion,
-         Guid taggregateId,
+         TaggregateId taggregateId,
          DateTime utcTimeStamp):base(taggregateId)
       {
          Test1 = test1;

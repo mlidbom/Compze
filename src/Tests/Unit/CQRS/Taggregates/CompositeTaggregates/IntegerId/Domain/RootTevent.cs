@@ -1,5 +1,6 @@
-using System;
+using Compze.Core.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
+using System;
 
 // ReSharper disable MemberHidesStaticFromOuterClass
 // ReSharper disable RedundantNameQualifier
@@ -25,10 +26,10 @@ static partial class RootTevent
       public abstract class Root : TaggregateTevent, IRoot
       {
          protected Root() { }
-         protected Root(Guid taggregateId) : base(taggregateId) { }
+         protected Root(TaggregateId taggregateId) : base(taggregateId) { }
       }
 
-      public class Created(Guid id, string name) : Root(id), RootTevent.Created
+      public class Created(TaggregateId id, string name) : Root(id), RootTevent.Created
       {
          public string Name { get; } = name;
       }

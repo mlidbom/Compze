@@ -13,7 +13,7 @@ public partial class SelfGeneratingQueryModel<TQueryModel, TTaggregateTevent> : 
    where TTaggregateTevent : class, ITaggregateTevent
 {
    //Yes empty. Id should be assigned by an action, and it should be obvious that the taggregate in invalid until that happens
-   protected SelfGeneratingQueryModel() : base(Guid.Empty) => Assert.Argument.Is(typeof(TTaggregateTevent).IsInterface);
+   protected SelfGeneratingQueryModel() : base(TaggregateId.Empty) => Assert.Argument.Is(typeof(TTaggregateTevent).IsInterface);
 
    readonly IMutableTeventDispatcher<TTaggregateTevent> _teventDispatcher = IMutableTeventDispatcher<TTaggregateTevent>.New();
 
@@ -23,7 +23,7 @@ public partial class SelfGeneratingQueryModel<TQueryModel, TTaggregateTevent> : 
    {
       if(theTevent is ITaggregateCreatedTevent)
       {
-         Id = new TentityId(theTevent.TaggregateId);
+         Id = theTevent.TaggregateId;
       }
 
       Version = theTevent.TaggregateVersion;

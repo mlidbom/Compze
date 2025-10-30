@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Compze.Core.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.Public.Exceptions;
 
@@ -9,7 +10,7 @@ namespace Compze.Tessaging.Teventive.TeventStore;
 
 static class TaggregateHistoryValidator
 {
-   public static void ValidateHistory(Guid taggregateId, IReadOnlyList<ITaggregateTevent> history)
+   public static void ValidateHistory(TaggregateId taggregateId, IReadOnlyList<ITaggregateTevent> history)
    {
       var version = 1;
       foreach(var taggregateTevent in history)

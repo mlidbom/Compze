@@ -34,7 +34,7 @@ partial class SqliteTeventStoreSqlLayer(SqliteTeventStoreConnectionManager conne
       teventJson: teventReader.GetString(1),
       teventId: new TessageId(Guid.Parse(teventReader.GetString(4))),
       taggregateVersion: teventReader.GetInt32(3),
-      taggregateId: Guid.Parse(teventReader.GetString(2)),
+      taggregateId: new TaggregateId(Guid.Parse(teventReader.GetString(2))),
       // DateTime stored as Ticks (INTEGER) for full precision
       utcTimeStamp: new DateTime(teventReader.GetInt64(5), DateTimeKind.Utc),
       storageInformation: new TaggregateTeventStorageInformation
@@ -51,7 +51,7 @@ partial class SqliteTeventStoreSqlLayer(SqliteTeventStoreConnectionManager conne
                           }
    );
 
-   public IReadOnlyList<TeventDataRow> GetTaggregateHistory(Guid taggregateId, bool takeWriteLock, int startAfterInsertedVersion = 0)
+   public IReadOnlyList<TeventDataRow> GetTaggregateHistory(TaggregateId taggregateId, bool takeWriteLock, int startAfterInsertedVersion = 0)
    {
 
       return _connectionManager.UseCommand(suppressTransactionWarning: !takeWriteLock,
@@ -113,7 +113,7 @@ partial class SqliteTeventStoreSqlLayer(SqliteTeventStoreConnectionManager conne
                                                                                       WHERE {Tevent.EffectiveVersion} = 1 
                                                                                       ORDER BY {Tevent.ReadOrderIntegerPart} ASC, {Tevent.ReadOrderFractionPart} ASC
                                                                                       """)
-                                                                     .ExecuteReaderAndSelect(reader => new CreationTeventRow(taggregateId: Guid.Parse(reader.GetString(0)), typeId: Guid.Parse(reader.GetString(1)))));
+                                                                     .ExecuteReaderAndSelect(reader => new CreationTeventRow(taggregateId: new TaggregateId(Guid.Parse(reader.GetString(0))), typeId: Guid.Parse(reader.GetString(1)))));
    }
 }
 

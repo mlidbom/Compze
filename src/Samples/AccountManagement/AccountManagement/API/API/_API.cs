@@ -1,6 +1,7 @@
 // ReSharper disable MemberCanBeMadeStatic.Global we want the fluid navigation to be composable with other APIs (AccountApi as a member property in a composite API for a composite UI etc) so static navigation is out.
 // ReSharper disable MemberCanBeMadeStatic.Local
 using System;
+using Compze.Core.Public;
 using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Core.Tessaging.Public;
 using Compze.Core.Tessaging.Typermedia.Public;
@@ -36,7 +37,7 @@ public class AccountApi : IStaticInstancePropertySingleton<AccountApi>
    {
       static readonly NavigationSpecification<StartResource.TueriesResource> Tueries = Instance.Start.Select(start => start.Tueries);
 
-      public NavigationSpecification<AccountResource> AccountById(Guid accountId) => Tueries.Get(tueries => tueries.AccountById.WithId(accountId));
+      public NavigationSpecification<AccountResource> AccountById(TaggregateId accountId) => Tueries.Get(tueries => tueries.AccountById.WithId(accountId));
    }
 
    public class TommandsSection
@@ -44,7 +45,7 @@ public class AccountApi : IStaticInstancePropertySingleton<AccountApi>
       static NavigationSpecification<StartResource.TommandsResource> Tommands => Instance.Start.Select(start => start.TommandsResources);
 
       public NavigationSpecification<AccountResource.Tommand.Register> Register() => Tommands.Select(tommands => tommands.Register);
-      public NavigationSpecification<AccountResource.Tommand.Register.RegistrationAttemptResult> Register(Guid accountId, string email, string password) => Tommands.Post(tommands => tommands.Register.WithValues(accountId, email, password));
+      public NavigationSpecification<AccountResource.Tommand.Register.RegistrationAttemptResult> Register(TaggregateId accountId, string email, string password) => Tommands.Post(tommands => tommands.Register.WithValues(accountId, email, password));
 
       public NavigationSpecification<AccountResource.Tommand.LogIn> Login() => Tommands.Select(tommands => tommands.Login);
       public NavigationSpecification<AccountResource.Tommand.LogIn.LoginAttemptResult> Login(string email, string password) => Tommands.Post(tommands => tommands.Login.WithValues(email, password));

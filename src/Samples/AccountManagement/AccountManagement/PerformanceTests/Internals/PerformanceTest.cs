@@ -1,6 +1,7 @@
 using AccountManagement.API;
 using AccountManagement.Domain.Registration;
 using AccountManagement.UserStories.Scenarios;
+using Compze.Core.Public;
 using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Core.Wiring.Testing.Internal;
 using Compze.Tessaging.Hosting;
@@ -80,15 +81,15 @@ public class PerformanceTest : UniversalTestBase
                                    action: () =>
                                    {
                                       var accountId = accountsReader.Next().Id;
-                                      _clientEndpoint!.ExecuteClientRequest(AccountApi.Instance.Tuery.AccountById(accountId)).Id.PrimitiveValue.Should().Be(accountId);
+                                      _clientEndpoint!.ExecuteClientRequest(AccountApi.Instance.Tuery.AccountById(accountId)).Id.Should().Be(accountId);
                                    },
                                    iterations: fetches,
                                    maxTotal: 20.Milliseconds());
    }
 
-   ConcurrentBag<(string Email, string Password, Guid Id)> CreateAccountsThreaded(int accountCount)
+   ConcurrentBag<(string Email, string Password, TaggregateId Id)> CreateAccountsThreaded(int accountCount)
    {
-      var created = new ConcurrentBag<(string Email, string Password, Guid Id)>();
+      var created = new ConcurrentBag<(string Email, string Password, TaggregateId Id)>();
 
       StopwatchCE.TimeExecutionThreaded(
          () =>
@@ -96,7 +97,7 @@ public class PerformanceTest : UniversalTestBase
             var registerAccountScenario = _scenarioApi!.Register;
             var result = registerAccountScenario.Execute().Result;
             result.Status.Should().Be(RegistrationAttemptStatus.Successful);
-            _clientEndpoint!.ExecuteClientRequest(AccountApi.Instance.Tuery.AccountById(result.RegisteredAccount!.Id.PrimitiveValue)).Id.Should().Be(result.RegisteredAccount.Id);
+            _clientEndpoint!.ExecuteClientRequest(AccountApi.Instance.Tuery.AccountById(result.RegisteredAccount!.Id)).Id.Should().Be(result.RegisteredAccount.Id);
             created.Add((registerAccountScenario.Email, registerAccountScenario.Password, registerAccountScenario.AccountId));
          },
          iterations: accountCount);

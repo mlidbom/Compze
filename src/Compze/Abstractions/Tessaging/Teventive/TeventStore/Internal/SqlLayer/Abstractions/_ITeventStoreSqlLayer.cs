@@ -8,11 +8,11 @@ public interface ITeventStoreSqlLayer
 {
    void SetupSchemaIfDatabaseUnInitialized();
 
-   IReadOnlyList<TeventDataRow> GetTaggregateHistory(Guid taggregateId, bool takeWriteLock, int startAfterInsertedVersion = 0);
+   IReadOnlyList<TeventDataRow> GetTaggregateHistory(TaggregateId taggregateId, bool takeWriteLock, int startAfterInsertedVersion = 0);
    IEnumerable<TeventDataRow> StreamTevents(int batchSize);
    IReadOnlyList<CreationTeventRow> ListTaggregateIdsInCreationOrder();
    void InsertSingleTaggregateTevents(IReadOnlyList<TeventDataRow> tevents);
-   void DeleteTaggregate(Guid taggregateId);
+   void DeleteTaggregate(TaggregateId taggregateId);
    void UpdateEffectiveVersions(IReadOnlyList<VersionSpecification> versions);
 
    TeventNeighborhood LoadTeventNeighborHood(TessageId teventId);

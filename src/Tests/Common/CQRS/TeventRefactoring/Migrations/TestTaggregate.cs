@@ -44,10 +44,10 @@ namespace Compze.Tests.Common.CQRS.TeventRefactoring.Migrations
       public void Publish(params RootTevent[] tevents)
       {
 #pragma warning disable CS0618 // Type or member is obsolete
-         if(GetIdBypassContractValidation().PrimitiveValue == Guid.Empty && tevents.First().TaggregateId == Guid.Empty)
+         if(GetIdBypassContractValidation().IsEmpty && tevents.First().TaggregateId.IsEmpty)
          {
             Id = new TaggregateId();
-            tevents.Cast<IMutableTaggregateTevent>().First().SetTaggregateIdInternal(Id.PrimitiveValue);
+            tevents.Cast<IMutableTaggregateTevent>().First().SetTaggregateIdInternal(Id);
          }
 #pragma warning restore CS0618 // Type or member is obsolete
 
@@ -76,7 +76,7 @@ namespace Compze.Tests.Common.CQRS.TeventRefactoring.Migrations
       {
          var rootTevents = tevents.ToTevents();
 #pragma warning disable CS0618 // Type or member is obsolete
-         rootTevents.Cast<IMutableTaggregateTevent>().First().SetTaggregateIdInternal(id?.PrimitiveValue ?? Guid.NewGuid());
+         rootTevents.Cast<IMutableTaggregateTevent>().First().SetTaggregateIdInternal(id ?? new TaggregateId());
 #pragma warning restore CS0618 // Type or member is obsolete
          return new TestTaggregate(rootTevents);
       }

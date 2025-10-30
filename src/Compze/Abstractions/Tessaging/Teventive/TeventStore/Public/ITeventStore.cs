@@ -16,12 +16,12 @@ public interface ITeventStore : IDisposable
    void PersistMigrations();
 
    ///<summary>The passed <paramref name="teventType"/> filters the taggregate Ids so that only ids of taggregates that are created by an tevent that inherits from <paramref name="teventType"/> are returned.</summary>
-   IEnumerable<Guid> StreamTaggregateIdsInCreationOrder(Type? teventType = null);
+   IEnumerable<TaggregateId> StreamTaggregateIdsInCreationOrder(Type? teventType = null);
 }
 
 public static class TeventStoreExtensions
 {
-   public static IEnumerable<Guid> StreamTaggregateIdsInCreationOrder<TTaggregateTevent>(this ITeventStore @this) => @this.StreamTaggregateIdsInCreationOrder(typeof(TTaggregateTevent));
+   public static IEnumerable<TaggregateId> StreamTaggregateIdsInCreationOrder<TTaggregateTevent>(this ITeventStore @this) => @this.StreamTaggregateIdsInCreationOrder(typeof(TTaggregateTevent));
 }
 
 public static class TeventStoreTestingExtensions

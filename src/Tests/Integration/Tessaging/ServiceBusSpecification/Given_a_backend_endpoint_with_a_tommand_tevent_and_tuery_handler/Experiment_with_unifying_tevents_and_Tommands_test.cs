@@ -48,7 +48,7 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
 
             builder.RegisterHandlers
                    .ForTevent((UserTevent.IUserRegistered _) => {})
-                   .ForTuery((GetUserTuery tuery, ITeventStoreReader teventReader) => new UserResource(teventReader.GetHistory(new TaggregateId(tuery.UserId))))
+                   .ForTuery((GetUserTuery tuery, ITeventStoreReader teventReader) => new UserResource(teventReader.GetHistory(tuery.UserId)))
                    .ForTommandWithResult((UserRegistrarTommand.RegisterUserTypermediaTommand typermediaTommand, ITeventStoreUpdater store) =>
                     {
                        store.Save(UserTaggregate.Register(typermediaTommand));
@@ -91,10 +91,10 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
          public class Root : TaggregateTevent, IRoot
          {
             protected Root() {}
-            protected Root(Guid taggregateId) : base(taggregateId) {}
+            protected Root(TaggregateId taggregateId) : base(taggregateId) {}
          }
 
-         public class UserRegisteredTevent(Guid userId) : Root(userId), IUserRegistered;
+         public class UserRegisteredTevent(TaggregateId userId) : Root(userId), IUserRegistered;
       }
    }
 
@@ -102,7 +102,7 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
    {
       public class RegisterUserTypermediaTommand : TessageTypes.Remotable.AtMostOnce.AtMostOnceTypermediaTommand<RegisterUserResult>
       {
-         public Guid UserId { get; private set; } = Guid.NewGuid();
+         public TaggregateId UserId { get; private set; } = new TaggregateId();
 
          RegisterUserTypermediaTommand() {}
 
@@ -119,7 +119,7 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
          public class Root : TaggregateTevent, IRoot
          {
             protected Root() {}
-            protected Root(Guid taggregateId) : base(taggregateId) {}
+            protected Root(TaggregateId taggregateId) : base(taggregateId) {}
          }
 
          public class Created() : Root(UserRegistrarTaggregate.SingleId), ITaggregateCreatedTevent;
@@ -128,7 +128,7 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
 
    public class UserRegistrarTaggregate : Taggregate<UserRegistrarTaggregate, UserRegistrarTevent.IRoot, UserRegistrarTevent.Implementation.Root>
    {
-      internal static Guid SingleId = Guid.Parse("5C400DD9-50FB-40C7-8A13-265005588AED");
+      internal static TaggregateId SingleId = new TaggregateId(Guid.Parse("5C400DD9-50FB-40C7-8A13-265005588AED"));
 
       internal static UserRegistrarTaggregate Create()
       {
@@ -158,9 +158,9 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
       }
    }
 
-   public class GetUserTuery(Guid userId) : TessageTypes.Remotable.NonTransactional.Tueries.Tuery<UserResource>
+   public class GetUserTuery(TaggregateId userId) : TessageTypes.Remotable.NonTransactional.Tueries.Tuery<UserResource>
    {
-      public Guid UserId { get; private set; } = userId;
+      public TaggregateId UserId { get; private set; } = userId;
    }
 
    public class UserResource(IEnumerable<ITaggregateTevent> history)
@@ -168,7 +168,7 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
       public IEnumerable<ITaggregateTevent> History { get; } = history;
    }
 
-   public class RegisterUserResult(Guid userId)
+   public class RegisterUserResult(TaggregateId userId)
    {
       public GetUserTuery UserLink { get; private set; } = new(userId);
    }

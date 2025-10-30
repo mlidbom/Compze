@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Compze.Core.Public;
 using Compze.Core.Tessaging.Teventive.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.Refactoring.Migrations.Internal;
@@ -17,7 +18,7 @@ abstract class CompleteTeventStoreStreamMutator
 
    class OnlySerializeVersionsMutator : ICompleteTeventStreamMutator
    {
-      readonly Dictionary<Guid, int> _taggregateVersions = new();
+      readonly Dictionary<TaggregateId, int> _taggregateVersions = new();
 
       public IEnumerable<TaggregateTevent> Mutate(IEnumerable<TaggregateTevent> teventStream)
       {
@@ -36,7 +37,7 @@ abstract class CompleteTeventStoreStreamMutator
    class RealMutator(IReadOnlyList<ITeventMigration> teventMigrationFactories) : ICompleteTeventStreamMutator
    {
       readonly IReadOnlyList<ITeventMigration> _teventMigrationFactories = teventMigrationFactories;
-      readonly Dictionary<Guid, ISingleTaggregateInstanceTeventStreamMutator> _taggregateMutatorsCache = new();
+      readonly Dictionary<TaggregateId, ISingleTaggregateInstanceTeventStreamMutator> _taggregateMutatorsCache = new();
 
       public IEnumerable<TaggregateTevent> Mutate(IEnumerable<TaggregateTevent> teventStream)
       {

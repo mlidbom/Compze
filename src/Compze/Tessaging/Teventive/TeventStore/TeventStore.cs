@@ -51,11 +51,11 @@ namespace Compze.Tessaging.Teventive.TeventStore;
       _sqlLayer = sqlLayer;
    }
 
-   public IReadOnlyList<ITaggregateTevent> GetTaggregateHistoryForUpdate(TaggregateId taggregateId) => GetTaggregateHistoryInternal(taggregateId: taggregateId.PrimitiveValue, takeWriteLock: true);
+   public IReadOnlyList<ITaggregateTevent> GetTaggregateHistoryForUpdate(TaggregateId taggregateId) => GetTaggregateHistoryInternal(taggregateId: taggregateId, takeWriteLock: true);
 
-   public IReadOnlyList<ITaggregateTevent> GetTaggregateHistory(TaggregateId taggregateId) => GetTaggregateHistoryInternal(taggregateId.PrimitiveValue, takeWriteLock: false);
+   public IReadOnlyList<ITaggregateTevent> GetTaggregateHistory(TaggregateId taggregateId) => GetTaggregateHistoryInternal(taggregateId, takeWriteLock: false);
 
-   IReadOnlyList<ITaggregateTevent> GetTaggregateHistoryInternal(Guid taggregateId, bool takeWriteLock)
+   IReadOnlyList<ITaggregateTevent> GetTaggregateHistoryInternal(TaggregateId taggregateId, bool takeWriteLock)
    {
       _usageGuard.EnsureAccessValid();
       _sqlLayer.SetupSchemaIfDatabaseUnInitialized();
@@ -116,7 +116,7 @@ namespace Compze.Tessaging.Teventive.TeventStore;
       return tevent;
    }
 
-   TaggregateTeventWithRefactoringInformation[] GetTaggregateTeventsFromSqlLayer(Guid taggregateId, bool takeWriteLock, int startAfterInsertedVersion = 0)
+   TaggregateTeventWithRefactoringInformation[] GetTaggregateTeventsFromSqlLayer(TaggregateId taggregateId, bool takeWriteLock, int startAfterInsertedVersion = 0)
       => _sqlLayer.GetTaggregateHistory(taggregateId: taggregateId,
                                                startAfterInsertedVersion: startAfterInsertedVersion,
                                                takeWriteLock: takeWriteLock)
@@ -183,11 +183,11 @@ namespace Compze.Tessaging.Teventive.TeventStore;
    {
       _usageGuard.EnsureAccessValid();
       _sqlLayer.SetupSchemaIfDatabaseUnInitialized();
-      _cache.Remove(taggregateId.PrimitiveValue);
-      _sqlLayer.DeleteTaggregate(taggregateId.PrimitiveValue);
+      _cache.Remove(taggregateId);
+      _sqlLayer.DeleteTaggregate(taggregateId);
    }
 
-   public IEnumerable<Guid> StreamTaggregateIdsInCreationOrder(Type? teventBaseType = null)
+   public IEnumerable<TaggregateId> StreamTaggregateIdsInCreationOrder(Type? teventBaseType = null)
    {
       Assert.Argument.Is(teventBaseType == null || teventBaseType.IsInterface && typeof(ITaggregateTevent).IsAssignableFrom(teventBaseType));
       _usageGuard.EnsureAccessValid();

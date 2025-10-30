@@ -29,6 +29,8 @@ class AccountQueryModel : SelfGeneratingQueryModel<AccountQueryModel, AccountTev
       LoadFromHistory(tevents);
    }
 
+   TaggregateId IAccountResourceData.Id => (TaggregateId)base.Id;
+
    protected override void AssertInvariantsAreMet()
    {
       Guard.IsNotNull(Email);
@@ -41,13 +43,14 @@ class AccountQueryModel : SelfGeneratingQueryModel<AccountQueryModel, AccountTev
       internal Tuery Tueries => new();
       internal class Tuery
       {
-         public TessageTypes.StrictlyLocal.Tueries.EntityLink<AccountQueryModel> Get(Guid id) => new(new EntityId(id));
+         public TessageTypes.StrictlyLocal.Tueries.EntityLink<AccountQueryModel> Get(EntityId id) => new(id);
       }
 
       public static void RegisterHandlers(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => Get(registrar);
 
       static void Get(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery(
          (TessageTypes.StrictlyLocal.Tueries.EntityLink<AccountQueryModel> tuery, IInProcessTypermediaNavigator navigator) =>
-            new AccountQueryModel(navigator.Execute(new TeventStoreApi().Tueries.GetHistory<AccountTevent.Root>(tuery.EntityId))));
+            //todo this Id conversion feels iffy
+            new AccountQueryModel(navigator.Execute(new TeventStoreApi().Tueries.GetHistory<AccountTevent.Root>(new TaggregateId(tuery.EntityId.PrimitiveValue)))));
    }
 }

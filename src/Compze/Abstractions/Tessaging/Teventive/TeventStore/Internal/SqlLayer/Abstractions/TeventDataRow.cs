@@ -36,7 +36,7 @@ public class TeventDataRow
                            };
    }
 
-   public TeventDataRow(Guid teventType, string teventJson, TessageId teventId, int taggregateVersion, Guid taggregateId, DateTime utcTimeStamp, TaggregateTeventStorageInformation storageInformation)
+   public TeventDataRow(Guid teventType, string teventJson, TessageId teventId, int taggregateVersion, TaggregateId taggregateId, DateTime utcTimeStamp, TaggregateTeventStorageInformation storageInformation)
    {
       TeventType = teventType;
       TeventJson = teventJson;
@@ -53,7 +53,7 @@ public class TeventDataRow
    public TessageId TeventId { get; private set; }
    public int TaggregateVersion { get; private set; }
 
-   public Guid TaggregateId { get; private set; }
+   public TaggregateId TaggregateId { get; private set; }
    public DateTime UtcTimeStamp { get; private set; }
 
    public TaggregateTeventStorageInformation StorageInformation { get; private set; }

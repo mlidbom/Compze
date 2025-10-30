@@ -79,7 +79,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
    public void CanSaveAndLoadTaggregate()
    {
       var user = new User();
-      user.Register("email@email.se", "password", Guid.NewGuid());
+      user.Register("email@email.se", "password", new TaggregateId());
       user.ChangePassword("NewPassword");
       user.ChangeEmail("NewEmail");
 
@@ -125,7 +125,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
    public void CanLoadSpecificVersionOfTaggregate()
    {
       var user = new User();
-      user.Register("email@email.se", "password", Guid.NewGuid());
+      user.Register("email@email.se", "password", new TaggregateId());
       user.ChangePassword("NewPassword");
       user.ChangeEmail("NewEmail");
 
@@ -155,7 +155,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
    public void ReturnsSameInstanceOnRepeatedLoads()
    {
       var user = new User();
-      user.Register("email@email.se", "password", Guid.NewGuid());
+      user.Register("email@email.se", "password", new TaggregateId());
 
       UseInTransactionalScope(session => session.Save(user));
 
@@ -171,7 +171,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
    public void ReturnsSameInstanceOnLoadAfterSave()
    {
       var user = new User();
-      user.Register("email@email.se", "password", Guid.NewGuid());
+      user.Register("email@email.se", "password", new TaggregateId());
 
       UseInTransactionalScope(session =>
       {
@@ -188,7 +188,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
    public void TracksAndUpdatesLoadedTaggregates()
    {
       var user = new User();
-      user.Register("email@email.se", "password", Guid.NewGuid());
+      user.Register("email@email.se", "password", new TaggregateId());
 
       UseInTransactionalScope(session => session.Save(user));
 
@@ -209,7 +209,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
    public void DoesNotUpdateTaggregatesLoadedViaSpecificVersion()
    {
       var user = new User();
-      user.Register("OriginalEmail", "password", Guid.NewGuid());
+      user.Register("OriginalEmail", "password", new TaggregateId());
 
       UseInTransactionalScope(session => session.Save(user));
 
@@ -230,7 +230,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
    public void ResetsTaggregatesAfterSaveChanges()
    {
       var user = new User();
-      user.Register("OriginalEmail", "password", Guid.NewGuid());
+      user.Register("OriginalEmail", "password", new TaggregateId());
 
       UseInTransactionalScope(session => session.Save(user));
       ((ITaggregate)user).Commit(tevents => tevents.Should().BeEmpty());
@@ -240,7 +240,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
    public void ThrowsWhenAttemptingToSaveExistingTaggregate()
    {
       var user = new User();
-      user.Register("OriginalEmail", "password", Guid.NewGuid());
+      user.Register("OriginalEmail", "password", new TaggregateId());
 
       UseInTransactionalScope(session => session.Save(user));
 
@@ -252,7 +252,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
    public void DoesNotExplodeWhenSavingMoreThan10Tevents()
    {
       var user = new User();
-      user.Register("OriginalEmail", "password", Guid.NewGuid());
+      user.Register("OriginalEmail", "password", new TaggregateId());
       1.Through(100).ForEach(index => user.ChangeEmail("email" + index));
 
       UseInTransactionalScope(session => session.Save(user));
@@ -262,10 +262,10 @@ public class TeventStoreUpdaterTest : UniversalTestBase
    public void TaggregateCannotBeRetrievedAfterBeingDeleted()
    {
       var user1 = new User();
-      user1.Register("email1@email.se", "password", Guid.NewGuid());
+      user1.Register("email1@email.se", "password", new TaggregateId());
 
       var user2 = new User();
-      user2.Register("email2@email.se", "password", Guid.NewGuid());
+      user2.Register("email2@email.se", "password", new TaggregateId());
 
       UseInTransactionalScope(session =>
       {
@@ -290,10 +290,10 @@ public class TeventStoreUpdaterTest : UniversalTestBase
    public void DeletingAnTaggregateDoesNotPreventTeventsFromItFromBeingRaised()
    {
       var user1 = new User();
-      user1.Register("email1@email.se", "password", Guid.NewGuid());
+      user1.Register("email1@email.se", "password", new TaggregateId());
 
       var user2 = new User();
-      user2.Register("email2@email.se", "password", Guid.NewGuid());
+      user2.Register("email2@email.se", "password", new TaggregateId());
 
       UseInTransactionalScope(session =>
       {
@@ -325,7 +325,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
       UseInTransactionalScope(session =>
       {
          var user1 = new User();
-         user1.Register("email1@email.se", "password", Guid.NewGuid());
+         user1.Register("email1@email.se", "password", new TaggregateId());
          session.Save(user1);
 
          _teventSpy.DispatchedTessages.Last()
@@ -347,7 +347,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
       UseInTransactionalScope(session =>
       {
          var user = new User();
-         user.Register("test@email.com", "Password1", userId.PrimitiveValue);
+         user.Register("test@email.com", "Password1", userId);
          session.Save(user);
       });
 
@@ -372,7 +372,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
       UseInTransactionalScope(session =>
       {
          var user = new User();
-         user.Register("test@email.com", "Password1", userId.PrimitiveValue);
+         user.Register("test@email.com", "Password1", userId);
          session.Save(user);
       });
 
@@ -393,7 +393,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
       UseInTransactionalScope(session =>
       {
          var user = new User();
-         user.Register("test@email.com", "Password1", userId.PrimitiveValue);
+         user.Register("test@email.com", "Password1", userId);
          session.Save(user);
       });
 
@@ -416,7 +416,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
    public void Concurrent_read_only_access_to_taggregate_history_can_occur_in_parallel()
    {
       var user = new User();
-      user.Register("email@email.se", "password", Guid.NewGuid());
+      user.Register("email@email.se", "password", new TaggregateId());
 
       UseInTransactionalScope(session => session.Save(user));
 
@@ -449,7 +449,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
       var users = 1.Through(9).Select(i =>
       {
          var u = new User();
-         u.Register(i + "@test.com", "abcd", Guid.NewGuid());
+         u.Register(i + "@test.com", "abcd", new TaggregateId());
          u.ChangeEmail("new" + i + "@test.com");
          return u;
       }).ToList();
@@ -492,7 +492,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
    [PCT]
    public async Task InsertNewTeventType_should_not_throw_exception_if_the_tevent_type_has_been_inserted_by_something_else()
    {
-      var user = UseInTransactionalScope(session => User.Register(session, "email@email.se", "password", Guid.NewGuid()));
+      var user = UseInTransactionalScope(session => User.Register(session, "email@email.se", "password", new TaggregateId()));
       var otherUser = await ChangeAnotherUsersEmailInOtherInstance();
 
       UseInTransactionalScope(session => session.Get<User>(otherUser.Id).Email.Should().Be("otheruser@email.new"));
@@ -511,7 +511,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
             var another = User.Register(session,
                                         "email@email.se",
                                         "password",
-                                        Guid.NewGuid());
+                                        new TaggregateId());
             another.ChangeEmail("otheruser@email.new");
             return another;
          });
@@ -522,7 +522,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
    public void If_the_first_transaction_to_insert_an_tevent_of_specific_type_fails_the_next_succeeds()
    {
       var user = new User();
-      user.Register("email@email.se", "password", Guid.NewGuid());
+      user.Register("email@email.se", "password", new TaggregateId());
 
       UseInTransactionalScope(session => session.Save(user));
 
@@ -549,7 +549,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
    public void Serializes_access_to_an_taggregate_so_that_concurrent_transactions_succeed_even_if_history_has_been_read_outside_of_modifying_transactions()
    {
       var user = new User();
-      user.Register("email@email.se", "password", Guid.NewGuid());
+      user.Register("email@email.se", "password", new TaggregateId());
       UseInTransactionalScope(session =>
       {
          session.Save(user);
@@ -603,7 +603,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
    public void Serializes_access_to_an_taggregate_so_that_concurrent_transactions_succeed()
    {
       var user = new User();
-      user.Register("email@email.se", "password", Guid.NewGuid());
+      user.Register("email@email.se", "password", new TaggregateId());
       UseInTransactionalScope(session =>
       {
          session.Save(user);
@@ -662,7 +662,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
       {
          using var updater = _serviceLocator.Resolve<ITeventStoreUpdater>();
          var user = new User();
-         user.Register("email@email.se", "password", Guid.NewGuid());
+         user.Register("email@email.se", "password", new TaggregateId());
 
          TransactionScopeCe.Execute(() => updater.Save(user));
          FluentActions.Invoking(() => TransactionScopeCe.Execute(() => updater.Get<User>(user.Id)))

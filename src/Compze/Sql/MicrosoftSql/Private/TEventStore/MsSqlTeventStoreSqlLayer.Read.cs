@@ -38,7 +38,7 @@ partial class MsSqlTeventStoreSqlLayer(MsSqlTeventStoreConnectionManager connect
       teventJson: teventReader.GetString(1),
       teventId: new TessageId(teventReader.GetGuid(4)),
       taggregateVersion: teventReader.GetInt32(3),
-      taggregateId: teventReader.GetGuid(2),
+      taggregateId: new TaggregateId(teventReader.GetGuid(2)),
       //Without this the datetime will be DateTimeKind.Unspecified and will not convert correctly into Local time....
       utcTimeStamp: DateTime.SpecifyKind(teventReader.GetDateTime(5), DateTimeKind.Utc),
       storageInformation: new TaggregateTeventStorageInformation
@@ -57,7 +57,7 @@ partial class MsSqlTeventStoreSqlLayer(MsSqlTeventStoreConnectionManager connect
                           }
    );
 
-   public IReadOnlyList<TeventDataRow> GetTaggregateHistory(Guid taggregateId, bool takeWriteLock, int startAfterInsertedVersion = 0) =>
+   public IReadOnlyList<TeventDataRow> GetTaggregateHistory(TaggregateId taggregateId, bool takeWriteLock, int startAfterInsertedVersion = 0) =>
       _connectionManager.UseCommand(suppressTransactionWarning: !takeWriteLock,
                                     command => command.SetCommandText($"""
 
@@ -67,7 +67,7 @@ partial class MsSqlTeventStoreSqlLayer(MsSqlTeventStoreConnectionManager connect
                                                                            AND {Tevent.EffectiveVersion} > 0
                                                                        ORDER BY {Tevent.ReadOrder} ASC
                                                                        """)
-                                                      .AddParameter(Tevent.TaggregateId, taggregateId)
+                                                      .AddParameter(Tevent.TaggregateId, taggregateId.PrimitiveValue)
                                                       .AddParameter("CachedVersion", startAfterInsertedVersion)
                                                       .ExecuteReaderAndSelect(ReadDataRow)
                                                       .ToList());
@@ -114,6 +114,6 @@ partial class MsSqlTeventStoreSqlLayer(MsSqlTeventStoreConnectionManager connect
                                                                                       WHERE {Tevent.EffectiveVersion} = 1 
                                                                                       ORDER BY {Tevent.ReadOrder} ASC
                                                                                       """)
-                                                                     .ExecuteReaderAndSelect(reader => new CreationTeventRow(taggregateId: reader.GetGuid(0), typeId: reader.GetGuid(1))));
+                                                                     .ExecuteReaderAndSelect(reader => new CreationTeventRow(taggregateId: new TaggregateId(reader.GetGuid(0)), typeId: reader.GetGuid(1))));
    }
 }

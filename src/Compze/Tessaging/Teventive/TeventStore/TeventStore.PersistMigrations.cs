@@ -27,7 +27,7 @@ partial class TeventStore
       var lastLogTime = DateTime.Now;
 
       const int recoverableErrorRetriesToMake = 5;
-      var exceptions = new List<(Guid TaggregateId,Exception Exception)>();
+      var exceptions = new List<(TaggregateId TaggregateId,Exception Exception)>();
 
       var taggregateIdsInCreationOrder = StreamTaggregateIdsInCreationOrder().ToList();
 

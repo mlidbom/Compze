@@ -1,8 +1,9 @@
-using System;
-using System.ComponentModel.DataAnnotations;
 using AccountManagement.API.ValidationAttributes;
+using Compze.Core.Public;
 using Compze.Core.Tessaging.Public;
 using Newtonsoft.Json;
+using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace AccountManagement.API;
 
@@ -12,15 +13,15 @@ public partial class AccountResource
    {
       public class ChangeEmail : TessageTypes.Remotable.AtMostOnce.AtMostOnceTypermediaTommand
       {
-         [JsonConstructor]public ChangeEmail(Guid accountId, string email) : base()
+         [JsonConstructor]public ChangeEmail(TaggregateId accountId, string email) : base()
          {
             AccountId = accountId;
             Email = email;
          }
 
-         internal ChangeEmail(Guid accountId):base() => AccountId = accountId;
+         internal ChangeEmail(TaggregateId accountId):base() => AccountId = accountId;
 
-         [Required] [EntityId] public Guid AccountId { get; set; }
+         [Required] [TaggregateId] public TaggregateId AccountId { get; set; }
          [Required] [Email] public string Email { get; set; } = string.Empty;
 
          public ChangeEmail WithEmail(string email) => new(AccountId)

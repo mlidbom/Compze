@@ -66,12 +66,12 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
          if(Version == 0)
          {
             if(theTevent is not ITaggregateCreatedTevent) throw new Exception($"The first published tevent {theTevent.GetType()} did not implement {nameof(ITaggregateCreatedTevent)}. The first tevent an taggregate publishes must always implement {nameof(ITaggregateCreatedTevent)}.");
-            if(theTevent.TaggregateId == Guid.Empty) throw new Exception($"{nameof(ITaggregateTevent.TaggregateId)} was empty in {nameof(ITaggregateCreatedTevent)}");
+            if(theTevent.TaggregateId.IsEmpty) throw new Exception($"{nameof(ITaggregateTevent.TaggregateId)} was empty in {nameof(ITaggregateCreatedTevent)}");
             ((IMutableTaggregateTevent)theTevent).SetTaggregateVersionInternal(1);
          } else
          {
-            if(theTevent.TaggregateId != Guid.Empty && theTevent.TaggregateId != Id.PrimitiveValue) throw new ArgumentOutOfRangeException($"Tried to raise tevent for Taggregated: {theTevent.TaggregateId} from Taggregate with Id: {Id}.");
-            ((IMutableTaggregateTevent)theTevent).SetTaggregateIdInternal(Id.PrimitiveValue);
+            if(theTevent.TaggregateId is not null && theTevent.TaggregateId.IsEmpty && theTevent.TaggregateId != Id) throw new ArgumentOutOfRangeException($"Tried to raise tevent for Taggregated: {theTevent.TaggregateId} from Taggregate with Id: {Id}.");
+            ((IMutableTaggregateTevent)theTevent).SetTaggregateIdInternal(Id);
          }
 #pragma warning restore CS0618 // Type or member is obsolete
          ApplyTevent(theTevent);
@@ -101,7 +101,7 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
       {
          if(theTevent is ITaggregateCreatedTevent)
          {
-            base.Id = new TaggregateId(theTevent.TaggregateId);
+            base.Id = theTevent.TaggregateId;
          }
 
          Version = theTevent.TaggregateVersion;

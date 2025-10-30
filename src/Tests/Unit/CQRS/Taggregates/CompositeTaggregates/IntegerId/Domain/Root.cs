@@ -1,4 +1,5 @@
 using System;
+using Compze.Core.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public;
 using Compze.Core.Time.Public;
 using JetBrains.Annotations;
@@ -20,7 +21,7 @@ class Root : Taggregate<Root, RootTevent.IRoot, RootTevent.Implementation.Root>
       RegisterTeventAppliers()
         .For<RootTevent.PropertyUpdated.Name>(e => Name = e.Name);
 
-      Publish(new RootTevent.Implementation.Created(Guid.NewGuid(), name));
+      Publish(new RootTevent.Implementation.Created(new TaggregateId(), name));
    }
 
    public IReadOnlyEntityCollection<RemovableEntity, int> Entities => _entities.Entities;

@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using AccountManagement.API;
+using Compze.Core.Public;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.Testing.XUnit.BDD;
 using FluentAssertions;
@@ -26,7 +27,7 @@ public class RegisterAccountUITommandTests : UniversalTestBase
    [XF]
    public void IsInvalidifAccountIdIsEmpty()
    {
-      _registerAccountUiTommand!.AccountId = Guid.Empty;
+      _registerAccountUiTommand!.AccountId = TaggregateId.Empty;
       TommandValidator.ValidationFailures(_registerAccountUiTommand).Should().NotBeEmpty();
    }
 

@@ -34,8 +34,8 @@ public class MyExactlyOnceTommand : TessageTypes.Remotable.ExactlyOnce.Tommand;
 public class MyUpdateTaggregateTommand : TessageTypes.Remotable.AtMostOnce.AtMostOnceTypermediaTommand
 {
    [UsedImplicitly] MyUpdateTaggregateTommand(){}
-   public MyUpdateTaggregateTommand(Guid taggregateId) => TaggregateId = taggregateId;
-   public Guid TaggregateId { get; private set; }
+   public MyUpdateTaggregateTommand(TaggregateId taggregateId) => TaggregateId = taggregateId;
+   public TaggregateId TaggregateId { get; private set; }
 }
 
 public class MyCreateTaggregateTommand : TessageTypes.Remotable.AtMostOnce.AtMostOnceTypermediaTommand
@@ -45,10 +45,10 @@ public class MyCreateTaggregateTommand : TessageTypes.Remotable.AtMostOnce.AtMos
    public static MyCreateTaggregateTommand Create() => new()
                                                       {
                                                          Id = new TessageId(),
-                                                         TaggregateId = Guid.NewGuid()
+                                                         TaggregateId = new TaggregateId()
                                                       };
 
-   public Guid TaggregateId { get; set; }
+   public TaggregateId TaggregateId { get; set; }
 }
 
 public class MyTaggregate : Taggregate<MyTaggregate, MyTaggregateTevent.IRoot, MyTaggregateTevent.Implementation.Root>
@@ -61,7 +61,7 @@ public class MyTaggregate : Taggregate<MyTaggregate, MyTaggregateTevent.IRoot, M
 
    public void Update() => Publish(new MyTaggregateTevent.Implementation.Updated());
 
-   public static void Create(Guid id, IInProcessTypermediaNavigator bus)
+   public static void Create(TaggregateId id, IInProcessTypermediaNavigator bus)
    {
       var created = new MyTaggregate();
       created.Publish(new MyTaggregateTevent.Implementation.Created(id));
@@ -79,11 +79,11 @@ public static class MyTaggregateTevent
       public class Root : TaggregateTevent, IRoot
       {
          protected Root() {}
-         protected Root(Guid taggregateId) : base(taggregateId) {}
+         protected Root(TaggregateId taggregateId) : base(taggregateId) {}
       }
 
       // ReSharper disable once MemberHidesStaticFromOuterClass
-      public class Created(Guid taggregateId) : Root(taggregateId), MyTaggregateTevent.Created;
+      public class Created(TaggregateId taggregateId) : Root(taggregateId), MyTaggregateTevent.Created;
 
       // ReSharper disable once MemberHidesStaticFromOuterClass
       public class Updated : Root, MyTaggregateTevent.Updated;

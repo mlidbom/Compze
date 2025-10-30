@@ -17,14 +17,14 @@ public partial class AccountResource
       {
          public static Register Create() => new()
                                             {
-                                               AccountId = Guid.NewGuid(),
+                                               AccountId = new TaggregateId(),
                                                Id = new TessageId()
                                             };
 
          //Note the use of a custom validation attributes.
-         [EntityId(ErrorMessageResourceType = typeof(RegisterAccountTommandResources), ErrorMessageResourceName = "IdInvalid")]
+         [TaggregateId(ErrorMessageResourceType = typeof(RegisterAccountTommandResources), ErrorMessageResourceName = "IdInvalid")]
          [Required(ErrorMessageResourceType = typeof(RegisterAccountTommandResources), ErrorMessageResourceName = "IdMissing")]
-         public Guid AccountId { [UsedImplicitly] get; set; } = Guid.NewGuid();
+         public TaggregateId AccountId { [UsedImplicitly] get; set; } = new TaggregateId();
 
          [Email(ErrorMessageResourceType = typeof(RegisterAccountTommandResources), ErrorMessageResourceName = "EmailInvalid")]
          [Required(ErrorMessageResourceType = typeof(RegisterAccountTommandResources), ErrorMessageResourceName = "EmailMissing")]
@@ -35,13 +35,13 @@ public partial class AccountResource
 
          public IEnumerable<ValidationResult> Validate(ValidationContext validationContext) => Domain.Passwords.Password.Validate(Password, this, () => Password);
 
-         internal Register WithValues(Guid accountId, string email, string password) => new()
-                                                                                        {
-                                                                                           Id = new TessageId(),
-                                                                                           AccountId = accountId,
-                                                                                           Email = email,
-                                                                                           Password = password
-                                                                                        };
+         internal Register WithValues(TaggregateId accountId, string email, string password) => new()
+                                                                                                {
+                                                                                                   Id = new TessageId(),
+                                                                                                   AccountId = accountId,
+                                                                                                   Email = email,
+                                                                                                   Password = password
+                                                                                                };
       }
    }
 }

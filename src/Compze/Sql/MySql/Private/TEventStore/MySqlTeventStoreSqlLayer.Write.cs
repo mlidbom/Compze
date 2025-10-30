@@ -38,7 +38,7 @@ partial class MySqlTeventStoreSqlLayer
                                          AND @{Tevent.ReadOrder} = '0.0000000000000000000';
 
                                          """)
-                                    .AddParameter(Tevent.TaggregateId, data.TaggregateId)
+                                    .AddParameter(Tevent.TaggregateId, data.TaggregateId.PrimitiveValue)
                                     .AddParameter(Tevent.InsertedVersion, data.StorageInformation.InsertedVersion)
                                     .AddParameter(Tevent.TeventType, data.TeventType)
                                     .AddParameter(Tevent.TeventId, data.TeventId.PrimitiveValue)
@@ -105,7 +105,7 @@ partial class MySqlTeventStoreSqlLayer
       return Assert.Result.NotNull(neighborhood).then(neighborhood);
    }
 
-   public void DeleteTaggregate(Guid taggregateId)
+   public void DeleteTaggregate(TaggregateId taggregateId)
    {
       _connectionManager.UseCommand(
          command =>

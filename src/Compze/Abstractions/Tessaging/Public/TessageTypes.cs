@@ -22,6 +22,12 @@ public static class TessageTypes
          {
             public EntityId EntityId { get; private set; } = entityId;
          }
+
+         public sealed class TaggregateLink<TResult>(TaggregateId taggregateId) : StrictlyLocal.Tueries.StrictlyLocalTuery<EntityLink<TResult>, TResult>
+            where TResult : IEntity<Guid>
+         {
+            public TaggregateId TaggregateId { get; private set; } = taggregateId;
+         }
       }
 
       public static class Tommands
@@ -66,9 +72,9 @@ public static class TessageTypes
             public class EntityLink<TResult> : Remotable.NonTransactional.Tueries.Tuery<TResult> where TResult : IEntity<Guid>
             {
                public EntityLink() {}
-               public EntityLink(Guid entityId) => EntityId = entityId;
-               public EntityLink<TResult> WithId(Guid id) => new(id);
-               public Guid EntityId { get; private set; }
+               public EntityLink(EntityId entityId) => EntityId = entityId;
+               public EntityLink<TResult> WithId(EntityId id) => new(id);
+               public EntityId EntityId { get; private set; }
             }
 
             ///<summary>Implement <see cref="IRemotableCreateMyOwnResultTuery{TResult}"/> by passing a func to this base class.</summary>

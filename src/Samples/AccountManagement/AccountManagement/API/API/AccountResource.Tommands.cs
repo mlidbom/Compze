@@ -16,8 +16,8 @@ public partial class AccountResource
 
       public AccountTommands(AccountResource accountResource)
       {
-         ChangeEmail = new Tommand.ChangeEmail(accountResource.Id.PrimitiveValue);
-         ChangePassword = new Tommand.ChangePassword(accountResource.Id.PrimitiveValue);
+         ChangeEmail = new Tommand.ChangeEmail(accountResource.Id);
+         ChangePassword = new Tommand.ChangePassword(accountResource.Id);
       }
 
       public Tommand.ChangeEmail ChangeEmail { get; private set; }

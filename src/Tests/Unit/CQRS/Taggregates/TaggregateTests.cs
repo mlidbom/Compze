@@ -9,6 +9,7 @@ using Compze.Utilities.Testing.XUnit.BDD;
 using FluentAssertions;
 using System;
 using System.Collections.Generic;
+using Compze.Core.Public;
 
 namespace Compze.Tests.Unit.CQRS.Taggregates;
 
@@ -20,7 +21,7 @@ public class TaggregateTests : UniversalTestBase
       var user = new User();
       user.Version.Should().Be(0);
 
-      user.Register("email", "password", Guid.NewGuid());
+      user.Register("email", "password", new TaggregateId());
       user.Version.Should().Be(1);
 
       user.ChangeEmail("NewEmail");
@@ -37,7 +38,7 @@ public class TaggregateTests : UniversalTestBase
       ITaggregate userAsteventStored = user;
       user.Version.Should().Be(0);
 
-      user.Register("email", "password", Guid.NewGuid());
+      user.Register("email", "password", new TaggregateId());
       userAsteventStored.Commit(_ => {});
       userAsteventStored.Commit(tevents => tevents.Should().BeEmpty());
 
@@ -94,7 +95,7 @@ public class TaggregateTests : UniversalTestBase
 
    interface ITriggeringTevent : ITaggregateCreatedTevent;
 
-   class TriggeringTevent() : TaggregateTevent(Guid.NewGuid()), ITriggeringTevent;
+   class TriggeringTevent() : TaggregateTevent(new TaggregateId()), ITriggeringTevent;
 
    interface ITriggeredTevent : ITaggregateTevent;
    class TriggeredTevent : TaggregateTevent, ITriggeredTevent;

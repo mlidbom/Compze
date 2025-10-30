@@ -47,6 +47,6 @@ public class ChangePasswordScenario : ScenarioBase<AccountResource>
    {
       Account.Tommands.ChangePassword.WithValues(OldPassword, NewPassword).Post().ExecuteAsClientRequestOn(_clientEndpoint);
 
-      return Account = Api.Tuery.AccountById(Account.Id.PrimitiveValue).ExecuteAsClientRequestOn(_clientEndpoint);
+      return Account = Api.Tuery.AccountById(Account.Id).ExecuteAsClientRequestOn(_clientEndpoint);
    }
 }
