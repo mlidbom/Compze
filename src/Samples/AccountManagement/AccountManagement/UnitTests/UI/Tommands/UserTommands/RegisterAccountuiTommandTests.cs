@@ -25,9 +25,9 @@ public class RegisterAccountUITommandTests : UniversalTestBase
    }
 
    [XF]
-   public void IsInvalidifAccountIdIsEmpty()
+   public void IsInvalidifAccountIdIsNull()
    {
-      _registerAccountUiTommand!.AccountId = TaggregateId.Empty;
+      _registerAccountUiTommand!.AccountId = null!;
       TommandValidator.ValidationFailures(_registerAccountUiTommand).Should().NotBeEmpty();
    }
 

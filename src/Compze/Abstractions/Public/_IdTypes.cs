@@ -35,8 +35,6 @@ public class TaggregateId : TentityId
 {
    public TaggregateId(Guid id) : base(id) {}
    public TaggregateId() : base(Guid.NewGuid()) {}
-   //urgent: this should not exist
-   public static readonly TaggregateId Empty = new TaggregateId(Guid.Empty);
 }
 
 public class TessageId : TentityId
