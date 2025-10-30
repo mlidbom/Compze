@@ -10,32 +10,26 @@ public class EntityId<TPrimitive>(TPrimitive primitiveValue) : ValueWrapper<TPri
 {
 }
 
-public class EntityId : EntityId<Guid>
-{
-   public EntityId(Guid id) : base(id) {}
-   public EntityId() : base(Guid.NewGuid()) {}
-}
-
 public class TentityId<TPrimitive>(TPrimitive primitiveValue) : EntityId<TPrimitive>(primitiveValue)
    where TPrimitive : IEquatable<TPrimitive>
-{
+{}
 
+public class EntityId(Guid id) : EntityId<Guid>(id)
+{
+   public EntityId() : this(Guid.NewGuid()) {}
 }
 
-public class TentityId : EntityId
+public class TentityId(Guid id) : EntityId(id)
 {
-   public TentityId(Guid id) : base(id) {}
-   public TentityId() : base(Guid.NewGuid()) {}
+   public TentityId() : this(Guid.NewGuid()) {}
 }
 
-public class TaggregateId : TentityId
+public class TaggregateId(Guid id) : TentityId(id)
 {
-   public TaggregateId(Guid id) : base(id) {}
-   public TaggregateId() : base(Guid.NewGuid()) {}
+   public TaggregateId() : this(Guid.NewGuid()) {}
 }
 
-public class TessageId : TentityId
+public class TessageId(Guid id) : TentityId(id)
 {
-   public TessageId(Guid id) : base(id) {}
-   public TessageId() : base(Guid.CreateVersion7()) {}
+   public TessageId() : this(Guid.CreateVersion7()) {}
 }
