@@ -41,7 +41,7 @@ public class TeventMigrationPerformanceTest : TeventMigrationTestBase
 
 
       _taggregate = UtcTimeSource.WithOverride(TestingTimeSource.FrozenUtcNow(), () =>
-                                                  TestTaggregate.FromTevents(TestingTimeSource.FrozenUtcNow(), Guid.NewGuid(), historyTypes));
+                                                  TestTaggregate.FromTevents(Guid.NewGuid(), historyTypes));
       _history = _taggregate.History.Cast<TaggregateTevent>().ToList();
 
       _currentMigrations = Enumerable.Empty<ITeventMigration>().ToList();

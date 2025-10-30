@@ -52,7 +52,7 @@ public class MyCreateTaggregateTommand : TessageTypes.Remotable.AtMostOnce.AtMos
 
 public class MyTaggregate : Taggregate<MyTaggregate, MyTaggregateTevent.IRoot, MyTaggregateTevent.Implementation.Root>
 {
-   public MyTaggregate() : base(new DateTimeNowTimeSource())
+   public MyTaggregate()
    {
       RegisterTeventAppliers()
         .IgnoreUnhandled<MyTaggregateTevent.IRoot>();

@@ -28,8 +28,7 @@ public class TestingComponentRegistrar : ComponentRegistrar
                               { typeof(MySqlConnectionPoolRegistrar.ITestingRegistrar), new MySqlDbPoolRegistrar(this) },
                               { typeof(PgSqlConnectionPoolRegistrar.ITestingRegistrar), new PostgreSqlSqlDbPoolRegistrar(this) },
                               { typeof(SqliteConnectionPoolRegistrar.ITestingRegistrar), new SqliteSqlDbPoolRegistrar(this) },
-                              { typeof(SqliteMemoryConnectionPoolRegistrar.ITestingRegistrar), new SqliteMemoryDbPoolRegistrar(this) },
-                              { typeof(TimeSourceRegistrar.ITestingRegistrar), new TestingTimeSourceRegistrar(this) }
+                              { typeof(SqliteMemoryConnectionPoolRegistrar.ITestingRegistrar), new SqliteMemoryDbPoolRegistrar(this) }
                            };
    }
 
@@ -44,13 +43,6 @@ public class TestingComponentRegistrar : ComponentRegistrar
    }
 
    public override IComponentRegistrar Clone() => new TestingComponentRegistrar();
-
-   class TestingTimeSourceRegistrar(IComponentRegistrar registrar) : TimeSourceRegistrar.ITestingRegistrar
-   {
-      readonly IComponentRegistrar _registrar = registrar;
-
-      public IComponentRegistrar Register() => _registrar.TestingTimeSource();
-   }
 
    class MsSqlDbPoolRegistrar(IComponentRegistrar registrar) : MsSqlSqlConnectionPoolRegistrar.ITestingRegistrar
    {

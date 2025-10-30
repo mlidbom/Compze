@@ -1,26 +1,18 @@
 using System;
 using System.Globalization;
+using System.Threading.Tasks;
 using Compze.Core.Time.Public;
-using Compze.Utilities.DependencyInjection;
-using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE;
+using Compze.Utilities.SystemCE.ActionFuncHarmonization;
+using Compze.Utilities.Threading;
+using Compze.Utilities.Threading.TasksCE;
 
 namespace Compze.Core.Time.Testing.Public;
-
-static class TestingTimeSourceRegistrar
-{
-   internal static IComponentRegistrar TestingTimeSource(this IComponentRegistrar registrar)
-      => Public.TestingTimeSource.RegisterWith(registrar);
-}
 
 /// <summary> Just statically returns whatever value was assigned.</summary>
 public class TestingTimeSource : IUtcTimeTimeSource
 {
-   internal static IComponentRegistrar RegisterWith(IComponentRegistrar registrar) =>
-      registrar.Register(Singleton.For<IUtcTimeTimeSource, TestingTimeSource>()
-                                  .CreatedBy(() => new TestingTimeSource())
-                                  .DelegateToParentServiceLocatorWhenCloning());
-
    DateTime? _freezeAt;
 
    TestingTimeSource() {}
@@ -39,10 +31,29 @@ public class TestingTimeSource : IUtcTimeTimeSource
 
    public static TestingTimeSource FrozenAtUtcTime(string time) => FrozenAtUtcTime(DateTime.Parse(time, CultureInfo.InvariantCulture).ToUniversalTime());
 
-   public void FreezeAtUtcTime(DateTime time) => _freezeAt = time.ToUniversalTimeSafely();
-
-   public void FreezeAtUtcTime(string time) => FreezeAtUtcTime(DateTime.Parse(time, CultureInfo.InvariantCulture).ToUniversalTime());
 
    ///<summary>Gets the current UTC time.</summary>
-   public DateTime UtcNow => _freezeAt ?? DateTime.UtcNow;
+   public DateTime UtcNow => _freezeAt ?? DateTimeNowTimeSource.Instance.UtcNow;
+
+
+   class Overrider(IUtcTimeTimeSource theOverride)
+   {
+      readonly IUtcTimeTimeSource _theOverride = theOverride;
+
+      public unit Run(Action action) => Run(action.AsFunc());
+
+      public TResult Run<TResult>(Func<TResult> action) => RunAsync(action.AsAsync()).Result;
+
+      public async Task<unit> RunAsync(Func<Task> action) => await RunAsync(action.AsFunc()).caf();
+
+      public async Task<TResult> RunAsync<TResult>(Func<Task<TResult>> action)
+      {
+         var current = UtcTimeSource.Override.Value;
+         using(ScopedChange.Enter(() => UtcTimeSource.Override.Value = _theOverride, () => UtcTimeSource.Override.Value = current))
+         {
+            return await action().caf();
+         }
+      }
+   }
+
 }

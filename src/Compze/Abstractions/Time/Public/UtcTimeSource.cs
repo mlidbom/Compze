@@ -15,7 +15,7 @@ public static class UtcTimeSource
 
    public static DateTime UtcNow => Override?.Value?.UtcNow ?? TimeSource.UtcNow;
 
-   static readonly ThreadLocal<IUtcTimeTimeSource?> Override = new();
+   internal static readonly ThreadLocal<IUtcTimeTimeSource?> Override = new();
 
    public static unit WithOverride(IUtcTimeTimeSource theOverride, Action action) =>
       WithOverride(theOverride, action.AsFunc());
@@ -24,7 +24,7 @@ public static class UtcTimeSource
       WithOverrideAsync(theOverride, action.AsAsync()).Result;
 
    public static async Task<unit> WithOverrideAsync(IUtcTimeTimeSource theOverride, Func<Task> action) =>
-      await WithOverrideAsync(theOverride, action.AsFunc());
+      await WithOverrideAsync(theOverride, action.AsFunc()).caf();
 
    public static async Task<TResult> WithOverrideAsync<TResult>(IUtcTimeTimeSource theOverride, Func<Task<TResult>> action)
    {

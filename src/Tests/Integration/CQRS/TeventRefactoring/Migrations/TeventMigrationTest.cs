@@ -275,9 +275,7 @@ public class TeventMigrationTest : TeventMigrationTestBase
                TestingTimeSource.FrozenAtUtcTime("2001-01-01 12:00"),
                () =>
                {
-                  serviceLocator.Resolve<TestingTimeSource>().FreezeAtUtcTime("2001-01-01 12:00");
-
-                  var taggregate = TestTaggregate.FromTevents(serviceLocator.Resolve<IUtcTimeTimeSource>(), id, EnumerableCE.OfTypes<Ec1, E1, E2, E3, E4>());
+                  var taggregate = TestTaggregate.FromTevents(id, EnumerableCE.OfTypes<Ec1, E1, E2, E3, E4>());
                   var initialHistory = taggregate.History;
 
                   ITeventStoreUpdater Session() => serviceLocator.Resolve<ITeventStoreUpdater>();
@@ -296,7 +294,7 @@ public class TeventMigrationTest : TeventMigrationTestBase
 
                   var migratedHistory = serviceLocator.ExecuteTransactionInIsolatedScope(() => Session().Get<TestTaggregate>(id).History);
                   var expectedAfterReplacingE1WithE5 =
-                     TestTaggregate.FromTevents(serviceLocator.Resolve<IUtcTimeTimeSource>(), id, EnumerableCE.OfTypes<Ec1, E5, E2, E3, E4>()).History;
+                     TestTaggregate.FromTevents(id, EnumerableCE.OfTypes<Ec1, E5, E2, E3, E4>()).History;
                   AssertStreamsAreIdentical(expected: expectedAfterReplacingE1WithE5, migratedHistory: migratedHistory, descriptionOfHistory: "migrated history", writer);
 
                   var historyAfterPersistingButBeforeReload = serviceLocator.ExecuteInIsolatedScope(() =>
@@ -315,7 +313,7 @@ public class TeventMigrationTest : TeventMigrationTestBase
                   toDispose.Add(serviceLocator = serviceLocator.Clone());
 
                   migratedHistory = serviceLocator.ExecuteTransactionInIsolatedScope(() => Session().Get<TestTaggregate>(id).History);
-                  var expectedAfterReplacingE2WithE6 = TestTaggregate.FromTevents(serviceLocator.Resolve<IUtcTimeTimeSource>(), id, EnumerableCE.OfTypes<Ec1, E5, E6, E3, E4>()).History;
+                  var expectedAfterReplacingE2WithE6 = TestTaggregate.FromTevents(id, EnumerableCE.OfTypes<Ec1, E5, E6, E3, E4>()).History;
                   AssertStreamsAreIdentical(expected: expectedAfterReplacingE2WithE6, migratedHistory: migratedHistory, descriptionOfHistory: "migrated history", writer);
 
                   historyAfterPersistingButBeforeReload = serviceLocator.ExecuteInIsolatedScope(() =>
@@ -358,9 +356,7 @@ public class TeventMigrationTest : TeventMigrationTestBase
                TestingTimeSource.FrozenAtUtcTime("2001-01-01 12:00"),
                () =>
                {
-                  serviceLocator.Resolve<TestingTimeSource>().FreezeAtUtcTime("2001-01-01 12:00");
-
-                  var taggregate = TestTaggregate.FromTevents(serviceLocator.Resolve<IUtcTimeTimeSource>(), id, EnumerableCE.OfTypes<Ec1, E1, E2, E3, E4>());
+                  var taggregate = TestTaggregate.FromTevents(id, EnumerableCE.OfTypes<Ec1, E1, E2, E3, E4>());
                   var initialHistory = taggregate.History;
 
                   ITeventStoreUpdater Session() => serviceLocator.Resolve<ITeventStoreUpdater>();
@@ -379,7 +375,7 @@ public class TeventMigrationTest : TeventMigrationTestBase
 
                   var migratedHistory = serviceLocator.ExecuteTransactionInIsolatedScope(() => Session().Get<TestTaggregate>(id).History);
                   var expectedAfterReplacingE1WithE5 =
-                     TestTaggregate.FromTevents(serviceLocator.Resolve<IUtcTimeTimeSource>(), id, EnumerableCE.OfTypes<Ec1, E5, E2, E3, E4>()).History;
+                     TestTaggregate.FromTevents(id, EnumerableCE.OfTypes<Ec1, E5, E2, E3, E4>()).History;
                   AssertStreamsAreIdentical(expected: expectedAfterReplacingE1WithE5, migratedHistory: migratedHistory, descriptionOfHistory: "migrated history", writer);
 
                   var historyAfterPersistingButBeforeReload = serviceLocator.ExecuteInIsolatedScope(() =>
@@ -399,7 +395,7 @@ public class TeventMigrationTest : TeventMigrationTestBase
                   toDispose.Add(serviceLocator = serviceLocator.Clone());
 
                   migratedHistory = serviceLocator.ExecuteTransactionInIsolatedScope(() => Session().Get<TestTaggregate>(id).History);
-                  var expectedAfterReplacingE2WithE6 = TestTaggregate.FromTevents(serviceLocator.Resolve<IUtcTimeTimeSource>(), id, EnumerableCE.OfTypes<Ec1, E5, E6, E3, E4, E6, E7>()).History;
+                  var expectedAfterReplacingE2WithE6 = TestTaggregate.FromTevents(id, EnumerableCE.OfTypes<Ec1, E5, E6, E3, E4, E6, E7>()).History;
                   AssertStreamsAreIdentical(expected: expectedAfterReplacingE2WithE6, migratedHistory: migratedHistory, descriptionOfHistory: "migrated history", writer);
 
                   historyAfterPersistingButBeforeReload = serviceLocator.ExecuteInIsolatedScope(() =>
@@ -415,7 +411,7 @@ public class TeventMigrationTest : TeventMigrationTestBase
                   migrations = Enumerable.Empty<ITeventMigration>().ToList();
                   serviceLocator.ExecuteTransactionInIsolatedScope(() => Session().Get<TestTaggregate>(id).Publish(new E8(), new E9()));
                   historyAfterPersistingAndReloading = serviceLocator.ExecuteTransactionInIsolatedScope(() => Session().Get<TestTaggregate>(id).History);
-                  var expectedAfterReplacingE2WithE6AndRaisingE8E9 = TestTaggregate.FromTevents(serviceLocator.Resolve<IUtcTimeTimeSource>(), id, EnumerableCE.OfTypes<Ec1, E5, E6, E3, E4, E6, E7, E8, E9>()).History;
+                  var expectedAfterReplacingE2WithE6AndRaisingE8E9 = TestTaggregate.FromTevents(id, EnumerableCE.OfTypes<Ec1, E5, E6, E3, E4, E6, E7, E8, E9>()).History;
                   AssertStreamsAreIdentical(expected: expectedAfterReplacingE2WithE6AndRaisingE8E9, migratedHistory: historyAfterPersistingAndReloading, descriptionOfHistory: "migrated, persisted, reloaded", writer);
                });
          }
@@ -447,9 +443,7 @@ public class TeventMigrationTest : TeventMigrationTestBase
                TestingTimeSource.FrozenAtUtcTime("2001-01-01 12:00"),
                () =>
                {
-                  serviceLocator.Resolve<TestingTimeSource>().FreezeAtUtcTime("2001-01-01 12:00");
-
-                  var initialTaggregate = TestTaggregate.FromTevents(serviceLocator.Resolve<IUtcTimeTimeSource>(), id, EnumerableCE.OfTypes<Ec1, E1>());
+                  var initialTaggregate = TestTaggregate.FromTevents(id, EnumerableCE.OfTypes<Ec1, E1>());
 
                   ITeventStoreUpdater Session() => serviceLocator.Resolve<ITeventStoreUpdater>();
                   ITeventStore TeventStore() => serviceLocator.Resolve<ITeventStore>();
@@ -466,7 +460,7 @@ public class TeventMigrationTest : TeventMigrationTestBase
 
                   var taggregate = serviceLocator.ExecuteTransactionInIsolatedScope(() => Session().Get<TestTaggregate>(id));
 
-                  var expected = TestTaggregate.FromTevents(serviceLocator.Resolve<IUtcTimeTimeSource>(), id, EnumerableCE.OfTypes<Ec1, E5, E2>()).History;
+                  var expected = TestTaggregate.FromTevents(id, EnumerableCE.OfTypes<Ec1, E5, E2>()).History;
                   AssertStreamsAreIdentical(expected: expected, migratedHistory: taggregate.History, descriptionOfHistory: "migrated history", writer);
 
                   var completeTeventHistory = serviceLocator.ExecuteInIsolatedScope(() => TeventStore().ListAllTeventsForTestingPurposesAbsolutelyNotUsableForARealTeventStoreOfAnySize()).Cast<TaggregateTevent>().ToList();
@@ -505,12 +499,10 @@ public class TeventMigrationTest : TeventMigrationTestBase
                TestingTimeSource.FrozenAtUtcTime("2001-01-01 12:00"),
                () =>
                {
-                  serviceLocator.Resolve<TestingTimeSource>().FreezeAtUtcTime("2001-01-01 12:00");
-
                   var id = Guid.Parse("00000000-0000-0000-0000-000000000001");
-                  var initialTaggregate = TestTaggregate.FromTevents(serviceLocator.Resolve<IUtcTimeTimeSource>(), id, EnumerableCE.OfTypes<Ec1, E1>());
-                  var expectedHistoryAfterFirstMigration = TestTaggregate.FromTevents(serviceLocator.Resolve<IUtcTimeTimeSource>(), id, EnumerableCE.OfTypes<Ec1, E2, E1>()).History;
-                  var expectedHistoryAfterSecondMigration = TestTaggregate.FromTevents(serviceLocator.Resolve<IUtcTimeTimeSource>(), id, EnumerableCE.OfTypes<Ec1, E2, E3, E1>()).History;
+                  var initialTaggregate = TestTaggregate.FromTevents(id, EnumerableCE.OfTypes<Ec1, E1>());
+                  var expectedHistoryAfterFirstMigration = TestTaggregate.FromTevents(id, EnumerableCE.OfTypes<Ec1, E2, E1>()).History;
+                  var expectedHistoryAfterSecondMigration = TestTaggregate.FromTevents(id, EnumerableCE.OfTypes<Ec1, E2, E3, E1>()).History;
 
                   ITeventStoreUpdater Session() => serviceLocator.Resolve<ITeventStoreUpdater>();
                   ITeventStore TeventStore() => serviceLocator.Resolve<ITeventStore>();
@@ -562,12 +554,10 @@ public class TeventMigrationTest : TeventMigrationTestBase
                TestingTimeSource.FrozenAtUtcTime("2001-01-01 12:00"),
                () =>
                {
-                  serviceLocator.Resolve<TestingTimeSource>().FreezeAtUtcTime("2001-01-01 12:00");
-
                   var id = Guid.Parse("00000000-0000-0000-0000-000000000001");
-                  var initialTaggregate = TestTaggregate.FromTevents(serviceLocator.Resolve<IUtcTimeTimeSource>(), id, EnumerableCE.OfTypes<Ec1, E1>());
-                  var expectedHistoryAfterFirstMigration = TestTaggregate.FromTevents(serviceLocator.Resolve<IUtcTimeTimeSource>(), id, EnumerableCE.OfTypes<Ec1, E1, E2>()).History;
-                  var expectedHistoryAfterSecondMigration = TestTaggregate.FromTevents(serviceLocator.Resolve<IUtcTimeTimeSource>(), id, EnumerableCE.OfTypes<Ec1, E1, E3, E2>()).History;
+                  var initialTaggregate = TestTaggregate.FromTevents(id, EnumerableCE.OfTypes<Ec1, E1>());
+                  var expectedHistoryAfterFirstMigration = TestTaggregate.FromTevents(id, EnumerableCE.OfTypes<Ec1, E1, E2>()).History;
+                  var expectedHistoryAfterSecondMigration = TestTaggregate.FromTevents(id, EnumerableCE.OfTypes<Ec1, E1, E3, E2>()).History;
 
                   ITeventStoreUpdater Session() => serviceLocator.Resolve<ITeventStoreUpdater>();
                   ITeventStore TeventStore() => serviceLocator.Resolve<ITeventStore>();
@@ -629,7 +619,6 @@ public class TeventMigrationTest : TeventMigrationTestBase
          var id = Guid.Parse("00000000-0000-0000-0000-000000000001");
 
          var taggregate = TestTaggregate.FromTevents(
-            serviceLocator.Resolve<IUtcTimeTimeSource>(),
             id,
             EnumerableCE.OfTypes<Ec1, E1, E2, E3, E4>());
 

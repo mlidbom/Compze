@@ -71,8 +71,7 @@ class ServerEndpointBuilder : IEndpointBuilder, IAsyncDisposable, IDisposable
    {
       var register = Container.Register();
       //Universal stuff here
-      register.TimeSource()
-              .JSonAppConfigFileConfigurationParameterProvider()
+      register.JSonAppConfigFileConfigurationParameterProvider()
               .TypeMapper();
 
       //Only endpoint stuff after here

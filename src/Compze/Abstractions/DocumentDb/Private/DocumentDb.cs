@@ -22,19 +22,17 @@ class DocumentDb : IDocumentDb
 {
    internal static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Scoped.For<IDocumentDb>()
-                                  .CreatedBy((IDocumentDbSqlLayer sqlLayer, ITypeMapper typeMapper, IUtcTimeTimeSource timeSource, IDocumentDbSerializer serializer)
-                                                => new DocumentDb(timeSource, serializer, typeMapper, sqlLayer)));
+                                  .CreatedBy((IDocumentDbSqlLayer sqlLayer, ITypeMapper typeMapper, IDocumentDbSerializer serializer)
+                                                => new DocumentDb(serializer, typeMapper, sqlLayer)));
 
-   readonly IUtcTimeTimeSource _timeSource;
    readonly IDocumentDbSerializer _serializer;
 
    readonly ITypeMapper _typeMapper;
    readonly IDocumentDbSqlLayer _sqlLayer;
 
-   DocumentDb(IUtcTimeTimeSource timeSource, IDocumentDbSerializer serializer, ITypeMapper typeMapper, IDocumentDbSqlLayer sqlLayer)
+   DocumentDb(IDocumentDbSerializer serializer, ITypeMapper typeMapper, IDocumentDbSqlLayer sqlLayer)
    {
       _sqlLayer = sqlLayer;
-      _timeSource = timeSource;
       _serializer = serializer;
       _typeMapper = typeMapper;
    }

@@ -45,7 +45,6 @@ public static class DiContainerExtensions
    {
       var container = @this.CreateWithServiceLocatorAndCurrentTestsPluggableComponents();
       container.Register()
-               .TimeSource()
                .TypeMapper()
                .DummyConfigurationParameterProvider()
                .TessageHandlerRegistry()

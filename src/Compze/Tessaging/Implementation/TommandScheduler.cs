@@ -23,15 +23,14 @@ static class TommandSchedulerRegistrar
       => registrar.Register(Implementation.TommandScheduler.RegisterWith);
 }
 
-class TommandScheduler(IOutbox transport, IUtcTimeTimeSource timeSource, ITaskRunner taskRunner) : IDisposable
+class TommandScheduler(IOutbox transport, ITaskRunner taskRunner) : IDisposable
 {
    internal static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<TommandScheduler>()
-                                     .CreatedBy((IOutbox transport, IUtcTimeTimeSource timeSource, ITaskRunner taskRunner)
-                                                   => new TommandScheduler(transport, timeSource, taskRunner)));
+                                     .CreatedBy((IOutbox transport, ITaskRunner taskRunner)
+                                                   => new TommandScheduler(transport, taskRunner)));
 
    readonly IOutbox _transport = transport;
-   readonly IUtcTimeTimeSource _timeSource = timeSource;
    readonly ITaskRunner _taskRunner = taskRunner;
    Timer? _scheduledTessagesTimer;
    readonly List<ScheduledTommand> _scheduledTessages = [];

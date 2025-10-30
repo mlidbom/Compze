@@ -16,7 +16,6 @@ namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification;
 
 public class When_scheduling_tommands_to_be_sent_in_the_future : UniversalTestBase
 {
-   IUtcTimeTimeSource _timeSource = DateTimeNowTimeSource.Instance;
    readonly IThreadGate _receivedTommandGate;
    readonly ITestingEndpointHost _host;
    readonly IEndpoint _endpoint;
@@ -34,13 +33,7 @@ public class When_scheduling_tommands_to_be_sent_in_the_future : UniversalTestBa
          });
    }
 
-   protected override async Task InitializeAsyncInternal()
-   {
-      await _host.StartAsync();
-
-      var serviceLocator = _endpoint.ServiceLocator;
-      _timeSource = serviceLocator.Resolve<IUtcTimeTimeSource>();
-   }
+   protected override async Task InitializeAsyncInternal() => await _host.StartAsync();
 
    protected override async Task DisposeAsyncInternal() => await _host.DisposeAsync();
 

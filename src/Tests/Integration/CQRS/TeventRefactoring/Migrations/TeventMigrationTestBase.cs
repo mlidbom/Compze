@@ -52,8 +52,6 @@ public abstract class TeventMigrationTestBase : UniversalTestBase
          TestingTimeSource.FrozenAtUtcTime("2001-01-01 12:00"),
          async () =>
          {
-            var timeSource = serviceLocator.Resolve<TestingTimeSource>();
-            timeSource.FreezeAtUtcTime("2001-02-02 01:01:01.011111");
             var scenarioIndex = 1;
 
             try
@@ -64,7 +62,6 @@ public abstract class TeventMigrationTestBase : UniversalTestBase
                      TestingTimeSource.FrozenAtUtcTime(UtcTimeSource.UtcNow + FluentTimeSpanExtensions.Hours(1)),
                      async () =>
                      {
-                        timeSource.FreezeAtUtcTime(UtcTimeSource.UtcNow + FluentTimeSpanExtensions.Hours(1)); //No time collision between scenarios please.
                         migrations = migrationScenario.Migrations.ToList();
                         await RunScenarioWithTeventStoreType(migrationScenario, serviceLocator, migrations, scenarioIndex++, writer);
                         return unit.Value;
@@ -88,8 +85,6 @@ public abstract class TeventMigrationTestBase : UniversalTestBase
       var startingMigrations = migrations.ToList();
       migrations.Clear();
 
-      var timeSource = serviceLocator.Resolve<TestingTimeSource>();
-
       IReadOnlyList<ITaggregateTevent> teventsInStoreAtStart;
       using(serviceLocator.BeginScope()) //Why is this needed? It fails without it but I do not understand why...
       {
@@ -101,15 +96,15 @@ public abstract class TeventMigrationTestBase : UniversalTestBase
 
       var original = UtcTimeSource.WithOverride(TestingTimeSource.FrozenUtcNow(),
                                                 () =>
-                                                   TestTaggregate.FromTevents(TestingTimeSource.FrozenUtcNow(), scenario.TaggregateId, scenario.OriginalHistory)
+                                                   TestTaggregate.FromTevents(scenario.TaggregateId, scenario.OriginalHistory)
                                                                  .History.ToList());
 
       writer.WriteLine("Original History: ");
       original.ForEach(e => writer.WriteLine($"      {e}"));
       writer.WriteLine();
 
-      var initialTaggregate = TestTaggregate.FromTevents(timeSource, scenario.TaggregateId, scenario.OriginalHistory);
-      var expected = TestTaggregate.FromTevents(timeSource, scenario.TaggregateId, scenario.ExpectedHistory)
+      var initialTaggregate = TestTaggregate.FromTevents(scenario.TaggregateId, scenario.OriginalHistory);
+      var expected = TestTaggregate.FromTevents(scenario.TaggregateId, scenario.ExpectedHistory)
                                    .History.ToList();
       var expectedCompleteTeventStoreStream = teventsInStoreAtStart.Concat(expected)
                                                                    .ToList();
@@ -122,8 +117,6 @@ public abstract class TeventMigrationTestBase : UniversalTestBase
          TestingTimeSource.FrozenAtUtcTime(UtcTimeSource.UtcNow + FluentTimeSpanExtensions.Hours(1)),
          async () =>
          {
-            timeSource.FreezeAtUtcTime(UtcTimeSource.UtcNow + FluentTimeSpanExtensions.Hours(1)); //Bump clock to ensure that times will be be wrong unless the time from the original tevents are used..
-
             serviceLocator.ExecuteTransactionInIsolatedScope(() => serviceLocator.Resolve<ITeventStoreUpdater>()
                                                                                  .Save(initialTaggregate));
             startingMigrations.ForEach(migrations.Add);

@@ -19,7 +19,7 @@ class Account : Taggregate<Account, AccountTevent.Root, AccountTevent.Implementa
 
    //No public constructors please. Taggregates are created through domain verbs.
    //Expose named factory methods that ensure the instance is valid instead. See register method below.
-   Account() : base(new DateTimeNowTimeSource())
+   Account()
    {
       //Maintain correct state as tevents are raised or read from the store.
       //Use property updated tevents whenever possible. Changes to public state should be represented by property updated tevents.

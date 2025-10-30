@@ -56,10 +56,7 @@ namespace Compze.Tests.Common.CQRS.TeventRefactoring.Migrations
         }
 
 
-        [Obsolete("For serialization only", error: true), UsedImplicitly]
         public TestTaggregate() => SetupAppliers();
-
-        TestTaggregate(IUtcTimeTimeSource timeSource):base(timeSource) => SetupAppliers();
 
         void SetupAppliers()
         {
@@ -67,20 +64,20 @@ namespace Compze.Tests.Common.CQRS.TeventRefactoring.Migrations
                 .For<IRootTevent>(e => _history.Add(e));
         }
 
-        public TestTaggregate(IUtcTimeTimeSource timeSource, params RootTevent[] tevents):this(timeSource)
+        public TestTaggregate(params RootTevent[] tevents):this()
         {
            if(tevents.First() is not ITaggregateCreatedTevent) throw new Exception($"First tevent must be {nameof(ITaggregateCreatedTevent)}");
 
             Publish(tevents);
         }
 
-        public static TestTaggregate FromTevents(IUtcTimeTimeSource timeSource, Guid? id, IEnumerable<Type> tevents)
+        public static TestTaggregate FromTevents(Guid? id, IEnumerable<Type> tevents)
         {
             var rootTevents = tevents.ToTevents();
 #pragma warning disable CS0618 // Type or member is obsolete
             rootTevents.Cast<IMutableTaggregateTevent>().First().SetTaggregateIdInternal(id ?? Guid.NewGuid());
 #pragma warning restore CS0618 // Type or member is obsolete
-            return new TestTaggregate(timeSource, rootTevents);
+            return new TestTaggregate(rootTevents);
         }
 
         readonly List<IRootTevent> _history = [];

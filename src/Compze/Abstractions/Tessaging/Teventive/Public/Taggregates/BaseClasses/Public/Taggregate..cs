@@ -22,8 +22,6 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
    where TTaggregateTevent : class, ITaggregateTevent
    where TTaggregateTeventImplementation : TaggregateTevent, TTaggregateTevent
 {
-   IUtcTimeTimeSource TimeSource { get; set; }
-
    static Taggregate() => TaggregateTypeValidator<TTaggregate, TTaggregateTeventImplementation, TTaggregateTevent>.AssertStaticStructureIsValid();
 
    static TWrapperTeventInterface WrapEvent(TTaggregateTevent @event) =>
@@ -32,11 +30,9 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
                                           .Invoke(@event);
 
    //Yes Guid.Empty. Id should be assigned by an action, and it should be obvious that the taggregate in invalid until that happens
-   protected Taggregate(IUtcTimeTimeSource timeSource) : base(Guid.Empty)
+   protected Taggregate() : base(Guid.Empty)
    {
-      Assert.Argument.NotNull(timeSource)
-            .Is(typeof(TTaggregateTevent).IsInterface);
-      TimeSource = timeSource;
+      Assert.Argument.Is(typeof(TTaggregateTevent).IsInterface);
       _teventHandlersDispatcher.Register().IgnoreUnhandled<TTaggregateTevent>();
    }
 
@@ -122,8 +118,6 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
       commitTevents(_unCommittedTevents);
       _unCommittedTevents.Clear();
    }
-
-   void ITaggregate.SetTimeSource(IUtcTimeTimeSource timeSource) => TimeSource = timeSource;
 
    void ITaggregate.LoadFromHistory(IEnumerable<ITaggregateTevent> history)
    {
