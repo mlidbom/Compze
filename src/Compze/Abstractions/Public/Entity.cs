@@ -30,12 +30,9 @@ public class Entity<TEntity, TKey> : IEntity<TKey>
    public virtual EntityId<TKey> Id
    {
       get => Assert.Result.Is(!Equals(_id.PrimitiveValue, default(TKey))).then(_id);
+      [Obsolete(ObsoleteMessage.ForInternalUseOnly)]
       protected set => _id = Assert.Argument.NotNull(value).then(value);
    }
-
-   ///<summary>Sets the id of the instance. Should probably never be used except by infrastructure code.</summary>
-   [Obsolete(ObsoleteMessage.ForInternalUseOnly)]
-   protected void SetIdBeVerySureYouKnowWhatYouAreDoing(EntityId<TKey> id) => Id = id;
 
    ///<summary>Gets the id of the instance bypassing contract validation. Should probably never be used except by infrastructure code.</summary>
    [Obsolete(ObsoleteMessage.ForInternalUseOnly)]

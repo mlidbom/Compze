@@ -101,7 +101,9 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
       {
          if(theTevent is ITaggregateCreatedTevent)
          {
+#pragma warning disable CS0618 // Type or member is obsolete
             base.Id = theTevent.TaggregateId;
+#pragma warning restore CS0618 // Type or member is obsolete
          }
 
          Version = theTevent.TaggregateVersion;

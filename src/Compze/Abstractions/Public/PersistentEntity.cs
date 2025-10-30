@@ -24,6 +24,7 @@ public class Entity<TEntity> : Entity<TEntity, Guid>, IEntity where TEntity : En
    public new virtual EntityId Id
    {
       get => (EntityId)base.Id;
+      [Obsolete(ObsoleteMessage.ForInternalUseOnly)]
       protected set => base.Id = value;
    }
 }

@@ -23,7 +23,9 @@ public partial class SelfGeneratingQueryModel<TQueryModel, TTaggregateTevent> : 
    {
       if(theTevent is ITaggregateCreatedTevent)
       {
+#pragma warning disable CS0618 // Type or member is obsolete
          Id = theTevent.TaggregateId;
+#pragma warning restore CS0618 // Type or member is obsolete
       }
 
       Version = theTevent.TaggregateVersion;
