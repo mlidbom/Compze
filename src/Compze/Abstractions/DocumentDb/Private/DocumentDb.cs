@@ -22,19 +22,17 @@ class DocumentDb : IDocumentDb
 {
    internal static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Scoped.For<IDocumentDb>()
-                                  .CreatedBy((IDocumentDbSqlLayer sqlLayer, ITypeMapper typeMapper, IUtcTimeTimeSource timeSource, IDocumentDbSerializer serializer)
-                                                => new DocumentDb(timeSource, serializer, typeMapper, sqlLayer)));
+                                  .CreatedBy((IDocumentDbSqlLayer sqlLayer, ITypeMapper typeMapper, IDocumentDbSerializer serializer)
+                                                => new DocumentDb(serializer, typeMapper, sqlLayer)));
 
-   readonly IUtcTimeTimeSource _timeSource;
    readonly IDocumentDbSerializer _serializer;
 
    readonly ITypeMapper _typeMapper;
    readonly IDocumentDbSqlLayer _sqlLayer;
 
-   DocumentDb(IUtcTimeTimeSource timeSource, IDocumentDbSerializer serializer, ITypeMapper typeMapper, IDocumentDbSqlLayer sqlLayer)
+   DocumentDb(IDocumentDbSerializer serializer, ITypeMapper typeMapper, IDocumentDbSqlLayer sqlLayer)
    {
       _sqlLayer = sqlLayer;
-      _timeSource = timeSource;
       _serializer = serializer;
       _typeMapper = typeMapper;
    }
@@ -68,7 +66,7 @@ class DocumentDb : IDocumentDb
       var idString = GetIdString(id);
       var serializedDocument = _serializer.Serialize(value);
 
-      _sqlLayer.Add(new IDocumentDbSqlLayer.WriteRow(id: idString, serializedDocument: serializedDocument, updateTime: _timeSource.UtcNow, typeId: _typeMapper.GetId(value.GetType()).GuidValue));
+      _sqlLayer.Add(new IDocumentDbSqlLayer.WriteRow(id: idString, serializedDocument: serializedDocument, updateTime: UtcTimeSource.UtcNow, typeId: _typeMapper.GetId(value.GetType()).GuidValue));
 
       persistentValues.GetOrAddDefault(value.GetType())[idString] = serializedDocument;
    }
@@ -94,7 +92,7 @@ class DocumentDb : IDocumentDb
       values = values.ToList();
 
       var toUpdate = new List<IDocumentDbSqlLayer.WriteRow>();
-      var now = _timeSource.UtcNow;
+      var now = UtcTimeSource.UtcNow;
       foreach(var item in values)
       {
          var serializedDocument = _serializer.Serialize(item.Value);

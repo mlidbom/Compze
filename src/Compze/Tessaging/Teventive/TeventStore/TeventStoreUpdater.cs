@@ -27,23 +27,21 @@ class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
    readonly IDictionary<Guid, ITaggregate> _idMap = new Dictionary<Guid, ITaggregate>();
    readonly IUsageGuard _usageGuard;
    readonly List<IDisposable> _disposableResources = [];
-   IUtcTimeTimeSource TimeSource { get; set; }
 
    internal static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(
          Scoped.For<ITeventStoreUpdater, ITeventStoreReader>()
-               .CreatedBy((ITeventStoreTeventPublisher teventPublisher, ITeventStore teventStore, IUtcTimeTimeSource timeSource, ITaggregateTypeValidator taggregateTypeValidator) =>
-                             new TeventStoreUpdater(teventPublisher, teventStore, timeSource, taggregateTypeValidator)));
+               .CreatedBy((ITeventStoreTeventPublisher teventPublisher, ITeventStore teventStore, ITaggregateTypeValidator taggregateTypeValidator) =>
+                             new TeventStoreUpdater(teventPublisher, teventStore, taggregateTypeValidator)));
 
-   TeventStoreUpdater(ITeventStoreTeventPublisher teventStoreTeventPublisher, ITeventStore store, IUtcTimeTimeSource timeSource, ITaggregateTypeValidator taggregateTypeValidator)
+   TeventStoreUpdater(ITeventStoreTeventPublisher teventStoreTeventPublisher, ITeventStore store, ITaggregateTypeValidator taggregateTypeValidator)
    {
-      Argument.NotNull(teventStoreTeventPublisher).NotNull(store).NotNull(timeSource);
+      Argument.NotNull(teventStoreTeventPublisher).NotNull(store);
 
       _usageGuard = new CombinationUsageGuard(new SingleThreadUseGuard(this), new SingleTransactionUsageGuard(this));
       _teventStoreTeventPublisher = teventStoreTeventPublisher;
       _store = store;
       _taggregateTypeValidator = taggregateTypeValidator;
-      TimeSource = timeSource;
    }
 
    public TTaggregate Get<TTaggregate>(Guid taggregateId) where TTaggregate : class, ITaggregate
@@ -181,7 +179,6 @@ class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
    TTaggregate CreateInstance<TTaggregate>() where TTaggregate : ITaggregate
    {
       var taggregate = Constructor.For<TTaggregate>.DefaultConstructor.Instance();
-      taggregate.SetTimeSource(TimeSource);
       return taggregate;
    }
 }

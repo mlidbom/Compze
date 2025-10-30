@@ -1,10 +1,18 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using Compze.Utilities.Functional;
+using Compze.Utilities.SystemCE.ActionFuncHarmonization;
 using Compze.Utilities.SystemCE.LinqCE;
 
 namespace Compze.Utilities.SystemCE;
 
 static class ActionCE
 {
+   internal static Action From(Func<unit> action) => action.AsAction();
+   internal static Action<TParam> From<TParam>(Func<TParam, unit> action) => action.AsAction();
+   internal static Action<TParam, TParam2> From<TParam, TParam2>(Func<TParam,TParam2, unit> action) => action.AsAction();
+
+
    internal static void InvokeAll(this IEnumerable<Action> @this) => @this.ForEach(me => me.Invoke());
 }

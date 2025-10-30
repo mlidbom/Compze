@@ -12,7 +12,6 @@ public interface ITaggregate
 
    void Commit(Action<IReadOnlyList<ITaggregateTevent>> commitTevents);
    void LoadFromHistory(IEnumerable<ITaggregateTevent> history);
-   void SetTimeSource(IUtcTimeTimeSource timeSource);
    IObservable<ITaggregateTevent> TeventStream { get; }
 }
 

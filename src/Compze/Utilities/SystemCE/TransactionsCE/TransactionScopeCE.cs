@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using System.Transactions;
+using Compze.Utilities.SystemCE.ActionFuncHarmonization;
 using Compze.Utilities.Threading.TasksCE;
 using JetBrains.Annotations;
 
@@ -10,7 +11,7 @@ public static class TransactionScopeCe
 {
    public static void SuppressAmbientAndExecuteInNewTransaction(Action action) => SuppressAmbient(() => Execute(action));
 
-   public static void Execute([InstantHandle] Action action, TransactionScopeOption option = TransactionScopeOption.Required) => Execute(action.AsUnitFunc(), option);
+   public static void Execute([InstantHandle] Action action, TransactionScopeOption option = TransactionScopeOption.Required) => Execute(action.AsFunc(), option);
 
    public static void SuppressAmbient(Action action) => Execute(action, TransactionScopeOption.Suppress);
 

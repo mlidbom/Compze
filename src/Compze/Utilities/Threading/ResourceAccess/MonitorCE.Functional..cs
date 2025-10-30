@@ -1,6 +1,8 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using Compze.Utilities.Functional;
+using Compze.Utilities.SystemCE;
+using Compze.Utilities.SystemCE.ActionFuncHarmonization;
 
 namespace Compze.Utilities.Threading.ResourceAccess;
 
@@ -14,7 +16,7 @@ public partial class MonitorCE
       using(TakeReadLock()) return func();
    }
 
-   public unit Update(Action action) => Update(action.AsUnitFunc());
+   public unit Update(Action action) => Update(action.AsFunc());
 
    public T Update<T>(Func<T> func)
    {

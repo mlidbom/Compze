@@ -16,7 +16,6 @@ namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification;
 
 public class When_scheduling_tommands_to_be_sent_in_the_future : UniversalTestBase
 {
-   IUtcTimeTimeSource _timeSource = DateTimeNowTimeSource.Instance;
    readonly IThreadGate _receivedTommandGate;
    readonly ITestingEndpointHost _host;
    readonly IEndpoint _endpoint;
@@ -34,19 +33,13 @@ public class When_scheduling_tommands_to_be_sent_in_the_future : UniversalTestBa
          });
    }
 
-   protected override async Task InitializeAsyncInternal()
-   {
-      await _host.StartAsync();
-
-      var serviceLocator = _endpoint.ServiceLocator;
-      _timeSource = serviceLocator.Resolve<IUtcTimeTimeSource>();
-   }
+   protected override async Task InitializeAsyncInternal() => await _host.StartAsync();
 
    protected override async Task DisposeAsyncInternal() => await _host.DisposeAsync();
 
    [PCT]  public void Tessages_whose_due_time_has_passed_are_delivered()
    {
-      var now = _timeSource.UtcNow;
+      var now = UtcTimeSource.UtcNow;
       var inOneHour = new ScheduledTommand();
 
       _endpoint.ExecuteServerRequestInTransaction(session => session.ScheduleSend(now + .2.Seconds(), inOneHour));
@@ -56,7 +49,7 @@ public class When_scheduling_tommands_to_be_sent_in_the_future : UniversalTestBa
 
    [PCT]  public void Tessages_whose_due_time_have_not_passed_are_not_delivered()
    {
-      var now = _timeSource.UtcNow;
+      var now = UtcTimeSource.UtcNow;
       var inOneHour = new ScheduledTommand();
       _endpoint.ExecuteServerRequestInTransaction(session => session.ScheduleSend(now + 2.Seconds(), inOneHour));
 

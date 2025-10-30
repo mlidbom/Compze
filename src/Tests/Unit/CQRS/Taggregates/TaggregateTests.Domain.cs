@@ -13,7 +13,7 @@ class User : Taggregate<User,IUserTevent, UserTevent>
    public string Password { get; private set; } = "";
 
 
-   public User():base(new DateTimeNowTimeSource())
+   public User()
    {
       RegisterTeventAppliers()
         .For<IUserRegistered>(e =>

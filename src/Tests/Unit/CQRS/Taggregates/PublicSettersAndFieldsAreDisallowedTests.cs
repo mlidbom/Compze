@@ -71,7 +71,7 @@ public class PublicSettersAndFieldsAreDisallowedTests : UniversalTestBase
 
    }
 
-   class Root(IUtcTimeTimeSource timeSource) : Taggregate<Root, RootTevent.IRoot, RootTevent.Root>(timeSource)
+   class Root() : Taggregate<Root, RootTevent.IRoot, RootTevent.Root>()
    {
       public class AggComponent(Root parent): Root.Component<AggComponent, RootTevent.Component.Root, RootTevent.Component.IRoot>(parent)
       {
@@ -97,7 +97,7 @@ public class PublicSettersAndFieldsAreDisallowedTests : UniversalTestBase
 
    [XF]public void Trying_to_create_instance_of_taggregate_throws_and_lists_all_broken_types_in_exception_except_ignored()
    {
-      FluentActions.Invoking(() => new Root(null!))
+      FluentActions.Invoking(() => new Root())
                    .Should().Throw<Exception>()
                    .Which.InnerException!
                    .Message

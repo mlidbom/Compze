@@ -14,7 +14,7 @@ class CompositeTaggregate :
     readonly RemovableEntity.CollectionManager _entities;
     public Component Component { get; private set; }
 
-    public CompositeTaggregate(string name, Guid id) : base(new DateTimeNowTimeSource())
+    public CompositeTaggregate(string name, Guid id)
     {
         Component = new Component(this);
         _entities = RemovableEntity.CreateSelfManagingCollection(this);

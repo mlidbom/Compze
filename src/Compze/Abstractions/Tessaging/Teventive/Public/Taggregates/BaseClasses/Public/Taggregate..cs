@@ -22,8 +22,6 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
    where TTaggregateTevent : class, ITaggregateTevent
    where TTaggregateTeventImplementation : TaggregateTevent, TTaggregateTevent
 {
-   IUtcTimeTimeSource TimeSource { get; set; }
-
    static Taggregate() => TaggregateTypeValidator<TTaggregate, TTaggregateTeventImplementation, TTaggregateTevent>.AssertStaticStructureIsValid();
 
    static TWrapperTeventInterface WrapEvent(TTaggregateTevent @event) =>
@@ -32,11 +30,9 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
                                           .Invoke(@event);
 
    //Yes Guid.Empty. Id should be assigned by an action, and it should be obvious that the taggregate in invalid until that happens
-   protected Taggregate(IUtcTimeTimeSource timeSource) : base(Guid.Empty)
+   protected Taggregate() : base(Guid.Empty)
    {
-      Assert.Argument.NotNull(timeSource)
-            .Is(typeof(TTaggregateTevent).IsInterface);
-      TimeSource = timeSource;
+      Assert.Argument.Is(typeof(TTaggregateTevent).IsInterface);
       _teventHandlersDispatcher.Register().IgnoreUnhandled<TTaggregateTevent>();
    }
 
@@ -57,7 +53,7 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
       {
 #pragma warning disable CS0618 // Type or member is obsolete
          ((IMutableTaggregateTevent)theTevent).SetTaggregateVersionInternal(Version + 1);
-         ((IMutableTaggregateTevent)theTevent).SetUtcTimeStampInternal(TimeSource.UtcNow);
+         ((IMutableTaggregateTevent)theTevent).SetUtcTimeStampInternal(UtcTimeSource.UtcNow);
          if(Version == 0)
          {
             if(theTevent is not ITaggregateCreatedTevent) throw new Exception($"The first published tevent {theTevent.GetType()} did not implement {nameof(ITaggregateCreatedTevent)}. The first tevent an taggregate publishes must always implement {nameof(ITaggregateCreatedTevent)}.");
@@ -122,8 +118,6 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
       commitTevents(_unCommittedTevents);
       _unCommittedTevents.Clear();
    }
-
-   void ITaggregate.SetTimeSource(IUtcTimeTimeSource timeSource) => TimeSource = timeSource;
 
    void ITaggregate.LoadFromHistory(IEnumerable<ITaggregateTevent> history)
    {

@@ -1,5 +1,7 @@
 using System;
 using Compze.Utilities.Functional;
+using Compze.Utilities.SystemCE;
+using Compze.Utilities.SystemCE.ActionFuncHarmonization;
 
 namespace Compze.Utilities.Threading.ResourceAccess;
 
@@ -30,7 +32,7 @@ public interface IThreadShared
          _monitor.Update(() => update(_shared));
 
       public unit Update(Action<TShared> update) =>
-         _monitor.Update(() => update.AsUnitFunc()(_shared));
+         _monitor.Update(() => update.AsFunc()(_shared));
 
       public unit Await(Func<TShared, bool> condition) => _monitor.Await(() => condition(_shared));
       public unit Await(TimeSpan timeout, Func<TShared, bool> condition) => _monitor.Await(timeout, () => condition(_shared));

@@ -12,7 +12,7 @@ class Root : Taggregate<Root, RootTevent.IRoot, RootTevent.Implementation.Root>
    readonly RemovableEntity.CollectionManager _entities;
    public Component Component { get; private set; }
 
-   public Root(string name) : base(new DateTimeNowTimeSource())
+   public Root(string name)
    {
       Component = new Component(this);
       _entities = RemovableEntity.CreateSelfManagingCollection(this);

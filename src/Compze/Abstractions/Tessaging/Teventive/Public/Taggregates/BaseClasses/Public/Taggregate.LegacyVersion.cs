@@ -10,8 +10,6 @@ public class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeventImpleme
     where TTaggregateTevent : class, ITaggregateTevent
     where TTaggregateTeventImplementation : TaggregateTevent, TTaggregateTevent
 {
-    [Obsolete("Only for infrastructure", true)]
-    protected Taggregate() : this(DateTimeNowTimeSource.Instance) {}
+    protected Taggregate() {}
 
-    protected Taggregate(IUtcTimeTimeSource timeSource) : base(timeSource) {}
 }

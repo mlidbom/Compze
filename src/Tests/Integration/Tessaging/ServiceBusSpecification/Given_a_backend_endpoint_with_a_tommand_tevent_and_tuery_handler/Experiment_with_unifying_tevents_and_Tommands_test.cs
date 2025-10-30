@@ -136,7 +136,7 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
          return registrar;
       }
 
-      UserRegistrarTaggregate() : base(DateTimeNowTimeSource.Instance)
+      UserRegistrarTaggregate()
          => RegisterTeventAppliers()
            .IgnoreUnhandled<UserRegistrarTevent.IRoot>();
 
@@ -145,7 +145,7 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
 
    public class UserTaggregate : Taggregate<UserTaggregate, UserTevent.IRoot, UserTevent.Implementation.Root>
    {
-      UserTaggregate() : base(DateTimeNowTimeSource.Instance)
+      UserTaggregate()
          => RegisterTeventAppliers()
            .IgnoreUnhandled<UserTevent.IRoot>();
 
