@@ -10,7 +10,8 @@
    </PropertyGroup>
 
    <ItemGroup>
-      <None Include="../**/*.md" Exclude="$(BuildOutputExcludes)" KeepDuplicates="false" />
+      <None Include="../**/TODO/*.md" Exclude="$(BuildOutputExcludes)" KeepDuplicates="false" />
+      <None Include="../**/*TODO*.md" Exclude="$(BuildOutputExcludes)" KeepDuplicates="false" />
       <None Include="../**/*.props" Exclude="$(BuildOutputExcludes)" KeepDuplicates="false" />
       <None Include="../**/config.nsdepcop" Exclude="$(BuildOutputExcludes)" KeepDuplicates="false" />
 	   <None Include="../**/*.editorconfig" Exclude="$(BuildOutputExcludes)" KeepDuplicates="false" />
