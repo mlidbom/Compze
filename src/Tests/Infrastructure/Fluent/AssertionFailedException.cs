@@ -3,10 +3,9 @@ using Compze.Utilities.SystemCE;
 
 namespace Compze.Tests.Infrastructure.Fluent;
 
-public class AssertionFailedException(string message) :
+public class AssertionFailedException(string message, Exception inner = null) :
    Exception($"""
-
               
-              {message.Indent()}
+              {message}
 
-              """);
+              """, inner);

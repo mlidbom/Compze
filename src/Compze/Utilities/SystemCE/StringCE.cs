@@ -22,6 +22,7 @@ static class StringCE
       return string.Join(separator, @this.ToArray());
    }
 
+   public static string Join(this IEnumerable<string> @this) => string.Join("", @this.ToArray());
 
    internal static string ReplaceInvariant(this string @this, string oldValue, string newValue) => @this.Replace(oldValue, newValue, StringComparison.InvariantCulture);
 
