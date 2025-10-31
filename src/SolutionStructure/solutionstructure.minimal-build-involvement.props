@@ -1,4 +1,4 @@
-<!-- Common properties for all build organization projects -->
+<!-- Common properties for all solution organization projects -->
 <Project>
    <PropertyGroup>
       <TargetFramework>net9.0</TargetFramework>
@@ -8,13 +8,6 @@
       <!-- Disable ALL default item globs -->
       <EnableDefaultItems>false</EnableDefaultItems>
       
-      <!-- Completely disable compilation and build outputs -->
-      <!--<ProduceReferenceAssembly>false</ProduceReferenceAssembly>-->
-      <!--<GenerateDependencyFile>false</GenerateDependencyFile>-->
-      <!--<CopyBuildOutputToOutputDirectory>false</CopyBuildOutputToOutputDirectory>-->
-      <!--<GenerateAssemblyInfo>false</GenerateAssemblyInfo>-->
-      <!--<Deterministic>false</Deterministic>-->
-      <!--<SkipCompilerExecution>true</SkipCompilerExecution> doing this breaks visual studio's ability to tell if a project is up to date-->
       <CopyBuildOutputToPublishDirectory>false</CopyBuildOutputToPublishDirectory>
       
       <!-- Disable analyzers to prevent warnings -->
@@ -23,36 +16,6 @@
       <EnableNETAnalyzers>false</EnableNETAnalyzers>
       <EnforceCodeStyleInBuild>false</EnforceCodeStyleInBuild>
       
-      <!-- Disable additional generated files -->
-      <!--<GenerateDocumentationFile>false</GenerateDocumentationFile>-->
-      <!--<PublishRepositoryUrl>false</PublishRepositoryUrl>-->
-      <!--<EmbedUntrackedSources>false</EmbedUntrackedSources>-->
-      <!--<IncludeSymbols>false</IncludeSymbols>-->
-      <!--<IncludeSource>false</IncludeSource>-->
-      <!--<EnableSourceLink>false</EnableSourceLink>-->
-      <!--<EnableSourceControlManagerQueries>false</EnableSourceControlManagerQueries>-->
-      
-      <!-- Disable package dependency resolution since we have no dependencies -->
-      <!--<ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>None</ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>-->
-      <!--<DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>-->
    </PropertyGroup>
    
-   <!-- Override the entire Build target to skip all build work -->
-   <!--<Target Name="Build" />-->
-   
-   <!-- Override targets that would fail without restore -->
-   <!--<Target Name="ResolvePackageAssets" />-->
-   <!--<Target Name="ResolvePackageDependenciesForBuild" />-->
-   <!--<Target Name="ResolveLockFileReferences" />-->
-   <!--<Target Name="ResolveLockFileAnalyzers" />-->
-   <!--<Target Name="ResolveLockFileCopyLocalFiles" />-->
-   
-   <!-- Also override other build targets as fallback -->
-   <!--<Target Name="CoreBuild" />-->
-   <!--<Target Name="CoreCompile" />-->
-   <!--<Target Name="GenerateBuildDependencyFile" />-->
-   <!--<Target Name="GenerateBuildRuntimeConfigurationFiles" />-->
-   <!--<Target Name="CopyFilesToOutputDirectory" />-->
-   <!--<Target Name="GenerateMSBuildEditorConfigFile" />-->
-   <!--<Target Name="InitializeSourceControlInformation" />-->
 </Project>
