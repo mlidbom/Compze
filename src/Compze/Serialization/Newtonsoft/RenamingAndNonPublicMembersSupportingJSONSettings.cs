@@ -22,6 +22,8 @@ static class RenamingAndNonPublicMembersSupportingJsonSettings
 
    internal static readonly JsonSerializerSettings Tessaging = Default;
 
+   internal static readonly JsonSerializerSettings SharedObjects = Default;
+
    public static readonly JsonSerializerSettings TeventStore =
       new(Default)
       {
