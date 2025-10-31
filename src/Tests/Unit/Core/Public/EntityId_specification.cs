@@ -24,8 +24,8 @@ public class EntityId_specification
             readonly TentityId _taggregateId = new(ExpectedGuidValue);
             [XF] public void IEquatable_equals_returns_true() => _tentityId.Equals(_taggregateId).Must().BeTrue();
             [XF] public void Object_equals_returns_true() => Equals(_tentityId, _taggregateId).Must().BeTrue();
-            [XF] public void Equals_operator_returns_true() => (_tentityId == _taggregateId).Must().BeTrue();
-            [XF] public void Not_equals_operator_returns_false() => (_tentityId != _taggregateId).Must().BeFalse();
+            [XF] public void equals_operator_returns_true() => (_tentityId == _taggregateId).Must().BeTrue();
+            [XF] public void not_equals_operator_returns_false() => (_tentityId != _taggregateId).Must().BeFalse();
          }
 
          public class with_a_different_value : and_another_TentityId
@@ -33,8 +33,8 @@ public class EntityId_specification
             readonly TentityId _differentTentityId = new(DifferentGuidValue);
             [XF] public void IEquatable_equals_returns_false() => _tentityId.Equals(_differentTentityId).Must().BeFalse();
             [XF] public void Object_equals_returns_false() => Equals(_tentityId, _differentTentityId).Must().BeFalse();
-            [XF] public void Equals_operator_returns_false() => (_tentityId == _differentTentityId).Must().BeFalse();
-            [XF] public void Not_equals_operator_returns_true() => (_tentityId != _differentTentityId).Must().BeTrue();
+            [XF] public void equals_operator_returns_false() => (_tentityId == _differentTentityId).Must().BeFalse();
+            [XF] public void not_equals_operator_returns_true() => (_tentityId != _differentTentityId).Must().BeTrue();
          }
       }
 
@@ -45,8 +45,8 @@ public class EntityId_specification
             readonly TaggregateId _taggregateId = new(ExpectedGuidValue);
             [XF] public void IEquatable_equals_returns_true() => _tentityId.Equals(_taggregateId).Must().BeTrue();
             [XF] public void Object_equals_returns_true() => Equals(_tentityId, _taggregateId).Must().BeTrue();
-            [XF] public void Equals_operator_returns_true() => (_tentityId == _taggregateId).Must().BeTrue();
-            [XF] public void Not_equals_operator_returns_false() => (_tentityId != _taggregateId).Must().BeFalse();
+            [XF] public void equals_operator_returns_true() => (_tentityId == _taggregateId).Must().BeTrue();
+            [XF] public void not_equals_operator_returns_false() => (_tentityId != _taggregateId).Must().BeFalse();
          }
       }
 
@@ -57,8 +57,8 @@ public class EntityId_specification
             readonly TessageId _tessageId = new(ExpectedGuidValue);
             [XF] public void IEquatable_equals_returns_false() => _tentityId.Equals(_tessageId).Must().BeFalse();
             [XF] public void Object_equals_returns_false() => Equals(_tentityId, _tessageId).Must().BeFalse();
-            [XF] public void Equals_operator_returns_false() => (_tentityId == _tessageId).Must().BeFalse();
-            [XF] public void Not_equals_operator_returns_true() => (_tentityId != _tessageId).Must().BeTrue();
+            [XF] public void equals_operator_returns_false() => (_tentityId == _tessageId).Must().BeFalse();
+            [XF] public void not_equals_operator_returns_true() => (_tentityId != _tessageId).Must().BeTrue();
          }
       }
 
@@ -66,8 +66,8 @@ public class EntityId_specification
       {
          [XF] public void IEquatable_equals_returns_false() => _tentityId.Equals(null).Must().BeFalse();
          [XF] public void Object_equals_returns_false() => Equals(_tentityId, null).Must().BeFalse();
-         [XF] public void Equals_operator_returns_false() => (_tentityId == null).Must().BeFalse();
-         [XF] public void Not_equals_operator_returns_true() => (_tentityId != null).Must().BeTrue();
+         [XF] public void equals_operator_returns_false() => (_tentityId == null).Must().BeFalse();
+         [XF] public void not_equals_operator_returns_true() => (_tentityId != null).Must().BeTrue();
       }
    }
 }
