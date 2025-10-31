@@ -84,6 +84,7 @@
     <Project Path="msbuild/Solution.Build.csproj" />
     <Project Path="SolutionStructure/Solution.EditorConfigs.csproj" />
     <Project Path="SolutionStructure/Solution.NsDepCop.csproj" />
+    <Project Path="SolutionStructure/Solution.Readme.csproj" DisplayName="Solution.README" />
     <Project Path="SolutionStructure/Solution.TestConfig.csproj" />
     <Project Path="SolutionStructure/Solution.TODO.csproj" />
   </Folder>
