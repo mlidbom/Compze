@@ -57,6 +57,7 @@
     <File Path="Compze/test-common-appsettings.json" />
     <File Path="TestUsingPluggableComponentCombinations" />
     <File Path="TestUsingPluggableComponentCombinations.example" />
+    <File Path="TODO_must_assertion_improvements.md" />
   </Folder>
   <Folder Name="/_Solution Items/Tests/">
     <File Path="Compze/test-common-appsettings.json" />
