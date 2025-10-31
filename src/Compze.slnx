@@ -80,6 +80,12 @@
   <Folder Name="/_Websites/">
     <Project Path="Websites/Website/Website.csproj" />
   </Folder>
+  <Folder Name="/~Solution Structure/">
+    <Project Path="msbuild/Solution.Build.csproj" />
+    <Project Path="SolutionStructure/Solution.EditorConfigs.csproj" />
+    <Project Path="SolutionStructure/Solution.NsDepCop.csproj" />
+    <Project Path="SolutionStructure/Solution.TestConfig.csproj" />
+    <Project Path="SolutionStructure/Solution.TODO.csproj" />
+  </Folder>
   <Project Path="../DevScripts/Scripts.csproj" />
-  <Project Path="msbuild/Build.csproj" />
 </Solution>
