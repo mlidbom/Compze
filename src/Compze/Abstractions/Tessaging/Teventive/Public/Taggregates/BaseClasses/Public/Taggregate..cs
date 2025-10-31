@@ -41,8 +41,7 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
       _teventHandlersDispatcher.Register().IgnoreUnhandled<TTaggregateTevent>();
    }
 
-   TentityId ITentity.Id => Id;
-
+   EntityId IEntity.Id => Id;
    public override TaggregateId Id => (TaggregateId)base.Id;
 
    readonly List<ITaggregateTevent> _unCommittedTevents = [];

@@ -40,16 +40,8 @@ public interface IEntity : IEntity<Guid>
    new EntityId Id { get; }
 }
 
-public interface ITentity<TId> : IEntity<TId> where TId : IEquatable<TId>
+public interface ITentity : IEntity
 {
-   EntityId<TId> IEntity<TId>.Id => Id;
-   new TentityId<TId> Id { get; }
-}
-
-public interface ITentity : ITentity<Guid>
-{
-   TentityId<Guid> ITentity<Guid>.Id => new TentityId<Guid>(Id.PrimitiveValue);
-   new TentityId Id { get; }
 }
 
 /// <summary>

@@ -12,10 +12,6 @@ public class EntityId<TPrimitive>(TPrimitive primitiveValue) : ValueWrapper<TPri
    protected override bool IsConsideredTypeCompatibleForEquality(object other) => GetType().IsAssignableToOrFrom(other.GetType());
 }
 
-public class TentityId<TPrimitive>(TPrimitive primitiveValue) : EntityId<TPrimitive>(primitiveValue)
-   where TPrimitive : IEquatable<TPrimitive>
-{}
-
 public class EntityId(Guid id) : EntityId<Guid>(id)
 {
    public EntityId() : this(Guid.NewGuid()) {}

@@ -7,7 +7,7 @@ namespace Compze.Core.Tessaging.Teventive.Public;
 
 public interface ITaggregate : ITentity
 {
-   TentityId ITentity.Id => Id;
+   EntityId IEntity.Id => Id;
    new TaggregateId Id { get; }
    int Version { get; }
 
