@@ -22,6 +22,16 @@
       <RunAnalyzersDuringBuild>false</RunAnalyzersDuringBuild>
       <EnableNETAnalyzers>false</EnableNETAnalyzers>
       <EnforceCodeStyleInBuild>false</EnforceCodeStyleInBuild>
+      
+      <!-- Disable additional generated files -->
+      <GenerateDocumentationFile>false</GenerateDocumentationFile>
+      <PublishRepositoryUrl>false</PublishRepositoryUrl>
+      <EmbedUntrackedSources>false</EmbedUntrackedSources>
+      <IncludeSymbols>false</IncludeSymbols>
+      <IncludeSource>false</IncludeSource>
+      <EnableSourceLink>false</EnableSourceLink>
+      <EnableSourceControlManagerQueries>false</EnableSourceControlManagerQueries>
+    
    </PropertyGroup>
    
    <!-- Override build targets to do nothing -->
@@ -29,4 +39,6 @@
    <Target Name="GenerateBuildDependencyFile" />
    <Target Name="GenerateBuildRuntimeConfigurationFiles" />
    <Target Name="CopyFilesToOutputDirectory" />
+   <Target Name="GenerateMSBuildEditorConfigFile" />
+   <Target Name="InitializeSourceControlInformation" />
 </Project>
