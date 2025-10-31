@@ -1,6 +1,6 @@
 ﻿<!-- ReSharper disable MarkupAttributeTypo -->
 <Project Sdk="Microsoft.NET.Sdk">
-   <Import Project="Build.Common.props" />
+   <Import Project="../SolutionStructure/solutionstructure.minimal-build-involvement.props" />
 
    <ItemGroup>
       <None Include="../**/*.props" Exclude="$(BuildOutputExcludes)" KeepDuplicates="false" />
