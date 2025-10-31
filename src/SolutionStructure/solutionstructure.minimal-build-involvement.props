@@ -5,4 +5,8 @@
       <IsPackable>false</IsPackable>
       <EnableDefaultItems>false</EnableDefaultItems>
    </PropertyGroup>
+
+   <PropertyGroup>
+      <BuildOutputExcludes>**/bin/**;**/obj/**</BuildOutputExcludes>
+   </PropertyGroup>
 </Project>
