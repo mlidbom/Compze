@@ -29,8 +29,8 @@ internal partial class MySqlInboxSqlLayer(IMySqlConnectionPool connectionFactory
                    ON DUPLICATE KEY UPDATE {TessageTable.TessageId} = {TessageTable.TessageId}
 
                    """)
-              .AddParameter(TessageTable.TessageId, tessageId.PrimitiveValue)
-              .AddParameter(TessageTable.TypeId, typeId.PrimitiveValue)
+              .AddParameter(TessageTable.TessageId, tessageId.Value)
+              .AddParameter(TessageTable.TypeId, typeId.Value)
                //performance: Like with the tevent store, keep all framework properties out of the JSON and put it into separate columns instead. For tevents. Reuse a pre-serialized instance from the persisting to the tevent store.
               .AddMediumTextParameter(TessageTable.Body, serializedTessage)
               .ExecuteNonQuery();
@@ -56,7 +56,7 @@ internal partial class MySqlInboxSqlLayer(IMySqlConnectionPool connectionFactory
                                        AND {TessageTable.Status} = {(int)InboxTessageStatus.UnHandled}
 
                                    """)
-                              .AddParameter(TessageTable.TessageId, tessageId.PrimitiveValue)
+                              .AddParameter(TessageTable.TessageId, tessageId.Value)
                               .ExecuteNonQuery();
 
             Assert.Result.Is(affectedRows == 1);
@@ -80,7 +80,7 @@ internal partial class MySqlInboxSqlLayer(IMySqlConnectionPool connectionFactory
                         WHERE {TessageTable.TessageId} = @{TessageTable.TessageId}
 
                         """)
-                   .AddParameter(TessageTable.TessageId, tessageId.PrimitiveValue)
+                   .AddParameter(TessageTable.TessageId, tessageId.Value)
                    .AddMediumTextParameter(TessageTable.ExceptionStackTrace, exceptionStackTrace)
                    .AddMediumTextParameter(TessageTable.ExceptionTessage, exceptionTessage)
                    .AddVarcharParameter(TessageTable.ExceptionType, 500, exceptionType)
@@ -99,7 +99,7 @@ internal partial class MySqlInboxSqlLayer(IMySqlConnectionPool connectionFactory
                         WHERE {TessageTable.TessageId} = @{TessageTable.TessageId}
                             AND {TessageTable.Status} = {(int)InboxTessageStatus.UnHandled}
                         """)
-                   .AddParameter(TessageTable.TessageId, tessageId.PrimitiveValue)
+                   .AddParameter(TessageTable.TessageId, tessageId.Value)
                    .ExecuteNonQuery());
    }
 

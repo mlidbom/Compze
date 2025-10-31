@@ -71,7 +71,7 @@ internal partial class MySqlTeventStoreSqlLayer(MySqlTeventStoreConnectionManage
                                                                        ORDER BY {Tevent.ReadOrder} ASC
                                                                        {CreateLockHint(takeWriteLock)}
                                                                        """)
-                                                      .AddParameter(Tevent.TaggregateId, taggregateId.PrimitiveValue)
+                                                      .AddParameter(Tevent.TaggregateId, taggregateId.Value)
                                                       .AddParameter("CachedVersion", startAfterInsertedVersion)
                                                       .ExecuteReaderAndSelect(ReadDataRow)
                                                       .SkipWhile(row => row.StorageInformation.InsertedVersion <= startAfterInsertedVersion)

@@ -42,7 +42,7 @@ partial class MsSqlDocumentDbSqlLayer : IDocumentDbSqlLayer
             connection.UseCommand(command => command.SetCommandText($"UPDATE {Schema.TableName} SET {Schema.Value} = @{Schema.Value}, {Schema.Updated} = @{Schema.Updated} WHERE {Schema.Id} = @{Schema.Id} AND {Schema.ValueTypeId} = @{Schema.ValueTypeId}")
                                                     .AddNVarcharParameter(Schema.Id, 500, writeRow.Id)
                                                     .AddDateTime2Parameter(Schema.Updated, writeRow.UpdateTime)
-                                                    .AddParameter(Schema.ValueTypeId, writeRow.TypeId.PrimitiveValue)
+                                                    .AddParameter(Schema.ValueTypeId, writeRow.TypeId.Value)
                                                     .AddNVarcharMaxParameter(Schema.Value, writeRow.SerializedDocument)
                                                     .ExecuteNonQuery());
          }
@@ -80,7 +80,7 @@ partial class MsSqlDocumentDbSqlLayer : IDocumentDbSqlLayer
          {
             command.SetCommandText($"INSERT INTO {Schema.TableName}({Schema.Id}, {Schema.ValueTypeId}, {Schema.Value}, {Schema.Created}, {Schema.Updated}) VALUES(@{Schema.Id}, @{Schema.ValueTypeId}, @{Schema.Value}, @{Schema.Created}, @{Schema.Updated})")
                    .AddNVarcharParameter(Schema.Id, 500, row.Id)
-                   .AddParameter(Schema.ValueTypeId, row.TypeId.PrimitiveValue)
+                   .AddParameter(Schema.ValueTypeId, row.TypeId.Value)
                    .AddDateTime2Parameter(Schema.Created, row.UpdateTime)
                    .AddDateTime2Parameter(Schema.Updated, row.UpdateTime)
                    .AddNVarcharMaxParameter(Schema.Value, row.SerializedDocument)

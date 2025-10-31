@@ -31,8 +31,8 @@ partial class MsSqlInboxSqlLayer(IMsSqlConnectionPool connectionFactory, MsSqlSq
                                     VALUES (source.{TessageTable.TessageId}, source.{TessageTable.TypeId}, source.{TessageTable.Body}, {(int)InboxTessageStatus.UnHandled});
 
                                 """)
-                           .AddParameter(TessageTable.TessageId, tessageId.PrimitiveValue)
-                           .AddParameter(TessageTable.TypeId, typeId.PrimitiveValue)
+                           .AddParameter(TessageTable.TessageId, tessageId.Value)
+                           .AddParameter(TessageTable.TypeId, typeId.Value)
                             //performance: Like with the tevent store, keep all framework properties out of the JSON and put it into separate columns instead. For tevents. Reuse a pre-serialized instance from the persisting to the tevent store.
                            .AddNVarcharMaxParameter(TessageTable.Body, serializedTessage)
                            .ExecuteNonQuery();
@@ -57,7 +57,7 @@ partial class MsSqlInboxSqlLayer(IMsSqlConnectionPool connectionFactory, MsSqlSq
                                     AND {TessageTable.Status} = {(int)InboxTessageStatus.UnHandled}
 
                                 """)
-                           .AddParameter(TessageTable.TessageId, tessageId.PrimitiveValue)
+                           .AddParameter(TessageTable.TessageId, tessageId.Value)
                            .ExecuteNonQuery();
 
          Assert.Result.Is(affectedRows == 1);
@@ -80,7 +80,7 @@ partial class MsSqlInboxSqlLayer(IMsSqlConnectionPool connectionFactory, MsSqlSq
                                                           WHERE {TessageTable.TessageId} = @{TessageTable.TessageId}
 
                                                           """)
-                                                     .AddParameter(TessageTable.TessageId, tessageId.PrimitiveValue)
+                                                     .AddParameter(TessageTable.TessageId, tessageId.Value)
                                                      .AddNVarcharMaxParameter(TessageTable.ExceptionStackTrace, exceptionStackTrace)
                                                      .AddNVarcharMaxParameter(TessageTable.ExceptionTessage, exceptionTessage)
                                                      .AddNVarcharParameter(TessageTable.ExceptionType, 500, exceptionType)
@@ -98,7 +98,7 @@ partial class MsSqlInboxSqlLayer(IMsSqlConnectionPool connectionFactory, MsSqlSq
                                                           WHERE {TessageTable.TessageId} = @{TessageTable.TessageId}
                                                               AND {TessageTable.Status} = {(int)InboxTessageStatus.UnHandled}
                                                           """)
-                                                     .AddParameter(TessageTable.TessageId, tessageId.PrimitiveValue)
+                                                     .AddParameter(TessageTable.TessageId, tessageId.Value)
                                                      .ExecuteNonQuery());
    }
 

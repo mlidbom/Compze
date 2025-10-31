@@ -58,7 +58,7 @@ public class DocumentDbTests : DocumentDbTestsBase
     {
         var ids = 1.Through(9).Select(index => new EntityId(Guid.Parse($"00000000-0000-0000-0000-00000000000{index}"))).ToArray();
 
-        var users = ids.Select(id => new User(id.PrimitiveValue)).ToArray();
+        var users = ids.Select(id => new User(id.Value)).ToArray();
 
         UseInTransactionalScope((_, updater) => users.ForEach(user => updater.Save(user)));
 
@@ -75,7 +75,7 @@ public class DocumentDbTests : DocumentDbTestsBase
                    .Select(index => new EntityId(Guid.Parse($"00000000-0000-0000-0000-00000000000{index}")))
                    .ToArray();
 
-        var users = ids.Select(id => new User(id.PrimitiveValue))
+        var users = ids.Select(id => new User(id.Value))
                        .ToArray();
 
         UseInTransactionalScope((_, updater) => users.ForEach(user => updater.Save(user)));
@@ -94,7 +94,7 @@ public class DocumentDbTests : DocumentDbTestsBase
     {
         var ids = 1.Through(9).Select(index => new EntityId(Guid.Parse($"00000000-0000-0000-0000-00000000000{index}"))).ToArray();
 
-        var users = ids.Select(id => new User(id.PrimitiveValue)).ToArray();
+        var users = ids.Select(id => new User(id.Value)).ToArray();
 
         UseInTransactionalScope((_, updater) => users.ForEach(user => updater.Save(user)));
 

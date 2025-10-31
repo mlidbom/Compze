@@ -50,6 +50,6 @@ class AccountQueryModel : SelfGeneratingQueryModel<AccountQueryModel, AccountTev
       static void Get(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery(
          (TessageTypes.StrictlyLocal.Tueries.EntityLink<AccountQueryModel> tuery, IInProcessTypermediaNavigator navigator) =>
             //todo this Id conversion feels iffy
-            new AccountQueryModel(navigator.Execute(new TeventStoreApi().Tueries.GetHistory<AccountTevent.Root>(new TaggregateId(tuery.EntityId.PrimitiveValue)))));
+            new AccountQueryModel(navigator.Execute(new TeventStoreApi().Tueries.GetHistory<AccountTevent.Root>(new TaggregateId(tuery.EntityId.Value)))));
    }
 }

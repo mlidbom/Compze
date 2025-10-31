@@ -68,7 +68,7 @@ partial class MsSqlTeventStoreSqlLayer(MsSqlTeventStoreConnectionManager connect
                                                                            AND {Tevent.EffectiveVersion} > 0
                                                                        ORDER BY {Tevent.ReadOrder} ASC
                                                                        """)
-                                                      .AddParameter(Tevent.TaggregateId, taggregateId.PrimitiveValue)
+                                                      .AddParameter(Tevent.TaggregateId, taggregateId.Value)
                                                       .AddParameter("CachedVersion", startAfterInsertedVersion)
                                                       .ExecuteReaderAndSelect(ReadDataRow)
                                                       .ToList());

@@ -32,8 +32,8 @@ internal partial class MySqlOutboxSqlLayer(IMySqlConnectionPool connectionFactor
                        VALUES (@{TessageTable.TessageId}, @{TessageTable.TypeIdGuidValue}, @{TessageTable.SerializedTessage});
 
                    """)
-              .AddParameter(TessageTable.TessageId, tessageWithReceivers.TessageId.PrimitiveValue)
-              .AddParameter(TessageTable.TypeIdGuidValue, tessageWithReceivers.TypeId.PrimitiveValue)
+              .AddParameter(TessageTable.TessageId, tessageWithReceivers.TessageId.Value)
+              .AddParameter(TessageTable.TypeIdGuidValue, tessageWithReceivers.TypeId.Value)
                //performance: Like with the tevent store, keep all framework properties out of the JSON and put it into separate columns instead. For tevents. Reuse a pre-serialized instance from the persisting to the tevent store.
               .AddMediumTextParameter(TessageTable.SerializedTessage, tessageWithReceivers.SerializedTessage)
               .AddParameter(DispatchingTable.IsReceived, 0);
@@ -46,7 +46,7 @@ internal partial class MySqlOutboxSqlLayer(IMySqlConnectionPool connectionFactor
                                                             ({DispatchingTable.TessageId},  {DispatchingTable.EndpointId},          {DispatchingTable.IsReceived}) 
                                                     VALUES (@{DispatchingTable.TessageId}, @{DispatchingTable.EndpointId}_{index}, @{DispatchingTable.IsReceived});
 
-                                                """).AddParameter($"{DispatchingTable.EndpointId}_{index}", endpointId.PrimitiveValue));
+                                                """).AddParameter($"{DispatchingTable.EndpointId}_{index}", endpointId.Value));
 
             command.ExecuteNonQuery();
          });
@@ -66,8 +66,8 @@ internal partial class MySqlOutboxSqlLayer(IMySqlConnectionPool connectionFactor
                             AND {DispatchingTable.IsReceived} = 0
 
                         """)
-                   .AddParameter(DispatchingTable.TessageId, tessageId.PrimitiveValue)
-                   .AddParameter(DispatchingTable.EndpointId, endpointId.PrimitiveValue)
+                   .AddParameter(DispatchingTable.TessageId, tessageId.Value)
+                   .AddParameter(DispatchingTable.EndpointId, endpointId.Value)
                    .ExecuteNonQuery());
 
       return affectedRows == 1
@@ -90,8 +90,8 @@ internal partial class MySqlOutboxSqlLayer(IMySqlConnectionPool connectionFactor
                             AND {DispatchingTable.EndpointId} = @{DispatchingTable.EndpointId}
 
                         """)
-                   .AddParameter(DispatchingTable.TessageId, tessageId.PrimitiveValue)
-                   .AddParameter(DispatchingTable.EndpointId, endpointId.PrimitiveValue)
+                   .AddParameter(DispatchingTable.TessageId, tessageId.Value)
+                   .AddParameter(DispatchingTable.EndpointId, endpointId.Value)
                    .AddDateTime2Parameter(DispatchingTable.LastAttemptTime, DateTime.UtcNow)
                    .AddMediumTextParameter(DispatchingTable.FailureReason, failureReason)
                    .ExecuteNonQuery());

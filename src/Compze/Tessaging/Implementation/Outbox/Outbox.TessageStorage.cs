@@ -51,7 +51,7 @@ partial class Outbox
 
          if(result == IServiceBusSqlLayer.MarkAsReceivedResult.WasAlreadyMarked)
          {
-            this.Log().Info($"Tessage {tessageId} to endpoint {receiverId.PrimitiveValue} was already marked as received.");
+            this.Log().Info($"Tessage {tessageId} to endpoint {receiverId.Value} was already marked as received.");
          }
       }
 

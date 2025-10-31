@@ -38,16 +38,16 @@ partial class MySqlTeventStoreSqlLayer
                                          AND @{Tevent.ReadOrder} = '0.0000000000000000000';
 
                                          """)
-                                    .AddParameter(Tevent.TaggregateId, data.TaggregateId.PrimitiveValue)
+                                    .AddParameter(Tevent.TaggregateId, data.TaggregateId.Value)
                                     .AddParameter(Tevent.InsertedVersion, data.StorageInformation.InsertedVersion)
-                                    .AddParameter(Tevent.TeventType, data.TeventType.PrimitiveValue)
-                                    .AddParameter(Tevent.TeventId, data.TeventId.PrimitiveValue)
+                                    .AddParameter(Tevent.TeventType, data.TeventType.Value)
+                                    .AddParameter(Tevent.TeventId, data.TeventId.Value)
                                     .AddDateTime2Parameter(Tevent.UtcTimeStamp, data.UtcTimeStamp)
                                     .AddMediumTextParameter(Tevent.Tevent, data.TeventJson)
 
                                     .AddParameter(Tevent.ReadOrder, MySqlDbType.VarChar, data.StorageInformation.ReadOrder?.ToString() ?? ReadOrder.Zero.ToString())
                                     .AddParameter(Tevent.EffectiveVersion, MySqlDbType.Int32, data.StorageInformation.EffectiveVersion)
-                                    .AddNullableParameter(Tevent.TargetTevent, MySqlDbType.VarChar, data.StorageInformation.RefactoringInformation?.TargetTevent.PrimitiveValue)
+                                    .AddNullableParameter(Tevent.TargetTevent, MySqlDbType.VarChar, data.StorageInformation.RefactoringInformation?.TargetTevent.Value)
                                     .AddNullableParameter(Tevent.RefactoringType, MySqlDbType.Byte, data.StorageInformation.RefactoringInformation?.RefactoringType == null ? null : (byte?)data.StorageInformation.RefactoringInformation.RefactoringType)
                                     .ExecuteNonQuery());
             }
@@ -90,7 +90,7 @@ partial class MySqlTeventStoreSqlLayer
          {
             command.CommandText = selectStatement;
 
-            command.Parameters.Add(new MySqlParameter(Tevent.TeventId, MySqlDbType.Guid) { Value = teventId.PrimitiveValue });
+            command.Parameters.Add(new MySqlParameter(Tevent.TeventId, MySqlDbType.Guid) { Value = teventId.Value });
             using var reader = command.ExecuteReader();
             reader.Read();
 

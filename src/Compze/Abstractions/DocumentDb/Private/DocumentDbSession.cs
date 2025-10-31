@@ -116,7 +116,7 @@ partial class DocumentDbSession : IDocumentDbSession
    {
       var idSet = ids.ToHashSet(); //Avoid multiple enumerations.
 
-      var stored = _backingStore.GetAll<TValue>(idSet.Select(id => id.PrimitiveValue));
+      var stored = _backingStore.GetAll<TValue>(idSet.Select(id => id.Value));
 
       stored.Where(document => !_entitiesByIdAndType.Contains(typeof(TValue), document.Id))
             .ForEach(unloadedDocument => OnInitialLoad(unloadedDocument.Id, unloadedDocument));

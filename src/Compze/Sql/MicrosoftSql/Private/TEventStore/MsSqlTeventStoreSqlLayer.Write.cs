@@ -44,14 +44,14 @@ partial class MsSqlTeventStoreSqlLayer
                                          """)
                                     .AddParameter(Tevent.TaggregateId, SqlDbType.UniqueIdentifier, data.TaggregateId)
                                     .AddParameter(Tevent.InsertedVersion, data.StorageInformation.InsertedVersion)
-                                    .AddParameter(Tevent.TeventType, data.TeventType.PrimitiveValue)
-                                    .AddParameter(Tevent.TeventId, data.TeventId.PrimitiveValue)
+                                    .AddParameter(Tevent.TeventType, data.TeventType.Value)
+                                    .AddParameter(Tevent.TeventId, data.TeventId.Value)
                                     .AddDateTime2Parameter(Tevent.UtcTimeStamp, data.UtcTimeStamp)
                                     .AddNVarcharMaxParameter(Tevent.Tevent, data.TeventJson)
 
                                     .AddParameter(Tevent.ReadOrder, SqlDbType.Decimal, data.StorageInformation.ReadOrder?.ToSqlDecimal() ?? new SqlDecimal(0))
                                     .AddParameter(Tevent.EffectiveVersion, SqlDbType.Int, data.StorageInformation.EffectiveVersion)
-                                    .AddNullableParameter(Tevent.TargetTevent, SqlDbType.UniqueIdentifier, data.StorageInformation.RefactoringInformation?.TargetTevent.PrimitiveValue)
+                                    .AddNullableParameter(Tevent.TargetTevent, SqlDbType.UniqueIdentifier, data.StorageInformation.RefactoringInformation?.TargetTevent.Value)
                                     .AddNullableParameter(Tevent.RefactoringType, SqlDbType.TinyInt, data.StorageInformation.RefactoringInformation?.RefactoringType == null ? null : (byte?)data.StorageInformation.RefactoringInformation.RefactoringType)
                                     .ExecuteNonQuery());
             }
@@ -94,7 +94,7 @@ partial class MsSqlTeventStoreSqlLayer
          command =>
          {
             command.CommandText = selectStatement;
-            command.Parameters.Add(new SqlParameter(Tevent.TeventId, SqlDbType.UniqueIdentifier) {Value = teventId.PrimitiveValue});
+            command.Parameters.Add(new SqlParameter(Tevent.TeventId, SqlDbType.UniqueIdentifier) {Value = teventId.Value});
             using var reader = command.ExecuteReader();
             reader.Read();
 

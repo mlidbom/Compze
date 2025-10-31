@@ -46,15 +46,15 @@ partial class PgSqlTeventStoreSqlLayer
 
 
                                          """)
-                                    .AddParameter(Tevent.TaggregateId, data.TaggregateId.PrimitiveValue)
+                                    .AddParameter(Tevent.TaggregateId, data.TaggregateId.Value)
                                     .AddParameter(Tevent.InsertedVersion, data.StorageInformation.InsertedVersion)
-                                    .AddParameter(Tevent.TeventType, data.TeventType.PrimitiveValue)
-                                    .AddParameter(Tevent.TeventId, data.TeventId.PrimitiveValue)
+                                    .AddParameter(Tevent.TeventType, data.TeventType.Value)
+                                    .AddParameter(Tevent.TeventId, data.TeventId.Value)
                                     .AddTimestampWithTimeZone(Tevent.UtcTimeStamp, data.UtcTimeStamp)
                                     .AddMediumTextParameter(Tevent.Tevent, data.TeventJson)
                                     .AddParameter(Tevent.ReadOrder, NpgsqlDbType.Varchar, data.StorageInformation.ReadOrder?.ToString() ?? new ReadOrder().ToString())
                                     .AddParameter(Tevent.EffectiveVersion, NpgsqlDbType.Integer, data.StorageInformation.EffectiveVersion)
-                                    .AddNullableParameter(Tevent.TargetTevent, NpgsqlDbType.Uuid, data.StorageInformation.RefactoringInformation?.TargetTevent.PrimitiveValue)
+                                    .AddNullableParameter(Tevent.TargetTevent, NpgsqlDbType.Uuid, data.StorageInformation.RefactoringInformation?.TargetTevent.Value)
                                     .AddNullableParameter(Tevent.RefactoringType, NpgsqlDbType.Smallint, data.StorageInformation.RefactoringInformation?.RefactoringType == null ? null : (byte?)data.StorageInformation.RefactoringInformation.RefactoringType)
                                     .PrepareStatement()
                                     .ExecuteNonQuery());
@@ -98,7 +98,7 @@ partial class PgSqlTeventStoreSqlLayer
          {
             command.CommandText = selectStatement;
 
-            command.AddParameter(Tevent.TeventId, teventId.PrimitiveValue);
+            command.AddParameter(Tevent.TeventId, teventId.Value);
             using var reader = command.PrepareStatement()
                                       .ExecuteReader();
             reader.Read();
@@ -120,7 +120,7 @@ partial class PgSqlTeventStoreSqlLayer
          command =>
          {
             command.SetCommandText($"DELETE FROM {Tevent.TableName} /*With(ROWLOCK)*/ WHERE {Tevent.TaggregateId} = @{Tevent.TaggregateId};")
-                   .AddParameter(Tevent.TaggregateId, taggregateId.PrimitiveValue)
+                   .AddParameter(Tevent.TaggregateId, taggregateId.Value)
                    .PrepareStatement()
                    .ExecuteNonQuery();
          });

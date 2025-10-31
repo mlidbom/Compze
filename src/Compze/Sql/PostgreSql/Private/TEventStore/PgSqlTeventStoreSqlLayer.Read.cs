@@ -75,7 +75,7 @@ partial class PgSqlTeventStoreSqlLayer(PgSqlTeventStoreConnectionManager connect
                                                                           ORDER BY {Tevent.ReadOrder} ASC;
 
                                                                           """)
-                                                         .AddParameter(Tevent.TaggregateId, taggregateId.PrimitiveValue)
+                                                         .AddParameter(Tevent.TaggregateId, taggregateId.Value)
                                                          .AddParameter("CachedVersion", startAfterInsertedVersion)
                                                          .PrepareStatement()
                                                          .ExecuteReaderAndSelect(ReadDataRow)
@@ -89,7 +89,7 @@ partial class PgSqlTeventStoreSqlLayer(PgSqlTeventStoreConnectionManager connect
          //We prefer predictable performance, even if slightly slower under easy conditions, to services that suddenly virtually stop working completely due to tons of concurrency issues as an taggregate is accessed by many threads.
          //Pages that led to the below hack: https://tinyurl.com/y7nef75p, https://tinyurl.com/y7c63cny, https://tinyurl.com/y75qlwar
          _connectionManager.UseCommand(command => command.SetCommandText($"select {Tevent.TaggregateId} from TaggregateLock where TaggregateId = @{Tevent.TaggregateId} for update;")
-                                                         .AddParameter(Tevent.TaggregateId, taggregateId.PrimitiveValue)
+                                                         .AddParameter(Tevent.TaggregateId, taggregateId.Value)
                                                          .PrepareStatement()
                                                          .ExecuteNonQuery());
 

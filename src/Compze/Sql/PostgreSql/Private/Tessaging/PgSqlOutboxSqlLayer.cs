@@ -33,8 +33,8 @@ partial class PgSqlOutboxSqlLayer(IPgSqlConnectionPool connectionFactory, PgSqlS
                        VALUES (@{TessageTable.TessageId}, @{TessageTable.TypeIdGuidValue}, @{TessageTable.SerializedTessage});
 
                    """)
-              .AddParameter(TessageTable.TessageId, tessageWithReceivers.TessageId.PrimitiveValue)
-              .AddParameter(TessageTable.TypeIdGuidValue, tessageWithReceivers.TypeId.PrimitiveValue)
+              .AddParameter(TessageTable.TessageId, tessageWithReceivers.TessageId.Value)
+              .AddParameter(TessageTable.TypeIdGuidValue, tessageWithReceivers.TypeId.Value)
                //performance: Like with the tevent store, keep all framework properties out of the JSON and put it into separate columns instead. For tevents. Reuse a pre-serialized instance from the persisting to the tevent store.
               .AddMediumTextParameter(TessageTable.SerializedTessage, tessageWithReceivers.SerializedTessage)
               .AddParameter(DispatchingTable.IsReceived, NpgsqlDbType.Boolean, false);
@@ -47,7 +47,7 @@ partial class PgSqlOutboxSqlLayer(IPgSqlConnectionPool connectionFactory, PgSqlS
                                                             ({DispatchingTable.TessageId},  {DispatchingTable.EndpointId},          {DispatchingTable.IsReceived}) 
                                                     VALUES (@{DispatchingTable.TessageId}, @{DispatchingTable.EndpointId}_{index}, @{DispatchingTable.IsReceived});
 
-                                                """).AddParameter($"{DispatchingTable.EndpointId}_{index}", endpointId.PrimitiveValue));
+                                                """).AddParameter($"{DispatchingTable.EndpointId}_{index}", endpointId.Value));
 
             command
               .PrepareStatement() //Even though the count above will differ it will probably not have too many variations for preparing the statement to be quite beneficial.
@@ -69,8 +69,8 @@ partial class PgSqlOutboxSqlLayer(IPgSqlConnectionPool connectionFactory, PgSqlS
                             AND {DispatchingTable.IsReceived} = false;
 
                         """)
-                   .AddParameter(DispatchingTable.TessageId, tessageId.PrimitiveValue)
-                   .AddParameter(DispatchingTable.EndpointId, endpointId.PrimitiveValue)
+                   .AddParameter(DispatchingTable.TessageId, tessageId.Value)
+                   .AddParameter(DispatchingTable.EndpointId, endpointId.Value)
                    .PrepareStatement()
                    .ExecuteNonQuery());
 
@@ -94,8 +94,8 @@ partial class PgSqlOutboxSqlLayer(IPgSqlConnectionPool connectionFactory, PgSqlS
                             AND {DispatchingTable.EndpointId} = @{DispatchingTable.EndpointId};
 
                         """)
-                   .AddParameter(DispatchingTable.TessageId, tessageId.PrimitiveValue)
-                   .AddParameter(DispatchingTable.EndpointId, endpointId.PrimitiveValue)
+                   .AddParameter(DispatchingTable.TessageId, tessageId.Value)
+                   .AddParameter(DispatchingTable.EndpointId, endpointId.Value)
                    .AddTimestampWithTimeZone(DispatchingTable.LastAttemptTime, DateTime.UtcNow)
                    .AddMediumTextParameter(DispatchingTable.FailureReason, failureReason)
                    .PrepareStatement()

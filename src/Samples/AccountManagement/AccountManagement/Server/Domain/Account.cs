@@ -17,7 +17,7 @@ class Account : Taggregate<Account, AccountTevent.Root, AccountTevent.Implementa
    public Email Email { get; private set; } = null!;       //Never public setters on an taggregate. AssertInvariantsAreMet guarantees not null status.
    public Password Password { get; private set; } = null!; //Never public setters on an taggregate. AssertInvariantsAreMet guarantees not null status.
 
-   public override AccountId Id => new AccountId(base.Id.PrimitiveValue);
+   public override AccountId Id => new AccountId(base.Id.Value);
 
    //No public constructors please. Taggregates are created through domain verbs.
    //Expose named factory methods that ensure the instance is valid instead. See register method below.
@@ -39,7 +39,7 @@ class Account : Taggregate<Account, AccountTevent.Root, AccountTevent.Implementa
       Guard.IsNotNull(Email);
       Guard.IsNotNull(Password);
       Guard.IsNotNull(Id);
-      Guard.IsNotDefault(Id.PrimitiveValue);
+      Guard.IsNotDefault(Id.Value);
    }
 
    /// <summary><para>Used when a user manually creates an account themselves.</para>
