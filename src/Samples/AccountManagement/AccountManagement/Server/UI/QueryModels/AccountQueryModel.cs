@@ -28,7 +28,7 @@ class AccountQueryModel : SelfGeneratingQueryModel<AccountQueryModel, AccountTev
       LoadFromHistory(tevents);
    }
 
-   TaggregateId IAccountResourceData.Id => (TaggregateId)base.Id;
+   AccountId IAccountResourceData.Id => (AccountId)base.Id;
 
    protected override void AssertInvariantsAreMet()
    {

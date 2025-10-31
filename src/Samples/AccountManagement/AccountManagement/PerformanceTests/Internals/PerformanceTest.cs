@@ -17,6 +17,8 @@ using FluentAssertions.Extensions;
 using System;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
+using Microsoft.Identity.Client;
+using AccountId = AccountManagement.Domain.AccountId;
 
 namespace AccountManagement;
 
@@ -87,9 +89,9 @@ public class PerformanceTest : UniversalTestBase
                                    maxTotal: 20.Milliseconds());
    }
 
-   ConcurrentBag<(string Email, string Password, TaggregateId Id)> CreateAccountsThreaded(int accountCount)
+   ConcurrentBag<(string Email, string Password, AccountId Id)> CreateAccountsThreaded(int accountCount)
    {
-      var created = new ConcurrentBag<(string Email, string Password, TaggregateId Id)>();
+      var created = new ConcurrentBag<(string Email, string Password, AccountId Id)>();
 
       StopwatchCE.TimeExecutionThreaded(
          () =>

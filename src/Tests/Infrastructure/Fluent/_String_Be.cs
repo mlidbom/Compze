@@ -1,7 +1,5 @@
 using Compze.Utilities.SystemCE;
 using DiffPlex;
-using DiffPlex.DiffBuilder;
-using DiffPlex.DiffBuilder.Model;
 using DiffPlex.Renderer;
 using System;
 using System.Linq;

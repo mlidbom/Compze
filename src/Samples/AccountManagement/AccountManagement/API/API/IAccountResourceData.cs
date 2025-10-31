@@ -6,7 +6,7 @@ namespace AccountManagement.API;
 
 interface IAccountResourceData
 {
-   TaggregateId Id { get; }
+   AccountId Id { get; }
    Email Email { get; }
    Password Password { get; }
 }

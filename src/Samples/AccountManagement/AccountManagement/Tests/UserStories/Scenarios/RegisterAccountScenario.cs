@@ -1,5 +1,6 @@
 using System;
 using AccountManagement.API;
+using AccountManagement.Domain;
 using AccountManagement.Domain.Registration;
 using Compze.Core.Public;
 using Compze.Core.Tessaging.Hosting.Public;
@@ -11,12 +12,12 @@ public class RegisterAccountScenario(IEndpoint clientEndpoint, string? email = n
 {
    readonly IEndpoint _clientEndpoint = clientEndpoint;
 
-   public TaggregateId AccountId = new TaggregateId();
+   public AccountId AccountId = new AccountId();
    public string Email = email ?? TestData.Emails.CreateUnusedEmail();
    public string Password = password;
 
 
-   public RegisterAccountScenario WithAccountId(TaggregateId acountId)
+   public RegisterAccountScenario WithAccountId(AccountId acountId)
    {
       AccountId = acountId;
       return this;

@@ -17,6 +17,8 @@ class Account : Taggregate<Account, AccountTevent.Root, AccountTevent.Implementa
    public Email Email { get; private set; } = null!;       //Never public setters on an taggregate. AssertInvariantsAreMet guarantees not null status.
    public Password Password { get; private set; } = null!; //Never public setters on an taggregate. AssertInvariantsAreMet guarantees not null status.
 
+   public override AccountId Id => new AccountId(base.Id.PrimitiveValue);
+
    //No public constructors please. Taggregates are created through domain verbs.
    //Expose named factory methods that ensure the instance is valid instead. See register method below.
    Account()
@@ -46,7 +48,7 @@ class Account : Taggregate<Account, AccountTevent.Root, AccountTevent.Implementa
    /// <para> * makes it impossible to use the class incorrectly, such as forgetting to check for duplicates or save the new instance in the repository.</para>
    /// <para> * reduces code duplication since multiple callers are not burdened with saving the instance, checking for duplicates etc.</para>
    /// </summary>
-   internal static (RegistrationAttemptStatus Status, Account? Registered) Register(TaggregateId accountId, Email email ,Password password, IInProcessTypermediaNavigator navigator)
+   internal static (RegistrationAttemptStatus Status, Account? Registered) Register(AccountId accountId, Email email ,Password password, IInProcessTypermediaNavigator navigator)
    {
       //Ensure that it is impossible to call with invalid arguments.
       //Since all domain types should ensure that it is impossible to create a non-default value that is invalid we only have to disallow default values.
