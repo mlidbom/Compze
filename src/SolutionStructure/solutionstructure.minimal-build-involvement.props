@@ -3,19 +3,6 @@
    <PropertyGroup>
       <TargetFramework>net9.0</TargetFramework>
       <IsPackable>false</IsPackable>
-      <BuildOutputExcludes>**/bin/**;**/obj/**</BuildOutputExcludes>
-
-      <!-- Disable ALL default item globs -->
       <EnableDefaultItems>false</EnableDefaultItems>
-      
-      <CopyBuildOutputToPublishDirectory>false</CopyBuildOutputToPublishDirectory>
-      
-      <!-- Disable analyzers to prevent warnings -->
-      <RunAnalyzers>false</RunAnalyzers>
-      <RunAnalyzersDuringBuild>false</RunAnalyzersDuringBuild>
-      <EnableNETAnalyzers>false</EnableNETAnalyzers>
-      <EnforceCodeStyleInBuild>false</EnforceCodeStyleInBuild>
-      
    </PropertyGroup>
-   
 </Project>
