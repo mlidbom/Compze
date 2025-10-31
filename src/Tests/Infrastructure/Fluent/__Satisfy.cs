@@ -4,12 +4,12 @@ namespace Compze.Tests.Infrastructure.Fluent;
 
 public static class _Satisfy
 {
-   public static IAssertionBuilder<T> Satisfy<T>(this IAssertionBuilder<T> builder, Func<T, bool> predicate, string message)
+   public static IMust<T> Satisfy<T>(this IMust<T> context, Func<T, bool> predicate, Func<string>? messageOverride = null)
    {
-      if(!predicate(builder.Subject))
+      if(!predicate(context.Actual))
       {
-         throw new AssertionFailedException(message);
+         throw new AssertionFailedException(messageOverride?.Invoke() ?? context.Expression);
       }
-      return builder;
+      return context;
    }
 }

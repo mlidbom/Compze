@@ -8,7 +8,7 @@ public abstract class ValueWrapper<TValue>(TValue primitiveValue) : IEquatable<V
    where TValue : IEquatable<TValue>
 {
    // ReSharper disable once MemberCanBePrivate.Global
-   public TValue PrimitiveValue { get; } = primitiveValue;
+   public TValue PrimitiveValue { get; private set; } = primitiveValue;
    object ISingleUntypedPrimitiveValueWrapper.UntypedPrimitiveValue => PrimitiveValue;
 
    public bool Equals(ValueWrapper<TValue>? other) => other != null
