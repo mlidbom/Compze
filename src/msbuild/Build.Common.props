@@ -31,10 +31,26 @@
       <IncludeSource>false</IncludeSource>
       <EnableSourceLink>false</EnableSourceLink>
       <EnableSourceControlManagerQueries>false</EnableSourceControlManagerQueries>
-    
+      
+      <!-- Disable package dependency resolution since we have no dependencies -->
+      <ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>None</ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>
+      <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
    </PropertyGroup>
    
-   <!-- Override build targets to do nothing -->
+   <!-- Override the entire Build target to skip all build work -->
+   <Target Name="Build">
+      <Message Text="Skipping build for file organization project $(MSBuildProjectName)" Importance="low" />
+   </Target>
+   
+   <!-- Override targets that would fail without restore -->
+   <Target Name="ResolvePackageAssets" />
+   <Target Name="ResolvePackageDependenciesForBuild" />
+   <Target Name="ResolveLockFileReferences" />
+   <Target Name="ResolveLockFileAnalyzers" />
+   <Target Name="ResolveLockFileCopyLocalFiles" />
+   
+   <!-- Also override other build targets as fallback -->
+   <Target Name="CoreBuild" />
    <Target Name="CoreCompile" />
    <Target Name="GenerateBuildDependencyFile" />
    <Target Name="GenerateBuildRuntimeConfigurationFiles" />
