@@ -161,15 +161,7 @@ partial class DocumentDbSession : IDocumentDbSession
       documentItem.CommitChangesToBackingStore();
    }
 
-   public virtual void Save<TEntity>(TEntity entity) where TEntity : IEntity<Guid>
-   {
-      if(entity.Id.Equals(Guid.Empty))
-      {
-         throw new DocumentIdIsEmptyGuidException();
-      }
-
-      Save(entity.Id, entity);
-   }
+   public virtual void Save<TEntity>(TEntity entity) where TEntity : IEntity<Guid> => Save(entity.Id, entity);
 
    public virtual void Delete<TEntity>(TEntity entity) where TEntity : IEntity<Guid> => Delete<TEntity>(entity.Id);
 
