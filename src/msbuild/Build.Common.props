@@ -1,0 +1,14 @@
+<!-- Common properties for all build organization projects -->
+<Project>
+   <PropertyGroup>
+      <TargetFramework>net9.0</TargetFramework>
+      <IsPackable>false</IsPackable>
+      <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
+      <GenerateDependencyFile>false</GenerateDependencyFile>
+      <CopyBuildOutputToOutputDirectory>false</CopyBuildOutputToOutputDirectory>
+      <BuildOutputExcludes>**/bin/**;**/obj/**</BuildOutputExcludes>
+
+      <!-- Disable ALL default item globs -->
+      <EnableDefaultItems>false</EnableDefaultItems>
+   </PropertyGroup>
+</Project>

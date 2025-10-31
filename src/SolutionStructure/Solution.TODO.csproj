@@ -1,0 +1,9 @@
+<!-- ReSharper disable MarkupAttributeTypo -->
+<Project Sdk="Microsoft.NET.Sdk">
+   <Import Project="../msbuild/Build.Common.props" />
+
+   <ItemGroup>
+      <None Include="../**/TODO/*.md" Exclude="$(BuildOutputExcludes)" KeepDuplicates="false" />
+      <None Include="../**/*TODO*.md" Exclude="$(BuildOutputExcludes)" KeepDuplicates="false" />
+   </ItemGroup>
+</Project>
