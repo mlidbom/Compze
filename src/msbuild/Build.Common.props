@@ -3,23 +3,30 @@
    <PropertyGroup>
       <TargetFramework>net9.0</TargetFramework>
       <IsPackable>false</IsPackable>
-      <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
-      <GenerateDependencyFile>false</GenerateDependencyFile>
-      <CopyBuildOutputToOutputDirectory>false</CopyBuildOutputToOutputDirectory>
       <BuildOutputExcludes>**/bin/**;**/obj/**</BuildOutputExcludes>
 
       <!-- Disable ALL default item globs -->
       <EnableDefaultItems>false</EnableDefaultItems>
       
-      <!-- Skip the build entirely - these projects are just for organizing files -->
-      <UseCommonOutputDirectory>false</UseCommonOutputDirectory>
+      <!-- Completely disable compilation and build outputs -->
+      <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
+      <GenerateDependencyFile>false</GenerateDependencyFile>
+      <CopyBuildOutputToOutputDirectory>false</CopyBuildOutputToOutputDirectory>
       <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
       <Deterministic>false</Deterministic>
-      <ProduceOnlyReferenceAssembly>false</ProduceOnlyReferenceAssembly>
+      <SkipCompilerExecution>true</SkipCompilerExecution>
+      <CopyBuildOutputToPublishDirectory>false</CopyBuildOutputToPublishDirectory>
+      
+      <!-- Disable analyzers to prevent warnings -->
+      <RunAnalyzers>false</RunAnalyzers>
+      <RunAnalyzersDuringBuild>false</RunAnalyzersDuringBuild>
+      <EnableNETAnalyzers>false</EnableNETAnalyzers>
+      <EnforceCodeStyleInBuild>false</EnforceCodeStyleInBuild>
    </PropertyGroup>
    
-   <!-- Override Core build targets to do nothing -->
+   <!-- Override build targets to do nothing -->
    <Target Name="CoreCompile" />
    <Target Name="GenerateBuildDependencyFile" />
    <Target Name="GenerateBuildRuntimeConfigurationFiles" />
+   <Target Name="CopyFilesToOutputDirectory" />
 </Project>
