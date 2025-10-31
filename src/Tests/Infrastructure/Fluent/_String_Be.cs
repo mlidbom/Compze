@@ -5,6 +5,7 @@ using System;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using Compze.Utilities.SystemCE.Text;
 
 namespace Compze.Tests.Infrastructure.Fluent;
 
@@ -38,7 +39,7 @@ static class DiffGenerator
 {
    public static string CreateDiff(string expected, string actual)
    {
-      if(expected.ContainsInvariant(Environment.NewLine))
+      if(expected.ContainsOrdinal(Environment.NewLine))
       {
          return UnidiffRenderer.GenerateUnidiff(oldText: expected, newText: actual, oldFileName: "expression", newFileName: "expected");
       } else
@@ -77,14 +78,14 @@ static class DiffGenerator
          // Add deleted pieces (only to expected line)
          for(int i = 0; i < block.DeleteCountA; i++)
          {
-            expectedLine.Append(CultureInfo.InvariantCulture, $"[-{oldPieces[oldIndex]}]");
+            expectedLine.AppendInvariant($"[-{oldPieces[oldIndex]}]");
             oldIndex++;
          }
 
          // Add inserted pieces (only to actual line)
          for(int i = 0; i < block.InsertCountB; i++)
          {
-            actualLine.Append(CultureInfo.InvariantCulture, $"[+{newPieces[newIndex]}]");
+            actualLine.AppendInvariant($"[+{newPieces[newIndex]}]");
             newIndex++;
          }
       }

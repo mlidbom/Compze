@@ -27,7 +27,7 @@ public class DbPoolDatabase
 
    static int IdFromName(string name)
    {
-      var nameIndex = name.ReplaceInvariant(PoolDatabaseNamePrefix, "");
+      var nameIndex = name.ReplaceOrdinal(PoolDatabaseNamePrefix, "");
       return IntCE.ParseInvariant(nameIndex);
    }
 

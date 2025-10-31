@@ -8,11 +8,11 @@ using static Compze.Utilities.Contracts.Assert;
 namespace Compze.Utilities.SystemCE;
 
 ///<summary>Contains extensions on <see cref="string"/></summary>
-static class StringCE
+public static class StringCE
 {
    ///<summary>returns true if me is null, empty or only whitespace</summary>
    [ContractAnnotation("null => true")]
-   internal static bool IsNullEmptyOrWhiteSpace(this string? @this) => string.IsNullOrWhiteSpace(@this);
+   public static bool IsNullEmptyOrWhiteSpace(this string? @this) => string.IsNullOrWhiteSpace(@this);
 
    /// <summary>Delegates to <see cref="string.Join(string,string[])"/> </summary>
    public static string Join(this IEnumerable<string> @this, string separator)
@@ -24,13 +24,13 @@ static class StringCE
 
    public static string Join(this IEnumerable<string> @this) => string.Join("", @this.ToArray());
 
-   internal static string ReplaceInvariant(this string @this, string oldValue, string newValue) => @this.Replace(oldValue, newValue, StringComparison.InvariantCulture);
+   public static string ReplaceOrdinal(this string @this, string oldValue, string newValue) => @this.Replace(oldValue, newValue, StringComparison.Ordinal);
 
-   internal static bool ContainsInvariant(this string @this, string value) => @this.Contains(value, StringComparison.InvariantCulture);
+   public static bool ContainsOrdinal(this string @this, string value) => @this.Contains(value, StringComparison.Ordinal);
 
-   internal static int GetHashcodeInvariant(this string @this) => @this.GetHashCode(StringComparison.InvariantCulture);
+   public static int GetHashcodeOrdinal(this string @this) => @this.GetHashCode(StringComparison.Ordinal);
 
-   public static bool StartsWithInvariant(this string @this, string ending) => @this.StartsWith(ending, StringComparison.InvariantCulture);
+   public static bool StartsWithOrdinal(this string @this, string ending) => @this.StartsWith(ending, StringComparison.Ordinal);
 
    [StringFormatMethod(formatParameterName:"tessage")]
    public static string FormatInvariant(string message, params object[] arguments) =>
@@ -38,7 +38,7 @@ static class StringCE
 
    public static string RemoveLeadingLineBreak(this string @this)
    {
-      while(@this.StartsWithInvariant(Environment.NewLine))
+      while(@this.StartsWithOrdinal(Environment.NewLine))
       {
          @this = @this[Environment.NewLine.Length..];
       }
@@ -49,10 +49,4 @@ static class StringCE
    public static string Pluralize(this int count, string theString) => count == 1 ? theString : $"{theString}s";
 
    public static string Invariant(this FormattableString interpolatedString) => FormattableString.Invariant(interpolatedString);
-
-   public static string IndentToDepth(this string it, string indent, int depth) => it.Split(Environment.NewLine).Select(line => Enumerable.Repeat(indent, depth).Join(string.Empty) + line).Join(Environment.NewLine);
-   public static string IndentTab(this string it) => it.IndentToDepth("\t", 1);
-   public static string IndentSpaces(this string it, int count=3) => it.IndentToDepth(" ", count);
-   public static string Indent(this string it) => it.IndentSpaces();
-   public static string JoinLines(this IEnumerable<string > it) => it.Join(Environment.NewLine);
 }

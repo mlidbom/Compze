@@ -3,6 +3,7 @@ using Compze.Core.Wiring.Testing.Internal;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tests.Common.Testing.Sql;
 using Compze.Tests.Infrastructure.XUnit;
+using Compze.Utilities.SystemCE;
 using FluentAssertions;
 
 namespace Compze.Tests.Integration.Testing.Sql;
@@ -60,6 +61,6 @@ public class After_Creating_Two_Dbs_Named_DB1_And_DB2 : DbPoolTestBase
       disposedPool.Invoking(action: _ => disposedPool.ConnectionStringFor(Db1))
           .Should().Throw<Exception>()
           .Where(exceptionExpression: exception => exception.Message.ToUpperInvariant()
-                                                            .Contains("DISPOSED", StringComparison.InvariantCulture));
+                                                            .ContainsOrdinal("DISPOSED"));
    }
 }
