@@ -114,4 +114,6 @@ static class TypeCE
 
       return name;
    }
+
+   public static bool IsAssignableToOrFrom(this Type @this, Type other) => @this.IsAssignableFrom(other) || @this.IsAssignableTo(other);
 }

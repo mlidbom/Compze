@@ -15,8 +15,10 @@ public abstract class ValueWrapper<TValue>(TValue primitiveValue) : IEquatable<V
                                                    && other.PrimitiveValue.Equals(PrimitiveValue);
 
    public override bool Equals(object? obj) => obj != null
-                                            && obj.GetType() == GetType()
+                                            && IsConsideredTypeCompatibleForEquality(obj)
                                             && Equals((ValueWrapper<TValue>)obj);
+
+   protected virtual bool IsConsideredTypeCompatibleForEquality(object other) => GetType() == other.GetType();
 
    // ReSharper disable once NonReadonlyMemberInGetHashCode only used by serialization, in practice readonly
    public override int GetHashCode() => PrimitiveValue.GetHashCode();
