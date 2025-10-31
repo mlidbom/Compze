@@ -1,5 +1,4 @@
 using Compze.Serialization.Newtonsoft.Private;
-//using Compze.Serialization.Newtonsoft.Private.PrimitiveWrappers;
 using Compze.Serialization.Newtonsoft.Private.TeventStore;
 using Newtonsoft.Json;
 using System.Collections.Generic;
@@ -16,7 +15,6 @@ static class RenamingAndNonPublicMembersSupportingJsonSettings
       {
          TypeNameHandling = TypeNameHandling.Auto,
          ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
-         //Converters = new List<JsonConverter> { new ValueWrapperConverter() },
          ContractResolver = new CompositeContractResolver(new IncludeMembersWithPrivateSetters())
       };
 
