@@ -1,12 +1,8 @@
 ﻿<!-- ReSharper disable MarkupAttributeTypo -->
 <Project Sdk="Microsoft.NET.Sdk">
+   <Import Project="../src/SolutionStructure/solutionstructure.minimal-build-involvement.props" />
+   
    <PropertyGroup>
-      <TargetFramework>net8.0</TargetFramework>
-      <IsPackable>false</IsPackable>
-      <BuildOutputExcludes>**/bin/**;**/obj/**</BuildOutputExcludes>
-
-      <!-- Disable ALL default item globs -->
-      <EnableDefaultItems>false</EnableDefaultItems>
       <RootNamespace>Automation</RootNamespace>
    </PropertyGroup>
 
