@@ -27,7 +27,7 @@ public class TaggregateId(Guid id) : TentityId(id)
    public TaggregateId() : this(Guid.NewGuid()) {}
 }
 
-public class TessageId(Guid id) : TentityId(id)
+public class TessageId(Guid id) : EntityId(id)
 {
    public TessageId() : this(Guid.CreateVersion7()) {}
 }

@@ -12,11 +12,11 @@ public abstract class ValueWrapper<TValue>(TValue primitiveValue) : IEquatable<V
    object ISingleUntypedPrimitiveValueWrapper.UntypedPrimitiveValue => PrimitiveValue;
 
    public bool Equals(ValueWrapper<TValue>? other) => other != null
+                                                   && IsConsideredTypeCompatibleForEquality(other)
                                                    && other.PrimitiveValue.Equals(PrimitiveValue);
 
    public override bool Equals(object? obj) => obj != null
-                                            && IsConsideredTypeCompatibleForEquality(obj)
-                                            && Equals((ValueWrapper<TValue>)obj);
+                                            && Equals(obj as ValueWrapper<TValue>);
 
    protected virtual bool IsConsideredTypeCompatibleForEquality(object other) => GetType() == other.GetType();
 
