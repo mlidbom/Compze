@@ -5,6 +5,8 @@ using static Compze.Tests.Infrastructure.Fluent.MustActions;
 
 // ReSharper disable InconsistentNaming
 
+#pragma warning disable CA1711 // ending name on Exception
+
 namespace Compze.Tests.Unit.Testing.Fluent;
 
 public class When_comparing_strings : UniversalTestBase

@@ -114,7 +114,7 @@ public class When_serializing_polymorphic_wrapper_objects : SerializerTest
                    };
          }
 
-         public List<EntityId?> Ids { get; set; }
+         public List<EntityId?> Ids { get; set; } = [];
       }
    }
 }

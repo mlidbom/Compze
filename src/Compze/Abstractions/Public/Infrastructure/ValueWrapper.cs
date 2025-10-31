@@ -18,6 +18,7 @@ public abstract class ValueWrapper<TValue>(TValue primitiveValue) : IEquatable<V
                                             && obj.GetType() == GetType()
                                             && Equals((ValueWrapper<TValue>)obj);
 
+   // ReSharper disable once NonReadonlyMemberInGetHashCode only used by serialization, in practice readonly
    public override int GetHashCode() => PrimitiveValue.GetHashCode();
    public override string ToString() => PrimitiveValue.ToString() ?? "";
 

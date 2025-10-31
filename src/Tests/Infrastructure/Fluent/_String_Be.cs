@@ -2,6 +2,7 @@ using Compze.Utilities.SystemCE;
 using DiffPlex;
 using DiffPlex.Renderer;
 using System;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 
@@ -37,7 +38,7 @@ static class DiffGenerator
 {
    public static string CreateDiff(string expected, string actual)
    {
-      if(expected.Contains(Environment.NewLine))
+      if(expected.ContainsInvariant(Environment.NewLine))
       {
          return UnidiffRenderer.GenerateUnidiff(oldText: expected, newText: actual, oldFileName: "expression", newFileName: "expected");
       } else
@@ -46,10 +47,12 @@ static class DiffGenerator
       }
    }
 
+   static readonly char[] WordSeparators = [' '];
+
    static string SingleLineDiff(string expected, string actual)
    {
       var differ = new Differ();
-      var diff = differ.CreateWordDiffs(expected, actual, false, false, new[] { ' ' });
+      var diff = differ.CreateWordDiffs(expected, actual, false, false, WordSeparators);
 
       var oldPieces = diff.PiecesOld;
       var newPieces = diff.PiecesNew;
@@ -74,14 +77,14 @@ static class DiffGenerator
          // Add deleted pieces (only to expected line)
          for(int i = 0; i < block.DeleteCountA; i++)
          {
-            expectedLine.Append($"[-{oldPieces[oldIndex]}]");
+            expectedLine.Append(CultureInfo.InvariantCulture, $"[-{oldPieces[oldIndex]}]");
             oldIndex++;
          }
 
          // Add inserted pieces (only to actual line)
          for(int i = 0; i < block.InsertCountB; i++)
          {
-            actualLine.Append($"[+{newPieces[newIndex]}]");
+            actualLine.Append(CultureInfo.InvariantCulture, $"[+{newPieces[newIndex]}]");
             newIndex++;
          }
       }
