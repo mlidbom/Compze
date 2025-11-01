@@ -8,68 +8,23 @@ namespace Compze.Utilities.SystemCE.LinqCE;
 ///<summary>Extracts member names from expressions</summary>
 static class ExpressionUtil
 {
-   public static string ExtractMemberPath<TValue>(Expression<Func<TValue>> func)
-   {
-      Argument.NotNull(func);
-      return ExtractMemberPath((LambdaExpression)func);
-   }
-
-   static string ExtractMemberPath(LambdaExpression lambda)
-   {
-      Argument.NotNull(lambda);
-      var memberExpression = lambda.Body is UnaryExpression unaryExpression
-                                ? (MemberExpression)unaryExpression.Operand
-                                : (MemberExpression)lambda.Body;
-
-      return $"{memberExpression.Member.DeclaringType!.FullName}.{memberExpression.Member.Name}";
-   }
-
-   public static MemberInfo ExtractFinalMemberInfo(this LambdaExpression expression) =>
-      expression.Body.ExtractFinalMemberInfo();
+   public static MemberInfo ExtractFinalMemberInfo(this LambdaExpression lambda) =>
+      lambda.Body.ExtractFinalMemberInfo();
 
    public static MemberInfo ExtractFinalMemberInfo(this Expression expression) =>
       expression.ExtractFinalMemberAccessExpression().Member;
 
    public static MemberExpression ExtractFinalMemberAccessExpression(this Expression expression)
    {
-      // Extract the final (outermost) member access from an expression
-      var current = expression;
-
-      while(current != null)
+      try
       {
-         switch(current)
-         {
-            case MemberExpression memberExpr:
-               if(memberExpr.Member.DeclaringType == null)
-                  throw new ArgumentException("Member must have a declaring type", nameof(expression));
-
-               return memberExpr;
-
-            case UnaryExpression unaryExpr: // boxing, casting etc
-               current = unaryExpr.Operand;
-               continue;
-
-            case MethodCallExpression methodCall:
-
-               if(methodCall.Method.Name == "get_Item" && methodCall.Object != null) // Check if this is an indexer call (get_Item)
-               {
-                  current = methodCall.Object; // Continue from the object being indexed
-                  continue;
-               }
-
-               // For other method calls, the expression must continue to a member access
-               throw new ArgumentException(
-                  "Expression must end with a property or field access, not a method call. " +
-                  "Example: obj => obj.Method().Property (not obj => obj.Method())",
-                  nameof(expression));
-
-            default:
-               throw new ArgumentException(
-                  $"Expression must end with a property or field access. Unsupported expression type: {current.GetType().Name}",
-                  nameof(expression));
-         }
+         return expression is UnaryExpression unaryExpression
+                   ? (MemberExpression)unaryExpression.Operand
+                   : (MemberExpression)expression;
       }
-
-      throw new ArgumentException("Expression must end with a property or field access", nameof(expression));
+      catch(InvalidCastException ex)
+      {
+         throw new Exception("The expression must end with accessing a property of field");
+      }
    }
 }
