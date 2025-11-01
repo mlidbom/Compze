@@ -9,11 +9,11 @@ public static class StringContain
                       () =>
                          $"""
                           {must.Separator}
-                          expected the expression: 
+                          expected the string produced by the expression: 
                           {must.Separator}
                           {must.Expression.Indent()}
                           {must.Separator}
-                          to Contain:
+                          to contain the string:
                           {must.Separator}
                           {expected}
                           {must.Separator}
