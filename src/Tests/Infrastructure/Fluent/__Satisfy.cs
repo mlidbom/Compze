@@ -12,7 +12,8 @@ public static class _Satisfy
                                      Func<T, bool> predicate,
                                      Func<string>? messageOverride = null,
                                      [CallerArgumentExpression(nameof(predicate))]
-                                     string predicateExpression = null!)
+                                     string predicateExpression = null!,
+                                     Func<T,string>? failureMessage = null)
    {
       if(!predicate(context.Actual))
       {
@@ -31,7 +32,9 @@ public static class _Satisfy
                         {context.Separator}
                         {predicateExpression.Indent()}
                         {context.Separator}
-                        but it was:
+                        {failureMessage?.Invoke(context.Actual) ?? "but it did not"}
+                        {context.Separator}
+                        Actual was:
                         {context.Separator}
                         ToString():
                         {context.Separator}
