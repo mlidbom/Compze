@@ -30,9 +30,21 @@ public static class MustActions
       }
       catch(Exception unexpected)
       {
-         throw new AssertionFailedException($"Expected {must.Expression} to throw {typeof(TException).Name} but instead a {unexpected.GetType().GetFullNameCompilable()} was thrown");
+         throw new AssertionFailedException($"""
+                                             Expected invoking the expression
+                                             {must.Separator}
+                                             {must.Expression} 
+                                             {must.Separator}
+                                             to throw {typeof(TException).Name} but instead a {unexpected.GetType().GetFullNameCompilable()} was thrown
+                                             """);
       }
 
-      throw new AssertionFailedException($"Expected {must.Expression} to throw {typeof(TException).Name} but no exception was thrown");
+      throw new AssertionFailedException($"""
+                                          Expected invoking the expression
+                                          {must.Separator}
+                                          {must.Expression} 
+                                          {must.Separator}
+                                          to throw {typeof(TException).Name} but no exception was thrown
+                                          """);
    }
 }
