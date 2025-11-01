@@ -24,7 +24,7 @@ public class When_comparing_unordered_collections_with_BeEquivalentTo : Universa
       {
          readonly Dictionary<string, int> _one_differing_item = new() { ["c"] = 3, ["a"] = 2, ["b"] = 2 };
 
-         public class BeEquivalentTo_throws_AssertionFailedException : with_on_item_different
+         public class BeEquivalentTo_throws_AssertionFailedException_ : with_on_item_different
          {
             string ExceptionMessage() => MustActions.Invoking(() => _expected.Must().BeEquivalentTo(_one_differing_item)).Must().Throw<AssertionFailedException>().Which.Message;
             [XF] public void with_the_message_()

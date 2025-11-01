@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using static Compze.Utilities.Contracts.Assert;
@@ -57,8 +58,9 @@ static class TypeCE
                   .Where(it => it.GetGenericTypeDefinition() == genericInterface);
    }
 
+   static readonly ConcurrentDictionary<Type, List<Type>> GenericInterfacesByType = new();
    public static IEnumerable<Type> ListGenericInterfaces(this Type @this) =>
-      @this.GetInterfaces().Where(it => it.IsGenericType);
+      GenericInterfacesByType.GetOrAdd(@this, it => it.GetInterfaces().Where(it => it.IsGenericType).ToList());
 
    public static bool ImplementsGenericInterface(this Type @this, Type implementedGenericInterface) =>
       @this.ListGenericInterfaces(implementedGenericInterface).Any();

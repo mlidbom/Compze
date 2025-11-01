@@ -13,8 +13,8 @@ namespace Compze.Tests.Infrastructure.Fluent.Serialization;
 class DeterministicOrderedForUnorderedCollectionsConverter : JsonConverter
 {
    public override bool CanConvert(Type objectType) =>
-      objectType.Implements(typeof(IDictionary<,>)) ||
-      objectType.Implements(typeof(ISet<>));
+      objectType.ImplementsGenericInterface(typeof(IDictionary<,>)) ||
+      objectType.ImplementsGenericInterface(typeof(ISet<>));
 
    public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
    {
@@ -27,7 +27,7 @@ class DeterministicOrderedForUnorderedCollectionsConverter : JsonConverter
       var objectType = value.GetType();
 
       // Handle dictionaries (IDictionary<TKey, TValue>)
-      if(objectType.Implements(typeof(IDictionary<,>)))
+      if(objectType.ImplementsGenericInterface(typeof(IDictionary<,>)))
       {
          var dictionary = (IDictionary)value;
          var orderedKeys = dictionary.Keys.Cast<object?>().OrderBy(k => k?.ToString() ?? string.Empty).ToList();
@@ -55,7 +55,7 @@ class DeterministicOrderedForUnorderedCollectionsConverter : JsonConverter
       }
 
       // Handle sets (ISet<T>)
-      if(objectType.Implements(typeof(ISet<>)))
+      if(objectType.ImplementsGenericInterface(typeof(ISet<>)))
       {
          var enumerable = (IEnumerable)value;
          var orderedItems = enumerable.Cast<object?>().OrderBy(item => item?.ToString() ?? string.Empty).ToList();
