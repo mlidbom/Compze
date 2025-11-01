@@ -8,7 +8,7 @@ namespace Compze.Tests.Infrastructure.Fluent;
 
 public static class _Satisfy
 {
-   public static IMust<T> Satisfy<T>(this IMust<T> context,
+   public static Must<T> Satisfy<T>(this Must<T> context,
                                      Func<T, bool> predicate,
                                      Func<string>? messageOverride = null,
                                      [CallerArgumentExpression(nameof(predicate))]

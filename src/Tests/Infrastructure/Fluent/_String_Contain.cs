@@ -4,7 +4,7 @@ namespace Compze.Tests.Infrastructure.Fluent;
 
 public static class StringContain
 {
-   public static IMust<string> Contain(this IMust<string> must, string expected)
+   public static Must<string> Contain(this Must<string> must, string expected)
       => must.Satisfy(it => it.ContainsOrdinal(expected),
                       () =>
                          $"""

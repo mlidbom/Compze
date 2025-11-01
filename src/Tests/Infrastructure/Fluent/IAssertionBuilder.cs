@@ -5,23 +5,22 @@ using Compze.Utilities.SystemCE;
 
 namespace Compze.Tests.Infrastructure.Fluent;
 
-public interface IMust<out T>
+public class Must<T>
 {
-   string Separator { get; }
-   string Expression { get; }
-   T Actual { get; }
-}
+   public Must(T subject, string expression)
+   {
+      Actual = subject;
+      Expression = NormalizeExpressionIndentation(expression);
+   }
 
-public class Must<T>(T subject, string expression) : IMust<T>
-{
    // ReSharper disable once InconsistentNaming
    // ReSharper disable once StaticMemberInGenericType
    static readonly string _separator = "-".Repeat(50).Join();
    public string Separator => _separator;
-   public T Actual { get; } = subject;
-   public string Expression { get; } = NormalizeExpressionIndentation(expression);
+   public T Actual { get; }
+   public string Expression { get; }
 
-   private static string NormalizeExpressionIndentation(string expression)
+   public string NormalizeExpressionIndentation(string expression)
    {
       var lines = expression.Split(Environment.NewLine);
       if(lines.Length == 1) return expression;

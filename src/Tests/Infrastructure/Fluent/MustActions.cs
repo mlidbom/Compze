@@ -8,14 +8,14 @@ public class ActionSpec(Action action, string expression)
 {
    readonly Action _action = action;
    readonly string _expression = expression;
-   public IMust<Action> Must() => new Must<Action>(_action, _expression);
+   public Must<Action> Must() => new Must<Action>(_action, _expression);
 }
 
 public static class MustActions
 {
    public static ActionSpec Invoking(Action action, [CallerArgumentExpression(nameof(action))] string expression = null!) => new(action, expression);
 
-   public static CaughtException<TException> Throw<TException>(this IMust<Action> must)
+   public static CaughtException<TException> Throw<TException>(this Must<Action> must)
       where TException : Exception
    {
       try
@@ -54,6 +54,6 @@ public class CaughtException<TException>(TException exception)
    public  TException Which => _exception;
    public  TException And => _exception;
    public TException That => _exception;
-   public IMust<TException> ThatMust => _exception.Must();
-   public IMust<TException> WhichMust => _exception.Must();
+   public Must<TException> ThatMust => _exception.Must();
+   public Must<TException> WhichMust => _exception.Must();
 }

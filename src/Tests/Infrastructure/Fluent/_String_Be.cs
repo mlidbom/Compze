@@ -11,7 +11,7 @@ namespace Compze.Tests.Infrastructure.Fluent;
 
 public static class StringBe
 {
-   public static IMust<string>? Be(this IMust<string> must, string expected, [CallerArgumentExpression(nameof(expected))]
+   public static Must<string>? Be(this Must<string> must, string expected, [CallerArgumentExpression(nameof(expected))]
                                    string expectedExpression = null!)
       => must.Satisfy(it => Equals(it, expected),
                       () =>

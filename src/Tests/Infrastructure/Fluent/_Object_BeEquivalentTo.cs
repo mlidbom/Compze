@@ -8,25 +8,25 @@ namespace Compze.Tests.Infrastructure.Fluent;
 
 public static class ObjectBeEquivalentTo
 {
-   public static IMust<TValue> BeEquivalentTo<TValue>(this IMust<TValue> must,
+   public static Must<TValue> BeEquivalentTo<TValue>(this Must<TValue> must,
                                                       TValue expected,
                                                       [CallerArgumentExpression(nameof(expected))]
                                                       string expectedExpression = null!)
       => BeEquivalentToCore(must, expected, expectedExpression, TestingJsonSettings.AllMembers);
 
-   public static IMust<TValue> BeEquivalentToInternal<TValue>(this IMust<TValue> must,
+   public static Must<TValue> BeEquivalentToInternal<TValue>(this Must<TValue> must,
                                                               TValue expected,
                                                               [CallerArgumentExpression(nameof(expected))]
                                                               string expectedExpression = null!)
       => BeEquivalentToCore(must, expected, expectedExpression, TestingJsonSettings.InternalAndPublicMembers);
 
-   public static IMust<TValue> BeEquivalentToPublic<TValue>(this IMust<TValue> must,
+   public static Must<TValue> BeEquivalentToPublic<TValue>(this Must<TValue> must,
                                                             TValue expected,
                                                             [CallerArgumentExpression(nameof(expected))]
                                                             string expectedExpression = null!)
       => BeEquivalentToCore(must, expected, expectedExpression, TestingJsonSettings.PublicMembers);
 
-   static IMust<TValue> BeEquivalentToCore<TValue>(IMust<TValue> must,
+   static Must<TValue> BeEquivalentToCore<TValue>(Must<TValue> must,
                                                    TValue expected,
                                                    string expectedExpression,
                                                    JsonSerializerSettings settings)
