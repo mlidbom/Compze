@@ -23,7 +23,7 @@ static class ExpressionUtil
       }
       catch(InvalidCastException ex)
       {
-         throw new Exception("The expression must end with accessing a property of field");
+         throw new ArgumentException("The expression must end with accessing a property or field", nameof(expression), ex);
       }
    }
 }
