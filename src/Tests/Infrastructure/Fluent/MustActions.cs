@@ -47,6 +47,7 @@ public static class MustActions
    }
 }
 
+#pragma warning disable CA1711 //I don't much care that the class name ends with Exception
 public class CaughtException<TException>(TException exception)
    where TException : Exception
 {

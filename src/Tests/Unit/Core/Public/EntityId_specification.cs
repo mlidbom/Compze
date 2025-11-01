@@ -6,6 +6,8 @@ using Compze.Utilities.Testing.XUnit.BDD;
 // ReSharper disable InconsistentNaming
 // ReSharper disable ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
 
+#pragma warning disable CA1052 //I should make an inherited class static? Really?
+
 namespace Compze.Tests.Unit.Core.Public;
 
 public class EntityId_specification
