@@ -22,4 +22,47 @@ static class ExpressionUtil
 
       return $"{memberExpression.Member.DeclaringType!.FullName}.{memberExpression.Member.Name}";
    }
+
+   public static MemberExpression ExtractFinalMemberAccessExpression(this Expression expression)
+   {
+      // Walk through the expression tree to find the final member access
+      // This handles: obj.Property, obj.Method().Property, obj[0].Property, etc.
+      var current = expression;
+
+      while(current != null)
+      {
+         switch(current)
+         {
+            case MemberExpression memberExpr:
+               var declaringType = memberExpr.Member.DeclaringType
+                                ?? throw new ArgumentException("Member must have a declaring type", nameof(expression));
+               return memberExpr;
+
+            case UnaryExpression unaryExpr: // boxing, casting etc
+               current = unaryExpr.Operand;
+               continue;
+
+            case MethodCallExpression methodCall:
+
+               if(methodCall.Method.Name == "get_Item" && methodCall.Object != null) // Check if this is an indexer call (get_Item)
+               {
+                  current = methodCall.Object; // Continue from the object being indexed
+                  continue;
+               }
+
+               // For other method calls, the expression must continue to a member access
+               throw new ArgumentException(
+                  "Expression must end with a property or field access, not a method call. " +
+                  "Example: obj => obj.Method().Property (not obj => obj.Method())",
+                  nameof(expression));
+
+            default:
+               throw new ArgumentException(
+                  $"Expression must end with a property or field access. Unsupported expression type: {current.GetType().Name}",
+                  nameof(expression));
+         }
+      }
+
+      throw new ArgumentException("Expression must end with a property or field access", nameof(expression));
+   }
 }
