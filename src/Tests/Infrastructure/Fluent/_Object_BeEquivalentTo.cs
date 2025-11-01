@@ -57,6 +57,16 @@ public static class ObjectBeEquivalentTo
                               {(expected?.ToString() ?? "null").Indent()}
                               {must.Separator}
 
+                              Actual JSON:
+                              {must.Separator}
+                              {actualJson}
+                              {must.Separator}
+
+                              Expected JSON:
+                              {must.Separator}
+                              {expectedJson}
+                              {must.Separator}
+
                               JSON Diff:
                               {must.Separator}
                               {UnidiffRenderer.GenerateUnidiff(oldText: expectedJson, newText: actualJson, oldFileName: "expected", newFileName: "actual")}

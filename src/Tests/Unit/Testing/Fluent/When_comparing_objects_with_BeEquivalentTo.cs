@@ -61,6 +61,32 @@ public class When_comparing_objects_with_BeEquivalentTo : UniversalTestBase
                                                                                           +  "PrivateField": "private1"
                                                                                            }
                                                                                           """);
+
+            [XF] public void the_complete_actual_json() => ExceptionMessage().Must().Contain("""
+                                                                                             Actual JSON:
+                                                                                             --------------------------------------------------
+                                                                                             {
+                                                                                               "$type": "Compze.Tests.Unit.Testing.Fluent.When_comparing_objects_with_BeEquivalentTo+TestObject, Compze.Tests.Unit",
+                                                                                               "PublicProperty": "public1",
+                                                                                               "InternalProperty": "internal1",
+                                                                                               "<PublicProperty>k__BackingField": "public1",
+                                                                                               "<InternalProperty>k__BackingField": "internal1",
+                                                                                               "PrivateField": "private1"
+                                                                                             }
+                                                                                             """);
+
+            [XF] public void the_complete_expected_json() => ExceptionMessage().Must().Contain("""
+                                                                                               Expected JSON:
+                                                                                               --------------------------------------------------
+                                                                                               {
+                                                                                                 "$type": "Compze.Tests.Unit.Testing.Fluent.When_comparing_objects_with_BeEquivalentTo+TestObject, Compze.Tests.Unit",
+                                                                                                 "PublicProperty": "public2",
+                                                                                                 "InternalProperty": "internal2",
+                                                                                                 "<PublicProperty>k__BackingField": "public2",
+                                                                                                 "<InternalProperty>k__BackingField": "internal2",
+                                                                                                 "PrivateField": "private2"
+                                                                                               }
+                                                                                               """);
          }
       }
    }
