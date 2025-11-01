@@ -3,6 +3,7 @@ using DiffPlex;
 using DiffPlex.Renderer;
 using System;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using Compze.Utilities.SystemCE.Text;
 
@@ -10,7 +11,8 @@ namespace Compze.Tests.Infrastructure.Fluent;
 
 public static class StringBe
 {
-   public static IMust<string>? Be(this IMust<string> must, string expected)
+   public static IMust<string>? Be(this IMust<string> must, string expected, [CallerArgumentExpression(nameof(expected))]
+                                   string expectedExpression = null!)
       => must.Satisfy(it => Equals(it, expected),
                       () =>
                          $"""""
@@ -19,22 +21,22 @@ public static class StringBe
                           {must.Separator}
                           {must.Expression.Indent()}
                           {must.Separator}
-                          to Be the string:
+                          to result in the same string as the expression:
                           {must.Separator}
-                          """
-                          {expected}
-                          """
+                          {expectedExpression.Indent()}
                           {must.Separator}
-                          but it was the string:
-                          {must.Separator}
-                          """
-                          {must.Actual}
-                          """
-                          {must.Separator}
-                          Diff:
+                          but it generated the Diff:
                           {must.Separator}
                           {DiffGenerator.CreateDiff(expected, must.Actual)}
-
+                          {must.Separator}
+                          Actual was:
+                          {must.Separator}
+                          {must.Actual}
+                          {must.Separator}
+                          Expected was:
+                          {must.Separator}
+                          {expected}
+                          {must.Separator}
                           """"");
 
    static class DiffGenerator

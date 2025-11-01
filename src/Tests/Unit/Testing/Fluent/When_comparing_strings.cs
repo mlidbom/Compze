@@ -14,41 +14,58 @@ public class When_comparing_strings : UniversalTestBase
    public class given_two_multiline_strings : When_comparing_strings
    {
       readonly string _actual = """
-                                     First line
-                                     Actual Second line
-                                     Third line
-                                     """;
+                                First line
+                                Actual Second line
+                                Third line
+                                """;
 
       public class that_differ : given_two_multiline_strings
       {
          readonly string _expected = """
-                                            First line
-                                            Expected Second line
-                                            Third line
-                                            """;
+                                     First line
+                                     Expected Second line
+                                     Third line
+                                     """;
 
          public class must_be_throws_AssertionFailedException : that_differ
          {
             string ExceptionMessage() => Invoking(() => _actual.Must().Be(_expected)).Must().Throw<AssertionFailedException>().Which.Message;
 
-            public class and_the_exception_message_contains : must_be_throws_AssertionFailedException
-            {
-               [XF] public void the_code_of_the_failing_expression() => ExceptionMessage().Must().Contain(nameof(_actual));
+            [XF] public void and_the_full_message_is() =>
+               ExceptionMessage().Must().Be("""
+                                            --------------------------------------------------
+                                            expected the expression: 
+                                            --------------------------------------------------
+                                               _actual
+                                            --------------------------------------------------
+                                            to result in the same string as the expression:
+                                            --------------------------------------------------
+                                               _expected
+                                            --------------------------------------------------
+                                            but it generated the Diff:
+                                            --------------------------------------------------
+                                            --- expression
+                                            +++ expected
+                                            @@ -1,3 +1,3 @@
+                                             First line
+                                            -Expected Second line
+                                            +Actual Second line
+                                             Third line
 
-               [XF] public void the_full_first_string() => ExceptionMessage().Must().Contain(_actual);
-
-               [XF] public void the_full_second_string() => ExceptionMessage().Must().Contain(_actual);
-
-               [XF] public void a_unified_diff() => ExceptionMessage().Must().Contain("""
-                                                                                      --- expression
-                                                                                      +++ expected
-                                                                                      @@ -1,3 +1,3 @@
-                                                                                       First line
-                                                                                      -Expected Second line
-                                                                                      +Actual Second line
-                                                                                       Third line
-                                                                                      """);
-            }
+                                            --------------------------------------------------
+                                            Actual was:
+                                            --------------------------------------------------
+                                            First line
+                                            Actual Second line
+                                            Third line
+                                            --------------------------------------------------
+                                            Expected was:
+                                            --------------------------------------------------
+                                            First line
+                                            Expected Second line
+                                            Third line
+                                            --------------------------------------------------
+                                            """);
          }
       }
    }
@@ -65,19 +82,31 @@ public class When_comparing_strings : UniversalTestBase
          {
             string ExceptionMessage() => Invoking(() => _actual.Must().Be(_expected)).Must().Throw<AssertionFailedException>().Which.Message;
 
-            public class and_the_exception_message_contains : must_be_throws_AssertionFailedException
-            {
-               [XF] public void the_code_of_the_failing_expression() => ExceptionMessage().Must().Contain(nameof(_actual));
-
-               [XF] public void the_full_first_string() => ExceptionMessage().Must().Contain(_actual);
-
-               [XF] public void the_full_second_string() => ExceptionMessage().Must().Contain(_actual);
-
-               [XF] public void a_line_diff() => ExceptionMessage().Must().Contain("""
-                                                                                      First [-Expected-Second] Third
-                                                                                      First [+Actual-Second] Third
-                                                                                      """);
-            }
+            [XF] public void and_the_full_message_is() =>
+               ExceptionMessage().Must().Be("""
+                                            --------------------------------------------------
+                                            expected the expression: 
+                                            --------------------------------------------------
+                                               _actual
+                                            --------------------------------------------------
+                                            to result in the same string as the expression:
+                                            --------------------------------------------------
+                                               _expected
+                                            --------------------------------------------------
+                                            but it generated the Diff:
+                                            --------------------------------------------------
+                                            First [-Expected-Second] Third
+                                            First [+Actual-Second] Third
+                                            --------------------------------------------------
+                                            Actual was:
+                                            --------------------------------------------------
+                                            First Actual-Second Third
+                                            --------------------------------------------------
+                                            Expected was:
+                                            --------------------------------------------------
+                                            First Expected-Second Third
+                                            --------------------------------------------------
+                                            """);
          }
       }
    }
