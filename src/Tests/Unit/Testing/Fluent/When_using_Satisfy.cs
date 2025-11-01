@@ -100,7 +100,6 @@ public class When_using_Satisfy : UniversalTestBase
 
       [XF] public void the_full_message_is() =>
          ExceptionMessage().Must().Be("""
-                                        
                                         expected the expression:
                                         --------------------------------------------------
                                            _actual
@@ -125,7 +124,6 @@ public class When_using_Satisfy : UniversalTestBase
                                           "Status": "Unmarried"
                                         }
                                         --------------------------------------------------
-                                        
                                         """);
    }
 }
