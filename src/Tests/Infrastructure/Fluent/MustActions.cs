@@ -13,9 +13,7 @@ public class ActionSpec(Action action, string expression)
 
 public static class MustActions
 {
-   public static ActionSpec Invoking(Action action, [CallerArgumentExpression(nameof(action))] string expression = null!) => 
-      new ActionSpec(action, expression);
-
+   public static ActionSpec Invoking(Action action, [CallerArgumentExpression(nameof(action))] string expression = null!) => new(action, expression);
 
    public static TException Throw<TException>(this IMust<Action> must)
       where TException : Exception
