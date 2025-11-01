@@ -22,6 +22,7 @@ public static class _Satisfy
          }
 
          var message = $"""
+                        {context.Separator}
                         expected the object returned by the expression:
                         {context.Separator}
                         {context.Expression.Indent()}

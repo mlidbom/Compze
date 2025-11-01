@@ -14,7 +14,7 @@ public static class StringBe
       => must.Satisfy(it => Equals(it, expected),
                       () =>
                          $"""""
-
+                          {must.Separator}
                           expected the expression: 
                           {must.Separator}
                           {must.Expression.Indent()}
