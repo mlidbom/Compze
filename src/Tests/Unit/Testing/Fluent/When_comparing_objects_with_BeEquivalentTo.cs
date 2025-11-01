@@ -28,7 +28,7 @@ public class When_comparing_objects_with_BeEquivalentTo : UniversalTestBase
 
       public class BeEquivalentTo_throws_AssertionFailedException : given_two_objects_that_differ_in_all_members
       {
-         string ExceptionMessage() => Invoking(() => _actual.Must().BeEquivalentTo(_expected)).Must().Throw<AssertionFailedException>().Message;
+         string ExceptionMessage() => Invoking(() => _actual.Must().BeEquivalentTo(_expected)).Must().Throw<AssertionFailedException>().Which.Message;
 
          public class and_the_exception_message_contains : BeEquivalentTo_throws_AssertionFailedException
          {

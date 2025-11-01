@@ -29,7 +29,7 @@ public class When_comparing_strings : UniversalTestBase
 
          public class must_be_throws_AssertionFailedException : that_differ
          {
-            string ExceptionMessage() => Invoking(() => _actual.Must().Be(_expected)).Must().Throw<AssertionFailedException>().Message;
+            string ExceptionMessage() => Invoking(() => _actual.Must().Be(_expected)).Must().Throw<AssertionFailedException>().Which.Message;
 
             public class and_the_exception_message_contains : must_be_throws_AssertionFailedException
             {
@@ -63,7 +63,7 @@ public class When_comparing_strings : UniversalTestBase
 
          public class must_be_throws_AssertionFailedException : that_differ
          {
-            string ExceptionMessage() => Invoking(() => _actual.Must().Be(_expected)).Must().Throw<AssertionFailedException>().Message;
+            string ExceptionMessage() => Invoking(() => _actual.Must().Be(_expected)).Must().Throw<AssertionFailedException>().Which.Message;
 
             public class and_the_exception_message_contains : must_be_throws_AssertionFailedException
             {

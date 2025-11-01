@@ -38,6 +38,7 @@ public class When_using_Satisfy : UniversalTestBase
          string ExceptionMessage() => Invoking(() => _value.Must().Satisfy(v => v > 10))
                                      .Must()
                                      .Throw<AssertionFailedException>()
+                                     .Which
                                      .Message;
 
          public class and_the_exception_message : Satisfy_throws
@@ -58,6 +59,7 @@ public class When_using_Satisfy : UniversalTestBase
       string ExceptionMessage() => Invoking(() => _value.Must().Satisfy(v => v > 10, () => "Custom error message"))
                                   .Must()
                                   .Throw<AssertionFailedException>()
+                                  .Which
                                   .Message;
 
       public class Satisfy_throws_with_custom_message : with_a_custom_error_message
@@ -82,6 +84,7 @@ public class When_using_Satisfy : UniversalTestBase
       string ExceptionMessage() => Invoking(() => _actual.Must().Satisfy(it => it.Name == "all wrong"))
                                   .Must()
                                   .Throw<AssertionFailedException>()
+                                  .Which
                                   .Message;
 
       [XF] public void the_message_contains_the_full_json_for_actual() =>

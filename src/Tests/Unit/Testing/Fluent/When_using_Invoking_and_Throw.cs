@@ -1,0 +1,148 @@
+using System;
+using Compze.Tests.Infrastructure;
+using Compze.Tests.Infrastructure.Fluent;
+using Compze.Utilities.Testing.XUnit.BDD;
+using static Compze.Tests.Infrastructure.Fluent.MustActions;
+
+// ReSharper disable InconsistentNaming
+
+namespace Compze.Tests.Unit.Testing.Fluent;
+
+public class When_using_Invoking_and_Throw : UniversalTestBase
+{
+   public class given_an_action_that_throws_the_expected_exception : When_using_Invoking_and_Throw
+   {
+      readonly InvalidOperationException _actual = new InvalidOperationException("test message");
+
+      [XF] public void and_allows_asserting_on_the_exception()
+         => Invoking(() => throw _actual)
+           .Must()
+           .Throw<InvalidOperationException>()
+           .WhichMust
+           .Be(_actual);
+   }
+
+   public class given_an_action_that_throws_a_different_exception : When_using_Invoking_and_Throw
+   {
+      public class Throw_throws : given_an_action_that_throws_a_different_exception
+      {
+         [XF] public void when_wrong_exception_type_is_thrown()
+            => Invoking(() => Invoking(() => throw new InvalidOperationException("wrong"))
+                             .Must()
+                             .Throw<ArgumentException>())
+              .Must()
+              .Throw<AssertionFailedException>();
+
+         public class and_the_exception_message : Throw_throws
+         {
+            string ExceptionMessage() => Invoking(() => Invoking(() => throw new InvalidOperationException("wrong"))
+                                                       .Must()
+                                                       .Throw<ArgumentException>())
+                                        .Must()
+                                        .Throw<AssertionFailedException>()
+                                        .Which.
+                                         Message;
+
+            [XF] public void is_the_full_formatted_message()
+               => ExceptionMessage().Must().Be($$"""
+                                                 Expected invoking the expression
+                                                 --------------------------------------------------
+                                                 () => throw new InvalidOperationException("wrong") 
+                                                 --------------------------------------------------
+                                                 to throw ArgumentException but instead a System.InvalidOperationException was thrown
+                                                 """);
+         }
+      }
+   }
+
+   public class given_an_action_that_does_not_throw : When_using_Invoking_and_Throw
+   {
+      public class Throw_throws : given_an_action_that_does_not_throw
+      {
+         [XF] public void when_no_exception_is_thrown()
+            => Invoking(() => Invoking(() =>
+                              { /* do nothing */
+                              })
+                             .Must()
+                             .Throw<InvalidOperationException>())
+              .Must()
+              .Throw<AssertionFailedException>();
+
+         public class and_the_exception_message : Throw_throws
+         {
+            string ExceptionMessage() => Invoking(() => Invoking(() =>
+                                                        { /* do nothing */
+                                                        })
+                                                       .Must()
+                                                       .Throw<InvalidOperationException>())
+                                        .Must()
+                                        .Throw<AssertionFailedException>()
+                                        .Which
+                                        .Message;
+
+            [XF] public void is_the_full_formatted_message()
+               => ExceptionMessage().Must().Be("""
+                                               Expected invoking the expression
+                                               --------------------------------------------------
+                                               () =>
+                                               { /* do nothing */
+                                               } 
+                                               --------------------------------------------------
+                                               to throw InvalidOperationException but no exception was thrown
+                                               """);
+         }
+      }
+   }
+
+   public class given_an_action_that_throws_a_derived_exception : When_using_Invoking_and_Throw
+   {
+      public class Throw_catches_the_derived_exception : given_an_action_that_throws_a_derived_exception
+      {
+         // ReSharper disable once NotResolvedInText
+         readonly ArgumentNullException _actual = new("argument");
+
+         [XF] public void when_expecting_base_exception_type()
+            => Invoking(() => throw _actual)
+              .Must()
+              .Throw<ArgumentException>()
+              .That
+              .Must()
+              .Be(_actual);
+      }
+   }
+
+   public class given_code_that_validates_exceptions : When_using_Invoking_and_Throw
+   {
+      public class Invoking_can_be_used_recursively : given_code_that_validates_exceptions
+      {
+         [XF] public void to_test_exception_throwing_validation_code()
+         {
+            // Test that validation code correctly catches the expected exception
+            var caughtException = Invoking(() => throw new InvalidOperationException("inner"))
+                                 .Must()
+                                 .Throw<InvalidOperationException>();
+
+            // Verify the caught exception has the expected properties
+            caughtException.Which.Message.Must().Contain("inner");
+         }
+      }
+   }
+
+   public class given_an_action_with_complex_error_details : When_using_Invoking_and_Throw
+   {
+      record TestObject(string Name, int Value);
+
+      public class Throw_enables_detailed_assertions : given_an_action_with_complex_error_details
+      {
+         [XF] public void on_exception_with_complex_data()
+         {
+            var testData = new TestObject("test", 42);
+            var exception = Invoking(() => throw new InvalidOperationException($"Failed with {testData}"))
+                           .Must()
+                           .Throw<InvalidOperationException>();
+
+            exception.Which.Message.Must().Be("Failed with TestObject { Name = test, Value = 42 }");
+         }
+      }
+   }
+}

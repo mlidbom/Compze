@@ -15,7 +15,7 @@ public static class MustActions
 {
    public static ActionSpec Invoking(Action action, [CallerArgumentExpression(nameof(action))] string expression = null!) => new(action, expression);
 
-   public static TException Throw<TException>(this IMust<Action> must)
+   public static CaughtException<TException> Throw<TException>(this IMust<Action> must)
       where TException : Exception
    {
       try
@@ -24,7 +24,7 @@ public static class MustActions
       }
       catch(TException caught)
       {
-         return caught;
+         return new CaughtException<TException>(caught);
       }
       catch(Exception unexpected)
       {
@@ -45,4 +45,15 @@ public static class MustActions
                                           to throw {typeof(TException).Name} but no exception was thrown
                                           """);
    }
+}
+
+public class CaughtException<TException>(TException exception)
+   where TException : Exception
+{
+   readonly TException _exception = exception;
+   public  TException Which => _exception;
+   public  TException And => _exception;
+   public TException That => _exception;
+   public IMust<TException> ThatMust => _exception.Must();
+   public IMust<TException> WhichMust => _exception.Must();
 }
