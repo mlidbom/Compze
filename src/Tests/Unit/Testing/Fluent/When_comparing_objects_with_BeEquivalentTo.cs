@@ -1,0 +1,154 @@
+using Compze.Tests.Infrastructure;
+using Compze.Tests.Infrastructure.Fluent;
+using Compze.Utilities.Testing.XUnit.BDD;
+using static Compze.Tests.Infrastructure.Fluent.MustActions;
+
+// ReSharper disable InconsistentNaming
+
+#pragma warning disable CA1711 // ending name on Exception
+
+namespace Compze.Tests.Unit.Testing.Fluent;
+
+public class When_comparing_objects_with_BeEquivalentTo : UniversalTestBase
+{
+   class TestObject
+   {
+      public string PublicProperty { get; set; } = "";
+      internal string InternalProperty { get; set; } = "";
+      private string PrivateField = "";
+
+      public TestObject(string publicValue, string internalValue, string privateValue)
+      {
+         PublicProperty = publicValue;
+         InternalProperty = internalValue;
+         PrivateField = privateValue;
+      }
+
+      public string GetPrivateField() => PrivateField;
+   }
+
+   public class given_two_objects_that_differ_in_all_members : When_comparing_objects_with_BeEquivalentTo
+   {
+      readonly TestObject _actual = new("public1", "internal1", "private1");
+      readonly TestObject _expected = new("public2", "internal2", "private2");
+
+      public class BeEquivalentTo_throws_AssertionFailedException : given_two_objects_that_differ_in_all_members
+      {
+         string ExceptionMessage() => Invoking(() => _actual.Must().BeEquivalentTo(_expected)).Must().Throw<AssertionFailedException>().Message;
+
+         public class and_the_exception_message_contains : BeEquivalentTo_throws_AssertionFailedException
+         {
+            [XF] public void the_full_actual_expression() => ExceptionMessage().Must().Contain($"""
+                                                                                               expected the expression: 
+                                                                                               --------------------------------------------------
+                                                                                                  {nameof(_actual)}
+                                                                                               --------------------------------------------------
+                                                                                               to BeEquivalentTo:
+                                                                                               --------------------------------------------------
+                                                                                                  {nameof(_expected)}
+                                                                                               --------------------------------------------------
+                                                                                               """);
+
+            [XF] public void the_full_unified_diff() => ExceptionMessage().Must().Contain("""
+                                                                                          --- expected
+                                                                                          +++ actual
+                                                                                          @@ -1,8 +1,8 @@
+                                                                                           {
+                                                                                             "$type": "Compze.Tests.Unit.Testing.Fluent.When_comparing_objects_with_BeEquivalentTo+TestObject, Compze.Tests.Unit",
+                                                                                          -  "PublicProperty": "public2",
+                                                                                          -  "InternalProperty": "internal2",
+                                                                                          -  "<PublicProperty>k__BackingField": "public2",
+                                                                                          -  "<InternalProperty>k__BackingField": "internal2",
+                                                                                          -  "PrivateField": "private2"
+                                                                                          +  "PublicProperty": "public1",
+                                                                                          +  "InternalProperty": "internal1",
+                                                                                          +  "<PublicProperty>k__BackingField": "public1",
+                                                                                          +  "<InternalProperty>k__BackingField": "internal1",
+                                                                                          +  "PrivateField": "private1"
+                                                                                           }
+                                                                                          """);
+         }
+      }
+   }
+
+   public class given_two_objects_that_are_equivalent : When_comparing_objects_with_BeEquivalentTo
+   {
+      readonly TestObject _actual = new("same", "same", "same");
+      readonly TestObject _expected = new("same", "same", "same");
+
+      public class BeEquivalentTo_does_not_throw : given_two_objects_that_are_equivalent
+      {
+         [XF] public void assertion_succeeds() => _actual.Must().BeEquivalentTo(_expected);
+      }
+   }
+
+   public class given_two_objects_that_differ_only_in_public_members : When_comparing_objects_with_BeEquivalentTo
+   {
+      readonly TestObject _actual = new("public1", "sameInternal", "samePrivate");
+      readonly TestObject _expected = new("public2", "sameInternal", "samePrivate");
+
+      public class BeEquivalentTo_throws : given_two_objects_that_differ_only_in_public_members
+      {
+         [XF] public void because_it_checks_all_members()
+            => Invoking(() => _actual.Must().BeEquivalentTo(_expected)).Must().Throw<AssertionFailedException>();
+      }
+
+      public class BeEquivalentToInternal_throws : given_two_objects_that_differ_only_in_public_members
+      {
+         [XF] public void because_backing_field_for_public_property_is_private()
+            => Invoking(() => _actual.Must().BeEquivalentToInternal(_expected)).Must().Throw<AssertionFailedException>();
+      }
+
+      public class BeEquivalentToPublic_throws : given_two_objects_that_differ_only_in_public_members
+      {
+         [XF] public void because_public_members_differ()
+            => Invoking(() => _actual.Must().BeEquivalentToPublic(_expected)).Must().Throw<AssertionFailedException>();
+      }
+   }
+
+   public class given_two_objects_that_differ_only_in_internal_members : When_comparing_objects_with_BeEquivalentTo
+   {
+      readonly TestObject _actual = new("samePublic", "internal1", "samePrivate");
+      readonly TestObject _expected = new("samePublic", "internal2", "samePrivate");
+
+      public class BeEquivalentTo_throws : given_two_objects_that_differ_only_in_internal_members
+      {
+         [XF] public void because_it_checks_all_members()
+            => Invoking(() => _actual.Must().BeEquivalentTo(_expected)).Must().Throw<AssertionFailedException>();
+      }
+
+      public class BeEquivalentToInternal_throws : given_two_objects_that_differ_only_in_internal_members
+      {
+         [XF] public void because_internal_members_differ()
+            => Invoking(() => _actual.Must().BeEquivalentToInternal(_expected)).Must().Throw<AssertionFailedException>();
+      }
+
+      public class BeEquivalentToPublic_does_not_throw : given_two_objects_that_differ_only_in_internal_members
+      {
+         [XF] public void because_public_members_are_the_same() => _actual.Must().BeEquivalentToPublic(_expected);
+      }
+   }
+
+   public class given_two_objects_that_differ_only_in_private_members : When_comparing_objects_with_BeEquivalentTo
+   {
+      readonly TestObject _actual = new("samePublic", "sameInternal", "private1");
+      readonly TestObject _expected = new("samePublic", "sameInternal", "private2");
+
+      public class BeEquivalentTo_throws : given_two_objects_that_differ_only_in_private_members
+      {
+         [XF] public void because_it_checks_all_members()
+            => Invoking(() => _actual.Must().BeEquivalentTo(_expected)).Must().Throw<AssertionFailedException>();
+      }
+
+      public class BeEquivalentToInternal_throws : given_two_objects_that_differ_only_in_private_members
+      {
+         [XF] public void because_it_checks_all_non_public_members()
+            => Invoking(() => _actual.Must().BeEquivalentToInternal(_expected)).Must().Throw<AssertionFailedException>();
+      }
+
+      public class BeEquivalentToPublic_does_not_throw : given_two_objects_that_differ_only_in_private_members
+      {
+         [XF] public void because_public_members_are_the_same() => _actual.Must().BeEquivalentToPublic(_expected);
+      }
+   }
+}
