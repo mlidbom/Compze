@@ -46,18 +46,14 @@ public class When_comparing_objects_with_BeEquivalentTo : UniversalTestBase
             [XF] public void the_full_unified_diff() => ExceptionMessage().Must().Contain("""
                                                                                           --- expected
                                                                                           +++ actual
-                                                                                          @@ -1,8 +1,8 @@
+                                                                                          @@ -1,6 +1,6 @@
                                                                                            {
                                                                                              "$type": "Compze.Tests.Unit.Testing.Fluent.When_comparing_objects_with_BeEquivalentTo+TestObject, Compze.Tests.Unit",
                                                                                           -  "PublicProperty": "public2",
                                                                                           -  "InternalProperty": "internal2",
-                                                                                          -  "<PublicProperty>k__BackingField": "public2",
-                                                                                          -  "<InternalProperty>k__BackingField": "internal2",
                                                                                           -  "PrivateField": "private2"
                                                                                           +  "PublicProperty": "public1",
                                                                                           +  "InternalProperty": "internal1",
-                                                                                          +  "<PublicProperty>k__BackingField": "public1",
-                                                                                          +  "<InternalProperty>k__BackingField": "internal1",
                                                                                           +  "PrivateField": "private1"
                                                                                            }
                                                                                           """);
@@ -69,8 +65,6 @@ public class When_comparing_objects_with_BeEquivalentTo : UniversalTestBase
                                                                                                "$type": "Compze.Tests.Unit.Testing.Fluent.When_comparing_objects_with_BeEquivalentTo+TestObject, Compze.Tests.Unit",
                                                                                                "PublicProperty": "public1",
                                                                                                "InternalProperty": "internal1",
-                                                                                               "<PublicProperty>k__BackingField": "public1",
-                                                                                               "<InternalProperty>k__BackingField": "internal1",
                                                                                                "PrivateField": "private1"
                                                                                              }
                                                                                              """);
@@ -82,8 +76,6 @@ public class When_comparing_objects_with_BeEquivalentTo : UniversalTestBase
                                                                                                  "$type": "Compze.Tests.Unit.Testing.Fluent.When_comparing_objects_with_BeEquivalentTo+TestObject, Compze.Tests.Unit",
                                                                                                  "PublicProperty": "public2",
                                                                                                  "InternalProperty": "internal2",
-                                                                                                 "<PublicProperty>k__BackingField": "public2",
-                                                                                                 "<InternalProperty>k__BackingField": "internal2",
                                                                                                  "PrivateField": "private2"
                                                                                                }
                                                                                                """);
