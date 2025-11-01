@@ -110,6 +110,38 @@ public static class ObjectEqualityAssertions
       must.Satisfy(it => Comparer<TValue>.Default.Compare(it, expected) == 0);
       must.Satisfy(it => Comparer<TValue>.Default.Compare(expected, it) == 0);
 
+      // < operator - both directions (should return false for equal values)
+      var lessThanOperator = typeof(TValue).GetMethod("op_LessThan", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static, null, [typeof(TValue), typeof(TValue)], null);
+      if(lessThanOperator != null)
+      {
+         must.Satisfy(it => (bool)lessThanOperator.Invoke(null, [it, expected])! == false);
+         must.Satisfy(it => (bool)lessThanOperator.Invoke(null, [expected, it])! == false);
+      }
+
+      // > operator - both directions (should return false for equal values)
+      var greaterThanOperator = typeof(TValue).GetMethod("op_GreaterThan", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static, null, [typeof(TValue), typeof(TValue)], null);
+      if(greaterThanOperator != null)
+      {
+         must.Satisfy(it => (bool)greaterThanOperator.Invoke(null, [it, expected])! == false);
+         must.Satisfy(it => (bool)greaterThanOperator.Invoke(null, [expected, it])! == false);
+      }
+
+      // <= operator - both directions (should return true for equal values)
+      var lessThanOrEqualOperator = typeof(TValue).GetMethod("op_LessThanOrEqual", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static, null, [typeof(TValue), typeof(TValue)], null);
+      if(lessThanOrEqualOperator != null)
+      {
+         must.Satisfy(it => (bool)lessThanOrEqualOperator.Invoke(null, [it, expected])!);
+         must.Satisfy(it => (bool)lessThanOrEqualOperator.Invoke(null, [expected, it])!);
+      }
+
+      // >= operator - both directions (should return true for equal values)
+      var greaterThanOrEqualOperator = typeof(TValue).GetMethod("op_GreaterThanOrEqual", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static, null, [typeof(TValue), typeof(TValue)], null);
+      if(greaterThanOrEqualOperator != null)
+      {
+         must.Satisfy(it => (bool)greaterThanOrEqualOperator.Invoke(null, [it, expected])!);
+         must.Satisfy(it => (bool)greaterThanOrEqualOperator.Invoke(null, [expected, it])!);
+      }
+
       // GetHashCode - should return the same value for equal objects
       must.Satisfy(it => it!.GetHashCode() == expected!.GetHashCode());
 
