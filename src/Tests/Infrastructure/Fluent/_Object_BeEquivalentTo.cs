@@ -16,8 +16,8 @@ public class EquivalencyConfig<TValue>
 
    public EquivalencyConfig<TValue> Excluding<TMember>(Expression<Func<TValue, TMember>> memberExpression)
    {
-      var memberAccess = memberExpression.Body.ExtractFinalMemberAccessExpression();
-      ExcludedMembers.Add((memberAccess.Member.DeclaringType.NotNull(), memberAccess.Member.Name.NotNull()));
+      var member = memberExpression.Body.ExtractFinalMemberInfo();
+      ExcludedMembers.Add((member.DeclaringType.NotNull(), member.Name.NotNull()));
       return this;
    }
 }

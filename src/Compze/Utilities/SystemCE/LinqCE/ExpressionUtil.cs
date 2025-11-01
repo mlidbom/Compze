@@ -1,5 +1,6 @@
 using System;
 using System.Linq.Expressions;
+using System.Reflection;
 using static Compze.Utilities.Contracts.Assert;
 
 namespace Compze.Utilities.SystemCE.LinqCE;
@@ -22,6 +23,10 @@ static class ExpressionUtil
 
       return $"{memberExpression.Member.DeclaringType!.FullName}.{memberExpression.Member.Name}";
    }
+
+   public static MemberInfo ExtractFinalMemberInfo(this Expression expression) =>
+      expression.ExtractFinalMemberAccessExpression().Member;
+
 
    public static MemberExpression ExtractFinalMemberAccessExpression(this Expression expression)
    {
