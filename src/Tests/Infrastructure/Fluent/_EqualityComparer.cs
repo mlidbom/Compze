@@ -1,4 +1,5 @@
 using Compze.Tests.Infrastructure.Fluent.Serialization;
+using Compze.Utilities.SystemCE.ReflectionCE;
 using DiffPlex.Renderer;
 using Newtonsoft.Json;
 using System;
@@ -42,108 +43,44 @@ public static class ObjectEqualityAssertions
 
    public static Must<TValue>? Be_transitively_equal_to_according_to_every_supported_comparison_method_and_hashcode<TValue>(this Must<TValue> must, TValue expected, [CallerArgumentExpression(nameof(expected))] string expectedExpression = null!)
    {
-      var actual = must.Actual;
+      must.Satisfy(actual => Equals(actual, expected));
+      must.Satisfy(actual => Equals(expected, actual));
 
-      // IEquatable<T>.Equals - both directions
-      if(actual is IEquatable<TValue> equatable)
-      {
-         must.Satisfy(it => equatable.Equals(expected));
-      }
-      if(expected is IEquatable<TValue> expectedEquatable)
-      {
-         must.Satisfy(it => expectedEquatable.Equals(actual));
-      }
+      must.Satisfy(actual => (actual as IEquatable<TValue>)?.Equals(expected) ?? true);
+      must.Satisfy(actual => (expected as IEquatable<TValue>)?.Equals(actual) ?? true);
 
-      // Object.Equals - both directions
-      must.Satisfy(it => Equals(it, expected));
-      must.Satisfy(it => Equals(expected, it));
+      must.Satisfy(actual => actual.DeclaredType().Operators.Equality?.Invoke(actual, expected) ?? true, () => "Operator == should have returned true");
+      must.Satisfy(actual => actual.DeclaredType().Operators.Equality?.Invoke(expected, actual) ?? true, () => "Operator == should have returned true");
 
-      // == operator - both directions (using reflection to call actual operator if it exists)
-      var equalityOperator = typeof(TValue).GetMethod("op_Equality", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static, null, [typeof(TValue), typeof(TValue)], null);
-      if(equalityOperator != null)
-      {
-         must.Satisfy(it => (bool)equalityOperator.Invoke(null, [it, expected])!);
-         must.Satisfy(it => (bool)equalityOperator.Invoke(null, [expected, it])!);
-      }
-      else
-      {
-         // Fallback to EqualityComparer if no operator is defined
-         must.Satisfy(actual => EqualityComparer<TValue>.Default.Equals(actual, expected));
-         must.Satisfy(actual => EqualityComparer<TValue>.Default.Equals(expected, actual));
-      }
+      must.Satisfy(actual => !actual.DeclaredType().Operators.InEquality?.Invoke(actual, expected) ?? true, () => "Operator != should have returned false");
+      must.Satisfy(actual => !actual.DeclaredType().Operators.InEquality?.Invoke(expected, actual) ?? true, () => "Operator != should have returned false");
 
-      // != operator - both directions (should return false)
-      var inequalityOperator = typeof(TValue).GetMethod("op_Inequality", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static, null, [typeof(TValue), typeof(TValue)], null);
-      if(inequalityOperator != null)
-      {
-         must.Satisfy(it => (bool)inequalityOperator.Invoke(null, [it, expected])! == false);
-         must.Satisfy(it => (bool)inequalityOperator.Invoke(null, [expected, it])! == false);
-      }
-      else
-      {
-         // Fallback to EqualityComparer if no operator is defined
-         must.Satisfy(it => !EqualityComparer<TValue>.Default.Equals(it, expected) == false);
-         must.Satisfy(it => !EqualityComparer<TValue>.Default.Equals(expected, it) == false);
-      }
+      must.Satisfy(actual => EqualityComparer<TValue>.Default.Equals(actual, expected), () => "default equality comparer should have returned true");
+      must.Satisfy(actual => EqualityComparer<TValue>.Default.Equals(expected, actual), () => "default equality comparer should have returned true");
 
-      // IComparable<T>.CompareTo - both directions (should return 0)
-      if(actual is IComparable<TValue> actualAsGenericComparable)
-      {
-         must.Satisfy(it => actualAsGenericComparable.CompareTo(expected) == 0);
-      }
-      if(expected is IComparable<TValue> expectedAsGenericComparable)
-      {
-         must.Satisfy(it => expectedAsGenericComparable.CompareTo(actual) == 0);
-      }
 
-      // IComparable.CompareTo - both directions (should return 0)
-      if(actual is IComparable actualAsComparable)
-      {
-         must.Satisfy(it => actualAsComparable.CompareTo(expected) == 0);
-      }
-      if(expected is IComparable expectedAsComparable)
-      {
-         must.Satisfy(it => expectedAsComparable.CompareTo(actual) == 0);
-      }
+      must.Satisfy(actual => (actual as IComparable<TValue>)?.CompareTo(expected).Equals(0) ?? true, () => "IComparable<T>.CompareTo should have returned 0");
+      must.Satisfy(actual => (expected as IComparable<TValue>)?.CompareTo(actual).Equals(0) ?? true, () => "IComparable<T>.CompareTo should have returned 0");
 
-      // Comparer<T>.Default.Compare - both directions (should return 0)
-      must.Satisfy(it => Comparer<TValue>.Default.Compare(it, expected) == 0);
-      must.Satisfy(it => Comparer<TValue>.Default.Compare(expected, it) == 0);
+      must.Satisfy(actual => (actual as IComparable)?.CompareTo(expected).Equals(0) ?? true, () => "IComparable.CompareTo should have returned 0");
+      must.Satisfy(actual => (expected as IComparable)?.CompareTo(actual).Equals(0) ?? true, () => "IComparable.CompareTo should have returned 0");
 
-      // < operator - both directions (should return false for equal values)
-      var lessThanOperator = typeof(TValue).GetMethod("op_LessThan", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static, null, [typeof(TValue), typeof(TValue)], null);
-      if(lessThanOperator != null)
-      {
-         must.Satisfy(it => (bool)lessThanOperator.Invoke(null, [it, expected])! == false);
-         must.Satisfy(it => (bool)lessThanOperator.Invoke(null, [expected, it])! == false);
-      }
+      must.Satisfy(actual => Comparer<TValue>.Default.Compare(actual, expected) == 0, () => "Default comparer should have returned 0");
+      must.Satisfy(actual => Comparer<TValue>.Default.Compare(expected, actual) == 0, () => "Default comparer should have returned 0");
 
-      // > operator - both directions (should return false for equal values)
-      var greaterThanOperator = typeof(TValue).GetMethod("op_GreaterThan", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static, null, [typeof(TValue), typeof(TValue)], null);
-      if(greaterThanOperator != null)
-      {
-         must.Satisfy(it => (bool)greaterThanOperator.Invoke(null, [it, expected])! == false);
-         must.Satisfy(it => (bool)greaterThanOperator.Invoke(null, [expected, it])! == false);
-      }
+      must.Satisfy(actual => !actual.DeclaredType().Operators.LessThan?.Invoke(expected, actual) ?? true, () => "Operator < should have returned false");
+      must.Satisfy(actual => !actual.DeclaredType().Operators.LessThan?.Invoke(actual, expected) ?? true, () => "Operator < should have returned false");
 
-      // <= operator - both directions (should return true for equal values)
-      var lessThanOrEqualOperator = typeof(TValue).GetMethod("op_LessThanOrEqual", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static, null, [typeof(TValue), typeof(TValue)], null);
-      if(lessThanOrEqualOperator != null)
-      {
-         must.Satisfy(it => (bool)lessThanOrEqualOperator.Invoke(null, [it, expected])!);
-         must.Satisfy(it => (bool)lessThanOrEqualOperator.Invoke(null, [expected, it])!);
-      }
+      must.Satisfy(actual => !actual.DeclaredType().Operators.LessThanOrEqual?.Invoke(expected, actual) ?? true, () => "Operator <= should have returned false");
+      must.Satisfy(actual => !actual.DeclaredType().Operators.LessThanOrEqual?.Invoke(actual, expected) ?? true, () => "Operator <= should have returned false");
 
-      // >= operator - both directions (should return true for equal values)
-      var greaterThanOrEqualOperator = typeof(TValue).GetMethod("op_GreaterThanOrEqual", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static, null, [typeof(TValue), typeof(TValue)], null);
-      if(greaterThanOrEqualOperator != null)
-      {
-         must.Satisfy(it => (bool)greaterThanOrEqualOperator.Invoke(null, [it, expected])!);
-         must.Satisfy(it => (bool)greaterThanOrEqualOperator.Invoke(null, [expected, it])!);
-      }
+      must.Satisfy(actual => !actual.DeclaredType().Operators.GreaterThan?.Invoke(expected, actual) ?? true, () => "Operator > should have returned false");
+      must.Satisfy(actual => !actual.DeclaredType().Operators.GreaterThan?.Invoke(actual, expected) ?? true, () => "Operator > should have returned false");
 
-      // GetHashCode - should return the same value for equal objects
-      must.Satisfy(it => it!.GetHashCode() == expected!.GetHashCode());
+      must.Satisfy(actual => !actual.DeclaredType().Operators.GreaterThanOrEqual?.Invoke(expected, actual) ?? true, () => "Operator >= should have returned false");
+      must.Satisfy(actual => !actual.DeclaredType().Operators.GreaterThanOrEqual?.Invoke(actual, expected) ?? true, () => "Operator >= should have returned false");
+
+      must.Satisfy(actual => actual!.GetHashCode() == expected!.GetHashCode());
 
       return must;
    }
