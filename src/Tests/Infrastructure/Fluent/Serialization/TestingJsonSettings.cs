@@ -12,41 +12,23 @@ namespace Compze.Tests.Infrastructure.Fluent.Serialization;
 
 static class TestingJsonSettings
 {
-   internal static readonly JsonSerializerSettings All =
-      new()
-      {
-         TypeNameHandling = TypeNameHandling.All,
-         TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Simple,
-         Formatting = Formatting.Indented,
-         ContractResolver = new AllMembersContractResolver(),
-         ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-         MaxDepth = 32
-      };
+   internal static readonly JsonSerializerSettings All = CreateSettings(new AllMembersContractResolver());
+   internal static readonly JsonSerializerSettings Internal = CreateSettings(new InternalMembersContractResolver());
+   internal static readonly JsonSerializerSettings Public = CreateSettings(new PublicMembersContractResolver());
 
-   internal static readonly JsonSerializerSettings Internal =
+   static JsonSerializerSettings CreateSettings(IContractResolver resolver) =>
       new()
       {
          TypeNameHandling = TypeNameHandling.All,
          TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Simple,
          Formatting = Formatting.Indented,
-         ContractResolver = new InternalMembersContractResolver(),
-         ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-         MaxDepth = 32
-      };
-
-   internal static readonly JsonSerializerSettings Public =
-      new()
-      {
-         TypeNameHandling = TypeNameHandling.All,
-         TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Simple,
-         Formatting = Formatting.Indented,
-         ContractResolver = new PublicMembersContractResolver(),
+         ContractResolver = resolver,
          ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
          MaxDepth = 32
       };
 }
 
-class AllMembersContractResolver : DefaultContractResolver
+abstract class MemberFilteringContractResolver : DefaultContractResolver
 {
    protected override JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization)
    {
@@ -58,64 +40,39 @@ class AllMembersContractResolver : DefaultContractResolver
 
    protected override IList<JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization)
    {
-      var properties = type.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
-                           .Select(p => CreateProperty(p, memberSerialization))
-                           .ToList();
+      var allProperties = type.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+                              .Where(ShouldIncludeProperty);
 
-      var fields = type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
-                       .Select(f => CreateProperty(f, memberSerialization))
-                       .ToList();
+      var allFields = type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+                          .Where(ShouldIncludeField);
 
-      return properties.Union(fields).ToList();
+      return allProperties.Cast<MemberInfo>()
+                          .Concat(allFields)
+                          .Select(m => CreateProperty(m, memberSerialization))
+                          .ToList();
    }
+
+   protected abstract bool ShouldIncludeProperty(PropertyInfo property);
+   protected abstract bool ShouldIncludeField(FieldInfo field);
 }
 
-class InternalMembersContractResolver : DefaultContractResolver
+class AllMembersContractResolver : MemberFilteringContractResolver
 {
-   protected override JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization)
-   {
-      var property = base.CreateProperty(member, memberSerialization);
-      property.Readable = true;
-      property.Writable = true;
-      return property;
-   }
-
-   protected override IList<JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization)
-   {
-      var properties = type.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
-                           .Where(p => p.GetMethod is { IsAssembly: true } or { IsFamilyOrAssembly: true } or { IsFamily: true })
-                           .Select(p => CreateProperty(p, memberSerialization))
-                           .ToList();
-
-      var fields = type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
-                       .Where(f => f.IsAssembly || f.IsFamilyOrAssembly || f.IsFamily)
-                       .Select(f => CreateProperty(f, memberSerialization))
-                       .ToList();
-
-      return properties.Union(fields).ToList();
-   }
+   protected override bool ShouldIncludeProperty(PropertyInfo property) => true;
+   protected override bool ShouldIncludeField(FieldInfo field) => true;
 }
 
-class PublicMembersContractResolver : DefaultContractResolver
+class InternalMembersContractResolver : MemberFilteringContractResolver
 {
-   protected override JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization)
-   {
-      var property = base.CreateProperty(member, memberSerialization);
-      property.Readable = true;
-      property.Writable = true;
-      return property;
-   }
+   protected override bool ShouldIncludeProperty(PropertyInfo property) =>
+      property.GetMethod is { IsAssembly: true } or { IsFamilyOrAssembly: true } or { IsFamily: true };
 
-   protected override IList<JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization)
-   {
-      var properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                           .Select(p => CreateProperty(p, memberSerialization))
-                           .ToList();
+   protected override bool ShouldIncludeField(FieldInfo field) =>
+      field.IsAssembly || field.IsFamilyOrAssembly || field.IsFamily;
+}
 
-      var fields = type.GetFields(BindingFlags.Public | BindingFlags.Instance)
-                       .Select(f => CreateProperty(f, memberSerialization))
-                       .ToList();
-
-      return properties.Union(fields).ToList();
-   }
+class PublicMembersContractResolver : MemberFilteringContractResolver
+{
+   protected override bool ShouldIncludeProperty(PropertyInfo property) => property.GetMethod?.IsPublic ?? false;
+   protected override bool ShouldIncludeField(FieldInfo field) => field.IsPublic;
 }
