@@ -24,7 +24,9 @@ abstract class MemberFilteringContractResolver : DefaultContractResolver
    protected override IList<JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization)
    {
       var allProperties = type.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
-                              .Where(ShouldIncludeProperty);
+                              .Where(ShouldIncludeProperty)
+                              .GroupBy(p => p.Name)
+                              .Select(g => g.First()); // Take the most derived property when there are multiple with same name
 
       var allFields = type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
                           .Where(ShouldIncludeField)
