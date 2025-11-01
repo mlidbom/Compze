@@ -62,28 +62,23 @@ public class When_comparing_objects_with_Be : UniversalTestBase
             [XF] public void _is() =>
                ExceptionMessage().Must().Be(""""
                                             --------------------------------------------------
-                                            expected the object returned by the expression: 
+                                            expected the object "it" returned by the expression: 
+                                               _actual
+                                            to be equal to the the object "expected" returned by the expression:
+                                               _expected
+                                            but it failed the test: 
+                                               it => Equals(it, expected)
                                             --------------------------------------------------
-                                            _actual
+                                            Diff:
                                             --------------------------------------------------
-                                            to be the equal to the the object returned by the expression:
+                                            [-43]
+                                            [+42]
                                             --------------------------------------------------
-                                            _expected
-                                            --------------------------------------------------
-                                            but it was not and a diff of the instances is:
-                                            --------------------------------------------------
-                                            --- expected
-                                            +++ actual
-                                            @@ -1,1 +1,1 @@
-                                            -43
-                                            +42
-                                            
-                                            --------------------------------------------------
-                                            Actual was:
+                                            it was:
                                             --------------------------------------------------
                                             42
                                             --------------------------------------------------
-                                            Expected was:
+                                            expected was:
                                             --------------------------------------------------
                                             43
                                             --------------------------------------------------
@@ -117,18 +112,17 @@ public class When_comparing_objects_with_Be : UniversalTestBase
             [XF] public void _is() =>
                ExceptionMessage().Must().Be(""""
                                             --------------------------------------------------
-                                            expected the object returned by the expression: 
+                                            expected the object "it" returned by the expression: 
+                                               _actual
+                                            to be equal to the the object "expected" returned by the expression:
+                                               _expected
+                                            but it failed the test: 
+                                               it => Equals(it, expected)
                                             --------------------------------------------------
-                                            _actual
+                                            Diff:
                                             --------------------------------------------------
-                                            to be the equal to the the object returned by the expression:
-                                            --------------------------------------------------
-                                            _expected
-                                            --------------------------------------------------
-                                            but it was not and a diff of the instances is:
-                                            --------------------------------------------------
-                                            --- expected
-                                            +++ actual
+                                            --- expression
+                                            +++ expected
                                             @@ -1,4 +1,4 @@
                                              {
                                                "$type": "Compze.Tests.Unit.Testing.Fluent.When_comparing_objects_with_Be+TestObjectWithOverriddenEquals, Compze.Tests.Unit",
@@ -137,14 +131,14 @@ public class When_comparing_objects_with_Be : UniversalTestBase
                                              }
                                             
                                             --------------------------------------------------
-                                            Actual was:
+                                            it was:
                                             --------------------------------------------------
                                             {
                                               "$type": "Compze.Tests.Unit.Testing.Fluent.When_comparing_objects_with_Be+TestObjectWithOverriddenEquals, Compze.Tests.Unit",
                                               "_value": "actual_value"
                                             }
                                             --------------------------------------------------
-                                            Expected was:
+                                            expected was:
                                             --------------------------------------------------
                                             {
                                               "$type": "Compze.Tests.Unit.Testing.Fluent.When_comparing_objects_with_Be+TestObjectWithOverriddenEquals, Compze.Tests.Unit",

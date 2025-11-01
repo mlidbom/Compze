@@ -1,11 +1,9 @@
 using Compze.Tests.Infrastructure.Fluent.Serialization;
 using Compze.Utilities.SystemCE.ReflectionCE;
-using DiffPlex.Renderer;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using Compze.Utilities.Contracts;
 using Compze.Utilities.SystemCE;
 
 namespace Compze.Tests.Infrastructure.Fluent;
@@ -17,50 +15,16 @@ public static class ObjectEqualityAssertions
       if(expected is null && must.Actual is null)
          return must;
 
-      return must.Satisfy(it => Equals(it, expected),
-                          messageOverride: _ =>
-                          {
-                             var actualJson = JsonConvert.SerializeObject(must.Actual, TestingJsonSettings.AllMembers);
-                             var expectedJson = JsonConvert.SerializeObject(expected, TestingJsonSettings.AllMembers);
-                             return $"""
-                                     {must.Separator}
-                                     expected the object returned by the expression: 
-                                     {must.Separator}
-                                     {must.Expression}
-                                     {must.Separator}
-                                     to be the equal to the the object returned by the expression:
-                                     {must.Separator}
-                                     {must.NormalizeExpressionIndentation(expectedExpression)}
-                                     {must.Separator}
-                                     but it was not and a diff of the instances is:
-                                     {must.Separator}
-                                     {UnidiffRenderer.GenerateUnidiff(oldText: expectedJson, newText: actualJson, oldFileName: "expected", newFileName: "actual")}
-                                     {must.Separator}
-                                     Actual was:
-                                     {must.Separator}
-                                     {actualJson}
-                                     {must.Separator}
-                                     Expected was:
-                                     {must.Separator}
-                                     {expectedJson}
-                                     {must.Separator}
-                                     """;
-                          });
+      return must.Be_transitively_equal_to_according_to_every_supported_comparison_method_and_hashcode(expected, expectedExpression);
    }
 
    public static Must<TValue> Be_transitively_equal_to_according_to_every_supported_comparison_method_and_hashcode<TValue>(this Must<TValue> must, TValue expected, [CallerArgumentExpression(nameof(expected))] string expectedExpression = null!)
    {
-      var usedArguments = new List<AssertionArgumentInfo>
-                          {
-                             new("actual", must.Expression, must.Actual)
-                          };
-
-
       must.Satisfy(it => Equals(it, expected), messageOverride: BuildFailureMessage);
       must.Satisfy(it => Equals(expected, it), messageOverride: BuildFailureMessage);
 
-      must.Satisfy(it => (it as IEquatable<TValue>)?.Equals(expected) ?? true);
-      must.Satisfy(it => (expected as IEquatable<TValue>)?.Equals(it) ?? true);
+      must.Satisfy(it => (it as IEquatable<TValue>)?.Equals(expected) ?? true, messageOverride: BuildFailureMessage);
+      must.Satisfy(it => (expected as IEquatable<TValue>)?.Equals(it) ?? true, messageOverride: BuildFailureMessage);
 
       must.Satisfy(it => it.DeclaredType().Operators.Equality?.Invoke(it, expected) ?? true, failureMessage: it => "it == expected should have returned true", messageOverride: BuildFailureMessage);
       must.Satisfy(it => it.DeclaredType().Operators.Equality?.Invoke(expected, it) ?? true, failureMessage: it => "expected == it have returned true", messageOverride: BuildFailureMessage);
@@ -100,16 +64,11 @@ public static class ObjectEqualityAssertions
          return $"""
                  {must.Separator}
                  expected the object "it" returned by the expression: 
-                 {must.Separator}
-                 {must.Expression}
-                 {must.Separator}
-                 to be the equal to the the object "expected" returned by the expression:
-                 {must.Separator}
-                 {must.NormalizeExpressionIndentation(expectedExpression)}
-                 {must.Separator}
+                 {must.Expression.Indent()}
+                 to be equal to the the object "expected" returned by the expression:
+                 {must.NormalizeExpressionIndentation(expectedExpression).Indent()}
                  but it failed the test: 
-                 {info.PredicateExpression.Indent()}
-                 with the message: {info.FailureMessage?.Invoke(must.Actual)}
+                 {info.PredicateExpression.Indent()}{FailureMessage()}
                  {must.Separator}
                  Diff:
                  {must.Separator}
@@ -124,6 +83,12 @@ public static class ObjectEqualityAssertions
                  {expectedJson}
                  {must.Separator}
                  """;
+
+         string FailureMessage() =>
+            info.FailureMessage != null ? $""""
+
+                                           with the message: {info.FailureMessage?.Invoke(must.Actual)}""" 
+                                           """" : "";
       }
    }
 }
