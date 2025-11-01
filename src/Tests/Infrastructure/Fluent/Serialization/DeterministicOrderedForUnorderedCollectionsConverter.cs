@@ -18,7 +18,7 @@ class DeterministicOrderedForUnorderedCollectionsConverter : JsonConverter
 
    public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
    {
-      if (value == null)
+      if(value == null)
       {
          writer.WriteNull();
          return;
@@ -27,36 +27,62 @@ class DeterministicOrderedForUnorderedCollectionsConverter : JsonConverter
       var objectType = value.GetType();
 
       // Handle dictionaries (IDictionary<TKey, TValue>)
-      if (objectType.Implements(typeof(IDictionary<,>)))
+      if(objectType.Implements(typeof(IDictionary<,>)))
       {
          var dictionary = (IDictionary)value;
          var orderedKeys = dictionary.Keys.Cast<object?>().OrderBy(k => k?.ToString() ?? string.Empty).ToList();
 
          writer.WriteStartObject();
-         foreach (var key in orderedKeys)
+
+         // Preserve type information
+         if(serializer.TypeNameHandling != TypeNameHandling.None)
          {
-            if (key != null)
+            writer.WritePropertyName("$type");
+            writer.WriteValue($"{objectType.FullName}, {objectType.Assembly.GetName().Name}");
+         }
+
+         foreach(var key in orderedKeys)
+         {
+            if(key != null)
             {
                writer.WritePropertyName(key.ToString() ?? string.Empty);
                serializer.Serialize(writer, dictionary[key]);
             }
          }
+
          writer.WriteEndObject();
          return;
       }
 
       // Handle sets (ISet<T>)
-      if (objectType.Implements(typeof(ISet<>)))
+      if(objectType.Implements(typeof(ISet<>)))
       {
          var enumerable = (IEnumerable)value;
          var orderedItems = enumerable.Cast<object?>().OrderBy(item => item?.ToString() ?? string.Empty).ToList();
 
+         writer.WriteStartObject();
+
+         // Preserve type information
+         if(serializer.TypeNameHandling != TypeNameHandling.None)
+         {
+            writer.WritePropertyName("$type");
+            writer.WriteValue($"{objectType.FullName}, {objectType.Assembly.GetName().Name}");
+            writer.WritePropertyName("$values");
+         }
+
          writer.WriteStartArray();
-         foreach (var item in orderedItems)
+         foreach(var item in orderedItems)
          {
             serializer.Serialize(writer, item);
          }
+
          writer.WriteEndArray();
+
+         if(serializer.TypeNameHandling != TypeNameHandling.None)
+         {
+            writer.WriteEndObject();
+         }
+
          return;
       }
 

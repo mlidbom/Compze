@@ -38,7 +38,7 @@ public static class StringBe
    {
       public static string CreateDiff(string expected, string actual)
       {
-         if(expected.ContainsOrdinal(Environment.NewLine))
+         if(expected.ContainsOrdinal(Environment.NewLine) || actual.ContainsOrdinal(Environment.NewLine))
          {
             return UnidiffRenderer.GenerateUnidiff(oldText: expected, newText: actual, oldFileName: "expression", newFileName: "expected");
          } else
