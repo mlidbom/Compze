@@ -2,6 +2,7 @@ using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.Fluent;
 using Compze.Utilities.Testing.XUnit.BDD;
 using static Compze.Tests.Infrastructure.Fluent.MustActions;
+// ReSharper disable UnusedMember.Local
 
 // ReSharper disable InconsistentNaming
 
@@ -11,18 +12,11 @@ namespace Compze.Tests.Unit.Testing.Fluent;
 
 public class When_comparing_objects_with_BeEquivalentTo : UniversalTestBase
 {
-   class TestObject
+   class TestObject(string publicValue, string internalValue, string privateValue)
    {
-      public string PublicProperty { get; set; } = "";
-      internal string InternalProperty { get; set; } = "";
-      private string PrivateField = "";
-
-      public TestObject(string publicValue, string internalValue, string privateValue)
-      {
-         PublicProperty = publicValue;
-         InternalProperty = internalValue;
-         PrivateField = privateValue;
-      }
+      public string PublicProperty { get; set; } = publicValue;
+      internal string InternalProperty { get; set; } = internalValue;
+      private readonly string PrivateField = privateValue;
 
       public string GetPrivateField() => PrivateField;
    }
