@@ -6,8 +6,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
-using Compze.Utilities.SystemCE.LinqCE;
-using static Compze.Tests.Infrastructure.Fluent.ObjectEqualityAssertions;
 
 namespace Compze.Tests.Infrastructure.Fluent;
 
@@ -60,6 +58,8 @@ public static class _Satisfy
                 .Where(it => it != RemoveLine)
                 .JoinLines();
 
+         throw new AssertionFailedException(message);
+
          string DisplayUsedArgumentsDefinitions()
          {
             if(usedArguments == null || !usedArguments.Any())
@@ -84,33 +84,35 @@ public static class _Satisfy
                     """;
          }
 
+         static string ArgumentDescription(AssertionArgumentInfo arg) =>
+            $"""
+             {arg.Name} was:
+             {arg.Expression.Indent()}
+             {Must.Separator}
+             """;
 
-         throw new AssertionFailedException(message);
+         static string ArgumentValueDisplay(AssertionArgumentInfo context)
+         {
+            var something = context.Value != null ? JsonConvert.SerializeObject(context.Value, TestingJsonSettings.AllMembers) : "null";
+            return $"""
+                    The value of: 
+                    {context.Expression.Indent()}
+                    Was:
+                    {Must.Separator}
+                    ToString():
+                    {Must.Separator}
+                    {context.Value?.ToString() ?? "null"}
+                    {Must.Separator}
+                    JSON:
+                    {Must.Separator}
+                    {Serialize(context.Value)}
+                    {Must.Separator}
+                    """;
+         }
+
+         static string Serialize(object? obj) => obj != null ? JsonConvert.SerializeObject(obj, TestingJsonSettings.AllMembers) : "null";
       }
 
       return context;
    }
-
-   static string ArgumentDescription(AssertionArgumentInfo arg) =>
-      $"""
-       {arg.Name} was:
-       {arg.Expression.Indent()}
-       {Must.Separator}
-       """;
-
-   static string ArgumentValueDisplay(AssertionArgumentInfo context) =>
-      $"""
-       The value of: 
-       {context.Expression.Indent()}
-       Was:
-       {Must.Separator}
-       ToString():
-       {Must.Separator}
-       {context.Value?.ToString() ?? "null"}
-       {Must.Separator}
-       JSON:
-       {Must.Separator}
-       context.Value != null ? {JsonConvert.SerializeObject(context.Value, TestingJsonSettings.AllMembers)} : "null";
-       {Must.Separator}
-       """;
 }
