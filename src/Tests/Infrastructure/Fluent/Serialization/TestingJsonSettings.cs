@@ -16,6 +16,25 @@ static class TestingJsonSettings
    internal static readonly JsonSerializerSettings InternalAndPublicMembers = CreateSettings(new InternalMembersContractResolver());
    internal static readonly JsonSerializerSettings PublicMembers = CreateSettings(new PublicMembersContractResolver());
 
+   internal static JsonSerializerSettings CreateSettingsWithExclusions(JsonSerializerSettings baseSettings, ISet<(Type DeclaringType, string MemberName)> excludedMembers)
+   {
+      var baseResolver = baseSettings.ContractResolver as MemberFilteringContractResolver 
+                         ?? throw new ArgumentException("Base settings must have a MemberFilteringContractResolver", nameof(baseSettings));
+      var excludingResolver = new ExcludingMembersContractResolver(baseResolver, excludedMembers);
+      
+      var settings = new JsonSerializerSettings
+      {
+         TypeNameHandling = baseSettings.TypeNameHandling,
+         TypeNameAssemblyFormatHandling = baseSettings.TypeNameAssemblyFormatHandling,
+         Formatting = baseSettings.Formatting,
+         ContractResolver = excludingResolver,
+         ReferenceLoopHandling = baseSettings.ReferenceLoopHandling,
+         MaxDepth = baseSettings.MaxDepth
+      };
+      
+      return settings;
+   }
+
    static JsonSerializerSettings CreateSettings(IContractResolver resolver) =>
       new()
       {
@@ -37,6 +56,9 @@ abstract class MemberFilteringContractResolver : DefaultContractResolver
       property.Writable = true;
       return property;
    }
+
+   internal IList<JsonProperty> CreatePropertiesInternal(Type type, MemberSerialization memberSerialization) 
+      => CreateProperties(type, memberSerialization);
 
    protected override IList<JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization)
    {
@@ -79,4 +101,38 @@ class PublicMembersContractResolver : MemberFilteringContractResolver
 {
    protected override bool ShouldIncludeProperty(PropertyInfo property) => property.GetMethod?.IsPublic ?? false;
    protected override bool ShouldIncludeField(FieldInfo field) => field.IsPublic;
+}
+
+class ExcludingMembersContractResolver : DefaultContractResolver
+{
+   readonly MemberFilteringContractResolver _baseResolver;
+   readonly ISet<(Type DeclaringType, string MemberName)> _excludedMembers;
+
+   public ExcludingMembersContractResolver(MemberFilteringContractResolver baseResolver, ISet<(Type DeclaringType, string MemberName)> excludedMembers)
+   {
+      _baseResolver = baseResolver;
+      _excludedMembers = excludedMembers;
+   }
+
+   protected override IList<JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization)
+   {
+      var properties = _baseResolver.CreatePropertiesInternal(type, memberSerialization);
+      return properties.Where(p => !ShouldExclude(type, p.PropertyName)).ToList();
+   }
+
+   bool ShouldExclude(Type objectType, string? propertyName)
+   {
+      if (string.IsNullOrEmpty(propertyName))
+         return false;
+
+      // Check if this specific type+member combination should be excluded
+      // We need to check the actual type and all its base types/interfaces
+      foreach (var (excludedType, excludedMemberName) in _excludedMembers)
+      {
+         if (propertyName == excludedMemberName && excludedType.IsAssignableFrom(objectType))
+            return true;
+      }
+
+      return false;
+   }
 }

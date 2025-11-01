@@ -13,6 +13,7 @@ using Compze.Tessaging.Teventive.TeventStore;
 using Compze.Tessaging.Teventive.TeventStore.Wiring;
 using Compze.Tests.Common.CQRS.TeventRefactoring.Migrations;
 using Compze.Tests.Infrastructure;
+using Compze.Tests.Infrastructure.Fluent;
 using Compze.Tests.Infrastructure.FluentAssertionsExtensions;
 using Compze.Tests.Infrastructure.Serialization;
 using Compze.Utilities.DependencyInjection;
@@ -214,21 +215,7 @@ public abstract class TeventMigrationTestBase : UniversalTestBase
 
    internal static void AssertStreamsAreIdentical(IReadOnlyList<ITaggregateTevent> expected, IReadOnlyList<ITaggregateTevent> migratedHistory, string descriptionOfHistory, DeferredConsoleWriter writer)
    {
-      try
-      {
-         migratedHistory.Should()
-                        .BeStrictlyEquivalentTo(expected, config => config.Excluding(tevent => tevent.Id));
-      }
-      catch(Exception)
-      {
-         writer.WriteLine($"   Failed comparing with {descriptionOfHistory}");
-         writer.WriteLine("   Expected: ");
-         expected.ForEach(e => writer.WriteLine($"      {e.ToNewtonSoftDebugString(Formatting.None)}"));
-         writer.WriteLine("\n   Actual: ");
-         migratedHistory.ForEach(e => writer.WriteLine($"      {e.ToNewtonSoftDebugString(Formatting.None)}"));
-         writer.WriteLine("\n");
-
-         throw;
-      }
+         migratedHistory.ToList().Must()
+                        .BeEquivalentTo(expected.ToList(), config => config.Excluding(list => list[0].Id));
    }
 }

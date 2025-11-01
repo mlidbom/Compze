@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.Fluent;
 using Compze.Utilities.Testing.XUnit.BDD;
@@ -156,6 +158,92 @@ public class When_comparing_objects_with_BeEquivalentTo : UniversalTestBase
       public class BeEquivalentToPublic_does_not_throw : given_two_objects_that_differ_only_in_private_members
       {
          [XF] public void because_public_members_are_the_same() => _actual.Must().BeEquivalentToPublic(_expected);
+      }
+   }
+
+   public class given_two_objects_with_different_Ids : When_comparing_objects_with_BeEquivalentTo
+   {
+      readonly TestObjectWithId _actual = new(1, "sameValue");
+      readonly TestObjectWithId _expected = new(2, "sameValue");
+
+      class TestObjectWithId(int id, string value)
+      {
+         public int Id { get; } = id;
+         public string Value { get; } = value;
+      }
+
+      public class BeEquivalentTo_with_exclusion_does_not_throw : given_two_objects_with_different_Ids
+      {
+         [XF] public void because_Id_is_excluded() 
+            => _actual.Must().BeEquivalentTo(_expected, config => config.Excluding(obj => obj.Id));
+      }
+
+      public class BeEquivalentTo_without_exclusion_throws : given_two_objects_with_different_Ids
+      {
+         [XF] public void because_Id_differs()
+            => Invoking(() => _actual.Must().BeEquivalentTo(_expected)).Must().Throw<AssertionFailedException>();
+      }
+   }
+
+   public class given_a_collection_with_objects_having_different_Ids : When_comparing_objects_with_BeEquivalentTo
+   {
+      readonly List<TestObjectWithId> _actual = [new(1, "value1"), new(2, "value2")];
+      readonly List<TestObjectWithId> _expected = [new(99, "value1"), new(88, "value2")];
+
+      class TestObjectWithId(int id, string value)
+      {
+         public int Id { get; } = id;
+         public string Value { get; } = value;
+      }
+
+      public class BeEquivalentTo_with_First_Id_exclusion_does_not_throw : given_a_collection_with_objects_having_different_Ids
+      {
+         [XF] public void because_Id_is_excluded_using_First()
+            => _actual.Must().BeEquivalentTo(_expected, config => config.Excluding(list => list.First().Id));
+      }
+
+      public class BeEquivalentTo_with_indexer_Id_exclusion_does_not_throw : given_a_collection_with_objects_having_different_Ids
+      {
+         [XF] public void because_Id_is_excluded_using_indexer()
+            => _actual.Must().BeEquivalentTo(_expected, config => config.Excluding(list => list[0].Id));
+      }
+   }
+
+   public class given_nested_objects_with_different_Id_properties : When_comparing_objects_with_BeEquivalentTo
+   {
+      readonly Container _actual = new(new Inner(1, "value"), new Outer(1, "other"));
+      readonly Container _expected = new(new Inner(99, "value"), new Outer(99, "other"));
+
+      class Container(Inner inner, Outer outer)
+      {
+         public Inner Inner { get; } = inner;
+         public Outer Outer { get; } = outer;
+      }
+
+      class Inner(int id, string value)
+      {
+         public int Id { get; } = id;
+         public string Value { get; } = value;
+      }
+
+      class Outer(int id, string value)
+      {
+         public int Id { get; } = id;
+         public string Value { get; } = value;
+      }
+
+      public class BeEquivalentTo_excluding_only_Outer_Id_throws : given_nested_objects_with_different_Id_properties
+      {
+         [XF] public void because_Inner_Id_differs_and_is_not_excluded()
+            => Invoking(() => _actual.Must().BeEquivalentTo(_expected, config => config.Excluding(c => c.Outer.Id)))
+               .Must().Throw<AssertionFailedException>();
+      }
+
+      public class BeEquivalentTo_excluding_only_Inner_Id_throws : given_nested_objects_with_different_Id_properties
+      {
+         [XF] public void because_Outer_Id_differs_and_is_not_excluded()
+            => Invoking(() => _actual.Must().BeEquivalentTo(_expected, config => config.Excluding(c => c.Inner.Id)))
+               .Must().Throw<AssertionFailedException>();
       }
    }
 }
