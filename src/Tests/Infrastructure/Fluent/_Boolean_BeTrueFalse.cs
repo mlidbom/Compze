@@ -9,12 +9,11 @@ public static class BooleanBeTrueFalse
       => must.Satisfy(it => it == true,
                       () =>
                          $"""
-
                           expected the expression: 
                           {must.Separator}
                           {must.Expression.Indent()}
                           {must.Separator}
-                          to be true
+                          to be true, but it was false
                           """);
 
 
@@ -22,11 +21,10 @@ public static class BooleanBeTrueFalse
       => must.Satisfy(it => it == false,
                       () =>
                          $"""
-
                           expected the expression: 
                           {must.Separator}
                           {must.Expression.Indent()}
                           {must.Separator}
-                          to be false
+                          to be false, but it was true
                           """);
 }
