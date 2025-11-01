@@ -9,7 +9,6 @@ using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tests.Common.Sql.DocumentDb;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.Fluent;
-using Compze.Tests.Infrastructure.FluentAssertionsExtensions;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;

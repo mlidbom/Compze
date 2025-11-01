@@ -1,5 +1,4 @@
 using Compze.Tests.Infrastructure.Fluent.Serialization;
-using Compze.Utilities.SystemCE;
 using DiffPlex.Renderer;
 using Newtonsoft.Json;
 using System.Runtime.CompilerServices;

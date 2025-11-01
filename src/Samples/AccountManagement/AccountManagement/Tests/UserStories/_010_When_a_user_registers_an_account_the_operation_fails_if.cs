@@ -1,5 +1,4 @@
 using System;
-using Compze.Core.Public;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Tests.Infrastructure.XUnit;
 

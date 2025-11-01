@@ -1,5 +1,4 @@
 using System;
-using Compze.Utilities.SystemCE;
 
 namespace Compze.Tests.Infrastructure.Fluent;
 

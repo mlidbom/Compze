@@ -1,4 +1,3 @@
-using System.Runtime.CompilerServices;
 using Compze.Utilities.SystemCE;
 
 namespace Compze.Tests.Infrastructure.Fluent;
