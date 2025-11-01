@@ -21,14 +21,9 @@ static class TestingJsonSettings
                       ?? throw new ArgumentException("Base settings must have a MemberFilteringContractResolver", nameof(baseSettings));
       var excludingResolver = new ExcludingMembersContractResolver(baseResolver, excludedMembers);
 
-      var settings = new JsonSerializerSettings
+      var settings = new JsonSerializerSettings(baseSettings)
                      {
-                        TypeNameHandling = baseSettings.TypeNameHandling,
-                        TypeNameAssemblyFormatHandling = baseSettings.TypeNameAssemblyFormatHandling,
-                        Formatting = baseSettings.Formatting,
-                        ContractResolver = excludingResolver,
-                        ReferenceLoopHandling = baseSettings.ReferenceLoopHandling,
-                        MaxDepth = baseSettings.MaxDepth
+                        ContractResolver = excludingResolver
                      };
 
       return settings;
