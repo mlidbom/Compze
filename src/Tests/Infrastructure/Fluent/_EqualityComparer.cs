@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 
 namespace Compze.Tests.Infrastructure.Fluent;
 
-public static class ObjectBe
+public static class ObjectEqualityAssertions
 {
    public static Must<TValue>? Be<TValue>(this Must<TValue> must, TValue expected, [CallerArgumentExpression(nameof(expected))] string expectedExpression = null!)
       => must.Satisfy(it => Equals(it, expected),
@@ -37,4 +37,20 @@ public static class ObjectBe
                                  {must.Separator}
                                  """;
                       });
+
+   public static Must<TValue>? Be_transitively_equal_to_according_to_every_supported_comparison_method<TValue>(this Must<TValue> must, TValue expected, [CallerArgumentExpression(nameof(expected))] string expectedExpression = null!)
+   {
+
+         //using Satisfy, passing expectedExpression along, Implement the equivalent of making all the below assertions, and their inversion (with _first and _second reversed)
+         //Also do the same for IComparable<T> and the < > <= >= operators
+
+        //[XF] public void IEquatable_equals_returns_true() => _first.Equals(_second).Must().BeTrue();
+        //[XF] public void Object_equals_returns_true() => Equals(_first, _second).Must().BeTrue();
+        //[XF] public void equals_operator_returns_true() => (_first == _second).Must().BeTrue();
+        //[XF] public void not_equals_operator_returns_false() => (_first != _second).Must().BeFalse();
+
+
+
+        return must;
+   }
 }
