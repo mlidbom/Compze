@@ -5,6 +5,11 @@ using Compze.Utilities.SystemCE;
 
 namespace Compze.Tests.Infrastructure.Fluent;
 
+class Must
+{
+   public static readonly string Separator = "-".Repeat(50).Join();
+}
+
 public class Must<T>
 {
    public Must(T subject, string expression)
@@ -15,8 +20,7 @@ public class Must<T>
 
    // ReSharper disable once InconsistentNaming
    // ReSharper disable once StaticMemberInGenericType
-   static readonly string _separator = "-".Repeat(50).Join();
-   public string Separator => _separator;
+   public string Separator => Must.Separator;
    public T Actual { get; }
    public string Expression { get; }
 

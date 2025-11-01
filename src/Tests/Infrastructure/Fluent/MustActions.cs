@@ -8,7 +8,7 @@ public class ActionSpec(Action action, string expression)
 {
    readonly Action _action = action;
    readonly string _expression = expression;
-   public Must<Action> Must() => new Must<Action>(_action, _expression);
+   public Must<Action> Must() => new(_action, _expression);
 }
 
 public static class MustActions
