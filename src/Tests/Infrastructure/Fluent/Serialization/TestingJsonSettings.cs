@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Compze.Utilities.SystemCE;
 
 #pragma warning disable CA2326 // TypeNameHandling is safe for testing serialization
 #pragma warning disable CA2327
@@ -16,7 +17,7 @@ static class TestingJsonSettings
    internal static readonly JsonSerializerSettings InternalAndPublicMembers = CreateSettings(new InternalMembersContractResolver());
    internal static readonly JsonSerializerSettings PublicMembers = CreateSettings(new PublicMembersContractResolver());
 
-   internal static JsonSerializerSettings CreateSettingsWithExclusions(JsonSerializerSettings baseSettings, ISet<(Type DeclaringType, string MemberName)> excludedMembers)
+   internal static JsonSerializerSettings CreateSettingsWithExclusions(JsonSerializerSettings baseSettings, IReadOnlySet<MemberInfo> excludedMembers)
    {
       var baseResolver = baseSettings.ContractResolver as MemberFilteringContractResolver 
                          ?? throw new ArgumentException("Base settings must have a MemberFilteringContractResolver", nameof(baseSettings));
@@ -106,9 +107,9 @@ class PublicMembersContractResolver : MemberFilteringContractResolver
 class ExcludingMembersContractResolver : DefaultContractResolver
 {
    readonly MemberFilteringContractResolver _baseResolver;
-   readonly ISet<(Type DeclaringType, string MemberName)> _excludedMembers;
+   readonly IReadOnlySet<MemberInfo> _excludedMembers;
 
-   public ExcludingMembersContractResolver(MemberFilteringContractResolver baseResolver, ISet<(Type DeclaringType, string MemberName)> excludedMembers)
+   public ExcludingMembersContractResolver(MemberFilteringContractResolver baseResolver, IReadOnlySet<MemberInfo> excludedMembers)
    {
       _baseResolver = baseResolver;
       _excludedMembers = excludedMembers;
@@ -125,11 +126,9 @@ class ExcludingMembersContractResolver : DefaultContractResolver
       if (string.IsNullOrEmpty(propertyName))
          return false;
 
-      // Check if this specific type+member combination should be excluded
-      // We need to check the actual type and all its base types/interfaces
-      foreach (var (excludedType, excludedMemberName) in _excludedMembers)
+      foreach (var excludedMember in _excludedMembers)
       {
-         if (propertyName == excludedMemberName && excludedType.IsAssignableFrom(objectType))
+         if (propertyName == excludedMember.Name && excludedMember.DeclaringType.NotNull().IsAssignableFrom(objectType))
             return true;
       }
 

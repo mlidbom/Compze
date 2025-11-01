@@ -1,23 +1,22 @@
 using Compze.Tests.Infrastructure.Fluent.Serialization;
-using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
 using DiffPlex.Renderer;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 
 namespace Compze.Tests.Infrastructure.Fluent;
 
 public class EquivalencyConfig<TValue>
 {
-   internal HashSet<(Type DeclaringType, string MemberName)> ExcludedMembers { get; } = new();
+   internal HashSet<MemberInfo> ExcludedMembers { get; } = new();
 
    public EquivalencyConfig<TValue> Excluding<TMember>(Expression<Func<TValue, TMember>> memberExpression)
    {
-      var member = memberExpression.Body.ExtractFinalMemberInfo();
-      ExcludedMembers.Add((member.DeclaringType.NotNull(), member.Name.NotNull()));
+      ExcludedMembers.Add(memberExpression.Body.ExtractFinalMemberInfo());
       return this;
    }
 }
