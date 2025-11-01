@@ -2,6 +2,7 @@ using System;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.Fluent;
 using Compze.Utilities.Testing.XUnit.BDD;
+using FluentAssertions;
 using static Compze.Tests.Infrastructure.Fluent.MustActions;
 
 // ReSharper disable InconsistentNaming
@@ -71,5 +72,23 @@ public class When_using_Satisfy : UniversalTestBase
                => ExceptionMessage().Must().Satisfy(msg => !msg.Contains("failed", StringComparison.Ordinal));
          }
       }
+   }
+
+   public class given_a_complex_object : When_using_Satisfy
+   {
+      readonly TestObject _actual = new("John", 30, "Unmarried");
+
+      record TestObject(string Name, int Age, string Status);
+
+      string ExceptionMessage() => Invoking(() => _actual.Must().Satisfy(it => it.Name == "all wrong"))
+                                  .Must()
+                                  .Throw<AssertionFailedException>()
+                                  .Message;
+
+      [XF] public void the_message_contains_the_full_json_for_actual() =>
+         ExceptionMessage().Should().Contain("section heading, separators and full json here");
+
+      [XF] public void the_full_message_is() =>
+         ExceptionMessage().Should().Contain("the full message here");
    }
 }
