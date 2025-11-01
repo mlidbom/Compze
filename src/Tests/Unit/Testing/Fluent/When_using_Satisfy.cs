@@ -24,6 +24,7 @@ public class When_using_Satisfy : UniversalTestBase
          [XF] public void so_multiple_assertions_can_be_made()
             => _value.Must()
                      .Satisfy(v => v > 0)
+                     .And()
                      .Satisfy(v => v < 10)
                      .Satisfy(v => v % 5 == 0);
       }
