@@ -12,9 +12,9 @@ namespace Compze.Tests.Infrastructure.Fluent.Serialization;
 
 static class TestingJsonSettings
 {
-   internal static readonly JsonSerializerSettings All = CreateSettings(new AllMembersContractResolver());
-   internal static readonly JsonSerializerSettings Internal = CreateSettings(new InternalMembersContractResolver());
-   internal static readonly JsonSerializerSettings Public = CreateSettings(new PublicMembersContractResolver());
+   internal static readonly JsonSerializerSettings AllMembers = CreateSettings(new AllMembersContractResolver());
+   internal static readonly JsonSerializerSettings InternalAndPublicMembers = CreateSettings(new InternalMembersContractResolver());
+   internal static readonly JsonSerializerSettings PublicMembers = CreateSettings(new PublicMembersContractResolver());
 
    static JsonSerializerSettings CreateSettings(IContractResolver resolver) =>
       new()

@@ -13,19 +13,19 @@ public static class ObjectBeEquivalentTo
                                                       TValue expected,
                                                       [CallerArgumentExpression(nameof(expected))]
                                                       string expectedExpression = null!)
-      => BeEquivalentToCore(must, expected, expectedExpression, TestingJsonSettings.All);
+      => BeEquivalentToCore(must, expected, expectedExpression, TestingJsonSettings.AllMembers);
 
    public static IMust<TValue> BeEquivalentToInternal<TValue>(this IMust<TValue> must,
                                                               TValue expected,
                                                               [CallerArgumentExpression(nameof(expected))]
                                                               string expectedExpression = null!)
-      => BeEquivalentToCore(must, expected, expectedExpression, TestingJsonSettings.Internal);
+      => BeEquivalentToCore(must, expected, expectedExpression, TestingJsonSettings.InternalAndPublicMembers);
 
    public static IMust<TValue> BeEquivalentToPublic<TValue>(this IMust<TValue> must,
                                                             TValue expected,
                                                             [CallerArgumentExpression(nameof(expected))]
                                                             string expectedExpression = null!)
-      => BeEquivalentToCore(must, expected, expectedExpression, TestingJsonSettings.Public);
+      => BeEquivalentToCore(must, expected, expectedExpression, TestingJsonSettings.PublicMembers);
 
    static IMust<TValue> BeEquivalentToCore<TValue>(IMust<TValue> must,
                                                    TValue expected,
