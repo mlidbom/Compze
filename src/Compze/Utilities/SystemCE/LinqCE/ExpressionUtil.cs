@@ -24,6 +24,9 @@ static class ExpressionUtil
       return $"{memberExpression.Member.DeclaringType!.FullName}.{memberExpression.Member.Name}";
    }
 
+   public static MemberInfo ExtractFinalMemberInfo(this LambdaExpression expression) =>
+      expression.Body.ExtractFinalMemberInfo();
+
    public static MemberInfo ExtractFinalMemberInfo(this Expression expression) =>
       expression.ExtractFinalMemberAccessExpression().Member;
 

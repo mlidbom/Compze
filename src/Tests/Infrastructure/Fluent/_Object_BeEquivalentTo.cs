@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using Compze.Utilities.Functional;
 
 namespace Compze.Tests.Infrastructure.Fluent;
 
@@ -14,11 +15,9 @@ public class EquivalencyConfig<TValue>
 {
    internal HashSet<MemberInfo> ExcludedMembers { get; } = new();
 
-   public EquivalencyConfig<TValue> Excluding<TMember>(Expression<Func<TValue, TMember>> memberExpression)
-   {
-      ExcludedMembers.Add(memberExpression.Body.ExtractFinalMemberInfo());
-      return this;
-   }
+   public EquivalencyConfig<TValue> Excluding<TMember>(Expression<Func<TValue, TMember>> memberExpression) =>
+      ExcludedMembers.Add(memberExpression.ExtractFinalMemberInfo())
+                     .then(this);
 }
 
 public static class ObjectBeEquivalentTo
