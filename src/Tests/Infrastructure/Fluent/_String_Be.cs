@@ -17,15 +17,11 @@ public static class StringBe
                       () =>
                          $"""""
                           {must.Separator}
-                          expected the expression: 
+                          the expression: 
                           {must.Separator}
                           {must.Expression.Indent()}
                           {must.Separator}
-                          to result in the same string as the expression:
-                          {must.Separator}
-                          {expectedExpression.Indent()}
-                          {must.Separator}
-                          but it generated the Diff:
+                          did not result in the expected string, resulting in the diff
                           {must.Separator}
                           {DiffGenerator.CreateDiff(expected, must.Actual)}
                           {must.Separator}

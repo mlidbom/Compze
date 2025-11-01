@@ -34,15 +34,11 @@ public class When_comparing_strings : UniversalTestBase
             [XF] public void and_the_full_message_is() =>
                ExceptionMessage().Must().Be("""
                                             --------------------------------------------------
-                                            expected the expression: 
+                                            the expression: 
                                             --------------------------------------------------
                                                _actual
                                             --------------------------------------------------
-                                            to result in the same string as the expression:
-                                            --------------------------------------------------
-                                               _expected
-                                            --------------------------------------------------
-                                            but it generated the Diff:
+                                            did not result in the expected string, resulting in the diff
                                             --------------------------------------------------
                                             --- expression
                                             +++ expected
@@ -51,7 +47,7 @@ public class When_comparing_strings : UniversalTestBase
                                             -Expected Second line
                                             +Actual Second line
                                              Third line
-
+                                            
                                             --------------------------------------------------
                                             Actual was:
                                             --------------------------------------------------
@@ -85,15 +81,11 @@ public class When_comparing_strings : UniversalTestBase
             [XF] public void and_the_full_message_is() =>
                ExceptionMessage().Must().Be("""
                                             --------------------------------------------------
-                                            expected the expression: 
+                                            the expression: 
                                             --------------------------------------------------
                                                _actual
                                             --------------------------------------------------
-                                            to result in the same string as the expression:
-                                            --------------------------------------------------
-                                               _expected
-                                            --------------------------------------------------
-                                            but it generated the Diff:
+                                            did not result in the expected string, resulting in the diff
                                             --------------------------------------------------
                                             First [-Expected-Second] Third
                                             First [+Actual-Second] Third
