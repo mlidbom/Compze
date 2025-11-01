@@ -45,46 +45,46 @@ public static class ObjectEqualityAssertions
    {
       var usedArguments = new List<AssertionArgumentInfo>
                           {
-                             new(nameof(expected), expectedExpression, expected)
+                             new("actual", must.Expression, must.Actual)
                           };
 
-      must.Satisfy(actual => Equals(actual, expected), usedArguments: usedArguments);
-      must.Satisfy(actual => Equals(expected, actual), usedArguments: usedArguments);
+      must.Satisfy(it => Equals(it, expected), usedArguments: usedArguments);
+      must.Satisfy(it => Equals(expected, it), usedArguments: usedArguments);
 
-      must.Satisfy(actual => (actual as IEquatable<TValue>)?.Equals(expected) ?? true);
-      must.Satisfy(actual => (expected as IEquatable<TValue>)?.Equals(actual) ?? true);
+      must.Satisfy(it => (it as IEquatable<TValue>)?.Equals(expected) ?? true);
+      must.Satisfy(it => (expected as IEquatable<TValue>)?.Equals(it) ?? true);
 
-      must.Satisfy(actual => actual.DeclaredType().Operators.Equality?.Invoke(actual, expected) ?? true, () => "Operator == should have returned true", usedArguments: usedArguments);
-      must.Satisfy(actual => actual.DeclaredType().Operators.Equality?.Invoke(expected, actual) ?? true, () => "Operator == should have returned true", usedArguments: usedArguments);
+      must.Satisfy(it => it.DeclaredType().Operators.Equality?.Invoke(it, expected) ?? true, () => "Operator == should have returned true", usedArguments: usedArguments);
+      must.Satisfy(it => it.DeclaredType().Operators.Equality?.Invoke(expected, it) ?? true, () => "Operator == should have returned true", usedArguments: usedArguments);
 
-      must.Satisfy(actual => !actual.DeclaredType().Operators.InEquality?.Invoke(actual, expected) ?? true, () => "Operator != should have returned false", usedArguments: usedArguments);
-      must.Satisfy(actual => !actual.DeclaredType().Operators.InEquality?.Invoke(expected, actual) ?? true, () => "Operator != should have returned false", usedArguments: usedArguments);
+      must.Satisfy(it => !it.DeclaredType().Operators.InEquality?.Invoke(it, expected) ?? true, () => "Operator != should have returned false", usedArguments: usedArguments);
+      must.Satisfy(it => !it.DeclaredType().Operators.InEquality?.Invoke(expected, it) ?? true, () => "Operator != should have returned false", usedArguments: usedArguments);
 
-      must.Satisfy(actual => EqualityComparer<TValue>.Default.Equals(actual, expected), () => "default equality comparer should have returned true", usedArguments: usedArguments);
-      must.Satisfy(actual => EqualityComparer<TValue>.Default.Equals(expected, actual), () => "default equality comparer should have returned true", usedArguments: usedArguments);
+      must.Satisfy(it => EqualityComparer<TValue>.Default.Equals(it, expected), () => "default equality comparer should have returned true", usedArguments: usedArguments);
+      must.Satisfy(it => EqualityComparer<TValue>.Default.Equals(expected, it), () => "default equality comparer should have returned true", usedArguments: usedArguments);
 
-      must.Satisfy(actual => (actual as IComparable<TValue>)?.CompareTo(expected).Equals(0) ?? true, () => "IComparable<T>.CompareTo should have returned 0", usedArguments: usedArguments);
-      must.Satisfy(actual => (expected as IComparable<TValue>)?.CompareTo(actual).Equals(0) ?? true, () => "IComparable<T>.CompareTo should have returned 0", usedArguments: usedArguments);
+      must.Satisfy(it => (it as IComparable<TValue>)?.CompareTo(expected).Equals(0) ?? true, () => "IComparable<T>.CompareTo should have returned 0", usedArguments: usedArguments);
+      must.Satisfy(it => (expected as IComparable<TValue>)?.CompareTo(it).Equals(0) ?? true, () => "IComparable<T>.CompareTo should have returned 0", usedArguments: usedArguments);
 
-      must.Satisfy(actual => (actual as IComparable)?.CompareTo(expected).Equals(0) ?? true, () => "IComparable.CompareTo should have returned 0", usedArguments: usedArguments);
-      must.Satisfy(actual => (expected as IComparable)?.CompareTo(actual).Equals(0) ?? true, () => "IComparable.CompareTo should have returned 0", usedArguments: usedArguments);
+      must.Satisfy(it => (it as IComparable)?.CompareTo(expected).Equals(0) ?? true, () => "IComparable.CompareTo should have returned 0", usedArguments: usedArguments);
+      must.Satisfy(it => (expected as IComparable)?.CompareTo(it).Equals(0) ?? true, () => "IComparable.CompareTo should have returned 0", usedArguments: usedArguments);
 
-      must.Satisfy(actual => Comparer<TValue>.Default.Compare(actual, expected) == 0, () => "Default comparer should have returned 0", usedArguments: usedArguments);
-      must.Satisfy(actual => Comparer<TValue>.Default.Compare(expected, actual) == 0, () => "Default comparer should have returned 0", usedArguments: usedArguments);
+      must.Satisfy(it => Comparer<TValue>.Default.Compare(it, expected) == 0, () => "Default comparer should have returned 0", usedArguments: usedArguments);
+      must.Satisfy(it => Comparer<TValue>.Default.Compare(expected, it) == 0, () => "Default comparer should have returned 0", usedArguments: usedArguments);
 
-      must.Satisfy(actual => !actual.DeclaredType().Operators.LessThan?.Invoke(expected, actual) ?? true, () => "Operator < should have returned false", usedArguments: usedArguments);
-      must.Satisfy(actual => !actual.DeclaredType().Operators.LessThan?.Invoke(actual, expected) ?? true, () => "Operator < should have returned false", usedArguments: usedArguments);
+      must.Satisfy(it => !it.DeclaredType().Operators.LessThan?.Invoke(expected, it) ?? true, () => "Operator < should have returned false", usedArguments: usedArguments);
+      must.Satisfy(it => !it.DeclaredType().Operators.LessThan?.Invoke(it, expected) ?? true, () => "Operator < should have returned false", usedArguments: usedArguments);
 
-      must.Satisfy(actual => actual.DeclaredType().Operators.LessThanOrEqual?.Invoke(expected, actual) ?? true, () => "Operator <= should have returned true", usedArguments: usedArguments);
-      must.Satisfy(actual => actual.DeclaredType().Operators.LessThanOrEqual?.Invoke(actual, expected) ?? true, () => "Operator <= should have returned true", usedArguments: usedArguments);
+      must.Satisfy(it => it.DeclaredType().Operators.LessThanOrEqual?.Invoke(expected, it) ?? true, () => "Operator <= should have returned true", usedArguments: usedArguments);
+      must.Satisfy(it => it.DeclaredType().Operators.LessThanOrEqual?.Invoke(it, expected) ?? true, () => "Operator <= should have returned true", usedArguments: usedArguments);
 
-      must.Satisfy(actual => !actual.DeclaredType().Operators.GreaterThan?.Invoke(expected, actual) ?? true, () => "Operator > should have returned false", usedArguments: usedArguments);
-      must.Satisfy(actual => !actual.DeclaredType().Operators.GreaterThan?.Invoke(actual, expected) ?? true, () => "Operator > should have returned false", usedArguments: usedArguments);
+      must.Satisfy(it => !it.DeclaredType().Operators.GreaterThan?.Invoke(expected, it) ?? true, () => "Operator > should have returned false", usedArguments: usedArguments);
+      must.Satisfy(it => !it.DeclaredType().Operators.GreaterThan?.Invoke(it, expected) ?? true, () => "Operator > should have returned false", usedArguments: usedArguments);
 
-      must.Satisfy(actual => actual.DeclaredType().Operators.GreaterThanOrEqual?.Invoke(expected, actual) ?? true, () => "Operator >= should have returned true", usedArguments: usedArguments);
-      must.Satisfy(actual => actual.DeclaredType().Operators.GreaterThanOrEqual?.Invoke(actual, expected) ?? true, () => "Operator >= should have returned true", usedArguments: usedArguments);
+      must.Satisfy(it => it.DeclaredType().Operators.GreaterThanOrEqual?.Invoke(expected, it) ?? true, () => "Operator >= should have returned true", usedArguments: usedArguments);
+      must.Satisfy(it => it.DeclaredType().Operators.GreaterThanOrEqual?.Invoke(it, expected) ?? true, () => "Operator >= should have returned true", usedArguments: usedArguments);
 
-      must.Satisfy(actual => actual!.GetHashCode() == expected!.GetHashCode(), usedArguments: usedArguments);
+      must.Satisfy(it => it!.GetHashCode() == expected!.GetHashCode(), usedArguments: usedArguments);
 
 
       return must;
