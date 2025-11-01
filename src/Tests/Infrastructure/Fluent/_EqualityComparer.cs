@@ -5,41 +5,47 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using Compze.Utilities.Contracts;
 
 namespace Compze.Tests.Infrastructure.Fluent;
 
 public static class ObjectEqualityAssertions
 {
    public static Must<TValue> Be<TValue>(this Must<TValue> must, TValue expected, [CallerArgumentExpression(nameof(expected))] string expectedExpression = null!)
-      => must.Satisfy(it => Equals(it, expected),
-                      messageOverride: () =>
-                      {
-                         var actualJson = JsonConvert.SerializeObject(must.Actual, TestingJsonSettings.AllMembers);
-                         var expectedJson = JsonConvert.SerializeObject(expected, TestingJsonSettings.AllMembers);
-                         return $"""
-                                 {must.Separator}
-                                 expected the object returned by the expression: 
-                                 {must.Separator}
-                                 {must.Expression}
-                                 {must.Separator}
-                                 to be the equal to the the object returned by the expression:
-                                 {must.Separator}
-                                 {must.NormalizeExpressionIndentation(expectedExpression)}
-                                 {must.Separator}
-                                 but it was not and a diff of the instances is:
-                                 {must.Separator}
-                                 {UnidiffRenderer.GenerateUnidiff(oldText: expectedJson, newText: actualJson, oldFileName: "expected", newFileName: "actual")}
-                                 {must.Separator}
-                                 Actual was:
-                                 {must.Separator}
-                                 {actualJson}
-                                 {must.Separator}
-                                 Expected was:
-                                 {must.Separator}
-                                 {expectedJson}
-                                 {must.Separator}
-                                 """;
-                      });
+   {
+      if(expected is null && must.Actual is null)
+         return must;
+
+      return must.Satisfy(it => Equals(it, expected),
+                          messageOverride: () =>
+                          {
+                             var actualJson = JsonConvert.SerializeObject(must.Actual, TestingJsonSettings.AllMembers);
+                             var expectedJson = JsonConvert.SerializeObject(expected, TestingJsonSettings.AllMembers);
+                             return $"""
+                                     {must.Separator}
+                                     expected the object returned by the expression: 
+                                     {must.Separator}
+                                     {must.Expression}
+                                     {must.Separator}
+                                     to be the equal to the the object returned by the expression:
+                                     {must.Separator}
+                                     {must.NormalizeExpressionIndentation(expectedExpression)}
+                                     {must.Separator}
+                                     but it was not and a diff of the instances is:
+                                     {must.Separator}
+                                     {UnidiffRenderer.GenerateUnidiff(oldText: expectedJson, newText: actualJson, oldFileName: "expected", newFileName: "actual")}
+                                     {must.Separator}
+                                     Actual was:
+                                     {must.Separator}
+                                     {actualJson}
+                                     {must.Separator}
+                                     Expected was:
+                                     {must.Separator}
+                                     {expectedJson}
+                                     {must.Separator}
+                                     """;
+                          });
+   }
 
    public static Must<TValue> Be_transitively_equal_to_according_to_every_supported_comparison_method_and_hashcode<TValue>(this Must<TValue> must, TValue expected, [CallerArgumentExpression(nameof(expected))] string expectedExpression = null!)
    {
@@ -47,8 +53,6 @@ public static class ObjectEqualityAssertions
                           {
                              new("actual", must.Expression, must.Actual)
                           };
-
-      must.Satisfy(it => it != null && expected != null);
 
       must.Satisfy(it => Equals(it, expected), usedArguments: usedArguments);
       must.Satisfy(it => Equals(expected, it), usedArguments: usedArguments);
