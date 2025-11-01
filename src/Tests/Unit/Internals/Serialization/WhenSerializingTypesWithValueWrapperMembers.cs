@@ -16,9 +16,9 @@ using FluentAssertions;
 
 namespace Compze.Tests.Unit.Internals.Serialization
 {
-   public class WhenSerializingTypesWithValueWrapperMembers : SerializerTest
+   public class When_serializing_types_with_ValueWrapper_members : SerializerTest
    {
-      [PCTSerializer] public void SerializedDataContainsOnlyTheWrappedValue() =>
+      [PCTSerializer] public void Serialized_data_contains_type_information_only_when_the_type_differs_from_the_declared() =>
          Root.Create()
              ._(DocumentSerializer.Serialize)
              .Must()
