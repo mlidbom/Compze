@@ -60,7 +60,7 @@ public static class ObjectBeEquivalentTo
       var expectedJson = JsonConvert.SerializeObject(expected, settings);
 
       return must.Satisfy(it => actualJson == expectedJson,
-                          () =>
+                          messageOverride: () =>
                              $"""
                               {must.Separator}
                               expected the object returned by the expression: 

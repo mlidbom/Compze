@@ -5,13 +5,13 @@ namespace Compze.Tests.Infrastructure.Fluent;
 public static class StringContain
 {
    public static Must<string> Contain(this Must<string> must, string expected) =>
-      must.Satisfy(it => it.ContainsOrdinal(expected), () => BuildMessage("did not contain the expected string:", must, expected));
+      must.Satisfy(it => it.ContainsOrdinal(expected), messageOverride: () => BuildMessage("did not contain the expected string:", must, expected));
 
    public static Must<string>? StartWith(this Must<string> must, string expected) =>
-      must.Satisfy(it => it.StartsWithOrdinal(expected), () => BuildMessage("did not start with the expected string:", must, expected));
+      must.Satisfy(it => it.StartsWithOrdinal(expected), messageOverride: () => BuildMessage("did not start with the expected string:", must, expected));
 
    public static Must<string>? EndWith(this Must<string> must, string expected) =>
-      must.Satisfy(it => it.EndsWithOrdinal(expected), () => BuildMessage("did not end with the expected string:", must, expected));
+      must.Satisfy(it => it.EndsWithOrdinal(expected), messageOverride: () => BuildMessage("did not end with the expected string:", must, expected));
 
    static string BuildMessage(string message, Must<string> must, string expected)
    {

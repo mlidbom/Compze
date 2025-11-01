@@ -15,9 +15,9 @@ public static class _Satisfy
 
    public static Must<T> Satisfy<T>(this Must<T> context,
                                     Func<T, bool> predicate,
-                                    Func<string>? messageOverride = null,
                                     [CallerArgumentExpression(nameof(predicate))]
                                     string predicateExpression = null!,
+                                    Func<string>? messageOverride = null,
                                     Func<T, string>? failureMessage = null,
                                     IReadOnlyList<AssertionArgumentInfo>? usedArguments = null)
    {
