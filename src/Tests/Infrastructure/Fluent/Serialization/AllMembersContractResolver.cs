@@ -4,6 +4,6 @@ namespace Compze.Tests.Infrastructure.Fluent.Serialization;
 
 class AllMembersContractResolver : MemberFilteringContractResolver
 {
-   protected override bool ShouldIncludeProperty(PropertyInfo property) => true;
-   protected override bool ShouldIncludeField(FieldInfo field) => true;
+   protected override bool ShouldInclude(PropertyInfo property) => true;
+   protected override bool ShouldInclude(FieldInfo field) => true;
 }
