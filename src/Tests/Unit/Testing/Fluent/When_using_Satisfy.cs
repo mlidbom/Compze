@@ -2,7 +2,6 @@ using System;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.Fluent;
 using Compze.Utilities.Testing.XUnit.BDD;
-using FluentAssertions;
 using static Compze.Tests.Infrastructure.Fluent.MustActions;
 
 // ReSharper disable InconsistentNaming
@@ -86,9 +85,47 @@ public class When_using_Satisfy : UniversalTestBase
                                   .Message;
 
       [XF] public void the_message_contains_the_full_json_for_actual() =>
-         ExceptionMessage().Should().Contain("section heading, separators and full json here");
+         ExceptionMessage().Must().Contain("""
+                                           Actual JSON:
+                                           --------------------------------------------------
+                                           {
+                                             "$type": "Compze.Tests.Unit.Testing.Fluent.When_using_Satisfy+given_a_complex_object+TestObject, Compze.Tests.Unit",
+                                             "EqualityContract": "Compze.Tests.Unit.Testing.Fluent.When_using_Satisfy+given_a_complex_object+TestObject, Compze.Tests.Unit, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+                                             "Name": "John",
+                                             "Age": 30,
+                                             "Status": "Unmarried"
+                                           }
+                                           --------------------------------------------------
+                                           """);
 
       [XF] public void the_full_message_is() =>
-         ExceptionMessage().Should().Contain("the full message here");
+         ExceptionMessage().Must().Be("""
+                                        
+                                        expected the expression:
+                                        --------------------------------------------------
+                                           _actual
+                                        --------------------------------------------------
+                                        to Satisfy:
+                                        --------------------------------------------------
+                                           it => it.Name == "all wrong"
+                                        --------------------------------------------------
+                                        
+                                        Actual.ToString():
+                                        --------------------------------------------------
+                                           TestObject { Name = John, Age = 30, Status = Unmarried }
+                                        --------------------------------------------------
+                                        
+                                        Actual JSON:
+                                        --------------------------------------------------
+                                        {
+                                          "$type": "Compze.Tests.Unit.Testing.Fluent.When_using_Satisfy+given_a_complex_object+TestObject, Compze.Tests.Unit",
+                                          "EqualityContract": "Compze.Tests.Unit.Testing.Fluent.When_using_Satisfy+given_a_complex_object+TestObject, Compze.Tests.Unit, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+                                          "Name": "John",
+                                          "Age": 30,
+                                          "Status": "Unmarried"
+                                        }
+                                        --------------------------------------------------
+                                        
+                                        """);
    }
 }
