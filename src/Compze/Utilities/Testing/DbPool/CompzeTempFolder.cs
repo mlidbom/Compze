@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using Compze.Utilities.Testing.DbPool.SystemCE.ThreadingCE;
 
@@ -7,11 +8,11 @@ namespace Compze.Utilities.Testing.DbPool;
 using SPath = Path;
 #pragma warning restore IDE0065
 
-///<summary>Manages the Temp folder in a machine wide thread safe manner.</summary>
-static class CompzeTempFolder
+///<summary>Manages the AppData folder in a machine wide thread safe manner.</summary>
+static class CompzeFolder
 {
-   static readonly MutexCE MachineWideLock = MutexCE.ForMutexNamed(nameof(CompzeTempFolder));
-   static readonly string DefaultPath = SPath.Combine(SPath.GetTempPath(), "Compze_TEMP");
+   static readonly MutexCE MachineWideLock = MutexCE.ForMutexNamed(nameof(CompzeFolder));
+   static readonly string DefaultPath = SPath.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Compze");
    static readonly string Path = EnsureFolderExists();
 
    internal static string EnsureFolderExists(string folderName) => MachineWideLock.ExecuteWithLock(() =>

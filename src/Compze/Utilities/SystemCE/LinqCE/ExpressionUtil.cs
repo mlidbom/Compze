@@ -1,25 +1,29 @@
 using System;
 using System.Linq.Expressions;
-using static Compze.Utilities.Contracts.Assert;
+using System.Reflection;
 
 namespace Compze.Utilities.SystemCE.LinqCE;
 
 ///<summary>Extracts member names from expressions</summary>
 static class ExpressionUtil
 {
-   public static string ExtractMemberPath<TValue>(Expression<Func<TValue>> func)
-   {
-      Argument.NotNull(func);
-      return ExtractMemberPath((LambdaExpression)func);
-   }
+   public static MemberInfo ExtractFinalMemberInfo(this LambdaExpression lambda) =>
+      lambda.Body.ExtractFinalMemberInfo();
 
-   static string ExtractMemberPath(LambdaExpression lambda)
-   {
-      Argument.NotNull(lambda);
-      var memberExpression = lambda.Body is UnaryExpression unaryExpression
-                                ? (MemberExpression)unaryExpression.Operand
-                                : (MemberExpression)lambda.Body;
+   public static MemberInfo ExtractFinalMemberInfo(this Expression expression) =>
+      expression.ExtractFinalMemberAccessExpression().Member;
 
-      return $"{memberExpression.Member.DeclaringType!.FullName}.{memberExpression.Member.Name}";
+   public static MemberExpression ExtractFinalMemberAccessExpression(this Expression expression)
+   {
+      try
+      {
+         return expression is UnaryExpression unaryExpression
+                   ? (MemberExpression)unaryExpression.Operand
+                   : (MemberExpression)expression;
+      }
+      catch(InvalidCastException ex)
+      {
+         throw new ArgumentException("The expression must end with accessing a property or field", nameof(expression), ex);
+      }
    }
 }

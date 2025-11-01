@@ -8,7 +8,7 @@ namespace Compze.Utilities.Testing.DbPool.SystemCE.ThreadingCE;
 
 public abstract class MachineWideSharedObject
 {
-   protected static readonly string DataFolder = CompzeTempFolder.EnsureFolderExists("SharedFiles");
+   protected static readonly string DataFolder = CompzeFolder.EnsureFolderExists("SharedFiles");
 }
 
 public sealed class MachineWideSharedObject<TObject> : MachineWideSharedObject where TObject : class, new()

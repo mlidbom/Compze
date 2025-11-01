@@ -13,6 +13,7 @@ using System.Transactions;
 using Compze.Core.Tessaging.Teventive.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.Public;
+using Compze.Tests.Infrastructure.Fluent;
 using Compze.Tests.Infrastructure.XUnit;
 
 namespace Compze.Tests.Integration.CQRS;
@@ -136,7 +137,7 @@ public class TeventStoreTests : UniversalTestBase
       TransactionScopeCe.Execute(() => taggregatesWithTevents.ForEach(it => TeventStore.SaveSingleTaggregateTevents(it.Value)));
       var allTaggregateIds = TeventStore.StreamTaggregateIdsInCreationOrder<ISomeTevent>()
                                       .ToList();
-      allTaggregateIds.Should().HaveCount(taggregatesWithTevents.Count);
+      allTaggregateIds.Must().HaveCount(taggregatesWithTevents.Count);
    });
 
    [PCT]

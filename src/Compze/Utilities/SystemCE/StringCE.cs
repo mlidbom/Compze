@@ -32,6 +32,8 @@ public static class StringCE
 
    public static bool StartsWithOrdinal(this string @this, string ending) => @this.StartsWith(ending, StringComparison.Ordinal);
 
+   public static bool EndsWithOrdinal(this string @this, string ending) => @this.EndsWith(ending, StringComparison.Ordinal);
+
    [StringFormatMethod(formatParameterName:"tessage")]
    public static string FormatInvariant(string message, params object[] arguments) =>
       string.Format(CultureInfo.InvariantCulture,  message, arguments);
