@@ -25,44 +25,44 @@ public class EquivalencyConfig<TValue>
       // Walk through the expression tree to find the final member access
       // This handles: obj.Property, obj.Method().Property, obj[0].Property, etc.
       Expression? current = expression;
-      
-      while (current != null)
+
+      while(current != null)
       {
-         switch (current)
+         switch(current)
          {
             case MemberExpression memberExpr:
                // This is a member access - return its declaring type and name
-               var declaringType = memberExpr.Member.DeclaringType 
-                  ?? throw new ArgumentException("Member must have a declaring type", nameof(expression));
+               var declaringType = memberExpr.Member.DeclaringType
+                                ?? throw new ArgumentException("Member must have a declaring type", nameof(expression));
                return (declaringType, memberExpr.Member.Name);
-               
+
             case UnaryExpression unaryExpr:
                // Handle conversions (e.g., boxing, casting)
                current = unaryExpr.Operand;
                continue;
-               
+
             case MethodCallExpression methodCall:
                // Check if this is an indexer call (get_Item)
-               if (methodCall.Method.Name == "get_Item" && methodCall.Object != null)
+               if(methodCall.Method.Name == "get_Item" && methodCall.Object != null)
                {
                   // Continue from the object being indexed
                   current = methodCall.Object;
                   continue;
                }
-               
+
                // For other method calls, the expression must continue to a member access
                throw new ArgumentException(
                   "Expression must end with a property or field access, not a method call. " +
                   "Example: obj => obj.Method().Property (not obj => obj.Method())",
                   nameof(expression));
-               
+
             default:
                throw new ArgumentException(
                   $"Expression must end with a property or field access. Unsupported expression type: {current.GetType().Name}",
                   nameof(expression));
          }
       }
-      
+
       throw new ArgumentException("Expression must end with a property or field access", nameof(expression));
    }
 }
@@ -70,16 +70,16 @@ public class EquivalencyConfig<TValue>
 public static class ObjectBeEquivalentTo
 {
    public static Must<TValue> BeEquivalentTo<TValue>(this Must<TValue> must,
-                                                      TValue expected,
-                                                      [CallerArgumentExpression(nameof(expected))]
-                                                      string expectedExpression = null!)
+                                                     TValue expected,
+                                                     [CallerArgumentExpression(nameof(expected))]
+                                                     string expectedExpression = null!)
       => BeEquivalentToCore(must, expected, expectedExpression, TestingJsonSettings.AllMembers);
 
    public static Must<TValue> BeEquivalentTo<TValue>(this Must<TValue> must,
-                                                      TValue expected,
-                                                      Func<EquivalencyConfig<TValue>, EquivalencyConfig<TValue>> config,
-                                                      [CallerArgumentExpression(nameof(expected))]
-                                                      string expectedExpression = null!)
+                                                     TValue expected,
+                                                     Func<EquivalencyConfig<TValue>, EquivalencyConfig<TValue>> config,
+                                                     [CallerArgumentExpression(nameof(expected))]
+                                                     string expectedExpression = null!)
    {
       var equivalencyConfig = config(new EquivalencyConfig<TValue>());
       var settings = TestingJsonSettings.CreateSettingsWithExclusions(TestingJsonSettings.AllMembers, equivalencyConfig.ExcludedMembers);
@@ -87,21 +87,21 @@ public static class ObjectBeEquivalentTo
    }
 
    public static Must<TValue> BeEquivalentToInternal<TValue>(this Must<TValue> must,
-                                                              TValue expected,
-                                                              [CallerArgumentExpression(nameof(expected))]
-                                                              string expectedExpression = null!)
+                                                             TValue expected,
+                                                             [CallerArgumentExpression(nameof(expected))]
+                                                             string expectedExpression = null!)
       => BeEquivalentToCore(must, expected, expectedExpression, TestingJsonSettings.InternalAndPublicMembers);
 
    public static Must<TValue> BeEquivalentToPublic<TValue>(this Must<TValue> must,
-                                                            TValue expected,
-                                                            [CallerArgumentExpression(nameof(expected))]
-                                                            string expectedExpression = null!)
+                                                           TValue expected,
+                                                           [CallerArgumentExpression(nameof(expected))]
+                                                           string expectedExpression = null!)
       => BeEquivalentToCore(must, expected, expectedExpression, TestingJsonSettings.PublicMembers);
 
    static Must<TValue> BeEquivalentToCore<TValue>(Must<TValue> must,
-                                                   TValue expected,
-                                                   string expectedExpression,
-                                                   JsonSerializerSettings settings)
+                                                  TValue expected,
+                                                  string expectedExpression,
+                                                  JsonSerializerSettings settings)
    {
       var actualJson = JsonConvert.SerializeObject(must.Actual, settings);
       var expectedJson = JsonConvert.SerializeObject(expected, settings);
