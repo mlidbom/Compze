@@ -6,16 +6,15 @@ namespace Compze.Tests.Unit.Testing.Fluent;
 enum BreakComparableMethod
 {
    None = 0,
-   ObjectEquals = 1 << 0,
-   IEquatable = 1 << 2,
-   OperatorEquality = 1 << 3,
-   OperatorInequality = 1 << 4,
-   EqualityComparer = 1 << 5,
-   IComparableGeneric = 1 << 6,
-   IComparable = 1 << 7,
-   OperatorLessThan = 1 << 8,
-   OperatorLessThanOrEqual = 1 << 9,
-   OperatorGreaterThan = 1 << 10,
-   OperatorGreaterThanOrEqual = 1 << 11,
-   GetHashCode = 1 << 12
+   ObjectEquals = 1 << 0,              // 1
+   IEquatable = 1 << 1,                // 2
+   OperatorEquality = 1 << 2,          // 4
+   OperatorInequality = 1 << 3,        // 8
+   IComparableGeneric = 1 << 4,        // 16
+   IComparable = 1 << 5,               // 32
+   OperatorLessThan = 1 << 6,          // 64
+   OperatorLessThanOrEqual = 1 << 7,   // 128
+   OperatorGreaterThan = 1 << 8,       // 256
+   OperatorGreaterThanOrEqual = 1 << 9, // 512
+   GetHashCode = 1 << 10               // 1024
 }

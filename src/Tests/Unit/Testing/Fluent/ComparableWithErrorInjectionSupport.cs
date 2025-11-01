@@ -46,7 +46,7 @@ class ComparableWithErrorInjectionSupport : IEquatable<ComparableWithErrorInject
 
    public int CompareTo(object? obj)
    {
-      if(obj is not ComparableWithErrorInjectionSupport other) throw new ArgumentException("Object is not a TestValue");
+      if(obj is not ComparableWithErrorInjectionSupport other) throw new ArgumentException("Object is not a ComparableWithErrorInjectionSupport");
       var result = _value.CompareTo(other._value);
       if(_breakComparableMethod.HasFlag(BreakComparableMethod.IComparable) && result == 0) result = 1;
       return result;
