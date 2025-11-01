@@ -58,7 +58,6 @@ public class When_serializing_polymorphic_wrapper_objects : SerializerTest
             Root.Create()
                 ._(DocumentSerializer.Serialize)
                 .Must()
-                 //bug: we have lost the types
                 .Be(ExpectedSerializedData);
 
          public class round_tripped_serialized_data : the_initial_serialized_data
