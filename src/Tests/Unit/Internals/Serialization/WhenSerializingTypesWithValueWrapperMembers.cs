@@ -26,25 +26,25 @@ namespace Compze.Tests.Unit.Internals.Serialization
                  {
                    "PersonHoldingProperty": {
                      "Id": {
-                       "PrimitiveValue": "312bdec4-3a0a-4186-b0e7-49efbcbe5ffc"
+                       "Value": "312bdec4-3a0a-4186-b0e7-49efbcbe5ffc"
                      }
                    },
                    "UserHolderProperty": {
                      "$type": "fc967965-cab8-466c-b090-b0d9b3555708",
                      "Id": {
-                       "PrimitiveValue": "cf99c283-f5ee-48dd-9c19-98221be5fe9a"
+                       "Value": "cf99c283-f5ee-48dd-9c19-98221be5fe9a"
                      }
                    },
                    "ListOfPersons": [
                      {
                        "Id": {
-                         "PrimitiveValue": "6aa91672-8378-4a02-8d3f-1321989291db"
+                         "Value": "6aa91672-8378-4a02-8d3f-1321989291db"
                        }
                      },
                      {
                        "$type": "fc967965-cab8-466c-b090-b0d9b3555708",
                        "Id": {
-                         "PrimitiveValue": "4c05d71d-41df-45ca-8a50-26e6456bc62f"
+                         "Value": "4c05d71d-41df-45ca-8a50-26e6456bc62f"
                        }
                      }
                    ]
