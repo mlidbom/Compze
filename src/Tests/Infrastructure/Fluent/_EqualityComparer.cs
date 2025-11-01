@@ -55,41 +55,39 @@ public static class ObjectEqualityAssertions
                              new("actual", must.Expression, must.Actual)
                           };
 
+
       must.Satisfy(it => Equals(it, expected), messageOverride: BuildFailureMessage);
       must.Satisfy(it => Equals(expected, it), messageOverride: BuildFailureMessage);
 
       must.Satisfy(it => (it as IEquatable<TValue>)?.Equals(expected) ?? true);
       must.Satisfy(it => (expected as IEquatable<TValue>)?.Equals(it) ?? true);
 
-      must.Satisfy(it => it.DeclaredType().Operators.Equality?.Invoke(it, expected) ?? true, failureMessage: it => "Operator == should have returned true", messageOverride: BuildFailureMessage);
-      must.Satisfy(it => it.DeclaredType().Operators.Equality?.Invoke(expected, it) ?? true, failureMessage: it => "Operator == should have returned true", messageOverride: BuildFailureMessage);
+      must.Satisfy(it => it.DeclaredType().Operators.Equality?.Invoke(it, expected) ?? true, failureMessage: it => "it == expected should have returned true", messageOverride: BuildFailureMessage);
+      must.Satisfy(it => it.DeclaredType().Operators.Equality?.Invoke(expected, it) ?? true, failureMessage: it => "expected == it have returned true", messageOverride: BuildFailureMessage);
 
-      must.Satisfy(it => !it.DeclaredType().Operators.InEquality?.Invoke(it, expected) ?? true, failureMessage: it => "Operator != should have returned false", messageOverride: BuildFailureMessage);
-      must.Satisfy(it => !it.DeclaredType().Operators.InEquality?.Invoke(expected, it) ?? true, failureMessage: it => "Operator != should have returned false", messageOverride: BuildFailureMessage);
+      must.Satisfy(it => !it.DeclaredType().Operators.InEquality?.Invoke(it, expected) ?? true, failureMessage: it => "it != expected have returned false", messageOverride: BuildFailureMessage);
+      must.Satisfy(it => !it.DeclaredType().Operators.InEquality?.Invoke(expected, it) ?? true, failureMessage: it => "expected != it have returned false", messageOverride: BuildFailureMessage);
 
       must.Satisfy(it => EqualityComparer<TValue>.Default.Equals(it, expected), failureMessage: it => "default equality comparer should have returned true", messageOverride: BuildFailureMessage);
       must.Satisfy(it => EqualityComparer<TValue>.Default.Equals(expected, it), failureMessage: it => "default equality comparer should have returned true", messageOverride: BuildFailureMessage);
 
-      must.Satisfy(it => (it as IComparable<TValue>)?.CompareTo(expected).Equals(0) ?? true, failureMessage: it => "IComparable<T>.CompareTo should have returned 0", messageOverride: BuildFailureMessage);
-      must.Satisfy(it => (expected as IComparable<TValue>)?.CompareTo(it).Equals(0) ?? true, failureMessage: it => "IComparable<T>.CompareTo should have returned 0", messageOverride: BuildFailureMessage);
+      must.Satisfy(it => (it as IComparable<TValue>)?.CompareTo(expected).Equals(0) ?? true, failureMessage: it => "it.CompareTo(expected) should have returned 0", messageOverride: BuildFailureMessage);
+      must.Satisfy(it => (expected as IComparable<TValue>)?.CompareTo(it).Equals(0) ?? true, failureMessage: it => "expected.CompareTo(it) should have returned 0", messageOverride: BuildFailureMessage);
 
-      must.Satisfy(it => (it as IComparable)?.CompareTo(expected).Equals(0) ?? true, failureMessage: it => "IComparable.CompareTo should have returned 0", messageOverride: BuildFailureMessage);
-      must.Satisfy(it => (expected as IComparable)?.CompareTo(it).Equals(0) ?? true, failureMessage: it => "IComparable.CompareTo should have returned 0", messageOverride: BuildFailureMessage);
+      must.Satisfy(it => (it as IComparable)?.CompareTo(expected).Equals(0) ?? true, failureMessage: it => "it.CompareTo(expected) should have returned 0", messageOverride: BuildFailureMessage);
+      must.Satisfy(it => (expected as IComparable)?.CompareTo(it).Equals(0) ?? true, failureMessage: it => "expected.CompareTo(it) should have returned 0", messageOverride: BuildFailureMessage);
 
-      must.Satisfy(it => Comparer<TValue>.Default.Compare(it, expected) == 0, failureMessage: it => "Default comparer should have returned 0", messageOverride: BuildFailureMessage);
-      must.Satisfy(it => Comparer<TValue>.Default.Compare(expected, it) == 0, failureMessage: it => "Default comparer should have returned 0", messageOverride: BuildFailureMessage);
+      must.Satisfy(it => !it.DeclaredType().Operators.LessThan?.Invoke(expected, it) ?? true, failureMessage: it => "it < expected have returned false", messageOverride: BuildFailureMessage);
+      must.Satisfy(it => !it.DeclaredType().Operators.LessThan?.Invoke(it, expected) ?? true, failureMessage: it => "expected < it have returned false", messageOverride: BuildFailureMessage);
 
-      must.Satisfy(it => !it.DeclaredType().Operators.LessThan?.Invoke(expected, it) ?? true, failureMessage: it => "Operator < should have returned false", messageOverride: BuildFailureMessage);
-      must.Satisfy(it => !it.DeclaredType().Operators.LessThan?.Invoke(it, expected) ?? true, failureMessage: it => "Operator < should have returned false", messageOverride: BuildFailureMessage);
+      must.Satisfy(it => it.DeclaredType().Operators.LessThanOrEqual?.Invoke(expected, it) ?? true, failureMessage: it => "it <= expected have returned true", messageOverride: BuildFailureMessage);
+      must.Satisfy(it => it.DeclaredType().Operators.LessThanOrEqual?.Invoke(it, expected) ?? true, failureMessage: it => "expected <= it have returned true", messageOverride: BuildFailureMessage);
 
-      must.Satisfy(it => it.DeclaredType().Operators.LessThanOrEqual?.Invoke(expected, it) ?? true, failureMessage: it => "Operator <= should have returned true", messageOverride: BuildFailureMessage);
-      must.Satisfy(it => it.DeclaredType().Operators.LessThanOrEqual?.Invoke(it, expected) ?? true, failureMessage: it => "Operator <= should have returned true", messageOverride: BuildFailureMessage);
+      must.Satisfy(it => !it.DeclaredType().Operators.GreaterThan?.Invoke(expected, it) ?? true, failureMessage: it => "it > expected have returned false", messageOverride: BuildFailureMessage);
+      must.Satisfy(it => !it.DeclaredType().Operators.GreaterThan?.Invoke(it, expected) ?? true, failureMessage: it => "expected > it have returned false", messageOverride: BuildFailureMessage);
 
-      must.Satisfy(it => !it.DeclaredType().Operators.GreaterThan?.Invoke(expected, it) ?? true, failureMessage: it => "Operator > should have returned false", messageOverride: BuildFailureMessage);
-      must.Satisfy(it => !it.DeclaredType().Operators.GreaterThan?.Invoke(it, expected) ?? true, failureMessage: it => "Operator > should have returned false", messageOverride: BuildFailureMessage);
-
-      must.Satisfy(it => it.DeclaredType().Operators.GreaterThanOrEqual?.Invoke(expected, it) ?? true, failureMessage: it => "Operator >= should have returned true", messageOverride: BuildFailureMessage);
-      must.Satisfy(it => it.DeclaredType().Operators.GreaterThanOrEqual?.Invoke(it, expected) ?? true, failureMessage: it => "Operator >= should have returned true", messageOverride: BuildFailureMessage);
+      must.Satisfy(it => it.DeclaredType().Operators.GreaterThanOrEqual?.Invoke(expected, it) ?? true, failureMessage: it => "it >= expected have returned true", messageOverride: BuildFailureMessage);
+      must.Satisfy(it => it.DeclaredType().Operators.GreaterThanOrEqual?.Invoke(it, expected) ?? true, failureMessage: it => "expected >= it have returned true", messageOverride: BuildFailureMessage);
 
       must.Satisfy(it => it!.GetHashCode() == expected!.GetHashCode(), messageOverride: BuildFailureMessage);
 
@@ -101,11 +99,11 @@ public static class ObjectEqualityAssertions
          var expectedJson = JsonConvert.SerializeObject(expected, TestingJsonSettings.AllMembers);
          return $"""
                  {must.Separator}
-                 expected the object returned by the expression: 
+                 expected the object "it" returned by the expression: 
                  {must.Separator}
                  {must.Expression}
                  {must.Separator}
-                 to be the equal to the the object returned by the expression:
+                 to be the equal to the the object "expected" returned by the expression:
                  {must.Separator}
                  {must.NormalizeExpressionIndentation(expectedExpression)}
                  {must.Separator}
@@ -115,13 +113,13 @@ public static class ObjectEqualityAssertions
                  {must.Separator}
                  Diff:
                  {must.Separator}
-                 {UnidiffRenderer.GenerateUnidiff(oldText: expectedJson, newText: actualJson, oldFileName: "expected", newFileName: "actual")}
+                 {DiffGenerator.CreateDiff(expectedJson, actualJson)}
                  {must.Separator}
-                 Actual was:
+                 it was:
                  {must.Separator}
                  {actualJson}
                  {must.Separator}
-                 Expected was:
+                 expected was:
                  {must.Separator}
                  {expectedJson}
                  {must.Separator}
