@@ -27,10 +27,10 @@ public static class ObjectEqualityAssertions
       must.Satisfy(it => (expected as IEquatable<TValue>)?.Equals(it) ?? true, messageOverride: BuildFailureMessage);
 
       must.Satisfy(it => it.DeclaredType().Operators.Equality?.Invoke(it, expected) ?? true, failureMessage: it => "it == expected should have returned true", messageOverride: BuildFailureMessage);
-      must.Satisfy(it => it.DeclaredType().Operators.Equality?.Invoke(expected, it) ?? true, failureMessage: it => "expected == it have returned true", messageOverride: BuildFailureMessage);
+      must.Satisfy(it => it.DeclaredType().Operators.Equality?.Invoke(expected, it) ?? true, failureMessage: it => "expected == it should have returned true", messageOverride: BuildFailureMessage);
 
-      must.Satisfy(it => !it.DeclaredType().Operators.InEquality?.Invoke(it, expected) ?? true, failureMessage: it => "it != expected have returned false", messageOverride: BuildFailureMessage);
-      must.Satisfy(it => !it.DeclaredType().Operators.InEquality?.Invoke(expected, it) ?? true, failureMessage: it => "expected != it have returned false", messageOverride: BuildFailureMessage);
+      must.Satisfy(it => !it.DeclaredType().Operators.InEquality?.Invoke(it, expected) ?? true, failureMessage: it => "it != expected should have returned false", messageOverride: BuildFailureMessage);
+      must.Satisfy(it => !it.DeclaredType().Operators.InEquality?.Invoke(expected, it) ?? true, failureMessage: it => "expected != it should have returned false", messageOverride: BuildFailureMessage);
 
       must.Satisfy(it => EqualityComparer<TValue>.Default.Equals(it, expected), failureMessage: it => "default equality comparer should have returned true", messageOverride: BuildFailureMessage);
       must.Satisfy(it => EqualityComparer<TValue>.Default.Equals(expected, it), failureMessage: it => "default equality comparer should have returned true", messageOverride: BuildFailureMessage);
@@ -41,17 +41,17 @@ public static class ObjectEqualityAssertions
       must.Satisfy(it => (it as IComparable)?.CompareTo(expected).Equals(0) ?? true, failureMessage: it => "it.CompareTo(expected) should have returned 0", messageOverride: BuildFailureMessage);
       must.Satisfy(it => (expected as IComparable)?.CompareTo(it).Equals(0) ?? true, failureMessage: it => "expected.CompareTo(it) should have returned 0", messageOverride: BuildFailureMessage);
 
-      must.Satisfy(it => !it.DeclaredType().Operators.LessThan?.Invoke(expected, it) ?? true, failureMessage: it => "it < expected have returned false", messageOverride: BuildFailureMessage);
-      must.Satisfy(it => !it.DeclaredType().Operators.LessThan?.Invoke(it, expected) ?? true, failureMessage: it => "expected < it have returned false", messageOverride: BuildFailureMessage);
+      must.Satisfy(it => !it.DeclaredType().Operators.LessThan?.Invoke(it, expected) ?? true, failureMessage: it => "it < expected should have returned false", messageOverride: BuildFailureMessage);
+      must.Satisfy(it => !it.DeclaredType().Operators.LessThan?.Invoke(expected, it) ?? true, failureMessage: it => "expected < it should have returned false", messageOverride: BuildFailureMessage);
 
-      must.Satisfy(it => it.DeclaredType().Operators.LessThanOrEqual?.Invoke(expected, it) ?? true, failureMessage: it => "it <= expected have returned true", messageOverride: BuildFailureMessage);
-      must.Satisfy(it => it.DeclaredType().Operators.LessThanOrEqual?.Invoke(it, expected) ?? true, failureMessage: it => "expected <= it have returned true", messageOverride: BuildFailureMessage);
+      must.Satisfy(it => it.DeclaredType().Operators.LessThanOrEqual?.Invoke(it, expected) ?? true, failureMessage: it => "it <= expected should have returned true", messageOverride: BuildFailureMessage);
+      must.Satisfy(it => it.DeclaredType().Operators.LessThanOrEqual?.Invoke(expected, it) ?? true, failureMessage: it => "expected <= it should have returned true", messageOverride: BuildFailureMessage);
 
-      must.Satisfy(it => !it.DeclaredType().Operators.GreaterThan?.Invoke(expected, it) ?? true, failureMessage: it => "it > expected have returned false", messageOverride: BuildFailureMessage);
-      must.Satisfy(it => !it.DeclaredType().Operators.GreaterThan?.Invoke(it, expected) ?? true, failureMessage: it => "expected > it have returned false", messageOverride: BuildFailureMessage);
+      must.Satisfy(it => !it.DeclaredType().Operators.GreaterThan?.Invoke(expected, it) ?? true, failureMessage: it => "expected > it should have returned false", messageOverride: BuildFailureMessage);
+      must.Satisfy(it => !it.DeclaredType().Operators.GreaterThan?.Invoke(it, expected) ?? true, failureMessage: it => "it > expected should have returned false", messageOverride: BuildFailureMessage);
 
-      must.Satisfy(it => it.DeclaredType().Operators.GreaterThanOrEqual?.Invoke(expected, it) ?? true, failureMessage: it => "it >= expected have returned true", messageOverride: BuildFailureMessage);
-      must.Satisfy(it => it.DeclaredType().Operators.GreaterThanOrEqual?.Invoke(it, expected) ?? true, failureMessage: it => "expected >= it have returned true", messageOverride: BuildFailureMessage);
+      must.Satisfy(it => it.DeclaredType().Operators.GreaterThanOrEqual?.Invoke(expected, it) ?? true, failureMessage: it => "expected >= it should have returned true", messageOverride: BuildFailureMessage);
+      must.Satisfy(it => it.DeclaredType().Operators.GreaterThanOrEqual?.Invoke(it, expected) ?? true, failureMessage: it => "it >= expected should have returned true", messageOverride: BuildFailureMessage);
 
       must.Satisfy(it => it!.GetHashCode() == expected!.GetHashCode(), messageOverride: BuildFailureMessage);
 
