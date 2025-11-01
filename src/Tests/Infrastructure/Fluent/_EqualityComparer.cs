@@ -58,13 +58,33 @@ public static class ObjectEqualityAssertions
       must.Satisfy(it => Equals(it, expected));
       must.Satisfy(it => Equals(expected, it));
 
-      // == operator - both directions
-      must.Satisfy(actual => EqualityComparer<TValue>.Default.Equals(actual, expected));
-      must.Satisfy(actual => EqualityComparer<TValue>.Default.Equals(expected, actual));
+      // == operator - both directions (using reflection to call actual operator if it exists)
+      var equalityOperator = typeof(TValue).GetMethod("op_Equality", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static, null, [typeof(TValue), typeof(TValue)], null);
+      if(equalityOperator != null)
+      {
+         must.Satisfy(it => (bool)equalityOperator.Invoke(null, [it, expected])!);
+         must.Satisfy(it => (bool)equalityOperator.Invoke(null, [expected, it])!);
+      }
+      else
+      {
+         // Fallback to EqualityComparer if no operator is defined
+         must.Satisfy(actual => EqualityComparer<TValue>.Default.Equals(actual, expected));
+         must.Satisfy(actual => EqualityComparer<TValue>.Default.Equals(expected, actual));
+      }
 
       // != operator - both directions (should return false)
-      must.Satisfy(it => !EqualityComparer<TValue>.Default.Equals(it, expected) == false);
-      must.Satisfy(it => !EqualityComparer<TValue>.Default.Equals(expected, it) == false);
+      var inequalityOperator = typeof(TValue).GetMethod("op_Inequality", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static, null, [typeof(TValue), typeof(TValue)], null);
+      if(inequalityOperator != null)
+      {
+         must.Satisfy(it => (bool)inequalityOperator.Invoke(null, [it, expected])! == false);
+         must.Satisfy(it => (bool)inequalityOperator.Invoke(null, [expected, it])! == false);
+      }
+      else
+      {
+         // Fallback to EqualityComparer if no operator is defined
+         must.Satisfy(it => !EqualityComparer<TValue>.Default.Equals(it, expected) == false);
+         must.Satisfy(it => !EqualityComparer<TValue>.Default.Equals(expected, it) == false);
+      }
 
       // IComparable<T>.CompareTo - both directions (should return 0)
       if(actual is IComparable<TValue> actualAsGenericComparable)
