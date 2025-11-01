@@ -8,6 +8,6 @@ public static class __Must
                                   [CallerArgumentExpression(nameof(subject))]
                                   string expression = null!) => new Must<T>(subject, expression);
 
-   ///<summary>Allows for more correct sentences if one does not like just chaining the assertion methods themselves</summary>
+   ///<summary>Allows for more correct sentences if one does not like just chaining the assertion methods themselves. Actually does nothing at all.</summary>
    public static IMust<T> And<T>(this IMust<T> @this) => @this;
 }
