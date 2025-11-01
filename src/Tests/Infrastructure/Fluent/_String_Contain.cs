@@ -8,6 +8,7 @@ public static class StringContain
       => must.Satisfy(it => it.ContainsOrdinal(expected),
                       () =>
                          $"""
+                          {must.Separator}
                           expected the expression: 
                           {must.Separator}
                           {must.Expression.Indent()}
