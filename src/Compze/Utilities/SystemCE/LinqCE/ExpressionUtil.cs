@@ -29,8 +29,7 @@ static class ExpressionUtil
 
    public static MemberExpression ExtractFinalMemberAccessExpression(this Expression expression)
    {
-      // Walk through the expression tree to find the final member access
-      // This handles: obj.Property, obj.Method().Property, obj[0].Property, etc.
+      // Extract the final (outermost) member access from an expression
       var current = expression;
 
       while(current != null)
