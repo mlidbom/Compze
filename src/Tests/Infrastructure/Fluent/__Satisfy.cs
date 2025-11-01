@@ -31,7 +31,6 @@ public static class _Satisfy
                         {context.Separator}
                         {predicateExpression.Indent()}
                         {context.Separator}
-
                         but it was:
                         {context.Separator}
                         ToString():
