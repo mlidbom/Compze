@@ -13,7 +13,7 @@ namespace Compze.Tests.Unit.Testing.Fluent;
 public class When_comparing_custom_types_with_Be : UniversalTestBase
 {
    [Flags]
-   enum BreaComparableMethod
+   enum BreakComparableMethod
    {
       None = 0,
       ObjectEquals = 1 << 0,
@@ -44,19 +44,19 @@ public class When_comparing_custom_types_with_Be : UniversalTestBase
    class ComparableWithErrorInjectionSupport : IEquatable<ComparableWithErrorInjectionSupport>, IComparable<ComparableWithErrorInjectionSupport>, IComparable
    {
       readonly int _value;
-      readonly BreaComparableMethod _breaComparableMethod;
+      readonly BreakComparableMethod _breakComparableMethod;
 
-      public ComparableWithErrorInjectionSupport(int value, BreaComparableMethod breaComparableMethod = BreaComparableMethod.None)
+      public ComparableWithErrorInjectionSupport(int value, BreakComparableMethod breakComparableMethod = BreakComparableMethod.None)
       {
          _value = value;
-         _breaComparableMethod = breaComparableMethod;
+         _breakComparableMethod = breakComparableMethod;
       }
 
       public override bool Equals(object? obj)
       {
          if(obj is not ComparableWithErrorInjectionSupport other) return false;
          var result = _value == other._value;
-         if(_breaComparableMethod.HasFlag(BreaComparableMethod.ObjectEquals)) result = !result;
+         if(_breakComparableMethod.HasFlag(BreakComparableMethod.ObjectEquals)) result = !result;
          return result;
       }
 
@@ -64,14 +64,14 @@ public class When_comparing_custom_types_with_Be : UniversalTestBase
       {
          if(other is null) return false;
          var result = _value == other._value;
-         if(_breaComparableMethod.HasFlag(BreaComparableMethod.IEquatable)) result = !result;
+         if(_breakComparableMethod.HasFlag(BreakComparableMethod.IEquatable)) result = !result;
          return result;
       }
 
       public override int GetHashCode()
       {
          var hash = _value.GetHashCode();
-         if(_breaComparableMethod.HasFlag(BreaComparableMethod.GetHashCode)) hash = ~hash;
+         if(_breakComparableMethod.HasFlag(BreakComparableMethod.GetHashCode)) hash = ~hash;
          return hash;
       }
 
@@ -79,7 +79,7 @@ public class When_comparing_custom_types_with_Be : UniversalTestBase
       {
          if(other is null) return 1;
          var result = _value.CompareTo(other._value);
-         if(_breaComparableMethod.HasFlag(BreaComparableMethod.IComparableGeneric) && result == 0) result = 1;
+         if(_breakComparableMethod.HasFlag(BreakComparableMethod.IComparableGeneric) && result == 0) result = 1;
          return result;
       }
 
@@ -87,7 +87,7 @@ public class When_comparing_custom_types_with_Be : UniversalTestBase
       {
          if(obj is not ComparableWithErrorInjectionSupport other) throw new ArgumentException("Object is not a TestValue");
          var result = _value.CompareTo(other._value);
-         if(_breaComparableMethod.HasFlag(BreaComparableMethod.IComparable) && result == 0) result = 1;
+         if(_breakComparableMethod.HasFlag(BreakComparableMethod.IComparable) && result == 0) result = 1;
          return result;
       }
 
@@ -96,7 +96,7 @@ public class When_comparing_custom_types_with_Be : UniversalTestBase
          if(ReferenceEquals(left, right)) return true;
          if(left is null || right is null) return false;
          var result = left._value == right._value;
-         if(left._breaComparableMethod.HasFlag(BreaComparableMethod.OperatorEquality)) result = !result;
+         if(left._breakComparableMethod.HasFlag(BreakComparableMethod.OperatorEquality)) result = !result;
          return result;
       }
 
@@ -105,7 +105,7 @@ public class When_comparing_custom_types_with_Be : UniversalTestBase
          if(ReferenceEquals(left, right)) return false;
          if(left is null || right is null) return true;
          var result = left._value != right._value;
-         if(left._breaComparableMethod.HasFlag(BreaComparableMethod.OperatorInequality)) result = !result;
+         if(left._breakComparableMethod.HasFlag(BreakComparableMethod.OperatorInequality)) result = !result;
          return result;
       }
 
@@ -113,7 +113,7 @@ public class When_comparing_custom_types_with_Be : UniversalTestBase
       {
          if(left is null || right is null) return false;
          var result = left._value < right._value;
-         if(left._breaComparableMethod.HasFlag(BreaComparableMethod.OperatorLessThan)) result = !result;
+         if(left._breakComparableMethod.HasFlag(BreakComparableMethod.OperatorLessThan)) result = !result;
          return result;
       }
 
@@ -121,7 +121,7 @@ public class When_comparing_custom_types_with_Be : UniversalTestBase
       {
          if(left is null || right is null) return false;
          var result = left._value > right._value;
-         if(left._breaComparableMethod.HasFlag(BreaComparableMethod.OperatorGreaterThan)) result = !result;
+         if(left._breakComparableMethod.HasFlag(BreakComparableMethod.OperatorGreaterThan)) result = !result;
          return result;
       }
 
@@ -129,7 +129,7 @@ public class When_comparing_custom_types_with_Be : UniversalTestBase
       {
          if(left is null || right is null) return false;
          var result = left._value <= right._value;
-         if(left._breaComparableMethod.HasFlag(BreaComparableMethod.OperatorLessThanOrEqual)) result = !result;
+         if(left._breakComparableMethod.HasFlag(BreakComparableMethod.OperatorLessThanOrEqual)) result = !result;
          return result;
       }
 
@@ -137,7 +137,7 @@ public class When_comparing_custom_types_with_Be : UniversalTestBase
       {
          if(left is null || right is null) return false;
          var result = left._value >= right._value;
-         if(left._breaComparableMethod.HasFlag(BreaComparableMethod.OperatorGreaterThanOrEqual)) result = !result;
+         if(left._breakComparableMethod.HasFlag(BreakComparableMethod.OperatorGreaterThanOrEqual)) result = !result;
          return result;
       }
    }
@@ -152,7 +152,7 @@ public class When_comparing_custom_types_with_Be : UniversalTestBase
 
    public class given_two_equal_values_but_Object_Equals_is_broken : When_comparing_custom_types_with_Be
    {
-      readonly ComparableWithErrorInjectionSupport _actual = new(42, BreaComparableMethod.ObjectEquals);
+      readonly ComparableWithErrorInjectionSupport _actual = new(42, BreakComparableMethod.ObjectEquals);
       readonly ComparableWithErrorInjectionSupport _expected = new(42);
 
       [XF] public void Be_throws_with_correct_predicate() =>
@@ -164,7 +164,7 @@ public class When_comparing_custom_types_with_Be : UniversalTestBase
    public class given_two_equal_values_but_Object_Equals_reversed_is_broken : When_comparing_custom_types_with_Be
    {
       readonly ComparableWithErrorInjectionSupport _actual = new(42);
-      readonly ComparableWithErrorInjectionSupport _expected = new(42, BreaComparableMethod.ObjectEquals);
+      readonly ComparableWithErrorInjectionSupport _expected = new(42, BreakComparableMethod.ObjectEquals);
 
       [XF] public void Be_throws_with_correct_predicate() =>
          Invoking(() => _actual.Must().Be(_expected))
@@ -174,7 +174,7 @@ public class When_comparing_custom_types_with_Be : UniversalTestBase
 
    public class given_two_equal_values_but_IEquatable_is_broken : When_comparing_custom_types_with_Be
    {
-      readonly ComparableWithErrorInjectionSupport _actual = new(42, BreaComparableMethod.IEquatable);
+      readonly ComparableWithErrorInjectionSupport _actual = new(42, BreakComparableMethod.IEquatable);
       readonly ComparableWithErrorInjectionSupport _expected = new(42);
 
       [XF] public void Be_throws_with_correct_predicate() =>
@@ -186,7 +186,7 @@ public class When_comparing_custom_types_with_Be : UniversalTestBase
    public class given_two_equal_values_but_IEquatable_reversed_is_broken : When_comparing_custom_types_with_Be
    {
       readonly ComparableWithErrorInjectionSupport _actual = new(42);
-      readonly ComparableWithErrorInjectionSupport _expected = new(42, BreaComparableMethod.IEquatable);
+      readonly ComparableWithErrorInjectionSupport _expected = new(42, BreakComparableMethod.IEquatable);
 
       [XF] public void Be_throws_with_correct_predicate() =>
          Invoking(() => _actual.Must().Be(_expected))
@@ -196,7 +196,7 @@ public class When_comparing_custom_types_with_Be : UniversalTestBase
 
    public class given_two_equal_values_but_operator_equality_is_broken : When_comparing_custom_types_with_Be
    {
-      readonly ComparableWithErrorInjectionSupport _actual = new(42, BreaComparableMethod.OperatorEquality);
+      readonly ComparableWithErrorInjectionSupport _actual = new(42, BreakComparableMethod.OperatorEquality);
       readonly ComparableWithErrorInjectionSupport _expected = new(42);
 
       [XF] public void Be_throws_with_correct_predicate_and_message()
@@ -213,7 +213,7 @@ public class When_comparing_custom_types_with_Be : UniversalTestBase
    public class given_two_equal_values_but_operator_equality_reversed_is_broken : When_comparing_custom_types_with_Be
    {
       readonly ComparableWithErrorInjectionSupport _actual = new(42);
-      readonly ComparableWithErrorInjectionSupport _expected = new(42, BreaComparableMethod.OperatorEquality);
+      readonly ComparableWithErrorInjectionSupport _expected = new(42, BreakComparableMethod.OperatorEquality);
 
       [XF] public void Be_throws_with_correct_predicate_and_message()
       {
@@ -228,7 +228,7 @@ public class When_comparing_custom_types_with_Be : UniversalTestBase
 
    public class given_two_equal_values_but_operator_inequality_is_broken : When_comparing_custom_types_with_Be
    {
-      readonly ComparableWithErrorInjectionSupport _actual = new(42, BreaComparableMethod.OperatorInequality);
+      readonly ComparableWithErrorInjectionSupport _actual = new(42, BreakComparableMethod.OperatorInequality);
       readonly ComparableWithErrorInjectionSupport _expected = new(42);
 
       [XF] public void Be_throws_with_correct_predicate_and_message()
@@ -245,7 +245,7 @@ public class When_comparing_custom_types_with_Be : UniversalTestBase
    public class given_two_equal_values_but_operator_inequality_reversed_is_broken : When_comparing_custom_types_with_Be
    {
       readonly ComparableWithErrorInjectionSupport _actual = new(42);
-      readonly ComparableWithErrorInjectionSupport _expected = new(42, BreaComparableMethod.OperatorInequality);
+      readonly ComparableWithErrorInjectionSupport _expected = new(42, BreakComparableMethod.OperatorInequality);
 
       [XF] public void Be_throws_with_correct_predicate_and_message()
       {
@@ -260,7 +260,7 @@ public class When_comparing_custom_types_with_Be : UniversalTestBase
 
    public class given_two_equal_values_but_IComparable_generic_is_broken : When_comparing_custom_types_with_Be
    {
-      readonly ComparableWithErrorInjectionSupport _actual = new(42, BreaComparableMethod.IComparableGeneric);
+      readonly ComparableWithErrorInjectionSupport _actual = new(42, BreakComparableMethod.IComparableGeneric);
       readonly ComparableWithErrorInjectionSupport _expected = new(42);
 
       [XF] public void Be_throws_with_correct_predicate_and_message()
@@ -277,7 +277,7 @@ public class When_comparing_custom_types_with_Be : UniversalTestBase
    public class given_two_equal_values_but_IComparable_generic_reversed_is_broken : When_comparing_custom_types_with_Be
    {
       readonly ComparableWithErrorInjectionSupport _actual = new(42);
-      readonly ComparableWithErrorInjectionSupport _expected = new(42, BreaComparableMethod.IComparableGeneric);
+      readonly ComparableWithErrorInjectionSupport _expected = new(42, BreakComparableMethod.IComparableGeneric);
 
       [XF] public void Be_throws_with_correct_predicate_and_message()
       {
@@ -292,7 +292,7 @@ public class When_comparing_custom_types_with_Be : UniversalTestBase
 
    public class given_two_equal_values_but_IComparable_is_broken : When_comparing_custom_types_with_Be
    {
-      readonly ComparableWithErrorInjectionSupport _actual = new(42, BreaComparableMethod.IComparable);
+      readonly ComparableWithErrorInjectionSupport _actual = new(42, BreakComparableMethod.IComparable);
       readonly ComparableWithErrorInjectionSupport _expected = new(42);
 
       [XF] public void Be_throws_with_correct_predicate_and_message()
@@ -309,7 +309,7 @@ public class When_comparing_custom_types_with_Be : UniversalTestBase
    public class given_two_equal_values_but_IComparable_reversed_is_broken : When_comparing_custom_types_with_Be
    {
       readonly ComparableWithErrorInjectionSupport _actual = new(42);
-      readonly ComparableWithErrorInjectionSupport _expected = new(42, BreaComparableMethod.IComparable);
+      readonly ComparableWithErrorInjectionSupport _expected = new(42, BreakComparableMethod.IComparable);
 
       [XF] public void Be_throws_with_correct_predicate_and_message()
       {
@@ -324,7 +324,7 @@ public class When_comparing_custom_types_with_Be : UniversalTestBase
 
    public class given_two_equal_values_but_operator_less_than_is_broken : When_comparing_custom_types_with_Be
    {
-      readonly ComparableWithErrorInjectionSupport _actual = new(42, BreaComparableMethod.OperatorLessThan);
+      readonly ComparableWithErrorInjectionSupport _actual = new(42, BreakComparableMethod.OperatorLessThan);
       readonly ComparableWithErrorInjectionSupport _expected = new(42);
 
       [XF] public void Be_throws_with_correct_predicate_and_message()
@@ -341,7 +341,7 @@ public class When_comparing_custom_types_with_Be : UniversalTestBase
    public class given_two_equal_values_but_operator_less_than_reversed_is_broken : When_comparing_custom_types_with_Be
    {
       readonly ComparableWithErrorInjectionSupport _actual = new(42);
-      readonly ComparableWithErrorInjectionSupport _expected = new(42, BreaComparableMethod.OperatorLessThan);
+      readonly ComparableWithErrorInjectionSupport _expected = new(42, BreakComparableMethod.OperatorLessThan);
 
       [XF] public void Be_throws_with_correct_predicate_and_message()
       {
@@ -356,7 +356,7 @@ public class When_comparing_custom_types_with_Be : UniversalTestBase
 
    public class given_two_equal_values_but_operator_less_than_or_equal_is_broken : When_comparing_custom_types_with_Be
    {
-      readonly ComparableWithErrorInjectionSupport _actual = new(42, BreaComparableMethod.OperatorLessThanOrEqual);
+      readonly ComparableWithErrorInjectionSupport _actual = new(42, BreakComparableMethod.OperatorLessThanOrEqual);
       readonly ComparableWithErrorInjectionSupport _expected = new(42);
 
       [XF] public void Be_throws_with_correct_predicate_and_message()
@@ -373,7 +373,7 @@ public class When_comparing_custom_types_with_Be : UniversalTestBase
    public class given_two_equal_values_but_operator_less_than_or_equal_reversed_is_broken : When_comparing_custom_types_with_Be
    {
       readonly ComparableWithErrorInjectionSupport _actual = new(42);
-      readonly ComparableWithErrorInjectionSupport _expected = new(42, BreaComparableMethod.OperatorLessThanOrEqual);
+      readonly ComparableWithErrorInjectionSupport _expected = new(42, BreakComparableMethod.OperatorLessThanOrEqual);
 
       [XF] public void Be_throws_with_correct_predicate_and_message()
       {
@@ -388,7 +388,7 @@ public class When_comparing_custom_types_with_Be : UniversalTestBase
 
    public class given_two_equal_values_but_operator_greater_than_is_broken : When_comparing_custom_types_with_Be
    {
-      readonly ComparableWithErrorInjectionSupport _actual = new(42, BreaComparableMethod.OperatorGreaterThan);
+      readonly ComparableWithErrorInjectionSupport _actual = new(42, BreakComparableMethod.OperatorGreaterThan);
       readonly ComparableWithErrorInjectionSupport _expected = new(42);
 
       [XF] public void Be_throws_with_correct_predicate_and_message()
@@ -405,7 +405,7 @@ public class When_comparing_custom_types_with_Be : UniversalTestBase
    public class given_two_equal_values_but_operator_greater_than_reversed_is_broken : When_comparing_custom_types_with_Be
    {
       readonly ComparableWithErrorInjectionSupport _actual = new(42);
-      readonly ComparableWithErrorInjectionSupport _expected = new(42, BreaComparableMethod.OperatorGreaterThan);
+      readonly ComparableWithErrorInjectionSupport _expected = new(42, BreakComparableMethod.OperatorGreaterThan);
 
       [XF] public void Be_throws_with_correct_predicate_and_message()
       {
@@ -420,7 +420,7 @@ public class When_comparing_custom_types_with_Be : UniversalTestBase
 
    public class given_two_equal_values_but_operator_greater_than_or_equal_is_broken : When_comparing_custom_types_with_Be
    {
-      readonly ComparableWithErrorInjectionSupport _actual = new(42, BreaComparableMethod.OperatorGreaterThanOrEqual);
+      readonly ComparableWithErrorInjectionSupport _actual = new(42, BreakComparableMethod.OperatorGreaterThanOrEqual);
       readonly ComparableWithErrorInjectionSupport _expected = new(42);
 
       [XF] public void Be_throws_with_correct_predicate_and_message()
@@ -437,7 +437,7 @@ public class When_comparing_custom_types_with_Be : UniversalTestBase
    public class given_two_equal_values_but_operator_greater_than_or_equal_reversed_is_broken : When_comparing_custom_types_with_Be
    {
       readonly ComparableWithErrorInjectionSupport _actual = new(42);
-      readonly ComparableWithErrorInjectionSupport _expected = new(42, BreaComparableMethod.OperatorGreaterThanOrEqual);
+      readonly ComparableWithErrorInjectionSupport _expected = new(42, BreakComparableMethod.OperatorGreaterThanOrEqual);
 
       [XF] public void Be_throws_with_correct_predicate_and_message()
       {
@@ -452,7 +452,7 @@ public class When_comparing_custom_types_with_Be : UniversalTestBase
 
    public class given_two_equal_values_but_GetHashCode_is_broken : When_comparing_custom_types_with_Be
    {
-      readonly ComparableWithErrorInjectionSupport _actual = new(42, BreaComparableMethod.GetHashCode);
+      readonly ComparableWithErrorInjectionSupport _actual = new(42, BreakComparableMethod.GetHashCode);
       readonly ComparableWithErrorInjectionSupport _expected = new(42);
 
       [XF] public void Be_throws_with_correct_predicate() =>
