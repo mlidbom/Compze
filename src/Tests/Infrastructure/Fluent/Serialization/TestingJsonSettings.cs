@@ -36,5 +36,6 @@ static class TestingJsonSettings
          Formatting = Formatting.Indented,
          ContractResolver = resolver,
          ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+         Converters = { new OrderedCollectionConverter() } // Ensure deterministic collection ordering
       };
 }

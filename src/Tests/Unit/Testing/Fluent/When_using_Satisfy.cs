@@ -90,13 +90,14 @@ public class When_using_Satisfy : UniversalTestBase
 
       [XF] public void the_message_contains_the_full_json_for_actual() =>
          ExceptionMessage().Must().Contain("""
+                                           --------------------------------------------------
                                            JSON:
                                            --------------------------------------------------
                                            {
                                              "$type": "Compze.Tests.Unit.Testing.Fluent.When_using_Satisfy+given_a_complex_object+TestObject, Compze.Tests.Unit",
+                                             "Age": 30,
                                              "EqualityContract": "Compze.Tests.Unit.Testing.Fluent.When_using_Satisfy+given_a_complex_object+TestObject, Compze.Tests.Unit, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
                                              "Name": "John",
-                                             "Age": 30,
                                              "Status": "Unmarried"
                                            }
                                            --------------------------------------------------
@@ -125,9 +126,9 @@ public class When_using_Satisfy : UniversalTestBase
                                         --------------------------------------------------
                                         {
                                           "$type": "Compze.Tests.Unit.Testing.Fluent.When_using_Satisfy+given_a_complex_object+TestObject, Compze.Tests.Unit",
+                                          "Age": 30,
                                           "EqualityContract": "Compze.Tests.Unit.Testing.Fluent.When_using_Satisfy+given_a_complex_object+TestObject, Compze.Tests.Unit, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
                                           "Name": "John",
-                                          "Age": 30,
                                           "Status": "Unmarried"
                                         }
                                         --------------------------------------------------

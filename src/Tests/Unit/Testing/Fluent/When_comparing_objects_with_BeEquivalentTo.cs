@@ -50,12 +50,13 @@ public class When_comparing_objects_with_BeEquivalentTo : UniversalTestBase
                                             --------------------------------------------------
                                             --- expected
                                             +++ actual
-                                            @@ -2,5 +2,5 @@
+                                            @@ -1,6 +1,6 @@
+                                             {
                                                "$type": "Compze.Tests.Unit.Testing.Fluent.When_comparing_objects_with_BeEquivalentTo+TestObject, Compze.Tests.Unit",
-                                               "PublicProperty": "public_expected",
                                                "InternalProperty": "internal_expected",
-                                            -  "PrivateField": "private_expected"
-                                            +  "PrivateField": "private_actual"
+                                            -  "PrivateField": "private_expected",
+                                            +  "PrivateField": "private_actual",
+                                               "PublicProperty": "public_expected"
                                              }
                                             
                                             --------------------------------------------------
@@ -63,18 +64,18 @@ public class When_comparing_objects_with_BeEquivalentTo : UniversalTestBase
                                             --------------------------------------------------
                                             {
                                               "$type": "Compze.Tests.Unit.Testing.Fluent.When_comparing_objects_with_BeEquivalentTo+TestObject, Compze.Tests.Unit",
-                                              "PublicProperty": "public_expected",
                                               "InternalProperty": "internal_expected",
-                                              "PrivateField": "private_actual"
+                                              "PrivateField": "private_actual",
+                                              "PublicProperty": "public_expected"
                                             }
                                             --------------------------------------------------
                                             Expected was:
                                             --------------------------------------------------
                                             {
                                               "$type": "Compze.Tests.Unit.Testing.Fluent.When_comparing_objects_with_BeEquivalentTo+TestObject, Compze.Tests.Unit",
-                                              "PublicProperty": "public_expected",
                                               "InternalProperty": "internal_expected",
-                                              "PrivateField": "private_expected"
+                                              "PrivateField": "private_expected",
+                                              "PublicProperty": "public_expected"
                                             }
                                             --------------------------------------------------
                                             """");

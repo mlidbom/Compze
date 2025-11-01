@@ -35,6 +35,7 @@ abstract class MemberFilteringContractResolver : DefaultContractResolver
       return allProperties.Cast<MemberInfo>()
                           .Concat(allFields)
                           .Select(m => CreateProperty(m, memberSerialization))
+                          .OrderBy(p => p.PropertyName) // Ensure deterministic order
                           .ToList();
    }
 
