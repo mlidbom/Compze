@@ -8,9 +8,9 @@ using SPath = Path;
 #pragma warning restore IDE0065
 
 ///<summary>Manages the Temp folder in a machine wide thread safe manner.</summary>
-static class CompzeTempFolder
+static class CompzeFolder
 {
-   static readonly MutexCE MachineWideLock = MutexCE.ForMutexNamed(nameof(CompzeTempFolder));
+   static readonly MutexCE MachineWideLock = MutexCE.ForMutexNamed(nameof(CompzeFolder));
    static readonly string DefaultPath = SPath.Combine(SPath.GetTempPath(), "Compze_TEMP");
    static readonly string Path = EnsureFolderExists();
 
