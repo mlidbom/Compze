@@ -27,7 +27,6 @@ static class ExpressionUtil
    public static MemberInfo ExtractFinalMemberInfo(this Expression expression) =>
       expression.ExtractFinalMemberAccessExpression().Member;
 
-
    public static MemberExpression ExtractFinalMemberAccessExpression(this Expression expression)
    {
       // Walk through the expression tree to find the final member access
@@ -39,8 +38,9 @@ static class ExpressionUtil
          switch(current)
          {
             case MemberExpression memberExpr:
-               var declaringType = memberExpr.Member.DeclaringType
-                                ?? throw new ArgumentException("Member must have a declaring type", nameof(expression));
+               if(memberExpr.Member.DeclaringType == null)
+                  throw new ArgumentException("Member must have a declaring type", nameof(expression));
+
                return memberExpr;
 
             case UnaryExpression unaryExpr: // boxing, casting etc
