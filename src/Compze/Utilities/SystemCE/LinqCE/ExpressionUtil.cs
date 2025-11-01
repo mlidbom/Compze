@@ -1,7 +1,6 @@
 using System;
 using System.Linq.Expressions;
 using System.Reflection;
-using static Compze.Utilities.Contracts.Assert;
 
 namespace Compze.Utilities.SystemCE.LinqCE;
 
