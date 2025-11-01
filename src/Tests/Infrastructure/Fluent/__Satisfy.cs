@@ -21,10 +21,8 @@ public static class _Satisfy
             throw new AssertionFailedException(messageOverride.Invoke());
          }
 
-         var actualJson = JsonConvert.SerializeObject(context.Actual, TestingJsonSettings.AllMembers);
-
          var message = $"""
-                        expected the expression:
+                        expected the object returned by the expression:
                         {context.Separator}
                         {context.Expression.Indent()}
                         {context.Separator}
@@ -33,14 +31,15 @@ public static class _Satisfy
                         {predicateExpression.Indent()}
                         {context.Separator}
 
-                        Actual.ToString():
+                        but it was:
                         {context.Separator}
-                        {(context.Actual?.ToString() ?? "null").Indent()}
+                        ToString():
                         {context.Separator}
-
-                        Actual JSON:
+                        {context.Actual?.ToString() ?? "null"}
                         {context.Separator}
-                        {actualJson}
+                        JSON:
+                        {context.Separator}
+                        {JsonConvert.SerializeObject(context.Actual, TestingJsonSettings.AllMembers)}
                         {context.Separator}
                         """;
 

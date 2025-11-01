@@ -89,7 +89,7 @@ public class When_using_Satisfy : UniversalTestBase
 
       [XF] public void the_message_contains_the_full_json_for_actual() =>
          ExceptionMessage().Must().Contain("""
-                                           Actual JSON:
+                                           JSON:
                                            --------------------------------------------------
                                            {
                                              "$type": "Compze.Tests.Unit.Testing.Fluent.When_using_Satisfy+given_a_complex_object+TestObject, Compze.Tests.Unit",
@@ -103,7 +103,7 @@ public class When_using_Satisfy : UniversalTestBase
 
       [XF] public void the_full_message_is() =>
          ExceptionMessage().Must().Be("""
-                                        expected the expression:
+                                        expected the object returned by the expression:
                                         --------------------------------------------------
                                            _actual
                                         --------------------------------------------------
@@ -112,12 +112,13 @@ public class When_using_Satisfy : UniversalTestBase
                                            it => it.Name == "all wrong"
                                         --------------------------------------------------
                                         
-                                        Actual.ToString():
+                                        but it was:
                                         --------------------------------------------------
-                                           TestObject { Name = John, Age = 30, Status = Unmarried }
+                                        ToString():
                                         --------------------------------------------------
-                                        
-                                        Actual JSON:
+                                        TestObject { Name = John, Age = 30, Status = Unmarried }
+                                        --------------------------------------------------
+                                        JSON:
                                         --------------------------------------------------
                                         {
                                           "$type": "Compze.Tests.Unit.Testing.Fluent.When_using_Satisfy+given_a_complex_object+TestObject, Compze.Tests.Unit",
