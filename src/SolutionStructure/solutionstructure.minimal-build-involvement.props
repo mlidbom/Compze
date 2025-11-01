@@ -1,0 +1,12 @@
+<!-- Common properties for all solution organization projects -->
+<Project>
+   <PropertyGroup>
+      <TargetFramework>net9.0</TargetFramework>
+      <IsPackable>false</IsPackable>
+      <EnableDefaultItems>false</EnableDefaultItems>
+   </PropertyGroup>
+
+   <PropertyGroup>
+      <BuildOutputExcludes>**/bin/**;**/obj/**</BuildOutputExcludes>
+   </PropertyGroup>
+</Project>

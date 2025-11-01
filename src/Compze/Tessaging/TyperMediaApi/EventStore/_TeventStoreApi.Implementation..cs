@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Compze.Core.Public;
 using Compze.Core.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Core.Tessaging.Public;
 using Compze.Core.Tessaging.Teventive.Public;
@@ -16,11 +17,13 @@ public partial class TeventStoreApi
    {
       public class TaggregateLink<TTaggregate> : TessageTypes.StrictlyLocal.Tueries.StrictlyLocalTuery<TaggregateLink<TTaggregate>, TTaggregate> where TTaggregate : class, ITaggregate
       {
-         [Obsolete("for serializer", error: true)]
-         public TaggregateLink() {}
+         [Obsolete("Used by serializer", error:true)]
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+         public TaggregateLink() : base() {}
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 
-         internal TaggregateLink(Guid id) => Id = id;
-         public Guid Id { get; private set; }
+         internal TaggregateLink(TaggregateId id) => Id = id;
+         public TaggregateId Id { get; private set; }
 
          internal static void RegisterHandler(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery((TaggregateLink<TTaggregate> tuery, ITeventStoreUpdater updater) => updater.Get<TTaggregate>(tuery.Id));
       }
@@ -28,37 +31,41 @@ public partial class TeventStoreApi
       public class GetTaggregateHistory<TTevent> : TessageTypes.StrictlyLocal.Tueries.StrictlyLocalTuery<GetTaggregateHistory<TTevent>, IEnumerable<TTevent>> where TTevent : ITaggregateTevent
       {
          [Obsolete("for serializer", error: true)]
-         public GetTaggregateHistory() {}
+         public GetTaggregateHistory() => Id = null!;
 
-         internal GetTaggregateHistory(Guid id) => Id = id;
-         public Guid Id { get; private set; }
+         internal GetTaggregateHistory(TaggregateId id) => Id = id;
+         public TaggregateId Id { get; private set; }
 
          internal static void RegisterHandler(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery((GetTaggregateHistory<TTevent> tuery, ITeventStoreReader reader) => reader.GetHistory(tuery.Id).Cast<TTevent>());
       }
 
       public class GetReadonlyCopyOfTaggregate<TTaggregate> : TessageTypes.StrictlyLocal.Tueries.StrictlyLocalTuery<GetReadonlyCopyOfTaggregate<TTaggregate>, TTaggregate> where TTaggregate : class, ITaggregate
       {
-         [Obsolete("for serializer", error: true)]
-         public GetReadonlyCopyOfTaggregate() {}
+         [Obsolete("Used by serializer", error:true)]
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+         public GetReadonlyCopyOfTaggregate() : base() {}
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 
-         internal GetReadonlyCopyOfTaggregate(Guid id) => Id = id;
-         public Guid Id { get; private set; }
+         internal GetReadonlyCopyOfTaggregate(TaggregateId id) => Id = id;
+         public TaggregateId Id { get; private set; }
 
          internal static void RegisterHandler(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery((GetReadonlyCopyOfTaggregate<TTaggregate> tuery, ITeventStoreReader reader) => reader.GetReadonlyCopy<TTaggregate>(tuery.Id));
       }
 
       public class GetReadonlyCopyOfTaggregateVersion<TTaggregate> : TessageTypes.StrictlyLocal.Tueries.StrictlyLocalTuery<GetReadonlyCopyOfTaggregateVersion<TTaggregate>, TTaggregate> where TTaggregate : class, ITaggregate
       {
-         [Obsolete("for serializer", error: true)]
-         public GetReadonlyCopyOfTaggregateVersion() {}
+         [Obsolete("Used by serializer", error:true)]
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+         public GetReadonlyCopyOfTaggregateVersion() : base() {}
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 
-         internal GetReadonlyCopyOfTaggregateVersion(Guid id, int version)
+         internal GetReadonlyCopyOfTaggregateVersion(TaggregateId id, int version)
          {
             Id = id;
             Version = version;
          }
 
-         public Guid Id { get; private set; }
+         public TaggregateId Id { get; private set; }
          public int Version { get; private set; }
 
          internal static void RegisterHandler(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery((GetReadonlyCopyOfTaggregateVersion<TTaggregate> tuery, ITeventStoreReader reader) => reader.GetReadonlyCopyOfVersion<TTaggregate>(tuery.Id, tuery.Version));

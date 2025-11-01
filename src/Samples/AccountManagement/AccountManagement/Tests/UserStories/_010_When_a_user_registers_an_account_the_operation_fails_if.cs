@@ -1,4 +1,5 @@
 using System;
+using Compze.Core.Public;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Tests.Infrastructure.XUnit;
 
@@ -17,5 +18,5 @@ public class _010_When_a_user_registers_an_account_the_operation_fails_if : User
                                                                     .ExecutingShouldThrow<Exception>());
 
    [PCT] public void AccountId_is_empty()
-      => Scenario.Register.WithAccountId(Guid.Empty).ExecutingShouldThrow<Exception>();
+      => Scenario.Register.WithAccountId(null!).ExecutingShouldThrow<Exception>();
 }

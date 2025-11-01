@@ -1,17 +1,18 @@
+using Compze.Core.Public;
+using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
+using Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.TransactionsCE;
+using Compze.Utilities.Threading.ResourceAccess;
 using Microsoft.Extensions.Caching.Memory;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Transactions;
-using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
-using Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions;
-using Compze.Utilities.Threading.ResourceAccess;
 
 namespace Compze.Tessaging.Teventive.TeventStore;
 
@@ -38,15 +39,15 @@ class TeventCache : IDisposable, ITeventCache
       readonly TeventCache _parent = teventCache;
       readonly MonitorCE _monitor = MonitorCE.WithDefaultTimeout();
 
-      readonly IThreadShared<Dictionary<string, Dictionary<Guid, Entry>>> _overlays = IThreadShared.WithDefaultTimeout<Dictionary<string, Dictionary<Guid, Entry>>>();
+      readonly IThreadShared<Dictionary<string, Dictionary<TaggregateId, Entry>>> _overlays = IThreadShared.WithDefaultTimeout<Dictionary<string, Dictionary<TaggregateId, Entry>>>();
 
-      Dictionary<Guid, Entry> CurrentOverlay
+      Dictionary<TaggregateId, Entry> CurrentOverlay
       {
          get
          {
             Assert.State.NotNull(Transaction.Current);
             var transactionId = Transaction.Current.TransactionInformation.LocalIdentifier;
-            Dictionary<Guid, Entry>? overlay = null;
+            Dictionary<TaggregateId, Entry>? overlay = null;
 
             if(_overlays.Update(it => it.TryGetValue(transactionId, out overlay)))
             {
@@ -64,10 +65,10 @@ class TeventCache : IDisposable, ITeventCache
          }
       }
 
-      internal void Add(Guid taggregateId, Entry entry) => _monitor.Update(
+      internal void Add(TaggregateId taggregateId, Entry entry) => _monitor.Update(
          () => CurrentOverlay[taggregateId] = entry);
 
-      internal bool TryGet(Guid taggregateId, [NotNullWhen(true)]out Entry? entry)
+      internal bool TryGet(TaggregateId taggregateId, [NotNullWhen(true)]out Entry? entry)
       {
          entry = null;
          if(Transaction.Current == null) return false;
@@ -114,7 +115,7 @@ class TeventCache : IDisposable, ITeventCache
 
    readonly TransactionalOverlay _transactionalOverlay;
 
-   void AcceptTransactionResult(Dictionary<Guid, Entry> overlay)
+   void AcceptTransactionResult(Dictionary<TaggregateId, Entry> overlay)
    {
       foreach(var (key, value) in overlay)
       {
@@ -122,7 +123,7 @@ class TeventCache : IDisposable, ITeventCache
       }
    }
 
-   public Entry Get(Guid id)
+   public Entry Get(TaggregateId id)
    {
       if(_transactionalOverlay.TryGet(id, out var entry))
       {
@@ -132,7 +133,7 @@ class TeventCache : IDisposable, ITeventCache
       return GetInternal(id) ?? Entry.Empty;
    }
 
-   public void Store(Guid id, Entry entry)
+   public void Store(TaggregateId id, Entry entry)
    {
       if(Transaction.Current != null)
       {
@@ -143,7 +144,7 @@ class TeventCache : IDisposable, ITeventCache
       }
    }
 
-   public void Remove(Guid id) => RemoveInternal(id);
+   public void Remove(TaggregateId id) => RemoveInternal(id);
 
    MemoryCache _internalCache;
 
@@ -152,9 +153,9 @@ class TeventCache : IDisposable, ITeventCache
                                                        SlidingExpiration = 20.Minutes()
                                                     };
 
-   void StoreInternal(Guid id, Entry entry) => _internalCache.Set(key: id.ToString(), value: entry, options: Policy);
-   Entry? GetInternal(Guid id) => (Entry?)_internalCache.Get(id.ToString());
-   void RemoveInternal(Guid id) => _internalCache.Remove(key: id.ToString());
+   void StoreInternal(TaggregateId id, Entry entry) => _internalCache.Set(key: id.ToString(), value: entry, options: Policy);
+   Entry? GetInternal(TaggregateId id) => (Entry?)_internalCache.Get(id.ToString());
+   void RemoveInternal(TaggregateId id) => _internalCache.Remove(key: id.ToString());
 
    public void Clear()
    {

@@ -6,13 +6,13 @@ using JetBrains.Annotations;
 
 namespace Compze.Tests.Common.Sql.DocumentDb;
 
-public class Dog : IPersistentEntity
+public class Dog : IEntity
 {
-   public Guid Id { get; set; }
+   public EntityId Id { get; set; } = new();
    public string Name { get; [UsedImplicitly] set; } = "John Doe Doggy";
 }
 
-public class Person : PersistentEntity<Person>
+public class Person : Entity<Person>
 {
    public Person() {}
    public Person(Guid id): base(id) {}

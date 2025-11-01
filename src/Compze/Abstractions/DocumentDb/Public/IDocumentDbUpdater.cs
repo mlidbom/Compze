@@ -10,6 +10,6 @@ public interface IDocumentDbUpdater
 
    void Save<TValue>(object id, TValue value);
    void Delete<TEntity>(object id);
-   void Save<TEntity>(TEntity entity) where TEntity : IHasPersistentIdentity<Guid>;
-   void Delete<TEntity>(TEntity entity) where TEntity : IHasPersistentIdentity<Guid>;
+   void Save<TEntity>(TEntity entity) where TEntity : IEntity<Guid>;
+   void Delete<TEntity>(TEntity entity) where TEntity : IEntity<Guid>;
 }

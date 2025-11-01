@@ -32,15 +32,15 @@ static class TypeMapperSourceCodeGenerator
       code.AppendLine(CultureInfo.InvariantCulture, $"/// </summary>");
       code.AppendLine(CultureInfo.InvariantCulture, $"public sealed class {MappingClassName}");
       code.AppendLine("{");
-      code.AppendLine("   public void MapTypesForCurrentAssembly(Action<Guid, Type> map)");
+      code.AppendLine("   public void MapTypesForCurrentAssembly(Action<string, Type> map)");
       code.AppendLine("   {");
 
       foreach(var type in typesToMap)
       {
          var guid = existingMappings.TryGetValue(type, out var typeId)
-                       ? typeId.GuidValue.ToString()
+                       ? typeId.ToString()
                        : Guid.NewGuid().ToString();
-         code.AppendLine(CultureInfo.InvariantCulture, $"      map(new Guid(\"{guid}\"), typeof({type.GetFullNameCompilable()}));");
+         code.AppendLine(CultureInfo.InvariantCulture, $"      map(\"{guid}\", typeof({type.GetFullNameCompilable()}));");
       }
 
       code.AppendLine("   }");

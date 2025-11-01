@@ -1,6 +1,6 @@
-using System;
 using System.ComponentModel.DataAnnotations;
 using AccountManagement.API.ValidationAttributes;
+using Compze.Core.Public;
 using Compze.Core.Tessaging.Public;
 
 // ReSharper disable MemberCanBeMadeStatic.Global
@@ -11,9 +11,9 @@ public partial class AccountResource
 {
    public static partial class Tommand
    {
-      public partial class LogIn() : TessageTypes.Remotable.AtMostOnce.AtMostOnceTypermediaTommand<LogIn.LoginAttemptResult>(DeduplicationIdHandling.Reuse)
+      public partial class LogIn() : TessageTypes.Remotable.AtMostOnce.AtMostOnceTypermediaTommand<LogIn.LoginAttemptResult>()
       {
-         public static LogIn Create() => new() {Id = Guid.CreateVersion7()};
+         public static LogIn Create() => new() {Id = new TessageId()};
 
          [Required] [Email] public string Email { get; set; } = string.Empty;
          [Required] public string Password { get; set; } = string.Empty;

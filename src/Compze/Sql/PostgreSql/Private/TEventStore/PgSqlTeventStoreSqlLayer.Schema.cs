@@ -1,5 +1,3 @@
-using Compze.Sql.Common;
-using Compze.Utilities.SystemCE.TransactionsCE;
 using Tevent = Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.TeventTableSchemaStrings;
 using Lock = Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.TaggregateLockTableSchemaStrings;
 

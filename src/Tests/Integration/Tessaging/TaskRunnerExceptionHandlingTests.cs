@@ -11,7 +11,6 @@ using FluentAssertions;
 using FluentAssertions.Extensions;
 using System;
 using System.Threading.Tasks;
-using Xunit;
 
 namespace Compze.Tests.Integration.Tessaging;
 

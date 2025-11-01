@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Compze.Core.Public;
 using Compze.Core.Tessaging.Teventive.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.Refactoring.Migrations.Internal;
@@ -19,7 +20,7 @@ namespace Compze.Tessaging.Teventive.TeventStore.Refactoring.Migrations;
 //Each of the optimizations were done with the help of a profiler and running benchmarks on the tested performance improvements time and time again.
 class SingleTaggregateInstanceTeventStreamMutator : ISingleTaggregateInstanceTeventStreamMutator
 {
-   readonly Guid _taggregateId;
+   readonly TaggregateId _taggregateId;
    readonly ISingleTaggregateInstanceHandlingTeventMigrator[] _teventMigrators;
    readonly TeventModifier _teventModifier;
 
@@ -133,6 +134,6 @@ class SingleTaggregateInstanceTeventStreamMutator : ISingleTaggregateInstanceTev
 
 sealed class EndOfTaggregateHistoryTeventPlaceHolder : TaggregateTevent {
 #pragma warning disable CS0618 // Type or member is obsolete
-    public EndOfTaggregateHistoryTeventPlaceHolder(Guid taggregateId, int i):base(taggregateId) => ((IMutableTaggregateTevent)this).SetTaggregateVersionInternal(i);
+    public EndOfTaggregateHistoryTeventPlaceHolder(TaggregateId taggregateId, int i):base(taggregateId) => ((IMutableTaggregateTevent)this).SetTaggregateVersionInternal(i);
 #pragma warning restore CS0618 // Type or member is obsolete
 }

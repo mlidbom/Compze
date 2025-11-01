@@ -1,5 +1,5 @@
-using System;
 using System.Linq;
+using Compze.Core.Public;
 using Compze.Core.Tessaging.Teventive.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.Public;
@@ -36,11 +36,12 @@ public abstract class SingleTaggregateQueryModelGenerator<TImplementer, TViewMod
    ///<summary>Registers handlers for the incoming tevents. All matching handlers will be called in the order they were registered.</summary>
    protected ITeventHandlerRegistrar<TTevent> RegisterHandlers() => _teventDispatcher.Register();
 
-   public Option<TViewModel> TryGenerate(Guid id) => TryGenerate(id, int.MaxValue);
+   public Option<TViewModel> TryGenerate(EntityId id) => TryGenerate(id, int.MaxValue);
 
-   public Option<TViewModel> TryGenerate(Guid id, int version)
+   public Option<TViewModel> TryGenerate(EntityId id, int version)
    {
-      var history = _session.GetHistory(id).Take(version).Cast<TTevent>().ToList();
+      //todo: this conversion is iffy
+      var history = _session.GetHistory(new TaggregateId(id.Value)).Take(version).Cast<TTevent>().ToList();
       if (history.None())
       {
          return Option.None<TViewModel>();

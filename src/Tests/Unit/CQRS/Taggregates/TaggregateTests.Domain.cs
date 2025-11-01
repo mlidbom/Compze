@@ -1,8 +1,7 @@
-using System;
+using Compze.Core.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.Public;
-using Compze.Core.Time.Public;
 using JetBrains.Annotations;
 
 namespace Compze.Tests.Unit.CQRS.Taggregates;
@@ -28,9 +27,9 @@ class User : Taggregate<User,IUserTevent, UserTevent>
         .For<IUserChangedPassword>(e => Password = e.Password);
    }
 
-   public void Register(string email, string password, Guid id) => Publish(new UserRegistered(id, email, password));
+   public void Register(string email, string password, TaggregateId id) => Publish(new UserRegistered(id, email, password));
 
-   public static User Register(ITeventStoreUpdater taggregates, string email, string password, Guid id)
+   public static User Register(ITeventStoreUpdater taggregates, string email, string password, TaggregateId id)
    {
       var user = new User();
       user.Register(email, password, id);
@@ -48,7 +47,7 @@ interface IUserTevent : ITaggregateTevent;
 abstract class UserTevent : TaggregateTevent, IUserTevent
 {
    protected UserTevent() {}
-   protected UserTevent(Guid taggregateId) : base(taggregateId) {}
+   protected UserTevent(TaggregateId taggregateId) : base(taggregateId) {}
 }
 
 interface IUserChangedEmail : IUserTevent
@@ -76,7 +75,7 @@ interface IUserRegistered : IUserTevent, ITaggregateCreatedTevent
    string Password { get; }
 }
 
-class UserRegistered(Guid userId, string email, string password) : UserTevent(userId), IUserRegistered
+class UserRegistered(TaggregateId userId, string email, string password) : UserTevent(userId), IUserRegistered
 {
    public string Email { get; private set; } = email;
    public string Password { get; private set; } = password;

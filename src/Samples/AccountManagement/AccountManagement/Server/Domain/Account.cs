@@ -1,13 +1,13 @@
-using System;
 using AccountManagement.API;
-using AccountManagement.Domain.Tevents;
 using AccountManagement.Domain.Passwords;
 using AccountManagement.Domain.Registration;
+using AccountManagement.Domain.Tevents;
 using CommunityToolkit.Diagnostics;
+using Compze.Core.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public;
 using Compze.Core.Tessaging.Typermedia.Public;
-using Compze.Core.Time.Public;
 using Compze.Utilities.Functional;
+using System;
 
 namespace AccountManagement.Domain;
 
@@ -16,6 +16,8 @@ class Account : Taggregate<Account, AccountTevent.Root, AccountTevent.Implementa
 {
    public Email Email { get; private set; } = null!;       //Never public setters on an taggregate. AssertInvariantsAreMet guarantees not null status.
    public Password Password { get; private set; } = null!; //Never public setters on an taggregate. AssertInvariantsAreMet guarantees not null status.
+
+   public override AccountId Id => new AccountId(base.Id.Value);
 
    //No public constructors please. Taggregates are created through domain verbs.
    //Expose named factory methods that ensure the instance is valid instead. See register method below.
@@ -36,7 +38,8 @@ class Account : Taggregate<Account, AccountTevent.Root, AccountTevent.Implementa
    {
       Guard.IsNotNull(Email);
       Guard.IsNotNull(Password);
-      Guard.IsNotDefault(Id);
+      Guard.IsNotNull(Id);
+      Guard.IsNotDefault(Id.Value);
    }
 
    /// <summary><para>Used when a user manually creates an account themselves.</para>
@@ -45,11 +48,11 @@ class Account : Taggregate<Account, AccountTevent.Root, AccountTevent.Implementa
    /// <para> * makes it impossible to use the class incorrectly, such as forgetting to check for duplicates or save the new instance in the repository.</para>
    /// <para> * reduces code duplication since multiple callers are not burdened with saving the instance, checking for duplicates etc.</para>
    /// </summary>
-   internal static (RegistrationAttemptStatus Status, Account? Registered) Register(Guid accountId, Email email ,Password password, IInProcessTypermediaNavigator navigator)
+   internal static (RegistrationAttemptStatus Status, Account? Registered) Register(AccountId accountId, Email email ,Password password, IInProcessTypermediaNavigator navigator)
    {
       //Ensure that it is impossible to call with invalid arguments.
       //Since all domain types should ensure that it is impossible to create a non-default value that is invalid we only have to disallow default values.
-      Guard.IsNotDefault(accountId);Guard.IsNotNull(email);Guard.IsNotNull(password);
+      Guard.IsNotNull(email);Guard.IsNotNull(password);
 
       //The email is the unique identifier for logging into the account so duplicates are forbidden.
       if(navigator.Execute(InternalApi.Tueries.TryGetByEmail(email)) is Some<Account>)

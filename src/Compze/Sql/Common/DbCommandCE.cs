@@ -88,13 +88,13 @@ static class DbCommandCE
                                             {nameof(parameter.Precision)}: {parameter.Precision},
                                             {nameof(parameter.Direction)}: {parameter.Direction},
                                             {nameof(parameter.IsNullable)}: {parameter.IsNullable}
-                                            """.ReplaceInvariant(Environment.NewLine, "")));
+                                            """.ReplaceOrdinal(Environment.NewLine, "")));
 
          ConsoleCE.WriteLine("####################################### Hacking values into parameter positions #######################################");
          var commandTextWithParameterValues = @this.CommandText;
          parameters.ForEach(
             parameter => ParameterPrefixes.ForEach(
-               prefix => commandTextWithParameterValues = commandTextWithParameterValues.ReplaceInvariant($"{prefix}{parameter.ParameterName}", parameter.Value == DBNull.Value ? "NULL" : parameter.Value?.ToString() ?? "NULL")));
+               prefix => commandTextWithParameterValues = commandTextWithParameterValues.ReplaceOrdinal($"{prefix}{parameter.ParameterName}", parameter.Value == DBNull.Value ? "NULL" : parameter.Value?.ToString() ?? "NULL")));
          Console.WriteLine(commandTextWithParameterValues);
          ConsoleCE.WriteLine("######################################################################################################");
       }

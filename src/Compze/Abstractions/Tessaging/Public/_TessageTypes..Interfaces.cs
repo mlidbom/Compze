@@ -1,4 +1,4 @@
-using System;
+using Compze.Core.Public;
 
 // ReSharper disable UnusedTypeParameter
 
@@ -53,9 +53,8 @@ public interface IRemotableCreateMyOwnResultTuery<out TResult> : IRemotableTuery
 /// The <see cref="Id"/> must be maintained when binding a tommand to a UI or the guarantee will be lost.</summary>
 public interface IAtMostOnceTessage : IRemotableTessage, IMustBeHandledTransactionally
 {
-   //Refactor: We should use a custom type for TessageIds. Likely a readonly record struct.
    ///<summary>Used by the infrastructure to guarantee that the same tessage is never delivered more than once. Must be generated when the tessage is created and then NEVER modified. Must be maintained when binding a tommand in a UI etc.</summary>
-   Guid Id { get; }
+   TessageId Id { get; }
 }
 public interface IAtMostOnceTypermediaTommand : IAtMostOnceTessage, IRemotableTommand, ITypermediaTessage;
 public interface IAtMostOnceTommand<out TResult> : IAtMostOnceTypermediaTommand, IRemotableTommand<TResult>;
@@ -90,6 +89,6 @@ public interface IExactlyOncePublisherIdentifyingTevent<out TTeventInterface> : 
    where TTeventInterface : IExactlyOnceTevent
 {
 #pragma warning disable CA1033 //Explicit interface implementation is the only way I know of to add a default implementation here.
-   Guid IAtMostOnceTessage.Id => Tevent.Id;
+   TessageId IAtMostOnceTessage.Id => Tevent.Id;
 #pragma warning restore CA1033 //Explicit interface implementation is the only way I know of to add a default implementation here.
 }

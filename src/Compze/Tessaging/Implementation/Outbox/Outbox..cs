@@ -1,7 +1,7 @@
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Transactions;
+using Compze.Core.Public;
 using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Core.Tessaging.Public;
 using Compze.Tessaging.Implementation.Abstractions;
@@ -80,7 +80,7 @@ partial class Outbox : IOutbox
       });
    }
 
-   void HandleDeliveryTaskResults(Task completedSendTask, EndpointId receiverId, Guid tessageId)
+   void HandleDeliveryTaskResults(Task completedSendTask, EndpointId receiverId, TessageId tessageId)
    {
       _exceptionReporter.RunSwallowingAndReportingAnyExceptions(() =>
       {

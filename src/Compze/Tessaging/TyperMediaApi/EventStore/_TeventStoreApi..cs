@@ -1,4 +1,4 @@
-using System;
+using Compze.Core.Public;
 using Compze.Core.Tessaging.Teventive.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 
@@ -13,16 +13,17 @@ public partial class TeventStoreApi
 
    public partial class TueryApi
    {
-      public TaggregateLink<TTaggregate> GetForUpdate<TTaggregate>(Guid id) where TTaggregate : class, ITaggregate =>
+      public TaggregateLink<TTaggregate> GetForUpdate<TTaggregate>(TaggregateId id) where TTaggregate : class, ITaggregate =>
          new(id);
 
-      public GetReadonlyCopyOfTaggregate<TTaggregate> GetReadOnlyCopy<TTaggregate>(Guid id) where TTaggregate : class, ITaggregate =>
+      public GetReadonlyCopyOfTaggregate<TTaggregate> GetReadOnlyCopy<TTaggregate>(TaggregateId id) where TTaggregate : class, ITaggregate =>
          new(id);
 
-      public GetReadonlyCopyOfTaggregateVersion<TTaggregate> GetReadOnlyCopyOfVersion<TTaggregate>(Guid id, int version) where TTaggregate : class, ITaggregate =>
+      public GetReadonlyCopyOfTaggregateVersion<TTaggregate> GetReadOnlyCopyOfVersion<TTaggregate>(TaggregateId id, int version) where TTaggregate : class, ITaggregate =>
          new(id, version);
 
-      public GetTaggregateHistory<TTevent> GetHistory<TTevent>(Guid id) where TTevent : ITaggregateTevent =>
+      //Todo: should be aggregateId
+      public GetTaggregateHistory<TTevent> GetHistory<TTevent>(TaggregateId id) where TTevent : ITaggregateTevent =>
          new(id);
    }
 

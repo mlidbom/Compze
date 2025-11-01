@@ -1,11 +1,10 @@
 using System;
+using Compze.Core.Public;
 using Compze.Core.Tessaging.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Core.Tessaging.Typermedia.Public;
-using Compze.Core.Time.Public;
 using Compze.Tessaging.TyperMediaApi.EventStore;
-using JetBrains.Annotations;
 
 // ReSharper disable ClassNeverInstantiated.Global
 // ReSharper disable InconsistentNaming for testing
@@ -20,8 +19,8 @@ public class MyTommandResult;
 
 public class MyAtMostOnceTypermediaTommandWithResult : TessageTypes.Remotable.AtMostOnce.AtMostOnceTypermediaTommand<MyTommandResult>
 {
-   MyAtMostOnceTypermediaTommandWithResult() : base(DeduplicationIdHandling.Reuse) {}
-   public static MyAtMostOnceTypermediaTommandWithResult Create() => new() {Id = Guid.CreateVersion7()};
+   MyAtMostOnceTypermediaTommandWithResult() : base() {}
+   public static MyAtMostOnceTypermediaTommandWithResult Create() => new() {Id = new TessageId()};
 }
 
 public class MyTueryResult;
@@ -32,22 +31,26 @@ public class MyExactlyOnceTommand : TessageTypes.Remotable.ExactlyOnce.Tommand;
 
 public class MyUpdateTaggregateTommand : TessageTypes.Remotable.AtMostOnce.AtMostOnceTypermediaTommand
 {
-   [UsedImplicitly] MyUpdateTaggregateTommand() : base(DeduplicationIdHandling.Reuse) {}
-   public MyUpdateTaggregateTommand(Guid taggregateId) : base(DeduplicationIdHandling.Create) => TaggregateId = taggregateId;
-   public Guid TaggregateId { get; private set; }
+   [Obsolete("Used by serializer", error:true)]
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+   public MyUpdateTaggregateTommand() {}
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+   public MyUpdateTaggregateTommand(TaggregateId taggregateId) => TaggregateId = taggregateId;
+   public TaggregateId TaggregateId { get; private set; }
 }
 
 public class MyCreateTaggregateTommand : TessageTypes.Remotable.AtMostOnce.AtMostOnceTypermediaTommand
 {
-   MyCreateTaggregateTommand() : base(DeduplicationIdHandling.Reuse) {}
+   [Obsolete("Used by serializer", error:true)]
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+   public MyCreateTaggregateTommand() {}
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 
-   public static MyCreateTaggregateTommand Create() => new()
-                                                      {
-                                                         Id = Guid.CreateVersion7(),
-                                                         TaggregateId = Guid.NewGuid()
-                                                      };
+   public MyCreateTaggregateTommand(TaggregateId taggregateId) => TaggregateId = taggregateId;
 
-   public Guid TaggregateId { get; set; }
+   public static MyCreateTaggregateTommand Create() => new(new TaggregateId());
+
+   public TaggregateId TaggregateId { get; set; }
 }
 
 public class MyTaggregate : Taggregate<MyTaggregate, MyTaggregateTevent.IRoot, MyTaggregateTevent.Implementation.Root>
@@ -60,7 +63,7 @@ public class MyTaggregate : Taggregate<MyTaggregate, MyTaggregateTevent.IRoot, M
 
    public void Update() => Publish(new MyTaggregateTevent.Implementation.Updated());
 
-   public static void Create(Guid id, IInProcessTypermediaNavigator bus)
+   public static void Create(TaggregateId id, IInProcessTypermediaNavigator bus)
    {
       var created = new MyTaggregate();
       created.Publish(new MyTaggregateTevent.Implementation.Created(id));
@@ -78,11 +81,11 @@ public static class MyTaggregateTevent
       public class Root : TaggregateTevent, IRoot
       {
          protected Root() {}
-         protected Root(Guid taggregateId) : base(taggregateId) {}
+         protected Root(TaggregateId accountId) : base(accountId) {}
       }
 
       // ReSharper disable once MemberHidesStaticFromOuterClass
-      public class Created(Guid taggregateId) : Root(taggregateId), MyTaggregateTevent.Created;
+      public class Created(TaggregateId accountId) : Root(accountId), MyTaggregateTevent.Created;
 
       // ReSharper disable once MemberHidesStaticFromOuterClass
       public class Updated : Root, MyTaggregateTevent.Updated;

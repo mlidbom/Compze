@@ -1,10 +1,10 @@
-using System;
 using System.Collections.Generic;
 using AccountManagement.API;
 using AccountManagement.Domain;
 using AccountManagement.Domain.Tevents;
 using AccountManagement.Domain.Passwords;
 using CommunityToolkit.Diagnostics;
+using Compze.Core.Public;
 using Compze.Core.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Core.Tessaging.Public;
 using Compze.Core.Tessaging.Typermedia.Public;
@@ -28,6 +28,8 @@ class AccountQueryModel : SelfGeneratingQueryModel<AccountQueryModel, AccountTev
       LoadFromHistory(tevents);
    }
 
+   AccountId IAccountResourceData.Id => (AccountId)base.Id;
+
    protected override void AssertInvariantsAreMet()
    {
       Guard.IsNotNull(Email);
@@ -40,13 +42,14 @@ class AccountQueryModel : SelfGeneratingQueryModel<AccountQueryModel, AccountTev
       internal Tuery Tueries => new();
       internal class Tuery
       {
-         public TessageTypes.StrictlyLocal.Tueries.EntityLink<AccountQueryModel> Get(Guid id) => new(id);
+         public TessageTypes.StrictlyLocal.Tueries.EntityLink<AccountQueryModel> Get(EntityId id) => new(id);
       }
 
       public static void RegisterHandlers(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => Get(registrar);
 
       static void Get(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery(
          (TessageTypes.StrictlyLocal.Tueries.EntityLink<AccountQueryModel> tuery, IInProcessTypermediaNavigator navigator) =>
-            new AccountQueryModel(navigator.Execute(new TeventStoreApi().Tueries.GetHistory<AccountTevent.Root>(tuery.EntityId))));
+            //todo this Id conversion feels iffy
+            new AccountQueryModel(navigator.Execute(new TeventStoreApi().Tueries.GetHistory<AccountTevent.Root>(new TaggregateId(tuery.EntityId.Value)))));
    }
 }

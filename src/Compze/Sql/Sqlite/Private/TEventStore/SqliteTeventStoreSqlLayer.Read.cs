@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Compze.Core.Public;
+using Compze.Core.Refactoring.Naming.Internal;
 using Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions;
 using Compze.Sql.Common;
 using Microsoft.Data.Sqlite;
@@ -29,11 +31,11 @@ partial class SqliteTeventStoreSqlLayer(SqliteTeventStoreConnectionManager conne
    }
 
    static TeventDataRow ReadDataRow(SqliteDataReader teventReader) => new(
-      teventType: Guid.Parse(teventReader.GetString(0)),
+      teventType: new TypeId(Guid.Parse(teventReader.GetString(0))),
       teventJson: teventReader.GetString(1),
-      teventId: Guid.Parse(teventReader.GetString(4)),
+      teventId: new TessageId(Guid.Parse(teventReader.GetString(4))),
       taggregateVersion: teventReader.GetInt32(3),
-      taggregateId: Guid.Parse(teventReader.GetString(2)),
+      taggregateId: new TaggregateId(Guid.Parse(teventReader.GetString(2))),
       // DateTime stored as Ticks (INTEGER) for full precision
       utcTimeStamp: new DateTime(teventReader.GetInt64(5), DateTimeKind.Utc),
       storageInformation: new TaggregateTeventStorageInformation
@@ -43,14 +45,14 @@ partial class SqliteTeventStoreSqlLayer(SqliteTeventStoreConnectionManager conne
                              EffectiveVersion = teventReader.GetInt32(3),
                              RefactoringInformation = (teventReader.IsDBNull(7) ? (Guid?)null : Guid.Parse(teventReader.GetString(7)), teventReader.IsDBNull(8) ? (int?)null : teventReader.GetInt32(8))switch
                              {
-                                (null, null)              => null,
-                                ({} targetTevent, {} type) => new TaggregateTeventRefactoringInformation(targetTevent, (TaggregateTeventRefactoringType)type),
-                                _                         => throw new Exception("Should not be possible to get here")
+                                (null, null)               => null,
+                                ({} targetTevent, {} type) => new TaggregateTeventRefactoringInformation(new TessageId(targetTevent), (TaggregateTeventRefactoringType)type),
+                                _                          => throw new Exception("Should not be possible to get here")
                              }
                           }
    );
 
-   public IReadOnlyList<TeventDataRow> GetTaggregateHistory(Guid taggregateId, bool takeWriteLock, int startAfterInsertedVersion = 0)
+   public IReadOnlyList<TeventDataRow> GetTaggregateHistory(TaggregateId taggregateId, bool takeWriteLock, int startAfterInsertedVersion = 0)
    {
 
       return _connectionManager.UseCommand(suppressTransactionWarning: !takeWriteLock,
@@ -112,7 +114,7 @@ partial class SqliteTeventStoreSqlLayer(SqliteTeventStoreConnectionManager conne
                                                                                       WHERE {Tevent.EffectiveVersion} = 1 
                                                                                       ORDER BY {Tevent.ReadOrderIntegerPart} ASC, {Tevent.ReadOrderFractionPart} ASC
                                                                                       """)
-                                                                     .ExecuteReaderAndSelect(reader => new CreationTeventRow(taggregateId: Guid.Parse(reader.GetString(0)), typeId: Guid.Parse(reader.GetString(1)))));
+                                                                     .ExecuteReaderAndSelect(reader => new CreationTeventRow(taggregateId: new TaggregateId(Guid.Parse(reader.GetString(0))), typeId: Guid.Parse(reader.GetString(1)))));
    }
 }
 

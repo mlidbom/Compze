@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using Compze.Core.Public;
 using Compze.Core.Refactoring.Naming.Internal;
 using Compze.Core.Serialization.Internal;
 using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
@@ -22,7 +23,7 @@ abstract class ControllerBase(IRemotableTessageSerializer serializer, ITypeMappe
 
    protected async Task<TransportTessage.InComing> CreateIncomingTessage()
    {
-      var tessageId = Guid.Parse(Request.Headers[HttpConstants.Headers.TessageId][0].NotNull());
+      var tessageId = new TessageId(Guid.Parse(Request.Headers[HttpConstants.Headers.TessageId][0].NotNull()));
       var typeIdStr = Request.Headers[HttpConstants.Headers.PayLoadTypeId][0].NotNull();
       var typeId = new TypeId(Guid.Parse(typeIdStr));
 

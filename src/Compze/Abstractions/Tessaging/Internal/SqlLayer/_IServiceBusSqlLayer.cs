@@ -1,3 +1,6 @@
+using Compze.Core.Public;
+using Compze.Core.Refactoring.Naming.Internal;
+using Compze.Core.Tessaging.Hosting.Public;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,8 +14,8 @@ interface IServiceBusSqlLayer
    interface IOutboxSqlLayer
    {
       void SaveTessage(OutboxTessageWithReceivers tessageWithReceivers);
-      MarkAsReceivedResult MarkAsReceived(Guid tessageId, Guid endpointId);
-      void RecordDeliveryFailure(Guid tessageId, Guid endpointId, string failureReason);
+      MarkAsReceivedResult MarkAsReceived(TessageId tessageId, EndpointId endpointId);
+      void RecordDeliveryFailure(TessageId tessageId, EndpointId endpointId, string failureReason);
       IReadOnlyList<UndeliveredTessage> GetUndeliveredTessages(TimeSpan olderThan);
       Task InitAsync();
    }
@@ -31,27 +34,27 @@ interface IServiceBusSqlLayer
 
    interface IInboxSqlLayer
    {
-      SaveTessageResult SaveTessage(Guid tessageId, Guid typeId, string serializedTessage);
-      void MarkAsSucceeded(Guid tessageId);
-      int RecordException(Guid tessageId, string exceptionStackTrace, string exceptionTessage, string exceptionType);
-      int MarkAsFailed(Guid tessageId);
+      SaveTessageResult SaveTessage(TessageId tessageId, TypeId typeId, string serializedTessage);
+      void MarkAsSucceeded(TessageId tessageId);
+      int RecordException(TessageId tessageId, string exceptionStackTrace, string exceptionTessage, string exceptionType);
+      int MarkAsFailed(TessageId tessageId);
       Task InitAsync();
    }
 
-   class OutboxTessageWithReceivers(string serializedTessage, Guid typeIdGuidValue, Guid tessageId, IEnumerable<Guid> receiverEndpointIds)
+   class OutboxTessageWithReceivers(string serializedTessage, TypeId typeId, TessageId tessageId, IEnumerable<EndpointId> receiverEndpointIds)
    {
       public string SerializedTessage { get; } = serializedTessage;
-      public Guid TypeIdGuidValue { get; } = typeIdGuidValue;
-      public Guid TessageId { get; } = tessageId;
-      public IEnumerable<Guid> ReceiverEndpointIds { get; } = receiverEndpointIds.ToList();
+      public TypeId TypeId { get; } = typeId;
+      public TessageId TessageId { get; } = tessageId;
+      public IEnumerable<EndpointId> ReceiverEndpointIds { get; } = receiverEndpointIds.ToList();
    }
 
-   class UndeliveredTessage(Guid tessageId, Guid typeIdGuid, string serializedTessage, Guid targetEndpointId, int retryCount, DateTime? lastAttemptTime)
+   class UndeliveredTessage(TessageId tessageId, TypeId typeId, string serializedTessage, EndpointId targetEndpointId, int retryCount, DateTime? lastAttemptTime)
    {
-      public Guid TessageId { get; } = tessageId;
-      public Guid TypeIdGuid { get; } = typeIdGuid;
+      public TessageId TessageId { get; } = tessageId;
+      public TypeId TypeId { get; } = typeId;
       public string SerializedTessage { get; } = serializedTessage;
-      public Guid TargetEndpointId { get; } = targetEndpointId;
+      public EndpointId TargetEndpointId { get; } = targetEndpointId;
       public int RetryCount { get; } = retryCount;
       public DateTime? LastAttemptTime { get; } = lastAttemptTime;
    }

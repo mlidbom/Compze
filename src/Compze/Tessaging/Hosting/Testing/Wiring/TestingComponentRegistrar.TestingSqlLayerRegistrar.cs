@@ -11,9 +11,6 @@ namespace Compze.Tessaging.Hosting.Testing.Wiring;
 
 public static class TestingComponentRegistrarTestingSqlLayerRegistrar
 {
-   public static IComponentRegistrar CurrentTestsConfiguredSqlLayer(this IComponentRegistrar register) =>
-      register.CurrentTestsConfiguredSqlLayer(Guid.NewGuid().ToString());
-
    public static IComponentRegistrar CurrentTestsConfiguredSqlLayer(this IComponentRegistrar register, string connectionStringName) =>
       register.CastTo<TestingComponentRegistrar>()
               .CurrentTestsConfiguredSqlLayer(connectionStringName);

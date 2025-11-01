@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Transactions;
+using Compze.Core.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions;
 using Compze.Tessaging.Teventive.TeventStore.Refactoring.Migrations;
@@ -26,7 +27,7 @@ partial class TeventStore
       var lastLogTime = DateTime.Now;
 
       const int recoverableErrorRetriesToMake = 5;
-      var exceptions = new List<(Guid TaggregateId,Exception Exception)>();
+      var exceptions = new List<(TaggregateId TaggregateId,Exception Exception)>();
 
       var taggregateIdsInCreationOrder = StreamTaggregateIdsInCreationOrder().ToList();
 
@@ -65,7 +66,7 @@ partial class TeventStore
                         refactorings.Add(newTevents
                                         .Select(it => new TeventDataRow(tevent: it.NewTevent.ToTaggregateTeventData(),
                                                                           it.StorageInformation,
-                                                                          _typeMapper.GetId(it.NewTevent.GetType()).GuidValue,
+                                                                          _typeMapper.GetId(it.NewTevent.GetType()),
                                                                           teventAsJson: _serializer.Serialize(it.NewTevent)))
                                         .ToList());
 
@@ -177,7 +178,7 @@ partial class TeventStore
       }
    }
 
-   void InsertAfterTevent(Guid teventId, TeventDataRow[] insertAfterGroup)
+   void InsertAfterTevent(TessageId teventId, TeventDataRow[] insertAfterGroup)
    {
       var teventToInsertAfter = _sqlLayer.LoadTeventNeighborHood(teventId);
 
@@ -188,7 +189,7 @@ partial class TeventStore
       _sqlLayer.InsertSingleTaggregateTevents(insertAfterGroup);
    }
 
-   void InsertBeforeTevent(Guid teventId, TeventDataRow[] insertBefore)
+   void InsertBeforeTevent(TessageId teventId, TeventDataRow[] insertBefore)
    {
       var teventToInsertBefore = _sqlLayer.LoadTeventNeighborHood(teventId);
 
@@ -199,7 +200,7 @@ partial class TeventStore
       _sqlLayer.InsertSingleTaggregateTevents(insertBefore);
    }
 
-   void ReplaceTevent(Guid teventId, TeventDataRow[] replacementTevents)
+   void ReplaceTevent(TessageId teventId, TeventDataRow[] replacementTevents)
    {
       var neighborHood = _sqlLayer.LoadTeventNeighborHood(teventId);
 
@@ -227,6 +228,6 @@ partial class TeventStore
    static bool IsRecoverableSqlException(Exception exception)
    {
       var tessage = exception.Message.ToUpperInvariant();
-      return tessage.ContainsInvariant("TIMEOUT") || tessage.ContainsInvariant("DEADLOCK");
+      return tessage.ContainsOrdinal("TIMEOUT") || tessage.ContainsOrdinal("DEADLOCK");
    }
 }

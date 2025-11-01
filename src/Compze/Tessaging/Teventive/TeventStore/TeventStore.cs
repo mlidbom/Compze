@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Compze.Core.Public;
 using Compze.Core.Refactoring.Naming.Internal;
 using Compze.Core.Serialization.Internal;
 using Compze.Core.Tessaging.Teventive.Public;
@@ -50,11 +51,11 @@ namespace Compze.Tessaging.Teventive.TeventStore;
       _sqlLayer = sqlLayer;
    }
 
-   public IReadOnlyList<ITaggregateTevent> GetTaggregateHistoryForUpdate(Guid taggregateId) => GetTaggregateHistoryInternal(taggregateId: taggregateId, takeWriteLock: true);
+   public IReadOnlyList<ITaggregateTevent> GetTaggregateHistoryForUpdate(TaggregateId taggregateId) => GetTaggregateHistoryInternal(taggregateId: taggregateId, takeWriteLock: true);
 
-   public IReadOnlyList<ITaggregateTevent> GetTaggregateHistory(Guid taggregateId) => GetTaggregateHistoryInternal(taggregateId, takeWriteLock: false);
+   public IReadOnlyList<ITaggregateTevent> GetTaggregateHistory(TaggregateId taggregateId) => GetTaggregateHistoryInternal(taggregateId, takeWriteLock: false);
 
-   IReadOnlyList<ITaggregateTevent> GetTaggregateHistoryInternal(Guid taggregateId, bool takeWriteLock)
+   IReadOnlyList<ITaggregateTevent> GetTaggregateHistoryInternal(TaggregateId taggregateId, bool takeWriteLock)
    {
       _usageGuard.EnsureAccessValid();
       _sqlLayer.SetupSchemaIfDatabaseUnInitialized();
@@ -105,7 +106,7 @@ namespace Compze.Tessaging.Teventive.TeventStore;
 
    TaggregateTevent HydrateTevent(TeventDataRow teventDataRowRow)
    {
-      var tevent = (TaggregateTevent)_serializer.Deserialize(teventType: _typeMapper.GetType(new TypeId(teventDataRowRow.TeventType)), json: teventDataRowRow.TeventJson);
+      var tevent = (TaggregateTevent)_serializer.Deserialize(teventType: _typeMapper.GetType(teventDataRowRow.TeventType), json: teventDataRowRow.TeventJson);
 #pragma warning disable CS0618 // Type or member is obsolete
       ((IMutableTaggregateTevent)tevent).SetTaggregateIdInternal(teventDataRowRow.TaggregateId);
       ((IMutableTaggregateTevent)tevent).SetTaggregateVersionInternal(teventDataRowRow.TaggregateVersion);
@@ -115,7 +116,7 @@ namespace Compze.Tessaging.Teventive.TeventStore;
       return tevent;
    }
 
-   TaggregateTeventWithRefactoringInformation[] GetTaggregateTeventsFromSqlLayer(Guid taggregateId, bool takeWriteLock, int startAfterInsertedVersion = 0)
+   TaggregateTeventWithRefactoringInformation[] GetTaggregateTeventsFromSqlLayer(TaggregateId taggregateId, bool takeWriteLock, int startAfterInsertedVersion = 0)
       => _sqlLayer.GetTaggregateHistory(taggregateId: taggregateId,
                                                startAfterInsertedVersion: startAfterInsertedVersion,
                                                takeWriteLock: takeWriteLock)
@@ -160,7 +161,7 @@ namespace Compze.Tessaging.Teventive.TeventStore;
       var specifications = taggregateTevents.Select(tevent => cacheEntry.CreateInsertionSpecificationForNewTevent(tevent)).ToArray();
 
       var teventRows = taggregateTevents
-                     .Select(tevent => new TeventDataRow(specification: cacheEntry.CreateInsertionSpecificationForNewTevent(tevent), _typeMapper.GetId(tevent.GetType()).GuidValue, teventAsJson: _serializer.Serialize((TaggregateTevent)tevent)))
+                     .Select(tevent => new TeventDataRow(specification: cacheEntry.CreateInsertionSpecificationForNewTevent(tevent), _typeMapper.GetId(tevent.GetType()), teventAsJson: _serializer.Serialize((TaggregateTevent)tevent)))
                      .ToList();
 
       teventRows.ForEach(it => it.StorageInformation.EffectiveVersion = it.TaggregateVersion);
@@ -178,7 +179,7 @@ namespace Compze.Tessaging.Teventive.TeventStore;
                                         maxSeenInsertedVersion: specifications.Max(specification => specification.InsertedVersion)));
    }
 
-   public void DeleteTaggregate(Guid taggregateId)
+   public void DeleteTaggregate(TaggregateId taggregateId)
    {
       _usageGuard.EnsureAccessValid();
       _sqlLayer.SetupSchemaIfDatabaseUnInitialized();
@@ -186,7 +187,7 @@ namespace Compze.Tessaging.Teventive.TeventStore;
       _sqlLayer.DeleteTaggregate(taggregateId);
    }
 
-   public IEnumerable<Guid> StreamTaggregateIdsInCreationOrder(Type? teventBaseType = null)
+   public IEnumerable<TaggregateId> StreamTaggregateIdsInCreationOrder(Type? teventBaseType = null)
    {
       Assert.Argument.Is(teventBaseType == null || teventBaseType.IsInterface && typeof(ITaggregateTevent).IsAssignableFrom(teventBaseType));
       _usageGuard.EnsureAccessValid();

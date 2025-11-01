@@ -1,4 +1,4 @@
-using System;
+using Compze.Core.Public;
 using Compze.Core.Tessaging.Teventive.Public;
 using Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId.Domain;
 using Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId.Domain.Tevents;
@@ -22,11 +22,11 @@ public static partial class Composite_taggregate_specification
    {
       readonly CompositeTaggregate _taggregate;
       readonly RootQueryModel _queryModel;
-      readonly Guid _taggregateId;
+      readonly TaggregateId _taggregateId;
 
       public After_constructing_root_taggregate_with_name_root_and_slaving_a_tuery_model_to_the_taggregates_tevents()
       {
-         _taggregateId = Guid.NewGuid();
+         _taggregateId = new TaggregateId();
          _taggregate = new CompositeTaggregate("root", _taggregateId);
          _queryModel = new RootQueryModel();
          ITaggregate<CompositeTaggregateTevent.ICompositeTaggregateTevent> taggregate = _taggregate;

@@ -18,15 +18,10 @@ class NewtonsoftSharedObjectSerializer : ISharedObjectSerializer
       => registrar.Register(Singleton.For<ISharedObjectSerializer>()
                                      .CreatedBy(() => new NewtonsoftSharedObjectSerializer()));
 
-   static readonly JsonSerializerSettings JsonSettings = JsonSettings = new JsonSerializerSettings
-                                                                        {
-                                                                           ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
-                                                                           ContractResolver = IncludeMembersWithPrivateSettersResolver.Instance
-                                                                        };
 
-   public string Serialize(object instance) => JsonConvert.SerializeObject(instance, Formatting.Indented, JsonSettings);
+   public string Serialize(object instance) => JsonConvert.SerializeObject(instance, Formatting.Indented, RenamingAndNonPublicMembersSupportingJsonSettings.SharedObjects);
 
    public TShared Deserialize<TShared>(string serialized)
       where TShared : class =>
-      JsonConvert.DeserializeObject<TShared>(serialized, JsonSettings).NotNull();
+      JsonConvert.DeserializeObject<TShared>(serialized, RenamingAndNonPublicMembersSupportingJsonSettings.SharedObjects).NotNull();
 }

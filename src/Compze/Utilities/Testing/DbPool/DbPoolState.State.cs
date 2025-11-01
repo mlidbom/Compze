@@ -21,7 +21,7 @@ namespace Compze.Utilities.Testing.DbPool;
 
    IEnumerable<DbPoolDatabase> CleanUnReserved => UnReserved.Where(db => db.IsClean);
 
-   internal bool TryReserve(string reservationName, Guid poolId, TimeSpan reservationLength, [NotNullWhen(true)] out DbPoolDatabase? reserved)
+   internal bool TryReserve(string reservationName, DbPoolId poolId, TimeSpan reservationLength, [NotNullWhen(true)] out DbPoolDatabase? reserved)
    {
       CollectGarbage();
 
@@ -39,7 +39,7 @@ namespace Compze.Utilities.Testing.DbPool;
    void CollectGarbage() => Databases.Where(db => db.ShouldBeReleased)
                                      .ForEach(db => db.Release());
 
-   internal void ReleaseReservationsFor(Guid poolId) => DatabasesReservedBy(poolId).ForEach(db => db.Release());
+   internal void ReleaseReservationsFor(DbPoolId poolId) => DatabasesReservedBy(poolId).ForEach(db => db.Release());
 
-   IReadOnlyList<DbPoolDatabase> DatabasesReservedBy(Guid poolId) => Databases.Where(db => db.IsReserved && db.ReservedByPoolId == poolId).ToList();
+   IReadOnlyList<DbPoolDatabase> DatabasesReservedBy(DbPoolId poolId) => Databases.Where(db => db.IsReserved && db.ReservedByPoolId == poolId).ToList();
 }

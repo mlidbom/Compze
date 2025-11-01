@@ -1,4 +1,5 @@
 using System;
+using Compze.Core.Public;
 using Compze.Core.Tessaging.Teventive.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using JetBrains.Annotations;
@@ -18,7 +19,7 @@ public class TestTevent : TaggregateTevent
       string test1,
       string test2,
       int taggregateVersion,
-      Guid taggregateId,
+      TaggregateId taggregateId,
       DateTime utcTimeStamp):base(taggregateId)
    {
       Test1 = test1;

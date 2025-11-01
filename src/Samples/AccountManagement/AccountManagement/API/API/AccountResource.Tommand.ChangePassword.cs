@@ -1,9 +1,10 @@
+using AccountManagement.API.ValidationAttributes;
+using AccountManagement.Domain;
+using Compze.Core.Public;
+using Compze.Core.Tessaging.Public;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using AccountManagement.API.ValidationAttributes;
-using Compze.Core.Tessaging.Public;
-using JetBrains.Annotations;
 
 namespace AccountManagement.API;
 
@@ -13,10 +14,13 @@ public partial class AccountResource
    {
       public class ChangePassword : TessageTypes.Remotable.AtMostOnce.AtMostOnceTypermediaTommand, IValidatableObject
       {
-         [UsedImplicitly] public ChangePassword() : base(DeduplicationIdHandling.Reuse) {}
-         public ChangePassword(Guid accountId):base(DeduplicationIdHandling.Create) => AccountId = accountId;
+         [Obsolete("Used by serializer", error:true)]
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+         public ChangePassword() : base() {}
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+         public ChangePassword(AccountId accountId):base() => AccountId = accountId;
 
-         [Required] [EntityId] public Guid AccountId { get; set; }
+         [Required] [TaggregateId] public AccountId AccountId { get; set; }
          [Required] public string OldPassword { get; set; } = string.Empty;
          [Required] public string NewPassword { get; set; } = string.Empty;
 

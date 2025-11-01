@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using Compze.Core.Public;
 using Compze.Core.Tessaging.Public;
+using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
 
 namespace Compze.Core.Refactoring.Naming.Internal.Implementation;
@@ -80,10 +81,10 @@ static class TypeMapperTypeDiscovery
 
       const string compzeAssemblyNamesStart = "Compze.";
 
-      if(assembly.FullName.StartsWith(compzeAssemblyNamesStart, StringComparison.Ordinal))
+      if(assembly.FullName.StartsWithOrdinal(compzeAssemblyNamesStart))
          return true;
 
-      if(assembly.GetReferencedAssemblies().Any(name => name.Name != null && name.Name.StartsWith(compzeAssemblyNamesStart, StringComparison.Ordinal)))
+      if(assembly.GetReferencedAssemblies().Any(name => name.Name != null && name.Name.StartsWithOrdinal(compzeAssemblyNamesStart)))
          return true;
 
       return false;
@@ -137,6 +138,6 @@ static class TypeMapperTypeDiscovery
 
       // Map if it's an ITessage or implements IHasPersistentIdentity<>
       return typeof(IRemotableTessage).IsAssignableFrom(type) ||
-             type.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IHasPersistentIdentity<>));
+             type.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IEntity<>));
    }
 }

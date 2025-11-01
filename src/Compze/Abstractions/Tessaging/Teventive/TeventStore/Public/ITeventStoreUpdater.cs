@@ -1,4 +1,5 @@
 using System;
+using Compze.Core.Public;
 using Compze.Core.Tessaging.Teventive.Public;
 
 namespace Compze.Core.Tessaging.Teventive.TeventStore.Public;
@@ -8,7 +9,7 @@ public interface ITeventStoreUpdater : IDisposable
    /// <summary>
    /// Loads an taggregate and tracks it for changes.
    /// </summary>
-   TTaggregate Get<TTaggregate>(Guid taggregateId) where TTaggregate : class, ITaggregate;
+   TTaggregate Get<TTaggregate>(TaggregateId taggregateId) where TTaggregate : class, ITaggregate;
 
    /// <summary>
    /// Causes the store to start tracking the taggregate.
@@ -18,10 +19,10 @@ public interface ITeventStoreUpdater : IDisposable
    /// <summary>
    /// Tries to get the specified instance. Returns false and sets the result to null if the taggregate did not exist.
    /// </summary>
-   bool TryGet<TTaggregate>(Guid taggregateId, out TTaggregate? result) where TTaggregate : class, ITaggregate;
+   bool TryGet<TTaggregate>(TaggregateId taggregateId, out TTaggregate? result) where TTaggregate : class, ITaggregate;
 
    /// <summary>
    /// Deletes all traces of an taggregate from the store.
    /// </summary>
-   void Delete(Guid taggregateId);
+   void Delete(TaggregateId taggregateId);
 }

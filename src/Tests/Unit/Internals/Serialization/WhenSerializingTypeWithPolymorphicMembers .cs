@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using Compze.Tests.Infrastructure.Fluent;
 using Compze.Tests.Infrastructure.FluentAssertionsExtensions;
 using Compze.Tests.Infrastructure.XUnit;
@@ -22,7 +21,7 @@ namespace Compze.Tests.Unit.Internals.Serialization
          Root.Create()
              ._(DocumentSerializer.Serialize)
              .Must()
-             .Equal("""
+             .Be("""
                     {
                       "ATypeProperty": {
                         "$type": "645544b7-e56c-4e3c-81cd-149e9be90bd7",

@@ -1,5 +1,6 @@
 using System;
 using System.Text.RegularExpressions;
+using Compze.Utilities.SystemCE;
 using Newtonsoft.Json;
 
 namespace AccountManagement.Domain;
@@ -26,9 +27,9 @@ public record Email
    {
       if(string.IsNullOrWhiteSpace(emailAddress)) return false;
       if(!BasicEmailValidationRegex.IsMatch(emailAddress)) return false;
-      if(emailAddress.Contains("..", StringComparison.Ordinal)) return false;
+      if(emailAddress.ContainsOrdinal("..")) return false;
       // ReSharper disable once ConvertIfStatementToReturnStatement
-      if(emailAddress.Contains("@.", StringComparison.Ordinal) || emailAddress.Contains(".@", StringComparison.Ordinal)) return false;
+      if(emailAddress.ContainsOrdinal("@.") || emailAddress.ContainsOrdinal(".@")) return false;
 
       return true;
    }

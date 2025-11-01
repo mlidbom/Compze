@@ -1,11 +1,12 @@
 using AccountManagement.Domain;
 using AccountManagement.Domain.Passwords;
 using Compze.Core.Public;
+using Compze.Core.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public;
 using Newtonsoft.Json;
 
 namespace AccountManagement.API;
 
-public partial class AccountResource : PersistentEntity<AccountResource>
+public partial class AccountResource : TaggregateViewModel<AccountResource>
 {
 #pragma warning disable IDE0051 // Remove unused private members
    [JsonConstructor]AccountResource(Email email, Password password, AccountTommands tommands)
@@ -16,6 +17,9 @@ public partial class AccountResource : PersistentEntity<AccountResource>
       Tommands = tommands;
    }
 
+   public override AccountId Id => new AccountId(base.Id.Value);
+
+   //Todo: this conversion smells
    internal AccountResource(IAccountResourceData account) : base(account.Id)
    {
       Tommands = new AccountTommands(this);

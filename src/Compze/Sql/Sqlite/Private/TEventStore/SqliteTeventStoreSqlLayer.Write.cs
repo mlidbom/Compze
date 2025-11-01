@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Compze.Core.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions;
 using Compze.Sql.Common;
 using Compze.Utilities.Contracts;
@@ -70,7 +71,7 @@ partial class SqliteTeventStoreSqlLayer
       _connectionManager.UseConnection(connection => connection.ExecuteNonQuery(commandText));
    }
 
-   public TeventNeighborhood LoadTeventNeighborHood(Guid teventId)
+   public TeventNeighborhood LoadTeventNeighborHood(TessageId teventId)
    {
       var selectStatement = $"""
 
@@ -116,7 +117,7 @@ partial class SqliteTeventStoreSqlLayer
       return Assert.Result.NotNull(neighborhood).then(neighborhood);
    }
 
-   public void DeleteTaggregate(Guid taggregateId)
+   public void DeleteTaggregate(TaggregateId taggregateId)
    {
       _connectionManager.UseCommand(
          command =>

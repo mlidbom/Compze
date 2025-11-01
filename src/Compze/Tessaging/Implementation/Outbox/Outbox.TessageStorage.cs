@@ -1,7 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Compze.Core.Public;
 using Compze.Core.Refactoring.Naming.Internal;
 using Compze.Core.Serialization.Internal;
 using Compze.Core.Tessaging.Hosting.Public;
@@ -11,6 +8,9 @@ using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Logging;
 using Compze.Utilities.Threading.TasksCE;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Compze.Tessaging.Implementation.Outbox;
 
@@ -38,31 +38,30 @@ partial class Outbox
       public void SaveTessage(IExactlyOnceTessage tessage, params EndpointId[] receiverEndpointIds)
       {
          var outboxTessageWithReceivers = new IServiceBusSqlLayer.OutboxTessageWithReceivers(_serializer.SerializeTessage(tessage),
-                                                                                             _typeMapper.GetId(tessage.GetType()).GuidValue,
+                                                                                             _typeMapper.GetId(tessage.GetType()),
                                                                                              tessage.Id,
-                                                                                             receiverEndpointIds.Select(it => it.GuidValue));
+                                                                                             receiverEndpointIds);
 
          _sqlLayer.SaveTessage(outboxTessageWithReceivers);
       }
 
-      public void MarkAsReceived(Guid tessageId, EndpointId receiverId)
+      public void MarkAsReceived(TessageId tessageId, EndpointId receiverId)
       {
-         var endpointIdGuidValue = receiverId.GuidValue;
-         var result = _sqlLayer.MarkAsReceived(tessageId, endpointIdGuidValue);
+         var result = _sqlLayer.MarkAsReceived(tessageId, receiverId);
 
          if(result == IServiceBusSqlLayer.MarkAsReceivedResult.WasAlreadyMarked)
          {
-            this.Log().Info($"Tessage {tessageId} to endpoint {receiverId.GuidValue} was already marked as received.");
+            this.Log().Info($"Tessage {tessageId} to endpoint {receiverId.Value} was already marked as received.");
          }
       }
 
-      public void RecordDeliveryFailure(Guid tessageId, EndpointId receiverId, Exception? exception)
+      public void RecordDeliveryFailure(TessageId tessageId, EndpointId receiverId, Exception? exception)
       {
          var failureReason = exception != null
                                 ? $"{exception.GetType().Name}: {exception.Message}\n{exception.StackTrace}"
                                 : "Unknown failure";
 
-         _sqlLayer.RecordDeliveryFailure(tessageId, receiverId.GuidValue, failureReason);
+         _sqlLayer.RecordDeliveryFailure(tessageId, receiverId, failureReason);
       }
 
       public IReadOnlyList<IServiceBusSqlLayer.UndeliveredTessage> GetUndeliveredTessages(TimeSpan olderThan) =>

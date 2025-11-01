@@ -1,7 +1,7 @@
-using System;
 using AccountManagement.Domain;
 using AccountManagement.UI.QueryModels;
 using CommunityToolkit.Diagnostics;
+using Compze.Core.Public;
 using Compze.Core.Tessaging.Public;
 using Compze.Tessaging.TyperMediaApi.EventStore;
 using Compze.Utilities.Functional;
@@ -21,11 +21,11 @@ static class InternalApi
    {
       internal TryGetByEmailTuery TryGetByEmail(Email email) => new(email);
 
-      internal TeventStoreApi.TueryApi.TaggregateLink<Account> GetForUpdate(Guid id) => TeventStore.Tueries.GetForUpdate<Account>(id);
+      internal TeventStoreApi.TueryApi.TaggregateLink<Account> GetForUpdate(TaggregateId id) => TeventStore.Tueries.GetForUpdate<Account>(id);
 
-      internal TeventStoreApi.TueryApi.GetReadonlyCopyOfTaggregate<Account> GetReadOnlyCopy(Guid id) => TeventStore.Tueries.GetReadOnlyCopy<Account>(id);
+      internal TeventStoreApi.TueryApi.GetReadonlyCopyOfTaggregate<Account> GetReadOnlyCopy(TaggregateId id) => TeventStore.Tueries.GetReadOnlyCopy<Account>(id);
 
-      internal TeventStoreApi.TueryApi.GetReadonlyCopyOfTaggregateVersion<Account> GetReadOnlyCopyOfVersion(Guid id, int version) => TeventStore.Tueries.GetReadOnlyCopyOfVersion<Account>(id, version);
+      internal TeventStoreApi.TueryApi.GetReadonlyCopyOfTaggregateVersion<Account> GetReadOnlyCopyOfVersion(TaggregateId id, int version) => TeventStore.Tueries.GetReadOnlyCopyOfVersion<Account>(id, version);
 
       internal class TryGetByEmailTuery : IStrictlyLocalTuery<TryGetByEmailTuery, Option<Account>>
       {

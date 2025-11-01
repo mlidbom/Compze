@@ -105,13 +105,15 @@ static class TypeCE
 
    public static string GetFullNameCompilable(this Type @this)
    {
-      if(!@this.IsConstructedGenericType) return @this.FullName!.ReplaceInvariant("+", ".");
+      if(!@this.IsConstructedGenericType) return @this.FullName!.ReplaceOrdinal("+", ".");
 
       var typeArguments = @this.GenericTypeArguments;
-      var genericTypeName = @this.GetGenericTypeDefinition().GetFullNameCompilable().ReplaceInvariant($"`{typeArguments.Length}", "");
+      var genericTypeName = @this.GetGenericTypeDefinition().GetFullNameCompilable().ReplaceOrdinal($"`{typeArguments.Length}", "");
 
       var name = $"{genericTypeName}<{typeArguments.Select(type => type.GetFullNameCompilable()).Join(",")}>";
 
       return name;
    }
+
+   public static bool IsAssignableToOrFrom(this Type @this, Type other) => @this.IsAssignableFrom(other) || @this.IsAssignableTo(other);
 }

@@ -66,7 +66,7 @@ class DocumentDb : IDocumentDb
       var idString = GetIdString(id);
       var serializedDocument = _serializer.Serialize(value);
 
-      _sqlLayer.Add(new IDocumentDbSqlLayer.WriteRow(id: idString, serializedDocument: serializedDocument, updateTime: UtcTimeSource.UtcNow, typeId: _typeMapper.GetId(value.GetType()).GuidValue));
+      _sqlLayer.Add(new IDocumentDbSqlLayer.WriteRow(id: idString, serializedDocument: serializedDocument, updateTime: UtcTimeSource.UtcNow, typeId: _typeMapper.GetId(value.GetType())));
 
       persistentValues.GetOrAddDefault(value.GetType())[idString] = serializedDocument;
    }
@@ -100,7 +100,7 @@ class DocumentDb : IDocumentDb
          if(needsUpdate)
          {
             persistentValues.GetOrAddDefault(item.Value.GetType())[item.Key] = serializedDocument;
-            toUpdate.Add(new IDocumentDbSqlLayer.WriteRow(item.Key, serializedDocument, now, _typeMapper.GetId(item.Value.GetType()).GuidValue));
+            toUpdate.Add(new IDocumentDbSqlLayer.WriteRow(item.Key, serializedDocument, now, _typeMapper.GetId(item.Value.GetType())));
          }
       }
 
@@ -116,24 +116,24 @@ class DocumentDb : IDocumentDb
       return storedList.Select(Deserialize<TDocument>);
    }
 
-   public IEnumerable<TDocument> GetAll<TDocument>(IEnumerable<Guid> ids) where TDocument : IHasPersistentIdentity<Guid>
+   public IEnumerable<TDocument> GetAll<TDocument>(IEnumerable<Guid> ids) where TDocument : IEntity<Guid>
    {
       var storedList = _sqlLayer.GetAll(ids, AcceptableTypeIds<TDocument>());
 
       return storedList.Select(Deserialize<TDocument>);
    }
 
-   public IEnumerable<Guid> GetAllIds<T>() where T : IHasPersistentIdentity<Guid> => _sqlLayer.GetAllIds(AcceptableTypeIds<T>());
+   public IEnumerable<Guid> GetAllIds<T>() where T : IEntity<Guid> => _sqlLayer.GetAllIds(AcceptableTypeIds<T>());
 
    [return: NotNull] TDocument Deserialize<TDocument>(IDocumentDbSqlLayer.ReadRow stored) =>
       (TDocument)Assert.Result.ReturnNotNull(_serializer.Deserialize(GetTypeFromId(new TypeId(stored.TypeId)), stored.SerializedDocument));
 
-   IReadOnlySet<Guid> AcceptableTypeIds<T>() => AcceptableTypeIds(typeof(T));
+   IReadOnlySet<TypeId> AcceptableTypeIds<T>() => AcceptableTypeIds(typeof(T));
 
-   IReadOnlySet<Guid> AcceptableTypeIds(Type type) => _typeMapper.GetIdForTypesAssignableTo(type)
-                                                                 .Select(typeId => typeId.GuidValue)
-                                                                 .ToHashSet()
-                                                                 .assert(ids => ids.Any(), _ => $"Found no TypeIds for {type.GetFullNameCompilable()}");
+   IReadOnlySet<TypeId> AcceptableTypeIds(Type type) => _typeMapper.GetIdForTypesAssignableTo(type)
+                                                                   .Select(typeId => typeId)
+                                                                   .ToHashSet()
+                                                                   .assert(ids => ids.Any(), _ => $"Found no TypeIds for {type.GetFullNameCompilable()}");
 
    Type GetTypeFromId(TypeId id) => _typeMapper.GetType(id);
 }

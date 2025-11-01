@@ -13,7 +13,7 @@ using Compze.Utilities.SystemCE.ReflectionCE;
 namespace Compze.Core.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public;
 
 public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeventImplementation, TWrapperTeventInterface, TWrapperTeventImplementation> :
-   VersionedPersistentEntity<TTaggregate>,
+   VersionedEntity<TTaggregate>,
    ITaggregate<TTaggregateTevent>,
    ITeventiveInternals<TTaggregateTevent, TTaggregateTeventImplementation>
    where TWrapperTeventImplementation : TWrapperTeventInterface
@@ -29,12 +29,20 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
                                           .WithArgument(@event.GetType())
                                           .Invoke(@event);
 
-   //Yes Guid.Empty. Id should be assigned by an action, and it should be obvious that the taggregate in invalid until that happens
-   protected Taggregate() : base(Guid.Empty)
+   //Yes null. Id should be assigned by an action, and it should be obvious that the taggregate in invalid until that happens. It's a bit ugly to declare Id as non-null, but a null value will never escape the property due to contract validation
+   protected Taggregate() : this(null!)
+   {
+   }
+
+
+   protected Taggregate(TaggregateId id) : base(id)
    {
       Assert.Argument.Is(typeof(TTaggregateTevent).IsInterface);
       _teventHandlersDispatcher.Register().IgnoreUnhandled<TTaggregateTevent>();
    }
+
+   EntityId IEntity.Id => Id;
+   public override TaggregateId Id => (TaggregateId)base.Id;
 
    readonly List<ITaggregateTevent> _unCommittedTevents = [];
    readonly IMutableTeventDispatcher<TTaggregateTevent> _teventAppliersDispatcher = IMutableTeventDispatcher<TTaggregateTevent>.New();
@@ -57,11 +65,12 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
          if(Version == 0)
          {
             if(theTevent is not ITaggregateCreatedTevent) throw new Exception($"The first published tevent {theTevent.GetType()} did not implement {nameof(ITaggregateCreatedTevent)}. The first tevent an taggregate publishes must always implement {nameof(ITaggregateCreatedTevent)}.");
-            if(theTevent.TaggregateId == Guid.Empty) throw new Exception($"{nameof(ITaggregateTevent.TaggregateId)} was empty in {nameof(ITaggregateCreatedTevent)}");
+            if(theTevent.TaggregateId is null)
+               throw new Exception($"{nameof(ITaggregateTevent.TaggregateId)} was null in {nameof(ITaggregateCreatedTevent)}");
             ((IMutableTaggregateTevent)theTevent).SetTaggregateVersionInternal(1);
          } else
          {
-            if(theTevent.TaggregateId != Guid.Empty && theTevent.TaggregateId != Id) throw new ArgumentOutOfRangeException($"Tried to raise tevent for Taggregated: {theTevent.TaggregateId} from Taggregate with Id: {Id}.");
+            if(theTevent.TaggregateId is not null && theTevent.TaggregateId != Id) throw new ArgumentOutOfRangeException($"Tried to raise tevent for Taggregated: {theTevent.TaggregateId} from Taggregate with Id: {Id}.");
             ((IMutableTaggregateTevent)theTevent).SetTaggregateIdInternal(Id);
          }
 #pragma warning restore CS0618 // Type or member is obsolete
@@ -92,9 +101,9 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
       {
          if(theTevent is ITaggregateCreatedTevent)
          {
-#pragma warning disable 618 // Reviewed OK: This is the one place where we are quite sure that calling this obsolete method is correct.
-            SetIdBeVerySureYouKnowWhatYouAreDoing(theTevent.TaggregateId);
-#pragma warning restore 618
+#pragma warning disable CS0618 // Type or member is obsolete
+            base.Id = theTevent.TaggregateId;
+#pragma warning restore CS0618 // Type or member is obsolete
          }
 
          Version = theTevent.TaggregateVersion;

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Compze.Core.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions;
 using Compze.Sql.Common;
 using Compze.Utilities.Contracts;
@@ -45,15 +46,15 @@ partial class PgSqlTeventStoreSqlLayer
 
 
                                          """)
-                                    .AddParameter(Tevent.TaggregateId, data.TaggregateId)
+                                    .AddParameter(Tevent.TaggregateId, data.TaggregateId.Value)
                                     .AddParameter(Tevent.InsertedVersion, data.StorageInformation.InsertedVersion)
-                                    .AddParameter(Tevent.TeventType, data.TeventType)
-                                    .AddParameter(Tevent.TeventId, data.TeventId)
+                                    .AddParameter(Tevent.TeventType, data.TeventType.Value)
+                                    .AddParameter(Tevent.TeventId, data.TeventId.Value)
                                     .AddTimestampWithTimeZone(Tevent.UtcTimeStamp, data.UtcTimeStamp)
                                     .AddMediumTextParameter(Tevent.Tevent, data.TeventJson)
                                     .AddParameter(Tevent.ReadOrder, NpgsqlDbType.Varchar, data.StorageInformation.ReadOrder?.ToString() ?? new ReadOrder().ToString())
                                     .AddParameter(Tevent.EffectiveVersion, NpgsqlDbType.Integer, data.StorageInformation.EffectiveVersion)
-                                    .AddNullableParameter(Tevent.TargetTevent, NpgsqlDbType.Uuid, data.StorageInformation.RefactoringInformation?.TargetTevent)
+                                    .AddNullableParameter(Tevent.TargetTevent, NpgsqlDbType.Uuid, data.StorageInformation.RefactoringInformation?.TargetTevent.Value)
                                     .AddNullableParameter(Tevent.RefactoringType, NpgsqlDbType.Smallint, data.StorageInformation.RefactoringInformation?.RefactoringType == null ? null : (byte?)data.StorageInformation.RefactoringInformation.RefactoringType)
                                     .PrepareStatement()
                                     .ExecuteNonQuery());
@@ -76,7 +77,7 @@ partial class PgSqlTeventStoreSqlLayer
       _connectionManager.UseConnection(connection => connection.ExecuteNonQuery(commandText));
    }
 
-   public TeventNeighborhood LoadTeventNeighborHood(Guid teventId)
+   public TeventNeighborhood LoadTeventNeighborHood(TessageId teventId)
    {
       const string lockHintToMinimizeRiskOfDeadlocksByTakingUpdateLockOnInitialRead = "";
 
@@ -97,14 +98,14 @@ partial class PgSqlTeventStoreSqlLayer
          {
             command.CommandText = selectStatement;
 
-            command.AddParameter(Tevent.TeventId, teventId);
+            command.AddParameter(Tevent.TeventId, teventId.Value);
             using var reader = command.PrepareStatement()
                                       .ExecuteReader();
             reader.Read();
 
-            var effectiveReadOrder = reader.GetString(0).ReplaceInvariant(",", ".");
-            var previousTeventReadOrder = (reader[1] as string)?.ReplaceInvariant(",", ".");
-            var nextTeventReadOrder = (reader[2] as string)?.ReplaceInvariant(",", ".");
+            var effectiveReadOrder = reader.GetString(0).ReplaceOrdinal(",", ".");
+            var previousTeventReadOrder = (reader[1] as string)?.ReplaceOrdinal(",", ".");
+            var nextTeventReadOrder = (reader[2] as string)?.ReplaceOrdinal(",", ".");
             neighborhood = new TeventNeighborhood(effectiveReadOrder: ReadOrder.Parse(effectiveReadOrder),
                                                  previousTeventReadOrder: previousTeventReadOrder == null ? null : new ReadOrder?(ReadOrder.Parse(previousTeventReadOrder)),
                                                  nextTeventReadOrder: nextTeventReadOrder == null ? null : new ReadOrder?(ReadOrder.Parse(nextTeventReadOrder)));
@@ -113,13 +114,13 @@ partial class PgSqlTeventStoreSqlLayer
       return Assert.Result.NotNull(neighborhood).then(neighborhood);
    }
 
-   public void DeleteTaggregate(Guid taggregateId)
+   public void DeleteTaggregate(TaggregateId taggregateId)
    {
       _connectionManager.UseCommand(
          command =>
          {
             command.SetCommandText($"DELETE FROM {Tevent.TableName} /*With(ROWLOCK)*/ WHERE {Tevent.TaggregateId} = @{Tevent.TaggregateId};")
-                   .AddParameter(Tevent.TaggregateId, taggregateId)
+                   .AddParameter(Tevent.TaggregateId, taggregateId.Value)
                    .PrepareStatement()
                    .ExecuteNonQuery();
          });

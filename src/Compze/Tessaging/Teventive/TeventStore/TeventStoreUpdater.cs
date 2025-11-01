@@ -7,13 +7,13 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using Compze.Core.Public;
 using Compze.Core.Tessaging.Teventive.Internal;
 using Compze.Core.Tessaging.Teventive.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.Internal;
 using Compze.Core.Tessaging.Teventive.TeventStore.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.Public.Exceptions;
-using Compze.Core.Time.Public;
 using Compze.Utilities.Threading;
 using static Compze.Utilities.Contracts.Assert;
 
@@ -24,7 +24,7 @@ class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
    readonly ITeventStoreTeventPublisher _teventStoreTeventPublisher;
    readonly ITeventStore _store;
    readonly ITaggregateTypeValidator _taggregateTypeValidator;
-   readonly IDictionary<Guid, ITaggregate> _idMap = new Dictionary<Guid, ITaggregate>();
+   readonly IDictionary<TaggregateId, ITaggregate> _idMap = new Dictionary<TaggregateId, ITaggregate>();
    readonly IUsageGuard _usageGuard;
    readonly List<IDisposable> _disposableResources = [];
 
@@ -44,7 +44,7 @@ class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
       _taggregateTypeValidator = taggregateTypeValidator;
    }
 
-   public TTaggregate Get<TTaggregate>(Guid taggregateId) where TTaggregate : class, ITaggregate
+   public TTaggregate Get<TTaggregate>(TaggregateId taggregateId) where TTaggregate : class, ITaggregate
    {
       _taggregateTypeValidator.AssertIsValid<TTaggregate>();
       _usageGuard.EnsureAccessValid();
@@ -56,19 +56,19 @@ class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
       return result;
    }
 
-   public bool TryGet<TTaggregate>(Guid taggregateId, [MaybeNullWhen(false)] out TTaggregate taggregate) where TTaggregate : class, ITaggregate
+   public bool TryGet<TTaggregate>(TaggregateId taggregateId, [MaybeNullWhen(false)] out TTaggregate taggregate) where TTaggregate : class, ITaggregate
    {
       _taggregateTypeValidator.AssertIsValid<TTaggregate>();
       _usageGuard.EnsureAccessValid();
       return DoTryGet(taggregateId, out taggregate);
    }
 
-   public TTaggregate GetReadonlyCopy<TTaggregate>(Guid taggregateId) where TTaggregate : class, ITaggregate => LoadSpecificVersionInternal<TTaggregate>(taggregateId, int.MaxValue, verifyVersion: false);
+   public TTaggregate GetReadonlyCopy<TTaggregate>(TaggregateId taggregateId) where TTaggregate : class, ITaggregate => LoadSpecificVersionInternal<TTaggregate>(taggregateId, int.MaxValue, verifyVersion: false);
 
-   public TTaggregate GetReadonlyCopyOfVersion<TTaggregate>(Guid taggregateId, int version) where TTaggregate : class, ITaggregate => LoadSpecificVersionInternal<TTaggregate>(taggregateId, version);
+   public TTaggregate GetReadonlyCopyOfVersion<TTaggregate>(TaggregateId taggregateId, int version) where TTaggregate : class, ITaggregate => LoadSpecificVersionInternal<TTaggregate>(taggregateId, version);
 
    // ReSharper disable once ParameterOnlyUsedForPreconditionCheck.Local
-   TTaggregate LoadSpecificVersionInternal<TTaggregate>(Guid taggregateId, int version, bool verifyVersion = true) where TTaggregate : ITaggregate
+   TTaggregate LoadSpecificVersionInternal<TTaggregate>(TaggregateId taggregateId, int version, bool verifyVersion = true) where TTaggregate : ITaggregate
    {
       _taggregateTypeValidator.AssertIsValid<TTaggregate>();
       Argument.IsGreaterThan(version, 0);
@@ -130,7 +130,7 @@ class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
       _teventStoreTeventPublisher.Publish(tevent);
    }
 
-   public void Delete(Guid taggregateId)
+   public void Delete(TaggregateId taggregateId)
    {
       _store.DeleteTaggregate(taggregateId);
       _idMap.Remove(taggregateId);
@@ -143,17 +143,14 @@ class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
       _store.Dispose();
    }
 
-   public override string ToString() => $"{_id}: {GetType().FullName}";
-   readonly Guid _id = Guid.NewGuid();
+   public IReadOnlyList<ITaggregateTevent> GetHistory(TaggregateId taggregateId) => GetHistoryInternal(taggregateId, takeWriteLock: false);
 
-   public IReadOnlyList<ITaggregateTevent> GetHistory(Guid taggregateId) => GetHistoryInternal(taggregateId, takeWriteLock: false);
-
-   IReadOnlyList<ITaggregateTevent> GetHistoryInternal(Guid taggregateId, bool takeWriteLock) =>
+   IReadOnlyList<ITaggregateTevent> GetHistoryInternal(TaggregateId taggregateId, bool takeWriteLock) =>
       takeWriteLock
          ? _store.GetTaggregateHistoryForUpdate(taggregateId)
          : _store.GetTaggregateHistory(taggregateId);
 
-   bool DoTryGet<TTaggregate>(Guid taggregateId, [NotNullWhen(true)] out TTaggregate? taggregate) where TTaggregate : class, ITaggregate
+   bool DoTryGet<TTaggregate>(TaggregateId taggregateId, [NotNullWhen(true)] out TTaggregate? taggregate) where TTaggregate : class, ITaggregate
    {
       if(_idMap.TryGetValue(taggregateId, out var teventStored))
       {

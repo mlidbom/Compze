@@ -1,5 +1,4 @@
-using System;
-using System.Linq;
+using Compze.Core.Public;
 using Compze.Core.Refactoring.Naming.Internal.Implementation;
 using Compze.Core.Serialization.Internal;
 using Compze.Serialization.Newtonsoft.Private.TeventStore;
@@ -12,6 +11,8 @@ using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
 using Newtonsoft.Json;
+using System;
+using System.Linq;
 
 namespace Compze.Tests.Performance.Internals.Serialization;
 
@@ -34,7 +35,7 @@ public class TeventStoreTeventSerializerPerformanceTests : UniversalTestBase
       var tevent = new TestTevent(
          test1: "Test1",
          test2: "Test2",
-         taggregateId: Guid.NewGuid(),
+         taggregateId: new TaggregateId(),
          taggregateVersion: 2,
          utcTimeStamp: DateTime.Now + 1.Minutes());
 
@@ -60,7 +61,7 @@ public class TeventStoreTeventSerializerPerformanceTests : UniversalTestBase
       var tevents = 1.Through(iterations).Select( _ =>  new TestTevent(
                                                     test1: "Test1",
                                                     test2: "Test2",
-                                                    taggregateId: Guid.NewGuid(),
+                                                    taggregateId: new TaggregateId(),
                                                     taggregateVersion: 2,
                                                     utcTimeStamp: DateTime.Now + 1.Minutes())).ToList();
 

@@ -57,6 +57,7 @@
     <File Path="Compze/test-common-appsettings.json" />
     <File Path="TestUsingPluggableComponentCombinations" />
     <File Path="TestUsingPluggableComponentCombinations.example" />
+    <File Path="TODO_must_assertion_improvements.md" />
   </Folder>
   <Folder Name="/_Solution Items/Tests/">
     <File Path="Compze/test-common-appsettings.json" />
@@ -79,6 +80,13 @@
   <Folder Name="/_Websites/">
     <Project Path="Websites/Website/Website.csproj" />
   </Folder>
+  <Folder Name="/~Solution Structure/">
+    <Project Path="msbuild/Solution.Build.csproj" />
+    <Project Path="SolutionStructure/Solution.EditorConfigs.csproj" />
+    <Project Path="SolutionStructure/Solution.NsDepCop.csproj" />
+    <Project Path="SolutionStructure/Solution.Readme.csproj" DisplayName="Solution.README" />
+    <Project Path="SolutionStructure/Solution.TestConfig.csproj" />
+    <Project Path="SolutionStructure/Solution.TODO.csproj" />
+  </Folder>
   <Project Path="../DevScripts/Scripts.csproj" />
-  <Project Path="msbuild/Build.csproj" />
 </Solution>

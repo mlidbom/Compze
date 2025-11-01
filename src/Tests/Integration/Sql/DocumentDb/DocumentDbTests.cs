@@ -8,6 +8,7 @@ using Compze.Core.Public;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tests.Common.Sql.DocumentDb;
 using Compze.Tests.Infrastructure;
+using Compze.Tests.Infrastructure.FluentAssertionsExtensions;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
@@ -55,9 +56,9 @@ public class DocumentDbTests : DocumentDbTestsBase
     [PCT]
     public void GetAllWithIdsReturnsAsManyResultsAsPassedIds()
     {
-        var ids = 1.Through(9).Select(index => Guid.Parse($"00000000-0000-0000-0000-00000000000{index}")).ToArray();
+        var ids = 1.Through(9).Select(index => new EntityId(Guid.Parse($"00000000-0000-0000-0000-00000000000{index}"))).ToArray();
 
-        var users = ids.Select(id => new User(id)).ToArray();
+        var users = ids.Select(id => new User(id.Value)).ToArray();
 
         UseInTransactionalScope((_, updater) => users.ForEach(user => updater.Save(user)));
 
@@ -71,17 +72,17 @@ public class DocumentDbTests : DocumentDbTestsBase
     public void GetAllWithIdsThrowsNoSuchDocumentExceptionExceptionIfAnyIdIsMissing()
     {
         var ids = 1.Through(9)
-                   .Select(index => Guid.Parse($"00000000-0000-0000-0000-00000000000{index}"))
+                   .Select(index => new EntityId(Guid.Parse($"00000000-0000-0000-0000-00000000000{index}")))
                    .ToArray();
 
-        var users = ids.Select(id => new User(id))
+        var users = ids.Select(id => new User(id.Value))
                        .ToArray();
 
         UseInTransactionalScope((_, updater) => users.ForEach(user => updater.Save(user)));
 
         UseInScope(reader => Invoking(
                       () => reader.GetAll<User>(ids.Take(5)
-                                                   .Append(Guid.Parse("00000000-0000-0000-0000-000000000099"))
+                                                   .Append(new EntityId(Guid.Parse("00000000-0000-0000-0000-000000000099")))
                                                    .ToArray())
                                   // ReSharper disable once ReturnValueOfPureMethodIsNotUsed
                                   .ToArray()).Should().Throw<ArgumentOutOfRangeException>());
@@ -91,9 +92,9 @@ public class DocumentDbTests : DocumentDbTestsBase
     [PCT]
     public void GetAllWithIdsReturnsTheSameInstanceForAnyPreviouslyFetchedDocuments()
     {
-        var ids = 1.Through(9).Select(index => Guid.Parse($"00000000-0000-0000-0000-00000000000{index}")).ToArray();
+        var ids = 1.Through(9).Select(index => new EntityId(Guid.Parse($"00000000-0000-0000-0000-00000000000{index}"))).ToArray();
 
-        var users = ids.Select(id => new User(id)).ToArray();
+        var users = ids.Select(id => new User(id.Value)).ToArray();
 
         UseInTransactionalScope((_, updater) => users.ForEach(user => updater.Save(user)));
 
@@ -142,8 +143,8 @@ public class DocumentDbTests : DocumentDbTestsBase
     [PCT]
     public void CallingSaveWithAnInterfaceAsTypeParameterDoesNotExplode()
     {
-        IPersistentEntity user1 = new User { Email = "user1" };
-        IPersistentEntity user2 = new User { Email = "user2" };
+        IEntity user1 = new User { Email = "user1" };
+        IEntity user2 = new User { Email = "user2" };
 
         UseInTransactionalScope((reader, updater) =>
         {
@@ -406,11 +407,11 @@ public class DocumentDbTests : DocumentDbTestsBase
     {
         UseInTransactionalScope((_, updater) =>
         {
-            var lassie = new Dog { Id = Guid.NewGuid() };
+            var lassie = new Dog { Id = new EntityId() };
             updater.Save(lassie);
         });
 
-        var buster = new Dog { Id = Guid.NewGuid() };
+        var buster = new Dog { Id = new EntityId() };
         UseInTransactionalScope((_, updater) => Invoking(() => updater.Delete(buster)).Should().Throw<ArgumentOutOfRangeException>());
     }
 
@@ -507,8 +508,8 @@ public class DocumentDbTests : DocumentDbTestsBase
 
         UseInTransactionalScope((_, updater) =>
         {
-            updater.Save<IPersistentEntity>(user);
-            updater.Save<IPersistentEntity>(dog);
+            updater.Save<IEntity>(user);
+            updater.Save<IEntity>(dog);
         });
 
         UseInScope(reader =>
@@ -531,8 +532,8 @@ public class DocumentDbTests : DocumentDbTestsBase
         {
             updater.Save(new User());
             updater.Save(new User());
-            updater.Save(new Dog { Id = Guid.NewGuid() });
-            updater.Save(new Dog { Id = Guid.NewGuid() });
+            updater.Save(new Dog { Id = new EntityId() });
+            updater.Save(new Dog { Id = new EntityId() });
         });
 
         using (ServiceLocator.BeginScope())
@@ -583,8 +584,8 @@ public class DocumentDbTests : DocumentDbTestsBase
 
         UseInScope(reader =>
         {
-            reader.Get<Person>(user1.Id).Should().Be(user1);
-            reader.Get<Person>(person1.Id).Should().Be(person1);
+            reader.Get<Person>(user1.Id).Should().BeStrictlyEquivalentTo(user1);
+            reader.Get<Person>(person1.Id).Should().BeStrictlyEquivalentTo(person1);
         });
     }
 
@@ -602,22 +603,17 @@ public class DocumentDbTests : DocumentDbTestsBase
 
         using (ServiceLocator.BeginScope())
         {
-            var people = ServiceLocator.DocumentDbBulkReader().GetAll<Person>().ToList();
+            var people = ServiceLocator.DocumentDbBulkReader().GetAll<Person>().Select(it => it.Id).ToHashSet();
 
             people.Should().HaveCount(2);
-            people.Should().Contain(user1);
-            people.Should().Contain(person1);
+            people.Should().Contain(user1.Id);
+            people.Should().Contain(person1.Id);
         }
     }
 
     [PCT]
-    public void ThrowsExceptionIfYouTryToSaveAnIHasPersistentIdentityWithNoId()
-    {
-        var user1 = new User(Guid.Empty);
-
-        UseInTransactionalScope((_, updater) => updater.Invoking(it => it.Save(user1))
-                                                       .Should().Throw<Exception>());
-    }
+    public void ThrowsExceptionIfYouTryToCreateAnIHasPersistentIdentityWithNoId() => 
+       Invoking(() => new User(Guid.Empty)).Should().Throw<Exception>();
 
     [PCT]
     public void GetByIdsShouldReturnOnlyMatchingResultEvenWhenMoreResultsAreInTheCache()
@@ -646,7 +642,7 @@ public class DocumentDbTests : DocumentDbTestsBase
 
         var user1 = new User(userid1);
         var user2 = new User(userid2);
-        var dog = new Dog { Id = Guid.Parse("00000000-0000-0000-0000-000000000010") };
+        var dog = new Dog { Id = new EntityId(Guid.Parse("00000000-0000-0000-0000-000000000010")) };
 
         UseInTransactionalScope((_, updater) =>
         {
@@ -678,7 +674,7 @@ public class DocumentDbTests : DocumentDbTestsBase
 
         var user1 = new User(userid1);
         var user2 = new User(userid2);
-        var dog = new Dog { Id = Guid.Parse("00000000-0000-0000-0000-000000000010") };
+        var dog = new Dog { Id = new EntityId(Guid.Parse("00000000-0000-0000-0000-000000000010")) };
 
         UseInTransactionalScope((_, updater) =>
         {
@@ -778,7 +774,7 @@ public class DocumentDbTests : DocumentDbTestsBase
 
         await InsertUsersInOtherDocumentDb(userId);
 
-        UseInScope(reader => reader.GetAll<User>([userId])
+        UseInScope(reader => reader.GetAll<User>([new EntityId(userId)])
                                    .Count()
                                    .Should()
                                    .Be(1));

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Compze.Core.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions;
 using Compze.Sql.Common;
 using Compze.Utilities.Contracts;
@@ -37,16 +38,16 @@ partial class MySqlTeventStoreSqlLayer
                                          AND @{Tevent.ReadOrder} = '0.0000000000000000000';
 
                                          """)
-                                    .AddParameter(Tevent.TaggregateId, data.TaggregateId)
+                                    .AddParameter(Tevent.TaggregateId, data.TaggregateId.Value)
                                     .AddParameter(Tevent.InsertedVersion, data.StorageInformation.InsertedVersion)
-                                    .AddParameter(Tevent.TeventType, data.TeventType)
-                                    .AddParameter(Tevent.TeventId, data.TeventId)
+                                    .AddParameter(Tevent.TeventType, data.TeventType.Value)
+                                    .AddParameter(Tevent.TeventId, data.TeventId.Value)
                                     .AddDateTime2Parameter(Tevent.UtcTimeStamp, data.UtcTimeStamp)
                                     .AddMediumTextParameter(Tevent.Tevent, data.TeventJson)
 
                                     .AddParameter(Tevent.ReadOrder, MySqlDbType.VarChar, data.StorageInformation.ReadOrder?.ToString() ?? ReadOrder.Zero.ToString())
                                     .AddParameter(Tevent.EffectiveVersion, MySqlDbType.Int32, data.StorageInformation.EffectiveVersion)
-                                    .AddNullableParameter(Tevent.TargetTevent, MySqlDbType.VarChar, data.StorageInformation.RefactoringInformation?.TargetTevent)
+                                    .AddNullableParameter(Tevent.TargetTevent, MySqlDbType.VarChar, data.StorageInformation.RefactoringInformation?.TargetTevent.Value)
                                     .AddNullableParameter(Tevent.RefactoringType, MySqlDbType.Byte, data.StorageInformation.RefactoringInformation?.RefactoringType == null ? null : (byte?)data.StorageInformation.RefactoringInformation.RefactoringType)
                                     .ExecuteNonQuery());
             }
@@ -68,7 +69,7 @@ partial class MySqlTeventStoreSqlLayer
 
    }
 
-   public TeventNeighborhood LoadTeventNeighborHood(Guid teventId)
+   public TeventNeighborhood LoadTeventNeighborHood(TessageId teventId)
    {
       //var lockHintToMinimizeRiskOfDeadlocksByTakingUpdateLockOnInitialRead = "With(UPDLOCK, READCOMMITTED, ROWLOCK)";
       const string lockHintToMinimizeRiskOfDeadlocksByTakingUpdateLockOnInitialRead = "";
@@ -89,13 +90,13 @@ partial class MySqlTeventStoreSqlLayer
          {
             command.CommandText = selectStatement;
 
-            command.Parameters.Add(new MySqlParameter(Tevent.TeventId, MySqlDbType.Guid) { Value = teventId });
+            command.Parameters.Add(new MySqlParameter(Tevent.TeventId, MySqlDbType.Guid) { Value = teventId.Value });
             using var reader = command.ExecuteReader();
             reader.Read();
 
-            var effectiveReadOrder = reader.GetString(0).ReplaceInvariant(",", ".");
-            var previousTeventReadOrder = (reader[1] as string)?.ReplaceInvariant(",", ".");
-            var nextTeventReadOrder = (reader[2] as string)?.ReplaceInvariant(",", ".");
+            var effectiveReadOrder = reader.GetString(0).ReplaceOrdinal(",", ".");
+            var previousTeventReadOrder = (reader[1] as string)?.ReplaceOrdinal(",", ".");
+            var nextTeventReadOrder = (reader[2] as string)?.ReplaceOrdinal(",", ".");
             neighborhood = new TeventNeighborhood(effectiveReadOrder: ReadOrder.Parse(effectiveReadOrder),
                                                  previousTeventReadOrder: previousTeventReadOrder == null ? null : new ReadOrder?(ReadOrder.Parse(previousTeventReadOrder)),
                                                  nextTeventReadOrder: nextTeventReadOrder == null ? null : new ReadOrder?(ReadOrder.Parse(nextTeventReadOrder)));
@@ -104,7 +105,7 @@ partial class MySqlTeventStoreSqlLayer
       return Assert.Result.NotNull(neighborhood).then(neighborhood);
    }
 
-   public void DeleteTaggregate(Guid taggregateId)
+   public void DeleteTaggregate(TaggregateId taggregateId)
    {
       _connectionManager.UseCommand(
          command =>

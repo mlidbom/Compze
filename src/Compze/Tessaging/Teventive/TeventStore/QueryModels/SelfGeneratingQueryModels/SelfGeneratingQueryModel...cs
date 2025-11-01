@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Compze.Core.Public;
 using Compze.Core.Tessaging.Teventive.Public;
@@ -8,12 +7,12 @@ using Compze.Utilities.SystemCE.LinqCE;
 
 namespace Compze.Tessaging.Teventive.TeventStore.QueryModels.SelfGeneratingQueryModels;
 
-public partial class SelfGeneratingQueryModel<TQueryModel, TTaggregateTevent> : VersionedPersistentEntity<TQueryModel>
+public partial class SelfGeneratingQueryModel<TQueryModel, TTaggregateTevent> : VersionedEntity<TQueryModel>
    where TQueryModel : SelfGeneratingQueryModel<TQueryModel, TTaggregateTevent>
    where TTaggregateTevent : class, ITaggregateTevent
 {
    //Yes empty. Id should be assigned by an action, and it should be obvious that the taggregate in invalid until that happens
-   protected SelfGeneratingQueryModel() : base(Guid.Empty) => Assert.Argument.Is(typeof(TTaggregateTevent).IsInterface);
+   protected SelfGeneratingQueryModel() : base(null!) => Assert.Argument.Is(typeof(TTaggregateTevent).IsInterface);
 
    readonly IMutableTeventDispatcher<TTaggregateTevent> _teventDispatcher = IMutableTeventDispatcher<TTaggregateTevent>.New();
 
@@ -23,9 +22,9 @@ public partial class SelfGeneratingQueryModel<TQueryModel, TTaggregateTevent> : 
    {
       if(theTevent is ITaggregateCreatedTevent)
       {
-#pragma warning disable 618 //Reviewed OK: This is precisely the type of internal code this is supposed to use this "obsolete" method.
-         SetIdBeVerySureYouKnowWhatYouAreDoing(theTevent.TaggregateId);
-#pragma warning restore 618
+#pragma warning disable CS0618 // Type or member is obsolete
+         Id = theTevent.TaggregateId;
+#pragma warning restore CS0618 // Type or member is obsolete
       }
 
       Version = theTevent.TaggregateVersion;

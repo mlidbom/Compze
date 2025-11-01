@@ -2,6 +2,7 @@ using System;
 using System.Threading;
 using AccountManagement.Domain.Tevents;
 using Compze.Core.DocumentDb;
+using Compze.Core.Public;
 using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Core.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Core.Tessaging.Typermedia.Public;
@@ -34,7 +35,7 @@ static class AccountStatistics
       public int NumberOfFailedLogins { get; private set; }
 
       //Since this is a singleton tuery model and not bound to a specific Taggregate's tevents we override the Id member to always be the singleton Id.
-      public override Guid Id => StaticId;
+      public override EntityId Id => new(StaticId);
       internal static Guid StaticId = Guid.Parse("93498554-5C2E-4D6A-862D-2DA7BCCAC747");
    }
 

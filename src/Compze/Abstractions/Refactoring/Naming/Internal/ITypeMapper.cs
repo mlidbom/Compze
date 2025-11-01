@@ -7,7 +7,7 @@ namespace Compze.Core.Refactoring.Naming.Internal;
 
 
 /// <summary>
-/// Maps types to Guids.
+/// Maps types to TypeIds.
 /// Whenever we serialize or save an instance of a type anywhere, we use the mapped ID, not the type name.
 /// That way one can freely rename types without breaking any persisted data or communication between systems.
 /// </summary>

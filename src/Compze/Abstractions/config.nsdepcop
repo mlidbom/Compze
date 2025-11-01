@@ -19,6 +19,9 @@
 	<Allowed From="Compze.Core.DocumentDb.Private"
             To="Compze.Core.DocumentDb.Infrastructure" />
 
+	<Allowed From="Compze.Core.Public"
+            To="Compze.Core.Public.Infrastructure" />
+
 	<!--todo: review these-->
 	<Allowed From="Compze.Core.Tessaging.Teventive.Infrastructure.Validation"
             To="Compze.Core.Tessaging.Typermedia.Infrastructure.Validation" />
@@ -35,6 +38,7 @@
 	<!--todo: Remove this-->
    <Allowed From="Compze.Core.Tessaging.Hosting.Public"
             To="Compze.Core.Tessaging.Transport.Internal" />
+
 
 
 </NsDepCopConfig>

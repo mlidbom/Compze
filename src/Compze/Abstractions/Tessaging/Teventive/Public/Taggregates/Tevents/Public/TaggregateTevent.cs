@@ -1,20 +1,22 @@
 using System;
+using Compze.Core.Public;
+using Compze.Core.Time.Public;
 
 namespace Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 
 public abstract class TaggregateTevent() : IMutableTaggregateTevent
 {
-    protected TaggregateTevent(Guid taggregateId) : this() => TaggregateId = taggregateId;
+    protected TaggregateTevent(TaggregateId taggregateId) : this() => TaggregateId = taggregateId;
 
-    public Guid Id { get; private set; } = Guid.CreateVersion7();
+    public TessageId Id { get; private set; } = new();
     public int TaggregateVersion { get; private set; }
-    public Guid TaggregateId { get; private set; }
-    public DateTime UtcTimeStamp { get; private set; } = DateTime.UtcNow; //Todo: Should use time source.
+    public TaggregateId TaggregateId { get; private set; } = null!; //We are being sneaky here, it is actually never allowed to be visibly null, but the taggregate class needs it to be null at first, and guarantees that it never escapes from it while still null.
+    public DateTime UtcTimeStamp { get; private set; } = UtcTimeSource.UtcNow;
 
 #pragma warning disable CA1033 // We do not want these methods as part of the public interface of TaggregateTevent.
-    void IMutableTaggregateTevent.SetTaggregateIdInternal(Guid taggregateId) => TaggregateId = taggregateId;
+    void IMutableTaggregateTevent.SetTaggregateIdInternal(TaggregateId taggregateId) => TaggregateId = taggregateId;
     void IMutableTaggregateTevent.SetTaggregateVersionInternal(int taggregateVersion) => TaggregateVersion = taggregateVersion;
     void IMutableTaggregateTevent.SetUtcTimeStampInternal(DateTime utcTimeStamp) => UtcTimeStamp = utcTimeStamp;
-    void IMutableTaggregateTevent.SetTessageIdInternal(Guid tessageId) => Id = tessageId;
+    void IMutableTaggregateTevent.SetTessageIdInternal(TessageId tessageId) => Id = tessageId;
 #pragma warning restore CA1033
 }

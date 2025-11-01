@@ -1,4 +1,3 @@
-using Compze.Sql.MySql.Private.DbPool;
 using Compze.Utilities.DependencyInjection.Abstractions;
 
 namespace Compze.Sql.MySql.Wiring;

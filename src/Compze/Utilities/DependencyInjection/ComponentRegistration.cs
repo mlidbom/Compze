@@ -10,7 +10,6 @@ namespace Compze.Utilities.DependencyInjection;
 public abstract class ComponentRegistration
 {
    internal readonly MonitorCE Monitor = MonitorCE.WithDefaultTimeout();
-   internal Guid Id { get; } = Guid.NewGuid();
    internal IReadOnlySet<Type> ServiceTypes { get; }
    internal InstantiationSpec InstantiationSpec { get; }
    internal Lifestyle Lifestyle { get; }

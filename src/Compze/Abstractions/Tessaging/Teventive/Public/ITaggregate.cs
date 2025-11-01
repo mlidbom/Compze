@@ -1,13 +1,14 @@
 using System;
 using System.Collections.Generic;
+using Compze.Core.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
-using Compze.Core.Time.Public;
 
 namespace Compze.Core.Tessaging.Teventive.Public;
 
-public interface ITaggregate
+public interface ITaggregate : ITentity
 {
-   Guid Id { get; }
+   EntityId IEntity.Id => Id;
+   new TaggregateId Id { get; }
    int Version { get; }
 
    void Commit(Action<IReadOnlyList<ITaggregateTevent>> commitTevents);

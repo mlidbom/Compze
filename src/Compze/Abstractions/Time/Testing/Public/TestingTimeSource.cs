@@ -39,7 +39,7 @@ public class TestingTimeSourceAdapter
 
       public unit Run(Action action) => Run(action.AsFunc());
 
-      public TResult Run<TResult>(Func<TResult> action) => RunAsync(action.AsAsync()).Result;
+      public TResult Run<TResult>(Func<TResult> action) => RunAsync(action.AsAsync()).ResultUnwrappingException();
 
       public async Task<unit> RunAsync(Func<Task> action) => await RunAsync(action.AsFunc()).caf();
 

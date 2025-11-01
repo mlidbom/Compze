@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Transactions;
+using Compze.Core.Public;
+using Compze.Core.Refactoring.Naming.Internal;
 using Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions;
 using Compze.Sql.Common;
 using Npgsql;
@@ -35,11 +37,11 @@ partial class PgSqlTeventStoreSqlLayer(PgSqlTeventStoreConnectionManager connect
    static TeventDataRow ReadDataRow(NpgsqlDataReader teventReader)
    {
       return new TeventDataRow(
-         teventType: teventReader.GetGuid(0),
+         teventType: new TypeId(teventReader.GetGuid(0)),
          teventJson: teventReader.GetString(1),
-         teventId: teventReader.GetGuid(4),
+         teventId: new TessageId(teventReader.GetGuid(4)),
          taggregateVersion: teventReader.GetInt32(3),
-         taggregateId: teventReader.GetGuid(2),
+         taggregateId: new TaggregateId(teventReader.GetGuid(2)),
          //Without this the datetime will be DateTimeKind.Unspecified and will not convert correctly into Local time....
          utcTimeStamp: DateTime.SpecifyKind(teventReader.GetDateTime(5), DateTimeKind.Utc),
          storageInformation: new TaggregateTeventStorageInformation
@@ -51,7 +53,7 @@ partial class PgSqlTeventStoreSqlLayer(PgSqlTeventStoreConnectionManager connect
                                 {
                                    (null, null) => null,
                                    // ReSharper disable PatternAlwaysOfType
-                                   (Guid targetTevent, short type) => new TaggregateTeventRefactoringInformation(targetTevent, (TaggregateTeventRefactoringType)type),
+                                   (Guid targetTevent, short type) => new TaggregateTeventRefactoringInformation(new TessageId(targetTevent), (TaggregateTeventRefactoringType)type),
                                    // ReSharper restore PatternAlwaysOfType
                                    (_, _) => throw new Exception("Should not be possible to get here")
                                 }
@@ -59,7 +61,7 @@ partial class PgSqlTeventStoreSqlLayer(PgSqlTeventStoreConnectionManager connect
       );
    }
 
-   public IReadOnlyList<TeventDataRow> GetTaggregateHistory(Guid taggregateId, bool takeWriteLock, int startAfterInsertedVersion = 0)
+   public IReadOnlyList<TeventDataRow> GetTaggregateHistory(TaggregateId taggregateId, bool takeWriteLock, int startAfterInsertedVersion = 0)
    {
       IReadOnlyList<TeventDataRow> GetHistory() =>
          _connectionManager.UseCommand(suppressTransactionWarning: true,
@@ -73,7 +75,7 @@ partial class PgSqlTeventStoreSqlLayer(PgSqlTeventStoreConnectionManager connect
                                                                           ORDER BY {Tevent.ReadOrder} ASC;
 
                                                                           """)
-                                                         .AddParameter(Tevent.TaggregateId, taggregateId)
+                                                         .AddParameter(Tevent.TaggregateId, taggregateId.Value)
                                                          .AddParameter("CachedVersion", startAfterInsertedVersion)
                                                          .PrepareStatement()
                                                          .ExecuteReaderAndSelect(ReadDataRow)
@@ -87,7 +89,7 @@ partial class PgSqlTeventStoreSqlLayer(PgSqlTeventStoreConnectionManager connect
          //We prefer predictable performance, even if slightly slower under easy conditions, to services that suddenly virtually stop working completely due to tons of concurrency issues as an taggregate is accessed by many threads.
          //Pages that led to the below hack: https://tinyurl.com/y7nef75p, https://tinyurl.com/y7c63cny, https://tinyurl.com/y75qlwar
          _connectionManager.UseCommand(command => command.SetCommandText($"select {Tevent.TaggregateId} from TaggregateLock where TaggregateId = @{Tevent.TaggregateId} for update;")
-                                                         .AddParameter(Tevent.TaggregateId, taggregateId)
+                                                         .AddParameter(Tevent.TaggregateId, taggregateId.Value)
                                                          .PrepareStatement()
                                                          .ExecuteNonQuery());
 
@@ -149,6 +151,6 @@ partial class PgSqlTeventStoreSqlLayer(PgSqlTeventStoreConnectionManager connect
                                                                                       ORDER BY {Tevent.ReadOrder} ASC
                                                                                       """)
                                                                      .PrepareStatement()
-                                                                     .ExecuteReaderAndSelect(reader => new CreationTeventRow(taggregateId: reader.GetGuid(0), typeId: reader.GetGuid(1))));
+                                                                     .ExecuteReaderAndSelect(reader => new CreationTeventRow(taggregateId: new TaggregateId(reader.GetGuid(0)), typeId: reader.GetGuid(1))));
    }
 }

@@ -181,8 +181,8 @@ class TypeMapper : ITypeMapper
 
       if(method != null && instance != null)
       {
-         void MapAction(Guid guid, Type type) => state.Map(type, new TypeId(guid));
-         method.Invoke(instance, [(Action<Guid, Type>)MapAction]);
+         void MapAction(string guid, Type type) => state.Map(type, new TypeId(new Guid(guid)));
+         method.Invoke(instance, [(Action<string, Type>)MapAction]);
       }
 
       var typesWithMissingMappings = typesRequiringMapping.Where(type => !state.TypeToTypeIdMap.ContainsKey(type)).ToList();
@@ -265,7 +265,7 @@ class TypeMapper : ITypeMapper
 
       foreach(var missingType in missingInTheSameAssembly)
       {
-         fixTessage.Append(CultureInfo.InvariantCulture, $"{Environment.NewLine}      map(new Guid(\"{Guid.NewGuid()}\"), typeof({missingType.GetFullNameCompilable()}));");
+         fixTessage.Append(CultureInfo.InvariantCulture, $"{Environment.NewLine}      map(\"{Guid.NewGuid()}\", typeof({missingType.GetFullNameCompilable()}));");
       }
 
       fixTessage.Append(Environment.NewLine).AppendLine();
@@ -291,7 +291,7 @@ class TypeMapper : ITypeMapper
          if(TypeIdToTypeMap.TryGetValue(typeId, out var existingType))
          {
             if(existingType == type) return;
-            throw new Exception($"Attempted to map TypeId:{typeId.GuidValue} to: {type.FullName}, but it is already mapped to Type: {existingType.FullName}");
+            throw new Exception($"Attempted to map TypeId:{typeId} to: {type.FullName}, but it is already mapped to Type: {existingType.FullName}");
          }
 
          AssertTypeValidForMapping(type);

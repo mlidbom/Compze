@@ -32,7 +32,7 @@ class MemoryInboxTransportServer : IInboxTransportServer
    {
       _inbox = new LazyCE<IInbox>(serviceLocator.Resolve<IInbox>);
       _engine = new LazyCE<Inbox.HandlerExecutionEngine>(serviceLocator.Resolve<Inbox.HandlerExecutionEngine>);;
-      Address = new Uri($"memory://{endpointId.GuidValue.ToString()}");
+      Address = new Uri($"memory://{endpointId}");
    }
 
    public Uri Address { get; }

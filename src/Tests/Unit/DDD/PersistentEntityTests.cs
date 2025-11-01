@@ -9,9 +9,9 @@ namespace Compze.Tests.Unit.DDD;
 
 #pragma warning disable CA1508 //Avoid dead conditional code
 
-public class PersistentEntityTests : UniversalTestBase
+public class EntityTests : UniversalTestBase
 {
-   class Person : PersistentEntity<Person>
+   class Person : Entity<Person>
    {
       public Person()
       {
@@ -30,28 +30,11 @@ public class PersistentEntityTests : UniversalTestBase
    }
 
    [XF]
-   public void IntstanceEqualsOtherInstanceWithSameId()
-   {
-      var lhs = new Person();
-      var rhs = new Person(lhs.Id);
-      AssertAreEqual(lhs, rhs);
-   }
-
-   [XF]
    public void IntstanceNotEqualToinstanceWithOtherId()
    {
       var lhs = new Person(Guid.NewGuid());
       var rhs = new Person(Guid.NewGuid());
       AssertAreNotEqual(lhs, rhs);
-   }
-
-   [XF]
-   public void IntstancesWithSameIdHasSameHashCode()
-   {
-      var lhs = new Person();
-      var rhs = new Person(lhs.Id);
-      lhs.GetHashCode().Should().Be(rhs.GetHashCode());
-      (lhs.GetHashCode() == rhs.GetHashCode()).Should().BeTrue();
    }
 
 

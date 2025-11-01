@@ -23,7 +23,6 @@ public class RegisterController(IRemoteTypermediaNavigator remoteApiNavigator) :
          case RegistrationAttemptStatus.EmailAlreadyRegistered:
             ModelState.AddModelError((AccountResource.Tommand.Register model) => model.Email, "Email is already registered");
             ModelState.Remove((AccountResource.Tommand.Register model) => model.Id);
-            registrationTommand.ReplaceDeduplicationId();
             return View("RegistrationForm", registrationTommand);
          default:
             throw new ArgumentOutOfRangeException();

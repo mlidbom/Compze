@@ -22,7 +22,7 @@ public static class Types
                var allCompzeTypes = AppDomain.CurrentDomain.AllCompzeTypes();
 
                var abstractionsInternalTypes = allCompzeTypes
-                                              .Where(type => type.Namespace?.Contains(".Abstractions.Internal", StringComparison.Ordinal) == true)
+                                              .Where(type => type.Namespace?.ContainsOrdinal(".Abstractions.Internal") == true)
                                               .ToList();
 
                var publicTypes = abstractionsInternalTypes

@@ -1,15 +1,15 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using Compze.Core.DocumentDb.Internal.SqlLayer;
 using Compze.Core.DocumentDb.Internal.SqlLayer.Exceptions;
+using Compze.Core.Refactoring.Naming.Internal;
 using Compze.Sql.Common;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE;
-using Compze.Utilities.Threading.ResourceAccess;
 using Microsoft.Data.Sqlite;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using Schema = Compze.Core.DocumentDb.Internal.SqlLayer.IDocumentDbSqlLayer.DocumentTableSchemaStrings;
 
 namespace Compze.Sql.Sqlite.Private.DocumentDb;
@@ -43,7 +43,7 @@ internal partial class SqliteDocumentDbSqlLayer : IDocumentDbSqlLayer
       });
    }
 
-   public bool TryGet(string idString, IReadOnlySet<Guid> acceptableTypeIds, bool useUpdateLock, [NotNullWhen(true)] out IDocumentDbSqlLayer.ReadRow? document)
+   public bool TryGet(string idString, IReadOnlySet<TypeId> acceptableTypeIds, bool useUpdateLock, [NotNullWhen(true)] out IDocumentDbSqlLayer.ReadRow? document)
    {
       EnsureInitialized();
 
@@ -89,7 +89,7 @@ internal partial class SqliteDocumentDbSqlLayer : IDocumentDbSqlLayer
       }
    }
 
-   public int Remove(string idString, IReadOnlySet<Guid> acceptableTypes)
+   public int Remove(string idString, IReadOnlySet<TypeId> acceptableTypes)
    {
       EnsureInitialized();
       return _connectionPool.UseCommand(
@@ -99,7 +99,7 @@ internal partial class SqliteDocumentDbSqlLayer : IDocumentDbSqlLayer
                    .ExecuteNonQuery());
    }
 
-   public IEnumerable<Guid> GetAllIds(IReadOnlySet<Guid> acceptableTypes)
+   public IEnumerable<Guid> GetAllIds(IReadOnlySet<TypeId> acceptableTypes)
    {
       EnsureInitialized();
       return _connectionPool.UseCommand(
@@ -107,7 +107,7 @@ internal partial class SqliteDocumentDbSqlLayer : IDocumentDbSqlLayer
                            .ExecuteReaderAndSelect(reader => Guid.Parse(reader.GetString(0))));
    }
 
-   public IReadOnlyList<IDocumentDbSqlLayer.ReadRow> GetAll(IEnumerable<Guid> ids, IReadOnlySet<Guid> acceptableTypes)
+   public IReadOnlyList<IDocumentDbSqlLayer.ReadRow> GetAll(IEnumerable<Guid> ids, IReadOnlySet<TypeId> acceptableTypes)
    {
       EnsureInitialized();
       return _connectionPool.UseCommand(
@@ -118,7 +118,7 @@ internal partial class SqliteDocumentDbSqlLayer : IDocumentDbSqlLayer
                            .ExecuteReaderAndSelect(reader => new IDocumentDbSqlLayer.ReadRow(Guid.Parse(reader.GetString(2)), reader.GetString(1))));
    }
 
-   public IReadOnlyList<IDocumentDbSqlLayer.ReadRow> GetAll(IReadOnlySet<Guid> acceptableTypes)
+   public IReadOnlyList<IDocumentDbSqlLayer.ReadRow> GetAll(IReadOnlySet<TypeId> acceptableTypes)
    {
       EnsureInitialized();
       return _connectionPool.UseCommand(
@@ -126,7 +126,7 @@ internal partial class SqliteDocumentDbSqlLayer : IDocumentDbSqlLayer
                            .ExecuteReaderAndSelect(reader => new IDocumentDbSqlLayer.ReadRow(Guid.Parse(reader.GetString(2)), reader.GetString(1))));
    }
 
-   static string TypeInClause(IReadOnlySet<Guid> acceptableTypeIds) => Assert.Argument.Is(acceptableTypeIds.Any()).then("IN( '" + acceptableTypeIds.Select(guid => guid.ToString()).Join("', '") + "')\n");
+   static string TypeInClause(IReadOnlySet<TypeId> acceptableTypeIds) => Assert.Argument.Is(acceptableTypeIds.Any()).then("IN( '" + acceptableTypeIds.Select(guid => guid.ToString()).Join("', '") + "')\n");
 
    void EnsureInitialized() => _schemaManager.EnsureSchemaInitialized();
 }

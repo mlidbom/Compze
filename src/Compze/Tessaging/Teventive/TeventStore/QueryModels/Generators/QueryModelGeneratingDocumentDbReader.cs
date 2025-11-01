@@ -24,7 +24,7 @@ public class QueryModelGeneratingQueryModelReader : IVersioningQueryModelReader
       _usageGuard = new SingleThreadUseGuard(this);
    }
 
-   public virtual TValue Get<TValue>(object key)
+   public virtual TValue Get<TValue>(EntityId key)
    {
       _usageGuard.EnsureAccessValid();
       if(TryGet(key, out TValue? value))
@@ -35,7 +35,7 @@ public class QueryModelGeneratingQueryModelReader : IVersioningQueryModelReader
       throw new NoSuchDocumentException(key, typeof(TValue));
    }
 
-   public virtual TValue GetVersion<TValue>(object key, int version)
+   public virtual TValue GetVersion<TValue>(EntityId key, int version)
    {
       _usageGuard.EnsureAccessValid();
       if(TryGetVersion(key, out TValue? value, version))
@@ -46,9 +46,9 @@ public class QueryModelGeneratingQueryModelReader : IVersioningQueryModelReader
       throw new NoSuchDocumentException(key, typeof(TValue));
    }
 
-   public virtual bool TryGet<TDocument>(object key, [MaybeNullWhen(false)] out TDocument document) => TryGetVersion(key, out document);
+   public virtual bool TryGet<TDocument>(EntityId key, [MaybeNullWhen(false)] out TDocument document) => TryGetVersion(key, out document);
 
-   public virtual bool TryGetVersion<TDocument>(object key, [MaybeNullWhen(false)] out TDocument document, int version = -1)
+   public virtual bool TryGetVersion<TDocument>(EntityId key, [MaybeNullWhen(false)] out TDocument document, int version = -1)
    {
       var requiresVersioning = version > 0;
       _usageGuard.EnsureAccessValid();
@@ -87,17 +87,17 @@ public class QueryModelGeneratingQueryModelReader : IVersioningQueryModelReader
       return false;
    }
 
-   Option<TDocument> TryGenerateModel<TDocument>(object key, int version)
+   Option<TDocument> TryGenerateModel<TDocument>(EntityId key, int version)
    {
       if(version < 0)
       {
          return GetGeneratorsForDocumentType<TDocument>()
-               .Select(generator => generator.TryGenerate((Guid)key))
+               .Select(generator => generator.TryGenerate(key))
                .Single();
       }
 
       return VersionedGeneratorsForDocumentType<TDocument>()
-            .Select(generator => generator.TryGenerate((Guid)key, version))
+            .Select(generator => generator.TryGenerate(key, version))
             .Single();
    }
 
@@ -105,7 +105,7 @@ public class QueryModelGeneratingQueryModelReader : IVersioningQueryModelReader
                                                                             ? VersionedGeneratorsForDocumentType<TDocument>().Any()
                                                                             : GetGeneratorsForDocumentType<TDocument>().Any();
 
-   public virtual IEnumerable<TValue> GetAll<TValue>(IEnumerable<Guid> ids) where TValue : IHasPersistentIdentity<Guid>
+   public virtual IEnumerable<TValue> GetAll<TValue>(IEnumerable<EntityId> ids) where TValue : IEntity
    {
       _usageGuard.EnsureAccessValid();
       return ids.Select(id => Get<TValue>(id)).ToList();
