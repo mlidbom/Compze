@@ -83,12 +83,12 @@ class InternalMembersContractResolver : DefaultContractResolver
    protected override IList<JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization)
    {
       var properties = type.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
-                           .Where(p => !p.GetMethod?.IsPublic ?? false)
+                           .Where(p => p.GetMethod is { IsAssembly: true } or { IsFamilyOrAssembly: true } or { IsFamily: true })
                            .Select(p => CreateProperty(p, memberSerialization))
                            .ToList();
 
       var fields = type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
-                       .Where(f => !f.IsPublic)
+                       .Where(f => f.IsAssembly || f.IsFamilyOrAssembly || f.IsFamily)
                        .Select(f => CreateProperty(f, memberSerialization))
                        .ToList();
 
