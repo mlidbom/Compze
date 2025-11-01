@@ -15,19 +15,19 @@ public class EntityId_specification
    static readonly Guid ExpectedGuidValue = Guid.Parse("10000000-0000-0000-0000-000000000000");
    static readonly Guid DifferentGuidValue = Guid.Parse("20000000-0000-0000-0000-000000000000");
 
-   public class given_an_entity_id : EntityId_specification
+   public class given_a_TentityId : EntityId_specification
    {
       readonly TentityId _tentityId = new(ExpectedGuidValue);
 
-      public class and_another_TentityId : given_an_entity_id
+      public class and_another_TentityId : given_a_TentityId
       {
          public class with_the_same_value : and_a_taggregate_id_which_inherits_from_EntityId
          {
-            readonly TentityId _taggregateId = new(ExpectedGuidValue);
-            [XF] public void IEquatable_equals_returns_true() => _tentityId.Equals(_taggregateId).Must().BeTrue();
-            [XF] public void Object_equals_returns_true() => Equals(_tentityId, _taggregateId).Must().BeTrue();
-            [XF] public void equals_operator_returns_true() => (_tentityId == _taggregateId).Must().BeTrue();
-            [XF] public void not_equals_operator_returns_false() => (_tentityId != _taggregateId).Must().BeFalse();
+            readonly TentityId _sameTentityId = new(ExpectedGuidValue);
+            [XF] public void IEquatable_equals_returns_true() => _tentityId.Equals(_sameTentityId).Must().BeTrue();
+            [XF] public void Object_equals_returns_true() => Equals(_tentityId, _sameTentityId).Must().BeTrue();
+            [XF] public void equals_operator_returns_true() => (_tentityId == _sameTentityId).Must().BeTrue();
+            [XF] public void not_equals_operator_returns_false() => (_tentityId != _sameTentityId).Must().BeFalse();
          }
 
          public class with_a_different_value : and_another_TentityId
@@ -40,19 +40,19 @@ public class EntityId_specification
          }
       }
 
-      public class and_a_taggregate_id_which_inherits_from_EntityId : given_an_entity_id
+      public class and_a_taggregate_id_which_inherits_from_EntityId : given_a_TentityId
       {
          public class with_the_same_value : and_a_taggregate_id_which_inherits_from_EntityId
          {
-            readonly TaggregateId _taggregateId = new(ExpectedGuidValue);
-            [XF] public void IEquatable_equals_returns_true() => _tentityId.Equals(_taggregateId).Must().BeTrue();
-            [XF] public void Object_equals_returns_true() => Equals(_tentityId, _taggregateId).Must().BeTrue();
-            [XF] public void equals_operator_returns_true() => (_tentityId == _taggregateId).Must().BeTrue();
-            [XF] public void not_equals_operator_returns_false() => (_tentityId != _taggregateId).Must().BeFalse();
+            readonly TaggregateId _sameTaggregateId = new(ExpectedGuidValue);
+            [XF] public void IEquatable_equals_returns_true() => _tentityId.Equals(_sameTaggregateId).Must().BeTrue();
+            [XF] public void Object_equals_returns_true() => Equals(_tentityId, _sameTaggregateId).Must().BeTrue();
+            [XF] public void equals_operator_returns_true() => (_tentityId == _sameTaggregateId).Must().BeTrue();
+            [XF] public void not_equals_operator_returns_false() => (_tentityId != _sameTaggregateId).Must().BeFalse();
          }
       }
 
-      public class and_a_tessage_id_which_does_not_inherits_from_TEntityId : given_an_entity_id
+      public class and_a_tessage_id_which_does_not_inherits_from_TEntityId : given_a_TentityId
       {
          public class with_the_same_value : and_a_tessage_id_which_does_not_inherits_from_TEntityId
          {
@@ -64,7 +64,7 @@ public class EntityId_specification
          }
       }
 
-      public class when_passing_null_as_the_other_value : given_an_entity_id
+      public class when_passing_null_as_the_other_value : given_a_TentityId
       {
          [XF] public void IEquatable_equals_returns_false() => _tentityId.Equals(null).Must().BeFalse();
          [XF] public void Object_equals_returns_false() => Equals(_tentityId, null).Must().BeFalse();
