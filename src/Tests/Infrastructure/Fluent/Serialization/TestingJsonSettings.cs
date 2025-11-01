@@ -33,10 +33,8 @@ static class TestingJsonSettings
       new()
       {
          TypeNameHandling = TypeNameHandling.All,
-         TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Simple,
          Formatting = Formatting.Indented,
          ContractResolver = resolver,
          ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-         MaxDepth = 32
       };
 }
