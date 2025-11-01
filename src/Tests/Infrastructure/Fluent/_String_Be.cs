@@ -21,7 +21,7 @@ public static class StringBe
                           {must.Separator}
                           {must.Expression.Indent()}
                           {must.Separator}
-                          did not result in the expected string, resulting in the diff
+                          did not result in the expected string, producing the diff
                           {must.Separator}
                           {DiffGenerator.CreateDiff(expected, must.Actual)}
                           {must.Separator}

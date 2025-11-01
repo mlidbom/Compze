@@ -38,7 +38,7 @@ public class When_comparing_strings : UniversalTestBase
                                             --------------------------------------------------
                                                _actual
                                             --------------------------------------------------
-                                            did not result in the expected string, resulting in the diff
+                                            did not result in the expected string, producing the diff
                                             --------------------------------------------------
                                             --- expression
                                             +++ expected
@@ -85,7 +85,7 @@ public class When_comparing_strings : UniversalTestBase
                                             --------------------------------------------------
                                                _actual
                                             --------------------------------------------------
-                                            did not result in the expected string, resulting in the diff
+                                            did not result in the expected string, producing the diff
                                             --------------------------------------------------
                                             First [-Expected-Second] Third
                                             First [+Actual-Second] Third
