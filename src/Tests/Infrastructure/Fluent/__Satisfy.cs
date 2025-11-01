@@ -3,6 +3,7 @@ using Compze.Utilities.SystemCE;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using static Compze.Tests.Infrastructure.Fluent.ObjectEqualityAssertions;
 
@@ -37,6 +38,7 @@ public static class _Satisfy
                         {context.Separator}
                         {predicateExpression.Indent()}
                         {context.Separator}
+                        {DisplayUsedArgumentsDefinitions()}
                         {failureMessage?.Invoke(context.Actual) ?? "but it did not"}
                         {context.Separator}
                         The value of: 
@@ -51,7 +53,17 @@ public static class _Satisfy
                         {context.Separator}
                         {JsonConvert.SerializeObject(context.Actual, TestingJsonSettings.AllMembers)}
                         {context.Separator}
-                        """;
+                        """.Split(Environment.NewLine)
+                           .Where(it => it != RemoveLine)
+                           .JoinLines();
+
+         string DisplayUsedArgumentsDefinitions()
+         {
+            if(usedArguments == null)
+               return RemoveLine;
+
+            throw new NotImplementedException();
+         }
 
          throw new AssertionFailedException(message);
       }
