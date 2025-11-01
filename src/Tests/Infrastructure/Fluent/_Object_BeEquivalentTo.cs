@@ -35,8 +35,8 @@ public static class ObjectBeEquivalentTo
                                                      string expectedExpression = null!)
    {
       var equivalencyConfig = config(new EquivalencyConfig<TValue>());
-      var settings = TestingJsonSettings.CreateSettingsWithExclusions(TestingJsonSettings.AllMembers, equivalencyConfig.ExcludedMembers);
-      return BeEquivalentToCore(must, expected, expectedExpression, settings);
+      var serializerSettings = TestingJsonSettings.CreateSettingsWithExclusions(TestingJsonSettings.AllMembers, equivalencyConfig.ExcludedMembers);
+      return BeEquivalentToCore(must, expected, expectedExpression, serializerSettings);
    }
 
    public static Must<TValue> BeEquivalentToInternal<TValue>(this Must<TValue> must,
