@@ -44,7 +44,7 @@ public static class ObjectBeEquivalentTo
                               {must.Separator}
                               to be equivalent to the object returned by the expression:
                               {must.Separator}
-                              {expectedExpression}
+                              {must.NormalizeExpressionIndentation(expectedExpression)}
                               {must.Separator}
                               But it resulted in the Diff:
                               {must.Separator}
