@@ -7,7 +7,7 @@ public static class BooleanBeTrueFalse
 {
    public static Must<bool>? BeTrue(this Must<bool> must)
       => must.Satisfy(it => it == true,
-                      messageOverride:() =>
+                      messageOverride: _ =>
                          $"""
                           expected the expression: 
                           {must.Separator}
@@ -19,7 +19,7 @@ public static class BooleanBeTrueFalse
 
    public static Must<bool>? BeFalse(this Must<bool> must)
       => must.Satisfy(it => it == false,
-                      messageOverride:() =>
+                      messageOverride:_ =>
                          $"""
                           expected the expression: 
                           {must.Separator}

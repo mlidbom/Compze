@@ -9,6 +9,11 @@ using System.Text;
 
 namespace Compze.Tests.Infrastructure.Fluent;
 
+public record SatisfyCallInfo<T>(string PredicateExpression, Func<T, bool> Predicate, Func<T, string>? FailureMessage, IReadOnlyList<AssertionArgumentInfo>? UsedArguments)
+{
+
+}
+
 public static class _Satisfy
 {
    const string RemoveLine = nameof(RemoveLine);
@@ -17,7 +22,7 @@ public static class _Satisfy
                                     Func<T, bool> predicate,
                                     [CallerArgumentExpression(nameof(predicate))]
                                     string predicateExpression = null!,
-                                    Func<string>? messageOverride = null,
+                                    Func<SatisfyCallInfo<T>, string>? messageOverride = null,
                                     Func<T, string>? failureMessage = null,
                                     IReadOnlyList<AssertionArgumentInfo>? usedArguments = null)
    {
@@ -25,7 +30,7 @@ public static class _Satisfy
       {
          if(messageOverride != null)
          {
-            throw new AssertionFailedException(messageOverride.Invoke());
+            throw new AssertionFailedException(messageOverride.Invoke(new SatisfyCallInfo<T>(predicateExpression, predicate, failureMessage, usedArguments)));
          }
 
          var message = $"""

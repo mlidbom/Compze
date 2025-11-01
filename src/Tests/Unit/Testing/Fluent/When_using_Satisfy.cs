@@ -44,7 +44,7 @@ public class When_using_Satisfy : UniversalTestBase
    {
       readonly int _value = 5;
 
-      string ExceptionMessage() => Invoking(() => _value.Must().Satisfy(v => v > 10, messageOverride: () => "Custom error message"))
+      string ExceptionMessage() => Invoking(() => _value.Must().Satisfy(v => v > 10, messageOverride: _ => "Custom error message"))
                                   .Must()
                                   .Throw<AssertionFailedException>()
                                   .Which
