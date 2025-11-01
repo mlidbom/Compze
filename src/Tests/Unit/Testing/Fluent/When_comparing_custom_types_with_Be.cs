@@ -79,7 +79,7 @@ public class When_comparing_custom_types_with_Be : UniversalTestBase
       {
          if(other is null) return 1;
          var result = _value.CompareTo(other._value);
-         if(_brokenBehavior.HasFlag(BrokenBehavior.IComparableGeneric)) result = -result;
+         if(_brokenBehavior.HasFlag(BrokenBehavior.IComparableGeneric) && result == 0) result = 1;
          return result;
       }
 
@@ -87,7 +87,7 @@ public class When_comparing_custom_types_with_Be : UniversalTestBase
       {
          if(obj is not TestValue other) throw new ArgumentException("Object is not a TestValue");
          var result = _value.CompareTo(other._value);
-         if(_brokenBehavior.HasFlag(BrokenBehavior.IComparable)) result = -result;
+         if(_brokenBehavior.HasFlag(BrokenBehavior.IComparable) && result == 0) result = 1;
          return result;
       }
 
@@ -269,7 +269,7 @@ public class When_comparing_custom_types_with_Be : UniversalTestBase
             .Must().Throw<AssertionFailedException>()
             .Which.Message;
 
-         message.Must().Contain("(it as IComparable<TestValue>)?.CompareTo(expected).Equals(0) ?? true");
+         message.Must().Contain("(it as IComparable<TValue>)?.CompareTo(expected).Equals(0) ?? true");
          message.Must().Contain("it.CompareTo(expected) (IComparable<T>) should have returned 0");
       }
    }
@@ -285,7 +285,7 @@ public class When_comparing_custom_types_with_Be : UniversalTestBase
             .Must().Throw<AssertionFailedException>()
             .Which.Message;
 
-         message.Must().Contain("(expected as IComparable<TestValue>)?.CompareTo(it).Equals(0) ?? true");
+         message.Must().Contain("(expected as IComparable<TValue>)?.CompareTo(it).Equals(0) ?? true");
          message.Must().Contain("expected.CompareTo(it) (IComparable<T>) should have returned 0");
       }
    }
