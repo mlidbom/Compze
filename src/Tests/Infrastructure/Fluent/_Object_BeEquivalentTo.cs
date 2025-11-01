@@ -60,16 +60,8 @@ public static class ObjectBeEquivalentTo
 
                               JSON Diff:
                               {must.Separator}
-                              {JsonDiffGenerator.CreateDiff(expectedJson, actualJson)}
+                              {UnidiffRenderer.GenerateUnidiff(oldText: expectedJson, newText: actualJson, oldFileName: "expected", newFileName: "actual")}
                               {must.Separator}
                               """);
-   }
-}
-
-static class JsonDiffGenerator
-{
-   public static string CreateDiff(string expectedJson, string actualJson)
-   {
-      return UnidiffRenderer.GenerateUnidiff(oldText: expectedJson, newText: actualJson, oldFileName: "expected", newFileName: "actual");
    }
 }
