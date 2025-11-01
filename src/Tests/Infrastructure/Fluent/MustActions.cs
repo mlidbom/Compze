@@ -4,29 +4,6 @@ using Compze.Utilities.SystemCE.ReflectionCE;
 
 namespace Compze.Tests.Infrastructure.Fluent;
 
-public static class Catch<TException>
-   where TException : Exception
-{
-   public static TException Invoking(Action action, [CallerArgumentExpression(nameof(action))] string expression = null!)
-   {
-      try
-      {
-         action();
-      }
-      catch(TException caught)
-      {
-         return caught;
-      }
-      catch(Exception unexpected)
-      {
-         throw new AssertionFailedException($"Expected {expression} to throw {typeof(TException).Name} but instead a {unexpected.GetType().GetFullNameCompilable()} was thrown");
-      }
-
-      throw new AssertionFailedException($"Expected {expression} to throw {typeof(TException).Name} but no exception was thrown");
-   }
-}
-
-
 public class ActionSpec(Action action, string expression)
 {
    readonly Action _action = action;
