@@ -1,6 +1,8 @@
 using Compze.Tests.Infrastructure.Fluent.Serialization;
 using DiffPlex.Renderer;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
 namespace Compze.Tests.Infrastructure.Fluent;
@@ -38,19 +40,59 @@ public static class ObjectEqualityAssertions
                                  """;
                       });
 
-   public static Must<TValue>? Be_transitively_equal_to_according_to_every_supported_comparison_method<TValue>(this Must<TValue> must, TValue expected, [CallerArgumentExpression(nameof(expected))] string expectedExpression = null!)
+   public static Must<TValue>? Be_transitively_equal_to_according_to_every_supported_comparison_method_and_hashcode<TValue>(this Must<TValue> must, TValue expected, [CallerArgumentExpression(nameof(expected))] string expectedExpression = null!)
    {
+      var actual = must.Actual;
 
-         //using Satisfy, passing expectedExpression along, Implement the equivalent of making all the below assertions, and their inversion (with _first and _second reversed)
-         //Also do the same for IComparable<T> and the < > <= >= operators
+      // IEquatable<T>.Equals - both directions
+      if(actual is IEquatable<TValue> equatable)
+      {
+         must.Satisfy(it => equatable.Equals(expected));
+      }
+      if(expected is IEquatable<TValue> expectedEquatable)
+      {
+         must.Satisfy(it => expectedEquatable.Equals(actual));
+      }
 
-        //[XF] public void IEquatable_equals_returns_true() => _first.Equals(_second).Must().BeTrue();
-        //[XF] public void Object_equals_returns_true() => Equals(_first, _second).Must().BeTrue();
-        //[XF] public void equals_operator_returns_true() => (_first == _second).Must().BeTrue();
-        //[XF] public void not_equals_operator_returns_false() => (_first != _second).Must().BeFalse();
+      // Object.Equals - both directions
+      must.Satisfy(it => Equals(it, expected));
+      must.Satisfy(it => Equals(expected, it));
 
+      // == operator - both directions
+      must.Satisfy(actual => EqualityComparer<TValue>.Default.Equals(actual, expected));
+      must.Satisfy(actual => EqualityComparer<TValue>.Default.Equals(expected, actual));
 
+      // != operator - both directions (should return false)
+      must.Satisfy(it => !EqualityComparer<TValue>.Default.Equals(it, expected) == false);
+      must.Satisfy(it => !EqualityComparer<TValue>.Default.Equals(expected, it) == false);
 
-        return must;
+      // IComparable<T>.CompareTo - both directions (should return 0)
+      if(actual is IComparable<TValue> actualAsGenericComparable)
+      {
+         must.Satisfy(it => actualAsGenericComparable.CompareTo(expected) == 0);
+      }
+      if(expected is IComparable<TValue> expectedAsGenericComparable)
+      {
+         must.Satisfy(it => expectedAsGenericComparable.CompareTo(actual) == 0);
+      }
+
+      // IComparable.CompareTo - both directions (should return 0)
+      if(actual is IComparable actualAsComparable)
+      {
+         must.Satisfy(it => actualAsComparable.CompareTo(expected) == 0);
+      }
+      if(expected is IComparable expectedAsComparable)
+      {
+         must.Satisfy(it => expectedAsComparable.CompareTo(actual) == 0);
+      }
+
+      // Comparer<T>.Default.Compare - both directions (should return 0)
+      must.Satisfy(it => Comparer<TValue>.Default.Compare(it, expected) == 0);
+      must.Satisfy(it => Comparer<TValue>.Default.Compare(expected, it) == 0);
+
+      // GetHashCode - should return the same value for equal objects
+      must.Satisfy(it => it!.GetHashCode() == expected!.GetHashCode());
+
+      return must;
    }
 }
