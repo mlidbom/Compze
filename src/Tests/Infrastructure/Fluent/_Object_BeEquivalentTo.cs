@@ -37,39 +37,26 @@ public static class ObjectBeEquivalentTo
       return must.Satisfy(it => actualJson == expectedJson,
                           () =>
                              $"""
-
-                              expected the expression: 
                               {must.Separator}
-                              {must.Expression.Indent()}
+                              expected the object returned by the expression: 
                               {must.Separator}
-                              to BeEquivalentTo:
+                              {must.Expression}
                               {must.Separator}
-                              {expectedExpression.Indent()}
+                              to be equivalent to the object returned by the expression:
                               {must.Separator}
-
-                              Actual.ToString():
+                              {expectedExpression}
                               {must.Separator}
-                              {(must.Actual?.ToString() ?? "null").Indent()}
+                              But it resulted in the Diff:
                               {must.Separator}
-
-                              Expected.ToString():
+                              {UnidiffRenderer.GenerateUnidiff(oldText: expectedJson, newText: actualJson, oldFileName: "expected", newFileName: "actual")}
                               {must.Separator}
-                              {(expected?.ToString() ?? "null").Indent()}
-                              {must.Separator}
-
-                              Actual JSON:
+                              Actual was:
                               {must.Separator}
                               {actualJson}
                               {must.Separator}
-
-                              Expected JSON:
+                              Expected was:
                               {must.Separator}
                               {expectedJson}
-                              {must.Separator}
-
-                              JSON Diff:
-                              {must.Separator}
-                              {UnidiffRenderer.GenerateUnidiff(oldText: expectedJson, newText: actualJson, oldFileName: "expected", newFileName: "actual")}
                               {must.Separator}
                               """);
    }
