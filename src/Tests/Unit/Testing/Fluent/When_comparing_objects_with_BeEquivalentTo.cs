@@ -43,42 +43,62 @@ public class When_comparing_objects_with_BeEquivalentTo : UniversalTestBase
                                                                                                --------------------------------------------------
                                                                                                """);
 
-            [XF] public void the_full_unified_diff() => ExceptionMessage().Must().Contain("""
-                                                                                          --- expected
-                                                                                          +++ actual
-                                                                                          @@ -1,6 +1,6 @@
-                                                                                           {
-                                                                                             "$type": "Compze.Tests.Unit.Testing.Fluent.When_comparing_objects_with_BeEquivalentTo+TestObject, Compze.Tests.Unit",
-                                                                                          -  "PublicProperty": "public2",
-                                                                                          -  "InternalProperty": "internal2",
-                                                                                          -  "PrivateField": "private2"
-                                                                                          +  "PublicProperty": "public1",
-                                                                                          +  "InternalProperty": "internal1",
-                                                                                          +  "PrivateField": "private1"
-                                                                                           }
-                                                                                          """);
+            [XF] public void the_full_Actual_ToString_section() => ExceptionMessage().Must().Contain("""
+                                                                                                      Actual.ToString():
+                                                                                                      --------------------------------------------------
+                                                                                                         Compze.Tests.Unit.Testing.Fluent.When_comparing_objects_with_BeEquivalentTo+TestObject
+                                                                                                      --------------------------------------------------
+                                                                                                      """);
 
-            [XF] public void the_complete_actual_json() => ExceptionMessage().Must().Contain("""
-                                                                                             Actual JSON:
-                                                                                             --------------------------------------------------
-                                                                                             {
-                                                                                               "$type": "Compze.Tests.Unit.Testing.Fluent.When_comparing_objects_with_BeEquivalentTo+TestObject, Compze.Tests.Unit",
-                                                                                               "PublicProperty": "public1",
-                                                                                               "InternalProperty": "internal1",
-                                                                                               "PrivateField": "private1"
-                                                                                             }
-                                                                                             """);
+            [XF] public void the_full_Expected_ToString_section() => ExceptionMessage().Must().Contain("""
+                                                                                                        Expected.ToString():
+                                                                                                        --------------------------------------------------
+                                                                                                           Compze.Tests.Unit.Testing.Fluent.When_comparing_objects_with_BeEquivalentTo+TestObject
+                                                                                                        --------------------------------------------------
+                                                                                                        """);
 
-            [XF] public void the_complete_expected_json() => ExceptionMessage().Must().Contain("""
-                                                                                               Expected JSON:
-                                                                                               --------------------------------------------------
-                                                                                               {
-                                                                                                 "$type": "Compze.Tests.Unit.Testing.Fluent.When_comparing_objects_with_BeEquivalentTo+TestObject, Compze.Tests.Unit",
-                                                                                                 "PublicProperty": "public2",
-                                                                                                 "InternalProperty": "internal2",
-                                                                                                 "PrivateField": "private2"
-                                                                                               }
-                                                                                               """);
+            [XF] public void the_complete_actual_json_with_heading_and_separators() => ExceptionMessage().Must().Contain("""
+                                                                                                                          Actual JSON:
+                                                                                                                          --------------------------------------------------
+                                                                                                                          {
+                                                                                                                            "$type": "Compze.Tests.Unit.Testing.Fluent.When_comparing_objects_with_BeEquivalentTo+TestObject, Compze.Tests.Unit",
+                                                                                                                            "PublicProperty": "public1",
+                                                                                                                            "InternalProperty": "internal1",
+                                                                                                                            "PrivateField": "private1"
+                                                                                                                          }
+                                                                                                                          --------------------------------------------------
+                                                                                                                          """);
+
+            [XF] public void the_complete_expected_json_with_heading_and_separators() => ExceptionMessage().Must().Contain("""
+                                                                                                                            Expected JSON:
+                                                                                                                            --------------------------------------------------
+                                                                                                                            {
+                                                                                                                              "$type": "Compze.Tests.Unit.Testing.Fluent.When_comparing_objects_with_BeEquivalentTo+TestObject, Compze.Tests.Unit",
+                                                                                                                              "PublicProperty": "public2",
+                                                                                                                              "InternalProperty": "internal2",
+                                                                                                                              "PrivateField": "private2"
+                                                                                                                            }
+                                                                                                                            --------------------------------------------------
+                                                                                                                            """);
+
+            [XF] public void the_full_unified_diff_with_heading_and_separators() => ExceptionMessage().Must().Contain("""
+                                                                                                                        JSON Diff:
+                                                                                                                        --------------------------------------------------
+                                                                                                                        --- expected
+                                                                                                                        +++ actual
+                                                                                                                        @@ -1,6 +1,6 @@
+                                                                                                                         {
+                                                                                                                           "$type": "Compze.Tests.Unit.Testing.Fluent.When_comparing_objects_with_BeEquivalentTo+TestObject, Compze.Tests.Unit",
+                                                                                                                        -  "PublicProperty": "public2",
+                                                                                                                        -  "InternalProperty": "internal2",
+                                                                                                                        -  "PrivateField": "private2"
+                                                                                                                        +  "PublicProperty": "public1",
+                                                                                                                        +  "InternalProperty": "internal1",
+                                                                                                                        +  "PrivateField": "private1"
+                                                                                                                         }
+
+                                                                                                                        --------------------------------------------------
+                                                                                                                        """);
          }
       }
    }
