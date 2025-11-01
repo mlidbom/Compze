@@ -58,7 +58,6 @@ public static class ObjectEqualityAssertions
       must.Satisfy(actual => EqualityComparer<TValue>.Default.Equals(actual, expected), () => "default equality comparer should have returned true");
       must.Satisfy(actual => EqualityComparer<TValue>.Default.Equals(expected, actual), () => "default equality comparer should have returned true");
 
-
       must.Satisfy(actual => (actual as IComparable<TValue>)?.CompareTo(expected).Equals(0) ?? true, () => "IComparable<T>.CompareTo should have returned 0");
       must.Satisfy(actual => (expected as IComparable<TValue>)?.CompareTo(actual).Equals(0) ?? true, () => "IComparable<T>.CompareTo should have returned 0");
 
@@ -71,14 +70,14 @@ public static class ObjectEqualityAssertions
       must.Satisfy(actual => !actual.DeclaredType().Operators.LessThan?.Invoke(expected, actual) ?? true, () => "Operator < should have returned false");
       must.Satisfy(actual => !actual.DeclaredType().Operators.LessThan?.Invoke(actual, expected) ?? true, () => "Operator < should have returned false");
 
-      must.Satisfy(actual => !actual.DeclaredType().Operators.LessThanOrEqual?.Invoke(expected, actual) ?? true, () => "Operator <= should have returned false");
-      must.Satisfy(actual => !actual.DeclaredType().Operators.LessThanOrEqual?.Invoke(actual, expected) ?? true, () => "Operator <= should have returned false");
+      must.Satisfy(actual => actual.DeclaredType().Operators.LessThanOrEqual?.Invoke(expected, actual) ?? true, () => "Operator <= should have returned true");
+      must.Satisfy(actual => actual.DeclaredType().Operators.LessThanOrEqual?.Invoke(actual, expected) ?? true, () => "Operator <= should have returned true");
 
       must.Satisfy(actual => !actual.DeclaredType().Operators.GreaterThan?.Invoke(expected, actual) ?? true, () => "Operator > should have returned false");
       must.Satisfy(actual => !actual.DeclaredType().Operators.GreaterThan?.Invoke(actual, expected) ?? true, () => "Operator > should have returned false");
 
-      must.Satisfy(actual => !actual.DeclaredType().Operators.GreaterThanOrEqual?.Invoke(expected, actual) ?? true, () => "Operator >= should have returned false");
-      must.Satisfy(actual => !actual.DeclaredType().Operators.GreaterThanOrEqual?.Invoke(actual, expected) ?? true, () => "Operator >= should have returned false");
+      must.Satisfy(actual => actual.DeclaredType().Operators.GreaterThanOrEqual?.Invoke(expected, actual) ?? true, () => "Operator >= should have returned true");
+      must.Satisfy(actual => actual.DeclaredType().Operators.GreaterThanOrEqual?.Invoke(actual, expected) ?? true, () => "Operator >= should have returned true");
 
       must.Satisfy(actual => actual!.GetHashCode() == expected!.GetHashCode());
 
