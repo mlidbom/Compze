@@ -41,6 +41,13 @@ public static class ObjectEqualityAssertions
                                  """;
                       });
 
+   public class AssertionArgumentInfo(string name, string expression, object value)
+   {
+      public string Name { get; } = name;
+      public string Expression { get; } = expression;
+      public object Value { get; } = value;
+   }
+
    public static Must<TValue>? Be_transitively_equal_to_according_to_every_supported_comparison_method_and_hashcode<TValue>(this Must<TValue> must, TValue expected, [CallerArgumentExpression(nameof(expected))] string expectedExpression = null!)
    {
       must.Satisfy(actual => Equals(actual, expected));

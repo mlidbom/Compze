@@ -1,19 +1,24 @@
-using System;
-using System.Runtime.CompilerServices;
 using Compze.Tests.Infrastructure.Fluent.Serialization;
 using Compze.Utilities.SystemCE;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using static Compze.Tests.Infrastructure.Fluent.ObjectEqualityAssertions;
 
 namespace Compze.Tests.Infrastructure.Fluent;
 
 public static class _Satisfy
 {
+   const string RemoveLine = nameof(RemoveLine);
+
    public static Must<T> Satisfy<T>(this Must<T> context,
                                      Func<T, bool> predicate,
                                      Func<string>? messageOverride = null,
                                      [CallerArgumentExpression(nameof(predicate))]
                                      string predicateExpression = null!,
-                                     Func<T,string>? failureMessage = null)
+                                     Func<T,string>? failureMessage = null,
+                                     IEnumerable<AssertionArgumentInfo>? usedArguments = null)
    {
       if(!predicate(context.Actual))
       {
@@ -34,7 +39,9 @@ public static class _Satisfy
                         {context.Separator}
                         {failureMessage?.Invoke(context.Actual) ?? "but it did not"}
                         {context.Separator}
-                        Actual was:
+                        The value of: 
+                        {context.Expression.Indent()}
+                        Was:
                         {context.Separator}
                         ToString():
                         {context.Separator}
