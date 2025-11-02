@@ -1,39 +1,18 @@
 using System;
 using System.Runtime.CompilerServices;
-// ReSharper disable PrimaryConstructorParameterCaptureDisallowed
 
 namespace Compze.Tests.Infrastructure.Fluent;
 
-public static class DateTimeProximityAssertions
+public static class DateTimeToleranceAssertions
 {
-   public static DateTimeProximityAssertion BeWithin(this Must<DateTime> must, TimeSpan tolerance, [CallerArgumentExpression(nameof(tolerance))] string toleranceExpression = null!) =>
-      new(must, tolerance, toleranceExpression);
-}
-
-public class DateTimeProximityAssertion(Must<DateTime> must, TimeSpan tolerance, string toleranceExpression)
-{
-   readonly string _toleranceExpression = toleranceExpression;
-   readonly Must<DateTime> _must = must;
-
-   public Must<DateTime> Before(DateTime mustBeBefore, [CallerArgumentExpression(nameof(mustBeBefore))] string referenceExpression = null!)
+   public static Must<DateTime> Be(this Must<DateTime> must, DateTime expected, TimeSpan tolerance, [CallerArgumentExpression(nameof(expected))] string expectedExpression = null!, [CallerArgumentExpression(nameof(tolerance))] string toleranceExpression = null!)
    {
-      return _must.Satisfy(
-         it => it >= mustBeBefore - tolerance && it <= mustBeBefore,
+      return must.Satisfy(
+         it => (it - expected).Duration() <= tolerance,
          usedArguments:
          [
-            new(nameof(tolerance), _toleranceExpression, tolerance),
-            new(nameof(mustBeBefore), referenceExpression, mustBeBefore)
-         ]);
-   }
-
-   public Must<DateTime> After(DateTime mustBeAfter, [CallerArgumentExpression(nameof(mustBeAfter))] string referenceExpression = null!)
-   {
-      return _must.Satisfy(
-         it => it >= mustBeAfter && it <= mustBeAfter + tolerance,
-         usedArguments:
-         [
-            new(nameof(tolerance), _toleranceExpression, tolerance),
-            new(nameof(mustBeAfter), referenceExpression, mustBeAfter)
+            new(nameof(expected), expectedExpression, expected),
+            new(nameof(tolerance), toleranceExpression, tolerance)
          ]);
    }
 }
