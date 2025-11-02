@@ -39,12 +39,12 @@ public static class ObjectEqualityAssertions
       must.Satisfy(it => (expected as IComparable)?.CompareTo(it).Equals(0) ?? true, failureMessage: it => "expected.CompareTo(it) (IComparable) should have returned 0", messageOverride: BuildFailureMessage);
 
       // IStructuralEquatable - used for structural equality (e.g., arrays, tuples)
-      must.Satisfy(it => (it as IStructuralEquatable)?.Equals(expected, StructuralComparisons.StructuralEqualityComparer) ?? true, failureMessage: it => "it.Equals(expected, StructuralEqualityComparer) (IStructuralEquatable) should have returned true", messageOverride: BuildFailureMessage);
-      must.Satisfy(it => (expected as IStructuralEquatable)?.Equals(it, StructuralComparisons.StructuralEqualityComparer) ?? true, failureMessage: it => "expected.Equals(it, StructuralEqualityComparer) (IStructuralEquatable) should have returned true", messageOverride: BuildFailureMessage);
+      must.Satisfy(it => (it as IStructuralEquatable)?.Equals(expected, StructuralComparisons.StructuralEqualityComparer) ?? true, failureMessage: it => "it.Equals(expected, StructuralEqualityComparer) should have returned true", messageOverride: BuildFailureMessage);
+      must.Satisfy(it => (expected as IStructuralEquatable)?.Equals(it, StructuralComparisons.StructuralEqualityComparer) ?? true, failureMessage: it => "expected.Equals(it, StructuralEqualityComparer) should have returned true", messageOverride: BuildFailureMessage);
 
       // IStructuralComparable - used for structural comparison (e.g., arrays, tuples)
-      must.Satisfy(it => (it as IStructuralComparable)?.CompareTo(expected, StructuralComparisons.StructuralComparer).Equals(0) ?? true, failureMessage: it => "it.CompareTo(expected, StructuralComparer) (IStructuralComparable) should have returned 0", messageOverride: BuildFailureMessage);
-      must.Satisfy(it => (expected as IStructuralComparable)?.CompareTo(it, StructuralComparisons.StructuralComparer).Equals(0) ?? true, failureMessage: it => "expected.CompareTo(it, StructuralComparer) (IStructuralComparable) should have returned 0", messageOverride: BuildFailureMessage);
+      must.Satisfy(it => (it as IStructuralComparable)?.CompareTo(expected, StructuralComparisons.StructuralComparer).Equals(0) ?? true, failureMessage: it => "it.CompareTo(expected, StructuralComparer) should have returned 0", messageOverride: BuildFailureMessage);
+      must.Satisfy(it => (expected as IStructuralComparable)?.CompareTo(it, StructuralComparisons.StructuralComparer).Equals(0) ?? true, failureMessage: it => "expected.CompareTo(it, StructuralComparer) should have returned 0", messageOverride: BuildFailureMessage);
 
       must.Satisfy(it => !it.DeclaredType().Operators.LessThan?.Invoke(it, expected) ?? true, failureMessage: it => "it < expected should have returned false", messageOverride: BuildFailureMessage);
       must.Satisfy(it => !it.DeclaredType().Operators.LessThan?.Invoke(expected, it) ?? true, failureMessage: it => "expected < it should have returned false", messageOverride: BuildFailureMessage);
