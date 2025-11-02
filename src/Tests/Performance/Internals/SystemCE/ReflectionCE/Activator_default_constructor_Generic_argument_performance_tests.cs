@@ -5,7 +5,7 @@ using Compze.Tests.Infrastructure;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
 using Compze.Utilities.Testing.XUnit.BDD;
-using FluentAssertions;
+using Compze.Tests.Infrastructure.Fluent;
 using JetBrains.Annotations;
 
 #pragma warning disable CA1806 // Do not ignore method results
@@ -16,7 +16,7 @@ public class Activator_default_constructor_Generic_argument_performance_tests : 
 {
    [UsedImplicitly] class Simple;
 
-   [XF] public void Can_construct_instance() => Constructor.For<Simple>.DefaultConstructor.Instance().Should().NotBe(null);
+   [XF] public void Can_construct_instance() => Constructor.For<Simple>.DefaultConstructor.Instance().Must().NotBeNull();
 
    [XF] public void Constructs_1_000_000_instances_within_50_percent_of_default_constructor_time()
    {

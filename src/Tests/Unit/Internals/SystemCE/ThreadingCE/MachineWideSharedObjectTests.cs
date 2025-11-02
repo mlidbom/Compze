@@ -8,11 +8,12 @@ using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.Utilities.SystemCE;
 using Compze.Utilities.Threading.Testing;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.Testing.DbPool.SystemCE.ThreadingCE;
 using Compze.Tests.Infrastructure.Fluent;
-using FluentAssertions.Extensions;
+
 using JetBrains.Annotations;
 using Compze.Utilities.Threading.TasksCE;
 

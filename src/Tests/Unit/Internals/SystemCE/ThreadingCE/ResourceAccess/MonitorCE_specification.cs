@@ -3,9 +3,10 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Compze.Tests.Infrastructure;
+using Compze.Utilities.SystemCE;
 using Compze.Utilities.Testing.XUnit.BDD;
 using Compze.Tests.Infrastructure.Fluent;
-using FluentAssertions.Extensions;
+
 using NCrunch.Framework;
 using Xunit;
 using static Compze.Tests.Infrastructure.Fluent.MustActions;

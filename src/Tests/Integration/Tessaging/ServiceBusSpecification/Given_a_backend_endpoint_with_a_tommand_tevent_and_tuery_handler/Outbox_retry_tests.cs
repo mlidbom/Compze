@@ -1,6 +1,9 @@
 using System;
+using Compze.Utilities.SystemCE;
 using System.Linq;
+using Compze.Utilities.SystemCE;
 using System.Threading.Tasks;
+using Compze.Utilities.SystemCE;
 using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Implementation.Outbox;
 using Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
@@ -8,7 +11,7 @@ using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Utilities.Threading.Testing;
 using Compze.Tests.Infrastructure.Fluent;
-using FluentAssertions.Extensions;
+
 
 namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
 

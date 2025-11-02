@@ -6,7 +6,7 @@ using Compze.Tests.Infrastructure;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
 using Compze.Utilities.Testing.XUnit.BDD;
-using FluentAssertions;
+using Compze.Tests.Infrastructure.Fluent;
 using JetBrains.Annotations;
 
 #pragma warning disable IDE1006 //Reviewed OK: Test Naming Styles
@@ -27,7 +27,7 @@ public class Activator_one_argument_constructor_performance_tests : UniversalTes
 #pragma warning restore IDE0060 // Remove unused parameter
    }
 
-   [XF] public void Can_create_instance() => Constructor.For<Simple>.WithArguments<string>.Instance(Argument).Should().NotBe(null);
+   [XF] public void Can_create_instance() => Constructor.For<Simple>.WithArguments<string>.Instance(Argument).Must().NotBeNull();
 
    [XF] public void _005_Constructs_1_00_000_instances_within_150_percent_of_normal_constructor_call()
    {
