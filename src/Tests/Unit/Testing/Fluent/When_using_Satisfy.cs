@@ -76,7 +76,7 @@ public class When_using_Satisfy : UniversalTestBase
       [XF] public void the_full_message_is() =>
          ExceptionMessage().Must().Be("""
                                       --------------------------------------------------
-                                      expected the object returned by the expression:
+                                      expected
                                       --------------------------------------------------
                                          _actual
                                       --------------------------------------------------

@@ -29,15 +29,15 @@ public class When_comparing_objects_with_BeEquivalentTo : UniversalTestBase
             [XF] public void and_the_exception_message_is() =>
                ExceptionMessage().Must().Be(""""
                                             --------------------------------------------------
-                                            expected the object returned by the expression: 
+                                            expected:
                                             --------------------------------------------------
-                                            _actual
+                                               _actual
                                             --------------------------------------------------
-                                            to be equivalent to the object returned by the expression:
+                                            to be equivalent to:
                                             --------------------------------------------------
-                                            _expected
+                                               _expected
                                             --------------------------------------------------
-                                            But it resulted in the Diff:
+                                            But comparison of the objects serialized as JSON resulted in the Diff:
                                             --------------------------------------------------
                                             --- expected
                                             +++ actual
@@ -49,7 +49,7 @@ public class When_comparing_objects_with_BeEquivalentTo : UniversalTestBase
                                             +  "PrivateField": "private_actual",
                                                "PublicProperty": "public_expected"
                                              }
-
+                                            
                                             --------------------------------------------------
                                             Actual was:
                                             --------------------------------------------------

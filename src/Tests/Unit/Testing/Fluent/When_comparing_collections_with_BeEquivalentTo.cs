@@ -30,15 +30,15 @@ public class When_comparing_unordered_collections_with_BeEquivalentTo : Universa
             [XF] public void with_the_message_()
                => ExceptionMessage().Must().Be("""
                                                --------------------------------------------------
-                                               expected the object returned by the expression: 
+                                               expected:
                                                --------------------------------------------------
-                                               _expected
+                                                  _expected
                                                --------------------------------------------------
-                                               to be equivalent to the object returned by the expression:
+                                               to be equivalent to:
                                                --------------------------------------------------
-                                               _one_differing_item
+                                                  _one_differing_item
                                                --------------------------------------------------
-                                               But it resulted in the Diff:
+                                               But comparison of the objects serialized as JSON resulted in the Diff:
                                                --------------------------------------------------
                                                --- expected
                                                +++ actual
@@ -50,7 +50,7 @@ public class When_comparing_unordered_collections_with_BeEquivalentTo : Universa
                                                   "b": 2,
                                                   "c": 3
                                                 }
-
+                                               
                                                --------------------------------------------------
                                                Actual was:
                                                --------------------------------------------------

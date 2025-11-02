@@ -8,6 +8,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using Compze.Utilities.Functional;
+using Compze.Utilities.SystemCE;
 
 namespace Compze.Tests.Infrastructure.Fluent;
 
@@ -63,15 +64,15 @@ public static class ObjectBeEquivalentTo
                           messageOverride: _ =>
                              $"""
                               {must.Separator}
-                              expected the object returned by the expression: 
+                              expected:
                               {must.Separator}
-                              {must.Expression}
+                              {must.Expression.Indent()}
                               {must.Separator}
-                              to be equivalent to the object returned by the expression:
+                              to be equivalent to:
                               {must.Separator}
-                              {must.NormalizeExpressionIndentation(expectedExpression)}
+                              {must.NormalizeExpressionIndentation(expectedExpression).Indent()}
                               {must.Separator}
-                              But it resulted in the Diff:
+                              But comparison of the objects serialized as JSON resulted in the Diff:
                               {must.Separator}
                               {DiffGenerator.CreateDiff(expected: expectedJson, actual:actualJson)}
                               {must.Separator}
