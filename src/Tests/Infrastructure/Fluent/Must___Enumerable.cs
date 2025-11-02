@@ -1,6 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using Compze.Tests.Infrastructure.Fluent.Serialization;
+using Compze.Utilities.SystemCE;
+using Newtonsoft.Json;
 
 namespace Compze.Tests.Infrastructure.Fluent;
 
@@ -20,6 +23,37 @@ public static class Must___Enumerable
 
    public static Must<TCollection> SequenceEqual<TCollection, TElement>(this Must<TCollection> must, IEnumerable<TElement> expected, [CallerArgumentExpression(nameof(expected))] string expectedExpression = null!)
       where TCollection : IEnumerable<TElement>
-      => must.Satisfy(it => it.SequenceEqual(expected),
-                      usedArguments: [new(nameof(expected), expectedExpression, expected)]);
+   {
+      var actualJson = JsonConvert.SerializeObject(must.Actual, TestingJsonSettings.AllMembers);
+      var expectedJson = JsonConvert.SerializeObject(expected, TestingJsonSettings.AllMembers);
+
+      return must.Satisfy(
+         it => it.SequenceEqual(expected),
+         messageOverride: _ =>
+            $"""
+             {must.Separator}
+             expected the sequence:
+             {must.Separator}
+             {must.Expression.Indent()}
+             {must.Separator}
+             to be sequence equal to:
+             {must.Separator}
+             {must.NormalizeExpressionIndentation(expectedExpression).Indent()}
+             {must.Separator}
+             But it was not.
+             {must.Separator}
+             Diff:
+             {must.Separator}
+             {DiffGenerator.CreateDiff(expected: expectedJson, actual: actualJson)}
+             {must.Separator}
+             Actual was:
+             {must.Separator}
+             {actualJson}
+             {must.Separator}
+             Expected was:
+             {must.Separator}
+             {expectedJson}
+             {must.Separator}
+             """);
+   }
 }
