@@ -1,5 +1,6 @@
 namespace Compze.Tests.Infrastructure.Fluent;
 #pragma warning disable IDE0200
+// ReSharper disable InconsistentNaming
 
 public static class Must_Be___Null___strings
 {

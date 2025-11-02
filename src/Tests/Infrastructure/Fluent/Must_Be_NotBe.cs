@@ -7,6 +7,7 @@ using System.Runtime.CompilerServices;
 using Compze.Utilities.SystemCE;
 
 namespace Compze.Tests.Infrastructure.Fluent;
+// ReSharper disable InconsistentNaming
 
 public static class Must_Be_NotBe
 {

@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.CompilerServices;
+// ReSharper disable InconsistentNaming
 
 namespace Compze.Tests.Infrastructure.Fluent;
 

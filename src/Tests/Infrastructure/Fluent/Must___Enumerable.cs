@@ -4,6 +4,7 @@ using System.Runtime.CompilerServices;
 using Compze.Tests.Infrastructure.Fluent.Serialization;
 using Compze.Utilities.SystemCE;
 using Newtonsoft.Json;
+// ReSharper disable InconsistentNaming
 
 namespace Compze.Tests.Infrastructure.Fluent;
 

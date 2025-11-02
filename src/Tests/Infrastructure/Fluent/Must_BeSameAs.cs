@@ -1,6 +1,7 @@
 using System.Runtime.CompilerServices;
 
 namespace Compze.Tests.Infrastructure.Fluent;
+// ReSharper disable InconsistentNaming
 
 public static class Must_BeSameAs
 {

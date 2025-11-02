@@ -1,4 +1,5 @@
 using Compze.Utilities.SystemCE;
+// ReSharper disable InconsistentNaming
 
 namespace Compze.Tests.Infrastructure.Fluent;
 

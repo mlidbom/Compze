@@ -9,6 +9,7 @@ using System.Runtime.CompilerServices;
 using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE;
 
+// ReSharper disable InconsistentNaming
 namespace Compze.Tests.Infrastructure.Fluent;
 
 public class EquivalencyConfig<TValue>
@@ -23,16 +24,16 @@ public class EquivalencyConfig<TValue>
 public static class Must_DeepEqual
 {
    public static Must<TValue> DeepEqual<TValue>(this Must<TValue> must,
-                                                     TValue expected,
-                                                     [CallerArgumentExpression(nameof(expected))]
-                                                     string expectedExpression = null!)
+                                                TValue expected,
+                                                [CallerArgumentExpression(nameof(expected))]
+                                                string expectedExpression = null!)
       => DeepEqualCore(must, expected, expectedExpression, TestingJsonSettings.AllMembers);
 
    public static Must<TValue> DeepEqualPrivate<TValue>(this Must<TValue> must,
-                                                     TValue expected,
-                                                     Func<EquivalencyConfig<TValue>, EquivalencyConfig<TValue>> config,
-                                                     [CallerArgumentExpression(nameof(expected))]
-                                                     string expectedExpression = null!)
+                                                       TValue expected,
+                                                       Func<EquivalencyConfig<TValue>, EquivalencyConfig<TValue>> config,
+                                                       [CallerArgumentExpression(nameof(expected))]
+                                                       string expectedExpression = null!)
    {
       var equivalencyConfig = config(new EquivalencyConfig<TValue>());
       var serializerSettings = TestingJsonSettings.CreateSettingsWithExclusions(TestingJsonSettings.AllMembers, equivalencyConfig.ExcludedMembers);
@@ -40,21 +41,21 @@ public static class Must_DeepEqual
    }
 
    public static Must<TValue> DeepEqualInternal<TValue>(this Must<TValue> must,
-                                                             TValue expected,
-                                                             [CallerArgumentExpression(nameof(expected))]
-                                                             string expectedExpression = null!)
+                                                        TValue expected,
+                                                        [CallerArgumentExpression(nameof(expected))]
+                                                        string expectedExpression = null!)
       => DeepEqualCore(must, expected, expectedExpression, TestingJsonSettings.InternalAndPublicMembers);
 
    public static Must<TValue> DeepEqualPublic<TValue>(this Must<TValue> must,
-                                                           TValue expected,
-                                                           [CallerArgumentExpression(nameof(expected))]
-                                                           string expectedExpression = null!)
+                                                      TValue expected,
+                                                      [CallerArgumentExpression(nameof(expected))]
+                                                      string expectedExpression = null!)
       => DeepEqualCore(must, expected, expectedExpression, TestingJsonSettings.PublicMembers);
 
    static Must<TValue> DeepEqualCore<TValue>(Must<TValue> must,
-                                                  TValue expected,
-                                                  string expectedExpression,
-                                                  JsonSerializerSettings settings)
+                                             TValue expected,
+                                             string expectedExpression,
+                                             JsonSerializerSettings settings)
    {
       var actualJson = JsonConvert.SerializeObject(must.Actual, settings);
       var expectedJson = JsonConvert.SerializeObject(expected, settings);
@@ -73,7 +74,7 @@ public static class Must_DeepEqual
                               {must.Separator}
                               But comparison of the objects serialized as JSON resulted in the Diff:
                               {must.Separator}
-                              {DiffGenerator.CreateDiff(expected: expectedJson, actual:actualJson)}
+                              {DiffGenerator.CreateDiff(expected: expectedJson, actual: actualJson)}
                               {must.Separator}
                               Actual was:
                               {must.Separator}

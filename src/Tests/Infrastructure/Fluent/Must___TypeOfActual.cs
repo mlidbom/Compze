@@ -1,4 +1,5 @@
 namespace Compze.Tests.Infrastructure.Fluent;
+// ReSharper disable InconsistentNaming
 
 public static class Must___TypeOfActual
 {

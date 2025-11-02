@@ -2,6 +2,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 
 #pragma warning disable IDE0200
+// ReSharper disable InconsistentNaming
 
 namespace Compze.Tests.Infrastructure.Fluent;
 
