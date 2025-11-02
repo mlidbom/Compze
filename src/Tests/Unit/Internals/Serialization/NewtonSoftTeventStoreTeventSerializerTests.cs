@@ -41,8 +41,8 @@ public class NewtonSoftTeventStoreTeventSerializerTests : SerializerTest
 
       roundTripped.Must().DeepEqual(teventWithOnlySubclassValues,
                                     config => config
-                                             .Excluding(tevent => tevent.UtcTimeStamp) //Timestamp is defaulted in the constructor used by serialization.
-                                             .Excluding(tevent => tevent.Id));
+                                             .ExcludeTypeMember(tevent => tevent.UtcTimeStamp) //Timestamp is defaulted in the constructor used by serialization.
+                                             .ExcludeTypeMember(tevent => tevent.Id));
    }
 
    public class TestTevent : TaggregateTevent

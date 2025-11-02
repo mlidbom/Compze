@@ -16,7 +16,7 @@ public class EquivalencyConfig<TValue>
 {
    internal HashSet<MemberInfo> ExcludedMembers { get; } = new();
 
-   public EquivalencyConfig<TValue> Excluding<TMember>(Expression<Func<TValue, TMember>> memberExpression) =>
+   public EquivalencyConfig<TValue> ExcludeTypeMember<TMember>(Expression<Func<TValue, TMember>> memberExpression) =>
       ExcludedMembers.Add(memberExpression.ExtractFinalMemberInfo())
                      .then(this);
 }
