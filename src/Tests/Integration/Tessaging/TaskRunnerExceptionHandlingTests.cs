@@ -52,7 +52,7 @@ public class TaskRunnerExceptionHandlingTests : UniversalTestBase
          var taggregateException = await disposeAction.Must().ThrowAsync<AggregateException>();
 
          var flattened = taggregateException.Which.Flatten();
-         flattened.InnerExceptions.Must().Satisfy(it => it.Any(e => e is InvalidOperationException && e.Message == "exception1"));
+         flattened.InnerExceptions.Must().SatisfyInternal(it => it.Any(e => e is InvalidOperationException && e.Message == "exception1"));
       });
    }
 
@@ -74,9 +74,9 @@ public class TaskRunnerExceptionHandlingTests : UniversalTestBase
 
          var flattened = taggregateException.Which.Flatten();
          flattened.InnerExceptions.Must().HaveCount(3);
-         flattened.InnerExceptions.Must().Satisfy(it => it.Any(e => e is InvalidOperationException && e.Message == "exception1"));
-         flattened.InnerExceptions.Must().Satisfy(it => it.Any(e => e is ArgumentException && e.Message == "exception2"));
-         flattened.InnerExceptions.Must().Satisfy(it => it.Any(e => e is NotSupportedException && e.Message == "exception3"));
+         flattened.InnerExceptions.Must().SatisfyInternal(it => it.Any(e => e is InvalidOperationException && e.Message == "exception1"));
+         flattened.InnerExceptions.Must().SatisfyInternal(it => it.Any(e => e is ArgumentException && e.Message == "exception2"));
+         flattened.InnerExceptions.Must().SatisfyInternal(it => it.Any(e => e is NotSupportedException && e.Message == "exception3"));
       });
    }
 }

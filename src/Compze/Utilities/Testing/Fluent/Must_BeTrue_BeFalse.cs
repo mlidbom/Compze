@@ -7,7 +7,7 @@ namespace Compze.Utilities.Testing.Fluent;
 public static class Must_BeTrue_BeFalse
 {
    public static IMust<bool>? BeTrue(this IMust<bool> must)
-      => must.Satisfy(it => it == true,
+      => must.SatisfyInternal(it => it == true,
                       messageOverride: _ =>
                          $"""
                           expected the expression: 
@@ -19,7 +19,7 @@ public static class Must_BeTrue_BeFalse
 
 
    public static IMust<bool>? BeFalse(this IMust<bool> must)
-      => must.Satisfy(it => it == false,
+      => must.SatisfyInternal(it => it == false,
                       messageOverride:_ =>
                          $"""
                           expected the expression: 

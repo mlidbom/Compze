@@ -7,7 +7,7 @@ namespace Compze.Utilities.Testing.Fluent;
 public static class Must_Be_string
 {
    public static IMust<string> Be(this IMust<string> must, string expected, [CallerArgumentExpression(nameof(expected))] string expectedExpression = null!)
-      => must.Satisfy(it => Equals(it, expected),
+      => must.SatisfyInternal(it => Equals(it, expected),
                       messageOverride: _ =>
                          $"""""
                           {must.Separator}

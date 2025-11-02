@@ -36,43 +36,43 @@ public static class Must_Be_NotBe
       if(expected is null && must.Actual is null)
          return must;
 
-      must.Satisfy(it => Equals(it, expected), messageOverride: BuildFailureMessage);
-      must.Satisfy(it => Equals(expected, it), messageOverride: BuildFailureMessage);
+      must.SatisfyInternal(it => Equals(it, expected), messageOverride: BuildFailureMessage);
+      must.SatisfyInternal(it => Equals(expected, it), messageOverride: BuildFailureMessage);
 
-      must.Satisfy(it => (it as IEquatable<TValue>)?.Equals(expected) ?? true, messageOverride: BuildFailureMessage);
-      must.Satisfy(it => (expected as IEquatable<TValue>)?.Equals(it) ?? true, messageOverride: BuildFailureMessage);
+      must.SatisfyInternal(it => (it as IEquatable<TValue>)?.Equals(expected) ?? true, messageOverride: BuildFailureMessage);
+      must.SatisfyInternal(it => (expected as IEquatable<TValue>)?.Equals(it) ?? true, messageOverride: BuildFailureMessage);
 
-      must.Satisfy(it => it.DeclaredType().Operators.Equality?.Invoke(it, expected) ?? true, failureMessage: it => "it == expected should have returned true", messageOverride: BuildFailureMessage);
-      must.Satisfy(it => it.DeclaredType().Operators.Equality?.Invoke(expected, it) ?? true, failureMessage: it => "expected == it should have returned true", messageOverride: BuildFailureMessage);
+      must.SatisfyInternal(it => it.DeclaredType().Operators.Equality?.Invoke(it, expected) ?? true, failureMessage: it => "it == expected should have returned true", messageOverride: BuildFailureMessage);
+      must.SatisfyInternal(it => it.DeclaredType().Operators.Equality?.Invoke(expected, it) ?? true, failureMessage: it => "expected == it should have returned true", messageOverride: BuildFailureMessage);
 
-      must.Satisfy(it => !it.DeclaredType().Operators.InEquality?.Invoke(it, expected) ?? true, failureMessage: it => "it != expected should have returned false", messageOverride: BuildFailureMessage);
-      must.Satisfy(it => !it.DeclaredType().Operators.InEquality?.Invoke(expected, it) ?? true, failureMessage: it => "expected != it should have returned false", messageOverride: BuildFailureMessage);
+      must.SatisfyInternal(it => !it.DeclaredType().Operators.InEquality?.Invoke(it, expected) ?? true, failureMessage: it => "it != expected should have returned false", messageOverride: BuildFailureMessage);
+      must.SatisfyInternal(it => !it.DeclaredType().Operators.InEquality?.Invoke(expected, it) ?? true, failureMessage: it => "expected != it should have returned false", messageOverride: BuildFailureMessage);
 
-      must.Satisfy(it => (it as IStructuralEquatable)?.Equals(expected, StructuralComparisons.StructuralEqualityComparer) ?? true, failureMessage: it => "it.Equals(expected, StructuralEqualityComparer) should have returned true", messageOverride: BuildFailureMessage);
-      must.Satisfy(it => (expected as IStructuralEquatable)?.Equals(it, StructuralComparisons.StructuralEqualityComparer) ?? true, failureMessage: it => "expected.Equals(it, StructuralEqualityComparer) should have returned true", messageOverride: BuildFailureMessage);
+      must.SatisfyInternal(it => (it as IStructuralEquatable)?.Equals(expected, StructuralComparisons.StructuralEqualityComparer) ?? true, failureMessage: it => "it.Equals(expected, StructuralEqualityComparer) should have returned true", messageOverride: BuildFailureMessage);
+      must.SatisfyInternal(it => (expected as IStructuralEquatable)?.Equals(it, StructuralComparisons.StructuralEqualityComparer) ?? true, failureMessage: it => "expected.Equals(it, StructuralEqualityComparer) should have returned true", messageOverride: BuildFailureMessage);
 
-      must.Satisfy(it => (it as IComparable<TValue>)?.CompareTo(expected).Equals(0) ?? true, failureMessage: it => "it.CompareTo(expected) (IComparable<T>) should have returned 0", messageOverride: BuildFailureMessage);
-      must.Satisfy(it => (expected as IComparable<TValue>)?.CompareTo(it).Equals(0) ?? true, failureMessage: it => "expected.CompareTo(it) (IComparable<T>) should have returned 0", messageOverride: BuildFailureMessage);
+      must.SatisfyInternal(it => (it as IComparable<TValue>)?.CompareTo(expected).Equals(0) ?? true, failureMessage: it => "it.CompareTo(expected) (IComparable<T>) should have returned 0", messageOverride: BuildFailureMessage);
+      must.SatisfyInternal(it => (expected as IComparable<TValue>)?.CompareTo(it).Equals(0) ?? true, failureMessage: it => "expected.CompareTo(it) (IComparable<T>) should have returned 0", messageOverride: BuildFailureMessage);
 
-      must.Satisfy(it => (it as IComparable)?.CompareTo(expected).Equals(0) ?? true, failureMessage: it => "it.CompareTo(expected) (IComparable) should have returned 0", messageOverride: BuildFailureMessage);
-      must.Satisfy(it => (expected as IComparable)?.CompareTo(it).Equals(0) ?? true, failureMessage: it => "expected.CompareTo(it) (IComparable) should have returned 0", messageOverride: BuildFailureMessage);
+      must.SatisfyInternal(it => (it as IComparable)?.CompareTo(expected).Equals(0) ?? true, failureMessage: it => "it.CompareTo(expected) (IComparable) should have returned 0", messageOverride: BuildFailureMessage);
+      must.SatisfyInternal(it => (expected as IComparable)?.CompareTo(it).Equals(0) ?? true, failureMessage: it => "expected.CompareTo(it) (IComparable) should have returned 0", messageOverride: BuildFailureMessage);
 
-      must.Satisfy(it => (it as IStructuralComparable)?.CompareTo(expected, StructuralComparisons.StructuralComparer).Equals(0) ?? true, failureMessage: it => "it.CompareTo(expected, StructuralComparer) should have returned 0", messageOverride: BuildFailureMessage);
-      must.Satisfy(it => (expected as IStructuralComparable)?.CompareTo(it, StructuralComparisons.StructuralComparer).Equals(0) ?? true, failureMessage: it => "expected.CompareTo(it, StructuralComparer) should have returned 0", messageOverride: BuildFailureMessage);
+      must.SatisfyInternal(it => (it as IStructuralComparable)?.CompareTo(expected, StructuralComparisons.StructuralComparer).Equals(0) ?? true, failureMessage: it => "it.CompareTo(expected, StructuralComparer) should have returned 0", messageOverride: BuildFailureMessage);
+      must.SatisfyInternal(it => (expected as IStructuralComparable)?.CompareTo(it, StructuralComparisons.StructuralComparer).Equals(0) ?? true, failureMessage: it => "expected.CompareTo(it, StructuralComparer) should have returned 0", messageOverride: BuildFailureMessage);
 
-      must.Satisfy(it => !it.DeclaredType().Operators.LessThan?.Invoke(it, expected) ?? true, failureMessage: it => "it < expected should have returned false", messageOverride: BuildFailureMessage);
-      must.Satisfy(it => !it.DeclaredType().Operators.LessThan?.Invoke(expected, it) ?? true, failureMessage: it => "expected < it should have returned false", messageOverride: BuildFailureMessage);
+      must.SatisfyInternal(it => !it.DeclaredType().Operators.LessThan?.Invoke(it, expected) ?? true, failureMessage: it => "it < expected should have returned false", messageOverride: BuildFailureMessage);
+      must.SatisfyInternal(it => !it.DeclaredType().Operators.LessThan?.Invoke(expected, it) ?? true, failureMessage: it => "expected < it should have returned false", messageOverride: BuildFailureMessage);
 
-      must.Satisfy(it => it.DeclaredType().Operators.LessThanOrEqual?.Invoke(it, expected) ?? true, failureMessage: it => "it <= expected should have returned true", messageOverride: BuildFailureMessage);
-      must.Satisfy(it => it.DeclaredType().Operators.LessThanOrEqual?.Invoke(expected, it) ?? true, failureMessage: it => "expected <= it should have returned true", messageOverride: BuildFailureMessage);
+      must.SatisfyInternal(it => it.DeclaredType().Operators.LessThanOrEqual?.Invoke(it, expected) ?? true, failureMessage: it => "it <= expected should have returned true", messageOverride: BuildFailureMessage);
+      must.SatisfyInternal(it => it.DeclaredType().Operators.LessThanOrEqual?.Invoke(expected, it) ?? true, failureMessage: it => "expected <= it should have returned true", messageOverride: BuildFailureMessage);
 
-      must.Satisfy(it => !it.DeclaredType().Operators.GreaterThan?.Invoke(expected, it) ?? true, failureMessage: it => "expected > it should have returned false", messageOverride: BuildFailureMessage);
-      must.Satisfy(it => !it.DeclaredType().Operators.GreaterThan?.Invoke(it, expected) ?? true, failureMessage: it => "it > expected should have returned false", messageOverride: BuildFailureMessage);
+      must.SatisfyInternal(it => !it.DeclaredType().Operators.GreaterThan?.Invoke(expected, it) ?? true, failureMessage: it => "expected > it should have returned false", messageOverride: BuildFailureMessage);
+      must.SatisfyInternal(it => !it.DeclaredType().Operators.GreaterThan?.Invoke(it, expected) ?? true, failureMessage: it => "it > expected should have returned false", messageOverride: BuildFailureMessage);
 
-      must.Satisfy(it => it.DeclaredType().Operators.GreaterThanOrEqual?.Invoke(expected, it) ?? true, failureMessage: it => "expected >= it should have returned true", messageOverride: BuildFailureMessage);
-      must.Satisfy(it => it.DeclaredType().Operators.GreaterThanOrEqual?.Invoke(it, expected) ?? true, failureMessage: it => "it >= expected should have returned true", messageOverride: BuildFailureMessage);
+      must.SatisfyInternal(it => it.DeclaredType().Operators.GreaterThanOrEqual?.Invoke(expected, it) ?? true, failureMessage: it => "expected >= it should have returned true", messageOverride: BuildFailureMessage);
+      must.SatisfyInternal(it => it.DeclaredType().Operators.GreaterThanOrEqual?.Invoke(it, expected) ?? true, failureMessage: it => "it >= expected should have returned true", messageOverride: BuildFailureMessage);
 
-      must.Satisfy(it => it!.GetHashCode() == expected!.GetHashCode(), messageOverride: BuildFailureMessage);
+      must.SatisfyInternal(it => it!.GetHashCode() == expected!.GetHashCode(), messageOverride: BuildFailureMessage);
 
       return must;
 
@@ -147,21 +147,21 @@ public static class Must_Be_NotBe
          return must; // One is null, the other isn't, so they're not equal
 
       // Equality checks - these are the only reliable indicators that objects are NOT equal
-      must.Satisfy(it => !Equals(it, unexpected), messageOverride: BuildFailureMessage);
-      must.Satisfy(it => !Equals(unexpected, it), messageOverride: BuildFailureMessage);
+      must.SatisfyInternal(it => !Equals(it, unexpected), messageOverride: BuildFailureMessage);
+      must.SatisfyInternal(it => !Equals(unexpected, it), messageOverride: BuildFailureMessage);
 
-      must.Satisfy(it => !((it as IEquatable<TValue>)?.Equals(unexpected) ?? false), messageOverride: BuildFailureMessage);
-      must.Satisfy(it => !((unexpected as IEquatable<TValue>)?.Equals(it) ?? false), messageOverride: BuildFailureMessage);
+      must.SatisfyInternal(it => !((it as IEquatable<TValue>)?.Equals(unexpected) ?? false), messageOverride: BuildFailureMessage);
+      must.SatisfyInternal(it => !((unexpected as IEquatable<TValue>)?.Equals(it) ?? false), messageOverride: BuildFailureMessage);
 
-      must.Satisfy(it => !(it.DeclaredType().Operators.Equality?.Invoke(it, unexpected) ?? false), failureMessage: it => "it == unexpected should have returned false", messageOverride: BuildFailureMessage);
-      must.Satisfy(it => !(it.DeclaredType().Operators.Equality?.Invoke(unexpected, it) ?? false), failureMessage: it => "unexpected == it should have returned false", messageOverride: BuildFailureMessage);
+      must.SatisfyInternal(it => !(it.DeclaredType().Operators.Equality?.Invoke(it, unexpected) ?? false), failureMessage: it => "it == unexpected should have returned false", messageOverride: BuildFailureMessage);
+      must.SatisfyInternal(it => !(it.DeclaredType().Operators.Equality?.Invoke(unexpected, it) ?? false), failureMessage: it => "unexpected == it should have returned false", messageOverride: BuildFailureMessage);
 
-      must.Satisfy(it => it.DeclaredType().Operators.InEquality?.Invoke(it, unexpected) ?? true, failureMessage: it => "it != unexpected should have returned true", messageOverride: BuildFailureMessage);
-      must.Satisfy(it => it.DeclaredType().Operators.InEquality?.Invoke(unexpected, it) ?? true, failureMessage: it => "unexpected != it should have returned true", messageOverride: BuildFailureMessage);
+      must.SatisfyInternal(it => it.DeclaredType().Operators.InEquality?.Invoke(it, unexpected) ?? true, failureMessage: it => "it != unexpected should have returned true", messageOverride: BuildFailureMessage);
+      must.SatisfyInternal(it => it.DeclaredType().Operators.InEquality?.Invoke(unexpected, it) ?? true, failureMessage: it => "unexpected != it should have returned true", messageOverride: BuildFailureMessage);
 
       // IStructuralEquatable - used for structural equality (e.g., arrays, tuples)
-      must.Satisfy(it => !((it as IStructuralEquatable)?.Equals(unexpected, StructuralComparisons.StructuralEqualityComparer) ?? false), failureMessage: it => "it.Equals(unexpected, StructuralEqualityComparer) should have returned false", messageOverride: BuildFailureMessage);
-      must.Satisfy(it => !((unexpected as IStructuralEquatable)?.Equals(it, StructuralComparisons.StructuralEqualityComparer) ?? false), failureMessage: it => "unexpected.Equals(it, StructuralEqualityComparer) should have returned false", messageOverride: BuildFailureMessage);
+      must.SatisfyInternal(it => !((it as IStructuralEquatable)?.Equals(unexpected, StructuralComparisons.StructuralEqualityComparer) ?? false), failureMessage: it => "it.Equals(unexpected, StructuralEqualityComparer) should have returned false", messageOverride: BuildFailureMessage);
+      must.SatisfyInternal(it => !((unexpected as IStructuralEquatable)?.Equals(it, StructuralComparisons.StructuralEqualityComparer) ?? false), failureMessage: it => "unexpected.Equals(it, StructuralEqualityComparer) should have returned false", messageOverride: BuildFailureMessage);
 
       // Unlike in the Be_ version we do not check any of the below, because none of them have any return values that are guaranteed to be wrong for non-equal objects:
       // - GetHashCode(), IComparable/IComparable<T>, IStructuralComparable, Comparison operators (<, >, <=, >=)

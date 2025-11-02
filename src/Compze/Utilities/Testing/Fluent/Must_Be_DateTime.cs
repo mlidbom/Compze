@@ -8,7 +8,7 @@ public static class Must_Be_DateTime
 {
    public static IMust<DateTime> Be(this IMust<DateTime> must, DateTime expected, TimeSpan tolerance, [CallerArgumentExpression(nameof(expected))] string expectedExpression = null!, [CallerArgumentExpression(nameof(tolerance))] string toleranceExpression = null!)
    {
-      return must.Satisfy(
+      return must.SatisfyInternal(
          it => (it - expected).Duration() <= tolerance,
          usedArguments:
          [

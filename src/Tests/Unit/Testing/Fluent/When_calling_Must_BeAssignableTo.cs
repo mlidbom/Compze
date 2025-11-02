@@ -1,3 +1,4 @@
+using System;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.Testing.XUnit.BDD;
 using static Compze.Utilities.Testing.Fluent.MustActions;
@@ -15,7 +16,7 @@ public class When_calling_Must_BeAssignableTo : UniversalTestBase
       [XF] public void it_does_not_throw()
       {
          object value = "string";
-         value.Must().BeAssignableTo<string>();
+         value.Must().BeAssignableTo<DateTime>();
       }
    }
 

@@ -6,6 +6,7 @@ using System.Text;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.Testing.Fluent.Serialization;
 using Newtonsoft.Json;
+// ReSharper disable InconsistentNaming
 
 namespace Compze.Utilities.Testing.Fluent;
 
@@ -18,21 +19,40 @@ public static class _Must_Satisfy
 {
    const string RemoveLine = nameof(RemoveLine);
 
+
    public static IMust Satisfy(this IMust must,
+                                       Func<object, bool> predicate,
+                                       [CallerArgumentExpression(nameof(predicate))]
+                                       string predicateExpression = null!,
+                                       Func<SatisfyCallInfo<object>, string>? messageOverride = null,
+                                       Func<object, string>? failureMessage = null) => must.Cast<object>().SatisfyInternal(predicate, predicateExpression, messageOverride, failureMessage, null, null);
+
+   public static IMust<T> Satisfy<T>(this IMust<T> context,
+                                     Func<T, bool> predicate,
+                                     [CallerArgumentExpression(nameof(predicate))]
+                                     string predicateExpression = null!,
+                                     Func<SatisfyCallInfo<T>, string>? messageOverride = null,
+                                     Func<T, string>? failureMessage = null,
+                                     AssertionArgumentInfo[]? usedArguments = null,
+                                     [CallerMemberName] string callerName = null!) => context.SatisfyInternal(predicate, predicateExpression, messageOverride, failureMessage, null, null);
+
+   public static IMust SatisfyInternal(this IMust must,
                               Func<object, bool> predicate,
                               [CallerArgumentExpression(nameof(predicate))]
                               string predicateExpression = null!,
                               Func<SatisfyCallInfo<object>, string>? messageOverride = null,
                               Func<object, string>? failureMessage = null,
-                              AssertionArgumentInfo[]? usedArguments = null) => must.Cast<object>().Satisfy(predicate, predicateExpression, messageOverride, failureMessage, usedArguments);
+                              AssertionArgumentInfo[]? usedArguments = null,
+                              [CallerMemberName] string callerName = null!) => must.Cast<object>().SatisfyInternal(predicate, predicateExpression, messageOverride, failureMessage, usedArguments, callerName);
 
-   public static IMust<T> Satisfy<T>(this IMust<T> context,
+   public static IMust<T> SatisfyInternal<T>(this IMust<T> context,
                                     Func<T, bool> predicate,
                                     [CallerArgumentExpression(nameof(predicate))]
                                     string predicateExpression = null!,
                                     Func<SatisfyCallInfo<T>, string>? messageOverride = null,
                                     Func<T, string>? failureMessage = null,
-                                    AssertionArgumentInfo[]? usedArguments = null)
+                                    AssertionArgumentInfo[]? usedArguments = null,
+                                    [CallerMemberName] string? callerName = null!)
    {
       if(!predicate(context.Actual))
       {
@@ -45,6 +65,7 @@ public static class _Must_Satisfy
 
          var message = $"""
              {context.Separator}
+             {AssertionMethodCall()}
              {ArgumentDescription(parameterName, context.Expression)}
              {DisplayUsedArgumentsDefinitions()}
              failed to Satisfy:
@@ -95,6 +116,21 @@ public static class _Must_Satisfy
                                       {failureMessage?.Invoke(context.Actual) ?? "but it did not"}
                                       {context.Separator}
                                       """ : RemoveLine;
+
+         string AssertionMethodCall()
+         {
+            if(string.IsNullOrEmpty(callerName))
+               return RemoveLine;
+
+            var arguments = usedArguments != null && usedArguments.Any()
+               ? usedArguments.Select(it => it.Expression).Join(", ")
+               : "";
+
+            return $"""
+                    {context.Expression}.Must().{callerName}({arguments})
+                    {context.Separator}
+                    """;
+         }
 
          static string ArgumentValue(string name, object? value)
          {

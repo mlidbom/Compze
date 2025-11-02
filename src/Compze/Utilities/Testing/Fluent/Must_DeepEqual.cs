@@ -74,7 +74,7 @@ public static class Must_DeepEqual
       var actualJson = JsonConvert.SerializeObject(must.Actual, serializerSettings);
       var expectedJson = JsonConvert.SerializeObject(expected, serializerSettings);
 
-      return must.Satisfy(it => actualJson == expectedJson,
+      return must.SatisfyInternal(it => actualJson == expectedJson,
                           messageOverride: _ =>
                              $"""
                               {must.Separator}
