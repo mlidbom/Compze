@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using Compze.Utilities.SystemCE.ReflectionCE;
 
 namespace Compze.Tests.Infrastructure.Fluent;
@@ -11,9 +12,18 @@ public class ActionSpec(Action action, string expression)
    public Must<Action> Must() => new(_action, _expression);
 }
 
+public class AsyncActionSpec(Func<Task> action, string expression)
+{
+   readonly Func<Task> _action = action;
+   readonly string _expression = expression;
+   public Must<Func<Task>> Must() => new(_action, _expression);
+}
+
 public static class MustActions
 {
    public static ActionSpec Invoking(Action action, [CallerArgumentExpression(nameof(action))] string expression = null!) => new(action, expression);
+
+   public static AsyncActionSpec InvokingAsync(Func<Task> action, [CallerArgumentExpression(nameof(action))] string expression = null!) => new(action, expression);
 
    public static CaughtException<TException> Throw<TException>(this Must<Action> must)
       where TException : Exception
@@ -21,6 +31,37 @@ public static class MustActions
       try
       {
          must.Actual();
+      }
+      catch(TException caught)
+      {
+         return new CaughtException<TException>(caught);
+      }
+      catch(Exception unexpected)
+      {
+         throw new AssertionFailedException($"""
+                                             Expected invoking the expression
+                                             {must.Separator}
+                                             {must.Expression} 
+                                             {must.Separator}
+                                             to throw {typeof(TException).Name} but instead a {unexpected.GetType().GetFullNameCompilable()} was thrown
+                                             """);
+      }
+
+      throw new AssertionFailedException($"""
+                                          Expected invoking the expression
+                                          {must.Separator}
+                                          {must.Expression} 
+                                          {must.Separator}
+                                          to throw {typeof(TException).Name} but no exception was thrown
+                                          """);
+   }
+
+   public static async Task<CaughtException<TException>> ThrowAsync<TException>(this Must<Func<Task>> must)
+      where TException : Exception
+   {
+      try
+      {
+         await must.Actual();
       }
       catch(TException caught)
       {
