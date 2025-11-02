@@ -1,10 +1,10 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
    <PropertyGroup>
       <TargetFramework>net9.0</TargetFramework>
       <Nullable>enable</Nullable>
    </PropertyGroup>
    <ItemGroup>
-     <ProjectReference Include="..\..\..\Compze\Utilities\Compze.Utilities.csproj" />
+     <ProjectReference Include="..\..\Compze.Utilities.csproj" />
    </ItemGroup>
 
 	<ItemGroup>

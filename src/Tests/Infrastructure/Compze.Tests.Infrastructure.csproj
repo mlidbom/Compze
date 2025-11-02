@@ -19,12 +19,4 @@
       <PackageReference Include="xunit.v3" Version="3.1.0" />
       <PackageReference Include="xunit.v3.extensibility.core" Version="3.1.0" />
    </ItemGroup>
-  <!-- Exclude subdirectories that have their own .csproj files to prevent compilation errors.
-       This section is automatically maintained by DevScripts\C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders.ps1 -->
-  <ItemGroup>
-    <Compile Remove="Fluent\**" />
-    <EmbeddedResource Remove="Fluent\**" />
-    <None Remove="Fluent\**" />
-    <Content Remove="Fluent\**" />
-  </ItemGroup>
 </Project>

@@ -1,13 +1,13 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
    <PropertyGroup>
       <TargetFramework>net9.0</TargetFramework>
       <Nullable>enable</Nullable>
    </PropertyGroup>
    <ItemGroup>
       <ProjectReference Include="..\..\..\..\Tests\Infrastructure\Compze.Tests.Infrastructure.csproj" />
-      <ProjectReference Include="..\..\..\..\Tests\Infrastructure\Fluent\Compze.Tests.Infrastructure.Fluent.csproj" />
+      <ProjectReference Include="..\..\..\..\Compze\Utilities\Testing\Fluent\Compze.Utilities.Testing.Fluent.csproj" />
       <ProjectReference Include="..\API\AccountManagement.API.csproj" />
-      <ProjectReference Include="..\..\..\..\Tests\Infrastructure\Fluent\Compze.Tests.Infrastructure.Fluent.csproj" />
+      <ProjectReference Include="..\..\..\..\Compze\Utilities\Testing\Fluent\Compze.Utilities.Testing.Fluent.csproj" />
    </ItemGroup>
    <ItemGroup>
       <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">

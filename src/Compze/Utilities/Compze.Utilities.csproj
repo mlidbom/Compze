@@ -33,6 +33,10 @@
     <EmbeddedResource Remove="Testing\DbPool\**" />
     <None Remove="Testing\DbPool\**" />
     <Content Remove="Testing\DbPool\**" />
+    <Compile Remove="Testing\Fluent\**" />
+    <EmbeddedResource Remove="Testing\Fluent\**" />
+    <None Remove="Testing\Fluent\**" />
+    <Content Remove="Testing\Fluent\**" />
     <Compile Remove="Testing\XUnit\**" />
     <EmbeddedResource Remove="Testing\XUnit\**" />
     <None Remove="Testing\XUnit\**" />

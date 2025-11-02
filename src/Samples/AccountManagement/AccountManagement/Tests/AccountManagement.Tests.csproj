@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
    <PropertyGroup>
       <TargetFramework>net9.0</TargetFramework>
       <Nullable>enable</Nullable>
@@ -10,7 +10,7 @@
       <ProjectReference Include="..\..\..\..\Tests\Infrastructure\Compze.Tests.Infrastructure.csproj" />
       <ProjectReference Include="..\Server\AccountManagement.Server.csproj" />
       <ProjectReference Include="..\..\..\..\Compze\Utilities\Compze.Utilities.csproj" />
-      <ProjectReference Include="..\..\..\..\Tests\Infrastructure\Fluent\Compze.Tests.Infrastructure.Fluent.csproj" />
+      <ProjectReference Include="..\..\..\..\Compze\Utilities\Testing\Fluent\Compze.Utilities.Testing.Fluent.csproj" />
    </ItemGroup>
    <ItemGroup>
       <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
