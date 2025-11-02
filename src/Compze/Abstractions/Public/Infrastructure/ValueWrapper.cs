@@ -3,7 +3,7 @@ using System;
 namespace Compze.Core.Public.Infrastructure;
 
 #pragma warning disable CA1033 //We are using explicit interface implementation to hide this from the public interface
-public abstract class ValueWrapper<TValue>(TValue value) : IEquatable<ValueWrapper<TValue>>,
+public class ValueWrapper<TValue>(TValue value) : IEquatable<ValueWrapper<TValue>>,
                                                                     ISingleUntypedPrimitiveValueWrapper
    where TValue : IEquatable<TValue>
 {
