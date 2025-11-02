@@ -1,6 +1,6 @@
-using System;
 using System.Linq;
-using System.Runtime.CompilerServices;
+
+#pragma warning disable IDE0200
 
 namespace Compze.Tests.Infrastructure.Fluent;
 
