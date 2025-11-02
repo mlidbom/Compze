@@ -1,5 +1,6 @@
 using System.Linq;
 using System.Runtime.CompilerServices;
+// ReSharper disable ConvertClosureToMethodGroup
 
 #pragma warning disable IDE0200
 // ReSharper disable InconsistentNaming
