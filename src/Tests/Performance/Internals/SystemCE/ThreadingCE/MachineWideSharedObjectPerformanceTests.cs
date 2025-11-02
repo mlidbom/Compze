@@ -38,5 +38,5 @@ public class MachineWideSharedObjectPerformanceTests : UniversalTestBase
       TimeAsserter.Execute(() => _shared.Update(it => it.Name = ""), iterations: 20, maxTotal: 50.Milliseconds(), maxTries: 10);
 
    [PCTSerializer] public void Update_runs_multi_threaded_30_times_in_50_milliseconds() =>
-      TimeAsserter.ExecuteThreaded(() => _shared.Update(it => it.Name = ""), iterations: 60, maxTotal: 50.Milliseconds(), maxTries: 10);
+      TimeAsserter.ExecuteThreaded(() => _shared.Update(it => it.Name = ""), iterations: 30, maxTotal: 50.Milliseconds(), maxTries: 10);
 }

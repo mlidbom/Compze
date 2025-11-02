@@ -4,10 +4,7 @@ using Compze.Tests.Infrastructure;
 using Compze.Utilities.Testing.Fluent;
 using Compze.Utilities.Testing.XUnit.BDD;
 using static Compze.Utilities.Testing.Fluent.MustActions;
-using __Must = Compze.Utilities.Testing.Fluent.__Must;
 using AssertionFailedException = Compze.Utilities.Testing.Fluent.AssertionFailedException;
-using Must_Be_string = Compze.Utilities.Testing.Fluent.Must_Be_string;
-using Must_DeepEqual = Compze.Utilities.Testing.Fluent.Must_DeepEqual;
 
 // ReSharper disable UnusedMember.Local
 

@@ -1,9 +1,8 @@
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.Testing.XUnit.BDD;
 using static Compze.Utilities.Testing.Fluent.MustActions;
-using __Must = Compze.Utilities.Testing.Fluent.__Must;
+using Compze.Utilities.Testing.Fluent;
 using AssertionFailedException = Compze.Utilities.Testing.Fluent.AssertionFailedException;
-using Must___TypeOfActual = Compze.Utilities.Testing.Fluent.Must___TypeOfActual;
 
 // ReSharper disable InconsistentNaming
 
@@ -16,7 +15,7 @@ public class When_calling_Must_BeExactType : UniversalTestBase
       [XF] public void it_does_not_throw()
       {
          object value = "string";
-         Must___TypeOfActual.BeOfType<string>(__Must.Must(value));
+         value.Must().BeOfType<string>();
       }
    }
 
@@ -25,7 +24,7 @@ public class When_calling_Must_BeExactType : UniversalTestBase
       [XF] public void it_throws()
       {
          object value = 42;
-         Invoking(() => Must___TypeOfActual.BeOfType<string>(__Must.Must(value)))
+         Invoking(() => value.Must().BeOfType<string>())
             .Must()
             .Throw<AssertionFailedException>();
       }
@@ -39,7 +38,7 @@ public class When_calling_Must_BeExactType : UniversalTestBase
       [XF] public void it_throws_when_expecting_base_type()
       {
          object value = new Derived();
-         Invoking(() => Must___TypeOfActual.BeOfType<Base>(__Must.Must(value)))
+         Invoking(() => value.Must().BeOfType<Base>())
             .Must()
             .Throw<AssertionFailedException>();
       }

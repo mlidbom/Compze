@@ -2,10 +2,7 @@ using Compze.Tests.Infrastructure;
 using Compze.Utilities.Testing.Fluent;
 using Compze.Utilities.Testing.XUnit.BDD;
 using static Compze.Utilities.Testing.Fluent.MustActions;
-using __Must = Compze.Utilities.Testing.Fluent.__Must;
 using AssertionFailedException = Compze.Utilities.Testing.Fluent.AssertionFailedException;
-using Must___String = Compze.Utilities.Testing.Fluent.Must___String;
-using Must_Be_NotBe = Compze.Utilities.Testing.Fluent.Must_Be_NotBe;
 
 // ReSharper disable UnusedMember.Local
 // ReSharper disable InconsistentNaming

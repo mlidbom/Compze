@@ -18,6 +18,24 @@ public static class _Must_Satisfy
 {
    const string RemoveLine = nameof(RemoveLine);
 
+   static string ExtractParameterName(string lambdaExpression)
+   {
+      // Handle expressions like "it => ..." or "(it) => ..." or "x => ..."
+      var arrowIndex = lambdaExpression.IndexOf("=>", StringComparison.Ordinal);
+      if(arrowIndex == -1)
+         return "it"; // Fallback to default if not a lambda expression
+
+      var parameterPart = lambdaExpression[..arrowIndex].Trim();
+      
+      // Remove parentheses if present: "(it)" -> "it"
+      if(parameterPart.StartsWith('(') && parameterPart.EndsWith(')'))
+      {
+         parameterPart = parameterPart[1..^1].Trim();
+      }
+
+      return string.IsNullOrWhiteSpace(parameterPart) ? "it" : parameterPart;
+   }
+
    public static IMust Satisfy(this IMust must,
                               Func<object, bool> predicate,
                               [CallerArgumentExpression(nameof(predicate))]
@@ -41,16 +59,18 @@ public static class _Must_Satisfy
             throw new AssertionFailedException(messageOverride.Invoke(new SatisfyCallInfo<T>(predicateExpression, predicate, failureMessage, usedArguments)));
          }
 
+         var parameterName = ExtractParameterName(predicateExpression);
+
          var message = $"""
              {context.Separator}
-             {ArgumentDescription("it", context.Expression)}
+             {ArgumentDescription(parameterName, context.Expression)}
              {DisplayUsedArgumentsDefinitions()}
              failed to Satisfy:
              {context.Separator}
              {predicateExpression.Indent()}
              {context.Separator}
              {CustomFailureMessage()}
-             {ArgumentValue("it", context.Actual)}
+             {ArgumentValue(parameterName, context.Actual)}
              {DisplayUsedArgumentsValues()}
              """.Split(Environment.NewLine)
                 .Where(it => it != RemoveLine)
