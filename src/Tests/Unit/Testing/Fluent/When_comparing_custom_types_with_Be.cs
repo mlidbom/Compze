@@ -329,4 +329,48 @@ public class When_comparing_custom_types_with_Be : UniversalTestBase
             .Must().Throw<AssertionFailedException>()
             .Which.Message.Must().Contain("it => it!.GetHashCode() == expected!.GetHashCode()");
    }
+
+   public class given_two_equal_values_but_IStructuralEquatable_is_broken : When_comparing_custom_types_with_Be
+   {
+      readonly ComparableWithErrorInjectionSupport _actual = new(42, BreakComparableMethod.IStructuralEquatable);
+      readonly ComparableWithErrorInjectionSupport _expected = new(42);
+
+      [XF] public void Be_throws_with_correct_predicate_and_message() =>
+         Invoking(() => _actual.Must().Be(_expected))
+            .Must().Throw<AssertionFailedException>()
+            .Which.Message.Must().Contain("it.Equals(expected, StructuralEqualityComparer) (IStructuralEquatable) should have returned true");
+   }
+
+   public class given_two_equal_values_but_IStructuralEquatable_reversed_is_broken : When_comparing_custom_types_with_Be
+   {
+      readonly ComparableWithErrorInjectionSupport _actual = new(42);
+      readonly ComparableWithErrorInjectionSupport _expected = new(42, BreakComparableMethod.IStructuralEquatable);
+
+      [XF] public void Be_throws_with_correct_predicate_and_message() =>
+         Invoking(() => _actual.Must().Be(_expected))
+            .Must().Throw<AssertionFailedException>()
+            .Which.Message.Must().Contain("expected.Equals(it, StructuralEqualityComparer) (IStructuralEquatable) should have returned true");
+   }
+
+   public class given_two_equal_values_but_IStructuralComparable_is_broken : When_comparing_custom_types_with_Be
+   {
+      readonly ComparableWithErrorInjectionSupport _actual = new(42, BreakComparableMethod.IStructuralComparable);
+      readonly ComparableWithErrorInjectionSupport _expected = new(42);
+
+      [XF] public void Be_throws_with_correct_predicate_and_message() =>
+         Invoking(() => _actual.Must().Be(_expected))
+            .Must().Throw<AssertionFailedException>()
+            .Which.Message.Must().Contain("it.CompareTo(expected, StructuralComparer) (IStructuralComparable) should have returned 0");
+   }
+
+   public class given_two_equal_values_but_IStructuralComparable_reversed_is_broken : When_comparing_custom_types_with_Be
+   {
+      readonly ComparableWithErrorInjectionSupport _actual = new(42);
+      readonly ComparableWithErrorInjectionSupport _expected = new(42, BreakComparableMethod.IStructuralComparable);
+
+      [XF] public void Be_throws_with_correct_predicate_and_message() =>
+         Invoking(() => _actual.Must().Be(_expected))
+            .Must().Throw<AssertionFailedException>()
+            .Which.Message.Must().Contain("expected.CompareTo(it, StructuralComparer) (IStructuralComparable) should have returned 0");
+   }
 }

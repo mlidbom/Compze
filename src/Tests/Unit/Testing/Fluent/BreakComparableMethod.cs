@@ -16,5 +16,7 @@ enum BreakComparableMethod
    OperatorLessThanOrEqual = 1 << 7,   // 128
    OperatorGreaterThan = 1 << 8,       // 256
    OperatorGreaterThanOrEqual = 1 << 9, // 512
-   GetHashCode = 1 << 10               // 1024
+   GetHashCode = 1 << 10,              // 1024
+   IStructuralEquatable = 1 << 11,     // 2048
+   IStructuralComparable = 1 << 12     // 4096
 }

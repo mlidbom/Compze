@@ -2,7 +2,7 @@ using Compze.Tests.Infrastructure.Fluent.Serialization;
 using Compze.Utilities.SystemCE.ReflectionCE;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
+using System.Collections;
 using System.Runtime.CompilerServices;
 using Compze.Utilities.SystemCE;
 
@@ -32,14 +32,19 @@ public static class ObjectEqualityAssertions
       must.Satisfy(it => !it.DeclaredType().Operators.InEquality?.Invoke(it, expected) ?? true, failureMessage: it => "it != expected should have returned false", messageOverride: BuildFailureMessage);
       must.Satisfy(it => !it.DeclaredType().Operators.InEquality?.Invoke(expected, it) ?? true, failureMessage: it => "expected != it should have returned false", messageOverride: BuildFailureMessage);
 
-      must.Satisfy(it => EqualityComparer<TValue>.Default.Equals(it, expected), failureMessage: it => "default equality comparer should have returned true", messageOverride: BuildFailureMessage);
-      must.Satisfy(it => EqualityComparer<TValue>.Default.Equals(expected, it), failureMessage: it => "default equality comparer should have returned true", messageOverride: BuildFailureMessage);
-
       must.Satisfy(it => (it as IComparable<TValue>)?.CompareTo(expected).Equals(0) ?? true, failureMessage: it => "it.CompareTo(expected) (IComparable<T>) should have returned 0", messageOverride: BuildFailureMessage);
       must.Satisfy(it => (expected as IComparable<TValue>)?.CompareTo(it).Equals(0) ?? true, failureMessage: it => "expected.CompareTo(it) (IComparable<T>) should have returned 0", messageOverride: BuildFailureMessage);
 
       must.Satisfy(it => (it as IComparable)?.CompareTo(expected).Equals(0) ?? true, failureMessage: it => "it.CompareTo(expected) (IComparable) should have returned 0", messageOverride: BuildFailureMessage);
       must.Satisfy(it => (expected as IComparable)?.CompareTo(it).Equals(0) ?? true, failureMessage: it => "expected.CompareTo(it) (IComparable) should have returned 0", messageOverride: BuildFailureMessage);
+
+      // IStructuralEquatable - used for structural equality (e.g., arrays, tuples)
+      must.Satisfy(it => (it as IStructuralEquatable)?.Equals(expected, StructuralComparisons.StructuralEqualityComparer) ?? true, failureMessage: it => "it.Equals(expected, StructuralEqualityComparer) (IStructuralEquatable) should have returned true", messageOverride: BuildFailureMessage);
+      must.Satisfy(it => (expected as IStructuralEquatable)?.Equals(it, StructuralComparisons.StructuralEqualityComparer) ?? true, failureMessage: it => "expected.Equals(it, StructuralEqualityComparer) (IStructuralEquatable) should have returned true", messageOverride: BuildFailureMessage);
+
+      // IStructuralComparable - used for structural comparison (e.g., arrays, tuples)
+      must.Satisfy(it => (it as IStructuralComparable)?.CompareTo(expected, StructuralComparisons.StructuralComparer).Equals(0) ?? true, failureMessage: it => "it.CompareTo(expected, StructuralComparer) (IStructuralComparable) should have returned 0", messageOverride: BuildFailureMessage);
+      must.Satisfy(it => (expected as IStructuralComparable)?.CompareTo(it, StructuralComparisons.StructuralComparer).Equals(0) ?? true, failureMessage: it => "expected.CompareTo(it, StructuralComparer) (IStructuralComparable) should have returned 0", messageOverride: BuildFailureMessage);
 
       must.Satisfy(it => !it.DeclaredType().Operators.LessThan?.Invoke(it, expected) ?? true, failureMessage: it => "it < expected should have returned false", messageOverride: BuildFailureMessage);
       must.Satisfy(it => !it.DeclaredType().Operators.LessThan?.Invoke(expected, it) ?? true, failureMessage: it => "expected < it should have returned false", messageOverride: BuildFailureMessage);
@@ -85,10 +90,12 @@ public static class ObjectEqualityAssertions
                  """;
 
          string FailureMessage() =>
-            info.FailureMessage != null ? $""""
+            info.FailureMessage != null
+               ? $""""
 
-                                           with the message: {info.FailureMessage?.Invoke(must.Actual)}""" 
-                                           """" : "";
+                  with the message: {info.FailureMessage?.Invoke(must.Actual)}""" 
+                  """"
+               : "";
       }
    }
 }

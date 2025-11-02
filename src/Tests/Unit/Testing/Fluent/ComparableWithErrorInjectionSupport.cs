@@ -1,8 +1,13 @@
 using System;
+using System.Collections;
 
 namespace Compze.Tests.Unit.Testing.Fluent;
 
-class ComparableWithErrorInjectionSupport : IEquatable<ComparableWithErrorInjectionSupport>, IComparable<ComparableWithErrorInjectionSupport>, IComparable
+class ComparableWithErrorInjectionSupport : IEquatable<ComparableWithErrorInjectionSupport>, 
+                                             IComparable<ComparableWithErrorInjectionSupport>, 
+                                             IComparable,
+                                             IStructuralEquatable,
+                                             IStructuralComparable
 {
    readonly int _value;
    readonly BreakComparableMethod _breakComparableMethod;
@@ -99,6 +104,31 @@ class ComparableWithErrorInjectionSupport : IEquatable<ComparableWithErrorInject
       if(left is null || right is null) return false;
       var result = left._value >= right._value;
       if(left._breakComparableMethod.HasFlag(BreakComparableMethod.OperatorGreaterThanOrEqual)) result = !result;
+      return result;
+   }
+
+   // IStructuralEquatable implementation
+   bool IStructuralEquatable.Equals(object? other, IEqualityComparer comparer)
+   {
+      if(other is not ComparableWithErrorInjectionSupport otherValue) return false;
+      var result = _value == otherValue._value;
+      if(_breakComparableMethod.HasFlag(BreakComparableMethod.IStructuralEquatable)) result = !result;
+      return result;
+   }
+
+   int IStructuralEquatable.GetHashCode(IEqualityComparer comparer)
+   {
+      var hash = comparer.GetHashCode(_value);
+      if(_breakComparableMethod.HasFlag(BreakComparableMethod.IStructuralEquatable)) hash = ~hash;
+      return hash;
+   }
+
+   // IStructuralComparable implementation
+   int IStructuralComparable.CompareTo(object? other, IComparer comparer)
+   {
+      if(other is not ComparableWithErrorInjectionSupport otherValue) throw new ArgumentException("Object is not a ComparableWithErrorInjectionSupport");
+      var result = _value.CompareTo(otherValue._value);
+      if(_breakComparableMethod.HasFlag(BreakComparableMethod.IStructuralComparable) && result == 0) result = 1;
       return result;
    }
 }
