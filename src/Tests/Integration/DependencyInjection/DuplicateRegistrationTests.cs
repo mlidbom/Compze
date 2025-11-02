@@ -27,8 +27,8 @@ public class DuplicateRegistrationTests : UniversalTestBase
       attemptingDuplicateRegistration.Must()
                                      .Throw<InvalidOperationException>()
                                      .And.Message.Must()
-                                     .Contain("*ITestService*")
-                                     .Contain("*already*registered*");
+                                     .Contain("ITestService")
+                                     .Contain("already registered");
    }
 
    [PCT]
@@ -43,8 +43,8 @@ public class DuplicateRegistrationTests : UniversalTestBase
       attemptingDuplicateRegistration.Must()
                                      .Throw<InvalidOperationException>()
                                      .And.Message.Must()
-                                     .Contain("*ITestService*")
-                                     .Contain("*already*registered*");
+                                     .Contain("ITestService")
+                                     .Contain("already registered");
    }
 
    [PCT]
@@ -61,7 +61,7 @@ public class DuplicateRegistrationTests : UniversalTestBase
       attemptingToReregisterOneServiceType.Must()
                                           .Throw<InvalidOperationException>()
                                           .And.Message.Must()
-                                          .Contain("*ITestService*")
-                                          .Contain("*already*registered*");
+                                          .Contain("ITestService")
+                                          .Contain("already registered");
    }
 }
