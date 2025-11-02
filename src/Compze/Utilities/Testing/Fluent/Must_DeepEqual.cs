@@ -15,7 +15,7 @@ namespace Compze.Utilities.Testing.Fluent;
 public class EquivalencyConfig<TValue>
 {
    internal HashSet<MemberInfo> ExcludedMembers { get; } = new();
-   internal bool TypesIgnored { get; set; }
+   internal bool TypesIgnored { get; private set; }
 
    public EquivalencyConfig<TValue> ExcludeTypeMember<TMember>(Expression<Func<TValue, TMember>> memberExpression) =>
       ExcludedMembers.Add(memberExpression.ExtractFinalMemberInfo())
