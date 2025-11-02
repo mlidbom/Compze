@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.Functional;
 
@@ -13,6 +14,9 @@ static class DateTimeCE
    //todo: Do we also need ToLocalTimeSafely?
    ///<summary>Like <see cref="DateTime.ToUniversalTime"/> except it will throw an exception if <see cref="@this"/>.Kind == <see cref="DateTimeKind.Unspecified"/> instead of assuming that Kind == <see cref="DateTimeKind.Local"/> and converting based on that assumption like <see cref="DateTime.ToUniversalTime"/> does.</summary>
    internal static DateTime ToUniversalTimeSafely(this DateTime @this) => @this.AssertHasKind().ToUniversalTime();
+
+   ///<summary>Parses a DateTime string using invariant culture to avoid locale-dependent behavior</summary>
+   internal static DateTime ParseInvariant(string dateTimeString) => DateTime.Parse(dateTimeString, CultureInfo.InvariantCulture);
 
    ///<summary>Ensures that a DateTime instance has a Kind specified so that it can be accurately stored, restored, and passed between systems with different time zones without losing information</summary>
    static DateTime AssertHasKind(this DateTime @this) =>

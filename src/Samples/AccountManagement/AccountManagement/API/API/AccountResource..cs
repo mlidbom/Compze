@@ -1,6 +1,5 @@
 using AccountManagement.Domain;
 using AccountManagement.Domain.Passwords;
-using Compze.Core.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public;
 using Newtonsoft.Json;
 

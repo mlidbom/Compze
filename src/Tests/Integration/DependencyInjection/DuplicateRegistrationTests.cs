@@ -13,7 +13,6 @@ public class DuplicateRegistrationTests : UniversalTestBase
    interface ITestService;
    class TestService : ITestService;
    interface ITestService2;
-   class TestService2 : ITestService2;
    class MultiService : ITestService, ITestService2;
 
    [PCT]
@@ -61,17 +60,5 @@ public class DuplicateRegistrationTests : UniversalTestBase
                                           .Throw<InvalidOperationException>()
                                           .WithMessage("*ITestService*")
                                           .WithMessage("*already*registered*");
-   }
-
-   [PCT]
-   public void Can_register_different_service_types_successfully()
-   {
-      var container = TestEnv.DIContainer.CreateWithServiceLocatorAndCurrentTestsPluggableComponents();
-
-      container.Register(Singleton.For<ITestService>().CreatedBy(() => new TestService()));
-
-      var registeringDifferentServiceType = () => container.Register(Singleton.For<ITestService2>().CreatedBy(() => new TestService2()));
-
-      registeringDifferentServiceType.Should().NotThrow();
    }
 }

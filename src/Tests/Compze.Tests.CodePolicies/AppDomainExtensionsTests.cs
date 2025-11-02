@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using Compze.Tests.Infrastructure.Fluent;
 using Compze.Utilities.SystemCE;

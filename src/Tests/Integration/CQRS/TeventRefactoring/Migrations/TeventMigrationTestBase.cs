@@ -14,15 +14,10 @@ using Compze.Tessaging.Teventive.TeventStore.Wiring;
 using Compze.Tests.Common.CQRS.TeventRefactoring.Migrations;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.Fluent;
-using Compze.Tests.Infrastructure.FluentAssertionsExtensions;
-using Compze.Tests.Infrastructure.Serialization;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Functional;
-using Compze.Utilities.SystemCE.LinqCE;
-using FluentAssertions;
 using FluentAssertions.Extensions;
-using Newtonsoft.Json;
 
 // ReSharper disable AccessToModifiedClosure
 
@@ -216,6 +211,6 @@ public abstract class TeventMigrationTestBase : UniversalTestBase
    internal static void AssertStreamsAreIdentical(IReadOnlyList<ITaggregateTevent> expected, IReadOnlyList<ITaggregateTevent> migratedHistory, string descriptionOfHistory, DeferredConsoleWriter writer)
    {
          migratedHistory.ToList().Must()
-                        .BeEquivalentTo(expected.ToList(), config => config.Excluding(it => it.First().Id));
+                        .DeepEqualPrivate(expected.ToList(), config => config.Excluding(it => it.First().Id));
    }
 }

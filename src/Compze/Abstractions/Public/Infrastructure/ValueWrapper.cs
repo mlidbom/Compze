@@ -3,7 +3,7 @@ using System;
 namespace Compze.Core.Public.Infrastructure;
 
 #pragma warning disable CA1033 //We are using explicit interface implementation to hide this from the public interface
-public abstract class ValueWrapper<TValue>(TValue value) : IEquatable<ValueWrapper<TValue>>,
+public class ValueWrapper<TValue>(TValue value) : IEquatable<ValueWrapper<TValue>>,
                                                                     ISingleUntypedPrimitiveValueWrapper
    where TValue : IEquatable<TValue>
 {
@@ -15,8 +15,7 @@ public abstract class ValueWrapper<TValue>(TValue value) : IEquatable<ValueWrapp
                                                    && IsConsideredTypeCompatibleForEquality(other)
                                                    && other.Value.Equals(Value);
 
-   public override bool Equals(object? obj) => obj != null
-                                            && Equals(obj as ValueWrapper<TValue>);
+   public override bool Equals(object? obj) => Equals(obj as ValueWrapper<TValue>);
 
    protected virtual bool IsConsideredTypeCompatibleForEquality(object other) => GetType() == other.GetType();
 

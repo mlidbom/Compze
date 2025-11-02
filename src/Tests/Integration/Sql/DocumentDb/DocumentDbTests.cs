@@ -8,7 +8,7 @@ using Compze.Core.Public;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tests.Common.Sql.DocumentDb;
 using Compze.Tests.Infrastructure;
-using Compze.Tests.Infrastructure.FluentAssertionsExtensions;
+using Compze.Tests.Infrastructure.Fluent;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
@@ -584,8 +584,8 @@ public class DocumentDbTests : DocumentDbTestsBase
 
         UseInScope(reader =>
         {
-            reader.Get<Person>(user1.Id).Should().BeStrictlyEquivalentTo(user1);
-            reader.Get<Person>(person1.Id).Should().BeStrictlyEquivalentTo(person1);
+            reader.Get<Person>(user1.Id).Must().DeepEqual(user1);
+            reader.Get<Person>(person1.Id).Must().DeepEqual(person1);
         });
     }
 

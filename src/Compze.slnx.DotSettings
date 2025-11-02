@@ -719,7 +719,7 @@
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=0EF719E40C92024E9BF0101B615075C7/Scope/=C3001E7C0DA78E4487072B7E050D86C5/Type/@EntryValue">InCSharpFile</s:String>
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=0EF719E40C92024E9BF0101B615075C7/Shortcut/@EntryValue">nguid_test</s:String>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=0EF719E40C92024E9BF0101B615075C7/ShortenQualifiedReferences/@EntryValue">True</s:Boolean>
-	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=0EF719E40C92024E9BF0101B615075C7/Text/@EntryValue">global::System.Guid.Parse("00000000-0000-0000-0000-00000000000$NUMBER$")&#xD;
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=0EF719E40C92024E9BF0101B615075C7/Text/@EntryValue">global::System.Guid.Parse("$NUMBER$00000000-0000-0000-0000-00000000000")&#xD;
 </s:String>
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=2CAB0A567F30704CA99AA3EC249E3153/Text/@EntryValue">$HEADER$namespace $NAMESPACE$
 {

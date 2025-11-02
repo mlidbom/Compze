@@ -1,0 +1,40 @@
+using Compze.Tests.Infrastructure;
+using Compze.Tests.Infrastructure.Fluent;
+using Compze.Utilities.Testing.XUnit.BDD;
+using static Compze.Tests.Infrastructure.Fluent.MustActions;
+
+// ReSharper disable InconsistentNaming
+
+namespace Compze.Tests.Unit.Testing.Fluent;
+
+public class When_calling_Must_NotBeNull : UniversalTestBase
+{
+   public class with_a_non_null_reference : When_calling_Must_NotBeNull
+   {
+      [XF] public void it_does_not_throw() => "not null".Must().NotBeNull();
+   }
+
+   public class with_a_null_reference_type_value : When_calling_Must_NotBeNull
+   {
+      readonly string? _actual = null;
+
+      [XF] public void it_throws() => Invoking(() => _actual.Must().NotBeNull())
+                                     .Must()
+                                     .Throw<AssertionFailedException>();
+   }
+
+   public class with_a_null_nullable_value_type : When_calling_Must_NotBeNull
+   {
+      readonly int? _actual = null;
+
+      [XF] public void it_throws() => Invoking(() => _actual.Must().NotBeNull())
+                                     .Must()
+                                     .Throw<AssertionFailedException>();
+   }
+
+   public class with_a_non_null_nullable_value_type : When_calling_Must_NotBeNull
+   {
+      readonly int? _value = 42;
+      [XF] public void it_does_not_throw() => _value.Must().NotBeNull();
+   }
+}

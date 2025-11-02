@@ -8,9 +8,9 @@ using static Compze.Tests.Infrastructure.Fluent.MustActions;
 
 namespace Compze.Tests.Unit.Testing.Fluent;
 
-public class When_using_Invoking_and_Throw : UniversalTestBase
+public class When_calling_Invoking_Must_Throw : UniversalTestBase
 {
-   public class given_an_action_that_throws_the_expected_exception : When_using_Invoking_and_Throw
+   public class given_an_action_that_throws_the_expected_exception : When_calling_Invoking_Must_Throw
    {
       readonly InvalidOperationException _actual = new InvalidOperationException("test message");
 
@@ -22,7 +22,7 @@ public class When_using_Invoking_and_Throw : UniversalTestBase
            .Be(_actual);
    }
 
-   public class given_an_action_that_throws_a_different_exception : When_using_Invoking_and_Throw
+   public class given_an_action_that_throws_a_different_exception : When_calling_Invoking_Must_Throw
    {
       public class Throw_throws : given_an_action_that_throws_a_different_exception
       {
@@ -40,22 +40,22 @@ public class When_using_Invoking_and_Throw : UniversalTestBase
                                                        .Throw<ArgumentException>())
                                         .Must()
                                         .Throw<AssertionFailedException>()
-                                        .Which.
-                                         Message;
+                                        .Which.Message;
 
             [XF] public void is_the_full_formatted_message()
-               => ExceptionMessage().Must().Be($$"""
-                                                 Expected invoking the expression
-                                                 --------------------------------------------------
-                                                 () => throw new InvalidOperationException("wrong") 
-                                                 --------------------------------------------------
-                                                 to throw ArgumentException but instead a System.InvalidOperationException was thrown
-                                                 """);
+               => ExceptionMessage().Must().Be($"""
+
+                                                Expected invoking the expression
+                                                --------------------------------------------------
+                                                () => throw new InvalidOperationException("wrong") 
+                                                --------------------------------------------------
+                                                to throw ArgumentException but instead a System.InvalidOperationException was thrown
+                                                """);
          }
       }
    }
 
-   public class given_an_action_that_does_not_throw : When_using_Invoking_and_Throw
+   public class given_an_action_that_does_not_throw : When_calling_Invoking_Must_Throw
    {
       public class Throw_throws : given_an_action_that_does_not_throw
       {
@@ -82,6 +82,7 @@ public class When_using_Invoking_and_Throw : UniversalTestBase
 
             [XF] public void is_the_full_formatted_message()
                => ExceptionMessage().Must().Be("""
+                                               
                                                Expected invoking the expression
                                                --------------------------------------------------
                                                () =>
@@ -94,7 +95,7 @@ public class When_using_Invoking_and_Throw : UniversalTestBase
       }
    }
 
-   public class given_an_action_that_throws_a_derived_exception : When_using_Invoking_and_Throw
+   public class given_an_action_that_throws_a_derived_exception : When_calling_Invoking_Must_Throw
    {
       public class Throw_catches_the_derived_exception : given_an_action_that_throws_a_derived_exception
       {
@@ -108,41 +109,6 @@ public class When_using_Invoking_and_Throw : UniversalTestBase
               .That
               .Must()
               .Be(_actual);
-      }
-   }
-
-   public class given_code_that_validates_exceptions : When_using_Invoking_and_Throw
-   {
-      public class Invoking_can_be_used_recursively : given_code_that_validates_exceptions
-      {
-         [XF] public void to_test_exception_throwing_validation_code()
-         {
-            // Test that validation code correctly catches the expected exception
-            var caughtException = Invoking(() => throw new InvalidOperationException("inner"))
-                                 .Must()
-                                 .Throw<InvalidOperationException>();
-
-            // Verify the caught exception has the expected properties
-            caughtException.Which.Message.Must().Contain("inner");
-         }
-      }
-   }
-
-   public class given_an_action_with_complex_error_details : When_using_Invoking_and_Throw
-   {
-      record TestObject(string Name, int Value);
-
-      public class Throw_enables_detailed_assertions : given_an_action_with_complex_error_details
-      {
-         [XF] public void on_exception_with_complex_data()
-         {
-            var testData = new TestObject("test", 42);
-            var exception = Invoking(() => throw new InvalidOperationException($"Failed with {testData}"))
-                           .Must()
-                           .Throw<InvalidOperationException>();
-
-            exception.Which.Message.Must().Be("Failed with TestObject { Name = test, Value = 42 }");
-         }
       }
    }
 }

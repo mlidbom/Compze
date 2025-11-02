@@ -21,6 +21,7 @@ using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Performance;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tests.Infrastructure;
+using Compze.Tests.Infrastructure.Fluent;
 using Compze.Tests.Infrastructure.SystemCE;
 using Compze.Utilities.Threading.Testing;
 using Compze.Utilities.SystemCE.TransactionsCE.Testing;
@@ -485,7 +486,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
          TeventStorageTestHelper.StripSteventhDecimalPointFromSecondFractionOnUtcUpdateTime(dispatchedTevents);
          TeventStorageTestHelper.StripSteventhDecimalPointFromSecondFractionOnUtcUpdateTime(allPersistedTevents);
 
-         allPersistedTevents.Should().BeEquivalentTo(dispatchedTevents, options => options.WithStrictOrdering());
+         allPersistedTevents.Must().DeepEqual(dispatchedTevents);
       });
    }
 

@@ -1,6 +1,5 @@
 using AccountManagement.API.ValidationAttributes;
 using AccountManagement.Domain;
-using Compze.Core.Public;
 using Compze.Core.Tessaging.Public;
 using System;
 using System.Collections.Generic;

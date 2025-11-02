@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using Compze.Utilities.Functional;
 using static Compze.Utilities.Contracts.Assert;
 
 namespace Compze.Utilities.SystemCE.ReflectionCE;
@@ -24,15 +26,8 @@ static class TypeCE
    }
 
    ///<returns>true if <paramref name="me"/> implements the interface: <paramref name="implemented"/>. By definition true if <paramref name="me"/> == <paramref name="implemented"/>.</returns>
-   public static bool Implements(this Type me, Type implemented)
+   public static bool Implements(this Type me, Type implemented) => Argument.NotNull(me).NotNull(implemented).Is(implemented.IsInterface).then(() =>
    {
-      Argument.NotNull(me).NotNull(implemented);
-
-      if(!implemented.IsInterface)
-      {
-         throw new ArgumentException(nameof(implemented));
-      }
-
       if(me == implemented) { return true; }
 
       if(me is { IsInterface: true, IsGenericType: true } && me.GetGenericTypeDefinition() == implemented)
@@ -46,7 +41,7 @@ static class TypeCE
       }
 
       return me.GetInterfaces().Contains(implemented);
-   }
+   });
 
    public static Type GetGenericInterface(this Type @this, Type implementedGenericInterface) =>
       @this.ListGenericInterfaces(implementedGenericInterface).Single();
@@ -57,8 +52,9 @@ static class TypeCE
                   .Where(it => it.GetGenericTypeDefinition() == genericInterface);
    }
 
+   static readonly ConcurrentDictionary<Type, List<Type>> GenericInterfacesByType = new();
    public static IEnumerable<Type> ListGenericInterfaces(this Type @this) =>
-      @this.GetInterfaces().Where(it => it.IsGenericType);
+      GenericInterfacesByType.GetOrAdd(@this, it => it.GetInterfaces().Where(it => it.IsGenericType).ToList());
 
    public static bool ImplementsGenericInterface(this Type @this, Type implementedGenericInterface) =>
       @this.ListGenericInterfaces(implementedGenericInterface).Any();
