@@ -31,10 +31,7 @@ public class When_comparing_objects_with_Be : UniversalTestBase
       readonly string _actual = "same_value";
       readonly string _expected = "same_value";
 
-      public class Be_does_not_throw : given_two_equal_strings
-      {
-         [XF] public void assertion_succeeds() => _actual.Must().Be(_expected);
-      }
+      [XF] public void Be_does_not_throw() => _actual.Must().Be(_expected);
    }
 
    public class given_two_equal_integers : When_comparing_objects_with_Be
@@ -42,10 +39,7 @@ public class When_comparing_objects_with_Be : UniversalTestBase
       readonly int _actual = 42;
       readonly int _expected = 42;
 
-      public class Be_does_not_throw : given_two_equal_integers
-      {
-         [XF] public void assertion_succeeds() => _actual.Must().Be(_expected);
-      }
+      [XF] public void Be_does_not_throw() => _actual.Must().Be(_expected);
    }
 
    public class given_two_different_integers : When_comparing_objects_with_Be
@@ -96,10 +90,7 @@ public class When_comparing_objects_with_Be : UniversalTestBase
       readonly TestObjectWithOverriddenEquals _actual = new("same");
       readonly TestObjectWithOverriddenEquals _expected = new("same");
 
-      public class Be_does_not_throw : given_two_equal_custom_objects_with_overridden_equals
-      {
-         [XF] public void assertion_succeeds() => _actual.Must().Be(_expected);
-      }
+      [XF] public void Be_does_not_throw() => _actual.Must().Be(_expected);
    }
 
    public class given_two_different_custom_objects_with_overridden_equals : When_comparing_objects_with_Be
