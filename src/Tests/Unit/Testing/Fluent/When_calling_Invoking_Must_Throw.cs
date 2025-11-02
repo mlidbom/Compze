@@ -8,9 +8,9 @@ using static Compze.Tests.Infrastructure.Fluent.MustActions;
 
 namespace Compze.Tests.Unit.Testing.Fluent;
 
-public class When_using_Invoking_and_Throw : UniversalTestBase
+public class When_calling_Invoking_Must_Throw : UniversalTestBase
 {
-   public class given_an_action_that_throws_the_expected_exception : When_using_Invoking_and_Throw
+   public class given_an_action_that_throws_the_expected_exception : When_calling_Invoking_Must_Throw
    {
       readonly InvalidOperationException _actual = new InvalidOperationException("test message");
 
@@ -22,7 +22,7 @@ public class When_using_Invoking_and_Throw : UniversalTestBase
            .Be(_actual);
    }
 
-   public class given_an_action_that_throws_a_different_exception : When_using_Invoking_and_Throw
+   public class given_an_action_that_throws_a_different_exception : When_calling_Invoking_Must_Throw
    {
       public class Throw_throws : given_an_action_that_throws_a_different_exception
       {
@@ -55,7 +55,7 @@ public class When_using_Invoking_and_Throw : UniversalTestBase
       }
    }
 
-   public class given_an_action_that_does_not_throw : When_using_Invoking_and_Throw
+   public class given_an_action_that_does_not_throw : When_calling_Invoking_Must_Throw
    {
       public class Throw_throws : given_an_action_that_does_not_throw
       {
@@ -94,7 +94,7 @@ public class When_using_Invoking_and_Throw : UniversalTestBase
       }
    }
 
-   public class given_an_action_that_throws_a_derived_exception : When_using_Invoking_and_Throw
+   public class given_an_action_that_throws_a_derived_exception : When_calling_Invoking_Must_Throw
    {
       public class Throw_catches_the_derived_exception : given_an_action_that_throws_a_derived_exception
       {
