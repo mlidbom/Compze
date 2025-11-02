@@ -22,7 +22,8 @@ public static class Must___Enumerable
       where TCollection : System.Collections.IEnumerable
       => must.Satisfy(it => it.Cast<object>().Any());
 
-   public static IMust<TCollection> SequenceEqual<TCollection, TElement>(this IMust<TCollection> must, IEnumerable<TElement> expected, [CallerArgumentExpression(nameof(expected))] string expectedExpression = null!)
+   //Todo: rename
+   public static IMust<TCollection> Equal<TCollection, TElement>(this IMust<TCollection> must, IEnumerable<TElement> expected, [CallerArgumentExpression(nameof(expected))] string expectedExpression = null!)
       where TCollection : IEnumerable<TElement>
    {
       var actualJson = JsonConvert.SerializeObject(must.Actual, TestingJsonSettings.AllMembers);

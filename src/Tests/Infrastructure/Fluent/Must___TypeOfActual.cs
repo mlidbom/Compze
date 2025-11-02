@@ -3,7 +3,8 @@ namespace Compze.Tests.Infrastructure.Fluent;
 
 public static class Must___TypeOfActual
 {
-   public static IMust<TExpected> BeExactType<TExpected>(this IMust must) =>
+   //todo: rename
+   public static IMust<TExpected> BeOfType<TExpected>(this IMust must) =>
       must.Satisfy(it => it.GetType() == typeof(TExpected))
           .Cast<TExpected>();
 

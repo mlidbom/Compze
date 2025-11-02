@@ -5,7 +5,6 @@ using Compze.Utilities.SystemCE.ReflectionCE;
 
 namespace Compze.Tests.Infrastructure.Fluent;
 // ReSharper disable InconsistentNaming
-
 public class ActionSpec(Action action, string expression)
 {
    readonly Action _action = action;
@@ -22,6 +21,9 @@ public class AsyncActionSpec(Func<Task> action, string expression)
 
 public static class MustActions
 {
+   public static IMust<Action> Must<T>(this Func<T> func, [CallerArgumentExpression(nameof(func))] string expression = null!) => Invoking(func, expression).Must();
+   public static IMust<Action> Must(this Action action, [CallerArgumentExpression(nameof(action))] string expression = null!) => Invoking(action, expression).Must();
+
    public static ActionSpec Invoking<T>(Func<T> action, [CallerArgumentExpression(nameof(action))] string expression = null!) => new(() => action(), expression);
    public static ActionSpec Invoking(Action action, [CallerArgumentExpression(nameof(action))] string expression = null!) => new(action, expression);
 
@@ -30,6 +32,10 @@ public static class MustActions
 
    public static ActionSpec Invoking<T, TResult>(this T subject, Func<T, TResult> func, [CallerArgumentExpression(nameof(func))] string expression = null!)
       => Invoking(() => func(subject), expression);
+
+
+   public static IMust<Func<Task>> Must(this Func<Task> action, [CallerArgumentExpression(nameof(action))] string expression = null!) => InvokingAsync(action, expression).Must();
+   public static IMust<Func<Task>> Must<T>(this Func<Task<T>> func, [CallerArgumentExpression(nameof(func))] string expression = null!) => InvokingAsync(func, expression).Must();
 
    public static AsyncActionSpec InvokingAsync(Func<Task> action, [CallerArgumentExpression(nameof(action))] string expression = null!) => new(action, expression);
 
@@ -104,8 +110,8 @@ public class CaughtException<TException>(TException exception)
    where TException : Exception
 {
    readonly TException _exception = exception;
-   public  TException Which => _exception;
-   public  TException And => _exception;
+   public TException Which => _exception;
+   public TException And => _exception;
    public TException That => _exception;
    public IMust<TException> ThatMust => _exception.Must();
    public IMust<TException> WhichMust => _exception.Must();
