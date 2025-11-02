@@ -13,9 +13,9 @@ using static Compze.Tests.Infrastructure.Fluent.MustActions;
 
 namespace Compze.Tests.Unit.Testing.Fluent;
 
-public class When_comparing_objects_with_DeepEqual : UniversalTestBase
+public class When_calling_Must_DeepEqual : UniversalTestBase
 {
-   public class given_two_objects_that : When_comparing_objects_with_DeepEqual
+   public class given_two_objects_that : When_calling_Must_DeepEqual
    {
       public class differ_in_one_private_member : given_two_objects_that
       {

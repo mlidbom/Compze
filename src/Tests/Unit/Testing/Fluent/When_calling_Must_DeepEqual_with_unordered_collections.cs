@@ -6,9 +6,9 @@ using Compze.Utilities.Testing.XUnit.BDD;
 
 namespace Compze.Tests.Unit.Testing.Fluent;
 
-public class When_comparing_unordered_collections_with_DeepEqual : UniversalTestBase
+public class When_calling_Must_DeepEqual_with_unordered_collections : UniversalTestBase
 {
-   public class given_two_dictionaries: When_comparing_unordered_collections_with_DeepEqual
+   public class given_two_dictionaries: When_calling_Must_DeepEqual_with_unordered_collections
    {
       readonly Dictionary<string, int> _expected = new() { ["a"] = 1, ["b"] = 2, ["c"] = 3 };
 
@@ -75,7 +75,7 @@ public class When_comparing_unordered_collections_with_DeepEqual : UniversalTest
       }
    }
 
-   public class given_two_hashsets_with_same_content_but_differing_insertion_order : When_comparing_unordered_collections_with_DeepEqual
+   public class given_two_hashsets_with_same_content_but_differing_insertion_order : When_calling_Must_DeepEqual_with_unordered_collections
    {
       readonly HashSet<string> _set1 = ["apple", "banana", "cherry"];
       readonly HashSet<string> _set2 = ["cherry", "apple", "banana"];
@@ -87,7 +87,7 @@ public class When_comparing_unordered_collections_with_DeepEqual : UniversalTest
       }
    }
 
-   public class given_two_objects_with_hashset_properties_with_the_same_content_but_different_insertion_order : When_comparing_unordered_collections_with_DeepEqual
+   public class given_two_objects_with_hashset_properties_with_the_same_content_but_different_insertion_order : When_calling_Must_DeepEqual_with_unordered_collections
    {
       readonly TestObject _obj1 = new() { Items = ["x", "y", "z"] };
       readonly TestObject _obj2 = new() { Items = ["z", "x", "y"] };
