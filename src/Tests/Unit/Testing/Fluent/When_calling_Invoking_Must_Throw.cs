@@ -40,17 +40,17 @@ public class When_calling_Invoking_Must_Throw : UniversalTestBase
                                                        .Throw<ArgumentException>())
                                         .Must()
                                         .Throw<AssertionFailedException>()
-                                        .Which.
-                                         Message;
+                                        .Which.Message;
 
             [XF] public void is_the_full_formatted_message()
-               => ExceptionMessage().Must().Be($$"""
-                                                 Expected invoking the expression
-                                                 --------------------------------------------------
-                                                 () => throw new InvalidOperationException("wrong") 
-                                                 --------------------------------------------------
-                                                 to throw ArgumentException but instead a System.InvalidOperationException was thrown
-                                                 """);
+               => ExceptionMessage().Must().Be($"""
+
+                                                Expected invoking the expression
+                                                --------------------------------------------------
+                                                () => throw new InvalidOperationException("wrong") 
+                                                --------------------------------------------------
+                                                to throw ArgumentException but instead a System.InvalidOperationException was thrown
+                                                """);
          }
       }
    }
@@ -82,6 +82,7 @@ public class When_calling_Invoking_Must_Throw : UniversalTestBase
 
             [XF] public void is_the_full_formatted_message()
                => ExceptionMessage().Must().Be("""
+                                               
                                                Expected invoking the expression
                                                --------------------------------------------------
                                                () =>

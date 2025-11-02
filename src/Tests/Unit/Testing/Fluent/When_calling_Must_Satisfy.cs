@@ -73,6 +73,7 @@ public class When_calling_Must_Satisfy : UniversalTestBase
 
       [XF] public void it_throws_and_the_full_message_is() =>
          ExceptionMessage().Must().Be("""
+                                      
                                       --------------------------------------------------
                                       "it" defined by:
                                       --------------------------------------------------

@@ -28,6 +28,7 @@ public class When_calling_Must_DeepEqual : UniversalTestBase
 
             [XF] public void and_the_exception_message_is() =>
                ExceptionMessage().Must().Be(""""
+                                            
                                             --------------------------------------------------
                                             expected:
                                             --------------------------------------------------

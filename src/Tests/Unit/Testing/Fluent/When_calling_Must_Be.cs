@@ -41,6 +41,7 @@ public class When_calling_Must_Be : UniversalTestBase
 
          [XF] public void and_the_exception_message__is() =>
             ExceptionMessage().Must().Be("""
+                                         
                                          --------------------------------------------------
                                          expected the object "it" returned by the expression: 
                                          --------------------------------------------------
@@ -89,6 +90,7 @@ public class When_calling_Must_Be : UniversalTestBase
 
          [XF] public void and_the_exception_message__is() =>
             ExceptionMessage().Must().Be(""""
+                                         
                                          --------------------------------------------------
                                          expected the object "it" returned by the expression: 
                                          --------------------------------------------------

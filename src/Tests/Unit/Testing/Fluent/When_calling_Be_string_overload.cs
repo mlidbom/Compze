@@ -33,6 +33,7 @@ public class When_calling_Be_string_overload : UniversalTestBase
 
             [XF] public void and_the_full_message_is() =>
                ExceptionMessage().Must().Be("""
+                                            
                                             --------------------------------------------------
                                             the expression: 
                                             --------------------------------------------------
@@ -80,6 +81,7 @@ public class When_calling_Be_string_overload : UniversalTestBase
 
             [XF] public void and_the_full_message_is() =>
                ExceptionMessage().Must().Be("""
+                                            
                                             --------------------------------------------------
                                             the expression: 
                                             --------------------------------------------------

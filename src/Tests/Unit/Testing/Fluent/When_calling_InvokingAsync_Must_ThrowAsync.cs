@@ -64,6 +64,7 @@ public class When_calling_InvokingAsync_Must_ThrowAsync : UniversalTestBase
             {
                var message = await ExceptionMessage();
                message.Must().Be($$"""
+                                   
                                    Expected invoking the expression
                                    --------------------------------------------------
                                    async () =>
@@ -114,6 +115,7 @@ public class When_calling_InvokingAsync_Must_ThrowAsync : UniversalTestBase
             {
                var message = await ExceptionMessage();
                message.Must().Be("""
+                                 
                                  Expected invoking the expression
                                  --------------------------------------------------
                                  async () =>

@@ -2,4 +2,8 @@ using System;
 
 namespace Compze.Tests.Infrastructure.Fluent;
 
-public class AssertionFailedException(string message, Exception? inner = null) : Exception(message, inner);
+public class AssertionFailedException(string message, Exception? inner = null) : 
+   Exception($"""
+              
+              {message}
+              """, inner);//If we don't ensure a starting newline, the display in test output becomes quite bad
