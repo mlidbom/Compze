@@ -9,15 +9,15 @@ using static Compze.Tests.Infrastructure.Fluent.MustActions;
 
 namespace Compze.Tests.Unit.Testing.Fluent;
 
-public class When_using_Satisfy : UniversalTestBase
+public class When_calling_Must_Satisfy : UniversalTestBase
 {
-   public class given_a_value_that_satisfies_the_predicate : When_using_Satisfy
+   public class given_a_value_that_satisfies_the_predicate : When_calling_Must_Satisfy
    {
       readonly int _value = 5;
       [XF] public void Satisfy_returns_successfully() => _value.Must().Satisfy(v => v > 0);
    }
 
-   public class given_a_value_that_does_not_satisfy_the_predicate : When_using_Satisfy
+   public class given_a_value_that_does_not_satisfy_the_predicate : When_calling_Must_Satisfy
    {
       readonly int _value = 5;
 
@@ -40,7 +40,7 @@ public class When_using_Satisfy : UniversalTestBase
       }
    }
 
-   public class with_a_custom_error_message : When_using_Satisfy
+   public class with_a_custom_error_message : When_calling_Must_Satisfy
    {
       readonly int _value = 5;
 
@@ -63,7 +63,7 @@ public class When_using_Satisfy : UniversalTestBase
       }
    }
 
-   public class given_a_complex_object : When_using_Satisfy
+   public class given_a_complex_object : When_calling_Must_Satisfy
    {
       readonly TestObject _actual = new("John", 30, "Unmarried");
 
