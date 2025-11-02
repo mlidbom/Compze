@@ -16,7 +16,7 @@ public class When_calling_Must_BeSameAs : UniversalTestBase
       [XF] public void it_throws() =>
          Invoking(() => new ValueWrapper<int>(42)
                        .Must()
-                       .BeSameAs(new ValueWrapper<int>(42)))
+                       .ReferenceEqual(new ValueWrapper<int>(42)))
            .Must()
            .Throw<AssertionFailedException>();
    }
@@ -27,6 +27,6 @@ public class When_calling_Must_BeSameAs : UniversalTestBase
 
       [XF] public void it_does_not_throw() => _actual
                                                    .Must()
-                                                   .BeSameAs(_actual);
+                                                   .ReferenceEqual(_actual);
    }
 }
