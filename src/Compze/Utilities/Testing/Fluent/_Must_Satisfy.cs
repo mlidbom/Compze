@@ -18,24 +18,6 @@ public static class _Must_Satisfy
 {
    const string RemoveLine = nameof(RemoveLine);
 
-   static string ExtractParameterName(string lambdaExpression)
-   {
-      // Handle expressions like "it => ..." or "(it) => ..." or "x => ..."
-      var arrowIndex = lambdaExpression.IndexOf("=>", StringComparison.Ordinal);
-      if(arrowIndex == -1)
-         return "it"; // Fallback to default if not a lambda expression
-
-      var parameterPart = lambdaExpression[..arrowIndex].Trim();
-      
-      // Remove parentheses if present: "(it)" -> "it"
-      if(parameterPart.StartsWith('(') && parameterPart.EndsWith(')'))
-      {
-         parameterPart = parameterPart[1..^1].Trim();
-      }
-
-      return string.IsNullOrWhiteSpace(parameterPart) ? "it" : parameterPart;
-   }
-
    public static IMust Satisfy(this IMust must,
                               Func<object, bool> predicate,
                               [CallerArgumentExpression(nameof(predicate))]
@@ -134,5 +116,21 @@ public static class _Must_Satisfy
       }
 
       return context;
+   }
+
+   static string ExtractParameterName(string lambdaExpression)
+   {
+      // Handle expressions like "it => it.Value > 5" or "x => x > 0"
+      var arrowIndex = lambdaExpression.IndexOf("=>", StringComparison.Ordinal);
+      if(arrowIndex == -1)
+         return "it"; // Fallback to "it" if we can't parse
+
+      var parameterPart = lambdaExpression[..arrowIndex].Trim();
+      
+      // Remove parentheses if present: "(it)" => "it"
+      if(parameterPart.StartsWith('(') && parameterPart.EndsWith(')'))
+         parameterPart = parameterPart[1..^1].Trim();
+      
+      return parameterPart;
    }
 }
