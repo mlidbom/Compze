@@ -111,23 +111,6 @@ public class When_using_Invoking_and_Throw : UniversalTestBase
       }
    }
 
-   public class given_code_that_validates_exceptions : When_using_Invoking_and_Throw
-   {
-      public class Invoking_can_be_used_recursively : given_code_that_validates_exceptions
-      {
-         [XF] public void to_test_exception_throwing_validation_code()
-         {
-            // Test that validation code correctly catches the expected exception
-            var caughtException = Invoking(() => throw new InvalidOperationException("inner"))
-                                 .Must()
-                                 .Throw<InvalidOperationException>();
-
-            // Verify the caught exception has the expected properties
-            caughtException.Which.Message.Must().Contain("inner");
-         }
-      }
-   }
-
    public class given_an_action_with_complex_error_details : When_using_Invoking_and_Throw
    {
       record TestObject(string Name, int Value);

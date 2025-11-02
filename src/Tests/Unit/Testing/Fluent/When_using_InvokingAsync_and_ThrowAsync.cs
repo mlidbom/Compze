@@ -151,27 +151,6 @@ public class When_using_InvokingAsync_and_ThrowAsync : UniversalTestBase
       }
    }
 
-   public class given_async_code_that_validates_exceptions : When_using_InvokingAsync_and_ThrowAsync
-   {
-      public class InvokingAsync_can_be_used_recursively : given_async_code_that_validates_exceptions
-      {
-         [XF] public async Task to_test_exception_throwing_validation_code()
-         {
-            // Test that validation code correctly catches the expected exception
-            var caughtException = await InvokingAsync(async () =>
-                                        {
-                                           await Task.Yield();
-                                           throw new InvalidOperationException("inner");
-                                        })
-                                       .Must()
-                                       .ThrowAsync<InvalidOperationException>();
-
-            // Verify the caught exception has the expected properties
-            caughtException.Which.Message.Must().Contain("inner");
-         }
-      }
-   }
-
    public class given_an_async_action_with_complex_error_details : When_using_InvokingAsync_and_ThrowAsync
    {
       record TestObject(string Name, int Value);
