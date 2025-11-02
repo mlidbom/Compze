@@ -105,9 +105,10 @@ public class When_comparing_objects_with_BeEquivalentTo : UniversalTestBase
             => Invoking(() => _actual.Must().BeEquivalentTo(_expected)).Must().Throw<AssertionFailedException>();
       }
 
-      public class BeEquivalentToInternal_does_not_throw : given_two_objects_that_differ_only_in_public_members
+      public class BeEquivalentToInternal_throws : given_two_objects_that_differ_only_in_public_members
       {
-         [XF] public void because_internal_members_are_the_same() => _actual.Must().BeEquivalentToInternal(_expected);
+         [XF] public void because_public_members_differ()
+            => Invoking(() => _actual.Must().BeEquivalentToInternal(_expected)).Must().Throw<AssertionFailedException>();
       }
 
       public class BeEquivalentToPublic_throws : given_two_objects_that_differ_only_in_public_members
@@ -153,7 +154,7 @@ public class When_comparing_objects_with_BeEquivalentTo : UniversalTestBase
 
       public class BeEquivalentToInternal_does_not_throw : given_two_objects_that_differ_only_in_private_members
       {
-         [XF] public void because_it_only_checks_internal_and_protected_members() => _actual.Must().BeEquivalentToInternal(_expected);
+         [XF] public void because_it_checks_public_internal_and_protected_members_but_not_private() => _actual.Must().BeEquivalentToInternal(_expected);
       }
 
       public class BeEquivalentToPublic_does_not_throw : given_two_objects_that_differ_only_in_private_members
