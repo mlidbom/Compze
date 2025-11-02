@@ -98,4 +98,79 @@ public static class ObjectEqualityAssertions
                : "";
       }
    }
+
+   public static Must<TValue> NotBe<TValue>(this Must<TValue> must, TValue unexpected, [CallerArgumentExpression(nameof(unexpected))] string unexpectedExpression = null!)
+   {
+      if(unexpected is null && must.Actual is null)
+         throw new AssertionFailedException($"Both values are null, so they are equal");
+
+      if(unexpected is null || must.Actual is null)
+         return must; // One is null, the other isn't, so they're not equal
+
+      return must.Not_be_transitively_equal_to_according_to_any_supported_comparison_method(unexpected, unexpectedExpression);
+   }
+
+   public static Must<TValue> Not_be_transitively_equal_to_according_to_any_supported_comparison_method<TValue>(this Must<TValue> must, TValue unexpected, [CallerArgumentExpression(nameof(unexpected))] string unexpectedExpression = null!)
+   {
+      // Equality checks - these are the only reliable indicators that objects are NOT equal
+      must.Satisfy(it => !Equals(it, unexpected), messageOverride: BuildFailureMessage);
+      must.Satisfy(it => !Equals(unexpected, it), messageOverride: BuildFailureMessage);
+
+      must.Satisfy(it => !((it as IEquatable<TValue>)?.Equals(unexpected) ?? false), messageOverride: BuildFailureMessage);
+      must.Satisfy(it => !((unexpected as IEquatable<TValue>)?.Equals(it) ?? false), messageOverride: BuildFailureMessage);
+
+      must.Satisfy(it => !(it.DeclaredType().Operators.Equality?.Invoke(it, unexpected) ?? false), failureMessage: it => "it == unexpected should have returned false", messageOverride: BuildFailureMessage);
+      must.Satisfy(it => !(it.DeclaredType().Operators.Equality?.Invoke(unexpected, it) ?? false), failureMessage: it => "unexpected == it should have returned false", messageOverride: BuildFailureMessage);
+
+      must.Satisfy(it => it.DeclaredType().Operators.InEquality?.Invoke(it, unexpected) ?? true, failureMessage: it => "it != unexpected should have returned true", messageOverride: BuildFailureMessage);
+      must.Satisfy(it => it.DeclaredType().Operators.InEquality?.Invoke(unexpected, it) ?? true, failureMessage: it => "unexpected != it should have returned true", messageOverride: BuildFailureMessage);
+
+      // IStructuralEquatable - used for structural equality (e.g., arrays, tuples)
+      must.Satisfy(it => !((it as IStructuralEquatable)?.Equals(unexpected, StructuralComparisons.StructuralEqualityComparer) ?? false), failureMessage: it => "it.Equals(unexpected, StructuralEqualityComparer) should have returned false", messageOverride: BuildFailureMessage);
+      must.Satisfy(it => !((unexpected as IStructuralEquatable)?.Equals(it, StructuralComparisons.StructuralEqualityComparer) ?? false), failureMessage: it => "unexpected.Equals(it, StructuralEqualityComparer) should have returned false", messageOverride: BuildFailureMessage);
+
+      // Note: We deliberately do NOT check:
+      // - GetHashCode() - equal hash codes for unequal objects is allowed by the contract
+      // - IComparable/IComparable<T>.CompareTo() - returning 0 doesn't necessarily mean equality
+      // - IStructuralComparable.CompareTo() - returning 0 doesn't necessarily mean equality  
+      // - Comparison operators (<, >, <=, >=) - these don't define equality, only ordering relationships
+
+      return must;
+
+      string BuildFailureMessage(SatisfyCallInfo<TValue> info)
+      {
+         var actualJson = JsonConvert.SerializeObject(must.Actual, TestingJsonSettings.AllMembers);
+         var unexpectedJson = JsonConvert.SerializeObject(unexpected, TestingJsonSettings.AllMembers);
+         return $"""
+                 {must.Separator}
+                 expected the object "it" returned by the expression: 
+                 {must.Expression.Indent()}
+                 to NOT be equal to the the object "unexpected" returned by the expression:
+                 {must.NormalizeExpressionIndentation(unexpectedExpression).Indent()}
+                 but it failed the test: 
+                 {info.PredicateExpression.Indent()}{FailureMessage()}
+                 {must.Separator}
+                 Diff:
+                 {must.Separator}
+                 {DiffGenerator.CreateDiff(unexpectedJson, actualJson)}
+                 {must.Separator}
+                 it was:
+                 {must.Separator}
+                 {actualJson}
+                 {must.Separator}
+                 unexpected was:
+                 {must.Separator}
+                 {unexpectedJson}
+                 {must.Separator}
+                 """;
+
+         string FailureMessage() =>
+            info.FailureMessage != null
+               ? $""""
+
+                  with the message: {info.FailureMessage?.Invoke(must.Actual)}""" 
+                  """"
+               : "";
+      }
+   }
 }
