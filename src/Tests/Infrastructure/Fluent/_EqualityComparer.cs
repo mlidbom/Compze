@@ -32,15 +32,15 @@ public static class ObjectEqualityAssertions
       must.Satisfy(it => !it.DeclaredType().Operators.InEquality?.Invoke(it, expected) ?? true, failureMessage: it => "it != expected should have returned false", messageOverride: BuildFailureMessage);
       must.Satisfy(it => !it.DeclaredType().Operators.InEquality?.Invoke(expected, it) ?? true, failureMessage: it => "expected != it should have returned false", messageOverride: BuildFailureMessage);
 
+      // IStructuralEquatable - used for structural equality (e.g., arrays, tuples)
+      must.Satisfy(it => (it as IStructuralEquatable)?.Equals(expected, StructuralComparisons.StructuralEqualityComparer) ?? true, failureMessage: it => "it.Equals(expected, StructuralEqualityComparer) should have returned true", messageOverride: BuildFailureMessage);
+      must.Satisfy(it => (expected as IStructuralEquatable)?.Equals(it, StructuralComparisons.StructuralEqualityComparer) ?? true, failureMessage: it => "expected.Equals(it, StructuralEqualityComparer) should have returned true", messageOverride: BuildFailureMessage);
+
       must.Satisfy(it => (it as IComparable<TValue>)?.CompareTo(expected).Equals(0) ?? true, failureMessage: it => "it.CompareTo(expected) (IComparable<T>) should have returned 0", messageOverride: BuildFailureMessage);
       must.Satisfy(it => (expected as IComparable<TValue>)?.CompareTo(it).Equals(0) ?? true, failureMessage: it => "expected.CompareTo(it) (IComparable<T>) should have returned 0", messageOverride: BuildFailureMessage);
 
       must.Satisfy(it => (it as IComparable)?.CompareTo(expected).Equals(0) ?? true, failureMessage: it => "it.CompareTo(expected) (IComparable) should have returned 0", messageOverride: BuildFailureMessage);
       must.Satisfy(it => (expected as IComparable)?.CompareTo(it).Equals(0) ?? true, failureMessage: it => "expected.CompareTo(it) (IComparable) should have returned 0", messageOverride: BuildFailureMessage);
-
-      // IStructuralEquatable - used for structural equality (e.g., arrays, tuples)
-      must.Satisfy(it => (it as IStructuralEquatable)?.Equals(expected, StructuralComparisons.StructuralEqualityComparer) ?? true, failureMessage: it => "it.Equals(expected, StructuralEqualityComparer) should have returned true", messageOverride: BuildFailureMessage);
-      must.Satisfy(it => (expected as IStructuralEquatable)?.Equals(it, StructuralComparisons.StructuralEqualityComparer) ?? true, failureMessage: it => "expected.Equals(it, StructuralEqualityComparer) should have returned true", messageOverride: BuildFailureMessage);
 
       // IStructuralComparable - used for structural comparison (e.g., arrays, tuples)
       must.Satisfy(it => (it as IStructuralComparable)?.CompareTo(expected, StructuralComparisons.StructuralComparer).Equals(0) ?? true, failureMessage: it => "it.CompareTo(expected, StructuralComparer) should have returned 0", messageOverride: BuildFailureMessage);
@@ -129,11 +129,8 @@ public static class ObjectEqualityAssertions
       must.Satisfy(it => !((it as IStructuralEquatable)?.Equals(unexpected, StructuralComparisons.StructuralEqualityComparer) ?? false), failureMessage: it => "it.Equals(unexpected, StructuralEqualityComparer) should have returned false", messageOverride: BuildFailureMessage);
       must.Satisfy(it => !((unexpected as IStructuralEquatable)?.Equals(it, StructuralComparisons.StructuralEqualityComparer) ?? false), failureMessage: it => "unexpected.Equals(it, StructuralEqualityComparer) should have returned false", messageOverride: BuildFailureMessage);
 
-      // Note: We deliberately do NOT check:
-      // - GetHashCode() - equal hash codes for unequal objects is allowed by the contract
-      // - IComparable/IComparable<T>.CompareTo() - returning 0 doesn't necessarily mean equality
-      // - IStructuralComparable.CompareTo() - returning 0 doesn't necessarily mean equality  
-      // - Comparison operators (<, >, <=, >=) - these don't define equality, only ordering relationships
+      // Unlike in the Be_ version we do not check any of the below, because none of them have any return values that are guaranteed to be wrong for non-equal objects:
+      // - GetHashCode(), IComparable/IComparable<T>, IStructuralComparable, Comparison operators (<, >, <=, >=)
 
       return must;
 
@@ -145,7 +142,7 @@ public static class ObjectEqualityAssertions
                  {must.Separator}
                  expected the object "it" returned by the expression: 
                  {must.Expression.Indent()}
-                 to NOT be equal to the the object "unexpected" returned by the expression:
+                 to not be equal to the the object "unexpected" returned by the expression:
                  {must.NormalizeExpressionIndentation(unexpectedExpression).Indent()}
                  but it failed the test: 
                  {info.PredicateExpression.Indent()}{FailureMessage()}
