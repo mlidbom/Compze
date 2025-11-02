@@ -11,10 +11,10 @@ namespace Compze.Tests.Infrastructure.Fluent;
 // ReSharper disable InconsistentNaming
 public static class Must_Be_NotBe
 {
-   public static Must<TValue> Be<TValue, TExpected>(this Must<TValue> must, TExpected expected, [CallerArgumentExpression(nameof(expected))] string expectedExpression = null!) =>
+   public static IMust<TValue> Be<TValue, TExpected>(this IMust<TValue> must, TExpected expected, [CallerArgumentExpression(nameof(expected))] string expectedExpression = null!) =>
       must.Be_transitively_equal_to_according_to_every_supported_comparison_method_and_hashcode(expected, expectedExpression);
 
-   public static Must<TValue> Be_transitively_equal_to_according_to_every_supported_comparison_method_and_hashcode<TValue, TExpected>(this Must<TValue> must, TExpected expected, [CallerArgumentExpression(nameof(expected))] string expectedExpression = null!)
+   public static IMust<TValue> Be_transitively_equal_to_according_to_every_supported_comparison_method_and_hashcode<TValue, TExpected>(this IMust<TValue> must, TExpected expected, [CallerArgumentExpression(nameof(expected))] string expectedExpression = null!)
    {
       if(expected is TValue expectedAsActual)
       {
@@ -31,7 +31,7 @@ public static class Must_Be_NotBe
                  .Cast<TValue>();
    }
 
-   static Must<TValue> Be_transitively_equal_to_according_to_every_supported_comparison_method_and_hashcode_internal<TValue>(this Must<TValue> must, TValue expected, [CallerArgumentExpression(nameof(expected))] string expectedExpression = null!)
+   static IMust<TValue> Be_transitively_equal_to_according_to_every_supported_comparison_method_and_hashcode_internal<TValue>(this IMust<TValue> must, TValue expected, [CallerArgumentExpression(nameof(expected))] string expectedExpression = null!)
    {
       if(expected is null && must.Actual is null)
          return must;
@@ -117,10 +117,10 @@ public static class Must_Be_NotBe
       }
    }
 
-   public static Must<TValue> NotBe<TValue, TUnExpected>(this Must<TValue> must, TUnExpected unexpected, [CallerArgumentExpression(nameof(unexpected))] string unexpectedExpression = null!) =>
+   public static IMust<TValue> NotBe<TValue, TUnExpected>(this IMust<TValue> must, TUnExpected unexpected, [CallerArgumentExpression(nameof(unexpected))] string unexpectedExpression = null!) =>
       must.Not_be_transitively_equal_to_according_to_any_supported_comparison_method(unexpected, unexpectedExpression);
 
-   public static Must<TValue> Not_be_transitively_equal_to_according_to_any_supported_comparison_method<TValue, TUnExpected>(this Must<TValue> must, TUnExpected unexpected, [CallerArgumentExpression(nameof(unexpected))] string unexpectedExpression = null!)
+   public static IMust<TValue> Not_be_transitively_equal_to_according_to_any_supported_comparison_method<TValue, TUnExpected>(this IMust<TValue> must, TUnExpected unexpected, [CallerArgumentExpression(nameof(unexpected))] string unexpectedExpression = null!)
    {
       if(unexpected is TValue unExpectedAsActual)
       {
@@ -138,7 +138,7 @@ public static class Must_Be_NotBe
                  .Cast<TValue>();
    }
 
-   public static Must<TValue> Not_be_transitively_equal_to_according_to_any_supported_comparison_method_internal<TValue>(this Must<TValue> must, TValue unexpected, [CallerArgumentExpression(nameof(unexpected))] string unexpectedExpression = null!)
+   public static IMust<TValue> Not_be_transitively_equal_to_according_to_any_supported_comparison_method_internal<TValue>(this IMust<TValue> must, TValue unexpected, [CallerArgumentExpression(nameof(unexpected))] string unexpectedExpression = null!)
    {
       if(unexpected is null && must.Actual is null)
          throw new AssertionFailedException($"Both values are null, so they are equal");

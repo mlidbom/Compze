@@ -10,19 +10,19 @@ namespace Compze.Tests.Infrastructure.Fluent;
 
 public static class Must___Enumerable
 {
-   public static Must<TCollection> HaveCount<TCollection>(this Must<TCollection> must, int count, [CallerArgumentExpression(nameof(count))] string predicateExpression = null!)
+   public static IMust<TCollection> HaveCount<TCollection>(this IMust<TCollection> must, int count, [CallerArgumentExpression(nameof(count))] string predicateExpression = null!)
       where TCollection : System.Collections.IEnumerable
       => must.Satisfy(it => it.Cast<object>().Count() == count, predicateExpression:$"Count == {predicateExpression}", failureMessage: it => $"but Count was: {it.Cast<object>().Count()}, not {count}");
 
-   public static Must<TCollection> BeEmpty<TCollection>(this Must<TCollection> must, string? message = null!)
+   public static IMust<TCollection> BeEmpty<TCollection>(this IMust<TCollection> must, string? message = null!)
       where TCollection : System.Collections.IEnumerable
       => must.Satisfy(it => !it.Cast<object>().Any(), failureMessage: it => $"but it contained {it.Cast<object>().Count()} items");
 
-   public static Must<TCollection> NotBeEmpty<TCollection>(this Must<TCollection> must, string? message = null!)
+   public static IMust<TCollection> NotBeEmpty<TCollection>(this IMust<TCollection> must, string? message = null!)
       where TCollection : System.Collections.IEnumerable
       => must.Satisfy(it => it.Cast<object>().Any());
 
-   public static Must<TCollection> SequenceEqual<TCollection, TElement>(this Must<TCollection> must, IEnumerable<TElement> expected, [CallerArgumentExpression(nameof(expected))] string expectedExpression = null!)
+   public static IMust<TCollection> SequenceEqual<TCollection, TElement>(this IMust<TCollection> must, IEnumerable<TElement> expected, [CallerArgumentExpression(nameof(expected))] string expectedExpression = null!)
       where TCollection : IEnumerable<TElement>
    {
       var actualJson = JsonConvert.SerializeObject(must.Actual, TestingJsonSettings.AllMembers);

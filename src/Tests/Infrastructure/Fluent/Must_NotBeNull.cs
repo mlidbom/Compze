@@ -5,9 +5,9 @@ namespace Compze.Tests.Infrastructure.Fluent;
 
 public static class Must_NotBeNull
 {
-   public static Must<TValue> NotBeNull<TValue>(this Must<TValue?> must) =>
+   public static IMust<TValue> NotBeNull<TValue>(this IMust<TValue?> must) =>
       must.Satisfy(it => it is not null).Cast<TValue>();
 
-   public static Must<TValue?> BeNull<TValue>(this Must<TValue?> must) =>
+   public static IMust<TValue?> BeNull<TValue>(this IMust<TValue?> must) =>
       must.Satisfy(it => it is null);
 }

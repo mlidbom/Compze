@@ -5,7 +5,7 @@ namespace Compze.Tests.Infrastructure.Fluent;
 
 public static class Must_BeTrue_BeFalse
 {
-   public static Must<bool>? BeTrue(this Must<bool> must)
+   public static IMust<bool>? BeTrue(this IMust<bool> must)
       => must.Satisfy(it => it == true,
                       messageOverride: _ =>
                          $"""
@@ -17,7 +17,7 @@ public static class Must_BeTrue_BeFalse
                           """);
 
 
-   public static Must<bool>? BeFalse(this Must<bool> must)
+   public static IMust<bool>? BeFalse(this IMust<bool> must)
       => must.Satisfy(it => it == false,
                       messageOverride:_ =>
                          $"""

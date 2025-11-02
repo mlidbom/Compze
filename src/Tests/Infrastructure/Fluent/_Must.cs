@@ -3,13 +3,29 @@ using System;
 using System.Linq;
 using Compze.Utilities.SystemCE;
 
+#pragma warning disable CA1033
+
 namespace Compze.Tests.Infrastructure.Fluent;
 
-public class Must
+public interface IMust
+{
+   string Expression { get; }
+   object? ActualUntyped { get; }
+   string Separator { get; }
+   IMust<T> Cast<T>();
+   string NormalizeExpressionIndentation(string expression);
+}
+
+public interface IMust<out T> : IMust
+{
+   T Actual { get; }
+}
+
+public abstract class Must : IMust
 {
    public string Expression { get; }
 
-   public Must(object? actual, string expression)
+   protected Must(object? actual, string expression)
    {
       ActualUntyped = actual;
       Expression = NormalizeExpressionIndentation(expression);
@@ -17,10 +33,10 @@ public class Must
 
    public object? ActualUntyped { get; }
 
-
+   string IMust.Separator => Separator;
 #pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
 #pragma warning disable CS8604 // Possible null reference argument.
-   public Must<T> Cast<T>() => new((T)ActualUntyped, Expression);
+   public IMust<T> Cast<T>() => new Must<T>((T)ActualUntyped, Expression);
 #pragma warning restore CS8604 // Possible null reference argument.
 #pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
 
@@ -42,11 +58,12 @@ public class Must
    }
 }
 
-public class Must<T> : Must
+public class Must<T> : Must, IMust<T>
 {
    public Must(T actual, string expression) : base(actual, expression) => Actual = actual;
 
-
    public new string Separator => Must.Separator;
+
+   string IMust.Separator => Separator;
    public T Actual { get; }
 }

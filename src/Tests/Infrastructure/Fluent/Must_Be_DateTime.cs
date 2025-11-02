@@ -6,7 +6,7 @@ namespace Compze.Tests.Infrastructure.Fluent;
 
 public static class Must_Be_DateTime
 {
-   public static Must<DateTime> Be(this Must<DateTime> must, DateTime expected, TimeSpan tolerance, [CallerArgumentExpression(nameof(expected))] string expectedExpression = null!, [CallerArgumentExpression(nameof(tolerance))] string toleranceExpression = null!)
+   public static IMust<DateTime> Be(this IMust<DateTime> must, DateTime expected, TimeSpan tolerance, [CallerArgumentExpression(nameof(expected))] string expectedExpression = null!, [CallerArgumentExpression(nameof(tolerance))] string toleranceExpression = null!)
    {
       return must.Satisfy(
          it => (it - expected).Duration() <= tolerance,

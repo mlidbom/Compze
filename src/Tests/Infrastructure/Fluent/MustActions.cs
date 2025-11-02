@@ -10,29 +10,33 @@ public class ActionSpec(Action action, string expression)
 {
    readonly Action _action = action;
    readonly string _expression = expression;
-   public Must<Action> Must() => new(_action, _expression);
+   public IMust<Action> Must() => new Must<Action>(_action, _expression);
 }
 
 public class AsyncActionSpec(Func<Task> action, string expression)
 {
    readonly Func<Task> _action = action;
    readonly string _expression = expression;
-   public Must<Func<Task>> Must() => new(_action, _expression);
+   public IMust<Func<Task>> Must() => new Must<Func<Task>>(_action, _expression);
 }
 
 public static class MustActions
 {
+   public static ActionSpec Invoking<T>(Func<T> action, [CallerArgumentExpression(nameof(action))] string expression = null!) => new(() => action(), expression);
    public static ActionSpec Invoking(Action action, [CallerArgumentExpression(nameof(action))] string expression = null!) => new(action, expression);
 
    public static ActionSpec Invoking<T>(this T subject, Action<T> action, [CallerArgumentExpression(nameof(action))] string expression = null!)
       => Invoking(() => action(subject), expression);
+
+   public static ActionSpec Invoking<T, TResult>(this T subject, Func<T, TResult> func, [CallerArgumentExpression(nameof(func))] string expression = null!)
+      => Invoking(() => func(subject), expression);
 
    public static AsyncActionSpec InvokingAsync(Func<Task> action, [CallerArgumentExpression(nameof(action))] string expression = null!) => new(action, expression);
 
    public static AsyncActionSpec InvokingAsync<T>(this T subject, Func<T, Task> action, [CallerArgumentExpression(nameof(action))] string expression = null!)
       => InvokingAsync(() => action(subject), expression);
 
-   public static CaughtException<TException> Throw<TException>(this Must<Action> must)
+   public static CaughtException<TException> Throw<TException>(this IMust<Action> must)
       where TException : Exception
    {
       try
@@ -63,7 +67,7 @@ public static class MustActions
                                           """);
    }
 
-   public static async Task<CaughtException<TException>> ThrowAsync<TException>(this Must<Func<Task>> must)
+   public static async Task<CaughtException<TException>> ThrowAsync<TException>(this IMust<Func<Task>> must)
       where TException : Exception
    {
       try
@@ -103,6 +107,6 @@ public class CaughtException<TException>(TException exception)
    public  TException Which => _exception;
    public  TException And => _exception;
    public TException That => _exception;
-   public Must<TException> ThatMust => _exception.Must();
-   public Must<TException> WhichMust => _exception.Must();
+   public IMust<TException> ThatMust => _exception.Must();
+   public IMust<TException> WhichMust => _exception.Must();
 }

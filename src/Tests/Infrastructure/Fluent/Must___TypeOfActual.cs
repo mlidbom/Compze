@@ -3,11 +3,11 @@ namespace Compze.Tests.Infrastructure.Fluent;
 
 public static class Must___TypeOfActual
 {
-   public static Must<TExpected> BeExactType<TExpected>(this Must must) =>
+   public static IMust<TExpected> BeExactType<TExpected>(this IMust must) =>
       must.Satisfy(it => it.GetType() == typeof(TExpected))
           .Cast<TExpected>();
 
-   public static Must<TExpected> BeAssignableTo<TExpected>(this Must must) =>
+   public static IMust<TExpected> BeAssignableTo<TExpected>(this IMust must) =>
       must.Satisfy(it => it.GetType().IsAssignableTo(typeof(TExpected)))
           .Cast<TExpected>();
 }

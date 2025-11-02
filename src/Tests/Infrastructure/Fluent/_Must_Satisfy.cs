@@ -18,7 +18,7 @@ public static class _Must_Satisfy
 {
    const string RemoveLine = nameof(RemoveLine);
 
-   public static Must Satisfy(this Must must,
+   public static IMust Satisfy(this IMust must,
                               Func<object, bool> predicate,
                               [CallerArgumentExpression(nameof(predicate))]
                               string predicateExpression = null!,
@@ -26,7 +26,7 @@ public static class _Must_Satisfy
                               Func<object, string>? failureMessage = null,
                               AssertionArgumentInfo[]? usedArguments = null) => must.Cast<object>().Satisfy(predicate, predicateExpression, messageOverride, failureMessage, usedArguments);
 
-   public static Must<T> Satisfy<T>(this Must<T> context,
+   public static IMust<T> Satisfy<T>(this IMust<T> context,
                                     Func<T, bool> predicate,
                                     [CallerArgumentExpression(nameof(predicate))]
                                     string predicateExpression = null!,

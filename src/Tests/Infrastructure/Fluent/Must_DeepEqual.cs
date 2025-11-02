@@ -23,13 +23,13 @@ public class EquivalencyConfig<TValue>
 
 public static class Must_DeepEqual
 {
-   public static Must<TValue> DeepEqual<TValue>(this Must<TValue> must,
+   public static IMust<TValue> DeepEqual<TValue>(this IMust<TValue> must,
                                                 TValue expected,
                                                 [CallerArgumentExpression(nameof(expected))]
                                                 string expectedExpression = null!)
       => DeepEqualCore(must, expected, expectedExpression, TestingJsonSettings.AllMembers);
 
-   public static Must<TValue> DeepEqualPrivate<TValue>(this Must<TValue> must,
+   public static IMust<TValue> DeepEqualPrivate<TValue>(this IMust<TValue> must,
                                                        TValue expected,
                                                        Func<EquivalencyConfig<TValue>, EquivalencyConfig<TValue>> config,
                                                        [CallerArgumentExpression(nameof(expected))]
@@ -40,19 +40,19 @@ public static class Must_DeepEqual
       return DeepEqualCore(must, expected, expectedExpression, serializerSettings);
    }
 
-   public static Must<TValue> DeepEqualInternal<TValue>(this Must<TValue> must,
+   public static IMust<TValue> DeepEqualInternal<TValue>(this IMust<TValue> must,
                                                         TValue expected,
                                                         [CallerArgumentExpression(nameof(expected))]
                                                         string expectedExpression = null!)
       => DeepEqualCore(must, expected, expectedExpression, TestingJsonSettings.InternalAndPublicMembers);
 
-   public static Must<TValue> DeepEqualPublic<TValue>(this Must<TValue> must,
+   public static IMust<TValue> DeepEqualPublic<TValue>(this IMust<TValue> must,
                                                       TValue expected,
                                                       [CallerArgumentExpression(nameof(expected))]
                                                       string expectedExpression = null!)
       => DeepEqualCore(must, expected, expectedExpression, TestingJsonSettings.PublicMembers);
 
-   static Must<TValue> DeepEqualCore<TValue>(Must<TValue> must,
+   static IMust<TValue> DeepEqualCore<TValue>(IMust<TValue> must,
                                              TValue expected,
                                              string expectedExpression,
                                              JsonSerializerSettings settings)

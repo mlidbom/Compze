@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using Compze.Tests.Infrastructure.Fluent;
 using Compze.Utilities.Testing.XUnit.BDD;
 using FluentAssertions;
 using static FluentAssertions.FluentActions;
@@ -32,7 +33,7 @@ public static partial class Composite_taggregate_specification
 
                      [XF] public void TryGet_returns_false_and_the_out_parameter_is_null()
                      {
-                        _taggregate.Entities.TryGet(_entity2.Id, out var agEntity2Fetched).Should().BeFalse();
+                        _taggregate.Entities.TryGet(_entity2.Id, out var agEntity2Fetched).Must().BeFalse();
                         agEntity2Fetched.Should().Be(null);
                      }
                   }
@@ -52,7 +53,7 @@ public static partial class Composite_taggregate_specification
 
                      [XF] public void TryGet_returns_false_and_the_out_parameter_is_null()
                      {
-                        _queryModel.Entities.TryGet(_entity2.Id, out var qmEntity2Fetched).Should().BeFalse();
+                        _queryModel.Entities.TryGet(_entity2.Id, out var qmEntity2Fetched).Must().BeFalse();
                         qmEntity2Fetched.Should().Be(null);
                      }
                   }
