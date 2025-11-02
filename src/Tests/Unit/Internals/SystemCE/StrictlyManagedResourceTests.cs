@@ -4,10 +4,10 @@ using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.Testing.DbPool.SystemCE;
 using Compze.Utilities.Testing.XUnit.BDD;
-using FluentAssertions;
+using Compze.Tests.Infrastructure.Fluent;
 using JetBrains.Annotations;
 using Xunit;
-using static FluentAssertions.FluentActions;
+using static Compze.Tests.Infrastructure.Fluent.MustActions;
 
 namespace Compze.Tests.Unit.Internals.SystemCE;
 
@@ -25,9 +25,9 @@ public class StrictlyManagedResourceTests : UniversalTestBase
                                                                       _ = new StrictlyManagedResource<MyClass>();
                                                                    });
 
-                                                                   Invoking(UncatchableExceptionsGatherer.ForceFullGcAllGenerationsAndWaitForFinalizersConsumeAndThrowAnyGatheredExceptions)
-                                                                     .Should().Throw<AggregateException>()
-                                                                     .Which.InnerExceptions.Should().HaveCount(1);
+                                                                   Invoking(() => UncatchableExceptionsGatherer.ForceFullGcAllGenerationsAndWaitForFinalizersConsumeAndThrowAnyGatheredExceptions())
+                                                                     .Must().Throw<AggregateException>()
+                                                                     .Which.InnerExceptions.Must().HaveCount(1);
                                                                 }));
    }
 #pragma warning disable CA1812 // Avoid uninstantiated internal classes
