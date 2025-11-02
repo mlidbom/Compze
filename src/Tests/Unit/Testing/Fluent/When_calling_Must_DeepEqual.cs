@@ -43,7 +43,7 @@ public class When_calling_Must_DeepEqual : UniversalTestBase
                                             +++ actual
                                             @@ -1,6 +1,6 @@
                                              {
-                                               "$type": "Compze.Tests.Unit.Testing.Fluent.When_comparing_objects_with_DeepEqual+TestObject, Compze.Tests.Unit",
+                                               "$type": "Compze.Tests.Unit.Testing.Fluent.When_calling_Must_DeepEqual+TestObject, Compze.Tests.Unit",
                                                "InternalProperty": "internal_expected",
                                             -  "PrivateField": "private_expected",
                                             +  "PrivateField": "private_actual",
@@ -54,7 +54,7 @@ public class When_calling_Must_DeepEqual : UniversalTestBase
                                             Actual was:
                                             --------------------------------------------------
                                             {
-                                              "$type": "Compze.Tests.Unit.Testing.Fluent.When_comparing_objects_with_DeepEqual+TestObject, Compze.Tests.Unit",
+                                              "$type": "Compze.Tests.Unit.Testing.Fluent.When_calling_Must_DeepEqual+TestObject, Compze.Tests.Unit",
                                               "InternalProperty": "internal_expected",
                                               "PrivateField": "private_actual",
                                               "PublicProperty": "public_expected"
@@ -63,7 +63,7 @@ public class When_calling_Must_DeepEqual : UniversalTestBase
                                             Expected was:
                                             --------------------------------------------------
                                             {
-                                              "$type": "Compze.Tests.Unit.Testing.Fluent.When_comparing_objects_with_DeepEqual+TestObject, Compze.Tests.Unit",
+                                              "$type": "Compze.Tests.Unit.Testing.Fluent.When_calling_Must_DeepEqual+TestObject, Compze.Tests.Unit",
                                               "InternalProperty": "internal_expected",
                                               "PrivateField": "private_expected",
                                               "PublicProperty": "public_expected"
