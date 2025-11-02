@@ -56,6 +56,27 @@ public static class MustActions
                                           """);
    }
 
+   public static Must<Action> NotThrow(this Must<Action> must)
+   {
+      try
+      {
+         must.Actual();
+         return must;
+      }
+      catch(Exception caught)
+      {
+         throw new AssertionFailedException($"""
+                                             Expected invoking the expression
+                                             {must.Separator}
+                                             {must.Expression} 
+                                             {must.Separator}
+                                             to not throw any exception but a {caught.GetType().GetFullNameCompilable()} was thrown with message:
+                                             {must.Separator}
+                                             {caught.Message}
+                                             """, caught);
+      }
+   }
+
    public static async Task<CaughtException<TException>> ThrowAsync<TException>(this Must<Func<Task>> must)
       where TException : Exception
    {
@@ -85,6 +106,27 @@ public static class MustActions
                                           {must.Separator}
                                           to throw {typeof(TException).Name} but no exception was thrown
                                           """);
+   }
+
+   public static async Task<Must<Func<Task>>> NotThrowAsync(this Must<Func<Task>> must)
+   {
+      try
+      {
+         await must.Actual();
+         return must;
+      }
+      catch(Exception caught)
+      {
+         throw new AssertionFailedException($"""
+                                             Expected invoking the expression
+                                             {must.Separator}
+                                             {must.Expression} 
+                                             {must.Separator}
+                                             to not throw any exception but a {caught.GetType().GetFullNameCompilable()} was thrown with message:
+                                             {must.Separator}
+                                             {caught.Message}
+                                             """, caught);
+      }
    }
 }
 
