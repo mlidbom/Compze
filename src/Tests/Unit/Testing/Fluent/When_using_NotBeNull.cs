@@ -7,39 +7,34 @@ using static Compze.Tests.Infrastructure.Fluent.MustActions;
 
 namespace Compze.Tests.Unit.Testing.Fluent;
 
-public class When_using_NotBeNull : UniversalTestBase
+public class When_calling_Must_NotBeNull : UniversalTestBase
 {
-   public class given_a_non_null_reference : When_using_NotBeNull
+   public class with_a_non_null_reference : When_calling_Must_NotBeNull
    {
-      [XF] public void NotBeNull_does_not_throw() => "not null".Must().NotBeNull();
+      [XF] public void it_does_not_throw() => "not null".Must().NotBeNull();
    }
 
-   public class given_a_null_reference_type : When_using_NotBeNull
+   public class with_a_null_reference_type_value : When_calling_Must_NotBeNull
    {
       readonly string? _actual = null;
 
-      [XF] public void Not_be_null_throwAssertionFailedException() =>
-         Invoking(() => _actual.Must().NotBeNull())
-           .Must()
-           .Throw<AssertionFailedException>();
+      [XF] public void it_throws() => Invoking(() => _actual.Must().NotBeNull())
+                                     .Must()
+                                     .Throw<AssertionFailedException>();
    }
 
-   public class given_a_null_nullable_value_type : When_using_NotBeNull
+   public class with_a_null_nullable_value_type : When_calling_Must_NotBeNull
    {
       readonly int? _actual = null;
 
-      [XF] public void Not_be_null_throwAssertionFailedException() =>
-         Invoking(() => _actual.Must().NotBeNull())
-           .Must()
-           .Throw<AssertionFailedException>();
+      [XF] public void it_throws() => Invoking(() => _actual.Must().NotBeNull())
+                                     .Must()
+                                     .Throw<AssertionFailedException>();
    }
 
-   public class given_a_non_null_nullable_value_type : When_using_NotBeNull
+   public class with_a_non_null_nullable_value_type : When_calling_Must_NotBeNull
    {
-      [XF] public void NotBeNull_does_not_throw()
-      {
-         int? value = 42;
-         value.Must().NotBeNull();
-      }
+      readonly int? _value = 42;
+      [XF] public void it_does_not_throw() => _value.Must().NotBeNull();
    }
 }
