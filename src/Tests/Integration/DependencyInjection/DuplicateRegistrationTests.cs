@@ -13,7 +13,6 @@ public class DuplicateRegistrationTests : UniversalTestBase
    interface ITestService;
    class TestService : ITestService;
    interface ITestService2;
-   class TestService2 : ITestService2;
    class MultiService : ITestService, ITestService2;
 
    [PCT]

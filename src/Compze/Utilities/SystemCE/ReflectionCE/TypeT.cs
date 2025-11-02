@@ -11,13 +11,13 @@ public class Type<T>
 {
    public static readonly Type<T> Instance = new();
    Type() {}
-   public OperatorsCollection Operators => OperatorsCollection.Instance;
+   public TypeOperators Operators => TypeOperators.Instance;
 
-   public class OperatorsCollection
+   public class TypeOperators
    {
       // ReSharper disable once MemberHidesStaticFromOuterClass
-      public static readonly OperatorsCollection Instance = new();
-      OperatorsCollection() {}
+      public static readonly TypeOperators Instance = new();
+      TypeOperators() {}
       public readonly Func<T, T, bool>? Equality = TryGetBooleanOperator("op_Equality");
       public readonly Func<T, T, bool>? InEquality = TryGetBooleanOperator("op_Inequality");
       public readonly Func<T, T, bool>? LessThan = TryGetBooleanOperator("op_LessThan");
