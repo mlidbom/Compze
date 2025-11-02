@@ -19,8 +19,7 @@ public static class Must_Contain
     public static IMust<HashSet<T>> Contain<T>(this IMust<HashSet<T>> must, T item, [CallerArgumentExpression(nameof(item))] string itemExpression = null!)
        => must.Satisfy(it => it.Contains(item), usedArguments: [new(nameof(item), itemExpression, item)]);
 
-    public static IMust<TCollection> Contain<TCollection>(this IMust<TCollection> must, object item, [CallerArgumentExpression(nameof(item))] string itemExpression = null!)
-      where TCollection : IEnumerable<object>
+    public static IMust<IEnumerable<TItem>> Contain<TItem>(this IMust<IEnumerable<TItem>> must, TItem item, [CallerArgumentExpression(nameof(item))] string itemExpression = null!)
       => must.Satisfy(it => it.Contains(item), usedArguments: [new(nameof(item), itemExpression, item)]);
 
    public static IMust<ReadOnlyCollection<TItem>> Contain<TItem>(this IMust<ReadOnlyCollection<TItem>> must, TItem item, [CallerArgumentExpression(nameof(item))] string itemExpression = null!)

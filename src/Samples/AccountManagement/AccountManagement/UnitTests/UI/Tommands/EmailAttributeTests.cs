@@ -2,7 +2,8 @@ using AccountManagement.API.ValidationAttributes;
 using AccountManagement.Tests.Unit.UI.Tommands.UserTommands;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.Testing.XUnit.BDD;
-using FluentAssertions;
+using Compze.Tests.Infrastructure.Fluent;
+using static Compze.Tests.Infrastructure.Fluent.MustActions;
 using JetBrains.Annotations;
 
 namespace AccountManagement.Tests.Unit.UI.Tommands;
@@ -13,21 +14,21 @@ public class EmailAttributeTests : UniversalTestBase
    public void IsNotValidIfEmailIsNull()
    {
       TommandValidator.ValidationFailures(new ATommand {Email = null})
-                      .Should().NotBeEmpty();
+                      .Must().NotBeEmpty();
    }
 
    [XF]
    public void IsValidIfEmailIsEmpty()
    {
       TommandValidator.ValidationFailures(new ATommand {Email = ""})
-                      .Should().BeEmpty();
+                      .Must().BeEmpty();
    }
 
    [XF]
    public void IsNotValidIfEmailIsInvalid()
    {
       TommandValidator.ValidationFailures(new ATommand {Email = "InvalidEmail"})
-                      .Should().NotBeEmpty();
+                      .Must().NotBeEmpty();
    }
 
    class ATommand

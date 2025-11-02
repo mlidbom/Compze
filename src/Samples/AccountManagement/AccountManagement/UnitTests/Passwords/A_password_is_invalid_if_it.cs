@@ -1,7 +1,8 @@
 using AccountManagement.Domain.Passwords;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.Testing.XUnit.BDD;
-using FluentAssertions;
+using Compze.Tests.Infrastructure.Fluent;
+using static Compze.Tests.Infrastructure.Fluent.MustActions;
 
 using static FluentAssertions.FluentActions;
 
@@ -21,6 +22,6 @@ public class A_password_is_invalid_if_it : UniversalTestBase
    static void AssertCreatingPasswordThrowsExceptionContainingFailure(string password, Password.Policy.Failures expectedFailure)
       // ReSharper disable once ObjectCreationAsStatement
       => Invoking(() => new Password(password))
-        .Should().Throw<PasswordDoesNotMatchPolicyException>().Which
-        .Failures.Should().Contain(expectedFailure);
+        .Must().Throw<PasswordDoesNotMatchPolicyException>().Which
+        .Failures.Must().Contain(expectedFailure);
 }

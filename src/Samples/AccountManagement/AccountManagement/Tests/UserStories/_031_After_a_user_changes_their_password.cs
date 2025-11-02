@@ -1,7 +1,8 @@
 using System.Threading.Tasks;
 using AccountManagement.UserStories.Scenarios;
 using Compze.Tests.Infrastructure.XUnit;
-using FluentAssertions;
+using Compze.Tests.Infrastructure.Fluent;
+using static Compze.Tests.Infrastructure.Fluent.MustActions;
 
 
 namespace AccountManagement.UserStories;
@@ -18,8 +19,8 @@ public class _031_After_a_user_changes_their_password : UserStoryTest
    }
 
    [PCT] public void Logging_in_with_the_new_password_works() =>
-      Scenario.Login(_changePasswordScenario!.Account.Email, _changePasswordScenario.NewPassword).Execute().Succeeded.Should().Be(true);
+      Scenario.Login(_changePasswordScenario!.Account.Email, _changePasswordScenario.NewPassword).Execute().Succeeded.Must().Be(true);
 
    [PCT] public void Logging_in_with_the_old_password_fails() =>
-      Scenario.Login(_changePasswordScenario!.Account.Email, _changePasswordScenario.OldPassword).Execute().Succeeded.Should().Be(false);
+      Scenario.Login(_changePasswordScenario!.Account.Email, _changePasswordScenario.OldPassword).Execute().Succeeded.Must().Be(false);
 }

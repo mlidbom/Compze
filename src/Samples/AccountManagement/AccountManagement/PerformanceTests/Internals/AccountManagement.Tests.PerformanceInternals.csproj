@@ -12,7 +12,6 @@
       <ProjectReference Include="..\..\..\..\..\Compze\Utilities\Compze.Utilities.csproj" />
    </ItemGroup>
    <ItemGroup>
-      <PackageReference Include="FluentAssertions" Version="8.7.1" />
       <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
       <PackageReference Include="NCrunch.Framework" Version="5.11.0" />
       <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">

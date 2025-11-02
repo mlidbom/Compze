@@ -10,9 +10,11 @@ using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.SystemCE.CollectionsCE.ConcurrentCE;
 using Compze.Tests.Infrastructure.XUnit;
+using Compze.Utilities.SystemCE;
 using Compze.Utilities.Threading.TasksCE;
-using FluentAssertions;
-using FluentAssertions.Extensions;
+using Compze.Tests.Infrastructure.Fluent;
+using static Compze.Tests.Infrastructure.Fluent.MustActions;
+
 using System;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
@@ -46,14 +48,14 @@ public class PerformanceTest : UniversalTestBase
    [PCT] public void SingleThreaded_creates_XX_accounts_in_100_milliseconds() =>
       TimeAsserter.Execute(
          description: "Register accounts",
-         action: () => _scenarioApi!.Register.Execute().Result.Status.Should().Be(RegistrationAttemptStatus.Successful),
+         action: () => _scenarioApi!.Register.Execute().Result.Status.Must().Be(RegistrationAttemptStatus.Successful),
          iterations: TestEnv.SqlLayer.ValueFor(msSql: 6, mySql: 3, pgSql: 4, sqlite: 3, sqliteMemory:6),
          maxTotal: 100.Milliseconds().EnvMultiply(1.6));
 
    [PCT] public void Multithreaded_creates_XX_accounts_in_60_milliseconds__db2_memory__msSql__mySql__oracle_pgSql_() =>
       TimeAsserter.ExecuteThreaded(
          description: "Register accounts",
-         action: () => _scenarioApi!.Register.Execute().Result.Status.Should().Be(RegistrationAttemptStatus.Successful),
+         action: () => _scenarioApi!.Register.Execute().Result.Status.Must().Be(RegistrationAttemptStatus.Successful),
          iterations: TestEnv.SqlLayer.ValueFor(msSql: 8, mySql: 2, pgSql: 4, sqlite: 2, sqliteMemory: 2),
          maxTotal: 60.Milliseconds().EnvMultiply(instrumented:2.2, unoptimized:1.4));
 
@@ -66,7 +68,7 @@ public class PerformanceTest : UniversalTestBase
                                    action: () =>
                                    {
                                       var (email, password, _) = accountsReader.Next();
-                                      _scenarioApi!.Login(email, password).Execute().Succeeded.Should().BeTrue();
+                                      _scenarioApi!.Login(email, password).Execute().Succeeded.Must().BeTrue();
                                    },
                                    iterations: logins,
                                    maxTotal: 100.Milliseconds());
@@ -81,7 +83,7 @@ public class PerformanceTest : UniversalTestBase
                                    action: () =>
                                    {
                                       var accountId = accountsReader.Next().Id;
-                                      _clientEndpoint!.ExecuteClientRequest(AccountApi.Instance.Tuery.AccountById(accountId)).Id.Should().Be(accountId);
+                                      _clientEndpoint!.ExecuteClientRequest(AccountApi.Instance.Tuery.AccountById(accountId)).Id.Must().Be(accountId);
                                    },
                                    iterations: fetches,
                                    maxTotal: 20.Milliseconds());
@@ -96,8 +98,8 @@ public class PerformanceTest : UniversalTestBase
          {
             var registerAccountScenario = _scenarioApi!.Register;
             var result = registerAccountScenario.Execute().Result;
-            result.Status.Should().Be(RegistrationAttemptStatus.Successful);
-            _clientEndpoint!.ExecuteClientRequest(AccountApi.Instance.Tuery.AccountById(result.RegisteredAccount!.Id)).Id.Should().Be(result.RegisteredAccount.Id);
+            result.Status.Must().Be(RegistrationAttemptStatus.Successful);
+            _clientEndpoint!.ExecuteClientRequest(AccountApi.Instance.Tuery.AccountById(result.RegisteredAccount!.Id)).Id.Must().Be(result.RegisteredAccount.Id);
             created.Add((registerAccountScenario.Email, registerAccountScenario.Password, registerAccountScenario.AccountId));
          },
          iterations: accountCount);
