@@ -3,7 +3,7 @@ using System;
 using System.Linq;
 using Compze.Utilities.SystemCE;
 
-#pragma warning disable CA1033
+#pragma warning disable CA1033 // The compiler is unhappy about the explicit interface implementation below
 
 namespace Compze.Tests.Infrastructure.Fluent;
 
