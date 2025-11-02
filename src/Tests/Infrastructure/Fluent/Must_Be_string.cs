@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 
 namespace Compze.Tests.Infrastructure.Fluent;
 
-public static class StringBe
+public static class Must_Be_string
 {
    public static Must<string>? Be(this Must<string> must, string expected, [CallerArgumentExpression(nameof(expected))] string expectedExpression = null!)
       => must.Satisfy(it => Equals(it, expected),

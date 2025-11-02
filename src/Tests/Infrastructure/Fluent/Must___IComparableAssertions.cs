@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 
 namespace Compze.Tests.Infrastructure.Fluent;
 
-public static class ComparableAssertions
+public static class Must___IComparableAssertions
 {
    public static Must<TValue> BeGreaterThan<TValue>(this Must<TValue> must, TValue expected, [CallerArgumentExpression(nameof(expected))] string expectedExpression = null!)
       where TValue : IComparable<TValue> =>

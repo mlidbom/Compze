@@ -2,7 +2,7 @@ using Compze.Utilities.SystemCE;
 
 namespace Compze.Tests.Infrastructure.Fluent;
 
-public static class StringContain
+public static class Must___String
 {
    public static Must<string> Contain(this Must<string> must, string expected) =>
       must.Satisfy(it => it.ContainsOrdinal(expected), messageOverride: _ => BuildMessage("did not contain the expected string:", must, expected));

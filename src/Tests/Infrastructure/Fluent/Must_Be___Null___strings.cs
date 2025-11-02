@@ -1,7 +1,7 @@
 namespace Compze.Tests.Infrastructure.Fluent;
 #pragma warning disable IDE0200
 
-public static class StringNullOrEmptyAssertions
+public static class Must_Be___Null___strings
 {
    public static Must<string?> BeNullOrEmpty(this Must<string?> must) =>
       must.Satisfy(it => string.IsNullOrEmpty(it));

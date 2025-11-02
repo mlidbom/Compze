@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 
 namespace Compze.Tests.Infrastructure.Fluent;
 
-public static class _Enumerables_lists
+public static class Must___Enumerable
 {
    public static Must<TCollection> HaveCount<TCollection>(this Must<TCollection> must, int count, [CallerArgumentExpression(nameof(count))] string predicateExpression = null!)
       where TCollection : System.Collections.IEnumerable

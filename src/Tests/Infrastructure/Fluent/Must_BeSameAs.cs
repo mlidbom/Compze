@@ -2,7 +2,7 @@ using System.Runtime.CompilerServices;
 
 namespace Compze.Tests.Infrastructure.Fluent;
 
-public static class ObjectReferenceEqualityAssertions
+public static class Must_BeSameAs
 {
    public static Must<TValue> BeSameAs<TValue>(this Must<TValue> must, TValue expected, [CallerArgumentExpression(nameof(expected))] string expectedExpression = null!)
       where TValue : class =>

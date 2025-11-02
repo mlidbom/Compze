@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 
 namespace Compze.Tests.Infrastructure.Fluent;
 
-public static class ValueAssertions
+public static class Must_BeOneOf
 {
    public static Must<TValue> BeOneOf<TValue>(this Must<TValue> must, TValue[] validValues, [CallerArgumentExpression(nameof(validValues))] string validValuesExpression = null!) =>
       must.Satisfy(it => validValues.Contains(it),

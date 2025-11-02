@@ -20,7 +20,7 @@ public class EquivalencyConfig<TValue>
                      .then(this);
 }
 
-public static class ObjectDeepEquality
+public static class Must_DeepEqual
 {
    public static Must<TValue> DeepEqual<TValue>(this Must<TValue> must,
                                                      TValue expected,

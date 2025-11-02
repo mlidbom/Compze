@@ -14,7 +14,7 @@ public record SatisfyCallInfo<T>(string PredicateExpression, Func<T, bool> Predi
 
 }
 
-public static class _Satisfy
+public static class _Must_Satisfy
 {
    const string RemoveLine = nameof(RemoveLine);
 

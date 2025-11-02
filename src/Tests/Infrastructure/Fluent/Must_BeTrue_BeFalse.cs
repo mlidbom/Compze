@@ -3,7 +3,7 @@ using Compze.Utilities.SystemCE;
 
 namespace Compze.Tests.Infrastructure.Fluent;
 
-public static class BooleanBeTrueFalse
+public static class Must_BeTrue_BeFalse
 {
    public static Must<bool>? BeTrue(this Must<bool> must)
       => must.Satisfy(it => it == true,

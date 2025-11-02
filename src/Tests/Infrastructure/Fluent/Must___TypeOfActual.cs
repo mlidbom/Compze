@@ -1,6 +1,6 @@
 namespace Compze.Tests.Infrastructure.Fluent;
 
-public static class TypeAssertions
+public static class Must___TypeOfActual
 {
    public static Must<TExpected> BeExactType<TExpected>(this Must must) =>
       must.Satisfy(it => it.GetType() == typeof(TExpected))

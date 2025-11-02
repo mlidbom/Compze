@@ -8,7 +8,7 @@ using Compze.Utilities.SystemCE;
 
 namespace Compze.Tests.Infrastructure.Fluent;
 
-public static class ObjectEqualityAssertions
+public static class Must_Be_NotBe
 {
    public static Must<TValue> Be<TValue>(this Must<TValue> must, TValue expected, [CallerArgumentExpression(nameof(expected))] string expectedExpression = null!)
    {
