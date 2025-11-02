@@ -22,7 +22,7 @@ public class After_Creating_Two_Dbs_Named_DB1_And_DB2 : DbPoolTestBase
                     {
                        using var command = connection.CreateCommand();
                        command.CommandText = LayerSpecificCommandText();
-                       command.ExecuteScalar().Must().Be(1);
+                       command.ExecuteScalar().Must().Be(1L);
                     });
    }
 
@@ -34,7 +34,7 @@ public class After_Creating_Two_Dbs_Named_DB1_And_DB2 : DbPoolTestBase
                     {
                        using var command = connection.CreateCommand();
                        command.CommandText = LayerSpecificCommandText();
-                       command.ExecuteScalar().Must().Be(1);
+                       command.ExecuteScalar().Must().Be(1L);
                     });
    }
 
