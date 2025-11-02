@@ -5,9 +5,11 @@ namespace Compze.Tests.Infrastructure.Fluent;
 
 public static class TypeAssertions
 {
-   public static Must<object> BeOfType<TExpected>(this Must<object> must) =>
-      must.Satisfy(it => it.GetType() == typeof(TExpected));
+   public static Must<TExpected> BeOfType<TExpected>(this Must must) =>
+      must.Satisfy(it => it.GetType() == typeof(TExpected))
+          .Cast<TExpected>();
 
-   public static Must<object> BeAssignableTo<TExpected>(this Must<object> must) =>
-      must.Satisfy(it => it.GetType().IsAssignableTo(typeof(TExpected)));
+   public static Must<TExpected> BeAssignableTo<TExpected>(this Must must) =>
+      must.Satisfy(it => it.GetType().IsAssignableTo(typeof(TExpected)))
+          .Cast<TExpected>();
 }
