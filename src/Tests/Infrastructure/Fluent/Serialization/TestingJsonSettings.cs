@@ -36,6 +36,8 @@ static class TestingJsonSettings
          Formatting = Formatting.Indented,
          ContractResolver = resolver,
          ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-         Converters = { new DeterministicOrderedForUnorderedCollectionsConverter() }
+         PreserveReferencesHandling = PreserveReferencesHandling.Objects,
+         MaxDepth = 32,
+         Converters = { new DeterministicOrderedForUnorderedCollectionsConverter(), new ExceptionJsonConverter() }
       };
 }

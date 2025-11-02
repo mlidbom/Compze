@@ -6,7 +6,7 @@ using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
-using FluentAssertions;
+using Compze.Tests.Infrastructure.Fluent;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -53,7 +53,7 @@ public class Navigator_specification : UniversalTestBase
    [PCT]  public void Can_get_tommand_result()
    {
       var tommandResult1 = _clientEndpoint.ExecuteClientRequest(navigator => navigator.Post(RegisterUserTypermediaTommand.Create("new-user-name")));
-      tommandResult1.Name.Should().Be("new-user-name");
+      tommandResult1.Name.Must().Be("new-user-name");
    }
 
    [PCT]  public void Can_navigate_to_startpage_execute_tommand_and_follow_tommand_result_link_to_the_created_resource()
@@ -62,7 +62,7 @@ public class Navigator_specification : UniversalTestBase
                                                                                      .Post(startpage => startpage.RegisterUser("new-user-name"))
                                                                                      .Get(registerUserResult => registerUserResult.User));
 
-      userResource.Name.Should().Be("new-user-name");
+      userResource.Name.Must().Be("new-user-name");
    }
 
    [PCT]  public async Task Can_navigate_async_to_startpage_execute_tommand_and_follow_tommand_result_link_to_the_created_resource()
@@ -71,7 +71,7 @@ public class Navigator_specification : UniversalTestBase
                                                                                     .Post(startpage => startpage.RegisterUser("new-user-name"))
                                                                                     .Get(registerUserResult => registerUserResult.User));
 
-      (await userResource).Name.Should().Be("new-user-name");
+      (await userResource).Name.Must().Be("new-user-name");
    }
 
    protected internal class UserApiStartPage
