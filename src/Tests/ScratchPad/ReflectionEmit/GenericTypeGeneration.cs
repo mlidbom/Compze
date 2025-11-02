@@ -7,11 +7,10 @@ using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
 using Compze.Utilities.SystemCE.ReflectionCE.EmitCE;
+using Compze.Utilities.Testing.Fluent;
 using Compze.Utilities.Testing.XUnit.BDD;
 using Compze.Utilities.Threading;
 using Compze.Utilities.Threading.ResourceAccess;
-using Compze.Tests.Infrastructure.Fluent;
-
 
 namespace Compze.Tests.ScratchPad.ReflectionEmit;
 

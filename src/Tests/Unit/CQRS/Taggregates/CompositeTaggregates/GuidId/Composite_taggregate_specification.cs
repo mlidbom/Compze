@@ -4,8 +4,8 @@ using Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId.Domain;
 using Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId.Domain.Tevents;
 using Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId.QueryModels;
 using Compze.Utilities.SystemCE.ReactiveCE;
+using Compze.Utilities.Testing.Fluent;
 using Compze.Utilities.Testing.XUnit.BDD;
-using Compze.Tests.Infrastructure.Fluent;
 
 // ReSharper disable InconsistentNaming
 // ReSharper disable ImplicitlyCapturedClosure

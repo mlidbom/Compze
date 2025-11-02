@@ -5,9 +5,9 @@ using Compze.Core.Time.Public;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.SystemCE.ReactiveCE;
 using Compze.Utilities.Testing.XUnit.BDD;
-using Compze.Tests.Infrastructure.Fluent;
 using System.Collections.Generic;
 using Compze.Core.Public;
+using Compze.Utilities.Testing.Fluent;
 
 namespace Compze.Tests.Unit.CQRS.Taggregates;
 

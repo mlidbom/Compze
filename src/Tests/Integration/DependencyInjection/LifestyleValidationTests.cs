@@ -4,8 +4,8 @@ using Compze.Tests.Infrastructure;
 using Compze.Utilities.DependencyInjection;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Utilities.DependencyInjection.Abstractions;
-using Compze.Tests.Infrastructure.Fluent;
-using static Compze.Tests.Infrastructure.Fluent.MustActions;
+using Compze.Utilities.Testing.Fluent;
+using static Compze.Utilities.Testing.Fluent.MustActions;
 
 namespace Compze.Tests.Integration.DependencyInjection;
 

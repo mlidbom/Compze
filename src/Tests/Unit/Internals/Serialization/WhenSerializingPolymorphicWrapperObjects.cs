@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using Compze.Core.Public;
-using Compze.Tests.Infrastructure.Fluent;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Utilities.Functional;
+using Compze.Utilities.Testing.Fluent;
 
 // ReSharper disable UnusedMember.Global
 

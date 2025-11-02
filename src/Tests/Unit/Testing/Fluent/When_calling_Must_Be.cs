@@ -1,8 +1,12 @@
 using Compze.Tests.Infrastructure;
-using Compze.Tests.Infrastructure.Fluent;
 using Compze.Utilities.Testing.XUnit.BDD;
 using System;
-using static Compze.Tests.Infrastructure.Fluent.MustActions;
+using Compze.Utilities.Testing.Fluent;
+using static Compze.Utilities.Testing.Fluent.MustActions;
+using __Must = Compze.Utilities.Testing.Fluent.__Must;
+using AssertionFailedException = Compze.Utilities.Testing.Fluent.AssertionFailedException;
+using Must_Be_NotBe = Compze.Utilities.Testing.Fluent.Must_Be_NotBe;
+using Must_Be_string = Compze.Utilities.Testing.Fluent.Must_Be_string;
 
 // ReSharper disable UnusedMember.Local
 
@@ -19,7 +23,7 @@ public class When_calling_Must_Be : UniversalTestBase
       readonly string _actual = "same_value";
       readonly string _expected = "same_value";
 
-      [XF] public void it_does_not_throw() => _actual.Must().Be(_expected);
+      [XF] public void it_does_not_throw() => Must_Be_string.Be(__Must.Must(_actual), _expected);
    }
 
    public class with_two_equal_integers : When_calling_Must_Be
@@ -27,7 +31,7 @@ public class When_calling_Must_Be : UniversalTestBase
       readonly int _actual = 42;
       readonly int _expected = 42;
 
-      [XF] public void it_does_not_throw() => _actual.Must().Be(_expected);
+      [XF] public void it_does_not_throw() => Must_Be_NotBe.Be(__Must.Must(_actual), _expected);
    }
 
    public class with_two_different_integers : When_calling_Must_Be
@@ -37,37 +41,38 @@ public class When_calling_Must_Be : UniversalTestBase
 
       public class it_throws_AssertionFailedException : with_two_different_integers
       {
-         string ExceptionMessage() => Invoking(() => _actual.Must().Be(_expected)).Must().Throw<AssertionFailedException>().Which.Message;
+         string ExceptionMessage() => Invoking(() => Must_Be_NotBe.Be(__Must.Must(_actual), _expected)).Must().Throw<AssertionFailedException>().Which.Message;
 
          [XF] public void and_the_exception_message__is() =>
-            ExceptionMessage().Must().Be("""
-                                         
-                                         --------------------------------------------------
-                                         expected the object "it" returned by the expression: 
-                                         --------------------------------------------------
-                                            _actual
-                                         --------------------------------------------------
-                                         to be equal to the the object "expected" returned by the expression:
-                                         --------------------------------------------------
-                                            _expected
-                                         --------------------------------------------------
-                                         but it failed the test: 
-                                            it => Equals(it, expected)
-                                         --------------------------------------------------
-                                         Diff:
-                                         --------------------------------------------------
-                                         [-43]
-                                         [+42]
-                                         --------------------------------------------------
-                                         it was:
-                                         --------------------------------------------------
-                                         42
-                                         --------------------------------------------------
-                                         expected was:
-                                         --------------------------------------------------
-                                         43
-                                         --------------------------------------------------
-                                         """);
+            Must_Be_string.Be(__Must.Must(ExceptionMessage()),
+                              """
+
+                              --------------------------------------------------
+                              expected the object "it" returned by the expression: 
+                              --------------------------------------------------
+                                 _actual
+                              --------------------------------------------------
+                              to be equal to the the object "expected" returned by the expression:
+                              --------------------------------------------------
+                                 _expected
+                              --------------------------------------------------
+                              but it failed the test: 
+                                 it => Equals(it, expected)
+                              --------------------------------------------------
+                              Diff:
+                              --------------------------------------------------
+                              [-43]
+                              [+42]
+                              --------------------------------------------------
+                              it was:
+                              --------------------------------------------------
+                              42
+                              --------------------------------------------------
+                              expected was:
+                              --------------------------------------------------
+                              43
+                              --------------------------------------------------
+                              """);
       }
    }
 
@@ -76,7 +81,7 @@ public class When_calling_Must_Be : UniversalTestBase
       readonly TestObjectWithOverriddenEquals _actual = new("same");
       readonly TestObjectWithOverriddenEquals _expected = new("same");
 
-      [XF] public void Be_does_not_throw() => _actual.Must().Be(_expected);
+      [XF] public void Be_does_not_throw() => Must_Be_NotBe.Be(__Must.Must(_actual), _expected);
    }
 
    public class given_two_different_custom_objects_with_overridden_equals : When_calling_Must_Be
@@ -86,7 +91,7 @@ public class When_calling_Must_Be : UniversalTestBase
 
       public class Be_throws_AssertionFailedException : given_two_different_custom_objects_with_overridden_equals
       {
-         string ExceptionMessage() => Invoking(() => _actual.Must().Be(_expected)).Must().Throw<AssertionFailedException>().Which.Message;
+         string ExceptionMessage() => Invoking(() => Must_Be_NotBe.Be(__Must.Must(_actual), _expected)).Must().Throw<AssertionFailedException>().Which.Message;
 
          [XF] public void and_the_exception_message__is() =>
             ExceptionMessage().Must().Be(""""

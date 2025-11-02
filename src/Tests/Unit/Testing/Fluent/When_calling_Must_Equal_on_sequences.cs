@@ -1,8 +1,12 @@
 using System.Linq;
 using Compze.Tests.Infrastructure;
-using Compze.Tests.Infrastructure.Fluent;
+using Compze.Utilities.Testing.Fluent;
 using Compze.Utilities.Testing.XUnit.BDD;
-using static Compze.Tests.Infrastructure.Fluent.MustActions;
+using static Compze.Utilities.Testing.Fluent.MustActions;
+using __Must = Compze.Utilities.Testing.Fluent.__Must;
+using AssertionFailedException = Compze.Utilities.Testing.Fluent.AssertionFailedException;
+using Must___Enumerable = Compze.Utilities.Testing.Fluent.Must___Enumerable;
+
 #pragma warning disable CA1861
 // ReSharper disable InconsistentNaming
 
@@ -11,27 +15,27 @@ namespace Compze.Tests.Unit.Testing.Fluent;
 public class When_calling_Must_SequenceEqual : UniversalTestBase
 {
    [XF] public void it_does_not_throw_for_equal_sequences()
-      => new[] { 1, 2, 3 }.Must().Equal(new[] { 1, 2, 3 });
+      => Must___Enumerable.Equal(__Must.Must(new[] { 1, 2, 3 }), new[] { 1, 2, 3 });
 
    [XF] public void it_throws_for_different_sequences()
-      => Invoking(() => new[] { 1, 2, 3 }.Must().Equal(new[] { 1, 2, 4 }))
+      => Invoking(() => Must___Enumerable.Equal(__Must.Must(new[] { 1, 2, 3 }), new[] { 1, 2, 4 }))
         .Must()
         .Throw<AssertionFailedException>();
 
    [XF] public void it_throws_for_different_lengths()
-      => Invoking(() => new[] { 1, 2 }.Must().Equal(new[] { 1, 2, 3 }))
+      => Invoking(() => Must___Enumerable.Equal(__Must.Must(new[] { 1, 2 }), new[] { 1, 2, 3 }))
         .Must()
         .Throw<AssertionFailedException>();
 
    [XF] public void it_works_with_linq_operations()
-      => Enumerable.Range(1, 10).Must().Equal(Enumerable.Range(1, 10));
+      => Must___Enumerable.Equal(__Must.Must(Enumerable.Range(1, 10)), Enumerable.Range(1, 10));
 
    public class when_sequences_differ : When_calling_Must_SequenceEqual
    {
       readonly int[] _actual = [1, 2, 3];
       readonly int[] _expected = [1, 2, 4];
 
-      string ExceptionMessage() => Invoking(() => _actual.Must().Equal(_expected)).Must().Throw<AssertionFailedException>().Which.Message;
+      string ExceptionMessage() => Invoking(() => Must___Enumerable.Equal(__Must.Must(_actual), _expected)).Must().Throw<AssertionFailedException>().Which.Message;
 
       [XF] public void the_exception_message_includes_the_full_diff() =>
          ExceptionMessage().Must().Be(""""

@@ -5,12 +5,4 @@
    <ItemGroup>
       <None Include="../**/*readme*" Exclude="$(BuildOutputExcludes)" KeepDuplicates="false" />
    </ItemGroup>
-  <!-- Exclude subdirectories that have their own .csproj files to prevent compilation errors.
-       This section is automatically maintained by DevScripts\C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders.ps1 -->
-  <ItemGroup>
-    <Compile Remove="\**" />
-    <EmbeddedResource Remove="\**" />
-    <None Remove="\**" />
-    <Content Remove="\**" />
-  </ItemGroup>
 </Project>

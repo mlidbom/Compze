@@ -5,7 +5,7 @@ using System.Linq;
 using Compze.Utilities.SystemCE.ReflectionCE;
 using Newtonsoft.Json;
 
-namespace Compze.Tests.Infrastructure.Fluent.Serialization;
+namespace Compze.Utilities.Testing.Fluent.Serialization;
 
 /// <summary>
 /// Ensures dictionaries and sets serialize in a deterministic order for reliable comparison.

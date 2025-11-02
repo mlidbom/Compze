@@ -5,8 +5,8 @@ using Compze.Tessaging.Hosting.Testing.Performance;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
+using Compze.Utilities.Testing.Fluent;
 using Compze.Utilities.Testing.XUnit.BDD;
-using Compze.Tests.Infrastructure.Fluent;
 using JetBrains.Annotations;
 
 #pragma warning disable IDE1006 //Reviewed OK: Test Naming Styles

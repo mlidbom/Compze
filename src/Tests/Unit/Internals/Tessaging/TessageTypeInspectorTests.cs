@@ -2,8 +2,7 @@ using Compze.Core.Tessaging.Public;
 using Compze.Core.Tessaging.Teventive.Infrastructure.Validation;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.Testing.XUnit.BDD;
-using Compze.Tests.Infrastructure.Fluent;
-using static Compze.Tests.Infrastructure.Fluent.MustActions;
+using static Compze.Utilities.Testing.Fluent.MustActions;
 
 namespace Compze.Tests.Unit.Internals.Tessaging;
 

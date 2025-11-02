@@ -1,7 +1,7 @@
 using System;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Tests.Infrastructure.XUnit;
-using Compze.Tests.Infrastructure.Fluent;
+using Compze.Utilities.Testing.Fluent;
 
 namespace AccountManagement.UserStories;
 

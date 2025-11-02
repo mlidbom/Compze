@@ -3,7 +3,7 @@ using Compze.Tessaging.Hosting.Testing;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.Testing.XUnit.BDD;
 using Compze.Tests.Infrastructure.XUnit;
-using Compze.Tests.Infrastructure.Fluent;
+using Compze.Utilities.Testing.Fluent;
 
 namespace Compze.Tests.Integration.Infrastructure;
 

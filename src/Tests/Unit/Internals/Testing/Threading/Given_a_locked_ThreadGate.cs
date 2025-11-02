@@ -1,13 +1,13 @@
 using System;
 using Compze.Tests.Infrastructure;
-using Compze.Tests.Infrastructure.Fluent;
 using Compze.Utilities.Threading.Testing;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
+using Compze.Utilities.Testing.Fluent;
 using Compze.Utilities.Testing.XUnit.BDD;
 using Xunit;
 using Compze.Utilities.Threading.ResourceAccess;
-using static Compze.Tests.Infrastructure.Fluent.MustActions;
+using static Compze.Utilities.Testing.Fluent.MustActions;
 
 // ReSharper disable InconsistentNaming
 // ReSharper disable AccessToDisposedClosure

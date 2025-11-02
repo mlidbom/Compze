@@ -12,10 +12,10 @@ using Compze.Tests.Infrastructure.SystemCE.CollectionsCE.ConcurrentCE;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.Threading.TasksCE;
-using Compze.Tests.Infrastructure.Fluent;
 using System;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
+using Compze.Utilities.Testing.Fluent;
 using AccountId = AccountManagement.Domain.AccountId;
 
 namespace AccountManagement;

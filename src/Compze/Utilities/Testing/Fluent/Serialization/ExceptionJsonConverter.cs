@@ -1,7 +1,7 @@
 using System;
 using Newtonsoft.Json;
 
-namespace Compze.Tests.Infrastructure.Fluent.Serialization;
+namespace Compze.Utilities.Testing.Fluent.Serialization;
 
 /// <summary>
 /// Custom converter that prevents serialization of Exception objects to avoid stack overflow

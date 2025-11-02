@@ -3,10 +3,10 @@ using Compze.Core.Tessaging.Teventive.Internal.Implementation;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Tests.Infrastructure;
-using Compze.Tests.Infrastructure.Fluent;
+using Compze.Utilities.Testing.Fluent;
 using Compze.Utilities.Testing.XUnit.BDD;
 using JetBrains.Annotations;
-using static Compze.Tests.Infrastructure.Fluent.MustActions;
+using static Compze.Utilities.Testing.Fluent.MustActions;
 
 // ReSharper disable MemberHidesStaticFromOuterClass
 // ReSharper disable UnusedMember.Local

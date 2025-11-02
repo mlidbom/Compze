@@ -1,7 +1,9 @@
 using Compze.Tests.Infrastructure;
-using Compze.Tests.Infrastructure.Fluent;
 using Compze.Utilities.Testing.XUnit.BDD;
-using static Compze.Tests.Infrastructure.Fluent.MustActions;
+using static Compze.Utilities.Testing.Fluent.MustActions;
+using __Must = Compze.Utilities.Testing.Fluent.__Must;
+using AssertionFailedException = Compze.Utilities.Testing.Fluent.AssertionFailedException;
+using Must___TypeOfActual = Compze.Utilities.Testing.Fluent.Must___TypeOfActual;
 
 // ReSharper disable InconsistentNaming
 
@@ -14,7 +16,7 @@ public class When_calling_Must_BeAssignableTo : UniversalTestBase
       [XF] public void it_does_not_throw()
       {
          object value = "string";
-         value.Must().BeAssignableTo<string>();
+         Must___TypeOfActual.BeAssignableTo<string>(__Must.Must(value));
       }
    }
 
@@ -26,7 +28,7 @@ public class When_calling_Must_BeAssignableTo : UniversalTestBase
       [XF] public void it_does_not_throw()
       {
          object value = new Derived();
-         value.Must().BeAssignableTo<Base>();
+         Must___TypeOfActual.BeAssignableTo<Base>(__Must.Must(value));
       }
    }
 
@@ -38,7 +40,7 @@ public class When_calling_Must_BeAssignableTo : UniversalTestBase
       [XF] public void it_does_not_throw()
       {
          object value = new TestClass();
-         value.Must().BeAssignableTo<ITest>();
+         Must___TypeOfActual.BeAssignableTo<ITest>(__Must.Must(value));
       }
    }
 
@@ -47,7 +49,7 @@ public class When_calling_Must_BeAssignableTo : UniversalTestBase
       [XF] public void it_throws()
       {
          object value = 42;
-         Invoking(() => value.Must().BeAssignableTo<string>())
+         Invoking(() => Must___TypeOfActual.BeAssignableTo<string>(__Must.Must(value)))
             .Must()
             .Throw<AssertionFailedException>();
       }

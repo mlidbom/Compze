@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Threading;
-using Compze.Tests.Infrastructure.Fluent;
+using Compze.Utilities.Testing.Fluent;
 
 // ReSharper disable All
 #pragma warning disable //Reviewed OK: This is API experimental code that is never ever used.

@@ -1,6 +1,6 @@
 using System;
 
-namespace Compze.Tests.Infrastructure.Fluent;
+namespace Compze.Utilities.Testing.Fluent;
 
 public class AssertionFailedException(string message, Exception? inner = null) : 
    Exception($"""

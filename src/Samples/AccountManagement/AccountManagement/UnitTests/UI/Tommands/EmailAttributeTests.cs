@@ -1,8 +1,8 @@
 using AccountManagement.API.ValidationAttributes;
 using AccountManagement.Tests.Unit.UI.Tommands.UserTommands;
 using Compze.Tests.Infrastructure;
+using Compze.Utilities.Testing.Fluent;
 using Compze.Utilities.Testing.XUnit.BDD;
-using Compze.Tests.Infrastructure.Fluent;
 using JetBrains.Annotations;
 
 namespace AccountManagement.Tests.Unit.UI.Tommands;

@@ -1,7 +1,8 @@
 using Compze.Utilities.SystemCE;
+
 // ReSharper disable RedundantBoolCompare
 // ReSharper disable InconsistentNaming
-namespace Compze.Tests.Infrastructure.Fluent;
+namespace Compze.Utilities.Testing.Fluent;
 
 public static class Must_BeTrue_BeFalse
 {

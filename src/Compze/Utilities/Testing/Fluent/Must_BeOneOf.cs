@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 #pragma warning disable IDE0200
 // ReSharper disable InconsistentNaming
 
-namespace Compze.Tests.Infrastructure.Fluent;
+namespace Compze.Utilities.Testing.Fluent;
 
 public static class Must_BeOneOf
 {

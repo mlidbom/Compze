@@ -1,12 +1,12 @@
-using Compze.Tests.Infrastructure.Fluent.Serialization;
-using Compze.Utilities.SystemCE.ReflectionCE;
-using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Runtime.CompilerServices;
 using Compze.Utilities.SystemCE;
+using Compze.Utilities.SystemCE.ReflectionCE;
+using Compze.Utilities.Testing.Fluent.Serialization;
+using Newtonsoft.Json;
 
-namespace Compze.Tests.Infrastructure.Fluent;
+namespace Compze.Utilities.Testing.Fluent;
 
 // ReSharper disable InconsistentNaming
 public static class Must_Be_NotBe

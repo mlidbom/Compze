@@ -1,11 +1,11 @@
-using Compze.Utilities.Functional;
 using System;
 using System.Linq;
+using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE;
 
 #pragma warning disable CA1033 // The compiler is unhappy about the explicit interface implementation below
 
-namespace Compze.Tests.Infrastructure.Fluent;
+namespace Compze.Utilities.Testing.Fluent;
 
 public interface IMust
 {

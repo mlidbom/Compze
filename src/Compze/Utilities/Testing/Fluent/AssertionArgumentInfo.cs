@@ -1,4 +1,4 @@
-namespace Compze.Tests.Infrastructure.Fluent;
+namespace Compze.Utilities.Testing.Fluent;
 
 public class AssertionArgumentInfo(string name, string expression, object? value)
 {

@@ -12,8 +12,7 @@ using Compze.Utilities.SystemCE;
 using Compze.Utilities.Threading.Testing;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.Testing.DbPool.SystemCE.ThreadingCE;
-using Compze.Tests.Infrastructure.Fluent;
-
+using Compze.Utilities.Testing.Fluent;
 using JetBrains.Annotations;
 using Compze.Utilities.Threading.TasksCE;
 

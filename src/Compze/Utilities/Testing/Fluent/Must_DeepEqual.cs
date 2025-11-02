@@ -1,6 +1,3 @@
-using Compze.Tests.Infrastructure.Fluent.Serialization;
-using Compze.Utilities.SystemCE.LinqCE;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
@@ -8,9 +5,12 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE;
+using Compze.Utilities.SystemCE.LinqCE;
+using Compze.Utilities.Testing.Fluent.Serialization;
+using Newtonsoft.Json;
 
 // ReSharper disable InconsistentNaming
-namespace Compze.Tests.Infrastructure.Fluent;
+namespace Compze.Utilities.Testing.Fluent;
 
 public class EquivalencyConfig<TValue>
 {

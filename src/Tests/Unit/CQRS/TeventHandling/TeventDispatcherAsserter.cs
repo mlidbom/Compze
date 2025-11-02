@@ -1,6 +1,6 @@
 using Compze.Core.Tessaging.Public;
 using Compze.Core.Tessaging.Teventive.Public;
-using Compze.Tests.Infrastructure.Fluent;
+using Compze.Utilities.Testing.Fluent;
 
 namespace Compze.Tests.Unit.CQRS.TeventHandling;
 

@@ -1,6 +1,6 @@
 using System;
 using AccountManagement.API;
-using Compze.Tests.Infrastructure.Fluent;
+using Compze.Utilities.Testing.Fluent;
 
 namespace AccountManagement.UserStories.Scenarios;
 

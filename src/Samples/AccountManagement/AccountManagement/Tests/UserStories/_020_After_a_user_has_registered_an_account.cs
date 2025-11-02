@@ -2,7 +2,7 @@ using System.Threading.Tasks;
 using AccountManagement.Domain.Registration;
 using AccountManagement.UserStories.Scenarios;
 using Compze.Tests.Infrastructure.XUnit;
-using Compze.Tests.Infrastructure.Fluent;
+using Compze.Utilities.Testing.Fluent;
 
 namespace AccountManagement.UserStories;
 

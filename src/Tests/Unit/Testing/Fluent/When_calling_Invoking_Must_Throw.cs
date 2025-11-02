@@ -1,8 +1,8 @@
 using System;
 using Compze.Tests.Infrastructure;
-using Compze.Tests.Infrastructure.Fluent;
+using Compze.Utilities.Testing.Fluent;
 using Compze.Utilities.Testing.XUnit.BDD;
-using static Compze.Tests.Infrastructure.Fluent.MustActions;
+using static Compze.Utilities.Testing.Fluent.MustActions;
 
 // ReSharper disable InconsistentNaming
 

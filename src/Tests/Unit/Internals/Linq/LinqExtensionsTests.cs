@@ -2,8 +2,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.SystemCE.LinqCE;
+using Compze.Utilities.Testing.Fluent;
 using Compze.Utilities.Testing.XUnit.BDD;
-using Compze.Tests.Infrastructure.Fluent;
 
 namespace Compze.Tests.Unit.Internals.Linq;
 

@@ -2,7 +2,7 @@ using System;
 using System.Globalization;
 using Compze.Core.Time.Public;
 using Compze.Tests.Infrastructure;
-using Compze.Tests.Infrastructure.Fluent;
+using Compze.Utilities.Testing.Fluent;
 using Compze.Utilities.Testing.XUnit.BDD;
 
 namespace Compze.Tests.Unit.GenericAbstractions.Time;

@@ -1,13 +1,13 @@
-using Compze.Tests.Infrastructure.Fluent.Serialization;
-using Compze.Utilities.SystemCE;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using Compze.Utilities.SystemCE;
+using Compze.Utilities.Testing.Fluent.Serialization;
+using Newtonsoft.Json;
 
-namespace Compze.Tests.Infrastructure.Fluent;
+namespace Compze.Utilities.Testing.Fluent;
 
 public record SatisfyCallInfo<T>(string PredicateExpression, Func<T, bool> Predicate, Func<T, string>? FailureMessage, IReadOnlyList<AssertionArgumentInfo>? UsedArguments)
 {

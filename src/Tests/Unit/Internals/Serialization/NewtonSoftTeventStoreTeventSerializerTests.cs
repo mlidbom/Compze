@@ -6,7 +6,7 @@ using Compze.Utilities.SystemCE;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 using System;
-using Compze.Tests.Infrastructure.Fluent;
+using Compze.Utilities.Testing.Fluent;
 
 namespace Compze.Tests.Unit.Internals.Serialization;
 

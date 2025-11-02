@@ -1,6 +1,6 @@
 using System.Runtime.CompilerServices;
 
-namespace Compze.Tests.Infrastructure.Fluent;
+namespace Compze.Utilities.Testing.Fluent;
 // ReSharper disable InconsistentNaming
 
 public static class Must___ReferenceEqual

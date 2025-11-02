@@ -6,7 +6,6 @@ using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.TransactionsCE;
-using Compze.Tests.Infrastructure.Fluent;
 using System;
 using System.Linq;
 using System.Transactions;
@@ -14,6 +13,7 @@ using Compze.Core.Tessaging.Teventive.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.Public;
 using Compze.Tests.Infrastructure.XUnit;
+using Compze.Utilities.Testing.Fluent;
 
 namespace Compze.Tests.Integration.CQRS;
 

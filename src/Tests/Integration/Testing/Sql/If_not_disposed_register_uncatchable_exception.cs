@@ -6,9 +6,9 @@ using Compze.Utilities.SystemCE;
 using Compze.Utilities.Testing.DbPool.SystemCE;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Utilities.Testing.DbPool;
-using Compze.Tests.Infrastructure.Fluent;
+using Compze.Utilities.Testing.Fluent;
 using Xunit;
-using static Compze.Tests.Infrastructure.Fluent.MustActions;
+using static Compze.Utilities.Testing.Fluent.MustActions;
 
 namespace Compze.Tests.Integration.Testing.Sql;
 

@@ -1,7 +1,7 @@
 using AccountManagement.Domain;
 using Compze.Tests.Infrastructure;
+using Compze.Utilities.Testing.Fluent;
 using Compze.Utilities.Testing.XUnit.BDD;
-using Compze.Tests.Infrastructure.Fluent;
 using Xunit;
 using static FluentAssertions.FluentActions;
 

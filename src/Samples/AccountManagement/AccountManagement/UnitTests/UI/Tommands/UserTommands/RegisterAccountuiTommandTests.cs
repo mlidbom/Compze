@@ -2,8 +2,8 @@ using System;
 using System.Linq;
 using AccountManagement.API;
 using Compze.Tests.Infrastructure;
+using Compze.Utilities.Testing.Fluent;
 using Compze.Utilities.Testing.XUnit.BDD;
-using Compze.Tests.Infrastructure.Fluent;
 
 namespace AccountManagement.Tests.Unit.UI.Tommands.UserTommands;
 

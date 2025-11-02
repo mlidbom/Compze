@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Compze.Utilities.SystemCE.ReflectionCE;
 
-namespace Compze.Tests.Infrastructure.Fluent;
+namespace Compze.Utilities.Testing.Fluent;
 // ReSharper disable InconsistentNaming
 public class ActionSpec(Action action, string expression)
 {

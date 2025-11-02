@@ -3,11 +3,11 @@ using Compze.Tests.Infrastructure;
 using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.Testing.DbPool.SystemCE;
+using Compze.Utilities.Testing.Fluent;
 using Compze.Utilities.Testing.XUnit.BDD;
-using Compze.Tests.Infrastructure.Fluent;
 using JetBrains.Annotations;
 using Xunit;
-using static Compze.Tests.Infrastructure.Fluent.MustActions;
+using static Compze.Utilities.Testing.Fluent.MustActions;
 
 namespace Compze.Tests.Unit.Internals.SystemCE;
 

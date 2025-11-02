@@ -1,8 +1,8 @@
 using System.Collections.Generic;
-using Compze.Tests.Infrastructure.Fluent;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Tests.Unit.Internals.Serialization.OriginalTypes;
 using Compze.Utilities.Functional;
+using Compze.Utilities.Testing.Fluent;
 
 // ReSharper disable UnusedMember.Global
 

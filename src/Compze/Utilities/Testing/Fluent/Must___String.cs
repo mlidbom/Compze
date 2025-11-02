@@ -1,6 +1,6 @@
 using Compze.Utilities.SystemCE;
 
-namespace Compze.Tests.Infrastructure.Fluent;
+namespace Compze.Utilities.Testing.Fluent;
 
 public static class Must___String
 {

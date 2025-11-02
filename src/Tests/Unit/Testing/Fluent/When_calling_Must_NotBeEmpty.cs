@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Compze.Tests.Infrastructure;
-using Compze.Tests.Infrastructure.Fluent;
+using Compze.Utilities.Testing.Fluent;
 using Compze.Utilities.Testing.XUnit.BDD;
 #pragma warning disable CA1861
 #pragma warning disable CA1825
