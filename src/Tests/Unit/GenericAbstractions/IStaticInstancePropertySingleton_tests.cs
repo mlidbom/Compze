@@ -1,8 +1,8 @@
 using Compze.Tests.Infrastructure;
+using Compze.Tests.Infrastructure.Fluent;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
 using Compze.Utilities.Testing.XUnit.BDD;
-using FluentAssertions;
 using JetBrains.Annotations;
 
 namespace Compze.Tests.Unit.GenericAbstractions;
@@ -27,9 +27,9 @@ public class IStaticInstancePropertySingleton_tests : UniversalTestBase
       var instance1 = Constructor.For<ImplicitImplementation>.DefaultConstructor.Instance();
       var instance2 = Constructor.For<ImplicitImplementation>.DefaultConstructor.Instance();
 
-      instance1.Should().NotBeNull();
-      instance1.Should().BeSameAs(instance2);
-      instance1.Should().BeSameAs(ImplicitImplementation.Instance);
+      instance1.Must().NotBeNull();
+      instance1.Must().BeSameAs(instance2);
+      instance1.Must().BeSameAs(ImplicitImplementation.Instance);
    }
 
    [XF]
@@ -38,7 +38,7 @@ public class IStaticInstancePropertySingleton_tests : UniversalTestBase
       var instance1 = Constructor.For<ExplicitImplementation>.DefaultConstructor.Instance();
       var instance2 = Constructor.For<ExplicitImplementation>.DefaultConstructor.Instance();
 
-      instance1.Should().NotBeNull();
-      instance1.Should().BeSameAs(instance2);
+      instance1.Must().NotBeNull();
+      instance1.Must().BeSameAs(instance2);
    }
 }
