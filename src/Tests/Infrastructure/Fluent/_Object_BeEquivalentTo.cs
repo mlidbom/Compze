@@ -29,7 +29,7 @@ public static class ObjectDeepEquality
                                                      string expectedExpression = null!)
       => DeepEqualCore(must, expected, expectedExpression, TestingJsonSettings.AllMembers);
 
-   public static Must<TValue> DeepEqual<TValue>(this Must<TValue> must,
+   public static Must<TValue> DeepEqualPrivate<TValue>(this Must<TValue> must,
                                                      TValue expected,
                                                      Func<EquivalencyConfig<TValue>, EquivalencyConfig<TValue>> config,
                                                      [CallerArgumentExpression(nameof(expected))]
