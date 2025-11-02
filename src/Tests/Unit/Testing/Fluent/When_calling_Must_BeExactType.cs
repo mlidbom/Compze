@@ -8,29 +8,29 @@ using static Compze.Tests.Infrastructure.Fluent.MustActions;
 
 namespace Compze.Tests.Unit.Testing.Fluent;
 
-public class When_calling_Must_BeOfType : UniversalTestBase
+public class When_calling_Must_BeExactType : UniversalTestBase
 {
-   public class with_an_object_of_the_expected_type : When_calling_Must_BeOfType
+   public class with_an_object_of_the_expected_type : When_calling_Must_BeExactType
    {
       [XF] public void it_does_not_throw()
       {
          object value = "string";
-         value.Must().BeOfType<string>();
+         value.Must().BeExactType<string>();
       }
    }
 
-   public class with_an_object_of_a_different_type : When_calling_Must_BeOfType
+   public class with_an_object_of_a_different_type : When_calling_Must_BeExactType
    {
       [XF] public void it_throws()
       {
          object value = 42;
-         Invoking(() => value.Must().BeOfType<string>())
+         Invoking(() => value.Must().BeExactType<string>())
             .Must()
             .Throw<AssertionFailedException>();
       }
    }
 
-   public class with_a_derived_type : When_calling_Must_BeOfType
+   public class with_a_derived_type : When_calling_Must_BeExactType
    {
       class Base { }
       class Derived : Base { }
@@ -38,7 +38,7 @@ public class When_calling_Must_BeOfType : UniversalTestBase
       [XF] public void it_throws_when_expecting_base_type()
       {
          object value = new Derived();
-         Invoking(() => value.Must().BeOfType<Base>())
+         Invoking(() => value.Must().BeExactType<Base>())
             .Must()
             .Throw<AssertionFailedException>();
       }

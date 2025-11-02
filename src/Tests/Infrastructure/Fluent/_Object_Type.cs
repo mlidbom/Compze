@@ -2,7 +2,7 @@ namespace Compze.Tests.Infrastructure.Fluent;
 
 public static class TypeAssertions
 {
-   public static Must<TExpected> BeOfType<TExpected>(this Must must) =>
+   public static Must<TExpected> BeExactType<TExpected>(this Must must) =>
       must.Satisfy(it => it.GetType() == typeof(TExpected))
           .Cast<TExpected>();
 
