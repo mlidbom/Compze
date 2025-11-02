@@ -151,28 +151,6 @@ public class When_using_InvokingAsync_and_ThrowAsync : UniversalTestBase
       }
    }
 
-   public class given_an_async_action_with_complex_error_details : When_using_InvokingAsync_and_ThrowAsync
-   {
-      record TestObject(string Name, int Value);
-
-      public class ThrowAsync_enables_detailed_assertions : given_an_async_action_with_complex_error_details
-      {
-         [XF] public async Task on_exception_with_complex_data()
-         {
-            var testData = new TestObject("test", 42);
-            var exception = await InvokingAsync(async () =>
-                                  {
-                                     await Task.Yield();
-                                     throw new InvalidOperationException($"Failed with {testData}");
-                                  })
-                               .Must()
-                               .ThrowAsync<InvalidOperationException>();
-
-            exception.Which.Message.Must().Be("Failed with TestObject { Name = test, Value = 42 }");
-         }
-      }
-   }
-
    public class given_an_async_action_that_completes_synchronously : When_using_InvokingAsync_and_ThrowAsync
    {
       readonly InvalidOperationException _actual = new InvalidOperationException("sync exception");

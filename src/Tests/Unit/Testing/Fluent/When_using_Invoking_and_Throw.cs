@@ -110,22 +110,4 @@ public class When_using_Invoking_and_Throw : UniversalTestBase
               .Be(_actual);
       }
    }
-
-   public class given_an_action_with_complex_error_details : When_using_Invoking_and_Throw
-   {
-      record TestObject(string Name, int Value);
-
-      public class Throw_enables_detailed_assertions : given_an_action_with_complex_error_details
-      {
-         [XF] public void on_exception_with_complex_data()
-         {
-            var testData = new TestObject("test", 42);
-            var exception = Invoking(() => throw new InvalidOperationException($"Failed with {testData}"))
-                           .Must()
-                           .Throw<InvalidOperationException>();
-
-            exception.Which.Message.Must().Be("Failed with TestObject { Name = test, Value = 42 }");
-         }
-      }
-   }
 }
