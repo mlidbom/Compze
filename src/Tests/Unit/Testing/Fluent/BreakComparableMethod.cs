@@ -1,4 +1,5 @@
 using System;
+// ReSharper disable InconsistentNaming
 
 namespace Compze.Tests.Unit.Testing.Fluent;
 
