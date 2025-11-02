@@ -32,9 +32,9 @@ public interface IThreadGate : IThreadGateVisitor
    Action<ThreadSnapshot> PassThroughAction { get; }
 
    bool IsOpen { get; }
-   long Queued { get; }
-   long Requested { get; }
-   long Passed { get; }
+   int Queued { get; }
+   int Requested { get; }
+   int Passed { get; }
    TimeSpan DefaultTimeout { get; }
 
    IReadOnlyList<ThreadSnapshot> RequestedThreads { get; }
