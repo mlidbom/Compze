@@ -8,9 +8,7 @@
       <ProjectReference Include="..\..\..\Compze\Utilities\Compze.Utilities.csproj" />
       <ProjectReference Include="..\..\..\Compze\Utilities\Testing\Fluent\Compze.Utilities.Testing.Fluent.csproj" />
    </ItemGroup>
-   <ItemGroup>
-      <PackageReference Include="FluentAssertions" Version="8.7.1" />
-      <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
+   <ItemGroup>      <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
       <PackageReference Include="NCrunch.Framework" Version="5.11.0" />
       <PackageReference Include="Nito.AsyncEx.Context" Version="5.1.2" />
       <PackageReference Include="Shouldly" Version="4.3.0" />

@@ -4,6 +4,9 @@
       <Nullable>enable</Nullable>
    </PropertyGroup>
    <ItemGroup>
+     <AdditionalFiles Include="config.nsdepcop" />
+   </ItemGroup>
+   <ItemGroup>
      <ProjectReference Include="..\..\Compze.Utilities.csproj" />
    </ItemGroup>
 

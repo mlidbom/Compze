@@ -2,6 +2,7 @@ using System;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Compze.Utilities.SystemCE.ReflectionCE;
+using Compze.Utilities.Threading.TasksCE;
 
 namespace Compze.Utilities.Testing.Fluent;
 // ReSharper disable InconsistentNaming
@@ -78,7 +79,7 @@ public static class MustActions
    {
       try
       {
-         await must.Actual();
+         await must.Actual().caf();
       }
       catch(TException caught)
       {

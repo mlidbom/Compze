@@ -15,10 +15,13 @@ namespace Compze.Utilities.Testing.Fluent;
 public class EquivalencyConfig<TValue>
 {
    internal HashSet<MemberInfo> ExcludedMembers { get; } = new();
+   internal bool TypesIgnored { get; set; }
 
    public EquivalencyConfig<TValue> ExcludeTypeMember<TMember>(Expression<Func<TValue, TMember>> memberExpression) =>
       ExcludedMembers.Add(memberExpression.ExtractFinalMemberInfo())
                      .then(this);
+
+   public EquivalencyConfig<TValue> IgnoreTypes() => this.mutate(it => it.TypesIgnored = true);
 }
 
 public static class Must_DeepEqual
@@ -59,6 +62,14 @@ public static class Must_DeepEqual
    {
       var equivalencyConfig = (config ?? (conf => conf))(new EquivalencyConfig<TValue>());
       var serializerSettings = TestingJsonSettings.CreateSettingsWithExclusions(settings, equivalencyConfig.ExcludedMembers);
+      
+      if (equivalencyConfig.TypesIgnored)
+      {
+         serializerSettings = new JsonSerializerSettings(serializerSettings)
+         {
+            TypeNameHandling = TypeNameHandling.None
+         };
+      }
 
       var actualJson = JsonConvert.SerializeObject(must.Actual, serializerSettings);
       var expectedJson = JsonConvert.SerializeObject(expected, serializerSettings);

@@ -3,7 +3,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.Threading.TasksCE;
-using FluentAssertions;
+using Compze.Utilities.Testing.Fluent;
 using Xunit.Sdk;
 
 namespace Compze.Utilities.Testing.XUnit.Tests.ComponentCombinations._2Components.NotArgumentPassing;
@@ -19,7 +19,7 @@ public class WhenAnInvalidComponentIsMentionedInSkipped
                               SkipReasons = ["because something"]
                            }.GetData(MethodBase.GetCurrentMethod().NotNull().CastTo<MethodInfo>(), new DisposalTracker()).caf();
 
-      testData.Should().HaveCount(1);
-      testData.Single().Skip.Should().Contain("nonsense");
+      testData.Must().HaveCount(1);
+      testData.Single().Skip.Must().Contain("nonsense");
    }
 }

@@ -2,7 +2,7 @@ using AccountManagement.Domain.Passwords;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.Testing.Fluent;
 using Compze.Utilities.Testing.XUnit.BDD;
-using static FluentAssertions.FluentActions;
+using static Compze.Utilities.Testing.Fluent.MustActions;
 
 
 namespace AccountManagement.Tests.Unit.Passwords;
