@@ -11,7 +11,7 @@ using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
-using FluentAssertions;
+using Compze.Tests.Infrastructure.Fluent;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -75,8 +75,8 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
 
       var user = _clientEndpoint.ServiceLocator.ExecuteInIsolatedScope(() => RemoteNavigator.Get(registrationResult.UserLink));
 
-      user.Should().NotBe(null);
-      user.History.Count().Should().Be(1);
+      user.Must().NotBeNull();
+      user.History.Count().Must().Be(1);
    }
 
    public static class UserTevent
