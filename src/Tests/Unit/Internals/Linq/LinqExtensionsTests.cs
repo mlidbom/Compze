@@ -20,8 +20,8 @@ public class LinqExtensionsTests : UniversalTestBase
                           new() { 4, 5, 6, 7 }
                        };
 
-      var flattened = nestedInts.Flatten<List<int>, int>();
-      flattened.Must().DeepEqual(1.Through(7));
+      var flattened = nestedInts.Flatten<List<int>, int>().ToList();
+      flattened.Must().DeepEqual(1.Through(7).ToList());
    }
 
    [XF]
