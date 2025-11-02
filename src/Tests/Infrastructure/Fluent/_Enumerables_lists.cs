@@ -17,4 +17,9 @@ public static class _Enumerables_lists
    public static Must<TCollection> NotBeEmpty<TCollection>(this Must<TCollection> must, string? message = null!)
       where TCollection : IEnumerable<object>
       => must.Satisfy(it => it.Any());
+
+   public static Must<TCollection> SequenceEqual<TCollection, TElement>(this Must<TCollection> must, IEnumerable<TElement> expected, [CallerArgumentExpression(nameof(expected))] string expectedExpression = null!)
+      where TCollection : IEnumerable<TElement>
+      => must.Satisfy(it => it.SequenceEqual(expected),
+                      usedArguments: [new(nameof(expected), expectedExpression, expected)]);
 }
