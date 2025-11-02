@@ -65,6 +65,7 @@
     <File Path="TestUsingPluggableComponentCombinations.example" />
   </Folder>
   <Folder Name="/_Tests/">
+    <Project Path="Tests/Infrastructure/Fluent/Compze.Tests.Infrastructure.Fluent.csproj" />
     <Project Path="Compze/Utilities/Testing/XUnit/Tests/Compze.Utilities.Testing.XUnit.Tests.csproj">
       <BuildType Solution="docs|*" Project="Release" />
     </Project>
@@ -84,9 +85,11 @@
     <Project Path="msbuild/Solution.Build.csproj" />
     <Project Path="SolutionStructure/Solution.EditorConfigs.csproj" />
     <Project Path="SolutionStructure/Solution.NsDepCop.csproj" />
-    <Project Path="SolutionStructure/Solution.Readme.csproj" DisplayName="Solution.README" />
+    <Project Path="SolutionStructure/Solution.Readme.csproj" />
     <Project Path="SolutionStructure/Solution.TestConfig.csproj" />
     <Project Path="SolutionStructure/Solution.TODO.csproj" />
   </Folder>
   <Project Path="../DevScripts/Scripts.csproj" />
+  <Folder Name="/Compze/Tests/" />
+  <Folder Name="/Compze/Tests/Infrastructure/" />
 </Solution>

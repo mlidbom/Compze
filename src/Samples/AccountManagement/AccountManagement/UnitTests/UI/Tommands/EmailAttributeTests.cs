@@ -3,7 +3,6 @@ using AccountManagement.Tests.Unit.UI.Tommands.UserTommands;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.Testing.XUnit.BDD;
 using Compze.Tests.Infrastructure.Fluent;
-using static Compze.Tests.Infrastructure.Fluent.MustActions;
 using JetBrains.Annotations;
 
 namespace AccountManagement.Tests.Unit.UI.Tommands;

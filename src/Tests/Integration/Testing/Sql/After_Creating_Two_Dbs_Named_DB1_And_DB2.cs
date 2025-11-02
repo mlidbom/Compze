@@ -3,10 +3,8 @@ using Compze.Core.Wiring.Testing.Internal;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tests.Common.Testing.Sql;
 using Compze.Tests.Infrastructure.XUnit;
-using Compze.Utilities.SystemCE;
 using Compze.Tests.Infrastructure.Fluent;
 
-using static Compze.Tests.Infrastructure.Fluent.MustActions;
 namespace Compze.Tests.Integration.Testing.Sql;
 
 public class After_Creating_Two_Dbs_Named_DB1_And_DB2 : DbPoolTestBase

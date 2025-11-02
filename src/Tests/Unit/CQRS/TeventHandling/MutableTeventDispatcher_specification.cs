@@ -2,7 +2,6 @@ using Compze.Core.Tessaging.Teventive.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Tests.Infrastructure.Fluent;
 using Compze.Utilities.Testing.XUnit.BDD;
-using static Compze.Tests.Infrastructure.Fluent.MustActions;
 
 // ReSharper disable InconsistentNaming
 #pragma warning disable IDE0051 //Reviewed OK: unused private members are intentional in this test.

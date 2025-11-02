@@ -1,4 +1,3 @@
-using System;
 using Compze.Core.Public.Infrastructure;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.Fluent;

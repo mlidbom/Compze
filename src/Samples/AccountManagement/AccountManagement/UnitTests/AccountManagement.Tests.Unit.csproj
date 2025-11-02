@@ -1,18 +1,20 @@
-<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Tests\Infrastructure\Compze.Tests.Infrastructure.csproj" />
-    <ProjectReference Include="..\API\AccountManagement.API.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-     <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
-        <PrivateAssets>all</PrivateAssets>
-        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-     </PackageReference>
-     <PackageReference Include="xunit.v3" Version="3.1.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
-  </ItemGroup>
+﻿<Project Sdk="Microsoft.NET.Sdk">
+   <PropertyGroup>
+      <TargetFramework>net9.0</TargetFramework>
+      <Nullable>enable</Nullable>
+   </PropertyGroup>
+   <ItemGroup>
+      <ProjectReference Include="..\..\..\..\Tests\Infrastructure\Compze.Tests.Infrastructure.csproj" />
+      <ProjectReference Include="..\..\..\..\Tests\Infrastructure\Fluent\Compze.Tests.Infrastructure.Fluent.csproj" />
+      <ProjectReference Include="..\API\AccountManagement.API.csproj" />
+      <ProjectReference Include="..\..\..\..\Tests\Infrastructure\Fluent\Compze.Tests.Infrastructure.Fluent.csproj" />
+   </ItemGroup>
+   <ItemGroup>
+      <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
+         <PrivateAssets>all</PrivateAssets>
+         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+      <PackageReference Include="xunit.v3" Version="3.1.0" />
+      <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
+   </ItemGroup>
 </Project>

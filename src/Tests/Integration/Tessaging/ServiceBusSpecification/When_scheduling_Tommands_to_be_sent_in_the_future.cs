@@ -12,7 +12,6 @@ using Compze.Tests.Infrastructure.Fluent;
 using System;
 using Compze.Utilities.SystemCE;
 using System.Threading.Tasks;
-using Compze.Utilities.SystemCE;
 
 namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification;
 
