@@ -1,8 +1,10 @@
+using System;
 using System.Collections.Generic;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.Fluent;
 using Compze.Utilities.Testing.XUnit.BDD;
 using static Compze.Tests.Infrastructure.Fluent.MustActions;
+#pragma warning disable CA1861
 
 // ReSharper disable InconsistentNaming
 
@@ -14,7 +16,8 @@ public class When_calling_Must_HaveCount : UniversalTestBase
       => new List<int> { 1, 2, 3 }.Must().HaveCount(3);
 
    [XF] public void it_does_not_throw_when_count_is_zero()
-      => new int[0].Must().HaveCount(0);
+      =>
+         Array.Empty<int>().Must().HaveCount(0);
 
    [XF] public void it_throws_when_count_is_different()
       => Invoking(() => new[] { 1, 2, 3 }.Must().HaveCount(5))

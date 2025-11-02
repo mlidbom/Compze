@@ -27,7 +27,7 @@ public static class Must_Be_NotBe
       }
 
       return must.Cast<object>()
-                 .Be_transitively_equal_to_according_to_every_supported_comparison_method_and_hashcode_internal(expected, expectedExpression)
+                 .Be_transitively_equal_to_according_to_every_supported_comparison_method_and_hashcode_internal(expected!, expectedExpression)
                  .Cast<TValue>();
    }
 
@@ -134,7 +134,7 @@ public static class Must_Be_NotBe
       }
 
       return must.Cast<object>()
-                 .Not_be_transitively_equal_to_according_to_any_supported_comparison_method_internal(unexpected, unexpectedExpression)
+                 .Not_be_transitively_equal_to_according_to_any_supported_comparison_method_internal(unexpected!, unexpectedExpression)
                  .Cast<TValue>();
    }
 

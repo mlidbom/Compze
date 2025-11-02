@@ -24,7 +24,13 @@ public static class MustActions
 {
    public static ActionSpec Invoking(Action action, [CallerArgumentExpression(nameof(action))] string expression = null!) => new(action, expression);
 
+   public static ActionSpec Invoking<T>(this T subject, Action<T> action, [CallerArgumentExpression(nameof(action))] string expression = null!)
+      => Invoking(() => action(subject), expression);
+
    public static AsyncActionSpec InvokingAsync(Func<Task> action, [CallerArgumentExpression(nameof(action))] string expression = null!) => new(action, expression);
+
+   public static AsyncActionSpec InvokingAsync<T>(this T subject, Func<T, Task> action, [CallerArgumentExpression(nameof(action))] string expression = null!)
+      => InvokingAsync(() => action(subject), expression);
 
    public static CaughtException<TException> Throw<TException>(this Must<Action> must)
       where TException : Exception

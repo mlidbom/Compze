@@ -2,6 +2,7 @@ using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.Fluent;
 using Compze.Utilities.Testing.XUnit.BDD;
 using static Compze.Tests.Infrastructure.Fluent.MustActions;
+#pragma warning disable CS8620 // Argument cannot be used for parameter due to differences in the nullability of reference types.
 
 // ReSharper disable InconsistentNaming
 

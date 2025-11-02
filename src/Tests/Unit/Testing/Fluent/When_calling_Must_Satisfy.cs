@@ -22,7 +22,7 @@ public class When_calling_Must_Satisfy : UniversalTestBase
    {
       readonly int _value = 5;
 
-      public class it_throws_AssertionFailedException : with_a_predicate_returning_false
+      public class it_throws_AssertionFailedException_ : with_a_predicate_returning_false
       {
          string ExceptionMessage() => Invoking(() => _value.Must().Satisfy(v => v > 10))
                                      .Must()
@@ -30,7 +30,7 @@ public class When_calling_Must_Satisfy : UniversalTestBase
                                      .Which
                                      .Message;
 
-         public class and_the_exception_message : it_throws_AssertionFailedException
+         public class and_the_exception_message : it_throws_AssertionFailedException_
          {
             [XF] public void contains_the_expression_being_tested()
                => ExceptionMessage().Must().Contain(nameof(_value));

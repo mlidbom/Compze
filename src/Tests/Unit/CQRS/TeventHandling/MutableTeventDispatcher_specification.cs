@@ -49,7 +49,7 @@ public static class MutableTeventDispatcher_specification
          }
 
          [XF] public void when_dispatching_an_unhandled_tevent_that_is_not_ignored_an_exception_is_thrown() =>
-            Invoking(() => _dispatcher.Dispatch(new UnHandledUserTevent())).Must().Throw<TeventUnhandledException>();
+            _dispatcher.Invoking(it => it.Dispatch(new UnHandledUserTevent())).Must().Throw<TeventUnhandledException>();
 
          public class when_dispatching_an_IUserCreatedTevent : with_2_BeforeHandlers_2_AfterHandlers_and_1_handler_each_per_4_specific_tevent_type
          {
