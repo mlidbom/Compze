@@ -108,6 +108,24 @@ public class When_using_InvokingAsync_and_NotThrowAsync : UniversalTestBase
                assertionException.Which.InnerException.Must().Satisfy(it => it is InvalidOperationException);
                assertionException.Which.InnerException!.Message.Must().Be("test error");
             }
+
+            [XF] public async Task is_the_full_formatted_message()
+            {
+               var message = await ExceptionMessage();
+               message.Must().Be("""
+                                 Expected invoking the expression
+                                 --------------------------------------------------
+                                 async () =>
+                                 {
+                                    await Task.Yield();
+                                    throw new InvalidOperationException("test error");
+                                 } 
+                                 --------------------------------------------------
+                                 to not throw any exception but a System.InvalidOperationException was thrown with message:
+                                 --------------------------------------------------
+                                 test error
+                                 """);
+            }
          }
       }
    }

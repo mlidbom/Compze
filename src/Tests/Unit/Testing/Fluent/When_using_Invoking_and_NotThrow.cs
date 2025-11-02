@@ -77,6 +77,17 @@ public class When_using_Invoking_and_NotThrow : UniversalTestBase
                assertionException.Which.InnerException.Must().Satisfy(it => it is InvalidOperationException);
                assertionException.Which.InnerException!.Message.Must().Be("test error");
             }
+
+            [XF] public void is_the_full_formatted_message()
+               => ExceptionMessage().Must().Be("""
+                                               Expected invoking the expression
+                                               --------------------------------------------------
+                                               () => throw new InvalidOperationException("test error") 
+                                               --------------------------------------------------
+                                               to not throw any exception but a System.InvalidOperationException was thrown with message:
+                                               --------------------------------------------------
+                                               test error
+                                               """);
          }
       }
    }
