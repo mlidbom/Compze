@@ -5,7 +5,6 @@ using Compze.Utilities.Threading.Testing;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.Testing.XUnit.BDD;
-using FluentAssertions;
 using Xunit;
 using Compze.Utilities.Threading.ResourceAccess;
 using static Compze.Tests.Infrastructure.Fluent.MustActions;
