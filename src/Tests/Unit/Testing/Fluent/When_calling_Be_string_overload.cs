@@ -9,9 +9,9 @@ using static Compze.Tests.Infrastructure.Fluent.MustActions;
 
 namespace Compze.Tests.Unit.Testing.Fluent;
 
-public class When_comparing_strings : UniversalTestBase
+public class When_calling_Be_string_overload : UniversalTestBase
 {
-   public class given_two_multiline_strings : When_comparing_strings
+   public class with_two_multiline_strings : When_calling_Be_string_overload
    {
       readonly string _actual = """
                                 First line
@@ -19,7 +19,7 @@ public class When_comparing_strings : UniversalTestBase
                                 Third line
                                 """;
 
-      public class that_differ : given_two_multiline_strings
+      public class that_differ : with_two_multiline_strings
       {
          readonly string _expected = """
                                      First line
@@ -27,7 +27,7 @@ public class When_comparing_strings : UniversalTestBase
                                      Third line
                                      """;
 
-         public class must_be_throws_AssertionFailedException : that_differ
+         public class it_throws_AssertionFailedException : that_differ
          {
             string ExceptionMessage() => Invoking(() => _actual.Must().Be(_expected)).Must().Throw<AssertionFailedException>().Which.Message;
 
@@ -47,7 +47,7 @@ public class When_comparing_strings : UniversalTestBase
                                             -Expected Second line
                                             +Actual Second line
                                              Third line
-                                            
+
                                             --------------------------------------------------
                                             Actual was:
                                             --------------------------------------------------
@@ -66,15 +66,15 @@ public class When_comparing_strings : UniversalTestBase
       }
    }
 
-   public class given_two_single_line_strings : When_comparing_strings
+   public class with_two_single_line_strings : When_calling_Be_string_overload
    {
       readonly string _actual = """First Actual-Second Third""";
 
-      public class that_differ : given_two_single_line_strings
+      public class that_differ : with_two_single_line_strings
       {
          readonly string _expected = """First Expected-Second Third""";
 
-         public class must_be_throws_AssertionFailedException : that_differ
+         public class it_throws_AssertionFailedException : that_differ
          {
             string ExceptionMessage() => Invoking(() => _actual.Must().Be(_expected)).Must().Throw<AssertionFailedException>().Which.Message;
 
