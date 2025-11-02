@@ -13,18 +13,18 @@ using static Compze.Tests.Infrastructure.Fluent.MustActions;
 
 namespace Compze.Tests.Unit.Testing.Fluent;
 
-public class When_comparing_objects_with_BeEquivalentTo : UniversalTestBase
+public class When_comparing_objects_with_DeepEqual : UniversalTestBase
 {
-   public class given_two_objects_that : When_comparing_objects_with_BeEquivalentTo
+   public class given_two_objects_that : When_comparing_objects_with_DeepEqual
    {
       public class differ_in_one_private_member : given_two_objects_that
       {
          readonly TestObject _actual = new("public_expected", "internal_expected", "private_actual");
          readonly TestObject _expected = new("public_expected", "internal_expected", "private_expected");
 
-         public class BeEquivalentTo_throws_AssertionFailedException : differ_in_one_private_member
+         public class DeepEqual_throws_AssertionFailedException : differ_in_one_private_member
          {
-            string ExceptionMessage() => Invoking(() => _actual.Must().BeEquivalentTo(_expected)).Must().Throw<AssertionFailedException>().Which.Message;
+            string ExceptionMessage() => Invoking(() => _actual.Must().DeepEqual(_expected)).Must().Throw<AssertionFailedException>().Which.Message;
 
             [XF] public void and_the_exception_message_is() =>
                ExceptionMessage().Must().Be(""""
@@ -33,7 +33,7 @@ public class When_comparing_objects_with_BeEquivalentTo : UniversalTestBase
                                             --------------------------------------------------
                                                _actual
                                             --------------------------------------------------
-                                            to be equivalent to:
+                                            to be deeply equal to:
                                             --------------------------------------------------
                                                _expected
                                             --------------------------------------------------
@@ -43,7 +43,7 @@ public class When_comparing_objects_with_BeEquivalentTo : UniversalTestBase
                                             +++ actual
                                             @@ -1,6 +1,6 @@
                                              {
-                                               "$type": "Compze.Tests.Unit.Testing.Fluent.When_comparing_objects_with_BeEquivalentTo+TestObject, Compze.Tests.Unit",
+                                               "$type": "Compze.Tests.Unit.Testing.Fluent.When_comparing_objects_with_DeepEqual+TestObject, Compze.Tests.Unit",
                                                "InternalProperty": "internal_expected",
                                             -  "PrivateField": "private_expected",
                                             +  "PrivateField": "private_actual",
@@ -54,7 +54,7 @@ public class When_comparing_objects_with_BeEquivalentTo : UniversalTestBase
                                             Actual was:
                                             --------------------------------------------------
                                             {
-                                              "$type": "Compze.Tests.Unit.Testing.Fluent.When_comparing_objects_with_BeEquivalentTo+TestObject, Compze.Tests.Unit",
+                                              "$type": "Compze.Tests.Unit.Testing.Fluent.When_comparing_objects_with_DeepEqual+TestObject, Compze.Tests.Unit",
                                               "InternalProperty": "internal_expected",
                                               "PrivateField": "private_actual",
                                               "PublicProperty": "public_expected"
@@ -63,7 +63,7 @@ public class When_comparing_objects_with_BeEquivalentTo : UniversalTestBase
                                             Expected was:
                                             --------------------------------------------------
                                             {
-                                              "$type": "Compze.Tests.Unit.Testing.Fluent.When_comparing_objects_with_BeEquivalentTo+TestObject, Compze.Tests.Unit",
+                                              "$type": "Compze.Tests.Unit.Testing.Fluent.When_comparing_objects_with_DeepEqual+TestObject, Compze.Tests.Unit",
                                               "InternalProperty": "internal_expected",
                                               "PrivateField": "private_expected",
                                               "PublicProperty": "public_expected"
@@ -78,7 +78,7 @@ public class When_comparing_objects_with_BeEquivalentTo : UniversalTestBase
          readonly TestObject _actual = new("same", "same", "same");
          readonly TestObject _expected = new("same", "same", "same");
 
-         [XF] public void BeEquivalentTo_does_not_throw() => _actual.Must().BeEquivalentTo(_expected);
+         [XF] public void DeepEqual_does_not_throw() => _actual.Must().DeepEqual(_expected);
       }
 
       public class differ_in_public_members : given_two_objects_that
@@ -86,14 +86,14 @@ public class When_comparing_objects_with_BeEquivalentTo : UniversalTestBase
          readonly TestObject _actual = new("public1", "sameInternal", "samePrivate");
          readonly TestObject _expected = new("public2", "sameInternal", "samePrivate");
 
-         [XF] public void BeEquivalentTo_throws()
-            => Invoking(() => _actual.Must().BeEquivalentTo(_expected)).Must().Throw<AssertionFailedException>();
+         [XF] public void DeepEqual_throws()
+            => Invoking(() => _actual.Must().DeepEqual(_expected)).Must().Throw<AssertionFailedException>();
 
-         [XF] public void BeEquivalentToInternal_throws()
-            => Invoking(() => _actual.Must().BeEquivalentToInternal(_expected)).Must().Throw<AssertionFailedException>();
+         [XF] public void DeepEqualInternal_throws()
+            => Invoking(() => _actual.Must().DeepEqualInternal(_expected)).Must().Throw<AssertionFailedException>();
 
-         [XF] public void BeEquivalentToPublic_throws()
-            => Invoking(() => _actual.Must().BeEquivalentToPublic(_expected)).Must().Throw<AssertionFailedException>();
+         [XF] public void DeepEqualPublic_throws()
+            => Invoking(() => _actual.Must().DeepEqualPublic(_expected)).Must().Throw<AssertionFailedException>();
       }
 
       public class differ_only_in_internal_members : given_two_objects_that
@@ -101,13 +101,13 @@ public class When_comparing_objects_with_BeEquivalentTo : UniversalTestBase
          readonly TestObject _actual = new("samePublic", "internal1", "samePrivate");
          readonly TestObject _expected = new("samePublic", "internal2", "samePrivate");
 
-         [XF] public void BeEquivalentTo_throws()
-            => Invoking(() => _actual.Must().BeEquivalentTo(_expected)).Must().Throw<AssertionFailedException>();
+         [XF] public void DeepEqual_throws()
+            => Invoking(() => _actual.Must().DeepEqual(_expected)).Must().Throw<AssertionFailedException>();
 
-         [XF] public void BeEquivalentToInternal_throws()
-            => Invoking(() => _actual.Must().BeEquivalentToInternal(_expected)).Must().Throw<AssertionFailedException>();
+         [XF] public void DeepEqualInternal_throws()
+            => Invoking(() => _actual.Must().DeepEqualInternal(_expected)).Must().Throw<AssertionFailedException>();
 
-         [XF] public void BeEquivalentToPublic_does_not_throw() => _actual.Must().BeEquivalentToPublic(_expected);
+         [XF] public void DeepEqualPublic_does_not_throw() => _actual.Must().DeepEqualPublic(_expected);
       }
 
       public class differ_only_in_private_members : given_two_objects_that
@@ -115,12 +115,12 @@ public class When_comparing_objects_with_BeEquivalentTo : UniversalTestBase
          readonly TestObject _actual = new("samePublic", "sameInternal", "private1");
          readonly TestObject _expected = new("samePublic", "sameInternal", "private2");
 
-         [XF] public void BeEquivalentTo_throws()
-            => Invoking(() => _actual.Must().BeEquivalentTo(_expected)).Must().Throw<AssertionFailedException>();
+         [XF] public void DeepEqual_throws()
+            => Invoking(() => _actual.Must().DeepEqual(_expected)).Must().Throw<AssertionFailedException>();
 
-         [XF] public void BeEquivalentToInternal_does_not_throw() => _actual.Must().BeEquivalentToInternal(_expected);
+         [XF] public void DeepEqualInternal_does_not_throw() => _actual.Must().DeepEqualInternal(_expected);
 
-         [XF] public void BeEquivalentToPublic_does_not_throw() => _actual.Must().BeEquivalentToPublic(_expected);
+         [XF] public void DeepEqualPublic_does_not_throw() => _actual.Must().DeepEqualPublic(_expected);
       }
 
       public class have_different_Ids : given_two_objects_that
@@ -134,13 +134,13 @@ public class When_comparing_objects_with_BeEquivalentTo : UniversalTestBase
             public string Value { get; } = value;
          }
 
-         [XF] public void BeEquivalentTo_throws()
-            => Invoking(() => _actual.Must().BeEquivalentTo(_expected)).Must().Throw<AssertionFailedException>();
+         [XF] public void DeepEqual_throws()
+            => Invoking(() => _actual.Must().DeepEqual(_expected)).Must().Throw<AssertionFailedException>();
 
          public class and_an_exclusion_of_the_Id_property : have_different_Ids
          {
-            [XF] public void BeEquivalentTo_does_not_throw_throws()
-               => _actual.Must().BeEquivalentTo(_expected, config => config.Excluding(obj => obj.Id));
+            [XF] public void DeepEqual_does_not_throw_throws()
+               => _actual.Must().DeepEqual(_expected, config => config.Excluding(obj => obj.Id));
          }
       }
 
@@ -155,18 +155,18 @@ public class When_comparing_objects_with_BeEquivalentTo : UniversalTestBase
             public string Value { get; } = value;
          }
 
-         [XF] public void BeEquivalentTo_throws() => Invoking(() => _actual.Must().BeEquivalentTo(_expected)).Must().Throw<AssertionFailedException>();
+         [XF] public void DeepEqual_throws() => Invoking(() => _actual.Must().DeepEqual(_expected)).Must().Throw<AssertionFailedException>();
 
          public class with_an_exclusion_via_the_first_method : are_collections_with_objects_having_different_Ids
          {
-            [XF] public void BeEquivalentTo_does_not_throw()
-               => _actual.Must().BeEquivalentTo(_expected, config => config.Excluding(list => list.First().Id));
+            [XF] public void DeepEqual_does_not_throw()
+               => _actual.Must().DeepEqual(_expected, config => config.Excluding(list => list.First().Id));
          }
 
          public class with_an_exclusion_via_the_indexer : are_collections_with_objects_having_different_Ids
          {
-            [XF] public void BeEquivalentTo_does_not_throw()
-               => _actual.Must().BeEquivalentTo(_expected, config => config.Excluding(list => list[0].Id));
+            [XF] public void DeepEqual_does_not_throw()
+               => _actual.Must().DeepEqual(_expected, config => config.Excluding(list => list[0].Id));
          }
       }
 
@@ -175,26 +175,26 @@ public class When_comparing_objects_with_BeEquivalentTo : UniversalTestBase
          readonly Container _actual = new(new Inner(1, "value"), new Outer(1, "other"));
          readonly Container _expected = new(new Inner(99, "value"), new Outer(99, "other"));
 
-         [XF] public void BeEquivalentTo_throws() => Invoking(() => _actual.Must().BeEquivalentTo(_expected)).Must().Throw<AssertionFailedException>();
+         [XF] public void DeepEqual_throws() => Invoking(() => _actual.Must().DeepEqual(_expected)).Must().Throw<AssertionFailedException>();
 
          public class And_an_exclusion_of_the_Id_property_in_the_Inner_class : contain_nested_objects_with_differing_Id_properties_in_both_the_Inner_and_Outer_type
          {
-            [XF] public void BeEquivalentTo_throws_()
-               => Invoking(() => _actual.Must().BeEquivalentTo(_expected, config => config.Excluding(c => c.Outer.Id)))
+            [XF] public void DeepEqual_throws_()
+               => Invoking(() => _actual.Must().DeepEqual(_expected, config => config.Excluding(c => c.Outer.Id)))
                  .Must().Throw<AssertionFailedException>();
          }
 
          public class And_an_exclusion_of_the_Id_property_in_the_Outer_class : contain_nested_objects_with_differing_Id_properties_in_both_the_Inner_and_Outer_type
          {
-            [XF] public void BeEquivalentTo_throws_()
-               => Invoking(() => _actual.Must().BeEquivalentTo(_expected, config => config.Excluding(c => c.Inner.Id)))
+            [XF] public void DeepEqual_throws_()
+               => Invoking(() => _actual.Must().DeepEqual(_expected, config => config.Excluding(c => c.Inner.Id)))
                  .Must().Throw<AssertionFailedException>();
          }
 
          public class and_an_exclusion_the_Id_property_in_both_the_Inner_class_and_Outer_class : contain_nested_objects_with_differing_Id_properties_in_both_the_Inner_and_Outer_type
          {
-            [XF] public void BeEquivalentTo_does_not_throw_throws()
-               => _actual.Must().BeEquivalentTo(_expected, config => config.Excluding(it => it.Outer.Id).Excluding(it => it.Inner.Id));
+            [XF] public void DeepEqual_does_not_throw_throws()
+               => _actual.Must().DeepEqual(_expected, config => config.Excluding(it => it.Outer.Id).Excluding(it => it.Inner.Id));
          }
 
          class Container(Inner inner, Outer outer)

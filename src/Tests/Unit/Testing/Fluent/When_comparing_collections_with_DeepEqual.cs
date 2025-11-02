@@ -6,9 +6,9 @@ using Compze.Utilities.Testing.XUnit.BDD;
 
 namespace Compze.Tests.Unit.Testing.Fluent;
 
-public class When_comparing_unordered_collections_with_BeEquivalentTo : UniversalTestBase
+public class When_comparing_unordered_collections_with_DeepEqual : UniversalTestBase
 {
-   public class given_two_dictionaries: When_comparing_unordered_collections_with_BeEquivalentTo
+   public class given_two_dictionaries: When_comparing_unordered_collections_with_DeepEqual
    {
       readonly Dictionary<string, int> _expected = new() { ["a"] = 1, ["b"] = 2, ["c"] = 3 };
 
@@ -17,16 +17,16 @@ public class When_comparing_unordered_collections_with_BeEquivalentTo : Universa
          readonly Dictionary<string, int> _same_content_different_order = new() { ["c"] = 3, ["a"] = 1, ["b"] = 2 };
 
          [XF] public void be_equivalent_to_does_not_throw()
-            => _expected.Must().BeEquivalentTo(_same_content_different_order);
+            => _expected.Must().DeepEqual(_same_content_different_order);
       }
 
       public class with_on_item_different : given_two_dictionaries
       {
          readonly Dictionary<string, int> _one_differing_item = new() { ["c"] = 3, ["a"] = 2, ["b"] = 2 };
 
-         public class BeEquivalentTo_throws_AssertionFailedException_ : with_on_item_different
+         public class DeepEqual_throws_AssertionFailedException_ : with_on_item_different
          {
-            string ExceptionMessage() => MustActions.Invoking(() => _expected.Must().BeEquivalentTo(_one_differing_item)).Must().Throw<AssertionFailedException>().Which.Message;
+            string ExceptionMessage() => MustActions.Invoking(() => _expected.Must().DeepEqual(_one_differing_item)).Must().Throw<AssertionFailedException>().Which.Message;
             [XF] public void with_the_message_()
                => ExceptionMessage().Must().Be("""
                                                --------------------------------------------------
@@ -34,7 +34,7 @@ public class When_comparing_unordered_collections_with_BeEquivalentTo : Universa
                                                --------------------------------------------------
                                                   _expected
                                                --------------------------------------------------
-                                               to be equivalent to:
+                                               to be deeply equal to:
                                                --------------------------------------------------
                                                   _one_differing_item
                                                --------------------------------------------------
@@ -75,19 +75,19 @@ public class When_comparing_unordered_collections_with_BeEquivalentTo : Universa
       }
    }
 
-   public class given_two_hashsets_with_same_content_but_differing_insertion_order : When_comparing_unordered_collections_with_BeEquivalentTo
+   public class given_two_hashsets_with_same_content_but_differing_insertion_order : When_comparing_unordered_collections_with_DeepEqual
    {
       readonly HashSet<string> _set1 = ["apple", "banana", "cherry"];
       readonly HashSet<string> _set2 = ["cherry", "apple", "banana"];
 
-      public class BeEquivalentTo_should_not_throw : given_two_hashsets_with_same_content_but_differing_insertion_order
+      public class DeepEqual_should_not_throw : given_two_hashsets_with_same_content_but_differing_insertion_order
       {
          [XF] public void because_content_is_same_despite_potentially_different_order()
-            => _set1.Must().BeEquivalentTo(_set2);
+            => _set1.Must().DeepEqual(_set2);
       }
    }
 
-   public class given_two_objects_with_hashset_properties_with_the_same_content_but_different_insertion_order : When_comparing_unordered_collections_with_BeEquivalentTo
+   public class given_two_objects_with_hashset_properties_with_the_same_content_but_different_insertion_order : When_comparing_unordered_collections_with_DeepEqual
    {
       readonly TestObject _obj1 = new() { Items = ["x", "y", "z"] };
       readonly TestObject _obj2 = new() { Items = ["z", "x", "y"] };
@@ -97,10 +97,10 @@ public class When_comparing_unordered_collections_with_BeEquivalentTo : Universa
          public HashSet<string> Items { get; set; } = [];
       }
 
-      public class BeEquivalentTo_should_not_throw : given_two_objects_with_hashset_properties_with_the_same_content_but_different_insertion_order
+      public class DeepEqual_should_not_throw : given_two_objects_with_hashset_properties_with_the_same_content_but_different_insertion_order
       {
          [XF] public void because_hashset_content_is_same()
-            => _obj1.Must().BeEquivalentTo(_obj2);
+            => _obj1.Must().DeepEqual(_obj2);
       }
    }
 }

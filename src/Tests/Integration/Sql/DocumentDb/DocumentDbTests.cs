@@ -584,8 +584,8 @@ public class DocumentDbTests : DocumentDbTestsBase
 
         UseInScope(reader =>
         {
-            reader.Get<Person>(user1.Id).Must().BeEquivalentTo(user1);
-            reader.Get<Person>(person1.Id).Must().BeEquivalentTo(person1);
+            reader.Get<Person>(user1.Id).Must().DeepEqual(user1);
+            reader.Get<Person>(person1.Id).Must().DeepEqual(person1);
         });
     }
 

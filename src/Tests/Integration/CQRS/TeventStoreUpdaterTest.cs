@@ -486,7 +486,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
          TeventStorageTestHelper.StripSteventhDecimalPointFromSecondFractionOnUtcUpdateTime(dispatchedTevents);
          TeventStorageTestHelper.StripSteventhDecimalPointFromSecondFractionOnUtcUpdateTime(allPersistedTevents);
 
-         allPersistedTevents.Must().BeEquivalentTo(dispatchedTevents);
+         allPersistedTevents.Must().DeepEqual(dispatchedTevents);
       });
    }
 

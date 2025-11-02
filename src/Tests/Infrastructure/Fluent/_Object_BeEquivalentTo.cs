@@ -21,15 +21,15 @@ public class EquivalencyConfig<TValue>
                      .then(this);
 }
 
-public static class ObjectBeEquivalentTo
+public static class ObjectDeepEquality
 {
-   public static Must<TValue> BeEquivalentTo<TValue>(this Must<TValue> must,
+   public static Must<TValue> DeepEqual<TValue>(this Must<TValue> must,
                                                      TValue expected,
                                                      [CallerArgumentExpression(nameof(expected))]
                                                      string expectedExpression = null!)
-      => BeEquivalentToCore(must, expected, expectedExpression, TestingJsonSettings.AllMembers);
+      => DeepEqualCore(must, expected, expectedExpression, TestingJsonSettings.AllMembers);
 
-   public static Must<TValue> BeEquivalentTo<TValue>(this Must<TValue> must,
+   public static Must<TValue> DeepEqual<TValue>(this Must<TValue> must,
                                                      TValue expected,
                                                      Func<EquivalencyConfig<TValue>, EquivalencyConfig<TValue>> config,
                                                      [CallerArgumentExpression(nameof(expected))]
@@ -37,22 +37,22 @@ public static class ObjectBeEquivalentTo
    {
       var equivalencyConfig = config(new EquivalencyConfig<TValue>());
       var serializerSettings = TestingJsonSettings.CreateSettingsWithExclusions(TestingJsonSettings.AllMembers, equivalencyConfig.ExcludedMembers);
-      return BeEquivalentToCore(must, expected, expectedExpression, serializerSettings);
+      return DeepEqualCore(must, expected, expectedExpression, serializerSettings);
    }
 
-   public static Must<TValue> BeEquivalentToInternal<TValue>(this Must<TValue> must,
+   public static Must<TValue> DeepEqualInternal<TValue>(this Must<TValue> must,
                                                              TValue expected,
                                                              [CallerArgumentExpression(nameof(expected))]
                                                              string expectedExpression = null!)
-      => BeEquivalentToCore(must, expected, expectedExpression, TestingJsonSettings.InternalAndPublicMembers);
+      => DeepEqualCore(must, expected, expectedExpression, TestingJsonSettings.InternalAndPublicMembers);
 
-   public static Must<TValue> BeEquivalentToPublic<TValue>(this Must<TValue> must,
+   public static Must<TValue> DeepEqualPublic<TValue>(this Must<TValue> must,
                                                            TValue expected,
                                                            [CallerArgumentExpression(nameof(expected))]
                                                            string expectedExpression = null!)
-      => BeEquivalentToCore(must, expected, expectedExpression, TestingJsonSettings.PublicMembers);
+      => DeepEqualCore(must, expected, expectedExpression, TestingJsonSettings.PublicMembers);
 
-   static Must<TValue> BeEquivalentToCore<TValue>(Must<TValue> must,
+   static Must<TValue> DeepEqualCore<TValue>(Must<TValue> must,
                                                   TValue expected,
                                                   string expectedExpression,
                                                   JsonSerializerSettings settings)
@@ -68,7 +68,7 @@ public static class ObjectBeEquivalentTo
                               {must.Separator}
                               {must.Expression.Indent()}
                               {must.Separator}
-                              to be equivalent to:
+                              to be deeply equal to:
                               {must.Separator}
                               {must.NormalizeExpressionIndentation(expectedExpression).Indent()}
                               {must.Separator}
