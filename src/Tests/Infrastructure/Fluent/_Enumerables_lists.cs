@@ -7,16 +7,16 @@ namespace Compze.Tests.Infrastructure.Fluent;
 public static class _Enumerables_lists
 {
    public static Must<TCollection> HaveCount<TCollection>(this Must<TCollection> must, int count, [CallerArgumentExpression(nameof(count))] string predicateExpression = null!)
-      where TCollection : IReadOnlyCollection<object>
-      => must.Satisfy(it => it.Count == count, predicateExpression:$"Count == {predicateExpression}", failureMessage: it => $"but Count was: {it.Count}, not {count}");
+      where TCollection : System.Collections.IEnumerable
+      => must.Satisfy(it => it.Cast<object>().Count() == count, predicateExpression:$"Count == {predicateExpression}", failureMessage: it => $"but Count was: {it.Cast<object>().Count()}, not {count}");
 
    public static Must<TCollection> BeEmpty<TCollection>(this Must<TCollection> must, string? message = null!)
-      where TCollection : IEnumerable<object>
-      => must.Satisfy(it => !it.Any(), failureMessage: it => $"but it contained {it.Count()} items");
+      where TCollection : System.Collections.IEnumerable
+      => must.Satisfy(it => !it.Cast<object>().Any(), failureMessage: it => $"but it contained {it.Cast<object>().Count()} items");
 
    public static Must<TCollection> NotBeEmpty<TCollection>(this Must<TCollection> must, string? message = null!)
-      where TCollection : IEnumerable<object>
-      => must.Satisfy(it => it.Any());
+      where TCollection : System.Collections.IEnumerable
+      => must.Satisfy(it => it.Cast<object>().Any());
 
    public static Must<TCollection> SequenceEqual<TCollection, TElement>(this Must<TCollection> must, IEnumerable<TElement> expected, [CallerArgumentExpression(nameof(expected))] string expectedExpression = null!)
       where TCollection : IEnumerable<TElement>
