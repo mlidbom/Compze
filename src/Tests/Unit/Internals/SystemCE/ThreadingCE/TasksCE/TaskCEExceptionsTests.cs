@@ -3,8 +3,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.Testing.XUnit.BDD;
-using FluentAssertions;
-using static FluentAssertions.FluentActions;
+using Compze.Tests.Infrastructure.Fluent;
+using static Compze.Tests.Infrastructure.Fluent.MustActions;
 using Compze.Utilities.Threading.TasksCE;
 
 namespace Compze.Tests.Unit.Internals.SystemCE.ThreadingCE.TasksCE;
@@ -18,7 +18,7 @@ public class TaskCEExceptionsTests : UniversalTestBase
    }
 
    [XF] public async Task WithAggregateExceptions_throws_taggregate_exception_containing_all_exceptions() =>
-      (await Invoking(async () => await Task.WhenAll(Enumerable.Repeat(1, 10).Select(_ => FailingMethod())).WithAggregateExceptions())
-            .Should().ThrowAsync<AggregateException>())
-     .Which.InnerExceptions.Should().HaveCount(10);
+      (await InvokingAsync(async () => await Task.WhenAll(Enumerable.Repeat(1, 10).Select(_ => FailingMethod())).WithAggregateExceptions())
+            .Must().ThrowAsync<AggregateException>())
+     .Which.InnerExceptions.Must().HaveCount(10);
 }

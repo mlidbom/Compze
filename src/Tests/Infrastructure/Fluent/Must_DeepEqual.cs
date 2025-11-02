@@ -25,40 +25,43 @@ public static class Must_DeepEqual
 {
    public static IMust<TValue> DeepEqual<TValue>(this IMust<TValue> must,
                                                 TValue expected,
+                                                Func<EquivalencyConfig<TValue>, EquivalencyConfig<TValue>>? config = null,
                                                 [CallerArgumentExpression(nameof(expected))]
-                                                string expectedExpression = null!)
-      => DeepEqualCore(must, expected, expectedExpression, TestingJsonSettings.AllMembers);
+                                                string expectedExpression = null!) =>
+      DeepEqualPrivate(must, expected, config, expectedExpression);
 
    public static IMust<TValue> DeepEqualPrivate<TValue>(this IMust<TValue> must,
                                                        TValue expected,
-                                                       Func<EquivalencyConfig<TValue>, EquivalencyConfig<TValue>> config,
+                                                       Func<EquivalencyConfig<TValue>, EquivalencyConfig<TValue>>? config = null,
                                                        [CallerArgumentExpression(nameof(expected))]
-                                                       string expectedExpression = null!)
-   {
-      var equivalencyConfig = config(new EquivalencyConfig<TValue>());
-      var serializerSettings = TestingJsonSettings.CreateSettingsWithExclusions(TestingJsonSettings.AllMembers, equivalencyConfig.ExcludedMembers);
-      return DeepEqualCore(must, expected, expectedExpression, serializerSettings);
-   }
+                                                       string expectedExpression = null!) =>
+      DeepEqualCore(must, expected, expectedExpression, TestingJsonSettings.AllMembers, config);
 
    public static IMust<TValue> DeepEqualInternal<TValue>(this IMust<TValue> must,
-                                                        TValue expected,
-                                                        [CallerArgumentExpression(nameof(expected))]
-                                                        string expectedExpression = null!)
-      => DeepEqualCore(must, expected, expectedExpression, TestingJsonSettings.InternalAndPublicMembers);
+                                                         TValue expected,
+                                                         Func<EquivalencyConfig<TValue>, EquivalencyConfig<TValue>>? config = null,
+                                                         [CallerArgumentExpression(nameof(expected))]
+                                                         string expectedExpression = null!)
+      => DeepEqualCore(must, expected, expectedExpression, TestingJsonSettings.InternalAndPublicMembers, config);
 
    public static IMust<TValue> DeepEqualPublic<TValue>(this IMust<TValue> must,
                                                       TValue expected,
+                                                      Func<EquivalencyConfig<TValue>, EquivalencyConfig<TValue>>? config = null,
                                                       [CallerArgumentExpression(nameof(expected))]
                                                       string expectedExpression = null!)
-      => DeepEqualCore(must, expected, expectedExpression, TestingJsonSettings.PublicMembers);
+      => DeepEqualCore(must, expected, expectedExpression, TestingJsonSettings.PublicMembers, config);
 
    static IMust<TValue> DeepEqualCore<TValue>(IMust<TValue> must,
                                              TValue expected,
                                              string expectedExpression,
-                                             JsonSerializerSettings settings)
+                                             JsonSerializerSettings settings,
+                                             Func<EquivalencyConfig<TValue>, EquivalencyConfig<TValue>>? config = null)
    {
-      var actualJson = JsonConvert.SerializeObject(must.Actual, settings);
-      var expectedJson = JsonConvert.SerializeObject(expected, settings);
+      var equivalencyConfig = (config ?? (conf => conf))(new EquivalencyConfig<TValue>());
+      var serializerSettings = TestingJsonSettings.CreateSettingsWithExclusions(settings, equivalencyConfig.ExcludedMembers);
+
+      var actualJson = JsonConvert.SerializeObject(must.Actual, serializerSettings);
+      var expectedJson = JsonConvert.SerializeObject(expected, serializerSettings);
 
       return must.Satisfy(it => actualJson == expectedJson,
                           messageOverride: _ =>
