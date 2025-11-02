@@ -17,7 +17,7 @@ using Compze.Tests.Infrastructure.Fluent;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Functional;
-using FluentAssertions.Extensions;
+using Compze.Utilities.SystemCE;
 
 // ReSharper disable AccessToModifiedClosure
 
@@ -49,7 +49,7 @@ public abstract class TeventMigrationTestBase : UniversalTestBase
             {
                foreach(var migrationScenario in scenarios)
                {
-                  await UtcTimeSource.Test.FrozenAtUtc(UtcTimeSource.UtcNow + FluentTimeSpanExtensions.Hours(1)).RunAsync(
+                  await UtcTimeSource.Test.FrozenAtUtc(UtcTimeSource.UtcNow + 1.Hours()).RunAsync(
                      async () =>
                      {
                         migrations = migrationScenario.Migrations.ToList();
@@ -103,7 +103,7 @@ public abstract class TeventMigrationTestBase : UniversalTestBase
       expected.ForEach(e => writer.WriteLine($"      {e}"));
       writer.WriteLine();
 
-      await UtcTimeSource.Test.FrozenAtUtc(UtcTimeSource.UtcNow + FluentTimeSpanExtensions.Hours(1)).RunAsync(
+      await UtcTimeSource.Test.FrozenAtUtc(UtcTimeSource.UtcNow + 1.Hours()).RunAsync(
          async () =>
          {
             serviceLocator.ExecuteTransactionInIsolatedScope(() => serviceLocator.Resolve<ITeventStoreUpdater>()
