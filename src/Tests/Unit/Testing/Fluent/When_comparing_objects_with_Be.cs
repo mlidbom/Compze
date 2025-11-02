@@ -63,9 +63,13 @@ public class When_comparing_objects_with_Be : UniversalTestBase
                ExceptionMessage().Must().Be(""""
                                             --------------------------------------------------
                                             expected the object "it" returned by the expression: 
+                                            --------------------------------------------------
                                                _actual
+                                            --------------------------------------------------
                                             to be equal to the the object "expected" returned by the expression:
+                                            --------------------------------------------------
                                                _expected
+                                            --------------------------------------------------
                                             but it failed the test: 
                                                it => Equals(it, expected)
                                             --------------------------------------------------
@@ -113,9 +117,13 @@ public class When_comparing_objects_with_Be : UniversalTestBase
                ExceptionMessage().Must().Be(""""
                                             --------------------------------------------------
                                             expected the object "it" returned by the expression: 
+                                            --------------------------------------------------
                                                _actual
+                                            --------------------------------------------------
                                             to be equal to the the object "expected" returned by the expression:
+                                            --------------------------------------------------
                                                _expected
+                                            --------------------------------------------------
                                             but it failed the test: 
                                                it => Equals(it, expected)
                                             --------------------------------------------------

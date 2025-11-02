@@ -69,9 +69,13 @@ public static class ObjectEqualityAssertions
          return $"""
                  {must.Separator}
                  expected the object "it" returned by the expression: 
+                 {must.Separator}
                  {must.Expression.Indent()}
+                 {must.Separator}
                  to be equal to the the object "expected" returned by the expression:
+                 {must.Separator}
                  {must.NormalizeExpressionIndentation(expectedExpression).Indent()}
+                 {must.Separator}
                  but it failed the test: 
                  {info.PredicateExpression.Indent()}{FailureMessage()}
                  {must.Separator}
