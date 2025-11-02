@@ -1,3 +1,4 @@
+
 ---
 applyTo: '**'
 ---
@@ -12,7 +13,7 @@ applyTo: '**'
   - Use descriptive variable and method names. Long names are fine if they make the code clearer.
   - Use InternalsVisibleTo to maintain encapsulation within framework code
   - Run the FULL test suite to ensure no tests are broken.
-    - If less than 700 tests are executed something has gone wrong and it counts as test failure.
+    - If less than 958 tests are executed something has gone wrong and it counts as test failure.
   - Test pluggable components (DI containers and persistence layers) using the DuplicateByPluggableComponentTest structure.
 - IF
   - Performance tests fail
