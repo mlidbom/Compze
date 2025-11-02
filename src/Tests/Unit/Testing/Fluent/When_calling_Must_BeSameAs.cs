@@ -9,11 +9,11 @@ using static Compze.Tests.Infrastructure.Fluent.MustActions;
 
 namespace Compze.Tests.Unit.Testing.Fluent;
 
-public class When_using_BeSameAs : UniversalTestBase
+public class When_calling_Must_BeSameAs : UniversalTestBase
 {
-   public class given_two_different_objects_with_the_same_value : When_using_BeSameAs
+   public class with_two_different_objects_with_the_same_value : When_calling_Must_BeSameAs
    {
-      [XF] public void NotBeSameAs_throws_AssertionFailedException() =>
+      [XF] public void it_throws() =>
          Invoking(() => new ValueWrapper<int>(42)
                        .Must()
                        .BeSameAs(new ValueWrapper<int>(42)))
@@ -21,11 +21,11 @@ public class When_using_BeSameAs : UniversalTestBase
            .Throw<AssertionFailedException>();
    }
 
-   public class given_two_references_to_the_same_object : When_using_BeSameAs
+   public class with_two_references_to_the_same_object : When_calling_Must_BeSameAs
    {
       readonly ValueWrapper<int> _actual = new(12);
 
-      [XF] public void BeSameAs_does_not_throw() => _actual
+      [XF] public void it_does_not_throw() => _actual
                                                    .Must()
                                                    .BeSameAs(_actual);
    }
