@@ -4,7 +4,6 @@ using Compze.Core.Public;
 using Compze.Tests.Infrastructure.Fluent;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Utilities.Functional;
-using FluentAssertions;
 
 // ReSharper disable UnusedMember.Global
 
