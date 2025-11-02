@@ -24,7 +24,7 @@ public static class _Satisfy
                                     string predicateExpression = null!,
                                     Func<SatisfyCallInfo<T>, string>? messageOverride = null,
                                     Func<T, string>? failureMessage = null,
-                                    IReadOnlyList<AssertionArgumentInfo>? usedArguments = null)
+                                    AssertionArgumentInfo[]? usedArguments = null)
    {
       if(!predicate(context.Actual))
       {
@@ -35,29 +35,14 @@ public static class _Satisfy
 
          var message = $"""
              {context.Separator}
-             expected
-             {context.Separator}
-             {context.Expression.Indent()}
-             {context.Separator}
-             to Satisfy:
+             {ArgumentDescription("it", context.Expression)}
+             {DisplayUsedArgumentsDefinitions()}
+             failed to Satisfy:
              {context.Separator}
              {predicateExpression.Indent()}
              {context.Separator}
-             {DisplayUsedArgumentsDefinitions()}
-             {failureMessage?.Invoke(context.Actual) ?? "but it did not"}
-             {context.Separator}
-             The value of: 
-             {context.Expression.Indent()}
-             Was:
-             {context.Separator}
-             ToString():
-             {context.Separator}
-             {context.Actual?.ToString() ?? "null"}
-             {context.Separator}
-             JSON:
-             {context.Separator}
-             {JsonConvert.SerializeObject(context.Actual, TestingJsonSettings.AllMembers)}
-             {context.Separator}
+             {CustomFailureMessage()}
+             {ArgumentValue("it", context.Actual)}
              {DisplayUsedArgumentsValues()}
              """.Split(Environment.NewLine)
                 .Where(it => it != RemoveLine)
@@ -72,8 +57,7 @@ public static class _Satisfy
 
             var stringBuilder = new StringBuilder();
             return $"""
-                    Where:
-                    {usedArguments.Select(ArgumentDescription).JoinLines()}
+                    {usedArguments.Select(it => ArgumentDescription(it.Name, it.Expression)).JoinLines()}
                     """;
          }
 
@@ -84,33 +68,36 @@ public static class _Satisfy
 
             var stringBuilder = new StringBuilder();
             return $"""
-                    Where:
-                    {usedArguments.Select(ArgumentValueDisplay).JoinLines()}
+                    {usedArguments.Select(it => ArgumentValue(it.Name, it.Value)).JoinLines()}
                     """;
          }
 
-         static string ArgumentDescription(AssertionArgumentInfo arg) =>
+         static string ArgumentDescription(string name, string expression) =>
             $"""
-             {arg.Name} was:
-             {arg.Expression.Indent()}
+             "{name}" defined by:
+             {Must.Separator}
+             {expression.Indent()}
              {Must.Separator}
              """;
 
-         static string ArgumentValueDisplay(AssertionArgumentInfo context)
+         string CustomFailureMessage() =>
+            failureMessage != null ? $"""
+                                      {failureMessage?.Invoke(context.Actual) ?? "but it did not"}
+                                      {context.Separator}
+                                      """ : RemoveLine;
+
+         static string ArgumentValue(string name, object? value)
          {
-            var something = context.Value != null ? JsonConvert.SerializeObject(context.Value, TestingJsonSettings.AllMembers) : "null";
             return $"""
-                    The value of: 
-                    {context.Expression.Indent()}
-                    Was:
+                    "{name}" was:
                     {Must.Separator}
                     ToString():
                     {Must.Separator}
-                    {context.Value?.ToString() ?? "null"}
+                    {value?.ToString() ?? "null"}
                     {Must.Separator}
                     JSON:
                     {Must.Separator}
-                    {Serialize(context.Value)}
+                    {Serialize(value)}
                     {Must.Separator}
                     """;
          }

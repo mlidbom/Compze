@@ -39,15 +39,37 @@ public class When_using_NotBeSameAs : UniversalTestBase
          [XF] public void is_the_full_formatted_message()
             => ExceptionMessage().Must().Be("""
                                             --------------------------------------------------
-                                            expected the object "it" returned by the expression: 
+                                            "it" defined by:
                                             --------------------------------------------------
                                                _actual
                                             --------------------------------------------------
-                                            to not be the same reference as the object "unexpected" returned by the expression:
+                                            "unexpected" defined by:
                                             --------------------------------------------------
                                                _unexpected
                                             --------------------------------------------------
-                                            but they reference the same object (reference equality succeeded when it shouldn't)
+                                            failed to Satisfy:
+                                            --------------------------------------------------
+                                               it => !ReferenceEquals(it, unexpected)
+                                            --------------------------------------------------
+                                            "it" was:
+                                            --------------------------------------------------
+                                            ToString():
+                                            --------------------------------------------------
+                                            reference
+                                            --------------------------------------------------
+                                            JSON:
+                                            --------------------------------------------------
+                                            "reference"
+                                            --------------------------------------------------
+                                            "unexpected" was:
+                                            --------------------------------------------------
+                                            ToString():
+                                            --------------------------------------------------
+                                            reference
+                                            --------------------------------------------------
+                                            JSON:
+                                            --------------------------------------------------
+                                            "reference"
                                             --------------------------------------------------
                                             """);
       }

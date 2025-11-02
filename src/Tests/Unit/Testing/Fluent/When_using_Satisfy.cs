@@ -76,19 +76,15 @@ public class When_using_Satisfy : UniversalTestBase
       [XF] public void the_full_message_is() =>
          ExceptionMessage().Must().Be("""
                                       --------------------------------------------------
-                                      expected
+                                      "it" defined by:
                                       --------------------------------------------------
                                          _actual
                                       --------------------------------------------------
-                                      to Satisfy:
+                                      failed to Satisfy:
                                       --------------------------------------------------
                                          it => it.Name == "all wrong"
                                       --------------------------------------------------
-                                      but it did not
-                                      --------------------------------------------------
-                                      The value of: 
-                                         _actual
-                                      Was:
+                                      "it" was:
                                       --------------------------------------------------
                                       ToString():
                                       --------------------------------------------------
