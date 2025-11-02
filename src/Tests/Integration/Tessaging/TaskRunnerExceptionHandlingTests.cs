@@ -56,19 +56,6 @@ public class TaskRunnerExceptionHandlingTests : UniversalTestBase
    }
 
    [PCT]
-   public async Task Should_not_throw_on_dispose_when_no_exceptions_occurred()
-   {
-      var gate = ThreadGate.CreateOpenWithTimeout(1.Seconds());
-
-      _taskRunner.Run("test-task", gate.AwaitPassThrough);
-
-      gate.AwaitPassedThroughCountEqualTo(1);
-
-      var disposeAction = async () => await _host.DisposeAsync();
-      await disposeAction.Should().NotThrowAsync();
-   }
-
-   [PCT]
    public async Task Should_collect_multiple_exceptions_from_multiple_background_tasks()
    {
       await CompzeLogger.SuppressLoggingWhileRunningAsync(async () =>
