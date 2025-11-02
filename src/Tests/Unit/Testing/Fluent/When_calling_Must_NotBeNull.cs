@@ -16,14 +16,14 @@ public class When_calling_Must_NotBeNull : UniversalTestBase
 {
    public class with_a_non_null_reference : When_calling_Must_NotBeNull
    {
-      [XF] public void it_does_not_throw() => Must_NotBeNull.NotBeNull(__Must.Must("not null"));
+      [XF] public void it_does_not_throw() => "not null".Must().NotBeNull();
    }
 
    public class with_a_null_reference_type_value : When_calling_Must_NotBeNull
    {
       readonly string? _actual = null;
 
-      [XF] public void it_throws() => Invoking(() => Must_NotBeNull.NotBeNull(__Must.Must(_actual)))
+      [XF] public void it_throws() => Invoking(() => _actual.Must().NotBeNull())
                                      .Must()
                                      .Throw<AssertionFailedException>();
    }
@@ -32,7 +32,7 @@ public class When_calling_Must_NotBeNull : UniversalTestBase
    {
       readonly int? _actual = null;
 
-      [XF] public void it_throws() => Invoking(() => Must_NotBeNull.NotBeNull(__Must.Must(_actual)))
+      [XF] public void it_throws() => Invoking(() => _actual.Must().NotBeNull())
                                      .Must()
                                      .Throw<AssertionFailedException>();
    }

@@ -19,7 +19,7 @@ public class When_calling_Must_Satisfy : UniversalTestBase
    public class with_a_predicate_returning_true : When_calling_Must_Satisfy
    {
       readonly int _value = 5;
-      [XF] public void it_does_not_throw() => _Must_Satisfy.Satisfy(__Must.Must(_value), v => v > 0);
+      [XF] public void it_does_not_throw() => _value.Must().Satisfy(v => v > 0);
    }
 
    public class with_a_predicate_returning_false : When_calling_Must_Satisfy
@@ -28,7 +28,7 @@ public class When_calling_Must_Satisfy : UniversalTestBase
 
       public class it_throws_AssertionFailedException_ : with_a_predicate_returning_false
       {
-         string ExceptionMessage() => Invoking(() => _Must_Satisfy.Satisfy(__Must.Must(_value), v => v > 10))
+         string ExceptionMessage() => Invoking(() => _value.Must().Satisfy(v => v > 10))
                                      .Must()
                                      .Throw<AssertionFailedException>()
                                      .Which
@@ -37,10 +37,10 @@ public class When_calling_Must_Satisfy : UniversalTestBase
          public class and_the_exception_message : it_throws_AssertionFailedException_
          {
             [XF] public void contains_the_expression_being_tested()
-               => Must___String.Contain(__Must.Must(ExceptionMessage()), nameof(_value));
+               => ExceptionMessage().Must().Contain(nameof(_value));
 
             [XF] public void contains_the_predicate_expression()
-               => Must___String.Contain(__Must.Must(ExceptionMessage()), "v => v > 10");
+               => ExceptionMessage().Must().Contain("v => v > 10");
          }
       }
    }
@@ -49,7 +49,7 @@ public class When_calling_Must_Satisfy : UniversalTestBase
    {
       readonly int _value = 5;
 
-      string ExceptionMessage() => Invoking(() => _Must_Satisfy.Satisfy(__Must.Must(_value), v => v > 10, messageOverride: _ => "Custom error message"))
+      string ExceptionMessage() => Invoking(() => _value.Must().Satisfy(v => v > 10, messageOverride: _ => "Custom error message"))
                                   .Must()
                                   .Throw<AssertionFailedException>()
                                   .Which
@@ -58,10 +58,10 @@ public class When_calling_Must_Satisfy : UniversalTestBase
       public class and_the_exception_message : using_a_custom_error_message
       {
          [XF] public void contains_the_custom_message()
-            => Must___String.Contain(__Must.Must(ExceptionMessage()), "Custom error message");
+            => ExceptionMessage().Must().Contain("Custom error message");
 
          [XF] public void does_not_contain_the_default_format()
-            => _Must_Satisfy.Satisfy(__Must.Must(ExceptionMessage()), msg => !msg.Contains("failed", StringComparison.Ordinal));
+            => ExceptionMessage().Must().Satisfy(msg => !msg.Contains("failed", StringComparison.Ordinal));
       }
    }
 
@@ -71,7 +71,7 @@ public class When_calling_Must_Satisfy : UniversalTestBase
 
       record TestObject(string Name, int Age, string Status);
 
-      string ExceptionMessage() => Invoking(() => _Must_Satisfy.Satisfy(__Must.Must(_actual), it => it.Name == "all wrong"))
+      string ExceptionMessage() => Invoking(() => _actual.Must().Satisfy(it => it.Name == "all wrong"))
                                   .Must().Throw<AssertionFailedException>()
                                   .Which.Message;
 

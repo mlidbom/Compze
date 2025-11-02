@@ -14,12 +14,12 @@ public class When_calling_Must_NotContain : UniversalTestBase
 {
    public class with_a_string_that_does_not_contain_the_substring : When_calling_Must_NotContain
    {
-      [XF] public void it_does_not_throw() => Must___String.NotContain(__Must.Must("hello world"), "xyz");
+      [XF] public void it_does_not_throw() => "hello world".Must().NotContain("xyz");
    }
 
    public class with_a_string_that_contains_the_substring : When_calling_Must_NotContain
    {
-      [XF] public void it_throws() => Invoking(() => Must___String.NotContain(__Must.Must("hello world"), "world"))
+      [XF] public void it_throws() => Invoking(() => "hello world".Must().NotContain("world"))
                                      .Must()
                                      .Throw<AssertionFailedException>();
    }

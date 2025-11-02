@@ -556,8 +556,8 @@ public class TeventStoreUpdaterTest : UniversalTestBase
          user.ChangeEmail("newemail@somewhere.not");
       });
 
-      var getHistorySection = GatedCodeSection.WithTimeout(TimeSpanCE.Seconds(2));
-      var changeEmailSection = GatedCodeSection.WithTimeout(TimeSpanCE.Seconds(2));
+      var getHistorySection = GatedCodeSection.WithTimeout(2.Seconds());
+      var changeEmailSection = GatedCodeSection.WithTimeout(2.Seconds());
 
       const int threads = 2;
       var tasks = 1.Through(threads).Select(_ => TaskCE.Run(UpdateEmail)).ToArray();
