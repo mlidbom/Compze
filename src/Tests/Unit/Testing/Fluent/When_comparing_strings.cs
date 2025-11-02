@@ -40,8 +40,8 @@ public class When_comparing_strings : UniversalTestBase
                                             --------------------------------------------------
                                             did not result in the expected string, producing the diff
                                             --------------------------------------------------
-                                            --- expression
-                                            +++ expected
+                                            --- expected
+                                            +++ actual
                                             @@ -1,3 +1,3 @@
                                              First line
                                             -Expected Second line

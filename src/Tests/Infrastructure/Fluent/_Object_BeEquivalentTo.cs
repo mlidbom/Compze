@@ -73,7 +73,7 @@ public static class ObjectBeEquivalentTo
                               {must.Separator}
                               But it resulted in the Diff:
                               {must.Separator}
-                              {UnidiffRenderer.GenerateUnidiff(oldText: expectedJson, newText: actualJson, oldFileName: "expected", newFileName: "actual")}
+                              {DiffGenerator.CreateDiff(expected: expectedJson, actual:actualJson)}
                               {must.Separator}
                               Actual was:
                               {must.Separator}

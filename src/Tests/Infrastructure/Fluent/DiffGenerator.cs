@@ -14,7 +14,7 @@ static class DiffGenerator
    {
       if(expected.ContainsOrdinal(Environment.NewLine) || actual.ContainsOrdinal(Environment.NewLine))
       {
-         return UnidiffRenderer.GenerateUnidiff(oldText: expected, newText: actual, oldFileName: "expression", newFileName: "expected");
+         return UnidiffRenderer.GenerateUnidiff(oldText: expected, newText: actual, oldFileName: "expected", newFileName: "actual");
       } else
       {
          return SingleLineDiff(expected, actual);

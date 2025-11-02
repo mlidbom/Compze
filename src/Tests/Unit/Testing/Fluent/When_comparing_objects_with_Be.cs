@@ -121,8 +121,8 @@ public class When_comparing_objects_with_Be : UniversalTestBase
                                             --------------------------------------------------
                                             Diff:
                                             --------------------------------------------------
-                                            --- expression
-                                            +++ expected
+                                            --- expected
+                                            +++ actual
                                             @@ -1,4 +1,4 @@
                                              {
                                                "$type": "Compze.Tests.Unit.Testing.Fluent.When_comparing_objects_with_Be+TestObjectWithOverriddenEquals, Compze.Tests.Unit",
