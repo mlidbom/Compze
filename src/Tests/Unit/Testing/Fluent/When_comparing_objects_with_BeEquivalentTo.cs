@@ -15,6 +15,208 @@ namespace Compze.Tests.Unit.Testing.Fluent;
 
 public class When_comparing_objects_with_BeEquivalentTo : UniversalTestBase
 {
+   public class given_two_objects_that : When_comparing_objects_with_BeEquivalentTo
+   {
+      public class differ_in_one_private_member : given_two_objects_that
+      {
+         readonly TestObject _actual = new("public_expected", "internal_expected", "private_actual");
+         readonly TestObject _expected = new("public_expected", "internal_expected", "private_expected");
+
+         public class BeEquivalentTo_throws_AssertionFailedException : differ_in_one_private_member
+         {
+            string ExceptionMessage() => Invoking(() => _actual.Must().BeEquivalentTo(_expected)).Must().Throw<AssertionFailedException>().Which.Message;
+
+            [XF] public void and_the_exception_message_is() =>
+               ExceptionMessage().Must().Be(""""
+                                            --------------------------------------------------
+                                            expected the object returned by the expression: 
+                                            --------------------------------------------------
+                                            _actual
+                                            --------------------------------------------------
+                                            to be equivalent to the object returned by the expression:
+                                            --------------------------------------------------
+                                            _expected
+                                            --------------------------------------------------
+                                            But it resulted in the Diff:
+                                            --------------------------------------------------
+                                            --- expected
+                                            +++ actual
+                                            @@ -1,6 +1,6 @@
+                                             {
+                                               "$type": "Compze.Tests.Unit.Testing.Fluent.When_comparing_objects_with_BeEquivalentTo+TestObject, Compze.Tests.Unit",
+                                               "InternalProperty": "internal_expected",
+                                            -  "PrivateField": "private_expected",
+                                            +  "PrivateField": "private_actual",
+                                               "PublicProperty": "public_expected"
+                                             }
+
+                                            --------------------------------------------------
+                                            Actual was:
+                                            --------------------------------------------------
+                                            {
+                                              "$type": "Compze.Tests.Unit.Testing.Fluent.When_comparing_objects_with_BeEquivalentTo+TestObject, Compze.Tests.Unit",
+                                              "InternalProperty": "internal_expected",
+                                              "PrivateField": "private_actual",
+                                              "PublicProperty": "public_expected"
+                                            }
+                                            --------------------------------------------------
+                                            Expected was:
+                                            --------------------------------------------------
+                                            {
+                                              "$type": "Compze.Tests.Unit.Testing.Fluent.When_comparing_objects_with_BeEquivalentTo+TestObject, Compze.Tests.Unit",
+                                              "InternalProperty": "internal_expected",
+                                              "PrivateField": "private_expected",
+                                              "PublicProperty": "public_expected"
+                                            }
+                                            --------------------------------------------------
+                                            """");
+         }
+      }
+
+      public class are_equivalent : given_two_objects_that
+      {
+         readonly TestObject _actual = new("same", "same", "same");
+         readonly TestObject _expected = new("same", "same", "same");
+
+         [XF] public void BeEquivalentTo_does_not_throw() => _actual.Must().BeEquivalentTo(_expected);
+      }
+
+      public class differ_in_public_members : given_two_objects_that
+      {
+         readonly TestObject _actual = new("public1", "sameInternal", "samePrivate");
+         readonly TestObject _expected = new("public2", "sameInternal", "samePrivate");
+
+         [XF] public void BeEquivalentTo_throws()
+            => Invoking(() => _actual.Must().BeEquivalentTo(_expected)).Must().Throw<AssertionFailedException>();
+
+         [XF] public void BeEquivalentToInternal_throws()
+            => Invoking(() => _actual.Must().BeEquivalentToInternal(_expected)).Must().Throw<AssertionFailedException>();
+
+         [XF] public void BeEquivalentToPublic_throws()
+            => Invoking(() => _actual.Must().BeEquivalentToPublic(_expected)).Must().Throw<AssertionFailedException>();
+      }
+
+      public class differ_only_in_internal_members : given_two_objects_that
+      {
+         readonly TestObject _actual = new("samePublic", "internal1", "samePrivate");
+         readonly TestObject _expected = new("samePublic", "internal2", "samePrivate");
+
+         [XF] public void BeEquivalentTo_throws()
+            => Invoking(() => _actual.Must().BeEquivalentTo(_expected)).Must().Throw<AssertionFailedException>();
+
+         [XF] public void BeEquivalentToInternal_throws()
+            => Invoking(() => _actual.Must().BeEquivalentToInternal(_expected)).Must().Throw<AssertionFailedException>();
+
+         [XF] public void BeEquivalentToPublic_does_not_throw() => _actual.Must().BeEquivalentToPublic(_expected);
+      }
+
+      public class differ_only_in_private_members : given_two_objects_that
+      {
+         readonly TestObject _actual = new("samePublic", "sameInternal", "private1");
+         readonly TestObject _expected = new("samePublic", "sameInternal", "private2");
+
+         [XF] public void BeEquivalentTo_throws()
+            => Invoking(() => _actual.Must().BeEquivalentTo(_expected)).Must().Throw<AssertionFailedException>();
+
+         [XF] public void BeEquivalentToInternal_does_not_throw() => _actual.Must().BeEquivalentToInternal(_expected);
+
+         [XF] public void BeEquivalentToPublic_does_not_throw() => _actual.Must().BeEquivalentToPublic(_expected);
+      }
+
+      public class have_different_Ids : given_two_objects_that
+      {
+         readonly TestObjectWithId _actual = new(1, "sameValue");
+         readonly TestObjectWithId _expected = new(2, "sameValue");
+
+         class TestObjectWithId(int id, string value)
+         {
+            public int Id { get; } = id;
+            public string Value { get; } = value;
+         }
+
+         [XF] public void BeEquivalentTo_throws()
+            => Invoking(() => _actual.Must().BeEquivalentTo(_expected)).Must().Throw<AssertionFailedException>();
+
+         public class and_an_exclusion_of_the_Id_property : have_different_Ids
+         {
+            [XF] public void BeEquivalentTo_does_not_throw_throws()
+               => _actual.Must().BeEquivalentTo(_expected, config => config.Excluding(obj => obj.Id));
+         }
+      }
+
+      public class are_collections_with_objects_having_different_Ids : given_two_objects_that
+      {
+         readonly List<TestObjectWithId> _actual = [new(1, "value1"), new(2, "value2")];
+         readonly List<TestObjectWithId> _expected = [new(99, "value1"), new(88, "value2")];
+
+         class TestObjectWithId(int id, string value)
+         {
+            public int Id { get; } = id;
+            public string Value { get; } = value;
+         }
+
+         [XF] public void BeEquivalentTo_throws() => Invoking(() => _actual.Must().BeEquivalentTo(_expected)).Must().Throw<AssertionFailedException>();
+
+         public class with_an_exclusion_via_the_first_method : are_collections_with_objects_having_different_Ids
+         {
+            [XF] public void BeEquivalentTo_does_not_throw()
+               => _actual.Must().BeEquivalentTo(_expected, config => config.Excluding(list => list.First().Id));
+         }
+
+         public class with_an_exclusion_via_the_indexer : are_collections_with_objects_having_different_Ids
+         {
+            [XF] public void BeEquivalentTo_does_not_throw()
+               => _actual.Must().BeEquivalentTo(_expected, config => config.Excluding(list => list[0].Id));
+         }
+      }
+
+      public class contain_nested_objects_with_differing_Id_properties_in_both_the_Inner_and_Outer_type : given_two_objects_that
+      {
+         readonly Container _actual = new(new Inner(1, "value"), new Outer(1, "other"));
+         readonly Container _expected = new(new Inner(99, "value"), new Outer(99, "other"));
+
+         [XF] public void BeEquivalentTo_throws() => Invoking(() => _actual.Must().BeEquivalentTo(_expected)).Must().Throw<AssertionFailedException>();
+
+         public class And_an_exclusion_of_the_Id_property_in_the_Inner_class : contain_nested_objects_with_differing_Id_properties_in_both_the_Inner_and_Outer_type
+         {
+            [XF] public void BeEquivalentTo_throws_()
+               => Invoking(() => _actual.Must().BeEquivalentTo(_expected, config => config.Excluding(c => c.Outer.Id)))
+                 .Must().Throw<AssertionFailedException>();
+         }
+
+         public class And_an_exclusion_of_the_Id_property_in_the_Outer_class : contain_nested_objects_with_differing_Id_properties_in_both_the_Inner_and_Outer_type
+         {
+            [XF] public void BeEquivalentTo_throws_()
+               => Invoking(() => _actual.Must().BeEquivalentTo(_expected, config => config.Excluding(c => c.Inner.Id)))
+                 .Must().Throw<AssertionFailedException>();
+         }
+
+         public class and_an_exclusion_the_Id_property_in_both_the_Inner_class_and_Outer_class : contain_nested_objects_with_differing_Id_properties_in_both_the_Inner_and_Outer_type
+         {
+            [XF] public void BeEquivalentTo_does_not_throw_throws()
+               => _actual.Must().BeEquivalentTo(_expected, config => config.Excluding(it => it.Outer.Id).Excluding(it => it.Inner.Id));
+         }
+
+         class Container(Inner inner, Outer outer)
+         {
+            public Inner Inner { get; } = inner;
+            public Outer Outer { get; } = outer;
+         }
+
+         class Inner(int id, string value)
+         {
+            public int Id { get; } = id;
+            public string Value { get; } = value;
+         }
+
+         class Outer(int id, string value)
+         {
+            public int Id { get; } = id;
+            public string Value { get; } = value;
+         }
+      }
+   }
+
    class TestObject(string publicValue, string internalValue, string privateValue)
    {
       public string PublicProperty { get; set; } = publicValue;
@@ -22,207 +224,5 @@ public class When_comparing_objects_with_BeEquivalentTo : UniversalTestBase
       private readonly string PrivateField = privateValue;
 
       public string GetPrivateField() => PrivateField;
-   }
-
-   public class given_two_objects_that_differ_in_one_private_member_member : When_comparing_objects_with_BeEquivalentTo
-   {
-      readonly TestObject _actual = new("public_expected", "internal_expected", "private_actual");
-      readonly TestObject _expected = new("public_expected", "internal_expected", "private_expected");
-
-      public class BeEquivalentTo_throws_AssertionFailedException : given_two_objects_that_differ_in_one_private_member_member
-      {
-         string ExceptionMessage() => Invoking(() => _actual.Must().BeEquivalentTo(_expected)).Must().Throw<AssertionFailedException>().Which.Message;
-
-         [XF] public void and_the_exception_message__is() =>
-            ExceptionMessage().Must().Be(""""
-                                         --------------------------------------------------
-                                         expected the object returned by the expression: 
-                                         --------------------------------------------------
-                                         _actual
-                                         --------------------------------------------------
-                                         to be equivalent to the object returned by the expression:
-                                         --------------------------------------------------
-                                         _expected
-                                         --------------------------------------------------
-                                         But it resulted in the Diff:
-                                         --------------------------------------------------
-                                         --- expected
-                                         +++ actual
-                                         @@ -1,6 +1,6 @@
-                                          {
-                                            "$type": "Compze.Tests.Unit.Testing.Fluent.When_comparing_objects_with_BeEquivalentTo+TestObject, Compze.Tests.Unit",
-                                            "InternalProperty": "internal_expected",
-                                         -  "PrivateField": "private_expected",
-                                         +  "PrivateField": "private_actual",
-                                            "PublicProperty": "public_expected"
-                                          }
-
-                                         --------------------------------------------------
-                                         Actual was:
-                                         --------------------------------------------------
-                                         {
-                                           "$type": "Compze.Tests.Unit.Testing.Fluent.When_comparing_objects_with_BeEquivalentTo+TestObject, Compze.Tests.Unit",
-                                           "InternalProperty": "internal_expected",
-                                           "PrivateField": "private_actual",
-                                           "PublicProperty": "public_expected"
-                                         }
-                                         --------------------------------------------------
-                                         Expected was:
-                                         --------------------------------------------------
-                                         {
-                                           "$type": "Compze.Tests.Unit.Testing.Fluent.When_comparing_objects_with_BeEquivalentTo+TestObject, Compze.Tests.Unit",
-                                           "InternalProperty": "internal_expected",
-                                           "PrivateField": "private_expected",
-                                           "PublicProperty": "public_expected"
-                                         }
-                                         --------------------------------------------------
-                                         """");
-      }
-   }
-
-   public class given_two_objects_that_are_equivalent : When_comparing_objects_with_BeEquivalentTo
-   {
-      readonly TestObject _actual = new("same", "same", "same");
-      readonly TestObject _expected = new("same", "same", "same");
-
-      [XF] public void BeEquivalentTo_does_not_throw() => _actual.Must().BeEquivalentTo(_expected);
-   }
-
-   public class given_two_objects_that_differ_only_in_public_members : When_comparing_objects_with_BeEquivalentTo
-   {
-      readonly TestObject _actual = new("public1", "sameInternal", "samePrivate");
-      readonly TestObject _expected = new("public2", "sameInternal", "samePrivate");
-
-      [XF] public void BeEquivalentTo_throws()
-         => Invoking(() => _actual.Must().BeEquivalentTo(_expected)).Must().Throw<AssertionFailedException>();
-
-      [XF] public void BeEquivalentToInternal_throws()
-         => Invoking(() => _actual.Must().BeEquivalentToInternal(_expected)).Must().Throw<AssertionFailedException>();
-
-      [XF] public void BeEquivalentToPublic_throws()
-         => Invoking(() => _actual.Must().BeEquivalentToPublic(_expected)).Must().Throw<AssertionFailedException>();
-   }
-
-   public class given_two_objects_that_differ_only_in_internal_members : When_comparing_objects_with_BeEquivalentTo
-   {
-      readonly TestObject _actual = new("samePublic", "internal1", "samePrivate");
-      readonly TestObject _expected = new("samePublic", "internal2", "samePrivate");
-
-      [XF] public void BeEquivalentTo_throws()
-         => Invoking(() => _actual.Must().BeEquivalentTo(_expected)).Must().Throw<AssertionFailedException>();
-
-      [XF] public void BeEquivalentToInternal_throws()
-         => Invoking(() => _actual.Must().BeEquivalentToInternal(_expected)).Must().Throw<AssertionFailedException>();
-
-      [XF] public void BeEquivalentToPublic_does_not_throw() => _actual.Must().BeEquivalentToPublic(_expected);
-   }
-
-   public class given_two_objects_that_differ_only_in_private_members : When_comparing_objects_with_BeEquivalentTo
-   {
-      readonly TestObject _actual = new("samePublic", "sameInternal", "private1");
-      readonly TestObject _expected = new("samePublic", "sameInternal", "private2");
-
-      [XF] public void BeEquivalentTo_throws()
-         => Invoking(() => _actual.Must().BeEquivalentTo(_expected)).Must().Throw<AssertionFailedException>();
-
-      [XF] public void BeEquivalentToInternal_does_not_throw() => _actual.Must().BeEquivalentToInternal(_expected);
-
-      [XF] public void BeEquivalentToPublic_does_not_throw() => _actual.Must().BeEquivalentToPublic(_expected);
-   }
-
-   public class given_two_objects_with_different_Ids : When_comparing_objects_with_BeEquivalentTo
-   {
-      readonly TestObjectWithId _actual = new(1, "sameValue");
-      readonly TestObjectWithId _expected = new(2, "sameValue");
-
-      class TestObjectWithId(int id, string value)
-      {
-         public int Id { get; } = id;
-         public string Value { get; } = value;
-      }
-
-      public class and_using_an_exclusion_of_the_Id_property : given_two_objects_with_different_Ids
-      {
-         [XF] public void BeEquivalentTo_does_not_throw_throws()
-            => _actual.Must().BeEquivalentTo(_expected, config => config.Excluding(obj => obj.Id));
-      }
-
-      public class BeEquivalentTo_throws : given_two_objects_with_different_Ids
-      {
-         [XF] public void because_Id_differs()
-            => Invoking(() => _actual.Must().BeEquivalentTo(_expected)).Must().Throw<AssertionFailedException>();
-      }
-   }
-
-   public class given_a_collection_with_objects_having_different_Ids : When_comparing_objects_with_BeEquivalentTo
-   {
-      readonly List<TestObjectWithId> _actual = [new(1, "value1"), new(2, "value2")];
-      readonly List<TestObjectWithId> _expected = [new(99, "value1"), new(88, "value2")];
-
-      class TestObjectWithId(int id, string value)
-      {
-         public int Id { get; } = id;
-         public string Value { get; } = value;
-      }
-
-      [XF] public void BeEquivalentTo_throws() => Invoking(() => _actual.Must().BeEquivalentTo(_expected)).Must().Throw<AssertionFailedException>();
-
-      public class with_an_exclusion_via_the_first_method : given_a_collection_with_objects_having_different_Ids
-      {
-         [XF] public void BeEquivalentTo_does_not_throw()
-            => _actual.Must().BeEquivalentTo(_expected, config => config.Excluding(list => list.First().Id));
-      }
-
-      public class with_an_exclusion_via_the_indexer : given_a_collection_with_objects_having_different_Ids
-      {
-         [XF] public void BeEquivalentTo_does_not_throw()
-            => _actual.Must().BeEquivalentTo(_expected, config => config.Excluding(list => list[0].Id));
-      }
-   }
-
-   public class given_nested_objects_with_differing_Id_properties_in_both_the_Inner_and_Outer_type : When_comparing_objects_with_BeEquivalentTo
-   {
-      readonly Container _actual = new(new Inner(1, "value"), new Outer(1, "other"));
-      readonly Container _expected = new(new Inner(99, "value"), new Outer(99, "other"));
-
-      [XF] public void BeEquivalentTo_throws() => Invoking(() => _actual.Must().BeEquivalentTo(_expected)).Must().Throw<AssertionFailedException>();
-
-      public class And_an_exclusion_the_Id_property_in_the_Inner_class : given_nested_objects_with_differing_Id_properties_in_both_the_Inner_and_Outer_type
-      {
-         [XF] public void BeEquivalentTo_throws()
-            => Invoking(() => _actual.Must().BeEquivalentTo(_expected, config => config.Excluding(c => c.Outer.Id)))
-              .Must().Throw<AssertionFailedException>();
-      }
-
-      public class And_an_exclusion_the_Id_property_in_the_Outer_class : given_nested_objects_with_differing_Id_properties_in_both_the_Inner_and_Outer_type
-      {
-         [XF] public void because_Outer_Id_differs_and_is_not_excluded()
-            => Invoking(() => _actual.Must().BeEquivalentTo(_expected, config => config.Excluding(c => c.Inner.Id)))
-              .Must().Throw<AssertionFailedException>();
-      }
-
-      public class And_an_exclusion_the_Id_property_in_the_Inner_class_and_Outer_class : given_nested_objects_with_differing_Id_properties_in_both_the_Inner_and_Outer_type
-      {
-         [XF] public void BeEquivalentTo_does_not_throw_throws()
-            => _actual.Must().BeEquivalentTo(_expected, config => config.Excluding(it => it.Outer.Id).Excluding(it => it.Inner.Id));
-      }
-
-      class Container(Inner inner, Outer outer)
-      {
-         public Inner Inner { get; } = inner;
-         public Outer Outer { get; } = outer;
-      }
-
-      class Inner(int id, string value)
-      {
-         public int Id { get; } = id;
-         public string Value { get; } = value;
-      }
-
-      class Outer(int id, string value)
-      {
-         public int Id { get; } = id;
-         public string Value { get; } = value;
-      }
    }
 }
