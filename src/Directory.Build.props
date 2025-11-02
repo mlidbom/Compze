@@ -19,5 +19,4 @@
 	
 	<Import Project="msbuild\IncludeTestConfigurationFiles.props" Condition="'$(IsTestProject)' == 'true'" />
 	<Import Project="msbuild\IncludeTestAppSettings.props" Condition="'$(IsTestProject)' == 'true'" />
-	<Import Project="msbuild\IncludeFluentAssertionsModuleInitializer.props" Condition="'$(IsTestProject)' == 'true'" />
 </Project>

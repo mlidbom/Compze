@@ -1,7 +1,10 @@
 using Compze.Tests.Infrastructure;
-using Compze.Tests.Infrastructure.Fluent;
+using Compze.Utilities.Testing.Fluent;
 using Compze.Utilities.Testing.XUnit.BDD;
-using static Compze.Tests.Infrastructure.Fluent.MustActions;
+using static Compze.Utilities.Testing.Fluent.MustActions;
+using __Must = Compze.Utilities.Testing.Fluent.__Must;
+using AssertionFailedException = Compze.Utilities.Testing.Fluent.AssertionFailedException;
+using Must___String = Compze.Utilities.Testing.Fluent.Must___String;
 
 // ReSharper disable InconsistentNaming
 
@@ -11,12 +14,12 @@ public class When_calling_Must_NotContain : UniversalTestBase
 {
    public class with_a_string_that_does_not_contain_the_substring : When_calling_Must_NotContain
    {
-      [XF] public void it_does_not_throw() => "hello world".Must().NotContain("xyz");
+      [XF] public void it_does_not_throw() => Must___String.NotContain(__Must.Must("hello world"), "xyz");
    }
 
    public class with_a_string_that_contains_the_substring : When_calling_Must_NotContain
    {
-      [XF] public void it_throws() => Invoking(() => "hello world".Must().NotContain("world"))
+      [XF] public void it_throws() => Invoking(() => Must___String.NotContain(__Must.Must("hello world"), "world"))
                                      .Must()
                                      .Throw<AssertionFailedException>();
    }

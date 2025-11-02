@@ -1,11 +1,11 @@
 using AccountManagement.Domain;
 using Compze.Tests.Infrastructure;
+using Compze.Utilities.Testing.Fluent;
 using Compze.Utilities.Testing.XUnit.BDD;
-using FluentAssertions;
 
 namespace AccountManagement.Tests.Unit.Emails;
 
 public class Given_any_email : UniversalTestBase
 {
-   [XF] public void ToString_returns_the_string_used_to_create_the_email() => Email.Parse("some.valid@email.com").ToString().Should().Be("some.valid@email.com");
+   [XF] public void ToString_returns_the_string_used_to_create_the_email() => Email.Parse("some.valid@email.com").ToString().Must().Be("some.valid@email.com");
 }

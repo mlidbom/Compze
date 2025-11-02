@@ -4,8 +4,8 @@ using Compze.Tests.Infrastructure;
 using Compze.Utilities.DependencyInjection;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Utilities.DependencyInjection.Abstractions;
-using FluentAssertions;
-using static FluentAssertions.FluentActions;
+using Compze.Utilities.Testing.Fluent;
+using static Compze.Utilities.Testing.Fluent.MustActions;
 
 namespace Compze.Tests.Integration.DependencyInjection;
 
@@ -24,11 +24,11 @@ public class LifestyleValidationTests : UniversalTestBase
             Scoped.For<IScopedService>().CreatedBy(() => new ScopedService()),
             Singleton.For<ISingletonService>().CreatedBy((IScopedService scoped) => new SingletonServiceDependingOnScoped(scoped))
          ).ServiceLocator;
-      }).Should().Throw<InvalidLifeStyleCombinationException>().Which;
+      }).Must().Throw<InvalidLifeStyleCombinationException>().Which;
 
-      exception.Message.Should().Contain("Invalid lifestyle combination");
-      exception.Message.Should().Contain("Singleton");
-      exception.Message.Should().Contain("Scoped");
+      exception.Message.Must().Contain("Invalid lifestyle combination");
+      exception.Message.Must().Contain("Singleton");
+      exception.Message.Must().Contain("Scoped");
    }
 
 

@@ -8,11 +8,11 @@ using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.Utilities.SystemCE;
 using Compze.Utilities.Threading.Testing;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.Testing.DbPool.SystemCE.ThreadingCE;
-using FluentAssertions;
-using FluentAssertions.Extensions;
+using Compze.Utilities.Testing.Fluent;
 using JetBrains.Annotations;
 using Compze.Utilities.Threading.TasksCE;
 
@@ -56,7 +56,7 @@ public class MachineWideSharedObjectTests : UniversalTestBase
       var shared = CreateAndDeleteFileWhenTestCompletes(name);
       var test = shared.GetCopy();
 
-      test.Name.Should().Be("Default");
+      test.Name.Must().Be("Default");
    }
 
    [PCT] public void Create_update_and_get()
@@ -65,15 +65,15 @@ public class MachineWideSharedObjectTests : UniversalTestBase
       var shared = CreateAndDeleteFileWhenTestCompletes(name);
       var value = shared.GetCopy();
 
-      value.Name.Should().Be("Default");
+      value.Name.Must().Be("Default");
 
       value = shared.Update(it => it.Name = "Updated");
 
-      value.Name.Should().Be("Updated");
+      value.Name.Must().Be("Updated");
 
       value = shared.GetCopy();
 
-      value.Name.Should().Be("Updated");
+      value.Name.Must().Be("Updated");
    }
 
    [PCT] public void Two_instances_with_same_name_share_data()
@@ -84,17 +84,17 @@ public class MachineWideSharedObjectTests : UniversalTestBase
       var test1 = shared1.GetCopy();
       var test2 = shared2.GetCopy();
 
-      test1.Name.Should().Be("Default");
-      test2.Name.Should().Be("Default");
+      test1.Name.Must().Be("Default");
+      test2.Name.Must().Be("Default");
 
       test1 = shared1.Update(it => it.Name = "Updated");
       test2 = shared2.GetCopy();
 
-      test1.Name.Should().Be("Updated");
-      test2.Name.Should().Be("Updated");
+      test1.Name.Must().Be("Updated");
+      test2.Name.Must().Be("Updated");
 
       test1 = shared1.GetCopy();
-      test1.Name.Should().Be("Updated");
+      test1.Name.Must().Be("Updated");
    }
 
    [PCT] public void Persistent_Once_all_instance_are_disposed_data_is_retained()
@@ -104,14 +104,14 @@ public class MachineWideSharedObjectTests : UniversalTestBase
       MachineWideSharedObject<SharedObject> shared2;
       var shared = CreateAndDeleteFileWhenTestCompletes(name);
 
-      shared.Update(it => it.Name = newName).Name.Should().Be(newName);
+      shared.Update(it => it.Name = newName).Name.Must().Be(newName);
       shared2 = CreateAndDeleteFileWhenTestCompletes(name);
-      shared.GetCopy().Name.Should().Be(newName);
+      shared.GetCopy().Name.Must().Be(newName);
 
-      shared2.GetCopy().Name.Should().Be(newName);
+      shared2.GetCopy().Name.Must().Be(newName);
 
       shared = CreateAndDeleteFileWhenTestCompletes(name);
-      shared.GetCopy().Name.Should().Be(newName);
+      shared.GetCopy().Name.Must().Be(newName);
    }
 
    [PCT] public async Task Update_blocks_GetCopy_and_Update_from_both_same_and_other_instances()
@@ -151,7 +151,7 @@ public class MachineWideSharedObjectTests : UniversalTestBase
 
       Thread.Sleep(50.Milliseconds());
 
-      conflictingSections.ForEach(it => it.ExitGate.PassedThrough.Count.Should().Be(0));
+      conflictingSections.ForEach(it => it.ExitGate.PassedThrough.Count.Must().Be(0));
       updateGate.Open();
       conflictingSections.ForEach(it => it.ExitGate.AwaitPassedThroughCountEqualTo(1));
 

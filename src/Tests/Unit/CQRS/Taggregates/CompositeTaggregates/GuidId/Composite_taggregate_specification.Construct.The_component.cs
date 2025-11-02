@@ -1,6 +1,6 @@
 using Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId.Domain;
+using Compze.Utilities.Testing.Fluent;
 using Compze.Utilities.Testing.XUnit.BDD;
-using FluentAssertions;
 
 namespace Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId;
 
@@ -18,15 +18,15 @@ public static partial class Composite_taggregate_specification
             _component = _taggregate.Component;
             _qmComponent = _queryModel.Component;
          }
-         [XF] public void Component_Name_is_empty_string() => _component.Name.Should().Be("");
-         [XF] public void QueryModel_Name_is_empty_string() => _qmComponent.Name.Should().Be("");
+         [XF] public void Component_Name_is_empty_string() => _component.Name.Must().Be("");
+         [XF] public void QueryModel_Name_is_empty_string() => _qmComponent.Name.Must().Be("");
 
          public class After_calling_rename_with_string_newName : The_component
          {
             public After_calling_rename_with_string_newName() => _component.Rename("newName");
 
-            [XF] public void Component_Name_is_newName() => _component.Name.Should().Be("newName");
-            [XF] public void QueryModel_Name_is_newName() => _qmComponent.Name.Should().Be("newName");
+            [XF] public void Component_Name_is_newName() => _component.Name.Must().Be("newName");
+            [XF] public void QueryModel_Name_is_newName() => _qmComponent.Name.Must().Be("newName");
          }
       }
    }

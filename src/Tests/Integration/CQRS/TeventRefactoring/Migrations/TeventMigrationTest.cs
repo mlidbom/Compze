@@ -15,7 +15,7 @@ using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.TransactionsCE;
 using Compze.Tests.Infrastructure.XUnit;
-using FluentAssertions;
+using Compze.Utilities.Testing.Fluent;
 
 // ReSharper disable AccessToDisposedClosure
 // ReSharper disable AccessToModifiedClosure
@@ -29,11 +29,11 @@ public class TeventMigrationTest : TeventMigrationTestBase
    [PCT]
    public async Task Base_class_method_should_detect_incorrect_type_order()
    {
-      await this.Invoking(_ => RunMigrationTestAsync<Exception>(
-                             new MigrationScenario(
-                                EnumerableCE.OfTypes<Ec1, E1, Ef, Ef>(),
-                                EnumerableCE.OfTypes<Ec1, Ef, E2, Ef>())))
-                .Should().ThrowAsync<Exception>();
+      await this.InvokingAsync(_ => RunMigrationTestAsync<Exception>(
+                                  new MigrationScenario(
+                                     EnumerableCE.OfTypes<Ec1, E1, Ef, Ef>(),
+                                     EnumerableCE.OfTypes<Ec1, Ef, E2, Ef>())))
+                .Must().ThrowAsync<Exception>();
    }
 
    [PCT]
@@ -244,14 +244,14 @@ public class TeventMigrationTest : TeventMigrationTestBase
    [PCT]
    public async Task Given_Ec1_E1_before_E1_E2_after_E2_E3_throws_NonIdempotentMigrationDetectedException()
    {
-      await this.Invoking(_ =>
-                             RunMigrationTestAsync<NonIdempotentMigrationDetectedException>(
-                                new MigrationScenario(
-                                   EnumerableCE.OfTypes<Ec1, E1>(),
-                                   EnumerableCE.OfTypes<Ec1, E2, E3, E1>(),
-                                   Before<E1>.Insert<E2>(),
-                                   After<E2>.Insert<E3>())))
-                .Should().ThrowAsync<NonIdempotentMigrationDetectedException>();
+      await this.InvokingAsync(_ =>
+                                  RunMigrationTestAsync<NonIdempotentMigrationDetectedException>(
+                                     new MigrationScenario(
+                                        EnumerableCE.OfTypes<Ec1, E1>(),
+                                        EnumerableCE.OfTypes<Ec1, E2, E3, E1>(),
+                                        Before<E1>.Insert<E2>(),
+                                        After<E2>.Insert<E3>())))
+                .Must().ThrowAsync<NonIdempotentMigrationDetectedException>();
    }
 
    [PCT]
@@ -616,7 +616,7 @@ public class TeventMigrationTest : TeventMigrationTestBase
          otherProcessServiceLocator.ExecuteTransactionInIsolatedScope(() => OtherTeventStoreSession().Get<TestTaggregate>(id));
 
          var test = serviceLocator.ExecuteTransactionInIsolatedScope(() => PersistingTeventStore().GetTaggregateHistory(id));
-         test.Count.Should().BeGreaterThan(0);
+         test.Count.Must().BeGreaterThan(0);
 
          serviceLocator.ExecuteInIsolatedScope(() => PersistingTeventStore().PersistMigrations());
 

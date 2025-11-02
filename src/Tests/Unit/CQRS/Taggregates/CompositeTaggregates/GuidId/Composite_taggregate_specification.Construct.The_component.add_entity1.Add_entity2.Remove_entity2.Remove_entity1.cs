@@ -1,7 +1,9 @@
 using System;
 using System.Linq;
+using Compze.Utilities.Testing.Fluent;
 using Compze.Utilities.Testing.XUnit.BDD;
-using FluentAssertions;
+using static Compze.Utilities.Testing.Fluent.MustActions;
+
 
 namespace Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId;
 
@@ -23,40 +25,40 @@ public static partial class Composite_taggregate_specification
 
                      public class The_Entities_collection___ : After_calling_entity1_Remove
                      {
-                        [XF] public void Single_throws() => FluentActions.Invoking(() => _component.Entities.Single()).Should().Throw<Exception>();
-                        [XF] public void InCreationOrder_0_throws() => FluentActions.Invoking(() => _component.Entities.InCreationOrder[0]).Should().Throw<Exception>();
-                        [XF] public void InCreationOrder_Count_is_0() => _component.Entities.InCreationOrder.Count.Should().Be(0);
+                        [XF] public void Single_throws() => Invoking(() => _component.Entities.Single()).Must().Throw<Exception>();
+                        [XF] public void InCreationOrder_0_throws() => Invoking(() => _component.Entities.InCreationOrder[0]).Must().Throw<Exception>();
+                        [XF] public void InCreationOrder_Count_is_0() => _component.Entities.InCreationOrder.Count.Must().Be(0);
 
                         public class Passing_the_entity1_id_to : The_Entities_collection___
                         {
-                           [XF] public void Contains_returns_false() => _component.Entities.Contains(_entity1.Id).Should().Be(false);
-                           [XF] public void Get_throws() => FluentActions.Invoking(() => _component.Entities.Get(_entity1.Id)).Should().Throw<Exception>();
-                           [XF] public void Indexer_throws() => FluentActions.Invoking(() => _component.Entities[_entity1.Id]).Should().Throw<Exception>();
+                           [XF] public void Contains_returns_false() => _component.Entities.Contains(_entity1.Id).Must().BeFalse();
+                           [XF] public void Get_throws() => Invoking(() => _component.Entities.Get(_entity1.Id)).Must().Throw<Exception>();
+                           [XF] public void Indexer_throws() => Invoking(() => _component.Entities[_entity1.Id]).Must().Throw<Exception>();
 
                            [XF] public void TryGet_returns_false_and_the_out_parameter_is_null()
                            {
-                              _component.Entities.TryGet(_entity1.Id, out var entity1Fetched).Should().BeFalse();
-                              entity1Fetched.Should().Be(null);
+                              _component.Entities.TryGet(_entity1.Id, out var entity1Fetched).Must().BeFalse();
+                              entity1Fetched.Must().BeNull();
                            }
                         }
                      }
 
                      public class The_QueryModel_Entities_collection_ : After_calling_entity1_Remove
                      {
-                        [XF] public void Single_throws() => FluentActions.Invoking(() => _qmComponent.Entities.Single()).Should().Throw<Exception>();
-                        [XF] public void InCreationOrder_0_throws() => FluentActions.Invoking(() => _qmComponent.Entities.InCreationOrder[0]).Should().Throw<Exception>();
-                        [XF] public void InCreationOrder_Count_is_0() => _qmComponent.Entities.InCreationOrder.Count.Should().Be(0);
+                        [XF] public void Single_throws() => Invoking(() => _qmComponent.Entities.Single()).Must().Throw<Exception>();
+                        [XF] public void InCreationOrder_0_throws() => Invoking(() => _qmComponent.Entities.InCreationOrder[0]).Must().Throw<Exception>();
+                        [XF] public void InCreationOrder_Count_is_0() => _qmComponent.Entities.InCreationOrder.Count.Must().Be(0);
 
                         public class Passing_the_entity1_id_to : The_QueryModel_Entities_collection_
                         {
-                           [XF] public void Contains_returns_false() => _qmComponent.Entities.Contains(_entity1.Id).Should().Be(false);
-                           [XF] public void Get_throws() => FluentActions.Invoking(() => _qmComponent.Entities.Get(_entity1.Id)).Should().Throw<Exception>();
-                           [XF] public void Indexer_throws() => FluentActions.Invoking(() => _qmComponent.Entities[_entity1.Id]).Should().Throw<Exception>();
+                           [XF] public void Contains_returns_false() => _qmComponent.Entities.Contains(_entity1.Id).Must().BeFalse();
+                           [XF] public void Get_throws() => Invoking(() => _qmComponent.Entities.Get(_entity1.Id)).Must().Throw<Exception>();
+                           [XF] public void Indexer_throws() => Invoking(() => _qmComponent.Entities[_entity1.Id]).Must().Throw<Exception>();
 
                            [XF] public void TryGet_returns_false_and_the_out_parameter_is_null()
                            {
-                              _qmComponent.Entities.TryGet(_entity1.Id, out var qmEntity1Fetched).Should().BeFalse();
-                              qmEntity1Fetched.Should().Be(null);
+                              _qmComponent.Entities.TryGet(_entity1.Id, out var qmEntity1Fetched).Must().BeFalse();
+                              qmEntity1Fetched.Must().BeNull();
                            }
                         }
                      }

@@ -1,9 +1,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using Compze.Tests.Infrastructure;
-using Compze.Tests.Infrastructure.Fluent;
+using Compze.Utilities.Testing.Fluent;
 using Compze.Utilities.Testing.XUnit.BDD;
-using static Compze.Tests.Infrastructure.Fluent.MustActions;
+using static Compze.Utilities.Testing.Fluent.MustActions;
+using __Must = Compze.Utilities.Testing.Fluent.__Must;
+using AssertionFailedException = Compze.Utilities.Testing.Fluent.AssertionFailedException;
+using Must_Be_string = Compze.Utilities.Testing.Fluent.Must_Be_string;
+using Must_DeepEqual = Compze.Utilities.Testing.Fluent.Must_DeepEqual;
 
 // ReSharper disable UnusedMember.Local
 
@@ -24,53 +28,54 @@ public class When_calling_Must_DeepEqual : UniversalTestBase
 
          public class DeepEqual_throws_AssertionFailedException : differ_in_one_private_member
          {
-            string ExceptionMessage() => Invoking(() => _actual.Must().DeepEqual(_expected)).Must().Throw<AssertionFailedException>().Which.Message;
+            string ExceptionMessage() => Invoking(() => Must_DeepEqual.DeepEqual(__Must.Must(_actual), _expected)).Must().Throw<AssertionFailedException>().Which.Message;
 
             [XF] public void and_the_exception_message_is() =>
-               ExceptionMessage().Must().Be(""""
-                                            
-                                            --------------------------------------------------
-                                            expected:
-                                            --------------------------------------------------
-                                               _actual
-                                            --------------------------------------------------
-                                            to be deeply equal to:
-                                            --------------------------------------------------
-                                               _expected
-                                            --------------------------------------------------
-                                            But comparison of the objects serialized as JSON resulted in the Diff:
-                                            --------------------------------------------------
-                                            --- expected
-                                            +++ actual
-                                            @@ -1,6 +1,6 @@
-                                             {
-                                               "$type": "Compze.Tests.Unit.Testing.Fluent.When_calling_Must_DeepEqual+TestObject, Compze.Tests.Unit",
-                                               "InternalProperty": "internal_expected",
-                                            -  "PrivateField": "private_expected",
-                                            +  "PrivateField": "private_actual",
-                                               "PublicProperty": "public_expected"
-                                             }
-                                            
-                                            --------------------------------------------------
-                                            Actual was:
-                                            --------------------------------------------------
-                                            {
-                                              "$type": "Compze.Tests.Unit.Testing.Fluent.When_calling_Must_DeepEqual+TestObject, Compze.Tests.Unit",
-                                              "InternalProperty": "internal_expected",
-                                              "PrivateField": "private_actual",
-                                              "PublicProperty": "public_expected"
-                                            }
-                                            --------------------------------------------------
-                                            Expected was:
-                                            --------------------------------------------------
-                                            {
-                                              "$type": "Compze.Tests.Unit.Testing.Fluent.When_calling_Must_DeepEqual+TestObject, Compze.Tests.Unit",
-                                              "InternalProperty": "internal_expected",
-                                              "PrivateField": "private_expected",
-                                              "PublicProperty": "public_expected"
-                                            }
-                                            --------------------------------------------------
-                                            """");
+               Must_Be_string.Be(__Must.Must(ExceptionMessage()),
+                                 """"
+
+                                 --------------------------------------------------
+                                 expected:
+                                 --------------------------------------------------
+                                    _actual
+                                 --------------------------------------------------
+                                 to be deeply equal to:
+                                 --------------------------------------------------
+                                    _expected
+                                 --------------------------------------------------
+                                 But comparison of the objects serialized as JSON resulted in the Diff:
+                                 --------------------------------------------------
+                                 --- expected
+                                 +++ actual
+                                 @@ -1,6 +1,6 @@
+                                  {
+                                    "$type": "Compze.Tests.Unit.Testing.Fluent.When_calling_Must_DeepEqual+TestObject, Compze.Tests.Unit",
+                                    "InternalProperty": "internal_expected",
+                                 -  "PrivateField": "private_expected",
+                                 +  "PrivateField": "private_actual",
+                                    "PublicProperty": "public_expected"
+                                  }
+
+                                 --------------------------------------------------
+                                 Actual was:
+                                 --------------------------------------------------
+                                 {
+                                   "$type": "Compze.Tests.Unit.Testing.Fluent.When_calling_Must_DeepEqual+TestObject, Compze.Tests.Unit",
+                                   "InternalProperty": "internal_expected",
+                                   "PrivateField": "private_actual",
+                                   "PublicProperty": "public_expected"
+                                 }
+                                 --------------------------------------------------
+                                 Expected was:
+                                 --------------------------------------------------
+                                 {
+                                   "$type": "Compze.Tests.Unit.Testing.Fluent.When_calling_Must_DeepEqual+TestObject, Compze.Tests.Unit",
+                                   "InternalProperty": "internal_expected",
+                                   "PrivateField": "private_expected",
+                                   "PublicProperty": "public_expected"
+                                 }
+                                 --------------------------------------------------
+                                 """");
          }
       }
 
@@ -79,7 +84,7 @@ public class When_calling_Must_DeepEqual : UniversalTestBase
          readonly TestObject _actual = new("same", "same", "same");
          readonly TestObject _expected = new("same", "same", "same");
 
-         [XF] public void DeepEqual_does_not_throw() => _actual.Must().DeepEqual(_expected);
+         [XF] public void DeepEqual_does_not_throw() => Must_DeepEqual.DeepEqual(__Must.Must(_actual), _expected);
       }
 
       public class differ_in_public_members : given_two_objects_that
@@ -88,13 +93,13 @@ public class When_calling_Must_DeepEqual : UniversalTestBase
          readonly TestObject _expected = new("public2", "sameInternal", "samePrivate");
 
          [XF] public void DeepEqual_throws()
-            => Invoking(() => _actual.Must().DeepEqual(_expected)).Must().Throw<AssertionFailedException>();
+            => Invoking(() => Must_DeepEqual.DeepEqual(__Must.Must(_actual), _expected)).Must().Throw<AssertionFailedException>();
 
          [XF] public void DeepEqualInternal_throws()
-            => Invoking(() => _actual.Must().DeepEqualInternal(_expected)).Must().Throw<AssertionFailedException>();
+            => Invoking(() => Must_DeepEqual.DeepEqualInternal(__Must.Must(_actual), _expected)).Must().Throw<AssertionFailedException>();
 
          [XF] public void DeepEqualPublic_throws()
-            => Invoking(() => _actual.Must().DeepEqualPublic(_expected)).Must().Throw<AssertionFailedException>();
+            => Invoking(() => Must_DeepEqual.DeepEqualPublic(__Must.Must(_actual), _expected)).Must().Throw<AssertionFailedException>();
       }
 
       public class differ_only_in_internal_members : given_two_objects_that
@@ -103,12 +108,12 @@ public class When_calling_Must_DeepEqual : UniversalTestBase
          readonly TestObject _expected = new("samePublic", "internal2", "samePrivate");
 
          [XF] public void DeepEqual_throws()
-            => Invoking(() => _actual.Must().DeepEqual(_expected)).Must().Throw<AssertionFailedException>();
+            => Invoking(() => Must_DeepEqual.DeepEqual(__Must.Must(_actual), _expected)).Must().Throw<AssertionFailedException>();
 
          [XF] public void DeepEqualInternal_throws()
-            => Invoking(() => _actual.Must().DeepEqualInternal(_expected)).Must().Throw<AssertionFailedException>();
+            => Invoking(() => Must_DeepEqual.DeepEqualInternal(__Must.Must(_actual), _expected)).Must().Throw<AssertionFailedException>();
 
-         [XF] public void DeepEqualPublic_does_not_throw() => _actual.Must().DeepEqualPublic(_expected);
+         [XF] public void DeepEqualPublic_does_not_throw() => Must_DeepEqual.DeepEqualPublic(__Must.Must(_actual), _expected);
       }
 
       public class differ_only_in_private_members : given_two_objects_that
@@ -117,11 +122,11 @@ public class When_calling_Must_DeepEqual : UniversalTestBase
          readonly TestObject _expected = new("samePublic", "sameInternal", "private2");
 
          [XF] public void DeepEqual_throws()
-            => Invoking(() => _actual.Must().DeepEqual(_expected)).Must().Throw<AssertionFailedException>();
+            => Invoking(() => Must_DeepEqual.DeepEqual(__Must.Must(_actual), _expected)).Must().Throw<AssertionFailedException>();
 
-         [XF] public void DeepEqualInternal_does_not_throw() => _actual.Must().DeepEqualInternal(_expected);
+         [XF] public void DeepEqualInternal_does_not_throw() => Must_DeepEqual.DeepEqualInternal(__Must.Must(_actual), _expected);
 
-         [XF] public void DeepEqualPublic_does_not_throw() => _actual.Must().DeepEqualPublic(_expected);
+         [XF] public void DeepEqualPublic_does_not_throw() => Must_DeepEqual.DeepEqualPublic(__Must.Must(_actual), _expected);
       }
 
       public class have_different_Ids : given_two_objects_that
@@ -136,12 +141,12 @@ public class When_calling_Must_DeepEqual : UniversalTestBase
          }
 
          [XF] public void DeepEqual_throws()
-            => Invoking(() => _actual.Must().DeepEqual(_expected)).Must().Throw<AssertionFailedException>();
+            => Invoking(() => Must_DeepEqual.DeepEqual(__Must.Must(_actual), _expected)).Must().Throw<AssertionFailedException>();
 
          public class and_an_exclusion_of_the_Id_property : have_different_Ids
          {
             [XF] public void DeepEqual_does_not_throw_throws()
-               => _actual.Must().DeepEqualPrivate(_expected, config => config.Excluding(obj => obj.Id));
+               => Must_DeepEqual.DeepEqualPrivate(__Must.Must(_actual), _expected, config => config.ExcludeTypeMember(obj => obj.Id));
          }
       }
 
@@ -156,18 +161,18 @@ public class When_calling_Must_DeepEqual : UniversalTestBase
             public string Value { get; } = value;
          }
 
-         [XF] public void DeepEqual_throws() => Invoking(() => _actual.Must().DeepEqual(_expected)).Must().Throw<AssertionFailedException>();
+         [XF] public void DeepEqual_throws() => Invoking(() => Must_DeepEqual.DeepEqual(__Must.Must(_actual), _expected)).Must().Throw<AssertionFailedException>();
 
          public class with_an_exclusion_via_the_first_method : are_collections_with_objects_having_different_Ids
          {
             [XF] public void DeepEqual_does_not_throw()
-               => _actual.Must().DeepEqualPrivate(_expected, config => config.Excluding(list => list.First().Id));
+               => Must_DeepEqual.DeepEqualPrivate(__Must.Must(_actual), _expected, config => config.ExcludeTypeMember(list => list.First().Id));
          }
 
          public class with_an_exclusion_via_the_indexer : are_collections_with_objects_having_different_Ids
          {
             [XF] public void DeepEqual_does_not_throw()
-               => _actual.Must().DeepEqualPrivate(_expected, config => config.Excluding(list => list[0].Id));
+               => Must_DeepEqual.DeepEqualPrivate(__Must.Must(_actual), _expected, config => config.ExcludeTypeMember(list => list[0].Id));
          }
       }
 
@@ -176,26 +181,26 @@ public class When_calling_Must_DeepEqual : UniversalTestBase
          readonly Container _actual = new(new Inner(1, "value"), new Outer(1, "other"));
          readonly Container _expected = new(new Inner(99, "value"), new Outer(99, "other"));
 
-         [XF] public void DeepEqual_throws() => Invoking(() => _actual.Must().DeepEqual(_expected)).Must().Throw<AssertionFailedException>();
+         [XF] public void DeepEqual_throws() => Invoking(() => Must_DeepEqual.DeepEqual(__Must.Must(_actual), _expected)).Must().Throw<AssertionFailedException>();
 
          public class And_an_exclusion_of_the_Id_property_in_the_Inner_class : contain_nested_objects_with_differing_Id_properties_in_both_the_Inner_and_Outer_type
          {
             [XF] public void DeepEqual_throws_()
-               => Invoking(() => _actual.Must().DeepEqualPrivate(_expected, config => config.Excluding(c => c.Outer.Id)))
+               => Invoking(() => Must_DeepEqual.DeepEqualPrivate(__Must.Must(_actual), _expected, config => config.ExcludeTypeMember(c => c.Outer.Id)))
                  .Must().Throw<AssertionFailedException>();
          }
 
          public class And_an_exclusion_of_the_Id_property_in_the_Outer_class : contain_nested_objects_with_differing_Id_properties_in_both_the_Inner_and_Outer_type
          {
             [XF] public void DeepEqual_throws_()
-               => Invoking(() => _actual.Must().DeepEqualPrivate(_expected, config => config.Excluding(c => c.Inner.Id)))
+               => Invoking(() => Must_DeepEqual.DeepEqualPrivate(__Must.Must(_actual), _expected, config => config.ExcludeTypeMember(c => c.Inner.Id)))
                  .Must().Throw<AssertionFailedException>();
          }
 
          public class and_an_exclusion_the_Id_property_in_both_the_Inner_class_and_Outer_class : contain_nested_objects_with_differing_Id_properties_in_both_the_Inner_and_Outer_type
          {
             [XF] public void DeepEqual_does_not_throw_throws()
-               => _actual.Must().DeepEqualPrivate(_expected, config => config.Excluding(it => it.Outer.Id).Excluding(it => it.Inner.Id));
+               => _actual.Must().DeepEqualPrivate(_expected, config => config.ExcludeTypeMember(it => it.Outer.Id).ExcludeTypeMember(it => it.Inner.Id));
          }
 
          class Container(Inner inner, Outer outer)

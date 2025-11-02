@@ -7,10 +7,10 @@ using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Utilities.Threading.Testing;
-using FluentAssertions;
-using FluentAssertions.Extensions;
 using System;
+using Compze.Utilities.SystemCE;
 using System.Threading.Tasks;
+using Compze.Utilities.Testing.Fluent;
 
 namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification;
 
@@ -54,7 +54,7 @@ public class When_scheduling_tommands_to_be_sent_in_the_future : UniversalTestBa
       _endpoint.ExecuteServerRequestInTransaction(session => session.ScheduleSend(now + 2.Seconds(), inOneHour));
 
       _receivedTommandGate.TryAwaitPassedThroughCountEqualTo(1, timeout: .5.Seconds())
-                          .Should().Be(false);
+                          .Must().Be(false);
    }
 
    internal class ScheduledTommand : TessageTypes.Remotable.ExactlyOnce.Tommand;

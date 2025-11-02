@@ -1,9 +1,10 @@
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
+using Compze.Utilities.Testing.Fluent;
 using Compze.Utilities.Testing.XUnit.BDD;
-using FluentAssertions;
 using JetBrains.Annotations;
+#pragma warning disable CS8620 // Argument cannot be used for parameter due to differences in the nullability of reference types.
 
 namespace Compze.Tests.Unit.GenericAbstractions;
 
@@ -12,13 +13,13 @@ public class IStaticInstancePropertySingleton_tests : UniversalTestBase
    [UsedImplicitly] class ImplicitImplementation : IStaticInstancePropertySingleton<ImplicitImplementation>
    {
       public static ImplicitImplementation Instance { get; } = new ImplicitImplementation();
-      ImplicitImplementation() { }
+      ImplicitImplementation() {}
    }
 
    [UsedImplicitly] class ExplicitImplementation : IStaticInstancePropertySingleton<ExplicitImplementation>
    {
       static ExplicitImplementation IStaticInstancePropertySingleton<ExplicitImplementation>.Instance { get; } = new ExplicitImplementation();
-      ExplicitImplementation() { }
+      ExplicitImplementation() {}
    }
 
    [XF]
@@ -27,9 +28,9 @@ public class IStaticInstancePropertySingleton_tests : UniversalTestBase
       var instance1 = Constructor.For<ImplicitImplementation>.DefaultConstructor.Instance();
       var instance2 = Constructor.For<ImplicitImplementation>.DefaultConstructor.Instance();
 
-      instance1.Should().NotBeNull();
-      instance1.Should().BeSameAs(instance2);
-      instance1.Should().BeSameAs(ImplicitImplementation.Instance);
+      instance1.Must().NotBeNull()
+               .BeSameAs(instance2)
+               .BeSameAs(ImplicitImplementation.Instance);
    }
 
    [XF]
@@ -38,7 +39,8 @@ public class IStaticInstancePropertySingleton_tests : UniversalTestBase
       var instance1 = Constructor.For<ExplicitImplementation>.DefaultConstructor.Instance();
       var instance2 = Constructor.For<ExplicitImplementation>.DefaultConstructor.Instance();
 
-      instance1.Should().NotBeNull();
-      instance1.Should().BeSameAs(instance2);
+      instance1.Must()
+               .NotBeNull()
+               .BeSameAs(instance2);
    }
 }

@@ -1,8 +1,8 @@
 using System;
 using Compze.Core.Public;
 using Compze.Tests.Infrastructure;
+using Compze.Utilities.Testing.Fluent;
 using Compze.Utilities.Testing.XUnit.BDD;
-using FluentAssertions;
 
 namespace Compze.Tests.Unit.DDD;
 
@@ -42,9 +42,9 @@ public class EntityTests : UniversalTestBase
    public void ComparisonWithRhsNullReturnsFalse()
    {
       var lhs = new Person();
-      lhs.Equals(null!).Should().BeFalse();
+      lhs.Equals(null!).Must().BeFalse();
       // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-      (lhs == null).Should().BeFalse();
+      (lhs == null).Must().BeFalse();
    }
 
    [XF]
@@ -52,7 +52,7 @@ public class EntityTests : UniversalTestBase
    {
       var rhs = new Person();
       // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-      (null == rhs).Should().BeFalse();
+      (null == rhs).Must().BeFalse();
    }
 
    [XF]
@@ -61,24 +61,24 @@ public class EntityTests : UniversalTestBase
       Person? rhs = null;
       Person? lhs = null;
       // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-      (rhs == lhs).Should().BeTrue();
+      (rhs == lhs).Must().BeTrue();
    }
 
    static void AssertAreEqual(Person lhs, Person rhs)
    {
-      lhs.Should().Be(rhs);
-      lhs.Equals(rhs).Should().BeTrue();
-      Equals(lhs, rhs).Should().BeTrue();
-      (lhs == rhs).Should().BeTrue();
-      (lhs != rhs).Should().BeFalse();
+      lhs.Must().Be(rhs);
+      lhs.Equals(rhs).Must().BeTrue();
+      Equals(lhs, rhs).Must().BeTrue();
+      (lhs == rhs).Must().BeTrue();
+      (lhs != rhs).Must().BeFalse();
    }
 
    static void AssertAreNotEqual(Person lhs, Person rhs)
    {
-      lhs.Should().NotBe(rhs);
-      lhs.Equals(rhs).Should().BeFalse();
-      Equals(lhs, rhs).Should().BeFalse();
-      (lhs == rhs).Should().BeFalse();
-      (lhs != rhs).Should().BeTrue();
+      lhs.Must().NotBe(rhs);
+      lhs.Equals(rhs).Must().BeFalse();
+      Equals(lhs, rhs).Must().BeFalse();
+      (lhs == rhs).Must().BeFalse();
+      (lhs != rhs).Must().BeTrue();
    }
 }

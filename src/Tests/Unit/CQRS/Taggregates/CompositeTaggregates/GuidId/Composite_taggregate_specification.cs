@@ -4,8 +4,8 @@ using Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId.Domain;
 using Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId.Domain.Tevents;
 using Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId.QueryModels;
 using Compze.Utilities.SystemCE.ReactiveCE;
+using Compze.Utilities.Testing.Fluent;
 using Compze.Utilities.Testing.XUnit.BDD;
-using FluentAssertions;
 
 // ReSharper disable InconsistentNaming
 // ReSharper disable ImplicitlyCapturedClosure
@@ -34,18 +34,18 @@ public static partial class Composite_taggregate_specification
          taggregate.Commit(_queryModel.LoadFromHistory);
       }
 
-      [XF] public void Taggregate_name_is_root() => _taggregate.Name.Should().Be("root");
-      [XF] public void Tuery_model_name_is_root() => _queryModel.Name.Should().Be("root");
-      [XF] public void Taggregate_id_is_the_supplied_id() => _taggregate.Id.Should().Be(_taggregateId);
-      [XF] public void QueryModel_id_is_the_supplied_id() => _queryModel.Id.Should().Be(_taggregateId);
+      [XF] public void Taggregate_name_is_root() => _taggregate.Name.Must().Be("root");
+      [XF] public void Tuery_model_name_is_root() => _queryModel.Name.Must().Be("root");
+      [XF] public void Taggregate_id_is_the_supplied_id() => _taggregate.Id.Must().Be(_taggregateId);
+      [XF] public void QueryModel_id_is_the_supplied_id() => _queryModel.Id.Must().Be(_taggregateId);
 
       [XF] public void Taggregate_Component_Component_tests()
       {
-         _taggregate.Component.CComponent.Name.Should().BeNullOrEmpty();
-         _queryModel.Component.CComponent.Name.Should().BeNullOrEmpty();
+         _taggregate.Component.CComponent.Name.Must().BeNullOrEmpty();
+         _queryModel.Component.CComponent.Name.Must().BeNullOrEmpty();
          _taggregate.Component.CComponent.Rename("newName");
-         _taggregate.Component.CComponent.Name.Should().Be("newName");
-         _queryModel.Component.CComponent.Name.Should().Be("newName");
+         _taggregate.Component.CComponent.Name.Must().Be("newName");
+         _queryModel.Component.CComponent.Name.Must().Be("newName");
       }
    }
 }

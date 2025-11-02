@@ -1,10 +1,8 @@
 using System.Collections.Generic;
-using Compze.Tests.Infrastructure.Fluent;
-using Compze.Tests.Infrastructure.FluentAssertionsExtensions;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Tests.Unit.Internals.Serialization.OriginalTypes;
 using Compze.Utilities.Functional;
-using FluentAssertions;
+using Compze.Utilities.Testing.Fluent;
 
 // ReSharper disable UnusedMember.Global
 
@@ -60,7 +58,7 @@ namespace Compze.Tests.Unit.Internals.Serialization
 
          var roundTripped = DocumentSerializer.Deserialize<Root>(json);
 
-         roundTripped.Should().BeStrictlyEquivalentTo(original);
+         roundTripped.Must().DeepEqual(original);
       }
    }
 

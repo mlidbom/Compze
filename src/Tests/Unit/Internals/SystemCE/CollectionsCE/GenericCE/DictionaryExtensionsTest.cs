@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
+using Compze.Utilities.Testing.Fluent;
 using Compze.Utilities.Testing.XUnit.BDD;
-using FluentAssertions;
 
 namespace Compze.Tests.Unit.Internals.SystemCE.CollectionsCE.GenericCE;
 
@@ -22,7 +22,7 @@ public static class DictionaryExtensionsGetOrAddWhenKey
       public void ShouldReturnResulOfConstructor()
       {
          var empty = new Dictionary<string, int>();
-         empty.GetOrAdd(Key, Constructor).Should().Be(InsertedValue);
+         empty.GetOrAdd(Key, Constructor).Must().Be(InsertedValue);
       }
 
       [XF]
@@ -31,7 +31,7 @@ public static class DictionaryExtensionsGetOrAddWhenKey
          var empty = new Dictionary<string, int>();
          empty.GetOrAdd(Key, Constructor);
 
-         empty[Key].Should().Be(InsertedValue);
+         empty[Key].Must().Be(InsertedValue);
       }
    }
 
@@ -43,7 +43,7 @@ public static class DictionaryExtensionsGetOrAddWhenKey
       {
          var empty = new Dictionary<string, int> { { Key, ExistingValue } };
 
-         empty.GetOrAdd(Key, Constructor).Should().Be(ExistingValue);
+         empty.GetOrAdd(Key, Constructor).Must().Be(ExistingValue);
       }
 
       [XF]
@@ -52,7 +52,7 @@ public static class DictionaryExtensionsGetOrAddWhenKey
          var empty = new Dictionary<string, int> { { Key, ExistingValue } };
          empty.GetOrAdd(Key, Constructor);
 
-         empty[Key].Should().Be(ExistingValue);
+         empty[Key].Must().Be(ExistingValue);
       }
    }
 
@@ -64,7 +64,7 @@ public static class DictionaryExtensionsGetOrAddWhenKey
       public void ShouldReturnResulOfConstructor()
       {
          var empty = new Dictionary<string, int>();
-         empty.GetOrAddDefault(Key).Should().Be(ResultOfDefaultConstructor);
+         empty.GetOrAddDefault(Key).Must().Be(ResultOfDefaultConstructor);
       }
 
       [XF]
@@ -73,7 +73,7 @@ public static class DictionaryExtensionsGetOrAddWhenKey
          var empty = new Dictionary<string, int>();
          empty.GetOrAddDefault(Key);
 
-         empty[Key].Should().Be(ResultOfDefaultConstructor);
+         empty[Key].Must().Be(ResultOfDefaultConstructor);
       }
    }
 
@@ -85,7 +85,7 @@ public static class DictionaryExtensionsGetOrAddWhenKey
       {
          var empty = new Dictionary<string, int> { { Key, ExistingValue } };
 
-         empty.GetOrAddDefault(Key).Should().Be(ExistingValue);
+         empty.GetOrAddDefault(Key).Must().Be(ExistingValue);
       }
 
       [XF]
@@ -94,7 +94,7 @@ public static class DictionaryExtensionsGetOrAddWhenKey
          var empty = new Dictionary<string, int> { { Key, ExistingValue } };
          empty.GetOrAddDefault(Key);
 
-         empty[Key].Should().Be(ExistingValue);
+         empty[Key].Must().Be(ExistingValue);
       }
    }
 }

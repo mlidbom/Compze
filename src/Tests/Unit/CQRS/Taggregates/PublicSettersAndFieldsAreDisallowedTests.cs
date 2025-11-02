@@ -3,9 +3,10 @@ using Compze.Core.Tessaging.Teventive.Internal.Implementation;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Tests.Infrastructure;
+using Compze.Utilities.Testing.Fluent;
 using Compze.Utilities.Testing.XUnit.BDD;
-using FluentAssertions;
 using JetBrains.Annotations;
+using static Compze.Utilities.Testing.Fluent.MustActions;
 
 // ReSharper disable MemberHidesStaticFromOuterClass
 // ReSharper disable UnusedMember.Local
@@ -96,58 +97,58 @@ public class PublicSettersAndFieldsAreDisallowedTests : UniversalTestBase
 
    [XF]public void Trying_to_create_instance_of_taggregate_throws_and_lists_all_broken_types_in_exception_except_ignored()
    {
-      FluentActions.Invoking(() => new Root())
-                   .Should().Throw<Exception>()
+      Invoking(() => new Root())
+                   .Must().Throw<Exception>()
                    .Which.InnerException!
-                   .Message
-                   .Should().Contain(typeof(Root).FullName)
-                   .And.Contain(typeof(RootTevent.IRoot).FullName)
-                   .And.Contain(typeof(RootTevent.Root).FullName)
-                   .And.NotContain(typeof(RootTevent.Ignored).FullName);
+                   .Message.Must()
+                   .Contain(typeof(Root).FullName!)
+                   .Contain(typeof(RootTevent.IRoot).FullName!)
+                   .Contain(typeof(RootTevent.Root).FullName!)
+                   .NotContain(typeof(RootTevent.Ignored).FullName!);
    }
 
    [XF] public void Trying_to_create_instance_of_component_throws_and_lists_all_broken_types_in_exception()
    {
-      FluentActions.Invoking(() => new Root.AggComponent(null!))
-                   .Should().Throw<Exception>()
+      Invoking(() => new Root.AggComponent(null!))
+                   .Must().Throw<Exception>()
                    .Which.InnerException!
-                   .Message
-                   .Should().Contain(typeof(Root.AggComponent).FullName).And
-                   .Contain(typeof(RootTevent.Component.IRoot).FullName)
-                   .And.Contain(typeof(RootTevent.Component.Root).FullName);
+                   .Message.Must()
+                   .Contain(typeof(Root.AggComponent).FullName!)
+                   .Contain(typeof(RootTevent.Component.IRoot).FullName!)
+                   .Contain(typeof(RootTevent.Component.Root).FullName!);
    }
 
 
    [XF] public void Trying_to_create_instance_of_nested_nested_component_throws_and_lists_all_broken_types_in_exception()
    {
-      FluentActions.Invoking(() => new Root.AggComponent.NestedAggComponent(null!))
-                   .Should().Throw<Exception>()
+      Invoking(() => new Root.AggComponent.NestedAggComponent(null!))
+                   .Must().Throw<Exception>()
                    .Which.InnerException!
-                   .Message
-                   .Should().Contain(typeof(Root.AggComponent.NestedAggComponent).FullName).And
-                   .Contain(typeof(RootTevent.Component.NestedComponent.IRoot).FullName)
-                   .And.Contain(typeof(RootTevent.Component.NestedComponent.Root).FullName);
+                   .Message.Must()
+                   .Contain(typeof(Root.AggComponent.NestedAggComponent).FullName!)
+                   .Contain(typeof(RootTevent.Component.NestedComponent.IRoot).FullName!)
+                   .Contain(typeof(RootTevent.Component.NestedComponent.Root).FullName!);
    }
 
    [XF] public void Trying_to_create_instance_of_entity_throws_and_lists_all_broken_types_in_exception()
    {
-      FluentActions.Invoking(() => new Root.AggEntity(null!))
-                   .Should().Throw<Exception>()
+      Invoking(() => new Root.AggEntity(null!))
+                   .Must().Throw<Exception>()
                    .Which.InnerException!
-                   .Message
-                   .Should().Contain(typeof(Root.AggEntity).FullName).And
-                   .Contain(typeof(RootTevent.Entity.IRoot).FullName)
-                   .And.Contain(typeof(RootTevent.Entity.Root).FullName);
+                   .Message.Must()
+                   .Contain(typeof(Root.AggEntity).FullName!)
+                   .Contain(typeof(RootTevent.Entity.IRoot).FullName!)
+                   .Contain(typeof(RootTevent.Entity.Root).FullName!);
    }
 
    [XF] public void Trying_to_create_instance_of_entity_nested_component_throws_and_lists_all_broken_types_in_exception()
    {
-      FluentActions.Invoking(() => new Root.AggEntity.EntNestedComp(null!))
-                   .Should().Throw<Exception>()
+      Invoking(() => new Root.AggEntity.EntNestedComp(null!))
+                   .Must().Throw<Exception>()
                    .Which.InnerException!
-                   .Message
-                   .Should().Contain(typeof(Root.AggEntity.EntNestedComp).FullName).And
-                   .Contain(typeof(RootTevent.Entity.Component.IRoot).FullName)
-                   .And.Contain(typeof(RootTevent.Entity.Component.Root).FullName);
+                   .Message.Must()
+                   .Contain(typeof(Root.AggEntity.EntNestedComp).FullName!)
+                   .Contain(typeof(RootTevent.Entity.Component.IRoot).FullName!)
+                   .Contain(typeof(RootTevent.Entity.Component.Root).FullName!);
    }
 }

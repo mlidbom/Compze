@@ -1,4 +1,5 @@
 using System;
+using Compze.Utilities.SystemCE;
 using System.Linq;
 using System.Threading.Tasks;
 using Compze.Tessaging.Hosting;
@@ -6,9 +7,8 @@ using Compze.Tessaging.Implementation.Outbox;
 using Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
+using Compze.Utilities.Testing.Fluent;
 using Compze.Utilities.Threading.Testing;
-using FluentAssertions;
-using FluentAssertions.Extensions;
 
 namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
 
@@ -28,8 +28,8 @@ public class Outbox_retry_tests : EndpointHostTestBase
                         "A tessage with a retry count greater than 0 should have been added to storage");
 
       var undeliveredTessage = originalRemoteStorage.GetUndeliveredTessages(TimeSpan.Zero)[0];
-      undeliveredTessage.RetryCount.Should().BeGreaterThan(0, "failure should increment retry count");
-      undeliveredTessage.LastAttemptTime.Should().NotBeNull("last attempt time should be recorded");
+      undeliveredTessage.RetryCount.Must().BeGreaterThan(0, "failure should increment retry count");
+      undeliveredTessage.LastAttemptTime.Must().NotBeNull();
 
       await Host.DisposeAsyncWithoutWaitingForEndpointsToBeAtRest();
       await StartHostAsync();
@@ -42,7 +42,7 @@ public class Outbox_retry_tests : EndpointHostTestBase
                         10.Milliseconds(),
                         "Timeout waiting for tessages to be removed from outbox");
 
-      originalRemoteStorage.GetUndeliveredTessages(TimeSpan.Zero).Should().HaveCount(0, "the new endpoint after restart should be using the same database");
+      originalRemoteStorage.GetUndeliveredTessages(TimeSpan.Zero).Must().HaveCount(0, "the new endpoint after restart should be using the same database");
    }
 
    [PCT]
@@ -58,8 +58,8 @@ public class Outbox_retry_tests : EndpointHostTestBase
                         "A tessage with a retry count greater than 0 should have been added to storage");
 
       var undeliveredTessage = remoteStorage.GetUndeliveredTessages(TimeSpan.Zero)[0];
-      undeliveredTessage.RetryCount.Should().BeGreaterThan(0, "failure should increment retry count");
-      undeliveredTessage.LastAttemptTime.Should().NotBeNull("last attempt time should be recorded");
+      undeliveredTessage.RetryCount.Must().BeGreaterThan(0, "failure should increment retry count");
+      undeliveredTessage.LastAttemptTime.Must().NotBeNull();
 
       await Host.DisposeAsyncWithoutWaitingForEndpointsToBeAtRest();
    }

@@ -1,8 +1,12 @@
 using System;
 using Compze.Tests.Infrastructure;
-using Compze.Tests.Infrastructure.Fluent;
+using Compze.Utilities.Testing.Fluent;
 using Compze.Utilities.Testing.XUnit.BDD;
-using static Compze.Tests.Infrastructure.Fluent.MustActions;
+using static Compze.Utilities.Testing.Fluent.MustActions;
+using __Must = Compze.Utilities.Testing.Fluent.__Must;
+using _Must_Satisfy = Compze.Utilities.Testing.Fluent._Must_Satisfy;
+using AssertionFailedException = Compze.Utilities.Testing.Fluent.AssertionFailedException;
+using Must___String = Compze.Utilities.Testing.Fluent.Must___String;
 
 // ReSharper disable NotAccessedPositionalProperty.Local
 
@@ -15,28 +19,28 @@ public class When_calling_Must_Satisfy : UniversalTestBase
    public class with_a_predicate_returning_true : When_calling_Must_Satisfy
    {
       readonly int _value = 5;
-      [XF] public void it_does_not_throw() => _value.Must().Satisfy(v => v > 0);
+      [XF] public void it_does_not_throw() => _Must_Satisfy.Satisfy(__Must.Must(_value), v => v > 0);
    }
 
    public class with_a_predicate_returning_false : When_calling_Must_Satisfy
    {
       readonly int _value = 5;
 
-      public class it_throws_AssertionFailedException : with_a_predicate_returning_false
+      public class it_throws_AssertionFailedException_ : with_a_predicate_returning_false
       {
-         string ExceptionMessage() => Invoking(() => _value.Must().Satisfy(v => v > 10))
+         string ExceptionMessage() => Invoking(() => _Must_Satisfy.Satisfy(__Must.Must(_value), v => v > 10))
                                      .Must()
                                      .Throw<AssertionFailedException>()
                                      .Which
                                      .Message;
 
-         public class and_the_exception_message : it_throws_AssertionFailedException
+         public class and_the_exception_message : it_throws_AssertionFailedException_
          {
             [XF] public void contains_the_expression_being_tested()
-               => ExceptionMessage().Must().Contain(nameof(_value));
+               => Must___String.Contain(__Must.Must(ExceptionMessage()), nameof(_value));
 
             [XF] public void contains_the_predicate_expression()
-               => ExceptionMessage().Must().Contain("v => v > 10");
+               => Must___String.Contain(__Must.Must(ExceptionMessage()), "v => v > 10");
          }
       }
    }
@@ -45,7 +49,7 @@ public class When_calling_Must_Satisfy : UniversalTestBase
    {
       readonly int _value = 5;
 
-      string ExceptionMessage() => Invoking(() => _value.Must().Satisfy(v => v > 10, messageOverride: _ => "Custom error message"))
+      string ExceptionMessage() => Invoking(() => _Must_Satisfy.Satisfy(__Must.Must(_value), v => v > 10, messageOverride: _ => "Custom error message"))
                                   .Must()
                                   .Throw<AssertionFailedException>()
                                   .Which
@@ -54,10 +58,10 @@ public class When_calling_Must_Satisfy : UniversalTestBase
       public class and_the_exception_message : using_a_custom_error_message
       {
          [XF] public void contains_the_custom_message()
-            => ExceptionMessage().Must().Contain("Custom error message");
+            => Must___String.Contain(__Must.Must(ExceptionMessage()), "Custom error message");
 
          [XF] public void does_not_contain_the_default_format()
-            => ExceptionMessage().Must().Satisfy(msg => !msg.Contains("failed", StringComparison.Ordinal));
+            => _Must_Satisfy.Satisfy(__Must.Must(ExceptionMessage()), msg => !msg.Contains("failed", StringComparison.Ordinal));
       }
    }
 
@@ -67,7 +71,7 @@ public class When_calling_Must_Satisfy : UniversalTestBase
 
       record TestObject(string Name, int Age, string Status);
 
-      string ExceptionMessage() => Invoking(() => _actual.Must().Satisfy(it => it.Name == "all wrong"))
+      string ExceptionMessage() => Invoking(() => _Must_Satisfy.Satisfy(__Must.Must(_actual), it => it.Name == "all wrong"))
                                   .Must().Throw<AssertionFailedException>()
                                   .Which.Message;
 

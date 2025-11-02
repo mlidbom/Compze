@@ -2,8 +2,8 @@ using System;
 using AccountManagement.API.ValidationAttributes;
 using AccountManagement.Tests.Unit.UI.Tommands.UserTommands;
 using Compze.Tests.Infrastructure;
+using Compze.Utilities.Testing.Fluent;
 using Compze.Utilities.Testing.XUnit.BDD;
-using FluentAssertions;
 using JetBrains.Annotations;
 
 
@@ -16,14 +16,14 @@ public class EntityIdAttributeTests: UniversalTestBase
    public void IsValidIfIdIsNull()
    {
       TommandValidator.ValidationFailures(new ATommand {AnId = null})
-                      .Should().NotBeEmpty();
+                      .Must().NotBeEmpty();
    }
 
    [XF]
    public void IsNotValidIfIdIsEmpty()
    {
       TommandValidator.ValidationFailures(new ATommand {AnId = Guid.Empty})
-                      .Should().NotBeEmpty();
+                      .Must().NotBeEmpty();
    }
 
    class ATommand

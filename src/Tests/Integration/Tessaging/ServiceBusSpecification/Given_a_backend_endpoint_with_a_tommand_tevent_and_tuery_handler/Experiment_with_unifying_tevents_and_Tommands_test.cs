@@ -11,12 +11,12 @@ using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
-using FluentAssertions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Compze.Core.Public;
+using Compze.Utilities.Testing.Fluent;
 
 // ReSharper disable MemberCanBeInternal for testing
 // ReSharper disable InconsistentNaming for testing
@@ -75,8 +75,8 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
 
       var user = _clientEndpoint.ServiceLocator.ExecuteInIsolatedScope(() => RemoteNavigator.Get(registrationResult.UserLink));
 
-      user.Should().NotBe(null);
-      user.History.Count().Should().Be(1);
+      user.Must().NotBeNull();
+      user.History.Count().Must().Be(1);
    }
 
    public static class UserTevent

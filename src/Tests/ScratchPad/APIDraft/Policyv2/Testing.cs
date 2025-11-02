@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Threading;
-using FluentAssertions;
+using Compze.Utilities.Testing.Fluent;
 
 // ReSharper disable All
 #pragma warning disable //Reviewed OK: This is API experimental code that is never ever used.
@@ -22,7 +22,7 @@ public class Testing
 
       //bus.SendAsyncAsync(new CreateAccountTommand)
       createAccountHandler.Started.Wait();
-      accountQueryModelUpdater.IsStarted.Should().Be(false);
+      accountQueryModelUpdater.IsStarted.Must().Be(false);
       createAccountHandler.AllowToComplete.Set();
       accountQueryModelUpdater.Started.Wait();
    }

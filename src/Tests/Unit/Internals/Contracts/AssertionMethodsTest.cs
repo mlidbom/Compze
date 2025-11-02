@@ -1,7 +1,8 @@
 using System;
 using System.Runtime.CompilerServices;
 using Compze.Utilities.Contracts;
-using FluentAssertions;
+using Compze.Utilities.Testing.Fluent;
+using static Compze.Utilities.Testing.Fluent.MustActions;
 
 namespace Compze.Tests.Unit.Internals.Contracts;
 
@@ -13,9 +14,9 @@ public abstract class AssertionMethodsTest
    // ReSharper disable once EntityNameCapturedOnly.Global : Yes. Capturing its name is the entire point of passing it :)
    internal static void ThrowsAndCapturesArgumentExpressionText(Func<ContractAsserter> assertFunc, object? value, [CallerArgumentExpression(nameof(value))] string valueExpressionString = "")
    {
-      FluentActions.Invoking(assertFunc)
-                   .Should().Throw<AssertionTestException>()
+      Invoking(() => assertFunc())
+                     .Must().Throw<AssertionTestException>()
                    .Which.Message
-                   .Should().Contain(valueExpressionString);
+                   .Must().Contain(valueExpressionString);
    }
 }

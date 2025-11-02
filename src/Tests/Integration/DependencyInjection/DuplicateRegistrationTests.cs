@@ -4,7 +4,7 @@ using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.DependencyInjection;
 using Compze.Tests.Infrastructure.XUnit;
-using FluentAssertions;
+using Compze.Utilities.Testing.Fluent;
 
 namespace Compze.Tests.Integration.DependencyInjection;
 
@@ -24,10 +24,11 @@ public class DuplicateRegistrationTests : UniversalTestBase
 
       var attemptingDuplicateRegistration = () => container.Register(Singleton.For<ITestService>().CreatedBy(() => new TestService()));
 
-      attemptingDuplicateRegistration.Should()
+      attemptingDuplicateRegistration.Must()
                                      .Throw<InvalidOperationException>()
-                                     .WithMessage("*ITestService*")
-                                     .WithMessage("*already*registered*");
+                                     .And.Message.Must()
+                                     .Contain("ITestService")
+                                     .Contain("already registered");
    }
 
    [PCT]
@@ -39,10 +40,11 @@ public class DuplicateRegistrationTests : UniversalTestBase
 
       var attemptingDuplicateRegistration = () => container.Register(Scoped.For<ITestService>().CreatedBy(() => new TestService()));
 
-      attemptingDuplicateRegistration.Should()
+      attemptingDuplicateRegistration.Must()
                                      .Throw<InvalidOperationException>()
-                                     .WithMessage("*ITestService*")
-                                     .WithMessage("*already*registered*");
+                                     .And.Message.Must()
+                                     .Contain("ITestService")
+                                     .Contain("already registered");
    }
 
    [PCT]
@@ -56,9 +58,10 @@ public class DuplicateRegistrationTests : UniversalTestBase
 
       var attemptingToReregisterOneServiceType = () => container.Register(Singleton.For<ITestService>().CreatedBy(() => new TestService()));
 
-      attemptingToReregisterOneServiceType.Should()
+      attemptingToReregisterOneServiceType.Must()
                                           .Throw<InvalidOperationException>()
-                                          .WithMessage("*ITestService*")
-                                          .WithMessage("*already*registered*");
+                                          .And.Message.Must()
+                                          .Contain("ITestService")
+                                          .Contain("already registered");
    }
 }

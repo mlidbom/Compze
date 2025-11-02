@@ -2,8 +2,8 @@ using System;
 using System.Globalization;
 using Compze.Core.Time.Public;
 using Compze.Tests.Infrastructure;
+using Compze.Utilities.Testing.Fluent;
 using Compze.Utilities.Testing.XUnit.BDD;
-using FluentAssertions;
 
 namespace Compze.Tests.Unit.GenericAbstractions.Time;
 
@@ -14,7 +14,7 @@ public class DummyTimeSourceTests : UniversalTestBase
    {
       UtcTimeSource.Test.FrozenAtUtcNow().Run(() =>
       {
-         Math.Abs((UtcTimeSource.UtcNow - DateTime.UtcNow).TotalMilliseconds).Should().BeLessThan(100);
+         Math.Abs((UtcTimeSource.UtcNow - DateTime.UtcNow).TotalMilliseconds).Must().BeLessThan(100);
       });
 
    }
@@ -25,7 +25,7 @@ public class DummyTimeSourceTests : UniversalTestBase
       var utcNow = DateTime.UtcNow;
       UtcTimeSource.Test.FrozenAtUtc(utcNow).Run(() =>
       {
-         UtcTimeSource.UtcNow.Should().Be(utcNow);
+         UtcTimeSource.UtcNow.Must().Be(utcNow);
       });
    }
 
@@ -35,7 +35,7 @@ public class DummyTimeSourceTests : UniversalTestBase
       var dateTime = DateTime.Parse("2001-01-01 00:00", CultureInfo.InvariantCulture).ToUniversalTime();
       UtcTimeSource.Test.FrozenAtUtc("2001-01-01 00:00").Run(() =>
       {
-         UtcTimeSource.UtcNow.Should().Be(dateTime);
+         UtcTimeSource.UtcNow.Must().Be(dateTime);
       });
    }
 }

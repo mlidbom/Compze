@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using Compze.Tests.Infrastructure;
-using Compze.Tests.Infrastructure.Fluent;
+using Compze.Utilities.Testing.Fluent;
 using Compze.Utilities.Testing.XUnit.BDD;
 // ReSharper disable InconsistentNaming
 

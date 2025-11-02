@@ -6,9 +6,9 @@ using Compze.Utilities.SystemCE;
 using Compze.Utilities.Testing.DbPool.SystemCE;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Utilities.Testing.DbPool;
-using FluentAssertions;
+using Compze.Utilities.Testing.Fluent;
 using Xunit;
-using static FluentAssertions.FluentActions;
+using static Compze.Utilities.Testing.Fluent.MustActions;
 
 namespace Compze.Tests.Integration.Testing.Sql;
 
@@ -26,8 +26,8 @@ public class If_not_disposed_ : DbPoolTestBase
                                                                    });
 
                                                                    Invoking(UncatchableExceptionsGatherer.ForceFullGcAllGenerationsAndWaitForFinalizersConsumeAndThrowAnyGatheredExceptions)
-                                                                     .Should().Throw<AggregateException>().Which
-                                                                     .InnerExceptions.Should().HaveCount(1);
+                                                                     .Must().Throw<AggregateException>().Which
+                                                                     .InnerExceptions.Must().HaveCount(1);
                                                                 }));
    }
 }

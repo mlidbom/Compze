@@ -4,8 +4,9 @@ using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
 using Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
 using Compze.Tests.Infrastructure.XUnit;
+using Compze.Utilities.Testing.Fluent;
 using Compze.Utilities.Threading.Testing;
-using FluentAssertions;
+using static Compze.Utilities.Testing.Fluent.MustActions;
 
 // ReSharper disable InconsistentNaming
 
@@ -23,8 +24,8 @@ public class EndpointHostTest_Tests : EndpointHostTestBase
    [PCT]  public async Task If_tommand_handler_with_result_throws_disposing_host_throws_AggregateException_containing_the_thrown_exception_and_SendAsync_throws_TessageDispatchingFailedException()
    {
       TommandHandlerWithResultThreadGate.ThrowPostPassThrough(_thrownException);
-      await FluentActions.Invoking(async () => await ClientEndpoint.ExecuteClientRequest(async session => await session.PostAsync(MyAtMostOnceTypermediaTommandWithResult.Create())))
-                         .Should().ThrowAsync<TessageDispatchingFailedException>();
+      await InvokingAsync(async () => await ClientEndpoint.ExecuteClientRequest(async session => await session.PostAsync(MyAtMostOnceTypermediaTommandWithResult.Create())))
+                         .Must().ThrowAsync<TessageDispatchingFailedException>();
 
       await AssertDisposingHostThrowsAggregateExceptionHierarchyContainingThrownExceptionAsANonAggregateException();
    }
@@ -39,18 +40,19 @@ public class EndpointHostTest_Tests : EndpointHostTestBase
    [PCT]  public async Task If_tuery_handler_throws_disposing_host_throws_AggregateException_containing_the_thrown_exception_and_SendAsync_throws_TessageDispatchingFailedException()
    {
       TueryHandlerThreadGate.ThrowPostPassThrough(_thrownException);
-      await FluentActions.Invoking(() => ClientEndpoint.ExecuteClientRequest(session => session.GetAsync(new MyTuery())))
-                         .Should().ThrowAsync<TessageDispatchingFailedException>();
+      //urgent: this seems to do some pretty strange async related things
+      await InvokingAsync(() => ClientEndpoint.ExecuteClientRequest(session => session.GetAsync(new MyTuery())))
+                         .Must().ThrowAsync<TessageDispatchingFailedException>();
 
       await AssertDisposingHostThrowsAggregateExceptionHierarchyContainingThrownExceptionAsANonAggregateException();
    }
 
    async Task AssertDisposingHostThrowsAggregateExceptionHierarchyContainingThrownExceptionAsANonAggregateException()
    {
-      var exception = (await FluentActions.Invoking(async Task () => await Host.DisposeAsync())
-                                          .Should().ThrowAsync<AggregateException>()).Which;
+      var exception = (await InvokingAsync(async Task () => await Host.DisposeAsync())
+                            .Must().ThrowAsync<AggregateException>()).Which;
       var rootExceptions = exception.Flatten().InnerExceptions;
-      rootExceptions.Should().Contain(_thrownException);
+      rootExceptions.Must().Contain(_thrownException);
    }
 
    readonly IntentionalException _thrownException = new();

@@ -1,7 +1,7 @@
 using Compze.Core.DocumentDb.Private;
 using Compze.Tests.Infrastructure;
+using Compze.Utilities.Testing.Fluent;
 using Compze.Utilities.Testing.XUnit.BDD;
-using FluentAssertions;
 
 namespace Compze.Tests.Unit.Internals.KeyValueStorage;
 
@@ -24,9 +24,9 @@ public class DocumentDBSession_DocumentKeyTests : UniversalTestBase
       var lhs = new DocumentDbSession.DocumentKey<Base>("theId");
       var rhs = new DocumentDbSession.DocumentKey<Base>("theId");
 
-      lhs.Should().Be(rhs);
-      rhs.Should().Be(lhs);
-      lhs.GetHashCode().Should().Be(rhs.GetHashCode());
+      lhs.Must().Be(rhs);
+      rhs.Must().Be(lhs);
+      lhs.GetHashCode().Must().Be(rhs.GetHashCode());
    }
 
    [XF]
@@ -35,9 +35,9 @@ public class DocumentDBSession_DocumentKeyTests : UniversalTestBase
       var lhs = new DocumentDbSession.DocumentKey<Base>("THEID");
       var rhs = new DocumentDbSession.DocumentKey<Base>("theid");
 
-      lhs.Should().Be(rhs);
-      rhs.Should().Be(lhs);
-      lhs.GetHashCode().Should().Be(rhs.GetHashCode());
+      lhs.Must().Be(rhs);
+      rhs.Must().Be(lhs);
+      lhs.GetHashCode().Must().Be(rhs.GetHashCode());
    }
 
    [XF]
@@ -46,9 +46,9 @@ public class DocumentDBSession_DocumentKeyTests : UniversalTestBase
       var lhs = new DocumentDbSession.DocumentKey<Base>("theid  ");
       var rhs = new DocumentDbSession.DocumentKey<Base>("theid");
 
-      lhs.Should().Be(rhs);
-      rhs.Should().Be(lhs);
-      lhs.GetHashCode().Should().Be(rhs.GetHashCode());
+      lhs.Must().Be(rhs);
+      rhs.Must().Be(lhs);
+      lhs.GetHashCode().Must().Be(rhs.GetHashCode());
    }
 
    [XF]
@@ -57,8 +57,8 @@ public class DocumentDBSession_DocumentKeyTests : UniversalTestBase
       var lhs = new DocumentDbSession.DocumentKey<Base>("theFirstId");
       var rhs = new DocumentDbSession.DocumentKey<Base>("theSecondId");
 
-      lhs.Should().NotBe(rhs);
-      rhs.Should().NotBe(lhs);
+      lhs.Must().NotBe(rhs);
+      rhs.Must().NotBe(lhs);
    }
 
    [XF]
@@ -67,9 +67,9 @@ public class DocumentDBSession_DocumentKeyTests : UniversalTestBase
       var lhs = new DocumentDbSession.DocumentKey<Base>("theId");
       var rhs = new DocumentDbSession.DocumentKey<Inheritor>("theId");
 
-      lhs.Should().Be(rhs);
-      rhs.Should().Be(lhs);
-      lhs.GetHashCode().Should().Be(rhs.GetHashCode());
+      lhs.Must().Be(rhs);
+      rhs.Must().Be(lhs);
+      lhs.GetHashCode().Must().Be(rhs.GetHashCode());
    }
 
    [XF]
@@ -78,8 +78,8 @@ public class DocumentDBSession_DocumentKeyTests : UniversalTestBase
       var lhs = new DocumentDbSession.DocumentKey<Base>("theFirstId");
       var rhs = new DocumentDbSession.DocumentKey<Inheritor>("theSecondId");
 
-      lhs.Should().NotBe(rhs);
-      rhs.Should().NotBe(lhs);
+      lhs.Must().NotBe(rhs);
+      rhs.Must().NotBe(lhs);
    }
 
    [XF]
@@ -88,7 +88,7 @@ public class DocumentDBSession_DocumentKeyTests : UniversalTestBase
       var lhs = new DocumentDbSession.DocumentKey<Base>("theId");
       var rhs = new DocumentDbSession.DocumentKey<Unrelated>("theId");
 
-      lhs.Should().NotBe(rhs);
-      rhs.Should().NotBe(lhs);
+      lhs.Must().NotBe(rhs);
+      rhs.Must().NotBe(lhs);
    }
 }

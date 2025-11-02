@@ -1,6 +1,6 @@
 using Compze.Core.Tessaging.Public;
 using Compze.Core.Tessaging.Teventive.Public;
-using FluentAssertions;
+using Compze.Utilities.Testing.Fluent;
 
 namespace Compze.Tests.Unit.CQRS.TeventHandling;
 
@@ -28,7 +28,7 @@ static class TeventDispatcherAsserter
          _dispatcher.Register().IgnoreAllUnhandled();
          _dispatcher.Register().For((THandlerTevent _) => callCount++);
          _dispatcher.Dispatch(_tevent);
-         callCount.Should().Be(1, "Tessage was not dispatched to handler.");
+         callCount.Must().Be(1, "Tessage was not dispatched to handler.");
       }
 
       public void DispatchesToGeneric<THandlerTevent>()
@@ -38,7 +38,7 @@ static class TeventDispatcherAsserter
          _dispatcher.Register().IgnoreAllUnhandled();
          _dispatcher.Register().ForGenericTevent((THandlerTevent _) => callCount++);
          _dispatcher.Dispatch(_tevent);
-         callCount.Should().Be(1, "Tessage was not dispatched to handler.");
+         callCount.Must().Be(1, "Tessage was not dispatched to handler.");
       }
 
       public void DispatchesToWrapped<THandlerTevent>()
@@ -48,7 +48,7 @@ static class TeventDispatcherAsserter
          _dispatcher.Register().IgnoreAllUnhandled();
          _dispatcher.Register().ForWrapped((THandlerTevent _) => callCount++);
          _dispatcher.Dispatch(_tevent);
-         callCount.Should().Be(1, "Tessage was not dispatched to handler.");
+         callCount.Must().Be(1, "Tessage was not dispatched to handler.");
       }
 
       public void DispatchesToWrappedGeneric<THandlerTevent>()
@@ -58,7 +58,7 @@ static class TeventDispatcherAsserter
          _dispatcher.Register().IgnoreAllUnhandled();
          _dispatcher.Register().ForWrappedGeneric((THandlerTevent _) => callCount++);
          _dispatcher.Dispatch(_tevent);
-         callCount.Should().Be(1, "Tessage was not dispatched to handler.");
+         callCount.Must().Be(1, "Tessage was not dispatched to handler.");
       }
 
       public void DoesNotDispatchToWrapped<THandlerTevent>()
@@ -68,7 +68,7 @@ static class TeventDispatcherAsserter
          _dispatcher.Register().IgnoreAllUnhandled();
          _dispatcher.Register().ForWrapped((THandlerTevent _) => callCount++);
          _dispatcher.Dispatch(_tevent);
-         callCount.Should().Be(0, "Tessage was dispatched to handler.");
+         callCount.Must().Be(0, "Tessage was dispatched to handler.");
       }
    }
 
@@ -85,7 +85,7 @@ static class TeventDispatcherAsserter
          _dispatcher.Register().IgnoreAllUnhandled();
          _dispatcher.Register().For((THandlerTevent _) => callCount++);
          _dispatcher.Dispatch(_tevent);
-         callCount.Should().Be(1, "Tessage was not dispatched to handler.");
+         callCount.Must().Be(1, "Tessage was not dispatched to handler.");
       }
 
       public void DispatchesToGeneric<THandlerTevent>()
@@ -95,7 +95,7 @@ static class TeventDispatcherAsserter
          _dispatcher.Register().IgnoreAllUnhandled();
          _dispatcher.Register().ForGenericTevent((THandlerTevent _) => callCount++);
          _dispatcher.Dispatch(_tevent);
-         callCount.Should().Be(1, "Tessage was not dispatched to handler.");
+         callCount.Must().Be(1, "Tessage was not dispatched to handler.");
       }
 
       public void DispatchesToWrapped<THandlerTevent>()
@@ -105,7 +105,7 @@ static class TeventDispatcherAsserter
          _dispatcher.Register().IgnoreAllUnhandled();
          _dispatcher.Register().ForWrapped((THandlerTevent _) => callCount++);
          _dispatcher.Dispatch(_tevent);
-         callCount.Should().Be(1, "Tessage was not dispatched to handler.");
+         callCount.Must().Be(1, "Tessage was not dispatched to handler.");
       }
 
       public void DispatchesToWrappedGeneric<THandlerTevent>()
@@ -115,7 +115,7 @@ static class TeventDispatcherAsserter
          _dispatcher.Register().IgnoreAllUnhandled();
          _dispatcher.Register().ForWrappedGeneric((THandlerTevent _) => callCount++);
          _dispatcher.Dispatch(_tevent);
-         callCount.Should().Be(1, "Tessage was not dispatched to handler.");
+         callCount.Must().Be(1, "Tessage was not dispatched to handler.");
       }
 
       public void DoesNotDispatchToWrapped<THandlerTevent>()
@@ -125,7 +125,7 @@ static class TeventDispatcherAsserter
          _dispatcher.Register().IgnoreAllUnhandled();
          _dispatcher.Register().ForWrapped((THandlerTevent _) => callCount++);
          _dispatcher.Dispatch(_tevent);
-         callCount.Should().Be(0, "Tessage was dispatched to handler.");
+         callCount.Must().Be(0, "Tessage was dispatched to handler.");
       }
    }
 

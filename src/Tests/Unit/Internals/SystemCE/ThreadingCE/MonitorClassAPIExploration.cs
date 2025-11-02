@@ -1,9 +1,9 @@
 using System;
 using System.Threading;
 using Compze.Utilities.SystemCE;
+using Compze.Utilities.Testing.Fluent;
 using Compze.Utilities.Testing.XUnit.BDD;
 using Compze.Utilities.Threading.Testing;
-using FluentAssertions;
 
 // ReSharper disable ImplicitlyCapturedClosure
 
@@ -17,7 +17,7 @@ public class MonitorClassApiExploration
 
       Monitor.Enter(guarded);
       Monitor.Wait(guarded, 1.Milliseconds())
-             .Should()
+             .Must()
              .BeFalse();
    }
 
@@ -51,13 +51,13 @@ public class MonitorClassApiExploration
 
       threadOneWaitsOnLockSection.ExitGate
                                  .TryAwaitPassedThroughCountEqualTo(1, timeout: 200.Milliseconds())
-                                 .Should().Be(false);
+                                 .Must().Be(false);
 
       threadTwoHasAcquiredLockAndWishesToReleaseItGate.AwaitLetOneThreadPassThrough();
 
       threadOneWaitsOnLockSection.ExitGate.AwaitPassedThroughCountEqualTo(1);
 
-      waitSucceeded.Should().Be(false);
+      waitSucceeded.Must().Be(false);
    }
 
    [XF] public void Wait_does_not_hang_on_long_timeout_values()
@@ -91,12 +91,12 @@ public class MonitorClassApiExploration
 
       threadOneWaitsOnLockSection.ExitGate
                                  .TryAwaitPassedThroughCountEqualTo(1, timeout: 200.Milliseconds())
-                                 .Should().Be(false);
+                                 .Must().Be(false);
 
       threadTwoHasAcquiredLockAndWishesToReleaseItGate.AwaitLetOneThreadPassThrough();
 
       threadOneWaitsOnLockSection.ExitGate.AwaitPassedThroughCountEqualTo(1);
 
-      waitSucceeded.Should().Be(true);
+      waitSucceeded.Must().Be(true);
    }
 }

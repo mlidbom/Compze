@@ -1,9 +1,10 @@
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.Threading.Testing;
-using FluentAssertions.Extensions;
+
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;

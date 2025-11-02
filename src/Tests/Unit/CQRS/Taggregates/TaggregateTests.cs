@@ -5,9 +5,9 @@ using Compze.Core.Time.Public;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.SystemCE.ReactiveCE;
 using Compze.Utilities.Testing.XUnit.BDD;
-using FluentAssertions;
 using System.Collections.Generic;
 using Compze.Core.Public;
+using Compze.Utilities.Testing.Fluent;
 
 namespace Compze.Tests.Unit.CQRS.Taggregates;
 
@@ -17,16 +17,16 @@ public class TaggregateTests : UniversalTestBase
    public void VersionIncreasesWithEachAppliedTevent()
    {
       var user = new User();
-      user.Version.Should().Be(0);
+      user.Version.Must().Be(0);
 
       user.Register("email", "password", new TaggregateId());
-      user.Version.Should().Be(1);
+      user.Version.Must().Be(1);
 
       user.ChangeEmail("NewEmail");
-      user.Version.Should().Be(2);
+      user.Version.Must().Be(2);
 
       user.ChangePassword("NewPassword");
-      user.Version.Should().Be(3);
+      user.Version.Must().Be(3);
    }
 
    [XF]
@@ -34,19 +34,19 @@ public class TaggregateTests : UniversalTestBase
    {
       var user = new User();
       ITaggregate userAsteventStored = user;
-      user.Version.Should().Be(0);
+      user.Version.Must().Be(0);
 
       user.Register("email", "password", new TaggregateId());
       userAsteventStored.Commit(_ => {});
-      userAsteventStored.Commit(tevents => tevents.Should().BeEmpty());
+      userAsteventStored.Commit(tevents => tevents.Must().BeEmpty());
 
       user.ChangeEmail("NewEmail");
       userAsteventStored.Commit(_ => {});
-      userAsteventStored.Commit(tevents => tevents.Should().BeEmpty());
+      userAsteventStored.Commit(tevents => tevents.Must().BeEmpty());
 
       user.ChangePassword("NewPassword");
       userAsteventStored.Commit(_ => {});
-      userAsteventStored.Commit(tevents => tevents.Should().BeEmpty());
+      userAsteventStored.Commit(tevents => tevents.Must().BeEmpty());
    }
 
    [XF]
@@ -59,18 +59,18 @@ public class TaggregateTests : UniversalTestBase
          using(((ITaggregate)taggregate).TeventStream.Subscribe(tevent =>
                {
                   receivedTevents.Add(tevent);
-                  taggregate.TriggeringTeventApplied.Should()
+                  taggregate.TriggeringTeventApplied.Must()
                             .BeTrue();
-                  taggregate.TriggeredTeventApplied.Should()
+                  taggregate.TriggeredTeventApplied.Must()
                             .BeTrue();
                }))
          {
             taggregate.RaiseTriggeringTevent();
          }
 
-         receivedTevents.Count.Should().Be(2);
-         receivedTevents[0].GetType().Should().Be<TriggeringTevent>();
-         receivedTevents[1].GetType().Should().Be<TriggeredTevent>();
+         receivedTevents.Count.Must().Be(2);
+         receivedTevents[0].GetType().Must().Be(typeof(TriggeringTevent));
+         receivedTevents[1].GetType().Must().Be(typeof(TriggeredTevent));
       });
    }
 

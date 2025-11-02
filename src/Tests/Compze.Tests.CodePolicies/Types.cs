@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
-using Compze.Tests.Infrastructure.Fluent;
 using Compze.Utilities.SystemCE;
+using Compze.Utilities.Testing.Fluent;
 using Compze.Utilities.Testing.XUnit.BDD;
 
 namespace Compze.Tests.CodePolicies;

@@ -29,7 +29,7 @@ class Root : Taggregate<Root, RootTevent.IRoot, RootTevent.Implementation.Root>
 class Component : Root.Component<Component, RootTevent.Component.Implementation.Root, RootTevent.Component.IRoot>
 {
    static int _instances;
-   public string Name { get; private set; } = string.Empty;
+   public string? Name { get; private set; } = string.Empty;
 
    public Component(Root parent): base(parent)
    {

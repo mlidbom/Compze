@@ -8,15 +8,14 @@ using Compze.Core.Public;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tests.Common.Sql.DocumentDb;
 using Compze.Tests.Infrastructure;
-using Compze.Tests.Infrastructure.Fluent;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Tests.Infrastructure.XUnit;
+using Compze.Utilities.Testing.Fluent;
 using Compze.Utilities.Threading;
 using Compze.Utilities.Threading.TasksCE;
-using FluentAssertions;
-using static FluentAssertions.FluentActions;
+using static Compze.Utilities.Testing.Fluent.MustActions;
 
 // ReSharper disable AccessToDisposedClosure
 
@@ -45,11 +44,11 @@ public class DocumentDbTests : DocumentDbTestsBase
         {
             var loadedUser = reader.Get<User>(user.Id);
 
-            loadedUser.Id.Should().Be(user.Id);
-            loadedUser.Email.Should().Be(user.Email);
-            loadedUser.Password.Should().Be(user.Password);
+            loadedUser.Id.Must().Be(user.Id);
+            loadedUser.Email.Must().Be(user.Email);
+            loadedUser.Password.Must().Be(user.Password);
 
-            loadedUser.Address.Should().Be(user.Address);
+            loadedUser.Address.Must().Be(user.Address);
         });
     }
 
@@ -64,7 +63,7 @@ public class DocumentDbTests : DocumentDbTestsBase
 
         UseInScope(reader => reader.GetAll<User>(ids.Take(5))
                                    .Select(fetched => fetched.Id)
-                                   .Should()
+                                   .Must()
                                    .Equal(ids.Take(5)));
     }
 
@@ -85,7 +84,7 @@ public class DocumentDbTests : DocumentDbTestsBase
                                                    .Append(new EntityId(Guid.Parse("00000000-0000-0000-0000-000000000099")))
                                                    .ToArray())
                                   // ReSharper disable once ReturnValueOfPureMethodIsNotUsed
-                                  .ToArray()).Should().Throw<ArgumentOutOfRangeException>());
+                                  .ToArray()).Must().Throw<ArgumentOutOfRangeException>());
     }
 
 
@@ -105,7 +104,7 @@ public class DocumentDbTests : DocumentDbTestsBase
             var fetchedWithGetAll = reader.GetAll<User>(ids)
                                         .ToArray();
 
-            fetchedIndividually.ForEach((user, index) => user.Should().BeSameAs(fetchedWithGetAll[index]));
+            fetchedIndividually.ForEach((user, index) => user.Must().BeSameAs(fetchedWithGetAll[index]));
         });
     }
 
@@ -132,11 +131,11 @@ public class DocumentDbTests : DocumentDbTestsBase
         {
             var loadedUser = updater.GetForUpdate<User>(user.Id);
 
-            loadedUser.Id.Should().Be(user.Id);
-            loadedUser.Email.Should().Be(user.Email);
-            loadedUser.Password.Should().Be(user.Password);
+            loadedUser.Id.Must().Be(user.Id);
+            loadedUser.Email.Must().Be(user.Email);
+            loadedUser.Password.Must().Be(user.Password);
 
-            loadedUser.Address.Should().Be(user.Address);
+            loadedUser.Address.Must().Be(user.Address);
         });
     }
 
@@ -151,20 +150,20 @@ public class DocumentDbTests : DocumentDbTestsBase
             updater.Save(user2);
             updater.Save(user1.Id, user1);
             reader.Get<User>(user1.Id)
-                 .Should()
+                 .Must()
                  .Be(user1);
             reader.Get<User>(user2.Id)
-                 .Should()
+                 .Must()
                  .Be(user2);
         });
 
         UseInScope(reader =>
         {
             reader.Get<User>(user1.Id)
-                 .Id.Should()
+                 .Id.Must()
                  .Be(user1.Id);
             reader.Get<User>(user2.Id)
-                 .Id.Should()
+                 .Id.Must()
                  .Be(user2.Id);
         });
     }
@@ -182,7 +181,7 @@ public class DocumentDbTests : DocumentDbTestsBase
 
         UseInScope(reader =>
                       reader.TryGet(user.Id, out user)
-                            .Should()
+                            .Must()
                             .BeFalse());
     }
 
@@ -198,7 +197,7 @@ public class DocumentDbTests : DocumentDbTestsBase
             updater.Save(user.Id, user);
         });
 
-        UseInScope(reader => reader.TryGet(user.Id, out user).Should().BeTrue());
+        UseInScope(reader => reader.TryGet(user.Id, out user).Must().BeTrue());
     }
 
     [PCT]
@@ -210,27 +209,27 @@ public class DocumentDbTests : DocumentDbTestsBase
         UseInTransactionalScope((reader, updater) =>
         {
            updater.Save(lowerCase.TheEmail, lowerCase);
-           Invoking(() => updater.Save(upperCase.TheEmail, upperCase)).Should().Throw<ArgumentException>();
+           Invoking(() => updater.Save(upperCase.TheEmail, upperCase)).Must().Throw<ArgumentException>();
 
            reader.Get<Email>(lowerCase.TheEmail)
-                 .Should()
+                 .Must()
                  .Be(reader.Get<Email>(upperCase.TheEmail));
         });
 
         UseInTransactionalScope((reader, updater) =>
         {
 
-            Invoking(() => updater.Save(upperCase.TheEmail, upperCase)).Should().Throw<ArgumentException>();
+            Invoking(() => updater.Save(upperCase.TheEmail, upperCase)).Must().Throw<ArgumentException>();
             reader.Get<Email>(upperCase.TheEmail)
-                .TheEmail.Should()
+                .TheEmail.Must()
                 .Be(lowerCase.TheEmail);
             reader.Get<Email>(lowerCase.TheEmail)
-                .Should()
+                .Must()
                 .Be(reader.Get<Email>(upperCase.TheEmail));
 
             updater.Delete<Email>(upperCase.TheEmail);
-            Invoking(() => updater.Delete<Email>(upperCase.TheEmail)).Should().Throw<ArgumentOutOfRangeException>();
-            Invoking(() => updater.Delete<Email>(lowerCase.TheEmail)).Should().Throw<ArgumentOutOfRangeException>();
+            Invoking(() => updater.Delete<Email>(upperCase.TheEmail)).Must().Throw<ArgumentOutOfRangeException>();
+            Invoking(() => updater.Delete<Email>(lowerCase.TheEmail)).Must().Throw<ArgumentOutOfRangeException>();
         });
     }
 
@@ -243,26 +242,26 @@ public class DocumentDbTests : DocumentDbTestsBase
         UseInTransactionalScope((reader, updater) =>
         {
             updater.Save(noWhitespace.TheEmail, noWhitespace);
-            Invoking(() => updater.Save(withWhitespace.TheEmail, withWhitespace)).Should().Throw<ArgumentException>();
+            Invoking(() => updater.Save(withWhitespace.TheEmail, withWhitespace)).Must().Throw<ArgumentException>();
 
             reader.Get<Email>(noWhitespace.TheEmail)
-                .Should()
+                .Must()
                 .Be(reader.Get<Email>(withWhitespace.TheEmail));
         });
 
         UseInTransactionalScope((reader, updater) =>
         {
-            Invoking(() => updater.Save(withWhitespace.TheEmail, withWhitespace)).Should().Throw<ArgumentException>();
+            Invoking(() => updater.Save(withWhitespace.TheEmail, withWhitespace)).Must().Throw<ArgumentException>();
             reader.Get<Email>(withWhitespace.TheEmail)
-                .TheEmail.Should()
+                .TheEmail.Must()
                 .Be(noWhitespace.TheEmail);
             reader.Get<Email>(noWhitespace.TheEmail)
-                .Should()
+                .Must()
                 .Be(reader.Get<Email>(withWhitespace.TheEmail));
 
             updater.Delete<Email>(withWhitespace.TheEmail);
-            Invoking(() => updater.Delete<Email>(withWhitespace.TheEmail)).Should().Throw<ArgumentOutOfRangeException>();
-            Invoking(() => updater.Delete<Email>(noWhitespace.TheEmail)).Should().Throw<ArgumentOutOfRangeException>();
+            Invoking(() => updater.Delete<Email>(withWhitespace.TheEmail)).Must().Throw<ArgumentOutOfRangeException>();
+            Invoking(() => updater.Delete<Email>(noWhitespace.TheEmail)).Must().Throw<ArgumentOutOfRangeException>();
         });
     }
 
@@ -272,7 +271,7 @@ public class DocumentDbTests : DocumentDbTestsBase
         var user = new User();
 
         UseInScope(reader => reader.TryGet(user.Id, out user)
-                                   .Should()
+                                   .Must()
                                    .Be(false));
     }
 
@@ -292,7 +291,7 @@ public class DocumentDbTests : DocumentDbTestsBase
         });
 
         UseInScope(reader => reader.TryGet(user.Id, out user)
-                                   .Should()
+                                   .Must()
                                    .BeFalse());
     }
 
@@ -309,24 +308,24 @@ public class DocumentDbTests : DocumentDbTestsBase
             updater.Delete(user);
 
             reader.TryGet(user.Id, out User? _)
-                .Should()
+                .Must()
                 .Be(false);
             updater.Save(user);
             reader.TryGet(user.Id, out User? _)
-                .Should()
+                .Must()
                 .Be(true);
             updater.Delete(user);
             reader.TryGet(user.Id, out User? _)
-                .Should()
+                .Must()
                 .Be(false);
             updater.Save(user);
             reader.TryGet(user.Id, out User? _)
-                .Should()
+                .Must()
                 .Be(true);
         });
 
         UseInScope(reader => reader.TryGet(user.Id, out user)
-                                   .Should()
+                                   .Must()
                                    .Be(true));
     }
 
@@ -342,7 +341,7 @@ public class DocumentDbTests : DocumentDbTestsBase
         {
             var loaded1 = reader.Get<User>(user.Id);
             var loaded2 = reader.Get<User>(user.Id);
-            loaded1.Should().BeSameAs(loaded2);
+            loaded1.Must().BeSameAs(loaded2);
         });
     }
 
@@ -357,8 +356,8 @@ public class DocumentDbTests : DocumentDbTestsBase
 
             var loaded1 = reader.Get<User>(user.Id);
             var loaded2 = reader.Get<User>(user.Id);
-            loaded1.Should().BeSameAs(loaded2);
-            loaded1.Should().BeSameAs(user);
+            loaded1.Must().BeSameAs(loaded2);
+            loaded1.Must().BeSameAs(user);
         });
     }
 
@@ -373,7 +372,7 @@ public class DocumentDbTests : DocumentDbTestsBase
         UseInScope(reader =>
         {
             var loadedUser = reader.Get<HashSet<User>>(user.Id);
-            loadedUser.Count.Should().Be(1);
+            loadedUser.Count.Must().Be(1);
         });
     }
 
@@ -395,9 +394,9 @@ public class DocumentDbTests : DocumentDbTestsBase
         UseInScope(reader =>
         {
             var loadedUser = reader.Get<User>(user.Id);
-            loadedUser.People.Count.Should().Be(1);
+            loadedUser.People.Count.Must().Be(1);
             var loadedUserInSet = loadedUser.People.Single();
-            loadedUserInSet.Id.Should().Be(userInSet.Id);
+            loadedUserInSet.Id.Must().Be(userInSet.Id);
         });
     }
 
@@ -412,7 +411,7 @@ public class DocumentDbTests : DocumentDbTestsBase
         });
 
         var buster = new Dog { Id = new EntityId() };
-        UseInTransactionalScope((_, updater) => Invoking(() => updater.Delete(buster)).Should().Throw<ArgumentOutOfRangeException>());
+        UseInTransactionalScope((_, updater) => Invoking(() => updater.Delete(buster)).Must().Throw<ArgumentOutOfRangeException>());
     }
 
     [PCT]
@@ -425,14 +424,14 @@ public class DocumentDbTests : DocumentDbTestsBase
         UseInTransactionalScope((reader, updater) =>
         {
             var loadedUser = updater.GetForUpdate<User>(user.Id);
-            loadedUser.Should()
+            loadedUser.Must()
                     .NotBeNull();
             updater.Delete(user);
 
-            Invoking(() => reader.Get<User>(user.Id)).Should().Throw<ArgumentOutOfRangeException>();
+            Invoking(() => reader.Get<User>(user.Id)).Must().Throw<ArgumentOutOfRangeException>();
         });
 
-        UseInScope(reader => Invoking(() => reader.Get<User>(user.Id)).Should().Throw<ArgumentOutOfRangeException>());
+        UseInScope(reader => Invoking(() => reader.Get<User>(user.Id)).Must().Throw<ArgumentOutOfRangeException>());
     }
 
     [PCT]
@@ -445,10 +444,10 @@ public class DocumentDbTests : DocumentDbTestsBase
         UseInTransactionalScope((_, updater) =>
         {
             updater.Delete(user);
-            Invoking(() => updater.GetForUpdate<User>(user.Id)).Should().Throw<ArgumentOutOfRangeException>();
+            Invoking(() => updater.GetForUpdate<User>(user.Id)).Must().Throw<ArgumentOutOfRangeException>();
         });
 
-        UseInScope(reader => Invoking(() => reader.Get<User>(user.Id)).Should().Throw<ArgumentOutOfRangeException>());
+        UseInScope(reader => Invoking(() => reader.Get<User>(user.Id)).Must().Throw<ArgumentOutOfRangeException>());
     }
 
     [PCT]
@@ -460,10 +459,10 @@ public class DocumentDbTests : DocumentDbTestsBase
         {
             updater.Save(user);
             updater.Delete(user);
-            Invoking(() => updater.GetForUpdate<User>(user.Id)).Should().Throw<ArgumentOutOfRangeException>();
+            Invoking(() => updater.GetForUpdate<User>(user.Id)).Must().Throw<ArgumentOutOfRangeException>();
         });
 
-        UseInScope(reader => Invoking(() => reader.Get<User>(user.Id)).Should().Throw<ArgumentOutOfRangeException>());
+        UseInScope(reader => Invoking(() => reader.Get<User>(user.Id)).Must().Throw<ArgumentOutOfRangeException>());
     }
 
     [PCT]
@@ -482,7 +481,7 @@ public class DocumentDbTests : DocumentDbTestsBase
         UseInScope(reader =>
         {
             var loadedUser = reader.Get<User>(user.Id);
-            loadedUser.Password.Should().Be("NewPassword");
+            loadedUser.Password.Must().Be("NewPassword");
         });
     }
 
@@ -493,7 +492,7 @@ public class DocumentDbTests : DocumentDbTestsBase
 
         UseInTransactionalScope((_, updater) => updater.Save(user.Id, user));
 
-        Invoking(() => UseInTransactionalScope((_, updater) => updater.Save(user.Id, user))).Should().Throw<ArgumentException>();
+        Invoking(() => UseInTransactionalScope((_, updater) => updater.Save(user.Id, user))).Must().Throw<ArgumentException>();
     }
 
     [PCT]
@@ -517,10 +516,10 @@ public class DocumentDbTests : DocumentDbTestsBase
             var loadedDog = reader.Get<Dog>(dog.Id);
             var loadedUser = reader.Get<User>(dog.Id);
 
-            loadedDog.Name.Should().Be(dog.Name);
-            loadedUser.Email.Should().Be(user.Email);
-            loadedDog.Id.Should().Be(user.Id);
-            loadedUser.Id.Should().Be(user.Id);
+            loadedDog.Name.Must().Be(dog.Name);
+            loadedUser.Email.Must().Be(user.Email);
+            loadedDog.Id.Must().Be(user.Id);
+            loadedUser.Id.Must().Be(user.Id);
         });
     }
 
@@ -538,8 +537,8 @@ public class DocumentDbTests : DocumentDbTestsBase
 
         using (ServiceLocator.BeginScope())
         {
-            ServiceLocator.DocumentDbBulkReader().GetAll<Dog>().ToList().Should().HaveCount(2);
-            ServiceLocator.DocumentDbBulkReader().GetAll<User>().ToList().Should().HaveCount(2);
+            ServiceLocator.DocumentDbBulkReader().GetAll<Dog>().ToList().Must().HaveCount(2);
+            ServiceLocator.DocumentDbBulkReader().GetAll<User>().ToList().Must().HaveCount(2);
         }
     }
 
@@ -559,14 +558,14 @@ public class DocumentDbTests : DocumentDbTestsBase
 
         var user = new User();
 
-        Invoking(() => session.Get<User>(Guid.NewGuid())).Should().Throw<MultiThreadedUseException>();
-        Invoking(() => session.GetAll<User>()).Should().Throw<MultiThreadedUseException>();
-        Invoking(() => session.Save(user, user.Id)).Should().Throw<MultiThreadedUseException>();
-        Invoking(() => session.Delete(user)).Should().Throw<MultiThreadedUseException>();
-        Invoking(() => session.Dispose()).Should().Throw<MultiThreadedUseException>();
-        Invoking(() => session.Save(new User())).Should().Throw<MultiThreadedUseException>();
-        Invoking(() => session.TryGet(Guid.NewGuid(), out user)).Should().Throw<MultiThreadedUseException>();
-        Invoking(() => session.Delete(user)).Should().Throw<MultiThreadedUseException>();
+        Invoking(() => session.Get<User>(Guid.NewGuid())).Must().Throw<MultiThreadedUseException>();
+        Invoking(() => session.GetAll<User>()).Must().Throw<MultiThreadedUseException>();
+        Invoking(() => session.Save(user, user.Id)).Must().Throw<MultiThreadedUseException>();
+        Invoking(() => session.Delete(user)).Must().Throw<MultiThreadedUseException>();
+        Invoking(() => session.Dispose()).Must().Throw<MultiThreadedUseException>();
+        Invoking(() => session.Save(new User())).Must().Throw<MultiThreadedUseException>();
+        Invoking(() => session.TryGet(Guid.NewGuid(), out user)).Must().Throw<MultiThreadedUseException>();
+        Invoking(() => session.Delete(user)).Must().Throw<MultiThreadedUseException>();
     }
 
 
@@ -605,15 +604,15 @@ public class DocumentDbTests : DocumentDbTestsBase
         {
             var people = ServiceLocator.DocumentDbBulkReader().GetAll<Person>().Select(it => it.Id).ToHashSet();
 
-            people.Should().HaveCount(2);
-            people.Should().Contain(user1.Id);
-            people.Should().Contain(person1.Id);
+            people.Must().HaveCount(2);
+            people.Must().Contain(user1.Id);
+            people.Must().Contain(person1.Id);
         }
     }
 
     [PCT]
     public void ThrowsExceptionIfYouTryToCreateAnIHasPersistentIdentityWithNoId() => 
-       Invoking(() => new User(Guid.Empty)).Should().Throw<Exception>();
+       Invoking(() => new User(Guid.Empty)).Must().Throw<Exception>();
 
     [PCT]
     public void GetByIdsShouldReturnOnlyMatchingResultEvenWhenMoreResultsAreInTheCache()
@@ -628,8 +627,8 @@ public class DocumentDbTests : DocumentDbTestsBase
 
             var people = reader.GetAll<User>([user1.Id]);
 
-            people.ToList().Should().HaveCount(1);
-            people.Should().Contain(user1);
+            people.ToList().Must().HaveCount(1);
+            people.Must().Contain(user1);
         });
     }
 
@@ -657,11 +656,10 @@ public class DocumentDbTests : DocumentDbTestsBase
                                   .GetAllIds<User>()
                                   .ToHashSet();
 
-            ids.Count.Should()
-             .Be(2);
-            ids.Should()
-             .Contain(userid1);
-            ids.Should()
+
+            ids.Must()
+               .HaveCount(2)
+             .Contain(userid1)
              .Contain(userid2);
         });
     }
@@ -686,11 +684,11 @@ public class DocumentDbTests : DocumentDbTestsBase
                                   .GetAllIds<User>()
                                   .ToHashSet();
 
-            ids.Count.Should()
+            ids.Count.Must()
              .Be(2);
-            ids.Should()
+            ids.Must()
              .Contain(userid1);
-            ids.Should()
+            ids.Must()
              .Contain(userid2);
         });
     }
@@ -721,14 +719,14 @@ public class DocumentDbTests : DocumentDbTestsBase
         using (ServiceLocator.BeginScope())
         {
             var store = CreateStore();
-            store.GetAll<User>().Should().HaveCount(4);
-            store.GetAll<Person>().Should().HaveCount(8); //User inherits person
+            store.GetAll<User>().Must().HaveCount(4);
+            store.GetAll<Person>().Must().HaveCount(8); //User inherits person
 
             store.GetAllIds<User>().ForEach(userId => store.Remove(userId, typeof(User)));
 
-            store.GetAll<User>().Should().HaveCount(0);
+            store.GetAll<User>().Must().HaveCount(0);
 
-            store.GetAll<Person>().Should().HaveCount(4);
+            store.GetAll<Person>().Must().HaveCount(4);
         }
 
     }
@@ -763,7 +761,7 @@ public class DocumentDbTests : DocumentDbTestsBase
 
         using (ServiceLocator.BeginScope())
         {
-            ServiceLocator.DocumentDbSession().GetAll<User>().Count().Should().Be(1);
+            ServiceLocator.DocumentDbSession().GetAll<User>().Count().Must().Be(1);
         }
     }
 
@@ -776,7 +774,7 @@ public class DocumentDbTests : DocumentDbTestsBase
 
         UseInScope(reader => reader.GetAll<User>([new EntityId(userId)])
                                    .Count()
-                                   .Should()
+                                   .Must()
                                    .Be(1));
     }
 }

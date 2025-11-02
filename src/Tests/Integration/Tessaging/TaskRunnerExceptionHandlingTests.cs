@@ -7,10 +7,11 @@ using Compze.Utilities.Functional;
 using Compze.Utilities.Logging;
 using Compze.Utilities.Threading.TasksCE;
 using Compze.Utilities.Threading.Testing;
-using FluentAssertions;
-using FluentAssertions.Extensions;
 using System;
+using Compze.Utilities.SystemCE;
+using System.Linq;
 using System.Threading.Tasks;
+using Compze.Utilities.Testing.Fluent;
 
 namespace Compze.Tests.Integration.Tessaging;
 
@@ -48,10 +49,10 @@ public class TaskRunnerExceptionHandlingTests : UniversalTestBase
 
 
          var disposeAction = async () => await _host.DisposeAsync().caf();
-         var taggregateException = await disposeAction.Should().ThrowAsync<AggregateException>();
+         var taggregateException = await disposeAction.Must().ThrowAsync<AggregateException>();
 
          var flattened = taggregateException.Which.Flatten();
-         flattened.InnerExceptions.Should().Contain(e => e is InvalidOperationException && e.Message == "exception1");
+         flattened.InnerExceptions.Must().Satisfy(it => it.Any(e => e is InvalidOperationException && e.Message == "exception1"));
       });
    }
 
@@ -69,13 +70,13 @@ public class TaskRunnerExceptionHandlingTests : UniversalTestBase
          gate.AwaitPassedThroughCountEqualTo(3);
 
          var disposeAction = async () => await _host.DisposeAsync().caf();
-         var taggregateException = await disposeAction.Should().ThrowAsync<AggregateException>();
+         var taggregateException = await disposeAction.Must().ThrowAsync<AggregateException>();
 
          var flattened = taggregateException.Which.Flatten();
-         flattened.InnerExceptions.Should().HaveCount(3);
-         flattened.InnerExceptions.Should().Contain(e => e is InvalidOperationException && e.Message == "exception1");
-         flattened.InnerExceptions.Should().Contain(e => e is ArgumentException && e.Message == "exception2");
-         flattened.InnerExceptions.Should().Contain(e => e is NotSupportedException && e.Message == "exception3");
+         flattened.InnerExceptions.Must().HaveCount(3);
+         flattened.InnerExceptions.Must().Satisfy(it => it.Any(e => e is InvalidOperationException && e.Message == "exception1"));
+         flattened.InnerExceptions.Must().Satisfy(it => it.Any(e => e is ArgumentException && e.Message == "exception2"));
+         flattened.InnerExceptions.Must().Satisfy(it => it.Any(e => e is NotSupportedException && e.Message == "exception3"));
       });
    }
 }

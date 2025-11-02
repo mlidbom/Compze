@@ -28,7 +28,12 @@ public class Type<T>
       static Func<T, T, bool>? TryGetBooleanOperator(string operatorName)
       {
          var method = typeof(T).GetMethod(operatorName, System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static, null, [typeof(T), typeof(T)], null);
-         return method != null ? (left, right) => (bool)method.Invoke(null, [left, right])! : null;
+
+         // Only use operators that actually return bool (not SqlBoolean or other "boolean-like" types)
+         if(method == null || method.ReturnType != typeof(bool))
+            return null;
+
+         return (left, right) => (bool)method.Invoke(null, [left, right])!;
       }
    }
 }

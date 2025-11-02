@@ -1,13 +1,13 @@
 using System;
+using Compze.Utilities.SystemCE;
 using System.Threading.Tasks;
 using System.Transactions;
 using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
 using Compze.Tests.Infrastructure.XUnit;
+using Compze.Utilities.Testing.Fluent;
 using Compze.Utilities.Threading.Testing;
-using FluentAssertions;
-using FluentAssertions.Extensions;
 
 namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
 
@@ -26,11 +26,11 @@ public class Retry_policies_AtMostOnceTommand_when_tommand_handler_fails : Endpo
    [PCT] public void ExactlyOnce_Tevent_raised_in_handler_does_not_reach_remote_handler()
    {
       MyRemoteTaggregateTeventHandlerThreadGate.TryAwaitPassedThroughCountEqualTo(count: 1, 1.Seconds())
-                                             .Should()
-                                             .Be(expected: false, because: "tevent should not reach handler");
+                                             .Must()
+                                             .Be(expected: false);
    }
 
-   [PCT] public void Tommand_handler_is_tried_5_times() => MyCreateTaggregateTommandHandlerThreadGate.Passed.Should().Be(expected: 5);
+   [PCT] public void Tommand_handler_is_tried_5_times() => MyCreateTaggregateTommandHandlerThreadGate.Passed.Must().Be(expected: 5);
 
-   [PCT] public void ExactlyOnce_Tevent_raised_in_handler_reaches_local_handler_5_times() => MyLocalTaggregateTeventHandlerThreadGate.Passed.Should().Be(expected: 5);
+   [PCT] public void ExactlyOnce_Tevent_raised_in_handler_reaches_local_handler_5_times() => MyLocalTaggregateTeventHandlerThreadGate.Passed.Must().Be(expected: 5);
 }

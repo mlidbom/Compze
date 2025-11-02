@@ -16,9 +16,9 @@ public class ThreadGate : IThreadGate
 
    public bool IsOpen { get; private set; }
 
-   public long Queued => _monitor.Read(() => _queuedThreads.Count);
-   public long Passed => _monitor.Read(() => _passedThreads.Count);
-   public long Requested => _monitor.Read(() => _requestsThreads.Count);
+   public int Queued => _monitor.Read(() => _queuedThreads.Count);
+   public int Passed => _monitor.Read(() => _passedThreads.Count);
+   public int Requested => _monitor.Read(() => _requestsThreads.Count);
 
    public IReadOnlyList<ThreadSnapshot> RequestedThreads => _monitor.Read(() => _requestsThreads.ToList());
    public IReadOnlyList<ThreadSnapshot> QueuedThreads => _monitor.Read(() => _queuedThreads.ToList());

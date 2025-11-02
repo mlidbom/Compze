@@ -4,7 +4,6 @@
       <Nullable>enable</Nullable>
    </PropertyGroup>
    <ItemGroup>
-      <PackageReference Include="FluentAssertions" Version="8.7.1" />
       <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
       <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
          <PrivateAssets>all</PrivateAssets>
@@ -19,8 +18,10 @@
       <PackageReference Include="Serilog.Sinks.Seq" Version="9.0.0" />
    </ItemGroup>
    <ItemGroup>
+      <ProjectReference Include="..\Infrastructure\Compze.Tests.Infrastructure.csproj" />
       <ProjectReference Include="..\..\Compze\Utilities\Testing\XUnit\Compze.Utilities.Testing.XUnit.csproj" />
       <ProjectReference Include="..\..\Compze\Utilities\Compze.Utilities.csproj" />
       <ProjectReference Include="..\..\Compze\Abstractions\Compze.Core.csproj" />
+      <ProjectReference Include="..\..\Compze\Utilities\Testing\Fluent\Compze.Utilities.Testing.Fluent.csproj" />
    </ItemGroup>
 </Project>

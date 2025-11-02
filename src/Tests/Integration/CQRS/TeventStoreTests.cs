@@ -6,15 +6,14 @@ using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.TransactionsCE;
-using FluentAssertions;
 using System;
 using System.Linq;
 using System.Transactions;
 using Compze.Core.Tessaging.Teventive.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.Public;
-using Compze.Tests.Infrastructure.Fluent;
 using Compze.Tests.Infrastructure.XUnit;
+using Compze.Utilities.Testing.Fluent;
 
 namespace Compze.Tests.Integration.CQRS;
 
@@ -46,7 +45,7 @@ public class TeventStoreTests : UniversalTestBase
                                                                              .Select(i => new SomeTevent(taggregateId, i)).ToList()));
       var stream = TeventStore.ListAllTeventsForTestingPurposesAbsolutelyNotUsableForARealTeventStoreOfAnySize();
 
-      stream.Should()
+      stream.Must()
             .HaveCount(10);
    });
 
@@ -64,11 +63,11 @@ public class TeventStoreTests : UniversalTestBase
                              .ToList();
 
       var currentTeventNumber = 0;
-      stream.Should()
+      stream.Must()
             .HaveCount(moreTeventsThanTheBatchSizeForStreamingTevents);
       foreach(var taggregateTevent in stream)
       {
-         taggregateTevent.TaggregateVersion.Should()
+         taggregateTevent.TaggregateVersion.Must()
                        .Be(++currentTeventNumber, "Incorrect tevent version detected");
       }
    });
@@ -93,10 +92,10 @@ public class TeventStoreTests : UniversalTestBase
       TransactionScopeCe.Execute(() => TeventStore.DeleteTaggregate(toRemove));
 
       taggregatesWithTevents.Select(kvp => TeventStore.GetTaggregateHistory(kvp.Value[0].TaggregateId))
-                          .ForEach(stream => stream.Should().HaveCount(10));
+                          .ForEach(stream => stream.Must().HaveCount(10));
 
       TeventStore.GetTaggregateHistory(toRemove)
-                .Should()
+                .Must()
                 .BeEmpty();
    });
 
@@ -117,7 +116,7 @@ public class TeventStoreTests : UniversalTestBase
 
       var allTaggregateIds = TeventStore.StreamTaggregateIdsInCreationOrder()
                                       .ToList();
-      allTaggregateIds.Should().HaveCount(taggregatesWithTevents.Count);
+      allTaggregateIds.Must().HaveCount(taggregatesWithTevents.Count);
    });
 
    //Todo: This does not check that only taggregates of the correct type are returned since there are only tevents of type SomeTevent in the store..
@@ -155,10 +154,10 @@ public class TeventStoreTests : UniversalTestBase
       {
          ((ITaggregate)user).Commit(teventStore.SaveSingleTaggregateTevents);
          teventStore.GetTaggregateHistory(user.Id);
-         teventStore.GetTaggregateHistory(user.Id).Should().NotBeEmpty();
+         teventStore.GetTaggregateHistory(user.Id).Must().NotBeEmpty();
       }
 
-      teventStore.GetTaggregateHistory(user.Id).Should().BeEmpty();
+      teventStore.GetTaggregateHistory(user.Id).Must().BeEmpty();
    });
 
    [PCT]
@@ -177,7 +176,7 @@ public class TeventStoreTests : UniversalTestBase
          {
             ((ITaggregate)user).Commit(teventStore.SaveSingleTaggregateTevents);
             teventStore.GetTaggregateHistory(user.Id);
-            teventStore.GetTaggregateHistory(user.Id).Should().NotBeEmpty();
+            teventStore.GetTaggregateHistory(user.Id).Must().NotBeEmpty();
          });
       }
 
@@ -185,6 +184,6 @@ public class TeventStoreTests : UniversalTestBase
 
       var secondRead = serviceLocator.ExecuteInIsolatedScope(() => serviceLocator.TeventStore().GetTaggregateHistory(user.Id).Single());
 
-      firstRead.Should().BeSameAs(secondRead);
+      firstRead.Must().BeSameAs(secondRead);
    }
 }

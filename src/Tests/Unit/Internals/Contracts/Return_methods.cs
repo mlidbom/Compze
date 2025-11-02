@@ -1,6 +1,6 @@
+using Compze.Utilities.Testing.Fluent;
 using Compze.Utilities.Testing.XUnit.BDD;
-using FluentAssertions;
-using static FluentAssertions.FluentActions;
+using static Compze.Utilities.Testing.Fluent.MustActions;
 
 namespace Compze.Tests.Unit.Internals.Contracts;
 
@@ -15,26 +15,26 @@ public class Return_methods : AssertionMethodsTest
    public class ReturnNotNull_method
    {
       [XF] public void throws_for_null_int() => Invoking(() => Asserter.ReturnNotNull(NullInt))
-                                                  .Should().Throw<AssertionTestException>()
-                                                  .Which.Message.Should().Contain(nameof(NullInt));
+                                                  .Must().Throw<AssertionTestException>()
+                                                  .Which.Message.Must().Contain(nameof(NullInt));
 
       [XF] public void throws_for_null_object() => Invoking(() => Asserter.ReturnNotNull(NullObject))
-                                                     .Should().Throw<AssertionTestException>()
-                                                     .Which.Message.Should().Contain(nameof(NullObject));
+                                                     .Must().Throw<AssertionTestException>()
+                                                     .Which.Message.Must().Contain(nameof(NullObject));
 
-      [XF] public void Returns_the_value_if_valid() => Asserter.ReturnNotNull(EmptyObject).Should().Be(EmptyObject);
+      [XF] public void Returns_the_value_if_valid() => Asserter.ReturnNotNull(EmptyObject).Must().Be(EmptyObject);
    }
 
    public class ReturnNotNullOrDefault_method
    {
       [XF] public void throws_for_null_int() => Invoking(() => Asserter.ReturnNotNullOrDefault(NullInt))
-                                                  .Should().Throw<AssertionTestException>()
-                                                  .Which.Message.Should().Contain(nameof(NullInt));
+                                                  .Must().Throw<AssertionTestException>()
+                                                  .Which.Message.Must().Contain(nameof(NullInt));
 
       [XF] public void throws_for_default_int() => Invoking(() => Asserter.ReturnNotNullOrDefault(DefaultInt))
-                                                     .Should().Throw<AssertionTestException>()
-                                                     .Which.Message.Should().Contain(nameof(DefaultInt));
+                                                     .Must().Throw<AssertionTestException>()
+                                                     .Which.Message.Must().Contain(nameof(DefaultInt));
 
-      [XF] public void Returns_the_value_if_valid() => Asserter.ReturnNotNull(AnInt).Should().Be(AnInt);
+      [XF] public void Returns_the_value_if_valid() => Asserter.ReturnNotNull(AnInt).Must().Be(AnInt);
    }
 }

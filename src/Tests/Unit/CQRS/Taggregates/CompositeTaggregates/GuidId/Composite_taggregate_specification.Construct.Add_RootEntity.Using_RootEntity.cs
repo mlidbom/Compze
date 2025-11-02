@@ -1,5 +1,5 @@
+using Compze.Utilities.Testing.Fluent;
 using Compze.Utilities.Testing.XUnit.BDD;
-using FluentAssertions;
 
 namespace Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId;
 
@@ -15,8 +15,8 @@ public static partial class Composite_taggregate_specification
             {
                public After_calling_rename_with_string_newName() => _rootEntity.Rename("newName");
 
-               [XF] public void Component_Name_is_newName() => _rootEntity.Name.Should().Be("newName");
-               [XF] public void QueryModel_Name_is_newName() => _qmRootEntity.Name.Should().Be("newName");
+               [XF] public void Component_Name_is_newName() => _rootEntity.Name.Must().Be("newName");
+               [XF] public void QueryModel_Name_is_newName() => _qmRootEntity.Name.Must().Be("newName");
             }
          }
       }

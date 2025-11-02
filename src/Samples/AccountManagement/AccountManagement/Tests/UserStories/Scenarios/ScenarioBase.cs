@@ -1,7 +1,6 @@
 using System;
 using AccountManagement.API;
-using FluentAssertions;
-using FluentAssertions.Specialized;
+using Compze.Utilities.Testing.Fluent;
 
 namespace AccountManagement.UserStories.Scenarios;
 
@@ -12,5 +11,5 @@ public abstract class ScenarioBase<TResult>
    public abstract TResult Execute();
 
 
-   public ExceptionAssertions<TException> ExecutingShouldThrow<TException>() where TException : Exception => this.Invoking(it => it.Execute()).Should().Throw<TException>();
+   public CaughtException<TException> ExecutingShouldThrow<TException>() where TException : Exception => this.Invoking(it => it.Execute()).Must().Throw<TException>();
 }

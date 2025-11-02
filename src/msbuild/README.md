@@ -16,9 +16,6 @@ Includes the `TestUsingPluggableComponentCombinations` file in the project outpu
 ### IncludeTestAppSettings.props
 Includes `test-common-appsettings.json` as `appsettings.json` in the project output.
 
-### IncludeFluentAssertionsLicenseSuppressor.props
-Includes the module initializer that suppresses FluentAssertions license messages.
-
 ## Structure Philosophy
 
 - **Modular files** contain only the actual functionality (no conditionals)

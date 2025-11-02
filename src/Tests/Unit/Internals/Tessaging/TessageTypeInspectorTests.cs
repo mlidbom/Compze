@@ -2,8 +2,7 @@ using Compze.Core.Tessaging.Public;
 using Compze.Core.Tessaging.Teventive.Infrastructure.Validation;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.Testing.XUnit.BDD;
-using FluentAssertions;
-using static FluentAssertions.FluentActions;
+using static Compze.Utilities.Testing.Fluent.MustActions;
 
 namespace Compze.Tests.Unit.Internals.Tessaging;
 
@@ -12,8 +11,8 @@ interface INonCovariantParameterPublisherIdentifyingTevent : IPublisherIdentifyi
 
 public class TessageTypeInspector_throws_TessageTypeDesignViolationException_if_ : UniversalTestBase
 {
-   static void AssertInvalidForSending<TTessage>() => Invoking(TessageInspector.AssertValid<TTessage>).Should().Throw<TessageTypeInspector.TessageTypeDesignViolationException>();
-   static void AssertInvalidForSubscription<TTessage>() => Invoking(TessageInspector.AssertValidForSubscription<TTessage>).Should().Throw<TessageTypeInspector.TessageTypeDesignViolationException>();
+   static void AssertInvalidForSending<TTessage>() => Invoking(TessageInspector.AssertValid<TTessage>).Must().Throw<TessageTypeInspector.TessageTypeDesignViolationException>();
+   static void AssertInvalidForSubscription<TTessage>() => Invoking(TessageInspector.AssertValidForSubscription<TTessage>).Must().Throw<TessageTypeInspector.TessageTypeDesignViolationException>();
 
    public class Inspecting_type_for_subscription_ : UniversalTestBase
    {

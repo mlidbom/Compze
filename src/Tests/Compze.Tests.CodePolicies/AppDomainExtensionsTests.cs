@@ -1,8 +1,7 @@
 using System.Linq;
-using Compze.Tests.Infrastructure.Fluent;
 using Compze.Utilities.SystemCE;
+using Compze.Utilities.Testing.Fluent;
 using Compze.Utilities.Testing.XUnit.BDD;
-using FluentAssertions;
 
 namespace Compze.Tests.CodePolicies;
 
@@ -21,7 +20,7 @@ public static class AppDomainExtensionsTests
                                       .Where(assembly => assembly.GetName().Name?.StartsWithOrdinal("Compze.") == true)
                                       .ToList();
 
-         compzeAssemblies.Should().NotBeEmpty("there should be Compze assemblies loaded");
+         compzeAssemblies.Must().NotBeEmpty("there should be Compze assemblies loaded");
 
          var assembliesWithTypes = allTypes
                                   .GroupBy(type => type.Assembly)
@@ -49,8 +48,8 @@ public static class AppDomainExtensionsTests
          var publicTypes = allTypes.Where(type => type.IsPublic || type.IsNestedPublic).ToList();
          var internalTypes = allTypes.Where(type => !type.IsPublic && !type.IsNestedPublic && !type.IsNestedPrivate && !type.IsNestedFamily && !type.IsNestedFamORAssem && !type.IsNestedFamANDAssem).ToList();
 
-         publicTypes.Should().NotBeEmpty("there should be public types in Compze assemblies");
-         internalTypes.Should().NotBeEmpty("there should be internal types in Compze assemblies");
+         publicTypes.Must().NotBeEmpty("there should be public types in Compze assemblies");
+         internalTypes.Must().NotBeEmpty("there should be internal types in Compze assemblies");
       }
 
       [XF]
@@ -61,7 +60,7 @@ public static class AppDomainExtensionsTests
          var allTypes = System.AppDomain.CurrentDomain.AllCompzeTypes();
          var classes = allTypes.Where(type => type.IsClass).ToList();
 
-         classes.Should().NotBeEmpty("there should be classes in Compze assemblies");
+         classes.Must().NotBeEmpty("there should be classes in Compze assemblies");
       }
 
       [XF]
@@ -72,7 +71,7 @@ public static class AppDomainExtensionsTests
          var allTypes = System.AppDomain.CurrentDomain.AllCompzeTypes();
          var structs = allTypes.Where(type => type.IsValueType && !type.IsEnum).ToList();
 
-         structs.Should().NotBeEmpty("there should be structs in Compze assemblies");
+         structs.Must().NotBeEmpty("there should be structs in Compze assemblies");
       }
 
       [XF]
@@ -83,7 +82,7 @@ public static class AppDomainExtensionsTests
          var allTypes = System.AppDomain.CurrentDomain.AllCompzeTypes();
          var interfaces = allTypes.Where(type => type.IsInterface).ToList();
 
-         interfaces.Should().NotBeEmpty("there should be interfaces in Compze assemblies");
+         interfaces.Must().NotBeEmpty("there should be interfaces in Compze assemblies");
       }
    }
 }

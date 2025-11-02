@@ -3,11 +3,11 @@ using Compze.Tests.Infrastructure;
 using Compze.Utilities.Threading.Testing;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
+using Compze.Utilities.Testing.Fluent;
 using Compze.Utilities.Testing.XUnit.BDD;
-using FluentAssertions;
 using Xunit;
 using Compze.Utilities.Threading.ResourceAccess;
-using static FluentAssertions.FluentActions;
+using static Compze.Utilities.Testing.Fluent.MustActions;
 
 // ReSharper disable InconsistentNaming
 // ReSharper disable AccessToDisposedClosure
@@ -17,7 +17,7 @@ namespace Compze.Tests.Unit.Internals.Testing.Threading;
 public class Given_a_locked_ThreadGate : UniversalTestBase
 {
    [XF] public void Calling_AllowOneThreadToPassThrough_throws_an_AwaitingConditionTimedOutException_since_no_threads_are_waiting_to_pass()
-      => Invoking(() => ThreadGate.CreateClosedWithTimeout(20.Milliseconds()).AwaitLetOneThreadPassThrough()).Should().Throw<AwaitingConditionTimeoutException>();
+      => Invoking(() => ThreadGate.CreateClosedWithTimeout(20.Milliseconds()).AwaitLetOneThreadPassThrough()).Must().Throw<AwaitingConditionTimeoutException>();
 
    public class After_starting_10_threads_that_all_call_PassThrough : UniversalTestBase
    {
@@ -27,7 +27,7 @@ public class Given_a_locked_ThreadGate : UniversalTestBase
 
          using var fixture = ThreadGateTestFixture.StartEntrantsOnThreads(10);
          fixture.Gate.AwaitQueueLengthEqualTo(fixture.NumberOfThreads, 500.Milliseconds());
-         fixture.ThreadsPassedTheGate(0.Milliseconds()).Should().Be(0);
+         fixture.ThreadsPassedTheGate(0.Milliseconds()).Must().Be(0);
       }
 
       public sealed class And_all_have_queued_up_calling_PassThrough : UniversalTestBase, IDisposable
@@ -36,10 +36,10 @@ public class Given_a_locked_ThreadGate : UniversalTestBase
 
          protected override void DisposeInternal() => _fixture.Dispose();
 
-         [XF] public void _10_milliseconds_later_no_thread_has_passed_the_gate() => _fixture.ThreadsPassedTheGate(10.Milliseconds()).Should().Be(0);
-         [XF] public void PassedThrough_is_0() => _fixture.Gate.Passed.Should().Be(0);
-         [XF] public void QueueLength_is_10() => _fixture.Gate.Queued.Should().Be(10);
-         [XF] public void RequestCount_is_10() => _fixture.Gate.Requested.Should().Be(10);
+         [XF] public void _10_milliseconds_later_no_thread_has_passed_the_gate() => _fixture.ThreadsPassedTheGate(10.Milliseconds()).Must().Be(0);
+         [XF] public void PassedThrough_is_0() => _fixture.Gate.Passed.Must().Be(0);
+         [XF] public void QueueLength_is_10() => _fixture.Gate.Queued.Must().Be(10);
+         [XF] public void RequestCount_is_10() => _fixture.Gate.Requested.Must().Be(10);
       }
    }
 
@@ -52,10 +52,10 @@ public class Given_a_locked_ThreadGate : UniversalTestBase
 
       protected override void DisposeInternal() => _fixture.Dispose();
 
-      [XF] public void _10_milliseconds_later_one_thread_has_passed_the_gate() => _fixture.ThreadsPassedTheGate(10.Milliseconds()).Should().Be(1);
-      [XF] public void PassedThrough_is_1() => _fixture.Gate.Passed.Should().Be(1);
-      [XF] public void QueueLength_is_9() => _fixture.Gate.Queued.Should().Be(9);
-      [XF] public void RequestCount_is_10() => _fixture.Gate.Requested.Should().Be(10);
+      [XF] public void _10_milliseconds_later_one_thread_has_passed_the_gate() => _fixture.ThreadsPassedTheGate(10.Milliseconds()).Must().Be(1);
+      [XF] public void PassedThrough_is_1() => _fixture.Gate.Passed.Must().Be(1);
+      [XF] public void QueueLength_is_9() => _fixture.Gate.Queued.Must().Be(9);
+      [XF] public void RequestCount_is_10() => _fixture.Gate.Requested.Must().Be(10);
    }
 
    public sealed class After_10_threads_have_queued_up_at_PassThrough_and_LetOneThreadPassThrough_is_called_five_times : UniversalTestBase, IDisposable
@@ -67,10 +67,10 @@ public class Given_a_locked_ThreadGate : UniversalTestBase
 
       protected override void DisposeInternal() => _fixture.Dispose();
 
-      [XF] public void _10_milliseconds_later_five_threads_have_passed_the_gate() => _fixture.ThreadsPassedTheGate(10.Milliseconds()).Should().Be(5);
-      [XF] public void PassedThrough_is_5() => _fixture.Gate.Passed.Should().Be(5);
-      [XF] public void QueueLength_is_5() => _fixture.Gate.Queued.Should().Be(5);
-      [XF] public void RequestCount_is_10() => _fixture.Gate.Requested.Should().Be(10);
+      [XF] public void _10_milliseconds_later_five_threads_have_passed_the_gate() => _fixture.ThreadsPassedTheGate(10.Milliseconds()).Must().Be(5);
+      [XF] public void PassedThrough_is_5() => _fixture.Gate.Passed.Must().Be(5);
+      [XF] public void QueueLength_is_5() => _fixture.Gate.Queued.Must().Be(5);
+      [XF] public void RequestCount_is_10() => _fixture.Gate.Requested.Must().Be(10);
    }
 
    public class After_Y_threads_have_queued_up_at_PassThrough_and_LetOneThreadPassThrough_is_called_X_times_where_X_is_at_most_Y : UniversalTestBase
@@ -98,18 +98,18 @@ public class Given_a_locked_ThreadGate : UniversalTestBase
 
       [Theory, MemberData(nameof(ThreadPassThroughTestData))]
       public void _200_milliseconds_later_X_threads_have_passed_the_gate(int threads, int timesToCallLetOneThreadPassThrough) =>
-         RunTest(threads, timesToCallLetOneThreadPassThrough, fixture => fixture.ThreadsPassedTheGate(200.Milliseconds()).Should().Be(timesToCallLetOneThreadPassThrough));
+         RunTest(threads, timesToCallLetOneThreadPassThrough, fixture => fixture.ThreadsPassedTheGate(200.Milliseconds()).Must().Be(timesToCallLetOneThreadPassThrough));
 
       [Theory, MemberData(nameof(ThreadPassThroughTestData))]
       public void PassedThrough_is_X(int threads, int timesToCallLetOneThreadPassThrough) =>
-         RunTest(threads, timesToCallLetOneThreadPassThrough, fixture => fixture.Gate.Passed.Should().Be(timesToCallLetOneThreadPassThrough));
+         RunTest(threads, timesToCallLetOneThreadPassThrough, fixture => fixture.Gate.Passed.Must().Be(timesToCallLetOneThreadPassThrough));
 
       [Theory, MemberData(nameof(ThreadPassThroughTestData))]
       public void QueueLength_is_Y_minus_X(int threads, int timesToCallLetOneThreadPassThrough) =>
-         RunTest(threads, timesToCallLetOneThreadPassThrough, fixture => fixture.Gate.Queued.Should().Be(Math.Max(0, threads - timesToCallLetOneThreadPassThrough)));
+         RunTest(threads, timesToCallLetOneThreadPassThrough, fixture => fixture.Gate.Queued.Must().Be(Math.Max(0, threads - timesToCallLetOneThreadPassThrough)));
 
       [Theory, MemberData(nameof(ThreadPassThroughTestData))]
       public void RequestCount_is_Y(int threads, int timesToCallLetOneThreadPassThrough) =>
-         RunTest(threads, timesToCallLetOneThreadPassThrough, fixture => fixture.Gate.Requested.Should().Be(threads));
+         RunTest(threads, timesToCallLetOneThreadPassThrough, fixture => fixture.Gate.Requested.Must().Be(threads));
    }
 }

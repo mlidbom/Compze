@@ -12,7 +12,6 @@ using Compze.Core.Tessaging.Teventive.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.Public;
 using Compze.Core.Wiring.Testing.Internal;
-using FluentAssertions;
 using JetBrains.Annotations;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
@@ -21,13 +20,13 @@ using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Performance;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tests.Infrastructure;
-using Compze.Tests.Infrastructure.Fluent;
 using Compze.Tests.Infrastructure.SystemCE;
 using Compze.Utilities.Threading.Testing;
 using Compze.Utilities.SystemCE.TransactionsCE.Testing;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Tests.Infrastructure.XUnit;
+using Compze.Utilities.Testing.Fluent;
 using Compze.Utilities.Threading;
 using Compze.Utilities.Threading.TasksCE;
 using EnumerableCE = Compze.Utilities.SystemCE.LinqCE.EnumerableCE;
@@ -72,8 +71,8 @@ public class TeventStoreUpdaterTest : UniversalTestBase
    [PCT]
    public void WhenFetchingTaggregateThatDoesNotExistNoSuchAggregateExceptionIsThrown()
    {
-      UseInTransactionalScope(session => FluentActions.Invoking(() => session.Get<User>(new TaggregateId()))
-                                                      .Should().Throw<ArgumentOutOfRangeException>());
+      UseInTransactionalScope(session => MustActions.Invoking(() => session.Get<User>(new TaggregateId()))
+                                                      .Must().Throw<ArgumentOutOfRangeException>());
    }
 
    [PCT]
@@ -90,9 +89,9 @@ public class TeventStoreUpdaterTest : UniversalTestBase
       {
          var loadedUser = session.Get<User>(user.Id);
 
-         loadedUser.Id.Should().Be(user.Id);
-         loadedUser.Email.Should().Be(user.Email);
-         loadedUser.Password.Should().Be(user.Password);
+         loadedUser.Id.Must().Be(user.Id);
+         loadedUser.Email.Must().Be(user.Email);
+         loadedUser.Password.Must().Be(user.Password);
       });
    }
 
@@ -115,11 +114,11 @@ public class TeventStoreUpdaterTest : UniversalTestBase
       updater = updater.NotNull();
       reader = reader.NotNull();
 
-      FluentActions.Invoking(() => updater.Get<User>(new TaggregateId())).Should().Throw<MultiThreadedUseException>();
-      FluentActions.Invoking(() => updater.Dispose()).Should().Throw<MultiThreadedUseException>();
-      FluentActions.Invoking(() => reader.GetReadonlyCopyOfVersion<User>(new TaggregateId(), 1)).Should().Throw<MultiThreadedUseException>();
-      FluentActions.Invoking(() => updater.Save(new User())).Should().Throw<MultiThreadedUseException>();
-      FluentActions.Invoking(() => updater.TryGet(new TaggregateId(), out User? _)).Should().Throw<MultiThreadedUseException>();
+      MustActions.Invoking(() => updater.Get<User>(new TaggregateId())).Must().Throw<MultiThreadedUseException>();
+      MustActions.Invoking(() => updater.Dispose()).Must().Throw<MultiThreadedUseException>();
+      MustActions.Invoking(() => reader.GetReadonlyCopyOfVersion<User>(new TaggregateId(), 1)).Must().Throw<MultiThreadedUseException>();
+      MustActions.Invoking(() => updater.Save(new User())).Must().Throw<MultiThreadedUseException>();
+      MustActions.Invoking(() => updater.TryGet(new TaggregateId(), out User? _)).Must().Throw<MultiThreadedUseException>();
    }
 
    [PCT]
@@ -136,19 +135,19 @@ public class TeventStoreUpdaterTest : UniversalTestBase
       {
          var reader = _serviceLocator.Resolve<ITeventStoreReader>();
          var loadedUser = reader.GetReadonlyCopyOfVersion<User>(user.Id, 1);
-         loadedUser.Id.Should().Be(user.Id);
-         loadedUser.Email.Should().Be("email@email.se");
-         loadedUser.Password.Should().Be("password");
+         loadedUser.Id.Must().Be(user.Id);
+         loadedUser.Email.Must().Be("email@email.se");
+         loadedUser.Password.Must().Be("password");
 
          loadedUser = reader.GetReadonlyCopyOfVersion<User>(user.Id, 2);
-         loadedUser.Id.Should().Be(user.Id);
-         loadedUser.Email.Should().Be("email@email.se");
-         loadedUser.Password.Should().Be("NewPassword");
+         loadedUser.Id.Must().Be(user.Id);
+         loadedUser.Email.Must().Be("email@email.se");
+         loadedUser.Password.Must().Be("NewPassword");
 
          loadedUser = reader.GetReadonlyCopyOfVersion<User>(user.Id, 3);
-         loadedUser.Id.Should().Be(user.Id);
-         loadedUser.Email.Should().Be("NewEmail");
-         loadedUser.Password.Should().Be("NewPassword");
+         loadedUser.Id.Must().Be(user.Id);
+         loadedUser.Email.Must().Be("NewEmail");
+         loadedUser.Password.Must().Be("NewPassword");
       });
    }
 
@@ -164,7 +163,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
       {
          var loaded1 = session.Get<User>(user.Id);
          var loaded2 = session.Get<User>(user.Id);
-         loaded1.Should().BeSameAs(loaded2);
+         loaded1.Must().BeSameAs(loaded2);
       });
    }
 
@@ -180,8 +179,8 @@ public class TeventStoreUpdaterTest : UniversalTestBase
 
          var loaded1 = session.Get<User>(user.Id);
          var loaded2 = session.Get<User>(user.Id);
-         loaded1.Should().BeSameAs(loaded2);
-         loaded1.Should().BeSameAs(user);
+         loaded1.Must().BeSameAs(loaded2);
+         loaded1.Must().BeSameAs(user);
       });
    }
 
@@ -202,7 +201,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
       UseInTransactionalScope(session =>
       {
          var loadedUser = session.Get<User>(user.Id);
-         loadedUser.Password.Should().Be("NewPassword");
+         loadedUser.Password.Must().Be("NewPassword");
       });
    }
 
@@ -223,7 +222,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
       UseInTransactionalScope(session =>
       {
          var loadedUser = session.Get<User>(user.Id);
-         loadedUser.Email.Should().Be("OriginalEmail");
+         loadedUser.Email.Must().Be("OriginalEmail");
       });
    }
 
@@ -234,7 +233,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
       user.Register("OriginalEmail", "password", new TaggregateId());
 
       UseInTransactionalScope(session => session.Save(user));
-      ((ITaggregate)user).Commit(tevents => tevents.Should().BeEmpty());
+      ((ITaggregate)user).Commit(tevents => tevents.Must().BeEmpty());
    }
 
    [PCT]
@@ -245,8 +244,8 @@ public class TeventStoreUpdaterTest : UniversalTestBase
 
       UseInTransactionalScope(session => session.Save(user));
 
-      UseInTransactionalScope(session => FluentActions.Invoking(() => session.Save(user))
-                                                      .Should().Throw<InvalidOperationException>());
+      UseInTransactionalScope(session => MustActions.Invoking(() => session.Save(user))
+                                                      .Must().Throw<InvalidOperationException>());
    }
 
    [PCT]
@@ -279,12 +278,12 @@ public class TeventStoreUpdaterTest : UniversalTestBase
          session.Delete(user1.Id);
 
          var loadedUser2 = session.Get<User>(user2.Id);
-         loadedUser2.Id.Should().Be(user2.Id);
-         loadedUser2.Email.Should().Be(user2.Email);
-         loadedUser2.Password.Should().Be(user2.Password);
+         loadedUser2.Id.Must().Be(user2.Id);
+         loadedUser2.Email.Must().Be(user2.Email);
+         loadedUser2.Password.Must().Be(user2.Password);
       });
 
-      UseInTransactionalScope(session => session.TryGet(user1.Id, out User? _).Should().BeFalse());
+      UseInTransactionalScope(session => session.TryGet(user1.Id, out User? _).Must().BeFalse());
    }
 
    [PCT]
@@ -302,7 +301,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
          session.Save(user2);
       });
 
-      _teventSpy.DispatchedTessages.Count().Should().Be(2);
+      _teventSpy.DispatchedTessages.Count().Must().Be(2);
 
       UseInTransactionalScope(session =>
       {
@@ -315,9 +314,9 @@ public class TeventStoreUpdaterTest : UniversalTestBase
 
       var published = _teventSpy.DispatchedTessages.ToList();
       _teventSpy.DispatchedTessages.Count()
-               .Should()
+               .Must()
                .Be(3);
-      published.Last().Should().BeOfType<UserChangedEmail>();
+      published.Last().Must().BeOfType<UserChangedEmail>();
    }
 
    [PCT]
@@ -330,13 +329,13 @@ public class TeventStoreUpdaterTest : UniversalTestBase
          session.Save(user1);
 
          _teventSpy.DispatchedTessages.Last()
-                  .Should()
+                  .Must()
                   .BeOfType<UserRegistered>();
 
          user1 = session.Get<User>(user1.Id);
          user1.ChangeEmail("new_email");
          _teventSpy.DispatchedTessages.Last()
-                  .Should()
+                  .Must()
                   .BeOfType<UserChangedEmail>();
       });
    }
@@ -361,7 +360,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
       UseInScope(session =>
       {
          var history = ((ITeventStoreReader)session).GetHistory(userId);
-         history.Count.Should().Be(2);
+         history.Count.Must().Be(2);
       });
    }
 
@@ -382,7 +381,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
       UseInScope(session =>
       {
          var history = ((ITeventStoreReader)session).GetHistory(userId);
-         history.Count.Should().Be(0);
+         history.Count.Must().Be(0);
       });
    }
 
@@ -407,7 +406,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
       UseInScope(session =>
       {
          var history = ((ITeventStoreReader)session).GetHistory(userId);
-         history.Count.Should().Be(0);
+         history.Count.Must().Be(0);
       });
    }
 
@@ -433,7 +432,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
          maxDegreeOfParallelism: 5,
          description: $"If access is serialized the time will be approximately {singleThreadedExecutionTime} milliseconds. If parallelized it should be far below this value.");
 
-      timingsSummary.IndividualExecutionTimes.Aggregate(TimeSpan.Zero, (t1, t2) => t1 + t2).Should().BeGreaterThan(timingsSummary.Total, "If the sum elapsed time of the parts that run in parallel is not greater than the clock time passed parallelism is not taking place.");
+      timingsSummary.IndividualExecutionTimes.Aggregate(TimeSpan.Zero, (t1, t2) => t1 + t2).Must().BeGreaterThan(timingsSummary.Total, "If the sum elapsed time of the parts that run in parallel is not greater than the clock time passed parallelism is not taking place.");
       return;
 
       void ReadUserHistory() =>
@@ -458,29 +457,29 @@ public class TeventStoreUpdaterTest : UniversalTestBase
       UseInTransactionalScope(session =>
       {
          users.Take(3).ForEach(session.Save);
-         _teventSpy.DispatchedTessages.Count().Should().Be(6);
+         _teventSpy.DispatchedTessages.Count().Must().Be(6);
       });
 
       UseInTransactionalScope(session =>
       {
-         _teventSpy.DispatchedTessages.Count().Should().Be(6);
+         _teventSpy.DispatchedTessages.Count().Must().Be(6);
          users.Skip(3).Take(3).ForEach(session.Save);
-         _teventSpy.DispatchedTessages.Count().Should().Be(12);
+         _teventSpy.DispatchedTessages.Count().Must().Be(12);
       });
 
       UseInTransactionalScope(session =>
       {
-         _teventSpy.DispatchedTessages.Count().Should().Be(12);
+         _teventSpy.DispatchedTessages.Count().Must().Be(12);
          users.Skip(6).Take(3).ForEach(session.Save);
-         _teventSpy.DispatchedTessages.Count().Should().Be(18);
+         _teventSpy.DispatchedTessages.Count().Must().Be(18);
       });
 
       UseInTransactionalScope(_ =>
       {
-         _teventSpy.DispatchedTessages.Count().Should().Be(18);
+         _teventSpy.DispatchedTessages.Count().Must().Be(18);
 
          var dispatchedTevents = _teventSpy.DispatchedTessages.OfType<ITaggregateTevent>().ToList();
-         dispatchedTevents.Select(e => e.Id).Distinct().Count().Should().Be(18);
+         dispatchedTevents.Select(e => e.Id).Distinct().Count().Must().Be(18);
 
          var allPersistedTevents = _serviceLocator.TeventStore().ListAllTeventsForTestingPurposesAbsolutelyNotUsableForARealTeventStoreOfAnySize();
          TeventStorageTestHelper.StripSteventhDecimalPointFromSecondFractionOnUtcUpdateTime(dispatchedTevents);
@@ -496,7 +495,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
       var user = UseInTransactionalScope(session => User.Register(session, "email@email.se", "password", new TaggregateId()));
       var otherUser = await ChangeAnotherUsersEmailInOtherInstance();
 
-      UseInTransactionalScope(session => session.Get<User>(otherUser.Id).Email.Should().Be("otheruser@email.new"));
+      UseInTransactionalScope(session => session.Get<User>(otherUser.Id).Email.Must().Be("otheruser@email.new"));
 
       UseInTransactionalScope(_ => user.ChangeEmail("some@email.new"));
       return;
@@ -527,8 +526,8 @@ public class TeventStoreUpdaterTest : UniversalTestBase
 
       UseInTransactionalScope(session => session.Save(user));
 
-      FluentActions.Invoking(() => ChangeUserEmail(failOnPrepare: true))
-                   .Should().Throw<Exception>();
+      MustActions.Invoking(() => ChangeUserEmail(failOnPrepare: true))
+                   .Must().Throw<Exception>();
 
       ChangeUserEmail(failOnPrepare: false);
       return;
@@ -574,7 +573,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
       {
          var userHistory = ((ITeventStoreReader)session).GetHistory(user.Id)
                                                        .ToArray(); //Reading the taggregate will throw an exception if the history is invalid.
-         userHistory.Length.Should()
+         userHistory.Length.Must()
                     .Be(threads + 2); //Make sure that all of the transactions completed
       });
       return;
@@ -624,9 +623,9 @@ public class TeventStoreUpdaterTest : UniversalTestBase
 
       Thread.Sleep(100.Milliseconds());
 
-      var bothTasksReadUserException = ExceptionCE.TryCatch(() => hasFetchedUser.Passed.Should().Be(1, "Only one thread should have been able to fetch the taggregate"));
+      var bothTasksReadUserException = ExceptionCE.TryCatch(() => hasFetchedUser.Passed.Must().Be(1, "Only one thread should have been able to fetch the taggregate"));
 
-      var bothTasksCompletedException = ExceptionCE.TryCatch(() => changeEmailSection.ExitGate.Queued.Should().Be(1, "One thread should be blocked by transaction and never reach here until the other completes the transaction."));
+      var bothTasksCompletedException = ExceptionCE.TryCatch(() => changeEmailSection.ExitGate.Queued.Must().Be(1, "One thread should be blocked by transaction and never reach here until the other completes the transaction."));
 
       changeEmailSection.Open();
 
@@ -639,7 +638,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
       {
          var userHistory = ((ITeventStoreReader)session).GetHistory(user.Id)
                                                        .ToArray(); //Reading the taggregate will throw an exception if the history is invalid.
-         userHistory.Length.Should()
+         userHistory.Length.Must()
                     .Be(threads + 2); //Make sure that all of the transactions completed
       });
       return;
@@ -666,8 +665,8 @@ public class TeventStoreUpdaterTest : UniversalTestBase
          user.Register("email@email.se", "password", new TaggregateId());
 
          TransactionScopeCe.Execute(() => updater.Save(user));
-         FluentActions.Invoking(() => TransactionScopeCe.Execute(() => updater.Get<User>(user.Id)))
-                      .Should().Throw<InvalidOperationException>();
+         MustActions.Invoking(() => TransactionScopeCe.Execute(() => updater.Get<User>(user.Id)))
+                      .Must().Throw<InvalidOperationException>();
       }
    }
 }

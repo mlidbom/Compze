@@ -7,11 +7,10 @@ using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
 using Compze.Utilities.SystemCE.ReflectionCE.EmitCE;
+using Compze.Utilities.Testing.Fluent;
 using Compze.Utilities.Testing.XUnit.BDD;
 using Compze.Utilities.Threading;
 using Compze.Utilities.Threading.ResourceAccess;
-using FluentAssertions;
-
 
 namespace Compze.Tests.ScratchPad.ReflectionEmit;
 
@@ -36,7 +35,7 @@ public class Example
       var userTevent = new UserTevent();
       var instance = constructor(userTevent);
 
-      instance.Tevent.Should().Be(userTevent);
+      instance.Tevent.Must().Be(userTevent);
    }
 
 

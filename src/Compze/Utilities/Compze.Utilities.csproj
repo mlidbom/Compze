@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFramework>net9.0</TargetFramework>
@@ -11,6 +11,9 @@
          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
 	</ItemGroup>
+  <ItemGroup>
+    <Folder Include="SystemCE\Text\" />
+  </ItemGroup>
   <!-- Exclude subdirectories that have their own .csproj files to prevent compilation errors.
        This section is automatically maintained by DevScripts\C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders.ps1 -->
   <ItemGroup>
@@ -30,6 +33,10 @@
     <EmbeddedResource Remove="Testing\DbPool\**" />
     <None Remove="Testing\DbPool\**" />
     <Content Remove="Testing\DbPool\**" />
+    <Compile Remove="Testing\Fluent\**" />
+    <EmbeddedResource Remove="Testing\Fluent\**" />
+    <None Remove="Testing\Fluent\**" />
+    <Content Remove="Testing\Fluent\**" />
     <Compile Remove="Testing\XUnit\**" />
     <EmbeddedResource Remove="Testing\XUnit\**" />
     <None Remove="Testing\XUnit\**" />
@@ -38,8 +45,5 @@
     <EmbeddedResource Remove="Testing\XUnit\Tests\**" />
     <None Remove="Testing\XUnit\Tests\**" />
     <Content Remove="Testing\XUnit\Tests\**" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="SystemCE\Text\" />
   </ItemGroup>
 </Project>

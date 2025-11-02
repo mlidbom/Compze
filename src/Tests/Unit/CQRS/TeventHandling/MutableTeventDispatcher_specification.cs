@@ -1,7 +1,7 @@
 using Compze.Core.Tessaging.Teventive.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
+using Compze.Utilities.Testing.Fluent;
 using Compze.Utilities.Testing.XUnit.BDD;
-using FluentAssertions;
 
 // ReSharper disable InconsistentNaming
 #pragma warning disable IDE0051 //Reviewed OK: unused private members are intentional in this test.
@@ -44,22 +44,22 @@ public static class MutableTeventDispatcher_specification
          [XF] public void when_dispatching_an_ignored_tevent_no_calls_are_made_to_any_handlers()
          {
             _dispatcher.Dispatch(new IgnoredUserTevent());
-            CallsMade.Should().Be(0);
+            CallsMade.Must().Be(0);
          }
 
          [XF] public void when_dispatching_an_unhandled_tevent_that_is_not_ignored_an_exception_is_thrown() =>
-            FluentActions.Invoking(() => _dispatcher.Dispatch(new UnHandledUserTevent())).Should().Throw<TeventUnhandledException>();
+            _dispatcher.Invoking(it => it.Dispatch(new UnHandledUserTevent())).Must().Throw<TeventUnhandledException>();
 
          public class when_dispatching_an_IUserCreatedTevent : with_2_BeforeHandlers_2_AfterHandlers_and_1_handler_each_per_4_specific_tevent_type
          {
             public when_dispatching_an_IUserCreatedTevent() => _dispatcher.Dispatch(new UserCreatedTevent());
 
-            [XF] public void BeforeHandler1_is_called_first() => BeforeHandlers1CallOrder.Should().Be(1);
-            [XF] public void BeforeHandler2_is_called_second() => BeforeHandlers2CallOrder.Should().Be(2);
-            [XF] public void The_specific_handler_is_called_third() => UserCreatedCallOrder.Should().Be(3);
-            [XF] public void AfterHandler1_is_called_fourth() => AfterHandlers1CallOrder.Should().Be(4);
-            [XF] public void AfterHandler2_is_called_fifth() => AfterHandlers2CallOrder.Should().Be(5);
-            [XF] public void Five_calls_are_made_in_total() => CallsMade.Should().Be(5);
+            [XF] public void BeforeHandler1_is_called_first() => BeforeHandlers1CallOrder.Must().Be(1);
+            [XF] public void BeforeHandler2_is_called_second() => BeforeHandlers2CallOrder.Must().Be(2);
+            [XF] public void The_specific_handler_is_called_third() => UserCreatedCallOrder.Must().Be(3);
+            [XF] public void AfterHandler1_is_called_fourth() => AfterHandlers1CallOrder.Must().Be(4);
+            [XF] public void AfterHandler2_is_called_fifth() => AfterHandlers2CallOrder.Must().Be(5);
+            [XF] public void Five_calls_are_made_in_total() => CallsMade.Must().Be(5);
          }
       }
 
@@ -77,8 +77,8 @@ public static class MutableTeventDispatcher_specification
 
             _dispatcher.Dispatch(new UserRegistered());
 
-            handler1CallOrder.Should().Be(1);
-            handler2CallOrder.Should().Be(2);
+            handler1CallOrder.Must().Be(1);
+            handler2CallOrder.Must().Be(2);
          }
       }
 

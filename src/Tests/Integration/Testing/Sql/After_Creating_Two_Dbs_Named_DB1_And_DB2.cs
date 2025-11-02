@@ -3,8 +3,7 @@ using Compze.Core.Wiring.Testing.Internal;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tests.Common.Testing.Sql;
 using Compze.Tests.Infrastructure.XUnit;
-using Compze.Utilities.SystemCE;
-using FluentAssertions;
+using Compze.Utilities.Testing.Fluent;
 
 namespace Compze.Tests.Integration.Testing.Sql;
 
@@ -21,7 +20,7 @@ public class After_Creating_Two_Dbs_Named_DB1_And_DB2 : DbPoolTestBase
                     {
                        using var command = connection.CreateCommand();
                        command.CommandText = LayerSpecificCommandText();
-                       command.ExecuteScalar().Should().Be(1);
+                       command.ExecuteScalar().Must().Be(1L);
                     });
    }
 
@@ -33,7 +32,7 @@ public class After_Creating_Two_Dbs_Named_DB1_And_DB2 : DbPoolTestBase
                     {
                        using var command = connection.CreateCommand();
                        command.CommandText = LayerSpecificCommandText();
-                       command.ExecuteScalar().Should().Be(1);
+                       command.ExecuteScalar().Must().Be(1L);
                     });
    }
 
@@ -41,26 +40,25 @@ public class After_Creating_Two_Dbs_Named_DB1_And_DB2 : DbPoolTestBase
 
    [PCT] public void The_same_connection_string_is_returned_by_each_call_to_CreateOrGetLocalDb_Db1()
    {
-      Pool.ConnectionStringFor(Db1).Should().Be(Pool.ConnectionStringFor(Db1));
+      Pool.ConnectionStringFor(Db1).Must().Be(Pool.ConnectionStringFor(Db1));
    }
 
    [PCT] public void The_same_connection_string_is_returned_by_each_call_to_CreateOrGetLocalDb_Db2()
    {
-      Pool.ConnectionStringFor(Db2).Should().Be(Pool.ConnectionStringFor(Db2));
+      Pool.ConnectionStringFor(Db2).Must().Be(Pool.ConnectionStringFor(Db2));
    }
 
    [PCT] public void The_Db1_connection_string_is_different_from_the_Db2_connection_string()
    {
-      Pool.ConnectionStringFor(Db1).Should().NotBe(Pool.ConnectionStringFor(Db2));
+      Pool.ConnectionStringFor(Db1).Must().NotBe(Pool.ConnectionStringFor(Db2));
    }
 
    [PCT] public void Using_disposed_pool_throws_Exception()
    {
       var disposedPool = ResolvePool();
       disposedPool.Dispose();
-      disposedPool.Invoking(action: _ => disposedPool.ConnectionStringFor(Db1))
-          .Should().Throw<Exception>()
-          .Where(exceptionExpression: exception => exception.Message.ToUpperInvariant()
-                                                            .ContainsOrdinal("DISPOSED"));
+      var exception = disposedPool.Invoking(action: _ => disposedPool.ConnectionStringFor(Db1))
+          .Must().Throw<Exception>();
+      exception.And.Message.ToUpperInvariant().Must().Contain("DISPOSED");
    }
 }

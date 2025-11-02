@@ -3,7 +3,7 @@ using Compze.Tessaging.Hosting.Testing;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.Testing.XUnit.BDD;
 using Compze.Tests.Infrastructure.XUnit;
-using FluentAssertions;
+using Compze.Utilities.Testing.Fluent;
 
 namespace Compze.Tests.Integration.Infrastructure;
 
@@ -21,23 +21,23 @@ public class PluggableComponentsTheoryTests : UniversalTestBase
       System.Console.WriteLine($"  DI Container: {TestEnv.DIContainer}");
 
       // Verify the values are valid parsed enums (not relying on default check since MicrosoftSqlServer happens to be 0)
-      TestEnv.SqlLayer.Should().BeOneOf(
-         SqlLayer.MsSql,
+      TestEnv.SqlLayer.Must().BeOneOf(
+         [SqlLayer.MsSql,
          SqlLayer.MySql,
          SqlLayer.PgSql,
          SqlLayer.Sqlite,
-         SqlLayer.SqliteMemory
+         SqlLayer.SqliteMemory]
       );
-      TestEnv.DIContainer.Should().BeOneOf(
-         DIContainer.Microsoft,
-         DIContainer.SimpleInjector
+      TestEnv.DIContainer.Must().BeOneOf(
+         [DIContainer.Microsoft,
+         DIContainer.SimpleInjector]
       );
 
       // Test the ValueForDb functionality (alias for SqlLayer.ValueFor)
       var testValue = TestEnv.SqlLayer.ValueFor(msSql: "SQL Server", mySql: "MySQL", pgSql: "PostgreSQL", sqlite: "SQLite", sqliteMemory: "SQLiteMemory");
 
       System.Console.WriteLine($"  ValueForDb result: {testValue}");
-      testValue.Should().NotBeNull();
+      testValue.Must().NotBeNull();
 
       // Verify the value matches the current sql layer
       var expectedValue = TestEnv.SqlLayer switch
@@ -50,7 +50,7 @@ public class PluggableComponentsTheoryTests : UniversalTestBase
          _                                         => throw new System.Exception($"Unexpected sql layer: {TestEnv.SqlLayer}")
       };
 
-      testValue.Should().Be(expectedValue);
+      testValue.Must().Be(expectedValue);
    }
 
    [PCT]
@@ -67,7 +67,7 @@ public class PluggableComponentsTheoryTests : UniversalTestBase
 
       System.Console.WriteLine($"✓ Timeout for {TestEnv.SqlLayer}: {timeout}");
 
-      timeout.Should().BePositive();
+      timeout.Must().BePositive();
 
       // Verify it matches expected value
       var expected = TestEnv.SqlLayer switch
@@ -80,13 +80,13 @@ public class PluggableComponentsTheoryTests : UniversalTestBase
          _                                         => throw new System.Exception($"Unexpected sql layer: {TestEnv.SqlLayer}")
       };
 
-      timeout.Should().Be(expected);
+      timeout.Must().Be(expected);
    }
 
    [XF]
    public void Regular_fact_test_should_run_only_once()
    {
       System.Console.WriteLine("✓ This regular Fact test runs exactly once");
-      true.Should().BeTrue();
+      true.Must().BeTrue();
    }
 }
