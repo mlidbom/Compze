@@ -2,7 +2,7 @@ using System.Linq;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.Testing.XUnit.BDD;
-using FluentAssertions;
+using Compze.Tests.Infrastructure.Fluent;
 
 namespace Compze.Tests.Unit.Internals.Linq;
 
@@ -13,6 +13,6 @@ public class SeqTests : UniversalTestBase
    public void CreateShouldEnumerateAllParamsInOrder()
    {
       var oneToTen = 1.Through(10);
-      EnumerableCE.Create(oneToTen.ToArray()).Should().BeEquivalentTo(oneToTen);
+      EnumerableCE.Create(oneToTen.ToArray()).Must().SequenceEqual(oneToTen);
    }
 }
