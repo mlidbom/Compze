@@ -20,6 +20,6 @@ public class WhenAnInvalidComponentIsMentionedInSkipped
                            }.GetData(MethodBase.GetCurrentMethod().NotNull().CastTo<MethodInfo>(), new DisposalTracker()).caf();
 
       testData.Must().HaveCount(1);
-      testData.Single().Skip.Must().Contain("nonsense");
+      testData.Single().Skip!.Must().Contain("nonsense");
    }
 }
