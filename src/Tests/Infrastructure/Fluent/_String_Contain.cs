@@ -7,6 +7,9 @@ public static class StringContain
    public static Must<string> Contain(this Must<string> must, string expected) =>
       must.Satisfy(it => it.ContainsOrdinal(expected), messageOverride: _ => BuildMessage("did not contain the expected string:", must, expected));
 
+   public static Must<string> NotContain(this Must<string> must, string unexpected) =>
+      must.Satisfy(it => !it.ContainsOrdinal(unexpected), messageOverride: _ => BuildMessage("contained the unexpected string:", must, unexpected));
+
    public static Must<string>? StartWith(this Must<string> must, string expected) =>
       must.Satisfy(it => it.StartsWithOrdinal(expected), messageOverride: _ => BuildMessage("did not start with the expected string:", must, expected));
 
