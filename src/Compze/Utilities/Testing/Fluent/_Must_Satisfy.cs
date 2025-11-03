@@ -15,8 +15,6 @@ public record SatisfyCallInfo<T>(string PredicateExpression, Func<T, bool> Predi
 
 public static class _Must_Satisfy
 {
-   const string RemoveLine = nameof(RemoveLine);
-
    public static IMust Satisfy(this IMust must,
                                Func<object, bool> predicate,
                                Func<object, string>? failureMessage = null,
@@ -36,7 +34,7 @@ public static class _Must_Satisfy
              {CustomFailureMessage()}
              {ArgumentValue(context.Expression, context.Actual)}
              """.Split(Environment.NewLine)
-                .Where(it => it != RemoveLine)
+                .Where(it => it != Must.RemoveLine)
                 .JoinLines();
 
          throw new AssertionFailedException(message);
@@ -44,10 +42,10 @@ public static class _Must_Satisfy
          string CustomFailureMessage() =>
             failureMessage != null
                ? $"""
-                  {failureMessage?.Invoke(context.Actual) ?? "but it did not"}
+                  {failureMessage?.Invoke(context.Actual)}
                   {context.Separator}
                   """
-               : RemoveLine;
+               : Must.RemoveLine;
       }
 
       return context;
@@ -95,7 +93,7 @@ public static class _Must_Satisfy
              {ArgumentValue(parameterName, context.Actual)}
              {DisplayUsedArgumentsValues()}
              """.Split(Environment.NewLine)
-                .Where(it => it != RemoveLine)
+                .Where(it => it != Must.RemoveLine)
                 .JoinLines();
 
          throw new AssertionFailedException(message);
@@ -103,7 +101,7 @@ public static class _Must_Satisfy
          string DisplayUsedArgumentsDefinitions()
          {
             if(usedArguments == null || !usedArguments.Any())
-               return RemoveLine;
+               return Must.RemoveLine;
 
             var stringBuilder = new StringBuilder();
             return $"""
@@ -114,7 +112,7 @@ public static class _Must_Satisfy
          string DisplayUsedArgumentsValues()
          {
             if(usedArguments == null || !usedArguments.Any())
-               return RemoveLine;
+               return Must.RemoveLine;
 
             var stringBuilder = new StringBuilder();
             return $"""
@@ -136,12 +134,12 @@ public static class _Must_Satisfy
                   {failureMessage?.Invoke(context.Actual) ?? "but it did not"}
                   {context.Separator}
                   """
-               : RemoveLine;
+               : Must.RemoveLine;
 
          string AssertionMethodCall()
          {
             if(string.IsNullOrEmpty(callerName))
-               return RemoveLine;
+               return Must.RemoveLine;
 
             var arguments = usedArguments != null && usedArguments.Any()
                                ? usedArguments.Select(it => it.Expression).Join(", ")

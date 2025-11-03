@@ -33,6 +33,21 @@ public interface IMust
        {AssertionCode(method, predicate)}
        {Separator}
        """;
+
+   string AssertionMethodCall(string callerName, string? predicate = null, AssertionArgumentInfo[]? usedArguments = null)
+   {
+      if(string.IsNullOrEmpty(callerName))
+         return Must.RemoveLine;
+
+      var arguments = usedArguments != null && usedArguments.Any()
+                         ? usedArguments.Select(it => it.Expression).Join(", ")
+                         : "";
+
+      return $"""
+              {Expression}.Must().{callerName}({arguments})
+              {Separator}
+              """;
+   }
 }
 
 public interface IMust<out T> : IMust
@@ -42,6 +57,8 @@ public interface IMust<out T> : IMust
 
 public abstract class Must : IMust
 {
+   public const string RemoveLine = nameof(RemoveLine);
+
    public string Expression { get; }
 
    protected Must(object? actual, string expression)
