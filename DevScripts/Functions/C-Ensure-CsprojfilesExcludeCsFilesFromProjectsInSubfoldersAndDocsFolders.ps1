@@ -113,9 +113,12 @@ $($docsLines -join "`r`n")
     foreach ($csprojFile in $allCsprojFiles) {
         $projectDir = $csprojFile.Directory.FullName
         
-        # Find all .csproj files in subdirectories
+        # Find all .csproj files in subdirectories (not siblings)
         $childProjects = Get-ProjectFilesInPath -Path $projectDir | 
-            Where-Object { $_.FullName -ne $csprojFile.FullName }
+            Where-Object { 
+                $_.FullName -ne $csprojFile.FullName -and
+                $_.Directory.FullName -ne $projectDir
+            }
         
         # Find all _docs directories in this project
         $docsFolders = Get-ChildItem -Path $projectDir -Directory -Filter "_docs" -Recurse | 
