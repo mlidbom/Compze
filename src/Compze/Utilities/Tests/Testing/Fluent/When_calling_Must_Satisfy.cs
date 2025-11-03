@@ -1,5 +1,4 @@
 using System;
-using Compze.Tests.Infrastructure;
 using Compze.Utilities.Testing.Fluent;
 using Compze.Utilities.Testing.XUnit.BDD;
 using static Compze.Utilities.Testing.Fluent.MustActions;
@@ -9,7 +8,7 @@ using AssertionFailedException = Compze.Utilities.Testing.Fluent.AssertionFailed
 
 // ReSharper disable InconsistentNaming
 
-namespace Compze.Tests.Unit.Testing.Fluent;
+namespace Compze.Utilities.Tests.Testing.Fluent;
 
 public class When_calling_Must_Satisfy : UniversalTestBase
 {
@@ -89,9 +88,9 @@ public class When_calling_Must_Satisfy : UniversalTestBase
                                       JSON:
                                       --------------------------------------------------
                                       {
-                                        "$type": "Compze.Tests.Unit.Testing.Fluent.When_calling_Must_Satisfy+given_a_complex_object_as_actual_and_a_predicate_that_returns_false+TestObject, Compze.Tests.Unit",
+                                        "$type": "Compze.Utilities.Tests.Testing.Fluent.When_calling_Must_Satisfy+given_a_complex_object_as_actual_and_a_predicate_that_returns_false+TestObject, Compze.Utilities.Tests",
                                         "Age": 30,
-                                        "EqualityContract": "Compze.Tests.Unit.Testing.Fluent.When_calling_Must_Satisfy+given_a_complex_object_as_actual_and_a_predicate_that_returns_false+TestObject, Compze.Tests.Unit, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+                                        "EqualityContract": "Compze.Utilities.Tests.Testing.Fluent.When_calling_Must_Satisfy+given_a_complex_object_as_actual_and_a_predicate_that_returns_false+TestObject, Compze.Utilities.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
                                         "Name": "John",
                                         "Status": "Unmarried"
                                       }

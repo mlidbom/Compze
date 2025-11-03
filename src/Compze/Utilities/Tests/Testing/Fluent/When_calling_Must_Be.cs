@@ -1,7 +1,6 @@
-using Compze.Tests.Infrastructure;
-using Compze.Utilities.Testing.XUnit.BDD;
 using System;
 using Compze.Utilities.Testing.Fluent;
+using Compze.Utilities.Testing.XUnit.BDD;
 using static Compze.Utilities.Testing.Fluent.MustActions;
 using AssertionFailedException = Compze.Utilities.Testing.Fluent.AssertionFailedException;
 
@@ -11,7 +10,7 @@ using AssertionFailedException = Compze.Utilities.Testing.Fluent.AssertionFailed
 
 #pragma warning disable CA1711 // ending name on Exception
 
-namespace Compze.Tests.Unit.Testing.Fluent;
+namespace Compze.Utilities.Tests.Testing.Fluent;
 
 public class When_calling_Must_Be : UniversalTestBase
 {
@@ -110,23 +109,23 @@ public class When_calling_Must_Be : UniversalTestBase
                                          +++ actual
                                          @@ -1,4 +1,4 @@
                                           {
-                                            "$type": "Compze.Tests.Unit.Testing.Fluent.When_calling_Must_Be+TestObjectWithOverriddenEquals, Compze.Tests.Unit",
+                                            "$type": "Compze.Utilities.Tests.Testing.Fluent.When_calling_Must_Be+TestObjectWithOverriddenEquals, Compze.Utilities.Tests",
                                          -  "_value": "expected_value"
                                          +  "_value": "actual_value"
                                           }
-
+                                         
                                          --------------------------------------------------
                                          it was:
                                          --------------------------------------------------
                                          {
-                                           "$type": "Compze.Tests.Unit.Testing.Fluent.When_calling_Must_Be+TestObjectWithOverriddenEquals, Compze.Tests.Unit",
+                                           "$type": "Compze.Utilities.Tests.Testing.Fluent.When_calling_Must_Be+TestObjectWithOverriddenEquals, Compze.Utilities.Tests",
                                            "_value": "actual_value"
                                          }
                                          --------------------------------------------------
                                          expected was:
                                          --------------------------------------------------
                                          {
-                                           "$type": "Compze.Tests.Unit.Testing.Fluent.When_calling_Must_Be+TestObjectWithOverriddenEquals, Compze.Tests.Unit",
+                                           "$type": "Compze.Utilities.Tests.Testing.Fluent.When_calling_Must_Be+TestObjectWithOverriddenEquals, Compze.Utilities.Tests",
                                            "_value": "expected_value"
                                          }
                                          --------------------------------------------------

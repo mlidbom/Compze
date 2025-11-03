@@ -1,7 +1,8 @@
 using System;
+
 // ReSharper disable InconsistentNaming
 
-namespace Compze.Tests.Unit.Testing.Fluent;
+namespace Compze.Utilities.Tests.Testing.Fluent;
 
 [Flags]
 enum BreakComparableMethod

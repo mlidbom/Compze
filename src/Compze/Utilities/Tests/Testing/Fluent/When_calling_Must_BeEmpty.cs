@@ -1,13 +1,12 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Compze.Tests.Infrastructure;
-using Compze.Utilities.Testing.XUnit.BDD;
-using System;
 using Compze.Utilities.Testing.Fluent;
+using Compze.Utilities.Testing.XUnit.BDD;
 
 #pragma warning disable CA1861
 
-namespace Compze.Tests.Unit.Testing.Fluent;
+namespace Compze.Utilities.Tests.Testing.Fluent;
 
 public class When_calling_Must_BeEmpty : UniversalTestBase
 {

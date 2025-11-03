@@ -1,5 +1,4 @@
 using Compze.Core.Public.Infrastructure;
-using Compze.Tests.Infrastructure;
 using Compze.Utilities.Testing.Fluent;
 using Compze.Utilities.Testing.XUnit.BDD;
 using static Compze.Utilities.Testing.Fluent.MustActions;
@@ -7,7 +6,7 @@ using AssertionFailedException = Compze.Utilities.Testing.Fluent.AssertionFailed
 
 // ReSharper disable InconsistentNaming
 
-namespace Compze.Tests.Unit.Testing.Fluent;
+namespace Compze.Utilities.Tests.Testing.Fluent;
 
 public class When_calling_Must_BeSameAs : UniversalTestBase
 {

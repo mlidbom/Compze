@@ -1,10 +1,10 @@
 using System.Collections.Generic;
-using Compze.Tests.Infrastructure;
 using Compze.Utilities.Testing.Fluent;
 using Compze.Utilities.Testing.XUnit.BDD;
+
 // ReSharper disable InconsistentNaming
 
-namespace Compze.Tests.Unit.Testing.Fluent;
+namespace Compze.Utilities.Tests.Testing.Fluent;
 
 public class When_calling_Must_DeepEqual_with_unordered_collections : UniversalTestBase
 {

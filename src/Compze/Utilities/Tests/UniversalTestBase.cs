@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Compze.Utilities.SystemCE;
 using Xunit;
 
-namespace Compze.Tests.Infrastructure;
+namespace Compze.Utilities.Tests;
 
 /// <summary>
 /// Base class for all tests that performs lazy initialization on first test construction.

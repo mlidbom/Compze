@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFramework>net9.0</TargetFramework>
@@ -18,31 +18,5 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\..\Fluent\Compze.Utilities.Testing.Fluent.csproj" />
 	  <ProjectReference Include="..\Compze.Utilities.Testing.XUnit.csproj" />
-	</ItemGroup>
-	<ItemGroup>
-	  <None Update="TestUsingArgumentPassingThreeComponentsPCTAttribute">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	  <None Update="TestUsingNotArgumentPassingOneComponentsPCTAttribute">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	  <None Update="TestUsingArgumentPassingTwoComponentsPCTAttribute">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	  <None Update="TestUsingArgumentPassingOneComponentsPCTAttribute">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	  <None Update="TestUsingNotArgumentPassingTwoComponentsPCTAttribute">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-      <None Update="TestUsingArgumentPassingFourComponentsPCTAttribute">
-         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
-      <None Update="TestUsingArgumentPassingFiveComponentsPCTAttribute">
-         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
-      <None Update="TestUsingWildcards">
-         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
 	</ItemGroup>
 </Project>

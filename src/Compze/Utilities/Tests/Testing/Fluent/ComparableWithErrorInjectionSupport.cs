@@ -1,7 +1,7 @@
 using System;
 using System.Collections;
 
-namespace Compze.Tests.Unit.Testing.Fluent;
+namespace Compze.Utilities.Tests.Testing.Fluent;
 
 class ComparableWithErrorInjectionSupport : IEquatable<ComparableWithErrorInjectionSupport>, 
                                              IComparable<ComparableWithErrorInjectionSupport>, 

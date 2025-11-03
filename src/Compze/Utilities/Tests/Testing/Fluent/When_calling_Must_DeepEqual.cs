@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using Compze.Tests.Infrastructure;
 using Compze.Utilities.Testing.Fluent;
 using Compze.Utilities.Testing.XUnit.BDD;
 using static Compze.Utilities.Testing.Fluent.MustActions;
@@ -12,7 +11,7 @@ using AssertionFailedException = Compze.Utilities.Testing.Fluent.AssertionFailed
 
 #pragma warning disable CA1711 // ending name on Exception
 
-namespace Compze.Tests.Unit.Testing.Fluent;
+namespace Compze.Utilities.Tests.Testing.Fluent;
 
 public class When_calling_Must_DeepEqual : UniversalTestBase
 {
@@ -29,7 +28,7 @@ public class When_calling_Must_DeepEqual : UniversalTestBase
 
             [XF] public void and_the_exception_message_is() =>
                ExceptionMessage().Must().Be(""""
-
+                                            
                                             --------------------------------------------------
                                             expected:
                                             --------------------------------------------------
@@ -45,18 +44,18 @@ public class When_calling_Must_DeepEqual : UniversalTestBase
                                             +++ actual
                                             @@ -1,6 +1,6 @@
                                              {
-                                               "$type": "Compze.Tests.Unit.Testing.Fluent.When_calling_Must_DeepEqual+TestObject, Compze.Tests.Unit",
+                                               "$type": "Compze.Utilities.Tests.Testing.Fluent.When_calling_Must_DeepEqual+TestObject, Compze.Utilities.Tests",
                                                "InternalProperty": "internal_expected",
                                             -  "PrivateField": "private_expected",
                                             +  "PrivateField": "private_actual",
                                                "PublicProperty": "public_expected"
                                              }
-
+                                            
                                             --------------------------------------------------
                                             Actual was:
                                             --------------------------------------------------
                                             {
-                                              "$type": "Compze.Tests.Unit.Testing.Fluent.When_calling_Must_DeepEqual+TestObject, Compze.Tests.Unit",
+                                              "$type": "Compze.Utilities.Tests.Testing.Fluent.When_calling_Must_DeepEqual+TestObject, Compze.Utilities.Tests",
                                               "InternalProperty": "internal_expected",
                                               "PrivateField": "private_actual",
                                               "PublicProperty": "public_expected"
@@ -65,7 +64,7 @@ public class When_calling_Must_DeepEqual : UniversalTestBase
                                             Expected was:
                                             --------------------------------------------------
                                             {
-                                              "$type": "Compze.Tests.Unit.Testing.Fluent.When_calling_Must_DeepEqual+TestObject, Compze.Tests.Unit",
+                                              "$type": "Compze.Utilities.Tests.Testing.Fluent.When_calling_Must_DeepEqual+TestObject, Compze.Utilities.Tests",
                                               "InternalProperty": "internal_expected",
                                               "PrivateField": "private_expected",
                                               "PublicProperty": "public_expected"
