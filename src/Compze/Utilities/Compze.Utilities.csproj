@@ -45,5 +45,9 @@
     <EmbeddedResource Remove="Testing\XUnit\Tests\**" />
     <None Remove="Testing\XUnit\Tests\**" />
     <Content Remove="Testing\XUnit\Tests\**" />
+    <Compile Remove="Tests\**" />
+    <EmbeddedResource Remove="Tests\**" />
+    <None Remove="Tests\**" />
+    <Content Remove="Tests\**" />
   </ItemGroup>
 </Project>

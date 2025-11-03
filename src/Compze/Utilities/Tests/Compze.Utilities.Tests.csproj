@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <Folder Include="Testing\DbPool\" />
+	  <Folder Include="Testing\Xunit\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Testing\DbPool\Compze.Utilities.Testing.DbPool.csproj" />
+	  <ProjectReference Include="..\Testing\Fluent\Compze.Utilities.Testing.Fluent.csproj" />
+	  <ProjectReference Include="..\Testing\XUnit\Compze.Utilities.Testing.XUnit.csproj" />
+	</ItemGroup>
+
+</Project>

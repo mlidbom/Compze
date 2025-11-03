@@ -49,7 +49,8 @@
       <InternalsVisibleTo Include="Compze.Tests.Common" />
       <InternalsVisibleTo Include="Compze.Tests.Infrastructure" />
       <InternalsVisibleTo Include="Compze.Utilities.Testing.Fluent" />
-      <InternalsVisibleTo Include="Compze.Tests.Integration" />
+      <InternalsVisibleTo Include="Compze.Utilities.Tests" />
+	   <InternalsVisibleTo Include="Compze.Tests.Integration" />
       <InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />
 	   <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
       <InternalsVisibleTo Include="Compze.Tests.ScratchPad" />
