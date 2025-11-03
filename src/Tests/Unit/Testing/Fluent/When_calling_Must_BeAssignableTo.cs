@@ -16,7 +16,7 @@ public class When_calling_Must_BeAssignableTo : UniversalTestBase
       [XF] public void it_does_not_throw()
       {
          object value = "string";
-         value.Must().BeAssignableTo<DateTime>();
+         value.Must().BeAssignableTo<string>();
       }
    }
 

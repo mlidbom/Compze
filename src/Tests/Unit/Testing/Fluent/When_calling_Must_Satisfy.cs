@@ -46,7 +46,7 @@ public class When_calling_Must_Satisfy : UniversalTestBase
    {
       readonly int _value = 5;
 
-      string ExceptionMessage() => Invoking(() => _value.Must().Satisfy(v => v > 10, messageOverride: _ => "Custom error message"))
+      string ExceptionMessage() => Invoking(() => _value.Must().Satisfy(v => v > 10, failureMessage: _ => "Custom error message"))
                                   .Must()
                                   .Throw<AssertionFailedException>()
                                   .Which
@@ -76,15 +76,11 @@ public class When_calling_Must_Satisfy : UniversalTestBase
          ExceptionMessage().Must().Be("""
                                       
                                       --------------------------------------------------
-                                      "it" defined by:
+                                      Failing assertion:
                                       --------------------------------------------------
-                                         _actual
+                                      _actual.Must().Satisfy(it => it.Name == "all wrong")
                                       --------------------------------------------------
-                                      failed to Satisfy:
-                                      --------------------------------------------------
-                                         it => it.Name == "all wrong"
-                                      --------------------------------------------------
-                                      "it" was:
+                                      "_actual" was:
                                       --------------------------------------------------
                                       ToString():
                                       --------------------------------------------------
