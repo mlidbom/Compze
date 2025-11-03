@@ -32,11 +32,7 @@ public static class _Must_Satisfy
       if(!predicate(context.Actual))
       {
          var message = $"""
-             {context.Separator}
-             Failing assertion:
-             {context.Separator}
-             {context.Expression}.Must().Satisfy({predicateExpression})
-             {context.Separator}
+             {context.FailingAssertionHeading(nameof(Satisfy), predicateExpression)}
              {CustomFailureMessage()}
              {ArgumentValue(context.Expression, context.Actual)}
              """.Split(Environment.NewLine)

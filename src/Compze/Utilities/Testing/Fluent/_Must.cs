@@ -14,6 +14,25 @@ public interface IMust
    string Separator { get; }
    IMust<T> Cast<T>();
    string NormalizeExpressionIndentation(string expression);
+
+   string AssertionCode(string method, string? predicate = null, AssertionArgumentInfo[]? arguments = null)
+   {
+      var argumentsText = arguments != null && arguments.Any()
+                         ? arguments.Select(it => it.Expression).Join(", ")
+                         : "";
+
+      return $"{Expression}.Must().{method}({predicate})";
+
+   }
+
+   string FailingAssertionHeading(string method, string? predicate = null, AssertionArgumentInfo[]? arguments = null) =>
+      $"""
+       {Separator}
+       Failing assertion:
+       {Separator}
+       {AssertionCode(method, predicate)}
+       {Separator}
+       """;
 }
 
 public interface IMust<out T> : IMust
