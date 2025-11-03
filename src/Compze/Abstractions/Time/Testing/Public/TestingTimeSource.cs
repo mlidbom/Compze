@@ -5,8 +5,9 @@ using Compze.Core.Time.Public;
 using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ActionFuncHarmonization;
-using Compze.Utilities.Threading;
-using Compze.Utilities.Threading.TasksCE;
+using Compze.Utilities.SystemCE.ThreadingCE;
+using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
+
 // ReSharper disable MemberCanBeMadeStatic.Local
 
 namespace Compze.Core.Time.Testing.Public;

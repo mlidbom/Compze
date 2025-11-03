@@ -6,15 +6,14 @@ using Compze.Utilities.SystemCE.ReflectionCE;
 using Compze.Utilities.SystemCE.TransactionsCE;
 using Compze.Utilities.Testing.DbPool.SystemCE;
 using Compze.Utilities.Testing.DbPool.SystemCE.ThreadingCE;
-using Compze.Utilities.Threading;
-using Compze.Utilities.Threading.ResourceAccess;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using Compze.Core.Serialization.Internal.DbPool;
 using Compze.Sql.Common.DbPool;
 using Compze.Utilities.DependencyInjection;
+using Compze.Utilities.SystemCE.ThreadingCE;
+using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
 #pragma warning disable CA1724 //I don't care that the class uses the same name as the namespace
 

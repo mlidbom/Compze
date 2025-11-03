@@ -5,8 +5,8 @@ using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.TransactionsCE;
-using Compze.Utilities.Threading.TasksCE;
 using System.Threading.Tasks;
+using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Sql.Sqlite.Private;
 

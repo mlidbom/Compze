@@ -1,7 +1,7 @@
 using System;
 using System.Reflection;
 using System.Reflection.Emit;
-using Compze.Utilities.Threading.ResourceAccess;
+using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
 #pragma warning disable CA1810 // Initialize reference type static fields inline
 

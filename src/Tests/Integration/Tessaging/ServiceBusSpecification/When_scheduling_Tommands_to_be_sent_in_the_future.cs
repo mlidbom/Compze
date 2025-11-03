@@ -6,10 +6,10 @@ using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
-using Compze.Utilities.Threading.Testing;
 using System;
 using Compze.Utilities.SystemCE;
 using System.Threading.Tasks;
+using Compze.Utilities.SystemCE.ThreadingCE.Testing;
 using Compze.Utilities.Testing.Fluent;
 
 namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification;

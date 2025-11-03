@@ -2,19 +2,19 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Compze.Core.Serialization.Internal.DbPool;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE;
-using Compze.Utilities.Threading.Testing;
 using Compze.Utilities.SystemCE.LinqCE;
+using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
+using Compze.Utilities.SystemCE.ThreadingCE.Testing;
 using Compze.Utilities.Testing.DbPool.SystemCE.ThreadingCE;
 using Compze.Utilities.Testing.Fluent;
 using JetBrains.Annotations;
-using Compze.Utilities.Threading.TasksCE;
 
 // ReSharper disable ImplicitlyCapturedClosure
 

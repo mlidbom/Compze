@@ -1,6 +1,6 @@
 using System;
 using System.Transactions;
-using Compze.Utilities.Threading.ResourceAccess;
+using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
 namespace Compze.Utilities.SystemCE.TransactionsCE;
 

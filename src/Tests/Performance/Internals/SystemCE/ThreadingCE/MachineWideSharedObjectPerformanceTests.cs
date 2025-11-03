@@ -1,4 +1,3 @@
-using Compze.Core.Serialization.Internal.DbPool;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Performance;
 using Compze.Tessaging.Hosting.Testing.Wiring;
@@ -8,6 +7,7 @@ using Compze.Utilities.SystemCE;
 using Compze.Utilities.Testing.DbPool.SystemCE.ThreadingCE;
 using System;
 using Compze.Tests.Infrastructure.XUnit;
+using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
 namespace Compze.Tests.Performance.Internals.SystemCE.ThreadingCE;
 

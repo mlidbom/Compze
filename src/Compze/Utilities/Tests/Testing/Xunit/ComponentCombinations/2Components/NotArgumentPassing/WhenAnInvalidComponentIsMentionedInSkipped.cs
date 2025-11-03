@@ -2,8 +2,8 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Compze.Utilities.SystemCE;
+using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using Compze.Utilities.Testing.Fluent;
-using Compze.Utilities.Threading.TasksCE;
 using Xunit.Sdk;
 
 namespace Compze.Utilities.Tests.Testing.Xunit.ComponentCombinations._2Components.NotArgumentPassing;

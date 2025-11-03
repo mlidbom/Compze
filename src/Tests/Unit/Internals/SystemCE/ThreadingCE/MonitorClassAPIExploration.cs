@@ -1,9 +1,9 @@
 using System;
 using System.Threading;
 using Compze.Utilities.SystemCE;
+using Compze.Utilities.SystemCE.ThreadingCE.Testing;
 using Compze.Utilities.Testing.Fluent;
 using Compze.Utilities.Testing.XUnit.BDD;
-using Compze.Utilities.Threading.Testing;
 
 // ReSharper disable ImplicitlyCapturedClosure
 

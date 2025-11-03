@@ -1,7 +1,7 @@
-using Compze.Core.Serialization.Internal.DbPool;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE;
+using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 using Newtonsoft.Json;
 
 namespace Compze.Serialization.Newtonsoft.Private.DbPool;

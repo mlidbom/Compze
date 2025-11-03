@@ -5,7 +5,7 @@ using Compze.Utilities.Contracts;
 using Compze.Utilities.Logging;
 using Compze.Utilities.SystemCE;
 using JetBrains.Annotations;
-using SyncOrAsyncCE = Compze.Utilities.Threading.SyncOrAsyncCE;
+using SyncOrAsyncCE = Compze.Utilities.SystemCE.ThreadingCE.SyncOrAsyncCE;
 
 namespace Compze.Tessaging.Hosting.Testing.Performance;
 

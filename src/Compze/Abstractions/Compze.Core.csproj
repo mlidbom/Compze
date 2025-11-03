@@ -23,4 +23,7 @@
     <None Include="Tessaging\Teventive\Public\Taggregates\_docs\**\*.cs" />
     <Content Include="Tessaging\Teventive\Public\Taggregates\_docs\**\*.md" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Serialization\Internal\DbPool\" />
+  </ItemGroup>
 </Project>

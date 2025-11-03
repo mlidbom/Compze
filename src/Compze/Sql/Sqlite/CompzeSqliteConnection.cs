@@ -3,8 +3,8 @@ using System.Threading.Tasks;
 using System.Transactions;
 using Compze.Sql.Common.Abstractions;
 using Compze.Utilities.Contracts;
+using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using Compze.Utilities.SystemCE.TransactionsCE;
-using Compze.Utilities.Threading.TasksCE;
 using Microsoft.Data.Sqlite;
 
 namespace Compze.Sql.Sqlite;

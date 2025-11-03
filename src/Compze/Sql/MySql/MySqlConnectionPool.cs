@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Compze.Sql.Common;
 using Compze.Sql.Common.Abstractions;
 using Compze.Utilities.SystemCE;
-using Compze.Utilities.Threading.TasksCE;
+using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using MySql.Data.MySqlClient;
 
 namespace Compze.Sql.MySql;

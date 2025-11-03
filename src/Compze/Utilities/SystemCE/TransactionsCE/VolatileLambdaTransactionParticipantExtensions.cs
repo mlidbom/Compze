@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Transactions;
 using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
-using Compze.Utilities.Threading.ResourceAccess;
+using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
 namespace Compze.Utilities.SystemCE.TransactionsCE;
 

@@ -6,8 +6,8 @@ using Compze.Core.Tessaging.Public;
 using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
 using Compze.Tessaging.Implementation.Transport.Client.Internal;
 using Compze.Utilities.SystemCE.ReflectionCE;
-using Compze.Utilities.Threading;
-using Compze.Utilities.Threading.ResourceAccess;
+using Compze.Utilities.SystemCE.ThreadingCE;
+using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Routing;
 
