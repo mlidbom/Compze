@@ -22,15 +22,34 @@ public readonly struct unit : IEquatable<unit>
    // ReSharper disable once MemberCanBeInternal
    public static readonly unit Value = default;
 
-   ///<summary>Executes the task and returns unit making for easily returning unit without extra lines: unit Method() => unit.From(() => DoSomething())</summary>
+   ///<summary>Executes the task and returns unit making for easily returning unit without extra lines:
+   /// <code>
+   ///   unit Method() => unit.From(() => DoSomething())
+   /// </code>
+   /// </summary>
    public static unit From(Action action)
    {
       action();
       return Value;
    }
 
+   ///<summary>Creates a <see cref="Func"/> returning <see cref="unit"/> from an <see cref="Action"/>>, making it easy to call methods that take a <see cref="Func"/> when what you have is an Action
+   /// <code>
+   ///   ITakeFunc(unit.Func(() => DoSomething()));
+   /// </code>
+   /// </summary>
+   public static Func<unit> Func(Action action) =>
+      () =>
+      {
+         action();
+         return Value;
+      };
+
    public override string ToString() => "()";
 
+   //we manually implement equality, not because it's required for correctness, but for performance,
+   //this should be a bit more performant than the built-in,
+   //and the random hashcode better than the default for a zero value struct due to less risk of ending up in an over-populated bucket in hash based collections.
    public bool Equals(unit _) => true;
    public override bool Equals(object? obj) => obj is unit;
    public static bool operator ==(unit _, unit __) => true;
