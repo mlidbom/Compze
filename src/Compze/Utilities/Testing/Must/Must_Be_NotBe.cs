@@ -27,8 +27,8 @@ public static class Must_Be_NotBe
       }
 
       return context.Cast<object>()
-                 .Be_transitively_equal_to_according_to_every_supported_comparison_method_and_hashcode_internal(expected!, expectedExpression)
-                 .Cast<TValue>();
+                    .Be_transitively_equal_to_according_to_every_supported_comparison_method_and_hashcode_internal(expected!, expectedExpression)
+                    .Cast<TValue>();
    }
 
    static IAssertionContext<TValue> Be_transitively_equal_to_according_to_every_supported_comparison_method_and_hashcode_internal<TValue>(this IAssertionContext<TValue> context, TValue expected, [CallerArgumentExpression(nameof(expected))] string expectedExpression = null!)
@@ -80,17 +80,29 @@ public static class Must_Be_NotBe
       {
          var actualJson = JsonConvert.SerializeObject(context.Actual, TestingJsonSettings.AllMembers);
          var expectedJson = JsonConvert.SerializeObject(expected, TestingJsonSettings.AllMembers);
+
+         var actualToString = context.Actual?.ToString();
+         var expectedToString = expected?.ToString();
+
+         var skipDiff = actualToString == actualJson && expectedToString == expectedJson;
+
+         var diffMessage = skipDiff
+                              ? $"Expected {expectedToString} but got {actualToString}"
+                              : $"""
+                                 Diff:
+                                 {AssertionContext.Separator}
+                                 {DiffGenerator.CreateDiff(expectedJson, actualJson)}
+                                 """;
+
          return $"""
                  {context.FailingAssertionHeading(nameof(Be), expectedExpression)}
-                 Diff:
-                 {AssertionContext.Separator}
-                 {DiffGenerator.CreateDiff(expectedJson, actualJson)}
-                 {AssertionContext.Separator}
-                 the first failing equivalency test was: 
-                 {info.PredicateExpression.Indent()}{FailureMessage()}
+                 {diffMessage}
                  {AssertionContext.Separator}
                  {context.ArgumentValue($"{context.Expression}", context.Actual)}
                  {context.ArgumentValue($"{expectedExpression}", expected)}
+                 the first failing equivalency test was: 
+                 {info.PredicateExpression.Indent()}{FailureMessage()}
+                 {AssertionContext.Separator}
                  """;
 
          string FailureMessage() =>
@@ -116,12 +128,12 @@ public static class Must_Be_NotBe
       if(context.Actual is TUnExpected)
       {
          context.Cast<TUnExpected>().Not_be_transitively_equal_to_according_to_any_supported_comparison_method_internal(unexpected, unexpectedExpression)
-             .Cast<TValue>();
+                .Cast<TValue>();
       }
 
       return context.Cast<object>()
-                 .Not_be_transitively_equal_to_according_to_any_supported_comparison_method_internal(unexpected!, unexpectedExpression)
-                 .Cast<TValue>();
+                    .Not_be_transitively_equal_to_according_to_any_supported_comparison_method_internal(unexpected!, unexpectedExpression)
+                    .Cast<TValue>();
    }
 
    public static IAssertionContext<TValue> Not_be_transitively_equal_to_according_to_any_supported_comparison_method_internal<TValue>(this IAssertionContext<TValue> context, TValue unexpected, [CallerArgumentExpression(nameof(unexpected))] string unexpectedExpression = null!)

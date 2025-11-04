@@ -47,17 +47,44 @@ public class When_calling_Must_Be : UniversalTestBase
                                          --------------------------------------------------
                                          _actual.Must().Be(_expected)
                                          --------------------------------------------------
-                                         Diff:
-                                         --------------------------------------------------
-                                         [-43]
-                                         [+42]
-                                         --------------------------------------------------
-                                         the first failing equivalency test was: 
-                                            it => Equals(it, expected)
+                                         Expected 43 but got 42
                                          --------------------------------------------------
                                          _actual was a System.Int32 with the value: 42
                                          --------------------------------------------------
                                          _expected was a System.Int32 with the value: 43
+                                         --------------------------------------------------
+                                         the first failing equivalency test was: 
+                                            it => Equals(it, expected)
+                                         --------------------------------------------------
+                                         """);
+      }
+   }
+
+   public class with_an_int_and_a_long_with_the_same_value : When_calling_Must_Be
+   {
+      readonly int _actual = 42;
+      readonly long _expected = 42;
+
+      public class it_throws_AssertionFailedException : with_an_int_and_a_long_with_the_same_value
+      {
+         string ExceptionMessage() => Invoking(() => _actual.Must().Be(_expected)).Must().Throw<AssertionFailedException>().Which.Message;
+
+         [XF] public void and_the_exception_message__is() =>
+            ExceptionMessage().Must().Be("""
+                                         
+                                         --------------------------------------------------
+                                         Failing assertion:
+                                         --------------------------------------------------
+                                         _actual.Must().Be(_expected)
+                                         --------------------------------------------------
+                                         Expected 42 but got 42
+                                         --------------------------------------------------
+                                         _actual was a System.Int32 with the value: 42
+                                         --------------------------------------------------
+                                         _expected was a System.Int64 with the value: 42
+                                         --------------------------------------------------
+                                         the first failing equivalency test was: 
+                                            it => Equals(it, expected)
                                          --------------------------------------------------
                                          """);
       }
@@ -100,14 +127,7 @@ public class When_calling_Must_Be : UniversalTestBase
                                           }
                                          
                                          --------------------------------------------------
-                                         the first failing equivalency test was: 
-                                            it => Equals(it, expected)
-                                         --------------------------------------------------
                                          _actual was a Compze.Utilities.Tests.Testing.Must.When_calling_Must_Be.TestObjectWithOverriddenEquals with:
-                                         --------------------------------------------------
-                                         ToString():
-                                         --------------------------------------------------
-                                         Compze.Utilities.Tests.Testing.Must.When_calling_Must_Be+TestObjectWithOverriddenEquals
                                          --------------------------------------------------
                                          JSON:
                                          --------------------------------------------------
@@ -118,16 +138,15 @@ public class When_calling_Must_Be : UniversalTestBase
                                          --------------------------------------------------
                                          _expected was a Compze.Utilities.Tests.Testing.Must.When_calling_Must_Be.TestObjectWithOverriddenEquals with:
                                          --------------------------------------------------
-                                         ToString():
-                                         --------------------------------------------------
-                                         Compze.Utilities.Tests.Testing.Must.When_calling_Must_Be+TestObjectWithOverriddenEquals
-                                         --------------------------------------------------
                                          JSON:
                                          --------------------------------------------------
                                          {
                                            "$type": "Compze.Utilities.Tests.Testing.Must.When_calling_Must_Be+TestObjectWithOverriddenEquals, Compze.Utilities.Tests",
                                            "_value": "expected_value"
                                          }
+                                         --------------------------------------------------
+                                         the first failing equivalency test was: 
+                                            it => Equals(it, expected)
                                          --------------------------------------------------
                                          """);
       }

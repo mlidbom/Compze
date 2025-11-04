@@ -76,18 +76,31 @@ public interface IAssertionContext
             }
          } else // A complex type
          {
-            return $"""
-                    {expression} was a {value.GetType().GetFullNameCompilable()} with:
-                    {AssertionContext.Separator}
-                    ToString():
-                    {AssertionContext.Separator}
-                    {toString}
-                    {AssertionContext.Separator}
-                    JSON:
-                    {AssertionContext.Separator}
-                    {json}
-                    {AssertionContext.Separator}
-                    """;
+            if(toString == value.GetType().FullName)
+            {
+               return $"""
+                       {expression} was a {value.GetType().GetFullNameCompilable()} with:
+                       {AssertionContext.Separator}
+                       JSON:
+                       {AssertionContext.Separator}
+                       {json}
+                       {AssertionContext.Separator}
+                       """;
+            } else
+            {
+               return $"""
+                       {expression} was a {value.GetType().GetFullNameCompilable()} with:
+                       {AssertionContext.Separator}
+                       ToString():
+                       {AssertionContext.Separator}
+                       {toString}
+                       {AssertionContext.Separator}
+                       JSON:
+                       {AssertionContext.Separator}
+                       {json}
+                       {AssertionContext.Separator}
+                       """;
+            }
          }
       }
    }
