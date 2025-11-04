@@ -8,7 +8,7 @@ using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Tessaging.Implementation.Transport.Client.Implementation.Http;
 using Compze.Tessaging.Implementation.Transport.Client.Implementation.Universal;
 using Compze.Tessaging.Implementation.Transport.Client.Internal;
-using Compze.Utilities.Threading.TasksCE;
+using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Tessaging.Implementation.Outbox;
 

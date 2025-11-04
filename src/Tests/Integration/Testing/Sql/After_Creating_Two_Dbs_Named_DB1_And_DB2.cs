@@ -3,7 +3,7 @@ using Compze.Core.Wiring.Testing.Internal;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tests.Common.Testing.Sql;
 using Compze.Tests.Infrastructure.XUnit;
-using Compze.Utilities.Testing.Fluent;
+using Compze.Utilities.Testing.Must;
 
 namespace Compze.Tests.Integration.Testing.Sql;
 
@@ -59,6 +59,6 @@ public class After_Creating_Two_Dbs_Named_DB1_And_DB2 : DbPoolTestBase
       disposedPool.Dispose();
       var exception = disposedPool.Invoking(action: _ => disposedPool.ConnectionStringFor(Db1))
           .Must().Throw<Exception>();
-      exception.And.Message.ToUpperInvariant().Must().Contain("DISPOSED");
+      exception.Which.Message.ToUpperInvariant().Must().Contain("DISPOSED");
    }
 }

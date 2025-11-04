@@ -2,9 +2,9 @@ using System;
 using System.Linq;
 using Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId.Domain;
 using Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId.QueryModels;
-using Compze.Utilities.Testing.Fluent;
+using Compze.Utilities.Testing.Must;
 using Compze.Utilities.Testing.XUnit.BDD;
-using static Compze.Utilities.Testing.Fluent.MustActions;
+using static Compze.Utilities.Testing.Must.MustActions;
 
 namespace Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId;
 

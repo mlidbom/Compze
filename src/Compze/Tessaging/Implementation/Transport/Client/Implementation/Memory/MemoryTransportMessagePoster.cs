@@ -7,7 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Compze.Core.Refactoring.Naming.Internal;
 using Compze.Core.Serialization.Internal;
-using Compze.Utilities.Threading.TasksCE;
+using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Memory;
 

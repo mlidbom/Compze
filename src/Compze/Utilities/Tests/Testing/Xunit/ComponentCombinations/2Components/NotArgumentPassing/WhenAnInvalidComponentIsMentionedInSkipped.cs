@@ -1,0 +1,25 @@
+using System.Linq;
+using System.Reflection;
+using System.Threading.Tasks;
+using Compze.Utilities.SystemCE;
+using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
+using Compze.Utilities.Testing.Must;
+using Xunit.Sdk;
+
+namespace Compze.Utilities.Tests.Testing.Xunit.ComponentCombinations._2Components.NotArgumentPassing;
+
+public class WhenAnInvalidComponentIsMentionedInSkipped
+{
+   [NotArgumentPassingTwoComponentsPCT]
+   public async Task TheTestIsSkippedWithAnErrorTessage()
+   {
+      var testData = await new NotArgumentPassingTwoComponentsPCTAttribute()
+                           {
+                              Skipped = ["nonsense"],
+                              SkipReasons = ["because something"]
+                           }.GetData(MethodBase.GetCurrentMethod().NotNull().CastTo<MethodInfo>(), new DisposalTracker()).caf();
+
+      testData.Must().HaveCount(1);
+      testData.Single().Skip!.Must().Contain("nonsense");
+   }
+}

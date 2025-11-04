@@ -11,6 +11,8 @@
    <Allowed From="Compze.*" To="Compze.Core.*.Public" />
    <Allowed From="Compze.*.Internal.*" To="Compze.Core.*.Internal.*" />
    <Allowed From="Compze.*.Private.*" To="Compze.Core.*.Internal.*" />
+
+	<DisAllowed From="Compze.Utilities.*" To="Compze.Core.*" />
 	
 	 <!--Prevent Public from depending on Internal and Private abstractions--> 
 	<!--<Disallowed From="*.Public" To="*.Internal" />

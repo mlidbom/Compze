@@ -8,8 +8,8 @@ using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
 using Compze.Utilities.SystemCE.ReflectionCE.EmitCE;
-using Compze.Utilities.Threading;
-using Compze.Utilities.Threading.ResourceAccess;
+using Compze.Utilities.SystemCE.ThreadingCE;
+using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
 // ReSharper disable UnusedTypeParameter : todo: We'll keep the unused stuff for reference for now. If it is not used during the refactoring of wrapped tevent dispatching, ditch it.
 // ReSharper disable UnusedMember.Global

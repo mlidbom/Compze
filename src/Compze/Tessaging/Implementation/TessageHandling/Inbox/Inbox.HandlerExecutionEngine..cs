@@ -7,7 +7,7 @@ using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Utilities.DependencyInjection.Abstractions;
-using Compze.Utilities.Threading;
+using Compze.Utilities.SystemCE.ThreadingCE;
 
 namespace Compze.Tessaging.Implementation.TessageHandling.Inbox;
 

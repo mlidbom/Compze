@@ -3,8 +3,6 @@ using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
-using Compze.Utilities.Threading.Testing;
-
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -16,6 +14,7 @@ using Compze.Tessaging.Teventive.TeventStore.Wiring;
 using Compze.Tessaging.TyperMediaApi.EventStore;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.Functional;
+using Compze.Utilities.SystemCE.ThreadingCE.Testing;
 
 // ReSharper disable ClassNeverInstantiated.Global
 // ReSharper disable InconsistentNaming for testing

@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Data.Common;
 using Compze.Sql.Common.Abstractions;
 using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
-using Compze.Utilities.Threading.ResourceAccess;
+using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
 namespace Compze.Sql.Common;
 
-abstract partial class DbConnectionManager<TConnection, TCommand>
+abstract partial class DbConnectionPool<TConnection, TCommand>
    where TConnection : IPoolableConnection, ICompzeDbConnection<TCommand>
    where TCommand : DbCommand
 {
@@ -19,6 +19,6 @@ abstract partial class DbConnectionManager<TConnection, TCommand>
 
    static IDbConnectionPool<TConnection, TCommand> Create(string connectionString, PoolableConnectionFlags flags, Func<string, TConnection> createConnection) =>
       flags.HasFlag(PoolableConnectionFlags.MustUseSameConnectionThroughoutATransaction)
-         ? new TransactionAffinityDbConnectionManager(connectionString, createConnection)
-         : new DefaultDbConnectionManager(connectionString, createConnection);
+         ? new TransactionAffinityDbConnectionPool(connectionString, createConnection)
+         : new DefaultDbConnectionPool(connectionString, createConnection);
 }

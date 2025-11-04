@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.DependencyInjection.Abstractions;
-using Compze.Utilities.Threading.ResourceAccess;
+using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
 namespace Compze.Utilities.DependencyInjection;
 

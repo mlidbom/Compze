@@ -1,29 +1,29 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Transactions;
 using Compze.Sql.Common.Abstractions;
+using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
+using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using Compze.Utilities.SystemCE.TransactionsCE;
-using Compze.Utilities.Threading.ResourceAccess;
-using Compze.Utilities.Threading.TasksCE;
 
 // ReSharper disable StaticMemberInGenericType
 
 namespace Compze.Sql.Common;
 
-abstract partial class DbConnectionManager<TConnection, TCommand>
+abstract partial class DbConnectionPool<TConnection, TCommand>
    where TConnection : IPoolableConnection, ICompzeDbConnection<TCommand>
    where TCommand : DbCommand
 {
-   class DefaultDbConnectionManager(string connectionString, Func<string, TConnection> createConnection) : DbConnectionManager<TConnection, TCommand>, IDbConnectionPool<TConnection, TCommand>
+   class DefaultDbConnectionPool(string connectionString, Func<string, TConnection> createConnection) : DbConnectionPool<TConnection, TCommand>, IDbConnectionPool<TConnection, TCommand>
    {
       readonly string _connectionString = connectionString;
       readonly Func<string, TConnection> _createConnection = createConnection;
 
-      static int _openings = 0;
+      static readonly RunOnce RunOnce = new();
 
       protected async Task<TConnection> OpenConnectionAsync()
       {
@@ -32,7 +32,7 @@ abstract partial class DbConnectionManager<TConnection, TCommand>
 
          //This is here so that we can reassure ourselves, via a profiler, time and time again that it is actually the
          //first opening of a connection that takes very long and thus trying our own pooling will not help.
-         if(Interlocked.Increment(ref _openings) == 1)
+         if(RunOnce.IsFirstCall())
          {
             await connection.OpenAsync().caf(); //Currently 120 passing tests total of 60 seconds runtime, average per test 500ms.
          } else
@@ -50,7 +50,7 @@ abstract partial class DbConnectionManager<TConnection, TCommand>
 
          //This is here so that we can reassure ourselves, via a profiler, time and time again that it is actually the
          //first opening of a connection that takes very long and thus trying our own pooling will not help.
-         if(Interlocked.Increment(ref _openings) == 1)
+         if(RunOnce.IsFirstCall())
          {
             connection.Open(); //Currently 120 passing tests total of 60 seconds runtime, average per test 500ms.
          } else
@@ -78,7 +78,7 @@ abstract partial class DbConnectionManager<TConnection, TCommand>
       public override string ToString() => _connectionString;
    }
 
-   class TransactionAffinityDbConnectionManager(string connectionString, Func<string, TConnection> createConnection) : DefaultDbConnectionManager(connectionString, createConnection)
+   class TransactionAffinityDbConnectionPool(string connectionString, Func<string, TConnection> createConnection) : DefaultDbConnectionPool(connectionString, createConnection)
    {
       readonly IThreadShared<Dictionary<string, Task<TConnection>>> _transactionConnections =
          IThreadShared.WithDefaultTimeout<Dictionary<string, Task<TConnection>>>();

@@ -1,8 +1,8 @@
 using System;
 using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
-using Compze.Utilities.Testing.Fluent;
-using static Compze.Utilities.Testing.Fluent.MustActions;
+using Compze.Utilities.Testing.Must;
+using static Compze.Utilities.Testing.Must.MustActions;
 
 namespace Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 

@@ -1,0 +1,65 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <Folder Include="Testing\DbPool\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Testing\DbPool\Compze.Utilities.Testing.DbPool.csproj" />
+	  <ProjectReference Include="..\Testing\Must\Compze.Utilities.Testing.Must.csproj" />
+	  <ProjectReference Include="..\Testing\XUnit\Compze.Utilities.Testing.XUnit.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="Testing\Xunit\TestUsingArgumentPassingFiveComponentsPCTAttribute">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	    <TargetPath>%(Filename)</TargetPath>
+	  </None>
+	  <None Update="Testing\Xunit\TestUsingArgumentPassingFourComponentsPCTAttribute">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	    <TargetPath>%(Filename)</TargetPath>
+	  </None>
+	  <None Update="Testing\Xunit\TestUsingArgumentPassingOneComponentsPCTAttribute">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	    <TargetPath>%(Filename)</TargetPath>
+	  </None>
+	  <None Update="Testing\Xunit\TestUsingArgumentPassingThreeComponentsPCTAttribute">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	    <TargetPath>%(Filename)</TargetPath>
+	  </None>
+	  <None Update="Testing\Xunit\TestUsingArgumentPassingTwoComponentsPCTAttribute">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	    <TargetPath>%(Filename)</TargetPath>
+	  </None>
+	  <None Update="Testing\Xunit\TestUsingNotArgumentPassingOneComponentsPCTAttribute">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	    <TargetPath>%(Filename)</TargetPath>
+	  </None>
+	  <None Update="Testing\Xunit\TestUsingNotArgumentPassingTwoComponentsPCTAttribute">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	    <TargetPath>%(Filename)</TargetPath>
+	  </None>
+	  <None Update="Testing\Xunit\TestUsingWildcards">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	    <TargetPath>%(Filename)</TargetPath>
+	  </None>
+	</ItemGroup>
+
+   <ItemGroup>
+      <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
+      <PackageReference Include="JetBrains.Annotations" Version="2025.2.2">
+         <IncludeAssets>compile;analyzers</IncludeAssets>
+      </PackageReference>
+      <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
+         <PrivateAssets>all</PrivateAssets>
+         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+      <PackageReference Include="xunit.v3" Version="3.1.0" />
+   </ItemGroup>
+
+</Project>

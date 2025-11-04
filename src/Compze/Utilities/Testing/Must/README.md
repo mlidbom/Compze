@@ -1,0 +1,1 @@
+Strict by default fluent assertions. Shows exactly what failed: JSON of involved objects, the failing code, and unified diffs for equality tests. Deep equals support. Trivial to extend with custom assertions.

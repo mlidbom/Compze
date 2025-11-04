@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using AccountManagement.UserStories.Scenarios;
 using Compze.Tests.Infrastructure.XUnit;
-using Compze.Utilities.Testing.Fluent;
+using Compze.Utilities.Testing.Must;
 
 namespace AccountManagement.UserStories;
 

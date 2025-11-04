@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Compze.Sql.Common;
 using Compze.Sql.Common.Abstractions;
 using Compze.Utilities.SystemCE;
-using Compze.Utilities.Threading.TasksCE;
+using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using Microsoft.Data.SqlClient;
 
 namespace Compze.Sql.MicrosoftSql;
@@ -23,7 +23,7 @@ interface IMsSqlConnectionPool : IDbConnectionPool<ICompzeMsSqlConnection, SqlCo
             () =>
             {
                var connectionString = getConnectionString();
-               return DbConnectionManager<ICompzeMsSqlConnection, SqlCommand>.ForConnectionString(
+               return DbConnectionPool<ICompzeMsSqlConnection, SqlCommand>.ForConnectionString(
                   connectionString,
                   PoolableConnectionFlags.Defaults,
                   ICompzeMsSqlConnection.Create);

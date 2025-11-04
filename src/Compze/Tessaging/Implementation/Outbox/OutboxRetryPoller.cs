@@ -11,11 +11,11 @@ using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Logging;
 using Compze.Utilities.SystemCE.LinqCE;
-using Compze.Utilities.Threading.TasksCE;
 using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Tessaging.Implementation.Outbox;
 

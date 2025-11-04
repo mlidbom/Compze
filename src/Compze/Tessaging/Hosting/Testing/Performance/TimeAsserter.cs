@@ -5,7 +5,7 @@ using Compze.Utilities.Contracts;
 using Compze.Utilities.Logging;
 using Compze.Utilities.SystemCE;
 using JetBrains.Annotations;
-using SyncOrAsyncCE = Compze.Utilities.Threading.SyncOrAsyncCE;
+using Compze.Utilities.SystemCE.ThreadingCE;
 
 namespace Compze.Tessaging.Hosting.Testing.Performance;
 
@@ -73,7 +73,7 @@ static class TimeAsserter
                                                      [InstantHandle] Action? tearDown,
                                                      uint maxTries,
                                                      DeferredConsoleWriter writer) where TReturnValue : StopwatchCE.TimedExecutionSummary =>
-      SyncOrAsyncCE.SyncResult(InternalExecuteAsync(SyncOrAsyncCE.AsAsync(runScenario), iterations, maxAverage, maxTotal, description, setup, tearDown, maxTries, null, writer));
+      InternalExecuteAsync(runScenario.AsAsync(), iterations, maxAverage, maxTotal, description, setup, tearDown, maxTries, null, writer).SyncResult();
 
    static async Task<TReturnValue> InternalExecuteAsync<TReturnValue>([InstantHandle] Func<Task<TReturnValue>> runScenario,
                                                                       int iterations,
@@ -193,5 +193,5 @@ static class TimeAsserter
 
    static string Percent(TimeSpan percent, TimeSpan of) => $"{(int)(percent.TotalMilliseconds / of.TotalMilliseconds * 100)}%";
 
-   public class TimeOutException(string message) : Exception(message);
+   class TimeOutException(string message) : Exception(message);
 }

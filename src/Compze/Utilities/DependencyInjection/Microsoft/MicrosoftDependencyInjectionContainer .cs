@@ -6,7 +6,7 @@ using Compze.Utilities.Contracts;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
-using Compze.Utilities.Threading.TasksCE;
+using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Compze.Utilities.DependencyInjection.Microsoft;

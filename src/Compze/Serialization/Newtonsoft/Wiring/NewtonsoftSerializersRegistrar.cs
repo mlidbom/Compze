@@ -1,4 +1,3 @@
-using Compze.Serialization.Newtonsoft.Private.DbPool;
 using Compze.Serialization.Newtonsoft.Private.DocumentDb;
 using Compze.Serialization.Newtonsoft.Private.Tessaging;
 using Compze.Serialization.Newtonsoft.Private.TeventStore;
@@ -11,6 +10,5 @@ static class NewtonsoftSerializersRegistrar
    internal static IComponentRegistrar NewtonsoftSerializers(this IComponentRegistrar registrar) =>
       registrar.NewtonSoftRemotableTessageSerializer()
                .NewtonsoftDocumentDbSerializer()
-               .NewtonsoftTeventStoreSerializer()
-               .NewtonsoftSharedObjectSerializer();
+               .NewtonsoftTeventStoreSerializer();
 }

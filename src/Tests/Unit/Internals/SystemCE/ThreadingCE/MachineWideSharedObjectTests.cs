@@ -2,19 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Compze.Core.Serialization.Internal.DbPool;
-using Compze.Tessaging.Hosting.Testing;
-using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tests.Infrastructure;
-using Compze.Tests.Infrastructure.XUnit;
-using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE;
-using Compze.Utilities.Threading.Testing;
 using Compze.Utilities.SystemCE.LinqCE;
-using Compze.Utilities.Testing.DbPool.SystemCE.ThreadingCE;
-using Compze.Utilities.Testing.Fluent;
+using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
+using Compze.Utilities.SystemCE.ThreadingCE.Testing;
+using Compze.Utilities.Testing.Must;
+using Compze.Utilities.Testing.XUnit.BDD;
 using JetBrains.Annotations;
-using Compze.Utilities.Threading.TasksCE;
+using Newtonsoft.Json;
 
 // ReSharper disable ImplicitlyCapturedClosure
 
@@ -22,35 +19,31 @@ namespace Compze.Tests.Unit.Internals.SystemCE.ThreadingCE;
 
 [UsedImplicitly] public class SharedObject
 {
+   // ReSharper disable once MemberCanBeInternal
    public string Name { get; set; } = "Default";
+}
+
+class SharedObjectSerializer : ISharedObjectSerializer<SharedObject>
+{
+   public string Serialize(SharedObject instance) => JsonConvert.SerializeObject(instance);
+
+   public SharedObject Deserialize(string json) => JsonConvert.DeserializeObject<SharedObject>(json).NotNull();
 }
 
 public class MachineWideSharedObjectTests : UniversalTestBase
 {
    readonly List<MachineWideSharedObject<SharedObject>> _created = new();
-   readonly IServiceLocator _serviceLocator;
-   readonly ISharedObjectSerializer _serializer;
 
-   public MachineWideSharedObjectTests()
-   {
-      _serviceLocator = TestEnv.DIContainer.CreateWithServiceLocatorAndCurrentTestsPluggableComponents().ServiceLocator;
-      _serializer = _serviceLocator.Resolve<ISharedObjectSerializer>();
-   }
-
-   protected override void DisposeInternal()
-   {
-      _created.ForEach(obj => obj.Delete());
-      _serviceLocator.Dispose();
-   }
+   protected override void DisposeInternal() => _created.ForEach(obj => obj.Delete());
 
    MachineWideSharedObject<SharedObject> CreateAndDeleteFileWhenTestCompletes(string name)
    {
-      var created = MachineWideSharedObject<SharedObject>.For(name, _serializer);
+      var created = MachineWideSharedObject<SharedObject>.For(name, new SharedObjectSerializer(), CorruptionAction.ThrowException);
       _created.Add(created);
       return created;
    }
 
-   [PCT] public void Create()
+   [XF] public void Create()
    {
       var name = Guid.NewGuid().ToString();
       var shared = CreateAndDeleteFileWhenTestCompletes(name);
@@ -59,7 +52,7 @@ public class MachineWideSharedObjectTests : UniversalTestBase
       test.Name.Must().Be("Default");
    }
 
-   [PCT] public void Create_update_and_get()
+   [XF] public void Create_update_and_get()
    {
       var name = Guid.NewGuid().ToString();
       var shared = CreateAndDeleteFileWhenTestCompletes(name);
@@ -76,7 +69,7 @@ public class MachineWideSharedObjectTests : UniversalTestBase
       value.Name.Must().Be("Updated");
    }
 
-   [PCT] public void Two_instances_with_same_name_share_data()
+   [XF] public void Two_instances_with_same_name_share_data()
    {
       var name = Guid.NewGuid().ToString();
       var shared1 = CreateAndDeleteFileWhenTestCompletes(name);
@@ -97,15 +90,14 @@ public class MachineWideSharedObjectTests : UniversalTestBase
       test1.Name.Must().Be("Updated");
    }
 
-   [PCT] public void Persistent_Once_all_instance_are_disposed_data_is_retained()
+   [XF] public void Persistent_Once_all_instance_are_disposed_data_is_retained()
    {
       const string name = "40BD77DF-7C32-4B28-9A49-DA2CE202CC4F";
       var newName = Guid.NewGuid().ToString();
-      MachineWideSharedObject<SharedObject> shared2;
       var shared = CreateAndDeleteFileWhenTestCompletes(name);
 
       shared.Update(it => it.Name = newName).Name.Must().Be(newName);
-      shared2 = CreateAndDeleteFileWhenTestCompletes(name);
+      var shared2 = CreateAndDeleteFileWhenTestCompletes(name);
       shared.GetCopy().Name.Must().Be(newName);
 
       shared2.GetCopy().Name.Must().Be(newName);
@@ -114,7 +106,7 @@ public class MachineWideSharedObjectTests : UniversalTestBase
       shared.GetCopy().Name.Must().Be(newName);
    }
 
-   [PCT] public async Task Update_blocks_GetCopy_and_Update_from_both_same_and_other_instances()
+   [XF] public async Task Update_blocks_GetCopy_and_Update_from_both_same_and_other_instances()
    {
       var timeout = 15.Seconds();
       var updateGate = ThreadGate.CreateClosedWithTimeout(timeout);

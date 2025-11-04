@@ -6,23 +6,13 @@
     <FrameworkUtilisationTypeForNUnit2>Disabled</FrameworkUtilisationTypeForNUnit2>
     <HotSpotsExclusionList />
     <HotSpotsLineExclusionList>
-      <Value>Threading\ResourceAccess\MonitorCE.Functional.Awaiting.cs:Compze\Utilities\Compze.Utilities.csproj-65</Value>
       <Value>SystemCE\ThreadingCE\TaskRunner.cs:Compze\Tessaging\Compze.Tessaging.csproj-57</Value>
-      <Value>Threading\ResourceAccess\MonitorCE.Functional.Awaiting.cs:Compze\Utilities\Compze.Utilities.csproj-41</Value>
-      <Value>Threading\ResourceAccess\MonitorCE.Functional.Awaiting.cs:Compze\Utilities\Compze.Utilities.csproj-23</Value>
       <Value>Hosting\EndpointRequestExecutor.cs:Compze\Tessaging\Compze.Tessaging.csproj-23</Value>
-      <Value>Threading\ResourceAccess\MonitorCE.Functional.Awaiting.cs:Compze\Utilities\Compze.Utilities.csproj-19</Value>
       <Value>Implementation\TessageHandling\Inbox\Inbox.HandlerExecutionEngine.Coordinator.cs:Compze\Tessaging\Compze.Tessaging.csproj-32</Value>
-      <Value>Threading\ResourceAccess\ThreadShared.cs:Compze\Utilities\Compze.Utilities.csproj-35</Value>
       <Value>Implementation\TessageHandling\Inbox\Inbox.HandlerExecutionEngine..cs:Compze\Tessaging\Compze.Tessaging.csproj-41</Value>
-      <Value>Threading\ResourceAccess\MonitorCE.Functional.Awaiting.cs:Compze\Utilities\Compze.Utilities.csproj-17</Value>
       <Value>Implementation\Transport\Client\Implementation\Memory\MemoryInboxTransportServer.cs:Compze\Tessaging\Compze.Tessaging.csproj-83</Value>
       <Value>Implementation\Transport\Client\Implementation\Memory\MemoryTransportMessagePoster.cs:Compze\Tessaging\Compze.Tessaging.csproj-41</Value>
-      <Value>Threading\TasksCE\TaskCE.Run.cs:Compze\Utilities\Compze.Utilities.csproj-27</Value>
-      <Value>Threading\ResourceAccess\MonitorCE.Functional.Awaiting.cs:Compze\Utilities\Compze.Utilities.csproj-13</Value>
       <Value>Implementation\Outbox\OutboxRetryPoller.cs:Compze\Tessaging\Compze.Tessaging.csproj-103</Value>
-      <Value>Threading\ResourceAccess\MonitorCE.Functional.Awaiting.cs:Compze\Utilities\Compze.Utilities.csproj-9</Value>
-      <Value>Threading\ResourceAccess\MonitorCE.Functional.Awaiting.cs:Compze\Utilities\Compze.Utilities.csproj-33</Value>
     </HotSpotsLineExclusionList>
     <MSpecEnabled>False</MSpecEnabled>
     <NUnit3Enabled>False</NUnit3Enabled>

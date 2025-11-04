@@ -10,6 +10,8 @@ namespace Compze.Utilities.SystemCE;
 ///<summary>Contains extensions on <see cref="string"/></summary>
 public static class StringCE
 {
+   internal const string Empty = "";
+
    ///<summary>returns true if me is null, empty or only whitespace</summary>
    [ContractAnnotation("null => true")]
    public static bool IsNullEmptyOrWhiteSpace(this string? @this) => string.IsNullOrWhiteSpace(@this);

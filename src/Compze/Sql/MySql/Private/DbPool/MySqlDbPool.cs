@@ -3,7 +3,7 @@ using Compze.Sql.Common.DbPool;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Functional;
-using Compze.Utilities.Threading.ResourceAccess;
+using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 using MySql.Data.MySqlClient;
 
 namespace Compze.Sql.MySql.Private.DbPool;

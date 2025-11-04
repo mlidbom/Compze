@@ -1,8 +1,8 @@
 using System;
 using System.Runtime.CompilerServices;
 using Compze.Utilities.Contracts;
-using Compze.Utilities.Testing.Fluent;
-using static Compze.Utilities.Testing.Fluent.MustActions;
+using Compze.Utilities.Testing.Must;
+using static Compze.Utilities.Testing.Must.MustActions;
 
 namespace Compze.Tests.Unit.Internals.Contracts;
 

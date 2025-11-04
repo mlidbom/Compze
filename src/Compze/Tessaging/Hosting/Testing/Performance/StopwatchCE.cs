@@ -5,7 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Compze.Utilities.SystemCE;
-using Compze.Utilities.Threading;
+using Compze.Utilities.SystemCE.ThreadingCE;
 using JetBrains.Annotations;
 
 namespace Compze.Tessaging.Hosting.Testing.Performance;

@@ -12,7 +12,7 @@
       </PackageReference>
 	</ItemGroup>
   <ItemGroup>
-    <Folder Include="SystemCE\Text\" />
+    <Folder Include="SystemCE\TextCE\" />
   </ItemGroup>
   <!-- Exclude subdirectories that have their own .csproj files to prevent compilation errors.
        This section is automatically maintained by DevScripts\C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders.ps1 -->
@@ -33,10 +33,10 @@
     <EmbeddedResource Remove="Testing\DbPool\**" />
     <None Remove="Testing\DbPool\**" />
     <Content Remove="Testing\DbPool\**" />
-    <Compile Remove="Testing\Fluent\**" />
-    <EmbeddedResource Remove="Testing\Fluent\**" />
-    <None Remove="Testing\Fluent\**" />
-    <Content Remove="Testing\Fluent\**" />
+    <Compile Remove="Testing\Must\**" />
+    <EmbeddedResource Remove="Testing\Must\**" />
+    <None Remove="Testing\Must\**" />
+    <Content Remove="Testing\Must\**" />
     <Compile Remove="Testing\XUnit\**" />
     <EmbeddedResource Remove="Testing\XUnit\**" />
     <None Remove="Testing\XUnit\**" />
@@ -45,5 +45,9 @@
     <EmbeddedResource Remove="Testing\XUnit\Tests\**" />
     <None Remove="Testing\XUnit\Tests\**" />
     <Content Remove="Testing\XUnit\Tests\**" />
+    <Compile Remove="Tests\**" />
+    <EmbeddedResource Remove="Tests\**" />
+    <None Remove="Tests\**" />
+    <Content Remove="Tests\**" />
   </ItemGroup>
 </Project>

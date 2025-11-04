@@ -4,7 +4,7 @@ using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.DependencyInjection;
 using Compze.Tests.Infrastructure.XUnit;
-using Compze.Utilities.Testing.Fluent;
+using Compze.Utilities.Testing.Must;
 
 namespace Compze.Tests.Integration.DependencyInjection;
 
@@ -24,11 +24,11 @@ public class DuplicateRegistrationTests : UniversalTestBase
 
       var attemptingDuplicateRegistration = () => container.Register(Singleton.For<ITestService>().CreatedBy(() => new TestService()));
 
-      attemptingDuplicateRegistration.Must()
-                                     .Throw<InvalidOperationException>()
-                                     .And.Message.Must()
-                                     .Contain("ITestService")
-                                     .Contain("already registered");
+      CaughtException<InvalidOperationException> tempQualifier = attemptingDuplicateRegistration.Must()
+                                                                                                .Throw<InvalidOperationException>();
+      tempQualifier.Which.Message.Must()
+                   .Contain("ITestService")
+                   .Contain("already registered");
    }
 
    [PCT]
@@ -40,11 +40,11 @@ public class DuplicateRegistrationTests : UniversalTestBase
 
       var attemptingDuplicateRegistration = () => container.Register(Scoped.For<ITestService>().CreatedBy(() => new TestService()));
 
-      attemptingDuplicateRegistration.Must()
-                                     .Throw<InvalidOperationException>()
-                                     .And.Message.Must()
-                                     .Contain("ITestService")
-                                     .Contain("already registered");
+      CaughtException<InvalidOperationException> tempQualifier = attemptingDuplicateRegistration.Must()
+                                                                                                .Throw<InvalidOperationException>();
+      tempQualifier.Which.Message.Must()
+                   .Contain("ITestService")
+                   .Contain("already registered");
    }
 
    [PCT]
@@ -58,10 +58,10 @@ public class DuplicateRegistrationTests : UniversalTestBase
 
       var attemptingToReregisterOneServiceType = () => container.Register(Singleton.For<ITestService>().CreatedBy(() => new TestService()));
 
-      attemptingToReregisterOneServiceType.Must()
-                                          .Throw<InvalidOperationException>()
-                                          .And.Message.Must()
-                                          .Contain("ITestService")
-                                          .Contain("already registered");
+      CaughtException<InvalidOperationException> tempQualifier = attemptingToReregisterOneServiceType.Must()
+                                                                                                     .Throw<InvalidOperationException>();
+      tempQualifier.Which.Message.Must()
+                   .Contain("ITestService")
+                   .Contain("already registered");
    }
 }

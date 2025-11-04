@@ -1,10 +1,10 @@
 using Compze.Sql.Common;
 using Compze.Sql.Common.Abstractions;
 using Compze.Utilities.SystemCE;
-using Compze.Utilities.Threading.TasksCE;
 using Npgsql;
 using System;
 using System.Threading.Tasks;
+using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Sql.PostgreSql;
 
@@ -25,7 +25,7 @@ interface IPgSqlConnectionPool : IDbConnectionPool<ICompzeNpgsqlConnection, Npgs
             () =>
             {
                var connectionString = getConnectionString();
-               return DbConnectionManager<ICompzeNpgsqlConnection, NpgsqlCommand>.ForConnectionString(
+               return DbConnectionPool<ICompzeNpgsqlConnection, NpgsqlCommand>.ForConnectionString(
                   connectionString,
                   PoolableConnectionFlags.MustUseSameConnectionThroughoutATransaction,
                   ICompzeNpgsqlConnection.Create);

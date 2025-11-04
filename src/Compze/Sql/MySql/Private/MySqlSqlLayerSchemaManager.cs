@@ -5,8 +5,8 @@ using Compze.Sql.MySql.Private.TEventStore;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE;
+using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using Compze.Utilities.SystemCE.TransactionsCE;
-using Compze.Utilities.Threading.TasksCE;
 
 namespace Compze.Sql.MySql.Private;
 

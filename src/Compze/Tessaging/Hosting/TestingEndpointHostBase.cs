@@ -9,7 +9,7 @@ using Compze.Tessaging.Implementation.Transport.Client.Routing.Abstractions;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
-using Compze.Utilities.Threading.TasksCE;
+using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Tessaging.Hosting;
 

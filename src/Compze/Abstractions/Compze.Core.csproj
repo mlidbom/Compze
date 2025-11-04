@@ -13,6 +13,9 @@
          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
    </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Serialization\Internal\DbPool\" />
+  </ItemGroup>
   <!-- Exclude _docs files from compilation but keep them visible.
        This section is automatically maintained by DevScripts\C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders.ps1 -->
   <ItemGroup>

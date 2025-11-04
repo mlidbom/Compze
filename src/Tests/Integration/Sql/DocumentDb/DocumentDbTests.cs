@@ -12,10 +12,10 @@ using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Tests.Infrastructure.XUnit;
-using Compze.Utilities.Testing.Fluent;
-using Compze.Utilities.Threading;
-using Compze.Utilities.Threading.TasksCE;
-using static Compze.Utilities.Testing.Fluent.MustActions;
+using Compze.Utilities.SystemCE.ThreadingCE;
+using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
+using Compze.Utilities.Testing.Must;
+using static Compze.Utilities.Testing.Must.MustActions;
 
 // ReSharper disable AccessToDisposedClosure
 

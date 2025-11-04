@@ -2,10 +2,10 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Compze.Tests.Infrastructure;
-using Compze.Utilities.Testing.Fluent;
+using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
+using Compze.Utilities.Testing.Must;
 using Compze.Utilities.Testing.XUnit.BDD;
-using static Compze.Utilities.Testing.Fluent.MustActions;
-using Compze.Utilities.Threading.TasksCE;
+using static Compze.Utilities.Testing.Must.MustActions;
 
 namespace Compze.Tests.Unit.Internals.SystemCE.ThreadingCE.TasksCE;
 

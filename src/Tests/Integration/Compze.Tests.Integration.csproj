@@ -9,7 +9,7 @@
       <ProjectReference Include="..\..\Compze\Tessaging\Hosting\AspNetCore\Compze.Tessaging.Hosting.AspNetCore.csproj" />
       <ProjectReference Include="..\Unit\Internals\Compze.Tests.Unit.Internals.csproj" />
       <ProjectReference Include="..\..\Compze\Utilities\Compze.Utilities.csproj" />
-      <ProjectReference Include="..\..\Compze\Utilities\Testing\Fluent\Compze.Utilities.Testing.Fluent.csproj" />
+      <ProjectReference Include="..\..\Compze\Utilities\Testing\Must\Compze.Utilities.Testing.Must.csproj" />
    </ItemGroup>
    <ItemGroup>
       <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />

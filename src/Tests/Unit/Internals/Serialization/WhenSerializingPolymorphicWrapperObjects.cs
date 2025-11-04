@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Compze.Core.Public;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Utilities.Functional;
-using Compze.Utilities.Testing.Fluent;
+using Compze.Utilities.Testing.Must;
 
 // ReSharper disable UnusedMember.Global
 

@@ -3,12 +3,12 @@ using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Core.Tessaging.Internal.SqlLayer;
 using Compze.Sql.Common;
 using Compze.Utilities.SystemCE.LinqCE;
-using Compze.Utilities.Threading.TasksCE;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Threading.Tasks;
 using Compze.Core.Refactoring.Naming.Internal;
+using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using DispatchingTable = Compze.Core.Tessaging.Internal.SqlLayer.IServiceBusSqlLayer.OutboxTessageDispatchingTableSchemaStrings;
 using TessageTable = Compze.Core.Tessaging.Internal.SqlLayer.IServiceBusSqlLayer.OutboxTessagesDatabaseSchemaStrings;
 

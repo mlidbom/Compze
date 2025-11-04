@@ -3,7 +3,7 @@ using Compze.Sql.Common.DbPool;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE.LinqCE;
-using Compze.Utilities.Threading.ResourceAccess;
+using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 using Microsoft.Data.Sqlite;
 
 namespace Compze.Sql.Sqlite.Private.DbPool;
