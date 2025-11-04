@@ -25,6 +25,47 @@ public class When_calling_Must_HaveCount : UniversalTestBase
         .Must()
         .Throw<AssertionFailedException>();
 
+   [XF] public void it_throws_when_count_is_different_and_the_message_is()
+      => Invoking(() => new[] { 1, 2, 3 }.Must().HaveCount(5))
+        .Must()
+        .Throw<AssertionFailedException>()
+        .Which.Message.Must().Be("""
+                                 
+                                 --------------------------------------------------
+                                 Failing assertion:
+                                 --------------------------------------------------
+                                 new[] { 1, 2, 3 }.Must().HaveCount()
+                                 --------------------------------------------------
+                                 "it" defined by:
+                                 --------------------------------------------------
+                                    new[] { 1, 2, 3 }
+                                 --------------------------------------------------
+                                 failed to Satisfy:
+                                 --------------------------------------------------
+                                    Count == 5
+                                 --------------------------------------------------
+                                 but Count was: 3, not 5
+                                 --------------------------------------------------
+                                 "it" was:
+                                 --------------------------------------------------
+                                 ToString():
+                                 --------------------------------------------------
+                                 System.Int32[]
+                                 --------------------------------------------------
+                                 JSON:
+                                 --------------------------------------------------
+                                 {
+                                   "$type": "System.Int32[], System.Private.CoreLib",
+                                   "$values": [
+                                     1,
+                                     2,
+                                     3
+                                   ]
+                                 }
+                                 --------------------------------------------------
+                                 """);
+
+
    [XF] public void it_throws_when_expected_empty_but_not()
       => Invoking(() => new[] { 1 }.Must().HaveCount(0))
         .Must()

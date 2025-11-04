@@ -15,7 +15,7 @@ public interface IAssertionContext
 
    string AssertionCode(string method, string? predicate = null, AssertionArgumentInfo[]? arguments = null) => $"{Expression}.Must().{method}({predicate})";
 
-   string FailingAssertionHeading(string method, string? predicate = null, AssertionArgumentInfo[]? arguments = null) =>
+   string FailingAssertionHeading(string method, string? predicate = null) =>
       $"""
        {AssertionContext.Separator}
        Failing assertion:
@@ -23,6 +23,21 @@ public interface IAssertionContext
        {AssertionCode(method, predicate)}
        {AssertionContext.Separator}
        """;
+
+   string FailingAssertionHeading(string callerName, string? predicate = null, AssertionArgumentInfo[]? usedArguments = null)
+   {
+      if(string.IsNullOrEmpty(callerName))
+         return AssertionContext.RemoveLine;
+
+      var arguments = usedArguments != null && usedArguments.Any()
+                         ? usedArguments.Select(it => it.Expression).Join(", ")
+                         : "";
+
+      return $"""
+              {Expression}.Must().{callerName}({arguments})
+              {AssertionContext.Separator}
+              """;
+   }
 }
 
 public interface IAssertionContext<out T> : IAssertionContext

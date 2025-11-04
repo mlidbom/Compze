@@ -79,11 +79,7 @@ public static class _Must_Satisfy
          var parameterName = ExtractParameterName(predicateExpression);
 
          var message = $"""
-             {AssertionContext.Separator}
-             Failing assertion:
-             {AssertionContext.Separator}
-             {AssertionMethodCall()}
-             {ArgumentDescription(parameterName, context.Expression)}
+             {context.FailingAssertionHeading(callerName, predicateExpression, usedArguments)}
              {DisplayUsedArgumentsDefinitions()}
              failed to Satisfy:
              {AssertionContext.Separator}
@@ -135,21 +131,6 @@ public static class _Must_Satisfy
                   {AssertionContext.Separator}
                   """
                : AssertionContext.RemoveLine;
-
-         string AssertionMethodCall()
-         {
-            if(string.IsNullOrEmpty(callerName))
-               return AssertionContext.RemoveLine;
-
-            var arguments = usedArguments != null && usedArguments.Any()
-                               ? usedArguments.Select(it => it.Expression).Join(", ")
-                               : "";
-
-            return $"""
-                    {context.Expression}.Must().{callerName}({arguments})
-                    {AssertionContext.Separator}
-                    """;
-         }
       }
 
       return context;

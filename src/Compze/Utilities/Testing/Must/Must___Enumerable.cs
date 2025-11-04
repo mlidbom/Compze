@@ -13,7 +13,7 @@ public static class Must___Enumerable
 {
    public static IAssertionContext<TCollection> HaveCount<TCollection>(this IAssertionContext<TCollection> context, int count, [CallerArgumentExpression(nameof(count))] string predicateExpression = null!)
       where TCollection : System.Collections.IEnumerable
-      => context.SatisfyInternal(it => it.Cast<object>().Count() == count, predicateExpression:$"Count == {predicateExpression}", failureMessage: it => $"but Count was: {it.Cast<object>().Count()}, not {count}");
+      => context.SatisfyInternal(it => it.Cast<object>().Count() == count, usedArguments: [new (nameof(count), predicateExpression, count)]);
 
    public static IAssertionContext<TCollection> BeEmpty<TCollection>(this IAssertionContext<TCollection> context, string? message = null!)
       where TCollection : System.Collections.IEnumerable
