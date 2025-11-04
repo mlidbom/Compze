@@ -3,7 +3,7 @@ using Compze.Utilities.Contracts;
 
 namespace Compze.Utilities.SystemCE.IOCE;
 
-class FileCE
+public class FileCE
 {
    public readonly FileInfo FileInfo;
 
@@ -12,4 +12,6 @@ class FileCE
       Assert.Argument.Is(fileInfo.Exists);
       FileInfo = fileInfo;
    }
+
+   public void Delete() => File.Delete(FileInfo.FullName);
 }

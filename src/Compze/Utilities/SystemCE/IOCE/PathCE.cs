@@ -4,7 +4,7 @@ using System.IO;
 
 namespace Compze.Utilities.SystemCE.IOCE;
 
-public static partial class PathCE
+public static class PathCE
 {
    internal static string ReplaceInvalidCharactersWith(string path, char replacement) =>
       path.mutate(it => Path.GetInvalidFileNameChars()
