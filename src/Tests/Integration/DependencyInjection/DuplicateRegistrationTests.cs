@@ -24,11 +24,11 @@ public class DuplicateRegistrationTests : UniversalTestBase
 
       var attemptingDuplicateRegistration = () => container.Register(Singleton.For<ITestService>().CreatedBy(() => new TestService()));
 
-      attemptingDuplicateRegistration.Must()
-                                     .Throw<InvalidOperationException>()
-                                     .And.Message.Must()
-                                     .Contain("ITestService")
-                                     .Contain("already registered");
+      CaughtException<InvalidOperationException> tempQualifier = attemptingDuplicateRegistration.Must()
+                                                                                                .Throw<InvalidOperationException>();
+      tempQualifier.Which.Message.Must()
+                   .Contain("ITestService")
+                   .Contain("already registered");
    }
 
    [PCT]
@@ -40,11 +40,11 @@ public class DuplicateRegistrationTests : UniversalTestBase
 
       var attemptingDuplicateRegistration = () => container.Register(Scoped.For<ITestService>().CreatedBy(() => new TestService()));
 
-      attemptingDuplicateRegistration.Must()
-                                     .Throw<InvalidOperationException>()
-                                     .And.Message.Must()
-                                     .Contain("ITestService")
-                                     .Contain("already registered");
+      CaughtException<InvalidOperationException> tempQualifier = attemptingDuplicateRegistration.Must()
+                                                                                                .Throw<InvalidOperationException>();
+      tempQualifier.Which.Message.Must()
+                   .Contain("ITestService")
+                   .Contain("already registered");
    }
 
    [PCT]
@@ -58,10 +58,10 @@ public class DuplicateRegistrationTests : UniversalTestBase
 
       var attemptingToReregisterOneServiceType = () => container.Register(Singleton.For<ITestService>().CreatedBy(() => new TestService()));
 
-      attemptingToReregisterOneServiceType.Must()
-                                          .Throw<InvalidOperationException>()
-                                          .And.Message.Must()
-                                          .Contain("ITestService")
-                                          .Contain("already registered");
+      CaughtException<InvalidOperationException> tempQualifier = attemptingToReregisterOneServiceType.Must()
+                                                                                                     .Throw<InvalidOperationException>();
+      tempQualifier.Which.Message.Must()
+                   .Contain("ITestService")
+                   .Contain("already registered");
    }
 }

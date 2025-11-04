@@ -16,8 +16,7 @@ public class When_calling_Invoking_Must_Throw : UniversalTestBase
       [XF] public void and_allows_asserting_on_the_exception()
          => Invoking(() => throw _actual)
            .Must()
-           .Throw<InvalidOperationException>()
-           .WhichMust
+           .Throw<InvalidOperationException>().Which.Must()
            .Be(_actual);
    }
 

@@ -112,8 +112,5 @@ public class CaughtException<TException>(TException exception)
 {
    readonly TException _exception = exception;
    public TException Which => _exception;
-   public TException And => _exception;
    public TException That => _exception;
-   public IMust<TException> ThatMust => _exception.Must();
-   public IMust<TException> WhichMust => _exception.Must();
 }

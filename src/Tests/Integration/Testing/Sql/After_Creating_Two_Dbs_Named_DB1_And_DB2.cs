@@ -59,6 +59,6 @@ public class After_Creating_Two_Dbs_Named_DB1_And_DB2 : DbPoolTestBase
       disposedPool.Dispose();
       var exception = disposedPool.Invoking(action: _ => disposedPool.ConnectionStringFor(Db1))
           .Must().Throw<Exception>();
-      exception.And.Message.ToUpperInvariant().Must().Contain("DISPOSED");
+      exception.Which.Message.ToUpperInvariant().Must().Contain("DISPOSED");
    }
 }

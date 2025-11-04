@@ -24,7 +24,7 @@ public class When_calling_InvokingAsync_Must_ThrowAsync : UniversalTestBase
                            .Must()
                            .ThrowAsync<InvalidOperationException>();
 
-         caught.WhichMust.Be(_actual);
+         caught.Which.Must().Be(_actual);
       }
    }
 
@@ -168,7 +168,7 @@ public class When_calling_InvokingAsync_Must_ThrowAsync : UniversalTestBase
                            .Must()
                            .ThrowAsync<InvalidOperationException>();
 
-         caught.WhichMust.Be(_actual);
+         caught.Which.Must().Be(_actual);
       }
    }
 
