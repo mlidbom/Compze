@@ -10,22 +10,33 @@ public abstract class MachineWideSharedObject
    internal static readonly LazyCE<DirectoryCE> DataDirectory = new(() => DirectoryCE.StandardDirectories.LocalApplicationData.GetOrCreateDirectory("Compze").GetOrCreateDirectory("SharedFiles"));
 }
 
+public enum CorruptionAction
+{
+   ThrowException = 0,
+   ReplaceContentWithDefault = 1,
+   ReplaceContentWithDefaultAndThrow = 2
+}
+
 public sealed class MachineWideSharedObject<TObject> : MachineWideSharedObject where TObject : class, new()
 {
    readonly TextFile _file;
    readonly MutexCE _synchronizer;
    readonly ISharedObjectSerializer _serializer;
+   readonly CorruptionAction _corruptionAction;
 
-   internal static MachineWideSharedObject<TObject> For(string name, ISharedObjectSerializer serializer) => new(name, serializer);
+   internal static MachineWideSharedObject<TObject> For(string name, ISharedObjectSerializer serializer, CorruptionAction corruptionAction) => new(name, serializer, corruptionAction);
 
-   MachineWideSharedObject(string name, ISharedObjectSerializer serializer)
+   MachineWideSharedObject(string name, ISharedObjectSerializer serializer, CorruptionAction corruptionAction)
    {
       _serializer = serializer;
+      _corruptionAction = corruptionAction;
       var fileName = PathCE.ReplaceInvalidCharactersWith(name, '_');
       _synchronizer = MutexCE.ForMutexNamed(fileName);
 
-      _file = _synchronizer.ExecuteWithLock(() => DataDirectory.Value.GetOrCreateTextFile(fileName, Encoding.UTF8, () => _serializer.Serialize(new TObject())));
+      _file = _synchronizer.ExecuteWithLock(() => DataDirectory.Value.GetOrCreateTextFile(fileName, Encoding.UTF8, CreateDefaultJson));
    }
+
+   string CreateDefaultJson() => _serializer.Serialize(new TObject());
 
    internal TObject Update(Action<TObject> action) => _synchronizer.ExecuteWithLock(() =>
    {
@@ -54,18 +65,28 @@ public sealed class MachineWideSharedObject<TObject> : MachineWideSharedObject w
       }
       catch(Exception exception)
       {
+         if(_corruptionAction != CorruptionAction.ReplaceContentWithDefault)
+            throw new Exception($"""
+                                 Failed to deserialize object from file {_file}
+                                 The file content was:
+                                 """,
+                                exception);
+
          _file.Delete();
-         _file.WriteAllText(_serializer.Serialize(new TObject()));
-         throw new Exception($"""
+         _file.WriteAllText(CreateDefaultJson());
+         if(_corruptionAction == CorruptionAction.ReplaceContentWithDefaultAndThrow)
+         {
+            throw new Exception($"""
 
-                              Failed to deserialize object from file {_file}
-                              Deleted the corrupt file and replaced it with the content of a default {typeof(TObject).FullName}.
-                              The file content was: 
+                                 Failed to deserialize object from file {_file}
+                                 Deleted the corrupt file and replaced it with the content of a default {typeof(TObject).FullName}.
+                                 The file content was: 
 
-                              {json}
-                               
-                              """,
-                             exception);
+                                 {json}
+                                  
+                                 """,
+                                exception);
+         }
       }
    }
 }

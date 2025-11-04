@@ -12,7 +12,6 @@ using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using Compze.Utilities.SystemCE.ThreadingCE.Testing;
-using Compze.Utilities.Testing.DbPool.SystemCE.ThreadingCE;
 using Compze.Utilities.Testing.Must;
 using JetBrains.Annotations;
 
@@ -45,7 +44,7 @@ public class MachineWideSharedObjectTests : UniversalTestBase
 
    MachineWideSharedObject<SharedObject> CreateAndDeleteFileWhenTestCompletes(string name)
    {
-      var created = MachineWideSharedObject<SharedObject>.For(name, _serializer);
+      var created = MachineWideSharedObject<SharedObject>.For(name, _serializer, CorruptionAction.ThrowException);
       _created.Add(created);
       return created;
    }

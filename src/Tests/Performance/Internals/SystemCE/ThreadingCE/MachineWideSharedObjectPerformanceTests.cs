@@ -19,7 +19,7 @@ public class MachineWideSharedObjectPerformanceTests : UniversalTestBase
    public MachineWideSharedObjectPerformanceTests()
    {
       _serviceLocator = TestEnv.DIContainer.CreateWithServiceLocatorAndCurrentTestsPluggableComponents().ServiceLocator;
-      _shared = MachineWideSharedObject<SharedObject>.For(Guid.NewGuid().ToString(), _serviceLocator.Resolve<ISharedObjectSerializer>());
+      _shared = MachineWideSharedObject<SharedObject>.For(Guid.NewGuid().ToString(), _serviceLocator.Resolve<ISharedObjectSerializer>(), CorruptionAction.ThrowException);
    }
 
    protected override void DisposeInternal()
