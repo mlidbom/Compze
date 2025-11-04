@@ -77,7 +77,7 @@ public static class _Must_Satisfy
          }
 
          var message = $"""
-             {context.FailingAssertionHeading(caller!, predicateExpression, expressions)}
+             {context.FailingAssertionHeading(caller!, expressions)}
              {CustomFailureMessage()}
              {ArgumentValue(context.Expression, context.Actual)}
              {ExpressionValues()}
