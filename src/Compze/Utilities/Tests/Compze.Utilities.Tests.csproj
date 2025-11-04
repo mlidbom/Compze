@@ -6,10 +6,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <Folder Include="Testing\DbPool\" />
-	</ItemGroup>
-
-	<ItemGroup>
 	  <ProjectReference Include="..\Testing\DbPool\Compze.Utilities.Testing.DbPool.csproj" />
 	  <ProjectReference Include="..\Testing\Must\Compze.Utilities.Testing.Must.csproj" />
 	  <ProjectReference Include="..\Testing\XUnit\Compze.Utilities.Testing.XUnit.csproj" />
