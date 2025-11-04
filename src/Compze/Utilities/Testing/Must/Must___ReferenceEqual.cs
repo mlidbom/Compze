@@ -5,11 +5,11 @@ namespace Compze.Utilities.Testing.Must;
 
 public static class Must___ReferenceEqual
 {
-   public static IMust<TValue> BeSameAs<TValue>(this IMust<TValue> must, TValue expected, [CallerArgumentExpression(nameof(expected))] string expectedExpression = null!)
+   public static IAssertionContext<TValue> BeSameAs<TValue>(this IAssertionContext<TValue> assertionContext, TValue expected, [CallerArgumentExpression(nameof(expected))] string expectedExpression = null!)
       where TValue : class =>
-      must.SatisfyInternal(it => ReferenceEquals(it, expected), usedArguments: [new(nameof(expected), expectedExpression, expected)]);
+      assertionContext.SatisfyInternal(it => ReferenceEquals(it, expected), usedArguments: [new(nameof(expected), expectedExpression, expected)]);
 
-   public static IMust<TValue> NotBeSameAs<TValue>(this IMust<TValue> must, TValue unexpected, [CallerArgumentExpression(nameof(unexpected))] string unexpectedExpression = null!)
+   public static IAssertionContext<TValue> NotBeSameAs<TValue>(this IAssertionContext<TValue> assertionContext, TValue unexpected, [CallerArgumentExpression(nameof(unexpected))] string unexpectedExpression = null!)
       where TValue : class =>
-      must.SatisfyInternal(it => !ReferenceEquals(it, unexpected), usedArguments: [new(nameof(unexpected), unexpectedExpression, unexpected)]);
+      assertionContext.SatisfyInternal(it => !ReferenceEquals(it, unexpected), usedArguments: [new(nameof(unexpected), unexpectedExpression, unexpected)]);
 }

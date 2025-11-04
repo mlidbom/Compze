@@ -6,26 +6,26 @@ namespace Compze.Utilities.Testing.Must;
 
 public static class Must_Be_string
 {
-   public static IMust<string> Be(this IMust<string> must, string expected, [CallerArgumentExpression(nameof(expected))] string expectedExpression = null!)
-      => must.SatisfyInternal(it => Equals(it, expected),
+   public static IAssertionContext<string> Be(this IAssertionContext<string> assertionContext, string expected, [CallerArgumentExpression(nameof(expected))] string expectedExpression = null!)
+      => assertionContext.SatisfyInternal(it => Equals(it, expected),
                       messageOverride: _ =>
                          $"""""
-                          {must.Separator}
+                          {AssertionContext.Separator}
                           the expression: 
-                          {must.Separator}
-                          {must.Expression.Indent()}
-                          {must.Separator}
+                          {AssertionContext.Separator}
+                          {assertionContext.Expression.Indent()}
+                          {AssertionContext.Separator}
                           did not result in the expected string, producing the diff
-                          {must.Separator}
-                          {DiffGenerator.CreateDiff(expected, must.Actual)}
-                          {must.Separator}
+                          {AssertionContext.Separator}
+                          {DiffGenerator.CreateDiff(expected, assertionContext.Actual)}
+                          {AssertionContext.Separator}
                           Actual was:
-                          {must.Separator}
-                          {must.Actual}
-                          {must.Separator}
+                          {AssertionContext.Separator}
+                          {assertionContext.Actual}
+                          {AssertionContext.Separator}
                           Expected was:
-                          {must.Separator}
+                          {AssertionContext.Separator}
                           {expected}
-                          {must.Separator}
+                          {AssertionContext.Separator}
                           """"");
 }

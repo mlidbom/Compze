@@ -7,12 +7,10 @@ using Compze.Utilities.SystemCE;
 
 namespace Compze.Utilities.Testing.Must;
 
-public interface IMust
+public interface IAssertionContext
 {
    string Expression { get; }
-   object? ActualUntyped { get; }
-   string Separator { get; }
-   IMust<T> Cast<T>();
+   IAssertionContext<T> Cast<T>();
    string NormalizeExpressionIndentation(string expression);
 
    string AssertionCode(string method, string? predicate = null, AssertionArgumentInfo[]? arguments = null)
@@ -27,17 +25,17 @@ public interface IMust
 
    string FailingAssertionHeading(string method, string? predicate = null, AssertionArgumentInfo[]? arguments = null) =>
       $"""
-       {Separator}
+       {AssertionContext.Separator}
        Failing assertion:
-       {Separator}
+       {AssertionContext.Separator}
        {AssertionCode(method, predicate)}
-       {Separator}
+       {AssertionContext.Separator}
        """;
 
    string AssertionMethodCall(string callerName, string? predicate = null, AssertionArgumentInfo[]? usedArguments = null)
    {
       if(string.IsNullOrEmpty(callerName))
-         return Must.RemoveLine;
+         return AssertionContext.RemoveLine;
 
       var arguments = usedArguments != null && usedArguments.Any()
                          ? usedArguments.Select(it => it.Expression).Join(", ")
@@ -45,23 +43,23 @@ public interface IMust
 
       return $"""
               {Expression}.Must().{callerName}({arguments})
-              {Separator}
+              {AssertionContext.Separator}
               """;
    }
 }
 
-public interface IMust<out T> : IMust
+public interface IAssertionContext<out T> : IAssertionContext
 {
    T Actual { get; }
 }
 
-public abstract class Must : IMust
+public abstract class AssertionContext : IAssertionContext
 {
    public const string RemoveLine = nameof(RemoveLine);
 
    public string Expression { get; }
 
-   protected Must(object? actual, string expression)
+   protected AssertionContext(object? actual, string expression)
    {
       ActualUntyped = actual;
       Expression = NormalizeExpressionIndentation(expression);
@@ -69,10 +67,9 @@ public abstract class Must : IMust
 
    public object? ActualUntyped { get; }
 
-   string IMust.Separator => Separator;
 #pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
 #pragma warning disable CS8604 // Possible null reference argument.
-   public IMust<T> Cast<T>() => new Must<T>((T)ActualUntyped, Expression);
+   public IAssertionContext<T> Cast<T>() => new AssertionContext<T>((T)ActualUntyped, Expression);
 #pragma warning restore CS8604 // Possible null reference argument.
 #pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
 
@@ -94,12 +91,9 @@ public abstract class Must : IMust
    }
 }
 
-public class Must<T> : Must, IMust<T>
+public class AssertionContext<T> : AssertionContext, IAssertionContext<T>
 {
-   public Must(T actual, string expression) : base(actual, expression) => Actual = actual;
+   internal AssertionContext(T actual, string expression) : base(actual, expression) => Actual = actual;
 
-   public new string Separator => Must.Separator;
-
-   string IMust.Separator => Separator;
    public T Actual { get; }
 }

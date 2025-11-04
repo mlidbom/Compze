@@ -26,35 +26,35 @@ public class EquivalencyConfig<TValue>
 
 public static class Must_DeepEqual
 {
-   public static IMust<TValue> DeepEqual<TValue>(this IMust<TValue> must,
+   public static IAssertionContext<TValue> DeepEqual<TValue>(this IAssertionContext<TValue> assertionContext,
                                                 TValue expected,
                                                 Func<EquivalencyConfig<TValue>, EquivalencyConfig<TValue>>? config = null,
                                                 [CallerArgumentExpression(nameof(expected))]
                                                 string expectedExpression = null!) =>
-      DeepEqualPrivate(must, expected, config, expectedExpression);
+      DeepEqualPrivate(assertionContext, expected, config, expectedExpression);
 
-   public static IMust<TValue> DeepEqualPrivate<TValue>(this IMust<TValue> must,
+   public static IAssertionContext<TValue> DeepEqualPrivate<TValue>(this IAssertionContext<TValue> assertionContext,
                                                        TValue expected,
                                                        Func<EquivalencyConfig<TValue>, EquivalencyConfig<TValue>>? config = null,
                                                        [CallerArgumentExpression(nameof(expected))]
                                                        string expectedExpression = null!) =>
-      DeepEqualCore(must, expected, expectedExpression, TestingJsonSettings.AllMembers, config);
+      DeepEqualCore(assertionContext, expected, expectedExpression, TestingJsonSettings.AllMembers, config);
 
-   public static IMust<TValue> DeepEqualInternal<TValue>(this IMust<TValue> must,
+   public static IAssertionContext<TValue> DeepEqualInternal<TValue>(this IAssertionContext<TValue> assertionContext,
                                                          TValue expected,
                                                          Func<EquivalencyConfig<TValue>, EquivalencyConfig<TValue>>? config = null,
                                                          [CallerArgumentExpression(nameof(expected))]
                                                          string expectedExpression = null!)
-      => DeepEqualCore(must, expected, expectedExpression, TestingJsonSettings.InternalAndPublicMembers, config);
+      => DeepEqualCore(assertionContext, expected, expectedExpression, TestingJsonSettings.InternalAndPublicMembers, config);
 
-   public static IMust<TValue> DeepEqualPublic<TValue>(this IMust<TValue> must,
+   public static IAssertionContext<TValue> DeepEqualPublic<TValue>(this IAssertionContext<TValue> assertionContext,
                                                       TValue expected,
                                                       Func<EquivalencyConfig<TValue>, EquivalencyConfig<TValue>>? config = null,
                                                       [CallerArgumentExpression(nameof(expected))]
                                                       string expectedExpression = null!)
-      => DeepEqualCore(must, expected, expectedExpression, TestingJsonSettings.PublicMembers, config);
+      => DeepEqualCore(assertionContext, expected, expectedExpression, TestingJsonSettings.PublicMembers, config);
 
-   static IMust<TValue> DeepEqualCore<TValue>(IMust<TValue> must,
+   static IAssertionContext<TValue> DeepEqualCore<TValue>(IAssertionContext<TValue> assertionContext,
                                              TValue expected,
                                              string expectedExpression,
                                              JsonSerializerSettings settings,
@@ -71,33 +71,33 @@ public static class Must_DeepEqual
          };
       }
 
-      var actualJson = JsonConvert.SerializeObject(must.Actual, serializerSettings);
+      var actualJson = JsonConvert.SerializeObject(assertionContext.Actual, serializerSettings);
       var expectedJson = JsonConvert.SerializeObject(expected, serializerSettings);
 
-      return must.SatisfyInternal(it => actualJson == expectedJson,
+      return assertionContext.SatisfyInternal(it => actualJson == expectedJson,
                           messageOverride: _ =>
                              $"""
-                              {must.Separator}
+                              {AssertionContext.Separator}
                               expected:
-                              {must.Separator}
-                              {must.Expression.Indent()}
-                              {must.Separator}
+                              {AssertionContext.Separator}
+                              {assertionContext.Expression.Indent()}
+                              {AssertionContext.Separator}
                               to be deeply equal to:
-                              {must.Separator}
-                              {must.NormalizeExpressionIndentation(expectedExpression).Indent()}
-                              {must.Separator}
+                              {AssertionContext.Separator}
+                              {assertionContext.NormalizeExpressionIndentation(expectedExpression).Indent()}
+                              {AssertionContext.Separator}
                               But comparison of the objects serialized as JSON resulted in the Diff:
-                              {must.Separator}
+                              {AssertionContext.Separator}
                               {DiffGenerator.CreateDiff(expected: expectedJson, actual: actualJson)}
-                              {must.Separator}
+                              {AssertionContext.Separator}
                               Actual was:
-                              {must.Separator}
+                              {AssertionContext.Separator}
                               {actualJson}
-                              {must.Separator}
+                              {AssertionContext.Separator}
                               Expected was:
-                              {must.Separator}
+                              {AssertionContext.Separator}
                               {expectedJson}
-                              {must.Separator}
+                              {AssertionContext.Separator}
                               """);
    }
 }

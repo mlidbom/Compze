@@ -5,9 +5,9 @@ namespace Compze.Utilities.Testing.Must;
 
 public static class Must_NotBeNull
 {
-   public static IMust<TValue> NotBeNull<TValue>(this IMust<TValue?> must) =>
-      must.SatisfyInternal(it => it is not null).Cast<TValue>();
+   public static IAssertionContext<TValue> NotBeNull<TValue>(this IAssertionContext<TValue?> assertionContext) =>
+      assertionContext.SatisfyInternal(it => it is not null).Cast<TValue>();
 
-   public static IMust<TValue?> BeNull<TValue>(this IMust<TValue?> must) =>
-      must.SatisfyInternal(it => it is null);
+   public static IAssertionContext<TValue?> BeNull<TValue>(this IAssertionContext<TValue?> assertionContext) =>
+      assertionContext.SatisfyInternal(it => it is null);
 }

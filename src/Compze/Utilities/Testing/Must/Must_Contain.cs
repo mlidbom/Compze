@@ -9,19 +9,19 @@ namespace Compze.Utilities.Testing.Must;
 
 public static class Must_Contain
 {
-   public static IMust<IReadOnlySet<T>> Contain<T>(this IMust<IReadOnlySet<T>> must, T item, [CallerArgumentExpression(nameof(item))] string itemExpression = null!)
-      => must.SatisfyInternal(it => it.Contains(item), usedArguments: [new(nameof(item), itemExpression, item)]);
+   public static IAssertionContext<IReadOnlySet<T>> Contain<T>(this IAssertionContext<IReadOnlySet<T>> assertionContext, T item, [CallerArgumentExpression(nameof(item))] string itemExpression = null!)
+      => assertionContext.SatisfyInternal(it => it.Contains(item), usedArguments: [new(nameof(item), itemExpression, item)]);
 
-   public static IMust<ISet<T>> Contain<T>(this IMust<ISet<T>> must, T item, [CallerArgumentExpression(nameof(item))] string itemExpression = null!)
-      => must.SatisfyInternal(it => it.Contains(item), usedArguments: [new(nameof(item), itemExpression, item)]);
+   public static IAssertionContext<ISet<T>> Contain<T>(this IAssertionContext<ISet<T>> assertionContext, T item, [CallerArgumentExpression(nameof(item))] string itemExpression = null!)
+      => assertionContext.SatisfyInternal(it => it.Contains(item), usedArguments: [new(nameof(item), itemExpression, item)]);
 
-    public static IMust<HashSet<T>> Contain<T>(this IMust<HashSet<T>> must, T item, [CallerArgumentExpression(nameof(item))] string itemExpression = null!)
-       => must.SatisfyInternal(it => it.Contains(item), usedArguments: [new(nameof(item), itemExpression, item)]);
+    public static IAssertionContext<HashSet<T>> Contain<T>(this IAssertionContext<HashSet<T>> assertionContext, T item, [CallerArgumentExpression(nameof(item))] string itemExpression = null!)
+       => assertionContext.SatisfyInternal(it => it.Contains(item), usedArguments: [new(nameof(item), itemExpression, item)]);
 
-    public static IMust<IEnumerable<TItem>> Contain<TItem>(this IMust<IEnumerable<TItem>> must, TItem item, [CallerArgumentExpression(nameof(item))] string itemExpression = null!)
-      => must.SatisfyInternal(it => it.Contains(item), usedArguments: [new(nameof(item), itemExpression, item)]);
+    public static IAssertionContext<IEnumerable<TItem>> Contain<TItem>(this IAssertionContext<IEnumerable<TItem>> assertionContext, TItem item, [CallerArgumentExpression(nameof(item))] string itemExpression = null!)
+      => assertionContext.SatisfyInternal(it => it.Contains(item), usedArguments: [new(nameof(item), itemExpression, item)]);
 
-   public static IMust<ReadOnlyCollection<TItem>> Contain<TItem>(this IMust<ReadOnlyCollection<TItem>> must, TItem item, [CallerArgumentExpression(nameof(item))] string itemExpression = null!)
-      => must.SatisfyInternal(it => it.Contains(item), usedArguments: [new(nameof(item), itemExpression, item)]);
+   public static IAssertionContext<ReadOnlyCollection<TItem>> Contain<TItem>(this IAssertionContext<ReadOnlyCollection<TItem>> assertionContext, TItem item, [CallerArgumentExpression(nameof(item))] string itemExpression = null!)
+      => assertionContext.SatisfyInternal(it => it.Contains(item), usedArguments: [new(nameof(item), itemExpression, item)]);
 
 }

@@ -11,52 +11,52 @@ namespace Compze.Utilities.Testing.Must;
 
 public static class Must___Enumerable
 {
-   public static IMust<TCollection> HaveCount<TCollection>(this IMust<TCollection> must, int count, [CallerArgumentExpression(nameof(count))] string predicateExpression = null!)
+   public static IAssertionContext<TCollection> HaveCount<TCollection>(this IAssertionContext<TCollection> assertionContext, int count, [CallerArgumentExpression(nameof(count))] string predicateExpression = null!)
       where TCollection : System.Collections.IEnumerable
-      => must.SatisfyInternal(it => it.Cast<object>().Count() == count, predicateExpression:$"Count == {predicateExpression}", failureMessage: it => $"but Count was: {it.Cast<object>().Count()}, not {count}");
+      => assertionContext.SatisfyInternal(it => it.Cast<object>().Count() == count, predicateExpression:$"Count == {predicateExpression}", failureMessage: it => $"but Count was: {it.Cast<object>().Count()}, not {count}");
 
-   public static IMust<TCollection> BeEmpty<TCollection>(this IMust<TCollection> must, string? message = null!)
+   public static IAssertionContext<TCollection> BeEmpty<TCollection>(this IAssertionContext<TCollection> assertionContext, string? message = null!)
       where TCollection : System.Collections.IEnumerable
-      => must.SatisfyInternal(it => !it.Cast<object>().Any(), failureMessage: it => $"but it contained {it.Cast<object>().Count()} items");
+      => assertionContext.SatisfyInternal(it => !it.Cast<object>().Any(), failureMessage: it => $"but it contained {it.Cast<object>().Count()} items");
 
-   public static IMust<TCollection> NotBeEmpty<TCollection>(this IMust<TCollection> must, string? message = null!)
+   public static IAssertionContext<TCollection> NotBeEmpty<TCollection>(this IAssertionContext<TCollection> assertionContext, string? message = null!)
       where TCollection : System.Collections.IEnumerable
-      => must.SatisfyInternal(it => it.Cast<object>().Any());
+      => assertionContext.SatisfyInternal(it => it.Cast<object>().Any());
 
    //Todo: rename
-   public static IMust<TCollection> Equal<TCollection, TElement>(this IMust<TCollection> must, IEnumerable<TElement> expected, [CallerArgumentExpression(nameof(expected))] string expectedExpression = null!)
+   public static IAssertionContext<TCollection> Equal<TCollection, TElement>(this IAssertionContext<TCollection> assertionContext, IEnumerable<TElement> expected, [CallerArgumentExpression(nameof(expected))] string expectedExpression = null!)
       where TCollection : IEnumerable<TElement>
    {
-      var actualJson = JsonConvert.SerializeObject(must.Actual, TestingJsonSettings.AllMembers);
+      var actualJson = JsonConvert.SerializeObject(assertionContext.Actual, TestingJsonSettings.AllMembers);
       var expectedJson = JsonConvert.SerializeObject(expected, TestingJsonSettings.AllMembers);
 
-      return must.SatisfyInternal(
+      return assertionContext.SatisfyInternal(
          it => it.SequenceEqual(expected),
          messageOverride: _ =>
             $"""
-             {must.Separator}
+             {AssertionContext.Separator}
              expected the sequence:
-             {must.Separator}
-             {must.Expression.Indent()}
-             {must.Separator}
+             {AssertionContext.Separator}
+             {assertionContext.Expression.Indent()}
+             {AssertionContext.Separator}
              to be sequence equal to:
-             {must.Separator}
-             {must.NormalizeExpressionIndentation(expectedExpression).Indent()}
-             {must.Separator}
+             {AssertionContext.Separator}
+             {assertionContext.NormalizeExpressionIndentation(expectedExpression).Indent()}
+             {AssertionContext.Separator}
              But it was not.
-             {must.Separator}
+             {AssertionContext.Separator}
              Diff:
-             {must.Separator}
+             {AssertionContext.Separator}
              {DiffGenerator.CreateDiff(expected: expectedJson, actual: actualJson)}
-             {must.Separator}
+             {AssertionContext.Separator}
              Actual was:
-             {must.Separator}
+             {AssertionContext.Separator}
              {actualJson}
-             {must.Separator}
+             {AssertionContext.Separator}
              Expected was:
-             {must.Separator}
+             {AssertionContext.Separator}
              {expectedJson}
-             {must.Separator}
+             {AssertionContext.Separator}
              """);
    }
 }

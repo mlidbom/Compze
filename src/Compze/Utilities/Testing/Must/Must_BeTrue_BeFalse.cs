@@ -6,26 +6,25 @@ namespace Compze.Utilities.Testing.Must;
 
 public static class Must_BeTrue_BeFalse
 {
-   public static IMust<bool>? BeTrue(this IMust<bool> must)
-      => must.SatisfyInternal(it => it == true,
-                      messageOverride: _ =>
-                         $"""
-                          expected the expression: 
-                          {must.Separator}
-                          {must.Expression.Indent()}
-                          {must.Separator}
-                          to be true, but it was false
-                          """);
+   public static IAssertionContext<bool>? BeTrue(this IAssertionContext<bool> assertionContext)
+      => assertionContext.SatisfyInternal(it => it == true,
+                                          messageOverride: _ =>
+                                             $"""
+                                              expected the expression: 
+                                              {AssertionContext.Separator}
+                                              {assertionContext.Expression.Indent()}
+                                              {AssertionContext.Separator}
+                                              to be true, but it was false
+                                              """);
 
-
-   public static IMust<bool>? BeFalse(this IMust<bool> must)
-      => must.SatisfyInternal(it => it == false,
-                      messageOverride:_ =>
-                         $"""
-                          expected the expression: 
-                          {must.Separator}
-                          {must.Expression.Indent()}
-                          {must.Separator}
-                          to be false, but it was true
-                          """);
+   public static IAssertionContext<bool>? BeFalse(this IAssertionContext<bool> context)
+      => context.SatisfyInternal(it => it == false,
+                                 messageOverride: _ =>
+                                    $"""
+                                     expected the expression: 
+                                     {AssertionContext.Separator}
+                                     {context.Expression.Indent()}
+                                     {AssertionContext.Separator}
+                                     to be false, but it was true
+                                     """);
 }

@@ -7,31 +7,31 @@ namespace Compze.Utilities.Testing.Must;
 
 public static class Must___IComparableAssertions
 {
-   public static IMust<TValue> BeGreaterThan<TValue>(this IMust<TValue> must, TValue expected, [CallerArgumentExpression(nameof(expected))] string expectedExpression = null!)
+   public static IAssertionContext<TValue> BeGreaterThan<TValue>(this IAssertionContext<TValue> assertionContext, TValue expected, [CallerArgumentExpression(nameof(expected))] string expectedExpression = null!)
       where TValue : IComparable<TValue> =>
-      must.SatisfyInternal(it => it.CompareTo(expected) > 0,
+      assertionContext.SatisfyInternal(it => it.CompareTo(expected) > 0,
                    usedArguments: [new(nameof(expected), expectedExpression, expected)]);
 
-   public static IMust<TValue> BeGreaterThanOrEqualTo<TValue>(this IMust<TValue> must, TValue expected, [CallerArgumentExpression(nameof(expected))] string expectedExpression = null!)
+   public static IAssertionContext<TValue> BeGreaterThanOrEqualTo<TValue>(this IAssertionContext<TValue> assertionContext, TValue expected, [CallerArgumentExpression(nameof(expected))] string expectedExpression = null!)
       where TValue : IComparable<TValue> =>
-      must.SatisfyInternal(it => it.CompareTo(expected) >= 0,
+      assertionContext.SatisfyInternal(it => it.CompareTo(expected) >= 0,
                    usedArguments: [new(nameof(expected), expectedExpression, expected)]);
 
-   public static IMust<TValue> BeLessThan<TValue>(this IMust<TValue> must, TValue expected, [CallerArgumentExpression(nameof(expected))] string expectedExpression = null!)
+   public static IAssertionContext<TValue> BeLessThan<TValue>(this IAssertionContext<TValue> assertionContext, TValue expected, [CallerArgumentExpression(nameof(expected))] string expectedExpression = null!)
       where TValue : IComparable<TValue> =>
-      must.SatisfyInternal(it => it.CompareTo(expected) < 0,
+      assertionContext.SatisfyInternal(it => it.CompareTo(expected) < 0,
                    usedArguments: [new(nameof(expected), expectedExpression, expected)]);
 
-   public static IMust<TValue> BeLessThanOrEqualTo<TValue>(this IMust<TValue> must, TValue expected, [CallerArgumentExpression(nameof(expected))] string expectedExpression = null!)
+   public static IAssertionContext<TValue> BeLessThanOrEqualTo<TValue>(this IAssertionContext<TValue> assertionContext, TValue expected, [CallerArgumentExpression(nameof(expected))] string expectedExpression = null!)
       where TValue : IComparable<TValue> =>
-      must.SatisfyInternal(it => it.CompareTo(expected) <= 0,
+      assertionContext.SatisfyInternal(it => it.CompareTo(expected) <= 0,
                    usedArguments: [new(nameof(expected), expectedExpression, expected)]);
 
-   public static IMust<TValue> BePositive<TValue>(this IMust<TValue> must)
+   public static IAssertionContext<TValue> BePositive<TValue>(this IAssertionContext<TValue> assertionContext)
       where TValue : IComparable<TValue> =>
-      must.SatisfyInternal(it => it.CompareTo(default(TValue)!) > 0);
+      assertionContext.SatisfyInternal(it => it.CompareTo(default(TValue)!) > 0);
 
-   public static IMust<TValue> BeNegative<TValue>(this IMust<TValue> must)
+   public static IAssertionContext<TValue> BeNegative<TValue>(this IAssertionContext<TValue> assertionContext)
       where TValue : IComparable<TValue> =>
-      must.SatisfyInternal(it => it.CompareTo(default(TValue)!) < 0);
+      assertionContext.SatisfyInternal(it => it.CompareTo(default(TValue)!) < 0);
 }
