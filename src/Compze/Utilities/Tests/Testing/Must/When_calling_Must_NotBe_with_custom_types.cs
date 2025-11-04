@@ -34,6 +34,51 @@ public class When_calling_Must_NotBe_with_custom_types : UniversalTestBase
       readonly ComparableWithErrorInjectionSupport _actual = new(42, BreakComparableMethod.ObjectEquals);
       readonly ComparableWithErrorInjectionSupport _unexpected = new(99);
 
+      [XF] public void it_throws_and_the_full_message_is() =>
+         Invoking(() => _actual.Must().NotBe(_unexpected))
+           .Must().Throw<AssertionFailedException>()
+           .Which.Message.Must().Be("""
+
+                                    --------------------------------------------------
+                                    Failing assertion:
+                                    --------------------------------------------------
+                                    _actual.Must().NotBe(_unexpected)
+                                    --------------------------------------------------
+                                    first failing test: 
+                                       it => !Equals(it, unexpected)
+                                    --------------------------------------------------
+                                    Diff:
+                                    --------------------------------------------------
+                                    --- expected
+                                    +++ actual
+                                    @@ -1,5 +1,5 @@
+                                     {
+                                       "$type": "Compze.Utilities.Tests.Testing.Must.ComparableWithErrorInjectionSupport, Compze.Utilities.Tests",
+                                    -  "_breakComparableMethod": 0,
+                                    -  "_value": 99
+                                    +  "_breakComparableMethod": 1,
+                                    +  "_value": 42
+                                     }
+
+                                    --------------------------------------------------
+                                    it was:
+                                    --------------------------------------------------
+                                    {
+                                      "$type": "Compze.Utilities.Tests.Testing.Must.ComparableWithErrorInjectionSupport, Compze.Utilities.Tests",
+                                      "_breakComparableMethod": 1,
+                                      "_value": 42
+                                    }
+                                    --------------------------------------------------
+                                    unexpected was:
+                                    --------------------------------------------------
+                                    {
+                                      "$type": "Compze.Utilities.Tests.Testing.Must.ComparableWithErrorInjectionSupport, Compze.Utilities.Tests",
+                                      "_breakComparableMethod": 0,
+                                      "_value": 99
+                                    }
+                                    --------------------------------------------------
+                                    """);
+
       [XF] public void it_throws_and_includes_the_failing_predicate_in_the_message() =>
          Invoking(() => _actual.Must().NotBe(_unexpected))
            .Must().Throw<AssertionFailedException>()
@@ -118,16 +163,6 @@ public class When_calling_Must_NotBe_with_custom_types : UniversalTestBase
            .Must().Throw<AssertionFailedException>()
            .Which.Message.Must().Contain("it.DeclaredType().Operators.InEquality?.Invoke(unexpected, it) ?? true").Contain("unexpected != it should have returned true");
    }
-
-   // Note: We do NOT test IComparable/IComparable<T>.CompareTo() because: returning 0 doesn't necessarily mean equality.
-   // A type can implement CompareTo based on one property (e.g., LastName for sorting) while Equals compares multiple properties.
-   //
-   // Note: We do NOT test IStructuralComparable.CompareTo() because: returning 0 doesn't necessarily mean structural equality.
-   //
-   // Note: We do NOT test comparison operators (<, >, <=, >=) because: these define ordering relationships, not equality.
-   // For types with partial orderings or custom comparison semantics, comparison results don't reliably indicate equality.
-
-   // Note: No test for GetHashCode - equal hash codes for unequal objects is allowed by the contract
 
    public class given_two_unequal_values_but_IStructuralEquatable_is_broken : When_calling_Must_NotBe_with_custom_types
    {

@@ -81,7 +81,7 @@ public static class Must_Be_NotBe
          var actualJson = JsonConvert.SerializeObject(context.Actual, TestingJsonSettings.AllMembers);
          var expectedJson = JsonConvert.SerializeObject(expected, TestingJsonSettings.AllMembers);
          return $"""
-                 {context.FailingAssertionHeading("Be", expectedExpression)}
+                 {context.FailingAssertionHeading(nameof(Be), expectedExpression)}
                  the first failing equivalency test was: 
                  {info.PredicateExpression.Indent()}{FailureMessage()}
                  {AssertionContext.Separator}
@@ -165,12 +165,8 @@ public static class Must_Be_NotBe
          var actualJson = JsonConvert.SerializeObject(context.Actual, TestingJsonSettings.AllMembers);
          var unexpectedJson = JsonConvert.SerializeObject(unexpected, TestingJsonSettings.AllMembers);
          return $"""
-                 {AssertionContext.Separator}
-                 expected the object "it" returned by the expression: 
-                 {context.Expression.Indent()}
-                 to not be equal to the the object "unexpected" returned by the expression:
-                 {context.NormalizeExpressionIndentation(unexpectedExpression).Indent()}
-                 but it failed the test: 
+                 {context.FailingAssertionHeading(nameof(NotBe), unexpectedExpression)}
+                 first failing test: 
                  {info.PredicateExpression.Indent()}{FailureMessage()}
                  {AssertionContext.Separator}
                  Diff:
