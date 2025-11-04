@@ -73,7 +73,8 @@ public sealed class MachineWideSharedObject<TObject> : MachineWideSharedObject w
                                 exception);
 
          _file.Delete();
-         _file.WriteAllText(CreateDefaultJson());
+         var defaultJson = CreateDefaultJson();
+         _file.WriteAllText(defaultJson);
          if(_corruptionAction == CorruptionAction.ReplaceContentWithDefaultAndThrow)
          {
             throw new Exception($"""
@@ -87,6 +88,8 @@ public sealed class MachineWideSharedObject<TObject> : MachineWideSharedObject w
                                  """,
                                 exception);
          }
+
+         return _serializer.Deserialize<TObject>(defaultJson);//We deserialize rather than just using the default object in order to guarantee that the data can be deserialized, if not we want an exception every time
       }
    }
 }
