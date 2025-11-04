@@ -2,17 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Compze.Tessaging.Hosting.Testing;
-using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tests.Infrastructure;
-using Compze.Tests.Infrastructure.XUnit;
-using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using Compze.Utilities.SystemCE.ThreadingCE.Testing;
 using Compze.Utilities.Testing.Must;
+using Compze.Utilities.Testing.XUnit.BDD;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 
@@ -35,13 +32,8 @@ class SharedObjectSerializer : ISharedObjectSerializer<SharedObject>
 public class MachineWideSharedObjectTests : UniversalTestBase
 {
    readonly List<MachineWideSharedObject<SharedObject>> _created = new();
-   readonly IServiceLocator _serviceLocator = TestEnv.DIContainer.CreateWithServiceLocatorAndCurrentTestsPluggableComponents().ServiceLocator;
 
-   protected override void DisposeInternal()
-   {
-      _created.ForEach(obj => obj.Delete());
-      _serviceLocator.Dispose();
-   }
+   protected override void DisposeInternal() => _created.ForEach(obj => obj.Delete());
 
    MachineWideSharedObject<SharedObject> CreateAndDeleteFileWhenTestCompletes(string name)
    {
@@ -50,7 +42,7 @@ public class MachineWideSharedObjectTests : UniversalTestBase
       return created;
    }
 
-   [PCT] public void Create()
+   [XF] public void Create()
    {
       var name = Guid.NewGuid().ToString();
       var shared = CreateAndDeleteFileWhenTestCompletes(name);
@@ -59,7 +51,7 @@ public class MachineWideSharedObjectTests : UniversalTestBase
       test.Name.Must().Be("Default");
    }
 
-   [PCT] public void Create_update_and_get()
+   [XF] public void Create_update_and_get()
    {
       var name = Guid.NewGuid().ToString();
       var shared = CreateAndDeleteFileWhenTestCompletes(name);
@@ -76,7 +68,7 @@ public class MachineWideSharedObjectTests : UniversalTestBase
       value.Name.Must().Be("Updated");
    }
 
-   [PCT] public void Two_instances_with_same_name_share_data()
+   [XF] public void Two_instances_with_same_name_share_data()
    {
       var name = Guid.NewGuid().ToString();
       var shared1 = CreateAndDeleteFileWhenTestCompletes(name);
@@ -97,7 +89,7 @@ public class MachineWideSharedObjectTests : UniversalTestBase
       test1.Name.Must().Be("Updated");
    }
 
-   [PCT] public void Persistent_Once_all_instance_are_disposed_data_is_retained()
+   [XF] public void Persistent_Once_all_instance_are_disposed_data_is_retained()
    {
       const string name = "40BD77DF-7C32-4B28-9A49-DA2CE202CC4F";
       var newName = Guid.NewGuid().ToString();
@@ -114,7 +106,7 @@ public class MachineWideSharedObjectTests : UniversalTestBase
       shared.GetCopy().Name.Must().Be(newName);
    }
 
-   [PCT] public async Task Update_blocks_GetCopy_and_Update_from_both_same_and_other_instances()
+   [XF] public async Task Update_blocks_GetCopy_and_Update_from_both_same_and_other_instances()
    {
       var timeout = 15.Seconds();
       var updateGate = ThreadGate.CreateClosedWithTimeout(timeout);

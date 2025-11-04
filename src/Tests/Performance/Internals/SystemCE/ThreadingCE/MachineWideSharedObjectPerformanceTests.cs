@@ -1,10 +1,10 @@
 using Compze.Tessaging.Hosting.Testing.Performance;
 using Compze.Tests.Infrastructure;
-using Compze.Tests.Infrastructure.XUnit;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 using Newtonsoft.Json;
 using System;
+using Compze.Utilities.Testing.XUnit.BDD;
 
 namespace Compze.Tests.Performance.Internals.SystemCE.ThreadingCE;
 
@@ -21,15 +21,15 @@ public class MachineWideSharedObjectPerformanceTests : UniversalTestBase
 
    protected override void DisposeInternal() => _shared.Delete();
 
-   [PCTSerializer] public void Get_copy_runs_single_threaded_XX_times_in_50_milliseconds()
+   [XF] public void Get_copy_runs_single_threaded_XX_times_in_50_milliseconds()
       => TimeAsserter.Execute(() => _shared.GetCopy(), iterations: 100, maxTotal: 50.Milliseconds());
 
-   [PCTSerializer] public void Get_copy_runs_multi_threaded_XX_times_in_50_milliseconds() =>
+   [XF] public void Get_copy_runs_multi_threaded_XX_times_in_50_milliseconds() =>
       TimeAsserter.ExecuteThreaded(() => _shared.GetCopy(), iterations: 100, maxTotal: 50.Milliseconds());
 
-   [PCTSerializer] public void Update_runs_single_threaded_XX_times_in_50_milliseconds() =>
+   [XF] public void Update_runs_single_threaded_XX_times_in_50_milliseconds() =>
       TimeAsserter.Execute(() => _shared.Update(it => it.Name = ""), iterations: 20, maxTotal: 50.Milliseconds(), maxTries: 10);
 
-   [PCTSerializer] public void Update_runs_multi_threaded_30_times_in_50_milliseconds() =>
+   [XF] public void Update_runs_multi_threaded_30_times_in_50_milliseconds() =>
       TimeAsserter.ExecuteThreaded(() => _shared.Update(it => it.Name = ""), iterations: 30, maxTotal: 50.Milliseconds(), maxTries: 10);
 }
