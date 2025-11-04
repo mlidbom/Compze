@@ -12,8 +12,8 @@ public static class Must_Be_DateTime
          it => (it - expected).Duration() <= tolerance,
          usedArguments:
          [
-            new(nameof(expected), expectedExpression, expected),
-            new(nameof(tolerance), toleranceExpression, tolerance)
+            new(expectedExpression, expected),
+            new(toleranceExpression, tolerance)
          ]);
    }
 }

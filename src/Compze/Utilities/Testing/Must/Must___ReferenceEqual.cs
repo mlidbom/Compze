@@ -7,9 +7,9 @@ public static class Must___ReferenceEqual
 {
    public static IAssertionContext<TValue> BeSameAs<TValue>(this IAssertionContext<TValue> context, TValue expected, [CallerArgumentExpression(nameof(expected))] string expectedExpression = null!)
       where TValue : class =>
-      context.SatisfyInternal(it => ReferenceEquals(it, expected), usedArguments: [new(nameof(expected), expectedExpression, expected)]);
+      context.SatisfyInternal(it => ReferenceEquals(it, expected), usedArguments: [new(expectedExpression, expected)]);
 
    public static IAssertionContext<TValue> NotBeSameAs<TValue>(this IAssertionContext<TValue> context, TValue unexpected, [CallerArgumentExpression(nameof(unexpected))] string unexpectedExpression = null!)
       where TValue : class =>
-      context.SatisfyInternal(it => !ReferenceEquals(it, unexpected), usedArguments: [new(nameof(unexpected), unexpectedExpression, unexpected)]);
+      context.SatisfyInternal(it => !ReferenceEquals(it, unexpected), usedArguments: [new(unexpectedExpression, unexpected)]);
 }
