@@ -10,6 +10,7 @@ public class TextFile : FileCE
 
    public void WriteAllText(string text) => File.WriteAllText(FileInfo.FullName, text, _encoding);
    public string ReadAllText() => File.ReadAllText(FileInfo.FullName, _encoding);
+
    public static TextFile Create(DirectoryCE directory, string name, Encoding? encoding = null, string content = StringCE.Empty)
    {
       encoding ??= Encoding.UTF8;

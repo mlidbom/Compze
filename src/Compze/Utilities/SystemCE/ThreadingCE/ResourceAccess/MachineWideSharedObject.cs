@@ -7,7 +7,10 @@ namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
 public abstract class MachineWideSharedObject
 {
-   internal static readonly LazyCE<DirectoryCE> DataDirectory = new(() => DirectoryCE.StandardDirectories.LocalApplicationData.GetOrCreateDirectory("Compze").GetOrCreateDirectory("SharedFiles"));
+   internal static readonly LazyCE<DirectoryCE> DataDirectory = new(() => DirectoryCE.StandardDirectories
+                                                                                     .LocalApplicationData
+                                                                                     .GetOrCreateDirectory("Compze")
+                                                                                     .GetOrCreateDirectory("SharedFiles"));
 }
 
 public enum CorruptionAction
@@ -65,10 +68,7 @@ public sealed class MachineWideSharedObject<TObject> : MachineWideSharedObject w
       catch(Exception exception)
       {
          if(_corruptionAction != CorruptionAction.ReplaceContentWithDefaultAndThrow)
-            throw new Exception($"""
-                                 Failed to deserialize object from file {_file}
-                                 The file content was:
-                                 """,
+            throw new Exception($"""Failed to deserialize object from file {_file}""",
                                 exception);
 
          _file.Delete();
