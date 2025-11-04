@@ -85,7 +85,7 @@ public class When_calling_Must_Be : UniversalTestBase
          string ExceptionMessage() => Invoking(() => _actual.Must().Be(_expected)).Must().Throw<AssertionFailedException>().Which.Message;
 
          [XF] public void and_the_exception_message__is() =>
-            ExceptionMessage().Must().Be(""""
+            ExceptionMessage().Must().Be("""
                                          
                                          --------------------------------------------------
                                          Failing assertion:
@@ -121,7 +121,7 @@ public class When_calling_Must_Be : UniversalTestBase
                                            "_value": "expected_value"
                                          }
                                          --------------------------------------------------
-                                         """");
+                                         """);
       }
    }
 
