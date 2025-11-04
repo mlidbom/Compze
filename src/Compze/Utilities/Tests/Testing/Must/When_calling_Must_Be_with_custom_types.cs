@@ -68,15 +68,13 @@ public class When_calling_Must_Be_with_custom_types : UniversalTestBase
       readonly ComparableWithErrorInjectionSupport _actual = new(42, BreakComparableMethod.OperatorEquality);
       readonly ComparableWithErrorInjectionSupport _expected = new(42);
 
-      [XF] public void Be_throws_with_correct_predicate_and_message()
-      {
-         var message = Invoking(() => _actual.Must().Be(_expected))
-            .Must().Throw<AssertionFailedException>()
-            .Which.Message;
-
-         message.Must().Contain("it.DeclaredType().Operators.Equality?.Invoke(it, expected) ?? true");
-         message.Must().Contain("it == expected should have returned true");
-      }
+      [XF] public void Be_throws_with_correct_predicate_and_message() =>
+         Invoking(() => _actual.Must().Be(_expected))
+           .Must().Throw<AssertionFailedException>()
+           .Which.Message
+           .Must()
+           .Contain("it.DeclaredType().Operators.Equality?.Invoke(it, expected) ?? true")
+           .Contain("it == expected should have returned true");
    }
 
    public class given_two_equal_values_but_operator_equality_reversed_is_broken : When_calling_Must_Be_with_custom_types
@@ -87,8 +85,8 @@ public class When_calling_Must_Be_with_custom_types : UniversalTestBase
       [XF] public void Be_throws_with_correct_predicate_and_message()
       {
          var message = Invoking(() => _actual.Must().Be(_expected))
-            .Must().Throw<AssertionFailedException>()
-            .Which.Message;
+                      .Must().Throw<AssertionFailedException>()
+                      .Which.Message;
 
          message.Must().Contain("it.DeclaredType().Operators.Equality?.Invoke(expected, it) ?? true");
          message.Must().Contain("expected == it should have returned true");
@@ -103,8 +101,8 @@ public class When_calling_Must_Be_with_custom_types : UniversalTestBase
       [XF] public void Be_throws_with_correct_predicate_and_message()
       {
          var message = Invoking(() => _actual.Must().Be(_expected))
-            .Must().Throw<AssertionFailedException>()
-            .Which.Message;
+                      .Must().Throw<AssertionFailedException>()
+                      .Which.Message;
 
          message.Must().Contain("!it.DeclaredType().Operators.InEquality?.Invoke(it, expected) ?? true");
          message.Must().Contain("it != expected should have returned false");
@@ -119,8 +117,8 @@ public class When_calling_Must_Be_with_custom_types : UniversalTestBase
       [XF] public void Be_throws_with_correct_predicate_and_message()
       {
          var message = Invoking(() => _actual.Must().Be(_expected))
-            .Must().Throw<AssertionFailedException>()
-            .Which.Message;
+                      .Must().Throw<AssertionFailedException>()
+                      .Which.Message;
 
          message.Must().Contain("!it.DeclaredType().Operators.InEquality?.Invoke(expected, it) ?? true");
          message.Must().Contain("expected != it should have returned false");
@@ -135,8 +133,8 @@ public class When_calling_Must_Be_with_custom_types : UniversalTestBase
       [XF] public void Be_throws_with_correct_predicate_and_message()
       {
          var message = Invoking(() => _actual.Must().Be(_expected))
-            .Must().Throw<AssertionFailedException>()
-            .Which.Message;
+                      .Must().Throw<AssertionFailedException>()
+                      .Which.Message;
 
          message.Must().Contain("(it as IComparable<TValue>)?.CompareTo(expected).Equals(0) ?? true");
          message.Must().Contain("it.CompareTo(expected) (IComparable<T>) should have returned 0");
@@ -151,8 +149,8 @@ public class When_calling_Must_Be_with_custom_types : UniversalTestBase
       [XF] public void Be_throws_with_correct_predicate_and_message()
       {
          var message = Invoking(() => _actual.Must().Be(_expected))
-            .Must().Throw<AssertionFailedException>()
-            .Which.Message;
+                      .Must().Throw<AssertionFailedException>()
+                      .Which.Message;
 
          message.Must().Contain("(expected as IComparable<TValue>)?.CompareTo(it).Equals(0) ?? true");
          message.Must().Contain("expected.CompareTo(it) (IComparable<T>) should have returned 0");
@@ -167,8 +165,8 @@ public class When_calling_Must_Be_with_custom_types : UniversalTestBase
       [XF] public void Be_throws_with_correct_predicate_and_message()
       {
          var message = Invoking(() => _actual.Must().Be(_expected))
-            .Must().Throw<AssertionFailedException>()
-            .Which.Message;
+                      .Must().Throw<AssertionFailedException>()
+                      .Which.Message;
 
          message.Must().Contain("(it as IComparable)?.CompareTo(expected).Equals(0) ?? true");
          message.Must().Contain("it.CompareTo(expected) (IComparable) should have returned 0");
@@ -183,8 +181,8 @@ public class When_calling_Must_Be_with_custom_types : UniversalTestBase
       [XF] public void Be_throws_with_correct_predicate_and_message()
       {
          var message = Invoking(() => _actual.Must().Be(_expected))
-            .Must().Throw<AssertionFailedException>()
-            .Which.Message;
+                      .Must().Throw<AssertionFailedException>()
+                      .Which.Message;
 
          message.Must().Contain("(expected as IComparable)?.CompareTo(it).Equals(0) ?? true");
          message.Must().Contain("expected.CompareTo(it) (IComparable) should have returned 0");
@@ -199,8 +197,8 @@ public class When_calling_Must_Be_with_custom_types : UniversalTestBase
       [XF] public void Be_throws_with_correct_predicate_and_message()
       {
          var message = Invoking(() => _actual.Must().Be(_expected))
-            .Must().Throw<AssertionFailedException>()
-            .Which.Message;
+                      .Must().Throw<AssertionFailedException>()
+                      .Which.Message;
 
          message.Must().Contain("!it.DeclaredType().Operators.LessThan?.Invoke(it, expected) ?? true");
          message.Must().Contain("it < expected should have returned false");
@@ -215,8 +213,8 @@ public class When_calling_Must_Be_with_custom_types : UniversalTestBase
       [XF] public void Be_throws_with_correct_predicate_and_message()
       {
          var message = Invoking(() => _actual.Must().Be(_expected))
-            .Must().Throw<AssertionFailedException>()
-            .Which.Message;
+                      .Must().Throw<AssertionFailedException>()
+                      .Which.Message;
 
          message.Must().Contain("!it.DeclaredType().Operators.LessThan?.Invoke(expected, it) ?? true");
          message.Must().Contain("expected < it should have returned false");
@@ -231,8 +229,8 @@ public class When_calling_Must_Be_with_custom_types : UniversalTestBase
       [XF] public void Be_throws_with_correct_predicate_and_message()
       {
          var message = Invoking(() => _actual.Must().Be(_expected))
-            .Must().Throw<AssertionFailedException>()
-            .Which.Message;
+                      .Must().Throw<AssertionFailedException>()
+                      .Which.Message;
 
          message.Must().Contain("it.DeclaredType().Operators.LessThanOrEqual?.Invoke(it, expected) ?? true");
          message.Must().Contain("it <= expected should have returned true");
@@ -247,8 +245,8 @@ public class When_calling_Must_Be_with_custom_types : UniversalTestBase
       [XF] public void Be_throws_with_correct_predicate_and_message()
       {
          var message = Invoking(() => _actual.Must().Be(_expected))
-            .Must().Throw<AssertionFailedException>()
-            .Which.Message;
+                      .Must().Throw<AssertionFailedException>()
+                      .Which.Message;
 
          message.Must().Contain("it.DeclaredType().Operators.LessThanOrEqual?.Invoke(expected, it) ?? true");
          message.Must().Contain("expected <= it should have returned true");
@@ -263,8 +261,8 @@ public class When_calling_Must_Be_with_custom_types : UniversalTestBase
       [XF] public void Be_throws_with_correct_predicate_and_message()
       {
          var message = Invoking(() => _actual.Must().Be(_expected))
-            .Must().Throw<AssertionFailedException>()
-            .Which.Message;
+                      .Must().Throw<AssertionFailedException>()
+                      .Which.Message;
 
          message.Must().Contain("!it.DeclaredType().Operators.GreaterThan?.Invoke(it, expected) ?? true");
          message.Must().Contain("it > expected should have returned false");
@@ -279,8 +277,8 @@ public class When_calling_Must_Be_with_custom_types : UniversalTestBase
       [XF] public void Be_throws_with_correct_predicate_and_message()
       {
          var message = Invoking(() => _actual.Must().Be(_expected))
-            .Must().Throw<AssertionFailedException>()
-            .Which.Message;
+                      .Must().Throw<AssertionFailedException>()
+                      .Which.Message;
 
          message.Must().Contain("!it.DeclaredType().Operators.GreaterThan?.Invoke(expected, it) ?? true");
          message.Must().Contain("expected > it should have returned false");
@@ -295,8 +293,8 @@ public class When_calling_Must_Be_with_custom_types : UniversalTestBase
       [XF] public void Be_throws_with_correct_predicate_and_message()
       {
          var message = Invoking(() => _actual.Must().Be(_expected))
-            .Must().Throw<AssertionFailedException>()
-            .Which.Message;
+                      .Must().Throw<AssertionFailedException>()
+                      .Which.Message;
 
          message.Must().Contain("it.DeclaredType().Operators.GreaterThanOrEqual?.Invoke(it, expected) ?? true");
          message.Must().Contain("it >= expected should have returned true");
@@ -311,8 +309,8 @@ public class When_calling_Must_Be_with_custom_types : UniversalTestBase
       [XF] public void Be_throws_with_correct_predicate_and_message()
       {
          var message = Invoking(() => _actual.Must().Be(_expected))
-            .Must().Throw<AssertionFailedException>()
-            .Which.Message;
+                      .Must().Throw<AssertionFailedException>()
+                      .Which.Message;
 
          message.Must().Contain("it.DeclaredType().Operators.GreaterThanOrEqual?.Invoke(expected, it) ?? true");
          message.Must().Contain("expected >= it should have returned true");
@@ -370,7 +368,7 @@ public class When_calling_Must_Be_with_custom_types : UniversalTestBase
 
       [XF] public void Be_throws_with_correct_predicate_and_message() =>
          Invoking(() => _actual.Must().Be(_expected))
-            .Must().Throw<AssertionFailedException>()
-            .Which.Message.Must().Contain("expected.CompareTo(it, StructuralComparer) should have returned 0");
+           .Must().Throw<AssertionFailedException>()
+           .Which.Message.Must().Contain("expected.CompareTo(it, StructuralComparer) should have returned 0");
    }
 }
