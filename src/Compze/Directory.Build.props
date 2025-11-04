@@ -48,7 +48,7 @@
       <InternalsVisibleTo Include="Compze.Tests.CodePolicies" />
       <InternalsVisibleTo Include="Compze.Tests.Common" />
       <InternalsVisibleTo Include="Compze.Tests.Infrastructure" />
-      <InternalsVisibleTo Include="Compze.Utilities.Testing.Fluent" />
+      <InternalsVisibleTo Include="Compze.Utilities.Testing.Must" />
       <InternalsVisibleTo Include="Compze.Utilities.Tests" />
 	   <InternalsVisibleTo Include="Compze.Tests.Integration" />
       <InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />

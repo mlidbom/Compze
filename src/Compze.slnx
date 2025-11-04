@@ -86,11 +86,11 @@
   </Folder>
   <Folder Name="/Compze/Utilities/Testing/">
     <Project Path="Compze/Utilities/Testing/DbPool/Compze.Utilities.Testing.DbPool.csproj" />
-    <Project Path="Compze/Utilities/Testing/Fluent/Compze.Utilities.Testing.Fluent.csproj" />
     <Project Path="Compze/Utilities/Testing/XUnit/Compze.Utilities.Testing.XUnit.csproj" />
     <Project Path="Compze/Utilities/Testing/XUnit/Tests/Compze.Utilities.Testing.XUnit.Tests.csproj">
       <BuildType Solution="docs|*" Project="Release" />
     </Project>
+    <Project Path="Compze/Utilities/Testing/Must/Compze.Utilities.Testing.Must.csproj" />
   </Folder>
   <Project Path="../DevScripts/Scripts.csproj" />
 </Solution>

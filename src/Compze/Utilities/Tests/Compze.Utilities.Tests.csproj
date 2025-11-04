@@ -11,7 +11,7 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\Testing\DbPool\Compze.Utilities.Testing.DbPool.csproj" />
-	  <ProjectReference Include="..\Testing\Fluent\Compze.Utilities.Testing.Fluent.csproj" />
+	  <ProjectReference Include="..\Testing\Must\Compze.Utilities.Testing.Must.csproj" />
 	  <ProjectReference Include="..\Testing\XUnit\Compze.Utilities.Testing.XUnit.csproj" />
 	</ItemGroup>
 

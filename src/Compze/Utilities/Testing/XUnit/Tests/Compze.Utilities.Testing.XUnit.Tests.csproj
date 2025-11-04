@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFramework>net9.0</TargetFramework>
@@ -16,7 +16,7 @@
 		<PackageReference Include="xunit.v3" Version="3.1.0" />
 	</ItemGroup>
 	<ItemGroup>
-	  <ProjectReference Include="..\..\Fluent\Compze.Utilities.Testing.Fluent.csproj" />
+	  <ProjectReference Include="..\..\Must\Compze.Utilities.Testing.Must.csproj" />
 	  <ProjectReference Include="..\Compze.Utilities.Testing.XUnit.csproj" />
 	</ItemGroup>
 </Project>
