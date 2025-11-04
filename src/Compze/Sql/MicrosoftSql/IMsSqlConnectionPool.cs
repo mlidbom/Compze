@@ -23,7 +23,7 @@ interface IMsSqlConnectionPool : IDbConnectionPool<ICompzeMsSqlConnection, SqlCo
             () =>
             {
                var connectionString = getConnectionString();
-               return DbConnectionManager<ICompzeMsSqlConnection, SqlCommand>.ForConnectionString(
+               return DbConnectionPool<ICompzeMsSqlConnection, SqlCommand>.ForConnectionString(
                   connectionString,
                   PoolableConnectionFlags.Defaults,
                   ICompzeMsSqlConnection.Create);

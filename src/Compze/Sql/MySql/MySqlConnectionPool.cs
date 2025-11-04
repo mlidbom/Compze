@@ -23,7 +23,7 @@ internal interface IMySqlConnectionPool : IDbConnectionPool<ICompzeMySqlConnecti
             () =>
             {
                var connectionString = getConnectionString();
-               return DbConnectionManager<ICompzeMySqlConnection, MySqlCommand>.ForConnectionString(
+               return DbConnectionPool<ICompzeMySqlConnection, MySqlCommand>.ForConnectionString(
                   connectionString,
                   PoolableConnectionFlags.Defaults,
                   ICompzeMySqlConnection.Create);

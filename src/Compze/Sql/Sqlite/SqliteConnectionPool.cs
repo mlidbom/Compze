@@ -23,7 +23,7 @@ internal interface ISqliteConnectionPool : IDbConnectionPool<ICompzeSqliteConnec
             () =>
             {
                var connectionString = getConnectionString();
-               return DbConnectionManager<ICompzeSqliteConnection, SqliteCommand>.ForConnectionString(
+               return DbConnectionPool<ICompzeSqliteConnection, SqliteCommand>.ForConnectionString(
                   connectionString,
                   PoolableConnectionFlags.MustUseSameConnectionThroughoutATransaction,
                   ICompzeSqliteConnection.Create);
