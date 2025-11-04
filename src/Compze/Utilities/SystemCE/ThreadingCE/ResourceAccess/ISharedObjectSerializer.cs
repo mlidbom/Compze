@@ -1,7 +1,7 @@
 namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
-interface ISharedObjectSerializer
+interface ISharedObjectSerializer<T> where T : class
 {
-   string Serialize(object instance);
-   TShared Deserialize<TShared>(string json) where TShared : class;
+   string Serialize(T instance);
+   T Deserialize(string json);
 }

@@ -14,6 +14,7 @@ using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using Compze.Utilities.SystemCE.ThreadingCE.Testing;
 using Compze.Utilities.Testing.Must;
 using JetBrains.Annotations;
+using Newtonsoft.Json;
 
 // ReSharper disable ImplicitlyCapturedClosure
 
@@ -24,17 +25,17 @@ namespace Compze.Tests.Unit.Internals.SystemCE.ThreadingCE;
    public string Name { get; set; } = "Default";
 }
 
+class SharedObjectSerializer : ISharedObjectSerializer<SharedObject>
+{
+   public string Serialize(SharedObject instance) => JsonConvert.SerializeObject(instance);
+
+   public SharedObject Deserialize(string json) => JsonConvert.DeserializeObject<SharedObject>(json).NotNull();
+}
+
 public class MachineWideSharedObjectTests : UniversalTestBase
 {
    readonly List<MachineWideSharedObject<SharedObject>> _created = new();
-   readonly IServiceLocator _serviceLocator;
-   readonly ISharedObjectSerializer _serializer;
-
-   public MachineWideSharedObjectTests()
-   {
-      _serviceLocator = TestEnv.DIContainer.CreateWithServiceLocatorAndCurrentTestsPluggableComponents().ServiceLocator;
-      _serializer = _serviceLocator.Resolve<ISharedObjectSerializer>();
-   }
+   readonly IServiceLocator _serviceLocator = TestEnv.DIContainer.CreateWithServiceLocatorAndCurrentTestsPluggableComponents().ServiceLocator;
 
    protected override void DisposeInternal()
    {
@@ -44,7 +45,7 @@ public class MachineWideSharedObjectTests : UniversalTestBase
 
    MachineWideSharedObject<SharedObject> CreateAndDeleteFileWhenTestCompletes(string name)
    {
-      var created = MachineWideSharedObject<SharedObject>.For(name, _serializer, CorruptionAction.ThrowException);
+      var created = MachineWideSharedObject<SharedObject>.For(name, new SharedObjectSerializer(), CorruptionAction.ThrowException);
       _created.Add(created);
       return created;
    }

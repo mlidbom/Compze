@@ -23,12 +23,12 @@ public sealed class MachineWideSharedObject<TObject> : MachineWideSharedObject w
 {
    readonly TextFile _file;
    readonly MutexCE _synchronizer;
-   readonly ISharedObjectSerializer _serializer;
+   readonly ISharedObjectSerializer<TObject> _serializer;
    readonly CorruptionAction _corruptionAction;
 
-   internal static MachineWideSharedObject<TObject> For(string name, ISharedObjectSerializer serializer, CorruptionAction corruptionAction) => new(name, serializer, corruptionAction);
+   internal static MachineWideSharedObject<TObject> For(string name, ISharedObjectSerializer<TObject> serializer, CorruptionAction corruptionAction) => new(name, serializer, corruptionAction);
 
-   MachineWideSharedObject(string name, ISharedObjectSerializer serializer, CorruptionAction corruptionAction)
+   MachineWideSharedObject(string name, ISharedObjectSerializer<TObject> serializer, CorruptionAction corruptionAction)
    {
       _serializer = serializer;
       _corruptionAction = corruptionAction;
@@ -63,7 +63,7 @@ public sealed class MachineWideSharedObject<TObject> : MachineWideSharedObject w
       var json = _file.ReadAllText();
       try
       {
-         return _serializer.Deserialize<TObject>(json);
+         return _serializer.Deserialize(json);
       }
       catch(Exception exception)
       {
