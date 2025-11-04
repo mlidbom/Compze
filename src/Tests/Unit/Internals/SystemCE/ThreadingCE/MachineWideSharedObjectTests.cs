@@ -19,6 +19,7 @@ namespace Compze.Tests.Unit.Internals.SystemCE.ThreadingCE;
 
 [UsedImplicitly] public class SharedObject
 {
+   // ReSharper disable once MemberCanBeInternal
    public string Name { get; set; } = "Default";
 }
 
@@ -93,11 +94,10 @@ public class MachineWideSharedObjectTests : UniversalTestBase
    {
       const string name = "40BD77DF-7C32-4B28-9A49-DA2CE202CC4F";
       var newName = Guid.NewGuid().ToString();
-      MachineWideSharedObject<SharedObject> shared2;
       var shared = CreateAndDeleteFileWhenTestCompletes(name);
 
       shared.Update(it => it.Name = newName).Name.Must().Be(newName);
-      shared2 = CreateAndDeleteFileWhenTestCompletes(name);
+      var shared2 = CreateAndDeleteFileWhenTestCompletes(name);
       shared.GetCopy().Name.Must().Be(newName);
 
       shared2.GetCopy().Name.Must().Be(newName);
