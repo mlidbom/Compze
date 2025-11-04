@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE;
@@ -33,8 +35,8 @@ public interface IAssertionContext
          return AssertionContext.RemoveLine;
 
       var argumentsExpressions = usedArguments != null && usedArguments.Any()
-                         ? usedArguments.Select(it => it.Expression).Join(", ")
-                         : "";
+                                    ? usedArguments.Select(it => it.Expression).Join(", ")
+                                    : "";
 
       return $"""
               {AssertionContext.Separator}
@@ -55,18 +57,38 @@ public interface IAssertionContext
                  """;
       } else
       {
-         return $"""
-                 {expression} was a {value.GetType().GetFullNameCompilable()} with:
-                 {AssertionContext.Separator}
-                 ToString():
-                 {AssertionContext.Separator}
-                 {value.ToString()}
-                 {AssertionContext.Separator}
-                 JSON:
-                 {AssertionContext.Separator}
-                 {Serialize(value)}
-                 {AssertionContext.Separator}
-                 """;
+         var json = Serialize(value);
+         var toString = value.ToString();
+         if(toString == json) //A simple type for which Newtonsoft just outputs toString
+         {
+            if(expression == toString) //an inline constant
+            {
+               return $"""
+                       {expression} was a {value.GetType().GetFullNameCompilable()}
+                       {AssertionContext.Separator}
+                       """;
+            } else
+            {
+               return $"""
+                       {expression} was a {value.GetType().GetFullNameCompilable()} with the value: {toString}
+                       {AssertionContext.Separator}
+                       """;
+            }
+         } else // A complex type
+         {
+            return $"""
+                    {expression} was a {value.GetType().GetFullNameCompilable()} with:
+                    {AssertionContext.Separator}
+                    ToString():
+                    {AssertionContext.Separator}
+                    {toString}
+                    {AssertionContext.Separator}
+                    JSON:
+                    {AssertionContext.Separator}
+                    {json}
+                    {AssertionContext.Separator}
+                    """;
+         }
       }
    }
 
