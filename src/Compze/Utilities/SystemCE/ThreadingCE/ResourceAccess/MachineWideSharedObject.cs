@@ -13,8 +13,7 @@ public abstract class MachineWideSharedObject
 public enum CorruptionAction
 {
    ThrowException = 0,
-   ReplaceContentWithDefault = 1,
-   ReplaceContentWithDefaultAndThrow = 2
+   ReplaceContentWithDefaultAndThrow = 1
 }
 
 public sealed class MachineWideSharedObject<TObject> : MachineWideSharedObject where TObject : class, new()
@@ -65,7 +64,7 @@ public sealed class MachineWideSharedObject<TObject> : MachineWideSharedObject w
       }
       catch(Exception exception)
       {
-         if(_corruptionAction != CorruptionAction.ReplaceContentWithDefault)
+         if(_corruptionAction != CorruptionAction.ReplaceContentWithDefaultAndThrow)
             throw new Exception($"""
                                  Failed to deserialize object from file {_file}
                                  The file content was:
@@ -75,21 +74,17 @@ public sealed class MachineWideSharedObject<TObject> : MachineWideSharedObject w
          _file.Delete();
          var defaultJson = CreateDefaultJson();
          _file.WriteAllText(defaultJson);
-         if(_corruptionAction == CorruptionAction.ReplaceContentWithDefaultAndThrow)
-         {
-            throw new Exception($"""
 
-                                 Failed to deserialize object from file {_file}
-                                 Deleted the corrupt file and replaced it with the content of a default {typeof(TObject).FullName}.
-                                 The file content was: 
+         throw new Exception($"""
 
-                                 {json}
-                                  
-                                 """,
-                                exception);
-         }
+                              Failed to deserialize object from file {_file}
+                              Deleted the corrupt file and replaced it with the content of a default {typeof(TObject).FullName}.
+                              The file content was: 
 
-         return _serializer.Deserialize<TObject>(defaultJson);//We deserialize rather than just using the default object in order to guarantee that the data can be deserialized, if not we want an exception every time
+                              {json}
+                               
+                              """,
+                             exception);
       }
    }
 }
