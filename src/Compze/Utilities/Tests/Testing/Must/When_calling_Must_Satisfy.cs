@@ -79,7 +79,7 @@ public class When_calling_Must_Satisfy : UniversalTestBase
                                       --------------------------------------------------
                                       _actual.Must().Satisfy(it => it.Name == "all wrong")
                                       --------------------------------------------------
-                                      "_actual" was:
+                                      _actual was:
                                       --------------------------------------------------
                                       ToString():
                                       --------------------------------------------------

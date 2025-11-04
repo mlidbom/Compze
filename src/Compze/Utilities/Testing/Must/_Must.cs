@@ -13,7 +13,7 @@ public interface IAssertionContext
    IAssertionContext<T> Cast<T>();
    string NormalizeExpressionIndentation(string expression);
 
-   string AssertionCode(string method, string? predicate = null, AssertionArgumentInfo[]? arguments = null) => $"{Expression}.Must().{method}({predicate})";
+   string AssertionCode(string method, string? predicate = null) => $"{Expression}.Must().{method}({predicate})";
 
    string FailingAssertionHeading(string method, string? predicate = null) =>
       $"""
@@ -24,17 +24,20 @@ public interface IAssertionContext
        {AssertionContext.Separator}
        """;
 
-   string FailingAssertionHeading(string callerName, string? predicate = null, AssertionArgumentInfo[]? usedArguments = null)
+   string FailingAssertionHeading(string callerName, string? predicate, AssertionArgumentInfo[]? usedArguments)
    {
       if(string.IsNullOrEmpty(callerName))
          return AssertionContext.RemoveLine;
 
-      var arguments = usedArguments != null && usedArguments.Any()
+      var argumentsExpressions = usedArguments != null && usedArguments.Any()
                          ? usedArguments.Select(it => it.Expression).Join(", ")
                          : "";
 
       return $"""
-              {Expression}.Must().{callerName}({arguments})
+              {AssertionContext.Separator}
+              Failing assertion:
+              {AssertionContext.Separator}
+              {Expression}.Must().{callerName}({argumentsExpressions})
               {AssertionContext.Separator}
               """;
    }

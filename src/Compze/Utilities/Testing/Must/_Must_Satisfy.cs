@@ -76,34 +76,16 @@ public static class _Must_Satisfy
             throw new AssertionFailedException(messageOverride.Invoke(new SatisfyCallInfo<T>(predicateExpression, predicate, failureMessage, usedArguments)));
          }
 
-         var parameterName = ExtractParameterName(predicateExpression);
-
          var message = $"""
-             {context.FailingAssertionHeading(callerName, predicateExpression, usedArguments)}
-             {DisplayUsedArgumentsDefinitions()}
-             failed to Satisfy:
-             {AssertionContext.Separator}
-             {predicateExpression.Indent()}
-             {AssertionContext.Separator}
+             {context.FailingAssertionHeading(callerName!, predicateExpression, usedArguments)}
              {CustomFailureMessage()}
-             {ArgumentValue(parameterName, context.Actual)}
+             {ArgumentValue(context.Expression, context.Actual)}
              {DisplayUsedArgumentsValues()}
              """.Split(Environment.NewLine)
                 .Where(it => it != AssertionContext.RemoveLine)
                 .JoinLines();
 
          throw new AssertionFailedException(message);
-
-         string DisplayUsedArgumentsDefinitions()
-         {
-            if(usedArguments == null || !usedArguments.Any())
-               return AssertionContext.RemoveLine;
-
-            var stringBuilder = new StringBuilder();
-            return $"""
-                    {usedArguments.Select(it => ArgumentDescription(it.Name, it.Expression)).JoinLines()}
-                    """;
-         }
 
          string DisplayUsedArgumentsValues()
          {
@@ -112,22 +94,14 @@ public static class _Must_Satisfy
 
             var stringBuilder = new StringBuilder();
             return $"""
-                    {usedArguments.Select(it => ArgumentValue(it.Name, it.Value)).JoinLines()}
+                    {usedArguments.Select(it => ArgumentValue(it.Expression, it.Value)).JoinLines()}
                     """;
          }
-
-         static string ArgumentDescription(string name, string expression) =>
-            $"""
-             "{name}" defined by:
-             {AssertionContext.Separator}
-             {expression.Indent()}
-             {AssertionContext.Separator}
-             """;
 
          string CustomFailureMessage() =>
             failureMessage != null
                ? $"""
-                  {failureMessage?.Invoke(context.Actual) ?? "but it did not"}
+                  {failureMessage?.Invoke(context.Actual)}
                   {AssertionContext.Separator}
                   """
                : AssertionContext.RemoveLine;
@@ -136,10 +110,10 @@ public static class _Must_Satisfy
       return context;
    }
 
-   static string ArgumentValue(string name, object? value)
+   static string ArgumentValue(string expression, object? value)
    {
       return $"""
-              "{name}" was:
+              {expression} was:
               {AssertionContext.Separator}
               ToString():
               {AssertionContext.Separator}

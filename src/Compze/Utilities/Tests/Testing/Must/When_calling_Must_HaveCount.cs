@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Compze.Utilities.Testing.Must;
 using Compze.Utilities.Testing.XUnit.BDD;
 using static Compze.Utilities.Testing.Must.MustActions;
-using AssertionFailedException = Compze.Utilities.Testing.Must.AssertionFailedException;
 
 #pragma warning disable CA1861
 
@@ -34,19 +33,11 @@ public class When_calling_Must_HaveCount : UniversalTestBase
                                  --------------------------------------------------
                                  Failing assertion:
                                  --------------------------------------------------
-                                 new[] { 1, 2, 3 }.Must().HaveCount()
+                                 new[] { 1, 2, 3 }.Must().HaveCount(5)
                                  --------------------------------------------------
-                                 "it" defined by:
+                                 Expected count to be 5 but it was 3
                                  --------------------------------------------------
-                                    new[] { 1, 2, 3 }
-                                 --------------------------------------------------
-                                 failed to Satisfy:
-                                 --------------------------------------------------
-                                    Count == 5
-                                 --------------------------------------------------
-                                 but Count was: 3, not 5
-                                 --------------------------------------------------
-                                 "it" was:
+                                 new[] { 1, 2, 3 } was:
                                  --------------------------------------------------
                                  ToString():
                                  --------------------------------------------------
@@ -62,6 +53,16 @@ public class When_calling_Must_HaveCount : UniversalTestBase
                                      3
                                    ]
                                  }
+                                 --------------------------------------------------
+                                 5 was:
+                                 --------------------------------------------------
+                                 ToString():
+                                 --------------------------------------------------
+                                 5
+                                 --------------------------------------------------
+                                 JSON:
+                                 --------------------------------------------------
+                                 5
                                  --------------------------------------------------
                                  """);
 
