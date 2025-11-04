@@ -89,14 +89,8 @@ public static class Must_Be_NotBe
                  {AssertionContext.Separator}
                  {DiffGenerator.CreateDiff(expectedJson, actualJson)}
                  {AssertionContext.Separator}
-                 "it" was:
-                 {AssertionContext.Separator}
-                 {actualJson}
-                 {AssertionContext.Separator}
-                 "expected" was:
-                 {AssertionContext.Separator}
-                 {expectedJson}
-                 {AssertionContext.Separator}
+                 {context.ArgumentValue($"{context.Expression}", context.Actual)}
+                 {context.ArgumentValue($"{expectedExpression}", expected)}
                  """;
 
          string FailureMessage() =>
@@ -173,14 +167,8 @@ public static class Must_Be_NotBe
                  {AssertionContext.Separator}
                  {DiffGenerator.CreateDiff(unexpectedJson, actualJson)}
                  {AssertionContext.Separator}
-                 it was:
-                 {AssertionContext.Separator}
-                 {actualJson}
-                 {AssertionContext.Separator}
-                 unexpected was:
-                 {AssertionContext.Separator}
-                 {unexpectedJson}
-                 {AssertionContext.Separator}
+                 {context.ArgumentValue($"{context.Expression}", context.Actual)}
+                 {context.ArgumentValue($"{unexpectedExpression}", unexpected)}
                  """;
 
          string FailureMessage() =>

@@ -32,7 +32,7 @@ public static class _Must_Satisfy
          var message = $"""
              {context.FailingAssertionHeading(nameof(Satisfy), predicateExpression)}
              {CustomFailureMessage()}
-             {ArgumentValue(context.Expression, context.Actual)}
+             {context.ArgumentValue(context.Expression, context.Actual)}
              """.Split(Environment.NewLine)
                 .Where(it => it != AssertionContext.RemoveLine)
                 .JoinLines();
@@ -79,7 +79,7 @@ public static class _Must_Satisfy
          var message = $"""
              {context.FailingAssertionHeading(caller!, expressions)}
              {CustomFailureMessage()}
-             {ArgumentValue(context.Expression, context.Actual)}
+             {context.ArgumentValue(context.Expression, context.Actual)}
              {ExpressionValues()}
              """.Split(Environment.NewLine)
                 .Where(it => it != AssertionContext.RemoveLine)
@@ -92,9 +92,8 @@ public static class _Must_Satisfy
             if(expressions == null || !expressions.Any())
                return AssertionContext.RemoveLine;
 
-            var stringBuilder = new StringBuilder();
             return $"""
-                    {expressions.Select(it => ArgumentValue(it.Expression, it.Value)).JoinLines()}
+                    {expressions.Select(it => context.ArgumentValue(it.Expression, it.Value)).JoinLines()}
                     """;
          }
 
@@ -109,23 +108,5 @@ public static class _Must_Satisfy
 
       return context;
    }
-
-   static string ArgumentValue(string expression, object? value)
-   {
-      return $"""
-              {expression} was:
-              {AssertionContext.Separator}
-              ToString():
-              {AssertionContext.Separator}
-              {value?.ToString() ?? "null"}
-              {AssertionContext.Separator}
-              JSON:
-              {AssertionContext.Separator}
-              {Serialize(value)}
-              {AssertionContext.Separator}
-              """;
-   }
-
-   static string Serialize(object? obj) => obj != null ? JsonConvert.SerializeObject(obj, TestingJsonSettings.AllMembers) : "null";
 
 }

@@ -38,7 +38,7 @@ public class When_calling_Must_NotBe_with_custom_types : UniversalTestBase
          Invoking(() => _actual.Must().NotBe(_unexpected))
            .Must().Throw<AssertionFailedException>()
            .Which.Message.Must().Be("""
-
+                                    
                                     --------------------------------------------------
                                     Failing assertion:
                                     --------------------------------------------------
@@ -59,9 +59,15 @@ public class When_calling_Must_NotBe_with_custom_types : UniversalTestBase
                                     +  "_breakComparableMethod": 1,
                                     +  "_value": 42
                                      }
-
+                                    
                                     --------------------------------------------------
-                                    it was:
+                                    _actual was:
+                                    --------------------------------------------------
+                                    ToString():
+                                    --------------------------------------------------
+                                    Compze.Utilities.Tests.Testing.Must.ComparableWithErrorInjectionSupport
+                                    --------------------------------------------------
+                                    JSON:
                                     --------------------------------------------------
                                     {
                                       "$type": "Compze.Utilities.Tests.Testing.Must.ComparableWithErrorInjectionSupport, Compze.Utilities.Tests",
@@ -69,7 +75,13 @@ public class When_calling_Must_NotBe_with_custom_types : UniversalTestBase
                                       "_value": 42
                                     }
                                     --------------------------------------------------
-                                    unexpected was:
+                                    _unexpected was:
+                                    --------------------------------------------------
+                                    ToString():
+                                    --------------------------------------------------
+                                    Compze.Utilities.Tests.Testing.Must.ComparableWithErrorInjectionSupport
+                                    --------------------------------------------------
+                                    JSON:
                                     --------------------------------------------------
                                     {
                                       "$type": "Compze.Utilities.Tests.Testing.Must.ComparableWithErrorInjectionSupport, Compze.Utilities.Tests",

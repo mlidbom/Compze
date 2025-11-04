@@ -55,11 +55,23 @@ public class When_calling_Must_Be : UniversalTestBase
                                          [-43]
                                          [+42]
                                          --------------------------------------------------
-                                         "it" was:
+                                         _actual was:
+                                         --------------------------------------------------
+                                         ToString():
                                          --------------------------------------------------
                                          42
                                          --------------------------------------------------
-                                         "expected" was:
+                                         JSON:
+                                         --------------------------------------------------
+                                         42
+                                         --------------------------------------------------
+                                         _expected was:
+                                         --------------------------------------------------
+                                         ToString():
+                                         --------------------------------------------------
+                                         43
+                                         --------------------------------------------------
+                                         JSON:
                                          --------------------------------------------------
                                          43
                                          --------------------------------------------------
@@ -107,14 +119,26 @@ public class When_calling_Must_Be : UniversalTestBase
                                           }
                                          
                                          --------------------------------------------------
-                                         "it" was:
+                                         _actual was:
+                                         --------------------------------------------------
+                                         ToString():
+                                         --------------------------------------------------
+                                         Compze.Utilities.Tests.Testing.Must.When_calling_Must_Be+TestObjectWithOverriddenEquals
+                                         --------------------------------------------------
+                                         JSON:
                                          --------------------------------------------------
                                          {
                                            "$type": "Compze.Utilities.Tests.Testing.Must.When_calling_Must_Be+TestObjectWithOverriddenEquals, Compze.Utilities.Tests",
                                            "_value": "actual_value"
                                          }
                                          --------------------------------------------------
-                                         "expected" was:
+                                         _expected was:
+                                         --------------------------------------------------
+                                         ToString():
+                                         --------------------------------------------------
+                                         Compze.Utilities.Tests.Testing.Must.When_calling_Must_Be+TestObjectWithOverriddenEquals
+                                         --------------------------------------------------
+                                         JSON:
                                          --------------------------------------------------
                                          {
                                            "$type": "Compze.Utilities.Tests.Testing.Must.When_calling_Must_Be+TestObjectWithOverriddenEquals, Compze.Utilities.Tests",

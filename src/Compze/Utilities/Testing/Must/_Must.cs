@@ -2,6 +2,8 @@ using System;
 using System.Linq;
 using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE;
+using Compze.Utilities.Testing.Must.Serialization;
+using Newtonsoft.Json;
 
 #pragma warning disable CA1033 // The compiler is unhappy about the explicit interface implementation below
 
@@ -41,6 +43,24 @@ public interface IAssertionContext
               {AssertionContext.Separator}
               """;
    }
+
+   string ArgumentValue(string expression, object? value)
+   {
+      return $"""
+              {expression} was:
+              {AssertionContext.Separator}
+              ToString():
+              {AssertionContext.Separator}
+              {value?.ToString() ?? "null"}
+              {AssertionContext.Separator}
+              JSON:
+              {AssertionContext.Separator}
+              {Serialize(value)}
+              {AssertionContext.Separator}
+              """;
+   }
+
+   static string Serialize(object? obj) => obj != null ? JsonConvert.SerializeObject(obj, TestingJsonSettings.AllMembers) : "null";
 }
 
 public interface IAssertionContext<out T> : IAssertionContext
