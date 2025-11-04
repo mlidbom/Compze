@@ -13,15 +13,7 @@ public interface IAssertionContext
    IAssertionContext<T> Cast<T>();
    string NormalizeExpressionIndentation(string expression);
 
-   string AssertionCode(string method, string? predicate = null, AssertionArgumentInfo[]? arguments = null)
-   {
-      var argumentsText = arguments != null && arguments.Any()
-                         ? arguments.Select(it => it.Expression).Join(", ")
-                         : "";
-
-      return $"{Expression}.Must().{method}({predicate})";
-
-   }
+   string AssertionCode(string method, string? predicate = null, AssertionArgumentInfo[]? arguments = null) => $"{Expression}.Must().{method}({predicate})";
 
    string FailingAssertionHeading(string method, string? predicate = null, AssertionArgumentInfo[]? arguments = null) =>
       $"""
@@ -31,21 +23,6 @@ public interface IAssertionContext
        {AssertionCode(method, predicate)}
        {AssertionContext.Separator}
        """;
-
-   string AssertionMethodCall(string callerName, string? predicate = null, AssertionArgumentInfo[]? usedArguments = null)
-   {
-      if(string.IsNullOrEmpty(callerName))
-         return AssertionContext.RemoveLine;
-
-      var arguments = usedArguments != null && usedArguments.Any()
-                         ? usedArguments.Select(it => it.Expression).Join(", ")
-                         : "";
-
-      return $"""
-              {Expression}.Must().{callerName}({arguments})
-              {AssertionContext.Separator}
-              """;
-   }
 }
 
 public interface IAssertionContext<out T> : IAssertionContext
@@ -75,7 +52,6 @@ public abstract class AssertionContext : IAssertionContext
 
    public static readonly string Separator = "-".Repeat(50).Join();
 
-   // ReSharper disable once MemberCanBeMadeStatic.Global
    public string NormalizeExpressionIndentation(string expression)
    {
       var lines = expression.Split(Environment.NewLine);

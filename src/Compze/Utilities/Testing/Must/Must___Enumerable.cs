@@ -11,37 +11,37 @@ namespace Compze.Utilities.Testing.Must;
 
 public static class Must___Enumerable
 {
-   public static IAssertionContext<TCollection> HaveCount<TCollection>(this IAssertionContext<TCollection> assertionContext, int count, [CallerArgumentExpression(nameof(count))] string predicateExpression = null!)
+   public static IAssertionContext<TCollection> HaveCount<TCollection>(this IAssertionContext<TCollection> context, int count, [CallerArgumentExpression(nameof(count))] string predicateExpression = null!)
       where TCollection : System.Collections.IEnumerable
-      => assertionContext.SatisfyInternal(it => it.Cast<object>().Count() == count, predicateExpression:$"Count == {predicateExpression}", failureMessage: it => $"but Count was: {it.Cast<object>().Count()}, not {count}");
+      => context.SatisfyInternal(it => it.Cast<object>().Count() == count, predicateExpression:$"Count == {predicateExpression}", failureMessage: it => $"but Count was: {it.Cast<object>().Count()}, not {count}");
 
-   public static IAssertionContext<TCollection> BeEmpty<TCollection>(this IAssertionContext<TCollection> assertionContext, string? message = null!)
+   public static IAssertionContext<TCollection> BeEmpty<TCollection>(this IAssertionContext<TCollection> context, string? message = null!)
       where TCollection : System.Collections.IEnumerable
-      => assertionContext.SatisfyInternal(it => !it.Cast<object>().Any(), failureMessage: it => $"but it contained {it.Cast<object>().Count()} items");
+      => context.SatisfyInternal(it => !it.Cast<object>().Any(), failureMessage: it => $"but it contained {it.Cast<object>().Count()} items");
 
-   public static IAssertionContext<TCollection> NotBeEmpty<TCollection>(this IAssertionContext<TCollection> assertionContext, string? message = null!)
+   public static IAssertionContext<TCollection> NotBeEmpty<TCollection>(this IAssertionContext<TCollection> context, string? message = null!)
       where TCollection : System.Collections.IEnumerable
-      => assertionContext.SatisfyInternal(it => it.Cast<object>().Any());
+      => context.SatisfyInternal(it => it.Cast<object>().Any());
 
    //Todo: rename
-   public static IAssertionContext<TCollection> Equal<TCollection, TElement>(this IAssertionContext<TCollection> assertionContext, IEnumerable<TElement> expected, [CallerArgumentExpression(nameof(expected))] string expectedExpression = null!)
+   public static IAssertionContext<TCollection> Equal<TCollection, TElement>(this IAssertionContext<TCollection> context, IEnumerable<TElement> expected, [CallerArgumentExpression(nameof(expected))] string expectedExpression = null!)
       where TCollection : IEnumerable<TElement>
    {
-      var actualJson = JsonConvert.SerializeObject(assertionContext.Actual, TestingJsonSettings.AllMembers);
+      var actualJson = JsonConvert.SerializeObject(context.Actual, TestingJsonSettings.AllMembers);
       var expectedJson = JsonConvert.SerializeObject(expected, TestingJsonSettings.AllMembers);
 
-      return assertionContext.SatisfyInternal(
+      return context.SatisfyInternal(
          it => it.SequenceEqual(expected),
          messageOverride: _ =>
             $"""
              {AssertionContext.Separator}
              expected the sequence:
              {AssertionContext.Separator}
-             {assertionContext.Expression.Indent()}
+             {context.Expression.Indent()}
              {AssertionContext.Separator}
              to be sequence equal to:
              {AssertionContext.Separator}
-             {assertionContext.NormalizeExpressionIndentation(expectedExpression).Indent()}
+             {context.NormalizeExpressionIndentation(expectedExpression).Indent()}
              {AssertionContext.Separator}
              But it was not.
              {AssertionContext.Separator}

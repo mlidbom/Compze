@@ -15,11 +15,11 @@ public record SatisfyCallInfo<T>(string PredicateExpression, Func<T, bool> Predi
 
 public static class _Must_Satisfy
 {
-   public static IAssertionContext Satisfy(this IAssertionContext assertionContext,
+   public static IAssertionContext Satisfy(this IAssertionContext context,
                                Func<object, bool> predicate,
                                Func<object, string>? failureMessage = null,
                                [CallerArgumentExpression(nameof(predicate))]
-                               string predicateExpression = null!) => assertionContext.Cast<object>().Satisfy(predicate, failureMessage: failureMessage, predicateExpression: predicateExpression);
+                               string predicateExpression = null!) => context.Cast<object>().Satisfy(predicate, failureMessage: failureMessage, predicateExpression: predicateExpression);
 
    public static IAssertionContext<T> Satisfy<T>(this IAssertionContext<T> context,
                                      Func<T, bool> predicate,
@@ -51,14 +51,14 @@ public static class _Must_Satisfy
       return context;
    }
 
-   public static IAssertionContext SatisfyInternal(this IAssertionContext assertionContext,
+   public static IAssertionContext SatisfyInternal(this IAssertionContext context,
                                        Func<object, bool> predicate,
                                        [CallerArgumentExpression(nameof(predicate))]
                                        string predicateExpression = null!,
                                        Func<SatisfyCallInfo<object>, string>? messageOverride = null,
                                        Func<object, string>? failureMessage = null,
                                        AssertionArgumentInfo[]? usedArguments = null,
-                                       [CallerMemberName] string callerName = null!) => assertionContext.Cast<object>().SatisfyInternal(predicate, predicateExpression, messageOverride, failureMessage, usedArguments, callerName);
+                                       [CallerMemberName] string callerName = null!) => context.Cast<object>().SatisfyInternal(predicate, predicateExpression, messageOverride, failureMessage, usedArguments, callerName);
 
    public static IAssertionContext<T> SatisfyInternal<T>(this IAssertionContext<T> context,
                                              Func<T, bool> predicate,

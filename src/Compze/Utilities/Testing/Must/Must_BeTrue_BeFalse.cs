@@ -6,13 +6,13 @@ namespace Compze.Utilities.Testing.Must;
 
 public static class Must_BeTrue_BeFalse
 {
-   public static IAssertionContext<bool>? BeTrue(this IAssertionContext<bool> assertionContext)
-      => assertionContext.SatisfyInternal(it => it == true,
+   public static IAssertionContext<bool>? BeTrue(this IAssertionContext<bool> context)
+      => context.SatisfyInternal(it => it == true,
                                           messageOverride: _ =>
                                              $"""
                                               expected the expression: 
                                               {AssertionContext.Separator}
-                                              {assertionContext.Expression.Indent()}
+                                              {context.Expression.Indent()}
                                               {AssertionContext.Separator}
                                               to be true, but it was false
                                               """);

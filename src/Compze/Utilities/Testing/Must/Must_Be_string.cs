@@ -6,22 +6,22 @@ namespace Compze.Utilities.Testing.Must;
 
 public static class Must_Be_string
 {
-   public static IAssertionContext<string> Be(this IAssertionContext<string> assertionContext, string expected, [CallerArgumentExpression(nameof(expected))] string expectedExpression = null!)
-      => assertionContext.SatisfyInternal(it => Equals(it, expected),
+   public static IAssertionContext<string> Be(this IAssertionContext<string> context, string expected, [CallerArgumentExpression(nameof(expected))] string expectedExpression = null!)
+      => context.SatisfyInternal(it => Equals(it, expected),
                       messageOverride: _ =>
                          $"""""
                           {AssertionContext.Separator}
                           the expression: 
                           {AssertionContext.Separator}
-                          {assertionContext.Expression.Indent()}
+                          {context.Expression.Indent()}
                           {AssertionContext.Separator}
                           did not result in the expected string, producing the diff
                           {AssertionContext.Separator}
-                          {DiffGenerator.CreateDiff(expected, assertionContext.Actual)}
+                          {DiffGenerator.CreateDiff(expected, context.Actual)}
                           {AssertionContext.Separator}
                           Actual was:
                           {AssertionContext.Separator}
-                          {assertionContext.Actual}
+                          {context.Actual}
                           {AssertionContext.Separator}
                           Expected was:
                           {AssertionContext.Separator}

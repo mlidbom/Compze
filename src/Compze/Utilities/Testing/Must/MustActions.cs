@@ -43,12 +43,12 @@ public static class MustActions
    public static AsyncActionSpec InvokingAsync<T>(this T subject, Func<T, Task> action, [CallerArgumentExpression(nameof(action))] string expression = null!)
       => InvokingAsync(() => action(subject), expression);
 
-   public static CaughtException<TException> Throw<TException>(this IAssertionContext<Action> assertionContext)
+   public static CaughtException<TException> Throw<TException>(this IAssertionContext<Action> context)
       where TException : Exception
    {
       try
       {
-         assertionContext.Actual();
+         context.Actual();
       }
       catch(TException caught)
       {
@@ -57,7 +57,7 @@ public static class MustActions
       catch(Exception unexpected)
       {
          throw new AssertionFailedException($"""
-                                             {assertionContext.ThrowAssertionFailureHeading(typeof(TException))}
+                                             {context.ThrowAssertionFailureHeading(typeof(TException))}
                                              Expected a {typeof(TException).GetFullNameCompilable()} 
                                              but got a {unexpected.GetType().GetFullNameCompilable()}
                                              {AssertionContext.Separator}
@@ -66,18 +66,18 @@ public static class MustActions
       }
 
       throw new AssertionFailedException($"""
-                                          {assertionContext.ThrowAssertionFailureHeading(typeof(TException))}
+                                          {context.ThrowAssertionFailureHeading(typeof(TException))}
                                           Expected a {typeof(TException).GetFullNameCompilable()}, but no exception was thrown
                                           {AssertionContext.Separator}
                                           """);
    }
 
-   public static async Task<CaughtException<TException>> ThrowAsync<TException>(this IAssertionContext<Func<Task>> assertionContext)
+   public static async Task<CaughtException<TException>> ThrowAsync<TException>(this IAssertionContext<Func<Task>> context)
       where TException : Exception
    {
       try
       {
-         await assertionContext.Actual().caf();
+         await context.Actual().caf();
       }
       catch(TException caught)
       {
@@ -86,7 +86,7 @@ public static class MustActions
       catch(Exception unexpected)
       {
          throw new AssertionFailedException($"""
-                                             {assertionContext.ThrowAssertionFailureHeading(typeof(TException))}
+                                             {context.ThrowAssertionFailureHeading(typeof(TException))}
                                              Expected a {typeof(TException).GetFullNameCompilable()}
                                              but got a {unexpected.GetType().GetFullNameCompilable()}
                                              {AssertionContext.Separator}
@@ -95,7 +95,7 @@ public static class MustActions
       }
 
       throw new AssertionFailedException($"""
-                                          {assertionContext.ThrowAssertionFailureHeading(typeof(TException))}
+                                          {context.ThrowAssertionFailureHeading(typeof(TException))}
                                           Expected a {typeof(TException).GetFullNameCompilable()}, but no exception was thrown
                                           {AssertionContext.Separator}
                                           """);
@@ -113,24 +113,24 @@ public class CaughtException<TException>(TException exception)
 
 static class InvokingMustThrowExtensions
 {
-   public static string ThrowAssertionFailureHeading(this IAssertionContext<Func<Task>> assertionContext, Type expectedException)
+   public static string ThrowAssertionFailureHeading(this IAssertionContext<Func<Task>> context, Type expectedException)
    {
       return $"""
               {AssertionContext.Separator}
               Failing assertion:
               {AssertionContext.Separator}
-              InvokingAsync({assertionContext.Expression}).Must().Throw<{expectedException.Name}>()
+              InvokingAsync({context.Expression}).Must().Throw<{expectedException.Name}>()
               {AssertionContext.Separator}
               """;
    }
 
-   public static string ThrowAssertionFailureHeading(this IAssertionContext<Action> assertionContext, Type expectedException)
+   public static string ThrowAssertionFailureHeading(this IAssertionContext<Action> context, Type expectedException)
    {
       return $"""
               {AssertionContext.Separator}
               Failing assertion:
               {AssertionContext.Separator}
-              Invoking({assertionContext.Expression}).Must().Throw<{expectedException.Name}>()
+              Invoking({context.Expression}).Must().Throw<{expectedException.Name}>()
               {AssertionContext.Separator}
               """;
    }
