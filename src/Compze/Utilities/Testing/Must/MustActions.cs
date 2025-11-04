@@ -5,6 +5,7 @@ using Compze.Utilities.SystemCE.ReflectionCE;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Utilities.Testing.Must;
+
 // ReSharper disable InconsistentNaming
 public class ActionSpec(Action action, string expression)
 {
@@ -34,7 +35,6 @@ public static class MustActions
    public static ActionSpec Invoking<T, TResult>(this T subject, Func<T, TResult> func, [CallerArgumentExpression(nameof(func))] string expression = null!)
       => Invoking(() => func(subject), expression);
 
-
    public static IMust<Func<Task>> Must(this Func<Task> action, [CallerArgumentExpression(nameof(action))] string expression = null!) => InvokingAsync(action, expression).Must();
    public static IMust<Func<Task>> Must<T>(this Func<Task<T>> func, [CallerArgumentExpression(nameof(func))] string expression = null!) => InvokingAsync(func, expression).Must();
 
@@ -57,20 +57,18 @@ public static class MustActions
       catch(Exception unexpected)
       {
          throw new AssertionFailedException($"""
-                                             Expected invoking the expression
+                                             {must.ThrowAssertionFailureHeading(typeof(TException))}
+                                             Expected a {typeof(TException).GetFullNameCompilable()} 
+                                             but got a {unexpected.GetType().GetFullNameCompilable()}
                                              {must.Separator}
-                                             {must.Expression} 
-                                             {must.Separator}
-                                             to throw {typeof(TException).Name} but instead a {unexpected.GetType().GetFullNameCompilable()} was thrown
-                                             """);
+                                             """,
+                                            unexpected);
       }
 
       throw new AssertionFailedException($"""
-                                          Expected invoking the expression
+                                          {must.ThrowAssertionFailureHeading(typeof(TException))}
+                                          Expected a {typeof(TException).GetFullNameCompilable()}, but no exception was thrown
                                           {must.Separator}
-                                          {must.Expression} 
-                                          {must.Separator}
-                                          to throw {typeof(TException).Name} but no exception was thrown
                                           """);
    }
 
@@ -88,20 +86,18 @@ public static class MustActions
       catch(Exception unexpected)
       {
          throw new AssertionFailedException($"""
-                                             Expected invoking the expression
+                                             {must.ThrowAssertionFailureHeading(typeof(TException))}
+                                             Expected a {typeof(TException).GetFullNameCompilable()}
+                                             but got a {unexpected.GetType().GetFullNameCompilable()}
                                              {must.Separator}
-                                             {must.Expression} 
-                                             {must.Separator}
-                                             to throw {typeof(TException).Name} but instead a {unexpected.GetType().GetFullNameCompilable()} was thrown
-                                             """);
+                                             """,
+                                            unexpected);
       }
 
       throw new AssertionFailedException($"""
-                                          Expected invoking the expression
+                                          {must.ThrowAssertionFailureHeading(typeof(TException))}
+                                          Expected a {typeof(TException).GetFullNameCompilable()}, but no exception was thrown
                                           {must.Separator}
-                                          {must.Expression} 
-                                          {must.Separator}
-                                          to throw {typeof(TException).Name} but no exception was thrown
                                           """);
    }
 }
@@ -113,4 +109,29 @@ public class CaughtException<TException>(TException exception)
    readonly TException _exception = exception;
    public TException Which => _exception;
    public TException That => _exception;
+}
+
+static class InvokingMustThrowExtensions
+{
+   public static string ThrowAssertionFailureHeading(this IMust<Func<Task>> must, Type expectedException)
+   {
+      return $"""
+              {Must.Separator}
+              Failing assertion:
+              {Must.Separator}
+              InvokingAsync({must.Expression}).Must().Throw<{expectedException.Name}>()
+              {Must.Separator}
+              """;
+   }
+
+   public static string ThrowAssertionFailureHeading(this IMust<Action> must, Type expectedException)
+   {
+      return $"""
+              {Must.Separator}
+              Failing assertion:
+              {Must.Separator}
+              Invoking({must.Expression}).Must().Throw<{expectedException.Name}>()
+              {Must.Separator}
+              """;
+   }
 }

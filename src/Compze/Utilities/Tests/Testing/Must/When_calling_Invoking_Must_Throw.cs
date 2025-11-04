@@ -43,11 +43,14 @@ public class When_calling_Invoking_Must_Throw : UniversalTestBase
             [XF] public void is_the_full_formatted_message()
                => ExceptionMessage().Must().Be($"""
 
-                                                Expected invoking the expression
                                                 --------------------------------------------------
-                                                () => throw new InvalidOperationException("wrong") 
+                                                Failing assertion:
                                                 --------------------------------------------------
-                                                to throw ArgumentException but instead a System.InvalidOperationException was thrown
+                                                Invoking(() => throw new InvalidOperationException("wrong")).Must().Throw<ArgumentException>()
+                                                --------------------------------------------------
+                                                Expected a System.ArgumentException 
+                                                but got a System.InvalidOperationException
+                                                --------------------------------------------------
                                                 """);
          }
       }
@@ -81,13 +84,15 @@ public class When_calling_Invoking_Must_Throw : UniversalTestBase
             [XF] public void is_the_full_formatted_message()
                => ExceptionMessage().Must().Be("""
                                                
-                                               Expected invoking the expression
                                                --------------------------------------------------
-                                               () =>
+                                               Failing assertion:
+                                               --------------------------------------------------
+                                               Invoking(() =>
                                                { /* do nothing */
-                                               } 
+                                               }).Must().Throw<InvalidOperationException>()
                                                --------------------------------------------------
-                                               to throw InvalidOperationException but no exception was thrown
+                                               Expected a System.InvalidOperationException, but no exception was thrown
+                                               --------------------------------------------------
                                                """);
          }
       }

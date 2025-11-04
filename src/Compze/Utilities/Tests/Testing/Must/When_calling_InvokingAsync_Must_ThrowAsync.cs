@@ -62,17 +62,20 @@ public class When_calling_InvokingAsync_Must_ThrowAsync : UniversalTestBase
             [XF] public async Task is_the_full_formatted_message()
             {
                var message = await ExceptionMessage();
-               message.Must().Be($$"""
+               message.Must().Be("""
                                    
-                                   Expected invoking the expression
                                    --------------------------------------------------
-                                   async () =>
+                                   Failing assertion:
+                                   --------------------------------------------------
+                                   InvokingAsync(async () =>
                                    {
                                       await Task.Yield();
                                       throw new InvalidOperationException("wrong");
-                                   } 
+                                   }).Must().Throw<ArgumentException>()
                                    --------------------------------------------------
-                                   to throw ArgumentException but instead a System.InvalidOperationException was thrown
+                                   Expected a System.ArgumentException
+                                   but got a System.InvalidOperationException
+                                   --------------------------------------------------
                                    """);
             }
          }
@@ -115,15 +118,17 @@ public class When_calling_InvokingAsync_Must_ThrowAsync : UniversalTestBase
                var message = await ExceptionMessage();
                message.Must().Be("""
                                  
-                                 Expected invoking the expression
                                  --------------------------------------------------
-                                 async () =>
+                                 Failing assertion:
+                                 --------------------------------------------------
+                                 InvokingAsync(async () =>
                                  {
                                     await Task.Yield();
                                     // do nothing
-                                 } 
+                                 }).Must().Throw<InvalidOperationException>()
                                  --------------------------------------------------
-                                 to throw InvalidOperationException but no exception was thrown
+                                 Expected a System.InvalidOperationException, but no exception was thrown
+                                 --------------------------------------------------
                                  """);
             }
          }
