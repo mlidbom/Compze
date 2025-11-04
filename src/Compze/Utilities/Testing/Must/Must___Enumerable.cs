@@ -2,12 +2,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Compze.Utilities.SystemCE;
-using Compze.Utilities.Testing.Fluent.Serialization;
+using Compze.Utilities.Testing.Must.Serialization;
 using Newtonsoft.Json;
 
 // ReSharper disable InconsistentNaming
 
-namespace Compze.Utilities.Testing.Fluent;
+namespace Compze.Utilities.Testing.Must;
 
 public static class Must___Enumerable
 {

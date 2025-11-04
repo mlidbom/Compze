@@ -13,7 +13,7 @@ using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using Compze.Utilities.SystemCE.ThreadingCE.Testing;
 using Compze.Utilities.Testing.DbPool.SystemCE.ThreadingCE;
-using Compze.Utilities.Testing.Fluent;
+using Compze.Utilities.Testing.Must;
 using JetBrains.Annotations;
 
 // ReSharper disable ImplicitlyCapturedClosure

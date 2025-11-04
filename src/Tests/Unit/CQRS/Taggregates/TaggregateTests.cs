@@ -7,7 +7,7 @@ using Compze.Utilities.SystemCE.ReactiveCE;
 using Compze.Utilities.Testing.XUnit.BDD;
 using System.Collections.Generic;
 using Compze.Core.Public;
-using Compze.Utilities.Testing.Fluent;
+using Compze.Utilities.Testing.Must;
 
 namespace Compze.Tests.Unit.CQRS.Taggregates;
 

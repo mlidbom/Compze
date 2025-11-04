@@ -11,7 +11,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using Compze.Utilities.SystemCE.ThreadingCE.Testing;
-using Compze.Utilities.Testing.Fluent;
+using Compze.Utilities.Testing.Must;
 
 namespace Compze.Tests.Integration.Tessaging;
 

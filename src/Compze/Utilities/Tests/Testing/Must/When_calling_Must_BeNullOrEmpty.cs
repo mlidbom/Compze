@@ -1,0 +1,31 @@
+using Compze.Utilities.Testing.Must;
+using Compze.Utilities.Testing.XUnit.BDD;
+using static Compze.Utilities.Testing.Must.MustActions;
+using AssertionFailedException = Compze.Utilities.Testing.Must.AssertionFailedException;
+
+#pragma warning disable CS8620 // Argument cannot be used for parameter due to differences in the nullability of reference types.
+
+// ReSharper disable InconsistentNaming
+
+namespace Compze.Utilities.Tests.Testing.Must;
+
+public class When_calling_Must_BeNullOrEmpty : UniversalTestBase
+{
+   public class with_null : When_calling_Must_BeNullOrEmpty
+   {
+      readonly string? _value = null;
+      [XF] public void it_does_not_throw() => _value.Must().BeNullOrEmpty();
+   }
+
+   public class with_empty_string : When_calling_Must_BeNullOrEmpty
+   {
+      [XF] public void it_does_not_throw() => string.Empty.Must().BeNullOrEmpty();
+   }
+
+   public class with_non_empty_string : When_calling_Must_BeNullOrEmpty
+   {
+      [XF] public void it_throws() => Invoking(() => "text".Must().BeNullOrEmpty())
+                                     .Must()
+                                     .Throw<AssertionFailedException>();
+   }
+}

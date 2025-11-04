@@ -5,7 +5,7 @@ using Compze.Utilities.SystemCE;
 
 #pragma warning disable CA1033 // The compiler is unhappy about the explicit interface implementation below
 
-namespace Compze.Utilities.Testing.Fluent;
+namespace Compze.Utilities.Testing.Must;
 
 public interface IMust
 {

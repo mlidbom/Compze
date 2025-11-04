@@ -2,7 +2,7 @@ using Compze.Utilities.SystemCE;
 
 // ReSharper disable RedundantBoolCompare
 // ReSharper disable InconsistentNaming
-namespace Compze.Utilities.Testing.Fluent;
+namespace Compze.Utilities.Testing.Must;
 
 public static class Must_BeTrue_BeFalse
 {

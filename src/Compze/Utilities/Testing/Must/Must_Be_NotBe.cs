@@ -3,10 +3,10 @@ using System.Collections;
 using System.Runtime.CompilerServices;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
-using Compze.Utilities.Testing.Fluent.Serialization;
+using Compze.Utilities.Testing.Must.Serialization;
 using Newtonsoft.Json;
 
-namespace Compze.Utilities.Testing.Fluent;
+namespace Compze.Utilities.Testing.Must;
 
 // ReSharper disable InconsistentNaming
 public static class Must_Be_NotBe
@@ -82,7 +82,7 @@ public static class Must_Be_NotBe
          var expectedJson = JsonConvert.SerializeObject(expected, TestingJsonSettings.AllMembers);
          return $"""
                  {must.FailingAssertionHeading("Be", expectedExpression)}
-                 the fist failing equivalency test was: 
+                 the first failing equivalency test was: 
                  {info.PredicateExpression.Indent()}{FailureMessage()}
                  {must.Separator}
                  Diff:

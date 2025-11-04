@@ -6,7 +6,7 @@ using Compze.Utilities.SystemCE.TextCE;
 using DiffPlex;
 using DiffPlex.Renderer;
 
-namespace Compze.Utilities.Testing.Fluent;
+namespace Compze.Utilities.Testing.Must;
 
 static class DiffGenerator
 {

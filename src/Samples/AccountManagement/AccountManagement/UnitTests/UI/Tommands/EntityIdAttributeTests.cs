@@ -2,7 +2,7 @@ using System;
 using AccountManagement.API.ValidationAttributes;
 using AccountManagement.Tests.Unit.UI.Tommands.UserTommands;
 using Compze.Tests.Infrastructure;
-using Compze.Utilities.Testing.Fluent;
+using Compze.Utilities.Testing.Must;
 using Compze.Utilities.Testing.XUnit.BDD;
 using JetBrains.Annotations;
 

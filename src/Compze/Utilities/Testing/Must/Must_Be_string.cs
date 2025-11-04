@@ -1,7 +1,7 @@
 using System.Runtime.CompilerServices;
 using Compze.Utilities.SystemCE;
 
-namespace Compze.Utilities.Testing.Fluent;
+namespace Compze.Utilities.Testing.Must;
 // ReSharper disable InconsistentNaming
 
 public static class Must_Be_string

@@ -4,12 +4,12 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using Compze.Utilities.SystemCE;
-using Compze.Utilities.Testing.Fluent.Serialization;
+using Compze.Utilities.Testing.Must.Serialization;
 using Newtonsoft.Json;
 
 // ReSharper disable InconsistentNaming
 
-namespace Compze.Utilities.Testing.Fluent;
+namespace Compze.Utilities.Testing.Must;
 
 public record SatisfyCallInfo<T>(string PredicateExpression, Func<T, bool> Predicate, Func<T, string>? FailureMessage, IReadOnlyList<AssertionArgumentInfo>? UsedArguments) {}
 

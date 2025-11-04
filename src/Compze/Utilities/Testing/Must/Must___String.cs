@@ -2,7 +2,7 @@ using Compze.Utilities.SystemCE;
 using System.Runtime.CompilerServices;
 // ReSharper disable InconsistentNaming
 
-namespace Compze.Utilities.Testing.Fluent;
+namespace Compze.Utilities.Testing.Must;
 
 public static class Must___String
 {

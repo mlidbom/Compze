@@ -6,7 +6,7 @@ using Compze.Utilities.SystemCE;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace Compze.Utilities.Testing.Fluent.Serialization;
+namespace Compze.Utilities.Testing.Must.Serialization;
 
 class ExcludingMembersContractResolver : DefaultContractResolver
 {

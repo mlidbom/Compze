@@ -1,5 +1,5 @@
 // ReSharper disable ConvertClosureToMethodGroup
-namespace Compze.Utilities.Testing.Fluent;
+namespace Compze.Utilities.Testing.Must;
 #pragma warning disable IDE0200
 // ReSharper disable InconsistentNaming
 

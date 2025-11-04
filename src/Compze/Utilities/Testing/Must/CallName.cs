@@ -1,6 +1,6 @@
 using System.Runtime.CompilerServices;
 
-namespace Compze.Utilities.Testing.Fluent;
+namespace Compze.Utilities.Testing.Must;
 
 static class CallName
 {

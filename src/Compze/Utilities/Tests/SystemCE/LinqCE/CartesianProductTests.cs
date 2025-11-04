@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Compze.Utilities.SystemCE.LinqCE;
-using Compze.Utilities.Testing.Fluent;
+using Compze.Utilities.Testing.Must;
 using Xunit;
 
 #pragma warning disable CA1861 //we want the collections inline

@@ -1,6 +1,6 @@
 using System.Reflection;
 
-namespace Compze.Utilities.Testing.Fluent.Serialization;
+namespace Compze.Utilities.Testing.Must.Serialization;
 
 class PublicMembersContractResolver : MemberFilteringContractResolver
 {

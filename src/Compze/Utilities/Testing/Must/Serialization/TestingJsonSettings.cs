@@ -7,7 +7,7 @@ using Newtonsoft.Json.Serialization;
 #pragma warning disable CA2326 // TypeNameHandling is safe for testing serialization
 #pragma warning disable CA2327
 
-namespace Compze.Utilities.Testing.Fluent.Serialization;
+namespace Compze.Utilities.Testing.Must.Serialization;
 
 static class TestingJsonSettings
 {

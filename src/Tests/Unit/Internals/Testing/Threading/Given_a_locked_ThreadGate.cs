@@ -4,10 +4,10 @@ using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 using Compze.Utilities.SystemCE.ThreadingCE.Testing;
-using Compze.Utilities.Testing.Fluent;
+using Compze.Utilities.Testing.Must;
 using Compze.Utilities.Testing.XUnit.BDD;
 using Xunit;
-using static Compze.Utilities.Testing.Fluent.MustActions;
+using static Compze.Utilities.Testing.Must.MustActions;
 
 // ReSharper disable InconsistentNaming
 // ReSharper disable AccessToDisposedClosure

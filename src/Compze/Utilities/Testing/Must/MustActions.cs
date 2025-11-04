@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Compze.Utilities.SystemCE.ReflectionCE;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
-namespace Compze.Utilities.Testing.Fluent;
+namespace Compze.Utilities.Testing.Must;
 // ReSharper disable InconsistentNaming
 public class ActionSpec(Action action, string expression)
 {
