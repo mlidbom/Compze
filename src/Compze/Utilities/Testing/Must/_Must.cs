@@ -24,7 +24,7 @@ public interface IAssertionContext
        {AssertionContext.Separator}
        """;
 
-   string FailingAssertionHeading(string callerName, string? predicate, AssertionArgumentInfo[]? usedArguments)
+   string FailingAssertionHeading(string callerName, string? predicate, ExpressionValue[]? usedArguments)
    {
       if(string.IsNullOrEmpty(callerName))
          return AssertionContext.RemoveLine;

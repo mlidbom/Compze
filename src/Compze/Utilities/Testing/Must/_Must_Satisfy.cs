@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 
 namespace Compze.Utilities.Testing.Must;
 
-public record SatisfyCallInfo<T>(string PredicateExpression, Func<T, bool> Predicate, Func<T, string>? FailureMessage, IReadOnlyList<AssertionArgumentInfo>? UsedArguments) {}
+public record SatisfyCallInfo<T>(string PredicateExpression, Func<T, bool> Predicate, Func<T, string>? FailureMessage, IReadOnlyList<ExpressionValue>? UsedArguments) {}
 
 public static class _Must_Satisfy
 {
@@ -57,8 +57,8 @@ public static class _Must_Satisfy
                                        string predicateExpression = null!,
                                        Func<SatisfyCallInfo<object>, string>? messageOverride = null,
                                        Func<object, string>? failureMessage = null,
-                                       AssertionArgumentInfo[]? usedArguments = null,
-                                       [CallerMemberName] string callerName = null!) => context.Cast<object>().SatisfyInternal(predicate, predicateExpression, messageOverride, failureMessage, usedArguments, callerName);
+                                       ExpressionValue[]? expressions = null,
+                                       [CallerMemberName] string caller = null!) => context.Cast<object>().SatisfyInternal(predicate, predicateExpression, messageOverride, failureMessage, expressions, caller);
 
    public static IAssertionContext<T> SatisfyInternal<T>(this IAssertionContext<T> context,
                                              Func<T, bool> predicate,
@@ -66,35 +66,35 @@ public static class _Must_Satisfy
                                              string predicateExpression = null!,
                                              Func<SatisfyCallInfo<T>, string>? messageOverride = null,
                                              Func<T, string>? failureMessage = null,
-                                             AssertionArgumentInfo[]? usedArguments = null,
-                                             [CallerMemberName] string? callerName = null!)
+                                             ExpressionValue[]? expressions = null,
+                                             [CallerMemberName] string? caller = null!)
    {
       if(!predicate(context.Actual))
       {
          if(messageOverride != null)
          {
-            throw new AssertionFailedException(messageOverride.Invoke(new SatisfyCallInfo<T>(predicateExpression, predicate, failureMessage, usedArguments)));
+            throw new AssertionFailedException(messageOverride.Invoke(new SatisfyCallInfo<T>(predicateExpression, predicate, failureMessage, expressions)));
          }
 
          var message = $"""
-             {context.FailingAssertionHeading(callerName!, predicateExpression, usedArguments)}
+             {context.FailingAssertionHeading(caller!, predicateExpression, expressions)}
              {CustomFailureMessage()}
              {ArgumentValue(context.Expression, context.Actual)}
-             {DisplayUsedArgumentsValues()}
+             {ExpressionValues()}
              """.Split(Environment.NewLine)
                 .Where(it => it != AssertionContext.RemoveLine)
                 .JoinLines();
 
          throw new AssertionFailedException(message);
 
-         string DisplayUsedArgumentsValues()
+         string ExpressionValues()
          {
-            if(usedArguments == null || !usedArguments.Any())
+            if(expressions == null || !expressions.Any())
                return AssertionContext.RemoveLine;
 
             var stringBuilder = new StringBuilder();
             return $"""
-                    {usedArguments.Select(it => ArgumentValue(it.Expression, it.Value)).JoinLines()}
+                    {expressions.Select(it => ArgumentValue(it.Expression, it.Value)).JoinLines()}
                     """;
          }
 
@@ -128,19 +128,4 @@ public static class _Must_Satisfy
 
    static string Serialize(object? obj) => obj != null ? JsonConvert.SerializeObject(obj, TestingJsonSettings.AllMembers) : "null";
 
-   static string ExtractParameterName(string lambdaExpression)
-   {
-      // Handle expressions like "it => it.Value > 5" or "x => x > 0"
-      var arrowIndex = lambdaExpression.IndexOf("=>", StringComparison.Ordinal);
-      if(arrowIndex == -1)
-         return "it"; // Fallback to "it" if we can't parse
-
-      var parameterPart = lambdaExpression[..arrowIndex].Trim();
-
-      // Remove parentheses if present: "(it)" => "it"
-      if(parameterPart.StartsWith('(') && parameterPart.EndsWith(')'))
-         parameterPart = parameterPart[1..^1].Trim();
-
-      return parameterPart;
-   }
 }
