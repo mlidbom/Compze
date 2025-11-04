@@ -10,7 +10,8 @@ public abstract class FileSystemInfoCE : IEquatable<FileSystemInfoCE>
 
    protected FileSystemInfoCE(FileSystemInfo fileSystemInfo)
    {
-      Assert.Argument.Is(fileSystemInfo.Exists);
+      Assert.Argument.Is(fileSystemInfo.Exists)
+            .Is(Path.IsPathRooted(fileSystemInfo.FullName), () => $"{fileSystemInfo.FullName} is not an absolute Path. Only absolute paths are supported in order to eliminate the brittleness of an implicit dependency on Environment.CurrentDirectory");
       _path = fileSystemInfo.FullName;
    }
 
