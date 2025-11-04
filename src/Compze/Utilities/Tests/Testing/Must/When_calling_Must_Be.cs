@@ -47,7 +47,7 @@ public class When_calling_Must_Be : UniversalTestBase
                                          --------------------------------------------------
                                          _actual.Must().Be(_expected)
                                          --------------------------------------------------
-                                         the fist failing equivalency test was: 
+                                         the first failing equivalency test was: 
                                             it => Equals(it, expected)
                                          --------------------------------------------------
                                          Diff:
@@ -92,7 +92,7 @@ public class When_calling_Must_Be : UniversalTestBase
                                          --------------------------------------------------
                                          _actual.Must().Be(_expected)
                                          --------------------------------------------------
-                                         the fist failing equivalency test was: 
+                                         the first failing equivalency test was: 
                                             it => Equals(it, expected)
                                          --------------------------------------------------
                                          Diff:
