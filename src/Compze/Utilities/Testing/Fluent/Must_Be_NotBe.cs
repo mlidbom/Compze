@@ -81,27 +81,19 @@ public static class Must_Be_NotBe
          var actualJson = JsonConvert.SerializeObject(must.Actual, TestingJsonSettings.AllMembers);
          var expectedJson = JsonConvert.SerializeObject(expected, TestingJsonSettings.AllMembers);
          return $"""
-                 {must.Separator}
-                 expected the object "it" returned by the expression: 
-                 {must.Separator}
-                 {must.Expression.Indent()}
-                 {must.Separator}
-                 to be equal to the the object "expected" returned by the expression:
-                 {must.Separator}
-                 {must.NormalizeExpressionIndentation(expectedExpression).Indent()}
-                 {must.Separator}
-                 but it failed the test: 
+                 {must.FailingAssertionHeading("Be", expectedExpression)}
+                 the fist failing equivalency test was: 
                  {info.PredicateExpression.Indent()}{FailureMessage()}
                  {must.Separator}
                  Diff:
                  {must.Separator}
                  {DiffGenerator.CreateDiff(expectedJson, actualJson)}
                  {must.Separator}
-                 it was:
+                 "it" was:
                  {must.Separator}
                  {actualJson}
                  {must.Separator}
-                 expected was:
+                 "expected" was:
                  {must.Separator}
                  {expectedJson}
                  {must.Separator}

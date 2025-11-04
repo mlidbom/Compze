@@ -41,17 +41,13 @@ public class When_calling_Must_Be : UniversalTestBase
 
          [XF] public void and_the_exception_message__is() =>
             ExceptionMessage().Must().Be("""
-
+                                         
                                          --------------------------------------------------
-                                         expected the object "it" returned by the expression: 
+                                         Failing assertion:
                                          --------------------------------------------------
-                                            _actual
+                                         _actual.Must().Be(_expected)
                                          --------------------------------------------------
-                                         to be equal to the the object "expected" returned by the expression:
-                                         --------------------------------------------------
-                                            _expected
-                                         --------------------------------------------------
-                                         but it failed the test: 
+                                         the fist failing equivalency test was: 
                                             it => Equals(it, expected)
                                          --------------------------------------------------
                                          Diff:
@@ -59,11 +55,11 @@ public class When_calling_Must_Be : UniversalTestBase
                                          [-43]
                                          [+42]
                                          --------------------------------------------------
-                                         it was:
+                                         "it" was:
                                          --------------------------------------------------
                                          42
                                          --------------------------------------------------
-                                         expected was:
+                                         "expected" was:
                                          --------------------------------------------------
                                          43
                                          --------------------------------------------------
@@ -92,15 +88,11 @@ public class When_calling_Must_Be : UniversalTestBase
             ExceptionMessage().Must().Be(""""
                                          
                                          --------------------------------------------------
-                                         expected the object "it" returned by the expression: 
+                                         Failing assertion:
                                          --------------------------------------------------
-                                            _actual
+                                         _actual.Must().Be(_expected)
                                          --------------------------------------------------
-                                         to be equal to the the object "expected" returned by the expression:
-                                         --------------------------------------------------
-                                            _expected
-                                         --------------------------------------------------
-                                         but it failed the test: 
+                                         the fist failing equivalency test was: 
                                             it => Equals(it, expected)
                                          --------------------------------------------------
                                          Diff:
@@ -115,14 +107,14 @@ public class When_calling_Must_Be : UniversalTestBase
                                           }
                                          
                                          --------------------------------------------------
-                                         it was:
+                                         "it" was:
                                          --------------------------------------------------
                                          {
                                            "$type": "Compze.Utilities.Tests.Testing.Fluent.When_calling_Must_Be+TestObjectWithOverriddenEquals, Compze.Utilities.Tests",
                                            "_value": "actual_value"
                                          }
                                          --------------------------------------------------
-                                         expected was:
+                                         "expected" was:
                                          --------------------------------------------------
                                          {
                                            "$type": "Compze.Utilities.Tests.Testing.Fluent.When_calling_Must_Be+TestObjectWithOverriddenEquals, Compze.Utilities.Tests",
