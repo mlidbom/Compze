@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE;
+using Compze.Utilities.SystemCE.ReflectionCE;
 using Compze.Utilities.Testing.Must.Serialization;
 using Newtonsoft.Json;
 
@@ -46,18 +47,27 @@ public interface IAssertionContext
 
    string ArgumentValue(string expression, object? value)
    {
-      return $"""
-              {expression} was:
-              {AssertionContext.Separator}
-              ToString():
-              {AssertionContext.Separator}
-              {value?.ToString() ?? "null"}
-              {AssertionContext.Separator}
-              JSON:
-              {AssertionContext.Separator}
-              {Serialize(value)}
-              {AssertionContext.Separator}
-              """;
+      if(value == null)
+      {
+         return $"""
+                 {expression} was null:
+                 {AssertionContext.Separator}
+                 """;
+      } else
+      {
+         return $"""
+                 {expression} was a {value.GetType().GetFullNameCompilable()} with:
+                 {AssertionContext.Separator}
+                 ToString():
+                 {AssertionContext.Separator}
+                 {value.ToString()}
+                 {AssertionContext.Separator}
+                 JSON:
+                 {AssertionContext.Separator}
+                 {Serialize(value)}
+                 {AssertionContext.Separator}
+                 """;
+      }
    }
 
    static string Serialize(object? obj) => obj != null ? JsonConvert.SerializeObject(obj, TestingJsonSettings.AllMembers) : "null";

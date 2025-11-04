@@ -37,7 +37,7 @@ public class When_calling_Must_HaveCount : UniversalTestBase
                                  --------------------------------------------------
                                  Expected count to be 5 but it was 3
                                  --------------------------------------------------
-                                 new[] { 1, 2, 3 } was:
+                                 new[] { 1, 2, 3 } was a System.Int32[] with:
                                  --------------------------------------------------
                                  ToString():
                                  --------------------------------------------------
@@ -54,7 +54,7 @@ public class When_calling_Must_HaveCount : UniversalTestBase
                                    ]
                                  }
                                  --------------------------------------------------
-                                 5 was:
+                                 5 was a System.Int32 with:
                                  --------------------------------------------------
                                  ToString():
                                  --------------------------------------------------

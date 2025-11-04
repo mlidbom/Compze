@@ -82,12 +82,12 @@ public static class Must_Be_NotBe
          var expectedJson = JsonConvert.SerializeObject(expected, TestingJsonSettings.AllMembers);
          return $"""
                  {context.FailingAssertionHeading(nameof(Be), expectedExpression)}
-                 the first failing equivalency test was: 
-                 {info.PredicateExpression.Indent()}{FailureMessage()}
-                 {AssertionContext.Separator}
                  Diff:
                  {AssertionContext.Separator}
                  {DiffGenerator.CreateDiff(expectedJson, actualJson)}
+                 {AssertionContext.Separator}
+                 the first failing equivalency test was: 
+                 {info.PredicateExpression.Indent()}{FailureMessage()}
                  {AssertionContext.Separator}
                  {context.ArgumentValue($"{context.Expression}", context.Actual)}
                  {context.ArgumentValue($"{expectedExpression}", expected)}

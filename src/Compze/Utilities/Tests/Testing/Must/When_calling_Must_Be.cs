@@ -47,15 +47,15 @@ public class When_calling_Must_Be : UniversalTestBase
                                          --------------------------------------------------
                                          _actual.Must().Be(_expected)
                                          --------------------------------------------------
-                                         the first failing equivalency test was: 
-                                            it => Equals(it, expected)
-                                         --------------------------------------------------
                                          Diff:
                                          --------------------------------------------------
                                          [-43]
                                          [+42]
                                          --------------------------------------------------
-                                         _actual was:
+                                         the first failing equivalency test was: 
+                                            it => Equals(it, expected)
+                                         --------------------------------------------------
+                                         _actual was a System.Int32 with:
                                          --------------------------------------------------
                                          ToString():
                                          --------------------------------------------------
@@ -65,7 +65,7 @@ public class When_calling_Must_Be : UniversalTestBase
                                          --------------------------------------------------
                                          42
                                          --------------------------------------------------
-                                         _expected was:
+                                         _expected was a System.Int32 with:
                                          --------------------------------------------------
                                          ToString():
                                          --------------------------------------------------
@@ -104,9 +104,6 @@ public class When_calling_Must_Be : UniversalTestBase
                                          --------------------------------------------------
                                          _actual.Must().Be(_expected)
                                          --------------------------------------------------
-                                         the first failing equivalency test was: 
-                                            it => Equals(it, expected)
-                                         --------------------------------------------------
                                          Diff:
                                          --------------------------------------------------
                                          --- expected
@@ -119,7 +116,10 @@ public class When_calling_Must_Be : UniversalTestBase
                                           }
                                          
                                          --------------------------------------------------
-                                         _actual was:
+                                         the first failing equivalency test was: 
+                                            it => Equals(it, expected)
+                                         --------------------------------------------------
+                                         _actual was a Compze.Utilities.Tests.Testing.Must.When_calling_Must_Be.TestObjectWithOverriddenEquals with:
                                          --------------------------------------------------
                                          ToString():
                                          --------------------------------------------------
@@ -132,7 +132,7 @@ public class When_calling_Must_Be : UniversalTestBase
                                            "_value": "actual_value"
                                          }
                                          --------------------------------------------------
-                                         _expected was:
+                                         _expected was a Compze.Utilities.Tests.Testing.Must.When_calling_Must_Be.TestObjectWithOverriddenEquals with:
                                          --------------------------------------------------
                                          ToString():
                                          --------------------------------------------------

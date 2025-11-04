@@ -79,7 +79,7 @@ public class When_calling_Must_Satisfy : UniversalTestBase
                                       --------------------------------------------------
                                       _actual.Must().Satisfy(it => it.Name == "all wrong")
                                       --------------------------------------------------
-                                      _actual was:
+                                      _actual was a Compze.Utilities.Tests.Testing.Must.When_calling_Must_Satisfy.given_a_complex_object_as_actual_and_a_predicate_that_returns_false.TestObject with:
                                       --------------------------------------------------
                                       ToString():
                                       --------------------------------------------------

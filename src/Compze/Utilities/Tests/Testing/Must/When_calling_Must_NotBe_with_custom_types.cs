@@ -61,7 +61,7 @@ public class When_calling_Must_NotBe_with_custom_types : UniversalTestBase
                                      }
                                     
                                     --------------------------------------------------
-                                    _actual was:
+                                    _actual was a Compze.Utilities.Tests.Testing.Must.ComparableWithErrorInjectionSupport with:
                                     --------------------------------------------------
                                     ToString():
                                     --------------------------------------------------
@@ -75,7 +75,7 @@ public class When_calling_Must_NotBe_with_custom_types : UniversalTestBase
                                       "_value": 42
                                     }
                                     --------------------------------------------------
-                                    _unexpected was:
+                                    _unexpected was a Compze.Utilities.Tests.Testing.Must.ComparableWithErrorInjectionSupport with:
                                     --------------------------------------------------
                                     ToString():
                                     --------------------------------------------------
