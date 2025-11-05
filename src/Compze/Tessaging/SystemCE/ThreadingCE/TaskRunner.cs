@@ -53,7 +53,7 @@ static class TaskRunnerRegistrar
          });
 
          _inProgressTasks.Update(it => it.Add(task));
-         task.ContinueWith(completedTask => _inProgressTasks.Update(it => it.Remove(task)));//While surprising to me, completedTask and task are NOT the same object.
+         task.ContinueWithCE(completedTask => _inProgressTasks.Update(it => it.Remove(task))); //While surprising to me, completedTask and task are NOT the same object.
       }
 
       public void Run(string taskName, Func<unit> task) => Run(taskName, () => { task(); });

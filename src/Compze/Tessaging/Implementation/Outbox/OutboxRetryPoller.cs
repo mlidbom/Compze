@@ -167,7 +167,7 @@ class OutboxRetryPoller : IDisposable
 
          this.Log().Debug($"Retrying delivery of tessage {undeliveredTessage.TessageId} to endpoint {endpointId} (attempt {undeliveredTessage.RetryCount + 1})");
 
-         sendTask.ContinueWithAsynchronously(completedTask => HandleRetryResult(completedTask, undeliveredTessage.TessageId, endpointId));
+         sendTask.ContinueWithCE(completedTask => HandleRetryResult(completedTask, undeliveredTessage.TessageId, endpointId));
       }
 #pragma warning disable CA1031 //todo: we cannot throw here on a background thread, but maybe we should be checking what the failures are more specifically and pass some on to the exception reporter?
       catch(Exception exception)

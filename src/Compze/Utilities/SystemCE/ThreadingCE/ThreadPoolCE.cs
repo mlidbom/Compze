@@ -1,6 +1,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Utilities.SystemCE.ThreadingCE;
@@ -12,7 +13,7 @@ static class ThreadPoolCE
       for(var tries = 1; Idle <= threadCount && tries < 5; tries++)
       {
          using var waitForAllThreadsToStart = new CountdownEvent(threadCount);
-         Task.WaitAll(Enumerable.Range(1, threadCount).Select(_ => TaskCE.RunOnDedicatedThread(() =>
+         Task.WaitAll(1.Through(threadCount).Select(_ => TaskCE.RunOnDedicatedThread(() =>
          {
             // ReSharper disable AccessToDisposedClosure
             waitForAllThreadsToStart.Signal(1);

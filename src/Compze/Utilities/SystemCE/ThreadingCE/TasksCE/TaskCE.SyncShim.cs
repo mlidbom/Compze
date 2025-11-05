@@ -9,6 +9,10 @@ namespace Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
 static partial class TaskCE
 {
+   ///<summary>
+   /// Return Task.Result
+   /// If Result throws, and the <see cref="AggregateException"/>.InnerExceptions contains a single Exception, rethrows that single exception while maintaining a proper stack trace.
+   /// </summary>
    internal static TResult ResultUnwrappingException<TResult>(this Task<TResult> task)
    {
       try
@@ -29,6 +33,10 @@ static partial class TaskCE
       throw new Exception("Impossible!");
    }
 
+   ///<summary>
+   /// Calls Task.Wait()
+   /// If Wait() throws, and the <see cref="AggregateException"/>.InnerExceptions contains a single Exception, rethrows that single exception while maintaining a proper stack trace.
+   /// </summary>
    internal static void WaitUnwrappingException(this ValueTask task) => task.AsTask().WaitUnwrappingException();
 
    internal static void WaitUnwrappingException(this Task task)
@@ -51,8 +59,4 @@ static partial class TaskCE
 
       throw new Exception("Impossible!");
    }
-
-   ///<summary>Task.ContinueWith may run the continuation synchronously on the calling thread, causing all kinds of havoc. This simply guarantees that this does not happen.</summary>
-   internal static Task ContinueWithAsynchronously(this Task @this, Action<Task> continuation) =>
-      @this.ContinueWith(continuation, CancellationToken.None, TaskContinuationOptions.RunContinuationsAsynchronously, TaskScheduler.Default);
 }
