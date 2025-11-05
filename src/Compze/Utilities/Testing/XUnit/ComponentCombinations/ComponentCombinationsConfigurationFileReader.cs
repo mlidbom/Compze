@@ -29,14 +29,14 @@ static class ComponentCombinationsConfigurationFileReader
    }
 
    const string Comment = "//";
-   const char SkipPermutation = '#';
+   const char SkipCombination = '#';
 
    static IReadOnlyList<ComponentCombination> ReadFile(Type[] componentTypes, string fileName) =>
       ReadFileLines(fileName)
         .Select(it => it.Trim())
         .Where(it => !it.IsNullEmptyOrWhiteSpace())
         .Where(it => !it.StartsWithOrdinal(Comment))
-        .Where(it => !it.StartsWith(SkipPermutation))
+        .Where(it => !it.StartsWith(SkipCombination))
         .Select(it => new ComponentCombinationsConfigurationFileLine(componentTypes, it))
         .SelectMany(it => it.ExpandWildcardsIntoConcretePermutations())
         .OrderBy(it => it.ToString())

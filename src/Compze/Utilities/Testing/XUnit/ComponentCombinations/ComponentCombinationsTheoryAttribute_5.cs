@@ -9,6 +9,9 @@ namespace Compze.Utilities.Testing.XUnit.ComponentCombinations;
 public abstract class ComponentCombinationsTheoryAttribute<TComponent1, TComponent2, TComponent3, TComponent4, TComponent5> : ComponentCombinationsTheoryAttribute
    where TComponent1 : Enum
    where TComponent2 : Enum
+   where TComponent3 : Enum
+   where TComponent4 : Enum
+   where TComponent5 : Enum
 {
    protected ComponentCombinationsTheoryAttribute(string configurationFileName,
                                                   bool useTestMethodArgument,
