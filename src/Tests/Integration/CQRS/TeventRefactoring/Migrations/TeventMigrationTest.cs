@@ -440,7 +440,7 @@ public class TeventMigrationTest : TeventMigrationTestBase
 
                ITeventStoreUpdater Session() => serviceLocator.Resolve<ITeventStoreUpdater>();
                ITeventStore TeventStore() => serviceLocator.Resolve<ITeventStore>();
-                `
+
                serviceLocator.ExecuteTransactionInIsolatedScope(() => Session().Save(initialTaggregate));
 
                migrations = [Replace<E1>.With<E5>()];
