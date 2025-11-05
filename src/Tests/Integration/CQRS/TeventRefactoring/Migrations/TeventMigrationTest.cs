@@ -349,7 +349,7 @@ public class TeventMigrationTest : TeventMigrationTestBase
 
             var id = new TaggregateId();
 
-            UtcTimeSource.Test.FrozenAtUtc("2001-01-01 12:00").Run(() =>
+            UtcTimeSource.Test.FrozenAtUtcNow().Run(() =>
             {
                var taggregate = TestTaggregate.FromTevents(id, EnumerableCE.OfTypes<Ec1, E1, E2, E3, E4>());
                var initialHistory = taggregate.History;
@@ -424,7 +424,7 @@ public class TeventMigrationTest : TeventMigrationTestBase
    {
       await DeferredConsoleWriter.ExecuteAsync(async writer =>
       {
-         IReadOnlyList<ITeventMigration> migrations = Array.Empty<ITeventMigration>();
+         IReadOnlyList<ITeventMigration> migrations = [];
 
          List<IAsyncDisposable> toDispose = [];
          try
@@ -434,13 +434,13 @@ public class TeventMigrationTest : TeventMigrationTestBase
 
             var id = new TaggregateId();
 
-            UtcTimeSource.Test.FrozenAtUtc("2001-01-01 12:00").Run(() =>
+            UtcTimeSource.Test.FrozenAtUtcNow().Run(() =>
             {
                var initialTaggregate = TestTaggregate.FromTevents(id, EnumerableCE.OfTypes<Ec1, E1>());
 
                ITeventStoreUpdater Session() => serviceLocator.Resolve<ITeventStoreUpdater>();
                ITeventStore TeventStore() => serviceLocator.Resolve<ITeventStore>();
-
+                `
                serviceLocator.ExecuteTransactionInIsolatedScope(() => Session().Save(initialTaggregate));
 
                migrations = [Replace<E1>.With<E5>()];
