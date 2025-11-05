@@ -58,6 +58,5 @@ dotnet_diagnostic.CA2208.severity = none #Call the ArgumentOutOfRangeException c
 dotnet_diagnostic.CA1051.severity = none # CA1051: Do not declare visible instance fields
 dotnet_diagnostic.IDE1006.severity = none # IDE1006: Naming Styles
 dotnet_diagnostic.CA2100.severity = none # CA2100: Review SQL queries for security vulnerabilities
-#dotnet_diagnostic.CA2000.severity = none # CA2000: Dispose objects before losing scope
 dotnet_diagnostic.CA1801.severity = none # CA1801: Review unused parameters
 dotnet_diagnostic.CA1810.severity = none # CA1810: Initialize reference type static fields inline
