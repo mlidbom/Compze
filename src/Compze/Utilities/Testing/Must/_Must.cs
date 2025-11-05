@@ -103,6 +103,13 @@ public interface IAssertionContext
       }
    }
 
+   string Diff(string expected, string actual) => $"""
+                                                   Diff:
+                                                   {AssertionContext.Separator}
+                                                   {DiffGenerator.CreateDiff(expected: expected, actual: actual)}
+                                                   {AssertionContext.Separator}
+                                                   """;
+
    static string Serialize(object? obj) => obj != null ? JsonConvert.SerializeObject(obj, TestingJsonSettings.AllMembers) : "null";
 }
 

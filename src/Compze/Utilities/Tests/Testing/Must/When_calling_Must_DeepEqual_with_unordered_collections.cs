@@ -31,15 +31,11 @@ public class When_calling_Must_DeepEqual_with_unordered_collections : UniversalT
                => ExceptionMessage().Must().Be("""
                                                
                                                --------------------------------------------------
-                                               expected:
+                                               Failing assertion:
                                                --------------------------------------------------
-                                                  _expected
+                                               _expected.Must().DeepEqual(_one_differing_item)
                                                --------------------------------------------------
-                                               to be deeply equal to:
-                                               --------------------------------------------------
-                                                  _one_differing_item
-                                               --------------------------------------------------
-                                               But comparison of the objects serialized as JSON resulted in the Diff:
+                                               Diff:
                                                --------------------------------------------------
                                                --- expected
                                                +++ actual
@@ -53,7 +49,13 @@ public class When_calling_Must_DeepEqual_with_unordered_collections : UniversalT
                                                 }
                                                
                                                --------------------------------------------------
-                                               Actual was:
+                                               _expected was a System.Collections.Generic.Dictionary<System.String,System.Int32> with:
+                                               --------------------------------------------------
+                                               ToString():
+                                               --------------------------------------------------
+                                               System.Collections.Generic.Dictionary`2[System.String,System.Int32]
+                                               --------------------------------------------------
+                                               JSON:
                                                --------------------------------------------------
                                                {
                                                  "$type": "System.Collections.Generic.Dictionary`2[[System.String, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Int32, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.Private.CoreLib",
@@ -62,7 +64,13 @@ public class When_calling_Must_DeepEqual_with_unordered_collections : UniversalT
                                                  "c": 3
                                                }
                                                --------------------------------------------------
-                                               Expected was:
+                                               _one_differing_item was a System.Collections.Generic.Dictionary<System.String,System.Int32> with:
+                                               --------------------------------------------------
+                                               ToString():
+                                               --------------------------------------------------
+                                               System.Collections.Generic.Dictionary`2[System.String,System.Int32]
+                                               --------------------------------------------------
+                                               JSON:
                                                --------------------------------------------------
                                                {
                                                  "$type": "System.Collections.Generic.Dictionary`2[[System.String, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Int32, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.Private.CoreLib",

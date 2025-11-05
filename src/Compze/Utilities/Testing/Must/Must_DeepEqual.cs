@@ -77,27 +77,10 @@ public static class Must_DeepEqual
       return context.SatisfyInternal(it => actualJson == expectedJson,
                           messageOverride: _ =>
                              $"""
-                              {AssertionContext.Separator}
-                              expected:
-                              {AssertionContext.Separator}
-                              {context.Expression.Indent()}
-                              {AssertionContext.Separator}
-                              to be deeply equal to:
-                              {AssertionContext.Separator}
-                              {context.NormalizeExpressionIndentation(expectedExpression).Indent()}
-                              {AssertionContext.Separator}
-                              But comparison of the objects serialized as JSON resulted in the Diff:
-                              {AssertionContext.Separator}
-                              {DiffGenerator.CreateDiff(expected: expectedJson, actual: actualJson)}
-                              {AssertionContext.Separator}
-                              Actual was:
-                              {AssertionContext.Separator}
-                              {actualJson}
-                              {AssertionContext.Separator}
-                              Expected was:
-                              {AssertionContext.Separator}
-                              {expectedJson}
-                              {AssertionContext.Separator}
+                              {context.FailingAssertionHeading(nameof(DeepEqual), [new(expectedExpression, expected)])}
+                              {context.Diff(expectedJson, actualJson)}
+                              {context.ArgumentValue(context.Expression, context.Actual)}
+                              {context.ArgumentValue(expectedExpression, expected)}
                               """);
    }
 }

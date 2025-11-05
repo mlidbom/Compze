@@ -62,21 +62,16 @@ public class TeventStoreTests : UniversalTestBase
       const int batchSize = 100;
       const int moreTeventsThanTheBatchSizeForStreamingTevents = batchSize + 10;
       var taggregateId = new TaggregateId();
+      var savedEvents = 1.Through(moreTeventsThanTheBatchSizeForStreamingTevents)
+                         .Select(i => new SomeTevent(taggregateId, i)).ToList();
 
-      TransactionScopeCe.Execute(() => TeventStore.SaveSingleTaggregateTevents(1.Through(moreTeventsThanTheBatchSizeForStreamingTevents)
-                                                                                .Select(i => new SomeTevent(taggregateId, i)).ToList()));
+      TransactionScopeCe.Execute(() => TeventStore.SaveSingleTaggregateTevents(savedEvents));
 
-      var stream = TeventStore.ListAllTeventsForTestingPurposesAbsolutelyNotUsableForARealTeventStoreOfAnySize(batchSize: batchSize)
-                              .ToList();
-
-      var currentTeventNumber = 0;
-      stream.Must()
-            .HaveCount(moreTeventsThanTheBatchSizeForStreamingTevents);
-      foreach(var taggregateTevent in stream)
-      {
-         taggregateTevent.TaggregateVersion.Must()
-                         .Be(++currentTeventNumber, "Incorrect tevent version detected");
-      }
+      TeventStore.ListAllTeventsForTestingPurposesAbsolutelyNotUsableForARealTeventStoreOfAnySize(batchSize: batchSize)
+                 .Cast<SomeTevent>()
+                 .ToList()
+                 .Must()
+                 .DeepEqual(savedEvents);
    });
 
    [PCT]

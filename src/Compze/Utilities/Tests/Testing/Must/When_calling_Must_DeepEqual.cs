@@ -30,15 +30,11 @@ public class When_calling_Must_DeepEqual : UniversalTestBase
                ExceptionMessage().Must().Be(""""
                                             
                                             --------------------------------------------------
-                                            expected:
+                                            Failing assertion:
                                             --------------------------------------------------
-                                               _actual
+                                            _actual.Must().DeepEqual(_expected)
                                             --------------------------------------------------
-                                            to be deeply equal to:
-                                            --------------------------------------------------
-                                               _expected
-                                            --------------------------------------------------
-                                            But comparison of the objects serialized as JSON resulted in the Diff:
+                                            Diff:
                                             --------------------------------------------------
                                             --- expected
                                             +++ actual
@@ -52,7 +48,9 @@ public class When_calling_Must_DeepEqual : UniversalTestBase
                                              }
                                             
                                             --------------------------------------------------
-                                            Actual was:
+                                            _actual was a Compze.Utilities.Tests.Testing.Must.When_calling_Must_DeepEqual.TestObject with:
+                                            --------------------------------------------------
+                                            JSON:
                                             --------------------------------------------------
                                             {
                                               "$type": "Compze.Utilities.Tests.Testing.Must.When_calling_Must_DeepEqual+TestObject, Compze.Utilities.Tests",
@@ -61,7 +59,9 @@ public class When_calling_Must_DeepEqual : UniversalTestBase
                                               "PublicProperty": "public_expected"
                                             }
                                             --------------------------------------------------
-                                            Expected was:
+                                            _expected was a Compze.Utilities.Tests.Testing.Must.When_calling_Must_DeepEqual.TestObject with:
+                                            --------------------------------------------------
+                                            JSON:
                                             --------------------------------------------------
                                             {
                                               "$type": "Compze.Utilities.Tests.Testing.Must.When_calling_Must_DeepEqual+TestObject, Compze.Utilities.Tests",
