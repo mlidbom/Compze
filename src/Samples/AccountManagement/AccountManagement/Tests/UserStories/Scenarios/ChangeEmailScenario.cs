@@ -10,8 +10,8 @@ public class ChangeAccountEmailScenario : ScenarioBase<AccountResource>
 {
    readonly IEndpoint _clientEndpoint;
 
-   public string NewEmail = TestData.Emails.CreateUnusedEmail();
-   public readonly Email OldEmail;
+   public string NewEmail { get; private set;} = TestData.Emails.CreateUnusedEmail();
+   public Email OldEmail { get; }
 
    public ChangeAccountEmailScenario WithNewEmail(string newEmail)
    {

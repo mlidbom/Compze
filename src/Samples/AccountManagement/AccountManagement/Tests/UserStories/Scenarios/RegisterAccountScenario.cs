@@ -11,10 +11,9 @@ public class RegisterAccountScenario(IEndpoint clientEndpoint, string? email = n
 {
    readonly IEndpoint _clientEndpoint = clientEndpoint;
 
-   public AccountId AccountId = new();
-   public string Email = email ?? TestData.Emails.CreateUnusedEmail();
-   public string Password = password;
-
+   public AccountId AccountId { get; set; } = new();
+   public string Email { get; set; } = email ?? TestData.Emails.CreateUnusedEmail();
+   public string Password  { get; set; } = password;
 
    public RegisterAccountScenario WithAccountId(AccountId acountId)
    {
@@ -40,9 +39,9 @@ public class RegisterAccountScenario(IEndpoint clientEndpoint, string? email = n
 
       return registrationAttemptResult.Status switch
       {
-         RegistrationAttemptStatus.Successful => (registrationAttemptResult, Api.Tuery.AccountById(AccountId).ExecuteAsClientRequestOn(_clientEndpoint)),
+         RegistrationAttemptStatus.Successful             => (registrationAttemptResult, Api.Tuery.AccountById(AccountId).ExecuteAsClientRequestOn(_clientEndpoint)),
          RegistrationAttemptStatus.EmailAlreadyRegistered => (registrationAttemptResult, null),
-         _ => throw new ArgumentOutOfRangeException()
+         _                                                => throw new ArgumentOutOfRangeException()
       };
    }
 }

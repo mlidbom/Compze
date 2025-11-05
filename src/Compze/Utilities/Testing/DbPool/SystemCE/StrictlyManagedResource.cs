@@ -143,7 +143,7 @@ sealed class StrictlyManagedResource<TManagedResource> : IStrictlyManagedResourc
 public abstract class StrictlyManagedResourceBase<TInheritor> : IStrictlyManagedResource
    where TInheritor : StrictlyManagedResourceBase<TInheritor>
 {
-   protected bool Disposed;
+   protected bool Disposed{ get; private set; }
    readonly StrictlyManagedResource<StrictlyManagedResourceBase<TInheritor>> _strictlyManagedResource;
 
    protected StrictlyManagedResourceBase(bool forceStackTraceAllocation = false, bool needsFileInfo = false) => 

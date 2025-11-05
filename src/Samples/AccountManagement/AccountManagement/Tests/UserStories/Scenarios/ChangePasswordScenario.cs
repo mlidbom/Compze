@@ -10,8 +10,8 @@ public class ChangePasswordScenario : ScenarioBase<AccountResource>
 {
    readonly IEndpoint _clientEndpoint;
 
-   public string OldPassword;
-   public string NewPassword;
+   public string OldPassword { get; private set; }
+   public string NewPassword { get; private set; }
    public AccountResource Account { get; private set; }
 
    public ChangePasswordScenario WithNewPassword(string newPassword)

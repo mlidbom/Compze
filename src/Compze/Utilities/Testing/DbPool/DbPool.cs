@@ -32,7 +32,7 @@ public partial class DbPool : StrictlyManagedResourceBase<DbPool>
                                   .DelegateToParentServiceLocatorWhenCloning());
 
    readonly IDbPoolSqlLayer _sqlLayer;
-   protected readonly MachineWideSharedObject<DbPoolState> MachineWideState;
+   protected MachineWideSharedObject<DbPoolState> MachineWideState { get; }
    static TimeSpan _reservationLength;
    internal const int NumberOfDatabases = 50;
 

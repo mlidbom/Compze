@@ -18,12 +18,12 @@ public class Type<T>
       // ReSharper disable once MemberHidesStaticFromOuterClass
       public static readonly TypeOperators Instance = new();
       TypeOperators() {}
-      public readonly Func<T, T, bool>? Equality = TryGetBooleanOperator("op_Equality");
-      public readonly Func<T, T, bool>? InEquality = TryGetBooleanOperator("op_Inequality");
-      public readonly Func<T, T, bool>? LessThan = TryGetBooleanOperator("op_LessThan");
-      public readonly Func<T, T, bool>? GreaterThan = TryGetBooleanOperator("op_GreaterThan");
-      public readonly Func<T, T, bool>? LessThanOrEqual = TryGetBooleanOperator("op_LessThanOrEqual");
-      public readonly Func<T, T, bool>? GreaterThanOrEqual = TryGetBooleanOperator("op_GreaterThanOrEqual");
+      public Func<T, T, bool>? Equality { get; } = TryGetBooleanOperator("op_Equality");
+      public Func<T, T, bool>? InEquality { get; } = TryGetBooleanOperator("op_Inequality");
+      public Func<T, T, bool>? LessThan { get; } = TryGetBooleanOperator("op_LessThan");
+      public Func<T, T, bool>? GreaterThan { get; } = TryGetBooleanOperator("op_GreaterThan");
+      public Func<T, T, bool>? LessThanOrEqual { get; } = TryGetBooleanOperator("op_LessThanOrEqual");
+      public Func<T, T, bool>? GreaterThanOrEqual { get; } = TryGetBooleanOperator("op_GreaterThanOrEqual");
 
       static Func<T, T, bool>? TryGetBooleanOperator(string operatorName)
       {

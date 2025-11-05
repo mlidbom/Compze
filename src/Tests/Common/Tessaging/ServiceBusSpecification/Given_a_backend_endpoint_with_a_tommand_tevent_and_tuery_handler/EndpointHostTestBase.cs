@@ -28,17 +28,17 @@ namespace Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_
 public abstract class EndpointHostTestBase : UniversalTestBase
 {
    static readonly TimeSpan _timeout = 10.Seconds();
-   public ITestingEndpointHost Host = null!;
-   public readonly IThreadGate MyExactlyOnceTommandHandlerThreadGate;
-   public readonly IThreadGate TommandHandlerWithResultThreadGate;
-   public readonly IThreadGate MyCreateTaggregateTommandHandlerThreadGate;
-   public readonly IThreadGate MyUpdateTaggregateTommandHandlerThreadGate;
-   public readonly IThreadGate MyRemoteTaggregateTeventHandlerThreadGate;
-   public readonly IThreadGate MyLocalTaggregateTeventHandlerThreadGate;
-   public readonly IThreadGate TeventHandlerThreadGate;
-   public readonly IThreadGate TueryHandlerThreadGate;
+   public ITestingEndpointHost Host { get; set; } = null!;
+   public IThreadGate MyExactlyOnceTommandHandlerThreadGate { get; }
+   public IThreadGate TommandHandlerWithResultThreadGate { get; }
+   public IThreadGate MyCreateTaggregateTommandHandlerThreadGate { get; }
+   public IThreadGate MyUpdateTaggregateTommandHandlerThreadGate { get; }
+   public IThreadGate MyRemoteTaggregateTeventHandlerThreadGate { get; }
+   public IThreadGate MyLocalTaggregateTeventHandlerThreadGate { get; }
+   public IThreadGate TeventHandlerThreadGate { get; }
+   public IThreadGate TueryHandlerThreadGate { get; }
 
-   public readonly IReadOnlyList<IThreadGate> AllGates;
+   public IReadOnlyList<IThreadGate> AllGates  { get; }
 
    public IEndpoint BackendEndPoint { get; private set; } = null!;
    protected IEndpoint ClientEndpoint { get; private set; } = null!;
@@ -48,10 +48,10 @@ public abstract class EndpointHostTestBase : UniversalTestBase
 
    protected EndpointHostTestBase()
    {
-#pragma warning disable CA2000// We are passing this disposable into a constructor of an object we don't own
+#pragma warning disable CA2000 // We are passing this disposable into a constructor of an object we don't own
       _rootContainer = TestEnv.DIContainer.CreateWithServiceLocator()
                               .mutate(it => it.Register().CurrentTestsDbPoolIfNotCloneContainer());
-#pragma warning restore CA2000// We are passing this disposable into a constructor of an object we don't own
+#pragma warning restore CA2000 // We are passing this disposable into a constructor of an object we don't own
 
       AllGates =
       [

@@ -17,7 +17,7 @@ namespace Compze.Tests.Common.Testing.Sql;
 
 public abstract class DbPoolTestBase : UniversalTestBase
 {
-   protected readonly DbPool Pool;
+   protected DbPool Pool  { get; }
    protected override void DisposeInternal() => Pool.Dispose();
    readonly IServiceLocator _serviceLocator;
 
