@@ -50,7 +50,7 @@ public sealed class MachineWideSharedObject<TObject> : MachineWideSharedObject w
 
    internal TObject GetCopy() => _synchronizer.ExecuteWithLock(Load);
 
-   internal void Delete() => _file.Delete();
+   internal void Delete() => _file.GetFileInfo().Delete();
 
    void Save(TObject instance)
    {
@@ -71,7 +71,7 @@ public sealed class MachineWideSharedObject<TObject> : MachineWideSharedObject w
             throw new Exception($"""Failed to deserialize object from file {_file}""",
                                 exception);
 
-         _file.Delete();
+         _file.GetFileInfo().Delete();
          var defaultJson = CreateDefaultJson();
          _file.WriteAllText(defaultJson);
 

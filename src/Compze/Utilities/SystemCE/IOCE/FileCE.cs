@@ -4,9 +4,9 @@ namespace Compze.Utilities.SystemCE.IOCE;
 
 public class FileCE : FileSystemInfoCE
 {
-   public readonly FileInfo FileInfo;
+   public FileInfo GetFileInfo() => new FileInfo(AbsolutePath);
 
-   public FileCE(FileInfo fileInfo) : base(fileInfo) => FileInfo = fileInfo;
+   public FileCE(FileInfo fileInfo) : base(fileInfo){}
 
-   public void Delete() => File.Delete(FileInfo.FullName);
+   protected override FileSystemInfo GetFileSystemInfo() => GetFileInfo();
 }
