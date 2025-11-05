@@ -109,8 +109,10 @@ public abstract class ComponentCombinationsTheoryAttribute :
                            .ToArray();
          return new ValueTask<IReadOnlyCollection<ITheoryDataRow>>(combinations);
       }
+#pragma warning disable CA1031 //This is the best way we've found for surfacing the failure in a way that is actually displayed in test runners
       catch(Exception ex)
       {
+#pragma warning restore CA1031
          return new ValueTask<IReadOnlyCollection<ITheoryDataRow>>(
             [
                new TheoryDataRow() { Skip = $"Failed to read configuration: {ex.Message}" }

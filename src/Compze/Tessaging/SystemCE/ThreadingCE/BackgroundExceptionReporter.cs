@@ -26,8 +26,10 @@ static class BackgroundExceptionReporterRegistrar
          {
             CompzeLogger.For<BackgroundExceptionReporterImpl>().Error(exception, "Exception thrown on background thread.");
          }
+#pragma warning disable CA1031 //This is specifically designed for making sure that exceptions thrown in places where they cannot be surfaced directly, are not just ignored
          catch(Exception loggingException)
          {
+#pragma warning restore CA1031
             _collectedExceptions.Update(it => it.Add(loggingException));
          }
       }

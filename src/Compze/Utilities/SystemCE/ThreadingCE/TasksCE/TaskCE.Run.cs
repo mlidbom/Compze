@@ -28,8 +28,10 @@ static partial class TaskCE
                                          var result = function();
                                          taskCompletionSource.SetResult(result);
                                       }
+#pragma warning disable CA1031 // this is correct exception handling for tasks
                                       catch(Exception ex)
                                       {
+#pragma warning restore CA1031
                                          taskCompletionSource.SetException(ex);
                                       }
                                    },

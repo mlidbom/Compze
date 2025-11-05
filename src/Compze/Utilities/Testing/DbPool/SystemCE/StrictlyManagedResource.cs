@@ -110,9 +110,11 @@ sealed class StrictlyManagedResource<TManagedResource> : IStrictlyManagedResourc
                   }
                }
             }
-            //Don't even think about letting exceptions escape on the finalizer thread again.The day I spent trying to understand why test processes simply died without explanation was no fun. Once was plenty.
+
             // ReSharper disable once EmptyGeneralCatchClause
+#pragma warning disable CA1031 //Don't even think about letting exceptions escape on the finalizer thread again.The day I spent trying to understand why test processes simply died without explanation was no fun. Once was plenty.
             catch {}
+#pragma warning restore CA1031
          }
       }
    }

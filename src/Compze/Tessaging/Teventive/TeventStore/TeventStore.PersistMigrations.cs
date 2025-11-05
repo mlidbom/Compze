@@ -95,8 +95,10 @@ partial class TeventStore
                }
             }
          }
+#pragma warning disable CA1031 //We are gathering the exceptions to throw all together in an aggregate exception
          catch(Exception exception)
          {
+#pragma warning restore CA1031
             Log.Error(exception, $"Failed to persist migrations for taggregate: {taggregateId}");
             exceptions.Add((taggregateId, exception));
          }

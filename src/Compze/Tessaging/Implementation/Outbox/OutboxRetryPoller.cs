@@ -94,8 +94,11 @@ class OutboxRetryPoller : IDisposable
          {
             RetryUndeliveredTessages();
          }
+#pragma warning disable CA1031 //This is specifically designed for making sure that exceptions thrown in places where they cannot be surfaced directly, are not just ignored
          catch(Exception exception)
          {
+#pragma warning restore CA1031
+            //todo: should we really be reporting as real exceptions every message delivery failure running in a loop?
             _exceptionReporter.ReportException(exception);
          }
 
@@ -166,8 +169,10 @@ class OutboxRetryPoller : IDisposable
 
          sendTask.ContinueWithAsynchronously(completedTask => HandleRetryResult(completedTask, undeliveredTessage.TessageId, endpointId));
       }
+#pragma warning disable CA1031 //todo: we cannot throw here on a background thread, but maybe we should be checking what the failures are more specifically and pass some on to the exception reporter?
       catch(Exception exception)
       {
+#pragma warning restore CA1031
          this.Log().Error(exception, $"Error retrying tessage {undeliveredTessage.TessageId} to endpoint {endpointId}");
          RecordFailure(undeliveredTessage.TessageId, endpointId, exception);
       }

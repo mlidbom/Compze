@@ -18,6 +18,7 @@ public static class FailExecutionOnProcessExitIfTestsThrewUncatchableExceptions
          {
             UncatchableExceptionsGatherer.ForceFullGcAllGenerationsAndWaitForFinalizersConsumeAndThrowAnyGatheredExceptions();
          }
+#pragma warning disable CA1031 //This is specifically designed for making sure that exceptions thrown in places where they cannot be surfaced directly, are not just ignored
          catch(Exception ex)
          {
             try
@@ -36,5 +37,6 @@ public static class FailExecutionOnProcessExitIfTestsThrewUncatchableExceptions
             Console.Error.WriteLine(ex);
          }
       };
+#pragma warning restore CA1031
    }
 }

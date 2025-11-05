@@ -40,8 +40,10 @@ static class TaskRunnerRegistrar
             {
                task();
             }
+#pragma warning disable CA1031 //This is specifically designed for making sure that exceptions thrown in places where they cannot be surfaced directly, are not just ignored
             catch(Exception exception)
             {
+#pragma warning restore CA1031
                _exceptionReporter.ReportException(exception);
             }
          });
@@ -61,8 +63,10 @@ static class TaskRunnerRegistrar
             {
                this.Log().Info($"Thread: {threadName} is terminating because it received a: {exception.GetType().Name}.");
             }
+#pragma warning disable CA1031 //This is specifically designed for making sure that exceptions thrown in places where they cannot be surfaced directly, are not just ignored
             catch(Exception exception)
             {
+#pragma warning restore CA1031
                _exceptionReporter.ReportException(exception);
             }
          })

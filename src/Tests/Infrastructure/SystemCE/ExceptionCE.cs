@@ -10,7 +10,9 @@ public static class ExceptionCE
       {
          action();
       }
+#pragma warning disable CA1031 //Here we catch all exceptions so we can give them back to the client
       catch(Exception e)
+#pragma warning restore CA1031 //Here we catch all exceptions so we can give them back to the client
       {
          return e;
       }

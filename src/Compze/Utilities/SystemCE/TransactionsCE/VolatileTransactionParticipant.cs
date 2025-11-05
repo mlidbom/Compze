@@ -53,8 +53,10 @@ abstract class VolatileTransactionParticipant : IEnlistmentNotification
 
          preparingEnlistment.Prepared();
       }
+#pragma warning disable CA1031 //This is the proper handling of exceptions in the context of IEnlistmentNotification 
       catch(Exception exception)
       {
+#pragma warning restore CA1031 //This is the proper handling of exceptions in the context of IEnlistmentNotification
          preparingEnlistment.ForceRollback(exception);
       }
    }

@@ -62,8 +62,10 @@ partial class Inbox
                         _coordinator.Succeeded(this);
                         return;
                      }
+#pragma warning disable CA1031 //This is how you handle exceptions when manually using _taskCompletionSource
                      catch(Exception exception)
                      {
+#pragma warning restore CA1031
                         if(tessage is IAtMostOnceTessage)
                         {
                            _tessageStorage.RecordException(TransportTessage, exception);

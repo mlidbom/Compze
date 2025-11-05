@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Compze.Tessaging.Hosting.AspNetCore.Private;
+#pragma warning disable CA1031 //We catch all exceptions here to route them back to the client.
 
 class TessagingController : ControllerBase
 {
