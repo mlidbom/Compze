@@ -17,7 +17,9 @@ namespace Compze.Tests.ScratchPad.ReflectionEmit;
 public interface IUserPublisherIdentifyingTevent<out TWrappedUserTevent> : IPublisherIdentifyingTevent<TWrappedUserTevent>
    where TWrappedUserTevent : IUserTevent;
 
+#pragma warning disable CA1040 //avoid empty interfaces
 public interface IUserTevent : ITevent;
+#pragma warning restore CA1040 //avoid empty interfaces
 
 class UserTevent : IUserTevent;
 

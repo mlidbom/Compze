@@ -5,7 +5,7 @@ namespace Compze.Core.Tessaging.Teventive.TeventStore.QueryModels.Generators.Pub
 
 interface IVersioningQueryModelGenerator : IQueryModelGenerator;
 
-interface IVersioningQueryModelGenerator<TDocument> : IVersioningQueryModelGenerator
+interface IVersioningQueryModelGenerator<TDocument> : IQueryModelGenerator<TDocument>
 {
    Option<TDocument> TryGenerate(EntityId id, int version);
 }

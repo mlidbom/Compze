@@ -1,5 +1,6 @@
 using Compze.Core.Public;
 
+#pragma warning disable CA1040 //We define a number of empty marker interfaces here that are vital for framework functionality
 // ReSharper disable UnusedTypeParameter
 
 namespace Compze.Core.Tessaging.Public;
