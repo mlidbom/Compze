@@ -3,8 +3,10 @@ using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Logging;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using Compze.Utilities.Functional;
+using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
@@ -85,21 +87,10 @@ static class TaskRunnerRegistrar
       public void Dispose()
       {
          var threads = _threads.Read(threads => threads.ToArray());
-         foreach(var thread in threads)
-         {
-            if(thread.IsAlive)
-            {
-               thread.Interrupt();
-            }
-         }
-
-         foreach(var thread in threads)
-         {
-            if(thread.IsAlive)
-            {
-               thread.Join();
-            }
-         }
+         threads.Where(it => it.IsAlive)
+                .ForEach(it => it.Interrupt());
+         threads.Where(it => it.IsAlive)
+                .ForEach(it => it.Join());
 
          _cancellationTokenSource.Dispose();
       }

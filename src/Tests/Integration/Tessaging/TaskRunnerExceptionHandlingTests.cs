@@ -12,15 +12,16 @@ using System.Threading.Tasks;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using Compze.Utilities.SystemCE.ThreadingCE.Testing;
 using Compze.Utilities.Testing.Must;
+using static Compze.Utilities.Testing.Must.MustActions;
 
 namespace Compze.Tests.Integration.Tessaging;
 
 public class TaskRunnerExceptionHandlingTests : UniversalTestBase
 {
 #pragma warning disable CA2213 // Disposable fields should be disposed
-    readonly ITestingEndpointHost _host;
+   readonly ITestingEndpointHost _host;
 #pragma warning restore CA2213 // Disposable fields should be disposed
-    readonly ITaskRunner _taskRunner;
+   readonly ITaskRunner _taskRunner;
 
    public TaskRunnerExceptionHandlingTests()
    {
@@ -47,7 +48,6 @@ public class TaskRunnerExceptionHandlingTests : UniversalTestBase
 
          gate.AwaitPassedThroughCountEqualTo(1);
 
-
          var disposeAction = async () => await _host.DisposeAsync().caf();
          var taggregateException = await disposeAction.Must().ThrowAsync<AggregateException>();
 
@@ -63,20 +63,25 @@ public class TaskRunnerExceptionHandlingTests : UniversalTestBase
       {
          var gate = ThreadGate.CreateOpenWithTimeout(20.Seconds());
 
-         _taskRunner.Run("test-task-1", () => gate.AwaitPassThrough().then(() => throw new InvalidOperationException("exception1")));
-         _taskRunner.Run("test-task-2", () => gate.AwaitPassThrough().then(() => throw new ArgumentException("exception2")));
-         _taskRunner.Run("test-task-3", () => gate.AwaitPassThrough().then(() => throw new NotSupportedException("exception3")));
+         var _exception1 = new InvalidOperationException("exception1");
+         var _exception2 = new ArgumentException("exception2");
+         var _exception3 = new NotSupportedException("exception3");
+
+         _taskRunner.Run("test-task-1", () => gate.AwaitPassThrough().then(() => throw _exception1));
+         _taskRunner.Run("test-task-2", () => gate.AwaitPassThrough().then(() => throw _exception2));
+         _taskRunner.Run("test-task-3", () => gate.AwaitPassThrough().then(() => throw _exception3));
 
          gate.AwaitPassedThroughCountEqualTo(3);
 
-         var disposeAction = async () => await _host.DisposeAsync().caf();
-         var taggregateException = await disposeAction.Must().ThrowAsync<AggregateException>();
-
-         var flattened = taggregateException.Which.Flatten();
-         flattened.InnerExceptions.Must().HaveCount(3);
-         flattened.InnerExceptions.Must().SatisfyInternal(it => it.Any(e => e is InvalidOperationException && e.Message == "exception1"));
-         flattened.InnerExceptions.Must().SatisfyInternal(it => it.Any(e => e is ArgumentException && e.Message == "exception2"));
-         flattened.InnerExceptions.Must().SatisfyInternal(it => it.Any(e => e is NotSupportedException && e.Message == "exception3"));
+         (await InvokingAsync(async () => await _host.DisposeAsync()).Must().ThrowAsync<AggregateException>())
+           .Which
+           .Flatten()
+           .InnerExceptions
+           .Must()
+           .HaveCount(3)
+           .Contain(_exception1)
+           .Contain(_exception2)
+           .Contain(_exception3);
       });
    }
 }
