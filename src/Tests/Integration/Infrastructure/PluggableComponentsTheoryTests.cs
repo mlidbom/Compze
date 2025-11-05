@@ -82,11 +82,4 @@ public class PluggableComponentsTheoryTests : UniversalTestBase
 
       timeout.Must().Be(expected);
    }
-
-   [XF]
-   public void Regular_fact_test_should_run_only_once()
-   {
-      System.Console.WriteLine("✓ This regular Fact test runs exactly once");
-      true.Must().BeTrue();
-   }
 }
