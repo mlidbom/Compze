@@ -12,7 +12,7 @@ static class DiffGenerator
 {
    public static string CreateDiff(string expected, string actual)
    {
-      if(expected.ContainsOrdinal(Environment.NewLine) || actual.ContainsOrdinal(Environment.NewLine))
+      if(expected.ContainsCE(Environment.NewLine) || actual.ContainsCE(Environment.NewLine))
       {
          return UnidiffRenderer.GenerateUnidiff(oldText: expected, newText: actual, oldFileName: "expected", newFileName: "actual");
       } else

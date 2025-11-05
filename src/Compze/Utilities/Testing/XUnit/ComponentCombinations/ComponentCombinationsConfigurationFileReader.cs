@@ -35,7 +35,7 @@ static class ComponentCombinationsConfigurationFileReader
       ReadFileLines(fileName)
         .Select(it => it.Trim())
         .Where(it => !it.IsNullEmptyOrWhiteSpace())
-        .Where(it => !it.StartsWithOrdinal(Comment))
+        .Where(it => !it.StartsWithCE(Comment))
         .Where(it => !it.StartsWith(SkipCombination))
         .Select(it => new ComponentCombinationsConfigurationFileLine(componentTypes, it))
         .SelectMany(it => it.ExpandWildcardsIntoConcretePermutations())

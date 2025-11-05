@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using JetBrains.Annotations;
 using static Compze.Utilities.Contracts.Assert;
@@ -8,9 +7,9 @@ using static Compze.Utilities.Contracts.Assert;
 namespace Compze.Utilities.SystemCE;
 
 ///<summary>Contains extensions on <see cref="string"/></summary>
-public static class StringCE
+public static partial class StringCE
 {
-   internal const string Empty = "";
+   public static string Join(this IEnumerable<string> @this) => string.Join("", @this.ToArray());
 
    ///<summary>returns true if me is null, empty or only whitespace</summary>
    [ContractAnnotation("null => true")]
@@ -24,25 +23,9 @@ public static class StringCE
       return string.Join(separator, @this.ToArray());
    }
 
-   public static string Join(this IEnumerable<string> @this) => string.Join("", @this.ToArray());
-
-   public static string ReplaceOrdinal(this string @this, string oldValue, string newValue) => @this.Replace(oldValue, newValue, StringComparison.Ordinal);
-
-   public static bool ContainsOrdinal(this string @this, string value) => @this.Contains(value, StringComparison.Ordinal);
-
-   public static int GetHashcodeOrdinal(this string @this) => @this.GetHashCode(StringComparison.Ordinal);
-
-   public static bool StartsWithOrdinal(this string @this, string ending) => @this.StartsWith(ending, StringComparison.Ordinal);
-
-   public static bool EndsWithOrdinal(this string @this, string ending) => @this.EndsWith(ending, StringComparison.Ordinal);
-
-   [StringFormatMethod(formatParameterName:"tessage")]
-   public static string FormatInvariant(string message, params object[] arguments) =>
-      string.Format(CultureInfo.InvariantCulture,  message, arguments);
-
-   public static string RemoveLeadingLineBreak(this string @this)
+   public static string RemoveLeadingNewLines(this string @this)
    {
-      while(@this.StartsWithOrdinal(Environment.NewLine))
+      while(@this.StartsWithCE(Environment.NewLine))
       {
          @this = @this[Environment.NewLine.Length..];
       }
@@ -51,6 +34,4 @@ public static class StringCE
    }
 
    public static string Pluralize(this int count, string theString) => count == 1 ? theString : $"{theString}s";
-
-   public static string Invariant(this FormattableString interpolatedString) => FormattableString.Invariant(interpolatedString);
 }

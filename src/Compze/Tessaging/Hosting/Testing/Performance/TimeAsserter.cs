@@ -171,7 +171,7 @@ static class TimeAsserter
                                  Total:   {executionSummary.Total.FormatReadable()} {maxTotalReport}
                                  Average: {executionSummary.Average.FormatReadable()} {maxAverageReport}
                                  """
-                               .RemoveLeadingLineBreak());
+                               .RemoveLeadingNewLines());
       } else
       {
          writer.WriteLine($"Total:   {executionSummary.Total.FormatReadable()} {maxTotalReport} ");

@@ -9,6 +9,6 @@ internal static class SqlExceptions
    internal static class Sqlite
    {
       const int PrimaryKeyViolationSqliteErrorCode = 19; // SQLITE_CONSTRAINT
-      internal static bool IsPrimaryKeyViolation(SqliteException e) => e.SqliteErrorCode == PrimaryKeyViolationSqliteErrorCode && e.Message.ContainsOrdinal("UNIQUE constraint failed");
+      internal static bool IsPrimaryKeyViolation(SqliteException e) => e.SqliteErrorCode == PrimaryKeyViolationSqliteErrorCode && e.Message.ContainsCE("UNIQUE constraint failed");
    }
 }
