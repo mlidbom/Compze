@@ -2,5 +2,5 @@ namespace Compze.Core.Wiring.Testing.Internal;
 
 public enum Serializer
 {
-   Newtonsoft
+   Newtonsoft = 1
 }

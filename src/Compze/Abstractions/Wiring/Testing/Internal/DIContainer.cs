@@ -2,6 +2,6 @@ namespace Compze.Core.Wiring.Testing.Internal;
 
 public enum DIContainer
 {
-   SimpleInjector,
-   Microsoft
+   SimpleInjector = 1,
+   Microsoft = 2
 }

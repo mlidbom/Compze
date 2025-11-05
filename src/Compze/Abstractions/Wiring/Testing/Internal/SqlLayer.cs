@@ -4,9 +4,9 @@ namespace Compze.Core.Wiring.Testing.Internal;
 
 public enum SqlLayer
 {
-   MsSql,
-   MySql,
-   PgSql,
-   Sqlite,
-   SqliteMemory
+   MsSql = 1,
+   MySql = 2,
+   PgSql = 3,
+   Sqlite = 4,
+   SqliteMemory = 5
 }

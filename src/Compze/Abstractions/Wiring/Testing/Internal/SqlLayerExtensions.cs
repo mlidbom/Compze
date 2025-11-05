@@ -17,12 +17,12 @@ public static class SqlLayerExtensions
    {
       return sqlLayer switch
       {
-         SqlLayer.MsSql => msSql,
-         SqlLayer.MySql              => mySql,
-         SqlLayer.PgSql         => pgSql,
-         SqlLayer.Sqlite             => sqlite,
-         SqlLayer.SqliteMemory       => sqliteMemory,
-         _                           => throw new ArgumentOutOfRangeException(nameof(sqlLayer), sqlLayer, $"Unsupported sql layer: {sqlLayer}")
+         SqlLayer.MsSql        => msSql,
+         SqlLayer.MySql        => mySql,
+         SqlLayer.PgSql        => pgSql,
+         SqlLayer.Sqlite       => sqlite,
+         SqlLayer.SqliteMemory => sqliteMemory,
+         _                     => throw new ArgumentOutOfRangeException(nameof(sqlLayer), sqlLayer, $"Unsupported sql layer: {sqlLayer}")
       };
    }
 }

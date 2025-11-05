@@ -7,6 +7,7 @@ using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.TransactionsCE;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Transactions;
 using Compze.Core.Tessaging.Teventive.Public;
@@ -41,12 +42,18 @@ public class TeventStoreTests : UniversalTestBase
    public void StreamTeventsSinceReturnsWholeTeventLogWhenFromTeventIdIsNull() => _serviceLocator.ExecuteInIsolatedScope(() =>
    {
       var taggregateId = new TaggregateId();
-      TransactionScopeCe.Execute(() => TeventStore.SaveSingleTaggregateTevents(1.Through(10)
-                                                                             .Select(i => new SomeTevent(taggregateId, i)).ToList()));
-      var stream = TeventStore.ListAllTeventsForTestingPurposesAbsolutelyNotUsableForARealTeventStoreOfAnySize();
+      var savedEvents = 1.Through(10)
+                         .Select(i => new SomeTevent(taggregateId, i))
+                         .ToList();
+      TransactionScopeCe.Execute(() =>
+      {
+         TeventStore.SaveSingleTaggregateTevents(savedEvents);
+      });
 
-      stream.Must()
-            .HaveCount(10);
+      TeventStore.ListAllTeventsForTestingPurposesAbsolutelyNotUsableForARealTeventStoreOfAnySize().Cast<SomeTevent>()
+                 .ToList()
+                 .Must()
+                 .DeepEqual(savedEvents);
    });
 
    [PCT]
@@ -57,10 +64,10 @@ public class TeventStoreTests : UniversalTestBase
       var taggregateId = new TaggregateId();
 
       TransactionScopeCe.Execute(() => TeventStore.SaveSingleTaggregateTevents(1.Through(moreTeventsThanTheBatchSizeForStreamingTevents)
-                                                                             .Select(i => new SomeTevent(taggregateId, i)).ToList()));
+                                                                                .Select(i => new SomeTevent(taggregateId, i)).ToList()));
 
       var stream = TeventStore.ListAllTeventsForTestingPurposesAbsolutelyNotUsableForARealTeventStoreOfAnySize(batchSize: batchSize)
-                             .ToList();
+                              .ToList();
 
       var currentTeventNumber = 0;
       stream.Must()
@@ -68,7 +75,7 @@ public class TeventStoreTests : UniversalTestBase
       foreach(var taggregateTevent in stream)
       {
          taggregateTevent.TaggregateVersion.Must()
-                       .Be(++currentTeventNumber, "Incorrect tevent version detected");
+                         .Be(++currentTeventNumber, "Incorrect tevent version detected");
       }
    });
 
@@ -76,14 +83,14 @@ public class TeventStoreTests : UniversalTestBase
    public void DeleteTeventsDeletesTheTeventsForOnlyTheSpecifiedTaggregate() => _serviceLocator.ExecuteInIsolatedScope(() =>
    {
       var taggregatesWithTevents = 1.Through(10)
-                                  .ToDictionary(i => i,
-                                                _ =>
-                                                {
-                                                   var taggregateId = new TaggregateId();
-                                                   return 1.Through(10)
-                                                           .Select(j => new SomeTevent(taggregateId, j))
-                                                           .ToList();
-                                                });
+                                    .ToDictionary(i => i,
+                                                  _ =>
+                                                  {
+                                                     var taggregateId = new TaggregateId();
+                                                     return 1.Through(10)
+                                                             .Select(j => new SomeTevent(taggregateId, j))
+                                                             .ToList();
+                                                  });
 
       TransactionScopeCe.Execute(() => taggregatesWithTevents.ForEach(it => TeventStore.SaveSingleTaggregateTevents(it.Value)));
       var toRemove = taggregatesWithTevents[2][0].TaggregateId;
@@ -92,30 +99,30 @@ public class TeventStoreTests : UniversalTestBase
       TransactionScopeCe.Execute(() => TeventStore.DeleteTaggregate(toRemove));
 
       taggregatesWithTevents.Select(kvp => TeventStore.GetTaggregateHistory(kvp.Value[0].TaggregateId))
-                          .ForEach(stream => stream.Must().HaveCount(10));
+                            .ForEach(stream => stream.Must().HaveCount(10));
 
       TeventStore.GetTaggregateHistory(toRemove)
-                .Must()
-                .BeEmpty();
+                 .Must()
+                 .BeEmpty();
    });
 
    [PCT]
    public void GetListOfTaggregateIds() => _serviceLocator.ExecuteInIsolatedScope(() =>
    {
       var taggregatesWithTevents = 1.Through(10)
-                                  .ToDictionary(i => i,
-                                                _ =>
-                                                {
-                                                   var taggregateId = new TaggregateId();
-                                                   return 1.Through(10)
-                                                           .Select(j => new SomeTevent(taggregateId, j))
-                                                           .ToList();
-                                                });
+                                    .ToDictionary(i => i,
+                                                  _ =>
+                                                  {
+                                                     var taggregateId = new TaggregateId();
+                                                     return 1.Through(10)
+                                                             .Select(j => new SomeTevent(taggregateId, j))
+                                                             .ToList();
+                                                  });
 
       TransactionScopeCe.Execute(() => taggregatesWithTevents.ForEach(it => TeventStore.SaveSingleTaggregateTevents(it.Value)));
 
       var allTaggregateIds = TeventStore.StreamTaggregateIdsInCreationOrder()
-                                      .ToList();
+                                        .ToList();
       allTaggregateIds.Must().HaveCount(taggregatesWithTevents.Count);
    });
 
@@ -124,18 +131,18 @@ public class TeventStoreTests : UniversalTestBase
    public void GetListOfTaggregateIdsUsingTeventType() => _serviceLocator.ExecuteInIsolatedScope(() =>
    {
       var taggregatesWithTevents = 1.Through(10)
-                                  .ToDictionary(i => i,
-                                                _ =>
-                                                {
-                                                   var taggregateId = new TaggregateId();
-                                                   return 1.Through(10)
-                                                           .Select(j => new SomeTevent(taggregateId, j))
-                                                           .ToList();
-                                                });
+                                    .ToDictionary(i => i,
+                                                  _ =>
+                                                  {
+                                                     var taggregateId = new TaggregateId();
+                                                     return 1.Through(10)
+                                                             .Select(j => new SomeTevent(taggregateId, j))
+                                                             .ToList();
+                                                  });
 
       TransactionScopeCe.Execute(() => taggregatesWithTevents.ForEach(it => TeventStore.SaveSingleTaggregateTevents(it.Value)));
       var allTaggregateIds = TeventStore.StreamTaggregateIdsInCreationOrder<ISomeTevent>()
-                                      .ToList();
+                                        .ToList();
       allTaggregateIds.Must().HaveCount(taggregatesWithTevents.Count);
    });
 
