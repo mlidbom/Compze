@@ -40,7 +40,7 @@ public abstract class TeventMigrationTestBase : UniversalTestBase
       IList<ITeventMigration> migrations = new List<ITeventMigration>();
       var serviceLocator = CreateServiceLocatorForTeventStoreType(() => migrations.ToArray());
       await using var locator = serviceLocator;
-      await UtcTimeSource.Test.FrozenAtUtc("2001-01-01 12:00").RunAsync(
+      await UtcTimeSource.Test.FrozenAtUtcNow().RunAsync(
          async () =>
          {
             var scenarioIndex = 1;

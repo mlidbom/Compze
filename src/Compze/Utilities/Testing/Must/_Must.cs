@@ -74,7 +74,7 @@ public interface IAssertionContext
             }
          } else // A complex type
          {
-            if(toString == value.GetType().FullName)
+            if(!value.GetType().Methods().HasMeaningfulToStringOverride())
             {
                return $"""
                        {expression} was a {value.GetType().GetFullNameCompilable()} with:

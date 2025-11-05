@@ -125,11 +125,12 @@ public class TeventStoreTests : UniversalTestBase
    [PCT]
    public void GetListOfTaggregateIdsUsingTeventType() => _serviceLocator.ExecuteInIsolatedScope(() =>
    {
-      var taggregatesWithTevents = 1.Through(10)
+      var taggregateIds = 1.Through(10).Select(_ => new TaggregateId()).ToList();
+
+      var taggregatesWithTevents = taggregateIds
                                     .ToDictionary(i => i,
-                                                  _ =>
+                                                  taggregateId =>
                                                   {
-                                                     var taggregateId = new TaggregateId();
                                                      return 1.Through(10)
                                                              .Select(j => new SomeTevent(taggregateId, j))
                                                              .ToList();
@@ -138,7 +139,8 @@ public class TeventStoreTests : UniversalTestBase
       TransactionScopeCe.Execute(() => taggregatesWithTevents.ForEach(it => TeventStore.SaveSingleTaggregateTevents(it.Value)));
       var allTaggregateIds = TeventStore.StreamTaggregateIdsInCreationOrder<ISomeTevent>()
                                         .ToList();
-      allTaggregateIds.Must().HaveCount(taggregatesWithTevents.Count);
+
+      allTaggregateIds.Must().DeepEqual(taggregateIds);
    });
 
    [PCT]

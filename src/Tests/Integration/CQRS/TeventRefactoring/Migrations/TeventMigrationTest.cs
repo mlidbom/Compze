@@ -270,7 +270,7 @@ public class TeventMigrationTest : TeventMigrationTestBase
 
             var id = new TaggregateId();
 
-            UtcTimeSource.Test.FrozenAtUtc("2001-01-01 12:00").Run(() =>
+            UtcTimeSource.Test.FrozenAtUtcNow().Run(() =>
             {
                var taggregate = TestTaggregate.FromTevents(id, EnumerableCE.OfTypes<Ec1, E1, E2, E3, E4>());
                var initialHistory = taggregate.History;

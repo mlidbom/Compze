@@ -51,10 +51,6 @@ public class When_calling_Must_DeepEqual_with_unordered_collections : UniversalT
                                                --------------------------------------------------
                                                _expected was a System.Collections.Generic.Dictionary<System.String,System.Int32> with:
                                                --------------------------------------------------
-                                               ToString():
-                                               --------------------------------------------------
-                                               System.Collections.Generic.Dictionary`2[System.String,System.Int32]
-                                               --------------------------------------------------
                                                JSON:
                                                --------------------------------------------------
                                                {
@@ -65,10 +61,6 @@ public class When_calling_Must_DeepEqual_with_unordered_collections : UniversalT
                                                }
                                                --------------------------------------------------
                                                _one_differing_item was a System.Collections.Generic.Dictionary<System.String,System.Int32> with:
-                                               --------------------------------------------------
-                                               ToString():
-                                               --------------------------------------------------
-                                               System.Collections.Generic.Dictionary`2[System.String,System.Int32]
                                                --------------------------------------------------
                                                JSON:
                                                --------------------------------------------------
