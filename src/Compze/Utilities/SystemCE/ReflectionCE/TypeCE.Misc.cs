@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Compze.Utilities.Functional;
 
 namespace Compze.Utilities.SystemCE.ReflectionCE;
 
@@ -14,25 +16,8 @@ class TypeMethods(Type type)
 {
    readonly Type _type = type;
 
-   public MethodInfo? TryGetInstance(string name, BindingFlags flags = BindingFlags.Public | BindingFlags.Instance) => _type.GetMethod(name, flags);
-   public MethodInfo GetInstance(string name, BindingFlags flags = BindingFlags.Public | BindingFlags.Instance) => TryGetInstance(name, flags).NotNull();
-
    public MethodInfo GetToString() => _type.GetMethod("ToString", BindingFlags.Public | BindingFlags.Instance, null, Type.EmptyTypes, null).NotNull();
 
-   public bool HasMeaningfulToStringOverride()
-   {
-      var toStringMethod = _type.Methods().GetToString();
-
-      if(toStringMethod.DeclaringType == null)
-         return true;
-
-      var noMeaningfulOverrideTypes = new[]
-                                      {
-                                         typeof(object),
-                                         typeof(ValueType),
-                                         typeof(Enum)
-                                      };
-
-      return !noMeaningfulOverrideTypes.Contains(toStringMethod.DeclaringType);
-   }
+   static readonly IReadOnlySet<Type> noMeaningfulOverrideTypes = EnumerableCE.OfTypes<object, ValueType, Enum>().ToHashSet();
+   public bool HasMeaningfulToStringOverride() => !noMeaningfulOverrideTypes.Contains(GetToString().DeclaringType.NotNull());
 }
