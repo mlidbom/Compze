@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
@@ -31,12 +32,13 @@ static class TaskRunnerRegistrar
 
       readonly IBackgroundExceptionReporter _exceptionReporter;
       readonly IThreadShared<List<Thread>> _threads = IThreadShared.WithDefaultTimeout(new List<Thread>());
+      readonly IThreadShared<HashSet<Task>> _inProgressTasks = IThreadShared.WithDefaultTimeout(new HashSet<Task>());
 
       TaskRunnerImpl(IBackgroundExceptionReporter exceptionReporter) => _exceptionReporter = exceptionReporter;
 
       public void Run(string taskName, Action task)
       {
-         TaskCE.Run(() =>
+         var newTask = TaskCE.Run(() =>
          {
             try
             {
@@ -49,6 +51,9 @@ static class TaskRunnerRegistrar
                _exceptionReporter.ReportException(exception);
             }
          });
+
+         _inProgressTasks.Update(it => it.Add(newTask));
+         newTask.ContinueWith(completedTask => _inProgressTasks.Update(it => it.Remove(newTask)));//While surprising to me, completedTask and newTask are NOT the same object.
       }
 
       public void Run(string taskName, Func<unit> task) => Run(taskName, () => { task(); });
@@ -56,26 +61,26 @@ static class TaskRunnerRegistrar
       public Thread RunOnNamedThread(string threadName, ThreadStart threadLoop, ThreadPriority priority = ThreadPriority.Normal)
       {
          var thread = new Thread(() =>
-         {
-            try
-            {
-               threadLoop.Invoke();
-            }
-            catch(Exception exception) when(exception is OperationCanceledException or ThreadInterruptedException or ThreadAbortException)
-            {
-               this.Log().Info($"Thread: {threadName} is terminating because it received a: {exception.GetType().Name}.");
-            }
+                      {
+                         try
+                         {
+                            threadLoop.Invoke();
+                         }
+                         catch(Exception exception) when(exception is OperationCanceledException or ThreadInterruptedException or ThreadAbortException)
+                         {
+                            this.Log().Info($"Thread: {threadName} is terminating because it received a: {exception.GetType().Name}.");
+                         }
 #pragma warning disable CA1031 //This is specifically designed for making sure that exceptions thrown in places where they cannot be surfaced directly, are not just ignored
-            catch(Exception exception)
-            {
+                         catch(Exception exception)
+                         {
 #pragma warning restore CA1031
-               _exceptionReporter.ReportException(exception);
-            }
-         })
-         {
-            Name = threadName,
-            Priority = priority
-         };
+                            _exceptionReporter.ReportException(exception);
+                         }
+                      })
+                      {
+                         Name = threadName,
+                         Priority = priority
+                      };
 
          _threads.Update(it => it.Add(thread));
          thread.Start();
@@ -91,6 +96,7 @@ static class TaskRunnerRegistrar
                 .ForEach(it => it.Interrupt());
          threads.Where(it => it.IsAlive)
                 .ForEach(it => it.Join());
+         _inProgressTasks.Await(it => !it.Any());
 
          _cancellationTokenSource.Dispose();
       }
