@@ -15,7 +15,7 @@ namespace Compze.Tessaging.SystemCE.ThreadingCE;
 
 interface ITaskRunner
 {
-   void Run(string taskName, Action task);
+   void Run(string taskName, Action action);
    void Run(string taskName, Func<unit> task);
    Thread RunOnNamedThread(string threadName, ThreadStart threadLoop, ThreadPriority priority = ThreadPriority.Normal);
 }
@@ -36,13 +36,13 @@ static class TaskRunnerRegistrar
 
       TaskRunnerImpl(IBackgroundExceptionReporter exceptionReporter) => _exceptionReporter = exceptionReporter;
 
-      public void Run(string taskName, Action task)
+      public void Run(string taskName, Action action)
       {
-         var newTask = TaskCE.Run(() =>
+         var task = TaskCE.Run(() =>
          {
             try
             {
-               task();
+               action();
             }
 #pragma warning disable CA1031 //This is specifically designed for making sure that exceptions thrown in places where they cannot be surfaced directly, are not just ignored
             catch(Exception exception)
@@ -52,8 +52,8 @@ static class TaskRunnerRegistrar
             }
          });
 
-         _inProgressTasks.Update(it => it.Add(newTask));
-         newTask.ContinueWith(completedTask => _inProgressTasks.Update(it => it.Remove(newTask)));//While surprising to me, completedTask and newTask are NOT the same object.
+         _inProgressTasks.Update(it => it.Add(task));
+         task.ContinueWith(completedTask => _inProgressTasks.Update(it => it.Remove(task)));//While surprising to me, completedTask and task are NOT the same object.
       }
 
       public void Run(string taskName, Func<unit> task) => Run(taskName, () => { task(); });
