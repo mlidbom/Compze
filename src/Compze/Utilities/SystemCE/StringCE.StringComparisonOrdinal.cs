@@ -18,7 +18,7 @@ public static partial class StringCE
    public static bool EndsWithCE(this string @this, string ending) => @this.EndsWith(ending, StringComparison.Ordinal);
 
    [StringFormatMethod(formatParameterName:"tessage")]
-   public static string FormatCE(string message, params object[] arguments) =>
+   public static string FormatInvariant(string message, params object[] arguments) =>
       string.Format(CultureInfo.InvariantCulture,  message, arguments);
 
    public static string Invariant(this FormattableString interpolatedString) => FormattableString.Invariant(interpolatedString);
