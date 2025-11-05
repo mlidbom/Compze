@@ -24,6 +24,7 @@ class ExclusiveFactDiscoverer : IXunitTestCaseDiscoverer
 
       var details = TestIntrospectionHelper.GetTestCaseDetails(discoveryOptions, testMethod, factAttribute);
 
+      #pragma warning disable CA2000// We are passing this disposable into a constructor of an object we don't own
       var testCase = new ExclusiveFactTestCase(
          details: new TestCaseDetails(details),
          traits: testMethod.Traits.ToReadWrite(StringComparer.OrdinalIgnoreCase)

@@ -52,7 +52,9 @@ partial class RoutingInboxClient : IRoutingInboxClient, IDisposable
    public async Task ConnectAsync(EndPointAddress remoteEndpointAddress)
    {
       AssertRunning();
+#pragma warning disable CA2000//We are passing this disposable into a collection that we  track disposal for
       var clientConnection = new Outbox.Outbox.InboxConnection(_tessagesInFlightTracker, remoteEndpointAddress, _typeMapper, _serializer, _transportMessagePoster);
+#pragma warning restore CA2000
 
       await clientConnection.InitAsync().caf();
 

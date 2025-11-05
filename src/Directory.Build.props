@@ -8,7 +8,7 @@
 	<!-- Enable latest analyzer rules for all projects -->
 	<PropertyGroup>
 		<AnalysisLevel>latest-all</AnalysisLevel>
-		<RunAnalyzersDuringLiveAnalysis>True</RunAnalyzersDuringLiveAnalysis>
+		<RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
 		<NuGetAuditMode>direct</NuGetAuditMode>
 	</PropertyGroup>
 

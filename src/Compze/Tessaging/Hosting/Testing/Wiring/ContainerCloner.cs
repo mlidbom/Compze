@@ -19,7 +19,9 @@ static class ContainerCloner
 
    public static IServiceLocator Clone(this IServiceLocator @this)
    {
+#pragma warning disable CA2000//the container is disposed with the service locator
       var cloneContainer = ((IDependencyInjectionContainer)@this).Clone();
+#pragma warning restore CA2000
 
       cloneContainer.Register(Singleton.For<IDependencyInjectionContainer>().Instance(cloneContainer));
 

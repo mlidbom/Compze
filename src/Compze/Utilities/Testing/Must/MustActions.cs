@@ -3,6 +3,7 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Compze.Utilities.SystemCE.ReflectionCE;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
+using JetBrains.Annotations;
 
 namespace Compze.Utilities.Testing.Must;
 
@@ -26,21 +27,21 @@ public static class MustActions
    public static IAssertionContext<Action> Must<T>(this Func<T> func, [CallerArgumentExpression(nameof(func))] string expression = null!) => Invoking(func, expression).Must();
    public static IAssertionContext<Action> Must(this Action action, [CallerArgumentExpression(nameof(action))] string expression = null!) => Invoking(action, expression).Must();
 
-   public static ActionSpec Invoking<T>(Func<T> action, [CallerArgumentExpression(nameof(action))] string expression = null!) => new(() => action(), expression);
-   public static ActionSpec Invoking(Action action, [CallerArgumentExpression(nameof(action))] string expression = null!) => new(action, expression);
+   public static ActionSpec Invoking<T>([InstantHandle]Func<T> action, [CallerArgumentExpression(nameof(action))] string expression = null!) => new(() => action(), expression);
+   public static ActionSpec Invoking([InstantHandle]Action action, [CallerArgumentExpression(nameof(action))] string expression = null!) => new(action, expression);
 
-   public static ActionSpec Invoking<T>(this T subject, Action<T> action, [CallerArgumentExpression(nameof(action))] string expression = null!)
+   public static ActionSpec Invoking<T>(this T subject, [InstantHandle]Action<T> action, [CallerArgumentExpression(nameof(action))] string expression = null!)
       => Invoking(() => action(subject), expression);
 
    public static ActionSpec Invoking<T, TResult>(this T subject, Func<T, TResult> func, [CallerArgumentExpression(nameof(func))] string expression = null!)
       => Invoking(() => func(subject), expression);
 
-   public static IAssertionContext<Func<Task>> Must(this Func<Task> action, [CallerArgumentExpression(nameof(action))] string expression = null!) => InvokingAsync(action, expression).Must();
-   public static IAssertionContext<Func<Task>> Must<T>(this Func<Task<T>> func, [CallerArgumentExpression(nameof(func))] string expression = null!) => InvokingAsync(func, expression).Must();
+   public static IAssertionContext<Func<Task>> Must([InstantHandle]this Func<Task> action, [CallerArgumentExpression(nameof(action))] string expression = null!) => InvokingAsync(action, expression).Must();
+   public static IAssertionContext<Func<Task>> Must<T>([InstantHandle]this Func<Task<T>> func, [CallerArgumentExpression(nameof(func))] string expression = null!) => InvokingAsync(func, expression).Must();
 
-   public static AsyncActionSpec InvokingAsync(Func<Task> action, [CallerArgumentExpression(nameof(action))] string expression = null!) => new(action, expression);
+   public static AsyncActionSpec InvokingAsync([InstantHandle]Func<Task> action, [CallerArgumentExpression(nameof(action))] string expression = null!) => new(action, expression);
 
-   public static AsyncActionSpec InvokingAsync<T>(this T subject, Func<T, Task> action, [CallerArgumentExpression(nameof(action))] string expression = null!)
+   public static AsyncActionSpec InvokingAsync<T>(this T subject, [InstantHandle]Func<T, Task> action, [CallerArgumentExpression(nameof(action))] string expression = null!)
       => InvokingAsync(() => action(subject), expression);
 
    public static CaughtException<TException> Throw<TException>(this IAssertionContext<Action> context)

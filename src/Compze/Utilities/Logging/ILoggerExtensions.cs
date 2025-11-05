@@ -12,13 +12,17 @@ namespace Compze.Utilities.Logging;
 static class LevelLoggerExtensions
 {
    public static IDisposable LogMethodEntryExit(this ILevelLogger @this, [CallerMemberName] string message = "") =>
+#pragma warning disable CA2000// We are passing this out of the method...
       @this.Log($"Entering {message}")
            .then(new Disposable(() => @this.Log($"Exiting {message}")));
+#pragma warning restore CA2000
 
    public static IDisposable LogMethodExecutionTime(this ILevelLogger @this, [CallerMemberName] string message = "")
       => Stopwatch.StartNew()._(it => new Disposable(() => @this.Log($"Executed {message} in {it.Elapsed}")));
 
    public static IDisposable LogEntryExit(this ILevelLogger @this, string message = "") =>
+#pragma warning disable CA2000// We are passing this disposable out of the method
       @this.Log($"Entering {message}")
            .then(new Disposable(() => @this.Log($"Exiting {message}")));
+#pragma warning restore CA2000
 }

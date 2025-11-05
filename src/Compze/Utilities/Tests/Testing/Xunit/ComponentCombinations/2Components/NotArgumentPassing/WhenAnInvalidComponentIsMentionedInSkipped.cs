@@ -13,11 +13,12 @@ public class WhenAnInvalidComponentIsMentionedInSkipped
    [NotArgumentPassingTwoComponentsPCT]
    public async Task TheTestIsSkippedWithAnErrorTessage()
    {
+      await using var disposalTracker = new DisposalTracker();
       var testData = await new NotArgumentPassingTwoComponentsPCTAttribute()
                            {
                               Skipped = ["nonsense"],
                               SkipReasons = ["because something"]
-                           }.GetData(MethodBase.GetCurrentMethod().NotNull().CastTo<MethodInfo>(), new DisposalTracker()).caf();
+                           }.GetData(MethodBase.GetCurrentMethod().NotNull().CastTo<MethodInfo>(), disposalTracker).caf();
 
       testData.Must().HaveCount(1);
       testData.Single().Skip!.Must().Contain("nonsense");
