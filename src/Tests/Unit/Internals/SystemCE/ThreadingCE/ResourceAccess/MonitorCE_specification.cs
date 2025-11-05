@@ -80,8 +80,8 @@ public class MonitorCE_specification : UniversalTestBase
             monitor.SetTimeToWaitForStackTrace(timeToWaitForStackTrace.Value);
          }
 
-         var threadOneHasTakenUpdateLock = new ManualResetEvent(false);
-         var threadTwoIsAboutToTryToEnterUpdateLock = new ManualResetEvent(false);
+         using var threadOneHasTakenUpdateLock = new ManualResetEvent(false);
+         using var threadTwoIsAboutToTryToEnterUpdateLock = new ManualResetEvent(false);
 
          TaskCE.Run(() =>
          {

@@ -24,7 +24,7 @@ public partial class AccountResource
          //Note the use of a custom validation attributes.
          [TaggregateId(ErrorMessageResourceType = typeof(RegisterAccountTommandResources), ErrorMessageResourceName = "IdInvalid")]
          [Required(ErrorMessageResourceType = typeof(RegisterAccountTommandResources), ErrorMessageResourceName = "IdMissing")]
-         public AccountId AccountId { [UsedImplicitly] get; set; } = new AccountId();
+         public AccountId AccountId { [UsedImplicitly] get; set; } = new();
 
          [Email(ErrorMessageResourceType = typeof(RegisterAccountTommandResources), ErrorMessageResourceName = "EmailInvalid")]
          [Required(ErrorMessageResourceType = typeof(RegisterAccountTommandResources), ErrorMessageResourceName = "EmailMissing")]

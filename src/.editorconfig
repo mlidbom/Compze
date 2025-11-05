@@ -5,10 +5,6 @@ charset = utf-8
 #options: 
 
 
-dotnet_diagnostic.xUnit1006.severity = none # We have theory attributes that do not pass arguments to the test methods
-dotnet_diagnostic.CA1063.severity = none # We do NOT use unmanaged resources, nor use finalizers, nor are we willing to add a ton of complexity to every Disposable class just on the off chance that an inheritors does so. 
-dotnet_diagnostic.CA1816.severity = none # We do NOT use unmanaged resources, nor use finalizers, nor are we willing to add a ton of complexity to every Disposable class just on the off chance that an inheritors does so. 
-
 csharp_style_namespace_declarations = file_scoped
 csharp_style_var_elsewhere = true
 csharp_style_var_when_type_is_apparent = true
@@ -21,27 +17,32 @@ csharp_style_expression_bodied_operators = when_on_single_line
 csharp_style_expression_bodied_local_functions = when_on_single_line
 
 
+
+#Warnings we disagree with or have other good reasons for chosing to disable
+dotnet_diagnostic.CA1008.severity = none # Enums should have a Zero value. No because for many enums there IS no sane default, Zero is as bad as null, so intentionally avoiding 0 is the correct domain design. It is clear that it is invalid instead of mysterious
+dotnet_diagnostic.xUnit1006.severity = none # We have theory attributes that do not pass arguments to the test methods
+dotnet_diagnostic.CA1063.severity = none # We do NOT use unmanaged resources, nor use finalizers, nor are we willing to add a ton of complexity to every Disposable class just on the off chance that an inheritors does so. 
+dotnet_diagnostic.CA1816.severity = none # We do NOT use unmanaged resources, nor use finalizers, nor are we willing to add a ton of complexity to every Disposable class just on the off chance that an inheritors does so. 
 dotnet_diagnostic.CA1064.severity = none # We create a lot of specific exceptions to help debugging, they are not for public consumption. We decide which to make part of our public API
-dotnet_diagnostic.CA1707.severity = none # We use underscores in test names.
-dotnet_diagnostic.CA1840.severity = none # The thread class is the natural and logical place for this.
-dotnet_diagnostic.CA1852.severity = none # making every single class that could theoretically be sealed sealed as a nano optimization. NO thanks. sealed has an actual semantic meaning and I only seal classes where it applies.
+dotnet_diagnostic.CA1707.severity = none # We use underscores in test names and other places for readability in long names.
+dotnet_diagnostic.CA1840.severity = none # The thread class is the natural and logical place for ManagedThreadId. Being told to go looking for that in environment feels exceedingly strange to us.
+dotnet_diagnostic.CA1852.severity = none # making every single class that could theoretically be sealed sealed as a nano optimization... NO thanks. sealed has an actual semantic meaning and we only seal classes where it applies.
 dotnet_diagnostic.CA1515.severity = none # There are many good reasons for classes to be public. Such as frameworks not working if they are not!
 
 dotnet_diagnostic.IDE0055.severity = none # I don't want visual studio to give thousands of warnings about formatting
 dotnet_diagnostic.IDE0058.severity = none # In countless cases it is perfectly valid not to use the return value of an expression
-dotnet_diagnostic.IDE0046.severity = none # Not using the ternary operator in every case it is theoretically possible is not a warning level offense
+dotnet_diagnostic.IDE0046.severity = none # Not using the ternary operator in every case it is theoretically possible is not a warning level offense. It's small judgment call about what is more readable in every case.
 
 dotnet_diagnostic.IDE0007.severity = none #I like var, but not using it is valid in many cases. It's not a warning level offence.
-dotnet_diagnostic.IDE0011.severity = none # Sometimes braces are not needed for simple if statements. This is not a warning level thing to me.
+dotnet_diagnostic.IDE0011.severity = none # Sometimes braces are not needed for simple if statements. This is not a warning level thing to us.
 
-dotnet_diagnostic.CA1859.severity = none #CA1859: Use concrete types when possible for improved performance || I want the proper types, not whatever makes the code most efficient at the cost of exposing something I SHOULD NOT
-dotnet_diagnostic.CA1860.severity = none #Prefer comparing Count to 0 over using Any() || Well we think Any() is more readable and shorter and unless a profiler tells us we have an issue with this nano optimization we don't care.
+dotnet_diagnostic.CA1859.severity = none #CA1859: Use concrete types when possible for improved performance || We want the proper types, not whatever achives an utterly useless nano optimization at the cost of exposing something that should NOT be exposed.
+dotnet_diagnostic.CA1860.severity = none #Prefer comparing Count to 0 over using Any() || Well we think Any() is more readable and shorter and unless a profiler tells us we have an issue with this nano optimization we don't care. (And that will never happen).
 dotnet_diagnostic.CA1805.severity = none #We do sometimes initialize members to their default values. It makes it clear that we have not forgotten, that this is the indended value.
 
-#Todo: These should probably be fixed rather than ignored
-dotnet_diagnostic.CA2201.severity = none # Yes, In principle I should create a new specific Exception type for every place where I throw one. In practice it is just too much effort for very little gain. 
 
-
+#Theoretically, maybe, valid, but not worth the effort.
+dotnet_diagnostic.CA2201.severity = none # Maybe, In principle one should create a new specific Exception every place where one throws one. But unless there is reason to believe that catching that specific exception is meaningful.....
 
 #Todo: review these below and add comments on why they are there if they should stay
 dotnet_diagnostic.CA1032.severity = none #Implement standard exception constructors
@@ -57,6 +58,6 @@ dotnet_diagnostic.CA2208.severity = none #Call the ArgumentOutOfRangeException c
 dotnet_diagnostic.CA1051.severity = none # CA1051: Do not declare visible instance fields
 dotnet_diagnostic.IDE1006.severity = none # IDE1006: Naming Styles
 dotnet_diagnostic.CA2100.severity = none # CA2100: Review SQL queries for security vulnerabilities
-dotnet_diagnostic.CA2000.severity = none # CA2000: Dispose objects before losing scope
+#dotnet_diagnostic.CA2000.severity = none # CA2000: Dispose objects before losing scope
 dotnet_diagnostic.CA1801.severity = none # CA1801: Review unused parameters
 dotnet_diagnostic.CA1810.severity = none # CA1810: Initialize reference type static fields inline

@@ -100,7 +100,7 @@ public class When_serializing_polymorphic_wrapper_objects : SerializerTest
                       Ids = new List<EntityId?>
                             {
                                null,
-                               new EntityId(Guid.Parse("10000000-0000-0000-0000-000000000000")),
+                               new(Guid.Parse("10000000-0000-0000-0000-000000000000")),
                                new TentityId(Guid.Parse("20000000-0000-0000-0000-000000000000")),
                                new TaggregateId(Guid.Parse("30000000-0000-0000-0000-000000000000")),
                                new TessageId(Guid.Parse("40000000-0000-0000-0000-000000000000")),

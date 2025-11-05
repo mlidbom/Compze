@@ -11,7 +11,7 @@ public class When_calling_Invoking_Must_Throw : UniversalTestBase
 {
    public class given_an_action_that_throws_the_expected_exception : When_calling_Invoking_Must_Throw
    {
-      readonly InvalidOperationException _actual = new InvalidOperationException("test message");
+      readonly InvalidOperationException _actual = new("test message");
 
       [XF] public void and_allows_asserting_on_the_exception()
          => Invoking(() => throw _actual)

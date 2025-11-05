@@ -12,13 +12,13 @@ public class IStaticInstancePropertySingleton_tests : UniversalTestBase
 {
    [UsedImplicitly] class ImplicitImplementation : IStaticInstancePropertySingleton<ImplicitImplementation>
    {
-      public static ImplicitImplementation Instance { get; } = new ImplicitImplementation();
+      public static ImplicitImplementation Instance { get; } = new();
       ImplicitImplementation() {}
    }
 
    [UsedImplicitly] class ExplicitImplementation : IStaticInstancePropertySingleton<ExplicitImplementation>
    {
-      static ExplicitImplementation IStaticInstancePropertySingleton<ExplicitImplementation>.Instance { get; } = new ExplicitImplementation();
+      static ExplicitImplementation IStaticInstancePropertySingleton<ExplicitImplementation>.Instance { get; } = new();
       ExplicitImplementation() {}
    }
 

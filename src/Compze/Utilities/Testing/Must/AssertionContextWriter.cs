@@ -1,3 +1,4 @@
+using System;
 using Compze.Utilities.SystemCE.ReflectionCE;
 using Compze.Utilities.Testing.Must.Serialization;
 using Newtonsoft.Json;
@@ -95,12 +96,27 @@ public static class AssertionContextWriter
       }
    }
 
-   public static string Diff(this IAssertionContext context, string expected, string actual) => $"""
-                                                                                                 Diff:
-                                                                                                 {AssertionContext.Separator}
-                                                                                                 {DiffGenerator.CreateDiff(expected: expected, actual: actual)}
-                                                                                                 {AssertionContext.Separator}
-                                                                                                 """;
+   public static string Diff(this IAssertionContext context, string expected, string actual) =>
+      $"""
+       Diff:
+       {AssertionContext.Separator}
+       {DiffGenerator.CreateDiff(expected: expected, actual: actual)}
+       {AssertionContext.Separator}
+       """;
 
    static string Serialize(object? obj) => obj != null ? JsonConvert.SerializeObject(obj, TestingJsonSettings.AllMembers) : "null";
+
+   public static string NormalizeExpressionIndentation(this IAssertionContext context, string expression)
+   {
+      var lines = expression.Split(Environment.NewLine);
+      if(lines.Length == 1) return expression;
+
+      var minimumIndent = lines.Skip(1)
+                               .Where(it => !string.IsNullOrWhiteSpace(it))
+                               .Min(it => it.TakeWhile(char.IsWhiteSpace).Count());
+
+      return string.Join(Environment.NewLine,
+                         lines.Select((line, i) =>
+                                         i == 0 ? line : line.Length > minimumIndent ? line.Substring(minimumIndent) : line));
+   }
 }

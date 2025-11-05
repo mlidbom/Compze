@@ -7,7 +7,6 @@ using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.TransactionsCE;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Transactions;
 using Compze.Core.Tessaging.Teventive.Public;

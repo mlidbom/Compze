@@ -25,9 +25,9 @@ public class TestingTimeSourceAdapter
    IUtcTimeTimeSource FrozenUtc(string time) => new ConstantTimeSource(DateTime.Parse(time, CultureInfo.InvariantCulture).ToUniversalTime());
 
 
-   public TimeSourceOverride FrozenAtUtcNow() => new TimeSourceOverride(FrozenUtcNow());
-   public TimeSourceOverride FrozenAtUtc(DateTime time) => new TimeSourceOverride(FrozenUtc(time));
-   public TimeSourceOverride FrozenAtUtc(string time) => new TimeSourceOverride(FrozenUtc(time));
+   public TimeSourceOverride FrozenAtUtcNow() => new(FrozenUtcNow());
+   public TimeSourceOverride FrozenAtUtc(DateTime time) => new(FrozenUtc(time));
+   public TimeSourceOverride FrozenAtUtc(string time) => new(FrozenUtc(time));
 
    class ConstantTimeSource(DateTime time) : IUtcTimeTimeSource
    {

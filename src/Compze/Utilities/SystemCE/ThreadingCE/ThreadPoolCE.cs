@@ -11,9 +11,10 @@ static class ThreadPoolCE
    {
       for(var tries = 1; Idle <= threadCount && tries < 5; tries++)
       {
-         var waitForAllThreadsToStart = new CountdownEvent(threadCount);
+         using var waitForAllThreadsToStart = new CountdownEvent(threadCount);
          Task.WaitAll(Enumerable.Range(1, threadCount).Select(_ => TaskCE.RunOnDedicatedThread(() =>
          {
+            // ReSharper disable AccessToDisposedClosure
             waitForAllThreadsToStart.Signal(1);
             waitForAllThreadsToStart.Wait();
          })).ToArray());

@@ -33,7 +33,7 @@ class AspNetInboxTransportServer : IInboxTransportServer
       _serviceLocator = serviceLocator;
    }
 
-   public Uri Address => new Uri(_webApplication!.Urls.First());
+   public Uri Address => new(_webApplication!.Urls.First());
 
    public async Task StartAsync() => _webApplication = await StartServerAsync().caf();
 

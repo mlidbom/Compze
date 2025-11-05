@@ -16,7 +16,7 @@ public partial class AccountResource : TaggregateViewModel<AccountResource>
       Tommands = tommands;
    }
 
-   public override AccountId Id => new AccountId(base.Id.Value);
+   public override AccountId Id => new(base.Id.Value);
 
    //Todo: this conversion smells
    internal AccountResource(IAccountResourceData account) : base(account.Id)

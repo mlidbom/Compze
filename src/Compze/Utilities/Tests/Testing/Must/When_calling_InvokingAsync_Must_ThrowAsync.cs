@@ -12,7 +12,7 @@ public class When_calling_InvokingAsync_Must_ThrowAsync : UniversalTestBase
 {
    public class given_an_async_action_that_throws_the_expected_exception : When_calling_InvokingAsync_Must_ThrowAsync
    {
-      readonly InvalidOperationException _actual = new InvalidOperationException("test message");
+      readonly InvalidOperationException _actual = new("test message");
 
       [XF] public async Task and_allows_asserting_on_the_exception()
       {
@@ -159,7 +159,7 @@ public class When_calling_InvokingAsync_Must_ThrowAsync : UniversalTestBase
 
    public class given_an_async_action_that_completes_synchronously : When_calling_InvokingAsync_Must_ThrowAsync
    {
-      readonly InvalidOperationException _actual = new InvalidOperationException("sync exception");
+      readonly InvalidOperationException _actual = new("sync exception");
 
       [XF] public async Task ThrowAsync_catches_synchronously_thrown_exceptions()
       {

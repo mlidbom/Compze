@@ -11,7 +11,7 @@ public class RegisterAccountScenario(IEndpoint clientEndpoint, string? email = n
 {
    readonly IEndpoint _clientEndpoint = clientEndpoint;
 
-   public AccountId AccountId = new AccountId();
+   public AccountId AccountId = new();
    public string Email = email ?? TestData.Emails.CreateUnusedEmail();
    public string Password = password;
 

@@ -59,7 +59,7 @@ static class AccountStatistics
 
    class StatisticsSingletonInitializer
    {
-      readonly Lock _lock = new Lock();
+      readonly Lock _lock = new();
       bool _isInitialized;
       readonly DocumentDbApi _documentDbApi = new();
       public void EnsureInitialized(IInProcessTypermediaNavigator navigator)

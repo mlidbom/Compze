@@ -12,7 +12,7 @@ namespace AccountManagement;
 
 static class InternalApi
 {
-   static TeventStoreApi TeventStore => new TeventStoreApi();
+   static TeventStoreApi TeventStore => new();
    internal static Tuery Tueries => new();
    internal static Tommand Tommands => new();
    internal static AccountQueryModel.Api AccountQueryModel => new();
