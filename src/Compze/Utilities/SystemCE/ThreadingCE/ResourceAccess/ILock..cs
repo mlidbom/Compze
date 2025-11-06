@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
@@ -13,6 +12,9 @@ public partial interface ILock
 
    IDisposable TakeReadLock(TimeSpan timeout);
    IDisposable TakeUpdateLock(TimeSpan timeout);
+
+   IDisposable TakeUpdateLockWhen(TimeSpan timeout, Func<bool> condition);
+   IDisposable TakeReadLockWhen(TimeSpan timeout, Func<bool> condition);
 
    IDisposable? TryTakeUpdateLockWhen(TimeSpan timeout, Func<bool> condition);
    IDisposable? TryTakeReadLockWhen(TimeSpan timeout, Func<bool> condition);

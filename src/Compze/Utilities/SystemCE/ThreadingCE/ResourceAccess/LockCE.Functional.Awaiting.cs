@@ -11,9 +11,10 @@ public partial class LockCE
       Update = 1
    }
 
-   internal IDisposable EnterUpdateLockWhen(Func<bool> condition) => EnterUpdateLockWhen(Timeout, condition);
+   internal IDisposable TakeUpdateLockWhen(Func<bool> condition) => TakeUpdateLockWhen(Timeout, condition);
 
-   public IDisposable EnterUpdateLockWhen(TimeSpan timeout, Func<bool> condition) => TakeLockWhen(timeout, condition, LockType.Update);
+   public IDisposable TakeUpdateLockWhen(TimeSpan timeout, Func<bool> condition) => TakeLockWhen(timeout, condition, LockType.Update);
+   public IDisposable TakeReadLockWhen(TimeSpan timeout, Func<bool> condition) => TakeLockWhen(timeout, condition, LockType.Read);
 
    internal unit Await(Func<bool> condition) => Await(Timeout, condition);
 

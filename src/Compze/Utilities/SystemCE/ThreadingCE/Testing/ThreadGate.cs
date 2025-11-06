@@ -59,7 +59,7 @@ public class ThreadGate : IThreadGate
    {
       try
       {
-         using(_monitor.EnterUpdateLockWhen(timeout, condition))
+         using(_monitor.TakeUpdateLockWhen(timeout, condition))
          {
             action();
          }
@@ -96,7 +96,7 @@ public class ThreadGate : IThreadGate
          _queuedThreads.AddLast(currentThread);
       });
 
-      using(_monitor.EnterUpdateLockWhen(() => IsOpen))
+      using(_monitor.TakeUpdateLockWhen(() => IsOpen))
       {
          if(_lockOnNextPass)
          {
