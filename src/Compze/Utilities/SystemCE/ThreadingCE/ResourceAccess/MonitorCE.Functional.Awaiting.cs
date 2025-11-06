@@ -45,7 +45,7 @@ public partial class MonitorCE
             return null;
          }
 
-         Monitor.Wait(_lockObject, timeRemaining);
+         Wait(timeRemaining);
       }
 
       return lockType switch
@@ -55,4 +55,6 @@ public partial class MonitorCE
          _               => throw new ArgumentOutOfRangeException(nameof(lockType), lockType, message: null)
       };
    }
+
+   void Wait(TimeSpan timeout) => Monitor.Wait(_lockObject, timeout);
 }
