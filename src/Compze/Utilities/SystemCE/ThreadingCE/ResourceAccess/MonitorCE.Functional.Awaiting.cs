@@ -27,29 +27,6 @@ public partial class MonitorCE
       return readLock != null;
    }
 
-   IDisposable TakeLockWhen(TimeSpan timeout, Func<bool> condition, LockType lockType) => TryTakeLockWhen(timeout, condition, lockType) ?? throw new AwaitingConditionTimeoutException();
-
-   IDisposable? TryTakeLockWhen(TimeSpan timeout, Func<bool> condition, LockType lockType)
-   {
-      var startTime = DateTime.UtcNow;
-      if(TryTakeLock(timeout, lockType) is not {} takenLock)
-         return null;
-
-      while(!condition())
-      {
-         var elapsedTime = DateTime.UtcNow - startTime;
-         var timeRemaining = timeout - elapsedTime;
-         if(timeRemaining <= TimeSpan.Zero)
-         {
-            takenLock.Dispose();
-            return null;
-         }
-
-         ReleaseLockAndReacquireItOnPulseOrTimeout(timeRemaining);
-      }
-
-      return LockFor(lockType);
-   }
 
    IDisposable LockFor(LockType lockType)
    {

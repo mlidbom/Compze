@@ -22,33 +22,14 @@ public partial class MonitorCE
    IReadOnlyList<EnterLockTimeoutException> _timeOutExceptionsOnOtherThreads = new List<EnterLockTimeoutException>();
    internal static Action? OnTimeOut;
 
-   IDisposable TakeLock(LockType lockType) => TakeLock(Timeout, lockType);
-
-   IDisposable TakeLock(TimeSpan timeout, LockType lockType) => TryTakeLock(timeout, lockType) ?? throw RegisterTimeoutException();
 
    public void SetTimeToWaitForStackTrace(TimeSpan timeToWaitForStackTrace) => _stackTraceFetchTimeout = timeToWaitForStackTrace;
+
 
    void ReleaseLock()
    {
       UpdateAnyRegisteredTimeoutExceptions();
       Monitor.Exit(_lockObject);
-   }
-
-   IDisposable? TryTakeLock(TimeSpan timeout, LockType lockType)
-   {
-      if(Monitor.TryEnter(_lockObject)) return LockFor(lockType); //This will never block and calling it first improves performance quite a bit.
-
-      var lockTaken = false;
-      try
-      {
-         Monitor.TryEnter(_lockObject, timeout, ref lockTaken);
-         return lockTaken ? LockFor(lockType) : null;
-      }
-      catch(Exception) //It is rare, but apparently possible, for TryEnter to throw an exception after the lock is taken. So we need to catch it and call Monitor.Exit if that happens to avoid leaking locks.
-      {
-         if(lockTaken) Monitor.Exit(_lockObject);;
-         throw;
-      }
    }
 
    Exception RegisterTimeoutException()
