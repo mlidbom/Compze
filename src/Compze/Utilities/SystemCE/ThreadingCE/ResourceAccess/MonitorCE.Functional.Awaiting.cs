@@ -45,16 +45,14 @@ public partial class MonitorCE
             return null;
          }
 
-         Wait(timeRemaining);
+         Monitor.Wait(_lockObject, timeRemaining);
       }
 
       return lockType switch
       {
          LockType.Read   => _readLock,
          LockType.Update => _updateLock,
-         _               => throw new ArgumentOutOfRangeException(nameof(lockType), lockType, null)
+         _               => throw new ArgumentOutOfRangeException(nameof(lockType), lockType, message: null)
       };
    }
-
-   void Wait(TimeSpan timeout) => Monitor.Wait(_lockObject, timeout);
 }
