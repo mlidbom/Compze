@@ -14,7 +14,7 @@ public partial class LockCE
    readonly IDisposable _updateLock;
 
 #if NCRUNCH
-        static readonly TimeSpan DefaultTimeout = TimeSpan.FromSeconds(45); //Tests timeout at 60 seconds. We want locks to timeout faster so that the blocking stack traces turn up in the test output so we can diagnose the deadlocks.
+        static readonly TimeSpan DefaultTimeout = 45.Seconds(); //Tests timeout at 60 seconds. We want locks to timeout faster so that the blocking stack traces turn up in the test output so we can diagnose the deadlocks.
 #else
    static readonly TimeSpan DefaultTimeout = 2.Minutes(); //MsSql default query timeout is 30 seconds. Default .Net transaction timeout is 60. If we reach 2 minutes it is all but guaranteed that we have an in-memory deadlock.
 #endif
