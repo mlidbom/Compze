@@ -46,7 +46,7 @@ public partial class MonitorCE
       }
       catch(Exception) //It is rare, but apparently possible, for TryEnter to throw an exception after the lock is taken. So we need to catch it and call Monitor.Exit if that happens to avoid leaking locks.
       {
-         if(lockTaken) Exit();
+         if(lockTaken) Monitor.Exit(_lockObject);;
          throw;
       }
    }
