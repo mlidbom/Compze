@@ -11,7 +11,7 @@ namespace Compze.Tests.Unit.Internals.SystemCE.ThreadingCE;
 
 public class MonitorClassApiExploration
 {
-   [XF] public void Wait_returns_after_timeout_even_without_pulse_but_when_it_does_it_returns_false()
+   [XF] public void Wait_returns_after_timeout_even_without_pulse()
    {
       var guarded = new object();
 

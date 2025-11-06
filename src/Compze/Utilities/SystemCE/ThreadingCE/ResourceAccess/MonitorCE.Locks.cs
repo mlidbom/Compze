@@ -20,7 +20,7 @@ public partial class MonitorCE
       public void Dispose()
       {
          Monitor.PulseAll(_monitor._lockObject); //All threads blocked on Monitor.Wait for our _lockObject will now try and reacquire the lock
-         _monitor.Exit();
+         _monitor.ReleaseLock();
       }
    }
 
@@ -28,6 +28,6 @@ public partial class MonitorCE
    {
       readonly MonitorCE _monitor;
       internal ReadLock(MonitorCE monitor) => _monitor = monitor;
-      public void Dispose() => _monitor.Exit();
+      public void Dispose() => _monitor.ReleaseLock();
    }
 }

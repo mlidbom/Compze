@@ -28,7 +28,7 @@ public partial class MonitorCE
 
    public void SetTimeToWaitForStackTrace(TimeSpan timeToWaitForStackTrace) => _stackTraceFetchTimeout = timeToWaitForStackTrace;
 
-   void Exit()
+   void ReleaseLock()
    {
       UpdateAnyRegisteredTimeoutExceptions();
       Monitor.Exit(_lockObject);

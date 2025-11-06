@@ -45,7 +45,7 @@ public partial class MonitorCE
             return null;
          }
 
-         Wait(timeRemaining);
+         ReleaseLockAndReacquireItOnPulseOrTimeout(timeRemaining);
       }
 
       return LockFor(lockType);
@@ -61,5 +61,5 @@ public partial class MonitorCE
       };
    }
 
-   void Wait(TimeSpan timeout) => Monitor.Wait(_lockObject, timeout);
+   void ReleaseLockAndReacquireItOnPulseOrTimeout(TimeSpan timeout) => Monitor.Wait(_lockObject, timeout);
 }
