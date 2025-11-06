@@ -32,6 +32,14 @@ public interface IThreadShared
 
       public TResult Read<TResult>(Func<TShared, TResult> read, TimeSpan? timeout = null) => _lock.Read(() => read(_shared), timeout);
 
+      public bool TryRead<TResult>(TryReadDelegate<TShared, TResult> read, out TResult result, TimeSpan? timeout = null)
+      {
+         using(_lock.TakeReadLock(timeout))
+         {
+            return read(_shared, out result);
+         }
+      }
+
       public TResult ReadWhen<TResult>(Func<TShared, TResult> read, Func<TShared, bool> condition, TimeSpan? timeout = null) => _lock.ReadWhen(() => read(_shared), () => condition(_shared), timeout);
 
       public TResult Update<TResult>(Func<TShared, TResult> update, TimeSpan? timeout = null) => _lock.Update(() => update(_shared), timeout);
@@ -40,9 +48,14 @@ public interface IThreadShared
    }
 }
 
+public delegate bool TryReadDelegate<in TShared, TOut>(TShared shared, out TOut result);
+
 public interface IThreadShared<out TShared>
 {
    //core
+
+   bool TryRead<TResult>(TryReadDelegate<TShared, TResult> read, out TResult result, TimeSpan? timeout = null);
+
    TResult Read<TResult>(Func<TShared, TResult> read, TimeSpan? timeout = null);
    TResult ReadWhen<TResult>(Func<TShared, TResult> read, Func<TShared, bool> condition, TimeSpan? timeout = null);
    TResult Update<TResult>(Func<TShared, TResult> update, TimeSpan? timeout = null);
