@@ -7,7 +7,7 @@ public partial class LockCE
    public static LockCE WithDefaultTimeout() => new(DefaultTimeout);
    public static LockCE WithTimeout(TimeSpan timeout) => new(timeout);
 
-   readonly MonitorCE _coreLock = new();
+   readonly MonitorCE _monitor = new();
 
    //By creating the locks only once in the constructor usages become zero-allocation operations. By always referencing them by the concrete type inlining remains possible.
    readonly IDisposable _readLock;

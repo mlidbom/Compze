@@ -18,7 +18,7 @@ public partial class LockCE : ILock
 
    IDisposable TakeLockWhen(TimeSpan timeout, Func<bool> condition, LockType lockType) => TryTakeLockWhen(timeout, condition, lockType) ?? throw new AwaitingConditionTimeoutException();
 
-   IDisposable? TryTakeLock(TimeSpan timeout, LockType lockType) => _coreLock.TryTakeLock(timeout) ? LockFor(lockType) : null;
+   IDisposable? TryTakeLock(TimeSpan timeout, LockType lockType) => _monitor.TryTakeLock(timeout) ? LockFor(lockType) : null;
 
    IDisposable? TryTakeLockWhen(TimeSpan timeout, Func<bool> condition, LockType lockType)
    {
@@ -36,7 +36,7 @@ public partial class LockCE : ILock
             return null;
          }
 
-         _coreLock.ReleaseLockAndReacquireItOnPulseOrTimeout(timeRemaining);
+         _monitor.ReleaseLockAndReacquireItOnPulseOrTimeout(timeRemaining);
       }
 
       return LockFor(lockType);

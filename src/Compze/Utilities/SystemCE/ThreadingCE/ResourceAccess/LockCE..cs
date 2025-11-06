@@ -29,7 +29,7 @@ public partial class LockCE
    void ReleaseLock()
    {
       UpdateAnyRegisteredTimeoutExceptions();
-      _coreLock.ReleaseLock();
+      _monitor.ReleaseLock();
    }
 
    Exception RegisterTimeoutException()
