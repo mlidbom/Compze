@@ -23,7 +23,7 @@ partial class TessageTypeInspector
       new WrapperTeventInterfaceMustBeGenericAndDeclareTypeParameterAsAsOutParameter()
    ];
 
-   static readonly LockCE Monitor = LockCE.WithDefaultTimeout();
+   static readonly ILock Monitor = LockCE.WithDefaultTimeout();
 
    static IReadOnlySet<Type> _successfullyInspectedSubscribableTypes = new HashSet<Type>();
    internal static void AssertValidForSubscription(Type type)

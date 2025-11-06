@@ -14,11 +14,11 @@ public interface IThreadShared
 
    class MonitorCEThreadShared<TShared> : IThreadShared<TShared>
    {
-      readonly LockCE _monitor;
+      readonly ILock _monitor;
 
       readonly TShared _shared;
 
-      internal MonitorCEThreadShared(TShared shared, LockCE monitor)
+      internal MonitorCEThreadShared(TShared shared, ILock monitor)
       {
          _shared = shared;
          _monitor = monitor;

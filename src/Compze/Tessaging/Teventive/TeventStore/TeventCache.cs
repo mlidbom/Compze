@@ -37,7 +37,7 @@ class TeventCache : IDisposable, ITeventCache
    class TransactionalOverlay(TeventCache teventCache)
    {
       readonly TeventCache _parent = teventCache;
-      readonly LockCE _monitor = LockCE.WithDefaultTimeout();
+      readonly ILock _monitor = LockCE.WithDefaultTimeout();
 
       readonly IThreadShared<Dictionary<string, Dictionary<TaggregateId, Entry>>> _overlays = IThreadShared.WithDefaultTimeout<Dictionary<string, Dictionary<TaggregateId, Entry>>>();
 
