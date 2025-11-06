@@ -30,7 +30,7 @@ public partial class MonitorCE
 
    void Exit()
    {
-      UpdateAnyRegisteredTimeoutExceptions(); //If we are in a reentrant lock calling this is actually still fine, our stack trace will contain the original lock taking stack trace...
+      UpdateAnyRegisteredTimeoutExceptions();
       Monitor.Exit(_lockObject);
    }
 
