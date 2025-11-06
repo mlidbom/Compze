@@ -5,10 +5,6 @@ namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 ///<summary>The monitor class exposes a less than inviting and easy to use API in my humble opinion. This class attempts to adapt it to something that is reasonably understandable and less brittle.</summary>
 public partial class LockCE
 {
-   public IDisposable TakeReadLock() => TakeReadLock(Timeout);
-
-   public IDisposable TakeUpdateLock() => TakeUpdateLock(Timeout);
-
    sealed class UpdateLock : IDisposable
    {
       readonly LockCE _monitor;
