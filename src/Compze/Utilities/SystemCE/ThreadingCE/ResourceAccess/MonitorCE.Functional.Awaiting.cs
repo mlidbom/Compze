@@ -21,14 +21,8 @@ public partial class MonitorCE
 
    internal bool TryAwait(TimeSpan conditionTimeout, Func<bool> condition)
    {
-      if(TryEnterWhen(conditionTimeout, condition))
-      {
-         Exit();
-         return true;
-      } else
-      {
-         return false;
-      }
+      using var readLock = TryTakeReadLockWhen(conditionTimeout, condition);
+      return readLock != null;
    }
 
    void EnterWhen(TimeSpan timeout, Func<bool> condition) => Throw<AwaitingConditionTimeoutException>.If(!TryEnterWhen(timeout, condition));

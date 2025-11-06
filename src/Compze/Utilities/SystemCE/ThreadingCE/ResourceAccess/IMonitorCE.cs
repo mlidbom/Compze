@@ -11,9 +11,18 @@ interface IMonitorCE
    //the core, the functionality implemented by the actual MonitorCE implementation, upon which everything else is convenience extensions.
    TimeSpan Timeout { get; }
 
-   public bool TryTakeUpdateLockWhen(TimeSpan timeout, Func<bool> condition, [NotNullWhen(true)] out IDisposable? takenLock);
-   public bool TryTakeReadLockWhen(TimeSpan timeout, Func<bool> condition, [NotNullWhen(true)] out IDisposable? takenLock);
+   IDisposable? TryTakeUpdateLockWhen(TimeSpan timeout, Func<bool> condition);
+   IDisposable? TryTakeReadLockWhen(TimeSpan timeout, Func<bool> condition);
 
+   bool TryTakeUpdateLockWhen(TimeSpan timeout, Func<bool> condition, [NotNullWhen(true)]out IDisposable? updateLock)
+   {
+      updateLock = TryTakeUpdateLockWhen(timeout, condition);
+      return updateLock != null;
+   }
 
-
+   bool TryTakeReadLockWhen(TimeSpan timeout, Func<bool> condition, [NotNullWhen(true)] out IDisposable? readLock)
+   {
+      readLock = TryTakeReadLockWhen(timeout, condition);
+      return readLock != null;
+   }
 }
