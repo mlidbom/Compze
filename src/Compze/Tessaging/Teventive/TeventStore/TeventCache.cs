@@ -49,7 +49,7 @@ class TeventCache : IDisposable, ITeventCache
             var transactionId = Transaction.Current.TransactionInformation.LocalIdentifier;
             Dictionary<TaggregateId, Entry>? overlay = null;
 
-            if(_overlays.Update(it => it.TryGetValue(transactionId, out overlay)))
+            if(_overlays.Read(it => it.TryGetValue(transactionId, out overlay)))
             {
                return Assert.Result.NotNull(overlay).then(overlay);
             }
