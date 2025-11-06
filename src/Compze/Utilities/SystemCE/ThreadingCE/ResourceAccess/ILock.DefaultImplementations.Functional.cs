@@ -10,25 +10,26 @@ public partial interface ILock
 
    TReturn Read<TReturn>(Func<TReturn> func, TimeSpan? timeout = null)
    {
-      using(TakeReadLock(timeout ?? Timeout)) return func();
+      using(TakeReadLock(timeout)) return func();
    }
 
-   unit Update(Action action) => Update(action.AsFunc());
+   unit Update(Action action, TimeSpan? timeout = null) => Update(action.AsFunc(), timeout);
 
-   T Update<T>(Func<T> func)
+   T Update<T>(Func<T> func, TimeSpan? timeout = null)
    {
-      using(TakeUpdateLock()) return func();
+      using(TakeUpdateLock(timeout)) return func();
    }
 
+   unit ReadWhen(Action action, Func<bool> condition, TimeSpan? timeout = null) => ReadWhen(action.AsFunc(), condition, timeout);
 
-   unit ReadWhen(Action action, Func<bool> condition) => ReadWhen(action.AsFunc(), condition);
-   TReturn ReadWhen<TReturn>(Func<TReturn> func, Func<bool> condition)
+   TReturn ReadWhen<TReturn>(Func<TReturn> func, Func<bool> condition, TimeSpan? timeout = null)
    {
-      using(TakeReadLockWhen(condition)) return func();
+      using(TakeReadLockWhen(condition, timeout)) return func();
    }
 
-   unit UpdateWhen(Action action, Func<bool> condition) => ReadWhen(action.AsFunc(), condition);
-   TReturn UpdateWhen<TReturn>(Func<TReturn> func, Func<bool> condition)
+   unit UpdateWhen(Action action, Func<bool> condition, TimeSpan? timeout = null) => ReadWhen(action.AsFunc(), condition, timeout);
+
+   TReturn UpdateWhen<TReturn>(Func<TReturn> func, Func<bool> condition, TimeSpan? timeout = null)
    {
       using(TakeUpdateLockWhen(condition)) return func();
    }
