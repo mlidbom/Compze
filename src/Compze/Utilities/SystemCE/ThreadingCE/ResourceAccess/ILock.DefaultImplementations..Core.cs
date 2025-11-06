@@ -5,10 +5,6 @@ namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
 public partial interface ILock
 {
-   public IDisposable TakeReadLock() => TakeReadLock(Timeout);
-
-   public IDisposable TakeUpdateLock() => TakeUpdateLock(Timeout);
-
    bool TryTakeUpdateLockWhen(TimeSpan timeout, Func<bool> condition, [NotNullWhen(true)]out IDisposable? updateLock)
    {
       updateLock = TryTakeUpdateLockWhen(condition, timeout);

@@ -11,14 +11,14 @@ class LockCE : ILock
 {
    public TimeSpan Timeout { get; }
 
-   public IDisposable TakeReadLock(TimeSpan timeout) => TakeLock(timeout, LockType.Read);
-   public IDisposable TakeUpdateLock(TimeSpan timeout) => TakeLock(timeout, LockType.Update);
+   public IDisposable TakeReadLock(TimeSpan? timeout = null) => TakeLock(LockType.Read, timeout ?? Timeout);
+   public IDisposable TakeUpdateLock(TimeSpan? timeout = null) => TakeLock(LockType.Update, timeout ?? Timeout);
 
-   public IDisposable TakeReadLockWhen(Func<bool> condition, TimeSpan timeout) => TakeLockWhen(timeout, condition, LockType.Read);
-   public IDisposable TakeUpdateLockWhen(Func<bool> condition, TimeSpan timeout) => TakeLockWhen(timeout, condition, LockType.Update);
+   public IDisposable TakeReadLockWhen(Func<bool> condition, TimeSpan? timeout = null) => TakeLockWhen(condition, LockType.Read, timeout ?? Timeout);
+   public IDisposable TakeUpdateLockWhen(Func<bool> condition, TimeSpan? timeout = null) => TakeLockWhen(condition, LockType.Update, timeout ?? Timeout);
 
-   public IDisposable? TryTakeReadLockWhen(Func<bool> condition, TimeSpan timeout) => TryTakeLockWhen(timeout, condition, LockType.Read);
-   public IDisposable? TryTakeUpdateLockWhen(Func<bool> condition, TimeSpan timeout) => TryTakeLockWhen(timeout, condition, LockType.Update);
+   public IDisposable? TryTakeReadLockWhen(Func<bool> condition, TimeSpan? timeout = null) => TryTakeLockWhen(condition, LockType.Read, timeout ?? Timeout);
+   public IDisposable? TryTakeUpdateLockWhen(Func<bool> condition, TimeSpan? timeout = null) => TryTakeLockWhen(condition, LockType.Update, timeout ?? Timeout);
 
    public void SetTimeToWaitForStackTrace(TimeSpan timeToWaitForStackTrace) => _stackTraceFetchTimeout = timeToWaitForStackTrace;
 
@@ -51,16 +51,16 @@ class LockCE : ILock
       };
    }
 
-   IDisposable TakeLock(TimeSpan timeout, LockType lockType) => TryTakeLock(timeout, lockType) ?? throw RegisterTimeoutException();
+   IDisposable TakeLock(LockType lockType, TimeSpan timeout) => TryTakeLock(lockType, timeout) ?? throw RegisterTimeoutException();
 
-   IDisposable TakeLockWhen(TimeSpan timeout, Func<bool> condition, LockType lockType) => TryTakeLockWhen(timeout, condition, lockType) ?? throw new AwaitingConditionTimeoutException();
+   IDisposable TakeLockWhen(Func<bool> condition, LockType lockType, TimeSpan timeout) => TryTakeLockWhen(condition, lockType, timeout) ?? throw new AwaitingConditionTimeoutException();
 
-   IDisposable? TryTakeLock(TimeSpan timeout, LockType lockType) => _monitor.TryTakeLock(timeout) ? LockFor(lockType) : null;
+   IDisposable? TryTakeLock(LockType lockType, TimeSpan timeout) => _monitor.TryTakeLock(timeout) ? LockFor(lockType) : null;
 
-   IDisposable? TryTakeLockWhen(TimeSpan timeout, Func<bool> condition, LockType lockType)
+   IDisposable? TryTakeLockWhen(Func<bool> condition, LockType lockType, TimeSpan timeout)
    {
       var startTime = DateTime.UtcNow;
-      if(TryTakeLock(timeout, lockType) is not {} takenLock)
+      if(TryTakeLock(lockType, timeout) is not {} takenLock)
          return null;
 
       while(!condition())

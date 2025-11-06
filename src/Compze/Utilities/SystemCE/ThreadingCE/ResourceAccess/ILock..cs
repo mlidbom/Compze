@@ -16,14 +16,14 @@ public partial interface ILock
 
    TimeSpan Timeout { get; }
 
-   IDisposable TakeReadLock(TimeSpan timeout);
-   IDisposable TakeUpdateLock(TimeSpan timeout);
+   IDisposable TakeReadLock(TimeSpan? timeout = null);
+   IDisposable TakeUpdateLock(TimeSpan? timeout = null);
 
-   IDisposable TakeUpdateLockWhen(Func<bool> condition, TimeSpan timeout);
-   IDisposable TakeReadLockWhen(Func<bool> condition, TimeSpan timeout);
+   IDisposable TakeUpdateLockWhen(Func<bool> condition, TimeSpan? timeout = null);
+   IDisposable TakeReadLockWhen(Func<bool> condition, TimeSpan? timeout = null);
 
-   IDisposable? TryTakeUpdateLockWhen(Func<bool> condition, TimeSpan timeout);
-   IDisposable? TryTakeReadLockWhen(Func<bool> condition, TimeSpan timeout);
+   IDisposable? TryTakeUpdateLockWhen(Func<bool> condition, TimeSpan? timeout = null);
+   IDisposable? TryTakeReadLockWhen(Func<bool> condition, TimeSpan? timeout = null);
 
 
    //review: do we want this exposed?

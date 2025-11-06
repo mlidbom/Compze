@@ -6,17 +6,30 @@ namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
 public partial interface ILock
 {
-   public unit Read(Action action) => Read(action.AsFunc());
+   unit Read(Action action, TimeSpan? timeout = null) => Read(action.AsFunc(), timeout);
 
-   public TReturn Read<TReturn>(Func<TReturn> func)
+   TReturn Read<TReturn>(Func<TReturn> func, TimeSpan? timeout = null)
    {
-      using(TakeReadLock()) return func();
+      using(TakeReadLock(timeout ?? Timeout)) return func();
    }
 
-   public unit Update(Action action) => Update(action.AsFunc());
+   unit Update(Action action) => Update(action.AsFunc());
 
-   public T Update<T>(Func<T> func)
+   T Update<T>(Func<T> func)
    {
       using(TakeUpdateLock()) return func();
+   }
+
+
+   unit ReadWhen(Action action, Func<bool> condition) => ReadWhen(action.AsFunc(), condition);
+   TReturn ReadWhen<TReturn>(Func<TReturn> func, Func<bool> condition)
+   {
+      using(TakeReadLockWhen(condition)) return func();
+   }
+
+   unit UpdateWhen(Action action, Func<bool> condition) => ReadWhen(action.AsFunc(), condition);
+   TReturn UpdateWhen<TReturn>(Func<TReturn> func, Func<bool> condition)
+   {
+      using(TakeUpdateLockWhen(condition)) return func();
    }
 }
