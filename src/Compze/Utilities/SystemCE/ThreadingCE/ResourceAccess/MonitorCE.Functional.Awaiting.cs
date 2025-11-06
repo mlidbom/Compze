@@ -1,5 +1,4 @@
 using System;
-using System.Threading;
 using Compze.Utilities.Functional;
 
 namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
@@ -37,6 +36,4 @@ public partial class MonitorCE
          _               => throw new ArgumentOutOfRangeException(nameof(lockType), lockType, message: null)
       };
    }
-
-   void ReleaseLockAndReacquireItOnPulseOrTimeout(TimeSpan timeout) => Monitor.Wait(_lockObject, timeout);
 }

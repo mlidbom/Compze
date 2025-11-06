@@ -29,7 +29,7 @@ public partial class MonitorCE
    void ReleaseLock()
    {
       UpdateAnyRegisteredTimeoutExceptions();
-      Monitor.Exit(_lockObject);
+      _coreLock.ReleaseLock();
    }
 
    Exception RegisterTimeoutException()

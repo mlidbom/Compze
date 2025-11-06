@@ -1,5 +1,4 @@
 using System;
-using System.Threading;
 
 namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
@@ -7,10 +6,8 @@ namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 public partial class MonitorCE
 {
    internal IDisposable TakeReadLock() => TakeReadLock(Timeout);
-   internal IDisposable TakeReadLock(TimeSpan timeout) => TakeLock(timeout, LockType.Read);
 
    public IDisposable TakeUpdateLock() => TakeUpdateLock(Timeout);
-   public IDisposable TakeUpdateLock(TimeSpan timeout) => TakeLock(timeout, LockType.Update);
 
    sealed class UpdateLock : IDisposable
    {
@@ -19,7 +16,7 @@ public partial class MonitorCE
 
       public void Dispose()
       {
-         Monitor.PulseAll(_monitor._lockObject); //All threads blocked on Monitor.Wait for our _lockObject will now try and reacquire the lock
+         _monitor._coreLock.NotifyAllWaitingThreadsAboutUpdates(); //All threads blocked on Monitor.Wait for our _lockObject will now try and reacquire the lock
          _monitor.ReleaseLock();
       }
    }
