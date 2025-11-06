@@ -32,7 +32,7 @@ public partial class MonitorCE
    IDisposable? TryTakeLockWhen(TimeSpan timeout, Func<bool> condition, LockType lockType)
    {
       var startTime = DateTime.UtcNow;
-      if(TryTakeLock(timeout, lockType) == null)
+      if(TryTakeLock(timeout, lockType) is not {} takenLock)
          return null;
 
       while(!condition())
@@ -41,7 +41,7 @@ public partial class MonitorCE
          var timeRemaining = timeout - elapsedTime;
          if(timeRemaining <= TimeSpan.Zero)
          {
-            Exit();
+            takenLock.Dispose();
             return null;
          }
 
