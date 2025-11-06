@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
@@ -37,7 +36,7 @@ class EntitiesByIdAndTypeCache
    internal bool TryGet<T>(object id, out T value) =>
       _data.TryRead((Dictionary<IdAndType, object> data, out T value) =>
                     {
-                       if(TryGet(IdAndType.Create(id, typeof(T)), out var found))
+                       if(data.TryGetValue(IdAndType.Create(id, typeof(T)), out var found))
                        {
                           value = (T)found;
                           return true;
@@ -54,9 +53,6 @@ class EntitiesByIdAndTypeCache
    }
 
    bool ContainsInternal(IdAndType key) => _data.Read(it => it.TryGetValue(key, out _));
-
-   bool TryGet(IdAndType key, [NotNullWhen(returnValue: true)] out object? value) =>
-      _data.TryRead((Dictionary<IdAndType, object> data, out object? value) => data.TryGetValue(key, out value), out value);
 
    readonly record struct IdAndType(string Id, Type DocumentType)
    {
