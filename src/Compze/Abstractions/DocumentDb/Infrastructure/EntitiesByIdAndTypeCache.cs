@@ -34,7 +34,7 @@ class EntitiesByIdAndTypeCache
    internal bool Contains(Type type, object id) => ContainsInternal(IdAndType.Create(id, type));
 
    internal bool TryGet<T>(object id, out T value) =>
-      _data.TryRead((Dictionary<IdAndType, object> data, out T value) =>
+      _data.ReadOut((Dictionary<IdAndType, object> data, out T value) =>
                     {
                        if(data.TryGetValue(IdAndType.Create(id, typeof(T)), out var found))
                        {
