@@ -6,10 +6,10 @@ namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
 public partial class MonitorCE
 {
-   internal UpdateLock EnterUpdateLockWhen(Func<bool> condition) =>
+   internal IDisposable EnterUpdateLockWhen(Func<bool> condition) =>
       EnterUpdateLockWhen(Timeout, condition);
 
-   internal UpdateLock EnterUpdateLockWhen(TimeSpan conditionTimeout, Func<bool> condition)
+   public IDisposable EnterUpdateLockWhen(TimeSpan conditionTimeout, Func<bool> condition)
    {
       EnterWhen(conditionTimeout, condition);
       return _updateLock;
