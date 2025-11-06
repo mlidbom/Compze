@@ -19,12 +19,11 @@ public partial interface IMonitorCE
    IDisposable TakeReadLock(TimeSpan? timeout = null);
    IDisposable TakeUpdateLock(TimeSpan? timeout = null);
 
-   IDisposable TakeUpdateLockWhen(Func<bool> condition, TimeSpan? timeout = null);
    IDisposable TakeReadLockWhen(Func<bool> condition, TimeSpan? timeout = null);
+   IDisposable TakeUpdateLockWhen(Func<bool> condition, TimeSpan? timeout = null);
 
-   IDisposable? TryTakeUpdateLockWhen(Func<bool> condition, TimeSpan? timeout = null);
    IDisposable? TryTakeReadLockWhen(Func<bool> condition, TimeSpan? timeout = null);
-
+   IDisposable? TryTakeUpdateLockWhen(Func<bool> condition, TimeSpan? timeout = null);
 
    //review: do we want this exposed?
    void SetTimeToWaitForStackTrace(TimeSpan timeToWaitForStackTrace);
