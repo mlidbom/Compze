@@ -49,7 +49,7 @@ interface IStrictlyManagedResource : IDisposable;
 sealed class StrictlyManagedResource<TManagedResource> : IStrictlyManagedResource where TManagedResource : class, IStrictlyManagedResource
 {
    // ReSharper disable once StaticMemberInGenericType
-   static readonly ILock StaticLock = ILock.WithDefaultTimeout();
+   static readonly IMonitorCE StaticMonitor = IMonitorCE.WithDefaultTimeout();
    readonly bool _collectStackTraces;
    // ReSharper disable once StaticMemberInGenericType
    public static bool CollectStackTracesByDefault = StrictlyManagedResources.CollectStackTracesByDefault;
@@ -99,7 +99,7 @@ sealed class StrictlyManagedResource<TManagedResource> : IStrictlyManagedResourc
                   if(!_collectStackTraces)
                   {
                      //Todo: Log metric here.
-                     using(StaticLock.TakeUpdateLock())
+                     using(StaticMonitor.TakeUpdateLock())
                      {
                         if(!CollectStackTracesByDefault)
                         {

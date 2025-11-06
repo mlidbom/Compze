@@ -6,7 +6,7 @@ using System.Threading;
 namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 #pragma warning disable CA1001 //By creating the locks only once in the constructor usages become zero-allocation operations. By always referencing them by the concrete type inlining remains possible. They are not normal disposables
 ///<summary>The monitor class exposes a rather obscure, brittle and easily misused API in my opinion. This class attempts to adapt it to something that is reasonably understandable and less brittle.</summary>
-class LockCE : ILock
+class MonitorCE : IMonitorCE
 #pragma warning restore CA1001
 {
    public TimeSpan Timeout { get; }
@@ -23,7 +23,7 @@ class LockCE : ILock
    public void SetTimeToWaitForStackTrace(TimeSpan timeToWaitForStackTrace) => _stackTraceFetchTimeout = timeToWaitForStackTrace;
 
 
-   readonly MonitorCE _monitor = new();
+   readonly ThinMonitorWrapper _monitor = new();
    readonly Lock _timeoutLock = new();
 
    readonly IDisposable _readLock;
@@ -33,7 +33,7 @@ class LockCE : ILock
 
    TimeSpan _stackTraceFetchTimeout;
 
-   internal LockCE(TimeSpan timeout)
+   internal MonitorCE(TimeSpan timeout)
    {
       Timeout = timeout;
       _readLock = new ReadLock(this);
@@ -117,8 +117,8 @@ class LockCE : ILock
 
    sealed class UpdateLock : IDisposable
    {
-      readonly LockCE _monitor;
-      internal UpdateLock(LockCE monitor) => _monitor = monitor;
+      readonly MonitorCE _monitor;
+      internal UpdateLock(MonitorCE monitor) => _monitor = monitor;
 
       public void Dispose()
       {
@@ -129,8 +129,8 @@ class LockCE : ILock
 
    sealed class ReadLock : IDisposable
    {
-      readonly LockCE _monitor;
-      internal ReadLock(LockCE monitor) => _monitor = monitor;
+      readonly MonitorCE _monitor;
+      internal ReadLock(MonitorCE monitor) => _monitor = monitor;
       public void Dispose() => _monitor.ReleaseLock();
    }
 

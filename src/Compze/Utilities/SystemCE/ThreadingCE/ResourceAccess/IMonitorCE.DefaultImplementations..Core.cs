@@ -3,7 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
-public partial interface ILock
+public partial interface IMonitorCE
 {
    bool TryTakeUpdateLockWhen(TimeSpan timeout, Func<bool> condition, [NotNullWhen(true)]out IDisposable? updateLock)
    {

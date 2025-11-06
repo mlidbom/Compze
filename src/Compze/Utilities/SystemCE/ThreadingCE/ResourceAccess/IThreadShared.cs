@@ -7,34 +7,34 @@ namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 public interface IThreadShared
 {
    public static IThreadShared<TShared> WithDefaultTimeout<TShared>() where TShared : new() =>
-      new LockCEThreadShared<TShared>(new TShared(), ILock.WithDefaultTimeout());
+      new LockCEThreadShared<TShared>(new TShared(), IMonitorCE.WithDefaultTimeout());
 
    public static IThreadShared<TShared> WithDefaultTimeout<TShared>(TShared shared) =>
-      new LockCEThreadShared<TShared>(shared, ILock.WithDefaultTimeout());
+      new LockCEThreadShared<TShared>(shared, IMonitorCE.WithDefaultTimeout());
 
    public static IThreadShared<TShared> WithTimeout<TShared>(TimeSpan timeout) where TShared : new() =>
-      new LockCEThreadShared<TShared>(new TShared(), ILock.WithTimeout(timeout));
+      new LockCEThreadShared<TShared>(new TShared(), IMonitorCE.WithTimeout(timeout));
 
    public static IThreadShared<TShared> WithTimeout<TShared>(TShared shared, TimeSpan timeout) =>
-      new LockCEThreadShared<TShared>(shared, ILock.WithTimeout(timeout));
+      new LockCEThreadShared<TShared>(shared, IMonitorCE.WithTimeout(timeout));
 
    class LockCEThreadShared<TShared> : IThreadShared<TShared>
    {
-      readonly ILock _lock;
+      readonly IMonitorCE _monitor;
 
       readonly TShared _shared;
 
-      internal LockCEThreadShared(TShared shared, ILock @lock)
+      internal LockCEThreadShared(TShared shared, IMonitorCE monitor)
       {
          _shared = shared;
-         _lock = @lock;
+         _monitor = monitor;
       }
 
-      public TResult Read<TResult>(Func<TShared, TResult> read, TimeSpan? timeout = null) => _lock.Read(() => read(_shared), timeout);
+      public TResult Read<TResult>(Func<TShared, TResult> read, TimeSpan? timeout = null) => _monitor.Read(() => read(_shared), timeout);
 
       public TReturn ReadOut<TReturn, TOut>(OutReadDelegate<TShared, TReturn, TOut> readOut, out TOut result, TimeSpan? timeout = null)
       {
-         using(_lock.TakeReadLock(timeout))
+         using(_monitor.TakeReadLock(timeout))
          {
             return readOut(_shared, out result);
          }
@@ -42,17 +42,17 @@ public interface IThreadShared
 
       public TReturn ReadOutWhen<TReturn, TOut>(OutReadDelegate<TShared, TReturn, TOut> readOut, Func<TShared, bool> condition, out TOut result, TimeSpan? timeout = null)
       {
-         using(_lock.TakeReadLockWhen(() => condition(_shared), timeout))
+         using(_monitor.TakeReadLockWhen(() => condition(_shared), timeout))
          {
             return readOut(_shared, out result);
          }
       }
 
-      public TResult ReadWhen<TResult>(Func<TShared, TResult> read, Func<TShared, bool> condition, TimeSpan? timeout = null) => _lock.ReadWhen(() => read(_shared), () => condition(_shared), timeout);
+      public TResult ReadWhen<TResult>(Func<TShared, TResult> read, Func<TShared, bool> condition, TimeSpan? timeout = null) => _monitor.ReadWhen(() => read(_shared), () => condition(_shared), timeout);
 
-      public TResult Update<TResult>(Func<TShared, TResult> update, TimeSpan? timeout = null) => _lock.Update(() => update(_shared), timeout);
+      public TResult Update<TResult>(Func<TShared, TResult> update, TimeSpan? timeout = null) => _monitor.Update(() => update(_shared), timeout);
 
-      public TResult UpdateWhen<TResult>(Func<TShared, TResult> update, Func<TShared, bool> condition, TimeSpan? timeout = null) => _lock.UpdateWhen(() => update(_shared), () => condition(_shared), timeout);
+      public TResult UpdateWhen<TResult>(Func<TShared, TResult> update, Func<TShared, bool> condition, TimeSpan? timeout = null) => _monitor.UpdateWhen(() => update(_shared), () => condition(_shared), timeout);
    }
 }
 

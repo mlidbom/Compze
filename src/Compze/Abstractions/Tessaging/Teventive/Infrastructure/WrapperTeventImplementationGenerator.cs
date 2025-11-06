@@ -23,13 +23,13 @@ static class WrapperTeventImplementationGenerator
 
    static string DescribeParameterList(IEnumerable<Type> parameterTypes) => parameterTypes.Select(parameterType => parameterType.FullNameNotNull()).Join(", ");
 
-   static readonly ILock Lock = ILock.WithDefaultTimeout();
+   static readonly IMonitorCE MonitorCE = IMonitorCE.WithDefaultTimeout();
 
    static class WrapperConstructorCache<TWrapperTevent, TWrappedTevent>
       where TWrapperTevent : IPublisherIdentifyingTevent<TWrappedTevent>
       where TWrappedTevent : ITevent
    {
-      static readonly Func<ITevent, IPublisherIdentifyingTevent<ITevent>> UntypedConstructor = Lock.Update(() => CreateConstructorFor(typeof(TWrappedTevent)));
+      static readonly Func<ITevent, IPublisherIdentifyingTevent<ITevent>> UntypedConstructor = MonitorCE.Update(() => CreateConstructorFor(typeof(TWrappedTevent)));
 
       internal static readonly Func<TWrappedTevent, IPublisherIdentifyingTevent<TWrappedTevent>> Constructor = tevent => (IPublisherIdentifyingTevent<TWrappedTevent>)UntypedConstructor(tevent);
    }
@@ -46,7 +46,7 @@ static class WrapperTeventImplementationGenerator
    // Note the eventually though! This is not a priority, but certainly something to keep in mind. If we can dig out just the inner tevent and wrap it like this, a listening endpoint need only know
    // the types for the inner tevent that it listens to, not the types in which it is wrapped. Just a heads-up so we don't remove this strange code when we implement taggregates more cleanly. This still has great potential...
    public static Func<ITevent, IPublisherIdentifyingTevent<ITevent>> ConstructorFor(Type wrappedTeventType) =>
-      Lock.DoubleCheckedLocking(
+      MonitorCE.DoubleCheckedLocking(
          unlockedTryGetValue: () => _wrapperConstructors.GetValueOrDefault(wrappedTeventType),
          lockedSetValue: () => OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _wrapperConstructors, wrappedTeventType, CreateConstructorFor(wrappedTeventType))
       );

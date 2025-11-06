@@ -9,7 +9,7 @@ namespace Compze.Utilities.DependencyInjection;
 
 class TypeIndex<TInheritor> where TInheritor : TypeIndex<TInheritor>
 {
-   static readonly ILock Lock = ILock.WithDefaultTimeout();
+   static readonly IMonitorCE MonitorCE = IMonitorCE.WithDefaultTimeout();
    internal static int ServiceCount { get; private set; }
    static IReadOnlyDictionary<Type, int> _map = new Dictionary<Type, int>();
 
@@ -20,7 +20,7 @@ class TypeIndex<TInheritor> where TInheritor : TypeIndex<TInheritor>
       if(_map.TryGetValue(type, out var value))
          return value;
 
-      using(Lock.TakeUpdateLock())
+      using(MonitorCE.TakeUpdateLock())
       {
          if(_map.TryGetValue(type, out var value2))
             return value2;

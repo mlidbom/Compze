@@ -23,14 +23,14 @@ partial class TessageTypeInspector
       new WrapperTeventInterfaceMustBeGenericAndDeclareTypeParameterAsAsOutParameter()
    ];
 
-   static readonly ILock Lock = ILock.WithDefaultTimeout();
+   static readonly IMonitorCE MonitorCE = IMonitorCE.WithDefaultTimeout();
 
    static IReadOnlySet<Type> _successfullyInspectedSubscribableTypes = new HashSet<Type>();
    internal static void AssertValidForSubscription(Type type)
    {
       if(_successfullyInspectedSubscribableTypes.Contains(type)) return;
 
-      Lock.Update(() =>
+      MonitorCE.Update(() =>
       {
          if(!type.Is<ITevent>()) throw new Exception($"You can only subscribe to subtypes of {typeof(ITevent).GetFullNameCompilable()}");
          if(!type.IsInterface) throw new Exception($"{type.GetFullNameCompilable()} is not an interface. You can only subscribe to tevent interfaces because as soon as you subscribe to classes you loose the guarantees of semantic routing since classes do not support multiple inheritance.");
@@ -44,7 +44,7 @@ partial class TessageTypeInspector
    {
       if(_successfullyInspectedTypes.Contains(type)) return;
 
-      Lock.Update(() =>
+      MonitorCE.Update(() =>
       {
          if(_successfullyInspectedTypes.Contains(type)) return;
 

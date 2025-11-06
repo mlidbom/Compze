@@ -37,9 +37,9 @@ class TessageHandlerRegistry(ITypeMapper typeMapper) : ITessageHandlerRegistrar,
    IReadOnlyDictionary<Type, HandlerWithResultRegistration> _tommandHandlersReturningResults = new Dictionary<Type, HandlerWithResultRegistration>();
    IReadOnlyList<TeventHandlerRegistration> _teventHandlerRegistrations = new List<TeventHandlerRegistration>();
 
-   readonly ILock _lock = ILock.WithDefaultTimeout();
+   readonly IMonitorCE _monitor = IMonitorCE.WithDefaultTimeout();
 
-   ITessageHandlerRegistrar ITessageHandlerRegistrar.ForTevent<TTevent>(Action<TTevent> handler) => _lock.Update(() =>
+   ITessageHandlerRegistrar ITessageHandlerRegistrar.ForTevent<TTevent>(Action<TTevent> handler) => _monitor.Update(() =>
    {
       TessageInspector.AssertValid<TTevent>();
       _teventHandlers.TryGetValue(typeof(TTevent), out var currentTeventSubscribers);
@@ -50,7 +50,7 @@ class TessageHandlerRegistry(ITypeMapper typeMapper) : ITessageHandlerRegistrar,
       return this;
    });
 
-   ITessageHandlerRegistrar ITessageHandlerRegistrar.ForTommand<TTommand>(Action<TTommand> handler) => _lock.Update(() =>
+   ITessageHandlerRegistrar ITessageHandlerRegistrar.ForTommand<TTommand>(Action<TTommand> handler) => _monitor.Update(() =>
    {
       TessageInspector.AssertValid<TTommand>();
 
@@ -63,7 +63,7 @@ class TessageHandlerRegistry(ITypeMapper typeMapper) : ITessageHandlerRegistrar,
       return this;
    });
 
-   ITessageHandlerRegistrar ITessageHandlerRegistrar.ForTommand<TTommand, TResult>(Func<TTommand, TResult> handler) => _lock.Update(() =>
+   ITessageHandlerRegistrar ITessageHandlerRegistrar.ForTommand<TTommand, TResult>(Func<TTommand, TResult> handler) => _monitor.Update(() =>
    {
       TessageInspector.AssertValid<TTommand>();
 
@@ -71,7 +71,7 @@ class TessageHandlerRegistry(ITypeMapper typeMapper) : ITessageHandlerRegistrar,
       return this;
    });
 
-   ITessageHandlerRegistrar ITessageHandlerRegistrar.ForTuery<TTuery, TResult>(Func<TTuery, TResult> handler) => _lock.Update(() =>
+   ITessageHandlerRegistrar ITessageHandlerRegistrar.ForTuery<TTuery, TResult>(Func<TTuery, TResult> handler) => _monitor.Update(() =>
    {
       TessageInspector.AssertValid<TTuery>();
 

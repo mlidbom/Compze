@@ -3,7 +3,7 @@ using System;
 
 namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
-public partial interface ILock
+public partial interface IMonitorCE
 {
    unit Await(Func<bool> condition, TimeSpan? conditionTimeout = null)
    {

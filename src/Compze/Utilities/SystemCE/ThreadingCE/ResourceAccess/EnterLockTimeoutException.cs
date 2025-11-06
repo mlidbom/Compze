@@ -5,7 +5,7 @@ namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
 class EnterLockTimeoutException : Exception
 {
-   readonly ILock _lock = ILock.WithDefaultTimeout();
+   readonly IMonitorCE _monitor = IMonitorCE.WithDefaultTimeout();
    readonly TimeSpan _timeToWaitForOwningThreadStacktrace;
    string? _blockingThreadStacktrace;
 
@@ -17,7 +17,7 @@ class EnterLockTimeoutException : Exception
       get
       {
          //Todo: Blocking loggers and similar in production is not great: This only happens on in-memory deadlocks though, so it does not seem too urgent.
-         if(!_lock.TryAwait(() => _blockingThreadStacktrace != null, _timeToWaitForOwningThreadStacktrace))
+         if(!_monitor.TryAwait(() => _blockingThreadStacktrace != null, _timeToWaitForOwningThreadStacktrace))
          {
             _blockingThreadStacktrace = $"Failed to get blocking thread stack trace. Timed out after: {_timeToWaitForOwningThreadStacktrace}";
          }
@@ -31,5 +31,5 @@ class EnterLockTimeoutException : Exception
    }
 
    internal void SetBlockingThreadsDisposeStackTrace(StackTrace blockingThreadStackTrace) =>
-      _lock.Update(() => _blockingThreadStacktrace = blockingThreadStackTrace.ToString());
+      _monitor.Update(() => _blockingThreadStacktrace = blockingThreadStackTrace.ToString());
 }

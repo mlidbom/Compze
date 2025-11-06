@@ -12,10 +12,10 @@ public static class ConcurrentCircularReader
 public class ConcurrentCircularReader<T>(IEnumerable<T> source)
 {
    readonly T[] _items = source.ToArray();
-   readonly ILock _lock = ILock.WithDefaultTimeout();
+   readonly IMonitorCE _monitor = IMonitorCE.WithDefaultTimeout();
    int _current = -1;
 
-   public T Next() => _lock.Update(() =>
+   public T Next() => _monitor.Update(() =>
    {
       _current++;
       if(_current == _items.Length) _current = 0;

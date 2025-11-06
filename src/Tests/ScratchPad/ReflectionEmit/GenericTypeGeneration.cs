@@ -42,7 +42,7 @@ public class Example
 
 
    static IReadOnlyDictionary<Type, Type> _createdWrapperTypes = new Dictionary<Type, Type>();
-   static readonly ILock Lock = ILock.WithDefaultTimeout();
+   static readonly IMonitorCE MonitorCE = IMonitorCE.WithDefaultTimeout();
    static Type CreateGenericWrapperTeventType(Type wrapperTeventType)
    {
       if(_createdWrapperTypes.TryGetValue(wrapperTeventType, out var cachedWrapperImplementation))
@@ -50,7 +50,7 @@ public class Example
          return cachedWrapperImplementation;
       }
 
-      return Lock.Update(() =>
+      return MonitorCE.Update(() =>
       {
          if(_createdWrapperTypes.TryGetValue(wrapperTeventType, out cachedWrapperImplementation))
          {

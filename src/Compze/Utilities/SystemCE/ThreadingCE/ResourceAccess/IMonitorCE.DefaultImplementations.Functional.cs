@@ -4,7 +4,7 @@ using Compze.Utilities.SystemCE.ActionFuncHarmonization;
 
 namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
-public partial interface ILock
+public partial interface IMonitorCE
 {
    unit Read(Action action, TimeSpan? timeout = null) => Read(action.AsFunc(), timeout);
 
