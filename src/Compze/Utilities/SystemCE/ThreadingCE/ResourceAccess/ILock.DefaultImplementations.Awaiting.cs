@@ -5,14 +5,14 @@ namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
 public partial interface ILock
 {
-   IDisposable TakeReadLockWhen(Func<bool> condition) => TakeReadLockWhen(Timeout, condition);
-   IDisposable TakeUpdateLockWhen(Func<bool> condition) => TakeUpdateLockWhen(Timeout, condition);
+   IDisposable TakeReadLockWhen(Func<bool> condition) => TakeReadLockWhen(condition, Timeout);
+   IDisposable TakeUpdateLockWhen(Func<bool> condition) => TakeUpdateLockWhen(condition, Timeout);
 
    unit Await(Func<bool> condition) => Await(condition, Timeout);
 
    unit Await(Func<bool> condition, TimeSpan conditionTimeout)
    {
-      using(TakeReadLockWhen(conditionTimeout, condition));
+      using(TakeReadLockWhen(condition, conditionTimeout));
       return unit.Value;
    }
 

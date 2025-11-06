@@ -59,7 +59,7 @@ public class ThreadGate : IThreadGate
    {
       try
       {
-         using(_monitor.TakeUpdateLockWhen(timeout, condition))
+         using(_monitor.TakeUpdateLockWhen(condition, timeout))
          {
             action();
          }

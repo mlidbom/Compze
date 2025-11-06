@@ -19,8 +19,8 @@ public partial interface ILock
    IDisposable TakeReadLock(TimeSpan timeout);
    IDisposable TakeUpdateLock(TimeSpan timeout);
 
-   IDisposable TakeUpdateLockWhen(TimeSpan timeout, Func<bool> condition);
-   IDisposable TakeReadLockWhen(TimeSpan timeout, Func<bool> condition);
+   IDisposable TakeUpdateLockWhen(Func<bool> condition, TimeSpan timeout);
+   IDisposable TakeReadLockWhen(Func<bool> condition, TimeSpan timeout);
 
    IDisposable? TryTakeUpdateLockWhen(TimeSpan timeout, Func<bool> condition);
    IDisposable? TryTakeReadLockWhen(TimeSpan timeout, Func<bool> condition);
