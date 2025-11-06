@@ -53,7 +53,7 @@ class EntitiesByIdAndTypeCache
       if(ContainsInternal(key)) throw new Exception($"Instance of {key.DocumentType.FullName} with Id: {key.Id} is already present");
    }
 
-   bool ContainsInternal(IdAndType key) => TryGet(key, out _);
+   bool ContainsInternal(IdAndType key) => _data.Read(it => it.TryGetValue(key, out _));
 
    bool TryGet(IdAndType key, [NotNullWhen(returnValue: true)] out object? value) =>
       _data.TryRead((Dictionary<IdAndType, object> data, out object? value) => data.TryGetValue(key, out value), out value);
