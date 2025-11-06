@@ -23,7 +23,7 @@ class TessagesInFlightTracker(ITypeMapper typeMapper) : ITessagesInFlightTracker
       _implementation.Update(implementation => implementation.SendingTessageOnTransport(transportTessage, remoteEndpointId));
 
    public void AwaitNoTessagesInFlight(TimeSpan? timeoutOverride) =>
-      _implementation.Await(timeoutOverride ?? 10.Seconds(), implementation => implementation.NoTessagesInFlight());
+      _implementation.Await(implementation => implementation.NoTessagesInFlight(), timeoutOverride ?? 10.Seconds());
 
    public void DoneWith(TransportTessage.InComing tessage, EndpointId handlingEndpointId, Exception? exception) =>
       _implementation.Update(implementation => implementation.DoneWith(tessage, handlingEndpointId, exception));
