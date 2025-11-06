@@ -5,7 +5,7 @@ namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
 public partial class LockCE : ILock
 {
-   internal IDisposable TakeReadLock(TimeSpan timeout) => TakeLock(timeout, LockType.Read);
+   public IDisposable TakeReadLock(TimeSpan timeout) => TakeLock(timeout, LockType.Read);
    public IDisposable TakeUpdateLock(TimeSpan timeout) => TakeLock(timeout, LockType.Update);
 
    public IDisposable? TryTakeUpdateLockWhen(TimeSpan timeout, Func<bool> condition) => TryTakeLockWhen(timeout, condition, LockType.Update);

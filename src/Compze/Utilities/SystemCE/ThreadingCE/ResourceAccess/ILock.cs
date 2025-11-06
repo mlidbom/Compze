@@ -3,13 +3,16 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
-interface ILock
+//THis file contains the core, the functionality implemented by the actual ILock implementation, upon which everything in the other files is convenience extensions
+public partial interface ILock
 {
    public static ILock WithDefaultTimeout() => LockCE.WithDefaultTimeout();
    public static ILock WithTimeout(TimeSpan timeout) => LockCE.WithTimeout(timeout);
 
-   //the core, the functionality implemented by the actual MonitorCE implementation, upon which everything else is convenience extensions.
    TimeSpan Timeout { get; }
+
+   IDisposable TakeReadLock(TimeSpan timeout);
+   IDisposable TakeUpdateLock(TimeSpan timeout);
 
    IDisposable? TryTakeUpdateLockWhen(TimeSpan timeout, Func<bool> condition);
    IDisposable? TryTakeReadLockWhen(TimeSpan timeout, Func<bool> condition);
