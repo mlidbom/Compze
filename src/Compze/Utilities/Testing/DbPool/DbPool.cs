@@ -44,15 +44,15 @@ public partial class DbPool : StrictlyManagedResourceBase<DbPool>
       MachineWideState = MachineWideSharedObject<DbPoolState>.For(sqlLayer.GetType().GetFullNameCompilable(), DbPoolStateSerializer.Instance, CorruptionAction.ReplaceContentWithDefaultAndThrow);
    }
 
-   readonly ILock _guard = ILock.WithTimeout(30.Seconds());
+   readonly ILock _lock = ILock.WithTimeout(30.Seconds());
    readonly DbPoolId _poolId = new();
    IReadOnlyList<DbPoolDatabase> _transientCache = new List<DbPoolDatabase>();
 
    static ILogger _log = CompzeLogger.For<DbPool>();
 
-   public void SetLogLevel(LogLevel logLevel) => _guard.Update(() => _log = _log.WithLogLevel(logLevel));
+   public void SetLogLevel(LogLevel logLevel) => _lock.Update(() => _log = _log.WithLogLevel(logLevel));
 
-   public string ConnectionStringFor(string reservationName) => _guard.Update(() =>
+   public string ConnectionStringFor(string reservationName) => _lock.Update(() =>
    {
       Assert.State.IsNotDisposed(Disposed, this);
 

@@ -14,26 +14,26 @@ public interface IThreadShared
 
    class MonitorCEThreadShared<TShared> : IThreadShared<TShared>
    {
-      readonly ILock _monitor;
+      readonly ILock _lock;
 
       readonly TShared _shared;
 
-      internal MonitorCEThreadShared(TShared shared, ILock monitor)
+      internal MonitorCEThreadShared(TShared shared, ILock @lock)
       {
          _shared = shared;
-         _monitor = monitor;
+         _lock = @lock;
       }
 
-      public TResult Read<TResult>(Func<TShared, TResult> read) => _monitor.Read(() => read(_shared));
+      public TResult Read<TResult>(Func<TShared, TResult> read) => _lock.Read(() => read(_shared));
 
       public unit Read(Action<TShared> read) => Read(read.AsFunc());
 
-      public TResult Update<TResult>(Func<TShared, TResult> update) => _monitor.Update(() => update(_shared));
+      public TResult Update<TResult>(Func<TShared, TResult> update) => _lock.Update(() => update(_shared));
 
       public unit Update(Action<TShared> update) => Update(update.AsFunc());
 
-      public unit Await(Func<TShared, bool> condition) => _monitor.Await(() => condition(_shared));
-      public unit Await(TimeSpan timeout, Func<TShared, bool> condition) => _monitor.Await(() => condition(_shared), timeout);
+      public unit Await(Func<TShared, bool> condition) => _lock.Await(() => condition(_shared));
+      public unit Await(TimeSpan timeout, Func<TShared, bool> condition) => _lock.Await(() => condition(_shared), timeout);
    }
 }
 

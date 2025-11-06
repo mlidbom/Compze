@@ -13,7 +13,7 @@ namespace Compze.Tessaging.Implementation.Transport.Client.Routing;
 
 class InboxConnectionRouter(ITypeMapper typeMapper)
 {
-   readonly ILock _monitor = ILock.WithDefaultTimeout();
+   readonly ILock _lock = ILock.WithDefaultTimeout();
    readonly ITypeMapper _typeMapper = typeMapper;
 
    IReadOnlyDictionary<Type, IInboxConnection> _tommandHandlerRoutes = new Dictionary<Type, IInboxConnection>();
@@ -46,7 +46,7 @@ class InboxConnectionRouter(ITypeMapper typeMapper)
          }
       }
 
-      using(_monitor.TakeUpdateLock())
+      using(_lock.TakeUpdateLock())
       {
          if(teventSubscribers.Count > 0)
          {
@@ -81,7 +81,7 @@ class InboxConnectionRouter(ITypeMapper typeMapper)
                                  .Select(route => route.Connection)
                                  .ToArray();
 
-      using(_monitor.TakeUpdateLock())
+      using(_lock.TakeUpdateLock())
       {
          OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _teventSubscriberRouteCache, tevent.GetType(), subscriberConnections);
       }

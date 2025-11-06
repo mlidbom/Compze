@@ -38,39 +38,39 @@ public class MonitorCEPerformanceTests : UniversalTestBase
    {
       long Value { get; set; }
 
-      readonly ILock _monitor = ILock.WithDefaultTimeout();
+      readonly ILock _lock = ILock.WithDefaultTimeout();
 
       internal long Read_Unsafe() => Value;
 
       internal long Read_Locked()
       {
-         lock(_monitor) return Read_Unsafe();
+         lock(_lock) return Read_Unsafe();
       }
 
       internal long Read_MonitorCE_Using_EnterLock()
       {
-         using(_monitor.TakeReadLock())
+         using(_lock.TakeReadLock())
          {
             return Read_Unsafe();
          }
       }
 
-      internal long Read_MonitorCE_Read() => _monitor.Read(Read_Unsafe);
+      internal long Read_MonitorCE_Read() => _lock.Read(Read_Unsafe);
 
 
       internal void Increment_Unsafe() => Value++;
 
       internal void Increment_Locked()
       {
-         lock(_monitor) Increment_Unsafe();
+         lock(_lock) Increment_Unsafe();
       }
 
       internal void Increment_MonitorCE_Using_EnterLock()
       {
-         using(_monitor.TakeReadLock()) Increment_Unsafe();
+         using(_lock.TakeReadLock()) Increment_Unsafe();
       }
 
-      internal void Increment_MonitorCE_Update() => _monitor.Update(Increment_Unsafe);
+      internal void Increment_MonitorCE_Update() => _lock.Update(Increment_Unsafe);
    }
 
    static void RunSingleThreadedScenario(Action action, TimeSpan singleThreadMaxTime)

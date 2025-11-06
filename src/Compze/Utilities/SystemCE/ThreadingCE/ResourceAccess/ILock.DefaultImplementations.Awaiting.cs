@@ -5,6 +5,7 @@ namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
 public partial interface ILock
 {
+   //review: Should the condition timeout default be the same as the lock timeout default?
    IDisposable TakeReadLockWhen(Func<bool> condition) => TakeReadLockWhen(condition, Timeout);
    IDisposable TakeUpdateLockWhen(Func<bool> condition) => TakeUpdateLockWhen(condition, Timeout);
 
@@ -12,7 +13,7 @@ public partial interface ILock
 
    unit Await(Func<bool> condition, TimeSpan conditionTimeout)
    {
-      using(TakeReadLockWhen(condition, conditionTimeout));
+      using var readLock = TryTakeReadLockWhen(conditionTimeout, condition);
       return unit.Value;
    }
 

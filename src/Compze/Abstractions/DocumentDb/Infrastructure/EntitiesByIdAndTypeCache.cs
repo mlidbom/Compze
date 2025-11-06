@@ -12,9 +12,9 @@ namespace Compze.Core.DocumentDb.Infrastructure;
 class EntitiesByIdAndTypeCache
 {
     readonly Dictionary<IdAndType, object> _stringIdToInstance = new();
-    readonly ILock _monitor = ILock.WithDefaultTimeout();
+    readonly ILock _lock = ILock.WithDefaultTimeout();
 
-    public void Add<T>(object id, T value) => _monitor.Update(action: () =>
+    public void Add<T>(object id, T value) => _lock.Update(action: () =>
     {
         Argument.NotNull(value);
         var key = IdAndType.Create(id, value.GetType());
@@ -22,22 +22,22 @@ class EntitiesByIdAndTypeCache
         _stringIdToInstance[key] = value;
     });
 
-    public void Remove(object id, Type documentType) => _monitor.Update(action: () =>
+    public void Remove(object id, Type documentType) => _lock.Update(action: () =>
     {
         IdAndType.Create(id, documentType)
         .assert(_stringIdToInstance.Remove, it => $"No object with id: {it} of type: {documentType.FullName} is present");
     });
 
     public IList<KeyValuePair<string, object>> GetAll() =>
-        _monitor.Read(() => _stringIdToInstance
+        _lock.Read(() => _stringIdToInstance
                            .Select(pair => KeyValuePair.Create(pair.Key.Id, pair.Value))
                            .ToList());
 
-    internal bool Contains(Type type, object id) => _monitor.Read(func: () => ContainsInternal(IdAndType.Create(id, type)));
+    internal bool Contains(Type type, object id) => _lock.Read(func: () => ContainsInternal(IdAndType.Create(id, type)));
 
     internal bool TryGet<T>(object id, out T value)
     {
-        using(_monitor.TakeUpdateLock())
+        using(_lock.TakeUpdateLock())
         {
             if(TryGet(IdAndType.Create(id, typeof(T)), out var found))
             {

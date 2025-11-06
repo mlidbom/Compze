@@ -4,9 +4,10 @@ using System.Diagnostics;
 using System.Threading;
 
 namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
-
+#pragma warning disable CA1001 //By creating the locks only once in the constructor usages become zero-allocation operations. By always referencing them by the concrete type inlining remains possible. They are not normal disposables
 ///<summary>The monitor class exposes a rather obscure, brittle and easily misused API in my opinion. This class attempts to adapt it to something that is reasonably understandable and less brittle.</summary>
 class LockCE : ILock
+#pragma warning restore CA1001
 {
    public TimeSpan Timeout { get; }
 
@@ -25,10 +26,8 @@ class LockCE : ILock
    readonly MonitorCE _monitor = new();
    readonly Lock _timeoutLock = new();
 
-#pragma warning disable CA1001 //By creating the locks only once in the constructor usages become zero-allocation operations. By always referencing them by the concrete type inlining remains possible. They are not normal disposables
    readonly IDisposable _readLock;
    readonly IDisposable _updateLock;
-#pragma warning restore CA1001
 
    static readonly TimeSpan DefaultTimeToWaitForStackTrace = 1.Seconds();
 

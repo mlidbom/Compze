@@ -21,16 +21,16 @@ public class MonitorCE_specification : UniversalTestBase
 {
    [XF] public void When_one_thread_has_UpdateLock_other_thread_is_blocked_until_first_thread_disposes_lock_()
    {
-      var monitor = ILock.WithTimeout(1.Seconds());
+      var theLock = ILock.WithTimeout(1.Seconds());
 
-      var updateLock = monitor.TakeUpdateLock();
+      var updateLock = theLock.TakeUpdateLock();
 
       using var otherThreadIsWaitingForLock = new ManualResetEventSlim(false);
       using var otherThreadGotLock = new ManualResetEventSlim(false);
       var otherThreadTask = TaskCE.Run(() =>
       {
          otherThreadIsWaitingForLock.Set();
-         using(monitor.TakeUpdateLock())
+         using(theLock.TakeUpdateLock())
          {
             otherThreadGotLock.Set();
          }
@@ -47,16 +47,16 @@ public class MonitorCE_specification : UniversalTestBase
 
    [XF] public void Owning_thread_can_reenter_the_lock_and_the_lock_is_only_exited_when_releasing_the_outermost_lock()
    {
-      var monitor = ILock.WithTimeout(1.Seconds());
-      using(monitor.TakeUpdateLock())
+      var theLock = ILock.WithTimeout(1.Seconds());
+      using(theLock.TakeUpdateLock())
       {
-         using(monitor.TakeUpdateLock()) {}
+         using(theLock.TakeUpdateLock()) {}
 
-         Invoking(() => TaskCE.Run(() => monitor.TakeUpdateLock(timeout: 100.Milliseconds())).Wait())
+         Invoking(() => TaskCE.Run(() => theLock.TakeUpdateLock(timeout: 100.Milliseconds())).Wait())
            .Must().Throw<Exception>();
       }
 
-      TaskCE.Run(() => monitor.TakeUpdateLock(timeout: 0.Milliseconds())).Wait();
+      TaskCE.Run(() => theLock.TakeUpdateLock(timeout: 0.Milliseconds())).Wait();
    }
 
    public class An_exception_is_thrown_by_EnterUpdateLock_if_lock_is_not_acquired_within_timeout : UniversalTestBase
@@ -74,10 +74,10 @@ public class MonitorCE_specification : UniversalTestBase
 
       static Exception RunScenario(TimeSpan ownerThreadBlockTime, TimeSpan monitorTimeout, TimeSpan? timeToWaitForStackTrace = null)
       {
-         var monitor = ILock.WithTimeout(monitorTimeout);
+         var theLock = ILock.WithTimeout(monitorTimeout);
          if(timeToWaitForStackTrace.HasValue)
          {
-            monitor.SetTimeToWaitForStackTrace(timeToWaitForStackTrace.Value);
+            theLock.SetTimeToWaitForStackTrace(timeToWaitForStackTrace.Value);
          }
 
          using var threadOneHasTakenUpdateLock = new ManualResetEvent(false);
@@ -85,7 +85,7 @@ public class MonitorCE_specification : UniversalTestBase
 
          TaskCE.Run(() =>
          {
-            var @lock = monitor.TakeUpdateLock();
+            var @lock = theLock.TakeUpdateLock();
             threadOneHasTakenUpdateLock.Set();
             threadTwoIsAboutToTryToEnterUpdateLock.WaitOne();
             Thread.Sleep(ownerThreadBlockTime);
@@ -97,7 +97,7 @@ public class MonitorCE_specification : UniversalTestBase
          var thrownException = Invoking(() => TaskCE.Run(() =>
                                                      {
                                                         threadTwoIsAboutToTryToEnterUpdateLock.Set();
-                                                        monitor.TakeUpdateLock();
+                                                        theLock.TakeUpdateLock();
                                                      })
                                                     .Wait())
                               .Must().Throw<AggregateException>()
