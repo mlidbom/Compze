@@ -32,11 +32,11 @@ public interface IThreadShared
 
       public TResult Read<TResult>(Func<TShared, TResult> read, TimeSpan? timeout = null) => _lock.Read(() => read(_shared), timeout);
 
-      public bool TryRead<TResult>(TryReadDelegate<TShared, TResult> read, out TResult result, TimeSpan? timeout = null)
+      public TReturn ReadOut<TReturn, TOut>(OutReadDelegate<TShared, TReturn, TOut> readOut, out TOut result, TimeSpan? timeout = null)
       {
          using(_lock.TakeReadLock(timeout))
          {
-            return read(_shared, out result);
+            return readOut(_shared, out result);
          }
       }
 
@@ -49,18 +49,20 @@ public interface IThreadShared
 }
 
 public delegate bool TryReadDelegate<in TShared, TOut>(TShared shared, out TOut result);
+public delegate TReturn OutReadDelegate<in TShared, out TReturn, TOut>(TShared shared, out TOut result);
 
 public interface IThreadShared<out TShared>
 {
    //core
+   TReturn ReadOut<TReturn, TOut>(OutReadDelegate<TShared, TReturn, TOut> readOut, out TOut result, TimeSpan? timeout = null);
 
-   bool TryRead<TResult>(TryReadDelegate<TShared, TResult> read, out TResult result, TimeSpan? timeout = null);
+   bool TryRead<TOut>(TryReadDelegate<TShared, TOut> read, out TOut result, TimeSpan? timeout = null) =>
+      ReadOut((TShared shared, out TOut value) => read(shared, out value), out result, timeout);
 
    TResult Read<TResult>(Func<TShared, TResult> read, TimeSpan? timeout = null);
    TResult ReadWhen<TResult>(Func<TShared, TResult> read, Func<TShared, bool> condition, TimeSpan? timeout = null);
    TResult Update<TResult>(Func<TShared, TResult> update, TimeSpan? timeout = null);
    TResult UpdateWhen<TResult>(Func<TShared, TResult> update, Func<TShared, bool> condition, TimeSpan? timeout = null);
-
 
    //Default implementations
    unit Read(Action<TShared> read, TimeSpan? timeout = null) => Read(read.AsFunc(), timeout);
