@@ -17,8 +17,8 @@ class LockCE : ILock
    public IDisposable TakeReadLockWhen(Func<bool> condition, TimeSpan timeout) => TakeLockWhen(timeout, condition, LockType.Read);
    public IDisposable TakeUpdateLockWhen(Func<bool> condition, TimeSpan timeout) => TakeLockWhen(timeout, condition, LockType.Update);
 
-   public IDisposable? TryTakeReadLockWhen(TimeSpan timeout, Func<bool> condition) => TryTakeLockWhen(timeout, condition, LockType.Read);
-   public IDisposable? TryTakeUpdateLockWhen(TimeSpan timeout, Func<bool> condition) => TryTakeLockWhen(timeout, condition, LockType.Update);
+   public IDisposable? TryTakeReadLockWhen(Func<bool> condition, TimeSpan timeout) => TryTakeLockWhen(timeout, condition, LockType.Read);
+   public IDisposable? TryTakeUpdateLockWhen(Func<bool> condition, TimeSpan timeout) => TryTakeLockWhen(timeout, condition, LockType.Update);
 
    public void SetTimeToWaitForStackTrace(TimeSpan timeToWaitForStackTrace) => _stackTraceFetchTimeout = timeToWaitForStackTrace;
 

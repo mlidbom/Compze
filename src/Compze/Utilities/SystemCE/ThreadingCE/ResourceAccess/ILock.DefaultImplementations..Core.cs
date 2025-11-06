@@ -11,13 +11,13 @@ public partial interface ILock
 
    bool TryTakeUpdateLockWhen(TimeSpan timeout, Func<bool> condition, [NotNullWhen(true)]out IDisposable? updateLock)
    {
-      updateLock = TryTakeUpdateLockWhen(timeout, condition);
+      updateLock = TryTakeUpdateLockWhen(condition, timeout);
       return updateLock != null;
    }
 
    bool TryTakeReadLockWhen(TimeSpan timeout, Func<bool> condition, [NotNullWhen(true)] out IDisposable? readLock)
    {
-      readLock = TryTakeReadLockWhen(timeout, condition);
+      readLock = TryTakeReadLockWhen(condition, timeout);
       return readLock != null;
    }
 }

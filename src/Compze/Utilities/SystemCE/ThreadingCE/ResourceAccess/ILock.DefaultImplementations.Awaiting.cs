@@ -13,13 +13,13 @@ public partial interface ILock
 
    unit Await(Func<bool> condition, TimeSpan conditionTimeout)
    {
-      using var readLock = TryTakeReadLockWhen(conditionTimeout, condition);
+      using var readLock = TakeReadLockWhen(condition, conditionTimeout);
       return unit.Value;
    }
 
    bool TryAwait(Func<bool> condition, TimeSpan conditionTimeout)
    {
-      using var readLock = TryTakeReadLockWhen(conditionTimeout, condition);
+      using var readLock = TryTakeReadLockWhen(condition, conditionTimeout);
       return readLock != null;
    }
 }
