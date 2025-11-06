@@ -22,16 +22,22 @@ public partial class MonitorCE : IMonitorCE
       }
    }
 
-   public bool TryTakeReadLockWhen(TimeSpan timeout, Func<bool> condition, [NotNullWhen(true)]out IDisposable? takenLock)
+   public bool TryTakeReadLockWhen(TimeSpan timeout, Func<bool> condition, [NotNullWhen(true)] out IDisposable? takenLock)
    {
-      if(TryEnterWhen(timeout, condition))
+      if (TryEnterWhen(timeout, condition))
       {
          takenLock = _readLock;
          return true;
-      } else
+      }
+      else
       {
          takenLock = null;
          return false;
       }
    }
+   
+   void DoSomething()
+    {
+        using var aLock = TryTakeUpdateLockWhen(TimeSpan.FromSeconds(1), () => true);
+    }
 }
