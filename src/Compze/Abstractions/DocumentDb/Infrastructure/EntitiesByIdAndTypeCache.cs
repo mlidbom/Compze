@@ -11,57 +11,56 @@ namespace Compze.Core.DocumentDb.Infrastructure;
 ///<summary>Tracks entities by the combination of their ID and type</summary>
 class EntitiesByIdAndTypeCache
 {
-    readonly Dictionary<IdAndType, object> _stringIdToInstance = new();
-    readonly ILock _lock = ILock.WithDefaultTimeout();
+   readonly IThreadShared<Dictionary<IdAndType, object>> _data = IThreadShared.WithDefaultTimeout(new Dictionary<IdAndType, object>());
 
-    public void Add<T>(object id, T value) => _lock.Update(action: () =>
-    {
-        Argument.NotNull(value);
-        var key = IdAndType.Create(id, value.GetType());
-        AssertNotPresent(key);
-        _stringIdToInstance[key] = value;
-    });
+   public void Add<T>(object id, T value) => _data.Update(data =>
+   {
+      Argument.NotNull(value);
+      var key = IdAndType.Create(id, value.GetType());
+      AssertNotPresent(key);
+      data[key] = value;
+   });
 
-    public void Remove(object id, Type documentType) => _lock.Update(action: () =>
-    {
-        IdAndType.Create(id, documentType)
-        .assert(_stringIdToInstance.Remove, it => $"No object with id: {it} of type: {documentType.FullName} is present");
-    });
+   public void Remove(object id, Type documentType) => _data.Update(data =>
+   {
+      IdAndType.Create(id, documentType)
+               .assert(data.Remove, it => $"No object with id: {it} of type: {documentType.FullName} is present");
+   });
 
-    public IList<KeyValuePair<string, object>> GetAll() =>
-        _lock.Read(() => _stringIdToInstance
-                           .Select(pair => KeyValuePair.Create(pair.Key.Id, pair.Value))
-                           .ToList());
+   public IList<KeyValuePair<string, object>> GetAll() =>
+      _data.Read(data => data
+                        .Select(pair => KeyValuePair.Create(pair.Key.Id, pair.Value))
+                        .ToList());
 
-    internal bool Contains(Type type, object id) => _lock.Read(func: () => ContainsInternal(IdAndType.Create(id, type)));
+   internal bool Contains(Type type, object id) => ContainsInternal(IdAndType.Create(id, type));
 
-    internal bool TryGet<T>(object id, out T value)
-    {
-        using(_lock.TakeUpdateLock())
-        {
-            if(TryGet(IdAndType.Create(id, typeof(T)), out var found))
-            {
-                value = (T)found;
-                return true;
-            }
+   internal bool TryGet<T>(object id, out T value) =>
+      _data.TryRead((Dictionary<IdAndType, object> data, out T value) =>
+                    {
+                       if(TryGet(IdAndType.Create(id, typeof(T)), out var found))
+                       {
+                          value = (T)found;
+                          return true;
+                       }
 
-            value = default!;
-            return false;
-        }
-    }
+                       value = default!;
+                       return false;
+                    },
+                    out value);
 
-    void AssertNotPresent(IdAndType key)
-    {
-        if (ContainsInternal(key)) throw new Exception($"Instance of {key.DocumentType.FullName} with Id: {key.Id} is already present");
-    }
+   void AssertNotPresent(IdAndType key)
+   {
+      if(ContainsInternal(key)) throw new Exception($"Instance of {key.DocumentType.FullName} with Id: {key.Id} is already present");
+   }
 
-    bool ContainsInternal(IdAndType key) => TryGet(key, out _);
+   bool ContainsInternal(IdAndType key) => TryGet(key, out _);
 
-    bool TryGet(IdAndType key, [NotNullWhen(returnValue: true)] out object? value) => _stringIdToInstance.TryGetValue(key, out value);
+   bool TryGet(IdAndType key, [NotNullWhen(returnValue: true)] out object? value) =>
+      _data.TryRead((Dictionary<IdAndType, object> data, out object? value) => data.TryGetValue(key, out value), out value);
 
-    readonly record struct IdAndType(string Id, Type DocumentType)
-    {
-        internal static IdAndType Create(object id, Type type) =>
-            new(Result.ReturnNotNull(id).ToStringNotNull().ToUpperInvariant().TrimEnd(trimChar: ' '), type);
-    }
+   readonly record struct IdAndType(string Id, Type DocumentType)
+   {
+      internal static IdAndType Create(object id, Type type) =>
+         new(Result.ReturnNotNull(id).ToStringNotNull().ToUpperInvariant().TrimEnd(trimChar: ' '), type);
+   }
 }
