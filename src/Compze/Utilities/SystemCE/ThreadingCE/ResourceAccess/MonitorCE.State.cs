@@ -22,7 +22,7 @@ public partial class MonitorCE
    public TimeSpan Timeout { get; }
    TimeSpan? _stackTraceFetchTimeout;
 
-   MonitorCE(TimeSpan timeout)
+   internal MonitorCE(TimeSpan timeout)
    {
       _readLock = new ReadLock(this);
       _stackTraceFetchTimeout = null;
