@@ -13,7 +13,6 @@ public partial class MonitorCE
    readonly ReadLock _readLock;
    readonly UpdateLock _updateLock;
 
-   static readonly TimeSpan InfiniteTimeout = -TimeSpan.FromMilliseconds(1);
 #if NCRUNCH
         static readonly TimeSpan DefaultTimeout = TimeSpan.FromSeconds(45); //Tests timeout at 60 seconds. We want locks to timeout faster so that the blocking stack traces turn up in the test output so we can diagnose the deadlocks.
 #else

@@ -7,7 +7,7 @@ namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 public partial class MonitorCE
 {
    internal UpdateLock EnterUpdateLockWhen(Func<bool> condition) =>
-      EnterUpdateLockWhen(InfiniteTimeout, condition);
+      EnterUpdateLockWhen(Timeout, condition);
 
    internal UpdateLock EnterUpdateLockWhen(TimeSpan conditionTimeout, Func<bool> condition)
    {
@@ -15,7 +15,7 @@ public partial class MonitorCE
       return _updateLock;
    }
 
-   internal unit Await(Func<bool> condition) => Await(InfiniteTimeout, condition);
+   internal unit Await(Func<bool> condition) => Await(Timeout, condition);
 
    internal unit Await(TimeSpan conditionTimeout, Func<bool> condition) => Throw<AwaitingConditionTimeoutException>.If(!TryAwait(conditionTimeout, condition));
 
@@ -31,33 +31,25 @@ public partial class MonitorCE
       }
    }
 
-   void EnterWhen(TimeSpan conditionTimeout, Func<bool> condition) => Throw<AwaitingConditionTimeoutException>.If(!TryEnterWhen(conditionTimeout, condition));
+   void EnterWhen(TimeSpan timeout, Func<bool> condition) => Throw<AwaitingConditionTimeoutException>.If(!TryEnterWhen(timeout, condition));
 
-   bool TryEnterWhen(TimeSpan conditionTimeout, Func<bool> condition)
+   bool TryEnterWhen(TimeSpan timeout, Func<bool> condition)
    {
-      if(conditionTimeout == InfiniteTimeout)
-      {
-         if(!TryEnter(DefaultTimeout)) 
-            return false;
-         while(!condition()) Wait(InfiniteTimeout);
-      } else
-      {
-         var startTime = DateTime.UtcNow;
-         if(!TryEnter(DefaultTimeout)) 
-            return false;
+      var startTime = DateTime.UtcNow;
+      if(!TryEnter(DefaultTimeout))
+         return false;
 
-         while(!condition())
+      while(!condition())
+      {
+         var elapsedTime = DateTime.UtcNow - startTime;
+         var timeRemaining = timeout - elapsedTime;
+         if(timeRemaining <= TimeSpan.Zero)
          {
-            var elapsedTime = DateTime.UtcNow - startTime;
-            var timeRemaining = conditionTimeout - elapsedTime;
-            if(timeRemaining <= TimeSpan.Zero)
-            {
-               Exit();
-               return false;
-            }
-
-            Wait(timeRemaining);
+            Exit();
+            return false;
          }
+
+         Wait(timeRemaining);
       }
 
       return true;
