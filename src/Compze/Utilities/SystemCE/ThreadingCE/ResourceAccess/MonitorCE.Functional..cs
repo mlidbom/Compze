@@ -10,6 +10,7 @@ namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
                  Justification = "The lock fields are reusable tokens created once in the constructor for zero-allocation operations. They are not traditional disposable resources that need cleanup.")]
 public partial class MonitorCE
 {
+   public unit Read(Action action) => Read(action.AsFunc());
    public TReturn Read<TReturn>(Func<TReturn> func)
    {
       using(TakeReadLock()) return func();

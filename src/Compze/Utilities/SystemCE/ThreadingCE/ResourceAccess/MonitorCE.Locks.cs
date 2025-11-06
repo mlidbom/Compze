@@ -12,7 +12,7 @@ public partial class MonitorCE
       return _readLock;
    }
 
-   public UpdateLock TakeUpdateLock() => TakeUpdateLock(_timeout);
+   public UpdateLock TakeUpdateLock() => TakeUpdateLock(Timeout);
    public UpdateLock TakeUpdateLock(TimeSpan timeout)
    {
       Enter(timeout);

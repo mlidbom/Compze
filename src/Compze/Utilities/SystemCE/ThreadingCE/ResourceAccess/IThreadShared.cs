@@ -24,14 +24,13 @@ public interface IThreadShared
          _monitor = monitor;
       }
 
-      public TResult Read<TResult>(Func<TShared, TResult> read) =>
-         _monitor.Read(() => read(_shared));
+      public TResult Read<TResult>(Func<TShared, TResult> read) => _monitor.Read(() => read(_shared));
 
-      public TResult Update<TResult>(Func<TShared, TResult> update) =>
-         _monitor.Update(() => update(_shared));
+      public unit Read(Action<TShared> read) => Read(read.AsFunc());
 
-      public unit Update(Action<TShared> update) =>
-         _monitor.Update(() => update.AsFunc()(_shared));
+      public TResult Update<TResult>(Func<TShared, TResult> update) => _monitor.Update(() => update(_shared));
+
+      public unit Update(Action<TShared> update) => Update(update.AsFunc());
 
       public unit Await(Func<TShared, bool> condition) => _monitor.Await(() => condition(_shared));
       public unit Await(TimeSpan timeout, Func<TShared, bool> condition) => _monitor.Await(timeout, () => condition(_shared));
@@ -41,6 +40,7 @@ public interface IThreadShared
 public interface IThreadShared<out TResource>
 {
    TResult Read<TResult>(Func<TResource, TResult> read);
+   unit Read(Action<TResource> read);
    TResult Update<TResult>(Func<TResource, TResult> update);
    unit Update(Action<TResource> update);
    unit Await(Func<TResource, bool> condition);

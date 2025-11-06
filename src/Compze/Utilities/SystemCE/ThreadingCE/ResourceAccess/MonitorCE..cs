@@ -22,7 +22,7 @@ public partial class MonitorCE
    IReadOnlyList<EnterLockTimeoutException> _timeOutExceptionsOnOtherThreads = new List<EnterLockTimeoutException>();
    internal static Action? OnTimeOut;
 
-   void Enter() => Enter(_timeout);
+   void Enter() => Enter(Timeout);
 
    void Enter(TimeSpan timeout)
    {
@@ -62,7 +62,7 @@ public partial class MonitorCE
       OnTimeOut?.Invoke();
       lock(_timeoutLock)
       {
-         var exception = new EnterLockTimeoutException(_timeout, _stackTraceFetchTimeout);
+         var exception = new EnterLockTimeoutException(Timeout, _stackTraceFetchTimeout);
          OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _timeOutExceptionsOnOtherThreads, exception);
          throw exception;
       }
