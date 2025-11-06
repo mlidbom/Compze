@@ -3,7 +3,7 @@ using System;
 namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
 ///<summary>The monitor class exposes a less than inviting and easy to use API in my humble opinion. This class attempts to adapt it to something that is reasonably understandable and less brittle.</summary>
-public partial class MonitorCE
+public partial class LockCE
 {
    internal IDisposable TakeReadLock() => TakeReadLock(Timeout);
 
@@ -11,8 +11,8 @@ public partial class MonitorCE
 
    sealed class UpdateLock : IDisposable
    {
-      readonly MonitorCE _monitor;
-      internal UpdateLock(MonitorCE monitor) => _monitor = monitor;
+      readonly LockCE _monitor;
+      internal UpdateLock(LockCE monitor) => _monitor = monitor;
 
       public void Dispose()
       {
@@ -23,8 +23,8 @@ public partial class MonitorCE
 
    sealed class ReadLock : IDisposable
    {
-      readonly MonitorCE _monitor;
-      internal ReadLock(MonitorCE monitor) => _monitor = monitor;
+      readonly LockCE _monitor;
+      internal ReadLock(LockCE monitor) => _monitor = monitor;
       public void Dispose() => _monitor.ReleaseLock();
    }
 }

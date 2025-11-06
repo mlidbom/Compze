@@ -3,7 +3,7 @@ using Compze.Utilities.Functional;
 
 namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
-public partial class MonitorCE
+public partial class LockCE
 {
    enum LockType
    {

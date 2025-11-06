@@ -42,7 +42,7 @@ public class Example
 
 
    static IReadOnlyDictionary<Type, Type> _createdWrapperTypes = new Dictionary<Type, Type>();
-   static readonly MonitorCE Monitor = MonitorCE.WithDefaultTimeout();
+   static readonly LockCE Monitor = LockCE.WithDefaultTimeout();
    static Type CreateGenericWrapperTeventType(Type wrapperTeventType)
    {
       if(_createdWrapperTypes.TryGetValue(wrapperTeventType, out var cachedWrapperImplementation))

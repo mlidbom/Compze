@@ -3,7 +3,7 @@ using System.Threading;
 
 namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
-class ThinMonitorWrapper
+class MonitorCE
 {
    readonly object _lockObject = new();
 

@@ -5,7 +5,7 @@ namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
 class EnterLockTimeoutException : Exception
 {
-   readonly MonitorCE _monitor = MonitorCE.WithDefaultTimeout();
+   readonly LockCE _monitor = LockCE.WithDefaultTimeout();
    readonly TimeSpan _timeToWaitForOwningThreadStacktrace;
    string? _blockingThreadStacktrace;
 

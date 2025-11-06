@@ -13,7 +13,7 @@ namespace Compze.Tessaging.Implementation.Transport.Client.Routing;
 
 class InboxConnectionRouter(ITypeMapper typeMapper)
 {
-   readonly MonitorCE _monitor = MonitorCE.WithDefaultTimeout();
+   readonly LockCE _monitor = LockCE.WithDefaultTimeout();
    readonly ITypeMapper _typeMapper = typeMapper;
 
    IReadOnlyDictionary<Type, IInboxConnection> _tommandHandlerRoutes = new Dictionary<Type, IInboxConnection>();

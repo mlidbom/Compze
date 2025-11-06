@@ -3,7 +3,7 @@ using System.Threading;
 
 namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
-public partial class MonitorCE : IMonitorCE
+public partial class LockCE : ILock
 {
    internal IDisposable TakeReadLock(TimeSpan timeout) => TakeLock(timeout, LockType.Read);
    public IDisposable TakeUpdateLock(TimeSpan timeout) => TakeLock(timeout, LockType.Update);

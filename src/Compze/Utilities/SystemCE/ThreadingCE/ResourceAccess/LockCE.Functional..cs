@@ -8,7 +8,7 @@ namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 [SuppressMessage("Design",
                  "CA1001:Types that own disposable fields should be disposable",
                  Justification = "The lock fields are reusable tokens created once in the constructor for zero-allocation operations. They are not traditional disposable resources that need cleanup.")]
-public partial class MonitorCE
+public partial class LockCE
 {
    public unit Read(Action action) => Read(action.AsFunc());
    public TReturn Read<TReturn>(Func<TReturn> func)

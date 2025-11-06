@@ -3,10 +3,10 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
-interface IMonitorCE
+interface ILock
 {
-   public static IMonitorCE WithDefaultTimeout() => MonitorCE.WithDefaultTimeout();
-   public static IMonitorCE WithTimeout(TimeSpan timeout) => MonitorCE.WithTimeout(timeout);
+   public static ILock WithDefaultTimeout() => LockCE.WithDefaultTimeout();
+   public static ILock WithTimeout(TimeSpan timeout) => LockCE.WithTimeout(timeout);
 
    //the core, the functionality implemented by the actual MonitorCE implementation, upon which everything else is convenience extensions.
    TimeSpan Timeout { get; }

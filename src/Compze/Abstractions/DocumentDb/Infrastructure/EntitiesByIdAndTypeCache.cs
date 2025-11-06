@@ -12,7 +12,7 @@ namespace Compze.Core.DocumentDb.Infrastructure;
 class EntitiesByIdAndTypeCache
 {
     readonly Dictionary<IdAndType, object> _stringIdToInstance = new();
-    readonly MonitorCE _monitor = MonitorCE.WithDefaultTimeout();
+    readonly LockCE _monitor = LockCE.WithDefaultTimeout();
 
     public void Add<T>(object id, T value) => _monitor.Update(action: () =>
     {

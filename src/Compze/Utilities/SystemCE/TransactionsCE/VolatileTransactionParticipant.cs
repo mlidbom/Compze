@@ -19,7 +19,7 @@ abstract class VolatileTransactionParticipant : IEnlistmentNotification
 
    protected virtual void OnInDoubt() {}
 
-   readonly MonitorCE _guard = MonitorCE.WithTimeout(30.Seconds());
+   readonly LockCE _guard = LockCE.WithTimeout(30.Seconds());
    Transaction? _enlistedIn;
    internal void EnsureEnlistedInAnyAmbientTransaction() => _guard.Update(() =>
    {

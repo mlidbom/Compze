@@ -2,12 +2,12 @@ using System;
 
 namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
-public partial class MonitorCE
+public partial class LockCE
 {
-   public static MonitorCE WithDefaultTimeout() => new(DefaultTimeout);
-   public static MonitorCE WithTimeout(TimeSpan timeout) => new(timeout);
+   public static LockCE WithDefaultTimeout() => new(DefaultTimeout);
+   public static LockCE WithTimeout(TimeSpan timeout) => new(timeout);
 
-   readonly ThinMonitorWrapper _coreLock = new();
+   readonly MonitorCE _coreLock = new();
 
    //By creating the locks only once in the constructor usages become zero-allocation operations. By always referencing them by the concrete type inlining remains possible.
    readonly IDisposable _readLock;
@@ -22,7 +22,7 @@ public partial class MonitorCE
    public TimeSpan Timeout { get; }
    TimeSpan? _stackTraceFetchTimeout;
 
-   internal MonitorCE(TimeSpan timeout)
+   internal LockCE(TimeSpan timeout)
    {
       _readLock = new ReadLock(this);
       _stackTraceFetchTimeout = null;
