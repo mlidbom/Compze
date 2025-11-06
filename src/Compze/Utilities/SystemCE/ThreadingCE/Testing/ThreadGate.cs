@@ -49,7 +49,7 @@ public class ThreadGate : IThreadGate
       return this.AwaitClosed();
    }
 
-   public bool TryAwait(TimeSpan timeout, Func<bool> condition) => _monitor.TryAwait(timeout, condition);
+   public bool TryAwait(TimeSpan timeout, Func<bool> condition) => _monitor.TryAwait(condition, timeout);
 
    public IThreadGate SetPostPassThroughAction(Action<ThreadSnapshot> action) => this.mutate(_ => _monitor.Update(() => _postPassThroughAction = action));
    public IThreadGate SetPrePassThroughAction(Action<ThreadSnapshot> action) => this.mutate(_ => _monitor.Update(() => _prePassThroughAction = action));

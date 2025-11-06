@@ -7,6 +7,7 @@ namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 public partial interface ILock
 {
    public unit Read(Action action) => Read(action.AsFunc());
+
    public TReturn Read<TReturn>(Func<TReturn> func)
    {
       using(TakeReadLock()) return func();
@@ -17,5 +18,5 @@ public partial interface ILock
    public T Update<T>(Func<T> func)
    {
       using(TakeUpdateLock()) return func();
-   }   
+   }
 }

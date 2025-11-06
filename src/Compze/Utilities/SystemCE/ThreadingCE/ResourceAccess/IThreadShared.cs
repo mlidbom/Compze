@@ -33,7 +33,7 @@ public interface IThreadShared
       public unit Update(Action<TShared> update) => Update(update.AsFunc());
 
       public unit Await(Func<TShared, bool> condition) => _monitor.Await(() => condition(_shared));
-      public unit Await(TimeSpan timeout, Func<TShared, bool> condition) => _monitor.Await(timeout, () => condition(_shared));
+      public unit Await(TimeSpan timeout, Func<TShared, bool> condition) => _monitor.Await(() => condition(_shared), timeout);
    }
 }
 

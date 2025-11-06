@@ -8,6 +8,20 @@ namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 ///<summary>The monitor class exposes a rather obscure, brittle and easily misused API in my opinion. This class attempts to adapt it to something that is reasonably understandable and less brittle.</summary>
 class LockCE : ILock
 {
+   public TimeSpan Timeout { get; }
+
+   public IDisposable TakeReadLock(TimeSpan timeout) => TakeLock(timeout, LockType.Read);
+   public IDisposable TakeUpdateLock(TimeSpan timeout) => TakeLock(timeout, LockType.Update);
+
+   public IDisposable TakeReadLockWhen(TimeSpan timeout, Func<bool> condition) => TakeLockWhen(timeout, condition, LockType.Read);
+   public IDisposable TakeUpdateLockWhen(TimeSpan timeout, Func<bool> condition) => TakeLockWhen(timeout, condition, LockType.Update);
+
+   public IDisposable? TryTakeReadLockWhen(TimeSpan timeout, Func<bool> condition) => TryTakeLockWhen(timeout, condition, LockType.Read);
+   public IDisposable? TryTakeUpdateLockWhen(TimeSpan timeout, Func<bool> condition) => TryTakeLockWhen(timeout, condition, LockType.Update);
+
+   public void SetTimeToWaitForStackTrace(TimeSpan timeToWaitForStackTrace) => _stackTraceFetchTimeout = timeToWaitForStackTrace;
+
+
    readonly MonitorCE _monitor = new();
    readonly Lock _timeoutLock = new();
 
@@ -27,19 +41,6 @@ class LockCE : ILock
       _updateLock = new UpdateLock(this);
       _stackTraceFetchTimeout = DefaultTimeToWaitForStackTrace;
    }
-
-   public TimeSpan Timeout { get; }
-
-   public void SetTimeToWaitForStackTrace(TimeSpan timeToWaitForStackTrace) => _stackTraceFetchTimeout = timeToWaitForStackTrace;
-
-   public IDisposable TakeReadLock(TimeSpan timeout) => TakeLock(timeout, LockType.Read);
-   public IDisposable TakeUpdateLock(TimeSpan timeout) => TakeLock(timeout, LockType.Update);
-
-   public IDisposable? TryTakeUpdateLockWhen(TimeSpan timeout, Func<bool> condition) => TryTakeLockWhen(timeout, condition, LockType.Update);
-   public IDisposable? TryTakeReadLockWhen(TimeSpan timeout, Func<bool> condition) => TryTakeLockWhen(timeout, condition, LockType.Read);
-
-   public IDisposable TakeUpdateLockWhen(TimeSpan timeout, Func<bool> condition) => TakeLockWhen(timeout, condition, LockType.Update);
-   public IDisposable TakeReadLockWhen(TimeSpan timeout, Func<bool> condition) => TakeLockWhen(timeout, condition, LockType.Read);
 
    IDisposable LockFor(LockType lockType)
    {
