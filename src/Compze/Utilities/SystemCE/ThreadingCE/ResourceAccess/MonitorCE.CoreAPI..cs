@@ -5,10 +5,6 @@ namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
 public partial class MonitorCE : IMonitorCE
 {
-   public IDisposable? TryTakeUpdateLockWhen(TimeSpan timeout, Func<bool> condition) => TryEnterWhen(timeout, condition) ? _updateLock : null;
-
-   public IDisposable? TryTakeReadLockWhen(TimeSpan timeout, Func<bool> condition)  => TryEnterWhen(timeout, condition) ? _readLock : null;
-
    public bool TryTakeUpdateLockWhen(TimeSpan timeout, Func<bool> condition, [NotNullWhen(true)]out IDisposable? takenLock)
    {
       if(TryEnterWhen(timeout, condition))
@@ -35,9 +31,4 @@ public partial class MonitorCE : IMonitorCE
          return false;
       }
    }
-   
-   void DoSomething()
-    {
-        using var aLock = TryTakeUpdateLockWhen(TimeSpan.FromSeconds(1), () => true);
-    }
 }
