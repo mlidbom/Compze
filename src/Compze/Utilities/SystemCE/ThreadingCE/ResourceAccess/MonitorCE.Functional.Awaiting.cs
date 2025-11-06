@@ -32,7 +32,7 @@ public partial class MonitorCE
    IDisposable? TryTakeLockWhen(TimeSpan timeout, Func<bool> condition, LockType lockType)
    {
       var startTime = DateTime.UtcNow;
-      if(!TryEnter(DefaultTimeout))
+      if(TryTakeLock(timeout, lockType) == null)
          return null;
 
       while(!condition())
@@ -48,6 +48,11 @@ public partial class MonitorCE
          Wait(timeRemaining);
       }
 
+      return LockFor(lockType);
+   }
+
+   IDisposable? LockFor(LockType lockType)
+   {
       return lockType switch
       {
          LockType.Read   => _readLock,

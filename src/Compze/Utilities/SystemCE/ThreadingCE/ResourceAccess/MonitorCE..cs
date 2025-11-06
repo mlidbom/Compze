@@ -22,15 +22,9 @@ public partial class MonitorCE
    IReadOnlyList<EnterLockTimeoutException> _timeOutExceptionsOnOtherThreads = new List<EnterLockTimeoutException>();
    internal static Action? OnTimeOut;
 
-   void Enter() => Enter(Timeout);
+   IDisposable TakeLock(LockType lockType) => TakeLock(Timeout, lockType);
 
-   void Enter(TimeSpan timeout)
-   {
-      if(!TryEnter(timeout))
-      {
-         RegisterAndThrowTimeoutException();
-      }
-   }
+   IDisposable TakeLock(TimeSpan timeout, LockType lockType) => TryTakeLock(timeout, lockType) ?? throw RegisterTimeoutException();
 
    public void SetTimeToWaitForStackTrace(TimeSpan timeToWaitForStackTrace) => _stackTraceFetchTimeout = timeToWaitForStackTrace;
 
@@ -40,15 +34,15 @@ public partial class MonitorCE
       Monitor.Exit(_lockObject);
    }
 
-   bool TryEnter(TimeSpan timeout)
+   IDisposable? TryTakeLock(TimeSpan timeout, LockType lockType)
    {
-      if(Monitor.TryEnter(_lockObject)) return true; //This will never block and calling it first improves performance quite a bit.
+      if(Monitor.TryEnter(_lockObject)) return LockFor(lockType); //This will never block and calling it first improves performance quite a bit.
 
       var lockTaken = false;
       try
       {
          Monitor.TryEnter(_lockObject, timeout, ref lockTaken);
-         return lockTaken;
+         return lockTaken ? LockFor(lockType) : null;
       }
       catch(Exception) //It is rare, but apparently possible, for TryEnter to throw an exception after the lock is taken. So we need to catch it and call Monitor.Exit if that happens to avoid leaking locks.
       {
@@ -57,14 +51,14 @@ public partial class MonitorCE
       }
    }
 
-   void RegisterAndThrowTimeoutException()
+   Exception RegisterTimeoutException()
    {
       OnTimeOut?.Invoke();
       lock(_timeoutLock)
       {
          var exception = new EnterLockTimeoutException(Timeout, _stackTraceFetchTimeout);
          OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _timeOutExceptionsOnOtherThreads, exception);
-         throw exception;
+         return exception;
       }
    }
 
