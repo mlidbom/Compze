@@ -5,15 +5,13 @@ namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
 public partial interface ILock
 {
-   unit Await(Func<bool> condition) => Await(condition, Timeout);
-
-   unit Await(Func<bool> condition, TimeSpan conditionTimeout)
+   unit Await(Func<bool> condition, TimeSpan? conditionTimeout = null)
    {
       using var readLock = TakeReadLockWhen(condition, conditionTimeout);
       return unit.Value;
    }
 
-   bool TryAwait(Func<bool> condition, TimeSpan conditionTimeout)
+   bool TryAwait(Func<bool> condition, TimeSpan? conditionTimeout = null)
    {
       using var readLock = TryTakeReadLockWhen(condition, conditionTimeout);
       return readLock != null;
