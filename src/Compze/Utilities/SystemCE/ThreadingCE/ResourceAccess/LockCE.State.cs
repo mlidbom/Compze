@@ -4,8 +4,8 @@ namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
 public partial class LockCE
 {
-   public static ILock WithDefaultTimeout() => new LockCE(DefaultTimeout);
-   public static ILock WithTimeout(TimeSpan timeout) => new LockCE(timeout);
+   public static ILock WithDefaultTimeout() => ILock.WithDefaultTimeout();
+   public static ILock WithTimeout(TimeSpan timeout) => ILock.WithTimeout(timeout);
 
    readonly MonitorCE _monitor = new();
 
@@ -13,16 +13,10 @@ public partial class LockCE
    readonly IDisposable _readLock;
    readonly IDisposable _updateLock;
 
-#if NCRUNCH
-        static readonly TimeSpan DefaultTimeout = 45.Seconds(); //Tests timeout at 60 seconds. We want locks to timeout faster so that the blocking stack traces turn up in the test output so we can diagnose the deadlocks.
-#else
-   static readonly TimeSpan DefaultTimeout = 2.Minutes(); //MsSql default query timeout is 30 seconds. Default .Net transaction timeout is 60. If we reach 2 minutes it is all but guaranteed that we have an in-memory deadlock.
-#endif
-
    public TimeSpan Timeout { get; }
    TimeSpan? _stackTraceFetchTimeout;
 
-   LockCE(TimeSpan timeout)
+   internal LockCE(TimeSpan timeout)
    {
       _readLock = new ReadLock(this);
       _stackTraceFetchTimeout = null;
