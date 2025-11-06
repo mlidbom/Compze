@@ -19,5 +19,5 @@ public partial interface ILock
    {
       readLock = TryTakeReadLockWhen(timeout, condition);
       return readLock != null;
-   }   
+   }
 }

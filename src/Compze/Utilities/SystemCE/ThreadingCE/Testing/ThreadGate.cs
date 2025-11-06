@@ -137,7 +137,7 @@ public class ThreadGate : IThreadGate
    });
 
    string Name { get; }
-   readonly LockCE _monitor;
+   readonly ILock _monitor;
    bool _lockOnNextPass;
    bool _enableLogging = false;
    Action<ThreadSnapshot> _passThroughAction = _ => {};

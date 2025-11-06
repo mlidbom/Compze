@@ -18,4 +18,8 @@ public partial interface ILock
 
    IDisposable? TryTakeUpdateLockWhen(TimeSpan timeout, Func<bool> condition);
    IDisposable? TryTakeReadLockWhen(TimeSpan timeout, Func<bool> condition);
+
+
+   //review: do wo want this exposed? 
+   void SetTimeToWaitForStackTrace(TimeSpan timeToWaitForStackTrace);
 }

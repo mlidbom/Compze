@@ -6,7 +6,7 @@ namespace Compze.Utilities.SystemCE;
 class LazyCE<TValue>(Func<TValue> factory)
    where TValue : class
 {
-   readonly LockCE _monitor = LockCE.WithDefaultTimeout();
+   readonly ILock _monitor = LockCE.WithDefaultTimeout();
    TValue? _value;
    readonly Func<TValue> _factory = factory;
 

@@ -4,8 +4,8 @@ namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
 public partial class LockCE
 {
-   public static LockCE WithDefaultTimeout() => new(DefaultTimeout);
-   public static LockCE WithTimeout(TimeSpan timeout) => new(timeout);
+   public static ILock WithDefaultTimeout() => new LockCE(DefaultTimeout);
+   public static ILock WithTimeout(TimeSpan timeout) => new LockCE(timeout);
 
    readonly MonitorCE _monitor = new();
 
