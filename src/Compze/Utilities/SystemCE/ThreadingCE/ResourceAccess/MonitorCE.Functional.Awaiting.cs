@@ -51,7 +51,7 @@ public partial class MonitorCE
       return LockFor(lockType);
    }
 
-   IDisposable? LockFor(LockType lockType)
+   IDisposable LockFor(LockType lockType)
    {
       return lockType switch
       {
