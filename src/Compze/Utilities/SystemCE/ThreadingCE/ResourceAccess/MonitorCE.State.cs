@@ -19,7 +19,7 @@ public partial class MonitorCE
    static readonly TimeSpan DefaultTimeout = TimeSpan.FromMinutes(2); //MsSql default query timeout is 30 seconds. Default .Net transaction timeout is 60. If we reach 2 minutes it is all but guaranteed that we have an in-memory deadlock.
 #endif
 
-   TimeSpan Timeout { get; }
+   public TimeSpan Timeout { get; }
    TimeSpan? _stackTraceFetchTimeout;
 
    MonitorCE(TimeSpan timeout)

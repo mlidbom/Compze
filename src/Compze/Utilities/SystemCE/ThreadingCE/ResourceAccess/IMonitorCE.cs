@@ -8,4 +8,5 @@ interface IMonitorCE
    IDisposable? TryTakeReadLockWhen(TimeSpan timeout, Func<bool> condition);
    IDisposable? TryTakeUpdateLock(TimeSpan timeout);
    IDisposable? TryTakeReadLock(TimeSpan timeout);
+   TimeSpan Timeout { get; }
 }
