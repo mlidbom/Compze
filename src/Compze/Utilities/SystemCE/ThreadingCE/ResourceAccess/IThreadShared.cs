@@ -31,25 +31,29 @@ public interface IThreadShared
       }
 
       public TResult Read<TResult>(Func<TShared, TResult> read, TimeSpan? timeout = null) => _lock.Read(() => read(_shared), timeout);
-      public unit Read(Action<TShared> read, TimeSpan? timeout = null) => Read(read.AsFunc(), timeout);
 
-      public TResult ReadWhen<TResult>(Func<TShared, TResult> read, Func<bool> condition, TimeSpan? timeout = null) => _lock.ReadWhen(() => read(_shared), condition, timeout);
-
+      public TResult ReadWhen<TResult>(Func<TShared, TResult> read, Func<TShared, bool> condition, TimeSpan? timeout = null) => _lock.ReadWhen(() => read(_shared), () => condition(_shared), timeout);
 
       public TResult Update<TResult>(Func<TShared, TResult> update, TimeSpan? timeout = null) => _lock.Update(() => update(_shared), timeout);
-      public unit Update(Action<TShared> update, TimeSpan? timeout = null) => Update(update.AsFunc(), timeout);
 
-      public TResult UpdateWhen<TResult>(Func<TShared, TResult> update, Func<bool> condition, TimeSpan? timeout = null) => _lock.UpdateWhen(() => update(_shared), condition, timeout);
-
-      public unit Await(Func<TShared, bool> condition, TimeSpan? timeout = null) => _lock.Await(() => condition(_shared), timeout);
+      public TResult UpdateWhen<TResult>(Func<TShared, TResult> update, Func<TShared, bool> condition, TimeSpan? timeout = null) => _lock.UpdateWhen(() => update(_shared), () => condition(_shared), timeout);
    }
 }
 
-public interface IThreadShared<out TResource>
+public interface IThreadShared<out TShared>
 {
-   TResult Read<TResult>(Func<TResource, TResult> read, TimeSpan? timeout = null);
-   unit Read(Action<TResource> read, TimeSpan? timeout = null);
-   TResult Update<TResult>(Func<TResource, TResult> update, TimeSpan? timeout = null);
-   unit Update(Action<TResource> update, TimeSpan? timeout = null);
-   unit Await(Func<TResource, bool> condition, TimeSpan? timeout = null);
+   //core
+   TResult Read<TResult>(Func<TShared, TResult> read, TimeSpan? timeout = null);
+   TResult ReadWhen<TResult>(Func<TShared, TResult> read, Func<TShared, bool> condition, TimeSpan? timeout = null);
+   TResult Update<TResult>(Func<TShared, TResult> update, TimeSpan? timeout = null);
+   TResult UpdateWhen<TResult>(Func<TShared, TResult> update, Func<TShared, bool> condition, TimeSpan? timeout = null);
+
+
+   //Default implementations
+   unit Read(Action<TShared> read, TimeSpan? timeout = null) => Read(read.AsFunc(), timeout);
+   unit ReadWhen(Action<TShared> read, Func<TShared, bool> condition, TimeSpan? timeout = null) => ReadWhen(read.AsFunc(), condition, timeout);
+   unit Update(Action<TShared> update, TimeSpan? timeout = null) => Update(update.AsFunc(), timeout);
+   unit UpdateWhen(Action<TShared> update, Func<TShared, bool> condition, TimeSpan? timeout = null) => UpdateWhen(update.AsFunc(), condition, timeout);
+
+   unit Await(Func<TShared, bool> condition, TimeSpan? timeout = null) => ReadWhen(it => {}, condition, timeout);
 }
