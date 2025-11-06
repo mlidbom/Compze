@@ -38,7 +38,7 @@ public class MonitorCEPerformanceTests : UniversalTestBase
    {
       long Value { get; set; }
 
-      readonly ILock _monitor = LockCE.WithDefaultTimeout();
+      readonly ILock _monitor = ILock.WithDefaultTimeout();
 
       internal long Read_Unsafe() => Value;
 

@@ -7,10 +7,10 @@ namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 public interface IThreadShared
 {
    public static IThreadShared<TShared> WithDefaultTimeout<TShared>() where TShared : new() =>
-      new MonitorCEThreadShared<TShared>(new TShared(), LockCE.WithDefaultTimeout());
+      new MonitorCEThreadShared<TShared>(new TShared(), ILock.WithDefaultTimeout());
 
    public static IThreadShared<TShared> WithDefaultTimeout<TShared>(TShared shared) =>
-      new MonitorCEThreadShared<TShared>(shared, LockCE.WithDefaultTimeout());
+      new MonitorCEThreadShared<TShared>(shared, ILock.WithDefaultTimeout());
 
    class MonitorCEThreadShared<TShared> : IThreadShared<TShared>
    {

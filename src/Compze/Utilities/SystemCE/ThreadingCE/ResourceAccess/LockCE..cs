@@ -20,7 +20,6 @@ public partial class LockCE
 {
    readonly object _timeoutLock = new();
    IReadOnlyList<EnterLockTimeoutException> _timeOutExceptionsOnOtherThreads = new List<EnterLockTimeoutException>();
-   internal static Action? OnTimeOut;
 
    public void SetTimeToWaitForStackTrace(TimeSpan timeToWaitForStackTrace) => _stackTraceFetchTimeout = timeToWaitForStackTrace;
 
@@ -33,7 +32,6 @@ public partial class LockCE
 
    Exception RegisterTimeoutException()
    {
-      OnTimeOut?.Invoke();
       lock(_timeoutLock)
       {
          var exception = new EnterLockTimeoutException(Timeout, _stackTraceFetchTimeout);

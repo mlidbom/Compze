@@ -116,7 +116,7 @@ public class ThreadGate : IThreadGate
    ThreadGate(TimeSpan defaultTimeout, string? name = null)
    {
       Name = name ?? Guid.NewGuid().ToString();
-      _monitor = LockCE.WithTimeout(defaultTimeout);
+      _monitor = ILock.WithTimeout(defaultTimeout);
       DefaultTimeout = defaultTimeout;
    }
 

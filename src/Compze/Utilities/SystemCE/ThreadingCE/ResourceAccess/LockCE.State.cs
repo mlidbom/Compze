@@ -4,9 +4,6 @@ namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
 public partial class LockCE
 {
-   public static ILock WithDefaultTimeout() => ILock.WithDefaultTimeout();
-   public static ILock WithTimeout(TimeSpan timeout) => ILock.WithTimeout(timeout);
-
    readonly MonitorCE _monitor = new();
 
    //By creating the locks only once in the constructor usages become zero-allocation operations. By always referencing them by the concrete type inlining remains possible.

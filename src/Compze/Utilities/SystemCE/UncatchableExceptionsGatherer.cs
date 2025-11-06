@@ -9,10 +9,10 @@ namespace Compze.Utilities.SystemCE;
 static class UncatchableExceptionsGatherer
 {
    static List<Exception> _exceptions = [];
-   static readonly ILock Monitor = LockCE.WithTimeout(1.Seconds());
+   static readonly ILock Monitor = ILock.WithTimeout(1.Seconds());
 
    ///<summary>If writing tests to ensure uncatchable exceptions are registered, you need to prevent others from running similar tests at the same time. Use this monitor for that</summary>
-   internal static readonly ILock TestingMonitor = LockCE.WithTimeout(1.Seconds());
+   internal static readonly ILock TestingMonitor = ILock.WithTimeout(1.Seconds());
 
    internal static unit Register(Exception exception) => Monitor.Update(() => _exceptions.Add(exception));
 

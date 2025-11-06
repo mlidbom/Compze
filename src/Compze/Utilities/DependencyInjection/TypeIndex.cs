@@ -9,7 +9,7 @@ namespace Compze.Utilities.DependencyInjection;
 
 class TypeIndex<TInheritor> where TInheritor : TypeIndex<TInheritor>
 {
-   static readonly ILock Monitor = LockCE.WithDefaultTimeout();
+   static readonly ILock Monitor = ILock.WithDefaultTimeout();
    internal static int ServiceCount { get; private set; }
    static IReadOnlyDictionary<Type, int> _map = new Dictionary<Type, int>();
 
