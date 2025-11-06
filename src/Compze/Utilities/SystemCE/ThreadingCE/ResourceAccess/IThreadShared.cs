@@ -7,24 +7,24 @@ namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 public interface IThreadShared
 {
    public static IThreadShared<TShared> WithDefaultTimeout<TShared>() where TShared : new() =>
-      new MonitorCEThreadShared<TShared>(new TShared(), ILock.WithDefaultTimeout());
+      new LockCEThreadShared<TShared>(new TShared(), ILock.WithDefaultTimeout());
 
    public static IThreadShared<TShared> WithDefaultTimeout<TShared>(TShared shared) =>
-      new MonitorCEThreadShared<TShared>(shared, ILock.WithDefaultTimeout());
+      new LockCEThreadShared<TShared>(shared, ILock.WithDefaultTimeout());
 
    public static IThreadShared<TShared> WithTimeout<TShared>(TimeSpan timeout) where TShared : new() =>
-      new MonitorCEThreadShared<TShared>(new TShared(), ILock.WithTimeout(timeout));
+      new LockCEThreadShared<TShared>(new TShared(), ILock.WithTimeout(timeout));
 
    public static IThreadShared<TShared> WithTimeout<TShared>(TShared shared, TimeSpan timeout) =>
-      new MonitorCEThreadShared<TShared>(shared, ILock.WithTimeout(timeout));
+      new LockCEThreadShared<TShared>(shared, ILock.WithTimeout(timeout));
 
-   class MonitorCEThreadShared<TShared> : IThreadShared<TShared>
+   class LockCEThreadShared<TShared> : IThreadShared<TShared>
    {
       readonly ILock _lock;
 
       readonly TShared _shared;
 
-      internal MonitorCEThreadShared(TShared shared, ILock @lock)
+      internal LockCEThreadShared(TShared shared, ILock @lock)
       {
          _shared = shared;
          _lock = @lock;
