@@ -28,5 +28,5 @@ class ThinMonitorWrapper
 
    public void ReleaseLock() => Monitor.Exit(_lockObject);
 
-   public void NotifyAllWaitingThreadsAboutUpdates() => Monitor.PulseAll(_lockObject); //All threads blocked on Monitor.Wait for our _lockObject will now try and reacquire the lock
+   public void NotifyWaitingThreadsAboutUpdates() => Monitor.PulseAll(_lockObject); //All threads blocked on Monitor.Wait for our _lockObject will now try and reacquire the lock
 }

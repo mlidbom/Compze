@@ -16,7 +16,7 @@ public partial class MonitorCE
 
       public void Dispose()
       {
-         _monitor._coreLock.NotifyAllWaitingThreadsAboutUpdates(); //All threads blocked on Monitor.Wait for our _lockObject will now try and reacquire the lock
+         _monitor._coreLock.NotifyWaitingThreadsAboutUpdates(); //All threads blocked on Monitor.Wait for our _lockObject will now try and reacquire the lock
          _monitor.ReleaseLock();
       }
    }
