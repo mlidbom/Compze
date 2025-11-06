@@ -6,14 +6,16 @@ namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
 public partial class MonitorCE
 {
+   enum LockType
+   {
+      Read = 0,
+      Update = 1
+   }
+
    internal IDisposable EnterUpdateLockWhen(Func<bool> condition) =>
       EnterUpdateLockWhen(Timeout, condition);
 
-   public IDisposable EnterUpdateLockWhen(TimeSpan conditionTimeout, Func<bool> condition)
-   {
-      EnterWhen(conditionTimeout, condition);
-      return _updateLock;
-   }
+   public IDisposable EnterUpdateLockWhen(TimeSpan timeout, Func<bool> condition) => TakeLockWhen(timeout, condition, LockType.Update);
 
    internal unit Await(Func<bool> condition) => Await(Timeout, condition);
 
@@ -25,13 +27,13 @@ public partial class MonitorCE
       return readLock != null;
    }
 
-   void EnterWhen(TimeSpan timeout, Func<bool> condition) => Throw<AwaitingConditionTimeoutException>.If(!TryEnterWhen(timeout, condition));
+   IDisposable TakeLockWhen(TimeSpan timeout, Func<bool> condition, LockType lockType) => TryTakeLockWhen(timeout, condition, lockType) ?? throw new AwaitingConditionTimeoutException();
 
-   bool TryEnterWhen(TimeSpan timeout, Func<bool> condition)
+   IDisposable? TryTakeLockWhen(TimeSpan timeout, Func<bool> condition, LockType lockType)
    {
       var startTime = DateTime.UtcNow;
       if(!TryEnter(DefaultTimeout))
-         return false;
+         return null;
 
       while(!condition())
       {
@@ -40,13 +42,18 @@ public partial class MonitorCE
          if(timeRemaining <= TimeSpan.Zero)
          {
             Exit();
-            return false;
+            return null;
          }
 
          Wait(timeRemaining);
       }
 
-      return true;
+      return lockType switch
+      {
+         LockType.Read   => _readLock,
+         LockType.Update => _updateLock,
+         _               => throw new ArgumentOutOfRangeException(nameof(lockType), lockType, null)
+      };
    }
 
    void Wait(TimeSpan timeout) => Monitor.Wait(_lockObject, timeout);
