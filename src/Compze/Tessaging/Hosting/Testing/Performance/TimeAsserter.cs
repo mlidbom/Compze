@@ -77,7 +77,7 @@ static class TimeAsserter
                                                      DeferredConsoleWriter writer) where TReturnValue : StopwatchCE.TimedExecutionSummary =>
       InternalExecuteAsync(runScenario.AsAsync(), iterations, maxAverage, maxTotal, description, setup, tearDown, maxTries, null, writer).ResultUnwrappingException();
 
-   static readonly AsyncLockCE AsyncLock = new();
+   static readonly IAsyncLockCE AsyncLock = IAsyncLockCE.WithDefaultTimeout();
 
    static async Task<TReturnValue> InternalExecuteAsync<TReturnValue>([InstantHandle] Func<Task<TReturnValue>> runScenario,
                                                                       int iterations,

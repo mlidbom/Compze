@@ -22,7 +22,7 @@ public class AsyncLockCE_specification : UniversalTestBase
    {
       [XF] public async Task it_executes_the_action()
       {
-         using var asyncLock = new AsyncLockCE();
+         using var asyncLock = IAsyncLockCE.WithDefaultTimeout();
          var executed = false;
          await asyncLock.LockedAsync(async () =>
          {
@@ -34,7 +34,7 @@ public class AsyncLockCE_specification : UniversalTestBase
 
       [XF] public async Task it_blocks_concurrent_calls()
       {
-         using var asyncLock = new AsyncLockCE();
+         using var asyncLock = IAsyncLockCE.WithDefaultTimeout();
          var firstTaskTookLockGate = ThreadGate.CreateClosedWithTimeout(1.Seconds());
          var secondTaskTookLockGate = ThreadGate.CreateOpenWithTimeout(1.Seconds());
 
@@ -57,7 +57,7 @@ public class AsyncLockCE_specification : UniversalTestBase
 
       [XF] public async Task it_allows_reentrant_calls_from_same_async_context()
       {
-         using var asyncLock = new AsyncLockCE();
+         using var asyncLock = IAsyncLockCE.WithDefaultTimeout();
 
          await asyncLock.LockedAsync(async () =>
          {
@@ -70,7 +70,7 @@ public class AsyncLockCE_specification : UniversalTestBase
    {
       [XF] public async Task it_returns_the_result()
       {
-         using var asyncLock = new AsyncLockCE();
+         using var asyncLock = IAsyncLockCE.WithDefaultTimeout();
          (await asyncLock.LockedAsync(async () =>
                {
                   await Task.Yield();
@@ -80,7 +80,7 @@ public class AsyncLockCE_specification : UniversalTestBase
 
       [XF] public async Task it_blocks_concurrent_calls()
       {
-         using var asyncLock = new AsyncLockCE();
+         using var asyncLock = IAsyncLockCE.WithDefaultTimeout();
          var task1TookLockGate = ThreadGate.CreateClosedWithTimeout(1.Seconds());
          var task2TookLockGate = ThreadGate.CreateOpenWithTimeout(1.Seconds());
 
@@ -107,7 +107,7 @@ public class AsyncLockCE_specification : UniversalTestBase
 
       [XF] public async Task it_allows_reentrant_calls_from_same_async_context()
       {
-         using var asyncLock = new AsyncLockCE();
+         using var asyncLock = IAsyncLockCE.WithDefaultTimeout();
 
          await asyncLock.LockedAsync(async () =>
                                         await asyncLock.LockedAsync(async () => await Task.Yield())); //Not hanging is success
@@ -118,7 +118,7 @@ public class AsyncLockCE_specification : UniversalTestBase
    {
       [XF] public void it_executes_the_action()
       {
-         using var asyncLock = new AsyncLockCE();
+         using var asyncLock = IAsyncLockCE.WithDefaultTimeout();
          var executed = false;
          asyncLock.Locked(() => executed = true);
          executed.Must().BeTrue();
@@ -126,7 +126,7 @@ public class AsyncLockCE_specification : UniversalTestBase
 
       [XF] public async Task it_blocks_concurrent_calls_from_different_threads()
       {
-         using var asyncLock = new AsyncLockCE();
+         using var asyncLock = IAsyncLockCE.WithDefaultTimeout();
          var task1TookLockGate = ThreadGate.CreateClosedWithTimeout(1.Seconds());
          var task2TookLockGate = ThreadGate.CreateOpenWithTimeout(1.Seconds());
 
@@ -145,21 +145,21 @@ public class AsyncLockCE_specification : UniversalTestBase
 
       [XF] public void it_allows_reentrant_calls_from_same_thread()
       {
-         using var asyncLock = new AsyncLockCE();
+         using var asyncLock = IAsyncLockCE.WithDefaultTimeout();
 
          asyncLock.Locked(() => asyncLock.Locked(() => {}));
       }
 
       [XF] public void it_allows_reentrant_calls_from_same_async_context()
       {
-         using var asyncLock = new AsyncLockCE();
+         using var asyncLock = IAsyncLockCE.WithDefaultTimeout();
 
          var task = Task.Run(() => asyncLock.Locked(() => Task.Run(() => asyncLock.Locked(() => {}))));
       }
 
       [XF] public void it_allows_reentrant_calls_from_same_async_context_while_blocking_calls_from_same_thread()
       {
-         using var asyncLock = new AsyncLockCE();
+         using var asyncLock = IAsyncLockCE.WithDefaultTimeout();
          var firstTaskTookLockGate = ThreadGate.CreateClosedWithTimeout(1.Seconds());
          var firstTaskNestedTaskTookLockGate = ThreadGate.CreateOpenWithTimeout(1.Seconds());
 
@@ -195,14 +195,14 @@ public class AsyncLockCE_specification : UniversalTestBase
    {
       [XF] public void it_returns_the_result()
       {
-         using var asyncLock = new AsyncLockCE();
+         using var asyncLock = IAsyncLockCE.WithDefaultTimeout();
          var result = asyncLock.Locked(() => 42);
          result.Must().Be(42);
       }
 
       [XF] public async Task it_blocks_concurrent_calls_from_different_threads()
       {
-         using var asyncLock = new AsyncLockCE();
+         using var asyncLock = IAsyncLockCE.WithDefaultTimeout();
          var task1TookLockGate = ThreadGate.CreateClosedWithTimeout(1.Seconds());
          var task2TookLockGate = ThreadGate.CreateOpenWithTimeout(1.Seconds());
 
@@ -221,7 +221,7 @@ public class AsyncLockCE_specification : UniversalTestBase
 
       [XF] public void it_allows_reentrant_calls_from_same_thread()
       {
-         using var asyncLock = new AsyncLockCE();
+         using var asyncLock = IAsyncLockCE.WithDefaultTimeout();
 
          asyncLock.Locked(() => asyncLock.Locked(() => "inner")).Must().Be("inner");
       }
@@ -231,7 +231,7 @@ public class AsyncLockCE_specification : UniversalTestBase
    {
       [XF] public async Task async_call_can_reenter_sync_call_from_same_context()
       {
-         using var asyncLock = new AsyncLockCE();
+         using var asyncLock = IAsyncLockCE.WithDefaultTimeout();
 
          await asyncLock.LockedAsync(async () => //not hanging is success
          {
@@ -242,7 +242,7 @@ public class AsyncLockCE_specification : UniversalTestBase
 
       [XF] public async Task sync_call_can_reenter_async_call_from_same_context()
       {
-         using var asyncLock = new AsyncLockCE();
+         using var asyncLock = IAsyncLockCE.WithDefaultTimeout();
 
          asyncLock.Locked(() =>
          {
@@ -260,7 +260,7 @@ public class AsyncLockCE_specification : UniversalTestBase
    {
       [XF] public async Task LockedAsync_propagates_exception_and_releases_lock()
       {
-         using var asyncLock = new AsyncLockCE();
+         using var asyncLock = IAsyncLockCE.WithDefaultTimeout();
 
          await InvokingAsync(async () => await asyncLock.LockedAsync(async () =>
          {
@@ -273,7 +273,7 @@ public class AsyncLockCE_specification : UniversalTestBase
 
       [XF] public void Locked_propagates_exception_and_releases_lock()
       {
-         using var asyncLock = new AsyncLockCE();
+         using var asyncLock = IAsyncLockCE.WithDefaultTimeout();
 
          Invoking(() => asyncLock.Locked(() => throw new InvalidOperationException("test")))
            .Must()
@@ -287,7 +287,7 @@ public class AsyncLockCE_specification : UniversalTestBase
    {
       [XF] public void Calling_locked_throws_ObjectDisposedException()
       {
-         var asyncLock = new AsyncLockCE();
+         var asyncLock = IAsyncLockCE.WithDefaultTimeout();
          asyncLock.Dispose();
 
          Invoking(() => asyncLock.Locked(() => {}))
@@ -297,7 +297,7 @@ public class AsyncLockCE_specification : UniversalTestBase
 
       [XF] public async Task Calling_LockedAsync_throws_ObjectDisposedException()
       {
-         var asyncLock = new AsyncLockCE();
+         var asyncLock = IAsyncLockCE.WithDefaultTimeout();
          asyncLock.Dispose();
 
          await InvokingAsync(async () => await asyncLock.LockedAsync(async () => await Task.Yield()))
