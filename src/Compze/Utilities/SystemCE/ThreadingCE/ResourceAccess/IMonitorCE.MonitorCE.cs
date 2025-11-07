@@ -94,14 +94,14 @@ public partial interface IMonitorCE
          while(!condition())
          {
             var elapsedTime = DateTime.UtcNow - startTime;
-            var timeRemaining = actualWaitTimeout - elapsedTime;
-            if(timeRemaining <= TimeSpan.Zero)
+            var waitTimeRemaining = actualWaitTimeout - elapsedTime;
+            if(waitTimeRemaining <= TimeSpan.Zero)
             {
                takenLock.Dispose();
                return null;
             }
 
-            _monitor.ReleaseLockAndReacquireItOnPulseOrTimeout(timeRemaining);
+            _monitor.ReleaseLockAndReacquireItOnPulseOrTimeout(waitTimeRemaining);
          }
 
          return LockFor(lockType);
