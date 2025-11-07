@@ -187,6 +187,6 @@ public class TeventStoreTests : UniversalTestBase
 
       var secondRead = serviceLocator.ExecuteInIsolatedScope(() => serviceLocator.TeventStore().GetTaggregateHistory(user.Id).Single());
 
-      firstRead.Must().BeSameAs(secondRead);
+      firstRead.Must().ReferenceEqual(secondRead);
    }
 }

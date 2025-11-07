@@ -29,8 +29,8 @@ public class IStaticInstancePropertySingleton_tests : UniversalTestBase
       var instance2 = Constructor.For<ImplicitImplementation>.DefaultConstructor.Instance();
 
       instance1.Must().NotBeNull()
-               .BeSameAs(instance2)
-               .BeSameAs(ImplicitImplementation.Instance);
+               .ReferenceEqual(instance2)
+               .ReferenceEqual(ImplicitImplementation.Instance);
    }
 
    [XF]
@@ -41,6 +41,6 @@ public class IStaticInstancePropertySingleton_tests : UniversalTestBase
 
       instance1.Must()
                .NotBeNull()
-               .BeSameAs(instance2);
+               .ReferenceEqual(instance2);
    }
 }

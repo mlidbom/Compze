@@ -104,7 +104,7 @@ public class DocumentDbTests : DocumentDbTestsBase
             var fetchedWithGetAll = reader.GetAll<User>(ids)
                                         .ToArray();
 
-            fetchedIndividually.ForEach((user, index) => user.Must().BeSameAs(fetchedWithGetAll[index]));
+            fetchedIndividually.ForEach((user, index) => user.Must().ReferenceEqual(fetchedWithGetAll[index]));
         });
     }
 
@@ -341,7 +341,7 @@ public class DocumentDbTests : DocumentDbTestsBase
         {
             var loaded1 = reader.Get<User>(user.Id);
             var loaded2 = reader.Get<User>(user.Id);
-            loaded1.Must().BeSameAs(loaded2);
+            loaded1.Must().ReferenceEqual(loaded2);
         });
     }
 
@@ -356,8 +356,8 @@ public class DocumentDbTests : DocumentDbTestsBase
 
             var loaded1 = reader.Get<User>(user.Id);
             var loaded2 = reader.Get<User>(user.Id);
-            loaded1.Must().BeSameAs(loaded2);
-            loaded1.Must().BeSameAs(user);
+            loaded1.Must().ReferenceEqual(loaded2);
+            loaded1.Must().ReferenceEqual(user);
         });
     }
 
