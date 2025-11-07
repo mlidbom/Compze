@@ -54,9 +54,9 @@ public class When_calling_Must_NotBe_with_custom_types : UniversalTestBase
                                     @@ -1,5 +1,5 @@
                                      {
                                        "$type": "Compze.Utilities.Tests.Testing.Must.ComparableWithErrorInjectionSupport, Compze.Utilities.Tests",
-                                    -  "_breakComparableMethod": 0,
+                                    -  "_breakComparableMethod": "None",
                                     -  "_value": 99
-                                    +  "_breakComparableMethod": 1,
+                                    +  "_breakComparableMethod": "ObjectEquals",
                                     +  "_value": 42
                                      }
                                     
@@ -67,7 +67,7 @@ public class When_calling_Must_NotBe_with_custom_types : UniversalTestBase
                                     --------------------------------------------------
                                     {
                                       "$type": "Compze.Utilities.Tests.Testing.Must.ComparableWithErrorInjectionSupport, Compze.Utilities.Tests",
-                                      "_breakComparableMethod": 1,
+                                      "_breakComparableMethod": "ObjectEquals",
                                       "_value": 42
                                     }
                                     --------------------------------------------------
@@ -77,7 +77,7 @@ public class When_calling_Must_NotBe_with_custom_types : UniversalTestBase
                                     --------------------------------------------------
                                     {
                                       "$type": "Compze.Utilities.Tests.Testing.Must.ComparableWithErrorInjectionSupport, Compze.Utilities.Tests",
-                                      "_breakComparableMethod": 0,
+                                      "_breakComparableMethod": "None",
                                       "_value": 99
                                     }
                                     --------------------------------------------------
