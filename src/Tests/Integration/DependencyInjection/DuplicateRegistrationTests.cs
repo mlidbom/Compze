@@ -5,7 +5,6 @@ using Compze.Tests.Infrastructure;
 using Compze.Utilities.DependencyInjection;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Utilities.Testing.Must;
-using static Compze.Utilities.Testing.Must.MustActions;
 
 namespace Compze.Tests.Integration.DependencyInjection;
 
