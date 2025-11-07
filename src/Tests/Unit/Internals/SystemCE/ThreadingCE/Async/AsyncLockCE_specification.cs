@@ -81,24 +81,28 @@ public class AsyncLockCE_specification : UniversalTestBase
       [XF] public async Task it_blocks_concurrent_calls()
       {
          using var asyncLock = new AsyncLockCE();
-         bool task1completed = false;
+         var task1TookLockGate = ThreadGate.CreateClosedWithTimeout(1.Seconds());
+         var task2TookLockGate = ThreadGate.CreateOpenWithTimeout(1.Seconds());
 
-         var firstTask = asyncLock.LockedAsync(async () =>
-         {
-            await Task.Delay(50.Milliseconds());
-            task1completed = true;
-         });
-
-         await Task.Delay(10.Milliseconds());
-
-         var checkIfTaskOneHasCompleted = asyncLock.LockedAsync(async () =>
+         var task1 = asyncLock.LockedAsync(async () =>
          {
             await Task.Yield();
-            return task1completed;
+            task1TookLockGate.AwaitPassThrough();
          });
 
-         (await checkIfTaskOneHasCompleted).Must().Be(true); // Proves task2 didn't enter until task1 set the value to 1
-         await firstTask;
+         task1TookLockGate.AwaitQueueLengthEqualTo(1);
+
+         var task2 = asyncLock.LockedAsync(async () =>
+         {
+            task2TookLockGate.AwaitPassThrough();
+            await Task.Yield();
+         });
+
+         task2TookLockGate.TryAwaitPassedThroughCountEqualTo(1, 10.Milliseconds()).Must().Be(false);
+         task1TookLockGate.Open();
+         task2TookLockGate.TryAwaitPassedThroughCountEqualTo(1, 10.Milliseconds()).Must().Be(true);
+
+         await Task.WhenAll(task1, task2);
       }
 
       [XF] public async Task it_allows_reentrant_calls_from_same_async_context()
@@ -123,21 +127,20 @@ public class AsyncLockCE_specification : UniversalTestBase
       [XF] public async Task it_blocks_concurrent_calls_from_different_threads()
       {
          using var asyncLock = new AsyncLockCE();
-         var firstTaskCompleted = false;
+         var task1TookLockGate = ThreadGate.CreateClosedWithTimeout(1.Seconds());
+         var task2TookLockGate = ThreadGate.CreateOpenWithTimeout(1.Seconds());
 
-         var syncTask = TaskCE.Run(() => asyncLock.Locked(() =>
-         {
-            Thread.Sleep(50.Milliseconds());
-            firstTaskCompleted = true;
-         }));
+         var task1 = TaskCE.Run(() => asyncLock.Locked(() => task1TookLockGate.AwaitPassThrough()));
 
-         await Task.Delay(10.Milliseconds());
+         task1TookLockGate.AwaitQueueLengthEqualTo(1);
 
-         var checkIfFirstTaskCompleted = TaskCE.Run(() => asyncLock.Locked(() => firstTaskCompleted));
+         var task2 = TaskCE.Run(() => asyncLock.Locked(() => task2TookLockGate.AwaitPassThrough()));
 
-         await Task.WhenAll(syncTask, checkIfFirstTaskCompleted);
+         task2TookLockGate.TryAwaitPassedThroughCountEqualTo(1, 10.Milliseconds()).Must().Be(false);
+         task1TookLockGate.Open();
+         task2TookLockGate.TryAwaitPassedThroughCountEqualTo(1, 10.Milliseconds()).Must().Be(true);
 
-         checkIfFirstTaskCompleted.Result.Must().BeTrue();
+         await Task.WhenAll(task1, task2);
       }
 
       [XF] public void it_allows_reentrant_calls_from_same_thread()
@@ -157,18 +160,19 @@ public class AsyncLockCE_specification : UniversalTestBase
       [XF] public void it_allows_reentrant_calls_from_same_async_context_while_blocking_calls_from_same_thread()
       {
          using var asyncLock = new AsyncLockCE();
-         var firstLockTakenGate = ThreadGate.CreateClosedWithTimeout(1.Seconds());
+         var firstTaskTookLockGate = ThreadGate.CreateClosedWithTimeout(1.Seconds());
+         var firstTaskNestedTaskTookLockGate = ThreadGate.CreateOpenWithTimeout(1.Seconds());
 
          var secondTaskStartedGate = ThreadGate.CreateOpenWithTimeout(1.Seconds());
          var secondTaskGotLockGate = ThreadGate.CreateOpenWithTimeout(1.Seconds());
 
          var firstTask = Task.Run(() => asyncLock.Locked(() =>
          {
-            firstLockTakenGate.AwaitPassThrough();
-            return Task.Run(() => asyncLock.Locked(() => {}));
+            firstTaskTookLockGate.AwaitPassThrough();
+            return Task.Run(() => asyncLock.Locked(() => firstTaskNestedTaskTookLockGate.AwaitPassThrough()));
          }));
 
-         firstLockTakenGate.AwaitQueueLengthEqualTo(1);
+         firstTaskTookLockGate.AwaitQueueLengthEqualTo(1);
 
          var secondTask = Task.Run(() =>
          {
@@ -179,8 +183,9 @@ public class AsyncLockCE_specification : UniversalTestBase
 
          secondTaskStartedGate.AwaitPassedThroughCountEqualTo(1);
          secondTaskGotLockGate.TryAwaitPassedThroughCountEqualTo(1, 20.Milliseconds()).Must().BeFalse();
-         firstLockTakenGate.Open();
-         secondTaskGotLockGate.TryAwaitPassedThroughCountEqualTo(1, 20.Milliseconds()).Must().BeTrue();
+         firstTaskTookLockGate.Open();
+         firstTaskNestedTaskTookLockGate.AwaitPassedThroughCountEqualTo(1);
+         secondTaskGotLockGate.AwaitPassedThroughCountEqualTo(1, 20.Milliseconds());
 
          Task.WaitAll(firstTask, secondTask);
       }
@@ -198,30 +203,20 @@ public class AsyncLockCE_specification : UniversalTestBase
       [XF] public async Task it_blocks_concurrent_calls_from_different_threads()
       {
          using var asyncLock = new AsyncLockCE();
-         var counter = 0;
-         var secondTaskSawCounterAs = 0;
+         var task1TookLockGate = ThreadGate.CreateClosedWithTimeout(1.Seconds());
+         var task2TookLockGate = ThreadGate.CreateOpenWithTimeout(1.Seconds());
 
-         var task1 = TaskCE.Run(() => asyncLock.Locked(() =>
-         {
-            counter = 1;
-            Thread.Sleep(50.Milliseconds());
-            counter = 2;
-            return counter;
-         }));
+         var task1 = TaskCE.Run(() => asyncLock.Locked(() => task1TookLockGate.AwaitPassThrough()));
 
-         await Task.Delay(10.Milliseconds());
+         task1TookLockGate.AwaitQueueLengthEqualTo(1);
 
-         var task2 = TaskCE.Run(() => asyncLock.Locked(() =>
-         {
-            secondTaskSawCounterAs = counter;
-            counter = 3;
-            return counter;
-         }));
+         var task2 = TaskCE.Run(() => asyncLock.Locked(() => task2TookLockGate.AwaitPassThrough()));
 
-         var results = await Task.WhenAll(task1, task2);
-         results[0].Must().Be(2);
-         results[1].Must().Be(3);
-         secondTaskSawCounterAs.Must().Be(2); // Proves task2 didn't enter until task1 completed
+         task2TookLockGate.TryAwaitPassedThroughCountEqualTo(1, 10.Milliseconds()).Must().Be(false);
+         task1TookLockGate.Open();
+         task2TookLockGate.TryAwaitPassedThroughCountEqualTo(1, 10.Milliseconds()).Must().Be(true);
+
+         await Task.WhenAll(task1, task2);
       }
 
       [XF] public void it_allows_reentrant_calls_from_same_thread()
