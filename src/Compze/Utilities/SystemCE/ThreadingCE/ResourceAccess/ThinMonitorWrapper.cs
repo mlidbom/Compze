@@ -8,12 +8,15 @@ class ThinMonitorWrapper
 {
    static readonly TimeSpan InfiniteTimeOut = -1.Milliseconds();//https://learn.microsoft.com/en-us/dotnet/api/system.threading.monitor.tryenter?view=net-9.0
    readonly object _lockObject = new();
+   long _contentionCount = 0;
+   public long ContentionCount => _contentionCount;
 
    public bool TryTakeLock(TimeSpan timeout)
    {
       Assert.Argument.Is(timeout != InfiniteTimeOut, () => "Infinite timeouts are not supported");
 
-      //if(Monitor.TryEnter(_lockObject)) return true; //This will never block and calling it first improves performance quite a bit.
+      if(Monitor.TryEnter(_lockObject)) return true; //This will never block, calling it is essentially free and allows us to collect contention statistics
+      Interlocked.Increment(ref _contentionCount);
       return Monitor.TryEnter(_lockObject, timeout);
    }
 

@@ -25,6 +25,9 @@ public partial interface IMonitorCE
    IDisposable? TryTakeReadLockWhen(Func<bool> condition, TimeSpan? waitTimeout = null, TimeSpan? lockTimeout = null);
    IDisposable? TryTakeUpdateLockWhen(Func<bool> condition, TimeSpan? waitTimeout = null, TimeSpan? lockTimeout = null);
 
+
+   long ContentionCount { get; }
+
    //review: do we want this exposed?
    void SetTimeToWaitForStackTrace(TimeSpan timeToWaitForStackTrace);
 }

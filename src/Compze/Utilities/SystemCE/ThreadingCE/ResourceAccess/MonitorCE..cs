@@ -27,6 +27,8 @@ class MonitorCE : IMonitorCE
    public IDisposable? TryTakeUpdateLockWhen(Func<bool> condition, TimeSpan? waitTimeout = null, TimeSpan? lockTimeout = null) =>
       TryTakeLockWhen(condition, LockType.Update, throwOnFailedLock: false, waitTimeout: waitTimeout, lockTimeout: lockTimeout);
 
+   public long ContentionCount => _monitor.ContentionCount;
+
    public void SetTimeToWaitForStackTrace(TimeSpan timeToWaitForStackTrace) => _stackTraceFetchTimeout = timeToWaitForStackTrace;
 
    readonly ThinMonitorWrapper _monitor = new();
