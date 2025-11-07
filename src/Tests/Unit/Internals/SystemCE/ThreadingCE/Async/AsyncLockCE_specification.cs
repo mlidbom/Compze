@@ -356,5 +356,39 @@ public class AsyncLockCE_specification : UniversalTestBase
             await asyncLock.LockedAsync(async () => await Task.Yield()); // Should not timeout
          });
       }
+
+      [XF] public async Task exception_message_includes_blocking_thread_stack_trace()
+      {
+         using var asyncLock = IAsyncLockCE.WithTimeout(50.Milliseconds());
+         asyncLock.SetTimeToWaitForStackTrace(500.Milliseconds());
+         var firstTaskTookLockGate = ThreadGate.CreateClosedWithTimeout(1.Seconds());
+
+         var firstTask = TaskCE.Run(() => asyncLock.Locked(() =>
+         {
+            BlockingMethodThatHoldsLock();
+            firstTaskTookLockGate.AwaitPassThrough();
+         }));
+
+         firstTaskTookLockGate.AwaitQueueLengthEqualTo(1);
+
+         var caughtException = await InvokingAsync(async () => await asyncLock.LockedAsync(async () => await Task.Yield()))
+              .Must()
+              .ThrowAsync<AsyncLockTimeoutException>();
+
+         firstTaskTookLockGate.Open();
+         await firstTask;
+
+         // The stack trace should show Exit being called, which proves we captured the blocking thread's stack
+         caughtException.Which.Message.Must().Contain("Exit");
+         caughtException.Which.Message.Must().Contain("Blocking thread lock disposal stack trace");
+         caughtException.Which.Message.Must().Contain("AsyncLockCE.cs");
+      }
+
+      [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
+      static void BlockingMethodThatHoldsLock()
+      {
+         // This method name should appear in the stack trace
+         // NoInlining attribute prevents the compiler from inlining this method
+      }
    }
 }

@@ -1,6 +1,9 @@
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
+using Compze.Utilities.Contracts;
 using Compze.Utilities.Functional;
 using Compze.Utilities.Misc;
 using Compze.Utilities.SystemCE.ActionFuncHarmonization;
@@ -22,14 +25,28 @@ public interface IAsyncLockCE : IDisposable
    unit Locked(Action lockedAction);
    TReturn Locked<TReturn>(Func<TReturn> lockedAction);
 
+   void SetTimeToWaitForStackTrace(TimeSpan timeToWaitForStackTrace);
+
 
    class AsyncLockCE : IAsyncLockCE
    {
       readonly SemaphoreSlim _semaphore = new(1, 1);
       readonly AsyncLocal<int> _lockEntranceCount = new();
       readonly TimeSpan _timeout;
+      readonly Lock _timeoutLock = new();
 
-      internal AsyncLockCE(TimeSpan timeout) => _timeout = timeout;
+      static readonly TimeSpan DefaultTimeToWaitForStackTrace = 1.Seconds();
+
+      TimeSpan _stackTraceFetchTimeout;
+      IReadOnlyList<AsyncLockTimeoutException> _timeOutExceptionsOnOtherThreads = new List<AsyncLockTimeoutException>();
+
+      internal AsyncLockCE(TimeSpan timeout)
+      {
+         _timeout = timeout;
+         _stackTraceFetchTimeout = DefaultTimeToWaitForStackTrace;
+      }
+
+      public void SetTimeToWaitForStackTrace(TimeSpan timeToWaitForStackTrace) => _stackTraceFetchTimeout = timeToWaitForStackTrace;
 
       public async Task<unit> LockedAsync(Func<Task> lockedAction) => await LockedAsync(lockedAction.AsFunc()).caf();
 
@@ -40,7 +57,7 @@ public interface IAsyncLockCE : IDisposable
          {
             if(!await _semaphore.WaitAsync(_timeout).caf())
             {
-               throw new AsyncLockTimeoutException(_timeout);
+               throw RegisterTimeoutException();
             }
          }
 
@@ -57,7 +74,7 @@ public interface IAsyncLockCE : IDisposable
          {
             if(!_semaphore.Wait(_timeout))
             {
-               throw new AsyncLockTimeoutException(_timeout);
+               throw RegisterTimeoutException();
             }
          }
 
@@ -70,7 +87,36 @@ public interface IAsyncLockCE : IDisposable
          _lockEntranceCount.Value -= 1;
          if(_lockEntranceCount.Value == 0)
          {
+            UpdateAnyRegisteredTimeoutExceptions();
             _semaphore.Release();
+         }
+      }
+
+      Exception RegisterTimeoutException()
+      {
+         lock(_timeoutLock)
+         {
+            var exception = new AsyncLockTimeoutException(_timeout, _stackTraceFetchTimeout);
+            OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _timeOutExceptionsOnOtherThreads, exception);
+            return exception;
+         }
+      }
+
+      void UpdateAnyRegisteredTimeoutExceptions()
+      {
+         // ReSharper disable once InconsistentlySynchronizedField
+         if(_timeOutExceptionsOnOtherThreads.Count > 0)
+         {
+            lock(_timeoutLock)
+            {
+               var stackTrace = new StackTrace(fNeedFileInfo: true);
+               foreach(var exception in _timeOutExceptionsOnOtherThreads)
+               {
+                  exception.SetBlockingThreadsDisposeStackTrace(stackTrace);
+               }
+
+               Interlocked.Exchange(ref _timeOutExceptionsOnOtherThreads, new List<AsyncLockTimeoutException>());
+            }
          }
       }
 
