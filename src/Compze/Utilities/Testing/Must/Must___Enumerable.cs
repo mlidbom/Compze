@@ -24,7 +24,7 @@ public static class Must___Enumerable
       => context.SatisfyInternal(it => it.Cast<object>().Any());
 
    //Todo: rename
-   public static IAssertionContext<TCollection> Equal<TCollection, TElement>(this IAssertionContext<TCollection> context, IEnumerable<TElement> expected, [CallerArgumentExpression(nameof(expected))] string expectedExpression = null!)
+   public static IAssertionContext<TCollection> SequenceEqual<TCollection, TElement>(this IAssertionContext<TCollection> context, IEnumerable<TElement> expected, [CallerArgumentExpression(nameof(expected))] string expectedExpression = null!)
       where TCollection : IEnumerable<TElement>
    {
       var actualJson = JsonConvert.SerializeObject(context.Actual, TestingJsonSettings.AllMembers);

@@ -64,7 +64,7 @@ public class DocumentDbTests : DocumentDbTestsBase
         UseInScope(reader => reader.GetAll<User>(ids.Take(5))
                                    .Select(fetched => fetched.Id)
                                    .Must()
-                                   .Equal(ids.Take(5)));
+                                   .SequenceEqual(ids.Take(5)));
     }
 
     [PCT]
