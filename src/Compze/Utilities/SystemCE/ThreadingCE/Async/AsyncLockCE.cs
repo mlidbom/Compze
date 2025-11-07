@@ -7,7 +7,7 @@ using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Utilities.SystemCE.ThreadingCE.Async;
 
-public class AsyncLockCE
+public class AsyncLockCE : IDisposable
 {
    readonly SemaphoreSlim _semaphore = new(1, 1);
    readonly AsyncLocal<int> _lockEntranceCount = new();
@@ -16,19 +16,19 @@ public class AsyncLockCE
 
    public async Task<TReturn> LockedAsync<TReturn>(Func<Task<TReturn>> lockedAction)
    {
-      await using var _exit = new AsyncDisposable(Exit);
+      await using var exit = new AsyncDisposable(Exit).ConfigureAwait(false);//Analyzer does not understand caf() here for some reason and emits a warning.
       if(_lockEntranceCount.Value == 0)
-         await _semaphore.WaitAsync();
+         await _semaphore.WaitAsync().caf();
 
       _lockEntranceCount.Value += 1;
-      return await lockedAction();
+      return await lockedAction().caf();
    }
 
    public unit Locked(Action lockedAction) => Locked(lockedAction.AsFunc());
 
    public TReturn Locked<TReturn>(Func<TReturn> lockedAction)
    {
-      using var _exit = new Disposable(Exit);
+      using var exit = new Disposable(Exit);
       if(_lockEntranceCount.Value == 0)
          _semaphore.Wait();
 
@@ -44,4 +44,6 @@ public class AsyncLockCE
          _semaphore.Release();
       }
    }
+
+   public void Dispose() => _semaphore.Dispose();
 }

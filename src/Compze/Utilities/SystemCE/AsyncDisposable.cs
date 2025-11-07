@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Compze.Utilities.SystemCE.ThreadingCE;
+using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Utilities.SystemCE;
 
@@ -15,7 +16,7 @@ sealed class AsyncDisposable : IAsyncDisposable
 
    internal AsyncDisposable(Func<ValueTask> dispose) => _dispose = () => dispose().AsTask();
 
-   public async ValueTask DisposeAsync() => await _dispose();
+   public async ValueTask DisposeAsync() => await _dispose().caf();
 
    public static readonly IAsyncDisposable NullOp = new AsyncDisposable(ActionCE.NullOp);
 }
