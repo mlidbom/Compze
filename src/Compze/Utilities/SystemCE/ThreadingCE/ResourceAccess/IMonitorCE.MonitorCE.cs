@@ -93,8 +93,7 @@ public partial interface IMonitorCE
 
          while(!condition())
          {
-            var elapsedTime = DateTime.UtcNow - startTime;
-            var waitTimeRemaining = actualWaitTimeout - elapsedTime;
+            var waitTimeRemaining = actualWaitTimeout - DateTimeCE.TimeElapsedSince(startTime);
             if(waitTimeRemaining <= TimeSpan.Zero)
             {
                takenLock.Dispose();
