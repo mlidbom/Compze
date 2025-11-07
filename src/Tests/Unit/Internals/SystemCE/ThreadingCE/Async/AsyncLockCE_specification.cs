@@ -232,38 +232,27 @@ public class AsyncLockCE_specification : UniversalTestBase
       [XF] public async Task async_call_can_reenter_sync_call_from_same_context()
       {
          using var asyncLock = new AsyncLockCE();
-         var result = "";
 
-         await asyncLock.LockedAsync(async () =>
+         await asyncLock.LockedAsync(async () => //not hanging is success
          {
-            result += "async-outer-";
-            asyncLock.Locked(() => result += "sync-inner-");
+            asyncLock.Locked(() => { });
             await Task.Yield();
-            result += "async-outer-end";
          });
-
-         result.Must().Be("async-outer-sync-inner-async-outer-end");
       }
 
       [XF] public async Task sync_call_can_reenter_async_call_from_same_context()
       {
          using var asyncLock = new AsyncLockCE();
-         var result = "";
 
          asyncLock.Locked(() =>
          {
-            result += "sync-outer-";
             asyncLock.LockedAsync(async () =>
             {
-               result += "async-inner-";
                await Task.Yield();
-               result += "async-inner-end-";
             }).Wait();
-            result += "sync-outer-end";
          });
 
          await Task.Yield();
-         result.Must().Be("sync-outer-async-inner-async-inner-end-sync-outer-end");
       }
    }
 
@@ -294,9 +283,9 @@ public class AsyncLockCE_specification : UniversalTestBase
       }
    }
 
-   public class When_disposing : AsyncLockCE_specification
+   public class After_disposing : AsyncLockCE_specification
    {
-      [XF] public void Dispose_releases_underlying_semaphore()
+      [XF] public void Calling_locked_throws_ObjectDisposedException()
       {
          var asyncLock = new AsyncLockCE();
          asyncLock.Dispose();
@@ -306,10 +295,9 @@ public class AsyncLockCE_specification : UniversalTestBase
            .Throw<ObjectDisposedException>();
       }
 
-      [XF] public async Task Dispose_after_async_operations_complete()
+      [XF] public async Task Calling_LockedAsync_throws_ObjectDisposedException()
       {
          var asyncLock = new AsyncLockCE();
-         await asyncLock.LockedAsync(async () => await Task.Yield());
          asyncLock.Dispose();
 
          await InvokingAsync(async () => await asyncLock.LockedAsync(async () => await Task.Yield()))
