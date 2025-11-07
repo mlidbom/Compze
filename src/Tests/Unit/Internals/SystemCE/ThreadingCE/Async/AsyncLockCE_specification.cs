@@ -32,14 +32,13 @@ public class AsyncLockCE_specification : UniversalTestBase
       [XF] public async Task it_blocks_concurrent_calls()
       {
          using var asyncLock = new AsyncLockCE();
-         var firstTaskStarted = false;
-         var secondTaskStarted = false;
+         var firstTaskEntered = false;
          var firstTaskCompleted = false;
-         var secondTaskSeesFirstCompleted = false;
+         var secondTaskEnteredWhileFirstWasInside = false;
 
          var firstTask = asyncLock.LockedAsync(async () =>
          {
-            firstTaskStarted = true;
+            firstTaskEntered = true;
             await Task.Delay(50.Milliseconds());
             firstTaskCompleted = true;
          });
@@ -48,17 +47,15 @@ public class AsyncLockCE_specification : UniversalTestBase
 
          var secondTask = asyncLock.LockedAsync(async () =>
          {
-            secondTaskStarted = true;
-            secondTaskSeesFirstCompleted = firstTaskCompleted;
+            secondTaskEnteredWhileFirstWasInside = !firstTaskCompleted;
             await Task.Yield();
          });
 
          await Task.WhenAll(firstTask, secondTask);
 
-         firstTaskStarted.Must().BeTrue();
-         secondTaskStarted.Must().BeTrue();
+         firstTaskEntered.Must().BeTrue();
          firstTaskCompleted.Must().BeTrue();
-         secondTaskSeesFirstCompleted.Must().BeTrue();
+         secondTaskEnteredWhileFirstWasInside.Must().BeFalse();
       }
 
       [XF] public async Task it_allows_reentrant_calls_from_same_async_context()
@@ -91,11 +88,13 @@ public class AsyncLockCE_specification : UniversalTestBase
       {
          using var asyncLock = new AsyncLockCE();
          var counter = 0;
+         var secondTaskSawCounterAs = 0;
 
          var task1 = asyncLock.LockedAsync(async () =>
          {
+            counter = 1;
             await Task.Delay(50.Milliseconds());
-            counter++;
+            counter = 2;
             return counter;
          });
 
@@ -103,14 +102,16 @@ public class AsyncLockCE_specification : UniversalTestBase
 
          var task2 = asyncLock.LockedAsync(async () =>
          {
-            counter++;
+            secondTaskSawCounterAs = counter;
+            counter = 3;
             await Task.Yield();
             return counter;
          });
 
          var results = await Task.WhenAll(task1, task2);
-         results[0].Must().Be(1);
-         results[1].Must().Be(2);
+         results[0].Must().Be(2);
+         results[1].Must().Be(3);
+         secondTaskSawCounterAs.Must().Be(2); // Proves task2 didn't enter until task1 completed
       }
 
       [XF] public async Task it_allows_reentrant_calls_from_same_async_context()
@@ -143,29 +144,29 @@ public class AsyncLockCE_specification : UniversalTestBase
       [XF] public async Task it_blocks_concurrent_calls_from_different_threads()
       {
          using var asyncLock = new AsyncLockCE();
-         var syncTaskStarted = false;
-         var syncTaskCompleted = false;
-         var otherTaskSeesCompleted = false;
+         var firstTaskEntered = false;
+         var firstTaskCompleted = false;
+         var secondTaskEnteredWhileFirstWasInside = false;
 
          var syncTask = TaskCE.Run(() => asyncLock.Locked(() =>
          {
-            syncTaskStarted = true;
+            firstTaskEntered = true;
             Thread.Sleep(50.Milliseconds());
-            syncTaskCompleted = true;
+            firstTaskCompleted = true;
          }));
 
          await Task.Delay(10.Milliseconds());
 
          var otherTask = TaskCE.Run(() => asyncLock.Locked(() =>
          {
-            otherTaskSeesCompleted = syncTaskCompleted;
+            secondTaskEnteredWhileFirstWasInside = !firstTaskCompleted;
          }));
 
          await Task.WhenAll(syncTask, otherTask);
 
-         syncTaskStarted.Must().BeTrue();
-         syncTaskCompleted.Must().BeTrue();
-         otherTaskSeesCompleted.Must().BeTrue();
+         firstTaskEntered.Must().BeTrue();
+         firstTaskCompleted.Must().BeTrue();
+         secondTaskEnteredWhileFirstWasInside.Must().BeFalse();
       }
 
       [XF] public void it_allows_reentrant_calls_from_same_thread()
@@ -198,11 +199,13 @@ public class AsyncLockCE_specification : UniversalTestBase
       {
          using var asyncLock = new AsyncLockCE();
          var counter = 0;
+         var secondTaskSawCounterAs = 0;
 
          var task1 = TaskCE.Run(() => asyncLock.Locked(() =>
          {
+            counter = 1;
             Thread.Sleep(50.Milliseconds());
-            counter++;
+            counter = 2;
             return counter;
          }));
 
@@ -210,13 +213,15 @@ public class AsyncLockCE_specification : UniversalTestBase
 
          var task2 = TaskCE.Run(() => asyncLock.Locked(() =>
          {
-            counter++;
+            secondTaskSawCounterAs = counter;
+            counter = 3;
             return counter;
          }));
 
          var results = await Task.WhenAll(task1, task2);
-         results[0].Must().Be(1);
-         results[1].Must().Be(2);
+         results[0].Must().Be(2);
+         results[1].Must().Be(3);
+         secondTaskSawCounterAs.Must().Be(2); // Proves task2 didn't enter until task1 completed
       }
 
       [XF] public void it_allows_reentrant_calls_from_same_thread()
