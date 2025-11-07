@@ -20,17 +20,19 @@ public partial interface IMonitorCE
       using(TakeUpdateLock(timeout)) return func();
    }
 
-   unit ReadWhen(Action action, Func<bool> condition, TimeSpan? timeout = null) => ReadWhen(action.AsFunc(), condition, timeout);
+   unit ReadWhen(Action action, Func<bool> condition, TimeSpan? waitTimeout = null, TimeSpan? lockTimeout = null) =>
+      ReadWhen(action.AsFunc(), condition, waitTimeout: waitTimeout, lockTimeout: lockTimeout);
 
-   TReturn ReadWhen<TReturn>(Func<TReturn> func, Func<bool> condition, TimeSpan? timeout = null)
+   TReturn ReadWhen<TReturn>(Func<TReturn> func, Func<bool> condition, TimeSpan? waitTimeout = null, TimeSpan? lockTimeout = null)
    {
-      using(TakeReadLockWhen(condition, timeout)) return func();
+      using(TakeReadLockWhen(condition, waitTimeout: waitTimeout, lockTimeout: lockTimeout)) return func();
    }
 
-   unit UpdateWhen(Action action, Func<bool> condition, TimeSpan? timeout = null) => ReadWhen(action.AsFunc(), condition, timeout);
+   unit UpdateWhen(Action action, Func<bool> condition, TimeSpan? waitTimeout = null, TimeSpan? lockTimeout = null) =>
+      UpdateWhen(action.AsFunc(), condition, waitTimeout: waitTimeout, lockTimeout: lockTimeout);
 
-   TReturn UpdateWhen<TReturn>(Func<TReturn> func, Func<bool> condition, TimeSpan? timeout = null)
+   TReturn UpdateWhen<TReturn>(Func<TReturn> func, Func<bool> condition, TimeSpan? waitTimeout = null, TimeSpan? lockTimeout = null)
    {
-      using(TakeUpdateLockWhen(condition)) return func();
+      using(TakeUpdateLockWhen(condition, waitTimeout: waitTimeout, lockTimeout: lockTimeout)) return func();
    }
 }
