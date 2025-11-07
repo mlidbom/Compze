@@ -5,15 +5,15 @@ namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
 public partial interface IMonitorCE
 {
-   bool TryTakeUpdateLockWhen(TimeSpan timeout, Func<bool> condition, [NotNullWhen(true)]out IDisposable? updateLock)
+   bool TryTakeUpdateLockWhen(Func<bool> condition, [NotNullWhen(true)] out IDisposable? updateLock, TimeSpan? waitTimeout = null, TimeSpan? lockTimeout = null)
    {
-      updateLock = TryTakeUpdateLockWhen(condition, timeout);
+      updateLock = TryTakeUpdateLockWhen(condition, waitTimeout: waitTimeout, lockTimeout: lockTimeout);
       return updateLock != null;
    }
 
-   bool TryTakeReadLockWhen(TimeSpan timeout, Func<bool> condition, [NotNullWhen(true)] out IDisposable? readLock)
+   bool TryTakeReadLockWhen(Func<bool> condition, [NotNullWhen(true)] out IDisposable? readLock, TimeSpan? waitTimeout = null, TimeSpan? lockTimeout = null)
    {
-      readLock = TryTakeReadLockWhen(condition, timeout);
+      readLock = TryTakeReadLockWhen(condition, waitTimeout: waitTimeout, lockTimeout: lockTimeout);
       return readLock != null;
    }
 }
