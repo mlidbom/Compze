@@ -39,7 +39,7 @@ class TeventCache : IDisposable, ITeventCache
       readonly TeventCache _parent = teventCache;
       readonly IMonitorCE _monitor = IMonitorCE.WithDefaultTimeout();
 
-      readonly IThreadShared<Dictionary<string, Dictionary<TaggregateId, Entry>>> _overlays = IThreadShared.WithDefaultTimeout<Dictionary<string, Dictionary<TaggregateId, Entry>>>();
+      readonly IThreadShared<Dictionary<string, Dictionary<TaggregateId, Entry>>> _overlays = IThreadShared.WithDefaultTimeouts<Dictionary<string, Dictionary<TaggregateId, Entry>>>();
 
       Dictionary<TaggregateId, Entry> CurrentOverlay
       {

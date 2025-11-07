@@ -17,7 +17,7 @@ static class BackgroundExceptionReporterRegistrar
       internal static void RegisterWith(IComponentRegistrar registrar)
          => registrar.Register(Singleton.For<IBackgroundExceptionReporter>().CreatedBy(() => new BackgroundExceptionReporterImpl()));
 
-      readonly IThreadShared<List<Exception>> _collectedExceptions = IThreadShared.WithDefaultTimeout(new List<Exception>());
+      readonly IThreadShared<List<Exception>> _collectedExceptions = IThreadShared.WithDefaultTimeouts(new List<Exception>());
 
       public void ReportException(Exception exception)
       {

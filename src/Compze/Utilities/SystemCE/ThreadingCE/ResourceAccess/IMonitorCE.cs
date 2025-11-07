@@ -1,15 +1,14 @@
 using System;
+using Compze.Utilities.Misc;
 
 namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
 //THis file contains the methods that implementations actually have to implement
 public partial interface IMonitorCE
 {
-#if NCRUNCH
-        static readonly TimeSpan DefaultTimeout = 45.Seconds(); //Tests timeout at 60 seconds. We want locks to timeout faster so that the blocking stack traces turn up in the test output so we can diagnose the deadlocks.
-#else
-   static readonly TimeSpan DefaultTimeout = 2.Minutes(); //MsSql default query timeout is 30 seconds. Default .Net transaction timeout is 60. If we reach 2 minutes it is all but guaranteed that we have an in-memory deadlock.
-#endif
+   static readonly TimeSpan DefaultTimeout = CompzeEnvironment.IsNCrunch
+                                                ? 45.Seconds() //Tests timeout at 60 seconds. We want locks to timeout faster so that the blocking stack traces turn up in the test output so we can diagnose the deadlocks.
+                                                : 2.Minutes(); //MsSql default query timeout is 30 seconds. Default .Net transaction timeout is 60. If we reach 2 minutes it is highly likely that we have an in-memory deadlock.
 
    public static IMonitorCE WithDefaultTimeout() => new MonitorCE(DefaultTimeout, DefaultTimeout);
    public static IMonitorCE WithTimeouts(TimeSpan lockTimeout, TimeSpan? waitTimeout = null) => new MonitorCE(lockTimeout, waitTimeout ?? lockTimeout);

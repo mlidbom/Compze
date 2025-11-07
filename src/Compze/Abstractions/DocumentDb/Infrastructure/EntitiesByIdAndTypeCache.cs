@@ -10,7 +10,7 @@ namespace Compze.Core.DocumentDb.Infrastructure;
 ///<summary>Tracks entities by the combination of their ID and type</summary>
 class EntitiesByIdAndTypeCache
 {
-   readonly IThreadShared<Dictionary<IdAndType, object>> _data = IThreadShared.WithDefaultTimeout(new Dictionary<IdAndType, object>());
+   readonly IThreadShared<Dictionary<IdAndType, object>> _data = IThreadShared.WithDefaultTimeouts(new Dictionary<IdAndType, object>());
 
    public void Add<T>(object id, T value) => _data.Update(data =>
    {

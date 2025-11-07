@@ -9,7 +9,7 @@ namespace Compze.Utilities.SystemCE.ReactiveCE;
 ///<summary>Simple implementation of <see cref="IObservable{T}"/> that tracks subscribers and allows for calling OnNext on them all at once.</summary>
 class SimpleObservable<TTevent> : IObservable<TTevent>
 {
-   readonly IThreadShared<HashSet<IObserver<TTevent>>> _observerCollection = IThreadShared.WithDefaultTimeout<HashSet<IObserver<TTevent>>>();
+   readonly IThreadShared<HashSet<IObserver<TTevent>>> _observerCollection = IThreadShared.WithDefaultTimeouts<HashSet<IObserver<TTevent>>>();
 
    ///<summary>Calls <see cref="IObserver{T}.OnNext"/> for each subscribed observer.</summary>
    public void OnNext(TTevent tevent)

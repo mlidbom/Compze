@@ -29,7 +29,7 @@ sealed class PgSqlDbPoolSqlLayer : IDbPoolSqlLayer
                                 ?? "Host=localhost;Database=postgres;Username=postgres;Password=Development!1;";
 
       _masterConnectionPool = IPgSqlConnectionPool.CreateInstance(masterConnectionString);
-      _connectionStringBuilder = IThreadShared.WithDefaultTimeout(new NpgsqlConnectionStringBuilder(masterConnectionString));
+      _connectionStringBuilder = IThreadShared.WithDefaultTimeouts(new NpgsqlConnectionStringBuilder(masterConnectionString));
    }
 
    public string ConnectionStringFor(DbPoolDatabase db)

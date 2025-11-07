@@ -31,8 +31,8 @@ static class TaskRunnerRegistrar
          => registrar.Register(Singleton.For<ITaskRunner>().CreatedBy((IBackgroundExceptionReporter exceptionReporter) => new TaskRunnerImpl(exceptionReporter)));
 
       readonly IBackgroundExceptionReporter _exceptionReporter;
-      readonly IThreadShared<List<Thread>> _threads = IThreadShared.WithDefaultTimeout(new List<Thread>());
-      readonly IThreadShared<HashSet<Task>> _inProgressTasks = IThreadShared.WithDefaultTimeout(new HashSet<Task>());
+      readonly IThreadShared<List<Thread>> _threads = IThreadShared.WithDefaultTimeouts(new List<Thread>());
+      readonly IThreadShared<HashSet<Task>> _inProgressTasks = IThreadShared.WithDefaultTimeouts(new HashSet<Task>());
 
       TaskRunnerImpl(IBackgroundExceptionReporter exceptionReporter) => _exceptionReporter = exceptionReporter;
 

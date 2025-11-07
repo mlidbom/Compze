@@ -8,7 +8,7 @@ namespace Compze.Utilities.SystemCE.TransactionsCE;
 
 static class VolatileLambdaTransactionParticipantExtensions
 {
-   static readonly IThreadShared<Dictionary<string, VolatileLambdaTransactionParticipant>> Participants = IThreadShared.WithDefaultTimeout<Dictionary<string, VolatileLambdaTransactionParticipant>>();
+   static readonly IThreadShared<Dictionary<string, VolatileLambdaTransactionParticipant>> Participants = IThreadShared.WithDefaultTimeouts<Dictionary<string, VolatileLambdaTransactionParticipant>>();
 
    public static Transaction AddCommitTasks(this Transaction @this, params Action[] actions) => UseParticipant(@this, part => part.AddCommitTasks(actions));
    public static Transaction AddPrepareTasks(this Transaction @this, params Action[] actions) => UseParticipant(@this, part => part.AddPrepareTasks(actions));
