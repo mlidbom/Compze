@@ -35,24 +35,24 @@ public class AsyncLockCE_specification : UniversalTestBase
       [XF] public async Task it_blocks_concurrent_calls()
       {
          using var asyncLock = new AsyncLockCE();
-         var firstTaskCompleted = false;
+         var firstTaskTookLockGate = ThreadGate.CreateClosedWithTimeout(1.Seconds());
+         var secondTaskTookLockGate = ThreadGate.CreateOpenWithTimeout(1.Seconds());
 
          var firstTask = asyncLock.LockedAsync(async () =>
          {
-            await Task.Delay(50.Milliseconds());
-            firstTaskCompleted = true;
-         });
-
-         await Task.Delay(10.Milliseconds());
-
-         var checkIfFirstTaskCompleted = asyncLock.LockedAsync(async () =>
-         {
             await Task.Yield();
-            return firstTaskCompleted;
+            firstTaskTookLockGate.AwaitPassThrough();
          });
 
-         (await checkIfFirstTaskCompleted).Must().Be(true);
-         await firstTask;
+         firstTaskTookLockGate.AwaitQueueLengthEqualTo(1);
+
+         var secondTask = asyncLock.LockedAsync(async () => secondTaskTookLockGate.AwaitPassThrough());
+
+         secondTaskTookLockGate.TryAwaitPassedThroughCountEqualTo(1, 10.Milliseconds()).Must().Be(false);
+         firstTaskTookLockGate.Open();
+         secondTaskTookLockGate.TryAwaitPassedThroughCountEqualTo(1, 10.Milliseconds()).Must().Be(true);
+
+         await Task.WhenAll(firstTask, secondTask);
       }
 
       [XF] public async Task it_allows_reentrant_calls_from_same_async_context()
