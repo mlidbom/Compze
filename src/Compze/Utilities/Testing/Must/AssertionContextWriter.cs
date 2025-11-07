@@ -40,6 +40,7 @@ public static class AssertionContextWriter
 
    public static string ExpressionValue(this IAssertionContext context, string expression, object? value)
    {
+      expression = context.NormalizeExpressionIndentation(expression);
       if(value == null)
       {
          return $"""
