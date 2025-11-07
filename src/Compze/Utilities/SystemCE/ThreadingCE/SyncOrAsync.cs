@@ -16,11 +16,4 @@ static class SyncOrAsyncCE
          action();
          return Task.FromResult(unit.Value);
       };
-
-   internal static TResult SyncResult<TResult>(this Task<TResult> @this)
-   {
-      //Should only ever be called when in the sync mode, so assert that the task is done.
-      Assert.Argument.Is(@this.IsCompleted);
-      return @this.GetAwaiter().GetResult();
-   }
 }
