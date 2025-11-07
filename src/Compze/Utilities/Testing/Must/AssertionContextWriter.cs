@@ -65,6 +65,14 @@ public static class AssertionContextWriter
                        {AssertionContext.Separator}
                        """;
             }
+         } else if(value is string aString)
+         {
+            return $"""
+                    {expression} was a string with the value:
+                    {AssertionContext.Separator}
+                    {aString}
+                    {AssertionContext.Separator}
+                    """;
          } else // A complex type
          {
             if(!value.GetType().Methods().HasMeaningfulToStringOverride())
