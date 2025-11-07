@@ -5,9 +5,12 @@ using Compze.Tests.Infrastructure;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ThreadingCE.Async;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
+using Compze.Utilities.SystemCE.ThreadingCE.Testing;
 using Compze.Utilities.Testing.Must;
 using Compze.Utilities.Testing.XUnit.BDD;
 using static Compze.Utilities.Testing.Must.MustActions;
+
+// ReSharper disable AccessToDisposedClosure
 
 // ReSharper disable InconsistentNaming
 
@@ -32,30 +35,24 @@ public class AsyncLockCE_specification : UniversalTestBase
       [XF] public async Task it_blocks_concurrent_calls()
       {
          using var asyncLock = new AsyncLockCE();
-         var firstTaskEntered = false;
          var firstTaskCompleted = false;
-         var secondTaskEnteredWhileFirstWasInside = false;
 
          var firstTask = asyncLock.LockedAsync(async () =>
          {
-            firstTaskEntered = true;
             await Task.Delay(50.Milliseconds());
             firstTaskCompleted = true;
          });
 
          await Task.Delay(10.Milliseconds());
 
-         var secondTask = asyncLock.LockedAsync(async () =>
+         var checkIfFirstTaskCompleted = asyncLock.LockedAsync(async () =>
          {
-            secondTaskEnteredWhileFirstWasInside = !firstTaskCompleted;
             await Task.Yield();
+            return firstTaskCompleted;
          });
 
-         await Task.WhenAll(firstTask, secondTask);
-
-         firstTaskEntered.Must().BeTrue();
-         firstTaskCompleted.Must().BeTrue();
-         secondTaskEnteredWhileFirstWasInside.Must().BeFalse();
+         (await checkIfFirstTaskCompleted).Must().Be(true);
+         await firstTask;
       }
 
       [XF] public async Task it_allows_reentrant_calls_from_same_async_context()
@@ -64,10 +61,7 @@ public class AsyncLockCE_specification : UniversalTestBase
 
          await asyncLock.LockedAsync(async () =>
          {
-            await asyncLock.LockedAsync(async () =>
-            {
-               await Task.Yield();
-            });
+            await asyncLock.LockedAsync(async () => await Task.Yield());
          });
       }
    }
@@ -87,47 +81,32 @@ public class AsyncLockCE_specification : UniversalTestBase
       [XF] public async Task it_blocks_concurrent_calls()
       {
          using var asyncLock = new AsyncLockCE();
-         var counter = 0;
-         var secondTaskSawCounterAs = 0;
+         bool task1completed = false;
 
-         var task1 = asyncLock.LockedAsync(async () =>
+         var firstTask = asyncLock.LockedAsync(async () =>
          {
-            counter = 1;
             await Task.Delay(50.Milliseconds());
-            counter = 2;
-            return counter;
+            task1completed = true;
          });
 
          await Task.Delay(10.Milliseconds());
 
-         var task2 = asyncLock.LockedAsync(async () =>
+         var checkIfTaskOneHasCompleted = asyncLock.LockedAsync(async () =>
          {
-            secondTaskSawCounterAs = counter;
-            counter = 3;
             await Task.Yield();
-            return counter;
+            return task1completed;
          });
 
-         var results = await Task.WhenAll(task1, task2);
-         results[0].Must().Be(2);
-         results[1].Must().Be(3);
-         secondTaskSawCounterAs.Must().Be(2); // Proves task2 didn't enter until task1 completed
+         (await checkIfTaskOneHasCompleted).Must().Be(true); // Proves task2 didn't enter until task1 set the value to 1
+         await firstTask;
       }
 
       [XF] public async Task it_allows_reentrant_calls_from_same_async_context()
       {
          using var asyncLock = new AsyncLockCE();
-         var result = await asyncLock.LockedAsync(async () =>
-         {
-            var innerResult = await asyncLock.LockedAsync(async () =>
-            {
-               await Task.Yield();
-               return "inner";
-            });
-            return $"outer-{innerResult}";
-         });
 
-         result.Must().Be("outer-inner");
+         await asyncLock.LockedAsync(async () =>
+                                        await asyncLock.LockedAsync(async () => await Task.Yield())); //Not hanging is success
       }
    }
 
@@ -144,45 +123,66 @@ public class AsyncLockCE_specification : UniversalTestBase
       [XF] public async Task it_blocks_concurrent_calls_from_different_threads()
       {
          using var asyncLock = new AsyncLockCE();
-         var firstTaskEntered = false;
          var firstTaskCompleted = false;
-         var secondTaskEnteredWhileFirstWasInside = false;
 
          var syncTask = TaskCE.Run(() => asyncLock.Locked(() =>
          {
-            firstTaskEntered = true;
             Thread.Sleep(50.Milliseconds());
             firstTaskCompleted = true;
          }));
 
          await Task.Delay(10.Milliseconds());
 
-         var otherTask = TaskCE.Run(() => asyncLock.Locked(() =>
-         {
-            secondTaskEnteredWhileFirstWasInside = !firstTaskCompleted;
-         }));
+         var checkIfFirstTaskCompleted = TaskCE.Run(() => asyncLock.Locked(() => firstTaskCompleted));
 
-         await Task.WhenAll(syncTask, otherTask);
+         await Task.WhenAll(syncTask, checkIfFirstTaskCompleted);
 
-         firstTaskEntered.Must().BeTrue();
-         firstTaskCompleted.Must().BeTrue();
-         secondTaskEnteredWhileFirstWasInside.Must().BeFalse();
+         checkIfFirstTaskCompleted.Result.Must().BeTrue();
       }
 
       [XF] public void it_allows_reentrant_calls_from_same_thread()
       {
          using var asyncLock = new AsyncLockCE();
-         var outerExecuted = false;
-         var innerExecuted = false;
 
-         asyncLock.Locked(() =>
+         asyncLock.Locked(() => asyncLock.Locked(() => {}));
+      }
+
+      [XF] public void it_allows_reentrant_calls_from_same_async_context()
+      {
+         using var asyncLock = new AsyncLockCE();
+
+         var task = Task.Run(() => asyncLock.Locked(() => Task.Run(() => asyncLock.Locked(() => {}))));
+      }
+
+      [XF] public void it_allows_reentrant_calls_from_same_async_context_while_blocking_calls_from_same_thread()
+      {
+         using var asyncLock = new AsyncLockCE();
+         var firstLockTakenGate = ThreadGate.CreateClosedWithTimeout(1.Seconds());
+
+         var secondTaskStartedGate = ThreadGate.CreateOpenWithTimeout(1.Seconds());
+         var secondTaskGotLockGate = ThreadGate.CreateOpenWithTimeout(1.Seconds());
+
+         var firstTask = Task.Run(() => asyncLock.Locked(() =>
          {
-            outerExecuted = true;
-            asyncLock.Locked(() => innerExecuted = true);
+            firstLockTakenGate.AwaitPassThrough();
+            return Task.Run(() => asyncLock.Locked(() => {}));
+         }));
+
+         firstLockTakenGate.AwaitQueueLengthEqualTo(1);
+
+         var secondTask = Task.Run(() =>
+         {
+            secondTaskStartedGate.AwaitPassThrough();
+            asyncLock.Locked(() => {});
+            secondTaskGotLockGate.AwaitPassThrough();
          });
 
-         outerExecuted.Must().BeTrue();
-         innerExecuted.Must().BeTrue();
+         secondTaskStartedGate.AwaitPassedThroughCountEqualTo(1);
+         secondTaskGotLockGate.TryAwaitPassedThroughCountEqualTo(1, 20.Milliseconds()).Must().BeFalse();
+         firstLockTakenGate.Open();
+         secondTaskGotLockGate.TryAwaitPassedThroughCountEqualTo(1, 20.Milliseconds()).Must().BeTrue();
+
+         Task.WaitAll(firstTask, secondTask);
       }
    }
 
@@ -227,13 +227,8 @@ public class AsyncLockCE_specification : UniversalTestBase
       [XF] public void it_allows_reentrant_calls_from_same_thread()
       {
          using var asyncLock = new AsyncLockCE();
-         var result = asyncLock.Locked(() =>
-         {
-            var innerResult = asyncLock.Locked(() => "inner");
-            return $"outer-{innerResult}";
-         });
 
-         result.Must().Be("outer-inner");
+         asyncLock.Locked(() => asyncLock.Locked(() => "inner")).Must().Be("inner");
       }
    }
 
@@ -289,14 +284,7 @@ public class AsyncLockCE_specification : UniversalTestBase
             throw new InvalidOperationException("test");
          })).Must().ThrowAsync<InvalidOperationException>();
 
-         var executed = false;
-         await asyncLock.LockedAsync(async () =>
-         {
-            executed = true;
-            await Task.Yield();
-         });
-
-         executed.Must().BeTrue();
+         await asyncLock.LockedAsync(async () => await Task.Yield());
       }
 
       [XF] public void Locked_propagates_exception_and_releases_lock()
@@ -307,9 +295,7 @@ public class AsyncLockCE_specification : UniversalTestBase
            .Must()
            .Throw<InvalidOperationException>();
 
-         var executed = false;
-         asyncLock.Locked(() => executed = true);
-         executed.Must().BeTrue();
+         asyncLock.Locked(() => {});
       }
    }
 
