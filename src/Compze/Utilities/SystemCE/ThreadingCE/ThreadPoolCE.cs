@@ -10,7 +10,7 @@ static class ThreadPoolCE
 {
    internal static void TryToEnsureSufficientIdleThreadsToRunTasksConcurrently(int threadCount)
    {
-      for(var tries = 1; Idle <= threadCount && tries < 5; tries++)
+      for(var tries = 1; IdleThreads <= threadCount && tries < 5; tries++)
       {
          using var waitForAllThreadsToStart = new CountdownEvent(threadCount);
          Task.WaitAll(1.Through(threadCount).Select(_ => TaskCE.RunOnDedicatedThread(() =>
@@ -22,11 +22,11 @@ static class ThreadPoolCE
       }
    }
 
-   static int Executing => Max - Available;
-   static int Live => ThreadPool.ThreadCount;
-   static int Idle => Live - Executing;
+   static int ExecutingThreads => MaxThreads - AvailableThreads;
+   static int LiveThreads => ThreadPool.ThreadCount;
+   static int IdleThreads => LiveThreads - ExecutingThreads;
 
-   static int Max
+   static int MaxThreads
    {
       get
       {
@@ -35,7 +35,7 @@ static class ThreadPoolCE
       }
    }
 
-   static int Available
+   static int AvailableThreads
    {
       get
       {
