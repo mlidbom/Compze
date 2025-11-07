@@ -34,4 +34,7 @@ static partial class TimeSpanCE
 
       return time >= OneMicrosecond ? $"{time.TotalMicroseconds()} microseconds" : $"{time.TotalNanoseconds()} nanoseconds";
    }
+
+   ///<summary>Returns true if the timespan is zero or negative</summary>
+   internal static bool None(this TimeSpan @this) => @this <= TimeSpan.Zero;
 }

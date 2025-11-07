@@ -78,7 +78,7 @@ public partial interface IMonitorCE
          var actualWaitTimeout = waitTimeout ?? WaitTimeout;
          var actualLockTimeout = lockTimeout ?? LockTimeout;
 
-         var startTime = DateTime.UtcNow;
+         var waitStartedAt = DateTime.UtcNow;
 
          IDisposable takenLock;
          if(throwOnFailedLock)
@@ -93,8 +93,8 @@ public partial interface IMonitorCE
 
          while(!condition())
          {
-            var waitTimeRemaining = actualWaitTimeout - DateTimeCE.TimeElapsedSince(startTime);
-            if(waitTimeRemaining <= TimeSpan.Zero)
+            var waitTimeRemaining = actualWaitTimeout - DateTimeCE.TimeElapsedSince(waitStartedAt);
+            if(waitTimeRemaining.None())
             {
                takenLock.Dispose();
                return null;
