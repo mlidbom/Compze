@@ -34,29 +34,10 @@ public static class Must___Enumerable
          it => it.SequenceEqual(expected),
          messageOverride: _ =>
             $"""
-             {AssertionContext.Separator}
-             expected the sequence:
-             {AssertionContext.Separator}
-             {context.Expression.Indent()}
-             {AssertionContext.Separator}
-             to be sequence equal to:
-             {AssertionContext.Separator}
-             {context.NormalizeExpressionIndentation(expectedExpression).Indent()}
-             {AssertionContext.Separator}
-             But it was not.
-             {AssertionContext.Separator}
-             Diff:
-             {AssertionContext.Separator}
-             {DiffGenerator.CreateDiff(expected: expectedJson, actual: actualJson)}
-             {AssertionContext.Separator}
-             Actual was:
-             {AssertionContext.Separator}
-             {actualJson}
-             {AssertionContext.Separator}
-             Expected was:
-             {AssertionContext.Separator}
-             {expectedJson}
-             {AssertionContext.Separator}
+             {context.FailingAssertionHeading(nameof(SequenceEqual), [new(expectedExpression, expected)])}
+             {context.Diff(expectedJson, actualJson)}
+             {context.ArgumentValue(context.Expression, context.Actual)}
+             {context.ArgumentValue(expectedExpression, expected)}
              """);
    }
 }

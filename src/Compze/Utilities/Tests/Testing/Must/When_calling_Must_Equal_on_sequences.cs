@@ -38,15 +38,9 @@ public class When_calling_Must_SequenceEqual : UniversalTestBase
          ExceptionMessage().Must().Be(""""
 
                                       --------------------------------------------------
-                                      expected the sequence:
+                                      Failing assertion:
                                       --------------------------------------------------
-                                         _actual
-                                      --------------------------------------------------
-                                      to be sequence equal to:
-                                      --------------------------------------------------
-                                         _expected
-                                      --------------------------------------------------
-                                      But it was not.
+                                      _actual.Must().SequenceEqual(_expected)
                                       --------------------------------------------------
                                       Diff:
                                       --------------------------------------------------
@@ -60,9 +54,11 @@ public class When_calling_Must_SequenceEqual : UniversalTestBase
                                       +    3
                                          ]
                                        }
-                                      
+
                                       --------------------------------------------------
-                                      Actual was:
+                                      _actual was a System.Int32[] with:
+                                      --------------------------------------------------
+                                      JSON:
                                       --------------------------------------------------
                                       {
                                         "$type": "System.Int32[], System.Private.CoreLib",
@@ -73,7 +69,9 @@ public class When_calling_Must_SequenceEqual : UniversalTestBase
                                         ]
                                       }
                                       --------------------------------------------------
-                                      Expected was:
+                                      _expected was a System.Int32[] with:
+                                      --------------------------------------------------
+                                      JSON:
                                       --------------------------------------------------
                                       {
                                         "$type": "System.Int32[], System.Private.CoreLib",
