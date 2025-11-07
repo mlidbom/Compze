@@ -305,4 +305,56 @@ public class AsyncLockCE_specification : UniversalTestBase
               .ThrowAsync<ObjectDisposedException>();
       }
    }
+
+   public class When_timeout_is_exceeded : AsyncLockCE_specification
+   {
+      [XF] public async Task LockedAsync_throws_AsyncLockTimeoutException()
+      {
+         using var asyncLock = IAsyncLockCE.WithTimeout(50.Milliseconds());
+         var firstTaskTookLockGate = ThreadGate.CreateClosedWithTimeout(1.Seconds());
+
+         var firstTask = asyncLock.LockedAsync(async () =>
+         {
+            await Task.Yield();
+            firstTaskTookLockGate.AwaitPassThrough();
+         });
+
+         firstTaskTookLockGate.AwaitQueueLengthEqualTo(1);
+
+         await InvokingAsync(async () => await asyncLock.LockedAsync(async () => await Task.Yield()))
+              .Must()
+              .ThrowAsync<AsyncLockTimeoutException>();
+
+         firstTaskTookLockGate.Open();
+         await firstTask;
+      }
+
+      [XF] public async Task Locked_throws_AsyncLockTimeoutException()
+      {
+         using var asyncLock = IAsyncLockCE.WithTimeout(50.Milliseconds());
+         var firstTaskTookLockGate = ThreadGate.CreateClosedWithTimeout(1.Seconds());
+
+         var firstTask = TaskCE.Run(() => asyncLock.Locked(() => firstTaskTookLockGate.AwaitPassThrough()));
+
+         firstTaskTookLockGate.AwaitQueueLengthEqualTo(1);
+
+         Invoking(() => asyncLock.Locked(() => {}))
+           .Must()
+           .Throw<AsyncLockTimeoutException>();
+
+         firstTaskTookLockGate.Open();
+         await firstTask;
+      }
+
+      [XF] public async Task timeout_does_not_affect_reentrant_calls()
+      {
+         using var asyncLock = IAsyncLockCE.WithTimeout(50.Milliseconds());
+
+         await asyncLock.LockedAsync(async () =>
+         {
+            await Task.Delay(100.Milliseconds());
+            await asyncLock.LockedAsync(async () => await Task.Yield()); // Should not timeout
+         });
+      }
+   }
 }
