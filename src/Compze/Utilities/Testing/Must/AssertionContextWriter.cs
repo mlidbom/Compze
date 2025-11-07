@@ -3,6 +3,7 @@ using Compze.Utilities.SystemCE.ReflectionCE;
 using Compze.Utilities.Testing.Must.Serialization;
 using Newtonsoft.Json;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using Compze.Utilities.SystemCE;
 
 namespace Compze.Utilities.Testing.Must;
@@ -38,6 +39,7 @@ public static class AssertionContextWriter
               """;
    }
 
+   public static string ExpressionValue<T>(this IAssertionContext<T> context) => context.ExpressionValue(context.Expression, context.Actual);
    public static string ExpressionValue(this IAssertionContext context, string expression, object? value)
    {
       expression = context.NormalizeExpressionIndentation(expression);

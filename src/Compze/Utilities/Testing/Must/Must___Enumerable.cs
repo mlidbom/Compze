@@ -33,7 +33,7 @@ public static class Must___Enumerable
             $"""
              {context.FailingAssertionHeading(nameof(SequenceEqual), [new(expectedExpression, expected)])}
              {context.Diff(expected, context.Actual)}
-             {context.ExpressionValue(context.Expression, context.Actual)}
+             {context.ExpressionValue()}
              {context.ExpressionValue(expectedExpression, expected)}
              """);
    }

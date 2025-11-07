@@ -98,8 +98,8 @@ public static class Must_Be_NotBe
                  {context.FailingAssertionHeading(nameof(Be), expectedExpression)}
                  {diffMessage}
                  {AssertionContext.Separator}
-                 {context.ExpressionValue($"{context.Expression}", context.Actual)}
-                 {context.ExpressionValue($"{expectedExpression}", expected)}
+                 {context.ExpressionValue()}
+                 {context.ExpressionValue(expectedExpression, expected)}
                  the first failing equivalency test was: 
                  {info.PredicateExpression.Indent()}{FailureMessage()}
                  {AssertionContext.Separator}
@@ -174,8 +174,8 @@ public static class Must_Be_NotBe
                  {info.PredicateExpression.Indent()}{FailureMessage()}
                  {AssertionContext.Separator}
                  {context.Diff(unexpected, context.Actual, "unexpected", "actual")}
-                 {context.ExpressionValue($"{context.Expression}", context.Actual)}
-                 {context.ExpressionValue($"{unexpectedExpression}", unexpected)}
+                 {context.ExpressionValue()}
+                 {context.ExpressionValue(unexpectedExpression, unexpected)}
                  """;
 
          string FailureMessage() =>
