@@ -62,7 +62,7 @@ public class MonitorCE_specification : UniversalTestBase
    public class An_exception_is_thrown_by_EnterUpdateLock_if_lock_is_not_acquired_within_timeout : UniversalTestBase
    {
       [XF, EnableRdi(false)] public void Exception_is_ObjectLockTimedOutException() =>
-         RunScenario(ownerThreadBlockTime: 20.Milliseconds(), timeToWaitForStackTrace: 30.Seconds(), monitorTimeout: 10.Milliseconds()).Must().BeOfType<EnterLockTimeoutException>();
+         RunScenario(ownerThreadBlockTime: 20.Milliseconds(), timeToWaitForStackTrace: 30.Seconds(), monitorTimeout: 10.Milliseconds()).Must().BeOfType<TakeLockTimeoutException>();
 
       [XF, EnableRdi(false)] public void If_owner_thread_blocks_for_less_than_fetchStackTraceTimeout_Exception_contains_owning_threads_stack_trace() =>
          RunScenario(ownerThreadBlockTime: 20.Milliseconds(), timeToWaitForStackTrace: 30.Seconds(), monitorTimeout: 5.Milliseconds()).Message.Must().Contain(nameof(DisposeInMethodSoItWillBeInTheCapturedCallStack));

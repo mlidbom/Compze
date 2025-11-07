@@ -112,13 +112,13 @@ public partial interface IMonitorCE
          _monitor.ReleaseLock();
       }
 
-      IReadOnlyList<EnterLockTimeoutException> _timeOutExceptionsOnOtherThreads = new List<EnterLockTimeoutException>();
+      IReadOnlyList<TakeLockTimeoutException> _timeOutExceptionsOnOtherThreads = new List<TakeLockTimeoutException>();
 
       Exception RegisterTimeoutException()
       {
          lock(_timeoutLock)
          {
-            var exception = new EnterLockTimeoutException(LockTimeout, _stackTraceFetchTimeout);
+            var exception = new TakeLockTimeoutException(LockTimeout, _stackTraceFetchTimeout);
             OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _timeOutExceptionsOnOtherThreads, exception);
             return exception;
          }
@@ -137,7 +137,7 @@ public partial interface IMonitorCE
                   exception.SetBlockingThreadsDisposeStackTrace(stackTrace);
                }
 
-               Interlocked.Exchange(ref _timeOutExceptionsOnOtherThreads, new List<EnterLockTimeoutException>());
+               Interlocked.Exchange(ref _timeOutExceptionsOnOtherThreads, new List<TakeLockTimeoutException>());
             }
          }
       }
