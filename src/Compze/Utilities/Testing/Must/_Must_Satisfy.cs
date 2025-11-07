@@ -29,7 +29,7 @@ public static class _Must_Satisfy
          var message = $"""
              {context.FailingAssertionHeading(nameof(Satisfy), predicateExpression)}
              {CustomFailureMessage()}
-             {context.ArgumentValue(context.Expression, context.Actual)}
+             {context.ExpressionValue(context.Expression, context.Actual)}
              """.Split(Environment.NewLine)
                 .Where(it => it != AssertionContext.RemoveLine)
                 .JoinLines();
@@ -76,7 +76,7 @@ public static class _Must_Satisfy
          var message = $"""
              {context.FailingAssertionHeading(caller, expressionValues)}
              {CustomFailureMessage()}
-             {context.ArgumentValue(context.Expression, context.Actual)}
+             {context.ExpressionValue(context.Expression, context.Actual)}
              {ExpressionValues()}
              """.Split(Environment.NewLine)
                 .Where(it => it != AssertionContext.RemoveLine)
@@ -90,7 +90,7 @@ public static class _Must_Satisfy
                return AssertionContext.RemoveLine;
 
             return $"""
-                    {expressionValues.Select(it => context.ArgumentValue(it.Expression, it.Value)).JoinLines()}
+                    {expressionValues.Select(it => context.ExpressionValue(it.Expression, it.Value)).JoinLines()}
                     """;
          }
 

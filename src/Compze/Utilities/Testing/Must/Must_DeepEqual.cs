@@ -78,8 +78,8 @@ public static class Must_DeepEqual
                              $"""
                               {context.FailingAssertionHeading(nameof(DeepEqual), [new(expectedExpression, expected)])}
                               {context.Diff(expectedJson, actualJson)}
-                              {context.ArgumentValue(context.Expression, context.Actual)}
-                              {context.ArgumentValue(expectedExpression, expected)}
+                              {context.ExpressionValue(context.Expression, context.Actual)}
+                              {context.ExpressionValue(expectedExpression, expected)}
                               """);
    }
 }

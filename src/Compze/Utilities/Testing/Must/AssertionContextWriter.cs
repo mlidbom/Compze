@@ -38,7 +38,7 @@ public static class AssertionContextWriter
               """;
    }
 
-   public static string ArgumentValue(this IAssertionContext context, string expression, object? value)
+   public static string ExpressionValue(this IAssertionContext context, string expression, object? value)
    {
       if(value == null)
       {

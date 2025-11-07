@@ -36,8 +36,8 @@ public static class Must___Enumerable
             $"""
              {context.FailingAssertionHeading(nameof(SequenceEqual), [new(expectedExpression, expected)])}
              {context.Diff(expectedJson, actualJson)}
-             {context.ArgumentValue(context.Expression, context.Actual)}
-             {context.ArgumentValue(expectedExpression, expected)}
+             {context.ExpressionValue(context.Expression, context.Actual)}
+             {context.ExpressionValue(expectedExpression, expected)}
              """);
    }
 }
