@@ -372,11 +372,22 @@ public class AsyncLockCE_specification : UniversalTestBase
                                     .Must()
                                     .ThrowAsync<AsyncLockTimeoutException>();
 
+         var caughtException2 = await InvokingAsync(async () => await asyncLock.LockedAsync(async () => await Task.Yield()))
+                                    .Must()
+                                    .ThrowAsync<AsyncLockTimeoutException>();
+
          firstTaskTookLockGate.Open();
          await firstTask;
 
          // The stack trace should show our specific method name, proving we captured the blocking thread's user code stack
+
+         Console.WriteLine(caughtException.Which.Message);
+
          caughtException.Which.Message.Must()
+                        .Contain(nameof(HoldLockInMethodSoItWillBeInTheCapturedCallStack))
+                        .Contain("Blocking thread lock disposal stack trace");
+
+         caughtException2.Which.Message.Must()
                         .Contain(nameof(HoldLockInMethodSoItWillBeInTheCapturedCallStack))
                         .Contain("Blocking thread lock disposal stack trace");
       }
