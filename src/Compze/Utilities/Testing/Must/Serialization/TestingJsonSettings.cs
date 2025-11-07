@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 
 #pragma warning disable CA2326 // TypeNameHandling is safe for testing serialization
@@ -37,6 +38,11 @@ static class TestingJsonSettings
          ContractResolver = resolver,
          ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
          MaxDepth = 32,
-         Converters = { new DeterministicOrderedForUnorderedCollectionsConverter(), new ExceptionJsonConverter() }
+         Converters =
+         {
+            new DeterministicOrderedForUnorderedCollectionsConverter(),
+            new ExceptionJsonConverter(),
+            new StringEnumConverter()
+         }
       };
 }

@@ -49,7 +49,7 @@ public class ThreadGate : IThreadGate
       return this.AwaitClosed();
    }
 
-   public bool TryAwait(TimeSpan timeout, Func<bool> condition) => _monitor.TryAwait(timeout, condition);
+   public bool TryAwait(TimeSpan timeout, Func<bool> condition) => _monitor.TryAwait(condition, timeout);
 
    public IThreadGate SetPostPassThroughAction(Action<ThreadSnapshot> action) => this.mutate(_ => _monitor.Update(() => _postPassThroughAction = action));
    public IThreadGate SetPrePassThroughAction(Action<ThreadSnapshot> action) => this.mutate(_ => _monitor.Update(() => _prePassThroughAction = action));
@@ -59,7 +59,7 @@ public class ThreadGate : IThreadGate
    {
       try
       {
-         using(_monitor.EnterUpdateLockWhen(timeout, condition))
+         using(_monitor.TakeUpdateLockWhen(condition, timeout))
          {
             action();
          }
@@ -96,7 +96,7 @@ public class ThreadGate : IThreadGate
          _queuedThreads.AddLast(currentThread);
       });
 
-      using(_monitor.EnterUpdateLockWhen(() => IsOpen))
+      using(_monitor.TakeUpdateLockWhen(() => IsOpen))
       {
          if(_lockOnNextPass)
          {
@@ -116,7 +116,7 @@ public class ThreadGate : IThreadGate
    ThreadGate(TimeSpan defaultTimeout, string? name = null)
    {
       Name = name ?? Guid.NewGuid().ToString();
-      _monitor = MonitorCE.WithTimeout(defaultTimeout);
+      _monitor = IMonitorCE.WithTimeouts(defaultTimeout);
       DefaultTimeout = defaultTimeout;
    }
 
@@ -137,7 +137,7 @@ public class ThreadGate : IThreadGate
    });
 
    string Name { get; }
-   readonly MonitorCE _monitor;
+   readonly IMonitorCE _monitor;
    bool _lockOnNextPass;
    bool _enableLogging = false;
    Action<ThreadSnapshot> _passThroughAction = _ => {};

@@ -23,7 +23,7 @@ public abstract class FileSystemInfoCE : IEquatable<FileSystemInfoCE>
 
    public override bool Equals(object? obj) => Equals(obj as FileSystemInfoCE);
 
-   public override int GetHashCode() => AbsolutePath.GetHashcodeOrdinal();
+   public override int GetHashCode() => AbsolutePath.GetHashcodeCE();
 
    public static bool operator ==(FileSystemInfoCE? left, FileSystemInfoCE? right) => Equals(left, right);
    public static bool operator !=(FileSystemInfoCE? left, FileSystemInfoCE? right) => !Equals(left, right);

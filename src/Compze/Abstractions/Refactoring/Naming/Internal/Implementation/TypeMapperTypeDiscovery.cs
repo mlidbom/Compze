@@ -81,10 +81,10 @@ static class TypeMapperTypeDiscovery
 
       const string compzeAssemblyNamesStart = "Compze.";
 
-      if(assembly.FullName.StartsWithOrdinal(compzeAssemblyNamesStart))
+      if(assembly.FullName.StartsWithCE(compzeAssemblyNamesStart))
          return true;
 
-      if(assembly.GetReferencedAssemblies().Any(name => name.Name != null && name.Name.StartsWithOrdinal(compzeAssemblyNamesStart)))
+      if(assembly.GetReferencedAssemblies().Any(name => name.Name != null && name.Name.StartsWithCE(compzeAssemblyNamesStart)))
          return true;
 
       return false;

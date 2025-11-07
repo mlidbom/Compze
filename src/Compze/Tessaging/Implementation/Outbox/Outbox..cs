@@ -62,7 +62,7 @@ partial class Outbox : IOutbox
       Transaction.Current.OnCommittedSuccessfully(() => connections.ForEach(subscriberConnection =>
       {
          subscriberConnection.SendAsync(exactlyOnceTevent)
-                             .ContinueWithAsynchronously(task => HandleDeliveryTaskResults(task, subscriberConnection.EndpointInformation.Id, exactlyOnceTevent.Id));
+                             .ContinueWithCE(task => HandleDeliveryTaskResults(task, subscriberConnection.EndpointInformation.Id, exactlyOnceTevent.Id));
       }));
    }
 
@@ -76,7 +76,7 @@ partial class Outbox : IOutbox
       Transaction.Current.OnCommittedSuccessfully(() =>
       {
          connection.SendAsync(exactlyOnceTommand)
-                   .ContinueWithAsynchronously(task => HandleDeliveryTaskResults(task, connection.EndpointInformation.Id, exactlyOnceTommand.Id));
+                   .ContinueWithCE(task => HandleDeliveryTaskResults(task, connection.EndpointInformation.Id, exactlyOnceTommand.Id));
       });
    }
 

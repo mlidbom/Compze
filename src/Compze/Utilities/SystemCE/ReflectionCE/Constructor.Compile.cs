@@ -24,8 +24,8 @@ public static partial class Constructor
          return typeof(TInstance)
                .GetProperties(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
                .SingleOrDefault(prop =>
-                                   prop.Name.ContainsOrdinal(nameof(IStaticInstancePropertySingleton<TInstance>)) &&
-                                   prop.Name.ContainsOrdinal(nameof(IStaticInstancePropertySingleton<TInstance>.Instance)) &&
+                                   prop.Name.ContainsCE(nameof(IStaticInstancePropertySingleton<TInstance>)) &&
+                                   prop.Name.ContainsCE(nameof(IStaticInstancePropertySingleton<TInstance>.Instance)) &&
                                    prop.PropertyType == typeof(TInstance))
                .NotNull(() => $"This should be impossible, but it seems {typeof(TInstance).FullName} does not implement {typeof(IStaticInstancePropertySingleton<TInstance>).FullName}");
       }

@@ -12,41 +12,35 @@ namespace Compze.Utilities.Tests.Testing.Must;
 public class When_calling_Must_SequenceEqual : UniversalTestBase
 {
    [XF] public void it_does_not_throw_for_equal_sequences()
-      => new[] { 1, 2, 3 }.Must().Equal([1, 2, 3]);
+      => new[] { 1, 2, 3 }.Must().SequenceEqual([1, 2, 3]);
 
    [XF] public void it_throws_for_different_sequences()
-      => Invoking(() => new[] { 1, 2, 3 }.Must().Equal([1, 2, 4]))
+      => Invoking(() => new[] { 1, 2, 3 }.Must().SequenceEqual([1, 2, 4]))
         .Must()
         .Throw<AssertionFailedException>();
 
    [XF] public void it_throws_for_different_lengths()
-      => Invoking(() => new[] { 1, 2 }.Must().Equal([1, 2, 3]))
+      => Invoking(() => new[] { 1, 2 }.Must().SequenceEqual([1, 2, 3]))
         .Must()
         .Throw<AssertionFailedException>();
 
    [XF] public void it_works_with_linq_operations()
-      => Enumerable.Range(1, 10).Must().Equal(Enumerable.Range(1, 10));
+      => Enumerable.Range(1, 10).Must().SequenceEqual(Enumerable.Range(1, 10));
 
    public class when_sequences_differ : When_calling_Must_SequenceEqual
    {
       readonly int[] _actual = [1, 2, 3];
       readonly int[] _expected = [1, 2, 4];
 
-      string ExceptionMessage() => Invoking(() => _actual.Must().Equal(_expected)).Must().Throw<AssertionFailedException>().Which.Message;
+      string ExceptionMessage() => Invoking(() => _actual.Must().SequenceEqual(_expected)).Must().Throw<AssertionFailedException>().Which.Message;
 
-      [XF] public void the_exception_message_includes_the_full_diff() =>
+      [XF] public void the_full_exception_message_is() =>
          ExceptionMessage().Must().Be(""""
 
                                       --------------------------------------------------
-                                      expected the sequence:
+                                      Failing assertion:
                                       --------------------------------------------------
-                                         _actual
-                                      --------------------------------------------------
-                                      to be sequence equal to:
-                                      --------------------------------------------------
-                                         _expected
-                                      --------------------------------------------------
-                                      But it was not.
+                                      _actual.Must().SequenceEqual(_expected)
                                       --------------------------------------------------
                                       Diff:
                                       --------------------------------------------------
@@ -60,9 +54,11 @@ public class When_calling_Must_SequenceEqual : UniversalTestBase
                                       +    3
                                          ]
                                        }
-                                      
+
                                       --------------------------------------------------
-                                      Actual was:
+                                      _actual was a System.Int32[] with:
+                                      --------------------------------------------------
+                                      JSON:
                                       --------------------------------------------------
                                       {
                                         "$type": "System.Int32[], System.Private.CoreLib",
@@ -73,7 +69,9 @@ public class When_calling_Must_SequenceEqual : UniversalTestBase
                                         ]
                                       }
                                       --------------------------------------------------
-                                      Expected was:
+                                      _expected was a System.Int32[] with:
+                                      --------------------------------------------------
+                                      JSON:
                                       --------------------------------------------------
                                       {
                                         "$type": "System.Int32[], System.Private.CoreLib",

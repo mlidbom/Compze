@@ -14,7 +14,7 @@ public class When_calling_Must_BeExactType : UniversalTestBase
       [XF] public void it_does_not_throw()
       {
          object value = "string";
-         value.Must().BeOfType<string>();
+         value.Must().BeExactType<string>();
       }
    }
 
@@ -23,7 +23,7 @@ public class When_calling_Must_BeExactType : UniversalTestBase
       [XF] public void it_throws()
       {
          object value = 42;
-         Invoking(() => value.Must().BeOfType<string>())
+         Invoking(() => value.Must().BeExactType<string>())
             .Must()
             .Throw<AssertionFailedException>();
       }
@@ -37,7 +37,7 @@ public class When_calling_Must_BeExactType : UniversalTestBase
       [XF] public void it_throws_when_expecting_base_type()
       {
          object value = new Derived();
-         Invoking(() => value.Must().BeOfType<Base>())
+         Invoking(() => value.Must().BeExactType<Base>())
             .Must()
             .Throw<AssertionFailedException>();
       }

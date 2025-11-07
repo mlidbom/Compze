@@ -2,7 +2,7 @@ using System;
 
 namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
-class AwaitingConditionTimeoutException : Exception
+public class AwaitingConditionTimeoutException : Exception
 {
    public AwaitingConditionTimeoutException(AwaitingConditionTimeoutException parent, string message) : base(message, innerException: parent)
    { }

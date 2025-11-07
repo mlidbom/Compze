@@ -37,9 +37,9 @@ class TeventCache : IDisposable, ITeventCache
    class TransactionalOverlay(TeventCache teventCache)
    {
       readonly TeventCache _parent = teventCache;
-      readonly MonitorCE _monitor = MonitorCE.WithDefaultTimeout();
+      readonly IMonitorCE _monitor = IMonitorCE.WithDefaultTimeout();
 
-      readonly IThreadShared<Dictionary<string, Dictionary<TaggregateId, Entry>>> _overlays = IThreadShared.WithDefaultTimeout<Dictionary<string, Dictionary<TaggregateId, Entry>>>();
+      readonly IThreadShared<Dictionary<string, Dictionary<TaggregateId, Entry>>> _overlays = IThreadShared.WithDefaultTimeouts<Dictionary<string, Dictionary<TaggregateId, Entry>>>();
 
       Dictionary<TaggregateId, Entry> CurrentOverlay
       {
@@ -49,7 +49,7 @@ class TeventCache : IDisposable, ITeventCache
             var transactionId = Transaction.Current.TransactionInformation.LocalIdentifier;
             Dictionary<TaggregateId, Entry>? overlay = null;
 
-            if(_overlays.Update(it => it.TryGetValue(transactionId, out overlay)))
+            if(_overlays.Read(it => it.TryGetValue(transactionId, out overlay)))
             {
                return Assert.Result.NotNull(overlay).then(overlay);
             }

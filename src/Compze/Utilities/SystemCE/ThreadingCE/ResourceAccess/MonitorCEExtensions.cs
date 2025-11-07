@@ -1,26 +1,43 @@
 using System;
-using Compze.Utilities.Contracts;
 
 namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
 static class MonitorCEExtensions
 {
-   ///<summary>Implements the double-checked locking pattern which:
-   /// 1. Returns the  value from <paramref name="unlockedTryGetValue"/> if it is not null.
-   /// 2. Calls <paramref name="lockedSetValue"/> within an update lock if <paramref name="unlockedTryGetValue"/> returns null.
-   /// 2.1 Checks once again for the presence of the value after taking the update lock before adding it.
-   /// 2.2 Asserts that <paramref name="unlockedTryGetValue"/> returns a value after <paramref name="lockedSetValue"/> has been called.
-   /// </summary>
-   public static TResult DoubleCheckedLocking<TResult>(this MonitorCE @this, Func<TResult?> unlockedTryGetValue, Action lockedSetValue) where TResult : class
-   {
-      var result = unlockedTryGetValue();
-      if(result != null) return result;
-      return @this.Update(() =>
+   public static TResult DoubleCheckedLocking<TResult>(this IMonitorCE @this, Func<TResult?> tryRead, Action updateOnFailedRead)
+      where TResult : class =>
+      tryRead() ?? @this.Update(() =>
       {
-         result = unlockedTryGetValue();
+         var result = tryRead();
          if(result != null) return result;
-         lockedSetValue();
-         return Assert.Result.ReturnNotNull(unlockedTryGetValue());
+         updateOnFailedRead();
+         return tryRead() ?? throw new Exception($"{nameof(tryRead)} returned null even after {nameof(updateOnFailedRead)} had been called.");
       });
-   }
+
+   public static TResult DoubleCheckedLocking<TResult>(this IMonitorCE @this, Func<bool> canRead, Func<TResult> read, Action updateOnFailedRead) =>
+      canRead()
+         ? read()
+         : @this.Update(() =>
+         {
+            if(canRead()) return read();
+            updateOnFailedRead();
+            return read();
+         });
+
+   public static TResult ReadOrUpdate<TResult>(this IMonitorCE @this, Func<TResult?> tryRead, Action updateOnFailedRead, TimeSpan? timeout = null)
+      where TResult : class =>
+      @this.Read(() => tryRead() ?? @this.Update(() =>
+      {
+         updateOnFailedRead();
+         return tryRead() ?? throw new Exception($"{nameof(tryRead)} returned null even after {nameof(updateOnFailedRead)} had been called.");
+      }));
+
+   public static TResult ReadOrUpdate<TResult>(this IMonitorCE @this, Func<bool> canRead, Func<TResult> read, Action update, TimeSpan? timeout = null) =>
+      @this.Read(() => canRead()
+                          ? read()
+                          : @this.Update(() =>
+                          {
+                             update();
+                             return read();
+                          }));
 }

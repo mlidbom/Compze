@@ -13,7 +13,7 @@ public class When_calling_Must_BeSameAs : UniversalTestBase
    public class with_two_different_objects_with_the_same_value : When_calling_Must_BeSameAs
    {
       [XF] public void it_throws() =>
-         Invoking(() => new ValueWrapper<int>(42).Must().BeSameAs(new ValueWrapper<int>(42)))
+         Invoking(() => new ValueWrapper<int>(42).Must().ReferenceEqual(new ValueWrapper<int>(42)))
            .Must()
            .Throw<AssertionFailedException>();
    }
@@ -24,6 +24,6 @@ public class When_calling_Must_BeSameAs : UniversalTestBase
 
       [XF] public void it_does_not_throw() => _actual
                                                    .Must()
-                                                   .BeSameAs(_actual);
+                                                   .ReferenceEqual(_actual);
    }
 }

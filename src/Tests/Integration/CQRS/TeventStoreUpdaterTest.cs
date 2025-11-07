@@ -163,7 +163,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
       {
          var loaded1 = session.Get<User>(user.Id);
          var loaded2 = session.Get<User>(user.Id);
-         loaded1.Must().BeSameAs(loaded2);
+         loaded1.Must().ReferenceEqual(loaded2);
       });
    }
 
@@ -179,8 +179,8 @@ public class TeventStoreUpdaterTest : UniversalTestBase
 
          var loaded1 = session.Get<User>(user.Id);
          var loaded2 = session.Get<User>(user.Id);
-         loaded1.Must().BeSameAs(loaded2);
-         loaded1.Must().BeSameAs(user);
+         loaded1.Must().ReferenceEqual(loaded2);
+         loaded1.Must().ReferenceEqual(user);
       });
    }
 
@@ -316,7 +316,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
       _teventSpy.DispatchedTessages.Count()
                .Must()
                .Be(3);
-      published.Last().Must().BeOfType<UserChangedEmail>();
+      published.Last().Must().BeExactType<UserChangedEmail>();
    }
 
    [PCT]
@@ -330,13 +330,13 @@ public class TeventStoreUpdaterTest : UniversalTestBase
 
          _teventSpy.DispatchedTessages.Last()
                   .Must()
-                  .BeOfType<UserRegistered>();
+                  .BeExactType<UserRegistered>();
 
          user1 = session.Get<User>(user1.Id);
          user1.ChangeEmail("new_email");
          _teventSpy.DispatchedTessages.Last()
                   .Must()
-                  .BeOfType<UserChangedEmail>();
+                  .BeExactType<UserChangedEmail>();
       });
    }
 

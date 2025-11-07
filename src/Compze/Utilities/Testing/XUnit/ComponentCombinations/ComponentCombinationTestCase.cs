@@ -17,7 +17,7 @@ class ComponentCombinationTestCase : ConstructorArgumentForwardingTestCase, ISel
    static readonly IReadOnlyList<string> HiddenArgumentNames = ["combination", "components", "???"]; //the ???: is Xunit being confused because we have no arguments declare on the test methods.
 
    static string ReplaceArgumentNames(string testMethodName) =>
-      HiddenArgumentNames.Aggregate(testMethodName, (current, hidden) => current.ReplaceOrdinal($"{hidden}: ", ""));
+      HiddenArgumentNames.Aggregate(testMethodName, (current, hidden) => current.ReplaceCE($"{hidden}: ", ""));
 
    // ReSharper disable once UnusedMember.Global
    [Obsolete("Called by deserializer", error: true)]

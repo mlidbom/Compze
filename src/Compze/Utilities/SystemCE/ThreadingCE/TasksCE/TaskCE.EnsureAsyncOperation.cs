@@ -45,4 +45,8 @@ static partial class TaskCE
    internal static Task RunOnDedicatedThread(Action action) => RunOnDedicatedThread(action.AsFunc());
    internal static Task<T> RunOnDedicatedThread<T>(Func<T> func) => DefaultSchedulerDenyChildAttachTaskFactory.StartNew(func, TaskCreationOptions.LongRunning);
 #pragma warning restore CA2008 // Do not create tasks without passing a TaskScheduler
+
+   ///<summary>Task.ContinueWith may run the continuation synchronously on the calling thread, causing all kinds of subtle and hard to debug problems. This simply guarantees that that does not happen.</summary>
+   internal static Task ContinueWithCE(this Task @this, Action<Task> continuation) =>
+      @this.ContinueWith(continuation, CancellationToken.None, TaskContinuationOptions.RunContinuationsAsynchronously, TaskScheduler.Default);
 }

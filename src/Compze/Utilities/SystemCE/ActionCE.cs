@@ -14,4 +14,6 @@ static class ActionCE
 
 
    internal static void InvokeAll(this IEnumerable<Action> @this) => @this.ForEach(me => me.Invoke());
+
+   public static readonly Action NullOp = () => {};
 }

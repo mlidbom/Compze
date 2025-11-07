@@ -8,7 +8,7 @@ using Compze.Utilities.SystemCE;
 
 namespace Compze.Utilities.Testing.Must;
 
-public record SatisfyCallInfo<T>(string PredicateExpression, Func<T, bool> Predicate, Func<T, string>? FailureMessage, IReadOnlyList<ExpressionValue>? UsedArguments) {}
+public record SatisfyCallInfo<T>(string PredicateExpression, Func<T, bool> Predicate, Func<T, string>? FailureMessage, string CallingMethod, IReadOnlyList<ExpressionValue>? UsedArguments) {}
 
 public static class _Must_Satisfy
 {
@@ -29,7 +29,7 @@ public static class _Must_Satisfy
          var message = $"""
              {context.FailingAssertionHeading(nameof(Satisfy), predicateExpression)}
              {CustomFailureMessage()}
-             {context.ArgumentValue(context.Expression, context.Actual)}
+             {context.ExpressionValue(context.Expression, context.Actual)}
              """.Split(Environment.NewLine)
                 .Where(it => it != AssertionContext.RemoveLine)
                 .JoinLines();
@@ -54,8 +54,8 @@ public static class _Must_Satisfy
                                        string predicateExpression = null!,
                                        Func<SatisfyCallInfo<object>, string>? messageOverride = null,
                                        Func<object, string>? failureMessage = null,
-                                       ExpressionValue[]? expressions = null,
-                                       [CallerMemberName] string caller = null!) => context.Cast<object>().SatisfyInternal(predicate, predicateExpression, messageOverride, failureMessage, expressions, caller);
+                                       ExpressionValue[]? expressionValues = null,
+                                       [CallerMemberName] string caller = null!) => context.Cast<object>().SatisfyInternal(predicate, predicateExpression, messageOverride, failureMessage, expressionValues, caller);
 
    public static IAssertionContext<T> SatisfyInternal<T>(this IAssertionContext<T> context,
                                              Func<T, bool> predicate,
@@ -63,20 +63,20 @@ public static class _Must_Satisfy
                                              string predicateExpression = null!,
                                              Func<SatisfyCallInfo<T>, string>? messageOverride = null,
                                              Func<T, string>? failureMessage = null,
-                                             ExpressionValue[]? expressions = null,
-                                             [CallerMemberName] string? caller = null!)
+                                             ExpressionValue[]? expressionValues = null,
+                                             [CallerMemberName] string caller = null!)
    {
       if(!predicate(context.Actual))
       {
          if(messageOverride != null)
          {
-            throw new AssertionFailedException(messageOverride.Invoke(new SatisfyCallInfo<T>(predicateExpression, predicate, failureMessage, expressions)));
+            throw new AssertionFailedException(messageOverride.Invoke(new SatisfyCallInfo<T>(predicateExpression, predicate, failureMessage, caller, expressionValues)));
          }
 
          var message = $"""
-             {context.FailingAssertionHeading(caller!, expressions)}
+             {context.FailingAssertionHeading(caller, expressionValues)}
              {CustomFailureMessage()}
-             {context.ArgumentValue(context.Expression, context.Actual)}
+             {context.ExpressionValue(context.Expression, context.Actual)}
              {ExpressionValues()}
              """.Split(Environment.NewLine)
                 .Where(it => it != AssertionContext.RemoveLine)
@@ -86,11 +86,11 @@ public static class _Must_Satisfy
 
          string ExpressionValues()
          {
-            if(expressions == null || !expressions.Any())
+            if(expressionValues == null || !expressionValues.Any())
                return AssertionContext.RemoveLine;
 
             return $"""
-                    {expressions.Select(it => context.ArgumentValue(it.Expression, it.Value)).JoinLines()}
+                    {expressionValues.Select(it => context.ExpressionValue(it.Expression, it.Value)).JoinLines()}
                     """;
          }
 

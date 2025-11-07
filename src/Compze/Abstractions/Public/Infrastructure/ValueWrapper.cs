@@ -1,4 +1,5 @@
 using System;
+using Compze.Utilities.SystemCE;
 
 namespace Compze.Core.Public.Infrastructure;
 
@@ -21,7 +22,7 @@ public class ValueWrapper<TValue>(TValue value) : IEquatable<ValueWrapper<TValue
 
    // ReSharper disable once NonReadonlyMemberInGetHashCode only used by serialization, in practice readonly
    public override int GetHashCode() => Value.GetHashCode();
-   public override string ToString() => Value.ToString() ?? "";
+   public override string ToString() => Value.ToStringCE();
 
    public static bool operator ==(ValueWrapper<TValue>? left, ValueWrapper<TValue>? right) => Equals(left, right);
    public static bool operator !=(ValueWrapper<TValue>? left, ValueWrapper<TValue>? right) => !Equals(left, right);

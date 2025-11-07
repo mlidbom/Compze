@@ -20,4 +20,6 @@ class Disposable : IDisposable
 
    ///<summary>Constructs an object that will call <param name="action"> when disposed.</param></summary>
    public static IDisposable Create(Action action) => new Disposable(action);
+
+   public static readonly IDisposable NullOp = new Disposable(ActionCE.NullOp);
 }

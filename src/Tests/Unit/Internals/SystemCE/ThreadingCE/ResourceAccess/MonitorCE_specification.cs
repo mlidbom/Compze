@@ -21,7 +21,7 @@ public class MonitorCE_specification : UniversalTestBase
 {
    [XF] public void When_one_thread_has_UpdateLock_other_thread_is_blocked_until_first_thread_disposes_lock_()
    {
-      var monitor = MonitorCE.WithTimeout(1.Seconds());
+      var monitor = IMonitorCE.WithTimeouts(1.Seconds());
 
       var updateLock = monitor.TakeUpdateLock();
 
@@ -47,7 +47,7 @@ public class MonitorCE_specification : UniversalTestBase
 
    [XF] public void Owning_thread_can_reenter_the_lock_and_the_lock_is_only_exited_when_releasing_the_outermost_lock()
    {
-      var monitor = MonitorCE.WithTimeout(1.Seconds());
+      var monitor = IMonitorCE.WithTimeouts(1.Seconds());
       using(monitor.TakeUpdateLock())
       {
          using(monitor.TakeUpdateLock()) {}
@@ -62,7 +62,7 @@ public class MonitorCE_specification : UniversalTestBase
    public class An_exception_is_thrown_by_EnterUpdateLock_if_lock_is_not_acquired_within_timeout : UniversalTestBase
    {
       [XF, EnableRdi(false)] public void Exception_is_ObjectLockTimedOutException() =>
-         RunScenario(ownerThreadBlockTime: 20.Milliseconds(), timeToWaitForStackTrace: 30.Seconds(), monitorTimeout: 10.Milliseconds()).Must().BeOfType<EnterLockTimeoutException>();
+         RunScenario(ownerThreadBlockTime: 20.Milliseconds(), timeToWaitForStackTrace: 30.Seconds(), monitorTimeout: 10.Milliseconds()).Must().BeExactType<TakeLockTimeoutException>();
 
       [XF, EnableRdi(false)] public void If_owner_thread_blocks_for_less_than_fetchStackTraceTimeout_Exception_contains_owning_threads_stack_trace() =>
          RunScenario(ownerThreadBlockTime: 20.Milliseconds(), timeToWaitForStackTrace: 30.Seconds(), monitorTimeout: 5.Milliseconds()).Message.Must().Contain(nameof(DisposeInMethodSoItWillBeInTheCapturedCallStack));
@@ -74,7 +74,7 @@ public class MonitorCE_specification : UniversalTestBase
 
       static Exception RunScenario(TimeSpan ownerThreadBlockTime, TimeSpan monitorTimeout, TimeSpan? timeToWaitForStackTrace = null)
       {
-         var monitor = MonitorCE.WithTimeout(monitorTimeout);
+         var monitor = IMonitorCE.WithTimeouts(monitorTimeout);
          if(timeToWaitForStackTrace.HasValue)
          {
             monitor.SetTimeToWaitForStackTrace(timeToWaitForStackTrace.Value);

@@ -13,6 +13,7 @@
 	</ItemGroup>
   <ItemGroup>
     <Folder Include="SystemCE\TextCE\" />
+    <Folder Include="SystemCE\ThreadingCE\Async\" />
   </ItemGroup>
   <!-- Exclude subdirectories that have their own .csproj files to prevent compilation errors.
        This section is automatically maintained by DevScripts\C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders.ps1 -->

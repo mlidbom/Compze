@@ -3,13 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using Compze.Utilities.Contracts;
 using Compze.Utilities.DependencyInjection.Abstractions;
-using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
 namespace Compze.Utilities.DependencyInjection;
 
 public abstract class ComponentRegistration
 {
-   internal readonly MonitorCE Monitor = MonitorCE.WithDefaultTimeout();
    internal IReadOnlySet<Type> ServiceTypes { get; }
    internal InstantiationSpec InstantiationSpec { get; }
    internal Lifestyle Lifestyle { get; }

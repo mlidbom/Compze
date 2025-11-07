@@ -33,13 +33,13 @@ public class When_calling_Be_string_overload : UniversalTestBase
 
             [XF] public void and_the_full_message_is() =>
                ExceptionMessage().Must().Be("""
-
+                                            
                                             --------------------------------------------------
-                                            the expression: 
+                                            Failing assertion:
                                             --------------------------------------------------
-                                               _actual
+                                            _actual.Must().Be(_expected)
                                             --------------------------------------------------
-                                            did not result in the expected string, producing the diff
+                                            Diff:
                                             --------------------------------------------------
                                             --- expected
                                             +++ actual
@@ -48,15 +48,15 @@ public class When_calling_Be_string_overload : UniversalTestBase
                                             -Expected Second line
                                             +Actual Second line
                                              Third line
-
+                                            
                                             --------------------------------------------------
-                                            Actual was:
+                                            _actual was a string with the value:
                                             --------------------------------------------------
                                             First line
                                             Actual Second line
                                             Third line
                                             --------------------------------------------------
-                                            Expected was:
+                                            _expected was a string with the value:
                                             --------------------------------------------------
                                             First line
                                             Expected Second line
@@ -83,20 +83,20 @@ public class When_calling_Be_string_overload : UniversalTestBase
                ExceptionMessage().Must().Be("""
                                             
                                             --------------------------------------------------
-                                            the expression: 
+                                            Failing assertion:
                                             --------------------------------------------------
-                                               _actual
+                                            _actual.Must().Be(_expected)
                                             --------------------------------------------------
-                                            did not result in the expected string, producing the diff
+                                            Diff:
                                             --------------------------------------------------
                                             First [-Expected-Second] Third
                                             First [+Actual-Second] Third
                                             --------------------------------------------------
-                                            Actual was:
+                                            _actual was a string with the value:
                                             --------------------------------------------------
                                             First Actual-Second Third
                                             --------------------------------------------------
-                                            Expected was:
+                                            _expected was a string with the value:
                                             --------------------------------------------------
                                             First Expected-Second Third
                                             --------------------------------------------------

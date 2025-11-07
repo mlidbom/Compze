@@ -29,7 +29,7 @@ class TypeMapper : ITypeMapper
 
    TypeMapper() {}
    internal static readonly ITypeMapper Instance = new TypeMapper();
-   static readonly IThreadShared<MappingState> State = IThreadShared.WithDefaultTimeout<MappingState>();
+   static readonly IThreadShared<MappingState> State = IThreadShared.WithDefaultTimeouts<MappingState>();
 
    static TypeMapper()
    {

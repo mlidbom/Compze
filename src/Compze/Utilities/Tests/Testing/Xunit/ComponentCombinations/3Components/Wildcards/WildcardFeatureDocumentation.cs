@@ -9,8 +9,8 @@ public class WildcardFeatureDocumentation
    [WildcardTest] public void WildcardConfigurationGeneratesCorrectPermutations(ComponentCombination combination)
    {
       combination.Components.Must().HaveCount(3);
-      combination.Components[0].Must().BeOfType<Serializer>();
-      combination.Components[1].Must().BeOfType<SqlLayer>();
-      combination.Components[2].Must().BeOfType<DIContainer>();
+      combination.Components[0].Must().BeExactType<Serializer>();
+      combination.Components[1].Must().BeExactType<SqlLayer>();
+      combination.Components[2].Must().BeExactType<DIContainer>();
    }
 }

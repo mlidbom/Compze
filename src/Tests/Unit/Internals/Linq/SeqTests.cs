@@ -13,6 +13,6 @@ public class SeqTests : UniversalTestBase
    public void CreateShouldEnumerateAllParamsInOrder()
    {
       var oneToTen = 1.Through(10);
-      EnumerableCE.Create(oneToTen.ToArray()).Must().Equal(oneToTen);
+      EnumerableCE.Create(oneToTen.ToArray()).Must().SequenceEqual(oneToTen);
    }
 }

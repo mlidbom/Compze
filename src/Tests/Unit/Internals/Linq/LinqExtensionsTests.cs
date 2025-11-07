@@ -28,7 +28,7 @@ public class LinqExtensionsTests : UniversalTestBase
    public void ChoppingFollowedBySelectManyShouldEqualOriginalSequence()
    {
       var oneThroughAHundred = 1.Through(10003).ChopIntoSizesOf(10).SelectMany(me => me);
-      oneThroughAHundred.Must().Equal(1.Through(10003));
+      oneThroughAHundred.Must().SequenceEqual(1.Through(10003));
    }
 
    [XF]

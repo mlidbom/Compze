@@ -14,7 +14,7 @@ static class AssemblyBuilderCE
    static AssemblyBuilderCE()
    {
       var assembly = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName($"{nameof(AssemblyBuilderCE)}_dynamic_assembly"), AssemblyBuilderAccess.Run);
-      Module = IThreadShared.WithDefaultTimeout(assembly.DefineDynamicModule(assembly.GetName().Name.NotNull()));
+      Module = IThreadShared.WithDefaultTimeouts(assembly.DefineDynamicModule(assembly.GetName().Name.NotNull()));
    }
 }
 

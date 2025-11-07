@@ -1,23 +1,24 @@
 using System;
 using System.Diagnostics;
+using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
-namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
+namespace Compze.Utilities.SystemCE.ThreadingCE.Async;
 
-class EnterLockTimeoutException : Exception
+public class AsyncLockTimeoutException : Exception
 {
-   readonly MonitorCE _monitor = MonitorCE.WithDefaultTimeout();
+   readonly IMonitorCE _monitor = IMonitorCE.WithDefaultTimeout();
    readonly TimeSpan _timeToWaitForOwningThreadStacktrace;
    string? _blockingThreadStacktrace;
 
-   internal EnterLockTimeoutException(TimeSpan timeout, TimeSpan? stackTraceFetchTimeout) : base($"Timed out awaiting lock after {timeout}. This likely indicates an in-memory deadlock. See below for the stacktrace of the blocking thread as it disposes the lock.") =>
-      _timeToWaitForOwningThreadStacktrace = stackTraceFetchTimeout ?? TimeSpan.FromSeconds(1);
+   internal AsyncLockTimeoutException(TimeSpan timeout, TimeSpan stackTraceFetchTimeout) : base($"Timed out awaiting async lock after {timeout}. This likely indicates an in-memory deadlock. See below for the stacktrace of the blocking thread as it disposes the lock.") =>
+      _timeToWaitForOwningThreadStacktrace = stackTraceFetchTimeout;
 
    public override string Message
    {
       get
       {
          //Todo: Blocking loggers and similar in production is not great: This only happens on in-memory deadlocks though, so it does not seem too urgent.
-         if(!_monitor.TryAwait(_timeToWaitForOwningThreadStacktrace, () => _blockingThreadStacktrace != null))
+         if(!_monitor.TryAwait(() => _blockingThreadStacktrace != null, _timeToWaitForOwningThreadStacktrace))
          {
             _blockingThreadStacktrace = $"Failed to get blocking thread stack trace. Timed out after: {_timeToWaitForOwningThreadStacktrace}";
          }

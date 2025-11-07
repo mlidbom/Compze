@@ -98,8 +98,8 @@ public static class Must_Be_NotBe
                  {context.FailingAssertionHeading(nameof(Be), expectedExpression)}
                  {diffMessage}
                  {AssertionContext.Separator}
-                 {context.ArgumentValue($"{context.Expression}", context.Actual)}
-                 {context.ArgumentValue($"{expectedExpression}", expected)}
+                 {context.ExpressionValue($"{context.Expression}", context.Actual)}
+                 {context.ExpressionValue($"{expectedExpression}", expected)}
                  the first failing equivalency test was: 
                  {info.PredicateExpression.Indent()}{FailureMessage()}
                  {AssertionContext.Separator}
@@ -168,19 +168,14 @@ public static class Must_Be_NotBe
 
       string BuildFailureMessage(SatisfyCallInfo<TValue> info)
       {
-         var actualJson = JsonConvert.SerializeObject(context.Actual, TestingJsonSettings.AllMembers);
-         var unexpectedJson = JsonConvert.SerializeObject(unexpected, TestingJsonSettings.AllMembers);
          return $"""
                  {context.FailingAssertionHeading(nameof(NotBe), unexpectedExpression)}
                  first failing test: 
                  {info.PredicateExpression.Indent()}{FailureMessage()}
                  {AssertionContext.Separator}
-                 Diff:
-                 {AssertionContext.Separator}
-                 {DiffGenerator.CreateDiff(unexpectedJson, actualJson)}
-                 {AssertionContext.Separator}
-                 {context.ArgumentValue($"{context.Expression}", context.Actual)}
-                 {context.ArgumentValue($"{unexpectedExpression}", unexpected)}
+                 {context.Diff(unexpected, context.Actual, "unexpected", "actual")}
+                 {context.ExpressionValue($"{context.Expression}", context.Actual)}
+                 {context.ExpressionValue($"{unexpectedExpression}", unexpected)}
                  """;
 
          string FailureMessage() =>
