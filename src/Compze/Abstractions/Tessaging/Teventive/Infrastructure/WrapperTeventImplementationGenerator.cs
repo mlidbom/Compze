@@ -47,8 +47,8 @@ static class WrapperTeventImplementationGenerator
    // the types for the inner tevent that it listens to, not the types in which it is wrapped. Just a heads-up so we don't remove this strange code when we implement taggregates more cleanly. This still has great potential...
    public static Func<ITevent, IPublisherIdentifyingTevent<ITevent>> ConstructorFor(Type wrappedTeventType) =>
       MonitorCE.DoubleCheckedLocking(
-         unlockedTryGetValue: () => _wrapperConstructors.GetValueOrDefault(wrappedTeventType),
-         setValue: () => OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _wrapperConstructors, wrappedTeventType, CreateConstructorFor(wrappedTeventType))
+         tryRead: () => _wrapperConstructors.GetValueOrDefault(wrappedTeventType),
+         update: () => OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _wrapperConstructors, wrappedTeventType, CreateConstructorFor(wrappedTeventType))
       );
 
    static Func<ITevent, IPublisherIdentifyingTevent<ITevent>> CreateConstructorFor(Type wrappedTeventType)

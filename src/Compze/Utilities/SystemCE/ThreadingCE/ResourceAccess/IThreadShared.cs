@@ -49,14 +49,8 @@ public interface IThreadShared
       }
 
       public TResult ReadOrUpdate<TResult>(Func<TShared, TResult?> tryRead, Action<TShared> updateOnFailedRead, TimeSpan? timeout = null)
-         where TResult : class
-      {
-         using var readLock = _monitor.TakeReadLock(timeout);
-         var readAttemptResult = tryRead(_shared);
-         if(readAttemptResult != null) return readAttemptResult;
-         Update(updateOnFailedRead.AsFunc());
-         return tryRead(_shared) ?? throw new Exception("Read value is still null after running the update action");
-      }
+         where TResult : class =>
+         _monitor.ReadOrUpdate(() => tryRead(_shared), () => updateOnFailedRead(_shared));
 
       public TResult ReadWhen<TResult>(Func<TShared, TResult> read, Func<TShared, bool> condition, TimeSpan? timeout = null) => _monitor.ReadWhen(() => read(_shared), () => condition(_shared), timeout);
 
