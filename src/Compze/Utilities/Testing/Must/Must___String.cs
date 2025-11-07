@@ -17,4 +17,13 @@ public static class Must___String
 
    public static IAssertionContext<string>? EndWith(this IAssertionContext<string> context, string expected, [CallerArgumentExpression(nameof(expected))] string expectedExpression = null!) =>
       context.SatisfyInternal(it => it.EndsWithCE(expected),expressions: [new(expectedExpression, expected)]);
+
+   public static IAssertionContext<string?> BeNullOrEmpty(this IAssertionContext<string?> context) =>
+      context.SatisfyInternal(it => string.IsNullOrEmpty(it));
+
+   public static IAssertionContext<string> NotBeNullOrEmpty(this IAssertionContext<string?> context) =>
+      context.SatisfyInternal(it => !string.IsNullOrEmpty(it))!;
+
+   public static IAssertionContext<string> NotBeNullOrWhiteSpace(this IAssertionContext<string?> context) =>
+      context.SatisfyInternal(it => !string.IsNullOrWhiteSpace(it))!;
 }

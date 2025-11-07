@@ -4,13 +4,4 @@ namespace Compze.Utilities.Testing.Must;
 // ReSharper disable InconsistentNaming
 
 public static class Must_NotBeNullOrEmpty___strings
-{
-   public static IAssertionContext<string?> BeNullOrEmpty(this IAssertionContext<string?> context) =>
-      context.SatisfyInternal(it => string.IsNullOrEmpty(it));
-
-   public static IAssertionContext<string> NotBeNullOrEmpty(this IAssertionContext<string?> context) =>
-      context.SatisfyInternal(it => !string.IsNullOrEmpty(it))!;
-
-   public static IAssertionContext<string> NotBeNullOrWhiteSpace(this IAssertionContext<string?> context) =>
-      context.SatisfyInternal(it => !string.IsNullOrWhiteSpace(it))!;
-}
+{}
