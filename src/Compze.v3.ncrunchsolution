@@ -5,15 +5,7 @@
     <FrameworkUtilisationTypeForMSTest>Disabled</FrameworkUtilisationTypeForMSTest>
     <FrameworkUtilisationTypeForNUnit2>Disabled</FrameworkUtilisationTypeForNUnit2>
     <HotSpotsExclusionList />
-    <HotSpotsLineExclusionList>
-      <Value>SystemCE\ThreadingCE\TaskRunner.cs:Compze\Tessaging\Compze.Tessaging.csproj-66</Value>
-      <Value>Hosting\EndpointRequestExecutor.cs:Compze\Tessaging\Compze.Tessaging.csproj-23</Value>
-      <Value>Implementation\TessageHandling\Inbox\Inbox.HandlerExecutionEngine.Coordinator.cs:Compze\Tessaging\Compze.Tessaging.csproj-32</Value>
-      <Value>Implementation\TessageHandling\Inbox\Inbox.HandlerExecutionEngine..cs:Compze\Tessaging\Compze.Tessaging.csproj-41</Value>
-      <Value>Implementation\Transport\Client\Implementation\Memory\MemoryInboxTransportServer.cs:Compze\Tessaging\Compze.Tessaging.csproj-83</Value>
-      <Value>Implementation\Transport\Client\Implementation\Memory\MemoryTransportMessagePoster.cs:Compze\Tessaging\Compze.Tessaging.csproj-41</Value>
-      <Value>Implementation\Outbox\OutboxRetryPoller.cs:Compze\Tessaging\Compze.Tessaging.csproj-106</Value>
-    </HotSpotsLineExclusionList>
+    <HotSpotsLineExclusionList />
     <MSpecEnabled>False</MSpecEnabled>
     <NUnit3Enabled>False</NUnit3Enabled>
     <RdiConfigured>True</RdiConfigured>
