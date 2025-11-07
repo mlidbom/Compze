@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
+using Compze.Utilities.Contracts;
 
 namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 #pragma warning disable CA1001 //By creating the locks only once in the constructor usages become zero-allocation operations. By always referencing them by the concrete type inlining remains possible. They are not normal disposables
@@ -9,9 +10,6 @@ namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 class MonitorCE : IMonitorCE
 #pragma warning restore CA1001
 {
-   public TimeSpan LockTimeout { get; }
-   public TimeSpan WaitTimeout { get; }
-
    public IDisposable TakeReadLock(TimeSpan? timeout = null) => TakeLock(LockType.Read, timeout ?? LockTimeout);
    public IDisposable TakeUpdateLock(TimeSpan? timeout = null) => TakeLock(LockType.Update, timeout ?? LockTimeout);
 
@@ -27,6 +25,8 @@ class MonitorCE : IMonitorCE
    public IDisposable? TryTakeUpdateLockWhen(Func<bool> condition, TimeSpan? waitTimeout = null, TimeSpan? lockTimeout = null) =>
       TryTakeLockWhen(condition, LockType.Update, throwOnFailedLock: false, waitTimeout: waitTimeout, lockTimeout: lockTimeout);
 
+   public TimeSpan LockTimeout { get; }
+   public TimeSpan WaitTimeout { get; }
    public long ContentionCount => _monitor.ContentionCount;
 
    public void SetTimeToWaitForStackTrace(TimeSpan timeToWaitForStackTrace) => _stackTraceFetchTimeout = timeToWaitForStackTrace;
@@ -160,5 +160,28 @@ class MonitorCE : IMonitorCE
    {
       Read = 0,
       Update = 1
+   }
+
+   class ThinMonitorWrapper
+   {
+      static readonly TimeSpan InfiniteTimeOut = -1.Milliseconds();//https://learn.microsoft.com/en-us/dotnet/api/system.threading.monitor.tryenter?view=net-9.0
+      readonly object _lockObject = new();
+      long _contentionCount = 0;
+      public long ContentionCount => _contentionCount;
+
+      public bool TryTakeLock(TimeSpan timeout)
+      {
+         Assert.Argument.Is(timeout != InfiniteTimeOut, () => "Infinite timeouts are not supported");
+
+         if(Monitor.TryEnter(_lockObject)) return true; //This will never block, calling it is essentially free and allows us to collect contention statistics
+         Interlocked.Increment(ref _contentionCount);
+         return Monitor.TryEnter(_lockObject, timeout);
+      }
+
+      public void ReleaseLockAndReacquireItOnPulseOrTimeout(TimeSpan timeout) => Monitor.Wait(_lockObject, timeout);
+
+      public void ReleaseLock() => Monitor.Exit(_lockObject);
+
+      public void NotifyWaitingThreadsAboutUpdates() => Monitor.PulseAll(_lockObject); //All threads blocked on Monitor.Wait for our _lockObject will now try and reacquire the lock
    }
 }
