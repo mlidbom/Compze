@@ -11,19 +11,20 @@ public partial interface IMonitorCE
    static readonly TimeSpan DefaultTimeout = 2.Minutes(); //MsSql default query timeout is 30 seconds. Default .Net transaction timeout is 60. If we reach 2 minutes it is all but guaranteed that we have an in-memory deadlock.
 #endif
 
-   public static IMonitorCE WithDefaultTimeout() => new MonitorCE(DefaultTimeout);
-   public static IMonitorCE WithTimeout(TimeSpan timeout) => new MonitorCE(timeout);
+   public static IMonitorCE WithDefaultTimeout() => new MonitorCE(DefaultTimeout, DefaultTimeout);
+   public static IMonitorCE WithTimeouts(TimeSpan lockTimeout, TimeSpan? waitTimeout = null) => new MonitorCE(lockTimeout, waitTimeout ?? lockTimeout);
 
-   TimeSpan Timeout { get; }
+   TimeSpan LockTimeout { get; }
+   TimeSpan WaitTimeout { get; }
 
    IDisposable TakeReadLock(TimeSpan? timeout = null);
    IDisposable TakeUpdateLock(TimeSpan? timeout = null);
 
-   IDisposable TakeReadLockWhen(Func<bool> condition, TimeSpan? timeout = null);
-   IDisposable TakeUpdateLockWhen(Func<bool> condition, TimeSpan? timeout = null);
+   IDisposable TakeReadLockWhen(Func<bool> condition, TimeSpan? waitTimeout = null, TimeSpan? lockTimeout = null);
+   IDisposable TakeUpdateLockWhen(Func<bool> condition, TimeSpan? waitTimeout = null, TimeSpan? lockTimeout = null);
 
-   IDisposable? TryTakeReadLockWhen(Func<bool> condition, TimeSpan? timeout = null);
-   IDisposable? TryTakeUpdateLockWhen(Func<bool> condition, TimeSpan? timeout = null);
+   IDisposable? TryTakeReadLockWhen(Func<bool> condition, TimeSpan? waitTimeout = null, TimeSpan? lockTimeout = null);
+   IDisposable? TryTakeUpdateLockWhen(Func<bool> condition, TimeSpan? waitTimeout = null, TimeSpan? lockTimeout = null);
 
    //review: do we want this exposed?
    void SetTimeToWaitForStackTrace(TimeSpan timeToWaitForStackTrace);

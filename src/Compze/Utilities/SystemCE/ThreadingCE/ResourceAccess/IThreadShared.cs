@@ -13,10 +13,10 @@ public interface IThreadShared
       new LockCEThreadShared<TShared>(shared, IMonitorCE.WithDefaultTimeout());
 
    public static IThreadShared<TShared> WithTimeout<TShared>(TimeSpan timeout) where TShared : new() =>
-      new LockCEThreadShared<TShared>(new TShared(), IMonitorCE.WithTimeout(timeout));
+      new LockCEThreadShared<TShared>(new TShared(), IMonitorCE.WithTimeouts(timeout));
 
    public static IThreadShared<TShared> WithTimeout<TShared>(TShared shared, TimeSpan timeout) =>
-      new LockCEThreadShared<TShared>(shared, IMonitorCE.WithTimeout(timeout));
+      new LockCEThreadShared<TShared>(shared, IMonitorCE.WithTimeouts(timeout));
 
    class LockCEThreadShared<TShared> : IThreadShared<TShared>
    {
