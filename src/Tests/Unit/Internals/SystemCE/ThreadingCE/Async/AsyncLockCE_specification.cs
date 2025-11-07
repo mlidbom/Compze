@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Compze.Tests.Infrastructure;
@@ -235,7 +236,7 @@ public class AsyncLockCE_specification : UniversalTestBase
 
          await asyncLock.LockedAsync(async () => //not hanging is success
          {
-            asyncLock.Locked(() => { });
+            asyncLock.Locked(() => {});
             await Task.Yield();
          });
       }
@@ -363,32 +364,24 @@ public class AsyncLockCE_specification : UniversalTestBase
          asyncLock.SetTimeToWaitForStackTrace(500.Milliseconds());
          var firstTaskTookLockGate = ThreadGate.CreateClosedWithTimeout(1.Seconds());
 
-         var firstTask = TaskCE.Run(() => asyncLock.Locked(() =>
-         {
-            BlockingMethodThatHoldsLock();
-            firstTaskTookLockGate.AwaitPassThrough();
-         }));
+         var firstTask = TaskCE.Run(() => HoldLockInMethodSoItWillBeInTheCapturedCallStack(asyncLock, firstTaskTookLockGate));
 
          firstTaskTookLockGate.AwaitQueueLengthEqualTo(1);
 
          var caughtException = await InvokingAsync(async () => await asyncLock.LockedAsync(async () => await Task.Yield()))
-              .Must()
-              .ThrowAsync<AsyncLockTimeoutException>();
+                                    .Must()
+                                    .ThrowAsync<AsyncLockTimeoutException>();
 
          firstTaskTookLockGate.Open();
          await firstTask;
 
-         // The stack trace should show Exit being called, which proves we captured the blocking thread's stack
-         caughtException.Which.Message.Must().Contain("Exit");
-         caughtException.Which.Message.Must().Contain("Blocking thread lock disposal stack trace");
-         caughtException.Which.Message.Must().Contain("AsyncLockCE.cs");
+         // The stack trace should show our specific method name, proving we captured the blocking thread's user code stack
+         caughtException.Which.Message.Must()
+                        .Contain(nameof(HoldLockInMethodSoItWillBeInTheCapturedCallStack))
+                        .Contain("Blocking thread lock disposal stack trace");
       }
 
-      [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
-      static void BlockingMethodThatHoldsLock()
-      {
-         // This method name should appear in the stack trace
-         // NoInlining attribute prevents the compiler from inlining this method
-      }
+      [MethodImpl(MethodImplOptions.NoInlining)]
+      static void HoldLockInMethodSoItWillBeInTheCapturedCallStack(IAsyncLockCE asyncLock, IThreadGate gate) => asyncLock.Locked(gate.AwaitPassThrough);
    }
 }
