@@ -49,7 +49,7 @@ public class When_calling_Must_NotBe_with_custom_types : UniversalTestBase
                                     --------------------------------------------------
                                     Diff:
                                     --------------------------------------------------
-                                    --- expected
+                                    --- unexpected
                                     +++ actual
                                     @@ -1,5 +1,5 @@
                                      {

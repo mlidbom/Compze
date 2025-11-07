@@ -27,15 +27,12 @@ public static class Must___Enumerable
    public static IAssertionContext<TCollection> SequenceEqual<TCollection, TElement>(this IAssertionContext<TCollection> context, IEnumerable<TElement> expected, [CallerArgumentExpression(nameof(expected))] string expectedExpression = null!)
       where TCollection : IEnumerable<TElement>
    {
-      var actualJson = JsonConvert.SerializeObject(context.Actual, TestingJsonSettings.AllMembers);
-      var expectedJson = JsonConvert.SerializeObject(expected, TestingJsonSettings.AllMembers);
-
       return context.SatisfyInternal(
          it => it.SequenceEqual(expected),
          messageOverride: _ =>
             $"""
              {context.FailingAssertionHeading(nameof(SequenceEqual), [new(expectedExpression, expected)])}
-             {context.Diff(expectedJson, actualJson)}
+             {context.Diff(expected, context.Actual)}
              {context.ExpressionValue(context.Expression, context.Actual)}
              {context.ExpressionValue(expectedExpression, expected)}
              """);

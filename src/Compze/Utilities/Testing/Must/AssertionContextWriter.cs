@@ -96,11 +96,14 @@ public static class AssertionContextWriter
       }
    }
 
-   public static string Diff(this IAssertionContext context, string expected, string actual) =>
+   public static string Diff(this IAssertionContext context, object expected, object actual, string? oldFileName = null, string? newFileName = null) =>
+      context.Diff(Serialize(expected), Serialize(actual), oldFileName, newFileName);
+
+   public static string Diff(this IAssertionContext context, string expected, string actual, string? oldFileName = null, string? newFileName = null) =>
       $"""
        Diff:
        {AssertionContext.Separator}
-       {DiffGenerator.CreateDiff(expected: expected, actual: actual)}
+       {DiffGenerator.CreateDiff(expected: expected, actual: actual, oldFileName: oldFileName, newFileName: newFileName)}
        {AssertionContext.Separator}
        """;
 
