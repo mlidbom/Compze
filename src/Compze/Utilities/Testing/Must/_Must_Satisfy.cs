@@ -85,9 +85,7 @@ public static class _Must_Satisfy
             if(expressionValues == null || !expressionValues.Any())
                return AssertionContext.RemoveLine;
 
-            return $"""
-                    {expressionValues.Select(it => context.ExpressionValue(it.Expression, it.Value)).JoinLines()}
-                    """;
+            return expressionValues.Select(it => context.ExpressionValue(it.Expression, it.Value)).JoinLines();
          }
 
          string CustomFailureMessage() =>
