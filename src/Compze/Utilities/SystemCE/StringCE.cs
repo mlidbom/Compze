@@ -33,5 +33,9 @@ public static partial class StringCE
       return @this;
    }
 
+   public static string RemoveLinesWhere(this string @this, Func<string, bool> predicate) => @this.Split(Environment.NewLine)
+                                                                                             .Where(it => !predicate(it))
+                                                                                             .JoinLines();
+
    public static string Pluralize(this int count, string theString) => count == 1 ? theString : $"{theString}s";
 }
