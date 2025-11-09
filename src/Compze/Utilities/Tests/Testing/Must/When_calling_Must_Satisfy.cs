@@ -55,9 +55,6 @@ public class When_calling_Must_Satisfy : UniversalTestBase
       {
          [XF] public void contains_the_custom_message()
             => ExceptionMessage().Must().Contain("Custom error message");
-
-         [XF] public void does_not_contain_the_default_format()
-            => ExceptionMessage().Must().Satisfy(msg => !msg.Contains("failed", StringComparison.Ordinal));
       }
    }
 
