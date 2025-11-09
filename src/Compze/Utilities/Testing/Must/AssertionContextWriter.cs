@@ -52,7 +52,7 @@ public static class AssertionContextWriter
       {
          var json = Serialize(value);
          var toString = value.ToString();
-         if(toString == json) //A simple type for which Newtonsoft just outputs toString
+         if(toString == json) //A simple type for which Newtonsoft just outputs ToString()
          {
             if(expression.Replace("\"", "") == toString) //an inline constant
             {
