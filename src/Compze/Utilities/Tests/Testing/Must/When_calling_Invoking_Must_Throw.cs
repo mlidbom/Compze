@@ -15,9 +15,8 @@ public class When_calling_Invoking_Must_Throw : UniversalTestBase
 
       [XF] public void and_allows_asserting_on_the_exception()
          => Invoking(() => throw _actual)
-           .Must()
-           .Throw<InvalidOperationException>().Which.Must()
-           .Be(_actual);
+           .Must().Throw<InvalidOperationException>()
+           .Which.Must().Be(_actual);
    }
 
    public class given_an_action_that_throws_a_different_exception : When_calling_Invoking_Must_Throw
@@ -26,18 +25,14 @@ public class When_calling_Invoking_Must_Throw : UniversalTestBase
       {
          [XF] public void when_wrong_exception_type_is_thrown()
             => Invoking(() => Invoking(() => throw new InvalidOperationException("wrong"))
-                             .Must()
-                             .Throw<ArgumentException>())
-              .Must()
-              .Throw<AssertionFailedException>();
+                             .Must().Throw<ArgumentException>())
+              .Must().Throw<AssertionFailedException>();
 
          public class and_the_exception_message : Throw_throws
          {
             string ExceptionMessage() => Invoking(() => Invoking(() => throw new InvalidOperationException("wrong"))
-                                                       .Must()
-                                                       .Throw<ArgumentException>())
-                                        .Must()
-                                        .Throw<AssertionFailedException>()
+                                                       .Must().Throw<ArgumentException>())
+                                        .Must().Throw<AssertionFailedException>()
                                         .Which.Message;
 
             [XF] public void is_the_full_formatted_message()
@@ -64,10 +59,8 @@ public class When_calling_Invoking_Must_Throw : UniversalTestBase
             => Invoking(() => Invoking(() =>
                               { /* do nothing */
                               })
-                             .Must()
-                             .Throw<InvalidOperationException>())
-              .Must()
-              .Throw<AssertionFailedException>();
+                             .Must().Throw<InvalidOperationException>())
+              .Must().Throw<AssertionFailedException>();
 
          public class and_the_exception_message : Throw_throws
          {
@@ -83,7 +76,7 @@ public class When_calling_Invoking_Must_Throw : UniversalTestBase
 
             [XF] public void is_the_full_formatted_message()
                => ExceptionMessage().Must().Be("""
-                                               
+
                                                --------------------------------------------------
                                                Failing assertion:
                                                --------------------------------------------------
@@ -107,11 +100,8 @@ public class When_calling_Invoking_Must_Throw : UniversalTestBase
 
          [XF] public void when_expecting_base_exception_type()
             => Invoking(() => throw _actual)
-              .Must()
-              .Throw<ArgumentException>()
-              .That
-              .Must()
-              .Be(_actual);
+              .Must().Throw<ArgumentException>()
+              .Which.Must().Be(_actual);
       }
    }
 }

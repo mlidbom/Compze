@@ -16,15 +16,16 @@ public class When_calling_InvokingAsync_Must_ThrowAsync : UniversalTestBase
 
       [XF] public async Task and_allows_asserting_on_the_exception()
       {
-         var caught = await InvokingAsync(async () =>
-                            {
-                               await Task.Yield();
-                               throw _actual;
-                            })
-                           .Must()
-                           .ThrowAsync<InvalidOperationException>();
-
-         caught.Which.Must().Be(_actual);
+         (await InvokingAsync(async () =>
+                {
+                   await Task.Yield();
+                   throw _actual;
+                })
+               .Must()
+               .ThrowAsync<InvalidOperationException>())
+           .Which
+           .Must()
+           .Be(_actual);
       }
    }
 
@@ -35,12 +36,12 @@ public class When_calling_InvokingAsync_Must_ThrowAsync : UniversalTestBase
          [XF] public async Task when_wrong_exception_type_is_thrown()
          {
             await InvokingAsync(async () => await InvokingAsync(async () =>
-                                            {
-                                               await Task.Yield();
-                                               throw new InvalidOperationException("wrong");
-                                            })
-                                           .Must()
-                                           .ThrowAsync<ArgumentException>())
+                                                  {
+                                                     await Task.Yield();
+                                                     throw new InvalidOperationException("wrong");
+                                                  })
+                                                 .Must()
+                                                 .ThrowAsync<ArgumentException>())
                  .Must()
                  .ThrowAsync<AssertionFailedException>();
          }
@@ -48,35 +49,35 @@ public class When_calling_InvokingAsync_Must_ThrowAsync : UniversalTestBase
          public class and_the_exception_message : ThrowAsync_throws
          {
             async Task<string> ExceptionMessage() => (await InvokingAsync(async () => await InvokingAsync(async () =>
-                                                                                      {
-                                                                                         await Task.Yield();
-                                                                                         throw new InvalidOperationException("wrong");
-                                                                                      })
-                                                                                     .Must()
-                                                                                     .ThrowAsync<ArgumentException>())
-                                                            .Must()
-                                                            .ThrowAsync<AssertionFailedException>())
-                                                     .Which
-                                                     .Message;
+                                                                                            {
+                                                                                               await Task.Yield();
+                                                                                               throw new InvalidOperationException("wrong");
+                                                                                            })
+                                                                                           .Must()
+                                                                                           .ThrowAsync<ArgumentException>())
+                                                           .Must()
+                                                           .ThrowAsync<AssertionFailedException>())
+                                                    .Which
+                                                    .Message;
 
             [XF] public async Task is_the_full_formatted_message()
             {
-               var message = await ExceptionMessage();
-               message.Must().Be("""
-                                   
-                                   --------------------------------------------------
-                                   Failing assertion:
-                                   --------------------------------------------------
-                                   InvokingAsync(async () =>
-                                   {
-                                      await Task.Yield();
-                                      throw new InvalidOperationException("wrong");
-                                   }).Must().Throw<ArgumentException>()
-                                   --------------------------------------------------
-                                   Expected a System.ArgumentException
-                                   but got a System.InvalidOperationException
-                                   --------------------------------------------------
-                                   """);
+               (await ExceptionMessage())
+                 .Must().Be("""
+
+                            --------------------------------------------------
+                            Failing assertion:
+                            --------------------------------------------------
+                            InvokingAsync(async () =>
+                            {
+                               await Task.Yield();
+                               throw new InvalidOperationException("wrong");
+                            }).Must().Throw<ArgumentException>()
+                            --------------------------------------------------
+                            Expected a System.ArgumentException
+                            but got a System.InvalidOperationException
+                            --------------------------------------------------
+                            """);
             }
          }
       }
@@ -89,12 +90,12 @@ public class When_calling_InvokingAsync_Must_ThrowAsync : UniversalTestBase
          [XF] public async Task when_no_exception_is_thrown()
          {
             await InvokingAsync(async () => await InvokingAsync(async () =>
-                                            {
-                                               await Task.Yield();
-                                               // do nothing
-                                            })
-                                           .Must()
-                                           .ThrowAsync<InvalidOperationException>())
+                                                  {
+                                                     await Task.Yield();
+                                                     // do nothing
+                                                  })
+                                                 .Must()
+                                                 .ThrowAsync<InvalidOperationException>())
                  .Must()
                  .ThrowAsync<AssertionFailedException>();
          }
@@ -102,34 +103,34 @@ public class When_calling_InvokingAsync_Must_ThrowAsync : UniversalTestBase
          public class and_the_exception_message : ThrowAsync_throws
          {
             async Task<string> ExceptionMessage() => (await InvokingAsync(async () => await InvokingAsync(async () =>
-                                                                                      {
-                                                                                         await Task.Yield();
-                                                                                         // do nothing
-                                                                                      })
-                                                                                     .Must()
-                                                                                     .ThrowAsync<InvalidOperationException>())
-                                                            .Must()
-                                                            .ThrowAsync<AssertionFailedException>())
-                                                     .Which
-                                                     .Message;
+                                                                                            {
+                                                                                               await Task.Yield();
+                                                                                               // do nothing
+                                                                                            })
+                                                                                           .Must()
+                                                                                           .ThrowAsync<InvalidOperationException>())
+                                                           .Must()
+                                                           .ThrowAsync<AssertionFailedException>())
+                                                    .Which
+                                                    .Message;
 
             [XF] public async Task is_the_full_formatted_message()
             {
-               var message = await ExceptionMessage();
-               message.Must().Be("""
-                                 
-                                 --------------------------------------------------
-                                 Failing assertion:
-                                 --------------------------------------------------
-                                 InvokingAsync(async () =>
-                                 {
-                                    await Task.Yield();
-                                    // do nothing
-                                 }).Must().Throw<InvalidOperationException>()
-                                 --------------------------------------------------
-                                 Expected a System.InvalidOperationException, but no exception was thrown
-                                 --------------------------------------------------
-                                 """);
+               (await ExceptionMessage())
+                 .Must().Be("""
+
+                            --------------------------------------------------
+                            Failing assertion:
+                            --------------------------------------------------
+                            InvokingAsync(async () =>
+                            {
+                               await Task.Yield();
+                               // do nothing
+                            }).Must().Throw<InvalidOperationException>()
+                            --------------------------------------------------
+                            Expected a System.InvalidOperationException, but no exception was thrown
+                            --------------------------------------------------
+                            """);
             }
          }
       }
@@ -144,15 +145,14 @@ public class When_calling_InvokingAsync_Must_ThrowAsync : UniversalTestBase
 
          [XF] public async Task when_expecting_base_exception_type()
          {
-            var caught = await InvokingAsync(async () =>
-                               {
-                                  await Task.Yield();
-                                  throw _actual;
-                               })
-                              .Must()
-                              .ThrowAsync<ArgumentException>();
-
-            caught.That.Must().Be(_actual);
+            (await InvokingAsync(async () =>
+                   {
+                      await Task.Yield();
+                      throw _actual;
+                   })
+                  .Must()
+                  .ThrowAsync<ArgumentException>())
+              .Which.Must().Be(_actual);
          }
       }
    }

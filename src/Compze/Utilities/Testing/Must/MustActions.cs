@@ -107,9 +107,7 @@ public static class MustActions
 public class CaughtException<TException>(TException exception)
    where TException : Exception
 {
-   readonly TException _exception = exception;
-   public TException Which => _exception;
-   public TException That => _exception;
+   public TException Which { get; } = exception;
 }
 
 static class InvokingMustThrowExtensions
