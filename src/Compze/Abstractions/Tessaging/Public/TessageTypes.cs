@@ -68,6 +68,17 @@ public static class TessageTypes
                public EntityId EntityId { get; private set; }
             }
 
+            public class TaggregateLink<TResult> : Remotable.NonTransactional.Tueries.Tuery<TResult> where TResult : IEntity<Guid>
+            {
+               [Obsolete("Used by serializer", error:true)]
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+               public TaggregateLink() : base() {}
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+               public TaggregateLink(TaggregateId taggregateId) => TaggregateId = taggregateId;
+               public EntityLink<TResult> WithId(EntityId id) => new(id);
+               public TaggregateId TaggregateId { get; private set; }
+            }
+
             ///<summary>Implement <see cref="IRemotableCreateMyOwnResultTuery{TResult}"/> by passing a func to this base class.</summary>
             public abstract class FuncResultTuery<TResult>(Func<TResult> factory) : Tuery<TResult>, IRemotableCreateMyOwnResultTuery<TResult>
             {

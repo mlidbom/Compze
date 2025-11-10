@@ -53,6 +53,6 @@ static class AccountUIAdapter
       });
 
    internal static void GetById(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery(
-      (TessageTypes.Remotable.NonTransactional.Tueries.EntityLink<AccountResource> accountTuery, IInProcessTypermediaNavigator navigator)
-         => new AccountResource(navigator.Execute(InternalApi.AccountQueryModel.Tueries.Get(accountTuery.EntityId))));
+      (TessageTypes.Remotable.NonTransactional.Tueries.TaggregateLink<AccountResource> accountTuery, IInProcessTypermediaNavigator navigator)
+         => new AccountResource(navigator.Execute(InternalApi.AccountQueryModel.Tueries.Get(accountTuery.TaggregateId))));
 }

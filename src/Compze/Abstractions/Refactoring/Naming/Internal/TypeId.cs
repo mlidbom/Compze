@@ -3,8 +3,7 @@ using Compze.Core.Public;
 
 namespace Compze.Core.Refactoring.Naming.Internal;
 
-public class TypeId : EntityId
+public class TypeId(Guid guidValue) : EntityId(guidValue)
 {
-   public TypeId(Guid guidValue) : base(guidValue){}
-
+   public TypeId() : this(Guid.NewGuid()) {}
 }
