@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Compze.Sql.Common.DbPool;
 using Compze.Utilities.DependencyInjection;
@@ -10,6 +11,7 @@ namespace Compze.Sql.Sqlite.Private.DbPool;
 
 class SqliteMemoryDbPoolSqlLayer : IDbPoolSqlLayer
 {
+   readonly string _poolId = Guid.NewGuid().ToString();
    internal static IComponentRegistrar RegisterWith(IComponentRegistrar registrar) =>
       registrar.Register(Singleton.For<IDbPoolSqlLayer>()
                                   .CreatedBy(() => new SqliteMemoryDbPoolSqlLayer())
@@ -23,7 +25,9 @@ class SqliteMemoryDbPoolSqlLayer : IDbPoolSqlLayer
    {
       return new SqliteConnectionStringBuilder
              {
-                DataSource = db.Name,
+                //In case the cleanup in dispose is not successful in getting rid of the database (say for instance some code somewhere is keeping a connection open, thus keeping the database alive across pool instances)
+                //,we want a unique connection string so that we never get an existing in memory database for a new pool, breaking test isolation
+                DataSource = $"{db.Name}_pool_id_{_poolId}",
                 Mode = SqliteOpenMode.Memory,
                 Cache = SqliteCacheMode.Shared
              }.ConnectionString;
