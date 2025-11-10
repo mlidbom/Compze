@@ -46,7 +46,7 @@ public class AsyncLockCE_specification : UniversalTestBase
 
          firstTaskTookLockGate.AwaitQueueLengthEqualTo(1);
 
-         var secondTask = asyncLock.LockedAsync(async () => secondTaskTookLockGate.AwaitPassThrough());
+         var secondTask = asyncLock.LockedAsync(async () => await Task.FromResult(secondTaskTookLockGate.AwaitPassThrough()));
 
          secondTaskTookLockGate.TryAwaitPassedThroughCountEqualTo(1, 10.Milliseconds()).Must().Be(false);
          firstTaskTookLockGate.Open();

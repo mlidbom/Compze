@@ -11,6 +11,8 @@ using System;
 using System.Threading.Tasks;
 using Compze.Core.Refactoring.Naming.Internal;
 using Compze.Core.Serialization.Internal;
+using Compze.Core.Tessaging.Public;
+using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
@@ -20,18 +22,21 @@ static class MemoryInboxTransportServerRegistrar
 {
    internal static IComponentRegistrar MemoryTransport(this IComponentRegistrar registrar) =>
       registrar.Register(Singleton.For<IInboxTransportServer, MemoryInboxTransportServer>()
-                                  .CreatedBy((EndpointId endpointId, ITypeMapper typeMapper, IRemotableTessageSerializer serializer, IServiceLocator serviceLocator) => new MemoryInboxTransportServer(endpointId, serviceLocator)));
+                                  .CreatedBy((EndpointId endpointId, ITypeMapper typeMapper, IRemotableTessageSerializer serializer, IServiceLocator serviceLocator) => new MemoryInboxTransportServer(endpointId, serviceLocator, serializer)));
 }
 
 class MemoryInboxTransportServer : IInboxTransportServer
 {
+   readonly IRemotableTessageSerializer _serializer;
    readonly LazyCE<IInbox> _inbox;
    readonly LazyCE<Inbox.HandlerExecutionEngine> _engine;
 
-   internal MemoryInboxTransportServer(EndpointId endpointId, IServiceLocator serviceLocator)
+   internal MemoryInboxTransportServer(EndpointId endpointId, IServiceLocator serviceLocator, IRemotableTessageSerializer serializer)
    {
+      _serializer = serializer;
       _inbox = new LazyCE<IInbox>(serviceLocator.Resolve<IInbox>);
-      _engine = new LazyCE<Inbox.HandlerExecutionEngine>(serviceLocator.Resolve<Inbox.HandlerExecutionEngine>);;
+      _engine = new LazyCE<Inbox.HandlerExecutionEngine>(serviceLocator.Resolve<Inbox.HandlerExecutionEngine>);
+      ;
       Address = new Uri($"memory://{endpointId}");
    }
 
@@ -65,11 +70,13 @@ class MemoryInboxTransportServer : IInboxTransportServer
             case TransportTessageType.TypermediaAtMostOnceTommandWithReturnValue:
                return (await _inbox.Value.Receive(incomingTessage).caf())
                      .NotNull()
-                     .CastTo<TResult>();
+                     .CastTo<TResult>()
+                     ._(RoundTripSerialize);
             case TransportTessageType.TyperMediaTuery:
                return (await _engine.Value.Enqueue(incomingTessage).caf())
                      .NotNull()
-                     .CastTo<TResult>();
+                     .CastTo<TResult>()
+                     ._(RoundTripSerialize);
             case TransportTessageType.ExactlyOnceTevent:
             case TransportTessageType.TypermediaAtMostOnceTommand:
             case TransportTessageType.ExactlyOnceTommand:
@@ -107,5 +114,15 @@ class MemoryInboxTransportServer : IInboxTransportServer
       {
          throw new TessageDispatchingFailedException(ex.ToString());
       }
+   }
+
+   TResponse RoundTripSerialize<TResponse>(TResponse response)
+   {
+      // ReSharper disable once CompareNonConstrainedGenericWithNull
+      if(response == null)
+         throw new Exception("Null return values are not supported");
+
+      return _serializer.SerializeResponse(response)
+                        ._(it => _serializer.DeserializeResponse<TResponse>(it));
    }
 }
