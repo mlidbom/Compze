@@ -116,27 +116,27 @@ public static class Must_Be_NotBe
    }
 
    public static IAssertionContext<TValue> NotBe<TValue, TUnExpected>(this IAssertionContext<TValue> context, TUnExpected unexpected, [CallerArgumentExpression(nameof(unexpected))] string unexpectedExpression = null!) =>
-      context.Not_be_transitively_equal_to_according_to_any_supported_comparison_method(unexpected, unexpectedExpression);
+      context.Not_be_equal_to_according_to_any_supported_comparison_method_in_any_direction(unexpected, unexpectedExpression);
 
-   public static IAssertionContext<TValue> Not_be_transitively_equal_to_according_to_any_supported_comparison_method<TValue, TUnExpected>(this IAssertionContext<TValue> context, TUnExpected unexpected, [CallerArgumentExpression(nameof(unexpected))] string unexpectedExpression = null!)
+   public static IAssertionContext<TValue> Not_be_equal_to_according_to_any_supported_comparison_method_in_any_direction<TValue, TUnExpected>(this IAssertionContext<TValue> context, TUnExpected unexpected, [CallerArgumentExpression(nameof(unexpected))] string unexpectedExpression = null!)
    {
       if(unexpected is TValue unExpectedAsActual)
       {
-         return context.Not_be_transitively_equal_to_according_to_any_supported_comparison_method_internal(unExpectedAsActual, unexpectedExpression);
+         return context.Not_be_equal_to_according_to_any_supported_comparison_method_in_any_direction_internal(unExpectedAsActual, unexpectedExpression);
       }
 
       if(context.Actual is TUnExpected)
       {
-         context.Cast<TUnExpected>().Not_be_transitively_equal_to_according_to_any_supported_comparison_method_internal(unexpected, unexpectedExpression)
+         context.Cast<TUnExpected>().Not_be_equal_to_according_to_any_supported_comparison_method_in_any_direction_internal(unexpected, unexpectedExpression)
                 .Cast<TValue>();
       }
 
       return context.Cast<object>()
-                    .Not_be_transitively_equal_to_according_to_any_supported_comparison_method_internal(unexpected!, unexpectedExpression)
+                    .Not_be_equal_to_according_to_any_supported_comparison_method_in_any_direction_internal(unexpected!, unexpectedExpression)
                     .Cast<TValue>();
    }
 
-   public static IAssertionContext<TValue> Not_be_transitively_equal_to_according_to_any_supported_comparison_method_internal<TValue>(this IAssertionContext<TValue> context, TValue unexpected, [CallerArgumentExpression(nameof(unexpected))] string unexpectedExpression = null!)
+   public static IAssertionContext<TValue> Not_be_equal_to_according_to_any_supported_comparison_method_in_any_direction_internal<TValue>(this IAssertionContext<TValue> context, TValue unexpected, [CallerArgumentExpression(nameof(unexpected))] string unexpectedExpression = null!)
    {
       if(unexpected is null && context.Actual is null)
          throw new AssertionFailedException($"Both values are null, so they are equal");
