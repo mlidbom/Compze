@@ -44,17 +44,12 @@ class SqliteDbPoolSqlLayer : IDbPoolSqlLayer
 
    public void ResetDatabase(DbPoolDatabase db)
    {
+      DeleteDbFile(db);
       using var dbCreatingConnection = new SqliteConnection(ConnectionStringFor(db));
       dbCreatingConnection.Open();
    }
 
-   static void DeleteDb(string dbPath)
-   {
-      if(File.Exists(dbPath))
-      {
-         File.Delete(dbPath);
-      }
-   }
+   void DeleteDbFile(DbPoolDatabase db) => File.Delete(CreateDbPath(db)); //File.Delete does not throw on non-existent, files, so we can save one file system access by not checking for existence
 
    string CreateDbPath(DbPoolDatabase db) => Path.Combine(_baseDirectory, $"{db.Name}.db");
 
@@ -67,17 +62,16 @@ class SqliteDbPoolSqlLayer : IDbPoolSqlLayer
          SqliteConnection.ClearAllPools();
          foreach(var db in reservedDatabases)
          {
-            var dbPath = CreateDbPath(db);
             try
             {
-               DeleteDb(dbPath);
+               DeleteDbFile(db);
                reservedDatabases = reservedDatabases.Where(it => it != db).ToList();
             }
             catch
             {
                if(attempt == maxCleanupAttempts)
                {
-                  throw new Exception($"Failed to clean up database {dbPath}");
+                  throw new Exception($"Failed to clean up database {CreateDbPath(db)}");
                }
 
                Thread.Sleep(TimeSpan.FromMilliseconds(10));
