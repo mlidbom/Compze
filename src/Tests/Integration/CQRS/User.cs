@@ -6,7 +6,7 @@ using JetBrains.Annotations;
 
 namespace Compze.Tests.Integration.CQRS;
 
-class User : Taggregate<User, IUserTevent, UserTevent>
+class User : Taggregate<User, IUserTevent, UserTevent, IUserTevent<IUserTevent>, UserTevent<UserTevent>>
 {
    public string Email { get; private set; } = "";
    public string Password { get; private set; } = "";
@@ -41,8 +41,12 @@ class User : Taggregate<User, IUserTevent, UserTevent>
    public void ChangeEmail(string email) => Publish(new UserChangedEmail(email));
 }
 
+interface IUserTevent<out T> : ITaggregateIdentifyingTevent<T> where T : IUserTevent;
 interface IUserTevent : ITaggregateTevent;
 
+class UserTevent<T>(T tevent) : TaggregateIdentifyingTevent<T>(tevent), IUserTevent<T> where T : IUserTevent {
+
+}
 abstract class UserTevent : TaggregateTevent, IUserTevent
 {
    protected UserTevent() {}
