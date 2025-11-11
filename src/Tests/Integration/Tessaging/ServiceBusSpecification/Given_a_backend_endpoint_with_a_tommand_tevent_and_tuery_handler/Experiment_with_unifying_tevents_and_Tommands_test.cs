@@ -79,11 +79,15 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
       user.History.Count().Must().Be(1);
    }
 
+   public interface IUserTevent<out T> : ITaggregateIdentifyingTevent<T> where T : IUserTevent;
    public interface IUserTevent : ITaggregateTevent
    {
       public interface UserRegistered : IUserTevent, ITaggregateCreatedTevent;
    }
 
+   public class UserTevent<T>(T tevent) : TaggregateIdentifyingTevent<T>(tevent), IUserTevent<T> where T : IUserTevent {
+
+   }
    public class UserTevent : TaggregateTevent, IUserTevent
    {
       protected UserTevent() {}
@@ -135,7 +139,7 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
       internal static RegisterUserResult RegisterUser(IRemoteTypermediaNavigator navigator) => UserRegistrarTommand.RegisterUserTypermediaTommand.Create().PostOn(navigator);
    }
 
-   public class UserTaggregate : Taggregate<UserTaggregate, IUserTevent, UserTevent>
+   public class UserTaggregate : Taggregate<UserTaggregate, IUserTevent, UserTevent, IUserTevent<IUserTevent>, UserTevent<UserTevent>>
    {
       UserTaggregate()
          => RegisterTeventAppliers()
