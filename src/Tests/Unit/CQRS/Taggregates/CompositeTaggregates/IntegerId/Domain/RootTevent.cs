@@ -7,7 +7,7 @@ using JetBrains.Annotations;
 // ReSharper disable InconsistentNaming
 namespace Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.IntegerId.Domain;
 
-static partial class RootTevent
+static class RootTevent
 {
    public interface IRoot : ITaggregateTevent;
 
@@ -35,7 +35,7 @@ static partial class RootTevent
       }
    }
 
-   public static partial class Component
+   public static class Component
    {
       public interface IRoot : RootTevent.IRoot;
 
@@ -115,7 +115,7 @@ static partial class RootTevent
       }
    }
 
-   public static partial class Entity
+   public static class Entity
    {
       public interface IRoot : RootTevent.IRoot
       {
