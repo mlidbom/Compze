@@ -8,11 +8,11 @@ namespace Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.IntegerId.Doma
 
 interface IRootTevent : ITaggregateTevent
 {
-   interface Created : ITaggregateCreatedTevent, PropertyUpdated.Name;
+   interface Created : IRootTevent, ITaggregateCreatedTevent, PropertyUpdated.Name;
 
-   public interface PropertyUpdated
+   public interface PropertyUpdated : IRootTevent
    {
-      public interface Name : RootTevent.IRoot
+      public interface Name : PropertyUpdated
       {
          string Name { get; }
       }
@@ -20,7 +20,7 @@ interface IRootTevent : ITaggregateTevent
 
    public interface Component : IRootTevent
    {
-      interface Renamed : PropertyUpdated.Name;
+      interface Renamed : Component, PropertyUpdated.Name;
 
       public interface PropertyUpdated : Component
       {
@@ -34,9 +34,9 @@ interface IRootTevent : ITaggregateTevent
       {
          int EntityId { get; }
 
-         public interface Created : PropertyUpdated.Name;
+         public interface Created : Entity, PropertyUpdated.Name;
 
-         interface Renamed : PropertyUpdated.Name;
+         interface Renamed : Entity, PropertyUpdated.Name;
 
          public interface Removed : Entity;
 
@@ -54,9 +54,9 @@ interface IRootTevent : ITaggregateTevent
    {
       int EntityId { get; }
 
-      internal interface Created : PropertyUpdated.Name;
+      internal interface Created : Entity, PropertyUpdated.Name;
 
-      interface Renamed : PropertyUpdated.Name;
+      interface Renamed : Entity, PropertyUpdated.Name;
 
       internal interface Removed : Entity;
 
@@ -72,9 +72,9 @@ interface IRootTevent : ITaggregateTevent
       {
          int NestedEntityId { get; }
 
-         public interface Created : PropertyUpdated.Name;
+         public interface Created : NestedEntity, PropertyUpdated.Name;
 
-         interface Renamed : PropertyUpdated.Name;
+         interface Renamed : NestedEntity, PropertyUpdated.Name;
          public interface Removed : NestedEntity;
 
          public interface PropertyUpdated : NestedEntity
