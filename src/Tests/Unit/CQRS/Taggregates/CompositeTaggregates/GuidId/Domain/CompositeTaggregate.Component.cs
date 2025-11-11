@@ -4,14 +4,14 @@ using Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId.Domain.Teve
 
 namespace Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId.Domain;
 
-partial class Component : CompositeTaggregate.Component<Component, CompositeTaggregateTevent.Component.Implementation.Root, CompositeTaggregateTevent.Component.IRoot>
+partial class Component : CompositeTaggregate.Component<Component, CompositeTaggregateTevent.Component, ICompositeTaggregateTevent.Component>
 {
     public Component(CompositeTaggregate parent) : base(parent)
     {
         _entities = Component.Entity.CreateSelfManagingCollection(this);
         CComponent = new NestedComponent(this);
         RegisterTeventAppliers()
-           .For<CompositeTaggregateTevent.Component.PropertyUpdated.Name>(e => Name = e.Name);
+           .For<ICompositeTaggregateTevent.Component.PropertyUpdated.Name>(e => Name = e.Name);
     }
 
     readonly Component.Entity.CollectionManager _entities;
@@ -20,6 +20,6 @@ partial class Component : CompositeTaggregate.Component<Component, CompositeTagg
 
     public string Name { get; private set; } = string.Empty;
     public IReadOnlyEntityCollection<Entity, Guid> Entities => _entities.Entities;
-    public void Rename(string name) => Publish(new CompositeTaggregateTevent.Component.Implementation.Renamed(name));
-    public Component.Entity AddEntity(string name, Guid id) => _entities.AddByPublishing(new CompositeTaggregateTevent.Component.Entity.Implementation.Created(id, name));
+    public void Rename(string name) => Publish(new CompositeTaggregateTevent.Component.Renamed(name));
+    public Component.Entity AddEntity(string name, Guid id) => _entities.AddByPublishing(new CompositeTaggregateTevent.Component.Entity.Created(id, name));
 }

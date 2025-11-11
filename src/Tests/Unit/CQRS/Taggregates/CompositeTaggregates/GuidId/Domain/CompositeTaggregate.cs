@@ -7,8 +7,8 @@ namespace Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId.Domain;
 
 class CompositeTaggregate :
     Taggregate<CompositeTaggregate,
-        CompositeTaggregateTevent.ICompositeTaggregateTevent,
-        CompositeTaggregateTevent.Implementation.Root>
+        ICompositeTaggregateTevent,
+        CompositeTaggregateTevent>
 {
     public string Name { get; private set; } = string.Empty;
     readonly RemovableEntity.CollectionManager _entities;
@@ -20,11 +20,11 @@ class CompositeTaggregate :
         _entities = RemovableEntity.CreateSelfManagingCollection(this);
 
         RegisterTeventAppliers()
-           .For<CompositeTaggregateTevent.PropertyUpdated.Name>(e => Name = e.Name);
+           .For<ICompositeTaggregateTevent.PropertyUpdated.Name>(e => Name = e.Name);
 
-        Publish(new CompositeTaggregateTevent.Implementation.Created(id, name));
+        Publish(new CompositeTaggregateTevent.Created(id, name));
     }
 
     public IReadOnlyEntityCollection<RemovableEntity, Guid> Entities => _entities.Entities;
-    public RemovableEntity AddEntity(string name) => _entities.AddByPublishing(new CompositeTaggregateTevent.Entity.Implementation.Created(Guid.NewGuid(), name));
+    public RemovableEntity AddEntity(string name) => _entities.AddByPublishing(new CompositeTaggregateTevent.Entity.Created(Guid.NewGuid(), name));
 }
