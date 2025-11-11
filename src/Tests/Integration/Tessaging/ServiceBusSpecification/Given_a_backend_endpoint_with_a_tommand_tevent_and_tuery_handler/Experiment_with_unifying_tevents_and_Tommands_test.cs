@@ -109,36 +109,30 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
       }
    }
 
-   public static class UserRegistrarTevent
+   public interface IUserRegistrarTevent : ITaggregateTevent {}
+
+   public class UserRegistrarTevent : TaggregateTevent, IUserRegistrarTevent
    {
-      public interface IRoot : ITaggregateTevent;
+      protected UserRegistrarTevent() {}
+      protected UserRegistrarTevent(TaggregateId taggregateId) : base(taggregateId) {}
 
-      public static class Implementation
-      {
-         public class Root : TaggregateTevent, IRoot
-         {
-            protected Root() {}
-            protected Root(TaggregateId taggregateId) : base(taggregateId) {}
-         }
-
-         public class Created() : Root(UserRegistrarTaggregate.SingletonId), ITaggregateCreatedTevent;
-      }
+      public class Created() : UserRegistrarTevent(UserRegistrarTaggregate.SingletonId), ITaggregateCreatedTevent;
    }
 
-   public class UserRegistrarTaggregate : Taggregate<UserRegistrarTaggregate, UserRegistrarTevent.IRoot, UserRegistrarTevent.Implementation.Root>
+   public class UserRegistrarTaggregate : Taggregate<UserRegistrarTaggregate, IUserRegistrarTevent, UserRegistrarTevent>
    {
       internal static readonly TaggregateId SingletonId = new(Guid.Parse("5C400DD9-50FB-40C7-8A13-265005588AED"));
 
       internal static UserRegistrarTaggregate Create()
       {
          var registrar = new UserRegistrarTaggregate();
-         registrar.Publish(new UserRegistrarTevent.Implementation.Created());
+         registrar.Publish(new UserRegistrarTevent.Created());
          return registrar;
       }
 
       UserRegistrarTaggregate()
          => RegisterTeventAppliers()
-           .IgnoreUnhandled<UserRegistrarTevent.IRoot>();
+           .IgnoreUnhandled<IUserRegistrarTevent>();
 
       internal static RegisterUserResult RegisterUser(IRemoteTypermediaNavigator navigator) => UserRegistrarTommand.RegisterUserTypermediaTommand.Create().PostOn(navigator);
    }
