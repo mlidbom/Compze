@@ -7,220 +7,112 @@ using JetBrains.Annotations;
 // ReSharper disable InconsistentNaming
 namespace Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.IntegerId.Domain;
 
-static class RootTevent
+abstract class RootTevent : TaggregateTevent, IRootTevent
 {
-   public interface IRoot : ITaggregateTevent;
+   protected RootTevent() {}
+   protected RootTevent(TaggregateId taggregateId) : base(taggregateId) {}
 
-   interface Created : ITaggregateCreatedTevent, PropertyUpdated.Name;
-
-   public static class PropertyUpdated
+   public class Created(TaggregateId id, string name) : RootTevent(id), IRootTevent.Created
    {
-      public interface Name : RootTevent.IRoot
-      {
-         string Name { get; }
-      }
+      public string Name { get; } = name;
    }
 
-   internal static class Implementation
+   public class Component : RootTevent, IRootTevent.Component
    {
-      public abstract class Root : TaggregateTevent, IRoot
-      {
-         protected Root() { }
-         protected Root(TaggregateId taggregateId) : base(taggregateId) { }
-      }
-
-      public class Created(TaggregateId id, string name) : Root(id), RootTevent.Created
+      public class Renamed(string name) : Component, IRootTevent.Component.Renamed
       {
          public string Name { get; } = name;
       }
-   }
 
-   public static class Component
-   {
-      public interface IRoot : RootTevent.IRoot;
-
-      interface Renamed : PropertyUpdated.Name;
-
-      public static class PropertyUpdated
+      public abstract class Entity : Component, IRootTevent.Component.Entity
       {
-         public interface Name : IRoot
-         {
-            string Name { get; }
-         }
-      }
+         public int EntityId { get; protected set; }
 
-      internal static class Implementation
-      {
-         public abstract class Root : RootTevent.Implementation.Root, Component.IRoot;
-
-         public class Renamed(string name) : Root, Component.Renamed
+         [UsedImplicitly] public class IdGetterSetter : IGetSetTaggregateEntityTeventEntityId<int, Entity, IRootTevent.Component.Entity>
          {
-            public string Name { get; } = name;
-         }
-      }
-
-      public static class Entity
-      {
-         public interface IRoot : RootTevent.Component.IRoot
-         {
-            int EntityId { get; }
+            public void SetEntityId(Entity tevent, int id) => tevent.EntityId = id;
+            public int GetId(IRootTevent.Component.Entity tevent) => tevent.EntityId;
          }
 
-         public interface Created : PropertyUpdated.Name;
-
-         interface Renamed : PropertyUpdated.Name;
-
-         public interface Removed : IRoot;
-
-         public static class PropertyUpdated
-         {
-            public interface Name : IRoot
-            {
-               string Name { get; }
-            }
-         }
-
-         internal static class Implementation
-         {
-            public abstract class Root : RootTevent.Component.Implementation.Root, Entity.IRoot
-            {
-               public int EntityId { get; protected set; }
-
-#pragma warning disable CA1812 // Used via reflection in taggregate infrastructure
-               [UsedImplicitly] public class IdGetterSetter : IGetSetTaggregateEntityTeventEntityId<int, Root, IRoot>
-#pragma warning restore CA1812
-               {
-                  public void SetEntityId(Root tevent, int id) => tevent.EntityId = id;
-                  public int GetId(IRoot tevent) => tevent.EntityId;
-               }
-            }
-
-            public class Created : Root, Entity.Created
-            {
-               public Created(int entityId, string name)
-               {
-                  EntityId = entityId;
-                  Name = name;
-               }
-               public string Name { get; }
-            }
-
-            public class Renamed(string name) : Root, Entity.Renamed
-            {
-               public string Name { get; } = name;
-            }
-
-            public class Removed : Root, Entity.Removed;
-         }
-      }
-   }
-
-   public static class Entity
-   {
-      public interface IRoot : RootTevent.IRoot
-      {
-         int EntityId { get; }
-      }
-
-      internal interface Created : PropertyUpdated.Name;
-
-      interface Renamed : PropertyUpdated.Name;
-
-      internal interface Removed : IRoot;
-
-      internal static class PropertyUpdated
-      {
-         public interface Name : IRoot
-         {
-            string Name { get; }
-         }
-      }
-
-      internal static class Implementation
-      {
-         public abstract class Root : RootTevent.Implementation.Root, Entity.IRoot
-         {
-            public int EntityId { get; protected set; }
-
-#pragma warning disable CA1812 // Used via reflection in taggregate infrastructure
-            [UsedImplicitly] public class IdGetterSetter : IGetSetTaggregateEntityTeventEntityId<int, Root, IRoot>
-#pragma warning restore CA1812
-            {
-               public void SetEntityId(Root tevent, int id) => tevent.EntityId = id;
-               public int GetId(IRoot tevent) => tevent.EntityId;
-            }
-         }
-
-         public class Created : Root, Entity.Created
+         public class Created : Entity, IRootTevent.Component.Entity.Created
          {
             public Created(int entityId, string name)
             {
                EntityId = entityId;
                Name = name;
             }
+
             public string Name { get; }
          }
 
-         public class Renamed(string name) : Root, Entity.Renamed
+         public class Renamed(string name) : Entity, IRootTevent.Component.Entity.Renamed
          {
             public string Name { get; } = name;
          }
 
-         public class Removed : Root, Entity.Removed;
+         public class Removed : Entity, IRootTevent.Component.Entity.Removed;
       }
+   }
 
-      public static class NestedEntity
-      {
-         public interface IRoot : RootTevent.Entity.IRoot
-         {
-            int NestedEntityId { get; }
-         }
-
-         public interface Created : PropertyUpdated.Name;
-
-         interface Renamed : PropertyUpdated.Name;
-         public interface Removed : IRoot;
-
-         public static class PropertyUpdated
-         {
-            public interface Name : IRoot
-            {
-               string Name { get; }
-            }
-         }
-
-         internal static class Implementation
-         {
-            public abstract class Root : RootTevent.Entity.Implementation.Root, NestedEntity.IRoot
-            {
-               public int NestedEntityId { get; protected set; }
+   public abstract class Entity : RootTevent, IRootTevent.Entity
+   {
+      public int EntityId { get; protected set; }
 
 #pragma warning disable CA1812 // Used via reflection in taggregate infrastructure
-               [UsedImplicitly] public new class IdGetterSetter : Root, IGetSetTaggregateEntityTeventEntityId<int, Root, IRoot>
+      [UsedImplicitly] public class IdGetterSetter : IGetSetTaggregateEntityTeventEntityId<int, Entity, IRootTevent.Entity>
 #pragma warning restore CA1812
-               {
-                  public void SetEntityId(Root tevent, int id) => tevent.NestedEntityId = id;
-                  public int GetId(IRoot tevent) => tevent.NestedEntityId;
-               }
-            }
+      {
+         public void SetEntityId(Entity tevent, int id) => tevent.EntityId = id;
+         public int GetId(IRootTevent.Entity tevent) => tevent.EntityId;
+      }
 
-            public class Created : Root, NestedEntity.Created
-            {
-               public Created(int nestedEntityId, string name)
-               {
-                  NestedEntityId = nestedEntityId;
-                  Name = name;
-               }
-               public string Name { get; }
-            }
-
-            public class Renamed(string name) : Root, NestedEntity.Renamed
-            {
-               public string Name { get; } = name;
-            }
-
-            public class Removed : Root, NestedEntity.Removed;
+      public class Created : Entity, IRootTevent.Entity.Created
+      {
+         public Created(int entityId, string name)
+         {
+            EntityId = entityId;
+            Name = name;
          }
+
+         public string Name { get; }
+      }
+
+      public class Renamed(string name) : Entity, IRootTevent.Entity.Renamed
+      {
+         public string Name { get; } = name;
+      }
+
+      public class Removed : Entity, IRootTevent.Entity.Removed;
+
+      public abstract class NestedEntity : Entity, IRootTevent.Entity.NestedEntity
+      {
+         public int NestedEntityId { get; protected set; }
+
+#pragma warning disable CA1812 // Used via reflection in taggregate infrastructure
+         [UsedImplicitly] public new class IdGetterSetter : NestedEntity, IGetSetTaggregateEntityTeventEntityId<int, NestedEntity, IRootTevent.Entity.NestedEntity>
+#pragma warning restore CA1812
+         {
+            public void SetEntityId(NestedEntity tevent, int id) => tevent.NestedEntityId = id;
+            public int GetId(IRootTevent.Entity.NestedEntity tevent) => tevent.NestedEntityId;
+         }
+
+         public class Created : NestedEntity, IRootTevent.Entity.NestedEntity.Created
+         {
+            public Created(int nestedEntityId, string name)
+            {
+               NestedEntityId = nestedEntityId;
+               Name = name;
+            }
+
+            public string Name { get; }
+         }
+
+         public class Renamed(string name) : NestedEntity, IRootTevent.Entity.NestedEntity.Renamed
+         {
+            public string Name { get; } = name;
+         }
+
+         public class Removed : NestedEntity, IRootTevent.Entity.NestedEntity.Removed;
       }
    }
 }
