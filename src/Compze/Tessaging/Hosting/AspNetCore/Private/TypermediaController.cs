@@ -16,18 +16,18 @@ namespace Compze.Tessaging.Hosting.AspNetCore.Private;
 
 #pragma warning disable CA1031 //Here we catch all exceptions so we can transmit them back to the client
 
-class RpcController : ControllerBase
+class TypermediaController : ControllerBase
 {
    internal static void RegisterWith(IComponentRegistrar registrar) =>
       registrar.Register(
-         Scoped.For<RpcController>()
+         Scoped.For<TypermediaController>()
                .CreatedBy((IRemotableTessageSerializer serializer,
                            ITypeMapper typeMapper,
                            IInbox inbox,
                            Inbox.HandlerExecutionEngine handlerExecutionEngine)
-                             => new RpcController(serializer, typeMapper, inbox, handlerExecutionEngine)));
+                             => new TypermediaController(serializer, typeMapper, inbox, handlerExecutionEngine)));
 
-   RpcController(IRemotableTessageSerializer serializer,
+   TypermediaController(IRemotableTessageSerializer serializer,
                  ITypeMapper typeMapper,
                  IInbox inbox,
                  Inbox.HandlerExecutionEngine handlerExecutionEngine) : base(serializer, typeMapper, inbox, handlerExecutionEngine) {}

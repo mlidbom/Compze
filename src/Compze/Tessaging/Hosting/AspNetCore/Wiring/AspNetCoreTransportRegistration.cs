@@ -11,6 +11,6 @@ public static class AspNetCoreTransportRegistrar
                .HttpApiTransportClient()
                .Register(CompzeControllerActivator.RegisterWith,
                          AspNetInboxTransportServer.RegisterWith,
-                         RpcController.RegisterWith,
+                         TypermediaController.RegisterWith,
                          TessagingController.RegisterWith);
 }
