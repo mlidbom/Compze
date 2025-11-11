@@ -4,7 +4,7 @@ using JetBrains.Annotations;
 
 namespace Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.IntegerId.Domain;
 
-class Root : Taggregate<Root, IRootTevent, RootTevent>
+class Root : Taggregate<Root, IRootTevent, RootTevent, IRootTevent<IRootTevent>, RootTevent<RootTevent>>
 {
    static int _instances;
    public string Name { get; private set; } = string.Empty;

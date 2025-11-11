@@ -6,6 +6,7 @@ using JetBrains.Annotations;
 // ReSharper disable InconsistentNaming
 namespace Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.IntegerId.Domain;
 
+interface IRootTevent<out T> : ITaggregateIdentifyingTevent<T> where T : IRootTevent;
 interface IRootTevent : ITaggregateTevent
 {
    interface Created : IRootTevent, ITaggregateCreatedTevent, PropertyUpdated.Name;
