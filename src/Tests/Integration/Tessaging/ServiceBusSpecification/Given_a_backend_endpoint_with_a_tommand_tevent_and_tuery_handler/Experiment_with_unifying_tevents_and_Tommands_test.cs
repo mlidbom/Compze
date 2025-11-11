@@ -46,7 +46,7 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
             builder.Container.Register().TeventStore(builder.Configuration.ConnectionStringName);
 
             builder.RegisterHandlers
-                   .ForTevent((UserTevent.IUserRegistered _) => {})
+                   .ForTevent((IUserTevent.UserRegistered _) => {})
                    .ForTuery((GetUserTuery tuery, ITeventStoreReader teventReader) => new UserResource(teventReader.GetHistory(tuery.UserId)))
                    .ForTommandWithResult((UserRegistrarTommand.RegisterUserTypermediaTommand typermediaTommand, ITeventStoreUpdater store) =>
                     {
@@ -79,22 +79,17 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
       user.History.Count().Must().Be(1);
    }
 
-   public static class UserTevent
+   public interface IUserTevent : ITaggregateTevent
    {
-      public interface IRoot : ITaggregateTevent;
+      public interface UserRegistered : IUserTevent, ITaggregateCreatedTevent;
+   }
 
-      public interface IUserRegistered : IRoot, ITaggregateCreatedTevent;
+   public class UserTevent : TaggregateTevent, IUserTevent
+   {
+      protected UserTevent() {}
+      protected UserTevent(TaggregateId taggregateId) : base(taggregateId) {}
 
-      public static class Implementation
-      {
-         public class Root : TaggregateTevent, IRoot
-         {
-            protected Root() {}
-            protected Root(TaggregateId taggregateId) : base(taggregateId) {}
-         }
-
-         public class UserRegisteredTevent(TaggregateId userId) : Root(userId), IUserRegistered;
-      }
+      public class UserRegisteredTevent(TaggregateId userId) : UserTevent(userId), IUserTevent.UserRegistered;
    }
 
    public static class UserRegistrarTommand
@@ -112,9 +107,8 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
    public interface IUserRegistrarTevent<out T> : ITaggregateIdentifyingTevent<T> where T : IUserRegistrarTevent {}
    public interface IUserRegistrarTevent : ITaggregateTevent {}
 
-   public class UserRegistrarTevent<T>(T tevent) : TaggregateIdentifyingTevent<T>(tevent), IUserRegistrarTevent<T> where T : IUserRegistrarTevent {
+   public class UserRegistrarTevent<T>(T tevent) : TaggregateIdentifyingTevent<T>(tevent), IUserRegistrarTevent<T> where T : IUserRegistrarTevent {}
 
-   }
    public class UserRegistrarTevent : TaggregateTevent, IUserRegistrarTevent
    {
       protected UserRegistrarTevent() {}
@@ -141,16 +135,16 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
       internal static RegisterUserResult RegisterUser(IRemoteTypermediaNavigator navigator) => UserRegistrarTommand.RegisterUserTypermediaTommand.Create().PostOn(navigator);
    }
 
-   public class UserTaggregate : Taggregate<UserTaggregate, UserTevent.IRoot, UserTevent.Implementation.Root>
+   public class UserTaggregate : Taggregate<UserTaggregate, IUserTevent, UserTevent>
    {
       UserTaggregate()
          => RegisterTeventAppliers()
-           .IgnoreUnhandled<UserTevent.IRoot>();
+           .IgnoreUnhandled<IUserTevent>();
 
       internal static UserTaggregate Register(UserRegistrarTommand.RegisterUserTypermediaTommand typermediaTommand)
       {
          var registered = new UserTaggregate();
-         registered.Publish(new UserTevent.Implementation.UserRegisteredTevent(typermediaTommand.UserId));
+         registered.Publish(new UserTevent.UserRegisteredTevent(typermediaTommand.UserId));
          return registered;
       }
    }
