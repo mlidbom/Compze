@@ -8,7 +8,8 @@ using Newtonsoft.Json;
 
 namespace AccountManagement.Domain.Tevents;
 
-//refactor: Consider using interfaces instead of static classes for nesting our tevents.
+public interface IAccountTevent<out T> : ITaggregateIdentifyingTevent<T> where T : IAccountTevent {}
+
 public partial interface IAccountTevent
 {
 #pragma warning disable CA1724 // Type names should not match namespaces
