@@ -6,7 +6,9 @@ using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 
 namespace AccountManagement.Domain.Tevents;
 
-public partial interface IAccountTevent : ITaggregateTevent
+public interface IAccountTevent<out T> : ITaggregateIdentifyingTevent<T> where T : IAccountTevent {}
+
+public interface IAccountTevent : ITaggregateTevent
 {
 
    public interface Created : IAccountTevent, ITaggregateCreatedTevent;

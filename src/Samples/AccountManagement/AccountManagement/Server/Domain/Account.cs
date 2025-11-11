@@ -11,7 +11,7 @@ using System;
 namespace AccountManagement.Domain;
 
 ///Completely encapsulates all the business logic for an account.  Should make it impossible for clients to use the class incorrectly.
-class Account : Taggregate<Account, IAccountTevent, IAccountTevent.Implementation.Root>, IAccountResourceData
+class Account : Taggregate<Account, IAccountTevent, AccountTevent>, IAccountResourceData
 {
    public Email Email { get; private set; } = null!;       //Never public setters on an taggregate. AssertInvariantsAreMet guarantees not null status.
    public Password Password { get; private set; } = null!; //Never public setters on an taggregate. AssertInvariantsAreMet guarantees not null status.
@@ -60,7 +60,7 @@ class Account : Taggregate<Account, IAccountTevent, IAccountTevent.Implementatio
       }
 
       var newAccount = new Account();
-      newAccount.Publish(new IAccountTevent.Implementation.UserRegistered(accountId: accountId, email: email, password: password));
+      newAccount.Publish(new AccountTevent.UserRegistered(accountId: accountId, email: email, password: password));
 
       navigator.Execute(InternalApi.Tommands.Save(newAccount));
 
@@ -73,24 +73,24 @@ class Account : Taggregate<Account, IAccountTevent, IAccountTevent.Implementatio
 
       Password.AssertIsCorrectPassword(oldPassword);
 
-      Publish(new IAccountTevent.Implementation.UserChangedPassword(newPassword));
+      Publish(new AccountTevent.UserChangedPassword(newPassword));
    }
 
    internal void ChangeEmail(Email email)
    {
       Guard.IsNotNull(email);
 
-      Publish(new IAccountTevent.Implementation.UserChangedEmail(email));
+      Publish(new AccountTevent.UserChangedEmail(email));
    }
 
    internal IAccountTevent.LoginAttempted Login(string logInPassword)
    {
       if(Password.IsCorrectPassword(logInPassword))
       {
-         return Publish(new IAccountTevent.Implementation.LoggedIn(token: Guid.NewGuid().ToString()));
+         return Publish(new AccountTevent.LoggedIn(token: Guid.NewGuid().ToString()));
       } else
       {
-         return Publish(new IAccountTevent.Implementation.LoginFailed());
+         return Publish(new AccountTevent.LoginFailed());
       }
    }
 }
