@@ -12,21 +12,21 @@ partial class Component
         Component.RemovableEntity<
             Entity,
             Guid,
-            CompositeTaggregateTevent.Component.Entity.IRoot,
-            CompositeTaggregateTevent.Component.Entity.Implementation.Root,
-            CompositeTaggregateTevent.Component.Entity.Created,
-            CompositeTaggregateTevent.Component.Entity.Removed,
-            CompositeTaggregateTevent.Component.Entity.Implementation.Root.IdGetterSetter>
+            ICompositeTaggregateTevent.Component.Entity,
+            CompositeTaggregateTevent.Component.Entity,
+            ICompositeTaggregateTevent.Component.Entity.Created,
+            ICompositeTaggregateTevent.Component.Entity.Removed,
+            CompositeTaggregateTevent.Component.Entity.IdGetterSetter>
     {
         public string Name { get; private set; } = string.Empty;
 
         public Entity(Component parent) : base(parent)
         {
             RegisterTeventAppliers()
-               .For<CompositeTaggregateTevent.Component.Entity.PropertyUpdated.Name>(e => Name = e.Name);
+               .For<ICompositeTaggregateTevent.Component.Entity.PropertyUpdated.Name>(e => Name = e.Name);
         }
 
-        public void Rename(string name) => Publish(new CompositeTaggregateTevent.Component.Entity.Implementation.Renamed(name));
-        public void Remove() => Publish(new CompositeTaggregateTevent.Component.Entity.Implementation.Removed());
+        public void Rename(string name) => Publish(new CompositeTaggregateTevent.Component.Entity.Renamed(name));
+        public void Remove() => Publish(new CompositeTaggregateTevent.Component.Entity.Removed());
     }
 }

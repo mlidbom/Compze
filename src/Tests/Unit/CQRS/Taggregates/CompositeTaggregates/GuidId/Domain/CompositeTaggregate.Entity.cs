@@ -10,11 +10,11 @@ partial class RemovableEntity :
     CompositeTaggregate.RemovableEntity<
         RemovableEntity,
         Guid,
-        CompositeTaggregateTevent.Entity.Implementation.Root,
-        CompositeTaggregateTevent.Entity.IRoot,
-        CompositeTaggregateTevent.Entity.Created,
-        CompositeTaggregateTevent.Entity.Removed,
-        CompositeTaggregateTevent.Entity.Implementation.Root.IdGetterSetter>
+        CompositeTaggregateTevent.Entity,
+        ICompositeTaggregateTevent.Entity,
+        ICompositeTaggregateTevent.Entity.Created,
+        ICompositeTaggregateTevent.Entity.Removed,
+        CompositeTaggregateTevent.Entity.IdGetterSetter>
 {
     public string Name { get; private set; } = string.Empty;
 
@@ -22,15 +22,15 @@ partial class RemovableEntity :
     {
         _entities = RemovableNestedEntity.CreateSelfManagingCollection(this);
         RegisterTeventAppliers()
-           .For<CompositeTaggregateTevent.Entity.PropertyUpdated.Name>(e => Name = e.Name);
+           .For<ICompositeTaggregateTevent.Entity.PropertyUpdated.Name>(e => Name = e.Name);
     }
 
     public IReadOnlyEntityCollection<RemovableNestedEntity, Guid> Entities => _entities.Entities;
     readonly RemovableNestedEntity.CollectionManager _entities;
 
-    public void Rename(string name) => Publish(new CompositeTaggregateTevent.Entity.Implementation.Renamed(name));
-    public void Remove() => Publish(new CompositeTaggregateTevent.Entity.Implementation.Removed());
+    public void Rename(string name) => Publish(new CompositeTaggregateTevent.Entity.Renamed(name));
+    public void Remove() => Publish(new CompositeTaggregateTevent.Entity.Removed());
 
     public RemovableNestedEntity AddEntity(string name, Guid id)
-        => _entities.AddByPublishing(new CompositeTaggregateTevent.Entity.NestedEntity.Implementation.Created(id: id, name: name));
+        => _entities.AddByPublishing(new CompositeTaggregateTevent.Entity.NestedEntity.Created(id: id, name: name));
 }

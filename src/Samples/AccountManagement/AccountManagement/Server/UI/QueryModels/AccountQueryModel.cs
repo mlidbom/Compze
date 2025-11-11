@@ -13,17 +13,17 @@ using Compze.Tessaging.TyperMediaApi.EventStore;
 
 namespace AccountManagement.UI.QueryModels;
 
-class AccountQueryModel : SelfGeneratingQueryModel<AccountQueryModel, AccountTevent.Root>, IAccountResourceData
+class AccountQueryModel : SelfGeneratingQueryModel<AccountQueryModel, IAccountTevent>, IAccountResourceData
 {
    public Password Password { get; private set; } = null!; //Nullable status guaranteed by AssertInvariantsAreMet
    public Email Email { get; private set; } = null!;       //Nullable status guaranteed by AssertInvariantsAreMet
 
-   AccountQueryModel(IEnumerable<AccountTevent.Root> tevents)
+   AccountQueryModel(IEnumerable<IAccountTevent> tevents)
    {
       RegisterTeventAppliers()
-        .For<AccountTevent.PropertyUpdated.Email>(tevent => Email = tevent.Email)
-        .For<AccountTevent.PropertyUpdated.Password>(tevent => Password = tevent.Password)
-        .IgnoreUnhandled<AccountTevent.LoginAttempted>();
+        .For<IAccountTevent.PropertyUpdated.Email>(tevent => Email = tevent.Email)
+        .For<IAccountTevent.PropertyUpdated.Password>(tevent => Password = tevent.Password)
+        .IgnoreUnhandled<IAccountTevent.LoginAttempted>();
 
       LoadFromHistory(tevents);
    }
@@ -50,6 +50,6 @@ class AccountQueryModel : SelfGeneratingQueryModel<AccountQueryModel, AccountTev
       static void Get(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery(
          (TessageTypes.StrictlyLocal.Tueries.EntityLink<AccountQueryModel> tuery, IInProcessTypermediaNavigator navigator) =>
             //todo this Id conversion feels iffy
-            new AccountQueryModel(navigator.Execute(new TeventStoreApi().Tueries.GetHistory<AccountTevent.Root>(new TaggregateId(tuery.EntityId.Value)))));
+            new AccountQueryModel(navigator.Execute(new TeventStoreApi().Tueries.GetHistory<IAccountTevent>(new TaggregateId(tuery.EntityId.Value)))));
    }
 }

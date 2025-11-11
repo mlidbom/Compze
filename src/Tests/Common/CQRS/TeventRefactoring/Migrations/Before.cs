@@ -9,7 +9,7 @@ using Compze.Utilities.SystemCE.ReflectionCE;
 
 namespace Compze.Tests.Common.CQRS.TeventRefactoring.Migrations;
 
-public class Before<TTevent> : TeventMigration<IRootTevent>
+public class Before<TTevent> : TeventMigration<ITestTaggregateTevent>
 {
    readonly IEnumerable<Type> _insert;
 

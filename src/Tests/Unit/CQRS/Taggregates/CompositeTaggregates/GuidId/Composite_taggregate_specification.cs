@@ -29,7 +29,7 @@ public static partial class Composite_taggregate_specification
          _taggregateId = new TaggregateId();
          _taggregate = new CompositeTaggregate("root", _taggregateId);
          _queryModel = new RootQueryModel();
-         ITaggregate<CompositeTaggregateTevent.ICompositeTaggregateTevent> taggregate = _taggregate;
+         ITaggregate<ICompositeTaggregateTevent> taggregate = _taggregate;
          taggregate.TeventStream.Subscribe(_queryModel.ApplyTevent);
          taggregate.Commit(_queryModel.LoadFromHistory);
       }

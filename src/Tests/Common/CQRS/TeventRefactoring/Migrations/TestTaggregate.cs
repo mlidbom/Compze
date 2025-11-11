@@ -12,45 +12,50 @@ using Compze.Utilities.SystemCE.ReflectionCE;
 
 namespace Compze.Tests.Common.CQRS.TeventRefactoring.Migrations
 {
-   public interface IRootTevent : ITaggregateTevent;
+   public interface ITestTaggregateTevent<out T> : ITaggregateIdentifyingTevent<T> where T : ITestTaggregateTevent;
+   public interface ITestTaggregateTevent : ITaggregateTevent;
 
-   public abstract class RootTevent : TaggregateTevent, IRootTevent;
+   public class TestTaggregateTevent<T>(T tevent) : TaggregateIdentifyingTevent<T>(tevent), ITestTaggregateTevent<T> where T : ITestTaggregateTevent
+   {
+   }
+
+   public abstract class TestTaggregateTevent : TaggregateTevent, ITestTaggregateTevent;
 
    namespace Tevents
    {
-      public abstract class EcAbstract : RootTevent, ITaggregateCreatedTevent;
+      public abstract class EcAbstract : TestTaggregateTevent, ITaggregateCreatedTevent;
 
       // ReSharper disable ClassNeverInstantiated.Global
       public class Ec1 : EcAbstract;
       public class Ec2 : EcAbstract;
       public class Ec3 : EcAbstract;
-      public class E1 : RootTevent;
-      public class E2 : RootTevent;
-      public class E3 : RootTevent;
-      public class E4 : RootTevent;
-      public class E5 : RootTevent;
-      public class E6 : RootTevent;
-      public class E7 : RootTevent;
-      public class E8 : RootTevent;
-      public class E9 : RootTevent;
+      public class E1 : TestTaggregateTevent;
+      public class E2 : TestTaggregateTevent;
+      public class E3 : TestTaggregateTevent;
+      public class E4 : TestTaggregateTevent;
+      public class E5 : TestTaggregateTevent;
+      public class E6 : TestTaggregateTevent;
+      public class E7 : TestTaggregateTevent;
+      public class E8 : TestTaggregateTevent;
+      public class E9 : TestTaggregateTevent;
 
-      public class Ef : RootTevent;
+      public class Ef : TestTaggregateTevent;
       // ReSharper restore ClassNeverInstantiated.Global
    }
 
-   public class TestTaggregate : Taggregate<TestTaggregate, IRootTevent, RootTevent>
+   public class TestTaggregate : Taggregate<TestTaggregate, ITestTaggregateTevent, TestTaggregateTevent, ITestTaggregateTevent<ITestTaggregateTevent>, TestTaggregateTevent<TestTaggregateTevent>>
    {
-      public void Publish(params RootTevent[] tevents) => tevents.ForEach(base.Publish);
+      public void Publish(params TestTaggregateTevent[] tevents) => tevents.ForEach(base.Publish);
 
       public TestTaggregate() => SetupAppliers();
 
       void SetupAppliers()
       {
          RegisterTeventAppliers()
-           .For<IRootTevent>(e => _history.Add(e));
+           .For<ITestTaggregateTevent>(e => _history.Add(e));
       }
 
-      public TestTaggregate(params RootTevent[] tevents) : this()
+      public TestTaggregate(params TestTaggregateTevent[] tevents) : this()
       {
          if(tevents.First() is not ITaggregateCreatedTevent) throw new Exception($"First tevent must be {nameof(ITaggregateCreatedTevent)}");
 
@@ -66,12 +71,12 @@ namespace Compze.Tests.Common.CQRS.TeventRefactoring.Migrations
          return new TestTaggregate(rootTevents);
       }
 
-      readonly List<IRootTevent> _history = [];
+      readonly List<ITestTaggregateTevent> _history = [];
       public IReadOnlyList<ITaggregateTevent> History => _history;
    }
 
    static class TeventSequenceGenerator
    {
-      public static RootTevent[] ToTevents(this IEnumerable<Type> types) => types.Select(Constructor.CreateInstance).Cast<RootTevent>().ToArray();
+      public static TestTaggregateTevent[] ToTevents(this IEnumerable<Type> types) => types.Select(Constructor.CreateInstance).Cast<TestTaggregateTevent>().ToArray();
    }
 }

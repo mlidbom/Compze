@@ -12,21 +12,21 @@ namespace Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId.Domain;
         RemovableEntity.RemovableEntity<
             RemovableNestedEntity,
             Guid,
-            CompositeTaggregateTevent.Entity.NestedEntity.IRoot,
-            CompositeTaggregateTevent.Entity.NestedEntity.Implementation.Root,
-            CompositeTaggregateTevent.Entity.NestedEntity.Created,
-            CompositeTaggregateTevent.Entity.NestedEntity.Removed,
-            CompositeTaggregateTevent.Entity.NestedEntity.Implementation.Root.IdGetterSetter>
+            ICompositeTaggregateTevent.Entity.NestedEntity,
+            CompositeTaggregateTevent.Entity.NestedEntity,
+            ICompositeTaggregateTevent.Entity.NestedEntity.Created,
+            ICompositeTaggregateTevent.Entity.NestedEntity.Removed,
+            CompositeTaggregateTevent.Entity.NestedEntity.IdGetterSetter>
     {
         public string Name { get; private set; } = string.Empty;
 
         public RemovableNestedEntity(RemovableEntity removableEntity) : base(removableEntity)
         {
             RegisterTeventAppliers()
-               .For<CompositeTaggregateTevent.Entity.NestedEntity.PropertyUpdated.Name>(e => Name = e.Name);
+               .For<ICompositeTaggregateTevent.Entity.NestedEntity.PropertyUpdated.Name>(e => Name = e.Name);
         }
 
-        public void Rename(string name) => Publish(new CompositeTaggregateTevent.Entity.NestedEntity.Implementation.Renamed(name: name));
-        public void Remove() => Publish(new CompositeTaggregateTevent.Entity.NestedEntity.Implementation.Removed());
+        public void Rename(string name) => Publish(new CompositeTaggregateTevent.Entity.NestedEntity.Renamed(name: name));
+        public void Remove() => Publish(new CompositeTaggregateTevent.Entity.NestedEntity.Removed());
     }
 }

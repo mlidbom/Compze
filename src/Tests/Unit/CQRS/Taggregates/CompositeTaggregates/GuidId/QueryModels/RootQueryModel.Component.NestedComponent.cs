@@ -4,12 +4,12 @@ namespace Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId.QueryMo
 
 partial class Component
 {
-   public class NestedComponent : Component.NestedComponent<NestedComponent, CompositeTaggregateTevent.Component.NestedComponent.IRoot>
+   public class NestedComponent : Component.NestedComponent<NestedComponent, ICompositeTaggregateTevent.Component.NestedComponent>
    {
       public NestedComponent(Component parent) : base(parent)
       {
          RegisterTeventAppliers()
-           .For<CompositeTaggregateTevent.Component.NestedComponent.PropertyUpdated.Name>(e => Name = e.Name);
+           .For<ICompositeTaggregateTevent.Component.NestedComponent.PropertyUpdated.Name>(e => Name = e.Name);
       }
 
       public string Name { get; private set; } = string.Empty;

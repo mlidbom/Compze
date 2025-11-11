@@ -18,15 +18,15 @@ static class AccountStatistics
    /// Note that we use a <see cref="SelfGeneratingQueryModel{TQueryModel,TTaggregateTevent}"/> even though we will store it in a document database.
    /// Doing so lets the tuery model cleanly encapsulate how it maintains its own state when it receives tevents.
    /// </summary>
-   public class SingletonStatisticsQueryModel : SelfGeneratingQueryModel<SingletonStatisticsQueryModel, AccountTevent.Root>
+   public class SingletonStatisticsQueryModel : SelfGeneratingQueryModel<SingletonStatisticsQueryModel, IAccountTevent>
    {
       public SingletonStatisticsQueryModel()
       {
          RegisterTeventAppliers()
-           .For<AccountTevent.Created>(_ => NumberOfAccounts++)
-           .For<AccountTevent.LoginAttempted>(_ => NumberOfLoginsAttempts++)
-           .For<AccountTevent.LoggedIn>(_ => NumberOfSuccessfulLogins++)
-           .For<AccountTevent.LoginFailed>(_ => NumberOfFailedLogins++);
+           .For<IAccountTevent.Created>(_ => NumberOfAccounts++)
+           .For<IAccountTevent.LoginAttempted>(_ => NumberOfLoginsAttempts++)
+           .For<IAccountTevent.LoggedIn>(_ => NumberOfSuccessfulLogins++)
+           .For<IAccountTevent.LoginFailed>(_ => NumberOfFailedLogins++);
       }
 
       public int NumberOfAccounts { get; private set; }
@@ -40,7 +40,7 @@ static class AccountStatistics
    }
 
    static void MaintainStatisticsWhenRelevantTeventsAreReceived(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTevent(
-      (AccountTevent.Root tevent, IInProcessTypermediaNavigator navigator, StatisticsSingletonInitializer initializer) =>
+      (IAccountTevent tevent, IInProcessTypermediaNavigator navigator, StatisticsSingletonInitializer initializer) =>
       {
          initializer.EnsureInitialized(navigator);
 

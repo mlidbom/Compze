@@ -26,7 +26,7 @@ public class AccountManagementServerDomainBootstrapper
    static void RegisterDomainComponents(IEndpointBuilder builder)
    {
       builder.RegisterTeventStore()
-             .HandleTaggregate<Account, AccountTevent.Root>();
+             .HandleTaggregate<Account, IAccountTevent>();
 
       builder.RegisterDocumentDb()
              .HandleDocumentType<TeventStoreApi.TueryApi.TaggregateLink<Account>>(builder.RegisterHandlers)

@@ -85,7 +85,7 @@ public abstract class EndpointHostTestBase : UniversalTestBase
          builder =>
          {
             builder.RegisterTeventStore()
-                   .HandleTaggregate<MyTaggregate, MyTaggregateTevent.IRoot>();
+                   .HandleTaggregate<MyTaggregate, IMyTaggregateTevent>();
 
             builder.RegisterHandlers
                    .ForTommand((MyExactlyOnceTommand _) => MyExactlyOnceTommandHandlerThreadGate.AwaitPassThrough())
@@ -100,7 +100,7 @@ public abstract class EndpointHostTestBase : UniversalTestBase
                        navigator.Execute(new TeventStoreApi().Tueries.GetForUpdate<MyTaggregate>(tommand.TaggregateId)).Update();
                     })
                    .ForTevent((IMyExactlyOnceTevent _) => TeventHandlerThreadGate.AwaitPassThrough())
-                   .ForTevent((MyTaggregateTevent.IRoot _) => MyLocalTaggregateTeventHandlerThreadGate.AwaitPassThrough())
+                   .ForTevent((IMyTaggregateTevent _) => MyLocalTaggregateTeventHandlerThreadGate.AwaitPassThrough())
                    .ForTuery((MyTuery _) =>
                     {
                        TueryHandlerThreadGate.AwaitPassThrough();
@@ -117,7 +117,7 @@ public abstract class EndpointHostTestBase : UniversalTestBase
                                              new EndpointId(Guid.Parse("E72924D3-5279-44B5-B20D-D682E537672B")),
                                              builder =>
                                              {
-                                                builder.RegisterHandlers.ForTevent((MyTaggregateTevent.IRoot _) => MyRemoteTaggregateTeventHandlerThreadGate.AwaitPassThrough());
+                                                builder.RegisterHandlers.ForTevent((IMyTaggregateTevent _) => MyRemoteTaggregateTeventHandlerThreadGate.AwaitPassThrough());
                                              });
 
       ClientEndpoint = Host.RegisterClientEndpointForRegisteredEndpoints();

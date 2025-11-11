@@ -20,7 +20,7 @@ public class MyTommandResult;
 public class MyAtMostOnceTypermediaTommandWithResult : TessageTypes.Remotable.AtMostOnce.AtMostOnceTypermediaTommand<MyTommandResult>
 {
    MyAtMostOnceTypermediaTommandWithResult() : base() {}
-   public static MyAtMostOnceTypermediaTommandWithResult Create() => new() {Id = new TessageId()};
+   public static MyAtMostOnceTypermediaTommandWithResult Create() => new() { Id = new TessageId() };
 }
 
 public class MyTueryResult;
@@ -31,7 +31,7 @@ public class MyExactlyOnceTommand : TessageTypes.Remotable.ExactlyOnce.Tommand;
 
 public class MyUpdateTaggregateTommand : TessageTypes.Remotable.AtMostOnce.AtMostOnceTypermediaTommand
 {
-   [Obsolete("Used by serializer", error:true)]
+   [Obsolete("Used by serializer", error: true)]
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
    public MyUpdateTaggregateTommand() {}
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
@@ -41,7 +41,7 @@ public class MyUpdateTaggregateTommand : TessageTypes.Remotable.AtMostOnce.AtMos
 
 public class MyCreateTaggregateTommand : TessageTypes.Remotable.AtMostOnce.AtMostOnceTypermediaTommand
 {
-   [Obsolete("Used by serializer", error:true)]
+   [Obsolete("Used by serializer", error: true)]
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
    public MyCreateTaggregateTommand() {}
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
@@ -53,41 +53,40 @@ public class MyCreateTaggregateTommand : TessageTypes.Remotable.AtMostOnce.AtMos
    public TaggregateId TaggregateId { get; set; }
 }
 
-public class MyTaggregate : Taggregate<MyTaggregate, MyTaggregateTevent.IRoot, MyTaggregateTevent.Implementation.Root>
+public class MyTaggregate : Taggregate<MyTaggregate, IMyTaggregateTevent, MyTaggregateTevent, IMyTaggregateTevent<IMyTaggregateTevent>, MyTaggregateTevent<MyTaggregateTevent>>
 {
    public MyTaggregate()
    {
       RegisterTeventAppliers()
-        .IgnoreUnhandled<MyTaggregateTevent.IRoot>();
+        .IgnoreUnhandled<IMyTaggregateTevent>();
    }
 
-   public void Update() => Publish(new MyTaggregateTevent.Implementation.Updated());
+   public void Update() => Publish(new MyTaggregateTevent.Updated());
 
    public static void Create(TaggregateId id, IInProcessTypermediaNavigator bus)
    {
       var created = new MyTaggregate();
-      created.Publish(new MyTaggregateTevent.Implementation.Created(id));
+      created.Publish(new MyTaggregateTevent.Created(id));
       bus.Execute(new TeventStoreApi().Tommands.Save(created));
    }
 }
 
-public static class MyTaggregateTevent
+public interface IMyTaggregateTevent<out T> : ITaggregateIdentifyingTevent<T> where T : IMyTaggregateTevent;
+
+public interface IMyTaggregateTevent : ITaggregateTevent
 {
-   public interface IRoot : ITaggregateTevent;
-   public interface Created : IRoot, ITaggregateCreatedTevent;
-   public interface Updated : IRoot;
-   public static class Implementation
-   {
-      public class Root : TaggregateTevent, IRoot
-      {
-         protected Root() {}
-         protected Root(TaggregateId accountId) : base(accountId) {}
-      }
+   public interface Created : IMyTaggregateTevent, ITaggregateCreatedTevent;
+   public interface Updated : IMyTaggregateTevent;
+}
 
-      // ReSharper disable once MemberHidesStaticFromOuterClass
-      public class Created(TaggregateId accountId) : Root(accountId), MyTaggregateTevent.Created;
+public class MyTaggregateTevent<T>(T tevent) : TaggregateIdentifyingTevent<T>(tevent), IMyTaggregateTevent<T> where T : IMyTaggregateTevent {}
 
-      // ReSharper disable once MemberHidesStaticFromOuterClass
-      public class Updated : Root, MyTaggregateTevent.Updated;
-   }
+public class MyTaggregateTevent : TaggregateTevent, IMyTaggregateTevent
+{
+   protected MyTaggregateTevent() {}
+   protected MyTaggregateTevent(TaggregateId accountId) : base(accountId) {}
+
+   public class Created(TaggregateId accountId) : MyTaggregateTevent(accountId), IMyTaggregateTevent.Created;
+
+   public class Updated : MyTaggregateTevent, IMyTaggregateTevent.Updated;
 }

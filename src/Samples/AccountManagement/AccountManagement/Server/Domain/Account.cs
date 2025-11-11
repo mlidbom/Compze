@@ -11,7 +11,7 @@ using System;
 namespace AccountManagement.Domain;
 
 ///Completely encapsulates all the business logic for an account.  Should make it impossible for clients to use the class incorrectly.
-class Account : Taggregate<Account, AccountTevent.Root, AccountTevent.Implementation.Root>, IAccountResourceData
+class Account : Taggregate<Account, IAccountTevent, AccountTevent, IAccountTevent<IAccountTevent>, AccountTevent<AccountTevent>>, IAccountResourceData
 {
    public Email Email { get; private set; } = null!;       //Never public setters on an taggregate. AssertInvariantsAreMet guarantees not null status.
    public Password Password { get; private set; } = null!; //Never public setters on an taggregate. AssertInvariantsAreMet guarantees not null status.
@@ -25,10 +25,10 @@ class Account : Taggregate<Account, AccountTevent.Root, AccountTevent.Implementa
       //Maintain correct state as tevents are raised or read from the store.
       //Use property updated tevents whenever possible. Changes to public state should be represented by property updated tevents.
       RegisterTeventAppliers()
-        .For<AccountTevent.PropertyUpdated.Email>(e => Email = e.Email)
-        .For<AccountTevent.PropertyUpdated.Password>(e => Password = e.Password)
-        .IgnoreUnhandled<AccountTevent.LoggedIn>()
-        .IgnoreUnhandled<AccountTevent.LoginFailed>();
+        .For<IAccountTevent.PropertyUpdated.Email>(e => Email = e.Email)
+        .For<IAccountTevent.PropertyUpdated.Password>(e => Password = e.Password)
+        .IgnoreUnhandled<IAccountTevent.LoggedIn>()
+        .IgnoreUnhandled<IAccountTevent.LoginFailed>();
    }
 
    //Ensure that the state of the instance is sane. If not throw an exception.
@@ -60,7 +60,7 @@ class Account : Taggregate<Account, AccountTevent.Root, AccountTevent.Implementa
       }
 
       var newAccount = new Account();
-      newAccount.Publish(new AccountTevent.Implementation.UserRegistered(accountId: accountId, email: email, password: password));
+      newAccount.Publish(new AccountTevent.UserRegistered(accountId: accountId, email: email, password: password));
 
       navigator.Execute(InternalApi.Tommands.Save(newAccount));
 
@@ -73,24 +73,24 @@ class Account : Taggregate<Account, AccountTevent.Root, AccountTevent.Implementa
 
       Password.AssertIsCorrectPassword(oldPassword);
 
-      Publish(new AccountTevent.Implementation.UserChangedPassword(newPassword));
+      Publish(new AccountTevent.UserChangedPassword(newPassword));
    }
 
    internal void ChangeEmail(Email email)
    {
       Guard.IsNotNull(email);
 
-      Publish(new AccountTevent.Implementation.UserChangedEmail(email));
+      Publish(new AccountTevent.UserChangedEmail(email));
    }
 
-   internal AccountTevent.LoginAttempted Login(string logInPassword)
+   internal IAccountTevent.LoginAttempted Login(string logInPassword)
    {
       if(Password.IsCorrectPassword(logInPassword))
       {
-         return Publish(new AccountTevent.Implementation.LoggedIn(token: Guid.NewGuid().ToString()));
+         return Publish(new AccountTevent.LoggedIn(token: Guid.NewGuid().ToString()));
       } else
       {
-         return Publish(new AccountTevent.Implementation.LoginFailed());
+         return Publish(new AccountTevent.LoginFailed());
       }
    }
 }
