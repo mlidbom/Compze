@@ -10,7 +10,7 @@ using Compze.Utilities.SystemCE.ReflectionCE;
 
 namespace Compze.Tests.Integration.CQRS.TeventRefactoring.Migrations;
 
-class Replace<TTevent> : TeventMigration<IRootTevent>
+class Replace<TTevent> : TeventMigration<ITestTaggregateTevent>
 {
    readonly Migrator _migratorSingleton;
 
