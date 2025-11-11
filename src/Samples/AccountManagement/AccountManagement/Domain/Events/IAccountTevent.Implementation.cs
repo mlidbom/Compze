@@ -9,19 +9,19 @@ using Newtonsoft.Json;
 namespace AccountManagement.Domain.Tevents;
 
 //refactor: Consider using interfaces instead of static classes for nesting our tevents.
-public static partial class AccountTevent
+public partial interface IAccountTevent
 {
 #pragma warning disable CA1724 // Type names should not match namespaces
    public static class Implementation
 #pragma warning restore CA1724 // Type names should not match namespaces
    {
-      public abstract class Root : TaggregateTevent, AccountTevent.Root
+      public abstract class Root : TaggregateTevent, IAccountTevent
       {
          protected Root() {}
          protected Root(AccountId accountId) : base(accountId) {}
       }
 
-      public class UserRegistered : Root, AccountTevent.UserRegistered
+      public class UserRegistered : Root, IAccountTevent.UserRegistered
       {
 #pragma warning disable IDE0051 // Remove unused private members
          [JsonConstructor] UserRegistered(Email email, Password password)
@@ -49,21 +49,21 @@ public static partial class AccountTevent
          public Password Password { get; private set; }
       }
 
-      public class UserChangedEmail(Email email) : Root, AccountTevent.UserChangedEmail
+      public class UserChangedEmail(Email email) : Root, IAccountTevent.UserChangedEmail
       {
          public Email Email { get; private set; } = email;
       }
 
-      public class UserChangedPassword(Password password) : Root, AccountTevent.UserChangedPassword
+      public class UserChangedPassword(Password password) : Root, IAccountTevent.UserChangedPassword
       {
          public Password Password { get; private set; } = password;
       }
 
-      public class LoggedIn(string token) : Root, AccountTevent.LoggedIn
+      public class LoggedIn(string token) : Root, IAccountTevent.LoggedIn
       {
          public string AuthenticationToken { get; } = token;
       }
 
-      public class LoginFailed : Root, AccountTevent.LoginFailed;
+      public class LoginFailed : Root, IAccountTevent.LoginFailed;
    }
 }

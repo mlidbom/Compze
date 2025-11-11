@@ -13,7 +13,7 @@ namespace AccountManagement.Domain;
    static DocumentDbApi DocumentDb => new();
 
    internal static void UpdateMappingWhenEmailChanges(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTevent(
-      (AccountTevent.PropertyUpdated.Email emailUpdated, IInProcessTypermediaNavigator navigator) =>
+      (IAccountTevent.PropertyUpdated.Email emailUpdated, IInProcessTypermediaNavigator navigator) =>
       {
          if(emailUpdated.TaggregateVersion > 1)
          {

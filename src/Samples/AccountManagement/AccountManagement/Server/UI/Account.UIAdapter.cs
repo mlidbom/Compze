@@ -22,8 +22,8 @@ static class AccountUIAdapter
          {
             return account.Value.Login(logIn.Password) switch
             {
-               AccountTevent.LoggedIn loggedIn => AccountResource.Tommand.LogIn.LoginAttemptResult.Success(loggedIn.AuthenticationToken),
-               AccountTevent.LoginFailed _ => AccountResource.Tommand.LogIn.LoginAttemptResult.Failure(),
+               IAccountTevent.LoggedIn loggedIn => AccountResource.Tommand.LogIn.LoginAttemptResult.Success(loggedIn.AuthenticationToken),
+               IAccountTevent.LoginFailed _ => AccountResource.Tommand.LogIn.LoginAttemptResult.Failure(),
                _ => throw new ArgumentOutOfRangeException()
             };
          } else

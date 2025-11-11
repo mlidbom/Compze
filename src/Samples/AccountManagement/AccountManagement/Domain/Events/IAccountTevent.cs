@@ -6,11 +6,10 @@ using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 
 namespace AccountManagement.Domain.Tevents;
 
-public static partial class AccountTevent
+public partial interface IAccountTevent : ITaggregateTevent
 {
-   public interface Root : ITaggregateTevent {}
 
-   public interface Created : Root, ITaggregateCreatedTevent;
+   public interface Created : IAccountTevent, ITaggregateCreatedTevent;
       //Used in multiple places by the infrastructure and clients. Things WILL BREAK without this.
    //Taggregate: Sets the ID when such an tevent is raised.
    //Creates a viewmodel automatically when received by an SingleTaggregateQueryModelUpdater
@@ -28,18 +27,18 @@ public static partial class AccountTevent
 
    public static class PropertyUpdated
    {
-      public interface Password : AccountTevent.Root
+      public interface Password : IAccountTevent
       {
          Passwords.Password Password { get; /* Never add a setter! */ }
       }
 
-      public interface Email : AccountTevent.Root
+      public interface Email : IAccountTevent
       {
          Domain.Email Email { get; /* Never add a setter! */ }
       }
    }
 
-   public interface LoginAttempted : AccountTevent.Root;
+   public interface LoginAttempted : IAccountTevent;
 
    public interface LoggedIn : LoginAttempted
    {
