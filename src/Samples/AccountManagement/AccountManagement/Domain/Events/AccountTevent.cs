@@ -1,5 +1,6 @@
 using AccountManagement.Domain.Passwords;
 using CommunityToolkit.Diagnostics;
+using Compze.Core.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Newtonsoft.Json;
 
@@ -7,6 +8,10 @@ using Newtonsoft.Json;
 // ReSharper disable InconsistentNaming
 
 namespace AccountManagement.Domain.Tevents;
+
+public class AccountTevent<T>(T tevent) : TaggregateIdentifyingTevent<T>(tevent), IAccountTevent<T> where T : IAccountTevent
+{
+}
 
 public class AccountTevent : TaggregateTevent, IAccountTevent
 {
