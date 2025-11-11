@@ -5,26 +5,23 @@ using System;
 
 namespace Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId.Domain;
 
-class CompositeTaggregate :
-    Taggregate<CompositeTaggregate,
-        ICompositeTaggregateTevent,
-        CompositeTaggregateTevent>
+class CompositeTaggregate : Taggregate<CompositeTaggregate, ICompositeTaggregateTevent, CompositeTaggregateTevent, ICompositeTaggregateTevent<ICompositeTaggregateTevent>, CompositeTaggregateTevent<CompositeTaggregateTevent>>
 {
-    public string Name { get; private set; } = string.Empty;
-    readonly RemovableEntity.CollectionManager _entities;
-    public Component Component { get; private set; }
+   public string Name { get; private set; } = string.Empty;
+   readonly RemovableEntity.CollectionManager _entities;
+   public Component Component { get; private set; }
 
-    public CompositeTaggregate(string name, TaggregateId id)
-    {
-        Component = new Component(this);
-        _entities = RemovableEntity.CreateSelfManagingCollection(this);
+   public CompositeTaggregate(string name, TaggregateId id)
+   {
+      Component = new Component(this);
+      _entities = RemovableEntity.CreateSelfManagingCollection(this);
 
-        RegisterTeventAppliers()
-           .For<ICompositeTaggregateTevent.PropertyUpdated.Name>(e => Name = e.Name);
+      RegisterTeventAppliers()
+        .For<ICompositeTaggregateTevent.PropertyUpdated.Name>(e => Name = e.Name);
 
-        Publish(new CompositeTaggregateTevent.Created(id, name));
-    }
+      Publish(new CompositeTaggregateTevent.Created(id, name));
+   }
 
-    public IReadOnlyEntityCollection<RemovableEntity, Guid> Entities => _entities.Entities;
-    public RemovableEntity AddEntity(string name) => _entities.AddByPublishing(new CompositeTaggregateTevent.Entity.Created(Guid.NewGuid(), name));
+   public IReadOnlyEntityCollection<RemovableEntity, Guid> Entities => _entities.Entities;
+   public RemovableEntity AddEntity(string name) => _entities.AddByPublishing(new CompositeTaggregateTevent.Entity.Created(Guid.NewGuid(), name));
 }
