@@ -8,147 +8,167 @@ using Compze.Utilities.Testing.XUnit.BDD;
 using JetBrains.Annotations;
 using static Compze.Utilities.Testing.Must.MustActions;
 
+// ReSharper disable InconsistentNaming
+
 // ReSharper disable MemberHidesStaticFromOuterClass
 // ReSharper disable UnusedMember.Local
 // ReSharper disable ObjectCreationAsStatement
 // ReSharper disable MemberCanBeInternal
 #pragma warning disable CA1806 // Do not ignore method results
+#pragma warning disable CA1812 // These types are instantiated via reflection in taggregate infrastructure
 
 namespace Compze.Tests.Unit.CQRS.Taggregates;
 
 public class PublicSettersAndFieldsAreDisallowedTests : UniversalTestBase
 {
-   public static class RootTevent
+   public interface IRootTevent : ITaggregateTevent
    {
-      public interface IRoot : ITaggregateTevent { string Public1 { get; set; } }
+      string Public1 { get; set; }
 
-      public class Root : TaggregateTevent, IRoot { public string Public1 { get; set; } = string.Empty; }
-
-      [AllowPublicSetters]
-      public class Ignored : Root { public string IgnoredMember { get; set; } = string.Empty; }
-
-      public static class Component
+      public interface Component : IRootTevent
       {
-         public interface IRoot : RootTevent.IRoot { string Public2 { get; set; }  }
-         internal class Root : RootTevent.Root, IRoot { public string Public2 { get; set; } = string.Empty;}
+         string Public2 { get; set; }
 
-         public static class NestedComponent
+         public interface NestedComponent : Component
          {
-            public interface IRoot : Component.IRoot{ string           Public3 { get; set; }  }
-#pragma warning disable CA1812 // Used via reflection in taggregate infrastructure
-            internal class Root : Component.Root, IRoot { public string Public3 { get; set; } = string.Empty; }
-#pragma warning restore CA1812
+            string Public3 { get; set; }
          }
       }
 
-      public static class Entity
+      public interface Entity : IRootTevent
       {
-         public interface IRoot : RootTevent.IRoot{ string            Public4 { get; set; }  }
-         internal class Root : RootTevent.Root, IRoot { public string Public4 { get; set; } = string.Empty;
-#pragma warning disable CA1812 // Used via reflection in taggregate infrastructure
-            [UsedImplicitly] public class GetterSetter : IGetSetTaggregateEntityTeventEntityId<Guid, Root, IRoot>
-#pragma warning restore CA1812
-            {
-               public Guid GetId(IRoot tevent) => throw new Exception();
-               public void SetEntityId(Root tevent, Guid id) => throw new Exception();
-            }
-         }
+         string Public4 { get; set; }
 
-         public static class Component
+         public interface Component : Entity
          {
-            public interface IRoot : Entity.IRoot { string           Public2 { get; set; }  }
-            internal class Root : Entity.Root, IRoot { public string Public2 { get; set; } = string.Empty; }
+            string Public2 { get; set; }
 
-            public static class NestedComponent
+            public interface NestedComponent : Component
             {
-               public interface IRoot : Component.IRoot{ string            Public3 { get; set; }  }
-#pragma warning disable CA1812 // Used via reflection in taggregate infrastructure
-               internal class Root : Component.Root, IRoot { public string Public3 { get; set; } = string.Empty;}
-#pragma warning restore CA1812
+               string Public3 { get; set; }
             }
          }
       }
-
    }
 
-   class Root() : Taggregate<Root, RootTevent.IRoot, RootTevent.Root>()
+   public abstract class RootTevent : TaggregateTevent, IRootTevent
    {
-      public class AggComponent(Root parent): Root.Component<AggComponent, RootTevent.Component.Root, RootTevent.Component.IRoot>(parent)
+      public string Public1 { get; set; } = string.Empty;
+
+      [AllowPublicSetters]
+      public class Ignored : RootTevent
+      {
+         public string IgnoredMember { get; set; } = string.Empty;
+      }
+
+      public class Component : RootTevent, IRootTevent.Component
+      {
+         public string Public2 { get; set; } = string.Empty;
+
+         public class NestedComponent : Component, IRootTevent.Component.NestedComponent
+         {
+            public string Public3 { get; set; } = string.Empty;
+         }
+      }
+
+      public class Entity : RootTevent, IRootTevent.Entity
+      {
+         public string Public4 { get; set; } = string.Empty;
+
+            [UsedImplicitly]
+            public class GetterSetter : IGetSetTaggregateEntityTeventEntityId<Guid, RootTevent, IRootTevent>
+            {
+                public Guid GetId(IRootTevent tevent) => throw new Exception();
+                public void SetEntityId(RootTevent tevent, Guid id) => throw new Exception();
+            }
+
+            public class Component : Entity, IRootTevent.Entity.Component
+         {
+            public string Public2 { get; set; } = string.Empty;
+
+            public class NestedComponent : Component, IRootTevent.Entity.Component.NestedComponent
+            {
+               public string Public3 { get; set; } = string.Empty;
+            }
+         }
+      }
+   }
+
+   class Root() : Taggregate<Root, IRootTevent, RootTevent>()
+   {
+      public class AggComponent(Root parent) : Root.Component<AggComponent, RootTevent.Component, IRootTevent.Component>(parent)
       {
          public string Public { get; set; } = string.Empty;
 
-         public class NestedAggComponent(AggComponent parent) : AggComponent.Component<NestedAggComponent, RootTevent.Component.NestedComponent.Root, RootTevent.Component.NestedComponent.IRoot>(parent)
+         public class NestedAggComponent(AggComponent parent) : AggComponent.Component<NestedAggComponent, RootTevent.Component.NestedComponent, IRootTevent.Component.NestedComponent>(parent)
          {
             public string Public { get; set; } = string.Empty;
          }
       }
 
-      public class AggEntity(Root taggregate) : Root.Entity<AggEntity, Guid, RootTevent.Entity.Root, RootTevent.Entity.IRoot, RootTevent.Entity.IRoot, RootTevent.Entity.Root.GetterSetter>(taggregate)
+      public class AggEntity(Root taggregate) : Root.Entity<AggEntity, Guid, RootTevent.Entity, IRootTevent.Entity, IRootTevent.Entity, RootTevent.Entity.GetterSetter>(taggregate)
       {
-         public string Public { get; set; }  = string.Empty;
+         public string Public { get; set; } = string.Empty;
 
-         public class EntNestedComp(AggEntity parent) : AggEntity.Component<EntNestedComp, RootTevent.Entity.Component.Root, RootTevent.Entity.Component.IRoot>(parent)
+         public class EntNestedComp(AggEntity parent) : AggEntity.Component<EntNestedComp, RootTevent.Entity.Component, IRootTevent.Entity.Component>(parent)
          {
             public string Public2 { get; set; } = string.Empty;
          }
       }
    }
 
-
-   [XF]public void Trying_to_create_instance_of_taggregate_throws_and_lists_all_broken_types_in_exception_except_ignored()
+   [XF] public void Trying_to_create_instance_of_taggregate_throws_and_lists_all_broken_types_in_exception_except_ignored()
    {
       Invoking(() => new Root())
-                   .Must().Throw<Exception>()
-                   .Which.InnerException!
-                   .Message.Must()
-                   .Contain(typeof(Root).FullName!)
-                   .Contain(typeof(RootTevent.IRoot).FullName!)
-                   .Contain(typeof(RootTevent.Root).FullName!)
-                   .NotContain(typeof(RootTevent.Ignored).FullName!);
+        .Must().Throw<Exception>()
+        .Which.InnerException!
+        .Message.Must()
+        .Contain(typeof(Root).FullName!)
+        .Contain(typeof(IRootTevent).FullName!)
+        .NotContain(typeof(RootTevent.Ignored).FullName!);
    }
 
    [XF] public void Trying_to_create_instance_of_component_throws_and_lists_all_broken_types_in_exception()
    {
       Invoking(() => new Root.AggComponent(null!))
-                   .Must().Throw<Exception>()
-                   .Which.InnerException!
-                   .Message.Must()
-                   .Contain(typeof(Root.AggComponent).FullName!)
-                   .Contain(typeof(RootTevent.Component.IRoot).FullName!)
-                   .Contain(typeof(RootTevent.Component.Root).FullName!);
+        .Must().Throw<Exception>()
+        .Which.InnerException!
+        .Message.Must()
+        .Contain(typeof(Root.AggComponent).FullName!)
+        .Contain(typeof(IRootTevent.Component).FullName!)
+        .Contain(typeof(RootTevent.Component).FullName!);
    }
-
 
    [XF] public void Trying_to_create_instance_of_nested_nested_component_throws_and_lists_all_broken_types_in_exception()
    {
       Invoking(() => new Root.AggComponent.NestedAggComponent(null!))
-                   .Must().Throw<Exception>()
-                   .Which.InnerException!
-                   .Message.Must()
-                   .Contain(typeof(Root.AggComponent.NestedAggComponent).FullName!)
-                   .Contain(typeof(RootTevent.Component.NestedComponent.IRoot).FullName!)
-                   .Contain(typeof(RootTevent.Component.NestedComponent.Root).FullName!);
+        .Must().Throw<Exception>()
+        .Which.InnerException!
+        .Message.Must()
+        .Contain(typeof(Root.AggComponent.NestedAggComponent).FullName!)
+        .Contain(typeof(IRootTevent.Component.NestedComponent).FullName!)
+        .Contain(typeof(RootTevent.Component.NestedComponent).FullName!);
    }
 
    [XF] public void Trying_to_create_instance_of_entity_throws_and_lists_all_broken_types_in_exception()
    {
       Invoking(() => new Root.AggEntity(null!))
-                   .Must().Throw<Exception>()
-                   .Which.InnerException!
-                   .Message.Must()
-                   .Contain(typeof(Root.AggEntity).FullName!)
-                   .Contain(typeof(RootTevent.Entity.IRoot).FullName!)
-                   .Contain(typeof(RootTevent.Entity.Root).FullName!);
+        .Must().Throw<Exception>()
+        .Which.InnerException!
+        .Message.Must()
+        .Contain(typeof(Root.AggEntity).FullName!)
+        .Contain(typeof(IRootTevent.Entity).FullName!)
+        .Contain(typeof(RootTevent.Entity).FullName!);
    }
 
    [XF] public void Trying_to_create_instance_of_entity_nested_component_throws_and_lists_all_broken_types_in_exception()
    {
       Invoking(() => new Root.AggEntity.EntNestedComp(null!))
-                   .Must().Throw<Exception>()
-                   .Which.InnerException!
-                   .Message.Must()
-                   .Contain(typeof(Root.AggEntity.EntNestedComp).FullName!)
-                   .Contain(typeof(RootTevent.Entity.Component.IRoot).FullName!)
-                   .Contain(typeof(RootTevent.Entity.Component.Root).FullName!);
+        .Must().Throw<Exception>()
+        .Which.InnerException!
+        .Message.Must()
+        .Contain(typeof(Root.AggEntity.EntNestedComp).FullName!)
+        .Contain(typeof(IRootTevent.Entity.Component).FullName!)
+        .Contain(typeof(RootTevent.Entity.Component).FullName!);
    }
 }
