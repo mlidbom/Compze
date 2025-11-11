@@ -53,41 +53,40 @@ public class MyCreateTaggregateTommand : TessageTypes.Remotable.AtMostOnce.AtMos
    public TaggregateId TaggregateId { get; set; }
 }
 
-public class MyTaggregate : Taggregate<MyTaggregate, MyTaggregateTevent.IRoot, MyTaggregateTevent.Implementation.Root>
+public class MyTaggregate : Taggregate<MyTaggregate, IMyTaggregateTevent, IMyTaggregateTevent.Implementation.Root>
 {
    public MyTaggregate()
    {
       RegisterTeventAppliers()
-        .IgnoreUnhandled<MyTaggregateTevent.IRoot>();
+        .IgnoreUnhandled<IMyTaggregateTevent>();
    }
 
-   public void Update() => Publish(new MyTaggregateTevent.Implementation.Updated());
+   public void Update() => Publish(new IMyTaggregateTevent.Implementation.Updated());
 
    public static void Create(TaggregateId id, IInProcessTypermediaNavigator bus)
    {
       var created = new MyTaggregate();
-      created.Publish(new MyTaggregateTevent.Implementation.Created(id));
+      created.Publish(new IMyTaggregateTevent.Implementation.Created(id));
       bus.Execute(new TeventStoreApi().Tommands.Save(created));
    }
 }
 
-public static class MyTaggregateTevent
+public interface IMyTaggregateTevent : ITaggregateTevent
 {
-   public interface IRoot : ITaggregateTevent;
-   public interface Created : IRoot, ITaggregateCreatedTevent;
-   public interface Updated : IRoot;
+   public interface Created : IMyTaggregateTevent, ITaggregateCreatedTevent;
+   public interface Updated : IMyTaggregateTevent;
    public static class Implementation
    {
-      public class Root : TaggregateTevent, IRoot
+      public class Root : TaggregateTevent, IMyTaggregateTevent
       {
          protected Root() {}
          protected Root(TaggregateId accountId) : base(accountId) {}
       }
 
       // ReSharper disable once MemberHidesStaticFromOuterClass
-      public class Created(TaggregateId accountId) : Root(accountId), MyTaggregateTevent.Created;
+      public class Created(TaggregateId accountId) : Root(accountId), IMyTaggregateTevent.Created;
 
       // ReSharper disable once MemberHidesStaticFromOuterClass
-      public class Updated : Root, MyTaggregateTevent.Updated;
+      public class Updated : Root, IMyTaggregateTevent.Updated;
    }
 }
