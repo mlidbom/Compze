@@ -26,7 +26,7 @@ class Root : Taggregate<Root, IRootTevent, RootTevent, IRootTevent<IRootTevent>,
    public RemovableEntity AddEntity(string name) => _entities.AddByPublishing(new RootTevent.Entity.Created(++_instances, name));
 }
 
-class Component : Root.Component<Component, RootTevent.Component, IRootTevent.Component>
+class Component : Root.Component<Component, IRootTevent.Component, RootTevent.Component>
 {
    static int _instances;
    public string? Name { get; private set; } = string.Empty;

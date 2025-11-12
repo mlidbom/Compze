@@ -10,11 +10,11 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
     where TTaggregateTevent : class, ITaggregateTevent
     where TTaggregateTeventImplementation : TaggregateTevent, TTaggregateTevent
 {
-    public abstract class Component<TComponent, TComponentTeventImplementation, TComponentTevent>
+    public abstract class Component<TComponent, TComponentTevent, TComponentTeventImplementation>
         : TeventiveComponent<TTaggregate, TTaggregateTevent, TTaggregateTeventImplementation, TComponent, TComponentTevent, TComponentTeventImplementation>
         where TComponentTevent : class, TTaggregateTevent
         where TComponentTeventImplementation : TTaggregateTeventImplementation, TComponentTevent
-        where TComponent : Component<TComponent, TComponentTeventImplementation, TComponentTevent>
+        where TComponent : Component<TComponent, TComponentTevent, TComponentTeventImplementation>
     {
         protected Component(TTaggregate parent) : base(parent) {}
     }

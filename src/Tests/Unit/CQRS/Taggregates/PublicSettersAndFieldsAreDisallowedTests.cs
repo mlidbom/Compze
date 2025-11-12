@@ -100,7 +100,7 @@ public class PublicSettersAndFieldsAreDisallowedTests : UniversalTestBase
 
    class Root() : Taggregate<Root, IRootTevent, RootTevent, IRootTevent<IRootTevent>, RootTevent<RootTevent>>()
    {
-      public class AggComponent(Root parent) : Root.Component<AggComponent, RootTevent.Component, IRootTevent.Component>(parent)
+      public class AggComponent(Root parent) : Root.Component<AggComponent, IRootTevent.Component, RootTevent.Component>(parent)
       {
          public string Public { get; set; } = string.Empty;
 

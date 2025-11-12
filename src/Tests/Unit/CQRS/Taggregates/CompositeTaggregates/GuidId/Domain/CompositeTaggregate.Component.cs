@@ -4,7 +4,7 @@ using Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId.Domain.Teve
 
 namespace Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId.Domain;
 
-partial class Component : CompositeTaggregate.Component<Component, CompositeTaggregateTevent.Component, ICompositeTaggregateTevent.Component>
+partial class Component : CompositeTaggregate.Component<Component, ICompositeTaggregateTevent.Component, CompositeTaggregateTevent.Component>
 {
     public Component(CompositeTaggregate parent) : base(parent)
     {
