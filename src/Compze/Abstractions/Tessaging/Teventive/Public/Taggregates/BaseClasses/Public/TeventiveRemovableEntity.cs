@@ -13,7 +13,7 @@ public abstract class TeventiveRemovableEntity<TParent,
                                               TEntityCreatedTevent,
                                               TEntityRemovedTevent,
                                               TEntityTeventIdGetterSetter>
-    : TeventiveEntity<TParent, TParentTevent, TParentTeventImplementation, TEntity, TEntityId, TEntityTeventImplementation, TEntityTevent, TEntityCreatedTevent, TEntityTeventIdGetterSetter>
+    : Tentity<TParent, TParentTevent, TParentTeventImplementation, TEntity, TEntityId, TEntityTeventImplementation, TEntityTevent, TEntityCreatedTevent, TEntityTeventIdGetterSetter>
     where TParent : ITeventiveInternals<TParentTevent, TParentTeventImplementation>
     where TParentTevent : class, ITaggregateTevent
     where TEntityId : struct
@@ -36,7 +36,7 @@ public abstract class TeventiveRemovableEntity<TParent,
     public new static CollectionManager CreateSelfManagingCollection(TParent parent)
         => new(parent);
 
-    public new class CollectionManager : TeventiveEntity<TParent, TParentTevent, TParentTeventImplementation, TEntity, TEntityId, TEntityTeventImplementation, TEntityTevent, TEntityCreatedTevent, TEntityTeventIdGetterSetter>.CollectionManager
+    public new class CollectionManager : Tentity<TParent, TParentTevent, TParentTeventImplementation, TEntity, TEntityId, TEntityTeventImplementation, TEntityTevent, TEntityCreatedTevent, TEntityTeventIdGetterSetter>.CollectionManager
     {
         internal CollectionManager(TParent parent): base(parent)
         {

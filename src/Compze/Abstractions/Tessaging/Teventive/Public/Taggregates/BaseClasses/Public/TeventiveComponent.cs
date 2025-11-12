@@ -71,7 +71,7 @@ public abstract class TeventiveComponent<TParent,
                                  TEntityTeventImplementation,
                                  TEntityCreatedTevent,
                                  TEntityTeventIdGetterSetter> :
-        TeventiveEntity<
+        Tentity<
             TComponent,
             TComponentTevent,
             TComponentTeventImplementation,

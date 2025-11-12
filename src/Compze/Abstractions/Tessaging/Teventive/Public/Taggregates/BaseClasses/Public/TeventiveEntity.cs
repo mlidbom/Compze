@@ -8,90 +8,90 @@ using JetBrains.Annotations;
 namespace Compze.Core.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public;
 
 [UsedImplicitly(ImplicitUseKindFlags.InstantiatedWithFixedConstructorSignature)]
-public abstract class TeventiveEntity<TParent,
-                                     TParentTevent,
-                                     TParentTeventImplementation,
-                                     TEntity,
-                                     TEntityId,
-                                     TEntityTeventImplementation,
-                                     TEntityTevent,
-                                     TEntityCreatedTevent,
-                                     TEntityTeventIdGetterSetter>
-    : TeventiveComponent<TParent, TParentTevent, TParentTeventImplementation, TEntity, TEntityTevent, TEntityTeventImplementation>
-    where TParent : ITeventiveInternals<TParentTevent, TParentTeventImplementation>
-    where TParentTevent : class, ITaggregateTevent
-    where TEntityId : struct
-    where TEntityTevent : class, TParentTevent
-    where TParentTeventImplementation : TaggregateTevent, TParentTevent
-    where TEntityTeventImplementation : TParentTeventImplementation, TEntityTevent
-    where TEntityCreatedTevent : TEntityTevent
-    where TEntity : TeventiveEntity<TParent, TParentTevent, TParentTeventImplementation, TEntity, TEntityId, TEntityTeventImplementation, TEntityTevent, TEntityCreatedTevent, TEntityTeventIdGetterSetter>
-    where TEntityTeventIdGetterSetter : IGetSetTaggregateEntityTeventEntityId<TEntityId, TEntityTeventImplementation, TEntityTevent>
+public abstract class Tentity<TParent,
+                              TParentTevent,
+                              TParentTeventImplementation,
+                              TTentity,
+                              TTentityId,
+                              TTentityTeventImplementation,
+                              TTentityTevent,
+                              TTentityCreatedTevent,
+                              TTentityTeventIdGetterSetter>
+   : TeventiveComponent<TParent, TParentTevent, TParentTeventImplementation, TTentity, TTentityTevent, TTentityTeventImplementation>
+   where TParent : ITeventiveInternals<TParentTevent, TParentTeventImplementation>
+   where TParentTevent : class, ITaggregateTevent
+   where TTentityId : struct
+   where TTentityTevent : class, TParentTevent
+   where TParentTeventImplementation : TaggregateTevent, TParentTevent
+   where TTentityTeventImplementation : TParentTeventImplementation, TTentityTevent
+   where TTentityCreatedTevent : TTentityTevent
+   where TTentity : Tentity<TParent, TParentTevent, TParentTeventImplementation, TTentity, TTentityId, TTentityTeventImplementation, TTentityTevent, TTentityCreatedTevent, TTentityTeventIdGetterSetter>
+   where TTentityTeventIdGetterSetter : IGetSetTaggregateEntityTeventEntityId<TTentityId, TTentityTeventImplementation, TTentityTevent>
 {
-    static TeventiveEntity() => TaggregateTypeValidator<TEntity, TEntityTeventImplementation, TEntityTevent>.AssertStaticStructureIsValid();
+   static Tentity() => TaggregateTypeValidator<TTentity, TTentityTeventImplementation, TTentityTevent>.AssertStaticStructureIsValid();
 
-    static readonly TEntityTeventIdGetterSetter IdGetterSetter = Constructor.For<TEntityTeventIdGetterSetter>.DefaultConstructor.Instance();
+   static readonly TTentityTeventIdGetterSetter IdGetterSetter = Constructor.For<TTentityTeventIdGetterSetter>.DefaultConstructor.Instance();
 
-    TEntityId _id;
-    public TEntityId Id => Assert.Result.ReturnNotDefault(_id);
+   TTentityId _id;
+   public TTentityId Id => Assert.Result.ReturnNotDefault(_id);
 
-    protected TeventiveEntity(TParent taggregate) : base(taggregate, false)
-    {
-        RegisterTeventAppliers()
-           .For<TEntityCreatedTevent>(e => _id = IdGetterSetter.GetId(e));
-    }
+   protected Tentity(TParent taggregate) : base(taggregate, false)
+   {
+      RegisterTeventAppliers()
+        .For<TTentityCreatedTevent>(e => _id = IdGetterSetter.GetId(e));
+   }
 
-    protected override void Publish(TEntityTeventImplementation tevent)
-    {
-        var id = IdGetterSetter.GetId(tevent);
-        if(Equals(id, default(TEntityId)))
-        {
-            IdGetterSetter.SetEntityId(tevent, Id);
-        } else if(!Equals(id, Id))
-        {
-            throw new Exception($"Attempted to raise tevent with EntityId: {id} from within entity with EntityId: {Id}");
-        }
+   protected override void Publish(TTentityTeventImplementation tevent)
+   {
+      var id = IdGetterSetter.GetId(tevent);
+      if(Equals(id, default(TTentityId)))
+      {
+         IdGetterSetter.SetEntityId(tevent, Id);
+      } else if(!Equals(id, Id))
+      {
+         throw new Exception($"Attempted to raise tevent with EntityId: {id} from within entity with EntityId: {Id}");
+      }
 
-        base.Publish(tevent);
-    }
+      base.Publish(tevent);
+   }
 
-    // ReSharper disable once UnusedMember.Global todo: write tests.
-    public static CollectionManager CreateSelfManagingCollection(TParent parent) => new(parent);
+   // ReSharper disable once UnusedMember.Global todo: write tests.
+   public static CollectionManager CreateSelfManagingCollection(TParent parent) => new(parent);
 
-    public class CollectionManager : IEntityCollectionManager<TEntity, TEntityId, TEntityTevent, TEntityTeventImplementation, TEntityCreatedTevent>
-    {
-        protected static readonly TEntityTeventIdGetterSetter IdGetter = Constructor.For<TEntityTeventIdGetterSetter>.DefaultConstructor.Instance();
+   public class CollectionManager : IEntityCollectionManager<TTentity, TTentityId, TTentityTevent, TTentityTeventImplementation, TTentityCreatedTevent>
+   {
+      protected static readonly TTentityTeventIdGetterSetter IdGetter = Constructor.For<TTentityTeventIdGetterSetter>.DefaultConstructor.Instance();
 
-        protected EntityCollection<TEntity, TEntityId> ManagedEntities { get; }
+      protected EntityCollection<TTentity, TTentityId> ManagedEntities { get; }
 
-        TParent _parent;
+      TParent _parent;
 
-        internal CollectionManager(TParent parent)
-        {
-            ManagedEntities = [];
-            _parent = parent;
+      internal CollectionManager(TParent parent)
+      {
+         ManagedEntities = [];
+         _parent = parent;
 #pragma warning disable CS0618 // This is just the type of infrastructure code the methods are for
-            parent.RegisterTeventAppliersInternal()
-               .For<TEntityCreatedTevent>(e =>
+         parent.RegisterTeventAppliersInternal()
+               .For<TTentityCreatedTevent>(e =>
                 {
-                    var entity = Constructor.For<TEntity>.WithArguments<TParent>.Instance(parent);
-                    ManagedEntities.Add(entity, IdGetter.GetId(e));
+                   var entity = Constructor.For<TTentity>.WithArguments<TParent>.Instance(parent);
+                   ManagedEntities.Add(entity, IdGetter.GetId(e));
                 })
-               .For<TEntityTevent>(e => GetEntityAsTeventiveInternals(e).ApplyTeventInternal(e));
+               .For<TTentityTevent>(e => GetEntityAsTeventiveInternals(e).ApplyTeventInternal(e));
 #pragma warning restore CS0618
-        }
+      }
 
-        ITeventiveInternals<TEntityTevent, TEntityTeventImplementation> GetEntityAsTeventiveInternals(TEntityTevent e) => ManagedEntities[IdGetter.GetId(e)];
+      ITeventiveInternals<TTentityTevent, TTentityTeventImplementation> GetEntityAsTeventiveInternals(TTentityTevent e) => ManagedEntities[IdGetter.GetId(e)];
 
-        public IReadOnlyEntityCollection<TEntity, TEntityId> Entities => ManagedEntities;
+      public IReadOnlyEntityCollection<TTentity, TTentityId> Entities => ManagedEntities;
 
-        public TEntity AddByPublishing<TCreationTevent>(TCreationTevent creationTevent) where TCreationTevent : TEntityTeventImplementation, TEntityCreatedTevent
-        {
+      public TTentity AddByPublishing<TCreationTevent>(TCreationTevent creationTevent) where TCreationTevent : TTentityTeventImplementation, TTentityCreatedTevent
+      {
 #pragma warning disable CS0618 // This is just the type of infrastructure code the methods are for
-            _parent.PublishInternal(creationTevent);
+         _parent.PublishInternal(creationTevent);
 #pragma warning restore CS0618
-            var result = ManagedEntities.InCreationOrder[^1];
-            return result;
-        }
-    }
+         var result = ManagedEntities.InCreationOrder[^1];
+         return result;
+      }
+   }
 }

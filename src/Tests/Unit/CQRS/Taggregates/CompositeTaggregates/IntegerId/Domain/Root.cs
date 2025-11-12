@@ -71,8 +71,8 @@ class Component : Root.Component<Component, IRootTevent.Component, RootTevent.Co
 [UsedImplicitly]class RemovableEntity : Root.RemovableEntity<RemovableEntity,
 #pragma warning restore CA1812
    int,
-   RootTevent.Entity,
    IRootTevent.Entity,
+   RootTevent.Entity,
    IRootTevent.Entity.Created,
    IRootTevent.Entity.Removed,
    RootTevent.Entity.IdGetterSetter>

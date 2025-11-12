@@ -10,8 +10,8 @@ partial class RemovableEntity :
     CompositeTaggregate.RemovableEntity<
         RemovableEntity,
         Guid,
-        CompositeTaggregateTevent.Entity,
         ICompositeTaggregateTevent.Entity,
+        CompositeTaggregateTevent.Entity,
         ICompositeTaggregateTevent.Entity.Created,
         ICompositeTaggregateTevent.Entity.Removed,
         CompositeTaggregateTevent.Entity.IdGetterSetter>

@@ -21,7 +21,7 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
 
     [UsedImplicitly(ImplicitUseKindFlags.InstantiatedWithFixedConstructorSignature)]
     public abstract class Entity<TEntity, TEntityId, TEntityTevent, TEntityTeventImplementation, TEntityCreatedTevent, TEntityTeventIdGetterSetter>
-        : TeventiveEntity<TTaggregate, TTaggregateTevent, TTaggregateTeventImplementation, TEntity, TEntityId, TEntityTeventImplementation, TEntityTevent, TEntityCreatedTevent, TEntityTeventIdGetterSetter>
+        : Tentity<TTaggregate, TTaggregateTevent, TTaggregateTeventImplementation, TEntity, TEntityId, TEntityTeventImplementation, TEntityTevent, TEntityCreatedTevent, TEntityTeventIdGetterSetter>
         where TEntityId : struct
         where TEntityTevent : class, TTaggregateTevent
         where TEntityTeventImplementation : TTaggregateTeventImplementation, TEntityTevent
@@ -32,14 +32,14 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
         protected Entity(TTaggregate taggregate) : base(taggregate) {}
     }
 
-    public abstract class RemovableEntity<TEntity, TEntityId, TEntityTeventImplementation, TEntityTevent, TEntityCreatedTevent, TEntityRemovedTevent, TEntityTeventIdGetterSetter>
+    public abstract class RemovableEntity<TEntity, TEntityId, TEntityTevent, TEntityTeventImplementation, TEntityCreatedTevent, TEntityRemovedTevent, TEntityTeventIdGetterSetter>
         : TeventiveRemovableEntity<TTaggregate, TTaggregateTevent, TTaggregateTeventImplementation, TEntity, TEntityId, TEntityTevent, TEntityTeventImplementation, TEntityCreatedTevent, TEntityRemovedTevent, TEntityTeventIdGetterSetter>
         where TEntityId : struct
         where TEntityTevent : class, TTaggregateTevent
         where TEntityTeventImplementation : TTaggregateTeventImplementation, TEntityTevent
         where TEntityCreatedTevent : TEntityTevent
         where TEntityRemovedTevent : TEntityTevent
-        where TEntity : RemovableEntity<TEntity, TEntityId, TEntityTeventImplementation, TEntityTevent, TEntityCreatedTevent, TEntityRemovedTevent, TEntityTeventIdGetterSetter>
+        where TEntity : RemovableEntity<TEntity, TEntityId, TEntityTevent, TEntityTeventImplementation, TEntityCreatedTevent, TEntityRemovedTevent, TEntityTeventIdGetterSetter>
         where TEntityTeventIdGetterSetter : IGetSetTaggregateEntityTeventEntityId<TEntityId, TEntityTeventImplementation, TEntityTevent>
     {
         protected RemovableEntity(TTaggregate taggregate) : base(taggregate) {}
