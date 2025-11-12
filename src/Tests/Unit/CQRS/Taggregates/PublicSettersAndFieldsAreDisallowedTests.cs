@@ -110,7 +110,7 @@ public class PublicSettersAndFieldsAreDisallowedTests : UniversalTestBase
          }
       }
 
-      public class AggEntity(Root taggregate) : Root.Entity<AggEntity, Guid, RootTevent.Entity, IRootTevent.Entity, IRootTevent.Entity, RootTevent.Entity.GetterSetter>(taggregate)
+      public class AggEntity(Root taggregate) : Root.Entity<AggEntity, Guid, IRootTevent.Entity, RootTevent.Entity, IRootTevent.Entity, RootTevent.Entity.GetterSetter>(taggregate)
       {
          public string Public { get; set; } = string.Empty;
 

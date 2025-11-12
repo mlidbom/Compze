@@ -20,13 +20,13 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
     }
 
     [UsedImplicitly(ImplicitUseKindFlags.InstantiatedWithFixedConstructorSignature)]
-    public abstract class Entity<TEntity, TEntityId, TEntityTeventImplementation, TEntityTevent, TEntityCreatedTevent, TEntityTeventIdGetterSetter>
+    public abstract class Entity<TEntity, TEntityId, TEntityTevent, TEntityTeventImplementation, TEntityCreatedTevent, TEntityTeventIdGetterSetter>
         : TeventiveEntity<TTaggregate, TTaggregateTevent, TTaggregateTeventImplementation, TEntity, TEntityId, TEntityTeventImplementation, TEntityTevent, TEntityCreatedTevent, TEntityTeventIdGetterSetter>
         where TEntityId : struct
         where TEntityTevent : class, TTaggregateTevent
         where TEntityTeventImplementation : TTaggregateTeventImplementation, TEntityTevent
         where TEntityCreatedTevent : TEntityTevent
-        where TEntity : Entity<TEntity, TEntityId, TEntityTeventImplementation, TEntityTevent, TEntityCreatedTevent, TEntityTeventIdGetterSetter>
+        where TEntity : Entity<TEntity, TEntityId, TEntityTevent, TEntityTeventImplementation, TEntityCreatedTevent, TEntityTeventIdGetterSetter>
         where TEntityTeventIdGetterSetter : IGetSetTaggregateEntityTeventEntityId<TEntityId, TEntityTeventImplementation, TEntityTevent>
     {
         protected Entity(TTaggregate taggregate) : base(taggregate) {}
