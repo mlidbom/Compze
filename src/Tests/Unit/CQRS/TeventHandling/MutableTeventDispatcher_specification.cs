@@ -30,15 +30,15 @@ public static class MutableTeventDispatcher_specification
          public with_2_BeforeHandlers_2_AfterHandlers_and_1_handler_each_per_4_specific_tevent_type()
          {
             _dispatcher.Register()
-                       .IgnoreUnhandled<IIgnoredUserTevent>()
+                       .IgnoreUnhandled<IUserTevent.IIgnoredUserTevent>()
                        .BeforeHandlers(_ => BeforeHandlers1CallOrder = ++CallsMade)
                        .BeforeHandlers(_ => BeforeHandlers2CallOrder = ++CallsMade)
                        .AfterHandlers(_ => AfterHandlers1CallOrder = ++CallsMade)
                        .AfterHandlers(_ => AfterHandlers2CallOrder = ++CallsMade)
-                       .For<IUserCreatedTevent>(_ => UserCreatedCallOrder = ++CallsMade)
-                       .For<IUserRegistered>(_ => ++CallsMade)
-                       .For<IUserSkillsRemoved>(_ => ++CallsMade)
-                       .For<IUserSkillsAdded>(_ => ++CallsMade);
+                       .For<IUserTevent.IUserCreatedTevent>(_ => UserCreatedCallOrder = ++CallsMade)
+                       .For<IUserTevent.IUserRegistered>(_ => ++CallsMade)
+                       .For<IUserTevent.IUserSkillsRemoved>(_ => ++CallsMade)
+                       .For<IUserTevent.IUserSkillsAdded>(_ => ++CallsMade);
          }
 
          [XF] public void when_dispatching_an_ignored_tevent_no_calls_are_made_to_any_handlers()
@@ -72,8 +72,8 @@ public static class MutableTeventDispatcher_specification
             var handler2CallOrder = 0;
 
             _dispatcher.Register()
-                       .For<IUserRegistered>(_ => handler1CallOrder = ++calls)
-                       .For<IUserRegistered>(_ => handler2CallOrder = ++calls);
+                       .For<IUserTevent.IUserRegistered>(_ => handler1CallOrder = ++calls)
+                       .For<IUserTevent.IUserRegistered>(_ => handler2CallOrder = ++calls);
 
             _dispatcher.Dispatch(new UserRegistered());
 
@@ -82,20 +82,22 @@ public static class MutableTeventDispatcher_specification
          }
       }
 
-      interface IUserTevent : ITaggregateTevent;
-      interface IUserCreatedTevent : IUserTevent;
-      interface IUserRegistered : IUserCreatedTevent;
-      interface IUserSkillsTevent : IUserTevent;
-      interface IUserSkillsAdded : IUserSkillsTevent;
-      interface IUserSkillsRemoved : IUserSkillsTevent;
-      interface IIgnoredUserTevent : IUserTevent;
+      interface IUserTevent : ITaggregateTevent
+      {
+         interface IUserCreatedTevent : IUserTevent;
+         interface IUserRegistered : IUserCreatedTevent;
+         interface IUserSkillsTevent : IUserTevent;
+         interface IUserSkillsAdded : IUserSkillsTevent;
+         interface IUserSkillsRemoved : IUserSkillsTevent;
+         interface IIgnoredUserTevent : IUserTevent;
+      }
 
       class UnHandledUserTevent : TaggregateTevent, IUserTevent;
 
-      class IgnoredUserTevent : TaggregateTevent, IIgnoredUserTevent;
+      class IgnoredUserTevent : TaggregateTevent, IUserTevent.IIgnoredUserTevent;
 
-      class UserCreatedTevent : TaggregateTevent, IUserCreatedTevent;
+      class UserCreatedTevent : TaggregateTevent, IUserTevent.IUserCreatedTevent;
 
-      class UserRegistered : TaggregateTevent, IUserRegistered;
+      class UserRegistered : TaggregateTevent, IUserTevent.IUserRegistered;
    }
 }
