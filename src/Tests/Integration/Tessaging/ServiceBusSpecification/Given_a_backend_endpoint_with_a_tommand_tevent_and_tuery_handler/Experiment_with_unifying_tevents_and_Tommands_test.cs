@@ -18,6 +18,7 @@ using System.Threading.Tasks;
 using Compze.Core.Public;
 using Compze.Utilities.Testing.Must;
 
+#pragma warning disable CA1715 //Interfaces without I prefix
 // ReSharper disable MemberCanBeInternal for testing
 // ReSharper disable InconsistentNaming for testing
 #pragma warning disable CA1724 // Type names should not match namespaces

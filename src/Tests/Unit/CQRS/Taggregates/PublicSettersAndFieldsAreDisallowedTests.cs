@@ -9,11 +9,12 @@ using JetBrains.Annotations;
 using static Compze.Utilities.Testing.Must.MustActions;
 
 // ReSharper disable InconsistentNaming
-
+#pragma warning disable CA1715 //Interfaces without I prefix
 // ReSharper disable MemberHidesStaticFromOuterClass
 // ReSharper disable UnusedMember.Local
 // ReSharper disable ObjectCreationAsStatement
 // ReSharper disable MemberCanBeInternal
+#pragma warning disable CS0108 //Hides inherited member.
 #pragma warning disable CA1806 // Do not ignore method results
 #pragma warning disable CA1812 // These types are instantiated via reflection in taggregate infrastructure
 

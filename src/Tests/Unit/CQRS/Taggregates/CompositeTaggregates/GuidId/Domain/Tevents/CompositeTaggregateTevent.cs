@@ -31,13 +31,13 @@ public abstract class CompositeTaggregateTevent : TaggregateTevent, ICompositeTa
 
       internal abstract class NestedComponent : Component, ICompositeTaggregateTevent.Component.NestedComponent
       {
-         public class Renamed(string name) : NestedComponent, ICompositeTaggregateTevent.Component.NestedComponent.Renamed
+         public new class Renamed(string name) : NestedComponent, ICompositeTaggregateTevent.Component.NestedComponent.Renamed
          {
             public string Name { get; } = name;
          }
       }
 
-      public abstract class Entity : Component, ICompositeTaggregateTevent.Component.Entity
+      public new abstract class Entity : Component, ICompositeTaggregateTevent.Component.Entity
       {
          public Guid EntityId { get; protected set; }
 
@@ -49,7 +49,7 @@ public abstract class CompositeTaggregateTevent : TaggregateTevent, ICompositeTa
             public Guid GetId(ICompositeTaggregateTevent.Component.Entity tevent) => tevent.EntityId;
          }
 
-         public class Created : Entity, ICompositeTaggregateTevent.Component.Entity.Created
+         public new class Created : Entity, ICompositeTaggregateTevent.Component.Entity.Created
          {
             public Created(Guid entityId, string name)
             {
@@ -60,7 +60,7 @@ public abstract class CompositeTaggregateTevent : TaggregateTevent, ICompositeTa
             public string Name { get; }
          }
 
-         public class Renamed(string name) : Entity, ICompositeTaggregateTevent.Component.Entity.Renamed
+         public new class Renamed(string name) : Entity, ICompositeTaggregateTevent.Component.Entity.Renamed
          {
             public string Name { get; } = name;
          }
@@ -81,7 +81,7 @@ public abstract class CompositeTaggregateTevent : TaggregateTevent, ICompositeTa
          public Guid GetId(ICompositeTaggregateTevent.Entity tevent) => tevent.EntityId;
       }
 
-      public class Created : Entity, ICompositeTaggregateTevent.Entity.Created
+      public new class Created : Entity, ICompositeTaggregateTevent.Entity.Created
       {
          public Created(Guid entityId, string name)
          {
@@ -104,14 +104,14 @@ public abstract class CompositeTaggregateTevent : TaggregateTevent, ICompositeTa
          public Guid NestedEntityId { get; protected set; }
 
 #pragma warning disable CA1812 // Used via reflection in taggregate infrastructure
-         [UsedImplicitly] public new class IdGetterSetter : NestedEntity, IGetSetTaggregateEntityTeventEntityId<Guid, NestedEntity, ICompositeTaggregateTevent.Entity.NestedEntity>
+         [UsedImplicitly] public new class IdGetterSetter : IGetSetTaggregateEntityTeventEntityId<Guid, NestedEntity, ICompositeTaggregateTevent.Entity.NestedEntity>
 #pragma warning restore CA1812
          {
             public void SetEntityId(NestedEntity tevent, Guid id) => tevent.NestedEntityId = id;
             public Guid GetId(ICompositeTaggregateTevent.Entity.NestedEntity tevent) => tevent.NestedEntityId;
          }
 
-         public class Created : NestedEntity, ICompositeTaggregateTevent.Entity.NestedEntity.Created
+         public new class Created : NestedEntity, ICompositeTaggregateTevent.Entity.NestedEntity.Created
          {
             public Created(Guid id, string name)
             {
@@ -122,12 +122,12 @@ public abstract class CompositeTaggregateTevent : TaggregateTevent, ICompositeTa
             public string Name { get; }
          }
 
-         public class Renamed(string name) : NestedEntity, ICompositeTaggregateTevent.Entity.NestedEntity.Renamed
+         public new class Renamed(string name) : NestedEntity, ICompositeTaggregateTevent.Entity.NestedEntity.Renamed
          {
             public string Name { get; } = name;
          }
 
-         public class Removed : NestedEntity, ICompositeTaggregateTevent.Entity.NestedEntity.Removed;
+         public new class Removed : NestedEntity, ICompositeTaggregateTevent.Entity.NestedEntity.Removed;
       }
    }
 }

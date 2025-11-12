@@ -1,6 +1,8 @@
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using System;
 
+#pragma warning disable CA1715 //Interfaces without I prefix
+#pragma warning disable CS0108 //Hides inherited member.
 // ReSharper disable MemberHidesStaticFromOuterClass
 // ReSharper disable RedundantNameQualifier
 // ReSharper disable InconsistentNaming

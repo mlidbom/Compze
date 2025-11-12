@@ -5,6 +5,7 @@ using Compze.Core.Tessaging.Teventive.TeventStore.Public;
 using JetBrains.Annotations;
 
 namespace Compze.Tests.Unit.CQRS.Taggregates;
+#pragma warning disable CA1812 //Uninstantiated class (used via reflection)
 
 class User : Taggregate<User,IUserTevent, UserTevent, IUserTevent<IUserTevent>, UserTevent<UserTevent>>
 {
