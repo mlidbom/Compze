@@ -35,6 +35,7 @@ class Account : Taggregate<Account, IAccountTevent, AccountTevent, IAccountTeven
    //Called after every call to Publish.
    protected override void AssertInvariantsAreMet()
    {
+      base.AssertInvariantsAreMet();
       Guard.IsNotNull(Email);
       Guard.IsNotNull(Password);
       Guard.IsNotNull(Id);
