@@ -11,6 +11,6 @@ public class Given_a_cat_taggregate_inheriting_from_an_animal_taggregate
 
    [XF] public void dog_birth()
    {
-      var cat = DogTaggregate.RegisterBirth();
+      var dog = DogTaggregate.RegisterBirth();
    }
 }
