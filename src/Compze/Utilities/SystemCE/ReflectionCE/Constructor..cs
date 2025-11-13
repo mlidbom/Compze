@@ -20,13 +20,19 @@ public static partial class Constructor
       }
    }
 
-   internal static class ForGenericType<TGenericType>
-   {
-      // ReSharper disable once StaticMemberInGenericType
-      static readonly ConcurrentDictionary<Type, Func<object, object>> Cache = new();
+   static readonly ConcurrentDictionary<Type, GenericTypeConstructor> GenericTypeConstructors = new();
+   public static GenericTypeConstructor ForGenericType(Type genericType) => GenericTypeConstructors.GetOrAdd(genericType, it => new GenericTypeConstructor(it));
 
-      internal static Func<object, object> WithArgument(Type argumentType) =>
-         Cache.GetOrAdd(argumentType, _ => Compile.ForGenericType<TGenericType>().WithArgument(argumentType));
+   public class GenericTypeConstructor(Type genericType)
+   {
+      readonly Type _genericType = genericType;
+
+      static readonly ConcurrentDictionary<Type, Func<object, object>> ArgumentTypeConstructorCache = new();
+
+      internal Func<object, object> WithArgument(Type argumentType) =>
+         ArgumentTypeConstructorCache.GetOrAdd(argumentType,
+                        _ => Compile.ForGenericType(_genericType).WithArgument(argumentType)
+         );
    }
 
    internal static bool HasDefaultConstructor(Type type) => type.GetConstructor(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, Type.EmptyTypes, null) != null;

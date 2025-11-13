@@ -29,4 +29,7 @@
     <None Remove="Internals\**" />
     <Content Remove="Internals\**" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="CQRS\Taggregates\InheritingTaggregate\" />
+  </ItemGroup>
 </Project>

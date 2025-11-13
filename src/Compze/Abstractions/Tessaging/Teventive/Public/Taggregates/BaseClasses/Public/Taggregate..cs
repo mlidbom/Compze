@@ -24,10 +24,12 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
 {
    static Taggregate() => TaggregateTypeValidator<TTaggregate, TTaggregateTeventImplementation, TTaggregateTevent>.AssertStaticStructureIsValid();
 
-   static TWrapperTeventInterface WrapEvent(TTaggregateTevent @event) =>
-      (TWrapperTeventInterface)Constructor.ForGenericType<TWrapperTeventImplementation>
-                                          .WithArgument(@event.GetType())
-                                          .Invoke(@event);
+   protected virtual Type WrapperTEventImplementation => typeof(TWrapperTeventImplementation);
+
+   TWrapperTeventInterface WrapEvent(TTaggregateTevent tevent) =>
+      (TWrapperTeventInterface)Constructor.ForGenericType(WrapperTEventImplementation)
+                                          .WithArgument(tevent.GetType())
+                                          .Invoke(tevent);
 
    //Yes null. Id should be assigned by an action, and it should be obvious that the taggregate in invalid until that happens. It's a bit ugly to declare Id as non-null, but a null value will never escape the property due to contract validation
    protected Taggregate() : this(null!)
