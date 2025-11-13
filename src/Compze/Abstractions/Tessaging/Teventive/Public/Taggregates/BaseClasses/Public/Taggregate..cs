@@ -55,41 +55,43 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
 
    readonly List<TTaggregateTeventImplementation> _teventsPublishedDuringCurrentPublishCallIncludingReentrantCallsFromTeventHandlers = [];
 
-   protected TTevent Publish<TTevent>(TTevent theTevent) where TTevent : TTaggregateTeventImplementation
+   protected TTevent Publish<TTevent>(TTevent tevent) where TTevent : TTaggregateTeventImplementation
    {
       Assert.State.Is(!_applyingTevents, () => "You cannot raise tevents from within tevent appliers");
+
+      var wrapped = WrapEvent(tevent);
 
       using(ScopedChange.Enter(() => _reentrancyLevel++, () => _reentrancyLevel--))
       {
 #pragma warning disable CS0618 // Type or member is obsolete
-         ((IMutableTaggregateTevent)theTevent).SetTaggregateVersionInternal(Version + 1);
-         ((IMutableTaggregateTevent)theTevent).SetUtcTimeStampInternal(UtcTimeSource.UtcNow);
+         ((IMutableTaggregateTevent)tevent).SetTaggregateVersionInternal(Version + 1);
+         ((IMutableTaggregateTevent)tevent).SetUtcTimeStampInternal(UtcTimeSource.UtcNow);
          if(Version == 0)
          {
-            if(theTevent is not ITaggregateCreatedTevent) throw new Exception($"The first published tevent {theTevent.GetType()} did not implement {nameof(ITaggregateCreatedTevent)}. The first tevent an taggregate publishes must always implement {nameof(ITaggregateCreatedTevent)}.");
-            if(theTevent.TaggregateId is null)
+            if(tevent is not ITaggregateCreatedTevent) throw new Exception($"The first published tevent {tevent.GetType()} did not implement {nameof(ITaggregateCreatedTevent)}. The first tevent an taggregate publishes must always implement {nameof(ITaggregateCreatedTevent)}.");
+            if(tevent.TaggregateId is null)
                throw new Exception($"{nameof(ITaggregateTevent.TaggregateId)} was null in {nameof(ITaggregateCreatedTevent)}");
-            ((IMutableTaggregateTevent)theTevent).SetTaggregateVersionInternal(1);
+            ((IMutableTaggregateTevent)tevent).SetTaggregateVersionInternal(1);
          } else
          {
-            if(theTevent.TaggregateId is not null && theTevent.TaggregateId != Id) throw new ArgumentOutOfRangeException($"Tried to raise tevent for Taggregated: {theTevent.TaggregateId} from Taggregate with Id: {Id}.");
-            ((IMutableTaggregateTevent)theTevent).SetTaggregateIdInternal(Id);
+            if(tevent.TaggregateId is not null && tevent.TaggregateId != Id) throw new ArgumentOutOfRangeException($"Tried to raise tevent for Taggregated: {tevent.TaggregateId} from Taggregate with Id: {Id}.");
+            ((IMutableTaggregateTevent)tevent).SetTaggregateIdInternal(Id);
          }
 #pragma warning restore CS0618 // Type or member is obsolete
-         ApplyTevent(theTevent);
-         _unCommittedTevents.Add(theTevent);
-         _teventsPublishedDuringCurrentPublishCallIncludingReentrantCallsFromTeventHandlers.Add(theTevent);
-         _teventHandlersDispatcher.Dispatch(WrapEvent(theTevent));
+         ApplyTevent(tevent);
+         _unCommittedTevents.Add(tevent);
+         _teventsPublishedDuringCurrentPublishCallIncludingReentrantCallsFromTeventHandlers.Add(tevent);
+         _teventHandlersDispatcher.Dispatch(wrapped);
       }
 
       if(_reentrancyLevel == 0)
       {
          AssertInvariantsAreMetInternal(); //It is allowed to enter a temporarily invalid state that will be corrected by new tevents published by tevent handlers. So we only check invariants once this tevent has been fully published including tevents published by handlers of the original tevent.
-         foreach(var tevent in _teventsPublishedDuringCurrentPublishCallIncludingReentrantCallsFromTeventHandlers) _teventStream.OnNext(tevent);
+         foreach(var it in _teventsPublishedDuringCurrentPublishCallIncludingReentrantCallsFromTeventHandlers) _teventStream.OnNext(it);
          _teventsPublishedDuringCurrentPublishCallIncludingReentrantCallsFromTeventHandlers.Clear();
       }
 
-      return theTevent;
+      return tevent;
    }
 
    protected ITeventHandlerRegistrar<TTaggregateTevent> RegisterTeventAppliers() => _teventAppliersDispatcher.Register();
