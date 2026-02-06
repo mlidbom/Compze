@@ -3,7 +3,7 @@ using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
 namespace Compze.Utilities.SystemCE;
 
-class LazyCE<TValue>(Func<TValue> factory)
+public class LazyCE<TValue>(Func<TValue> factory)
    where TValue : class
 {
    readonly IMonitorCE _monitor = IMonitorCE.WithDefaultTimeout();
@@ -13,4 +13,6 @@ class LazyCE<TValue>(Func<TValue> factory)
    public TValue Value => _monitor.DoubleCheckedLocking(() => _value, () => _value = _factory());
 
    public TValue? ValueIfInitialized() => _value;
+
+   public void Reset() => _value = null;
 }
