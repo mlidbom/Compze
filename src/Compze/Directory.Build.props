@@ -71,5 +71,13 @@
       <InternalsVisibleTo Include="Compze.Utilities.Testing.XUnit.Tests" />
       <InternalsVisibleTo Include="Compze.Utilities.Threading.Testing" />
       <InternalsVisibleTo Include="Compze.Wiring" />
+
+      <InternalsVisibleTo Include="JAStudio.Core" />
+      <InternalsVisibleTo Include="JAStudio.Core.Tests" />
+      <InternalsVisibleTo Include="JAStudio.PythonInterop" />
+      <InternalsVisibleTo Include="JAStudio.UI" />
+      <InternalsVisibleTo Include="JAStudio.UI.DesktopHost" />
+      <InternalsVisibleTo Include="JAStudio.UI.Tests" />
+      
    </ItemGroup>
 </Project>
