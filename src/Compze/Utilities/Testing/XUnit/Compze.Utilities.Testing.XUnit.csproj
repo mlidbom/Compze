@@ -3,6 +3,8 @@
       <TargetFramework>net9.0</TargetFramework>
       <Nullable>enable</Nullable>
       <IsTestProject>false</IsTestProject>
+      <Version>0.1.0-alpha.1</Version>
+      <Description>xUnit testing utilities and attributes for the Compze framework.</Description>
    </PropertyGroup>
    <ItemGroup>
       <ProjectReference Include="..\..\Compze.Utilities.csproj" />

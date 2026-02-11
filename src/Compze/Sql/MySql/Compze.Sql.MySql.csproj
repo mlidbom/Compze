@@ -2,6 +2,8 @@
    <PropertyGroup>
       <TargetFramework>net9.0</TargetFramework>
       <Nullable>enable</Nullable>
+      <Version>0.1.0-alpha.1</Version>
+      <Description>MySQL database support for the Compze framework.</Description>
    </PropertyGroup>
    <ItemGroup>
       <ProjectReference Include="..\..\Abstractions\Compze.Core.csproj" />
