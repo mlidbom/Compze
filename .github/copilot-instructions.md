@@ -3,7 +3,7 @@
 ## Repository Overview
 
 Compze is a .NET framework for building expressive domains through:
-- **Teventive programming**: Type-routed events that leverage .NET type compatibility for elegant event modeling
+- **Teventive programming**: Type-routed events (also called "Semantic Events" in documentation) that leverage .NET type compatibility for elegant event modeling
 - **Typermedia APIs**: Type-based message routing that extends hypermedia principles with .NET types
 
 ## Tech Stack
