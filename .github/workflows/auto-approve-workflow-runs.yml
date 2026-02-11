@@ -1,0 +1,15 @@
+name: Auto Approve Workflow Runs
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '*/5 * * * *'
+
+jobs:
+  auto-approve:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: mheap/automatic-approve-action@851272ecb1e93d215b9ab3c16278d434a4fd775b
+        with:
+          token: ${{ secrets.AUTO_APPROVE_WORKFLOWS_PERSONAL_ACCESS_TOKEN }}
+          workflows: "ci.yml"
