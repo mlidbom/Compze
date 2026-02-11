@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    env:
+      COMPOSABLE_MACHINE_SLOWNESS: "5.0"
+      DOTNET_CLI_TELEMETRY_OPTOUT: "1"
+      DOTNET_NOLOGO: "true"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Configure test pluggable components
+        run: cp src/TestUsingPluggableComponentCombinations.github-ci src/TestUsingPluggableComponentCombinations
+
+      - name: Build
+        run: dotnet build src/Compze.slnx
+
+      - name: Test
+        run: dotnet test src/Compze.slnx --no-build
