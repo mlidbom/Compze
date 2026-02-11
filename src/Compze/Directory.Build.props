@@ -3,8 +3,22 @@
    <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
 
    <PropertyGroup>
-
+      <Authors>Lidbom Solutions AB</Authors>
+      <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+      <PackageProjectUrl>https://github.com/mlidbom/Compze</PackageProjectUrl>
+      <RepositoryUrl>https://github.com/mlidbom/Compze.git</RepositoryUrl>
+      <RepositoryType>git</RepositoryType>
+      <PackageTags>compze;messaging;event-sourcing;cqrs</PackageTags>
+      <Copyright>Copyright (c) Lidbom Solutions AB. All rights reserved.</Copyright>
+      <PublishRepositoryUrl>true</PublishRepositoryUrl>
+      <EmbedUntrackedSources>true</EmbedUntrackedSources>
+      <IncludeSymbols>true</IncludeSymbols>
+      <SymbolPackageFormat>snupkg</SymbolPackageFormat>
    </PropertyGroup>
+
+   <ItemGroup>
+      <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
+   </ItemGroup>
 
    <ItemGroup>
       <!-- InternalsVisibleTo for all Compze assemblies -->

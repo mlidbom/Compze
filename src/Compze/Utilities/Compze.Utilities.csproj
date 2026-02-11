@@ -3,6 +3,8 @@
 	<PropertyGroup>
 		<TargetFramework>net9.0</TargetFramework>
 		<Nullable>enable</Nullable>
+		<Version>0.1.0-alpha.1</Version>
+		<Description>Core utilities for the Compze framework including dependency injection abstractions, system extensions, and threading helpers.</Description>
 	</PropertyGroup>
 	<ItemGroup>
       <PackageReference Include="JetBrains.Annotations" Version="2025.2.2" />

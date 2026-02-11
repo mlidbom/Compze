@@ -2,6 +2,8 @@
    <PropertyGroup>
       <TargetFramework>net9.0</TargetFramework>
       <Nullable>enable</Nullable>
+      <Version>0.1.0-alpha.1</Version>
+      <Description>Messaging infrastructure for the Compze framework including command, query, and event handling.</Description>
    </PropertyGroup>
    <ItemGroup>
       <ProjectReference Include="..\Sql\Common\Compze.Sql.Common.csproj" />

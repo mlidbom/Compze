@@ -3,6 +3,8 @@
    <PropertyGroup>
       <TargetFramework>net9.0</TargetFramework>
       <Nullable>enable</Nullable>
+      <Version>0.1.0-alpha.1</Version>
+      <Description>Serilog logging integration for the Compze framework.</Description>
    </PropertyGroup>
    <ItemGroup>
       <PackageReference Include="Serilog" Version="4.3.0" />
