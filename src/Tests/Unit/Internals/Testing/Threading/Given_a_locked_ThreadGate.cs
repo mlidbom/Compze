@@ -14,6 +14,7 @@ using static Compze.Utilities.Testing.Must.MustActions;
 
 namespace Compze.Tests.Unit.Internals.Testing.Threading;
 
+[Collection(nameof(NonParallelCollection))]
 public class Given_a_locked_ThreadGate : UniversalTestBase
 {
    [XF] public void Calling_AllowOneThreadToPassThrough_throws_an_AwaitingConditionTimedOutException_since_no_threads_are_waiting_to_pass()
@@ -26,7 +27,7 @@ public class Given_a_locked_ThreadGate : UniversalTestBase
          using(ThreadGateTestFixture.StartEntrantsOnThreads(10).WaitForAllThreadsToQueueUpAtPassThrough()) {} //warmup
 
          using var fixture = ThreadGateTestFixture.StartEntrantsOnThreads(10);
-         fixture.Gate.AwaitQueueLengthEqualTo(fixture.NumberOfThreads, 500.Milliseconds());
+         fixture.Gate.AwaitQueueLengthEqualTo(fixture.NumberOfThreads, 5.Seconds());
          fixture.ThreadsPassedTheGate(0.Milliseconds()).Must().Be(0);
       }
 

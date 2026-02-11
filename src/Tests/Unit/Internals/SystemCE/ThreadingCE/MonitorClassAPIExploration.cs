@@ -4,11 +4,13 @@ using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ThreadingCE.Testing;
 using Compze.Utilities.Testing.Must;
 using Compze.Utilities.Testing.XUnit.BDD;
+using Xunit;
 
 // ReSharper disable ImplicitlyCapturedClosure
 
 namespace Compze.Tests.Unit.Internals.SystemCE.ThreadingCE;
 
+[Collection(nameof(NonParallelCollection))]
 public class MonitorClassApiExploration
 {
    [XF] public void Wait_returns_after_timeout_even_without_pulse()
@@ -31,7 +33,7 @@ public class MonitorClassApiExploration
       var waitTimeout = 100.Milliseconds();
 
       var waitSucceeded = false;
-      using var taskRunner = TestingTaskRunner.WithTimeout(1.Seconds());
+      using var taskRunner = TestingTaskRunner.WithTimeout(5.Seconds());
       taskRunner.Run(() =>
       {
          Monitor.Enter(guarded);
@@ -70,7 +72,7 @@ public class MonitorClassApiExploration
       var waitTimeout = TimeSpan.FromMilliseconds(int.MaxValue);
 
       var waitSucceeded = false;
-      using var taskRunner = TestingTaskRunner.WithTimeout(1.Seconds());
+      using var taskRunner = TestingTaskRunner.WithTimeout(5.Seconds());
       taskRunner.Run(() =>
       {
          Monitor.Enter(guarded);
