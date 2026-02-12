@@ -1,6 +1,6 @@
 <Project>
   <UsingTask TaskName="CircularLibraryDependencySourceRewriter.RewriteDirectoryTask"
-             AssemblyFile="$(MSBuildThisFileDirectory)..\src\CircularLibraryDependencySourceRewriter\bin\$(Configuration)\net9.0\CircularLibraryDependencySourceRewriter.dll" />
+             AssemblyFile="$(MSBuildThisFileDirectory)bin\$(Configuration)\net9.0\CircularLibraryDependencySourceRewriter.dll" />
 
   <Target Name="RewriteInternalizedSource"
           BeforeTargets="CoreCompile"

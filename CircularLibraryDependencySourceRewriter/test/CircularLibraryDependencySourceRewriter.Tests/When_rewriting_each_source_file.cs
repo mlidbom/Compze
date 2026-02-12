@@ -12,11 +12,18 @@ public class When_rewriting_each_source_file
    static readonly string InputDir = Path.Combine(TestProjectDir, "input_source");
    static readonly string OutputDir = Path.Combine(TestProjectDir, "output_source");
 
+   static readonly string[] ExcludedDirectories = ["bin", "obj", "InternalizedSource"];
+
    public static TheoryData<string> SourceFiles()
    {
       var data = new TheoryData<string>();
       foreach(var file in Directory.EnumerateFiles(InputDir, "*.cs", SearchOption.AllDirectories))
-         data.Add(Path.GetRelativePath(InputDir, file));
+      {
+         var relativePath = Path.GetRelativePath(InputDir, file);
+         var firstSegment = relativePath.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)[0];
+         if(!ExcludedDirectories.Contains(firstSegment, StringComparer.OrdinalIgnoreCase))
+            data.Add(relativePath);
+      }
       return data;
    }
 

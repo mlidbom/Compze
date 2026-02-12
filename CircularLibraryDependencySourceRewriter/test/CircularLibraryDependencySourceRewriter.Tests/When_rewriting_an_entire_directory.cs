@@ -23,7 +23,6 @@ public class When_rewriting_an_entire_directory : IDisposable
 
    static string[] RelativeFiles(string dir) =>
       Directory.EnumerateFiles(dir, "*.cs", SearchOption.AllDirectories)
-               .Where(f => !f.Contains($"{Path.DirectorySeparatorChar}obj{Path.DirectorySeparatorChar}"))
                .Select(f => Path.GetRelativePath(dir, f))
                .Order()
                .ToArray();
