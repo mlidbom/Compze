@@ -6,7 +6,9 @@ namespace Compze.Utilities.SystemCE.TransactionsCE;
 
 ///<summary>Getting the code for participating in a transaction right is surprisingly tricky and the failures very hard to diagnose.
 /// Use this class for all our transaction participants so we only have to get it right once.</summary>
+#pragma warning disable CA1033 // Abstract class with explicit interface implementation — protected virtual methods expose functionality to derived classes
 public abstract class VolatileTransactionParticipant : IEnlistmentNotification
+#pragma warning restore CA1033
 {
    readonly EnlistmentOptions _enlistmentOptions;
    protected VolatileTransactionParticipant(EnlistmentOptions enlistmentOptions = EnlistmentOptions.None) => _enlistmentOptions = enlistmentOptions;

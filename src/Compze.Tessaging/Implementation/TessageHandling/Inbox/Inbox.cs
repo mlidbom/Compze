@@ -19,6 +19,7 @@ public static class InboxRegistrar
       => registrar.Register(TessageHandling.Inbox.Inbox.RegisterWith);
 }
 
+#pragma warning disable CA1724 // Type name intentionally matches namespace concept
 [UsedImplicitly] partial class Inbox : IInbox, IAsyncDisposable
 {
    public static void RegisterWith(IComponentRegistrar registrar)

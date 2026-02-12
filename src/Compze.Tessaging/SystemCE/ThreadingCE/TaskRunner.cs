@@ -23,18 +23,18 @@ public interface ITaskRunner
 public static class TaskRunnerRegistrar
 {
    public static IComponentRegistrar TaskRunner(this IComponentRegistrar registrar)
-      => registrar.Register(TaskRunnerImpl.RegisterWith);
+      => registrar.Register(TaskRunnerCore.RegisterWith);
 
-   public class TaskRunnerImpl : ITaskRunner, IDisposable
+   public class TaskRunnerCore : ITaskRunner, IDisposable
    {
       public static void RegisterWith(IComponentRegistrar registrar)
-         => registrar.Register(Singleton.For<ITaskRunner>().CreatedBy((IBackgroundExceptionReporter exceptionReporter) => new TaskRunnerImpl(exceptionReporter)));
+         => registrar.Register(Singleton.For<ITaskRunner>().CreatedBy((IBackgroundExceptionReporter exceptionReporter) => new TaskRunnerCore(exceptionReporter)));
 
       readonly IBackgroundExceptionReporter _exceptionReporter;
       readonly IThreadShared<List<Thread>> _threads = IThreadShared.WithDefaultTimeouts(new List<Thread>());
       readonly IThreadShared<HashSet<Task>> _inProgressTasks = IThreadShared.WithDefaultTimeouts(new HashSet<Task>());
 
-      TaskRunnerImpl(IBackgroundExceptionReporter exceptionReporter) => _exceptionReporter = exceptionReporter;
+      TaskRunnerCore(IBackgroundExceptionReporter exceptionReporter) => _exceptionReporter = exceptionReporter;
 
       public void Run(string taskName, Action action)
       {

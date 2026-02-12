@@ -15,7 +15,9 @@ namespace Compze.Tessaging.Implementation.Abstractions;
 
 public static class TessageTypesInternal
 {
+#pragma warning disable CA1040 // Marker interface used for type-routing
    public interface ITessage;
+#pragma warning restore CA1040
 
    public class EndpointInformationTuery : TessageTypesInternal.ITessage, IRemotableTuery<EndpointInformation>;
 

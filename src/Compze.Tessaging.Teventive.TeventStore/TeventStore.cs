@@ -20,6 +20,7 @@ using JetBrains.Annotations;
 
 namespace Compze.Tessaging.Teventive.TeventStore;
 
+#pragma warning disable CA1724 // Type name intentionally matches namespace concept
 [UsedImplicitly] partial class TeventStore : ITeventStore
 {
    readonly ITypeMapper _typeMapper;
@@ -51,9 +52,9 @@ namespace Compze.Tessaging.Teventive.TeventStore;
       _sqlLayer = sqlLayer;
    }
 
-   public IReadOnlyList<ITaggregateTevent> GetTaggregateHistoryForUpdate(TaggregateId taggregateId) => GetTaggregateHistoryInternal(taggregateId: taggregateId, takeWriteLock: true);
+   public IReadOnlyList<ITaggregateTevent> GetTaggregateHistoryForUpdate(TaggregateId id) => GetTaggregateHistoryInternal(taggregateId: id, takeWriteLock: true);
 
-   public IReadOnlyList<ITaggregateTevent> GetTaggregateHistory(TaggregateId taggregateId) => GetTaggregateHistoryInternal(taggregateId, takeWriteLock: false);
+   public IReadOnlyList<ITaggregateTevent> GetTaggregateHistory(TaggregateId id) => GetTaggregateHistoryInternal(id, takeWriteLock: false);
 
    IReadOnlyList<ITaggregateTevent> GetTaggregateHistoryInternal(TaggregateId taggregateId, bool takeWriteLock)
    {
@@ -145,22 +146,22 @@ namespace Compze.Tessaging.Teventive.TeventStore;
       }
    }
 
-   public void SaveSingleTaggregateTevents(IReadOnlyList<ITaggregateTevent> taggregateTevents)
+   public void SaveSingleTaggregateTevents(IReadOnlyList<ITaggregateTevent> tevents)
    {
       _usageGuard.EnsureAccessValid();
       _sqlLayer.SetupSchemaIfDatabaseUnInitialized();
 
-      var taggregateId = taggregateTevents[0].TaggregateId;
+      var taggregateId = tevents[0].TaggregateId;
 
-      if(taggregateTevents.Any(it => it.TaggregateId != taggregateId))
+      if(tevents.Any(it => it.TaggregateId != taggregateId))
       {
          throw new ArgumentException("Got tevents from multiple Taggregates. This is not supported.");
       }
 
       var cacheEntry = _cache.Get(taggregateId);
-      var specifications = taggregateTevents.Select(tevent => cacheEntry.CreateInsertionSpecificationForNewTevent(tevent)).ToArray();
+      var specifications = tevents.Select(tevent => cacheEntry.CreateInsertionSpecificationForNewTevent(tevent)).ToArray();
 
-      var teventRows = taggregateTevents
+      var teventRows = tevents
                      .Select(tevent => new TeventDataRow(specification: cacheEntry.CreateInsertionSpecificationForNewTevent(tevent), _typeMapper.GetId(tevent.GetType()), teventAsJson: _serializer.Serialize((TaggregateTevent)tevent)))
                      .ToList();
 
@@ -168,7 +169,7 @@ namespace Compze.Tessaging.Teventive.TeventStore;
       _sqlLayer.InsertSingleTaggregateTevents(teventRows);
 
       var completeTaggregateHistory = cacheEntry
-                                    .Tevents.Concat(taggregateTevents)
+                                    .Tevents.Concat(tevents)
                                     .Cast<TaggregateTevent>()
                                     .ToArray();
       SingleTaggregateInstanceTeventStreamMutator.AssertMigrationsAreIdempotent(_migrationFactories, completeTaggregateHistory);
@@ -187,14 +188,14 @@ namespace Compze.Tessaging.Teventive.TeventStore;
       _sqlLayer.DeleteTaggregate(taggregateId);
    }
 
-   public IEnumerable<TaggregateId> StreamTaggregateIdsInCreationOrder(Type? teventBaseType = null)
+   public IEnumerable<TaggregateId> StreamTaggregateIdsInCreationOrder(Type? teventType = null)
    {
-      Assert.Argument.Is(teventBaseType == null || teventBaseType.IsInterface && typeof(ITaggregateTevent).IsAssignableFrom(teventBaseType));
+      Assert.Argument.Is(teventType == null || teventType.IsInterface && typeof(ITaggregateTevent).IsAssignableFrom(teventType));
       _usageGuard.EnsureAccessValid();
 
       _sqlLayer.SetupSchemaIfDatabaseUnInitialized();
       return _sqlLayer.ListTaggregateIdsInCreationOrder()
-                              .Where(it => teventBaseType == null || teventBaseType.IsAssignableFrom(_typeMapper.GetType(new TypeId(it.TypeId))))
+                              .Where(it => teventType == null || teventType.IsAssignableFrom(_typeMapper.GetType(new TypeId(it.TypeId))))
                               .Select(it => it.TaggregateId);
    }
 

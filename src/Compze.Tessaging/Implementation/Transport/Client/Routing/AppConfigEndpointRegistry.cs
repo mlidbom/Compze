@@ -13,7 +13,7 @@ public class AppConfigEndpointRegistry(IConfigurationParameterProvider settingsP
    readonly IConfigurationParameterProvider _settingsProvider = settingsProvider;
 #pragma warning restore CA1823
 
-   public IEnumerable<IEndpoint> ServerEndpoints => throw new NotImplementedException();
+   public IEnumerable<IEndpoint> ServerEndpoints => throw new NotSupportedException();
    // var configurationValue = _settingsProvider.GetString("ServerEndpoints");
    // var addresses = configurationValue.Split(';')
    //                                   .Select(stringValue => stringValue.Trim())

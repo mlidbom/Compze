@@ -65,7 +65,7 @@ public class ComponentRegistration<TService> : ComponentRegistration where TServ
       );
    }
 
-   public override object Resolve(IServiceLocator locator) => locator.Resolve<TService>();
+   public override object Resolve(IServiceLocator serviceLocator) => serviceLocator.Resolve<TService>();
 
    public ComponentRegistration(Lifestyle lifestyle,
                                   IEnumerable<Type> serviceTypes,

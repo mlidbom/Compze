@@ -56,16 +56,16 @@ public class TypeMapper : ITypeMapper
       });
    }
 
-   public Type GetType(TypeId typeId)
+   public Type GetType(TypeId teventTypeId)
    {
       return State.Read(state =>
       {
-         if(state.TypeIdToTypeMap.TryGetValue(typeId, out var type))
+         if(state.TypeIdToTypeMap.TryGetValue(teventTypeId, out var type))
          {
             return type;
          }
 
-         throw new Exception($"Could not find type for {nameof(TypeId)}: {typeId}");
+         throw new Exception($"Could not find type for {nameof(TypeId)}: {teventTypeId}");
       });
    }
 

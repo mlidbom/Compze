@@ -10,12 +10,12 @@ namespace Compze.Tessaging.SystemCE.ThreadingCE;
 public static class BackgroundExceptionReporterRegistrar
 {
    public static IComponentRegistrar BackgroundExceptionReporter(this IComponentRegistrar registrar)
-      => registrar.Register(BackgroundExceptionReporterImpl.RegisterWith);
+      => registrar.Register(BackgroundExceptionReporterCore.RegisterWith);
 
-   public class BackgroundExceptionReporterImpl : IBackgroundExceptionReporter
+   public class BackgroundExceptionReporterCore : IBackgroundExceptionReporter
    {
       public static void RegisterWith(IComponentRegistrar registrar)
-         => registrar.Register(Singleton.For<IBackgroundExceptionReporter>().CreatedBy(() => new BackgroundExceptionReporterImpl()));
+         => registrar.Register(Singleton.For<IBackgroundExceptionReporter>().CreatedBy(() => new BackgroundExceptionReporterCore()));
 
       readonly IThreadShared<List<Exception>> _collectedExceptions = IThreadShared.WithDefaultTimeouts(new List<Exception>());
 
@@ -24,7 +24,7 @@ public static class BackgroundExceptionReporterRegistrar
          _collectedExceptions.Update(it => it.Add(exception));
          try
          {
-            CompzeLogger.For<BackgroundExceptionReporterImpl>().Error(exception, "Exception thrown on background thread.");
+            CompzeLogger.For<BackgroundExceptionReporterCore>().Error(exception, "Exception thrown on background thread.");
          }
 #pragma warning disable CA1031 //This is specifically designed for making sure that exceptions thrown in places where they cannot be surfaced directly, are not just ignored
          catch(Exception loggingException)

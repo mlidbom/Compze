@@ -26,7 +26,9 @@ public class ReentrancyGuard
       }
    }
 
+#pragma warning disable CA1024 // Method is appropriate — has side effects (clears flag)
    public bool GetAndClearReentryWasAttempted()
+#pragma warning restore CA1024
    {
       using(new Disposable(() => _reentryWasAttempted = false))
       {

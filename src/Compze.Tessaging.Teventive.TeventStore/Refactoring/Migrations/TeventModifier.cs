@@ -65,7 +65,7 @@ public class TeventModifier(Action<IReadOnlyList<TeventModifier.RefactoredTevent
 
    }
 
-   public void Replace(params TaggregateTevent[] replacementTevents)
+   public void Replace(params TaggregateTevent[] tevents)
    {
       AssertNoPriorModificationsHaveBeenMade();
       if(_inspectedTevent is EndOfTaggregateHistoryTeventPlaceHolder)
@@ -74,7 +74,7 @@ public class TeventModifier(Action<IReadOnlyList<TeventModifier.RefactoredTevent
 
       }
 
-      _replacementTevents = replacementTevents.Select(tevent => new RefactoredTevent(tevent, new TaggregateTeventStorageInformation())).ToArray();
+      _replacementTevents = tevents.Select(tevent => new RefactoredTevent(tevent, new TaggregateTeventStorageInformation())).ToArray();
 
       _replacementTevents.ForEach(
          (e, index) =>
@@ -90,7 +90,7 @@ public class TeventModifier(Action<IReadOnlyList<TeventModifier.RefactoredTevent
          });
 #pragma warning restore CS0618 // Type or member is obsolete
 
-        CurrentNode = CurrentNode.Replace(replacementTevents);
+        CurrentNode = CurrentNode.Replace(tevents);
       _teventsAddedCallback.Invoke(_replacementTevents);
    }
 
@@ -160,5 +160,7 @@ public class TeventModifier(Action<IReadOnlyList<TeventModifier.RefactoredTevent
 #pragma warning restore CS0618 // Type or member is obsolete
     }
 
+#pragma warning disable CA1819 // Array property needed for migration tevent history
     public TaggregateTevent[] MutatedHistory => Tevents?.ToArray() ?? [Assert.Result.NotNull(_inspectedTevent).then(_inspectedTevent)];
+#pragma warning restore CA1819
 }

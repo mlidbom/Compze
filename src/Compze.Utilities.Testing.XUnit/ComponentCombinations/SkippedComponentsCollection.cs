@@ -4,7 +4,9 @@ using System.Linq;
 
 namespace Compze.Utilities.Testing.XUnit.ComponentCombinations;
 
+#pragma warning disable CA1711 // Name accurately describes a collection of skip specifications
 public class SkipComponentSpecificationsCollection
+#pragma warning restore CA1711
 {
    readonly IReadOnlyList<SkipComponentSpecification> _skippedComponents;
 

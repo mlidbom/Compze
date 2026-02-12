@@ -28,7 +28,7 @@ public static class TessageHandlerRegistryRegistrar
 }
 
 //performance: Use static caching + indexing trick for storing and retrieving values throughout this class. TueryTypeIndexFor<TTuery>.Index. Etc
-public class TessageHandlerRegistry(ITypeMapper typeMapper) : ITessageHandlerRegistrar, ITessageHandlerRegistry
+public sealed class TessageHandlerRegistry(ITypeMapper typeMapper) : ITessageHandlerRegistrar, ITessageHandlerRegistry
 {
    readonly ITypeMapper _typeMapper = typeMapper;
    IReadOnlyDictionary<Type, Action<object>> _tommandHandlers = new Dictionary<Type, Action<object>>();
@@ -93,7 +93,7 @@ public class TessageHandlerRegistry(ITypeMapper typeMapper) : ITessageHandlerReg
 
    public Action<ITommand> GetTommandHandler(Type tommandType) => _tommandHandlers[tommandType];
 
-   public Func<ITuery<object>, object> GetTueryHandler(Type tueryType) => _tueryHandlers[tueryType].HandlerMethod;
+   public Func<ITuery<object>, object> GetTueryHandler(Type tommandType) => _tueryHandlers[tommandType].HandlerMethod;
 
    //performance: Use static caching trick.
    public IReadOnlyList<Action<ITevent>> GetTeventHandlers(Type teventType) => _teventHandlers.Where(it => it.Key.IsAssignableFrom(teventType)).SelectMany(it => it.Value).ToList();

@@ -70,18 +70,18 @@ public partial class RoutingInboxClient : IRoutingInboxClient, IDisposable
    public IReadOnlyList<IInboxConnection> SubscriberConnectionsFor(IExactlyOnceTevent tevent) =>
       AssertRunning().then(() => _inboxConnectionRouter.SubscriberConnectionsFor(tevent));
 
-   public async Task PostAsync(IAtMostOnceTypermediaTommand atMostOnceTommand)
+   public async Task PostAsync(IAtMostOnceTypermediaTommand tommand)
    {
       AssertRunning();
-      var connection = _inboxConnectionRouter.ConnectionToHandlerFor(atMostOnceTommand);
-      await connection.PostAsync(atMostOnceTommand).caf();
+      var connection = _inboxConnectionRouter.ConnectionToHandlerFor(tommand);
+      await connection.PostAsync(tommand).caf();
    }
 
-   public async Task<TTommandResult> PostAsync<TTommandResult>(IAtMostOnceTommand<TTommandResult> atMostOnceTypermediaTommand)
+   public async Task<TTommandResult> PostAsync<TTommandResult>(IAtMostOnceTommand<TTommandResult> typermediaTommand)
    {
       AssertRunning();
-      var connection = _inboxConnectionRouter.ConnectionToHandlerFor(atMostOnceTypermediaTommand);
-      return await connection.PostAsync(atMostOnceTypermediaTommand).caf();
+      var connection = _inboxConnectionRouter.ConnectionToHandlerFor(typermediaTommand);
+      return await connection.PostAsync(typermediaTommand).caf();
    }
 
    public async Task<TTueryResult> GetAsync<TTueryResult>(IRemotableTuery<TTueryResult> tuery)

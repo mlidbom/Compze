@@ -8,6 +8,7 @@ using JetBrains.Annotations;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Http;
 
+#pragma warning disable CA1812 // Instantiated via JSON deserialization
 [UsedImplicitly] class ProblemDetails
 {
    public string Type { get; set; } = "";

@@ -16,7 +16,7 @@ namespace Compze.Core.Tessaging.Teventive.Infrastructure.EventDispatching;
 /// </summary>
 public partial class CallMatchingHandlersInRegistrationOrderTeventDispatcher<TTevent> where TTevent : class, ITevent
 {
-   public class RegistrationBuilder(CallMatchingHandlersInRegistrationOrderTeventDispatcher<TTevent> owner) : ITeventHandlerRegistrar<TTevent>
+   public sealed class RegistrationBuilder(CallMatchingHandlersInRegistrationOrderTeventDispatcher<TTevent> owner) : ITeventHandlerRegistrar<TTevent>
    {
       readonly CallMatchingHandlersInRegistrationOrderTeventDispatcher<TTevent> _owner = owner;
 

@@ -22,6 +22,7 @@ public static class OutboxRegistrar
       => registrar.Register(Implementation.Outbox.Outbox.RegisterWith);
 }
 
+#pragma warning disable CA1724 // Type name intentionally matches namespace concept
 public partial class Outbox : IOutbox
 {
    public static void RegisterWith(IComponentRegistrar registrar)

@@ -20,7 +20,9 @@ public class TestCaseDetails(
 {
    public string TestCaseDisplayName => details.TestCaseDisplayName;
    public bool Explicit => details.Explicit;
+#pragma warning disable CA1819 // Array property mirrors xUnit's own API shape
    public Type[]? SkipExceptions => details.SkipExceptions;
+#pragma warning restore CA1819
    public string? SkipReason => details.SkipReason;
    public Type? SkipType => details.SkipType;
    public string? SkipUnless => details.SkipUnless;

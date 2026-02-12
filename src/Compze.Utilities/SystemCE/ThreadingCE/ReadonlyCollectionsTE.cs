@@ -5,6 +5,7 @@ using Compze.Utilities.Functional;
 
 namespace Compze.Utilities.SystemCE.ThreadingCE;
 
+#pragma warning disable CA1002 // Utility extension methods returning List by design for copy-and-add pattern
 public static class ReadonlyCollectionsTE
 {
    public static Dictionary<TKey, TValue> AddToCopy<TKey, TValue>(this IReadOnlyDictionary<TKey, TValue> @this, TKey key, TValue value) where TKey : notnull => new(@this) { { key, value } };
