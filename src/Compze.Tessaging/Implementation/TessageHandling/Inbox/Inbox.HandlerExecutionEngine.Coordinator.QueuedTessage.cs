@@ -12,17 +12,17 @@ using Compze.Utilities.SystemCE.LinqCE;
 
 namespace Compze.Tessaging.Implementation.TessageHandling.Inbox;
 
-partial class Inbox
+public partial class Inbox
 {
-   partial class HandlerExecutionEngine
+   public partial class HandlerExecutionEngine
    {
-      partial class Coordinator
+      public partial class Coordinator
       {
          // ReSharper disable once MemberCanBePrivate.Local Resharper is just confused....
-         internal class HandlerExecutionTask
+         public class HandlerExecutionTask
          {
             readonly TaskCompletionSource<object?> _taskCompletionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
-            internal readonly TransportTessage.InComing TransportTessage;
+            public readonly TransportTessage.InComing TransportTessage;
             readonly Coordinator _coordinator;
             readonly Func<object, object?> _tessageTask;
             readonly ITaskRunner _taskRunner;
@@ -30,7 +30,7 @@ partial class Inbox
             readonly IServiceLocator _serviceLocator;
             readonly ITessageHandlerRegistry _handlerRegistry;
 
-            internal Task<object?> Task => _taskCompletionSource.Task;
+            public Task<object?> Task => _taskCompletionSource.Task;
             public TessageId TessageId { get; }
 
             const string ExecuteTaskName = $"{nameof(HandlerExecutionTask)}_{nameof(Execute)}";

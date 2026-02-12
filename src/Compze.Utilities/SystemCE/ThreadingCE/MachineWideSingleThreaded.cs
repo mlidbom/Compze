@@ -5,7 +5,7 @@ using JetBrains.Annotations;
 
 namespace Compze.Utilities.Testing.DbPool.SystemCE.ThreadingCE;
 
-class MutexCE
+public class MutexCE
 {
    readonly Mutex _mutex;
 
@@ -14,9 +14,9 @@ class MutexCE
                   ? mutex
                   : new Mutex(initiallyOwned: false, name: mutexName);
 
-   internal void ExecuteWithLock([InstantHandle] Action action) => ExecuteWithLock(action.AsFunc());
+   public void ExecuteWithLock([InstantHandle] Action action) => ExecuteWithLock(action.AsFunc());
 
-   internal TResult ExecuteWithLock<TResult>([InstantHandle] Func<TResult> func)
+   public TResult ExecuteWithLock<TResult>([InstantHandle] Func<TResult> func)
    {
       try
       {
@@ -29,5 +29,5 @@ class MutexCE
       }
    }
 
-   internal static MutexCE ForMutexNamed(string name) => new(name);
+   public static MutexCE ForMutexNamed(string name) => new(name);
 }

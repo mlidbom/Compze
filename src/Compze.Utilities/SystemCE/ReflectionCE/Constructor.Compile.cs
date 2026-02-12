@@ -8,9 +8,9 @@ namespace Compze.Utilities.SystemCE.ReflectionCE;
 
 public static partial class Constructor
 {
-   internal static class Compile
+   public static class Compile
    {
-      internal static Func<TInstance> DefaultInstanceFactory<TInstance>() =>
+      public static Func<TInstance> DefaultInstanceFactory<TInstance>() =>
          typeof(IStaticInstancePropertySingleton<TInstance>).IsAssignableFrom(typeof(TInstance))
             ? CompileStaticInstancePropertyDelegate<TInstance>()
             : Compile.ForType<TInstance>().DefaultConstructor();
@@ -37,17 +37,17 @@ public static partial class Constructor
          return Expression.Lambda<Func<TInstance>>(Expression.Property(null, instanceProperty)).Compile();
       }
 
-      internal static ConstructorCompiler<TTypeToConstruct> ForType<TTypeToConstruct>() => new();
-      internal static ConstructorCompiler<object> ForType(Type typeToConstruct) => new(typeToConstruct);
+      public static ConstructorCompiler<TTypeToConstruct> ForType<TTypeToConstruct>() => new();
+      public static ConstructorCompiler<object> ForType(Type typeToConstruct) => new(typeToConstruct);
 
       // ReSharper disable once MemberHidesStaticFromOuterClass
-      internal static GenericTypeConstructorCompiler ForGenericType(Type genericType) => new(genericType);
+      public static GenericTypeConstructorCompiler ForGenericType(Type genericType) => new(genericType);
 
-      internal class GenericTypeConstructorCompiler(Type genericType)
+      public class GenericTypeConstructorCompiler(Type genericType)
       {
          readonly Type _genericType = genericType;
 
-         internal Func<object, object> WithArgument(Type argumentType)
+         public Func<object, object> WithArgument(Type argumentType)
          {
             var genericTypeDefinition = _genericType.GetGenericTypeDefinition();
             var constructedType = genericTypeDefinition.MakeGenericType(argumentType);
@@ -68,18 +68,18 @@ public static partial class Constructor
          }
       }
 
-      internal class ConstructorCompiler<TInstance>
+      public class ConstructorCompiler<TInstance>
       {
          readonly Type _typeToConstruct;
-         internal ConstructorCompiler(Type typeToConstruct) => _typeToConstruct = typeToConstruct;
+         public ConstructorCompiler(Type typeToConstruct) => _typeToConstruct = typeToConstruct;
 
-         internal ConstructorCompiler() : this(typeof(TInstance)) {}
+         public ConstructorCompiler() : this(typeof(TInstance)) {}
 
          Delegate WithArgumentTypes(Type argument1Type) => CompileForSignature(typeof(Func<,>).MakeGenericType(argument1Type, _typeToConstruct));
-         internal Func<TInstance> DefaultConstructor() => (Func<TInstance>)CompileForSignature(typeof(Func<>).MakeGenericType(_typeToConstruct));
-         internal Func<TArgument1, TInstance> WithArguments<TArgument1>() => (Func<TArgument1, TInstance>)WithArgumentTypes(typeof(TArgument1));
+         public Func<TInstance> DefaultConstructor() => (Func<TInstance>)CompileForSignature(typeof(Func<>).MakeGenericType(_typeToConstruct));
+         public Func<TArgument1, TInstance> WithArguments<TArgument1>() => (Func<TArgument1, TInstance>)WithArgumentTypes(typeof(TArgument1));
 
-         internal Func<object, object> WithArgument(Type argument1Type)
+         public Func<object, object> WithArgument(Type argument1Type)
          {
             var constructor = WithArgumentTypes(argument1Type);
 

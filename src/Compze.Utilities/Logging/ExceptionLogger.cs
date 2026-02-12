@@ -2,9 +2,9 @@ using System;
 
 namespace Compze.Utilities.Logging;
 
-static class ExceptionLogger
+public static class ExceptionLogger
 {
-   internal static TResult ExceptionsAndRethrow<TResult>(this ILogger log, Func<TResult> func)
+   public static TResult ExceptionsAndRethrow<TResult>(this ILogger log, Func<TResult> func)
    {
       try
       {

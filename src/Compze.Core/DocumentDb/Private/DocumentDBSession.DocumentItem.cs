@@ -6,15 +6,15 @@ using Compze.Utilities.SystemCE;
 
 namespace Compze.Core.DocumentDb.Private;
 
-partial class DocumentDbSession
+public partial class DocumentDbSession
 {
-   class DocumentItem
+   public class DocumentItem
    {
       readonly IDocumentDb _backingStore;
       readonly Dictionary<Type, Dictionary<string, string>> _persistentValues;
       DocumentKey Key { get; set; }
 
-      internal DocumentItem(DocumentKey key, IDocumentDb backingStore, Dictionary<Type, Dictionary<string, string>> persistentValues)
+      public DocumentItem(DocumentKey key, IDocumentDb backingStore, Dictionary<Type, Dictionary<string, string>> persistentValues)
       {
          _backingStore = backingStore;
          _persistentValues = persistentValues;

@@ -7,17 +7,17 @@ using Compze.Utilities.DependencyInjection.Abstractions;
 
 namespace Compze.Serialization.Newtonsoft.Private.Tessaging;
 
-static class RemotableTessageSerializerRegistrar
+public static class RemotableTessageSerializerRegistrar
 {
-   internal static IComponentRegistrar NewtonSoftRemotableTessageSerializer(this IComponentRegistrar registrar)
+   public static IComponentRegistrar NewtonSoftRemotableTessageSerializer(this IComponentRegistrar registrar)
       => registrar.Register(Tessaging.NewtonsoftRemotableTessageSerializer.RegisterWith);
 }
 
-class NewtonsoftRemotableTessageSerializer : IRemotableTessageSerializer
+public class NewtonsoftRemotableTessageSerializer : IRemotableTessageSerializer
 {
    readonly RenamingSupportingJsonSerializer _serializer;
 
-   internal static void RegisterWith(IComponentRegistrar registrar)
+   public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<IRemotableTessageSerializer>()
                                      .CreatedBy((ITypeMapper typeMapper) => new NewtonsoftRemotableTessageSerializer(typeMapper)));
 

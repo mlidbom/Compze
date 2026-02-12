@@ -7,16 +7,16 @@ namespace Compze.Utilities.SystemCE.ReflectionCE;
 
 public static partial class Constructor
 {
-   internal static class For<TInstance>
+   public static class For<TInstance>
    {
-      internal static class DefaultConstructor
+      public static class DefaultConstructor
       {
-         internal static readonly Func<TInstance> Instance = Compile.DefaultInstanceFactory<TInstance>();
+         public static readonly Func<TInstance> Instance = Compile.DefaultInstanceFactory<TInstance>();
       }
 
-      internal static class WithArguments<TArgument1>
+      public static class WithArguments<TArgument1>
       {
-         internal static readonly Func<TArgument1, TInstance> Instance = Compile.ForType<TInstance>().WithArguments<TArgument1>();
+         public static readonly Func<TArgument1, TInstance> Instance = Compile.ForType<TInstance>().WithArguments<TArgument1>();
       }
    }
 
@@ -29,13 +29,13 @@ public static partial class Constructor
 
       static readonly ConcurrentDictionary<Type, Func<object, object>> ArgumentTypeConstructorCache = new();
 
-      internal Func<object, object> WithArgument(Type argumentType) =>
+      public Func<object, object> WithArgument(Type argumentType) =>
          ArgumentTypeConstructorCache.GetOrAdd(argumentType,
                         _ => Compile.ForGenericType(_genericType).WithArgument(argumentType)
          );
    }
 
-   internal static bool HasDefaultConstructor(Type type) => type.GetConstructor(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, Type.EmptyTypes, null) != null;
+   public static bool HasDefaultConstructor(Type type) => type.GetConstructor(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, Type.EmptyTypes, null) != null;
 
    public static object CreateInstance(Type type) => Result.ReturnNotNull(Activator.CreateInstance(type, nonPublic: true)); //Activator.CreateInstance is highly optimized nowadays. Compiling a constructor wins only when we don't need to do even a lookup by type.
 }

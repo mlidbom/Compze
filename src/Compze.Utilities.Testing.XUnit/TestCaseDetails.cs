@@ -18,16 +18,16 @@ public class TestCaseDetails(
       string UniqueID,
       IXunitTestMethod ResolvedTestMethod) details)
 {
-   internal string TestCaseDisplayName => details.TestCaseDisplayName;
-   internal bool Explicit => details.Explicit;
-   internal Type[]? SkipExceptions => details.SkipExceptions;
-   internal string? SkipReason => details.SkipReason;
-   internal Type? SkipType => details.SkipType;
-   internal string? SkipUnless => details.SkipUnless;
-   internal string? SkipWhen => details.SkipWhen;
-   internal string? SourceFilePath => details.SourceFilePath;
-   internal int? SourceLineNumber => details.SourceLineNumber;
-   internal int Timeout => details.Timeout;
-   internal string UniqueID => details.UniqueID;
-   internal IXunitTestMethod ResolvedTestMethod => details.ResolvedTestMethod;
+   public string TestCaseDisplayName => details.TestCaseDisplayName;
+   public bool Explicit => details.Explicit;
+   public Type[]? SkipExceptions => details.SkipExceptions;
+   public string? SkipReason => details.SkipReason;
+   public Type? SkipType => details.SkipType;
+   public string? SkipUnless => details.SkipUnless;
+   public string? SkipWhen => details.SkipWhen;
+   public string? SourceFilePath => details.SourceFilePath;
+   public int? SourceLineNumber => details.SourceLineNumber;
+   public int Timeout => details.Timeout;
+   public string UniqueID => details.UniqueID;
+   public IXunitTestMethod ResolvedTestMethod => details.ResolvedTestMethod;
 }

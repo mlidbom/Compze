@@ -5,23 +5,23 @@ using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Utilities.SystemCE.ActionFuncHarmonization;
 
-static class ActionToUnitFuncConverterAsync
+public static class ActionToUnitFuncConverterAsync
 {
-   internal static Func<Task<unit>> AsFunc(this Func<Task> @this) =>
+   public static Func<Task<unit>> AsFunc(this Func<Task> @this) =>
       async () =>
       {
          await @this().caf();
          return unit.Value;
       };
 
-   internal static Func<TParam,Task<unit>> AsFunc<TParam>(this Func<TParam, Task> @this) =>
+   public static Func<TParam,Task<unit>> AsFunc<TParam>(this Func<TParam, Task> @this) =>
       async param =>
       {
          await @this(param).caf();
          return unit.Value;
       };
 
-   internal static Func<TParam, TParam2,Task<unit>> AsFunc<TParam, TParam2>(this Func<TParam, TParam2, Task> @this) =>
+   public static Func<TParam, TParam2,Task<unit>> AsFunc<TParam, TParam2>(this Func<TParam, TParam2, Task> @this) =>
       async (param, param2)  =>
       {
          await @this(param, param2).caf();

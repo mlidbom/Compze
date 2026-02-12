@@ -3,11 +3,11 @@ using D = Compze.Core.Tessaging.Internal.SqlLayer.IServiceBusSqlLayer.OutboxTess
 
 namespace Compze.Sql.MySql.Private.Tessaging;
 
-partial class MySqlOutboxSqlLayer
+public partial class MySqlOutboxSqlLayer
 {
    const string MySqlGuidType = "CHAR(36)";
 
-   internal const string SchemaCreationSql =
+   public const string SchemaCreationSql =
       $"""
 
         CREATE TABLE IF NOT EXISTS {M.TableName}

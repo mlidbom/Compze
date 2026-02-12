@@ -2,7 +2,7 @@ using System;
 
 namespace Compze.Core.DocumentDb.Internal.SqlLayer.Exceptions;
 
-class NoSuchDocumentException : ArgumentOutOfRangeException
+public class NoSuchDocumentException : ArgumentOutOfRangeException
 {
    public NoSuchDocumentException(object key, Type type):base($"Type: {type.FullName}, Key: {key}")
    {

@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
-static partial class TaskCE
+public static partial class TaskCE
 {
    ///<summary>
    /// Return Task.Result
    /// If Result throws, and the <see cref="AggregateException"/>.InnerExceptions contains a single Exception, rethrows that single exception while maintaining a proper stack trace.
    /// </summary>
-   internal static TResult ResultUnwrappingException<TResult>(this Task<TResult> task)
+   public static TResult ResultUnwrappingException<TResult>(this Task<TResult> task)
    {
       try
       {
@@ -36,9 +36,9 @@ static partial class TaskCE
    /// Calls Task.Wait()
    /// If Wait() throws, and the <see cref="AggregateException"/>.InnerExceptions contains a single Exception, rethrows that single exception while maintaining a proper stack trace.
    /// </summary>
-   internal static void WaitUnwrappingException(this ValueTask task) => task.AsTask().WaitUnwrappingException();
+   public static void WaitUnwrappingException(this ValueTask task) => task.AsTask().WaitUnwrappingException();
 
-   internal static void WaitUnwrappingException(this Task task)
+   public static void WaitUnwrappingException(this Task task)
    {
       try
       {

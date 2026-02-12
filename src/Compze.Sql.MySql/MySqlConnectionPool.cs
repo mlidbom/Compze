@@ -8,12 +8,12 @@ using MySql.Data.MySqlClient;
 
 namespace Compze.Sql.MySql;
 
-internal interface IMySqlConnectionPool : IDbConnectionPool<ICompzeMySqlConnection, MySqlCommand>
+public interface IMySqlConnectionPool : IDbConnectionPool<ICompzeMySqlConnection, MySqlCommand>
 {
    static IMySqlConnectionPool CreateInstance(string connectionString) => CreateInstance(() => connectionString);
    static MySqlConnectionPool CreateInstance(Func<string> getConnectionString) => new(getConnectionString);
 
-   class MySqlConnectionPool : IMySqlConnectionPool
+   public class MySqlConnectionPool : IMySqlConnectionPool
    {
       readonly LazyCE<IDbConnectionPool<ICompzeMySqlConnection, MySqlCommand>> _pool;
 

@@ -4,7 +4,7 @@ using Compze.Utilities.SystemCE;
 
 namespace Compze.Tessaging.Teventive.TeventStore.Refactoring.Migrations;
 
-class AssertMigrationsAreIdempotentTeventModifier : ITeventModifier, IStaticInstancePropertySingleton<ITeventModifier>
+public class AssertMigrationsAreIdempotentTeventModifier : ITeventModifier, IStaticInstancePropertySingleton<ITeventModifier>
 {
    public static ITeventModifier Instance { get; } = new AssertMigrationsAreIdempotentTeventModifier();
    AssertMigrationsAreIdempotentTeventModifier() { }

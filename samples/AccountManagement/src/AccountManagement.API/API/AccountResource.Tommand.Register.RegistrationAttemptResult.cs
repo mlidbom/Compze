@@ -14,7 +14,7 @@ public partial class AccountResource
       {
          public class RegistrationAttemptResult
          {
-            [JsonConstructor]internal RegistrationAttemptResult(RegistrationAttemptStatus status, AccountResource? registeredAccount)
+            [JsonConstructor]public RegistrationAttemptResult(RegistrationAttemptStatus status, AccountResource? registeredAccount)
             {
                if(status == RegistrationAttemptStatus.Successful && registeredAccount is null) throw new InvalidEnumArgumentException("Status cannot be successful and registered account null");
                Status = status;

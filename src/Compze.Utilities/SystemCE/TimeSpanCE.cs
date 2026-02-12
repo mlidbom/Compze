@@ -5,17 +5,17 @@ using System.Globalization;
 namespace Compze.Utilities.SystemCE;
 
 /// <summary>A collection of extensions to work with timespans</summary>
-static partial class TimeSpanCE
+public static partial class TimeSpanCE
 {
    public static TimeSpan MultiplyBy(this TimeSpan @this, double times) => TimeSpan.FromTicks((long)(@this.Ticks * times));
 
    public static TimeSpan DivideBy(this TimeSpan @this, double divideBy) => TimeSpan.FromTicks((long)(@this.Ticks / divideBy));
 
-   internal static string ToStringInvariant(this TimeSpan @this, string format) => @this.ToString(format, CultureInfo.InvariantCulture);
+   public static string ToStringInvariant(this TimeSpan @this, string format) => @this.ToString(format, CultureInfo.InvariantCulture);
 
-   internal static string FormatReadable(this TimeSpan? time) => time == null ? "" : time.Value.FormatReadable();
+   public static string FormatReadable(this TimeSpan? time) => time == null ? "" : time.Value.FormatReadable();
 
-   internal static string FormatReadable(this TimeSpan time)
+   public static string FormatReadable(this TimeSpan time)
    {
       if(time >= OneMillisecond)
       {
@@ -36,5 +36,5 @@ static partial class TimeSpanCE
    }
 
    ///<summary>Returns true if the timespan is zero or negative</summary>
-   internal static bool None(this TimeSpan @this) => @this <= TimeSpan.Zero;
+   public static bool None(this TimeSpan @this) => @this <= TimeSpan.Zero;
 }

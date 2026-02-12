@@ -6,14 +6,14 @@ using Compze.Utilities.SystemCE.LinqCE;
 
 namespace Compze.Utilities.SystemCE;
 
-static class ActionCE
+public static class ActionCE
 {
-   internal static Action From(Func<unit> action) => action.AsAction();
-   internal static Action<TParam> From<TParam>(Func<TParam, unit> action) => action.AsAction();
-   internal static Action<TParam, TParam2> From<TParam, TParam2>(Func<TParam,TParam2, unit> action) => action.AsAction();
+   public static Action From(Func<unit> action) => action.AsAction();
+   public static Action<TParam> From<TParam>(Func<TParam, unit> action) => action.AsAction();
+   public static Action<TParam, TParam2> From<TParam, TParam2>(Func<TParam,TParam2, unit> action) => action.AsAction();
 
 
-   internal static void InvokeAll(this IEnumerable<Action> @this) => @this.ForEach(me => me.Invoke());
+   public static void InvokeAll(this IEnumerable<Action> @this) => @this.ForEach(me => me.Invoke());
 
    public static readonly Action NullOp = () => {};
 }

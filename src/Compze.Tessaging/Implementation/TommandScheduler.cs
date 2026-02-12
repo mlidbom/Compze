@@ -17,15 +17,15 @@ using Compze.Utilities.SystemCE.TransactionsCE;
 
 namespace Compze.Tessaging.Implementation;
 
-static class TommandSchedulerRegistrar
+public static class TommandSchedulerRegistrar
 {
-   internal static IComponentRegistrar TommandScheduler(this IComponentRegistrar registrar)
+   public static IComponentRegistrar TommandScheduler(this IComponentRegistrar registrar)
       => registrar.Register(Implementation.TommandScheduler.RegisterWith);
 }
 
-class TommandScheduler(IOutbox transport, ITaskRunner taskRunner) : IDisposable
+public class TommandScheduler(IOutbox transport, ITaskRunner taskRunner) : IDisposable
 {
-   internal static void RegisterWith(IComponentRegistrar registrar)
+   public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<TommandScheduler>()
                                      .CreatedBy((IOutbox transport, ITaskRunner taskRunner)
                                                    => new TommandScheduler(transport, taskRunner)));
@@ -63,7 +63,7 @@ class TommandScheduler(IOutbox transport, ITaskRunner taskRunner) : IDisposable
 
    public void Stop() => _scheduledTessagesTimer?.Dispose();
 
-   class ScheduledTommand(DateTime sendAt, IExactlyOnceTommand tommand)
+   public class ScheduledTommand(DateTime sendAt, IExactlyOnceTommand tommand)
    {
       public DateTime SendAt { get; } = sendAt.ToUniversalTimeSafely();
       public IExactlyOnceTommand Tommand { get; } = tommand;

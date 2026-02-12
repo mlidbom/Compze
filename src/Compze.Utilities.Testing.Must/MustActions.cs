@@ -110,7 +110,7 @@ public class CaughtException<TException>(TException exception)
    public TException Which { get; } = exception;
 }
 
-static class InvokingMustThrowExtensions
+public static class InvokingMustThrowExtensions
 {
    public static string ThrowAssertionFailureHeading(this IAssertionContext<Func<Task>> context, Type expectedException)
    {

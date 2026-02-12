@@ -16,7 +16,7 @@ using Lock = Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Taggr
 namespace Compze.Sql.PostgreSql.Private.TEventStore;
 
 //Performance: explore PgSql alternatives to commented out MSSql hints throughout the sql layer.
-partial class PgSqlTeventStoreSqlLayer
+public partial class PgSqlTeventStoreSqlLayer
 {
    public void InsertSingleTaggregateTevents(IReadOnlyList<TeventDataRow> tevents)
    {

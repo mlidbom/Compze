@@ -11,7 +11,7 @@ namespace Compze.Core.Refactoring.Naming.Internal;
 /// Whenever we serialize or save an instance of a type anywhere, we use the mapped ID, not the type name.
 /// That way one can freely rename types without breaking any persisted data or communication between systems.
 /// </summary>
-interface ITypeMapper
+public interface ITypeMapper
 {
    //todo: Use static type and indexing trick to improve performance
    TypeId GetId(Type type);

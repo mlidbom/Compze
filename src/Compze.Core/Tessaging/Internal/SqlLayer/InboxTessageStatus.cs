@@ -1,6 +1,6 @@
 namespace Compze.Core.Tessaging.Internal.SqlLayer;
 
-enum InboxTessageStatus
+public enum InboxTessageStatus
 {
    UnHandled = 0,
    Succeeded = 1,

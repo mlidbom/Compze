@@ -11,7 +11,7 @@ using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Tessaging.Hosting.Testing.Performance;
 
-static class TimeAsserter
+public static class TimeAsserter
 {
    const int MaxTriesLimit = 40;
    const int MaxTriesDefault = 10;
@@ -201,5 +201,5 @@ static class TimeAsserter
 
    static string Percent(TimeSpan percent, TimeSpan of) => $"{(int)(percent.TotalMilliseconds / of.TotalMilliseconds * 100)}%";
 
-   class TimeOutException(string message) : Exception(message);
+   public class TimeOutException(string message) : Exception(message);
 }

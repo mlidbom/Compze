@@ -2,9 +2,9 @@ using Tessage = Compze.Core.Tessaging.Internal.SqlLayer.IServiceBusSqlLayer.Inbo
 
 namespace Compze.Sql.MicrosoftSql.Private.Tessaging;
 
-partial class MsSqlInboxSqlLayer
+public partial class MsSqlInboxSqlLayer
 {
-   internal const string SchemaCreationSql =
+   public const string SchemaCreationSql =
       $"""
 
        IF NOT EXISTS(select name from sys.tables where name = '{Tessage.TableName}')

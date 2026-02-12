@@ -10,7 +10,7 @@ using Tevent = Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Tev
 
 namespace Compze.Sql.MySql.Private.TEventStore;
 
-internal partial class MySqlTeventStoreSqlLayer(MySqlTeventStoreConnectionManager connectionManager, MySqlSqlLayerSchemaManager schemaManager) : ITeventStoreSqlLayer
+public partial class MySqlTeventStoreSqlLayer(MySqlTeventStoreConnectionManager connectionManager, MySqlSqlLayerSchemaManager schemaManager) : ITeventStoreSqlLayer
 {
    readonly MySqlTeventStoreConnectionManager _connectionManager = connectionManager;
    readonly MySqlSqlLayerSchemaManager _schemaManager = schemaManager;

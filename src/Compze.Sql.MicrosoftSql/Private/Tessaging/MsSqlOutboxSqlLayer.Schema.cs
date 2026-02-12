@@ -3,9 +3,9 @@ using Dispatching = Compze.Core.Tessaging.Internal.SqlLayer.IServiceBusSqlLayer.
 
 namespace Compze.Sql.MicrosoftSql.Private.Tessaging;
 
-partial class MsSqlOutboxSqlLayer
+public partial class MsSqlOutboxSqlLayer
 {
-   internal const string SchemaCreationSql =
+   public const string SchemaCreationSql =
       $"""
 
        IF NOT EXISTS (select name from sys.tables where name = '{Outbox.TableName}')

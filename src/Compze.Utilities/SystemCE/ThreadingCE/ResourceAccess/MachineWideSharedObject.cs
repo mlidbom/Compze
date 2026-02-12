@@ -7,7 +7,7 @@ namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
 public abstract class MachineWideSharedObject
 {
-   internal static readonly LazyCE<DirectoryCE> DataDirectory = new(() => DirectoryCE.StandardDirectories
+   public static readonly LazyCE<DirectoryCE> DataDirectory = new(() => DirectoryCE.StandardDirectories
                                                                                      .LocalApplicationData
                                                                                      .GetOrCreateDirectory("Compze")
                                                                                      .GetOrCreateDirectory("SharedFiles"));
@@ -26,7 +26,7 @@ public sealed class MachineWideSharedObject<TObject> : MachineWideSharedObject w
    readonly ISharedObjectSerializer<TObject> _serializer;
    readonly CorruptionAction _corruptionAction;
 
-   internal static MachineWideSharedObject<TObject> For(string name, ISharedObjectSerializer<TObject> serializer, CorruptionAction corruptionAction) => new(name, serializer, corruptionAction);
+   public static MachineWideSharedObject<TObject> For(string name, ISharedObjectSerializer<TObject> serializer, CorruptionAction corruptionAction) => new(name, serializer, corruptionAction);
 
    MachineWideSharedObject(string name, ISharedObjectSerializer<TObject> serializer, CorruptionAction corruptionAction)
    {
@@ -40,7 +40,7 @@ public sealed class MachineWideSharedObject<TObject> : MachineWideSharedObject w
 
    string CreateDefaultJson() => _serializer.Serialize(new TObject());
 
-   internal TObject Update(Action<TObject> action) => _synchronizer.ExecuteWithLock(() =>
+   public TObject Update(Action<TObject> action) => _synchronizer.ExecuteWithLock(() =>
    {
       var instance = Load();
       action(instance);
@@ -48,9 +48,9 @@ public sealed class MachineWideSharedObject<TObject> : MachineWideSharedObject w
       return instance;
    });
 
-   internal TObject GetCopy() => _synchronizer.ExecuteWithLock(Load);
+   public TObject GetCopy() => _synchronizer.ExecuteWithLock(Load);
 
-   internal void Delete() => _file.GetFileInfo().Delete();
+   public void Delete() => _file.GetFileInfo().Delete();
 
    void Save(TObject instance)
    {

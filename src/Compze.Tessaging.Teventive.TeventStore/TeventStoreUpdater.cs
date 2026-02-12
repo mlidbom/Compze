@@ -19,7 +19,7 @@ using static Compze.Utilities.Contracts.Assert;
 
 namespace Compze.Tessaging.Teventive.TeventStore;
 
-class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
+public class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
 {
    readonly ITeventStoreTeventPublisher _teventStoreTeventPublisher;
    readonly ITeventStore _store;
@@ -28,7 +28,7 @@ class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
    readonly IUsageGuard _usageGuard;
    readonly List<IDisposable> _disposableResources = [];
 
-   internal static void RegisterWith(IComponentRegistrar registrar)
+   public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(
          Scoped.For<ITeventStoreUpdater, ITeventStoreReader>()
                .CreatedBy((ITeventStoreTeventPublisher teventPublisher, ITeventStore teventStore, ITaggregateTypeValidator taggregateTypeValidator) =>

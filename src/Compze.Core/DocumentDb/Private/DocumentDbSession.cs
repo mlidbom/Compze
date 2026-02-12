@@ -16,13 +16,13 @@ using static Compze.Utilities.Contracts.Assert;
 namespace Compze.Core.DocumentDb.Private;
 
 // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
-partial class DocumentDbSession : IDocumentDbSession
+public partial class DocumentDbSession : IDocumentDbSession
 {
    public static void RegisterWith(IComponentRegistrar registrar) =>
       registrar.Register(Scoped.For<IDocumentDbSession, IDocumentDbUpdater, IDocumentDbReader, IDocumentDbBulkReader>()
                                .CreatedBy((IDocumentDb documentDb) => new ContextEnsuringWrapper(new DocumentDbSession(documentDb))));
 
-   class ContextEnsuringWrapper : IDocumentDbSession
+   public class ContextEnsuringWrapper : IDocumentDbSession
    {
       readonly UsageGuard<DocumentDbSession> _guarded;
 

@@ -5,9 +5,9 @@ using Compze.Utilities.DependencyInjection.Abstractions;
 
 namespace Compze.Serialization.Newtonsoft.Wiring;
 
-static class NewtonsoftSerializersRegistrar
+public static class NewtonsoftSerializersRegistrar
 {
-   internal static IComponentRegistrar NewtonsoftSerializers(this IComponentRegistrar registrar) =>
+   public static IComponentRegistrar NewtonsoftSerializers(this IComponentRegistrar registrar) =>
       registrar.NewtonSoftRemotableTessageSerializer()
                .NewtonsoftDocumentDbSerializer()
                .NewtonsoftTeventStoreSerializer();

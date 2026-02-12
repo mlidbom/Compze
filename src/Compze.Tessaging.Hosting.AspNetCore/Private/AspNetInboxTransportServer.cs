@@ -15,13 +15,13 @@ using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
 namespace Compze.Tessaging.Hosting.AspNetCore.Private;
 
-class AspNetInboxTransportServer : IInboxTransportServer
+public class AspNetInboxTransportServer : IInboxTransportServer
 {
    readonly IServiceLocator _serviceLocator;
    WebApplication? _webApplication;
    readonly CompzeControllerActivator _controllerActivator;
 
-   internal static void RegisterWith(IComponentRegistrar registrar) =>
+   public static void RegisterWith(IComponentRegistrar registrar) =>
       registrar.Register(
          Singleton.For<IInboxTransportServer>()
                   .CreatedBy((IServiceLocator serviceLocator, CompzeControllerActivator activator)

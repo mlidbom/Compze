@@ -1,6 +1,6 @@
 namespace Compze.Core.Tessaging.Teventive.Internal;
 
-interface ITaggregateTypeValidator
+public interface ITaggregateTypeValidator
 {
    void AssertIsValid<TTaggregate>();
 }

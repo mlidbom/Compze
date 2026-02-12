@@ -5,7 +5,7 @@ using Microsoft.Data.Sqlite;
 
 namespace Compze.Sql.Sqlite.Private.TEventStore;
 
-class SqliteTeventStoreConnectionManager(ISqliteConnectionPool sqlConnectionPool)
+public class SqliteTeventStoreConnectionManager(ISqliteConnectionPool sqlConnectionPool)
 {
    readonly ISqliteConnectionPool _connectionPool = sqlConnectionPool;
 

@@ -2,5 +2,5 @@ using System;
 
 namespace Compze.Utilities.Contracts;
 
-class InvariantViolatedException(string message) : Exception(message);
-class InvalidResultException(string message) : Exception(message);
+public class InvariantViolatedException(string message) : Exception(message);
+public class InvalidResultException(string message) : Exception(message);

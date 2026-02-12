@@ -6,14 +6,14 @@ using Npgsql;
 
 namespace Compze.Sql.PostgreSql;
 
-interface ICompzeNpgsqlConnection : IPoolableConnection, ICompzeDbConnection<NpgsqlCommand>
+public interface ICompzeNpgsqlConnection : IPoolableConnection, ICompzeDbConnection<NpgsqlCommand>
 {
    //todo: Check if upgrade of Npgsql from 4.1.4 to 7.0.0 means that we should change something.
    //Npgsql 7.0 Release Notes | Npgsql Documentation https://www.npgsql.org/doc/release-notes/7.0.html
    //Verify Windows-only distributed transactions work on .NET 7.0 � Issue #4581 � npgsql/npgsql � GitHub https://github.com/npgsql/npgsql/issues/4581
-   internal static ICompzeNpgsqlConnection Create(string connString) => new CompzeNpgsqlConnection(connString);
+   public static ICompzeNpgsqlConnection Create(string connString) => new CompzeNpgsqlConnection(connString);
 
-   sealed class CompzeNpgsqlConnection(string connectionString) : ICompzeNpgsqlConnection
+   public sealed class CompzeNpgsqlConnection(string connectionString) : ICompzeNpgsqlConnection
    {
       NpgsqlConnection Connection { get; } = new(connectionString);
 

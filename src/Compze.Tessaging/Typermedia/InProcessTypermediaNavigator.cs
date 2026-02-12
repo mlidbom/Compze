@@ -8,15 +8,15 @@ using Compze.Utilities.SystemCE.ThreadingCE;
 
 namespace Compze.Tessaging.Typermedia;
 
-static class LocalHypermediaNavigatorRegistrar
+public static class LocalHypermediaNavigatorRegistrar
 {
-   internal static IComponentRegistrar InProcessHypermediaNavigator(this IComponentRegistrar registrar)
+   public static IComponentRegistrar InProcessHypermediaNavigator(this IComponentRegistrar registrar)
       => registrar.Register(Typermedia.InProcessTypermediaNavigator.RegisterWith);
 }
 
-class InProcessTypermediaNavigator : IInProcessTypermediaNavigator
+public class InProcessTypermediaNavigator : IInProcessTypermediaNavigator
 {
-   internal static void RegisterWith(IComponentRegistrar registrar)
+   public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Scoped.For<IInProcessTypermediaNavigator>()
                                   .CreatedBy((ITessageHandlerRegistry tessageHandlerRegistry)
                                                 => new InProcessTypermediaNavigator(tessageHandlerRegistry)));

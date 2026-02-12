@@ -10,9 +10,9 @@ using Compze.Utilities.SystemCE.TransactionsCE;
 
 namespace Compze.Sql.MySql.Private;
 
-class MySqlSqlLayerSchemaManager(IMySqlConnectionPool connectionPool)
+public class MySqlSqlLayerSchemaManager(IMySqlConnectionPool connectionPool)
 {
-   internal static IComponentRegistrar RegisterWith(IComponentRegistrar registrar)
+   public static IComponentRegistrar RegisterWith(IComponentRegistrar registrar)
    {
       if(registrar.Container().IsRegistered<MySqlSqlLayerSchemaManager>())
          return registrar;

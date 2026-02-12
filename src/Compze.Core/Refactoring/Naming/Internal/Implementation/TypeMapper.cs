@@ -15,20 +15,20 @@ using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
 namespace Compze.Core.Refactoring.Naming.Internal.Implementation;
 
-static class TypeMapperRegistrar
+public static class TypeMapperRegistrar
 {
    public static IComponentRegistrar TypeMapper(this IComponentRegistrar @this)
       => Implementation.TypeMapper.RegisterWith(@this);
 }
 
-class TypeMapper : ITypeMapper
+public class TypeMapper : ITypeMapper
 {
-   internal static IComponentRegistrar RegisterWith(IComponentRegistrar registrar) =>
+   public static IComponentRegistrar RegisterWith(IComponentRegistrar registrar) =>
       registrar.Register(Singleton.For<ITypeMapper, TypeMapper>()
                                   .Instance(TypeMapper.Instance));
 
    TypeMapper() {}
-   internal static readonly ITypeMapper Instance = new TypeMapper();
+   public static readonly ITypeMapper Instance = new TypeMapper();
    static readonly IThreadShared<MappingState> State = IThreadShared.WithDefaultTimeouts<MappingState>();
 
    static TypeMapper()
@@ -273,14 +273,14 @@ class TypeMapper : ITypeMapper
       return new Exception(fixTessage.ToString());
    }
 
-   class MappingState
+   public class MappingState
    {
       public readonly Dictionary<Type, TypeId> TypeToTypeIdMap = new();
       public readonly Dictionary<TypeId, Type> TypeIdToTypeMap = new();
       public readonly HashSet<Assembly> CheckedAssemblies = [];
       public readonly Dictionary<Assembly, string> AssemblyMappingUpdateTessages = new();
 
-      internal void Map(Type type, TypeId typeId)
+      public void Map(Type type, TypeId typeId)
       {
          if(TypeToTypeIdMap.TryGetValue(type, out var existingTypeId))
          {

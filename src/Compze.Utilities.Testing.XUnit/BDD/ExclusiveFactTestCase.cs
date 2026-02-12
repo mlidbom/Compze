@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Compze.Utilities.Testing.XUnit.BDD;
 
-class ExclusiveFactTestCase : ConstructorArgumentForwardingTestCase
+public class ExclusiveFactTestCase : ConstructorArgumentForwardingTestCase
 {
    [Obsolete("Called by deserializer")]
    // ReSharper disable once UnusedMember.Global

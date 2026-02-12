@@ -19,15 +19,15 @@ using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Universal;
 
-static class TransportRegistrar
+public static class TransportRegistrar
 {
-   internal static IComponentRegistrar Transport(this IComponentRegistrar registrar)
+   public static IComponentRegistrar Transport(this IComponentRegistrar registrar)
       => registrar.Register(RoutingInboxClient.RegisterWith);
 }
 
-partial class RoutingInboxClient : IRoutingInboxClient, IDisposable
+public partial class RoutingInboxClient : IRoutingInboxClient, IDisposable
 {
-   internal static void RegisterWith(IComponentRegistrar registrar)
+   public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<IRoutingInboxClient>().CreatedBy((ITessagesInFlightTracker tessagesInFlightTracker, ITypeMapper typeMapper, IRemotableTessageSerializer serializer, ITransportMessagePoster transportMessagePoster)
                                                                      => new RoutingInboxClient(tessagesInFlightTracker, typeMapper, serializer, transportMessagePoster)));
 

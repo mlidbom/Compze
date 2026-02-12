@@ -5,7 +5,7 @@ using Microsoft.Data.Sqlite;
 
 namespace Compze.Sql.Sqlite.Private;
 
-internal static class SqliteCommandParameterExtensions
+public static class SqliteCommandParameterExtensions
 {
    public static SqliteCommand AddParameter(this SqliteCommand @this, string name, int value) => AddParameter(@this, name, SqliteType.Integer, value);
    public static SqliteCommand AddParameter(this SqliteCommand @this, string name, long value) => AddParameter(@this, name, SqliteType.Integer, value);

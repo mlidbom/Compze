@@ -9,7 +9,7 @@ namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 public partial interface IMonitorCE
 {
 #pragma warning disable CA1001 //By creating the locks only once in the constructor usages become zero-allocation operations.
-   class MonitorCE : IMonitorCE
+   public class MonitorCE : IMonitorCE
 #pragma warning restore CA1001
    {
       public IDisposable TakeReadLock(TimeSpan? timeout = null) => TakeLock(LockType.Read, timeout);
@@ -43,7 +43,7 @@ public partial interface IMonitorCE
 
       TimeSpan _stackTraceFetchTimeout;
 
-      internal MonitorCE(TimeSpan lockTimeout, TimeSpan waitTimeout)
+      public MonitorCE(TimeSpan lockTimeout, TimeSpan waitTimeout)
       {
          LockTimeout = lockTimeout;
          WaitTimeout = waitTimeout;
@@ -142,13 +142,13 @@ public partial interface IMonitorCE
          }
       }
 
-      enum LockType
+      public enum LockType
       {
          Read = 0,
          Update = 1
       }
 
-      class ThinMonitorWrapper
+      public class ThinMonitorWrapper
       {
          static readonly TimeSpan InfiniteTimeOut = -1.Milliseconds(); //https://learn.microsoft.com/en-us/dotnet/api/system.threading.monitor.tryenter?view=net-9.0
          readonly object _lockObject = new();

@@ -2,11 +2,11 @@ using T = Compze.Core.Tessaging.Internal.SqlLayer.IServiceBusSqlLayer.InboxTessa
 
 namespace Compze.Sql.MySql.Private.Tessaging;
 
-partial class MySqlInboxSqlLayer
+public partial class MySqlInboxSqlLayer
 {
    const string MySqlGuidType = "CHAR(36)";
 
-   internal const string SchemaCreationSql =
+   public const string SchemaCreationSql =
       $"""
 
            CREATE TABLE IF NOT EXISTS {T.TableName}

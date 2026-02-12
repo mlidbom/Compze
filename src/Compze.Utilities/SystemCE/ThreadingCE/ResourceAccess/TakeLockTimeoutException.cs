@@ -9,7 +9,7 @@ public class TakeLockTimeoutException : Exception
    readonly TimeSpan _timeToWaitForOwningThreadStacktrace;
    string? _blockingThreadStacktrace;
 
-   internal TakeLockTimeoutException(TimeSpan timeout, TimeSpan stackTraceFetchTimeout) : base($"Timed out awaiting lock after {timeout}. This likely indicates an in-memory deadlock. See below for the stacktrace of the blocking thread as it disposes the lock.") =>
+   public TakeLockTimeoutException(TimeSpan timeout, TimeSpan stackTraceFetchTimeout) : base($"Timed out awaiting lock after {timeout}. This likely indicates an in-memory deadlock. See below for the stacktrace of the blocking thread as it disposes the lock.") =>
       _timeToWaitForOwningThreadStacktrace = stackTraceFetchTimeout;
 
    public override string Message
@@ -30,6 +30,6 @@ public class TakeLockTimeoutException : Exception
       }
    }
 
-   internal void SetBlockingThreadsDisposeStackTrace(StackTrace blockingThreadStackTrace) =>
+   public void SetBlockingThreadsDisposeStackTrace(StackTrace blockingThreadStackTrace) =>
       _monitor.Update(() => _blockingThreadStacktrace = blockingThreadStackTrace.ToString());
 }

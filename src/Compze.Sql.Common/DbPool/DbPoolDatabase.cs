@@ -17,13 +17,13 @@ public class DbPoolDatabase
    public string ReservationName { get; private set; } = string.Empty;
    public DbPoolId? ReservedByPoolId { get; private set; } = null;
 
-   internal string Name => $"{PoolDatabaseNamePrefix}{Id:0000}";
+   public string Name => $"{PoolDatabaseNamePrefix}{Id:0000}";
 
    [UsedImplicitly]public DbPoolDatabase() { }
-   internal DbPoolDatabase(int id) => Id = id;
-   internal DbPoolDatabase(string name) : this(IdFromName(name)) { }
+   public DbPoolDatabase(int id) => Id = id;
+   public DbPoolDatabase(string name) : this(IdFromName(name)) { }
 
-   internal bool ShouldBeReleased => IsReserved && ReservationExpirationTime < DateTime.UtcNow;
+   public bool ShouldBeReleased => IsReserved && ReservationExpirationTime < DateTime.UtcNow;
 
    static int IdFromName(string name)
    {
@@ -31,7 +31,7 @@ public class DbPoolDatabase
       return IntCE.ParseInvariant(nameIndex);
    }
 
-   internal DbPoolDatabase Release()
+   public DbPoolDatabase Release()
    {
       Assert.State.Is(IsReserved);
       IsReserved = false;
@@ -41,14 +41,14 @@ public class DbPoolDatabase
       return this;
    }
 
-   internal DbPoolDatabase Clean()
+   public DbPoolDatabase Clean()
    {
       Assert.State.Is(!IsClean);
       IsClean = true;
       return this;
    }
 
-   internal DbPoolDatabase Reserve(string reservationName, DbPoolId poolId, TimeSpan reservationLength)
+   public DbPoolDatabase Reserve(string reservationName, DbPoolId poolId, TimeSpan reservationLength)
    {
       Assert.State.Is(!IsReserved);
 

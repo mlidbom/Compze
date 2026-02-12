@@ -7,14 +7,14 @@ using JetBrains.Annotations;
 
 namespace Compze.Tessaging.Hosting.Testing.Performance;
 
-sealed class DeferredConsoleWriter : IDisposable
+public sealed class DeferredConsoleWriter : IDisposable
 {
    // ReSharper disable once MemberCanBePrivate.Global
    public bool VerboseMode { get; set; } = false;
-   class Buffer
+   public class Buffer
    {
-      internal readonly StringBuilder Content = new();
-      internal bool TestSucceeded;
+      public readonly StringBuilder Content = new();
+      public bool TestSucceeded;
    }
 
    readonly IThreadShared<Buffer> _buffer = IThreadShared.WithDefaultTimeouts(new Buffer());

@@ -7,15 +7,15 @@ using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
 namespace Compze.Utilities.DependencyInjection;
 
-class TypeIndex<TInheritor> where TInheritor : TypeIndex<TInheritor>
+public class TypeIndex<TInheritor> where TInheritor : TypeIndex<TInheritor>
 {
    static readonly IMonitorCE MonitorCE = IMonitorCE.WithDefaultTimeout();
-   internal static int ServiceCount { get; private set; }
+   public static int ServiceCount { get; private set; }
    static IReadOnlyDictionary<Type, int> _map = new Dictionary<Type, int>();
 
    static Type[] _backMap = [];
 
-   internal static int For(Type type)
+   public static int For(Type type)
    {
       if(_map.TryGetValue(type, out var value))
          return value;
@@ -31,8 +31,8 @@ class TypeIndex<TInheritor> where TInheritor : TypeIndex<TInheritor>
       }
    }
 
-   internal static class ForService<TType>
+   public static class ForService<TType>
    {
-      internal static readonly int Index = ServiceTypeIndex.For(typeof(TType));
+      public static readonly int Index = ServiceTypeIndex.For(typeof(TType));
    }
 }

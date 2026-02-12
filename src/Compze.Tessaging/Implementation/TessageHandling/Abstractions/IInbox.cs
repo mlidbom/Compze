@@ -4,7 +4,7 @@ using Compze.Tessaging.Implementation.Transport.Abstractions;
 
 namespace Compze.Tessaging.Implementation.TessageHandling.Abstractions;
 
-interface IInbox
+public interface IInbox
 {
    EndPointAddress Address { get; }
    Task StartAsync();

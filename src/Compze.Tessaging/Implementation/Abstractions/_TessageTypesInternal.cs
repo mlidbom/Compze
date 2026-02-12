@@ -15,11 +15,11 @@ namespace Compze.Tessaging.Implementation.Abstractions;
 
 public static class TessageTypesInternal
 {
-   internal interface ITessage;
+   public interface ITessage;
 
-   internal class EndpointInformationTuery : TessageTypesInternal.ITessage, IRemotableTuery<EndpointInformation>;
+   public class EndpointInformationTuery : TessageTypesInternal.ITessage, IRemotableTuery<EndpointInformation>;
 
-   internal class EndpointInformation
+   public class EndpointInformation
    {
       [Obsolete("Called by serializer", error: true)]
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.

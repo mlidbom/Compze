@@ -11,10 +11,10 @@ using Compze.Utilities.SystemCE.ThreadingCE;
 
 namespace Compze.Tessaging.Implementation.TessageHandling.Inbox;
 
-partial class Inbox
+public partial class Inbox
 {
    // ReSharper disable once ArrangeTypeMemberModifiers Resharper is confused. If I remove Internal my code stops compiling.
-   internal partial class HandlerExecutionEngine(
+   public partial class HandlerExecutionEngine(
       ITessagesInFlightTracker globalStateTracker,
       ITessageHandlerRegistry handlerRegistry,
       IServiceLocator serviceLocator,
@@ -33,7 +33,7 @@ partial class Inbox
       readonly Coordinator _coordinator = new(globalStateTracker, taskRunner, storage, serviceLocator, handlerRegistry, endpointId);
       readonly ITaskRunner _taskRunner = taskRunner;
 
-      internal Task<object?> Enqueue(TransportTessage.InComing transportTessage) => _coordinator.EnqueueTessageTask(transportTessage);
+      public Task<object?> Enqueue(TransportTessage.InComing transportTessage) => _coordinator.EnqueueTessageTask(transportTessage);
 
       void AwaitDispatchableTessageThreadLoop()
       {

@@ -9,7 +9,7 @@ using Xunit.v3;
 namespace Compze.Utilities.Testing.XUnit.BDD;
 
 #pragma warning disable CA1812 // Avoid uninstantiated internal classes : This class is instantiated by xUnit via reflection.
-class ExclusiveFactDiscoverer : IXunitTestCaseDiscoverer
+public class ExclusiveFactDiscoverer : IXunitTestCaseDiscoverer
 {
    public async ValueTask<IReadOnlyCollection<IXunitTestCase>> Discover(
       ITestFrameworkDiscoveryOptions discoveryOptions,

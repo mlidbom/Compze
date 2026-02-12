@@ -2,9 +2,9 @@ using Document = Compze.Core.DocumentDb.Internal.SqlLayer.IDocumentDbSqlLayer.Do
 
 namespace Compze.Sql.MicrosoftSql.Private.DocumentDb;
 
-partial class MsSqlDocumentDbSqlLayer
+public partial class MsSqlDocumentDbSqlLayer
 {
-   internal const string SchemaCreationSql =
+   public const string SchemaCreationSql =
       $"""
 
        IF NOT EXISTS(select name from sys.tables where name = '{Document.TableName}')

@@ -10,7 +10,7 @@ using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Http;
 
-class HttpExactlyOnceTessageSender(
+public class HttpExactlyOnceTessageSender(
    ITransportMessagePoster transportMessagePoster,
    EndPointAddress remoteAddress,
    ITypeMapper typeMapper,

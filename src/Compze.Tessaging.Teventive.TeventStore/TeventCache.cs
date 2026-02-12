@@ -21,9 +21,9 @@ public interface ITeventCache
    void Clear();
 }
 
-class TeventCache : IDisposable, ITeventCache
+public class TeventCache : IDisposable, ITeventCache
 {
-   internal static void RegisterWith(IComponentRegistrar registrar)
+   public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(
          Singleton.For<TeventCache, ITeventCache>()
                   .CreatedBy(() => new TeventCache()));
@@ -34,7 +34,7 @@ class TeventCache : IDisposable, ITeventCache
       _transactionalOverlay = new TransactionalOverlay(this);
    }
 
-   class TransactionalOverlay(TeventCache teventCache)
+   public class TransactionalOverlay(TeventCache teventCache)
    {
       readonly TeventCache _parent = teventCache;
       readonly IMonitorCE _monitor = IMonitorCE.WithDefaultTimeout();
@@ -65,10 +65,10 @@ class TeventCache : IDisposable, ITeventCache
          }
       }
 
-      internal void Add(TaggregateId taggregateId, Entry entry) => _monitor.Update(
+      public void Add(TaggregateId taggregateId, Entry entry) => _monitor.Update(
          () => CurrentOverlay[taggregateId] = entry);
 
-      internal bool TryGet(TaggregateId taggregateId, [NotNullWhen(true)]out Entry? entry)
+      public bool TryGet(TaggregateId taggregateId, [NotNullWhen(true)]out Entry? entry)
       {
          entry = null;
          if(Transaction.Current == null) return false;
@@ -79,7 +79,7 @@ class TeventCache : IDisposable, ITeventCache
       }
    }
 
-   internal class Entry
+   public class Entry
    {
       public static readonly Entry Empty = new();
       Entry()

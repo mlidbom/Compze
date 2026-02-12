@@ -5,7 +5,7 @@ using Compze.Tessaging.Implementation.Transport.Abstractions;
 
 namespace Compze.Tessaging.Implementation.TessageHandling.Inbox;
 
-partial class Inbox
+public partial class Inbox
 {
    public interface ITessageStorage
    {

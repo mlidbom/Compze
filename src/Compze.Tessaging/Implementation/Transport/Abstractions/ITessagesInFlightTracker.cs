@@ -4,7 +4,7 @@ using Compze.Core.Tessaging.Hosting.Public;
 
 namespace Compze.Tessaging.Implementation.Transport.Abstractions;
 
-interface ITessagesInFlightTracker
+public interface ITessagesInFlightTracker
 {
     IReadOnlyList<Exception> GetExceptions();
 

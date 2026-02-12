@@ -3,9 +3,9 @@ using D = Compze.Core.Tessaging.Internal.SqlLayer.IServiceBusSqlLayer.OutboxTess
 
 namespace Compze.Sql.Sqlite.Private.Tessaging;
 
-partial class SqliteOutboxSqlLayer
+public partial class SqliteOutboxSqlLayer
 {
-   internal const string SchemaCreationSql =
+   public const string SchemaCreationSql =
       $"""
 
        CREATE TABLE IF NOT EXISTS {Tessage.TableName}

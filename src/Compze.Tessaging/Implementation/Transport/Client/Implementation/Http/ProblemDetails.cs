@@ -16,7 +16,7 @@ namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Http;
    public string Detail { get; set; } = "";
    public string Instance { get; set; } = "";
 
-   internal static async Task<ProblemDetails> FromResponse(HttpResponseMessage response)
+   public static async Task<ProblemDetails> FromResponse(HttpResponseMessage response)
    {
       try
       {
@@ -29,7 +29,7 @@ namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Http;
    }
 }
 
-class FailedToExtractProblemDetailsException(HttpResponseMessage response) : Exception($"""
+public class FailedToExtractProblemDetailsException(HttpResponseMessage response) : Exception($"""
                                                                                         Failed to extract problem details from response.
                                                                                         RequestUri: {response.RequestMessage?.RequestUri} 
                                                                                         Status code: {response.StatusCode}

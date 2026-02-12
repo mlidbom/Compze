@@ -1,6 +1,6 @@
 namespace Compze.Sql.MicrosoftSql.Private.DbPool;
 
-static class MsSqlDatabaseHelpers
+public static class MsSqlDatabaseHelpers
 {
    const string DropAllObjectsStatement = """
 
@@ -33,7 +33,7 @@ static class MsSqlDatabaseHelpers
 
                                           """;
 
-   internal const string SetReadCommittedSnapshotOnStatement = """
+   public const string SetReadCommittedSnapshotOnStatement = """
 
                                                                declare @databaseName varchar(1000)
                                                                select @databaseName = DB_NAME()
@@ -42,7 +42,7 @@ static class MsSqlDatabaseHelpers
                                                                exec sp_executesql @sql
                                                                """;
 
-   internal static void DropAllObjectsAndSetReadCommittedSnapshotIsolationLevel(this ICompzeMsSqlConnection connection)
+   public static void DropAllObjectsAndSetReadCommittedSnapshotIsolationLevel(this ICompzeMsSqlConnection connection)
    {
       using var cmd = connection.CreateCommand();
       cmd.CommandText = DropAllObjectsStatement + SetReadCommittedSnapshotOnStatement;

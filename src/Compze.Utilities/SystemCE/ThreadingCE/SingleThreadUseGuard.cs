@@ -3,7 +3,7 @@ using System.Threading;
 namespace Compze.Utilities.SystemCE.ThreadingCE;
 
 ///<summary>Ensures that guarded components are used within one thread only.</summary>
-class SingleThreadUseGuard : UsageGuard
+public class SingleThreadUseGuard : UsageGuard
 {
    readonly object _guarded;
    readonly Thread _owningThread;

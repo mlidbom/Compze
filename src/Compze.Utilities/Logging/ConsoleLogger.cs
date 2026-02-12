@@ -2,7 +2,7 @@ using System;
 
 namespace Compze.Utilities.Logging;
 
-class ConsoleLogger : Logger
+public class ConsoleLogger : Logger
 {
    readonly Type _type;
    ConsoleLogger(Type type) => _type = type;

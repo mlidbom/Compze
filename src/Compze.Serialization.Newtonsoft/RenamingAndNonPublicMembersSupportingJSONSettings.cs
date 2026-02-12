@@ -7,9 +7,9 @@ using Newtonsoft.Json;
 
 namespace Compze.Serialization.Newtonsoft;
 
-static class RenamingAndNonPublicMembersSupportingJsonSettings
+public static class RenamingAndNonPublicMembersSupportingJsonSettings
 {
-   internal static readonly JsonSerializerSettings Default =
+   public static readonly JsonSerializerSettings Default =
       new()
       {
          TypeNameHandling = TypeNameHandling.Auto,
@@ -17,11 +17,11 @@ static class RenamingAndNonPublicMembersSupportingJsonSettings
          ContractResolver = new CompositeContractResolver(new IncludeMembersWithPrivateSetters())
       };
 
-   internal static readonly JsonSerializerSettings DocumentDb = Default;
+   public static readonly JsonSerializerSettings DocumentDb = Default;
 
-   internal static readonly JsonSerializerSettings Tessaging = Default;
+   public static readonly JsonSerializerSettings Tessaging = Default;
 
-   internal static readonly JsonSerializerSettings SharedObjects = Default;
+   public static readonly JsonSerializerSettings SharedObjects = Default;
 
    public static readonly JsonSerializerSettings TeventStore =
       new(Default)

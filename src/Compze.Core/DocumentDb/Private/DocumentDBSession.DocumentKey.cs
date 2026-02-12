@@ -3,9 +3,9 @@ using Compze.Utilities.SystemCE;
 
 namespace Compze.Core.DocumentDb.Private;
 
-partial class DocumentDbSession
+public partial class DocumentDbSession
 {
-   internal class DocumentKey : IEquatable<DocumentKey>
+   public class DocumentKey : IEquatable<DocumentKey>
    {
       public DocumentKey(object id, Type type)
       {
@@ -58,6 +58,6 @@ partial class DocumentDbSession
 
    }
 
-   internal class DocumentKey<TDocument>(object id) : DocumentKey(id, typeof(TDocument));
+   public class DocumentKey<TDocument>(object id) : DocumentKey(id, typeof(TDocument));
 
 }

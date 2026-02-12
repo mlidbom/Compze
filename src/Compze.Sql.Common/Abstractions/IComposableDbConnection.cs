@@ -5,12 +5,12 @@ using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Sql.Common.Abstractions;
 
-interface ICompzeDbConnection
+public interface ICompzeDbConnection
 {
    DbCommand CreateCommand();
 }
 
-interface ICompzeDbConnection<out TCommand> : ICompzeDbConnection
+public interface ICompzeDbConnection<out TCommand> : ICompzeDbConnection
    where TCommand : DbCommand
 {
    new TCommand CreateCommand();

@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 
 namespace Compze.Serialization.Newtonsoft.Private;
 
-class RenamingSupportingJsonSerializer : IJsonSerializer
+public class RenamingSupportingJsonSerializer : IJsonSerializer
 {
    readonly JsonSerializerSettings _jsonSettings;
    readonly RenamingDecorator _renamingDecorator;

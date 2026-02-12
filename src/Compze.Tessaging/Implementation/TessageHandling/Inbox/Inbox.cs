@@ -13,15 +13,15 @@ using JetBrains.Annotations;
 
 namespace Compze.Tessaging.Implementation.TessageHandling.Inbox;
 
-static class InboxRegistrar
+public static class InboxRegistrar
 {
-   internal static IComponentRegistrar Inbox(this IComponentRegistrar registrar)
+   public static IComponentRegistrar Inbox(this IComponentRegistrar registrar)
       => registrar.Register(TessageHandling.Inbox.Inbox.RegisterWith);
 }
 
 [UsedImplicitly] partial class Inbox : IInbox, IAsyncDisposable
 {
-   internal static void RegisterWith(IComponentRegistrar registrar)
+   public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(
          Singleton.For<Inbox.ITessageStorage>()
                   .CreatedBy((IServiceBusSqlLayer.IInboxSqlLayer sqlLayer)

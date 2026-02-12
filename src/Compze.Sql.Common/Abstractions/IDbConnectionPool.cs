@@ -6,7 +6,7 @@ using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Sql.Common.Abstractions;
 
-interface IDbConnectionPool<out TConnection, out TCommand>
+public interface IDbConnectionPool<out TConnection, out TCommand>
    where TConnection : IPoolableConnection, ICompzeDbConnection<TCommand>
    where TCommand : DbCommand
 {

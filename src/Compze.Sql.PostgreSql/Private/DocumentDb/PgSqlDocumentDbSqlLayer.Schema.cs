@@ -2,9 +2,9 @@ using Document = Compze.Core.DocumentDb.Internal.SqlLayer.IDocumentDbSqlLayer.Do
 
 namespace Compze.Sql.PostgreSql.Private.DocumentDb;
 
-partial class PgSqlDocumentDbSqlLayer
+public partial class PgSqlDocumentDbSqlLayer
 {
-   internal const string SchemaCreationSql =
+   public const string SchemaCreationSql =
       $"""
 
        CREATE TABLE IF NOT EXISTS {Document.TableName} 

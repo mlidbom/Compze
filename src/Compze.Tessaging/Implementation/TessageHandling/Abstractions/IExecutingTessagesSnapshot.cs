@@ -3,7 +3,7 @@ using Compze.Tessaging.Implementation.Transport.Abstractions;
 
 namespace Compze.Tessaging.Implementation.TessageHandling.Abstractions;
 
-interface IExecutingTessagesSnapshot
+public interface IExecutingTessagesSnapshot
 {
     IReadOnlyList<TransportTessage.InComing> AtMostOnceTommands { get; }
     IReadOnlyList<TransportTessage.InComing> ExactlyOnceTommands { get; }

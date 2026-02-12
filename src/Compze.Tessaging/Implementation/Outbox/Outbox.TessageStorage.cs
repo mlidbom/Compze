@@ -14,12 +14,12 @@ using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Tessaging.Implementation.Outbox;
 
-partial class Outbox
+public partial class Outbox
 {
-   internal class TessageStorage : ITessageStorage
+   public class TessageStorage : ITessageStorage
    {
       // ReSharper disable once MemberHidesStaticFromOuterClass
-      internal static void RegisterWith(IComponentRegistrar registrar)
+      public static void RegisterWith(IComponentRegistrar registrar)
          => registrar.Register(Singleton.For<ITessageStorage>()
                                         .CreatedBy((IServiceBusSqlLayer.IOutboxSqlLayer sqlLayer, ITypeMapper typeMapper, IRemotableTessageSerializer serializer)
                                                       => new TessageStorage(sqlLayer, typeMapper, serializer)));

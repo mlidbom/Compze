@@ -9,10 +9,10 @@ using Microsoft.Data.Sqlite;
 
 namespace Compze.Sql.Sqlite.Private.DbPool;
 
-class SqliteMemoryDbPoolSqlLayer : IDbPoolSqlLayer
+public class SqliteMemoryDbPoolSqlLayer : IDbPoolSqlLayer
 {
    readonly string _poolId = Guid.NewGuid().ToString();
-   internal static IComponentRegistrar RegisterWith(IComponentRegistrar registrar) =>
+   public static IComponentRegistrar RegisterWith(IComponentRegistrar registrar) =>
       registrar.Register(Singleton.For<IDbPoolSqlLayer>()
                                   .CreatedBy(() => new SqliteMemoryDbPoolSqlLayer())
                                   .DelegateToParentServiceLocatorWhenCloning());

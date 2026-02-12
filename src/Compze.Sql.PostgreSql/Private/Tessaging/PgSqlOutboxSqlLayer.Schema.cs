@@ -3,11 +3,11 @@ using Dispatch = Compze.Core.Tessaging.Internal.SqlLayer.IServiceBusSqlLayer.Out
 
 namespace Compze.Sql.PostgreSql.Private.Tessaging;
 
-partial class PgSqlOutboxSqlLayer
+public partial class PgSqlOutboxSqlLayer
 {
    const string PgSqlGuidType = "UUID";
 
-   internal const string SchemaCreationSql =
+   public const string SchemaCreationSql =
       $"""
 
        CREATE TABLE IF NOT EXISTS {Tessage.TableName}

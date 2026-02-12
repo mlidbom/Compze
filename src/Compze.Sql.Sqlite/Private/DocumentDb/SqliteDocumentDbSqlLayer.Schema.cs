@@ -2,9 +2,9 @@ using Document = Compze.Core.DocumentDb.Internal.SqlLayer.IDocumentDbSqlLayer.Do
 
 namespace Compze.Sql.Sqlite.Private.DocumentDb;
 
-partial class SqliteDocumentDbSqlLayer
+public partial class SqliteDocumentDbSqlLayer
 {
-   internal const string SchemaCreationSql =
+   public const string SchemaCreationSql =
       $"""
 
        CREATE TABLE IF NOT EXISTS {Document.TableName} 
