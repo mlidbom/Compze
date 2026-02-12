@@ -12,8 +12,7 @@ function C-Split-Project {
     The command performs the following operations:
     1. Creates the new project using C-Create-Project
     2. Copies all ProjectReference entries from the parent to the new project
-    3. For each project that has InternalsVisibleTo to the parent, adds InternalsVisibleTo to the new project
-    4. For each project that has a ProjectReference to the parent, adds a ProjectReference to the new project
+    3. For each project that has a ProjectReference to the parent, adds a ProjectReference to the new project
     
     .PARAMETER Parent
     The name of the parent project (e.g., "Compze.Wiring")
@@ -94,20 +93,7 @@ function C-Split-Project {
         }
     }
     
-    # Step 4: For each project that has InternalsVisibleTo to the parent, add InternalsVisibleTo to the new project
-    $allProjects = Get-AllProjectFiles -SolutionPath $SolutionPath
-    $ivtAddedCount = 0
-    
-    foreach ($project in $allProjects) {
-        $ivtList = Get-InternalsVisibleTo -CsprojPath $project.FullName
-        
-        if ($ivtList -contains $Parent) {
-            Add-InternalsVisibleTo -CsprojPath $project.FullName -AssemblyName $New
-            $ivtAddedCount++
-        }
-    }
-    
-    # Step 5: For each project that references the parent, add a reference to the new project
+    # Step 4: For each project that references the parent, add a reference to the new project
     $referenceAddedCount = 0
     
     foreach ($project in $allProjects) {

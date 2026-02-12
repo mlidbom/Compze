@@ -162,12 +162,12 @@ The `_docs` handling stays (documentation co-location pattern is independent of 
 **Current:**
 ```
 src/Directory.Build.props           ← detects test projects by path, imports msbuild props
-src/Compze/Directory.Build.props    ← NuGet metadata + InternalsVisibleTo for all Compze libs
+src/Compze/Directory.Build.props    ← NuGet metadata
 ```
 
 **Target:**
 ```
-src/Directory.Build.props           ← NuGet metadata + InternalsVisibleTo (moved from Compze/)
+src/Directory.Build.props           ← NuGet metadata (moved from Compze/)
                                       No longer needs path-based IsTestProject detection
 test/Directory.Build.props          ← <IsTestProject>true</IsTestProject>, imports src/Directory.Build.props
 ```
