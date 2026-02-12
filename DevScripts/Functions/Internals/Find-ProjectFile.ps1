@@ -33,8 +33,9 @@ function Find-ProjectFile {
     }
     
     $solutionDir = Split-Path -Parent $SolutionPath
+    $repoRoot = Split-Path -Parent $solutionDir
     $projectFileName = "$ProjectName.csproj"
     
-    return Get-CsprojFiles -Path $solutionDir -Filter $projectFileName | 
+    return Get-CsprojFiles -Path $repoRoot -Filter $projectFileName | 
         Select-Object -First 1
 }

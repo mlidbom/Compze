@@ -53,8 +53,6 @@ function C-Split-Project {
         return
     }
     
-    $solutionDir = Split-Path -Parent $SolutionPath
-    
     # Step 1: Find the parent project
     $parentProjectFile = Find-ProjectFile -SolutionPath $SolutionPath -ProjectName $Parent
     
@@ -93,8 +91,8 @@ function C-Split-Project {
         }
     }
     
-    # Step 3: For each project that references the parent, add a reference to the new project
-    $referenceAddedCount = 0
+    # Step 4: For each project that references the parent, add a reference to the new project
+    $allProjects = Get-AllProjectFiles -SolutionPath $SolutionPath
     
     foreach ($project in $allProjects) {
         # Skip the parent and new projects themselves
@@ -120,7 +118,6 @@ function C-Split-Project {
             $relativePathToNew = [System.IO.Path]::GetRelativePath($projectDir, $newProjectPath)
             
             Add-ProjectReference -CsprojPath $project.FullName -ReferencePath $relativePathToNew
-            $referenceAddedCount++
         }
     }
 }
