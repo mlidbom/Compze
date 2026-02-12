@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
    <PropertyGroup>
       <TargetFramework>net9.0</TargetFramework>
       <Nullable>enable</Nullable>
@@ -9,6 +9,7 @@
       <ProjectReference Include="..\Compze.Serialization.Newtonsoft\Compze.Serialization.Newtonsoft.csproj" />
       <ProjectReference Include="..\Compze.Sql.Common\Compze.Sql.Common.csproj" />
       <ProjectReference Include="..\Compze.Utilities\Compze.Utilities.csproj" />
+      <ProjectReference Include="..\Compze.Utilities.Contracts\Compze.Utilities.Contracts.csproj" />
    </ItemGroup>
    <ItemGroup>
       <PackageReference Include="JetBrains.Annotations" Version="2025.2.4" />

@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
    <PropertyGroup>
       <TargetFramework>net9.0</TargetFramework>
       <Nullable>enable</Nullable>
@@ -13,6 +12,7 @@
       <ProjectReference Include="..\..\..\..\src\Compze.Tessaging.Hosting.Testing\Compze.Tessaging.Hosting.Testing.csproj" />
       <ProjectReference Include="..\AccountManagement.API\AccountManagement.API.csproj" />
       <ProjectReference Include="..\..\..\..\src\Compze.Utilities\Compze.Utilities.csproj" />
+      <ProjectReference Include="..\..\..\..\src\Compze.Utilities.Contracts\Compze.Utilities.Contracts.csproj" />
    </ItemGroup>
    <ItemGroup>
       <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.1" />

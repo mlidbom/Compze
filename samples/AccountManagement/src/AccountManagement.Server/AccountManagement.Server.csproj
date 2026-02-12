@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
    <PropertyGroup>
       <TargetFramework>net9.0</TargetFramework>
       <Nullable>enable</Nullable>
@@ -16,6 +16,7 @@
       <ProjectReference Include="..\..\..\..\src\Compze.Tessaging\Compze.Tessaging.csproj" />
       <ProjectReference Include="..\..\..\..\src\Compze.Sql.MicrosoftSql\Compze.Sql.MicrosoftSql.csproj" />
       <ProjectReference Include="..\..\..\..\src\Compze.Core\Compze.Core.csproj" />
+      <ProjectReference Include="..\..\..\..\src\Compze.Utilities.Contracts\Compze.Utilities.Contracts.csproj" />
    </ItemGroup>
    <ItemGroup>
       <None Update="appsettings.json">

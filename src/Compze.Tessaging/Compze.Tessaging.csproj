@@ -9,6 +9,7 @@
       <ProjectReference Include="..\Compze.Sql.Common\Compze.Sql.Common.csproj" />
       <ProjectReference Include="..\Compze.Utilities\Compze.Utilities.csproj" />
       <ProjectReference Include="..\Compze.Core\Compze.Core.csproj" />
+      <ProjectReference Include="..\Compze.Utilities.Contracts\Compze.Utilities.Contracts.csproj" />
    </ItemGroup>
    <ItemGroup>
       <PackageReference Include="JetBrains.Annotations" Version="2025.2.4" />

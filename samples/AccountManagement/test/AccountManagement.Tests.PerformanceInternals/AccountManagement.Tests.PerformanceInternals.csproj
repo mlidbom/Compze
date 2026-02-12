@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
    <PropertyGroup>
       <TargetFramework>net9.0</TargetFramework>
       <Nullable>enable</Nullable>
@@ -11,6 +10,7 @@
    <ItemGroup>
       <ProjectReference Include="..\AccountManagement.Tests\AccountManagement.Tests.csproj" />
       <ProjectReference Include="..\..\..\..\src\Compze.Utilities\Compze.Utilities.csproj" />
+      <ProjectReference Include="..\..\..\..\src\Compze.Utilities.Contracts\Compze.Utilities.Contracts.csproj" />
    </ItemGroup>
    <ItemGroup>
       <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />

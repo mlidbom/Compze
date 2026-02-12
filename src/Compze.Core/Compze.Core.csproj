@@ -7,6 +7,7 @@
    </PropertyGroup>
    <ItemGroup>
       <ProjectReference Include="..\Compze.Utilities\Compze.Utilities.csproj" />
+      <ProjectReference Include="..\Compze.Utilities.Contracts\Compze.Utilities.Contracts.csproj" />
    </ItemGroup>
    <ItemGroup>
       <PackageReference Include="NsDepCop" Version="2.6.0">
@@ -14,9 +15,9 @@
          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
    </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Serialization\Internal\DbPool\" />
-  </ItemGroup>
+   <ItemGroup>
+      <Folder Include="Serialization\Internal\DbPool\" />
+   </ItemGroup>
   <!-- Exclude _docs files from compilation but keep them visible.
        This section is automatically maintained by DevScripts\C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders.ps1 -->
   <ItemGroup>

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
    <PropertyGroup>
       <TargetFramework>net9.0</TargetFramework>
       <Nullable>enable</Nullable>
@@ -6,14 +6,14 @@
       <Description>Fluent assertion library for Compze testing.</Description>
    </PropertyGroup>
    <ItemGroup>
-     <AdditionalFiles Include="config.nsdepcop" />
+      <AdditionalFiles Include="config.nsdepcop" />
    </ItemGroup>
    <ItemGroup>
-     <ProjectReference Include="..\Compze.Utilities\Compze.Utilities.csproj" />
+      <ProjectReference Include="..\Compze.Utilities\Compze.Utilities.csproj" />
+      <ProjectReference Include="..\Compze.Utilities.Contracts\Compze.Utilities.Contracts.csproj" />
    </ItemGroup>
-
-	<ItemGroup>
+   <ItemGroup>
       <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
       <PackageReference Include="DiffPlex" Version="1.9.0" />
-	</ItemGroup>
+   </ItemGroup>
 </Project>

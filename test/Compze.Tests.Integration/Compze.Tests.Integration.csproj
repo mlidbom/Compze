@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
    <PropertyGroup>
       <TargetFramework>net9.0</TargetFramework>
       <Nullable>enable</Nullable>
@@ -11,10 +11,12 @@
       <ProjectReference Include="..\Compze.Tests.Unit.Internals\Compze.Tests.Unit.Internals.csproj" />
       <ProjectReference Include="..\..\src\Compze.Utilities\Compze.Utilities.csproj" />
       <ProjectReference Include="..\..\src\Compze.Utilities.Testing.Must\Compze.Utilities.Testing.Must.csproj" />
+      <ProjectReference Include="..\..\src\Compze.Utilities.Contracts\Compze.Utilities.Contracts.csproj" />
    </ItemGroup>
    <ItemGroup>
       <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
-      <PackageReference Include="NCrunch.Framework" Version="5.11.0" />      <PackageReference Include="JetBrains.Annotations" Version="2025.2.4">
+      <PackageReference Include="NCrunch.Framework" Version="5.11.0" />
+      <PackageReference Include="JetBrains.Annotations" Version="2025.2.4">
          <IncludeAssets>compile;analyzers</IncludeAssets>
       </PackageReference>
       <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
