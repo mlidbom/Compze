@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+   <PropertyGroup>
+      <TargetFramework>net9.0</TargetFramework>
+      <Nullable>enable</Nullable>
+      <IsPackable>false</IsPackable>
+      <IsTestProject>false</IsTestProject>
+   </PropertyGroup>
+   <ItemGroup>
+      <ProjectReference Include="..\..\src\Compze.Tessaging.Hosting.AspNetCore\Compze.Tessaging.Hosting.AspNetCore.csproj" />
+      <ProjectReference Include="..\..\src\Compze.Tessaging.Hosting.Testing\Compze.Tessaging.Hosting.Testing.csproj" />
+      <ProjectReference Include="..\..\src\Compze.Tessaging.Teventive.TeventStore\Compze.Tessaging.Teventive.TeventStore.csproj" />
+      <ProjectReference Include="..\Compze.Tests.Infrastructure\Compze.Tests.Infrastructure.csproj" />
+      <ProjectReference Include="..\..\src\Compze.Utilities\Compze.Utilities.csproj" />
+      <ProjectReference Include="..\..\src\Compze.Utilities.Testing.Must\Compze.Utilities.Testing.Must.csproj" />
+   </ItemGroup>
+   <ItemGroup>
+      <InternalsVisibleTo Include="Compze.Tests.Integration.Internals" />
+      <InternalsVisibleTo Include="Compze.Tests.Integration" />
+   </ItemGroup>
+   <ItemGroup>
+      <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
+      <PackageReference Include="xunit.v3" Version="3.1.0" />
+      <PackageReference Include="xunit.v3.extensibility.core" Version="3.1.0" />
+   </ItemGroup>
+</Project>

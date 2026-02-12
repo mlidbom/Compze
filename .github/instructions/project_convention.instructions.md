@@ -17,7 +17,7 @@ applyTo: '**'
 - **Primary constructors**: Use when appropriate (see `PCTAttribute` for an example).
 - **Indentation**: 3 spaces (match existing codebase).
 - **Test method names**: Use underscores for readability (e.g., `My_test_method()`).
-- **Namespace = folder path**: `Compze.Tests.Unit.MyFeature` must live in `Tests/Unit/MyFeature/`.
+- **Namespace = folder path**: `Compze.Tests.Unit.MyFeature` must live under the `Compze.Tests.Unit` project in a `MyFeature/` subdirectory.
 
 ## Pluggable Component Testing
 

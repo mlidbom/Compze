@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+   <PropertyGroup>
+      <TargetFramework>net9.0</TargetFramework>
+      <Nullable>enable</Nullable>
+      <IsPackable>false</IsPackable>
+      <IsTestProject>false</IsTestProject>
+   </PropertyGroup>
+   <ItemGroup>
+      <ProjectReference Include="..\..\src\Compze.Utilities.Logging.Serilog\Compze.Utilities.Logging.Serilog.csproj" />
+      <ProjectReference Include="..\..\src\Compze.Tessaging.Hosting.Testing\Compze.Tessaging.Hosting.Testing.csproj" />
+      <ProjectReference Include="..\..\src\Compze.Utilities.Testing.XUnit\Compze.Utilities.Testing.XUnit.csproj" />
+      <ProjectReference Include="..\..\src\Compze.Utilities.Testing.XUnit\Compze.Utilities.Testing.XUnit.csproj" />
+      <ProjectReference Include="..\..\src\Compze.Utilities\Compze.Utilities.csproj" />
+   </ItemGroup>
+   <ItemGroup>
+      <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />      <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+      <PackageReference Include="xunit.v3" Version="3.1.0" />
+      <PackageReference Include="xunit.v3.extensibility.core" Version="3.1.0" />
+   </ItemGroup>
+</Project>

@@ -5,9 +5,12 @@ function Place-ProjectInCorrectSolutionFolder {
     Moves a project to the correct folder within the solution file
     
     .DESCRIPTION
-    Calculates the correct solution folder based on the project's path
-    and moves the project element to that folder. Creates the folder if needed.
-    Assumes the project already exists in the solution file.
+    Calculates the correct solution folder based on the project name and places it there.
+    - Library projects (src/): grouped by first component after "Compze." (e.g., /Compze/, /Compze/Utilities/)
+    - Test projects (test/): placed in /_Tests/
+    - Sample projects: placed in /_Samples/ subfolders
+    - Solution structure projects: placed in /~Solution Structure/
+    This is purely a solution file organization update - it doesn't move any files.
     
     .PARAMETER ProjectName
     The name of the project to place in the correct folder
@@ -26,13 +29,14 @@ function Place-ProjectInCorrectSolutionFolder {
     )
     
     [xml]$xml = Get-Content $SolutionPath
+    $solutionDir = Split-Path -Parent $SolutionPath
     
-    # Calculate the expected project path
-    $solutionProjectPath = $ProjectName -replace '\.', '/'
-    $solutionProjectPath = "$solutionProjectPath/$ProjectName.csproj"
-    
-    # Find the project
-    $projectElement = $xml.SelectNodes("//Project[@Path]") | Where-Object { $_.Path -eq $solutionProjectPath } | Select-Object -First 1
+    # Find the project element in the solution file (match by project name in the path)
+    $projectElement = $xml.SelectNodes("//Project[@Path]") | Where-Object { 
+        $path = $_.Path
+        $fileName = ($path -split '[/\\]')[-1]
+        $fileName -eq "$ProjectName.csproj"
+    } | Select-Object -First 1
     
     if (-not $projectElement) {
         Write-Error "Project not found in solution: $ProjectName"
@@ -41,19 +45,18 @@ function Place-ProjectInCorrectSolutionFolder {
     
     $currentPath = $projectElement.GetAttribute("Path")
     
-    # Calculate target folder: "Compze/Common/Configuration/Compze.Common.Configuration.csproj" -> "/Compze/Common/"
-    $pathParts = $currentPath -split '/'
-    if ($pathParts.Length -lt 2) { 
-        Write-Error "Unexpected path format: $currentPath"
-        return 
-    }
+    # Determine the target solution folder based on path and name
+    $targetSolutionFolder = Get-TargetSolutionFolder -ProjectName $ProjectName -ProjectPath $currentPath
     
-    $directoryPath = $pathParts[0..($pathParts.Length - 2)] -join '/'
-    $targetFolderParts = $directoryPath -split '/'
-    $targetSolutionFolder = if ($targetFolderParts.Length -lt 2) {
-        "/" + $targetFolderParts[0] + "/"
-    } else {
-        "/" + ($targetFolderParts[0..($targetFolderParts.Length - 2)] -join '/') + "/"
+    if (-not $targetSolutionFolder) {
+        # Project should be at solution root (no folder)
+        $currentParent = $projectElement.ParentNode
+        if ($currentParent.Name -ne "Solution") {
+            $currentParent.RemoveChild($projectElement) | Out-Null
+            $xml.DocumentElement.AppendChild($projectElement) | Out-Null
+            $xml.Save($SolutionPath)
+        }
+        return
     }
     
     # Check if already in correct folder
@@ -77,4 +80,52 @@ function Place-ProjectInCorrectSolutionFolder {
     # Move project to target folder
     $targetFolder.AppendChild($projectElement) | Out-Null
     $xml.Save($SolutionPath)
+}
+
+function Get-TargetSolutionFolder {
+    <#
+    .SYNOPSIS
+    Determines the solution folder for a project based on its name and path.
+    #>
+    param(
+        [string]$ProjectName,
+        [string]$ProjectPath
+    )
+
+    # Test projects go to /_Tests/
+    if ($ProjectPath -match '^\.\./test/' -or $ProjectPath -match '^\.\.\\/test\\/' -or $ProjectName -match '^Compze\.Tests\.' -or $ProjectName -match '\.Tests$') {
+        return "/_Tests/"
+    }
+
+    # Sample projects
+    if ($ProjectPath -match 'Samples') {
+        if ($ProjectPath -match 'Tests|UnitTests|PerformanceTests') {
+            return "/_Samples/AccountManagement/Tests/"
+        }
+        return "/_Samples/AccountManagement/"
+    }
+
+    # Website
+    if ($ProjectPath -match 'Websites') {
+        return "/_Websites/"
+    }
+
+    # Solution structure projects
+    if ($ProjectPath -match 'msbuild|SolutionStructure') {
+        return "/~Solution Structure/"
+    }
+
+    # DevScripts — no folder (solution root)
+    if ($ProjectPath -match 'DevScripts') {
+        return $null
+    }
+
+    # Library projects: group by first component after "Compze."
+    $parts = $ProjectName -split '\.'
+    if ($parts.Count -le 2) {
+        return "/Compze/"
+    }
+
+    # Use first two segments as folder: /Compze/Utilities/, /Compze/Tessaging/, etc.
+    return "/Compze/$($parts[1])/"
 }

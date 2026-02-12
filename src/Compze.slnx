@@ -7,36 +7,6 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Folder Name="/Compze/">
-    <Project Path="Compze/Abstractions/Compze.Core.csproj" />
-  </Folder>
-  <Folder Name="/Compze/Serialization/">
-    <Project Path="Compze/Serialization/Newtonsoft/Compze.Serialization.Newtonsoft.csproj" />
-  </Folder>
-  <Folder Name="/Compze/Sql/">
-    <Project Path="Compze/Sql/Common/Compze.Sql.Common.csproj" />
-    <Project Path="Compze/Sql/MicrosoftSql/Compze.Sql.MicrosoftSql.csproj" />
-    <Project Path="Compze/Sql/MySql/Compze.Sql.MySql.csproj" />
-    <Project Path="Compze/Sql/PostgreSql/Compze.Sql.PostgreSql.csproj" />
-    <Project Path="Compze/Sql/Sqlite/Compze.Sql.Sqlite.csproj" />
-  </Folder>
-  <Folder Name="/Compze/Tessaging/">
-    <Project Path="Compze/Tessaging/Compze.Tessaging.csproj" />
-  </Folder>
-  <Folder Name="/Compze/Tessaging/Hosting/">
-    <Project Path="Compze/Tessaging/Hosting/AspNetCore/Compze.Tessaging.Hosting.AspNetCore.csproj" />
-    <Project Path="Compze/Tessaging/Hosting/Testing/Compze.Tessaging.Hosting.Testing.csproj" />
-  </Folder>
-  <Folder Name="/Compze/Tessaging/Teventive/">
-    <Project Path="Compze/Tessaging/Teventive/TeventStore/Compze.Tessaging.Teventive.TeventStore.csproj" />
-  </Folder>
-  <Folder Name="/Compze/Utilities/">
-    <Project Path="Compze/Utilities/Compze.Utilities.csproj" />
-    <Project Path="Compze/Utilities/DependencyInjection/Microsoft/Compze.Utilities.DependencyInjection.Microsoft.csproj" />
-    <Project Path="Compze/Utilities/DependencyInjection/SimpleInjector/Compze.Utilities.DependencyInjection.SimpleInjector.csproj" />
-    <Project Path="Compze/Utilities/Logging/Serilog/Compze.Utilities.Logging.Serilog.csproj" />
-    <Project Path="Compze/Utilities/Tests/Compze.Utilities.Tests.csproj" />
-  </Folder>
   <Folder Name="/_Samples/" />
   <Folder Name="/_Samples/AccountManagement/">
     <Project Path="Samples/AccountManagement/AccountManagement/API/AccountManagement.API.csproj" />
@@ -53,25 +23,15 @@
     <File Path="../README.md" />
     <File Path="../Writing_documentation.md" />
     <File Path=".editorconfig" />
-    <File Path="Compze/test-common-appsettings.json" />
+    <File Path="../test/test-common-appsettings.json" />
     <File Path="TestUsingPluggableComponentCombinations" />
     <File Path="TestUsingPluggableComponentCombinations.example" />
     <File Path="TODO_must_assertion_improvements.md" />
   </Folder>
   <Folder Name="/_Solution Items/Tests/">
-    <File Path="Compze/test-common-appsettings.json" />
+    <File Path="../test/test-common-appsettings.json" />
     <File Path="TestUsingPluggableComponentCombinations" />
     <File Path="TestUsingPluggableComponentCombinations.example" />
-  </Folder>
-  <Folder Name="/_Tests/">
-    <Project Path="Tests/Common/Compze.Tests.Common.csproj" />
-    <Project Path="Tests/Compze.Tests.CodePolicies/Compze.Tests.CodePolicies.csproj" />
-    <Project Path="Tests/Infrastructure/Compze.Tests.Infrastructure.csproj" />
-    <Project Path="Tests/Integration/Compze.Tests.Integration.csproj" />
-    <Project Path="Tests/ScratchPad/Compze.Tests.ScratchPad.csproj" />
-    <Project Path="Tests/Unit/Compze.Tests.Unit.csproj" />
-    <Project Path="Tests/Unit/Internals/Compze.Tests.Unit.Internals.csproj" />
-    <Project Path="Tests\Performance\Internals\Compze.Tests.Performance.Internals.csproj" />
   </Folder>
   <Folder Name="/_Websites/">
     <Project Path="Websites/Website/Website.csproj" />
@@ -84,13 +44,47 @@
     <Project Path="SolutionStructure/Solution.TestConfig.csproj" />
     <Project Path="SolutionStructure/Solution.TODO.csproj" />
   </Folder>
-  <Folder Name="/Compze/Utilities/Testing/">
-    <Project Path="Compze/Utilities/Testing/DbPool/Compze.Utilities.Testing.DbPool.csproj" />
-    <Project Path="Compze/Utilities/Testing/XUnit/Compze.Utilities.Testing.XUnit.csproj" />
-    <Project Path="Compze/Utilities/Testing/XUnit/Tests/Compze.Utilities.Testing.XUnit.Tests.csproj">
+  <Folder Name="/Compze/">
+    <Project Path="Compze.Core/Compze.Core.csproj" />
+    <Project Path="Compze.Tessaging/Compze.Tessaging.csproj" />
+    <Project Path="Compze.Utilities/Compze.Utilities.csproj" />
+  </Folder>
+  <Folder Name="/Compze/Serialization/">
+    <Project Path="Compze.Serialization.Newtonsoft/Compze.Serialization.Newtonsoft.csproj" />
+  </Folder>
+  <Folder Name="/Compze/Sql/">
+    <Project Path="Compze.Sql.Common/Compze.Sql.Common.csproj" />
+    <Project Path="Compze.Sql.MicrosoftSql/Compze.Sql.MicrosoftSql.csproj" />
+    <Project Path="Compze.Sql.MySql/Compze.Sql.MySql.csproj" />
+    <Project Path="Compze.Sql.PostgreSql/Compze.Sql.PostgreSql.csproj" />
+    <Project Path="Compze.Sql.Sqlite/Compze.Sql.Sqlite.csproj" />
+  </Folder>
+  <Folder Name="/Compze/Tessaging/">
+    <Project Path="Compze.Tessaging.Hosting.AspNetCore/Compze.Tessaging.Hosting.AspNetCore.csproj" />
+    <Project Path="Compze.Tessaging.Hosting.Testing/Compze.Tessaging.Hosting.Testing.csproj" />
+    <Project Path="Compze.Tessaging.Teventive.TeventStore/Compze.Tessaging.Teventive.TeventStore.csproj" />
+  </Folder>
+  <Folder Name="/Compze/Utilities/">
+    <Project Path="Compze.Utilities.DependencyInjection.Microsoft/Compze.Utilities.DependencyInjection.Microsoft.csproj" />
+    <Project Path="Compze.Utilities.DependencyInjection.SimpleInjector/Compze.Utilities.DependencyInjection.SimpleInjector.csproj" />
+    <Project Path="Compze.Utilities.Logging.Serilog/Compze.Utilities.Logging.Serilog.csproj" />
+    <Project Path="Compze.Utilities.Testing.DbPool/Compze.Utilities.Testing.DbPool.csproj" />
+    <Project Path="Compze.Utilities.Testing.XUnit/Compze.Utilities.Testing.XUnit.csproj" />
+    <Project Path="Compze.Utilities.Testing.Must/Compze.Utilities.Testing.Must.csproj" />
+  </Folder>
+  <Folder Name="/_Tests/">
+    <Project Path="../test/Compze.Utilities.Tests/Compze.Utilities.Tests.csproj" />
+    <Project Path="../test/Compze.Tests.Common/Compze.Tests.Common.csproj" />
+    <Project Path="../test/Compze.Tests.CodePolicies/Compze.Tests.CodePolicies.csproj" />
+    <Project Path="../test/Compze.Tests.Infrastructure/Compze.Tests.Infrastructure.csproj" />
+    <Project Path="../test/Compze.Tests.Integration/Compze.Tests.Integration.csproj" />
+    <Project Path="../test/Compze.Tests.ScratchPad/Compze.Tests.ScratchPad.csproj" />
+    <Project Path="../test/Compze.Tests.Unit/Compze.Tests.Unit.csproj" />
+    <Project Path="../test/Compze.Tests.Unit.Internals/Compze.Tests.Unit.Internals.csproj" />
+    <Project Path="../test/Compze.Tests.Performance.Internals/Compze.Tests.Performance.Internals.csproj" />
+    <Project Path="../test/Compze.Utilities.Testing.XUnit.Tests/Compze.Utilities.Testing.XUnit.Tests.csproj">
       <BuildType Solution="docs|*" Project="Release" />
     </Project>
-    <Project Path="Compze/Utilities/Testing/Must/Compze.Utilities.Testing.Must.csproj" />
   </Folder>
   <Project Path="../DevScripts/Scripts.csproj" />
 </Solution>

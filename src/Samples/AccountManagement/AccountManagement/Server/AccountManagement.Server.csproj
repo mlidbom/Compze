@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
    <PropertyGroup>
       <TargetFramework>net9.0</TargetFramework>
       <Nullable>enable</Nullable>
@@ -8,14 +8,14 @@
       <RootNamespace>AccountManagement</RootNamespace>
    </PropertyGroup>
    <ItemGroup>
-      <ProjectReference Include="..\..\..\..\Compze\Tessaging\Hosting\AspNetCore\Compze.Tessaging.Hosting.AspNetCore.csproj" />
-      <ProjectReference Include="..\..\..\..\Compze\Tessaging\Teventive\TeventStore\Compze.Tessaging.Teventive.TeventStore.csproj" />
-      <ProjectReference Include="..\..\..\..\Compze\Utilities\DependencyInjection\SimpleInjector\Compze.Utilities.DependencyInjection.SimpleInjector.csproj" />
+      <ProjectReference Include="..\..\..\..\Compze.Tessaging.Hosting.AspNetCore\Compze.Tessaging.Hosting.AspNetCore.csproj" />
+      <ProjectReference Include="..\..\..\..\Compze.Tessaging.Teventive.TeventStore\Compze.Tessaging.Teventive.TeventStore.csproj" />
+      <ProjectReference Include="..\..\..\..\Compze.Utilities.DependencyInjection.SimpleInjector\Compze.Utilities.DependencyInjection.SimpleInjector.csproj" />
       <ProjectReference Include="..\Domain\Events\AccountManagement.Domain.Tevents.csproj" />
-      <ProjectReference Include="..\..\..\..\Compze\Utilities\Compze.Utilities.csproj" />
-      <ProjectReference Include="..\..\..\..\Compze\Tessaging\Compze.Tessaging.csproj" />
-      <ProjectReference Include="..\..\..\..\Compze\Sql\MicrosoftSql\Compze.Sql.MicrosoftSql.csproj" />
-      <ProjectReference Include="..\..\..\..\Compze\Abstractions\Compze.Core.csproj" />
+      <ProjectReference Include="..\..\..\..\Compze.Utilities\Compze.Utilities.csproj" />
+      <ProjectReference Include="..\..\..\..\Compze.Tessaging\Compze.Tessaging.csproj" />
+      <ProjectReference Include="..\..\..\..\Compze.Sql.MicrosoftSql\Compze.Sql.MicrosoftSql.csproj" />
+      <ProjectReference Include="..\..\..\..\Compze.Core\Compze.Core.csproj" />
    </ItemGroup>
    <ItemGroup>
       <None Update="appsettings.json">
