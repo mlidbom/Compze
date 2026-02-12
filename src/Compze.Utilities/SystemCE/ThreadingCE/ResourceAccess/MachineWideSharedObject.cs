@@ -7,7 +7,7 @@ namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
 public abstract class MachineWideSharedObject
 {
-   public static readonly LazyCE<DirectoryCE> DataDirectory = new(() => DirectoryCE.StandardDirectories
+   internal static readonly LazyCE<DirectoryCE> DataDirectory = new(() => DirectoryCE.StandardDirectories
                                                                                      .LocalApplicationData
                                                                                      .GetOrCreateDirectory("Compze")
                                                                                      .GetOrCreateDirectory("SharedFiles"));
