@@ -50,13 +50,13 @@ Every output file is prepended with:
 // </auto-generated>
 ```
 
+## MSBuild Integration
+
 ### MSBuild Task: `RewriteDirectoryTask`
 
 An MSBuild `ITask` with two required properties:
 - `InputDirectory` — path to the source files to internalize
 - `OutputDirectory` — path where rewritten files are written
-
-## MSBuild Integration
 
 Import the `.targets` file in the consuming project and set two properties:
 
