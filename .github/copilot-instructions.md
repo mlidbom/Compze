@@ -2,26 +2,12 @@
 
 ## Rules — Follow These First
 
-- **Minimal changes**: Make the smallest possible changes to accomplish the task.
-- **Don't fix unrelated issues**: Focus only on the task at hand.
 - **Test thoroughly**: Always run the full test suite before finalizing.
-- **RULE: A full test run must execute at least 958 tests. Fewer = failure.**
 - **Performance tests**: If they fail, rerun. Repeated failures are NOT acceptable — do not report success.
-- **Documentation**: Update docs only if directly related to your changes.
-- **Before committing**: Run `C-Test`. Run `C-Validate-SolutionStructure` if you've modified project structure.
-- **InternalsVisibleTo**: Use to maintain encapsulation; run `C-Remove-RedundantInternalsVisibleTo` to clean up.
 - **`COMPOSABLE_MACHINE_SLOWNESS`**: Set this environment variable (e.g., `5.0`) to adjust performance test timing expectations on slow machines.
-
-### Do Not Modify Without Asking
-- `src/Directory.Build.props`
-- `src/msbuild/*.props`
-- `src/Compze.slnx` (use DevScripts `C-Create-Project`, `C-Rename-Project`, etc.)
-- `src/TestUsingPluggableComponentCombinations` (user's local config)
-- `src/solution-file-structure.README.md`
 
 ### Common Pitfalls
 - **Don't write one test per pluggable component** — use `[PCT]` (see Pluggable Component Testing below).
-- **Don't run `dotnet test` without `--no-build`** if you've already built.
 - **DevScripts must be imported** before using `C-*` commands — don't assume they're loaded. Import with: `Import-Module <repo>/DevScripts/Compze.psm1 -DisableNameChecking`
 
 ## Repository Overview
@@ -104,7 +90,6 @@ src/
   Compze.Utilities.Testing.DbPool/     # Database pool for testing
   Compze.Utilities.Testing.Must/       # Must assertion library
   Compze.Utilities.Testing.XUnit/      # xUnit testing infrastructure
-  Samples/                             # Sample applications (AccountManagement)
   Websites/Website/                    # DocFX documentation site
 test/
   Compze.Tests.CodePolicies/           # Code policy enforcement tests
@@ -117,12 +102,11 @@ test/
   Compze.Tests.Unit.Internals/         # Unit tests (internals)
   Compze.Utilities.Testing.XUnit.Tests/ # Testing framework tests
   Compze.Utilities.Tests/              # Utility tests
+Samples/                             # Sample applications (AccountManagement)
 DevScripts/                            # PowerShell development automation module
 ```
 
 ### Naming Conventions
-- **Projects**: Flat layout — directory name = project name (e.g., `Compze.Utilities.DependencyInjection` → `src/Compze.Utilities.DependencyInjection/`)
-- **Interfaces**: Prefix with `I` (e.g., `IUserEvent`, `IAggregateEvent`)
 - **Variables/Methods**: Use descriptive names; long names are acceptable if they improve clarity
 
 ## Pluggable Component Testing Pattern
@@ -133,39 +117,6 @@ Tests that need to run against all configured pluggable component combinations u
 2. **Decorate test methods with `[PCT]`** (Pluggable Component Theory, in `Tests/Infrastructure/XUnit/`)
 3. **Access current combination via the static `TestEnv` class** — methods take zero parameters
 
-### Template — copy this for new PCT tests:
-```csharp
-using Compze.Tessaging.Hosting.Testing;
-using Compze.Tests.Infrastructure;
-using Compze.Tests.Infrastructure.XUnit;
-
-namespace Compze.Tests.Integration.MyFeature;
-
-public class MyFeatureTests : UniversalTestBase
-{
-   [PCT]
-   public void My_test_method()
-   {
-      using var serviceLocator = TestEnv.DIContainer.SetupTestingServiceLocator(_ => { });
-      // ... test logic using serviceLocator
-   }
-}
-```
-
-### Template — copy this for non-PCT unit tests:
-```csharp
-using Compze.Tests.Infrastructure;
-using Compze.Utilities.Testing.Must;
-using Xunit;
-
-namespace Compze.Tests.Unit.MyFeature;
-
-public class MyFeatureTests : UniversalTestBase
-{
-   [Fact]
-   public void My_test_method() => 42.Must().Be(42);
-}
-```
 
 **Attribute variants:**
 - `[PCT]` — runs for all 4 component types (SqlLayer × DIContainer × Serializer × Transport)
