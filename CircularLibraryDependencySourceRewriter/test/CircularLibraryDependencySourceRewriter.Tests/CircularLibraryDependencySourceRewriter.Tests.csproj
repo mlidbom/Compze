@@ -15,6 +15,15 @@
     <PackageReference Include="xunit.runner.visualstudio" Version="*" />
   </ItemGroup>
 
+  <PropertyGroup>
+    <DefaultItemExcludes>$(DefaultItemExcludes);input_source\**;output_source\**</DefaultItemExcludes>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="input_source\**" />
+    <None Include="output_source\**" />
+  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\..\src\CircularLibraryDependencySourceRewriter\CircularLibraryDependencySourceRewriter.csproj" />
   </ItemGroup>
