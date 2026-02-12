@@ -1,0 +1,19 @@
+<Project>
+  <UsingTask TaskName="CircularLibraryDependencySourceRewriter.RewriteDirectoryTask"
+             AssemblyFile="$(MSBuildThisFileDirectory)..\src\CircularLibraryDependencySourceRewriter\bin\$(Configuration)\net9.0\CircularLibraryDependencySourceRewriter.dll" />
+
+  <Target Name="RewriteInternalizedSource"
+          BeforeTargets="CoreCompile"
+          Condition="'$(InternalizeSourceFrom)' != '' AND '$(InternalizeSourceTo)' != ''"
+          Inputs="$(InternalizeSourceFrom)\**\*.cs"
+          Outputs="$(InternalizeSourceTo)\**\*.cs">
+
+    <RewriteDirectoryTask InputDirectory="$(InternalizeSourceFrom)"
+                          OutputDirectory="$(InternalizeSourceTo)" />
+
+    <!-- Include the generated files in compilation -->
+    <ItemGroup>
+      <Compile Include="$(InternalizeSourceTo)\**\*.cs" />
+    </ItemGroup>
+  </Target>
+</Project>

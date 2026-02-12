@@ -15,6 +15,6 @@ public class GenerateOutputSource
    static readonly string InputDir = Path.Combine(TestProjectDir, "input_source");
    static readonly string OutputDir = Path.Combine(TestProjectDir, "output_source");
 
-   [Fact]
+   [Fact(Skip = "Manual-only: regenerates output_source baseline. Run explicitly with: dotnet test --filter GenerateOutputSource")]
    public void generate() => RewriteDirectory(InputDir, OutputDir);
 }
