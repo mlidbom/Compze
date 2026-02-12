@@ -8,7 +8,7 @@ using static Compze.Utilities.Contracts.Assert;
 namespace Compze.Utilities.SystemCE.ReflectionCE;
 
 /// <summary>A collection of extensions to work with <see cref="Type"/></summary>
-static partial class TypeCE
+public static partial class TypeCE
 {
    public static string FullNameNotNull(this Type @this) => Result.ReturnNotNull(@this.FullName);
 

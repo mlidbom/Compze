@@ -42,7 +42,7 @@ public interface IServiceLocator : IDisposable, IAsyncDisposable
    IDisposable BeginScope();
 }
 
-enum Lifestyle
+public enum Lifestyle
 {
    Singleton,
    Scoped

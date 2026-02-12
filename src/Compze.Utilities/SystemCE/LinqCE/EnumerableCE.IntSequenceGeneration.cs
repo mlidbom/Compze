@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace Compze.Utilities.SystemCE.LinqCE;
 
 /// <summary/>
-static partial class EnumerableCE
+public static partial class EnumerableCE
 {
    /// <summary>
    /// Represents a sequence first yielding <see cref="StartValue"/> and then infinitely yielding the last value plus <see cref="StepSize"/>

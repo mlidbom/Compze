@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Compze.Utilities.SystemCE.TextCE;
 
-static class StringBuilderCE
+public static class StringBuilderCE
 {
    public static StringBuilder AppendInvariant(this StringBuilder @this,
                                                [InterpolatedStringHandlerArgument(nameof(@this))] ref AppendInvariantHandler handler) =>

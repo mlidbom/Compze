@@ -4,7 +4,7 @@ using Compze.Utilities.SystemCE.ActionFuncHarmonization;
 
 namespace Compze.Utilities.SystemCE;
 
-class ReentrancyGuard
+public class ReentrancyGuard
 {
    bool _isExecuting = false;
    bool _reentryWasAttempted = false;
