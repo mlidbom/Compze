@@ -1,18 +1,124 @@
 # Compze.Utilities.Testing.XUnit
 
-xUnit testing utilities and attributes for the [Compze](https://github.com/mlidbom/Compze) framework.
+**BDD-style specification testing for xUnit v3** — write nested, inheritable test classes that read like executable specifications.
 
-## What is Compze?
+## The problem
 
-Compze is a .NET framework for building expressive domains through **Teventive programming** and **Typermedia APIs**. [Learn more](https://compze.net/)
+xUnit runs every `[Fact]` it finds on a class, *including inherited ones*. So if you nest test classes and use inheritance to build up context (the way BDD specifications work), every test from every ancestor re-runs on every descendant. A 3-level deep spec tree doesn't just duplicate work — it causes an *explosion* of redundant test executions.
 
-## What's in this package?
+This makes idiomatic BDD-style testing in plain xUnit impractical.
 
-This package provides xUnit integration for Compze's pluggable component testing:
+## The solution
 
-- **Custom test case support** — `ArgumentDiscardingTestCase` and `ConstructorArgumentForwardingTestCase` for pluggable component test execution
-- **Test discovery** — Attributes and infrastructure for discovering and running tests across all configured pluggable component combinations
-- **xUnit v3 compatible** — Built on xUnit v3 extensibility
+This package provides `[ExclusiveFact]` (and its short alias `[XF]`) — a custom xUnit v3 fact attribute that runs a test **only for the class that declares it**, never for inheriting classes. This single mechanism unlocks clean, nested, context-building BDD specifications without any duplicated runs.
+
+## What does BDD-style testing look like?
+
+Specifications are organized as nested classes where each level adds context. Class names describe the scenario, test method names describe the expected behavior:
+
+```csharp
+using Compze.Utilities.Testing.XUnit.BDD;
+
+public class When_a_user_attempts_to_register
+{
+   readonly RegistrationService _service = new();
+
+   public class with_invalid_email : When_a_user_attempts_to_register
+   {
+      public class that_is_missing_the_at_sign : with_invalid_email
+      {
+         readonly RegistrationResult _result;
+         public that_is_missing_the_at_sign() => _result = _service.Register("johndoe.com", "Secret123!");
+
+         [XF] public void registration_is_rejected()  => Assert.False(_result.Succeeded);
+         [XF] public void error_mentions_email()       => Assert.Contains("email", _result.Error, StringComparison.OrdinalIgnoreCase);
+      }
+
+      public class that_is_empty : with_invalid_email
+      {
+         readonly RegistrationResult _result;
+         public that_is_empty() => _result = _service.Register("", "Secret123!");
+
+         [XF] public void registration_is_rejected()  => Assert.False(_result.Succeeded);
+         [XF] public void error_mentions_required()    => Assert.Contains("required", _result.Error, StringComparison.OrdinalIgnoreCase);
+      }
+   }
+
+   public class with_invalid_password : When_a_user_attempts_to_register
+   {
+      public class that_is_too_short : with_invalid_password
+      {
+         readonly RegistrationResult _result;
+         public that_is_too_short() => _result = _service.Register("john@doe.com", "Ab1!");
+
+         [XF] public void registration_is_rejected()     => Assert.False(_result.Succeeded);
+         [XF] public void error_mentions_password_length() => Assert.Contains("at least 8", _result.Error);
+      }
+
+      public class that_has_no_digit : with_invalid_password
+      {
+         readonly RegistrationResult _result;
+         public that_has_no_digit() => _result = _service.Register("john@doe.com", "SecretPassword!");
+
+         [XF] public void registration_is_rejected()  => Assert.False(_result.Succeeded);
+         [XF] public void error_mentions_digit()       => Assert.Contains("digit", _result.Error, StringComparison.OrdinalIgnoreCase);
+      }
+   }
+
+   public class with_all_valid_data : When_a_user_attempts_to_register
+   {
+      readonly RegistrationResult _result;
+      public with_all_valid_data() => _result = _service.Register("john@doe.com", "Secret123!");
+
+      [XF] public void registration_succeeds()       => Assert.True(_result.Succeeded);
+      [XF] public void a_confirmation_email_is_sent() => Assert.True(_result.ConfirmationEmailSent);
+      [XF] public void the_user_id_is_assigned()      => Assert.NotEqual(Guid.Empty, _result.UserId);
+   }
+}
+```
+
+In the Test Explorer this produces a readable specification tree:
+
+```
+When_a_user_attempts_to_register
+├── with_invalid_email
+│   ├── that_is_missing_the_at_sign
+│   │   ├── registration_is_rejected
+│   │   └── error_mentions_email
+│   └── that_is_empty
+│       ├── registration_is_rejected
+│       └── error_mentions_required
+├── with_invalid_password
+│   ├── that_is_too_short
+│   │   ├── registration_is_rejected
+│   │   └── error_mentions_password_length
+│   └── that_has_no_digit
+│       ├── registration_is_rejected
+│       └── error_mentions_digit
+└── with_all_valid_data
+    ├── registration_succeeds
+    ├── a_confirmation_email_is_sent
+    └── the_user_id_is_assigned
+```
+
+Each `[XF]` test runs **exactly once** — in the class that declares it — even though child classes inherit parent members.
+
+### How context flows through inheritance
+
+The key technique: each nested class **inherits from its parent**, gaining access to the shared setup (here, `_service`). Each level's **constructor** adds its own specific context — the "act" step in each scenario. Tests declared at that level assert the outcome. Because `[XF]` skips inherited tests, only the assertions *declared* in each class execute there.
+
+## How it works
+
+`[ExclusiveFact]` / `[XF]` is an xUnit v3 `[Fact]` with a custom discoverer. During discovery it compares the declaring type of the test method against the current test class. If they differ (i.e. the test was inherited), the test case is simply not emitted. No reflection hacks, no runtime skipping — just clean xUnit extensibility.
+
+## Key benefits
+
+- **Reads like a specification** — class names are the context ("Given…", "When…", "And…"), method names are the assertions
+- **No duplicated runs** — inherited tests are silently excluded at discovery time
+- **Shared setup via constructors and inheritance** — each nested class adds context on top of the parent, just like BDD `context` blocks
+- **Works with standard xUnit tooling** — Test Explorer, `dotnet test`, CI — everything sees a clean hierarchy
+- **Zero ceremony** — swap `[Fact]` for `[XF]`, nest your classes, done
+- **xUnit v3 native** — built on the v3 extensibility APIs (`IXunitTestCaseDiscoverer`)
 
 ## Installation
 
@@ -24,9 +130,9 @@ dotnet add package Compze.Utilities.Testing.XUnit
 
 | Package | Description |
 |---------|-------------|
-| [Compze.Tessaging.Hosting.Testing](https://www.nuget.org/packages/Compze.Tessaging.Hosting.Testing) | Full testing infrastructure |
-| [Compze.Utilities.Testing.Must](https://www.nuget.org/packages/Compze.Utilities.Testing.Must) | Fluent assertions |
-| [Compze.Utilities.Testing.DbPool](https://www.nuget.org/packages/Compze.Utilities.Testing.DbPool) | Database pool management |
+| [Compze.Utilities.Testing.Must](https://www.nuget.org/packages/Compze.Utilities.Testing.Must) | Fluent assertions (`Must().Be()`, `Must().Throw<>()`, etc.) |
+| [Compze.Tessaging.Hosting.Testing](https://www.nuget.org/packages/Compze.Tessaging.Hosting.Testing) | Full integration testing infrastructure |
+| [Compze.Utilities.Testing.DbPool](https://www.nuget.org/packages/Compze.Utilities.Testing.DbPool) | Database pool management for tests |
 
 ## License
 
