@@ -22,7 +22,7 @@ namespace Compze.Tests.Unit.CQRS.Taggregates;
 
 public class PublicSettersAndFieldsAreDisallowedTests : UniversalTestBase
 {
-   public interface IRootTevent<out T> : ITaggregateIdentifyingTevent<T> where T : IRootTevent;
+   interface IRootTevent<out T> : ITaggregateIdentifyingTevent<T> where T : IRootTevent;
    public interface IRootTevent : ITaggregateTevent
    {
       string Public1 { get; set; }

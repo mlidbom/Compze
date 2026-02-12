@@ -16,7 +16,7 @@ class RootTevent<T>(T tevent) : TaggregateIdentifyingTevent<T>(tevent), IRootTev
 abstract class RootTevent : TaggregateTevent, IRootTevent
 {
    protected RootTevent() {}
-   protected RootTevent(TaggregateId taggregateId) : base(taggregateId) {}
+   RootTevent(TaggregateId taggregateId) : base(taggregateId) {}
 
    public class Created(TaggregateId id, string name) : RootTevent(id), IRootTevent.Created
    {

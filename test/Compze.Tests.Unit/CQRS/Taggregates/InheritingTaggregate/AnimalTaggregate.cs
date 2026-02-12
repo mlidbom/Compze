@@ -35,7 +35,7 @@ class CatTaggregate : AnimalTaggregate
 
 class DogTaggregate : AnimalTaggregate
 {
-   public DogTaggregate(){}
+   DogTaggregate(){}
    protected override Type WrapperTEventImplementation => typeof(DogTevent<DogTevent>);
 
    public static DogTaggregate RegisterBirth()
@@ -59,7 +59,7 @@ public class AnimalTevent<T>(T tevent) : TaggregateIdentifyingTevent<T>(tevent),
 public class AnimalTevent : TaggregateTevent, IAnimalTevent
 {
    protected AnimalTevent(){}
-   protected AnimalTevent(TaggregateId taggregateId):base(taggregateId){ }
+   AnimalTevent(TaggregateId taggregateId):base(taggregateId){ }
 
     public class Born : AnimalTevent, IAnimalTevent.Born
    {

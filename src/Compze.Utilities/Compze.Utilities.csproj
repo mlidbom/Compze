@@ -7,7 +7,7 @@
 		<Description>Core utilities for the Compze framework including dependency injection abstractions, system extensions, and threading helpers.</Description>
 	</PropertyGroup>
 	<ItemGroup>
-      <PackageReference Include="JetBrains.Annotations" Version="2025.2.2" />
+      <PackageReference Include="JetBrains.Annotations" Version="2025.2.3" />
       <PackageReference Include="NsDepCop" Version="2.6.0">
          <PrivateAssets>all</PrivateAssets>
          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
