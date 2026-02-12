@@ -11,9 +11,10 @@ function C-Split-Project {
 
     The command performs the following operations:
     1. Creates the new project using C-Create-Project
-    2. Copies all ProjectReference entries from the source to the split project
-    3. For each project that has a ProjectReference to the source, adds a ProjectReference to the split project
-    4. Optionally adds references between the source and split projects (via switches)
+    2. Moves source files from the corresponding subfolder in the source project to the split project
+    3. Copies all ProjectReference entries from the source to the split project
+    4. For each project that has a ProjectReference to the source, adds a ProjectReference to the split project
+    5. Optionally adds references between the source and split projects (via switches)
 
     Reference switches control two independent directions. Within each direction, normal ProjectReference
     and interned source reference are mutually exclusive, but you can combine switches across directions.
@@ -127,7 +128,21 @@ function C-Split-Project {
     $sourceProjectDir = Split-Path -Parent $sourceProjectFile.FullName
     $splitProjectDir = Split-Path -Parent $splitProjectFile.FullName
 
-    # Step 3: Copy all project references from source to split project
+    # Step 3: Move source files from subfolder in source project to split project
+    # Derive subfolder name: Compze.Utilities.DependencyInjection - Compze.Utilities = DependencyInjection
+    if ($SplitProject.StartsWith("$SourceProject.")) {
+        $subfolderParts = $SplitProject.Substring($SourceProject.Length + 1) -split '\.'
+        $subfolderPath = Join-Path $sourceProjectDir ($subfolderParts -join [System.IO.Path]::DirectorySeparatorChar)
+
+        if (Test-Path $subfolderPath) {
+            # Move contents into the split project directory
+            Get-ChildItem -Path $subfolderPath | Move-Item -Destination $splitProjectDir -Force
+            # Remove the now-empty subfolder
+            Remove-Item -Path $subfolderPath -Force -Recurse
+        }
+    }
+
+    # Step 4: Copy all project references from source to split project
     $sourceReferences = Get-ProjectReferences -CsprojPath $sourceProjectFile.FullName
 
     if ($sourceReferences -and $sourceReferences.Count -gt 0) {
@@ -138,7 +153,7 @@ function C-Split-Project {
         }
     }
 
-    # Step 4: For each project that references the source, add a reference to the split project
+    # Step 5: For each project that references the source, add a reference to the split project
     $allProjects = Get-AllProjectFiles -SolutionPath $SolutionPath
 
     foreach ($project in $allProjects) {
@@ -162,7 +177,7 @@ function C-Split-Project {
         }
     }
 
-    # Step 5: Add references between source and split projects based on switches
+    # Step 6: Add references between source and split projects based on switches
 
     # Direction: Split -> Source
     if ($SplitProjectReferencesSourceProject) {
