@@ -153,6 +153,9 @@ function C-Split-Project {
         }
     }
 
+    # Step 4b: Copy all package references from source to split project
+    C-Copy-PackageReferences -SourceCsprojPath $sourceProjectFile.FullName -TargetCsprojPath $splitProjectFile.FullName
+
     # Step 5: For each project that references the source, add a reference to the split project
     $allProjects = Get-AllProjectFiles -SolutionPath $SolutionPath
 
