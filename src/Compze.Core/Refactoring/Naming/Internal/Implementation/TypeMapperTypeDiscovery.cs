@@ -9,9 +9,9 @@ using Compze.Utilities.SystemCE.ReflectionCE;
 
 namespace Compze.Core.Refactoring.Naming.Internal.Implementation;
 
-static class TypeMapperTypeDiscovery
+public static class TypeMapperTypeDiscovery
 {
-   internal static ISet<Type> GetTypesRequiringMapping(Assembly assembly)
+   public static ISet<Type> GetTypesRequiringMapping(Assembly assembly)
    {
       if(!IsAssemblyWeShouldExamine(assembly)) return new HashSet<Type>();
       var types = new HashSet<Type>();

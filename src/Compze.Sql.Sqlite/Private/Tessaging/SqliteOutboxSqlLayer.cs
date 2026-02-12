@@ -14,7 +14,7 @@ using TessageTable = Compze.Core.Tessaging.Internal.SqlLayer.IServiceBusSqlLayer
 
 namespace Compze.Sql.Sqlite.Private.Tessaging;
 
-partial class SqliteOutboxSqlLayer(ISqliteConnectionPool connectionFactory, SqliteSqlLayerSchemaManager schemaManager) : IServiceBusSqlLayer.IOutboxSqlLayer
+public partial class SqliteOutboxSqlLayer(ISqliteConnectionPool connectionFactory, SqliteSqlLayerSchemaManager schemaManager) : IServiceBusSqlLayer.IOutboxSqlLayer
 {
    readonly ISqliteConnectionPool _connectionFactory = connectionFactory;
    readonly SqliteSqlLayerSchemaManager _schemaManager = schemaManager;

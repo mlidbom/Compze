@@ -4,7 +4,7 @@ using MySql.Data.MySqlClient;
 
 namespace Compze.Sql.MySql.Private;
 
-internal static class MySqlCommandParameterExtensions
+public static class MySqlCommandParameterExtensions
 {
    public static MySqlCommand AddParameter(this MySqlCommand @this, string name, int value) => AddParameter(@this, name, MySqlDbType.Int32, value);
    public static MySqlCommand AddParameter(this MySqlCommand @this, string name, Guid value) => AddParameter(@this, name, MySqlDbType.Guid, value);

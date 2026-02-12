@@ -2,7 +2,7 @@ using System;
 
 namespace Compze.Core.Serialization.Internal;
 
-interface IJsonSerializer
+public interface IJsonSerializer
 {
    //todo: we should be using the interface, not concrete implementations, so this should not be unused.
    // We should also inject the serializer, not instantiate it manually.

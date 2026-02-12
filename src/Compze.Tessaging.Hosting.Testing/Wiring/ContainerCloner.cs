@@ -9,9 +9,9 @@ using Compze.Utilities.SystemCE.LinqCE;
 
 namespace Compze.Tessaging.Hosting.Testing.Wiring;
 
-static class ContainerCloner
+public static class ContainerCloner
 {
-   class ContainerIsClonedMarkerClass
+   public class ContainerIsClonedMarkerClass
    {}
 
    static readonly IReadOnlyList<Type> TypesThatAreFacadesForTheContainer = EnumerableCE.OfTypes<IDependencyInjectionContainer, IServiceLocator, SimpleInjectorDependencyInjectionContainer>()

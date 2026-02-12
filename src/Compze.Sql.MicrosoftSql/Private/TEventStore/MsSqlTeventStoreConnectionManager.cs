@@ -5,7 +5,7 @@ using Microsoft.Data.SqlClient;
 
 namespace Compze.Sql.MicrosoftSql.Private.TEventStore;
 
-class MsSqlTeventStoreConnectionManager(IMsSqlConnectionPool sqlConnectionPool)
+public class MsSqlTeventStoreConnectionManager(IMsSqlConnectionPool sqlConnectionPool)
 {
    readonly IMsSqlConnectionPool _connectionPool = sqlConnectionPool;
 

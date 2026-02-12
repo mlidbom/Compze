@@ -1,6 +1,6 @@
 namespace Compze.Utilities.DependencyInjection;
 
-interface IServiceLocatorKernel
+public interface IServiceLocatorKernel
 {
    TComponent Resolve<TComponent>() where TComponent : class;
 }

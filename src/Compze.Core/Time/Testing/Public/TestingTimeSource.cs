@@ -14,7 +14,7 @@ namespace Compze.Core.Time.Testing.Public;
 
 public class TestingTimeSourceAdapter
 {
-   internal static readonly TestingTimeSourceAdapter Instance  = new ();
+   public static readonly TestingTimeSourceAdapter Instance  = new ();
 
    TestingTimeSourceAdapter(){}
 
@@ -29,7 +29,7 @@ public class TestingTimeSourceAdapter
    public TimeSourceOverride FrozenAtUtc(DateTime time) => new(FrozenUtc(time));
    public TimeSourceOverride FrozenAtUtc(string time) => new(FrozenUtc(time));
 
-   class ConstantTimeSource(DateTime time) : IUtcTimeTimeSource
+   public class ConstantTimeSource(DateTime time) : IUtcTimeTimeSource
    {
       public DateTime UtcNow { get; } = time;
    }

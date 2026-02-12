@@ -11,7 +11,7 @@ using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Routing;
 
-class InboxConnectionRouter(ITypeMapper typeMapper)
+public class InboxConnectionRouter(ITypeMapper typeMapper)
 {
    readonly IMonitorCE _monitor = IMonitorCE.WithDefaultTimeout();
    readonly ITypeMapper _typeMapper = typeMapper;
@@ -21,7 +21,7 @@ class InboxConnectionRouter(ITypeMapper typeMapper)
    IReadOnlyList<(Type TeventType, IInboxConnection Connection)> _teventSubscriberRoutes = new List<(Type TeventType, IInboxConnection Connection)>();
    IReadOnlyDictionary<Type, IReadOnlyList<IInboxConnection>> _teventSubscriberRouteCache = new Dictionary<Type, IReadOnlyList<IInboxConnection>>();
 
-   internal void RegisterRoutes(IInboxConnection inboxConnection, ISet<TypeId> handledTypeIds)
+   public void RegisterRoutes(IInboxConnection inboxConnection, ISet<TypeId> handledTypeIds)
    {
       var teventSubscribers = new List<(Type TeventType, IInboxConnection Connection)>();
       var tommandHandlerRoutes = new Dictionary<Type, IInboxConnection>();
@@ -62,17 +62,17 @@ class InboxConnectionRouter(ITypeMapper typeMapper)
       }
    }
 
-   internal IInboxConnection ConnectionToHandlerFor(IRemotableTommand tommand) =>
+   public IInboxConnection ConnectionToHandlerFor(IRemotableTommand tommand) =>
       _tommandHandlerRoutes.TryGetValue(tommand.GetType(), out var connection)
          ? connection
          : throw new NoHandlerForTessageTypeException(tommand.GetType());
 
-   internal IInboxConnection ConnectionToHandlerFor<TTuery>(IRemotableTuery<TTuery> tuery) =>
+   public IInboxConnection ConnectionToHandlerFor<TTuery>(IRemotableTuery<TTuery> tuery) =>
       _tueryHandlerRoutes.TryGetValue(tuery.GetType(), out var connection)
          ? connection
          : throw new NoHandlerForTessageTypeException(tuery.GetType());
 
-   internal IReadOnlyList<IInboxConnection> SubscriberConnectionsFor(IExactlyOnceTevent tevent)
+   public IReadOnlyList<IInboxConnection> SubscriberConnectionsFor(IExactlyOnceTevent tevent)
    {
       if(_teventSubscriberRouteCache.TryGetValue(tevent.GetType(), out var connection)) return connection;
 

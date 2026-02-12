@@ -30,7 +30,7 @@ public static partial class EnumerableCE
    public static IEnumerable<Type> OfTypes<T1, T2, T3, T4, T5, T6, T7>() => OfTypes<T1, T2, T3, T4, T5, T6>().Append(typeof(T7));
 
    ///<summary>Returns a sequence of types matching the supplied type arguments</summary>
-   internal static IEnumerable<Type> OfTypes<T1, T2, T3, T4, T5, T6, T7, T8>() => OfTypes<T1, T2, T3, T4, T5, T6, T7>().Append(typeof(T8));
+   public static IEnumerable<Type> OfTypes<T1, T2, T3, T4, T5, T6, T7, T8>() => OfTypes<T1, T2, T3, T4, T5, T6, T7>().Append(typeof(T8));
 
    ///<summary>Returns a sequence of types matching the supplied type arguments</summary>
    public static IEnumerable<Type> OfTypes<T1, T2, T3, T4, T5, T6, T7, T8, T9>() => OfTypes<T1, T2, T3, T4, T5, T6, T7, T8>().Append(typeof(T9));

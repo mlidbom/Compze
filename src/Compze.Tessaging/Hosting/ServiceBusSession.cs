@@ -12,15 +12,15 @@ using Compze.Utilities.SystemCE.ThreadingCE;
 namespace Compze.Tessaging.Hosting;
 
 
-static class ServiceBusSessionRegistrar
+public static class ServiceBusSessionRegistrar
 {
-   internal static IComponentRegistrar ServiceBusSession(this IComponentRegistrar registrar)
+   public static IComponentRegistrar ServiceBusSession(this IComponentRegistrar registrar)
       => registrar.Register(Hosting.ServiceBusSession.RegisterWith);
 }
 
 [UsedImplicitly] class ServiceBusSession : IServiceBusSession
 {
-   internal static void RegisterWith(IComponentRegistrar registrar)
+   public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Scoped.For<IServiceBusSession>()
                                   .CreatedBy((IOutbox outbox, TommandScheduler tommandScheduler)
                                                 => new ServiceBusSession(outbox, tommandScheduler)));

@@ -6,9 +6,9 @@ using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Utilities.SystemCE.ThreadingCE;
 
-static class ThreadPoolCE
+public static class ThreadPoolCE
 {
-   internal static void TryToEnsureSufficientIdleThreadsToRunTasksConcurrently(int concurrentTaskCount)
+   public static void TryToEnsureSufficientIdleThreadsToRunTasksConcurrently(int concurrentTaskCount)
    {
       using var waitForAllThreadsToStart = new CountdownEvent(concurrentTaskCount);
       Task.WaitAll(1.Through(concurrentTaskCount).Select(_ => TaskCE.Run(() =>

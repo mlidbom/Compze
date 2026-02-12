@@ -3,7 +3,7 @@ using Compze.Utilities.Functional;
 
 namespace Compze.Utilities.Logging;
 
-abstract class Logger : ILogger
+public abstract class Logger : ILogger
 {
    readonly LogLevel? _configuredLogLevel;
 

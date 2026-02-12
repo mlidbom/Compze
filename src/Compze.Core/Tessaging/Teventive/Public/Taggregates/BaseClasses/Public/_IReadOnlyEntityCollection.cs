@@ -13,7 +13,7 @@ public interface IReadOnlyEntityCollection<TEntity, in TEntityId> : IEnumerable<
    TEntity this[TEntityId id] { get; }
 }
 
-interface IEntityCollectionManager<TEntity, in TEntityId,in TEntityTevent, in TEntityTeventImplementation, in TEntityCreatedTevent>
+public interface IEntityCollectionManager<TEntity, in TEntityId,in TEntityTevent, in TEntityTeventImplementation, in TEntityCreatedTevent>
    where TEntityTevent : class
    where TEntityCreatedTevent : TEntityTevent
 {

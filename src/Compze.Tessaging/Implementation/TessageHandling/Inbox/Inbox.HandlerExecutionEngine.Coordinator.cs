@@ -14,12 +14,12 @@ using static Compze.Utilities.Contracts.Assert;
 
 namespace Compze.Tessaging.Implementation.TessageHandling.Inbox;
 
-partial class Inbox
+public partial class Inbox
 {
-   partial class HandlerExecutionEngine
+   public partial class HandlerExecutionEngine
    {
       //refactor: Consider moving all tessage type specific responsibilities into the tessage class or other class. Probably create more subtypes so that no type checking is required. See also inbox.
-      partial class Coordinator(ITessagesInFlightTracker globalStateTracker, ITaskRunner taskRunner, ITessageStorage tessageStorage, IServiceLocator serviceLocator, ITessageHandlerRegistry tessageHandlerRegistry, EndpointId endpointId)
+      public partial class Coordinator(ITessagesInFlightTracker globalStateTracker, ITaskRunner taskRunner, ITessageStorage tessageStorage, IServiceLocator serviceLocator, ITessageHandlerRegistry tessageHandlerRegistry, EndpointId endpointId)
       {
          readonly ITaskRunner _taskRunner = taskRunner;
          readonly ITessageStorage _tessageStorage = tessageStorage;
@@ -27,7 +27,7 @@ partial class Inbox
          readonly ITessageHandlerRegistry _tessageHandlerRegistry = tessageHandlerRegistry;
          readonly IThreadShared<NonThreadsafeImplementation> _implementation = IThreadShared.WithDefaultTimeouts(new NonThreadsafeImplementation(globalStateTracker, endpointId));
 
-         internal HandlerExecutionTask AwaitExecutableHandlerExecutionTask(IReadOnlyList<ITessageDispatchingRule> dispatchingRules)
+         public HandlerExecutionTask AwaitExecutableHandlerExecutionTask(IReadOnlyList<ITessageDispatchingRule> dispatchingRules)
          {
             HandlerExecutionTask? handlerExecutionTask = null;
             _implementation.Await(implementation => implementation.TryGetDispatchableTessage(dispatchingRules, out handlerExecutionTask));
@@ -45,7 +45,7 @@ partial class Inbox
 
          void Failed(HandlerExecutionTask queuedTessageInformation, Exception exception) => _implementation.Update(implementation => implementation.Failed(queuedTessageInformation, exception));
 
-         class NonThreadsafeImplementation(ITessagesInFlightTracker globalStateTracker, EndpointId endpointId) : IExecutingTessagesSnapshot
+         public class NonThreadsafeImplementation(ITessagesInFlightTracker globalStateTracker, EndpointId endpointId) : IExecutingTessagesSnapshot
          {
             const int MaxConcurrentlyExecutingHandlers = 20;
             readonly ITessagesInFlightTracker _globalStateTracker = globalStateTracker;
@@ -62,7 +62,7 @@ partial class Inbox
 
             readonly List<HandlerExecutionTask> _tessagesWaitingToExecute = [];
 
-            internal bool TryGetDispatchableTessage(IReadOnlyList<ITessageDispatchingRule> dispatchingRules, [NotNullWhen(true)] out HandlerExecutionTask? dispatchable)
+            public bool TryGetDispatchableTessage(IReadOnlyList<ITessageDispatchingRule> dispatchingRules, [NotNullWhen(true)] out HandlerExecutionTask? dispatchable)
             {
                dispatchable = null!;
                if(_executingTessages >= MaxConcurrentlyExecutingHandlers)
@@ -84,9 +84,9 @@ partial class Inbox
 
             public void EnqueueTessageTask(HandlerExecutionTask tessage) => _tessagesWaitingToExecute.Add(tessage);
 
-            internal void Succeeded(HandlerExecutionTask queuedTessageInformation) => DoneDispatching(queuedTessageInformation);
+            public void Succeeded(HandlerExecutionTask queuedTessageInformation) => DoneDispatching(queuedTessageInformation);
 
-            internal void Failed(HandlerExecutionTask queuedTessageInformation, Exception exception) => DoneDispatching(queuedTessageInformation, exception);
+            public void Failed(HandlerExecutionTask queuedTessageInformation, Exception exception) => DoneDispatching(queuedTessageInformation, exception);
 
             //Refactor: Switching should not be necessary. See also inbox.
             void Dispatching(HandlerExecutionTask dispatchable)

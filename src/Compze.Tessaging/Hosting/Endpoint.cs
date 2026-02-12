@@ -17,9 +17,9 @@ using static Compze.Utilities.Contracts.Assert;
 
 namespace Compze.Tessaging.Hosting;
 
-class Endpoint : IEndpoint
+public class Endpoint : IEndpoint
 {
-   class ServerComponents(TommandScheduler tommandScheduler, IInbox inbox, IOutbox outbox) : IDisposable
+   public class ServerComponents(TommandScheduler tommandScheduler, IInbox inbox, IOutbox outbox) : IDisposable
    {
       public readonly TommandScheduler TommandScheduler = tommandScheduler;
       public readonly IInbox Inbox = inbox;

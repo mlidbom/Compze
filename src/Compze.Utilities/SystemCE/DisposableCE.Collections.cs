@@ -4,7 +4,7 @@ using Compze.Utilities.SystemCE.LinqCE;
 
 namespace Compze.Utilities.SystemCE;
 
-static class DisposableCECollections
+public static class DisposableCECollections
 {
-   internal static void DisposeAll(this IEnumerable<IDisposable> disposables) => disposables.ForEach(disposable => disposable.Dispose());
+   public static void DisposeAll(this IEnumerable<IDisposable> disposables) => disposables.ForEach(disposable => disposable.Dispose());
 }

@@ -12,7 +12,7 @@ using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
 namespace Compze.Tessaging.Implementation.Transport;
 
-class TessagesInFlightTracker(ITypeMapper typeMapper) : ITessagesInFlightTracker
+public class TessagesInFlightTracker(ITypeMapper typeMapper) : ITessagesInFlightTracker
 {
    readonly IThreadShared<NonThreadSafeImplementation> _implementation = IThreadShared.WithDefaultTimeouts(new NonThreadSafeImplementation(typeMapper));
 
@@ -28,15 +28,15 @@ class TessagesInFlightTracker(ITypeMapper typeMapper) : ITessagesInFlightTracker
    public void DoneWith(TransportTessage.InComing tessage, EndpointId handlingEndpointId, Exception? exception) =>
       _implementation.Update(implementation => implementation.DoneWith(tessage, handlingEndpointId, exception));
 
-   class InFlightTessage
+   public class InFlightTessage
    {
       public Dictionary<EndpointId, bool> EndpointDeliveryStatus { get; } = [];
    }
 
-   class NonThreadSafeImplementation(ITypeMapper typeMapper)
+   public class NonThreadSafeImplementation(ITypeMapper typeMapper)
    {
       readonly ITypeMapper _typeMapper = typeMapper;
-      internal readonly Dictionary<TessageId, InFlightTessage> TrackedTessages = [];
+      public readonly Dictionary<TessageId, InFlightTessage> TrackedTessages = [];
 
       readonly List<Exception> _busExceptions = [];
 
@@ -66,7 +66,7 @@ class TessagesInFlightTracker(ITypeMapper typeMapper) : ITessagesInFlightTracker
    }
 }
 
-class NullOpTessagesInFlightTracker : ITessagesInFlightTracker
+public class NullOpTessagesInFlightTracker : ITessagesInFlightTracker
 {
    public IReadOnlyList<Exception> GetExceptions() => [];
    public void SendingTessageOnTransport(TransportTessage.OutGoing transportTessage, EndpointId remoteEndpointId) {}

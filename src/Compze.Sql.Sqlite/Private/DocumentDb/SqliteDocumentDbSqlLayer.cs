@@ -14,12 +14,12 @@ using Schema = Compze.Core.DocumentDb.Internal.SqlLayer.IDocumentDbSqlLayer.Docu
 
 namespace Compze.Sql.Sqlite.Private.DocumentDb;
 
-internal partial class SqliteDocumentDbSqlLayer : IDocumentDbSqlLayer
+public partial class SqliteDocumentDbSqlLayer : IDocumentDbSqlLayer
 {
    readonly ISqliteConnectionPool _connectionPool;
    readonly SqliteSqlLayerSchemaManager _schemaManager;
 
-   internal SqliteDocumentDbSqlLayer(ISqliteConnectionPool connectionPool, SqliteSqlLayerSchemaManager schemaManager)
+   public SqliteDocumentDbSqlLayer(ISqliteConnectionPool connectionPool, SqliteSqlLayerSchemaManager schemaManager)
    {
       _schemaManager = schemaManager;
       _connectionPool = connectionPool;

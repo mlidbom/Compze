@@ -8,31 +8,31 @@ using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Utilities.Logging;
 
-static class CompzeLogger
+public static class CompzeLogger
 {
    // ReSharper disable once UnusedParameter.Global removing the parameter would make it impossible to invoke this as an extension method :)
 #pragma warning disable IDE0060 //Reviewed OK: removing the parameter would make it impossible to invoke this as an extension method :)
-   internal static ILogger Log<T>(this T me) => LogCache<T>.Logger;
+   public static ILogger Log<T>(this T me) => LogCache<T>.Logger;
 #pragma warning restore IDE0060 // Remove unused parameter
 
-   internal static ILogger For<T>() => LogCache<T>.Logger;
-   internal static ILogger For(Type loggingType) => LoggerFactoryMethod(loggingType);
+   public static ILogger For<T>() => LogCache<T>.Logger;
+   public static ILogger For(Type loggingType) => LoggerFactoryMethod(loggingType);
 
-   internal static Func<Type, ILogger> LoggerFactoryMethod = ConsoleLogger.Create;
-   static class LogCache<T>
+   public static Func<Type, ILogger> LoggerFactoryMethod = ConsoleLogger.Create;
+   public static class LogCache<T>
    {
       // ReSharper disable once StaticFieldInGenericType
       public static readonly ILogger Logger = LoggerFactoryMethod(typeof(T));
    }
 
    // ReSharper disable once FieldCanBeMadeReadOnly.Global It is meant to be settable
-   internal static LogLevel LogLevel = LogLevel.Info;
+   public static LogLevel LogLevel = LogLevel.Info;
 
    static readonly AsyncLocal<bool> LoggingSuppressedTemporarily = new();
-   internal static bool LoggingSuppressed => LoggingSuppressedTemporarily.Value;
+   public static bool LoggingSuppressed => LoggingSuppressedTemporarily.Value;
 
 
-   internal static async Task SuppressLoggingWhileRunningAsync(Func<Task> action)
+   public static async Task SuppressLoggingWhileRunningAsync(Func<Task> action)
    {
       using(ScopedChange.Enter(() => LoggingSuppressedTemporarily.Value = true, () => LoggingSuppressedTemporarily.Value = false))
       {

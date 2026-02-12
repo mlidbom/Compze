@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace Compze.Sql.Common.DbPool;
 
-interface IDbPoolSqlLayer
+public interface IDbPoolSqlLayer
 {
    void ResetDatabase(DbPoolDatabase db);
 

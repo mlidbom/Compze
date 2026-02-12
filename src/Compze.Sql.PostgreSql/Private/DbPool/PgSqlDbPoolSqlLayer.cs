@@ -11,9 +11,9 @@ using Npgsql;
 
 namespace Compze.Sql.PostgreSql.Private.DbPool;
 
-sealed class PgSqlDbPoolSqlLayer : IDbPoolSqlLayer
+public sealed class PgSqlDbPoolSqlLayer : IDbPoolSqlLayer
 {
-   internal static IComponentRegistrar RegisterWith(IComponentRegistrar registrar) =>
+   public static IComponentRegistrar RegisterWith(IComponentRegistrar registrar) =>
       registrar.Register(Singleton.For<IDbPoolSqlLayer>()
                                   .CreatedBy(() => new PgSqlDbPoolSqlLayer())
                                   .DelegateToParentServiceLocatorWhenCloning());

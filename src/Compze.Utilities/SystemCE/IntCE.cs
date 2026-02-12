@@ -2,8 +2,8 @@ using System.Globalization;
 
 namespace Compze.Utilities.SystemCE;
 
-static class IntCE
+public static class IntCE
 {
-   internal static int ParseInvariant(string intAsString) => int.Parse(intAsString, CultureInfo.InvariantCulture);
-   internal static string ToStringInvariant(this int @this) => @this.ToString(CultureInfo.InvariantCulture);
+   public static int ParseInvariant(string intAsString) => int.Parse(intAsString, CultureInfo.InvariantCulture);
+   public static string ToStringInvariant(this int @this) => @this.ToString(CultureInfo.InvariantCulture);
 }

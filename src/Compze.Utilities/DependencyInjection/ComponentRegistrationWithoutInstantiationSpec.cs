@@ -10,13 +10,13 @@ public class ComponentRegistrationWithoutInstantiationSpec<TService> where TServ
    protected IReadOnlyList<Type> ServiceTypes { get; }
    readonly Lifestyle _lifestyle;
 
-   internal ComponentRegistrationWithoutInstantiationSpec(Lifestyle lifestyle, IEnumerable<Type> serviceTypes)
+   public ComponentRegistrationWithoutInstantiationSpec(Lifestyle lifestyle, IEnumerable<Type> serviceTypes)
    {
       _lifestyle = lifestyle;
       ServiceTypes = serviceTypes.Concat([typeof(TService)]).ToList();
    }
 
-   internal ComponentRegistration<TService> CreatedBy<TImplementation>(Func<IServiceLocatorKernel, TImplementation> factoryMethod,
+   public ComponentRegistration<TService> CreatedBy<TImplementation>(Func<IServiceLocatorKernel, TImplementation> factoryMethod,
                                                                        IEnumerable<Type> dependencyTypes)
       where TImplementation : TService
    {

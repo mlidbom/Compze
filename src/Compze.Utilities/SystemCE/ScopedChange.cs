@@ -2,7 +2,7 @@ using System;
 
 namespace Compze.Utilities.SystemCE;
 
-static class ScopedChange
+public static class ScopedChange
 {
    ///<summary>
    /// <para>A more expressive and concise version of making a change and then using a finally block to ensure that the change is rolled back at some later point.</para>

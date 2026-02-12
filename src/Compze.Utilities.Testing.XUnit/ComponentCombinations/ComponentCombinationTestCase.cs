@@ -10,7 +10,7 @@ using Xunit.v3;
 
 namespace Compze.Utilities.Testing.XUnit.ComponentCombinations;
 
-class ComponentCombinationTestCase : ConstructorArgumentForwardingTestCase, ISelfExecutingXunitTestCase
+public class ComponentCombinationTestCase : ConstructorArgumentForwardingTestCase, ISelfExecutingXunitTestCase
 {
    bool _useTestMethodArguments;
 

@@ -5,8 +5,8 @@ namespace Compze.Core.Tessaging.Transport.Internal;
 
 public record EndPointAddress
 {
-   internal Uri Uri { get; }
-   internal EndPointAddress(Uri uri)
+   public Uri Uri { get; }
+   public EndPointAddress(Uri uri)
    {
       Assert.Argument.NotNullEmptyOrWhitespace(uri.AbsoluteUri);
       Uri = uri;

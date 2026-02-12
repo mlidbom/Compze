@@ -12,12 +12,12 @@ using Schema = Compze.Core.DocumentDb.Internal.SqlLayer.IDocumentDbSqlLayer.Docu
 
 namespace Compze.Sql.MySql.Private.DocumentDb;
 
-internal partial class MySqlDocumentDbSqlLayer : IDocumentDbSqlLayer
+public partial class MySqlDocumentDbSqlLayer : IDocumentDbSqlLayer
 {
    readonly IMySqlConnectionPool _connectionPool;
    readonly MySqlSqlLayerSchemaManager _schemaManager;
 
-   internal MySqlDocumentDbSqlLayer(IMySqlConnectionPool connectionPool, MySqlSqlLayerSchemaManager schemaManager)
+   public MySqlDocumentDbSqlLayer(IMySqlConnectionPool connectionPool, MySqlSqlLayerSchemaManager schemaManager)
    {
       _schemaManager = schemaManager;
       _connectionPool = connectionPool;

@@ -66,7 +66,7 @@ public abstract class Tentity<TParent,
 
       TParent _parent;
 
-      internal CollectionManager(TParent parent)
+      public CollectionManager(TParent parent)
       {
          ManagedEntities = [];
          _parent = parent;

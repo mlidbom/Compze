@@ -9,7 +9,7 @@ using Compze.Utilities.SystemCE;
 
 namespace Compze.Utilities.Logging;
 
-static class LevelLoggerExtensions
+public static class LevelLoggerExtensions
 {
    public static IDisposable LogMethodEntryExit(this ILevelLogger @this, [CallerMemberName] string message = "") =>
 #pragma warning disable CA2000// We are passing this out of the method...

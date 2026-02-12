@@ -2,7 +2,7 @@ using System;
 
 namespace Compze.Core.Tessaging.Teventive.Infrastructure.Validation;
 
-static partial class TessageTypeInspector
+public static partial class TessageTypeInspector
 {
    public class TessageTypeDesignViolationException(string message) : Exception(message + TypeDesignRationale)
    {

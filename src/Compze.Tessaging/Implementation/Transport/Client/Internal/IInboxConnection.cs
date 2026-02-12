@@ -5,7 +5,7 @@ using Compze.Tessaging.Implementation.Abstractions;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Internal;
 
-interface IInboxConnection : IDisposable
+public interface IInboxConnection : IDisposable
 {
     TessageTypesInternal.EndpointInformation EndpointInformation { get; }
     Task SendAsync(IExactlyOnceTevent tevent);

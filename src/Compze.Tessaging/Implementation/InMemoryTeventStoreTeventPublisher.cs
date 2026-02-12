@@ -8,15 +8,15 @@ using JetBrains.Annotations;
 
 namespace Compze.Tessaging.Implementation;
 
-static class InMemoryTeventStoreTeventPublisherRegistrar
+public static class InMemoryTeventStoreTeventPublisherRegistrar
 {
-   internal static IComponentRegistrar InMemoryTeventStoreTeventPublisher(this IComponentRegistrar registrar)
+   public static IComponentRegistrar InMemoryTeventStoreTeventPublisher(this IComponentRegistrar registrar)
       => registrar.Register(Implementation.InMemoryTeventStoreTeventPublisher.RegisterWith);
 }
 
 [UsedImplicitly] class InMemoryTeventStoreTeventPublisher : ITeventStoreTeventPublisher
 {
-   internal static void RegisterWith(IComponentRegistrar registrar)
+   public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<ITeventStoreTeventPublisher>()
                                      .CreatedBy((ITessageHandlerRegistry tessageHandlerRegistry)
                                                    => new InMemoryTeventStoreTeventPublisher(tessageHandlerRegistry)));

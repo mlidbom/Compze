@@ -2,7 +2,7 @@ using System.Transactions;
 
 namespace Compze.Utilities.SystemCE.ThreadingCE;
 
-class SingleTransactionUsageGuard : IUsageGuard
+public class SingleTransactionUsageGuard : IUsageGuard
 {
    Transaction? _transaction = Transaction.Current;
    readonly object _guarded;

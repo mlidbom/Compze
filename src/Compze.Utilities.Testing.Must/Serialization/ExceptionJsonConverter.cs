@@ -7,7 +7,7 @@ namespace Compze.Utilities.Testing.Must.Serialization;
 /// Custom converter that prevents serialization of Exception objects to avoid stack overflow
 /// caused by circular references in Exception properties (InnerException, Data, etc.)
 /// </summary>
-class ExceptionJsonConverter : JsonConverter
+public class ExceptionJsonConverter : JsonConverter
 {
    public override bool CanConvert(Type objectType) => typeof(Exception).IsAssignableFrom(objectType);
 

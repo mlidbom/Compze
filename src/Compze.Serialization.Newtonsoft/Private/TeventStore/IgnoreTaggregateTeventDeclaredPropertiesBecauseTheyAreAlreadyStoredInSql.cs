@@ -5,7 +5,7 @@ using Newtonsoft.Json.Serialization;
 
 namespace Compze.Serialization.Newtonsoft.Private.TeventStore;
 
-class IgnoreTaggregateTeventDeclaredPropertiesBecauseTheyAreAlreadyStoredInSql : IJsonPropertyModifier
+public class IgnoreTaggregateTeventDeclaredPropertiesBecauseTheyAreAlreadyStoredInSql : IJsonPropertyModifier
 {
    public void ModifyProperty(JsonProperty property, MemberInfo memberInfo, MemberSerialization memberSerialization)
    {

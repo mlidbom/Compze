@@ -45,13 +45,6 @@ Ensures .csproj files exclude .cs files from projects in subfolders and properly
 C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders
 ```
 
-### C-Remove-RedundantInternalsVisibleTo
-Removes redundant InternalsVisibleTo attributes.
-
-```powershell
-C-Remove-RedundantInternalsVisibleTo
-```
-
 ### C-Validate-SolutionStructure
 Validates the Compze solution structure.
 

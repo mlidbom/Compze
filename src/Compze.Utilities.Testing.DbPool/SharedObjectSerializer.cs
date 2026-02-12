@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 
 namespace Compze.Utilities.Testing.DbPool;
 
-class DbPoolStateSerializer : ISharedObjectSerializer<DbPoolState>
+public class DbPoolStateSerializer : ISharedObjectSerializer<DbPoolState>
 {
    public static readonly DbPoolStateSerializer Instance = new();
    DbPoolStateSerializer(){}

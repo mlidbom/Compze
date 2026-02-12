@@ -15,7 +15,7 @@ namespace Compze.Core.Tessaging.Teventive.Infrastructure.EventDispatching;
 /// Calls all matching handlers in the order they were registered when an tevent is Dispatched.
 /// Handlers should be registered using the RegisterHandlers method in the constructor of the inheritor.
 /// </summary>
-partial class CallMatchingHandlersInRegistrationOrderTeventDispatcher<TTevent> : IMutableTeventDispatcher<TTevent>
+public partial class CallMatchingHandlersInRegistrationOrderTeventDispatcher<TTevent> : IMutableTeventDispatcher<TTevent>
    where TTevent : class, ITevent
 {
    readonly List<RegisteredHandler> _handlers = [];

@@ -4,7 +4,7 @@ using System;
 namespace Compze.Utilities.SystemCE;
 
 /// <summary>A collection of extensions to work with timespans</summary>
-static partial class TimeSpanCE
+public static partial class TimeSpanCE
 {
    static readonly TimeSpan OneMicrosecond = 1.Microseconds();
    static readonly TimeSpan OneMillisecond = 1.Microseconds();

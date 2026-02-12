@@ -14,7 +14,7 @@ using TessageTable = Compze.Core.Tessaging.Internal.SqlLayer.IServiceBusSqlLayer
 
 namespace Compze.Sql.PostgreSql.Private.Tessaging;
 
-partial class PgSqlOutboxSqlLayer(IPgSqlConnectionPool connectionFactory, PgSqlSqlLayerSchemaManager schemaManager) : IServiceBusSqlLayer.IOutboxSqlLayer
+public partial class PgSqlOutboxSqlLayer(IPgSqlConnectionPool connectionFactory, PgSqlSqlLayerSchemaManager schemaManager) : IServiceBusSqlLayer.IOutboxSqlLayer
 {
    readonly IPgSqlConnectionPool _connectionFactory = connectionFactory;
    readonly PgSqlSqlLayerSchemaManager _schemaManager = schemaManager;

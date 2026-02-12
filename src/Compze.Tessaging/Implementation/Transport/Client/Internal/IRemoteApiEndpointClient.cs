@@ -4,7 +4,7 @@ using Compze.Core.Tessaging.Public;
 namespace Compze.Tessaging.Implementation.Transport.Client.Internal;
 
 ///<summary>A client to one specific API endpoint</summary>
-interface IRemoteApiEndpointClient
+public interface IRemoteApiEndpointClient
 {
    Task<TResult> GetAsync<TResult>(IRemotableTuery<TResult> tuery);
    Task<TResult> PostAsync<TResult>(IAtMostOnceTommand<TResult> typermediaTommand);

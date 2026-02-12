@@ -6,7 +6,7 @@ using Compze.Core.Tessaging.Teventive.Public;
 
 namespace Compze.Tessaging.Implementation.TessageHandling.Abstractions;
 
-interface ITessageHandlerRegistry
+public interface ITessageHandlerRegistry
 {
     Action<object> GetTommandHandler(ITommand tessage);
 

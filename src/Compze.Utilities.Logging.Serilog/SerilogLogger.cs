@@ -5,7 +5,7 @@ using Serilog;
 
 namespace Compze.Utilities.Logging.Serilog;
 
-class SerilogLogger : Logger
+public class SerilogLogger : Logger
 {
    readonly global::Serilog.ILogger _logger;
    SerilogLogger(global::Serilog.ILogger logger) => _logger = logger;

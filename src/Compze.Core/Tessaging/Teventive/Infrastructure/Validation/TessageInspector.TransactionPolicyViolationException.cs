@@ -3,7 +3,7 @@ using Compze.Core.Tessaging.Public;
 
 namespace Compze.Core.Tessaging.Teventive.Infrastructure.Validation;
 
-static partial class TessageInspector
+public static partial class TessageInspector
 {
    public class TransactionPolicyViolationException(string message) : Exception(message + TransactionPolicyRationale)
    {

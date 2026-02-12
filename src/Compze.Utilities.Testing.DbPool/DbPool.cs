@@ -18,7 +18,7 @@ using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
 namespace Compze.Utilities.Testing.DbPool;
 
-static class DbPoolRegistrar
+public static class DbPoolRegistrar
 {
    public static IComponentRegistrar DbPool(this IComponentRegistrar registrar) =>
       Testing.DbPool.DbPool.RegisterWith(registrar);
@@ -26,7 +26,7 @@ static class DbPoolRegistrar
 
 public partial class DbPool : StrictlyManagedResourceBase<DbPool>
 {
-   internal static IComponentRegistrar RegisterWith(IComponentRegistrar registrar) =>
+   public static IComponentRegistrar RegisterWith(IComponentRegistrar registrar) =>
       registrar.Register(Singleton.For<DbPool>()
                                   .CreatedBy((IDbPoolSqlLayer sqlLayer) => new DbPool(sqlLayer))
                                   .DelegateToParentServiceLocatorWhenCloning());
@@ -34,9 +34,9 @@ public partial class DbPool : StrictlyManagedResourceBase<DbPool>
    readonly IDbPoolSqlLayer _sqlLayer;
    protected MachineWideSharedObject<DbPoolState> MachineWideState { get; }
    static TimeSpan _reservationLength;
-   internal const int NumberOfDatabases = 50;
+   public const int NumberOfDatabases = 50;
 
-   internal DbPool(IDbPoolSqlLayer sqlLayer) : base(forceStackTraceAllocation: false)
+   public DbPool(IDbPoolSqlLayer sqlLayer) : base(forceStackTraceAllocation: false)
    {
       _sqlLayer = sqlLayer;
       _reservationLength = System.Diagnostics.Debugger.IsAttached ? 10.Minutes() : 65.Seconds();

@@ -5,7 +5,7 @@ using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Utilities.SystemCE;
 
-class RunOnce
+public class RunOnce
 {
    int _ran = 0;
    public bool IsFirstCall() => Interlocked.Increment(ref _ran) == 1;

@@ -20,16 +20,16 @@ namespace Compze.Tessaging.Teventive.TeventStore.Refactoring.Migrations;
 //This is one of those central classes for which optimization is actually vitally important.
 //Each of the optimizations were done with the help of a profiler and running benchmarks on the tested performance improvements time and time again.
 //Performance: Consider whether using the new stackalloc and Range types might allow us to improve performance of migrations.
-class TeventModifier(Action<IReadOnlyList<TeventModifier.RefactoredTevent>> teventsAddedCallback) : ITeventModifier
+public class TeventModifier(Action<IReadOnlyList<TeventModifier.RefactoredTevent>> teventsAddedCallback) : ITeventModifier
 {
-   internal class RefactoredTevent(TaggregateTevent newTevent, TaggregateTeventStorageInformation storageInformation)
+   public class RefactoredTevent(TaggregateTevent newTevent, TaggregateTeventStorageInformation storageInformation)
    {
       public TaggregateTevent NewTevent { get; private set; } = newTevent;
       public TaggregateTeventStorageInformation StorageInformation { get; private set; } = storageInformation;
    }
 
    readonly Action<IReadOnlyList<RefactoredTevent>> _teventsAddedCallback = teventsAddedCallback;
-   internal LinkedList<TaggregateTevent>? Tevents;
+   public LinkedList<TaggregateTevent>? Tevents;
    RefactoredTevent[]? _replacementTevents;
    RefactoredTevent[]? _insertedTevents;
 
@@ -160,5 +160,5 @@ class TeventModifier(Action<IReadOnlyList<TeventModifier.RefactoredTevent>> teve
 #pragma warning restore CS0618 // Type or member is obsolete
     }
 
-    internal TaggregateTevent[] MutatedHistory => Tevents?.ToArray() ?? [Assert.Result.NotNull(_inspectedTevent).then(_inspectedTevent)];
+    public TaggregateTevent[] MutatedHistory => Tevents?.ToArray() ?? [Assert.Result.NotNull(_inspectedTevent).then(_inspectedTevent)];
 }

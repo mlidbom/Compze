@@ -14,7 +14,7 @@ public abstract class Option<T> : DiscriminatedUnion<Option<T>, Some<T>, None<T>
 
 public sealed class Some<T> : Option<T>
 {
-   internal Some(T value)
+   public Some(T value)
    {
       Assert.Argument.NotNull(value);
       Value = value;
@@ -26,5 +26,5 @@ public sealed class Some<T> : Option<T>
 public sealed class None<T> : Option<T>
 {
    None(){}
-   internal static readonly None<T> Instance = new();
+   public static readonly None<T> Instance = new();
 }

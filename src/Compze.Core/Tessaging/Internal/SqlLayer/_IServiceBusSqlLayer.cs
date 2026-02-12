@@ -8,10 +8,10 @@ using System.Threading.Tasks;
 
 namespace Compze.Core.Tessaging.Internal.SqlLayer;
 
-interface IServiceBusSqlLayer
+public interface IServiceBusSqlLayer
 {
 
-   interface IOutboxSqlLayer
+   public interface IOutboxSqlLayer
    {
       void SaveTessage(OutboxTessageWithReceivers tessageWithReceivers);
       MarkAsReceivedResult MarkAsReceived(TessageId tessageId, EndpointId endpointId);
@@ -20,19 +20,19 @@ interface IServiceBusSqlLayer
       Task InitAsync();
    }
 
-   enum MarkAsReceivedResult
+   public enum MarkAsReceivedResult
    {
       Initial,
       WasAlreadyMarked
    }
 
-   enum SaveTessageResult
+   public enum SaveTessageResult
    {
       NewTessage,
       Duplicate
    }
 
-   interface IInboxSqlLayer
+   public interface IInboxSqlLayer
    {
       SaveTessageResult SaveTessage(TessageId tessageId, TypeId typeId, string serializedTessage);
       void MarkAsSucceeded(TessageId tessageId);
@@ -41,7 +41,7 @@ interface IServiceBusSqlLayer
       Task InitAsync();
    }
 
-   class OutboxTessageWithReceivers(string serializedTessage, TypeId typeId, TessageId tessageId, IEnumerable<EndpointId> receiverEndpointIds)
+   public class OutboxTessageWithReceivers(string serializedTessage, TypeId typeId, TessageId tessageId, IEnumerable<EndpointId> receiverEndpointIds)
    {
       public string SerializedTessage { get; } = serializedTessage;
       public TypeId TypeId { get; } = typeId;
@@ -49,7 +49,7 @@ interface IServiceBusSqlLayer
       public IEnumerable<EndpointId> ReceiverEndpointIds { get; } = receiverEndpointIds.ToList();
    }
 
-   class UndeliveredTessage(TessageId tessageId, TypeId typeId, string serializedTessage, EndpointId targetEndpointId, int retryCount, DateTime? lastAttemptTime)
+   public class UndeliveredTessage(TessageId tessageId, TypeId typeId, string serializedTessage, EndpointId targetEndpointId, int retryCount, DateTime? lastAttemptTime)
    {
       public TessageId TessageId { get; } = tessageId;
       public TypeId TypeId { get; } = typeId;
@@ -59,14 +59,14 @@ interface IServiceBusSqlLayer
       public DateTime? LastAttemptTime { get; } = lastAttemptTime;
    }
 
-   static class InboxTessageDatabaseSchemaStrings
+   public static class InboxTessageDatabaseSchemaStrings
    {
-      internal const string TableName = "InboxTessages";
+      public const string TableName = "InboxTessages";
 
-      internal const string GeneratedId = nameof(GeneratedId);
-      internal const string TypeId = nameof(TypeId);
-      internal const string TessageId = nameof(TessageId);
-      internal const string Body = nameof(Body);
+      public const string GeneratedId = nameof(GeneratedId);
+      public const string TypeId = nameof(TypeId);
+      public const string TessageId = nameof(TessageId);
+      public const string Body = nameof(Body);
       public const string Status = nameof(Status);
       public const string ExceptionCount = nameof(ExceptionCount);
       public const string ExceptionTessage = nameof(ExceptionTessage);
@@ -74,25 +74,25 @@ interface IServiceBusSqlLayer
       public const string ExceptionStackTrace = nameof(ExceptionStackTrace);
    }
 
-   static class OutboxTessagesDatabaseSchemaStrings
+   public static class OutboxTessagesDatabaseSchemaStrings
    {
-      internal const string TableName = "OutboxTessages";
+      public const string TableName = "OutboxTessages";
 
-      internal const string GeneratedId = nameof(GeneratedId);
-      internal const string TypeIdGuidValue = nameof(TypeIdGuidValue);
-      internal const string TessageId = nameof(TessageId);
-      internal const string SerializedTessage = nameof(SerializedTessage);
+      public const string GeneratedId = nameof(GeneratedId);
+      public const string TypeIdGuidValue = nameof(TypeIdGuidValue);
+      public const string TessageId = nameof(TessageId);
+      public const string SerializedTessage = nameof(SerializedTessage);
    }
 
-   static class OutboxTessageDispatchingTableSchemaStrings
+   public static class OutboxTessageDispatchingTableSchemaStrings
    {
-      internal const string TableName = "OutboxTessageDispatching";
+      public const string TableName = "OutboxTessageDispatching";
 
-      internal const string TessageId = nameof(TessageId);
-      internal const string EndpointId = nameof(EndpointId);
-      internal const string IsReceived = nameof(IsReceived);
-      internal const string RetryCount = nameof(RetryCount);
-      internal const string LastAttemptTime = nameof(LastAttemptTime);
-      internal const string FailureReason = nameof(FailureReason);
+      public const string TessageId = nameof(TessageId);
+      public const string EndpointId = nameof(EndpointId);
+      public const string IsReceived = nameof(IsReceived);
+      public const string RetryCount = nameof(RetryCount);
+      public const string LastAttemptTime = nameof(LastAttemptTime);
+      public const string FailureReason = nameof(FailureReason);
    }
 }

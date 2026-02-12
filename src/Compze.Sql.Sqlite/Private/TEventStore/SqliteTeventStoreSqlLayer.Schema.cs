@@ -3,9 +3,9 @@ using Lock = Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Taggr
 
 namespace Compze.Sql.Sqlite.Private.TEventStore;
 
-partial class SqliteTeventStoreSqlLayer
+public partial class SqliteTeventStoreSqlLayer
 {
-   internal const string SchemaCreationSql =
+   public const string SchemaCreationSql =
       $"""
 
        CREATE TABLE IF NOT EXISTS {Tevent.TableName}

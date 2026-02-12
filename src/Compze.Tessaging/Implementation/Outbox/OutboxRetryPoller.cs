@@ -19,9 +19,9 @@ using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Tessaging.Implementation.Outbox;
 
-class OutboxRetryPoller : IDisposable
+public class OutboxRetryPoller : IDisposable
 {
-   internal static void RegisterWith(IComponentRegistrar registrar)
+   public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<OutboxRetryPoller>()
                                      .CreatedBy((Outbox.ITessageStorage tessageStorage,
                                                  IRoutingInboxClient routingInboxClient,
@@ -68,7 +68,7 @@ class OutboxRetryPoller : IDisposable
       _pollerThread = _taskRunner.RunOnNamedThread("OutboxRetryPoller", PollerLoop, ThreadPriority.BelowNormal);
    }
 
-   internal void Stop()
+   public void Stop()
    {
       if(_running)
       {

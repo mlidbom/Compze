@@ -8,7 +8,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace Compze.Tessaging.Configuration
 {
-   static class AppSettingsJsonConfigurationParameterProviderRegistrar
+   public static class AppSettingsJsonConfigurationParameterProviderRegistrar
    {
       public static IComponentRegistrar JSonAppConfigFileConfigurationParameterProvider(this IComponentRegistrar @this)
          => @this.Register(AppSettingsJsonConfigurationParameterProvider.RegisterWith);
@@ -16,9 +16,9 @@ namespace Compze.Tessaging.Configuration
 
 
    ///<summary>Fetches configuration variables from the application configuration file.</summary>
-   class AppSettingsJsonConfigurationParameterProvider : IConfigurationParameterProvider, IStaticInstancePropertySingleton<IConfigurationParameterProvider>
+   public class AppSettingsJsonConfigurationParameterProvider : IConfigurationParameterProvider, IStaticInstancePropertySingleton<IConfigurationParameterProvider>
    {
-      internal static void RegisterWith(IComponentRegistrar registrar)
+      public static void RegisterWith(IComponentRegistrar registrar)
          => registrar.Register(Singleton.For<IConfigurationParameterProvider>()
                                         .CreatedBy(() => new AppSettingsJsonConfigurationParameterProvider()));
 

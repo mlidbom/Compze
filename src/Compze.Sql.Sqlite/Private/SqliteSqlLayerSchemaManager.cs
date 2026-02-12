@@ -10,9 +10,9 @@ using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Sql.Sqlite.Private;
 
-class SqliteSqlLayerSchemaManager(ISqliteConnectionPool connectionPool)
+public class SqliteSqlLayerSchemaManager(ISqliteConnectionPool connectionPool)
 {
-   internal static IComponentRegistrar RegisterWith(IComponentRegistrar registrar)
+   public static IComponentRegistrar RegisterWith(IComponentRegistrar registrar)
    {
       if(registrar.Container().IsRegistered<SqliteSqlLayerSchemaManager>())
          return registrar;

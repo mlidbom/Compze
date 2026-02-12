@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Compze.Utilities.Testing.XUnit.ComponentCombinations;
 
-internal class SkipComponentSpecificationsCollection
+public class SkipComponentSpecificationsCollection
 {
    readonly IReadOnlyList<SkipComponentSpecification> _skippedComponents;
 

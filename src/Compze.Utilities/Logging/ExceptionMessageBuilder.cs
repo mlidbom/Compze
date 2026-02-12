@@ -9,12 +9,12 @@ using Compze.Utilities.SystemCE.ReflectionCE;
 
 namespace Compze.Utilities.Logging;
 
-static class ExceptionTessageBuilder
+public static class ExceptionTessageBuilder
 {
    const string LineSeparator = "----------------------------------------------------";
    const string IndentWith = "   ";
    const int StartDepth = 1;
-   internal static string BuildExceptionLogTessage(Exception exception, Type type, string? message)
+   public static string BuildExceptionLogTessage(Exception exception, Type type, string? message)
    {
       var builder = new StringBuilder();
 

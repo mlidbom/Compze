@@ -19,7 +19,7 @@ public class EndpointHost : IEndpointHost
    readonly IComponentRegistrar _registrar;
    readonly Func<IDependencyInjectionContainer> _containerFactory;
    protected IList<IEndpoint> Endpoints { get; } = [];
-   internal ITessagesInFlightTracker TessagesInFlightTracker;
+   public ITessagesInFlightTracker TessagesInFlightTracker;
 
    protected EndpointHost(IComponentRegistrar registrar, Func<IDependencyInjectionContainer> containerFactory)
    {

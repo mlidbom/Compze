@@ -6,10 +6,10 @@ namespace Compze.Utilities.SystemCE.TransactionsCE;
 
 ///<summary>Getting the code for participating in a transaction right is surprisingly tricky and the failures very hard to diagnose.
 /// Use this class for all our transaction participants so we only have to get it right once.</summary>
-abstract class VolatileTransactionParticipant : IEnlistmentNotification
+public abstract class VolatileTransactionParticipant : IEnlistmentNotification
 {
    readonly EnlistmentOptions _enlistmentOptions;
-   internal VolatileTransactionParticipant(EnlistmentOptions enlistmentOptions = EnlistmentOptions.None) => _enlistmentOptions = enlistmentOptions;
+   public VolatileTransactionParticipant(EnlistmentOptions enlistmentOptions = EnlistmentOptions.None) => _enlistmentOptions = enlistmentOptions;
 
    protected abstract void OnCommit();
    protected abstract void OnRollback();
@@ -21,7 +21,7 @@ abstract class VolatileTransactionParticipant : IEnlistmentNotification
 
    readonly IMonitorCE _monitor = IMonitorCE.WithTimeouts(30.Seconds());
    Transaction? _enlistedIn;
-   internal void EnsureEnlistedInAnyAmbientTransaction() => _monitor.Update(() =>
+   public void EnsureEnlistedInAnyAmbientTransaction() => _monitor.Update(() =>
    {
       var ambientTransaction = Transaction.Current;
       if(ambientTransaction == null) return;

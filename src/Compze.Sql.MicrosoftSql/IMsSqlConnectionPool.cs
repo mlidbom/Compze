@@ -8,12 +8,12 @@ using Microsoft.Data.SqlClient;
 
 namespace Compze.Sql.MicrosoftSql;
 
-interface IMsSqlConnectionPool : IDbConnectionPool<ICompzeMsSqlConnection, SqlCommand>
+public interface IMsSqlConnectionPool : IDbConnectionPool<ICompzeMsSqlConnection, SqlCommand>
 {
    static IMsSqlConnectionPool CreateInstance(string connectionString) => CreateInstance(() => connectionString);
    static MsSqlConnectionPool CreateInstance(Func<string> getConnectionString) => new(getConnectionString);
 
-   class MsSqlConnectionPool : IMsSqlConnectionPool
+   public class MsSqlConnectionPool : IMsSqlConnectionPool
    {
       readonly LazyCE<IDbConnectionPool<ICompzeMsSqlConnection, SqlCommand>> _pool;
 

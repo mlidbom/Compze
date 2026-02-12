@@ -7,12 +7,12 @@ using Compze.Utilities.Functional;
 namespace Compze.Utilities.SystemCE.ReflectionCE;
 
 /// <summary>A collection of extensions to work with <see cref="Type"/></summary>
-static partial class TypeCE
+public static partial class TypeCE
 {
    public static TypeMethods Methods(this Type type) => new(type);
 }
 
-class TypeMethods(Type type)
+public class TypeMethods(Type type)
 {
    readonly Type _type = type;
 

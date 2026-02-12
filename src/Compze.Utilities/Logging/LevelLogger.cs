@@ -5,33 +5,33 @@ namespace Compze.Utilities.Logging;
 // ReSharper disable UnusedMember.Global : These functions are very useful for debugging but only used occasionally. Let's keep them around for now.
 // ReSharper disable UnusedType.Global
 
-interface ILevelLogger
+public interface ILevelLogger
 {
    unit Log(string message);
 }
 
-abstract class LevelLogger(ILogger logger) : ILevelLogger
+public abstract class LevelLogger(ILogger logger) : ILevelLogger
 {
    protected readonly ILogger Logger = logger;
    public abstract unit Log(string message);
 }
 
-class DebugLogger(ILogger logger) : LevelLogger(logger)
+public class DebugLogger(ILogger logger) : LevelLogger(logger)
 {
    public override unit Log(string message) => Logger.Debug(message);
 }
 
-class InfoLogger(ILogger logger) : LevelLogger(logger)
+public class InfoLogger(ILogger logger) : LevelLogger(logger)
 {
    public override unit Log(string message) => Logger.Info(message);
 }
 
-class WarningLogger(ILogger logger) : LevelLogger(logger)
+public class WarningLogger(ILogger logger) : LevelLogger(logger)
 {
    public override unit Log(string message) => Logger.Warning(message);
 }
 
-static class LevelLoggerILoggerExtensions
+public static class LevelLoggerILoggerExtensions
 {
    public static ILevelLogger Debug(this ILogger @this) => new DebugLogger(@this);
    public static ILevelLogger Info(this ILogger @this) => new InfoLogger(@this);

@@ -13,12 +13,12 @@ namespace Compze.Tessaging.Hosting.Testing.Performance;
 //ncrunch: no coverage start
 
 ///<summary>Extensions to the Stopwatch class and related functionality.</summary>
-static class StopwatchCE
+public static class StopwatchCE
 {
    ///<summary>Measures how long it takes to execute <paramref name="action"/></summary>
-   internal static TimeSpan TimeExecution([InstantHandle] Action action) => new Stopwatch().TimeExecution(action);
+   public static TimeSpan TimeExecution([InstantHandle] Action action) => new Stopwatch().TimeExecution(action);
 
-   internal static async Task<TimeSpan> TimeExecutionAsync([InstantHandle] Func<Task> action) => await new Stopwatch().TimeExecutionAsync(action);
+   public static async Task<TimeSpan> TimeExecutionAsync([InstantHandle] Func<Task> action) => await new Stopwatch().TimeExecutionAsync(action);
 
    ///<summary>Measures how long it takes to execute <paramref name="action"/></summary>
    static TimeSpan TimeExecution(this Stopwatch @this, [InstantHandle] Action action)

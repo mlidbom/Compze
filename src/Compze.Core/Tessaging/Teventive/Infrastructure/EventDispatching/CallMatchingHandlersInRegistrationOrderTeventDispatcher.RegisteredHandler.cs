@@ -12,19 +12,19 @@ namespace Compze.Core.Tessaging.Teventive.Infrastructure.EventDispatching;
 /// Calls all matching handlers in the order they were registered when an tevent is Dispatched.
 /// Handlers should be registered using the RegisterHandlers method in the constructor of the inheritor.
 /// </summary>
-partial class CallMatchingHandlersInRegistrationOrderTeventDispatcher<TTevent> where TTevent : class, ITevent
+public partial class CallMatchingHandlersInRegistrationOrderTeventDispatcher<TTevent> where TTevent : class, ITevent
 {
-   abstract class RegisteredHandler
+   public abstract class RegisteredHandler
    {
-      internal abstract Action<ITevent>? TryCreateHandlerFor(Type teventType);
+      public abstract Action<ITevent>? TryCreateHandlerFor(Type teventType);
    }
 
-   class RegisteredHandler<THandledTevent>(Action<THandledTevent> handler) : RegisteredHandler where THandledTevent : ITevent
+   public class RegisteredHandler<THandledTevent>(Action<THandledTevent> handler) : RegisteredHandler where THandledTevent : ITevent
    {
       //Since handler has specified no preference for wrapper type the most generic of all will do and any wrapped tevent containing a matching tevent should be dispatched to this handler.
       readonly Action<THandledTevent> _handler = handler;
 
-      internal override Action<ITevent>? TryCreateHandlerFor(Type teventType)
+      public override Action<ITevent>? TryCreateHandlerFor(Type teventType)
       {
          if(typeof(THandledTevent).IsAssignableFrom(teventType))
          {
@@ -39,11 +39,11 @@ partial class CallMatchingHandlersInRegistrationOrderTeventDispatcher<TTevent> w
       }
    }
 
-   class RegisteredWrappedHandler<THandledWrapperTevent>(Action<THandledWrapperTevent> handler) : RegisteredHandler where THandledWrapperTevent : IPublisherIdentifyingTevent<ITevent>
+   public class RegisteredWrappedHandler<THandledWrapperTevent>(Action<THandledWrapperTevent> handler) : RegisteredHandler where THandledWrapperTevent : IPublisherIdentifyingTevent<ITevent>
    {
       readonly Action<THandledWrapperTevent> _handler = handler;
 
-      internal override Action<ITevent>? TryCreateHandlerFor(Type teventType) =>
+      public override Action<ITevent>? TryCreateHandlerFor(Type teventType) =>
          typeof(THandledWrapperTevent).IsAssignableFrom(teventType)
             ? tevent => _handler((THandledWrapperTevent)tevent)
             : null;

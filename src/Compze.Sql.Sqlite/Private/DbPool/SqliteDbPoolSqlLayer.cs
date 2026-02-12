@@ -10,9 +10,9 @@ using Microsoft.Data.Sqlite;
 
 namespace Compze.Sql.Sqlite.Private.DbPool;
 
-class SqliteDbPoolSqlLayer : IDbPoolSqlLayer
+public class SqliteDbPoolSqlLayer : IDbPoolSqlLayer
 {
-   internal static IComponentRegistrar RegisterWith(IComponentRegistrar registrar) =>
+   public static IComponentRegistrar RegisterWith(IComponentRegistrar registrar) =>
       registrar.Register(Singleton.For<IDbPoolSqlLayer>()
                                   .CreatedBy(() => new SqliteDbPoolSqlLayer())
                                   .DelegateToParentServiceLocatorWhenCloning());
@@ -21,7 +21,7 @@ class SqliteDbPoolSqlLayer : IDbPoolSqlLayer
 
    const string ConnectionStringConfigurationParameterName = "COMPOSABLE_SQLITE_DATABASE_POOL_BASE_DIRECTORY";
 
-   internal SqliteDbPoolSqlLayer()
+   public SqliteDbPoolSqlLayer()
    {
       _baseDirectory = Environment.GetEnvironmentVariable(ConnectionStringConfigurationParameterName)
                     ?? Path.Combine(Path.GetTempPath(), "CompzeDbPool", "Sqlite");

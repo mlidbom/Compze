@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Compze.Tessaging.Implementation.Outbox;
 
-partial class Outbox
+public partial class Outbox
 {
    public interface ITessageStorage
    {

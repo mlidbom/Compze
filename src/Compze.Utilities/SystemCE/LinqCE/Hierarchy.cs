@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace Compze.Utilities.SystemCE.LinqCE;
 
 /// <summary/>
-static class Hierarchy
+public static class Hierarchy
 {
    /// <summary>
    /// Flattens a hierarchical structure of <typeparamref name="TSource"/> objects into an <see cref="IEnumerable{TSource}"/>

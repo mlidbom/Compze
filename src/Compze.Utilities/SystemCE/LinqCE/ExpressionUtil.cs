@@ -5,7 +5,7 @@ using System.Reflection;
 namespace Compze.Utilities.SystemCE.LinqCE;
 
 ///<summary>Extracts member names from expressions</summary>
-static class ExpressionUtil
+public static class ExpressionUtil
 {
    public static MemberInfo ExtractFinalMemberInfo(this LambdaExpression lambda) =>
       lambda.Body.ExtractFinalMemberInfo();

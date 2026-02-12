@@ -6,7 +6,7 @@ namespace Compze.Sql.MicrosoftSql.Wiring;
 
 public static class MsSqlSqlConnectionPoolRegistrar
 {
-   internal interface ITestingRegistrar
+   public interface ITestingRegistrar
    {
       public IComponentRegistrar Register(string connectionStringName);
    }

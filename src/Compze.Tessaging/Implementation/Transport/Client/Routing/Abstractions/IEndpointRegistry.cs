@@ -3,7 +3,7 @@ using Compze.Core.Tessaging.Hosting.Public;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Routing.Abstractions;
 
-interface IEndpointRegistry
+public interface IEndpointRegistry
 {
     IEnumerable<IEndpoint> ServerEndpoints { get; }
 }

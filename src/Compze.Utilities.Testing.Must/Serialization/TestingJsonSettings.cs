@@ -10,13 +10,13 @@ using Newtonsoft.Json.Serialization;
 
 namespace Compze.Utilities.Testing.Must.Serialization;
 
-static class TestingJsonSettings
+public static class TestingJsonSettings
 {
-   internal static readonly JsonSerializerSettings AllMembers = CreateSettings(new AllMembersContractResolver());
-   internal static readonly JsonSerializerSettings InternalAndPublicMembers = CreateSettings(new InternalMembersContractResolver());
-   internal static readonly JsonSerializerSettings PublicMembers = CreateSettings(new PublicMembersContractResolver());
+   public static readonly JsonSerializerSettings AllMembers = CreateSettings(new AllMembersContractResolver());
+   public static readonly JsonSerializerSettings InternalAndPublicMembers = CreateSettings(new InternalMembersContractResolver());
+   public static readonly JsonSerializerSettings PublicMembers = CreateSettings(new PublicMembersContractResolver());
 
-   internal static JsonSerializerSettings CreateSettingsWithExclusions(JsonSerializerSettings baseSettings, IReadOnlySet<MemberInfo> excludedMembers)
+   public static JsonSerializerSettings CreateSettingsWithExclusions(JsonSerializerSettings baseSettings, IReadOnlySet<MemberInfo> excludedMembers)
    {
       var baseResolver = baseSettings.ContractResolver as MemberFilteringContractResolver
                       ?? throw new ArgumentException("Base settings IMust have a MemberFilteringContractResolver", nameof(baseSettings));

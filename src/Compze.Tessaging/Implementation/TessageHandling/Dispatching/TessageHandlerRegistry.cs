@@ -20,15 +20,15 @@ using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 namespace Compze.Tessaging.Implementation.TessageHandling.Dispatching;
 
 
-static class TessageHandlerRegistryRegistrar
+public static class TessageHandlerRegistryRegistrar
 {
-   internal static IComponentRegistrar TessageHandlerRegistry(this IComponentRegistrar registrar)
+   public static IComponentRegistrar TessageHandlerRegistry(this IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<ITessageHandlerRegistrar, ITessageHandlerRegistry, TessageHandlerRegistry>()
                                      .CreatedBy((ITypeMapper typeMapper) => new TessageHandlerRegistry(typeMapper)));
 }
 
 //performance: Use static caching + indexing trick for storing and retrieving values throughout this class. TueryTypeIndexFor<TTuery>.Index. Etc
-class TessageHandlerRegistry(ITypeMapper typeMapper) : ITessageHandlerRegistrar, ITessageHandlerRegistry
+public class TessageHandlerRegistry(ITypeMapper typeMapper) : ITessageHandlerRegistrar, ITessageHandlerRegistry
 {
    readonly ITypeMapper _typeMapper = typeMapper;
    IReadOnlyDictionary<Type, Action<object>> _tommandHandlers = new Dictionary<Type, Action<object>>();
@@ -154,21 +154,21 @@ class TessageHandlerRegistry(ITypeMapper typeMapper) : ITessageHandlerRegistrar,
                          .ToHashSet();
    }
 
-   class TeventHandlerRegistration(Type type, Action<ITeventHandlerRegistrar<ITevent>> registerHandlerWithRegistrar)
+   public class TeventHandlerRegistration(Type type, Action<ITeventHandlerRegistrar<ITevent>> registerHandlerWithRegistrar)
    {
       public Type Type { get; } = type;
       public Action<ITeventHandlerRegistrar<ITevent>> RegisterHandlerWithRegistrar { get; } = registerHandlerWithRegistrar;
    }
 
-   abstract class HandlerWithResultRegistration(Type returnValueType, Func<object, object> handlerMethod)
+   public abstract class HandlerWithResultRegistration(Type returnValueType, Func<object, object> handlerMethod)
    {
-      internal Type ReturnValueType { get; } = returnValueType;
-      internal Func<object, object> HandlerMethod { get; } = handlerMethod;
+      public Type ReturnValueType { get; } = returnValueType;
+      public Func<object, object> HandlerMethod { get; } = handlerMethod;
    }
 
-   class TommandHandlerWithResultRegistration<TTommand, TResult>(Func<TTommand, TResult> handlerMethod) : HandlerWithResultRegistration(typeof(TResult),
+   public class TommandHandlerWithResultRegistration<TTommand, TResult>(Func<TTommand, TResult> handlerMethod) : HandlerWithResultRegistration(typeof(TResult),
                                                                                                                                         tommand => handlerMethod((TTommand)tommand) ?? throw new Exception("You cannot return null from a tommand handler"));
 
-   class TueryHandlerRegistration<TTuery, TResult>(Func<TTuery, TResult> handlerMethod) : HandlerWithResultRegistration(typeof(TResult),
+   public class TueryHandlerRegistration<TTuery, TResult>(Func<TTuery, TResult> handlerMethod) : HandlerWithResultRegistration(typeof(TResult),
                                                                                                                         tommand => handlerMethod((TTuery)tommand) ?? throw new Exception("You cannot return null from a tuery handler"));
 }

@@ -2,9 +2,9 @@ using Tevent = Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Tev
 
 namespace Compze.Sql.MicrosoftSql.Private.TEventStore;
 
-partial class MsSqlTeventStoreSqlLayer
+public partial class MsSqlTeventStoreSqlLayer
 {
-   internal const string SchemaCreationSql =
+   public const string SchemaCreationSql =
       $"""
 
        IF NOT EXISTS(SELECT NAME FROM sys.tables WHERE name = '{Tevent.TableName}')
