@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
    <PropertyGroup>
       <TargetFramework>net9.0</TargetFramework>
@@ -8,10 +9,8 @@
       <RootNamespace>AccountManagement</RootNamespace>
    </PropertyGroup>
    <ItemGroup>
-      <ProjectReference Include="..\..\Compze.Tests.Infrastructure\Compze.Tests.Infrastructure.csproj" />
-      <ProjectReference Include="..\..\..\src\Samples\AccountManagement.Server\AccountManagement.Server.csproj" />
-      <ProjectReference Include="..\..\..\src\Compze.Utilities\Compze.Utilities.csproj" />
-      <ProjectReference Include="..\..\..\src\Compze.Utilities.Testing.Must\Compze.Utilities.Testing.Must.csproj" />
+      <ProjectReference Include="..\AccountManagement.Tests\AccountManagement.Tests.csproj" />
+      <ProjectReference Include="..\..\..\..\src\Compze.Utilities\Compze.Utilities.csproj" />
    </ItemGroup>
    <ItemGroup>
       <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />

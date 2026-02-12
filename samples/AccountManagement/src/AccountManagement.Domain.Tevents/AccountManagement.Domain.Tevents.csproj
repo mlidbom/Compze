@@ -6,6 +6,6 @@
    </PropertyGroup>
    <ItemGroup>
       <ProjectReference Include="..\AccountManagement.API\AccountManagement.API.csproj" />
-      <ProjectReference Include="..\..\Compze.Core\Compze.Core.csproj" />
+      <ProjectReference Include="..\..\..\..\src\Compze.Core\Compze.Core.csproj" />
    </ItemGroup>
 </Project>
