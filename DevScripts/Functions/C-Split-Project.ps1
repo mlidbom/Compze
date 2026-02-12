@@ -93,7 +93,7 @@ function C-Split-Project {
         }
     }
     
-    # Step 4: For each project that references the parent, add a reference to the new project
+    # Step 3: For each project that references the parent, add a reference to the new project
     $referenceAddedCount = 0
     
     foreach ($project in $allProjects) {
