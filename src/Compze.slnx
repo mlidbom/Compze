@@ -9,20 +9,20 @@
   </Configurations>
   <Folder Name="/_Samples/" />
   <Folder Name="/_Samples/AccountManagement/">
-    <Project Path="Samples/AccountManagement/AccountManagement/API/AccountManagement.API.csproj" />
-    <Project Path="Samples/AccountManagement/AccountManagement/Domain/Events/AccountManagement.Domain.Tevents.csproj" />
-    <Project Path="Samples/AccountManagement/AccountManagement/Server/AccountManagement.Server.csproj" />
-    <Project Path="Samples/AccountManagement/AccountManagement/UI/MVC/AccountManagement.UI.MVC.csproj" />
+    <Project Path="Samples/AccountManagement.API/AccountManagement.API.csproj" />
+    <Project Path="Samples/AccountManagement.Domain.Tevents/AccountManagement.Domain.Tevents.csproj" />
+    <Project Path="Samples/AccountManagement.Server/AccountManagement.Server.csproj" />
+    <Project Path="Samples/AccountManagement.UI.MVC/AccountManagement.UI.MVC.csproj" />
   </Folder>
   <Folder Name="/_Samples/AccountManagement/Tests/">
-    <Project Path="Samples/AccountManagement/AccountManagement/PerformanceTests/Internals/AccountManagement.Tests.PerformanceInternals.csproj" />
-    <Project Path="Samples/AccountManagement/AccountManagement/Tests/AccountManagement.Tests.csproj" />
-    <Project Path="Samples/AccountManagement/AccountManagement/UnitTests/AccountManagement.Tests.Unit.csproj" />
+    <Project Path="../test/Samples/AccountManagement.Tests.PerformanceInternals/AccountManagement.Tests.PerformanceInternals.csproj" />
+    <Project Path="../test/Samples/AccountManagement.Tests/AccountManagement.Tests.csproj" />
+    <Project Path="../test/Samples/AccountManagement.Tests.Unit/AccountManagement.Tests.Unit.csproj" />
   </Folder>
   <Folder Name="/_Solution Items/">
     <File Path="../README.md" />
     <File Path="../Writing_documentation.md" />
-    <File Path=".editorconfig" />
+    <File Path="../.editorconfig" />
     <File Path="../test/test-common-appsettings.json" />
     <File Path="TestUsingPluggableComponentCombinations" />
     <File Path="TestUsingPluggableComponentCombinations.example" />

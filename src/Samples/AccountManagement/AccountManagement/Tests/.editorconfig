@@ -1,3 +1,0 @@
-[*.cs]
-configure_await_analysis_mode = ui
-dotnet_diagnostic.CA2007.severity = none # MSBuild/CLI requires this explicit diagnostic suppression
