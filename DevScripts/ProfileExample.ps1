@@ -5,7 +5,7 @@
 # 2. Copy the line below to the end of your profile
 # 3. Save and restart PowerShell (or run: . $PROFILE)
 
-Import-Module C:\Dev\Compze\DevScripts\Compze.psd1 -DisableNameChecking
+Import-Module C:\Dev\Compze\DevScripts\Compze.psm1 -DisableNameChecking
 
 # After adding this, you can run these commands from any directory:
 # Type C-<Tab> to see all available commands, including:

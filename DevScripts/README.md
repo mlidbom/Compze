@@ -12,7 +12,7 @@ This keeps the console clean and makes it easy to spot actual problems. Success 
 
 Add to your PowerShell profile (`notepad $PROFILE`):
 ```powershell
-Import-Module C:\Dev\Compze\DevScripts\Compze.psd1 -DisableNameChecking
+Import-Module C:\Dev\Compze\DevScripts\Compze.psm1 -DisableNameChecking
 ```
 
 Then reload: `. $PROFILE`
@@ -31,11 +31,12 @@ Then reload: `. $PROFILE`
   - `-FullGitReset` - Full git reset before building (implies `-Clean`)
   - `-WhatIf` - Preview what would be deleted by git clean (with `-FullGitReset`)
 
-- **C-Test** - Runs Compze tests with proper configuration
-  - `-Build` - Build before testing
+- **C-Test** - Runs Compze tests with proper configuration (builds by default)
+  - `-NoBuild` - Skip building, just run tests
   - `-Clean` - Clean and build before testing
-  - `-FullGitReset` - Full git reset, build, then test (implies `-Clean` and `-Build`)
+  - `-FullGitReset` - Full git reset, build, then test (implies `-Clean`)
   - `-SingleThreadedTesting` - Run tests single-threaded for debugging
+  - `-Iterations <n>` - Run suite multiple times and show summary
   - `-WhatIf` - Preview what would be deleted by git clean (with `-FullGitReset`)
 
 ### Code Quality & Structure

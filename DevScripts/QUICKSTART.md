@@ -5,7 +5,7 @@
 Add this line to your PowerShell profile:
 
 ```powershell
-Import-Module C:\Dev\Compze\DevScripts\Compze.psd1 -DisableNameChecking
+Import-Module C:\Dev\Compze\DevScripts\Compze.psm1 -DisableNameChecking
 ```
 
 To edit your profile, run: `notepad $PROFILE`
@@ -13,20 +13,20 @@ To edit your profile, run: `notepad $PROFILE`
 ## Available Commands
 
 ### C-Test
-Runs the full test suite. Default is to run tests without building (assumes already built).
+Runs the full test suite. Builds by default before running tests.
 
 ```powershell
-# Run tests (default - no build)
+# Build + run tests (default)
 C-Test
 
-# Build then test
-C-Test -Build
+# Skip building, just run tests
+C-Test -NoBuild
 
 # Single-threaded testing (for debugging)
 C-Test -SingleThreadedTesting
 
-# Build and test single-threaded
-C-Test -Build -SingleThreadedTesting
+# Skip build and test single-threaded
+C-Test -NoBuild -SingleThreadedTesting
 ```
 
 ### C-Reload-Module
@@ -91,9 +91,8 @@ Tests run in parallel by default, respecting your assembly-level parallelization
 
 Use `-SingleThreadedTesting` for debugging when you need sequential execution.
 
-## Files Created
+## Files
 
 - **Compze.psm1** - Main module with function definitions
-- **Compze.psd1** - Module manifest
 - **README.md** - Detailed documentation
 - **ProfileExample.ps1** - Example profile configuration

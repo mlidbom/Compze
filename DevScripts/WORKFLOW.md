@@ -45,4 +45,4 @@ Just run `Reload-Profile` and continue working!
 If `Reload-Profile` doesn't seem to pick up changes:
 - Make sure you saved the file you edited
 - Check that you're editing the right file (`C:\Dev\Compze\DevScripts\Compze.psm1`)
-- Try running manually: `Import-Module C:\Dev\Compze\DevScripts\Compze.psd1 -DisableNameChecking -Force -Global`
+- Try running manually: `Import-Module C:\Dev\Compze\DevScripts\Compze.psm1 -DisableNameChecking -Force -Global`
