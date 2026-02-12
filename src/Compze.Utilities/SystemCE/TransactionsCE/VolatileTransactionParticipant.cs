@@ -9,7 +9,7 @@ namespace Compze.Utilities.SystemCE.TransactionsCE;
 public abstract class VolatileTransactionParticipant : IEnlistmentNotification
 {
    readonly EnlistmentOptions _enlistmentOptions;
-   public VolatileTransactionParticipant(EnlistmentOptions enlistmentOptions = EnlistmentOptions.None) => _enlistmentOptions = enlistmentOptions;
+   protected VolatileTransactionParticipant(EnlistmentOptions enlistmentOptions = EnlistmentOptions.None) => _enlistmentOptions = enlistmentOptions;
 
    protected abstract void OnCommit();
    protected abstract void OnRollback();

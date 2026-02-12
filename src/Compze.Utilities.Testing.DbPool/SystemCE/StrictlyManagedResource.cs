@@ -10,8 +10,8 @@ namespace Compze.Utilities.Testing.DbPool.SystemCE;
 public static class StrictlyManagedResources
 {
    // ReSharper disable once FieldCanBeMadeReadOnly.Global
-   public static bool CollectStackTracesByDefault = false;
-   public static bool LoggingTemporarilySuppressed = false;
+   internal static bool CollectStackTracesByDefault = false;
+   internal static bool LoggingTemporarilySuppressed = false;
 
    public static void SuppressLoggingWhileExecuting(Action action)
    {
@@ -52,7 +52,7 @@ public sealed class StrictlyManagedResource<TManagedResource> : IStrictlyManaged
    static readonly IMonitorCE StaticMonitor = IMonitorCE.WithDefaultTimeout();
    readonly bool _collectStackTraces;
    // ReSharper disable once StaticMemberInGenericType
-   public static bool CollectStackTracesByDefault = StrictlyManagedResources.CollectStackTracesByDefault;
+   internal static bool CollectStackTracesByDefault = StrictlyManagedResources.CollectStackTracesByDefault;
 
    public StrictlyManagedResource(bool forceStackTraceCollection = false, bool needsFileInfo = false, TManagedResource? instance = null)
    {

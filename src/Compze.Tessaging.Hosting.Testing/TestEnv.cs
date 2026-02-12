@@ -6,7 +6,7 @@ namespace Compze.Tessaging.Hosting.Testing;
 ///<summary>TestEnvironment class. Shortened name since it is referenced statically and has nested types</summary>
 public static partial class TestEnv
 {
-   public static Func<PluggableComponents?>? XunitDiscoverer = null;
+   public static Func<PluggableComponents?>? XunitDiscoverer { get; set; } = null;
 
    static PluggableComponents GetComponents()
    {

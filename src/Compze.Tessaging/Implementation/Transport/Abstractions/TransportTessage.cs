@@ -12,12 +12,12 @@ public static class TransportTessage
 {
    public class InComing
    {
-      public readonly TessageId TessageId;
+      internal readonly TessageId TessageId;
       readonly IRemotableTessageSerializer _serializer;
-      public readonly string Body;
-      public readonly TypeId TessageTypeId;
+      internal readonly string Body;
+      internal readonly TypeId TessageTypeId;
       readonly Type _tessageType;
-      public readonly TransportTessageType TessageTypeEnum;
+      internal readonly TransportTessageType TessageTypeEnum;
 
       ITessage? _tessage;
 
@@ -47,11 +47,11 @@ public static class TransportTessage
    public class OutGoing
    {
       public bool IsExactlyOnceDeliveryTessage { get; }
-      public readonly TessageId TessageId;
+      internal readonly TessageId TessageId;
 
-      public readonly TypeId Type;
-      public readonly string Body;
-      public readonly TransportTessageType TessageTypeEnum;
+      internal readonly TypeId Type;
+      internal readonly string Body;
+      internal readonly TransportTessageType TessageTypeEnum;
 
       public static OutGoing Create(IRemotableTessage tessage, ITypeMapper typeMapper, IRemotableTessageSerializer serializer)
       {

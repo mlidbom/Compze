@@ -13,8 +13,8 @@ public sealed class DeferredConsoleWriter : IDisposable
    public bool VerboseMode { get; set; } = false;
    public class Buffer
    {
-      public readonly StringBuilder Content = new();
-      public bool TestSucceeded;
+      internal readonly StringBuilder Content = new();
+      internal bool TestSucceeded;
    }
 
    readonly IThreadShared<Buffer> _buffer = IThreadShared.WithDefaultTimeouts(new Buffer());

@@ -14,7 +14,7 @@ public abstract class ComponentRegistration
    public IReadOnlyList<Type> DependencyTypes { get; }
    public bool ProvidesService(Type service) => ServiceTypes.Contains(service);
 
-   public ComponentRegistration(Lifestyle lifestyle,
+   protected ComponentRegistration(Lifestyle lifestyle,
                                   IEnumerable<Type> serviceTypes,
                                   InstantiationSpec instantiationSpec,
                                   IEnumerable<Type> dependencyTypes)

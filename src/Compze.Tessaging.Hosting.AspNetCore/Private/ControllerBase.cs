@@ -17,9 +17,9 @@ namespace Compze.Tessaging.Hosting.AspNetCore.Private;
 public abstract class ControllerBase(IRemotableTessageSerializer serializer, ITypeMapper typeMapper, IInbox inbox, Inbox.HandlerExecutionEngine handlerExecutionEngine) : Controller
 {
    readonly ITypeMapper _typeMapper = typeMapper;
-   protected readonly IInbox Inbox = inbox;
-   protected readonly IRemotableTessageSerializer Serializer = serializer;
-   protected readonly Inbox.HandlerExecutionEngine HandlerExecutionEngine = handlerExecutionEngine;
+   protected IInbox Inbox { get; } = inbox;
+   protected IRemotableTessageSerializer Serializer { get; } = serializer;
+   protected Inbox.HandlerExecutionEngine HandlerExecutionEngine { get; } = handlerExecutionEngine;
 
    protected async Task<TransportTessage.InComing> CreateIncomingTessage()
    {

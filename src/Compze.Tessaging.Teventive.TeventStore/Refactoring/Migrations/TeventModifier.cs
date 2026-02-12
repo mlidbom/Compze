@@ -29,7 +29,7 @@ public class TeventModifier(Action<IReadOnlyList<TeventModifier.RefactoredTevent
    }
 
    readonly Action<IReadOnlyList<RefactoredTevent>> _teventsAddedCallback = teventsAddedCallback;
-   public LinkedList<TaggregateTevent>? Tevents;
+   internal LinkedList<TaggregateTevent>? Tevents;
    RefactoredTevent[]? _replacementTevents;
    RefactoredTevent[]? _insertedTevents;
 

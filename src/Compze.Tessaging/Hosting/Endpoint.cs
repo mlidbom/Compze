@@ -21,9 +21,9 @@ public class Endpoint : IEndpoint
 {
    public class ServerComponents(TommandScheduler tommandScheduler, IInbox inbox, IOutbox outbox) : IDisposable
    {
-      public readonly TommandScheduler TommandScheduler = tommandScheduler;
-      public readonly IInbox Inbox = inbox;
-      public readonly IOutbox Outbox = outbox;
+      internal readonly TommandScheduler TommandScheduler = tommandScheduler;
+      internal readonly IInbox Inbox = inbox;
+      internal readonly IOutbox Outbox = outbox;
 
       public void Dispose() => TommandScheduler.Dispose();
    }

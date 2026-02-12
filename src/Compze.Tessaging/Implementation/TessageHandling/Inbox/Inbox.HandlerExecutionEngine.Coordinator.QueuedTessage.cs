@@ -22,7 +22,7 @@ public partial class Inbox
          public class HandlerExecutionTask
          {
             readonly TaskCompletionSource<object?> _taskCompletionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
-            public readonly TransportTessage.InComing TransportTessage;
+            internal readonly TransportTessage.InComing TransportTessage;
             readonly Coordinator _coordinator;
             readonly Func<object, object?> _tessageTask;
             readonly ITaskRunner _taskRunner;

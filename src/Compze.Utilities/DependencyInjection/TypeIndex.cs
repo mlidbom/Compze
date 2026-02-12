@@ -7,7 +7,7 @@ using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
 namespace Compze.Utilities.DependencyInjection;
 
-public class TypeIndex<TInheritor> where TInheritor : TypeIndex<TInheritor>
+public abstract class TypeIndex<TInheritor> where TInheritor : TypeIndex<TInheritor>
 {
    static readonly IMonitorCE MonitorCE = IMonitorCE.WithDefaultTimeout();
    public static int ServiceCount { get; private set; }

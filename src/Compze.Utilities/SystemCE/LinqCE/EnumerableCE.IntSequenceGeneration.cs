@@ -17,10 +17,10 @@ public static partial class EnumerableCE
          StepSize = stepSize;
       }
       /// <summary/>
-      public readonly int StartValue;
+      public int StartValue { get; }
 
       /// <summary/>
-      public readonly int StepSize;
+      public int StepSize { get; }
 
       public bool Equals(IterationSpecification other) => StartValue == other.StartValue && StepSize == other.StepSize;
       public override bool Equals(object? obj) => obj is IterationSpecification other && Equals(other);

@@ -18,7 +18,7 @@ public static class CompzeLogger
    public static ILogger For<T>() => LogCache<T>.Logger;
    public static ILogger For(Type loggingType) => LoggerFactoryMethod(loggingType);
 
-   public static Func<Type, ILogger> LoggerFactoryMethod = ConsoleLogger.Create;
+   public static Func<Type, ILogger> LoggerFactoryMethod { get; set; } = ConsoleLogger.Create;
    public static class LogCache<T>
    {
       // ReSharper disable once StaticFieldInGenericType
@@ -26,7 +26,7 @@ public static class CompzeLogger
    }
 
    // ReSharper disable once FieldCanBeMadeReadOnly.Global It is meant to be settable
-   public static LogLevel LogLevel = LogLevel.Info;
+   public static LogLevel LogLevel { get; set; } = LogLevel.Info;
 
    static readonly AsyncLocal<bool> LoggingSuppressedTemporarily = new();
    public static bool LoggingSuppressed => LoggingSuppressedTemporarily.Value;

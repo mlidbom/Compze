@@ -36,7 +36,7 @@ public class TessagesInFlightTracker(ITypeMapper typeMapper) : ITessagesInFlight
    public class NonThreadSafeImplementation(ITypeMapper typeMapper)
    {
       readonly ITypeMapper _typeMapper = typeMapper;
-      public readonly Dictionary<TessageId, InFlightTessage> TrackedTessages = [];
+      internal readonly Dictionary<TessageId, InFlightTessage> TrackedTessages = [];
 
       readonly List<Exception> _busExceptions = [];
 

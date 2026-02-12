@@ -12,7 +12,7 @@ public interface ILevelLogger
 
 public abstract class LevelLogger(ILogger logger) : ILevelLogger
 {
-   protected readonly ILogger Logger = logger;
+   protected ILogger Logger { get; } = logger;
    public abstract unit Log(string message);
 }
 

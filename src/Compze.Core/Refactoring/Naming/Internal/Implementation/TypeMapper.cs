@@ -275,10 +275,10 @@ public class TypeMapper : ITypeMapper
 
    public class MappingState
    {
-      public readonly Dictionary<Type, TypeId> TypeToTypeIdMap = new();
-      public readonly Dictionary<TypeId, Type> TypeIdToTypeMap = new();
-      public readonly HashSet<Assembly> CheckedAssemblies = [];
-      public readonly Dictionary<Assembly, string> AssemblyMappingUpdateTessages = new();
+      internal readonly Dictionary<Type, TypeId> TypeToTypeIdMap = new();
+      internal readonly Dictionary<TypeId, Type> TypeIdToTypeMap = new();
+      internal readonly HashSet<Assembly> CheckedAssemblies = [];
+      internal readonly Dictionary<Assembly, string> AssemblyMappingUpdateTessages = new();
 
       public void Map(Type type, TypeId typeId)
       {

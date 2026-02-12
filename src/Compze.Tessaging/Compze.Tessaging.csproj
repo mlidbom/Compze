@@ -11,7 +11,7 @@
       <ProjectReference Include="..\Compze.Core\Compze.Core.csproj" />
    </ItemGroup>
    <ItemGroup>
-      <PackageReference Include="JetBrains.Annotations" Version="2025.2.3" />
+      <PackageReference Include="JetBrains.Annotations" Version="2025.2.4" />
       <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="9.0.9" />
       <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.9" />
       <PackageReference Include="NsDepCop" Version="2.6.0">
