@@ -194,4 +194,7 @@ function C-Split-Project {
     } elseif ($SourceProjectSourceReferencesSplitProject) {
         C-Add-InternedSourceReference -ConsumerCsprojPath $sourceProjectFile.FullName -SourceProjectDir $splitProjectDir
     }
+
+    # Step 7: Update .csproj exclusions since files may have moved between project directories
+    C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders
 }
