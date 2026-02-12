@@ -1,0 +1,8 @@
+<Project>
+	<!-- Import shared build properties from src/ -->
+	<Import Project="$(MSBuildThisFileDirectory)../../src/Directory.Build.props" />
+	
+	<PropertyGroup>
+		<IsPackable>false</IsPackable>
+	</PropertyGroup>
+</Project>

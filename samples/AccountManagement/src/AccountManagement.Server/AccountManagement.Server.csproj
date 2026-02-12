@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+   <PropertyGroup>
+      <TargetFramework>net9.0</TargetFramework>
+      <Nullable>enable</Nullable>
+      <IsPackable>false</IsPackable>
+   </PropertyGroup>
+   <PropertyGroup>
+      <RootNamespace>AccountManagement</RootNamespace>
+   </PropertyGroup>
+   <ItemGroup>
+      <ProjectReference Include="..\..\..\..\src\Compze.Tessaging.Hosting.AspNetCore\Compze.Tessaging.Hosting.AspNetCore.csproj" />
+      <ProjectReference Include="..\..\..\..\src\Compze.Tessaging.Teventive.TeventStore\Compze.Tessaging.Teventive.TeventStore.csproj" />
+      <ProjectReference Include="..\..\..\..\src\Compze.Utilities.DependencyInjection.SimpleInjector\Compze.Utilities.DependencyInjection.SimpleInjector.csproj" />
+      <ProjectReference Include="..\AccountManagement.Domain.Tevents\AccountManagement.Domain.Tevents.csproj" />
+      <ProjectReference Include="..\..\..\..\src\Compze.Utilities\Compze.Utilities.csproj" />
+      <ProjectReference Include="..\..\..\..\src\Compze.Tessaging\Compze.Tessaging.csproj" />
+      <ProjectReference Include="..\..\..\..\src\Compze.Sql.MicrosoftSql\Compze.Sql.MicrosoftSql.csproj" />
+      <ProjectReference Include="..\..\..\..\src\Compze.Core\Compze.Core.csproj" />
+   </ItemGroup>
+   <ItemGroup>
+      <None Update="appsettings.json">
+         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+   </ItemGroup>
+</Project>
