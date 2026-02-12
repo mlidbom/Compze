@@ -44,6 +44,14 @@
     <Project Path="SolutionStructure/Solution.TestConfig.csproj" />
     <Project Path="SolutionStructure/Solution.TODO.csproj" />
   </Folder>
+  <Folder Name="/CircularLibraryDependencySourceRewriter/">
+    <Project Path="../CircularLibraryDependencySourceRewriter/src/CircularLibraryDependencySourceRewriter/CircularLibraryDependencySourceRewriter.csproj">
+      <BuildType Solution="docs|*" Project="Debug" />
+    </Project>
+    <Project Path="../CircularLibraryDependencySourceRewriter/test/CircularLibraryDependencySourceRewriter.Tests/CircularLibraryDependencySourceRewriter.Tests.csproj">
+      <BuildType Solution="docs|*" Project="Debug" />
+    </Project>
+  </Folder>
   <Folder Name="/Compze/">
     <Project Path="Compze.Core/Compze.Core.csproj" />
     <Project Path="Compze.Tessaging/Compze.Tessaging.csproj" />

@@ -4,123 +4,200 @@ function C-Split-Project {
     <#
     .SYNOPSIS
     Splits a project by creating a new related project with inherited references
-    
+
     .DESCRIPTION
-    Creates a new project that inherits the structure and references from a parent project.
+    Creates a new project that inherits the structure and references from a source project.
     This is useful for creating companion projects like *.Testing or *.Internal projects.
-    
+
     The command performs the following operations:
     1. Creates the new project using C-Create-Project
-    2. Copies all ProjectReference entries from the parent to the new project
-    3. For each project that has a ProjectReference to the parent, adds a ProjectReference to the new project
-    
-    .PARAMETER Parent
-    The name of the parent project (e.g., "Compze.Wiring")
-    
-    .PARAMETER New
+    2. Moves source files from the corresponding subfolder in the source project to the split project
+    3. Copies all ProjectReference entries from the source to the split project
+    4. For each project that has a ProjectReference to the source, adds a ProjectReference to the split project
+    5. Optionally adds references between the source and split projects (via switches)
+
+    Reference switches control two independent directions. Within each direction, normal ProjectReference
+    and interned source reference are mutually exclusive, but you can combine switches across directions.
+
+    .PARAMETER SourceProject
+    The name of the source project to split from (e.g., "Compze.Wiring")
+
+    .PARAMETER SplitProject
     The name of the new project to create (e.g., "Compze.Wiring.Testing")
-    
+
+    .PARAMETER SplitProjectReferencesSourceProject
+    Adds a normal ProjectReference from the split project to the source project.
+    Use when the extracted code depends on what remains in the source.
+    Mutually exclusive with -SplitProjectSourceReferencesSourceProject.
+
+    .PARAMETER SplitProjectSourceReferencesSourceProject
+    Configures the split project to internalize the source project's code using
+    CircularLibraryDependencySourceRewriter (imports .targets, sets InternalizeSourceFrom/To).
+    Use when the split project needs code from the source but a normal reference would create a cycle.
+    Mutually exclusive with -SplitProjectReferencesSourceProject.
+
+    .PARAMETER SourceProjectReferencesSplitProject
+    Adds a normal ProjectReference from the source project to the split project.
+    Use when the remaining code depends on what was extracted.
+    Mutually exclusive with -SourceProjectSourceReferencesSplitProject.
+
+    .PARAMETER SourceProjectSourceReferencesSplitProject
+    Configures the source project to internalize the split project's code using
+    CircularLibraryDependencySourceRewriter (imports .targets, sets InternalizeSourceFrom/To).
+    Use when the source project needs code from the split but a normal reference would create a cycle.
+    Mutually exclusive with -SourceProjectReferencesSplitProject.
+
     .PARAMETER SolutionPath
     Path to the solution file (defaults to src\Compze.slnx)
-    
+
     .EXAMPLE
-    C-Split-Project -Parent Compze.Wiring -New Compze.Wiring.Testing
-    Creates Compze.Wiring.Testing with all references inherited from Compze.Wiring
-    
+    C-Split-Project -SourceProject Compze.Wiring -SplitProject Compze.Wiring.Testing
+    Creates Compze.Wiring.Testing with all references inherited from Compze.Wiring, no reference between them.
+
     .EXAMPLE
-    C-Split-Project -Parent Compze.Common -New Compze.Common.Internal
-    Creates an internal companion project for Compze.Common
+    C-Split-Project -SourceProject Compze.Utilities -SplitProject Compze.Utilities.DependencyInjection -SplitProjectReferencesSourceProject
+    Creates Compze.Utilities.DependencyInjection with a normal ProjectReference back to Compze.Utilities.
+
+    .EXAMPLE
+    C-Split-Project -SourceProject Compze.Core -SplitProject Compze.Core.Abstractions -SourceProjectReferencesSplitProject
+    Creates Compze.Core.Abstractions and adds a normal ProjectReference from Compze.Core to it.
+
+    .EXAMPLE
+    C-Split-Project -SourceProject Compze.A -SplitProject Compze.B -SplitProjectReferencesSourceProject -SourceProjectSourceReferencesSplitProject
+    Circular dependency: Compze.B has a normal ProjectReference to Compze.A. Compze.A internalizes Compze.B's source.
     #>
     [CmdletBinding()]
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseApprovedVerbs', '')]
     param(
         [Parameter(Mandatory = $true)]
-        [string]$Parent,
-        
+        [string]$SourceProject,
+
         [Parameter(Mandatory = $true)]
-        [string]$New,
-        
+        [string]$SplitProject,
+
+        [switch]$SplitProjectReferencesSourceProject,
+
+        [switch]$SplitProjectSourceReferencesSourceProject,
+
+        [switch]$SourceProjectReferencesSplitProject,
+
+        [switch]$SourceProjectSourceReferencesSplitProject,
+
         [string]$SolutionPath
     )
-    
+
+    # Validate per-direction mutual exclusivity
+    if ($SplitProjectReferencesSourceProject -and $SplitProjectSourceReferencesSourceProject) {
+        Write-Error "-SplitProjectReferencesSourceProject and -SplitProjectSourceReferencesSourceProject are mutually exclusive (both set the split->source direction)"
+        return
+    }
+    if ($SourceProjectReferencesSplitProject -and $SourceProjectSourceReferencesSplitProject) {
+        Write-Error "-SourceProjectReferencesSplitProject and -SourceProjectSourceReferencesSplitProject are mutually exclusive (both set the source->split direction)"
+        return
+    }
+
     # Set default solution path if not provided
     if (-not $SolutionPath) {
         $SolutionPath = $script:CompzeSolutionPath
     }
-    
+
     if (-not (Test-Path $SolutionPath)) {
         Write-Error "Solution file not found: $SolutionPath"
         return
     }
-    
-    $solutionDir = Split-Path -Parent $SolutionPath
-    
-    # Step 1: Find the parent project
-    $parentProjectFile = Find-ProjectFile -SolutionPath $SolutionPath -ProjectName $Parent
-    
-    if (-not $parentProjectFile) {
-        Write-Error "Parent project not found: $Parent"
+
+    # Step 1: Find the source project
+    $sourceProjectFile = Find-ProjectFile -SolutionPath $SolutionPath -ProjectName $SourceProject
+
+    if (-not $sourceProjectFile) {
+        Write-Error "Source project not found: $SourceProject"
         return
     }
-    
-    # Step 2: Create the new project
-    C-Create-Project -ProjectName $New
-    
-    # Verify the new project was created
-    $newProjectFile = Find-ProjectFile -SolutionPath $SolutionPath -ProjectName $New
-    
-    if (-not $newProjectFile) {
-        Write-Error "Failed to create new project: $New"
+
+    # Step 2: Create the split project
+    C-Create-Project -ProjectName $SplitProject
+
+    # Verify the split project was created
+    $splitProjectFile = Find-ProjectFile -SolutionPath $SolutionPath -ProjectName $SplitProject
+
+    if (-not $splitProjectFile) {
+        Write-Error "Failed to create split project: $SplitProject"
         return
     }
-    
-    # Step 3: Copy all project references from parent to new project
-    $parentReferences = Get-ProjectReferences -CsprojPath $parentProjectFile.FullName
-    
-    if ($parentReferences -and $parentReferences.Count -gt 0) {
-        $parentProjectDir = Split-Path -Parent $parentProjectFile.FullName
-        $newProjectDir = Split-Path -Parent $newProjectFile.FullName
-        
-        foreach ($reference in $parentReferences) {
-            # Convert the reference path from parent project's perspective to new project's perspective
-            # Get absolute path of the referenced project
-            $absoluteReferencePath = [System.IO.Path]::GetFullPath((Join-Path $parentProjectDir $reference))
-            
-            # Calculate relative path from new project to the referenced project
-            $newRelativePath = [System.IO.Path]::GetRelativePath($newProjectDir, $absoluteReferencePath)
-            
-            Add-ProjectReference -CsprojPath $newProjectFile.FullName -ReferencePath $newRelativePath
+
+    $sourceProjectDir = Split-Path -Parent $sourceProjectFile.FullName
+    $splitProjectDir = Split-Path -Parent $splitProjectFile.FullName
+
+    # Step 3: Move source files from subfolder in source project to split project
+    # Derive subfolder name: Compze.Utilities.DependencyInjection - Compze.Utilities = DependencyInjection
+    if ($SplitProject.StartsWith("$SourceProject.")) {
+        $subfolderParts = $SplitProject.Substring($SourceProject.Length + 1) -split '\.'
+        $subfolderPath = Join-Path $sourceProjectDir ($subfolderParts -join [System.IO.Path]::DirectorySeparatorChar)
+
+        if (Test-Path $subfolderPath) {
+            # Move contents into the split project directory
+            Get-ChildItem -Path $subfolderPath | Move-Item -Destination $splitProjectDir -Force
+            # Remove the now-empty subfolder
+            Remove-Item -Path $subfolderPath -Force -Recurse
         }
     }
-    
-    # Step 3: For each project that references the parent, add a reference to the new project
-    $referenceAddedCount = 0
-    
+
+    # Step 4: Copy all project references from source to split project
+    $sourceReferences = Get-ProjectReferences -CsprojPath $sourceProjectFile.FullName
+
+    if ($sourceReferences -and $sourceReferences.Count -gt 0) {
+        foreach ($reference in $sourceReferences) {
+            $absoluteReferencePath = [System.IO.Path]::GetFullPath((Join-Path $sourceProjectDir $reference))
+            $newRelativePath = [System.IO.Path]::GetRelativePath($splitProjectDir, $absoluteReferencePath)
+            Add-ProjectReference -CsprojPath $splitProjectFile.FullName -ReferencePath $newRelativePath
+        }
+    }
+
+    # Step 4b: Copy all package references from source to split project
+    C-Copy-PackageReferences -SourceCsprojPath $sourceProjectFile.FullName -TargetCsprojPath $splitProjectFile.FullName
+
+    # Step 5: For each project that references the source, add a reference to the split project
+    $allProjects = Get-AllProjectFiles -SolutionPath $SolutionPath
+
     foreach ($project in $allProjects) {
-        # Skip the parent and new projects themselves
-        if ($project.BaseName -eq $Parent -or $project.BaseName -eq $New) {
+        if ($project.BaseName -eq $SourceProject -or $project.BaseName -eq $SplitProject) {
             continue
         }
-        
+
         $projectReferences = Get-ProjectReferences -CsprojPath $project.FullName
-        
-        # Check if this project references the parent
-        $referencesParent = $false
+        $referencesSource = $false
         foreach ($ref in $projectReferences) {
-            if ($ref -like "*$Parent.csproj") {
-                $referencesParent = $true
+            if ($ref -like "*$SourceProject.csproj") {
+                $referencesSource = $true
                 break
             }
         }
-        
-        if ($referencesParent) {
-            # Calculate relative path from this project to the new project
+
+        if ($referencesSource) {
             $projectDir = Split-Path -Parent $project.FullName
-            $newProjectPath = $newProjectFile.FullName
-            $relativePathToNew = [System.IO.Path]::GetRelativePath($projectDir, $newProjectPath)
-            
-            Add-ProjectReference -CsprojPath $project.FullName -ReferencePath $relativePathToNew
-            $referenceAddedCount++
+            $relativePathToSplit = [System.IO.Path]::GetRelativePath($projectDir, $splitProjectFile.FullName)
+            Add-ProjectReference -CsprojPath $project.FullName -ReferencePath $relativePathToSplit
         }
     }
+
+    # Step 6: Add references between source and split projects based on switches
+
+    # Direction: Split -> Source
+    if ($SplitProjectReferencesSourceProject) {
+        $relPath = [System.IO.Path]::GetRelativePath($splitProjectDir, $sourceProjectFile.FullName)
+        Add-ProjectReference -CsprojPath $splitProjectFile.FullName -ReferencePath $relPath
+    } elseif ($SplitProjectSourceReferencesSourceProject) {
+        C-Add-InternedSourceReference -ConsumerCsprojPath $splitProjectFile.FullName -SourceProjectDir $sourceProjectDir
+    }
+
+    # Direction: Source -> Split
+    if ($SourceProjectReferencesSplitProject) {
+        $relPath = [System.IO.Path]::GetRelativePath($sourceProjectDir, $splitProjectFile.FullName)
+        Add-ProjectReference -CsprojPath $sourceProjectFile.FullName -ReferencePath $relPath
+    } elseif ($SourceProjectSourceReferencesSplitProject) {
+        C-Add-InternedSourceReference -ConsumerCsprojPath $sourceProjectFile.FullName -SourceProjectDir $splitProjectDir
+    }
+
+    # Step 7: Update .csproj exclusions since files may have moved between project directories
+    C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders
 }

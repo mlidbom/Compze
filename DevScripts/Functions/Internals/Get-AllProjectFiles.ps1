@@ -26,5 +26,6 @@ function Get-AllProjectFiles {
     }
     
     $solutionDir = Split-Path -Parent $SolutionPath
-    return Get-CsprojFiles -Path $solutionDir
+    $repoRoot = Split-Path -Parent $solutionDir
+    return Get-CsprojFiles -Path $repoRoot
 }
