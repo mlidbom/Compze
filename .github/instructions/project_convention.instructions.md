@@ -3,19 +3,19 @@
 applyTo: '**'
 ---
 
-- DO NOT 
-  - Swallow exceptions in a catch block that does not rethrow
-  - Sprinkle explanatory comments everywhere. Use descriptive names instead.
-- - Add // Arrange etc comments in tests. The developers know how to write tests.
-  - Write one test per pluggable component, instead use the DuplicateByPluggableComponentTest structure so that they are ALL tested automatically, including future versions
-  - Write log spam in DevScripts PowerShell functions. Scripts that make changes should only write output if something goes wrong. Success should be silent.
-- DO
-  - Use descriptive variable and method names. Long names are fine if they make the code clearer.
-  - Use InternalsVisibleTo to maintain encapsulation within framework code
-  - Run the FULL test suite to ensure no tests are broken.
-    - If less than 958 tests are executed something has gone wrong and it counts as test failure.
-  - Test pluggable components (DI containers and persistence layers) using the DuplicateByPluggableComponentTest structure.
-- IF
-  - Performance tests fail
-    - Rerun them. REPEATED failures is NOT OK. Do not report success unless all tests pass.
+## Coding Rules
+
+- **Exceptions**: Never swallow exceptions in a catch block without rethrowing.
+- **Comments**: Prefer descriptive names over explanatory comments. Do not add `// Arrange`, `// Act`, `// Assert` comments in tests.
+- **DevScripts output**: Success should be silent — only write output when something goes wrong.
+
+## Pluggable Component Testing
+
+- **Never** write one test per pluggable component. Use `[PCT]` attribute + `UniversalTestBase` base class — this automatically tests ALL enabled combinations (see `copilot-instructions.md` for the full pattern).
+- Test methods take zero parameters; access the current combination via the static `TestEnv` class.
+
+## Code Quality Gates
+
+- Run the full test suite (`C-Test`). If fewer than 958 tests execute, treat it as a failure.
+- If performance tests fail, rerun them. Repeated failures are NOT acceptable — do not report success unless all tests pass.
 

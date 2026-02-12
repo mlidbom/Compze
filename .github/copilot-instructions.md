@@ -8,145 +8,167 @@ Compze is a .NET framework for building expressive domains through:
 
 ## Tech Stack
 
-- **Language**: C# (.NET)
+- **Language**: C# (.NET 9+, see `src/global.json`)
 - **Testing**: xUnit
-- **Build System**: MSBuild (.NET SDK)
+- **Build System**: MSBuild (.NET SDK), solution file: `src/Compze.slnx`
 - **Dependency Injection**: Pluggable (Microsoft DI, SimpleInjector)
 - **Persistence**: Pluggable (SQLite in-memory, SQL Server, PostgreSQL, MySQL)
-- **Documentation**: DocFX
-- **Development Tools**: PowerShell module (`DevScripts/`)
+- **Serialization**: Pluggable (Newtonsoft)
+- **Transport**: Pluggable (Memory, AspNetCore)
+- **Documentation**: DocFX (site in `Websites/Website/`)
+- **Development Tools**: PowerShell module (`DevScripts/Compze.psm1`)
 
-## Build and Test Instructions
+## Build and Test
 
 ### Prerequisites
-- Visual Studio 2022, JetBrains Rider, or Visual Studio Code
-- .NET SDK (version specified in `global.json`)
-- PowerShell (for DevScripts commands)
+- .NET SDK (version specified in `src/global.json`)
+- PowerShell with DevScripts module imported: `Import-Module <repo>/DevScripts/Compze.psd1 -DisableNameChecking`
 
-### Building the Solution
-```bash
-# Using DevScripts PowerShell module (preferred)
-C-Build
-
-# Using .NET CLI
-dotnet build src/Compze.slnx
+### Building
+```powershell
+C-Build                  # Build the solution (preferred)
+C-Build -Clean           # Deep clean then build
+dotnet build src/Compze.slnx  # Alternative: direct .NET CLI
 ```
 
 ### Running Tests
-```bash
-# Using DevScripts (preferred)
-C-Test                    # Run tests without building
-C-Test -Build             # Build then test
-C-Test -SingleThreadedTesting  # For debugging
+```powershell
+# DevScripts (preferred) — C-Test BUILDS BY DEFAULT
+C-Test                         # Build + run all tests
+C-Test -NoBuild                # Skip building, just run tests
+C-Test -SingleThreadedTesting  # Sequential execution (for debugging)
+C-Test -Iterations 5           # Run suite 5 times, show summary
+C-Test -Clean                  # Deep clean + build + test
+C-Test -FullGitReset           # Full git clean + build + test
 
-# Using .NET CLI
-dotnet test src/Compze.slnx
+# Running a subset of tests (no DevScripts support, use dotnet directly)
+dotnet test src/Compze.slnx --no-build --filter "FullyQualifiedName~MyTestClass"
 ```
 
-**Important**: A full test run should execute at least 958 tests. If fewer tests run, something is wrong.
+**Important**: A full test run must execute at least 958 tests. If fewer run, something is wrong — treat it as a test failure.
 
 ### Test Configuration
-- Default: SQLite in-memory with Microsoft DI
-- Configuration file: `TestUsingPluggableComponentCombinations` (auto-created from `.example` if missing)
-- Edit this file to test against external databases (SQL Server, PostgreSQL, MySQL)
+- Config file: `src/TestUsingPluggableComponentCombinations` (auto-created from `.example` on first build)
+- Format: `PersistenceLayer:DIContainer:Serializer:Transport` (one combination per line, `#` to comment out)
+- Default active combination: `SqliteMemory:Microsoft:Newtonsoft:Memory`
+- Uncomment lines to test against external databases (SQL Server, PostgreSQL, MySQL) or other DI containers
 
 ## Project Structure
 
-### Directory Layout
 ```
-/src/Compze/           # Main framework code
-  /Abstractions/       # Core abstractions (Compze.Core)
-  /Tessaging/          # Type-based messaging
-  /Utilities/          # Utilities and testing infrastructure
-/Tests/                # Tests organized by component
-/DevScripts/           # PowerShell development automation
-/Websites/Website/     # DocFX documentation website
+src/
+  Compze.slnx                # Solution file
+  Directory.Build.props       # Shared MSBuild properties
+  TestUsingPluggableComponentCombinations  # Active test config
+  Compze/                     # Main framework code
+    Abstractions/             # Core abstractions (Compze.Core)
+    Common/                   # Shared internal code
+    Serialization/            # Serialization (Newtonsoft)
+    Sql/                      # SQL persistence (Common, MicrosoftSql, MySql, PostgreSql, Sqlite)
+    Tessaging/                # Type-based messaging + Teventive + Hosting
+    Utilities/                # Utilities, DI, Testing infrastructure, Logging
+    Wiring/                   # Wiring/composition
+  Tests/
+    Common/                   # Shared test base classes (e.g., DocumentDbTestsBase)
+    Infrastructure/           # Test infrastructure (XUnit attributes, UniversalTestBase)
+    Unit/                     # Unit tests
+    Integration/              # Integration tests (pluggable component combinations)
+    Performance/              # Performance tests
+    ScratchPad/               # Scratch/experimental tests
+    Compze.Tests.CodePolicies/  # Code policy enforcement tests
+  Samples/                    # Sample applications (AccountManagement)
+  Websites/Website/           # DocFX documentation site
+DevScripts/                   # PowerShell development automation module
 ```
 
 ### Naming Conventions
 - **Projects**: Follow namespace structure (e.g., `Compze.Wiring.Testing` → `src/Compze/Wiring/Testing/`)
 - **Interfaces**: Prefix with `I` (e.g., `IUserEvent`, `IAggregateEvent`)
 - **Variables/Methods**: Use descriptive names; long names are acceptable if they improve clarity
-- **Documentation**: Co-located with code in `_docs/` folders within project directories
 
-## Key Architectural Patterns
+## Pluggable Component Testing Pattern
 
-### Pluggable Components Testing
-- **DO** test pluggable components (DI containers, persistence layers) using `DuplicateByPluggableComponentTest` structure
-- **DO NOT** write one test per pluggable component; the structure automatically tests ALL combinations including future versions
-- Configuration: `TestUsingPluggableComponentCombinations` file
+Tests that need to run against all configured pluggable component combinations use this pattern:
 
-### Teventive Programming
+1. **Inherit from `UniversalTestBase`** (in `Tests/Infrastructure/`)
+2. **Decorate test methods with `[PCT]`** (Pluggable Component Theory, in `Tests/Infrastructure/XUnit/`)
+3. **Access current combination via the static `TestEnv` class** — methods take zero parameters
+
+```csharp
+using Compze.Tessaging.Hosting.Testing;
+using Compze.Tests.Infrastructure;
+using Compze.Tests.Infrastructure.XUnit;
+
+public class MyFeatureTests : UniversalTestBase
+{
+    [PCT] // Runs once per enabled combination in TestUsingPluggableComponentCombinations
+    public void My_test_method()
+    {
+        // Access current combination via static TestEnv:
+        // TestEnv.SqlLayer, TestEnv.DIContainer, TestEnv.Serializer, TestEnv.Transport
+        using var serviceLocator = TestEnv.DIContainer.SetupTestingServiceLocator(_ => { });
+        // ... test logic using serviceLocator
+    }
+}
+```
+
+**Attribute variants:**
+- `[PCT]` — runs for all 4 component types (SqlLayer × DIContainer × Serializer × Transport)
+- `[PCTSerializer]` — only varies the Serializer component
+- `[PCTDIContainer]` — only varies the DIContainer component
+
+**DO NOT** write one test per pluggable component. The `[PCT]` mechanism automatically tests ALL enabled combinations, including any future ones added to the config file.
+
+**Good examples to reference:**
+- Simple: `Tests/Integration/Infrastructure/PluggableComponentsTheoryTests.cs`
+- With service locator: `Tests/Common/Sql/DocumentDb/DocumentDbTestsBase.cs`
+
+## Teventive Programming
 - Events use interface inheritance for type-based routing
 - Example: `IUserImported : IUserRegistered : IUserEvent : IAggregateEvent`
 - Subscribers receive events they're compatible with through type hierarchy
 
-### InternalsVisibleTo
-- **DO** use `InternalsVisibleTo` to maintain encapsulation within framework code
-- Use the PowerShell command `C-Remove-RedundantInternalsVisibleTo` to clean up unnecessary attributes
-
-## Code Style and Conventions
-
-### Comments
-- **DO NOT** add `// Arrange`, `// Act`, `// Assert` comments in tests
-- **DO NOT** sprinkle explanatory comments everywhere; use descriptive names instead
-- **DO** add comments only when necessary to explain complex logic or when they match existing comment style
-
-### Exception Handling
-- **DO NOT** swallow exceptions in catch blocks without rethrowing
-
-### Logging (DevScripts)
-- **DO NOT** write log spam in PowerShell functions
-- **Success should be silent** - only output when something goes wrong
-- This keeps the console clean and makes problems easy to spot
-
-### Performance Tests
-- If performance tests fail, rerun them
-- Repeated failures are NOT acceptable
-- Use `COMPOSABLE_MACHINE_SLOWNESS` environment variable to adjust expectations if needed
-
-## Documentation
-
-### Co-Location Pattern
+## Documentation Co-Location
 - Documentation lives in `_docs/` folders next to the code it documents
-- Files are excluded from compilation via `Directory.Build.props`
-- Included as `None` items for visibility in Solution Explorer
-- See `src/Documentation-CoLocation.README.md` for details
+- Files are excluded from compilation via `Directory.Build.props` (`DefaultItemExcludes`)
+- Included as `None` items for visibility in Solution Explorer and refactoring participation
+- See `src/Documentation-CoLocation.README.md` for full details
 
-### DocFX
-- Main documentation site in `Websites/Website/`
-- Generated from both markdown and code comments
-- See `Websites/Website/README.md` for building instructions
+## DevScripts Commands
 
-## Development Workflow
+Import: `Import-Module <repo>/DevScripts/Compze.psd1 -DisableNameChecking` (add to `$PROFILE`)
 
-### DevScripts Commands
-The repository includes a PowerShell module with helpful commands:
-- `C-Test` - Run tests with proper configuration
-- `C-Build` - Build the solution
-- `C-Clean` - Deep clean the solution
-- `C-Create-Project` - Create new projects with proper structure
-- `C-Validate-SolutionStructure` - Validate solution structure
-- `C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders` - Fix .csproj exclusions
-- `C-Get-Commands` - List all available commands
+| Command | Purpose |
+|---------|---------|
+| `C-Test` | Build + run full test suite |
+| `C-Build` | Build the solution |
+| `C-Clean` | Deep clean the solution |
+| `C-Create-Project` | Create new projects with proper structure |
+| `C-Validate-SolutionStructure` | Validate solution structure |
+| `C-Remove-RedundantInternalsVisibleTo` | Clean up unnecessary InternalsVisibleTo attributes |
+| `C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders` | Fix .csproj exclusions |
+| `C-Get-Commands` | List all available commands |
+| `C-Rename-Project` | Rename a project |
+| `C-Relocate-Project` | Move a project to a new location |
+| `C-Split-Project` | Split a project into multiple |
+| `C-Merge-Project` | Merge projects |
 
-See `DevScripts/README.md` and `DevScripts/QUICKSTART.md` for complete documentation.
+Type `C-<Tab>` in PowerShell to discover all commands.
 
-### Before Committing
-- Run the full test suite (`C-Test`)
-- Ensure at least 958 tests execute successfully
+## Before Committing
+- Run the full test suite (`C-Test`) — must execute at least 958 tests
+- If performance tests fail, rerun. Repeated failures are NOT acceptable.
 - Run `C-Validate-SolutionStructure` if you've modified project structure
 
-## Important Notes
-
+## Working Principles
 - **Minimal changes**: Make the smallest possible changes to accomplish the task
-- **Test thoroughly**: Validate that your changes don't break existing behavior
-- **Full test suite**: Always run all tests before finalizing changes
 - **Don't fix unrelated issues**: Focus only on the task at hand
-- **Documentation updates**: Update docs if directly related to your changes
+- **Test thoroughly**: Always run the full test suite before finalizing
+- **Documentation**: Update docs only if directly related to your changes
+- **InternalsVisibleTo**: Use to maintain encapsulation within framework code; run `C-Remove-RedundantInternalsVisibleTo` to clean up
+- **Performance test failures**: Use `COMPOSABLE_MACHINE_SLOWNESS` environment variable to adjust timing expectations if needed
 
 ## External Resources
-
-- [Project Website](http://compze.net/)
+- [Project Website](https://compze.net/)
 - [Semantic Events Documentation](https://compze.net/paradigms/semantic-events/definition.html)
 - [Development Setup](DEVELOPMENT.md)
