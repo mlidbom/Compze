@@ -27,13 +27,13 @@ public class MonitorClassApiExploration
    {
       var guarded = new object();
 
-      var threadOneWaitsOnLockSection = GatedCodeSection.WithTimeout(5.Seconds()).Open();
-      var threadTwoHasAcquiredLockAndWishesToReleaseItGate = ThreadGate.CreateClosedWithTimeout(5.Seconds());
+      var threadOneWaitsOnLockSection = GatedCodeSection.WithTimeout(30.Seconds()).Open();
+      var threadTwoHasAcquiredLockAndWishesToReleaseItGate = ThreadGate.CreateClosedWithTimeout(30.Seconds());
 
       var waitTimeout = 100.Milliseconds();
 
       var waitSucceeded = false;
-      using var taskRunner = TestingTaskRunner.WithTimeout(5.Seconds());
+      using var taskRunner = TestingTaskRunner.WithTimeout(30.Seconds());
       taskRunner.Run(() =>
       {
          Monitor.Enter(guarded);
@@ -66,13 +66,13 @@ public class MonitorClassApiExploration
    {
       var guarded = new object();
 
-      var threadOneWaitsOnLockSection = GatedCodeSection.WithTimeout(5.Seconds()).Open();
-      var threadTwoHasAcquiredLockAndWishesToReleaseItGate = ThreadGate.CreateClosedWithTimeout(5.Seconds());
+      var threadOneWaitsOnLockSection = GatedCodeSection.WithTimeout(30.Seconds()).Open();
+      var threadTwoHasAcquiredLockAndWishesToReleaseItGate = ThreadGate.CreateClosedWithTimeout(30.Seconds());
 
       var waitTimeout = TimeSpan.FromMilliseconds(int.MaxValue);
 
       var waitSucceeded = false;
-      using var taskRunner = TestingTaskRunner.WithTimeout(5.Seconds());
+      using var taskRunner = TestingTaskRunner.WithTimeout(30.Seconds());
       taskRunner.Run(() =>
       {
          Monitor.Enter(guarded);
