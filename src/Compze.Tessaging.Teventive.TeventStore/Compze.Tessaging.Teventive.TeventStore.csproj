@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+   <PropertyGroup>
+      <TargetFramework>net9.0</TargetFramework>
+      <Nullable>enable</Nullable>
+      <Version>0.1.0-alpha.2</Version>
+      <Description>Event store implementation for Compze event sourcing.</Description>
+   </PropertyGroup>
+   <ItemGroup>
+      <ProjectReference Include="..\Compze.Tessaging\Compze.Tessaging.csproj" />
+      <ProjectReference Include="..\Compze.Utilities\Compze.Utilities.csproj" />
+      <ProjectReference Include="..\Compze.Core\Compze.Core.csproj" />
+   </ItemGroup>
+	<ItemGroup>
+      <PackageReference Include="NsDepCop" Version="2.6.0">
+         <PrivateAssets>all</PrivateAssets>
+         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+	</ItemGroup>
+</Project>

@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+   <PropertyGroup>
+      <TargetFramework>net9.0</TargetFramework>
+      <Nullable>enable</Nullable>
+      <Version>0.1.0-alpha.2</Version>
+      <Description>Database pool management for Compze integration testing.</Description>
+   </PropertyGroup>
+   <ItemGroup>
+      <ProjectReference Include="..\Compze.Serialization.Newtonsoft\Compze.Serialization.Newtonsoft.csproj" />
+      <ProjectReference Include="..\Compze.Sql.Common\Compze.Sql.Common.csproj" />
+      <ProjectReference Include="..\Compze.Utilities\Compze.Utilities.csproj" />
+   </ItemGroup>
+   <ItemGroup>
+      <PackageReference Include="JetBrains.Annotations" Version="2025.2.2" />
+      <PackageReference Include="System.Threading.AccessControl" Version="9.0.9" />
+      <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+      <PackageReference Include="NsDepCop" Version="2.6.0">
+         <PrivateAssets>all</PrivateAssets>
+         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+   </ItemGroup>
+</Project>

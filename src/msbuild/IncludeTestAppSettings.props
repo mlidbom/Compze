@@ -1,7 +1,7 @@
 <Project>
 	<!-- Copy test-common-appsettings.json to test project output as appsettings.json -->
 	<ItemGroup>
-		<Content Include="$(MSBuildThisFileDirectory)..\Compze\test-common-appsettings.json">
+		<Content Include="$(MSBuildThisFileDirectory)..\..\test\test-common-appsettings.json">
 			<Link>appsettings.json</Link>
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>

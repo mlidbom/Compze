@@ -10,9 +10,9 @@
       <RootNamespace>AccountManagement.UI.MVC</RootNamespace>
    </PropertyGroup>
    <ItemGroup>
-      <ProjectReference Include="..\..\..\..\..\Compze\Tessaging\Hosting\Testing\Compze.Tessaging.Hosting.Testing.csproj" />
+      <ProjectReference Include="..\..\..\..\..\Compze.Tessaging.Hosting.Testing\Compze.Tessaging.Hosting.Testing.csproj" />
       <ProjectReference Include="..\..\API\AccountManagement.API.csproj" />
-      <ProjectReference Include="..\..\..\..\..\Compze\Utilities\Compze.Utilities.csproj" />
+      <ProjectReference Include="..\..\..\..\..\Compze.Utilities\Compze.Utilities.csproj" />
    </ItemGroup>
    <ItemGroup>
       <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.1" />

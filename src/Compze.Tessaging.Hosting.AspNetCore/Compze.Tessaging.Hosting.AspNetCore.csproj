@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+   <PropertyGroup>
+      <TargetFramework>net9.0</TargetFramework>
+      <Nullable>enable</Nullable>
+      <Version>0.1.0-alpha.2</Version>
+      <Description>ASP.NET Core hosting integration for Compze messaging.</Description>
+   </PropertyGroup>
+   <ItemGroup>
+      <FrameworkReference Include="Microsoft.AspNetCore.App" />
+   </ItemGroup>
+   <ItemGroup>
+      <ProjectReference Include="..\Compze.Tessaging\Compze.Tessaging.csproj" />
+      <ProjectReference Include="..\Compze.Utilities\Compze.Utilities.csproj" />
+      <ProjectReference Include="..\Compze.Core\Compze.Core.csproj" />
+   </ItemGroup>
+   <ItemGroup>
+      <PackageReference Include="Seq.Extensions.Logging" Version="9.0.0" />
+      <PackageReference Include="NsDepCop" Version="2.6.0">
+         <PrivateAssets>all</PrivateAssets>
+         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+   </ItemGroup>
+</Project>

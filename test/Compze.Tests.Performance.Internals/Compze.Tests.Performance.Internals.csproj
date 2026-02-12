@@ -5,15 +5,13 @@
       <Nullable>enable</Nullable>
       <IsPackable>false</IsPackable>
    </PropertyGroup>
-   <PropertyGroup>
-      <RootNamespace>AccountManagement</RootNamespace>
-   </PropertyGroup>
    <ItemGroup>
-      <ProjectReference Include="..\..\Tests\AccountManagement.Tests.csproj" />
-      <ProjectReference Include="..\..\..\..\..\Compze.Utilities\Compze.Utilities.csproj" />
+      <ProjectReference Include="..\Compze.Tests.Common\Compze.Tests.Common.csproj" />
+      <ProjectReference Include="..\Compze.Tests.Integration\Compze.Tests.Integration.csproj" />
+      <ProjectReference Include="..\..\src\Compze.Sql.Sqlite\Compze.Sql.Sqlite.csproj" />
+      <ProjectReference Include="..\..\src\Compze.Utilities\Compze.Utilities.csproj" />
    </ItemGroup>
-   <ItemGroup>
-      <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
+   <ItemGroup>      <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
       <PackageReference Include="NCrunch.Framework" Version="5.11.0" />
       <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
          <PrivateAssets>all</PrivateAssets>

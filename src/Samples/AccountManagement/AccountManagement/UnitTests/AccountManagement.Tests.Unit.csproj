@@ -5,10 +5,10 @@
       <IsPackable>false</IsPackable>
    </PropertyGroup>
    <ItemGroup>
-      <ProjectReference Include="..\..\..\..\Tests\Infrastructure\Compze.Tests.Infrastructure.csproj" />
-      <ProjectReference Include="..\..\..\..\Compze\Utilities\Testing\Must\Compze.Utilities.Testing.Must.csproj" />
+      <ProjectReference Include="..\..\..\..\..\test\Compze.Tests.Infrastructure\Compze.Tests.Infrastructure.csproj" />
+      <ProjectReference Include="..\..\..\..\Compze.Utilities.Testing.Must\Compze.Utilities.Testing.Must.csproj" />
       <ProjectReference Include="..\API\AccountManagement.API.csproj" />
-      <ProjectReference Include="..\..\..\..\Compze\Utilities\Testing\Must\Compze.Utilities.Testing.Must.csproj" />
+      <ProjectReference Include="..\..\..\..\Compze.Utilities.Testing.Must\Compze.Utilities.Testing.Must.csproj" />
    </ItemGroup>
    <ItemGroup>
       <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
