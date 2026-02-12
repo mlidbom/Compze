@@ -1,0 +1,46 @@
+name: Publish NuGet Packages
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    env:
+      DOTNET_CLI_TELEMETRY_OPTOUT: "1"
+      DOTNET_NOLOGO: "true"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Configure test pluggable components
+        run: cp src/TestUsingPluggableComponentCombinations.github-ci src/TestUsingPluggableComponentCombinations
+
+      - name: Build
+        run: dotnet build src/Compze.slnx --configuration Release
+
+      - name: Test
+        run: dotnet test src/Compze.slnx --configuration Release --no-build
+
+      - name: Pack all packable projects
+        run: dotnet pack src/Compze.slnx --configuration Release --no-build --output ./nupkgs
+
+      - name: Push to NuGet.org (skip already-published versions)
+        run: |
+          dotnet nuget push ./nupkgs/*.nupkg \
+            --api-key ${{ secrets.NUGET_API_KEY }} \
+            --source https://api.nuget.org/v3/index.json \
+            --skip-duplicate
+          dotnet nuget push ./nupkgs/*.snupkg \
+            --api-key ${{ secrets.NUGET_API_KEY }} \
+            --source https://api.nuget.org/v3/index.json \
+            --skip-duplicate
