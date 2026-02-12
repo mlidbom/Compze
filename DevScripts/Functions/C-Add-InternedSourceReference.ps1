@@ -6,10 +6,10 @@ function C-Add-InternedSourceReference {
     Configures a project to internalize source from another project directory
 
     .DESCRIPTION
-    Adds the CircularLibraryDependencySourceRewriter .targets import and sets
-    InternalizeSourceFrom/InternalizeSourceTo properties in the consumer project.
-    This allows the consumer to compile an internal copy of the source project's code,
-    which is useful for resolving circular dependency scenarios.
+    Adds the CircularLibraryDependencySourceRewriter .targets import, a ProjectReference
+    to CircularLibraryDependencySourceRewriter, and sets InternalizeSourceFrom/InternalizeSourceTo
+    properties in the consumer project. This allows the consumer to compile an internal copy of
+    the source project's code, which is useful for resolving circular dependency scenarios.
 
     .PARAMETER ConsumerCsprojPath
     Path to the .csproj file that will internalize the source
@@ -34,10 +34,17 @@ function C-Add-InternedSourceReference {
 
     $consumerDir = Split-Path -Parent $ConsumerCsprojPath
 
+    $cldrProjectPath = Join-Path $script:CompzeRoot "CircularLibraryDependencySourceRewriter" "src" "CircularLibraryDependencySourceRewriter" "CircularLibraryDependencySourceRewriter.csproj"
+    $cldrProjectRelativePath = [System.IO.Path]::GetRelativePath($consumerDir, $cldrProjectPath)
+
     $targetsAbsolutePath = Join-Path $script:CompzeRoot "CircularLibraryDependencySourceRewriter" "src" "CircularLibraryDependencySourceRewriter" "CircularLibraryDependencySourceRewriter.targets"
     $targetsRelativePath = [System.IO.Path]::GetRelativePath($consumerDir, $targetsAbsolutePath)
     $sourceRelativePath = [System.IO.Path]::GetRelativePath($consumerDir, $SourceProjectDir)
 
+    # Add ProjectReference to CircularLibraryDependencySourceRewriter (does its own file read/write)
+    Add-ProjectReference -CsprojPath $ConsumerCsprojPath -ReferencePath $cldrProjectRelativePath
+
+    # Now load the file (after Add-ProjectReference may have modified it) for remaining changes
     [xml]$xml = Get-Content $ConsumerCsprojPath
 
     # Add Import for the .targets file if not already present
