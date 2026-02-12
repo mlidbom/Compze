@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <DefaultItemExcludes>$(DefaultItemExcludes);input_source\**;output_source\**</DefaultItemExcludes>
+    <DefaultItemExcludes>$(DefaultItemExcludes);input_source\**;output_source\**;batch_output_source\**</DefaultItemExcludes>
   </PropertyGroup>
 
   <ItemGroup>
