@@ -10,4 +10,23 @@
    <Allowed From="Compze.Tessaging.Teventive.TeventStore.QueryModels.Generators"
             To="Compze.Core.DocumentDb.Infrastructure" />
 
+	<!-- Inherited from former parent Tessaging/config.nsdepcop -->
+	<Allowed From="Compze.Tessaging.*"
+            To="Compze.Core.Tessaging.*" />
+
+	<Allowed From="Compze.Tessaging.*"
+            To="Compze.Core.*.Internal.*" />
+
+	<Allowed From="Compze.Tessaging.*"
+            To="Compze.Tessaging.*" />
+
+	<Allowed From="Compze.Tessaging.*"
+            To="Compze.Core.Refactoring.*.Internal.*" />
+
+	<Allowed From="Compze.Tessaging.*"
+            To="Compze.Core.Configuration.Internal" />
+
+	<Allowed From="Compze.Tessaging.*"
+            To="Compze.Tessaging.Implementation.*" />
+
 </NsDepCopConfig>
