@@ -1,6 +1,6 @@
 # NOTE: Scripts that make changes should NOT log everything they do. They should only write output if something goes wrong.
 
-function Add-InternedSourceReference {
+function C-Add-InternedSourceReference {
     <#
     .SYNOPSIS
     Configures a project to internalize source from another project directory

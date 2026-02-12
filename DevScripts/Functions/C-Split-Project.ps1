@@ -169,7 +169,7 @@ function C-Split-Project {
         $relPath = [System.IO.Path]::GetRelativePath($splitProjectDir, $sourceProjectFile.FullName)
         Add-ProjectReference -CsprojPath $splitProjectFile.FullName -ReferencePath $relPath
     } elseif ($SplitProjectSourceReferencesSourceProject) {
-        Add-InternedSourceReference -ConsumerCsprojPath $splitProjectFile.FullName -SourceProjectDir $sourceProjectDir
+        C-Add-InternedSourceReference -ConsumerCsprojPath $splitProjectFile.FullName -SourceProjectDir $sourceProjectDir
     }
 
     # Direction: Source -> Split
@@ -177,6 +177,6 @@ function C-Split-Project {
         $relPath = [System.IO.Path]::GetRelativePath($sourceProjectDir, $splitProjectFile.FullName)
         Add-ProjectReference -CsprojPath $sourceProjectFile.FullName -ReferencePath $relPath
     } elseif ($SourceProjectSourceReferencesSplitProject) {
-        Add-InternedSourceReference -ConsumerCsprojPath $sourceProjectFile.FullName -SourceProjectDir $splitProjectDir
+        C-Add-InternedSourceReference -ConsumerCsprojPath $sourceProjectFile.FullName -SourceProjectDir $splitProjectDir
     }
 }
