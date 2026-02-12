@@ -13,7 +13,10 @@ function C-Split-Project {
     1. Creates the new project using C-Create-Project
     2. Copies all ProjectReference entries from the source to the split project
     3. For each project that has a ProjectReference to the source, adds a ProjectReference to the split project
-    4. Optionally adds a reference between the source and split projects (via switches)
+    4. Optionally adds references between the source and split projects (via switches)
+
+    Reference switches control two independent directions. Within each direction, normal ProjectReference
+    and interned source reference are mutually exclusive, but you can combine switches across directions.
 
     .PARAMETER SourceProject
     The name of the source project to split from (e.g., "Compze.Wiring")
@@ -22,22 +25,26 @@ function C-Split-Project {
     The name of the new project to create (e.g., "Compze.Wiring.Testing")
 
     .PARAMETER SplitProjectReferencesSourceProject
-    When set, adds a ProjectReference from the split project to the source project.
+    Adds a normal ProjectReference from the split project to the source project.
     Use when the extracted code depends on what remains in the source.
-    Mutually exclusive with -SourceProjectReferencesSplitProject and -UseInternedSourceReferences.
+    Mutually exclusive with -SplitProjectSourceReferencesSourceProject.
+
+    .PARAMETER SplitProjectSourceReferencesSourceProject
+    Configures the split project to internalize the source project's code using
+    CircularLibraryDependencySourceRewriter (imports .targets, sets InternalizeSourceFrom/To).
+    Use when the split project needs code from the source but a normal reference would create a cycle.
+    Mutually exclusive with -SplitProjectReferencesSourceProject.
 
     .PARAMETER SourceProjectReferencesSplitProject
-    When set, adds a ProjectReference from the source project to the split project.
+    Adds a normal ProjectReference from the source project to the split project.
     Use when the remaining code depends on what was extracted.
-    Mutually exclusive with -SplitProjectReferencesSourceProject and -UseInternedSourceReferences.
+    Mutually exclusive with -SourceProjectSourceReferencesSplitProject.
 
-    .PARAMETER UseInternedSourceReferences
-    When set, instead of a normal ProjectReference, configures the source project to internalize
-    the split project's source code using CircularLibraryDependencySourceRewriter. This adds an
-    Import of the .targets file and sets InternalizeSourceFrom/InternalizeSourceTo properties.
-    Also adds a normal ProjectReference from the split project back to the source project.
-    Use when both projects need each other's code (circular dependency scenario).
-    Mutually exclusive with -SplitProjectReferencesSourceProject and -SourceProjectReferencesSplitProject.
+    .PARAMETER SourceProjectSourceReferencesSplitProject
+    Configures the source project to internalize the split project's code using
+    CircularLibraryDependencySourceRewriter (imports .targets, sets InternalizeSourceFrom/To).
+    Use when the source project needs code from the split but a normal reference would create a cycle.
+    Mutually exclusive with -SourceProjectReferencesSplitProject.
 
     .PARAMETER SolutionPath
     Path to the solution file (defaults to src\Compze.slnx)
@@ -48,16 +55,15 @@ function C-Split-Project {
 
     .EXAMPLE
     C-Split-Project -SourceProject Compze.Utilities -SplitProject Compze.Utilities.DependencyInjection -SplitProjectReferencesSourceProject
-    Creates Compze.Utilities.DependencyInjection with a reference back to Compze.Utilities.
+    Creates Compze.Utilities.DependencyInjection with a normal ProjectReference back to Compze.Utilities.
 
     .EXAMPLE
     C-Split-Project -SourceProject Compze.Core -SplitProject Compze.Core.Abstractions -SourceProjectReferencesSplitProject
-    Creates Compze.Core.Abstractions and adds a reference from Compze.Core to it.
+    Creates Compze.Core.Abstractions and adds a normal ProjectReference from Compze.Core to it.
 
     .EXAMPLE
-    C-Split-Project -SourceProject Compze.Tessaging -SplitProject Compze.Tessaging.Internals -UseInternedSourceReferences
-    Creates Compze.Tessaging.Internals. The split project gets a normal reference to the source.
-    The source project internalizes the split project's source via CircularLibraryDependencySourceRewriter.
+    C-Split-Project -SourceProject Compze.A -SplitProject Compze.B -SplitProjectReferencesSourceProject -SourceProjectSourceReferencesSplitProject
+    Circular dependency: Compze.B has a normal ProjectReference to Compze.A. Compze.A internalizes Compze.B's source.
     #>
     [CmdletBinding()]
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseApprovedVerbs', '')]
@@ -70,20 +76,22 @@ function C-Split-Project {
 
         [switch]$SplitProjectReferencesSourceProject,
 
+        [switch]$SplitProjectSourceReferencesSourceProject,
+
         [switch]$SourceProjectReferencesSplitProject,
 
-        [switch]$UseInternedSourceReferences,
+        [switch]$SourceProjectSourceReferencesSplitProject,
 
         [string]$SolutionPath
     )
 
-    # Validate mutual exclusivity
-    $switchCount = 0
-    if ($SplitProjectReferencesSourceProject) { $switchCount++ }
-    if ($SourceProjectReferencesSplitProject) { $switchCount++ }
-    if ($UseInternedSourceReferences) { $switchCount++ }
-    if ($switchCount -gt 1) {
-        Write-Error "-SplitProjectReferencesSourceProject, -SourceProjectReferencesSplitProject, and -UseInternedSourceReferences are mutually exclusive"
+    # Validate per-direction mutual exclusivity
+    if ($SplitProjectReferencesSourceProject -and $SplitProjectSourceReferencesSourceProject) {
+        Write-Error "-SplitProjectReferencesSourceProject and -SplitProjectSourceReferencesSourceProject are mutually exclusive (both set the split->source direction)"
+        return
+    }
+    if ($SourceProjectReferencesSplitProject -and $SourceProjectSourceReferencesSplitProject) {
+        Write-Error "-SourceProjectReferencesSplitProject and -SourceProjectSourceReferencesSplitProject are mutually exclusive (both set the source->split direction)"
         return
     }
 
@@ -154,52 +162,75 @@ function C-Split-Project {
         }
     }
 
-    # Step 5: Add reference between source and split projects based on switches
+    # Step 5: Add references between source and split projects based on switches
+
+    # Direction: Split -> Source
     if ($SplitProjectReferencesSourceProject) {
         $relPath = [System.IO.Path]::GetRelativePath($splitProjectDir, $sourceProjectFile.FullName)
         Add-ProjectReference -CsprojPath $splitProjectFile.FullName -ReferencePath $relPath
+    } elseif ($SplitProjectSourceReferencesSourceProject) {
+        Add-InternedSourceReference -ConsumerCsprojPath $splitProjectFile.FullName -SourceProjectDir $sourceProjectDir
+    }
 
-    } elseif ($SourceProjectReferencesSplitProject) {
+    # Direction: Source -> Split
+    if ($SourceProjectReferencesSplitProject) {
         $relPath = [System.IO.Path]::GetRelativePath($sourceProjectDir, $splitProjectFile.FullName)
         Add-ProjectReference -CsprojPath $sourceProjectFile.FullName -ReferencePath $relPath
-
-    } elseif ($UseInternedSourceReferences) {
-        # The split project gets a normal reference to the source project
-        $splitToSourcePath = [System.IO.Path]::GetRelativePath($splitProjectDir, $sourceProjectFile.FullName)
-        Add-ProjectReference -CsprojPath $splitProjectFile.FullName -ReferencePath $splitToSourcePath
-
-        # The source project internalizes source from the split project via CircularLibraryDependencySourceRewriter
-        $targetsAbsolutePath = Join-Path $script:CompzeRoot "CircularLibraryDependencySourceRewriter" "src" "CircularLibraryDependencySourceRewriter" "CircularLibraryDependencySourceRewriter.targets"
-        $targetsRelativePath = [System.IO.Path]::GetRelativePath($sourceProjectDir, $targetsAbsolutePath)
-
-        $splitProjectDirRelative = [System.IO.Path]::GetRelativePath($sourceProjectDir, $splitProjectDir)
-
-        [xml]$xml = Get-Content $sourceProjectFile.FullName
-
-        # Add Import for the .targets file if not already present
-        $existingImport = $xml.SelectNodes("//Import[@Project]") |
-            Where-Object { $_.GetAttribute("Project") -like "*CircularLibraryDependencySourceRewriter.targets" } |
-            Select-Object -First 1
-
-        if (-not $existingImport) {
-            $import = $xml.CreateElement("Import")
-            $import.SetAttribute("Project", $targetsRelativePath)
-            $xml.DocumentElement.AppendChild($import) | Out-Null
-        }
-
-        # Add or update PropertyGroup with InternalizeSourceFrom/To
-        $propertyGroup = $xml.CreateElement("PropertyGroup")
-
-        $fromProp = $xml.CreateElement("InternalizeSourceFrom")
-        $fromProp.InnerText = $splitProjectDirRelative
-        $propertyGroup.AppendChild($fromProp) | Out-Null
-
-        $toProp = $xml.CreateElement("InternalizeSourceTo")
-        $toProp.InnerText = '$(MSBuildProjectDirectory)\InternalizedSource'
-        $propertyGroup.AppendChild($toProp) | Out-Null
-
-        $xml.DocumentElement.AppendChild($propertyGroup) | Out-Null
-
-        Save-XmlWithThreeSpacesIndentation -Xml $xml -Path $sourceProjectFile.FullName
+    } elseif ($SourceProjectSourceReferencesSplitProject) {
+        Add-InternedSourceReference -ConsumerCsprojPath $sourceProjectFile.FullName -SourceProjectDir $splitProjectDir
     }
+}
+
+function Add-InternedSourceReference {
+    <#
+    .SYNOPSIS
+    Configures a project to internalize source from another project directory
+
+    .DESCRIPTION
+    Adds the CircularLibraryDependencySourceRewriter .targets import and sets
+    InternalizeSourceFrom/InternalizeSourceTo properties in the consumer project.
+    #>
+    [CmdletBinding()]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseApprovedVerbs', '')]
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$ConsumerCsprojPath,
+
+        [Parameter(Mandatory = $true)]
+        [string]$SourceProjectDir
+    )
+
+    $consumerDir = Split-Path -Parent $ConsumerCsprojPath
+
+    $targetsAbsolutePath = Join-Path $script:CompzeRoot "CircularLibraryDependencySourceRewriter" "src" "CircularLibraryDependencySourceRewriter" "CircularLibraryDependencySourceRewriter.targets"
+    $targetsRelativePath = [System.IO.Path]::GetRelativePath($consumerDir, $targetsAbsolutePath)
+    $sourceRelativePath = [System.IO.Path]::GetRelativePath($consumerDir, $SourceProjectDir)
+
+    [xml]$xml = Get-Content $ConsumerCsprojPath
+
+    # Add Import for the .targets file if not already present
+    $existingImport = $xml.SelectNodes("//Import[@Project]") |
+        Where-Object { $_.GetAttribute("Project") -like "*CircularLibraryDependencySourceRewriter.targets" } |
+        Select-Object -First 1
+
+    if (-not $existingImport) {
+        $import = $xml.CreateElement("Import")
+        $import.SetAttribute("Project", $targetsRelativePath)
+        $xml.DocumentElement.AppendChild($import) | Out-Null
+    }
+
+    # Add PropertyGroup with InternalizeSourceFrom/To
+    $propertyGroup = $xml.CreateElement("PropertyGroup")
+
+    $fromProp = $xml.CreateElement("InternalizeSourceFrom")
+    $fromProp.InnerText = $sourceRelativePath
+    $propertyGroup.AppendChild($fromProp) | Out-Null
+
+    $toProp = $xml.CreateElement("InternalizeSourceTo")
+    $toProp.InnerText = '$(MSBuildProjectDirectory)\InternalizedSource'
+    $propertyGroup.AppendChild($toProp) | Out-Null
+
+    $xml.DocumentElement.AppendChild($propertyGroup) | Out-Null
+
+    Save-XmlWithThreeSpacesIndentation -Xml $xml -Path $ConsumerCsprojPath
 }
