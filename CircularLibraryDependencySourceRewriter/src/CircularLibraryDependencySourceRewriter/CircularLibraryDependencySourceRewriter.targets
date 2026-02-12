@@ -9,11 +9,9 @@
 
   <Target Name="RewriteInternalizedSource"
           BeforeTargets="CoreCompile"
-          Condition="'$(InternalizeSourceFrom)' != '' AND '$(InternalizeSourceTo)' != ''"
-          Inputs="$(InternalizeSourceFrom)\**\*.cs"
-          Outputs="$(InternalizeSourceTo)\**\*.cs">
+          Condition="'$(InternalizeSourceFrom)' != '' AND '$(InternalizeSourceTo)' != ''">
 
-    <RewriteDirectoryTask InputDirectory="$(InternalizeSourceFrom)"
+    <RewriteDirectoryTask InputDirectories="$(InternalizeSourceFrom)"
                           OutputDirectory="$(InternalizeSourceTo)" />
 
     <!-- Include the generated files in compilation -->

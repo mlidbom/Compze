@@ -31,25 +31,31 @@ public static partial class SourceRewriter
 
    static readonly string[] ExcludedDirectories = ["bin", "obj", "InternalizedSource"];
 
-   public static void RewriteDirectory(string inputDirectory, string outputDirectory)
+   public static void RewriteDirectory(string inputDirectory, string outputDirectory) =>
+      RewriteDirectories([inputDirectory], outputDirectory);
+
+   public static void RewriteDirectories(string[] inputDirectories, string outputDirectory)
    {
       if(Directory.Exists(outputDirectory))
          Directory.Delete(outputDirectory, recursive: true);
 
-      foreach(var inputFile in Directory.EnumerateFiles(inputDirectory, "*.cs", SearchOption.AllDirectories))
+      foreach(var inputDirectory in inputDirectories)
       {
-         var relativePath = Path.GetRelativePath(inputDirectory, inputFile);
+         foreach(var inputFile in Directory.EnumerateFiles(inputDirectory, "*.cs", SearchOption.AllDirectories))
+         {
+            var relativePath = Path.GetRelativePath(inputDirectory, inputFile);
 
-         if(IsInExcludedDirectory(relativePath))
-            continue;
+            if(IsInExcludedDirectory(relativePath))
+               continue;
 
-         var outputFile = Path.Combine(outputDirectory, relativePath);
+            var outputFile = Path.Combine(outputDirectory, relativePath);
 
-         Directory.CreateDirectory(Path.GetDirectoryName(outputFile)!);
+            Directory.CreateDirectory(Path.GetDirectoryName(outputFile)!);
 
-         var source = File.ReadAllText(inputFile);
-         var rewritten = MakeTypesInternal(source);
-         File.WriteAllText(outputFile, rewritten);
+            var source = File.ReadAllText(inputFile);
+            var rewritten = MakeTypesInternal(source);
+            File.WriteAllText(outputFile, rewritten);
+         }
       }
    }
 

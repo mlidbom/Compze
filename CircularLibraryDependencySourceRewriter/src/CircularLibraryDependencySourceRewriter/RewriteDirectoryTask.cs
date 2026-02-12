@@ -6,7 +6,7 @@ namespace CircularLibraryDependencySourceRewriter;
 public class RewriteDirectoryTask : Microsoft.Build.Utilities.Task
 {
    [Required]
-   public string InputDirectory { get; set; } = "";
+   public string InputDirectories { get; set; } = "";
 
    [Required]
    public string OutputDirectory { get; set; } = "";
@@ -15,10 +15,12 @@ public class RewriteDirectoryTask : Microsoft.Build.Utilities.Task
    {
       try
       {
-         Log.LogMessage(MessageImportance.Normal,
-            $"CircularLibraryDependencySourceRewriter: Rewriting '{InputDirectory}' → '{OutputDirectory}'");
+         var inputs = InputDirectories.Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 
-         SourceRewriter.RewriteDirectory(InputDirectory, OutputDirectory);
+         Log.LogMessage(MessageImportance.Normal,
+            $"CircularLibraryDependencySourceRewriter: Rewriting [{string.Join(", ", inputs.Select(i => $"'{i}'"))}] → '{OutputDirectory}'");
+
+         SourceRewriter.RewriteDirectories(inputs, OutputDirectory);
 
          Log.LogMessage(MessageImportance.Normal,
             "CircularLibraryDependencySourceRewriter: Rewrite complete.");
