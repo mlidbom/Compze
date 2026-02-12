@@ -18,9 +18,9 @@ using Compze.Utilities.SystemCE.ReflectionCE;
 
 namespace Compze.Core.DocumentDb.Private;
 
-class DocumentDb : IDocumentDb
+public class DocumentDb : IDocumentDb
 {
-   internal static void RegisterWith(IComponentRegistrar registrar)
+   public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Scoped.For<IDocumentDb>()
                                   .CreatedBy((IDocumentDbSqlLayer sqlLayer, ITypeMapper typeMapper, IDocumentDbSerializer serializer)
                                                 => new DocumentDb(serializer, typeMapper, sqlLayer)));
@@ -71,7 +71,7 @@ class DocumentDb : IDocumentDb
       persistentValues.GetOrAddDefault(value.GetType())[idString] = serializedDocument;
    }
 
-   internal static string GetIdString(object id) => id.ToStringNotNull().ToUpperInvariant().TrimEnd(' ');
+   public static string GetIdString(object id) => id.ToStringNotNull().ToUpperInvariant().TrimEnd(' ');
 
    public void Remove(object id, Type documentType)
    {

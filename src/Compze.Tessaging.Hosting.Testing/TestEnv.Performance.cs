@@ -8,7 +8,7 @@ using Compze.Utilities.SystemCE;
 namespace Compze.Tessaging.Hosting.Testing;
 
 ///<summary>TestEnvironment class. Shortened name since it is referenced statically and has nested types</summary>
-static partial class TestEnv
+public static partial class TestEnv
 {
     ///<summary>if we are running instrumented, returns the original multiplied by <paramref name="instrumented"/>, if we are running unoptimized, returns the original multiplied by <paramref name="instrumented"/>, otherwise returns the original</summary>
    public static TimeSpan EnvMultiply(this TimeSpan original, double instrumented = 1.0, double unoptimized = 1.0) =>

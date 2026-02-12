@@ -9,13 +9,13 @@ using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
 
 namespace Compze.Tessaging.Teventive.TeventStore.Refactoring.Migrations;
 
-abstract class CompleteTeventStoreStreamMutator
+public abstract class CompleteTeventStoreStreamMutator
 {
    public static ICompleteTeventStreamMutator Create(IReadOnlyList<ITeventMigration> teventMigrationFactories) => teventMigrationFactories.Any()
                                                                                                                   ? new RealMutator(teventMigrationFactories)
                                                                                                                   : new OnlySerializeVersionsMutator();
 
-   class OnlySerializeVersionsMutator : ICompleteTeventStreamMutator
+   public class OnlySerializeVersionsMutator : ICompleteTeventStreamMutator
    {
       readonly Dictionary<TaggregateId, int> _taggregateVersions = new();
 
@@ -33,7 +33,7 @@ abstract class CompleteTeventStoreStreamMutator
       }
    }
 
-   class RealMutator(IReadOnlyList<ITeventMigration> teventMigrationFactories) : ICompleteTeventStreamMutator
+   public class RealMutator(IReadOnlyList<ITeventMigration> teventMigrationFactories) : ICompleteTeventStreamMutator
    {
       readonly IReadOnlyList<ITeventMigration> _teventMigrationFactories = teventMigrationFactories;
       readonly Dictionary<TaggregateId, ISingleTaggregateInstanceTeventStreamMutator> _taggregateMutatorsCache = new();

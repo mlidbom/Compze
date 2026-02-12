@@ -8,9 +8,9 @@ using MySql.Data.MySqlClient;
 
 namespace Compze.Sql.MySql.Private.DbPool;
 
-sealed class MySqlDbPoolSqlLayer : IDbPoolSqlLayer
+public sealed class MySqlDbPoolSqlLayer : IDbPoolSqlLayer
 {
-   internal static IComponentRegistrar RegisterWith(IComponentRegistrar registrar) =>
+   public static IComponentRegistrar RegisterWith(IComponentRegistrar registrar) =>
       registrar.Register(Singleton.For<IDbPoolSqlLayer>()
                                   .CreatedBy(() => new MySqlDbPoolSqlLayer())
                                   .DelegateToParentServiceLocatorWhenCloning());

@@ -7,7 +7,7 @@ using static Compze.Utilities.Contracts.Assert;
 namespace Compze.Utilities.SystemCE.ReactiveCE;
 
 ///<summary>Simple implementation of <see cref="IObservable{T}"/> that tracks subscribers and allows for calling OnNext on them all at once.</summary>
-class SimpleObservable<TTevent> : IObservable<TTevent>
+public class SimpleObservable<TTevent> : IObservable<TTevent>
 {
    readonly IThreadShared<HashSet<IObserver<TTevent>>> _observerCollection = IThreadShared.WithDefaultTimeouts<HashSet<IObserver<TTevent>>>();
 

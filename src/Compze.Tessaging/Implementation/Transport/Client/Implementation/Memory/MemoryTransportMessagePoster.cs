@@ -11,15 +11,15 @@ using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Memory;
 
-static class MemoryTransportMessagePosterApiTransportClientRegistrar
+public static class MemoryTransportMessagePosterApiTransportClientRegistrar
 {
-   internal static IComponentRegistrar MemoryApiTransportClient(this IComponentRegistrar registrar)
+   public static IComponentRegistrar MemoryApiTransportClient(this IComponentRegistrar registrar)
       => registrar.Register(MemoryTransportMessagePoster.RegisterWith);
 }
 
-class MemoryTransportMessagePoster : ITransportMessagePoster
+public class MemoryTransportMessagePoster : ITransportMessagePoster
 {
-   internal static void RegisterWith(IComponentRegistrar registrar)
+   public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<ITransportMessagePoster>()
                                      .CreatedBy((IEndpointRegistry endpointRegistry, ITypeMapper typeMapper , IRemotableTessageSerializer serializer) => new MemoryTransportMessagePoster(endpointRegistry, typeMapper, serializer)));
 

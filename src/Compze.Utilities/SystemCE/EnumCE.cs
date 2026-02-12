@@ -27,7 +27,7 @@ public static class EnumCE
    public static IReadOnlySet<Enum> Values(Type enumType) => Cache.GetOrAdd(enumType, type => Enum.GetValues(type).Cast<Enum>().ToHashSet());
    public static IReadOnlySet<Enum> Values(Enum value) => Values(value.GetType());
 
-   static class TypeCache<T>
+   public static class TypeCache<T>
       where T : struct, Enum
    {
       public static readonly IReadOnlySet<T> Values = Enum.GetValues<T>().ToHashSet();

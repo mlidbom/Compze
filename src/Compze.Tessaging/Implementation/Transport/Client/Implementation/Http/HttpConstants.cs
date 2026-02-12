@@ -1,26 +1,26 @@
 namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Http;
 
-static class HttpConstants
+public static class HttpConstants
 {
-   internal static class Routes
+   public static class Routes
    {
-      internal static class Typermedia
+      public static class Typermedia
       {
-         internal const string TommandNoResult = "internal/rpc/tommand-no-result";
-         internal const string Tuery = "internal/rpc/tuery";
-         internal const string TommandWithResult = "internal/rpc/tommand-with-result";
+         public const string TommandNoResult = "internal/rpc/tommand-no-result";
+         public const string Tuery = "internal/rpc/tuery";
+         public const string TommandWithResult = "internal/rpc/tommand-with-result";
       }
 
-      internal static class Tessaging
+      public static class Tessaging
       {
-         internal const string Tevent = "internal/tessaging/tevent";
-         internal const string Tommand = "internal/tessaging/tommand";
+         public const string Tevent = "internal/tessaging/tevent";
+         public const string Tommand = "internal/tessaging/tommand";
       }
    }
 
-   internal static class Headers
+   public static class Headers
    {
-      internal const string TessageId = nameof(TessageId);
-      internal const string PayLoadTypeId = nameof(PayLoadTypeId);
+      public const string TessageId = nameof(TessageId);
+      public const string PayLoadTypeId = nameof(PayLoadTypeId);
    }
 }

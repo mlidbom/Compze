@@ -11,16 +11,16 @@ using JetBrains.Annotations;
 namespace Compze.Tessaging.Typermedia;
 
 
-static class RemoteHypermediaNavigatorRegistrar
+public static class RemoteHypermediaNavigatorRegistrar
 {
-   internal static IComponentRegistrar RemoteHypermediaNavigator(this IComponentRegistrar registrar)
+   public static IComponentRegistrar RemoteHypermediaNavigator(this IComponentRegistrar registrar)
       => registrar.Register(Typermedia.RemoteTypermediaNavigator.RegisterWith);
 }
 
 //Todo: Build a pipeline to handle things like tommand validation, caching layers etc. Don't explicitly check for rules and optimization here with duplication across the class.
 [UsedImplicitly] class RemoteTypermediaNavigator : IRemoteTypermediaNavigator
 {
-   internal static void RegisterWith(IComponentRegistrar registrar)
+   public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Scoped.For<IRemoteTypermediaNavigator>()
                                   .CreatedBy((IRoutingInboxClient routingInboxClient) => new RemoteTypermediaNavigator(routingInboxClient)));
 

@@ -9,17 +9,17 @@ using Microsoft.Data.Sqlite;
 
 namespace Compze.Sql.Sqlite;
 
-internal interface ICompzeSqliteConnection : IPoolableConnection, ICompzeDbConnection<SqliteCommand>
+public interface ICompzeSqliteConnection : IPoolableConnection, ICompzeDbConnection<SqliteCommand>
 {
-   internal static ICompzeSqliteConnection Create(string connString) => new CompzeSqliteConnection(connString);
+   public static ICompzeSqliteConnection Create(string connString) => new CompzeSqliteConnection(connString);
 
-   sealed class CompzeSqliteConnection : ICompzeSqliteConnection
+   public sealed class CompzeSqliteConnection : ICompzeSqliteConnection
    {
       SqliteConnection Connection { get; }
       SqliteTransaction? _transaction;
       readonly VolatileLambdaTransactionParticipant _transactionParticipant;
 
-      internal CompzeSqliteConnection(string connectionString)
+      public CompzeSqliteConnection(string connectionString)
       {
          Connection = new SqliteConnection(connectionString);
 

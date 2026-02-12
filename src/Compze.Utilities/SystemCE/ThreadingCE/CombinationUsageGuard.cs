@@ -1,6 +1,6 @@
 namespace Compze.Utilities.SystemCE.ThreadingCE;
 
-class CombinationUsageGuard(params IUsageGuard[] usageGuards) : IUsageGuard
+public class CombinationUsageGuard(params IUsageGuard[] usageGuards) : IUsageGuard
 {
    readonly IUsageGuard[] _usageGuards = usageGuards;
 

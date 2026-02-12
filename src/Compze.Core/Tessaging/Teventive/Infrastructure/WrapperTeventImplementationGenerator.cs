@@ -16,7 +16,7 @@ using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
 namespace Compze.Core.Tessaging.Teventive.Infrastructure;
 
-static class WrapperTeventImplementationGenerator
+public static class WrapperTeventImplementationGenerator
 {
    static IReadOnlyDictionary<Type, Func<ITevent, IPublisherIdentifyingTevent<ITevent>>> _wrapperConstructors = new Dictionary<Type, Func<ITevent, IPublisherIdentifyingTevent<ITevent>>>();
    static IReadOnlyDictionary<Type, Type> _createdWrapperTypes = new Dictionary<Type, Type>();
@@ -25,13 +25,13 @@ static class WrapperTeventImplementationGenerator
 
    static readonly IMonitorCE MonitorCE = IMonitorCE.WithDefaultTimeout();
 
-   static class WrapperConstructorCache<TWrapperTevent, TWrappedTevent>
+   public static class WrapperConstructorCache<TWrapperTevent, TWrappedTevent>
       where TWrapperTevent : IPublisherIdentifyingTevent<TWrappedTevent>
       where TWrappedTevent : ITevent
    {
       static readonly Func<ITevent, IPublisherIdentifyingTevent<ITevent>> UntypedConstructor = MonitorCE.Update(() => CreateConstructorFor(typeof(TWrappedTevent)));
 
-      internal static readonly Func<TWrappedTevent, IPublisherIdentifyingTevent<TWrappedTevent>> Constructor = tevent => (IPublisherIdentifyingTevent<TWrappedTevent>)UntypedConstructor(tevent);
+      public static readonly Func<TWrappedTevent, IPublisherIdentifyingTevent<TWrappedTevent>> Constructor = tevent => (IPublisherIdentifyingTevent<TWrappedTevent>)UntypedConstructor(tevent);
    }
 
    public static TWrapperTevent WrapTevent<TWrapperTevent, TWrappedTevent>(TWrappedTevent theTevent)

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc.Controllers;
 
 namespace Compze.Tessaging.Hosting.AspNetCore.Private;
 
-class InternalControllerFeatureProvider : ControllerFeatureProvider
+public class InternalControllerFeatureProvider : ControllerFeatureProvider
 {
    protected override bool IsController(TypeInfo typeInfo) => typeInfo.AsType().IsSubclassOf(typeof(Controller));
 }

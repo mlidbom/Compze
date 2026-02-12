@@ -22,9 +22,6 @@
       </EmbeddedResource>
    </ItemGroup>
    <ItemGroup>
-      <InternalsVisibleTo Include="AccountManagement.Server" />
-   </ItemGroup>
-   <ItemGroup>
       <ProjectReference Include="..\..\..\..\src\Compze.Tessaging\Compze.Tessaging.csproj" />
       <ProjectReference Include="..\..\..\..\src\Compze.Core\Compze.Core.csproj" />
    </ItemGroup>

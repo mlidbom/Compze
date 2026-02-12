@@ -7,7 +7,7 @@ public interface IUsageGuard
    void EnsureAccessValid();
 }
 
-class UsageGuard<TWrapped> where TWrapped : notnull
+public class UsageGuard<TWrapped> where TWrapped : notnull
 {
    readonly TWrapped _wrapped;
    readonly IUsageGuard _guard;

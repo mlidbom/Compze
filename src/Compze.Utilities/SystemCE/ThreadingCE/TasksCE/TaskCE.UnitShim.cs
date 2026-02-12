@@ -3,9 +3,9 @@ using Compze.Utilities.Functional;
 
 namespace Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
-static class TaskUnit
+public static class TaskUnit
 {
-   internal static async Task<unit> AsUnit(this Task task)
+   public static async Task<unit> AsUnit(this Task task)
    {
       await task.caf();
       return unit.Value;

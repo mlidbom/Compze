@@ -39,7 +39,7 @@ public abstract class AssertionContext : IAssertionContext
 
 public class AssertionContext<T> : AssertionContext, IAssertionContext<T>
 {
-   internal AssertionContext(T actual, string expression) : base(actual, expression) => Actual = actual;
+   public AssertionContext(T actual, string expression) : base(actual, expression) => Actual = actual;
 
    public T Actual { get; }
 }

@@ -14,7 +14,7 @@ using Tevent = Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Tev
 namespace Compze.Sql.MySql.Private.TEventStore;
 
 //Performance: explore MySql alternatives to commented out MSSql hints throughout the sql layer.
-partial class MySqlTeventStoreSqlLayer
+public partial class MySqlTeventStoreSqlLayer
 {
    public void InsertSingleTaggregateTevents(IReadOnlyList<TeventDataRow> tevents)
    {

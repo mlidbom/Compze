@@ -6,7 +6,7 @@ using Compze.Utilities.Functional;
 
 namespace Compze.Utilities.SystemCE.TransactionsCE;
 
-class VolatileLambdaTransactionParticipant : VolatileTransactionParticipant
+public class VolatileLambdaTransactionParticipant : VolatileTransactionParticipant
 {
    readonly Action? _onEnlist;
    readonly Action<TransactionStatus>? _onTransactionCompleted;
@@ -14,7 +14,7 @@ class VolatileLambdaTransactionParticipant : VolatileTransactionParticipant
    readonly List<Action> _commitTasks = [];
    readonly List<Action> _prepareTasks = [];
 
-   internal VolatileLambdaTransactionParticipant(EnlistmentOptions enlistmentOptions = EnlistmentOptions.None,
+   public VolatileLambdaTransactionParticipant(EnlistmentOptions enlistmentOptions = EnlistmentOptions.None,
                                                  Action? onPrepare = null,
                                                  Action? onCommit = null,
                                                  Action? onRollback = null,
@@ -29,13 +29,13 @@ class VolatileLambdaTransactionParticipant : VolatileTransactionParticipant
       if(onRollback != null) AddRollbackTasks(onRollback);
    }
 
-   internal VolatileLambdaTransactionParticipant AddCommitTasks(params Action[] tasks) =>
+   public VolatileLambdaTransactionParticipant AddCommitTasks(params Action[] tasks) =>
       this.mutate(_ => _commitTasks.AddRange(tasks));
 
-   internal VolatileLambdaTransactionParticipant AddPrepareTasks(params Action[] tasks) =>
+   public VolatileLambdaTransactionParticipant AddPrepareTasks(params Action[] tasks) =>
       this.mutate(_ => _prepareTasks.AddRange(tasks));
 
-   internal VolatileLambdaTransactionParticipant AddRollbackTasks(params Action[] tasks) =>
+   public VolatileLambdaTransactionParticipant AddRollbackTasks(params Action[] tasks) =>
       this.mutate(_ => _rollbackTasks.AddRange(tasks));
 
    protected override void OnCommit() => _commitTasks.InvokeAll();

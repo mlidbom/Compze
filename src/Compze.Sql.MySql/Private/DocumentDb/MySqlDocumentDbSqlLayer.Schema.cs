@@ -2,9 +2,9 @@ using Document = Compze.Core.DocumentDb.Internal.SqlLayer.IDocumentDbSqlLayer.Do
 
 namespace Compze.Sql.MySql.Private.DocumentDb;
 
-partial class MySqlDocumentDbSqlLayer
+public partial class MySqlDocumentDbSqlLayer
 {
-   internal const string SchemaCreationSql =
+   public const string SchemaCreationSql =
       $"""
 
        CREATE TABLE IF NOT EXISTS {Document.TableName}

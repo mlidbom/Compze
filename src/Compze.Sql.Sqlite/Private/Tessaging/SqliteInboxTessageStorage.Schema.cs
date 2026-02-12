@@ -2,9 +2,9 @@ using Tessage = Compze.Core.Tessaging.Internal.SqlLayer.IServiceBusSqlLayer.Inbo
 
 namespace Compze.Sql.Sqlite.Private.Tessaging;
 
-partial class SqliteInboxSqlLayer
+public partial class SqliteInboxSqlLayer
 {
-   internal const string SchemaCreationSql =
+   public const string SchemaCreationSql =
       $"""
 
        CREATE TABLE IF NOT EXISTS {Tessage.TableName}

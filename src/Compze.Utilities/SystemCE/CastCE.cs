@@ -1,6 +1,6 @@
 namespace Compze.Utilities.SystemCE;
 
-static class CastCE
+public static class CastCE
 {
-   internal static TTarget CastTo<TTarget>(this object me) => (TTarget)me.NotNull();
+   public static TTarget CastTo<TTarget>(this object me) => (TTarget)me.NotNull();
 }

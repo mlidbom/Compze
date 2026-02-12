@@ -2,11 +2,11 @@ using Tessage = Compze.Core.Tessaging.Internal.SqlLayer.IServiceBusSqlLayer.Inbo
 
 namespace Compze.Sql.PostgreSql.Private.Tessaging;
 
-partial class PgSqlInboxSqlLayer
+public partial class PgSqlInboxSqlLayer
 {
    const string PgSqlGuidType = "UUID";
 
-   internal const string SchemaCreationSql =
+   public const string SchemaCreationSql =
       $"""
            CREATE TABLE IF NOT EXISTS {Tessage.TableName}
            (

@@ -21,7 +21,7 @@ public abstract partial class SelfGeneratingQueryModel<TQueryModel,  TTaggregate
             registerTeventAppliers: true)
       {}
 
-      internal Component(ITeventHandlerRegistrar<TComponentTevent> appliersRegistrar, bool registerTeventAppliers)
+      public Component(ITeventHandlerRegistrar<TComponentTevent> appliersRegistrar, bool registerTeventAppliers)
       {
          if(registerTeventAppliers)
          {

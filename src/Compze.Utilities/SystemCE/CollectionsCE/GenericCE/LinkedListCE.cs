@@ -7,7 +7,7 @@ using Compze.Utilities.Functional;
 namespace Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
 
 ///<summary>Adds some convenience features to linked list</summary>
-static class LinkedListCE
+public static class LinkedListCE
 {
    ///<summary>Enumerates this and all following nodes.</summary>
    static IEnumerable<LinkedListNode<T>> NodesFrom<T>(this LinkedListNode<T> @this)

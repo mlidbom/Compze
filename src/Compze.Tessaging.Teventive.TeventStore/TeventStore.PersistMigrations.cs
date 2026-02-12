@@ -13,7 +13,7 @@ using ReadOrder = Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.
 
 namespace Compze.Tessaging.Teventive.TeventStore;
 
-partial class TeventStore
+public partial class TeventStore
 {
    public void PersistMigrations()
    {

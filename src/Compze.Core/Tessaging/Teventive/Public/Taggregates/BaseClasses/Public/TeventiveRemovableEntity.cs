@@ -38,7 +38,7 @@ public abstract class TeventiveRemovableEntity<TParent,
 
     public new class CollectionManager : Tentity<TParent, TParentTevent, TParentTeventImplementation, TEntity, TEntityId, TEntityTeventImplementation, TEntityTevent, TEntityCreatedTevent, TEntityTeventIdGetterSetter>.CollectionManager
     {
-        internal CollectionManager(TParent parent): base(parent)
+        public CollectionManager(TParent parent): base(parent)
         {
 #pragma warning disable 618 //Reviewed OK: This test class is allowed to use these "obsolete" methods.
             parent.RegisterTeventAppliersInternal().For<TEntityRemovedTevent>(e =>

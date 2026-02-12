@@ -8,7 +8,7 @@ using Newtonsoft.Json.Serialization;
 
 namespace Compze.Utilities.Testing.Must.Serialization;
 
-class ExcludingMembersContractResolver : DefaultContractResolver
+public class ExcludingMembersContractResolver : DefaultContractResolver
 {
    readonly MemberFilteringContractResolver _baseResolver;
    readonly IReadOnlySet<MemberInfo> _excludedMembers;

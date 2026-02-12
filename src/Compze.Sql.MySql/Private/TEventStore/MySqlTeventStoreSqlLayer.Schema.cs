@@ -2,11 +2,11 @@ using Tevent = Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Tev
 
 namespace Compze.Sql.MySql.Private.TEventStore;
 
-partial class MySqlTeventStoreSqlLayer
+public partial class MySqlTeventStoreSqlLayer
 {
    const string MySqlGuidType = "CHAR(36)";
 
-   internal const string SchemaCreationSql = $"""
+   public const string SchemaCreationSql = $"""
 
                                               CREATE TABLE IF NOT EXISTS {Tevent.TableName}
                                               (

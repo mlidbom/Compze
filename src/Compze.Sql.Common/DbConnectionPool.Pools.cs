@@ -14,11 +14,11 @@ using Compze.Utilities.SystemCE.TransactionsCE;
 
 namespace Compze.Sql.Common;
 
-abstract partial class DbConnectionPool<TConnection, TCommand>
+public abstract partial class DbConnectionPool<TConnection, TCommand>
    where TConnection : IPoolableConnection, ICompzeDbConnection<TCommand>
    where TCommand : DbCommand
 {
-   class DefaultDbConnectionPool(string connectionString, Func<string, TConnection> createConnection) : DbConnectionPool<TConnection, TCommand>, IDbConnectionPool<TConnection, TCommand>
+   public class DefaultDbConnectionPool(string connectionString, Func<string, TConnection> createConnection) : DbConnectionPool<TConnection, TCommand>, IDbConnectionPool<TConnection, TCommand>
    {
       readonly string _connectionString = connectionString;
       readonly Func<string, TConnection> _createConnection = createConnection;
@@ -78,7 +78,7 @@ abstract partial class DbConnectionPool<TConnection, TCommand>
       public override string ToString() => _connectionString;
    }
 
-   class TransactionAffinityDbConnectionPool(string connectionString, Func<string, TConnection> createConnection) : DefaultDbConnectionPool(connectionString, createConnection)
+   public class TransactionAffinityDbConnectionPool(string connectionString, Func<string, TConnection> createConnection) : DefaultDbConnectionPool(connectionString, createConnection)
    {
       readonly IThreadShared<Dictionary<string, Task<TConnection>>> _transactionConnections =
          IThreadShared.WithDefaultTimeouts<Dictionary<string, Task<TConnection>>>();

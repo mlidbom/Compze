@@ -4,7 +4,7 @@ using Compze.Utilities.SystemCE.ThreadingCE;
 
 namespace Compze.Utilities.SystemCE.TransactionsCE;
 
-class EnlistInAmbientTransactionUsageGuard : IUsageGuard
+public class EnlistInAmbientTransactionUsageGuard : IUsageGuard
 {
    readonly VolatileLambdaTransactionParticipant _transactionParticipant;
 

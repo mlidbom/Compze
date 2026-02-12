@@ -8,16 +8,16 @@ using System;
 namespace Compze.Tessaging.Implementation.Transport.Abstractions;
 
 //todo: split out TyperMediaTransportTessage
-static class TransportTessage
+public static class TransportTessage
 {
-   internal class InComing
+   public class InComing
    {
-      internal readonly TessageId TessageId;
+      public readonly TessageId TessageId;
       readonly IRemotableTessageSerializer _serializer;
-      internal readonly string Body;
-      internal readonly TypeId TessageTypeId;
+      public readonly string Body;
+      public readonly TypeId TessageTypeId;
       readonly Type _tessageType;
-      internal readonly TransportTessageType TessageTypeEnum;
+      public readonly TransportTessageType TessageTypeEnum;
 
       ITessage? _tessage;
 
@@ -33,7 +33,7 @@ static class TransportTessage
          return _tessage;
       }
 
-      internal InComing(string body, TypeId tessageTypeId, TessageId tessageId, ITypeMapper typeMapper, IRemotableTessageSerializer serializer)
+      public InComing(string body, TypeId tessageTypeId, TessageId tessageId, ITypeMapper typeMapper, IRemotableTessageSerializer serializer)
       {
          _serializer = serializer;
          Body = body;
@@ -44,14 +44,14 @@ static class TransportTessage
       }
    }
 
-   internal class OutGoing
+   public class OutGoing
    {
       public bool IsExactlyOnceDeliveryTessage { get; }
       public readonly TessageId TessageId;
 
-      internal readonly TypeId Type;
-      internal readonly string Body;
-      internal readonly TransportTessageType TessageTypeEnum;
+      public readonly TypeId Type;
+      public readonly string Body;
+      public readonly TransportTessageType TessageTypeEnum;
 
       public static OutGoing Create(IRemotableTessage tessage, ITypeMapper typeMapper, IRemotableTessageSerializer serializer)
       {

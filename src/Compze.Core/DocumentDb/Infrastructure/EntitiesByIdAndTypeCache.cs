@@ -8,7 +8,7 @@ using static Compze.Utilities.Contracts.Assert;
 namespace Compze.Core.DocumentDb.Infrastructure;
 
 ///<summary>Tracks entities by the combination of their ID and type</summary>
-class EntitiesByIdAndTypeCache
+public class EntitiesByIdAndTypeCache
 {
    readonly IThreadShared<Dictionary<IdAndType, object>> _data = IThreadShared.WithDefaultTimeouts(new Dictionary<IdAndType, object>());
 
@@ -31,9 +31,9 @@ class EntitiesByIdAndTypeCache
                         .Select(pair => KeyValuePair.Create(pair.Key.Id, pair.Value))
                         .ToList());
 
-   internal bool Contains(Type type, object id) => ContainsInternal(IdAndType.Create(id, type));
+   public bool Contains(Type type, object id) => ContainsInternal(IdAndType.Create(id, type));
 
-   internal bool TryGet<T>(object id, out T value) =>
+   public bool TryGet<T>(object id, out T value) =>
       _data.ReadOut((Dictionary<IdAndType, object> data, out T value) =>
                     {
                        if(data.TryGetValue(IdAndType.Create(id, typeof(T)), out var found))
@@ -54,9 +54,9 @@ class EntitiesByIdAndTypeCache
 
    bool ContainsInternal(IdAndType key) => _data.Read(it => it.TryGetValue(key, out _));
 
-   readonly record struct IdAndType(string Id, Type DocumentType)
+   public readonly record struct IdAndType(string Id, Type DocumentType)
    {
-      internal static IdAndType Create(object id, Type type) =>
+      public static IdAndType Create(object id, Type type) =>
          new(Result.ReturnNotNull(id).ToStringNotNull().ToUpperInvariant().TrimEnd(trimChar: ' '), type);
    }
 }

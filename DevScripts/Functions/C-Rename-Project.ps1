@@ -2,19 +2,15 @@
 function C-Rename-Project {
     <#
     .SYNOPSIS
-    Renames a project and updates all references including InternalsVisibleTo
+    Renames a project and updates all references
     
     .DESCRIPTION
     Renames a project file and updates all references throughout the solution:
     - Renames the project file (.csproj)
     - Renames any associated .ncrunchproject files
     - Updates ProjectReference elements in all .csproj files
-    - Updates InternalsVisibleTo attributes in all .csproj files
     - Updates Project Path references in all solution files (.slnx and .sln)
     - Updates .ncrunchproject references in .ncrunchsolution files
-    
-    This tool is essential because standard refactoring tools cannot handle
-    InternalsVisibleTo attributes, which are extensively used in this codebase.
     
     The script will search for and update ALL solution files found in the solution
     directory, not just a single file.
@@ -112,24 +108,7 @@ function C-Rename-Project {
         }
     }
     
-    # Step 4: Update InternalsVisibleTo attributes in all .csproj files
-    $internalsVisibleToUpdated = 0
-    
-    foreach ($csproj in $allCsprojFiles) {
-        $content = Get-Content $csproj.FullName -Raw
-        
-        # Match InternalsVisibleTo with exact project name
-        # Pattern: <InternalsVisibleTo Include="OldName" />
-        $pattern = '(<InternalsVisibleTo\s+Include=")(' + [regex]::Escape($Old) + ')(")'
-        
-        if ($content -match $pattern) {
-            $content = $content -replace $pattern, ('$1' + $New + '$3')
-            Set-Content -Path $csproj.FullName -Value $content -NoNewline -Encoding UTF8
-            $internalsVisibleToUpdated++
-        }
-    }
-    
-    # Step 5: Update solution files (.slnx and .sln)
+    # Step 4: Update solution files (.slnx and .sln)
     $slnxFiles = Get-ChildItem -Path $solutionDir -Filter "*.slnx" -Recurse
     $slnFiles = Get-ChildItem -Path $solutionDir -Filter "*.sln" -Recurse
     $allSolutionFiles = @($slnxFiles) + @($slnFiles)
@@ -150,22 +129,6 @@ function C-Rename-Project {
         }
     }
     
-    # Step 6: Update src/Directory.Build.props (InternalsVisibleTo)
-    $directoryBuildPropsPath = Join-Path $solutionDir "Directory.Build.props"
-    
-    if (Test-Path $directoryBuildPropsPath) {
-        $content = Get-Content $directoryBuildPropsPath -Raw
-        
-        # Match InternalsVisibleTo with exact project name
-        # Pattern: <InternalsVisibleTo Include="OldName" />
-        $pattern = '(<InternalsVisibleTo\s+Include=")(' + [regex]::Escape($Old) + ')(")'
-        
-        if ($content -match $pattern) {
-            $content = $content -replace $pattern, ('$1' + $New + '$3')
-            Set-Content -Path $directoryBuildPropsPath -Value $content -NoNewline -Encoding UTF8
-        }
-    }
-    
-    # Step 7: Run C-Clean to avoid build errors from leftover artifacts
+    # Step 5: Run C-Clean to avoid build errors from leftover artifacts
     C-Clean
 }

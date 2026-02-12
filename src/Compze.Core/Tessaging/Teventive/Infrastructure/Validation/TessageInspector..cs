@@ -7,15 +7,15 @@ using Compze.Utilities.SystemCE.LinqCE;
 
 namespace Compze.Core.Tessaging.Teventive.Infrastructure.Validation;
 
-static partial class TessageInspector
+public static partial class TessageInspector
 {
-   internal static void AssertValid(IReadOnlyList<Type> teventTypesToInspect) => teventTypesToInspect.ForEach(TessageTypeInspector.AssertValid);
+   public static void AssertValid(IReadOnlyList<Type> teventTypesToInspect) => teventTypesToInspect.ForEach(TessageTypeInspector.AssertValid);
 
-   internal static void AssertValidForSubscription<TTessage>() => TessageTypeInspector.AssertValidForSubscription(typeof(TTessage));
+   public static void AssertValidForSubscription<TTessage>() => TessageTypeInspector.AssertValidForSubscription(typeof(TTessage));
 
-   internal static void AssertValid<TTessage>() => TessageTypeInspector.AssertValid(typeof(TTessage));
+   public static void AssertValid<TTessage>() => TessageTypeInspector.AssertValid(typeof(TTessage));
 
-   internal static void AssertValidToSendRemote(ITessage tessage)
+   public static void AssertValidToSendRemote(ITessage tessage)
    {
       CommonAssertions(tessage);
 
@@ -34,7 +34,7 @@ static partial class TessageInspector
 #pragma warning restore IDE0010
    }
 
-   internal static void AssertValidToExecuteLocally(ITessage tessage)
+   public static void AssertValidToExecuteLocally(ITessage tessage)
    {
       CommonAssertions(tessage);
 

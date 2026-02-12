@@ -19,7 +19,7 @@ public partial class AccountResource
    public AccountId Id { get; private set; }
 
    //Todo: this conversion smells
-   internal AccountResource(IAccountResourceData account)
+   public AccountResource(IAccountResourceData account)
    {
       Id = account.Id;
       Tommands = new AccountTommands(this);

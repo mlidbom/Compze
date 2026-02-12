@@ -3,7 +3,7 @@
 
 namespace Website.docs.tessaging;
 
-class Basics
+public class Basics
 {
    public void DoNothing() {}
 
@@ -12,16 +12,16 @@ class Basics
    #endregion
 
    #region register_account_tommand_handler
-   class RegisterAccountTommandHandler : ITessageHandler<RegisterAccountTommand>
+   public class RegisterAccountTommandHandler : ITessageHandler<RegisterAccountTommand>
    {
       public void Handle(RegisterAccountTommand tommand) {}
    }
    #endregion
 }
 
-class RegisterAccountTommand {}
+public class RegisterAccountTommand {}
 
-interface ITessageHandler<T>
+public interface ITessageHandler<T>
 {
    void Handle(T tommand);
 }

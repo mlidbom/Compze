@@ -27,7 +27,7 @@ public interface IAsyncLockCE : IDisposable
    void SetTimeToWaitForStackTrace(TimeSpan timeToWaitForStackTrace);
 
 
-   class AsyncLockCE : IAsyncLockCE
+   public class AsyncLockCE : IAsyncLockCE
    {
       readonly SemaphoreSlim _semaphore = new(1, 1);
       readonly AsyncLocal<int> _lockEntranceCount = new();
@@ -39,7 +39,7 @@ public interface IAsyncLockCE : IDisposable
       TimeSpan _stackTraceFetchTimeout;
       IReadOnlyList<AsyncLockTimeoutException> _timeOutExceptionsOnOtherThreads = new List<AsyncLockTimeoutException>();
 
-      internal AsyncLockCE(TimeSpan timeout)
+      public AsyncLockCE(TimeSpan timeout)
       {
          _timeout = timeout;
          _stackTraceFetchTimeout = DefaultTimeToWaitForStackTrace;

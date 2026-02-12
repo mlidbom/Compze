@@ -12,9 +12,9 @@ using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Tessaging.Implementation.Outbox;
 
-partial class Outbox
+public partial class Outbox
 {
-   internal class InboxConnection(
+   public class InboxConnection(
       ITessagesInFlightTracker tessagesInFlightTracker,
       EndPointAddress remoteAddress,
       ITypeMapper typeMapper,
@@ -39,7 +39,7 @@ partial class Outbox
       public async Task PostAsync(IAtMostOnceTypermediaTommand tommand) => await _remoteApiClient!.PostAsync(tommand).caf();
       public async Task<TTueryResult> GetAsync<TTueryResult>(IRemotableTuery<TTueryResult> tuery) => await _remoteApiClient!.GetAsync(tuery).caf();
 
-      internal async Task InitAsync()
+      public async Task InitAsync()
       {
          (_remoteApiClient, _endpointInformation) = await ApiEndpointClient.BootstrapConnectionToEndpoint(_transportMessagePoster, _remoteAddress, _typeMapper, _serializer, _tessagesInFlightTracker).caf();
          _tessageSender = new HttpExactlyOnceTessageSender(_transportMessagePoster, _remoteAddress, _typeMapper, _serializer, _tessagesInFlightTracker, _endpointInformation.Id);

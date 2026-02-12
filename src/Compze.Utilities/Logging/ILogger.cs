@@ -3,7 +3,7 @@ using Compze.Utilities.Functional;
 
 namespace Compze.Utilities.Logging;
 
-interface ILogger
+public interface ILogger
 {
    ILogger WithLogLevel(LogLevel level);
    unit Error(Exception exception, string? message = null);

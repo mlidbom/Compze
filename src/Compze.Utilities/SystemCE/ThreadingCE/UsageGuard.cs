@@ -1,7 +1,7 @@
 namespace Compze.Utilities.SystemCE.ThreadingCE;
 
 ///<summary>Base class that takes care of most of the complexity of implementing <see cref="IUsageGuard"/></summary>
-abstract class UsageGuard : IUsageGuard
+public abstract class UsageGuard : IUsageGuard
 {
    ///<summary>Implementations throw an exception if the context has changed.</summary>
    public void EnsureAccessValid() => InternalAssertUsageAllowed();

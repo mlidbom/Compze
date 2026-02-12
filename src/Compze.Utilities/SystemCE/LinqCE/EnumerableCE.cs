@@ -32,16 +32,16 @@ public static partial class EnumerableCE
    }
 
    //Add these so that we don't waste effort enumerating these types to check if any entries exist.
-   internal static bool None<T>(this List<T> me) => me.Count == 0;
-   internal static bool None<T>(this IReadOnlyList<T> me) => me.Count == 0;
-   internal static bool None<T>(this T[] me) => me.Length == 0;
+   public static bool None<T>(this List<T> me) => me.Count == 0;
+   public static bool None<T>(this IReadOnlyList<T> me) => me.Count == 0;
+   public static bool None<T>(this T[] me) => me.Length == 0;
 
    /// <summary>
    /// <para>The inversion of Enumerable.Any() .</para>
    /// <para>Returns true if <paramref name="me"/> contains no elements.</para>
    /// </summary>
    /// <returns>true if <paramref name="me"/> contains no objects. Otherwise false.</returns>
-   internal static bool None<T>(this IEnumerable<T> me, Func<T,bool> condition)
+   public static bool None<T>(this IEnumerable<T> me, Func<T,bool> condition)
    {
       Argument.NotNull(me).NotNull(condition);
 
@@ -51,7 +51,7 @@ public static partial class EnumerableCE
    /// <summary>
    /// Chops an IEnumerable up into <paramref name="size"/> sized chunks.
    /// </summary>
-   internal static IEnumerable<IEnumerable<T>> ChopIntoSizesOf<T>(this IEnumerable<T> me, int size)
+   public static IEnumerable<IEnumerable<T>> ChopIntoSizesOf<T>(this IEnumerable<T> me, int size)
    {
       Argument.NotNull(me);
 
@@ -88,12 +88,12 @@ public static partial class EnumerableCE
    /// <typeparam name="TChild">The type contained in the nested enumerables.</typeparam>
    /// <param name="me">the collection to act upon</param>
    /// <returns>All the objects in all the nested collections </returns>
-   internal static IEnumerable<TChild> Flatten<T, TChild>(this IEnumerable<T> me) where T : IEnumerable<TChild>
+   public static IEnumerable<TChild> Flatten<T, TChild>(this IEnumerable<T> me) where T : IEnumerable<TChild>
    {
       Argument.NotNull(me);
 
       return me.SelectMany(obj => obj);
    }
 
-   internal static IReadOnlyList<T> ToReadOnlyList<T>(this IEnumerable<T> me) => me.ToList();
+   public static IReadOnlyList<T> ToReadOnlyList<T>(this IEnumerable<T> me) => me.ToList();
 }

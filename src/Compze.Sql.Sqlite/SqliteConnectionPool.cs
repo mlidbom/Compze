@@ -8,12 +8,12 @@ using Microsoft.Data.Sqlite;
 
 namespace Compze.Sql.Sqlite;
 
-internal interface ISqliteConnectionPool : IDbConnectionPool<ICompzeSqliteConnection, SqliteCommand>
+public interface ISqliteConnectionPool : IDbConnectionPool<ICompzeSqliteConnection, SqliteCommand>
 {
    static ISqliteConnectionPool CreateInstance(string connectionString) => CreateInstance(() => connectionString);
    static SqliteConnectionPool CreateInstance(Func<string> getConnectionString) => new(getConnectionString);
 
-   class SqliteConnectionPool : ISqliteConnectionPool
+   public class SqliteConnectionPool : ISqliteConnectionPool
    {
       readonly LazyCE<IDbConnectionPool<ICompzeSqliteConnection, SqliteCommand>> _pool;
 

@@ -3,7 +3,7 @@ using Compze.Core.Tessaging.Public;
 
 namespace Compze.Core.Serialization.Internal;
 
-interface IRemotableTessageSerializer
+public interface IRemotableTessageSerializer
 {
    string SerializeTessage(IRemotableTessage tessage);
    IRemotableTessage DeserializeTessage(Type tessageType, string json);

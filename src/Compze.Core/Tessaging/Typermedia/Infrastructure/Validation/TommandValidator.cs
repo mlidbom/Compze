@@ -6,7 +6,7 @@ using Compze.Core.Tessaging.Typermedia.Public;
 
 namespace Compze.Core.Tessaging.Typermedia.Infrastructure.Validation;
 
-static class TommandValidator
+public static class TommandValidator
 {
    public static void AssertTommandIsValid(ITommand tommand)
    {

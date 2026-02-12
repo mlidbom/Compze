@@ -11,7 +11,7 @@ using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Universal;
 
-class ApiEndpointClient(
+public class ApiEndpointClient(
    ITransportMessagePoster transportMessagePoster,
    EndPointAddress remoteAddress,
    ITypeMapper typeMapper,
@@ -47,7 +47,7 @@ class ApiEndpointClient(
       return await _transportMessagePoster.PostAsync<TResult>(tessage, tuery, _remoteAddress).caf();
    }
 
-   internal static async Task<(ApiEndpointClient, TessageTypesInternal.EndpointInformation)> BootstrapConnectionToEndpoint(ITransportMessagePoster transportMessagePoster,
+   public static async Task<(ApiEndpointClient, TessageTypesInternal.EndpointInformation)> BootstrapConnectionToEndpoint(ITransportMessagePoster transportMessagePoster,
                                                                                                                            EndPointAddress remoteAddress,
                                                                                                                            ITypeMapper typeMapper,
                                                                                                                            IRemotableTessageSerializer serializer,

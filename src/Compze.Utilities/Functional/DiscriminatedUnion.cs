@@ -6,7 +6,7 @@ namespace Compze.Utilities.Functional;
 
 public static class DiscriminatedUnion
 {
-   internal static void AssertValidType(object instance, IReadOnlyList<Type> allowedTypes)
+   public static void AssertValidType(object instance, IReadOnlyList<Type> allowedTypes)
    {
       var instanceType = instance.GetType();
       if(!allowedTypes.Contains(instanceType))

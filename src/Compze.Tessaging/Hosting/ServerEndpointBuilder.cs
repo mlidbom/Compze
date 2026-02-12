@@ -27,7 +27,7 @@ using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Tessaging.Hosting;
 
-class ServerEndpointBuilder : IEndpointBuilder, IAsyncDisposable, IDisposable
+public class ServerEndpointBuilder : IEndpointBuilder, IAsyncDisposable, IDisposable
 {
    bool _builtSuccessfully;
 

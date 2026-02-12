@@ -48,10 +48,6 @@ Then reload: `. $PROFILE`
   - `-FilePattern` - File pattern to match (defaults to *.cs)
   - `-WhatIf` - Preview changes without applying
 
-- **C-Remove-RedundantInternalsVisibleTo** - Removes redundant InternalsVisibleTo attributes
-  - `-SolutionPath` - Path to solution file
-  - `-LogFile` - Path to log file
-
 - **C-Validate-SolutionStructure** - Validates the Compze solution structure
 
 ### Project Management
@@ -62,11 +58,11 @@ Then reload: `. $PROFILE`
   - Creates basic .csproj file
   - Adds to solution file in correct folder structure
 
-- **C-Rename-Project** - Renames a project and updates all references including InternalsVisibleTo
+- **C-Rename-Project** - Renames a project and updates all references
   - `-Old` - Current project name (e.g., "Compze.Tessaging.Hosting.Configuration")
   - `-New` - New project name (e.g., "Compze.Common.Configuration")
   - `-SolutionPath` - Path to solution file (defaults to src\Compze.slnx)
-  - Updates project file name, ProjectReferences, InternalsVisibleTo attributes, and all solution files (.slnx and .sln)
+  - Updates project file name, ProjectReferences, and all solution files (.slnx and .sln)
 
 - **C-Relocate-Project** - Moves a project to match solution structure conventions
   - `-ProjectName` - Name of the project to relocate (e.g., "Compze.Common.Configuration")

@@ -4,12 +4,12 @@ using Compze.Utilities.SystemCE.ReflectionCE;
 
 namespace Compze.Tessaging.Implementation.Transport.Abstractions;
 
-static class TessageTypeTranslator
+public static class TessageTypeTranslator
 {
-   internal static TransportTessageType TransportTessageType(this ITessage tessage) =>
+   public static TransportTessageType TransportTessageType(this ITessage tessage) =>
       tessage.GetType().TransportTessageType();
 
-   internal static TransportTessageType TransportTessageType(this Type tessageType)
+   public static TransportTessageType TransportTessageType(this Type tessageType)
    {
       //tessaging
       if(tessageType.Is<IExactlyOnceTevent>())
@@ -27,7 +27,7 @@ static class TessageTypeTranslator
          throw new ArgumentOutOfRangeException();
    }
 
-   internal static Type TessageType(this TransportTessageType transportTessageType)
+   public static Type TessageType(this TransportTessageType transportTessageType)
    {
       switch(transportTessageType)
       {

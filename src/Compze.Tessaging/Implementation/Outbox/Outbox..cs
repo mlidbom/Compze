@@ -16,15 +16,15 @@ using Compze.Utilities.SystemCE.TransactionsCE;
 
 namespace Compze.Tessaging.Implementation.Outbox;
 
-static class OutboxRegistrar
+public static class OutboxRegistrar
 {
-   internal static IComponentRegistrar Outbox(this IComponentRegistrar registrar)
+   public static IComponentRegistrar Outbox(this IComponentRegistrar registrar)
       => registrar.Register(Implementation.Outbox.Outbox.RegisterWith);
 }
 
-partial class Outbox : IOutbox
+public partial class Outbox : IOutbox
 {
-   internal static void RegisterWith(IComponentRegistrar registrar)
+   public static void RegisterWith(IComponentRegistrar registrar)
    {
       registrar.Register(Singleton.For<IOutbox>()
                                   .CreatedBy((EndpointConfiguration configuration, IRoutingInboxClient routingInboxClient, ITessageStorage tessageStorage, IBackgroundExceptionReporter exceptionReporter, OutboxRetryPoller retryPoller)

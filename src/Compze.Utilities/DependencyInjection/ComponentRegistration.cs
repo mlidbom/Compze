@@ -8,13 +8,13 @@ namespace Compze.Utilities.DependencyInjection;
 
 public abstract class ComponentRegistration
 {
-   internal IReadOnlySet<Type> ServiceTypes { get; }
-   internal InstantiationSpec InstantiationSpec { get; }
-   internal Lifestyle Lifestyle { get; }
-   internal IReadOnlyList<Type> DependencyTypes { get; }
-   internal bool ProvidesService(Type service) => ServiceTypes.Contains(service);
+   public IReadOnlySet<Type> ServiceTypes { get; }
+   public InstantiationSpec InstantiationSpec { get; }
+   public Lifestyle Lifestyle { get; }
+   public IReadOnlyList<Type> DependencyTypes { get; }
+   public bool ProvidesService(Type service) => ServiceTypes.Contains(service);
 
-   internal ComponentRegistration(Lifestyle lifestyle,
+   public ComponentRegistration(Lifestyle lifestyle,
                                   IEnumerable<Type> serviceTypes,
                                   InstantiationSpec instantiationSpec,
                                   IEnumerable<Type> dependencyTypes)
@@ -31,9 +31,9 @@ public abstract class ComponentRegistration
       DependencyTypes = dependencyTypes.ToList();
    }
 
-   internal abstract ComponentRegistration CreateCloneRegistration(IServiceLocator currentLocator);
+   public abstract ComponentRegistration CreateCloneRegistration(IServiceLocator currentLocator);
 
-   internal abstract object Resolve(IServiceLocator serviceLocator);
+   public abstract object Resolve(IServiceLocator serviceLocator);
 }
 
 public class ComponentRegistration<TService> : ComponentRegistration where TService : class
@@ -49,7 +49,7 @@ public class ComponentRegistration<TService> : ComponentRegistration where TServ
       return this;
    }
 
-   internal override ComponentRegistration CreateCloneRegistration(IServiceLocator currentLocator)
+   public override ComponentRegistration CreateCloneRegistration(IServiceLocator currentLocator)
    {
       if(!ShouldDelegateToParentWhenCloning)
       {
@@ -65,9 +65,9 @@ public class ComponentRegistration<TService> : ComponentRegistration where TServ
       );
    }
 
-   internal override object Resolve(IServiceLocator locator) => locator.Resolve<TService>();
+   public override object Resolve(IServiceLocator locator) => locator.Resolve<TService>();
 
-   internal ComponentRegistration(Lifestyle lifestyle,
+   public ComponentRegistration(Lifestyle lifestyle,
                                   IEnumerable<Type> serviceTypes,
                                   InstantiationSpec instantiationSpec,
                                   IEnumerable<Type> dependencyTypes)

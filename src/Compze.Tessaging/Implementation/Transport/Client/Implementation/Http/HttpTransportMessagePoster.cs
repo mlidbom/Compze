@@ -11,15 +11,15 @@ using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Http;
 
-static class HttpApiTransportClientRegistrar
+public static class HttpApiTransportClientRegistrar
 {
-   internal static IComponentRegistrar HttpApiTransportClient(this IComponentRegistrar registrar)
+   public static IComponentRegistrar HttpApiTransportClient(this IComponentRegistrar registrar)
       => registrar.Register(Http.HttpTransportMessagePoster.RegisterWith);
 }
 
-class HttpTransportMessagePoster : ITransportMessagePoster
+public class HttpTransportMessagePoster : ITransportMessagePoster
 {
-   internal static void RegisterWith(IComponentRegistrar registrar)
+   public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<ITransportMessagePoster>()
                                      .CreatedBy((IHttpClientFactoryCE factory, IRemotableTessageSerializer serializer) => new HttpTransportMessagePoster(factory, serializer)));
 

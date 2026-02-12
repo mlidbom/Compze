@@ -6,9 +6,9 @@ using Microsoft.Data.SqlClient;
 
 namespace Compze.Sql.MicrosoftSql.Private.DbPool;
 
-class MsSqlDbPoolSqlLayer : IDbPoolSqlLayer
+public class MsSqlDbPoolSqlLayer : IDbPoolSqlLayer
 {
-   internal static IComponentRegistrar RegisterWith(IComponentRegistrar registrar) =>
+   public static IComponentRegistrar RegisterWith(IComponentRegistrar registrar) =>
       registrar.Register(Singleton.For<IDbPoolSqlLayer>()
                                   .CreatedBy(() => new MsSqlDbPoolSqlLayer())
                                   .DelegateToParentServiceLocatorWhenCloning());

@@ -18,13 +18,13 @@ public interface IThreadShared
    public static IThreadShared<TShared> WithTimeouts<TShared>(TShared shared, TimeSpan lockTimeout, TimeSpan? waitTimeout = null) =>
       new LockCEThreadShared<TShared>(shared, IMonitorCE.WithTimeouts(lockTimeout, waitTimeout));
 
-   class LockCEThreadShared<TShared> : IThreadShared<TShared>
+   public class LockCEThreadShared<TShared> : IThreadShared<TShared>
    {
       readonly IMonitorCE _monitor;
 
       readonly TShared _shared;
 
-      internal LockCEThreadShared(TShared shared, IMonitorCE monitor)
+      public LockCEThreadShared(TShared shared, IMonitorCE monitor)
       {
          _shared = shared;
          _monitor = monitor;

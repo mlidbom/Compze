@@ -2,16 +2,16 @@ using System;
 
 namespace Compze.Utilities.DependencyInjection;
 
-class InstantiationSpec
+public class InstantiationSpec
 {
-   internal object? SingletonInstance { get; }
-   internal object RunFactoryMethod(IServiceLocatorKernel kern) => FactoryMethod(kern);
-   internal Func<IServiceLocatorKernel, object> FactoryMethod { get; }
-   internal Type FactoryMethodReturnType { get; }
+   public object? SingletonInstance { get; }
+   public object RunFactoryMethod(IServiceLocatorKernel kern) => FactoryMethod(kern);
+   public Func<IServiceLocatorKernel, object> FactoryMethod { get; }
+   public Type FactoryMethodReturnType { get; }
 
-   internal static InstantiationSpec FromInstance(object instance) => new(instance);
+   public static InstantiationSpec FromInstance(object instance) => new(instance);
 
-   internal static InstantiationSpec FromFactoryMethod(Func<IServiceLocatorKernel, object> factoryMethod, Type factoryMethodReturnType) => new(factoryMethod, factoryMethodReturnType);
+   public static InstantiationSpec FromFactoryMethod(Func<IServiceLocatorKernel, object> factoryMethod, Type factoryMethodReturnType) => new(factoryMethod, factoryMethodReturnType);
 
    InstantiationSpec(Func<IServiceLocatorKernel, object> factoryMethod, Type factoryMethodReturnType)
    {

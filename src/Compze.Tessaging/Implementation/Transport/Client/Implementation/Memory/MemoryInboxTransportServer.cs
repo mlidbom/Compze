@@ -18,20 +18,20 @@ using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Memory;
 
-static class MemoryInboxTransportServerRegistrar
+public static class MemoryInboxTransportServerRegistrar
 {
-   internal static IComponentRegistrar MemoryTransport(this IComponentRegistrar registrar) =>
+   public static IComponentRegistrar MemoryTransport(this IComponentRegistrar registrar) =>
       registrar.Register(Singleton.For<IInboxTransportServer, MemoryInboxTransportServer>()
                                   .CreatedBy((EndpointId endpointId, ITypeMapper typeMapper, IRemotableTessageSerializer serializer, IServiceLocator serviceLocator) => new MemoryInboxTransportServer(endpointId, serviceLocator, serializer)));
 }
 
-class MemoryInboxTransportServer : IInboxTransportServer
+public class MemoryInboxTransportServer : IInboxTransportServer
 {
    readonly IRemotableTessageSerializer _serializer;
    readonly LazyCE<IInbox> _inbox;
    readonly LazyCE<Inbox.HandlerExecutionEngine> _engine;
 
-   internal MemoryInboxTransportServer(EndpointId endpointId, IServiceLocator serviceLocator, IRemotableTessageSerializer serializer)
+   public MemoryInboxTransportServer(EndpointId endpointId, IServiceLocator serviceLocator, IRemotableTessageSerializer serializer)
    {
       _serializer = serializer;
       _inbox = new LazyCE<IInbox>(serviceLocator.Resolve<IInbox>);

@@ -5,7 +5,7 @@ using static Compze.Utilities.Contracts.Assert;
 namespace Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
 
 ///<summary>Helpers for working with dictionaries</summary>
-static class DictionaryCE
+public static class DictionaryCE
 {
    /// <summary>
    /// If <paramref name="key"/> exists in me <paramref name="me"/> it is returned.

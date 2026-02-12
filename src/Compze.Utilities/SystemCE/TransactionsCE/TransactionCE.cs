@@ -4,9 +4,9 @@ using Compze.Utilities.Contracts;
 
 namespace Compze.Utilities.SystemCE.TransactionsCE;
 
-static class TransactionCE
+public static class TransactionCE
 {
-   internal static void OnCommittedSuccessfully(this Transaction @this, Action action)
+   public static void OnCommittedSuccessfully(this Transaction @this, Action action)
    {
       @this.TransactionCompleted += (_, args) =>
       {
@@ -18,9 +18,9 @@ static class TransactionCE
       };
    }
 
-   internal static void OnCompleted(this Transaction @this, Action action) => @this.TransactionCompleted += (_, _) => action();
+   public static void OnCompleted(this Transaction @this, Action action) => @this.TransactionCompleted += (_, _) => action();
 
-   internal static IDisposable NoTransactionEscalationScope(string scopeDescription)
+   public static IDisposable NoTransactionEscalationScope(string scopeDescription)
    {
       var transactionInformationDistributedIdentifierBefore = Transaction.Current?.TransactionInformation.DistributedIdentifier ?? Guid.Empty;
 

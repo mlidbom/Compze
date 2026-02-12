@@ -13,21 +13,21 @@ using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Tessaging.SystemCE.ThreadingCE;
 
-interface ITaskRunner
+public interface ITaskRunner
 {
    void Run(string taskName, Action action);
    void Run(string taskName, Func<unit> task);
    Thread RunOnNamedThread(string threadName, ThreadStart threadLoop, ThreadPriority priority = ThreadPriority.Normal);
 }
 
-static class TaskRunnerRegistrar
+public static class TaskRunnerRegistrar
 {
-   internal static IComponentRegistrar TaskRunner(this IComponentRegistrar registrar)
+   public static IComponentRegistrar TaskRunner(this IComponentRegistrar registrar)
       => registrar.Register(TaskRunnerImpl.RegisterWith);
 
-   class TaskRunnerImpl : ITaskRunner, IDisposable
+   public class TaskRunnerImpl : ITaskRunner, IDisposable
    {
-      internal static void RegisterWith(IComponentRegistrar registrar)
+      public static void RegisterWith(IComponentRegistrar registrar)
          => registrar.Register(Singleton.For<ITaskRunner>().CreatedBy((IBackgroundExceptionReporter exceptionReporter) => new TaskRunnerImpl(exceptionReporter)));
 
       readonly IBackgroundExceptionReporter _exceptionReporter;

@@ -7,13 +7,13 @@ using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
 namespace Compze.Utilities.Testing.DbPool.SystemCE;
 
-static class StrictlyManagedResources
+public static class StrictlyManagedResources
 {
    // ReSharper disable once FieldCanBeMadeReadOnly.Global
    public static bool CollectStackTracesByDefault = false;
-   internal static bool LoggingTemporarilySuppressed = false;
+   public static bool LoggingTemporarilySuppressed = false;
 
-   internal static void SuppressLoggingWhileExecuting(Action action)
+   public static void SuppressLoggingWhileExecuting(Action action)
    {
       using(ScopedChange.Enter(() => LoggingTemporarilySuppressed = true, () => LoggingTemporarilySuppressed = false))
       {
@@ -27,7 +27,7 @@ static class StrictlyManagedResources
 /// <para>Implementing this interface MUST be done by inheriting from <see cref="StrictlyManagedResourceBase{TInheritor}"/> or having a readonly field of type <see cref="StrictlyManagedResource{TManagedResource}"/>.
 ///  This guarantees the expected behavior including the ability to enable and disable the collection of stacktraces for the allocations.</para>
 /// </summary>
-interface IStrictlyManagedResource : IDisposable;
+public interface IStrictlyManagedResource : IDisposable;
 
 ///<summary>
 /// Helper class for implementing <see cref="IStrictlyManagedResource"/>
@@ -46,7 +46,7 @@ interface IStrictlyManagedResource : IDisposable;
 ///}
 /// </code>
 ///</example>
-sealed class StrictlyManagedResource<TManagedResource> : IStrictlyManagedResource where TManagedResource : class, IStrictlyManagedResource
+public sealed class StrictlyManagedResource<TManagedResource> : IStrictlyManagedResource where TManagedResource : class, IStrictlyManagedResource
 {
    // ReSharper disable once StaticMemberInGenericType
    static readonly IMonitorCE StaticMonitor = IMonitorCE.WithDefaultTimeout();
@@ -157,7 +157,7 @@ public abstract class StrictlyManagedResourceBase<TInheritor> : IStrictlyManaged
 }
 
 ///<summary><see cref="IStrictlyManagedResource"/></summary>
-class StrictlyManagedResourceWasFinalizedException(Type instanceType, string? reservationCallStack) : Exception(FormatTessage(instanceType, reservationCallStack))
+public class StrictlyManagedResourceWasFinalizedException(Type instanceType, string? reservationCallStack) : Exception(FormatTessage(instanceType, reservationCallStack))
 {
    static string FormatTessage(Type instanceType, string? reservationCallStack)
       => !reservationCallStack.IsNullEmptyOrWhiteSpace()

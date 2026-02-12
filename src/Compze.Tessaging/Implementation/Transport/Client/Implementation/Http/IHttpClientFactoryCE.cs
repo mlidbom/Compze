@@ -5,20 +5,20 @@ using Compze.Utilities.DependencyInjection.Abstractions;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Http;
 
-interface IHttpClientFactoryCE
+public interface IHttpClientFactoryCE
 {
    HttpClient CreateClient();
 }
 
-static class HttpClientFactoryCERegistrar
+public static class HttpClientFactoryCERegistrar
 {
-   internal static IComponentRegistrar HttpClientFactoryCE(this IComponentRegistrar registrar)
+   public static IComponentRegistrar HttpClientFactoryCE(this IComponentRegistrar registrar)
       => registrar.Register(Http.HttpClientFactoryCE.RegisterWith);
 }
 
-class HttpClientFactoryCE : IHttpClientFactoryCE
+public class HttpClientFactoryCE : IHttpClientFactoryCE
 {
-   internal static void RegisterWith(IComponentRegistrar registrar)
+   public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(
          Singleton.For<IHttpClientFactoryCE>().CreatedBy(() => new HttpClientFactoryCE()));
 

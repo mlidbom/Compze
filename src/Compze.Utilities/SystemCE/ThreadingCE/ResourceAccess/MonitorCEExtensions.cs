@@ -2,7 +2,7 @@ using System;
 
 namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
-static class MonitorCEExtensions
+public static class MonitorCEExtensions
 {
    public static TResult DoubleCheckedLocking<TResult>(this IMonitorCE @this, Func<TResult?> tryRead, Action updateOnFailedRead)
       where TResult : class =>

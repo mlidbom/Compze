@@ -1,8 +1,8 @@
 namespace Compze.Utilities.Misc;
 
-static class CompzeEnvironment
+public static class CompzeEnvironment
 {
-   internal const bool IsNCrunch =
+   public const bool IsNCrunch =
 #if NCRUNCH
         true;
 #else
