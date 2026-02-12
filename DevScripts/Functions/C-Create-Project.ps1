@@ -5,18 +5,24 @@ function C-Create-Project {
     Creates a new project with the proper directory structure and adds it to the solution
     
     .DESCRIPTION
-    Creates a new C# project following the Compze conventions:
-    - Creates the project directory based on namespace (e.g., Compze.Wiring.Testing -> src/Compze/Wiring/Testing/)
+    Creates a new C# project following the Compze flat-layout conventions:
+    - Library projects: src/<ProjectName>/<ProjectName>.csproj
+    - Test projects: test/<ProjectName>/<ProjectName>.csproj
     - Creates a basic .csproj file
     - Adds the project to the .slnx solution file in the appropriate folder structure
-    - Runs C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders to update parent projects
+    
+    Test projects are detected by name: contains ".Tests." or ends with ".Tests"
     
     .PARAMETER ProjectName
-    The full name of the project to create (e.g., "Compze.Wiring.Testing")
+    The full name of the project to create (e.g., "Compze.Wiring" or "Compze.Tests.MyFeature")
     
     .EXAMPLE
-    C-Create-Project -ProjectName Compze.Wiring.Testing
-    Creates a new project at src/Compze/Wiring/Testing/Compze.Wiring.Testing.csproj
+    C-Create-Project -ProjectName Compze.Wiring
+    Creates a new project at src/Compze.Wiring/Compze.Wiring.csproj
+    
+    .EXAMPLE
+    C-Create-Project -ProjectName Compze.Tests.MyFeature
+    Creates a new project at test/Compze.Tests.MyFeature/Compze.Tests.MyFeature.csproj
     #>
     [CmdletBinding()]
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseApprovedVerbs', '')]
@@ -32,12 +38,14 @@ function C-Create-Project {
         return
     }
     
-    $solutionDir = Split-Path -Parent $SolutionPath
+    # Step 1: Determine if test or library project, and calculate directory path
+    $isTest = ($ProjectName -match '\.Tests\.' -or $ProjectName -match '\.Tests$')
     
-    # Step 1: Calculate directory path from project name
-    # Compze.Wiring.Testing -> Compze/Wiring/Testing
-    $relativePath = $ProjectName -replace '\.', '\'
-    $projectDir = Join-Path $solutionDir $relativePath
+    if ($isTest) {
+        $projectDir = Join-Path $script:CompzeRoot "test" $ProjectName
+    } else {
+        $projectDir = Join-Path $script:CompzeSrcRoot $ProjectName
+    }
     
     # Check if directory already exists
     if (Test-Path $projectDir) {
@@ -75,7 +83,4 @@ function C-Create-Project {
     
     # Step 4: Add project to solution and organize in correct folder
     C-Place-ProjectInSolution -ProjectName $ProjectName
-    
-    # Step 5: Update parent projects to exclude this directory if needed
-    C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders
 }

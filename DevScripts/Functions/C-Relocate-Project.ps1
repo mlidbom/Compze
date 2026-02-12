@@ -1,5 +1,21 @@
 # NOTE: Scripts that make changes should NOT log everything they do. They should only write output if something goes wrong.
 function C-Relocate-Project {
+    <#
+    .SYNOPSIS
+    Relocates a project to its correct flat-layout directory
+    
+    .DESCRIPTION
+    Moves a project to follow the flat layout conventions:
+    - Library projects: src/<ProjectName>/<ProjectName>.csproj
+    - Test projects: test/<ProjectName>/<ProjectName>.csproj
+    Updates all ProjectReference paths and the solution file.
+    
+    .PARAMETER ProjectName
+    The full name of the project to relocate
+    
+    .PARAMETER SolutionPath
+    Path to the solution file (defaults to src\Compze.slnx)
+    #>
     [CmdletBinding()]
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseApprovedVerbs', '')]
     param(
@@ -12,6 +28,7 @@ function C-Relocate-Project {
     if (-not (Test-Path $SolutionPath)) { Write-Error "Solution file not found: $SolutionPath"; return }
     
     $solutionDir = Split-Path -Parent $SolutionPath
+    $repoRoot = $script:CompzeRoot
     
     # Step 1: Find project
     $projectFile = Find-ProjectFile -SolutionPath $SolutionPath -ProjectName $ProjectName
@@ -20,12 +37,15 @@ function C-Relocate-Project {
     $currentProjectDir = Split-Path -Parent $projectFile.FullName
     $projectFileName = Split-Path -Leaf $projectFile.FullName
     
-    # Step 2: Calculate target
-    $targetRelativePath = $ProjectName -replace '\.', '\'
-    $targetProjectDir = Join-Path $solutionDir $targetRelativePath
-    $targetSolutionPath = $ProjectName -replace '\.', '/'
+    # Step 2: Calculate target using flat layout
+    $isTest = ($ProjectName -match '\.Tests\.' -or $ProjectName -match '\.Tests$')
+    if ($isTest) {
+        $targetProjectDir = Join-Path $repoRoot "test" $ProjectName
+    } else {
+        $targetProjectDir = Join-Path $solutionDir $ProjectName
+    }
     
-    if ($currentProjectDir -eq $targetProjectDir) { return }
+    if ($currentProjectDir.TrimEnd('\') -eq $targetProjectDir.TrimEnd('\')) { return }
     
     # Step 3: Move directory
     if (Test-Path $targetProjectDir) {
@@ -45,11 +65,8 @@ function C-Relocate-Project {
     $normalizedCurrent = $currentProjectDir.TrimEnd('\') + '\'
     $normalizedTarget = $targetProjectDir.TrimEnd('\') + '\'
     if ($normalizedTarget.StartsWith($normalizedCurrent, [StringComparison]::OrdinalIgnoreCase)) {
-        # Move to temp location first, then to final destination.
-        # This is required when the target would be a subdirectory of the source.
         $tempDir = Join-Path $solutionDir ("temp_" + [Guid]::NewGuid().ToString())
         Move-Item -Path $currentProjectDir -Destination $tempDir -Force
-        # After the move the original parent directories may no longer exist - ensure target parent exists
         $targetParentDir = Split-Path -Parent $targetProjectDir
         if (-not (Test-Path $targetParentDir)) {
             New-Item -ItemType Directory -Path $targetParentDir -Force | Out-Null
@@ -71,11 +88,8 @@ function C-Relocate-Project {
         $matches = [regex]::Matches($movedProjectContent, $referencePattern)
         foreach ($match in $matches) {
             $oldRelativePath = $match.Groups[1].Value
-            # Convert old relative path to absolute path from old location
             $absolutePath = [System.IO.Path]::GetFullPath((Join-Path $currentProjectDir $oldRelativePath))
-            # Calculate new relative path from new location
             $newRelativePath = [System.IO.Path]::GetRelativePath($movedProjectDir, $absolutePath)
-            # Replace in content
             $updatedContent = $updatedContent -replace [regex]::Escape($oldRelativePath), $newRelativePath
         }
         if ($updatedContent -ne $movedProjectContent) {
@@ -103,7 +117,8 @@ function C-Relocate-Project {
         $content = Get-Content $_.FullName -Raw
         $pattern = '(<Project\s+Path=")([^"]*[/\\]' + [regex]::Escape($ProjectName) + '\.csproj)(")'
         if ($content -match $pattern) {
-            $newPath = $targetSolutionPath + '/' + $projectFileName
+            $slnDir = Split-Path -Parent $_.FullName
+            $newPath = [System.IO.Path]::GetRelativePath($slnDir, (Join-Path $targetProjectDir $projectFileName)) -replace '\\', '/'
             $newContent = $content -replace $pattern, ('$1' + $newPath + '$3')
             if ($content -ne $newContent) {
                 Set-Content -Path $_.FullName -Value $newContent -NoNewline -Encoding UTF8
@@ -113,7 +128,4 @@ function C-Relocate-Project {
     
     # Step 7: Update solution folder structure
     C-Place-ProjectInSolution -ProjectName $ProjectName -SolutionPath $SolutionPath
-    
-    # Step 8: Ensure csproj files are correct
-    C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders
 }

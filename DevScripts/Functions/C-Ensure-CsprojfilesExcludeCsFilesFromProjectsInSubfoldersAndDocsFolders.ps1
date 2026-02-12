@@ -105,8 +105,13 @@ $($docsLines -join "`r`n")
         return $itemGroup
     }
 
-    # Find all .csproj files
-    $allCsprojFiles = Get-ProjectFilesInPath -Path $srcPath
+    # Find all .csproj files in src/ and test/
+    $allCsprojFiles = @()
+    $allCsprojFiles += Get-ProjectFilesInPath -Path $srcPath
+    $testPath = Join-Path $script:CompzeRoot "test"
+    if (Test-Path $testPath) {
+        $allCsprojFiles += Get-ProjectFilesInPath -Path $testPath
+    }
 
     $processedCount = 0
 

@@ -150,8 +150,8 @@ function C-Rename-Project {
         }
     }
     
-    # Step 6: Update src/Compze/Directory.Build.props
-    $directoryBuildPropsPath = Join-Path $solutionDir "Compze\Directory.Build.props"
+    # Step 6: Update src/Directory.Build.props (InternalsVisibleTo)
+    $directoryBuildPropsPath = Join-Path $solutionDir "Directory.Build.props"
     
     if (Test-Path $directoryBuildPropsPath) {
         $content = Get-Content $directoryBuildPropsPath -Raw

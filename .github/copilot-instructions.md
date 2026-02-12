@@ -23,7 +23,6 @@
 - **Don't write one test per pluggable component** — use `[PCT]` (see Pluggable Component Testing below).
 - **Don't run `dotnet test` without `--no-build`** if you've already built.
 - **DevScripts must be imported** before using `C-*` commands — don't assume they're loaded. Import with: `Import-Module <repo>/DevScripts/Compze.psm1 -DisableNameChecking`
-- **After editing `.csproj` files**, run `C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders`.
 
 ## Repository Overview
 
@@ -78,38 +77,51 @@ dotnet test src/Compze.slnx --no-build --filter "FullyQualifiedName~MyTestClass"
 
 ## Project Structure
 
+The solution uses a **flat layout** — each project has its own top-level directory:
+- Library projects: `src/<ProjectName>/<ProjectName>.csproj`
+- Test projects: `test/<ProjectName>/<ProjectName>.csproj`
+
 ```
 src/
-  Compze.slnx                # Solution file
-  Directory.Build.props       # Shared MSBuild properties (do not modify)
+  Compze.slnx                         # Solution file
+  Directory.Build.props                # Shared MSBuild properties (do not modify)
   TestUsingPluggableComponentCombinations  # Active test config (do not modify)
-  Compze/                     # Main framework code
-    Abstractions/             # Core abstractions (Compze.Core)
-    Serialization/            # Serialization (Newtonsoft)
-    Sql/                      # SQL persistence (Common, MicrosoftSql, MySql, PostgreSql, Sqlite)
-    Tessaging/                # Type-based messaging + Teventive + Hosting
-    Utilities/                # Diverse utilities
-      DependencyInjection/    # DI abstractions and implementations
-      Testing/                # Testing infrastructure
-      Logging/                # Logging infrastructure
-      SystemCE/               # System class extensions
-      Contracts/              # Code contracts
-      Functional/             # Functional programming helpers
-  Tests/
-    Common/                   # Shared test base classes (e.g., DocumentDbTestsBase)
-    Infrastructure/           # Test infrastructure (XUnit attributes, UniversalTestBase)
-    Unit/                     # Unit tests
-    Integration/              # Integration tests (pluggable component combinations)
-    Performance/              # Performance tests
-    ScratchPad/               # Scratch/experimental tests
-    Compze.Tests.CodePolicies/  # Code policy enforcement tests
-  Samples/                    # Sample applications (AccountManagement)
-  Websites/Website/           # DocFX documentation site
-DevScripts/                   # PowerShell development automation module
+  Compze.Core/                         # Core abstractions
+  Compze.Serialization.Newtonsoft/     # Newtonsoft serialization
+  Compze.Sql.Common/                   # SQL persistence (common)
+  Compze.Sql.MicrosoftSql/             # SQL Server persistence
+  Compze.Sql.MySql/                    # MySQL persistence
+  Compze.Sql.PostgreSql/               # PostgreSQL persistence
+  Compze.Sql.Sqlite/                   # SQLite persistence
+  Compze.Tessaging/                    # Type-based messaging + Teventive
+  Compze.Tessaging.Hosting.AspNetCore/ # ASP.NET Core hosting
+  Compze.Tessaging.Hosting.Testing/    # Testing hosting
+  Compze.Tessaging.Teventive.TeventStore/ # TeventStore
+  Compze.Utilities/                    # Diverse utilities
+  Compze.Utilities.DependencyInjection.Microsoft/   # Microsoft DI
+  Compze.Utilities.DependencyInjection.SimpleInjector/ # SimpleInjector DI
+  Compze.Utilities.Logging.Serilog/    # Serilog logging
+  Compze.Utilities.Testing.DbPool/     # Database pool for testing
+  Compze.Utilities.Testing.Must/       # Must assertion library
+  Compze.Utilities.Testing.XUnit/      # xUnit testing infrastructure
+  Samples/                             # Sample applications (AccountManagement)
+  Websites/Website/                    # DocFX documentation site
+test/
+  Compze.Tests.CodePolicies/           # Code policy enforcement tests
+  Compze.Tests.Common/                 # Shared test base classes
+  Compze.Tests.Infrastructure/         # Test infrastructure (XUnit attributes, UniversalTestBase)
+  Compze.Tests.Integration/            # Integration tests
+  Compze.Tests.Performance.Internals/  # Performance tests
+  Compze.Tests.ScratchPad/             # Scratch/experimental tests
+  Compze.Tests.Unit/                   # Unit tests
+  Compze.Tests.Unit.Internals/         # Unit tests (internals)
+  Compze.Utilities.Testing.XUnit.Tests/ # Testing framework tests
+  Compze.Utilities.Tests/              # Utility tests
+DevScripts/                            # PowerShell development automation module
 ```
 
 ### Naming Conventions
-- **Projects**: Follow namespace structure (e.g., `Compze.Utilities.DependencyInjection` → `src/Compze/Utilities/DependencyInjection/`)
+- **Projects**: Flat layout — directory name = project name (e.g., `Compze.Utilities.DependencyInjection` → `src/Compze.Utilities.DependencyInjection/`)
 - **Interfaces**: Prefix with `I` (e.g., `IUserEvent`, `IAggregateEvent`)
 - **Variables/Methods**: Use descriptive names; long names are acceptable if they improve clarity
 
@@ -163,8 +175,8 @@ public class MyFeatureTests : UniversalTestBase
 **DO NOT** write one test per pluggable component. The `[PCT]` mechanism automatically tests ALL enabled combinations.
 
 **Good examples to reference:**
-- Simple: `Tests/Integration/Infrastructure/PluggableComponentsTheoryTests.cs`
-- With service locator: `Tests/Common/Sql/DocumentDb/DocumentDbTestsBase.cs`
+- Simple: `test/Compze.Tests.Integration/Infrastructure/PluggableComponentsTheoryTests.cs`
+- With service locator: `test/Compze.Tests.Common/Sql/DocumentDb/DocumentDbTestsBase.cs`
 
 ## Teventive Programming
 - Events use interface inheritance for type-based routing

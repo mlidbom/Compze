@@ -25,10 +25,18 @@ function Ensure-ProjectIsInSolution {
     )
     
     [xml]$xml = Get-Content $SolutionPath
+    $solutionDir = Split-Path -Parent $SolutionPath
     
-    # Calculate the expected project path
-    $solutionProjectPath = $ProjectName -replace '\.', '/'
-    $solutionProjectPath = "$solutionProjectPath/$ProjectName.csproj"
+    # Find the actual project file on disk to determine the correct path
+    $projectFile = Get-CsprojFiles -Path (Split-Path -Parent (Split-Path -Parent $SolutionPath)) -Filter "$ProjectName.csproj" | Select-Object -First 1
+    
+    if ($projectFile) {
+        # Use the actual location on disk
+        $solutionProjectPath = [System.IO.Path]::GetRelativePath($solutionDir, $projectFile.FullName) -replace '\\', '/'
+    } else {
+        # Project doesn't exist yet — use flat convention: ProjectName/ProjectName.csproj
+        $solutionProjectPath = "$ProjectName/$ProjectName.csproj"
+    }
     
     # Try to find the project
     $projectElement = $xml.SelectNodes("//Project[@Path]") | Where-Object { $_.Path -eq $solutionProjectPath } | Select-Object -First 1

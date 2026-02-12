@@ -1,15 +1,32 @@
 # rules for slnx file and file system structure
 
-- the slnx solution folder structure should be like this:
-  - the solution-folder and project file name pattern should be: 
-    - folder:Compze/A/B/C/
-    - project-file: Compze.A.B.C.csproj
- - Compze/A/B/C/ may also contain one level down nested projects:
-   - Compze.A.B.C.D.csproj
-   - Compze.A.B.C.E.csproj
-   
-- the file system structure to filename matching should ALWAYS be this
-  - file-name: Compze.A.B.C.D.csproj 
-  - directory: src/Compze/A/B/C/D
+## Flat Layout Convention
 
-- Not every file system folder must have a csproj file. It is fine for it to just be a folder belonging to a csproj in a parent folder
+Each project lives in its own top-level directory under `src/` (library) or `test/` (test):
+
+- **Library projects**: `src/<ProjectName>/<ProjectName>.csproj`
+- **Test projects**: `test/<ProjectName>/<ProjectName>.csproj`
+
+Examples:
+  - `src/Compze.Core/Compze.Core.csproj`
+  - `src/Compze.Utilities.DependencyInjection.Microsoft/Compze.Utilities.DependencyInjection.Microsoft.csproj`
+  - `test/Compze.Tests.Unit/Compze.Tests.Unit.csproj`
+
+## Solution Folder Organization
+
+Projects are organized into solution folders by category:
+
+| Solution Folder | Contents |
+|----------------|----------|
+| `/Compze/` | Root-level library projects (e.g., Compze.Core, Compze.Tessaging, Compze.Utilities) |
+| `/Compze/<SubGroup>/` | Library projects grouped by first component after "Compze." (e.g., `/Compze/Utilities/`, `/Compze/Sql/`) |
+| `/_Tests/` | All test projects |
+| `/_Samples/` | Sample applications |
+| `/_Websites/` | Documentation website |
+| `/~Solution Structure/` | MSBuild and solution structure projects |
+
+## Key Rules
+
+- Directory name MUST match project name exactly
+- No project nesting — each project is at the top level of `src/` or `test/`
+- Not every folder in a project directory must have a csproj — subdirectories are just folders belonging to the project
