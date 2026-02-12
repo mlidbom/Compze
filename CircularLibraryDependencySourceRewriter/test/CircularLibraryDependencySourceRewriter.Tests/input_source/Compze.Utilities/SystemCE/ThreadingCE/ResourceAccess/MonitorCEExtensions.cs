@@ -1,0 +1,43 @@
+using System;
+
+namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
+
+public static class MonitorCEExtensions
+{
+   public static TResult DoubleCheckedLocking<TResult>(this IMonitorCE @this, Func<TResult?> tryRead, Action updateOnFailedRead)
+      where TResult : class =>
+      tryRead() ?? @this.Update(() =>
+      {
+         var result = tryRead();
+         if(result != null) return result;
+         updateOnFailedRead();
+         return tryRead() ?? throw new Exception($"{nameof(tryRead)} returned null even after {nameof(updateOnFailedRead)} had been called.");
+      });
+
+   public static TResult DoubleCheckedLocking<TResult>(this IMonitorCE @this, Func<bool> canRead, Func<TResult> read, Action updateOnFailedRead) =>
+      canRead()
+         ? read()
+         : @this.Update(() =>
+         {
+            if(canRead()) return read();
+            updateOnFailedRead();
+            return read();
+         });
+
+   public static TResult ReadOrUpdate<TResult>(this IMonitorCE @this, Func<TResult?> tryRead, Action updateOnFailedRead, TimeSpan? timeout = null)
+      where TResult : class =>
+      @this.Read(() => tryRead() ?? @this.Update(() =>
+      {
+         updateOnFailedRead();
+         return tryRead() ?? throw new Exception($"{nameof(tryRead)} returned null even after {nameof(updateOnFailedRead)} had been called.");
+      }));
+
+   public static TResult ReadOrUpdate<TResult>(this IMonitorCE @this, Func<bool> canRead, Func<TResult> read, Action update, TimeSpan? timeout = null) =>
+      @this.Read(() => canRead()
+                          ? read()
+                          : @this.Update(() =>
+                          {
+                             update();
+                             return read();
+                          }));
+}
