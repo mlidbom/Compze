@@ -106,7 +106,6 @@ When_a_user_attempts_to_register
 | `[PCTDIContainer]` | Varies only the DIContainer component. |
 | `[Performance]` | Marks performance tests. |
 | `[LongRunning]` | Marks long-running tests. |
-| `[Fact]` / `[Theory]` | Standard xUnit — only for simple utility-level tests that don't use nesting. |
 
 **Never write one test per pluggable component.** Use `[PCT]` + `UniversalTestBase` + `TestEnv` — it automatically tests all enabled combinations with zero-parameter test methods.
 
