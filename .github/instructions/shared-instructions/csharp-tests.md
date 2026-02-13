@@ -1,8 +1,8 @@
 ---
-applyTo: "test/**/*.cs"
+applyTo: "test/**/*.cs,**/*.Tests/**/*.cs"
 ---
 
-# C# Test Code Conventions
+# C# Test Code Conventions for all repositories
 
 ## Preferred Style: BDD-Style Specification Tests
 

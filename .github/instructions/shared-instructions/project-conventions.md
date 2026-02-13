@@ -6,7 +6,6 @@ applyTo: '**'
 
 - **Exceptions**: Never swallow exceptions in a catch block without rethrowing.
 - **Comments**: Prefer descriptive names over explanatory comments. Do not add `// Arrange`, `// Act`, `// Assert` comments in tests.
-- **DevScripts output**: Success should be silent — only write output when something goes wrong.
 
 ## Code Quality
 

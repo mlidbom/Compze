@@ -2,7 +2,7 @@
 applyTo: "**/*.cs"
 ---
 
-# C# Code Conventions
+# C# Code Conventions for all repositories
 
 ## Formatting
 
