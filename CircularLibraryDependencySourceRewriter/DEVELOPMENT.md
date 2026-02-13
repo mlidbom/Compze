@@ -16,13 +16,14 @@ src/
   CircularLibraryDependencySourceRewriter/
     SourceRewriter.cs                                  # Core rewriting logic
     RewriteDirectoryTask.cs                            # MSBuild ITask implementation
-    CircularLibraryDependencySourceRewriter.targets     # MSBuild integration for consuming projects
-    CircularLibraryDependencySourceRewriter.csproj
+    CircularLibraryDependencySourceRewriter.targets     # MSBuild integration (packed into NuGet)
+    CircularLibraryDependencySourceRewriter.csproj      # Configured as NuGet package
 test/
   CircularLibraryDependencySourceRewriter.Tests/
     When_rewriting_source_with_MakeTypesInternal.cs     # Unit tests (BDD style)
     When_rewriting_each_source_file.cs                  # Per-file snapshot tests
-    When_rewriting_an_entire_directory.cs               # End-to-end batch test
+    When_rewriting_an_entire_directory.cs               # End-to-end batch test (single directory)
+    When_rewriting_multiple_directories.cs              # End-to-end batch test (multiple directories)
     GenerateOutputSource.cs                             # Manual helper to regenerate baseline
     input_source/                                       # Real C# source files (test input, committed)
     output_source/                                      # Expected rewritten output (committed baseline)
@@ -74,6 +75,16 @@ public(\s+)(modifiers)*(class|interface|struct|enum|record|delegate)
 Where `modifiers` matches `static`, `abstract`, `sealed`, `partial`, `unsafe`, `readonly`, `ref`, `file`, `new`.
 
 This works because the type keyword (`class`, `interface`, etc.) unambiguously distinguishes type declarations from member declarations. `public string Name` doesn't match because `string` isn't a type keyword. Nested types match independently regardless of nesting depth.
+
+## NuGet Packaging
+
+The project is packaged as a NuGet package containing the MSBuild task DLL and `.targets` file in both `build/` and `buildTransitive/`. To pack locally:
+
+```powershell
+dotnet pack src/CircularLibraryDependencySourceRewriter -c Release
+```
+
+The package outputs to the `nupkgs/` folder at the consuming repo root, configured as a local NuGet source.
 
 ## Tech Stack
 
