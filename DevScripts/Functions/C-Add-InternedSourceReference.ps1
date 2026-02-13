@@ -6,7 +6,7 @@ function C-Add-InternedSourceReference {
     Configures a project to internalize source from another project directory
 
     .DESCRIPTION
-    Adds a PackageReference to CircularLibraryDependencySourceRewriter and sets
+    Adds a PackageReference to Compze.InternalizedSourceReferences and sets
     InternalizeSourceFrom/InternalizeSourceTo properties in the consumer project.
     This allows the consumer to compile an internal copy of the source project's code,
     which is useful for resolving circular dependency scenarios.
@@ -36,10 +36,10 @@ function C-Add-InternedSourceReference {
 
     $sourceRelativePath = [System.IO.Path]::GetRelativePath($consumerDir, $SourceProjectDir)
 
-    # Add PackageReference to CircularLibraryDependencySourceRewriter
+    # Add PackageReference to Compze.InternalizedSourceReferences
     [xml]$xml = Get-Content $ConsumerCsprojPath
 
-    $existingPkgRef = $xml.SelectNodes("//PackageReference[@Include='CircularLibraryDependencySourceRewriter']") | Select-Object -First 1
+    $existingPkgRef = $xml.SelectNodes("//PackageReference[@Include='Compze.InternalizedSourceReferences']") | Select-Object -First 1
     if (-not $existingPkgRef) {
         # Find or create an ItemGroup for PackageReferences
         $pkgItemGroup = $xml.SelectNodes("//ItemGroup[PackageReference]") | Select-Object -First 1
@@ -48,7 +48,7 @@ function C-Add-InternedSourceReference {
             $xml.DocumentElement.AppendChild($pkgItemGroup) | Out-Null
         }
         $pkgRef = $xml.CreateElement("PackageReference")
-        $pkgRef.SetAttribute("Include", "CircularLibraryDependencySourceRewriter")
+        $pkgRef.SetAttribute("Include", "Compze.InternalizedSourceReferences")
         $pkgRef.SetAttribute("Version", "0.1.0-local")
         $pkgRef.SetAttribute("PrivateAssets", "all")
         $pkgItemGroup.AppendChild($pkgRef) | Out-Null
