@@ -4,7 +4,7 @@
       <Nullable>enable</Nullable>
    </PropertyGroup>
    <ItemGroup>
-      <PackageReference Include="Compze.InternalizedSourceReferences" Version="0.1.0-local" PrivateAssets="all" />
+      <PackageReference Include="Compze.InternalizedSourceReferences" Version="0.1.0-alpha.2" PrivateAssets="all" />
       <PackageReference Include="JetBrains.Annotations" Version="2025.2.4" />
       <PackageReference Include="NsDepCop" Version="2.6.0">
          <PrivateAssets>all</PrivateAssets>

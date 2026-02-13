@@ -28,6 +28,11 @@ jobs:
       - name: Configure test pluggable components
         run: cp src/TestUsingPluggableComponentCombinations.github-ci src/TestUsingPluggableComponentCombinations
 
+      - name: Build and test Compze.InternalizedSourceReferences
+        run: |
+          dotnet build Compze.InternalizedSourceReferences/Compze.InternalizedSourceReferences.slnx
+          dotnet test Compze.InternalizedSourceReferences/Compze.InternalizedSourceReferences.slnx --no-build
+
       - name: Build
         run: dotnet build src/Compze.slnx
 
