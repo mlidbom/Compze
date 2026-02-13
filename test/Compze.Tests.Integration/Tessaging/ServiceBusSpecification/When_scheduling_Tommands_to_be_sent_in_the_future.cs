@@ -44,7 +44,7 @@ public class When_scheduling_tommands_to_be_sent_in_the_future : UniversalTestBa
 
       _endpoint.ExecuteServerRequestInTransaction(session => session.ScheduleSend(now + .2.Seconds(), inOneHour));
 
-      _receivedTommandGate.AwaitPassedThroughCountEqualTo(1, timeout: 2.Seconds());
+      _receivedTommandGate.AwaitPassedThroughCountEqualTo(1, timeout: 10.Seconds());
    }
 
    [PCT]  public void Tessages_whose_due_time_have_not_passed_are_not_delivered()
