@@ -2,16 +2,6 @@
 
 **BDD-style specification testing for xUnit v3** — write nested, inheritable test classes that read like executable specifications.
 
-## The problem
-
-xUnit runs every `[Fact]` it finds on a class, *including inherited ones*. So if you nest test classes and use inheritance to build up context (the way BDD specifications work), every test from every ancestor re-runs on every descendant. A 3-level deep spec tree doesn't just duplicate work — it causes an *explosion* of redundant test executions.
-
-This makes idiomatic BDD-style testing in plain xUnit impractical.
-
-## The solution
-
-This package provides `[ExclusiveFact]` (and its short alias `[XF]`) — a custom xUnit v3 fact attribute that runs a test **only for the class that declares it**, never for inheriting classes. This single mechanism unlocks clean, nested, context-building BDD specifications without any duplicated runs.
-
 ## Tests that become an easy to read specification
 
 Specifications are organized as nested classes where each level adds context. Class names describe the scenario, test method names describe the expected behavior:
@@ -107,6 +97,13 @@ public class When_a_user_attempts_to_register
 note: We use our Must fluent assertion library in this code. You may want to check it out if you like our approach to testing...
 
 Each `[XF]` test runs **exactly once** — in the class that declares it — even though child classes inherit parent members.
+
+## Why do you need a separate library to do this?
+
+xUnit runs every `[Fact]` it finds on a class, *including inherited ones*. So if you nest test classes and use inheritance to build up context (the way BDD specifications work), every test from every ancestor re-runs on every descendant. A 3-level deep spec tree doesn't just duplicate work — it causes an exponential *explosion* of redundant test executions and an unreadable specification.
+
+This makes BDD-style testing in plain xUnit impractical.
+
 
 ### How context flows through inheritance
 
