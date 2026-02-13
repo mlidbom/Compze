@@ -1,0 +1,10 @@
+Run both commands from the repository root to add the shared instructions subtree:
+
+git subtree add --prefix .github/instructions/shared-instructions https://github.com/mlidbom/copilot-code-standards-and-instructions.git main
+git subtree split --prefix .github/instructions/shared-instructions --rejoin
+
+Do NOT use --squash — it discards commit objects that split/push need later.
+
+The second command creates a rejoin marker so that future pushes don't have to
+walk the entire repo history. Do this immediately after the add — it's instant
+at this point since only one commit touches the prefix.
