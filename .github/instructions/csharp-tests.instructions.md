@@ -55,7 +55,7 @@ For full BDD rationale and examples, see [src/Compze.Utilities.Testing.XUnit/REA
 
 ## Code Policy Tests
 
-- Typically static classes with `[Fact]` methods that scan assemblies for violations.
+- Typically static classes with `[XF]` methods that scan assemblies for violations.
 
 ## Pluggable Component Testing
 
