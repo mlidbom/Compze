@@ -35,13 +35,6 @@ jobs:
       - name: Pack Compze.InternalizedSourceReferences
         run: dotnet pack Compze.InternalizedSourceReferences/src/Compze.InternalizedSourceReferences/Compze.InternalizedSourceReferences.csproj --configuration Release --no-build --output ./nupkgs
 
-      - name: Publish Compze.InternalizedSourceReferences to NuGet.org
-        run: |
-          dotnet nuget push ./nupkgs/Compze.InternalizedSourceReferences.*.nupkg \
-            --api-key ${{ secrets.NUGET_API_KEY }} \
-            --source https://api.nuget.org/v3/index.json \
-            --skip-duplicate
-
       - name: Build
         run: dotnet build src/Compze.slnx --configuration Release
 
