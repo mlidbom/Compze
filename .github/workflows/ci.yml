@@ -32,7 +32,7 @@ jobs:
         run: |
           dotnet build Compze.InternalizedSourceReferences/Compze.InternalizedSourceReferences.slnx
           dotnet test Compze.InternalizedSourceReferences/Compze.InternalizedSourceReferences.slnx --no-build
-          dotnet pack Compze.InternalizedSourceReferences/src/Compze.InternalizedSourceReferences/Compze.InternalizedSourceReferences.csproj --no-build
+          dotnet pack Compze.InternalizedSourceReferences/src/Compze.InternalizedSourceReferences/Compze.InternalizedSourceReferences.csproj --no-build --configuration Debug
 
       - name: Build
         run: dotnet build src/Compze.slnx
