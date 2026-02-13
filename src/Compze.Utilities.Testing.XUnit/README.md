@@ -17,6 +17,7 @@ This package provides `[ExclusiveFact]` (and its short alias `[XF]`) — a custo
 Specifications are organized as nested classes where each level adds context. Class names describe the scenario, test method names describe the expected behavior:
 
 ```csharp
+using Compze.Utilities.Testing.Must;
 using Compze.Utilities.Testing.XUnit.BDD;
 
 public class When_a_user_attempts_to_register
@@ -30,8 +31,8 @@ public class When_a_user_attempts_to_register
          readonly RegistrationResult _result;
          public that_is_missing_the_at_sign() => _result = _service.Register("johndoe.com", "Secret123!");
 
-         [XF] public void registration_is_rejected()  => Assert.False(_result.Succeeded);
-         [XF] public void error_mentions_email()       => Assert.Contains("email", _result.Error, StringComparison.OrdinalIgnoreCase);
+         [XF] public void registration_is_rejected()  => _result.Succeeded.Must().BeFalse();
+         [XF] public void error_mentions_email()       => _result.Error.Must().Contain("email");
       }
 
       public class that_is_empty : with_invalid_email
@@ -39,8 +40,8 @@ public class When_a_user_attempts_to_register
          readonly RegistrationResult _result;
          public that_is_empty() => _result = _service.Register("", "Secret123!");
 
-         [XF] public void registration_is_rejected()  => Assert.False(_result.Succeeded);
-         [XF] public void error_mentions_required()    => Assert.Contains("required", _result.Error, StringComparison.OrdinalIgnoreCase);
+         [XF] public void registration_is_rejected()  => _result.Succeeded.Must().BeFalse();
+         [XF] public void error_mentions_required()    => _result.Error.Must().Contain("required");
       }
    }
 
@@ -51,8 +52,8 @@ public class When_a_user_attempts_to_register
          readonly RegistrationResult _result;
          public that_is_too_short() => _result = _service.Register("john@doe.com", "Ab1!");
 
-         [XF] public void registration_is_rejected()     => Assert.False(_result.Succeeded);
-         [XF] public void error_mentions_password_length() => Assert.Contains("at least 8", _result.Error);
+         [XF] public void registration_is_rejected()     => _result.Succeeded.Must().BeFalse();
+         [XF] public void error_mentions_password_length() => _result.Error.Must().Contain("at least 8");
       }
 
       public class that_has_no_digit : with_invalid_password
@@ -60,8 +61,8 @@ public class When_a_user_attempts_to_register
          readonly RegistrationResult _result;
          public that_has_no_digit() => _result = _service.Register("john@doe.com", "SecretPassword!");
 
-         [XF] public void registration_is_rejected()  => Assert.False(_result.Succeeded);
-         [XF] public void error_mentions_digit()       => Assert.Contains("digit", _result.Error, StringComparison.OrdinalIgnoreCase);
+         [XF] public void registration_is_rejected()  => _result.Succeeded.Must().BeFalse();
+         [XF] public void error_mentions_digit()       => _result.Error.Must().Contain("digit");
       }
    }
 
@@ -70,9 +71,9 @@ public class When_a_user_attempts_to_register
       readonly RegistrationResult _result;
       public with_all_valid_data() => _result = _service.Register("john@doe.com", "Secret123!");
 
-      [XF] public void registration_succeeds()       => Assert.True(_result.Succeeded);
-      [XF] public void a_confirmation_email_is_sent() => Assert.True(_result.ConfirmationEmailSent);
-      [XF] public void the_user_id_is_assigned()      => Assert.NotEqual(Guid.Empty, _result.UserId);
+      [XF] public void registration_succeeds()       => _result.Succeeded.Must().BeTrue();
+      [XF] public void a_confirmation_email_is_sent() => _result.ConfirmationEmailSent.Must().BeTrue();
+      [XF] public void the_user_id_is_assigned()      => _result.UserId.Must().NotBe(Guid.Empty);
    }
 }
 ```
