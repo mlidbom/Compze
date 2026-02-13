@@ -8,7 +8,7 @@
     <!-- NuGet package configuration -->
     <IsPackable>true</IsPackable>
     <PackageId>Compze.InternalizedSourceReferences</PackageId>
-    <Version>0.1.0-alpha.2</Version>
+    <Version>0.1.0-alpha.3</Version>
     <Description>MSBuild task that rewrites source files from referenced projects, making public types internal. Enables code sharing between projects with circular dependencies.</Description>
     <DevelopmentDependency>true</DevelopmentDependency>
     <NoPackageAnalysis>true</NoPackageAnalysis>

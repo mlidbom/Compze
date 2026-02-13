@@ -2,7 +2,7 @@
    <PropertyGroup>
       <TargetFramework>net9.0</TargetFramework>
       <Nullable>enable</Nullable>
-      <Version>0.1.0-alpha.2</Version>
+      <Version>0.1.0-alpha.3</Version>
       <Description>Core abstractions for the Compze framework including entity IDs, messaging contracts, and event sourcing interfaces.</Description>
    </PropertyGroup>
    <ItemGroup>
