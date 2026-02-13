@@ -99,4 +99,3 @@ applyTo: "**/*.cs"
   public class Foo<T>
      where T : IBar
   ```
-- Single simple constraints inline: `class Foo<T> where T : new()`.
