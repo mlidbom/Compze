@@ -101,13 +101,7 @@ When_a_user_attempts_to_register
 | Attribute | Purpose |
 | --- | --- |
 | `[XF]` | **Exclusive Fact — the default for new tests.** Only runs in the declaring class (not inherited), enabling BDD-style nested inheritance. |
-| `[PCT]` | Pluggable Component Theory — runs the test for every configured component combination (SqlLayer × DIContainer × Serializer × Transport). |
-| `[PCTSerializer]` | Varies only the Serializer component. |
-| `[PCTDIContainer]` | Varies only the DIContainer component. |
-| `[Performance]` | Marks performance tests. |
-| `[LongRunning]` | Marks long-running tests. |
-
-**Never write one test per pluggable component.** Use `[PCT]` + `UniversalTestBase` + `TestEnv` — it automatically tests all enabled combinations with zero-parameter test methods.
+| `[Fact]` / `[Theory]` | Standard xUnit — only for simple utility-level tests that don't use nesting. |
 
 ## Assertions
 
@@ -150,10 +144,6 @@ Short single-expression tests: attribute on the same line as the method:
 ## Setup & Teardown
 
 - Set up state in the **constructor** — not in a `[SetUp]` or separate method. In BDD-style specs, each nesting level's constructor adds its own context.
-- Override these protected virtual methods from `UniversalTestBase` instead of implementing `IDisposable`/`IAsyncLifetime` directly:
-  - `DisposeInternal()` — synchronous cleanup.
-  - `InitializeAsyncInternal()` — async initialization (e.g., `await Host.StartAsync()`).
-  - `DisposeAsyncInternal()` — async cleanup (e.g., `await Host.DisposeAsync()`).
 
 ## Async Tests
 
