@@ -100,9 +100,7 @@ Each `[XF]` test runs **exactly once** — in the class that declares it — eve
 
 ## Why do you need a separate library to do this?
 
-xUnit runs every `[Fact]` it finds on a class, *including inherited ones*. So if you nest test classes and use inheritance to build up context (the way BDD specifications work), every test from every ancestor re-runs on every descendant. A 3-level deep spec tree doesn't just duplicate work — it causes an exponential *explosion* of redundant test executions and an unreadable specification.
-
-This makes BDD-style testing in plain xUnit impractical.
+xUnit runs every `[Fact]` it finds on a class, *including inherited ones*. So if you nest-inherit test classes in this way it causes an exponential *explosion* of redundant test executions and an unreadable specification. This makes BDD-style testing impractical.
 
 
 ### How context flows through inheritance
