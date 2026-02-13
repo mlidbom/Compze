@@ -13,7 +13,7 @@ For full rationale and examples, see [src/Compze.Utilities.Testing.XUnit/README.
 **When adding tests to an existing test class that uses the older flat style:**
 - If it's relatively easy, refactor the existing tests in that class to BDD-style nested structure, then add the new tests in that structure.
 - If refactoring would be complex or risky, create a new test class using BDD-style structure for the new tests instead.
-- Do NOT add new tests to the old flat structure — this only adds to the technical debt and makes future refactoring harder.
+- Do NOT add new tests to the old flat structure — this only adds to the technical debt
 
 ### How it works
 
