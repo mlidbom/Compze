@@ -9,6 +9,7 @@
 ### Common Pitfalls
 - **Don't write one test per pluggable component** — use `[PCT]` (see Pluggable Component Testing below).
 - **DevScripts must be imported** before using `C-*` commands — don't assume they're loaded. Import with: `Import-Module <repo>/DevScripts/Compze.psm1 -DisableNameChecking`
+- **New package versions**: When creating a new packable project, set the `<Version>` to an early pre-release version (e.g., `0.1.0-alpha.1`). **NEVER** use `1.0.0` or any stable-looking version for something brand new and in development. Package versions are NOT synchronized across projects — each project has its own version.
 
 ## Repository Overview
 
