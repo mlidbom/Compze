@@ -44,18 +44,17 @@
     <Project Path="SolutionStructure/Solution.TestConfig.csproj" />
     <Project Path="SolutionStructure/Solution.TODO.csproj" />
   </Folder>
-  <Folder Name="/CircularLibraryDependencySourceRewriter/">
-    <Project Path="../CircularLibraryDependencySourceRewriter/src/CircularLibraryDependencySourceRewriter/CircularLibraryDependencySourceRewriter.csproj">
+  <Folder Name="/Compze.InternalizedSourceReferences/">
+    <Project Path="../Compze.InternalizedSourceReferences/src/Compze.InternalizedSourceReferences/Compze.InternalizedSourceReferences.csproj">
       <BuildType Solution="docs|*" Project="Debug" />
     </Project>
-    <Project Path="../CircularLibraryDependencySourceRewriter/test/CircularLibraryDependencySourceRewriter.Tests/CircularLibraryDependencySourceRewriter.Tests.csproj">
+    <Project Path="../Compze.InternalizedSourceReferences/test/Compze.InternalizedSourceReferences.Tests/Compze.InternalizedSourceReferences.Tests.csproj">
       <BuildType Solution="docs|*" Project="Debug" />
     </Project>
   </Folder>
   <Folder Name="/Compze/">
     <Project Path="Compze.Core/Compze.Core.csproj" />
     <Project Path="Compze.Tessaging/Compze.Tessaging.csproj" />
-    <Project Path="Compze.Utilities/Compze.Utilities.csproj" />
   </Folder>
   <Folder Name="/Compze/Serialization/">
     <Project Path="Compze.Serialization.Newtonsoft/Compze.Serialization.Newtonsoft.csproj" />
@@ -79,6 +78,12 @@
     <Project Path="Compze.Utilities.Testing.DbPool/Compze.Utilities.Testing.DbPool.csproj" />
     <Project Path="Compze.Utilities.Testing.XUnit/Compze.Utilities.Testing.XUnit.csproj" />
     <Project Path="Compze.Utilities.Testing.Must/Compze.Utilities.Testing.Must.csproj" />
+    <Project Path="Compze.Utilities.Contracts/Compze.Utilities.Contracts.csproj" />
+    <Project Path="Compze.Utilities.Functional/Compze.Utilities.Functional.csproj" />
+    <Project Path="Compze.Utilities.DependencyInjection/Compze.Utilities.DependencyInjection.csproj" />
+    <Project Path="Compze.Utilities.Logging/Compze.Utilities.Logging.csproj" />
+    <Project Path="Compze.Utilities.SystemCE/Compze.Utilities.SystemCE.csproj" />
+    <Project Path="Compze.Utilities.SystemCE.ThreadingCE/Compze.Utilities.SystemCE.ThreadingCE.csproj" />
   </Folder>
   <Folder Name="/_Tests/">
     <Project Path="../test/Compze.Utilities.Tests/Compze.Utilities.Tests.csproj" />

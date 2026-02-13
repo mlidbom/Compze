@@ -1,0 +1,49 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+
+    <!-- NuGet package configuration -->
+    <IsPackable>true</IsPackable>
+    <PackageId>Compze.InternalizedSourceReferences</PackageId>
+    <Version>0.1.0-alpha.2</Version>
+    <Description>MSBuild task that rewrites source files from referenced projects, making public types internal. Enables code sharing between projects with circular dependencies.</Description>
+    <DevelopmentDependency>true</DevelopmentDependency>
+    <NoPackageAnalysis>true</NoPackageAnalysis>
+    <NoWarn>$(NoWarn);NU5100;NU5128</NoWarn>
+    <PackageOutputPath>$(MSBuildThisFileDirectory)..\..\..\nupkgs</PackageOutputPath>
+
+    <!-- Don't put anything in lib/ - this is a build-only tool -->
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+
+    <!-- Package metadata (matches other Compze packages) -->
+    <Authors>Lidbom Solutions AB</Authors>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/mlidbom/Compze</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/mlidbom/Compze.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>compze;msbuild;source-rewriting;circular-dependencies</PackageTags>
+    <Copyright>Copyright (c) Lidbom Solutions AB. All rights reserved.</Copyright>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Build.Framework" Version="17.*" ExcludeAssets="runtime" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="17.*" ExcludeAssets="runtime" PrivateAssets="all" />
+  </ItemGroup>
+
+  <!-- Pack the .targets and DLL into both build/ and buildTransitive/ -->
+  <ItemGroup>
+    <None Include="Compze.InternalizedSourceReferences.targets" Pack="true" PackagePath="build/" />
+    <None Include="Compze.InternalizedSourceReferences.targets" Pack="true" PackagePath="buildTransitive/" />
+    <None Include="$(OutputPath)Compze.InternalizedSourceReferences.dll" Pack="true" PackagePath="build/" Visible="false" />
+    <None Include="$(OutputPath)Compze.InternalizedSourceReferences.dll" Pack="true" PackagePath="buildTransitive/" Visible="false" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="$(MSBuildProjectDirectory)/../../README.md" Pack="true" PackagePath="" />
+  </ItemGroup>
+
+</Project>

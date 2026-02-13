@@ -1,0 +1,8 @@
+﻿<ProjectConfiguration>
+  <Settings>
+    <AdditionalFilesToIncludeForProject>
+      <Value>..\Compze.Utilities.SystemCE\**.*</Value>
+      <Value>..\Compze.Utilities.SystemCE.ThreadingCE\**.*</Value>
+    </AdditionalFilesToIncludeForProject>
+  </Settings>
+</ProjectConfiguration>

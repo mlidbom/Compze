@@ -1,20 +1,23 @@
-<Project Sdk="Microsoft.NET.Sdk">
-
-	<PropertyGroup>
-		<TargetFramework>net9.0</TargetFramework>
-		<Nullable>enable</Nullable>
-    <Version>0.1.0-alpha.2</Version>
-		<Description>Core utilities for the Compze framework including dependency injection abstractions, system extensions, and threading helpers.</Description>
-	</PropertyGroup>
-	<ItemGroup>
+﻿<Project Sdk="Microsoft.NET.Sdk">
+   <PropertyGroup>
+      <TargetFramework>net9.0</TargetFramework>
+      <Nullable>enable</Nullable>
+      <Version>0.1.0-alpha.2</Version>
+      <Description>Core utilities for the Compze framework including dependency injection abstractions, system extensions, and threading helpers.</Description>
+   </PropertyGroup>
+   <ItemGroup>
       <PackageReference Include="JetBrains.Annotations" Version="2025.2.4" />
       <PackageReference Include="NsDepCop" Version="2.6.0">
          <PrivateAssets>all</PrivateAssets>
          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
-	</ItemGroup>
-  <ItemGroup>
-    <Folder Include="SystemCE\TextCE\" />
-    <Folder Include="SystemCE\ThreadingCE\Async\" />
-  </ItemGroup>
+   </ItemGroup>
+   <ItemGroup>
+      <Folder Include="SystemCE\TextCE\" />
+      <Folder Include="SystemCE\ThreadingCE\Async\" />
+   </ItemGroup>
+   <ItemGroup>
+      <ProjectReference Include="..\Compze.Utilities.Contracts\Compze.Utilities.Contracts.csproj" />
+      <ProjectReference Include="..\Compze.Utilities.Functional\Compze.Utilities.Functional.csproj" />
+   </ItemGroup>
 </Project>

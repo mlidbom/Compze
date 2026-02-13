@@ -26,12 +26,18 @@
       <ProjectReference Include="..\..\src\Compze.Utilities.DependencyInjection.SimpleInjector\Compze.Utilities.DependencyInjection.SimpleInjector.csproj" />
       <ProjectReference Include="..\..\src\Compze.Utilities.Logging.Serilog\Compze.Utilities.Logging.Serilog.csproj" />
       <ProjectReference Include="..\..\src\Compze.Utilities.Testing.DbPool\Compze.Utilities.Testing.DbPool.csproj" />
-      <ProjectReference Include="..\..\src\Compze.Utilities\Compze.Utilities.csproj" />
       <ProjectReference Include="..\..\src\Compze.Utilities.Testing.Must\Compze.Utilities.Testing.Must.csproj" />
+      <ProjectReference Include="..\..\src\Compze.Utilities.Contracts\Compze.Utilities.Contracts.csproj" />
+      <ProjectReference Include="..\..\src\Compze.Utilities.Functional\Compze.Utilities.Functional.csproj" />
+      <ProjectReference Include="..\..\src\Compze.Utilities.DependencyInjection\Compze.Utilities.DependencyInjection.csproj" />
+      <ProjectReference Include="..\..\src\Compze.Utilities.Logging\Compze.Utilities.Logging.csproj" />
+      <ProjectReference Include="..\..\src\Compze.Utilities.SystemCE\Compze.Utilities.SystemCE.csproj" />
+      <ProjectReference Include="..\..\src\Compze.Utilities.SystemCE.ThreadingCE\Compze.Utilities.SystemCE.ThreadingCE.csproj" />
    </ItemGroup>
    <ItemGroup>
       <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
-      <PackageReference Include="NCrunch.Framework" Version="5.11.0" />      <PackageReference Include="JetBrains.Annotations" Version="2025.2.4">
+      <PackageReference Include="NCrunch.Framework" Version="5.11.0" />
+      <PackageReference Include="JetBrains.Annotations" Version="2025.2.4">
          <IncludeAssets>compile;analyzers</IncludeAssets>
       </PackageReference>
       <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">

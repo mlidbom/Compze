@@ -6,10 +6,10 @@ function C-Add-InternedSourceReference {
     Configures a project to internalize source from another project directory
 
     .DESCRIPTION
-    Adds the CircularLibraryDependencySourceRewriter .targets import, a ProjectReference
-    to CircularLibraryDependencySourceRewriter, and sets InternalizeSourceFrom/InternalizeSourceTo
-    properties in the consumer project. This allows the consumer to compile an internal copy of
-    the source project's code, which is useful for resolving circular dependency scenarios.
+    Adds a PackageReference to Compze.InternalizedSourceReferences and sets
+    InternalizeSourceFrom/InternalizeSourceTo properties in the consumer project.
+    This allows the consumer to compile an internal copy of the source project's code,
+    which is useful for resolving circular dependency scenarios.
 
     .PARAMETER ConsumerCsprojPath
     Path to the .csproj file that will internalize the source
@@ -34,28 +34,24 @@ function C-Add-InternedSourceReference {
 
     $consumerDir = Split-Path -Parent $ConsumerCsprojPath
 
-    $cldrProjectPath = Join-Path $script:CompzeRoot "CircularLibraryDependencySourceRewriter" "src" "CircularLibraryDependencySourceRewriter" "CircularLibraryDependencySourceRewriter.csproj"
-    $cldrProjectRelativePath = [System.IO.Path]::GetRelativePath($consumerDir, $cldrProjectPath)
-
-    $targetsAbsolutePath = Join-Path $script:CompzeRoot "CircularLibraryDependencySourceRewriter" "src" "CircularLibraryDependencySourceRewriter" "CircularLibraryDependencySourceRewriter.targets"
-    $targetsRelativePath = [System.IO.Path]::GetRelativePath($consumerDir, $targetsAbsolutePath)
     $sourceRelativePath = [System.IO.Path]::GetRelativePath($consumerDir, $SourceProjectDir)
 
-    # Add ProjectReference to CircularLibraryDependencySourceRewriter (does its own file read/write)
-    Add-ProjectReference -CsprojPath $ConsumerCsprojPath -ReferencePath $cldrProjectRelativePath
-
-    # Now load the file (after Add-ProjectReference may have modified it) for remaining changes
+    # Add PackageReference to Compze.InternalizedSourceReferences
     [xml]$xml = Get-Content $ConsumerCsprojPath
 
-    # Add Import for the .targets file if not already present
-    $existingImport = $xml.SelectNodes("//Import[@Project]") |
-        Where-Object { $_.GetAttribute("Project") -like "*CircularLibraryDependencySourceRewriter.targets" } |
-        Select-Object -First 1
-
-    if (-not $existingImport) {
-        $import = $xml.CreateElement("Import")
-        $import.SetAttribute("Project", $targetsRelativePath)
-        $xml.DocumentElement.AppendChild($import) | Out-Null
+    $existingPkgRef = $xml.SelectNodes("//PackageReference[@Include='Compze.InternalizedSourceReferences']") | Select-Object -First 1
+    if (-not $existingPkgRef) {
+        # Find or create an ItemGroup for PackageReferences
+        $pkgItemGroup = $xml.SelectNodes("//ItemGroup[PackageReference]") | Select-Object -First 1
+        if (-not $pkgItemGroup) {
+            $pkgItemGroup = $xml.CreateElement("ItemGroup")
+            $xml.DocumentElement.AppendChild($pkgItemGroup) | Out-Null
+        }
+        $pkgRef = $xml.CreateElement("PackageReference")
+        $pkgRef.SetAttribute("Include", "Compze.InternalizedSourceReferences")
+        $pkgRef.SetAttribute("Version", "0.1.0-alpha.2")
+        $pkgRef.SetAttribute("PrivateAssets", "all")
+        $pkgItemGroup.AppendChild($pkgRef) | Out-Null
     }
 
     # Add PropertyGroup with InternalizeSourceFrom/To

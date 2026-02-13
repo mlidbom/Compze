@@ -10,8 +10,13 @@
    <ItemGroup>
       <ProjectReference Include="..\..\..\..\test\Compze.Tests.Infrastructure\Compze.Tests.Infrastructure.csproj" />
       <ProjectReference Include="..\..\src\AccountManagement.Server\AccountManagement.Server.csproj" />
-      <ProjectReference Include="..\..\..\..\src\Compze.Utilities\Compze.Utilities.csproj" />
       <ProjectReference Include="..\..\..\..\src\Compze.Utilities.Testing.Must\Compze.Utilities.Testing.Must.csproj" />
+      <ProjectReference Include="..\..\..\..\src\Compze.Utilities.Contracts\Compze.Utilities.Contracts.csproj" />
+      <ProjectReference Include="..\..\..\..\src\Compze.Utilities.Functional\Compze.Utilities.Functional.csproj" />
+      <ProjectReference Include="..\..\..\..\src\Compze.Utilities.DependencyInjection\Compze.Utilities.DependencyInjection.csproj" />
+      <ProjectReference Include="..\..\..\..\src\Compze.Utilities.Logging\Compze.Utilities.Logging.csproj" />
+      <ProjectReference Include="..\..\..\..\src\Compze.Utilities.SystemCE\Compze.Utilities.SystemCE.csproj" />
+      <ProjectReference Include="..\..\..\..\src\Compze.Utilities.SystemCE.ThreadingCE\Compze.Utilities.SystemCE.ThreadingCE.csproj" />
    </ItemGroup>
    <ItemGroup>
       <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />

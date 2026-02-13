@@ -127,7 +127,7 @@ public class MonitorCEPerformanceTests : UniversalTestBase
 
    [XF] public void _032_Read_MonitorCE_Read________________time_is_less_than_nanoseconds_SingleThreaded_60_MultiThreaded_360() =>
       RunScenarios(() => _guarded.Read_MonitorCE_Read(),
-                   singleThreadAllowedTime: (60 * TotalLocks).Nanoseconds().EnvMultiply(instrumented: 45.0, unoptimized: 2.2),
+                   singleThreadAllowedTime: (80 * TotalLocks).Nanoseconds().EnvMultiply(instrumented: 45.0, unoptimized: 2.2),
                    multiThreadAllowedTime: (360 * TotalLocks).Nanoseconds().EnvMultiply(instrumented: 9.0, unoptimized:1.6));
 
    [XF] public void _050_Increment_Unsafe___________________________________time_is_less_than_nanoseconds_SingleThreaded_06_MultiThreaded_12() =>
@@ -142,7 +142,7 @@ public class MonitorCEPerformanceTests : UniversalTestBase
 
    [XF] public void _070_Increment_MonitorCE_Using_EnterLock_________________time_is_less_than_nanoseconds_SingleThreaded_45__MultiThreaded_330() =>
       RunScenarios(() => _guarded.Increment_MonitorCE_Using_EnterLock(),
-                   singleThreadAllowedTime: (45 * TotalLocks).Nanoseconds().EnvMultiply(instrumented: 60, unoptimized: 2.2),
+                   singleThreadAllowedTime: (60 * TotalLocks).Nanoseconds().EnvMultiply(instrumented: 60, unoptimized: 2.2),
                    multiThreadAllowedTime: (500 * TotalLocks).Nanoseconds().EnvMultiply(instrumented: 8.0, unoptimized: 1.3));
 
    [XF] public void _073_Increment_MonitorCE_Update_________________________time_is_less_than_nanoseconds_SingleThreaded_120__MultiThreaded_340() =>

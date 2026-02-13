@@ -1,8 +1,0 @@
-<Solution>
-  <Folder Name="/src/">
-    <Project Path="src/CircularLibraryDependencySourceRewriter/CircularLibraryDependencySourceRewriter.csproj" />
-  </Folder>
-  <Folder Name="/test/">
-    <Project Path="test/CircularLibraryDependencySourceRewriter.Tests/CircularLibraryDependencySourceRewriter.Tests.csproj" />
-  </Folder>
-</Solution>
