@@ -4,29 +4,107 @@ applyTo: "test/**/*.cs"
 
 # C# Test Code Conventions
 
+## Preferred Style: BDD-Style Specification Tests
+
+The preferred way to write tests is **BDD-style nested specification classes** using `[XF]` (ExclusiveFact).
+Many existing tests don't yet follow this style, but all new tests should.
+For full rationale and examples, see [src/Compze.Utilities.Testing.XUnit/README.md](../../src/Compze.Utilities.Testing.XUnit/README.md).
+
+### How it works
+
+Specifications are organized as **nested classes where each level inherits from its parent** to accumulate context. Class names describe the scenario, test method names describe the expected behavior. Each level's **constructor** performs that level's setup which builds upon the setup for the previous level. Tests declared at that level assert the outcome.
+
+`[XF]` (alias for `[ExclusiveFact]`) ensures each test runs **only in the class that declares it** — never in inheriting classes. This prevents the exponential test duplication that plain `[Fact]` causes with inherited tests.
+
+### Complete example
+
+```csharp
+using Compze.Utilities.Testing.Must;
+using Compze.Utilities.Testing.XUnit.BDD;
+
+public class When_a_user_attempts_to_register
+{
+   readonly RegistrationService _service = new();
+
+   public class with_invalid_email : When_a_user_attempts_to_register
+   {
+      public class that_is_missing_the_at_sign : with_invalid_email
+      {
+         readonly RegistrationResult _result;
+         public that_is_missing_the_at_sign() => _result = _service.Register("johndoe.com", "Secret123!");
+
+         [XF] public void registration_is_rejected()  => _result.Succeeded.Must().BeFalse();
+         [XF] public void error_mentions_email()       => _result.Error.Must().Contain("email");
+      }
+
+      public class that_is_empty : with_invalid_email
+      {
+         readonly RegistrationResult _result;
+         public that_is_empty() => _result = _service.Register("", "Secret123!");
+
+         [XF] public void registration_is_rejected()  => _result.Succeeded.Must().BeFalse();
+         [XF] public void error_mentions_required()    => _result.Error.Must().Contain("required");
+      }
+   }
+
+   public class with_valid_data : When_a_user_attempts_to_register
+   {
+      readonly RegistrationResult _result;
+      public with_valid_data() => _result = _service.Register("john@doe.com", "Secret123!");
+
+      [XF] public void registration_succeeds()       => _result.Succeeded.Must().BeTrue();
+      [XF] public void a_confirmation_email_is_sent() => _result.ConfirmationEmailSent.Must().BeTrue();
+      [XF] public void the_user_id_is_assigned()      => _result.UserId.Must().NotBe(Guid.Empty);
+   }
+}
+```
+
+This produces a readable specification tree in Test Explorer:
+
+```
+When_a_user_attempts_to_register
+├── with_invalid_email
+│   ├── that_is_missing_the_at_sign
+│   │   ├── registration_is_rejected
+│   │   └── error_mentions_email
+│   └── that_is_empty
+│       ├── registration_is_rejected
+│       └── error_mentions_required
+└── with_valid_data
+    ├── registration_succeeds
+    ├── a_confirmation_email_is_sent
+    └── the_user_id_is_assigned
+```
+
+### Key rules for BDD-style tests
+
+- **Use `[XF]`**, never `[Fact]`,  — `[Fact]` causes inherited tests to re-run in every descendant.
+- **Class names describe context** using lowercase with underscores: `with_invalid_email`, `that_is_empty`, `After_adding_entity`.
+- **Method names describe expected behavior** using lowercase with underscores: `registration_is_rejected`, `error_mentions_email`.
+- **Each nested class inherits from its parent** to gain access to shared setup.
+- **Each level's constructor is the "act"** — it performs that level's specific setup.
+- **Tests at each level are only assertions** — single-expression `=>` bodies calling `Must()`.
+- **Split large specifications** across partial class files using dot-separated naming: `Specification.Step1.Step2.cs`.
+
 ## Framework & Base Class
 
 - **xUnit v3** is the test framework.
-- **Inherit from `UniversalTestBase`** — it provides `IDisposable` and `IAsyncLifetime` via protected virtual overrides.
-- No mocking frameworks — use real implementations via our PCT support.
+- **Inherit from `UniversalTestBase`** when tests need lifecycle management — it provides `IDisposable` and `IAsyncLifetime` via protected virtual overrides.
+- No mocking frameworks — use real implementations with in-memory backing (SQLite in-memory, in-process transports).
 
 ## Test Attributes
 
 | Attribute | Purpose |
 | --- | --- |
-| `[XF]` | Exclusive Fact. The default attribute to usef for non PCT tests. Only runs in the declaring class (not inherited), enabling nesting inherihiting tests for BDD style testing. |
+| `[XF]` | **Exclusive Fact — the default for new tests.** Only runs in the declaring class (not inherited), enabling BDD-style nested inheritance. |
 | `[PCT]` | Pluggable Component Theory — runs the test for every configured component combination (SqlLayer × DIContainer × Serializer × Transport). |
 | `[PCTSerializer]` | Varies only the Serializer component. |
 | `[PCTDIContainer]` | Varies only the DIContainer component. |
 | `[Performance]` | Marks performance tests. |
 | `[LongRunning]` | Marks long-running tests. |
+| `[Fact]` / `[Theory]` | Standard xUnit — only for simple utility-level tests that don't use nesting. |
 
 **Never write one test per pluggable component.** Use `[PCT]` + `UniversalTestBase` + `TestEnv` — it automatically tests all enabled combinations with zero-parameter test methods.
-
-## Test Method Naming
-
-- **Underscores for readability**: `My_test_method_does_something()`.
-- Descriptive sentence-style names are preferred: `If_tommand_handler_throws_disposing_host_throws_AggregateException()`.
 
 ## Assertions
 
@@ -54,39 +132,25 @@ Invoking(() => ...).Must().Throw<Exception>().Which.Message.Must().Contain("text
 
 **Do NOT add `// Arrange`, `// Act`, `// Assert` comments.** The pattern is implicit.
 
-Prefer single-expression test bodies when possible:
+In BDD-style tests, arrange/act happens in constructors (each nesting level), and test methods are pure assertions. Prefer single-expression test bodies:
 ```csharp
-[XF] public void Name_is_root() => _taggregate.Name.Must().Be("root");
+[XF] public void name_is_root() => _taggregate.Name.Must().Be("root");
 ```
 
 ## Attribute Placement
 
 Short single-expression tests: attribute on the same line as the method:
 ```csharp
-[XF] public void PassedThrough_is_0() => _fixture.Gate.Passed.Must().Be(0);
+[XF] public void passed_through_is_0() => _fixture.Gate.Passed.Must().Be(0);
 ```
 
 ## Setup & Teardown
 
-- Set up state in the **constructor** — not in a `[SetUp]` or separate method.
+- Set up state in the **constructor** — not in a `[SetUp]` or separate method. In BDD-style specs, each nesting level's constructor adds its own context.
 - Override these protected virtual methods from `UniversalTestBase` instead of implementing `IDisposable`/`IAsyncLifetime` directly:
   - `DisposeInternal()` — synchronous cleanup.
   - `InitializeAsyncInternal()` — async initialization (e.g., `await Host.StartAsync()`).
   - `DisposeAsyncInternal()` — async cleanup (e.g., `await Host.DisposeAsync()`).
-
-## BDD-Style Nested Classes
-
-For complex specifications, use nested partial classes with inheritance to accumulate state:
-```csharp
-public partial class After_constructing_root
-{
-   public partial class After_adding_entity : After_constructing_root
-   {
-      // inherits accumulated state, adds more setup in constructor
-   }
-}
-```
-Split across files using dot-separated naming: `Specification.Step1.Step2.cs`.
 
 ## Async Tests
 
