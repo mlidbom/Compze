@@ -165,4 +165,4 @@ Type `C-<Tab>` in PowerShell to discover all commands.
 ## External Resources
 - [Project Website](https://compze.net/)
 - [Semantic Events Documentation](https://compze.net/paradigms/semantic-events/definition.html)
-- [Development Setup](DEVELOPMENT.md)
+- [Development Setup](../DEVELOPMENT.md)
