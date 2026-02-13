@@ -10,6 +10,11 @@ The preferred way to write tests is **BDD-style nested specification classes** u
 Many existing tests don't yet follow this style, but all new tests should.
 For full rationale and examples, see [src/Compze.Utilities.Testing.XUnit/README.md](../../src/Compze.Utilities.Testing.XUnit/README.md).
 
+**When adding tests to an existing test class that uses the older flat style:**
+- If it's relatively easy, refactor the existing tests in that class to BDD-style nested structure, then add the new tests in that structure.
+- If refactoring would be complex or risky, create a new test class using BDD-style structure for the new tests instead.
+- Do NOT add new tests to the old flat structure — this only adds to the technical debt and makes future refactoring harder.
+
 ### How it works
 
 Specifications are organized as **nested classes where each level inherits from its parent** to accumulate context. Class names describe the scenario, test method names describe the expected behavior. Each level's **constructor** performs that level's setup which builds upon the setup for the previous level. Tests declared at that level assert the outcome.
