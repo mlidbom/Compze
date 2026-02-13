@@ -1,24 +1,15 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
    <PropertyGroup>
       <TargetFramework>net9.0</TargetFramework>
       <Nullable>enable</Nullable>
-      <Version>0.1.0-alpha.2</Version>
-      <Description>Database pool management for Compze integration testing.</Description>
    </PropertyGroup>
    <ItemGroup>
-      <ProjectReference Include="..\Compze.Serialization.Newtonsoft\Compze.Serialization.Newtonsoft.csproj" />
-      <ProjectReference Include="..\Compze.Sql.Common\Compze.Sql.Common.csproj" />
       <ProjectReference Include="..\Compze.Utilities.Contracts\Compze.Utilities.Contracts.csproj" />
       <ProjectReference Include="..\Compze.Utilities.Functional\Compze.Utilities.Functional.csproj" />
-      <ProjectReference Include="..\Compze.Utilities.DependencyInjection\Compze.Utilities.DependencyInjection.csproj" />
-      <ProjectReference Include="..\Compze.Utilities.Logging\Compze.Utilities.Logging.csproj" />
-      <ProjectReference Include="..\Compze.Utilities.SystemCE\Compze.Utilities.SystemCE.csproj" />
       <ProjectReference Include="..\Compze.Utilities.SystemCE.ThreadingCE\Compze.Utilities.SystemCE.ThreadingCE.csproj" />
    </ItemGroup>
    <ItemGroup>
       <PackageReference Include="JetBrains.Annotations" Version="2025.2.4" />
-      <PackageReference Include="System.Threading.AccessControl" Version="9.0.9" />
-      <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
       <PackageReference Include="NsDepCop" Version="2.6.0">
          <PrivateAssets>all</PrivateAssets>
          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

@@ -18,5 +18,6 @@
    </ItemGroup>
    <ItemGroup>
       <ProjectReference Include="..\Compze.Utilities.Contracts\Compze.Utilities.Contracts.csproj" />
+      <ProjectReference Include="..\Compze.Utilities.Functional\Compze.Utilities.Functional.csproj" />
    </ItemGroup>
 </Project>

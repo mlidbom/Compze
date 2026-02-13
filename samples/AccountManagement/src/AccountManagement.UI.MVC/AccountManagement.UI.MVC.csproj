@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk.Web">
    <PropertyGroup>
       <TargetFramework>net9.0</TargetFramework>
       <Nullable>enable</Nullable>
@@ -11,8 +11,12 @@
    <ItemGroup>
       <ProjectReference Include="..\..\..\..\src\Compze.Tessaging.Hosting.Testing\Compze.Tessaging.Hosting.Testing.csproj" />
       <ProjectReference Include="..\AccountManagement.API\AccountManagement.API.csproj" />
-      <ProjectReference Include="..\..\..\..\src\Compze.Utilities\Compze.Utilities.csproj" />
       <ProjectReference Include="..\..\..\..\src\Compze.Utilities.Contracts\Compze.Utilities.Contracts.csproj" />
+      <ProjectReference Include="..\..\..\..\src\Compze.Utilities.Functional\Compze.Utilities.Functional.csproj" />
+      <ProjectReference Include="..\..\..\..\src\Compze.Utilities.DependencyInjection\Compze.Utilities.DependencyInjection.csproj" />
+      <ProjectReference Include="..\..\..\..\src\Compze.Utilities.Logging\Compze.Utilities.Logging.csproj" />
+      <ProjectReference Include="..\..\..\..\src\Compze.Utilities.SystemCE\Compze.Utilities.SystemCE.csproj" />
+      <ProjectReference Include="..\..\..\..\src\Compze.Utilities.SystemCE.ThreadingCE\Compze.Utilities.SystemCE.ThreadingCE.csproj" />
    </ItemGroup>
    <ItemGroup>
       <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.1" />

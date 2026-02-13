@@ -4,18 +4,20 @@
       <Nullable>enable</Nullable>
    </PropertyGroup>
    <ItemGroup>
+      <ProjectReference Include="..\Compze.Utilities.Contracts\Compze.Utilities.Contracts.csproj" />
+      <ProjectReference Include="..\Compze.Utilities.Functional\Compze.Utilities.Functional.csproj" />
+      <ProjectReference Include="..\..\CircularLibraryDependencySourceRewriter\src\CircularLibraryDependencySourceRewriter\CircularLibraryDependencySourceRewriter.csproj" />
+   </ItemGroup>
+   <Import Project="..\..\CircularLibraryDependencySourceRewriter\src\CircularLibraryDependencySourceRewriter\CircularLibraryDependencySourceRewriter.targets" />
+   <PropertyGroup>
+      <InternalizeSourceFrom>..\Compze.Utilities.SystemCE</InternalizeSourceFrom>
+      <InternalizeSourceTo>$(MSBuildProjectDirectory)\InternalizedSource</InternalizeSourceTo>
+   </PropertyGroup>
+   <ItemGroup>
       <PackageReference Include="JetBrains.Annotations" Version="2025.2.4" />
       <PackageReference Include="NsDepCop" Version="2.6.0">
          <PrivateAssets>all</PrivateAssets>
          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
    </ItemGroup>
-   <ItemGroup>
-      <ProjectReference Include="..\..\CircularLibraryDependencySourceRewriter\src\CircularLibraryDependencySourceRewriter\CircularLibraryDependencySourceRewriter.csproj" />
-   </ItemGroup>
-   <Import Project="..\..\CircularLibraryDependencySourceRewriter\src\CircularLibraryDependencySourceRewriter\CircularLibraryDependencySourceRewriter.targets" />
-   <PropertyGroup>
-      <InternalizeSourceFrom>..\Compze.Utilities.SystemCE;..\Compze.Utilities.SystemCE.ThreadingCE;..\Compze.Utilities.Functional</InternalizeSourceFrom>
-      <InternalizeSourceTo>$(MSBuildProjectDirectory)\InternalizedSource</InternalizeSourceTo>
-   </PropertyGroup>
 </Project>

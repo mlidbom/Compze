@@ -55,7 +55,6 @@
   <Folder Name="/Compze/">
     <Project Path="Compze.Core/Compze.Core.csproj" />
     <Project Path="Compze.Tessaging/Compze.Tessaging.csproj" />
-    <Project Path="Compze.Utilities/Compze.Utilities.csproj" />
   </Folder>
   <Folder Name="/Compze/Serialization/">
     <Project Path="Compze.Serialization.Newtonsoft/Compze.Serialization.Newtonsoft.csproj" />
@@ -80,6 +79,11 @@
     <Project Path="Compze.Utilities.Testing.XUnit/Compze.Utilities.Testing.XUnit.csproj" />
     <Project Path="Compze.Utilities.Testing.Must/Compze.Utilities.Testing.Must.csproj" />
     <Project Path="Compze.Utilities.Contracts/Compze.Utilities.Contracts.csproj" />
+    <Project Path="Compze.Utilities.Functional/Compze.Utilities.Functional.csproj" />
+    <Project Path="Compze.Utilities.DependencyInjection/Compze.Utilities.DependencyInjection.csproj" />
+    <Project Path="Compze.Utilities.Logging/Compze.Utilities.Logging.csproj" />
+    <Project Path="Compze.Utilities.SystemCE/Compze.Utilities.SystemCE.csproj" />
+    <Project Path="Compze.Utilities.SystemCE.ThreadingCE/Compze.Utilities.SystemCE.ThreadingCE.csproj" />
   </Folder>
   <Folder Name="/_Tests/">
     <Project Path="../test/Compze.Utilities.Tests/Compze.Utilities.Tests.csproj" />
