@@ -1,6 +1,6 @@
 <Project>
   <UsingTask TaskName="CircularLibraryDependencySourceRewriter.RewriteDirectoryTask"
-             AssemblyFile="$(MSBuildThisFileDirectory)bin\$(Configuration)\net9.0\CircularLibraryDependencySourceRewriter.dll" />
+             AssemblyFile="$(MSBuildThisFileDirectory)CircularLibraryDependencySourceRewriter.dll" />
 
   <!-- Exclude internalized source from the SDK's default glob to avoid double-inclusion -->
   <ItemGroup Condition="'$(InternalizeSourceTo)' != ''">

@@ -5,14 +5,13 @@
    </PropertyGroup>
    <ItemGroup>
       <ProjectReference Include="..\Compze.Utilities.Contracts\Compze.Utilities.Contracts.csproj" />
-      <ProjectReference Include="..\..\CircularLibraryDependencySourceRewriter\src\CircularLibraryDependencySourceRewriter\CircularLibraryDependencySourceRewriter.csproj" />
    </ItemGroup>
-   <Import Project="..\..\CircularLibraryDependencySourceRewriter\src\CircularLibraryDependencySourceRewriter\CircularLibraryDependencySourceRewriter.targets" />
    <PropertyGroup>
       <InternalizeSourceFrom>..\Compze.Utilities.SystemCE;..\Compze.Utilities.SystemCE.ThreadingCE</InternalizeSourceFrom>
       <InternalizeSourceTo>$(MSBuildProjectDirectory)\InternalizedSource</InternalizeSourceTo>
    </PropertyGroup>
    <ItemGroup>
+      <PackageReference Include="CircularLibraryDependencySourceRewriter" Version="0.1.0-local" PrivateAssets="all" />
       <PackageReference Include="JetBrains.Annotations" Version="2025.2.4" />
       <PackageReference Include="NsDepCop" Version="2.6.0">
          <PrivateAssets>all</PrivateAssets>
