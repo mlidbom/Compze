@@ -36,8 +36,7 @@ public static partial class SourceRewriter
 
    public static void RewriteDirectories(string[] inputDirectories, string outputDirectory)
    {
-      if(Directory.Exists(outputDirectory))
-         Directory.Delete(outputDirectory, recursive: true);
+      var writtenFiles = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
       foreach(var inputDirectory in inputDirectories)
       {
@@ -49,12 +48,27 @@ public static partial class SourceRewriter
                continue;
 
             var outputFile = Path.Combine(outputDirectory, relativePath);
+            writtenFiles.Add(outputFile);
 
             Directory.CreateDirectory(Path.GetDirectoryName(outputFile)!);
 
             var source = File.ReadAllText(inputFile);
             var rewritten = MakeTypesInternal(source);
+
+            if(File.Exists(outputFile) && File.ReadAllText(outputFile) == rewritten)
+               continue;
+
             File.WriteAllText(outputFile, rewritten);
+         }
+      }
+
+      // Remove stale output files that no longer have a corresponding input
+      if(Directory.Exists(outputDirectory))
+      {
+         foreach(var existingFile in Directory.EnumerateFiles(outputDirectory, "*.cs", SearchOption.AllDirectories))
+         {
+            if(!writtenFiles.Contains(existingFile))
+               File.Delete(existingFile);
          }
       }
    }
