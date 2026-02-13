@@ -12,9 +12,36 @@ This makes idiomatic BDD-style testing in plain xUnit impractical.
 
 This package provides `[ExclusiveFact]` (and its short alias `[XF]`) — a custom xUnit v3 fact attribute that runs a test **only for the class that declares it**, never for inheriting classes. This single mechanism unlocks clean, nested, context-building BDD specifications without any duplicated runs.
 
-## What does BDD-style testing look like?
+## Tests that become an easy to read specification
 
 Specifications are organized as nested classes where each level adds context. Class names describe the scenario, test method names describe the expected behavior:
+
+### In the Test Explorer or in reports this produces something like this:
+
+```
+When_a_user_attempts_to_register
+├── with_invalid_email
+│   ├── that_is_missing_the_at_sign
+│   │   ├── registration_is_rejected
+│   │   └── error_mentions_email
+│   └── that_is_empty
+│       ├── registration_is_rejected
+│       └── error_mentions_required
+├── with_invalid_password
+│   ├── that_is_too_short
+│   │   ├── registration_is_rejected
+│   │   └── error_mentions_password_length
+│   └── that_has_no_digit
+│       ├── registration_is_rejected
+│       └── error_mentions_digit
+└── with_all_valid_data
+    ├── registration_succeeds
+    ├── a_confirmation_email_is_sent
+    └── the_user_id_is_assigned
+```
+
+
+### Tests in this style look like this
 
 ```csharp
 using Compze.Utilities.Testing.Must;
@@ -77,30 +104,7 @@ public class When_a_user_attempts_to_register
    }
 }
 ```
-
-In the Test Explorer this produces a readable specification tree:
-
-```
-When_a_user_attempts_to_register
-├── with_invalid_email
-│   ├── that_is_missing_the_at_sign
-│   │   ├── registration_is_rejected
-│   │   └── error_mentions_email
-│   └── that_is_empty
-│       ├── registration_is_rejected
-│       └── error_mentions_required
-├── with_invalid_password
-│   ├── that_is_too_short
-│   │   ├── registration_is_rejected
-│   │   └── error_mentions_password_length
-│   └── that_has_no_digit
-│       ├── registration_is_rejected
-│       └── error_mentions_digit
-└── with_all_valid_data
-    ├── registration_succeeds
-    ├── a_confirmation_email_is_sent
-    └── the_user_id_is_assigned
-```
+note: We use our Must fluent assertion library in this code. You may want to check it out if you like our approach to testing...
 
 Each `[XF]` test runs **exactly once** — in the class that declares it — even though child classes inherit parent members.
 
