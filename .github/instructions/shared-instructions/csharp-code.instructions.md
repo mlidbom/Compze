@@ -77,7 +77,6 @@ applyTo: "**/*.cs"
 ## Comments & Documentation
 
 - Prefer descriptive names and extracting new methods over explanatory comments.
-- No `#region` blocks in production code.
 
 ## XML doc comments
 
