@@ -6,6 +6,8 @@ applyTo: "test/**/*.cs"
 
 ## Preferred Style: BDD-Style Specification Tests
 
+- No mocking frameworks — use real implementations with in-memory backing (SQLite in-memory, in-process transports).
+
 The preferred way to write tests is **BDD-style nested specification classes** using `[XF]` (ExclusiveFact).
 Many existing tests don't yet follow this style, but all new tests should.
 
@@ -93,8 +95,6 @@ When_a_user_attempts_to_register
 ## Framework & Base Class
 
 - **xUnit v3** is the test framework.
-- **Inherit from `UniversalTestBase`** when tests need lifecycle management — it provides `IDisposable` and `IAsyncLifetime` via protected virtual overrides.
-- No mocking frameworks — use real implementations with in-memory backing (SQLite in-memory, in-process transports).
 
 ## Test Attributes
 
@@ -161,28 +161,6 @@ Short single-expression tests: attribute on the same line as the method:
 - Return `Task` or `async Task`.
 - **No `.ConfigureAwait(false)` / `.caf()` in test code** — this is suppressed for tests.
 - Use `InvokingAsync()` for async exception assertions.
-
-## Integration Tests
-
-- Create a `TestingEndpointHost`, register endpoints, start/stop in lifecycle methods:
-  ```csharp
-  protected override async Task InitializeAsyncInternal() => await _host.StartAsync();
-  protected override async Task DisposeAsyncInternal() => await _host.DisposeAsync();
-  ```
-- Use `IServiceLocator` for resolving services: `ServiceLocator.ExecuteTransactionInIsolatedScope(...)`.
-- Use `IThreadGate` for controlling concurrency timing: `gate.Close()`, `gate.Open()`, `gate.AwaitPassedThroughCountEqualTo(n)`.
-
-## Performance Tests
-
-- Use `TimeAsserter.Execute(action, iterations: N, maxTotal: duration)` for timed assertions.
-- Use `EnvDivide()` / `EnvMultiply()` on thresholds to adjust for slow/instrumented machines.
-- Warm up with `StopwatchCE.TimeExecution()` before measuring.
-- Mark performance test projects with `[assembly: PerformanceAttribute]`.
-- Test parallelization is disabled in performance test projects.
-
-## Code Policy Tests
-
-- Typically static classes with `[Fact]` methods that scan assemblies for violations.
 
 ## Test Data
 
