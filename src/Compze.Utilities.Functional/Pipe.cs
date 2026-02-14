@@ -1,6 +1,5 @@
 using System;
 using System.Threading.Tasks;
-using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
 // ReSharper disable InconsistentNaming
 
@@ -57,7 +56,7 @@ public static class Pipe
    ///<summary>Mutates <paramref name="it"/> using <paramref name="mutate"/> and returns <paramref name="it"/></summary>
    public static async Task<T> mutateAsync<T>(this T it, Func<T, Task> mutate)
    {
-      await mutate(it).caf();
+      await mutate(it).ConfigureAwait(false);
       return it;
    }
 }

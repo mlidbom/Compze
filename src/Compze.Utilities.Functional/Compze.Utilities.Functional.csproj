@@ -7,12 +7,7 @@
    <ItemGroup>
       <ProjectReference Include="..\Compze.Utilities.Contracts\Compze.Utilities.Contracts.csproj" />
    </ItemGroup>
-   <PropertyGroup>
-      <InternalizeSourceFrom>..\Compze.Utilities.SystemCE;..\Compze.Utilities.SystemCE.ThreadingCE</InternalizeSourceFrom>
-      <InternalizeSourceTo>$(MSBuildProjectDirectory)\InternalizedSource</InternalizeSourceTo>
-   </PropertyGroup>
    <ItemGroup>
-      <PackageReference Include="Compze.InternalizedSourceReferences" Version="0.1.0-alpha.2" PrivateAssets="all" />
       <PackageReference Include="JetBrains.Annotations" Version="2025.2.4" />
       <PackageReference Include="NsDepCop" Version="2.6.0">
          <PrivateAssets>all</PrivateAssets>
