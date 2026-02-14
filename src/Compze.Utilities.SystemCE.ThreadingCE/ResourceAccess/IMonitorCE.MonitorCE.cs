@@ -91,7 +91,6 @@ public partial interface IMonitorCE
             takenLock = attemptedLock;
          }
 
-         var lockReleased = false;
          try
          {
             while(!condition())
@@ -100,7 +99,6 @@ public partial interface IMonitorCE
                if(waitTimeRemaining.None())
                {
                   takenLock.Dispose();
-                  lockReleased = true;
                   return null;
                }
 
@@ -109,11 +107,7 @@ public partial interface IMonitorCE
          }
          catch
          {
-            if(!lockReleased)
-            {
-               ReleaseLock();
-            }
-
+            ReleaseLock();
             throw;
          }
 
