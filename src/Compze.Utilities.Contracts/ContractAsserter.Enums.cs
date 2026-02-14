@@ -1,6 +1,5 @@
 using System;
 using System.Runtime.CompilerServices;
-using Compze.Utilities.SystemCE;
 
 namespace Compze.Utilities.Contracts;
 

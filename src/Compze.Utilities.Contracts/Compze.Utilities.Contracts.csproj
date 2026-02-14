@@ -5,16 +5,10 @@
       <Version>0.1.0-alpha.3</Version>
    </PropertyGroup>
    <ItemGroup>
-      <PackageReference Include="Compze.InternalizedSourceReferences" Version="0.1.0-alpha.2" PrivateAssets="all" />
       <PackageReference Include="JetBrains.Annotations" Version="2025.2.4" />
       <PackageReference Include="NsDepCop" Version="2.6.0">
          <PrivateAssets>all</PrivateAssets>
          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
    </ItemGroup>
-
-   <PropertyGroup>
-      <InternalizeSourceFrom>..\Compze.Utilities.SystemCE;..\Compze.Utilities.SystemCE.ThreadingCE;..\Compze.Utilities.Functional</InternalizeSourceFrom>
-      <InternalizeSourceTo>$(MSBuildProjectDirectory)\InternalizedSource</InternalizeSourceTo>
-   </PropertyGroup>
 </Project>

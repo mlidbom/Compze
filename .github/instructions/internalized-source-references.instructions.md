@@ -33,9 +33,8 @@ A project that internalizes source has these elements:
 | Consumer project | Internalizes source from |
 |---|---|
 | `Compze.Utilities.SystemCE.ThreadingCE` | `Compze.Utilities.SystemCE` |
-| `Compze.Utilities.Contracts` | `Compze.Utilities.SystemCE`, `Compze.Utilities.SystemCE.ThreadingCE`, `Compze.Utilities.Functional` |
 
-These form a circular dependency cluster: `SystemCE` references `ThreadingCE` and `Contracts` via `ProjectReference`, while those projects internalize source from `SystemCE` (and each other) to use its code without creating a `ProjectReference` cycle.
+This is the remaining circular dependency: `SystemCE` references `ThreadingCE` via `ProjectReference`, while `ThreadingCE` internalizes source from `SystemCE` to use its code without creating a `ProjectReference` cycle back.
 
 ## Adding a New Internalized Source Reference
 
