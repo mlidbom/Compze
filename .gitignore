@@ -50,5 +50,4 @@ repomix*.xml
 /InternalsVisibleTo-Test-Results.log
 /src/TestUsingPluggableComponentCombinations
 /src/TestUsingPluggableComponentCombinations.defaults
-/nupkgs/
 InternalizedSource
