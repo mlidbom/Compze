@@ -59,6 +59,50 @@ public class MonitorCE_specification : UniversalTestBase
       TaskCE.Run(() => monitor.TakeUpdateLock(timeout: 0.Milliseconds())).Wait();
    }
 
+   public class When_a_thread_waiting_in_TakeUpdateLockWhen_is_interrupted : MonitorCE_specification
+   {
+      readonly IMonitorCE _monitor = IMonitorCE.WithTimeouts(30.Seconds());
+      readonly Thread _waitingThread;
+      readonly ManualResetEventSlim _threadIsWaiting = new(false);
+      readonly ManualResetEventSlim _threadCompleted = new(false);
+      Exception? _thrownException;
+
+      public When_a_thread_waiting_in_TakeUpdateLockWhen_is_interrupted()
+      {
+         _waitingThread = new Thread(() =>
+         {
+            try
+            {
+               _threadIsWaiting.Set();
+               _monitor.TakeUpdateLockWhen(() => false);
+            }
+#pragma warning disable CA1031 //We need to capture whatever exception Thread.Interrupt causes to assert on it
+            catch(Exception ex)
+            {
+#pragma warning restore CA1031
+               _thrownException = ex;
+            }
+            finally
+            {
+               _threadCompleted.Set();
+            }
+         }) { IsBackground = true };
+
+         _waitingThread.Start();
+         _threadIsWaiting.Wait();
+         Thread.Sleep(50.Milliseconds());
+         _waitingThread.Interrupt();
+         _threadCompleted.Wait(5.Seconds()).Must().BeTrue();
+      }
+
+      [XF] public void throws_ThreadInterruptedException() => _thrownException.Must().NotBeNull().BeExactType<ThreadInterruptedException>();
+
+      [XF] public void lock_is_released_so_other_threads_can_acquire_it()
+      {
+         using(_monitor.TakeUpdateLock(timeout: 1.Seconds())) {}
+      }
+   }
+
    public class An_exception_is_thrown_by_EnterUpdateLock_if_lock_is_not_acquired_within_timeout : UniversalTestBase
    {
       [XF, EnableRdi(false)] public void Exception_is_ObjectLockTimedOutException() =>
