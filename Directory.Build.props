@@ -1,0 +1,11 @@
+<Project>
+	<!--TODO: Remove this 
+        Disable SDK-bundled SourceLink/source control queries for local builds.
+	     Git 2.53+ sets extensions.relativeworktrees which Microsoft.Build.Tasks.Git
+	     doesn't support yet. Only needed for CI-published packages.
+	     See: https://github.com/dotnet/sourcelink/issues -->
+	<PropertyGroup Condition="'$(ContinuousIntegrationBuild)' != 'true'">
+		<EnableSourceLink>false</EnableSourceLink>
+		<EnableSourceControlManagerQueries>false</EnableSourceControlManagerQueries>
+	</PropertyGroup>
+</Project>

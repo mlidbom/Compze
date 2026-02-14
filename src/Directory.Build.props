@@ -1,4 +1,7 @@
 <Project>
+	<!-- Import root-level Directory.Build.props (Git 2.53 workaround etc.) -->
+	<Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)..'))" />
+
 	<!-- Enable package validation for all projects -->
 	<Import Project="msbuild\EnablePackageValidation.props" />
 	
@@ -31,7 +34,11 @@
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 	</PropertyGroup>
 
-	<ItemGroup Condition="'$(IsTestProject)' != 'true' AND '$(IsPackable)' != 'false'">
+	<!-- SourceLink only matters for published NuGet packages (CI builds).
+	     Locally it serves no purpose and breaks with Git 2.53+ due to the
+	     'relativeworktrees' extension not being supported by Microsoft.Build.Tasks.Git.
+	     See: https://github.com/dotnet/sourcelink/issues -->
+	<ItemGroup Condition="'$(IsTestProject)' != 'true' AND '$(IsPackable)' != 'false' AND '$(ContinuousIntegrationBuild)' == 'true'">
 		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
 	</ItemGroup>
 
