@@ -91,16 +91,24 @@ public partial interface IMonitorCE
             takenLock = attemptedLock;
          }
 
-         while(!condition())
+         try
          {
-            var waitTimeRemaining = actualWaitTimeout - DateTimeCE.TimeElapsedSince(waitStartedAt);
-            if(waitTimeRemaining.None())
+            while(!condition())
             {
-               takenLock.Dispose();
-               return null;
-            }
+               var waitTimeRemaining = actualWaitTimeout - DateTimeCE.TimeElapsedSince(waitStartedAt);
+               if(waitTimeRemaining.None())
+               {
+                  takenLock.Dispose();
+                  return null;
+               }
 
-            _monitor.ReleaseLockAndReacquireItOnPulseOrTimeout(waitTimeRemaining);
+               _monitor.ReleaseLockAndReacquireItOnPulseOrTimeout(waitTimeRemaining);
+            }
+         }
+         catch
+         {
+            ReleaseLock();
+            throw;
          }
 
          return LockFor(lockType);
