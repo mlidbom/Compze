@@ -18,7 +18,7 @@ Many existing tests don't yet follow this style, but all new tests should.
 
 ### How it works
 
-Specifications are organized as **nested classes where each level inherits from its parent** to accumulate context. Class names describe the scenario, test method names describe the expected behavior. Each level's **constructor** performs that level's setup which builds upon the setup for the previous level. Tests declared at that level assert the outcome.
+Specifications are organized as **nested classes where each level inherits from its parent** to accumulate context. Specifications are organized as nested classes where each level adds context. Namspaces + class names describe the scenario, test method names describe the expected results. Each level's **constructor** performs that level's setup which builds upon the setup for the previous level. Tests declared at that level assert the outcome.
 
 `[XF]` (alias for `[ExclusiveFact]`) ensures each test runs **only in the class that declares it** — never in inheriting classes. This prevents the exponential test duplication that plain `[Fact]` causes with inherited tests.
 
@@ -27,6 +27,8 @@ Specifications are organized as **nested classes where each level inherits from 
 ```csharp
 using Compze.Utilities.Testing.Must;
 using Compze.Utilities.Testing.XUnit.BDD;
+
+namespace OurApplication.Specifications.UserAccounts.Registration;
 
 public class When_a_user_attempts_to_register
 {
@@ -68,18 +70,22 @@ public class When_a_user_attempts_to_register
 This produces a readable specification tree in Test Explorer:
 
 ```
-When_a_user_attempts_to_register
-├── with_invalid_email
-│   ├── that_is_missing_the_at_sign
-│   │   ├── registration_is_rejected
-│   │   └── error_mentions_email
-│   └── that_is_empty
-│       ├── registration_is_rejected
-│       └── error_mentions_required
-└── with_valid_data
-    ├── registration_succeeds
-    ├── a_confirmation_email_is_sent
-    └── the_user_id_is_assigned
+OurApplication
+└── Specifications
+    └── UserAccounts
+        └── Registration
+            └── When_a_user_attempts_to_register
+                ├── with_invalid_email
+                │   ├── that_is_missing_the_at_sign
+                │   │   ├── registration_is_rejected
+                │   │   └── error_mentions_email
+                │   └── that_is_empty
+                │       ├── registration_is_rejected
+                │       └── error_mentions_required
+                └── with_valid_data
+                    ├── registration_succeeds
+                    ├── a_confirmation_email_is_sent
+                    └── the_user_id_is_assigned
 ```
 
 ### Key rules for BDD-style tests

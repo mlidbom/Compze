@@ -4,30 +4,35 @@
 
 ## Tests that become an easy to read specification
 
-Specifications are organized as nested classes where each level adds context. Class names describe the scenario, test method names describe the expected behavior:
+Specifications are organized as nested classes where each level adds context. Namspaces + class names describe the scenario, test method names describe the expected results:
 
 ### In the Test Explorer or in reports this produces something like this:
 
 ```
-When_a_user_attempts_to_register
-├── with_invalid_email
-│   ├── that_is_missing_the_at_sign
-│   │   ├── registration_is_rejected
-│   │   └── error_mentions_email
-│   └── that_is_empty
-│       ├── registration_is_rejected
-│       └── error_mentions_required
-├── with_invalid_password
-│   ├── that_is_too_short
-│   │   ├── registration_is_rejected
-│   │   └── error_mentions_password_length
-│   └── that_has_no_digit
-│       ├── registration_is_rejected
-│       └── error_mentions_digit
-└── with_all_valid_data
-    ├── registration_succeeds
-    ├── a_confirmation_email_is_sent
-    └── the_user_id_is_assigned
+OurApplication
+└── Specifications
+    └── UserAccounts
+        └── Registration
+            └── When_a_user_attempts_to_register
+                ├── with_invalid_email
+                │   ├── that_is_missing_the_at_sign
+                │   │   ├── registration_is_rejected
+                │   │   |── error_mentions_email
+                |   |   └── error_mentions_at_character
+                │   └── that_is_empty
+                │       ├── registration_is_rejected
+                │       └── error_mentions_required
+                ├── with_invalid_password
+                │   ├── that_is_too_short
+                │   │   ├── registration_is_rejected
+                │   │   └── error_mentions_password_length
+                │   └── that_has_no_digit
+                │       ├── registration_is_rejected
+                │       └── error_mentions_digit
+                └── with_all_valid_data
+                    ├── registration_succeeds
+                    ├── a_confirmation_email_is_sent
+                    └── the_user_id_is_assigned
 ```
 
 
@@ -36,6 +41,8 @@ When_a_user_attempts_to_register
 ```csharp
 using Compze.Utilities.Testing.Must;
 using Compze.Utilities.Testing.XUnit.BDD;
+
+namespace OurApplication.Specifications.UserAccounts.Registration;
 
 public class When_a_user_attempts_to_register
 {
@@ -50,6 +57,7 @@ public class When_a_user_attempts_to_register
 
          [XF] public void registration_is_rejected()  => _result.Succeeded.Must().BeFalse();
          [XF] public void error_mentions_email()       => _result.Error.Must().Contain("email");
+         [XF] public void error_mentions_at_character()       => _result.Error.Must().Contain("email");
       }
 
       public class that_is_empty : with_invalid_email
