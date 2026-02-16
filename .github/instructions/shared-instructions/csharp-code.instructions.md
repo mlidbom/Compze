@@ -4,6 +4,12 @@ applyTo: "**/*.cs"
 
 # C# Code Conventions for all repositories
 
+## Design & Refactoring
+
+- When implementing new functionality, if a missing abstraction makes the implementation inconsistent, awkward, or poorly structured — **introduce that abstraction**. Refactoring existing code to better accommodate new changes is expected and encouraged.
+- Do not bolt new behavior onto an ill-fitting structure just to avoid creating classes. If the right design calls for a new class, record, interface, or helper — create it.
+- The goal is a codebase where each change leaves the design **more** coherent, not less. Treat every feature as an opportunity to improve the surrounding code.
+
 ## Formatting
 
 - **Indentation**: 3 spaces.

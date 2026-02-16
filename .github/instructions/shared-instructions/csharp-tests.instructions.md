@@ -98,6 +98,22 @@ OurApplication
 - **Tests at each level are only assertions** — single-expression `=>` bodies calling `Must()`.
 - **Split large specifications** across partial class files using dot-separated naming: `Specification.Step1.Step2.cs`.
 
+### File & namespace organization
+
+- **One root-level test class per file.** The file name must match the root class name: `When_a_user_attempts_to_register.cs` contains `public class When_a_user_attempts_to_register`.
+- **Use namespace hierarchy to build readable spec lines.** The full path from namespace through nested classes to test method should read as a coherent specification sentence. Use subdirectories matching namespace segments.
+  - Good: `Specifications.UserAccounts.Registration.When_a_user_attempts_to_register.with_valid_data.registration_succeeds`
+  - Bad: `Specifications.When_a_user_attempts_to_register.with_valid_data.registration_succeeds` (too flat — what domain area?)
+- **Group related spec files** under a shared namespace/directory when they cover a cohesive feature area.
+
+### Naming accuracy
+
+Names are the specification — they must precisely match reality:
+
+- **Class names must describe the actual setup**, not an idealized or generalized version. If the constructor creates one user, say `with_a_single_user`, not `with_users`. If it sets up both email and password, don't call it `verifying_validation` — call it `with_invalid_email_and_weak_password`.
+- **Test method names must describe what is actually asserted.** If the assertion checks that both email and password errors are returned, don't name it `email_error_is_returned` — name it `both_validation_errors_are_returned`.
+- **Assertions must act on the state described by the class hierarchy.** Never assert on a parent field when the constructor creates a local instance — store it in a field and assert on that. Every assertion must verify the outcome of the setup described by the enclosing class names.
+
 ## Framework & Base Class
 
 - **xUnit v3** is the test framework.
