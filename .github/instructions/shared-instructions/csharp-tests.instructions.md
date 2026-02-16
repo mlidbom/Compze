@@ -135,7 +135,6 @@ Names are the specification — they must precisely match reality:
 
 - **Class names must describe the actual setup**, not an idealized or generalized version. If the constructor registers with an email missing the `@` sign, say `that_is_missing_the_at_sign`, not `with_bad_format`. If it sets up both an invalid email and a weak password, don't call it `verifying_validation` — call it `with_invalid_email_and_weak_password`.
 - **Test method names must describe what is actually asserted.** If the assertion checks that both email and password errors are returned, don't name it `email_error_is_returned` — name it `both_validation_errors_are_returned`.
-- **Assertions must act on the state described by the class hierarchy.** Never assert on a parent field when the constructor creates a local instance — store it in a field and assert on that. Every assertion must verify the outcome of the setup described by the enclosing class names.
 
 ## Framework & Base Class
 
