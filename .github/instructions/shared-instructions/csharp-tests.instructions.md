@@ -16,9 +16,21 @@ Many existing tests don't yet follow this style, but all new tests should.
 - If refactoring would be complex or risky, create a new test class using BDD-style structure for the new tests instead.
 - Do NOT add new tests to the old flat structure — this only adds to the technical debt
 
+### The goal: readable specifications
+
+The overriding goal is that **the full path from namespace through classes to test method reads as a clear specification sentence**. There is no rigid structural template to follow — no required AAA shape, no mandatory "Given/When/Then" vocabulary. Any sentence structure works as long as the result reads like a specification and the code is simple, clean, and actually does what the spec line says.
+
+Example spec lines:
+- `Specifications.Contracts.AssertionMethods.NotNull.Throws_when_called_with.null_string`
+- `Specifications.UserAccounts.Registration.When_a_user_attempts_to_register.with_valid_data.registration_succeeds`
+- `Specifications.Sql.TeventStore.ReadOrder.Parsing.after_calling_ToString.and_converting_back_to_ReadOrder.the_value_is_identical_to_the_original_value`
+
 ### How it works
 
-Specifications are organized as **nested classes where each level inherits from its parent** to accumulate context. Specifications are organized as nested classes where each level adds context. Namspaces + class names describe the scenario, test method names describe the expected results. Each level's **constructor** performs that level's setup which builds upon the setup for the previous level. Tests declared at that level assert the outcome.
+Specifications are organized using **namespaces/folders for categorization** and/or **nested classes**. 
+Each nested class inherits from its parent, and, often, each level's **constructor** performs that level's setup, building upon the parent's setup. 
+Note that there is no requirement that each level has a constructor though, a `AssertionMethods.NotNull.Throws_when_called_with.null_string` where NotNull is the root of the nested classes is perfectly fine for specifying the behavior of a method and will probably have zero setup. 
+Tests declared at a level assert the outcome of the accumulated context.
 
 `[XF]` (alias for `[ExclusiveFact]`) ensures each test runs **only in the class that declares it** — never in inheriting classes. This prevents the exponential test duplication that plain `[Fact]` causes with inherited tests.
 
@@ -98,6 +110,17 @@ OurApplication
 - **Tests at each level are only assertions** — single-expression `=>` bodies calling `Must()`.
 - **Split large specifications** across partial class files using dot-separated naming: `Specification.Step1.Step2.cs`.
 
+### Folders/namespaces vs. nested classes
+
+Use the right tool for each level in the spec path:
+
+- **Folders/namespaces** = categorization ("what area are we testing?"). No executable context — just organization.
+- **Nested classes** = accumulated context ("given this setup, what happens next?"). Each level's constructor builds on the parent's state.
+
+**If a nesting level has no constructor body** (or its constructor doesn't build on the parent's state), it's just categorization — use a folder/namespace instead. This keeps files small, reduces indentation depth, and makes navigation easier.
+
+Example: `Specifications.Contracts.AssertionMethods.NotNull` is all namespace/folder (categorization), then `ThrowsWhenCalledWith` is a nested class (shared setup context), and `null_string` is the test method (specific case).
+
 ### File & namespace organization
 
 - **One root-level test class per file.** The file name must match the root class name: `When_a_user_attempts_to_register.cs` contains `public class When_a_user_attempts_to_register`.
@@ -149,9 +172,7 @@ Invoking(() => ...).Must().Throw<Exception>().Which.Message.Must().Contain("text
 
 ## Arrange/Act/Assert
 
-**Do NOT add `// Arrange`, `// Act`, `// Assert` comments.** The pattern is implicit.
-
-In BDD-style tests, arrange/act happens in constructors (each nesting level), and test methods are pure assertions. Prefer single-expression test bodies:
+**Do NOT add `// Arrange`, `// Act`, `// Assert` comments.** There is no required AAA structure — the spec sentence is the structure. In BDD-style tests, setup happens in constructors (each nesting level) and test methods are pure assertions. Prefer single-expression test bodies:
 ```csharp
 [XF] public void name_is_root() => _taggregate.Name.Must().Be("root");
 ```

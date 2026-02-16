@@ -39,9 +39,9 @@ These are the best starting points. Each is a small, self-contained file with st
 | 11 | [DocumentDBSession.DocumentKeyTests.cs](../test/Compze.Tests.Unit.Internals/KeyValueStorage/DocumentDBSession.DocumentKeyTests.cs) | 7 | `DocumentKey_specification` → `same_type_same_id` → equal / `same_type_different_id` → not equal / `inheriting_types` → not equal / `case_insensitive` / `trailing_spaces` |
 | 12 | [AppConfigConfigurationParameterProviderTests.cs](../test/Compze.Tests.Unit.Internals/SystemCE/ConfigurationCE/AppConfigConfigurationParameterProviderTests.cs) | 3 | `Given_an_AppSettingsJsonConfigurationParameterProvider` → `with_existing_key` (returns value) / `with_missing_key` (throws, message contains key) |
 | 13 | [MonitorClassAPIExploration.cs](../test/Compze.Tests.Unit.Internals/SystemCE/ThreadingCE/MonitorClassAPIExploration.cs) | 3 | `Monitor_Wait_behavior` → `returns_after_timeout_without_pulse` / `does_not_return_until_lock_reacquired` / `does_not_hang_on_long_timeout` |
-| 14 | [NotDefault_method.cs](../test/Compze.Tests.Unit.Internals/Contracts/NotDefault_method.cs) | 1 | Tiny — could merge with other Contract tests into a single `Asserter_specification` with nested classes per method |
-| 15 | [NotNull_method_throws_for.cs](../test/Compze.Tests.Unit.Internals/Contracts/NotNull_method_throws_for.cs) | 2 | Same as above — candidate for merge |
-| 16 | [NotNullOrDefault_method_throws_for.cs](../test/Compze.Tests.Unit.Internals/Contracts/NotNullOrDefault_method_throws_for.cs) | 1 | Same as above — candidate for merge |
+| 14 | [NotDefault_method.cs](../test/Compze.Tests.Unit.Internals/Contracts/NotDefault_method.cs) | 1 | Already well-structured — small, focused file per method. Folder/namespace provides grouping. No migration needed. |
+| 15 | [NotNull_method_throws_for.cs](../test/Compze.Tests.Unit.Internals/Contracts/NotNull_method_throws_for.cs) | 2 | Same — already good. |
+| 16 | [NotNullOrDefault_method_throws_for.cs](../test/Compze.Tests.Unit.Internals/Contracts/NotNullOrDefault_method_throws_for.cs) | 1 | Same — already good. |
 | 17 | [SeqTests.cs](../test/Compze.Tests.Unit.Internals/Linq/SeqTests.cs) | 1 | Single test — wrap in nested class |
 | 18 | [ObjectExtensionsTest.cs](../test/Compze.Tests.Unit.Internals/ObjectExtensionsTest.cs) | 1 | Single test — wrap in nested class |
 | 19 | [StrictlyManagedResourceTests.cs](../test/Compze.Tests.Unit.Internals/SystemCE/StrictlyManagedResourceTests.cs) | 1 | Single test — `Given_a_StrictlyManagedResource` → `that_is_not_disposed` → `registers_uncatchable_exception_on_finalize` |
@@ -153,10 +153,10 @@ When migrating a file:
 - [ ] Test methods should be single-expression assertions using `Must()`
 - [ ] Remove any `// Arrange`, `// Act`, `// Assert` comments
 - [ ] Run tests to verify nothing broke
-- [ ] Files with 1-2 tests: consider whether merger with related tests makes a cleaner spec
+- [ ] Files with 1-2 tests: consider whether they're already well-structured as small focused files (namespace provides grouping)
 
 ## Recommended Migration Order
 
-Start with **Tier 1 items 1–12** — these are small, self-contained, and provide good practice with the pattern before tackling more complex files. The Contracts tests (#14–16) could be merged into a single `Asserter_specification.cs` with nested classes per method.
+Start with **Tier 1 items 1–12** — these are small, self-contained, and provide good practice with the pattern before tackling more complex files. Items #14–16 (Contracts tests) are already well-structured as small focused files — the `Contracts/` namespace provides the grouping, and there's no shared context to build through nesting.
 
 After Tier 1, move to **Tier 2** for the medium-complexity files, then Tier 3 for the PCT integration tests (which require more care around the pluggable component testing pattern).
