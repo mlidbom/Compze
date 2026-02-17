@@ -17,7 +17,7 @@ Many existing specifications don't yet follow this style, but all new specificat
 ## Black-box (integration) specifications, not unit tests
 Specifications should verify that things **actually work correctly together**. They are **not** unit tests
 - No mocking frameworks — use real implementations with the real DI container.
-- Use conditional wiring when setting up the DI container to inject test doubles for dependencies that we cannot get to work in the tests. All production components that can work in tests SHOULD be be used in the tests, not be replaced by test doubles.
+- Use conditional wiring when setting up the DI container to inject test doubles for dependencies that we cannot get to work in the tests. All production components that can work in tests SHOULD be used in the tests, not be replaced by test doubles.
 - No direct constructor calls to domain services — resolve everything through the container.
 - We want to verify the real wiring, not just isolated units. If a specification can't reach something through the container, that's a design signal — fix the design, not the visibility.
 - Use or create base classes that handle setup and teardown and provide helper methods for resolving services, creating test data, and other common tasks. This keeps the specifications focused on the behavior being specified, not on the mechanics of setting up tests.
@@ -29,7 +29,7 @@ Specifications should verify that things **actually work correctly together**. T
 
 
 
-### Goal: specifications that reads naturally and accurately specify how things should work.
+### Goal: specifications that read naturally and accurately specify how things should work.
 
 The overriding goal is that **the full path from namespace through classes to assertion method reads as a clear specification sentence**. There is no rigid structural template to follow — no required AAA shape, no mandatory "Given/When/Then" vocabulary. Any sentence structure works as long as the result reads like a specification and the code is simple, clean, and actually does what the spec line says.
 
@@ -53,16 +53,16 @@ using Compze.Utilities.Testing.XUnit.BDD;
 
 namespace OurApplication.Specifications.UserAccounts.Registration;
 
-public class When_a_user_attempts_to_register
+public class When_a_user_attempts_to_register : SomeSpecificationBaseClass
 {
-   readonly RegistrationService _service = new();
+   readonly IUserRegistrar _userRegistrar = ResolveService<IUserRegistrar>();
 
    public class with_invalid_email : When_a_user_attempts_to_register
    {
       public class that_is_missing_the_at_sign : with_invalid_email
       {
          readonly RegistrationResult _registrationResult;
-         public that_is_missing_the_at_sign() => _registrationResult = _service.Register("johndoe.com", "Secret123!");
+         public that_is_missing_the_at_sign() => _registrationResult = _userRegistrar.Register("johndoe.com", "Secret123!");
 
          [XF] public void registration_is_rejected()  => _registrationResult.Succeeded.Must().BeFalse();
          [XF] public void error_mentions_email()       => _registrationResult.Error.Must().Contain("email");
@@ -71,7 +71,7 @@ public class When_a_user_attempts_to_register
       public class that_is_empty : with_invalid_email
       {
          readonly RegistrationResult _registrationResult;
-         public that_is_empty() => _registrationResult = _service.Register("", "Secret123!");
+         public that_is_empty() => _registrationResult = _userRegistrar.Register("", "Secret123!");
 
          [XF] public void registration_is_rejected()  => _registrationResult.Succeeded.Must().BeFalse();
          [XF] public void error_mentions_required()    => _registrationResult.Error.Must().Contain("required");
@@ -81,7 +81,7 @@ public class When_a_user_attempts_to_register
    public class with_valid_data : When_a_user_attempts_to_register
    {
       readonly RegistrationResult _registrationResult;
-      public with_valid_data() => _registrationResult = _service.Register("john@doe.com", "Secret123!");
+      public with_valid_data() => _registrationResult = _userRegistrar.Register("john@doe.com", "Secret123!");
 
       [XF] public void registration_succeeds()       => _registrationResult.Succeeded.Must().BeTrue();
       [XF] public void a_confirmation_email_is_sent() => _registrationResult.ConfirmationEmailSent.Must().BeTrue();
