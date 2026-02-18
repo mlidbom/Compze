@@ -2,7 +2,7 @@
    <PropertyGroup>
       <TargetFramework>net9.0</TargetFramework>
       <Nullable>enable</Nullable>
-      <Version>0.1.0-alpha.3</Version>
+      <Version>0.1.0-alpha.4</Version>
       <Description>SimpleInjector dependency injection integration for the Compze framework.</Description>
    </PropertyGroup>
    <ItemGroup>
@@ -12,7 +12,6 @@
          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
    </ItemGroup>
-   <ItemGroup></ItemGroup>
    <ItemGroup>
       <ProjectReference Include="..\Compze.Utilities.Contracts\Compze.Utilities.Contracts.csproj" />
       <ProjectReference Include="..\Compze.Utilities.Functional\Compze.Utilities.Functional.csproj" />

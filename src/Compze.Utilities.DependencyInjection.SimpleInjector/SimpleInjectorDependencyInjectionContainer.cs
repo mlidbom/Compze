@@ -11,7 +11,7 @@ using SimpleInjector.Lifestyles;
 namespace Compze.Utilities.DependencyInjection.SimpleInjector;
 
 // ReSharper disable once ClassNeverInstantiated.Global
-public sealed class SimpleInjectorDependencyInjectionContainer : DependencyInjectionContainerBase, IServiceLocator, IServiceLocatorKernel
+public sealed class SimpleInjectorDependencyInjectionContainer : DependencyInjectionContainerBase, IServiceLocator, IServiceLocatorKernel, ISimpleInjectorContainerInternals
 {
    readonly Container _container;
 
@@ -70,6 +70,8 @@ public sealed class SimpleInjectorDependencyInjectionContainer : DependencyInjec
          return this;
       }
    }
+
+   Container ISimpleInjectorContainerInternals.Container => _container;
 
    public TComponent Resolve<TComponent>() where TComponent : class => _container.GetInstance<TComponent>();
    public object Resolve(Type serviceType) => _container.GetInstance(serviceType);

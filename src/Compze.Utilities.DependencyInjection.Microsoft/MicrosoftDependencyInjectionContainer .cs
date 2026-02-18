@@ -11,7 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Compze.Utilities.DependencyInjection.Microsoft;
 
-public sealed class MicrosoftDependencyInjectionContainer : DependencyInjectionContainerBase, IServiceLocator, IServiceLocatorKernel
+public sealed class MicrosoftDependencyInjectionContainer : DependencyInjectionContainerBase, IServiceLocator, IServiceLocatorKernel, IMicrosoftContainerInternals
 {
    readonly IServiceCollection _services;
    ServiceProvider? _serviceProvider;
@@ -108,6 +108,9 @@ public sealed class MicrosoftDependencyInjectionContainer : DependencyInjectionC
          _scopeCache.Value = null;
       });
    }
+
+   IServiceCollection IMicrosoftContainerInternals.ServiceCollection => _services;
+   IServiceProvider IMicrosoftContainerInternals.ServiceProvider => _serviceProvider.NotNull();
 
    public override void Dispose()
    {

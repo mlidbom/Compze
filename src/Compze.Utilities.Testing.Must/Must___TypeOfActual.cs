@@ -3,7 +3,6 @@ namespace Compze.Utilities.Testing.Must;
 
 public static class Must___TypeOfActual
 {
-   //todo: rename
    public static IAssertionContext<TExpected> BeExactType<TExpected>(this IAssertionContext context) =>
       context.SatisfyInternal(it => it.GetType() == typeof(TExpected), caller: CallName.For<TExpected>())
           .Cast<TExpected>();
