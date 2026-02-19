@@ -6,8 +6,10 @@
    </PropertyGroup>
    <ItemGroup>
       <ProjectReference Include="..\..\..\..\test\Compze.Tests.Infrastructure\Compze.Tests.Infrastructure.csproj" />
-      <ProjectReference Include="..\..\..\..\src\Compze.Utilities.Testing.Must\Compze.Utilities.Testing.Must.csproj" />
       <ProjectReference Include="..\..\src\AccountManagement.API\AccountManagement.API.csproj" />
+   </ItemGroup>
+   <ItemGroup>
+      <FlexiReference Include="Compze.Utilities.Testing.Must" ProjectPath="..\..\..\..\src\Compze.Utilities.Testing.Must\Compze.Utilities.Testing.Must.csproj" Version="$(CompzePackageVersion)" />
    </ItemGroup>
    <ItemGroup>
       <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">

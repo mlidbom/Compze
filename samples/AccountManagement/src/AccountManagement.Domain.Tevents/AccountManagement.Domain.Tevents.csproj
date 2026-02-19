@@ -6,6 +6,8 @@
    </PropertyGroup>
    <ItemGroup>
       <ProjectReference Include="..\AccountManagement.API\AccountManagement.API.csproj" />
-      <ProjectReference Include="..\..\..\..\src\Compze.Core\Compze.Core.csproj" />
+   </ItemGroup>
+   <ItemGroup>
+      <FlexiReference Include="Compze.Core" ProjectPath="..\..\..\..\src\Compze.Core\Compze.Core.csproj" Version="$(CompzePackageVersion)" />
    </ItemGroup>
 </Project>

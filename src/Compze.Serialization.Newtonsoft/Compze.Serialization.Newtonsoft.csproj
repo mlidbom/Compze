@@ -13,6 +13,6 @@
       </PackageReference>
    </ItemGroup>
    <ItemGroup>
-      <ProjectReference Include="..\Compze.Core\Compze.Core.csproj" />
+      <FlexiReference Include="Compze.Core" ProjectPath="..\Compze.Core\Compze.Core.csproj" Version="$(CompzePackageVersion)" />
    </ItemGroup>
 </Project>

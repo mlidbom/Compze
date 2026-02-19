@@ -1,0 +1,55 @@
+<Project>
+   <!--
+      FlexiReference — Solution-Aware Reference Resolution
+      
+      Resolves FlexiReference items to ProjectReference (when the referenced project
+      is part of the current solution) or PackageReference (otherwise).
+      
+      Usage in .csproj files:
+         <FlexiReference Include="Compze.Core"
+                         ProjectPath="..\Compze.Core\Compze.Core.csproj"
+                         Version="$(CompzePackageVersion)" />
+      
+      When building with a solution containing Compze.Core → ProjectReference
+      When building without a solution or without Compze.Core → PackageReference
+   -->
+
+   <!-- Default package version for Compze packages (can be overridden per-FlexiReference) -->
+   <PropertyGroup>
+      <CompzePackageVersion Condition="'$(CompzePackageVersion)' == ''">0.1.0-alpha.3</CompzePackageVersion>
+   </PropertyGroup>
+
+   <!-- Read the solution file content for project membership detection.
+        $(SolutionPath) is set by Visual Studio, Rider, VS Code (C# Dev Kit),
+        and 'dotnet build *.slnx'. It is '*Undefined*' when not set. -->
+   <PropertyGroup Condition="'$(SolutionPath)' != '' and '$(SolutionPath)' != '*Undefined*' and Exists('$(SolutionPath)')">
+      <_FlexiRef_SlnxContent>$([System.IO.File]::ReadAllText('$(SolutionPath)'))</_FlexiRef_SlnxContent>
+   </PropertyGroup>
+
+   <!-- Resolve FlexiReference items to ProjectReference or PackageReference.
+        Uses a Target because static ItemGroups with %(metadata) batching cause
+        MSB4190 in projects that don't have any FlexiReference items. -->
+   <Target Name="_ResolveFlexiReferences"
+           BeforeTargets="CollectPackageReferences;_GenerateRestoreProjectSpec;ResolveProjectReferences;_GetProjectReferenceTargetFrameworkProperties;Build"
+           Condition="@(FlexiReference->Count()) &gt; 0">
+
+      <!-- When the project IS in the solution → ProjectReference -->
+      <ItemGroup Condition="'$(_FlexiRef_SlnxContent)' != ''">
+         <ProjectReference Include="$([System.IO.Path]::GetFullPath('%(FlexiReference.ProjectPath)', '$(MSBuildProjectDirectory)'))"
+                           Condition="$(_FlexiRef_SlnxContent.Contains('%(FlexiReference.Identity).csproj'))" />
+      </ItemGroup>
+
+      <!-- When there's no solution context → all become PackageReference -->
+      <ItemGroup Condition="'$(_FlexiRef_SlnxContent)' == ''">
+         <PackageReference Include="%(FlexiReference.Identity)"
+                           Version="%(FlexiReference.Version)" />
+      </ItemGroup>
+
+      <!-- When there IS solution context, projects NOT in solution → PackageReference -->
+      <ItemGroup Condition="'$(_FlexiRef_SlnxContent)' != ''">
+         <PackageReference Include="%(FlexiReference.Identity)"
+                           Version="%(FlexiReference.Version)"
+                           Condition="!$(_FlexiRef_SlnxContent.Contains('%(FlexiReference.Identity).csproj'))" />
+      </ItemGroup>
+   </Target>
+</Project>

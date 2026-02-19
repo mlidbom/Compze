@@ -6,12 +6,12 @@
       <Description>Microsoft.Extensions.DependencyInjection integration for the Compze framework.</Description>
    </PropertyGroup>
    <ItemGroup>
-      <ProjectReference Include="..\Compze.Utilities.Contracts\Compze.Utilities.Contracts.csproj" />
-      <ProjectReference Include="..\Compze.Utilities.Functional\Compze.Utilities.Functional.csproj" />
-      <ProjectReference Include="..\Compze.Utilities.DependencyInjection\Compze.Utilities.DependencyInjection.csproj" />
-      <ProjectReference Include="..\Compze.Utilities.Logging\Compze.Utilities.Logging.csproj" />
-      <ProjectReference Include="..\Compze.Utilities.SystemCE\Compze.Utilities.SystemCE.csproj" />
-      <ProjectReference Include="..\Compze.Utilities.SystemCE.ThreadingCE\Compze.Utilities.SystemCE.ThreadingCE.csproj" />
+      <FlexiReference Include="Compze.Utilities.Contracts" ProjectPath="..\Compze.Utilities.Contracts\Compze.Utilities.Contracts.csproj" Version="$(CompzePackageVersion)" />
+      <FlexiReference Include="Compze.Utilities.Functional" ProjectPath="..\Compze.Utilities.Functional\Compze.Utilities.Functional.csproj" Version="$(CompzePackageVersion)" />
+      <FlexiReference Include="Compze.Utilities.DependencyInjection" ProjectPath="..\Compze.Utilities.DependencyInjection\Compze.Utilities.DependencyInjection.csproj" Version="$(CompzePackageVersion)" />
+      <FlexiReference Include="Compze.Utilities.Logging" ProjectPath="..\Compze.Utilities.Logging\Compze.Utilities.Logging.csproj" Version="$(CompzePackageVersion)" />
+      <FlexiReference Include="Compze.Utilities.SystemCE" ProjectPath="..\Compze.Utilities.SystemCE\Compze.Utilities.SystemCE.csproj" Version="$(CompzePackageVersion)" />
+      <FlexiReference Include="Compze.Utilities.SystemCE.ThreadingCE" ProjectPath="..\Compze.Utilities.SystemCE.ThreadingCE\Compze.Utilities.SystemCE.ThreadingCE.csproj" Version="$(CompzePackageVersion)" />
    </ItemGroup>
    <ItemGroup>
       <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.9" />

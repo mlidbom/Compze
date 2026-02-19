@@ -1,0 +1,16 @@
+<Solution>
+  <Folder Name="/AccountManagement/">
+    <Project Path="../samples/AccountManagement/src/AccountManagement.API/AccountManagement.API.csproj" />
+    <Project Path="../samples/AccountManagement/src/AccountManagement.Domain.Tevents/AccountManagement.Domain.Tevents.csproj" />
+    <Project Path="../samples/AccountManagement/src/AccountManagement.Server/AccountManagement.Server.csproj" />
+    <Project Path="../samples/AccountManagement/src/AccountManagement.UI.MVC/AccountManagement.UI.MVC.csproj" />
+  </Folder>
+  <Folder Name="/AccountManagement/Tests/">
+    <Project Path="../samples/AccountManagement/test/AccountManagement.Tests/AccountManagement.Tests.csproj" />
+    <Project Path="../samples/AccountManagement/test/AccountManagement.Tests.Unit/AccountManagement.Tests.Unit.csproj" />
+    <Project Path="../samples/AccountManagement/test/AccountManagement.Tests.PerformanceInternals/AccountManagement.Tests.PerformanceInternals.csproj" />
+  </Folder>
+  <Folder Name="/Test Infrastructure/">
+    <Project Path="../test/Compze.Tests.Infrastructure/Compze.Tests.Infrastructure.csproj" />
+  </Folder>
+</Solution>

@@ -20,14 +20,16 @@
    </ItemGroup>
    <ItemGroup>
       <ProjectReference Include="..\Compze.Tests.Infrastructure\Compze.Tests.Infrastructure.csproj" />
-      <ProjectReference Include="..\..\src\Compze.Utilities.Testing.XUnit\Compze.Utilities.Testing.XUnit.csproj" />
-      <ProjectReference Include="..\..\src\Compze.Core\Compze.Core.csproj" />
-      <ProjectReference Include="..\..\src\Compze.Utilities.Testing.Must\Compze.Utilities.Testing.Must.csproj" />
-      <ProjectReference Include="..\..\src\Compze.Utilities.Contracts\Compze.Utilities.Contracts.csproj" />
-      <ProjectReference Include="..\..\src\Compze.Utilities.Functional\Compze.Utilities.Functional.csproj" />
-      <ProjectReference Include="..\..\src\Compze.Utilities.DependencyInjection\Compze.Utilities.DependencyInjection.csproj" />
-      <ProjectReference Include="..\..\src\Compze.Utilities.Logging\Compze.Utilities.Logging.csproj" />
-      <ProjectReference Include="..\..\src\Compze.Utilities.SystemCE\Compze.Utilities.SystemCE.csproj" />
-      <ProjectReference Include="..\..\src\Compze.Utilities.SystemCE.ThreadingCE\Compze.Utilities.SystemCE.ThreadingCE.csproj" />
+   </ItemGroup>
+   <ItemGroup>
+      <FlexiReference Include="Compze.Utilities.Testing.XUnit" ProjectPath="..\..\src\Compze.Utilities.Testing.XUnit\Compze.Utilities.Testing.XUnit.csproj" Version="$(CompzePackageVersion)" />
+      <FlexiReference Include="Compze.Core" ProjectPath="..\..\src\Compze.Core\Compze.Core.csproj" Version="$(CompzePackageVersion)" />
+      <FlexiReference Include="Compze.Utilities.Testing.Must" ProjectPath="..\..\src\Compze.Utilities.Testing.Must\Compze.Utilities.Testing.Must.csproj" Version="$(CompzePackageVersion)" />
+      <FlexiReference Include="Compze.Utilities.Contracts" ProjectPath="..\..\src\Compze.Utilities.Contracts\Compze.Utilities.Contracts.csproj" Version="$(CompzePackageVersion)" />
+      <FlexiReference Include="Compze.Utilities.Functional" ProjectPath="..\..\src\Compze.Utilities.Functional\Compze.Utilities.Functional.csproj" Version="$(CompzePackageVersion)" />
+      <FlexiReference Include="Compze.Utilities.DependencyInjection" ProjectPath="..\..\src\Compze.Utilities.DependencyInjection\Compze.Utilities.DependencyInjection.csproj" Version="$(CompzePackageVersion)" />
+      <FlexiReference Include="Compze.Utilities.Logging" ProjectPath="..\..\src\Compze.Utilities.Logging\Compze.Utilities.Logging.csproj" Version="$(CompzePackageVersion)" />
+      <FlexiReference Include="Compze.Utilities.SystemCE" ProjectPath="..\..\src\Compze.Utilities.SystemCE\Compze.Utilities.SystemCE.csproj" Version="$(CompzePackageVersion)" />
+      <FlexiReference Include="Compze.Utilities.SystemCE.ThreadingCE" ProjectPath="..\..\src\Compze.Utilities.SystemCE.ThreadingCE\Compze.Utilities.SystemCE.ThreadingCE.csproj" Version="$(CompzePackageVersion)" />
    </ItemGroup>
 </Project>

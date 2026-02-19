@@ -17,7 +17,7 @@
 		<PackageReference Include="xunit.v3" Version="3.1.0" />
 	</ItemGroup>
 	<ItemGroup>
-	  <ProjectReference Include="..\..\src\Compze.Utilities.Testing.Must\Compze.Utilities.Testing.Must.csproj" />
-	  <ProjectReference Include="..\..\src\Compze.Utilities.Testing.XUnit\Compze.Utilities.Testing.XUnit.csproj" />
+		<FlexiReference Include="Compze.Utilities.Testing.Must" ProjectPath="..\..\src\Compze.Utilities.Testing.Must\Compze.Utilities.Testing.Must.csproj" Version="$(CompzePackageVersion)" />
+		<FlexiReference Include="Compze.Utilities.Testing.XUnit" ProjectPath="..\..\src\Compze.Utilities.Testing.XUnit\Compze.Utilities.Testing.XUnit.csproj" Version="$(CompzePackageVersion)" />
 	</ItemGroup>
 </Project>

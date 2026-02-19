@@ -8,19 +8,21 @@
       <RootNamespace>AccountManagement</RootNamespace>
    </PropertyGroup>
    <ItemGroup>
-      <ProjectReference Include="..\..\..\..\src\Compze.Tessaging.Hosting.AspNetCore\Compze.Tessaging.Hosting.AspNetCore.csproj" />
-      <ProjectReference Include="..\..\..\..\src\Compze.Tessaging.Teventive.TeventStore\Compze.Tessaging.Teventive.TeventStore.csproj" />
-      <ProjectReference Include="..\..\..\..\src\Compze.Utilities.DependencyInjection.SimpleInjector\Compze.Utilities.DependencyInjection.SimpleInjector.csproj" />
       <ProjectReference Include="..\AccountManagement.Domain.Tevents\AccountManagement.Domain.Tevents.csproj" />
-      <ProjectReference Include="..\..\..\..\src\Compze.Tessaging\Compze.Tessaging.csproj" />
-      <ProjectReference Include="..\..\..\..\src\Compze.Sql.MicrosoftSql\Compze.Sql.MicrosoftSql.csproj" />
-      <ProjectReference Include="..\..\..\..\src\Compze.Core\Compze.Core.csproj" />
-      <ProjectReference Include="..\..\..\..\src\Compze.Utilities.Contracts\Compze.Utilities.Contracts.csproj" />
-      <ProjectReference Include="..\..\..\..\src\Compze.Utilities.Functional\Compze.Utilities.Functional.csproj" />
-      <ProjectReference Include="..\..\..\..\src\Compze.Utilities.DependencyInjection\Compze.Utilities.DependencyInjection.csproj" />
-      <ProjectReference Include="..\..\..\..\src\Compze.Utilities.Logging\Compze.Utilities.Logging.csproj" />
-      <ProjectReference Include="..\..\..\..\src\Compze.Utilities.SystemCE\Compze.Utilities.SystemCE.csproj" />
-      <ProjectReference Include="..\..\..\..\src\Compze.Utilities.SystemCE.ThreadingCE\Compze.Utilities.SystemCE.ThreadingCE.csproj" />
+   </ItemGroup>
+   <ItemGroup>
+      <FlexiReference Include="Compze.Tessaging.Hosting.AspNetCore" ProjectPath="..\..\..\..\src\Compze.Tessaging.Hosting.AspNetCore\Compze.Tessaging.Hosting.AspNetCore.csproj" Version="$(CompzePackageVersion)" />
+      <FlexiReference Include="Compze.Tessaging.Teventive.TeventStore" ProjectPath="..\..\..\..\src\Compze.Tessaging.Teventive.TeventStore\Compze.Tessaging.Teventive.TeventStore.csproj" Version="$(CompzePackageVersion)" />
+      <FlexiReference Include="Compze.Utilities.DependencyInjection.SimpleInjector" ProjectPath="..\..\..\..\src\Compze.Utilities.DependencyInjection.SimpleInjector\Compze.Utilities.DependencyInjection.SimpleInjector.csproj" Version="$(CompzePackageVersion)" />
+      <FlexiReference Include="Compze.Tessaging" ProjectPath="..\..\..\..\src\Compze.Tessaging\Compze.Tessaging.csproj" Version="$(CompzePackageVersion)" />
+      <FlexiReference Include="Compze.Sql.MicrosoftSql" ProjectPath="..\..\..\..\src\Compze.Sql.MicrosoftSql\Compze.Sql.MicrosoftSql.csproj" Version="$(CompzePackageVersion)" />
+      <FlexiReference Include="Compze.Core" ProjectPath="..\..\..\..\src\Compze.Core\Compze.Core.csproj" Version="$(CompzePackageVersion)" />
+      <FlexiReference Include="Compze.Utilities.Contracts" ProjectPath="..\..\..\..\src\Compze.Utilities.Contracts\Compze.Utilities.Contracts.csproj" Version="$(CompzePackageVersion)" />
+      <FlexiReference Include="Compze.Utilities.Functional" ProjectPath="..\..\..\..\src\Compze.Utilities.Functional\Compze.Utilities.Functional.csproj" Version="$(CompzePackageVersion)" />
+      <FlexiReference Include="Compze.Utilities.DependencyInjection" ProjectPath="..\..\..\..\src\Compze.Utilities.DependencyInjection\Compze.Utilities.DependencyInjection.csproj" Version="$(CompzePackageVersion)" />
+      <FlexiReference Include="Compze.Utilities.Logging" ProjectPath="..\..\..\..\src\Compze.Utilities.Logging\Compze.Utilities.Logging.csproj" Version="$(CompzePackageVersion)" />
+      <FlexiReference Include="Compze.Utilities.SystemCE" ProjectPath="..\..\..\..\src\Compze.Utilities.SystemCE\Compze.Utilities.SystemCE.csproj" Version="$(CompzePackageVersion)" />
+      <FlexiReference Include="Compze.Utilities.SystemCE.ThreadingCE" ProjectPath="..\..\..\..\src\Compze.Utilities.SystemCE.ThreadingCE\Compze.Utilities.SystemCE.ThreadingCE.csproj" Version="$(CompzePackageVersion)" />
    </ItemGroup>
    <ItemGroup>
       <None Update="appsettings.json">

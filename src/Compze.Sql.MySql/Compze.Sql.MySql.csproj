@@ -6,8 +6,8 @@
       <Description>MySQL database support for the Compze framework.</Description>
    </PropertyGroup>
    <ItemGroup>
-      <ProjectReference Include="..\Compze.Core\Compze.Core.csproj" />
-      <ProjectReference Include="..\Compze.Sql.Common\Compze.Sql.Common.csproj" />
+      <FlexiReference Include="Compze.Core" ProjectPath="..\Compze.Core\Compze.Core.csproj" Version="$(CompzePackageVersion)" />
+      <FlexiReference Include="Compze.Sql.Common" ProjectPath="..\Compze.Sql.Common\Compze.Sql.Common.csproj" Version="$(CompzePackageVersion)" />
    </ItemGroup>
    <ItemGroup>
       <PackageReference Include="MySql.Data" Version="9.4.0" />

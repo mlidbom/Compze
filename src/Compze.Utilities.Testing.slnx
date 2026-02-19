@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/Testing Libraries/">
+    <Project Path="Compze.Utilities.Testing.XUnit/Compze.Utilities.Testing.XUnit.csproj" />
+    <Project Path="Compze.Utilities.Testing.Must/Compze.Utilities.Testing.Must.csproj" />
+    <Project Path="Compze.Utilities.Testing.DbPool/Compze.Utilities.Testing.DbPool.csproj" />
+  </Folder>
+  <Folder Name="/Tests/">
+    <Project Path="../test/Compze.Utilities.Testing.XUnit.Tests/Compze.Utilities.Testing.XUnit.Tests.csproj" />
+    <Project Path="../test/Compze.Utilities.Tests/Compze.Utilities.Tests.csproj" />
+  </Folder>
+</Solution>
