@@ -26,6 +26,9 @@ jobs:
       - name: Configure test pluggable components
         run: cp src/TestUsingPluggableComponentCombinations.github-ci src/TestUsingPluggableComponentCombinations
 
+      - name: Pack Compze.Build.InternalizedSourceReferences to local feed
+        run: dotnet pack src/Compze.Build.InternalizedSourceReferences/src/Compze.Build.InternalizedSourceReferences/Compze.Build.InternalizedSourceReferences.csproj --configuration Release --output ./nupkgs
+
       - name: Build
         run: dotnet build Compze.everything-ci.slnx --configuration Release
 
