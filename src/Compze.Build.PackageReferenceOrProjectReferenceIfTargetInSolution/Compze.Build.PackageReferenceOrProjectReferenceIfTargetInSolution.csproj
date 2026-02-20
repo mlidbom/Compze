@@ -12,7 +12,7 @@
 
       <!-- Package metadata -->
       <PackageId>Compze.Build.PackageReferenceOrProjectReferenceIfTargetInSolution</PackageId>
-      <Version>0.1.0-alpha.1</Version>
+      <Version>0.1.0-alpha.2</Version>
       <Authors>mlidbom</Authors>
       <Description>Solution-aware MSBuild reference resolution. Automatically uses ProjectReference when the target project is in the current solution, and PackageReference otherwise. Copy the .targets file into your repo and import it from Directory.Build.targets. See README for setup instructions.</Description>
       <PackageTags>msbuild;nuget;project-reference;package-reference;solution;build;dotnet</PackageTags>
