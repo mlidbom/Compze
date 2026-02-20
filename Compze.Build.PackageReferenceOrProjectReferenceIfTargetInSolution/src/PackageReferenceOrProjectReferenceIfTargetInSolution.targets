@@ -3,15 +3,21 @@
       PackageReferenceOrProjectReferenceIfTargetInSolution — Solution-Aware Reference Resolution
 
       Resolves PackageReferenceOrProjectReferenceIfTargetInSolution items,
-      creating a ProjectReference if the target project is part of the current solution and a PackageReference if not.
+      creating a ProjectReference if the target project is part of the current solution
+      and a PackageReference otherwise.
+
+      The project path is extracted automatically from the solution file (.slnx).
+      Only the package name and version are required.
 
       Usage in .csproj files:
          <PackageReferenceOrProjectReferenceIfTargetInSolution
-             Include="Compze.Core"
-             Version="0.1.0-alpha.3" />
+             Include="MyLibrary"
+             Version="1.0.0" />
 
-      When building with a solution containing Compze.Core → ProjectReference
-      When building without a solution or without Compze.Core → PackageReference
+      When building with a solution containing MyLibrary → ProjectReference
+      When building without a solution or without MyLibrary → PackageReference
+
+      Supports NuGet floating versions (e.g. Version="*-*") for non-packable projects.
 
       Import this file from your Directory.Build.targets:
          <Import Project="$(MSBuildThisFileDirectory)path/to/PackageReferenceOrProjectReferenceIfTargetInSolution.targets" />
@@ -25,11 +31,17 @@
       <_PkgOrPrj_SolutionDirectory>$([System.IO.Path]::GetDirectoryName('$(SolutionPath)'))</_PkgOrPrj_SolutionDirectory>
    </PropertyGroup>
 
+   <!-- Resolve items to ProjectReference or PackageReference.
+        Uses a Target to avoid MSB4190 in projects without any items of this type.
+        Uses computed custom metadata instead of %(Identity) in Condition attributes
+        because Roslyn's project system (VS Code C# Dev Kit, Visual Studio)
+        forbids built-in metadata references in item conditions. -->
    <Target Name="_ResolvePackageReferenceOrProjectReferenceIfTargetInSolution"
            BeforeTargets="CollectPackageReferences;_GenerateRestoreProjectSpec;ResolveProjectReferences;_GetProjectReferenceTargetFrameworkProperties;Build"
            Condition="@(PackageReferenceOrProjectReferenceIfTargetInSolution->Count()) &gt; 0">
 
-      <!-- Tag each item with whether its project is in the current solution, and extract the project path from the solution file -->
+      <!-- Tag each item with whether its project is in the current solution,
+           and extract the project path from the solution file -->
       <ItemGroup Condition="'$(_PkgOrPrj_SlnxContent)' != ''">
          <PackageReferenceOrProjectReferenceIfTargetInSolution Update="@(PackageReferenceOrProjectReferenceIfTargetInSolution)">
             <_IsInSolution>$(_PkgOrPrj_SlnxContent.Contains('%(Identity).csproj'))</_IsInSolution>
