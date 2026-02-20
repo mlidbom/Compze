@@ -19,7 +19,7 @@ A project that internalizes source has these elements:
 </PropertyGroup>
 
 <ItemGroup>
-   <PackageReference Include="Compze.Build.InternalizedSourceReferences" Version="0.1.0-alpha.2" PrivateAssets="all" />
+   <PackageReference Include="Compze.Build.InternalizedSourceReferences" Version="*-*" PrivateAssets="all" />
 </ItemGroup>
 ```
 

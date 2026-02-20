@@ -49,7 +49,7 @@ function C-Add-InternedSourceReference {
         }
         $pkgRef = $xml.CreateElement("PackageReference")
         $pkgRef.SetAttribute("Include", "Compze.Build.InternalizedSourceReferences")
-        $pkgRef.SetAttribute("Version", "0.1.0-alpha.2")
+        $pkgRef.SetAttribute("Version", "*-*")
         $pkgRef.SetAttribute("PrivateAssets", "all")
         $pkgItemGroup.AppendChild($pkgRef) | Out-Null
     }
