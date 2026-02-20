@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+   <PropertyGroup>
+      <TargetFramework>netstandard2.0</TargetFramework>
+
+      <!-- This project produces no compiled output — it distributes an MSBuild .targets file -->
+      <IncludeBuildOutput>false</IncludeBuildOutput>
+      <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
+      <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+      <NoWarn>NU5128</NoWarn>
+
+      <!-- Package metadata -->
+      <PackageId>Compze.Build.PackageReferenceOrProjectReferenceIfTargetInSolution</PackageId>
+      <Version>0.1.0-alpha.1</Version>
+      <Authors>mlidbom</Authors>
+      <Description>Solution-aware MSBuild reference resolution. Automatically uses ProjectReference when the target project is in the current solution, and PackageReference otherwise. Copy the .targets file into your repo and import it from Directory.Build.targets. See README for setup instructions.</Description>
+      <PackageTags>msbuild;nuget;project-reference;package-reference;solution;build;dotnet</PackageTags>
+      <PackageLicenseExpression>Unlicense</PackageLicenseExpression>
+      <PackageProjectUrl>https://github.com/mlidbom/Compze</PackageProjectUrl>
+      <RepositoryUrl>https://github.com/mlidbom/Compze</RepositoryUrl>
+      <RepositoryType>git</RepositoryType>
+      <PackageReadmeFile>README.md</PackageReadmeFile>
+      <DevelopmentDependency>true</DevelopmentDependency>
+   </PropertyGroup>
+
+   <ItemGroup>
+      <None Include="src\**" Pack="true" PackagePath="src\" />
+      <None Include="README.md" Pack="true" PackagePath="\" />
+   </ItemGroup>
+</Project>

@@ -11,28 +11,30 @@
       <ProjectReference Include="..\Compze.Tests.ScratchPad\Compze.Tests.ScratchPad.csproj" />
       <ProjectReference Include="..\Compze.Tests.Unit.Internals\Compze.Tests.Unit.Internals.csproj" />
       <ProjectReference Include="..\Compze.Tests.Unit\Compze.Tests.Unit.csproj" />
-      <ProjectReference Include="..\..\src\Compze.Core\Compze.Core.csproj" />
-      <ProjectReference Include="..\..\src\Compze.Serialization.Newtonsoft\Compze.Serialization.Newtonsoft.csproj" />
-      <ProjectReference Include="..\..\src\Compze.Sql.Common\Compze.Sql.Common.csproj" />
-      <ProjectReference Include="..\..\src\Compze.Sql.MicrosoftSql\Compze.Sql.MicrosoftSql.csproj" />
-      <ProjectReference Include="..\..\src\Compze.Sql.MySql\Compze.Sql.MySql.csproj" />
-      <ProjectReference Include="..\..\src\Compze.Sql.PostgreSql\Compze.Sql.PostgreSql.csproj" />
-      <ProjectReference Include="..\..\src\Compze.Sql.Sqlite\Compze.Sql.Sqlite.csproj" />
-      <ProjectReference Include="..\..\src\Compze.Tessaging\Compze.Tessaging.csproj" />
-      <ProjectReference Include="..\..\src\Compze.Tessaging.Hosting.AspNetCore\Compze.Tessaging.Hosting.AspNetCore.csproj" />
-      <ProjectReference Include="..\..\src\Compze.Tessaging.Hosting.Testing\Compze.Tessaging.Hosting.Testing.csproj" />
-      <ProjectReference Include="..\..\src\Compze.Tessaging.Teventive.TeventStore\Compze.Tessaging.Teventive.TeventStore.csproj" />
-      <ProjectReference Include="..\..\src\Compze.Utilities.DependencyInjection.Microsoft\Compze.Utilities.DependencyInjection.Microsoft.csproj" />
-      <ProjectReference Include="..\..\src\Compze.Utilities.DependencyInjection.SimpleInjector\Compze.Utilities.DependencyInjection.SimpleInjector.csproj" />
-      <ProjectReference Include="..\..\src\Compze.Utilities.Logging.Serilog\Compze.Utilities.Logging.Serilog.csproj" />
-      <ProjectReference Include="..\..\src\Compze.Utilities.Testing.DbPool\Compze.Utilities.Testing.DbPool.csproj" />
-      <ProjectReference Include="..\..\src\Compze.Utilities.Testing.Must\Compze.Utilities.Testing.Must.csproj" />
-      <ProjectReference Include="..\..\src\Compze.Utilities.Contracts\Compze.Utilities.Contracts.csproj" />
-      <ProjectReference Include="..\..\src\Compze.Utilities.Functional\Compze.Utilities.Functional.csproj" />
-      <ProjectReference Include="..\..\src\Compze.Utilities.DependencyInjection\Compze.Utilities.DependencyInjection.csproj" />
-      <ProjectReference Include="..\..\src\Compze.Utilities.Logging\Compze.Utilities.Logging.csproj" />
-      <ProjectReference Include="..\..\src\Compze.Utilities.SystemCE\Compze.Utilities.SystemCE.csproj" />
-      <ProjectReference Include="..\..\src\Compze.Utilities.SystemCE.ThreadingCE\Compze.Utilities.SystemCE.ThreadingCE.csproj" />
+   </ItemGroup>
+   <ItemGroup>
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Core" Version="*-*" />
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Serialization.Newtonsoft" Version="*-*" />
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Sql.Common" Version="*-*" />
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Sql.MicrosoftSql" Version="*-*" />
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Sql.MySql" Version="*-*" />
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Sql.PostgreSql" Version="*-*" />
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Sql.Sqlite" Version="*-*" />
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Tessaging" Version="*-*" />
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Tessaging.Hosting.AspNetCore" Version="*-*" />
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Tessaging.Hosting.Testing" Version="*-*" />
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Tessaging.Teventive.TeventStore" Version="*-*" />
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.DependencyInjection.Microsoft" Version="*-*" />
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.DependencyInjection.SimpleInjector" Version="*-*" />
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.Logging.Serilog" Version="*-*" />
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.Testing.DbPool" Version="*-*" />
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.Testing.Must" Version="*-*" />
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.Contracts" Version="*-*" />
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.Functional" Version="*-*" />
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.DependencyInjection" Version="*-*" />
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.Logging" Version="*-*" />
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.SystemCE" Version="*-*" />
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.SystemCE.ThreadingCE" Version="*-*" />
    </ItemGroup>
    <ItemGroup>
       <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />

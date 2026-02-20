@@ -1,4 +1,4 @@
-# Compze.InternalizedSourceReferences - Copilot Instructions
+# Compze.Build.InternalizedSourceReferences - Copilot Instructions
 
 ## What This Project Does
 
@@ -32,16 +32,16 @@ Distributed as a NuGet package containing an MSBuild task. Supports multiple sou
 ## Project Structure
 
 ```
-Compze.InternalizedSourceReferences.slnx   # Solution file
+Compze.Build.InternalizedSourceReferences.slnx   # Solution file
 global.json                                      # .NET SDK version
 src/
-  Compze.InternalizedSourceReferences/       # Library project (also a NuGet package)
+  Compze.Build.InternalizedSourceReferences/       # Library project (also a NuGet package)
     SourceRewriter.cs                            # Core rewriting logic
     RewriteDirectoryTask.cs                      # MSBuild ITask implementation
-    Compze.InternalizedSourceReferences.targets  # MSBuild integration (packed into NuGet)
-    Compze.InternalizedSourceReferences.csproj   # Configured as NuGet package
+    Compze.Build.InternalizedSourceReferences.targets  # MSBuild integration (packed into NuGet)
+    Compze.Build.InternalizedSourceReferences.csproj   # Configured as NuGet package
 test/
-  Compze.InternalizedSourceReferences.Tests/ # Test project
+  Compze.Build.InternalizedSourceReferences.Tests/ # Test project
     input_source/                                # Real C# source files (test input)
     output_source/                               # Expected rewritten output (committed baseline)
     batch_output_source/                         # Temp dir for single-directory batch test (gitignored)
@@ -52,9 +52,9 @@ test/
 ## Build and Test
 
 ```powershell
-cd Compze.InternalizedSourceReferences
-dotnet build Compze.InternalizedSourceReferences.slnx
-dotnet test Compze.InternalizedSourceReferences.slnx
+cd src/Compze.Build.InternalizedSourceReferences
+dotnet build Compze.Build.InternalizedSourceReferences.slnx
+dotnet test Compze.Build.InternalizedSourceReferences.slnx
 ```
 
 ## How the Tests Work

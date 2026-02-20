@@ -1,4 +1,4 @@
-# Compze.InternalizedSourceReferences
+# Compze.Build.InternalizedSourceReferences
 
 An MSBuild task that enables circular dependencies between .NET library projects. The library using thing task gets a local "internalized" copy of the other library's code (or any number of other libraries' code).
 

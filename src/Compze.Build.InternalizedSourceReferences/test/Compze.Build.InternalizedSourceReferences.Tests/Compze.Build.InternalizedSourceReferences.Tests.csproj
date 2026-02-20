@@ -20,7 +20,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Compze.InternalizedSourceReferences\Compze.InternalizedSourceReferences.csproj" />
+    <ProjectReference Include="..\..\src\Compze.Build.InternalizedSourceReferences\Compze.Build.InternalizedSourceReferences.csproj" />
   </ItemGroup>
 
 </Project>

@@ -22,8 +22,8 @@
       </EmbeddedResource>
    </ItemGroup>
    <ItemGroup>
-      <ProjectReference Include="..\..\..\..\src\Compze.Tessaging\Compze.Tessaging.csproj" />
-      <ProjectReference Include="..\..\..\..\src\Compze.Core\Compze.Core.csproj" />
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Tessaging" Version="*-*" />
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Core" Version="*-*" />
    </ItemGroup>
    <ItemGroup>
       <PackageReference Include="CommunityToolkit.Diagnostics" Version="8.4.0" />

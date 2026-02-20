@@ -7,13 +7,13 @@
 
     <!-- NuGet package configuration -->
     <IsPackable>true</IsPackable>
-    <PackageId>Compze.InternalizedSourceReferences</PackageId>
+    <PackageId>Compze.Build.InternalizedSourceReferences</PackageId>
     <Version>0.1.0-alpha.3</Version>
     <Description>MSBuild task that rewrites source files from referenced projects, making public types internal. Enables code sharing between projects with circular dependencies.</Description>
     <DevelopmentDependency>true</DevelopmentDependency>
     <NoPackageAnalysis>true</NoPackageAnalysis>
     <NoWarn>$(NoWarn);NU5100;NU5128</NoWarn>
-    <PackageOutputPath>$(MSBuildThisFileDirectory)..\..\..\nupkgs</PackageOutputPath>
+    <PackageOutputPath>$(MSBuildThisFileDirectory)..\..\..\..\nupkgs</PackageOutputPath>
 
     <!-- Don't put anything in lib/ - this is a build-only tool -->
     <IncludeBuildOutput>false</IncludeBuildOutput>
@@ -36,13 +36,15 @@
 
   <!-- Pack the .targets and DLL into both build/ and buildTransitive/ -->
   <ItemGroup>
-    <None Include="Compze.InternalizedSourceReferences.targets" Pack="true" PackagePath="build/" />
-    <None Include="Compze.InternalizedSourceReferences.targets" Pack="true" PackagePath="buildTransitive/" />
-    <None Include="$(OutputPath)Compze.InternalizedSourceReferences.dll" Pack="true" PackagePath="build/" Visible="false" />
-    <None Include="$(OutputPath)Compze.InternalizedSourceReferences.dll" Pack="true" PackagePath="buildTransitive/" Visible="false" />
+    <None Include="Compze.Build.InternalizedSourceReferences.targets" Pack="true" PackagePath="build/" />
+    <None Include="Compze.Build.InternalizedSourceReferences.targets" Pack="true" PackagePath="buildTransitive/" />
+    <None Include="$(OutputPath)Compze.Build.InternalizedSourceReferences.dll" Pack="true" PackagePath="build/" Visible="false" />
+    <None Include="$(OutputPath)Compze.Build.InternalizedSourceReferences.dll" Pack="true" PackagePath="buildTransitive/" Visible="false" />
   </ItemGroup>
 
   <ItemGroup>
+    <!-- Override Directory.Build.props README — ours is at the sub-solution root, not the project directory -->
+    <None Remove="$(MSBuildProjectDirectory)/README.md" />
     <None Include="$(MSBuildProjectDirectory)/../../README.md" Pack="true" PackagePath="" />
   </ItemGroup>
 

@@ -6,7 +6,7 @@ Applies to: `src/**/*.csproj`
 
 Some of our utility libraries have circular dependencies. For example, `Compze.Utilities.SystemCE` references `Compze.Utilities.SystemCE.ThreadingCE` via `ProjectReference`, and `ThreadingCE` needs code from `SystemCE`. A normal `ProjectReference` back would create a cycle that MSBuild cannot resolve.
 
-We solve this with **internalized source references**: an MSBuild task (`Compze.InternalizedSourceReferences` NuGet package) that copies the source files from one project into an `InternalizedSource/` folder in another project, rewriting all `public` type declarations to `internal`. This gives the consumer its own private copy of the code — no runtime sharing of static state, and internalized types **must not** appear in the consumer's public API.
+We solve this with **internalized source references**: an MSBuild task (`Compze.Build.InternalizedSourceReferences` NuGet package) that copies the source files from one project into an `InternalizedSource/` folder in another project, rewriting all `public` type declarations to `internal`. This gives the consumer its own private copy of the code — no runtime sharing of static state, and internalized types **must not** appear in the consumer's public API.
 
 ## How It Works in a .csproj
 
@@ -19,7 +19,7 @@ A project that internalizes source has these elements:
 </PropertyGroup>
 
 <ItemGroup>
-   <PackageReference Include="Compze.InternalizedSourceReferences" Version="0.1.0-alpha.2" PrivateAssets="all" />
+   <PackageReference Include="Compze.Build.InternalizedSourceReferences" Version="0.1.0-alpha.2" PrivateAssets="all" />
 </ItemGroup>
 ```
 
@@ -50,4 +50,4 @@ This adds the `PackageReference` and `InternalizeSourceFrom`/`InternalizeSourceT
 
 - **No public API exposure**: Internalized types are rewritten to `internal` — they cannot appear in the consumer's public method signatures, property types, base classes, or interface implementations.
 - **No shared static state**: Each consumer gets its own copy of the code, so static fields/properties are independent across consumers.
-- **The `Compze.InternalizedSourceReferences` sub-solution** lives at `Compze.InternalizedSourceReferences/` in the repo root — see its [README](../../Compze.InternalizedSourceReferences/README.md) and [DEVELOPMENT.md](../../Compze.InternalizedSourceReferences/DEVELOPMENT.md) for implementation details, testing, and packaging.
+- **The `Compze.Build.InternalizedSourceReferences` sub-solution** lives at `src/Compze.Build.InternalizedSourceReferences/` — see its [README](../../src/Compze.Build.InternalizedSourceReferences/README.md) and [DEVELOPMENT.md](../../src/Compze.Build.InternalizedSourceReferences/DEVELOPMENT.md) for implementation details, testing, and packaging.

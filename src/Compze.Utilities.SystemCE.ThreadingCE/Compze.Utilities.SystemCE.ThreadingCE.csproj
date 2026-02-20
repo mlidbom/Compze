@@ -5,15 +5,15 @@
       <Version>0.1.0-alpha.3</Version>
    </PropertyGroup>
    <ItemGroup>
-      <ProjectReference Include="..\Compze.Utilities.Contracts\Compze.Utilities.Contracts.csproj" />
-      <ProjectReference Include="..\Compze.Utilities.Functional\Compze.Utilities.Functional.csproj" />
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.Contracts" Version="*-*" />
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.Functional" Version="*-*" />
    </ItemGroup>
    <PropertyGroup>
       <InternalizeSourceFrom>..\Compze.Utilities.SystemCE</InternalizeSourceFrom>
       <InternalizeSourceTo>$(MSBuildProjectDirectory)\InternalizedSource</InternalizeSourceTo>
    </PropertyGroup>
    <ItemGroup>
-      <PackageReference Include="Compze.InternalizedSourceReferences" Version="0.1.0-alpha.2" PrivateAssets="all" />
+      <PackageReference Include="Compze.Build.InternalizedSourceReferences" Version="0.1.0-alpha.2" PrivateAssets="all" />
       <PackageReference Include="JetBrains.Annotations" Version="2025.2.4" />
       <PackageReference Include="NsDepCop" Version="2.6.0">
          <PrivateAssets>all</PrivateAssets>

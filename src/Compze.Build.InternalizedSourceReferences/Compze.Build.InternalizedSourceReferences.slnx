@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Compze.Build.InternalizedSourceReferences/Compze.Build.InternalizedSourceReferences.csproj" />
+  </Folder>
+  <Folder Name="/test/">
+    <Project Path="test/Compze.Build.InternalizedSourceReferences.Tests/Compze.Build.InternalizedSourceReferences.Tests.csproj" />
+  </Folder>
+</Solution>
