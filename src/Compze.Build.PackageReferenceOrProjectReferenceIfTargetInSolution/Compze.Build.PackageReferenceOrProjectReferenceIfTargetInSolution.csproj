@@ -4,6 +4,8 @@
 
       <!-- This project produces no compiled output — it distributes an MSBuild .targets file -->
       <IncludeBuildOutput>false</IncludeBuildOutput>
+      <!-- No symbol package — no DLL in lib/ -->
+      <IncludeSymbols>false</IncludeSymbols>
       <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
       <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
       <NoWarn>NU5128</NoWarn>
