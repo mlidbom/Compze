@@ -56,8 +56,8 @@ MyFramework.Samples.slnx            ← just samples (framework = NuGet packages
 ## Compatibility
 
 Confirmed to work with:
-- Visual Studio
-- VS Code (C# Dev Kit)
+- Visual Studio 2026
+- VS Code (C# Dev Kit and Resharper)
 - JetBrains Rider
 - `dotnet build` / `dotnet restore` CLI
 
