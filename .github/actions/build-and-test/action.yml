@@ -1,0 +1,32 @@
+name: Build and Test
+description: Shared setup, build, and test steps for CI and publish workflows
+
+inputs:
+  configuration:
+    description: Build configuration (Debug or Release)
+    required: false
+    default: Debug
+
+runs:
+  using: composite
+  steps:
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '9.0.x'
+
+    - name: Configure test pluggable components
+      shell: bash
+      run: cp src/TestUsingPluggableComponentCombinations.github-ci src/TestUsingPluggableComponentCombinations
+
+    - name: Pack Compze.Build.InternalizedSourceReferences to local feed
+      shell: bash
+      run: dotnet pack src/Compze.Build.InternalizedSourceReferences/src/Compze.Build.InternalizedSourceReferences/Compze.Build.InternalizedSourceReferences.csproj --configuration ${{ inputs.configuration }} --output ./nupkgs
+
+    - name: Build
+      shell: bash
+      run: dotnet build Compze.everything-ci.slnx --configuration ${{ inputs.configuration }}
+
+    - name: Test
+      shell: bash
+      run: dotnet test Compze.everything-ci.slnx --configuration ${{ inputs.configuration }} --no-build
