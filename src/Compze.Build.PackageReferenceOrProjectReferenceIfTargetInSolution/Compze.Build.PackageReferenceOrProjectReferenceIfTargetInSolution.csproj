@@ -26,6 +26,6 @@
 
    <ItemGroup>
       <None Include="src\**" Pack="true" PackagePath="src\" />
-      <None Include="README.md" Pack="true" PackagePath="\" />
+      <!-- README.md is packed by Directory.Build.props — don't duplicate it -->
    </ItemGroup>
 </Project>
