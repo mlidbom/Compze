@@ -10,17 +10,19 @@ When a .NET solution contains many projects that are also published as NuGet pac
 
 ## Our Solution
 
-In your `.csproj`:
+Use standard `ProjectReference` items with metadata that enables automatic conversion:
 
 ```xml
 <ItemGroup>
-    <PackageReferenceOrProjectReferenceIfTargetInSolution Include="MyLibrary" Version="2.0.0" />
+    <ProjectReference Include="../MyLibrary/MyLibrary.csproj"
+                      ConvertToPackageWhenNotInSolution="true"
+                      PackageFallbackVersion="2.0.0" />
 </ItemGroup>
 ```
 
 At build and restore time:
-- If `MyLibrary.csproj` is in the current solution this is replaced by a normal project reference.
-- If not this is replaced by a normal package reference.
+- If `MyLibrary.csproj` is in the current solution → stays as a normal ProjectReference.
+- If not → the ProjectReference is replaced by a PackageReference (using `PackageFallbackVersion` as the version).
 
 ## Installation
 
@@ -36,7 +38,7 @@ At build and restore time:
 
 > **Why a file copy instead of a NuGet auto-import?** This tool must participate in NuGet restore's project graph evaluation. NuGet package imports aren't available until *after* restore completes.
 
-## Primary use case
+## Primary use cases
 
 ### Partial Solutions for Faster Development
 
@@ -49,6 +51,17 @@ MyFramework.Utilities.slnx          ← just utilities + their tests
 MyFramework.Samples.slnx            ← just samples (framework = NuGet packages)
 ```
 
+### Switching Between Consuming and Contributing to a Library
+
+When your application depends on a library you also maintain, create two solutions with the same project files:
+
+```
+MyApp.slnx              ← just your app projects. Library references resolve from NuGet packages.
+MyApp.WithLibrary.slnx  ← your app projects + library projects. Library references become live ProjectReferences.
+```
+
+Switch between "consuming the library" and "developing the library" by opening a different solution — no changes to any `.csproj` files.
+
 ## Requirements
 
 - Solution files in `.slnx` format
@@ -56,10 +69,13 @@ MyFramework.Samples.slnx            ← just samples (framework = NuGet packages
 ## Compatibility
 
 Confirmed to work with:
-- Visual Studio 2022 and 2026
-- VS Code (C# Dev Kit and Resharper)
+- Visual Studio 2026
+- Visual Studio Code (C# Dev Kit and Resharper)
 - JetBrains Rider
 - `dotnet build` / `dotnet restore` CLI
+
+### Ncrunch
+- Under NCrunch no replacement occurs. NCrunch still works, but will build using the original project references
 
 ## License
 
