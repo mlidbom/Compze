@@ -6,12 +6,12 @@
       <Description>Microsoft.Extensions.DependencyInjection integration for the Compze framework.</Description>
    </PropertyGroup>
    <ItemGroup>
-      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.Contracts" Version="0.1.0-alpha.3" />
-      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.Functional" Version="0.1.0-alpha.3" />
-      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.DependencyInjection" Version="0.1.0-alpha.3" />
-      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.Logging" Version="0.1.0-alpha.3" />
-      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.SystemCE" Version="0.1.0-alpha.3" />
-      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.SystemCE.ThreadingCE" Version="0.1.0-alpha.3" />
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.Contracts" Version="*-*" />
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.Functional" Version="*-*" />
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.DependencyInjection" Version="*-*" />
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.Logging" Version="*-*" />
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.SystemCE" Version="*-*" />
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.SystemCE.ThreadingCE" Version="*-*" />
    </ItemGroup>
    <ItemGroup>
       <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.9" />

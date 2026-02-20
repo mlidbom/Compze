@@ -6,8 +6,8 @@
       <Description>SQLite database support for the Compze framework.</Description>
    </PropertyGroup>
    <ItemGroup>
-      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Core" Version="0.1.0-alpha.3" />
-      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Sql.Common" Version="0.1.0-alpha.3" />
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Core" Version="*-*" />
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Sql.Common" Version="*-*" />
    </ItemGroup>
    <ItemGroup>
       <PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.1" />

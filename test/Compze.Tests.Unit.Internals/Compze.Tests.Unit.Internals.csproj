@@ -8,13 +8,13 @@
       <ProjectReference Include="..\Compze.Tests.Infrastructure\Compze.Tests.Infrastructure.csproj" />
    </ItemGroup>
    <ItemGroup>
-      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.Testing.Must" Version="0.1.0-alpha.3" />
-      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.Contracts" Version="0.1.0-alpha.3" />
-      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.Functional" Version="0.1.0-alpha.3" />
-      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.DependencyInjection" Version="0.1.0-alpha.3" />
-      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.Logging" Version="0.1.0-alpha.3" />
-      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.SystemCE" Version="0.1.0-alpha.3" />
-      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.SystemCE.ThreadingCE" Version="0.1.0-alpha.3" />
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.Testing.Must" Version="*-*" />
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.Contracts" Version="*-*" />
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.Functional" Version="*-*" />
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.DependencyInjection" Version="*-*" />
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.Logging" Version="*-*" />
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.SystemCE" Version="*-*" />
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.SystemCE.ThreadingCE" Version="*-*" />
    </ItemGroup>
    <ItemGroup>
       <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />

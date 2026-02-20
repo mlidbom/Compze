@@ -17,7 +17,7 @@
       <Folder Include="SystemCE\ThreadingCE\Async\" />
    </ItemGroup>
    <ItemGroup>
-      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.Contracts" Version="0.1.0-alpha.3" />
-      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.Functional" Version="0.1.0-alpha.3" />
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.Contracts" Version="*-*" />
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.Functional" Version="*-*" />
    </ItemGroup>
 </Project>

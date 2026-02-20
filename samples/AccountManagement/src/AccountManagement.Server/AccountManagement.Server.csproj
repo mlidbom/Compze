@@ -11,18 +11,18 @@
       <ProjectReference Include="..\AccountManagement.Domain.Tevents\AccountManagement.Domain.Tevents.csproj" />
    </ItemGroup>
    <ItemGroup>
-      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Tessaging.Hosting.AspNetCore" Version="0.1.0-alpha.3" />
-      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Tessaging.Teventive.TeventStore" Version="0.1.0-alpha.3" />
-      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.DependencyInjection.SimpleInjector" Version="0.1.0-alpha.4" />
-      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Tessaging" Version="0.1.0-alpha.3" />
-      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Sql.MicrosoftSql" Version="0.1.0-alpha.3" />
-      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Core" Version="0.1.0-alpha.3" />
-      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.Contracts" Version="0.1.0-alpha.3" />
-      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.Functional" Version="0.1.0-alpha.3" />
-      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.DependencyInjection" Version="0.1.0-alpha.3" />
-      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.Logging" Version="0.1.0-alpha.3" />
-      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.SystemCE" Version="0.1.0-alpha.3" />
-      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.SystemCE.ThreadingCE" Version="0.1.0-alpha.3" />
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Tessaging.Hosting.AspNetCore" Version="*-*" />
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Tessaging.Teventive.TeventStore" Version="*-*" />
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.DependencyInjection.SimpleInjector" Version="*-*" />
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Tessaging" Version="*-*" />
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Sql.MicrosoftSql" Version="*-*" />
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Core" Version="*-*" />
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.Contracts" Version="*-*" />
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.Functional" Version="*-*" />
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.DependencyInjection" Version="*-*" />
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.Logging" Version="*-*" />
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.SystemCE" Version="*-*" />
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.SystemCE.ThreadingCE" Version="*-*" />
    </ItemGroup>
    <ItemGroup>
       <None Update="appsettings.json">

@@ -17,7 +17,7 @@
 		<PackageReference Include="xunit.v3" Version="3.1.0" />
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.Testing.Must" Version="0.1.0-alpha.3" />
-		<PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.Testing.XUnit" Version="0.1.0-alpha.3" />
+		<PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.Testing.Must" Version="*-*" />
+		<PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.Testing.XUnit" Version="*-*" />
 	</ItemGroup>
 </Project>

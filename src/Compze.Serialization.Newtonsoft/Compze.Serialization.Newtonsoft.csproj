@@ -13,6 +13,6 @@
       </PackageReference>
    </ItemGroup>
    <ItemGroup>
-      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Core" Version="0.1.0-alpha.3" />
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Core" Version="*-*" />
    </ItemGroup>
 </Project>

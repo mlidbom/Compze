@@ -22,8 +22,8 @@
       </EmbeddedResource>
    </ItemGroup>
    <ItemGroup>
-      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Tessaging" Version="0.1.0-alpha.3" />
-      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Core" Version="0.1.0-alpha.3" />
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Tessaging" Version="*-*" />
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Core" Version="*-*" />
    </ItemGroup>
    <ItemGroup>
       <PackageReference Include="CommunityToolkit.Diagnostics" Version="8.4.0" />
