@@ -26,23 +26,14 @@ jobs:
       - name: Configure test pluggable components
         run: cp src/TestUsingPluggableComponentCombinations.github-ci src/TestUsingPluggableComponentCombinations
 
-      - name: Build Compze.InternalizedSourceReferences
-        run: dotnet build Compze.InternalizedSourceReferences/Compze.InternalizedSourceReferences.slnx --configuration Release
-
-      - name: Test Compze.InternalizedSourceReferences
-        run: dotnet test Compze.InternalizedSourceReferences/Compze.InternalizedSourceReferences.slnx --configuration Release --no-build
-
-      - name: Pack Compze.InternalizedSourceReferences
-        run: dotnet pack Compze.InternalizedSourceReferences/src/Compze.InternalizedSourceReferences/Compze.InternalizedSourceReferences.csproj --configuration Release --no-build --output ./nupkgs
-
       - name: Build
-        run: dotnet build src/Compze.slnx --configuration Release
+        run: dotnet build Compze.everything-ci.slnx --configuration Release
 
       - name: Test
-        run: dotnet test src/Compze.slnx --configuration Release --no-build
+        run: dotnet test Compze.everything-ci.slnx --configuration Release --no-build
 
       - name: Pack all packable projects
-        run: dotnet pack src/Compze.slnx --configuration Release --no-build --output ./nupkgs
+        run: dotnet pack Compze.everything-ci.slnx --configuration Release --no-build --output ./nupkgs
 
       - name: Push to NuGet.org (skip already-published versions)
         run: |

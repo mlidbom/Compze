@@ -39,13 +39,13 @@
     <Project Path="src/SolutionStructure/Solution.TODO.csproj" />
   </Folder>
   <Folder Name="/Compze.Build/">
-    <Project Path="Compze.Build.PackageReferenceOrProjectReferenceIfTargetInSolution/Compze.Build.PackageReferenceOrProjectReferenceIfTargetInSolution.csproj" />
+    <Project Path="src/Compze.Build.PackageReferenceOrProjectReferenceIfTargetInSolution/Compze.Build.PackageReferenceOrProjectReferenceIfTargetInSolution.csproj" />
   </Folder>
-  <Folder Name="/Compze.InternalizedSourceReferences/">
-    <Project Path="Compze.InternalizedSourceReferences/src/Compze.InternalizedSourceReferences/Compze.InternalizedSourceReferences.csproj">
+  <Folder Name="/Compze.Build.InternalizedSourceReferences/">
+    <Project Path="src/Compze.Build.InternalizedSourceReferences/src/Compze.Build.InternalizedSourceReferences/Compze.Build.InternalizedSourceReferences.csproj">
       <BuildType Solution="docs|*" Project="Debug" />
     </Project>
-    <Project Path="Compze.InternalizedSourceReferences/test/Compze.InternalizedSourceReferences.Tests/Compze.InternalizedSourceReferences.Tests.csproj">
+    <Project Path="src/Compze.Build.InternalizedSourceReferences/test/Compze.Build.InternalizedSourceReferences.Tests/Compze.Build.InternalizedSourceReferences.Tests.csproj">
       <BuildType Solution="docs|*" Project="Debug" />
     </Project>
   </Folder>

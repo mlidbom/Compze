@@ -1,6 +1,6 @@
 <Project>
   <UsingTask TaskName="Compze.InternalizedSourceReferences.RewriteDirectoryTask"
-             AssemblyFile="$(MSBuildThisFileDirectory)Compze.InternalizedSourceReferences.dll"
+             AssemblyFile="$(MSBuildThisFileDirectory)Compze.Build.InternalizedSourceReferences.dll"
              Runtime="NET"
              Architecture="*" />
 

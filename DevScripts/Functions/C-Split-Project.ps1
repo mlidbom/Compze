@@ -32,7 +32,7 @@ function C-Split-Project {
 
     .PARAMETER SplitProjectSourceReferencesSourceProject
     Configures the split project to internalize the source project's code using
-    Compze.InternalizedSourceReferences (imports .targets, sets InternalizeSourceFrom/To).
+    Compze.Build.InternalizedSourceReferences (imports .targets, sets InternalizeSourceFrom/To).
     Use when the split project needs code from the source but a normal reference would create a cycle.
     Mutually exclusive with -SplitProjectReferencesSourceProject.
 
@@ -43,7 +43,7 @@ function C-Split-Project {
 
     .PARAMETER SourceProjectSourceReferencesSplitProject
     Configures the source project to internalize the split project's code using
-    Compze.InternalizedSourceReferences (imports .targets, sets InternalizeSourceFrom/To).
+    Compze.Build.InternalizedSourceReferences (imports .targets, sets InternalizeSourceFrom/To).
     Use when the source project needs code from the split but a normal reference would create a cycle.
     Mutually exclusive with -SourceProjectReferencesSplitProject.
 

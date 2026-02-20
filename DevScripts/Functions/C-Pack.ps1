@@ -6,7 +6,7 @@ function C-Pack {
 
     .DESCRIPTION
     Builds in Release configuration and packs all packable projects into the nupkgs/ folder at the repository root.
-    Includes both the main solution and Compze.InternalizedSourceReferences.
+    Includes both the main solution and Compze.Build.InternalizedSourceReferences.
 
     .PARAMETER NoBuild
     Skip building before packing. Use when you've already built in Release configuration.
@@ -27,8 +27,8 @@ function C-Pack {
     )
 
     $nupkgsPath = Join-Path $script:CompzeRoot "nupkgs"
-    $isrSlnPath = Join-Path $script:CompzeRoot "Compze.InternalizedSourceReferences" "Compze.InternalizedSourceReferences.slnx"
-    $isrCsprojPath = Join-Path $script:CompzeRoot "Compze.InternalizedSourceReferences" "src" "Compze.InternalizedSourceReferences" "Compze.InternalizedSourceReferences.csproj"
+    $isrSlnPath = Join-Path $script:CompzeRoot "src" "Compze.Build.InternalizedSourceReferences" "Compze.Build.InternalizedSourceReferences.slnx"
+    $isrCsprojPath = Join-Path $script:CompzeRoot "src" "Compze.Build.InternalizedSourceReferences" "src" "Compze.Build.InternalizedSourceReferences" "Compze.Build.InternalizedSourceReferences.csproj"
 
     # Clean output folder
     if (Test-Path $nupkgsPath) {
@@ -39,11 +39,11 @@ function C-Pack {
 
     $noBuildArg = if ($NoBuild) { "--no-build" } else { $null }
 
-    # Pack Compze.InternalizedSourceReferences first (other projects depend on it)
+    # Pack Compze.Build.InternalizedSourceReferences first (other projects depend on it)
     if (-not $NoBuild) {
         dotnet build $isrSlnPath --configuration Release
         if ($LASTEXITCODE -ne 0) {
-            Write-Error "Compze.InternalizedSourceReferences build failed!"
+            Write-Error "Compze.Build.InternalizedSourceReferences build failed!"
             return
         }
     }
@@ -52,7 +52,7 @@ function C-Pack {
     if ($NoBuild) { $packArgs += "--no-build" }
     dotnet @packArgs
     if ($LASTEXITCODE -ne 0) {
-        Write-Error "Compze.InternalizedSourceReferences pack failed!"
+        Write-Error "Compze.Build.InternalizedSourceReferences pack failed!"
         return
     }
 
