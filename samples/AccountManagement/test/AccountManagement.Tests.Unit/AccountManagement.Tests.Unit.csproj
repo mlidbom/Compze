@@ -9,7 +9,7 @@
       <ProjectReference Include="..\..\src\AccountManagement.API\AccountManagement.API.csproj" />
    </ItemGroup>
    <ItemGroup>
-      <FlexiReference Include="Compze.Utilities.Testing.Must" ProjectPath="..\..\..\..\src\Compze.Utilities.Testing.Must\Compze.Utilities.Testing.Must.csproj" Version="$(CompzePackageVersion)" />
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.Testing.Must" Version="0.1.0-alpha.3" />
    </ItemGroup>
    <ItemGroup>
       <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">

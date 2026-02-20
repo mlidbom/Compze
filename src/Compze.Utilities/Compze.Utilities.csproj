@@ -17,7 +17,7 @@
       <Folder Include="SystemCE\ThreadingCE\Async\" />
    </ItemGroup>
    <ItemGroup>
-      <FlexiReference Include="Compze.Utilities.Contracts" ProjectPath="..\Compze.Utilities.Contracts\Compze.Utilities.Contracts.csproj" Version="$(CompzePackageVersion)" />
-      <FlexiReference Include="Compze.Utilities.Functional" ProjectPath="..\Compze.Utilities.Functional\Compze.Utilities.Functional.csproj" Version="$(CompzePackageVersion)" />
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.Contracts" Version="0.1.0-alpha.3" />
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.Functional" Version="0.1.0-alpha.3" />
    </ItemGroup>
 </Project>

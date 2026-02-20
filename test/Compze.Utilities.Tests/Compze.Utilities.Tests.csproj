@@ -7,9 +7,9 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<FlexiReference Include="Compze.Utilities.Testing.DbPool" ProjectPath="..\..\src\Compze.Utilities.Testing.DbPool\Compze.Utilities.Testing.DbPool.csproj" Version="$(CompzePackageVersion)" />
-		<FlexiReference Include="Compze.Utilities.Testing.Must" ProjectPath="..\..\src\Compze.Utilities.Testing.Must\Compze.Utilities.Testing.Must.csproj" Version="$(CompzePackageVersion)" />
-		<FlexiReference Include="Compze.Utilities.Testing.XUnit" ProjectPath="..\..\src\Compze.Utilities.Testing.XUnit\Compze.Utilities.Testing.XUnit.csproj" Version="$(CompzePackageVersion)" />
+		<PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.Testing.DbPool" Version="0.1.0-alpha.3" />
+		<PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.Testing.Must" Version="0.1.0-alpha.3" />
+		<PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.Testing.XUnit" Version="0.1.0-alpha.3" />
 	</ItemGroup>
 
 	<ItemGroup>

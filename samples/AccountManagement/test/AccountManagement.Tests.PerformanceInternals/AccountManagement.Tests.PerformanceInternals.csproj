@@ -11,12 +11,12 @@
       <ProjectReference Include="..\AccountManagement.Tests\AccountManagement.Tests.csproj" />
    </ItemGroup>
    <ItemGroup>
-      <FlexiReference Include="Compze.Utilities.Contracts" ProjectPath="..\..\..\..\src\Compze.Utilities.Contracts\Compze.Utilities.Contracts.csproj" Version="$(CompzePackageVersion)" />
-      <FlexiReference Include="Compze.Utilities.Functional" ProjectPath="..\..\..\..\src\Compze.Utilities.Functional\Compze.Utilities.Functional.csproj" Version="$(CompzePackageVersion)" />
-      <FlexiReference Include="Compze.Utilities.DependencyInjection" ProjectPath="..\..\..\..\src\Compze.Utilities.DependencyInjection\Compze.Utilities.DependencyInjection.csproj" Version="$(CompzePackageVersion)" />
-      <FlexiReference Include="Compze.Utilities.Logging" ProjectPath="..\..\..\..\src\Compze.Utilities.Logging\Compze.Utilities.Logging.csproj" Version="$(CompzePackageVersion)" />
-      <FlexiReference Include="Compze.Utilities.SystemCE" ProjectPath="..\..\..\..\src\Compze.Utilities.SystemCE\Compze.Utilities.SystemCE.csproj" Version="$(CompzePackageVersion)" />
-      <FlexiReference Include="Compze.Utilities.SystemCE.ThreadingCE" ProjectPath="..\..\..\..\src\Compze.Utilities.SystemCE.ThreadingCE\Compze.Utilities.SystemCE.ThreadingCE.csproj" Version="$(CompzePackageVersion)" />
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.Contracts" Version="0.1.0-alpha.3" />
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.Functional" Version="0.1.0-alpha.3" />
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.DependencyInjection" Version="0.1.0-alpha.3" />
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.Logging" Version="0.1.0-alpha.3" />
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.SystemCE" Version="0.1.0-alpha.3" />
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.SystemCE.ThreadingCE" Version="0.1.0-alpha.3" />
    </ItemGroup>
    <ItemGroup>
       <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />

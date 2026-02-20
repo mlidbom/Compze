@@ -22,8 +22,8 @@
       </EmbeddedResource>
    </ItemGroup>
    <ItemGroup>
-      <FlexiReference Include="Compze.Tessaging" ProjectPath="..\..\..\..\src\Compze.Tessaging\Compze.Tessaging.csproj" Version="$(CompzePackageVersion)" />
-      <FlexiReference Include="Compze.Core" ProjectPath="..\..\..\..\src\Compze.Core\Compze.Core.csproj" Version="$(CompzePackageVersion)" />
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Tessaging" Version="0.1.0-alpha.3" />
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Core" Version="0.1.0-alpha.3" />
    </ItemGroup>
    <ItemGroup>
       <PackageReference Include="CommunityToolkit.Diagnostics" Version="8.4.0" />

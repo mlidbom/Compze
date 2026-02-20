@@ -6,14 +6,14 @@
       <Description>Database pool management for Compze integration testing.</Description>
    </PropertyGroup>
    <ItemGroup>
-      <FlexiReference Include="Compze.Serialization.Newtonsoft" ProjectPath="..\Compze.Serialization.Newtonsoft\Compze.Serialization.Newtonsoft.csproj" Version="$(CompzePackageVersion)" />
-      <FlexiReference Include="Compze.Sql.Common" ProjectPath="..\Compze.Sql.Common\Compze.Sql.Common.csproj" Version="$(CompzePackageVersion)" />
-      <FlexiReference Include="Compze.Utilities.Contracts" ProjectPath="..\Compze.Utilities.Contracts\Compze.Utilities.Contracts.csproj" Version="$(CompzePackageVersion)" />
-      <FlexiReference Include="Compze.Utilities.Functional" ProjectPath="..\Compze.Utilities.Functional\Compze.Utilities.Functional.csproj" Version="$(CompzePackageVersion)" />
-      <FlexiReference Include="Compze.Utilities.DependencyInjection" ProjectPath="..\Compze.Utilities.DependencyInjection\Compze.Utilities.DependencyInjection.csproj" Version="$(CompzePackageVersion)" />
-      <FlexiReference Include="Compze.Utilities.Logging" ProjectPath="..\Compze.Utilities.Logging\Compze.Utilities.Logging.csproj" Version="$(CompzePackageVersion)" />
-      <FlexiReference Include="Compze.Utilities.SystemCE" ProjectPath="..\Compze.Utilities.SystemCE\Compze.Utilities.SystemCE.csproj" Version="$(CompzePackageVersion)" />
-      <FlexiReference Include="Compze.Utilities.SystemCE.ThreadingCE" ProjectPath="..\Compze.Utilities.SystemCE.ThreadingCE\Compze.Utilities.SystemCE.ThreadingCE.csproj" Version="$(CompzePackageVersion)" />
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Serialization.Newtonsoft" Version="0.1.0-alpha.3" />
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Sql.Common" Version="0.1.0-alpha.3" />
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.Contracts" Version="0.1.0-alpha.3" />
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.Functional" Version="0.1.0-alpha.3" />
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.DependencyInjection" Version="0.1.0-alpha.3" />
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.Logging" Version="0.1.0-alpha.3" />
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.SystemCE" Version="0.1.0-alpha.3" />
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.SystemCE.ThreadingCE" Version="0.1.0-alpha.3" />
    </ItemGroup>
    <ItemGroup>
       <PackageReference Include="JetBrains.Annotations" Version="2025.2.4" />
