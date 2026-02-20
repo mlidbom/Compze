@@ -8,6 +8,6 @@
       <ProjectReference Include="..\AccountManagement.API\AccountManagement.API.csproj" />
    </ItemGroup>
    <ItemGroup>
-      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Core" Version="*-*" />
+      <ProjectReference Include="../../../../src/Compze.Core/Compze.Core.csproj" ConvertToPackageWhenNotInSolution="true" PackageFallbackVersion="*-*" />
    </ItemGroup>
 </Project>

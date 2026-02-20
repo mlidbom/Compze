@@ -17,7 +17,7 @@
       <Folder Include="SystemCE\ThreadingCE\Async\" />
    </ItemGroup>
    <ItemGroup>
-      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.Contracts" Version="*-*" />
-      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.Functional" Version="*-*" />
+      <ProjectReference Include="../Compze.Utilities.Contracts/Compze.Utilities.Contracts.csproj" ConvertToPackageWhenNotInSolution="true" PackageFallbackVersion="*-*" />
+      <ProjectReference Include="../Compze.Utilities.Functional/Compze.Utilities.Functional.csproj" ConvertToPackageWhenNotInSolution="true" PackageFallbackVersion="*-*" />
    </ItemGroup>
 </Project>

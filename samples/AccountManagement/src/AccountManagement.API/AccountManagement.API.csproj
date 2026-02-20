@@ -22,8 +22,8 @@
       </EmbeddedResource>
    </ItemGroup>
    <ItemGroup>
-      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Tessaging" Version="*-*" />
-      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Core" Version="*-*" />
+      <ProjectReference Include="../../../../src/Compze.Tessaging/Compze.Tessaging.csproj" ConvertToPackageWhenNotInSolution="true" PackageFallbackVersion="*-*" />
+      <ProjectReference Include="../../../../src/Compze.Core/Compze.Core.csproj" ConvertToPackageWhenNotInSolution="true" PackageFallbackVersion="*-*" />
    </ItemGroup>
    <ItemGroup>
       <PackageReference Include="CommunityToolkit.Diagnostics" Version="8.4.0" />

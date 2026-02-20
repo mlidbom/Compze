@@ -9,13 +9,13 @@
       <ProjectReference Include="..\Compze.Tests.Integration\Compze.Tests.Integration.csproj" />
    </ItemGroup>
    <ItemGroup>
-      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Sql.Sqlite" Version="*-*" />
-      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.Contracts" Version="*-*" />
-      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.Functional" Version="*-*" />
-      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.DependencyInjection" Version="*-*" />
-      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.Logging" Version="*-*" />
-      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.SystemCE" Version="*-*" />
-      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.SystemCE.ThreadingCE" Version="*-*" />
+      <ProjectReference Include="../../src/Compze.Sql.Sqlite/Compze.Sql.Sqlite.csproj" ConvertToPackageWhenNotInSolution="true" PackageFallbackVersion="*-*" />
+      <ProjectReference Include="../../src/Compze.Utilities.Contracts/Compze.Utilities.Contracts.csproj" ConvertToPackageWhenNotInSolution="true" PackageFallbackVersion="*-*" />
+      <ProjectReference Include="../../src/Compze.Utilities.Functional/Compze.Utilities.Functional.csproj" ConvertToPackageWhenNotInSolution="true" PackageFallbackVersion="*-*" />
+      <ProjectReference Include="../../src/Compze.Utilities.DependencyInjection/Compze.Utilities.DependencyInjection.csproj" ConvertToPackageWhenNotInSolution="true" PackageFallbackVersion="*-*" />
+      <ProjectReference Include="../../src/Compze.Utilities.Logging/Compze.Utilities.Logging.csproj" ConvertToPackageWhenNotInSolution="true" PackageFallbackVersion="*-*" />
+      <ProjectReference Include="../../src/Compze.Utilities.SystemCE/Compze.Utilities.SystemCE.csproj" ConvertToPackageWhenNotInSolution="true" PackageFallbackVersion="*-*" />
+      <ProjectReference Include="../../src/Compze.Utilities.SystemCE.ThreadingCE/Compze.Utilities.SystemCE.ThreadingCE.csproj" ConvertToPackageWhenNotInSolution="true" PackageFallbackVersion="*-*" />
    </ItemGroup>
    <ItemGroup>
       <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />

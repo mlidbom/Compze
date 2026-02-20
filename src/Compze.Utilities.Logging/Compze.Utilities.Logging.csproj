@@ -5,10 +5,10 @@
       <Version>0.1.0-alpha.3</Version>
    </PropertyGroup>
    <ItemGroup>
-      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.Contracts" Version="*-*" />
-      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.Functional" Version="*-*" />
-      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.SystemCE" Version="*-*" />
-      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.SystemCE.ThreadingCE" Version="*-*" />
+      <ProjectReference Include="../Compze.Utilities.Contracts/Compze.Utilities.Contracts.csproj" ConvertToPackageWhenNotInSolution="true" PackageFallbackVersion="*-*" />
+      <ProjectReference Include="../Compze.Utilities.Functional/Compze.Utilities.Functional.csproj" ConvertToPackageWhenNotInSolution="true" PackageFallbackVersion="*-*" />
+      <ProjectReference Include="../Compze.Utilities.SystemCE/Compze.Utilities.SystemCE.csproj" ConvertToPackageWhenNotInSolution="true" PackageFallbackVersion="*-*" />
+      <ProjectReference Include="../Compze.Utilities.SystemCE.ThreadingCE/Compze.Utilities.SystemCE.ThreadingCE.csproj" ConvertToPackageWhenNotInSolution="true" PackageFallbackVersion="*-*" />
    </ItemGroup>
    <ItemGroup>
       <PackageReference Include="JetBrains.Annotations" Version="2025.2.4" />

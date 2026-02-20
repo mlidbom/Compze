@@ -13,6 +13,6 @@
       </PackageReference>
    </ItemGroup>
    <ItemGroup>
-      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Core" Version="*-*" />
+      <ProjectReference Include="../Compze.Core/Compze.Core.csproj" ConvertToPackageWhenNotInSolution="true" PackageFallbackVersion="*-*" />
    </ItemGroup>
 </Project>

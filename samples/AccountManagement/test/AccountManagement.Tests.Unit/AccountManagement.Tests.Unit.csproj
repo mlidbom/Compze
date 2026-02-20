@@ -9,7 +9,7 @@
       <ProjectReference Include="..\..\src\AccountManagement.API\AccountManagement.API.csproj" />
    </ItemGroup>
    <ItemGroup>
-      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.Testing.Must" Version="*-*" />
+      <ProjectReference Include="../../../../src/Compze.Utilities.Testing.Must/Compze.Utilities.Testing.Must.csproj" ConvertToPackageWhenNotInSolution="true" PackageFallbackVersion="*-*" />
    </ItemGroup>
    <ItemGroup>
       <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">

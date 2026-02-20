@@ -5,8 +5,8 @@
       <Version>0.1.0-alpha.3</Version>
    </PropertyGroup>
    <ItemGroup>
-      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.Contracts" Version="*-*" />
-      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.Functional" Version="*-*" />
+      <ProjectReference Include="../Compze.Utilities.Contracts/Compze.Utilities.Contracts.csproj" ConvertToPackageWhenNotInSolution="true" PackageFallbackVersion="*-*" />
+      <ProjectReference Include="../Compze.Utilities.Functional/Compze.Utilities.Functional.csproj" ConvertToPackageWhenNotInSolution="true" PackageFallbackVersion="*-*" />
    </ItemGroup>
    <PropertyGroup>
       <InternalizeSourceFrom>..\Compze.Utilities.SystemCE</InternalizeSourceFrom>

@@ -7,9 +7,9 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.Testing.DbPool" Version="*-*" />
-		<PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.Testing.Must" Version="*-*" />
-		<PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.Testing.XUnit" Version="*-*" />
+		<ProjectReference Include="../../src/Compze.Utilities.Testing.DbPool/Compze.Utilities.Testing.DbPool.csproj" ConvertToPackageWhenNotInSolution="true" PackageFallbackVersion="*-*" />
+		<ProjectReference Include="../../src/Compze.Utilities.Testing.Must/Compze.Utilities.Testing.Must.csproj" ConvertToPackageWhenNotInSolution="true" PackageFallbackVersion="*-*" />
+		<ProjectReference Include="../../src/Compze.Utilities.Testing.XUnit/Compze.Utilities.Testing.XUnit.csproj" ConvertToPackageWhenNotInSolution="true" PackageFallbackVersion="*-*" />
 	</ItemGroup>
 
 	<ItemGroup>

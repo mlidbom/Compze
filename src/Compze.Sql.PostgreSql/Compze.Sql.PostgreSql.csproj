@@ -6,8 +6,8 @@
       <Description>PostgreSQL database support for the Compze framework.</Description>
    </PropertyGroup>
    <ItemGroup>
-      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Core" Version="*-*" />
-      <PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Sql.Common" Version="*-*" />
+      <ProjectReference Include="../Compze.Core/Compze.Core.csproj" ConvertToPackageWhenNotInSolution="true" PackageFallbackVersion="*-*" />
+      <ProjectReference Include="../Compze.Sql.Common/Compze.Sql.Common.csproj" ConvertToPackageWhenNotInSolution="true" PackageFallbackVersion="*-*" />
    </ItemGroup>
    <ItemGroup>
       <PackageReference Include="Npgsql" Version="9.0.4" />

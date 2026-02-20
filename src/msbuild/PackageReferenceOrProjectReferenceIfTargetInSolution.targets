@@ -1,76 +1,96 @@
 <Project>
    <!--
-      PackageReferenceOrProjectReferenceIfTargetInSolution — Solution-Aware Reference Resolution
+      Conditional ProjectReference → PackageReference Conversion
 
-      Resolves PackageReferenceOrProjectReferenceIfTargetInSolution items,
-      creating a ProjectReference if the target project is part of the current solution and a PackageReference if not.
+      Converts ProjectReference items marked with ConvertToPackageWhenNotInSolution="true"
+      into PackageReference items when the referenced project is not part of the current solution.
 
       Usage in .csproj files:
-         <PackageReferenceOrProjectReferenceIfTargetInSolution
-             Include="Compze.Core"
-             Version="0.1.0-alpha.3" />
+         <ProjectReference Include="../Compze.Core/Compze.Core.csproj"
+                           ConvertToPackageWhenNotInSolution="true"
+                           PackageFallbackVersion="*-*" />
 
-      When building with a solution containing Compze.Core → ProjectReference
-      When building without a solution or without Compze.Core → PackageReference
-
-      Import this file from your Directory.Build.targets:
-         <Import Project="$(MSBuildThisFileDirectory)path/to/PackageReferenceOrProjectReferenceIfTargetInSolution.targets" />
+      When building with a solution containing Compze.Core → stays as ProjectReference
+      When building without a solution or without Compze.Core → becomes PackageReference
+      Under NCrunch → always stays as ProjectReference (NCrunch handles them natively)
    -->
 
-   <!-- Read the solution file content for project membership detection.
+   <!-- Under NCrunch, skip all conversion — NCrunch handles real ProjectReferences natively
+        and builds in isolated workspaces where our conversion would interfere. -->
+
+   <!-- Read the solution file content for project membership detection (non-NCrunch only).
         $(SolutionPath) is set by Visual Studio, Rider, VS Code (C# Dev Kit),
         and 'dotnet build *.slnx'. It is '*Undefined*' when not set. -->
-   <PropertyGroup Condition="'$(SolutionPath)' != '' and '$(SolutionPath)' != '*Undefined*' and Exists('$(SolutionPath)')">
+   <PropertyGroup Condition="'$(NCrunch)' != '1' and '$(SolutionPath)' != '' and '$(SolutionPath)' != '*Undefined*' and Exists('$(SolutionPath)')">
       <_PkgOrPrj_SlnxContent>$([System.IO.File]::ReadAllText('$(SolutionPath)'))</_PkgOrPrj_SlnxContent>
-      <_PkgOrPrj_SolutionDirectory>$([System.IO.Path]::GetDirectoryName('$(SolutionPath)'))</_PkgOrPrj_SolutionDirectory>
    </PropertyGroup>
 
-   <!-- Static item resolution — evaluated during project load so VS, Rider, and
-        NuGet restore all see the resolved ProjectReference/PackageReference items.
-        Uses WithMetadataValue for filtering (custom metadata in Condition is forbidden: MSB4191).
-        Uses @() transforms for item creation (%(item.metadata) batching over empty groups
-        produces literal text instead of nothing in static evaluation). -->
-
-   <!-- Tag each item with whether its project is in the current solution, and extract the project path from the solution file -->
-   <ItemGroup Condition="'$(_PkgOrPrj_SlnxContent)' != ''">
-      <PackageReferenceOrProjectReferenceIfTargetInSolution Update="@(PackageReferenceOrProjectReferenceIfTargetInSolution)">
-         <_IsInSolution>$(_PkgOrPrj_SlnxContent.Contains('%(Identity).csproj'))</_IsInSolution>
-         <_ProjectPathFromSolution>$([System.Text.RegularExpressions.Regex]::Match($(_PkgOrPrj_SlnxContent), 'Path="([^"]*%(Identity)\.csproj)"').Groups[1].Value)</_ProjectPathFromSolution>
-      </PackageReferenceOrProjectReferenceIfTargetInSolution>
+   <!-- Extract convertible ProjectReferences (non-NCrunch only) -->
+   <ItemGroup Condition="'$(NCrunch)' != '1'">
+      <_PkgOrPrj_Convertible Include="@(ProjectReference->WithMetadataValue('ConvertToPackageWhenNotInSolution', 'true'))" />
    </ItemGroup>
 
-   <!-- Split into "in solution" and "not in solution" -->
-   <ItemGroup Condition="'$(_PkgOrPrj_SlnxContent)' != ''">
-      <_PkgOrPrj_InSolution Include="@(PackageReferenceOrProjectReferenceIfTargetInSolution->WithMetadataValue('_IsInSolution', 'True'))" />
-      <_PkgOrPrj_NotInSolution Include="@(PackageReferenceOrProjectReferenceIfTargetInSolution->WithMetadataValue('_IsInSolution', 'False'))" />
+   <!-- With solution context: tag which convertible items are in the solution -->
+   <ItemGroup Condition="'$(NCrunch)' != '1' and '$(_PkgOrPrj_SlnxContent)' != ''">
+      <_PkgOrPrj_Convertible Update="@(_PkgOrPrj_Convertible)">
+         <_IsInSolution>$(_PkgOrPrj_SlnxContent.Contains('%(Filename).csproj'))</_IsInSolution>
+      </_PkgOrPrj_Convertible>
    </ItemGroup>
 
-   <!-- Resolve full project paths for items in the solution -->
-   <ItemGroup Condition="'$(_PkgOrPrj_SlnxContent)' != ''">
-      <_PkgOrPrj_InSolution Update="@(_PkgOrPrj_InSolution)">
-         <_FullProjectPath>$([System.IO.Path]::GetFullPath($([System.IO.Path]::Combine('$(_PkgOrPrj_SolutionDirectory)', '%(_ProjectPathFromSolution)'))))</_FullProjectPath>
-      </_PkgOrPrj_InSolution>
+   <!-- Separate not-in-solution items -->
+   <ItemGroup Condition="'$(NCrunch)' != '1' and '$(_PkgOrPrj_SlnxContent)' != ''">
+      <_PkgOrPrj_ToConvert Include="@(_PkgOrPrj_Convertible->WithMetadataValue('_IsInSolution', 'False'))" />
    </ItemGroup>
 
-   <!-- Projects in the solution → ProjectReference -->
-   <ItemGroup Condition="'$(_PkgOrPrj_SlnxContent)' != ''">
-      <ProjectReference Include="@(_PkgOrPrj_InSolution->'%(_FullProjectPath)')" />
+   <!-- Convert not-in-solution items: remove ProjectReference, add PackageReference.
+        Set _PackageName and Version metadata, create intermediary items with package-name identity,
+        then set Version on those items before creating PackageReference. -->
+   <ItemGroup Condition="'$(NCrunch)' != '1' and '$(_PkgOrPrj_SlnxContent)' != ''">
+      <_PkgOrPrj_ToConvert Update="@(_PkgOrPrj_ToConvert)">
+         <_PackageName>%(Filename)</_PackageName>
+      </_PkgOrPrj_ToConvert>
    </ItemGroup>
 
-   <!-- Projects not in the solution → PackageReference (Version metadata copies automatically) -->
-   <ItemGroup Condition="'$(_PkgOrPrj_SlnxContent)' != ''">
-      <PackageReference Include="@(_PkgOrPrj_NotInSolution)" />
+   <ItemGroup Condition="'$(NCrunch)' != '1' and '$(_PkgOrPrj_SlnxContent)' != ''">
+      <ProjectReference Remove="@(_PkgOrPrj_ToConvert)" />
    </ItemGroup>
 
-   <!-- No solution context → all become PackageReference (Version metadata copies automatically) -->
-   <ItemGroup Condition="'$(_PkgOrPrj_SlnxContent)' == ''">
-      <PackageReference Include="@(PackageReferenceOrProjectReferenceIfTargetInSolution)" />
+   <!-- Create PackageReference items: use _PackageName as identity.
+        Transforms strip metadata, so use Update to set Version afterwards. -->
+   <ItemGroup Condition="'$(NCrunch)' != '1' and '$(_PkgOrPrj_SlnxContent)' != ''">
+      <PackageReference Include="@(_PkgOrPrj_ToConvert->'%(_PackageName)')" />
    </ItemGroup>
 
-   <!-- Clean up: remove source and temporary items so IDEs don't show them as files -->
-   <ItemGroup>
-      <PackageReferenceOrProjectReferenceIfTargetInSolution Remove="@(PackageReferenceOrProjectReferenceIfTargetInSolution)" />
-      <_PkgOrPrj_InSolution Remove="@(_PkgOrPrj_InSolution)" />
-      <_PkgOrPrj_NotInSolution Remove="@(_PkgOrPrj_NotInSolution)" />
+   <ItemGroup Condition="'$(NCrunch)' != '1' and '$(_PkgOrPrj_SlnxContent)' != ''">
+      <PackageReference Update="@(_PkgOrPrj_ToConvert->'%(_PackageName)')">
+         <Version>*-*</Version>
+      </PackageReference>
+   </ItemGroup>
+
+   <!-- No solution context (non-NCrunch): convert ALL convertible items to PackageReference -->
+   <ItemGroup Condition="'$(NCrunch)' != '1' and '$(_PkgOrPrj_SlnxContent)' == ''">
+      <_PkgOrPrj_Convertible Update="@(_PkgOrPrj_Convertible)">
+         <_PackageName>%(Filename)</_PackageName>
+      </_PkgOrPrj_Convertible>
+   </ItemGroup>
+
+   <ItemGroup Condition="'$(NCrunch)' != '1' and '$(_PkgOrPrj_SlnxContent)' == ''">
+      <ProjectReference Remove="@(_PkgOrPrj_Convertible)" />
+   </ItemGroup>
+
+   <ItemGroup Condition="'$(NCrunch)' != '1' and '$(_PkgOrPrj_SlnxContent)' == ''">
+      <PackageReference Include="@(_PkgOrPrj_Convertible->'%(_PackageName)')" />
+   </ItemGroup>
+
+   <ItemGroup Condition="'$(NCrunch)' != '1' and '$(_PkgOrPrj_SlnxContent)' == ''">
+      <PackageReference Update="@(_PkgOrPrj_Convertible->'%(_PackageName)')">
+         <Version>*-*</Version>
+      </PackageReference>
+   </ItemGroup>
+
+   <!-- Clean up temporary items -->
+   <ItemGroup Condition="'$(NCrunch)' != '1'">
+      <_PkgOrPrj_Convertible Remove="@(_PkgOrPrj_Convertible)" />
+      <_PkgOrPrj_ToConvert Remove="@(_PkgOrPrj_ToConvert)" />
    </ItemGroup>
 </Project>

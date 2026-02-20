@@ -17,7 +17,7 @@
 		<PackageReference Include="xunit.v3" Version="3.1.0" />
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.Testing.Must" Version="*-*" />
-		<PackageReferenceOrProjectReferenceIfTargetInSolution Include="Compze.Utilities.Testing.XUnit" Version="*-*" />
+		<ProjectReference Include="../../src/Compze.Utilities.Testing.Must/Compze.Utilities.Testing.Must.csproj" ConvertToPackageWhenNotInSolution="true" PackageFallbackVersion="*-*" />
+		<ProjectReference Include="../../src/Compze.Utilities.Testing.XUnit/Compze.Utilities.Testing.XUnit.csproj" ConvertToPackageWhenNotInSolution="true" PackageFallbackVersion="*-*" />
 	</ItemGroup>
 </Project>
