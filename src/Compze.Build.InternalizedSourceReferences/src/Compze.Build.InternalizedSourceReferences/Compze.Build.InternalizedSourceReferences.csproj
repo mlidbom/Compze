@@ -17,6 +17,8 @@
 
     <!-- Don't put anything in lib/ - this is a build-only tool -->
     <IncludeBuildOutput>false</IncludeBuildOutput>
+    <!-- No symbol package — the DLL is packed in build/ not lib/ -->
+    <IncludeSymbols>false</IncludeSymbols>
 
     <!-- Package metadata (matches other Compze packages) -->
     <Authors>Lidbom Solutions AB</Authors>
