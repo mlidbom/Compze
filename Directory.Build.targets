@@ -1,3 +1,4 @@
 <Project>
 	<Import Project="$(MSBuildThisFileDirectory)src/msbuild/PackageReferenceOrProjectReferenceIfTargetInSolution.targets" />
+	<Import Project="$(MSBuildThisFileDirectory)src/msbuild/LocalPackageVersioning.targets" />
 </Project>

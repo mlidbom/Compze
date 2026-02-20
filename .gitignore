@@ -5,6 +5,7 @@ test-results
 
 *.dll
 *.nupkg
+*.snupkg
 *.deps.json
 *.cache
 *.suo

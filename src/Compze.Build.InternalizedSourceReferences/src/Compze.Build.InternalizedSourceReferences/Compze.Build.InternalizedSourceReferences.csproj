@@ -13,7 +13,6 @@
     <DevelopmentDependency>true</DevelopmentDependency>
     <NoPackageAnalysis>true</NoPackageAnalysis>
     <NoWarn>$(NoWarn);NU5100;NU5128</NoWarn>
-    <PackageOutputPath>$(MSBuildThisFileDirectory)..\..\..\..\nupkgs</PackageOutputPath>
 
     <!-- Don't put anything in lib/ - this is a build-only tool -->
     <IncludeBuildOutput>false</IncludeBuildOutput>

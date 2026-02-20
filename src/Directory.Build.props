@@ -20,6 +20,8 @@
 
 	<!-- NuGet package metadata for library projects -->
 	<PropertyGroup Condition="'$(IsTestProject)' != 'true' AND '$(IsPackable)' != 'false'">
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<PackageOutputPath>$(MSBuildThisFileDirectory)..\nupkgs</PackageOutputPath>
 		<Authors>Lidbom Solutions AB</Authors>
 		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
 		<PackageProjectUrl>https://github.com/mlidbom/Compze</PackageProjectUrl>

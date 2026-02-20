@@ -23,9 +23,6 @@ jobs:
         with:
           configuration: Release
 
-      - name: Pack all packable projects
-        run: dotnet pack Compze.everything-ci.slnx --configuration Release --no-build --output ./nupkgs
-
       - name: Push to NuGet.org (skip already-published versions)
         run: |
           dotnet nuget push ./nupkgs/*.nupkg \

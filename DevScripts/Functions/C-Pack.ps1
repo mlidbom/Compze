@@ -5,30 +5,20 @@ function C-Pack {
     Packs all Compze NuGet packages
 
     .DESCRIPTION
-    Builds in Release configuration and packs all packable projects into the nupkgs/ folder at the repository root.
-    Includes both the main solution and Compze.Build.InternalizedSourceReferences.
-
-    .PARAMETER NoBuild
-    Skip building before packing. Use when you've already built in Release configuration.
+    Builds in Release configuration. All packable projects have GeneratePackageOnBuild enabled,
+    so building automatically produces packages in the nupkgs/ folder at the repository root.
+    Old package versions are cleaned up before building.
 
     .EXAMPLE
     C-Pack
-    Builds in Release and packs all projects
-
-    .EXAMPLE
-    C-Pack -NoBuild
-    Packs without rebuilding (assumes Release build already done)
+    Cleans old packages, builds in Release (which auto-packs all projects)
     #>
     [CmdletBinding()]
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseApprovedVerbs', '')]
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidGlobalVars', '')]
-    param(
-        [switch]$NoBuild
-    )
+    param()
 
     $nupkgsPath = Join-Path $script:CompzeRoot "nupkgs"
-    $isrSlnPath = Join-Path $script:CompzeRoot "src" "Compze.Build.InternalizedSourceReferences" "Compze.Build.InternalizedSourceReferences.slnx"
-    $isrCsprojPath = Join-Path $script:CompzeRoot "src" "Compze.Build.InternalizedSourceReferences" "src" "Compze.Build.InternalizedSourceReferences" "Compze.Build.InternalizedSourceReferences.csproj"
 
     # Clean output folder
     if (Test-Path $nupkgsPath) {
@@ -37,42 +27,21 @@ function C-Pack {
         New-Item -ItemType Directory -Path $nupkgsPath | Out-Null
     }
 
-    $noBuildArg = if ($NoBuild) { "--no-build" } else { $null }
+    # Ensure pluggable component configuration files exist before building
+    C-Set-PluggableComponents -EnsureValid
 
-    # Pack Compze.Build.InternalizedSourceReferences first (other projects depend on it)
-    if (-not $NoBuild) {
-        dotnet build $isrSlnPath --configuration Release
-        if ($LASTEXITCODE -ne 0) {
-            Write-Error "Compze.Build.InternalizedSourceReferences build failed!"
-            return
-        }
-    }
-
-    $packArgs = @("pack", $isrCsprojPath, "--configuration", "Release", "--output", $nupkgsPath)
-    if ($NoBuild) { $packArgs += "--no-build" }
-    dotnet @packArgs
+    # Build ISR first — ThreadingCE needs it as a PackageReference from the local feed
+    $isrSlnPath = Join-Path $script:CompzeRoot "src" "Compze.Build.InternalizedSourceReferences" "Compze.Build.InternalizedSourceReferences.slnx"
+    dotnet build $isrSlnPath --configuration Release
     if ($LASTEXITCODE -ne 0) {
-        Write-Error "Compze.Build.InternalizedSourceReferences pack failed!"
+        Write-Error "Compze.Build.InternalizedSourceReferences build failed!"
         return
     }
 
-    # Build and pack main solution
-    if (-not $NoBuild) {
-        # Ensure pluggable component configuration files exist before building
-        C-Set-PluggableComponents -EnsureValid
-
-        dotnet build $script:CompzeSolutionPath --configuration Release
-        if ($LASTEXITCODE -ne 0) {
-            Write-Error "Solution build failed!"
-            return
-        }
-    }
-
-    $packArgs = @("pack", $script:CompzeSolutionPath, "--configuration", "Release", "--output", $nupkgsPath)
-    if ($NoBuild) { $packArgs += "--no-build" }
-    dotnet @packArgs
+    # Build main solution — GeneratePackageOnBuild produces all packages automatically
+    dotnet build $script:CompzeSolutionPath --configuration Release
     if ($LASTEXITCODE -ne 0) {
-        Write-Error "Solution pack failed!"
+        Write-Error "Solution build failed!"
         return
     }
 

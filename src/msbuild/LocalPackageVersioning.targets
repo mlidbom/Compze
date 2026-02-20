@@ -1,0 +1,11 @@
+<Project>
+	<!--
+	    For local (non-CI) builds, append a timestamp to the package version so that every build
+	    produces a unique version. This ensures the NuGet cache never serves stale packages when
+	    working across multiple solutions.
+	    CI builds use the explicit Version from each csproj unchanged.
+	-->
+	<PropertyGroup Condition="'$(ContinuousIntegrationBuild)' != 'true' AND '$(IsPackable)' != 'false' AND '$(IsTestProject)' != 'true'">
+		<PackageVersion>$(Version).local.$([System.DateTime]::UtcNow.ToString("yyyyMMddHHmmss"))</PackageVersion>
+	</PropertyGroup>
+</Project>
