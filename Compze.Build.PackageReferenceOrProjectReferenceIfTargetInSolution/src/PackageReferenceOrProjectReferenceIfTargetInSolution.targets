@@ -3,21 +3,15 @@
       PackageReferenceOrProjectReferenceIfTargetInSolution — Solution-Aware Reference Resolution
 
       Resolves PackageReferenceOrProjectReferenceIfTargetInSolution items,
-      creating a ProjectReference if the target project is part of the current solution
-      and a PackageReference otherwise.
-
-      The project path is extracted automatically from the solution file (.slnx).
-      Only the package name and version are required.
+      creating a ProjectReference if the target project is part of the current solution and a PackageReference if not.
 
       Usage in .csproj files:
          <PackageReferenceOrProjectReferenceIfTargetInSolution
-             Include="MyLibrary"
-             Version="1.0.0" />
+             Include="Compze.Core"
+             Version="0.1.0-alpha.3" />
 
-      When building with a solution containing MyLibrary → ProjectReference
-      When building without a solution or without MyLibrary → PackageReference
-
-      Supports NuGet floating versions (e.g. Version="*-*") for non-packable projects.
+      When building with a solution containing Compze.Core → ProjectReference
+      When building without a solution or without Compze.Core → PackageReference
 
       Import this file from your Directory.Build.targets:
          <Import Project="$(MSBuildThisFileDirectory)path/to/PackageReferenceOrProjectReferenceIfTargetInSolution.targets" />
@@ -31,41 +25,45 @@
       <_PkgOrPrj_SolutionDirectory>$([System.IO.Path]::GetDirectoryName('$(SolutionPath)'))</_PkgOrPrj_SolutionDirectory>
    </PropertyGroup>
 
-   <!-- Resolve items to ProjectReference or PackageReference.
-        Uses a Target to avoid MSB4190 in projects without any items of this type.
-        Uses computed custom metadata instead of %(Identity) in Condition attributes
-        because Roslyn's project system (VS Code C# Dev Kit, Visual Studio)
-        forbids built-in metadata references in item conditions. -->
-   <Target Name="_ResolvePackageReferenceOrProjectReferenceIfTargetInSolution"
-           BeforeTargets="CollectPackageReferences;_GenerateRestoreProjectSpec;ResolveProjectReferences;_GetProjectReferenceTargetFrameworkProperties;Build"
-           Condition="@(PackageReferenceOrProjectReferenceIfTargetInSolution->Count()) &gt; 0">
+   <!-- Static item resolution — evaluated during project load so VS, Rider, and
+        NuGet restore all see the resolved ProjectReference/PackageReference items.
+        Uses WithMetadataValue for filtering (custom metadata in Condition is forbidden: MSB4191).
+        Uses @() transforms for item creation (%(item.metadata) batching over empty groups
+        produces literal text instead of nothing in static evaluation). -->
 
-      <!-- Tag each item with whether its project is in the current solution,
-           and extract the project path from the solution file -->
-      <ItemGroup Condition="'$(_PkgOrPrj_SlnxContent)' != ''">
-         <PackageReferenceOrProjectReferenceIfTargetInSolution Update="@(PackageReferenceOrProjectReferenceIfTargetInSolution)">
-            <_IsInSolution>$(_PkgOrPrj_SlnxContent.Contains('%(Identity).csproj'))</_IsInSolution>
-            <_ProjectPathFromSolution>$([System.Text.RegularExpressions.Regex]::Match($(_PkgOrPrj_SlnxContent), 'Path="([^"]*%(Identity)\.csproj)"').Groups[1].Value)</_ProjectPathFromSolution>
-         </PackageReferenceOrProjectReferenceIfTargetInSolution>
-      </ItemGroup>
+   <!-- Tag each item with whether its project is in the current solution, and extract the project path from the solution file -->
+   <ItemGroup Condition="'$(_PkgOrPrj_SlnxContent)' != ''">
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Update="@(PackageReferenceOrProjectReferenceIfTargetInSolution)">
+         <_IsInSolution>$(_PkgOrPrj_SlnxContent.Contains('%(Identity).csproj'))</_IsInSolution>
+         <_ProjectPathFromSolution>$([System.Text.RegularExpressions.Regex]::Match($(_PkgOrPrj_SlnxContent), 'Path="([^"]*%(Identity)\.csproj)"').Groups[1].Value)</_ProjectPathFromSolution>
+      </PackageReferenceOrProjectReferenceIfTargetInSolution>
+   </ItemGroup>
 
-      <!-- When the project IS in the solution → ProjectReference (path resolved from solution file) -->
-      <ItemGroup Condition="'$(_PkgOrPrj_SlnxContent)' != ''">
-         <ProjectReference Include="$([System.IO.Path]::GetFullPath($([System.IO.Path]::Combine('$(_PkgOrPrj_SolutionDirectory)', '%(PackageReferenceOrProjectReferenceIfTargetInSolution._ProjectPathFromSolution)'))))"
-                           Condition="'%(PackageReferenceOrProjectReferenceIfTargetInSolution._IsInSolution)' == 'True'" />
-      </ItemGroup>
+   <!-- Split into "in solution" and "not in solution" -->
+   <ItemGroup Condition="'$(_PkgOrPrj_SlnxContent)' != ''">
+      <_PkgOrPrj_InSolution Include="@(PackageReferenceOrProjectReferenceIfTargetInSolution->WithMetadataValue('_IsInSolution', 'True'))" />
+      <_PkgOrPrj_NotInSolution Include="@(PackageReferenceOrProjectReferenceIfTargetInSolution->WithMetadataValue('_IsInSolution', 'False'))" />
+   </ItemGroup>
 
-      <!-- When there IS solution context, projects NOT in solution → PackageReference -->
-      <ItemGroup Condition="'$(_PkgOrPrj_SlnxContent)' != ''">
-         <PackageReference Include="%(PackageReferenceOrProjectReferenceIfTargetInSolution.Identity)"
-                           Version="%(PackageReferenceOrProjectReferenceIfTargetInSolution.Version)"
-                           Condition="'%(PackageReferenceOrProjectReferenceIfTargetInSolution._IsInSolution)' != 'True'" />
-      </ItemGroup>
+   <!-- Resolve full project paths for items in the solution -->
+   <ItemGroup Condition="'$(_PkgOrPrj_SlnxContent)' != ''">
+      <_PkgOrPrj_InSolution Update="@(_PkgOrPrj_InSolution)">
+         <_FullProjectPath>$([System.IO.Path]::GetFullPath($([System.IO.Path]::Combine('$(_PkgOrPrj_SolutionDirectory)', '%(_ProjectPathFromSolution)'))))</_FullProjectPath>
+      </_PkgOrPrj_InSolution>
+   </ItemGroup>
 
-      <!-- When there's no solution context → all become PackageReference -->
-      <ItemGroup Condition="'$(_PkgOrPrj_SlnxContent)' == ''">
-         <PackageReference Include="%(PackageReferenceOrProjectReferenceIfTargetInSolution.Identity)"
-                           Version="%(PackageReferenceOrProjectReferenceIfTargetInSolution.Version)" />
-      </ItemGroup>
-   </Target>
+   <!-- Projects in the solution → ProjectReference -->
+   <ItemGroup Condition="'$(_PkgOrPrj_SlnxContent)' != ''">
+      <ProjectReference Include="@(_PkgOrPrj_InSolution->'%(_FullProjectPath)')" />
+   </ItemGroup>
+
+   <!-- Projects not in the solution → PackageReference (Version metadata copies automatically) -->
+   <ItemGroup Condition="'$(_PkgOrPrj_SlnxContent)' != ''">
+      <PackageReference Include="@(_PkgOrPrj_NotInSolution)" />
+   </ItemGroup>
+
+   <!-- No solution context → all become PackageReference (Version metadata copies automatically) -->
+   <ItemGroup Condition="'$(_PkgOrPrj_SlnxContent)' == ''">
+      <PackageReference Include="@(PackageReferenceOrProjectReferenceIfTargetInSolution)" />
+   </ItemGroup>
 </Project>
