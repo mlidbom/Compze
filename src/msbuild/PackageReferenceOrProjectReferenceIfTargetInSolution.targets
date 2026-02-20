@@ -66,4 +66,11 @@
    <ItemGroup Condition="'$(_PkgOrPrj_SlnxContent)' == ''">
       <PackageReference Include="@(PackageReferenceOrProjectReferenceIfTargetInSolution)" />
    </ItemGroup>
+
+   <!-- Clean up: remove source and temporary items so IDEs don't show them as files -->
+   <ItemGroup>
+      <PackageReferenceOrProjectReferenceIfTargetInSolution Remove="@(PackageReferenceOrProjectReferenceIfTargetInSolution)" />
+      <_PkgOrPrj_InSolution Remove="@(_PkgOrPrj_InSolution)" />
+      <_PkgOrPrj_NotInSolution Remove="@(_PkgOrPrj_NotInSolution)" />
+   </ItemGroup>
 </Project>
