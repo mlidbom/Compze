@@ -1,13 +1,9 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
    <PropertyGroup>
       <TargetFramework>net9.0</TargetFramework>
       <Nullable>enable</Nullable>
       <Version>0.1.0-alpha.3</Version>
    </PropertyGroup>
-   <ItemGroup>
-      <ProjectReference Include="..\Compze.Utilities.Contracts\Compze.Utilities.Contracts.csproj" />
-      <ProjectReference Include="..\Compze.Utilities.Functional\Compze.Utilities.Functional.csproj" />
-   </ItemGroup>
    <PropertyGroup>
       <InternalizeSourceFrom>..\Compze.Utilities.SystemCE</InternalizeSourceFrom>
       <InternalizeSourceTo>$(MSBuildProjectDirectory)\InternalizedSource</InternalizeSourceTo>
@@ -19,5 +15,17 @@
          <PrivateAssets>all</PrivateAssets>
          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Contracts)' == 'true'">
+      <PackageReference Include="Compze.Utilities.Contracts" Version="0.1.0-alpha.3" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Contracts)' != 'true'">
+      <ProjectReference Include="..\Compze.Utilities.Contracts\Compze.Utilities.Contracts.csproj" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Functional)' == 'true'">
+      <PackageReference Include="Compze.Utilities.Functional" Version="0.1.0-alpha.3" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Functional)' != 'true'">
+      <ProjectReference Include="..\Compze.Utilities.Functional\Compze.Utilities.Functional.csproj" />
    </ItemGroup>
 </Project>

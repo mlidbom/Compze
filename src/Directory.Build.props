@@ -2,6 +2,121 @@
 	<!-- Import root-level Directory.Build.props (Git 2.53 workaround etc.) -->
 	<Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)..'))" />
 
+	<!-- FlexRef: solution-aware ProjectReference ↔ PackageReference switching.
+	     Import BEFORE the UsePackageReference_* property declarations. -->
+	<Import Project="msbuild\FlexRef.props" />
+
+	<!-- FlexRef: per-dependency flags.
+	     Each property is set to 'true' when the project is NOT in the current solution,
+	     causing .csproj conditional ItemGroups to use PackageReference instead of ProjectReference.
+	     When the project IS in the solution (or no solution context), the property stays empty
+	     and ProjectReference is used (the safe default). -->
+	<PropertyGroup>
+		<!-- Utilities (leaf → high-level) -->
+		<UsePackageReference_Compze_Utilities_Contracts
+			Condition="'$(UsePackageReference_Compze_Utilities_Contracts)' != 'true'
+			         And '$(_SwitchRef_SolutionProjects)' != ''
+			         And !$(_SwitchRef_SolutionProjects.Contains('|Compze.Utilities.Contracts.csproj|'))">true</UsePackageReference_Compze_Utilities_Contracts>
+		<UsePackageReference_Compze_Utilities_Functional
+			Condition="'$(UsePackageReference_Compze_Utilities_Functional)' != 'true'
+			         And '$(_SwitchRef_SolutionProjects)' != ''
+			         And !$(_SwitchRef_SolutionProjects.Contains('|Compze.Utilities.Functional.csproj|'))">true</UsePackageReference_Compze_Utilities_Functional>
+		<UsePackageReference_Compze_Utilities
+			Condition="'$(UsePackageReference_Compze_Utilities)' != 'true'
+			         And '$(_SwitchRef_SolutionProjects)' != ''
+			         And !$(_SwitchRef_SolutionProjects.Contains('|Compze.Utilities.csproj|'))">true</UsePackageReference_Compze_Utilities>
+		<UsePackageReference_Compze_Utilities_SystemCE
+			Condition="'$(UsePackageReference_Compze_Utilities_SystemCE)' != 'true'
+			         And '$(_SwitchRef_SolutionProjects)' != ''
+			         And !$(_SwitchRef_SolutionProjects.Contains('|Compze.Utilities.SystemCE.csproj|'))">true</UsePackageReference_Compze_Utilities_SystemCE>
+		<UsePackageReference_Compze_Utilities_SystemCE_ThreadingCE
+			Condition="'$(UsePackageReference_Compze_Utilities_SystemCE_ThreadingCE)' != 'true'
+			         And '$(_SwitchRef_SolutionProjects)' != ''
+			         And !$(_SwitchRef_SolutionProjects.Contains('|Compze.Utilities.SystemCE.ThreadingCE.csproj|'))">true</UsePackageReference_Compze_Utilities_SystemCE_ThreadingCE>
+		<UsePackageReference_Compze_Utilities_Logging
+			Condition="'$(UsePackageReference_Compze_Utilities_Logging)' != 'true'
+			         And '$(_SwitchRef_SolutionProjects)' != ''
+			         And !$(_SwitchRef_SolutionProjects.Contains('|Compze.Utilities.Logging.csproj|'))">true</UsePackageReference_Compze_Utilities_Logging>
+		<UsePackageReference_Compze_Utilities_DependencyInjection
+			Condition="'$(UsePackageReference_Compze_Utilities_DependencyInjection)' != 'true'
+			         And '$(_SwitchRef_SolutionProjects)' != ''
+			         And !$(_SwitchRef_SolutionProjects.Contains('|Compze.Utilities.DependencyInjection.csproj|'))">true</UsePackageReference_Compze_Utilities_DependencyInjection>
+		<UsePackageReference_Compze_Utilities_DependencyInjection_Microsoft
+			Condition="'$(UsePackageReference_Compze_Utilities_DependencyInjection_Microsoft)' != 'true'
+			         And '$(_SwitchRef_SolutionProjects)' != ''
+			         And !$(_SwitchRef_SolutionProjects.Contains('|Compze.Utilities.DependencyInjection.Microsoft.csproj|'))">true</UsePackageReference_Compze_Utilities_DependencyInjection_Microsoft>
+		<UsePackageReference_Compze_Utilities_DependencyInjection_SimpleInjector
+			Condition="'$(UsePackageReference_Compze_Utilities_DependencyInjection_SimpleInjector)' != 'true'
+			         And '$(_SwitchRef_SolutionProjects)' != ''
+			         And !$(_SwitchRef_SolutionProjects.Contains('|Compze.Utilities.DependencyInjection.SimpleInjector.csproj|'))">true</UsePackageReference_Compze_Utilities_DependencyInjection_SimpleInjector>
+		<UsePackageReference_Compze_Utilities_Logging_Serilog
+			Condition="'$(UsePackageReference_Compze_Utilities_Logging_Serilog)' != 'true'
+			         And '$(_SwitchRef_SolutionProjects)' != ''
+			         And !$(_SwitchRef_SolutionProjects.Contains('|Compze.Utilities.Logging.Serilog.csproj|'))">true</UsePackageReference_Compze_Utilities_Logging_Serilog>
+		<UsePackageReference_Compze_Utilities_Testing_Must
+			Condition="'$(UsePackageReference_Compze_Utilities_Testing_Must)' != 'true'
+			         And '$(_SwitchRef_SolutionProjects)' != ''
+			         And !$(_SwitchRef_SolutionProjects.Contains('|Compze.Utilities.Testing.Must.csproj|'))">true</UsePackageReference_Compze_Utilities_Testing_Must>
+		<UsePackageReference_Compze_Utilities_Testing_XUnit
+			Condition="'$(UsePackageReference_Compze_Utilities_Testing_XUnit)' != 'true'
+			         And '$(_SwitchRef_SolutionProjects)' != ''
+			         And !$(_SwitchRef_SolutionProjects.Contains('|Compze.Utilities.Testing.XUnit.csproj|'))">true</UsePackageReference_Compze_Utilities_Testing_XUnit>
+		<UsePackageReference_Compze_Utilities_Testing_DbPool
+			Condition="'$(UsePackageReference_Compze_Utilities_Testing_DbPool)' != 'true'
+			         And '$(_SwitchRef_SolutionProjects)' != ''
+			         And !$(_SwitchRef_SolutionProjects.Contains('|Compze.Utilities.Testing.DbPool.csproj|'))">true</UsePackageReference_Compze_Utilities_Testing_DbPool>
+
+		<!-- Core + Serialization -->
+		<UsePackageReference_Compze_Core
+			Condition="'$(UsePackageReference_Compze_Core)' != 'true'
+			         And '$(_SwitchRef_SolutionProjects)' != ''
+			         And !$(_SwitchRef_SolutionProjects.Contains('|Compze.Core.csproj|'))">true</UsePackageReference_Compze_Core>
+		<UsePackageReference_Compze_Serialization_Newtonsoft
+			Condition="'$(UsePackageReference_Compze_Serialization_Newtonsoft)' != 'true'
+			         And '$(_SwitchRef_SolutionProjects)' != ''
+			         And !$(_SwitchRef_SolutionProjects.Contains('|Compze.Serialization.Newtonsoft.csproj|'))">true</UsePackageReference_Compze_Serialization_Newtonsoft>
+
+		<!-- SQL -->
+		<UsePackageReference_Compze_Sql_Common
+			Condition="'$(UsePackageReference_Compze_Sql_Common)' != 'true'
+			         And '$(_SwitchRef_SolutionProjects)' != ''
+			         And !$(_SwitchRef_SolutionProjects.Contains('|Compze.Sql.Common.csproj|'))">true</UsePackageReference_Compze_Sql_Common>
+		<UsePackageReference_Compze_Sql_MicrosoftSql
+			Condition="'$(UsePackageReference_Compze_Sql_MicrosoftSql)' != 'true'
+			         And '$(_SwitchRef_SolutionProjects)' != ''
+			         And !$(_SwitchRef_SolutionProjects.Contains('|Compze.Sql.MicrosoftSql.csproj|'))">true</UsePackageReference_Compze_Sql_MicrosoftSql>
+		<UsePackageReference_Compze_Sql_MySql
+			Condition="'$(UsePackageReference_Compze_Sql_MySql)' != 'true'
+			         And '$(_SwitchRef_SolutionProjects)' != ''
+			         And !$(_SwitchRef_SolutionProjects.Contains('|Compze.Sql.MySql.csproj|'))">true</UsePackageReference_Compze_Sql_MySql>
+		<UsePackageReference_Compze_Sql_PostgreSql
+			Condition="'$(UsePackageReference_Compze_Sql_PostgreSql)' != 'true'
+			         And '$(_SwitchRef_SolutionProjects)' != ''
+			         And !$(_SwitchRef_SolutionProjects.Contains('|Compze.Sql.PostgreSql.csproj|'))">true</UsePackageReference_Compze_Sql_PostgreSql>
+		<UsePackageReference_Compze_Sql_Sqlite
+			Condition="'$(UsePackageReference_Compze_Sql_Sqlite)' != 'true'
+			         And '$(_SwitchRef_SolutionProjects)' != ''
+			         And !$(_SwitchRef_SolutionProjects.Contains('|Compze.Sql.Sqlite.csproj|'))">true</UsePackageReference_Compze_Sql_Sqlite>
+
+		<!-- Tessaging -->
+		<UsePackageReference_Compze_Tessaging
+			Condition="'$(UsePackageReference_Compze_Tessaging)' != 'true'
+			         And '$(_SwitchRef_SolutionProjects)' != ''
+			         And !$(_SwitchRef_SolutionProjects.Contains('|Compze.Tessaging.csproj|'))">true</UsePackageReference_Compze_Tessaging>
+		<UsePackageReference_Compze_Tessaging_Hosting_AspNetCore
+			Condition="'$(UsePackageReference_Compze_Tessaging_Hosting_AspNetCore)' != 'true'
+			         And '$(_SwitchRef_SolutionProjects)' != ''
+			         And !$(_SwitchRef_SolutionProjects.Contains('|Compze.Tessaging.Hosting.AspNetCore.csproj|'))">true</UsePackageReference_Compze_Tessaging_Hosting_AspNetCore>
+		<UsePackageReference_Compze_Tessaging_Hosting_Testing
+			Condition="'$(UsePackageReference_Compze_Tessaging_Hosting_Testing)' != 'true'
+			         And '$(_SwitchRef_SolutionProjects)' != ''
+			         And !$(_SwitchRef_SolutionProjects.Contains('|Compze.Tessaging.Hosting.Testing.csproj|'))">true</UsePackageReference_Compze_Tessaging_Hosting_Testing>
+		<UsePackageReference_Compze_Tessaging_Teventive_TeventStore
+			Condition="'$(UsePackageReference_Compze_Tessaging_Teventive_TeventStore)' != 'true'
+			         And '$(_SwitchRef_SolutionProjects)' != ''
+			         And !$(_SwitchRef_SolutionProjects.Contains('|Compze.Tessaging.Teventive.TeventStore.csproj|'))">true</UsePackageReference_Compze_Tessaging_Teventive_TeventStore>
+	</PropertyGroup>
+
 	<!-- Enable package validation for all projects -->
 	<Import Project="msbuild\EnablePackageValidation.props" />
 	

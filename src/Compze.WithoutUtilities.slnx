@@ -1,0 +1,21 @@
+<Solution>
+  <Folder Name="/Compze/">
+    <Project Path="Compze.Core/Compze.Core.csproj" />
+    <Project Path="Compze.Tessaging/Compze.Tessaging.csproj" />
+  </Folder>
+  <Folder Name="/Compze/Serialization/">
+    <Project Path="Compze.Serialization.Newtonsoft/Compze.Serialization.Newtonsoft.csproj" />
+  </Folder>
+  <Folder Name="/Compze/Sql/">
+    <Project Path="Compze.Sql.Common/Compze.Sql.Common.csproj" />
+    <Project Path="Compze.Sql.MicrosoftSql/Compze.Sql.MicrosoftSql.csproj" />
+    <Project Path="Compze.Sql.MySql/Compze.Sql.MySql.csproj" />
+    <Project Path="Compze.Sql.PostgreSql/Compze.Sql.PostgreSql.csproj" />
+    <Project Path="Compze.Sql.Sqlite/Compze.Sql.Sqlite.csproj" />
+  </Folder>
+  <Folder Name="/Compze/Tessaging/">
+    <Project Path="Compze.Tessaging.Hosting.AspNetCore/Compze.Tessaging.Hosting.AspNetCore.csproj" />
+    <Project Path="Compze.Tessaging.Hosting.Testing/Compze.Tessaging.Hosting.Testing.csproj" />
+    <Project Path="Compze.Tessaging.Teventive.TeventStore/Compze.Tessaging.Teventive.TeventStore.csproj" />
+  </Folder>
+</Solution>

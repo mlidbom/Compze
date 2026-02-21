@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
    <PropertyGroup>
       <TargetFramework>net9.0</TargetFramework>
       <Nullable>enable</Nullable>
@@ -11,28 +11,6 @@
       <ProjectReference Include="..\Compze.Tests.ScratchPad\Compze.Tests.ScratchPad.csproj" />
       <ProjectReference Include="..\Compze.Tests.Unit.Internals\Compze.Tests.Unit.Internals.csproj" />
       <ProjectReference Include="..\Compze.Tests.Unit\Compze.Tests.Unit.csproj" />
-      <ProjectReference Include="..\..\src\Compze.Core\Compze.Core.csproj" />
-      <ProjectReference Include="..\..\src\Compze.Serialization.Newtonsoft\Compze.Serialization.Newtonsoft.csproj" />
-      <ProjectReference Include="..\..\src\Compze.Sql.Common\Compze.Sql.Common.csproj" />
-      <ProjectReference Include="..\..\src\Compze.Sql.MicrosoftSql\Compze.Sql.MicrosoftSql.csproj" />
-      <ProjectReference Include="..\..\src\Compze.Sql.MySql\Compze.Sql.MySql.csproj" />
-      <ProjectReference Include="..\..\src\Compze.Sql.PostgreSql\Compze.Sql.PostgreSql.csproj" />
-      <ProjectReference Include="..\..\src\Compze.Sql.Sqlite\Compze.Sql.Sqlite.csproj" />
-      <ProjectReference Include="..\..\src\Compze.Tessaging\Compze.Tessaging.csproj" />
-      <ProjectReference Include="..\..\src\Compze.Tessaging.Hosting.AspNetCore\Compze.Tessaging.Hosting.AspNetCore.csproj" />
-      <ProjectReference Include="..\..\src\Compze.Tessaging.Hosting.Testing\Compze.Tessaging.Hosting.Testing.csproj" />
-      <ProjectReference Include="..\..\src\Compze.Tessaging.Teventive.TeventStore\Compze.Tessaging.Teventive.TeventStore.csproj" />
-      <ProjectReference Include="..\..\src\Compze.Utilities.DependencyInjection.Microsoft\Compze.Utilities.DependencyInjection.Microsoft.csproj" />
-      <ProjectReference Include="..\..\src\Compze.Utilities.DependencyInjection.SimpleInjector\Compze.Utilities.DependencyInjection.SimpleInjector.csproj" />
-      <ProjectReference Include="..\..\src\Compze.Utilities.Logging.Serilog\Compze.Utilities.Logging.Serilog.csproj" />
-      <ProjectReference Include="..\..\src\Compze.Utilities.Testing.DbPool\Compze.Utilities.Testing.DbPool.csproj" />
-      <ProjectReference Include="..\..\src\Compze.Utilities.Testing.Must\Compze.Utilities.Testing.Must.csproj" />
-      <ProjectReference Include="..\..\src\Compze.Utilities.Contracts\Compze.Utilities.Contracts.csproj" />
-      <ProjectReference Include="..\..\src\Compze.Utilities.Functional\Compze.Utilities.Functional.csproj" />
-      <ProjectReference Include="..\..\src\Compze.Utilities.DependencyInjection\Compze.Utilities.DependencyInjection.csproj" />
-      <ProjectReference Include="..\..\src\Compze.Utilities.Logging\Compze.Utilities.Logging.csproj" />
-      <ProjectReference Include="..\..\src\Compze.Utilities.SystemCE\Compze.Utilities.SystemCE.csproj" />
-      <ProjectReference Include="..\..\src\Compze.Utilities.SystemCE.ThreadingCE\Compze.Utilities.SystemCE.ThreadingCE.csproj" />
    </ItemGroup>
    <ItemGroup>
       <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
@@ -45,5 +23,137 @@
          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
       <PackageReference Include="xunit.v3" Version="3.1.0" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Core)' == 'true'">
+      <PackageReference Include="Compze.Core" Version="0.1.0-alpha.3" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Core)' != 'true'">
+      <ProjectReference Include="..\..\src\Compze.Core\Compze.Core.csproj" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Serialization_Newtonsoft)' == 'true'">
+      <PackageReference Include="Compze.Serialization.Newtonsoft" Version="0.1.0-alpha.3" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Serialization_Newtonsoft)' != 'true'">
+      <ProjectReference Include="..\..\src\Compze.Serialization.Newtonsoft\Compze.Serialization.Newtonsoft.csproj" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Sql_Common)' == 'true'">
+      <PackageReference Include="Compze.Sql.Common" Version="0.1.0-alpha.3" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Sql_Common)' != 'true'">
+      <ProjectReference Include="..\..\src\Compze.Sql.Common\Compze.Sql.Common.csproj" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Sql_MicrosoftSql)' == 'true'">
+      <PackageReference Include="Compze.Sql.MicrosoftSql" Version="0.1.0-alpha.3" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Sql_MicrosoftSql)' != 'true'">
+      <ProjectReference Include="..\..\src\Compze.Sql.MicrosoftSql\Compze.Sql.MicrosoftSql.csproj" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Sql_MySql)' == 'true'">
+      <PackageReference Include="Compze.Sql.MySql" Version="0.1.0-alpha.3" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Sql_MySql)' != 'true'">
+      <ProjectReference Include="..\..\src\Compze.Sql.MySql\Compze.Sql.MySql.csproj" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Sql_PostgreSql)' == 'true'">
+      <PackageReference Include="Compze.Sql.PostgreSql" Version="0.1.0-alpha.3" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Sql_PostgreSql)' != 'true'">
+      <ProjectReference Include="..\..\src\Compze.Sql.PostgreSql\Compze.Sql.PostgreSql.csproj" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Sql_Sqlite)' == 'true'">
+      <PackageReference Include="Compze.Sql.Sqlite" Version="0.1.0-alpha.3" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Sql_Sqlite)' != 'true'">
+      <ProjectReference Include="..\..\src\Compze.Sql.Sqlite\Compze.Sql.Sqlite.csproj" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging)' == 'true'">
+      <PackageReference Include="Compze.Tessaging" Version="0.1.0-alpha.3" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging)' != 'true'">
+      <ProjectReference Include="..\..\src\Compze.Tessaging\Compze.Tessaging.csproj" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_Hosting_AspNetCore)' == 'true'">
+      <PackageReference Include="Compze.Tessaging.Hosting.AspNetCore" Version="0.1.0-alpha.3" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_Hosting_AspNetCore)' != 'true'">
+      <ProjectReference Include="..\..\src\Compze.Tessaging.Hosting.AspNetCore\Compze.Tessaging.Hosting.AspNetCore.csproj" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_Hosting_Testing)' == 'true'">
+      <PackageReference Include="Compze.Tessaging.Hosting.Testing" Version="0.1.0-alpha.3" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_Hosting_Testing)' != 'true'">
+      <ProjectReference Include="..\..\src\Compze.Tessaging.Hosting.Testing\Compze.Tessaging.Hosting.Testing.csproj" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_Teventive_TeventStore)' == 'true'">
+      <PackageReference Include="Compze.Tessaging.Teventive.TeventStore" Version="0.1.0-alpha.3" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_Teventive_TeventStore)' != 'true'">
+      <ProjectReference Include="..\..\src\Compze.Tessaging.Teventive.TeventStore\Compze.Tessaging.Teventive.TeventStore.csproj" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_DependencyInjection_Microsoft)' == 'true'">
+      <PackageReference Include="Compze.Utilities.DependencyInjection.Microsoft" Version="0.1.0-alpha.3" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_DependencyInjection_Microsoft)' != 'true'">
+      <ProjectReference Include="..\..\src\Compze.Utilities.DependencyInjection.Microsoft\Compze.Utilities.DependencyInjection.Microsoft.csproj" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_DependencyInjection_SimpleInjector)' == 'true'">
+      <PackageReference Include="Compze.Utilities.DependencyInjection.SimpleInjector" Version="0.1.0-alpha.3" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_DependencyInjection_SimpleInjector)' != 'true'">
+      <ProjectReference Include="..\..\src\Compze.Utilities.DependencyInjection.SimpleInjector\Compze.Utilities.DependencyInjection.SimpleInjector.csproj" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Logging_Serilog)' == 'true'">
+      <PackageReference Include="Compze.Utilities.Logging.Serilog" Version="0.1.0-alpha.3" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Logging_Serilog)' != 'true'">
+      <ProjectReference Include="..\..\src\Compze.Utilities.Logging.Serilog\Compze.Utilities.Logging.Serilog.csproj" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Testing_DbPool)' == 'true'">
+      <PackageReference Include="Compze.Utilities.Testing.DbPool" Version="0.1.0-alpha.3" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Testing_DbPool)' != 'true'">
+      <ProjectReference Include="..\..\src\Compze.Utilities.Testing.DbPool\Compze.Utilities.Testing.DbPool.csproj" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Testing_Must)' == 'true'">
+      <PackageReference Include="Compze.Utilities.Testing.Must" Version="0.1.0-alpha.3" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Testing_Must)' != 'true'">
+      <ProjectReference Include="..\..\src\Compze.Utilities.Testing.Must\Compze.Utilities.Testing.Must.csproj" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Contracts)' == 'true'">
+      <PackageReference Include="Compze.Utilities.Contracts" Version="0.1.0-alpha.3" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Contracts)' != 'true'">
+      <ProjectReference Include="..\..\src\Compze.Utilities.Contracts\Compze.Utilities.Contracts.csproj" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Functional)' == 'true'">
+      <PackageReference Include="Compze.Utilities.Functional" Version="0.1.0-alpha.3" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Functional)' != 'true'">
+      <ProjectReference Include="..\..\src\Compze.Utilities.Functional\Compze.Utilities.Functional.csproj" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_DependencyInjection)' == 'true'">
+      <PackageReference Include="Compze.Utilities.DependencyInjection" Version="0.1.0-alpha.3" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_DependencyInjection)' != 'true'">
+      <ProjectReference Include="..\..\src\Compze.Utilities.DependencyInjection\Compze.Utilities.DependencyInjection.csproj" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Logging)' == 'true'">
+      <PackageReference Include="Compze.Utilities.Logging" Version="0.1.0-alpha.3" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Logging)' != 'true'">
+      <ProjectReference Include="..\..\src\Compze.Utilities.Logging\Compze.Utilities.Logging.csproj" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_SystemCE)' == 'true'">
+      <PackageReference Include="Compze.Utilities.SystemCE" Version="0.1.0-alpha.3" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_SystemCE)' != 'true'">
+      <ProjectReference Include="..\..\src\Compze.Utilities.SystemCE\Compze.Utilities.SystemCE.csproj" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_SystemCE_ThreadingCE)' == 'true'">
+      <PackageReference Include="Compze.Utilities.SystemCE.ThreadingCE" Version="0.1.0-alpha.3" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_SystemCE_ThreadingCE)' != 'true'">
+      <ProjectReference Include="..\..\src\Compze.Utilities.SystemCE.ThreadingCE\Compze.Utilities.SystemCE.ThreadingCE.csproj" />
    </ItemGroup>
 </Project>

@@ -1,17 +1,20 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
    <PropertyGroup>
       <TargetFramework>net9.0</TargetFramework>
       <Nullable>enable</Nullable>
       <Version>0.1.0-alpha.3</Version>
    </PropertyGroup>
    <ItemGroup>
-      <ProjectReference Include="..\Compze.Utilities.Contracts\Compze.Utilities.Contracts.csproj" />
-   </ItemGroup>
-   <ItemGroup>
       <PackageReference Include="JetBrains.Annotations" Version="2025.2.4" />
       <PackageReference Include="NsDepCop" Version="2.6.0">
          <PrivateAssets>all</PrivateAssets>
          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Contracts)' == 'true'">
+      <PackageReference Include="Compze.Utilities.Contracts" Version="0.1.0-alpha.3" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Contracts)' != 'true'">
+      <ProjectReference Include="..\Compze.Utilities.Contracts\Compze.Utilities.Contracts.csproj" />
    </ItemGroup>
 </Project>
