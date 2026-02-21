@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
    <PropertyGroup>
       <TargetFramework>net9.0</TargetFramework>
       <Nullable>enable</Nullable>
@@ -12,7 +12,7 @@
       </PackageReference>
    </ItemGroup>
    <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Contracts)' == 'true'">
-      <PackageReference Include="Compze.Utilities.Contracts" Version="0.1.0-alpha.3" />
+      <PackageReference Include="Compze.Utilities.Contracts" Version="*-*" />
    </ItemGroup>
    <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Contracts)' != 'true'">
       <ProjectReference Include="..\Compze.Utilities.Contracts\Compze.Utilities.Contracts.csproj" />
