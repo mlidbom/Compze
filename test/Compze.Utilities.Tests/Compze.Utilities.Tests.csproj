@@ -1,52 +1,43 @@
-<Project Sdk="Microsoft.NET.Sdk">
-
-	<PropertyGroup>
-		<TargetFramework>net9.0</TargetFramework>
-		<Nullable>enable</Nullable>
-		<IsPackable>false</IsPackable>
-	</PropertyGroup>
-
-	<ItemGroup>
-	  <ProjectReference Include="..\..\src\Compze.Utilities.Testing.DbPool\Compze.Utilities.Testing.DbPool.csproj" />
-	  <ProjectReference Include="..\..\src\Compze.Utilities.Testing.Must\Compze.Utilities.Testing.Must.csproj" />
-	  <ProjectReference Include="..\..\src\Compze.Utilities.Testing.XUnit\Compze.Utilities.Testing.XUnit.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <None Update="Testing\Xunit\TestUsingArgumentPassingFiveComponentsPCTAttribute">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	    <TargetPath>%(Filename)</TargetPath>
-	  </None>
-	  <None Update="Testing\Xunit\TestUsingArgumentPassingFourComponentsPCTAttribute">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	    <TargetPath>%(Filename)</TargetPath>
-	  </None>
-	  <None Update="Testing\Xunit\TestUsingArgumentPassingOneComponentsPCTAttribute">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	    <TargetPath>%(Filename)</TargetPath>
-	  </None>
-	  <None Update="Testing\Xunit\TestUsingArgumentPassingThreeComponentsPCTAttribute">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	    <TargetPath>%(Filename)</TargetPath>
-	  </None>
-	  <None Update="Testing\Xunit\TestUsingArgumentPassingTwoComponentsPCTAttribute">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	    <TargetPath>%(Filename)</TargetPath>
-	  </None>
-	  <None Update="Testing\Xunit\TestUsingNotArgumentPassingOneComponentsPCTAttribute">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	    <TargetPath>%(Filename)</TargetPath>
-	  </None>
-	  <None Update="Testing\Xunit\TestUsingNotArgumentPassingTwoComponentsPCTAttribute">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	    <TargetPath>%(Filename)</TargetPath>
-	  </None>
-	  <None Update="Testing\Xunit\TestUsingWildcards">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	    <TargetPath>%(Filename)</TargetPath>
-	  </None>
-	</ItemGroup>
-
+﻿<Project Sdk="Microsoft.NET.Sdk">
+   <PropertyGroup>
+      <TargetFramework>net9.0</TargetFramework>
+      <Nullable>enable</Nullable>
+      <IsPackable>false</IsPackable>
+   </PropertyGroup>
+   <ItemGroup>
+      <None Update="Testing\Xunit\TestUsingArgumentPassingFiveComponentsPCTAttribute">
+         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+         <TargetPath>%(Filename)</TargetPath>
+      </None>
+      <None Update="Testing\Xunit\TestUsingArgumentPassingFourComponentsPCTAttribute">
+         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+         <TargetPath>%(Filename)</TargetPath>
+      </None>
+      <None Update="Testing\Xunit\TestUsingArgumentPassingOneComponentsPCTAttribute">
+         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+         <TargetPath>%(Filename)</TargetPath>
+      </None>
+      <None Update="Testing\Xunit\TestUsingArgumentPassingThreeComponentsPCTAttribute">
+         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+         <TargetPath>%(Filename)</TargetPath>
+      </None>
+      <None Update="Testing\Xunit\TestUsingArgumentPassingTwoComponentsPCTAttribute">
+         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+         <TargetPath>%(Filename)</TargetPath>
+      </None>
+      <None Update="Testing\Xunit\TestUsingNotArgumentPassingOneComponentsPCTAttribute">
+         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+         <TargetPath>%(Filename)</TargetPath>
+      </None>
+      <None Update="Testing\Xunit\TestUsingNotArgumentPassingTwoComponentsPCTAttribute">
+         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+         <TargetPath>%(Filename)</TargetPath>
+      </None>
+      <None Update="Testing\Xunit\TestUsingWildcards">
+         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+         <TargetPath>%(Filename)</TargetPath>
+      </None>
+   </ItemGroup>
    <ItemGroup>
       <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
       <PackageReference Include="JetBrains.Annotations" Version="2025.2.4">
@@ -58,5 +49,22 @@
       </PackageReference>
       <PackageReference Include="xunit.v3" Version="3.1.0" />
    </ItemGroup>
-
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Testing_DbPool)' == 'true'">
+      <PackageReference Include="Compze.Utilities.Testing.DbPool" Version="0.1.0-alpha.3" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Testing_DbPool)' != 'true'">
+      <ProjectReference Include="..\..\src\Compze.Utilities.Testing.DbPool\Compze.Utilities.Testing.DbPool.csproj" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Testing_Must)' == 'true'">
+      <PackageReference Include="Compze.Utilities.Testing.Must" Version="0.1.0-alpha.3" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Testing_Must)' != 'true'">
+      <ProjectReference Include="..\..\src\Compze.Utilities.Testing.Must\Compze.Utilities.Testing.Must.csproj" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Testing_XUnit)' == 'true'">
+      <PackageReference Include="Compze.Utilities.Testing.XUnit" Version="0.1.0-alpha.3" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Testing_XUnit)' != 'true'">
+      <ProjectReference Include="..\..\src\Compze.Utilities.Testing.XUnit\Compze.Utilities.Testing.XUnit.csproj" />
+   </ItemGroup>
 </Project>

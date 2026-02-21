@@ -1,18 +1,10 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
    <PropertyGroup>
       <TargetFramework>net9.0</TargetFramework>
       <Nullable>enable</Nullable>
       <Version>0.1.0-alpha.3</Version>
       <Description>Core abstractions for the Compze framework including entity IDs, messaging contracts, and event sourcing interfaces.</Description>
    </PropertyGroup>
-   <ItemGroup>
-      <ProjectReference Include="..\Compze.Utilities.Contracts\Compze.Utilities.Contracts.csproj" />
-      <ProjectReference Include="..\Compze.Utilities.Functional\Compze.Utilities.Functional.csproj" />
-      <ProjectReference Include="..\Compze.Utilities.DependencyInjection\Compze.Utilities.DependencyInjection.csproj" />
-      <ProjectReference Include="..\Compze.Utilities.Logging\Compze.Utilities.Logging.csproj" />
-      <ProjectReference Include="..\Compze.Utilities.SystemCE\Compze.Utilities.SystemCE.csproj" />
-      <ProjectReference Include="..\Compze.Utilities.SystemCE.ThreadingCE\Compze.Utilities.SystemCE.ThreadingCE.csproj" />
-   </ItemGroup>
    <ItemGroup>
       <PackageReference Include="NsDepCop" Version="2.6.0">
          <PrivateAssets>all</PrivateAssets>
@@ -22,14 +14,50 @@
    <ItemGroup>
       <Folder Include="Serialization\Internal\DbPool\" />
    </ItemGroup>
-  <!-- Exclude _docs files from compilation but keep them visible.
+   <!-- Exclude _docs files from compilation but keep them visible.
        This section is automatically maintained by DevScripts\C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders.ps1 -->
-  <ItemGroup>
-    <Compile Remove="Tessaging\_docs\**\*.cs" />
-    <None Include="Tessaging\_docs\**\*.cs" />
-    <Content Include="Tessaging\_docs\**\*.md" />
-    <Compile Remove="Tessaging\Teventive\Public\Taggregates\_docs\**\*.cs" />
-    <None Include="Tessaging\Teventive\Public\Taggregates\_docs\**\*.cs" />
-    <Content Include="Tessaging\Teventive\Public\Taggregates\_docs\**\*.md" />
-  </ItemGroup>
+   <ItemGroup>
+      <Compile Remove="Tessaging\_docs\**\*.cs" />
+      <None Include="Tessaging\_docs\**\*.cs" />
+      <Content Include="Tessaging\_docs\**\*.md" />
+      <Compile Remove="Tessaging\Teventive\Public\Taggregates\_docs\**\*.cs" />
+      <None Include="Tessaging\Teventive\Public\Taggregates\_docs\**\*.cs" />
+      <Content Include="Tessaging\Teventive\Public\Taggregates\_docs\**\*.md" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Contracts)' == 'true'">
+      <PackageReference Include="Compze.Utilities.Contracts" Version="0.1.0-alpha.3" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Contracts)' != 'true'">
+      <ProjectReference Include="..\Compze.Utilities.Contracts\Compze.Utilities.Contracts.csproj" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Functional)' == 'true'">
+      <PackageReference Include="Compze.Utilities.Functional" Version="0.1.0-alpha.3" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Functional)' != 'true'">
+      <ProjectReference Include="..\Compze.Utilities.Functional\Compze.Utilities.Functional.csproj" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_DependencyInjection)' == 'true'">
+      <PackageReference Include="Compze.Utilities.DependencyInjection" Version="0.1.0-alpha.3" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_DependencyInjection)' != 'true'">
+      <ProjectReference Include="..\Compze.Utilities.DependencyInjection\Compze.Utilities.DependencyInjection.csproj" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Logging)' == 'true'">
+      <PackageReference Include="Compze.Utilities.Logging" Version="0.1.0-alpha.3" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Logging)' != 'true'">
+      <ProjectReference Include="..\Compze.Utilities.Logging\Compze.Utilities.Logging.csproj" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_SystemCE)' == 'true'">
+      <PackageReference Include="Compze.Utilities.SystemCE" Version="0.1.0-alpha.3" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_SystemCE)' != 'true'">
+      <ProjectReference Include="..\Compze.Utilities.SystemCE\Compze.Utilities.SystemCE.csproj" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_SystemCE_ThreadingCE)' == 'true'">
+      <PackageReference Include="Compze.Utilities.SystemCE.ThreadingCE" Version="0.1.0-alpha.3" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_SystemCE_ThreadingCE)' != 'true'">
+      <ProjectReference Include="..\Compze.Utilities.SystemCE.ThreadingCE\Compze.Utilities.SystemCE.ThreadingCE.csproj" />
+   </ItemGroup>
 </Project>

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
    <PropertyGroup>
       <TargetFramework>net9.0</TargetFramework>
       <Nullable>enable</Nullable>
@@ -22,11 +22,19 @@
       </EmbeddedResource>
    </ItemGroup>
    <ItemGroup>
-      <ProjectReference Include="..\..\..\..\src\Compze.Tessaging\Compze.Tessaging.csproj" />
-      <ProjectReference Include="..\..\..\..\src\Compze.Core\Compze.Core.csproj" />
-   </ItemGroup>
-   <ItemGroup>
       <PackageReference Include="CommunityToolkit.Diagnostics" Version="8.4.0" />
       <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging)' == 'true'">
+      <PackageReference Include="Compze.Tessaging" Version="0.1.0-alpha.3" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging)' != 'true'">
+      <ProjectReference Include="..\..\..\..\src\Compze.Tessaging\Compze.Tessaging.csproj" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Core)' == 'true'">
+      <PackageReference Include="Compze.Core" Version="0.1.0-alpha.3" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Core)' != 'true'">
+      <ProjectReference Include="..\..\..\..\src\Compze.Core\Compze.Core.csproj" />
    </ItemGroup>
 </Project>

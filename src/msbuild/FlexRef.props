@@ -1,0 +1,80 @@
+<Project>
+
+  <!--
+    FlexRef.props
+
+    Shared MSBuild infrastructure for switching between ProjectReference
+    and PackageReference based on solution context.
+
+    Import this file in your Directory.Build.props BEFORE declaring any
+    per-dependency properties.
+
+    See README.md for full usage instructions.
+  -->
+
+  <!--
+    Step 1: Parse the .slnx and extract project filenames.
+
+    For VS/Rider/dotnet CLI, $(SolutionPath) points directly at the .slnx.
+    This is skipped when NCrunch is running — NCrunch's .csproj parser
+    cannot evaluate property functions like File.ReadAllText, so it
+    must use explicit per-dependency flags via CustomBuildProperties
+    instead (see Step 2).
+
+    .slnx files list projects as XML like this:
+        <Project Path="src/Acme.Core/Acme.Core.csproj" />
+
+    The regex matches each <Project> element's Path attribute, captures
+    the filename after the last /, and replaces the whole match with
+    |filename|:
+
+        <Project Path="src/Acme.Core/Acme.Core.csproj"  →  <Project |Acme.Core.csproj|
+
+    The surrounding XML is kept but harmless — | never appears in
+    normal XML content, so .Contains('|Acme.Core.csproj|') is an
+    exact match against real project filenames.
+
+    %28/%29 are MSBuild escapes for ( and ), &lt;/&gt; are XML escapes
+    for < and >.
+
+    The regex in normal notation:  <Project\s[^>]*Path="(?:[^"]*/)?([^"/]+)"
+
+    $(_SwitchRef_SolutionProjects) is used in Step 2 by consumers.
+  -->
+  <PropertyGroup Condition="'$(NCrunch)' != '1'
+                         And '$(SolutionPath)' != ''
+                         And '$(SolutionPath)' != '*Undefined*'
+                         And Exists('$(SolutionPath)')">
+    <_SwitchRef_SolutionProjects>$([System.Text.RegularExpressions.Regex]::Replace(
+        $([System.IO.File]::ReadAllText('$(SolutionPath)')),
+        '&lt;Project\s[^&gt;]*Path="%28?:[^"]*/%29?%28[^"/]+%29"',
+        '|$1|'))</_SwitchRef_SolutionProjects>
+  </PropertyGroup>
+
+  <!--
+    Step 2: Per-dependency flag derivation.
+
+    After importing this file, declare one property per switchable
+    dependency in your Directory.Build.props:
+
+    <PropertyGroup>
+      <UsePackageReference_MyProj_LibA
+          Condition="'$(UsePackageReference_MyProj_LibA)' != 'true'
+                   And '$(_SwitchRef_SolutionProjects)' != ''
+                   And !$(_SwitchRef_SolutionProjects.Contains('|LibA.csproj|'))">true</UsePackageReference_MyProj_LibA>
+    </PropertyGroup>
+
+    The Condition ensures:
+    - If already set (NCrunch / env var / CLI /p:), the existing value wins.
+    - If we have solution data and the project is absent, it's set to 'true'.
+    - Otherwise it stays empty → ProjectReference (the safe default).
+      (The '$(_SwitchRef_SolutionProjects)' != '' guard prevents the
+       .Contains() check from false-triggering when there's no solution
+       context — an empty string doesn't contain anything, so the negated
+       check would otherwise always succeed.)
+
+    The same property name is used everywhere: in .csproj conditions,
+    NCrunch CustomBuildProperties, and env var / CLI overrides.
+  -->
+
+</Project>

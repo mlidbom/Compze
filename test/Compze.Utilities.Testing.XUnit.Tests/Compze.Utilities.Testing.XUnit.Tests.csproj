@@ -1,23 +1,30 @@
-<Project Sdk="Microsoft.NET.Sdk">
-
-	<PropertyGroup>
-		<TargetFramework>net9.0</TargetFramework>
-		<Nullable>enable</Nullable>
-		<IsPackable>false</IsPackable>
-	</PropertyGroup>
-	<ItemGroup>
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
-		<PackageReference Include="JetBrains.Annotations" Version="2025.2.4">
-			<IncludeAssets>compile;analyzers</IncludeAssets>
-		</PackageReference>
-		<PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-		<PackageReference Include="xunit.v3" Version="3.1.0" />
-	</ItemGroup>
-	<ItemGroup>
-	  <ProjectReference Include="..\..\src\Compze.Utilities.Testing.Must\Compze.Utilities.Testing.Must.csproj" />
-	  <ProjectReference Include="..\..\src\Compze.Utilities.Testing.XUnit\Compze.Utilities.Testing.XUnit.csproj" />
-	</ItemGroup>
+﻿<Project Sdk="Microsoft.NET.Sdk">
+   <PropertyGroup>
+      <TargetFramework>net9.0</TargetFramework>
+      <Nullable>enable</Nullable>
+      <IsPackable>false</IsPackable>
+   </PropertyGroup>
+   <ItemGroup>
+      <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
+      <PackageReference Include="JetBrains.Annotations" Version="2025.2.4">
+         <IncludeAssets>compile;analyzers</IncludeAssets>
+      </PackageReference>
+      <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
+         <PrivateAssets>all</PrivateAssets>
+         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+      <PackageReference Include="xunit.v3" Version="3.1.0" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Testing_Must)' == 'true'">
+      <PackageReference Include="Compze.Utilities.Testing.Must" Version="0.1.0-alpha.3" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Testing_Must)' != 'true'">
+      <ProjectReference Include="..\..\src\Compze.Utilities.Testing.Must\Compze.Utilities.Testing.Must.csproj" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Testing_XUnit)' == 'true'">
+      <PackageReference Include="Compze.Utilities.Testing.XUnit" Version="0.1.0-alpha.3" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Testing_XUnit)' != 'true'">
+      <ProjectReference Include="..\..\src\Compze.Utilities.Testing.XUnit\Compze.Utilities.Testing.XUnit.csproj" />
+   </ItemGroup>
 </Project>

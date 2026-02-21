@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
    <PropertyGroup>
       <TargetFramework>net9.0</TargetFramework>
       <Nullable>enable</Nullable>
@@ -6,7 +6,6 @@
    </PropertyGroup>
    <ItemGroup>
       <ProjectReference Include="..\..\..\..\test\Compze.Tests.Infrastructure\Compze.Tests.Infrastructure.csproj" />
-      <ProjectReference Include="..\..\..\..\src\Compze.Utilities.Testing.Must\Compze.Utilities.Testing.Must.csproj" />
       <ProjectReference Include="..\..\src\AccountManagement.API\AccountManagement.API.csproj" />
    </ItemGroup>
    <ItemGroup>
@@ -16,5 +15,11 @@
       </PackageReference>
       <PackageReference Include="xunit.v3" Version="3.1.0" />
       <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Testing_Must)' == 'true'">
+      <PackageReference Include="Compze.Utilities.Testing.Must" Version="0.1.0-alpha.3" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Testing_Must)' != 'true'">
+      <ProjectReference Include="..\..\..\..\src\Compze.Utilities.Testing.Must\Compze.Utilities.Testing.Must.csproj" />
    </ItemGroup>
 </Project>
