@@ -25,8 +25,8 @@ runs:
 
     - name: Build
       shell: bash
-      run: dotnet build Compze.everything-ci.slnx --configuration ${{ inputs.configuration }}
+      run: dotnet build src/Compze.slnx --configuration ${{ inputs.configuration }}
 
     - name: Test
       shell: bash
-      run: dotnet test Compze.everything-ci.slnx --configuration ${{ inputs.configuration }} --no-build
+      run: dotnet test src/Compze.slnx --configuration ${{ inputs.configuration }} --no-build
