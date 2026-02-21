@@ -3,23 +3,23 @@
 ## Build & Test
 
 ```powershell
-dotnet build Compze.InternalizedSourceReferences.slnx
-dotnet test Compze.InternalizedSourceReferences.slnx
+dotnet build Compze.Build.InternalizedSourceReferences.slnx
+dotnet test Compze.Build.InternalizedSourceReferences.slnx
 ```
 
 ## Project Structure
 
 ```
-Compze.InternalizedSourceReferences.slnx
+Compze.Build.InternalizedSourceReferences.slnx
 global.json
 src/
-  Compze.InternalizedSourceReferences/
+  Compze.Build.InternalizedSourceReferences/
     SourceRewriter.cs                                  # Core rewriting logic
     RewriteDirectoryTask.cs                            # MSBuild ITask implementation
-    Compze.InternalizedSourceReferences.targets     # MSBuild integration (packed into NuGet)
-    Compze.InternalizedSourceReferences.csproj      # Configured as NuGet package
+    Compze.Build.InternalizedSourceReferences.targets     # MSBuild integration (packed into NuGet)
+    Compze.Build.InternalizedSourceReferences.csproj      # Configured as NuGet package
 test/
-  Compze.InternalizedSourceReferences.Tests/
+  Compze.Build.InternalizedSourceReferences.Tests/
     When_rewriting_source_with_MakeTypesInternal.cs     # Unit tests (BDD style)
     When_rewriting_each_source_file.cs                  # Per-file snapshot tests
     When_rewriting_an_entire_directory.cs               # End-to-end batch test (single directory)
@@ -81,7 +81,7 @@ This works because the type keyword (`class`, `interface`, etc.) unambiguously d
 The project is packaged as a NuGet package containing the MSBuild task DLL and `.targets` file in both `build/` and `buildTransitive/`. To pack locally:
 
 ```powershell
-dotnet pack src/Compze.InternalizedSourceReferences -c Release
+dotnet pack src/Compze.Build.InternalizedSourceReferences -c Release
 ```
 
 The package outputs to the `nupkgs/` folder at the consuming repo root, configured as a local NuGet source.

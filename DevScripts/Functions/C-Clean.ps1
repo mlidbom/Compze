@@ -100,6 +100,23 @@ function C-Clean {
                 Write-Warning "Failed to delete: $($folder.FullName) - $_"
             }
         }
+
+        # Clean nupkgs/ — keep only the latest version of each package
+        $nupkgsPath = Join-Path $script:CompzeRoot "nupkgs"
+        if (Test-Path $nupkgsPath) {
+            Get-ChildItem $nupkgsPath -Filter "*.nupkg" |
+                Group-Object { $_.Name -replace '\.\d+\.\d+\.\d+.*\.nupkg$', '' } |
+                ForEach-Object {
+                    $_.Group | Sort-Object LastWriteTime -Descending | Select-Object -Skip 1 | Remove-Item -Force
+                }
+            # Also clean orphaned .snupkg files that no longer have a matching .nupkg
+            Get-ChildItem $nupkgsPath -Filter "*.snupkg" | ForEach-Object {
+                $matchingNupkg = $_.FullName -replace '\.snupkg$', '.nupkg'
+                if (-not (Test-Path $matchingNupkg)) {
+                    Remove-Item $_.FullName -Force
+                }
+            }
+        }
         
         # If FullGitReset is specified, run git clean
         if ($FullGitReset) {

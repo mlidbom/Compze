@@ -18,39 +18,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
+      - name: Build and Test
+        uses: ./.github/actions/build-and-test
         with:
-          dotnet-version: '9.0.x'
-
-      - name: Configure test pluggable components
-        run: cp src/TestUsingPluggableComponentCombinations.github-ci src/TestUsingPluggableComponentCombinations
-
-      - name: Build Compze.InternalizedSourceReferences
-        run: dotnet build Compze.InternalizedSourceReferences/Compze.InternalizedSourceReferences.slnx --configuration Release
-
-      - name: Test Compze.InternalizedSourceReferences
-        run: dotnet test Compze.InternalizedSourceReferences/Compze.InternalizedSourceReferences.slnx --configuration Release --no-build
-
-      - name: Pack Compze.InternalizedSourceReferences
-        run: dotnet pack Compze.InternalizedSourceReferences/src/Compze.InternalizedSourceReferences/Compze.InternalizedSourceReferences.csproj --configuration Release --no-build --output ./nupkgs
-
-      - name: Build
-        run: dotnet build src/Compze.slnx --configuration Release
-
-      - name: Test
-        run: dotnet test src/Compze.slnx --configuration Release --no-build
-
-      - name: Pack all packable projects
-        run: dotnet pack src/Compze.slnx --configuration Release --no-build --output ./nupkgs
+          configuration: Release
 
       - name: Push to NuGet.org (skip already-published versions)
         run: |
           dotnet nuget push ./nupkgs/*.nupkg \
-            --api-key ${{ secrets.NUGET_API_KEY }} \
-            --source https://api.nuget.org/v3/index.json \
-            --skip-duplicate
-          dotnet nuget push ./nupkgs/*.snupkg \
             --api-key ${{ secrets.NUGET_API_KEY }} \
             --source https://api.nuget.org/v3/index.json \
             --skip-duplicate

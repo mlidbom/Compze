@@ -20,22 +20,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
+      - name: Build and Test
+        uses: ./.github/actions/build-and-test
         with:
-          dotnet-version: '9.0.x'
-
-      - name: Configure test pluggable components
-        run: cp src/TestUsingPluggableComponentCombinations.github-ci src/TestUsingPluggableComponentCombinations
-
-      - name: Build and test Compze.InternalizedSourceReferences
-        run: |
-          dotnet build Compze.InternalizedSourceReferences/Compze.InternalizedSourceReferences.slnx
-          dotnet test Compze.InternalizedSourceReferences/Compze.InternalizedSourceReferences.slnx --no-build
-          dotnet pack Compze.InternalizedSourceReferences/src/Compze.InternalizedSourceReferences/Compze.InternalizedSourceReferences.csproj --no-build --configuration Debug
-
-      - name: Build
-        run: dotnet build src/Compze.slnx
-
-      - name: Test
-        run: dotnet test src/Compze.slnx --no-build
+          configuration: Debug
