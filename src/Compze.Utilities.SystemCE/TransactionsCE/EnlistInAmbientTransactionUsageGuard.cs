@@ -9,7 +9,7 @@ public class EnlistInAmbientTransactionUsageGuard : IUsageGuard
    readonly VolatileLambdaTransactionParticipant _transactionParticipant;
 
    public EnlistInAmbientTransactionUsageGuard(Action flushCallback)
-      => _transactionParticipant = new(EnlistmentOptions.EnlistDuringPrepareRequired, onPrepare: flushCallback);
+      => _transactionParticipant = new VolatileLambdaTransactionParticipant(EnlistmentOptions.EnlistDuringPrepareRequired, onPrepare: flushCallback);
 
    public void EnsureAccessValid() => _transactionParticipant.EnsureEnlistedInAnyAmbientTransaction();
 }
