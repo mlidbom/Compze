@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
    <PropertyGroup>
       <TargetFramework>net9.0</TargetFramework>
       <Nullable>enable</Nullable>
@@ -16,49 +16,49 @@
       </PackageReference>
    </ItemGroup>
    <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging)' == 'true'">
-      <PackageReference Include="Compze.Tessaging" Version="0.1.0-alpha.3" />
+      <PackageReference Include="Compze.Tessaging" Version="*-*" />
    </ItemGroup>
    <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging)' != 'true'">
       <ProjectReference Include="..\Compze.Tessaging\Compze.Tessaging.csproj" />
    </ItemGroup>
    <ItemGroup Condition="'$(UsePackageReference_Compze_Core)' == 'true'">
-      <PackageReference Include="Compze.Core" Version="0.1.0-alpha.3" />
+      <PackageReference Include="Compze.Core" Version="*-*" />
    </ItemGroup>
    <ItemGroup Condition="'$(UsePackageReference_Compze_Core)' != 'true'">
       <ProjectReference Include="..\Compze.Core\Compze.Core.csproj" />
    </ItemGroup>
    <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Contracts)' == 'true'">
-      <PackageReference Include="Compze.Utilities.Contracts" Version="0.1.0-alpha.3" />
+      <PackageReference Include="Compze.Utilities.Contracts" Version="*-*" />
    </ItemGroup>
    <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Contracts)' != 'true'">
       <ProjectReference Include="..\Compze.Utilities.Contracts\Compze.Utilities.Contracts.csproj" />
    </ItemGroup>
    <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Functional)' == 'true'">
-      <PackageReference Include="Compze.Utilities.Functional" Version="0.1.0-alpha.3" />
+      <PackageReference Include="Compze.Utilities.Functional" Version="*-*" />
    </ItemGroup>
    <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Functional)' != 'true'">
       <ProjectReference Include="..\Compze.Utilities.Functional\Compze.Utilities.Functional.csproj" />
    </ItemGroup>
    <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_DependencyInjection)' == 'true'">
-      <PackageReference Include="Compze.Utilities.DependencyInjection" Version="0.1.0-alpha.3" />
+      <PackageReference Include="Compze.Utilities.DependencyInjection" Version="*-*" />
    </ItemGroup>
    <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_DependencyInjection)' != 'true'">
       <ProjectReference Include="..\Compze.Utilities.DependencyInjection\Compze.Utilities.DependencyInjection.csproj" />
    </ItemGroup>
    <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Logging)' == 'true'">
-      <PackageReference Include="Compze.Utilities.Logging" Version="0.1.0-alpha.3" />
+      <PackageReference Include="Compze.Utilities.Logging" Version="*-*" />
    </ItemGroup>
    <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Logging)' != 'true'">
       <ProjectReference Include="..\Compze.Utilities.Logging\Compze.Utilities.Logging.csproj" />
    </ItemGroup>
    <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_SystemCE)' == 'true'">
-      <PackageReference Include="Compze.Utilities.SystemCE" Version="0.1.0-alpha.3" />
+      <PackageReference Include="Compze.Utilities.SystemCE" Version="*-*" />
    </ItemGroup>
    <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_SystemCE)' != 'true'">
       <ProjectReference Include="..\Compze.Utilities.SystemCE\Compze.Utilities.SystemCE.csproj" />
    </ItemGroup>
    <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_SystemCE_ThreadingCE)' == 'true'">
-      <PackageReference Include="Compze.Utilities.SystemCE.ThreadingCE" Version="0.1.0-alpha.3" />
+      <PackageReference Include="Compze.Utilities.SystemCE.ThreadingCE" Version="*-*" />
    </ItemGroup>
    <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_SystemCE_ThreadingCE)' != 'true'">
       <ProjectReference Include="..\Compze.Utilities.SystemCE.ThreadingCE\Compze.Utilities.SystemCE.ThreadingCE.csproj" />
