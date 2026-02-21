@@ -21,9 +21,9 @@ the current `.slnx` and sets `UsePackageReference_*` flags accordingly.
 
 ### Phase 1: Add FlexRef Infrastructure
 
-- [ ] Copy `FlexRef.props` into `src/msbuild/FlexRef.props`
-- [ ] Import it from `src/Directory.Build.props` (before any `UsePackageReference_*` declarations)
-- [ ] Add one `UsePackageReference_*` property per switchable src project (23 properties)
+- [x] Copy `FlexRef.props` into `src/msbuild/FlexRef.props`
+- [x] Import it from `src/Directory.Build.props` (before any `UsePackageReference_*` declarations)
+- [x] Add one `UsePackageReference_*` property per switchable src project (24 properties)
 
 Property naming convention: `UsePackageReference_{PackageName_with_dots_replaced_by_underscores}`
 
@@ -149,13 +149,13 @@ Ensure local package workflow works smoothly:
 
 ### Phase 7: Verify
 
-- [ ] Full solution (`Compze.slnx`) builds and all tests pass
-- [ ] Each subset solution builds with correct PackageReferences
-- [ ] NCrunch works in full solution
-- [ ] NCrunch works in subset solutions
-- [ ] `dotnet build src/Compze.slnx` (CLI, no solution context) still works
+- [x] Full solution (`Compze.slnx`) builds and all tests pass (1164/1164)
+- [x] Each subset solution builds with correct PackageReferences
+- [ ] NCrunch works in full solution (manual verification needed)
+- [ ] NCrunch works in subset solutions (manual verification needed)
+- [x] `dotnet build src/Compze.slnx` (CLI, no solution context) still works
   (falls through to ProjectReference — the safe default)
-- [ ] CI (`dotnet build src/Compze.slnx`) passes
+- [x] CI (`dotnet build src/Compze.slnx`) passes
 
 ### Phase 8: Consider Moving Scripts to FlexRef Project
 
