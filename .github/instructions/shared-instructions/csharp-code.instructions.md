@@ -10,6 +10,7 @@ applyTo: "**/*.cs"
 - Do not bolt new behavior onto an ill-fitting structure just to avoid creating classes. If the right design calls for a new class, record, interface, or helper — create it.
 - The goal is a codebase where each change leaves the design **more** coherent, not less. Treat every feature as an opportunity to improve the surrounding code.
 - **Behavior belongs with data.** If a static method's first parameter is an object it primarily operates on, that method should probably be an instance method on that type instead. `StaticHelper.DoSomething(object, ...)` is C-style procedural code — prefer `object.DoSomething(...)`. Static utility classes are for genuinely cross-cutting operations that don't belong to any specific type. And those should usually be extension methods for discoverability.
+- **Logic belongs where it fits, not where it's first needed.** If a method operates on a type it doesn't belong to — move it to that type as an instance method, or make it an extension method on that type or interface. Don't let helper logic accumulate in unrelated classes just because that's where the need first arose.
 
 ## Formatting
 
