@@ -151,8 +151,8 @@ Ensure local package workflow works smoothly:
 
 - [x] Full solution (`Compze.slnx`) builds and all tests pass (1164/1164)
 - [x] Each subset solution builds with correct PackageReferences
-- [ ] NCrunch works in full solution (manual verification needed)
-- [ ] NCrunch works in subset solutions (manual verification needed)
+- [x] NCrunch works in full solution (manual verification needed)
+- [x] NCrunch works in subset solutions (manual verification needed)
 - [x] `dotnet build src/Compze.slnx` (CLI, no solution context) still works
   (falls through to ProjectReference — the safe default)
 - [x] CI (`dotnet build src/Compze.slnx`) passes
