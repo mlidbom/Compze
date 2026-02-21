@@ -1,0 +1,21 @@
+<Solution>
+  <Folder Name="/Compze.Utilities/">
+    <Project Path="Compze.Utilities.Contracts/Compze.Utilities.Contracts.csproj" />
+    <Project Path="Compze.Utilities.Functional/Compze.Utilities.Functional.csproj" />
+    <Project Path="Compze.Utilities/Compze.Utilities.csproj" />
+    <Project Path="Compze.Utilities.SystemCE/Compze.Utilities.SystemCE.csproj" />
+    <Project Path="Compze.Utilities.SystemCE.ThreadingCE/Compze.Utilities.SystemCE.ThreadingCE.csproj" />
+    <Project Path="Compze.Utilities.Logging/Compze.Utilities.Logging.csproj" />
+    <Project Path="Compze.Utilities.DependencyInjection/Compze.Utilities.DependencyInjection.csproj" />
+    <Project Path="Compze.Utilities.DependencyInjection.Microsoft/Compze.Utilities.DependencyInjection.Microsoft.csproj" />
+    <Project Path="Compze.Utilities.DependencyInjection.SimpleInjector/Compze.Utilities.DependencyInjection.SimpleInjector.csproj" />
+    <Project Path="Compze.Utilities.Logging.Serilog/Compze.Utilities.Logging.Serilog.csproj" />
+    <Project Path="Compze.Utilities.Testing.Must/Compze.Utilities.Testing.Must.csproj" />
+    <Project Path="Compze.Utilities.Testing.XUnit/Compze.Utilities.Testing.XUnit.csproj" />
+    <Project Path="Compze.Utilities.Testing.DbPool/Compze.Utilities.Testing.DbPool.csproj" />
+  </Folder>
+  <Folder Name="/_Tests/">
+    <Project Path="../test/Compze.Utilities.Tests/Compze.Utilities.Tests.csproj" />
+    <Project Path="../test/Compze.Utilities.Testing.XUnit.Tests/Compze.Utilities.Testing.XUnit.Tests.csproj" />
+  </Folder>
+</Solution>
