@@ -1,3 +1,5 @@
+using Compze.Utilities.Contracts;
+
 namespace Compze.Utilities.SystemCE.ThreadingCE;
 
 public class CombinationUsageGuard(params IUsageGuard[] usageGuards) : IUsageGuard

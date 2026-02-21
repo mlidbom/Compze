@@ -14,6 +14,7 @@ using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.Internal;
 using Compze.Core.Tessaging.Teventive.TeventStore.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.Public.Exceptions;
+using Compze.Utilities.Contracts;
 using Compze.Utilities.SystemCE.ThreadingCE;
 using static Compze.Utilities.Contracts.Assert;
 
