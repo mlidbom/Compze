@@ -6,11 +6,10 @@ using Compze.Core.DocumentDb.Infrastructure;
 using Compze.Core.DocumentDb.Internal.SqlLayer.Exceptions;
 using Compze.Core.DocumentDb.Public;
 using Compze.Core.Public;
-using Compze.Utilities.Contracts;
+using Compze.Utilities.Contracts.UsageGuards;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE.LinqCE;
-using Compze.Utilities.SystemCE.ThreadingCE;
 using Compze.Utilities.SystemCE.TransactionsCE;
 using static Compze.Utilities.Contracts.Assert;
 

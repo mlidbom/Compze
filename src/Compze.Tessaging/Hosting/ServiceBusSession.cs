@@ -7,8 +7,7 @@ using Compze.Core.Tessaging.Teventive.Infrastructure.Validation;
 using Compze.Core.Tessaging.Typermedia.Infrastructure.Validation;
 using Compze.Tessaging.Implementation;
 using Compze.Tessaging.Implementation.Abstractions;
-using Compze.Utilities.Contracts;
-using Compze.Utilities.SystemCE.ThreadingCE;
+using Compze.Utilities.Contracts.UsageGuards;
 
 namespace Compze.Tessaging.Hosting;
 

@@ -5,9 +5,8 @@ using System.Linq;
 using Compze.Core.DocumentDb.Infrastructure;
 using Compze.Core.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.QueryModels.Generators.Public;
-using Compze.Utilities.Contracts;
+using Compze.Utilities.Contracts.UsageGuards;
 using Compze.Utilities.Functional;
-using Compze.Utilities.SystemCE.ThreadingCE;
 using static Compze.Utilities.Contracts.Assert;
 
 namespace Compze.Tessaging.Teventive.TeventStore.QueryModels.Generators;

@@ -10,13 +10,13 @@ using Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions
 using Compze.Core.Tessaging.Teventive.TeventStore.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.Refactoring.Migrations.Public;
 using Compze.Tessaging.Teventive.TeventStore.Refactoring.Migrations;
-using Compze.Utilities.Contracts;
+using Compze.Utilities.Contracts.UsageGuards;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Logging;
 using Compze.Utilities.SystemCE.LinqCE;
-using Compze.Utilities.SystemCE.ThreadingCE;
 using JetBrains.Annotations;
+using static Compze.Utilities.Contracts.Assert;
 
 namespace Compze.Tessaging.Teventive.TeventStore;
 
@@ -190,7 +190,7 @@ namespace Compze.Tessaging.Teventive.TeventStore;
 
    public IEnumerable<TaggregateId> StreamTaggregateIdsInCreationOrder(Type? teventType = null)
    {
-      Assert.Argument.Is(teventType == null || teventType.IsInterface && typeof(ITaggregateTevent).IsAssignableFrom(teventType));
+      Argument.Is(teventType == null || teventType.IsInterface && typeof(ITaggregateTevent).IsAssignableFrom(teventType));
       _usageGuard.EnsureAccessValid();
 
       _sqlLayer.SetupSchemaIfDatabaseUnInitialized();
