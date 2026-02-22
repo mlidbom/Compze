@@ -5,7 +5,10 @@
       <IsPackable>false</IsPackable>
       <IsTestProject>false</IsTestProject>
    </PropertyGroup>
-   <ItemGroup>
+  <ItemGroup>
+    <!-- Shared source: SystemCE types compiled as internal -->
+    <Compile Include="..\..\src\Compze.Shared.Source\SystemCE\**\*.cs" LinkBase="SharedSource\SystemCE" />
+  </ItemGroup>   <ItemGroup>
       <ProjectReference Include="..\Compze.Tests.Infrastructure\Compze.Tests.Infrastructure.csproj" />
    </ItemGroup>
    <ItemGroup>
@@ -60,12 +63,6 @@
    </ItemGroup>
    <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Logging)' != 'true'">
       <ProjectReference Include="..\..\src\Compze.Utilities.Logging\Compze.Utilities.Logging.csproj" />
-   </ItemGroup>
-   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_SystemCE)' == 'true'">
-      <PackageReference Include="Compze.Utilities.SystemCE" Version="*-*" />
-   </ItemGroup>
-   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_SystemCE)' != 'true'">
-      <ProjectReference Include="..\..\src\Compze.Utilities.SystemCE\Compze.Utilities.SystemCE.csproj" />
    </ItemGroup>
    <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_SystemCE_ThreadingCE)' == 'true'">
       <PackageReference Include="Compze.Utilities.SystemCE.ThreadingCE" Version="*-*" />

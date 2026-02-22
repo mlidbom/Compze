@@ -54,7 +54,7 @@ public class ComponentCombinationTestCase : ConstructorArgumentForwardingTestCas
       CancellationTokenSource cancellationTokenSource)
    {
       return await ComponentCombination.RunInContextAsync(
-                new LazyCE<ComponentCombination>(() => combination),
+                () => combination,
                 async () => await XunitRunnerHelper.RunXunitTestCase(
                                _useTestMethodArguments ? this : new ArgumentDiscardingTestCase(this),
                                messageBus,

@@ -4,7 +4,10 @@
       <Nullable>enable</Nullable>
       <IsPackable>false</IsPackable>
    </PropertyGroup>
-   <ItemGroup>
+  <ItemGroup>
+    <!-- Shared source: SystemCE types compiled as internal -->
+    <Compile Include="..\..\src\Compze.Shared.Source\SystemCE\**\*.cs" LinkBase="SharedSource\SystemCE" />
+  </ItemGroup>   <ItemGroup>
       <None Update="Testing\Xunit\TestUsingArgumentPassingFiveComponentsPCTAttribute">
          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
          <TargetPath>%(Filename)</TargetPath>

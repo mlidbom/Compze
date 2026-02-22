@@ -4,7 +4,10 @@
       <Nullable>enable</Nullable>
       <IsPackable>false</IsPackable>
    </PropertyGroup>
-   <ItemGroup>
+  <ItemGroup>
+    <!-- Shared source: SystemCE types compiled as internal -->
+    <Compile Include="..\..\src\Compze.Shared.Source\SystemCE\**\*.cs" LinkBase="SharedSource\SystemCE" />
+  </ItemGroup>   <ItemGroup>
       <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
       <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
          <PrivateAssets>all</PrivateAssets>
@@ -62,12 +65,6 @@
    </ItemGroup>
    <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Logging)' != 'true'">
       <ProjectReference Include="..\..\src\Compze.Utilities.Logging\Compze.Utilities.Logging.csproj" />
-   </ItemGroup>
-   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_SystemCE)' == 'true'">
-      <PackageReference Include="Compze.Utilities.SystemCE" Version="*-*" />
-   </ItemGroup>
-   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_SystemCE)' != 'true'">
-      <ProjectReference Include="..\..\src\Compze.Utilities.SystemCE\Compze.Utilities.SystemCE.csproj" />
    </ItemGroup>
    <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_SystemCE_ThreadingCE)' == 'true'">
       <PackageReference Include="Compze.Utilities.SystemCE.ThreadingCE" Version="*-*" />

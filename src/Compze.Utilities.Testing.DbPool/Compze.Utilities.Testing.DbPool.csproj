@@ -6,6 +6,9 @@
     <Description>Database pool management for Compze integration testing.</Description>
   </PropertyGroup>
   <ItemGroup>
+    <!-- Shared source: SystemCE types compiled as internal -->
+    <Compile Include="..\Compze.Shared.Source\SystemCE\**\*.cs" LinkBase="SharedSource\SystemCE" />
+  </ItemGroup>  <ItemGroup>
     <PackageReference Include="JetBrains.Annotations" Version="2025.2.4" />
     <PackageReference Include="System.Threading.AccessControl" Version="9.0.9" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
@@ -56,7 +59,7 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Logging)' != 'true'">
     <ProjectReference Include="..\Compze.Utilities.Logging\Compze.Utilities.Logging.csproj" />
   </ItemGroup>
-  <!-- Compze.Utilities.SystemCE — flex reference -->
+  <!-- Compze.Utilities.SystemCE — flex reference (for UncatchableExceptionsGatherer public static state) -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_SystemCE)' == 'true'">
     <PackageReference Include="Compze.Utilities.SystemCE" Version="*-*" />
   </ItemGroup>

@@ -5,6 +5,9 @@
     <Version>0.1.0-alpha.3</Version>
   </PropertyGroup>
   <ItemGroup>
+    <!-- Shared source: SystemCE types compiled as internal -->
+    <Compile Include="..\Compze.Shared.Source\SystemCE\**\*.cs" LinkBase="SharedSource\SystemCE" />
+  </ItemGroup>  <ItemGroup>
     <PackageReference Include="JetBrains.Annotations" Version="2025.2.4" />
     <PackageReference Include="NsDepCop" Version="2.6.0">
       <PrivateAssets>all</PrivateAssets>
@@ -24,13 +27,6 @@
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Functional)' != 'true'">
     <ProjectReference Include="..\Compze.Utilities.Functional\Compze.Utilities.Functional.csproj" />
-  </ItemGroup>
-  <!-- Compze.Utilities.SystemCE — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_SystemCE)' == 'true'">
-    <PackageReference Include="Compze.Utilities.SystemCE" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_SystemCE)' != 'true'">
-    <ProjectReference Include="..\Compze.Utilities.SystemCE\Compze.Utilities.SystemCE.csproj" />
   </ItemGroup>
   <!-- Compze.Utilities.SystemCE.ThreadingCE — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_SystemCE_ThreadingCE)' == 'true'">

@@ -6,6 +6,9 @@
     <Description>MySQL database support for the Compze framework.</Description>
   </PropertyGroup>
   <ItemGroup>
+    <!-- Shared source: SystemCE types compiled as internal -->
+    <Compile Include="..\Compze.Shared.Source\SystemCE\**\*.cs" LinkBase="SharedSource\SystemCE" />
+  </ItemGroup>  <ItemGroup>
     <PackageReference Include="MySql.Data" Version="9.4.0" />
     <PackageReference Include="NsDepCop" Version="2.6.0">
       <PrivateAssets>all</PrivateAssets>

@@ -53,6 +53,9 @@
     </Project>
   </Folder>
   <Folder Name="/Compze/">
+    <Project Path="../../../../../../../Dev/Compze.worktrees/compze_worktree_1/src/Compze.Shared.Source/Compze.Shared.Source.csproj">
+      <BuildType Solution="docs|*" Project="Release" />
+    </Project>
     <Project Path="Compze.Core/Compze.Core.csproj" />
     <Project Path="Compze.Tessaging/Compze.Tessaging.csproj" />
   </Folder>

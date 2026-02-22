@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <!-- This project validates that shared source compiles. It is never packaged or referenced. -->
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Compze.Utilities.Contracts\Compze.Utilities.Contracts.csproj" />
+    <ProjectReference Include="..\Compze.Utilities.Functional\Compze.Utilities.Functional.csproj" />
+    <ProjectReference Include="..\Compze.Utilities.SystemCE.ThreadingCE\Compze.Utilities.SystemCE.ThreadingCE.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="JetBrains.Annotations" Version="2025.2.4" />
+  </ItemGroup>
+</Project>

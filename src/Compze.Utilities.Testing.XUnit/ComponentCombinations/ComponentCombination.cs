@@ -71,10 +71,10 @@ public class ComponentCombination : IXunitSerializable
    static readonly AsyncLocal<LazyCE<ComponentCombination>?> CurrentInternal = new();
 
    public static async Task<TReturn> RunInContextAsync<TReturn>(
-      LazyCE<ComponentCombination> combination,
+      Func<ComponentCombination> combinationFactory,
       Func<Task<TReturn>> executeTest)
    {
-      CurrentInternal.Value = combination;
+      CurrentInternal.Value = new LazyCE<ComponentCombination>(combinationFactory);
       try
       {
          return await executeTest().caf();

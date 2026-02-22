@@ -63,7 +63,7 @@ public class ServerEndpointBuilder : IEndpointBuilder, IAsyncDisposable, IDispos
       Configuration = configuration;
 
       _registry = new TessageHandlerRegistry(TypeMapper.Instance);
-      RegisterHandlers = new TessageHandlerRegistrarWithDependencyInjectionSupport(_registry, new LazyCE<IServiceLocator>(() => Container.ServiceLocator));
+      RegisterHandlers = new TessageHandlerRegistrarWithDependencyInjectionSupport(_registry, () => Container.ServiceLocator);
    }
 
    void SetupContainer()

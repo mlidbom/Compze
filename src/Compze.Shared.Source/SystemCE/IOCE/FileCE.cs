@@ -1,0 +1,14 @@
+using System.IO;
+
+namespace Compze.Utilities.SystemCE.IOCE;
+
+internal class FileCE : FileSystemInfoCE
+{
+#pragma warning disable CA1024 // Use properties. No, because that would imply that it is part of the instance state and that changing properties in it would change instance state.
+   public FileInfo GetFileInfo() => new(AbsolutePath);
+#pragma warning restore CA1024
+
+   public FileCE(FileInfo fileInfo) : base(fileInfo){}
+
+   protected override FileSystemInfo GetFileSystemInfo() => GetFileInfo();
+}

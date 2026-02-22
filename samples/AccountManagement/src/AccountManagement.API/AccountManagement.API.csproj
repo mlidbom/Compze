@@ -8,7 +8,10 @@
    <PropertyGroup>
       <RootNamespace>AccountManagement</RootNamespace>
    </PropertyGroup>
-   <ItemGroup>
+  <ItemGroup>
+    <!-- Shared source: SystemCE types compiled as internal -->
+    <Compile Include="..\..\..\..\src\Compze.Shared.Source\SystemCE\**\*.cs" LinkBase="SharedSource\SystemCE" />
+  </ItemGroup>   <ItemGroup>
       <Compile Update="API\RegisterAccountTommandResources.Designer.cs">
          <DesignTime>True</DesignTime>
          <AutoGen>True</AutoGen>

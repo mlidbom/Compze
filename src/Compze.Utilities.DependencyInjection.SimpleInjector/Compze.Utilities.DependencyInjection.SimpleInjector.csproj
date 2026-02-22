@@ -6,6 +6,9 @@
     <Description>SimpleInjector dependency injection integration for the Compze framework.</Description>
   </PropertyGroup>
   <ItemGroup>
+    <!-- Shared source: SystemCE types compiled as internal -->
+    <Compile Include="..\Compze.Shared.Source\SystemCE\**\*.cs" LinkBase="SharedSource\SystemCE" />
+  </ItemGroup>  <ItemGroup>
     <PackageReference Include="SimpleInjector" Version="5.5.0" />
     <PackageReference Include="NsDepCop" Version="2.6.0">
       <PrivateAssets>all</PrivateAssets>
@@ -39,13 +42,6 @@
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Logging)' != 'true'">
     <ProjectReference Include="..\Compze.Utilities.Logging\Compze.Utilities.Logging.csproj" />
-  </ItemGroup>
-  <!-- Compze.Utilities.SystemCE — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_SystemCE)' == 'true'">
-    <PackageReference Include="Compze.Utilities.SystemCE" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_SystemCE)' != 'true'">
-    <ProjectReference Include="..\Compze.Utilities.SystemCE\Compze.Utilities.SystemCE.csproj" />
   </ItemGroup>
   <!-- Compze.Utilities.SystemCE.ThreadingCE — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_SystemCE_ThreadingCE)' == 'true'">

@@ -6,6 +6,9 @@
     <Description>ASP.NET Core hosting integration for Compze messaging.</Description>
   </PropertyGroup>
   <ItemGroup>
+    <!-- Shared source: SystemCE types compiled as internal -->
+    <Compile Include="..\Compze.Shared.Source\SystemCE\**\*.cs" LinkBase="SharedSource\SystemCE" />
+  </ItemGroup>  <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
   <ItemGroup>
@@ -56,13 +59,6 @@
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Logging)' != 'true'">
     <ProjectReference Include="..\Compze.Utilities.Logging\Compze.Utilities.Logging.csproj" />
-  </ItemGroup>
-  <!-- Compze.Utilities.SystemCE — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_SystemCE)' == 'true'">
-    <PackageReference Include="Compze.Utilities.SystemCE" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_SystemCE)' != 'true'">
-    <ProjectReference Include="..\Compze.Utilities.SystemCE\Compze.Utilities.SystemCE.csproj" />
   </ItemGroup>
   <!-- Compze.Utilities.SystemCE.ThreadingCE — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_SystemCE_ThreadingCE)' == 'true'">
