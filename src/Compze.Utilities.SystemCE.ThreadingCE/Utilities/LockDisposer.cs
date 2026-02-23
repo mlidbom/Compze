@@ -3,13 +3,13 @@ using Compze.Utilities.Contracts;
 
 namespace Compze.Utilities.SystemCE.ThreadingCE.Utilities;
 
-///<summary>Simple utility class that calls the supplied action when the instance is disposed. Gets rid of the need to create a ton of small classes to do cleanup.</summary>
-class Disposable : IDisposable
+///<summary>Simple utility class that calls the supplied action when the instance is disposed. Calls for each dispose call, there is no check.</summary>
+class LockDisposer : IDisposable
 {
    readonly Action _action;
 
    ///<summary>Constructs an instance that will call <param name="action"> when disposed.</param></summary>
-   public Disposable(Action action)
+   public LockDisposer(Action action)
    {
       Assert.Argument.NotNull(action);
       _action = action;

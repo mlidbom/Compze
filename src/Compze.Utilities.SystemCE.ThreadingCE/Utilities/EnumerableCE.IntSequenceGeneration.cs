@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace Compze.Utilities.SystemCE.ThreadingCE.Utilities;
 
-static partial class EnumerableCE
+static class EnumerableCE
 {
    /// <summary>
    /// generates a sequence of integers beginning with <paramref name="me"/> where each element is
