@@ -4,7 +4,7 @@ using Compze.Utilities.Contracts;
 using Compze.Utilities.Testing.Must;
 using static Compze.Utilities.Testing.Must.MustActions;
 
-namespace Compze.Tests.Unit.Internals.Contracts;
+namespace Compze.Utilities.Contracts.Specifications;
 
 public abstract class AssertionMethodsTest
 {
