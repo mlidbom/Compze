@@ -5,7 +5,7 @@ using Compze.Utilities.SystemCE;
 using Compze.Utilities.Testing.XUnit.BDD;
 using Assert = Compze.Utilities.Contracts.Assert;
 
-namespace Compze.Tests.Performance.Internals.Contracts;
+namespace Compze.Utilities.Contracts.Specifications;
 
 public class NotNullOrDefaultPerformanceTests : UniversalTestBase
 {
