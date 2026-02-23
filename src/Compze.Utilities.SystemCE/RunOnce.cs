@@ -8,7 +8,7 @@ namespace Compze.Utilities.SystemCE;
 public class RunOnce
 {
    int _ran = 0;
-   public bool IsFirstCall() => Interlocked.Increment(ref _ran) == 1;
+   public bool IsFirstCall() => Interlocked.CompareExchange(ref _ran, 1, 0) == 0;
 
    public async Task RunIfFirstCallAsync(Func<Task> action)
    {
