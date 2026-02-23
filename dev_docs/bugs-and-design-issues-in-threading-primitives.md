@@ -35,14 +35,6 @@ In both `LockedAsync` and `Locked`, the `Exit()` cleanup is registered via `Asyn
 **Severity:** Low
 
 The `ReadOrUpdate` overloads declare a `timeout` parameter but never pass it through to the underlying `Read`/`Update` calls. Callers setting a timeout get no effect.
-
-### 7. `SingleTransactionUsageGuard` — unsynchronized field access
-
-**File:** `SingleTransactionUsageGuard.cs` (lines 11–18)  
-**Severity:** Low
-
-`_transaction` is read and written without synchronization. If `EnsureAccessValid()` is called from two threads concurrently when `_transaction` is still `null`, there is a data race. Given this class exists to prevent multi-threaded use, this may be acceptable by design — but the guard itself is the component that should be safe to call from multiple threads to detect the violation.
-
 ---
 
 ## Summary

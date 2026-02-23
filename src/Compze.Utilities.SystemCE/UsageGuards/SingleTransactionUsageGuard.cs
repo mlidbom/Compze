@@ -1,16 +1,16 @@
+using System.Threading;
 using System.Transactions;
 
 namespace Compze.Utilities.SystemCE.UsageGuards;
 
-public class SingleTransactionUsageGuard : IUsageGuard
+public class SingleTransactionUsageGuard(object guarded) : IUsageGuard
 {
    Transaction? _transaction = Transaction.Current;
-   readonly object _guarded;
-   public SingleTransactionUsageGuard(object guarded) => _guarded = guarded;
+   readonly object _guarded = guarded;
 
    public void EnsureAccessValid()
    {
-      _transaction ??= Transaction.Current;
+      Interlocked.CompareExchange(ref _transaction, Transaction.Current, null);
       if(Transaction.Current != null && Transaction.Current != _transaction)
       {
          throw new ComponentUsedByMultipleTransactionsException(_guarded.GetType());
