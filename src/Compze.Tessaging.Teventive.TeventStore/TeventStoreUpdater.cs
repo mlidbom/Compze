@@ -14,7 +14,6 @@ using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.Internal;
 using Compze.Core.Tessaging.Teventive.TeventStore.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.Public.Exceptions;
-using Compze.Utilities.Contracts.UsageGuards;
 using Compze.Utilities.SystemCE.UsageGuards;
 using static Compze.Utilities.Contracts.Assert;
 
@@ -72,7 +71,7 @@ public class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
    TTaggregate LoadSpecificVersionInternal<TTaggregate>(TaggregateId taggregateId, int version, bool verifyVersion = true) where TTaggregate : ITaggregate
    {
       _taggregateTypeValidator.AssertIsValid<TTaggregate>();
-      Argument.IsGreaterThan(version, 0);
+      Argument.Is(version > 0);
 
       _usageGuard.EnsureAccessValid();
 

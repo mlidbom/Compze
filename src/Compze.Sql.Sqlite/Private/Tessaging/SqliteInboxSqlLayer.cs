@@ -58,7 +58,7 @@ public partial class SqliteInboxSqlLayer(ISqliteConnectionPool connectionFactory
                               .AddVarcharParameter(TessageTable.TessageId, 36, tessageId.ToString())
                               .ExecuteNonQuery();
 
-            Assert.Result.Is(affectedRows == 1);
+            Assert.ReturnValue.Is(affectedRows == 1);
             return affectedRows;
          });
    }

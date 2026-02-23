@@ -1,5 +1,4 @@
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
-using JetBrains.Annotations;
 
 #pragma warning disable CS0108 //Hides inherited member.
 

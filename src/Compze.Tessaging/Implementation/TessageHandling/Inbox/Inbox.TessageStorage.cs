@@ -24,13 +24,13 @@ public class InboxTessageStorage(IServiceBusSqlLayer.IInboxSqlLayer sqlLayer) : 
                                                            exception.Message,
                                                            exception.GetType().GetFullNameCompilable());
 
-      Assert.Result.Is(affectedRows == 1);
+      Assert.ReturnValue.Is(affectedRows == 1);
    }
 
    public void MarkAsFailed(TransportTessage.InComing tessage)
    {
       var affectedRows = _sqlLayer.MarkAsFailed(tessage.TessageId);
-      Assert.Result.Is(affectedRows == 1);
+      Assert.ReturnValue.Is(affectedRows == 1);
    }
 
    public Task StartAsync() => _sqlLayer.InitAsync();

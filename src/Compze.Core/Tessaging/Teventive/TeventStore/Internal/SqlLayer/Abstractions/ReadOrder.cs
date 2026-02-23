@@ -92,7 +92,7 @@ public readonly struct ReadOrder : IComparable<ReadOrder>, IEquatable<ReadOrder>
          }
       }).ToArray();
 
-      Assert.Result.Is(result.All(order => order > rangeStart)) //We are staying within the specified range
+      Assert.ReturnValue.Is(result.All(order => order > rangeStart)) //We are staying within the specified range
             .Is(result.All(order => order < rangeEnd))          //We are staying within the specified range
             .Is(result.Distinct().Count() == numberOfTevents);   //Each ReadOrder is unique
 

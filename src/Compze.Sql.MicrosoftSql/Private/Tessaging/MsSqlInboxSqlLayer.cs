@@ -60,7 +60,7 @@ public partial class MsSqlInboxSqlLayer(IMsSqlConnectionPool connectionFactory, 
                            .AddParameter(TessageTable.TessageId, tessageId.Value)
                            .ExecuteNonQuery();
 
-         Assert.Result.Is(affectedRows == 1);
+         Assert.ReturnValue.Is(affectedRows == 1);
          return affectedRows;
       });
    }

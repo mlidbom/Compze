@@ -114,7 +114,7 @@ public partial class SqliteTeventStoreSqlLayer
                                                  nextTeventReadOrder: nextTeventReadOrder);
          });
 
-      return Assert.Result.NotNull(neighborhood).then(neighborhood);
+      return Assert.ReturnValue.NotNull(neighborhood).then(neighborhood);
    }
 
    public void DeleteTaggregate(TaggregateId taggregateId)

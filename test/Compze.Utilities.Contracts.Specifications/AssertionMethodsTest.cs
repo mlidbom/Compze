@@ -1,6 +1,5 @@
 using System;
 using System.Runtime.CompilerServices;
-using Compze.Utilities.Contracts;
 using Compze.Utilities.Testing.Must;
 using static Compze.Utilities.Testing.Must.MustActions;
 

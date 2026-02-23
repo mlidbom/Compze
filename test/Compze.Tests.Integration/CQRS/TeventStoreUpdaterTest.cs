@@ -25,7 +25,6 @@ using Compze.Utilities.SystemCE.TransactionsCE.Testing;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Tests.Infrastructure.XUnit;
-using Compze.Utilities.Contracts.UsageGuards;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using Compze.Utilities.SystemCE.ThreadingCE.Testing;
 using Compze.Utilities.SystemCE.UsageGuards;

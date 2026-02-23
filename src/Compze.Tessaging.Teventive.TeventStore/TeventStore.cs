@@ -10,7 +10,6 @@ using Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions
 using Compze.Core.Tessaging.Teventive.TeventStore.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.Refactoring.Migrations.Public;
 using Compze.Tessaging.Teventive.TeventStore.Refactoring.Migrations;
-using Compze.Utilities.Contracts.UsageGuards;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Logging;

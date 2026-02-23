@@ -1,6 +1,5 @@
 using System;
 using System.Transactions;
-using Compze.Utilities.Contracts.UsageGuards;
 using Compze.Utilities.SystemCE.UsageGuards;
 
 namespace Compze.Utilities.SystemCE.TransactionsCE;

@@ -1,5 +1,4 @@
 using Microsoft.Build.Framework;
-using Microsoft.Build.Utilities;
 
 namespace Compze.InternalizedSourceReferences;
 

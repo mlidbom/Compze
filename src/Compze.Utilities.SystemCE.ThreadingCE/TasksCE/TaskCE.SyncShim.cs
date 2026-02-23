@@ -9,8 +9,8 @@ namespace Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 public static partial class TaskCE
 {
    ///<summary>
-   /// Return Task.Result
-   /// If Result throws, and the <see cref="AggregateException"/>.InnerExceptions contains a single Exception, rethrows that single exception while maintaining a proper stack trace.
+   /// Return Task.ReturnValue
+   /// If ReturnValue throws, and the <see cref="AggregateException"/>.InnerExceptions contains a single Exception, rethrows that single exception while maintaining a proper stack trace.
    /// </summary>
    public static TResult ResultUnwrappingException<TResult>(this Task<TResult> task)
    {

@@ -145,12 +145,12 @@ public partial class TeventStore
 
    void AssertHistoriesAreIdentical(TaggregateTevent[] inMemoryMigratedHistory, IReadOnlyList<ITaggregateTevent> loadedTaggregateHistory)
    {
-      Assert.Result.Is(inMemoryMigratedHistory.Length == loadedTaggregateHistory.Count);
+      Assert.ReturnValue.Is(inMemoryMigratedHistory.Length == loadedTaggregateHistory.Count);
       for(var index = 0; index < inMemoryMigratedHistory.Length; ++index)
       {
          var inMemory = inMemoryMigratedHistory[index];
          var loaded = loadedTaggregateHistory[index];
-         Assert.Result
+         Assert.ReturnValue
                .Is(inMemory.TaggregateId == loaded.TaggregateId)
                .Is(inMemory.Id == loaded.Id)
                .Is(inMemory.TaggregateVersion == loaded.TaggregateVersion)

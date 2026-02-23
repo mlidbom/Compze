@@ -14,5 +14,5 @@ public static class Assert
    public static ContractAsserter Argument { get; } = new(tessage => new ArgumentException(tessage));
 
    ///<summary>Assert conditions on the results of a method before returning them. Failures throw <see cref="InvalidResultException"/> </summary>
-   public static ContractAsserter Result { get; } = new(tessage => new InvalidResultException(tessage));
+   public static ContractAsserter ReturnValue { get; } = new(tessage => new InvalidResultException(tessage));
 }

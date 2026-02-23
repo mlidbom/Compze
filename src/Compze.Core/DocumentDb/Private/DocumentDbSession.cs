@@ -6,7 +6,6 @@ using Compze.Core.DocumentDb.Infrastructure;
 using Compze.Core.DocumentDb.Internal.SqlLayer.Exceptions;
 using Compze.Core.DocumentDb.Public;
 using Compze.Core.Public;
-using Compze.Utilities.Contracts.UsageGuards;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE.LinqCE;
@@ -134,14 +133,14 @@ public partial class DocumentDbSession : IDocumentDbSession
 
    public virtual TValue Get<TValue>(object key)
    {
-      if(TryGet(key, out TValue? value)) return Result.ReturnNotNull(value);
+      if(TryGet(key, out TValue? value)) return ReturnValue.ReturnNotNull(value);
 
       throw new NoSuchDocumentException(key, typeof(TValue));
    }
 
    TValue GetInternal<TValue>(object key, bool useUpdateLock)
    {
-      if(TryGetInternal(key, typeof(TValue), out TValue? value, useUpdateLock)) return Result.ReturnNotNull(value);
+      if(TryGetInternal(key, typeof(TValue), out TValue? value, useUpdateLock)) return ReturnValue.ReturnNotNull(value);
 
       throw new NoSuchDocumentException(key, typeof(TValue));
    }

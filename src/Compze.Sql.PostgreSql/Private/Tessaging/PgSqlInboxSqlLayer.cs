@@ -61,7 +61,7 @@ public partial class PgSqlInboxSqlLayer(IPgSqlConnectionPool connectionFactory, 
                               .PrepareStatement()
                               .ExecuteNonQuery();
 
-            Assert.Result.Is(affectedRows == 1);
+            Assert.ReturnValue.Is(affectedRows == 1);
             return affectedRows;
          });
    }

@@ -31,7 +31,7 @@ public partial class Inbox
          {
             HandlerExecutionTask? handlerExecutionTask = null;
             _implementation.Await(implementation => implementation.TryGetDispatchableTessage(dispatchingRules, out handlerExecutionTask));
-            return Result.ReturnNotNull(handlerExecutionTask);
+            return ReturnValue.ReturnNotNull(handlerExecutionTask);
          }
 
          public Task<object?> EnqueueTessageTask(TransportTessage.InComing tessage) => _implementation.Update(implementation =>

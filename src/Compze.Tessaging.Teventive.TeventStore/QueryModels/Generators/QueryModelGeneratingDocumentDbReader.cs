@@ -5,7 +5,6 @@ using System.Linq;
 using Compze.Core.DocumentDb.Infrastructure;
 using Compze.Core.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.QueryModels.Generators.Public;
-using Compze.Utilities.Contracts.UsageGuards;
 using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE.UsageGuards;
 using static Compze.Utilities.Contracts.Assert;
@@ -30,7 +29,7 @@ public class QueryModelGeneratingQueryModelReader : IVersioningQueryModelReader
       _usageGuard.EnsureAccessValid();
       if(TryGet(key, out TValue? value))
       {
-         return Result.ReturnNotNull(value);
+         return ReturnValue.ReturnNotNull(value);
       }
 
       throw new NoSuchDocumentException(key, typeof(TValue));
@@ -41,7 +40,7 @@ public class QueryModelGeneratingQueryModelReader : IVersioningQueryModelReader
       _usageGuard.EnsureAccessValid();
       if(TryGetVersion(key, out TValue? value, version))
       {
-         return Result.ReturnNotNull(value);
+         return ReturnValue.ReturnNotNull(value);
       }
 
       throw new NoSuchDocumentException(key, typeof(TValue));
