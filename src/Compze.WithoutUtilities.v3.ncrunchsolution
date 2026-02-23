@@ -1,19 +1,19 @@
-﻿<SolutionConfiguration>
-   <Settings>
-      <CustomBuildProperties>
-         <Value>UsePackageReference_Compze_Utilities_Contracts = true</Value>
-         <Value>UsePackageReference_Compze_Utilities_Functional = true</Value>
-         <Value>UsePackageReference_Compze_Utilities = true</Value>
-         <Value>UsePackageReference_Compze_Utilities_SystemCE = true</Value>
-         <Value>UsePackageReference_Compze_Utilities_SystemCE_ThreadingCE = true</Value>
-         <Value>UsePackageReference_Compze_Utilities_Logging = true</Value>
-         <Value>UsePackageReference_Compze_Utilities_DependencyInjection = true</Value>
-         <Value>UsePackageReference_Compze_Utilities_DependencyInjection_Microsoft = true</Value>
-         <Value>UsePackageReference_Compze_Utilities_DependencyInjection_SimpleInjector = true</Value>
-         <Value>UsePackageReference_Compze_Utilities_Logging_Serilog = true</Value>
-         <Value>UsePackageReference_Compze_Utilities_Testing_Must = true</Value>
-         <Value>UsePackageReference_Compze_Utilities_Testing_XUnit = true</Value>
-         <Value>UsePackageReference_Compze_Utilities_Testing_DbPool = true</Value>
-      </CustomBuildProperties>
-   </Settings>
+<SolutionConfiguration>
+  <Settings>
+    <CustomBuildProperties>
+      <Value>UsePackageReference_Compze_Utilities = true</Value>
+      <Value>UsePackageReference_Compze_Utilities_Contracts = true</Value>
+      <Value>UsePackageReference_Compze_Utilities_DependencyInjection = true</Value>
+      <Value>UsePackageReference_Compze_Utilities_DependencyInjection_Microsoft = true</Value>
+      <Value>UsePackageReference_Compze_Utilities_DependencyInjection_SimpleInjector = true</Value>
+      <Value>UsePackageReference_Compze_Utilities_Functional = true</Value>
+      <Value>UsePackageReference_Compze_Utilities_Logging = true</Value>
+      <Value>UsePackageReference_Compze_Utilities_Logging_Serilog = true</Value>
+      <Value>UsePackageReference_Compze_Utilities_SystemCE = true</Value>
+      <Value>UsePackageReference_Compze_Utilities_SystemCE_ThreadingCE = true</Value>
+      <Value>UsePackageReference_Compze_Utilities_Testing_DbPool = true</Value>
+      <Value>UsePackageReference_Compze_Utilities_Testing_Must = true</Value>
+      <Value>UsePackageReference_Compze_Utilities_Testing_XUnit = true</Value>
+    </CustomBuildProperties>
+  </Settings>
 </SolutionConfiguration>

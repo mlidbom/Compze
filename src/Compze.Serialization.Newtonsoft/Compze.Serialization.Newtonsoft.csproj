@@ -1,21 +1,22 @@
 <Project Sdk="Microsoft.NET.Sdk">
-   <PropertyGroup>
-      <TargetFramework>net9.0</TargetFramework>
-      <Nullable>enable</Nullable>
-      <Version>0.1.0-alpha.3</Version>
-      <Description>Newtonsoft.Json serialization support for the Compze framework.</Description>
-   </PropertyGroup>
-   <ItemGroup>
-      <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
-      <PackageReference Include="NsDepCop" Version="2.6.0">
-         <PrivateAssets>all</PrivateAssets>
-         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      </PackageReference>
-   </ItemGroup>
-   <ItemGroup Condition="'$(UsePackageReference_Compze_Core)' == 'true'">
-      <PackageReference Include="Compze.Core" Version="*-*" />
-   </ItemGroup>
-   <ItemGroup Condition="'$(UsePackageReference_Compze_Core)' != 'true'">
-      <ProjectReference Include="..\Compze.Core\Compze.Core.csproj" />
-   </ItemGroup>
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <Version>0.1.0-alpha.3</Version>
+    <Description>Newtonsoft.Json serialization support for the Compze framework.</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+    <PackageReference Include="NsDepCop" Version="2.6.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+  <!-- Compze.Core — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Core)' == 'true'">
+    <PackageReference Include="Compze.Core" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Core)' != 'true'">
+    <ProjectReference Include="..\Compze.Core\Compze.Core.csproj" />
+  </ItemGroup>
 </Project>

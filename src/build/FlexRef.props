@@ -39,16 +39,16 @@
 
     The regex in normal notation:  <Project\s[^>]*Path="(?:[^"]*/)?([^"/]+)"
 
-    $(_SwitchRef_SolutionProjects) is used in Step 2 by consumers.
+    $(_FlexRef_SolutionProjects) is used in Step 2 by consumers.
   -->
   <PropertyGroup Condition="'$(NCrunch)' != '1'
                          And '$(SolutionPath)' != ''
                          And '$(SolutionPath)' != '*Undefined*'
                          And Exists('$(SolutionPath)')">
-    <_SwitchRef_SolutionProjects>$([System.Text.RegularExpressions.Regex]::Replace(
+    <_FlexRef_SolutionProjects>$([System.Text.RegularExpressions.Regex]::Replace(
         $([System.IO.File]::ReadAllText('$(SolutionPath)')),
         '&lt;Project\s[^&gt;]*Path="%28?:[^"]*/%29?%28[^"/]+%29"',
-        '|$1|'))</_SwitchRef_SolutionProjects>
+        '|$1|'))</_FlexRef_SolutionProjects>
   </PropertyGroup>
 
   <!--
@@ -60,15 +60,15 @@
     <PropertyGroup>
       <UsePackageReference_MyProj_LibA
           Condition="'$(UsePackageReference_MyProj_LibA)' != 'true'
-                   And '$(_SwitchRef_SolutionProjects)' != ''
-                   And !$(_SwitchRef_SolutionProjects.Contains('|LibA.csproj|'))">true</UsePackageReference_MyProj_LibA>
+                   And '$(_FlexRef_SolutionProjects)' != ''
+                   And !$(_FlexRef_SolutionProjects.Contains('|LibA.csproj|'))">true</UsePackageReference_MyProj_LibA>
     </PropertyGroup>
 
     The Condition ensures:
     - If already set (NCrunch / env var / CLI /p:), the existing value wins.
     - If we have solution data and the project is absent, it's set to 'true'.
     - Otherwise it stays empty → ProjectReference (the safe default).
-      (The '$(_SwitchRef_SolutionProjects)' != '' guard prevents the
+      (The '$(_FlexRef_SolutionProjects)' != '' guard prevents the
        .Contains() check from false-triggering when there's no solution
        context — an empty string doesn't contain anything, so the negated
        check would otherwise always succeed.)
