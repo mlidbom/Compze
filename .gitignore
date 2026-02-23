@@ -4,7 +4,6 @@ obj
 test-results
 
 *.dll
-*.nupkg
 *.deps.json
 *.cache
 *.suo
@@ -51,4 +50,3 @@ repomix*.xml
 /src/TestUsingPluggableComponentCombinations
 /src/TestUsingPluggableComponentCombinations.defaults
 InternalizedSource
-/nupkgs/
