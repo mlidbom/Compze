@@ -60,6 +60,11 @@ applyTo: "**/*.cs"
   - `Assert.Invariant.Is(condition)` — `InvariantViolatedException`
 - Use `.NotNull()` extension for quick null-dereferencing.
 
+### No Records
+- **Do not use `record` or `record struct`.**
+- Records encourage treating types as dumb data bags, discouraging encapsulation, behavior, and proper OO design.
+- If value equality is genuinely needed, implement `IEquatable<T>` explicitly — don't reach for record just to get it for free.
+
 ## Default Interface Methods (Mixins)
 
 This codebase uses **default interface methods extensively** as a mixin pattern. Interfaces often contain many convenience overloads and helper methods implemented as defaults that delegate to a small number of abstract members.
