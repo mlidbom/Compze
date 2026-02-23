@@ -2,15 +2,6 @@
 
 ## Bugs
 
-### 1. Monitor lock leak in `TryTakeLockWhen` (PR #73 — not yet merged)
-
-**File:** `ResourceAccess/IMonitorCE.MonitorCE.cs` (lines 94–105)  
-**Severity:** High
-
-If `ThreadInterruptedException` is thrown during `Monitor.Wait` inside `ReleaseLockAndReacquireItOnPulseOrTimeout`, the monitor is re-acquired by .NET but never released, permanently leaking the lock. The same leak occurs if the user-supplied `condition()` delegate throws.
-
-The fix from PR #73 (wrapping the while loop in `try { ... } catch { ReleaseLock(); throw; }`) is correct.
-
 ### 2. `AsyncLockCE` — reentrancy counter corruption on timeout
 
 **File:** `Async/AsyncLockCE.cs` (lines 57–65 and 72–80)  
@@ -30,13 +21,6 @@ In both `LockedAsync` and `Locked`, the `Exit()` cleanup is registered via `Asyn
 ---
 
 ## Design Concerns
-
-### 4. `Disposable` is not idempotent
-
-**File:** `Testing/Disposable.cs`  
-**Severity:** Low
-
-`Dispose()` calls `_action()` unconditionally every time. Double-dispose executes the action twice. The `_readLock` and `_updateLock` in `MonitorCE` are singleton instances reused for every lock acquisition, so this is by design there. But `Disposable` is also used in `GatedCodeSection.Enter()`, `ThreadGate.LogMethodEntryExit()`, and `AsyncLockCE.Locked` — some of those callers might accidentally double-dispose.
 
 ### 5. `MutexCE.ExecuteWithLock` — `AbandonedMutexException` not handled
 
