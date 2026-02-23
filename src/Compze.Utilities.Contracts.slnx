@@ -1,8 +1,4 @@
 <Solution>
-  <Folder Name="/Compze.Utilities.Contracts/">
-    <Project Path="Compze.Utilities.Contracts/Compze.Utilities.Contracts.csproj" />
-  </Folder>
-  <Folder Name="/_Specifications/">
-    <Project Path="../test/Compze.Utilities.Contracts.Specifications/Compze.Utilities.Contracts.Specifications.csproj" />
-  </Folder>
+  <Project Path="Compze.Utilities.Contracts/Compze.Utilities.Contracts.csproj" />
+  <Project Path="../test/Compze.Utilities.Contracts.Specifications/Compze.Utilities.Contracts.Specifications.csproj" />
 </Solution>
