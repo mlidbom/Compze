@@ -20,7 +20,12 @@ public class MutexCE
    {
       try
       {
-         _mutex.WaitOne();
+         try
+         {
+            _mutex.WaitOne();
+         }
+         catch(AbandonedMutexException) { } // The mutex IS acquired when this exception is thrown. https://learn.microsoft.com/en-us/dotnet/api/System.Threading.AbandonedMutexException
+
          return func();
       }
       finally
