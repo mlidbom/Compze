@@ -1,6 +1,6 @@
 using System;
 
-namespace Compze.Utilities.SystemCE;
+namespace Compze.Utilities.SystemCE.ThreadingCE.Utilities;
 
 /// <summary>A collection of extensions to work with timespans</summary>
 static partial class TimeSpanCE

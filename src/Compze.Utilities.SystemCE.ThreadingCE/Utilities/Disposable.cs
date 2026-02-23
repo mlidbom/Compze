@@ -1,7 +1,7 @@
 using System;
 using Compze.Utilities.Contracts;
 
-namespace Compze.Utilities.SystemCE;
+namespace Compze.Utilities.SystemCE.ThreadingCE.Utilities;
 
 ///<summary>Simple utility class that calls the supplied action when the instance is disposed. Gets rid of the need to create a ton of small classes to do cleanup.</summary>
 class Disposable : IDisposable
