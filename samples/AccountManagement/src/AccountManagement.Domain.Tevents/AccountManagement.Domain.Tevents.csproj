@@ -1,16 +1,17 @@
 <Project Sdk="Microsoft.NET.Sdk">
-   <PropertyGroup>
-      <TargetFramework>net9.0</TargetFramework>
-      <Nullable>enable</Nullable>
-      <IsPackable>false</IsPackable>
-   </PropertyGroup>
-   <ItemGroup>
-      <ProjectReference Include="..\AccountManagement.API\AccountManagement.API.csproj" />
-   </ItemGroup>
-   <ItemGroup Condition="'$(UsePackageReference_Compze_Core)' == 'true'">
-      <PackageReference Include="Compze.Core" Version="*-*" />
-   </ItemGroup>
-   <ItemGroup Condition="'$(UsePackageReference_Compze_Core)' != 'true'">
-      <ProjectReference Include="..\..\..\..\src\Compze.Core\Compze.Core.csproj" />
-   </ItemGroup>
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\AccountManagement.API\AccountManagement.API.csproj" />
+  </ItemGroup>
+  <!-- Compze.Core — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Core)' == 'true'">
+    <PackageReference Include="Compze.Core" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Core)' != 'true'">
+    <ProjectReference Include="..\..\..\..\src\Compze.Core\Compze.Core.csproj" />
+  </ItemGroup>
 </Project>

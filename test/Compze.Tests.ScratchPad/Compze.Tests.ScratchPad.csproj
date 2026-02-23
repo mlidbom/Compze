@@ -1,78 +1,87 @@
 <Project Sdk="Microsoft.NET.Sdk">
-   <PropertyGroup>
-      <TargetFramework>net9.0</TargetFramework>
-      <Nullable>enable</Nullable>
-      <IsPackable>false</IsPackable>
-   </PropertyGroup>
-   <ItemGroup>
-      <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
-      <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
-         <PrivateAssets>all</PrivateAssets>
-         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      </PackageReference>
-      <PackageReference Include="xunit.v3" Version="3.1.0" />
-      <PackageReference Include="Serilog" Version="4.3.0" />
-      <PackageReference Include="Serilog.Enrichers.Environment" Version="3.0.1" />
-      <PackageReference Include="Serilog.Formatting.Compact" Version="3.0.0" />
-      <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
-      <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
-      <PackageReference Include="Serilog.Sinks.Seq" Version="9.0.0" />
-   </ItemGroup>
-   <ItemGroup>
-      <ProjectReference Include="..\Compze.Tests.Infrastructure\Compze.Tests.Infrastructure.csproj" />
-   </ItemGroup>
-   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Testing_XUnit)' == 'true'">
-      <PackageReference Include="Compze.Utilities.Testing.XUnit" Version="*-*" />
-   </ItemGroup>
-   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Testing_XUnit)' != 'true'">
-      <ProjectReference Include="..\..\src\Compze.Utilities.Testing.XUnit\Compze.Utilities.Testing.XUnit.csproj" />
-   </ItemGroup>
-   <ItemGroup Condition="'$(UsePackageReference_Compze_Core)' == 'true'">
-      <PackageReference Include="Compze.Core" Version="*-*" />
-   </ItemGroup>
-   <ItemGroup Condition="'$(UsePackageReference_Compze_Core)' != 'true'">
-      <ProjectReference Include="..\..\src\Compze.Core\Compze.Core.csproj" />
-   </ItemGroup>
-   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Testing_Must)' == 'true'">
-      <PackageReference Include="Compze.Utilities.Testing.Must" Version="*-*" />
-   </ItemGroup>
-   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Testing_Must)' != 'true'">
-      <ProjectReference Include="..\..\src\Compze.Utilities.Testing.Must\Compze.Utilities.Testing.Must.csproj" />
-   </ItemGroup>
-   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Contracts)' == 'true'">
-      <PackageReference Include="Compze.Utilities.Contracts" Version="*-*" />
-   </ItemGroup>
-   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Contracts)' != 'true'">
-      <ProjectReference Include="..\..\src\Compze.Utilities.Contracts\Compze.Utilities.Contracts.csproj" />
-   </ItemGroup>
-   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Functional)' == 'true'">
-      <PackageReference Include="Compze.Utilities.Functional" Version="*-*" />
-   </ItemGroup>
-   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Functional)' != 'true'">
-      <ProjectReference Include="..\..\src\Compze.Utilities.Functional\Compze.Utilities.Functional.csproj" />
-   </ItemGroup>
-   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_DependencyInjection)' == 'true'">
-      <PackageReference Include="Compze.Utilities.DependencyInjection" Version="*-*" />
-   </ItemGroup>
-   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_DependencyInjection)' != 'true'">
-      <ProjectReference Include="..\..\src\Compze.Utilities.DependencyInjection\Compze.Utilities.DependencyInjection.csproj" />
-   </ItemGroup>
-   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Logging)' == 'true'">
-      <PackageReference Include="Compze.Utilities.Logging" Version="*-*" />
-   </ItemGroup>
-   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Logging)' != 'true'">
-      <ProjectReference Include="..\..\src\Compze.Utilities.Logging\Compze.Utilities.Logging.csproj" />
-   </ItemGroup>
-   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_SystemCE)' == 'true'">
-      <PackageReference Include="Compze.Utilities.SystemCE" Version="*-*" />
-   </ItemGroup>
-   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_SystemCE)' != 'true'">
-      <ProjectReference Include="..\..\src\Compze.Utilities.SystemCE\Compze.Utilities.SystemCE.csproj" />
-   </ItemGroup>
-   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_SystemCE_ThreadingCE)' == 'true'">
-      <PackageReference Include="Compze.Utilities.SystemCE.ThreadingCE" Version="*-*" />
-   </ItemGroup>
-   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_SystemCE_ThreadingCE)' != 'true'">
-      <ProjectReference Include="..\..\src\Compze.Utilities.SystemCE.ThreadingCE\Compze.Utilities.SystemCE.ThreadingCE.csproj" />
-   </ItemGroup>
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="xunit.v3" Version="3.1.0" />
+    <PackageReference Include="Serilog" Version="4.3.0" />
+    <PackageReference Include="Serilog.Enrichers.Environment" Version="3.0.1" />
+    <PackageReference Include="Serilog.Formatting.Compact" Version="3.0.0" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
+    <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
+    <PackageReference Include="Serilog.Sinks.Seq" Version="9.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Compze.Tests.Infrastructure\Compze.Tests.Infrastructure.csproj" />
+  </ItemGroup>
+  <!-- Compze.Core — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Core)' == 'true'">
+    <PackageReference Include="Compze.Core" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Core)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.Core\Compze.Core.csproj" />
+  </ItemGroup>
+  <!-- Compze.Utilities.Contracts — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Contracts)' == 'true'">
+    <PackageReference Include="Compze.Utilities.Contracts" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Contracts)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.Utilities.Contracts\Compze.Utilities.Contracts.csproj" />
+  </ItemGroup>
+  <!-- Compze.Utilities.DependencyInjection — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_DependencyInjection)' == 'true'">
+    <PackageReference Include="Compze.Utilities.DependencyInjection" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_DependencyInjection)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.Utilities.DependencyInjection\Compze.Utilities.DependencyInjection.csproj" />
+  </ItemGroup>
+  <!-- Compze.Utilities.Functional — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Functional)' == 'true'">
+    <PackageReference Include="Compze.Utilities.Functional" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Functional)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.Utilities.Functional\Compze.Utilities.Functional.csproj" />
+  </ItemGroup>
+  <!-- Compze.Utilities.Logging — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Logging)' == 'true'">
+    <PackageReference Include="Compze.Utilities.Logging" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Logging)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.Utilities.Logging\Compze.Utilities.Logging.csproj" />
+  </ItemGroup>
+  <!-- Compze.Utilities.SystemCE — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_SystemCE)' == 'true'">
+    <PackageReference Include="Compze.Utilities.SystemCE" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_SystemCE)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.Utilities.SystemCE\Compze.Utilities.SystemCE.csproj" />
+  </ItemGroup>
+  <!-- Compze.Utilities.SystemCE.ThreadingCE — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_SystemCE_ThreadingCE)' == 'true'">
+    <PackageReference Include="Compze.Utilities.SystemCE.ThreadingCE" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_SystemCE_ThreadingCE)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.Utilities.SystemCE.ThreadingCE\Compze.Utilities.SystemCE.ThreadingCE.csproj" />
+  </ItemGroup>
+  <!-- Compze.Utilities.Testing.Must — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Testing_Must)' == 'true'">
+    <PackageReference Include="Compze.Utilities.Testing.Must" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Testing_Must)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.Utilities.Testing.Must\Compze.Utilities.Testing.Must.csproj" />
+  </ItemGroup>
+  <!-- Compze.Utilities.Testing.XUnit — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Testing_XUnit)' == 'true'">
+    <PackageReference Include="Compze.Utilities.Testing.XUnit" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Testing_XUnit)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.Utilities.Testing.XUnit\Compze.Utilities.Testing.XUnit.csproj" />
+  </ItemGroup>
 </Project>

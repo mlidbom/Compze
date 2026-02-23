@@ -74,6 +74,10 @@ function C-Build {
             C-Clean
         }
         
+        # Ensure ISR build tool package exists — ThreadingCE needs it as a PackageReference.
+        # ISR has zero Compze dependencies so it can always be packed independently.
+        Ensure-IsrPackage
+        
         dotnet build $script:CompzeSolutionPath
         
         if ($LASTEXITCODE -ne 0) {

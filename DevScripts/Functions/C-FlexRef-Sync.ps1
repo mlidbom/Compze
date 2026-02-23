@@ -16,5 +16,5 @@ function C-FlexRef-Sync {
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseApprovedVerbs', '')]
     param()
 
-    flexref sync $script:CompzeSrcRoot
+    flexref sync $script:CompzeRoot
 }

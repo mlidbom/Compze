@@ -1,40 +1,42 @@
 <Project Sdk="Microsoft.NET.Sdk">
-   <PropertyGroup>
-      <TargetFramework>net9.0</TargetFramework>
-      <Nullable>enable</Nullable>
-      <IsPackable>false</IsPackable>
-      <NeutralLanguage>en</NeutralLanguage>
-   </PropertyGroup>
-   <PropertyGroup>
-      <RootNamespace>AccountManagement</RootNamespace>
-   </PropertyGroup>
-   <ItemGroup>
-      <Compile Update="API\RegisterAccountTommandResources.Designer.cs">
-         <DesignTime>True</DesignTime>
-         <AutoGen>True</AutoGen>
-         <DependentUpon>RegisterAccountTommandResources.resx</DependentUpon>
-      </Compile>
-   </ItemGroup>
-   <ItemGroup>
-      <EmbeddedResource Update="API\RegisterAccountTommandResources.resx">
-         <Generator>PublicResXFileCodeGenerator</Generator>
-         <LastGenOutput>RegisterAccountTommandResources.Designer.cs</LastGenOutput>
-      </EmbeddedResource>
-   </ItemGroup>
-   <ItemGroup>
-      <PackageReference Include="CommunityToolkit.Diagnostics" Version="8.4.0" />
-      <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
-   </ItemGroup>
-   <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging)' == 'true'">
-      <PackageReference Include="Compze.Tessaging" Version="*-*" />
-   </ItemGroup>
-   <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging)' != 'true'">
-      <ProjectReference Include="..\..\..\..\src\Compze.Tessaging\Compze.Tessaging.csproj" />
-   </ItemGroup>
-   <ItemGroup Condition="'$(UsePackageReference_Compze_Core)' == 'true'">
-      <PackageReference Include="Compze.Core" Version="*-*" />
-   </ItemGroup>
-   <ItemGroup Condition="'$(UsePackageReference_Compze_Core)' != 'true'">
-      <ProjectReference Include="..\..\..\..\src\Compze.Core\Compze.Core.csproj" />
-   </ItemGroup>
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+    <NeutralLanguage>en</NeutralLanguage>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RootNamespace>AccountManagement</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Update="API\RegisterAccountTommandResources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>RegisterAccountTommandResources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="API\RegisterAccountTommandResources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>RegisterAccountTommandResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Diagnostics" Version="8.4.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+  </ItemGroup>
+  <!-- Compze.Core — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Core)' == 'true'">
+    <PackageReference Include="Compze.Core" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Core)' != 'true'">
+    <ProjectReference Include="..\..\..\..\src\Compze.Core\Compze.Core.csproj" />
+  </ItemGroup>
+  <!-- Compze.Tessaging — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging)' == 'true'">
+    <PackageReference Include="Compze.Tessaging" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging)' != 'true'">
+    <ProjectReference Include="..\..\..\..\src\Compze.Tessaging\Compze.Tessaging.csproj" />
+  </ItemGroup>
 </Project>
