@@ -2,15 +2,6 @@
 
 ## Bugs
 
-### 2. `AsyncLockCE` — reentrancy counter corruption on timeout
-
-**File:** `Async/AsyncLockCE.cs` (lines 57–65 and 72–80)  
-**Severity:** High
-
-In both `LockedAsync` and `Locked`, the `Exit()` cleanup is registered via `AsyncDisposable`/`Disposable` **before** the semaphore is acquired. When `_semaphore.WaitAsync` times out, `RegisterTimeoutException()` throws, and `Exit()` still fires via the disposable. This decrements `_lockEntranceCount` from 0 to -1, corrupting the reentrancy counter for all future operations on that `AsyncLocal` flow.
-
-**Suggested fix:** Move the disposable registration to after the semaphore is successfully acquired, or guard `Exit()` against negative counts.
-
 ### 3. `AsyncLockCE` — `AsyncLocal` reentrancy leaks into child tasks
 
 **File:** `Async/AsyncLockCE.cs` (line 34)  
