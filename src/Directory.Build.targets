@@ -1,0 +1,10 @@
+<Project>
+  <!-- Local dev pack: append timestamp suffix to avoid NuGet cache staleness.
+       Set CompzeLocalPackSuffix via /p:CompzeLocalPackSuffix=dev.TIMESTAMP from C-Pack.
+       This runs in .targets (after project evaluation) so $(Version) has the real project version.
+       Pre-release versions (with '-') get a dot separator; stable versions get a hyphen. -->
+  <PropertyGroup Condition="'$(CompzeLocalPackSuffix)' != ''">
+    <Version Condition="$(Version.Contains('-'))">$(Version).$(CompzeLocalPackSuffix)</Version>
+    <Version Condition="!$(Version.Contains('-'))">$(Version)-$(CompzeLocalPackSuffix)</Version>
+  </PropertyGroup>
+</Project>
