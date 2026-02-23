@@ -1,6 +1,6 @@
 using System.Threading;
 
-namespace Compze.Utilities.Contracts.UsageGuards;
+namespace Compze.Utilities.SystemCE.UsageGuards;
 
 ///<summary>Ensures that guarded components are used within one thread only.</summary>
 public class SingleThreadUseGuard : UsageGuard

@@ -7,6 +7,7 @@ using Compze.Core.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.QueryModels.Generators.Public;
 using Compze.Utilities.Contracts.UsageGuards;
 using Compze.Utilities.Functional;
+using Compze.Utilities.SystemCE.UsageGuards;
 using static Compze.Utilities.Contracts.Assert;
 
 namespace Compze.Tessaging.Teventive.TeventStore.QueryModels.Generators;

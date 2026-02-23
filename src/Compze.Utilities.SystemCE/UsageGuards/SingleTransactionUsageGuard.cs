@@ -1,6 +1,6 @@
 using System.Transactions;
 
-namespace Compze.Utilities.Contracts.UsageGuards;
+namespace Compze.Utilities.SystemCE.UsageGuards;
 
 public class SingleTransactionUsageGuard : IUsageGuard
 {

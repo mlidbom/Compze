@@ -28,6 +28,7 @@ using Compze.Tests.Infrastructure.XUnit;
 using Compze.Utilities.Contracts.UsageGuards;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using Compze.Utilities.SystemCE.ThreadingCE.Testing;
+using Compze.Utilities.SystemCE.UsageGuards;
 using Compze.Utilities.Testing.Must;
 using EnumerableCE = Compze.Utilities.SystemCE.LinqCE.EnumerableCE;
 

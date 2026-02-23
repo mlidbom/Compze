@@ -1,4 +1,4 @@
-namespace Compze.Utilities.Contracts.UsageGuards;
+namespace Compze.Utilities.SystemCE.UsageGuards;
 
 ///<summary>Implementations ensure that any preconditions for using an object are fulfilled, and throws an exception if it could not successfully do so.</summary>
 public interface IUsageGuard

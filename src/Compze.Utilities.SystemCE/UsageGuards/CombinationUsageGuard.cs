@@ -1,4 +1,4 @@
-namespace Compze.Utilities.Contracts.UsageGuards;
+namespace Compze.Utilities.SystemCE.UsageGuards;
 
 public class CombinationUsageGuard(params IUsageGuard[] usageGuards) : IUsageGuard
 {
