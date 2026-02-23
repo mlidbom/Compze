@@ -51,3 +51,4 @@ repomix*.xml
 /src/TestUsingPluggableComponentCombinations
 /src/TestUsingPluggableComponentCombinations.defaults
 InternalizedSource
+/nupkgs/
