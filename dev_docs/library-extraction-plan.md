@@ -6,10 +6,10 @@ Compze contains a set of utility libraries that are **not part of the Teventive/
 
 The plan is to:
 
-1. **Get each library to "Good Enough"** — clean public API, adequate tests, no phantom dependencies
-2. **Publish them as stable (0.8+) NuGet packages**
-3. **Consume them in core Compze projects only via package references** — removing them from the main solution entirely
-4. **Maintain them separately** in their own solution (`Compze.Utilities.slnx`), only opening them when they need changes
+1. Get each into their own solutions with a test project for just them.
+2.  **Get each library to "Good Enough"** — clean public API, adequate tests, no phantom dependencies
+3. **Publish them as stable (0.8+) NuGet packages**
+4. **Maintain them separately** in their own solution (`Compze.Threading.slnx` etc), only opening them when they need changes
 
 This creates a clear boundary between stable utility code and the evolving core framework, while keeping a monolithic solution for CI and cross-cutting work.
 
