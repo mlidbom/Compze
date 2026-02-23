@@ -10,6 +10,9 @@
     <Project Path="../samples/AccountManagement/test/AccountManagement.Tests.PerformanceInternals/AccountManagement.Tests.PerformanceInternals.csproj" />
     <Project Path="../samples/AccountManagement/test/AccountManagement.Tests.Unit/AccountManagement.Tests.Unit.csproj" />
   </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path="Compze.Samples.v3.ncrunchsolution" />
+  </Folder>
   <Folder Name="/_Test Infrastructure/">
     <Project Path="../test/Compze.Tests.Infrastructure/Compze.Tests.Infrastructure.csproj" />
   </Folder>
