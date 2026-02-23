@@ -7,7 +7,7 @@
 
 ## What ThreadingCE Internalizes
 
-ThreadingCE's csproj has `<InternalizeSourceFrom>..\Compze.Utilities.SystemCE</InternalizeSourceFrom>`, which copies **all ~70 source files** from SystemCE. Of the **14 remaining ThreadingCE source files** (excluding TasksCE), only **2 actually use internalized SystemCE types**:
+ThreadingCE's csproj has `<InternalizeSourceFrom>..\Compze.Utilities.SystemCE</InternalizeSourceFrom>`, which copies **all ~70 source files** from SystemCE. Of ThreadingCE's **18 own source files**, only **3 actually use internalized SystemCE types**:
 
 ### `IMonitorCE.cs` — uses:
 | Internalized Type | API |
