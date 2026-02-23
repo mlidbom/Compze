@@ -3,7 +3,7 @@ using System.Threading;
 using Compze.Utilities.Functional.ActionFuncHarmonization;
 using JetBrains.Annotations;
 
-namespace Compze.Utilities.Testing.DbPool.SystemCE.ThreadingCE;
+namespace Compze.Utilities.SystemCE.ThreadingCE;
 
 public class MutexCE
 {
@@ -14,9 +14,9 @@ public class MutexCE
                   ? mutex
                   : new Mutex(initiallyOwned: false, name: mutexName);
 
-   public void ExecuteWithLock([InstantHandle] Action action) => ExecuteWithLock(action.AsFunc());
+   public void Locked([InstantHandle] Action action) => Locked(action.AsFunc());
 
-   public TResult ExecuteWithLock<TResult>([InstantHandle] Func<TResult> func)
+   public TResult Locked<TResult>([InstantHandle] Func<TResult> func)
    {
       try
       {

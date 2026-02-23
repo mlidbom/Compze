@@ -1,7 +1,6 @@
 using System;
 using System.Text;
 using Compze.Utilities.SystemCE.IOCE;
-using Compze.Utilities.Testing.DbPool.SystemCE.ThreadingCE;
 
 namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
@@ -35,12 +34,12 @@ public sealed class MachineWideSharedObject<TObject> : MachineWideSharedObject w
       var fileName = PathCE.ReplaceInvalidCharactersWith(name, '_');
       _synchronizer = MutexCE.ForMutexNamed(fileName);
 
-      _file = _synchronizer.ExecuteWithLock(() => DataDirectory.Value.GetOrCreateTextFile(fileName, Encoding.UTF8, CreateDefaultJson));
+      _file = _synchronizer.Locked(() => DataDirectory.Value.GetOrCreateTextFile(fileName, Encoding.UTF8, CreateDefaultJson));
    }
 
    string CreateDefaultJson() => _serializer.Serialize(new TObject());
 
-   public TObject Update(Action<TObject> action) => _synchronizer.ExecuteWithLock(() =>
+   public TObject Update(Action<TObject> action) => _synchronizer.Locked(() =>
    {
       var instance = Load();
       action(instance);
@@ -48,7 +47,7 @@ public sealed class MachineWideSharedObject<TObject> : MachineWideSharedObject w
       return instance;
    });
 
-   public TObject GetCopy() => _synchronizer.ExecuteWithLock(Load);
+   public TObject GetCopy() => _synchronizer.Locked(Load);
 
    public void Delete() => _file.GetFileInfo().Delete();
 
