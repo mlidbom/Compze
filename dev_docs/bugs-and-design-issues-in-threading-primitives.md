@@ -29,14 +29,6 @@ In both `LockedAsync` and `Locked`, the `Exit()` cleanup is registered via `Asyn
 
 `_mutex.WaitOne()` can throw `AbandonedMutexException` if the previous owner crashed without releasing. The current code propagates this as a failure. Depending on intent, you may want to catch it and proceed — the mutex IS acquired when this exception is thrown.
 
-### 6. `MonitorCEExtensions` — unused `timeout` parameter
-
-**File:** `ResourceAccess/MonitorCEExtensions.cs` (lines 29 and 36)  
-**Severity:** Low
-
-The `ReadOrUpdate` overloads declare a `timeout` parameter but never pass it through to the underlying `Read`/`Update` calls. Callers setting a timeout get no effect.
----
-
 ## Summary
 
 | # | Severity | Location | Issue |
