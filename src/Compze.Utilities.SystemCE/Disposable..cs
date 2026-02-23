@@ -18,8 +18,5 @@ public class Disposable : IDisposable
    ///<summary>Invokes the action passed to the constructor.</summary>
    public void Dispose() => _action();
 
-   ///<summary>Constructs an object that will call <param name="action"> when disposed.</param></summary>
-   public static IDisposable Create(Action action) => new Disposable(action);
-
    public static readonly IDisposable NullOp = new Disposable(ActionCE.NullOp);
 }
