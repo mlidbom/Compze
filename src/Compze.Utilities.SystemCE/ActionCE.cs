@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Compze.Utilities.Functional;
-using Compze.Utilities.SystemCE.ActionFuncHarmonization;
+using Compze.Utilities.Functional.ActionFuncHarmonization;
 using Compze.Utilities.SystemCE.LinqCE;
 
 namespace Compze.Utilities.SystemCE;

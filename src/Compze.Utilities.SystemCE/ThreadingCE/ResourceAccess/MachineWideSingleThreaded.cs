@@ -1,6 +1,6 @@
 using System;
 using System.Threading;
-using Compze.Utilities.SystemCE.ActionFuncHarmonization;
+using Compze.Utilities.Functional.ActionFuncHarmonization;
 using JetBrains.Annotations;
 
 namespace Compze.Utilities.Testing.DbPool.SystemCE.ThreadingCE;

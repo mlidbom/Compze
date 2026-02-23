@@ -84,6 +84,7 @@
     <Project Path="Compze.Utilities.Logging/Compze.Utilities.Logging.csproj" />
     <Project Path="Compze.Utilities.SystemCE/Compze.Utilities.SystemCE.csproj" />
     <Project Path="Compze.Utilities.SystemCE.ThreadingCE/Compze.Utilities.SystemCE.ThreadingCE.csproj" />
+    <Project Path="Compze.Utilities.SystemCE.ThreadingCE.Testing/Compze.Utilities.SystemCE.ThreadingCE.Testing.csproj" />
   </Folder>
   <Folder Name="/_Tests/">
     <Project Path="../test/Compze.Utilities.Contracts.Specifications/Compze.Utilities.Contracts.Specifications.csproj" />

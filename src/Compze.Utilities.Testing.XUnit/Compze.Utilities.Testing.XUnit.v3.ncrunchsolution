@@ -24,6 +24,7 @@
       <Value>UsePackageReference_Compze_Utilities_Logging_Serilog = true</Value>
       <Value>UsePackageReference_Compze_Utilities_SystemCE = true</Value>
       <Value>UsePackageReference_Compze_Utilities_SystemCE_ThreadingCE = true</Value>
+      <Value>UsePackageReference_Compze_Utilities_SystemCE_ThreadingCE_Testing = true</Value>
       <Value>UsePackageReference_Compze_Utilities_Testing_DbPool = true</Value>
       <Value>UsePackageReference_Compze_Utilities_Testing_Must = true</Value>
     </CustomBuildProperties>

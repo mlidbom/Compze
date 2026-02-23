@@ -1,15 +1,13 @@
 using System;
 using System.Threading.Tasks;
-using Compze.Utilities.Functional;
 
-namespace Compze.Utilities.SystemCE.ActionFuncHarmonization;
+namespace Compze.Utilities.Functional.ActionFuncHarmonization;
 
 public static class Func
 {
    public static Func<unit> From(Action action) => action.AsFunc();
    public static Func<TParam, unit> From<TParam>(Action<TParam> action) => action.AsFunc();
    public static Func<TParam, TParam2, unit> From<TParam, TParam2>(Action<TParam,TParam2> action) => action.AsFunc();
-
 
    public static Func<Task<unit>> From(Func<Task> action) => action.AsFunc();
    public static Func<TParam, Task<unit>> From<TParam>(Func<TParam, Task> action) => action.AsFunc();

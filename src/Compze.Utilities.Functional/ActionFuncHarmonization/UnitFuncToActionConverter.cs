@@ -1,7 +1,6 @@
 using System;
-using Compze.Utilities.Functional;
 
-namespace Compze.Utilities.SystemCE.ActionFuncHarmonization;
+namespace Compze.Utilities.Functional.ActionFuncHarmonization;
 
 public static class UnitFuncToActionConverter
 {

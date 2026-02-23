@@ -1,6 +1,6 @@
 using System;
 using Compze.Utilities.Functional;
-using Compze.Utilities.SystemCE.ActionFuncHarmonization;
+using Compze.Utilities.Functional.ActionFuncHarmonization;
 
 namespace Compze.Utilities.SystemCE;
 

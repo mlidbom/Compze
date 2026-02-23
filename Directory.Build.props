@@ -54,6 +54,8 @@
     <UsePackageReference_Compze_Utilities_SystemCE Condition="'$(UsePackageReference_Compze_Utilities_SystemCE)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Utilities.SystemCE.csproj|'))">true</UsePackageReference_Compze_Utilities_SystemCE>
     <!-- Compze.Utilities.SystemCE.ThreadingCE -->
     <UsePackageReference_Compze_Utilities_SystemCE_ThreadingCE Condition="'$(UsePackageReference_Compze_Utilities_SystemCE_ThreadingCE)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Utilities.SystemCE.ThreadingCE.csproj|'))">true</UsePackageReference_Compze_Utilities_SystemCE_ThreadingCE>
+    <!-- Compze.Utilities.SystemCE.ThreadingCE.Testing -->
+    <UsePackageReference_Compze_Utilities_SystemCE_ThreadingCE_Testing Condition="'$(UsePackageReference_Compze_Utilities_SystemCE_ThreadingCE_Testing)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Utilities.SystemCE.ThreadingCE.Testing.csproj|'))">true</UsePackageReference_Compze_Utilities_SystemCE_ThreadingCE_Testing>
     <!-- Compze.Utilities.Testing.DbPool -->
     <UsePackageReference_Compze_Utilities_Testing_DbPool Condition="'$(UsePackageReference_Compze_Utilities_Testing_DbPool)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Utilities.Testing.DbPool.csproj|'))">true</UsePackageReference_Compze_Utilities_Testing_DbPool>
     <!-- Compze.Utilities.Testing.Must -->
