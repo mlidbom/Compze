@@ -4,12 +4,7 @@
     <Nullable>enable</Nullable>
     <Version>0.1.0-alpha.3</Version>
   </PropertyGroup>
-  <PropertyGroup>
-    <InternalizeSourceFrom>..\Compze.Utilities.SystemCE</InternalizeSourceFrom>
-    <InternalizeSourceTo>$(MSBuildProjectDirectory)\InternalizedSource</InternalizeSourceTo>
-  </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Compze.Build.InternalizedSourceReferences" Version="*-*" PrivateAssets="all" />
     <PackageReference Include="JetBrains.Annotations" Version="2025.2.4" />
     <PackageReference Include="NsDepCop" Version="2.6.0">
       <PrivateAssets>all</PrivateAssets>
