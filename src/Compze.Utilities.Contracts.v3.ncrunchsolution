@@ -1,5 +1,9 @@
 <SolutionConfiguration>
   <Settings>
+    <AllowParallelTestExecution>True</AllowParallelTestExecution>
+    <EnableRDI>False</EnableRDI>
+    <RdiConfigured>True</RdiConfigured>
+    <SolutionConfigured>True</SolutionConfigured>
     <CustomBuildProperties>
       <Value>UsePackageReference_Compze_Core = true</Value>
       <Value>UsePackageReference_Compze_Serialization_Newtonsoft = true</Value>
