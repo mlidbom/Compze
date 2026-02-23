@@ -19,10 +19,6 @@ runs:
       shell: bash
       run: cp src/TestUsingPluggableComponentCombinations.github-ci src/TestUsingPluggableComponentCombinations
 
-    - name: Build Compze.Build.InternalizedSourceReferences to local feed
-      shell: bash
-      run: dotnet build src/Compze.Build.InternalizedSourceReferences/Compze.Build.InternalizedSourceReferences.slnx --configuration ${{ inputs.configuration }}
-
     - name: Build
       shell: bash
       run: dotnet build src/Compze.slnx --configuration ${{ inputs.configuration }}
