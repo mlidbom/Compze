@@ -50,6 +50,14 @@ var anotherAction = aUnitFunc.AsAction();
 ```
 
 
+## Why `_camelCase`?
+
+These extensions apply to *every* type, so name collisions and polluting auto-complete lists are a very real concern. _camelCase provides:
+
+- **Near zero collision risk** — no standard .NET method starts with `_`.
+- **Clear visuals** — instantly recognizable as something other than regular methods.
+- **Great discoverability** — type `._` and autocomplete shows only these extensions
+
 ## Related packages
 
 | Package | Description |
