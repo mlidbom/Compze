@@ -21,8 +21,7 @@ Chain operations fluently with `._()`:
 var result = initialValue
     ._(Transform)
     ._(Validate)
-    ._(Format)
-    ._(Log);
+    ._(Format);
 ```
 
 Primary methods:
@@ -50,13 +49,17 @@ var anotherAction = aUnitFunc.AsAction();
 ```
 
 
-## Why `_camelCase`?
+## What's with the naming?
 
 These extensions apply to *every* type, so name collisions and polluting auto-complete lists are a very real concern. _camelCase provides:
 
 - **Near zero collision risk** — no standard .NET method starts with `_`.
 - **Clear visuals** — instantly recognizable as something other than regular methods.
 - **Great discoverability** — type `._` and autocomplete shows only these extensions
+
+`._(` as the pipeline operator has the same advantages and keeps something you will be using constantly as short as possible.
+
+Lower case `unit` is sort of a wish for the future and the way we think it should be. We hope our unit will eventually be replaced by a language keyword and built in type.
 
 ## Related packages
 
