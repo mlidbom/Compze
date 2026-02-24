@@ -14,17 +14,15 @@ public class When_rewriting_each_source_file
 
    static readonly string[] ExcludedDirectories = ["bin", "obj", "InternalizedSource"];
 
-   public static TheoryData<string> SourceFiles()
+   public static IEnumerable<TheoryDataRow<string>> SourceFiles()
    {
-      var data = new TheoryData<string>();
       foreach(var file in Directory.EnumerateFiles(InputDir, "*.cs", SearchOption.AllDirectories))
       {
          var relativePath = Path.GetRelativePath(InputDir, file);
          var firstSegment = relativePath.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)[0];
          if(!ExcludedDirectories.Contains(firstSegment, StringComparer.OrdinalIgnoreCase))
-            data.Add(relativePath);
+            yield return new TheoryDataRow<string>(relativePath) { TestDisplayName = relativePath };
       }
-      return data;
    }
 
    [Theory]
