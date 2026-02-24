@@ -11,8 +11,4 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
-  <!-- Compze.Utilities.Contracts — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Contracts)' == 'true'">
-    <PackageReference Include="Compze.Utilities.Contracts" Version="*-*" />
-  </ItemGroup>
 </Project>
