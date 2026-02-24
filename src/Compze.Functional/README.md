@@ -1,6 +1,6 @@
 # Compze.Functional
 
-**Stop writing code that must be read inside out, and start writing code that reads the way you would describe the algorithm in words.**
+**Code that reads the way you would describe the algorithm in words, not code that must be read inside out. Powered by the pipe forward operator.**
 
 Sometimes very little goes a very long way. With just a handful of trivially simple extension methods we enable you to write code like this:
 
