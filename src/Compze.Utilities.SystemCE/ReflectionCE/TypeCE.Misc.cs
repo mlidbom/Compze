@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Compze.Utilities.Functional;
+using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
 
 namespace Compze.Utilities.SystemCE.ReflectionCE;
 
