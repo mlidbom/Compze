@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Transactions;
 using Compze.Utilities.Contracts;
-using Compze.Utilities.Functional;
+using Compze.Functional;
 
 namespace Compze.Utilities.SystemCE.TransactionsCE;
 

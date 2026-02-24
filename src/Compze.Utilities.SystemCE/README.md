@@ -70,7 +70,7 @@ dotnet add package Compze.Utilities.SystemCE
 |---------|-------------|
 | [Compze.Utilities.SystemCE.ThreadingCE](https://www.nuget.org/packages/Compze.Utilities.SystemCE.ThreadingCE) | Threading and synchronization |
 | [Compze.Utilities.Contracts](https://www.nuget.org/packages/Compze.Utilities.Contracts) | Design-by-contract assertions |
-| [Compze.Utilities.Functional](https://www.nuget.org/packages/Compze.Utilities.Functional) | Functional programming primitives |
+| [Compze.Functional](https://www.nuget.org/packages/Compze.Functional) | Functional programming primitives |
 | [Compze.Utilities](https://www.nuget.org/packages/Compze.Utilities) | Core utilities |
 
 ## License

@@ -1,7 +1,7 @@
 <Solution>
   <Folder Name="/Compze.Utilities/">
     <Project Path="Compze.Utilities.Contracts/Compze.Utilities.Contracts.csproj" />
-    <Project Path="Compze.Utilities.Functional/Compze.Utilities.Functional.csproj" />
+    <Project Path="Compze.Functional/Compze.Functional.csproj" />
     <Project Path="Compze.Utilities/Compze.Utilities.csproj" />
     <Project Path="Compze.Utilities.SystemCE/Compze.Utilities.SystemCE.csproj" />
     <Project Path="Compze.Utilities.SystemCE.ThreadingCE/Compze.Utilities.SystemCE.ThreadingCE.csproj" />
@@ -16,7 +16,7 @@
   </Folder>
   <Folder Name="/_Tests/">
     <Project Path="../test/Compze.Utilities.Tests/Compze.Utilities.Tests.csproj" />
-    <Project Path="../test/Compze.Utilities.Functional.Specifications/Compze.Utilities.Functional.Specifications.csproj" />
+    <Project Path="../test/Compze.Functional.Specifications/Compze.Functional.Specifications.csproj" />
     <Project Path="../test/Compze.Utilities.Testing.XUnit.Tests/Compze.Utilities.Testing.XUnit.Tests.csproj" />
   </Folder>
 </Solution>

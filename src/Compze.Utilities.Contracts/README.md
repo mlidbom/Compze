@@ -51,7 +51,7 @@ dotnet add package Compze.Utilities.Contracts
 | Package | Description |
 |---------|-------------|
 | [Compze.Utilities](https://www.nuget.org/packages/Compze.Utilities) | Core utilities |
-| [Compze.Utilities.Functional](https://www.nuget.org/packages/Compze.Utilities.Functional) | Functional programming primitives |
+| [Compze.Functional](https://www.nuget.org/packages/Compze.Functional) | Functional programming primitives |
 
 ## License
 

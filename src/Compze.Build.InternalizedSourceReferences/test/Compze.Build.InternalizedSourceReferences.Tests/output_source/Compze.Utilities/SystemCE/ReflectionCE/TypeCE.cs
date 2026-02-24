@@ -7,7 +7,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using Compze.Utilities.Functional;
+using Compze.Functional;
 using static Compze.Utilities.Contracts.Assert;
 
 namespace Compze.Utilities.SystemCE.ReflectionCE;

@@ -5,7 +5,7 @@
 #nullable enable
 using System;
 using System.Threading.Tasks;
-using Compze.Utilities.Functional;
+using Compze.Functional;
 
 namespace Compze.Utilities.SystemCE.ActionFuncHarmonization;
 

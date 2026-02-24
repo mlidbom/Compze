@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Compze.Utilities.Contracts;
-using Compze.Utilities.Functional;
+using Compze.Functional;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
 namespace Compze.Utilities.SystemCE.ThreadingCE.Testing;

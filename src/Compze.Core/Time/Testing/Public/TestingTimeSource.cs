@@ -2,7 +2,7 @@ using System;
 using System.Globalization;
 using System.Threading.Tasks;
 using Compze.Core.Time.Public;
-using Compze.Utilities.Functional;
+using Compze.Functional;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ThreadingCE;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;

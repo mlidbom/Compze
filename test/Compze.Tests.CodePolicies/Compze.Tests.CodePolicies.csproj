@@ -31,6 +31,13 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Core)' != 'true'">
     <ProjectReference Include="..\..\src\Compze.Core\Compze.Core.csproj" />
   </ItemGroup>
+  <!-- Compze.Functional — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Functional)' == 'true'">
+    <PackageReference Include="Compze.Functional" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Functional)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.Functional\Compze.Functional.csproj" />
+  </ItemGroup>
   <!-- Compze.Serialization.Newtonsoft — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Serialization_Newtonsoft)' == 'true'">
     <PackageReference Include="Compze.Serialization.Newtonsoft" Version="*-*" />
@@ -128,13 +135,6 @@
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_DependencyInjection_SimpleInjector)' != 'true'">
     <ProjectReference Include="..\..\src\Compze.Utilities.DependencyInjection.SimpleInjector\Compze.Utilities.DependencyInjection.SimpleInjector.csproj" />
-  </ItemGroup>
-  <!-- Compze.Utilities.Functional — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Functional)' == 'true'">
-    <PackageReference Include="Compze.Utilities.Functional" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Functional)' != 'true'">
-    <ProjectReference Include="..\..\src\Compze.Utilities.Functional\Compze.Utilities.Functional.csproj" />
   </ItemGroup>
   <!-- Compze.Utilities.Logging — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Logging)' == 'true'">

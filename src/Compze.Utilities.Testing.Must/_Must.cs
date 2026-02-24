@@ -1,4 +1,4 @@
-using Compze.Utilities.Functional;
+using Compze.Functional;
 using Compze.Utilities.SystemCE;
 
 namespace Compze.Utilities.Testing.Must;

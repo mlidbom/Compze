@@ -2,7 +2,7 @@
   <Folder Name="/Compze/" />
   <Folder Name="/Compze/Utilities/">
     <Project Path="../../Contracts/Compze.Utilities.Contracts.csproj" />
-    <Project Path="../../Functional/Compze.Utilities.Functional.csproj" />
+    <Project Path="../Compze.Functional/Compze.Functional.csproj" />
     <Project Path="../../SystemExtensions/Compze.Utilities.SystemExtensions.csproj" />
   </Folder>
   <Folder Name="/Compze/Utilities/Threading/">

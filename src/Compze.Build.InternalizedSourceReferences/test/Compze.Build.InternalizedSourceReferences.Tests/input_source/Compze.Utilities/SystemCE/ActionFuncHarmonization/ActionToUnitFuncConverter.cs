@@ -1,5 +1,5 @@
 using System;
-using Compze.Utilities.Functional;
+using Compze.Functional;
 
 namespace Compze.Utilities.SystemCE.ActionFuncHarmonization;
 

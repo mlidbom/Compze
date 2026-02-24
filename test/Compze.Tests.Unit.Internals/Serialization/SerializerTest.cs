@@ -4,7 +4,7 @@ using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.DependencyInjection.Abstractions;
-using Compze.Utilities.Functional;
+using Compze.Functional;
 
 namespace Compze.Tests.Unit.Internals.Serialization;
 

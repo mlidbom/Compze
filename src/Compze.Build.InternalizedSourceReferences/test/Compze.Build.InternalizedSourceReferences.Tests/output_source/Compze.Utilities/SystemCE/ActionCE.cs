@@ -5,7 +5,7 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
-using Compze.Utilities.Functional;
+using Compze.Functional;
 using Compze.Utilities.SystemCE.ActionFuncHarmonization;
 using Compze.Utilities.SystemCE.LinqCE;
 

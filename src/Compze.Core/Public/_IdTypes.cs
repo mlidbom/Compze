@@ -1,7 +1,7 @@
 using System;
 using Compze.Core.Public.Infrastructure;
 using Compze.Utilities.Contracts;
-using Compze.Utilities.Functional;
+using Compze.Functional;
 using Compze.Utilities.SystemCE.ReflectionCE;
 
 namespace Compze.Core.Public;

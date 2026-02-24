@@ -5,7 +5,7 @@ using Compze.Utilities.Testing.XUnit.BDD;
 
 #pragma warning disable CA1052 // BDD-style nested specification classes cannot be static
 
-namespace Compze.Utilities.Functional.Specifications.ActionFuncConverter;
+namespace Compze.Functional.Specifications.ActionFuncConverter;
 
 public class AsFunc_from_async_Action
 {

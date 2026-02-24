@@ -1,4 +1,4 @@
 <Solution>
-  <Project Path="Compze.Utilities.Functional/Compze.Utilities.Functional.csproj" />
-  <Project Path="../test/Compze.Utilities.Functional.Specifications/Compze.Utilities.Functional.Specifications.csproj" />
+  <Project Path="Compze.Functional/Compze.Functional.csproj" />
+  <Project Path="../test/Compze.Functional.Specifications/Compze.Functional.Specifications.csproj" />
 </Solution>

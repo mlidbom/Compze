@@ -2,7 +2,7 @@ using System.Globalization;
 using Compze.Utilities.Testing.Must;
 using Compze.Utilities.Testing.XUnit.BDD;
 
-namespace Compze.Utilities.Functional.Specifications.Pipe;
+namespace Compze.Functional.Specifications.Pipe;
 
 public class Pipe_forward_operator
 {

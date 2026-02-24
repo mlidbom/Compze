@@ -1,7 +1,7 @@
 using Compze.Utilities.Testing.Must;
 using Compze.Utilities.Testing.XUnit.BDD;
 
-namespace Compze.Utilities.Functional.Specifications.ObjectCE;
+namespace Compze.Functional.Specifications.ObjectCE;
 
 public class _repeat_method
 {

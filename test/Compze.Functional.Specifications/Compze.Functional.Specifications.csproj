@@ -12,12 +12,12 @@
     </PackageReference>
     <PackageReference Include="xunit.v3" Version="3.1.0" />
   </ItemGroup>
-  <!-- Compze.Utilities.Functional — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Functional)' == 'true'">
-    <PackageReference Include="Compze.Utilities.Functional" Version="*-*" />
+  <!-- Compze.Functional — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Functional)' == 'true'">
+    <PackageReference Include="Compze.Functional" Version="*-*" />
   </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Functional)' != 'true'">
-    <ProjectReference Include="..\..\src\Compze.Utilities.Functional\Compze.Utilities.Functional.csproj" />
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Functional)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.Functional\Compze.Functional.csproj" />
   </ItemGroup>
   <!-- Compze.Utilities.Testing.Must — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Testing_Must)' == 'true'">

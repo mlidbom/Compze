@@ -10,7 +10,7 @@ For each type, put an `x` in one column:
 
 ---
 
-## Compze.Utilities.Functional
+## Compze.Functional
 
 | # | Type | Notable members | Sample usage | Test usage | Public | Shared | Split |
 |---|------|----------------|--------------|------------|--------|--------|-------|

@@ -18,6 +18,13 @@
     </PackageReference>
     <PackageReference Include="xunit.v3" Version="3.1.0" />
   </ItemGroup>
+  <!-- Compze.Functional — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Functional)' == 'true'">
+    <PackageReference Include="Compze.Functional" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Functional)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.Functional\Compze.Functional.csproj" />
+  </ItemGroup>
   <!-- Compze.Utilities.Contracts — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Contracts)' == 'true'">
     <PackageReference Include="Compze.Utilities.Contracts" Version="*-*" />
@@ -31,13 +38,6 @@
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_DependencyInjection)' != 'true'">
     <ProjectReference Include="..\..\src\Compze.Utilities.DependencyInjection\Compze.Utilities.DependencyInjection.csproj" />
-  </ItemGroup>
-  <!-- Compze.Utilities.Functional — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Functional)' == 'true'">
-    <PackageReference Include="Compze.Utilities.Functional" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Functional)' != 'true'">
-    <ProjectReference Include="..\..\src\Compze.Utilities.Functional\Compze.Utilities.Functional.csproj" />
   </ItemGroup>
   <!-- Compze.Utilities.Logging — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Logging)' == 'true'">

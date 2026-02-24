@@ -4,7 +4,7 @@ using Compze.Utilities.Testing.XUnit.BDD;
 
 #pragma warning disable CA1052 // BDD-style nested specification classes cannot be static
 
-namespace Compze.Utilities.Functional.Specifications.Unit;
+namespace Compze.Functional.Specifications.Unit;
 
 public class unit_type
 {

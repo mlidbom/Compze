@@ -1,6 +1,6 @@
 using System;
 
-namespace Compze.Utilities.Functional;
+namespace Compze.Functional;
 
 public static class UnitFuncToActionConverter
 {

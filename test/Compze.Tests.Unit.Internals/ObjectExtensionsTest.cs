@@ -1,6 +1,6 @@
 using System.Linq;
 using Compze.Tests.Infrastructure;
-using Compze.Utilities.Functional;
+using Compze.Functional;
 using Compze.Utilities.Testing.Must;
 using Compze.Utilities.Testing.XUnit.BDD;
 

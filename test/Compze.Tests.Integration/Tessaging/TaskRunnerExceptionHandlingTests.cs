@@ -3,7 +3,7 @@ using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
-using Compze.Utilities.Functional;
+using Compze.Functional;
 using Compze.Utilities.Logging;
 using System;
 using Compze.Utilities.SystemCE;

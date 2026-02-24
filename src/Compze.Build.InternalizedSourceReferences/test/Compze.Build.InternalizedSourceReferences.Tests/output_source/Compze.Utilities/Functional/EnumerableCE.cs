@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Compze.Utilities.Functional;
+namespace Compze.Functional;
 
 internal static class EnumerableCE
 {

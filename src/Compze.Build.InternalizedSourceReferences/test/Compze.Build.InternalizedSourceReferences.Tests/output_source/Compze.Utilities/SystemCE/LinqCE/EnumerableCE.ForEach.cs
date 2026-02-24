@@ -5,7 +5,7 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
-using Compze.Utilities.Functional;
+using Compze.Functional;
 using JetBrains.Annotations;
 using static Compze.Utilities.Contracts.Assert;
 

@@ -4,7 +4,7 @@
 // </auto-generated>
 #nullable enable
 using System.Threading.Tasks;
-using Compze.Utilities.Functional;
+using Compze.Functional;
 
 namespace Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 

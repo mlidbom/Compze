@@ -1,6 +1,6 @@
 using System;
 using System.Threading;
-using Compze.Utilities.Functional;
+using Compze.Functional;
 using JetBrains.Annotations;
 
 namespace Compze.Utilities.SystemCE.ThreadingCE;

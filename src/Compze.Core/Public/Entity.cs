@@ -1,7 +1,7 @@
 using System;
 using System.Diagnostics;
 using Compze.Utilities.Contracts;
-using Compze.Utilities.Functional;
+using Compze.Functional;
 
 namespace Compze.Core.Public;
 

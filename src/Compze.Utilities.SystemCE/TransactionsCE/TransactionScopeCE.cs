@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using System.Transactions;
-using Compze.Utilities.Functional;
+using Compze.Functional;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using JetBrains.Annotations;
 

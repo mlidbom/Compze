@@ -1,5 +1,5 @@
 using System;
-using Compze.Utilities.Functional;
+using Compze.Functional;
 using Compze.Utilities.SystemCE.ActionFuncHarmonization;
 
 namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;

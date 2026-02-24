@@ -1,4 +1,4 @@
-# Compze.Utilities.Functional
+# Compze.Functional
 
 **Stop writing code that must be read inside out, and start writing code that reads the way you would describe the algorithm in words.**
 
