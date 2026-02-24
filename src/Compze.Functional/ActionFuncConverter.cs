@@ -58,5 +58,5 @@ public static class ActionFuncConverter
    public static Action<TParam, TParam2> AsAction<TParam, TParam2>(this Func<TParam, TParam2, unit> @this) =>
       (param, param2) => @this(param, param2);
 
-   //<func-to-action>
+   //</func-to-action>
 }
