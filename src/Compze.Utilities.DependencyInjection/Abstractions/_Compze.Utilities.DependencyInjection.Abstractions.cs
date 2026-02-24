@@ -15,7 +15,7 @@ public interface IComponentRegistrar
 
    IComponentRegistrar Register(params Action<IComponentRegistrar>[] registrationMethods)
       => registrationMethods.ForEach(it => it(this))
-                            ._Then(this);
+                            ._then(this);
 
    IDependencyInjectionContainer Container();
 

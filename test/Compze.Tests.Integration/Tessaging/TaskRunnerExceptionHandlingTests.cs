@@ -44,7 +44,7 @@ public class TaskRunnerExceptionHandlingTests : UniversalTestBase
       {
          var gate = ThreadGate.CreateOpenWithTimeout(1.Seconds());
 
-         _taskRunner.Run("test-task", () => gate.AwaitPassThrough()._Then(() => throw new InvalidOperationException("exception1")));
+         _taskRunner.Run("test-task", () => gate.AwaitPassThrough()._then(() => throw new InvalidOperationException("exception1")));
 
          gate.AwaitPassedThroughCountEqualTo(1);
 
@@ -67,9 +67,9 @@ public class TaskRunnerExceptionHandlingTests : UniversalTestBase
          var _exception2 = new ArgumentException("exception2");
          var _exception3 = new NotSupportedException("exception3");
 
-         _taskRunner.Run("test-task-1", () => gate.AwaitPassThrough()._Then(() => throw _exception1));
-         _taskRunner.Run("test-task-2", () => gate.AwaitPassThrough()._Then(() => throw _exception2));
-         _taskRunner.Run("test-task-3", () => gate.AwaitPassThrough()._Then(() => throw _exception3));
+         _taskRunner.Run("test-task-1", () => gate.AwaitPassThrough()._then(() => throw _exception1));
+         _taskRunner.Run("test-task-2", () => gate.AwaitPassThrough()._then(() => throw _exception2));
+         _taskRunner.Run("test-task-3", () => gate.AwaitPassThrough()._then(() => throw _exception3));
 
          gate.AwaitPassedThroughCountEqualTo(3);
 

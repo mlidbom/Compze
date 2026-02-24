@@ -126,7 +126,7 @@ public partial class SqliteDocumentDbSqlLayer : IDocumentDbSqlLayer
                            .ExecuteReaderAndSelect(reader => new IDocumentDbSqlLayer.ReadRow(Guid.Parse(reader.GetString(2)), reader.GetString(1))));
    }
 
-   static string TypeInClause(IReadOnlySet<TypeId> acceptableTypeIds) => Assert.Argument.Is(acceptableTypeIds.Any())._Then("IN( '" + acceptableTypeIds.Select(guid => guid.ToString()).Join("', '") + "')\n");
+   static string TypeInClause(IReadOnlySet<TypeId> acceptableTypeIds) => Assert.Argument.Is(acceptableTypeIds.Any())._then("IN( '" + acceptableTypeIds.Select(guid => guid.ToString()).Join("', '") + "')\n");
 
    void EnsureInitialized() => _schemaManager.EnsureSchemaInitialized();
 }

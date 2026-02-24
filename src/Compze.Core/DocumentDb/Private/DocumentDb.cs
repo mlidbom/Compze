@@ -134,7 +134,7 @@ public sealed class DocumentDb : IDocumentDb
    IReadOnlySet<TypeId> AcceptableTypeIds(Type type) => _typeMapper.GetIdForTypesAssignableTo(type)
                                                                    .Select(typeId => typeId)
                                                                    .ToHashSet()
-                                                                   ._Assert(ids => ids.Any(), _ => $"Found no TypeIds for {type.GetFullNameCompilable()}");
+                                                                   ._assert(ids => ids.Any(), _ => $"Found no TypeIds for {type.GetFullNameCompilable()}");
 
    Type GetTypeFromId(TypeId id) => _typeMapper.GetType(id);
 }

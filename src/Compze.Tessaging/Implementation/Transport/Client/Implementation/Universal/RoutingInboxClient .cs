@@ -65,10 +65,10 @@ public partial class RoutingInboxClient : IRoutingInboxClient, IDisposable
    }
 
    public IInboxConnection ConnectionToHandlerFor(IRemotableTommand tommand) =>
-      AssertRunning()._Then(() => _inboxConnectionRouter.ConnectionToHandlerFor(tommand));
+      AssertRunning()._then(() => _inboxConnectionRouter.ConnectionToHandlerFor(tommand));
 
    public IReadOnlyList<IInboxConnection> SubscriberConnectionsFor(IExactlyOnceTevent tevent) =>
-      AssertRunning()._Then(() => _inboxConnectionRouter.SubscriberConnectionsFor(tevent));
+      AssertRunning()._then(() => _inboxConnectionRouter.SubscriberConnectionsFor(tevent));
 
    public async Task PostAsync(IAtMostOnceTypermediaTommand tommand)
    {
@@ -92,9 +92,9 @@ public partial class RoutingInboxClient : IRoutingInboxClient, IDisposable
    }
 
    public void Start() => Assert.State.Is(!_running, () => "already running")
-                                ._Then(_running = true);
+                                ._then(_running = true);
 
-   public void Stop() => AssertRunning()._Then(() =>
+   public void Stop() => AssertRunning()._then(() =>
    {
       _running = false;
    });
@@ -115,5 +115,5 @@ public partial class RoutingInboxClient : IRoutingInboxClient, IDisposable
       }
    }
 
-   unit AssertRunning() => Assert.State.Is(_running, () => "not running")._Then(unit.Value);
+   unit AssertRunning() => Assert.State.Is(_running, () => "not running")._then(unit.Value);
 }

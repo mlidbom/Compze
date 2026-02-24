@@ -20,21 +20,21 @@ public static class DiContainerExtensions
    public static IDependencyInjectionContainer CreateWithServiceLocator(this DIContainer @this) =>
 #pragma warning disable CA2000//We are passing this disposable out of the method
       @this.CreateEmpty()
-           ._Mutate(it => it.Register(Singleton.For<IServiceLocator>()
+           ._mutate(it => it.Register(Singleton.For<IServiceLocator>()
                                               .CreatedBy(() => it.ServiceLocator)));
 #pragma warning restore CA2000
 
    public static IDependencyInjectionContainer CreateWithServiceLocatorAndCurrentTestsPluggableComponents(this DIContainer @this) =>
 #pragma warning disable CA2000//We are passing it out of the method
       @this.CreateWithCurrentTestsPluggableComponents()
-           ._Mutate(it => it.Register(Singleton.For<IServiceLocator>()
+           ._mutate(it => it.Register(Singleton.For<IServiceLocator>()
                                               .CreatedBy(() => it.ServiceLocator)));
 #pragma warning restore CA2000
 
    public static IDependencyInjectionContainer CreateWithCurrentTestsPluggableComponents(this DIContainer @this) =>
 #pragma warning disable CA2000//We are passing this disposable out of the method
       @this.CreateEmpty()
-           ._Mutate(it => it.Register()
+           ._mutate(it => it.Register()
                            .CurrentTestsPluggableComponents());
 #pragma warning restore CA2000
 

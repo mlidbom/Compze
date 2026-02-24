@@ -29,7 +29,7 @@ public abstract class DbPoolTestBase : UniversalTestBase
 
 #pragma warning disable CA2000// We are passing this disposable into a constructor of an object we don't own
    protected static IServiceLocator CreateServiceLocator() => TestEnv.DIContainer.CreateEmpty()
-                                                                     ._Mutate(it => it.Register()
+                                                                     ._mutate(it => it.Register()
                                                                                      .CurrentTestsDbPoolIfNotCloneContainer())
                                                                      .ServiceLocator;
 #pragma warning restore CA2000// We are passing this disposable into a constructor of an object we don't own
