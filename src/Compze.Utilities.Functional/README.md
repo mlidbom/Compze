@@ -15,7 +15,7 @@ public OperationResult SomeBusinessMethod(Guid userId) =>
     ._assert(ResultIsWhatWeExpected);
 ```
 
-## Pipe operator
+## Pipe forward operator
 
 Chain operations fluently with `._()`:
 
