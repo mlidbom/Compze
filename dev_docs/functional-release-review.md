@@ -15,7 +15,6 @@ The API surface is small, focused, and well-designed:
 - **`Pipe`** — `_()`, `_tap()`, `_mutate()`, `_mutateAsync()`, `_then()` (3 overloads), `_assert()` (2 overloads). Clean, correct, good XML docs.
 - **`unit`** — Full value-type semantics: equality, hashing, `ToString()`, `From()`, `Func()` (0–2 params), `AsyncFunc()` (0–2 params). `ConfigureAwait(false)` used consistently.
 - **`ActionFuncConverter`** — Symmetric Action↔Func bridging for sync (0–2 params) and async (0–2 params).
-- **`ObjectCE`** — Two utility extensions (`_repeat`, `ToStringNotNull`).
 
 ### Tests are thorough
 
@@ -25,18 +24,7 @@ The API surface is small, focused, and well-designed:
 
 Clear motivation, code examples, naming rationale, and "Related packages" section. It will pack into the NuGet package via `Directory.Build.props`.
 
-### Packaging metadata
-
-Inherited properly from `Directory.Build.props` (Authors, License, RepositoryUrl, README, symbols).
-
----
-
 ## Issues to Fix Before 0.8.0-beta.1
-
-
-### 3. Missing `_assert` overload
-
-The simplest overload — `_assert(Predicate<T>)` with no custom message/exception — is absent. Users get no zero-friction way to write `value._assert(v => v > 0)`. They must always provide either a message factory or exception factory. Consider whether to add a default-message overload for convenience, or if the current design is intentional (forcing users to write meaningful messages).
 
 ### 4. `PackageTags` not relevant for this package
 
