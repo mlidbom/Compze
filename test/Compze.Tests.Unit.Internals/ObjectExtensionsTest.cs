@@ -10,5 +10,5 @@ namespace Compze.Tests.Unit.Internals;
 public class ObjectExtensionsTest : UniversalTestBase
 {
    [XF]
-   public void RepeatShouldCreateSequenceOfLengthEqualToParameter() => 12._Repeat(10).Count().Must().Be(10);
+   public void RepeatShouldCreateSequenceOfLengthEqualToParameter() => 12._repeat(10).Count().Must().Be(10);
 }
