@@ -11,7 +11,7 @@ public static class ObjectCE
    /// <summary>
    /// Returns <paramref name="me"/> repeated <paramref name="times"/> times.
    /// </summary>
-   public static IEnumerable<T> Repeat<T>(this T me, int times)
+   public static IEnumerable<T> _Repeat<T>(this T me, int times)
    {
       while(times-- > 0)
       {
