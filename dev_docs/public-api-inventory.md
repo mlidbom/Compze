@@ -16,13 +16,8 @@ For each type, put an `x` in one column:
 |---|------|----------------|--------------|------------|--------|--------|-------|
 | 1 | `unit` | `.Value`, `.From(Action)`, `.Func(Action)` | — | Yes (1) | [ ] | [ ] | [ ] |
 | 2 | `Pipe` | `._(func)`, `._tap(action)`, `._mutate(action)`, `._then(value)`, `._assert(pred, msg)`, `._mutateAsync(func)` | — | Yes (7) | [ ] | [ ] | [ ] |
-| 3 | `Option` / `Option<T>` | `Option.Some(v)`, `Option.None<T>()` | **Yes** (5) | — | [ ] | [ ] | [ ] |
-| 4 | `Some<T>` | `.Value` | **Yes** | — | [ ] | [ ] | [ ] |
-| 5 | `None<T>` | `.Instance` | **Yes** | — | [ ] | [ ] | [ ] |
-| 6 | `DiscriminatedUnion` | `.AssertValidType(...)`, `InvalidDiscriminatedUnionTypeException` | — | — | [ ] | [ ] | [ ] |
-| 7 | `DiscriminatedUnion<...>` (5 arities) | (protected constructors only) | — | — | [ ] | [ ] | [ ] |
-| 8 | `ObjectCE` (Functional) | `.Repeat(times)`, `.ToStringNotNull()` | — | Yes (1) | [ ] | [ ] | [ ] |
-| 9 | `EnumerableCE` (Functional) | `.OfTypes<T1..T9>()` | — | Yes (8) | [ ] | [ ] | [ ] |
+| 3 | `ObjectCE` (Functional) | `.Repeat(times)`, `.ToStringNotNull()` | — | Yes (1) | [ ] | [ ] | [ ] |
+| 4 | `EnumerableCE` (Functional) | `.OfTypes<T1..T9>()` | — | Yes (8) | [ ] | [ ] | [ ] |
 
 ---
 

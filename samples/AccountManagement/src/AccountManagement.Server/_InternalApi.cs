@@ -4,7 +4,6 @@ using CommunityToolkit.Diagnostics;
 using Compze.Core.Public;
 using Compze.Core.Tessaging.Public;
 using Compze.Tessaging.TyperMediaApi.EventStore;
-using Compze.Utilities.Functional;
 
 // ReSharper disable MemberCanBeMadeStatic.Global we want _composable_ fluent APIs which does not happen with static members since we need instances to compose the API.
 
@@ -27,7 +26,7 @@ static class InternalApi
 
       internal TeventStoreApi.TueryApi.GetReadonlyCopyOfTaggregateVersion<Account> GetReadOnlyCopyOfVersion(TaggregateId id, int version) => TeventStore.Tueries.GetReadOnlyCopyOfVersion<Account>(id, version);
 
-      internal class TryGetByEmailTuery : IStrictlyLocalTuery<TryGetByEmailTuery, Option<Account>>
+      internal class TryGetByEmailTuery : IStrictlyLocalTuery<TryGetByEmailTuery, Account?>
       {
          public TryGetByEmailTuery(Email email)
          {

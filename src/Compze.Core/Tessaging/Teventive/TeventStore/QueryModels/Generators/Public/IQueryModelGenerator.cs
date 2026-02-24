@@ -1,5 +1,4 @@
 using Compze.Core.Public;
-using Compze.Utilities.Functional;
 
 namespace Compze.Core.Tessaging.Teventive.TeventStore.QueryModels.Generators.Public;
 
@@ -9,5 +8,5 @@ public interface IQueryModelGenerator;
 
 public interface IQueryModelGenerator<TDocument> : IQueryModelGenerator
 {
-   Option<TDocument> TryGenerate(EntityId id);
+   TDocument? TryGenerate(EntityId id);
 }

@@ -2,7 +2,6 @@ using System;
 using Compze.Core.DocumentDb.Public;
 using Compze.Core.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Core.Tessaging.Public;
-using Compze.Utilities.Functional;
 
 namespace Compze.Core.DocumentDb;
 
@@ -19,13 +18,13 @@ public partial class DocumentDbApi
             (GetDocumentForUpdate<TDocument> tuery, IDocumentDbUpdater updater) => updater.GetForUpdate<TDocument>(tuery.Id));
       }
 
-      public class TryGetDocument<TDocument> : TessageTypes.StrictlyLocal.Tueries.StrictlyLocalTuery<TryGetDocument<TDocument>, Option<TDocument>>
+      public class TryGetDocument<TDocument> : TessageTypes.StrictlyLocal.Tueries.StrictlyLocalTuery<TryGetDocument<TDocument>, TDocument?>
       {
          public TryGetDocument(string id) => Id = id;
          string Id { get; set; }
 
          public static void RegisterHandler(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery(
-            (TryGetDocument<TDocument> tuery, IDocumentDbReader updater) => updater.TryGet<TDocument>(tuery.Id, out var document) ? Option.Some(document) : Option.None<TDocument>());
+            (TryGetDocument<TDocument> tuery, IDocumentDbReader updater) => updater.TryGet<TDocument>(tuery.Id, out var document) ? document : default);
       }
 
       public class GetReadonlyCopyOfDocument<TDocument> : TessageTypes.StrictlyLocal.Tueries.StrictlyLocalTuery<GetReadonlyCopyOfDocument<TDocument>, TDocument>

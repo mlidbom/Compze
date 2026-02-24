@@ -8,7 +8,6 @@ using Compze.Core.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Core.Tessaging.Typermedia.Public;
 using Compze.Tessaging.Teventive.TeventStore.QueryModels.SelfGeneratingQueryModels;
 using Compze.Utilities.DependencyInjection;
-using Compze.Utilities.Functional;
 
 namespace AccountManagement.UI.QueryModels;
 
@@ -69,7 +68,7 @@ static class AccountStatistics
             if(!_isInitialized)
             {
                _isInitialized = true;
-               if(navigator.Execute(_documentDbApi.Tueries.TryGet<SingletonStatisticsQueryModel>(SingletonStatisticsQueryModel.StaticId)) is None<SingletonStatisticsQueryModel>)
+               if(navigator.Execute(_documentDbApi.Tueries.TryGet<SingletonStatisticsQueryModel>(SingletonStatisticsQueryModel.StaticId)) is null)
                {
                   navigator.Execute(_documentDbApi.Tommands.Save(new SingletonStatisticsQueryModel()));
                }

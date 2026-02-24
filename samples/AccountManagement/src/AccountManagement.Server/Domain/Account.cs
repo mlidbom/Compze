@@ -5,7 +5,6 @@ using AccountManagement.Domain.Tevents;
 using CommunityToolkit.Diagnostics;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public;
 using Compze.Core.Tessaging.Typermedia.Public;
-using Compze.Utilities.Functional;
 using System;
 
 namespace AccountManagement.Domain;
@@ -55,7 +54,7 @@ class Account : Taggregate<Account, IAccountTevent, AccountTevent, IAccountTeven
       Guard.IsNotNull(email);Guard.IsNotNull(password);
 
       //The email is the unique identifier for logging into the account so duplicates are forbidden.
-      if(navigator.Execute(InternalApi.Tueries.TryGetByEmail(email)) is Some<Account>)
+      if(navigator.Execute(InternalApi.Tueries.TryGetByEmail(email)) is not null)
       {
          return (RegistrationAttemptStatus.EmailAlreadyRegistered, null);
       }

@@ -5,7 +5,6 @@ using System.Linq;
 using Compze.Core.DocumentDb.Infrastructure;
 using Compze.Core.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.QueryModels.Generators.Public;
-using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE.UsageGuards;
 using static Compze.Utilities.Contracts.Assert;
 
@@ -72,10 +71,10 @@ public class QueryModelGeneratingQueryModelReader : IVersioningQueryModelReader
          return true;
       }
 
-      var option = TryGenerateModel<TDocument>(key, version);
-      if(option is Some<TDocument> returned)
+      var result = TryGenerateModel<TDocument>(key, version);
+      if(result is not null)
       {
-         document = returned.Value;
+         document = result;
          if(!requiresVersioning)
          {
             _entitiesByIdAndType.Add(key, document);
@@ -87,7 +86,7 @@ public class QueryModelGeneratingQueryModelReader : IVersioningQueryModelReader
       return false;
    }
 
-   Option<TDocument> TryGenerateModel<TDocument>(EntityId key, int version)
+   TDocument? TryGenerateModel<TDocument>(EntityId key, int version)
    {
       if(version < 0)
       {

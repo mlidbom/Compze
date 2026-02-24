@@ -5,7 +5,6 @@ using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.QueryModels;
 using Compze.Core.Tessaging.Teventive.TeventStore.QueryModels.Generators.Public;
-using Compze.Utilities.Functional;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
 using JetBrains.Annotations;
@@ -36,21 +35,21 @@ public abstract class SingleTaggregateQueryModelGenerator<TImplementer, TViewMod
    ///<summary>Registers handlers for the incoming tevents. All matching handlers will be called in the order they were registered.</summary>
    protected ITeventHandlerRegistrar<TTevent> RegisterHandlers() => _teventDispatcher.Register();
 
-   public Option<TViewModel> TryGenerate(EntityId id) => TryGenerate(id, int.MaxValue);
+   public TViewModel? TryGenerate(EntityId id) => TryGenerate(id, int.MaxValue);
 
-   public Option<TViewModel> TryGenerate(EntityId id, int version)
+   public TViewModel? TryGenerate(EntityId id, int version)
    {
       //todo: this conversion is iffy
       var history = _session.GetHistory(new TaggregateId(id.Value)).Take(version).Cast<TTevent>().ToList();
       if (history.None())
       {
-         return Option.None<TViewModel>();
+         return null;
       }
       var queryModel = Constructor.For<TViewModel>.DefaultConstructor.Instance();
       Model = queryModel;
       history.ForEach(_teventDispatcher.Dispatch);
       var result = Model;//Yes it does make sense. Look at the registered handler for ITaggregateDeletedTevent
       Model = null;
-      return Option.Some(result);
+      return result;
    }
 }

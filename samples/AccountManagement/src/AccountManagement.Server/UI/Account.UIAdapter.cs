@@ -7,7 +7,6 @@ using AccountManagement.Domain.Registration;
 using Compze.Core.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Core.Tessaging.Public;
 using Compze.Core.Tessaging.Typermedia.Public;
-using Compze.Utilities.Functional;
 
 namespace AccountManagement.UI;
 
@@ -18,9 +17,9 @@ static class AccountUIAdapter
       {
          var email = Email.Parse(logIn.Email);
 
-         if(navigator.Execute(InternalApi.Tueries.TryGetByEmail(email)) is Some<Account> account)
+         if(navigator.Execute(InternalApi.Tueries.TryGetByEmail(email)) is { } account)
          {
-            return account.Value.Login(logIn.Password) switch
+            return account.Login(logIn.Password) switch
             {
                IAccountTevent.LoggedIn loggedIn => AccountResource.Tommand.LogIn.LoginAttemptResult.Success(loggedIn.AuthenticationToken),
                IAccountTevent.LoginFailed _ => AccountResource.Tommand.LogIn.LoginAttemptResult.Failure(),

@@ -2,7 +2,6 @@ using AccountManagement.Domain.Tevents;
 using Compze.Core.DocumentDb;
 using Compze.Core.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Core.Tessaging.Typermedia.Public;
-using Compze.Utilities.Functional;
 using JetBrains.Annotations;
 using AccountLink = Compze.Tessaging.TyperMediaApi.EventStore.TeventStoreApi.TueryApi.TaggregateLink<AccountManagement.Domain.Account>;
 
@@ -27,7 +26,7 @@ namespace AccountManagement.Domain;
 
    internal static void TryGetAccountByEmail(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery(
       (InternalApi.Tuery.TryGetByEmailTuery tuery, IInProcessTypermediaNavigator navigator) =>
-         navigator.Execute(DocumentDb.Tueries.TryGet<AccountLink>(tuery.Email.StringValue)) is Some<AccountLink> accountLink
-            ? Option.Some(navigator.Execute(accountLink.Value))
-            : Option.None<Account>());
+         navigator.Execute(DocumentDb.Tueries.TryGet<AccountLink>(tuery.Email.StringValue)) is { } accountLink
+            ? navigator.Execute(accountLink)
+            : null);
 }
