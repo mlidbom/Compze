@@ -5,14 +5,18 @@ namespace Compze.Contracts;
 public static class Assert
 {
    ///<summary>Assert conditions about current state of "this". Failures throw <see cref="InvalidOperationException"/>.</summary>
-   public static ContractAsserter State { get; } = new(tessage => new InvalidOperationException(tessage));
+   public static ContractAsserter State { get; } = new(message => new InvalidOperationException(message),
+                                                        message => new InvalidOperationException($"{message} was null"));
 
    ///<summary>Assert something that must always be true for "this". Failures throw <see cref="InvariantViolatedException"/></summary>
-   public static ContractAsserter Invariant { get; } = new(tessage => new InvariantViolatedException(tessage));
+   public static ContractAsserter Invariant { get; } = new(message => new InvariantViolatedException(message),
+                                                           message => new InvariantViolatedException($"{message} was null"));
 
    ///<summary>Assert conditions on arguments to the current method. Failures throw <see cref="ArgumentException"/></summary>
-   public static ContractAsserter Argument { get; } = new(tessage => new ArgumentException(tessage));
+   public static ContractAsserter Argument { get; } = new(message => new ArgumentException(message),
+                                                          message => new ArgumentNullException(message));
 
    ///<summary>Assert conditions on the results of a method before returning them. Failures throw <see cref="InvalidResultException"/> </summary>
-   public static ContractAsserter ReturnValue { get; } = new(tessage => new InvalidResultException(tessage));
+   public static ContractAsserter ReturnValue { get; } = new(message => new InvalidResultException(message),
+                                                             message => new InvalidResultException($"{message} was null"));
 }

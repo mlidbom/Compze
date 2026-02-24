@@ -3,14 +3,18 @@ using System.Runtime.CompilerServices;
 
 namespace Compze.Contracts;
 
-public partial class ContractAsserter
+public static class ContractAsserterStringExtensions
 {
-   public ContractAsserter NotNullOrEmpty([NotNull]string? value, [CallerArgumentExpression(nameof(value))] string valueString = "") =>
-      !string.IsNullOrEmpty(value) ? this : throw _createException($"{valueString} was '{value}' which is {nameof(NotNullEmptyOrWhitespace)}");
-
-   public ContractAsserter NotNullEmptyOrWhitespace([NotNull]string? value, [CallerArgumentExpression(nameof(value))] string valueString = "")
+   public static ContractAsserter NotNullOrEmpty(this ContractAsserter asserter, [NotNull]string? value, [CallerArgumentExpression(nameof(value))] string valueString = "")
    {
-      NotNull(value, valueString);
-      return !string.IsNullOrWhiteSpace(value) ? this : throw _createException($"{valueString} was '{value}' which is {nameof(NotNullEmptyOrWhitespace)}");
+      if(string.IsNullOrEmpty(value)) asserter.ThrowFailed($"{valueString} was '{value}' which is {nameof(NotNullEmptyOrWhitespace)}");
+      return asserter;
+   }
+
+   public static ContractAsserter NotNullEmptyOrWhitespace(this ContractAsserter asserter, [NotNull]string? value, [CallerArgumentExpression(nameof(value))] string valueString = "")
+   {
+      asserter.NotNull(value, valueString);
+      if(string.IsNullOrWhiteSpace(value)) asserter.ThrowFailed($"{valueString} was '{value}' which is {nameof(NotNullEmptyOrWhitespace)}");
+      return asserter;
    }
 }

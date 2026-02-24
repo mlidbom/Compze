@@ -4,13 +4,14 @@ using System.Runtime.CompilerServices;
 
 namespace Compze.Contracts;
 
-public partial class ContractAsserter(Func<string, Exception> createException)
+public class ContractAsserter(Func<string, Exception> createException, Func<string, Exception> createNullException)
 {
    readonly Func<string, Exception> _createException = createException;
+   readonly Func<string, Exception> _createNullException = createNullException;
 
-   public ContractAsserter Is([DoesNotReturnIf(false)] bool value, Func<string>? createMessage = null, [CallerArgumentExpression(nameof(value))] string valueString = "") =>
-      value ? this : throw _createException(createMessage?.Invoke() ?? valueString);
+   [DoesNotReturn]
+   public void ThrowFailed(string expression) => throw _createException(expression);
 
-   public ContractAsserter IsNotDisposed([DoesNotReturnIf(true)] bool isDisposed, object theInstance) =>
-      !isDisposed ? this : throw new ObjectDisposedException(theInstance.GetType().FullName);
+   [DoesNotReturn]
+   public void ThrowNull(string expression) => throw _createNullException(expression);
 }

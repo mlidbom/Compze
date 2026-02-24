@@ -3,36 +3,29 @@ using System.Runtime.CompilerServices;
 
 namespace Compze.Contracts;
 
-public partial class ContractAsserter
+public static class ContractAsserterNullOrEmptyExtensions
 {
-   public ContractAsserter NotNull([NotNull] object? value, [CallerArgumentExpression(nameof(value))] string valueString = "") =>
-      value != null ? this : throw _createException(valueString);
-
-   public ContractAsserter NotNullOrDefault<TValue>([NotNull] TValue? value, [CallerArgumentExpression(nameof(value))] string valueString = "") where TValue : struct
+   public static ContractAsserter NotNullOrDefault<TValue>(this ContractAsserter asserter, [NotNull] TValue? value, [CallerArgumentExpression(nameof(value))] string valueString = "") where TValue : struct
    {
-      if(value == null || Equals(value, default(TValue))) throw _createException(valueString);
-      return this;
+      if(value == null || Equals(value, default(TValue))) asserter.ThrowFailed(valueString);
+      return asserter;
    }
-
-   public ContractAsserter NotDefault<TValue>(TValue value, [CallerArgumentExpression(nameof(value))] string valueString = "")
-      where TValue : struct
-      => !value.Equals(default(TValue)) ? this : throw _createException(valueString);
 
    //////////////////////////////////////////////////////////////////////////
    ////Specialized methods that return the value rather than `this` below here:
    ////The allow for single line returns from methods while retaining the static not-null guarantee.
    //////////////////////////////////////////////////////////////////////////
 
-   [return: NotNull] public TValue ReturnNotNull<TValue>([NotNull] TValue? value, [CallerArgumentExpression(nameof(value))] string valueString = "") =>
-      value ?? throw _createException(valueString);
+   [return: NotNull] public static TValue ReturnNotNull<TValue>(this ContractAsserter asserter, [NotNull] TValue? value, [CallerArgumentExpression(nameof(value))] string valueString = "") =>
+      value ?? throw new AssertionFailedException(valueString);
 
-   public TValue ReturnNotNullOrDefault<TValue>([NotNull] TValue? value, [CallerArgumentExpression(nameof(value))] string valueString = "") where TValue : struct
+   public static TValue ReturnNotNullOrDefault<TValue>(this ContractAsserter asserter, [NotNull] TValue? value, [CallerArgumentExpression(nameof(value))] string valueString = "") where TValue : struct
    {
-      NotNullOrDefault(value, valueString);
+      asserter.NotNullOrDefault(value, valueString);
       return (TValue)value;
    }
 
-   public TValue ReturnNotDefault<TValue>(TValue value, [CallerArgumentExpression(nameof(value))] string valueString = "")
+   public static TValue ReturnNotDefault<TValue>(this ContractAsserter asserter, TValue value, [CallerArgumentExpression(nameof(value))] string valueString = "")
       where TValue : struct
-      => !value.Equals(default(TValue)) ? value : throw _createException(valueString);
+      => !value.Equals(default(TValue)) ? value : throw new AssertionFailedException(valueString);
 }
