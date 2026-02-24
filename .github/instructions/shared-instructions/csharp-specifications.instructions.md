@@ -29,9 +29,19 @@ Specifications should verify that things **actually work correctly together**. T
 
 
 
-### Goal: specifications that read naturally and accurately specify how things should work.
+### Goal: specification names alone must fully describe the expected behavior.
 
-The overriding goal is that **the full path from namespace through classes to assertion method reads as a clear specification sentence**. There is no rigid structural template to follow — no required AAA shape, no mandatory "Given/When/Then" vocabulary. Any sentence structure works as long as the result reads like a specification and the code is simple, clean, and actually does what the spec line says.
+**The single most important rule:** Reading *only* the full specification names — from namespace through nested classes to the method name — must be enough to correctly implement the specified behavior. No one should need to read the test code to understand what is being specified. If you cannot implement the behavior from the name alone, the name is wrong.
+
+This means every name must be **precise and concrete**, not vague or generic:
+- Bad: `returns_value_when_predicate_is_true` — What value? True about what? You can't implement anything from this.
+- Good: `returns_the_piped_value_when_the_predicate_passes` — Now you know exactly what to return and when.
+- Bad: `with_default_message` — Default message of what? Is something being passed?
+- Good: `called_with_only_a_predicate` — Now you know which overload is being specified.
+- Bad: `works_with_type_changing_transformations` — "works" says nothing.
+- Good: `supports_type_changing_transformations` — Clear capability statement.
+
+There is no rigid structural template to follow — no required AAA shape, no mandatory "Given/When/Then" vocabulary. Any sentence structure works as long as the result reads like a specification and the code is simple, clean, and actually does what the spec line says.
 
 Example spec lines:
 - `Specifications.Contracts.AssertionMethods.NotNull.Throws_when_argument_is.null_string`
