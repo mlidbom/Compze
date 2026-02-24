@@ -6,7 +6,6 @@
     <Description>Database pool management for Compze integration testing.</Description>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="System.Threading.AccessControl" Version="9.0.9" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
     <PackageReference Include="NsDepCop" Version="2.6.0">
       <PrivateAssets>all</PrivateAssets>
