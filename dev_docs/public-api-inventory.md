@@ -80,7 +80,7 @@ For each type, put an `x` in one column:
 |---|------|----------------|--------------|------------|--------|--------|-------|
 | 44 | `ActionToUnitFuncConverter` | `.AsFunc(this Action)` (3 overloads) | — | — | [ ] | [ ] | [ ] |
 | 45 | `ActionToUnitFuncConverterAsync` | `.AsFunc(this Func<Task>)` (3 overloads) | — | — | [ ] | [ ] | [ ] |
-| 46 | `Func` (UnitFunc) | `.From(Action)`, `.From(Func<Task>)` (6 overloads) | — | — | [ ] | [ ] | [ ] |
+| 46 | `unit` | `.Func(Action)` (3 overloads), `.AsyncFunc(Func<Task>)` (3 overloads) | — | — | [ ] | [ ] | [ ] |
 | 47 | `UnitFuncToActionConverter` | `.AsAction(this Func<unit>)` (3 overloads) | — | — | [ ] | [ ] | [ ] |
 
 ### CollectionsCE
