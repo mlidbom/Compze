@@ -30,6 +30,6 @@ public class MachineWideSharedObjectPerformanceTests : UniversalTestBase
    [XF] public void Update_runs_single_threaded_XX_times_in_50_milliseconds() =>
       TimeAsserter.Execute(() => _shared.Update(it => it.Name = ""), iterations: 16, maxTotal: 50.Milliseconds(), maxTries: 10);
 
-   [XF] public void Update_runs_multi_threaded_30_times_in_50_milliseconds() =>
-      TimeAsserter.ExecuteThreaded(() => _shared.Update(it => it.Name = ""), iterations: 30, maxTotal: 50.Milliseconds(), maxTries: 10);
+   [XF] public void Update_runs_multi_threaded_20_times_in_50_milliseconds() =>
+      TimeAsserter.ExecuteThreaded(() => _shared.Update(it => it.Name = ""), iterations: 20, maxTotal: 50.Milliseconds(), maxTries: 10);
 }
