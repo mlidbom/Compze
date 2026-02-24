@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace Compze.Utilities.Functional.ActionFuncHarmonization;
 
-public static class Func
+public static class UnitFunc
 {
    public static Func<unit> From(Action action) => action.AsFunc();
    public static Func<TParam, unit> From<TParam>(Action<TParam> action) => action.AsFunc();
