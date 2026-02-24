@@ -48,13 +48,13 @@ public static class Pipe
    public static T _assert<T>(this T it, Predicate<T> predicate, [CallerArgumentExpression(nameof(predicate))] string? predicateExpression = null)
    {
       if(!predicate(it))
-         throw new Exception($"Assertion failed: {predicateExpression} (value: {it})");
+         throw new AssertionFailedException($"Assertion failed: {predicateExpression} (value: {it})");
       return it;
    }
 
    ///<summary>Throws Exception with message from <paramref name="messageFactory"/> if <paramref name="predicate"/> returns false when applied to <paramref name="it"/>. The factory is only invoked on failure, avoiding allocation in the success path.</summary>
    public static T _assert<T>(this T it, Predicate<T> predicate, Func<T, string> messageFactory) =>
-      it._assert(predicate, () => new Exception(messageFactory(it)));
+      it._assert(predicate, () => new AssertionFailedException(messageFactory(it)));
 
    ///<summary>Throws <paramref name="exceptionFactory"/>() if <paramref name="predicate"/> returns false when applied to <paramref name="it"/> otherwise returns <paramref name="it"/></summary>
    public static T _assert<T>(this T it, Predicate<T> predicate, Func<Exception> exceptionFactory)

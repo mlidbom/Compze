@@ -16,16 +16,16 @@ public class _assert_method
 
       [XF] public void throws_when_predicate_is_false() =>
          Invoking(() => (-1)._assert(x => x > 0))
-            .Must().Throw<Exception>();
+            .Must().Throw<AssertionFailedException>();
 
       [XF] public void exception_message_contains_predicate_expression() =>
          Invoking(() => (-1)._assert(x => x > 0))
-            .Must().Throw<Exception>()
+            .Must().Throw<AssertionFailedException>()
             .Which.Message.Must().Contain("x => x > 0");
 
       [XF] public void exception_message_contains_the_value() =>
          Invoking(() => (-1)._assert(x => x > 0))
-            .Must().Throw<Exception>()
+            .Must().Throw<AssertionFailedException>()
             .Which.Message.Must().Contain("-1");
    }
 
@@ -36,7 +36,7 @@ public class _assert_method
 
       [XF] public void throws_when_predicate_is_false() =>
          Invoking(() => (-1)._assert(x => x > 0, x => $"Expected positive but got {x}"))
-            .Must().Throw<Exception>()
+            .Must().Throw<AssertionFailedException>()
             .Which.Message.Must().Contain("Expected positive but got -1");
    }
 
