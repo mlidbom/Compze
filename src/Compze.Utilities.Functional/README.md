@@ -45,9 +45,11 @@ public unit Log(string message) => unit.From(() => Console.WriteLine(message));
 
 ### Convert between `Action<T>` and `Func<T,unit>`
 ```csharp
-Action anAction = SomeMethod;
+Action anAction = SomeVoidMethod;
 Func<unit> aUnitFunc = anAction.AsFunc();
 var anotherAction = aUnitFunc.AsAction(); 
+
+var something = AMethodTakingAFunc(unit.Func(SomeVoidMethod));
 ```
 
 
