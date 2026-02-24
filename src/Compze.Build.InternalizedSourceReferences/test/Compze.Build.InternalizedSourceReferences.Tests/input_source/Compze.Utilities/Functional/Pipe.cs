@@ -10,13 +10,15 @@ namespace Compze.Utilities.Functional;
 /// Enables chaining method calls in a fluent functional programming style rather than having to use separate lines and temporary variables.
 /// Think of these as "missing operators" for .NET types rather than traditional extension methods.
 /// 
-/// NAMING CONVENTION: All methods use lowercase naming breaking .NET conventions for two critical reasons:
+/// NAMING CONVENTION: All methods use _camelCase naming (e.g. _tap, _then, _assert) for two critical reasons:
 /// 
-/// 1. VISUAL DISTINCTION: Instantly recognizable as language-like features,
+/// 1. VISUAL DISTINCTION: The underscore prefix makes these instantly recognizable
+///    as language-like functional operators, distinct from both standard PascalCase methods
+///    and _camelCase private fields (which are nouns, not verbs).
 /// 
 /// 2. COLLISION AVOIDANCE: Since these are extensions on ALL types,
 ///    avoiding name conflicts with existing methods is vital.
-///    Lowercase naming is the most effective strategy we found.
+///    The _camelCase convention provides virtually zero collision risk.
 /// </summary>
 public static class Pipe
 {
@@ -24,30 +26,30 @@ public static class Pipe
    public static TResult _<TThis, TResult>(this TThis it, Func<TThis, TResult> func) => func(it);
 
    ///<summary>Passes <paramref name="it"/> to <paramref name="tap"/> and returns <paramref name="it"/></summary>
-   public static T tap<T>(this T it, Action<T> tap)
+   public static T _tap<T>(this T it, Action<T> tap)
    {
       tap(it);
       return it;
    }
 
-   ///<summary>Mutates <paramref name="it"/> using <paramref name="mutate"/> and returns <paramref name="it"/></summary>
-   public static T mutate<T>(this T it, Action<T> mutate) => it.tap(mutate);
+   ///<summary>An alias for <see cref="_tap{T}"/> which declares that your intent is to mutate the instance.</summary>
+   public static T _mutate<T>(this T it, Action<T> mutate) => it._tap(mutate);
 
    ///<summary> Returns <paramref name="value"/>, ignoring the previous value.  Useful for chaining calls where a constant value is needed.</summary>
-   public static TResult then<TValue, TResult>(this TValue _, TResult value) => value;
+   public static TResult _then<TValue, TResult>(this TValue _, TResult value) => value;
 
    ///<summary>Invokes <paramref name="func"/>, ignoring the previous value. Useful for chaining calls where the previous result is irrelevant.</summary>
-   public static TResult then<TValue, TResult>(this TValue _, Func<TResult> func) => func();
+   public static TResult _then<TValue, TResult>(this TValue _, Func<TResult> func) => func();
 
    ///<summary> Executes <paramref name="action"/>, ignoring the previous value, and returns a <see cref="unit"/>.  Useful for chaining statements that return void.</summary>
-   public static unit then<TValue>(this TValue _, Action action) => Functional.unit.From(action);
+   public static unit _then<TValue>(this TValue _, Action action) => Functional.unit.From(action);
 
    ///<summary>Throws Exception if <paramref name="predicate"/> returns false when applied to <paramref name="it"/> otherwise returns <paramref name="it"/></summary>
-   public static T assert<T>(this T it, Predicate<T> predicate, Func<T, string> tessageFactory) =>
-      it.assert(predicate, () => new Exception(tessageFactory(it)));
+   public static T _assert<T>(this T it, Predicate<T> predicate, Func<T, string> tessageFactory) =>
+      it._assert(predicate, () => new Exception(tessageFactory(it)));
 
    ///<summary>Throws <paramref name="exceptionFactory"/>() if <paramref name="predicate"/> returns false when applied to <paramref name="it"/> otherwise returns <paramref name="it"/></summary>
-   public static T assert<T>(this T it, Predicate<T> predicate, Func<Exception> exceptionFactory)
+   public static T _assert<T>(this T it, Predicate<T> predicate, Func<Exception> exceptionFactory)
    {
       if(!predicate(it))
          throw exceptionFactory();
@@ -55,7 +57,7 @@ public static class Pipe
    }
 
    ///<summary>Mutates <paramref name="it"/> using <paramref name="mutate"/> and returns <paramref name="it"/></summary>
-   public static async Task<T> mutateAsync<T>(this T it, Func<T, Task> mutate)
+   public static async Task<T> _mutateAsync<T>(this T it, Func<T, Task> mutate)
    {
       await mutate(it).caf();
       return it;

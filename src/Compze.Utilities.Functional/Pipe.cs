@@ -9,13 +9,15 @@ namespace Compze.Utilities.Functional;
 /// Enables chaining method calls in a fluent functional programming style rather than having to use separate lines and temporary variables.
 /// Think of these as "missing operators" for .NET types rather than traditional extension methods.
 /// 
-/// NAMING CONVENTION: All methods use lowercase naming breaking .NET conventions for two critical reasons:
+/// NAMING CONVENTION: All methods use _camelCase naming (e.g. _tap, _then, _assert) for two critical reasons:
 /// 
-/// 1. VISUAL DISTINCTION: Instantly recognizable as language-like features,
+/// 1. VISUAL DISTINCTION: The underscore prefix makes these instantly recognizable
+///    as language-like functional operators, distinct from both standard PascalCase methods
+///    and _camelCase private fields (which are nouns, not verbs).
 /// 
 /// 2. COLLISION AVOIDANCE: Since these are extensions on ALL types,
 ///    avoiding name conflicts with existing methods is vital.
-///    Lowercase naming is the most effective strategy we found.
+///    The _camelCase convention provides virtually zero collision risk.
 /// </summary>
 public static class Pipe
 {
