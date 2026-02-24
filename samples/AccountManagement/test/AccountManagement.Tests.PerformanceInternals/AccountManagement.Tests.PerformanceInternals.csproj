@@ -10,14 +10,14 @@
   <ItemGroup>
     <ProjectReference Include="..\AccountManagement.Tests\AccountManagement.Tests.csproj" />
   </ItemGroup>
-   <ItemGroup>
-      <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
-         <PrivateAssets>all</PrivateAssets>
-         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      </PackageReference>
-      <PackageReference Include="xunit.v3" Version="3.1.0" />
-      <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
-   </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="xunit.v3" Version="3.1.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
+  </ItemGroup>
   <!-- Compze.Utilities.Contracts — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Contracts)' == 'true'">
     <PackageReference Include="Compze.Utilities.Contracts" Version="*-*" />
