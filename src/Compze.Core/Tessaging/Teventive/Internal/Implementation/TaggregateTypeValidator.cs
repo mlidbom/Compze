@@ -36,7 +36,7 @@ public static class TaggregateTypeValidator<TDomainClass, TTeventImplementation,
          // ReSharper disable once PossibleNullReferenceException
          var brokenMembers = illegalMembers.Select(illegal => $"{illegal.DeclaringType?.FullName ?? "No declaring type or unnamed declaring type"}.{illegal.Name}").Distinct().OrderBy(me => me).Join(Environment.NewLine);
          var tessage = $"""
-                        Types used by taggregate contains types that have public setters or public  fields. This is a dangerous design. 
+                        Types used by taggregate contains public setters or public  fields. This is a dangerous design. 
                         If you ever mutate an tevent or an taggregate except by raising tevents your state is likely to become corrupt in our caches etc. 
                         List of problem members:{Environment.NewLine}{brokenMembers}{Environment.NewLine}{Environment.NewLine}
                         """;

@@ -8,6 +8,12 @@
     <EnableSourceLink>false</EnableSourceLink>
     <EnableSourceControlManagerQueries>false</EnableSourceControlManagerQueries>
   </PropertyGroup>
+  <!-- JetBrains.Annotations: available everywhere, never a NuGet dependency -->
+  <ItemGroup>
+    <PackageReference Include="JetBrains.Annotations" Version="2025.2.4">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
   <!-- Import FlexRef infrastructure (reads solution content) -->
   <Import Project="$(MSBuildThisFileDirectory)build\FlexRef.props" />
   <!-- Per-dependency auto-detection managed by FlexRef -->
