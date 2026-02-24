@@ -9,16 +9,16 @@ public class _then_method
 {
    public class with_constant_value
    {
-      [XF] public void ignores_previous_value_and_returns_constant() =>
+      [XF] public void returns_the_provided_value_ignoring_the_piped_value() =>
          "ignored"._then(42).Must().Be(42);
    }
 
    public class with_func
    {
-      [XF] public void ignores_previous_value_and_returns_func_result() =>
+      [XF] public void returns_the_func_result_ignoring_the_piped_value() =>
          "ignored"._then(() => 42).Must().Be(42);
 
-      [XF] public void invokes_the_func()
+      [XF] public void the_func_is_invoked()
       {
          var invoked = false;
          "ignored"._then(() => { invoked = true; return 0; });
@@ -28,7 +28,7 @@ public class _then_method
 
    public class with_action
    {
-      [XF] public void ignores_previous_value_and_executes_action()
+      [XF] public void executes_the_action_and_returns_unit()
       {
          var executed = false;
          var result = "ignored"._then(() => { executed = true; });
@@ -36,7 +36,7 @@ public class _then_method
          result.Must().Be(unit.Value);
       }
 
-      [XF] public void returns_unit() =>
+      [XF] public void the_return_value_is_unit() =>
          "ignored"._then(() => { }).Must().Be(unit.Value);
    }
 }

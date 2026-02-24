@@ -8,26 +8,26 @@ namespace Compze.Functional.Specifications.Unit;
 
 public class unit_type
 {
-   [XF] public void Value_returns_default_unit() => unit.Value.Must().Be(default(unit));
+   [XF] public void Value_is_the_default_unit_instance() => unit.Value.Must().Be(default(unit));
 
-   [XF] public void ToString_returns_empty_parentheses() => unit.Value.ToString().Must().Be("()");
+   [XF] public void ToString_returns_parentheses() => unit.Value.ToString().Must().Be("()");
 
 #pragma warning disable CS8981
    public class equality
    {
-      [XF] public void two_unit_values_are_equal() => unit.Value.Equals(unit.Value).Must().BeTrue();
+      [XF] public void Equals_returns_true_for_another_unit() => unit.Value.Equals(unit.Value).Must().BeTrue();
 
-      [XF] public void Equals_object_returns_true_for_boxed_unit() => unit.Value.Equals((object)unit.Value).Must().BeTrue();
+      [XF] public void Equals_returns_true_for_a_boxed_unit() => unit.Value.Equals((object)unit.Value).Must().BeTrue();
 
-      [XF] public void Equals_object_returns_false_for_non_unit() => unit.Value.Equals("not a unit").Must().BeFalse();
+      [XF] public void Equals_returns_false_for_a_non_unit_object() => unit.Value.Equals("not a unit").Must().BeFalse();
 
-      [XF] public void Equals_object_returns_false_for_null() => unit.Value.Equals(null).Must().BeFalse();
+      [XF] public void Equals_returns_false_for_null() => unit.Value.Equals(null).Must().BeFalse();
 
-      [XF] public void equality_operator_returns_true() => (unit.Value == default(unit)).Must().BeTrue();
+      [XF] public void the_equality_operator_returns_true_for_two_unit_values() => (unit.Value == default(unit)).Must().BeTrue();
 
-      [XF] public void inequality_operator_returns_false() => (unit.Value != default(unit)).Must().BeFalse();
+      [XF] public void the_inequality_operator_returns_false_for_two_unit_values() => (unit.Value != default(unit)).Must().BeFalse();
 
-      [XF] public void GetHashCode_is_consistent() => unit.Value.GetHashCode().Must().Be(unit.Value.GetHashCode());
+      [XF] public void GetHashCode_returns_the_same_value_for_all_instances() => unit.Value.GetHashCode().Must().Be(unit.Value.GetHashCode());
    }
 #pragma warning restore CS8981
 
@@ -46,7 +46,7 @@ public class unit_type
    {
       public class with_zero_parameters
       {
-         [XF] public void wraps_action_and_returns_unit()
+         [XF] public void wraps_the_action_into_a_Func_returning_unit()
          {
             var executed = false;
             var func = unit.Func(() => { executed = true; });
@@ -58,7 +58,7 @@ public class unit_type
 
       public class with_one_parameter
       {
-         [XF] public void wraps_action_and_passes_parameter()
+         [XF] public void passes_the_parameter_to_the_wrapped_action()
          {
             var captured = "";
             var func = unit.Func<string>(s => { captured = s; });
@@ -70,7 +70,7 @@ public class unit_type
 
       public class with_two_parameters
       {
-         [XF] public void wraps_action_and_passes_both_parameters()
+         [XF] public void passes_both_parameters_to_the_wrapped_action()
          {
             var capturedA = "";
             var capturedB = 0;
@@ -87,7 +87,7 @@ public class unit_type
    {
       public class with_zero_parameters
       {
-         [XF] public async Task wraps_async_action_and_returns_unit()
+         [XF] public async Task wraps_the_async_action_into_a_Func_returning_Task_of_unit()
          {
             var executed = false;
             var func = unit.AsyncFunc(async () => { await Task.Yield(); executed = true; });
@@ -99,7 +99,7 @@ public class unit_type
 
       public class with_one_parameter
       {
-         [XF] public async Task wraps_async_action_and_passes_parameter()
+         [XF] public async Task passes_the_parameter_to_the_wrapped_async_action()
          {
             var captured = "";
             var func = unit.AsyncFunc<string>(async s => { await Task.Yield(); captured = s; });
@@ -111,7 +111,7 @@ public class unit_type
 
       public class with_two_parameters
       {
-         [XF] public async Task wraps_async_action_and_passes_both_parameters()
+         [XF] public async Task passes_both_parameters_to_the_wrapped_async_action()
          {
             var capturedA = "";
             var capturedB = 0;

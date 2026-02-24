@@ -11,7 +11,7 @@ public class AsFunc_from_Action
 {
    public class with_zero_parameters
    {
-      [XF] public void executes_the_action_and_returns_unit()
+         [XF] public void the_converted_Func_executes_the_Action_and_returns_unit()
       {
          var executed = false;
          Action action = () => executed = true;
@@ -23,7 +23,7 @@ public class AsFunc_from_Action
 
    public class with_one_parameter
    {
-      [XF] public void executes_the_action_with_parameter_and_returns_unit()
+         [XF] public void the_converted_Func_passes_the_parameter_to_the_Action()
       {
          var captured = "";
          Action<string> action = s => captured = s;
@@ -35,7 +35,7 @@ public class AsFunc_from_Action
 
    public class with_two_parameters
    {
-      [XF] public void executes_the_action_with_parameters_and_returns_unit()
+         [XF] public void the_converted_Func_passes_both_parameters_to_the_Action()
       {
          var capturedA = "";
          var capturedB = 0;

@@ -11,19 +11,19 @@ public class _assert_method
 {
    public class with_default_message
    {
-      [XF] public void returns_value_when_predicate_is_true() =>
+      [XF] public void returns_the_piped_value_when_the_predicate_passes() =>
          42._assert(x => x > 0).Must().Be(42);
 
-      [XF] public void throws_when_predicate_is_false() =>
+      [XF] public void throws_AssertionFailedException_when_the_predicate_fails() =>
          Invoking(() => (-1)._assert(x => x > 0))
             .Must().Throw<AssertionFailedException>();
 
-      [XF] public void exception_message_contains_predicate_expression() =>
+      [XF] public void the_exception_message_contains_the_predicate_source_expression() =>
          Invoking(() => (-1)._assert(x => x > 0))
             .Must().Throw<AssertionFailedException>()
             .Which.Message.Must().Contain("x => x > 0");
 
-      [XF] public void exception_message_contains_the_value() =>
+      [XF] public void the_exception_message_contains_the_asserted_value() =>
          Invoking(() => (-1)._assert(x => x > 0))
             .Must().Throw<AssertionFailedException>()
             .Which.Message.Must().Contain("-1");
@@ -31,10 +31,10 @@ public class _assert_method
 
    public class with_message_factory
    {
-      [XF] public void returns_value_when_predicate_is_true() =>
+      [XF] public void returns_the_piped_value_when_the_predicate_passes() =>
          42._assert(x => x > 0, x => $"Expected positive but got {x}").Must().Be(42);
 
-      [XF] public void throws_when_predicate_is_false() =>
+      [XF] public void throws_with_the_factory_produced_message_when_the_predicate_fails() =>
          Invoking(() => (-1)._assert(x => x > 0, x => $"Expected positive but got {x}"))
             .Must().Throw<AssertionFailedException>()
             .Which.Message.Must().Contain("Expected positive but got -1");
@@ -42,10 +42,10 @@ public class _assert_method
 
    public class with_exception_factory
    {
-      [XF] public void returns_value_when_predicate_is_true() =>
+      [XF] public void returns_the_piped_value_when_the_predicate_passes() =>
          42._assert(x => x > 0, () => new InvalidOperationException("fail")).Must().Be(42);
 
-      [XF] public void throws_specified_exception_when_predicate_is_false() =>
+      [XF] public void throws_the_exception_from_the_factory_when_the_predicate_fails() =>
          Invoking(() => (-1)._assert(x => x > 0, () => new InvalidOperationException("negative!")))
             .Must().Throw<InvalidOperationException>()
             .Which.Message.Must().Contain("negative!");

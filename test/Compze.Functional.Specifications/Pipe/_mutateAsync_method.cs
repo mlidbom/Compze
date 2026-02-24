@@ -6,7 +6,7 @@ namespace Compze.Functional.Specifications.Pipe;
 
 public class _mutateAsync_method
 {
-   [XF] public async Task mutates_value_asynchronously_and_returns_it()
+   [XF] public async Task executes_the_async_mutation_and_returns_the_same_instance()
    {
       var list = new System.Collections.Generic.List<int>();
       var result = await list._mutateAsync(async l =>

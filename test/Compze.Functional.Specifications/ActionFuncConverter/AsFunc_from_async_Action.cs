@@ -11,7 +11,7 @@ public class AsFunc_from_async_Action
 {
    public class with_zero_parameters
    {
-      [XF] public async Task executes_the_async_action_and_returns_unit()
+         [XF] public async Task the_converted_Func_executes_the_async_Action_and_returns_unit()
       {
          var executed = false;
          Func<Task> action = async () => { await Task.Yield(); executed = true; };
@@ -23,7 +23,7 @@ public class AsFunc_from_async_Action
 
    public class with_one_parameter
    {
-      [XF] public async Task executes_the_async_action_with_parameter_and_returns_unit()
+         [XF] public async Task the_converted_Func_passes_the_parameter_to_the_async_Action()
       {
          var captured = "";
          Func<string, Task> action = async s => { await Task.Yield(); captured = s; };
@@ -35,7 +35,7 @@ public class AsFunc_from_async_Action
 
    public class with_two_parameters
    {
-      [XF] public async Task executes_the_async_action_with_parameters_and_returns_unit()
+         [XF] public async Task the_converted_Func_passes_both_parameters_to_the_async_Action()
       {
          var capturedA = "";
          var capturedB = 0;
