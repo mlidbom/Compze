@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Compze.Utilities.Contracts;
+using Compze.Contracts;
 using Compze.Utilities.DependencyInjection.Abstractions;
 
 namespace Compze.Utilities.DependencyInjection;

@@ -1,4 +1,4 @@
-using Compze.Utilities.Contracts;
+using Compze.Contracts;
 using System;
 using System.IO;
 

@@ -32,7 +32,7 @@ The 23 properties needed:
 ```xml
 <PropertyGroup>
   <!-- Utilities (leaf → high-level) -->
-  <UsePackageReference_Compze_Utilities_Contracts        Condition="..." />
+  <UsePackageReference_Compze_Contracts        Condition="..." />
   <UsePackageReference_Compze_Functional                  Condition="..." />
   <UsePackageReference_Compze_Utilities                  Condition="..." />
   <UsePackageReference_Compze_Utilities_SystemCE         Condition="..." />
@@ -178,7 +178,7 @@ directly.
 ## Dependency Graph (src→src)
 
 ```
-Compze.Utilities.Contracts (leaf)
+Compze.Contracts (leaf)
 ├── Compze.Functional
 │   ├── Compze.Utilities
 │   ├── Compze.Utilities.SystemCE.ThreadingCE

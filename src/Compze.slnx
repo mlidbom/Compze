@@ -79,7 +79,7 @@
     <Project Path="Compze.Utilities.Testing.DbPool/Compze.Utilities.Testing.DbPool.csproj" />
     <Project Path="Compze.Utilities.Testing.XUnit/Compze.Utilities.Testing.XUnit.csproj" />
     <Project Path="Compze.Utilities.Testing.Must/Compze.Utilities.Testing.Must.csproj" />
-    <Project Path="Compze.Utilities.Contracts/Compze.Utilities.Contracts.csproj" />
+    <Project Path="Compze.Contracts/Compze.Contracts.csproj" />
     <Project Path="Compze.Utilities.DependencyInjection/Compze.Utilities.DependencyInjection.csproj" />
     <Project Path="Compze.Utilities.Logging/Compze.Utilities.Logging.csproj" />
     <Project Path="Compze.Utilities.SystemCE/Compze.Utilities.SystemCE.csproj" />
@@ -87,7 +87,7 @@
     <Project Path="Compze.Utilities.SystemCE.ThreadingCE.Testing/Compze.Utilities.SystemCE.ThreadingCE.Testing.csproj" />
   </Folder>
   <Folder Name="/_Tests/">
-    <Project Path="../test/Compze.Utilities.Contracts.Specifications/Compze.Utilities.Contracts.Specifications.csproj" />
+    <Project Path="../test/Compze.Contracts.Specifications/Compze.Contracts.Specifications.csproj" />
     <Project Path="../test/Compze.Functional.Specifications/Compze.Functional.Specifications.csproj" />
     <Project Path="../test/Compze.Utilities.Tests/Compze.Utilities.Tests.csproj" />
     <Project Path="../test/Compze.Tests.Common/Compze.Tests.Common.csproj" />

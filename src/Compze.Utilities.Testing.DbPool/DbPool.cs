@@ -1,4 +1,4 @@
-using Compze.Utilities.Contracts;
+using Compze.Contracts;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Logging;
 using Compze.Utilities.SystemCE;

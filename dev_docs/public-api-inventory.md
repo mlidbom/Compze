@@ -21,7 +21,7 @@ For each type, put an `x` in one column:
 
 ---
 
-## Compze.Utilities.Contracts
+## Compze.Contracts
 
 | # | Type | Notable members | Sample usage | Test usage | Public | Shared | Split |
 |---|------|----------------|--------------|------------|--------|--------|-------|

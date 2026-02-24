@@ -5,7 +5,7 @@
 #nullable enable
 using System;
 using System.Threading;
-using static Compze.Utilities.Contracts.Assert;
+using static Compze.Contracts.Assert;
 
 namespace Compze.Utilities.SystemCE.ThreadingCE;
 

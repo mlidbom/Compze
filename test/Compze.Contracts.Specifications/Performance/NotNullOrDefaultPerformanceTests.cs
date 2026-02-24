@@ -3,7 +3,7 @@ using Compze.Tessaging.Hosting.Testing.Performance;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.Testing.XUnit.BDD;
 
-namespace Compze.Utilities.Contracts.Specifications.Performance;
+namespace Compze.Contracts.Specifications.Performance;
 
 public class NotNullOrDefaultPerformanceTests
 {

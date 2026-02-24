@@ -1,6 +1,6 @@
 using Compze.Utilities.Testing.XUnit.BDD;
 
-namespace Compze.Utilities.Contracts.Specifications;
+namespace Compze.Contracts.Specifications;
 
 public class NotNull_method_throws_for : AssertionMethodsTest
 {

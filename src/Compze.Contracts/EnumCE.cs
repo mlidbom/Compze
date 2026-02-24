@@ -3,7 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Compze.Utilities.Contracts;
+namespace Compze.Contracts;
 
 static class EnumCE
 {

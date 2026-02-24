@@ -11,7 +11,7 @@ using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.TransactionsCE;
 using Compze.Utilities.SystemCE.UsageGuards;
-using static Compze.Utilities.Contracts.Assert;
+using static Compze.Contracts.Assert;
 
 namespace Compze.Core.DocumentDb.Private;
 

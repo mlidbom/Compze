@@ -31,7 +31,7 @@ Primary methods:
 - `_mutate()` — intent declaring alias for _tap
 - `_then()` — discard the current value and continue with a new one. Enables one-liner implementations when the previous value is irrelevant.
 
-> **Note:** The `_assert()` method used in the examples above comes from [Compze.Utilities.Contracts](https://www.nuget.org/packages/Compze.Utilities.Contracts) — you may want to check it out.
+> **Note:** The `_assert()` method used in the examples above comes from [Compze.Contracts](https://www.nuget.org/packages/Compze.Contracts) — you may want to check it out.
 
 
 ## The Unit type
@@ -70,7 +70,7 @@ Lower case `unit` is sort of a wish for the future and the way we think it shoul
 
 | Package | Description |
 |---------|-------------|
-| [Compze.Utilities.Contracts](https://www.nuget.org/packages/Compze.Utilities.Contracts) | Design-by-contract assertions, including the `_assert()` pipeline operator |
+| [Compze.Contracts](https://www.nuget.org/packages/Compze.Contracts) | Design-by-contract assertions, including the `_assert()` pipeline operator |
 
 ## License
 

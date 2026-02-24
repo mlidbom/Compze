@@ -13,7 +13,7 @@ using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
-using static Compze.Utilities.Contracts.Assert;
+using static Compze.Contracts.Assert;
 
 namespace Compze.Tessaging.Hosting;
 

@@ -3,7 +3,7 @@
 // Changes to this file will be overwritten.
 // </auto-generated>
 #nullable enable
-using Compze.Utilities.Contracts;
+using Compze.Contracts;
 using System;
 using System.IO;
 

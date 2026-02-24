@@ -2,7 +2,7 @@ using Compze.Core.DocumentDb.Internal.SqlLayer;
 using Compze.Core.DocumentDb.Internal.SqlLayer.Exceptions;
 using Compze.Core.Refactoring.Naming.Internal;
 using Compze.Sql.Common;
-using Compze.Utilities.Contracts;
+using Compze.Contracts;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Functional;

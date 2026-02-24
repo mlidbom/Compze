@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 
 // ReSharper disable InconsistentNaming
 
-namespace Compze.Utilities.Contracts;
+namespace Compze.Contracts;
 
 /// <summary>
 /// Pipeline-friendly assertion extension methods.

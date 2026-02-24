@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Compze.Core.Public;
 using Compze.Core.Tessaging.Teventive.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
-using Compze.Utilities.Contracts;
+using Compze.Contracts;
 using Compze.Utilities.SystemCE.LinqCE;
 
 namespace Compze.Tessaging.Teventive.TeventStore.QueryModels.SelfGeneratingQueryModels;

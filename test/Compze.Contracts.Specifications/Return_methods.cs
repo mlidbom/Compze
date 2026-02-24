@@ -2,7 +2,7 @@ using Compze.Utilities.Testing.Must;
 using Compze.Utilities.Testing.XUnit.BDD;
 using static Compze.Utilities.Testing.Must.MustActions;
 
-namespace Compze.Utilities.Contracts.Specifications;
+namespace Compze.Contracts.Specifications;
 
 public class Return_methods : AssertionMethodsTest
 {

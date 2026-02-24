@@ -4,7 +4,7 @@ using Compze.Core.Public;
 using Compze.Core.Tessaging.Teventive.Internal.Implementation;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Core.Time.Public;
-using Compze.Utilities.Contracts;
+using Compze.Contracts;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.ReactiveCE;

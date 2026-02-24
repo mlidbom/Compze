@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
-using Compze.Utilities.Contracts;
+using Compze.Contracts;
 using Compze.Utilities.SystemCE.ThreadingCE.Utilities;
 
 namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;

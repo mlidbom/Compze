@@ -5,7 +5,7 @@
 #nullable enable
 using System;
 
-namespace Compze.Utilities.Contracts;
+namespace Compze.Contracts;
 
 internal static class Assert
 {

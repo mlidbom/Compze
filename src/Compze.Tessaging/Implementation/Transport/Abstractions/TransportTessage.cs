@@ -2,7 +2,7 @@ using Compze.Core.Public;
 using Compze.Core.Refactoring.Naming.Internal;
 using Compze.Core.Serialization.Internal;
 using Compze.Core.Tessaging.Public;
-using Compze.Utilities.Contracts;
+using Compze.Contracts;
 using System;
 
 namespace Compze.Tessaging.Implementation.Transport.Abstractions;

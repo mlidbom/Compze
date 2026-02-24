@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Compze.Functional;
-using Compze.Utilities.Contracts;
+using Compze.Contracts;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
-using static Compze.Utilities.Contracts.Assert;
+using static Compze.Contracts.Assert;
 
 namespace Compze.Core.DocumentDb.Infrastructure;
 

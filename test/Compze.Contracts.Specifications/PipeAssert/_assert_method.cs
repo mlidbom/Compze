@@ -5,7 +5,7 @@ using static Compze.Utilities.Testing.Must.MustActions;
 
 #pragma warning disable CA1052 // BDD-style nested specification classes cannot be static
 
-namespace Compze.Utilities.Contracts.Specifications.PipeAssert;
+namespace Compze.Contracts.Specifications.PipeAssert;
 
 public class _assert_method
 {

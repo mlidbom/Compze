@@ -16,7 +16,7 @@
   <Package Name="Compze.Tessaging.Hosting.Testing" />
   <Package Name="Compze.Tessaging.Teventive.TeventStore" />
   <Package Name="Compze.Utilities" />
-  <Package Name="Compze.Utilities.Contracts" />
+  <Package Name="Compze.Contracts" />
   <Package Name="Compze.Utilities.DependencyInjection" />
   <Package Name="Compze.Utilities.DependencyInjection.Microsoft" />
   <Package Name="Compze.Utilities.DependencyInjection.SimpleInjector" />

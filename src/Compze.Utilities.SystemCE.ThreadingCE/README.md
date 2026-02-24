@@ -87,7 +87,7 @@ dotnet add package Compze.Utilities.SystemCE.ThreadingCE
 | Package | Description |
 |---------|-------------|
 | [Compze.Utilities.SystemCE](https://www.nuget.org/packages/Compze.Utilities.SystemCE) | System type extensions |
-| [Compze.Utilities.Contracts](https://www.nuget.org/packages/Compze.Utilities.Contracts) | Design-by-contract assertions |
+| [Compze.Contracts](https://www.nuget.org/packages/Compze.Contracts) | Design-by-contract assertions |
 | [Compze.Functional](https://www.nuget.org/packages/Compze.Functional) | Functional programming primitives |
 | [Compze.Utilities](https://www.nuget.org/packages/Compze.Utilities) | Core utilities |
 

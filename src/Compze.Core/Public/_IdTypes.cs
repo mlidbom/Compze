@@ -1,6 +1,6 @@
 using System;
 using Compze.Core.Public.Infrastructure;
-using Compze.Utilities.Contracts;
+using Compze.Contracts;
 using Compze.Functional;
 using Compze.Utilities.SystemCE.ReflectionCE;
 

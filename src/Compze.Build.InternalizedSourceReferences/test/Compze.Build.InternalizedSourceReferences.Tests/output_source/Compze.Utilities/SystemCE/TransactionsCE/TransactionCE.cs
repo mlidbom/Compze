@@ -5,7 +5,7 @@
 #nullable enable
 using System;
 using System.Transactions;
-using Compze.Utilities.Contracts;
+using Compze.Contracts;
 
 namespace Compze.Utilities.SystemCE.TransactionsCE;
 

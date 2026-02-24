@@ -2,7 +2,7 @@ using System;
 using System.Runtime.CompilerServices;
 using Compze.Utilities.SystemCE;
 
-namespace Compze.Utilities.Contracts;
+namespace Compze.Contracts;
 
 public partial class ContractAsserter
 {

@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using System.Transactions;
-using Compze.Utilities.Contracts;
+using Compze.Contracts;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using Compze.Utilities.SystemCE.TransactionsCE.Testing;
 

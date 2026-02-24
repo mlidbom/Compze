@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 using Compze.Utilities.Testing.Must;
 using static Compze.Utilities.Testing.Must.MustActions;
 
-namespace Compze.Utilities.Contracts.Specifications;
+namespace Compze.Contracts.Specifications;
 
 public abstract class AssertionMethodsTest
 {

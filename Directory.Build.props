@@ -44,8 +44,8 @@
     <UsePackageReference_Compze_Tessaging_Teventive_TeventStore Condition="'$(UsePackageReference_Compze_Tessaging_Teventive_TeventStore)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Tessaging.Teventive.TeventStore.csproj|'))">true</UsePackageReference_Compze_Tessaging_Teventive_TeventStore>
     <!-- Compze.Utilities -->
     <UsePackageReference_Compze_Utilities Condition="'$(UsePackageReference_Compze_Utilities)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Utilities.csproj|'))">true</UsePackageReference_Compze_Utilities>
-    <!-- Compze.Utilities.Contracts -->
-    <UsePackageReference_Compze_Utilities_Contracts Condition="'$(UsePackageReference_Compze_Utilities_Contracts)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Utilities.Contracts.csproj|'))">true</UsePackageReference_Compze_Utilities_Contracts>
+    <!-- Compze.Contracts -->
+    <UsePackageReference_Compze_Contracts Condition="'$(UsePackageReference_Compze_Contracts)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Contracts.csproj|'))">true</UsePackageReference_Compze_Contracts>
     <!-- Compze.Utilities.DependencyInjection -->
     <UsePackageReference_Compze_Utilities_DependencyInjection Condition="'$(UsePackageReference_Compze_Utilities_DependencyInjection)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Utilities.DependencyInjection.csproj|'))">true</UsePackageReference_Compze_Utilities_DependencyInjection>
     <!-- Compze.Utilities.DependencyInjection.Microsoft -->
