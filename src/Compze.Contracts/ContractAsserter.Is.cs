@@ -6,21 +6,22 @@ namespace Compze.Contracts;
 
 public static class ContractAsserterIsExtensions
 {
-   [MethodImpl(MethodImplOptions.AggressiveInlining)]
-   public static ContractAsserter Is(this ContractAsserter asserter,
-                                     [DoesNotReturnIf(false)] bool value,
-                                     Func<string>? createMessage = null,
-                                     [CallerArgumentExpression(nameof(value))] string valueString = "")
+   extension(ContractAsserter @this)
    {
-      if(!value) asserter.ThrowFailed(createMessage?.Invoke() ?? valueString);
-      return asserter;
-   }
+      [MethodImpl(MethodImplOptions.AggressiveInlining)]
+      public ContractAsserter Is([DoesNotReturnIf(false)] bool value,
+                                 Func<string>? createMessage = null,
+                                 [CallerArgumentExpression(nameof(value))] string valueString = "")
+      {
+         if(!value) @this.ThrowFailed(createMessage?.Invoke() ?? valueString);
+         return @this;
+      }
 
-   public static ContractAsserter IsNotDisposed(this ContractAsserter asserter,
-                                                [DoesNotReturnIf(true)] bool isDisposed,
-                                                object theInstance)
-   {
-      if(isDisposed) throw new ObjectDisposedException(theInstance.GetType().FullName);
-      return asserter;
+      public ContractAsserter IsNotDisposed([DoesNotReturnIf(true)] bool isDisposed,
+                                            object theInstance)
+      {
+         if(isDisposed) throw new ObjectDisposedException(theInstance.GetType().FullName);
+         return @this;
+      }
    }
 }
