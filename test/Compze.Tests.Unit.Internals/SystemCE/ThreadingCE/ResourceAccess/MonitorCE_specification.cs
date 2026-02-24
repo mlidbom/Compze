@@ -109,7 +109,7 @@ public class MonitorCE_specification : UniversalTestBase
          RunScenario(ownerThreadBlockTime: 20.Milliseconds(), timeToWaitForStackTrace: 30.Seconds(), monitorTimeout: 10.Milliseconds()).Must().BeExactType<TakeLockTimeoutException>();
 
       [XF, EnableRdi(false)] public void If_owner_thread_blocks_for_less_than_fetchStackTraceTimeout_Exception_contains_owning_threads_stack_trace() =>
-         RunScenario(ownerThreadBlockTime: 20.Milliseconds(), timeToWaitForStackTrace: 30.Seconds(), monitorTimeout: 5.Milliseconds()).Message.Must().Contain(nameof(DisposeInMethodSoItWillBeInTheCapturedCallStack));
+         RunScenario(ownerThreadBlockTime: 50.Milliseconds(), timeToWaitForStackTrace: 30.Seconds(), monitorTimeout: 15.Milliseconds()).Message.Must().Contain(nameof(DisposeInMethodSoItWillBeInTheCapturedCallStack));
 
       [XF] public void If_owner_thread_blocks_for_more_than_fetchStackTraceTimeout_Exception_does_not_contain_owning_threads_stack_trace() =>
          RunScenario(ownerThreadBlockTime: 60.Milliseconds(), timeToWaitForStackTrace: 1.Milliseconds(), monitorTimeout: 5.Milliseconds()).Message.Must().NotContain(nameof(DisposeInMethodSoItWillBeInTheCapturedCallStack));
