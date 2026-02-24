@@ -57,7 +57,7 @@ These extensions apply to *every* type, so name collisions and polluting auto-co
 
 - **Near zero collision risk** — no standard .NET method starts with `_`.
 - **Clear visuals** — instantly recognizable as something other than regular methods.
-- **Great discoverability** — type `._` and autocomplete shows only these extensions
+- **Great discoverability** — type `._` and all these extensions are right there grouped together.
 
 `._(` as the pipeline operator has the same advantages and keeps something you will be using constantly as short as possible.
 
