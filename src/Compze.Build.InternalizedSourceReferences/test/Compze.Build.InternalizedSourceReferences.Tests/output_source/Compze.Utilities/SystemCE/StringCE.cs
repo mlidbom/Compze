@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
+using Compze.Contracts;
 using static Compze.Contracts.Assert;
 
 namespace Compze.Utilities.SystemCE;

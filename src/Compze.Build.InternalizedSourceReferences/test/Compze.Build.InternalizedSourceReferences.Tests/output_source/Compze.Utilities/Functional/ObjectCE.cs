@@ -4,6 +4,7 @@
 // </auto-generated>
 #nullable enable
 using System.Collections.Generic;
+using Compze.Contracts;
 using static Compze.Contracts.Assert;
 
 namespace Compze.Functional;

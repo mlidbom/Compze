@@ -7,7 +7,8 @@ namespace Compze.Contracts.Specifications;
 
 public abstract class AssertionMethodsTest
 {
-   internal static readonly ContractAsserter Asserter = new(tessage => new AssertionTestException(tessage));
+   internal static readonly ContractAsserter Asserter = new(tessage => new AssertionTestException(tessage),
+                                                               tessage => new AssertionTestException(tessage));
    protected class AssertionTestException(string message) : Exception(message);
 
    // ReSharper disable once EntityNameCapturedOnly.Global : Yes. Capturing its name is the entire point of passing it :)

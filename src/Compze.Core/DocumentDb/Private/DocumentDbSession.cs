@@ -11,6 +11,7 @@ using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.TransactionsCE;
 using Compze.Utilities.SystemCE.UsageGuards;
+using Compze.Contracts;
 using static Compze.Contracts.Assert;
 
 namespace Compze.Core.DocumentDb.Private;
@@ -147,7 +148,7 @@ public partial class DocumentDbSession : IDocumentDbSession
 
    public virtual void Save<TValue>(object id, TValue value)
    {
-      Argument.NotNull(value);
+      Argument.Is(value is not null);
 
       if(TryGetInternal(id, value.GetType(), out TValue? _, useUpdateLock: false))
       {

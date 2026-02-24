@@ -10,6 +10,7 @@ using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.Contracts;
 using static Compze.Contracts.Assert;
 
 namespace Compze.Tessaging.Implementation.TessageHandling.Inbox;

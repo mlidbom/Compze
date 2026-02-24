@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Linq.Expressions;
+using Compze.Contracts;
 using static Compze.Contracts.Assert;
 
 namespace Compze.Utilities.SystemCE.ComponentModelCE.DataAnnotationsCE;

@@ -16,6 +16,7 @@ using Compze.Utilities.Logging;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.UsageGuards;
 using JetBrains.Annotations;
+using Compze.Contracts;
 using static Compze.Contracts.Assert;
 
 namespace Compze.Tessaging.Teventive.TeventStore;

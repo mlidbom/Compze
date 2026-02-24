@@ -11,13 +11,11 @@ public static class ContractAsserterNullOrEmptyExtensions
       return asserter;
    }
 
-   //////////////////////////////////////////////////////////////////////////
-   ////Specialized methods that return the value rather than `this` below here:
-   ////The allow for single line returns from methods while retaining the static not-null guarantee.
-   //////////////////////////////////////////////////////////////////////////
-
-   [return: NotNull] public static TValue ReturnNotNull<TValue>(this ContractAsserter asserter, [NotNull] TValue? value, [CallerArgumentExpression(nameof(value))] string valueString = "") =>
-      value ?? throw new AssertionFailedException(valueString);
+   [return: NotNull] public static TValue ReturnNotNull<TValue>(this ContractAsserter asserter, [NotNull] TValue? value, [CallerArgumentExpression(nameof(value))] string valueString = "")
+   {
+      if(value is null) asserter.ThrowNull(valueString);
+      return value;
+   }
 
    public static TValue ReturnNotNullOrDefault<TValue>(this ContractAsserter asserter, [NotNull] TValue? value, [CallerArgumentExpression(nameof(value))] string valueString = "") where TValue : struct
    {
@@ -27,5 +25,8 @@ public static class ContractAsserterNullOrEmptyExtensions
 
    public static TValue ReturnNotDefault<TValue>(this ContractAsserter asserter, TValue value, [CallerArgumentExpression(nameof(value))] string valueString = "")
       where TValue : struct
-      => !value.Equals(default(TValue)) ? value : throw new AssertionFailedException(valueString);
+   {
+      if(value.Equals(default(TValue))) asserter.ThrowFailed(valueString);
+      return value;
+   }
 }

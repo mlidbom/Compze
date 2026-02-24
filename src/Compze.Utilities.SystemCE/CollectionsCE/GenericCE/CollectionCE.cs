@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Compze.Utilities.SystemCE.LinqCE;
+using Compze.Contracts;
 using static Compze.Contracts.Assert;
 
 namespace Compze.Utilities.SystemCE.CollectionsCE.GenericCE;

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Compze.Contracts;
 using static Compze.Contracts.Assert;
 
 namespace Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
@@ -13,7 +14,7 @@ public static class DictionaryCE
    /// </summary>
    public static TValue GetOrAdd<TKey, TValue>(this IDictionary<TKey, TValue> me, TKey key, Func<TValue> constructor) where TKey : notnull
    {
-      Argument.NotNull(me).NotNull(key).NotNull(constructor);
+      Argument.NotNull(me).Is(key is not null).NotNull(constructor);
 
       if(me.TryGetValue(key, out var value))
       {
@@ -31,7 +32,7 @@ public static class DictionaryCE
    public static TValue GetOrAddDefault<TKey, TValue>(this IDictionary<TKey, TValue> me, TKey key) where TValue : new()
                                                                                                    where TKey : notnull
    {
-      Argument.NotNull(me).NotNull(key);
+      Argument.NotNull(me).Is(key is not null);
       //Originally written to delegate to the above method. Believe it or not this causes a performance decrease that is actually significant in tight loops.
       if(me.TryGetValue(key, out var value))
       {
