@@ -9,7 +9,9 @@ public OperationResult SomeBusinessMethod(Guid userId) =>
     userId
     ._(LoadFromDatabase)
     ._assert(MayExecuteThisOperation)
+    _tap(it => {/*log pre logic state*/})
     ._(ActualOperationLogic)
+    _tap(it => {/*log post logic state*/})
     ._assert(ResultIsWhatWeExpected);
 ```
 
