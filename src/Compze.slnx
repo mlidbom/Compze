@@ -88,6 +88,7 @@
   </Folder>
   <Folder Name="/_Tests/">
     <Project Path="../test/Compze.Utilities.Contracts.Specifications/Compze.Utilities.Contracts.Specifications.csproj" />
+    <Project Path="../test/Compze.Utilities.Functional.Specifications/Compze.Utilities.Functional.Specifications.csproj" />
     <Project Path="../test/Compze.Utilities.Tests/Compze.Utilities.Tests.csproj" />
     <Project Path="../test/Compze.Tests.Common/Compze.Tests.Common.csproj" />
     <Project Path="../test/Compze.Tests.CodePolicies/Compze.Tests.CodePolicies.csproj" />

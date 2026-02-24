@@ -16,6 +16,7 @@
   </Folder>
   <Folder Name="/_Tests/">
     <Project Path="../test/Compze.Utilities.Tests/Compze.Utilities.Tests.csproj" />
+    <Project Path="../test/Compze.Utilities.Functional.Specifications/Compze.Utilities.Functional.Specifications.csproj" />
     <Project Path="../test/Compze.Utilities.Testing.XUnit.Tests/Compze.Utilities.Testing.XUnit.Tests.csproj" />
   </Folder>
 </Solution>
