@@ -8,10 +8,10 @@ Sometimes very little goes a very long way. With just a handful of trivially sim
 public OperationResult SomeBusinessMethod(Guid userId) =>
     userId
     ._(LoadFromDatabase)
+    ._tap(it => { /*log*/ })
     ._assert(MayExecuteThisOperation)
-    _tap(it => {/*log pre logic state*/})
     ._(ActualOperationLogic)
-    _tap(it => {/*log post logic state*/})
+    ._tap(it => { /*log*/ })
     ._assert(ResultIsWhatWeExpected);
 ```
 
