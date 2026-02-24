@@ -24,12 +24,6 @@ The API surface is small, focused, and well-designed:
 
 Clear motivation, code examples, naming rationale, and "Related packages" section. It will pack into the NuGet package via `Directory.Build.props`.
 
-## Issues to Fix Before 0.8.0-beta.1
-
-### 4. `PackageTags` not relevant for this package
-
-`Directory.Build.props` sets `PackageTags` to `compze;messaging;event-sourcing;cqrs` — not relevant for a standalone functional programming package. If Compze.Functional is intended to be general-purpose (its README positions it that way), it should have its own tags like `functional;pipe;unit;extensions`.
-
 ## Summary
 
 The **core API design and implementation are beta-ready**. The `Pipe`, `unit`, and `ActionFuncConverter` types are well-crafted, well-tested, and well-documented. The issues above are mostly cleanup (empty file, stale ncrunch config, wrong tags) and one API question (`_assert` convenience + `tessageFactory` naming). Fix those and it's ready for 0.8.0-beta.1.
