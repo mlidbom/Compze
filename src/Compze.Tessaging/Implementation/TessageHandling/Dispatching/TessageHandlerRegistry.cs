@@ -167,8 +167,8 @@ public sealed class TessageHandlerRegistry(ITypeMapper typeMapper) : ITessageHan
    }
 
    public class TommandHandlerWithResultRegistration<TTommand, TResult>(Func<TTommand, TResult> handlerMethod) : HandlerWithResultRegistration(typeof(TResult),
-                                                                                                                                        tommand => handlerMethod((TTommand)tommand) ?? throw new Exception("You cannot return null from a tommand handler"));
+                                                                                                                                        tommand => handlerMethod((TTommand)tommand)!);
 
    public class TueryHandlerRegistration<TTuery, TResult>(Func<TTuery, TResult> handlerMethod) : HandlerWithResultRegistration(typeof(TResult),
-                                                                                                                        tommand => handlerMethod((TTuery)tommand) ?? throw new Exception("You cannot return null from a tuery handler"));
+                                                                                                                        tommand => handlerMethod((TTuery)tommand)!);
 }
