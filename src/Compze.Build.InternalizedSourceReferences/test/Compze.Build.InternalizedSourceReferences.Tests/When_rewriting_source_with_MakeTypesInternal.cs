@@ -2,6 +2,7 @@ using Compze.Utilities.Testing.Must;
 using Compze.Utilities.Testing.XUnit.BDD;
 using static Compze.InternalizedSourceReferences.SourceRewriter;
 
+#pragma  warning disable CA1052
 // ReSharper disable InconsistentNaming
 
 namespace Compze.InternalizedSourceReferences.Tests;

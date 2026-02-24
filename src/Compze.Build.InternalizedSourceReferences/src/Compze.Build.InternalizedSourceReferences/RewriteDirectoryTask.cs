@@ -17,19 +17,21 @@ public class RewriteDirectoryTask : Microsoft.Build.Utilities.Task
          var inputs = InputDirectories.Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 
          Log.LogMessage(MessageImportance.Normal,
-            $"Compze.InternalizedSourceReferences: Rewriting [{string.Join(", ", inputs.Select(i => $"'{i}'"))}] → '{OutputDirectory}'");
+                        $"Compze.InternalizedSourceReferences: Rewriting [{string.Join(", ", inputs.Select(i => $"'{i}'"))}] → '{OutputDirectory}'");
 
          SourceRewriter.RewriteDirectories(inputs, OutputDirectory);
 
          Log.LogMessage(MessageImportance.Normal,
-            "Compze.InternalizedSourceReferences: Rewrite complete.");
+                        "Compze.InternalizedSourceReferences: Rewrite complete.");
 
          return true;
       }
+#pragma warning disable CA1031 //Returning false IS surfacing an exception in this API
       catch(Exception ex)
       {
          Log.LogErrorFromException(ex, showStackTrace: true);
          return false;
       }
+#pragma warning restore CA1031 //Returning false IS surfacing an exception in this API
    }
 }
