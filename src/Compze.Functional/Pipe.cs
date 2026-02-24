@@ -44,8 +44,8 @@ public static class Pipe
    public static unit _then<TValue>(this TValue _, Action action) => unit.From(action);
 
    ///<summary>Throws Exception if <paramref name="predicate"/> returns false when applied to <paramref name="it"/> otherwise returns <paramref name="it"/></summary>
-   public static T _assert<T>(this T it, Predicate<T> predicate, Func<T, string> tessageFactory) =>
-      it._assert(predicate, () => new Exception(tessageFactory(it)));
+   public static T _assert<T>(this T it, Predicate<T> predicate, Func<T, string> messageFactory) =>
+      it._assert(predicate, () => new Exception(messageFactory(it)));
 
    ///<summary>Throws <paramref name="exceptionFactory"/>() if <paramref name="predicate"/> returns false when applied to <paramref name="it"/> otherwise returns <paramref name="it"/></summary>
    public static T _assert<T>(this T it, Predicate<T> predicate, Func<Exception> exceptionFactory)
