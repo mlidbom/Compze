@@ -24,7 +24,7 @@ public static class MonitorCEExtensions
             return read();
          });
 
-   public static TResult ReadOrUpdate<TResult>(this IMonitorCE @this, Func<TResult?> tryRead, Action updateOnFailedRead, TimeSpan? timeout = null)
+   public static TResult ReadOrUpdate<TResult>(this IMonitorCE @this, Func<TResult?> tryRead, Action updateOnFailedRead)
       where TResult : class =>
       @this.Read(() => tryRead() ?? @this.Update(() =>
       {
@@ -32,7 +32,7 @@ public static class MonitorCEExtensions
          return tryRead() ?? throw new Exception($"{nameof(tryRead)} returned null even after {nameof(updateOnFailedRead)} had been called.");
       }));
 
-   public static TResult ReadOrUpdate<TResult>(this IMonitorCE @this, Func<bool> canRead, Func<TResult> read, Action update, TimeSpan? timeout = null) =>
+   public static TResult ReadOrUpdate<TResult>(this IMonitorCE @this, Func<bool> canRead, Func<TResult> read, Action update) =>
       @this.Read(() => canRead()
                           ? read()
                           : @this.Update(() =>

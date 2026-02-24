@@ -1,4 +1,5 @@
 using System;
+using Compze.Utilities.SystemCE.ThreadingCE.Utilities;
 
 namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 

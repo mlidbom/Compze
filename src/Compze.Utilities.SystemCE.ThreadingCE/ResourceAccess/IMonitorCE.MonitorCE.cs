@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using Compze.Utilities.Contracts;
+using Compze.Utilities.SystemCE.ThreadingCE.Utilities;
 
 namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
@@ -47,8 +48,8 @@ public partial interface IMonitorCE
       {
          LockTimeout = lockTimeout;
          WaitTimeout = waitTimeout;
-         _readLock = new Disposable(ReleaseLock);
-         _updateLock = new Disposable(() =>
+         _readLock = new LockDisposer(ReleaseLock);
+         _updateLock = new LockDisposer(() =>
          {
             _monitor.NotifyWaitingThreadsAboutUpdates(); //All threads blocked on Monitor.Wait for our _lockObject will now try and reacquire the lock
             ReleaseLock();

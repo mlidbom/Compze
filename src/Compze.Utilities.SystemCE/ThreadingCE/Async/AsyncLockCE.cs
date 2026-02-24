@@ -50,7 +50,6 @@ public interface IAsyncLockCE : IDisposable
 
       public async Task<TReturn> LockedAsync<TReturn>(Func<Task<TReturn>> lockedAction)
       {
-         await using var exit = new AsyncDisposable(Exit).ConfigureAwait(false);//Analyzer does not understand caf() here for some reason and emits a warning.
          if(_lockEntranceCount.Value == 0)
          {
             if(!await _semaphore.WaitAsync(_timeout).caf())
@@ -60,6 +59,7 @@ public interface IAsyncLockCE : IDisposable
          }
 
          _lockEntranceCount.Value += 1;
+         await using var exit = new AsyncDisposable(Exit).ConfigureAwait(false);//Analyzer does not understand caf() here for some reason and emits a warning.
          return await lockedAction().caf();
       }
 
@@ -67,7 +67,6 @@ public interface IAsyncLockCE : IDisposable
 
       public TReturn Locked<TReturn>(Func<TReturn> lockedAction)
       {
-         using var exit = new Disposable(Exit);
          if(_lockEntranceCount.Value == 0)
          {
             if(!_semaphore.Wait(_timeout))
@@ -77,6 +76,7 @@ public interface IAsyncLockCE : IDisposable
          }
 
          _lockEntranceCount.Value += 1;
+         using var exit = new Disposable(Exit);
          return lockedAction();
       }
 

@@ -16,7 +16,7 @@ public class ComponentRegistrationWithoutInstantiationSpec<TService> where TServ
       ServiceTypes = serviceTypes.Concat([typeof(TService)]).ToList();
    }
 
-   public ComponentRegistration<TService> CreatedBy<TImplementation>(Func<IServiceLocatorKernel, TImplementation> factoryMethod,
+   internal ComponentRegistration<TService> CreatedBy<TImplementation>(Func<IServiceLocatorKernel, TImplementation> factoryMethod,
                                                                        IEnumerable<Type> dependencyTypes)
       where TImplementation : TService
    {
