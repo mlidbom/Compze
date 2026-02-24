@@ -18,4 +18,7 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Contracts)' != 'true'">
     <ProjectReference Include="..\Compze.Utilities.Contracts\Compze.Utilities.Contracts.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="ActionFuncHarmonization\" />
+  </ItemGroup>
 </Project>

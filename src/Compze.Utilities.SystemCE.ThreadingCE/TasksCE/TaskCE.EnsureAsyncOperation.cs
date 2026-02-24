@@ -1,7 +1,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Compze.Utilities.Functional.ActionFuncHarmonization;
+using Compze.Utilities.Functional;
 
 namespace Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 

@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Compze.Utilities.Functional;
-using Compze.Utilities.Functional.ActionFuncHarmonization;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Utilities.SystemCE.ThreadingCE.Async;
