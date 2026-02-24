@@ -1,5 +1,4 @@
 using System;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 // ReSharper disable InconsistentNaming
@@ -10,7 +9,7 @@ namespace Compze.Functional;
 /// Enables chaining method calls in a fluent functional programming style rather than having to use separate lines and temporary variables.
 /// Think of these as "missing operators" for .NET types rather than traditional extension methods.
 /// 
-/// NAMING CONVENTION: All methods use _camelCase naming (e.g. _tap, _then, _assert) for two critical reasons:
+/// NAMING CONVENTION: All methods use _camelCase naming (e.g. _tap, _then) for two critical reasons:
 /// 
 /// 1. VISUAL DISTINCTION: The underscore prefix makes these instantly recognizable
 ///    as language-like functional operators, distinct from both standard PascalCase methods
@@ -43,26 +42,6 @@ public static class Pipe
 
    ///<summary> Executes <paramref name="action"/>, ignoring the previous value, and returns a <see cref="unit"/>.  Useful for chaining statements that return void.</summary>
    public static unit _then<TValue>(this TValue _, Action action) => unit.From(action);
-
-   ///<summary>Throws <see cref="Exception"/> if <paramref name="predicate"/> returns false when applied to <paramref name="it"/>. The exception message includes the predicate source expression and the value.</summary>
-   public static T _assert<T>(this T it, Predicate<T> predicate, [CallerArgumentExpression(nameof(predicate))] string? predicateExpression = null)
-   {
-      if(!predicate(it))
-         throw new AssertionFailedException($"Assertion failed: {predicateExpression} (value: {it})");
-      return it;
-   }
-
-   ///<summary>Throws Exception with message from <paramref name="messageFactory"/> if <paramref name="predicate"/> returns false when applied to <paramref name="it"/>. The factory is only invoked on failure, avoiding allocation in the success path.</summary>
-   public static T _assert<T>(this T it, Predicate<T> predicate, Func<T, string> messageFactory) =>
-      it._assert(predicate, () => new AssertionFailedException(messageFactory(it)));
-
-   ///<summary>Throws <paramref name="exceptionFactory"/>() if <paramref name="predicate"/> returns false when applied to <paramref name="it"/> otherwise returns <paramref name="it"/></summary>
-   public static T _assert<T>(this T it, Predicate<T> predicate, Func<Exception> exceptionFactory)
-   {
-      if(!predicate(it))
-         throw exceptionFactory();
-      return it;
-   }
 
    ///<summary>Mutates <paramref name="it"/> using <paramref name="mutate"/> and returns <paramref name="it"/></summary>
    public static async Task<T> _mutateAsync<T>(this T it, Func<T, Task> mutate)

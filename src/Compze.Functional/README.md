@@ -29,8 +29,9 @@ var result = initialValue
 Primary methods:
 - `_tap()` — execute side effect, return original value
 - `_mutate()` — intent declaring alias for _tap
-- `_assert()` — assert a condition and return original
 - `_then()` — discard the current value and continue with a new one. Enables one-liner implementations when the previous value is irrelevant.
+
+> **Note:** The `_assert()` method used in the examples above comes from [Compze.Utilities.Contracts](https://www.nuget.org/packages/Compze.Utilities.Contracts) — you may want to check it out.
 
 
 ## The Unit type
@@ -69,7 +70,7 @@ Lower case `unit` is sort of a wish for the future and the way we think it shoul
 
 | Package | Description |
 |---------|-------------|
-| [Compze.Utilities.Contracts](https://www.nuget.org/packages/Compze.Utilities.Contracts) | Design-by-contract assertions |
+| [Compze.Utilities.Contracts](https://www.nuget.org/packages/Compze.Utilities.Contracts) | Design-by-contract assertions, including the `_assert()` pipeline operator |
 
 ## License
 

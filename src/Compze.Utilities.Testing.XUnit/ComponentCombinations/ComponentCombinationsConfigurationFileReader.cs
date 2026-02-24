@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Compze.Functional;
+using Compze.Utilities.Contracts;
 using Compze.Utilities.SystemCE;
 
 namespace Compze.Utilities.Testing.XUnit.ComponentCombinations;
