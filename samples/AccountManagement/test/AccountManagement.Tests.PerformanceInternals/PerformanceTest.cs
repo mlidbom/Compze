@@ -16,6 +16,7 @@ using System.Collections.Concurrent;
 using System.Threading.Tasks;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using Compze.Utilities.Testing.Must;
+using Compze.Utilities.Testing.XUnit.BDD;
 using AccountId = AccountManagement.Domain.AccountId;
 
 namespace AccountManagement;
@@ -43,7 +44,7 @@ public class PerformanceTest : UniversalTestBase
       if(_clientEndpoint != null) await _clientEndpoint.DisposeAsync();
    }
 
-   [PCT] public void SingleThreaded_creates_XX_accounts_in_100_milliseconds() =>
+    [PCT] public void SingleThreaded_creates_XX_accounts_in_100_milliseconds() =>
       TimeAsserter.Execute(
          description: "Register accounts",
          action: () => _scenarioApi!.Register.Execute().Result.Status.Must().Be(RegistrationAttemptStatus.Successful),
