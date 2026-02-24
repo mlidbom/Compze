@@ -34,7 +34,7 @@ public abstract class AssertionContext : IAssertionContext
 #pragma warning restore CS8604 // Possible null reference argument.
 #pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
 
-   public static readonly string Separator = "-"._repeat(50).Join();
+   public static readonly string Separator = "-".Repeat(50).Join();
 }
 
 public class AssertionContext<T> : AssertionContext, IAssertionContext<T>
