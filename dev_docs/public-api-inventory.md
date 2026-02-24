@@ -15,7 +15,7 @@ For each type, put an `x` in one column:
 | # | Type | Notable members | Sample usage | Test usage | Public | Shared | Split |
 |---|------|----------------|--------------|------------|--------|--------|-------|
 | 1 | `unit` | `.Value`, `.From(Action)`, `.Func(Action)` | — | Yes (1) | [ ] | [ ] | [ ] |
-| 2 | `Pipe` | `._(func)`, `.tap(action)`, `.mutate(action)`, `.then(value)`, `.assert(pred, msg)`, `.mutateAsync(func)` | — | Yes (7) | [ ] | [ ] | [ ] |
+| 2 | `Pipe` | `._(func)`, `._tap(action)`, `._mutate(action)`, `._then(value)`, `._assert(pred, msg)`, `._mutateAsync(func)` | — | Yes (7) | [ ] | [ ] | [ ] |
 | 3 | `Option` / `Option<T>` | `Option.Some(v)`, `Option.None<T>()` | **Yes** (5) | — | [ ] | [ ] | [ ] |
 | 4 | `Some<T>` | `.Value` | **Yes** | — | [ ] | [ ] | [ ] |
 | 5 | `None<T>` | `.Instance` | **Yes** | — | [ ] | [ ] | [ ] |
@@ -80,7 +80,7 @@ For each type, put an `x` in one column:
 |---|------|----------------|--------------|------------|--------|--------|-------|
 | 44 | `ActionToUnitFuncConverter` | `.AsFunc(this Action)` (3 overloads) | — | — | [ ] | [ ] | [ ] |
 | 45 | `ActionToUnitFuncConverterAsync` | `.AsFunc(this Func<Task>)` (3 overloads) | — | — | [ ] | [ ] | [ ] |
-| 46 | `Func` (UnitFunc) | `.From(Action)`, `.From(Func<Task>)` (6 overloads) | — | — | [ ] | [ ] | [ ] |
+| 46 | `unit` | `.Func(Action)` (3 overloads), `.AsyncFunc(Func<Task>)` (3 overloads) | — | — | [ ] | [ ] | [ ] |
 | 47 | `UnitFuncToActionConverter` | `.AsAction(this Func<unit>)` (3 overloads) | — | — | [ ] | [ ] | [ ] |
 
 ### CollectionsCE

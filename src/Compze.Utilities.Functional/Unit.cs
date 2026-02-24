@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 
 namespace Compze.Utilities.Functional;
 
@@ -33,15 +34,59 @@ public readonly struct unit : IEquatable<unit>
       return Value;
    }
 
-   ///<summary>Creates a <see cref="Func"/> returning <see cref="unit"/> from an <see cref="Action"/>>, making it easy to call methods that take a <see cref="Func"/> when what you have is an Action
+   ///<summary>Creates a <see cref="Func{TResult}"/> returning <see cref="unit"/> from an <see cref="Action"/>, making it easy to call methods that take a <see cref="Func{TResult}"/> when what you have is a method group.
    /// <code>
-   ///   ITakeFunc(unit.Func(() => DoSomething()));
+   ///   ITakeFunc(unit.Func(anInstance.VoidMethod));
    /// </code>
    /// </summary>
    public static Func<unit> Func(Action action) =>
       () =>
       {
          action();
+         return Value;
+      };
+
+   ///<inheritdoc cref="Func(Action)"/>
+   public static Func<TParam, unit> Func<TParam>(Action<TParam> action) =>
+      param =>
+      {
+         action(param);
+         return Value;
+      };
+
+   ///<inheritdoc cref="Func(Action)"/>
+   public static Func<TParam, TParam2, unit> Func<TParam, TParam2>(Action<TParam, TParam2> action) =>
+      (param, param2) =>
+      {
+         action(param, param2);
+         return Value;
+      };
+
+   ///<summary>Creates a <see cref="Func{TResult}"/> returning <see cref="Task{T}"/> of <see cref="unit"/> from a <see cref="Func{TResult}"/> returning <see cref="Task"/>, making it easy to call methods that take a typed async func when what you have is a void-returning async method group.
+   /// <code>
+   ///   ITakeAsyncFunc(unit.AsyncFunc(anInstance.AsyncVoidMethod));
+   /// </code>
+   /// </summary>
+   public static Func<Task<unit>> AsyncFunc(Func<Task> action) =>
+      async () =>
+      {
+         await action().ConfigureAwait(false);
+         return Value;
+      };
+
+   ///<inheritdoc cref="AsyncFunc(Func{Task})"/>
+   public static Func<TParam, Task<unit>> AsyncFunc<TParam>(Func<TParam, Task> action) =>
+      async param =>
+      {
+         await action(param).ConfigureAwait(false);
+         return Value;
+      };
+
+   ///<inheritdoc cref="AsyncFunc(Func{Task})"/>
+   public static Func<TParam, TParam2, Task<unit>> AsyncFunc<TParam, TParam2>(Func<TParam, TParam2, Task> action) =>
+      async (param, param2) =>
+      {
+         await action(param, param2).ConfigureAwait(false);
          return Value;
       };
 

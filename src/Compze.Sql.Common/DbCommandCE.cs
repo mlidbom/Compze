@@ -37,21 +37,21 @@ public static class DbCommandCE
       await @this.SetCommandText(commandText).PrepareStatement().ExecuteNonQueryAsync().caf();
 
    public static TCommand AppendCommandText<TCommand>(this TCommand @this, string append) where TCommand : DbCommand =>
-      @this.mutate(me => me.CommandText += append);
+      @this._mutate(me => me.CommandText += append);
 
    public static TCommand SetCommandText<TCommand>(this TCommand @this, string commandText) where TCommand : DbCommand =>
-      @this.mutate(me => me.CommandText = commandText);
+      @this._mutate(me => me.CommandText = commandText);
 
    public static TCommand PrepareStatement<TCommand>(this TCommand @this) where TCommand : DbCommand
    {
       Assert.State.Is(@this.CommandText.Length > 0, () => "Cannot prepare statement with empty CommandText");
-      return @this.mutate(me => me.Prepare());
+      return @this._mutate(me => me.Prepare());
    }
 
    public static async Task<TCommand> PrepareStatementAsync<TCommand>(this TCommand @this) where TCommand : DbCommand
    {
       Assert.State.Is(@this.CommandText.Length > 0, () => "Cannot prepare statement with empty CommandText");
-      return await @this.mutateAsync(async me => await me.PrepareAsync().caf()).caf();
+      return await @this._mutateAsync(async me => await me.PrepareAsync().caf()).caf();
    }
 
    public static IReadOnlyList<T> ExecuteReaderAndSelect<T, TCommand, TReader>(this TCommand @this, Func<TReader, T> select)

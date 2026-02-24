@@ -111,7 +111,7 @@ public partial class PgSqlTeventStoreSqlLayer
                                                  nextTeventReadOrder: nextTeventReadOrder == null ? null : new ReadOrder?(ReadOrder.Parse(nextTeventReadOrder)));
          });
 
-      return Assert.ReturnValue.NotNull(neighborhood).then(neighborhood);
+      return Assert.ReturnValue.NotNull(neighborhood)._then(neighborhood);
    }
 
    public void DeleteTaggregate(TaggregateId taggregateId)

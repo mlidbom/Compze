@@ -23,7 +23,7 @@ public class EntitiesByIdAndTypeCache
    public void Remove(object id, Type documentType) => _data.Update(data =>
    {
       IdAndType.Create(id, documentType)
-               .assert(data.Remove, it => $"No object with id: {it} of type: {documentType.FullName} is present");
+               ._assert(data.Remove, it => $"No object with id: {it} of type: {documentType.FullName} is present");
    });
 
    public IList<KeyValuePair<string, object>> GetAll() =>

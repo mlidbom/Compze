@@ -42,7 +42,7 @@ public static class ComponentCombinationsConfigurationFileReader
         .OrderBy(it => it.ToString())
         .DistinctBy(it => it.ToString())
         .ToList()
-        .assert(it => it.Any(), it => "found no configured component combinations");
+        ._assert(it => it.Any(), it => "found no configured component combinations");
 
    static string[] ReadFileLines(string fileName)
    {

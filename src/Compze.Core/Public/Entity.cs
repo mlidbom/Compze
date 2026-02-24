@@ -29,9 +29,9 @@ public class Entity<TEntity, TKey> : IEntity<TKey>
    /// <inheritdoc />
    public virtual EntityId<TKey> Id
    {
-      get => Assert.ReturnValue.Is(!Equals(_id.Value, default(TKey))).then(_id);
+      get => Assert.ReturnValue.Is(!Equals(_id.Value, default(TKey)))._then(_id);
       [Obsolete(ObsoleteMessage.ForInternalUseOnly)]
-      protected set => _id = Assert.Argument.NotNull(value).then(value);
+      protected set => _id = Assert.Argument.NotNull(value)._then(value);
    }
 
    ///<summary>Gets the id of the instance bypassing contract validation. Should probably never be used except by infrastructure code.</summary>
