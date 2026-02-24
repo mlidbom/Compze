@@ -9,7 +9,7 @@ namespace Compze.Utilities.Contracts.Specifications.PipeAssert;
 
 public class _assert_method
 {
-   public class with_default_message
+   public class called_with_only_a_predicate
    {
       [XF] public void returns_the_piped_value_when_the_predicate_passes() =>
          42._assert(x => x > 0).Must().Be(42);
@@ -29,7 +29,7 @@ public class _assert_method
             .Which.Message.Must().Contain("-1");
    }
 
-   public class with_message_factory
+   public class called_with_a_message_factory
    {
       [XF] public void returns_the_piped_value_when_the_predicate_passes() =>
          42._assert(x => x > 0, x => $"Expected positive but got {x}").Must().Be(42);
@@ -40,7 +40,7 @@ public class _assert_method
             .Which.Message.Must().Contain("Expected positive but got -1");
    }
 
-   public class with_exception_factory
+   public class called_with_an_exception_factory
    {
       [XF] public void returns_the_piped_value_when_the_predicate_passes() =>
          42._assert(x => x > 0, () => new InvalidOperationException("fail")).Must().Be(42);
