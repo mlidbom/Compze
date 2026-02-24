@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 // ReSharper disable InconsistentNaming
@@ -43,7 +44,15 @@ public static class Pipe
    ///<summary> Executes <paramref name="action"/>, ignoring the previous value, and returns a <see cref="unit"/>.  Useful for chaining statements that return void.</summary>
    public static unit _then<TValue>(this TValue _, Action action) => unit.From(action);
 
-   ///<summary>Throws Exception if <paramref name="predicate"/> returns false when applied to <paramref name="it"/> otherwise returns <paramref name="it"/></summary>
+   ///<summary>Throws <see cref="Exception"/> if <paramref name="predicate"/> returns false when applied to <paramref name="it"/>. The exception message includes the predicate source expression and the value.</summary>
+   public static T _assert<T>(this T it, Predicate<T> predicate, [CallerArgumentExpression(nameof(predicate))] string? predicateExpression = null)
+   {
+      if(!predicate(it))
+         throw new Exception($"Assertion failed: {predicateExpression} (value: {it})");
+      return it;
+   }
+
+   ///<summary>Throws Exception with message from <paramref name="messageFactory"/> if <paramref name="predicate"/> returns false when applied to <paramref name="it"/>. The factory is only invoked on failure, avoiding allocation in the success path.</summary>
    public static T _assert<T>(this T it, Predicate<T> predicate, Func<T, string> messageFactory) =>
       it._assert(predicate, () => new Exception(messageFactory(it)));
 

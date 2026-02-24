@@ -9,6 +9,26 @@ namespace Compze.Functional.Specifications.Pipe;
 
 public class _assert_method
 {
+   public class with_default_message
+   {
+      [XF] public void returns_value_when_predicate_is_true() =>
+         42._assert(x => x > 0).Must().Be(42);
+
+      [XF] public void throws_when_predicate_is_false() =>
+         Invoking(() => (-1)._assert(x => x > 0))
+            .Must().Throw<Exception>();
+
+      [XF] public void exception_message_contains_predicate_expression() =>
+         Invoking(() => (-1)._assert(x => x > 0))
+            .Must().Throw<Exception>()
+            .Which.Message.Must().Contain("x => x > 0");
+
+      [XF] public void exception_message_contains_the_value() =>
+         Invoking(() => (-1)._assert(x => x > 0))
+            .Must().Throw<Exception>()
+            .Which.Message.Must().Contain("-1");
+   }
+
    public class with_message_factory
    {
       [XF] public void returns_value_when_predicate_is_true() =>
