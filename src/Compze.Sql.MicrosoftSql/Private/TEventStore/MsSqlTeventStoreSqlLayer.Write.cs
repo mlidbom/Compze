@@ -106,7 +106,7 @@ public partial class MsSqlTeventStoreSqlLayer
                                                  nextTeventReadOrder: nextTeventReadOrder.IsNull ? null : new ReadOrder?(ReadOrder.FromSqlDecimal(nextTeventReadOrder)));
          });
 
-      return Assert.ReturnValue.NotNull(neighborhood).then(neighborhood);
+      return Assert.ReturnValue.NotNull(neighborhood)._Then(neighborhood);
    }
 
    public void DeleteTaggregate(TaggregateId taggregateId)

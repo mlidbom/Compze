@@ -25,7 +25,7 @@ public static class DateTimeCE
                                This DateTime instance does not have a Kind specified. 
                                This means that it is impossible to accurately persist and restore, or serialize between systems, because it is impossible to know if it refers to the current TimeZone or to UTC timezone. 
                                Please make sure that all DateTime instances passed to methods which will result in them being persisted or serialized contains a Kind
-                               """).then(@this);
+                               """)._Then(@this);
 
    public static TimeSpan TimeElapsedSince(DateTime pointInThePast) => DateTime.UtcNow - pointInThePast;
 

@@ -51,9 +51,9 @@ public class ThreadGate : IThreadGate
 
    public bool TryAwait(TimeSpan timeout, Func<bool> condition) => _monitor.TryAwait(condition, timeout);
 
-   public IThreadGate SetPostPassThroughAction(Action<ThreadSnapshot> action) => this.mutate(_ => _monitor.Update(() => _postPassThroughAction = action));
-   public IThreadGate SetPrePassThroughAction(Action<ThreadSnapshot> action) => this.mutate(_ => _monitor.Update(() => _prePassThroughAction = action));
-   public IThreadGate SetPassThroughAction(Action<ThreadSnapshot> action) => this.mutate(_ => _monitor.Update(() => _passThroughAction = action));
+   public IThreadGate SetPostPassThroughAction(Action<ThreadSnapshot> action) => this._Mutate(_ => _monitor.Update(() => _postPassThroughAction = action));
+   public IThreadGate SetPrePassThroughAction(Action<ThreadSnapshot> action) => this._Mutate(_ => _monitor.Update(() => _prePassThroughAction = action));
+   public IThreadGate SetPassThroughAction(Action<ThreadSnapshot> action) => this._Mutate(_ => _monitor.Update(() => _passThroughAction = action));
 
    public IThreadGate ExecuteWithExclusiveLockWhen(TimeSpan timeout, Func<bool> condition, Action action)
    {

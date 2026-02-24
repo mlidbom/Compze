@@ -102,7 +102,7 @@ public partial class MySqlTeventStoreSqlLayer
                                                  nextTeventReadOrder: nextTeventReadOrder == null ? null : new ReadOrder?(ReadOrder.Parse(nextTeventReadOrder)));
          });
 
-      return Assert.ReturnValue.NotNull(neighborhood).then(neighborhood);
+      return Assert.ReturnValue.NotNull(neighborhood)._Then(neighborhood);
    }
 
    public void DeleteTaggregate(TaggregateId taggregateId)

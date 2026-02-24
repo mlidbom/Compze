@@ -20,7 +20,7 @@ public class SerializerTest : UniversalTestBase
 #pragma warning disable CA2000// We are disposing this disposable just a few lines down....
       _container = TestEnv.DIContainer
                          .CreateWithCurrentTestsPluggableComponents()
-                         .mutate(it => it.Register().TypeMapper());
+                         ._Mutate(it => it.Register().TypeMapper());
 #pragma warning disable CA2000
    }
 

@@ -30,13 +30,13 @@ public class VolatileLambdaTransactionParticipant : VolatileTransactionParticipa
    }
 
    public VolatileLambdaTransactionParticipant AddCommitTasks(params Action[] tasks) =>
-      this.mutate(_ => _commitTasks.AddRange(tasks));
+      this._Mutate(_ => _commitTasks.AddRange(tasks));
 
    public VolatileLambdaTransactionParticipant AddPrepareTasks(params Action[] tasks) =>
-      this.mutate(_ => _prepareTasks.AddRange(tasks));
+      this._Mutate(_ => _prepareTasks.AddRange(tasks));
 
    public VolatileLambdaTransactionParticipant AddRollbackTasks(params Action[] tasks) =>
-      this.mutate(_ => _rollbackTasks.AddRange(tasks));
+      this._Mutate(_ => _rollbackTasks.AddRange(tasks));
 
    protected override void OnCommit() => _commitTasks.InvokeAll();
    protected override void OnRollback() => _rollbackTasks.InvokeAll();

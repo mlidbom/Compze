@@ -126,7 +126,7 @@ public partial class MsSqlDocumentDbSqlLayer : IDocumentDbSqlLayer
                                                           .ExecuteReaderAndSelect(reader => new IDocumentDbSqlLayer.ReadRow(reader.GetGuid(2), reader.GetString(1))));
    }
 
-   static string TypeInClause(IReadOnlySet<TypeId> acceptableTypeIds) => Assert.Argument.Is(acceptableTypeIds.Any()).then("IN( '" + acceptableTypeIds.Select(guid => guid.ToString()).Join("', '") + "')\n");
+   static string TypeInClause(IReadOnlySet<TypeId> acceptableTypeIds) => Assert.Argument.Is(acceptableTypeIds.Any())._Then("IN( '" + acceptableTypeIds.Select(guid => guid.ToString()).Join("', '") + "')\n");
 
    static string UseUpdateLock(bool useUpdateLock) => useUpdateLock ? "With(UPDLOCK, ROWLOCK)" : "";
 

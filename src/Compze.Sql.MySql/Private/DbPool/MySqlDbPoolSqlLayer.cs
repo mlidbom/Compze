@@ -31,7 +31,7 @@ public sealed class MySqlDbPoolSqlLayer : IDbPoolSqlLayer
    }
 
    public string ConnectionStringFor(DbPoolDatabase db)
-      => _connectionStringBuilder.Update(it => it.mutate(me =>
+      => _connectionStringBuilder.Update(it => it._Mutate(me =>
       {
          me.Database = db.Name;
          me.MinimumPoolSize = 1;

@@ -18,9 +18,9 @@ public class EquivalencyConfig<TValue>
 
    public EquivalencyConfig<TValue> ExcludeTypeMember<TMember>(Expression<Func<TValue, TMember>> memberExpression) =>
       ExcludedMembers.Add(memberExpression.ExtractFinalMemberInfo())
-                     .then(this);
+                     ._Then(this);
 
-   public EquivalencyConfig<TValue> IgnoreTypes() => this.mutate(it => it.TypesIgnored = true);
+   public EquivalencyConfig<TValue> IgnoreTypes() => this._Mutate(it => it.TypesIgnored = true);
 }
 
 public static class Must_DeepEqual
