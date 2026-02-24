@@ -54,7 +54,7 @@ public partial class DbPool : StrictlyManagedResourceBase<DbPool>
 
    public string ConnectionStringFor(string reservationName) => _monitor.Update(() =>
    {
-      Assert.State.IsNotDisposed(Disposed, this);
+      Assert.State.NotDisposed(Disposed, this);
 
       var reservedDatabase = _transientCache.SingleOrDefault(db => db.ReservationName == reservationName);
       // ReSharper disable once ConditionIsAlwaysTrueOrFalse

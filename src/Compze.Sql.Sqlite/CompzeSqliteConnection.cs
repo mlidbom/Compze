@@ -43,14 +43,14 @@ public interface ICompzeSqliteConnection : IPoolableConnection, ICompzeDbConnect
 
       public void Open()
       {
-         Assert.State.IsNotDisposed(_disposed, this);
+         Assert.State.NotDisposed(_disposed, this);
          Connection.Open();
          _transactionParticipant.EnsureEnlistedInAnyAmbientTransaction();
       }
 
       public async Task OpenAsync()
       {
-         Assert.State.IsNotDisposed(_disposed, this);
+         Assert.State.NotDisposed(_disposed, this);
          await Connection.OpenAsync().caf();
          _transactionParticipant.EnsureEnlistedInAnyAmbientTransaction();
       }
@@ -59,7 +59,7 @@ public interface ICompzeSqliteConnection : IPoolableConnection, ICompzeDbConnect
 
       public SqliteCommand CreateCommand()
       {
-         Assert.State.IsNotDisposed(_disposed, this);
+         Assert.State.NotDisposed(_disposed, this);
          _transactionParticipant.EnsureEnlistedInAnyAmbientTransaction();
 
          var command = Connection.CreateCommand();

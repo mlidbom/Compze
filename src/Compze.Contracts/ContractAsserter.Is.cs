@@ -17,10 +17,9 @@ public static class ContractAsserterIsExtensions
          return @this;
       }
 
-      public ContractAsserter IsNotDisposed([DoesNotReturnIf(true)] bool isDisposed,
-                                            object theInstance)
+      public ContractAsserter NotDisposed([DoesNotReturnIf(true)] bool isDisposed, object theInstance)
       {
-         if(isDisposed) throw new ObjectDisposedException(theInstance.GetType().FullName);
+         ObjectDisposedException.ThrowIf(isDisposed, theInstance);
          return @this;
       }
    }
