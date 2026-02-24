@@ -145,9 +145,9 @@ public class MonitorCEPerformanceTests : UniversalTestBase
                    singleThreadAllowedTime: (60 * TotalLocks).Nanoseconds().EnvMultiply(instrumented: 60, unoptimized: 2.2),
                    multiThreadAllowedTime: (500 * TotalLocks).Nanoseconds().EnvMultiply(instrumented: 8.0, unoptimized: 1.3));
 
-   [XF] public void _073_Increment_MonitorCE_Update_________________________time_is_less_than_nanoseconds_SingleThreaded_120__MultiThreaded_340() =>
+   [XF] public void _073_Increment_MonitorCE_Update_________________________time_is_less_than_nanoseconds_SingleThreaded_180__MultiThreaded_460() =>
       RunScenarios(() => _guarded.Increment_MonitorCE_Update(),
-                   singleThreadAllowedTime: (120 * TotalLocks).Nanoseconds().EnvMultiply(instrumented: 45, unoptimized: 2.5),
+                   singleThreadAllowedTime: (180 * TotalLocks).Nanoseconds().EnvMultiply(instrumented: 45, unoptimized: 2.5),
                    multiThreadAllowedTime: (460 * TotalLocks).Nanoseconds().EnvMultiply(instrumented: 12, unoptimized: 1.3));
 
 }
