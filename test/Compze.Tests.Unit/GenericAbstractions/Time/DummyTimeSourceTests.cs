@@ -2,6 +2,7 @@ using System;
 using System.Globalization;
 using Compze.Core.Time.Public;
 using Compze.Tests.Infrastructure;
+using Compze.Utilities.SystemCE;
 using Compze.Utilities.Testing.Must;
 using Compze.Utilities.Testing.XUnit.BDD;
 
@@ -20,12 +21,12 @@ public class DummyTimeSourceTests : UniversalTestBase
    }
 
    [XF]
-   public void FromUtcTime_returns_an_instance_with_UtcTime_equal_to_supplied_value()
+   public void FromUtcTime_returns_an_instance_with_UtcTime_equal_to_supplied_value_truncated_to_microsecond_precision()
    {
       var utcNow = DateTime.UtcNow;
       UtcTimeSource.Test.FrozenAtUtc(utcNow).Run(() =>
       {
-         UtcTimeSource.UtcNow.Must().Be(utcNow);
+         UtcTimeSource.UtcNow.Must().Be(utcNow.TruncateToMicroseconds());
       });
    }
 

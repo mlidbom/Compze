@@ -29,4 +29,9 @@ public static class DateTimeCE
 
    public static TimeSpan TimeElapsedSince(DateTime pointInThePast) => DateTime.UtcNow - pointInThePast;
 
+   const long TicksPerMicrosecond = TimeSpan.TicksPerMillisecond / 1000; // 10
+
+   ///<summary>Truncates a DateTime to microsecond precision (6 fractional digits) by removing sub-microsecond ticks. This is the highest precision universally supported across all target databases (MySQL and PostgreSQL cap at microseconds).</summary>
+   public static DateTime TruncateToMicroseconds(this DateTime @this) => new(@this.Ticks - @this.Ticks % TicksPerMicrosecond, @this.Kind);
+
 }

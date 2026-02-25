@@ -30,7 +30,7 @@ public class TestingTimeSourceAdapter
 
    public class ConstantTimeSource(DateTime time) : IUtcTimeTimeSource
    {
-      public DateTime UtcNow { get; } = time;
+      public DateTime UtcNow { get; } = time.TruncateToMicroseconds();
    }
 
    public class TimeSourceOverride(IUtcTimeTimeSource theOverride)
