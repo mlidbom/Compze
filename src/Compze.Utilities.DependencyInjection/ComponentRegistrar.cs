@@ -10,7 +10,7 @@ public class ComponentRegistrar : IComponentRegistrar
 
    public void SetContainer(IDependencyInjectionContainer container)
    {
-      Contract.State.Fulfills(_container == null, () => "Container has already been set");
+      Contract.State.Assert(_container == null, () => "Container has already been set");
       _container = container;
    }
 

@@ -42,7 +42,7 @@ public class ThreadGate : IThreadGate
       using var _ = LogMethodEntryExit(nameof(AwaitLetOneThreadPassThrough));
       _monitor.Update(() =>
       {
-         Contract.State.Fulfills(!IsOpen);
+         Contract.State.Assert(!IsOpen);
          IsOpen = true;
          _lockOnNextPass = true;
       });

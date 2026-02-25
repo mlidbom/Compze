@@ -100,7 +100,7 @@ public partial class Outbox : IOutbox
    bool _running = false;
    public async Task StartAsync()
    {
-      Contract.State.Fulfills(!_running);
+      Contract.State.Assert(!_running);
 
       if(!_configuration.IsPureClientEndpoint)
       {
@@ -113,7 +113,7 @@ public partial class Outbox : IOutbox
 
    public async Task StopAsync()
    {
-      Contract.State.Fulfills(_running);
+      Contract.State.Assert(_running);
       _running = false;
       _retryPoller.Stop();
       await Task.CompletedTask.caf();

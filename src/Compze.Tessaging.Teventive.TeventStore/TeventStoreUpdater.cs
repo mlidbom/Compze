@@ -72,7 +72,7 @@ public class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
    TTaggregate LoadSpecificVersionInternal<TTaggregate>(TaggregateId taggregateId, int version, bool verifyVersion = true) where TTaggregate : ITaggregate
    {
       _taggregateTypeValidator.AssertIsValid<TTaggregate>();
-      Argument.Fulfills(version > 0);
+      Argument.Assert(version > 0);
 
       _usageGuard.EnsureAccessValid();
 

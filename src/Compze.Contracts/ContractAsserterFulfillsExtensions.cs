@@ -9,7 +9,7 @@ public static class ContractAsserterFulfillsExtensions
    extension(ContractAsserter @this)
    {
       [MethodImpl(MethodImplOptions.AggressiveInlining)]
-      public ContractAsserter Fulfills([DoesNotReturnIf(false)] bool value,
+      public ContractAsserter Assert([DoesNotReturnIf(false)] bool value,
                                        Func<string> createMessage)
       {
          if(!value) @this.ThrowFailed(createMessage.Invoke());
@@ -17,7 +17,7 @@ public static class ContractAsserterFulfillsExtensions
       }
 
       [MethodImpl(MethodImplOptions.AggressiveInlining)]
-      public ContractAsserter Fulfills([DoesNotReturnIf(false)] bool assert1,
+      public ContractAsserter Assert([DoesNotReturnIf(false)] bool assert1,
                                        [CallerArgumentExpression(nameof(assert1))] string expression1 = "")
       {
          if(!assert1) @this.ThrowFailed(expression1);
@@ -25,7 +25,7 @@ public static class ContractAsserterFulfillsExtensions
       }
 
       [MethodImpl(MethodImplOptions.AggressiveInlining)]
-      public ContractAsserter Fulfills([DoesNotReturnIf(false)] bool assert1,
+      public ContractAsserter Assert([DoesNotReturnIf(false)] bool assert1,
                                        [DoesNotReturnIf(false)] bool assert2,
                                        [CallerArgumentExpression(nameof(assert1))] string expression1 = "",
                                        [CallerArgumentExpression(nameof(assert2))] string expression2 = "")

@@ -39,7 +39,7 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
 
    protected Taggregate(TaggregateId id) : base(id)
    {
-      Contract.Argument.Fulfills(typeof(TTaggregateTevent).IsInterface);
+      Contract.Argument.Assert(typeof(TTaggregateTevent).IsInterface);
       _teventHandlersDispatcher.Register().IgnoreUnhandled<TTaggregateTevent>();
    }
 
@@ -57,7 +57,7 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
 
    protected TTevent Publish<TTevent>(TTevent tevent) where TTevent : TTaggregateTeventImplementation
    {
-      Contract.State.Fulfills(!_applyingTevents, () => "You cannot raise tevents from within tevent appliers");
+      Contract.State.Assert(!_applyingTevents, () => "You cannot raise tevents from within tevent appliers");
 
       var wrapped = WrapEvent(tevent);
 
@@ -117,7 +117,7 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
 
    void AssertInvariantsAreMetInternal()
    {
-      Contract.Invariant.Fulfills(Id != null, Id.Value != Guid.Empty);
+      Contract.Invariant.Assert(Id != null, Id.Value != Guid.Empty);
       AssertInvariantsAreMet();
    }
 
@@ -140,7 +140,7 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
 
    void ITaggregate.LoadFromHistory(IEnumerable<ITaggregateTevent> history)
    {
-      Contract.State.Fulfills(Version == 0, () => $"You can only call {nameof(ITaggregate.LoadFromHistory)} on an empty Taggregate with {nameof(Version)} == 0");
+      Contract.State.Assert(Version == 0, () => $"You can only call {nameof(ITaggregate.LoadFromHistory)} on an empty Taggregate with {nameof(Version)} == 0");
       history.ForEach(theTevent => ApplyTevent((TTaggregateTevent)theTevent));
       AssertInvariantsAreMetInternal();
    }
