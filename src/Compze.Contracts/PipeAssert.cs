@@ -48,7 +48,7 @@ public static class PipeAssert
    [MethodImpl(MethodImplOptions.AggressiveInlining)]
    public static T _assertNotNull<T>([NotNull] this T? @this, [CallerArgumentExpression(nameof(@this))] string? thisExpression = null) where T : class
    {
-      if(@this is null) ThrowAssertionFailed($"Assertion failed: {thisExpression}.{nameof(_assertNotNull)}() ## {thisExpression} was null");
+      if(@this is null) ThrowAssertionFailed($"Assertion failed: {thisExpression}.{nameof(_assertNotNull)}()");
       return @this;
    }
 
@@ -56,7 +56,7 @@ public static class PipeAssert
    [MethodImpl(MethodImplOptions.AggressiveInlining)]
    public static T _assertNotNull<T>([NotNull] this T? @this, [CallerArgumentExpression(nameof(@this))] string? thisExpression = null) where T : struct
    {
-      if(@this is null) ThrowAssertionFailed($"Assertion failed: {thisExpression}.{nameof(_assertNotNull)}() ## {thisExpression} was null");
+      if(@this is null) ThrowAssertionFailed($"Assertion failed: {thisExpression}.{nameof(_assertNotNull)}()");
       return @this.Value;
    }
 
@@ -64,7 +64,7 @@ public static class PipeAssert
    [MethodImpl(MethodImplOptions.AggressiveInlining)]
    public static T _assertNotDefault<T>(this T @this, [CallerArgumentExpression(nameof(@this))] string? thisExpression = null) where T : struct, IEquatable<T>
    {
-      if(@this.Equals(default)) ThrowAssertionFailed($"Assertion failed: {thisExpression}.{nameof(_assertNotDefault)}() ## {thisExpression} was: {@this}");
+      if(@this.Equals(default)) ThrowAssertionFailed($"Assertion failed: {thisExpression}.{nameof(_assertNotDefault)}()");
       return @this;
    }
 
