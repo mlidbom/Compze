@@ -43,7 +43,7 @@ public class Parallelism_policies : EndpointHostTestBase
       ClientEndpoint.ExecuteClientRequest(session => session.Post(MyCreateTaggregateTommand.Create()));
 
       MyRemoteTaggregateTeventHandlerThreadGate.AwaitQueueLengthEqualTo(1)
-                                             .TryAwaitQueueLengthEqualTo(2, timeout: 5.Seconds()).Must().Be(false);
+                                             .TryAwaitQueueLengthEqualTo(2, timeout: 100.Milliseconds()).Must().Be(false);
    }
 
    [PCT] public void Two_exactly_once_tommand_handlers_cannot_execute_in_parallel()
@@ -54,7 +54,7 @@ public class Parallelism_policies : EndpointHostTestBase
       RemoteEndpoint.ExecuteServerRequestInTransaction(session => session.Send(new MyExactlyOnceTommand()));
 
       MyExactlyOnceTommandHandlerThreadGate.AwaitQueueLengthEqualTo(1)
-                              .TryAwaitQueueLengthEqualTo(2, timeout: 5.Seconds()).Must().Be(false);
+                              .TryAwaitQueueLengthEqualTo(2, timeout: 100.Milliseconds()).Must().Be(false);
    }
 
    [PCT] public void Two_AtMostOnce_tommand_handlers_from_the_same_session_cannot_execute_in_parallel()
@@ -68,6 +68,6 @@ public class Parallelism_policies : EndpointHostTestBase
       });
 
       MyCreateTaggregateTommandHandlerThreadGate.AwaitQueueLengthEqualTo(1)
-                                               .TryAwaitQueueLengthEqualTo(2, timeout: 5.Seconds()).Must().Be(false);
+                                               .TryAwaitQueueLengthEqualTo(2, timeout: 100.Milliseconds()).Must().Be(false);
    }
 }

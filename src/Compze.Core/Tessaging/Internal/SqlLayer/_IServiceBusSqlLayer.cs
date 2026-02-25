@@ -35,7 +35,7 @@ public interface IServiceBusSqlLayer
    public interface IInboxSqlLayer
    {
       SaveTessageResult SaveTessage(TessageId tessageId, TypeId typeId, string serializedTessage);
-      void MarkAsSucceeded(TessageId tessageId);
+      int MarkAsSucceeded(TessageId tessageId);
       int RecordException(TessageId tessageId, string exceptionStackTrace, string exceptionTessage, string exceptionType);
       int MarkAsFailed(TessageId tessageId);
       Task InitAsync();

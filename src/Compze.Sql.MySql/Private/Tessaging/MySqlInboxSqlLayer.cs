@@ -40,11 +40,10 @@ public partial class MySqlInboxSqlLayer(IMySqlConnectionPool connectionFactory, 
          });
    }
 
-   public void MarkAsSucceeded(TessageId tessageId)
+   public int MarkAsSucceeded(TessageId tessageId)
    {
-      _connectionFactory.UseCommand(
+      return _connectionFactory.UseCommand(
          command =>
-         {
             command
               .SetCommandText(
                   $"""
@@ -56,9 +55,7 @@ public partial class MySqlInboxSqlLayer(IMySqlConnectionPool connectionFactory, 
 
                    """)
               .AddParameter(TessageTable.TessageId, tessageId.Value)
-              .ExecuteNonQuery()
-              ._assert(affectedRows => affectedRows == 1);
-         });
+              .ExecuteNonQuery());
    }
 
    public int RecordException(TessageId tessageId, string exceptionStackTrace, string exceptionTessage, string exceptionType)

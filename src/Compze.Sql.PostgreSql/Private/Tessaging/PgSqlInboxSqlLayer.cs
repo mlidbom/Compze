@@ -42,11 +42,10 @@ public partial class PgSqlInboxSqlLayer(IPgSqlConnectionPool connectionFactory, 
          });
    }
 
-   public void MarkAsSucceeded(TessageId tessageId)
+   public int MarkAsSucceeded(TessageId tessageId)
    {
-      _connectionFactory.UseCommand(
+      return _connectionFactory.UseCommand(
          command =>
-         {
             command
               .SetCommandText(
                   $"""
@@ -59,9 +58,7 @@ public partial class PgSqlInboxSqlLayer(IPgSqlConnectionPool connectionFactory, 
                    """)
               .AddParameter(TessageTable.TessageId, tessageId.Value)
               .PrepareStatement()
-              .ExecuteNonQuery()
-              ._assert(affectedRows => affectedRows == 1);
-         });
+              .ExecuteNonQuery());
    }
 
    public int RecordException(TessageId tessageId, string exceptionStackTrace, string exceptionTessage, string exceptionType)

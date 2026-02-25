@@ -15,7 +15,8 @@ public class InboxTessageStorage(IServiceBusSqlLayer.IInboxSqlLayer sqlLayer) : 
       => _sqlLayer.SaveTessage(tessage.TessageId, tessage.TessageTypeId, tessage.Body);
 
    public void MarkAsSucceeded(TransportTessage.InComing tessage)
-      => _sqlLayer.MarkAsSucceeded(tessage.TessageId);
+      => _sqlLayer.MarkAsSucceeded(tessage.TessageId)
+               ._assert(affectedRows => affectedRows == 1);
 
    public void RecordException(TransportTessage.InComing tessage, Exception exception)
    {

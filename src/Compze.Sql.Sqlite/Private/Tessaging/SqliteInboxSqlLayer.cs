@@ -40,11 +40,10 @@ public partial class SqliteInboxSqlLayer(ISqliteConnectionPool connectionFactory
          });
    }
 
-   public void MarkAsSucceeded(TessageId tessageId)
+   public int MarkAsSucceeded(TessageId tessageId)
    {
-      _connectionFactory.UseCommand(
+      return _connectionFactory.UseCommand(
          command =>
-         {
             command
               .SetCommandText(
                   $"""
@@ -56,9 +55,7 @@ public partial class SqliteInboxSqlLayer(ISqliteConnectionPool connectionFactory
 
                    """)
               .AddVarcharParameter(TessageTable.TessageId, 36, tessageId.ToString())
-              .ExecuteNonQuery()
-              ._assert(affectedRows => affectedRows == 1);
-         });
+              .ExecuteNonQuery());
    }
 
    public int RecordException(TessageId tessageId, string exceptionStackTrace, string exceptionTessage, string exceptionType)
