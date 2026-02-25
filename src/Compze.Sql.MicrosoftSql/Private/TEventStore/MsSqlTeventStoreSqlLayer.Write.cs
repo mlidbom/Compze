@@ -42,7 +42,7 @@ public partial class MsSqlTeventStoreSqlLayer
                                          END
 
                                          """)
-                                    .AddParameter(Tevent.TaggregateId, SqlDbType.UniqueIdentifier, data.TaggregateId)
+                                    .AddParameter(Tevent.TaggregateId, SqlDbType.UniqueIdentifier, data.TaggregateId.Value)
                                     .AddParameter(Tevent.InsertedVersion, data.StorageInformation.InsertedVersion)
                                     .AddParameter(Tevent.TeventType, data.TeventType.Value)
                                     .AddParameter(Tevent.TeventId, data.TeventId.Value)
