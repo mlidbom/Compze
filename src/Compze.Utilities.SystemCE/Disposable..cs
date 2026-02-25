@@ -13,7 +13,7 @@ public class Disposable : IDisposable
    ///<summary>Constructs an instance that will call <param name="onDispose"> when disposed.</param></summary>
    public Disposable(Action onDispose)
    {
-      Assert.Argument.NotNull(onDispose);
+      ContractAssertion.Argument.NotNull(onDispose);
       _onDispose = onDispose;
    }
 

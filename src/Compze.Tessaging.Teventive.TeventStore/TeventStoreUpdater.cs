@@ -16,7 +16,7 @@ using Compze.Core.Tessaging.Teventive.TeventStore.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.Public.Exceptions;
 using Compze.Utilities.SystemCE.UsageGuards;
 using Compze.Contracts;
-using static Compze.Contracts.Assert;
+using static Compze.Contracts.ContractAssertion;
 
 namespace Compze.Tessaging.Teventive.TeventStore;
 

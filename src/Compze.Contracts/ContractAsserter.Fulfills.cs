@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
@@ -7,6 +8,14 @@ public static class ContractAsserterFulfillsExtensions
 {
    extension(ContractAsserter @this)
    {
+      [MethodImpl(MethodImplOptions.AggressiveInlining)]
+      public ContractAsserter Fulfills([DoesNotReturnIf(false)] bool value,
+                                       Func<string> createMessage)
+      {
+         if(!value) @this.ThrowFailed(createMessage.Invoke());
+         return @this;
+      }
+
       [MethodImpl(MethodImplOptions.AggressiveInlining)]
       public ContractAsserter Fulfills([DoesNotReturnIf(false)] bool assert1,
                                        [CallerArgumentExpression(nameof(assert1))] string expression1 = "")

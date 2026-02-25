@@ -10,7 +10,7 @@ public static class TransactionCE
    {
       @this.TransactionCompleted += (_, args) =>
       {
-         Assert.Argument.NotNull(args.Transaction);
+         ContractAssertion.Argument.NotNull(args.Transaction);
          if(args.Transaction.TransactionInformation.Status == TransactionStatus.Committed)
          {
             action();

@@ -12,7 +12,7 @@ public class ObjectNotDefaultPerformanceTests
       const int one = 1;
 
       TimeAsserter.Execute(
-         action: () => Assert.Argument.NotDefault(one),
+         action: () => ContractAssertion.Argument.NotDefault(one),
          iterations: 10_000,
          maxTotal: 5.Milliseconds().EnvMultiply(instrumented: 6));
    }

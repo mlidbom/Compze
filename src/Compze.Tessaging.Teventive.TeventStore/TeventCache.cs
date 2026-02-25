@@ -45,7 +45,7 @@ public class TeventCache : IDisposable, ITeventCache
       {
          get
          {
-            Assert.State.NotNull(Transaction.Current);
+            ContractAssertion.State.NotNull(Transaction.Current);
             var transactionId = Transaction.Current.TransactionInformation.LocalIdentifier;
             Dictionary<TaggregateId, Entry>? overlay = null;
 

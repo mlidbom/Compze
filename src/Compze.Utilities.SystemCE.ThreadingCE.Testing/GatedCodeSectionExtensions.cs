@@ -53,7 +53,7 @@ public static class GatedCodeSectionExtensions
 
    public static IGatedCodeSection AssertIsEmpty(this IGatedCodeSection @this)
    {
-      Assert.State.Is(@this.IsEmpty(), () => $"{nameof(IGatedCodeSection)} must be empty when calling this method");
+      ContractAssertion.State.Fulfills(@this.IsEmpty(), () => $"{nameof(IGatedCodeSection)} must be empty when calling this method");
       return @this;
    }
 }

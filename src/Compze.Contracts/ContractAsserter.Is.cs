@@ -10,10 +10,9 @@ public static class ContractAsserterIsExtensions
    {
       [MethodImpl(MethodImplOptions.AggressiveInlining)]
       public ContractAsserter Is([DoesNotReturnIf(false)] bool value,
-                                 Func<string>? createMessage = null,
                                  [CallerArgumentExpression(nameof(value))] string valueString = "")
       {
-         if(!value) @this.ThrowFailed(createMessage?.Invoke() ?? valueString);
+         if(!value) @this.ThrowFailed(valueString);
          return @this;
       }
 

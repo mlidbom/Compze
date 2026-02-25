@@ -5,7 +5,7 @@ using Compze.Functional;
 using Compze.Contracts;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
-using static Compze.Contracts.Assert;
+using static Compze.Contracts.ContractAssertion;
 
 namespace Compze.Core.DocumentDb.Infrastructure;
 

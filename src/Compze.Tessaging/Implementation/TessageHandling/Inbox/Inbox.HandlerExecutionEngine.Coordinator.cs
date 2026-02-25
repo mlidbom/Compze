@@ -11,7 +11,7 @@ using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 using Compze.Contracts;
-using static Compze.Contracts.Assert;
+using static Compze.Contracts.ContractAssertion;
 
 namespace Compze.Tessaging.Implementation.TessageHandling.Inbox;
 

@@ -46,7 +46,7 @@ public class MemoryInboxTransportServer : IInboxTransportServer
 
    public Task StartAsync()
    {
-      Assert.State.Is(!Running);
+      ContractAssertion.State.Is(!Running);
       Running = true;
       return Task.CompletedTask;
    }

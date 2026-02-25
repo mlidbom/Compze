@@ -2,7 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Reflection;
 using Compze.Contracts;
-using static Compze.Contracts.Assert;
+using static Compze.Contracts.ContractAssertion;
 
 namespace Compze.Utilities.SystemCE.ReflectionCE;
 

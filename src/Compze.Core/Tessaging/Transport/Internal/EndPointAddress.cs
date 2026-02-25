@@ -8,7 +8,7 @@ public record EndPointAddress
    public Uri Uri { get; }
    public EndPointAddress(Uri uri)
    {
-      Assert.Argument.NotNullEmptyOrWhitespace(uri.AbsoluteUri);
+      ContractAssertion.Argument.NotNullEmptyOrWhitespace(uri.AbsoluteUri);
       Uri = uri;
    }
 }

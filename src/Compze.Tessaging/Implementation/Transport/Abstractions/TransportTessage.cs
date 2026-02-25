@@ -27,7 +27,7 @@ public static class TransportTessage
          {
             _tessage = _serializer.DeserializeTessage(_tessageType, Body);
 
-            Assert.State.Is(_tessage is not IExactlyOnceTessage actualTessage || TessageId == actualTessage.Id);
+            ContractAssertion.State.Is(_tessage is not IExactlyOnceTessage actualTessage || TessageId == actualTessage.Id);
          }
 
          return _tessage;

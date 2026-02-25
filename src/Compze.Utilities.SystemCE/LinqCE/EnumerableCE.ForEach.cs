@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Compze.Functional;
 using JetBrains.Annotations;
 using Compze.Contracts;
-using static Compze.Contracts.Assert;
+using static Compze.Contracts.ContractAssertion;
 
 namespace Compze.Utilities.SystemCE.LinqCE;
 

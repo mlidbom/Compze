@@ -11,7 +11,7 @@ class LockDisposer : IDisposable
    ///<summary>Constructs an instance that will call <param name="action"> when disposed.</param></summary>
    public LockDisposer(Action action)
    {
-      Assert.Argument.NotNull(action);
+      ContractAssertion.Argument.NotNull(action);
       _action = action;
    }
 

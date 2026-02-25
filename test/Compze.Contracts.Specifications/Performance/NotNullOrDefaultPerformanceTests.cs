@@ -12,7 +12,7 @@ public class NotNullOrDefaultPerformanceTests
       int? notNullOrDefault = 1;
 
       TimeAsserter.Execute(
-         action: () => Assert.Argument.NotNullOrDefault(notNullOrDefault),
+         action: () => ContractAssertion.Argument.NotNullOrDefault(notNullOrDefault),
          iterations: 10_000,
          maxTotal: 3.Milliseconds().EnvMultiply(instrumented: 6.0)
       );

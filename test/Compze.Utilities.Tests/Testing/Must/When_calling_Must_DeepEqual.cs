@@ -222,7 +222,7 @@ public class When_calling_Must_DeepEqual : UniversalTestBase
    {
       public string PublicProperty { get; set; } = publicValue;
       internal string InternalProperty { get; set; } = internalValue;
-      private readonly string PrivateField = privateValue;
+      readonly string PrivateField = privateValue;
 
       public string GetPrivateField() => PrivateField;
    }

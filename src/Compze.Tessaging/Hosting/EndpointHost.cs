@@ -58,7 +58,7 @@ public class EndpointHost : IEndpointHost
    {
       try
       {
-         Assert.State.Is(!_isStarted).Is(Endpoints.None(endpoint => endpoint.IsRunning));
+         ContractAssertion.State.Is(!_isStarted).Is(Endpoints.None(endpoint => endpoint.IsRunning));
          _isStarted = true;
 
          await Task.WhenAll(Endpoints.Select(endpointToStart => endpointToStart.StartListeningComponentsAsync())).WithAggregateExceptions().caf();

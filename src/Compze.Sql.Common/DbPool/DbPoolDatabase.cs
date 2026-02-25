@@ -33,7 +33,7 @@ public class DbPoolDatabase
 
    public DbPoolDatabase Release()
    {
-      Assert.State.Is(IsReserved);
+      ContractAssertion.State.Is(IsReserved);
       IsReserved = false;
       IsClean = false;
       ReservationName = string.Empty;
@@ -43,14 +43,14 @@ public class DbPoolDatabase
 
    public DbPoolDatabase Clean()
    {
-      Assert.State.Is(!IsClean);
+      ContractAssertion.State.Is(!IsClean);
       IsClean = true;
       return this;
    }
 
    public DbPoolDatabase Reserve(string reservationName, DbPoolId poolId, TimeSpan reservationLength)
    {
-      Assert.State.Is(!IsReserved);
+      ContractAssertion.State.Is(!IsReserved);
 
       IsReserved = true;
       ReservationName = reservationName;

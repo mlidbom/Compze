@@ -10,7 +10,7 @@ public abstract class TeventMigration<TMigratedTaggregateTeventHierarchyRootInte
 {
    protected TeventMigration(Guid id, string name, string description)
    {
-      Assert.Argument.NotDefault(id).NotNullEmptyOrWhitespace(description).NotNullEmptyOrWhitespace(name).Is(typeof(TMigratedTaggregateTeventHierarchyRootInterface).IsInterface);
+      ContractAssertion.Argument.NotDefault(id).NotNullEmptyOrWhitespace(description).NotNullEmptyOrWhitespace(name).Is(typeof(TMigratedTaggregateTeventHierarchyRootInterface).IsInterface);
 
       Id = id;
       Name = name;

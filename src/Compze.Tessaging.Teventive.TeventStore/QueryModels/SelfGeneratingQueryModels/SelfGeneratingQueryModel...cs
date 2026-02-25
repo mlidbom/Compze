@@ -12,7 +12,7 @@ public partial class SelfGeneratingQueryModel<TQueryModel, TTaggregateTevent> : 
    where TTaggregateTevent : class, ITaggregateTevent
 {
    //Yes empty. Id should be assigned by an action, and it should be obvious that the taggregate in invalid until that happens
-   protected SelfGeneratingQueryModel() : base(null!) => Assert.Argument.Is(typeof(TTaggregateTevent).IsInterface);
+   protected SelfGeneratingQueryModel() : base(null!) => ContractAssertion.Argument.Is(typeof(TTaggregateTevent).IsInterface);
 
    readonly IMutableTeventDispatcher<TTaggregateTevent> _teventDispatcher = IMutableTeventDispatcher<TTaggregateTevent>.New();
 
@@ -35,7 +35,7 @@ public partial class SelfGeneratingQueryModel<TQueryModel, TTaggregateTevent> : 
 
    public void LoadFromHistory(IEnumerable<ITaggregateTevent> history)
    {
-      Assert.State.Is(Version == 0);
+      ContractAssertion.State.Is(Version == 0);
       history.ForEach(theTevent => ApplyTevent((TTaggregateTevent)theTevent));
       AssertInvariantsAreMet();
    }
