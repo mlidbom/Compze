@@ -52,6 +52,8 @@ public class EndpointHost : IEndpointHost
 
    public virtual IEndpoint RegisterClientEndpoint(Action<IEndpointBuilder> setup) => InternalRegisterEndpoint(ClientEndpointConfiguration, setup);
 
+   public virtual IClient RegisterClient(Action<IEndpointBuilder>? setup = null) => new Client(RegisterClientEndpoint(setup ?? (_ => {})));
+
    bool _isStarted;
 
    public async Task StartAsync()

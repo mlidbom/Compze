@@ -27,6 +27,8 @@ public abstract class TestingEndpointHostBase : EndpointHost, ITestingEndpointHo
 
    public abstract IEndpoint RegisterClientEndpointForRegisteredEndpoints(Action<IEndpointBuilder>? setup = null);
 
+   public abstract IClient RegisterClientForRegisteredEndpoints(Action<IEndpointBuilder>? setup = null);
+
    public TException AssertThrown<TException>() where TException : Exception
    {
       WaitForEndpointsToBeAtRest();

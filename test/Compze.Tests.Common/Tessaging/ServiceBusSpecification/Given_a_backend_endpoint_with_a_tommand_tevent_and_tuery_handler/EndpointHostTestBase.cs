@@ -42,6 +42,7 @@ public abstract class EndpointHostTestBase : UniversalTestBase
 
    public IEndpoint BackendEndPoint { get; private set; } = null!;
    protected IEndpoint ClientEndpoint { get; private set; } = null!;
+   protected IClient Client { get; private set; } = null!;
    protected IEndpoint RemoteEndpoint { get; private set; } = null!;
 
    readonly IDependencyInjectionContainer _rootContainer;
@@ -121,6 +122,7 @@ public abstract class EndpointHostTestBase : UniversalTestBase
                                              });
 
       ClientEndpoint = Host.RegisterClientEndpointForRegisteredEndpoints();
+      Client = Host.RegisterClientForRegisteredEndpoints();
    }
 
    protected async Task StartHostAsync()

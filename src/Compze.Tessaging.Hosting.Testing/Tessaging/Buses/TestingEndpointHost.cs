@@ -70,4 +70,9 @@ public class TestingEndpointHost : TestingEndpointHostBase
    {
       setup?.Invoke(builder);
    });
+
+   public override IClient RegisterClientForRegisteredEndpoints(Action<IEndpointBuilder>? setup = null) => RegisterClient(builder =>
+   {
+      setup?.Invoke(builder);
+   });
 }
