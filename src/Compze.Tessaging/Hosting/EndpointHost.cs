@@ -50,7 +50,7 @@ public class EndpointHost : IEndpointHost
                                                                            id: new EndpointId(Guid.Parse("D4C869D2-68EF-469C-A5D6-37FCF2EC152A")),
                                                                            isPureClientEndpoint: true);
 
-   public virtual IEndpoint RegisterClientEndpoint(Action<IEndpointBuilder> setup) => InternalRegisterEndpoint(ClientEndpointConfiguration, setup);
+   protected virtual IEndpoint RegisterClientEndpoint(Action<IEndpointBuilder> setup) => InternalRegisterEndpoint(ClientEndpointConfiguration, setup);
 
    public virtual IClient RegisterClient(Action<IEndpointBuilder>? setup = null) => new Client(RegisterClientEndpoint(setup ?? (_ => {})));
 

@@ -25,8 +25,6 @@ public abstract class TestingEndpointHostBase : EndpointHost, ITestingEndpointHo
 
    void WaitForEndpointsToBeAtRest(TimeSpan? timeoutOverride = null) => Endpoints.ForEach(endpoint => endpoint.AwaitNoTessagesInFlight(timeoutOverride));
 
-   public abstract IEndpoint RegisterClientEndpointForRegisteredEndpoints(Action<IEndpointBuilder>? setup = null);
-
    public abstract IClient RegisterClientForRegisteredEndpoints(Action<IEndpointBuilder>? setup = null);
 
    public TException AssertThrown<TException>() where TException : Exception

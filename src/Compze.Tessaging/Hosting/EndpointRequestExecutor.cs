@@ -1,10 +1,7 @@
 using System;
-using System.Threading.Tasks;
 using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Core.Tessaging.Public;
-using Compze.Core.Tessaging.Typermedia.Public;
 using Compze.Utilities.DependencyInjection;
-using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Tessaging.Hosting;
 
@@ -17,28 +14,4 @@ public static class EndpointRequestExecutor
 
    //todo: Why would we run a "Server request" without a transaction??
    public static void ExecuteServerRequest(this IEndpoint @this, Action<IServiceBusSession> request) => @this.ServiceLocator.ExecuteInIsolatedScope(() => request(@this.ServiceLocator.Resolve<IServiceBusSession>()));
-
-
-   //Urgent: Most of these ExecuteClientRequests are very suspect. Are they really endpoint actions or something about pure clients? What is a "client endpoint"?
-   public static void ExecuteClientRequest(this IEndpoint @this, Action<IRemoteTypermediaNavigator> request) => @this.ServiceLocator.ExecuteInIsolatedScope(() => request(@this.ServiceLocator.Resolve<IRemoteTypermediaNavigator>()));
-   public static TResult ExecuteClientRequest<TResult>(this IEndpoint @this, Func<IRemoteTypermediaNavigator, TResult> request) => @this.ServiceLocator.ExecuteInIsolatedScope(() => request(@this.ServiceLocator.Resolve<IRemoteTypermediaNavigator>()));
-   public static async Task<TResult> ExecuteClientRequestAsync<TResult>(this IEndpoint @this, Func<IRemoteTypermediaNavigator, Task<TResult>> request) =>
-      await @this.ServiceLocator.ExecuteInIsolatedScopeAsync(async () => await request(@this.ServiceLocator.Resolve<IRemoteTypermediaNavigator>()).caf()).caf();
-
-   public static async Task ExecuteClientRequestAsync(this IEndpoint endpoint, Func<Task> request) =>await endpoint.ServiceLocator.ExecuteInIsolatedScopeAsync(async () => await request().caf()).caf();
-
-   public static async Task ExecuteClientRequestAsync(this IEndpoint endpoint, Func<IRemoteTypermediaNavigator, Task> request) =>
-      await endpoint.ServiceLocator.ExecuteInIsolatedScopeAsync(async () => await request(endpoint.ServiceLocator.Resolve<IRemoteTypermediaNavigator>()).caf()).caf();
-
-   //Leverage the manual implementations above to enable running navigation specifications as requests
-   public static TResult ExecuteClientRequest<TResult>(this IEndpoint @this, NavigationSpecification<TResult> navigation) => @this.ExecuteClientRequest(navigation.NavigateOn);
-   public static void ExecuteClientRequest(this IEndpoint @this, NavigationSpecification navigation) => @this.ExecuteClientRequest(navigation.NavigateOn);
-   public static async Task<TResult> ExecuteRequestAsync<TResult>(this IEndpoint endpoint, NavigationSpecification<TResult> navigation) => await endpoint.ExecuteClientRequestAsync(navigation.NavigateOnAsync).caf();
-   public static async Task ExecuteClientRequestAsync(this IEndpoint endpoint, NavigationSpecification navigation) => await endpoint.ExecuteClientRequestAsync(navigation.NavigateOnAsync).caf();
-
-   //Leverage allow for turning it around and access the functionality from the navigation specification instead of from the endpoint. Tastes differ as to which is clearer...
-   public static TResult ExecuteAsClientRequestOn<TResult>(this NavigationSpecification<TResult> navigationSpecification, IEndpoint endpoint) => endpoint.ExecuteClientRequest(navigationSpecification);
-   public static void ExecuteAsClientRequestOn(this NavigationSpecification navigationSpecification, IEndpoint endpoint) => endpoint.ExecuteClientRequest(navigationSpecification);
-   public static async Task<TResult> ExecuteAsClientRequestOnAsync<TResult>(this NavigationSpecification<TResult> navigationSpecification, IEndpoint endpoint) => await endpoint.ExecuteRequestAsync(navigationSpecification).caf();
-   public static async Task ExecuteAsClientRequestOnAsync(this NavigationSpecification navigationSpecification, IEndpoint endpoint) => await endpoint.ExecuteClientRequestAsync(navigationSpecification).caf();
 }
