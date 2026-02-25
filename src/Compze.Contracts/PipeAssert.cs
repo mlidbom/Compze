@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
@@ -62,18 +63,18 @@ public static class PipeAssert
 
    ///<summary>Throws <see cref="AssertionFailedException"/> if <paramref name="this"/> equals <c>default(T)</c>. Returns <paramref name="this"/> on success.</summary>
    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-   public static T _assertNotDefault<T>(this T @this, [CallerArgumentExpression(nameof(@this))] string? thisExpression = null) where T : struct, IEquatable<T>
+   public static T _assertNotDefault<T>(this T @this, [CallerArgumentExpression(nameof(@this))] string? thisExpression = null) where T : struct
    {
-      if(@this.Equals(default)) ThrowAssertionFailed($"Assertion failed: {thisExpression}.{nameof(_assertNotDefault)}()");
+      if(EqualityComparer<T>.Default.Equals(@this, default)) ThrowAssertionFailed($"Assertion failed: {thisExpression}.{nameof(_assertNotDefault)}()");
       return @this;
    }
 
    ///<summary>Throws <see cref="AssertionFailedException"/> if <paramref name="this"/> is null or its value equals <c>default(T)</c>. Returns the non-nullable, non-default value on success.</summary>
    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-   public static T _assertNotNullOrDefault<T>([NotNull] this T? @this, [CallerArgumentExpression(nameof(@this))] string? thisExpression = null) where T : struct, IEquatable<T>
+   public static T _assertNotNullOrDefault<T>([NotNull] this T? @this, [CallerArgumentExpression(nameof(@this))] string? thisExpression = null) where T : struct
    {
       if(@this is null) ThrowAssertionFailed($"Assertion failed: {thisExpression}.{nameof(_assertNotNullOrDefault)}() ## {thisExpression} was null");
-      if(@this.Value.Equals(default)) ThrowAssertionFailed($"Assertion failed: {thisExpression}.{nameof(_assertNotNullOrDefault)}() ## {thisExpression} was: {@this.Value}");
+      if(EqualityComparer<T>.Default.Equals(@this.Value, default)) ThrowAssertionFailed($"Assertion failed: {thisExpression}.{nameof(_assertNotNullOrDefault)}() ## {thisExpression} was: {@this.Value}");
       return @this.Value;
    }
 }

@@ -21,7 +21,7 @@ public abstract partial class SelfGeneratingQueryModel<TQueryModel, TTaggregateT
       static readonly TTeventEntityIdGetter IdGetter = Constructor.For<TTeventEntityIdGetter>.DefaultConstructor.Instance();
 
       TEntityId _id;
-      public TEntityId Id => Assert.ReturnValue.ReturnNotDefault(_id);
+      public TEntityId Id => _id._assertNotDefault();
 
       protected Entity(TQueryModel queryModel) : this(queryModel.RegisterTeventAppliers()) {}
 
