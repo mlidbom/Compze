@@ -25,7 +25,7 @@ public interface IMySqlConnectionPool : IDbConnectionPool<ICompzeMySqlConnection
                var connectionString = getConnectionString();
                return DbConnectionPool<ICompzeMySqlConnection, MySqlCommand>.ForConnectionString(
                   connectionString,
-                  PoolableConnectionFlags.Defaults,
+                  PoolableConnectionFlags.MustUseSameConnectionThroughoutATransaction,//todo: verify that this is needed. Enabling for now to see if it fixes CI issues.
                   ICompzeMySqlConnection.Create);
             });
       }
