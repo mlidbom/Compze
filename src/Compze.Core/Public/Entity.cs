@@ -29,7 +29,7 @@ public class Entity<TEntity, TKey> : IEntity<TKey>
    /// <inheritdoc />
    public virtual EntityId<TKey> Id
    {
-      get => Assert.ReturnValue.Is(!Equals(_id.Value, default(TKey)))._then(_id);
+      get => _id._assert(it => !it.Value.Equals(default));
       [Obsolete(ObsoleteMessage.ForInternalUseOnly)]
       protected set => _id = Assert.Argument.NotNull(value)._then(value);
    }

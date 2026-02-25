@@ -148,7 +148,7 @@ public partial class DocumentDbSession : IDocumentDbSession
 
    public virtual void Save<TValue>(object id, TValue value)
    {
-      Argument.Is(value is not null);
+      Argument.Fulfills(value is not null);
 
       if(TryGetInternal(id, value.GetType(), out TValue? _, useUpdateLock: false))
       {

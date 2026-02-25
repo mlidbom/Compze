@@ -17,6 +17,7 @@ public static class ContractAsserterIsExtensions
          return @this;
       }
 
+      [MethodImpl(MethodImplOptions.AggressiveInlining)]
       public ContractAsserter NotDisposed([DoesNotReturnIf(true)] bool isDisposed, object theInstance)
       {
          ObjectDisposedException.ThrowIf(isDisposed, theInstance);
