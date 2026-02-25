@@ -23,10 +23,9 @@ public partial class MySqlInboxSqlLayer(IMySqlConnectionPool connectionFactory, 
               .SetCommandText(
                   $"""
 
-                   INSERT {TessageTable.TableName} 
+                   INSERT IGNORE INTO {TessageTable.TableName} 
                                ({TessageTable.TessageId},  {TessageTable.TypeId},  {TessageTable.Body}, {TessageTable.Status}) 
                        VALUES (@{TessageTable.TessageId}, @{TessageTable.TypeId}, @{TessageTable.Body}, {(int)InboxTessageStatus.UnHandled})
-                   ON DUPLICATE KEY UPDATE {TessageTable.TessageId} = {TessageTable.TessageId}
 
                    """)
               .AddParameter(TessageTable.TessageId, tessageId.Value)
@@ -35,9 +34,9 @@ public partial class MySqlInboxSqlLayer(IMySqlConnectionPool connectionFactory, 
               .AddMediumTextParameter(TessageTable.Body, serializedTessage)
               .ExecuteNonQuery();
 
-            return affectedRows == 1 
-               ? IServiceBusSqlLayer.SaveTessageResult.NewTessage 
-               : IServiceBusSqlLayer.SaveTessageResult.Duplicate;
+            return affectedRows == 0 
+               ? IServiceBusSqlLayer.SaveTessageResult.Duplicate 
+               : IServiceBusSqlLayer.SaveTessageResult.NewTessage;
          });
    }
 
