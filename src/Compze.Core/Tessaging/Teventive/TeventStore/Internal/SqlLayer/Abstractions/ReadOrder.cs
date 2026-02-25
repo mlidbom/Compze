@@ -45,7 +45,7 @@ public readonly struct ReadOrder : IComparable<ReadOrder>, IEquatable<ReadOrder>
    public static ReadOrder Parse(string value, bool bypassScaleTest = false)
    {
       var parts = value.Split(".");
-      ContractAssertion.Argument.Is(parts.Length == 2);
+      ContractAssertion.Argument.Fulfills(parts.Length == 2);
       var order = parts[0];
       var offset = parts[1];
       if(order[0] == '-') throw new ArgumentException("We do not use negative numbers");

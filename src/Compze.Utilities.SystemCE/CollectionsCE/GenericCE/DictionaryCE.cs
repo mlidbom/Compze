@@ -14,7 +14,7 @@ public static class DictionaryCE
    /// </summary>
    public static TValue GetOrAdd<TKey, TValue>(this IDictionary<TKey, TValue> me, TKey key, Func<TValue> constructor) where TKey : notnull
    {
-      Argument.NotNull(me).Is(key is not null).NotNull(constructor);
+      Argument.NotNull3(me, key , constructor);
 
       if(me.TryGetValue(key, out var value))
       {
@@ -32,7 +32,7 @@ public static class DictionaryCE
    public static TValue GetOrAddDefault<TKey, TValue>(this IDictionary<TKey, TValue> me, TKey key) where TValue : new()
                                                                                                    where TKey : notnull
    {
-      Argument.NotNull(me).Is(key is not null);
+      Argument.NotNull2(me, key);
       //Originally written to delegate to the above method. Believe it or not this causes a performance decrease that is actually significant in tight loops.
       if(me.TryGetValue(key, out var value))
       {

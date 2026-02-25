@@ -92,7 +92,7 @@ public static class TimeAsserter
    {
       return await AsyncLock.LockedAsync(async () =>
       {
-         ContractAssertion.Argument.Is(maxTries > 0);
+         ContractAssertion.Argument.Fulfills(maxTries > 0);
          maxAverage = TestEnv.Performance.AdjustForMachineSlowness(maxAverage);
          maxTotal = TestEnv.Performance.AdjustForMachineSlowness(maxTotal);
          TestEnv.Performance.LogMachineSlownessAdjustment();

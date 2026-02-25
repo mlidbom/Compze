@@ -63,7 +63,7 @@ public class OutboxRetryPoller : IDisposable
 
    public void Start()
    {
-      ContractAssertion.State.Is(!_running);
+      ContractAssertion.State.Fulfills(!_running);
       _running = true;
       _pollerThread = _taskRunner.RunOnNamedThread("OutboxRetryPoller", PollerLoop, ThreadPriority.BelowNormal);
    }

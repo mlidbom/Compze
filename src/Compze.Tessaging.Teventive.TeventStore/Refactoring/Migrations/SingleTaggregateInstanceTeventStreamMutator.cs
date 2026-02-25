@@ -43,7 +43,7 @@ public class SingleTaggregateInstanceTeventStreamMutator : ISingleTaggregateInst
    static IEnumerable<TaggregateTevent> SingleTeventSequence(TaggregateTevent tevent) { yield return tevent; }
    public IEnumerable<TaggregateTevent> Mutate(TaggregateTevent tevent)
    {
-      ContractAssertion.Argument.Is(_taggregateId == tevent.TaggregateId);
+      ContractAssertion.Argument.Fulfills(_taggregateId == tevent.TaggregateId);
       if (_teventMigrators.Length == 0)
       {
          return SingleTeventSequence(tevent);

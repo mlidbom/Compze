@@ -10,7 +10,6 @@ public static class ContractAsserterNotNullExtensions
       [MethodImpl(MethodImplOptions.AggressiveInlining)]
       public ContractAsserter NotNull<T>([NotNull] T? value,
                                          [CallerArgumentExpression(nameof(value))] string expression = "")
-         where T : class
       {
          if(value is null) @this.ThrowNull(expression);
          return @this;
@@ -21,8 +20,6 @@ public static class ContractAsserterNotNullExtensions
                                                 [NotNull] T2? value2,
                                                 [CallerArgumentExpression(nameof(value1))] string expression1 = "",
                                                 [CallerArgumentExpression(nameof(value2))] string expression2 = "")
-         where T1 : class
-         where T2 : class
       {
          if(value1 is null) @this.ThrowNull(expression1);
          if(value2 is null) @this.ThrowNull(expression2);
@@ -36,9 +33,6 @@ public static class ContractAsserterNotNullExtensions
                                                     [CallerArgumentExpression(nameof(value1))] string expression1 = "",
                                                     [CallerArgumentExpression(nameof(value2))] string expression2 = "",
                                                     [CallerArgumentExpression(nameof(value3))] string expression3 = "")
-         where T1 : class
-         where T2 : class
-         where T3 : class
       {
          if(value1 is null) @this.ThrowNull(expression1);
          if(value2 is null) @this.ThrowNull(expression2);
@@ -55,10 +49,6 @@ public static class ContractAsserterNotNullExtensions
                                                         [CallerArgumentExpression(nameof(value2))] string expression2 = "",
                                                         [CallerArgumentExpression(nameof(value3))] string expression3 = "",
                                                         [CallerArgumentExpression(nameof(value4))] string expression4 = "")
-         where T1 : class
-         where T2 : class
-         where T3 : class
-         where T4 : class
       {
          if(value1 is null) @this.ThrowNull(expression1);
          if(value2 is null) @this.ThrowNull(expression2);
