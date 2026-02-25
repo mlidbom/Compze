@@ -15,8 +15,4 @@ public static class Assert
    ///<summary>Assert conditions on arguments to the current method. Failures throw <see cref="ArgumentException"/></summary>
    public static ContractAsserter Argument { get; } = new(message => new ArgumentException(message),
                                                           message => new ArgumentNullException(message));
-
-   ///<summary>Assert conditions on the results of a method before returning them. Failures throw <see cref="InvalidResultException"/> </summary>
-   public static ContractAsserter ReturnValue { get; } = new(message => new InvalidResultException(message),
-                                                             message => new InvalidResultException($"{message} was null"));
 }
