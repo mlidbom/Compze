@@ -33,7 +33,7 @@ public class TessagingController : ControllerBase
       var incomingTessage = await CreateIncomingTessage().caf();
       try
       {
-         await Inbox.Receive(incomingTessage).caf();
+         await Inbox.ReceiveAsync(incomingTessage).caf();
          return Ok();
       }
       catch(Exception exception)
@@ -49,7 +49,7 @@ public class TessagingController : ControllerBase
 
       try
       {
-         await Inbox.Receive(incomingTessage).caf();
+         await Inbox.ReceiveAsync(incomingTessage).caf();
          return Ok();
       }
       catch(Exception exception)

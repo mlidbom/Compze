@@ -34,8 +34,8 @@ public partial class MySqlInboxSqlLayer(IMySqlConnectionPool connectionFactory, 
               .AddMediumTextParameter(TessageTable.Body, serializedTessage)
               .ExecuteNonQuery();
 
-            return affectedRows == 0 
-               ? IServiceBusSqlLayer.SaveTessageResult.Duplicate 
+            return affectedRows == 0
+               ? IServiceBusSqlLayer.SaveTessageResult.Duplicate
                : IServiceBusSqlLayer.SaveTessageResult.NewTessage;
          });
    }

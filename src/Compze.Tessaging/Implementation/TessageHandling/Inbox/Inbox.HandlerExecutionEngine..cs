@@ -33,7 +33,9 @@ public partial class Inbox
       readonly Coordinator _coordinator = new(globalStateTracker, taskRunner, storage, serviceLocator, handlerRegistry, endpointId);
       readonly ITaskRunner _taskRunner = taskRunner;
 
-      public Task<object?> Enqueue(TransportTessage.InComing transportTessage) => _coordinator.EnqueueTessageTask(transportTessage);
+      public void Enqueue(TransportTessage.InComing transportTessage) => _coordinator.EnqueueTessageTask(transportTessage);
+
+      public Task<object?> ExecuteAsync(TransportTessage.InComing transportTessage) => _coordinator.EnqueueTessageTask(transportTessage);
 
       void AwaitDispatchableTessageThreadLoop()
       {

@@ -56,7 +56,20 @@ public static class InboxRegistrar
       await Task.WhenAll(storageStartTask, _transportServer.StartAsync()).caf();
    }
 
-   public async Task<object?> Receive(TransportTessage.InComing tessage)
+   public Task ReceiveAsync(TransportTessage.InComing tessage)
+   {
+      var saveResult = _storage.SaveIncomingTessage(tessage);
+
+      if(saveResult == IServiceBusSqlLayer.SaveTessageResult.Duplicate)
+      {
+         return Task.CompletedTask;
+      }
+
+      _handlerExecutionEngine.Enqueue(tessage);
+      return Task.CompletedTask;
+   }
+
+   public async Task<object?> ExecuteAsync(TransportTessage.InComing tessage)
    {
       var saveResult = _storage.SaveIncomingTessage(tessage);
 
@@ -65,7 +78,7 @@ public static class InboxRegistrar
          return null;
       }
 
-      return await _handlerExecutionEngine.Enqueue(tessage).caf();
+      return await _handlerExecutionEngine.ExecuteAsync(tessage).caf();
    }
 
    public async Task StopAsync() => await _transportServer.StopAsync().caf();
