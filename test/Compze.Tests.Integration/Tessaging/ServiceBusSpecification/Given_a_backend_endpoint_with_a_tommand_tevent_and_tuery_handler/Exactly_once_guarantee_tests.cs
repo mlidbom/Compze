@@ -14,6 +14,26 @@ namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification.Given_a_bac
 
 public class Exactly_once_guarantee_tests : EndpointHostTestBase
 {
+   [PCT] public void ExactlyOnceTommand_handler_executes_exactly_once()
+   {
+      RemoteEndpoint.ExecuteServerRequestInTransaction(session => session.Send(new MyExactlyOnceTommand()));
+
+      MyExactlyOnceTommandHandlerThreadGate.AwaitPassedThroughCountEqualTo(1);
+      MyExactlyOnceTommandHandlerThreadGate.TryAwaitPassedThroughCountEqualTo(2, timeout: 1.Seconds())
+                              .Must()
+                              .Be(false, "handler should execute exactly once");
+   }
+
+   [PCT] public void ExactlyOnceTevent_remote_handler_executes_exactly_once()
+   {
+      ClientEndpoint.ExecuteClientRequest(session => session.Post(MyCreateTaggregateTommand.Create()));
+
+      MyRemoteTaggregateTeventHandlerThreadGate.AwaitPassedThroughCountEqualTo(1);
+      MyRemoteTaggregateTeventHandlerThreadGate.TryAwaitPassedThroughCountEqualTo(2, timeout: 1.Seconds())
+                                             .Must()
+                                             .Be(false, "remote tevent handler should execute exactly once");
+   }
+
    [PCT] public void If_transaction_fails_after_successfully_Sending_ExactlyOnceTommand_tommand_never_reaches_tommand_handler()
    {
       Invoking(() => RemoteEndpoint.ExecuteServerRequestInTransaction(session =>
