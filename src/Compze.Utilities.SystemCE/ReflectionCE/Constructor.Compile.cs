@@ -27,7 +27,7 @@ public static partial class Constructor
                .SingleOrDefault(prop =>
                                    prop.Name.ContainsCE(nameof(IStaticInstancePropertySingleton<TInstance>)) &&
                                    prop.Name.ContainsCE(nameof(IStaticInstancePropertySingleton<TInstance>.Instance)) &&
-                                   prop.PropertyType == typeof(TInstance))._assertNotNull();
+                                   prop.PropertyType == typeof(TInstance))._assert().NotNull();
       }
 
       static Func<TInstance> CompileStaticInstancePropertyDelegate<TInstance>()

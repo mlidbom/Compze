@@ -81,7 +81,7 @@ public class Endpoint : IEndpoint
    {
       State.Assert(!_isSending);
       _isSending = true;
-      var serverEndpoints = _endpointRegistry.ServerEndpoints.Select(it => it.Address._assertNotNull()).ToHashSet();
+      var serverEndpoints = _endpointRegistry.ServerEndpoints.Select(it => it.Address._assert().NotNull()).ToHashSet();
       await Task.WhenAll(serverEndpoints.Select(address => _routingInboxClient.ConnectAsync(address))).caf();
       if(_serverComponents != null)
       {

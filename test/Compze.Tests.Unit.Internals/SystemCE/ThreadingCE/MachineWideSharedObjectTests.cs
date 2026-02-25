@@ -28,7 +28,7 @@ class SharedObjectSerializer : ISharedObjectSerializer<SharedObject>
 {
    public string Serialize(SharedObject instance) => JsonConvert.SerializeObject(instance);
 
-   public SharedObject Deserialize(string json) => JsonConvert.DeserializeObject<SharedObject>(json)._assertNotNull();
+   public SharedObject Deserialize(string json) => JsonConvert.DeserializeObject<SharedObject>(json)._assert().NotNull();
 }
 
 public class MachineWideSharedObjectTests : UniversalTestBase
