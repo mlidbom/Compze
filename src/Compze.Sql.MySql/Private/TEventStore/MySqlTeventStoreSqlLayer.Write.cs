@@ -112,8 +112,8 @@ public partial class MySqlTeventStoreSqlLayer
          {
             command.CommandText +=
                $"DELETE FROM {Tevent.TableName} /*With(ROWLOCK)*/ WHERE {Tevent.TaggregateId} = @{Tevent.TaggregateId};";
-            command.Parameters.Add(new MySqlParameter(Tevent.TaggregateId, MySqlDbType.Guid) { Value = taggregateId });
-            command.ExecuteNonQuery();
+            command.Parameters.Add(new MySqlParameter(Tevent.TaggregateId, MySqlDbType.Guid) { Value = taggregateId.Value });
+            command.ExecuteNonQuery()._assert(rowsAffected => rowsAffected > 0);
          });
    }
 }

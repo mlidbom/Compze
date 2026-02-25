@@ -7,7 +7,7 @@ Three distinct bugs were uncovered, all silent under `SqliteMemory` testing.
 
 ---
 
-## Bug 1: TeventStore Deletion Silently Fails (4 tests)
+## Bug 1: TeventStore Deletion Silently Fails (4 tests) — FIXED
 
 ### Symptom
 Deleting a taggregate from the tevent store has no effect — events remain in the database. Tests that delete and then assert the data is gone all fail.
@@ -23,20 +23,14 @@ command.Parameters.Add(new MySqlParameter(Tevent.TaggregateId, MySqlDbType.Guid)
 
 The MySql connector can't match the `TaggregateId` wrapper against the stored GUID column, so `DELETE` silently affects 0 rows.
 
-**The same bug exists in `MsSqlTeventStoreSqlLayer`** (SQL Server), which also passes the wrapper:
+**The same bug existed in `MsSqlTeventStoreSqlLayer`** (SQL Server), which also passed the wrapper.
 
-```csharp
-// MsSqlTeventStoreSqlLayer.Write.cs line ~117
-command.Parameters.Add(new SqlParameter(Tevent.TaggregateId, SqlDbType.UniqueIdentifier) 
-    { Value = taggregateId });      // BUG: should be taggregateId.Value
-```
-
-SQLite and PostgreSQL are **not** affected — they correctly unwrap the value:
+SQLite and PostgreSQL were **not** affected — they correctly unwrap the value:
 - SQLite: `AddVarcharParameter(Tevent.TaggregateId, 36, taggregateId.ToString())`
 - PostgreSQL: `AddParameter(Tevent.TaggregateId, taggregateId.Value)`
 
-### Fix
-Change `Value = taggregateId` to `Value = taggregateId.Value` in both MySQL and MsSql implementations.
+### Fix (applied)
+Changed `Value = taggregateId` to `Value = taggregateId.Value` in both MySQL and MsSql implementations. All 4 tests now pass.
 
 ### Affected Tests
 | Test Class | Test Method |

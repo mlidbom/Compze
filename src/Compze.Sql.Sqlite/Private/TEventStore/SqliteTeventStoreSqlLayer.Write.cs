@@ -120,7 +120,7 @@ public partial class SqliteTeventStoreSqlLayer
          {
             command.SetCommandText($"DELETE FROM {Tevent.TableName} WHERE {Tevent.TaggregateId} = @{Tevent.TaggregateId};")
                    .AddVarcharParameter(Tevent.TaggregateId, 36, taggregateId.ToString())
-                   .ExecuteNonQuery();
+                   .ExecuteNonQuery()._assert(rowsAffected => rowsAffected > 0);
          });
    }
 }

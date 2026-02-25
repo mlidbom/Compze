@@ -116,8 +116,8 @@ public partial class MsSqlTeventStoreSqlLayer
          {
             command.CommandText +=
                $"DELETE {Tevent.TableName} With(ROWLOCK) WHERE {Tevent.TaggregateId} = @{Tevent.TaggregateId}";
-            command.Parameters.Add(new SqlParameter(Tevent.TaggregateId, SqlDbType.UniqueIdentifier) {Value = taggregateId});
-            command.ExecuteNonQuery();
+            command.Parameters.Add(new SqlParameter(Tevent.TaggregateId, SqlDbType.UniqueIdentifier) {Value = taggregateId.Value});
+            command.ExecuteNonQuery()._assert(rowsAffected => rowsAffected > 0);
          });
    }
 }

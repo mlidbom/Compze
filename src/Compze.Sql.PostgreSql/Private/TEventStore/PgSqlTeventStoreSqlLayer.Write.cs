@@ -122,7 +122,7 @@ public partial class PgSqlTeventStoreSqlLayer
             command.SetCommandText($"DELETE FROM {Tevent.TableName} /*With(ROWLOCK)*/ WHERE {Tevent.TaggregateId} = @{Tevent.TaggregateId};")
                    .AddParameter(Tevent.TaggregateId, taggregateId.Value)
                    .PrepareStatement()
-                   .ExecuteNonQuery();
+                   .ExecuteNonQuery()._assert(rowsAffected => rowsAffected > 0);
          });
    }
 }
