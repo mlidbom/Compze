@@ -8,7 +8,7 @@ using System.Runtime.CompilerServices;
 
 namespace Compze.Contracts;
 
-/// <summary>Pipeline-friendly assertion extension methods. Uses the same _camelCase naming convention as Compze.Functional's Pipe operators so they blend naturally in pipelines./// </summary>
+/// <summary>Pipeline-friendly assertion extension methods. Uses the same _camelCase naming convention as Compze.Functional's Pipe operators so they blend naturally in pipelines.</summary>
 public static class PipeAssert
 {
    [DoesNotReturn]

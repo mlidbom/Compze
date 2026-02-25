@@ -7,16 +7,18 @@ public static class ContractAsserterStringExtensions
 {
    extension(ContractAsserter @this)
    {
-      public ContractAsserter NotNullOrEmpty([NotNull]string? value, [CallerArgumentExpression(nameof(value))] string valueString = "")
+      [MethodImpl(MethodImplOptions.AggressiveInlining)]
+      public ContractAsserter NotNullOrEmpty([NotNull]string? value, [CallerArgumentExpression(nameof(value))] string valueExpression = "")
       {
-         if(string.IsNullOrEmpty(value)) @this.ThrowFailed($"{valueString} was '{value}' which is {nameof(NotNullEmptyOrWhitespace)}");
+         if(string.IsNullOrEmpty(value)) @this.ThrowFailed(valueExpression);
          return @this;
       }
 
-      public ContractAsserter NotNullEmptyOrWhitespace([NotNull]string? value, [CallerArgumentExpression(nameof(value))] string valueString = "")
+      [MethodImpl(MethodImplOptions.AggressiveInlining)]
+      public ContractAsserter NotNullEmptyOrWhitespace([NotNull]string? value, [CallerArgumentExpression(nameof(value))] string valueExpression = "")
       {
-         @this.NotNull(value, valueString);
-         if(string.IsNullOrWhiteSpace(value)) @this.ThrowFailed($"{valueString} was '{value}' which is {nameof(NotNullEmptyOrWhitespace)}");
+         @this.NotNull(value, valueExpression);
+         if(string.IsNullOrWhiteSpace(value)) @this.ThrowFailed(valueExpression);
          return @this;
       }
    }

@@ -19,5 +19,5 @@ public static class Must_BeOneOf
    ///<summary>Throws if the enum value is not one of the declared values of the enum type</summary>
    public static IAssertionContext<TEnum> BeValidEnumValue<TEnum>(this IAssertionContext<TEnum> context)
       where TEnum : struct, Enum =>
-      context.SatisfyInternal(it => EnumCE.Values<TEnum>().Contains(it));
+      context.SatisfyInternal(it => it.IsValid());
 }
