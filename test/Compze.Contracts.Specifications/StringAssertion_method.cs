@@ -1,5 +1,6 @@
 using System;
 using Compze.Utilities.Testing.XUnit.BDD;
+// ReSharper disable InconsistentNaming
 
 namespace Compze.Contracts.Specifications;
 
