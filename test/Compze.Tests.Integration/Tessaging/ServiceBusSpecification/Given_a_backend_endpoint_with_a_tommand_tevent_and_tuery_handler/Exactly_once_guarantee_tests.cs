@@ -3,6 +3,7 @@ using System.Threading;
 using System.Transactions;
 using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
+using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
 using Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
 using Compze.Utilities.SystemCE.TransactionsCE.Testing;
 using Compze.Tests.Infrastructure.XUnit;
@@ -72,9 +73,9 @@ public class Exactly_once_guarantee_tests : EndpointHostTestBase
       const string exceptionTessage = "82369B6E-80D4-4E64-92B6-A564A7195CC5";
       MyCreateTaggregateTommandHandlerThreadGate.FailTransactionOnPreparePostPassThrough(new Exception(exceptionTessage));
 
-      var (backendException, frontEndException) = Host.AssertThatRunningScenarioThrowsBackendAndClientException<TransactionAbortedException>(() => Client.ExecuteRequest(navigator => navigator.Post(MyCreateTaggregateTommand.Create())));
+      var frontEndException = Invoking(() => Client.ExecuteRequest(navigator => navigator.Post(MyCreateTaggregateTommand.Create())))
+                                    .Must().Throw<TessageDispatchingFailedException>().Which;
 
-      backendException.InnerException!.Message.Must().Contain(exceptionTessage);
       frontEndException.Message.Must().Contain(exceptionTessage);
 
       MyLocalTaggregateTeventHandlerThreadGate.Passed.Must().BeGreaterThanOrEqualTo(1);

@@ -31,13 +31,6 @@ public class Failure_tests : EndpointHostTestBase
       exception.Must().NotBeNull();
    }
 
-   protected override async Task DisposeAsyncInternal()
-   {
-      var exception = await InvokingAsync(async () => await Host.DisposeAsync()).Must().ThrowAsync<Exception>();
-      exception.Which.Must().NotBeNull();
-      await base.DisposeAsyncInternal();
-   }
-
    readonly IntentionalException _thrownException = new();
    class IntentionalException : Exception;
 }
