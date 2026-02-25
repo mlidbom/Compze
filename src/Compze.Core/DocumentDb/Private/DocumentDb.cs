@@ -128,7 +128,7 @@ public sealed class DocumentDb : IDocumentDb
    public IEnumerable<Guid> GetAllIds<T>() where T : IEntity<Guid> => _sqlLayer.GetAllIds(AcceptableTypeIds<T>());
 
    [return: NotNull] TDocument Deserialize<TDocument>(IDocumentDbSqlLayer.ReadRow stored) =>
-      (TDocument)Assert.ReturnValue.ReturnNotNull(_serializer.Deserialize(GetTypeFromId(new TypeId(stored.TypeId)), stored.SerializedDocument));
+      (TDocument)_serializer.Deserialize(GetTypeFromId(new TypeId(stored.TypeId)), stored.SerializedDocument)._assertNotNull();
 
    IReadOnlySet<TypeId> AcceptableTypeIds<T>() => AcceptableTypeIds(typeof(T));
 

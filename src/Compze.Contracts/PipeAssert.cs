@@ -46,7 +46,7 @@ public static class PipeAssert
 
    ///<summary>Throws <see cref="AssertionFailedException"/> if <paramref name="this"/> is null. Returns the value as non-nullable on success.</summary>
    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-   public static T _assertNotNull<T>([NotNull] this T? @this, [CallerArgumentExpression(nameof(@this))] string? thisExpression = null) where T : class
+   [return: NotNull] public static T _assertNotNull<T>([NotNull] this T? @this, [CallerArgumentExpression(nameof(@this))] string? thisExpression = null) where T : class
    {
       if(@this is null) ThrowAssertionFailed($"Assertion failed: {thisExpression}.{nameof(_assertNotNull)}()");
       return @this;
