@@ -57,7 +57,7 @@ public class TestingEndpointHost : TestingEndpointHostBase
                                });
 
 
-   public override IEndpoint RegisterClientEndpoint(Action<IEndpointBuilder> setup) =>
+   protected override IEndpoint RegisterClientEndpoint(Action<IEndpointBuilder> setup) =>
       base.RegisterClientEndpoint(builder =>
       {
          builder.Container.Register()
@@ -65,11 +65,6 @@ public class TestingEndpointHost : TestingEndpointHostBase
 
          setup(builder);
       });
-
-   public override IEndpoint RegisterClientEndpointForRegisteredEndpoints(Action<IEndpointBuilder>? setup = null) => RegisterClientEndpoint(builder =>
-   {
-      setup?.Invoke(builder);
-   });
 
    public override IClient RegisterClientForRegisteredEndpoints(Action<IEndpointBuilder>? setup = null) => RegisterClient(builder =>
    {
