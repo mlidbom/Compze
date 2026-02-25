@@ -19,7 +19,7 @@ public class Exactly_once_guarantee_tests : EndpointHostTestBase
       RemoteEndpoint.ExecuteServerRequestInTransaction(session => session.Send(new MyExactlyOnceTommand()));
 
       MyExactlyOnceTommandHandlerThreadGate.AwaitPassedThroughCountEqualTo(1);
-      MyExactlyOnceTommandHandlerThreadGate.TryAwaitPassedThroughCountEqualTo(2, timeout: 1.Seconds())
+      MyExactlyOnceTommandHandlerThreadGate.TryAwaitPassedThroughCountEqualTo(2, timeout: 2.Seconds())
                               .Must()
                               .Be(false, "handler should execute exactly once");
    }
@@ -29,7 +29,7 @@ public class Exactly_once_guarantee_tests : EndpointHostTestBase
       ClientEndpoint.ExecuteClientRequest(session => session.Post(MyCreateTaggregateTommand.Create()));
 
       MyRemoteTaggregateTeventHandlerThreadGate.AwaitPassedThroughCountEqualTo(1);
-      MyRemoteTaggregateTeventHandlerThreadGate.TryAwaitPassedThroughCountEqualTo(2, timeout: 1.Seconds())
+      MyRemoteTaggregateTeventHandlerThreadGate.TryAwaitPassedThroughCountEqualTo(2, timeout: 2.Seconds())
                                              .Must()
                                              .Be(false, "remote tevent handler should execute exactly once");
    }

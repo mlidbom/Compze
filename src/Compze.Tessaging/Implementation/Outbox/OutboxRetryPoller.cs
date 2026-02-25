@@ -15,6 +15,7 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Tessaging.Implementation.Outbox;
@@ -39,8 +40,8 @@ public class OutboxRetryPoller : IDisposable
    readonly IBackgroundExceptionReporter _exceptionReporter;
 
    //Todo: implement a sane way of handling retries, something like an exponential backoff
-   static readonly TimeSpan PollingInterval = TimeSpan.FromSeconds(5);
-   static readonly TimeSpan TessageAgeThatIsConsideredFailed = TimeSpan.FromSeconds(5);
+   static readonly TimeSpan PollingInterval = 5.Seconds();
+   static readonly TimeSpan TessageAgeThatIsConsideredFailed = 5.Seconds();
 
    OutboxRetryPoller(Outbox.ITessageStorage tessageStorage,
                      IRoutingInboxClient routingInboxClient,
@@ -75,7 +76,7 @@ public class OutboxRetryPoller : IDisposable
          _running = false;
          this.Log().Info("Stopping OutboxRetryPoller...");
          _cancellationTokenSource.Cancel();
-         _pollerThread!.Join(TimeSpan.FromSeconds(5)); // Give it time to finish the current iteration
+         _pollerThread!.Join(5.Seconds()); // Give it time to finish the current iteration
          _cancellationTokenSource.Dispose();
       }
    }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Threading;
+using Compze.Utilities.SystemCE;
 using Compze.Utilities.Testing.Must;
 
 // ReSharper disable All
@@ -37,7 +38,7 @@ public class Testing
 
       public TestingResetTevent(string name, TimeSpan? timeout = null)
       {
-         timeout_ = timeout ?? TimeSpan.FromSeconds(1);
+         timeout_ = timeout ?? 1.Seconds();
          name_ = name;
       }
 
@@ -61,7 +62,7 @@ public class Testing
       private TimeSpan timeout_;
       public TestingResetTeventCollection(TimeSpan? timeout = null)
       {
-         timeout_ = timeout ?? TimeSpan.FromSeconds(1);
+         timeout_ = timeout ?? 1.Seconds();
       }
 
       public TestingResetTevent Manual(string name)
