@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Compze.Contracts;
 using Compze.Core.Tessaging.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Utilities.SystemCE;
@@ -81,7 +82,7 @@ public class Example
 
             wrapperTeventBuilder.ImplementConstructor(wrappedTeventField);
 
-            return wrapperTeventBuilder.CreateType().NotNull();
+            return wrapperTeventBuilder.CreateType()._assertNotNull();
          });
 
          OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _createdWrapperTypes, wrapperTeventType, genericWrapperTeventType);

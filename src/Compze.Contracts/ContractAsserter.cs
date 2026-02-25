@@ -1,6 +1,5 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Runtime.CompilerServices;
 
 namespace Compze.Contracts;
 
@@ -9,9 +8,7 @@ public class ContractAsserter(Func<string, Exception> createException, Func<stri
    readonly Func<string, Exception> _createException = createException;
    readonly Func<string, Exception> _createNullException = createNullException;
 
-   [DoesNotReturn]
-   public void ThrowFailed(string expression) => throw _createException(expression);
+   [DoesNotReturn] public void ThrowFailed(string expression) => throw _createException(expression);
 
-   [DoesNotReturn]
-   public void ThrowNull(string expression) => throw _createNullException(expression);
+   [DoesNotReturn] public void ThrowNull(string expression) => throw _createNullException(expression);
 }

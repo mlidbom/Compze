@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Compze.Contracts;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
@@ -27,7 +28,7 @@ class SharedObjectSerializer : ISharedObjectSerializer<SharedObject>
 {
    public string Serialize(SharedObject instance) => JsonConvert.SerializeObject(instance);
 
-   public SharedObject Deserialize(string json) => JsonConvert.DeserializeObject<SharedObject>(json).NotNull();
+   public SharedObject Deserialize(string json) => JsonConvert.DeserializeObject<SharedObject>(json)._assertNotNull();
 }
 
 public class MachineWideSharedObjectTests : UniversalTestBase

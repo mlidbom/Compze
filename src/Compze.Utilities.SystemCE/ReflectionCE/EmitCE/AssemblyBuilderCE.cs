@@ -1,6 +1,7 @@
 using System;
 using System.Reflection;
 using System.Reflection.Emit;
+using Compze.Contracts;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
 #pragma warning disable CA1810 // Initialize reference type static fields inline
@@ -14,7 +15,7 @@ public static class AssemblyBuilderCE
    static AssemblyBuilderCE()
    {
       var assembly = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName($"{nameof(AssemblyBuilderCE)}_dynamic_assembly"), AssemblyBuilderAccess.Run);
-      Module = IThreadShared.WithDefaultTimeouts(assembly.DefineDynamicModule(assembly.GetName().Name.NotNull()));
+      Module = IThreadShared.WithDefaultTimeouts(assembly.DefineDynamicModule(assembly.GetName().Name._assertNotNull()));
    }
 }
 

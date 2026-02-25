@@ -67,7 +67,7 @@ public sealed class MicrosoftDependencyInjectionContainer : DependencyInjectionC
    IServiceProvider CurrentProvider()
    {
       Assert.State.NotDisposed(_isDisposed, this);
-      return _scopeCache.Value != null ? _scopeCache.Value.ServiceProvider : _serviceProvider.NotNull();
+      return _scopeCache.Value != null ? _scopeCache.Value.ServiceProvider : _serviceProvider._assertNotNull();
    }
 
    public TComponent Resolve<TComponent>() where TComponent : class
@@ -110,7 +110,7 @@ public sealed class MicrosoftDependencyInjectionContainer : DependencyInjectionC
    }
 
    IServiceCollection IMicrosoftContainerInternals.ServiceCollection => _services;
-   IServiceProvider IMicrosoftContainerInternals.ServiceProvider => _serviceProvider.NotNull();
+   IServiceProvider IMicrosoftContainerInternals.ServiceProvider => _serviceProvider._assertNotNull();
 
    public override void Dispose()
    {

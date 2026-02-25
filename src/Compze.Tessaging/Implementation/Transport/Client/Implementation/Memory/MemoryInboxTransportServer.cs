@@ -67,15 +67,13 @@ public class MemoryInboxTransportServer : IInboxTransportServer
          switch(incomingTessage.TessageTypeEnum)
          {
             case TransportTessageType.TypermediaAtMostOnceTommandWithReturnValue:
-               return (await _inbox.Value.Receive(incomingTessage).caf())
-                     .NotNull()
-                     .CastTo<TResult>()
-                     ._(RoundTripSerialize);
+               return (await _inbox.Value.Receive(incomingTessage).caf())._assertNotNull()
+                                                                         .CastTo<TResult>()
+                                                                         ._(RoundTripSerialize);
             case TransportTessageType.TyperMediaTuery:
-               return (await _engine.Value.Enqueue(incomingTessage).caf())
-                     .NotNull()
-                     .CastTo<TResult>()
-                     ._(RoundTripSerialize);
+               return (await _engine.Value.Enqueue(incomingTessage).caf())._assertNotNull()
+                                                                          .CastTo<TResult>()
+                                                                          ._(RoundTripSerialize);
             case TransportTessageType.ExactlyOnceTevent:
             case TransportTessageType.TypermediaAtMostOnceTommand:
             case TransportTessageType.ExactlyOnceTommand:

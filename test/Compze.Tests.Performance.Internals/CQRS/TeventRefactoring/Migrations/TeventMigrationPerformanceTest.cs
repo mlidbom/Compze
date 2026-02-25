@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Compze.Contracts;
 
 namespace Compze.Tests.Performance.Internals.CQRS.TeventRefactoring.Migrations;
 
@@ -66,7 +67,7 @@ public class TeventMigrationPerformanceTest : TeventMigrationTestBase
          description: "Uncached loading",
          maxTotal: maxUncachedLoadTime,
          setup: () => clonedLocator = _container!.Clone(),
-         tearDownAsync: async Task () => await clonedLocator.NotNull().DisposeAsync(),
+         tearDownAsync: async Task () => await clonedLocator._assertNotNull().DisposeAsync(),
          action: () =>
          {
             LoadWithCloneLocator(clonedLocator!);
