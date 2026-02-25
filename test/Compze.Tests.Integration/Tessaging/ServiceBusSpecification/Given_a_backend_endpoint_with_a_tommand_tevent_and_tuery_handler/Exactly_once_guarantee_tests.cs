@@ -27,7 +27,7 @@ public class Exactly_once_guarantee_tests : EndpointHostTestBase
 
    [PCT] public void ExactlyOnceTevent_remote_handler_executes_exactly_once()
    {
-      ClientEndpoint.ExecuteClientRequest(session => session.Post(MyCreateTaggregateTommand.Create()));
+      Client.ExecuteRequest(session => session.Post(MyCreateTaggregateTommand.Create()));
 
       MyRemoteTaggregateTeventHandlerThreadGate.AwaitPassedThroughCountEqualTo(1);
       MyRemoteTaggregateTeventHandlerThreadGate.TryAwaitPassedThroughCountEqualTo(2, timeout: 2.Seconds())
@@ -72,7 +72,7 @@ public class Exactly_once_guarantee_tests : EndpointHostTestBase
       const string exceptionTessage = "82369B6E-80D4-4E64-92B6-A564A7195CC5";
       MyCreateTaggregateTommandHandlerThreadGate.FailTransactionOnPreparePostPassThrough(new Exception(exceptionTessage));
 
-      var (backendException, frontEndException) = Host.AssertThatRunningScenarioThrowsBackendAndClientException<TransactionAbortedException>(() => ClientEndpoint.ExecuteClientRequest(navigator => navigator.Post(MyCreateTaggregateTommand.Create())));
+      var (backendException, frontEndException) = Host.AssertThatRunningScenarioThrowsBackendAndClientException<TransactionAbortedException>(() => Client.ExecuteRequest(navigator => navigator.Post(MyCreateTaggregateTommand.Create())));
 
       backendException.InnerException!.Message.Must().Contain(exceptionTessage);
       frontEndException.Message.Must().Contain(exceptionTessage);

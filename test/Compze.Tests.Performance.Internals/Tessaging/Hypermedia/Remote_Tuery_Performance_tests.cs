@@ -69,11 +69,11 @@ public class RemoteTueryPerformanceTests : PerformanceTestBase
 
       //ncrunch: no coverage start
       void RunRequest() =>
-         ClientEndpoint.ServiceLocator.ExecuteInIsolatedScope(() =>
+         Client.ExecuteRequest(navigator =>
          {
             for(var i = 0; i < tueriesPerRequest; i++)
             {
-               RemoteNavigator.Navigate(navigationSpecification);
+               navigator.Navigate(navigationSpecification);
             }
          });
    }
@@ -92,9 +92,9 @@ public class RemoteTueryPerformanceTests : PerformanceTestBase
 
       //ncrunch: no coverage start
       async Task RunRequestAsync() =>
-         await ClientEndpoint.ServiceLocator.ExecuteInIsolatedScopeAsync(
-            async () => await Task.WhenAll(1.Through(tueriesPerRequest)
-                                            .Select(_ => RemoteNavigator.NavigateAsync(navigationSpecification))
+         await Client.ExecuteRequestAsync(
+            async navigator => await Task.WhenAll(1.Through(tueriesPerRequest)
+                                            .Select(_ => navigator.NavigateAsync(navigationSpecification))
                                             .ToArray()));
 
       async Task RunScenarioAsync() => await Task.WhenAll(1.Through(requests).Select(_ => RunRequestAsync()).ToArray());

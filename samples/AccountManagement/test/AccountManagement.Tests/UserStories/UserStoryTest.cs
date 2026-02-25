@@ -11,14 +11,14 @@ namespace AccountManagement.UserStories;
 public abstract class UserStoryTest : UniversalTestBase
 {
    protected ITestingEndpointHost Host { get; set; }
-   readonly IEndpoint _clientEndpoint;
-   internal AccountScenarioApi Scenario => new(_clientEndpoint!);
+   readonly IClient _client;
+   internal AccountScenarioApi Scenario => new(_client!);
 
    protected UserStoryTest()
    {
       Host = TestingEndpointHost.Create();
       new AccountManagementServerDomainBootstrapper().RegisterWith(Host);
-      _clientEndpoint = Host.RegisterClientEndpoint(setup:AccountApi.RegisterWithClientEndpoint);
+      _client = Host.RegisterClient(setup:AccountApi.RegisterWithClientEndpoint);
    }
 
    protected override async Task InitializeAsyncInternal() => await Host.StartAsync().caf();
@@ -26,6 +26,6 @@ public abstract class UserStoryTest : UniversalTestBase
    protected override async Task DisposeAsyncInternal()
    {
       await Host.DisposeAsync().caf();
-      await _clientEndpoint.DisposeAsync();
+      await _client.DisposeAsync();
    }
 }

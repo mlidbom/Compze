@@ -1,5 +1,4 @@
 using System.Threading.Tasks;
-using Compze.Core.Tessaging.Typermedia.Public;
 using Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
 using Compze.Tests.Infrastructure.XUnit;
 
@@ -11,10 +10,11 @@ public class Async_behavior_test : EndpointHostTestBase
    {
       TueryHandlerThreadGate.Close();
 
-      using var _ = ClientEndpoint.ServiceLocator.BeginScope();
-      var session = ClientEndpoint.ServiceLocator.Resolve<IRemoteTypermediaNavigator>();
-      var tuery = session.GetAsync(new MyTuery());
-      TueryHandlerThreadGate.Open();
-      await tuery;
+      await Client.ExecuteRequestAsync(async session =>
+      {
+         var tuery = session.GetAsync(new MyTuery());
+         TueryHandlerThreadGate.Open();
+         await tuery;
+      });
    }
 }

@@ -4,9 +4,9 @@ using Compze.Tessaging.Hosting;
 
 namespace AccountManagement.UserStories.Scenarios;
 
-public class LoginScenario(IEndpoint clientEndpoint, string email, string password) : ScenarioBase<AccountResource.Tommand.LogIn.LoginAttemptResult>
+public class LoginScenario(IClient client, string email, string password) : ScenarioBase<AccountResource.Tommand.LogIn.LoginAttemptResult>
 {
-   readonly IEndpoint _clientEndpoint = clientEndpoint;
+   readonly IClient _client = client;
    public string Password { get; set; } = password;
    public string Email { get; set; } = email;
 
@@ -22,14 +22,14 @@ public class LoginScenario(IEndpoint clientEndpoint, string email, string passwo
       return this;
    }
 
-   public static LoginScenario Create(IEndpoint clientEndpoint)
+   public static LoginScenario Create(IClient client)
    {
-      var registerAccountScenario = new RegisterAccountScenario(clientEndpoint);
+      var registerAccountScenario = new RegisterAccountScenario(client);
       registerAccountScenario.Execute();
-      return new LoginScenario(clientEndpoint, registerAccountScenario.Email, registerAccountScenario.Password);
+      return new LoginScenario(client, registerAccountScenario.Email, registerAccountScenario.Password);
    }
 
-   public LoginScenario(IEndpoint clientEndpoint, AccountResource account, string password) : this(clientEndpoint, account.Email.ToString(), password) {}
+   public LoginScenario(IClient client, AccountResource account, string password) : this(client, account.Email.ToString(), password) {}
 
-   public override AccountResource.Tommand.LogIn.LoginAttemptResult Execute() => Api.Tommand.Login(Email, Password).ExecuteAsClientRequestOn(_clientEndpoint);
+   public override AccountResource.Tommand.LogIn.LoginAttemptResult Execute() => Api.Tommand.Login(Email, Password).ExecuteRequestOn(_client);
 }

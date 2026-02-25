@@ -41,7 +41,6 @@ public abstract class EndpointHostTestBase : UniversalTestBase
    public IReadOnlyList<IThreadGate> AllGates  { get; }
 
    public IEndpoint BackendEndPoint { get; private set; } = null!;
-   protected IEndpoint ClientEndpoint { get; private set; } = null!;
    protected IClient Client { get; private set; } = null!;
    protected IEndpoint RemoteEndpoint { get; private set; } = null!;
 
@@ -121,7 +120,6 @@ public abstract class EndpointHostTestBase : UniversalTestBase
                                                 builder.RegisterHandlers.ForTevent((IMyTaggregateTevent _) => MyRemoteTaggregateTeventHandlerThreadGate.AwaitPassThrough());
                                              });
 
-      ClientEndpoint = Host.RegisterClientEndpointForRegisteredEndpoints();
       Client = Host.RegisterClientForRegisteredEndpoints();
    }
 
