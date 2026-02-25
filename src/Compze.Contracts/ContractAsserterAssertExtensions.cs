@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 
 namespace Compze.Contracts;
 
-public static class ContractAsserterFulfillsExtensions
+public static class ContractAsserterAssertExtensions
 {
    extension(ContractAsserter @this)
    {
