@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
+// ReSharper disable ConvertToExtensionBlock
 
 // ReSharper disable InconsistentNaming
 
@@ -59,14 +60,5 @@ public static class PipeAssert
    {
       if(EqualityComparer<T>.Default.Equals(@this, default)) ThrowAssertionFailed($"Assertion failed: {thisExpression}.{nameof(_assertNotDefault)}()");
       return @this;
-   }
-
-   ///<summary>Throws <see cref="AssertionFailedException"/> if <paramref name="this"/> is null or its value equals <c>default(T)</c>. Returns the non-nullable, non-default value on success.</summary>
-   [MethodImpl(MethodImplOptions.AggressiveInlining)]
-   public static T _assertNotNullOrDefault<T>([NotNull] this T? @this, [CallerArgumentExpression(nameof(@this))] string? thisExpression = null) where T : struct
-   {
-      if(@this is null) ThrowAssertionFailed($"Assertion failed: {thisExpression}.{nameof(_assertNotNullOrDefault)}() ## {thisExpression} was null");
-      if(EqualityComparer<T>.Default.Equals(@this.Value, default)) ThrowAssertionFailed($"Assertion failed: {thisExpression}.{nameof(_assertNotNullOrDefault)}() ## {thisExpression} was: {@this.Value}");
-      return @this.Value;
    }
 }
