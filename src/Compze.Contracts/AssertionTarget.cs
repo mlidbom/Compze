@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
@@ -9,10 +10,17 @@ namespace Compze.Contracts;
 public readonly struct AssertionTarget<T>(T value, string? valueExpression)
 #pragma warning restore CA1815
 {
-   internal T Value { get; } = value;
-   internal string? ValueExpression { get; } = valueExpression;
+   /// <summary>The value being asserted on.</summary>
+   [EditorBrowsable(EditorBrowsableState.Never)]
+   public T Value { get; } = value;
 
+   /// <summary>The caller-site expression that produced <see cref="Value"/>.</summary>
+   [EditorBrowsable(EditorBrowsableState.Never)]
+   public string? ValueExpression { get; } = valueExpression;
+
+   /// <summary>Throws <see cref="AssertionFailedException"/> with the specified message. Use this from custom assertion extension methods.</summary>
    [DoesNotReturn]
    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-   internal static void ThrowAssertionFailed(string message) => throw new AssertionFailedException(message);
+   [EditorBrowsable(EditorBrowsableState.Never)]
+   public static void ThrowAssertionFailed(string message) => throw new AssertionFailedException(message);
 }
