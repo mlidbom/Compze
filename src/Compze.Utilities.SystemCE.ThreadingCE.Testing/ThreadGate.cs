@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Compze.Utilities.Contracts;
+using Compze.Contracts;
 using Compze.Functional;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
@@ -42,7 +42,7 @@ public class ThreadGate : IThreadGate
       using var _ = LogMethodEntryExit(nameof(AwaitLetOneThreadPassThrough));
       _monitor.Update(() =>
       {
-         Assert.State.Is(!IsOpen);
+         Contract.State.Fulfills(!IsOpen);
          IsOpen = true;
          _lockOnNextPass = true;
       });

@@ -22,7 +22,7 @@ public class HttpClientFactoryCE : IHttpClientFactoryCE
       => registrar.Register(
          Singleton.For<IHttpClientFactoryCE>().CreatedBy(() => new HttpClientFactoryCE()));
 
-   private HttpClientFactoryCE() {}
+   HttpClientFactoryCE() {}
 
    public HttpClient CreateClient() => new(Handler, disposeHandler: false);
 

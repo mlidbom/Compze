@@ -1,5 +1,5 @@
 using System;
-using Compze.Utilities.Contracts;
+using Compze.Contracts;
 using Compze.Utilities.SystemCE;
 using JetBrains.Annotations;
 
@@ -33,7 +33,7 @@ public class DbPoolDatabase
 
    public DbPoolDatabase Release()
    {
-      Assert.State.Is(IsReserved);
+      Contract.State.Fulfills(IsReserved);
       IsReserved = false;
       IsClean = false;
       ReservationName = string.Empty;
@@ -43,14 +43,14 @@ public class DbPoolDatabase
 
    public DbPoolDatabase Clean()
    {
-      Assert.State.Is(!IsClean);
+      Contract.State.Fulfills(!IsClean);
       IsClean = true;
       return this;
    }
 
    public DbPoolDatabase Reserve(string reservationName, DbPoolId poolId, TimeSpan reservationLength)
    {
-      Assert.State.Is(!IsReserved);
+      Contract.State.Fulfills(!IsReserved);
 
       IsReserved = true;
       ReservationName = reservationName;

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Transactions;
+using Compze.Contracts;
 using Compze.Core.Public;
 using Compze.Core.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Core.Tessaging.Public;
@@ -111,8 +112,8 @@ public class TeventStoreUpdaterTest : UniversalTestBase
          wait.Set();
       });
       wait.Wait();
-      updater = updater.NotNull();
-      reader = reader.NotNull();
+      updater = updater._assertNotNull();
+      reader = reader._assertNotNull();
 
       MustActions.Invoking(() => updater.Get<User>(new TaggregateId())).Must().Throw<MultiThreadedUseException>();
       MustActions.Invoking(() => updater.Dispose()).Must().Throw<MultiThreadedUseException>();

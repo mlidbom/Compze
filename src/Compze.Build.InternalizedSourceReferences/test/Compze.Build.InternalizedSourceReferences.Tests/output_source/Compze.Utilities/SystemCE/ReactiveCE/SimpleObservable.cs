@@ -7,7 +7,8 @@ using System;
 using System.Collections.Generic;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
-using static Compze.Utilities.Contracts.Assert;
+using Compze.Contracts;
+using static Compze.Contracts.Assert;
 
 namespace Compze.Utilities.SystemCE.ReactiveCE;
 

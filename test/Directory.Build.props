@@ -3,6 +3,6 @@
 		<IsTestProject>true</IsTestProject>
 	</PropertyGroup>
 
-	<!-- Import src/Directory.Build.props for shared settings (after setting IsTestProject) -->
+	<!-- Import src/Directory.Build.props for shared settings (must come after setting IsTestProject since the imported file depends on it) -->
 	<Import Project="$(MSBuildThisFileDirectory)../src/Directory.Build.props" />
 </Project>

@@ -3,7 +3,7 @@ using Compze.Tessaging.Hosting.Testing.Performance;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.Testing.XUnit.BDD;
 
-namespace Compze.Utilities.Contracts.Specifications.Performance;
+namespace Compze.Contracts.Specifications.Performance;
 
 public class ObjectNotDefaultPerformanceTests
 {
@@ -12,7 +12,7 @@ public class ObjectNotDefaultPerformanceTests
       const int one = 1;
 
       TimeAsserter.Execute(
-         action: () => Assert.Argument.NotDefault(one),
+         action: () => Contract.Argument.NotDefault(one),
          iterations: 10_000,
          maxTotal: 5.Milliseconds().EnvMultiply(instrumented: 6));
    }

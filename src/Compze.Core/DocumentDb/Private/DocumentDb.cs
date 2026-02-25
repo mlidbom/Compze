@@ -9,7 +9,7 @@ using Compze.Core.Public;
 using Compze.Core.Refactoring.Naming.Internal;
 using Compze.Core.Serialization.Internal;
 using Compze.Core.Time.Public;
-using Compze.Utilities.Contracts;
+using Compze.Contracts;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Functional;
@@ -63,7 +63,7 @@ public sealed class DocumentDb : IDocumentDb
 
    public void Add<TDocument>(object id, TDocument value, Dictionary<Type, Dictionary<string, string>> persistentValues)
    {
-      Assert.Argument.NotNull(value);
+      Contract.Argument.Fulfills(value is not null);
 
       var idString = GetIdString(id);
       var serializedDocument = _serializer.Serialize(value);
@@ -128,7 +128,7 @@ public sealed class DocumentDb : IDocumentDb
    public IEnumerable<Guid> GetAllIds<T>() where T : IEntity<Guid> => _sqlLayer.GetAllIds(AcceptableTypeIds<T>());
 
    [return: NotNull] TDocument Deserialize<TDocument>(IDocumentDbSqlLayer.ReadRow stored) =>
-      (TDocument)Assert.ReturnValue.ReturnNotNull(_serializer.Deserialize(GetTypeFromId(new TypeId(stored.TypeId)), stored.SerializedDocument));
+      (TDocument)_serializer.Deserialize(GetTypeFromId(new TypeId(stored.TypeId)), stored.SerializedDocument)._assertNotNull();
 
    IReadOnlySet<TypeId> AcceptableTypeIds<T>() => AcceptableTypeIds(typeof(T));
 

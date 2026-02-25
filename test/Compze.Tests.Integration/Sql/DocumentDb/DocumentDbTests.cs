@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Compze.Contracts;
 using Compze.Core.DocumentDb.Public;
 using Compze.Core.Public;
 using Compze.Tessaging.Hosting.Testing.Wiring;
@@ -554,7 +555,7 @@ public class DocumentDbTests : DocumentDbTestsBase
         });
         wait.Wait();
         task.Wait();
-        session = session.NotNull();
+        session = session._assertNotNull();
 
         var user = new User();
 

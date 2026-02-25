@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using Compze.Contracts;
 using Compze.Core.Refactoring.Naming.Internal;
 using Compze.Core.Serialization.Internal;
 using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
@@ -39,7 +40,7 @@ public class TypermediaController : ControllerBase
 
       try
       {
-         var tueryResponse = (await HandlerExecutionEngine.Enqueue(incomingTessage).caf()).NotNull();
+         var tueryResponse = (await HandlerExecutionEngine.Enqueue(incomingTessage).caf())._assertNotNull();
          var tueryResponseJson = Serializer.SerializeResponse(tueryResponse);
          return Ok(tueryResponseJson);
       }
@@ -57,7 +58,7 @@ public class TypermediaController : ControllerBase
 
       try
       {
-         var tommandResponse = (await Inbox.Receive(incomingTessage).caf()).NotNull();
+         var tommandResponse = (await Inbox.Receive(incomingTessage).caf())._assertNotNull();
          var tommandResponseJson = Serializer.SerializeResponse(tommandResponse);
          return Ok(tommandResponseJson);
       }

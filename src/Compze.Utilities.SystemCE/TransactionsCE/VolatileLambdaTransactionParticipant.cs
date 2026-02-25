@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Transactions;
-using Compze.Utilities.Contracts;
+using Compze.Contracts;
 using Compze.Functional;
 
 namespace Compze.Utilities.SystemCE.TransactionsCE;
@@ -47,7 +47,7 @@ public class VolatileLambdaTransactionParticipant : VolatileTransactionParticipa
       _onEnlist?.Invoke();
       Transaction.Current!.TransactionCompleted += (_, parameters) =>
       {
-         Assert.Argument.NotNull(parameters.Transaction);
+         Contract.Argument.NotNull(parameters.Transaction);
          _onTransactionCompleted?.Invoke(parameters.Transaction.TransactionInformation.Status);
       };
    }

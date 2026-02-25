@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Concurrent;
 using System.Reflection;
-using static Compze.Utilities.Contracts.Assert;
+using Compze.Contracts;
+using static Compze.Contracts.Assert;
 
 namespace Compze.Utilities.SystemCE.ReflectionCE;
 

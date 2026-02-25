@@ -1,4 +1,4 @@
-using Compze.Utilities.Contracts;
+using Compze.Contracts;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Logging;
 using Compze.Utilities.SystemCE;
@@ -54,7 +54,7 @@ public partial class DbPool : StrictlyManagedResourceBase<DbPool>
 
    public string ConnectionStringFor(string reservationName) => _monitor.Update(() =>
    {
-      Assert.State.IsNotDisposed(Disposed, this);
+      Contract.State.NotDisposed(Disposed, this);
 
       var reservedDatabase = _transientCache.SingleOrDefault(db => db.ReservationName == reservationName);
       // ReSharper disable once ConditionIsAlwaysTrueOrFalse

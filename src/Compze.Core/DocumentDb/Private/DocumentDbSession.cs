@@ -11,7 +11,8 @@ using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.TransactionsCE;
 using Compze.Utilities.SystemCE.UsageGuards;
-using static Compze.Utilities.Contracts.Assert;
+using Compze.Contracts;
+using static Compze.Contracts.Contract;
 
 namespace Compze.Core.DocumentDb.Private;
 
@@ -133,21 +134,21 @@ public partial class DocumentDbSession : IDocumentDbSession
 
    public virtual TValue Get<TValue>(object key)
    {
-      if(TryGet(key, out TValue? value)) return ReturnValue.ReturnNotNull(value);
+      if(TryGet(key, out TValue? value)) return value._assertNotNull();
 
       throw new NoSuchDocumentException(key, typeof(TValue));
    }
 
    TValue GetInternal<TValue>(object key, bool useUpdateLock)
    {
-      if(TryGetInternal(key, typeof(TValue), out TValue? value, useUpdateLock)) return ReturnValue.ReturnNotNull(value);
+      if(TryGetInternal(key, typeof(TValue), out TValue? value, useUpdateLock)) return value._assertNotNull();
 
       throw new NoSuchDocumentException(key, typeof(TValue));
    }
 
    public virtual void Save<TValue>(object id, TValue value)
    {
-      Argument.NotNull(value);
+      Argument.Fulfills(value is not null);
 
       if(TryGetInternal(id, value.GetType(), out TValue? _, useUpdateLock: false))
       {

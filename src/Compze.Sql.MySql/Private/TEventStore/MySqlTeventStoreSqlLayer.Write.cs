@@ -4,7 +4,7 @@ using System.Linq;
 using Compze.Core.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions;
 using Compze.Sql.Common;
-using Compze.Utilities.Contracts;
+using Compze.Contracts;
 using Compze.Functional;
 using Compze.Utilities.SystemCE;
 using MySql.Data.MySqlClient;
@@ -102,7 +102,7 @@ public partial class MySqlTeventStoreSqlLayer
                                                  nextTeventReadOrder: nextTeventReadOrder == null ? null : new ReadOrder?(ReadOrder.Parse(nextTeventReadOrder)));
          });
 
-      return Assert.ReturnValue.NotNull(neighborhood)._then(neighborhood);
+      return neighborhood._assertNotNull();
    }
 
    public void DeleteTaggregate(TaggregateId taggregateId)

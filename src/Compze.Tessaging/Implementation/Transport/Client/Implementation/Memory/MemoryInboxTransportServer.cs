@@ -4,7 +4,7 @@ using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
 using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
 using Compze.Tessaging.Implementation.TessageHandling.Inbox;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
-using Compze.Utilities.Contracts;
+using Compze.Contracts;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using System;
@@ -46,7 +46,7 @@ public class MemoryInboxTransportServer : IInboxTransportServer
 
    public Task StartAsync()
    {
-      Assert.State.Is(!Running);
+      Contract.State.Fulfills(!Running);
       Running = true;
       return Task.CompletedTask;
    }
@@ -67,15 +67,13 @@ public class MemoryInboxTransportServer : IInboxTransportServer
          switch(incomingTessage.TessageTypeEnum)
          {
             case TransportTessageType.TypermediaAtMostOnceTommandWithReturnValue:
-               return (await _inbox.Value.Receive(incomingTessage).caf())
-                     .NotNull()
-                     .CastTo<TResult>()
-                     ._(RoundTripSerialize);
+               return (await _inbox.Value.Receive(incomingTessage).caf())._assertNotNull()
+                                                                         .CastTo<TResult>()
+                                                                         ._(RoundTripSerialize);
             case TransportTessageType.TyperMediaTuery:
-               return (await _engine.Value.Enqueue(incomingTessage).caf())
-                     .NotNull()
-                     .CastTo<TResult>()
-                     ._(RoundTripSerialize);
+               return (await _engine.Value.Enqueue(incomingTessage).caf())._assertNotNull()
+                                                                          .CastTo<TResult>()
+                                                                          ._(RoundTripSerialize);
             case TransportTessageType.ExactlyOnceTevent:
             case TransportTessageType.TypermediaAtMostOnceTommand:
             case TransportTessageType.ExactlyOnceTommand:

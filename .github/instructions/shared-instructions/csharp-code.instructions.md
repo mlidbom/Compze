@@ -30,6 +30,9 @@ applyTo: "**/*.cs"
 
 ## Naming
 
+ - **Make them however long they need to be** By far the most common problem with code we see is that trying to keep names short means they do NOT describe what they do. Names should be as long as they need to be to clearly convey their purpose. If you find yourself needing to add a comment to explain what a method or variable does, it's a strong sign the name should be improved instead.
+
+
 | Element          | Convention                                                                 |
 | ---------------- | -------------------------------------------------------------------------- |
 | Classes          | `PascalCase`                                                               |
@@ -48,30 +51,40 @@ applyTo: "**/*.cs"
 
 - Place at file top, outside namespace.
 - No global usings files — each file has its own explicit usings.
-- Prefer `using static Compze.Utilities.Contracts.Assert;` to call `Argument.NotNull()`, `State.Is()` etc. without the `Assert.` prefix.
+- Prefer `using static Compze.Contracts.Assert;` to call `Argument.NotNull()`, `State.Is()` etc. without the `Assert.` prefix.
 
 ## Null Handling
 
 - **Nullable reference types enabled** in all projects.
-- Use the contract assertion system instead of raw null checks:
+- Use Compze.Contracts:
   - `Assert.Argument.NotNull(value)` — `ArgumentException`
   - `Assert.State.Is(condition)` — `InvalidOperationException`
   - `Assert.Result.NotNull(result)` — `InvalidResultException`
   - `Assert.Invariant.Is(condition)` — `InvariantViolatedException`
 - Use `.NotNull()` extension for quick null-dereferencing.
 
+## Extension Methods
+
+- **Use extension blocks, not the old syntax `@this`**
+- **Always name the receiver parameter `@this`** — making it instantly recognizable.
+  ```csharp
+  extension(ContractAsserter @this)
+  {
+     public ContractAsserter NotNull<T>([NotNull] T? value, ...) { ... @this.ThrowNull(...); ... }
+  }
+  ```
+
+
 ### No Records
 - **Do not use `record` or `record struct`.**
-- Records encourage treating types as dumb data bags, discouraging encapsulation, behavior, and proper OO design.
-- If value equality is genuinely needed, implement `IEquatable<T>` explicitly — don't reach for record just to get it for free.
+- Records encourage treating types as dumb data bags, discouraging proper OO design with encapsulation and behavior.
+- If value equality is genuinely needed, implement `IEquatable<T>` explicitly.
 
 ## Default Interface Methods (Mixins)
 
-This codebase uses **default interface methods extensively** as a mixin pattern. Interfaces often contain many convenience overloads and helper methods implemented as defaults that delegate to a small number of abstract members.
+This codebase uses **default interface methods and extension methods extensively** as a mixin pattern. Interfaces often contain many convenience overloads and helper methods implemented as defaults that delegate to a small number of abstract members.
 
-**Always check interfaces for default method implementations AND extension methods** before assuming a method doesn't exist or writing workarounds. If you only see a few abstract members on a class, look at the interface — it likely has many more methods available via defaults. Also check for extension method classes (often named `{TypeName}Extensions` or `{TypeName}CE`) that add convenience methods. Older code uses extension methods for the same mixin pattern; newer code uses default interface methods.
-
-For example: `IMonitorCE` has ~10 abstract lock primitives (`TakeReadLock`, `TakeUpdateLock`, etc.) but provides ~12 default methods (`Read`, `Update`, `ReadWhen`, `Await`, etc.) that delegate to them — split across partial interface files:
+**Always check interfaces for default method implementations AND extension methods** before assuming a method doesn't exist or writing workarounds.
 
 ```csharp
 // Abstract — the only members implementors need to provide
@@ -91,7 +104,7 @@ TReturn Read<TReturn>(Func<TReturn> func, TimeSpan? timeout = null)
 ## Collections
 
 - Use collection expression syntax `[]` for initialization: `List<Task> tasks = [];`.
-- Prefer `IReadOnlyList<T>`, `IReadOnlyDictionary<K,V>`, `IReadOnlySet<T>` for return types and fields.
+- Use immutable types for exposed data `IReadOnlyList<T>`, `IReadOnlyDictionary<K,V>`, `IReadOnlySet<T>`
 - Prefer LINQ method syntax when not cumbersome.
 - Target-typed `new()` for well-known types: `static readonly ConcurrentDictionary<...> Cache = new();`.
 
@@ -109,7 +122,7 @@ TReturn Read<TReturn>(Func<TReturn> func, TimeSpan? timeout = null)
 
 - **CRITICAL**: Never swallow exceptions in a catch block without rethrowing.
   - Only catch an exception at all if you have a specific recovery strategy or need to add context before re-throwing.
-- Use the fluent `Assert.*` contract system instead of raw `throw` statements where possible.
+- Prefer `Assert.*` or `._assert` from Compze.Contracts over manual if clauses and throwing.
 
 ## Comments & Documentation
 

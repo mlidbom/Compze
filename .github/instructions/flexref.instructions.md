@@ -42,12 +42,12 @@ This lets us maintain multiple `.slnx` solutions of any size: a monolithic one w
 ## What a Flex Reference Looks Like in a .csproj
 
 ```xml
-<!-- Compze.Utilities.Contracts — flex reference -->
-<ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Contracts)' == 'true'">
-  <PackageReference Include="Compze.Utilities.Contracts" Version="*-*" />
+<!-- Compze.Contracts — flex reference -->
+<ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' == 'true'">
+  <PackageReference Include="Compze.Contracts" Version="*-*" />
 </ItemGroup>
-<ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Contracts)' != 'true'">
-  <ProjectReference Include="..\..\src\Compze.Utilities.Contracts\Compze.Utilities.Contracts.csproj" />
+<ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' != 'true'">
+  <ProjectReference Include="..\..\src\Compze.Contracts\Compze.Contracts.csproj" />
 </ItemGroup>
 ```
 

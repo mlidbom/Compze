@@ -1,7 +1,7 @@
 using Compze.Core.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions;
-using Compze.Utilities.Contracts;
+using Compze.Contracts;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Functional;
@@ -45,13 +45,13 @@ public class TeventCache : IDisposable, ITeventCache
       {
          get
          {
-            Assert.State.NotNull(Transaction.Current);
+            Contract.State.NotNull(Transaction.Current);
             var transactionId = Transaction.Current.TransactionInformation.LocalIdentifier;
             Dictionary<TaggregateId, Entry>? overlay = null;
 
             if(_overlays.Read(it => it.TryGetValue(transactionId, out overlay)))
             {
-               return Assert.ReturnValue.NotNull(overlay)._then(overlay);
+               return overlay._assertNotNull();
             }
 
             overlay = [];

@@ -1,3 +1,4 @@
+using Compze.Contracts;
 using Compze.Serialization.Newtonsoft;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
@@ -12,5 +13,5 @@ public class DbPoolStateSerializer : ISharedObjectSerializer<DbPoolState>
    public string Serialize(DbPoolState instance) => JsonConvert.SerializeObject(instance, Formatting.Indented, RenamingAndNonPublicMembersSupportingJsonSettings.SharedObjects);
 
    public DbPoolState Deserialize(string json) =>
-      JsonConvert.DeserializeObject<DbPoolState>(json, RenamingAndNonPublicMembersSupportingJsonSettings.SharedObjects).NotNull();
+      JsonConvert.DeserializeObject<DbPoolState>(json, RenamingAndNonPublicMembersSupportingJsonSettings.SharedObjects)._assertNotNull();
 }

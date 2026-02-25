@@ -1,4 +1,4 @@
-# Compze.Utilities.Contracts
+# Compze.Contracts
 
 Design-by-contract assertion library for [Compze](https://github.com/mlidbom/Compze).
 
@@ -43,7 +43,7 @@ void Transfer(Account from, Account to, decimal amount)
 ## Installation
 
 ```shell
-dotnet add package Compze.Utilities.Contracts
+dotnet add package Compze.Contracts
 ```
 
 ## Related packages

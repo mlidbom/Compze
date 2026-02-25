@@ -1,12 +1,12 @@
 using System;
 using Compze.Core.Public.Infrastructure;
-using Compze.Utilities.Contracts;
+using Compze.Contracts;
 using Compze.Functional;
 using Compze.Utilities.SystemCE.ReflectionCE;
 
 namespace Compze.Core.Public;
 
-public class EntityId<TPrimitive>(TPrimitive primitiveValue) : ValueWrapper<TPrimitive>(Assert.Argument.Is(!Equals(primitiveValue, default(TPrimitive)))._then(primitiveValue))
+public class EntityId<TPrimitive>(TPrimitive primitiveValue) : ValueWrapper<TPrimitive>(Contract.Argument.Fulfills(!Equals(primitiveValue, default(TPrimitive)))._then(primitiveValue))
    where TPrimitive : IEquatable<TPrimitive>
 {
    protected override bool IsConsideredTypeCompatibleForEquality(object other) => GetType().IsAssignableToOrFrom(other.GetType());

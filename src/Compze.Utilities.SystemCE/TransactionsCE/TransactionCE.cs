@@ -1,6 +1,6 @@
 using System;
 using System.Transactions;
-using Compze.Utilities.Contracts;
+using Compze.Contracts;
 
 namespace Compze.Utilities.SystemCE.TransactionsCE;
 
@@ -10,7 +10,7 @@ public static class TransactionCE
    {
       @this.TransactionCompleted += (_, args) =>
       {
-         Assert.Argument.NotNull(args.Transaction);
+         Contract.Argument.NotNull(args.Transaction);
          if(args.Transaction.TransactionInformation.Status == TransactionStatus.Committed)
          {
             action();

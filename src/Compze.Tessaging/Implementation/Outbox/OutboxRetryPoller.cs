@@ -6,7 +6,7 @@ using Compze.Core.Tessaging.Internal.SqlLayer;
 using Compze.Core.Tessaging.Public;
 using Compze.Tessaging.Implementation.Transport.Client.Internal;
 using Compze.Tessaging.SystemCE.ThreadingCE;
-using Compze.Utilities.Contracts;
+using Compze.Contracts;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Logging;
@@ -63,7 +63,7 @@ public class OutboxRetryPoller : IDisposable
 
    public void Start()
    {
-      Assert.State.Is(!_running);
+      Contract.State.Fulfills(!_running);
       _running = true;
       _pollerThread = _taskRunner.RunOnNamedThread("OutboxRetryPoller", PollerLoop, ThreadPriority.BelowNormal);
    }

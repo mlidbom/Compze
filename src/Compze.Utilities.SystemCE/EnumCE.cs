@@ -7,29 +7,21 @@ namespace Compze.Utilities.SystemCE;
 
 public static class EnumCE
 {
-   public static bool IsValid<TEnum>(this TEnum value)
-      where TEnum : struct, Enum => EnumCE.Values<TEnum>().Contains(value);
+   public static bool IsValid<TEnum>(this TEnum value) where TEnum : struct, Enum
+      => Values<TEnum>().Contains(value);
 
-   public static TEnum AssertValid<TEnum>(this TEnum value)
-      where TEnum : struct, Enum => value.IsValid() ? value : throw new ArgumentException($"{value} is not a valid {typeof(TEnum)} value");
+   public static bool IsValid(this Enum value) => Values(value).Contains(value);
 
-   public static bool IsValid(this Enum value)
-      => EnumCE.Values(value).Contains(value);
+   public static IReadOnlySet<TEnum> Values<TEnum>() where TEnum : struct, Enum
+      => TypeCache<TEnum>.ValidValues;
 
-   public static Enum AssertValid(this Enum value)
-      => value.IsValid() ? value : throw new ArgumentException($"{value} is not a valid {value.GetType().Name} value");
-
-   public static IReadOnlySet<TEnum> Values<TEnum>()
-      where TEnum : struct, Enum
-      => TypeCache<TEnum>.Values;
-
-   static readonly ConcurrentDictionary<Type, IReadOnlySet<Enum>> Cache = new();
    public static IReadOnlySet<Enum> Values(Type enumType) => Cache.GetOrAdd(enumType, type => Enum.GetValues(type).Cast<Enum>().ToHashSet());
    public static IReadOnlySet<Enum> Values(Enum value) => Values(value.GetType());
 
-   public static class TypeCache<T>
-      where T : struct, Enum
+   static class TypeCache<T> where T : struct, Enum
    {
-      public static readonly IReadOnlySet<T> Values = Enum.GetValues<T>().ToHashSet();
+      public static readonly IReadOnlySet<T> ValidValues = Enum.GetValues<T>().ToHashSet();
    }
+
+   static readonly ConcurrentDictionary<Type, IReadOnlySet<Enum>> Cache = new();
 }

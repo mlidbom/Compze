@@ -6,7 +6,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using static Compze.Utilities.Contracts.Assert;
+using Compze.Contracts;
+using static Compze.Contracts.Assert;
 
 namespace Compze.Utilities.SystemCE.LinqCE;
 

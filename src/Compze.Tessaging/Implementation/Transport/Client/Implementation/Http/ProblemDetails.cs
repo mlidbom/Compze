@@ -2,6 +2,7 @@ using System;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
+using Compze.Contracts;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using JetBrains.Annotations;
@@ -21,7 +22,7 @@ namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Http;
    {
       try
       {
-         return (await response.Content.ReadFromJsonAsync<ProblemDetails>().caf()).NotNull();
+         return (await response.Content.ReadFromJsonAsync<ProblemDetails>().caf())._assertNotNull();
       }
       catch(Exception)
       {

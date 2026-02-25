@@ -1,6 +1,6 @@
 using Compze.Core.Tessaging.Teventive.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
-using Compze.Utilities.Contracts;
+using Compze.Contracts;
 using Compze.Utilities.SystemCE.ReflectionCE;
 
 namespace Compze.Tessaging.Teventive.TeventStore.QueryModels.SelfGeneratingQueryModels;
@@ -34,7 +34,7 @@ public abstract partial class SelfGeneratingQueryModel<TQueryModel, TTaggregateT
          }
 
          TEntityId _id;
-         public TEntityId Id => Assert.ReturnValue.ReturnNotDefault(_id);
+         public TEntityId Id => _id._assertNotDefault();
 
          public static CollectionManager CreateSelfManagingCollection(TComponent parent) //todo:tests
             => new(parent: parent, appliersRegistrar: parent.RegisterTeventAppliers());

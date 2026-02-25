@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using System.Threading.Tasks;
-using Compze.Utilities.Contracts;
+using Compze.Contracts;
 using Compze.Functional;
 using Compze.Utilities.Logging;
 using Compze.Utilities.SystemCE;
@@ -44,13 +44,13 @@ public static class DbCommandCE
 
    public static TCommand PrepareStatement<TCommand>(this TCommand @this) where TCommand : DbCommand
    {
-      Assert.State.Is(@this.CommandText.Length > 0, () => "Cannot prepare statement with empty CommandText");
+      Contract.State.Fulfills(@this.CommandText.Length > 0, () => "Cannot prepare statement with empty CommandText");
       return @this._mutate(me => me.Prepare());
    }
 
    public static async Task<TCommand> PrepareStatementAsync<TCommand>(this TCommand @this) where TCommand : DbCommand
    {
-      Assert.State.Is(@this.CommandText.Length > 0, () => "Cannot prepare statement with empty CommandText");
+      Contract.State.Fulfills(@this.CommandText.Length > 0, () => "Cannot prepare statement with empty CommandText");
       return await @this._mutateAsync(async me => await me.PrepareAsync().caf()).caf();
    }
 

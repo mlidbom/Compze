@@ -1,5 +1,6 @@
 using System.Collections.Generic;
-using static Compze.Utilities.Contracts.Assert;
+using Compze.Contracts;
+using static Compze.Contracts.Contract;
 
 namespace Compze.Utilities.SystemCE;
 
@@ -19,5 +20,5 @@ public static class ObjectCE
       }
    }
 
-   public static string ToStringNotNull(this object @this) => ReturnValue.ReturnNotNull(@this.ToString());
+   public static string ToStringNotNull(this object @this) => @this.ToString()._assertNotNull();
 }

@@ -1,7 +1,8 @@
 using System;
 using Compze.Utilities.Testing.XUnit.BDD;
+// ReSharper disable InconsistentNaming
 
-namespace Compze.Utilities.Contracts.Specifications;
+namespace Compze.Contracts.Specifications;
 
 public class StringAssertion_method : AssertionMethodsTest
 {

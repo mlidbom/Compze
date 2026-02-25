@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
-using Compze.Utilities.Contracts;
+using Compze.Contracts;
 using Compze.Utilities.SystemCE.ThreadingCE.Utilities;
 
 namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
@@ -166,7 +166,7 @@ public partial interface IMonitorCE
 
          public bool TryTakeLock(TimeSpan timeout)
          {
-            Assert.Argument.Is(timeout != InfiniteTimeOut, () => "Infinite timeouts are not supported");
+            Contract.Argument.Fulfills(timeout != InfiniteTimeOut, () => "Infinite timeouts are not supported");
 
             if(Monitor.TryEnter(_lockObject)) return true; //This will never block, calling it is essentially free and allows us to collect contention statistics
             Interlocked.Increment(ref _contentionCount);

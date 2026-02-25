@@ -33,7 +33,7 @@ This creates a clear boundary between stable utility code and the evolving core 
 | Library | Key Value Proposition | Compze Dependencies | Status |
 |---------|----------------------|---------------------|--------|
 | **Contracts** | Fluent precondition/postcondition assertions (`Assert.Argument`, `Assert.State`, `Assert.Result`) | None | Fix `IsValid` inverted logic bug. Add test coverage for UsageGuards and uncovered methods. |
-| **Functional** | `unit` type eliminates the `Action`/`Func` split. `Pipe` enables fluent left-to-right composition. | Contracts (2 call sites, replaceable with BCL) | Remove `DiscriminatedUnion`, `Option`, `ObjectCE`. Move `EnumerableCE.OfTypes<>()` to SystemCE. What remains: `unit` and `Pipe`. |
+| **Functional** | `unit` type eliminates the `Action`/`Func` split. `Pipe` enables fluent left-to-right composition. | Contracts (2 call sites, replaceable with BCL) | **Ready to release.** |
 
 ### Tier 2 — Needs API review and naming pass
 

@@ -10,7 +10,8 @@ using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
-using static Compze.Utilities.Contracts.Assert;
+using Compze.Contracts;
+using static Compze.Contracts.Contract;
 
 namespace Compze.Tessaging.Implementation.TessageHandling.Inbox;
 
@@ -31,7 +32,7 @@ public partial class Inbox
          {
             HandlerExecutionTask? handlerExecutionTask = null;
             _implementation.Await(implementation => implementation.TryGetDispatchableTessage(dispatchingRules, out handlerExecutionTask));
-            return ReturnValue.ReturnNotNull(handlerExecutionTask);
+            return handlerExecutionTask._assertNotNull();
          }
 
          public Task<object?> EnqueueTessageTask(TransportTessage.InComing tessage) => _implementation.Update(implementation =>

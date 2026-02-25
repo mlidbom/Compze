@@ -2,7 +2,8 @@ using System;
 using System.Collections.Generic;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
-using static Compze.Utilities.Contracts.Assert;
+using Compze.Contracts;
+using static Compze.Contracts.Contract;
 
 namespace Compze.Utilities.SystemCE.ReactiveCE;
 
@@ -14,7 +15,7 @@ public class SimpleObservable<TTevent> : IObservable<TTevent>
    ///<summary>Calls <see cref="IObserver{T}.OnNext"/> for each subscribed observer.</summary>
    public void OnNext(TTevent tevent)
    {
-      Argument.NotNull(tevent);
+      Argument.Fulfills(tevent is not null);
 
       _observerCollection.Update(it => it.ForEach(observer => observer.OnNext(tevent)));
    }

@@ -4,6 +4,7 @@ using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 using Newtonsoft.Json;
 using System;
+using Compze.Contracts;
 using Compze.Utilities.Testing.XUnit.BDD;
 
 namespace Compze.Tests.Performance.Internals.SystemCE.ThreadingCE;
@@ -12,7 +13,7 @@ class SharedObjectSerializer : ISharedObjectSerializer<SharedObject>
 {
    public string Serialize(SharedObject instance) => JsonConvert.SerializeObject(instance);
 
-   public SharedObject Deserialize(string json) => JsonConvert.DeserializeObject<SharedObject>(json).NotNull();
+   public SharedObject Deserialize(string json) => JsonConvert.DeserializeObject<SharedObject>(json)._assertNotNull();
 }
 
 public class MachineWideSharedObjectPerformanceTests : UniversalTestBase

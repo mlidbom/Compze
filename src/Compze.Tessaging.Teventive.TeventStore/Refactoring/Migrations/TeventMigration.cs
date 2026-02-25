@@ -1,7 +1,7 @@
 using System;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.Refactoring.Migrations.Public;
-using Compze.Utilities.Contracts;
+using Compze.Contracts;
 
 namespace Compze.Tessaging.Teventive.TeventStore.Refactoring.Migrations;
 
@@ -10,7 +10,7 @@ public abstract class TeventMigration<TMigratedTaggregateTeventHierarchyRootInte
 {
    protected TeventMigration(Guid id, string name, string description)
    {
-      Assert.Argument.NotDefault(id).NotNullEmptyOrWhitespace(description).NotNullEmptyOrWhitespace(name).Is(typeof(TMigratedTaggregateTeventHierarchyRootInterface).IsInterface);
+      Contract.Argument.NotDefault(id).NotNullEmptyOrWhitespace(description).NotNullEmptyOrWhitespace(name).Fulfills(typeof(TMigratedTaggregateTeventHierarchyRootInterface).IsInterface);
 
       Id = id;
       Name = name;

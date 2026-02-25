@@ -3,14 +3,15 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using Compze.Functional;
-using static Compze.Utilities.Contracts.Assert;
+using Compze.Contracts;
+using static Compze.Contracts.Contract;
 
 namespace Compze.Utilities.SystemCE.ReflectionCE;
 
 /// <summary>A collection of extensions to work with <see cref="Type"/></summary>
 public static partial class TypeCE
 {
-   public static string FullNameNotNull(this Type @this) => ReturnValue.ReturnNotNull(@this.FullName);
+   public static string FullNameNotNull(this Type @this) => @this.FullName._assertNotNull();
 
    /// ///<returns>true if <paramref name="me"/> implements the interface: <typeparamref name="TImplemented"/>. By definition true if <paramref name="me"/> == <typeparamref name="TImplemented"/>.</returns>
    public static bool Implements<TImplemented>(this Type me)
@@ -26,7 +27,7 @@ public static partial class TypeCE
    }
 
    ///<returns>true if <paramref name="me"/> implements the interface: <paramref name="implemented"/>. By definition true if <paramref name="me"/> == <paramref name="implemented"/>.</returns>
-   public static bool Implements(this Type me, Type implemented) => Argument.NotNull(me).NotNull(implemented).Is(implemented.IsInterface)._then(() =>
+   public static bool Implements(this Type me, Type implemented) => Argument.NotNull2(me, implemented).Fulfills(implemented.IsInterface)._then(() =>
    {
       if(me == implemented) { return true; }
 

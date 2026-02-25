@@ -9,7 +9,7 @@ using Compze.Core.Tessaging.Transport.Internal;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Tessaging.Implementation.Transport.Client.Internal;
 using Compze.Tessaging.Implementation.Transport.Client.Routing;
-using Compze.Utilities.Contracts;
+using Compze.Contracts;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Functional;
@@ -91,7 +91,7 @@ public partial class RoutingInboxClient : IRoutingInboxClient, IDisposable
       return await connection.GetAsync(tuery).caf();
    }
 
-   public void Start() => Assert.State.Is(!_running, () => "already running")
+   public void Start() => Contract.State.Fulfills(!_running, () => "already running")
                                 ._then(_running = true);
 
    public void Stop() => AssertRunning()._then(() =>
@@ -115,5 +115,5 @@ public partial class RoutingInboxClient : IRoutingInboxClient, IDisposable
       }
    }
 
-   unit AssertRunning() => Assert.State.Is(_running, () => "not running")._then(unit.Value);
+   unit AssertRunning() => Contract.State.Fulfills(_running, () => "not running")._then(unit.Value);
 }

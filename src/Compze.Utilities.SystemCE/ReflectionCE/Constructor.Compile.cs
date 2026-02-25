@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using Compze.Contracts;
 
 namespace Compze.Utilities.SystemCE.ReflectionCE;
 
@@ -26,8 +27,7 @@ public static partial class Constructor
                .SingleOrDefault(prop =>
                                    prop.Name.ContainsCE(nameof(IStaticInstancePropertySingleton<TInstance>)) &&
                                    prop.Name.ContainsCE(nameof(IStaticInstancePropertySingleton<TInstance>.Instance)) &&
-                                   prop.PropertyType == typeof(TInstance))
-               .NotNull(() => $"This should be impossible, but it seems {typeof(TInstance).FullName} does not implement {typeof(IStaticInstancePropertySingleton<TInstance>).FullName}");
+                                   prop.PropertyType == typeof(TInstance))._assertNotNull();
       }
 
       static Func<TInstance> CompileStaticInstancePropertyDelegate<TInstance>()

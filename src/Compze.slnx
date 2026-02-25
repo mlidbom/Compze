@@ -52,9 +52,16 @@
       <BuildType Solution="docs|*" Project="Debug" />
     </Project>
   </Folder>
+  <Folder Name="/Compze.Contracts/">
+    <Project Path="../test/Compze.Contracts.Specifications/Compze.Contracts.Specifications.csproj" />
+    <Project Path="Compze.Contracts/Compze.Contracts.csproj" />
+  </Folder>
+  <Folder Name="/Compze.Functional/">
+    <Project Path="../test/Compze.Functional.Specifications/Compze.Functional.Specifications.csproj" />
+    <Project Path="Compze.Functional/Compze.Functional.csproj" />
+  </Folder>
   <Folder Name="/Compze/">
     <Project Path="Compze.Core/Compze.Core.csproj" />
-    <Project Path="Compze.Functional/Compze.Functional.csproj" />
     <Project Path="Compze.Tessaging/Compze.Tessaging.csproj" />
   </Folder>
   <Folder Name="/Compze/Serialization/">
@@ -79,7 +86,6 @@
     <Project Path="Compze.Utilities.Testing.DbPool/Compze.Utilities.Testing.DbPool.csproj" />
     <Project Path="Compze.Utilities.Testing.XUnit/Compze.Utilities.Testing.XUnit.csproj" />
     <Project Path="Compze.Utilities.Testing.Must/Compze.Utilities.Testing.Must.csproj" />
-    <Project Path="Compze.Utilities.Contracts/Compze.Utilities.Contracts.csproj" />
     <Project Path="Compze.Utilities.DependencyInjection/Compze.Utilities.DependencyInjection.csproj" />
     <Project Path="Compze.Utilities.Logging/Compze.Utilities.Logging.csproj" />
     <Project Path="Compze.Utilities.SystemCE/Compze.Utilities.SystemCE.csproj" />
@@ -87,8 +93,6 @@
     <Project Path="Compze.Utilities.SystemCE.ThreadingCE.Testing/Compze.Utilities.SystemCE.ThreadingCE.Testing.csproj" />
   </Folder>
   <Folder Name="/_Tests/">
-    <Project Path="../test/Compze.Utilities.Contracts.Specifications/Compze.Utilities.Contracts.Specifications.csproj" />
-    <Project Path="../test/Compze.Functional.Specifications/Compze.Functional.Specifications.csproj" />
     <Project Path="../test/Compze.Utilities.Tests/Compze.Utilities.Tests.csproj" />
     <Project Path="../test/Compze.Tests.Common/Compze.Tests.Common.csproj" />
     <Project Path="../test/Compze.Tests.CodePolicies/Compze.Tests.CodePolicies.csproj" />

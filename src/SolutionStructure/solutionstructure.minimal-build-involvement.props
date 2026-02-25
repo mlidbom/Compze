@@ -1,7 +1,7 @@
 <!-- Common properties for all solution organization projects -->
 <Project>
    <PropertyGroup>
-      <TargetFramework>net9.0</TargetFramework>
+      <TargetFramework>net10.0</TargetFramework>
       <IsPackable>false</IsPackable>
       <EnableDefaultItems>false</EnableDefaultItems>
    </PropertyGroup>

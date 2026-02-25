@@ -1,6 +1,6 @@
 <Solution>
   <Folder Name="/Compze.Utilities/">
-    <Project Path="Compze.Utilities.Contracts/Compze.Utilities.Contracts.csproj" />
+    <Project Path="Compze.Contracts/Compze.Contracts.csproj" />
     <Project Path="Compze.Functional/Compze.Functional.csproj" />
     <Project Path="Compze.Utilities/Compze.Utilities.csproj" />
     <Project Path="Compze.Utilities.SystemCE/Compze.Utilities.SystemCE.csproj" />

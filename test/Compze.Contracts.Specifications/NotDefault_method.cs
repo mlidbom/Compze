@@ -1,7 +1,7 @@
 using System;
 using Compze.Utilities.Testing.XUnit.BDD;
 
-namespace Compze.Utilities.Contracts.Specifications;
+namespace Compze.Contracts.Specifications;
 
 public class NotDefault_method : AssertionMethodsTest
 {

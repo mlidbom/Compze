@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Compze.Utilities.Contracts;
+using Compze.Contracts;
 using Compze.Functional;
 
 namespace Compze.Utilities.SystemCE.ThreadingCE;
@@ -30,7 +30,7 @@ public static class ReadonlyCollectionsTE
 
    public static void AddRange<T>(this ICollection<T> me, IEnumerable<T> toAdd)
    {
-      Assert.Argument.NotNull(me).NotNull(toAdd);
+      Contract.Argument.NotNull(me).NotNull(toAdd);
       foreach(var it in toAdd)
       {
          me.Add(it);

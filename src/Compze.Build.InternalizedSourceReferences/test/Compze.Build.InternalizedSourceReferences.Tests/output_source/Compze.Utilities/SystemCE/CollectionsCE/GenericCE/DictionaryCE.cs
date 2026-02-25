@@ -5,7 +5,8 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
-using static Compze.Utilities.Contracts.Assert;
+using Compze.Contracts;
+using static Compze.Contracts.Assert;
 
 namespace Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
 

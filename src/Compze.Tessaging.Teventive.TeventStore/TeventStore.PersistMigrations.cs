@@ -6,7 +6,7 @@ using Compze.Core.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions;
 using Compze.Tessaging.Teventive.TeventStore.Refactoring.Migrations;
-using Compze.Utilities.Contracts;
+using Compze.Contracts;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
 using ReadOrder = Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions.ReadOrder;
@@ -17,7 +17,7 @@ public partial class TeventStore
 {
    public void PersistMigrations()
    {
-      Assert.State.Is(Transaction.Current == null, () => $"Cannot run {nameof(PersistMigrations)} within a transaction. Internally manages transactions.");
+      Contract.State.Fulfills(Transaction.Current == null, () => $"Cannot run {nameof(PersistMigrations)} within a transaction. Internally manages transactions.");
       Log.Info("Starting to persist migrations");
 
       long migratedTaggregates = 0;
@@ -145,18 +145,17 @@ public partial class TeventStore
 
    void AssertHistoriesAreIdentical(TaggregateTevent[] inMemoryMigratedHistory, IReadOnlyList<ITaggregateTevent> loadedTaggregateHistory)
    {
-      Assert.ReturnValue.Is(inMemoryMigratedHistory.Length == loadedTaggregateHistory.Count);
+      Contract.Argument.Fulfills(inMemoryMigratedHistory.Length == loadedTaggregateHistory.Count);
       for(var index = 0; index < inMemoryMigratedHistory.Length; ++index)
       {
          var inMemory = inMemoryMigratedHistory[index];
          var loaded = loadedTaggregateHistory[index];
-         Assert.ReturnValue
-               .Is(inMemory.TaggregateId == loaded.TaggregateId)
-               .Is(inMemory.Id == loaded.Id)
-               .Is(inMemory.TaggregateVersion == loaded.TaggregateVersion)
-               .Is(inMemory.UtcTimeStamp == loaded.UtcTimeStamp)
-               .Is(inMemory.GetType() == loaded.GetType())
-               .Is(_serializer.Serialize(inMemory) == _serializer.Serialize((TaggregateTevent)loaded));
+         inMemory._assert(it => it.TaggregateId == loaded.TaggregateId)
+                 ._assert(it => it.Id == loaded.Id)
+                 ._assert(it => it.TaggregateVersion == loaded.TaggregateVersion)
+                 ._assert(it => it.UtcTimeStamp == loaded.UtcTimeStamp)
+                 ._assert(it => it.GetType() == loaded.GetType())
+                 ._assert(it => _serializer.Serialize(it) == _serializer.Serialize((TaggregateTevent)loaded));
       }
    }
 

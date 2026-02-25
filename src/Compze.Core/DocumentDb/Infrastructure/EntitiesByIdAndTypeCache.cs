@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Compze.Functional;
-using Compze.Utilities.Contracts;
+using Compze.Contracts;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
-using static Compze.Utilities.Contracts.Assert;
+using static Compze.Contracts.Contract;
 
 namespace Compze.Core.DocumentDb.Infrastructure;
 
@@ -16,7 +16,7 @@ public class EntitiesByIdAndTypeCache
 
    public void Add<T>(object id, T value) => _data.Update(data =>
    {
-      Argument.NotNull(value);
+      Argument.Fulfills(value is not null);
       var key = IdAndType.Create(id, value.GetType());
       AssertNotPresent(key);
       data[key] = value;
@@ -59,6 +59,6 @@ public class EntitiesByIdAndTypeCache
    public readonly record struct IdAndType(string Id, Type DocumentType)
    {
       public static IdAndType Create(object id, Type type) =>
-         new(ReturnValue.ReturnNotNull(id).ToStringNotNull().ToUpperInvariant().TrimEnd(trimChar: ' '), type);
+         new(id._assertNotNull().ToStringNotNull().ToUpperInvariant().TrimEnd(trimChar: ' '), type);
    }
 }

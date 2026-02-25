@@ -3,7 +3,7 @@ using System.Data.SqlTypes;
 using System.Globalization;
 using System.Linq;
 using System.Numerics;
-using Compze.Utilities.Contracts;
+using Compze.Contracts;
 using Compze.Utilities.SystemCE.LinqCE;
 
 namespace Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions;
@@ -45,7 +45,7 @@ public readonly struct ReadOrder : IComparable<ReadOrder>, IEquatable<ReadOrder>
    public static ReadOrder Parse(string value, bool bypassScaleTest = false)
    {
       var parts = value.Split(".");
-      Assert.Argument.Is(parts.Length == 2);
+      Contract.Argument.Fulfills(parts.Length == 2);
       var order = parts[0];
       var offset = parts[1];
       if(order[0] == '-') throw new ArgumentException("We do not use negative numbers");
@@ -92,11 +92,9 @@ public readonly struct ReadOrder : IComparable<ReadOrder>, IEquatable<ReadOrder>
          }
       }).ToArray();
 
-      Assert.ReturnValue.Is(result.All(order => order > rangeStart)) //We are staying within the specified range
-            .Is(result.All(order => order < rangeEnd))          //We are staying within the specified range
-            .Is(result.Distinct().Count() == numberOfTevents);   //Each ReadOrder is unique
-
-      return result;
+      return result._assert(it => it.All(order => order > rangeStart))       //We are staying within the specified range
+                   ._assert(it => it.All(order => order < rangeEnd))         //We are staying within the specified range
+                   ._assert(it => it.Distinct().Count() == numberOfTevents); //Each ReadOrder is unique
    }
 
    static SqlDecimal ToCorrectIntegerAndFractionDigits(SqlDecimal value) => SqlDecimal.ConvertToPrecScale(value, TotalDigits, FractionDigits);

@@ -1,5 +1,5 @@
 using System;
-using Compze.Utilities.Contracts;
+using Compze.Contracts;
 
 namespace Compze.Core.Tessaging.Transport.Internal;
 
@@ -8,7 +8,7 @@ public record EndPointAddress
    public Uri Uri { get; }
    public EndPointAddress(Uri uri)
    {
-      Assert.Argument.NotNullEmptyOrWhitespace(uri.AbsoluteUri);
+      Contract.Argument.NotNullEmptyOrWhitespace(uri.AbsoluteUri);
       Uri = uri;
    }
 }

@@ -4,7 +4,7 @@
 // </auto-generated>
 #nullable enable
 using System;
-using Compze.Utilities.Contracts;
+using Compze.Contracts;
 
 namespace Compze.Utilities.SystemCE;
 

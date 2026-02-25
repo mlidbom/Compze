@@ -1,6 +1,6 @@
 using System;
 using System.Diagnostics;
-using Compze.Utilities.Contracts;
+using Compze.Contracts;
 using Compze.Functional;
 
 namespace Compze.Core.Public;
@@ -29,9 +29,9 @@ public class Entity<TEntity, TKey> : IEntity<TKey>
    /// <inheritdoc />
    public virtual EntityId<TKey> Id
    {
-      get => Assert.ReturnValue.Is(!Equals(_id.Value, default(TKey)))._then(_id);
+      get => _id._assert(it => !it.Value.Equals(default));
       [Obsolete(ObsoleteMessage.ForInternalUseOnly)]
-      protected set => _id = Assert.Argument.NotNull(value)._then(value);
+      protected set => _id = Contract.Argument.NotNull(value)._then(value);
    }
 
    ///<summary>Gets the id of the instance bypassing contract validation. Should probably never be used except by infrastructure code.</summary>

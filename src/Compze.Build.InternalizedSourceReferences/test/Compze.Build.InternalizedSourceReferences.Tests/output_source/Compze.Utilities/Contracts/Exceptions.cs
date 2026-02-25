@@ -5,7 +5,7 @@
 #nullable enable
 using System;
 
-namespace Compze.Utilities.Contracts;
+namespace Compze.Contracts;
 
 internal class InvariantViolatedException(string message) : Exception(message);
 internal class InvalidResultException(string message) : Exception(message);

@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Compze.Utilities.Contracts;
+using Compze.Contracts;
 using Compze.Utilities.DependencyInjection.Abstractions;
 
 namespace Compze.Utilities.DependencyInjection;
@@ -21,7 +21,7 @@ public abstract class ComponentRegistration
    {
       serviceTypes = serviceTypes.ToList();
 
-      Assert.Argument.Is(
+      Contract.Argument.Fulfills(
          lifestyle == Lifestyle.Singleton || instantiationSpec.SingletonInstance == null,
          () => $"{nameof(InstantiationSpec.SingletonInstance)} registrations must be {nameof(Lifestyle.Singleton)}s");
 
@@ -42,7 +42,7 @@ public class ComponentRegistration<TService> : ComponentRegistration where TServ
 
    public ComponentRegistration<TService> DelegateToParentServiceLocatorWhenCloning()
    {
-      Assert.State.Is(
+      Contract.State.Fulfills(
          Lifestyle == Lifestyle.Singleton,
          () => "Only singletons can be delegated to parent container since disposal concern handling becomes very confused for any other lifestyle");
       ShouldDelegateToParentWhenCloning = true;
@@ -56,7 +56,7 @@ public class ComponentRegistration<TService> : ComponentRegistration where TServ
          return new ComponentRegistration<TService>(Lifestyle, ServiceTypes, InstantiationSpec, DependencyTypes);
       }
 
-      Assert.State.Is(Lifestyle == Lifestyle.Singleton, () => "Only Singletons can delegate to parent container when cloning, because otherwise both containers would attempt to dispose the component");
+      Contract.State.Fulfills(Lifestyle == Lifestyle.Singleton, () => "Only Singletons can delegate to parent container when cloning, because otherwise both containers would attempt to dispose the component");
       return new ComponentRegistration<TService>(////Instance registrations are not disposed.
          lifestyle: Lifestyle.Singleton,
          serviceTypes: ServiceTypes,

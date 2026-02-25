@@ -2,7 +2,7 @@ using Compze.Core.DocumentDb.Internal.SqlLayer;
 using Compze.Core.DocumentDb.Internal.SqlLayer.Exceptions;
 using Compze.Core.Refactoring.Naming.Internal;
 using Compze.Sql.Common;
-using Compze.Utilities.Contracts;
+using Compze.Contracts;
 using Compze.Functional;
 using Compze.Utilities.SystemCE;
 using Microsoft.Data.Sqlite;
@@ -126,7 +126,7 @@ public partial class SqliteDocumentDbSqlLayer : IDocumentDbSqlLayer
                            .ExecuteReaderAndSelect(reader => new IDocumentDbSqlLayer.ReadRow(Guid.Parse(reader.GetString(2)), reader.GetString(1))));
    }
 
-   static string TypeInClause(IReadOnlySet<TypeId> acceptableTypeIds) => Assert.Argument.Is(acceptableTypeIds.Any())._then("IN( '" + acceptableTypeIds.Select(guid => guid.ToString()).Join("', '") + "')\n");
+   static string TypeInClause(IReadOnlySet<TypeId> acceptableTypeIds) => Contract.Argument.Fulfills(acceptableTypeIds.Any())._then("IN( '" + acceptableTypeIds.Select(guid => guid.ToString()).Join("', '") + "')\n");
 
    void EnsureInitialized() => _schemaManager.EnsureSchemaInitialized();
 }

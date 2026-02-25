@@ -1,7 +1,7 @@
 using System;
 using Compze.Core.Tessaging.Teventive.Internal.Implementation;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
-using Compze.Utilities.Contracts;
+using Compze.Contracts;
 using Compze.Utilities.SystemCE.ReflectionCE;
 using JetBrains.Annotations;
 
@@ -33,7 +33,7 @@ public abstract class Tentity<TParent,
    static readonly TTentityTeventIdGetterSetter IdGetterSetter = Constructor.For<TTentityTeventIdGetterSetter>.DefaultConstructor.Instance();
 
    TTentityId _id;
-   public TTentityId Id => Assert.ReturnValue.ReturnNotDefault(_id);
+   public TTentityId Id => _id._assertNotDefault();
 
    protected Tentity(TParent taggregate) : base(taggregate, false)
    {

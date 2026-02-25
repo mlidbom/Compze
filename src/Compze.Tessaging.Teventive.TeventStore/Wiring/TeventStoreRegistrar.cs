@@ -7,7 +7,7 @@ using Compze.Core.Tessaging.Teventive.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.Refactoring.Migrations.Public;
 using Compze.Tessaging.TyperMediaApi.EventStore;
-using Compze.Utilities.Contracts;
+using Compze.Contracts;
 using Compze.Utilities.DependencyInjection.Abstractions;
 
 namespace Compze.Tessaging.Teventive.TeventStore.Wiring;
@@ -36,7 +36,7 @@ public static class TeventStoreRegistrar
                                                                    string connectionName,
                                                                    Func<IReadOnlyList<ITeventMigration>> migrations)
    {
-      Assert.Argument.NotNullEmptyOrWhitespace(connectionName);
+      Contract.Argument.NotNullEmptyOrWhitespace(connectionName);
 
       Teventive.TeventStore.TeventStore.RegisterWith(registrar, migrations);
 

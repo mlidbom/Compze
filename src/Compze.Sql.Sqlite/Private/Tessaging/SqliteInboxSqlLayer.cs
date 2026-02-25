@@ -2,7 +2,7 @@ using Compze.Core.Public;
 using Compze.Core.Refactoring.Naming.Internal;
 using Compze.Core.Tessaging.Internal.SqlLayer;
 using Compze.Sql.Common;
-using Compze.Utilities.Contracts;
+using Compze.Contracts;
 using System.Threading.Tasks;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using TessageTable =  Compze.Core.Tessaging.Internal.SqlLayer.IServiceBusSqlLayer.InboxTessageDatabaseSchemaStrings;
@@ -45,21 +45,19 @@ public partial class SqliteInboxSqlLayer(ISqliteConnectionPool connectionFactory
       _connectionFactory.UseCommand(
          command =>
          {
-            var affectedRows = command
-                              .SetCommandText(
-                                  $"""
+            command
+              .SetCommandText(
+                  $"""
 
-                                   UPDATE {TessageTable.TableName} 
-                                       SET {TessageTable.Status} = {(int)InboxTessageStatus.Succeeded}
-                                   WHERE {TessageTable.TessageId} = @{TessageTable.TessageId}
-                                       AND {TessageTable.Status} = {(int)InboxTessageStatus.UnHandled}
+                   UPDATE {TessageTable.TableName} 
+                       SET {TessageTable.Status} = {(int)InboxTessageStatus.Succeeded}
+                   WHERE {TessageTable.TessageId} = @{TessageTable.TessageId}
+                       AND {TessageTable.Status} = {(int)InboxTessageStatus.UnHandled}
 
-                                   """)
-                              .AddVarcharParameter(TessageTable.TessageId, 36, tessageId.ToString())
-                              .ExecuteNonQuery();
-
-            Assert.ReturnValue.Is(affectedRows == 1);
-            return affectedRows;
+                   """)
+              .AddVarcharParameter(TessageTable.TessageId, 36, tessageId.ToString())
+              .ExecuteNonQuery()
+              ._assert(affectedRows => affectedRows == 1);
          });
    }
 

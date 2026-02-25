@@ -4,7 +4,7 @@ using System.Linq;
 using Compze.Core.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions;
 using Compze.Sql.Common;
-using Compze.Utilities.Contracts;
+using Compze.Contracts;
 using Compze.Functional;
 using Compze.Utilities.SystemCE;
 using Microsoft.Data.Sqlite;
@@ -96,9 +96,7 @@ public partial class SqliteTeventStoreSqlLayer
                              where {Tevent.TeventId} = @{Tevent.TeventId}
                              """;
 
-      TeventNeighborhood? neighborhood = null;
-
-      _connectionManager.UseCommand(
+      return _connectionManager.UseCommand(
          command =>
          {
             command.CommandText = selectStatement;
@@ -109,12 +107,10 @@ public partial class SqliteTeventStoreSqlLayer
             var effectiveReadOrder = ReadOrder.FromParts(reader.GetInt64(0), reader.GetInt64(1));
             var previousTeventReadOrder = reader.IsDBNull(2) ? null : new ReadOrder?(ReadOrder.FromParts(reader.GetInt64(2), reader.GetInt64(3)));
             var nextTeventReadOrder = reader.IsDBNull(4) ? null : new ReadOrder?(ReadOrder.FromParts(reader.GetInt64(4), reader.GetInt64(5)));
-            neighborhood = new TeventNeighborhood(effectiveReadOrder: effectiveReadOrder,
+            return new TeventNeighborhood(effectiveReadOrder: effectiveReadOrder,
                                                  previousTeventReadOrder: previousTeventReadOrder,
                                                  nextTeventReadOrder: nextTeventReadOrder);
          });
-
-      return Assert.ReturnValue.NotNull(neighborhood)._then(neighborhood);
    }
 
    public void DeleteTaggregate(TaggregateId taggregateId)

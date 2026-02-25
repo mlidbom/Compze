@@ -5,7 +5,7 @@ using Compze.Core.Tessaging.Teventive.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions;
 using Compze.Core.Tessaging.Teventive.TeventStore.Refactoring.Migrations.Public;
-using Compze.Utilities.Contracts;
+using Compze.Contracts;
 using Compze.Functional;
 using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
 using Compze.Utilities.SystemCE.LinqCE;
@@ -161,6 +161,6 @@ public class TeventModifier(Action<IReadOnlyList<TeventModifier.RefactoredTevent
     }
 
 #pragma warning disable CA1819 // Array property needed for migration tevent history
-    public TaggregateTevent[] MutatedHistory => Tevents?.ToArray() ?? [Assert.ReturnValue.NotNull(_inspectedTevent)._then(_inspectedTevent)];
+    public TaggregateTevent[] MutatedHistory => Tevents?.ToArray() ?? [_inspectedTevent._assertNotNull()];
 #pragma warning restore CA1819
 }

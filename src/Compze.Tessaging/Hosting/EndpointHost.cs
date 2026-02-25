@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Tessaging.Implementation.Transport;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
-using Compze.Utilities.Contracts;
+using Compze.Contracts;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Logging;
@@ -58,7 +58,7 @@ public class EndpointHost : IEndpointHost
    {
       try
       {
-         Assert.State.Is(!_isStarted).Is(Endpoints.None(endpoint => endpoint.IsRunning));
+         Contract.State.Fulfills(!_isStarted, Endpoints.None(endpoint => endpoint.IsRunning));
          _isStarted = true;
 
          await Task.WhenAll(Endpoints.Select(endpointToStart => endpointToStart.StartListeningComponentsAsync())).WithAggregateExceptions().caf();

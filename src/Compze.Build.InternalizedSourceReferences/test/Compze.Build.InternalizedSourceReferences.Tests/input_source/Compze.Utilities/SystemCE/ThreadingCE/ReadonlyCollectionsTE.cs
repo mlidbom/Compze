@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Compze.Utilities.Contracts;
+using Compze.Contracts;
 using Compze.Functional;
 
 namespace Compze.Utilities.SystemCE.ThreadingCE;

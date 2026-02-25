@@ -6,7 +6,7 @@ using Compze.Core.Tessaging.Teventive.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.Refactoring.Migrations.Internal;
 using Compze.Core.Tessaging.Teventive.TeventStore.Refactoring.Migrations.Public;
-using Compze.Utilities.Contracts;
+using Compze.Contracts;
 using Compze.Utilities.SystemCE.LinqCE;
 
 // ReSharper disable ForCanBeConvertedToForeach
@@ -43,7 +43,7 @@ public class SingleTaggregateInstanceTeventStreamMutator : ISingleTaggregateInst
    static IEnumerable<TaggregateTevent> SingleTeventSequence(TaggregateTevent tevent) { yield return tevent; }
    public IEnumerable<TaggregateTevent> Mutate(TaggregateTevent tevent)
    {
-      Assert.Argument.Is(_taggregateId == tevent.TaggregateId);
+      Contract.Argument.Fulfills(_taggregateId == tevent.TaggregateId);
       if (_teventMigrators.Length == 0)
       {
          return SingleTeventSequence(tevent);

@@ -1,6 +1,6 @@
 using System.Runtime.CompilerServices;
 
-namespace Compze.Utilities.Contracts;
+namespace Compze.Contracts;
 
 public partial class ContractAsserter
 {

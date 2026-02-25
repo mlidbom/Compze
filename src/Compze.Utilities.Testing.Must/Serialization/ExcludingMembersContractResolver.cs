@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Compze.Contracts;
 using Compze.Utilities.SystemCE;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -32,7 +33,7 @@ public class ExcludingMembersContractResolver : DefaultContractResolver
 
       foreach(var excludedMember in _excludedMembers)
       {
-         if(propertyName == excludedMember.Name && excludedMember.DeclaringType.NotNull().IsAssignableFrom(objectType))
+         if(propertyName == excludedMember.Name && excludedMember.DeclaringType._assertNotNull().IsAssignableFrom(objectType))
             return true;
       }
 

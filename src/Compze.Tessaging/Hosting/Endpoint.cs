@@ -13,7 +13,8 @@ using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
-using static Compze.Utilities.Contracts.Assert;
+using Compze.Contracts;
+using static Compze.Contracts.Contract;
 
 namespace Compze.Tessaging.Hosting;
 
@@ -60,7 +61,7 @@ public class Endpoint : IEndpoint
 
    public async Task StartListeningComponentsAsync()
    {
-      State.Is(!_isListening);
+      State.Fulfills(!_isListening);
       _isListening = true;
 
       RunSanityChecks();
@@ -78,9 +79,9 @@ public class Endpoint : IEndpoint
 
    public async Task StartSendingComponentsAsync()
    {
-      State.Is(!_isSending);
+      State.Fulfills(!_isSending);
       _isSending = true;
-      var serverEndpoints = _endpointRegistry.ServerEndpoints.Select(it => it.Address.NotNull()).ToHashSet();
+      var serverEndpoints = _endpointRegistry.ServerEndpoints.Select(it => it.Address._assertNotNull()).ToHashSet();
       await Task.WhenAll(serverEndpoints.Select(address => _routingInboxClient.ConnectAsync(address))).caf();
       if(_serverComponents != null)
       {
