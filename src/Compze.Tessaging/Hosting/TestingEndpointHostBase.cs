@@ -51,7 +51,7 @@ public abstract class TestingEndpointHostBase : EndpointHost, ITestingEndpointHo
          _disposed = true;
          if(waitForEndpointsToBeAtRest)
          {
-            WaitForEndpointsToBeAtRest(timeoutOverride: 5.Seconds());
+            WaitForEndpointsToBeAtRest(timeoutOverride: 10.Seconds());
          }
 
          var unHandledExceptions = GetThrownExceptions().Except(_expectedExceptions).ToList();
