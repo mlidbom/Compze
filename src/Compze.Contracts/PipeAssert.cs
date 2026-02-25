@@ -19,9 +19,12 @@ public static class PipeAssert
 
    ///<summary>Throws <see cref="AssertionFailedException"/> if <paramref name="predicate"/> returns false when applied to <paramref name="this"/>. The exception message includes the predicate source expression and the value.</summary>
    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-   public static T _assert<T>(this T @this, Predicate<T> predicate, [CallerArgumentExpression(nameof(predicate))] string? predicateExpression = null)
+   public static T _assert<T>(this T @this,
+                              Predicate<T> predicate,
+                              [CallerArgumentExpression(nameof(@this))] string? thisExpression = null,
+                              [CallerArgumentExpression(nameof(predicate))] string? predicateExpression = null)
    {
-      if(!predicate(@this)) ThrowAssertionFailed($"Assertion failed: {predicateExpression} (value: {@this})");
+      if(!predicate(@this)) ThrowAssertionFailed($"Assertion failed: {thisExpression}.{nameof(_assert)}({predicateExpression}) ## the value of {thisExpression} was: {@this}");
       return @this;
    }
 
