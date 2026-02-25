@@ -30,8 +30,8 @@ public class TestingTimeSourceAdapter
 
    public class ConstantTimeSource(DateTime time) : IUtcTimeTimeSource
    {
-      public DateTime UtcNow { get; } = time.TruncateToMicroseconds();
-   }
+      public DateTime UtcNow { get; } = time.TruncateToMicroseconds(); //Some of our supported databases only have microsecond precision, and we compare the entire contents of our objects in tests.
+    }
 
    public class TimeSourceOverride(IUtcTimeTimeSource theOverride)
    {
