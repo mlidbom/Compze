@@ -20,7 +20,7 @@ jobs:
         serializer: [Newtonsoft]
         transport: [Memory, AspNetCore]
 
-    name: Test (${{ matrix.persistence }}, ${{ matrix.di }}, ${{ matrix.transport }})
+    name: "Test (${{ matrix.persistence }}:${{ matrix.di }}:${{ matrix.serializer }}:${{ matrix.transport }})"
 
     services:
       postgres:
