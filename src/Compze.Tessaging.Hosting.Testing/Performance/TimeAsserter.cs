@@ -6,7 +6,6 @@ using Compze.Utilities.Logging;
 using Compze.Utilities.SystemCE;
 using JetBrains.Annotations;
 using Compze.Utilities.SystemCE.ThreadingCE;
-using Compze.Utilities.SystemCE.ThreadingCE.Async;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Tessaging.Hosting.Testing.Performance;
@@ -66,6 +65,8 @@ public static class TimeAsserter
       await DeferredConsoleWriter.ExecuteAsync(async writer =>
                                                   await InternalExecuteAsync(() => StopwatchCE.TimeExecutionAsync(action, iterations), iterations, maxAverage, maxTotal, description, setup, tearDown, maxTries, tearDownAsync, writer));
 
+   static readonly MutexCE Mutex = MutexCE.ForMutexNamed("Compze.TimeAsserter.PerformanceTestLock");
+
    static TReturnValue InternalExecute<TReturnValue>([InstantHandle] Func<TReturnValue> runScenario,
                                                      int iterations,
                                                      TimeSpan? maxAverage,
@@ -75,9 +76,7 @@ public static class TimeAsserter
                                                      [InstantHandle] Action? tearDown,
                                                      uint maxTries,
                                                      DeferredConsoleWriter writer) where TReturnValue : StopwatchCE.TimedExecutionSummary =>
-      InternalExecuteAsync(runScenario.AsAsync(), iterations, maxAverage, maxTotal, description, setup, tearDown, maxTries, null, writer).ResultUnwrappingException();
-
-   static readonly IAsyncLockCE AsyncLock = IAsyncLockCE.WithDefaultTimeout();
+      Mutex.Locked(() => RunScenarioWithRetries(runScenario, iterations, maxAverage, maxTotal, description, setup, tearDown, maxTries, writer));
 
    static async Task<TReturnValue> InternalExecuteAsync<TReturnValue>([InstantHandle] Func<Task<TReturnValue>> runScenario,
                                                                       int iterations,
@@ -88,64 +87,72 @@ public static class TimeAsserter
                                                                       [InstantHandle] Action? tearDown,
                                                                       uint maxTries,
                                                                       [InstantHandle] Func<Task>? tearDownAsync,
-                                                                      DeferredConsoleWriter writer) where TReturnValue : StopwatchCE.TimedExecutionSummary
-   {
-      return await AsyncLock.LockedAsync(async () =>
+                                                                      DeferredConsoleWriter writer) where TReturnValue : StopwatchCE.TimedExecutionSummary =>
+      await Task.Run(() => Mutex.Locked(() => RunScenarioWithRetries(() => runScenario().ResultUnwrappingException(), iterations, maxAverage, maxTotal, description, setup, () =>
       {
-         Contract.Argument.Fulfills(maxTries > 0);
-         maxAverage = TestEnv.Performance.AdjustForMachineSlowness(maxAverage);
-         maxTotal = TestEnv.Performance.AdjustForMachineSlowness(maxTotal);
-         TestEnv.Performance.LogMachineSlownessAdjustment();
-         maxTries = Math.Min(MaxTriesLimit, maxTries);
+         if(tearDownAsync != null)
+            tearDownAsync().WaitUnwrappingException();
+         else
+            tearDown?.Invoke();
+      }, maxTries, writer)));
 
-         writer.WriteLine();
-         writer.WriteImportantLine($"""
-                                    "{description}" {iterations:### ### ###} {iterations.Pluralize("iteration")} starting
-                                    """);
+   static TReturnValue RunScenarioWithRetries<TReturnValue>([InstantHandle] Func<TReturnValue> runScenario,
+                                                            int iterations,
+                                                            TimeSpan? maxAverage,
+                                                            TimeSpan? maxTotal,
+                                                            string description,
+                                                            [InstantHandle] Action? setup,
+                                                            [InstantHandle] Action? tearDown,
+                                                            uint maxTries,
+                                                            DeferredConsoleWriter writer) where TReturnValue : StopwatchCE.TimedExecutionSummary
+   {
+      Contract.Argument.Fulfills(maxTries > 0);
+      maxAverage = TestEnv.Performance.AdjustForMachineSlowness(maxAverage);
+      maxTotal = TestEnv.Performance.AdjustForMachineSlowness(maxTotal);
+      TestEnv.Performance.LogMachineSlownessAdjustment();
+      maxTries = Math.Min(MaxTriesLimit, maxTries);
 
-         for(var tries = 1; tries <= maxTries; tries++)
+      writer.WriteLine();
+      writer.WriteImportantLine($"""
+                                 "{description}" {iterations:### ### ###} {iterations.Pluralize("iteration")} starting
+                                 """);
+
+      for(var tries = 1; tries <= maxTries; tries++)
+      {
+         setup?.Invoke();
+
+         try
          {
-            setup?.Invoke();
+            var executionSummary = runScenario();
 
-            try
+            var failureTessage = GetFailureTessage(executionSummary, maxAverage, maxTotal);
+            if(failureTessage.Length > 0)
             {
-               var executionSummary = await runScenario();
-
-               var failureTessage = GetFailureTessage(executionSummary, maxAverage, maxTotal);
-               if(failureTessage.Length > 0)
-               {
-                  if(tries >= maxTries)
-                     throw new TimeOutException($"""
-                                                 {description}:
-                                                 {failureTessage.Indent()}
-                                                 """);
-                  var waitTime = Math.Min(Math.Pow(2, tries), 50) * 10.Milliseconds(); //Back off on retries exponentially starting with 10ms, but only up to a maximum wait time of .5 seconds between retries.
-                  writer.WriteWarningLine($"Try: {tries} {failureTessage}, waiting {waitTime.FormatReadable()} before next attempt");
-                  if(VerboseMode)
-                     Log.Warning($"{description}: Try: {tries} {failureTessage}, waiting {waitTime.FormatReadable()} before next attempt");
-                  Thread.Sleep(waitTime);
-                  continue;
-               }
-
-               PrintSummary(executionSummary, iterations, maxAverage, maxTotal, writer);
-               writer.WriteImportantLine("DONE");
-               writer.WriteLine();
-               return executionSummary;
+               if(tries >= maxTries)
+                  throw new TimeOutException($"""
+                                              {description}:
+                                              {failureTessage.Indent()}
+                                              """);
+               var waitTime = Math.Min(Math.Pow(2, tries), 50) * 10.Milliseconds(); //Back off on retries exponentially starting with 10ms, but only up to a maximum wait time of .5 seconds between retries.
+               writer.WriteWarningLine($"Try: {tries} {failureTessage}, waiting {waitTime.FormatReadable()} before next attempt");
+               if(VerboseMode)
+                  Log.Warning($"{description}: Try: {tries} {failureTessage}, waiting {waitTime.FormatReadable()} before next attempt");
+               Thread.Sleep(waitTime);
+               continue;
             }
-            finally
-            {
-               if(tearDownAsync != null)
-               {
-                  await tearDownAsync();
-               } else
-               {
-                  tearDown?.Invoke();
-               }
-            }
+
+            PrintSummary(executionSummary, iterations, maxAverage, maxTotal, writer);
+            writer.WriteImportantLine("DONE");
+            writer.WriteLine();
+            return executionSummary;
          }
+         finally
+         {
+            tearDown?.Invoke();
+         }
+      }
 
-         throw new Exception("Unreachable");
-      });
+      throw new Exception("Unreachable");
    }
 
    static string GetFailureTessage(StopwatchCE.TimedExecutionSummary executionSummary, TimeSpan? maxAverage, TimeSpan? maxTotal)
