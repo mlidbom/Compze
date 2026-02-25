@@ -47,18 +47,10 @@ public static class PipeAssert
 
    ///<summary>Throws <see cref="AssertionFailedException"/> if <paramref name="this"/> is null. Returns the value as non-nullable on success.</summary>
    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-   [return: NotNull] public static T _assertNotNull<T>([NotNull] this T? @this, [CallerArgumentExpression(nameof(@this))] string? thisExpression = null) where T : class
+   [return: NotNull] public static T _assertNotNull<T>([NotNull] this T? @this, [CallerArgumentExpression(nameof(@this))] string? thisExpression = null)
    {
       if(@this is null) ThrowAssertionFailed($"Assertion failed: {thisExpression}.{nameof(_assertNotNull)}()");
       return @this;
-   }
-
-   ///<summary>Throws <see cref="AssertionFailedException"/> if <paramref name="this"/> is null. Returns the value as non-nullable on success.</summary>
-   [MethodImpl(MethodImplOptions.AggressiveInlining)]
-   public static T _assertNotNull<T>([NotNull] this T? @this, [CallerArgumentExpression(nameof(@this))] string? thisExpression = null) where T : struct
-   {
-      if(@this is null) ThrowAssertionFailed($"Assertion failed: {thisExpression}.{nameof(_assertNotNull)}()");
-      return @this.Value;
    }
 
    ///<summary>Throws <see cref="AssertionFailedException"/> if <paramref name="this"/> equals <c>default(T)</c>. Returns <paramref name="this"/> on success.</summary>

@@ -7,7 +7,6 @@ using Compze.Core.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.QueryModels.Generators.Public;
 using Compze.Utilities.SystemCE.UsageGuards;
 using Compze.Contracts;
-using static Compze.Contracts.Assert;
 
 namespace Compze.Tessaging.Teventive.TeventStore.QueryModels.Generators;
 
@@ -29,7 +28,7 @@ public class QueryModelGeneratingQueryModelReader : IVersioningQueryModelReader
       _usageGuard.EnsureAccessValid();
       if(TryGet(key, out TValue? value))
       {
-         return ReturnValue.ReturnNotNull(value);
+         return value._assertNotNull();
       }
 
       throw new NoSuchDocumentException(key, typeof(TValue));
@@ -40,7 +39,7 @@ public class QueryModelGeneratingQueryModelReader : IVersioningQueryModelReader
       _usageGuard.EnsureAccessValid();
       if(TryGetVersion(key, out TValue? value, version))
       {
-         return ReturnValue.ReturnNotNull(value);
+         return value._assertNotNull();
       }
 
       throw new NoSuchDocumentException(key, typeof(TValue));

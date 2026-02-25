@@ -134,14 +134,14 @@ public partial class DocumentDbSession : IDocumentDbSession
 
    public virtual TValue Get<TValue>(object key)
    {
-      if(TryGet(key, out TValue? value)) return ReturnValue.ReturnNotNull(value);
+      if(TryGet(key, out TValue? value)) return value._assertNotNull();
 
       throw new NoSuchDocumentException(key, typeof(TValue));
    }
 
    TValue GetInternal<TValue>(object key, bool useUpdateLock)
    {
-      if(TryGetInternal(key, typeof(TValue), out TValue? value, useUpdateLock)) return ReturnValue.ReturnNotNull(value);
+      if(TryGetInternal(key, typeof(TValue), out TValue? value, useUpdateLock)) return value._assertNotNull();
 
       throw new NoSuchDocumentException(key, typeof(TValue));
    }
