@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using System.Transactions;
 using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
@@ -32,6 +33,24 @@ public class Exactly_once_guarantee_tests : EndpointHostTestBase
       MyRemoteTaggregateTeventHandlerThreadGate.TryAwaitPassedThroughCountEqualTo(2, timeout: 2.Seconds())
                                              .Must()
                                              .Be(false, "remote tevent handler should execute exactly once");
+   }
+
+   [PCT] public void ExactlyOnceTommand_handler_executes_exactly_once_even_when_handler_is_slow()
+   {
+      MyExactlyOnceTommandHandlerThreadGate.Close();
+
+      RemoteEndpoint.ExecuteServerRequestInTransaction(session => session.Send(new MyExactlyOnceTommand()));
+
+      MyExactlyOnceTommandHandlerThreadGate.AwaitQueueLengthEqualTo(1);
+
+      // Wait long enough for the retry poller to have fired multiple times (polling at 500ms, first backoff at 500ms)
+      Thread.Sleep(2.Seconds());
+
+      MyExactlyOnceTommandHandlerThreadGate.Open();
+      MyExactlyOnceTommandHandlerThreadGate.AwaitPassedThroughCountEqualTo(1);
+      MyExactlyOnceTommandHandlerThreadGate.TryAwaitPassedThroughCountEqualTo(2, timeout: 2.Seconds())
+                              .Must()
+                              .Be(false, "handler should execute exactly once even when slow");
    }
 
    [PCT] public void If_transaction_fails_after_successfully_Sending_ExactlyOnceTommand_tommand_never_reaches_tommand_handler()

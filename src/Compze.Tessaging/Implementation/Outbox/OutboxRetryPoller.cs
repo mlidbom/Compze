@@ -39,9 +39,8 @@ public class OutboxRetryPoller : IDisposable
    readonly ITaskRunner _taskRunner;
    readonly IBackgroundExceptionReporter _exceptionReporter;
 
-   //Todo: implement a sane way of handling retries, something like an exponential backoff
-   static readonly TimeSpan PollingInterval = 5.Seconds();
-   static readonly TimeSpan TessageAgeThatIsConsideredFailed = 5.Seconds();
+   //Backoff schedule per-message via UndeliveredTessage.IsDueForRetry: 0.5s, 1s, 2s, 4s, 8s, 16s, 32s, 64s (capped)
+   static readonly TimeSpan PollingInterval = 500.Milliseconds();
 
    OutboxRetryPoller(Outbox.ITessageStorage tessageStorage,
                      IRoutingInboxClient routingInboxClient,
@@ -87,7 +86,7 @@ public class OutboxRetryPoller : IDisposable
    {
       this.Log().Info("OutboxRetryPoller started");
 
-      RetryUndeliveredTessages(TimeSpan.Zero);
+      RetryUndeliveredTessages();
 
       while(!_cancellationTokenSource.Token.IsCancellationRequested)
       {
@@ -117,14 +116,15 @@ public class OutboxRetryPoller : IDisposable
       this.Log().Info("OutboxRetryPoller stopped");
    }
 
-   void RetryUndeliveredTessages(TimeSpan? minimumAge = null)
+   void RetryUndeliveredTessages()
    {
-      var undeliveredTessages = _tessageStorage.GetUndeliveredTessages(minimumAge ?? TessageAgeThatIsConsideredFailed);
-      if(undeliveredTessages.Count == 0)
+      var undeliveredTessages = _tessageStorage.GetUndeliveredTessages(TimeSpan.Zero);
+      var dueTessages = undeliveredTessages.Where(tessage => tessage.IsDueForRetry).ToList();
+      if(dueTessages.Count == 0)
          return;
 
-      this.Log().Info($"Found {undeliveredTessages.Count} undelivered tessage(s) to retry");
-      undeliveredTessages.ForEach(RetryTessage);
+      this.Log().Info($"Found {dueTessages.Count} undelivered tessage(s) due for retry");
+      dueTessages.ForEach(RetryTessage);
    }
 
    void RetryTessage(IServiceBusSqlLayer.UndeliveredTessage undeliveredTessage)

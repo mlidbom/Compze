@@ -2,6 +2,7 @@
 
 ## Rules — Follow These First
 
+- **Don't code until instructed to**. Standard workflow is questions back and forth coming up with what to do. Then I give the go ahead to code. Questions are not instructions to start coding they are questions to be answered to the best of your ability.
 - **Test thoroughly**: Always run the full test suite before finalizing.
 - **Performance tests**: If they fail, rerun. Repeated failures are NOT acceptable — do not report success.
 - **`COMPOSABLE_MACHINE_SLOWNESS`**: Set this environment variable (e.g., `5.0`) to adjust performance test timing expectations on slow machines.
