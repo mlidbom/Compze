@@ -20,7 +20,7 @@ namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification;
 public class Navigator_specification : UniversalTestBase
 {
    readonly ITestingEndpointHost _host;
-   readonly IEndpoint _clientEndpoint;
+   readonly IClient _client;
 
    public Navigator_specification()
    {
@@ -43,7 +43,7 @@ public class Navigator_specification : UniversalTestBase
                     });
          });
 
-      _clientEndpoint = _host.RegisterClientEndpointForRegisteredEndpoints();
+      _client = _host.RegisterClientForRegisteredEndpoints();
    }
 
    protected override async Task InitializeAsyncInternal() => await _host.StartAsync();
@@ -52,13 +52,13 @@ public class Navigator_specification : UniversalTestBase
 
    [PCT]  public void Can_get_tommand_result()
    {
-      var tommandResult1 = _clientEndpoint.ExecuteClientRequest(navigator => navigator.Post(RegisterUserTypermediaTommand.Create("new-user-name")));
+      var tommandResult1 = _client.ExecuteRequest(navigator => navigator.Post(RegisterUserTypermediaTommand.Create("new-user-name")));
       tommandResult1.Name.Must().Be("new-user-name");
    }
 
    [PCT]  public void Can_navigate_to_startpage_execute_tommand_and_follow_tommand_result_link_to_the_created_resource()
    {
-      var userResource = _clientEndpoint.ExecuteClientRequest(NavigationSpecification.Get(UserApiStartPage.Self)
+      var userResource = _client.ExecuteRequest(NavigationSpecification.Get(UserApiStartPage.Self)
                                                                                      .Post(startpage => startpage.RegisterUser("new-user-name"))
                                                                                      .Get(registerUserResult => registerUserResult.User));
 
@@ -67,7 +67,7 @@ public class Navigator_specification : UniversalTestBase
 
    [PCT]  public async Task Can_navigate_async_to_startpage_execute_tommand_and_follow_tommand_result_link_to_the_created_resource()
    {
-      var userResource = _clientEndpoint.ExecuteRequestAsync(NavigationSpecification.Get(UserApiStartPage.Self)
+      var userResource = _client.ExecuteRequestAsync(NavigationSpecification.Get(UserApiStartPage.Self)
                                                                                     .Post(startpage => startpage.RegisterUser("new-user-name"))
                                                                                     .Get(registerUserResult => registerUserResult.User));
 

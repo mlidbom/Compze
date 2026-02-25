@@ -13,7 +13,7 @@ public class SetupTest : UniversalTestBase
    {
       var host = TestingEndpointHost.Create();
       new AccountManagementServerDomainBootstrapper().RegisterWith(host);
-      host.RegisterClientEndpoint(setup: AccountApi.RegisterWithClientEndpoint);
+      host.RegisterClient(setup: AccountApi.RegisterWithClientEndpoint);
       await host.StartAsync().caf();
       await host.DisposeAsync().caf();
    }

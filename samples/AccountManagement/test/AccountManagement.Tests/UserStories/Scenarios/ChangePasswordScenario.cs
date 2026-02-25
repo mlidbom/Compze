@@ -8,7 +8,7 @@ namespace AccountManagement.UserStories.Scenarios;
 
 public class ChangePasswordScenario : ScenarioBase<AccountResource>
 {
-   readonly IEndpoint _clientEndpoint;
+   readonly IClient _client;
 
    public string OldPassword { get; private set; }
    public string NewPassword { get; private set; }
@@ -26,18 +26,18 @@ public class ChangePasswordScenario : ScenarioBase<AccountResource>
       return this;
    }
 
-   public static ChangePasswordScenario Create(IEndpoint domainEndpoint)
+   public static ChangePasswordScenario Create(IClient client)
    {
-      var registerAccountScenario = new RegisterAccountScenario(domainEndpoint);
+      var registerAccountScenario = new RegisterAccountScenario(client);
       var account = registerAccountScenario.Execute().Account;
 
-      return new ChangePasswordScenario(domainEndpoint, account!, registerAccountScenario.Password, TestData.Passwords.CreateValidPasswordString());
+      return new ChangePasswordScenario(client, account!, registerAccountScenario.Password, TestData.Passwords.CreateValidPasswordString());
    }
 
-   public ChangePasswordScenario(IEndpoint clientEndpoint, AccountResource account, string oldPassword, string newPassword)
+   public ChangePasswordScenario(IClient client, AccountResource account, string oldPassword, string newPassword)
    {
       Guard.IsNotNull(account);
-      _clientEndpoint = clientEndpoint;
+      _client = client;
       Account = account;
       OldPassword = oldPassword;
       NewPassword = newPassword;
@@ -45,8 +45,8 @@ public class ChangePasswordScenario : ScenarioBase<AccountResource>
 
    public override AccountResource Execute()
    {
-      Account.Tommands.ChangePassword.WithValues(OldPassword, NewPassword).Post().ExecuteAsClientRequestOn(_clientEndpoint);
+      Account.Tommands.ChangePassword.WithValues(OldPassword, NewPassword).Post().ExecuteRequestOn(_client);
 
-      return Account = Api.Tuery.AccountById(Account.Id).ExecuteAsClientRequestOn(_clientEndpoint);
+      return Account = Api.Tuery.AccountById(Account.Id).ExecuteRequestOn(_client);
    }
 }

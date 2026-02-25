@@ -13,8 +13,7 @@ public abstract class PerformanceTestBase : UniversalTestBase
 {
    protected ITestingEndpointHost Host { get; set; }
    protected IEndpoint ServerEndpoint { get; set; }
-   public IEndpoint ClientEndpoint { get; set; }
-   protected IRemoteTypermediaNavigator RemoteNavigator => ClientEndpoint.ServiceLocator.Resolve<IRemoteTypermediaNavigator>();
+   public IClient Client { get; set; }
    protected IInProcessTypermediaNavigator InProcessNavigator => ServerEndpoint.ServiceLocator.Resolve<IInProcessTypermediaNavigator>();
 
    protected PerformanceTestBase()
@@ -30,7 +29,7 @@ public abstract class PerformanceTestBase : UniversalTestBase
                    .ForTuery((MyLocalStrictlyLocalTuery _) => new MyTueryResult());
          });
 
-      ClientEndpoint = Host.RegisterClientEndpointForRegisteredEndpoints();
+      Client = Host.RegisterClientForRegisteredEndpoints();
    }
 
    protected override async Task InitializeAsyncInternal() => await Host.StartAsync();

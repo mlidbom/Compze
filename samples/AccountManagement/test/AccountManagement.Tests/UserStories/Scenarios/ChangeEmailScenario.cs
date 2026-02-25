@@ -8,7 +8,7 @@ namespace AccountManagement.UserStories.Scenarios;
 
 public class ChangeAccountEmailScenario : ScenarioBase<AccountResource>
 {
-   readonly IEndpoint _clientEndpoint;
+   readonly IClient _client;
 
    public string NewEmail { get; private set;} = TestData.Emails.CreateUnusedEmail();
    public Email OldEmail { get; }
@@ -21,19 +21,19 @@ public class ChangeAccountEmailScenario : ScenarioBase<AccountResource>
 
    public AccountResource Account { get; private set; }
 
-   public static ChangeAccountEmailScenario Create(IEndpoint domainEndpoint) => new(domainEndpoint, new RegisterAccountScenario(domainEndpoint).Execute().Account!);
+   public static ChangeAccountEmailScenario Create(IClient client) => new(client, new RegisterAccountScenario(client).Execute().Account!);
 
-   public ChangeAccountEmailScenario(IEndpoint clientEndpoint, AccountResource account)
+   public ChangeAccountEmailScenario(IClient client, AccountResource account)
    {
-      _clientEndpoint = clientEndpoint;
+      _client = client;
       Account = account;
       OldEmail = Account.Email;
    }
 
    public override AccountResource Execute()
    {
-      Account.Tommands.ChangeEmail.WithEmail(NewEmail).Post().ExecuteAsClientRequestOn(_clientEndpoint);
+      Account.Tommands.ChangeEmail.WithEmail(NewEmail).Post().ExecuteRequestOn(_client);
 
-      return Account = Api.Tuery.AccountById(Account.Id).ExecuteAsClientRequestOn(_clientEndpoint);
+      return Account = Api.Tuery.AccountById(Account.Id).ExecuteRequestOn(_client);
    }
 }

@@ -24,7 +24,7 @@ public class EndpointHostTest_Tests : EndpointHostTestBase
    [PCT]  public async Task If_tommand_handler_with_result_throws_disposing_host_throws_AggregateException_containing_the_thrown_exception_and_SendAsync_throws_TessageDispatchingFailedException()
    {
       TommandHandlerWithResultThreadGate.ThrowPostPassThrough(_thrownException);
-      await InvokingAsync(async () => await ClientEndpoint.ExecuteClientRequest(async session => await session.PostAsync(MyAtMostOnceTypermediaTommandWithResult.Create())))
+      await InvokingAsync(async () => await Client.ExecuteRequestAsync(async session => await session.PostAsync(MyAtMostOnceTypermediaTommandWithResult.Create())))
                          .Must().ThrowAsync<TessageDispatchingFailedException>();
 
       await AssertDisposingHostThrowsAggregateExceptionHierarchyContainingThrownExceptionAsANonAggregateException();
@@ -33,7 +33,7 @@ public class EndpointHostTest_Tests : EndpointHostTestBase
    [PCT]  public async Task If_tevent_handler_throws_disposing_host_throws_AggregateException_containing_the_thrown_exception()
    {
       MyRemoteTaggregateTeventHandlerThreadGate.ThrowPostPassThrough(_thrownException);
-      ClientEndpoint.ExecuteClientRequest(session => session.Post(MyCreateTaggregateTommand.Create()));
+      Client.ExecuteRequest(session => session.Post(MyCreateTaggregateTommand.Create()));
       await AssertDisposingHostThrowsAggregateExceptionHierarchyContainingThrownExceptionAsANonAggregateException();
    }
 
@@ -41,7 +41,7 @@ public class EndpointHostTest_Tests : EndpointHostTestBase
    {
       TueryHandlerThreadGate.ThrowPostPassThrough(_thrownException);
       //urgent: this seems to do some pretty strange async related things
-      await InvokingAsync(() => ClientEndpoint.ExecuteClientRequest(session => session.GetAsync(new MyTuery())))
+      await InvokingAsync(() => Client.ExecuteRequestAsync(session => session.GetAsync(new MyTuery())))
                          .Must().ThrowAsync<TessageDispatchingFailedException>();
 
       await AssertDisposingHostThrowsAggregateExceptionHierarchyContainingThrownExceptionAsANonAggregateException();
