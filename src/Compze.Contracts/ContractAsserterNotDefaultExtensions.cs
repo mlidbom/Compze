@@ -17,10 +17,10 @@ public static class ContractAsserterNotDefaultExtensions
       }
 
       [MethodImpl(MethodImplOptions.AggressiveInlining)]
-      public ContractAsserter NotDefault2<T1, T2>(T1 value1,
-                                                   T2 value2,
-                                                   [CallerArgumentExpression(nameof(value1))] string expression1 = "",
-                                                   [CallerArgumentExpression(nameof(value2))] string expression2 = "")
+      public ContractAsserter NotDefault<T1, T2>(T1 value1,
+                                                 T2 value2,
+                                                 [CallerArgumentExpression(nameof(value1))] string expression1 = "",
+                                                 [CallerArgumentExpression(nameof(value2))] string expression2 = "")
          where T1 : struct
          where T2 : struct
       {
@@ -30,12 +30,12 @@ public static class ContractAsserterNotDefaultExtensions
       }
 
       [MethodImpl(MethodImplOptions.AggressiveInlining)]
-      public ContractAsserter NotDefault3<T1, T2, T3>(T1 value1,
-                                                       T2 value2,
-                                                       T3 value3,
-                                                       [CallerArgumentExpression(nameof(value1))] string expression1 = "",
-                                                       [CallerArgumentExpression(nameof(value2))] string expression2 = "",
-                                                       [CallerArgumentExpression(nameof(value3))] string expression3 = "")
+      public ContractAsserter NotDefault<T1, T2, T3>(T1 value1,
+                                                     T2 value2,
+                                                     T3 value3,
+                                                     [CallerArgumentExpression(nameof(value1))] string expression1 = "",
+                                                     [CallerArgumentExpression(nameof(value2))] string expression2 = "",
+                                                     [CallerArgumentExpression(nameof(value3))] string expression3 = "")
          where T1 : struct
          where T2 : struct
          where T3 : struct
@@ -47,14 +47,14 @@ public static class ContractAsserterNotDefaultExtensions
       }
 
       [MethodImpl(MethodImplOptions.AggressiveInlining)]
-      public ContractAsserter NotDefault4<T1, T2, T3, T4>(T1 value1,
-                                                           T2 value2,
-                                                           T3 value3,
-                                                           T4 value4,
-                                                           [CallerArgumentExpression(nameof(value1))] string expression1 = "",
-                                                           [CallerArgumentExpression(nameof(value2))] string expression2 = "",
-                                                           [CallerArgumentExpression(nameof(value3))] string expression3 = "",
-                                                           [CallerArgumentExpression(nameof(value4))] string expression4 = "")
+      public ContractAsserter NotDefault<T1, T2, T3, T4>(T1 value1,
+                                                         T2 value2,
+                                                         T3 value3,
+                                                         T4 value4,
+                                                         [CallerArgumentExpression(nameof(value1))] string expression1 = "",
+                                                         [CallerArgumentExpression(nameof(value2))] string expression2 = "",
+                                                         [CallerArgumentExpression(nameof(value3))] string expression3 = "",
+                                                         [CallerArgumentExpression(nameof(value4))] string expression4 = "")
          where T1 : struct
          where T2 : struct
          where T3 : struct
