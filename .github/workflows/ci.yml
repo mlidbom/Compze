@@ -15,21 +15,16 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - db: SqliteMemory
-            combo: "SqliteMemory:Microsoft:Newtonsoft:Memory"
-          - db: PgSql
-            combo: "PgSql:Microsoft:Newtonsoft:Memory"
-          - db: MySql
-            combo: "MySql:Microsoft:Newtonsoft:Memory"
-          - db: MsSql
-            combo: "MsSql:Microsoft:Newtonsoft:Memory"
+        persistence: [SqliteMemory, Sqlite, PgSql, MySql, MsSql]
+        di: [Microsoft, SimpleInjector]
+        serializer: [Newtonsoft]
+        transport: [Memory, AspNetCore]
 
-    name: Test (${{ matrix.db }})
+    name: Test (${{ matrix.persistence }}, ${{ matrix.di }}, ${{ matrix.transport }})
 
     services:
       postgres:
-        image: ${{ matrix.db == 'PgSql' && 'postgres:17' || '' }}
+        image: ${{ matrix.persistence == 'PgSql' && 'postgres:17' || '' }}
         env:
           POSTGRES_PASSWORD: "Development!1"
         ports:
@@ -40,7 +35,7 @@ jobs:
           --health-timeout 5s
           --health-retries 5
       mysql:
-        image: ${{ matrix.db == 'MySql' && 'mysql:8' || '' }}
+        image: ${{ matrix.persistence == 'MySql' && 'mysql:8' || '' }}
         env:
           MYSQL_ROOT_PASSWORD: "Development!1"
         ports:
@@ -51,7 +46,7 @@ jobs:
           --health-timeout 5s
           --health-retries 5
       mssql:
-        image: ${{ matrix.db == 'MsSql' && 'mcr.microsoft.com/mssql/server:2022-latest' || '' }}
+        image: ${{ matrix.persistence == 'MsSql' && 'mcr.microsoft.com/mssql/server:2022-latest' || '' }}
         env:
           ACCEPT_EULA: "Y"
           MSSQL_SA_PASSWORD: "Development!1"
@@ -67,7 +62,7 @@ jobs:
       COMPOSABLE_MACHINE_SLOWNESS: "5.0"
       DOTNET_CLI_TELEMETRY_OPTOUT: "1"
       DOTNET_NOLOGO: "true"
-      COMPOSABLE_MSSQL_DATABASE_POOL_MASTER_CONNECTIONSTRING: ${{ matrix.db == 'MsSql' && 'Data Source=localhost;Initial Catalog=master;User Id=sa;Password=Development!1;TrustServerCertificate=True;' || '' }}
+      COMPOSABLE_MSSQL_DATABASE_POOL_MASTER_CONNECTIONSTRING: ${{ matrix.persistence == 'MsSql' && 'Data Source=localhost;Initial Catalog=master;User Id=sa;Password=Development!1;TrustServerCertificate=True;' || '' }}
 
     steps:
       - uses: actions/checkout@v4
@@ -76,4 +71,4 @@ jobs:
         uses: ./.github/actions/build-and-test
         with:
           configuration: Debug
-          pluggable-components: ${{ matrix.combo }}
+          pluggable-components: "${{ matrix.persistence }}:${{ matrix.di }}:${{ matrix.serializer }}:${{ matrix.transport }}"
