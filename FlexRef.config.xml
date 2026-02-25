@@ -1,9 +1,6 @@
 <FlexRef>
-  <AutoDiscover>
-    <Exclude Name="Compze.Build.InternalizedSourceReferences" />
-  </AutoDiscover>
+  <AutoDiscover />
   <!-- Alternatively, list packages explicitly instead of using AutoDiscover:
-  <Package Name="Compze.Build.InternalizedSourceReferences" />
   <Package Name="Compze.Core" />
   <Package Name="Compze.Serialization.Newtonsoft" />
   <Package Name="Compze.Sql.Common" />

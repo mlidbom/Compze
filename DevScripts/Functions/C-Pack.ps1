@@ -12,9 +12,6 @@ function C-Pack {
     CI/publish builds use the real version from each .csproj. Local dev packs append
     a '.dev.YYYYMMDDHHMMSS' suffix (e.g., 0.1.0-alpha.3.dev.20260223143052).
 
-    The ISR (InternalizedSourceReferences) build tool is packed first since ThreadingCE
-    needs it as a PackageReference.
-
     .EXAMPLE
     C-Pack
     Packs all projects with timestamped dev versions, clears NuGet cache for Compze packages.
@@ -49,14 +46,6 @@ function C-Pack {
 
     # Ensure pluggable component configuration files exist before building
     C-Set-PluggableComponents -EnsureValid
-
-    # Pack ISR first — ThreadingCE needs it as a PackageReference from the local feed
-    $isrProjPath = Join-Path $script:CompzeRoot "src" "Compze.Build.InternalizedSourceReferences" "src" "Compze.Build.InternalizedSourceReferences" "Compze.Build.InternalizedSourceReferences.csproj"
-    dotnet pack $isrProjPath --configuration Release --output $nupkgsPath @versionArgs
-    if ($LASTEXITCODE -ne 0) {
-        Write-Error "C-Pack: ISR pack failed!"
-        return
-    }
 
     # Pack main solution
     dotnet pack $script:CompzeSolutionPath --configuration Release --output $nupkgsPath @versionArgs

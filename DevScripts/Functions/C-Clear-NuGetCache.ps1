@@ -8,8 +8,7 @@ function C-Clear-NuGetCache {
     Removes cached Compze packages from the NuGet global-packages folder so that
     subset solutions pick up freshly packed versions from the local nupkgs/ feed.
 
-    Does NOT clear Compze.Build.FlexRef or Compze.Build.InternalizedSourceReferences
-    (build tool packages that come from nuget.org).
+    Does NOT clear Compze.Build.FlexRef (build tool package that comes from nuget.org).
 
     .EXAMPLE
     C-Clear-NuGetCache
@@ -29,8 +28,7 @@ function C-Clear-NuGetCache {
 
     # Package prefixes to keep (build tools from nuget.org)
     $keepPatterns = @(
-        'compze.build.flexref',
-        'compze.build.internalizedsourcereferences'
+        'compze.build.flexref'
     )
 
     $cleared = 0

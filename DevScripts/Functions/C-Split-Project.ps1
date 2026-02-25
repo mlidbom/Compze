@@ -16,9 +16,6 @@ function C-Split-Project {
     4. For each project that has a ProjectReference to the source, adds a ProjectReference to the split project
     5. Optionally adds references between the source and split projects (via switches)
 
-    Reference switches control two independent directions. Within each direction, normal ProjectReference
-    and interned source reference are mutually exclusive, but you can combine switches across directions.
-
     .PARAMETER SourceProject
     The name of the source project to split from (e.g., "Compze.Wiring")
 
@@ -28,24 +25,10 @@ function C-Split-Project {
     .PARAMETER SplitProjectReferencesSourceProject
     Adds a normal ProjectReference from the split project to the source project.
     Use when the extracted code depends on what remains in the source.
-    Mutually exclusive with -SplitProjectSourceReferencesSourceProject.
-
-    .PARAMETER SplitProjectSourceReferencesSourceProject
-    Configures the split project to internalize the source project's code using
-    Compze.InternalizedSourceReferences (imports .targets, sets InternalizeSourceFrom/To).
-    Use when the split project needs code from the source but a normal reference would create a cycle.
-    Mutually exclusive with -SplitProjectReferencesSourceProject.
 
     .PARAMETER SourceProjectReferencesSplitProject
     Adds a normal ProjectReference from the source project to the split project.
     Use when the remaining code depends on what was extracted.
-    Mutually exclusive with -SourceProjectSourceReferencesSplitProject.
-
-    .PARAMETER SourceProjectSourceReferencesSplitProject
-    Configures the source project to internalize the split project's code using
-    Compze.InternalizedSourceReferences (imports .targets, sets InternalizeSourceFrom/To).
-    Use when the source project needs code from the split but a normal reference would create a cycle.
-    Mutually exclusive with -SourceProjectReferencesSplitProject.
 
     .PARAMETER SolutionPath
     Path to the solution file (defaults to src\Compze.slnx)
@@ -61,10 +44,6 @@ function C-Split-Project {
     .EXAMPLE
     C-Split-Project -SourceProject Compze.Core -SplitProject Compze.Core.Abstractions -SourceProjectReferencesSplitProject
     Creates Compze.Core.Abstractions and adds a normal ProjectReference from Compze.Core to it.
-
-    .EXAMPLE
-    C-Split-Project -SourceProject Compze.A -SplitProject Compze.B -SplitProjectReferencesSourceProject -SourceProjectSourceReferencesSplitProject
-    Circular dependency: Compze.B has a normal ProjectReference to Compze.A. Compze.A internalizes Compze.B's source.
     #>
     [CmdletBinding()]
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseApprovedVerbs', '')]
@@ -77,24 +56,10 @@ function C-Split-Project {
 
         [switch]$SplitProjectReferencesSourceProject,
 
-        [switch]$SplitProjectSourceReferencesSourceProject,
-
         [switch]$SourceProjectReferencesSplitProject,
-
-        [switch]$SourceProjectSourceReferencesSplitProject,
 
         [string]$SolutionPath
     )
-
-    # Validate per-direction mutual exclusivity
-    if ($SplitProjectReferencesSourceProject -and $SplitProjectSourceReferencesSourceProject) {
-        Write-Error "-SplitProjectReferencesSourceProject and -SplitProjectSourceReferencesSourceProject are mutually exclusive (both set the split->source direction)"
-        return
-    }
-    if ($SourceProjectReferencesSplitProject -and $SourceProjectSourceReferencesSplitProject) {
-        Write-Error "-SourceProjectReferencesSplitProject and -SourceProjectSourceReferencesSplitProject are mutually exclusive (both set the source->split direction)"
-        return
-    }
 
     # Set default solution path if not provided
     if (-not $SolutionPath) {
@@ -186,16 +151,12 @@ function C-Split-Project {
     if ($SplitProjectReferencesSourceProject) {
         $relPath = [System.IO.Path]::GetRelativePath($splitProjectDir, $sourceProjectFile.FullName)
         Add-ProjectReference -CsprojPath $splitProjectFile.FullName -ReferencePath $relPath
-    } elseif ($SplitProjectSourceReferencesSourceProject) {
-        C-Add-InternedSourceReference -ConsumerCsprojPath $splitProjectFile.FullName -SourceProjectDir $sourceProjectDir
     }
 
     # Direction: Source -> Split
     if ($SourceProjectReferencesSplitProject) {
         $relPath = [System.IO.Path]::GetRelativePath($sourceProjectDir, $splitProjectFile.FullName)
         Add-ProjectReference -CsprojPath $sourceProjectFile.FullName -ReferencePath $relPath
-    } elseif ($SourceProjectSourceReferencesSplitProject) {
-        C-Add-InternedSourceReference -ConsumerCsprojPath $sourceProjectFile.FullName -SourceProjectDir $splitProjectDir
     }
 
     # Step 7: Update .csproj exclusions since files may have moved between project directories

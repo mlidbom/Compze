@@ -44,14 +44,6 @@
     <Project Path="SolutionStructure/Solution.TestConfig.csproj" />
     <Project Path="SolutionStructure/Solution.TODO.csproj" />
   </Folder>
-  <Folder Name="/Compze.Build.InternalizedSourceReferences/">
-    <Project Path="Compze.Build.InternalizedSourceReferences/src/Compze.Build.InternalizedSourceReferences/Compze.Build.InternalizedSourceReferences.csproj">
-      <BuildType Solution="docs|*" Project="Debug" />
-    </Project>
-    <Project Path="Compze.Build.InternalizedSourceReferences/test/Compze.Build.InternalizedSourceReferences.Tests/Compze.Build.InternalizedSourceReferences.Tests.csproj">
-      <BuildType Solution="docs|*" Project="Debug" />
-    </Project>
-  </Folder>
   <Folder Name="/Compze.Contracts/">
     <Project Path="../test/Compze.Contracts.Specifications/Compze.Contracts.Specifications.csproj" />
     <Project Path="Compze.Contracts/Compze.Contracts.csproj" />
