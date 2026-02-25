@@ -161,6 +161,6 @@ public class TeventModifier(Action<IReadOnlyList<TeventModifier.RefactoredTevent
     }
 
 #pragma warning disable CA1819 // Array property needed for migration tevent history
-    public TaggregateTevent[] MutatedHistory => Tevents?.ToArray() ?? [Assert.ReturnValue.NotNull(_inspectedTevent)._then(_inspectedTevent)];
+    public TaggregateTevent[] MutatedHistory => Tevents?.ToArray() ?? [_inspectedTevent._assertNotNull()];
 #pragma warning restore CA1819
 }

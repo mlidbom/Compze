@@ -145,18 +145,17 @@ public partial class TeventStore
 
    void AssertHistoriesAreIdentical(TaggregateTevent[] inMemoryMigratedHistory, IReadOnlyList<ITaggregateTevent> loadedTaggregateHistory)
    {
-      Assert.ReturnValue.Is(inMemoryMigratedHistory.Length == loadedTaggregateHistory.Count);
+      Assert.Argument.Fulfills(inMemoryMigratedHistory.Length == loadedTaggregateHistory.Count);
       for(var index = 0; index < inMemoryMigratedHistory.Length; ++index)
       {
          var inMemory = inMemoryMigratedHistory[index];
          var loaded = loadedTaggregateHistory[index];
-         Assert.ReturnValue
-               .Is(inMemory.TaggregateId == loaded.TaggregateId)
-               .Is(inMemory.Id == loaded.Id)
-               .Is(inMemory.TaggregateVersion == loaded.TaggregateVersion)
-               .Is(inMemory.UtcTimeStamp == loaded.UtcTimeStamp)
-               .Is(inMemory.GetType() == loaded.GetType())
-               .Is(_serializer.Serialize(inMemory) == _serializer.Serialize((TaggregateTevent)loaded));
+         inMemory._assert(it => it.TaggregateId == loaded.TaggregateId)
+                 ._assert(it => it.Id == loaded.Id)
+                 ._assert(it => it.TaggregateVersion == loaded.TaggregateVersion)
+                 ._assert(it => it.UtcTimeStamp == loaded.UtcTimeStamp)
+                 ._assert(it => it.GetType() == loaded.GetType())
+                 ._assert(it => _serializer.Serialize(it) == _serializer.Serialize((TaggregateTevent)loaded));
       }
    }
 

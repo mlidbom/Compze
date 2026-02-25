@@ -38,5 +38,5 @@ public static partial class Constructor
 
    public static bool HasDefaultConstructor(Type type) => type.GetConstructor(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, Type.EmptyTypes, null) != null;
 
-   public static object CreateInstance(Type type) => ReturnValue.ReturnNotNull(Activator.CreateInstance(type, nonPublic: true)); //Activator.CreateInstance is highly optimized nowadays. Compiling a constructor wins only when we don't need to do even a lookup by type.
+   public static object CreateInstance(Type type) => Activator.CreateInstance(type, nonPublic: true)._assertNotNull(); //Activator.CreateInstance is highly optimized nowadays. Compiling a constructor wins only when we don't need to do even a lookup by type.
 }

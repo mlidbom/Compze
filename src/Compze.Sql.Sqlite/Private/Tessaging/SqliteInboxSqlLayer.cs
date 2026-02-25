@@ -45,21 +45,19 @@ public partial class SqliteInboxSqlLayer(ISqliteConnectionPool connectionFactory
       _connectionFactory.UseCommand(
          command =>
          {
-            var affectedRows = command
-                              .SetCommandText(
-                                  $"""
+            command
+              .SetCommandText(
+                  $"""
 
-                                   UPDATE {TessageTable.TableName} 
-                                       SET {TessageTable.Status} = {(int)InboxTessageStatus.Succeeded}
-                                   WHERE {TessageTable.TessageId} = @{TessageTable.TessageId}
-                                       AND {TessageTable.Status} = {(int)InboxTessageStatus.UnHandled}
+                   UPDATE {TessageTable.TableName} 
+                       SET {TessageTable.Status} = {(int)InboxTessageStatus.Succeeded}
+                   WHERE {TessageTable.TessageId} = @{TessageTable.TessageId}
+                       AND {TessageTable.Status} = {(int)InboxTessageStatus.UnHandled}
 
-                                   """)
-                              .AddVarcharParameter(TessageTable.TessageId, 36, tessageId.ToString())
-                              .ExecuteNonQuery();
-
-            Assert.ReturnValue.Is(affectedRows == 1);
-            return affectedRows;
+                   """)
+              .AddVarcharParameter(TessageTable.TessageId, 36, tessageId.ToString())
+              .ExecuteNonQuery()
+              ._assert(affectedRows => affectedRows == 1);
          });
    }
 

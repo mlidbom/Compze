@@ -47,21 +47,19 @@ public partial class MsSqlInboxSqlLayer(IMsSqlConnectionPool connectionFactory, 
    {
       _connectionFactory.UseCommand(command =>
       {
-         var affectedRows = command
-                           .SetCommandText(
-                               $"""
+         command
+           .SetCommandText(
+               $"""
 
-                                UPDATE {TessageTable.TableName} 
-                                    SET {TessageTable.Status} = {(int)InboxTessageStatus.Succeeded}
-                                WHERE {TessageTable.TessageId} = @{TessageTable.TessageId}
-                                    AND {TessageTable.Status} = {(int)InboxTessageStatus.UnHandled}
+                UPDATE {TessageTable.TableName} 
+                    SET {TessageTable.Status} = {(int)InboxTessageStatus.Succeeded}
+                WHERE {TessageTable.TessageId} = @{TessageTable.TessageId}
+                    AND {TessageTable.Status} = {(int)InboxTessageStatus.UnHandled}
 
-                                """)
-                           .AddParameter(TessageTable.TessageId, tessageId.Value)
-                           .ExecuteNonQuery();
-
-         Assert.ReturnValue.Is(affectedRows == 1);
-         return affectedRows;
+                """)
+           .AddParameter(TessageTable.TessageId, tessageId.Value)
+           .ExecuteNonQuery()
+           ._assert(affectedRows => affectedRows == 1);
       });
    }
 

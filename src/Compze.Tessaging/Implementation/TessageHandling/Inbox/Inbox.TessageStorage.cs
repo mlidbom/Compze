@@ -19,19 +19,16 @@ public class InboxTessageStorage(IServiceBusSqlLayer.IInboxSqlLayer sqlLayer) : 
 
    public void RecordException(TransportTessage.InComing tessage, Exception exception)
    {
-      var affectedRows = _sqlLayer.RecordException(tessage.TessageId,
-                                                           exception.StackTrace ?? string.Empty,
-                                                           exception.Message,
-                                                           exception.GetType().GetFullNameCompilable());
-
-      Assert.ReturnValue.Is(affectedRows == 1);
+      _sqlLayer.RecordException(tessage.TessageId,
+                                exception.StackTrace ?? string.Empty,
+                                exception.Message,
+                                exception.GetType().GetFullNameCompilable())
+               ._assert(affectedRows => affectedRows == 1);
    }
 
-   public void MarkAsFailed(TransportTessage.InComing tessage)
-   {
-      var affectedRows = _sqlLayer.MarkAsFailed(tessage.TessageId);
-      Assert.ReturnValue.Is(affectedRows == 1);
-   }
+   public void MarkAsFailed(TransportTessage.InComing tessage) =>
+      _sqlLayer.MarkAsFailed(tessage.TessageId)
+               ._assert(affectedRows => affectedRows == 1);
 
    public Task StartAsync() => _sqlLayer.InitAsync();
 }

@@ -92,11 +92,9 @@ public readonly struct ReadOrder : IComparable<ReadOrder>, IEquatable<ReadOrder>
          }
       }).ToArray();
 
-      Assert.ReturnValue.Is(result.All(order => order > rangeStart)) //We are staying within the specified range
-            .Is(result.All(order => order < rangeEnd))          //We are staying within the specified range
-            .Is(result.Distinct().Count() == numberOfTevents);   //Each ReadOrder is unique
-
-      return result;
+      return result._assert(it => it.All(order => order > rangeStart))       //We are staying within the specified range
+                   ._assert(it => it.All(order => order < rangeEnd))         //We are staying within the specified range
+                   ._assert(it => it.Distinct().Count() == numberOfTevents); //Each ReadOrder is unique
    }
 
    static SqlDecimal ToCorrectIntegerAndFractionDigits(SqlDecimal value) => SqlDecimal.ConvertToPrecScale(value, TotalDigits, FractionDigits);
