@@ -15,16 +15,12 @@ public class ApiEndpointClient(
    ITransportMessagePoster transportMessagePoster,
    EndPointAddress remoteAddress,
    ITypeMapper typeMapper,
-   IRemotableTessageSerializer serializer,
-   ITessagesInFlightTracker tessagesInFlightTracker,
-   EndpointId remoteEndpointId) : IRemoteApiEndpointClient
+   IRemotableTessageSerializer serializer) : IRemoteApiEndpointClient
 {
    readonly ITransportMessagePoster _transportMessagePoster = transportMessagePoster;
    readonly ITypeMapper _typeMapper = typeMapper;
    readonly IRemotableTessageSerializer _serializer = serializer;
-   readonly ITessagesInFlightTracker _tessagesInFlightTracker = tessagesInFlightTracker;
    readonly EndPointAddress _remoteAddress = remoteAddress;
-   readonly EndpointId _remoteEndpointId = remoteEndpointId;
 
    public async Task<TResult> PostAsync<TResult>(IAtMostOnceTommand<TResult> typermediaTommand)
    {
@@ -45,10 +41,9 @@ public class ApiEndpointClient(
    }
 
    public static async Task<(ApiEndpointClient, TessageTypesInternal.EndpointInformation)> BootstrapConnectionToEndpoint(ITransportMessagePoster transportMessagePoster,
-                                                                                                                           EndPointAddress remoteAddress,
-                                                                                                                           ITypeMapper typeMapper,
-                                                                                                                           IRemotableTessageSerializer serializer,
-                                                                                                                           ITessagesInFlightTracker tessagesInFlightTracker)
+                                                                                                                          EndPointAddress remoteAddress,
+                                                                                                                          ITypeMapper typeMapper,
+                                                                                                                          IRemotableTessageSerializer serializer)
    {
       var endpointInformationTuery = new TessageTypesInternal.EndpointInformationTuery();
       var endpointInformationTueryTessage = TransportTessage.OutGoing.Create(endpointInformationTuery, typeMapper, serializer);
@@ -57,6 +52,6 @@ public class ApiEndpointClient(
                                          endpointInformationTueryTessage,
                                          endpointInformationTuery,
                                          remoteAddress).caf();
-      return (new ApiEndpointClient(transportMessagePoster, remoteAddress, typeMapper, serializer, tessagesInFlightTracker, endpointInformation.Id), endpointInformation);
+      return (new ApiEndpointClient(transportMessagePoster, remoteAddress, typeMapper, serializer), endpointInformation);
    }
 }
