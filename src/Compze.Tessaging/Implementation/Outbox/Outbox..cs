@@ -102,11 +102,8 @@ public partial class Outbox : IOutbox
    {
       Contract.State.Fulfills(!_running);
 
-      if(!_configuration.IsPureClientEndpoint)
-      {
-         await _storage.StartAsync().caf();
-         _retryPoller.Start();
-      }
+      await _storage.StartAsync().caf();
+      _retryPoller.Start();
 
       _running = true;
    }
