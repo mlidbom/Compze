@@ -43,4 +43,37 @@ public static class PipeAssert
       if(!predicate(@this)) ThrowCustomException(exceptionFactory);
       return @this;
    }
+
+   ///<summary>Throws <see cref="AssertionFailedException"/> if <paramref name="this"/> is null. Returns the value as non-nullable on success.</summary>
+   [MethodImpl(MethodImplOptions.AggressiveInlining)]
+   public static T _assertNotNull<T>([NotNull] this T? @this, [CallerArgumentExpression(nameof(@this))] string? thisExpression = null) where T : class
+   {
+      if(@this is null) ThrowAssertionFailed($"Assertion failed: {thisExpression}.{nameof(_assertNotNull)}() ## {thisExpression} was null");
+      return @this;
+   }
+
+   ///<summary>Throws <see cref="AssertionFailedException"/> if <paramref name="this"/> is null. Returns the value as non-nullable on success.</summary>
+   [MethodImpl(MethodImplOptions.AggressiveInlining)]
+   public static T _assertNotNull<T>([NotNull] this T? @this, [CallerArgumentExpression(nameof(@this))] string? thisExpression = null) where T : struct
+   {
+      if(@this is null) ThrowAssertionFailed($"Assertion failed: {thisExpression}.{nameof(_assertNotNull)}() ## {thisExpression} was null");
+      return @this.Value;
+   }
+
+   ///<summary>Throws <see cref="AssertionFailedException"/> if <paramref name="this"/> equals <c>default(T)</c>. Returns <paramref name="this"/> on success.</summary>
+   [MethodImpl(MethodImplOptions.AggressiveInlining)]
+   public static T _assertNotDefault<T>(this T @this, [CallerArgumentExpression(nameof(@this))] string? thisExpression = null) where T : struct, IEquatable<T>
+   {
+      if(@this.Equals(default)) ThrowAssertionFailed($"Assertion failed: {thisExpression}.{nameof(_assertNotDefault)}() ## {thisExpression} was: {@this}");
+      return @this;
+   }
+
+   ///<summary>Throws <see cref="AssertionFailedException"/> if <paramref name="this"/> is null or its value equals <c>default(T)</c>. Returns the non-nullable, non-default value on success.</summary>
+   [MethodImpl(MethodImplOptions.AggressiveInlining)]
+   public static T _assertNotNullOrDefault<T>([NotNull] this T? @this, [CallerArgumentExpression(nameof(@this))] string? thisExpression = null) where T : struct, IEquatable<T>
+   {
+      if(@this is null) ThrowAssertionFailed($"Assertion failed: {thisExpression}.{nameof(_assertNotNullOrDefault)}() ## {thisExpression} was null");
+      if(@this.Value.Equals(default)) ThrowAssertionFailed($"Assertion failed: {thisExpression}.{nameof(_assertNotNullOrDefault)}() ## {thisExpression} was: {@this.Value}");
+      return @this.Value;
+   }
 }
