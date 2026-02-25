@@ -106,7 +106,7 @@ public static class TimeAsserter
                                                             uint maxTries,
                                                             DeferredConsoleWriter writer) where TReturnValue : StopwatchCE.TimedExecutionSummary
    {
-      Contract.Argument.Fulfills(maxTries > 0);
+      Contract.Argument.Assert(maxTries > 0);
       maxAverage = TestEnv.Performance.AdjustForMachineSlowness(maxAverage);
       maxTotal = TestEnv.Performance.AdjustForMachineSlowness(maxTotal);
       TestEnv.Performance.LogMachineSlownessAdjustment();

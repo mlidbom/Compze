@@ -61,7 +61,7 @@ public class Endpoint : IEndpoint
 
    public async Task StartListeningComponentsAsync()
    {
-      State.Fulfills(!_isListening);
+      State.Assert(!_isListening);
       _isListening = true;
 
       RunSanityChecks();
@@ -75,7 +75,7 @@ public class Endpoint : IEndpoint
 
    public async Task StartSendingComponentsAsync()
    {
-      State.Fulfills(!_isSending);
+      State.Assert(!_isSending);
       _isSending = true;
       var serverEndpoints = _endpointRegistry.ServerEndpoints.Select(it => it.Address._assertNotNull()).ToHashSet();
       await Task.WhenAll(serverEndpoints.Select(address => _routingInboxClient.ConnectAsync(address))).caf();

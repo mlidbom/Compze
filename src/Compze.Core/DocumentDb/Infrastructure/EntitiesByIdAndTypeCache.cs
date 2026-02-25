@@ -16,7 +16,7 @@ public class EntitiesByIdAndTypeCache
 
    public void Add<T>(object id, T value) => _data.Update(data =>
    {
-      Argument.Fulfills(value is not null);
+      Argument.Assert(value is not null);
       var key = IdAndType.Create(id, value.GetType());
       AssertNotPresent(key);
       data[key] = value;
