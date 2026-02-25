@@ -1,52 +1,21 @@
 # Client/Endpoint Entanglement
 
-## Problem
+## Status: Core entanglement resolved
 
-The concept of a "client-only endpoint" (`IsPureClientEndpoint`) is architectural nonsense. A **client** and an **endpoint** are fundamentally different things forced through the same `ServerEndpointBuilder` pipeline, causing repeated entanglement issues.
+The `IsPureClientEndpoint` flag and shared `ServerEndpointBuilder` pipeline have been eliminated. Clients and endpoints are now built through separate pipelines:
+- **`ClientBuilder`** — registers only client concerns (transport, serialization, type mapping, remote navigator, routing)
+- **`ServerEndpointBuilder`** — always registers full endpoint infrastructure (no `IsPureClientEndpoint` gates)
+- **`Client`** — self-contained with its own lifecycle (start routing, connect, stop, dispose). No longer wraps an `Endpoint`.
+- **`EndpointHost`** — tracks clients separately from endpoints
 
-### What a Client needs
-- Transport (HTTP posting)
-- Serialization + type mapping
-- Remote hypermedia navigator (Post/Get for Typermedia commands/queries)
-- Routing (which endpoint handles which Typermedia commands/queries)
+### Removed
+- `IsPureClientEndpoint` property from `EndpointConfiguration`
+- `RegisterClientEndpoint` from `IEndpointHost` interface
+- `RegisterClientEndpointForRegisteredEndpoints` from `ITestingEndpointHost` interface
+- All `ExecuteClientRequest*` / `ExecuteAsClientRequestOn*` extension methods on `IEndpoint`
+- All `if(!Configuration.IsPureClientEndpoint)` gates in `ServerEndpointBuilder`, `Endpoint`, and `Outbox`
 
-### What an Endpoint needs (in addition to all of the above)
-- Identity (`EndpointId`, `EndpointConfiguration`)
-- Outbox (persist + deliver exactly-once messages)
-- Inbox (receive, deduplicate, dispatch)
-- Handler registry
-- Background exception reporting, task runner
-- SQL layers, document DB, tevent store, etc.
-
-### Current state
-`ServerEndpointBuilder` registers everything for both, gated by `if(!Configuration.IsPureClientEndpoint)`. This means:
-- Client endpoints go through the same builder but skip half the registrations
-- Shared infrastructure (`RoutingInboxClient`, `IInboxConnection`) serves both RPC routing and exactly-once delivery routing
-- Adding dependencies to shared infrastructure (e.g., giving `InboxConnection` outbox storage for delivery management) breaks client endpoints because outbox storage isn't registered for them
-
-### Files involved
-- `src/Compze.Tessaging/Hosting/ServerEndpointBuilder.cs` — the builder with the `IsPureClientEndpoint` gate
-- `src/Compze.Tessaging/Implementation/Transport/Client/Internal/IInboxConnection.cs` — single interface serving both RPC and exactly-once delivery
-- `src/Compze.Tessaging/Implementation/Transport/Client/Implementation/Universal/RoutingInboxClient .cs` — creates `InboxConnection` instances, serves both RPC and delivery routing
-- `src/Compze.Tessaging/Implementation/Outbox/Outbox.InboxConnection.cs` — concrete connection class nested in `Outbox`, doing both RPC and delivery
-- `src/Compze.Tessaging.Hosting.Testing/Tessaging/Buses/TestingEndpointHost.cs` — `RegisterClientEndpoint` / `RegisterClientEndpointForRegisteredEndpoints`
-
-## Proposed solution
-
-### 1. Split the builder
-- **`EndpointBuilder`** — registers everything an endpoint needs
-- **`ClientBuilder`** — registers only client concerns (transport, serialization, remote navigator, routing)
-- Shared registrations extracted to common helper methods
-
-### 2. Split `IInboxConnection`
-- **`IRemoteApiConnection`** — for RPC: `PostAsync`, `GetAsync` (used by both clients and endpoints)
-- **`IOutboxConnection`** (or delivery-capable connection) — adds `EnqueueForDelivery` (used only by endpoints with outboxes)
-- The concrete `InboxConnection` can implement both, but the abstractions are clean
-
-### 3. Untangle `RoutingInboxClient`
-- Client instances only need RPC routing → only deal in `IRemoteApiConnection`
-- Endpoint instances need delivery routing → deal in `IOutboxConnection` additionally
-- Could be two separate classes, or one class with optional delivery capability
+## Remaining work
 
 ## Context: Delivery Manager feature blocked by this
 

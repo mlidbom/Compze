@@ -89,25 +89,21 @@ public class ServerEndpointBuilder : IEndpointBuilder, IAsyncDisposable, IDispos
 
       Container.Register(Singleton.For<ITessagesInFlightTracker>().CreatedBy(() => _globalStateTracker));
 
-      //Only real endpoint stuff after here
-      if(!Configuration.IsPureClientEndpoint)
-      {
-         register.BackgroundExceptionReporter()
-                 .TaskRunner()
-                 .Outbox()
-                 .Inbox()
-                 .TommandScheduler()
-                 .ServiceBusTeventStoreTeventPublisher()
-                 .ServiceBusSession()
-                 .InProcessHypermediaNavigator();
+      register.BackgroundExceptionReporter()
+              .TaskRunner()
+              .Outbox()
+              .Inbox()
+              .TommandScheduler()
+              .ServiceBusTeventStoreTeventPublisher()
+              .ServiceBusSession()
+              .InProcessHypermediaNavigator();
 
-         Container.Register(
-            Singleton.For<EndpointId>().Instance(Configuration.Id),
-            Singleton.For<IDependencyInjectionContainer>().Instance(Container),
-            Singleton.For<EndpointConfiguration>().Instance(Configuration),
-            Singleton.For<ITessageHandlerRegistry, ITessageHandlerRegistrar>().Instance(_registry)
-         );
-      }
+      Container.Register(
+         Singleton.For<EndpointId>().Instance(Configuration.Id),
+         Singleton.For<IDependencyInjectionContainer>().Instance(Container),
+         Singleton.For<EndpointConfiguration>().Instance(Configuration),
+         Singleton.For<ITessageHandlerRegistry, ITessageHandlerRegistrar>().Instance(_registry)
+      );
    }
 
    bool _disposed;

@@ -19,6 +19,7 @@ public class EndpointHost : IEndpointHost
    readonly IComponentRegistrar _registrar;
    readonly Func<IDependencyInjectionContainer> _containerFactory;
    protected IList<IEndpoint> Endpoints { get; } = [];
+   readonly List<Client> _clients = [];
    internal ITessagesInFlightTracker TessagesInFlightTracker;
 
    protected EndpointHost(IComponentRegistrar registrar, Func<IDependencyInjectionContainer> containerFactory)
@@ -33,7 +34,7 @@ public class EndpointHost : IEndpointHost
       public static IEndpointHost Create(Func<IDependencyInjectionContainer> containerFactory) => new EndpointHost(new ComponentRegistrar(), containerFactory);
    }
 
-   public virtual IEndpoint RegisterEndpoint(string name, EndpointId id, Action<IEndpointBuilder> setup) => InternalRegisterEndpoint(new EndpointConfiguration(name, id, isPureClientEndpoint: false), setup);
+   public virtual IEndpoint RegisterEndpoint(string name, EndpointId id, Action<IEndpointBuilder> setup) => InternalRegisterEndpoint(new EndpointConfiguration(name, id), setup);
 
    IEndpoint InternalRegisterEndpoint(EndpointConfiguration configuration, Action<IEndpointBuilder> setup)
    {
@@ -46,13 +47,14 @@ public class EndpointHost : IEndpointHost
       return endpoint;
    }
 
-   static readonly EndpointConfiguration ClientEndpointConfiguration = new(name: $"{nameof(EndpointHost)}_Default_Client_Endpoint",
-                                                                           id: new EndpointId(Guid.Parse("D4C869D2-68EF-469C-A5D6-37FCF2EC152A")),
-                                                                           isPureClientEndpoint: true);
-
-   protected virtual IEndpoint RegisterClientEndpoint(Action<IEndpointBuilder> setup) => InternalRegisterEndpoint(ClientEndpointConfiguration, setup);
-
-   public virtual IClient RegisterClient(Action<IEndpointBuilder>? setup = null) => new Client(RegisterClientEndpoint(setup ?? (_ => {})));
+   public virtual IClient RegisterClient(Action<IEndpointBuilder>? setup = null)
+   {
+      using var builder = new ClientBuilder(this, TessagesInFlightTracker, _containerFactory());
+      setup?.Invoke(builder);
+      var client = builder.Build();
+      _clients.Add(client);
+      return client;
+   }
 
    bool _isStarted;
 
@@ -65,6 +67,7 @@ public class EndpointHost : IEndpointHost
 
          await Task.WhenAll(Endpoints.Select(endpointToStart => endpointToStart.StartListeningComponentsAsync())).WithAggregateExceptions().caf();
          await Task.WhenAll(Endpoints.Select(endpointToStart => endpointToStart.StartSendingComponentsAsync())).WithAggregateExceptions().caf();
+         await Task.WhenAll(_clients.Select(client => client.StartAsync())).WithAggregateExceptions().caf();
       }catch(Exception e)
       {
          this.Log().Error(e, "Failed to start host");
@@ -84,10 +87,12 @@ public class EndpointHost : IEndpointHost
          if(_isStarted)
          {
             _isStarted = false;
+            _clients.ForEach(client => client.Stop());
             await Task.WhenAll(Endpoints.Select(endpoint => endpoint.StopSendingComponentsAsync())).WithAggregateExceptions().caf();
             await Task.WhenAll(Endpoints.Select(endpoint => endpoint.StopListeningComponentsAsync())).WithAggregateExceptions().caf();
          }
 
+         await Task.WhenAll(_clients.Select(client => client.DisposeAsync().AsTask())).WithAggregateExceptions().caf();
          await Task.WhenAll(Endpoints.Select(endpoint => endpoint.DisposeAsync().AsTask())).WithAggregateExceptions().caf();
       }
    }

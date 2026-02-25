@@ -68,25 +68,21 @@ public class Endpoint : IEndpoint
 
       _routingInboxClient.Start();
 
-      //todo: find cleaner way of getting a TyperMedia navigator than pretending to be an endpoint.
-      if(!_configuration.IsPureClientEndpoint)
-      {
-         _serverComponents = new ServerComponents(ServiceLocator.Resolve<TommandScheduler>(), ServiceLocator.Resolve<IInbox>(), ServiceLocator.Resolve<IOutbox>());
+      _serverComponents = new ServerComponents(ServiceLocator.Resolve<TommandScheduler>(), ServiceLocator.Resolve<IInbox>(), ServiceLocator.Resolve<IOutbox>());
 
-         await Task.WhenAll(_serverComponents.Inbox.StartAsync(), _serverComponents.TommandScheduler.StartAsync()).caf();
-      }
+      await Task.WhenAll(_serverComponents.Inbox.StartAsync(), _serverComponents.TommandScheduler.StartAsync()).caf();
    }
 
    public async Task StartSendingComponentsAsync()
    {
       State.Assert(!_isSending);
       _isSending = true;
-      var serverEndpoints = _endpointRegistry.ServerEndpoints.Select(it => it.Address._assert().NotNull()).ToHashSet();
-      await Task.WhenAll(serverEndpoints.Select(address => _routingInboxClient.ConnectAsync(address))).caf();
+      var serverAddresses = _endpointRegistry.ServerEndpointAddresses.ToHashSet();
+      await Task.WhenAll(serverAddresses.Select(address => _routingInboxClient.ConnectAsync(address))).caf();
       if(_serverComponents != null)
       {
          await Task.WhenAll(_serverComponents.Outbox.StartAsync()).caf();
-         serverEndpoints.Add(_serverComponents.Inbox.Address); //Yes, we do connect to ourselves. Scheduled tommands need to dispatch over the remote protocol to get the delivery guarantees...
+         serverAddresses.Add(_serverComponents.Inbox.Address); //Yes, we do connect to ourselves. Scheduled tommands need to dispatch over the remote protocol to get the delivery guarantees...
       }
    }
 
@@ -133,11 +129,7 @@ public class Endpoint : IEndpoint
          var exceptionReporter = ServiceLocator.Resolve<IBackgroundExceptionReporter>();
          await ServiceLocator.DisposeAsync().caf();
          _serverComponents.Dispose();
-         // Check for any exceptions collected on background threads before disposing
-         if(!_configuration.IsPureClientEndpoint)
-         {
-            exceptionReporter.ThrowIfAnyExceptions();
-         }
+         exceptionReporter.ThrowIfAnyExceptions();
       }
    }
 }

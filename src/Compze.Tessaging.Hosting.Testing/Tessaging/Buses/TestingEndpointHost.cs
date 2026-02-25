@@ -11,6 +11,7 @@ namespace Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 public class TestingEndpointHost : TestingEndpointHostBase
 {
    IDependencyInjectionContainer? _ownedContainer = null;
+
    public TestingEndpointHost(IComponentRegistrar registrar, IDependencyInjectionContainer rootContainer) : base(registrar, rootContainer.Clone)
    {
 
@@ -57,13 +58,13 @@ public class TestingEndpointHost : TestingEndpointHostBase
                                });
 
 
-   protected override IEndpoint RegisterClientEndpoint(Action<IEndpointBuilder> setup) =>
-      base.RegisterClientEndpoint(builder =>
+   public override IClient RegisterClient(Action<IEndpointBuilder>? setup = null) =>
+      base.RegisterClient(builder =>
       {
          builder.Container.Register()
                 .CurrentTestsPluggableComponents();
 
-         setup(builder);
+         setup?.Invoke(builder);
       });
 
    public override IClient RegisterClientForRegisteredEndpoints(Action<IEndpointBuilder>? setup = null) => RegisterClient(builder =>
