@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Linq.Expressions;
 using Compze.Contracts;
-using static Compze.Contracts.ContractAssertion;
+using static Compze.Contracts.Contract;
 
 namespace Compze.Utilities.SystemCE.ComponentModelCE.DataAnnotationsCE;
 

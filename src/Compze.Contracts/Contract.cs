@@ -2,7 +2,7 @@ using System;
 
 namespace Compze.Contracts;
 
-public static class ContractAssertion
+public static class Contract
 {
    ///<summary>Assert conditions about current state of "this". Failures throw <see cref="InvalidOperationException"/>.</summary>
    public static ContractAsserter State { get; } = new(message => new InvalidOperationException(message),

@@ -30,7 +30,7 @@ public static class ReadonlyCollectionsTE
 
    public static void AddRange<T>(this ICollection<T> me, IEnumerable<T> toAdd)
    {
-      ContractAssertion.Argument.NotNull(me).NotNull(toAdd);
+      Contract.Argument.NotNull(me).NotNull(toAdd);
       foreach(var it in toAdd)
       {
          me.Add(it);

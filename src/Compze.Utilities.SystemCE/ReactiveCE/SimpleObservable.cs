@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 using Compze.Contracts;
-using static Compze.Contracts.ContractAssertion;
+using static Compze.Contracts.Contract;
 
 namespace Compze.Utilities.SystemCE.ReactiveCE;
 

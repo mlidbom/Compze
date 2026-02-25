@@ -1,7 +1,7 @@
 using System;
 using System.Threading;
 using Compze.Contracts;
-using static Compze.Contracts.ContractAssertion;
+using static Compze.Contracts.Contract;
 
 namespace Compze.Utilities.SystemCE.UsageGuards;
 

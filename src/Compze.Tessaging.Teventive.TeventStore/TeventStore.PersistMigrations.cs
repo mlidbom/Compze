@@ -17,7 +17,7 @@ public partial class TeventStore
 {
    public void PersistMigrations()
    {
-      ContractAssertion.State.Fulfills(Transaction.Current == null, () => $"Cannot run {nameof(PersistMigrations)} within a transaction. Internally manages transactions.");
+      Contract.State.Fulfills(Transaction.Current == null, () => $"Cannot run {nameof(PersistMigrations)} within a transaction. Internally manages transactions.");
       Log.Info("Starting to persist migrations");
 
       long migratedTaggregates = 0;
@@ -145,7 +145,7 @@ public partial class TeventStore
 
    void AssertHistoriesAreIdentical(TaggregateTevent[] inMemoryMigratedHistory, IReadOnlyList<ITaggregateTevent> loadedTaggregateHistory)
    {
-      ContractAssertion.Argument.Fulfills(inMemoryMigratedHistory.Length == loadedTaggregateHistory.Count);
+      Contract.Argument.Fulfills(inMemoryMigratedHistory.Length == loadedTaggregateHistory.Count);
       for(var index = 0; index < inMemoryMigratedHistory.Length; ++index)
       {
          var inMemory = inMemoryMigratedHistory[index];

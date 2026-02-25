@@ -36,7 +36,7 @@ public static class TeventStoreRegistrar
                                                                    string connectionName,
                                                                    Func<IReadOnlyList<ITeventMigration>> migrations)
    {
-      ContractAssertion.Argument.NotNullEmptyOrWhitespace(connectionName);
+      Contract.Argument.NotNullEmptyOrWhitespace(connectionName);
 
       Teventive.TeventStore.TeventStore.RegisterWith(registrar, migrations);
 

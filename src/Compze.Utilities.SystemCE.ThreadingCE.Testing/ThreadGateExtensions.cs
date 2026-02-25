@@ -26,7 +26,7 @@ public static class ThreadGateExtensions
 
    public static IThreadGate FailTransactionOnPreparePostPassThrough(this IThreadGate @this, Exception exception) => @this.SetPostPassThroughAction(_ =>
    {
-      ContractAssertion.State.NotNull(Transaction.Current);
+      Contract.State.NotNull(Transaction.Current);
       Transaction.Current.FailOnPrepare(exception);
    });
 

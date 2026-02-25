@@ -43,14 +43,14 @@ public interface ICompzeSqliteConnection : IPoolableConnection, ICompzeDbConnect
 
       public void Open()
       {
-         ContractAssertion.State.NotDisposed(_disposed, this);
+         Contract.State.NotDisposed(_disposed, this);
          Connection.Open();
          _transactionParticipant.EnsureEnlistedInAnyAmbientTransaction();
       }
 
       public async Task OpenAsync()
       {
-         ContractAssertion.State.NotDisposed(_disposed, this);
+         Contract.State.NotDisposed(_disposed, this);
          await Connection.OpenAsync().caf();
          _transactionParticipant.EnsureEnlistedInAnyAmbientTransaction();
       }
@@ -59,7 +59,7 @@ public interface ICompzeSqliteConnection : IPoolableConnection, ICompzeDbConnect
 
       public SqliteCommand CreateCommand()
       {
-         ContractAssertion.State.NotDisposed(_disposed, this);
+         Contract.State.NotDisposed(_disposed, this);
          _transactionParticipant.EnsureEnlistedInAnyAmbientTransaction();
 
          var command = Connection.CreateCommand();
@@ -77,7 +77,7 @@ public interface ICompzeSqliteConnection : IPoolableConnection, ICompzeDbConnect
          if(!_disposed)
          {
             _disposed = true;
-            ContractAssertion.State.Fulfills(_transaction == null, () => "Transaction should have been completed (committed or rolled back) before disposing the connection");
+            Contract.State.Fulfills(_transaction == null, () => "Transaction should have been completed (committed or rolled back) before disposing the connection");
             Connection.Dispose();
          }
       }
@@ -87,7 +87,7 @@ public interface ICompzeSqliteConnection : IPoolableConnection, ICompzeDbConnect
          if(!_disposed)
          {
             _disposed = true;
-            ContractAssertion.State.Fulfills(_transaction == null, () => "Transaction should have been completed (committed or rolled back) before disposing the connection");
+            Contract.State.Fulfills(_transaction == null, () => "Transaction should have been completed (committed or rolled back) before disposing the connection");
             await Connection.DisposeAsync().caf();
          }
       }

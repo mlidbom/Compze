@@ -14,7 +14,7 @@ using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using Compze.Contracts;
-using static Compze.Contracts.ContractAssertion;
+using static Compze.Contracts.Contract;
 
 namespace Compze.Tessaging.Hosting;
 

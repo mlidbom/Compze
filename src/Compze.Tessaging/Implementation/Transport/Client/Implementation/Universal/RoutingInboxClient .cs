@@ -91,7 +91,7 @@ public partial class RoutingInboxClient : IRoutingInboxClient, IDisposable
       return await connection.GetAsync(tuery).caf();
    }
 
-   public void Start() => ContractAssertion.State.Fulfills(!_running, () => "already running")
+   public void Start() => Contract.State.Fulfills(!_running, () => "already running")
                                 ._then(_running = true);
 
    public void Stop() => AssertRunning()._then(() =>
@@ -115,5 +115,5 @@ public partial class RoutingInboxClient : IRoutingInboxClient, IDisposable
       }
    }
 
-   unit AssertRunning() => ContractAssertion.State.Fulfills(_running, () => "not running")._then(unit.Value);
+   unit AssertRunning() => Contract.State.Fulfills(_running, () => "not running")._then(unit.Value);
 }

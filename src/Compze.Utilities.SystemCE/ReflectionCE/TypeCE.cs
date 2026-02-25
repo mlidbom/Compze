@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Compze.Functional;
 using Compze.Contracts;
-using static Compze.Contracts.ContractAssertion;
+using static Compze.Contracts.Contract;
 
 namespace Compze.Utilities.SystemCE.ReflectionCE;
 

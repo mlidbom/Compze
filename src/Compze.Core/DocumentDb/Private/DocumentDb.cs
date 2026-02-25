@@ -63,7 +63,7 @@ public sealed class DocumentDb : IDocumentDb
 
    public void Add<TDocument>(object id, TDocument value, Dictionary<Type, Dictionary<string, string>> persistentValues)
    {
-      ContractAssertion.Argument.Fulfills(value is not null);
+      Contract.Argument.Fulfills(value is not null);
 
       var idString = GetIdString(id);
       var serializedDocument = _serializer.Serialize(value);

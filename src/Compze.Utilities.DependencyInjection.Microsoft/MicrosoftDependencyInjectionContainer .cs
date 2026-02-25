@@ -66,44 +66,44 @@ public sealed class MicrosoftDependencyInjectionContainer : DependencyInjectionC
 
    IServiceProvider CurrentProvider()
    {
-      ContractAssertion.State.NotDisposed(_isDisposed, this);
+      Contract.State.NotDisposed(_isDisposed, this);
       return _scopeCache.Value != null ? _scopeCache.Value.ServiceProvider : _serviceProvider._assertNotNull();
    }
 
    public TComponent Resolve<TComponent>() where TComponent : class
    {
-      ContractAssertion.State.NotDisposed(_isDisposed, this);
+      Contract.State.NotDisposed(_isDisposed, this);
       return CurrentProvider().GetRequiredService<TComponent>();
    }
 
    public object Resolve(Type serviceType)
    {
-      ContractAssertion.State.NotDisposed(_isDisposed, this);
+      Contract.State.NotDisposed(_isDisposed, this);
       return CurrentProvider().GetRequiredService(serviceType);
    }
 
    public TComponent[] ResolveAll<TComponent>() where TComponent : class
    {
-      ContractAssertion.State.NotDisposed(_isDisposed, this);
+      Contract.State.NotDisposed(_isDisposed, this);
       return CurrentProvider().GetServices<TComponent>().ToArray();
    }
 
    TComponent IServiceLocatorKernel.Resolve<TComponent>()
    {
-      ContractAssertion.State.NotDisposed(_isDisposed, this);
+      Contract.State.NotDisposed(_isDisposed, this);
       return CurrentProvider().GetRequiredService<TComponent>();
    }
 
    IDisposable IServiceLocator.BeginScope()
    {
-      ContractAssertion.State.NotDisposed(_isDisposed, this)
+      Contract.State.NotDisposed(_isDisposed, this)
             .Fulfills(_scopeCache.Value == null, () => "Scope already exists. Nested scopes are not supported.");
 
       _scopeCache.Value = CurrentProvider().CreateAsyncScope();
 
       return new Disposable(() =>
       {
-         ContractAssertion.State.Fulfills(_scopeCache.Value != null, () => "Attempt to dispose scope from a context that is not within the scope.");
+         Contract.State.Fulfills(_scopeCache.Value != null, () => "Attempt to dispose scope from a context that is not within the scope.");
          _scopeCache.Value.Dispose();
          _scopeCache.Value = null;
       });
@@ -116,7 +116,7 @@ public sealed class MicrosoftDependencyInjectionContainer : DependencyInjectionC
    {
       if(!_isDisposed)
       {
-         ContractAssertion.State.Fulfills(_scopeCache.Value == null, () => "Scopes must be disposed before the container");
+         Contract.State.Fulfills(_scopeCache.Value == null, () => "Scopes must be disposed before the container");
          _isDisposed = true;
          _serviceProvider?.Dispose();
          _serviceProvider = null;
@@ -127,7 +127,7 @@ public sealed class MicrosoftDependencyInjectionContainer : DependencyInjectionC
    {
       if(!_isDisposed)
       {
-         ContractAssertion.State.Fulfills(_scopeCache.Value == null, () => "Scopes must be disposed before the container");
+         Contract.State.Fulfills(_scopeCache.Value == null, () => "Scopes must be disposed before the container");
          _isDisposed = true;
          if(_serviceProvider != null)
          {

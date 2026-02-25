@@ -31,7 +31,7 @@ public class Entity<TEntity, TKey> : IEntity<TKey>
    {
       get => _id._assert(it => !it.Value.Equals(default));
       [Obsolete(ObsoleteMessage.ForInternalUseOnly)]
-      protected set => _id = ContractAssertion.Argument.NotNull(value)._then(value);
+      protected set => _id = Contract.Argument.NotNull(value)._then(value);
    }
 
    ///<summary>Gets the id of the instance bypassing contract validation. Should probably never be used except by infrastructure code.</summary>
