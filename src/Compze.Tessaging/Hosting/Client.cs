@@ -31,8 +31,8 @@ class Client : IClient
    internal async Task StartAsync()
    {
       _routingInboxClient.Start();
-      var serverEndpoints = _endpointRegistry.ServerEndpoints.Select(it => it.Address._assertNotNull()).ToHashSet();
-      await Task.WhenAll(serverEndpoints.Select(address => _routingInboxClient.ConnectAsync(address))).caf();
+      var serverAddresses = _endpointRegistry.ServerEndpointAddresses.ToHashSet();
+      await Task.WhenAll(serverAddresses.Select(address => _routingInboxClient.ConnectAsync(address))).caf();
       _started = true;
    }
 
