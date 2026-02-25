@@ -6,6 +6,10 @@ inputs:
     description: Build configuration (Debug or Release)
     required: false
     default: Debug
+  pluggable-components:
+    description: "Pluggable component combination to test (e.g. SqliteMemory:Microsoft:Newtonsoft:Memory). When not specified, uses the .github-ci config file."
+    required: false
+    default: ""
 
 runs:
   using: composite
@@ -17,7 +21,12 @@ runs:
 
     - name: Configure test pluggable components
       shell: bash
-      run: cp src/TestUsingPluggableComponentCombinations.github-ci src/TestUsingPluggableComponentCombinations
+      run: |
+        if [ -n "${{ inputs.pluggable-components }}" ]; then
+          echo "${{ inputs.pluggable-components }}" > src/TestUsingPluggableComponentCombinations
+        else
+          cp src/TestUsingPluggableComponentCombinations.github-ci src/TestUsingPluggableComponentCombinations
+        fi
 
     - name: Build
       shell: bash

@@ -12,6 +12,30 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
 
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - db: SqliteMemory
+            combo: "SqliteMemory:Microsoft:Newtonsoft:Memory"
+          - db: PgSql
+            combo: "PgSql:Microsoft:Newtonsoft:Memory"
+
+    name: Test (${{ matrix.db }})
+
+    services:
+      postgres:
+        image: ${{ matrix.db == 'PgSql' && 'postgres:17' || '' }}
+        env:
+          POSTGRES_PASSWORD: "Development!1"
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     env:
       COMPOSABLE_MACHINE_SLOWNESS: "5.0"
       DOTNET_CLI_TELEMETRY_OPTOUT: "1"
@@ -24,3 +48,4 @@ jobs:
         uses: ./.github/actions/build-and-test
         with:
           configuration: Debug
+          pluggable-components: ${{ matrix.combo }}
