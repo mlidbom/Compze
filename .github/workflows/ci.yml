@@ -22,6 +22,8 @@ jobs:
             combo: "PgSql:Microsoft:Newtonsoft:Memory"
           - db: MySql
             combo: "MySql:Microsoft:Newtonsoft:Memory"
+          - db: MsSql
+            combo: "MsSql:Microsoft:Newtonsoft:Memory"
 
     name: Test (${{ matrix.db }})
 
@@ -48,11 +50,24 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+      mssql:
+        image: ${{ matrix.db == 'MsSql' && 'mcr.microsoft.com/mssql/server:2022-latest' || '' }}
+        env:
+          ACCEPT_EULA: "Y"
+          MSSQL_SA_PASSWORD: "Development!1"
+        ports:
+          - 1433:1433
+        options: >-
+          --health-cmd "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'Development!1' -C -Q 'SELECT 1' || /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P 'Development!1' -Q 'SELECT 1'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
 
     env:
       COMPOSABLE_MACHINE_SLOWNESS: "5.0"
       DOTNET_CLI_TELEMETRY_OPTOUT: "1"
       DOTNET_NOLOGO: "true"
+      COMPOSABLE_MSSQL_DATABASE_POOL_MASTER_CONNECTIONSTRING: ${{ matrix.db == 'MsSql' && 'Data Source=localhost;Initial Catalog=master;User Id=sa;Password=Development!1;TrustServerCertificate=True;' || '' }}
 
     steps:
       - uses: actions/checkout@v4
