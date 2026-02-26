@@ -8,17 +8,16 @@ namespace Compze.Utilities.Logging.Serilog;
 public class SerilogLogger : Logger
 {
    readonly global::Serilog.ILogger _logger;
-   readonly string _typeName;
-   SerilogLogger(string typeName, global::Serilog.ILogger logger) { _logger = logger; _typeName = typeName; }
-   SerilogLogger(string typeName, global::Serilog.ILogger logger, LogLevel level) : base(level) { _logger = logger; _typeName = typeName; }
+   SerilogLogger(global::Serilog.ILogger logger) => _logger = logger;
+   SerilogLogger(global::Serilog.ILogger logger, LogLevel level) : base(level) => _logger = logger;
 
-   public static ILogger Create(Type type) => new SerilogLogger(type.Name, Log.ForContext(type));
+   public static ILogger Create(Type type) => new SerilogLogger(Log.ForContext(type));
 
    public override ILogger WithLogLevel(LogLevel level) =>
-      new SerilogLogger(_typeName, _logger, level);
+      new SerilogLogger(_logger, level);
 
    global::Serilog.ILogger CallerLogger(string caller) =>
-      _logger.ForContext(global::Serilog.Core.Constants.SourceContextPropertyName, $"{_typeName}.{caller}");
+      _logger.ForContext("CallerMember", caller);
 
    protected override void ErrorInternal(Exception exception, string? message, string caller) =>
       CallerLogger(caller).Error(exception, message ?? exception.GetType().FullName ?? "");

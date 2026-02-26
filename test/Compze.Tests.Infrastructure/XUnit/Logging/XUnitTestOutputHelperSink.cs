@@ -8,7 +8,7 @@ namespace Compze.Tests.Infrastructure.XUnit.Logging;
 
 class XUnitTestOutputHelperSink : ILogEventSink
 {
-   static readonly MessageTemplateTextFormatter Formatter = new("[{Timestamp:HH:mm:ss.fff} {Level:u3}] {LoggingClass}: {Message}{NewLine}{Exception}");
+   static readonly MessageTemplateTextFormatter Formatter = new("[{Timestamp:HH:mm:ss.fff} {Level:u3}] {LoggingClass}.{CallerMember}: {Message}{NewLine}{Exception}");
 
    public void Emit(LogEvent logEvent)
    {
