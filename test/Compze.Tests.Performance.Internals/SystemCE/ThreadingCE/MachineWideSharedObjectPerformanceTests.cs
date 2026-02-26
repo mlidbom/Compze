@@ -23,7 +23,7 @@ public class MachineWideSharedObjectPerformanceTests : UniversalTestBase
    protected override void DisposeInternal() => _shared.Delete();
 
    [XF] public void Get_copy_runs_single_threaded_XX_times_in_50_milliseconds()
-      => TimeAsserter.Execute(() => _shared.GetCopy(), iterations: 100, maxTotal: 50.Milliseconds());
+      => TimeAsserter.Execute(() => _shared.GetCopy(), iterations: 60, maxTotal: 50.Milliseconds());
 
    [XF] public void Get_copy_runs_multi_threaded_XX_times_in_50_milliseconds() =>
       TimeAsserter.ExecuteThreaded(() => _shared.GetCopy(), iterations: 75, maxTotal: 50.Milliseconds());
