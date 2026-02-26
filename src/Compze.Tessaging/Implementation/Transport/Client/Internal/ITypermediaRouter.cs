@@ -4,7 +4,7 @@ using Compze.Core.Tessaging.Transport.Internal;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Internal;
 
-public interface ITypermediaRoutingClient
+public interface ITypermediaRouter
 {
     Task ConnectAsync(EndPointAddress remoteEndpointAddress);
     void Start();

@@ -12,7 +12,7 @@ using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Universal;
 
-public class RemoteEndpointConnection : IExactlyOnceInboxConnection, IDisposable
+public class RemoteEndpointConnection : ITessagingInboxConnection, IDisposable
 {
    public TessageTypesInternal.EndpointInformation EndpointInformation { get; private set; } = null!;
    public IRemoteApiEndpointClient ApiClient { get; private set; } = null!;
@@ -46,7 +46,7 @@ public class RemoteEndpointConnection : IExactlyOnceInboxConnection, IDisposable
       ExactlyOnceSender = new HttpExactlyOnceTessageSender(_transportMessagePoster, _remoteAddress, _typeMapper, _serializer, _tessagesInFlightTracker, endpointInformation.Id);
    }
 
-   // IExactlyOnceInboxConnection
+   // ITessagingInboxConnection
    public async Task SendAsync(IExactlyOnceTevent tevent) => await ExactlyOnceSender.SendAsync(tevent).caf();
    public async Task SendAsync(IExactlyOnceTommand tommand) => await ExactlyOnceSender.SendAsync(tommand).caf();
 

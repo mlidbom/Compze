@@ -4,7 +4,7 @@ using Compze.Tessaging.Implementation.Abstractions;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Internal;
 
-public interface IExactlyOnceInboxConnection
+public interface ITessagingInboxConnection
 {
     TessageTypesInternal.EndpointInformation EndpointInformation { get; }
     Task SendAsync(IExactlyOnceTevent tevent);

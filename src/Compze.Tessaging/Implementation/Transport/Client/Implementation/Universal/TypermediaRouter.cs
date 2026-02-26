@@ -22,20 +22,20 @@ namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Univer
 public static class TransportRegistrar
 {
    public static IComponentRegistrar Transport(this IComponentRegistrar registrar)
-      => registrar.Register(TypermediaRoutingClient.RegisterWith)
-                  .Register(ExactlyOnceRoutingClient.RegisterWith);
+      => registrar.Register(TypermediaRouter.RegisterWith)
+                  .Register(TessagingRouter.RegisterWith);
 }
 
-public class TypermediaRoutingClient : ITypermediaRoutingClient, IDisposable
+public class TypermediaRouter : ITypermediaRouter, IDisposable
 {
    public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(
             Singleton.For<InboxConnectionRouter>().CreatedBy((ITypeMapper typeMapper) => new InboxConnectionRouter(typeMapper)),
-            Singleton.For<ITypermediaRoutingClient>().CreatedBy(
+            Singleton.For<ITypermediaRouter>().CreatedBy(
                (InboxConnectionRouter router, ITessagesInFlightTracker tessagesInFlightTracker, ITypeMapper typeMapper, IRemotableTessageSerializer serializer, ITransportMessagePoster transportMessagePoster)
-                  => new TypermediaRoutingClient(router, tessagesInFlightTracker, typeMapper, serializer, transportMessagePoster)));
+                  => new TypermediaRouter(router, tessagesInFlightTracker, typeMapper, serializer, transportMessagePoster)));
 
-   TypermediaRoutingClient(InboxConnectionRouter inboxConnectionRouter, ITessagesInFlightTracker tessagesInFlightTracker, ITypeMapper typeMapper, IRemotableTessageSerializer serializer, ITransportMessagePoster transportMessagePoster)
+   TypermediaRouter(InboxConnectionRouter inboxConnectionRouter, ITessagesInFlightTracker tessagesInFlightTracker, ITypeMapper typeMapper, IRemotableTessageSerializer serializer, ITransportMessagePoster transportMessagePoster)
    {
       _inboxConnectionRouter = inboxConnectionRouter;
       _tessagesInFlightTracker = tessagesInFlightTracker;

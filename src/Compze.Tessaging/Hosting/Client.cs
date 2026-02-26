@@ -16,13 +16,13 @@ namespace Compze.Tessaging.Hosting;
 class Client : IClient
 {
    readonly IServiceLocator _serviceLocator;
-   readonly ITypermediaRoutingClient _typermediaRoutingClient;
+   readonly ITypermediaRouter _typermediaRouter;
    readonly IEndpointRegistry _endpointRegistry;
 
    public Client(IServiceLocator serviceLocator)
    {
       _serviceLocator = serviceLocator;
-      _typermediaRoutingClient = serviceLocator.Resolve<ITypermediaRoutingClient>();
+      _typermediaRouter = serviceLocator.Resolve<ITypermediaRouter>();
       _endpointRegistry = serviceLocator.Resolve<IEndpointRegistry>();
    }
 
@@ -30,9 +30,9 @@ class Client : IClient
 
    internal async Task StartAsync()
    {
-      _typermediaRoutingClient.Start();
+      _typermediaRouter.Start();
       var serverAddresses = _endpointRegistry.ServerEndpointAddresses.ToHashSet();
-      await Task.WhenAll(serverAddresses.Select(address => _typermediaRoutingClient.ConnectAsync(address))).caf();
+      await Task.WhenAll(serverAddresses.Select(address => _typermediaRouter.ConnectAsync(address))).caf();
       _started = true;
    }
 
@@ -41,7 +41,7 @@ class Client : IClient
       if(_started)
       {
          _started = false;
-         _typermediaRoutingClient.Stop();
+         _typermediaRouter.Stop();
       }
    }
 

@@ -7,19 +7,19 @@ using Compze.Utilities.DependencyInjection.Abstractions;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Universal;
 
-public class ExactlyOnceRoutingClient : IExactlyOnceRoutingClient
+public class TessagingRouter : ITessagingRouter
 {
    public static void RegisterWith(IComponentRegistrar registrar)
-      => registrar.Register(Singleton.For<IExactlyOnceRoutingClient>().CreatedBy(
-            (InboxConnectionRouter router) => new ExactlyOnceRoutingClient(router)));
+      => registrar.Register(Singleton.For<ITessagingRouter>().CreatedBy(
+            (InboxConnectionRouter router) => new TessagingRouter(router)));
 
    readonly InboxConnectionRouter _inboxConnectionRouter;
 
-   ExactlyOnceRoutingClient(InboxConnectionRouter inboxConnectionRouter) => _inboxConnectionRouter = inboxConnectionRouter;
+   TessagingRouter(InboxConnectionRouter inboxConnectionRouter) => _inboxConnectionRouter = inboxConnectionRouter;
 
-   public IExactlyOnceInboxConnection ConnectionToHandlerFor(IRemotableTommand tommand) =>
+   public ITessagingInboxConnection ConnectionToHandlerFor(IRemotableTommand tommand) =>
       _inboxConnectionRouter.ConnectionToHandlerFor(tommand);
 
-   public IReadOnlyList<IExactlyOnceInboxConnection> SubscriberConnectionsFor(IExactlyOnceTevent tevent) =>
+   public IReadOnlyList<ITessagingInboxConnection> SubscriberConnectionsFor(IExactlyOnceTevent tevent) =>
       _inboxConnectionRouter.SubscriberConnectionsFor(tevent);
 }
