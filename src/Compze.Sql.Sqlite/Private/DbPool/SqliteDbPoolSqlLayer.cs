@@ -18,6 +18,10 @@ public class SqliteDbPoolSqlLayer : IDbPoolSqlLayer
                                   .DelegateToParentServiceLocatorWhenCloning());
 
    readonly string _baseDirectory;
+   // Without a unique name we can end up with another test re-creating a deleted database,
+   // causing very odd behavior in tests that should just have exploded with the message that
+   // their database is gone due to premature disposing of the pool. Yes, this really happened.
+   readonly string _poolId = Guid.NewGuid().ToString();
 
    const string ConnectionStringConfigurationParameterName = "COMPOSABLE_SQLITE_DATABASE_POOL_BASE_DIRECTORY";
 
@@ -51,7 +55,7 @@ public class SqliteDbPoolSqlLayer : IDbPoolSqlLayer
 
    void DeleteDbFile(DbPoolDatabase db) => File.Delete(CreateDbPath(db)); //File.Delete does not throw on non-existent, files, so we can save one file system access by not checking for existence
 
-   string CreateDbPath(DbPoolDatabase db) => Path.Combine(_baseDirectory, $"{db.Name}.db");
+   string CreateDbPath(DbPoolDatabase db) => Path.Combine(_baseDirectory, $"{db.Name}_{_poolId}.db");
 
    public void Dispose(IReadOnlyList<DbPoolDatabase> reservedDatabases)
    {
