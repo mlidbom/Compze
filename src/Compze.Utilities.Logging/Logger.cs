@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.CompilerServices;
 using Compze.Functional;
 
 namespace Compze.Utilities.Logging;
@@ -13,54 +14,54 @@ public abstract class Logger : ILogger
 
    protected Logger(LogLevel logLevel) => _configuredLogLevel = logLevel;
 
-   protected abstract void ErrorInternal(Exception exception, string? message);
+   protected abstract void ErrorInternal(Exception exception, string? message, string caller);
    public abstract ILogger WithLogLevel(LogLevel level);
 
-   public unit Error(Exception exception, string? message) => unit.From(() =>
+   public unit Error(Exception exception, string? message = null, [CallerMemberName] string caller = "") => unit.From(() =>
    {
       if(!CompzeLogger.LoggingSuppressed && LogLevel >= LogLevel.Error)
       {
-         ErrorInternal(exception, message);
+         ErrorInternal(exception, message, caller);
       }
    });
 
-   protected abstract void WarningInternal(string message);
+   protected abstract void WarningInternal(string message, string caller);
 
-   public unit Warning(string message) => unit.From(() =>
+   public unit Warning(string message, [CallerMemberName] string caller = "") => unit.From(() =>
    {
       if(!CompzeLogger.LoggingSuppressed && LogLevel >= LogLevel.Warning)
       {
-         WarningInternal(message);
+         WarningInternal(message, caller);
       }
    });
 
-   protected abstract void WarningInternal(Exception exception, string message);
+   protected abstract void WarningInternal(Exception exception, string message, string caller);
 
-   public unit Warning(Exception exception, string message) => unit.From(() =>
+   public unit Warning(Exception exception, string message, [CallerMemberName] string caller = "") => unit.From(() =>
    {
       if(!CompzeLogger.LoggingSuppressed && LogLevel >= LogLevel.Warning)
       {
-         WarningInternal(exception, message);
+         WarningInternal(exception, message, caller);
       }
    });
 
-   protected abstract void InfoInternal(string message);
+   protected abstract void InfoInternal(string message, string caller);
 
-   public unit Info(string message) => unit.From(() =>
+   public unit Info(string message, [CallerMemberName] string caller = "") => unit.From(() =>
    {
       if(!CompzeLogger.LoggingSuppressed && LogLevel >= LogLevel.Info)
       {
-         InfoInternal(message);
+         InfoInternal(message, caller);
       }
    });
 
-   protected abstract void DebugInternal(string message);
+   protected abstract void DebugInternal(string message, string caller);
 
-   public unit Debug(string message) => unit.From(() =>
+   public unit Debug(string message, [CallerMemberName] string caller = "") => unit.From(() =>
    {
       if(!CompzeLogger.LoggingSuppressed && LogLevel >= LogLevel.Debug)
       {
-         DebugInternal(message);
+         DebugInternal(message, caller);
       }
    });
 }

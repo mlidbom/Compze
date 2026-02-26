@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.CompilerServices;
 using Compze.Functional;
 
 namespace Compze.Utilities.Logging;
@@ -6,11 +7,11 @@ namespace Compze.Utilities.Logging;
 public interface ILogger
 {
    ILogger WithLogLevel(LogLevel level);
-   unit Error(Exception exception, string? message = null);
-   unit Warning(string message);
-   unit Warning(Exception exception, string message);
-   unit Info(string message);
-   unit Debug(string message);
+   unit Error(Exception exception, string? message = null, [CallerMemberName] string caller = "");
+   unit Warning(string message, [CallerMemberName] string caller = "");
+   unit Warning(Exception exception, string message, [CallerMemberName] string caller = "");
+   unit Info(string message, [CallerMemberName] string caller = "");
+   unit Debug(string message, [CallerMemberName] string caller = "");
 
-   unit NCrunch(string message) => Warning($"NCR:{message}");
+   unit NCrunch(string message, [CallerMemberName] string caller = "") => Warning($"NCR:{message}", caller);
 }

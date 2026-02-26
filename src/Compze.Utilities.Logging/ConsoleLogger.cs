@@ -11,18 +11,18 @@ public class ConsoleLogger : Logger
    public static ILogger Create(Type type) => new ConsoleLogger(type);
    public override ILogger WithLogLevel(LogLevel level) => new ConsoleLogger(_type, level);
 
-   protected override void ErrorInternal(Exception exception, string? message) =>
-      ConsoleCE.WriteLine(ExceptionTessageBuilder.BuildExceptionLogTessage(exception, _type, message));
+   protected override void ErrorInternal(Exception exception, string? message, string caller) =>
+      ConsoleCE.WriteLine(ExceptionTessageBuilder.BuildExceptionLogTessage(exception, _type, caller, message));
 
-   protected override void WarningInternal(string message) =>
-      ConsoleCE.WriteLine($"WARNING:{_type}: {DateTime.Now:HH:mm:ss.fff} {message}");
+   protected override void WarningInternal(string message, string caller) =>
+      ConsoleCE.WriteLine($"WARNING:{_type}.{caller}: {DateTime.Now:HH:mm:ss.fff} {message}");
 
-   protected override void WarningInternal(Exception exception, string message) =>
-      ConsoleCE.WriteLine($"WARNING:{_type}: {DateTime.Now:HH:mm:ss.fff} {message}, \n: Exception: {exception}");
+   protected override void WarningInternal(Exception exception, string message, string caller) =>
+      ConsoleCE.WriteLine($"WARNING:{_type}.{caller}: {DateTime.Now:HH:mm:ss.fff} {message}, \n: Exception: {exception}");
 
-   protected override void InfoInternal(string message) => 
-      ConsoleCE.WriteLine($"INFO:{_type}: {DateTime.Now:HH:mm:ss.fff} {message}");
+   protected override void InfoInternal(string message, string caller) => 
+      ConsoleCE.WriteLine($"INFO:{_type}.{caller}: {DateTime.Now:HH:mm:ss.fff} {message}");
 
-   protected override void DebugInternal(string message) =>
-      ConsoleCE.WriteLine($"DEBUG:{_type}: {DateTime.Now:HH:mm:ss.fff} {message}");
+   protected override void DebugInternal(string message, string caller) =>
+      ConsoleCE.WriteLine($"DEBUG:{_type}.{caller}: {DateTime.Now:HH:mm:ss.fff} {message}");
 }
