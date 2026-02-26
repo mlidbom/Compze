@@ -53,6 +53,7 @@ public partial class Outbox : IOutbox
    public void PublishTransactionally(IExactlyOnceTevent exactlyOnceTevent)
    {
       Contract.State.NotNull(Transaction.Current);
+      this.Log().Debug($"Outbox publishing tevent {exactlyOnceTevent.Id} ({exactlyOnceTevent.GetType().Name})");
       var connections = _tessagingRouter.SubscriberConnectionsFor(exactlyOnceTevent)
                                   .Where(connection => connection.EndpointInformation.Id != _configuration.Id)
                                   .ToArray(); //We dispatch tevents to ourselves synchronously so don't go doing it again here.;
@@ -71,6 +72,7 @@ public partial class Outbox : IOutbox
    public void SendTransactionally(IExactlyOnceTommand exactlyOnceTommand)
    {
       Contract.State.NotNull(Transaction.Current);
+      this.Log().Debug($"Outbox sending tommand {exactlyOnceTommand.Id} ({exactlyOnceTommand.GetType().Name})");
       var connection = _tessagingRouter.ConnectionToHandlerFor(exactlyOnceTommand);
 
       _storage.SaveTessage(exactlyOnceTommand, connection.EndpointInformation.Id);
@@ -87,13 +89,17 @@ public partial class Outbox : IOutbox
       _exceptionReporter.RunSwallowingAndReportingAnyExceptions(() =>
       {
          if(!_running)
+         {
+            this.Log().Debug($"Delivery result for tessage {tessageId} ignored — outbox has stopped");
             return; //We have shut down and storage may no longer be available/working. The recovery mechanisms will take care of this tessage after restart.
+         }
          if(completedSendTask.IsFaulted)
          {
             this.Log().Warning(completedSendTask.Exception!, $"Initial delivery failed for tessage {tessageId} to endpoint {receiverId}");
             _storage.RecordDeliveryFailure(tessageId, receiverId, completedSendTask.Exception);
          } else
          {
+            this.Log().Debug($"Tessage {tessageId} delivered to endpoint {receiverId}");
             _storage.MarkAsReceived(tessageId, receiverId);
          }
       });
@@ -103,18 +109,22 @@ public partial class Outbox : IOutbox
    public async Task StartAsync()
    {
       Contract.State.Assert(!_running);
+      this.Log().Info("Outbox starting");
 
       await _storage.StartAsync().caf();
       _retryPoller.Start();
 
       _running = true;
+      this.Log().Info("Outbox started");
    }
 
    public async Task StopAsync()
    {
       Contract.State.Assert(_running);
+      this.Log().Info("Outbox stopping");
       _running = false;
       _retryPoller.Stop();
+      this.Log().Info("Outbox stopped");
       await Task.CompletedTask.caf();
    }
 }

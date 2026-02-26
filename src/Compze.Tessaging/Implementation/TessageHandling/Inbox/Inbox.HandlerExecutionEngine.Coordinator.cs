@@ -9,6 +9,7 @@ using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.Utilities.Logging;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 using Compze.Contracts;
 using static Compze.Contracts.Contract;
@@ -37,6 +38,7 @@ public partial class Inbox
 
          public Task<object?> EnqueueTessageTask(TransportTessage.InComing tessage) => _implementation.Update(implementation =>
          {
+            this.Log().Debug($"Coordinator enqueueing {tessage.TessageTypeEnum} tessage {tessage.TessageId}");
             var inflightTessage = new HandlerExecutionTask(tessage, this, _taskRunner, _tessageStorage, _serviceLocator, _tessageHandlerRegistry);
             implementation.EnqueueTessageTask(inflightTessage);
             return inflightTessage.Task;
@@ -92,6 +94,7 @@ public partial class Inbox
             //Refactor: Switching should not be necessary. See also inbox.
             void Dispatching(HandlerExecutionTask dispatchable)
             {
+               this.Log().Debug($"Coordinator dispatching {dispatchable.TransportTessage.TessageTypeEnum} tessage {dispatchable.TessageId} (executing: {_executingTessages + 1}, waiting: {_tessagesWaitingToExecute.Count})");
                _executingTessages++;
 
                switch(dispatchable.TransportTessage.TessageTypeEnum)
@@ -119,6 +122,7 @@ public partial class Inbox
             //Refactor: Switching should not be necessary. See also inbox.
             void DoneDispatching(HandlerExecutionTask doneExecuting, Exception? exception = null)
             {
+               this.Log().Debug($"Coordinator done with {doneExecuting.TransportTessage.TessageTypeEnum} tessage {doneExecuting.TessageId}{(exception != null ? " (FAILED)" : "")} (executing: {_executingTessages - 1}, waiting: {_tessagesWaitingToExecute.Count})");
                _executingTessages--;
 
                switch(doneExecuting.TransportTessage.TessageTypeEnum)

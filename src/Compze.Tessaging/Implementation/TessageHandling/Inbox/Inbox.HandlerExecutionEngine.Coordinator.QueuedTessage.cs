@@ -44,6 +44,7 @@ public partial class Inbox
             {
                try
                {
+                  this.Log().Debug($"Handler executing {TransportTessage.TessageTypeEnum} tessage {TessageId}");
                   var tessage = TransportTessage.DeserializeTessageAndCacheForNextCall();
 
                   if(TransportTessage.TessageTypeEnum == TransportTessageType.TyperMediaTuery)
@@ -67,7 +68,9 @@ public partial class Inbox
             {
                try
                {
+                  this.Log().Debug($"Executing tuery {TessageId}");
                   var result = _serviceLocator.ExecuteInIsolatedScope(() => _tessageTask(tessage));
+                  this.Log().Debug($"Tuery {TessageId} completed successfully");
                   _taskCompletionSource.SetResult(result);
                   _coordinator.Succeeded(this);
                }
@@ -101,6 +104,7 @@ public partial class Inbox
                         tessageHandlerSucceeded = true;
                      }
 
+                     this.Log().Debug($"Transactional tessage {TessageId} completed successfully");
                      _taskCompletionSource.SetResult(result);
                      _coordinator.Succeeded(this);
                      return;

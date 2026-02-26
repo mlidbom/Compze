@@ -11,6 +11,7 @@ using Compze.Tessaging.Implementation.Transport.Client.Internal;
 using Compze.Tessaging.Implementation.Transport.Client.Routing.Abstractions;
 using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.Utilities.Logging;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using Compze.Contracts;
@@ -62,6 +63,7 @@ public class Endpoint : IEndpoint
    public async Task StartListeningComponentsAsync()
    {
       State.Assert(!_isListening);
+      this.Log().Info($"Endpoint '{_configuration.Name}' ({Id}) starting listening components");
       _isListening = true;
 
       RunSanityChecks();
@@ -69,11 +71,13 @@ public class Endpoint : IEndpoint
       _serverComponents = new ServerComponents(ServiceLocator.Resolve<TommandScheduler>(), ServiceLocator.Resolve<IInbox>(), ServiceLocator.Resolve<IOutbox>());
 
       await Task.WhenAll(_serverComponents.Inbox.StartAsync(), _serverComponents.TommandScheduler.StartAsync()).caf();
+      this.Log().Info($"Endpoint '{_configuration.Name}' ({Id}) listening at {Address}");
    }
 
    public async Task StartSendingComponentsAsync()
    {
       State.Assert(!_isSending);
+      this.Log().Info($"Endpoint '{_configuration.Name}' ({Id}) starting sending components");
       _isSending = true;
       if(_serverComponents != null)
       {
@@ -94,6 +98,7 @@ public class Endpoint : IEndpoint
    {
       if(_isSending)
       {
+         this.Log().Info($"Endpoint '{_configuration.Name}' ({Id}) stopping sending components");
          _isSending = false;
          if(_serverComponents != null)
          {
@@ -107,6 +112,7 @@ public class Endpoint : IEndpoint
    {
       if(_isListening)
       {
+         this.Log().Info($"Endpoint '{_configuration.Name}' ({Id}) stopping listening components");
          _isListening = false;
          if(_serverComponents != null)
          {
@@ -119,6 +125,7 @@ public class Endpoint : IEndpoint
 
    public async ValueTask DisposeAsync()
    {
+      this.Log().Debug($"Endpoint '{_configuration.Name}' ({Id}) disposing");
       await StopSendingComponentsAsync().caf();
       await StopListeningComponentsAsync().caf();
       if(_serverComponents != null)
