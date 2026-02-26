@@ -119,11 +119,21 @@ public class OutboxRetryPoller : IDisposable
    void RetryUndeliveredTessages()
    {
       var undeliveredTessages = _tessageStorage.GetUndeliveredTessages(TimeSpan.Zero);
+
+      if(undeliveredTessages.Count == 0)
+      {
+         this.Log().Debug("No undelivered tessages found");
+         return;
+      }
+
       var dueTessages = undeliveredTessages.Where(tessage => tessage.IsDueForRetry).ToList();
       if(dueTessages.Count == 0)
+      {
+         this.Log().Debug($"Found {undeliveredTessages.Count} undelivered tessage(s) but none are due for retry yet");
          return;
+      }
 
-      this.Log().Info($"Found {dueTessages.Count} undelivered tessage(s) due for retry");
+      this.Log().Info($"Found {dueTessages.Count} undelivered tessage(s) due for retry (of {undeliveredTessages.Count} total undelivered)");
       dueTessages.ForEach(RetryTessage);
    }
 

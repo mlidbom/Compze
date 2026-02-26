@@ -64,6 +64,7 @@ public partial class Outbox : IOutbox
 
       Transaction.Current.OnCommittedSuccessfully(() => connections.ForEach(subscriberConnection =>
       {
+         this.Log().Debug($"OnCommittedSuccessfully: Delivering tevent {exactlyOnceTevent.Id} to endpoint {subscriberConnection.EndpointInformation.Id}");
          subscriberConnection.SendAsync(exactlyOnceTevent)
                              .ContinueWithCE(task => HandleDeliveryTaskResults(task, subscriberConnection.EndpointInformation.Id, exactlyOnceTevent.Id));
       }));
@@ -79,6 +80,7 @@ public partial class Outbox : IOutbox
 
       Transaction.Current.OnCommittedSuccessfully(() =>
       {
+         this.Log().Debug($"OnCommittedSuccessfully: Delivering tommand {exactlyOnceTommand.Id} to endpoint {connection.EndpointInformation.Id}");
          connection.SendAsync(exactlyOnceTommand)
                    .ContinueWithCE(task => HandleDeliveryTaskResults(task, connection.EndpointInformation.Id, exactlyOnceTommand.Id));
       });
@@ -90,7 +92,8 @@ public partial class Outbox : IOutbox
       {
          if(!_running)
          {
-            this.Log().Debug($"Delivery result for tessage {tessageId} ignored — outbox has stopped");
+            var taskStatus = completedSendTask.IsFaulted ? $"Faulted: {completedSendTask.Exception}" : completedSendTask.IsCanceled ? "Canceled" : "Succeeded";
+            this.Log().Debug($"Delivery result for tessage {tessageId} ignored — outbox has stopped. Task status: {taskStatus}");
             return; //We have shut down and storage may no longer be available/working. The recovery mechanisms will take care of this tessage after restart.
          }
          if(completedSendTask.IsFaulted)

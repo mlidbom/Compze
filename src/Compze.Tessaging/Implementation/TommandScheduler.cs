@@ -57,7 +57,13 @@ public class TommandScheduler(IOutbox transport, ITaskRunner taskRunner) : IDisp
    {
       try
       {
-         _monitor.Update(() => _scheduledTessages.RemoveWhere(HasPassedSendTime).ForEach(Send));
+         _monitor.Update(() =>
+         {
+            var dueCommands = _scheduledTessages.RemoveWhere(HasPassedSendTime);
+            if(dueCommands.Count > 0)
+               this.Log().Debug($"Sending {dueCommands.Count} due scheduled tommand(s)");
+            dueCommands.ForEach(Send);
+         });
       }
 #pragma warning disable CA1031 // Timer callback — unhandled exceptions would crash the process
       catch(Exception exception)
@@ -70,7 +76,15 @@ public class TommandScheduler(IOutbox transport, ITaskRunner taskRunner) : IDisp
    bool HasPassedSendTime(ScheduledTommand tessage) => UtcTimeSource.UtcNow >= tessage.SendAt;
 
    const string SendTaskName = $"{nameof(TommandScheduler)}_Send";
-   void Send(ScheduledTommand scheduledTommand) => _taskRunner.Run(SendTaskName, () => TransactionScopeCe.Execute(() => _transport.SendTransactionally(scheduledTommand.Tommand)));
+   void Send(ScheduledTommand scheduledTommand)
+   {
+      this.Log().Debug($"Dispatching scheduled tommand {scheduledTommand.Tommand.Id} (due at {scheduledTommand.SendAt:O})");
+      _taskRunner.Run(SendTaskName, () =>
+      {
+         TransactionScopeCe.Execute(() => _transport.SendTransactionally(scheduledTommand.Tommand));
+         this.Log().Debug($"Dispatched scheduled tommand {scheduledTommand.Tommand.Id} — transaction committed");
+      });
+   }
 
    public void Dispose() => Stop();
 
