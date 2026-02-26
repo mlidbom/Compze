@@ -1,3 +1,4 @@
+using System;
 using System.Globalization;
 using Compze.Utilities.Logging;
 using Compze.Utilities.Logging.Serilog;
@@ -13,7 +14,9 @@ namespace Compze.Tests.Infrastructure;
 /// </summary>
 public static class TestFixtureHelper
 {
-   public static void SetupSerilog(ILogEventEnricher? testEnricher)
+   static bool IsCI => Environment.GetEnvironmentVariable("GITHUB_ACTIONS") == "true";
+
+   public static void SetupSerilog(ILogEventEnricher? testEnricher, ILogEventSink? testOutputSink = null)
    {
       var config = new LoggerConfiguration()
                   .Enrich.WithMachineName()
@@ -24,12 +27,20 @@ public static class TestFixtureHelper
 
       config.Enrich.With(new ShortSourceContextEnricher());
 
-      Log.Logger = config.MinimumLevel.Debug()
-                         .WriteTo.Seq("http://192.168.0.11:5341", formatProvider: CultureInfo.InvariantCulture)
-                         .WriteTo.Console(formatProvider: CultureInfo.InvariantCulture)
-                         .CreateLogger();
+      var loggerConfig = config.MinimumLevel.Debug();
 
-      CompzeLogger.LogLevel = LogLevel.Warning;
+      if(!IsCI)
+      {
+         loggerConfig = loggerConfig.WriteTo.Seq("http://192.168.0.11:5341", formatProvider: CultureInfo.InvariantCulture)
+                                    .WriteTo.Console(formatProvider: CultureInfo.InvariantCulture);
+      }
+
+      if(testOutputSink != null)
+         loggerConfig = loggerConfig.WriteTo.Sink(testOutputSink);
+
+      Log.Logger = loggerConfig.CreateLogger();
+
+      CompzeLogger.LogLevel = IsCI ? LogLevel.Debug : LogLevel.Warning;
       CompzeLogger.LoggerFactoryMethod = SerilogLogger.Create;
    }
 
