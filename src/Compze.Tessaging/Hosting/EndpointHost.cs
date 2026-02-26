@@ -49,7 +49,7 @@ public class EndpointHost : IEndpointHost
 
    public virtual IClient RegisterClient(Action<IEndpointBuilder>? setup = null)
    {
-      using var builder = new ClientBuilder(this, TessagesInFlightTracker, _containerFactory());
+      using var builder = new ClientBuilder(_containerFactory());
       setup?.Invoke(builder);
       var client = builder.Build();
       _clients.Add(client);
@@ -67,7 +67,9 @@ public class EndpointHost : IEndpointHost
 
          await Task.WhenAll(Endpoints.Select(endpointToStart => endpointToStart.StartListeningComponentsAsync())).WithAggregateExceptions().caf();
          await Task.WhenAll(Endpoints.Select(endpointToStart => endpointToStart.StartSendingComponentsAsync())).WithAggregateExceptions().caf();
-         await Task.WhenAll(_clients.Select(client => client.StartAsync())).WithAggregateExceptions().caf();
+
+         var seedAddress = Endpoints.First(e => e.Address != null).Address!;
+         await Task.WhenAll(_clients.Select(client => client.StartAsync(seedAddress))).WithAggregateExceptions().caf();
       }catch(Exception e)
       {
          this.Log().Error(e, "Failed to start host");

@@ -1,16 +1,11 @@
 using System;
 using System.Threading.Tasks;
-using Compze.Core.Configuration.Internal;
 using Compze.Core.Refactoring.Naming.Internal.Implementation;
 using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Core.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Tessaging.Configuration;
 using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
-using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Tessaging.Implementation.Transport.Client.Implementation.Universal;
-using Compze.Tessaging.Implementation.Transport.Client.Routing;
-using Compze.Tessaging.Implementation.Transport.Client.Routing.Abstractions;
-using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Tessaging.Typermedia;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
@@ -27,13 +22,8 @@ class ClientBuilder : IEndpointBuilder, IAsyncDisposable, IDisposable
    public EndpointConfiguration Configuration { get; }
    public TessageHandlerRegistrarWithDependencyInjectionSupport RegisterHandlers { get; }
 
-   readonly IEndpointHost _host;
-   readonly ITessagesInFlightTracker _globalStateTracker;
-
-   public ClientBuilder(IEndpointHost host, ITessagesInFlightTracker globalStateTracker, IDependencyInjectionContainer container)
+   public ClientBuilder(IDependencyInjectionContainer container)
    {
-      _host = host;
-      _globalStateTracker = globalStateTracker;
       Container = container;
 
       // Configuration and RegisterHandlers exist to satisfy IEndpointBuilder but are not meaningful for clients
@@ -57,20 +47,9 @@ class ClientBuilder : IEndpointBuilder, IAsyncDisposable, IDisposable
       var register = Container.Register();
 
       register.JSonAppConfigFileConfigurationParameterProvider()
-              .TypeMapper();
-
-      if(_host is IEndpointRegistry endpointRegistry)
-      {
-         Container.Register(Singleton.For<IEndpointRegistry>().Instance(endpointRegistry));
-      } else
-      {
-         Container.Register(Singleton.For<IEndpointRegistry>().CreatedBy((IConfigurationParameterProvider configurationParameterProvider) => new AppConfigEndpointRegistry(configurationParameterProvider)));
-      }
-
-      register.Transport()
+              .TypeMapper()
+              .TypermediaTransport()
               .RemoteHypermediaNavigator();
-
-      Container.Register(Singleton.For<ITessagesInFlightTracker>().CreatedBy(() => _globalStateTracker));
    }
 
    bool _disposed;

@@ -12,10 +12,9 @@ using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Universal;
 
-public class RemoteEndpointConnection : ITessagingInboxConnection, IDisposable
+public class TessagingConnection : ITessagingInboxConnection, IDisposable
 {
    public TessageTypesInternal.EndpointInformation EndpointInformation { get; private set; } = null!;
-   public IRemoteApiEndpointClient ApiClient { get; private set; } = null!;
    IExactlyOnceTessageSender ExactlyOnceSender { get; set; } = null!;
 
    readonly ITessagesInFlightTracker _tessagesInFlightTracker;
@@ -24,7 +23,7 @@ public class RemoteEndpointConnection : ITessagingInboxConnection, IDisposable
    readonly IRemotableTessageSerializer _serializer;
    readonly ITransportMessagePoster _transportMessagePoster;
 
-   public RemoteEndpointConnection(
+   public TessagingConnection(
       ITessagesInFlightTracker tessagesInFlightTracker,
       EndPointAddress remoteAddress,
       ITypeMapper typeMapper,
@@ -40,8 +39,13 @@ public class RemoteEndpointConnection : ITessagingInboxConnection, IDisposable
 
    public async Task InitAsync()
    {
-      (var apiClient, var endpointInformation) = await ApiEndpointClient.BootstrapConnectionToEndpoint(_transportMessagePoster, _remoteAddress, _typeMapper, _serializer).caf();
-      ApiClient = apiClient;
+      var endpointInformationTuery = new TessageTypesInternal.EndpointInformationTuery();
+      var endpointInformationTueryTessage = TransportTessage.OutGoing.Create(endpointInformationTuery, _typeMapper, _serializer);
+      var endpointInformation = await _transportMessagePoster
+                                     .PostAsync<TessageTypesInternal.EndpointInformation>(
+                                         endpointInformationTueryTessage,
+                                         endpointInformationTuery,
+                                         _remoteAddress).caf();
       EndpointInformation = endpointInformation;
       ExactlyOnceSender = new HttpExactlyOnceTessageSender(_transportMessagePoster, _remoteAddress, _typeMapper, _serializer, _tessagesInFlightTracker, endpointInformation.Id);
    }

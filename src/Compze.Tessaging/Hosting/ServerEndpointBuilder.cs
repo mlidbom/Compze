@@ -47,7 +47,7 @@ public class ServerEndpointBuilder : IEndpointBuilder, IAsyncDisposable, IDispos
       var serviceLocator = Container.ServiceLocator;
       var endpoint = new Endpoint(serviceLocator,
                                   serviceLocator.Resolve<ITessagesInFlightTracker>(),
-                                  serviceLocator.Resolve<ITypermediaRouter>(),
+                                  serviceLocator.Resolve<ITessagingRouter>(),
                                   serviceLocator.Resolve<IEndpointRegistry>(),
                                   Configuration);
       _builtSuccessfully = true;
@@ -84,8 +84,7 @@ public class ServerEndpointBuilder : IEndpointBuilder, IAsyncDisposable, IDispos
       }
 
       //Transport
-      register.Transport()
-              .RemoteHypermediaNavigator();
+      register.TessagingTransport();
 
       Container.Register(Singleton.For<ITessagesInFlightTracker>().CreatedBy(() => _globalStateTracker));
 
