@@ -37,10 +37,13 @@ public class TestingEndpointHost : TestingEndpointHostBase
 
    protected override async ValueTask DisposeAsync(bool disposing)
    {
-      await base.DisposeAsync(disposing).caf();
-      if(_ownedContainer != null)
+      try
       {
-         await _ownedContainer.DisposeAsync();
+         await base.DisposeAsync(disposing).caf();
+      }
+      finally
+      {
+         if(_ownedContainer != null) await _ownedContainer.DisposeAsync();
       }
    }
 
