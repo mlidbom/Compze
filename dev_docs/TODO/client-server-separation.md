@@ -62,8 +62,37 @@ Client → TypermediaRouter → ApiEndpointClient → ITransportMessagePoster
 - Server's outbox (known address → post directly)
 - Server management (known address → post directly)
 
+## Completed: Split routing and connection types
+
+### What was done
+- **Deleted `RoutingInboxClient`** (single class doing both typermedia and tessaging routing)
+- **Deleted `Outbox.InboxConnection`** (single connection type mixing typermedia API client with exactly-once sender)
+- **Deleted `IRoutingInboxClient`** and **`IInboxConnection`** (interfaces that bundled both concerns)
+
+### New types
+
+**Interfaces (domain-named, ISP-compliant):**
+- **`ITypermediaRouter`** — `PostAsync`, `GetAsync` only. Consumer: `RemoteTypermediaNavigator`. No lifecycle methods on the interface.
+- **`ITessagingRouter`** — `ConnectionToHandlerFor`, `SubscriberConnectionsFor`. Consumer: `Outbox`, `OutboxRetryPoller`.
+- **`ITessagingInboxConnection`** — `SendAsync(tevent)`, `SendAsync(tommand)`, plus `EndpointInformation`. The exactly-once connection abstraction.
+
+**Concrete types:**
+- **`TypermediaRouter`** — implements `ITypermediaRouter` + `IDisposable`. Owns lifecycle (Start/Stop/ConnectAsync), connection management, and the `InboxConnectionRouter` stop propagation.
+- **`TessagingRouter`** — implements `ITessagingRouter`. Pure delegation to `InboxConnectionRouter`.
+- **`RemoteEndpointConnection`** — implements `ITessagingInboxConnection` + `IDisposable`. Holds both `ApiClient` (for typermedia) and `ExactlyOnceSender` (for tessaging). Created per remote endpoint during `ConnectAsync`.
+
+**Shared infrastructure (temporary):**
+- **`InboxConnectionRouter`** — internal route registry shared by both routers. Stores `RemoteEndpointConnection` → type mappings. Has `Stop()`/`AssertNotStopped()` lifecycle to prevent routing after shutdown. Will dissolve when the two paradigms manage their own routes independently.
+- **`TransportRegistrar`** — registers both routers via `registrar.Transport()`.
+
+### Key design decisions
+- Interface names use **domain terminology** (`Typermedia`, `Tessaging`) not implementation details (`ExactlyOnce`, `AtMostOnce`)
+- No "Client" suffix on routers — they route, they don't "client"
+- `ITypermediaRouter` has no lifecycle methods — `RemoteTypermediaNavigator` shouldn't see Start/Stop. Lifecycle stays on the concrete `TypermediaRouter`, used directly by `Client` and `Endpoint`.
+- `InboxConnectionRouter.Stop()` is called from `TypermediaRouter.Stop()` to ensure both routing paths fail after shutdown — this prevents a race condition where in-flight handlers could `MarkAsSucceeded` then fail on scope disposal, causing `MarkAsFailed` to find 0 unhandled rows.
+
 ## Next Steps
-1. Split `InboxConnection` — separate typermedia connection from exactly-once sender
-2. Split `RoutingInboxClient` — typermedia routing vs exactly-once routing
+1. Separate `RemoteEndpointConnection` — it still bundles `ApiClient` (typermedia) and `ExactlyOnceSender` (tessaging). Each paradigm should have its own connection type.
+2. Dissolve `InboxConnectionRouter` — each paradigm discovers and manages its own routes
 3. Create standalone `Client.ConnectTo(params EndPointAddress[])` factory that needs no host
 4. `ClientBuilder` becomes optional convenience (host knows its endpoint addresses)
