@@ -48,7 +48,7 @@ class ClientBuilder : IEndpointBuilder, IAsyncDisposable, IDisposable
 
       register.JSonAppConfigFileConfigurationParameterProvider()
               .TypeMapper()
-              .Transport()
+              .TypermediaTransport()
               .RemoteHypermediaNavigator();
    }
 

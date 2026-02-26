@@ -24,9 +24,11 @@ namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Univer
 
 public static class TransportRegistrar
 {
-   public static IComponentRegistrar Transport(this IComponentRegistrar registrar)
-      => registrar.Register(TypermediaRouter.RegisterWith)
-                  .Register(TessagingRouter.RegisterWith);
+   public static IComponentRegistrar TypermediaTransport(this IComponentRegistrar registrar)
+      => registrar.Register(TypermediaRouter.RegisterWith);
+
+   public static IComponentRegistrar TessagingTransport(this IComponentRegistrar registrar)
+      => registrar.Register(TessagingRouter.RegisterWith);
 }
 
 public class TypermediaRouter : ITypermediaRouter, IDisposable

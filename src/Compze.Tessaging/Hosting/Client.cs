@@ -50,7 +50,7 @@ class Client : IClient
       var register = container.Register();
       register.JSonAppConfigFileConfigurationParameterProvider()
               .TypeMapper()
-              .Transport()
+              .TypermediaTransport()
               .RemoteHypermediaNavigator();
 
       var client = new Client(container.ServiceLocator);

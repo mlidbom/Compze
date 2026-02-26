@@ -33,7 +33,6 @@ public class Endpoint : IEndpoint
 
    public Endpoint(IServiceLocator serviceLocator,
                    ITessagesInFlightTracker globalStateTracker,
-                   ITypermediaRouter typermediaRouter,
                    ITessagingRouter tessagingRouter,
                    IEndpointRegistry endpointRegistry,
                    EndpointConfiguration configuration)
@@ -41,7 +40,6 @@ public class Endpoint : IEndpoint
       Argument.NotNull(serviceLocator).NotNull(configuration);
       ServiceLocator = serviceLocator;
       _globalStateTracker = globalStateTracker;
-      _typermediaRouter = typermediaRouter;
       _tessagingRouter = tessagingRouter;
       _configuration = configuration;
       _endpointRegistry = endpointRegistry;
@@ -52,7 +50,6 @@ public class Endpoint : IEndpoint
 
    public EndPointAddress? Address => _serverComponents?.Inbox.Address;
    readonly ITessagesInFlightTracker _globalStateTracker;
-   readonly ITypermediaRouter _typermediaRouter;
    readonly ITessagingRouter _tessagingRouter;
    readonly IEndpointRegistry _endpointRegistry;
 
@@ -69,8 +66,6 @@ public class Endpoint : IEndpoint
 
       RunSanityChecks();
 
-      _typermediaRouter.Start();
-
       _serverComponents = new ServerComponents(ServiceLocator.Resolve<TommandScheduler>(), ServiceLocator.Resolve<IInbox>(), ServiceLocator.Resolve<IOutbox>());
 
       await Task.WhenAll(_serverComponents.Inbox.StartAsync(), _serverComponents.TommandScheduler.StartAsync()).caf();
@@ -80,14 +75,12 @@ public class Endpoint : IEndpoint
    {
       State.Assert(!_isSending);
       _isSending = true;
-      var serverAddresses = _endpointRegistry.ServerEndpointAddresses.ToHashSet();
-      await Task.WhenAll(serverAddresses.Select(address => _typermediaRouter.ConnectAsync(address))).caf();
       if(_serverComponents != null)
       {
          //Tessaging connects to all endpoints including ourselves. Scheduled tommands need to dispatch over the remote protocol to get the delivery guarantees...
-         var tessagingAddresses = serverAddresses.ToHashSet();
-         tessagingAddresses.Add(_serverComponents.Inbox.Address);
-         await Task.WhenAll(tessagingAddresses.Select(address => _tessagingRouter.ConnectAsync(address))).caf();
+         var serverAddresses = _endpointRegistry.ServerEndpointAddresses.ToHashSet();
+         serverAddresses.Add(_serverComponents.Inbox.Address);
+         await Task.WhenAll(serverAddresses.Select(address => _tessagingRouter.ConnectAsync(address))).caf();
          await Task.WhenAll(_serverComponents.Outbox.StartAsync()).caf();
       }
    }
@@ -121,7 +114,6 @@ public class Endpoint : IEndpoint
          }
 
          _tessagingRouter.Stop();
-         _typermediaRouter.Stop();
       }
    }
 
