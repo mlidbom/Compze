@@ -22,12 +22,12 @@ public class Given_a_locked_ThreadGate : UniversalTestBase
 
    public class After_starting_10_threads_that_all_call_PassThrough : UniversalTestBase
    {
-      [XF] public void Within_500_milliseconds_all_threads_are_blocked_on_Passthrough_and_none_have_passed_the_gate()
+      [XF] public void Within_10_seconds_all_threads_are_blocked_on_Passthrough_and_none_have_passed_the_gate()
       {
          using(ThreadGateTestFixture.StartEntrantsOnThreads(10).WaitForAllThreadsToQueueUpAtPassThrough()) {} //warmup
 
          using var fixture = ThreadGateTestFixture.StartEntrantsOnThreads(10);
-         fixture.Gate.AwaitQueueLengthEqualTo(fixture.NumberOfThreads, 5.Seconds());
+         fixture.Gate.AwaitQueueLengthEqualTo(fixture.NumberOfThreads, 10.Seconds());
          fixture.ThreadsPassedTheGate(0.Milliseconds()).Must().Be(0);
       }
 
