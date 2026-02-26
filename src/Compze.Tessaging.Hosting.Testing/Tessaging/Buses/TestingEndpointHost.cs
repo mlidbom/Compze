@@ -43,7 +43,10 @@ public class TestingEndpointHost : TestingEndpointHostBase
       }
       finally
       {
-         if(_ownedContainer != null) await _ownedContainer.DisposeAsync();
+         if(_ownedContainer != null)
+         {
+            await _ownedContainer.DisposeAsync();
+         }
       }
    }
 
