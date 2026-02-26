@@ -1,11 +1,14 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Compze.Contracts;
+using Compze.Core.Refactoring.Naming.Internal.Implementation;
 using Compze.Core.Tessaging.Hosting.Public;
+using Compze.Core.Tessaging.Transport.Internal;
 using Compze.Core.Tessaging.Typermedia.Public;
+using Compze.Tessaging.Configuration;
+using Compze.Tessaging.Implementation.Transport.Client.Implementation.Universal;
 using Compze.Tessaging.Implementation.Transport.Client.Internal;
-using Compze.Tessaging.Implementation.Transport.Client.Routing.Abstractions;
+using Compze.Tessaging.Typermedia;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE;
@@ -17,22 +20,19 @@ class Client : IClient
 {
    readonly IServiceLocator _serviceLocator;
    readonly ITypermediaRouter _typermediaRouter;
-   readonly IEndpointRegistry _endpointRegistry;
 
-   public Client(IServiceLocator serviceLocator)
+   internal Client(IServiceLocator serviceLocator)
    {
       _serviceLocator = serviceLocator;
       _typermediaRouter = serviceLocator.Resolve<ITypermediaRouter>();
-      _endpointRegistry = serviceLocator.Resolve<IEndpointRegistry>();
    }
 
    bool _started;
 
-   internal async Task StartAsync()
+   internal async Task StartAsync(EndPointAddress seedAddress)
    {
       _typermediaRouter.Start();
-      var serverAddresses = _endpointRegistry.ServerEndpointAddresses.ToHashSet();
-      await Task.WhenAll(serverAddresses.Select(address => _typermediaRouter.ConnectAsync(address))).caf();
+      await _typermediaRouter.DiscoverAndConnectAsync(seedAddress).caf();
       _started = true;
    }
 
@@ -43,6 +43,19 @@ class Client : IClient
          _started = false;
          _typermediaRouter.Stop();
       }
+   }
+
+   public static async Task<IClient> ConnectTo(EndPointAddress seedAddress, IDependencyInjectionContainer container)
+   {
+      var register = container.Register();
+      register.JSonAppConfigFileConfigurationParameterProvider()
+              .TypeMapper()
+              .Transport()
+              .RemoteHypermediaNavigator();
+
+      var client = new Client(container.ServiceLocator);
+      await client.StartAsync(seedAddress).caf();
+      return client;
    }
 
    public void ExecuteRequest(Action<IRemoteTypermediaNavigator> request) =>

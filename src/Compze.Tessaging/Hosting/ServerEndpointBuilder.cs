@@ -48,6 +48,7 @@ public class ServerEndpointBuilder : IEndpointBuilder, IAsyncDisposable, IDispos
       var endpoint = new Endpoint(serviceLocator,
                                   serviceLocator.Resolve<ITessagesInFlightTracker>(),
                                   serviceLocator.Resolve<ITypermediaRouter>(),
+                                  serviceLocator.Resolve<ITessagingRouter>(),
                                   serviceLocator.Resolve<IEndpointRegistry>(),
                                   Configuration);
       _builtSuccessfully = true;
