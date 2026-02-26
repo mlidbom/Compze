@@ -9,6 +9,7 @@ using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Functional;
+using Compze.Utilities.Logging;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.TransactionsCE;
 
@@ -81,9 +82,9 @@ public partial class Inbox
                                   while(true)
                                   {
                                      var tessageHandlerSucceeded = false;
+                                     object? result = null;
                                      try
                                      {
-                                        object? result;
                                         using(_serviceLocator.BeginScope())
                                         {
                                            result = TransactionScopeCe.Execute(() =>
@@ -103,10 +104,11 @@ public partial class Inbox
                                      catch(Exception exception)
                                      {
 #pragma warning restore CA1031
-                                        if(tessageHandlerSucceeded)
+                                        if(tessageHandlerSucceeded) //The handler succeeded but something about cleaning up the scope failed.
                                         {
-                                           _taskCompletionSource.SetException(exception);
-                                           _coordinator.Failed(this, exception);
+                                           this.Log().Error(exception, "Tessage handler succeeded but an exception was thrown while cleaning up the scope.");
+                                           _taskCompletionSource.SetResult(result);
+                                           _coordinator.Succeeded(this);
                                            return;
                                         }
 
