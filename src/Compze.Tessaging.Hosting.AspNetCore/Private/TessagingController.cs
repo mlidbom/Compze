@@ -39,7 +39,7 @@ public class TessagingController : ControllerBase
       }
       catch(Exception exception)
       {
-         this.Log().Error(exception, "Exception handling tevent");
+         this.Log().Warning(exception, "Exception handling tevent");
          return Problem(statusCode: StatusCodes.Status500InternalServerError, type: exception.GetType().FullName, detail: exception.ToString());
       }
    }
@@ -56,7 +56,7 @@ public class TessagingController : ControllerBase
       }
       catch(Exception exception)
       {
-         this.Log().Error(exception, "Exception handling tommand");
+         this.Log().Warning(exception, "Exception handling tommand");
          return Problem(statusCode: StatusCodes.Status500InternalServerError, type: exception.GetType().FullName, detail: exception.ToString());
       }
    }

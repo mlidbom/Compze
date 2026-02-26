@@ -48,7 +48,7 @@ public class TypermediaController : ControllerBase
       catch(Exception exception)
       {
          //todo: eliminate all this code duplication
-         this.Log().Error(exception, "Exception handling tuery");
+         this.Log().Warning(exception, "Exception handling tuery");
          return Problem(statusCode: StatusCodes.Status500InternalServerError, type: exception.GetType().FullName, detail: exception.ToString());
       }
    }
@@ -66,7 +66,7 @@ public class TypermediaController : ControllerBase
       }
       catch(Exception exception)
       {
-         this.Log().Error(exception, "Exception handling tommand with result");
+         this.Log().Warning(exception, "Exception handling tommand with result");
          return Problem(statusCode: StatusCodes.Status500InternalServerError, type: exception.GetType().FullName, detail: exception.ToString());
       }
    }
@@ -83,7 +83,7 @@ public class TypermediaController : ControllerBase
       }
       catch(Exception exception)
       {
-         this.Log().Error(exception, "Exception handling tommand with no result");
+         this.Log().Warning(exception, "Exception handling tommand with no result");
          return Problem(statusCode: StatusCodes.Status500InternalServerError, type: exception.GetType().FullName, detail: exception.ToString());
       }
    }

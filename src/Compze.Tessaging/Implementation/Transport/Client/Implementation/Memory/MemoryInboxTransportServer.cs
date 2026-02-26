@@ -93,7 +93,7 @@ public class MemoryInboxTransportServer : IInboxTransportServer
       }
       catch(Exception ex)
       {
-         this.Log().Error(ex, $"Failed to dispatch tessage {incomingTessage.TessageId}");
+         this.Log().Warning(ex, $"Failed to dispatch tessage {incomingTessage.TessageId}");
          throw new TessageDispatchingFailedException(ex.ToString());
       }
    }
@@ -122,7 +122,7 @@ public class MemoryInboxTransportServer : IInboxTransportServer
       }
       catch(Exception ex)
       {
-         this.Log().Error(ex, $"Failed to dispatch tessage {incomingTessage.TessageId}");
+         this.Log().Warning(ex, $"Failed to dispatch tessage {incomingTessage.TessageId}");
          throw new TessageDispatchingFailedException(ex.ToString());
       }
    }

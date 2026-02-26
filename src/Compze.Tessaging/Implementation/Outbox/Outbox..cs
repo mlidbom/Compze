@@ -90,7 +90,7 @@ public partial class Outbox : IOutbox
             return; //We have shut down and storage may no longer be available/working. The recovery mechanisms will take care of this tessage after restart.
          if(completedSendTask.IsFaulted)
          {
-            this.Log().Warning(completedSendTask.Exception, $"Initial delivery failed for tessage {tessageId} to endpoint {receiverId}");
+            this.Log().Warning(completedSendTask.Exception!, $"Initial delivery failed for tessage {tessageId} to endpoint {receiverId}");
             _storage.RecordDeliveryFailure(tessageId, receiverId, completedSendTask.Exception);
          } else
          {
