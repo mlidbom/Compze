@@ -30,10 +30,7 @@ public class TessagesInFlightTracker(ITypeMapper typeMapper) : ITessagesInFlight
       }
       catch(AwaitingConditionTimeoutException e)
       {
-         throw _implementation.Read(implementation => new AwaitNoTessagesInFlightTimeoutException(
-            innerException: e,
-            undeliveredTessages: implementation.GetUndeliveredTessages(),
-            busExceptions: implementation.GetExceptions()));
+         throw _implementation.Read(implementation => new AwaitNoTessagesInFlightTimeoutException(innerException: e, undeliveredTessages: implementation.GetUndeliveredTessages()));
       }
    }
 
