@@ -22,14 +22,29 @@ public class TessagesInFlightTracker(ITypeMapper typeMapper) : ITessagesInFlight
    public void SendingTessageOnTransport(TransportTessage.OutGoing transportTessage, EndpointId remoteEndpointId) =>
       _implementation.Update(implementation => implementation.SendingTessageOnTransport(transportTessage, remoteEndpointId));
 
-   public void AwaitNoTessagesInFlight(TimeSpan? timeoutOverride) =>
-      _implementation.Await(implementation => implementation.NoTessagesInFlight(), timeoutOverride ?? 10.Seconds());
+   public void AwaitNoTessagesInFlight(TimeSpan? timeoutOverride)
+   {
+      try
+      {
+         _implementation.Await(implementation => implementation.NoTessagesInFlight(), timeoutOverride ?? 10.Seconds());
+      }
+      catch(AwaitingConditionTimeoutException e)
+      {
+         throw _implementation.Read(implementation => new AwaitNoTessagesInFlightTimeoutException(
+            innerException: e,
+            undeliveredTessages: implementation.GetUndeliveredTessages(),
+            busExceptions: implementation.GetExceptions()));
+      }
+   }
 
    public void DoneWith(TransportTessage.InComing tessage, EndpointId handlingEndpointId, Exception? exception) =>
       _implementation.Update(implementation => implementation.DoneWith(tessage, handlingEndpointId, exception));
 
    public class InFlightTessage
    {
+      public required TessageId TessageId { get; init; }
+      public required string TypeName { get; init; }
+      public required string Body { get; init; }
       public Dictionary<EndpointId, bool> EndpointDeliveryStatus { get; } = [];
    }
 
@@ -44,7 +59,13 @@ public class TessagesInFlightTracker(ITypeMapper typeMapper) : ITessagesInFlight
 
       public void SendingTessageOnTransport(TransportTessage.OutGoing transportTessage, EndpointId remoteEndpointId)
       {
-         var inFlightTessage = TrackedTessages.GetOrAdd(transportTessage.TessageId, () => new InFlightTessage());
+         var inFlightTessage = TrackedTessages.GetOrAdd(transportTessage.TessageId,
+                                                        () => new InFlightTessage
+                                                              {
+                                                                 TessageId = transportTessage.TessageId,
+                                                                 TypeName = _typeMapper.GetType(transportTessage.Type).FullName ?? transportTessage.Type.ToString(),
+                                                                 Body = transportTessage.Body
+                                                              });
          inFlightTessage.EndpointDeliveryStatus[remoteEndpointId] = false;
       }
 
@@ -63,6 +84,9 @@ public class TessagesInFlightTracker(ITypeMapper typeMapper) : ITessagesInFlight
       }
 
       public bool NoTessagesInFlight() => TrackedTessages.Values.SelectMany(it => it.EndpointDeliveryStatus.Values).All(delivered => delivered);
+
+      public IReadOnlyList<InFlightTessage> GetUndeliveredTessages() =>
+         TrackedTessages.Values.Where(t => t.EndpointDeliveryStatus.Values.Any(delivered => !delivered)).ToList();
    }
 }
 

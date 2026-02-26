@@ -15,7 +15,7 @@ public class SimpleObservable<TTevent> : IObservable<TTevent>
    ///<summary>Calls <see cref="IObserver{T}.OnNext"/> for each subscribed observer.</summary>
    public void OnNext(TTevent tevent)
    {
-      Argument.Fulfills(tevent is not null);
+      Argument.Assert(tevent is not null);
 
       _observerCollection.Update(it => it.ForEach(observer => observer.OnNext(tevent)));
    }

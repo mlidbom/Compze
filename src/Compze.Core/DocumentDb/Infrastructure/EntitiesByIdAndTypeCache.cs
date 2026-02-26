@@ -16,7 +16,7 @@ public class EntitiesByIdAndTypeCache
 
    public void Add<T>(object id, T value) => _data.Update(data =>
    {
-      Argument.Fulfills(value is not null);
+      Argument.Assert(value is not null);
       var key = IdAndType.Create(id, value.GetType());
       AssertNotPresent(key);
       data[key] = value;
@@ -59,6 +59,6 @@ public class EntitiesByIdAndTypeCache
    public readonly record struct IdAndType(string Id, Type DocumentType)
    {
       public static IdAndType Create(object id, Type type) =>
-         new(id._assertNotNull().ToStringNotNull().ToUpperInvariant().TrimEnd(trimChar: ' '), type);
+         new(id._assert().NotNull().ToStringNotNull().ToUpperInvariant().TrimEnd(trimChar: ' '), type);
    }
 }

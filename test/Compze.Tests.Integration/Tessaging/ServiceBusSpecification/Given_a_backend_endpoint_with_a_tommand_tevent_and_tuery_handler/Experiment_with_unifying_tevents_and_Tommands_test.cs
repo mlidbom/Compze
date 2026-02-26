@@ -5,6 +5,7 @@ using Compze.Core.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.Public;
 using Compze.Core.Tessaging.Typermedia.Public;
+using Compze.Tessaging.Hosting.Testing.Tessaging;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.Tessaging.Teventive.TeventStore.Wiring;
 using Compze.Tests.Infrastructure;
@@ -30,10 +31,8 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
    readonly ITestingEndpointHost _host;
 
    IServiceLocator _userDomainServiceLocator = null!;
-   readonly IEndpoint _clientEndpoint;
+   IClient _client = null!;
    readonly IEndpoint _userManagementDomainEndpoint;
-
-   IRemoteTypermediaNavigator RemoteNavigator => _clientEndpoint.ServiceLocator.Resolve<IRemoteTypermediaNavigator>();
 
    public Experiment_with_unifying_tevents_and_tommands_test()
    {
@@ -55,26 +54,30 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
                        return new RegisterUserResult(typermediaTommand.UserId);
                     });
          });
-
-      _clientEndpoint = _host.RegisterClientEndpointForRegisteredEndpoints();
    }
 
    protected override async Task InitializeAsyncInternal()
    {
       await _host.StartAsync();
 
+      _client = await TestClient.ConnectTo(_userManagementDomainEndpoint.Address!);
+
       _userDomainServiceLocator = _userManagementDomainEndpoint.ServiceLocator;
 
       _userDomainServiceLocator.ExecuteTransactionInIsolatedScope(() => _userDomainServiceLocator.Resolve<ITeventStoreUpdater>().Save(UserRegistrarTaggregate.Create()));
    }
 
-   protected override async Task DisposeAsyncInternal() => await _host.DisposeAsync();
+   protected override async Task DisposeAsyncInternal()
+   {
+      await _client.DisposeAsync();
+      await _host.DisposeAsync();
+   }
 
    [PCT] public void Can_register_user_and_fetch_user_resource()
    {
-      var registrationResult = _userDomainServiceLocator.ExecuteInIsolatedScope(() => UserRegistrarTaggregate.RegisterUser(_userDomainServiceLocator.Resolve<IRemoteTypermediaNavigator>()));
+      var registrationResult = _client.ExecuteRequest(navigator => UserRegistrarTaggregate.RegisterUser(navigator));
 
-      var user = _clientEndpoint.ServiceLocator.ExecuteInIsolatedScope(() => RemoteNavigator.Get(registrationResult.UserLink));
+      var user = _client.ExecuteRequest(navigator => navigator.Get(registrationResult.UserLink));
 
       user.Must().NotBeNull();
       user.History.Count().Must().Be(1);

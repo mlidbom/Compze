@@ -1,6 +1,7 @@
 using AccountManagement.API;
 using AccountManagement.UserStories.Scenarios;
 using Compze.Core.Tessaging.Hosting.Public;
+using Compze.Tessaging.Hosting.Testing.Tessaging;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.Tests.Infrastructure;
 using System.Threading.Tasks;
@@ -11,21 +12,25 @@ namespace AccountManagement.UserStories;
 public abstract class UserStoryTest : UniversalTestBase
 {
    protected ITestingEndpointHost Host { get; set; }
-   readonly IEndpoint _clientEndpoint;
-   internal AccountScenarioApi Scenario => new(_clientEndpoint!);
+   readonly IEndpoint _endpoint;
+   IClient _client = null!;
+   internal AccountScenarioApi Scenario => new(_client!);
 
    protected UserStoryTest()
    {
       Host = TestingEndpointHost.Create();
-      new AccountManagementServerDomainBootstrapper().RegisterWith(Host);
-      _clientEndpoint = Host.RegisterClientEndpoint(setup:AccountApi.RegisterWithClientEndpoint);
+      _endpoint = new AccountManagementServerDomainBootstrapper().RegisterWith(Host);
    }
 
-   protected override async Task InitializeAsyncInternal() => await Host.StartAsync().caf();
+   protected override async Task InitializeAsyncInternal()
+   {
+      await Host.StartAsync().caf();
+      _client = await TestClient.ConnectTo(_endpoint.Address!).caf();
+   }
 
    protected override async Task DisposeAsyncInternal()
    {
+      await _client.DisposeAsync().caf();
       await Host.DisposeAsync().caf();
-      await _clientEndpoint.DisposeAsync();
    }
 }

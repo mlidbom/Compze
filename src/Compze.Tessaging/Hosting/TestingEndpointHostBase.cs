@@ -4,41 +4,25 @@ using System.Linq;
 using System.Threading.Tasks;
 using Compze.Core.Refactoring.Naming.Internal.Implementation;
 using Compze.Core.Tessaging.Hosting.Public;
+using Compze.Core.Tessaging.Transport.Internal;
 using Compze.Tessaging.Implementation.Transport;
 using Compze.Tessaging.Implementation.Transport.Client.Routing.Abstractions;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE;
-using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Tessaging.Hosting;
 
 public abstract class TestingEndpointHostBase : EndpointHost, ITestingEndpointHost, IEndpointRegistry
 {
-   readonly List<Exception> _expectedExceptions = [];
-
-   protected TestingEndpointHostBase(IComponentRegistrar registrar, Func<IDependencyInjectionContainer> containerFactory) : base(registrar, containerFactory) => 
+   protected TestingEndpointHostBase(IComponentRegistrar registrar, Func<IDependencyInjectionContainer> containerFactory) : base(registrar, containerFactory) =>
       TessagesInFlightTracker = new TessagesInFlightTracker(TypeMapper.Instance);
 
-   public IEnumerable<IEndpoint> ServerEndpoints => Endpoints.Where(it => it.Address is not null)
-                                                                   .ToList();
+   public IEnumerable<EndPointAddress> ServerEndpointAddresses => Endpoints.Where(it => it.Address is not null)
+                                                                           .Select(it => it.Address!)
+                                                                           .ToList();
 
-   void WaitForEndpointsToBeAtRest(TimeSpan? timeoutOverride = null) => Endpoints.ForEach(endpoint => endpoint.AwaitNoTessagesInFlight(timeoutOverride));
-
-   public abstract IEndpoint RegisterClientEndpointForRegisteredEndpoints(Action<IEndpointBuilder>? setup = null);
-
-   public TException AssertThrown<TException>() where TException : Exception
-   {
-      WaitForEndpointsToBeAtRest();
-      var matchingException = GetThrownExceptions().OfType<TException>().SingleOrDefault();
-      if(matchingException == null)
-      {
-         throw new Exception("Matching exception not thrown.");
-      }
-
-      _expectedExceptions.Add(matchingException);
-      return matchingException;
-   }
+   void WaitForEndpointsToBeAtRest(TimeSpan? timeoutOverride = null) => TessagesInFlightTracker.AwaitNoTessagesInFlight(timeoutOverride);
 
    bool _disposed;
 
@@ -49,12 +33,20 @@ public abstract class TestingEndpointHostBase : EndpointHost, ITestingEndpointHo
       if(!_disposed)
       {
          _disposed = true;
+         List<Exception> unHandledExceptions = new();
          if(waitForEndpointsToBeAtRest)
          {
-            WaitForEndpointsToBeAtRest(timeoutOverride: 10.Seconds());
+            try
+            {
+               WaitForEndpointsToBeAtRest(timeoutOverride: 10.Seconds());
+            }
+            catch(Exception e)
+            {
+               unHandledExceptions.Add(e);
+            }
          }
 
-         var unHandledExceptions = GetThrownExceptions().Except(_expectedExceptions).ToList();
+         unHandledExceptions.AddRange(TessagesInFlightTracker.GetExceptions().ToList());
 
          try
          {
@@ -72,8 +64,5 @@ public abstract class TestingEndpointHostBase : EndpointHost, ITestingEndpointHo
       }
    }
 
-   public bool WaitForEndPointsToBeAtRestOnDispose { get; set; } = true;
    public async Task DisposeAsyncWithoutWaitingForEndpointsToBeAtRest() => await DisposeAsync(true, false).caf();
-
-   List<Exception> GetThrownExceptions() => TessagesInFlightTracker.GetExceptions().ToList();
 }

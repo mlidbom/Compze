@@ -33,7 +33,7 @@ public class EndpointHost : IEndpointHost
       public static IEndpointHost Create(Func<IDependencyInjectionContainer> containerFactory) => new EndpointHost(new ComponentRegistrar(), containerFactory);
    }
 
-   public virtual IEndpoint RegisterEndpoint(string name, EndpointId id, Action<IEndpointBuilder> setup) => InternalRegisterEndpoint(new EndpointConfiguration(name, id, isPureClientEndpoint: false), setup);
+   public virtual IEndpoint RegisterEndpoint(string name, EndpointId id, Action<IEndpointBuilder> setup) => InternalRegisterEndpoint(new EndpointConfiguration(name, id), setup);
 
    IEndpoint InternalRegisterEndpoint(EndpointConfiguration configuration, Action<IEndpointBuilder> setup)
    {
@@ -46,19 +46,13 @@ public class EndpointHost : IEndpointHost
       return endpoint;
    }
 
-   static readonly EndpointConfiguration ClientEndpointConfiguration = new(name: $"{nameof(EndpointHost)}_Default_Client_Endpoint",
-                                                                           id: new EndpointId(Guid.Parse("D4C869D2-68EF-469C-A5D6-37FCF2EC152A")),
-                                                                           isPureClientEndpoint: true);
-
-   public virtual IEndpoint RegisterClientEndpoint(Action<IEndpointBuilder> setup) => InternalRegisterEndpoint(ClientEndpointConfiguration, setup);
-
    bool _isStarted;
 
    public async Task StartAsync()
    {
       try
       {
-         Contract.State.Fulfills(!_isStarted, Endpoints.None(endpoint => endpoint.IsRunning));
+         Contract.State.Assert(!_isStarted, Endpoints.None(endpoint => endpoint.IsRunning));
          _isStarted = true;
 
          await Task.WhenAll(Endpoints.Select(endpointToStart => endpointToStart.StartListeningComponentsAsync())).WithAggregateExceptions().caf();

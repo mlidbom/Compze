@@ -214,12 +214,6 @@ Compze.Contracts (leaf)
   Management (`Directory.Packages.props`) if this becomes painful.
 - **test→test and sample→sample references**: Stay as regular
   `ProjectReference` — they are never published as NuGet packages.
-- **`Compze.Build.InternalizedSourceReferences`**: Separate sub-solution,
-  already has its own build. Not part of the FlexRef switching.
-- **`Compze.Utilities.SystemCE.ThreadingCE`**: Uses
-  `Compze.Build.InternalizedSourceReferences` to internalize source from
-  `Compze.Utilities.SystemCE`. This PackageReference is NOT switchable
-  (it's a build tool, not a library reference).
 - **Duplicate ProjectReference**: `Compze.Tests.Infrastructure` has a
   duplicate reference to `Compze.Utilities.Testing.XUnit` — should be
   cleaned up during Phase 2.

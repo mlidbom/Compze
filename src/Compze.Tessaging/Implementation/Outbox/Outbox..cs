@@ -28,23 +28,23 @@ public partial class Outbox : IOutbox
    public static void RegisterWith(IComponentRegistrar registrar)
    {
       registrar.Register(Singleton.For<IOutbox>()
-                                  .CreatedBy((EndpointConfiguration configuration, IRoutingInboxClient routingInboxClient, ITessageStorage tessageStorage, IBackgroundExceptionReporter exceptionReporter, OutboxRetryPoller retryPoller)
-                                                => new Outbox(routingInboxClient, tessageStorage, configuration, exceptionReporter, retryPoller)));
+                                  .CreatedBy((EndpointConfiguration configuration, ITessagingRouter tessagingRouter, ITessageStorage tessageStorage, IBackgroundExceptionReporter exceptionReporter, OutboxRetryPoller retryPoller)
+                                                => new Outbox(tessagingRouter, tessageStorage, configuration, exceptionReporter, retryPoller)));
       registrar.Register(TessageStorage.RegisterWith);
       registrar.Register(OutboxRetryPoller.RegisterWith);
    }
 
    readonly ITessageStorage _storage;
    readonly EndpointConfiguration _configuration;
-   readonly IRoutingInboxClient _routingInboxClient;
+   readonly ITessagingRouter _tessagingRouter;
    readonly IBackgroundExceptionReporter _exceptionReporter;
    readonly OutboxRetryPoller _retryPoller;
 
-   Outbox(IRoutingInboxClient routingInboxClient, ITessageStorage tessageStorage, EndpointConfiguration configuration, IBackgroundExceptionReporter exceptionReporter, OutboxRetryPoller retryPoller)
+   Outbox(ITessagingRouter tessagingRouter, ITessageStorage tessageStorage, EndpointConfiguration configuration, IBackgroundExceptionReporter exceptionReporter, OutboxRetryPoller retryPoller)
    {
       _storage = tessageStorage;
       _configuration = configuration;
-      _routingInboxClient = routingInboxClient;
+      _tessagingRouter = tessagingRouter;
       _exceptionReporter = exceptionReporter;
       _retryPoller = retryPoller;
    }
@@ -52,7 +52,7 @@ public partial class Outbox : IOutbox
    public void PublishTransactionally(IExactlyOnceTevent exactlyOnceTevent)
    {
       Contract.State.NotNull(Transaction.Current);
-      var connections = _routingInboxClient.SubscriberConnectionsFor(exactlyOnceTevent)
+      var connections = _tessagingRouter.SubscriberConnectionsFor(exactlyOnceTevent)
                                   .Where(connection => connection.EndpointInformation.Id != _configuration.Id)
                                   .ToArray(); //We dispatch tevents to ourselves synchronously so don't go doing it again here.;
 
@@ -70,7 +70,7 @@ public partial class Outbox : IOutbox
    public void SendTransactionally(IExactlyOnceTommand exactlyOnceTommand)
    {
       Contract.State.NotNull(Transaction.Current);
-      var connection = _routingInboxClient.ConnectionToHandlerFor(exactlyOnceTommand);
+      var connection = _tessagingRouter.ConnectionToHandlerFor(exactlyOnceTommand);
 
       _storage.SaveTessage(exactlyOnceTommand, connection.EndpointInformation.Id);
 
@@ -100,20 +100,17 @@ public partial class Outbox : IOutbox
    bool _running = false;
    public async Task StartAsync()
    {
-      Contract.State.Fulfills(!_running);
+      Contract.State.Assert(!_running);
 
-      if(!_configuration.IsPureClientEndpoint)
-      {
-         await _storage.StartAsync().caf();
-         _retryPoller.Start();
-      }
+      await _storage.StartAsync().caf();
+      _retryPoller.Start();
 
       _running = true;
    }
 
    public async Task StopAsync()
    {
-      Contract.State.Fulfills(_running);
+      Contract.State.Assert(_running);
       _running = false;
       _retryPoller.Stop();
       await Task.CompletedTask.caf();

@@ -19,7 +19,7 @@ public class WhenAnInvalidComponentIsMentionedInSkipped
                            {
                               Skipped = ["nonsense"],
                               SkipReasons = ["because something"]
-                           }.GetData(MethodBase.GetCurrentMethod()._assertNotNull().CastTo<MethodInfo>(), disposalTracker).caf();
+                           }.GetData(MethodBase.GetCurrentMethod()._assert().NotNull().CastTo<MethodInfo>(), disposalTracker).caf();
 
       testData.Must().HaveCount(1);
       testData.Single().Skip!.Must().Contain("nonsense");

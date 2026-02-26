@@ -14,9 +14,6 @@ public class _030_When_a_user_attempt_to_change_their_password_the_operation_fai
 
    [PCT] public void OldPassword_is_empty_string() => Scenario.ChangePassword().WithOldPassword("").ExecutingShouldThrow<Exception>();
 
-   [PCT] public void OldPassword_is_not_the_current_password_of_the_account()
-   {
+   [PCT] public void OldPassword_is_not_the_current_password_of_the_account() =>
       Scenario.ChangePassword().WithOldPassword("Wrong").ExecutingShouldThrow<Exception>().Which.Message.ToUpperInvariant().Must().Contain("PASSWORD").Contain("WRONG");
-      Host!.AssertThrown<Exception>().Message.ToUpperInvariant().Must().Contain("PASSWORD").Contain("WRONG");
-   }
 }

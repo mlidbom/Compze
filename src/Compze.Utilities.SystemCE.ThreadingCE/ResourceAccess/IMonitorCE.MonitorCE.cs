@@ -166,7 +166,7 @@ public partial interface IMonitorCE
 
          public bool TryTakeLock(TimeSpan timeout)
          {
-            Contract.Argument.Fulfills(timeout != InfiniteTimeOut, () => "Infinite timeouts are not supported");
+            Contract.Argument.Assert(timeout != InfiniteTimeOut, () => "Infinite timeouts are not supported");
 
             if(Monitor.TryEnter(_lockObject)) return true; //This will never block, calling it is essentially free and allows us to collect contention statistics
             Interlocked.Increment(ref _contentionCount);

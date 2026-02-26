@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using Compze.Contracts;
 using Compze.Core.Public;
 using Compze.Core.Tessaging.Public;
 using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
@@ -8,7 +9,9 @@ using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Functional;
+using Compze.Utilities.Logging;
 using Compze.Utilities.SystemCE.LinqCE;
+using Compze.Utilities.SystemCE.TransactionsCE;
 
 namespace Compze.Tessaging.Implementation.TessageHandling.Inbox;
 
@@ -34,57 +37,97 @@ public partial class Inbox
             public TessageId TessageId { get; }
 
             const string ExecuteTaskName = $"{nameof(HandlerExecutionTask)}_{nameof(Execute)}";
-            public void Execute()
+
+            public void Execute() => _taskRunner.Run(ExecuteTaskName, ExecuteCore);
+
+            void ExecuteCore()
             {
-               var tessage = TransportTessage.DeserializeTessageAndCacheForNextCall();
-               _taskRunner.Run(ExecuteTaskName, () =>
+               try
                {
-                  var retryPolicy = new DefaultRetryPolicy(tessage);
+                  var tessage = TransportTessage.DeserializeTessageAndCacheForNextCall();
 
-                  while(true)
+                  if(TransportTessage.TessageTypeEnum == TransportTessageType.TyperMediaTuery)
+                     ExecuteTuery(tessage);
+                  else
                   {
-                     try
+                     tessage._assert(it => it is IAtMostOnceTessage);
+                     ExecuteTransactionalTessage(tessage);
+                  }
+               }
+#pragma warning disable CA1031 // Catch all exception types to ensure _taskCompletionSource is always resolved
+               catch(Exception exception)
+#pragma warning restore CA1031
+               {
+                  _taskCompletionSource.TrySetException(exception);
+                  _coordinator.Failed(this, exception);
+               }
+            }
+
+            void ExecuteTuery(ITessage tessage)
+            {
+               try
+               {
+                  var result = _serviceLocator.ExecuteInIsolatedScope(() => _tessageTask(tessage));
+                  _taskCompletionSource.SetResult(result);
+                  _coordinator.Succeeded(this);
+               }
+#pragma warning disable CA1031 //This is how you handle exceptions when manually using _taskCompletionSource
+               catch(Exception exception)
+#pragma warning restore CA1031
+               {
+                  _taskCompletionSource.SetException(exception);
+                  _coordinator.Failed(this, exception);
+               }
+            }
+
+            void ExecuteTransactionalTessage(ITessage tessage)
+            {
+               var retryPolicy = new DefaultRetryPolicy(tessage);
+
+               while(true)
+               {
+                  var tessageHandlerSucceeded = false;
+                  object? result = null;
+                  try
+                  {
+                     using(_serviceLocator.BeginScope())
                      {
-                        var result = tessage is IMustBeHandledTransactionally
-                                        ? _serviceLocator.ExecuteTransactionInIsolatedScope(() =>
-                                        {
-                                           var innerResult = _tessageTask(tessage);
-                                           if(tessage is IAtMostOnceTessage)
-                                           {
-                                              _tessageStorage.MarkAsSucceeded(TransportTessage);
-                                           }
+                        result = TransactionScopeCe.Execute(() =>
+                        {
+                           var innerResult = _tessageTask(tessage);
+                           _tessageStorage.MarkAsSucceeded(TransportTessage);
+                           return innerResult;
+                        });
+                        tessageHandlerSucceeded = true;
+                     }
 
-                                           return innerResult;
-                                        })
-                                        : _serviceLocator.ExecuteInIsolatedScope(() => _tessageTask(tessage));
-
+                     _taskCompletionSource.SetResult(result);
+                     _coordinator.Succeeded(this);
+                     return;
+                  }
+#pragma warning disable CA1031 //This is how you handle exceptions when manually using _taskCompletionSource
+                  catch(Exception exception)
+                  {
+#pragma warning restore CA1031
+                     if(tessageHandlerSucceeded) //The handler succeeded but something about cleaning up the scope failed.
+                     {
+                        this.Log().Error(exception, "Tessage handler succeeded but an exception was thrown while cleaning up the scope.");
                         _taskCompletionSource.SetResult(result);
                         _coordinator.Succeeded(this);
                         return;
                      }
-#pragma warning disable CA1031 //This is how you handle exceptions when manually using _taskCompletionSource
-                     catch(Exception exception)
+
+                     _tessageStorage.RecordException(TransportTessage, exception);
+
+                     if(!retryPolicy.TryAwaitNextRetryTimeForException(exception))
                      {
-#pragma warning restore CA1031
-                        if(tessage is IAtMostOnceTessage)
-                        {
-                           _tessageStorage.RecordException(TransportTessage, exception);
-                        }
-
-                        if(!retryPolicy.TryAwaitNextRetryTimeForException(exception))
-                        {
-                           if(tessage is IAtMostOnceTessage)
-                           {
-                              _tessageStorage.MarkAsFailed(TransportTessage);
-                           }
-
-                           _taskCompletionSource.SetException(exception);
-                           _coordinator.Failed(this, exception);
-                           return;
-                        }
+                        _tessageStorage.MarkAsFailed(TransportTessage);
+                        _taskCompletionSource.SetException(exception);
+                        _coordinator.Failed(this, exception);
+                        return;
                      }
                   }
-               });
+               }
             }
 
             public HandlerExecutionTask(TransportTessage.InComing transportTessage, Coordinator coordinator, ITaskRunner taskRunner, ITessageStorage tessageStorage, IServiceLocator serviceLocator, ITessageHandlerRegistry handlerRegistry)
@@ -124,7 +167,7 @@ public partial class Inbox
                   {
                      var tommandHandler = _handlerRegistry.GetTommandHandler(tessage.GetType());
                      tommandHandler((IExactlyOnceTommand)tessage);
-                     return unit.Value;//Todo:Properly handle tommands with and without return values
+                     return unit.Value; //Todo:Properly handle tommands with and without return values
                   },
                   TransportTessageType.TyperMediaTuery => actualTessage =>
                   {

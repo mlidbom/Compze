@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Tessaging.Hosting.Testing.Wiring;
@@ -11,6 +12,7 @@ namespace Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 public class TestingEndpointHost : TestingEndpointHostBase
 {
    IDependencyInjectionContainer? _ownedContainer = null;
+
    public TestingEndpointHost(IComponentRegistrar registrar, IDependencyInjectionContainer rootContainer) : base(registrar, rootContainer.Clone)
    {
 
@@ -36,10 +38,31 @@ public class TestingEndpointHost : TestingEndpointHostBase
 
    protected override async ValueTask DisposeAsync(bool disposing)
    {
-      await base.DisposeAsync(disposing).caf();
+      List<Exception> exceptions = [];
+      try
+      {
+         await base.DisposeAsync(disposing).caf();
+      }
+      catch(Exception e)
+      {
+         exceptions.Add(e);
+      }
+
       if(_ownedContainer != null)
       {
-         await _ownedContainer.DisposeAsync();
+         try
+         {
+            await _ownedContainer.DisposeAsync();
+         }
+         catch(Exception e)
+         {
+            exceptions.Add(e);
+         }
+      }
+
+      if(exceptions.Count > 0)
+      {
+         throw new AggregateException(exceptions);
       }
    }
 
@@ -55,19 +78,4 @@ public class TestingEndpointHost : TestingEndpointHostBase
                                   setup(builder);
 
                                });
-
-
-   public override IEndpoint RegisterClientEndpoint(Action<IEndpointBuilder> setup) =>
-      base.RegisterClientEndpoint(builder =>
-      {
-         builder.Container.Register()
-                .CurrentTestsPluggableComponents();
-
-         setup(builder);
-      });
-
-   public override IEndpoint RegisterClientEndpointForRegisteredEndpoints(Action<IEndpointBuilder>? setup = null) => RegisterClientEndpoint(builder =>
-   {
-      setup?.Invoke(builder);
-   });
 }

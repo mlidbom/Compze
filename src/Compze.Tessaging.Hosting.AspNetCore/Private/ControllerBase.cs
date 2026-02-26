@@ -24,8 +24,8 @@ public abstract class ControllerBase(IRemotableTessageSerializer serializer, ITy
 
    protected async Task<TransportTessage.InComing> CreateIncomingTessage()
    {
-      var tessageId = new TessageId(Guid.Parse(Request.Headers[HttpConstants.Headers.TessageId][0]._assertNotNull()));
-      var typeIdStr = Request.Headers[HttpConstants.Headers.PayLoadTypeId][0]._assertNotNull();
+      var tessageId = new TessageId(Guid.Parse(Request.Headers[HttpConstants.Headers.TessageId][0]._assert().NotNull()));
+      var typeIdStr = Request.Headers[HttpConstants.Headers.PayLoadTypeId][0]._assert().NotNull();
       var typeId = new TypeId(Guid.Parse(typeIdStr));
 
       using var reader = new StreamReader(HttpContext.Request.Body);

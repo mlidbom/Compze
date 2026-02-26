@@ -59,13 +59,11 @@ The `Version="*-*"` wildcard resolves to the highest pre-release version availab
 
 ```xml
 <FlexRef>
-  <AutoDiscover>
-    <Exclude Name="Compze.Build.InternalizedSourceReferences" />
-  </AutoDiscover>
+  <AutoDiscover />
 </FlexRef>
 ```
 
-`<AutoDiscover />` scans all `.csproj` files to find packable projects. ISR is excluded because it is a build tool, not a library — it is always consumed as a `PackageReference`.
+`<AutoDiscover />` scans all `.csproj` files to find packable projects.
 
 ## Syncing After Changes
 

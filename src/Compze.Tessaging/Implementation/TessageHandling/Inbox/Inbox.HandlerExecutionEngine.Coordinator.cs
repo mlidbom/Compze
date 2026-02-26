@@ -32,7 +32,7 @@ public partial class Inbox
          {
             HandlerExecutionTask? handlerExecutionTask = null;
             _implementation.Await(implementation => implementation.TryGetDispatchableTessage(dispatchingRules, out handlerExecutionTask));
-            return handlerExecutionTask._assertNotNull();
+            return handlerExecutionTask._assert().NotNull();
          }
 
          public Task<object?> EnqueueTessageTask(TransportTessage.InComing tessage) => _implementation.Update(implementation =>
@@ -125,6 +125,7 @@ public partial class Inbox
                {
                   case TransportTessageType.ExactlyOnceTevent:
                      _executingExactlyOnceTevents.Remove(doneExecuting.TransportTessage);
+                     _globalStateTracker.DoneWith(doneExecuting.TransportTessage, _endpointId, exception);
                      break;
                   case TransportTessageType.TypermediaAtMostOnceTommandWithReturnValue:
                   case TransportTessageType.TypermediaAtMostOnceTommand:
@@ -132,6 +133,7 @@ public partial class Inbox
                      break;
                   case TransportTessageType.ExactlyOnceTommand:
                      _executingExactlyOnceTommands.Remove(doneExecuting.TransportTessage);
+                     _globalStateTracker.DoneWith(doneExecuting.TransportTessage, _endpointId, exception);
                      break;
                   case TransportTessageType.TyperMediaTuery:
                      _executingNonTransactionalTueries.Remove(doneExecuting.TransportTessage);
@@ -139,8 +141,6 @@ public partial class Inbox
                   default:
                      throw new ArgumentOutOfRangeException();
                }
-
-               _globalStateTracker.DoneWith(doneExecuting.TransportTessage, _endpointId, exception);
             }
 
             int _executingTessages;

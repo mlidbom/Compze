@@ -18,7 +18,7 @@ public class Parallelism_policies : EndpointHostTestBase
       TueryHandlerThreadGate.Close();
 
       var tasks = Task.WhenAll(1.Through(5)
-                                .Select(_ => ClientEndpoint.ExecuteClientRequestAsync(session =>
+                                .Select(_ => Client.ExecuteRequestAsync(session =>
                                                                                           session.GetAsync(new MyTuery()))));
 
       TueryHandlerThreadGate.AwaitQueueLengthEqualTo(5);
@@ -29,7 +29,7 @@ public class Parallelism_policies : EndpointHostTestBase
    [PCT] public async Task Five_tuery_handlers_can_execute_in_parallel_when_using_Tuery()
    {
       TueryHandlerThreadGate.Close();
-      var tasks = 1.Through(5).Select(_ => TaskCE.Run(() => ClientEndpoint.ExecuteClientRequest(session => session.Get(new MyTuery())))).ToList();
+      var tasks = 1.Through(5).Select(_ => TaskCE.Run(() => Client.ExecuteRequest(session => session.Get(new MyTuery())))).ToList();
 
       TueryHandlerThreadGate.AwaitQueueLengthEqualTo(5);
       TueryHandlerThreadGate.Open();
@@ -39,8 +39,8 @@ public class Parallelism_policies : EndpointHostTestBase
    [PCT] public void Two_tevent_handlers_cannot_execute_in_parallel()
    {
       MyRemoteTaggregateTeventHandlerThreadGate.Close();
-      ClientEndpoint.ExecuteClientRequest(session => session.Post(MyCreateTaggregateTommand.Create()));
-      ClientEndpoint.ExecuteClientRequest(session => session.Post(MyCreateTaggregateTommand.Create()));
+      Client.ExecuteRequest(session => session.Post(MyCreateTaggregateTommand.Create()));
+      Client.ExecuteRequest(session => session.Post(MyCreateTaggregateTommand.Create()));
 
       MyRemoteTaggregateTeventHandlerThreadGate.AwaitQueueLengthEqualTo(1)
                                              .TryAwaitQueueLengthEqualTo(2, timeout: 100.Milliseconds()).Must().Be(false);
@@ -57,17 +57,19 @@ public class Parallelism_policies : EndpointHostTestBase
                               .TryAwaitQueueLengthEqualTo(2, timeout: 100.Milliseconds()).Must().Be(false);
    }
 
-   [PCT] public void Two_AtMostOnce_tommand_handlers_from_the_same_session_cannot_execute_in_parallel()
+   [PCT] public async Task Two_AtMostOnce_tommand_handlers_from_the_same_session_cannot_execute_in_parallel()
    {
       CloseGates();
 
-      ClientEndpoint.ExecuteClientRequest(session =>
-      {
-         session.PostAsync(MyCreateTaggregateTommand.Create());
-         session.PostAsync(MyCreateTaggregateTommand.Create());
-      });
+      var commandsCompleted = Client.ExecuteRequestAsync(async session =>
+         await Task.WhenAll(
+            session.PostAsync(MyCreateTaggregateTommand.Create()),
+            session.PostAsync(MyCreateTaggregateTommand.Create())));
 
       MyCreateTaggregateTommandHandlerThreadGate.AwaitQueueLengthEqualTo(1)
                                                .TryAwaitQueueLengthEqualTo(2, timeout: 100.Milliseconds()).Must().Be(false);
+
+      OpenGates();
+      await commandsCompleted;
    }
 }

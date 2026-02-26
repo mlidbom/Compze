@@ -3,6 +3,7 @@ using Compze.Core.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Core.Tessaging.Public;
 using Compze.Core.Tessaging.Typermedia.Public;
 using Compze.Tessaging.Hosting;
+using Compze.Tessaging.Hosting.Testing.Tessaging;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
@@ -11,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Compze.Core.Public;
+using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using Compze.Utilities.Testing.Must;
 
 // ReSharper disable MemberCanBeMadeStatic.Local
@@ -20,7 +22,8 @@ namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification;
 public class Navigator_specification : UniversalTestBase
 {
    readonly ITestingEndpointHost _host;
-   readonly IEndpoint _clientEndpoint;
+   readonly IEndpoint _endpoint;
+   IClient _client = null!;
 
    public Navigator_specification()
    {
@@ -28,7 +31,7 @@ public class Navigator_specification : UniversalTestBase
 
       _host = TestingEndpointHost.Create();
 
-      _host.RegisterEndpoint(
+      _endpoint = _host.RegisterEndpoint(
          "Backend",
          new EndpointId(Guid.Parse("3A1B6A8C-D232-476C-A15A-9C8295413210")),
          builder =>
@@ -42,23 +45,29 @@ public class Navigator_specification : UniversalTestBase
                        return new UserRegisteredConfirmationResource(typermediaTommand.Name);
                     });
          });
-
-      _clientEndpoint = _host.RegisterClientEndpointForRegisteredEndpoints();
    }
 
-   protected override async Task InitializeAsyncInternal() => await _host.StartAsync();
+   protected override async Task InitializeAsyncInternal()
+   {
+      await _host.StartAsync().caf();
+      _client = await TestClient.ConnectTo(_endpoint.Address!).caf();
+   }
 
-   protected override async Task DisposeAsyncInternal() => await _host.DisposeAsync();
+   protected override async Task DisposeAsyncInternal()
+   {
+      await _client.DisposeAsync().caf();
+      await _host.DisposeAsync().caf();
+   }
 
    [PCT]  public void Can_get_tommand_result()
    {
-      var tommandResult1 = _clientEndpoint.ExecuteClientRequest(navigator => navigator.Post(RegisterUserTypermediaTommand.Create("new-user-name")));
+      var tommandResult1 = _client.ExecuteRequest(navigator => navigator.Post(RegisterUserTypermediaTommand.Create("new-user-name")));
       tommandResult1.Name.Must().Be("new-user-name");
    }
 
    [PCT]  public void Can_navigate_to_startpage_execute_tommand_and_follow_tommand_result_link_to_the_created_resource()
    {
-      var userResource = _clientEndpoint.ExecuteClientRequest(NavigationSpecification.Get(UserApiStartPage.Self)
+      var userResource = _client.ExecuteRequest(NavigationSpecification.Get(UserApiStartPage.Self)
                                                                                      .Post(startpage => startpage.RegisterUser("new-user-name"))
                                                                                      .Get(registerUserResult => registerUserResult.User));
 
@@ -67,7 +76,7 @@ public class Navigator_specification : UniversalTestBase
 
    [PCT]  public async Task Can_navigate_async_to_startpage_execute_tommand_and_follow_tommand_result_link_to_the_created_resource()
    {
-      var userResource = _clientEndpoint.ExecuteRequestAsync(NavigationSpecification.Get(UserApiStartPage.Self)
+      var userResource = _client.ExecuteRequestAsync(NavigationSpecification.Get(UserApiStartPage.Self)
                                                                                     .Post(startpage => startpage.RegisterUser("new-user-name"))
                                                                                     .Get(registerUserResult => registerUserResult.User));
 

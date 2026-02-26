@@ -112,8 +112,8 @@ public class TeventStoreUpdaterTest : UniversalTestBase
          wait.Set();
       });
       wait.Wait();
-      updater = updater._assertNotNull();
-      reader = reader._assertNotNull();
+      updater = updater._assert().NotNull();
+      reader = reader._assert().NotNull();
 
       MustActions.Invoking(() => updater.Get<User>(new TaggregateId())).Must().Throw<MultiThreadedUseException>();
       MustActions.Invoking(() => updater.Dispose()).Must().Throw<MultiThreadedUseException>();

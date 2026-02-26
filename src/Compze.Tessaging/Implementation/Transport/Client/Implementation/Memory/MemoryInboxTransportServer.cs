@@ -8,11 +8,13 @@ using Compze.Contracts;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Compze.Core.Refactoring.Naming.Internal;
 using Compze.Core.Serialization.Internal;
 using Compze.Functional;
 using Compze.Utilities.SystemCE;
+using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Memory;
@@ -21,7 +23,7 @@ public static class MemoryInboxTransportServerRegistrar
 {
    public static IComponentRegistrar MemoryTransport(this IComponentRegistrar registrar) =>
       registrar.Register(Singleton.For<IInboxTransportServer, MemoryInboxTransportServer>()
-                                  .CreatedBy((EndpointId endpointId, ITypeMapper typeMapper, IRemotableTessageSerializer serializer, IServiceLocator serviceLocator) => new MemoryInboxTransportServer(endpointId, serviceLocator, serializer)));
+                                  .CreatedBy((EndpointId endpointId, IRemotableTessageSerializer serializer, IServiceLocator serviceLocator) => new MemoryInboxTransportServer(endpointId, serviceLocator, serializer)));
 }
 
 public class MemoryInboxTransportServer : IInboxTransportServer
@@ -29,14 +31,19 @@ public class MemoryInboxTransportServer : IInboxTransportServer
    readonly IRemotableTessageSerializer _serializer;
    readonly LazyCE<IInbox> _inbox;
    readonly LazyCE<Inbox.HandlerExecutionEngine> _engine;
+   static readonly Dictionary<EndpointId, int> EndpointIdToInstanceCounts = new();
 
    public MemoryInboxTransportServer(EndpointId endpointId, IServiceLocator serviceLocator, IRemotableTessageSerializer serializer)
    {
       _serializer = serializer;
       _inbox = new LazyCE<IInbox>(serviceLocator.Resolve<IInbox>);
       _engine = new LazyCE<Inbox.HandlerExecutionEngine>(serviceLocator.Resolve<Inbox.HandlerExecutionEngine>);
-      ;
-      Address = new Uri($"memory://{endpointId}");
+
+      lock(EndpointIdToInstanceCounts)
+      {
+         var instanceCount = EndpointIdToInstanceCounts[endpointId] = EndpointIdToInstanceCounts.GetOrAdd(endpointId, () => 0) + 1;
+         Address = new Uri($"memory://{endpointId}/instance/{instanceCount}"); //Create an address that can be helpful in the debugger.
+      }
    }
 
    public Uri Address { get; }
@@ -46,14 +53,16 @@ public class MemoryInboxTransportServer : IInboxTransportServer
 
    public Task StartAsync()
    {
-      Contract.State.Fulfills(!Running);
+      Contract.State.Assert(!Running);
       Running = true;
+      InMemoryTransportNetwork.BindServerToAddress(new EndPointAddress(Address), this);
       return Task.CompletedTask;
    }
 
    public Task StopAsync()
    {
       Running = false;
+      InMemoryTransportNetwork.UnBindAddress(new EndPointAddress(Address));
       return Task.CompletedTask;
    }
 
@@ -67,11 +76,11 @@ public class MemoryInboxTransportServer : IInboxTransportServer
          switch(incomingTessage.TessageTypeEnum)
          {
             case TransportTessageType.TypermediaAtMostOnceTommandWithReturnValue:
-               return (await _inbox.Value.ExecuteAsync(incomingTessage).caf())._assertNotNull()
-                                                                               .CastTo<TResult>()
-                                                                               ._(RoundTripSerialize);
+               return (await _inbox.Value.ExecuteAsync(incomingTessage).caf())._assert().NotNull()
+                                                                              .CastTo<TResult>()
+                                                                              ._(RoundTripSerialize);
             case TransportTessageType.TyperMediaTuery:
-               return (await _engine.Value.ExecuteAsync(incomingTessage).caf())._assertNotNull()
+               return (await _engine.Value.ExecuteAsync(incomingTessage).caf())._assert().NotNull()
                                                                                .CastTo<TResult>()
                                                                                ._(RoundTripSerialize);
             case TransportTessageType.ExactlyOnceTevent:

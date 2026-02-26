@@ -28,7 +28,7 @@ public class QueryModelGeneratingQueryModelReader : IVersioningQueryModelReader
       _usageGuard.EnsureAccessValid();
       if(TryGet(key, out TValue? value))
       {
-         return value._assertNotNull();
+         return value._assert().NotNull();
       }
 
       throw new NoSuchDocumentException(key, typeof(TValue));
@@ -39,7 +39,7 @@ public class QueryModelGeneratingQueryModelReader : IVersioningQueryModelReader
       _usageGuard.EnsureAccessValid();
       if(TryGetVersion(key, out TValue? value, version))
       {
-         return value._assertNotNull();
+         return value._assert().NotNull();
       }
 
       throw new NoSuchDocumentException(key, typeof(TValue));

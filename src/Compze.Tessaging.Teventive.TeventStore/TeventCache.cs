@@ -51,7 +51,7 @@ public class TeventCache : IDisposable, ITeventCache
 
             if(_overlays.Read(it => it.TryGetValue(transactionId, out overlay)))
             {
-               return overlay._assertNotNull();
+               return overlay._assert().NotNull();
             }
 
             overlay = [];

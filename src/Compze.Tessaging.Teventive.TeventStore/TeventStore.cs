@@ -191,7 +191,7 @@ namespace Compze.Tessaging.Teventive.TeventStore;
 
    public IEnumerable<TaggregateId> StreamTaggregateIdsInCreationOrder(Type? teventType = null)
    {
-      Argument.Fulfills(teventType == null || teventType.IsInterface && typeof(ITaggregateTevent).IsAssignableFrom(teventType));
+      Argument.Assert(teventType == null || teventType.IsInterface && typeof(ITaggregateTevent).IsAssignableFrom(teventType));
       _usageGuard.EnsureAccessValid();
 
       _sqlLayer.SetupSchemaIfDatabaseUnInitialized();

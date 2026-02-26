@@ -77,7 +77,7 @@ public interface ICompzeSqliteConnection : IPoolableConnection, ICompzeDbConnect
          if(!_disposed)
          {
             _disposed = true;
-            Contract.State.Fulfills(_transaction == null, () => "Transaction should have been completed (committed or rolled back) before disposing the connection");
+            Contract.State.Assert(_transaction == null, () => "Transaction should have been completed (committed or rolled back) before disposing the connection");
             Connection.Dispose();
          }
       }
@@ -87,7 +87,7 @@ public interface ICompzeSqliteConnection : IPoolableConnection, ICompzeDbConnect
          if(!_disposed)
          {
             _disposed = true;
-            Contract.State.Fulfills(_transaction == null, () => "Transaction should have been completed (committed or rolled back) before disposing the connection");
+            Contract.State.Assert(_transaction == null, () => "Transaction should have been completed (committed or rolled back) before disposing the connection");
             await Connection.DisposeAsync().caf();
          }
       }

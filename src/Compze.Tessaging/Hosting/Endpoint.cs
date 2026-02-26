@@ -33,14 +33,14 @@ public class Endpoint : IEndpoint
 
    public Endpoint(IServiceLocator serviceLocator,
                    ITessagesInFlightTracker globalStateTracker,
-                   IRoutingInboxClient routingInboxClient,
+                   ITessagingRouter tessagingRouter,
                    IEndpointRegistry endpointRegistry,
                    EndpointConfiguration configuration)
    {
       Argument.NotNull(serviceLocator).NotNull(configuration);
       ServiceLocator = serviceLocator;
       _globalStateTracker = globalStateTracker;
-      _routingInboxClient = routingInboxClient;
+      _tessagingRouter = tessagingRouter;
       _configuration = configuration;
       _endpointRegistry = endpointRegistry;
    }
@@ -50,7 +50,7 @@ public class Endpoint : IEndpoint
 
    public EndPointAddress? Address => _serverComponents?.Inbox.Address;
    readonly ITessagesInFlightTracker _globalStateTracker;
-   readonly IRoutingInboxClient _routingInboxClient;
+   readonly ITessagingRouter _tessagingRouter;
    readonly IEndpointRegistry _endpointRegistry;
 
    ServerComponents? _serverComponents;
@@ -61,32 +61,27 @@ public class Endpoint : IEndpoint
 
    public async Task StartListeningComponentsAsync()
    {
-      State.Fulfills(!_isListening);
+      State.Assert(!_isListening);
       _isListening = true;
 
       RunSanityChecks();
 
-      _routingInboxClient.Start();
+      _serverComponents = new ServerComponents(ServiceLocator.Resolve<TommandScheduler>(), ServiceLocator.Resolve<IInbox>(), ServiceLocator.Resolve<IOutbox>());
 
-      //todo: find cleaner way of getting a TyperMedia navigator than pretending to be an endpoint.
-      if(!_configuration.IsPureClientEndpoint)
-      {
-         _serverComponents = new ServerComponents(ServiceLocator.Resolve<TommandScheduler>(), ServiceLocator.Resolve<IInbox>(), ServiceLocator.Resolve<IOutbox>());
-
-         await Task.WhenAll(_serverComponents.Inbox.StartAsync(), _serverComponents.TommandScheduler.StartAsync()).caf();
-      }
+      await Task.WhenAll(_serverComponents.Inbox.StartAsync(), _serverComponents.TommandScheduler.StartAsync()).caf();
    }
 
    public async Task StartSendingComponentsAsync()
    {
-      State.Fulfills(!_isSending);
+      State.Assert(!_isSending);
       _isSending = true;
-      var serverEndpoints = _endpointRegistry.ServerEndpoints.Select(it => it.Address._assertNotNull()).ToHashSet();
-      await Task.WhenAll(serverEndpoints.Select(address => _routingInboxClient.ConnectAsync(address))).caf();
       if(_serverComponents != null)
       {
+         //Tessaging connects to all endpoints including ourselves. Scheduled tommands need to dispatch over the remote protocol to get the delivery guarantees...
+         var serverAddresses = _endpointRegistry.ServerEndpointAddresses.ToHashSet();
+         serverAddresses.Add(_serverComponents.Inbox.Address);
+         await Task.WhenAll(serverAddresses.Select(address => _tessagingRouter.ConnectAsync(address))).caf();
          await Task.WhenAll(_serverComponents.Outbox.StartAsync()).caf();
-         serverEndpoints.Add(_serverComponents.Inbox.Address); //Yes, we do connect to ourselves. Scheduled tommands need to dispatch over the remote protocol to get the delivery guarantees...
       }
    }
 
@@ -118,11 +113,9 @@ public class Endpoint : IEndpoint
             await _serverComponents.Inbox.StopAsync().caf();
          }
 
-         _routingInboxClient.Stop();
+         _tessagingRouter.Stop();
       }
    }
-
-   public void AwaitNoTessagesInFlight(TimeSpan? timeoutOverride) => _globalStateTracker.AwaitNoTessagesInFlight(timeoutOverride);
 
    public async ValueTask DisposeAsync()
    {
@@ -133,11 +126,7 @@ public class Endpoint : IEndpoint
          var exceptionReporter = ServiceLocator.Resolve<IBackgroundExceptionReporter>();
          await ServiceLocator.DisposeAsync().caf();
          _serverComponents.Dispose();
-         // Check for any exceptions collected on background threads before disposing
-         if(!_configuration.IsPureClientEndpoint)
-         {
-            exceptionReporter.ThrowIfAnyExceptions();
-         }
+         exceptionReporter.ThrowIfAnyExceptions();
       }
    }
 }

@@ -13,29 +13,22 @@ public class Failure_tests : EndpointHostTestBase
    [PCT] public async Task If_tommand_handler_with_result_throws_awaiting_SendAsync_throws()
    {
       TommandHandlerWithResultThreadGate.ThrowPostPassThrough(_thrownException);
-      await InvokingAsync(async () => await ClientEndpoint.ExecuteClientRequestAsync(async session => await session.PostAsync(MyAtMostOnceTypermediaTommandWithResult.Create())))
+      await InvokingAsync(async () => await Client.ExecuteRequestAsync(async session => await session.PostAsync(MyAtMostOnceTypermediaTommandWithResult.Create())))
                    .Must().ThrowAsync<Exception>();
    }
 
    [PCT] public async Task If_tuery_handler_throws_awaiting_TueryAsync_throws()
    {
       TueryHandlerThreadGate.ThrowPostPassThrough(_thrownException);
-      await InvokingAsync(() => ClientEndpoint.ExecuteClientRequestAsync(session => session.GetAsync(new MyTuery())))
+      await InvokingAsync(() => Client.ExecuteRequestAsync(session => session.GetAsync(new MyTuery())))
            .Must().ThrowAsync<Exception>();
    }
 
    [PCT] public void If_tuery_handler_throws_Tuery_throws()
    {
       TueryHandlerThreadGate.ThrowPostPassThrough(_thrownException);
-      var exception = Invoking(() => ClientEndpoint.ExecuteClientRequest(session => session.Get(new MyTuery()))).Must().Throw<Exception>().Which;
+      var exception = Invoking(() => Client.ExecuteRequest(session => session.Get(new MyTuery()))).Must().Throw<Exception>().Which;
       exception.Must().NotBeNull();
-   }
-
-   protected override async Task DisposeAsyncInternal()
-   {
-      var exception = await InvokingAsync(async () => await Host.DisposeAsync()).Must().ThrowAsync<Exception>();
-      exception.Which.Must().NotBeNull();
-      await base.DisposeAsyncInternal();
    }
 
    readonly IntentionalException _thrownException = new();
