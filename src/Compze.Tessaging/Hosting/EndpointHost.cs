@@ -53,7 +53,7 @@ public class EndpointHost : IEndpointHost
       try
       {
          Contract.State.Assert(!_isStarted, Endpoints.None(endpoint => endpoint.IsRunning));
-         this.Log().Info($"EndpointHost starting with {Endpoints.Count} endpoint(s)");
+         this.Log().Info($"Starting with {Endpoints.Count} endpoint(s)");
          _isStarted = true;
 
          await Task.WhenAll(Endpoints.Select(endpointToStart => endpointToStart.StartListeningComponentsAsync())).WithAggregateExceptions().caf();
@@ -74,7 +74,7 @@ public class EndpointHost : IEndpointHost
       if(!_disposed)
       {
          _disposed = true;
-         this.Log().Info("EndpointHost disposing");
+         this.Log().Info("Disposing");
          if(_isStarted)
          {
             _isStarted = false;

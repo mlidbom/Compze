@@ -53,7 +53,7 @@ public partial class Outbox : IOutbox
    public void PublishTransactionally(IExactlyOnceTevent exactlyOnceTevent)
    {
       Contract.State.NotNull(Transaction.Current);
-      this.Log().Debug($"Outbox publishing tevent {exactlyOnceTevent.Id} ({exactlyOnceTevent.GetType().Name})");
+      this.Log().Debug($"Publishing tevent {exactlyOnceTevent.Id} ({exactlyOnceTevent.GetType().Name})");
       var connections = _tessagingRouter.SubscriberConnectionsFor(exactlyOnceTevent)
                                   .Where(connection => connection.EndpointInformation.Id != _configuration.Id)
                                   .ToArray(); //We dispatch tevents to ourselves synchronously so don't go doing it again here.;
@@ -72,7 +72,7 @@ public partial class Outbox : IOutbox
    public void SendTransactionally(IExactlyOnceTommand exactlyOnceTommand)
    {
       Contract.State.NotNull(Transaction.Current);
-      this.Log().Debug($"Outbox sending tommand {exactlyOnceTommand.Id} ({exactlyOnceTommand.GetType().Name})");
+      this.Log().Debug($"Sending tommand {exactlyOnceTommand.Id} ({exactlyOnceTommand.GetType().Name})");
       var connection = _tessagingRouter.ConnectionToHandlerFor(exactlyOnceTommand);
 
       _storage.SaveTessage(exactlyOnceTommand, connection.EndpointInformation.Id);
@@ -109,22 +109,22 @@ public partial class Outbox : IOutbox
    public async Task StartAsync()
    {
       Contract.State.Assert(!_running);
-      this.Log().Info("Outbox starting");
+      this.Log().Info("Starting");
 
       await _storage.StartAsync().caf();
       _retryPoller.Start();
 
       _running = true;
-      this.Log().Info("Outbox started");
+      this.Log().Info("Started");
    }
 
    public async Task StopAsync()
    {
       Contract.State.Assert(_running);
-      this.Log().Info("Outbox stopping");
+      this.Log().Info("Stopping");
       _running = false;
       _retryPoller.Stop();
-      this.Log().Info("Outbox stopped");
+      this.Log().Info("Stopped");
       await Task.CompletedTask.caf();
    }
 }

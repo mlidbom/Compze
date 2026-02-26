@@ -36,13 +36,13 @@ public partial class Inbox
 
       public void Enqueue(TransportTessage.InComing transportTessage)
       {
-         this.Log().Debug($"HandlerExecutionEngine enqueueing {transportTessage.TessageTypeEnum} tessage {transportTessage.TessageId}");
+         this.Log().Debug($"Enqueueing {transportTessage.TessageTypeEnum} tessage {transportTessage.TessageId}");
          _coordinator.EnqueueTessageTask(transportTessage);
       }
 
       public Task<object?> ExecuteAsync(TransportTessage.InComing transportTessage)
       {
-         this.Log().Debug($"HandlerExecutionEngine executing {transportTessage.TessageTypeEnum} tessage {transportTessage.TessageId}");
+         this.Log().Debug($"Executing {transportTessage.TessageTypeEnum} tessage {transportTessage.TessageId}");
          return _coordinator.EnqueueTessageTask(transportTessage);
       }
 
@@ -58,7 +58,7 @@ public partial class Inbox
 
       public void Start()
       {
-         this.Log().Info("HandlerExecutionEngine starting");
+         this.Log().Info("Starting");
          _awaitDispatchableTessageThread = _taskRunner.RunOnNamedThread(
             nameof(AwaitDispatchableTessageThreadLoop),
             AwaitDispatchableTessageThreadLoop,
@@ -67,10 +67,10 @@ public partial class Inbox
 
       public void Stop()
       {
-         this.Log().Info("HandlerExecutionEngine stopping");
+         this.Log().Info("Stopping");
          _awaitDispatchableTessageThread?.InterruptAndJoin();
          _awaitDispatchableTessageThread = null;
-         this.Log().Info("HandlerExecutionEngine stopped");
+         this.Log().Info("Stopped");
       }
    }
 }

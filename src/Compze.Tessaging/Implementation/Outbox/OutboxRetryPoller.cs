@@ -73,7 +73,7 @@ public class OutboxRetryPoller : IDisposable
       if(_running)
       {
          _running = false;
-         this.Log().Info("Stopping OutboxRetryPoller...");
+         this.Log().Info("Stopping...");
          _cancellationTokenSource.Cancel();
          _pollerThread!.Join(5.Seconds()); // Give it time to finish the current iteration
          _cancellationTokenSource.Dispose();
@@ -84,7 +84,7 @@ public class OutboxRetryPoller : IDisposable
 
    void PollerLoop()
    {
-      this.Log().Info("OutboxRetryPoller started");
+      this.Log().Info("Started");
 
       RetryUndeliveredTessages();
 
@@ -113,7 +113,7 @@ public class OutboxRetryPoller : IDisposable
          }
       }
 
-      this.Log().Info("OutboxRetryPoller stopped");
+      this.Log().Info("Stopped");
    }
 
    void RetryUndeliveredTessages()

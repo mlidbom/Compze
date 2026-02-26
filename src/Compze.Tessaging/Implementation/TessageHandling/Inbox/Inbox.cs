@@ -52,21 +52,21 @@ public static class InboxRegistrar
 
    public async Task StartAsync()
    {
-      this.Log().Info($"Inbox starting at {Address}");
+      this.Log().Info($"Starting at {Address}");
       _handlerExecutionEngine.Start();
       var storageStartTask = _storage.StartAsync();
       await Task.WhenAll(storageStartTask, _transportServer.StartAsync()).caf();
-      this.Log().Info($"Inbox started at {Address}");
+      this.Log().Info($"Started at {Address}");
    }
 
    public Task ReceiveAsync(TransportTessage.InComing tessage)
    {
-      this.Log().Debug($"Inbox receiving {tessage.TessageTypeEnum} tessage {tessage.TessageId}");
+      this.Log().Debug($"Receiving {tessage.TessageTypeEnum} tessage {tessage.TessageId}");
       var saveResult = _storage.SaveIncomingTessage(tessage);
 
       if(saveResult == IServiceBusSqlLayer.SaveTessageResult.Duplicate)
       {
-         this.Log().Debug($"Inbox skipping duplicate tessage {tessage.TessageId}");
+         this.Log().Debug($"Skipping duplicate tessage {tessage.TessageId}");
          return Task.CompletedTask;
       }
 
@@ -76,12 +76,12 @@ public static class InboxRegistrar
 
    public async Task<object?> ExecuteAsync(TransportTessage.InComing tessage)
    {
-      this.Log().Debug($"Inbox executing {tessage.TessageTypeEnum} tessage {tessage.TessageId}");
+      this.Log().Debug($"Executing {tessage.TessageTypeEnum} tessage {tessage.TessageId}");
       var saveResult = _storage.SaveIncomingTessage(tessage);
 
       if(saveResult == IServiceBusSqlLayer.SaveTessageResult.Duplicate)
       {
-         this.Log().Debug($"Inbox skipping duplicate tessage {tessage.TessageId}");
+         this.Log().Debug($"Skipping duplicate tessage {tessage.TessageId}");
          return null;
       }
 
@@ -90,13 +90,13 @@ public static class InboxRegistrar
 
    public async Task StopAsync()
    {
-      this.Log().Info($"Inbox stopping at {Address}");
+      this.Log().Info($"Stopping at {Address}");
       await _transportServer.StopAsync().caf();
    }
 
    public async ValueTask DisposeAsync()
    {
-      this.Log().Debug($"Inbox disposing at {Address}");
+      this.Log().Debug($"Disposing at {Address}");
       _handlerExecutionEngine.Stop();
       await StopAsync().caf();
       await _transportServer.DisposeAsync().caf();

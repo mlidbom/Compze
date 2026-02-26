@@ -63,7 +63,7 @@ public class TommandScheduler(IOutbox transport, ITaskRunner taskRunner) : IDisp
       catch(Exception exception)
 #pragma warning restore CA1031
       {
-         this.Log().Error(exception, "Exception in TommandScheduler timer callback");
+         this.Log().Error(exception, "Exception in timer callback");
       }
    }
 

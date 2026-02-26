@@ -55,7 +55,7 @@ public class MemoryInboxTransportServer : IInboxTransportServer
    public Task StartAsync()
    {
       Contract.State.Assert(!Running);
-      this.Log().Info($"MemoryTransport binding at {Address}");
+      this.Log().Info($"Binding at {Address}");
       Running = true;
       InMemoryTransportNetwork.BindServerToAddress(new EndPointAddress(Address), this);
       return Task.CompletedTask;
@@ -63,7 +63,7 @@ public class MemoryInboxTransportServer : IInboxTransportServer
 
    public Task StopAsync()
    {
-      this.Log().Info($"MemoryTransport unbinding at {Address}");
+      this.Log().Info($"Unbinding at {Address}");
       Running = false;
       InMemoryTransportNetwork.UnBindAddress(new EndPointAddress(Address));
       return Task.CompletedTask;
@@ -73,7 +73,7 @@ public class MemoryInboxTransportServer : IInboxTransportServer
    {
       try
       {
-         this.Log().Debug($"MemoryTransport receiving {incomingTessage.TessageTypeEnum} tessage {incomingTessage.TessageId} at {Address}");
+         this.Log().Debug($"Receiving {incomingTessage.TessageTypeEnum} tessage {incomingTessage.TessageId} at {Address}");
          if(!Running)
             throw new Exception("Transport is not running");
 
@@ -105,7 +105,7 @@ public class MemoryInboxTransportServer : IInboxTransportServer
    {
       try
       {
-         this.Log().Debug($"MemoryTransport receiving {incomingTessage.TessageTypeEnum} tessage {incomingTessage.TessageId} at {Address}");
+         this.Log().Debug($"Receiving {incomingTessage.TessageTypeEnum} tessage {incomingTessage.TessageId} at {Address}");
          if(!Running)
             throw new Exception("Transport is not running");
 
