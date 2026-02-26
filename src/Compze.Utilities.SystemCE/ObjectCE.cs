@@ -20,5 +20,5 @@ public static class ObjectCE
       }
    }
 
-   public static string ToStringNotNull(this object @this) => @this.ToString()._assertNotNull();
+   public static string ToStringNotNull(this object @this) => @this.ToString()._assert().NotNull();
 }

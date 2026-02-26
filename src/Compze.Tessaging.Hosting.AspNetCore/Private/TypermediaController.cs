@@ -40,7 +40,7 @@ public class TypermediaController : ControllerBase
 
       try
       {
-         var tueryResponse = (await HandlerExecutionEngine.ExecuteAsync(incomingTessage).caf())._assertNotNull();
+         var tueryResponse = (await HandlerExecutionEngine.ExecuteAsync(incomingTessage).caf())._assert().NotNull();
          var tueryResponseJson = Serializer.SerializeResponse(tueryResponse);
          return Ok(tueryResponseJson);
       }
@@ -58,7 +58,7 @@ public class TypermediaController : ControllerBase
 
       try
       {
-         var tommandResponse = (await Inbox.ExecuteAsync(incomingTessage).caf())._assertNotNull();
+         var tommandResponse = (await Inbox.ExecuteAsync(incomingTessage).caf())._assert().NotNull();
          var tommandResponseJson = Serializer.SerializeResponse(tommandResponse);
          return Ok(tommandResponseJson);
       }

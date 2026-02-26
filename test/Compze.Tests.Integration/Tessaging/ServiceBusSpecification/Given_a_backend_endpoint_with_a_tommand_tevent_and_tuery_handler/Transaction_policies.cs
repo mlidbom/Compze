@@ -30,7 +30,7 @@ public class Transaction_policies : EndpointHostTestBase
       tommandResult.Must().NotBeNull();
 
       var transaction = TommandHandlerWithResultThreadGate.AwaitPassedThroughCountEqualTo(1)
-                                                          .PassedThrough.Single().Transaction._assertNotNull();
+                                                          .PassedThrough.Single().Transaction._assert().NotNull();
       transaction.Must().NotBeNull()
                  .Actual.IsolationLevel
                  .Must().Be(IsolationLevel.Serializable);

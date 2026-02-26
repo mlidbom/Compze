@@ -19,6 +19,11 @@ public static class PipeAssert
    [MethodImpl(MethodImplOptions.AggressiveInlining)]
    static void ThrowCustomException(Func<Exception> exceptionFactory) => throw exceptionFactory();
 
+   ///<summary>Returns an <see cref="AssertionTarget{T}"/> wrapping <paramref name="this"/> for further assertion calls such as <c>.NotNull()</c> and <c>.NotDefault()</c>.</summary>
+   [MethodImpl(MethodImplOptions.AggressiveInlining)]
+   public static AssertionTarget<T> _assert<T>(this T @this, [CallerArgumentExpression(nameof(@this))] string? thisExpression = null)
+      => new(@this, thisExpression);
+
    ///<summary>Throws <see cref="AssertionFailedException"/> if <paramref name="predicate"/> returns false when applied to <paramref name="this"/>. The exception message includes the predicate source expression and the value.</summary>
    [MethodImpl(MethodImplOptions.AggressiveInlining)]
    public static T _assert<T>(this T @this,
@@ -43,22 +48,6 @@ public static class PipeAssert
    public static T _assert<T>(this T @this, Predicate<T> predicate, Func<Exception> exceptionFactory)
    {
       if(!predicate(@this)) ThrowCustomException(exceptionFactory);
-      return @this;
-   }
-
-   ///<summary>Throws <see cref="AssertionFailedException"/> if <paramref name="this"/> is null. Returns the value as non-nullable on success.</summary>
-   [MethodImpl(MethodImplOptions.AggressiveInlining)]
-   [return: NotNull] public static T _assertNotNull<T>([NotNull] this T? @this, [CallerArgumentExpression(nameof(@this))] string? thisExpression = null)
-   {
-      if(@this is null) ThrowAssertionFailed($"Assertion failed: {thisExpression}.{nameof(_assertNotNull)}()");
-      return @this;
-   }
-
-   ///<summary>Throws <see cref="AssertionFailedException"/> if <paramref name="this"/> equals <c>default(T)</c>. Returns <paramref name="this"/> on success.</summary>
-   [MethodImpl(MethodImplOptions.AggressiveInlining)]
-   public static T _assertNotDefault<T>(this T @this, [CallerArgumentExpression(nameof(@this))] string? thisExpression = null) where T : struct
-   {
-      if(EqualityComparer<T>.Default.Equals(@this, default)) ThrowAssertionFailed($"Assertion failed: {thisExpression}.{nameof(_assertNotDefault)}()");
       return @this;
    }
 }

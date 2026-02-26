@@ -555,7 +555,7 @@ public class DocumentDbTests : DocumentDbTestsBase
         });
         wait.Wait();
         task.Wait();
-        session = session._assertNotNull();
+        session = session._assert().NotNull();
 
         var user = new User();
 

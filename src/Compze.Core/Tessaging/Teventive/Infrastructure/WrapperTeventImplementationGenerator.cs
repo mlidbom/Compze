@@ -109,7 +109,7 @@ public static class WrapperTeventImplementationGenerator
 
          wrapperTeventBuilder.ImplementConstructor(wrappedTeventField);
 
-         return wrapperTeventBuilder.CreateType()._assertNotNull();
+         return wrapperTeventBuilder.CreateType()._assert().NotNull();
       });
 
       OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _createdWrapperTypes, wrapperTeventType, genericWrapperTeventType);

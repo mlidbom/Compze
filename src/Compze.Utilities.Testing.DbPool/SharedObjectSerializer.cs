@@ -13,5 +13,5 @@ public class DbPoolStateSerializer : ISharedObjectSerializer<DbPoolState>
    public string Serialize(DbPoolState instance) => JsonConvert.SerializeObject(instance, Formatting.Indented, RenamingAndNonPublicMembersSupportingJsonSettings.SharedObjects);
 
    public DbPoolState Deserialize(string json) =>
-      JsonConvert.DeserializeObject<DbPoolState>(json, RenamingAndNonPublicMembersSupportingJsonSettings.SharedObjects)._assertNotNull();
+      JsonConvert.DeserializeObject<DbPoolState>(json, RenamingAndNonPublicMembersSupportingJsonSettings.SharedObjects)._assert().NotNull();
 }

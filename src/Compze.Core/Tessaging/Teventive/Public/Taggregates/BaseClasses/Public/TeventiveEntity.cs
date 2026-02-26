@@ -33,7 +33,7 @@ public abstract class Tentity<TParent,
    static readonly TTentityTeventIdGetterSetter IdGetterSetter = Constructor.For<TTentityTeventIdGetterSetter>.DefaultConstructor.Instance();
 
    TTentityId _id;
-   public TTentityId Id => _id._assertNotDefault();
+   public TTentityId Id => _id._assert().NotDefault();
 
    protected Tentity(TParent taggregate) : base(taggregate, false)
    {

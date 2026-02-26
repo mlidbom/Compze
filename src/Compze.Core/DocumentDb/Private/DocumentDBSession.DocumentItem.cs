@@ -33,13 +33,13 @@ public partial class DocumentDbSession
 
       public void Save(object document)
       {
-         Document = document._assertNotNull();
+         Document = document._assert().NotNull();
          IsDeleted = false;
       }
 
       public void DocumentLoadedFromBackingStore(object document)
       {
-         Document = Document = document._assertNotNull();
+         Document = Document = document._assert().NotNull();
          IsInBackingStore = true;
       }
 

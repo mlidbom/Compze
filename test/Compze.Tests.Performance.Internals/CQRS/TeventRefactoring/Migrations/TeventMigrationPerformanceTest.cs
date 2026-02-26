@@ -67,7 +67,7 @@ public class TeventMigrationPerformanceTest : TeventMigrationTestBase
          description: "Uncached loading",
          maxTotal: maxUncachedLoadTime,
          setup: () => clonedLocator = _container!.Clone(),
-         tearDownAsync: async Task () => await clonedLocator._assertNotNull().DisposeAsync(),
+         tearDownAsync: async Task () => await clonedLocator._assert().NotNull().DisposeAsync(),
          action: () =>
          {
             LoadWithCloneLocator(clonedLocator!);

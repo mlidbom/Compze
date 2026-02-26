@@ -22,7 +22,7 @@ namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Http;
    {
       try
       {
-         return (await response.Content.ReadFromJsonAsync<ProblemDetails>().caf())._assertNotNull();
+         return (await response.Content.ReadFromJsonAsync<ProblemDetails>().caf())._assert().NotNull();
       }
       catch(Exception)
       {

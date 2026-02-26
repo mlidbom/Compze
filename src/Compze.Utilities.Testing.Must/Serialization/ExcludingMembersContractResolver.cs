@@ -33,7 +33,7 @@ public class ExcludingMembersContractResolver : DefaultContractResolver
 
       foreach(var excludedMember in _excludedMembers)
       {
-         if(propertyName == excludedMember.Name && excludedMember.DeclaringType._assertNotNull().IsAssignableFrom(objectType))
+         if(propertyName == excludedMember.Name && excludedMember.DeclaringType._assert().NotNull().IsAssignableFrom(objectType))
             return true;
       }
 

@@ -59,6 +59,6 @@ public class EntitiesByIdAndTypeCache
    public readonly record struct IdAndType(string Id, Type DocumentType)
    {
       public static IdAndType Create(object id, Type type) =>
-         new(id._assertNotNull().ToStringNotNull().ToUpperInvariant().TrimEnd(trimChar: ' '), type);
+         new(id._assert().NotNull().ToStringNotNull().ToUpperInvariant().TrimEnd(trimChar: ' '), type);
    }
 }
