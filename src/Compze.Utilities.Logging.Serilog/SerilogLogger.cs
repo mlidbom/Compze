@@ -8,26 +8,30 @@ namespace Compze.Utilities.Logging.Serilog;
 public class SerilogLogger : Logger
 {
    readonly global::Serilog.ILogger _logger;
-   SerilogLogger(global::Serilog.ILogger logger) => _logger = logger;
-   SerilogLogger(global::Serilog.ILogger logger, LogLevel level) : base(level) => _logger = logger;
+   readonly string _typeName;
+   SerilogLogger(string typeName, global::Serilog.ILogger logger) { _logger = logger; _typeName = typeName; }
+   SerilogLogger(string typeName, global::Serilog.ILogger logger, LogLevel level) : base(level) { _logger = logger; _typeName = typeName; }
 
-   public static ILogger Create(Type type) => new SerilogLogger(Log.ForContext(type));
+   public static ILogger Create(Type type) => new SerilogLogger(type.Name, Log.ForContext(type));
 
    public override ILogger WithLogLevel(LogLevel level) =>
-      new SerilogLogger(_logger, level);
+      new SerilogLogger(_typeName, _logger, level);
+
+   global::Serilog.ILogger CallerLogger(string caller) =>
+      _logger.ForContext(global::Serilog.Core.Constants.SourceContextPropertyName, $"{_typeName}.{caller}");
 
    protected override void ErrorInternal(Exception exception, string? message, string caller) =>
-      _logger.Error(exception, $"{caller}: {message ?? exception.GetType().FullName ?? ""}");
+      CallerLogger(caller).Error(exception, message ?? exception.GetType().FullName ?? "");
 
    protected override void WarningInternal(string message, string caller) =>
-      _logger.Warning($"{caller}: {message}");
+      CallerLogger(caller).Warning(message);
 
    protected override void WarningInternal(Exception exception, string message, string caller) =>
-      _logger.Warning(exception, $"{caller}: {message}");
+      CallerLogger(caller).Warning(exception, message);
 
    protected override void InfoInternal(string message, string caller) =>
-      _logger.Information($"{caller}: {message}");
+      CallerLogger(caller).Information(message);
 
    protected override void DebugInternal(string message, string caller) =>
-      _logger.Debug($"{caller}: {message}");
+      CallerLogger(caller).Debug(message);
 }
