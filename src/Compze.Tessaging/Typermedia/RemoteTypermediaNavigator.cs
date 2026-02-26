@@ -22,17 +22,17 @@ public static class RemoteHypermediaNavigatorRegistrar
 {
    public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Scoped.For<IRemoteTypermediaNavigator>()
-                                  .CreatedBy((IRoutingInboxClient routingInboxClient) => new RemoteTypermediaNavigator(routingInboxClient)));
+                                  .CreatedBy((ITypermediaRoutingClient typermediaRoutingClient) => new RemoteTypermediaNavigator(typermediaRoutingClient)));
 
-   readonly IRoutingInboxClient _routingInboxClient;
-   public RemoteTypermediaNavigator(IRoutingInboxClient routingInboxClient) => _routingInboxClient = routingInboxClient;
+   readonly ITypermediaRoutingClient _typermediaRoutingClient;
+   public RemoteTypermediaNavigator(ITypermediaRoutingClient typermediaRoutingClient) => _typermediaRoutingClient = typermediaRoutingClient;
 
    public void Post(IAtMostOnceTypermediaTommand tommand) => PostAsync(tommand).WaitUnwrappingException();
 
    public Task PostAsync(IAtMostOnceTypermediaTommand tommand)
    {
       TessageInspector.AssertValidToSendRemote(tommand);
-      return _routingInboxClient.PostAsync(tommand);
+      return _typermediaRoutingClient.PostAsync(tommand);
    }
 
    public TResult Post<TResult>(IAtMostOnceTommand<TResult> typermediaTommand) => PostAsync(typermediaTommand).ResultUnwrappingException();
@@ -40,7 +40,7 @@ public static class RemoteHypermediaNavigatorRegistrar
    public Task<TResult> PostAsync<TResult>(IAtMostOnceTommand<TResult> typermediaTommand)
    {
       TessageInspector.AssertValidToSendRemote(typermediaTommand);
-      return _routingInboxClient.PostAsync(typermediaTommand);
+      return _typermediaRoutingClient.PostAsync(typermediaTommand);
    }
 
    public async Task<TResult> GetAsync<TResult>(IRemotableTuery<TResult> tuery)
@@ -52,7 +52,7 @@ public static class RemoteHypermediaNavigatorRegistrar
       return await GetAsyncAfterFastPathOptimization(tuery).caf();
    }
 
-   async Task<TResult> GetAsyncAfterFastPathOptimization<TResult>(IRemotableTuery<TResult> tuery) => await _routingInboxClient.GetAsync(tuery).caf();
+   async Task<TResult> GetAsyncAfterFastPathOptimization<TResult>(IRemotableTuery<TResult> tuery) => await _typermediaRoutingClient.GetAsync(tuery).caf();
 
    TResult IRemoteTypermediaNavigator.Get<TResult>(IRemotableTuery<TResult> tuery) => GetAsync(tuery).ResultUnwrappingException();
 }
