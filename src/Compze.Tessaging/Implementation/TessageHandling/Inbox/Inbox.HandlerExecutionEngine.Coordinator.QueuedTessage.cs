@@ -9,6 +9,7 @@ using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Functional;
 using Compze.Utilities.SystemCE.LinqCE;
+using Compze.Utilities.SystemCE.TransactionsCE;
 
 namespace Compze.Tessaging.Implementation.TessageHandling.Inbox;
 
@@ -37,26 +38,55 @@ public partial class Inbox
             public void Execute()
             {
                var tessage = TransportTessage.DeserializeTessageAndCacheForNextCall();
+
+               if(TransportTessage.TessageTypeEnum == TransportTessageType.TyperMediaTuery)
+                  ExecuteTuery(tessage);
+               else
+                  ExecutePersistedTessage(tessage);
+            }
+
+            void ExecuteTuery(ITessage tessage)
+            {
+               _taskRunner.Run(ExecuteTaskName, () =>
+               {
+                  try
+                  {
+                     var result = _serviceLocator.ExecuteInIsolatedScope(() => _tessageTask(tessage));
+                     _taskCompletionSource.SetResult(result);
+                     _coordinator.Succeeded(this);
+                  }
+#pragma warning disable CA1031 //This is how you handle exceptions when manually using _taskCompletionSource
+                  catch(Exception exception)
+#pragma warning restore CA1031
+                  {
+                     _taskCompletionSource.SetException(exception);
+                     _coordinator.Failed(this, exception);
+                  }
+               });
+            }
+
+            void ExecutePersistedTessage(ITessage tessage)
+            {
                _taskRunner.Run(ExecuteTaskName, () =>
                {
                   var retryPolicy = new DefaultRetryPolicy(tessage);
 
                   while(true)
                   {
+                     var tessageHandlerSucceeded = false;
                      try
                      {
-                        var result = tessage is IMustBeHandledTransactionally
-                                        ? _serviceLocator.ExecuteTransactionInIsolatedScope(() =>
-                                        {
-                                           var innerResult = _tessageTask(tessage);
-                                           if(tessage is IAtMostOnceTessage)
-                                           {
-                                              _tessageStorage.MarkAsSucceeded(TransportTessage);
-                                           }
-
-                                           return innerResult;
-                                        })
-                                        : _serviceLocator.ExecuteInIsolatedScope(() => _tessageTask(tessage));
+                        object? result;
+                        using(_serviceLocator.BeginScope())
+                        {
+                           result = TransactionScopeCe.Execute(() =>
+                           {
+                              var innerResult = _tessageTask(tessage);
+                              _tessageStorage.MarkAsSucceeded(TransportTessage);
+                              return innerResult;
+                           });
+                           tessageHandlerSucceeded = true;
+                        }
 
                         _taskCompletionSource.SetResult(result);
                         _coordinator.Succeeded(this);
@@ -66,18 +96,18 @@ public partial class Inbox
                      catch(Exception exception)
                      {
 #pragma warning restore CA1031
-                        if(tessage is IAtMostOnceTessage)
+                        if(tessageHandlerSucceeded)
                         {
-                           _tessageStorage.RecordException(TransportTessage, exception);
+                           _taskCompletionSource.SetException(exception);
+                           _coordinator.Failed(this, exception);
+                           return;
                         }
+
+                        _tessageStorage.RecordException(TransportTessage, exception);
 
                         if(!retryPolicy.TryAwaitNextRetryTimeForException(exception))
                         {
-                           if(tessage is IAtMostOnceTessage)
-                           {
-                              _tessageStorage.MarkAsFailed(TransportTessage);
-                           }
-
+                           _tessageStorage.MarkAsFailed(TransportTessage);
                            _taskCompletionSource.SetException(exception);
                            _coordinator.Failed(this, exception);
                            return;
