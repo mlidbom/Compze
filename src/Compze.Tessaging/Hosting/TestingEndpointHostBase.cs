@@ -18,7 +18,7 @@ public abstract class TestingEndpointHostBase : EndpointHost, ITestingEndpointHo
 {
    readonly List<Exception> _expectedExceptions = [];
 
-   protected TestingEndpointHostBase(IComponentRegistrar registrar, Func<IDependencyInjectionContainer> containerFactory) : base(registrar, containerFactory) => 
+   protected TestingEndpointHostBase(IComponentRegistrar registrar, Func<IDependencyInjectionContainer> containerFactory) : base(registrar, containerFactory) =>
       TessagesInFlightTracker = new TessagesInFlightTracker(TypeMapper.Instance);
 
    public IEnumerable<EndPointAddress> ServerEndpointAddresses => Endpoints.Where(it => it.Address is not null)
@@ -49,25 +49,33 @@ public abstract class TestingEndpointHostBase : EndpointHost, ITestingEndpointHo
       if(!_disposed)
       {
          _disposed = true;
+         List<Exception> unHandledExceptions = new();
          if(waitForEndpointsToBeAtRest)
          {
-            WaitForEndpointsToBeAtRest(timeoutOverride: 10.Seconds());
-         }
+            try
+            {
+               WaitForEndpointsToBeAtRest(timeoutOverride: 10.Seconds());
+            }
+            catch(Exception e)
+            {
+               unHandledExceptions.Add(e);
+            }
 
-         var unHandledExceptions = GetThrownExceptions().Except(_expectedExceptions).ToList();
+            unHandledExceptions.AddRange(GetThrownExceptions().Except(_expectedExceptions).ToList());
 
-         try
-         {
-            await base.DisposeAsync(disposing).caf();
-         }
-         catch(AggregateException taggregateException)
-         {
-            unHandledExceptions.AddRange(taggregateException.Flatten().InnerExceptions);
-         }
+            try
+            {
+               await base.DisposeAsync(disposing).caf();
+            }
+            catch(AggregateException taggregateException)
+            {
+               unHandledExceptions.AddRange(taggregateException.Flatten().InnerExceptions);
+            }
 
-         if(unHandledExceptions.Any())
-         {
-            throw new AggregateException("Unhandled exceptions thrown in bus", unHandledExceptions);
+            if(unHandledExceptions.Any())
+            {
+               throw new AggregateException("Unhandled exceptions thrown in bus", unHandledExceptions);
+            }
          }
       }
    }
