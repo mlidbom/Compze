@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using Compze.Contracts;
 using Compze.Core.Public;
 using Compze.Core.Tessaging.Public;
 using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
@@ -42,7 +43,10 @@ public partial class Inbox
                if(TransportTessage.TessageTypeEnum == TransportTessageType.TyperMediaTuery)
                   ExecuteTuery(tessage);
                else
-                  ExecutePersistedTessage(tessage);
+               {
+                  tessage._assert(it => it is IAtMostOnceTessage);
+                  ExecuteTransactionalTessage(tessage);
+               }
             }
 
             void ExecuteTuery(ITessage tessage)
@@ -65,7 +69,7 @@ public partial class Inbox
                });
             }
 
-            void ExecutePersistedTessage(ITessage tessage)
+            void ExecuteTransactionalTessage(ITessage tessage)
             {
                _taskRunner.Run(ExecuteTaskName, () =>
                {
