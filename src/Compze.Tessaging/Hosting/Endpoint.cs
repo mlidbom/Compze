@@ -117,8 +117,6 @@ public class Endpoint : IEndpoint
       }
    }
 
-   public void AwaitNoTessagesInFlight(TimeSpan? timeoutOverride) => _globalStateTracker.AwaitNoTessagesInFlight(timeoutOverride);
-
    public async ValueTask DisposeAsync()
    {
       await StopSendingComponentsAsync().caf();

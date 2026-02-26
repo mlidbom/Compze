@@ -25,7 +25,7 @@ public abstract class TestingEndpointHostBase : EndpointHost, ITestingEndpointHo
                                                                            .Select(it => it.Address!)
                                                                            .ToList();
 
-   void WaitForEndpointsToBeAtRest(TimeSpan? timeoutOverride = null) => Endpoints.ForEach(endpoint => endpoint.AwaitNoTessagesInFlight(timeoutOverride));
+   void WaitForEndpointsToBeAtRest(TimeSpan? timeoutOverride = null) => TessagesInFlightTracker.AwaitNoTessagesInFlight(timeoutOverride);
 
    public TException AssertThrown<TException>() where TException : Exception
    {
