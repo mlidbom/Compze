@@ -1,8 +1,0 @@
-﻿<ProjectConfiguration>
-  <Settings>
-    <AdditionalFilesToIncludeForProject>
-      <Value>input_source\**.*</Value>
-      <Value>output_source\**.*</Value>
-    </AdditionalFilesToIncludeForProject>
-  </Settings>
-</ProjectConfiguration>

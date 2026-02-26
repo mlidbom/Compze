@@ -1,7 +1,0 @@
-# Override parent .gitignore rules — these directories are intentional test data
-!obj/
-!obj/**
-!bin/
-!bin/**
-!InternalizedSource/
-!InternalizedSource/**
