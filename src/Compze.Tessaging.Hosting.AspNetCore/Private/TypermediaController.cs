@@ -8,6 +8,7 @@ using Compze.Tessaging.Implementation.TessageHandling.Inbox;
 using Compze.Tessaging.Implementation.Transport.Client.Implementation.Http;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.Utilities.Logging;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using Microsoft.AspNetCore.Http;
@@ -47,6 +48,7 @@ public class TypermediaController : ControllerBase
       catch(Exception exception)
       {
          //todo: eliminate all this code duplication
+         this.Log().Error(exception, "Exception handling tuery");
          return Problem(statusCode: StatusCodes.Status500InternalServerError, type: exception.GetType().FullName, detail: exception.ToString());
       }
    }
@@ -64,6 +66,7 @@ public class TypermediaController : ControllerBase
       }
       catch(Exception exception)
       {
+         this.Log().Error(exception, "Exception handling tommand with result");
          return Problem(statusCode: StatusCodes.Status500InternalServerError, type: exception.GetType().FullName, detail: exception.ToString());
       }
    }
@@ -80,6 +83,7 @@ public class TypermediaController : ControllerBase
       }
       catch(Exception exception)
       {
+         this.Log().Error(exception, "Exception handling tommand with no result");
          return Problem(statusCode: StatusCodes.Status500InternalServerError, type: exception.GetType().FullName, detail: exception.ToString());
       }
    }

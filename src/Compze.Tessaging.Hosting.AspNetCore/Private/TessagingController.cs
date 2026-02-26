@@ -8,6 +8,7 @@ using Compze.Tessaging.Implementation.Transport.Client.Implementation.Http;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
+using Compze.Utilities.Logging;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -38,6 +39,7 @@ public class TessagingController : ControllerBase
       }
       catch(Exception exception)
       {
+         this.Log().Error(exception, "Exception handling tevent");
          return Problem(statusCode: StatusCodes.Status500InternalServerError, type: exception.GetType().FullName, detail: exception.ToString());
       }
    }
@@ -54,6 +56,7 @@ public class TessagingController : ControllerBase
       }
       catch(Exception exception)
       {
+         this.Log().Error(exception, "Exception handling tommand");
          return Problem(statusCode: StatusCodes.Status500InternalServerError, type: exception.GetType().FullName, detail: exception.ToString());
       }
    }

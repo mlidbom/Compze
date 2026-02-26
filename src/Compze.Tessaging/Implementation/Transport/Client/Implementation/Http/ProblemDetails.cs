@@ -24,16 +24,16 @@ namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Http;
       {
          return (await response.Content.ReadFromJsonAsync<ProblemDetails>().caf())._assert().NotNull();
       }
-      catch(Exception)
+      catch(Exception exception)
       {
-         throw new FailedToExtractProblemDetailsException(response);
+         throw new FailedToExtractProblemDetailsException(response, exception);
       }
    }
 }
 
-public class FailedToExtractProblemDetailsException(HttpResponseMessage response) : Exception($"""
+public class FailedToExtractProblemDetailsException(HttpResponseMessage response, Exception? innerException = null) : Exception($"""
                                                                                         Failed to extract problem details from response.
                                                                                         RequestUri: {response.RequestMessage?.RequestUri} 
                                                                                         Status code: {response.StatusCode}
                                                                                         Reason: {response.ReasonPhrase}
-                                                                                        """);
+                                                                                        """, innerException);

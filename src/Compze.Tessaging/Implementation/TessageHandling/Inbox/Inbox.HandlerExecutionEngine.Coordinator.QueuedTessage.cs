@@ -121,11 +121,14 @@ public partial class Inbox
 
                      if(!retryPolicy.TryAwaitNextRetryTimeForException(exception))
                      {
+                        this.Log().Error(exception, $"Transactional tessage {TessageId} failed after exhausting retries.");
                         _tessageStorage.MarkAsFailed(TransportTessage);
                         _taskCompletionSource.SetException(exception);
                         _coordinator.Failed(this, exception);
                         return;
                      }
+
+                     this.Log().Warning(exception, $"Transactional tessage {TessageId} failed, will retry.");
                   }
                }
             }

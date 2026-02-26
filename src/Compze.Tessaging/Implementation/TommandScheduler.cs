@@ -8,6 +8,7 @@ using Compze.Tessaging.Implementation.Abstractions;
 using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.Utilities.Logging;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
 using Compze.Utilities.SystemCE.LinqCE;
@@ -52,7 +53,19 @@ public class TommandScheduler(IOutbox transport, ITaskRunner taskRunner) : IDisp
       _scheduledTessages.Add(scheduledTommand);
    });
 
-   void SendDueTommands() => _monitor.Update(() => _scheduledTessages.RemoveWhere(HasPassedSendTime).ForEach(Send));
+   void SendDueTommands()
+   {
+      try
+      {
+         _monitor.Update(() => _scheduledTessages.RemoveWhere(HasPassedSendTime).ForEach(Send));
+      }
+#pragma warning disable CA1031 // Timer callback — unhandled exceptions would crash the process
+      catch(Exception exception)
+#pragma warning restore CA1031
+      {
+         this.Log().Error(exception, "Exception in TommandScheduler timer callback");
+      }
+   }
 
    bool HasPassedSendTime(ScheduledTommand tessage) => UtcTimeSource.UtcNow >= tessage.SendAt;
 

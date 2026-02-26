@@ -7,6 +7,7 @@ using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Contracts;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.Utilities.Logging;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -92,6 +93,7 @@ public class MemoryInboxTransportServer : IInboxTransportServer
       }
       catch(Exception ex)
       {
+         this.Log().Error(ex, $"Failed to dispatch tessage {incomingTessage.TessageId}");
          throw new TessageDispatchingFailedException(ex.ToString());
       }
    }
@@ -120,6 +122,7 @@ public class MemoryInboxTransportServer : IInboxTransportServer
       }
       catch(Exception ex)
       {
+         this.Log().Error(ex, $"Failed to dispatch tessage {incomingTessage.TessageId}");
          throw new TessageDispatchingFailedException(ex.ToString());
       }
    }
