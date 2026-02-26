@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
 using Compze.Utilities.SystemCE;
@@ -45,7 +46,7 @@ public class RunOnce_specification
          var runOnce = new RunOnce();
          var actionStarted = new TaskCompletionSource();
          var allowActionToComplete = new TaskCompletionSource();
-         var actionCompleted = false;
+         var events = new ConcurrentQueue<string>();
 
          var firstCall = Task.Run(async () =>
          {
@@ -53,13 +54,12 @@ public class RunOnce_specification
             {
                actionStarted.SetResult();
                await allowActionToComplete.Task;
-               actionCompleted = true;
+               events.Enqueue("first_completed");
             });
          });
 
          await actionStarted.Task;
 
-         var secondCallCompleted = false;
          var secondCall = Task.Run(async () =>
          {
             await runOnce.RunIfFirstCallAsync(async () =>
@@ -67,18 +67,14 @@ public class RunOnce_specification
                await Task.Yield();
                throw new InvalidOperationException("Should not execute");
             });
-            secondCallCompleted = true;
+            events.Enqueue("second_returned");
          });
-
-         await Task.Delay(50);
-         secondCallCompleted.Must().BeFalse();
 
          allowActionToComplete.SetResult();
          await firstCall;
          await secondCall;
 
-         actionCompleted.Must().BeTrue();
-         secondCallCompleted.Must().BeTrue();
+         events.ToArray().Must().SequenceEqual(["first_completed", "second_returned"]);
       }
 
       [XF] public async Task concurrent_caller_receives_exception_from_first_call()
@@ -147,9 +143,9 @@ public class RunOnce_specification
       [XF] public void concurrent_caller_waits_for_first_call_to_complete()
       {
          var runOnce = new RunOnce();
-         var actionStarted = new ManualResetEventSlim(false);
-         var allowActionToComplete = new ManualResetEventSlim(false);
-         var actionCompleted = false;
+         using var actionStarted = new ManualResetEventSlim(false);
+         using var allowActionToComplete = new ManualResetEventSlim(false);
+         var events = new ConcurrentQueue<string>();
 
          var firstCall = Task.Run(() =>
          {
@@ -157,28 +153,23 @@ public class RunOnce_specification
             {
                actionStarted.Set();
                allowActionToComplete.Wait();
-               actionCompleted = true;
+               events.Enqueue("first_completed");
             });
          });
 
          actionStarted.Wait();
 
-         var secondCallCompleted = false;
          var secondCall = Task.Run(() =>
          {
             runOnce.RunIfFirstCall(() => throw new InvalidOperationException("Should not execute"));
-            secondCallCompleted = true;
+            events.Enqueue("second_returned");
          });
-
-         Thread.Sleep(50);
-         secondCallCompleted.Must().BeFalse();
 
          allowActionToComplete.Set();
          firstCall.Wait();
          secondCall.Wait();
 
-         actionCompleted.Must().BeTrue();
-         secondCallCompleted.Must().BeTrue();
+         events.ToArray().Must().SequenceEqual(["first_completed", "second_returned"]);
       }
    }
 }
