@@ -52,7 +52,7 @@ public static class InboxRegistrar
 
    public async Task StartAsync()
    {
-      this.Log().Info($"Starting at {Address}");
+      this.Log().Info($"Starting");
       _handlerExecutionEngine.Start();
       var storageStartTask = _storage.StartAsync();
       await Task.WhenAll(storageStartTask, _transportServer.StartAsync()).caf();
@@ -90,13 +90,13 @@ public static class InboxRegistrar
 
    public async Task StopAsync()
    {
-      this.Log().Info($"Stopping at {Address}");
+      this.Log().Info("Stopping");
       await _transportServer.StopAsync().caf();
    }
 
    public async ValueTask DisposeAsync()
    {
-      this.Log().Debug($"Disposing at {Address}");
+      this.Log().Debug("Disposing");
       _handlerExecutionEngine.Stop();
       await StopAsync().caf();
       await _transportServer.DisposeAsync().caf();
