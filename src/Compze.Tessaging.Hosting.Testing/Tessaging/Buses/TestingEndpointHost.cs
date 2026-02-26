@@ -56,19 +56,4 @@ public class TestingEndpointHost : TestingEndpointHostBase
                                   setup(builder);
 
                                });
-
-
-   public override IClient RegisterClient(Action<IEndpointBuilder>? setup = null) =>
-      base.RegisterClient(builder =>
-      {
-         builder.Container.Register()
-                .CurrentTestsPluggableComponents();
-
-         setup?.Invoke(builder);
-      });
-
-   public override IClient RegisterClientForRegisteredEndpoints(Action<IEndpointBuilder>? setup = null) => RegisterClient(builder =>
-   {
-      setup?.Invoke(builder);
-   });
 }

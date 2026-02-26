@@ -1,60 +1,46 @@
 using System;
-using System.Linq;
 using System.Threading.Tasks;
-using Compze.Core.Refactoring.Naming.Internal.Implementation;
 using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Core.Tessaging.Transport.Internal;
 using Compze.Core.Tessaging.Typermedia.Public;
+using Compze.Core.Wiring.Testing.Internal;
 using Compze.Tessaging.Configuration;
+using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tessaging.Implementation.Transport.Client.Implementation.Universal;
 using Compze.Tessaging.Implementation.Transport.Client.Internal;
 using Compze.Tessaging.Typermedia;
+using Compze.Core.Refactoring.Naming.Internal.Implementation;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
-using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
-namespace Compze.Tessaging.Hosting;
+namespace Compze.Tessaging.Hosting.Testing.Tessaging;
 
-class Client : IClient
+public class TestClient : IClient
 {
    readonly IServiceLocator _serviceLocator;
    readonly ITypermediaRouter _typermediaRouter;
 
-   internal Client(IServiceLocator serviceLocator)
+   TestClient(IServiceLocator serviceLocator)
    {
       _serviceLocator = serviceLocator;
       _typermediaRouter = serviceLocator.Resolve<ITypermediaRouter>();
    }
 
-   bool _started;
-
-   internal async Task StartAsync(EndPointAddress seedAddress)
+   public static async Task<IClient> ConnectTo(EndPointAddress seedAddress)
    {
-      _typermediaRouter.Start();
-      await _typermediaRouter.DiscoverAndConnectAsync(seedAddress).caf();
-      _started = true;
-   }
+      var container = TestEnv.DIContainer.CreateWithServiceLocator();
+      container.Register()
+               .CurrentTestsSerializersIfNotClonedContainer()
+               .CurrentTestsClientTransport()
+               .JSonAppConfigFileConfigurationParameterProvider()
+               .TypeMapper()
+               .TypermediaTransport()
+               .RemoteHypermediaNavigator();
 
-   internal void Stop()
-   {
-      if(_started)
-      {
-         _started = false;
-         _typermediaRouter.Stop();
-      }
-   }
-
-   public static async Task<IClient> ConnectTo(EndPointAddress seedAddress, IDependencyInjectionContainer container)
-   {
-      var register = container.Register();
-      register.JSonAppConfigFileConfigurationParameterProvider()
-              .TypeMapper()
-              .TypermediaTransport()
-              .RemoteHypermediaNavigator();
-
-      var client = new Client(container.ServiceLocator);
-      await client.StartAsync(seedAddress).caf();
+      var client = new TestClient(container.ServiceLocator);
+      client._typermediaRouter.Start();
+      await client._typermediaRouter.DiscoverAndConnectAsync(seedAddress).caf();
       return client;
    }
 
@@ -72,7 +58,7 @@ class Client : IClient
 
    public async ValueTask DisposeAsync()
    {
-      Stop();
+      _typermediaRouter.Stop();
       await _serviceLocator.DisposeAsync().caf();
    }
 }

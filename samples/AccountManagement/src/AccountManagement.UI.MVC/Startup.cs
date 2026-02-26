@@ -1,8 +1,8 @@
-using AccountManagement.API;
 using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Core.Tessaging.Typermedia.Public;
 using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Hosting.Testing;
+using Compze.Tessaging.Hosting.Testing.Tessaging;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using JetBrains.Annotations;
@@ -18,13 +18,14 @@ namespace AccountManagement.UI.MVC;
 public class Startup
 {
    readonly IEndpointHost _host;
-   readonly IClient _client;
+   readonly IEndpoint _endpoint;
+   IClient _client = null!;
 
    public Startup(IConfiguration configuration)
    {
       Configuration = configuration;
       _host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateWithServiceLocatorAndCurrentTestsPluggableComponents());
-      _client = _host.RegisterClient(AccountApi.RegisterWithClientEndpoint);
+      _endpoint = new AccountManagementServerDomainBootstrapper().RegisterWith(_host);
    }
 
    // ReSharper disable once MemberCanBePrivate.Global
@@ -36,6 +37,8 @@ public class Startup
       services.AddMvc();
 
       _host.Start();
+
+      _client = TestClient.ConnectTo(_endpoint.Address!).GetAwaiter().GetResult();
       services.AddHttpContextAccessor();
       services.AddScoped(sp => (IRemoteTypermediaNavigator)sp.GetRequiredService<IHttpContextAccessor>().HttpContext!.Items[typeof(IRemoteTypermediaNavigator)]!);
    }

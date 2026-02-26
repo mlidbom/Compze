@@ -6,6 +6,7 @@ using Compze.Core.Wiring.Testing.Internal;
 using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Performance;
+using Compze.Tessaging.Hosting.Testing.Tessaging;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.SystemCE.CollectionsCE.ConcurrentCE;
@@ -30,10 +31,10 @@ public class PerformanceTest : UniversalTestBase
    protected override async Task InitializeAsyncInternal()
    {
       _host = TestingEndpointHost.Create();
-      new AccountManagementServerDomainBootstrapper().RegisterWith(_host);
-      _client = _host.RegisterClient(setup: AccountApi.RegisterWithClientEndpoint);
-      _scenarioApi = new AccountScenarioApi(_client);
+      var endpoint = new AccountManagementServerDomainBootstrapper().RegisterWith(_host);
       await _host.StartAsync().caf();
+      _client = await TestClient.ConnectTo(endpoint.Address!).caf();
+      _scenarioApi = new AccountScenarioApi(_client);
       //Warmup
       StopwatchCE.TimeExecutionThreaded(() => _scenarioApi.Register.Execute(), iterations: 10);
    }

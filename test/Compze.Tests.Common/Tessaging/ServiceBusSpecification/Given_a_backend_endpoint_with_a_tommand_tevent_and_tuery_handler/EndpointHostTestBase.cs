@@ -1,4 +1,5 @@
 using Compze.Tessaging.Hosting.Testing;
+using Compze.Tessaging.Hosting.Testing.Tessaging;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE;
@@ -71,6 +72,7 @@ public abstract class EndpointHostTestBase : UniversalTestBase
    protected override async Task DisposeAsyncInternal()
    {
       OpenGates();
+      if(Client != null) await Client.DisposeAsync();
       await Host.DisposeAsync();
       _rootContainer.Dispose();
    }
@@ -119,14 +121,13 @@ public abstract class EndpointHostTestBase : UniversalTestBase
                                              {
                                                 builder.RegisterHandlers.ForTevent((IMyTaggregateTevent _) => MyRemoteTaggregateTeventHandlerThreadGate.AwaitPassThrough());
                                              });
-
-      Client = Host.RegisterClientForRegisteredEndpoints();
    }
 
    protected async Task StartHostAsync()
    {
       InitializeHost();
       await Host.StartAsync();
+      Client = await TestClient.ConnectTo(BackendEndPoint.Address!);
    }
 
    protected void CloseGates() => AllGates.ForEach(gate => gate.Close());
