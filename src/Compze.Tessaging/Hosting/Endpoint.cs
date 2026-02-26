@@ -33,14 +33,14 @@ public class Endpoint : IEndpoint
 
    public Endpoint(IServiceLocator serviceLocator,
                    ITessagesInFlightTracker globalStateTracker,
-                   IRoutingInboxClient routingInboxClient,
+                   ITypermediaRoutingClient typermediaRoutingClient,
                    IEndpointRegistry endpointRegistry,
                    EndpointConfiguration configuration)
    {
       Argument.NotNull(serviceLocator).NotNull(configuration);
       ServiceLocator = serviceLocator;
       _globalStateTracker = globalStateTracker;
-      _routingInboxClient = routingInboxClient;
+      _typermediaRoutingClient = typermediaRoutingClient;
       _configuration = configuration;
       _endpointRegistry = endpointRegistry;
    }
@@ -50,7 +50,7 @@ public class Endpoint : IEndpoint
 
    public EndPointAddress? Address => _serverComponents?.Inbox.Address;
    readonly ITessagesInFlightTracker _globalStateTracker;
-   readonly IRoutingInboxClient _routingInboxClient;
+   readonly ITypermediaRoutingClient _typermediaRoutingClient;
    readonly IEndpointRegistry _endpointRegistry;
 
    ServerComponents? _serverComponents;
@@ -66,7 +66,7 @@ public class Endpoint : IEndpoint
 
       RunSanityChecks();
 
-      _routingInboxClient.Start();
+      _typermediaRoutingClient.Start();
 
       _serverComponents = new ServerComponents(ServiceLocator.Resolve<TommandScheduler>(), ServiceLocator.Resolve<IInbox>(), ServiceLocator.Resolve<IOutbox>());
 
@@ -78,7 +78,7 @@ public class Endpoint : IEndpoint
       State.Assert(!_isSending);
       _isSending = true;
       var serverAddresses = _endpointRegistry.ServerEndpointAddresses.ToHashSet();
-      await Task.WhenAll(serverAddresses.Select(address => _routingInboxClient.ConnectAsync(address))).caf();
+      await Task.WhenAll(serverAddresses.Select(address => _typermediaRoutingClient.ConnectAsync(address))).caf();
       if(_serverComponents != null)
       {
          await Task.WhenAll(_serverComponents.Outbox.StartAsync()).caf();
@@ -114,7 +114,7 @@ public class Endpoint : IEndpoint
             await _serverComponents.Inbox.StopAsync().caf();
          }
 
-         _routingInboxClient.Stop();
+         _typermediaRoutingClient.Stop();
       }
    }
 

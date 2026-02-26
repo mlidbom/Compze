@@ -22,73 +22,71 @@ namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Univer
 public static class TransportRegistrar
 {
    public static IComponentRegistrar Transport(this IComponentRegistrar registrar)
-      => registrar.Register(RoutingInboxClient.RegisterWith);
+      => registrar.Register(TypermediaRoutingClient.RegisterWith)
+                  .Register(ExactlyOnceRoutingClient.RegisterWith);
 }
 
-public partial class RoutingInboxClient : IRoutingInboxClient, IDisposable
+public class TypermediaRoutingClient : ITypermediaRoutingClient, IDisposable
 {
    public static void RegisterWith(IComponentRegistrar registrar)
-      => registrar.Register(Singleton.For<IRoutingInboxClient>().CreatedBy((ITessagesInFlightTracker tessagesInFlightTracker, ITypeMapper typeMapper, IRemotableTessageSerializer serializer, ITransportMessagePoster transportMessagePoster)
-                                                                     => new RoutingInboxClient(tessagesInFlightTracker, typeMapper, serializer, transportMessagePoster)));
+      => registrar.Register(
+            Singleton.For<InboxConnectionRouter>().CreatedBy((ITypeMapper typeMapper) => new InboxConnectionRouter(typeMapper)),
+            Singleton.For<ITypermediaRoutingClient>().CreatedBy(
+               (InboxConnectionRouter router, ITessagesInFlightTracker tessagesInFlightTracker, ITypeMapper typeMapper, IRemotableTessageSerializer serializer, ITransportMessagePoster transportMessagePoster)
+                  => new TypermediaRoutingClient(router, tessagesInFlightTracker, typeMapper, serializer, transportMessagePoster)));
 
-   RoutingInboxClient(ITessagesInFlightTracker tessagesInFlightTracker, ITypeMapper typeMapper, IRemotableTessageSerializer serializer, ITransportMessagePoster transportMessagePoster)
+   TypermediaRoutingClient(InboxConnectionRouter inboxConnectionRouter, ITessagesInFlightTracker tessagesInFlightTracker, ITypeMapper typeMapper, IRemotableTessageSerializer serializer, ITransportMessagePoster transportMessagePoster)
    {
+      _inboxConnectionRouter = inboxConnectionRouter;
       _tessagesInFlightTracker = tessagesInFlightTracker;
       _typeMapper = typeMapper;
       _serializer = serializer;
       _transportMessagePoster = transportMessagePoster;
-      _inboxConnectionRouter = new InboxConnectionRouter(typeMapper);
    }
 
+   readonly InboxConnectionRouter _inboxConnectionRouter;
    readonly ITessagesInFlightTracker _tessagesInFlightTracker;
    readonly ITypeMapper _typeMapper;
    readonly IRemotableTessageSerializer _serializer;
    readonly ITransportMessagePoster _transportMessagePoster;
 
    bool _running = false;
-   readonly InboxConnectionRouter _inboxConnectionRouter;
-   IReadOnlyDictionary<EndpointId, IInboxConnection> _inboxConnections = new Dictionary<EndpointId, IInboxConnection>();
+   IReadOnlyDictionary<EndpointId, RemoteEndpointConnection> _connections = new Dictionary<EndpointId, RemoteEndpointConnection>();
 
    public async Task ConnectAsync(EndPointAddress remoteEndpointAddress)
    {
       AssertRunning();
-#pragma warning disable CA2000//We are passing this disposable into a collection that we  track disposal for
-      var clientConnection = new Outbox.Outbox.InboxConnection(_tessagesInFlightTracker, remoteEndpointAddress, _typeMapper, _serializer, _transportMessagePoster);
+#pragma warning disable CA2000//We are passing this disposable into a collection that we track disposal for
+      var connection = new RemoteEndpointConnection(_tessagesInFlightTracker, remoteEndpointAddress, _typeMapper, _serializer, _transportMessagePoster);
 #pragma warning restore CA2000
 
-      await clientConnection.InitAsync().caf();
+      await connection.InitAsync().caf();
 
-      OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _inboxConnections, clientConnection.EndpointInformation.Id, clientConnection);
+      OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _connections, connection.EndpointInformation.Id, connection);
 
       //urgent: we can't have routes be discovered at startup based on the assumption that all endpoints are up...
-      _inboxConnectionRouter.RegisterRoutes(clientConnection, clientConnection.EndpointInformation.HandledTessageTypes);
+      _inboxConnectionRouter.RegisterRoutes(connection, connection.EndpointInformation.HandledTessageTypes);
    }
-
-   public IInboxConnection ConnectionToHandlerFor(IRemotableTommand tommand) =>
-      AssertRunning()._then(() => _inboxConnectionRouter.ConnectionToHandlerFor(tommand));
-
-   public IReadOnlyList<IInboxConnection> SubscriberConnectionsFor(IExactlyOnceTevent tevent) =>
-      AssertRunning()._then(() => _inboxConnectionRouter.SubscriberConnectionsFor(tevent));
 
    public async Task PostAsync(IAtMostOnceTypermediaTommand tommand)
    {
       AssertRunning();
       var connection = _inboxConnectionRouter.ConnectionToHandlerFor(tommand);
-      await connection.PostAsync(tommand).caf();
+      await connection.ApiClient.PostAsync(tommand).caf();
    }
 
    public async Task<TTommandResult> PostAsync<TTommandResult>(IAtMostOnceTommand<TTommandResult> typermediaTommand)
    {
       AssertRunning();
       var connection = _inboxConnectionRouter.ConnectionToHandlerFor(typermediaTommand);
-      return await connection.PostAsync(typermediaTommand).caf();
+      return await connection.ApiClient.PostAsync(typermediaTommand).caf();
    }
 
    public async Task<TTueryResult> GetAsync<TTueryResult>(IRemotableTuery<TTueryResult> tuery)
    {
       AssertRunning();
       var connection = _inboxConnectionRouter.ConnectionToHandlerFor(tuery);
-      return await connection.GetAsync(tuery).caf();
+      return await connection.ApiClient.GetAsync(tuery).caf();
    }
 
    public void Start() => Contract.State.Assert(!_running, () => "already running")
@@ -97,6 +95,7 @@ public partial class RoutingInboxClient : IRoutingInboxClient, IDisposable
    public void Stop() => AssertRunning()._then(() =>
    {
       _running = false;
+      _inboxConnectionRouter.Stop();
    });
 
    bool _disposed;
@@ -111,7 +110,7 @@ public partial class RoutingInboxClient : IRoutingInboxClient, IDisposable
             Stop();
          }
 
-         _inboxConnections.Values.DisposeAll();
+         _connections.Values.DisposeAll();
       }
    }
 
