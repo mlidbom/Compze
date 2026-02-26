@@ -38,92 +38,96 @@ public partial class Inbox
 
             const string ExecuteTaskName = $"{nameof(HandlerExecutionTask)}_{nameof(Execute)}";
 
-            public void Execute()
-            {
-               var tessage = TransportTessage.DeserializeTessageAndCacheForNextCall();
+            public void Execute() => _taskRunner.Run(ExecuteTaskName, ExecuteCore);
 
-               if(TransportTessage.TessageTypeEnum == TransportTessageType.TyperMediaTuery)
-                  ExecuteTuery(tessage);
-               else
+            void ExecuteCore()
+            {
+               try
                {
-                  tessage._assert(it => it is IAtMostOnceTessage);
-                  ExecuteTransactionalTessage(tessage);
+                  var tessage = TransportTessage.DeserializeTessageAndCacheForNextCall();
+
+                  if(TransportTessage.TessageTypeEnum == TransportTessageType.TyperMediaTuery)
+                     ExecuteTuery(tessage);
+                  else
+                  {
+                     tessage._assert(it => it is IAtMostOnceTessage);
+                     ExecuteTransactionalTessage(tessage);
+                  }
+               }
+#pragma warning disable CA1031 // Catch all exception types to ensure _taskCompletionSource is always resolved
+               catch(Exception exception)
+#pragma warning restore CA1031
+               {
+                  _taskCompletionSource.TrySetException(exception);
+                  _coordinator.Failed(this, exception);
                }
             }
 
             void ExecuteTuery(ITessage tessage)
             {
-               _taskRunner.Run(ExecuteTaskName,
-                               () =>
-                               {
-                                  try
-                                  {
-                                     var result = _serviceLocator.ExecuteInIsolatedScope(() => _tessageTask(tessage));
-                                     _taskCompletionSource.SetResult(result);
-                                     _coordinator.Succeeded(this);
-                                  }
+               try
+               {
+                  var result = _serviceLocator.ExecuteInIsolatedScope(() => _tessageTask(tessage));
+                  _taskCompletionSource.SetResult(result);
+                  _coordinator.Succeeded(this);
+               }
 #pragma warning disable CA1031 //This is how you handle exceptions when manually using _taskCompletionSource
-                                  catch(Exception exception)
+               catch(Exception exception)
 #pragma warning restore CA1031
-                                  {
-                                     _taskCompletionSource.SetException(exception);
-                                     _coordinator.Failed(this, exception);
-                                  }
-                               });
+               {
+                  _taskCompletionSource.SetException(exception);
+                  _coordinator.Failed(this, exception);
+               }
             }
 
             void ExecuteTransactionalTessage(ITessage tessage)
             {
-               _taskRunner.Run(ExecuteTaskName,
-                               () =>
-                               {
-                                  var retryPolicy = new DefaultRetryPolicy(tessage);
+               var retryPolicy = new DefaultRetryPolicy(tessage);
 
-                                  while(true)
-                                  {
-                                     var tessageHandlerSucceeded = false;
-                                     object? result = null;
-                                     try
-                                     {
-                                        using(_serviceLocator.BeginScope())
-                                        {
-                                           result = TransactionScopeCe.Execute(() =>
-                                           {
-                                              var innerResult = _tessageTask(tessage);
-                                              _tessageStorage.MarkAsSucceeded(TransportTessage);
-                                              return innerResult;
-                                           });
-                                           tessageHandlerSucceeded = true;
-                                        }
+               while(true)
+               {
+                  var tessageHandlerSucceeded = false;
+                  object? result = null;
+                  try
+                  {
+                     using(_serviceLocator.BeginScope())
+                     {
+                        result = TransactionScopeCe.Execute(() =>
+                        {
+                           var innerResult = _tessageTask(tessage);
+                           _tessageStorage.MarkAsSucceeded(TransportTessage);
+                           return innerResult;
+                        });
+                        tessageHandlerSucceeded = true;
+                     }
 
-                                        _taskCompletionSource.SetResult(result);
-                                        _coordinator.Succeeded(this);
-                                        return;
-                                     }
+                     _taskCompletionSource.SetResult(result);
+                     _coordinator.Succeeded(this);
+                     return;
+                  }
 #pragma warning disable CA1031 //This is how you handle exceptions when manually using _taskCompletionSource
-                                     catch(Exception exception)
-                                     {
+                  catch(Exception exception)
+                  {
 #pragma warning restore CA1031
-                                        if(tessageHandlerSucceeded) //The handler succeeded but something about cleaning up the scope failed.
-                                        {
-                                           this.Log().Error(exception, "Tessage handler succeeded but an exception was thrown while cleaning up the scope.");
-                                           _taskCompletionSource.SetResult(result);
-                                           _coordinator.Succeeded(this);
-                                           return;
-                                        }
+                     if(tessageHandlerSucceeded) //The handler succeeded but something about cleaning up the scope failed.
+                     {
+                        this.Log().Error(exception, "Tessage handler succeeded but an exception was thrown while cleaning up the scope.");
+                        _taskCompletionSource.SetResult(result);
+                        _coordinator.Succeeded(this);
+                        return;
+                     }
 
-                                        _tessageStorage.RecordException(TransportTessage, exception);
+                     _tessageStorage.RecordException(TransportTessage, exception);
 
-                                        if(!retryPolicy.TryAwaitNextRetryTimeForException(exception))
-                                        {
-                                           _tessageStorage.MarkAsFailed(TransportTessage);
-                                           _taskCompletionSource.SetException(exception);
-                                           _coordinator.Failed(this, exception);
-                                           return;
-                                        }
-                                     }
-                                  }
-                               });
+                     if(!retryPolicy.TryAwaitNextRetryTimeForException(exception))
+                     {
+                        _tessageStorage.MarkAsFailed(TransportTessage);
+                        _taskCompletionSource.SetException(exception);
+                        _coordinator.Failed(this, exception);
+                        return;
+                     }
+                  }
+               }
             }
 
             public HandlerExecutionTask(TransportTessage.InComing transportTessage, Coordinator coordinator, ITaskRunner taskRunner, ITessageStorage tessageStorage, IServiceLocator serviceLocator, ITessageHandlerRegistry handlerRegistry)
