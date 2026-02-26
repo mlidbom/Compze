@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Tessaging.Hosting.Testing.Wiring;
@@ -37,16 +38,31 @@ public class TestingEndpointHost : TestingEndpointHostBase
 
    protected override async ValueTask DisposeAsync(bool disposing)
    {
+      List<Exception> exceptions = [];
       try
       {
          await base.DisposeAsync(disposing).caf();
       }
-      finally
+      catch(Exception e)
       {
-         if(_ownedContainer != null)
+         exceptions.Add(e);
+      }
+
+      if(_ownedContainer != null)
+      {
+         try
          {
             await _ownedContainer.DisposeAsync();
          }
+         catch(Exception e)
+         {
+            exceptions.Add(e);
+         }
+      }
+
+      if(exceptions.Count > 0)
+      {
+         throw new AggregateException(exceptions);
       }
    }
 
