@@ -13,13 +13,27 @@ namespace Compze.Utilities.SystemCE;
 internal class RunOnce
 {
    int _ran = 0;
+   readonly TaskCompletionSource _completed = new();
+
    public bool IsFirstCall() => Interlocked.Increment(ref _ran) == 1;
 
    public async Task RunIfFirstCallAsync(Func<Task> action)
    {
       if(IsFirstCall())
       {
-         await action().caf();
+         try
+         {
+            await action().caf();
+            _completed.TrySetResult();
+         }
+         catch(Exception ex)
+         {
+            _completed.TrySetException(ex);
+            throw;
+         }
+      } else
+      {
+         await _completed.Task.caf();
       }
    }
 
@@ -27,7 +41,19 @@ internal class RunOnce
    {
       if(IsFirstCall())
       {
-         action();
+         try
+         {
+            action();
+            _completed.TrySetResult();
+         }
+         catch(Exception ex)
+         {
+            _completed.TrySetException(ex);
+            throw;
+         }
+      } else
+      {
+         _completed.Task.GetAwaiter().GetResult();
       }
    }
 }
