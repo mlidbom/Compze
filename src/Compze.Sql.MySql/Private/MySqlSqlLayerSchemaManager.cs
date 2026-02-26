@@ -4,7 +4,7 @@ using Compze.Sql.MySql.Private.Tessaging;
 using Compze.Sql.MySql.Private.TEventStore;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
-using Compze.Utilities.SystemCE;
+using Compze.Utilities.SystemCE.ThreadingCE;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using Compze.Utilities.SystemCE.TransactionsCE;
 
@@ -22,7 +22,7 @@ public class MySqlSqlLayerSchemaManager(IMySqlConnectionPool connectionPool)
 
    readonly IMySqlConnectionPool _connectionPool = connectionPool;
 
-   readonly RunOnce _runOnce = new();
+   readonly RunOnceAsync _runOnce = new();
 
    public async Task EnsureSchemaInitializedAsync() => await _runOnce.RunIfFirstCallAsync(async () =>
    {

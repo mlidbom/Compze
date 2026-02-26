@@ -5,29 +5,38 @@
 #nullable enable
 using System;
 using System.Threading;
-using System.Threading.Tasks;
-using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
-namespace Compze.Utilities.SystemCE;
+namespace Compze.Utilities.SystemCE.ThreadingCE;
 
 internal class RunOnce
 {
-   int _ran = 0;
-   public bool IsFirstCall() => Interlocked.Increment(ref _ran) == 1;
+   int _ran;
+   readonly ManualResetEventSlim _completed = new();
+   Exception? _exception;
 
-   public async Task RunIfFirstCallAsync(Func<Task> action)
-   {
-      if(IsFirstCall())
-      {
-         await action().caf();
-      }
-   }
+   public bool IsFirstCall() => _ran == 0 && Interlocked.CompareExchange(ref _ran, 1, 0) == 0;
 
    public void RunIfFirstCall(Action action)
    {
       if(IsFirstCall())
       {
-         action();
+         try
+         {
+            action();
+         }
+         catch(Exception ex)
+         {
+            _exception = ex;
+            throw;
+         }
+         finally
+         {
+            _completed.Set();
+         }
+      } else
+      {
+         _completed.Wait();
+         if(_exception is not null) throw new AggregateException(_exception);
       }
    }
 }

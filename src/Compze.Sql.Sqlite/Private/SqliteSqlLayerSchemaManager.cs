@@ -3,7 +3,7 @@ using Compze.Sql.Sqlite.Private.Tessaging;
 using Compze.Sql.Sqlite.Private.TEventStore;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
-using Compze.Utilities.SystemCE;
+using Compze.Utilities.SystemCE.ThreadingCE;
 using Compze.Utilities.SystemCE.TransactionsCE;
 using System.Threading.Tasks;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
@@ -22,7 +22,7 @@ public class SqliteSqlLayerSchemaManager(ISqliteConnectionPool connectionPool)
 
    readonly ISqliteConnectionPool _connectionPool = connectionPool;
 
-   readonly RunOnce _runOnce = new();
+   readonly RunOnceAsync _runOnce = new();
 
    public async Task EnsureSchemaInitializedAsync() => await _runOnce.RunIfFirstCallAsync(async () =>
    {
