@@ -13,18 +13,14 @@ public class TestingEndpointHost : TestingEndpointHostBase
 {
    IDependencyInjectionContainer? _ownedContainer = null;
 
-   public TestingEndpointHost(IComponentRegistrar registrar, IDependencyInjectionContainer rootContainer) : base(registrar, rootContainer.Clone)
-   {
-
-   }
+   public TestingEndpointHost(IComponentRegistrar registrar, IDependencyInjectionContainer rootContainer) : base(registrar, rootContainer.Clone) {}
 
    public static ITestingEndpointHost Create(IDependencyInjectionContainer? rootContainer = null)
    {
-#pragma warning disable CA2000// We are passing this disposable into a constructor of an object we don't own
+#pragma warning disable CA2000 // We are passing this disposable into a constructor of an object we don't own
       var usedContainer = rootContainer ?? TestEnv.DIContainer.CreateWithServiceLocator()
                                                   ._mutate(it => it.Register().CurrentTestsDbPoolIfNotCloneContainer());
-#pragma warning restore CA2000// We are passing this disposable into a constructor of an object we don't own
-
+#pragma warning restore CA2000 // We are passing this disposable into a constructor of an object we don't own
 
       var host = new TestingEndpointHost(new TestingComponentRegistrar(), usedContainer);
 
@@ -36,6 +32,7 @@ public class TestingEndpointHost : TestingEndpointHostBase
       return host;
    }
 
+#pragma warning disable CA1031 // We want to catch all exceptions and throw an aggregate if there are multiple
    protected override async ValueTask DisposeAsync(bool disposing)
    {
       List<Exception> exceptions = [];
@@ -65,6 +62,7 @@ public class TestingEndpointHost : TestingEndpointHostBase
          throw new AggregateException(exceptions);
       }
    }
+#pragma warning restore CA1031
 
    public override IEndpoint RegisterEndpoint(string name, EndpointId id, Action<IEndpointBuilder> setup)
       => base.RegisterEndpoint(name,
@@ -76,6 +74,5 @@ public class TestingEndpointHost : TestingEndpointHostBase
                                          .CurrentTestsPluggableComponents(connectionStringName: id.ToString());
 
                                   setup(builder);
-
                                });
 }

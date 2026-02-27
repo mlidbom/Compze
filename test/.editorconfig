@@ -1,3 +1,4 @@
 [*.cs]
 configure_await_analysis_mode = ui # Rider IDE understands this 
 dotnet_diagnostic.CA2007.severity = none # MSBuild/CLI requires this explicit diagnostic suppression
+dotnet_diagnostic.CA1052.severity = none # BDD-style nested specification classes cannot be static in xUnit

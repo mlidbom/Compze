@@ -9,6 +9,7 @@ using Xunit;
 
 namespace Compze.Utilities.Tests.SystemCE.ThreadingCE;
 
+#pragma warning disable CA1052 // Static holder class used for test organization
 public class RunOnceAsync_specification
 {
    public class RunIfFirstCallAsync

@@ -29,8 +29,10 @@ public class TestClient : IClient
 
    public static async Task<IClient> ConnectTo(EndPointAddress seedAddress)
    {
-      var container = TestEnv.DIContainer.CreateWithServiceLocator();
-      container.Register()
+#pragma warning disable CA2000 // We are passing this disposable into a constructor of an object we don't own
+        var container = TestEnv.DIContainer.CreateWithServiceLocator();
+#pragma warning restore CA2000
+        container.Register()
                .CurrentTestsSerializersIfNotClonedContainer()
                .CurrentTestsClientTransport()
                .JSonAppConfigFileConfigurationParameterProvider()

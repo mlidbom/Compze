@@ -40,10 +40,12 @@ public abstract class TestingEndpointHostBase : EndpointHost, ITestingEndpointHo
             {
                WaitForEndpointsToBeAtRest(timeoutOverride: 10.Seconds());
             }
+#pragma warning disable CA1031
             catch(Exception e)
             {
                unHandledExceptions.Add(e);
             }
+#pragma warning restore CA1031
          }
 
          unHandledExceptions.AddRange(TessagesInFlightTracker.GetExceptions().ToList());
