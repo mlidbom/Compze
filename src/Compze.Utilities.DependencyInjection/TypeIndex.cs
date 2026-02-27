@@ -20,7 +20,7 @@ public abstract class TypeIndex<TInheritor> where TInheritor : TypeIndex<TInheri
       if(_map.TryGetValue(type, out var value))
          return value;
 
-      using(MonitorCE.TakeUpdateLock())
+      using(MonitorCE.TakeLock())
       {
          if(_map.TryGetValue(type, out var value2))
             return value2;

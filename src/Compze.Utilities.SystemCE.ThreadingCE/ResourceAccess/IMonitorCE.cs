@@ -3,7 +3,6 @@ using Compze.Utilities.SystemCE.ThreadingCE.Utilities;
 
 namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
-//THis file contains the methods that implementations actually have to implement
 public partial interface IMonitorCE
 {
    static readonly TimeSpan DefaultTimeout = CompzeEnvironment.IsNCrunch
@@ -11,23 +10,13 @@ public partial interface IMonitorCE
                                                 : 2.Minutes(); //MsSql default query timeout is 30 seconds. Default .Net transaction timeout is 60. If we reach 2 minutes it is highly likely that we have an in-memory deadlock.
 
    public static IMonitorCE WithDefaultTimeout() => new MonitorCE(DefaultTimeout, DefaultTimeout);
-   public static IMonitorCE WithTimeouts(TimeSpan lockTimeout, TimeSpan? waitTimeout = null) => new MonitorCE(lockTimeout, waitTimeout ?? lockTimeout);
+   public static IMonitorCE WithTimeout(TimeSpan timeout) => new MonitorCE(timeout, timeout);
 
    TimeSpan LockTimeout { get; }
-   TimeSpan WaitTimeout { get; }
 
-   IDisposable TakeReadLock(TimeSpan? timeout = null);
-   IDisposable TakeUpdateLock(TimeSpan? timeout = null);
-
-   IDisposable TakeReadLockWhen(Func<bool> condition, TimeSpan? waitTimeout = null, TimeSpan? lockTimeout = null);
-   IDisposable TakeUpdateLockWhen(Func<bool> condition, TimeSpan? waitTimeout = null, TimeSpan? lockTimeout = null);
-
-   IDisposable? TryTakeReadLockWhen(Func<bool> condition, TimeSpan? waitTimeout = null, TimeSpan? lockTimeout = null);
-   IDisposable? TryTakeUpdateLockWhen(Func<bool> condition, TimeSpan? waitTimeout = null, TimeSpan? lockTimeout = null);
-
+   IDisposable TakeLock(TimeSpan? timeout = null);
 
    long ContentionCount { get; }
 
-   //review: do we want this exposed?
    void SetTimeToWaitForStackTrace(TimeSpan timeToWaitForStackTrace);
 }

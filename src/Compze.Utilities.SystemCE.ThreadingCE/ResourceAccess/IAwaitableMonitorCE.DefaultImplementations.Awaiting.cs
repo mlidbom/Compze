@@ -3,7 +3,7 @@ using System;
 
 namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
-public partial interface IMonitorCE
+public partial interface IAwaitableMonitorCE
 {
    unit Await(Func<bool> condition, TimeSpan? waitTimeout = null, TimeSpan? lockTimeout = null)
    {

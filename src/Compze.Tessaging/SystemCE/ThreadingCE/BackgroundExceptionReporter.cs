@@ -21,7 +21,7 @@ public static class BackgroundExceptionReporterRegistrar
 
       public void ReportException(Exception exception)
       {
-         _collectedExceptions.Update(it => it.Add(exception));
+         _collectedExceptions.Locked(it => it.Add(exception));
          try
          {
             CompzeLogger.For<BackgroundExceptionReporterCore>().Error(exception, "Exception thrown on background thread.");
@@ -30,13 +30,13 @@ public static class BackgroundExceptionReporterRegistrar
          catch(Exception loggingException)
          {
 #pragma warning restore CA1031
-            _collectedExceptions.Update(it => it.Add(loggingException));
+            _collectedExceptions.Locked(it => it.Add(loggingException));
          }
       }
 
       public void ThrowIfAnyExceptions()
       {
-         var exceptions = _collectedExceptions.Read(exceptions => exceptions.ToArray());
+         var exceptions = _collectedExceptions.Locked(exceptions => exceptions.ToArray());
          if(exceptions.Length > 0)
          {
             throw new AggregateException("Exceptions were thrown on background threads during endpoint execution.", exceptions);

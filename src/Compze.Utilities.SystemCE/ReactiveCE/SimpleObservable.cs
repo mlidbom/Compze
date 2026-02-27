@@ -17,13 +17,13 @@ public class SimpleObservable<TTevent> : IObservable<TTevent>
    {
       Argument.Assert(tevent is not null);
 
-      _observerCollection.Update(it => it.ForEach(observer => observer.OnNext(tevent)));
+      _observerCollection.Locked(it => it.ForEach(observer => observer.OnNext(tevent)));
    }
 
    /// <inheritdoc />
    public IDisposable Subscribe(IObserver<TTevent> observer)
    {
-      _observerCollection.Update(it =>  it.Add(observer));
-      return new Disposable(() => _observerCollection.Update(it => it.Remove(observer)));
+      _observerCollection.Locked(it =>  it.Add(observer));
+      return new Disposable(() => _observerCollection.Locked(it => it.Remove(observer)));
    }
 }

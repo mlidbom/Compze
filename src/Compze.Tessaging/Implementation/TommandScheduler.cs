@@ -35,7 +35,7 @@ public class TommandScheduler(IOutbox transport, ITaskRunner taskRunner) : IDisp
    readonly ITaskRunner _taskRunner = taskRunner;
    Timer? _scheduledTessagesTimer;
    readonly List<ScheduledTommand> _scheduledTessages = [];
-   readonly IMonitorCE _monitor = IMonitorCE.WithTimeouts(1.Seconds());
+   readonly IMonitorCE _monitor = IMonitorCE.WithTimeout(1.Seconds());
 
    public async Task StartAsync()
    {
@@ -43,7 +43,7 @@ public class TommandScheduler(IOutbox transport, ITaskRunner taskRunner) : IDisp
       await Task.CompletedTask.caf();
    }
 
-   public void Schedule(DateTime sendAt, IExactlyOnceTommand tessage) => _monitor.Update(() =>
+   public void Schedule(DateTime sendAt, IExactlyOnceTommand tessage) => _monitor.Locked(() =>
    {
       if(UtcTimeSource.UtcNow > sendAt.ToUniversalTimeSafely())
          throw new InvalidOperationException(message: "You cannot schedule a queuedTessageInformation to be sent in the past.");
@@ -57,7 +57,7 @@ public class TommandScheduler(IOutbox transport, ITaskRunner taskRunner) : IDisp
    {
       try
       {
-         _monitor.Update(() =>
+         _monitor.Locked(() =>
          {
             var dueCommands = _scheduledTessages.RemoveWhere(HasPassedSendTime);
             if(dueCommands.Count > 0)

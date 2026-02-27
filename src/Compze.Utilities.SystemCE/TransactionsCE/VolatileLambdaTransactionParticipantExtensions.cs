@@ -15,14 +15,14 @@ public static class VolatileLambdaTransactionParticipantExtensions
 
    static Transaction UseParticipant(Transaction @this, Action<VolatileLambdaTransactionParticipant> action)
    {
-      Participants.Update(participants =>
+      Participants.Locked(participants =>
       {
          var participant = participants.GetOrAdd(@this.TransactionInformation.LocalIdentifier,
                                                  () =>
                                                  {
                                                     var createdParticipant = new VolatileLambdaTransactionParticipant(
-                                                       onCommit: () => Participants.Update(parts => parts.Remove(@this.TransactionInformation.LocalIdentifier)),
-                                                       onRollback: () => Participants.Update(parts => parts.Remove(@this.TransactionInformation.LocalIdentifier)));
+                                                       onCommit: () => Participants.Locked(parts => parts.Remove(@this.TransactionInformation.LocalIdentifier)),
+                                                       onRollback: () => Participants.Locked(parts => parts.Remove(@this.TransactionInformation.LocalIdentifier)));
                                                     createdParticipant.EnsureEnlistedInAnyAmbientTransaction();
                                                     return createdParticipant;
                                                  });

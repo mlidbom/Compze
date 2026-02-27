@@ -33,7 +33,7 @@ public sealed class PgSqlDbPoolSqlLayer : IDbPoolSqlLayer
    }
 
    public string ConnectionStringFor(DbPoolDatabase db)
-      => _connectionStringBuilder.Update(it => it._mutate(me =>
+      => _connectionStringBuilder.Locked(it => it._mutate(me =>
       {
          me.Database = db.Name.ToLowerInvariant();
          me.MinPoolSize = 1;

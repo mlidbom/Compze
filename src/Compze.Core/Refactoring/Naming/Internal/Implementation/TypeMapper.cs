@@ -39,7 +39,7 @@ public class TypeMapper : ITypeMapper
 
    public TypeId GetId(Type type)
    {
-      return State.Read(state =>
+      return State.Locked(state =>
       {
          if(state.TypeToTypeIdMap.TryGetValue(type, out var typeId))
          {
@@ -58,7 +58,7 @@ public class TypeMapper : ITypeMapper
 
    public Type GetType(TypeId teventTypeId)
    {
-      return State.Read(state =>
+      return State.Locked(state =>
       {
          if(state.TypeIdToTypeMap.TryGetValue(teventTypeId, out var type))
          {
@@ -71,13 +71,13 @@ public class TypeMapper : ITypeMapper
 
    public bool TryGetType(TypeId typeId, [NotNullWhen(true)] out Type? type)
    {
-      type = State.Read(state => state.TypeIdToTypeMap.GetValueOrDefault(typeId));
+      type = State.Locked(state => state.TypeIdToTypeMap.GetValueOrDefault(typeId));
       return type != null;
    }
 
    public IEnumerable<TypeId> GetIdForTypesAssignableTo(Type type)
    {
-      return State.Read(state =>
+      return State.Locked(state =>
       {
          var found = state
                     .TypeToTypeIdMap
@@ -101,7 +101,7 @@ public class TypeMapper : ITypeMapper
       });
    }
 
-   public unit AssertMappingsExistFor(IEnumerable<Type> typesThatRequireMappings) => State.Update(state =>
+   public unit AssertMappingsExistFor(IEnumerable<Type> typesThatRequireMappings) => State.Locked(state =>
    {
       var missing = typesThatRequireMappings.Where(type => !state.TypeToTypeIdMap.ContainsKey(type)).ToList();
       if(missing.Any()) throw BuildExceptionDescribingHowToAddMissingMappings(missing);
@@ -122,7 +122,7 @@ public class TypeMapper : ITypeMapper
 
    static void EnsureAllCurrentlyLoadedAssembliesHaveBeenCheckedForRequiredMappings() => _reentrancyGuard.ExecuteIfNotReEntering(() =>
    {
-      State.Update(state =>
+      State.Locked(state =>
       {
          var unHandledAssemblies = AppDomain.CurrentDomain.GetAssemblies().Except(state.CheckedAssemblies);
 
@@ -202,7 +202,7 @@ public class TypeMapper : ITypeMapper
       var allTypesRequiringMapping = TypeMapperTypeDiscovery.GetTypesRequiringMapping(assembly);
 
       // Get existing mappings for types in this assembly from the current TypeMapper state
-      var existingMappings = State.Read(state => allTypesRequiringMapping
+      var existingMappings = State.Locked(state => allTypesRequiringMapping
                                                 .Where(type => state.TypeToTypeIdMap.ContainsKey(type))
                                                 .ToDictionary(type => type, type => state.TypeToTypeIdMap[type]));
 

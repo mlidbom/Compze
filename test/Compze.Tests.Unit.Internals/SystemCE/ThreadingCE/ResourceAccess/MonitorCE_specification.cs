@@ -21,7 +21,7 @@ public class MonitorCE_specification : UniversalTestBase
 {
    [XF] public void When_one_thread_has_UpdateLock_other_thread_is_blocked_until_first_thread_disposes_lock_()
    {
-      var monitor = IMonitorCE.WithTimeouts(1.Seconds());
+      var monitor = IAwaitableMonitorCE.WithTimeouts(1.Seconds());
 
       var updateLock = monitor.TakeUpdateLock();
 
@@ -47,7 +47,7 @@ public class MonitorCE_specification : UniversalTestBase
 
    [XF] public void Owning_thread_can_reenter_the_lock_and_the_lock_is_only_exited_when_releasing_the_outermost_lock()
    {
-      var monitor = IMonitorCE.WithTimeouts(1.Seconds());
+      var monitor = IAwaitableMonitorCE.WithTimeouts(1.Seconds());
       using(monitor.TakeUpdateLock())
       {
          using(monitor.TakeUpdateLock()) {}
@@ -61,7 +61,7 @@ public class MonitorCE_specification : UniversalTestBase
 
    public class When_a_thread_waiting_in_TakeUpdateLockWhen_is_interrupted : MonitorCE_specification
    {
-      readonly IMonitorCE _monitor = IMonitorCE.WithTimeouts(30.Seconds());
+      readonly IAwaitableMonitorCE _monitor = IAwaitableMonitorCE.WithTimeouts(30.Seconds());
       readonly Thread _waitingThread;
       readonly ManualResetEventSlim _threadIsWaiting = new(false);
       readonly ManualResetEventSlim _threadCompleted = new(false);
@@ -118,7 +118,7 @@ public class MonitorCE_specification : UniversalTestBase
 
       static Exception RunScenario(TimeSpan ownerThreadBlockTime, TimeSpan monitorTimeout, TimeSpan? timeToWaitForStackTrace = null)
       {
-         var monitor = IMonitorCE.WithTimeouts(monitorTimeout);
+         var monitor = IAwaitableMonitorCE.WithTimeouts(monitorTimeout);
          if(timeToWaitForStackTrace.HasValue)
          {
             monitor.SetTimeToWaitForStackTrace(timeToWaitForStackTrace.Value);

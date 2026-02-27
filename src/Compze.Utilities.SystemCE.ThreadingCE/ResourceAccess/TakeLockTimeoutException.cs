@@ -5,7 +5,7 @@ namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
 public class TakeLockTimeoutException : Exception
 {
-   readonly IMonitorCE _monitor = IMonitorCE.WithDefaultTimeout();
+   readonly IAwaitableMonitorCE _monitor = IAwaitableMonitorCE.WithDefaultTimeout();
    readonly TimeSpan _timeToWaitForOwningThreadStacktrace;
    string? _blockingThreadStacktrace;
 

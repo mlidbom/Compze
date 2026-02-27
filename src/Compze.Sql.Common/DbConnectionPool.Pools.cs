@@ -93,13 +93,13 @@ public abstract partial class DbConnectionPool<TConnection, TCommand>
          } else
          {
             //TConnection requires that the same connection is used throughout a transaction
-            var getConnectionTask = _transactionConnections.Update(
+            var getConnectionTask = _transactionConnections.Locked(
                transactionConnections => transactionConnections.GetOrAdd(
                   transactionLocalIdentifier,
                   constructor: async () =>
                   {
                      var connection = await OpenConnectionAsync().caf();
-                     Transaction.Current!.OnCompleted(action: () => _transactionConnections.Update(transactionConnectionsAfterTransaction =>
+                     Transaction.Current!.OnCompleted(action: () => _transactionConnections.Locked(transactionConnectionsAfterTransaction =>
                      {
                         transactionConnectionsAfterTransaction.Remove(transactionLocalIdentifier);
                         connection.Dispose();
@@ -122,13 +122,13 @@ public abstract partial class DbConnectionPool<TConnection, TCommand>
          } else
          {
             //TConnection requires that the same connection is used throughout a transaction
-            var getConnectionTask = _transactionConnections.Update(
+            var getConnectionTask = _transactionConnections.Locked(
                transactionConnections => transactionConnections.GetOrAdd(
                   transactionLocalIdentifier,
                   constructor: () =>
                   {
                      var createConnectionTask = Task.FromResult(OpenConnection());
-                     Transaction.Current!.OnCompleted(action: () => _transactionConnections.Update(transactionConnectionsAfterTransaction =>
+                     Transaction.Current!.OnCompleted(action: () => _transactionConnections.Locked(transactionConnectionsAfterTransaction =>
                      {
                         transactionConnectionsAfterTransaction.Remove(transactionLocalIdentifier);
                         createConnectionTask.Result.Dispose();

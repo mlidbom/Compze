@@ -18,7 +18,7 @@ public class StrictlyManagedResourceTests : UniversalTestBase
    [XF] public void If_not_disposed_register_uncatchable_exception_when_finalizer_runs()
    {
       StrictlyManagedResources.SuppressLoggingWhileExecuting(() =>
-                                                                UncatchableExceptionsGatherer.TestingMonitor.Update(() =>
+                                                                UncatchableExceptionsGatherer.TestingMonitor.Locked(() =>
                                                                 {
                                                                    unit.From(() =>
                                                                    {

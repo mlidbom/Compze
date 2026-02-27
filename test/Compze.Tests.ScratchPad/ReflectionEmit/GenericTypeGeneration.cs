@@ -51,7 +51,7 @@ public class Example
          return cachedWrapperImplementation;
       }
 
-      return MonitorCE.Update(() =>
+      return MonitorCE.Locked(() =>
       {
          if(_createdWrapperTypes.TryGetValue(wrapperTeventType, out cachedWrapperImplementation))
          {
@@ -66,7 +66,7 @@ public class Example
 
          var requiredTeventInterface = wrappedTeventType.GetGenericParameterConstraints().Single(constraint => constraint.IsInterface && typeof(ITevent).IsAssignableFrom(constraint));
 
-         var genericWrapperTeventType = AssemblyBuilderCE.Module.Update(module =>
+         var genericWrapperTeventType = AssemblyBuilderCE.Module.Locked(module =>
          {
             var wrapperTeventBuilder = module.DefineType(
                name: $"{wrapperTeventType}_ilgen_impl",

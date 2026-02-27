@@ -30,7 +30,7 @@ public static class WrapperTeventImplementationGenerator
       where TWrapperTevent : IPublisherIdentifyingTevent<TWrappedTevent>
       where TWrappedTevent : ITevent
    {
-      static readonly Func<ITevent, IPublisherIdentifyingTevent<ITevent>> UntypedConstructor = MonitorCE.Update(() => CreateConstructorFor(typeof(TWrappedTevent)));
+      static readonly Func<ITevent, IPublisherIdentifyingTevent<ITevent>> UntypedConstructor = MonitorCE.Locked(() => CreateConstructorFor(typeof(TWrappedTevent)));
 
       public static readonly Func<TWrappedTevent, IPublisherIdentifyingTevent<TWrappedTevent>> Constructor = tevent => (IPublisherIdentifyingTevent<TWrappedTevent>)UntypedConstructor(tevent);
    }
@@ -93,7 +93,7 @@ public static class WrapperTeventImplementationGenerator
 
       var requiredTeventInterface = wrappedTeventType.GetGenericParameterConstraints().Single(constraint => constraint.IsInterface && typeof(ITevent).IsAssignableFrom(constraint));
 
-      var genericWrapperTeventType = AssemblyBuilderCE.Module.Update(module =>
+      var genericWrapperTeventType = AssemblyBuilderCE.Module.Locked(module =>
       {
          var wrapperTeventBuilder = module.DefineType(
             name: $"{wrapperTeventType}_compze_generated_implementation",

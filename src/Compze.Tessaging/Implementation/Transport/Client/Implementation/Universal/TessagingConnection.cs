@@ -64,7 +64,7 @@ public class TessagingConnection(
       var transportTessage = TransportTessage.OutGoing.Create(tessage, _typeMapper, _serializer);
       _tessagesInFlightTracker.SendingTessageOnTransport(transportTessage, EndpointInformation.Id);
 
-      _queue.Update(queue => queue.Enqueue(new PendingDelivery(tessage, transportTessage)));
+      _queue.Locked(queue => queue.Enqueue(new PendingDelivery(tessage, transportTessage)));
 
       _signal.Set();
    }
@@ -109,7 +109,7 @@ public class TessagingConnection(
       {
          while(!_cancellationSource.IsCancellationRequested)
          {
-            var pending = _queue.Read(queue => queue.Count > 0 ? queue.Peek() : null);
+            var pending = _queue.Locked(queue => queue.Count > 0 ? queue.Peek() : null);
 
             if(pending == null)
             {
@@ -119,7 +119,7 @@ public class TessagingConnection(
 
             if(TrySend(pending))
             {
-               _queue.Update(queue => queue.Dequeue());
+               _queue.Locked(queue => queue.Dequeue());
 
                _consecutiveFailures = 0;
             } else

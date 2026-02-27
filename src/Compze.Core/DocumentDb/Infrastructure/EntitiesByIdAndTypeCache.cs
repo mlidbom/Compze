@@ -13,7 +13,7 @@ public class EntitiesByIdAndTypeCache
 {
    readonly IThreadShared<Dictionary<IdAndType, object>> _data = IThreadShared.WithDefaultTimeouts(new Dictionary<IdAndType, object>());
 
-   public void Add<T>(object id, T value) => _data.Update(data =>
+   public void Add<T>(object id, T value) => _data.Locked(data =>
    {
       Argument.Assert(value is not null);
       var key = IdAndType.Create(id, value.GetType());
@@ -21,21 +21,21 @@ public class EntitiesByIdAndTypeCache
       data[key] = value;
    });
 
-   public void Remove(object id, Type documentType) => _data.Update(data =>
+   public void Remove(object id, Type documentType) => _data.Locked(data =>
    {
       IdAndType.Create(id, documentType)
                ._assert(data.Remove, it => $"No object with id: {it} of type: {documentType.FullName} is present");
    });
 
    public IList<KeyValuePair<string, object>> GetAll() =>
-      _data.Read(data => data
+      _data.Locked(data => data
                         .Select(pair => KeyValuePair.Create(pair.Key.Id, pair.Value))
                         .ToList());
 
    public bool Contains(Type type, object id) => ContainsInternal(IdAndType.Create(id, type));
 
    public bool TryGet<T>(object id, out T value) =>
-      _data.ReadOut((data, out value) =>
+      _data.LockedOut((data, out value) =>
                     {
                        if(data.TryGetValue(IdAndType.Create(id, typeof(T)), out var found))
                        {
@@ -53,7 +53,7 @@ public class EntitiesByIdAndTypeCache
       if(ContainsInternal(key)) throw new Exception($"Instance of {key.DocumentType.FullName} with Id: {key.Id} is already present");
    }
 
-   bool ContainsInternal(IdAndType key) => _data.Read(it => it.TryGetValue(key, out _));
+   bool ContainsInternal(IdAndType key) => _data.Locked(it => it.TryGetValue(key, out _));
 
    public readonly record struct IdAndType(string Id, Type DocumentType)
    {

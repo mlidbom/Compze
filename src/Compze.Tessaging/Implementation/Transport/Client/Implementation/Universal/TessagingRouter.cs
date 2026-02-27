@@ -67,7 +67,7 @@ public class TessagingRouter : ITessagingRouter, IDisposable
 
       await connection.InitAsync().caf();
 
-      using(_monitor.TakeUpdateLock())
+      using(_monitor.TakeLock())
       {
          OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _connections, connection.EndpointInformation.Id, connection);
          RegisterRoutes(connection, connection.EndpointInformation.HandledTessageTypes);
@@ -141,7 +141,7 @@ public class TessagingRouter : ITessagingRouter, IDisposable
                                  .Select(route => route.Connection)
                                  .ToArray();
 
-      using(_monitor.TakeUpdateLock())
+      using(_monitor.TakeLock())
       {
          OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _teventSubscriberRouteCache, tevent.GetType(), subscriberConnections);
       }

@@ -30,7 +30,7 @@ public partial class TessageTypeInspector
    {
       if(_successfullyInspectedSubscribableTypes.Contains(type)) return;
 
-      MonitorCE.Update(() =>
+      MonitorCE.Locked(() =>
       {
          if(!type.Is<ITevent>()) throw new Exception($"You can only subscribe to subtypes of {typeof(ITevent).GetFullNameCompilable()}");
          if(!type.IsInterface) throw new Exception($"{type.GetFullNameCompilable()} is not an interface. You can only subscribe to tevent interfaces because as soon as you subscribe to classes you loose the guarantees of semantic routing since classes do not support multiple inheritance.");
@@ -44,7 +44,7 @@ public partial class TessageTypeInspector
    {
       if(_successfullyInspectedTypes.Contains(type)) return;
 
-      MonitorCE.Update(() =>
+      MonitorCE.Locked(() =>
       {
          if(_successfullyInspectedTypes.Contains(type)) return;
 

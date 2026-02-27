@@ -32,7 +32,7 @@ public static class TaskRunnerRegistrar
 
       readonly IBackgroundExceptionReporter _exceptionReporter;
       readonly IThreadShared<List<Thread>> _threads = IThreadShared.WithDefaultTimeouts(new List<Thread>());
-      readonly IThreadShared<HashSet<Task>> _inProgressTasks = IThreadShared.WithDefaultTimeouts(new HashSet<Task>());
+      readonly IAwaitableThreadShared<HashSet<Task>> _inProgressTasks = IAwaitableThreadShared.WithDefaultTimeouts(new HashSet<Task>());
 
       TaskRunnerCore(IBackgroundExceptionReporter exceptionReporter) => _exceptionReporter = exceptionReporter;
 
@@ -82,7 +82,7 @@ public static class TaskRunnerRegistrar
                          Priority = priority
                       };
 
-         _threads.Update(it => it.Add(thread));
+         _threads.Locked(it => it.Add(thread));
          thread.Start();
          return thread;
       }
@@ -91,7 +91,7 @@ public static class TaskRunnerRegistrar
 
       public void Dispose()
       {
-         var threads = _threads.Read(threads => threads.ToArray());
+         var threads = _threads.Locked(threads => threads.ToArray());
          threads.Where(it => it.IsAlive)
                 .ForEach(it => it.Interrupt());
          threads.Where(it => it.IsAlive)

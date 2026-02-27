@@ -99,7 +99,7 @@ public sealed class StrictlyManagedResource<TManagedResource> : IStrictlyManaged
                   if(!_collectStackTraces)
                   {
                      //Todo: Log metric here.
-                     using(StaticMonitor.TakeUpdateLock())
+                     using(StaticMonitor.TakeLock())
                      {
                         if(!CollectStackTracesByDefault)
                         {

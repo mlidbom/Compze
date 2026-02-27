@@ -39,7 +39,7 @@ public sealed class TessageHandlerRegistry(ITypeMapper typeMapper) : ITessageHan
 
    readonly IMonitorCE _monitor = IMonitorCE.WithDefaultTimeout();
 
-   ITessageHandlerRegistrar ITessageHandlerRegistrar.ForTevent<TTevent>(Action<TTevent> handler) => _monitor.Update(() =>
+   ITessageHandlerRegistrar ITessageHandlerRegistrar.ForTevent<TTevent>(Action<TTevent> handler) => _monitor.Locked(() =>
    {
       TessageInspector.AssertValid<TTevent>();
       _teventHandlers.TryGetValue(typeof(TTevent), out var currentTeventSubscribers);
@@ -50,7 +50,7 @@ public sealed class TessageHandlerRegistry(ITypeMapper typeMapper) : ITessageHan
       return this;
    });
 
-   ITessageHandlerRegistrar ITessageHandlerRegistrar.ForTommand<TTommand>(Action<TTommand> handler) => _monitor.Update(() =>
+   ITessageHandlerRegistrar ITessageHandlerRegistrar.ForTommand<TTommand>(Action<TTommand> handler) => _monitor.Locked(() =>
    {
       TessageInspector.AssertValid<TTommand>();
 
@@ -63,7 +63,7 @@ public sealed class TessageHandlerRegistry(ITypeMapper typeMapper) : ITessageHan
       return this;
    });
 
-   ITessageHandlerRegistrar ITessageHandlerRegistrar.ForTommand<TTommand, TResult>(Func<TTommand, TResult> handler) => _monitor.Update(() =>
+   ITessageHandlerRegistrar ITessageHandlerRegistrar.ForTommand<TTommand, TResult>(Func<TTommand, TResult> handler) => _monitor.Locked(() =>
    {
       TessageInspector.AssertValid<TTommand>();
 
@@ -71,7 +71,7 @@ public sealed class TessageHandlerRegistry(ITypeMapper typeMapper) : ITessageHan
       return this;
    });
 
-   ITessageHandlerRegistrar ITessageHandlerRegistrar.ForTuery<TTuery, TResult>(Func<TTuery, TResult> handler) => _monitor.Update(() =>
+   ITessageHandlerRegistrar ITessageHandlerRegistrar.ForTuery<TTuery, TResult>(Func<TTuery, TResult> handler) => _monitor.Locked(() =>
    {
       TessageInspector.AssertValid<TTuery>();
 

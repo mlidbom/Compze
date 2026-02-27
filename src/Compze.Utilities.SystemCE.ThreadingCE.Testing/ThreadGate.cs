@@ -116,7 +116,7 @@ public class ThreadGate : IThreadGate
    ThreadGate(TimeSpan defaultTimeout, string? name = null)
    {
       Name = name ?? Guid.NewGuid().ToString();
-      _monitor = IMonitorCE.WithTimeouts(defaultTimeout);
+      _monitor = IAwaitableMonitorCE.WithTimeouts(defaultTimeout);
       DefaultTimeout = defaultTimeout;
    }
 
@@ -137,7 +137,7 @@ public class ThreadGate : IThreadGate
    });
 
    string Name { get; }
-   readonly IMonitorCE _monitor;
+   readonly IAwaitableMonitorCE _monitor;
    bool _lockOnNextPass;
    bool _enableLogging = false;
    Action<ThreadSnapshot> _passThroughAction = _ => {};

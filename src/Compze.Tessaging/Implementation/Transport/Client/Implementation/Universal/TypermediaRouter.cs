@@ -67,7 +67,7 @@ public class TypermediaRouter : ITypermediaRouter, IDisposable
 
       await connection.InitAsync().caf();
 
-      using(_monitor.TakeUpdateLock())
+      using(_monitor.TakeLock())
       {
          OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _connections, connection.EndpointInformation.Id, connection);
 

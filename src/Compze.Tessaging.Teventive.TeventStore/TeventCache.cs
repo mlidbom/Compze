@@ -49,30 +49,30 @@ public class TeventCache : IDisposable, ITeventCache
             var transactionId = Transaction.Current.TransactionInformation.LocalIdentifier;
             Dictionary<TaggregateId, Entry>? overlay = null;
 
-            if(_overlays.Read(it => it.TryGetValue(transactionId, out overlay)))
+            if(_overlays.Locked(it => it.TryGetValue(transactionId, out overlay)))
             {
                return overlay._assert().NotNull();
             }
 
             overlay = [];
 
-            _overlays.Update(it => it.Add(transactionId, overlay));
+            _overlays.Locked(it => it.Add(transactionId, overlay));
 
             Transaction.Current.OnCommittedSuccessfully(() => _parent.AcceptTransactionResult(overlay));
-            Transaction.Current.OnCompleted(() => _overlays.Update(it => it.Remove(transactionId)));
+            Transaction.Current.OnCompleted(() => _overlays.Locked(it => it.Remove(transactionId)));
 
             return overlay;
          }
       }
 
-      public void Add(TaggregateId taggregateId, Entry entry) => _monitor.Update(
+      public void Add(TaggregateId taggregateId, Entry entry) => _monitor.Locked(
          () => CurrentOverlay[taggregateId] = entry);
 
       public bool TryGet(TaggregateId taggregateId, [NotNullWhen(true)]out Entry? entry)
       {
          entry = null;
          if(Transaction.Current == null) return false;
-         using(_monitor.TakeReadLock())
+         using(_monitor.TakeLock())
          {
             return CurrentOverlay.TryGetValue(taggregateId, out entry);
          }

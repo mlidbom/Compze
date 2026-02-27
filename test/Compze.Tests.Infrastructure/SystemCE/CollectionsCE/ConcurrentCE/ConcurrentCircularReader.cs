@@ -15,7 +15,7 @@ public class ConcurrentCircularReader<T>(IEnumerable<T> source)
    readonly IMonitorCE _monitor = IMonitorCE.WithDefaultTimeout();
    int _current = -1;
 
-   public T Next() => _monitor.Update(() =>
+   public T Next() => _monitor.Locked(() =>
    {
       _current++;
       if(_current == _items.Length) _current = 0;

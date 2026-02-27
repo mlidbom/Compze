@@ -6,7 +6,7 @@ public static class MonitorCEExtensions
 {
    public static TResult DoubleCheckedLocking<TResult>(this IMonitorCE @this, Func<TResult?> tryRead, Action updateOnFailedRead)
       where TResult : class =>
-      tryRead() ?? @this.Update(() =>
+      tryRead() ?? @this.Locked(() =>
       {
          var result = tryRead();
          if(result != null) return result;
@@ -17,27 +17,10 @@ public static class MonitorCEExtensions
    public static TResult DoubleCheckedLocking<TResult>(this IMonitorCE @this, Func<bool> canRead, Func<TResult> read, Action updateOnFailedRead) =>
       canRead()
          ? read()
-         : @this.Update(() =>
+         : @this.Locked(() =>
          {
             if(canRead()) return read();
             updateOnFailedRead();
             return read();
          });
-
-   public static TResult ReadOrUpdate<TResult>(this IMonitorCE @this, Func<TResult?> tryRead, Action updateOnFailedRead)
-      where TResult : class =>
-      @this.Read(() => tryRead() ?? @this.Update(() =>
-      {
-         updateOnFailedRead();
-         return tryRead() ?? throw new Exception($"{nameof(tryRead)} returned null even after {nameof(updateOnFailedRead)} had been called.");
-      }));
-
-   public static TResult ReadOrUpdate<TResult>(this IMonitorCE @this, Func<bool> canRead, Func<TResult> read, Action update) =>
-      @this.Read(() => canRead()
-                          ? read()
-                          : @this.Update(() =>
-                          {
-                             update();
-                             return read();
-                          }));
 }
