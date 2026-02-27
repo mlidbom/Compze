@@ -2,4 +2,4 @@ using System;
 
 namespace Compze.Contracts.Exceptions;
 
-public class InvariantViolatedException(string message) : Exception(message);
+public class InvariantAssertionFailedException(string message) : Exception(message);

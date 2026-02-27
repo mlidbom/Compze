@@ -10,10 +10,10 @@ public static class Contract
                                                         message => new StateAssertionFailedException(message),
                                                         message => new StateAssertionFailedException(message));
 
-   ///<summary>Assert something that must always be true for "this". Failures throw <see cref="InvariantViolatedException"/></summary>
+   ///<summary>Assert something that must always be true for "this". Failures throw <see cref="InvariantAssertionFailedException"/></summary>
    public static ContractAsserter Invariant { get; } = new("Invariant",
-                                                           message => new InvariantViolatedException(message),
-                                                           message => new InvariantViolatedException(message));
+                                                           message => new InvariantAssertionFailedException(message),
+                                                           message => new InvariantAssertionFailedException(message));
 
    ///<summary>Assert conditions on arguments to the current method. Failures throw <see cref="ArgumentAssertionFailedException"/></summary>
    public static ContractAsserter Argument { get; } = new("Argument",
