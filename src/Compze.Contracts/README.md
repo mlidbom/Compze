@@ -92,7 +92,7 @@ public static class MyContractExtensions
       public ContractAsserter IsValidEmail(string? value,
                                            [CallerArgumentExpression(nameof(value))] string expression = "")
       {
-         if(value is null || !value.Contains('@')) @this.ThrowFailed(expression);
+         if(!value.IsValidEmail()) @this.ThrowFailed(expression);
          return @this;
       }
    }
@@ -108,8 +108,7 @@ public static class MyPipelineExtensions
 {
    public static string IsValidEmail(this AssertionTarget<string?> target)
    {
-      if(target.Value is null || !target.Value.Contains('@'))
-         target.ThrowAssertionFailed();
+      if(!target.Value.IsValidEmail()) target.ThrowAssertionFailed();
       return target.Value!;
    }
 }
