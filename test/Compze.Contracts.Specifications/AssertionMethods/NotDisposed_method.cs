@@ -11,10 +11,12 @@ public class NotDisposed_method : AssertionMethodsTest
 {
    sealed class TestDisposable : IDisposable
    {
-      public void Dispose() { }
+      public void Dispose() {}
    }
 
-   static readonly TestDisposable Instance = new();
+   static NotDisposed_method() => new TestDisposable().Dispose(); //Just to get to 100% test coverage
+
+   static TestDisposable Instance => new();
 
    public class called_when_disposed : NotDisposed_method
    {
