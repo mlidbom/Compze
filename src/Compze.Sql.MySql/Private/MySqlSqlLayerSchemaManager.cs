@@ -17,7 +17,8 @@ public class MySqlSqlLayerSchemaManager(IMySqlConnectionPool connectionPool)
       if(registrar.Container().IsRegistered<MySqlSqlLayerSchemaManager>())
          return registrar;
       return registrar.Register(Singleton.For<MySqlSqlLayerSchemaManager>()
-                                         .CreatedBy((IMySqlConnectionPool connectionPool) => new MySqlSqlLayerSchemaManager(connectionPool)));
+                                         .CreatedBy((IMySqlConnectionPool connectionPool) => new MySqlSqlLayerSchemaManager(connectionPool))
+                                         .DelegateToParentServiceLocatorWhenCloning());
    }
 
    readonly IMySqlConnectionPool _connectionPool = connectionPool;

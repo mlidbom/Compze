@@ -17,7 +17,8 @@ public class PgSqlSqlLayerSchemaManager(IPgSqlConnectionPool connectionPool)
       if(registrar.Container().IsRegistered<PgSqlSqlLayerSchemaManager>())
          return registrar;
       return registrar.Register(Singleton.For<PgSqlSqlLayerSchemaManager>()
-                                         .CreatedBy((IPgSqlConnectionPool connectionPool) => new PgSqlSqlLayerSchemaManager(connectionPool)));
+                                         .CreatedBy((IPgSqlConnectionPool connectionPool) => new PgSqlSqlLayerSchemaManager(connectionPool))
+                                         .DelegateToParentServiceLocatorWhenCloning());
    }
 
    readonly IPgSqlConnectionPool _connectionPool = connectionPool;

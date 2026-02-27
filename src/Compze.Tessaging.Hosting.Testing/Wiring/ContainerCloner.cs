@@ -5,12 +5,14 @@ using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.DependencyInjection.Microsoft;
 using Compze.Utilities.DependencyInjection.SimpleInjector;
+using Compze.Utilities.Logging;
 using Compze.Utilities.SystemCE.LinqCE;
 
 namespace Compze.Tessaging.Hosting.Testing.Wiring;
 
 public static class ContainerCloner
 {
+   static readonly ILogger Log = CompzeLogger.For(typeof(ContainerCloner));
    public class ContainerIsClonedMarkerClass
    {}
 
@@ -30,6 +32,7 @@ public static class ContainerCloner
 
    public static IDependencyInjectionContainer Clone(this IDependencyInjectionContainer sourceContainer)
    {
+      Log.Info($"Cloning IDependencyInjectionContainer: {sourceContainer.GetHashCode()}");
       var sourceServiceLocator = sourceContainer.ServiceLocator;
       IDependencyInjectionContainer cloneContainer = sourceContainer switch
       {

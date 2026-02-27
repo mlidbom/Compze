@@ -17,7 +17,8 @@ public class MsSqlSqlLayerSchemaManager(IMsSqlConnectionPool connectionPool)
       if(registrar.Container().IsRegistered<MsSqlSqlLayerSchemaManager>())
          return registrar;
       return registrar.Register(Singleton.For<MsSqlSqlLayerSchemaManager>()
-                                         .CreatedBy((IMsSqlConnectionPool connectionPool) => new MsSqlSqlLayerSchemaManager(connectionPool)));
+                                         .CreatedBy((IMsSqlConnectionPool connectionPool) => new MsSqlSqlLayerSchemaManager(connectionPool))
+                                         .DelegateToParentServiceLocatorWhenCloning());
    }
 
    readonly IMsSqlConnectionPool _connectionPool = connectionPool;

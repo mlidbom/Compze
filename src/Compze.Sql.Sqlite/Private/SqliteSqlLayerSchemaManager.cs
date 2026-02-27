@@ -17,7 +17,8 @@ public class SqliteSqlLayerSchemaManager(ISqliteConnectionPool connectionPool)
       if(registrar.Container().IsRegistered<SqliteSqlLayerSchemaManager>())
          return registrar;
       return registrar.Register(Singleton.For<SqliteSqlLayerSchemaManager>()
-                                         .CreatedBy((ISqliteConnectionPool connectionPool) => new SqliteSqlLayerSchemaManager(connectionPool)));
+                                         .CreatedBy((ISqliteConnectionPool connectionPool) => new SqliteSqlLayerSchemaManager(connectionPool))
+                                         .DelegateToParentServiceLocatorWhenCloning());
    }
 
    readonly ISqliteConnectionPool _connectionPool = connectionPool;
