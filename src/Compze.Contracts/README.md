@@ -38,7 +38,7 @@ var conn = GetConnection()._assert().NotNull();
 
 Pipeline overloads:
 - `value._assert()` — returns `AssertionTarget<T>` for `.NotNull()` / `.NotDefault()` chains
-- `value._assert(predicate)` — throws `AssertionFailedException` with expression text and value
+- `value._assert(predicate)` — throws `AssertionFailedException("value._assert(predicate)")` on failure
 - `value._assert(predicate, messageFactory)` — throws `AssertionFailedException` with custom message
 - `value._assert(predicate, exceptionFactory)` — throws custom exception
 
@@ -98,8 +98,8 @@ public static class MyContractExtensions
    }
 }
 
-// Usage:
-Contract.Argument.IsValidEmail(userEmail); // throws: ArgumentAssertionFailedException("Argument.IsValidEmail(userEmail)")
+//throws: ArgumentAssertionFailedException("Argument.IsValidEmail(userEmail)") if invalid.
+Contract.Argument.IsValidEmail(userEmail); 
 ```
 
 #### AssertionTarget extension (pipeline)
@@ -113,8 +113,8 @@ public static class MyPipelineExtensions
    }
 }
 
-// Usage:
-var email = GetUserEmail()._assert().IsValidEmail(); // throws:  AssertionFailedException("GetUserEmail()._assert().IsValidEmail()")
+// throws:  AssertionFailedException("GetUserEmail()._assert().IsValidEmail()") if invalid.
+var email = GetUserEmail()._assert().IsValidEmail();
 ```
 
 
