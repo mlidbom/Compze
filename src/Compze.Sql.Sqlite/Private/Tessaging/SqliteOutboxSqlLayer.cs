@@ -142,5 +142,47 @@ public partial class SqliteOutboxSqlLayer(ISqliteConnectionPool connectionFactor
          });
    }
 
+   public IReadOnlyList<IServiceBusSqlLayer.UndeliveredTessage> GetUndeliveredTessagesForEndpoint(EndpointId endpointId)
+   {
+      return _connectionFactory.UseCommand(
+         command =>
+         {
+            var tessages = new List<IServiceBusSqlLayer.UndeliveredTessage>();
+            
+            command
+               .SetCommandText(
+                   $"""
+
+                    SELECT m.{TessageTable.TessageId}, 
+                           m.{TessageTable.TypeIdGuidValue}, 
+                           m.{TessageTable.SerializedTessage},
+                           d.{DispatchingTable.EndpointId},
+                           d.{DispatchingTable.RetryCount},
+                           d.{DispatchingTable.LastAttemptTime}
+                    FROM {TessageTable.TableName} m
+                    INNER JOIN {DispatchingTable.TableName} d ON m.{TessageTable.TessageId} = d.{DispatchingTable.TessageId}
+                    WHERE d.{DispatchingTable.IsReceived} = 0
+                      AND d.{DispatchingTable.EndpointId} = @endpointId
+                    ORDER BY d.{DispatchingTable.RetryCount}, d.{DispatchingTable.LastAttemptTime}
+
+                    """)
+               .AddVarcharParameter("endpointId", 36, endpointId.ToString());
+            
+            using var reader = command.ExecuteReader();
+            while(reader.Read())
+            {
+               tessages.Add(new IServiceBusSqlLayer.UndeliveredTessage(
+                  tessageId: new TessageId(Guid.Parse(reader.GetString(0))),
+                  typeId: new TypeId(Guid.Parse(reader.GetString(1))),
+                  serializedTessage: reader.GetString(2),
+                  targetEndpointId: new EndpointId(Guid.Parse(reader.GetString(3))),
+                  retryCount: reader.GetInt32(4),
+                  lastAttemptTime: reader.IsDBNull(5) ? null : DateTime.Parse(reader.GetString(5), CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind)));
+            }
+            
+            return tessages;
+         });
+   }
+
    public async Task InitAsync() => await _schemaManager.EnsureSchemaInitializedAsync().caf();
 }

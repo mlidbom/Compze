@@ -7,9 +7,11 @@ using Compze.Core.Serialization.Internal;
 using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Core.Tessaging.Public;
 using Compze.Core.Tessaging.Transport.Internal;
+using Compze.Tessaging.Implementation.Outbox;
 using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Tessaging.Implementation.Transport.Client.Internal;
+using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Contracts;
 using Compze.Functional;
 using Compze.Utilities.DependencyInjection;
@@ -26,14 +28,17 @@ public class TessagingRouter : ITessagingRouter, IDisposable
 {
    public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<ITessagingRouter>().CreatedBy(
-            (ITessagesInFlightTracker tessagesInFlightTracker, ITypeMapper typeMapper, IRemotableTessageSerializer serializer, ITransportMessagePoster transportMessagePoster)
-               => new TessagingRouter(tessagesInFlightTracker, typeMapper, serializer, transportMessagePoster)));
+            (ITessagesInFlightTracker tessagesInFlightTracker, ITypeMapper typeMapper, IRemotableTessageSerializer serializer, ITransportMessagePoster transportMessagePoster, Outbox.Outbox.ITessageStorage tessageStorage, ITaskRunner taskRunner, IBackgroundExceptionReporter exceptionReporter)
+               => new TessagingRouter(tessagesInFlightTracker, typeMapper, serializer, transportMessagePoster, tessageStorage, taskRunner, exceptionReporter)));
 
    readonly IMonitorCE _monitor = IMonitorCE.WithDefaultTimeout();
    readonly ITessagesInFlightTracker _tessagesInFlightTracker;
    readonly ITypeMapper _typeMapper;
    readonly IRemotableTessageSerializer _serializer;
    readonly ITransportMessagePoster _transportMessagePoster;
+   readonly Outbox.Outbox.ITessageStorage _tessageStorage;
+   readonly ITaskRunner _taskRunner;
+   readonly IBackgroundExceptionReporter _exceptionReporter;
 
    bool _stopped;
 
@@ -42,25 +47,40 @@ public class TessagingRouter : ITessagingRouter, IDisposable
    IReadOnlyList<(Type TeventType, TessagingConnection Connection)> _teventSubscriberRoutes = new List<(Type TeventType, TessagingConnection Connection)>();
    IReadOnlyDictionary<Type, IReadOnlyList<TessagingConnection>> _teventSubscriberRouteCache = new Dictionary<Type, IReadOnlyList<TessagingConnection>>();
 
-   TessagingRouter(ITessagesInFlightTracker tessagesInFlightTracker, ITypeMapper typeMapper, IRemotableTessageSerializer serializer, ITransportMessagePoster transportMessagePoster)
+   TessagingRouter(ITessagesInFlightTracker tessagesInFlightTracker, ITypeMapper typeMapper, IRemotableTessageSerializer serializer, ITransportMessagePoster transportMessagePoster, Outbox.Outbox.ITessageStorage tessageStorage, ITaskRunner taskRunner, IBackgroundExceptionReporter exceptionReporter)
    {
       _tessagesInFlightTracker = tessagesInFlightTracker;
       _typeMapper = typeMapper;
       _serializer = serializer;
       _transportMessagePoster = transportMessagePoster;
+      _tessageStorage = tessageStorage;
+      _taskRunner = taskRunner;
+      _exceptionReporter = exceptionReporter;
    }
 
    public async Task ConnectAsync(EndPointAddress remoteEndpointAddress)
    {
       AssertNotStopped();
 #pragma warning disable CA2000//We are passing this disposable into a collection that we track disposal for
-      var connection = new TessagingConnection(_tessagesInFlightTracker, remoteEndpointAddress, _typeMapper, _serializer, _transportMessagePoster);
+      var connection = new TessagingConnection(_tessagesInFlightTracker, remoteEndpointAddress, _typeMapper, _serializer, _transportMessagePoster, _tessageStorage, _taskRunner, _exceptionReporter);
 #pragma warning restore CA2000
 
       await connection.InitAsync().caf();
 
       OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _connections, connection.EndpointInformation.Id, connection);
       RegisterRoutes(connection, connection.EndpointInformation.HandledTessageTypes);
+   }
+
+   public void StartDelivery()
+   {
+      foreach(var connection in _connections.Values)
+         connection.StartDelivery();
+   }
+
+   public void StopDelivery()
+   {
+      foreach(var connection in _connections.Values)
+         connection.StopDelivery();
    }
 
    void RegisterRoutes(TessagingConnection connection, ISet<TypeId> handledTypeIds)
@@ -98,6 +118,12 @@ public class TessagingRouter : ITessagingRouter, IDisposable
    public void Stop() => _stopped = true;
 
    unit AssertNotStopped() => Contract.State.Assert(!_stopped, () => "router is stopped")._then(unit.Value);
+
+   public ITessagingInboxConnection ConnectionForEndpoint(EndpointId endpointId) =>
+      AssertNotStopped()._then(() =>
+         _connections.TryGetValue(endpointId, out var connection)
+            ? connection
+            : throw new InvalidOperationException($"No connection found for endpoint {endpointId}"));
 
    public ITessagingInboxConnection ConnectionToHandlerFor(IRemotableTommand tommand) =>
       AssertNotStopped()._then(() =>

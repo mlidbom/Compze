@@ -6,7 +6,6 @@ using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Core.Tessaging.Public;
 using Compze.Tessaging.Implementation.Abstractions;
 using Compze.Tessaging.Implementation.Transport.Client.Internal;
-using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Contracts;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
@@ -29,25 +28,20 @@ public partial class Outbox : IOutbox
    public static void RegisterWith(IComponentRegistrar registrar)
    {
       registrar.Register(Singleton.For<IOutbox>()
-                                  .CreatedBy((EndpointConfiguration configuration, ITessagingRouter tessagingRouter, ITessageStorage tessageStorage, IBackgroundExceptionReporter exceptionReporter, OutboxRetryPoller retryPoller)
-                                                => new Outbox(tessagingRouter, tessageStorage, configuration, exceptionReporter, retryPoller)));
+                                  .CreatedBy((EndpointConfiguration configuration, ITessagingRouter tessagingRouter, ITessageStorage tessageStorage)
+                                                => new Outbox(tessagingRouter, tessageStorage, configuration)));
       registrar.Register(TessageStorage.RegisterWith);
-      registrar.Register(OutboxRetryPoller.RegisterWith);
    }
 
    readonly ITessageStorage _storage;
    readonly EndpointConfiguration _configuration;
    readonly ITessagingRouter _tessagingRouter;
-   readonly IBackgroundExceptionReporter _exceptionReporter;
-   readonly OutboxRetryPoller _retryPoller;
 
-   Outbox(ITessagingRouter tessagingRouter, ITessageStorage tessageStorage, EndpointConfiguration configuration, IBackgroundExceptionReporter exceptionReporter, OutboxRetryPoller retryPoller)
+   Outbox(ITessagingRouter tessagingRouter, ITessageStorage tessageStorage, EndpointConfiguration configuration)
    {
       _storage = tessageStorage;
       _configuration = configuration;
       _tessagingRouter = tessagingRouter;
-      _exceptionReporter = exceptionReporter;
-      _retryPoller = retryPoller;
    }
 
    public void PublishTransactionally(IExactlyOnceTevent exactlyOnceTevent)
@@ -55,18 +49,16 @@ public partial class Outbox : IOutbox
       Contract.State.NotNull(Transaction.Current);
       this.Log().Debug($"Publishing tevent {exactlyOnceTevent.Id} ({exactlyOnceTevent.GetType().Name})");
       var connections = _tessagingRouter.SubscriberConnectionsFor(exactlyOnceTevent)
-                                  .Where(connection => connection.EndpointInformation.Id != _configuration.Id)
-                                  .ToArray(); //We dispatch tevents to ourselves synchronously so don't go doing it again here.;
-
+                                        .Where(connection => connection.EndpointInformation.Id != _configuration.Id)
+                                        .ToArray(); //We dispatch tevents to ourselves synchronously so don't go doing it again here.
 
       var teventHandlerEndpointIds = connections.Select(connection => connection.EndpointInformation.Id).ToArray();
       _storage.SaveTessage(exactlyOnceTevent, teventHandlerEndpointIds);
 
-      Transaction.Current.OnCommittedSuccessfully(() => connections.ForEach(subscriberConnection =>
+      Transaction.Current.OnCommittedSuccessfully(() => connections.ForEach(connection =>
       {
-         this.Log().Debug($"OnCommittedSuccessfully: Delivering tevent {exactlyOnceTevent.Id} to endpoint {subscriberConnection.EndpointInformation.Id}");
-         subscriberConnection.SendAsync(exactlyOnceTevent)
-                             .ContinueWithCE(task => HandleDeliveryTaskResults(task, subscriberConnection.EndpointInformation.Id, exactlyOnceTevent.Id));
+         this.Log().Debug($"OnCommittedSuccessfully: Delivering tevent {exactlyOnceTevent.Id} to endpoint {connection.EndpointInformation.Id}");
+         connection.EnqueueForDelivery(exactlyOnceTevent);
       }));
    }
 
@@ -81,41 +73,20 @@ public partial class Outbox : IOutbox
       Transaction.Current.OnCommittedSuccessfully(() =>
       {
          this.Log().Debug($"OnCommittedSuccessfully: Delivering tommand {exactlyOnceTommand.Id} to endpoint {connection.EndpointInformation.Id}");
-         connection.SendAsync(exactlyOnceTommand)
-                   .ContinueWithCE(task => HandleDeliveryTaskResults(task, connection.EndpointInformation.Id, exactlyOnceTommand.Id));
-      });
-   }
-
-   void HandleDeliveryTaskResults(Task completedSendTask, EndpointId receiverId, TessageId tessageId)
-   {
-      _exceptionReporter.RunSwallowingAndReportingAnyExceptions(() =>
-      {
-         if(!_running)
-         {
-            var taskStatus = completedSendTask.IsFaulted ? $"Faulted: {completedSendTask.Exception}" : completedSendTask.IsCanceled ? "Canceled" : "Succeeded";
-            this.Log().Debug($"Delivery result for tessage {tessageId} ignored — outbox has stopped. Task status: {taskStatus}");
-            return; //We have shut down and storage may no longer be available/working. The recovery mechanisms will take care of this tessage after restart.
-         }
-         if(completedSendTask.IsFaulted)
-         {
-            this.Log().Warning(completedSendTask.Exception!, $"Initial delivery failed for tessage {tessageId} to endpoint {receiverId}");
-            _storage.RecordDeliveryFailure(tessageId, receiverId, completedSendTask.Exception);
-         } else
-         {
-            this.Log().Debug($"Tessage {tessageId} delivered to endpoint {receiverId}");
-            _storage.MarkAsReceived(tessageId, receiverId);
-         }
+         connection.EnqueueForDelivery(exactlyOnceTommand);
       });
    }
 
    bool _running = false;
+
    public async Task StartAsync()
    {
       Contract.State.Assert(!_running);
       this.Log().Info("Starting");
 
       await _storage.StartAsync().caf();
-      _retryPoller.Start();
+
+      _tessagingRouter.StartDelivery();
 
       _running = true;
       this.Log().Info("Started");
@@ -126,7 +97,9 @@ public partial class Outbox : IOutbox
       Contract.State.Assert(_running);
       this.Log().Info("Stopping");
       _running = false;
-      _retryPoller.Stop();
+
+      _tessagingRouter.StopDelivery();
+
       this.Log().Info("Stopped");
       await Task.CompletedTask.caf();
    }

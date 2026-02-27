@@ -17,6 +17,7 @@ public interface IServiceBusSqlLayer
       MarkAsReceivedResult MarkAsReceived(TessageId tessageId, EndpointId endpointId);
       void RecordDeliveryFailure(TessageId tessageId, EndpointId endpointId, string failureReason);
       IReadOnlyList<UndeliveredTessage> GetUndeliveredTessages(TimeSpan olderThan);
+      IReadOnlyList<UndeliveredTessage> GetUndeliveredTessagesForEndpoint(EndpointId endpointId);
       Task InitAsync();
    }
 
