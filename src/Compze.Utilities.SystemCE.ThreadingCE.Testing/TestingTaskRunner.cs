@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Compze.Functional;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
+using Compze.Utilities.SystemCE.LinqCE;
 
 namespace Compze.Utilities.SystemCE.ThreadingCE.Testing;
 
@@ -13,17 +15,10 @@ public sealed class TestingTaskRunner(TimeSpan timeout) : IDisposable, IAsyncDis
    readonly List<Task> _monitoredTasks = [];
    readonly TimeSpan _timeout = timeout;
 
-   public static TestingTaskRunner New(TimeSpan timeout) => new(timeout);
+   public static TestingTaskRunner WithTimeout(TimeSpan timeout) => new(timeout);
 
    public TestingTaskRunner Run(params Action[] tasks)
-   {
-      foreach(var task in tasks)
-      {
-         _monitoredTasks.Add(TaskCE.Run(task));
-      }
-
-      return this;
-   }
+      => tasks.ForEach(it => _monitoredTasks.Add(TaskCE.Run(it)))._then(this);
 
    public void Dispose() => DisposeAsync().WaitUnwrappingException();
    public async ValueTask DisposeAsync() => await WaitForTasksToCompleteAsync().caf();
