@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
+
 // ReSharper disable ConvertToExtensionBlock
 
 // ReSharper disable InconsistentNaming
@@ -11,13 +12,11 @@ namespace Compze.Contracts;
 /// <summary>Pipeline-friendly assertion extension methods. Uses the same _camelCase naming convention as Compze.Functional's Pipe operators so they blend naturally in pipelines.</summary>
 public static class PipeAssert
 {
-   [DoesNotReturn]
    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-   static void ThrowAssertionFailed(string message) => throw new AssertionFailedException(message);
+   [DoesNotReturn] static void ThrowAssertionFailed(string message) => throw new AssertionFailedException(message);
 
-   [DoesNotReturn]
    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-   static void ThrowCustomException(Func<Exception> exceptionFactory) => throw exceptionFactory();
+   [DoesNotReturn] static void ThrowCustomException(Func<Exception> exceptionFactory) => throw exceptionFactory();
 
    ///<summary>Returns an <see cref="AssertionTarget{T}"/> wrapping <paramref name="this"/> for further assertion calls such as <c>.NotNull()</c> and <c>.NotDefault()</c>.</summary>
    [MethodImpl(MethodImplOptions.AggressiveInlining)]
