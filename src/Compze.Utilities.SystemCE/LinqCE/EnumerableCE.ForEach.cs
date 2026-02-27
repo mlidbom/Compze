@@ -15,7 +15,7 @@ public static partial class EnumerableCE
    /// <summary>
    /// Executes <paramref name="action"/> for each element in the sequence <paramref name="source"/>.
    /// </summary>
-   public static unit ForEach<TSource, TReturn>(this IEnumerable<TSource> source, Func<TSource, TReturn> action) => unit.From(() =>
+   public static unit ForEach<TSource, TReturn>(this IEnumerable<TSource> source, [InstantHandle]Func<TSource, TReturn> action) => unit.From(() =>
    {
       Argument.NotNull2(source, action);
       foreach(var item in source)
@@ -40,7 +40,7 @@ public static partial class EnumerableCE
    /// <summary>
    /// Executes <paramref name="action"/> for each element in the sequence <paramref name="source"/>.
    /// </summary>
-   public static unit ForEach<T>(this IEnumerable<T> source, Action<T, int> action) => unit.From(() =>
+   public static unit ForEach<T>(this IEnumerable<T> source, [InstantHandle]Action<T, int> action) => unit.From(() =>
    {
       Argument.NotNull2(source, action);
 
