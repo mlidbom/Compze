@@ -99,22 +99,23 @@ public static class MyContractExtensions
 }
 
 // Usage:
-Contract.Argument.IsValidEmail(email).NotNullOrEmpty(name);
+Contract.Argument.IsValidEmail(userEmail); // throws: ArgumentException("userEmail")
 ```
 
 #### AssertionTarget extension (pipeline)
 ```csharp
 public static class MyPipelineExtensions
 {
-   public static string NotNullOrEmpty(this AssertionTarget<string?> target)
+   public static string IsValidEmail(this AssertionTarget<string?> target)
    {
-      if(string.IsNullOrEmpty(target.Value)) target.ThrowAssertionFailed($"Assertion failed: {target.ValueExpression}._assert().NotNullOrEmpty()");
+      if(target.Value is null || !target.Value.Contains('@'))
+         target.ThrowAssertionFailed();
       return target.Value!;
    }
 }
 
 // Usage:
-var name = GetName()._assert().NotNullOrEmpty(); // Exception message: 'Assertion failed: GetName()._assert().NotNullOrEmpty()'
+var email = GetUserEmail()._assert().IsValidEmail(); // throws:  AssertionFailedException("GetUserEmail()._assert().IsValidEmail()")
 ```
 
 

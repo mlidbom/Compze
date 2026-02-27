@@ -9,17 +9,17 @@ public static class AssertionTargetExtensions
 {
    ///<summary>Throws <see cref="AssertionFailedException"/> if the value is null. Returns the value as non-nullable on success.</summary>
    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-   [return: NotNull] public static T NotNull<T>(this AssertionTarget<T> target)
+   [return: NotNull] public static T NotNull<T>(this AssertionTarget<T> @this)
    {
-      if(target.Value is null) AssertionTarget<T>.ThrowAssertionFailed($"Assertion failed: {target.ValueExpression}.{nameof(PipeAssert._assert)}().{nameof(NotNull)}()");
-      return target.Value;
+      if(@this.Value is null) @this.ThrowAssertionFailed();
+      return @this.Value;
    }
 
    ///<summary>Throws <see cref="AssertionFailedException"/> if the value equals <c>default(T)</c>. Returns the value on success.</summary>
    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-   public static T NotDefault<T>(this AssertionTarget<T> target) where T : struct
+   public static T NotDefault<T>(this AssertionTarget<T> @this) where T : struct
    {
-      if(EqualityComparer<T>.Default.Equals(target.Value, default)) AssertionTarget<T>.ThrowAssertionFailed($"Assertion failed: {target.ValueExpression}.{nameof(PipeAssert._assert)}().{nameof(NotDefault)}()");
-      return target.Value;
+      if(EqualityComparer<T>.Default.Equals(@this.Value, default)) @this.ThrowAssertionFailed();
+      return @this.Value;
    }
 }
