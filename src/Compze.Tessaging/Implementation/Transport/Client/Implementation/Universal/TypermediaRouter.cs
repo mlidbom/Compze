@@ -18,6 +18,7 @@ using Compze.Functional;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
 using Compze.Utilities.SystemCE.ThreadingCE;
+using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Universal;
@@ -49,7 +50,8 @@ public class TypermediaRouter : ITypermediaRouter, IDisposable
    readonly ITypeMapper _typeMapper;
    readonly IRemotableTessageSerializer _serializer;
    readonly ITransportMessagePoster _transportMessagePoster;
-   readonly object _connectLock = new();
+   readonly IMonitorCE _monitor = IMonitorCE.WithDefaultTimeout();
+
 
    bool _running;
    IReadOnlyDictionary<EndpointId, TypermediaConnection> _connections = new Dictionary<EndpointId, TypermediaConnection>();
@@ -65,7 +67,7 @@ public class TypermediaRouter : ITypermediaRouter, IDisposable
 
       await connection.InitAsync().caf();
 
-      lock(_connectLock)
+      using(_monitor.TakeUpdateLock())
       {
          OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _connections, connection.EndpointInformation.Id, connection);
 
