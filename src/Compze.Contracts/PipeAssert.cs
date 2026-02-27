@@ -19,9 +19,9 @@ public static class PipeAssert
    [MethodImpl(MethodImplOptions.AggressiveInlining)]
    [DoesNotReturn] static void ThrowCustomException(Func<Exception> exceptionFactory) => throw exceptionFactory();
 
-   ///<summary>Returns an <see cref="AssertionTarget{T}"/> wrapping <paramref name="this"/> for further assertion calls such as <c>.NotNull()</c> and <c>.NotDefault()</c>.</summary>
+   ///<summary>Returns an <see cref="PipeAssertTarget{T}"/> wrapping <paramref name="this"/> for further assertion calls such as <c>.NotNull()</c> and <c>.NotDefault()</c>.</summary>
    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-   public static AssertionTarget<T> _assert<T>(this T @this, [CallerArgumentExpression(nameof(@this))] string? thisExpression = null)
+   public static PipeAssertTarget<T> _assert<T>(this T @this, [CallerArgumentExpression(nameof(@this))] string? thisExpression = null)
       => new(@this, thisExpression);
 
    ///<summary>Throws <see cref="AssertionFailedException"/> if <paramref name="predicate"/> returns false when applied to <paramref name="this"/>. The exception message includes the predicate source expression and the value.</summary>

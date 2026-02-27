@@ -10,7 +10,7 @@ namespace Compze.Contracts;
 
 /// <summary>A zero-allocation wrapper that carries the value being asserted on together with its caller-site expression. Returned by <see cref="PipeAssert._assert{T}"/> and serves as the entry point for all assertion methods.</summary>
 #pragma warning disable CA1815 // Transient utility struct — equality comparison is never needed
-public readonly struct AssertionTarget<T>(T value, string? valueExpression)
+public readonly struct PipeAssertTarget<T>(T value, string? valueExpression)
 #pragma warning restore CA1815
 {
    /// <summary>The value being asserted on.</summary>
