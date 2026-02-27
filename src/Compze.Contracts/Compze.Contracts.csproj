@@ -3,7 +3,7 @@
       <TargetFramework>netstandard2.0</TargetFramework>
       <LangVersion>latest</LangVersion>
       <Nullable>enable</Nullable>
-      <Version>0.1.0-alpha.3</Version>
+      <Version>0.8.0</Version>
       <Description>Fluent, chainable runtime assertions for preconditions, invariants, and state checks — with CallerArgumentExpression support for clear failure messages. Zero dependencies.</Description>
       <PackageTags>contracts;assertions;preconditions;invariants;guard-clauses;fluent</PackageTags>
       <GenerateDocumentationFile>true</GenerateDocumentationFile>
