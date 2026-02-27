@@ -15,14 +15,14 @@ public class ConsoleLogger : Logger
       ConsoleCE.WriteLine(ExceptionTessageBuilder.BuildExceptionLogTessage(exception, _type, caller, message));
 
    protected override void WarningInternal(string message, string caller) =>
-      ConsoleCE.WriteLine($"WARNING:{_type}.{caller}: {DateTime.Now:HH:mm:ss.fff} {message}");
+      ConsoleCE.WriteLine($"{DateTime.Now:HH:mm:ss.fff} WRN {LogSourceFormatter.Format(_type.Name, caller)} ### {message}");
 
    protected override void WarningInternal(Exception exception, string message, string caller) =>
-      ConsoleCE.WriteLine($"WARNING:{_type}.{caller}: {DateTime.Now:HH:mm:ss.fff} {message}, \n: Exception: {exception}");
+      ConsoleCE.WriteLine($"{DateTime.Now:HH:mm:ss.fff} WRN {LogSourceFormatter.Format(_type.Name, caller)} ### {message}, \n: Exception: {exception}");
 
    protected override void InfoInternal(string message, string caller) => 
-      ConsoleCE.WriteLine($"INFO:{_type}.{caller}: {DateTime.Now:HH:mm:ss.fff} {message}");
+      ConsoleCE.WriteLine($"{DateTime.Now:HH:mm:ss.fff} INF {LogSourceFormatter.Format(_type.Name, caller)} ### {message}");
 
    protected override void DebugInternal(string message, string caller) =>
-      ConsoleCE.WriteLine($"DEBUG:{_type}.{caller}: {DateTime.Now:HH:mm:ss.fff} {message}");
+      ConsoleCE.WriteLine($"{DateTime.Now:HH:mm:ss.fff} DBG {LogSourceFormatter.Format(_type.Name, caller)} ### {message}");
 }

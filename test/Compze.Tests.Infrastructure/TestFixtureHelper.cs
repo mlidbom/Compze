@@ -52,7 +52,13 @@ public static class TestFixtureHelper
          {
             var fullName = sourceContext.ToString().Trim('"');
             var shortName = fullName.Substring(fullName.LastIndexOf('.') + 1);
-            logEvent.AddPropertyIfAbsent(propertyFactory.CreateProperty("LoggingClass", shortName));
+
+            var callerMember = "";
+            if (logEvent.Properties.TryGetValue("CallerMember", out var callerProp))
+               callerMember = callerProp.ToString().Trim('"');
+
+            var logSource = LogSourceFormatter.Format(shortName, callerMember);
+            logEvent.AddPropertyIfAbsent(propertyFactory.CreateProperty("LogSource", logSource));
          }
       }
    }

@@ -20,7 +20,7 @@ public static class ExceptionTessageBuilder
 
       builder.AppendLine(CultureInfo.InvariantCulture, $"""
                                                           ERROR: 
-                                                          {IndentWith}Originator: {type.GetFullNameCompilable()}.{caller}
+                                                          {IndentWith}Originator: {LogSourceFormatter.Format(type.Name, caller)}
                                                           {IndentWith}MESSAGE: {message} 
                                                           """);
 
