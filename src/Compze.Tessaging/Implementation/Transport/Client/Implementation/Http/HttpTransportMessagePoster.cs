@@ -32,9 +32,9 @@ public class HttpTransportMessagePoster : ITransportMessagePoster
       _serializer = serializer;
    }
 
-   public async Task<TResult> PostAsync<TResult>(TransportTessage.OutGoing tessage, object realTessage, EndPointAddress endPointAddress)
+   public async Task<TResult> PostAsync<TResult>(TransportTessage.OutGoing tessage, EndPointAddress endPointAddress)
    {
-      var response = await PostAsyncInternal(tessage, realTessage, new Uri(endPointAddress.Uri, GetRelativeUriForTessage(tessage))).caf();
+      var response = await PostAsyncInternal(tessage, new Uri(endPointAddress.Uri, GetRelativeUriForTessage(tessage))).caf();
 
       var resultJson = await response.Content.ReadAsStringAsync().caf();
       var result = _serializer.DeserializeResponse<TResult>(resultJson);
@@ -60,10 +60,10 @@ public class HttpTransportMessagePoster : ITransportMessagePoster
       }
    }
 
-   public async Task PostAsync(TransportTessage.OutGoing tessage, object realTessage, EndPointAddress endPointAddress) =>
-      await PostAsyncInternal(tessage, realTessage, new Uri(endPointAddress.Uri, GetRelativeUriForTessage(tessage))).caf();
+   public async Task PostAsync(TransportTessage.OutGoing tessage, EndPointAddress endPointAddress) =>
+      await PostAsyncInternal(tessage, new Uri(endPointAddress.Uri, GetRelativeUriForTessage(tessage))).caf();
 
-   async Task<HttpResponseMessage> PostAsyncInternal(TransportTessage.OutGoing tessage, object realTessage, Uri requestUri)
+   async Task<HttpResponseMessage> PostAsyncInternal(TransportTessage.OutGoing tessage, Uri requestUri)
    {
       using var httpClient = _httpClientFactory.CreateClient();
 
@@ -78,7 +78,7 @@ public class HttpTransportMessagePoster : ITransportMessagePoster
          throw new TessageDispatchingFailedException($"""
                                                       Uri:        {requestUri}
                                                       StatusCode: {response.StatusCode}
-                                                      Type:       {realTessage.GetType().FullName}
+                                                      Type:       {tessage.Tessage.GetType().FullName}
                                                       Body:
                                                       {tessage.Body}
 

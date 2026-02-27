@@ -25,19 +25,19 @@ public class ApiEndpointClient(
    public async Task<TResult> PostAsync<TResult>(IAtMostOnceTommand<TResult> typermediaTommand)
    {
       var tessage = TransportTessage.OutGoing.Create(typermediaTommand, _typeMapper, _serializer);
-      return await _transportMessagePoster.PostAsync<TResult>(tessage, typermediaTommand, _remoteAddress).caf();
+      return await _transportMessagePoster.PostAsync<TResult>(tessage, _remoteAddress).caf();
    }
 
    public async Task PostAsync(IAtMostOnceTypermediaTommand tommand)
    {
       var outGoingTessage = TransportTessage.OutGoing.Create(tommand, _typeMapper, _serializer);
-      await _transportMessagePoster.PostAsync(outGoingTessage, tommand, _remoteAddress).caf();
+      await _transportMessagePoster.PostAsync(outGoingTessage, _remoteAddress).caf();
    }
 
    public async Task<TResult> GetAsync<TResult>(IRemotableTuery<TResult> tuery)
    {
       var tessage = TransportTessage.OutGoing.Create(tuery, _typeMapper, _serializer);
-      return await _transportMessagePoster.PostAsync<TResult>(tessage, tuery, _remoteAddress).caf();
+      return await _transportMessagePoster.PostAsync<TResult>(tessage, _remoteAddress).caf();
    }
 
    public static async Task<(ApiEndpointClient, TessageTypesInternal.EndpointInformation)> BootstrapConnectionToEndpoint(ITransportMessagePoster transportMessagePoster,
@@ -50,7 +50,6 @@ public class ApiEndpointClient(
       var endpointInformation = await transportMessagePoster
                                      .PostAsync<TessageTypesInternal.EndpointInformation>(
                                          endpointInformationTueryTessage,
-                                         endpointInformationTuery,
                                          remoteAddress).caf();
       return (new ApiEndpointClient(transportMessagePoster, remoteAddress, typeMapper, serializer), endpointInformation);
    }

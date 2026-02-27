@@ -38,7 +38,10 @@ public class TessagingConnection(
    readonly ITaskRunner _taskRunner = taskRunner;
    readonly IBackgroundExceptionReporter _exceptionReporter = exceptionReporter;
 
-   record PendingDelivery(IExactlyOnceTessage Tessage, TransportTessage.OutGoing TransportTessage);
+   record PendingDelivery(TransportTessage.OutGoing TransportTessage)
+   {
+      public IExactlyOnceTessage Tessage => (IExactlyOnceTessage)TransportTessage.Tessage;
+   }
    readonly IThreadShared<Queue<PendingDelivery>> _queue = IThreadShared.WithDefaultTimeouts(new Queue<PendingDelivery>());
    readonly AutoResetEvent _signal = new(false);
    readonly CancellationTokenSource _cancellationSource = new();
@@ -53,7 +56,6 @@ public class TessagingConnection(
       var endpointInformation = await _transportMessagePoster
                                      .PostAsync<TessageTypesInternal.EndpointInformation>(
                                          endpointInformationTueryTessage,
-                                         endpointInformationTuery,
                                          _remoteAddress).caf();
       EndpointInformation = endpointInformation;
    }
@@ -64,7 +66,7 @@ public class TessagingConnection(
       var transportTessage = TransportTessage.OutGoing.Create(tessage, _typeMapper, _serializer);
       _tessagesInFlightTracker.SendingTessageOnTransport(transportTessage, EndpointInformation.Id);
 
-      _queue.Locked(queue => queue.Enqueue(new PendingDelivery(tessage, transportTessage)));
+      _queue.Locked(queue => queue.Enqueue(new PendingDelivery(transportTessage)));
 
       _signal.Set();
    }
@@ -140,7 +142,7 @@ public class TessagingConnection(
    {
       try
       {
-         _transportMessagePoster.PostAsync(pending.TransportTessage, pending.Tessage, _remoteAddress).GetAwaiter().GetResult();
+         _transportMessagePoster.PostAsync(pending.TransportTessage, _remoteAddress).GetAwaiter().GetResult();
 
          this.Log().Debug($"Delivered tessage {pending.Tessage.Id} to endpoint {EndpointInformation.Id}");
          _exceptionReporter.RunSwallowingAndReportingAnyExceptions(() => _tessageStorage.MarkAsReceived(pending.Tessage.Id, EndpointInformation.Id));

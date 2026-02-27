@@ -47,6 +47,7 @@ public static class TransportTessage
    public class OutGoing
    {
       public bool IsExactlyOnceDeliveryTessage { get; }
+      public IRemotableTessage Tessage { get; }
       internal readonly TessageId TessageId;
 
       internal readonly TypeId Type;
@@ -57,12 +58,13 @@ public static class TransportTessage
       {
          var tessageId = (tessage as IAtMostOnceTessage)?.Id ?? new TessageId();
          var body = serializer.SerializeTessage(tessage);
-         return new OutGoing(typeMapper.GetId(tessage.GetType()), tessage.GetType(), tessageId, body, tessage is IExactlyOnceTessage, tessage, typeMapper, serializer);
+         return new OutGoing(typeMapper.GetId(tessage.GetType()), tessage.GetType(), tessageId, body, tessage is IExactlyOnceTessage, tessage);
       }
 
-      OutGoing(TypeId typeId, Type type, TessageId id, string body, bool isExactlyOnceDeliveryTessage, IRemotableTessage tessage, ITypeMapper typeMapper, IRemotableTessageSerializer serializer)
+      OutGoing(TypeId typeId, Type type, TessageId id, string body, bool isExactlyOnceDeliveryTessage, IRemotableTessage tessage)
       {
          IsExactlyOnceDeliveryTessage = isExactlyOnceDeliveryTessage;
+         Tessage = tessage;
          Type = typeId;
          TessageId = (tessage as IAtMostOnceTessage)?.Id ?? new TessageId();
          Body = body;

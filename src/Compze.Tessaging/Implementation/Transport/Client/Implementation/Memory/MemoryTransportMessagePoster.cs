@@ -30,14 +30,14 @@ public class MemoryTransportMessagePoster : ITransportMessagePoster
       _serializer = serializer;
    }
 
-   public async Task<TResult> PostAsync<TResult>(TransportTessage.OutGoing tessage, object realTessage, EndPointAddress endPointAddress)
+   public async Task<TResult> PostAsync<TResult>(TransportTessage.OutGoing tessage, EndPointAddress endPointAddress)
    {
       var incomingTessage = new TransportTessage.InComing(tessage.Body, tessage.Type, tessage.TessageId, _typeMapper, _serializer);
       return await InMemoryTransportNetwork.GetServer(endPointAddress)
                   .PostAsync<TResult>(incomingTessage).caf();
    }
 
-   public async Task PostAsync(TransportTessage.OutGoing tessage, object realTessage, EndPointAddress endPointAddress)
+   public async Task PostAsync(TransportTessage.OutGoing tessage, EndPointAddress endPointAddress)
    {
       var incomingTessage = new TransportTessage.InComing(tessage.Body, tessage.Type, tessage.TessageId, _typeMapper, _serializer);
       await InMemoryTransportNetwork.GetServer(endPointAddress)
