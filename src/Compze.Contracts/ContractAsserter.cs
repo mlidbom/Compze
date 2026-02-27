@@ -3,6 +3,8 @@ using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using Compze.Contracts.Exceptions;
+// ReSharper disable MemberCanBeMadeStatic.Global
+// ReSharper disable MemberCanBeInternal
 
 namespace Compze.Contracts;
 

@@ -38,6 +38,6 @@ public class Argument_asserter
    public class assertion_methods_can_be_chained_across_asserter_types : Argument_asserter
    {
       [XF] public void Argument_chains_to_State_chains_to_Invariant() =>
-         Contract.Argument.Assert(true).State.Assert(true).Invariant.Assert(true);
+         Contract.Argument.Assert(true).State.Assert(true).Invariant.Assert(true).Argument.NotNull("something");
    }
 }
