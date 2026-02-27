@@ -3,9 +3,12 @@ using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using Compze.Contracts.Exceptions;
+// ReSharper disable MemberCanBeMadeStatic.Global
+// ReSharper disable MemberCanBeInternal
 
 namespace Compze.Contracts;
 
+/// <summary>Fluent assertion builder. Assertion methods are added via extension methods and return <c>this</c> for chaining.</summary>
 public class ContractAsserter(string name, Func<string, Exception> createException, Func<string, Exception> createNullException)
 {
    readonly string _name = name;

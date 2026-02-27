@@ -1,5 +1,4 @@
 using System;
-using System.Runtime.CompilerServices;
 using Compze.Utilities.Testing.Must;
 using static Compze.Utilities.Testing.Must.MustActions;
 
@@ -11,12 +10,14 @@ public abstract class AssertionMethodsTest
                                                                      tessage => new AssertionTestException(tessage));
    protected class AssertionTestException(string message) : Exception(message);
 
-   // ReSharper disable once EntityNameCapturedOnly.Global : Yes. Capturing its name is the entire point of passing it :)
-   internal static void ThrowsAndCapturesArgumentExpressionText(Func<ContractAsserter> assertFunc, object? value, [CallerArgumentExpression(nameof(value))] string valueExpressionString = "")
+   protected static void MustThrowContaining(Action action, string expectedExpression) =>
+      Invoking(action)
+        .Must().Throw<AssertionTestException>()
+        .Which.Message.Must().Contain(expectedExpression);
+
+   protected static void MustThrowContainingForEach(string?[] invalidValues, Action<string?> action, string expectedExpression)
    {
-      Invoking(() => assertFunc())
-                     .Must().Throw<AssertionTestException>()
-                   .Which.Message
-                   .Must().Contain(valueExpressionString);
+      foreach(var invalidValue in invalidValues)
+         MustThrowContaining(() => action(invalidValue), expectedExpression);
    }
 }

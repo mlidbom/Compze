@@ -3,6 +3,9 @@
       <TargetFramework>net10.0</TargetFramework>
       <Nullable>enable</Nullable>
       <Version>0.1.0-alpha.3</Version>
+      <Description>Fluent, chainable runtime assertions for preconditions, invariants, and state checks — with CallerArgumentExpression support for clear failure messages. Zero dependencies.</Description>
+      <PackageTags>contracts;assertions;preconditions;invariants;guard-clauses;fluent</PackageTags>
+      <GenerateDocumentationFile>true</GenerateDocumentationFile>
    </PropertyGroup>
    <ItemGroup>
       <PackageReference Include="NsDepCop" Version="2.6.0">
