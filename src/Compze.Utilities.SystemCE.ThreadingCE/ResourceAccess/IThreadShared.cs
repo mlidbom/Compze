@@ -11,10 +11,10 @@ public interface IThreadShared
    public static IThreadShared<TShared> WithDefaultTimeouts<TShared>(TShared shared) =>
       new LockCEThreadShared<TShared>(shared, IMonitor.WithDefaultTimeout());
 
-   public static IThreadShared<TShared> WithTimeout<TShared>(TimeSpan lockTimeout) where TShared : new() =>
+   public static IThreadShared<TShared> WithTimeout<TShared>(LockTimeout lockTimeout) where TShared : new() =>
       new LockCEThreadShared<TShared>(new TShared(), IMonitor.WithTimeout(lockTimeout));
 
-   public static IThreadShared<TShared> WithTimeout<TShared>(TShared shared, TimeSpan lockTimeout) =>
+   public static IThreadShared<TShared> WithTimeout<TShared>(TShared shared, LockTimeout lockTimeout) =>
       new LockCEThreadShared<TShared>(shared, IMonitor.WithTimeout(lockTimeout));
 
    // Single implementation for both IThreadShared<T> and IAwaitableThreadShared<T>.
@@ -38,9 +38,9 @@ public interface IThreadShared
          _awaitableMonitor = awaitableMonitor;
       }
 
-      public TResult Locked<TResult>(Func<TShared, TResult> func, TimeSpan? timeout = null) => _monitor.Locked(() => func(_shared), timeout);
+      public TResult Locked<TResult>(Func<TShared, TResult> func, LockTimeout? timeout = null) => _monitor.Locked(() => func(_shared), timeout);
 
-      public TReturn LockedOut<TReturn, TOut>(OutReadFunc<TShared, TReturn, TOut> func, out TOut result, TimeSpan? timeout = null)
+      public TReturn LockedOut<TReturn, TOut>(OutReadFunc<TShared, TReturn, TOut> func, out TOut result, LockTimeout? timeout = null)
       {
          using(_monitor.TakeLock(timeout))
          {
@@ -48,9 +48,9 @@ public interface IThreadShared
          }
       }
 
-      public TResult Read<TResult>(Func<TShared, TResult> read, TimeSpan? timeout = null) => _awaitableMonitor.Read(() => read(_shared), timeout);
+      public TResult Read<TResult>(Func<TShared, TResult> read, LockTimeout? timeout = null) => _awaitableMonitor.Read(() => read(_shared), timeout);
 
-      public TReturn ReadOut<TReturn, TOut>(OutReadFunc<TShared, TReturn, TOut> readOut, out TOut result, TimeSpan? timeout = null)
+      public TReturn ReadOut<TReturn, TOut>(OutReadFunc<TShared, TReturn, TOut> readOut, out TOut result, LockTimeout? timeout = null)
       {
          using(_awaitableMonitor.TakeReadLock(timeout))
          {
@@ -58,7 +58,7 @@ public interface IThreadShared
          }
       }
 
-      public TReturn ReadOutWhen<TReturn, TOut>(OutReadFunc<TShared, TReturn, TOut> readOut, Func<TShared, bool> condition, out TOut result, TimeSpan? timeout = null)
+      public TReturn ReadOutWhen<TReturn, TOut>(OutReadFunc<TShared, TReturn, TOut> readOut, Func<TShared, bool> condition, out TOut result, WaitTimeout? timeout = null)
       {
          using(_awaitableMonitor.TakeReadLockWhen(() => condition(_shared), timeout))
          {
@@ -66,15 +66,15 @@ public interface IThreadShared
          }
       }
 
-      public TResult ReadOrUpdate<TResult>(Func<TShared, TResult?> tryRead, Action<TShared> updateOnFailedRead, TimeSpan? timeout = null)
+      public TResult ReadOrUpdate<TResult>(Func<TShared, TResult?> tryRead, Action<TShared> updateOnFailedRead, LockTimeout? timeout = null)
          where TResult : class =>
          _awaitableMonitor.ReadOrUpdate(() => tryRead(_shared), () => updateOnFailedRead(_shared));
 
-      public TResult ReadWhen<TResult>(Func<TShared, TResult> read, Func<TShared, bool> condition, TimeSpan? timeout = null) => _awaitableMonitor.ReadWhen(() => read(_shared), () => condition(_shared), timeout);
+      public TResult ReadWhen<TResult>(Func<TShared, TResult> read, Func<TShared, bool> condition, WaitTimeout? timeout = null) => _awaitableMonitor.ReadWhen(() => read(_shared), () => condition(_shared), timeout);
 
-      public TResult Update<TResult>(Func<TShared, TResult> update, TimeSpan? timeout = null) => _awaitableMonitor.Update(() => update(_shared), timeout);
+      public TResult Update<TResult>(Func<TShared, TResult> update, LockTimeout? timeout = null) => _awaitableMonitor.Update(() => update(_shared), timeout);
 
-      public TResult UpdateWhen<TResult>(Func<TShared, TResult> update, Func<TShared, bool> condition, TimeSpan? timeout = null) => _awaitableMonitor.UpdateWhen(() => update(_shared), () => condition(_shared), timeout);
+      public TResult UpdateWhen<TResult>(Func<TShared, TResult> update, Func<TShared, bool> condition, WaitTimeout? timeout = null) => _awaitableMonitor.UpdateWhen(() => update(_shared), () => condition(_shared), timeout);
    }
 }
 
@@ -82,8 +82,8 @@ public delegate TReturn OutReadFunc<in TShared, out TReturn, TOut>(TShared share
 
 public interface IThreadShared<out TShared>
 {
-   TResult Locked<TResult>(Func<TShared, TResult> func, TimeSpan? timeout = null);
-   TReturn LockedOut<TReturn, TOut>(OutReadFunc<TShared, TReturn, TOut> func, out TOut result, TimeSpan? timeout = null);
+   TResult Locked<TResult>(Func<TShared, TResult> func, LockTimeout? timeout = null);
+   TReturn LockedOut<TReturn, TOut>(OutReadFunc<TShared, TReturn, TOut> func, out TOut result, LockTimeout? timeout = null);
 
-   unit Locked(Action<TShared> action, TimeSpan? timeout = null) => Locked(action.AsFunc(), timeout);
+   unit Locked(Action<TShared> action, LockTimeout? timeout = null) => Locked(action.AsFunc(), timeout);
 }

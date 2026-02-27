@@ -1,5 +1,6 @@
 using System;
 using System.Transactions;
+using Compze.Utilities.SystemCE.ThreadingCE;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
 namespace Compze.Utilities.SystemCE.TransactionsCE;
@@ -20,7 +21,7 @@ public abstract class VolatileTransactionParticipant : IEnlistmentNotification
 
    protected virtual void OnInDoubt() {}
 
-   readonly IMonitor _monitor = IMonitor.WithTimeout(30.Seconds());
+   readonly IMonitor _monitor = IMonitor.WithTimeout(LockTimeout.Seconds(30));
    Transaction? _enlistedIn;
    public void EnsureEnlistedInAnyAmbientTransaction() => _monitor.Locked(() =>
    {

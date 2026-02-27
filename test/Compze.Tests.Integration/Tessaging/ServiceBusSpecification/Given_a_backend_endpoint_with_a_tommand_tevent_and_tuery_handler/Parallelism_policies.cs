@@ -6,6 +6,7 @@ using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
+using Compze.Utilities.SystemCE.ThreadingCE;
 using Compze.Utilities.SystemCE.ThreadingCE.Testing;
 using Compze.Utilities.Testing.Must;
 
@@ -43,7 +44,7 @@ public class Parallelism_policies : EndpointHostTestBase
       Client.ExecuteRequest(session => session.Post(MyCreateTaggregateTommand.Create()));
 
       MyRemoteTaggregateTeventHandlerThreadGate.AwaitQueueLengthEqualTo(1)
-                                             .TryAwaitQueueLengthEqualTo(2, timeout: 100.Milliseconds()).Must().Be(false);
+                                             .TryAwaitQueueLengthEqualTo(2, timeout: WaitTimeout.Milliseconds(100)).Must().Be(false);
    }
 
    [PCT] public void Two_exactly_once_tommand_handlers_cannot_execute_in_parallel()
@@ -54,7 +55,7 @@ public class Parallelism_policies : EndpointHostTestBase
       RemoteEndpoint.ExecuteServerRequestInTransaction(session => session.Send(new MyExactlyOnceTommand()));
 
       MyExactlyOnceTommandHandlerThreadGate.AwaitQueueLengthEqualTo(1)
-                              .TryAwaitQueueLengthEqualTo(2, timeout: 100.Milliseconds()).Must().Be(false);
+                              .TryAwaitQueueLengthEqualTo(2, timeout: WaitTimeout.Milliseconds(100)).Must().Be(false);
    }
 
    [PCT] public async Task Two_AtMostOnce_tommand_handlers_from_the_same_session_cannot_execute_in_parallel()
@@ -67,7 +68,7 @@ public class Parallelism_policies : EndpointHostTestBase
             session.PostAsync(MyCreateTaggregateTommand.Create())));
 
       MyCreateTaggregateTommandHandlerThreadGate.AwaitQueueLengthEqualTo(1)
-                                               .TryAwaitQueueLengthEqualTo(2, timeout: 100.Milliseconds()).Must().Be(false);
+                                               .TryAwaitQueueLengthEqualTo(2, timeout: WaitTimeout.Milliseconds(100)).Must().Be(false);
 
       OpenGates();
       await commandsCompleted;

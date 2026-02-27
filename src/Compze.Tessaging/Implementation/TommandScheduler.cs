@@ -12,6 +12,7 @@ using Compze.Utilities.Logging;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
 using Compze.Utilities.SystemCE.LinqCE;
+using Compze.Utilities.SystemCE.ThreadingCE;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using Compze.Utilities.SystemCE.TransactionsCE;
@@ -35,7 +36,7 @@ public class TommandScheduler(IOutbox transport, ITaskRunner taskRunner) : IDisp
    readonly ITaskRunner _taskRunner = taskRunner;
    Timer? _scheduledTessagesTimer;
    readonly List<ScheduledTommand> _scheduledTessages = [];
-   readonly IMonitor _monitor = IMonitor.WithTimeout(1.Seconds());
+   readonly IMonitor _monitor = IMonitor.WithTimeout(LockTimeout.Seconds(1));
 
    public async Task StartAsync()
    {

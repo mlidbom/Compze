@@ -15,6 +15,7 @@ using Compze.Tessaging.Teventive.TeventStore.Wiring;
 using Compze.Tessaging.TyperMediaApi.EventStore;
 using Compze.Tests.Infrastructure;
 using Compze.Functional;
+using Compze.Utilities.SystemCE.ThreadingCE;
 using Compze.Utilities.SystemCE.ThreadingCE.Testing;
 
 // ReSharper disable ClassNeverInstantiated.Global
@@ -28,7 +29,7 @@ namespace Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_
 
 public abstract class EndpointHostTestBase : UniversalTestBase
 {
-   static readonly TimeSpan _timeout = 10.Seconds();
+   static readonly WaitTimeout _timeout = WaitTimeout.Seconds(10);
    public ITestingEndpointHost Host { get; set; } = null!;
    public IThreadGate MyExactlyOnceTommandHandlerThreadGate { get; }
    public IThreadGate TommandHandlerWithResultThreadGate { get; }

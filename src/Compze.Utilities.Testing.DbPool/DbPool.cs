@@ -4,6 +4,7 @@ using Compze.Utilities.Logging;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
 using Compze.Utilities.SystemCE.TransactionsCE;
+using Compze.Utilities.SystemCE.ThreadingCE;
 using Compze.Utilities.Testing.DbPool.SystemCE;
 using System;
 using System.Collections.Generic;
@@ -44,7 +45,7 @@ public partial class DbPool : StrictlyManagedResourceBase<DbPool>
       MachineWideState = MachineWideSharedObject<DbPoolState>.For(sqlLayer.GetType().GetFullNameCompilable(), DbPoolStateSerializer.Instance, CorruptionAction.ReplaceContentWithDefaultAndThrow);
    }
 
-   readonly IMonitor _monitor = IMonitor.WithTimeout(30.Seconds());
+   readonly IMonitor _monitor = IMonitor.WithTimeout(LockTimeout.Seconds(30));
    readonly DbPoolId _poolId = new();
    IReadOnlyList<DbPoolDatabase> _transientCache = new List<DbPoolDatabase>();
 

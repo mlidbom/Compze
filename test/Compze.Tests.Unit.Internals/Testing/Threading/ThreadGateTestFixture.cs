@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
+using Compze.Utilities.SystemCE.ThreadingCE;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using Compze.Utilities.SystemCE.ThreadingCE.Testing;
 
@@ -35,7 +36,7 @@ class ThreadGateTestFixture : IDisposable
 
    ThreadGateTestFixture()
    {
-      Gate = ThreadGate.CreateClosedWithTimeout(30.Seconds());
+      Gate = ThreadGate.CreateClosedWithTimeout(WaitTimeout.Seconds(30));
       NumberOfThreads = 10;
    }
 

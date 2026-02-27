@@ -9,6 +9,7 @@ using Compze.Tessaging.Implementation.Transport;
 using Compze.Tessaging.Implementation.Transport.Client.Routing.Abstractions;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE;
+using Compze.Utilities.SystemCE.ThreadingCE;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Tessaging.Hosting;
@@ -22,7 +23,7 @@ public abstract class TestingEndpointHostBase : EndpointHost, ITestingEndpointHo
                                                                            .Select(it => it.Address!)
                                                                            .ToList();
 
-   void WaitForEndpointsToBeAtRest(TimeSpan? timeoutOverride = null) => TessagesInFlightTracker.AwaitNoTessagesInFlight(timeoutOverride);
+   void WaitForEndpointsToBeAtRest(WaitTimeout? timeoutOverride = null) => TessagesInFlightTracker.AwaitNoTessagesInFlight(timeoutOverride);
 
    bool _disposed;
 
@@ -38,7 +39,7 @@ public abstract class TestingEndpointHostBase : EndpointHost, ITestingEndpointHo
          {
             try
             {
-               WaitForEndpointsToBeAtRest(timeoutOverride: 10.Seconds());
+               WaitForEndpointsToBeAtRest(timeoutOverride: WaitTimeout.Seconds(10));
             }
 #pragma warning disable CA1031
             catch(Exception e)

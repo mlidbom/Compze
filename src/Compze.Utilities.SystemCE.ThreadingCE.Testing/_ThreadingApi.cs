@@ -25,9 +25,9 @@ public interface IThreadGate : IThreadGateVisitor
    IThreadGate SetPassThroughAction(Action<ThreadSnapshot> action);
 
    ///<summary>Blocks until the gate is in a state which satisfies <see cref="condition"/> and then while owning the lock executes <see cref="action"/></summary>
-   IThreadGate ExecuteWithExclusiveLockWhen(TimeSpan timeout, Func<bool> condition, Action action);
+   IThreadGate ExecuteWithExclusiveLockWhen(WaitTimeout timeout, Func<bool> condition, Action action);
 
-   bool TryAwait(TimeSpan timeout, Func<bool> condition);
+   bool TryAwait(WaitTimeout timeout, Func<bool> condition);
 
    Action<ThreadSnapshot> PassThroughAction { get; }
 
@@ -35,7 +35,7 @@ public interface IThreadGate : IThreadGateVisitor
    int Queued { get; }
    int Requested { get; }
    int Passed { get; }
-   TimeSpan DefaultTimeout { get; }
+   WaitTimeout DefaultTimeout { get; }
 
    IReadOnlyList<ThreadSnapshot> RequestedThreads { get; }
    IReadOnlyList<ThreadSnapshot> QueuedThreads { get; }

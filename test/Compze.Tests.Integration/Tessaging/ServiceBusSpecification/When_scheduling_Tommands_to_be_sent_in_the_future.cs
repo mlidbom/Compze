@@ -9,6 +9,7 @@ using Compze.Tests.Infrastructure.XUnit;
 using System;
 using Compze.Utilities.SystemCE;
 using System.Threading.Tasks;
+using Compze.Utilities.SystemCE.ThreadingCE;
 using Compze.Utilities.SystemCE.ThreadingCE.Testing;
 using Compze.Utilities.Testing.Must;
 
@@ -23,7 +24,7 @@ public class When_scheduling_tommands_to_be_sent_in_the_future : UniversalTestBa
    public When_scheduling_tommands_to_be_sent_in_the_future()
    {
       _host = TestingEndpointHost.Create();
-      _receivedTommandGate = ThreadGate.CreateOpenWithTimeout(1.Seconds());
+      _receivedTommandGate = ThreadGate.CreateOpenWithTimeout(WaitTimeout.Seconds(1));
       _endpoint = _host.RegisterEndpoint(
          "endpoint",
          new EndpointId(Guid.Parse("17ED9DF9-33A8-4DF8-B6EC-6ED97AB2030B")),
@@ -44,7 +45,7 @@ public class When_scheduling_tommands_to_be_sent_in_the_future : UniversalTestBa
 
       _endpoint.ExecuteServerRequestInTransaction(session => session.ScheduleSend(now + .2.Seconds(), inOneHour));
 
-      _receivedTommandGate.AwaitPassedThroughCountEqualTo(1, timeout: 10.Seconds());
+      _receivedTommandGate.AwaitPassedThroughCountEqualTo(1, timeout: WaitTimeout.Seconds(10));
    }
 
    [PCT]  public void Tessages_whose_due_time_have_not_passed_are_not_delivered()
@@ -53,7 +54,7 @@ public class When_scheduling_tommands_to_be_sent_in_the_future : UniversalTestBa
       var inOneHour = new ScheduledTommand();
       _endpoint.ExecuteServerRequestInTransaction(session => session.ScheduleSend(now + 2.Seconds(), inOneHour));
 
-      _receivedTommandGate.TryAwaitPassedThroughCountEqualTo(1, timeout: .5.Seconds())
+      _receivedTommandGate.TryAwaitPassedThroughCountEqualTo(1, timeout: new WaitTimeout(TimeSpan.FromSeconds(.5)))
                           .Must().Be(false);
    }
 

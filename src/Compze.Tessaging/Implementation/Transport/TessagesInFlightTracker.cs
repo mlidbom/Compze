@@ -8,6 +8,7 @@ using Compze.Tessaging.Implementation.Abstractions;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
+using Compze.Utilities.SystemCE.ThreadingCE;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
 namespace Compze.Tessaging.Implementation.Transport;
@@ -22,11 +23,11 @@ public class TessagesInFlightTracker(ITypeMapper typeMapper) : ITessagesInFlight
    public void SendingTessageOnTransport(TransportTessage.OutGoing transportTessage, EndpointId remoteEndpointId) =>
       _implementation.Update(implementation => implementation.SendingTessageOnTransport(transportTessage, remoteEndpointId));
 
-   public void AwaitNoTessagesInFlight(TimeSpan? timeoutOverride)
+   public void AwaitNoTessagesInFlight(WaitTimeout? timeoutOverride)
    {
       try
       {
-         _implementation.Await(implementation => implementation.NoTessagesInFlight(), timeoutOverride ?? 10.Seconds());
+         _implementation.Await(implementation => implementation.NoTessagesInFlight(), timeoutOverride ?? WaitTimeout.Seconds(10));
       }
       catch(AwaitingConditionTimeoutException e)
       {
@@ -92,6 +93,6 @@ public class NullOpTessagesInFlightTracker : ITessagesInFlightTracker
 {
    public IReadOnlyList<Exception> GetExceptions() => [];
    public void SendingTessageOnTransport(TransportTessage.OutGoing transportTessage, EndpointId remoteEndpointId) {}
-   public void AwaitNoTessagesInFlight(TimeSpan? timeoutOverride) {}
+   public void AwaitNoTessagesInFlight(WaitTimeout? timeoutOverride) {}
    public void DoneWith(TransportTessage.InComing tessage, EndpointId handlingEndpointId, Exception? exception) {}
 }

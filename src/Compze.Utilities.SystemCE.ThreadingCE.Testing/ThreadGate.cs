@@ -9,10 +9,10 @@ namespace Compze.Utilities.SystemCE.ThreadingCE.Testing;
 
 public class ThreadGate : IThreadGate
 {
-   public static IThreadGate CreateClosedWithTimeout(TimeSpan timeout, string? name = null) => new ThreadGate(timeout, name);
-   public static IThreadGate CreateOpenWithTimeout(TimeSpan timeout, string? name = null) => new ThreadGate(timeout, name).Open();
+   public static IThreadGate CreateClosedWithTimeout(WaitTimeout timeout, string? name = null) => new ThreadGate(timeout, name);
+   public static IThreadGate CreateOpenWithTimeout(WaitTimeout timeout, string? name = null) => new ThreadGate(timeout, name).Open();
 
-   public TimeSpan DefaultTimeout { get; }
+   public WaitTimeout DefaultTimeout { get; }
 
    public bool IsOpen { get; private set; }
 
@@ -49,13 +49,13 @@ public class ThreadGate : IThreadGate
       return this.AwaitClosed();
    }
 
-   public bool TryAwait(TimeSpan timeout, Func<bool> condition) => _monitor.TryAwait(condition, timeout);
+   public bool TryAwait(WaitTimeout timeout, Func<bool> condition) => _monitor.TryAwait(condition, timeout);
 
    public IThreadGate SetPostPassThroughAction(Action<ThreadSnapshot> action) => this._mutate(_ => _monitor.Update(() => _postPassThroughAction = action));
    public IThreadGate SetPrePassThroughAction(Action<ThreadSnapshot> action) => this._mutate(_ => _monitor.Update(() => _prePassThroughAction = action));
    public IThreadGate SetPassThroughAction(Action<ThreadSnapshot> action) => this._mutate(_ => _monitor.Update(() => _passThroughAction = action));
 
-   public IThreadGate ExecuteWithExclusiveLockWhen(TimeSpan timeout, Func<bool> condition, Action action)
+   public IThreadGate ExecuteWithExclusiveLockWhen(WaitTimeout timeout, Func<bool> condition, Action action)
    {
       try
       {
@@ -113,10 +113,10 @@ public class ThreadGate : IThreadGate
       return unit.Value;
    }
 
-   ThreadGate(TimeSpan defaultTimeout, string? name = null)
+   ThreadGate(WaitTimeout defaultTimeout, string? name = null)
    {
       Name = name ?? Guid.NewGuid().ToString();
-      _monitor = IAwaitableMonitor.WithTimeouts(defaultTimeout);
+      _monitor = IAwaitableMonitor.WithTimeouts(new LockTimeout(defaultTimeout.Value), defaultTimeout);
       DefaultTimeout = defaultTimeout;
    }
 

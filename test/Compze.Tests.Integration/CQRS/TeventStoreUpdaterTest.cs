@@ -27,6 +27,7 @@ using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
+using Compze.Utilities.SystemCE.ThreadingCE;
 using Compze.Utilities.SystemCE.ThreadingCE.Testing;
 using Compze.Utilities.SystemCE.UsageGuards;
 using Compze.Utilities.Testing.Must;
@@ -557,8 +558,8 @@ public class TeventStoreUpdaterTest : UniversalTestBase
          user.ChangeEmail("newemail@somewhere.not");
       });
 
-      var getHistorySection = GatedCodeSection.WithTimeout(30.Seconds());
-      var changeEmailSection = GatedCodeSection.WithTimeout(30.Seconds());
+      var getHistorySection = GatedCodeSection.WithTimeout(WaitTimeout.Seconds(30));
+      var changeEmailSection = GatedCodeSection.WithTimeout(WaitTimeout.Seconds(30));
 
       const int threads = 2;
       var tasks = 1.Through(threads).Select(_ => TaskCE.Run(UpdateEmail)).ToArray();
@@ -611,8 +612,8 @@ public class TeventStoreUpdaterTest : UniversalTestBase
          user.ChangeEmail("newemail@somewhere.not");
       });
 
-      var changeEmailSection = GatedCodeSection.WithTimeout(20.Seconds());
-      var hasFetchedUser = ThreadGate.CreateOpenWithTimeout(20.Seconds());
+      var changeEmailSection = GatedCodeSection.WithTimeout(WaitTimeout.Seconds(20));
+      var hasFetchedUser = ThreadGate.CreateOpenWithTimeout(WaitTimeout.Seconds(20));
 
       const int threads = 2;
 

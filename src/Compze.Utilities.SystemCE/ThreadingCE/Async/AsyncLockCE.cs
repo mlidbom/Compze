@@ -10,12 +10,12 @@ namespace Compze.Utilities.SystemCE.ThreadingCE.Async;
 
 public interface IAsyncLockCE : IDisposable
 {
-   static readonly TimeSpan DefaultTimeout = CompzeEnvironment.IsNCrunch
-                                                ? 45.Seconds() //Tests timeout at 60 seconds. We want locks to timeout faster so that the blocking stack traces turn up in the test output so we can diagnose the deadlocks.
-                                                : 2.Minutes(); //MsSql default query timeout is 30 seconds. Default .Net transaction timeout is 60. If we reach 2 minutes it is highly likely that we have an in-memory deadlock.
+   static readonly LockTimeout DefaultLockTimeout = new(CompzeEnvironment.IsNCrunch
+                                                           ? 45.Seconds() //Tests timeout at 60 seconds. We want locks to timeout faster so that the blocking stack traces turn up in the test output so we can diagnose the deadlocks.
+                                                           : 2.Minutes()); //MsSql default query timeout is 30 seconds. Default .Net transaction timeout is 60. If we reach 2 minutes it is highly likely that we have an in-memory deadlock.
 
-   static IAsyncLockCE WithDefaultTimeout() => new AsyncLockCE(DefaultTimeout);
-   static IAsyncLockCE WithTimeout(TimeSpan timeout) => new AsyncLockCE(timeout);
+   static IAsyncLockCE WithDefaultTimeout() => new AsyncLockCE(DefaultLockTimeout);
+   static IAsyncLockCE WithTimeout(LockTimeout timeout) => new AsyncLockCE(timeout);
 
    Task<unit> LockedAsync(Func<Task> lockedAction);
    Task<TReturn> LockedAsync<TReturn>(Func<Task<TReturn>> lockedAction);
@@ -29,7 +29,7 @@ public interface IAsyncLockCE : IDisposable
    {
       readonly SemaphoreSlim _semaphore = new(1, 1);
       readonly AsyncLocal<int> _lockEntranceCount = new();
-      readonly TimeSpan _timeout;
+      readonly LockTimeout _timeout;
       readonly Lock _timeoutLock = new();
 
       static readonly TimeSpan DefaultTimeToWaitForStackTrace = 1.Seconds();
@@ -37,7 +37,7 @@ public interface IAsyncLockCE : IDisposable
       TimeSpan _stackTraceFetchTimeout;
       IReadOnlyList<AsyncLockTimeoutException> _timeOutExceptionsOnOtherThreads = new List<AsyncLockTimeoutException>();
 
-      public AsyncLockCE(TimeSpan timeout)
+      public AsyncLockCE(LockTimeout timeout)
       {
          _timeout = timeout;
          _stackTraceFetchTimeout = DefaultTimeToWaitForStackTrace;

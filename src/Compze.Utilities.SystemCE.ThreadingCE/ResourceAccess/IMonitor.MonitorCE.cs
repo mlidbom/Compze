@@ -13,24 +13,24 @@ public partial interface IMonitor
    private class MonitorCE : IMonitor, IAwaitableMonitor
 #pragma warning restore CA1001
    {
-      public IDisposable TakeLock(TimeSpan? timeout = null) => TakeLockCore(LockType.Read, timeout);
-      public IDisposable TakeReadLock(TimeSpan? timeout = null) => TakeLockCore(LockType.Read, timeout);
-      public IDisposable TakeUpdateLock(TimeSpan? timeout = null) => TakeLockCore(LockType.Update, timeout);
+      public IDisposable TakeLock(LockTimeout? timeout = null) => TakeLockCore(LockType.Read, timeout);
+      public IDisposable TakeReadLock(LockTimeout? timeout = null) => TakeLockCore(LockType.Read, timeout);
+      public IDisposable TakeUpdateLock(LockTimeout? timeout = null) => TakeLockCore(LockType.Update, timeout);
 
-      public IDisposable TakeReadLockWhen(Func<bool> condition, TimeSpan? waitTimeout = null, TimeSpan? lockTimeout = null) =>
+      public IDisposable TakeReadLockWhen(Func<bool> condition, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null) =>
          TakeLockWhen(condition, LockType.Read, waitTimeout: waitTimeout, lockTimeout: lockTimeout);
 
-      public IDisposable TakeUpdateLockWhen(Func<bool> condition, TimeSpan? waitTimeout = null, TimeSpan? lockTimeout = null) =>
+      public IDisposable TakeUpdateLockWhen(Func<bool> condition, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null) =>
          TakeLockWhen(condition, LockType.Update, waitTimeout: waitTimeout, lockTimeout: lockTimeout);
 
-      public IDisposable? TryTakeReadLockWhen(Func<bool> condition, TimeSpan? waitTimeout = null, TimeSpan? lockTimeout = null) =>
+      public IDisposable? TryTakeReadLockWhen(Func<bool> condition, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null) =>
          TryTakeLockWhen(condition, LockType.Read, throwOnFailedLock: false, waitTimeout: waitTimeout, lockTimeout: lockTimeout);
 
-      public IDisposable? TryTakeUpdateLockWhen(Func<bool> condition, TimeSpan? waitTimeout = null, TimeSpan? lockTimeout = null) =>
+      public IDisposable? TryTakeUpdateLockWhen(Func<bool> condition, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null) =>
          TryTakeLockWhen(condition, LockType.Update, throwOnFailedLock: false, waitTimeout: waitTimeout, lockTimeout: lockTimeout);
 
-      public TimeSpan LockTimeout { get; }
-      public TimeSpan WaitTimeout { get; }
+      public LockTimeout LockTimeout { get; }
+      public WaitTimeout WaitTimeout { get; }
       public long ContentionCount => _monitor.ContentionCount;
 
       public void SetTimeToWaitForStackTrace(TimeSpan timeToWaitForStackTrace) => _stackTraceFetchTimeout = timeToWaitForStackTrace;
@@ -45,7 +45,7 @@ public partial interface IMonitor
 
       TimeSpan _stackTraceFetchTimeout;
 
-      public MonitorCE(TimeSpan lockTimeout, TimeSpan waitTimeout)
+      public MonitorCE(LockTimeout lockTimeout, WaitTimeout waitTimeout)
       {
          LockTimeout = lockTimeout;
          WaitTimeout = waitTimeout;
@@ -68,14 +68,14 @@ public partial interface IMonitor
          };
       }
 
-      IDisposable TakeLockCore(LockType lockType, TimeSpan? lockTimeout = null) => TryTakeLockCore(lockType, lockTimeout) ?? throw RegisterTimeoutException();
+      IDisposable TakeLockCore(LockType lockType, LockTimeout? lockTimeout = null) => TryTakeLockCore(lockType, lockTimeout) ?? throw RegisterTimeoutException();
 
-      IDisposable TakeLockWhen(Func<bool> condition, LockType lockType, TimeSpan? waitTimeout = null, TimeSpan? lockTimeout = null) =>
+      IDisposable TakeLockWhen(Func<bool> condition, LockType lockType, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null) =>
          TryTakeLockWhen(condition, lockType, throwOnFailedLock: true, waitTimeout: waitTimeout, lockTimeout: lockTimeout) ?? throw new AwaitingConditionTimeoutException();
 
-      IDisposable? TryTakeLockCore(LockType lockType, TimeSpan? timeout = null) => _monitor.TryTakeLock(timeout ?? LockTimeout) ? LockFor(lockType) : null;
+      IDisposable? TryTakeLockCore(LockType lockType, LockTimeout? timeout = null) => _monitor.TryTakeLock(timeout ?? LockTimeout) ? LockFor(lockType) : null;
 
-      IDisposable? TryTakeLockWhen(Func<bool> condition, LockType lockType, bool throwOnFailedLock, TimeSpan? waitTimeout = null, TimeSpan? lockTimeout = null)
+      IDisposable? TryTakeLockWhen(Func<bool> condition, LockType lockType, bool throwOnFailedLock, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null)
       {
          var actualWaitTimeout = waitTimeout ?? WaitTimeout;
          var actualLockTimeout = lockTimeout ?? LockTimeout;

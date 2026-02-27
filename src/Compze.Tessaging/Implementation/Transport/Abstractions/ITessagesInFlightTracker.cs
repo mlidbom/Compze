@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Compze.Core.Tessaging.Hosting.Public;
+using Compze.Utilities.SystemCE.ThreadingCE;
 
 namespace Compze.Tessaging.Implementation.Transport.Abstractions;
 
@@ -9,6 +10,6 @@ public interface ITessagesInFlightTracker
     IReadOnlyList<Exception> GetExceptions();
 
     void SendingTessageOnTransport(TransportTessage.OutGoing transportTessage, EndpointId remoteEndpointId);
-    void AwaitNoTessagesInFlight(TimeSpan? timeoutOverride);
+    void AwaitNoTessagesInFlight(WaitTimeout? timeoutOverride);
     void DoneWith(TransportTessage.InComing tessage, EndpointId handlingEndpointId, Exception? exception);
 }

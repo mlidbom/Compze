@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
 using Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
 using Compze.Tests.Infrastructure.XUnit;
+using Compze.Utilities.SystemCE.ThreadingCE;
 using Compze.Utilities.SystemCE.ThreadingCE.Testing;
 using Compze.Utilities.Testing.Must;
 using static Compze.Utilities.Testing.Must.MustActions;
@@ -25,7 +26,7 @@ public class Retry_policies_AtMostOnceTommand_when_tommand_handler_fails : Endpo
 
    [PCT] public void ExactlyOnce_Tevent_raised_in_handler_does_not_reach_remote_handler()
    {
-      MyRemoteTaggregateTeventHandlerThreadGate.TryAwaitPassedThroughCountEqualTo(count: 1, 1.Seconds())
+      MyRemoteTaggregateTeventHandlerThreadGate.TryAwaitPassedThroughCountEqualTo(count: 1, WaitTimeout.Seconds(1))
                                              .Must()
                                              .Be(expected: false);
    }

@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.SystemCE;
+using Compze.Utilities.SystemCE.ThreadingCE;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using Compze.Utilities.Testing.Must;
@@ -21,7 +22,7 @@ public class MonitorCE_specification : UniversalTestBase
 {
    [XF] public void When_one_thread_has_UpdateLock_other_thread_is_blocked_until_first_thread_disposes_lock_()
    {
-      var monitor = IAwaitableMonitor.WithTimeouts(1.Seconds());
+      var monitor = IAwaitableMonitor.WithTimeouts(LockTimeout.Seconds(1));
 
       var updateLock = monitor.TakeUpdateLock();
 
@@ -47,21 +48,21 @@ public class MonitorCE_specification : UniversalTestBase
 
    [XF] public void Owning_thread_can_reenter_the_lock_and_the_lock_is_only_exited_when_releasing_the_outermost_lock()
    {
-      var monitor = IAwaitableMonitor.WithTimeouts(1.Seconds());
+      var monitor = IAwaitableMonitor.WithTimeouts(LockTimeout.Seconds(1));
       using(monitor.TakeUpdateLock())
       {
          using(monitor.TakeUpdateLock()) {}
 
-         Invoking(() => TaskCE.Run(() => monitor.TakeUpdateLock(timeout: 100.Milliseconds())).Wait())
+         Invoking(() => TaskCE.Run(() => monitor.TakeUpdateLock(timeout: LockTimeout.Milliseconds(100))).Wait())
            .Must().Throw<Exception>();
       }
 
-      TaskCE.Run(() => monitor.TakeUpdateLock(timeout: 0.Milliseconds())).Wait();
+      TaskCE.Run(() => monitor.TakeUpdateLock(timeout: LockTimeout.Milliseconds(0))).Wait();
    }
 
    public class When_a_thread_waiting_in_TakeUpdateLockWhen_is_interrupted : MonitorCE_specification
    {
-      readonly IAwaitableMonitor _monitor = IAwaitableMonitor.WithTimeouts(30.Seconds());
+      readonly IAwaitableMonitor _monitor = IAwaitableMonitor.WithTimeouts(LockTimeout.Seconds(30));
       readonly Thread _waitingThread;
       readonly ManualResetEventSlim _threadIsWaiting = new(false);
       readonly ManualResetEventSlim _threadCompleted = new(false);
@@ -99,7 +100,7 @@ public class MonitorCE_specification : UniversalTestBase
 
       [XF] public void lock_is_released_so_other_threads_can_acquire_it()
       {
-         using(_monitor.TakeUpdateLock(timeout: 1.Seconds())) {}
+         using(_monitor.TakeUpdateLock(timeout: LockTimeout.Seconds(1))) {}
       }
    }
 
@@ -118,7 +119,7 @@ public class MonitorCE_specification : UniversalTestBase
 
       static Exception RunScenario(TimeSpan ownerThreadBlockTime, TimeSpan monitorTimeout, TimeSpan? timeToWaitForStackTrace = null)
       {
-         var monitor = IAwaitableMonitor.WithTimeouts(monitorTimeout);
+         var monitor = IAwaitableMonitor.WithTimeouts(new LockTimeout(monitorTimeout));
          if(timeToWaitForStackTrace.HasValue)
          {
             monitor.SetTimeToWaitForStackTrace(timeToWaitForStackTrace.Value);

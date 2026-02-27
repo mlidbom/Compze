@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using Compze.Utilities.SystemCE;
+using Compze.Utilities.SystemCE.ThreadingCE;
 using Compze.Utilities.SystemCE.ThreadingCE.Testing;
 using Compze.Utilities.Testing.Must;
 using Compze.Utilities.Testing.XUnit.BDD;
@@ -27,8 +28,8 @@ public class MonitorClassApiExploration
    {
       var guarded = new object();
 
-      var threadOneWaitsOnLockSection = GatedCodeSection.WithTimeout(30.Seconds()).Open();
-      var threadTwoHasAcquiredLockAndWishesToReleaseItGate = ThreadGate.CreateClosedWithTimeout(30.Seconds());
+      var threadOneWaitsOnLockSection = GatedCodeSection.WithTimeout(WaitTimeout.Seconds(30)).Open();
+      var threadTwoHasAcquiredLockAndWishesToReleaseItGate = ThreadGate.CreateClosedWithTimeout(WaitTimeout.Seconds(30));
 
       var waitTimeout = 100.Milliseconds();
 
@@ -52,7 +53,7 @@ public class MonitorClassApiExploration
       threadTwoHasAcquiredLockAndWishesToReleaseItGate.AwaitQueueLengthEqualTo(1);
 
       threadOneWaitsOnLockSection.ExitGate
-                                 .TryAwaitPassedThroughCountEqualTo(1, timeout: 200.Milliseconds())
+                                 .TryAwaitPassedThroughCountEqualTo(1, timeout: WaitTimeout.Milliseconds(200))
                                  .Must().Be(false);
 
       threadTwoHasAcquiredLockAndWishesToReleaseItGate.AwaitLetOneThreadPassThrough();
@@ -66,8 +67,8 @@ public class MonitorClassApiExploration
    {
       var guarded = new object();
 
-      var threadOneWaitsOnLockSection = GatedCodeSection.WithTimeout(30.Seconds()).Open();
-      var threadTwoHasAcquiredLockAndWishesToReleaseItGate = ThreadGate.CreateClosedWithTimeout(30.Seconds());
+      var threadOneWaitsOnLockSection = GatedCodeSection.WithTimeout(WaitTimeout.Seconds(30)).Open();
+      var threadTwoHasAcquiredLockAndWishesToReleaseItGate = ThreadGate.CreateClosedWithTimeout(WaitTimeout.Seconds(30));
 
       var waitTimeout = TimeSpan.FromMilliseconds(int.MaxValue);
 
@@ -92,7 +93,7 @@ public class MonitorClassApiExploration
       threadTwoHasAcquiredLockAndWishesToReleaseItGate.AwaitQueueLengthEqualTo(1);
 
       threadOneWaitsOnLockSection.ExitGate
-                                 .TryAwaitPassedThroughCountEqualTo(1, timeout: 200.Milliseconds())
+                                 .TryAwaitPassedThroughCountEqualTo(1, timeout: WaitTimeout.Milliseconds(200))
                                  .Must().Be(false);
 
       threadTwoHasAcquiredLockAndWishesToReleaseItGate.AwaitLetOneThreadPassThrough();

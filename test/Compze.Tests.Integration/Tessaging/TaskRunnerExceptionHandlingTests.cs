@@ -10,6 +10,7 @@ using Compze.Utilities.SystemCE;
 using System.Linq;
 using System.Threading.Tasks;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
+using Compze.Utilities.SystemCE.ThreadingCE;
 using Compze.Utilities.SystemCE.ThreadingCE.Testing;
 using Compze.Utilities.Testing.Must;
 using static Compze.Utilities.Testing.Must.MustActions;
@@ -42,7 +43,7 @@ public class TaskRunnerExceptionHandlingTests : UniversalTestBase
    {
       await CompzeLogger.SuppressLoggingWhileRunningAsync(async () =>
       {
-         var gate = ThreadGate.CreateOpenWithTimeout(10.Seconds());
+         var gate = ThreadGate.CreateOpenWithTimeout(WaitTimeout.Seconds(10));
 
          _taskRunner.Run("test-task", () => gate.AwaitPassThrough()._then(() => throw new InvalidOperationException("exception1")));
 
@@ -61,7 +62,7 @@ public class TaskRunnerExceptionHandlingTests : UniversalTestBase
    {
       await CompzeLogger.SuppressLoggingWhileRunningAsync(async () =>
       {
-         var gate = ThreadGate.CreateOpenWithTimeout(20.Seconds());
+         var gate = ThreadGate.CreateOpenWithTimeout(WaitTimeout.Seconds(20));
 
          var _exception1 = new InvalidOperationException("exception1");
          var _exception2 = new ArgumentException("exception2");

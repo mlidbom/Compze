@@ -2,6 +2,7 @@ using System;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
+using Compze.Utilities.SystemCE.ThreadingCE;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 using Compze.Utilities.SystemCE.ThreadingCE.Testing;
 using Compze.Utilities.Testing.Must;
@@ -18,7 +19,7 @@ namespace Compze.Tests.Unit.Internals.Testing.Threading;
 public class Given_a_locked_ThreadGate : UniversalTestBase
 {
    [XF] public void Calling_AllowOneThreadToPassThrough_throws_an_AwaitingConditionTimedOutException_since_no_threads_are_waiting_to_pass()
-      => Invoking(() => ThreadGate.CreateClosedWithTimeout(20.Milliseconds()).AwaitLetOneThreadPassThrough()).Must().Throw<AwaitingConditionTimeoutException>();
+      => Invoking(() => ThreadGate.CreateClosedWithTimeout(WaitTimeout.Milliseconds(20)).AwaitLetOneThreadPassThrough()).Must().Throw<AwaitingConditionTimeoutException>();
 
    public class After_starting_10_threads_that_all_call_PassThrough : UniversalTestBase
    {
@@ -27,7 +28,7 @@ public class Given_a_locked_ThreadGate : UniversalTestBase
          using(ThreadGateTestFixture.StartEntrantsOnThreads(10).WaitForAllThreadsToQueueUpAtPassThrough()) {} //warmup
 
          using var fixture = ThreadGateTestFixture.StartEntrantsOnThreads(10);
-         fixture.Gate.AwaitQueueLengthEqualTo(fixture.NumberOfThreads, 10.Seconds());
+         fixture.Gate.AwaitQueueLengthEqualTo(fixture.NumberOfThreads, WaitTimeout.Seconds(10));
          fixture.ThreadsPassedTheGate(0.Milliseconds()).Must().Be(0);
       }
 

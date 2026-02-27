@@ -8,6 +8,7 @@ using Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endp
 using Compze.Utilities.SystemCE.TransactionsCE.Testing;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Utilities.SystemCE;
+using Compze.Utilities.SystemCE.ThreadingCE;
 using Compze.Utilities.SystemCE.ThreadingCE.Testing;
 using Compze.Utilities.Testing.Must;
 using static Compze.Utilities.Testing.Must.MustActions;
@@ -21,7 +22,7 @@ public class Exactly_once_guarantee_tests : EndpointHostTestBase
       RemoteEndpoint.ExecuteServerRequestInTransaction(session => session.Send(new MyExactlyOnceTommand()));
 
       MyExactlyOnceTommandHandlerThreadGate.AwaitPassedThroughCountEqualTo(1);
-      MyExactlyOnceTommandHandlerThreadGate.TryAwaitPassedThroughCountEqualTo(2, timeout: 2.Seconds())
+      MyExactlyOnceTommandHandlerThreadGate.TryAwaitPassedThroughCountEqualTo(2, timeout: WaitTimeout.Seconds(2))
                               .Must()
                               .Be(false, "handler should execute exactly once");
    }
@@ -31,7 +32,7 @@ public class Exactly_once_guarantee_tests : EndpointHostTestBase
       Client.ExecuteRequest(session => session.Post(MyCreateTaggregateTommand.Create()));
 
       MyRemoteTaggregateTeventHandlerThreadGate.AwaitPassedThroughCountEqualTo(1);
-      MyRemoteTaggregateTeventHandlerThreadGate.TryAwaitPassedThroughCountEqualTo(2, timeout: 2.Seconds())
+      MyRemoteTaggregateTeventHandlerThreadGate.TryAwaitPassedThroughCountEqualTo(2, timeout: WaitTimeout.Seconds(2))
                                              .Must()
                                              .Be(false, "remote tevent handler should execute exactly once");
    }
@@ -49,7 +50,7 @@ public class Exactly_once_guarantee_tests : EndpointHostTestBase
 
       MyExactlyOnceTommandHandlerThreadGate.Open();
       MyExactlyOnceTommandHandlerThreadGate.AwaitPassedThroughCountEqualTo(1);
-      MyExactlyOnceTommandHandlerThreadGate.TryAwaitPassedThroughCountEqualTo(2, timeout: 2.Seconds())
+      MyExactlyOnceTommandHandlerThreadGate.TryAwaitPassedThroughCountEqualTo(2, timeout: WaitTimeout.Seconds(2))
                               .Must()
                               .Be(false, "handler should execute exactly once even when slow");
    }
@@ -63,7 +64,7 @@ public class Exactly_once_guarantee_tests : EndpointHostTestBase
                     }))
                    .Must().Throw<TransactionAbortedException>();
 
-      MyExactlyOnceTommandHandlerThreadGate.TryAwaitPassedThroughCountEqualTo(1, 1.Seconds())
+      MyExactlyOnceTommandHandlerThreadGate.TryAwaitPassedThroughCountEqualTo(1, WaitTimeout.Seconds(1))
                               .Must()
                               .Be(false, "tommand should not reach handler");
    }
@@ -80,7 +81,7 @@ public class Exactly_once_guarantee_tests : EndpointHostTestBase
 
       MyLocalTaggregateTeventHandlerThreadGate.Passed.Must().BeGreaterThanOrEqualTo(1);
 
-      MyRemoteTaggregateTeventHandlerThreadGate.TryAwaitPassedThroughCountEqualTo(1, 1.Seconds())
+      MyRemoteTaggregateTeventHandlerThreadGate.TryAwaitPassedThroughCountEqualTo(1, WaitTimeout.Seconds(1))
                                              .Must()
                                              .Be(false, "tevent should not reach handler");
    }

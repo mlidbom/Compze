@@ -6,6 +6,7 @@ using Compze.Contracts;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
+using Compze.Utilities.SystemCE.ThreadingCE;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using Compze.Utilities.SystemCE.ThreadingCE.Testing;
@@ -109,7 +110,7 @@ public class MachineWideSharedObjectTests : UniversalTestBase
 
    [XF] public async Task Update_blocks_GetCopy_and_Update_from_both_same_and_other_instances()
    {
-      var timeout = 15.Seconds();
+      var timeout = WaitTimeout.Seconds(15);
       var updateGate = ThreadGate.CreateClosedWithTimeout(timeout);
       var conflictingUpdateSectionSameInstance = GatedCodeSection.WithTimeout(timeout);
       var conflictingUpdateSectionOtherInstance = GatedCodeSection.WithTimeout(timeout);
