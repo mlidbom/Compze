@@ -49,6 +49,7 @@ public class TypermediaRouter : ITypermediaRouter, IDisposable
    readonly ITypeMapper _typeMapper;
    readonly IRemotableTessageSerializer _serializer;
    readonly ITransportMessagePoster _transportMessagePoster;
+   readonly object _connectLock = new();
 
    bool _running;
    IReadOnlyDictionary<EndpointId, TypermediaConnection> _connections = new Dictionary<EndpointId, TypermediaConnection>();
@@ -64,10 +65,13 @@ public class TypermediaRouter : ITypermediaRouter, IDisposable
 
       await connection.InitAsync().caf();
 
-      OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _connections, connection.EndpointInformation.Id, connection);
+      lock(_connectLock)
+      {
+         OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _connections, connection.EndpointInformation.Id, connection);
 
-      //urgent: we can't have routes be discovered at startup based on the assumption that all endpoints are up...
-      RegisterRoutes(connection, connection.EndpointInformation.HandledTessageTypes);
+         //urgent: we can't have routes be discovered at startup based on the assumption that all endpoints are up...
+         RegisterRoutes(connection, connection.EndpointInformation.HandledTessageTypes);
+      }
    }
 
    public async Task DiscoverAndConnectAsync(EndPointAddress seedAddress)

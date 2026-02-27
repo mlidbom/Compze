@@ -67,8 +67,11 @@ public class TessagingRouter : ITessagingRouter, IDisposable
 
       await connection.InitAsync().caf();
 
-      OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _connections, connection.EndpointInformation.Id, connection);
-      RegisterRoutes(connection, connection.EndpointInformation.HandledTessageTypes);
+      using(_monitor.TakeUpdateLock())
+      {
+         OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _connections, connection.EndpointInformation.Id, connection);
+         RegisterRoutes(connection, connection.EndpointInformation.HandledTessageTypes);
+      }
    }
 
    public void StartDelivery()
@@ -102,17 +105,14 @@ public class TessagingRouter : ITessagingRouter, IDisposable
          }
       }
 
-      using(_monitor.TakeUpdateLock())
+      if(teventSubscribers.Count > 0)
       {
-         if(teventSubscribers.Count > 0)
-         {
-            OnlyWithinLocksThreadingHelpers.AddRangeToCopyAndReplace(ref _teventSubscriberRoutes, teventSubscribers);
-            _teventSubscriberRouteCache = new Dictionary<Type, IReadOnlyList<TessagingConnection>>();
-         }
-
-         if(tommandHandlerRoutes.Count > 0)
-            OnlyWithinLocksThreadingHelpers.AddRangeToCopyAndReplace(ref _tommandHandlerRoutes, tommandHandlerRoutes);
+         OnlyWithinLocksThreadingHelpers.AddRangeToCopyAndReplace(ref _teventSubscriberRoutes, teventSubscribers);
+         _teventSubscriberRouteCache = new Dictionary<Type, IReadOnlyList<TessagingConnection>>();
       }
+
+      if(tommandHandlerRoutes.Count > 0)
+         OnlyWithinLocksThreadingHelpers.AddRangeToCopyAndReplace(ref _tommandHandlerRoutes, tommandHandlerRoutes);
    }
 
    public void Stop() => _stopped = true;

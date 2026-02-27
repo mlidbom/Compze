@@ -72,7 +72,7 @@ public class TessagingConnection : ITessagingInboxConnection, IDisposable
       EndpointInformation = endpointInformation;
    }
 
-   // Delivery management
+   // Delivery management — enqueue for the send loop to process
    public void EnqueueForDelivery(IExactlyOnceTessage tessage)
    {
       var transportTessage = TransportTessage.OutGoing.Create(tessage, _typeMapper, _serializer);
