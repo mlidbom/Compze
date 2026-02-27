@@ -26,8 +26,7 @@ public static class TimeAsserter
                                                            uint maxTries = MaxTriesDefault,
                                                            [InstantHandle] Action? setup = null,
                                                            [InstantHandle] Action? tearDown = null) =>
-      DeferredConsoleWriter.Execute(writer =>
-                                       InternalExecute(() => StopwatchCE.TimeExecution(action, iterations), iterations, maxAverage, maxTotal, description, setup, tearDown, maxTries, writer));
+      InternalExecute(() => StopwatchCE.TimeExecution(action, iterations), iterations, maxAverage, maxTotal, description, setup, tearDown, maxTries);
 
    public static StopwatchCE.TimedThreadedExecutionSummary ExecuteThreaded([InstantHandle] Action action,
                                                                            int iterations = 1,
@@ -38,8 +37,7 @@ public static class TimeAsserter
                                                                            [InstantHandle] Action? tearDown = null,
                                                                            uint maxTries = MaxTriesDefault,
                                                                            int maxDegreeOfParallelism = -1) =>
-      DeferredConsoleWriter.Execute(writer =>
-                                       InternalExecute(() => StopwatchCE.TimeExecutionThreaded(action, iterations, maxDegreeOfParallelism), iterations, maxAverage, maxTotal, description, setup, tearDown, maxTries, writer));
+      InternalExecute(() => StopwatchCE.TimeExecutionThreaded(action, iterations, maxDegreeOfParallelism), iterations, maxAverage, maxTotal, description, setup, tearDown, maxTries);
 
    public static StopwatchCE.TimedExecutionSummary ExecuteThreadedLowOverhead([InstantHandle] Action action,
                                                                               int iterations = 1,
@@ -50,8 +48,7 @@ public static class TimeAsserter
                                                                               [InstantHandle] Action? tearDown = null,
                                                                               uint maxTries = MaxTriesDefault,
                                                                               int maxDegreeOfParallelism = -1) =>
-      DeferredConsoleWriter.Execute(writer =>
-                                       InternalExecute(() => StopwatchCE.TimeExecutionThreadedLowOverhead(action, iterations, maxDegreeOfParallelism), iterations, maxAverage, maxTotal, description, setup, tearDown, maxTries, writer));
+      InternalExecute(() => StopwatchCE.TimeExecutionThreadedLowOverhead(action, iterations, maxDegreeOfParallelism), iterations, maxAverage, maxTotal, description, setup, tearDown, maxTries);
 
    public static async Task<StopwatchCE.TimedExecutionSummary> ExecuteAsync([InstantHandle] Func<Task> action,
                                                                             int iterations = 1,
@@ -62,8 +59,7 @@ public static class TimeAsserter
                                                                             [InstantHandle] Action? setup = null,
                                                                             [InstantHandle] Action? tearDown = null,
                                                                             [InstantHandle] Func<Task>? tearDownAsync = null) =>
-      await DeferredConsoleWriter.ExecuteAsync(async writer =>
-                                                  await InternalExecuteAsync(() => StopwatchCE.TimeExecutionAsync(action, iterations), iterations, maxAverage, maxTotal, description, setup, tearDown, maxTries, tearDownAsync, writer));
+      await InternalExecuteAsync(() => StopwatchCE.TimeExecutionAsync(action, iterations), iterations, maxAverage, maxTotal, description, setup, tearDown, maxTries, tearDownAsync);
 
    static readonly MutexCE Mutex = MutexCE.ForMutexNamed("Compze.TimeAsserter.PerformanceTestLock");
 
@@ -74,9 +70,8 @@ public static class TimeAsserter
                                                      string description,
                                                      [InstantHandle] Action? setup,
                                                      [InstantHandle] Action? tearDown,
-                                                     uint maxTries,
-                                                     DeferredConsoleWriter writer) where TReturnValue : StopwatchCE.TimedExecutionSummary =>
-      Mutex.Locked(() => RunScenarioWithRetries(runScenario, iterations, maxAverage, maxTotal, description, setup, tearDown, maxTries, writer));
+                                                     uint maxTries) where TReturnValue : StopwatchCE.TimedExecutionSummary =>
+      Mutex.Locked(() => RunScenarioWithRetries(runScenario, iterations, maxAverage, maxTotal, description, setup, tearDown, maxTries));
 
    static async Task<TReturnValue> InternalExecuteAsync<TReturnValue>([InstantHandle] Func<Task<TReturnValue>> runScenario,
                                                                       int iterations,
@@ -86,15 +81,14 @@ public static class TimeAsserter
                                                                       [InstantHandle] Action? setup,
                                                                       [InstantHandle] Action? tearDown,
                                                                       uint maxTries,
-                                                                      [InstantHandle] Func<Task>? tearDownAsync,
-                                                                      DeferredConsoleWriter writer) where TReturnValue : StopwatchCE.TimedExecutionSummary =>
+                                                                      [InstantHandle] Func<Task>? tearDownAsync) where TReturnValue : StopwatchCE.TimedExecutionSummary =>
       await Task.Run(() => Mutex.Locked(() => RunScenarioWithRetries(() => runScenario().ResultUnwrappingException(), iterations, maxAverage, maxTotal, description, setup, () =>
       {
          if(tearDownAsync != null)
             tearDownAsync().WaitUnwrappingException();
          else
             tearDown?.Invoke();
-      }, maxTries, writer)));
+      }, maxTries)));
 
    static TReturnValue RunScenarioWithRetries<TReturnValue>([InstantHandle] Func<TReturnValue> runScenario,
                                                             int iterations,
@@ -103,8 +97,7 @@ public static class TimeAsserter
                                                             string description,
                                                             [InstantHandle] Action? setup,
                                                             [InstantHandle] Action? tearDown,
-                                                            uint maxTries,
-                                                            DeferredConsoleWriter writer) where TReturnValue : StopwatchCE.TimedExecutionSummary
+                                                            uint maxTries) where TReturnValue : StopwatchCE.TimedExecutionSummary
    {
       Contract.Argument.Assert(maxTries > 0);
       maxAverage = TestEnv.Performance.AdjustForMachineSlowness(maxAverage);
@@ -112,10 +105,10 @@ public static class TimeAsserter
       TestEnv.Performance.LogMachineSlownessAdjustment();
       maxTries = Math.Min(MaxTriesLimit, maxTries);
 
-      writer.WriteLine();
-      writer.WriteImportantLine($"""
-                                 "{description}" {iterations:### ### ###} {iterations.Pluralize("iteration")} starting
-                                 """);
+      Log.Info($"""
+               
+               ############################## "{description}" {iterations:### ### ###} {iterations.Pluralize("iteration")} starting
+               """);
 
       for(var tries = 1; tries <= maxTries; tries++)
       {
@@ -134,16 +127,16 @@ public static class TimeAsserter
                                               {failureTessage.Indent()}
                                               """);
                var waitTime = Math.Min(Math.Pow(2, tries), 50) * 10.Milliseconds(); //Back off on retries exponentially starting with 10ms, but only up to a maximum wait time of .5 seconds between retries.
-               writer.WriteWarningLine($"Try: {tries} {failureTessage}, waiting {waitTime.FormatReadable()} before next attempt");
-               if(VerboseMode)
-                  Log.Warning($"{description}: Try: {tries} {failureTessage}, waiting {waitTime.FormatReadable()} before next attempt");
+               Log.Warning($"Try: {tries} {failureTessage}, waiting {waitTime.FormatReadable()} before next attempt");
                Thread.Sleep(waitTime);
                continue;
             }
 
-            PrintSummary(executionSummary, iterations, maxAverage, maxTotal, writer);
-            writer.WriteImportantLine("DONE");
-            writer.WriteLine();
+            PrintSummary(executionSummary, iterations, maxAverage, maxTotal);
+            Log.Info($"""
+                      ############################## DONE
+                      
+                      """);
             return executionSummary;
          }
          finally
@@ -169,7 +162,7 @@ public static class TimeAsserter
       return failureTessage;
    }
 
-   static void PrintSummary(StopwatchCE.TimedExecutionSummary executionSummary, int iterations, TimeSpan? maxAverage, TimeSpan? maxTotal, DeferredConsoleWriter writer)
+   static void PrintSummary(StopwatchCE.TimedExecutionSummary executionSummary, int iterations, TimeSpan? maxAverage, TimeSpan? maxTotal)
    {
       var maxAverageReport = maxAverage == null
                                 ? ""
@@ -181,28 +174,27 @@ public static class TimeAsserter
 
       if(iterations > 1)
       {
-         writer.WriteLine($"""
+         Log.Info($"""
 
-                              Total:   {executionSummary.Total.FormatReadable()} {maxTotalReport}
-                              Average: {executionSummary.Average.FormatReadable()} {maxAverageReport}
-                              """
-                            .RemoveLeadingNewLines());
+                      Total:   {executionSummary.Total.FormatReadable()} {maxTotalReport}
+                      Average: {executionSummary.Average.FormatReadable()} {maxAverageReport}
+                   """);
       } else
       {
-         writer.WriteLine($"Total:   {executionSummary.Total.FormatReadable()} {maxTotalReport} ");
+         Log.Info($"Total:   {executionSummary.Total.FormatReadable()} {maxTotalReport} ");
       }
 
       if(executionSummary is StopwatchCE.TimedThreadedExecutionSummary threadedSummary)
       {
-         writer.WriteLine($"""
-                             
-                           Individual execution times    
-                               Average: {threadedSummary.IndividualExecutionTimes.Average().FormatReadable()}
-                               Min:     {threadedSummary.IndividualExecutionTimes.Min().FormatReadable()}
-                               Max:     {threadedSummary.IndividualExecutionTimes.Max().FormatReadable()}
-                               Sum:     {threadedSummary.IndividualExecutionTimes.Sum().FormatReadable()}
+         Log.Info($"""
+                    
+                   Individual execution times    
+                       Average: {threadedSummary.IndividualExecutionTimes.Average().FormatReadable()}
+                       Min:     {threadedSummary.IndividualExecutionTimes.Min().FormatReadable()}
+                       Max:     {threadedSummary.IndividualExecutionTimes.Max().FormatReadable()}
+                       Sum:     {threadedSummary.IndividualExecutionTimes.Sum().FormatReadable()}
 
-                           """);
+                   """);
       }
    }
 
