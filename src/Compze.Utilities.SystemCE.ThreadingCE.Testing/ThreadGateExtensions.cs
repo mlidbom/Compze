@@ -9,35 +9,34 @@ namespace Compze.Utilities.SystemCE.ThreadingCE.Testing;
 
 public static class ThreadGateExtensions
 {
-   public static IThreadGate Await(this IThreadGate @this, Func<bool> condition) => @this.Await(@this.DefaultTimeout, condition);
-   public static IThreadGate Await(this IThreadGate @this, WaitTimeout timeout, Func<bool> condition) => @this.ExecuteWithExclusiveLockWhen(timeout, condition, () => {});
-
-   public static IThreadGate AwaitClosed(this IThreadGate @this) => @this.Await(() => !@this.IsOpen);
-
-   public static IThreadGate AwaitQueueLengthEqualTo(this IThreadGate @this, int length) => @this.Await(() => @this.Queued == length);
-   public static IThreadGate AwaitQueueLengthEqualTo(this IThreadGate @this, int length, WaitTimeout timeout) => @this.Await(timeout, () => @this.Queued == length);
-   public static bool TryAwaitQueueLengthEqualTo(this IThreadGate @this, int length, WaitTimeout timeout) => @this.TryAwait(timeout, () => @this.Queued == length);
-
-   public static IThreadGate AwaitPassedThroughCountEqualTo(this IThreadGate @this, int length) => @this.Await(() => @this.Passed == length);
-   public static IThreadGate AwaitPassedThroughCountEqualTo(this IThreadGate @this, int length, WaitTimeout timeout) => @this.Await(timeout, () => @this.Passed == length);
-   public static bool TryAwaitPassedThroughCountEqualTo(this IThreadGate @this, int count, WaitTimeout timeout) => @this.TryAwait(timeout, () => @this.Passed == count);
-
-   public static IThreadGate ThrowPostPassThrough(this IThreadGate @this, Exception exception) => @this.SetPostPassThroughAction(_ => throw exception);
-
-   public static IThreadGate FailTransactionOnPreparePostPassThrough(this IThreadGate @this, Exception exception) => @this.SetPostPassThroughAction(_ =>
+   extension(IThreadGate @this)
    {
-      Contract.State.NotNull(Transaction.Current);
-      Transaction.Current.FailOnPrepare(exception);
-   });
+      public IThreadGate Await(Func<bool> condition) => @this.Await(@this.DefaultTimeout, condition);
+      public IThreadGate Await(WaitTimeout timeout, Func<bool> condition) => @this.ExecuteWithExclusiveLockWhen(timeout, condition, () => {});
+      public IThreadGate AwaitClosed() => @this.Await(() => !@this.IsOpen);
+      public IThreadGate AwaitQueueLengthEqualTo(int length) => @this.Await(() => @this.Queued == length);
+      public IThreadGate AwaitQueueLengthEqualTo(int length, WaitTimeout timeout) => @this.Await(timeout, () => @this.Queued == length);
+      public bool TryAwaitQueueLengthEqualTo(int length, WaitTimeout timeout) => @this.TryAwait(timeout, () => @this.Queued == length);
+      public IThreadGate AwaitPassedThroughCountEqualTo(int length) => @this.Await(() => @this.Passed == length);
+      public IThreadGate AwaitPassedThroughCountEqualTo(int length, WaitTimeout timeout) => @this.Await(timeout, () => @this.Passed == length);
+      public bool TryAwaitPassedThroughCountEqualTo(int count, WaitTimeout timeout) => @this.TryAwait(timeout, () => @this.Passed == count);
+      public IThreadGate ThrowPostPassThrough(Exception exception) => @this.SetPostPassThroughAction(_ => throw exception);
 
-   public static Task<IThreadGate> ThrowOnNextPassThroughAsync(this IThreadGate @this, Func<ThreadSnapshot, Exception> exceptionFactory)
-   {
-      var currentPassthroughAction = @this.PassThroughAction;
-      var currentPassedThroughCountPlusOne = @this.PassedThrough.Count + 1;
-      @this.SetPassThroughAction(threadSnapshot => throw exceptionFactory(threadSnapshot));
-      return @this.ExecuteWithExclusiveLockWhenAsync(WaitTimeout.Minutes(1), () => currentPassedThroughCountPlusOne == @this.PassedThrough.Count, () => @this.SetPassThroughAction(currentPassthroughAction));
+      public IThreadGate FailTransactionOnPreparePostPassThrough(Exception exception) => @this.SetPostPassThroughAction(_ =>
+      {
+         Contract.State.NotNull(Transaction.Current);
+         Transaction.Current.FailOnPrepare(exception);
+      });
+
+      public Task<IThreadGate> ThrowOnNextPassThroughAsync(Func<ThreadSnapshot, Exception> exceptionFactory)
+      {
+         var currentPassthroughAction = @this.PassThroughAction;
+         var currentPassedThroughCountPlusOne = @this.PassedThrough.Count + 1;
+         @this.SetPassThroughAction(threadSnapshot => throw exceptionFactory(threadSnapshot));
+         return @this.ExecuteWithExclusiveLockWhenAsync(WaitTimeout.Minutes(1), () => currentPassedThroughCountPlusOne == @this.PassedThrough.Count, () => @this.SetPassThroughAction(currentPassthroughAction));
+      }
+
+      public Task<IThreadGate> ExecuteWithExclusiveLockWhenAsync(WaitTimeout timeout, Func<bool> condition, Action action)
+         => TaskCE.Run(() => @this.ExecuteWithExclusiveLockWhen(timeout, condition, action));
    }
-
-   public static Task<IThreadGate> ExecuteWithExclusiveLockWhenAsync(this IThreadGate @this, WaitTimeout timeout, Func<bool> condition, Action action)
-      => TaskCE.Run(() => @this.ExecuteWithExclusiveLockWhen(timeout, condition, action));
 }
