@@ -38,7 +38,7 @@ public static class ExceptionTessageBuilder
    static string BuildAggregateExceptionTessage(AggregateException taggregateException, int depth)
    {
       return $"""
-              {LineSeparator} Taggregate exception
+              {LineSeparator} AggregateException
               StackTrace:
               {LineSeparator}
               {taggregateException.StackTrace}
