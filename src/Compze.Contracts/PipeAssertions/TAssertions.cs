@@ -6,7 +6,7 @@ using Compze.Contracts.Exceptions;
 namespace Compze.Contracts;
 
 /// <summary>Extension methods on <see cref="PipeAssertTarget{T}"/>.</summary>
-public static class AssertionTargetExtensions
+public static class TAssertions
 {
    ///<summary>Throws <see cref="AssertionFailedException"/> if the value is null. Returns the value as non-nullable on success.</summary>
    [MethodImpl(MethodImplOptions.AggressiveInlining)]
