@@ -1,14 +1,18 @@
-using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Builder;
 
 namespace AccountManagement.UI.MVC;
 
 static class Program
 {
-   public static void Main(string[] args) => BuildWebHost(args).Run();
+   public static void Main(string[] args)
+   {
+      var builder = WebApplication.CreateBuilder(args);
+      var startup = new Startup(builder.Configuration);
+      startup.ConfigureServices(builder.Services);
 
-   static IWebHost BuildWebHost(string[] args) =>
-      WebHost.CreateDefaultBuilder(args)
-             .UseStartup<Startup>()
-             .Build();
+      var app = builder.Build();
+      startup.Configure(app, app.Environment);
+
+      app.Run();
+   }
 }

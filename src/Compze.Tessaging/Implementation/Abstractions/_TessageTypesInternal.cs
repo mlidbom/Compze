@@ -52,9 +52,9 @@ public static class TessageTypesInternal
       public NetworkTopology() {}
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 
-      public NetworkTopology(IEnumerable<EndPointAddress> endpointAddresses) => EndpointAddresses = [..endpointAddresses];
+      public NetworkTopology(IEnumerable<EndPointAddress> endpointAddresses) => EndpointAddresses = endpointAddresses.ToList();
 
-      public List<EndPointAddress> EndpointAddresses { get; private set; }
+      public IReadOnlyList<EndPointAddress> EndpointAddresses { get; private set; }
    }
 
    public static void RegisterHandlers(TessageHandlerRegistrarWithDependencyInjectionSupport registrar)
