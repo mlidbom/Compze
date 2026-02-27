@@ -12,6 +12,9 @@ public partial interface IMonitorCE
    public static IMonitorCE WithDefaultTimeout() => new MonitorCE(DefaultTimeout, DefaultTimeout);
    public static IMonitorCE WithTimeout(TimeSpan timeout) => new MonitorCE(timeout, timeout);
 
+   internal static IAwaitableMonitorCE CreateAwaitableWithDefaultTimeout() => new MonitorCE(DefaultTimeout, DefaultTimeout);
+   internal static IAwaitableMonitorCE CreateAwaitableWithTimeouts(TimeSpan lockTimeout, TimeSpan waitTimeout) => new MonitorCE(lockTimeout, waitTimeout);
+
    TimeSpan LockTimeout { get; }
 
    IDisposable TakeLock(TimeSpan? timeout = null);
