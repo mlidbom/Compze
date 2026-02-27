@@ -63,7 +63,8 @@ public class TessagesInFlightTracker(ITypeMapper typeMapper) : ITessagesInFlight
                                                                  TypeName = _typeMapper.GetType(transportTessage.Type).FullName ?? transportTessage.Type.ToString(),
                                                                  Body = transportTessage.Body
                                                               });
-         inFlightTessage.EndpointDeliveryStatus[remoteEndpointId] = false;
+
+         inFlightTessage.EndpointDeliveryStatus.TryAdd(remoteEndpointId, false); //Retrying messages must not reset the status of already delivered messages.
       }
 
       public void DoneWith(TransportTessage.InComing tessage, EndpointId handlingEndpointId, Exception? exception)
