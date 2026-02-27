@@ -10,7 +10,7 @@ public static class StringNotNullEmptyOrWhitespace
    {
       ///<summary>Throws if the string is null, empty, or contains only whitespace.</summary>
       [MethodImpl(MethodImplOptions.AggressiveInlining)]
-      public ContractAsserter NotNullEmptyOrWhitespace([NotNull]string? value, [CallerArgumentExpression(nameof(value))] string valueExpression = "")
+      public ContractAsserter NotNullEmptyOrWhitespace([NotNull] string? value, [CallerArgumentExpression(nameof(value))] string valueExpression = "")
       {
          @this.NotNull(value, valueExpression);
          if(string.IsNullOrWhiteSpace(value)) @this.ThrowFailed(valueExpression);
