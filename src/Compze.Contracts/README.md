@@ -7,7 +7,7 @@ Fluent, chainable runtime assertions for preconditions, invariants, and state ch
 | Entry point | Throws on failure | Use for |
 |---|---|---|
 | `Contract.Argument` | `ArgumentAssertionFailedException` / `ArgumentNullException` | Method parameter validation |
-| `Contract.State` | `InvalidOperationException` | Enforcing state requirements for the requested operation|
+| `Contract.State` | `StateAssertionFailedException` | Enforcing state requirements for the requested operation|
 | `Contract.Invariant` | `InvariantViolatedException` | Class invariant enforcement |
 
 All entry points return a `ContractAsserter` that supports fluent chaining.

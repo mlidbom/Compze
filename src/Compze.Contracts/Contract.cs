@@ -5,10 +5,10 @@ namespace Compze.Contracts;
 
 public static class Contract
 {
-   ///<summary>Assert conditions about current state of "this". Failures throw <see cref="InvalidOperationException"/>.</summary>
+   ///<summary>Assert conditions about current state of "this". Failures throw <see cref="StateAssertionFailedException"/>.</summary>
    public static ContractAsserter State { get; } = new("State",
-                                                        message => new InvalidOperationException(message),
-                                                        message => new InvalidOperationException(message));
+                                                        message => new StateAssertionFailedException(message),
+                                                        message => new StateAssertionFailedException(message));
 
    ///<summary>Assert something that must always be true for "this". Failures throw <see cref="InvariantViolatedException"/></summary>
    public static ContractAsserter Invariant { get; } = new("Invariant",
