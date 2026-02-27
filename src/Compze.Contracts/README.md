@@ -8,7 +8,7 @@ Fluent, chainable runtime assertions for preconditions, invariants, and state ch
 |---|---|---|
 | `Contract.Argument` | `ArgumentAssertionFailedException` / `ArgumentNullException` | Method parameter validation |
 | `Contract.State` | `StateAssertionFailedException` | Enforcing state requirements for the requested operation|
-| `Contract.Invariant` | `InvariantViolatedException` | Class invariant enforcement |
+| `Contract.Invariant` | `InvariantAssertionFailedException` | Class invariant enforcement |
 
 All entry points return a `ContractAsserter` that supports fluent chaining.
 
@@ -37,7 +37,7 @@ var conn = GetConnection()._assert().NotNull();
 ```
 
 Pipeline overloads:
-- `value._assert()` — returns `AssertionTarget<T>` for `.NotNull()` / `.NotDefault()` chains
+- `value._assert()` — returns `PipeAssertTarget<T>` for `.NotNull()` / `.NotDefault()` chains
 - `value._assert(predicate)` — throws `AssertionFailedException("value._assert(predicate)")` on failure
 - `value._assert(predicate, messageFactory)` — throws `AssertionFailedException` with custom message
 - `value._assert(predicate, exceptionFactory)` — throws custom exception
@@ -81,7 +81,7 @@ public OperationResult SomeBusinessMethod(Guid userId) =>
 
 ### Custom assertion extensions
 
-Both `ContractAsserter` and `AssertionTarget<T>` are designed to be extended. All built-in assertions are themselves extension methods.
+Both `ContractAsserter` and `PipeAssertTarget<T>` are designed to be extended. All built-in assertions are themselves extension methods.
 
 #### ContractAsserter extension
 ```csharp
@@ -102,11 +102,11 @@ public static class MyContractExtensions
 Contract.Argument.IsValidEmail(userEmail); 
 ```
 
-#### AssertionTarget extension (pipeline)
+#### PipeAssertTarget extension (pipeline)
 ```csharp
 public static class MyPipelineExtensions
 {
-   public static string IsValidEmail(this AssertionTarget<string?> target)
+   public static string IsValidEmail(this PipeAssertTarget<string?> target)
    {
       if(!target.Value.IsValidEmail()) target.ThrowAssertionFailed();
       return target.Value!;

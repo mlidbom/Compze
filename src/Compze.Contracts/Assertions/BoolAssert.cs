@@ -4,10 +4,12 @@ using System.Runtime.CompilerServices;
 
 namespace Compze.Contracts;
 
+/// <summary>Boolean assertion extensions for <see cref="ContractAsserter"/>.</summary>
 public static class BoolAssert
 {
    extension(ContractAsserter @this)
    {
+      ///<summary>Throws if <paramref name="value"/> is false, using <paramref name="createMessage"/> to produce the failure message.</summary>
       [MethodImpl(MethodImplOptions.AggressiveInlining)]
       public ContractAsserter Assert([DoesNotReturnIf(false)] bool value,
                                        Func<string> createMessage)
@@ -16,6 +18,7 @@ public static class BoolAssert
          return @this;
       }
 
+      ///<summary>Throws if the condition is false.</summary>
       [MethodImpl(MethodImplOptions.AggressiveInlining)]
       public ContractAsserter Assert([DoesNotReturnIf(false)] bool assert1,
                                        [CallerArgumentExpression(nameof(assert1))] string expression1 = "")
@@ -24,6 +27,7 @@ public static class BoolAssert
          return @this;
       }
 
+      ///<summary>Throws if either condition is false.</summary>
       [MethodImpl(MethodImplOptions.AggressiveInlining)]
       public ContractAsserter Assert([DoesNotReturnIf(false)] bool assert1,
                                        [DoesNotReturnIf(false)] bool assert2,

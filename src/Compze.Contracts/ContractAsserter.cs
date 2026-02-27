@@ -6,6 +6,7 @@ using Compze.Contracts.Exceptions;
 
 namespace Compze.Contracts;
 
+/// <summary>Fluent assertion builder. Assertion methods are added via extension methods and return <c>this</c> for chaining.</summary>
 public class ContractAsserter(string name, Func<string, Exception> createException, Func<string, Exception> createNullException)
 {
    readonly string _name = name;

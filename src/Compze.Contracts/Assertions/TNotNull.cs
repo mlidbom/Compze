@@ -3,10 +3,12 @@ using System.Runtime.CompilerServices;
 
 namespace Compze.Contracts;
 
+/// <summary>Null-check assertion extensions for <see cref="ContractAsserter"/>.</summary>
 public static class TNotNull
 {
    extension(ContractAsserter @this)
    {
+      ///<summary>Throws if the value is null.</summary>
       [MethodImpl(MethodImplOptions.AggressiveInlining)]
       public ContractAsserter NotNull<T>([NotNull] T? value,
                                          [CallerArgumentExpression(nameof(value))] string expression = "")
@@ -15,6 +17,7 @@ public static class TNotNull
          return @this;
       }
 
+      ///<summary>Throws if either value is null.</summary>
       [MethodImpl(MethodImplOptions.AggressiveInlining)]
       public ContractAsserter NotNull2<T1, T2>([NotNull] T1? value1,
                                                 [NotNull] T2? value2,
@@ -26,6 +29,7 @@ public static class TNotNull
          return @this;
       }
 
+      ///<summary>Throws if any value is null.</summary>
       [MethodImpl(MethodImplOptions.AggressiveInlining)]
       public ContractAsserter NotNull3<T1, T2, T3>([NotNull] T1? value1,
                                                     [NotNull] T2? value2,
@@ -40,6 +44,7 @@ public static class TNotNull
          return @this;
       }
 
+      ///<summary>Throws if any value is null.</summary>
       [MethodImpl(MethodImplOptions.AggressiveInlining)]
       public ContractAsserter NotNull4<T1, T2, T3, T4>([NotNull] T1? value1,
                                                         [NotNull] T2? value2,

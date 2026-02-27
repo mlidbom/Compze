@@ -2,10 +2,12 @@ using System.Runtime.CompilerServices;
 
 namespace Compze.Contracts;
 
+/// <summary>Default-value assertion extensions for <see cref="ContractAsserter"/>.</summary>
 public static class TStructNotDefault
 {
    extension(ContractAsserter @this)
    {
+      ///<summary>Throws if the value equals <c>default(T)</c>.</summary>
       [MethodImpl(MethodImplOptions.AggressiveInlining)]
       public ContractAsserter NotDefault<T>(T value,
                                             [CallerArgumentExpression(nameof(value))] string expression = "")
@@ -15,6 +17,7 @@ public static class TStructNotDefault
          return @this;
       }
 
+      ///<summary>Throws if either value equals its <c>default</c>.</summary>
       [MethodImpl(MethodImplOptions.AggressiveInlining)]
       public ContractAsserter NotDefault<T1, T2>(T1 value1,
                                                  T2 value2,
@@ -28,6 +31,7 @@ public static class TStructNotDefault
          return @this;
       }
 
+      ///<summary>Throws if any value equals its <c>default</c>.</summary>
       [MethodImpl(MethodImplOptions.AggressiveInlining)]
       public ContractAsserter NotDefault<T1, T2, T3>(T1 value1,
                                                      T2 value2,
@@ -45,6 +49,7 @@ public static class TStructNotDefault
          return @this;
       }
 
+      ///<summary>Throws if any value equals its <c>default</c>.</summary>
       [MethodImpl(MethodImplOptions.AggressiveInlining)]
       public ContractAsserter NotDefault<T1, T2, T3, T4>(T1 value1,
                                                          T2 value2,
