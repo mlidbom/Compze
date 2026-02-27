@@ -27,4 +27,32 @@ public class called_with_4_arguments : AssertionMethodsTest
       [XF] public void argument_4_is_null() =>
          Invoking(() => Asserter.NotNull4("a", "b", "c", NullString)).Must().Throw<AssertionTestException>();
    }
+
+   public class exception_message_contains_the_argument_expression_if : called_with_4_arguments
+   {
+      static readonly string? NullArg1 = null;
+      static readonly string? NullArg2 = null;
+      static readonly string? NullArg3 = null;
+      static readonly string? NullArg4 = null;
+
+      [XF] public void argument_1_is_null() =>
+         Invoking(() => Asserter.NotNull4(NullArg1, "b", "c", "d"))
+            .Must().Throw<AssertionTestException>()
+            .Which.Message.Must().Contain(nameof(NullArg1));
+
+      [XF] public void argument_2_is_null() =>
+         Invoking(() => Asserter.NotNull4("a", NullArg2, "c", "d"))
+            .Must().Throw<AssertionTestException>()
+            .Which.Message.Must().Contain(nameof(NullArg2));
+
+      [XF] public void argument_3_is_null() =>
+         Invoking(() => Asserter.NotNull4("a", "b", NullArg3, "d"))
+            .Must().Throw<AssertionTestException>()
+            .Which.Message.Must().Contain(nameof(NullArg3));
+
+      [XF] public void argument_4_is_null() =>
+         Invoking(() => Asserter.NotNull4("a", "b", "c", NullArg4))
+            .Must().Throw<AssertionTestException>()
+            .Which.Message.Must().Contain(nameof(NullArg4));
+   }
 }
