@@ -1,9 +1,8 @@
-using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
 namespace Compze.Contracts;
 
-public static class ContractAsserterNotDefaultExtensions
+public static class StructNotDefault
 {
    extension(ContractAsserter @this)
    {

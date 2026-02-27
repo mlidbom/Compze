@@ -1,3 +1,5 @@
+using Compze.Utilities.SystemCE;
+
 namespace Compze.Utilities.Logging;
 
 public static class LogSourceFormatter
@@ -21,7 +23,7 @@ public static class LogSourceFormatter
    /// </summary>
    public static string ShortenNestedClass(string className)
    {
-      var plusIndex = className.IndexOf('+');
+      var plusIndex = className.IndexOfOrdinal('+');
       return plusIndex >= 0 ? className[..(plusIndex + 1)] : className;
    }
 }

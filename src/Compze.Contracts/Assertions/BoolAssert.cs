@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 
 namespace Compze.Contracts;
 
-public static class ContractAsserterAssertExtensions
+public static class BoolAssert
 {
    extension(ContractAsserter @this)
    {
