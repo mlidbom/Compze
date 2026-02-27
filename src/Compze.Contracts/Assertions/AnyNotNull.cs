@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 
 namespace Compze.Contracts;
 
-public static class AnyNotNull
+public static class TNotNull
 {
    extension(ContractAsserter @this)
    {
