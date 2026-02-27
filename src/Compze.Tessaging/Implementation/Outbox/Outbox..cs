@@ -6,7 +6,6 @@ using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Core.Tessaging.Public;
 using Compze.Tessaging.Implementation.Abstractions;
 using Compze.Tessaging.Implementation.Transport.Client.Internal;
-using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Contracts;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
@@ -58,8 +57,8 @@ public partial class Outbox : IOutbox
 
       Transaction.Current.OnCommittedSuccessfully(() => connections.ForEach(connection =>
       {
-         this.Log().Debug($"OnCommittedSuccessfully: Enqueuing tevent {exactlyOnceTevent.Id} for delivery to endpoint {connection.EndpointInformation.Id}");
-         connection.EnqueueForDelivery(exactlyOnceTevent.Id, exactlyOnceTevent);
+         this.Log().Debug($"OnCommittedSuccessfully: Delivering tevent {exactlyOnceTevent.Id} to endpoint {connection.EndpointInformation.Id}");
+         connection.Deliver(exactlyOnceTevent.Id, exactlyOnceTevent);
       }));
    }
 
@@ -73,8 +72,8 @@ public partial class Outbox : IOutbox
 
       Transaction.Current.OnCommittedSuccessfully(() =>
       {
-         this.Log().Debug($"OnCommittedSuccessfully: Enqueuing tommand {exactlyOnceTommand.Id} for delivery to endpoint {connection.EndpointInformation.Id}");
-         connection.EnqueueForDelivery(exactlyOnceTommand.Id, exactlyOnceTommand);
+         this.Log().Debug($"OnCommittedSuccessfully: Delivering tommand {exactlyOnceTommand.Id} to endpoint {connection.EndpointInformation.Id}");
+         connection.Deliver(exactlyOnceTommand.Id, exactlyOnceTommand);
       });
    }
 

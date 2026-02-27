@@ -10,6 +10,7 @@ public interface ITessagingInboxConnection
     TessageTypesInternal.EndpointInformation EndpointInformation { get; }
     Task SendAsync(IExactlyOnceTevent tevent);
     Task SendAsync(IExactlyOnceTommand tommand);
+    void Deliver(TessageId tessageId, IExactlyOnceTessage tessage);
     void EnqueueForDelivery(TessageId tessageId, IExactlyOnceTessage tessage);
     void StartDelivery();
     void StopDelivery();

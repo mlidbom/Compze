@@ -80,6 +80,33 @@ public class TessagingConnection : ITessagingInboxConnection, IDisposable
    public async Task SendAsync(IExactlyOnceTommand tommand) => await ExactlyOnceSender.SendAsync(tommand).caf();
 
    // Delivery management
+   public void Deliver(TessageId tessageId, IExactlyOnceTessage tessage)
+   {
+      var sendTask = tessage switch
+      {
+         IExactlyOnceTevent tevent => SendAsync(tevent),
+         IExactlyOnceTommand tommand => SendAsync(tommand),
+         _ => throw new InvalidOperationException($"Unexpected tessage type: {tessage.GetType().FullName}")
+      };
+
+      sendTask.ContinueWithCE(task =>
+      {
+         _exceptionReporter.RunSwallowingAndReportingAnyExceptions(() =>
+         {
+            if(task.IsFaulted)
+            {
+               this.Log().Warning(task.Exception!, $"Initial delivery failed for tessage {tessageId} to endpoint {EndpointInformation.Id}, enqueuing for retry");
+               _tessageStorage.RecordDeliveryFailure(tessageId, EndpointInformation.Id, task.Exception);
+               EnqueueForDelivery(tessageId, tessage);
+            } else
+            {
+               this.Log().Debug($"Tessage {tessageId} delivered to endpoint {EndpointInformation.Id}");
+               _tessageStorage.MarkAsReceived(tessageId, EndpointInformation.Id);
+            }
+         });
+      });
+   }
+
    public void EnqueueForDelivery(TessageId tessageId, IExactlyOnceTessage tessage)
    {
       lock(_queueLock) { _queue.Enqueue(new PendingDelivery(tessageId, tessage)); }
