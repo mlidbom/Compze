@@ -5,7 +5,7 @@ namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 public partial interface IAwaitableMonitor
 {
    public static IAwaitableMonitor WithDefaultTimeout() => IMonitor.CreateAwaitableWithDefaultTimeout();
-   public static IAwaitableMonitor WithTimeouts(LockTimeout lockTimeout, WaitTimeout? waitTimeout = null) => IMonitor.CreateAwaitableWithTimeouts(lockTimeout, waitTimeout ?? new WaitTimeout(lockTimeout.Value));
+   public static IAwaitableMonitor New(LockTimeout lockTimeout, WaitTimeout? waitTimeout = null) => IMonitor.CreateAwaitableWithTimeouts(lockTimeout, waitTimeout ?? new WaitTimeout(lockTimeout.Value));
 
    LockTimeout LockTimeout { get; }
    WaitTimeout WaitTimeout { get; }

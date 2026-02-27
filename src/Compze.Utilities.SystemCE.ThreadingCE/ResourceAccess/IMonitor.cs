@@ -10,7 +10,7 @@ public partial interface IMonitor
                                                         : 2.Minutes(); //MsSql default query timeout is 30 seconds. Default .Net transaction timeout is 60. If we reach 2 minutes it is highly likely that we have an in-memory deadlock.
 
    public static IMonitor WithDefaultTimeout() => new MonitorCE(new LockTimeout(DefaultTimeoutTimeSpan), new WaitTimeout(DefaultTimeoutTimeSpan));
-   public static IMonitor WithTimeout(LockTimeout timeout) => new MonitorCE(timeout, new WaitTimeout(timeout.Value));
+   public static IMonitor New(LockTimeout timeout) => new MonitorCE(timeout, new WaitTimeout(timeout.Value));
 
    internal static IAwaitableMonitor CreateAwaitableWithDefaultTimeout() => new MonitorCE(new LockTimeout(DefaultTimeoutTimeSpan), new WaitTimeout(DefaultTimeoutTimeSpan));
    internal static IAwaitableMonitor CreateAwaitableWithTimeouts(LockTimeout lockTimeout, WaitTimeout waitTimeout) => new MonitorCE(lockTimeout, waitTimeout);

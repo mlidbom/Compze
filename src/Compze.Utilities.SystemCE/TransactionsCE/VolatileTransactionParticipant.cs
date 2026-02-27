@@ -21,7 +21,7 @@ public abstract class VolatileTransactionParticipant : IEnlistmentNotification
 
    protected virtual void OnInDoubt() {}
 
-   readonly IMonitor _monitor = IMonitor.WithTimeout(LockTimeout.Seconds(30));
+   readonly IMonitor _monitor = IMonitor.New(LockTimeout.Seconds(30));
    Transaction? _enlistedIn;
    public void EnsureEnlistedInAnyAmbientTransaction() => _monitor.Locked(() =>
    {

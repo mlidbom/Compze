@@ -12,7 +12,6 @@ using System.Linq;
 using System.Threading;
 using Compze.Sql.Common.DbPool;
 using Compze.Utilities.DependencyInjection;
-using Compze.Utilities.SystemCE.ThreadingCE;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
 #pragma warning disable CA1724 //I don't care that the class uses the same name as the namespace
@@ -45,7 +44,7 @@ public partial class DbPool : StrictlyManagedResourceBase<DbPool>
       MachineWideState = MachineWideSharedObject<DbPoolState>.For(sqlLayer.GetType().GetFullNameCompilable(), DbPoolStateSerializer.Instance, CorruptionAction.ReplaceContentWithDefaultAndThrow);
    }
 
-   readonly IMonitor _monitor = IMonitor.WithTimeout(LockTimeout.Seconds(30));
+   readonly IMonitor _monitor = IMonitor.New(LockTimeout.Seconds(30));
    readonly DbPoolId _poolId = new();
    IReadOnlyList<DbPoolDatabase> _transientCache = new List<DbPoolDatabase>();
 

@@ -9,8 +9,8 @@ namespace Compze.Utilities.SystemCE.ThreadingCE.Testing;
 
 public class ThreadGate : IThreadGate
 {
-   public static IThreadGate CreateClosedWithTimeout(WaitTimeout timeout, string? name = null) => new ThreadGate(timeout, name);
-   public static IThreadGate CreateOpenWithTimeout(WaitTimeout timeout, string? name = null) => new ThreadGate(timeout, name).Open();
+   public static IThreadGate Closed(WaitTimeout timeout, string? name = null) => new ThreadGate(timeout, name);
+   public static IThreadGate Open(WaitTimeout timeout, string? name = null) => new ThreadGate(timeout, name).Open();
 
    public WaitTimeout DefaultTimeout { get; }
 
@@ -116,7 +116,7 @@ public class ThreadGate : IThreadGate
    ThreadGate(WaitTimeout defaultTimeout, string? name = null)
    {
       Name = name ?? Guid.NewGuid().ToString();
-      _monitor = IAwaitableMonitor.WithTimeouts(new LockTimeout(defaultTimeout.Value), defaultTimeout);
+      _monitor = IAwaitableMonitor.New(new LockTimeout(defaultTimeout.Value), defaultTimeout);
       DefaultTimeout = defaultTimeout;
    }
 

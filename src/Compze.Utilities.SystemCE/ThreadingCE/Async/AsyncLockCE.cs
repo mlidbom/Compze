@@ -15,7 +15,7 @@ public interface IAsyncLockCE : IDisposable
                                                            : 2.Minutes()); //MsSql default query timeout is 30 seconds. Default .Net transaction timeout is 60. If we reach 2 minutes it is highly likely that we have an in-memory deadlock.
 
    static IAsyncLockCE WithDefaultTimeout() => new AsyncLockCE(DefaultLockTimeout);
-   static IAsyncLockCE WithTimeout(LockTimeout timeout) => new AsyncLockCE(timeout);
+   static IAsyncLockCE New(LockTimeout timeout) => new AsyncLockCE(timeout);
 
    Task<unit> LockedAsync(Func<Task> lockedAction);
    Task<TReturn> LockedAsync<TReturn>(Func<Task<TReturn>> lockedAction);

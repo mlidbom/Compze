@@ -11,11 +11,11 @@ public interface IThreadShared
    public static IThreadShared<TShared> WithDefaultTimeouts<TShared>(TShared shared) =>
       new LockCEThreadShared<TShared>(shared, IMonitor.WithDefaultTimeout());
 
-   public static IThreadShared<TShared> WithTimeout<TShared>(LockTimeout lockTimeout) where TShared : new() =>
-      new LockCEThreadShared<TShared>(new TShared(), IMonitor.WithTimeout(lockTimeout));
+   public static IThreadShared<TShared> New<TShared>(LockTimeout lockTimeout) where TShared : new() =>
+      new LockCEThreadShared<TShared>(new TShared(), IMonitor.New(lockTimeout));
 
-   public static IThreadShared<TShared> WithTimeout<TShared>(TShared shared, LockTimeout lockTimeout) =>
-      new LockCEThreadShared<TShared>(shared, IMonitor.WithTimeout(lockTimeout));
+   public static IThreadShared<TShared> New<TShared>(TShared shared, LockTimeout lockTimeout) =>
+      new LockCEThreadShared<TShared>(shared, IMonitor.New(lockTimeout));
 
    // Single implementation for both IThreadShared<T> and IAwaitableThreadShared<T>.
    public class LockCEThreadShared<TShared> : IThreadShared<TShared>, IAwaitableThreadShared<TShared>
