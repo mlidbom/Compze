@@ -2,6 +2,7 @@ using System;
 using System.Globalization;
 using Compze.Utilities.Logging;
 using Compze.Utilities.Logging.Serilog;
+using Compze.Utilities.SystemCE;
 using Serilog;
 using Serilog.Core;
 using Serilog.Events;
@@ -14,8 +15,6 @@ namespace Compze.Tests.Infrastructure;
 /// </summary>
 public static class TestFixtureHelper
 {
-   static bool IsCI => Environment.GetEnvironmentVariable("GITHUB_ACTIONS") == "true";
-
    public static void SetupSerilog(ILogEventEnricher? testEnricher, ILogEventSink? testOutputSink = null)
    {
       var config = new LoggerConfiguration()
@@ -29,7 +28,7 @@ public static class TestFixtureHelper
 
       var loggerConfig = config.MinimumLevel.Debug();
 
-      if(!IsCI)
+      if(!CompzeEnvironment.IsGithubAction)
       {
          loggerConfig = loggerConfig.WriteTo.Seq("http://192.168.0.11:5341", formatProvider: CultureInfo.InvariantCulture)
                                     .WriteTo.Console(formatProvider: CultureInfo.InvariantCulture);
@@ -40,7 +39,7 @@ public static class TestFixtureHelper
 
       Log.Logger = loggerConfig.CreateLogger();
 
-      CompzeLogger.LogLevel = IsCI ? LogLevel.Debug : LogLevel.Warning;
+      CompzeLogger.LogLevel = CompzeEnvironment.IsGithubAction ? LogLevel.Debug : LogLevel.Warning;
       CompzeLogger.LoggerFactoryMethod = SerilogLogger.Create;
    }
 
