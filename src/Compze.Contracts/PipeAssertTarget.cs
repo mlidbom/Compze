@@ -8,7 +8,7 @@ using Compze.Contracts.Exceptions;
 
 namespace Compze.Contracts;
 
-/// <summary>A zero-allocation wrapper that carries the value being asserted on together with its caller-site expression. Returned by <see cref="PipeAssert._assert{T}"/> and serves as the entry point for all assertion methods.</summary>
+/// <summary>A zero-allocation wrapper that carries the value being asserted on together with its caller-site expression. Returned by <see cref="PipeAssert._assert{T}(T, string?)"/> and serves as the entry point for all assertion methods.</summary>
 #pragma warning disable CA1815 // Transient utility struct — equality comparison is never needed
 public readonly struct PipeAssertTarget<T>(T value, string? valueExpression)
 #pragma warning restore CA1815
