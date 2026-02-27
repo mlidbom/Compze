@@ -16,4 +16,14 @@ public class ContractAsserter(Func<string, Exception> createException, Func<stri
    /// <summary>Throws the asserter's configured null exception with the given expression. Use this from custom assertion extension methods.</summary>
    [EditorBrowsable(EditorBrowsableState.Never)]
    [DoesNotReturn] public void ThrowNull(string expression) => throw _createNullException(expression);
+
+
+   ///<summary>Assert conditions about current state of "this". Failures throw <see cref="InvalidOperationException"/>.</summary>
+   public ContractAsserter State => Contract.State;
+
+   ///<summary>Assert something that must always be true for "this". Failures throw <see cref="InvariantViolatedException"/></summary>
+   public ContractAsserter Invariant => Contract.Invariant;
+
+   ///<summary>Assert conditions on arguments to the current method. Failures throw <see cref="ArgumentException"/></summary>
+   public ContractAsserter Argument => Contract.Argument;
 }
