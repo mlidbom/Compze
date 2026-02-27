@@ -1,6 +1,8 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
+#pragma warning disable CS8777 // On netstandard2.0 the BCL string methods lack nullable annotations, but our checks guarantee non-null at exit
+
 namespace Compze.Contracts;
 
 /// <summary>String null-or-empty assertion extensions for <see cref="ContractAsserter"/>.</summary>
