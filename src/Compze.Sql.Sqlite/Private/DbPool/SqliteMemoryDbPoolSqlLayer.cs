@@ -34,13 +34,25 @@ public class SqliteMemoryDbPoolSqlLayer : IDbPoolSqlLayer
    }
 
    public void EnsureDatabaseExistsAndIsEmpty(DbPoolDatabase db) => ResetDatabase(db);
-   public void ResetDatabase(DbPoolDatabase db) => _keepInMemoryDatabaseAliveConnections.Locked(cons => cons[db.Name] = CreateOpenConnectionThusCreatingANewInMemoryDatabase(db));
+   public void ResetDatabase(DbPoolDatabase db) => _keepInMemoryDatabaseAliveConnections.Locked(cons =>
+   {
+      if(cons.TryGetValue(db.Name, out var oldConnection))
+      {
+         SqliteConnection.ClearPool(oldConnection);
+         oldConnection.Dispose();
+      }
+      cons[db.Name] = CreateOpenConnectionThusCreatingANewInMemoryDatabase(db);
+   });
 
    public void Dispose(IReadOnlyList<DbPoolDatabase> reservedDatabases)
    {
       _keepInMemoryDatabaseAliveConnections.Locked(cons =>
       {
-         cons.Values.ForEach(connection => connection.Dispose());
+         cons.Values.ForEach(connection =>
+         {
+            SqliteConnection.ClearPool(connection);
+            connection.Dispose();
+         });
          cons.Clear();
       });
    }
