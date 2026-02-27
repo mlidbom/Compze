@@ -6,7 +6,7 @@ Fluent, chainable runtime assertions for preconditions, invariants, and state ch
 
 | Entry point | Throws on failure | Use for |
 |---|---|---|
-| `Contract.Argument` | `ArgumentException` / `ArgumentNullException` | Method parameter validation |
+| `Contract.Argument` | `ArgumentAssertionFailedException` / `ArgumentNullException` | Method parameter validation |
 | `Contract.State` | `InvalidOperationException` | Enforcing state requirements for the requested operation|
 | `Contract.Invariant` | `InvariantViolatedException` | Class invariant enforcement |
 
@@ -99,7 +99,7 @@ public static class MyContractExtensions
 }
 
 // Usage:
-Contract.Argument.IsValidEmail(userEmail); // throws: ArgumentException("Argument.IsValidEmail(userEmail)")
+Contract.Argument.IsValidEmail(userEmail); // throws: ArgumentAssertionFailedException("Argument.IsValidEmail(userEmail)")
 ```
 
 #### AssertionTarget extension (pipeline)

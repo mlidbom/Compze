@@ -1,4 +1,5 @@
 using System;
+using Compze.Contracts.Exceptions;
 
 namespace Compze.Contracts;
 
@@ -14,8 +15,8 @@ public static class Contract
                                                            message => new InvariantViolatedException(message),
                                                            message => new InvariantViolatedException(message));
 
-   ///<summary>Assert conditions on arguments to the current method. Failures throw <see cref="ArgumentException"/></summary>
+   ///<summary>Assert conditions on arguments to the current method. Failures throw <see cref="ArgumentAssertionFailedException"/></summary>
    public static ContractAsserter Argument { get; } = new("Argument",
-                                                          message => new ArgumentException(message),
+                                                          message => new ArgumentAssertionFailedException(message),
                                                           message => new ArgumentNullException(message));
 }

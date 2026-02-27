@@ -1,5 +1,5 @@
 using System;
 
-namespace Compze.Contracts;
+namespace Compze.Contracts.Exceptions;
 
 public class InvariantViolatedException(string message) : Exception(message);
