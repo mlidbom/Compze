@@ -14,4 +14,10 @@ public abstract class AssertionMethodsTest
       Invoking(action)
         .Must().Throw<AssertionTestException>()
         .Which.Message.Must().Contain(expectedExpression);
+
+   protected static void MustThrowContainingForEach(string?[] invalidValues, Action<string?> action, string expectedExpression)
+   {
+      foreach(var invalidValue in invalidValues)
+         MustThrowContaining(() => action(invalidValue), expectedExpression);
+   }
 }
