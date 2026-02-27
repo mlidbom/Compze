@@ -33,7 +33,7 @@ public class TessagingConnection : ITessagingInboxConnection, IDisposable
    readonly ITaskRunner _taskRunner;
    readonly IBackgroundExceptionReporter _exceptionReporter;
 
-   record PendingDelivery(TessageId TessageId, IExactlyOnceTessage Tessage);
+   record PendingDelivery(IExactlyOnceTessage Tessage);
    readonly object _queueLock = new();
    readonly Queue<PendingDelivery> _queue = new();
    readonly AutoResetEvent _signal = new(false);
@@ -80,12 +80,12 @@ public class TessagingConnection : ITessagingInboxConnection, IDisposable
    public async Task SendAsync(IExactlyOnceTommand tommand) => await ExactlyOnceSender.SendAsync(tommand).caf();
 
    // Delivery management
-   public void EnqueueForDelivery(TessageId tessageId, IExactlyOnceTessage tessage)
+   public void EnqueueForDelivery(IExactlyOnceTessage tessage)
    {
       var transportTessage = TransportTessage.OutGoing.Create(tessage, _typeMapper, _serializer);
       _tessagesInFlightTracker.SendingTessageOnTransport(transportTessage, EndpointInformation.Id);
 
-      lock(_queueLock) { _queue.Enqueue(new PendingDelivery(tessageId, tessage)); }
+      lock(_queueLock) { _queue.Enqueue(new PendingDelivery(tessage)); }
 
       _signal.Set();
    }
@@ -107,7 +107,7 @@ public class TessagingConnection : ITessagingInboxConnection, IDisposable
       {
          var tessageType = _typeMapper.GetType(undeliveredTessage.TypeId);
          var tessage = (IExactlyOnceTessage)_serializer.DeserializeTessage(tessageType, undeliveredTessage.SerializedTessage);
-         EnqueueForDelivery(undeliveredTessage.TessageId, tessage);
+         EnqueueForDelivery(tessage);
       }
    }
 
@@ -177,16 +177,16 @@ public class TessagingConnection : ITessagingInboxConnection, IDisposable
                throw new InvalidOperationException($"Unexpected tessage type: {pending.Tessage.GetType().FullName}");
          }
 
-         this.Log().Debug($"Delivered tessage {pending.TessageId} to endpoint {EndpointInformation.Id}");
-         _exceptionReporter.RunSwallowingAndReportingAnyExceptions(() => _tessageStorage.MarkAsReceived(pending.TessageId, EndpointInformation.Id));
+         this.Log().Debug($"Delivered tessage {pending.Tessage.Id} to endpoint {EndpointInformation.Id}");
+         _exceptionReporter.RunSwallowingAndReportingAnyExceptions(() => _tessageStorage.MarkAsReceived(pending.Tessage.Id, EndpointInformation.Id));
          return true;
       }
 #pragma warning disable CA1031 // Background thread — must catch all to keep the send loop running
       catch(Exception exception)
       {
 #pragma warning restore CA1031
-         this.Log().Warning(exception, $"Delivery failed for tessage {pending.TessageId} to endpoint {EndpointInformation.Id}");
-         _exceptionReporter.RunSwallowingAndReportingAnyExceptions(() => _tessageStorage.RecordDeliveryFailure(pending.TessageId, EndpointInformation.Id, exception));
+         this.Log().Warning(exception, $"Delivery failed for tessage {pending.Tessage.Id} to endpoint {EndpointInformation.Id}");
+         _exceptionReporter.RunSwallowingAndReportingAnyExceptions(() => _tessageStorage.RecordDeliveryFailure(pending.Tessage.Id, EndpointInformation.Id, exception));
          return false;
       }
    }
