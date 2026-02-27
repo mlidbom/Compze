@@ -10,7 +10,6 @@ using Compze.Core.Tessaging.Transport.Internal;
 using Compze.Tessaging.Implementation.Abstractions;
 using Compze.Tessaging.Implementation.Outbox;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
-using Compze.Tessaging.Implementation.Transport.Client.Implementation.Http;
 using Compze.Tessaging.Implementation.Transport.Client.Internal;
 using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Utilities.Logging;
@@ -22,7 +21,6 @@ namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Univer
 public class TessagingConnection : ITessagingInboxConnection, IDisposable
 {
    public TessageTypesInternal.EndpointInformation EndpointInformation { get; private set; } = null!;
-   IExactlyOnceTessageSender ExactlyOnceSender { get; set; } = null!;
 
    readonly ITessagesInFlightTracker _tessagesInFlightTracker;
    readonly EndPointAddress _remoteAddress;
@@ -33,7 +31,7 @@ public class TessagingConnection : ITessagingInboxConnection, IDisposable
    readonly ITaskRunner _taskRunner;
    readonly IBackgroundExceptionReporter _exceptionReporter;
 
-   record PendingDelivery(IExactlyOnceTessage Tessage);
+   record PendingDelivery(IExactlyOnceTessage Tessage, TransportTessage.OutGoing TransportTessage);
    readonly object _queueLock = new();
    readonly Queue<PendingDelivery> _queue = new();
    readonly AutoResetEvent _signal = new(false);
@@ -72,12 +70,7 @@ public class TessagingConnection : ITessagingInboxConnection, IDisposable
                                          endpointInformationTuery,
                                          _remoteAddress).caf();
       EndpointInformation = endpointInformation;
-      ExactlyOnceSender = new HttpExactlyOnceTessageSender(_transportMessagePoster, _remoteAddress, _typeMapper, _serializer, _tessagesInFlightTracker, endpointInformation.Id);
    }
-
-   // ITessagingInboxConnection — direct send (used internally by the delivery loop)
-   public async Task SendAsync(IExactlyOnceTevent tevent) => await ExactlyOnceSender.SendAsync(tevent).caf();
-   public async Task SendAsync(IExactlyOnceTommand tommand) => await ExactlyOnceSender.SendAsync(tommand).caf();
 
    // Delivery management
    public void EnqueueForDelivery(IExactlyOnceTessage tessage)
@@ -85,7 +78,7 @@ public class TessagingConnection : ITessagingInboxConnection, IDisposable
       var transportTessage = TransportTessage.OutGoing.Create(tessage, _typeMapper, _serializer);
       _tessagesInFlightTracker.SendingTessageOnTransport(transportTessage, EndpointInformation.Id);
 
-      lock(_queueLock) { _queue.Enqueue(new PendingDelivery(tessage)); }
+      lock(_queueLock) { _queue.Enqueue(new PendingDelivery(tessage, transportTessage)); }
 
       _signal.Set();
    }
@@ -165,17 +158,7 @@ public class TessagingConnection : ITessagingInboxConnection, IDisposable
    {
       try
       {
-         switch(pending.Tessage)
-         {
-            case IExactlyOnceTevent tevent:
-               SendAsync(tevent).GetAwaiter().GetResult();
-               break;
-            case IExactlyOnceTommand tommand:
-               SendAsync(tommand).GetAwaiter().GetResult();
-               break;
-            default:
-               throw new InvalidOperationException($"Unexpected tessage type: {pending.Tessage.GetType().FullName}");
-         }
+         _transportMessagePoster.PostAsync(pending.TransportTessage, pending.Tessage, _remoteAddress).GetAwaiter().GetResult();
 
          this.Log().Debug($"Delivered tessage {pending.Tessage.Id} to endpoint {EndpointInformation.Id}");
          _exceptionReporter.RunSwallowingAndReportingAnyExceptions(() => _tessageStorage.MarkAsReceived(pending.Tessage.Id, EndpointInformation.Id));
