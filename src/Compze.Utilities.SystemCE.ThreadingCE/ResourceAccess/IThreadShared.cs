@@ -6,35 +6,35 @@ namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 public interface IThreadShared
 {
    public static IThreadShared<TShared> WithDefaultTimeouts<TShared>() where TShared : new() =>
-      new LockCEThreadShared<TShared>(new TShared(), IMonitorCE.WithDefaultTimeout());
+      new LockCEThreadShared<TShared>(new TShared(), IMonitor.WithDefaultTimeout());
 
    public static IThreadShared<TShared> WithDefaultTimeouts<TShared>(TShared shared) =>
-      new LockCEThreadShared<TShared>(shared, IMonitorCE.WithDefaultTimeout());
+      new LockCEThreadShared<TShared>(shared, IMonitor.WithDefaultTimeout());
 
    public static IThreadShared<TShared> WithTimeout<TShared>(TimeSpan lockTimeout) where TShared : new() =>
-      new LockCEThreadShared<TShared>(new TShared(), IMonitorCE.WithTimeout(lockTimeout));
+      new LockCEThreadShared<TShared>(new TShared(), IMonitor.WithTimeout(lockTimeout));
 
    public static IThreadShared<TShared> WithTimeout<TShared>(TShared shared, TimeSpan lockTimeout) =>
-      new LockCEThreadShared<TShared>(shared, IMonitorCE.WithTimeout(lockTimeout));
+      new LockCEThreadShared<TShared>(shared, IMonitor.WithTimeout(lockTimeout));
 
    // Single implementation for both IThreadShared<T> and IAwaitableThreadShared<T>.
    public class LockCEThreadShared<TShared> : IThreadShared<TShared>, IAwaitableThreadShared<TShared>
    {
-      readonly IMonitorCE _monitor;
-      readonly IAwaitableMonitorCE _awaitableMonitor;
+      readonly IMonitor _monitor;
+      readonly IAwaitableMonitor _awaitableMonitor;
       readonly TShared _shared;
 
-      public LockCEThreadShared(TShared shared, IMonitorCE monitor)
+      public LockCEThreadShared(TShared shared, IMonitor monitor)
       {
          _shared = shared;
          _monitor = monitor;
-         _awaitableMonitor = (IAwaitableMonitorCE)monitor;
+         _awaitableMonitor = (IAwaitableMonitor)monitor;
       }
 
-      public LockCEThreadShared(TShared shared, IAwaitableMonitorCE awaitableMonitor)
+      public LockCEThreadShared(TShared shared, IAwaitableMonitor awaitableMonitor)
       {
          _shared = shared;
-         _monitor = (IMonitorCE)awaitableMonitor;
+         _monitor = (IMonitor)awaitableMonitor;
          _awaitableMonitor = awaitableMonitor;
       }
 

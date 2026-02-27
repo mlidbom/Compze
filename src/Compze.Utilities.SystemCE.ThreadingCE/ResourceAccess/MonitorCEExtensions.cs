@@ -4,7 +4,7 @@ namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
 public static class MonitorCEExtensions
 {
-   public static TResult DoubleCheckedLocking<TResult>(this IMonitorCE @this, Func<TResult?> tryRead, Action updateOnFailedRead)
+   public static TResult DoubleCheckedLocking<TResult>(this IMonitor @this, Func<TResult?> tryRead, Action updateOnFailedRead)
       where TResult : class =>
       tryRead() ?? @this.Locked(() =>
       {
@@ -14,7 +14,7 @@ public static class MonitorCEExtensions
          return tryRead() ?? throw new Exception($"{nameof(tryRead)} returned null even after {nameof(updateOnFailedRead)} had been called.");
       });
 
-   public static TResult DoubleCheckedLocking<TResult>(this IMonitorCE @this, Func<bool> canRead, Func<TResult> read, Action updateOnFailedRead) =>
+   public static TResult DoubleCheckedLocking<TResult>(this IMonitor @this, Func<bool> canRead, Func<TResult> read, Action updateOnFailedRead) =>
       canRead()
          ? read()
          : @this.Locked(() =>

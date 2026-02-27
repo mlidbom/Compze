@@ -6,16 +6,16 @@ namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 public interface IAwaitableThreadShared
 {
    public static IAwaitableThreadShared<TShared> WithDefaultTimeouts<TShared>() where TShared : new() =>
-      new IThreadShared.LockCEThreadShared<TShared>(new TShared(), IAwaitableMonitorCE.WithDefaultTimeout());
+      new IThreadShared.LockCEThreadShared<TShared>(new TShared(), IAwaitableMonitor.WithDefaultTimeout());
 
    public static IAwaitableThreadShared<TShared> WithDefaultTimeouts<TShared>(TShared shared) =>
-      new IThreadShared.LockCEThreadShared<TShared>(shared, IAwaitableMonitorCE.WithDefaultTimeout());
+      new IThreadShared.LockCEThreadShared<TShared>(shared, IAwaitableMonitor.WithDefaultTimeout());
 
    public static IAwaitableThreadShared<TShared> WithTimeouts<TShared>(TimeSpan lockTimeout, TimeSpan? waitTimeout = null) where TShared : new() =>
-      new IThreadShared.LockCEThreadShared<TShared>(new TShared(), IAwaitableMonitorCE.WithTimeouts(lockTimeout, waitTimeout));
+      new IThreadShared.LockCEThreadShared<TShared>(new TShared(), IAwaitableMonitor.WithTimeouts(lockTimeout, waitTimeout));
 
    public static IAwaitableThreadShared<TShared> WithTimeouts<TShared>(TShared shared, TimeSpan lockTimeout, TimeSpan? waitTimeout = null) =>
-      new IThreadShared.LockCEThreadShared<TShared>(shared, IAwaitableMonitorCE.WithTimeouts(lockTimeout, waitTimeout));
+      new IThreadShared.LockCEThreadShared<TShared>(shared, IAwaitableMonitor.WithTimeouts(lockTimeout, waitTimeout));
 }
 
 public interface IAwaitableThreadShared<out TShared>

@@ -12,7 +12,7 @@ public static class ConcurrentCircularReader
 public class ConcurrentCircularReader<T>(IEnumerable<T> source)
 {
    readonly T[] _items = source.ToArray();
-   readonly IMonitorCE _monitor = IMonitorCE.WithDefaultTimeout();
+   readonly IMonitor _monitor = IMonitor.WithDefaultTimeout();
    int _current = -1;
 
    public T Next() => _monitor.Locked(() =>

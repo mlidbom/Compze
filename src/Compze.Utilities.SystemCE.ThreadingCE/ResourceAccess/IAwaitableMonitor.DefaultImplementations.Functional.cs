@@ -3,7 +3,7 @@ using System;
 
 namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
-public partial interface IAwaitableMonitorCE
+public partial interface IAwaitableMonitor
 {
    unit Read(Action action, TimeSpan? timeout = null) => Read(action.AsFunc(), timeout);
 

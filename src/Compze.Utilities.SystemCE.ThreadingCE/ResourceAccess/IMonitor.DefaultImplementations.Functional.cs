@@ -3,7 +3,7 @@ using System;
 
 namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
-public partial interface IMonitorCE
+public partial interface IMonitor
 {
    unit Locked(Action action, TimeSpan? timeout = null) => Locked(action.AsFunc(), timeout);
 

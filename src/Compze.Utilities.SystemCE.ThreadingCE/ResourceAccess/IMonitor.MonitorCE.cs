@@ -7,10 +7,10 @@ using Compze.Utilities.SystemCE.ThreadingCE.Utilities;
 
 namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
-public partial interface IMonitorCE
+public partial interface IMonitor
 {
 #pragma warning disable CA1001 //By creating the locks only once in the constructor usages become zero-allocation operations.
-   private class MonitorCE : IMonitorCE, IAwaitableMonitorCE
+   private class MonitorCE : IMonitor, IAwaitableMonitor
 #pragma warning restore CA1001
    {
       public IDisposable TakeLock(TimeSpan? timeout = null) => TakeLockCore(LockType.Read, timeout);

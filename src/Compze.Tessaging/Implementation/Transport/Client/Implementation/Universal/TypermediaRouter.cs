@@ -50,7 +50,7 @@ public class TypermediaRouter : ITypermediaRouter, IDisposable
    readonly ITypeMapper _typeMapper;
    readonly IRemotableTessageSerializer _serializer;
    readonly ITransportMessagePoster _transportMessagePoster;
-   readonly IMonitorCE _monitor = IMonitorCE.WithDefaultTimeout();
+   readonly IMonitor _monitor = IMonitor.WithDefaultTimeout();
 
 
    bool _running;

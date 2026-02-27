@@ -44,7 +44,7 @@ public partial class DbPool : StrictlyManagedResourceBase<DbPool>
       MachineWideState = MachineWideSharedObject<DbPoolState>.For(sqlLayer.GetType().GetFullNameCompilable(), DbPoolStateSerializer.Instance, CorruptionAction.ReplaceContentWithDefaultAndThrow);
    }
 
-   readonly IMonitorCE _monitor = IMonitorCE.WithTimeout(30.Seconds());
+   readonly IMonitor _monitor = IMonitor.WithTimeout(30.Seconds());
    readonly DbPoolId _poolId = new();
    IReadOnlyList<DbPoolDatabase> _transientCache = new List<DbPoolDatabase>();
 
