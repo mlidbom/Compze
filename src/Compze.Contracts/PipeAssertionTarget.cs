@@ -21,10 +21,8 @@ public readonly struct PipeAssertTarget<T>(T value, string? valueExpression)
    [EditorBrowsable(EditorBrowsableState.Never)]
    public string? ValueExpression { get; } = valueExpression;
 
-
    /// <summary>Throws <see cref="AssertionFailedException"/> with the specified message. Use this from custom assertion extension methods.</summary>
-   [DoesNotReturn]
    [MethodImpl(MethodImplOptions.AggressiveInlining)]
    [EditorBrowsable(EditorBrowsableState.Never)]
-   public void ThrowAssertionFailed([CallerMemberName] string? callerName = null) => throw new AssertionFailedException($"{ValueExpression}.{nameof(PipeAssert._assert)}().{callerName}()");
+   [DoesNotReturn] public void ThrowAssertionFailed([CallerMemberName] string? callerName = null) => throw new AssertionFailedException($"{ValueExpression}.{nameof(PipeAssert._assert)}().{callerName}()");
 }
