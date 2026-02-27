@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Compze.Functional;
 using Compze.Contracts;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
@@ -36,7 +35,7 @@ public class EntitiesByIdAndTypeCache
    public bool Contains(Type type, object id) => ContainsInternal(IdAndType.Create(id, type));
 
    public bool TryGet<T>(object id, out T value) =>
-      _data.ReadOut((Dictionary<IdAndType, object> data, out T value) =>
+      _data.ReadOut((data, out value) =>
                     {
                        if(data.TryGetValue(IdAndType.Create(id, typeof(T)), out var found))
                        {

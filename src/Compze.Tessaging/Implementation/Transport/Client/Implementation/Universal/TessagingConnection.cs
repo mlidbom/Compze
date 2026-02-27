@@ -2,63 +2,49 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Compze.Core.Public;
 using Compze.Core.Refactoring.Naming.Internal;
 using Compze.Core.Serialization.Internal;
 using Compze.Core.Tessaging.Public;
 using Compze.Core.Tessaging.Transport.Internal;
 using Compze.Tessaging.Implementation.Abstractions;
-using Compze.Tessaging.Implementation.Outbox;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Tessaging.Implementation.Transport.Client.Internal;
 using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Utilities.Logging;
+using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Universal;
 
-public class TessagingConnection : ITessagingInboxConnection, IDisposable
+public class TessagingConnection(
+   ITessagesInFlightTracker tessagesInFlightTracker,
+   EndPointAddress remoteAddress,
+   ITypeMapper typeMapper,
+   IRemotableTessageSerializer serializer,
+   ITransportMessagePoster transportMessagePoster,
+   Outbox.Outbox.ITessageStorage tessageStorage,
+   ITaskRunner taskRunner,
+   IBackgroundExceptionReporter exceptionReporter) : ITessagingInboxConnection, IDisposable
 {
    public TessageTypesInternal.EndpointInformation EndpointInformation { get; private set; } = null!;
 
-   readonly ITessagesInFlightTracker _tessagesInFlightTracker;
-   readonly EndPointAddress _remoteAddress;
-   readonly ITypeMapper _typeMapper;
-   readonly IRemotableTessageSerializer _serializer;
-   readonly ITransportMessagePoster _transportMessagePoster;
-   readonly Outbox.Outbox.ITessageStorage _tessageStorage;
-   readonly ITaskRunner _taskRunner;
-   readonly IBackgroundExceptionReporter _exceptionReporter;
+   readonly ITessagesInFlightTracker _tessagesInFlightTracker = tessagesInFlightTracker;
+   readonly EndPointAddress _remoteAddress = remoteAddress;
+   readonly ITypeMapper _typeMapper = typeMapper;
+   readonly IRemotableTessageSerializer _serializer = serializer;
+   readonly ITransportMessagePoster _transportMessagePoster = transportMessagePoster;
+   readonly Outbox.Outbox.ITessageStorage _tessageStorage = tessageStorage;
+   readonly ITaskRunner _taskRunner = taskRunner;
+   readonly IBackgroundExceptionReporter _exceptionReporter = exceptionReporter;
 
    record PendingDelivery(IExactlyOnceTessage Tessage, TransportTessage.OutGoing TransportTessage);
-   readonly object _queueLock = new();
-   readonly Queue<PendingDelivery> _queue = new();
+   readonly IThreadShared<Queue<PendingDelivery>> _queue = IThreadShared.WithDefaultTimeouts(new Queue<PendingDelivery>());
    readonly AutoResetEvent _signal = new(false);
    readonly CancellationTokenSource _cancellationSource = new();
    Thread? _sendLoopThread;
    int _consecutiveFailures;
    bool _deliveryRunning;
-
-   public TessagingConnection(
-      ITessagesInFlightTracker tessagesInFlightTracker,
-      EndPointAddress remoteAddress,
-      ITypeMapper typeMapper,
-      IRemotableTessageSerializer serializer,
-      ITransportMessagePoster transportMessagePoster,
-      Outbox.Outbox.ITessageStorage tessageStorage,
-      ITaskRunner taskRunner,
-      IBackgroundExceptionReporter exceptionReporter)
-   {
-      _tessagesInFlightTracker = tessagesInFlightTracker;
-      _remoteAddress = remoteAddress;
-      _typeMapper = typeMapper;
-      _serializer = serializer;
-      _transportMessagePoster = transportMessagePoster;
-      _tessageStorage = tessageStorage;
-      _taskRunner = taskRunner;
-      _exceptionReporter = exceptionReporter;
-   }
 
    public async Task InitAsync()
    {
@@ -78,7 +64,7 @@ public class TessagingConnection : ITessagingInboxConnection, IDisposable
       var transportTessage = TransportTessage.OutGoing.Create(tessage, _typeMapper, _serializer);
       _tessagesInFlightTracker.SendingTessageOnTransport(transportTessage, EndpointInformation.Id);
 
-      lock(_queueLock) { _queue.Enqueue(new PendingDelivery(tessage, transportTessage)); }
+      _queue.Update(queue => queue.Enqueue(new PendingDelivery(tessage, transportTessage)));
 
       _signal.Set();
    }
@@ -123,11 +109,7 @@ public class TessagingConnection : ITessagingInboxConnection, IDisposable
       {
          while(!_cancellationSource.IsCancellationRequested)
          {
-            PendingDelivery? pending;
-            lock(_queueLock)
-            {
-               pending = _queue.Count > 0 ? _queue.Peek() : null;
-            }
+            var pending = _queue.Read(queue => queue.Count > 0 ? queue.Peek() : null);
 
             if(pending == null)
             {
@@ -137,7 +119,7 @@ public class TessagingConnection : ITessagingInboxConnection, IDisposable
 
             if(TrySend(pending))
             {
-               lock(_queueLock) { _queue.Dequeue(); }
+               _queue.Update(queue => queue.Dequeue());
 
                _consecutiveFailures = 0;
             } else
