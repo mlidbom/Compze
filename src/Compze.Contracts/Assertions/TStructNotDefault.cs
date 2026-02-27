@@ -2,7 +2,7 @@ using System.Runtime.CompilerServices;
 
 namespace Compze.Contracts;
 
-public static class StructNotDefault
+public static class TStructNotDefault
 {
    extension(ContractAsserter @this)
    {
