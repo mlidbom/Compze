@@ -99,7 +99,7 @@ public static class MyContractExtensions
 }
 
 // Usage:
-Contract.Argument.IsValidEmail(userEmail); // throws: ArgumentException("userEmail")
+Contract.Argument.IsValidEmail(userEmail); // throws: ArgumentException("Argument.IsValidEmail(userEmail)")
 ```
 
 #### AssertionTarget extension (pipeline)
