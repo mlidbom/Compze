@@ -8,9 +8,12 @@ namespace Compze.Contracts.Specifications.AssertionMethods;
 
 public class Assert_method : AssertionMethodsTest
 {
-   public class called_with_a_false_condition : Assert_method
+   public class called_with_1_bool_argument : Assert_method
    {
-      [XF] public void throws() =>
+      [XF] public void does_not_throw_if_it_is_true() =>
+         Asserter.Assert(true).Must().Be(Asserter);
+
+      [XF] public void throws_if_it_is_false() =>
          Invoking(() => Asserter.Assert(false)).Must().Throw<AssertionTestException>();
 
       [XF] public void exception_message_contains_the_condition_expression()
@@ -22,41 +25,29 @@ public class Assert_method : AssertionMethodsTest
       }
    }
 
-   public class called_with_a_true_condition : Assert_method
+   public class called_with_2_bool_arguments : Assert_method
    {
-      [XF] public void returns_the_asserter_for_chaining() =>
-         Asserter.Assert(true).Must().Be(Asserter);
-   }
-
-   public class called_with_two_conditions_where_the_first_is_false : Assert_method
-   {
-      [XF] public void throws() =>
-         Invoking(() => Asserter.Assert(false, true)).Must().Throw<AssertionTestException>();
-   }
-
-   public class called_with_two_conditions_where_the_second_is_false : Assert_method
-   {
-      [XF] public void throws() =>
-         Invoking(() => Asserter.Assert(true, false)).Must().Throw<AssertionTestException>();
-   }
-
-   public class called_with_two_true_conditions : Assert_method
-   {
-      [XF] public void returns_the_asserter_for_chaining() =>
+      [XF] public void does_not_throw_if_all_are_true() =>
          Asserter.Assert(true, true).Must().Be(Asserter);
+
+      public class throws_if : called_with_2_bool_arguments
+      {
+         [XF] public void argument_1_is_false() =>
+            Invoking(() => Asserter.Assert(false, true)).Must().Throw<AssertionTestException>();
+
+         [XF] public void argument_2_is_false() =>
+            Invoking(() => Asserter.Assert(true, false)).Must().Throw<AssertionTestException>();
+      }
    }
 
-   public class called_with_a_message_factory_and_a_false_condition : Assert_method
+   public class called_with_a_message_factory : Assert_method
    {
-      [XF] public void throws_with_the_factory_produced_message() =>
+      [XF] public void does_not_throw_if_the_condition_is_true() =>
+         Asserter.Assert(true, () => "should not appear").Must().Be(Asserter);
+
+      [XF] public void throws_with_the_factory_produced_message_if_the_condition_is_false() =>
          Invoking(() => Asserter.Assert(false, () => "custom failure"))
             .Must().Throw<AssertionTestException>()
             .Which.Message.Must().Contain("custom failure");
-   }
-
-   public class called_with_a_message_factory_and_a_true_condition : Assert_method
-   {
-      [XF] public void returns_the_asserter_for_chaining() =>
-         Asserter.Assert(true, () => "should not appear").Must().Be(Asserter);
    }
 }
