@@ -67,6 +67,9 @@ public partial class Outbox
       public IReadOnlyList<IServiceBusSqlLayer.UndeliveredTessage> GetUndeliveredTessages(TimeSpan olderThan) =>
          _sqlLayer.GetUndeliveredTessages(olderThan);
 
+      public IReadOnlyList<IServiceBusSqlLayer.UndeliveredTessage> GetUndeliveredTessagesForEndpoint(EndpointId endpointId) =>
+         _sqlLayer.GetUndeliveredTessagesForEndpoint(endpointId);
+
       public async Task StartAsync() => await _sqlLayer.InitAsync().caf();
    }
 }
