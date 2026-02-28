@@ -51,6 +51,7 @@ public class MsSqlDbPoolSqlLayer : IDbPoolSqlLayer
 
    public void ResetDatabase(DbPoolDatabase db)
    {
+      ResetConnectionPool(db); //Does this makes things more or less stable. Added as a test.
       IMsSqlConnectionPool.CreateInstance(ConnectionStringFor(db))
                           .UseConnection(action: connection => connection.DropAllObjectsAndSetReadCommittedSnapshotIsolationLevel());
    }
