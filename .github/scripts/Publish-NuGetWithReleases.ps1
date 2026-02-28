@@ -64,8 +64,6 @@ foreach ($pkg in $newPackages) {
     Write-Host "── $($pkg.PackageName) v$($pkg.Version) ──"
     PushToNuGet $pkg $nupkgsPath -DryRun:$DryRun -Verbose:$Verbose
     CreateGitHubRelease $pkg $nupkgsPath -DryRun:$DryRun -Verbose:$Verbose
-    CreateTag $pkg -DryRun:$DryRun -Verbose:$Verbose
-    PushTag $pkg -DryRun:$DryRun -Verbose:$Verbose
     Write-Host ""
 }
 
