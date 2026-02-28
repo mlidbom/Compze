@@ -39,13 +39,12 @@ public class MsSqlDbPoolSqlLayer : IDbPoolSqlLayer
       } else
       {
          ResetConnectionPool(db);
-         var createDatabaseCommand = $"""
-                                      CREATE DATABASE [{databaseName}]
-                                      ALTER DATABASE [{databaseName}] SET RECOVERY SIMPLE;
-                                      ALTER DATABASE[{databaseName}] SET READ_COMMITTED_SNAPSHOT ON
-                                      """;
 
-         _masterConnectionPool.ExecuteNonQuery(createDatabaseCommand);
+         _masterConnectionPool.ExecuteNonQuery($"""
+                                                CREATE DATABASE [{databaseName}]
+                                                ALTER DATABASE [{databaseName}] SET RECOVERY SIMPLE;
+                                                ALTER DATABASE[{databaseName}] SET READ_COMMITTED_SNAPSHOT ON
+                                                """);
       }
    }
 
