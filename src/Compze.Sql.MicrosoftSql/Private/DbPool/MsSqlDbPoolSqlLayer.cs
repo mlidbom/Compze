@@ -38,8 +38,7 @@ public class MsSqlDbPoolSqlLayer : IDbPoolSqlLayer
          ResetDatabase(db);
       } else
       {
-         //ResetConnectionPool(db); verify that this is the problem, that without it things fail again.
-
+         ResetConnectionPool(db); //We are not clear on why we must clear the connection pool here, but unless we do all MsSql CI build tests on github fail
          _masterConnectionPool.ExecuteNonQuery($"""
                                                 CREATE DATABASE [{databaseName}]
                                                 ALTER DATABASE [{databaseName}] SET RECOVERY SIMPLE;
