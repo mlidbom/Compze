@@ -26,6 +26,11 @@ jobs:
         with:
           fetch-depth: 0  # Full history needed for tag detection
 
+      - name: Configure git identity
+        run: |
+          git config user.name "${{ github.actor }}"
+          git config user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
+
       - name: Build and Test
         uses: ./.github/actions/build-and-test
         with:
