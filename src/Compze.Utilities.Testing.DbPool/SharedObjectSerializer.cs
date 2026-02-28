@@ -1,17 +1,17 @@
+using System;
 using Compze.Contracts;
-using Compze.Serialization.Newtonsoft;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
-using Newtonsoft.Json;
+using MemoryPack;
 
 namespace Compze.Utilities.Testing.DbPool;
 
-public class DbPoolStateSerializer : ISharedObjectSerializer<DbPoolState>
+public class MemoryPackDbPoolStateSerializer : ISharedObjectSerializer<DbPoolState>
 {
-   public static readonly DbPoolStateSerializer Instance = new();
-   DbPoolStateSerializer(){}
-   public string Serialize(DbPoolState instance) => JsonConvert.SerializeObject(instance, Formatting.Indented, RenamingAndNonPublicMembersSupportingJsonSettings.SharedObjects);
+   public static readonly MemoryPackDbPoolStateSerializer Instance = new();
+   MemoryPackDbPoolStateSerializer(){}
+   public string Serialize(DbPoolState instance) => Convert.ToBase64String(MemoryPackSerializer.Serialize(instance));
 
    public DbPoolState Deserialize(string json) =>
-      JsonConvert.DeserializeObject<DbPoolState>(json, RenamingAndNonPublicMembersSupportingJsonSettings.SharedObjects)._assert().NotNull();
+      MemoryPackSerializer.Deserialize<DbPoolState>(Convert.FromBase64String(json))._assert().NotNull();
 }

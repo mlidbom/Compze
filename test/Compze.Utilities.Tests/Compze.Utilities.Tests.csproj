@@ -46,6 +46,13 @@
     </PackageReference>
     <PackageReference Include="xunit.v3" Version="3.1.0" />
   </ItemGroup>
+  <!-- Compze.Core — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Core)' == 'true'">
+    <PackageReference Include="Compze.Core" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Core)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.Core\Compze.Core.csproj" />
+  </ItemGroup>
   <!-- Compze.Utilities.Testing.DbPool — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Testing_DbPool)' == 'true'">
     <PackageReference Include="Compze.Utilities.Testing.DbPool" Version="*-*" />

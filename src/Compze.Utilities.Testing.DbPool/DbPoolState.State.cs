@@ -4,10 +4,12 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Compze.Utilities.SystemCE.LinqCE;
 using JetBrains.Annotations;
+using MemoryPack;
 
 namespace Compze.Utilities.Testing.DbPool;
 
-[UsedImplicitly] public class DbPoolState
+[MemoryPackable]
+[UsedImplicitly] public partial class DbPoolState
 {
    // ReSharper disable once MemberCanBePrivate.Global we'd like serialization to work please
    #pragma warning disable CA1002 //Well this needs to be serializable so the public list is acceptable

@@ -2,10 +2,12 @@ using System;
 using Compze.Contracts;
 using Compze.Utilities.SystemCE;
 using JetBrains.Annotations;
+using MemoryPack;
 
 namespace Compze.Utilities.Testing.DbPool;
 
-public class DbPoolDatabase
+[MemoryPackable]
+public partial class DbPoolDatabase
 {
    const string PoolDatabaseNamePrefix = $"Compze_DbPool_";
 
@@ -18,7 +20,7 @@ public class DbPoolDatabase
 
    public string Name => $"{PoolDatabaseNamePrefix}{Id:0000}";
 
-   [UsedImplicitly]public DbPoolDatabase() { }
+   [UsedImplicitly][MemoryPackConstructor]public DbPoolDatabase() { }
    public DbPoolDatabase(int id) => Id = id;
    public DbPoolDatabase(string name) : this(IdFromName(name)) { }
 

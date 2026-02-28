@@ -37,6 +37,13 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Functional)' != 'true'">
     <ProjectReference Include="..\Compze.Functional\Compze.Functional.csproj" />
   </ItemGroup>
+  <!-- Compze.Serialization.Newtonsoft — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Serialization_Newtonsoft)' == 'true'">
+    <PackageReference Include="Compze.Serialization.Newtonsoft" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Serialization_Newtonsoft)' != 'true'">
+    <ProjectReference Include="..\Compze.Serialization.Newtonsoft\Compze.Serialization.Newtonsoft.csproj" />
+  </ItemGroup>
   <!-- Compze.Sql.MicrosoftSql — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Sql_MicrosoftSql)' == 'true'">
     <PackageReference Include="Compze.Sql.MicrosoftSql" Version="*-*" />

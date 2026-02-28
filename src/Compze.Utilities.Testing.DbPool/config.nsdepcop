@@ -3,12 +3,8 @@
 <NsDepCopConfig IsEnabled="true"
                 InheritanceDepth="10">
 
-   <!--todo: remove. Use dependency injection-->
-	<Allowed From="Compze.Utilities.Testing.DbPool.*"
-            To="Compze.Serialization.Newtonsoft" />
-
-	<Allowed From="Compze.Utilities.Testing.DbPool.*"
-            To="Newtonsoft.Json" />
+   <Allowed From="Compze.Utilities.Testing.DbPool.*"
+            To="MemoryPack" />
 
 	<Allowed From="Compze.Utilities.Testing.DbPool.*"
             To="Compze.Core.Serialization.Internal.DbPool" />
