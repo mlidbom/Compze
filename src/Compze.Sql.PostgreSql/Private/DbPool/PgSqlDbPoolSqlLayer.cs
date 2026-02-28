@@ -56,29 +56,37 @@ public sealed class PgSqlDbPoolSqlLayer : IDbPoolSqlLayer
 
    public void ResetDatabase(DbPoolDatabase db)
    {
-      ResetConnectionPool(db);
-      IPgSqlConnectionPool.CreateInstance(ConnectionStringFor(db)).UseCommand(command => command.SetCommandText("""
+      ResetConnectionPool(db); // Clear stale connections before DDL
+      try
+      {
+         IPgSqlConnectionPool.CreateInstance(ConnectionStringFor(db)).UseCommand(command => command.SetCommandText("""
 
-                                                                                                                DO $$
-                                                                                                                DECLARE
-                                                                                                                        dbRecord RECORD;
-                                                                                                                BEGIN
-                                                                                                                	FOR dbRecord IN (SELECT nspname
-                                                                                                                			FROM pg_catalog.pg_namespace
-                                                                                                                			WHERE nspname NOT IN ('information_schema', 'pg_catalog', 'pg_toast')) 
-                                                                                                                	LOOP
-                                                                                                                			EXECUTE format('DROP SCHEMA %I CASCADE;', dbRecord.nspname);
-                                                                                                                	END LOOP;
+                                                                                                                   DO $$
+                                                                                                                   DECLARE
+                                                                                                                           dbRecord RECORD;
+                                                                                                                   BEGIN
+                                                                                                                   	FOR dbRecord IN (SELECT nspname
+                                                                                                                   			FROM pg_catalog.pg_namespace
+                                                                                                                   			WHERE nspname NOT IN ('information_schema', 'pg_catalog', 'pg_toast')) 
+                                                                                                                   	LOOP
+                                                                                                                   			EXECUTE format('DROP SCHEMA %I CASCADE;', dbRecord.nspname);
+                                                                                                                   	END LOOP;
 
-                                                                                                                	CREATE SCHEMA public AUTHORIZATION postgres;
-                                                                                                                	COMMENT ON SCHEMA public IS 'standard public schema';
-                                                                                                                	GRANT ALL ON SCHEMA public TO PUBLIC;
-                                                                                                                	GRANT ALL ON SCHEMA public TO postgres;
+                                                                                                                   	CREATE SCHEMA public AUTHORIZATION postgres;
+                                                                                                                   	COMMENT ON SCHEMA public IS 'standard public schema';
+                                                                                                                   	GRANT ALL ON SCHEMA public TO PUBLIC;
+                                                                                                                   	GRANT ALL ON SCHEMA public TO postgres;
 
-                                                                                                                END; $$;
-                                                                                                                """)
-                                                                                                .PrepareStatement()
-                                                                                                .ExecuteNonQuery());
+                                                                                                                   END; $$;
+                                                                                                                   """)
+                                                                                                   .PrepareStatement()
+                                                                                                   .ExecuteNonQuery());
+      }
+      catch
+      {
+         ResetConnectionPool(db); //The connection pool has cached the belief that this database does not exist. We must clear that.
+         throw;
+      }
    }
 
    void ResetConnectionPool(DbPoolDatabase db)
