@@ -5,7 +5,7 @@ function C-FlexRef-Sync {
     Syncs FlexRef infrastructure for all solutions
 
     .DESCRIPTION
-    Thin wrapper around 'flexref sync'. Updates Directory.Build.props,
+    Thin wrapper around 'dotnet flexref sync'. Updates Directory.Build.props,
     all .csproj flex references, and NCrunch .v3.ncrunchsolution files.
 
     .EXAMPLE
@@ -16,5 +16,5 @@ function C-FlexRef-Sync {
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseApprovedVerbs', '')]
     param()
 
-    flexref sync $script:CompzeRoot
+    dotnet flexref sync $script:CompzeRoot
 }
