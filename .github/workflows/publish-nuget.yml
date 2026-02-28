@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   publish:
@@ -17,15 +17,23 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history needed for tag detection
 
       - name: Build and Test
         uses: ./.github/actions/build-and-test
         with:
           configuration: Release
 
-      - name: Push to NuGet.org (skip already-published versions)
+      - name: Pack
+        shell: pwsh
         run: |
-          dotnet nuget push ./nupkgs/*.nupkg \
-            --api-key ${{ secrets.NUGET_API_KEY }} \
-            --source https://api.nuget.org/v3/index.json \
-            --skip-duplicate
+          Import-Module ./DevScripts/Compze.psm1 -DisableNameChecking
+          C-Pack -CI
+
+      - name: Publish packages and create GitHub releases
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+        run: .github/scripts/Publish-NuGetWithReleases.ps1

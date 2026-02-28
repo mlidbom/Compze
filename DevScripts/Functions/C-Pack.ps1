@@ -29,7 +29,10 @@ function C-Pack {
 
     $nupkgsPath = Join-Path $script:CompzeRoot "nupkgs"
 
-    if (-not (Test-Path $nupkgsPath)) {
+    if (Test-Path $nupkgsPath) {
+        Get-ChildItem $nupkgsPath -Filter "*.nupkg" -ErrorAction SilentlyContinue | Remove-Item -Force
+        Get-ChildItem $nupkgsPath -Filter "*.snupkg" -ErrorAction SilentlyContinue | Remove-Item -Force
+    } else {
         New-Item -ItemType Directory -Path $nupkgsPath | Out-Null
     }
 
@@ -39,9 +42,6 @@ function C-Pack {
         $timestamp = Get-Date -Format "yyyyMMddHHmmss"
         $suffix = "dev.$timestamp"
         $versionArgs = @("/p:CompzeLocalPackSuffix=$suffix")
-        # Remove old dev packages to keep the feed clean
-        Get-ChildItem $nupkgsPath -Filter "*.dev.*.nupkg" -ErrorAction SilentlyContinue | Remove-Item -Force
-        Get-ChildItem $nupkgsPath -Filter "*.dev.*.snupkg" -ErrorAction SilentlyContinue | Remove-Item -Force
     }
 
     # Ensure pluggable component configuration files exist before building

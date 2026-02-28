@@ -5,5 +5,9 @@
    <ItemGroup>
       <None Include="../**/*.props" Exclude="$(BuildOutputExcludes)" KeepDuplicates="false" />
       <None Include="../**/*.targets" Exclude="$(BuildOutputExcludes)" KeepDuplicates="false" />
+
+      <None Include="../../**/*.ps1" Exclude="$(BuildOutputExcludes)" KeepDuplicates="false" />
+      <None Include="../../**/*.psm1" Exclude="$(BuildOutputExcludes)" KeepDuplicates="false" />
+      <None Include="../../**/*.yml" Exclude="$(BuildOutputExcludes)" KeepDuplicates="false" />
    </ItemGroup>
 </Project>
