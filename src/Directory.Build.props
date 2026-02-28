@@ -27,6 +27,7 @@
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageIcon>compze-icon.png</PackageIcon>
   </PropertyGroup>
   <!-- SourceLink only matters for published NuGet packages (CI builds).
 	     Locally it serves no purpose and breaks with Git 2.53+ due to the
@@ -37,5 +38,6 @@
   </ItemGroup>
   <ItemGroup Condition="'$(IsTestProject)' != 'true' AND '$(IsPackable)' != 'false'">
     <None Include="$(MSBuildProjectDirectory)/README.md" Pack="true" PackagePath="" />
+    <None Include="$(MSBuildThisFileDirectory)../compze-icon.png" Pack="true" PackagePath="" />
   </ItemGroup>
 </Project>
