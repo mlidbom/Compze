@@ -44,7 +44,6 @@ public sealed class PgSqlDbPoolSqlLayer : IDbPoolSqlLayer
    public void EnsureDatabaseExistsAndIsEmpty(DbPoolDatabase db)
    {
       var databaseName = db.Name.ToLowerInvariant();
-      ResetConnectionPool(db);
       var exists = (string?)_masterConnectionPool.ExecuteScalar($"SELECT datname FROM pg_database WHERE datname = '{databaseName.ToLowerInvariant()}'");
       if(!string.IsNullOrEmpty(exists))
       {
@@ -55,7 +54,9 @@ public sealed class PgSqlDbPoolSqlLayer : IDbPoolSqlLayer
       }
    }
 
-   public void ResetDatabase(DbPoolDatabase db) =>
+   public void ResetDatabase(DbPoolDatabase db)
+   {
+      ResetConnectionPool(db);
       IPgSqlConnectionPool.CreateInstance(ConnectionStringFor(db)).UseCommand(command => command.SetCommandText("""
 
                                                                                                                 DO $$
@@ -78,6 +79,7 @@ public sealed class PgSqlDbPoolSqlLayer : IDbPoolSqlLayer
                                                                                                                 """)
                                                                                                 .PrepareStatement()
                                                                                                 .ExecuteNonQuery());
+   }
 
    void ResetConnectionPool(DbPoolDatabase db)
    {

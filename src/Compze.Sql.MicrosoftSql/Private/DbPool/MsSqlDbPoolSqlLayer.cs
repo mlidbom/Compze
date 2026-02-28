@@ -38,7 +38,6 @@ public class MsSqlDbPoolSqlLayer : IDbPoolSqlLayer
          ResetDatabase(db);
       } else
       {
-         ResetConnectionPool(db);
          var createDatabaseCommand = $"""
                                       CREATE DATABASE [{databaseName}]
                                       ALTER DATABASE [{databaseName}] SET RECOVERY SIMPLE;
@@ -49,9 +48,12 @@ public class MsSqlDbPoolSqlLayer : IDbPoolSqlLayer
       }
    }
 
-   public void ResetDatabase(DbPoolDatabase db) =>
+   public void ResetDatabase(DbPoolDatabase db)
+   {
+      ResetConnectionPool(db);
       IMsSqlConnectionPool.CreateInstance(ConnectionStringFor(db))
                           .UseConnection(action: connection => connection.DropAllObjectsAndSetReadCommittedSnapshotIsolationLevel());
+   }
 
    protected void ResetConnectionPool(DbPoolDatabase db)
    {
