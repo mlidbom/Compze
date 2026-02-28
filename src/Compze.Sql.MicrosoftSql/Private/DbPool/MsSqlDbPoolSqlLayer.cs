@@ -38,6 +38,7 @@ public class MsSqlDbPoolSqlLayer : IDbPoolSqlLayer
          ResetDatabase(db);
       } else
       {
+         ResetConnectionPool(db);
          var createDatabaseCommand = $"""
                                       CREATE DATABASE [{databaseName}]
                                       ALTER DATABASE [{databaseName}] SET RECOVERY SIMPLE;

@@ -48,6 +48,8 @@ public class SqliteDbPoolSqlLayer : IDbPoolSqlLayer
 
    public void ResetDatabase(DbPoolDatabase db)
    {
+      using var connection = new SqliteConnection(ConnectionStringFor(db));
+      SqliteConnection.ClearPool(connection);
       DeleteDbFile(db);
       using var dbCreatingConnection = new SqliteConnection(ConnectionStringFor(db));
       dbCreatingConnection.Open();

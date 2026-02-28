@@ -39,14 +39,11 @@ public sealed class MySqlDbPoolSqlLayer : IDbPoolSqlLayer
          me.ConnectionLifeTime = 10;
       }).ConnectionString);
 
-   public void EnsureDatabaseExistsAndIsEmpty(DbPoolDatabase db)
-   {
-      ResetConnectionPool(db);
-      ResetDatabase(db);
-   }
+   public void EnsureDatabaseExistsAndIsEmpty(DbPoolDatabase db) => ResetDatabase(db);
 
    public void ResetDatabase(DbPoolDatabase db)
    {
+      ResetConnectionPool(db);
       //I experimented with dropping objects like for the other databases, but it was not faster than just dropping and recreating the database.
       _masterConnectionPool.ExecuteNonQuery($"""
                                              DROP DATABASE IF EXISTS {db.Name};
