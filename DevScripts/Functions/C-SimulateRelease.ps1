@@ -6,7 +6,7 @@ function C-SimulateRelease {
 
     .DESCRIPTION
     Packs all projects with real versions (C-Pack -CI), then runs the publish script
-    in WhatIf mode. This shows exactly what would happen during a real release:
+    in dry-run mode. This shows exactly what would happen during a real release:
     which packages are new, their changelog entries, NuGet pushes, GitHub releases,
     and git tags — without actually doing any of it.
 

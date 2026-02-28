@@ -29,7 +29,7 @@ jobs:
         shell: pwsh
         run: |
           Import-Module ./DevScripts/Compze.psm1 -DisableNameChecking
-          C-Pack -CI
+          C-Pack -CI -NoBuild
 
       - name: Publish packages and create GitHub releases
         shell: pwsh
