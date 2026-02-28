@@ -1,12 +1,13 @@
 using System;
-using Compze.Sql.Common.DbPool;
+using Compze.Functional;
+using Compze.Sql.MySql;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
-using Compze.Functional;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.Utilities.Testing.DbPool;
 using MySql.Data.MySqlClient;
 
-namespace Compze.Sql.MySql.Private.DbPool;
+namespace Compze.Utilities.Testing.DbPool.MySql;
 
 public sealed class MySqlDbPoolSqlLayer : IDbPoolSqlLayer
 {

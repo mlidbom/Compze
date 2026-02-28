@@ -12,6 +12,13 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
+  <!-- Compze.Contracts — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' == 'true'">
+    <PackageReference Include="Compze.Contracts" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' != 'true'">
+    <ProjectReference Include="..\Compze.Contracts\Compze.Contracts.csproj" />
+  </ItemGroup>
   <!-- Compze.Functional — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Functional)' == 'true'">
     <PackageReference Include="Compze.Functional" Version="*-*" />
@@ -25,20 +32,6 @@
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_Serialization_Newtonsoft)' != 'true'">
     <ProjectReference Include="..\Compze.Serialization.Newtonsoft\Compze.Serialization.Newtonsoft.csproj" />
-  </ItemGroup>
-  <!-- Compze.Sql.Common — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Sql_Common)' == 'true'">
-    <PackageReference Include="Compze.Sql.Common" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Sql_Common)' != 'true'">
-    <ProjectReference Include="..\Compze.Sql.Common\Compze.Sql.Common.csproj" />
-  </ItemGroup>
-  <!-- Compze.Contracts — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' == 'true'">
-    <PackageReference Include="Compze.Contracts" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' != 'true'">
-    <ProjectReference Include="..\Compze.Contracts\Compze.Contracts.csproj" />
   </ItemGroup>
   <!-- Compze.Utilities.DependencyInjection — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_DependencyInjection)' == 'true'">

@@ -1,9 +1,9 @@
 using Compze.Utilities.DependencyInjection.Abstractions;
 
-namespace Compze.Sql.MicrosoftSql.Wiring;
+namespace Compze.Utilities.Testing.DbPool.MicrosoftSql;
 
 public static class MicrosoftSqlDbPoolRegistrar
 {
    public static IComponentRegistrar MsSqlDbPoolSqlLayer(this IComponentRegistrar registrar) =>
-      Private.DbPool.MsSqlDbPoolSqlLayer.RegisterWith(registrar);
+      MicrosoftSql.MsSqlDbPoolSqlLayer.RegisterWith(registrar);
 }

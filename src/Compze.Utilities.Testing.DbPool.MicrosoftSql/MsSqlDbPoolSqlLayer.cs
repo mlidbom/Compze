@@ -1,10 +1,11 @@
 using System;
-using Compze.Sql.Common.DbPool;
+using Compze.Sql.MicrosoftSql;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.Utilities.Testing.DbPool;
 using Microsoft.Data.SqlClient;
 
-namespace Compze.Sql.MicrosoftSql.Private.DbPool;
+namespace Compze.Utilities.Testing.DbPool.MicrosoftSql;
 
 public class MsSqlDbPoolSqlLayer : IDbPoolSqlLayer
 {
@@ -61,7 +62,7 @@ public class MsSqlDbPoolSqlLayer : IDbPoolSqlLayer
       }
    }
 
-   protected void ResetConnectionPool(DbPoolDatabase db)
+   void ResetConnectionPool(DbPoolDatabase db)
    {
       using var connection = new SqlConnection(ConnectionStringFor(db));
       SqlConnection.ClearPool(connection);

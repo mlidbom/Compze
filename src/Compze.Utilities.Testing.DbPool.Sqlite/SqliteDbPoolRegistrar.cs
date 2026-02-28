@@ -1,9 +1,9 @@
 using Compze.Utilities.DependencyInjection.Abstractions;
 
-namespace Compze.Sql.Sqlite.Wiring;
+namespace Compze.Utilities.Testing.DbPool.Sqlite;
 
-public static class SqliteDbPoolSqlLayerRegistrar
+public static class SqliteDbPoolRegistrar
 {
    public static IComponentRegistrar SqliteDbPoolSqlLayer(this IComponentRegistrar registrar) =>
-      Private.DbPool.SqliteDbPoolSqlLayer.RegisterWith(registrar);
+      Sqlite.SqliteDbPoolSqlLayer.RegisterWith(registrar);
 }

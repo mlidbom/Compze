@@ -3,8 +3,7 @@ using Compze.Contracts;
 using Compze.Utilities.SystemCE;
 using JetBrains.Annotations;
 
-namespace Compze.Sql.Common.DbPool;
-
+namespace Compze.Utilities.Testing.DbPool;
 
 public class DbPoolDatabase
 {
@@ -15,7 +14,7 @@ public class DbPoolDatabase
    public bool IsClean { get; private set; } = true;
    public DateTime ReservationExpirationTime { get; private set; } = DateTime.MinValue;
    public string ReservationName { get; private set; } = string.Empty;
-   public DbPoolId? ReservedByPoolId { get; private set; } = null;
+   public Guid? ReservedByPoolId { get; private set; } = null;
 
    public string Name => $"{PoolDatabaseNamePrefix}{Id:0000}";
 
@@ -48,7 +47,7 @@ public class DbPoolDatabase
       return this;
    }
 
-   public DbPoolDatabase Reserve(string reservationName, DbPoolId poolId, TimeSpan reservationLength)
+   public DbPoolDatabase Reserve(string reservationName, Guid poolId, TimeSpan reservationLength)
    {
       Contract.State.Assert(!IsReserved);
 

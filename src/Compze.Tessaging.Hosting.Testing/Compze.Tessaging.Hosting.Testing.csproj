@@ -16,6 +16,13 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
+  <!-- Compze.Contracts — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' == 'true'">
+    <PackageReference Include="Compze.Contracts" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' != 'true'">
+    <ProjectReference Include="..\Compze.Contracts\Compze.Contracts.csproj" />
+  </ItemGroup>
   <!-- Compze.Core — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Core)' == 'true'">
     <PackageReference Include="Compze.Core" Version="*-*" />
@@ -79,13 +86,6 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_Teventive_TeventStore)' != 'true'">
     <ProjectReference Include="..\Compze.Tessaging.Teventive.TeventStore\Compze.Tessaging.Teventive.TeventStore.csproj" />
   </ItemGroup>
-  <!-- Compze.Contracts — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' == 'true'">
-    <PackageReference Include="Compze.Contracts" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' != 'true'">
-    <ProjectReference Include="..\Compze.Contracts\Compze.Contracts.csproj" />
-  </ItemGroup>
   <!-- Compze.Utilities.DependencyInjection — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_DependencyInjection)' == 'true'">
     <PackageReference Include="Compze.Utilities.DependencyInjection" Version="*-*" />
@@ -134,6 +134,34 @@
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Testing_DbPool)' != 'true'">
     <ProjectReference Include="..\Compze.Utilities.Testing.DbPool\Compze.Utilities.Testing.DbPool.csproj" />
+  </ItemGroup>
+  <!-- Compze.Utilities.Testing.DbPool.MicrosoftSql — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Testing_DbPool_MicrosoftSql)' == 'true'">
+    <PackageReference Include="Compze.Utilities.Testing.DbPool.MicrosoftSql" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Testing_DbPool_MicrosoftSql)' != 'true'">
+    <ProjectReference Include="..\Compze.Utilities.Testing.DbPool.MicrosoftSql\Compze.Utilities.Testing.DbPool.MicrosoftSql.csproj" />
+  </ItemGroup>
+  <!-- Compze.Utilities.Testing.DbPool.MySql — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Testing_DbPool_MySql)' == 'true'">
+    <PackageReference Include="Compze.Utilities.Testing.DbPool.MySql" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Testing_DbPool_MySql)' != 'true'">
+    <ProjectReference Include="..\Compze.Utilities.Testing.DbPool.MySql\Compze.Utilities.Testing.DbPool.MySql.csproj" />
+  </ItemGroup>
+  <!-- Compze.Utilities.Testing.DbPool.PostgreSql — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Testing_DbPool_PostgreSql)' == 'true'">
+    <PackageReference Include="Compze.Utilities.Testing.DbPool.PostgreSql" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Testing_DbPool_PostgreSql)' != 'true'">
+    <ProjectReference Include="..\Compze.Utilities.Testing.DbPool.PostgreSql\Compze.Utilities.Testing.DbPool.PostgreSql.csproj" />
+  </ItemGroup>
+  <!-- Compze.Utilities.Testing.DbPool.Sqlite — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Testing_DbPool_Sqlite)' == 'true'">
+    <PackageReference Include="Compze.Utilities.Testing.DbPool.Sqlite" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Testing_DbPool_Sqlite)' != 'true'">
+    <ProjectReference Include="..\Compze.Utilities.Testing.DbPool.Sqlite\Compze.Utilities.Testing.DbPool.Sqlite.csproj" />
   </ItemGroup>
   <!-- Compze.Utilities.Testing.Must — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Testing_Must)' == 'true'">

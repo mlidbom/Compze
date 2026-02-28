@@ -26,6 +26,10 @@
       <Value>UsePackageReference_Compze_Utilities_SystemCE_ThreadingCE = true</Value>
       <Value>UsePackageReference_Compze_Utilities_SystemCE_ThreadingCE_Testing = true</Value>
       <Value>UsePackageReference_Compze_Utilities_Testing_DbPool = true</Value>
+      <Value>UsePackageReference_Compze_Utilities_Testing_DbPool_MicrosoftSql = true</Value>
+      <Value>UsePackageReference_Compze_Utilities_Testing_DbPool_MySql = true</Value>
+      <Value>UsePackageReference_Compze_Utilities_Testing_DbPool_PostgreSql = true</Value>
+      <Value>UsePackageReference_Compze_Utilities_Testing_DbPool_Sqlite = true</Value>
       <Value>UsePackageReference_Compze_Utilities_Testing_Must = true</Value>
     </CustomBuildProperties>
   </Settings>

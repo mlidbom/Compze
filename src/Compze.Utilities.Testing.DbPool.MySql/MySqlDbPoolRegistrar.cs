@@ -1,9 +1,9 @@
 using Compze.Utilities.DependencyInjection.Abstractions;
 
-namespace Compze.Sql.MySql.Wiring;
+namespace Compze.Utilities.Testing.DbPool.MySql;
 
 public static class MySqlDbPoolRegistrar
 {
    public static IComponentRegistrar MySqlDbPoolSqlLayer(this IComponentRegistrar registrar) =>
-      Private.DbPool.MySqlDbPoolSqlLayer.RegisterWith(registrar);
+      MySql.MySqlDbPoolSqlLayer.RegisterWith(registrar);
 }

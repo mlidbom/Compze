@@ -1,9 +1,9 @@
 using Compze.Utilities.DependencyInjection.Abstractions;
 
-namespace Compze.Sql.PostgreSql.Wiring;
+namespace Compze.Utilities.Testing.DbPool.PostgreSql;
 
 public static class PgSqlDbPoolRegistrar
 {
    public static IComponentRegistrar PgSqlDbPoolSqlLayer(this IComponentRegistrar registrar) =>
-      Private.DbPool.PgSqlDbPoolSqlLayer.RegisterWith(registrar);
+      PostgreSql.PgSqlDbPoolSqlLayer.RegisterWith(registrar);
 }

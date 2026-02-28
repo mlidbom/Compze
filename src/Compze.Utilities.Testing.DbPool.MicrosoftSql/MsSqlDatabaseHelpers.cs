@@ -1,6 +1,8 @@
-namespace Compze.Sql.MicrosoftSql.Private.DbPool;
+using Compze.Sql.MicrosoftSql;
 
-public static class MsSqlDatabaseHelpers
+namespace Compze.Utilities.Testing.DbPool.MicrosoftSql;
+
+static class MsSqlDatabaseHelpers
 {
    const string DropAllObjectsStatement = """
 
@@ -48,6 +50,4 @@ public static class MsSqlDatabaseHelpers
       cmd.CommandText = DropAllObjectsStatement + SetReadCommittedSnapshotOnStatement;
       cmd.ExecuteNonQuery();
    }
-
-
 }

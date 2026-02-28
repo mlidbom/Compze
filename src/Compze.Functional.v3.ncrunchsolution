@@ -5,6 +5,7 @@
     <RdiConfigured>True</RdiConfigured>
     <SolutionConfigured>True</SolutionConfigured>
     <CustomBuildProperties>
+      <Value>UsePackageReference_Compze_Contracts = true</Value>
       <Value>UsePackageReference_Compze_Core = true</Value>
       <Value>UsePackageReference_Compze_Serialization_Newtonsoft = true</Value>
       <Value>UsePackageReference_Compze_Sql_Common = true</Value>
@@ -17,7 +18,6 @@
       <Value>UsePackageReference_Compze_Tessaging_Hosting_Testing = true</Value>
       <Value>UsePackageReference_Compze_Tessaging_Teventive_TeventStore = true</Value>
       <Value>UsePackageReference_Compze_Utilities = true</Value>
-      <Value>UsePackageReference_Compze_Contracts = true</Value>
       <Value>UsePackageReference_Compze_Utilities_DependencyInjection = true</Value>
       <Value>UsePackageReference_Compze_Utilities_DependencyInjection_Microsoft = true</Value>
       <Value>UsePackageReference_Compze_Utilities_DependencyInjection_SimpleInjector = true</Value>
@@ -27,6 +27,10 @@
       <Value>UsePackageReference_Compze_Utilities_SystemCE_ThreadingCE = true</Value>
       <Value>UsePackageReference_Compze_Utilities_SystemCE_ThreadingCE_Testing = true</Value>
       <Value>UsePackageReference_Compze_Utilities_Testing_DbPool = true</Value>
+      <Value>UsePackageReference_Compze_Utilities_Testing_DbPool_MicrosoftSql = true</Value>
+      <Value>UsePackageReference_Compze_Utilities_Testing_DbPool_MySql = true</Value>
+      <Value>UsePackageReference_Compze_Utilities_Testing_DbPool_PostgreSql = true</Value>
+      <Value>UsePackageReference_Compze_Utilities_Testing_DbPool_Sqlite = true</Value>
       <Value>UsePackageReference_Compze_Utilities_Testing_Must = true</Value>
       <Value>UsePackageReference_Compze_Utilities_Testing_XUnit = true</Value>
     </CustomBuildProperties>

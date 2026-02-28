@@ -10,7 +10,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using Compze.Sql.Common.DbPool;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
@@ -45,7 +44,7 @@ public class DbPool : StrictlyManagedResourceBase<DbPool>
    }
 
    readonly IMonitor _monitor = IMonitor.New(LockTimeout.Seconds(30));
-   readonly DbPoolId _poolId = new();
+   readonly Guid _poolId = Guid.NewGuid();
    IReadOnlyList<DbPoolDatabase> _transientCache = new List<DbPoolDatabase>();
 
    static ILogger _log = CompzeLogger.For<DbPool>();

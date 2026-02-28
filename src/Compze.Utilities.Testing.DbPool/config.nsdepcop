@@ -3,10 +3,6 @@
 <NsDepCopConfig IsEnabled="true"
                 InheritanceDepth="10">
 
-   <!--todo: review-->
-   <Allowed From="Compze.Utilities.Testing.DbPool.*"
-            To="Compze.Sql.Common.DbPool.*" />
-
    <!--todo: remove. Use dependency injection-->
 	<Allowed From="Compze.Utilities.Testing.DbPool.*"
             To="Compze.Serialization.Newtonsoft" />

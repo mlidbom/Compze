@@ -1,13 +1,13 @@
 using System;
 using System.Collections.Generic;
-using Compze.Sql.Common.DbPool;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.Utilities.Testing.DbPool;
 using Microsoft.Data.Sqlite;
 
-namespace Compze.Sql.Sqlite.Private.DbPool;
+namespace Compze.Utilities.Testing.DbPool.Sqlite;
 
 public class SqliteMemoryDbPoolSqlLayer : IDbPoolSqlLayer
 {
