@@ -24,7 +24,7 @@ public static class DbPoolRegistrar
       Testing.DbPool.DbPool.RegisterWith(registrar);
 }
 
-public partial class DbPool : StrictlyManagedResourceBase<DbPool>
+public class DbPool : StrictlyManagedResourceBase<DbPool>
 {
    public static IComponentRegistrar RegisterWith(IComponentRegistrar registrar) =>
       registrar.Register(Singleton.For<DbPool>()
@@ -100,11 +100,11 @@ public partial class DbPool : StrictlyManagedResourceBase<DbPool>
       return _sqlLayer.ConnectionStringFor(reservedDatabase);
    });
 
-   public override void Dispose()
+   public override void Dispose() => _monitor.Locked(() =>
    {
       if(Disposed) return;
       base.Dispose();
       _sqlLayer.Dispose(_transientCache);
       MachineWideState.Update(machineWide => machineWide.ReleaseReservationsFor(_poolId));
-   }
+   });
 }
