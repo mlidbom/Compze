@@ -38,7 +38,7 @@ public class MsSqlDbPoolSqlLayer : IDbPoolSqlLayer
          ResetDatabase(db);
       } else
       {
-         ResetConnectionPool(db);
+         //ResetConnectionPool(db); verify that this is the problem, that without it things fail again.
 
          _masterConnectionPool.ExecuteNonQuery($"""
                                                 CREATE DATABASE [{databaseName}]
