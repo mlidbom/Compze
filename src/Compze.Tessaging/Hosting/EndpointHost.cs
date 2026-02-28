@@ -50,20 +50,12 @@ public class EndpointHost : IEndpointHost
 
    public async Task StartAsync()
    {
-      try
-      {
          Contract.State.Assert(!_isStarted, Endpoints.None(endpoint => endpoint.IsRunning));
          this.Log().Info($"Starting with {Endpoints.Count} endpoint(s)");
-         _isStarted = true;
 
          await Task.WhenAll(Endpoints.Select(endpointToStart => endpointToStart.StartListeningComponentsAsync())).WithAggregateExceptions().caf();
          await Task.WhenAll(Endpoints.Select(endpointToStart => endpointToStart.StartSendingComponentsAsync())).WithAggregateExceptions().caf();
-      }catch(Exception e)
-      {
-         this.Log().Error(e, "Failed to start host");
-         await DisposeAsync().caf();
-         throw;
-      }
+         _isStarted = true;
    }
 
    public void Start() => StartAsync().WaitUnwrappingException();
