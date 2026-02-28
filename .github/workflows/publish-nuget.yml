@@ -2,11 +2,11 @@ name: Create Releases
 
 on:
   workflow_dispatch:
+  workflow_call:
     inputs:
       dry-run:
-        description: "Dry run (show what would happen without publishing)"
         type: boolean
-        default: true
+        default: false
 
 permissions:
   contents: write

@@ -1,0 +1,11 @@
+name: Create Releases - Dry Run
+
+on:
+  workflow_dispatch:
+
+jobs:
+  dry-run:
+    uses: ./.github/workflows/publish-nuget.yml
+    with:
+      dry-run: true
+    secrets: inherit
