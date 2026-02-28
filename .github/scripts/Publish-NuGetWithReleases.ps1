@@ -13,10 +13,12 @@
 #
 # Usage:
 #   ./Publish-NuGetWithReleases.ps1          # Publish for real
-#   ./Publish-NuGetWithReleases.ps1 -WhatIf  # Dry run — shows what would happen
+#   ./Publish-NuGetWithReleases.ps1 -DryRun  # Dry run — shows what would happen
 
-[CmdletBinding(SupportsShouldProcess)]
-param()
+param(
+    [switch]$DryRun,
+    [switch]$Verbose
+)
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
@@ -30,7 +32,7 @@ $scriptDir = $PSScriptRoot
 
 # ── Main ──
 
-if (-not $WhatIfPreference) {
+if (-not $DryRun) {
     if (-not $env:NUGET_API_KEY) {
         Write-Error "NUGET_API_KEY environment variable is not set"
         exit 1
@@ -57,12 +59,14 @@ foreach ($pkg in $newPackages) {
     Write-Host "  $($pkg.PackageName) v$($pkg.Version)"
 }
 
-Write-Host "`nPublishing..."
+Write-Host ""
 foreach ($pkg in $newPackages) {
-    PushToNuGet $pkg $nupkgsPath
-    CreateGitHubRelease $pkg $nupkgsPath
-    CreateTag $pkg
-    PushTag $pkg
+    Write-Host "── $($pkg.PackageName) v$($pkg.Version) ──"
+    PushToNuGet $pkg $nupkgsPath -DryRun:$DryRun -Verbose:$Verbose
+    CreateGitHubRelease $pkg $nupkgsPath -DryRun:$DryRun -Verbose:$Verbose
+    CreateTag $pkg -DryRun:$DryRun -Verbose:$Verbose
+    PushTag $pkg -DryRun:$DryRun -Verbose:$Verbose
+    Write-Host ""
 }
 
-Write-Host "`nDone! Published $($newPackages.Count) package(s)."
+Write-Host "Done! Published $($newPackages.Count) package(s)."

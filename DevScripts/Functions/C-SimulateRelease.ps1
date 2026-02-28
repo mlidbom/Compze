@@ -10,18 +10,41 @@ function C-SimulateRelease {
     which packages are new, their changelog entries, NuGet pushes, GitHub releases,
     and git tags — without actually doing any of it.
 
+    Use -NoBuild to skip building when only iterating on changelogs or versions.
+    Use -NoPack to skip both building and packing, using existing nupkg files.
+    Use -Verbose to show all details (NuGet push, assets, tags).
+
     .EXAMPLE
     C-SimulateRelease
+
+    .EXAMPLE
+    C-SimulateRelease -NoBuild
+    Skips building, just repacks and checks changelogs.
+
+    .EXAMPLE
+    C-SimulateRelease -NoPack
+    Skips building and packing, just checks existing packages against changelogs.
+
+    .EXAMPLE
+    C-SimulateRelease -Verbose
+    Shows full details including NuGet push targets, assets, and git tags.
     #>
     [CmdletBinding()]
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseApprovedVerbs', '')]
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidGlobalVars', '')]
-    param()
+    param(
+        [switch]$NoBuild,
+        [switch]$NoPack
+    )
 
-    C-Pack -CI
-    if ($global:LASTEXITCODE -ne 0) { return }
+    if (-not $NoPack) {
+        C-Pack -CI -NoBuild:$NoBuild
+        if ($global:LASTEXITCODE -ne 0) { return }
+    }
 
-    & "$script:CompzeRoot/.github/scripts/Publish-NuGetWithReleases.ps1" -WhatIf
+    $verboseFlag = @()
+    if ($VerbosePreference -eq 'Continue') { $verboseFlag = @('-Verbose') }
+    & "$script:CompzeRoot/.github/scripts/Publish-NuGetWithReleases.ps1" -DryRun @verboseFlag
 
     $global:LASTEXITCODE = 0
 }

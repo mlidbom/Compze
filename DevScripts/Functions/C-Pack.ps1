@@ -19,12 +19,17 @@ function C-Pack {
     .EXAMPLE
     C-Pack -CI
     Packs using the real version from each .csproj (for publishing).
+
+    .EXAMPLE
+    C-Pack -CI -NoBuild
+    Packs using the real version, skipping build (assumes already built).
     #>
     [CmdletBinding()]
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseApprovedVerbs', '')]
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidGlobalVars', '')]
     param(
-        [switch]$CI
+        [switch]$CI,
+        [switch]$NoBuild
     )
 
     $nupkgsPath = Join-Path $script:CompzeRoot "nupkgs"
@@ -48,7 +53,9 @@ function C-Pack {
     C-Set-PluggableComponents -EnsureValid
 
     # Pack main solution
-    dotnet pack $script:CompzeSolutionPath --configuration Release --output $nupkgsPath @versionArgs
+    $noBuildArg = @()
+    if ($NoBuild) { $noBuildArg = @("--no-build") }
+    dotnet pack $script:CompzeSolutionPath --configuration Release --output $nupkgsPath @versionArgs @noBuildArg
     if ($LASTEXITCODE -ne 0) {
         Write-Error "C-Pack: Solution pack failed!"
         return

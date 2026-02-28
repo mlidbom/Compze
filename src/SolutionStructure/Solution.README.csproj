@@ -4,5 +4,6 @@
 
    <ItemGroup>
       <None Include="../**/*readme*" Exclude="$(BuildOutputExcludes)" KeepDuplicates="false" />
+      <None Include="../**/*changelog*" Exclude="$(BuildOutputExcludes)" KeepDuplicates="false" />
    </ItemGroup>
 </Project>

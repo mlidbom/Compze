@@ -1,15 +1,12 @@
-function PushToNuGet {
-    [CmdletBinding(SupportsShouldProcess)]
-    param($Package, [string]$NupkgsPath)
-
+function PushToNuGet($Package, [string]$NupkgsPath, [switch]$DryRun, [switch]$Verbose) {
     $nupkgPath = Join-Path $NupkgsPath "$($Package.PackageName).$($Package.Version).nupkg"
     if (-not (Test-Path $nupkgPath)) {
         Write-Error "Package file not found: $nupkgPath"
         exit 1
     }
 
-    Write-Host "  Will push $($Package.PackageName).$($Package.Version).nupkg to NuGet.org"
-    if ($PSCmdlet.ShouldProcess($nupkgPath, "Push to NuGet.org")) {
+    if ($Verbose) { Write-Host "  Push $($Package.PackageName).$($Package.Version).nupkg to NuGet.org" }
+    if (-not $DryRun) {
         dotnet nuget push $nupkgPath `
             --api-key $env:NUGET_API_KEY `
             --source "https://api.nuget.org/v3/index.json" `
