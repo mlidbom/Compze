@@ -16,6 +16,13 @@
     </PackageReference>
     <PackageReference Include="xunit.v3" Version="3.1.0" />
   </ItemGroup>
+  <!-- Compze.Contracts — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' == 'true'">
+    <PackageReference Include="Compze.Contracts" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.Contracts\Compze.Contracts.csproj" />
+  </ItemGroup>
   <!-- Compze.Core — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Core)' == 'true'">
     <PackageReference Include="Compze.Core" Version="*-*" />
@@ -36,13 +43,6 @@
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_Teventive_TeventStore)' != 'true'">
     <ProjectReference Include="..\..\src\Compze.Tessaging.Teventive.TeventStore\Compze.Tessaging.Teventive.TeventStore.csproj" />
-  </ItemGroup>
-  <!-- Compze.Contracts — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' == 'true'">
-    <PackageReference Include="Compze.Contracts" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' != 'true'">
-    <ProjectReference Include="..\..\src\Compze.Contracts\Compze.Contracts.csproj" />
   </ItemGroup>
   <!-- Compze.Utilities.DependencyInjection — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_DependencyInjection)' == 'true'">

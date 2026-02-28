@@ -20,6 +20,13 @@
     <None Include="Typermedia\_docs\**\*.cs" />
     <Content Include="Typermedia\_docs\**\*.md" />
   </ItemGroup>
+  <!-- Compze.Contracts — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' == 'true'">
+    <PackageReference Include="Compze.Contracts" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' != 'true'">
+    <ProjectReference Include="..\Compze.Contracts\Compze.Contracts.csproj" />
+  </ItemGroup>
   <!-- Compze.Core — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Core)' == 'true'">
     <PackageReference Include="Compze.Core" Version="*-*" />
@@ -40,13 +47,6 @@
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_Sql_Common)' != 'true'">
     <ProjectReference Include="..\Compze.Sql.Common\Compze.Sql.Common.csproj" />
-  </ItemGroup>
-  <!-- Compze.Contracts — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' == 'true'">
-    <PackageReference Include="Compze.Contracts" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' != 'true'">
-    <ProjectReference Include="..\Compze.Contracts\Compze.Contracts.csproj" />
   </ItemGroup>
   <!-- Compze.Utilities.DependencyInjection — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_DependencyInjection)' == 'true'">

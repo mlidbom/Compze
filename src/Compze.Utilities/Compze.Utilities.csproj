@@ -15,18 +15,18 @@
     <Folder Include="SystemCE\TextCE\" />
     <Folder Include="SystemCE\ThreadingCE\Async\" />
   </ItemGroup>
-  <!-- Compze.Functional — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Functional)' == 'true'">
-    <PackageReference Include="Compze.Functional" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Functional)' != 'true'">
-    <ProjectReference Include="..\Compze.Functional\Compze.Functional.csproj" />
-  </ItemGroup>
   <!-- Compze.Contracts — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' == 'true'">
     <PackageReference Include="Compze.Contracts" Version="*-*" />
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' != 'true'">
     <ProjectReference Include="..\Compze.Contracts\Compze.Contracts.csproj" />
+  </ItemGroup>
+  <!-- Compze.Functional — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Functional)' == 'true'">
+    <PackageReference Include="Compze.Functional" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Functional)' != 'true'">
+    <ProjectReference Include="..\Compze.Functional\Compze.Functional.csproj" />
   </ItemGroup>
 </Project>
