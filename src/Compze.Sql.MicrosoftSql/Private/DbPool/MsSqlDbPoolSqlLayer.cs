@@ -38,7 +38,6 @@ public class MsSqlDbPoolSqlLayer : IDbPoolSqlLayer
          ResetDatabase(db);
       } else
       {
-         ResetConnectionPool(db); //When ResetDatabase has failed, connection pool has cached the belief that this database does not exist. We need to clear that.
          _masterConnectionPool.ExecuteNonQuery($"""
                                                 CREATE DATABASE [{databaseName}]
                                                 ALTER DATABASE [{databaseName}] SET RECOVERY SIMPLE;
@@ -49,9 +48,17 @@ public class MsSqlDbPoolSqlLayer : IDbPoolSqlLayer
 
    public void ResetDatabase(DbPoolDatabase db)
    {
-      ResetConnectionPool(db); //Does this makes things more or less stable. Added as a test.
-      IMsSqlConnectionPool.CreateInstance(ConnectionStringFor(db))
-                          .UseConnection(action: connection => connection.DropAllObjectsAndSetReadCommittedSnapshotIsolationLevel());
+      ResetConnectionPool(db); // Clear stale connections before DDL
+      try
+      {
+         IMsSqlConnectionPool.CreateInstance(ConnectionStringFor(db))
+                             .UseConnection(action: connection => connection.DropAllObjectsAndSetReadCommittedSnapshotIsolationLevel());
+      }
+      catch
+      {
+         ResetConnectionPool(db); //The connection pool has cached the belief that this database does not exist. We must clear that.
+         throw;
+      }
    }
 
    protected void ResetConnectionPool(DbPoolDatabase db)
