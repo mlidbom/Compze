@@ -37,7 +37,7 @@ public class TeventStoreTeventSerializerPerformanceTests : UniversalTestBase
          test2: "Test2",
          taggregateId: new TaggregateId(),
          taggregateVersion: 2,
-         utcTimeStamp: DateTime.Now + 1.Minutes());
+         utcTimeStamp: DateTime.UtcNow + 1.Minutes());
 
       //Warmup
       _teventSerializer.Deserialize(typeof(TestTevent), _teventSerializer.Serialize(tevent));
@@ -48,7 +48,7 @@ public class TeventStoreTeventSerializerPerformanceTests : UniversalTestBase
             var teventJson = _teventSerializer.Serialize(tevent);
             _teventSerializer.Deserialize(typeof(TestTevent), teventJson);
          },
-         iterations:1000,
+         iterations: 1000,
          maxTotal: 25.Milliseconds()
       );
    }
@@ -58,12 +58,12 @@ public class TeventStoreTeventSerializerPerformanceTests : UniversalTestBase
       const int iterations = 1000;
       const double allowedSlowdown = 1.8;
 
-      var tevents = 1.Through(iterations).Select( _ =>  new TestTevent(
+      var tevents = 1.Through(iterations).Select(_ => new TestTevent(
                                                     test1: "Test1",
                                                     test2: "Test2",
                                                     taggregateId: new TaggregateId(),
                                                     taggregateVersion: 2,
-                                                    utcTimeStamp: DateTime.Now + 1.Minutes())).ToList();
+                                                    utcTimeStamp: DateTime.UtcNow + 1.Minutes())).ToList();
 
       var settings = NewtonsoftTeventStoreSerializer.JsonSettings;
 
@@ -74,17 +74,16 @@ public class TeventStoreTeventSerializerPerformanceTests : UniversalTestBase
       var defaultSerializerPerformanceNumbers = StopwatchCE.TimeExecution(() =>
       {
          var teventJson = tevents.Select(it => JsonConvert.SerializeObject(it, settings))
-                               .ToList();
+                                 .ToList();
          teventJson.ForEach(it => JsonConvert.DeserializeObject<TestTevent>(it, settings));
       });
 
-      var allowedTime = defaultSerializerPerformanceNumbers.MultiplyBy(allowedSlowdown).EnvMultiply(unoptimized:1.2);
-
+      var allowedTime = defaultSerializerPerformanceNumbers.MultiplyBy(allowedSlowdown).EnvMultiply(unoptimized: 1.2);
 
       TimeAsserter.Execute(() =>
                            {
                               var teventJson = tevents.Select(_teventSerializer.Serialize)
-                                                    .ToList();
+                                                      .ToList();
                               teventJson.ForEach(it => _teventSerializer.Deserialize(typeof(TestTevent), it));
                            },
                            maxTotal: allowedTime);

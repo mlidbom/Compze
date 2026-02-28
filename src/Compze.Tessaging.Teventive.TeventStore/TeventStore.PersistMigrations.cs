@@ -24,7 +24,7 @@ public partial class TeventStore
       long updatedTaggregates = 0;
       long newTeventCount = 0;
       var logInterval = 1.Minutes();
-      var lastLogTime = DateTime.Now;
+      var lastLogTime = DateTime.UtcNow;
 
       const int recoverableErrorRetriesToMake = 5;
       var exceptions = new List<(TaggregateId TaggregateId,Exception Exception)>();
@@ -103,9 +103,9 @@ public partial class TeventStore
             exceptions.Add((taggregateId, exception));
          }
 
-         if(logInterval < DateTime.Now - lastLogTime)
+         if(logInterval < DateTime.UtcNow - lastLogTime)
          {
-            lastLogTime = DateTime.Now;
+            lastLogTime = DateTime.UtcNow;
             // ReSharper disable once AccessToModifiedClosure
             int PercentDone() => (int)(double)migratedTaggregates / taggregateIdsInCreationOrder.Count * 100;
 

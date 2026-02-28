@@ -20,7 +20,7 @@ public class NewtonSoftTeventStoreTeventSerializerTests : SerializerTest
          test2: "Test2",
          taggregateId: new TaggregateId(),
          taggregateVersion: 2,
-         utcTimeStamp: DateTime.Now + 1.Minutes());
+         utcTimeStamp: DateTime.UtcNow + 1.Minutes());
 
       var teventWithOnlySubclassValues = new TestTevent("Test1", "Test2");
 #pragma warning disable CS0618 // Type or member is obsolete

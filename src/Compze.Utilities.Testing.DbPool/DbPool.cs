@@ -64,11 +64,11 @@ public partial class DbPool : StrictlyManagedResourceBase<DbPool>
          return _sqlLayer.ConnectionStringFor(reservedDatabase);
       }
 
-      var startTime = DateTime.Now;
+      var startTime = DateTime.UtcNow;
       var timeoutAt = startTime + 45.Seconds();
       while(reservedDatabase == null)
       {
-         if(DateTime.Now > timeoutAt) throw new Exception("Timed out waiting for database. Have you missed disposing a database pool? Please check your logs for errors about non-disposed pools.");
+         if(DateTime.UtcNow > timeoutAt) throw new Exception("Timed out waiting for database. Have you missed disposing a database pool? Please check your logs for errors about non-disposed pools.");
 
          MachineWideState.Update(machineWide =>
          {

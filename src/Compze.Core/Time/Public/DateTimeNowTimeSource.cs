@@ -2,7 +2,7 @@ using System;
 
 namespace Compze.Core.Time.Public;
 
-///<summary>Simply returns DateTime.Now or DateTime.UtcNow</summary>
+///<summary>Simply returns DateTime.UtcNow</summary>
 public class DateTimeNowTimeSource : IUtcTimeTimeSource
 {
    ///<summary>Returns an instance.</summary>
