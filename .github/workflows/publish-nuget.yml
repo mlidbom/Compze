@@ -1,7 +1,12 @@
-name: Publish NuGet Packages
+name: Create Releases
 
 on:
   workflow_dispatch:
+    inputs:
+      dry-run:
+        description: "Dry run (show what would happen without publishing)"
+        type: boolean
+        default: true
 
 permissions:
   contents: write
@@ -9,6 +14,7 @@ permissions:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    name: ${{ inputs.dry-run && 'Dry Run' || 'Publish' }}
 
     env:
       COMPOSABLE_MACHINE_SLOWNESS: "5.0"
@@ -35,5 +41,8 @@ jobs:
         shell: pwsh
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
-        run: .github/scripts/Publish-NuGetWithReleases.ps1
+          NUGET_API_KEY: ${{ inputs.dry-run && ' ' || secrets.NUGET_API_KEY }}
+        run: |
+          $dryRunFlag = @()
+          if ('${{ inputs.dry-run }}' -eq 'true') { $dryRunFlag = @('-DryRun') }
+          .github/scripts/Publish-NuGetWithReleases.ps1 @dryRunFlag -Verbose
