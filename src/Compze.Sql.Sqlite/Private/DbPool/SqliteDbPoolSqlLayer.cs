@@ -63,11 +63,12 @@ public class SqliteDbPoolSqlLayer : IDbPoolSqlLayer
       const int maxCleanupAttempts = 1000;
       for(var attempt = 1; attempt <= maxCleanupAttempts; attempt++)
       {
-         SqliteConnection.ClearAllPools();
          foreach(var db in reservedDatabases)
          {
             try
             {
+               using var connection = new SqliteConnection(ConnectionStringFor(db));
+               SqliteConnection.ClearPool(connection);
                DeleteDbFile(db);
                reservedDatabases = reservedDatabases.Where(it => it != db).ToList();
             }
@@ -81,6 +82,8 @@ public class SqliteDbPoolSqlLayer : IDbPoolSqlLayer
                Thread.Sleep(TimeSpan.FromMilliseconds(10));
             }
          }
+
+         if(reservedDatabases.Count == 0) break;
       }
    }
 }
