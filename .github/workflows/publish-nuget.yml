@@ -41,8 +41,11 @@ jobs:
         shell: pwsh
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NUGET_API_KEY: ${{ inputs.dry-run && ' ' || secrets.NUGET_API_KEY }}
+          NUGET_API_KEY: ${{ inputs.dry-run && '' || secrets.NUGET_API_KEY }}
+          DRY_RUN: ${{ inputs.dry-run }}
         run: |
-          $dryRunFlag = @()
-          if ('${{ inputs.dry-run }}' -eq 'true') { $dryRunFlag = @('-DryRun') }
-          .github/scripts/Publish-NuGetWithReleases.ps1 @dryRunFlag -Verbose
+          if ($env:DRY_RUN -eq 'true') {
+            .github/scripts/Publish-NuGetWithReleases.ps1 -DryRun -Verbose
+          } else {
+            .github/scripts/Publish-NuGetWithReleases.ps1 -Verbose
+          }
