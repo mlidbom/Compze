@@ -8,8 +8,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Compze.Functional;
 using Compze.Utilities.SystemCE.LinqCE;
-using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
-using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
+using Compze.Threading.ResourceAccess;
+using Compze.Threading.TasksCE;
 
 namespace Compze.Tessaging.SystemCE.ThreadingCE;
 

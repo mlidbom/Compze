@@ -4,14 +4,14 @@ using Compze.Utilities.Logging;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
 using Compze.Utilities.SystemCE.TransactionsCE;
-using Compze.Utilities.SystemCE.ThreadingCE;
+using Compze.Threading;
 using Compze.Utilities.Testing.DbPool.SystemCE;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Compze.Utilities.DependencyInjection;
-using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.Threading.ResourceAccess;
 
 #pragma warning disable CA1724 //I don't care that the class uses the same name as the namespace
 

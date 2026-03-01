@@ -4,7 +4,7 @@ using Compze.Utilities.SystemCE;
 using Npgsql;
 using System;
 using System.Threading.Tasks;
-using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
+using Compze.Threading.TasksCE;
 
 namespace Compze.Sql.PostgreSql;
 

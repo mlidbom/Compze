@@ -1,7 +1,7 @@
 using System;
 using Compze.Utilities.SystemCE;
-using Compze.Utilities.SystemCE.ThreadingCE;
-using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.Threading;
+using Compze.Threading.ResourceAccess;
 
 namespace Compze.Utilities.Logging;
 

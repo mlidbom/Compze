@@ -1,7 +1,7 @@
 using System;
 using Compze.Contracts;
 using Compze.Utilities.SystemCE;
-using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.Threading.ResourceAccess;
 using MemoryPack;
 
 namespace Compze.Utilities.Testing.DbPool;

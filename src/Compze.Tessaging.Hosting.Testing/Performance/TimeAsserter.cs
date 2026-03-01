@@ -5,8 +5,8 @@ using Compze.Contracts;
 using Compze.Utilities.Logging;
 using Compze.Utilities.SystemCE;
 using JetBrains.Annotations;
-using Compze.Utilities.SystemCE.ThreadingCE;
-using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
+using Compze.Threading;
+using Compze.Threading.TasksCE;
 
 namespace Compze.Tessaging.Hosting.Testing.Performance;
 

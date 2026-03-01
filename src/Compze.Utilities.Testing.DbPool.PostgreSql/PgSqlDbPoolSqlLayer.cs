@@ -4,7 +4,7 @@ using Compze.Sql.Common;
 using Compze.Sql.PostgreSql;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
-using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.Threading.ResourceAccess;
 using Compze.Utilities.Testing.DbPool;
 using Npgsql;
 

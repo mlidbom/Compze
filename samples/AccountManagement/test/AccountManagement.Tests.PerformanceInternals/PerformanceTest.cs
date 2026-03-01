@@ -15,7 +15,7 @@ using Compze.Utilities.SystemCE;
 using System;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
-using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
+using Compze.Threading.TasksCE;
 using Compze.Utilities.Testing.Must;
 using Compze.Utilities.Testing.XUnit.BDD;
 using AccountId = AccountManagement.Domain.AccountId;

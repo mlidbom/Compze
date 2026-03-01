@@ -1,9 +1,3 @@
 ﻿<ProjectConfiguration>
-  <Settings>
-    <AdditionalFilesToIncludeForProject>
-      <Value>..\Compze.Utilities.SystemCE\**.*</Value>
-      <Value>..\Compze.Utilities.SystemCE.ThreadingCE\**.*</Value>
-      <Value>..\Compze.Functional\**.*</Value>
-    </AdditionalFilesToIncludeForProject>
-  </Settings>
+  <Settings />
 </ProjectConfiguration>

@@ -1,8 +1,8 @@
 using System;
 using System.Diagnostics;
-using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.Threading.ResourceAccess;
 
-namespace Compze.Utilities.SystemCE.ThreadingCE.Async;
+namespace Compze.Threading.Async;
 
 public class AsyncLockTimeoutException : Exception
 {

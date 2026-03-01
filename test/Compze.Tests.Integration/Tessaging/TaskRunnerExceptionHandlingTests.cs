@@ -9,9 +9,9 @@ using System;
 using Compze.Utilities.SystemCE;
 using System.Linq;
 using System.Threading.Tasks;
-using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
-using Compze.Utilities.SystemCE.ThreadingCE;
-using Compze.Utilities.SystemCE.ThreadingCE.Testing;
+using Compze.Threading.TasksCE;
+using Compze.Threading;
+using Compze.Threading.Testing;
 using Compze.Utilities.Testing.Must;
 using static Compze.Utilities.Testing.Must.MustActions;
 

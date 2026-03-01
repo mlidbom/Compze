@@ -3,7 +3,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Compze.Contracts;
 using Compze.Utilities.SystemCE;
-using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
+using Compze.Threading.TasksCE;
 using Compze.Utilities.Testing.Must;
 using Xunit.Sdk;
 

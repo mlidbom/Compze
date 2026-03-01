@@ -4,8 +4,8 @@ using System.Threading.Tasks;
 using Compze.Core.Time.Public;
 using Compze.Functional;
 using Compze.Utilities.SystemCE;
-using Compze.Utilities.SystemCE.ThreadingCE;
-using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
+using Compze.Threading;
+using Compze.Threading.TasksCE;
 
 // ReSharper disable MemberCanBeMadeStatic.Local
 

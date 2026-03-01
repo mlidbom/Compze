@@ -4,7 +4,7 @@ using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Compze.Contracts;
 using Compze.Utilities.SystemCE;
-using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
+using Compze.Threading.TasksCE;
 using JetBrains.Annotations;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Http;
