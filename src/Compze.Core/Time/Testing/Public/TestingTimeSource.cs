@@ -6,6 +6,7 @@ using Compze.Functional;
 using Compze.Utilities.SystemCE;
 using Compze.Threading;
 using Compze.Threading.TasksCE;
+using Compze.Utilities.SystemCE.ThreadingCE;
 
 // ReSharper disable MemberCanBeMadeStatic.Local
 

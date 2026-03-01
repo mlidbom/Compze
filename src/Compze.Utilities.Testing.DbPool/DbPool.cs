@@ -12,6 +12,7 @@ using System.Linq;
 using System.Threading;
 using Compze.Utilities.DependencyInjection;
 using Compze.Threading.ResourceAccess;
+using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
 #pragma warning disable CA1724 //I don't care that the class uses the same name as the namespace
 

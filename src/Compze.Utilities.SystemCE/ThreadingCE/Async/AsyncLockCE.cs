@@ -4,10 +4,10 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Compze.Functional;
+using Compze.Threading;
 using Compze.Threading.TasksCE;
-using Compze.Utilities.SystemCE;
 
-namespace Compze.Threading.Async;
+namespace Compze.Utilities.SystemCE.ThreadingCE.Async;
 
 public interface IAsyncLockCE : IDisposable
 {
