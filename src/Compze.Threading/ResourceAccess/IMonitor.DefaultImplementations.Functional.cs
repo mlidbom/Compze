@@ -1,7 +1,7 @@
 using Compze.Functional;
 using System;
 
-namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
+namespace Compze.Threading.ResourceAccess;
 
 public partial interface IMonitor
 {

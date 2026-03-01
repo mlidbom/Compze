@@ -3,8 +3,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE.LinqCE;
-using Compze.Utilities.SystemCE.ThreadingCE;
-using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
+using Compze.Threading;
+using Compze.Threading.TasksCE;
 using SimpleInjector;
 using SimpleInjector.Lifestyles;
 

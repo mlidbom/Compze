@@ -12,7 +12,7 @@ using Compze.Tessaging.Typermedia;
 using Compze.Core.Refactoring.Naming.Internal.Implementation;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
-using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
+using Compze.Threading.TasksCE;
 
 namespace Compze.Tessaging.Hosting.Testing.Tessaging;
 

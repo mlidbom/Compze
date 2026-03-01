@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE.LinqCE;
-using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.Threading.ResourceAccess;
 using Compze.Utilities.Testing.DbPool;
 using Microsoft.Data.Sqlite;
 

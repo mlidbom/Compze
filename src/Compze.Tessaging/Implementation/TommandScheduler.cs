@@ -12,9 +12,9 @@ using Compze.Utilities.Logging;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
 using Compze.Utilities.SystemCE.LinqCE;
-using Compze.Utilities.SystemCE.ThreadingCE;
-using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
-using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
+using Compze.Threading;
+using Compze.Threading.ResourceAccess;
+using Compze.Threading.TasksCE;
 using Compze.Utilities.SystemCE.TransactionsCE;
 
 namespace Compze.Tessaging.Implementation;

@@ -2,7 +2,7 @@ using System;
 using System.Threading.Tasks;
 using System.Transactions;
 using Compze.Functional;
-using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
+using Compze.Threading.TasksCE;
 using JetBrains.Annotations;
 
 namespace Compze.Utilities.SystemCE.TransactionsCE;

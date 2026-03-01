@@ -3,10 +3,10 @@ using Compze.Sql.PostgreSql.Private.Tessaging;
 using Compze.Sql.PostgreSql.Private.TEventStore;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
-using Compze.Utilities.SystemCE.ThreadingCE;
+using Compze.Threading;
 using Compze.Utilities.SystemCE.TransactionsCE;
 using System.Threading.Tasks;
-using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
+using Compze.Threading.TasksCE;
 
 namespace Compze.Sql.PostgreSql.Private;
 

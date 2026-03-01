@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Compze.Utilities.SystemCE.ThreadingCE;
+namespace Compze.Threading;
 
 public static class OnlyWithinLocksThreadingHelpers
 {

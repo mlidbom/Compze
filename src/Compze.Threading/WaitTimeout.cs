@@ -1,6 +1,6 @@
 using System;
 
-namespace Compze.Utilities.SystemCE.ThreadingCE;
+namespace Compze.Threading;
 
 public readonly struct WaitTimeout(TimeSpan value) : IEquatable<WaitTimeout>
 {

@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Compze.Functional;
-using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
+using Compze.Threading.TasksCE;
 using Compze.Utilities.SystemCE.LinqCE;
 
-namespace Compze.Utilities.SystemCE.ThreadingCE.Testing;
+namespace Compze.Threading.Testing;
 
 ///<summary>
 /// Runs and monitors tasks on background threads.

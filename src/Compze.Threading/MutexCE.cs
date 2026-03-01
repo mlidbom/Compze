@@ -3,7 +3,7 @@ using System.Threading;
 using Compze.Functional;
 using JetBrains.Annotations;
 
-namespace Compze.Utilities.SystemCE.ThreadingCE;
+namespace Compze.Threading;
 
 public class MutexCE
 {

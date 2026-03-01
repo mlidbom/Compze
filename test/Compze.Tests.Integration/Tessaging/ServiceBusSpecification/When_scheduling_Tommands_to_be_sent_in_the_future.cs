@@ -9,8 +9,8 @@ using Compze.Tests.Infrastructure.XUnit;
 using System;
 using Compze.Utilities.SystemCE;
 using System.Threading.Tasks;
-using Compze.Utilities.SystemCE.ThreadingCE;
-using Compze.Utilities.SystemCE.ThreadingCE.Testing;
+using Compze.Threading;
+using Compze.Threading.Testing;
 using Compze.Utilities.Testing.Must;
 
 namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification;

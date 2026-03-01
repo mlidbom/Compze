@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using Compze.Contracts;
-using Compze.Utilities.SystemCE.ThreadingCE.Utilities;
+using Compze.Threading.Utilities;
 
-namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
+namespace Compze.Threading.ResourceAccess;
 
 public partial interface IMonitor
 {

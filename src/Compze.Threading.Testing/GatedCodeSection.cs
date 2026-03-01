@@ -1,6 +1,7 @@
 using System;
+using Compze.Utilities.SystemCE;
 
-namespace Compze.Utilities.SystemCE.ThreadingCE.Testing;
+namespace Compze.Threading.Testing;
 
 public class GatedCodeSection : IGatedCodeSection
 {

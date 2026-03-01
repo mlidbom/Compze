@@ -1,7 +1,7 @@
 using System;
 using Compze.Contracts;
 
-namespace Compze.Utilities.SystemCE.ThreadingCE.Utilities;
+namespace Compze.Threading.Utilities;
 
 ///<summary>Simple utility class that calls the supplied action when the instance is disposed. Calls for each dispose call, there is no check.</summary>
 class LockDisposer : IDisposable

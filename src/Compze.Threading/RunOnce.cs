@@ -2,7 +2,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 
-namespace Compze.Utilities.SystemCE.ThreadingCE;
+namespace Compze.Threading;
 
 [SuppressMessage("Design", "CA1001:Types that own disposable fields should be disposable", Justification = "RunOnce instances are long-lived singletons/statics that outlive any meaningful disposal scope")]
 public class RunOnce

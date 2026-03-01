@@ -5,7 +5,7 @@ using Compze.Core.Tessaging.Typermedia.Public;
 using Compze.Tessaging.Implementation.Transport.Client.Internal;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
-using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
+using Compze.Threading.TasksCE;
 using JetBrains.Annotations;
 
 namespace Compze.Tessaging.Typermedia;

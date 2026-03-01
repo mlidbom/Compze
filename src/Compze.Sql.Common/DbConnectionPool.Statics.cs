@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using Compze.Sql.Common.Abstractions;
 using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
-using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.Threading.ResourceAccess;
 
 namespace Compze.Sql.Common;
 

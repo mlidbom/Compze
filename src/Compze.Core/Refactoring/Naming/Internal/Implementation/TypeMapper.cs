@@ -11,7 +11,7 @@ using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Functional;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
-using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.Threading.ResourceAccess;
 
 namespace Compze.Core.Refactoring.Naming.Internal.Implementation;
 

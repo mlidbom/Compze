@@ -1,4 +1,4 @@
-namespace Compze.Utilities.SystemCE.ThreadingCE.Utilities;
+namespace Compze.Threading.Utilities;
 
 static class CompzeEnvironment
 {

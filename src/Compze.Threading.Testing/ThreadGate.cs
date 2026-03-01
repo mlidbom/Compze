@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using Compze.Contracts;
 using Compze.Functional;
-using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.Threading.ResourceAccess;
+using Compze.Utilities.SystemCE;
 
-namespace Compze.Utilities.SystemCE.ThreadingCE.Testing;
+namespace Compze.Threading.Testing;
 
 public class ThreadGate : IThreadGate
 {

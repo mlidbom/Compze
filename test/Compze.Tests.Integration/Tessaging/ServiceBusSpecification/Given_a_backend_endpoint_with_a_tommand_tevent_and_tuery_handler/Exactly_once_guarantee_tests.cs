@@ -8,8 +8,8 @@ using Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endp
 using Compze.Utilities.SystemCE.TransactionsCE.Testing;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Utilities.SystemCE;
-using Compze.Utilities.SystemCE.ThreadingCE;
-using Compze.Utilities.SystemCE.ThreadingCE.Testing;
+using Compze.Threading;
+using Compze.Threading.Testing;
 using Compze.Utilities.Testing.Must;
 using static Compze.Utilities.Testing.Must.MustActions;
 

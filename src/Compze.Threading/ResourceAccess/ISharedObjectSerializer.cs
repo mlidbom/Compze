@@ -1,4 +1,4 @@
-namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
+namespace Compze.Threading.ResourceAccess;
 
 public interface ISharedObjectSerializer<T> where T : class
 {

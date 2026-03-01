@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 using System.Transactions;
 using Compze.Sql.Common.Abstractions;
 using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
-using Compze.Utilities.SystemCE.ThreadingCE;
-using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
-using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
+using Compze.Threading;
+using Compze.Threading.ResourceAccess;
+using Compze.Threading.TasksCE;
 using Compze.Utilities.SystemCE.TransactionsCE;
 
 // ReSharper disable StaticMemberInGenericType

@@ -1,6 +1,6 @@
 using System;
 
-namespace Compze.Utilities.SystemCE.ThreadingCE;
+namespace Compze.Threading;
 
 public readonly struct LockTimeout(TimeSpan value) : IEquatable<LockTimeout>
 {

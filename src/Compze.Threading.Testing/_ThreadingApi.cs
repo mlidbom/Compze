@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Compze.Functional;
 
-namespace Compze.Utilities.SystemCE.ThreadingCE.Testing;
+namespace Compze.Threading.Testing;
 
 public interface IThreadGateVisitor
 {

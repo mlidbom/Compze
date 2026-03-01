@@ -5,8 +5,8 @@ using System.Reflection;
 using Compze.Core.Tessaging.Public;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
-using Compze.Utilities.SystemCE.ThreadingCE;
-using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.Threading;
+using Compze.Threading.ResourceAccess;
 
 namespace Compze.Core.Tessaging.Teventive.Infrastructure.Validation;
 

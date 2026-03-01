@@ -1,10 +1,10 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
-using Compze.Utilities.SystemCE.ThreadingCE.Utilities;
+using Compze.Threading.TasksCE;
+using Compze.Threading.Utilities;
 
-namespace Compze.Utilities.SystemCE.ThreadingCE;
+namespace Compze.Threading;
 
 public static class ThreadPoolCE
 {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Compze.Contracts;
 using Compze.Functional;
 
-namespace Compze.Utilities.SystemCE.ThreadingCE;
+namespace Compze.Threading;
 
 #pragma warning disable CA1002 // Utility extension methods returning List by design for copy-and-add pattern
 public static class ReadonlyCollectionsTE

@@ -1,6 +1,6 @@
 using System;
 
-namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
+namespace Compze.Threading.ResourceAccess;
 
 public static class MonitorCEExtensions
 {

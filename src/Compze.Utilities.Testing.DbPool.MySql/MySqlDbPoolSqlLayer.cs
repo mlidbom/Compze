@@ -3,7 +3,7 @@ using Compze.Functional;
 using Compze.Sql.MySql;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
-using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.Threading.ResourceAccess;
 using Compze.Utilities.Testing.DbPool;
 using MySql.Data.MySqlClient;
 

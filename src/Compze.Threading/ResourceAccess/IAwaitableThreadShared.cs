@@ -1,7 +1,7 @@
 using System;
 using Compze.Functional;
 
-namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
+namespace Compze.Threading.ResourceAccess;
 
 public interface IAwaitableThreadShared
 {

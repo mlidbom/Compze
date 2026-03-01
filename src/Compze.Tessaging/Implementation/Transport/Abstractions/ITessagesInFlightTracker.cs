@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Compze.Core.Tessaging.Hosting.Public;
-using Compze.Utilities.SystemCE.ThreadingCE;
+using Compze.Threading;
 
 namespace Compze.Tessaging.Implementation.Transport.Abstractions;
 

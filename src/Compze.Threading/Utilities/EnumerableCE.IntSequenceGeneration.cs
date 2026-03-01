@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Compze.Utilities.SystemCE.ThreadingCE.Utilities;
+namespace Compze.Threading.Utilities;
 
 static class EnumerableCE
 {

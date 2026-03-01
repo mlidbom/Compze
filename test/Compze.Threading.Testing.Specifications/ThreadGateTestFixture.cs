@@ -5,9 +5,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
-using Compze.Utilities.SystemCE.ThreadingCE;
-using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
-using Compze.Utilities.SystemCE.ThreadingCE.Testing;
+using Compze.Threading;
+using Compze.Threading.TasksCE;
+using Compze.Threading.Testing;
 
 namespace Compze.Threading.Testing.Specifications;
 
