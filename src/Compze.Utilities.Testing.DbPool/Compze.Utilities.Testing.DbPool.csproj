@@ -3,7 +3,7 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <Version>0.2.0-alpha.1</Version>
-    <Description>Database pool management for Compze integration testing.</Description>
+    <Description>Empty databases on demand for integration testing etc. Supports SQL Server, MySql, PostgreSQL and SQLite</Description>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="MemoryPack" Version="1.21.4" />

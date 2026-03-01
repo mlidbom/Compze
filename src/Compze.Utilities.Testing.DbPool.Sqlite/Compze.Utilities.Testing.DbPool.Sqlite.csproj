@@ -3,7 +3,7 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <Version>0.2.0-alpha.1</Version>
-    <Description>SQLite database pool support for Compze integration testing.</Description>
+    <Description>Empty SQLite databases on demand for integration testing etc.</Description>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.1" />

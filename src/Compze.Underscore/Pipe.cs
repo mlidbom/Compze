@@ -12,8 +12,7 @@ namespace Compze.Underscore;
 /// NAMING CONVENTION: All methods use _camelCase naming (e.g. _tap, _then) for two critical reasons:
 /// 
 /// 1. VISUAL DISTINCTION: The underscore prefix makes these instantly recognizable
-///    as language-like functional operators, distinct from both standard PascalCase methods
-///    and _camelCase private fields (which are nouns, not verbs).
+///    as language-like functional operators, distinct from both standard PascalCase methods.
 /// 
 /// 2. COLLISION AVOIDANCE: Since these are extensions on ALL types,
 ///    avoiding name conflicts with existing methods is vital.
