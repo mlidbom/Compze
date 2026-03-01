@@ -18,7 +18,7 @@ public interface IThreadShared
       new LockCEThreadShared<TShared>(shared, IMonitor.New(lockTimeout));
 
    // Single implementation for both IThreadShared<T> and IAwaitableThreadShared<T>.
-   internal class LockCEThreadShared<TShared> : IThreadShared<TShared>, IAwaitableThreadShared<TShared>
+   class LockCEThreadShared<TShared> : IThreadShared<TShared>, IAwaitableThreadShared<TShared>
    {
       readonly IMonitor _monitor;
       readonly IAwaitableMonitor _awaitableMonitor;
