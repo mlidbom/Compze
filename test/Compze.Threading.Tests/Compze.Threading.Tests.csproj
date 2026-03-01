@@ -24,6 +24,13 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' != 'true'">
     <ProjectReference Include="..\..\src\Compze.Contracts\Compze.Contracts.csproj" />
   </ItemGroup>
+  <!-- Compze.SystemCE.Internals — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_SystemCE_Internals)' == 'true'">
+    <PackageReference Include="Compze.SystemCE.Internals" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_SystemCE_Internals)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.SystemCE.Internals\Compze.SystemCE.Internals.csproj" />
+  </ItemGroup>
   <!-- Compze.Threading — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Threading)' == 'true'">
     <PackageReference Include="Compze.Threading" Version="*-*" />

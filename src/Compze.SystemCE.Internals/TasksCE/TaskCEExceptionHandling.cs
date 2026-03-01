@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace Compze.Threading.TasksCE;
 
-public static class TaskCEExceptionHandling
+internal static class TaskCEExceptionHandling
 {
    /// <summary>
    /// Ensures that if this task fails, the thrown exception is an AggregateException

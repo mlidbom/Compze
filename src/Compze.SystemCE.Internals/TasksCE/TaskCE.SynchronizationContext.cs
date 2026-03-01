@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 namespace Compze.Threading.TasksCE;
 
 [SuppressMessage("ReSharper", "InconsistentNaming")]
-public static class ConfigureAwaitCE
+internal static class ConfigureAwaitCE
 {
     ///<summary>
     /// Abbreviated version of <see cref="Task.ConfigureAwait(bool)"/> with <c>continueOnCapturedContext: false</c>.

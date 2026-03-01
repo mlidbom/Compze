@@ -26,4 +26,11 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Sql_Common)' != 'true'">
     <ProjectReference Include="..\Compze.Sql.Common\Compze.Sql.Common.csproj" />
   </ItemGroup>
+  <!-- Compze.SystemCE.Internals — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_SystemCE_Internals)' == 'true'">
+    <PackageReference Include="Compze.SystemCE.Internals" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_SystemCE_Internals)' != 'true'">
+    <ProjectReference Include="..\Compze.SystemCE.Internals\Compze.SystemCE.Internals.csproj" />
+  </ItemGroup>
 </Project>

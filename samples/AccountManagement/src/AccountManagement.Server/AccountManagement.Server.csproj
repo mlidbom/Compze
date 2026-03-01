@@ -36,6 +36,13 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Sql_MicrosoftSql)' != 'true'">
     <ProjectReference Include="..\..\..\..\src\Compze.Sql.MicrosoftSql\Compze.Sql.MicrosoftSql.csproj" />
   </ItemGroup>
+  <!-- Compze.SystemCE.Internals — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_SystemCE_Internals)' == 'true'">
+    <PackageReference Include="Compze.SystemCE.Internals" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_SystemCE_Internals)' != 'true'">
+    <ProjectReference Include="..\..\..\..\src\Compze.SystemCE.Internals\Compze.SystemCE.Internals.csproj" />
+  </ItemGroup>
   <!-- Compze.Tessaging — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging)' == 'true'">
     <PackageReference Include="Compze.Tessaging" Version="*-*" />

@@ -3,7 +3,7 @@ using Compze.Underscore;
 
 namespace Compze.Threading.TasksCE;
 
-public static class TaskUnit
+internal static class TaskUnit
 {
    public static async Task<unit> AsUnit(this Task task)
    {

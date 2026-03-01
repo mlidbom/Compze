@@ -79,6 +79,7 @@
     <Project Path="Compze.Tessaging.Teventive.TeventStore/Compze.Tessaging.Teventive.TeventStore.csproj" />
   </Folder>
   <Folder Name="/Compze/Utilities/">
+    <Project Path="Compze.SystemCE.Internals/Compze.SystemCE.Internals.csproj" />
     <Project Path="Compze.Utilities.DependencyInjection.Microsoft/Compze.Utilities.DependencyInjection.Microsoft.csproj" />
     <Project Path="Compze.Utilities.DependencyInjection.SimpleInjector/Compze.Utilities.DependencyInjection.SimpleInjector.csproj" />
     <Project Path="Compze.Utilities.DependencyInjection/Compze.Utilities.DependencyInjection.csproj" />

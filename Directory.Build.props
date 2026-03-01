@@ -34,6 +34,8 @@
     <UsePackageReference_Compze_Sql_PostgreSql Condition="'$(UsePackageReference_Compze_Sql_PostgreSql)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Sql.PostgreSql.csproj|'))">true</UsePackageReference_Compze_Sql_PostgreSql>
     <!-- Compze.Sql.Sqlite -->
     <UsePackageReference_Compze_Sql_Sqlite Condition="'$(UsePackageReference_Compze_Sql_Sqlite)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Sql.Sqlite.csproj|'))">true</UsePackageReference_Compze_Sql_Sqlite>
+    <!-- Compze.SystemCE.Internals -->
+    <UsePackageReference_Compze_SystemCE_Internals Condition="'$(UsePackageReference_Compze_SystemCE_Internals)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.SystemCE.Internals.csproj|'))">true</UsePackageReference_Compze_SystemCE_Internals>
     <!-- Compze.Tessaging -->
     <UsePackageReference_Compze_Tessaging Condition="'$(UsePackageReference_Compze_Tessaging)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Tessaging.csproj|'))">true</UsePackageReference_Compze_Tessaging>
     <!-- Compze.Tessaging.Hosting.AspNetCore -->
