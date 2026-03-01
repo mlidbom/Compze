@@ -5,7 +5,7 @@
     <Version>0.1.0-alpha.1</Version>
     <Description>Staging area for future Compze.SystemCE additions. Internal use only — not intended for direct consumption.</Description>
   </PropertyGroup>
-  <Import Project="InternalsVisibleToEveryone.props" />
+  <Import Project="..\msbuild\InternalsVisibleToEveryone.props" />
   <ItemGroup>
     <PackageReference Include="NsDepCop" Version="2.6.0">
       <PrivateAssets>all</PrivateAssets>
