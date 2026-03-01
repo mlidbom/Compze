@@ -15,7 +15,7 @@ using static Compze.Utilities.Testing.Must.MustActions;
 
 // ReSharper disable AccessToDisposedClosure
 
-namespace Compze.Threading.Tests.ResourceAccess;
+namespace Compze.Threading.Specifications.ResourceAccess;
 
 [Collection(nameof(NonParallelCollection))]
 public class MonitorCE_specification : UniversalTestBase
