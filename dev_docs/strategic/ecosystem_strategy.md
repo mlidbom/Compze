@@ -36,6 +36,6 @@ Theoretically we should be able to easily split each sub-project into its own re
 ## Open Questions
 
 1. **Core's future**: Does `Compze.Core` survive, or do its concepts get redistributed to Tessaging and Sql? It was born from a "minimize projects" strategy that FlexRef obsoletes.
-2. **Naming**: Should extracted sub-products keep the `Compze.Utilities.*` prefix or get shorter names? E.g., `Compze.Threading.InterProcessObject` vs `Compze.Utilities.SystemCE.ThreadingCE.InterProcessObject`.
+2. **Naming**: Should extracted sub-products keep the `Compze.Utilities.*` prefix or get shorter names? E.g., `Compze.InterProcessObject` vs `Compze.Utilities.SystemCE.ThreadingCE.InterProcessObject`.
 3. **Test decomposition timeline**: Splitting the monolithic test projects is gradual, hard work. Each test needs to find its natural sub-product home.
 4. **When to actually restructure directories**: This is a plan, not an immediate action. The classification informs decisions; the directory moves can happen incrementally as sub-products mature.
