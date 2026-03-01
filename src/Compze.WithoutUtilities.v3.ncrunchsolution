@@ -2,9 +2,9 @@
   <Settings>
     <CustomBuildProperties>
       <Value>UsePackageReference_Compze_Contracts = true</Value>
-      <Value>UsePackageReference_Compze_SystemCE_Staging = true</Value>
+      <Value>UsePackageReference_Compze_SystemCE_Internal = true</Value>
       <Value>UsePackageReference_Compze_Threading = true</Value>
-      <Value>UsePackageReference_Compze_Threading_Staging = true</Value>
+      <Value>UsePackageReference_Compze_Threading_Internal = true</Value>
       <Value>UsePackageReference_Compze_Threading_Testing = true</Value>
       <Value>UsePackageReference_Compze_Underscore = true</Value>
       <Value>UsePackageReference_Compze_Utilities = true</Value>

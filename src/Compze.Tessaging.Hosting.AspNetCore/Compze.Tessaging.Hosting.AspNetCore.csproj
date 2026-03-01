@@ -29,12 +29,12 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Core)' != 'true'">
     <ProjectReference Include="..\Compze.Core\Compze.Core.csproj" />
   </ItemGroup>
-  <!-- Compze.SystemCE.Staging — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_SystemCE_Staging)' == 'true'">
-    <PackageReference Include="Compze.SystemCE.Staging" Version="*-*" />
+  <!-- Compze.SystemCE.Internal — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_SystemCE_Internal)' == 'true'">
+    <PackageReference Include="Compze.SystemCE.Internal" Version="*-*" />
   </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_SystemCE_Staging)' != 'true'">
-    <ProjectReference Include="..\Compze.SystemCE.Staging\Compze.SystemCE.Staging.csproj" />
+  <ItemGroup Condition="'$(UsePackageReference_Compze_SystemCE_Internal)' != 'true'">
+    <ProjectReference Include="..\Compze.SystemCE.Internal\Compze.SystemCE.Internal.csproj" />
   </ItemGroup>
   <!-- Compze.Tessaging — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging)' == 'true'">

@@ -19,7 +19,7 @@
     <InternalsVisibleTo Include="Compze.Sql.MySql" />
     <InternalsVisibleTo Include="Compze.Sql.PostgreSql" />
     <InternalsVisibleTo Include="Compze.Sql.Sqlite" />
-    <InternalsVisibleTo Include="Compze.SystemCE.Staging" />
+    <InternalsVisibleTo Include="Compze.SystemCE.Internal" />
     <InternalsVisibleTo Include="Compze.Tessaging" />
     <InternalsVisibleTo Include="Compze.Tessaging.Hosting.AspNetCore" />
     <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Testing" />
@@ -34,7 +34,7 @@
     <InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />
     <InternalsVisibleTo Include="Compze.Threading" />
     <InternalsVisibleTo Include="Compze.Threading.Specifications" />
-    <InternalsVisibleTo Include="Compze.Threading.Staging" />
+    <InternalsVisibleTo Include="Compze.Threading.Internal" />
     <InternalsVisibleTo Include="Compze.Threading.Testing" />
     <InternalsVisibleTo Include="Compze.Threading.Testing.Specifications" />
     <InternalsVisibleTo Include="Compze.Threading.Tests" />

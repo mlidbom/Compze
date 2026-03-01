@@ -17,19 +17,19 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' != 'true'">
     <ProjectReference Include="..\Compze.Contracts\Compze.Contracts.csproj" />
   </ItemGroup>
-  <!-- Compze.SystemCE.Staging — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_SystemCE_Staging)' == 'true'">
-    <PackageReference Include="Compze.SystemCE.Staging" Version="*-*" />
+  <!-- Compze.SystemCE.Internal — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_SystemCE_Internal)' == 'true'">
+    <PackageReference Include="Compze.SystemCE.Internal" Version="*-*" />
   </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_SystemCE_Staging)' != 'true'">
-    <ProjectReference Include="..\Compze.SystemCE.Staging\Compze.SystemCE.Staging.csproj" />
+  <ItemGroup Condition="'$(UsePackageReference_Compze_SystemCE_Internal)' != 'true'">
+    <ProjectReference Include="..\Compze.SystemCE.Internal\Compze.SystemCE.Internal.csproj" />
   </ItemGroup>
-  <!-- Compze.Threading.Staging — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Threading_Staging)' == 'true'">
-    <PackageReference Include="Compze.Threading.Staging" Version="*-*" />
+  <!-- Compze.Threading.Internal — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Threading_Internal)' == 'true'">
+    <PackageReference Include="Compze.Threading.Internal" Version="*-*" />
   </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Threading_Staging)' != 'true'">
-    <ProjectReference Include="..\Compze.Threading.Staging\Compze.Threading.Staging.csproj" />
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Threading_Internal)' != 'true'">
+    <ProjectReference Include="..\Compze.Threading.Internal\Compze.Threading.Internal.csproj" />
   </ItemGroup>
   <!-- Compze.Underscore — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Underscore)' == 'true'">

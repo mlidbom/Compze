@@ -109,9 +109,9 @@
   </Folder>
   <Project Path="../DevScripts/Scripts.csproj" />
   <Folder Name="/Compze/SystemCE/">
-    <Project Path="Compze.SystemCE.Staging/Compze.SystemCE.Staging.csproj" />
+    <Project Path="Compze.SystemCE.Internal/Compze.SystemCE.Internal.csproj" />
   </Folder>
   <Folder Name="/Compze/Threading/">
-    <Project Path="Compze.Threading.Staging/Compze.Threading.Staging.csproj" />
+    <Project Path="Compze.Threading.Internal/Compze.Threading.Internal.csproj" />
   </Folder>
 </Solution>
