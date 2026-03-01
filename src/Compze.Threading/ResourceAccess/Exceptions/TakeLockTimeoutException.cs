@@ -30,6 +30,6 @@ public class TakeLockTimeoutException(LockTimeout timeout, WaitTimeout stackTrac
       }
    }
 
-   public void SetBlockingThreadsDisposeStackTrace(StackTrace blockingThreadStackTrace) =>
+   internal void SetBlockingThreadsDisposeStackTrace(StackTrace blockingThreadStackTrace) =>
       _monitor.Update(() => _blockingThreadStacktrace = blockingThreadStackTrace.ToString());
 }

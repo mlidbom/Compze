@@ -6,7 +6,7 @@ using Compze.Underscore;
 namespace Compze.Threading;
 
 #pragma warning disable CA1002 // Utility extension methods returning List by design for copy-and-add pattern
-public static class ReadonlyCollectionsTE
+static class ReadonlyCollections
 {
    public static Dictionary<TKey, TValue> AddToCopy<TKey, TValue>(this IReadOnlyDictionary<TKey, TValue> @this, TKey key, TValue value) where TKey : notnull => new(@this) { { key, value } };
 
@@ -28,7 +28,7 @@ public static class ReadonlyCollectionsTE
       return copy;
    }
 
-   public static void AddRange<T>(this ICollection<T> me, IEnumerable<T> toAdd)
+   static void AddRange<T>(this ICollection<T> me, IEnumerable<T> toAdd)
    {
       Contract.Argument.NotNull(me).NotNull(toAdd);
       foreach(var it in toAdd)

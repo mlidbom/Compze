@@ -1,6 +1,8 @@
 using System;
 using System.Threading;
 // ReSharper disable UnusedMember.Global
+// ReSharper disable MemberCanBePrivate.Global
+// ReSharper disable MemberCanBeInternal
 
 namespace Compze.Threading;
 

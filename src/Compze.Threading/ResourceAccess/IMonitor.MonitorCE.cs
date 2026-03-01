@@ -166,7 +166,7 @@ public partial interface IMonitor
          Update = 1
       }
 
-      private class ThinMonitorWrapper
+      class ThinMonitorWrapper
       {
          static readonly TimeSpan InfiniteTimeOut = -1.Milliseconds(); //https://learn.microsoft.com/en-us/dotnet/api/system.threading.monitor.tryenter?view=net-9.0
          readonly object _lockObject = new();

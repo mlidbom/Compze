@@ -24,14 +24,14 @@ public interface IThreadShared
       readonly IAwaitableMonitor _awaitableMonitor;
       readonly TShared _shared;
 
-      public LockCEThreadShared(TShared shared, IMonitor monitor)
+      internal LockCEThreadShared(TShared shared, IMonitor monitor)
       {
          _shared = shared;
          _monitor = monitor;
          _awaitableMonitor = (IAwaitableMonitor)monitor;
       }
 
-      public LockCEThreadShared(TShared shared, IAwaitableMonitor awaitableMonitor)
+      internal LockCEThreadShared(TShared shared, IAwaitableMonitor awaitableMonitor)
       {
          _shared = shared;
          _monitor = (IMonitor)awaitableMonitor;
