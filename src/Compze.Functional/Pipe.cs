@@ -35,6 +35,15 @@ public static class Pipe
    public static T _mutate<T>(this T it, Action<T> mutate) => it._tap(mutate);
 
    ///<summary> Returns <paramref name="value"/>, ignoring the previous value.  Useful for chaining calls where a constant value is needed.</summary>
+   public static TResult _<TValue, TResult>(this TValue _, TResult value) => value;
+
+   ///<summary>Invokes <paramref name="func"/>, ignoring the previous value. Useful for chaining calls where the previous result is irrelevant.</summary>
+   public static TResult _<TValue, TResult>(this TValue _, Func<TResult> func) => func();
+
+   ///<summary> Executes <paramref name="action"/>, ignoring the previous value, and returns a <see cref="unit"/>.  Useful for chaining statements that return void.</summary>
+   public static unit _<TValue>(this TValue _, Action action) => unit.From(action);
+
+   ///<summary> Returns <paramref name="value"/>, ignoring the previous value.  Useful for chaining calls where a constant value is needed.</summary>
    public static TResult _then<TValue, TResult>(this TValue _, TResult value) => value;
 
    ///<summary>Invokes <paramref name="func"/>, ignoring the previous value. Useful for chaining calls where the previous result is irrelevant.</summary>

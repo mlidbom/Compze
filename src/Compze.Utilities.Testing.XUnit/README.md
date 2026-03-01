@@ -57,7 +57,7 @@ public class When_a_user_attempts_to_register
 
          [XF] public void registration_is_rejected()  => _result.Succeeded.Must().BeFalse();
          [XF] public void error_mentions_email()       => _result.Error.Must().Contain("email");
-         [XF] public void error_mentions_at_character()       => _result.Error.Must().Contain("email");
+         [XF] public void error_mentions_at_character()       => _result.Error.Must().Contain("@");
       }
 
       public class that_is_empty : with_invalid_email
