@@ -3,7 +3,7 @@ using Compze.Core.Tessaging.Teventive.Infrastructure;
 
 namespace Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 
-public static class PublisherTypeIdentifyingTevent
+static class PublisherTypeIdentifyingTevent
 {
    public static IPublisherIdentifyingTevent<ITevent> WrapTevent(ITevent theTevent) =>
       WrapperTeventImplementationGenerator.ConstructorFor(theTevent.GetType()).Invoke(theTevent);

@@ -1,6 +1,6 @@
 namespace Compze.Core.Public.Infrastructure;
 
-public interface ISingleUntypedPrimitiveValueWrapper
+interface ISingleUntypedPrimitiveValueWrapper
 {
    object UntypedPrimitiveValue { get; }
 }
