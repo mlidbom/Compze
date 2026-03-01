@@ -20,20 +20,20 @@ This provides the `jb` command with two sub-tools: `jb inspectcode` and `jb clea
 Runs ReSharper's code inspections without opening the IDE. Produces a report of all detected issues.
 
 ```powershell
-# Full solution (lets it build first — recommended)
-jb inspectcode src/Compze.slnx --output=inspect-report.xml --format=Xml --severity=WARNING
-
-# SARIF format (default, integrates with VS Code SARIF Viewer and GitHub code scanning)
+# Full solution — SARIF is the default format, integrates with VS Code SARIF Viewer extension
 jb inspectcode src/Compze.slnx --output=inspect-report.sarif --severity=WARNING
 
 # Specific project only
 jb inspectcode src/Compze.slnx --project=Compze.Core --output=core-report.sarif
 
 # Include suggestions (more verbose)
-jb inspectcode src/Compze.slnx --severity=SUGGESTION
+jb inspectcode src/Compze.slnx --severity=SUGGESTION --output=inspect-report.sarif
+
+# XML format — useful for PowerShell analysis (see below)
+jb inspectcode src/Compze.slnx --output=inspect-report.xml --format=Xml --severity=WARNING
 
 # Multiple output formats in one run
-jb inspectcode src/Compze.slnx --format=Html;Xml --output=reports/
+jb inspectcode src/Compze.slnx --format=Sarif;Html --output=reports/
 ```
 
 **Key parameters:**
@@ -41,7 +41,7 @@ jb inspectcode src/Compze.slnx --format=Html;Xml --output=reports/
 | Parameter | Description |
 |---|---|
 | `--output (-o)` | Output file path. Use `-` for stdout. |
-| `--format (-f)` | `Sarif` (default), `Xml`, `Html`, `Text`. Combine with `;`. |
+| `--format (-f)` | `Sarif` (default, recommended), `Xml`, `Html`, `Text`. Combine with `;`. |
 | `--severity (-e)` | Minimum severity: `INFO`, `HINT`, `SUGGESTION` (default), `WARNING`, `ERROR` |
 | `--project` | Wildcard to limit to specific projects, e.g. `--project=*Core` |
 | `--include/--exclude` | File masks using Ant-style wildcards (`**/*.cs`, etc.) |
@@ -146,8 +146,8 @@ Run against `src/Compze.slnx` at WARNING severity: **1,398 issues across 36 issu
 ## Practical Workflow
 
 1. **Commit** your current work
-2. **Inspect**: `jb inspectcode src/Compze.slnx --output=inspect-report.xml --format=Xml --severity=WARNING`
-3. **Analyze** the report — filter for specific TypeIds you want to address
+2. **Inspect**: `jb inspectcode src/Compze.slnx --output=inspect-report.sarif --severity=WARNING`
+3. **Analyze** the report in VS Code with the [SARIF Viewer extension](https://marketplace.visualstudio.com/items?itemName=MS-SARIFVscode.sarif-viewer), or use XML format for PowerShell analysis (see below)
 4. **Fix** either manually or with CleanupCode for style issues
 5. **Review** changes with `git diff`
 6. **Test**: `dotnet test src/Compze.slnx --no-build`
@@ -155,7 +155,9 @@ Run against `src/Compze.slnx` at WARNING severity: **1,398 issues across 36 issu
 
 For visibility reduction specifically, InspectCode identifies the targets but CleanupCode doesn't auto-fix them — those changes need to be made manually or with IDE refactoring.
 
-## Analyzing XML Reports with PowerShell
+## Analyzing Reports with PowerShell (XML format)
+
+SARIF is best for VS Code integration (clickable locations, filtering in the SARIF Viewer panel). Use XML format when you want to do bulk analysis in PowerShell:
 
 ```powershell
 # Load and summarize
