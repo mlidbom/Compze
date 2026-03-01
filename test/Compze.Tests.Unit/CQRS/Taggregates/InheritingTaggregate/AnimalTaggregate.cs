@@ -47,18 +47,18 @@ class DogTaggregate : AnimalTaggregate
 }
 
 
-public interface IAnimalTevent<out T> : ITaggregateIdentifyingTevent<T> where T : IAnimalTevent {}
+interface IAnimalTevent<out T> : ITaggregateIdentifyingTevent<T> where T : IAnimalTevent {}
 
-public interface IAnimalTevent : ITaggregateTevent
+interface IAnimalTevent : ITaggregateTevent
 {
 #pragma warning disable CA1715 // Nested event interface follows semantic events naming convention (compze.net/paradigms/semantic-events/event-naming.html)
    interface Born : IAnimalTevent, ITaggregateCreatedTevent{}
 #pragma warning restore CA1715
 }
 
-public class AnimalTevent<T>(T tevent) : TaggregateIdentifyingTevent<T>(tevent), IAnimalTevent<T> where T : IAnimalTevent{}
+class AnimalTevent<T>(T tevent) : TaggregateIdentifyingTevent<T>(tevent), IAnimalTevent<T> where T : IAnimalTevent{}
 
-public class AnimalTevent : TaggregateTevent, IAnimalTevent
+class AnimalTevent : TaggregateTevent, IAnimalTevent
 {
    protected AnimalTevent(){}
    AnimalTevent(TaggregateId taggregateId):base(taggregateId){ }

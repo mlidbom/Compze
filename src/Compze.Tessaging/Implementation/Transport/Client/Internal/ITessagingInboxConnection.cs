@@ -3,7 +3,7 @@ using Compze.Tessaging.Implementation.Abstractions;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Internal;
 
-public interface ITessagingInboxConnection
+interface ITessagingInboxConnection
 {
     TessageTypesInternal.EndpointInformation EndpointInformation { get; }
     void EnqueueForDelivery(IExactlyOnceTessage tessage);
