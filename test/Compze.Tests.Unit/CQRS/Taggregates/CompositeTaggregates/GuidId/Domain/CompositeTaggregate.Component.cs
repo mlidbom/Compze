@@ -14,7 +14,7 @@ partial class Component : CompositeTaggregate.Component<Component, ICompositeTag
            .For<ICompositeTaggregateTevent.Component.PropertyUpdated.Name>(e => Name = e.Name);
     }
 
-    readonly Component.Entity.CollectionManager _entities;
+    readonly Component.Entity.ICollectionManager _entities;
 
     public NestedComponent CComponent { get; private set; }
 

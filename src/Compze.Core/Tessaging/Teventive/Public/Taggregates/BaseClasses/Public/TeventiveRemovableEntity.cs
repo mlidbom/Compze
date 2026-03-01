@@ -33,10 +33,10 @@ public abstract class TeventiveRemovableEntity<TParent,
            .IgnoreUnhandled<TEntityRemovedTevent>();
     }
 
-    public new static CollectionManager CreateSelfManagingCollection(TParent parent)
-        => new(parent);
+    public new static ICollectionManager CreateSelfManagingCollection(TParent parent)
+        => new CollectionManager(parent);
 
-    public new class CollectionManager : Tentity<TParent, TParentTevent, TParentTeventImplementation, TEntity, TEntityId, TEntityTeventImplementation, TEntityTevent, TEntityCreatedTevent, TEntityTeventIdGetterSetter>.CollectionManager
+    internal new class CollectionManager : Tentity<TParent, TParentTevent, TParentTeventImplementation, TEntity, TEntityId, TEntityTeventImplementation, TEntityTevent, TEntityCreatedTevent, TEntityTeventIdGetterSetter>.CollectionManager
     {
         public CollectionManager(TParent parent): base(parent)
         {

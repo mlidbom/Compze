@@ -8,7 +8,7 @@ namespace Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId.Domain;
 class CompositeTaggregate : Taggregate<CompositeTaggregate, ICompositeTaggregateTevent, CompositeTaggregateTevent, ICompositeTaggregateTevent<ICompositeTaggregateTevent>, CompositeTaggregateTevent<CompositeTaggregateTevent>>
 {
    public string Name { get; private set; } = string.Empty;
-   readonly RemovableEntity.CollectionManager _entities;
+   readonly RemovableEntity.ICollectionManager _entities;
    public Component Component { get; private set; }
 
    public CompositeTaggregate(string name, TaggregateId id)
