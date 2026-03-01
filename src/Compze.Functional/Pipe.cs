@@ -21,38 +21,41 @@ namespace Compze.Functional;
 /// </summary>
 public static class Pipe
 {
-   extension<TThis>(TThis it)
+   ///<summary>passes <paramref name="it"/> to <paramref name="func"/> and returns the result. It is the pipe forward operator that is missing in C#. If you start using it, soon ._( will become the missing operator in your mind.</summary>
+   public static TResult _<TThis, TResult>(this TThis it, Func<TThis, TResult> func) => func(it);
+
+   ///<summary>Passes <paramref name="it"/> to <paramref name="tap"/> and returns <paramref name="it"/></summary>
+   public static T _tap<T>(this T it, Action<T> tap)
    {
-      ///<summary>passes <paramref name="it"/> to <paramref name="func"/> and returns the result. It is the pipe forward operator that is missing in C#. If you start using it, soon ._( will become the missing operator in your mind.</summary>
-      public TResult _<TResult>(Func<TThis, TResult> func) => func(it);
+      tap(it);
+      return it;
+   }
 
-      ///<summary>Passes <paramref name="it"/> to <paramref name="tap"/> and returns <paramref name="it"/></summary>
-      public TThis _tap(Action<TThis> tap)
-      {
-         tap(it);
-         return it;
-      }
+   ///<summary>An alias for <see cref="_tap{T}"/> which declares that your intent is to mutate the instance.</summary>
+   public static T _mutate<T>(this T it, Action<T> mutate) => it._tap(mutate);
 
-      ///<summary>An alias for <see cref="_tap{T}"/> which declares that your intent is to mutate the instance.</summary>
-      public TThis _mutate(Action<TThis> mutate) => it._tap(mutate);
+   ///<summary> Returns <paramref name="value"/>, ignoring the previous value.  Useful for chaining calls where a constant value is needed.</summary>
+   public static TResult _<TValue, TResult>(this TValue _, TResult value) => value;
 
-      ///<summary> Returns <paramref name="value"/>, ignoring the previous value.  Useful for things like returning `this` at the end of a pipeline.</summary>
-      public TResult _<TResult>(TResult value) => value;
+   ///<summary>Invokes <paramref name="func"/>, ignoring the previous value. Useful for chaining calls where the previous result is irrelevant.</summary>
+   public static TResult _<TValue, TResult>(this TValue _, Func<TResult> func) => func();
 
-      ///<summary> Returns <paramref name="value"/>, ignoring the previous value.  Useful for things like returning `this` at the end of a pipeline.</summary>
-      public TResult _then<TResult>(TResult value) => value;
+   ///<summary> Executes <paramref name="action"/>, ignoring the previous value, and returns a <see cref="unit"/>.  Useful for chaining statements that return void.</summary>
+   public static unit _<TValue>(this TValue _, Action action) => unit.From(action);
 
-      ///<summary>Invokes <paramref name="func"/>, ignoring the previous value. Useful for chaining calls where the previous result is irrelevant.</summary>
-      public TResult _<TResult>(Func<TResult> func) => func();
+   ///<summary> Returns <paramref name="value"/>, ignoring the previous value.  Useful for chaining calls where a constant value is needed.</summary>
+   public static TResult _then<TValue, TResult>(this TValue _, TResult value) => value;
 
-      ///<summary>Invokes <paramref name="func"/>, ignoring the previous value. Useful for chaining calls where the previous result is irrelevant.</summary>
-      public TResult _then<TResult>(Func<TResult> func) => func();
+   ///<summary>Invokes <paramref name="func"/>, ignoring the previous value. Useful for chaining calls where the previous result is irrelevant.</summary>
+   public static TResult _then<TValue, TResult>(this TValue _, Func<TResult> func) => func();
 
-      ///<summary>Mutates <paramref name="it"/> using <paramref name="mutate"/> and returns <paramref name="it"/></summary>
-      public async Task<TThis> _mutateAsync(Func<TThis, Task> mutate)
-      {
-         await mutate(it).ConfigureAwait(false);
-         return it;
-      }
+   ///<summary> Executes <paramref name="action"/>, ignoring the previous value, and returns a <see cref="unit"/>.  Useful for chaining statements that return void.</summary>
+   public static unit _then<TValue>(this TValue _, Action action) => unit.From(action);
+
+   ///<summary>Mutates <paramref name="it"/> using <paramref name="mutate"/> and returns <paramref name="it"/></summary>
+   public static async Task<T> _mutateAsync<T>(this T it, Func<T, Task> mutate)
+   {
+      await mutate(it).ConfigureAwait(false);
+      return it;
    }
 }
