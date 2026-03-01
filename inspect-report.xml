@@ -322,30 +322,22 @@
       <Issue TypeId="UnusedMethodReturnValue.Global" File="Compze.Core\Time\Testing\Public\TestingTimeSource.cs" Offset="1748-1754" Line="45" Message="Method 'RunAsync' return value is never used" />
     </Project>
     <Project Name="Compze.Serialization.Newtonsoft">
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Serialization.Newtonsoft\Private\CompositeContractResolver.cs" Offset="185-191" Line="8" Message="Class 'CompositeContractResolver' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Serialization.Newtonsoft\Private\DocumentDb\DocumentDbSerializer.cs" Offset="261-267" Line="8" Message="Class 'NewtonsoftDocumentDbSerializerRegistrar' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Serialization.Newtonsoft\Private\DocumentDb\DocumentDbSerializer.cs" Offset="328-334" Line="10" Message="Method 'NewtonsoftDocumentDbSerializer' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Serialization.Newtonsoft\Private\DocumentDb\DocumentDbSerializer.cs" Offset="512-518" Line="14" Message="Class 'NewtonsoftDocumentDbSerializer' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Serialization.Newtonsoft\Private\DocumentDb\DocumentDbSerializer.cs" Offset="621-627" Line="16" Message="Method 'RegisterWith' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Serialization.Newtonsoft\Private\IncludeMembersWithPrivateSetters.cs" Offset="144-150" Line="7" Message="Class 'IncludeMembersWithPrivateSetters' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Serialization.Newtonsoft\Private\RenamingDecorator.cs" Offset="192-198" Line="8" Message="Class 'RenamingDecorator' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Serialization.Newtonsoft\Private\RenamingDecorator.cs" Offset="644-650" Line="17" Message="Method 'ReplaceTypeNames' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Serialization.Newtonsoft\Private\RenamingDecorator.cs" Offset="1135-1141" Line="29" Message="Method 'RestoreTypeNames' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Serialization.Newtonsoft\Private\Tessaging\RemotableTessageSerializer.cs" Offset="312-318" Line="10" Message="Class 'RemotableTessageSerializerRegistrar' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Serialization.Newtonsoft\Private\Tessaging\RemotableTessageSerializer.cs" Offset="375-381" Line="12" Message="Method 'NewtonSoftRemotableTessageSerializer' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Serialization.Newtonsoft\Private\Tessaging\RemotableTessageSerializer.cs" Offset="579-585" Line="16" Message="Class 'NewtonsoftRemotableTessageSerializer' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Serialization.Newtonsoft\Private\Tessaging\RemotableTessageSerializer.cs" Offset="727-733" Line="20" Message="Method 'RegisterWith' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Serialization.Newtonsoft\Private\TeventStore\IgnoreTaggregateTeventDeclaredPropertiesBecauseTheyAreAlreadyStoredInSql.cs" Offset="230-236" Line="8" Message="Class 'IgnoreTaggregateTeventDeclaredPropertiesBecauseTheyAreAlreadyStoredInSql' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Serialization.Newtonsoft\Private\TeventStore\TeventStoreSerializer.cs" Offset="375-381" Line="11" Message="Class 'NewtonsoftTeventStoreSerializerRegistrar' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Serialization.Newtonsoft\Private\TeventStore\TeventStoreSerializer.cs" Offset="443-449" Line="13" Message="Method 'NewtonsoftTeventStoreSerializer' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Serialization.Newtonsoft\Private\TeventStore\TeventStoreSerializer.cs" Offset="909-915" Line="23" Message="Method 'RegisterWith' can be made internal" />
-      <Issue TypeId="MemberCanBePrivate.Global" File="Compze.Serialization.Newtonsoft\Private\TeventStore\TeventStoreSerializer.cs" Offset="1182-1188" Line="28" Message="Constructor 'NewtonsoftTeventStoreSerializer' can be made private" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Serialization.Newtonsoft\RenamingAndNonPublicMembersSupportingJSONSettings.cs" Offset="376-382" Line="10" Message="Class 'RenamingAndNonPublicMembersSupportingJsonSettings' can be made internal" />
-      <Issue TypeId="MemberCanBePrivate.Global" File="Compze.Serialization.Newtonsoft\RenamingAndNonPublicMembersSupportingJSONSettings.cs" Offset="453-459" Line="12" Message="Field 'Default' can be made private" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Serialization.Newtonsoft\RenamingAndNonPublicMembersSupportingJSONSettings.cs" Offset="784-790" Line="20" Message="Field 'DocumentDb' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Serialization.Newtonsoft\RenamingAndNonPublicMembersSupportingJSONSettings.cs" Offset="858-864" Line="22" Message="Field 'Tessaging' can be made internal" />
-      <Issue TypeId="UnusedMember.Global" File="Compze.Serialization.Newtonsoft\RenamingAndNonPublicMembersSupportingJSONSettings.cs" Offset="977-990" Line="24" Message="Field 'SharedObjects' is never used" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Serialization.Newtonsoft\RenamingAndNonPublicMembersSupportingJSONSettings.cs" Offset="1008-1014" Line="26" Message="Field 'TeventStore' can be made internal" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Serialization.Newtonsoft\Private\CompositeContractResolver.cs" Offset="185-193" Line="8" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Serialization.Newtonsoft\Private\DocumentDb\DocumentDbSerializer.cs" Offset="261-269" Line="8" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Serialization.Newtonsoft\Private\DocumentDb\DocumentDbSerializer.cs" Offset="514-522" Line="14" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
+      <Issue TypeId="MemberCanBeInternal" File="Compze.Serialization.Newtonsoft\Private\IJsonPropertyModifier.cs" Offset="144-150" Line="7" Message="Interface 'IJsonPropertyModifier' can be made internal" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Serialization.Newtonsoft\Private\IncludeMembersWithPrivateSetters.cs" Offset="144-152" Line="7" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Serialization.Newtonsoft\Private\RenamingDecorator.cs" Offset="192-200" Line="8" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
+      <Issue TypeId="MemberCanBeInternal" File="Compze.Serialization.Newtonsoft\Private\RenamingSupportingJsonSerializer.cs" Offset="186-192" Line="8" Message="Class 'RenamingSupportingJsonSerializer' can be made internal" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Serialization.Newtonsoft\Private\Tessaging\RemotableTessageSerializer.cs" Offset="312-320" Line="10" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Serialization.Newtonsoft\Private\Tessaging\RemotableTessageSerializer.cs" Offset="581-589" Line="16" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Serialization.Newtonsoft\Private\TeventStore\IgnoreTaggregateTeventDeclaredPropertiesBecauseTheyAreAlreadyStoredInSql.cs" Offset="230-238" Line="8" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Serialization.Newtonsoft\Private\TeventStore\TeventStoreSerializer.cs" Offset="375-383" Line="11" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
+      <Issue TypeId="MemberCanBeInternal" File="Compze.Serialization.Newtonsoft\Private\TeventStore\TeventStoreSerializer.cs" Offset="911-917" Line="23" Message="Method 'RegisterWith' can be made internal" />
+      <Issue TypeId="MemberCanBePrivate.Global" File="Compze.Serialization.Newtonsoft\Private\TeventStore\TeventStoreSerializer.cs" Offset="1184-1190" Line="28" Message="Constructor 'NewtonsoftTeventStoreSerializer' can be made private" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Serialization.Newtonsoft\RenamingAndNonPublicMembersSupportingJSONSettings.cs" Offset="376-384" Line="10" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
+      <Issue TypeId="MemberCanBePrivate.Global" File="Compze.Serialization.Newtonsoft\RenamingAndNonPublicMembersSupportingJSONSettings.cs" Offset="455-461" Line="12" Message="Field 'Default' can be made private" />
+      <Issue TypeId="UnusedMember.Global" File="Compze.Serialization.Newtonsoft\RenamingAndNonPublicMembersSupportingJSONSettings.cs" Offset="979-992" Line="24" Message="Field 'SharedObjects' is never used" />
     </Project>
     <Project Name="Compze.Sql.Common">
       <Issue TypeId="UnusedMember.Global" File="Compze.Sql.Common\Abstractions\IComposableDbConnection.cs" Offset="668-683" Line="30" Message="Method 'UseCommandAsync' is never used" />
@@ -361,230 +353,162 @@
       <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.Common\DbCommandCE.cs" Offset="1217-1223" Line="33" Message="Method 'PrepareAndExecuteNonQuery' can be made internal" />
       <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.Common\DbCommandCE.cs" Offset="1391-1397" Line="36" Message="Method 'PrepareAndExecuteNonQueryAsync' can be made internal" />
       <Issue TypeId="UnusedMember.Global" File="Compze.Sql.Common\DbCommandCE.cs" Offset="2276-2297" Line="51" Message="Method 'PrepareStatementAsync' is never used" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.Common\DbDataReaderCE.cs" Offset="76-82" Line="6" Message="Class 'DbDataReaderCE' can be made internal" />
-      <Issue TypeId="UnusedMember.Global" File="Compze.Sql.Common\DbDataReaderCE.cs" Offset="213-230" Line="9" Message="Method 'GetGuidFromString' is never used" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.Common\DbDataReaderCE.cs" Offset="310-316" Line="10" Message="Method 'ForEachSuccessfulRead' can be made internal" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Sql.Common\DbDataReaderCE.cs" Offset="76-84" Line="6" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
+      <Issue TypeId="UnusedMember.Global" File="Compze.Sql.Common\DbDataReaderCE.cs" Offset="215-232" Line="9" Message="Method 'GetGuidFromString' is never used" />
     </Project>
     <Project Name="Compze.Sql.MicrosoftSql">
       <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MicrosoftSql\CompzeMsSqlConnection.cs" Offset="539-545" Line="17" Message="Constructor 'CompzeMsSqlConnection' can be made internal" />
       <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MicrosoftSql\IMsSqlConnectionPool.cs" Offset="734-740" Line="20" Message="Constructor 'MsSqlConnectionPool' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MicrosoftSql\Private\DocumentDb\MsSqlDocumentDbSqlLayer.cs" Offset="678-684" Line="19" Message="Class 'MsSqlDocumentDbSqlLayer' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MicrosoftSql\Private\DocumentDb\MsSqlDocumentDbSqlLayer.cs" Offset="752-758" Line="21" Message="Method 'RegisterWith' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MicrosoftSql\Private\DocumentDb\MsSqlDocumentDbSqlLayer.Schema.cs" Offset="166-172" Line="5" Message="Class 'MsSqlDocumentDbSqlLayer' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MicrosoftSql\Private\DocumentDb\MsSqlDocumentDbSqlLayer.Schema.cs" Offset="218-224" Line="7" Message="Constant 'SchemaCreationSql' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MicrosoftSql\Private\MsSqlCommandExtensions.cs" Offset="157-163" Line="8" Message="Class 'MsSqlCommandExtensions' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MicrosoftSql\Private\MsSqlCommandExtensions.cs" Offset="207-213" Line="10" Message="Method 'ExecuteReaderAndSelect' can be made internal" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Sql.MicrosoftSql\Private\DocumentDb\MsSqlDocumentDbSqlLayer.cs" Offset="678-686" Line="19" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Sql.MicrosoftSql\Private\DocumentDb\MsSqlDocumentDbSqlLayer.Schema.cs" Offset="166-174" Line="5" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Sql.MicrosoftSql\Private\MsSqlCommandExtensions.cs" Offset="157-165" Line="8" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
+      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MicrosoftSql\Private\MsSqlSqlLayerSchemaManager.cs" Offset="442-448" Line="13" Message="Class 'MsSqlSqlLayerSchemaManager' can be made internal" />
       <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MicrosoftSql\Private\MsSqlSqlLayerSchemaManager.cs" Offset="526-532" Line="15" Message="Method 'RegisterWith' can be made internal" />
       <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MicrosoftSql\Private\MsSqlSqlLayerSchemaManager.cs" Offset="1150-1156" Line="28" Message="Method 'EnsureSchemaInitializedAsync' can be made internal" />
       <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MicrosoftSql\Private\MsSqlSqlLayerSchemaManager.cs" Offset="1698-1704" Line="47" Message="Method 'EnsureSchemaInitialized' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MicrosoftSql\Private\SqlCommandParameterExtensions.cs" Offset="116-122" Line="7" Message="Class 'SqlCommandParameterExtensions' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MicrosoftSql\Private\SqlCommandParameterExtensions.cs" Offset="173-179" Line="9" Message="Method 'AddParameter' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MicrosoftSql\Private\SqlCommandParameterExtensions.cs" Offset="314-320" Line="10" Message="Method 'AddParameter' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MicrosoftSql\Private\SqlCommandParameterExtensions.cs" Offset="469-475" Line="11" Message="Method 'AddDateTime2Parameter' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MicrosoftSql\Private\SqlCommandParameterExtensions.cs" Offset="630-636" Line="12" Message="Method 'AddNVarcharParameter' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MicrosoftSql\Private\SqlCommandParameterExtensions.cs" Offset="807-813" Line="13" Message="Method 'AddNVarcharMaxParameter' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MicrosoftSql\Private\SqlCommandParameterExtensions.cs" Offset="1317-1323" Line="23" Message="Method 'AddParameter' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MicrosoftSql\Private\SqlCommandParameterExtensions.cs" Offset="1496-1502" Line="25" Message="Method 'AddNullableParameter' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MicrosoftSql\Private\SqlExceptions.cs" Offset="238-244" Line="6" Message="Class 'SqlExceptions' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MicrosoftSql\Private\SqlExceptions.cs" Offset="279-285" Line="8" Message="Class 'MsSql' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MicrosoftSql\Private\SqlExceptions.cs" Offset="377-383" Line="11" Message="Method 'IsPrimaryKeyViolation' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MicrosoftSql\Private\Tessaging\MsSqlInboxSqlLayer.cs" Offset="413-419" Line="12" Message="Class 'MsSqlInboxSqlLayer' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MicrosoftSql\Private\Tessaging\MsSqlInboxTessageStorage.Schema.cs" Offset="170-176" Line="5" Message="Class 'MsSqlInboxSqlLayer' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MicrosoftSql\Private\Tessaging\MsSqlInboxTessageStorage.Schema.cs" Offset="217-223" Line="7" Message="Constant 'SchemaCreationSql' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MicrosoftSql\Private\Tessaging\MsSqlOutboxSqlLayer.cs" Offset="656-662" Line="16" Message="Class 'MsSqlOutboxSqlLayer' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MicrosoftSql\Private\Tessaging\MsSqlOutboxSqlLayer.Schema.cs" Offset="296-302" Line="6" Message="Class 'MsSqlOutboxSqlLayer' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MicrosoftSql\Private\Tessaging\MsSqlOutboxSqlLayer.Schema.cs" Offset="344-350" Line="8" Message="Constant 'SchemaCreationSql' can be made internal" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Sql.MicrosoftSql\Private\SqlCommandParameterExtensions.cs" Offset="116-124" Line="7" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Sql.MicrosoftSql\Private\SqlExceptions.cs" Offset="238-246" Line="6" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Sql.MicrosoftSql\Private\Tessaging\MsSqlInboxSqlLayer.cs" Offset="413-421" Line="12" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Sql.MicrosoftSql\Private\Tessaging\MsSqlInboxTessageStorage.Schema.cs" Offset="170-178" Line="5" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Sql.MicrosoftSql\Private\Tessaging\MsSqlOutboxSqlLayer.cs" Offset="656-664" Line="16" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Sql.MicrosoftSql\Private\Tessaging\MsSqlOutboxSqlLayer.Schema.cs" Offset="296-304" Line="6" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
+      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MicrosoftSql\Private\TEventStore\MsSqlTeventStoreConnectionManager.cs" Offset="166-172" Line="8" Message="Class 'MsSqlTeventStoreConnectionManager' can be made internal" />
       <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MicrosoftSql\Private\TEventStore\MsSqlTeventStoreConnectionManager.cs" Offset="333-339" Line="12" Message="Method 'UseConnection' can be made internal" />
       <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MicrosoftSql\Private\TEventStore\MsSqlTeventStoreConnectionManager.cs" Offset="517-523" Line="18" Message="Method 'UseCommand' can be made internal" />
       <Issue TypeId="MemberCanBePrivate.Global" File="Compze.Sql.MicrosoftSql\Private\TEventStore\MsSqlTeventStoreConnectionManager.cs" Offset="616-622" Line="19" Message="Method 'UseCommand' can be made private" />
       <Issue TypeId="UnusedMember.Global" File="Compze.Sql.MicrosoftSql\Private\TEventStore\MsSqlTeventStoreConnectionManager.cs" Offset="851-861" Line="25" Message="Method 'UseCommand' is never used" />
       <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MicrosoftSql\Private\TEventStore\MsSqlTeventStoreConnectionManager.cs" Offset="954-960" Line="26" Message="Method 'UseCommand' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MicrosoftSql\Private\TEventStore\MsSqlTeventStoreSqlLayer.Read.cs" Offset="500-506" Line="15" Message="Class 'MsSqlTeventStoreSqlLayer' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MicrosoftSql\Private\TEventStore\MsSqlTeventStoreSqlLayer.Schema.cs" Offset="164-170" Line="5" Message="Class 'MsSqlTeventStoreSqlLayer' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MicrosoftSql\Private\TEventStore\MsSqlTeventStoreSqlLayer.Schema.cs" Offset="217-223" Line="7" Message="Constant 'SchemaCreationSql' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MicrosoftSql\Private\TEventStore\MsSqlTeventStoreSqlLayer.Write.cs" Offset="642-648" Line="18" Message="Class 'MsSqlTeventStoreSqlLayer' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MicrosoftSql\Wiring\MsSqlDocumentDbRegistrar.cs" Offset="105-111" Line="5" Message="Class 'MsSqlDocumentDbRegistrar' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MicrosoftSql\Wiring\MsSqlDocumentDbRegistrar.cs" Offset="157-163" Line="7" Message="Method 'MsSqlDocumentDbSqlLayer' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MicrosoftSql\Wiring\MsSqlSqlLayerSchemaManagerRegistrar.cs" Offset="105-111" Line="5" Message="Class 'MsSqlSqlLayerSchemaManagerRegistrar' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MicrosoftSql\Wiring\MsSqlSqlLayerSchemaManagerRegistrar.cs" Offset="168-174" Line="7" Message="Method 'MsSqlSqlLayerSchemaManager' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MicrosoftSql\Wiring\MsSqlTessagingRegistrar.cs" Offset="288-294" Line="9" Message="Class 'MsSqlTessagingRegistrar' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MicrosoftSql\Wiring\MsSqlTessagingRegistrar.cs" Offset="339-345" Line="11" Message="Method 'MsSqlTessagingSqlLayer' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MicrosoftSql\Wiring\MsSqlTeventStoreRegistrar.cs" Offset="325-331" Line="9" Message="Class 'MsSqlTeventStoreRegistrar' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MicrosoftSql\Wiring\MsSqlTeventStoreRegistrar.cs" Offset="378-384" Line="11" Message="Method 'MsSqlTeventStoreSqlLayer' can be made internal" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Sql.MicrosoftSql\Private\TEventStore\MsSqlTeventStoreSqlLayer.Read.cs" Offset="500-508" Line="15" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Sql.MicrosoftSql\Private\TEventStore\MsSqlTeventStoreSqlLayer.Schema.cs" Offset="164-172" Line="5" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Sql.MicrosoftSql\Private\TEventStore\MsSqlTeventStoreSqlLayer.Write.cs" Offset="642-650" Line="18" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Sql.MicrosoftSql\Wiring\MsSqlDocumentDbRegistrar.cs" Offset="105-113" Line="5" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Sql.MicrosoftSql\Wiring\MsSqlSqlLayerSchemaManagerRegistrar.cs" Offset="105-113" Line="5" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Sql.MicrosoftSql\Wiring\MsSqlTessagingRegistrar.cs" Offset="288-296" Line="9" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Sql.MicrosoftSql\Wiring\MsSqlTeventStoreRegistrar.cs" Offset="325-333" Line="9" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
     </Project>
     <Project Name="Compze.Sql.MySql">
       <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MySql\CompzeMySqlConnection.cs" Offset="534-540" Line="17" Message="Constructor 'CompzeMySqlConnection' can be made internal" />
       <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MySql\MySqlConnectionPool.cs" Offset="729-735" Line="20" Message="Constructor 'MySqlConnectionPool' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MySql\Private\DocumentDb\MySqlDocumentDbSqlLayer.cs" Offset="515-521" Line="15" Message="Class 'MySqlDocumentDbSqlLayer' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MySql\Private\DocumentDb\MySqlDocumentDbSqlLayer.cs" Offset="698-704" Line="20" Message="Constructor 'MySqlDocumentDbSqlLayer' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MySql\Private\DocumentDb\MySqlDocumentDbSqlLayer.Schema.cs" Offset="159-165" Line="5" Message="Class 'MySqlDocumentDbSqlLayer' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MySql\Private\DocumentDb\MySqlDocumentDbSqlLayer.Schema.cs" Offset="211-217" Line="7" Message="Constant 'SchemaCreationSql' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MySql\Private\MySqlCommandExtensions.cs" Offset="148-154" Line="8" Message="Class 'MyMySqlCommandExtensions' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MySql\Private\MySqlCommandExtensions.cs" Offset="200-206" Line="10" Message="Method 'ExecuteReaderAndSelect' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MySql\Private\MySqlCommandParameterExtensions.cs" Offset="107-113" Line="7" Message="Class 'MySqlCommandParameterExtensions' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MySql\Private\MySqlCommandParameterExtensions.cs" Offset="166-172" Line="9" Message="Method 'AddParameter' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MySql\Private\MySqlCommandParameterExtensions.cs" Offset="315-321" Line="10" Message="Method 'AddParameter' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MySql\Private\MySqlCommandParameterExtensions.cs" Offset="464-470" Line="11" Message="Method 'AddDateTime2Parameter' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MySql\Private\MySqlCommandParameterExtensions.cs" Offset="630-636" Line="12" Message="Method 'AddVarcharParameter' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MySql\Private\MySqlCommandParameterExtensions.cs" Offset="813-819" Line="13" Message="Method 'AddMediumTextParameter' can be made internal" />
-      <Issue TypeId="MemberCanBePrivate.Global" File="Compze.Sql.MySql\Private\MySqlCommandParameterExtensions.cs" Offset="986-992" Line="15" Message="Method 'AddParameter' can be made private" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MySql\Private\MySqlCommandParameterExtensions.cs" Offset="1351-1357" Line="23" Message="Method 'AddParameter' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MySql\Private\MySqlCommandParameterExtensions.cs" Offset="1538-1544" Line="25" Message="Method 'AddNullableParameter' can be made internal" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Sql.MySql\Private\DocumentDb\MySqlDocumentDbSqlLayer.cs" Offset="515-523" Line="15" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Sql.MySql\Private\DocumentDb\MySqlDocumentDbSqlLayer.Schema.cs" Offset="159-167" Line="5" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Sql.MySql\Private\MySqlCommandExtensions.cs" Offset="148-156" Line="8" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Sql.MySql\Private\MySqlCommandParameterExtensions.cs" Offset="107-115" Line="7" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
+      <Issue TypeId="MemberCanBePrivate.Global" File="Compze.Sql.MySql\Private\MySqlCommandParameterExtensions.cs" Offset="988-994" Line="15" Message="Method 'AddParameter' can be made private" />
+      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MySql\Private\MySqlSqlLayerSchemaManager.cs" Offset="414-420" Line="13" Message="Class 'MySqlSqlLayerSchemaManager' can be made internal" />
       <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MySql\Private\MySqlSqlLayerSchemaManager.cs" Offset="498-504" Line="15" Message="Method 'RegisterWith' can be made internal" />
       <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MySql\Private\MySqlSqlLayerSchemaManager.cs" Offset="1122-1128" Line="28" Message="Method 'EnsureSchemaInitializedAsync' can be made internal" />
       <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MySql\Private\MySqlSqlLayerSchemaManager.cs" Offset="1856-1862" Line="46" Message="Method 'EnsureSchemaInitialized' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MySql\Private\Tessaging\MySqlInboxSqlLayer.cs" Offset="407-413" Line="12" Message="Class 'MySqlInboxSqlLayer' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MySql\Private\Tessaging\MySqlInboxTessageStorage.Schema.cs" Offset="157-163" Line="5" Message="Class 'MySqlInboxSqlLayer' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MySql\Private\Tessaging\MySqlInboxTessageStorage.Schema.cs" Offset="251-257" Line="9" Message="Constant 'SchemaCreationSql' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MySql\Private\Tessaging\MySqlOutboxSqlLayer.cs" Offset="649-655" Line="16" Message="Class 'MySqlOutboxSqlLayer' can be made internal" />
-      <Issue TypeId="UnnecessaryWhitespace" File="Compze.Sql.MySql\Private\Tessaging\MySqlOutboxSqlLayer.cs" Offset="5381-5387" Line="103" Message="Unnecessary whitespace" />
-      <Issue TypeId="UnnecessaryWhitespace" File="Compze.Sql.MySql\Private\Tessaging\MySqlOutboxSqlLayer.cs" Offset="5547-5559" Line="108" Message="Unnecessary whitespace" />
-      <Issue TypeId="UnnecessaryWhitespace" File="Compze.Sql.MySql\Private\Tessaging\MySqlOutboxSqlLayer.cs" Offset="6606-6618" Line="128" Message="Unnecessary whitespace" />
-      <Issue TypeId="UnnecessaryWhitespace" File="Compze.Sql.MySql\Private\Tessaging\MySqlOutboxSqlLayer.cs" Offset="7207-7219" Line="140" Message="Unnecessary whitespace" />
-      <Issue TypeId="UnnecessaryWhitespace" File="Compze.Sql.MySql\Private\Tessaging\MySqlOutboxSqlLayer.cs" Offset="7559-7571" Line="151" Message="Unnecessary whitespace" />
-      <Issue TypeId="UnnecessaryWhitespace" File="Compze.Sql.MySql\Private\Tessaging\MySqlOutboxSqlLayer.cs" Offset="8531-8543" Line="170" Message="Unnecessary whitespace" />
-      <Issue TypeId="UnnecessaryWhitespace" File="Compze.Sql.MySql\Private\Tessaging\MySqlOutboxSqlLayer.cs" Offset="9132-9144" Line="182" Message="Unnecessary whitespace" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MySql\Private\Tessaging\MySqlOutboxSqlLayer.Schema.cs" Offset="274-280" Line="6" Message="Class 'MySqlOutboxSqlLayer' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MySql\Private\Tessaging\MySqlOutboxSqlLayer.Schema.cs" Offset="369-375" Line="10" Message="Constant 'SchemaCreationSql' can be made internal" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Sql.MySql\Private\Tessaging\MySqlInboxSqlLayer.cs" Offset="407-415" Line="12" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Sql.MySql\Private\Tessaging\MySqlInboxTessageStorage.Schema.cs" Offset="157-165" Line="5" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Sql.MySql\Private\Tessaging\MySqlOutboxSqlLayer.cs" Offset="649-657" Line="16" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
+      <Issue TypeId="UnnecessaryWhitespace" File="Compze.Sql.MySql\Private\Tessaging\MySqlOutboxSqlLayer.cs" Offset="5383-5389" Line="103" Message="Unnecessary whitespace" />
+      <Issue TypeId="UnnecessaryWhitespace" File="Compze.Sql.MySql\Private\Tessaging\MySqlOutboxSqlLayer.cs" Offset="5549-5561" Line="108" Message="Unnecessary whitespace" />
+      <Issue TypeId="UnnecessaryWhitespace" File="Compze.Sql.MySql\Private\Tessaging\MySqlOutboxSqlLayer.cs" Offset="6608-6620" Line="128" Message="Unnecessary whitespace" />
+      <Issue TypeId="UnnecessaryWhitespace" File="Compze.Sql.MySql\Private\Tessaging\MySqlOutboxSqlLayer.cs" Offset="7209-7221" Line="140" Message="Unnecessary whitespace" />
+      <Issue TypeId="UnnecessaryWhitespace" File="Compze.Sql.MySql\Private\Tessaging\MySqlOutboxSqlLayer.cs" Offset="7561-7573" Line="151" Message="Unnecessary whitespace" />
+      <Issue TypeId="UnnecessaryWhitespace" File="Compze.Sql.MySql\Private\Tessaging\MySqlOutboxSqlLayer.cs" Offset="8533-8545" Line="170" Message="Unnecessary whitespace" />
+      <Issue TypeId="UnnecessaryWhitespace" File="Compze.Sql.MySql\Private\Tessaging\MySqlOutboxSqlLayer.cs" Offset="9134-9146" Line="182" Message="Unnecessary whitespace" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Sql.MySql\Private\Tessaging\MySqlOutboxSqlLayer.Schema.cs" Offset="274-282" Line="6" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
+      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MySql\Private\TEventStore\MySqlTeventStoreConnectionManager.cs" Offset="157-163" Line="8" Message="Class 'MySqlTeventStoreConnectionManager' can be made internal" />
       <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MySql\Private\TEventStore\MySqlTeventStoreConnectionManager.cs" Offset="324-330" Line="12" Message="Method 'UseConnection' can be made internal" />
       <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MySql\Private\TEventStore\MySqlTeventStoreConnectionManager.cs" Offset="508-514" Line="18" Message="Method 'UseCommand' can be made internal" />
       <Issue TypeId="MemberCanBePrivate.Global" File="Compze.Sql.MySql\Private\TEventStore\MySqlTeventStoreConnectionManager.cs" Offset="609-615" Line="19" Message="Method 'UseCommand' can be made private" />
       <Issue TypeId="UnusedMember.Global" File="Compze.Sql.MySql\Private\TEventStore\MySqlTeventStoreConnectionManager.cs" Offset="846-856" Line="25" Message="Method 'UseCommand' is never used" />
       <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MySql\Private\TEventStore\MySqlTeventStoreConnectionManager.cs" Offset="951-957" Line="26" Message="Method 'UseCommand' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MySql\Private\TEventStore\MySqlTeventStoreSqlLayer.Read.cs" Offset="442-448" Line="13" Message="Class 'MySqlTeventStoreSqlLayer' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MySql\Private\TEventStore\MySqlTeventStoreSqlLayer.Schema.cs" Offset="157-163" Line="5" Message="Class 'MySqlTeventStoreSqlLayer' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MySql\Private\TEventStore\MySqlTeventStoreSqlLayer.Schema.cs" Offset="257-263" Line="9" Message="Constant 'SchemaCreationSql' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MySql\Private\TEventStore\MySqlTeventStoreSqlLayer.Write.cs" Offset="682-688" Line="17" Message="Class 'MySqlTeventStoreSqlLayer' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MySql\SqlExceptions.cs" Offset="221-227" Line="6" Message="Class 'SqlExceptions' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MySql\SqlExceptions.cs" Offset="347-353" Line="9" Message="Class 'MySql' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MySql\SqlExceptions.cs" Offset="445-451" Line="12" Message="Method 'IsPrimaryKeyViolation' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MySql\Wiring\MySqlDocumentDbRegistrar.cs" Offset="269-275" Line="9" Message="Class 'MySqlDocumentDbRegistrar' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MySql\Wiring\MySqlDocumentDbRegistrar.cs" Offset="321-327" Line="11" Message="Method 'MySqlDocumentDbSqlLayer' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MySql\Wiring\MySqlSqlLayerSchemaManagerRegistrar.cs" Offset="98-104" Line="5" Message="Class 'PgSqlSqlLayerSchemaManagerRegistrar' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MySql\Wiring\MySqlSqlLayerSchemaManagerRegistrar.cs" Offset="161-167" Line="7" Message="Method 'MySqlSqlLayerSchemaManager' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MySql\Wiring\MySqlTessagingRegistrar.cs" Offset="267-273" Line="9" Message="Class 'MySqlTessagingRegistrar' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MySql\Wiring\MySqlTessagingRegistrar.cs" Offset="318-324" Line="11" Message="Method 'MySqlTessagingSqlLayer' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MySql\Wiring\MySqlTeventStoreRegistrar.cs" Offset="304-310" Line="9" Message="Class 'MySqlTeventStoreRegistrar' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.MySql\Wiring\MySqlTeventStoreRegistrar.cs" Offset="357-363" Line="11" Message="Method 'MySqlTeventStoreSqlLayer' can be made internal" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Sql.MySql\Private\TEventStore\MySqlTeventStoreSqlLayer.Read.cs" Offset="442-450" Line="13" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Sql.MySql\Private\TEventStore\MySqlTeventStoreSqlLayer.Schema.cs" Offset="157-165" Line="5" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Sql.MySql\Private\TEventStore\MySqlTeventStoreSqlLayer.Write.cs" Offset="682-690" Line="17" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Sql.MySql\SqlExceptions.cs" Offset="221-229" Line="6" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Sql.MySql\Wiring\MySqlDocumentDbRegistrar.cs" Offset="269-277" Line="9" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Sql.MySql\Wiring\MySqlSqlLayerSchemaManagerRegistrar.cs" Offset="98-106" Line="5" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Sql.MySql\Wiring\MySqlTessagingRegistrar.cs" Offset="267-275" Line="9" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Sql.MySql\Wiring\MySqlTeventStoreRegistrar.cs" Offset="304-312" Line="9" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
     </Project>
     <Project Name="Compze.Sql.PostgreSql">
       <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.PostgreSql\PgSqlConnectionPool.cs" Offset="761-767" Line="20" Message="Constructor 'PgSqlConnectionPool' can be made internal" />
       <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.PostgreSql\PgSqlConnectionPool.cs" Offset="856-862" Line="22" Message="Constructor 'PgSqlConnectionPool' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.PostgreSql\Private\DocumentDb\PgSqlDocumentDbSqlLayer.cs" Offset="504-510" Line="15" Message="Class 'PgSqlDocumentDbSqlLayer' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.PostgreSql\Private\DocumentDb\PgSqlDocumentDbSqlLayer.cs" Offset="687-693" Line="20" Message="Constructor 'PgSqlDocumentDbSqlLayer' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.PostgreSql\Private\DocumentDb\PgSqlDocumentDbSqlLayer.Schema.cs" Offset="164-170" Line="5" Message="Class 'PgSqlDocumentDbSqlLayer' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.PostgreSql\Private\DocumentDb\PgSqlDocumentDbSqlLayer.Schema.cs" Offset="216-222" Line="7" Message="Constant 'SchemaCreationSql' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.PostgreSql\Private\PgSqlCommandExtensions.cs" Offset="137-143" Line="8" Message="Class 'MyNpgsqlCommandExtensions' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.PostgreSql\Private\PgSqlCommandExtensions.cs" Offset="190-196" Line="10" Message="Method 'ExecuteReaderAndSelect' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.PostgreSql\Private\PgSqlCommandParameterExtensions.cs" Offset="150-156" Line="9" Message="Class 'NpgsqlCommandParameterExtensions' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.PostgreSql\Private\PgSqlCommandParameterExtensions.cs" Offset="210-216" Line="11" Message="Method 'AddParameter' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.PostgreSql\Private\PgSqlCommandParameterExtensions.cs" Offset="364-370" Line="12" Message="Method 'AddParameter' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.PostgreSql\Private\PgSqlCommandParameterExtensions.cs" Offset="516-522" Line="13" Message="Method 'AddTimestampWithTimeZone' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.PostgreSql\Private\PgSqlCommandParameterExtensions.cs" Offset="715-721" Line="14" Message="Method 'AddVarcharParameter' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.PostgreSql\Private\PgSqlCommandParameterExtensions.cs" Offset="899-905" Line="15" Message="Method 'AddMediumTextParameter' can be made internal" />
-      <Issue TypeId="MemberCanBePrivate.Global" File="Compze.Sql.PostgreSql\Private\PgSqlCommandParameterExtensions.cs" Offset="1069-1075" Line="17" Message="Method 'AddParameter' can be made private" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.PostgreSql\Private\PgSqlCommandParameterExtensions.cs" Offset="1441-1447" Line="25" Message="Method 'AddParameter' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.PostgreSql\Private\PgSqlCommandParameterExtensions.cs" Offset="1632-1638" Line="27" Message="Method 'AddNullableParameter' can be made internal" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Sql.PostgreSql\Private\DocumentDb\PgSqlDocumentDbSqlLayer.cs" Offset="504-512" Line="15" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Sql.PostgreSql\Private\DocumentDb\PgSqlDocumentDbSqlLayer.Schema.cs" Offset="164-172" Line="5" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Sql.PostgreSql\Private\PgSqlCommandExtensions.cs" Offset="137-145" Line="8" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Sql.PostgreSql\Private\PgSqlCommandParameterExtensions.cs" Offset="150-158" Line="9" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
+      <Issue TypeId="MemberCanBePrivate.Global" File="Compze.Sql.PostgreSql\Private\PgSqlCommandParameterExtensions.cs" Offset="1071-1077" Line="17" Message="Method 'AddParameter' can be made private" />
+      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.PostgreSql\Private\PgSqlSqlLayerSchemaManager.cs" Offset="434-440" Line="13" Message="Class 'PgSqlSqlLayerSchemaManager' can be made internal" />
       <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.PostgreSql\Private\PgSqlSqlLayerSchemaManager.cs" Offset="518-524" Line="15" Message="Method 'RegisterWith' can be made internal" />
       <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.PostgreSql\Private\PgSqlSqlLayerSchemaManager.cs" Offset="1142-1148" Line="28" Message="Method 'EnsureSchemaInitializedAsync' can be made internal" />
       <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.PostgreSql\Private\PgSqlSqlLayerSchemaManager.cs" Offset="1876-1882" Line="46" Message="Method 'EnsureSchemaInitialized' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.PostgreSql\Private\Tessaging\PgSqlInboxSqlLayer.cs" Offset="412-418" Line="12" Message="Class 'PgSqlInboxSqlLayer' can be made internal" />
-      <Issue TypeId="UnnecessaryWhitespace" File="Compze.Sql.PostgreSql\Private\Tessaging\PgSqlInboxSqlLayer.cs" Offset="2007-2008" Line="39" Message="Unnecessary whitespace" />
-      <Issue TypeId="UnnecessaryWhitespace" File="Compze.Sql.PostgreSql\Private\Tessaging\PgSqlInboxSqlLayer.cs" Offset="2074-2075" Line="40" Message="Unnecessary whitespace" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.PostgreSql\Private\Tessaging\PgSqlInboxSqlLayer.Schema.cs" Offset="168-174" Line="5" Message="Class 'PgSqlInboxSqlLayer' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.PostgreSql\Private\Tessaging\PgSqlInboxSqlLayer.Schema.cs" Offset="258-264" Line="9" Message="Constant 'SchemaCreationSql' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.PostgreSql\Private\Tessaging\PgSqlOutboxSqlLayer.cs" Offset="674-680" Line="17" Message="Class 'PgSqlOutboxSqlLayer' can be made internal" />
-      <Issue TypeId="UnnecessaryWhitespace" File="Compze.Sql.PostgreSql\Private\Tessaging\PgSqlOutboxSqlLayer.cs" Offset="5725-5731" Line="108" Message="Unnecessary whitespace" />
-      <Issue TypeId="UnnecessaryWhitespace" File="Compze.Sql.PostgreSql\Private\Tessaging\PgSqlOutboxSqlLayer.cs" Offset="5891-5903" Line="113" Message="Unnecessary whitespace" />
-      <Issue TypeId="UnnecessaryWhitespace" File="Compze.Sql.PostgreSql\Private\Tessaging\PgSqlOutboxSqlLayer.cs" Offset="7006-7018" Line="134" Message="Unnecessary whitespace" />
-      <Issue TypeId="UnnecessaryWhitespace" File="Compze.Sql.PostgreSql\Private\Tessaging\PgSqlOutboxSqlLayer.cs" Offset="7607-7619" Line="146" Message="Unnecessary whitespace" />
-      <Issue TypeId="UnnecessaryWhitespace" File="Compze.Sql.PostgreSql\Private\Tessaging\PgSqlOutboxSqlLayer.cs" Offset="7959-7971" Line="157" Message="Unnecessary whitespace" />
-      <Issue TypeId="UnnecessaryWhitespace" File="Compze.Sql.PostgreSql\Private\Tessaging\PgSqlOutboxSqlLayer.cs" Offset="8984-8996" Line="177" Message="Unnecessary whitespace" />
-      <Issue TypeId="UnnecessaryWhitespace" File="Compze.Sql.PostgreSql\Private\Tessaging\PgSqlOutboxSqlLayer.cs" Offset="9585-9597" Line="189" Message="Unnecessary whitespace" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.PostgreSql\Private\Tessaging\PgSqlOutboxSqlLayer.Schema.cs" Offset="292-298" Line="6" Message="Class 'PgSqlOutboxSqlLayer' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.PostgreSql\Private\Tessaging\PgSqlOutboxSqlLayer.Schema.cs" Offset="383-389" Line="10" Message="Constant 'SchemaCreationSql' can be made internal" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Sql.PostgreSql\Private\Tessaging\PgSqlInboxSqlLayer.cs" Offset="412-420" Line="12" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
+      <Issue TypeId="UnnecessaryWhitespace" File="Compze.Sql.PostgreSql\Private\Tessaging\PgSqlInboxSqlLayer.cs" Offset="2009-2010" Line="39" Message="Unnecessary whitespace" />
+      <Issue TypeId="UnnecessaryWhitespace" File="Compze.Sql.PostgreSql\Private\Tessaging\PgSqlInboxSqlLayer.cs" Offset="2076-2077" Line="40" Message="Unnecessary whitespace" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Sql.PostgreSql\Private\Tessaging\PgSqlInboxSqlLayer.Schema.cs" Offset="168-176" Line="5" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Sql.PostgreSql\Private\Tessaging\PgSqlOutboxSqlLayer.cs" Offset="674-682" Line="17" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
+      <Issue TypeId="UnnecessaryWhitespace" File="Compze.Sql.PostgreSql\Private\Tessaging\PgSqlOutboxSqlLayer.cs" Offset="5727-5733" Line="108" Message="Unnecessary whitespace" />
+      <Issue TypeId="UnnecessaryWhitespace" File="Compze.Sql.PostgreSql\Private\Tessaging\PgSqlOutboxSqlLayer.cs" Offset="5893-5905" Line="113" Message="Unnecessary whitespace" />
+      <Issue TypeId="UnnecessaryWhitespace" File="Compze.Sql.PostgreSql\Private\Tessaging\PgSqlOutboxSqlLayer.cs" Offset="7008-7020" Line="134" Message="Unnecessary whitespace" />
+      <Issue TypeId="UnnecessaryWhitespace" File="Compze.Sql.PostgreSql\Private\Tessaging\PgSqlOutboxSqlLayer.cs" Offset="7609-7621" Line="146" Message="Unnecessary whitespace" />
+      <Issue TypeId="UnnecessaryWhitespace" File="Compze.Sql.PostgreSql\Private\Tessaging\PgSqlOutboxSqlLayer.cs" Offset="7961-7973" Line="157" Message="Unnecessary whitespace" />
+      <Issue TypeId="UnnecessaryWhitespace" File="Compze.Sql.PostgreSql\Private\Tessaging\PgSqlOutboxSqlLayer.cs" Offset="8986-8998" Line="177" Message="Unnecessary whitespace" />
+      <Issue TypeId="UnnecessaryWhitespace" File="Compze.Sql.PostgreSql\Private\Tessaging\PgSqlOutboxSqlLayer.cs" Offset="9587-9599" Line="189" Message="Unnecessary whitespace" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Sql.PostgreSql\Private\Tessaging\PgSqlOutboxSqlLayer.Schema.cs" Offset="292-300" Line="6" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
+      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.PostgreSql\Private\TEventStore\PgSqlTeventStoreConnectionManager.cs" Offset="146-152" Line="8" Message="Class 'PgSqlTeventStoreConnectionManager' can be made internal" />
       <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.PostgreSql\Private\TEventStore\PgSqlTeventStoreConnectionManager.cs" Offset="313-319" Line="12" Message="Method 'UseConnection' can be made internal" />
       <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.PostgreSql\Private\TEventStore\PgSqlTeventStoreConnectionManager.cs" Offset="498-504" Line="18" Message="Method 'UseCommand' can be made internal" />
       <Issue TypeId="MemberCanBePrivate.Global" File="Compze.Sql.PostgreSql\Private\TEventStore\PgSqlTeventStoreConnectionManager.cs" Offset="600-606" Line="19" Message="Method 'UseCommand' can be made private" />
       <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.PostgreSql\Private\TEventStore\PgSqlTeventStoreConnectionManager.cs" Offset="823-829" Line="25" Message="Method 'UseCommand' can be made internal" />
       <Issue TypeId="UnusedMethodReturnValue.Global" File="Compze.Sql.PostgreSql\Private\TEventStore\PgSqlTeventStoreConnectionManager.cs" Offset="830-837" Line="25" Message="Method 'UseCommand' return value is never used" />
       <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.PostgreSql\Private\TEventStore\PgSqlTeventStoreConnectionManager.cs" Offset="944-950" Line="26" Message="Method 'UseCommand' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.PostgreSql\Private\TEventStore\PgSqlTeventStoreSqlLayer.Read.cs" Offset="479-485" Line="15" Message="Class 'PgSqlTeventStoreSqlLayer' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.PostgreSql\Private\TEventStore\PgSqlTeventStoreSqlLayer.Schema.cs" Offset="272-278" Line="6" Message="Class 'PgSqlTeventStoreSqlLayer' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.PostgreSql\Private\TEventStore\PgSqlTeventStoreSqlLayer.Schema.cs" Offset="368-374" Line="10" Message="Constant 'SchemaCreationSql' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.PostgreSql\Private\TEventStore\PgSqlTeventStoreSqlLayer.Write.cs" Offset="801-807" Line="19" Message="Class 'PgSqlTeventStoreSqlLayer' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.PostgreSql\SqlExceptions.cs" Offset="244-250" Line="7" Message="Class 'SqlExceptions' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.PostgreSql\SqlExceptions.cs" Offset="285-291" Line="9" Message="Class 'PgSql' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.PostgreSql\SqlExceptions.cs" Offset="384-390" Line="12" Message="Method 'IsPrimaryKeyViolation' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.PostgreSql\Wiring\PgSqlDocumentDbRegistrar.cs" Offset="284-290" Line="9" Message="Class 'PgSqlDocumentDbRegistrar' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.PostgreSql\Wiring\PgSqlDocumentDbRegistrar.cs" Offset="336-342" Line="11" Message="Method 'PgSqlDocumentDbSqlLayer' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.PostgreSql\Wiring\PgSqlSqlLayerSchemaManagerRegistrar.cs" Offset="103-109" Line="5" Message="Class 'PgSqlSqlLayerSchemaManagerRegistrar' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.PostgreSql\Wiring\PgSqlSqlLayerSchemaManagerRegistrar.cs" Offset="166-172" Line="7" Message="Method 'PgSqlSqlLayerSchemaManager' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.PostgreSql\Wiring\PgSqlTessagingRegistrar.cs" Offset="282-288" Line="9" Message="Class 'PgSqlTessagingRegistrar' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.PostgreSql\Wiring\PgSqlTessagingRegistrar.cs" Offset="333-339" Line="11" Message="Method 'PgSqlTessagingSqlLayer' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.PostgreSql\Wiring\PgSqlTeventStoreRegistrar.cs" Offset="319-325" Line="9" Message="Class 'PgSqlTeventStoreRegistrar' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.PostgreSql\Wiring\PgSqlTeventStoreRegistrar.cs" Offset="372-378" Line="11" Message="Method 'PgSqlTeventStoreSqlLayer' can be made internal" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Sql.PostgreSql\Private\TEventStore\PgSqlTeventStoreSqlLayer.Read.cs" Offset="479-487" Line="15" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Sql.PostgreSql\Private\TEventStore\PgSqlTeventStoreSqlLayer.Schema.cs" Offset="272-280" Line="6" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Sql.PostgreSql\Private\TEventStore\PgSqlTeventStoreSqlLayer.Write.cs" Offset="801-809" Line="19" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Sql.PostgreSql\SqlExceptions.cs" Offset="244-252" Line="7" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Sql.PostgreSql\Wiring\PgSqlDocumentDbRegistrar.cs" Offset="284-292" Line="9" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Sql.PostgreSql\Wiring\PgSqlSqlLayerSchemaManagerRegistrar.cs" Offset="103-111" Line="5" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Sql.PostgreSql\Wiring\PgSqlTessagingRegistrar.cs" Offset="282-290" Line="9" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Sql.PostgreSql\Wiring\PgSqlTeventStoreRegistrar.cs" Offset="319-327" Line="9" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
     </Project>
     <Project Name="Compze.Sql.Sqlite">
       <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.Sqlite\CompzeSqliteConnection.cs" Offset="761-767" Line="22" Message="Constructor 'CompzeSqliteConnection' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.Sqlite\Private\DocumentDb\SqliteDocumentDbSqlLayer.cs" Offset="566-572" Line="17" Message="Class 'SqliteDocumentDbSqlLayer' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.Sqlite\Private\DocumentDb\SqliteDocumentDbSqlLayer.cs" Offset="752-758" Line="22" Message="Constructor 'SqliteDocumentDbSqlLayer' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.Sqlite\Private\DocumentDb\SqliteDocumentDbSqlLayer.Schema.cs" Offset="160-166" Line="5" Message="Class 'SqliteDocumentDbSqlLayer' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.Sqlite\Private\DocumentDb\SqliteDocumentDbSqlLayer.Schema.cs" Offset="213-219" Line="7" Message="Constant 'SchemaCreationSql' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.Sqlite\Private\SqlExceptions.cs" Offset="263-269" Line="7" Message="Class 'SqlExceptions' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.Sqlite\Private\SqlExceptions.cs" Offset="389-395" Line="10" Message="Class 'Sqlite' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.Sqlite\Private\SqlExceptions.cs" Offset="508-514" Line="13" Message="Method 'IsPrimaryKeyViolation' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.Sqlite\Private\SqliteCommandExtensions.cs" Offset="148-154" Line="8" Message="Class 'SqliteCommandExtensions' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.Sqlite\Private\SqliteCommandExtensions.cs" Offset="199-205" Line="10" Message="Method 'ExecuteReaderAndSelect' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.Sqlite\Private\SqliteCommandParameterExtensions.cs" Offset="141-147" Line="8" Message="Class 'SqliteCommandParameterExtensions' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.Sqlite\Private\SqliteCommandParameterExtensions.cs" Offset="201-207" Line="10" Message="Method 'AddParameter' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.Sqlite\Private\SqliteCommandParameterExtensions.cs" Offset="353-359" Line="11" Message="Method 'AddParameter' can be made internal" />
-      <Issue TypeId="UnusedMember.Global" File="Compze.Sql.Sqlite\Private\SqliteCommandParameterExtensions.cs" Offset="534-546" Line="12" Message="Method 'AddParameter' is never used" />
-      <Issue TypeId="UnnecessaryWhitespace" File="Compze.Sql.Sqlite\Private\SqliteCommandParameterExtensions.cs" Offset="664-667" Line="13" Message="Unnecessary whitespace" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.Sqlite\Private\SqliteCommandParameterExtensions.cs" Offset="766-772" Line="15" Message="Method 'AddDateTime2Parameter' can be made internal" />
-      <Issue TypeId="UnnecessaryWhitespace" File="Compze.Sql.Sqlite\Private\SqliteCommandParameterExtensions.cs" Offset="870-871" Line="15" Message="Unnecessary whitespace" />
-      <Issue TypeId="UnnecessaryWhitespace" File="Compze.Sql.Sqlite\Private\SqliteCommandParameterExtensions.cs" Offset="967-970" Line="17" Message="Unnecessary whitespace" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.Sqlite\Private\SqliteCommandParameterExtensions.cs" Offset="975-981" Line="18" Message="Method 'AddVarcharParameter' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.Sqlite\Private\SqliteCommandParameterExtensions.cs" Offset="1146-1152" Line="19" Message="Method 'AddMediumTextParameter' can be made internal" />
-      <Issue TypeId="MemberCanBePrivate.Global" File="Compze.Sql.Sqlite\Private\SqliteCommandParameterExtensions.cs" Offset="1310-1316" Line="21" Message="Method 'AddParameter' can be made private" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.Sqlite\Private\SqliteCommandParameterExtensions.cs" Offset="1660-1666" Line="29" Message="Method 'AddNullableParameter' can be made internal" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Sql.Sqlite\Private\DocumentDb\SqliteDocumentDbSqlLayer.cs" Offset="566-574" Line="17" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Sql.Sqlite\Private\DocumentDb\SqliteDocumentDbSqlLayer.Schema.cs" Offset="160-168" Line="5" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Sql.Sqlite\Private\SqlExceptions.cs" Offset="263-271" Line="7" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Sql.Sqlite\Private\SqliteCommandExtensions.cs" Offset="148-156" Line="8" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Sql.Sqlite\Private\SqliteCommandParameterExtensions.cs" Offset="141-149" Line="8" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
+      <Issue TypeId="UnusedMember.Global" File="Compze.Sql.Sqlite\Private\SqliteCommandParameterExtensions.cs" Offset="536-548" Line="12" Message="Method 'AddParameter' is never used" />
+      <Issue TypeId="UnnecessaryWhitespace" File="Compze.Sql.Sqlite\Private\SqliteCommandParameterExtensions.cs" Offset="666-669" Line="13" Message="Unnecessary whitespace" />
+      <Issue TypeId="UnnecessaryWhitespace" File="Compze.Sql.Sqlite\Private\SqliteCommandParameterExtensions.cs" Offset="872-873" Line="15" Message="Unnecessary whitespace" />
+      <Issue TypeId="UnnecessaryWhitespace" File="Compze.Sql.Sqlite\Private\SqliteCommandParameterExtensions.cs" Offset="969-972" Line="17" Message="Unnecessary whitespace" />
+      <Issue TypeId="MemberCanBePrivate.Global" File="Compze.Sql.Sqlite\Private\SqliteCommandParameterExtensions.cs" Offset="1312-1318" Line="21" Message="Method 'AddParameter' can be made private" />
+      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.Sqlite\Private\SqliteSqlLayerSchemaManager.cs" Offset="418-424" Line="13" Message="Class 'SqliteSqlLayerSchemaManager' can be made internal" />
       <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.Sqlite\Private\SqliteSqlLayerSchemaManager.cs" Offset="504-510" Line="15" Message="Method 'RegisterWith' can be made internal" />
       <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.Sqlite\Private\SqliteSqlLayerSchemaManager.cs" Offset="1133-1139" Line="28" Message="Method 'EnsureSchemaInitializedAsync' can be made internal" />
       <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.Sqlite\Private\SqliteSqlLayerSchemaManager.cs" Offset="1871-1877" Line="46" Message="Method 'EnsureSchemaInitialized' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.Sqlite\Private\Tessaging\SqliteInboxSqlLayer.cs" Offset="408-414" Line="12" Message="Class 'SqliteInboxSqlLayer' can be made internal" />
-      <Issue TypeId="UnnecessaryWhitespace" File="Compze.Sql.Sqlite\Private\Tessaging\SqliteInboxSqlLayer.cs" Offset="1771-1772" Line="37" Message="Unnecessary whitespace" />
-      <Issue TypeId="UnnecessaryWhitespace" File="Compze.Sql.Sqlite\Private\Tessaging\SqliteInboxSqlLayer.cs" Offset="1838-1839" Line="38" Message="Unnecessary whitespace" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.Sqlite\Private\Tessaging\SqliteInboxTessageStorage.Schema.cs" Offset="164-170" Line="5" Message="Class 'SqliteInboxSqlLayer' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.Sqlite\Private\Tessaging\SqliteInboxTessageStorage.Schema.cs" Offset="212-218" Line="7" Message="Constant 'SchemaCreationSql' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.Sqlite\Private\Tessaging\SqliteOutboxSqlLayer.cs" Offset="679-685" Line="17" Message="Class 'SqliteOutboxSqlLayer' can be made internal" />
-      <Issue TypeId="UnnecessaryWhitespace" File="Compze.Sql.Sqlite\Private\Tessaging\SqliteOutboxSqlLayer.cs" Offset="5321-5327" Line="103" Message="Unnecessary whitespace" />
-      <Issue TypeId="UnnecessaryWhitespace" File="Compze.Sql.Sqlite\Private\Tessaging\SqliteOutboxSqlLayer.cs" Offset="5487-5499" Line="108" Message="Unnecessary whitespace" />
-      <Issue TypeId="UnnecessaryWhitespace" File="Compze.Sql.Sqlite\Private\Tessaging\SqliteOutboxSqlLayer.cs" Offset="6562-6574" Line="128" Message="Unnecessary whitespace" />
-      <Issue TypeId="UnnecessaryWhitespace" File="Compze.Sql.Sqlite\Private\Tessaging\SqliteOutboxSqlLayer.cs" Offset="7279-7291" Line="140" Message="Unnecessary whitespace" />
-      <Issue TypeId="UnnecessaryWhitespace" File="Compze.Sql.Sqlite\Private\Tessaging\SqliteOutboxSqlLayer.cs" Offset="7631-7643" Line="151" Message="Unnecessary whitespace" />
-      <Issue TypeId="UnnecessaryWhitespace" File="Compze.Sql.Sqlite\Private\Tessaging\SqliteOutboxSqlLayer.cs" Offset="8619-8631" Line="170" Message="Unnecessary whitespace" />
-      <Issue TypeId="UnnecessaryWhitespace" File="Compze.Sql.Sqlite\Private\Tessaging\SqliteOutboxSqlLayer.cs" Offset="9336-9348" Line="182" Message="Unnecessary whitespace" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.Sqlite\Private\Tessaging\SqliteOutboxSqlLayer.Schema.cs" Offset="281-287" Line="6" Message="Class 'SqliteOutboxSqlLayer' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.Sqlite\Private\Tessaging\SqliteOutboxSqlLayer.Schema.cs" Offset="330-336" Line="8" Message="Constant 'SchemaCreationSql' can be made internal" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Sql.Sqlite\Private\Tessaging\SqliteInboxSqlLayer.cs" Offset="408-416" Line="12" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
+      <Issue TypeId="UnnecessaryWhitespace" File="Compze.Sql.Sqlite\Private\Tessaging\SqliteInboxSqlLayer.cs" Offset="1773-1774" Line="37" Message="Unnecessary whitespace" />
+      <Issue TypeId="UnnecessaryWhitespace" File="Compze.Sql.Sqlite\Private\Tessaging\SqliteInboxSqlLayer.cs" Offset="1840-1841" Line="38" Message="Unnecessary whitespace" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Sql.Sqlite\Private\Tessaging\SqliteInboxTessageStorage.Schema.cs" Offset="164-172" Line="5" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Sql.Sqlite\Private\Tessaging\SqliteOutboxSqlLayer.cs" Offset="679-687" Line="17" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
+      <Issue TypeId="UnnecessaryWhitespace" File="Compze.Sql.Sqlite\Private\Tessaging\SqliteOutboxSqlLayer.cs" Offset="5323-5329" Line="103" Message="Unnecessary whitespace" />
+      <Issue TypeId="UnnecessaryWhitespace" File="Compze.Sql.Sqlite\Private\Tessaging\SqliteOutboxSqlLayer.cs" Offset="5489-5501" Line="108" Message="Unnecessary whitespace" />
+      <Issue TypeId="UnnecessaryWhitespace" File="Compze.Sql.Sqlite\Private\Tessaging\SqliteOutboxSqlLayer.cs" Offset="6564-6576" Line="128" Message="Unnecessary whitespace" />
+      <Issue TypeId="UnnecessaryWhitespace" File="Compze.Sql.Sqlite\Private\Tessaging\SqliteOutboxSqlLayer.cs" Offset="7281-7293" Line="140" Message="Unnecessary whitespace" />
+      <Issue TypeId="UnnecessaryWhitespace" File="Compze.Sql.Sqlite\Private\Tessaging\SqliteOutboxSqlLayer.cs" Offset="7633-7645" Line="151" Message="Unnecessary whitespace" />
+      <Issue TypeId="UnnecessaryWhitespace" File="Compze.Sql.Sqlite\Private\Tessaging\SqliteOutboxSqlLayer.cs" Offset="8621-8633" Line="170" Message="Unnecessary whitespace" />
+      <Issue TypeId="UnnecessaryWhitespace" File="Compze.Sql.Sqlite\Private\Tessaging\SqliteOutboxSqlLayer.cs" Offset="9338-9350" Line="182" Message="Unnecessary whitespace" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Sql.Sqlite\Private\Tessaging\SqliteOutboxSqlLayer.Schema.cs" Offset="281-289" Line="6" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
+      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.Sqlite\Private\TEventStore\SqliteTeventStoreConnectionManager.cs" Offset="157-163" Line="8" Message="Class 'SqliteTeventStoreConnectionManager' can be made internal" />
       <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.Sqlite\Private\TEventStore\SqliteTeventStoreConnectionManager.cs" Offset="327-333" Line="12" Message="Method 'UseConnection' can be made internal" />
       <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.Sqlite\Private\TEventStore\SqliteTeventStoreConnectionManager.cs" Offset="512-518" Line="18" Message="Method 'UseCommand' can be made internal" />
       <Issue TypeId="MemberCanBePrivate.Global" File="Compze.Sql.Sqlite\Private\TEventStore\SqliteTeventStoreConnectionManager.cs" Offset="614-620" Line="19" Message="Method 'UseCommand' can be made private" />
       <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.Sqlite\Private\TEventStore\SqliteTeventStoreConnectionManager.cs" Offset="837-843" Line="25" Message="Method 'UseCommand' can be made internal" />
       <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.Sqlite\Private\TEventStore\SqliteTeventStoreConnectionManager.cs" Offset="958-964" Line="26" Message="Method 'UseCommand' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.Sqlite\Private\TEventStore\SqliteTeventStoreSqlLayer.Read.cs" Offset="442-448" Line="13" Message="Class 'SqliteTeventStoreSqlLayer' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.Sqlite\Private\TEventStore\SqliteTeventStoreSqlLayer.Schema.cs" Offset="268-274" Line="6" Message="Class 'SqliteTeventStoreSqlLayer' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.Sqlite\Private\TEventStore\SqliteTeventStoreSqlLayer.Schema.cs" Offset="322-328" Line="8" Message="Constant 'SchemaCreationSql' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.Sqlite\Private\TEventStore\SqliteTeventStoreSqlLayer.Write.cs" Offset="584-590" Line="16" Message="Class 'SqliteTeventStoreSqlLayer' can be made internal" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Sql.Sqlite\Private\TEventStore\SqliteTeventStoreSqlLayer.Read.cs" Offset="442-450" Line="13" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Sql.Sqlite\Private\TEventStore\SqliteTeventStoreSqlLayer.Schema.cs" Offset="268-276" Line="6" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Sql.Sqlite\Private\TEventStore\SqliteTeventStoreSqlLayer.Write.cs" Offset="584-592" Line="16" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
       <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.Sqlite\SqliteConnectionPool.cs" Offset="738-744" Line="20" Message="Constructor 'SqliteConnectionPool' can be made internal" />
       <Issue TypeId="UnusedMethodReturnValue.Local" File="Compze.Sql.Sqlite\Wiring\SqliteConnectionPoolRegistrar.cs" Offset="811-830" Line="27" Message="Method 'SqliteProductionConnectionPool' return value is never used" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.Sqlite\Wiring\SqliteDocumentDbRegistrar.cs" Offset="272-278" Line="9" Message="Class 'SqliteDocumentDbRegistrar' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.Sqlite\Wiring\SqliteDocumentDbRegistrar.cs" Offset="325-331" Line="11" Message="Method 'SqliteDocumentDbSqlLayer' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.Sqlite\Wiring\SqliteSqlLayerSchemaManagerRegistrar.cs" Offset="99-105" Line="5" Message="Class 'PgSqlSqlLayerSchemaManagerRegistrar' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.Sqlite\Wiring\SqliteSqlLayerSchemaManagerRegistrar.cs" Offset="162-168" Line="7" Message="Method 'SqliteSqlLayerSchemaManager' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.Sqlite\Wiring\SqliteTessagingRegistrar.cs" Offset="270-276" Line="9" Message="Class 'SqliteTessagingRegistrar' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.Sqlite\Wiring\SqliteTessagingRegistrar.cs" Offset="322-328" Line="11" Message="Method 'SqliteTessagingSqlLayer' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.Sqlite\Wiring\SqliteTeventStoreRegistrar.cs" Offset="307-313" Line="9" Message="Class 'SqliteTeventStoreRegistrar' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Sql.Sqlite\Wiring\SqliteTeventStoreRegistrar.cs" Offset="361-367" Line="11" Message="Method 'SqliteTeventStoreSqlLayer' can be made internal" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Sql.Sqlite\Wiring\SqliteDocumentDbRegistrar.cs" Offset="272-280" Line="9" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Sql.Sqlite\Wiring\SqliteSqlLayerSchemaManagerRegistrar.cs" Offset="99-107" Line="5" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Sql.Sqlite\Wiring\SqliteTessagingRegistrar.cs" Offset="270-278" Line="9" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Sql.Sqlite\Wiring\SqliteTeventStoreRegistrar.cs" Offset="307-315" Line="9" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
     </Project>
     <Project Name="Compze.SystemCE.Internal">
       <Issue TypeId="CheckNamespace" File="Compze.SystemCE.Internal\TasksCE\TaskCE.EnsureAsyncOperation.cs" Offset="109-133" Line="6" Message="Namespace does not correspond to file location, must be: 'Compze.SystemCE.Internal.TasksCE'" />
@@ -760,11 +684,9 @@
       <Issue TypeId="MemberCanBeInternal" File="Compze.Tessaging\TyperMediaApi\EventStore\_TeventStoreApi.Implementation..cs" Offset="5045-5051" Line="83" Message="Method 'RegisterHandler' can be made internal" />
     </Project>
     <Project Name="Compze.Tessaging.Hosting.AspNetCore">
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Tessaging.Hosting.AspNetCore\Private\AspNetInboxTransportServer.cs" Offset="623-629" Line="18" Message="Class 'AspNetInboxTransportServer' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Tessaging.Hosting.AspNetCore\Private\AspNetInboxTransportServer.cs" Offset="840-846" Line="24" Message="Method 'RegisterWith' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Tessaging.Hosting.AspNetCore\Private\CompzeControllerActivator.cs" Offset="347-353" Line="9" Message="Class 'CompzeControllerActivator' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Tessaging.Hosting.AspNetCore\Private\CompzeControllerActivator.cs" Offset="417-423" Line="11" Message="Method 'RegisterWith' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Tessaging.Hosting.AspNetCore\Private\InternalControllerFeatureProvider.cs" Offset="164-170" Line="7" Message="Class 'InternalControllerFeatureProvider' can be made internal" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Tessaging.Hosting.AspNetCore\Private\AspNetInboxTransportServer.cs" Offset="623-631" Line="18" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Tessaging.Hosting.AspNetCore\Private\CompzeControllerActivator.cs" Offset="347-355" Line="9" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Tessaging.Hosting.AspNetCore\Private\InternalControllerFeatureProvider.cs" Offset="164-172" Line="7" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
       <Issue TypeId="MemberCanBeInternal" File="Compze.Tessaging.Hosting.AspNetCore\Private\TessagingController.cs" Offset="795-801" Line="20" Message="Method 'RegisterWith' can be made internal" />
       <Issue TypeId="MemberCanBeInternal" File="Compze.Tessaging.Hosting.AspNetCore\Private\TypermediaController.cs" Offset="866-872" Line="23" Message="Method 'RegisterWith' can be made internal" />
     </Project>
@@ -1167,12 +1089,10 @@
       <Issue TypeId="UnusedMember.Global" File="Compze.Utilities.DependencyInjection\TypeIndex.cs" Offset="1107-1112" Line="36" Message="Field 'Index' is never used" />
     </Project>
     <Project Name="Compze.Utilities.DependencyInjection.Microsoft">
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Utilities.DependencyInjection.Microsoft\LifeStyleConverter.cs" Offset="185-191" Line="7" Message="Class 'LifeStyleConverter' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Utilities.DependencyInjection.Microsoft\LifeStyleConverter.cs" Offset="231-237" Line="9" Message="Method 'AsServiceLifetime' can be made internal" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Utilities.DependencyInjection.Microsoft\LifeStyleConverter.cs" Offset="185-193" Line="7" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
     </Project>
     <Project Name="Compze.Utilities.DependencyInjection.SimpleInjector">
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Utilities.DependencyInjection.SimpleInjector\LifeStyleConverter.cs" Offset="141-147" Line="6" Message="Class 'LifeStyleConverter' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Utilities.DependencyInjection.SimpleInjector\LifeStyleConverter.cs" Offset="187-193" Line="8" Message="Method 'AsSimpleInjectorLifestyle' can be made internal" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Utilities.DependencyInjection.SimpleInjector\LifeStyleConverter.cs" Offset="141-149" Line="6" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
     </Project>
     <Project Name="Compze.Utilities.Logging">
       <Issue TypeId="MemberCanBePrivate.Global" File="Compze.Utilities.Logging\CompzeLogger.cs" Offset="912-918" Line="22" Message="Class 'LogCache' can be made private" />
@@ -1342,31 +1262,26 @@
       <Issue TypeId="MemberCanBeInternal" File="Compze.Utilities.Testing.DbPool\SharedObjectSerializer.cs" Offset="272-278" Line="11" Message="Field 'Instance' can be made internal" />
       <Issue TypeId="MemberCanBePrivate.Global" File="Compze.Utilities.Testing.DbPool\SystemCE\StrictlyManagedResource.cs" Offset="2343-2351" Line="55" Message="Field 'CollectStackTracesByDefault' can be made private" />
       <Issue TypeId="UnnecessaryWhitespace" File="Compze.Utilities.Testing.DbPool\SystemCE\StrictlyManagedResource.cs" Offset="5943-5944" Line="149" Message="Unnecessary whitespace" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Utilities.Testing.DbPool\SystemCE\StrictlyManagedResource.cs" Offset="6289-6295" Line="160" Message="Class 'StrictlyManagedResourceWasFinalizedException' can be made internal" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Utilities.Testing.DbPool\SystemCE\StrictlyManagedResource.cs" Offset="6289-6297" Line="160" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
     </Project>
     <Project Name="Compze.Utilities.Testing.DbPool.MicrosoftSql">
       <Issue TypeId="MemberCanBePrivate.Global" File="Compze.Utilities.Testing.DbPool.MicrosoftSql\MsSqlDatabaseHelpers.cs" Offset="2918-2924" Line="38" Message="Constant 'SetReadCommittedSnapshotOnStatement' can be made private" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Utilities.Testing.DbPool.MicrosoftSql\MsSqlDbPoolSqlLayer.cs" Offset="284-290" Line="10" Message="Class 'MsSqlDbPoolSqlLayer' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Utilities.Testing.DbPool.MicrosoftSql\MsSqlDbPoolSqlLayer.cs" Offset="342-348" Line="12" Message="Method 'RegisterWith' can be made internal" />
-      <Issue TypeId="MemberCanBePrivate.Global" File="Compze.Utilities.Testing.DbPool.MicrosoftSql\MsSqlDbPoolSqlLayer.cs" Offset="875-881" Line="22" Message="Constructor 'MsSqlDbPoolSqlLayer' can be made private" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Utilities.Testing.DbPool.MicrosoftSql\MsSqlDbPoolSqlLayer.cs" Offset="284-292" Line="10" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
+      <Issue TypeId="MemberCanBePrivate.Global" File="Compze.Utilities.Testing.DbPool.MicrosoftSql\MsSqlDbPoolSqlLayer.cs" Offset="877-883" Line="22" Message="Constructor 'MsSqlDbPoolSqlLayer' can be made private" />
     </Project>
     <Project Name="Compze.Utilities.Testing.DbPool.MySql">
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Utilities.Testing.DbPool.MySql\MySqlDbPoolSqlLayer.cs" Offset="334-340" Line="12" Message="Class 'MySqlDbPoolSqlLayer' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Utilities.Testing.DbPool.MySql\MySqlDbPoolSqlLayer.cs" Offset="399-405" Line="14" Message="Method 'RegisterWith' can be made internal" />
-      <Issue TypeId="MemberCanBePrivate.Global" File="Compze.Utilities.Testing.DbPool.MySql\MySqlDbPoolSqlLayer.cs" Offset="972-978" Line="25" Message="Constructor 'MySqlDbPoolSqlLayer' can be made private" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Utilities.Testing.DbPool.MySql\MySqlDbPoolSqlLayer.cs" Offset="334-342" Line="12" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
+      <Issue TypeId="MemberCanBePrivate.Global" File="Compze.Utilities.Testing.DbPool.MySql\MySqlDbPoolSqlLayer.cs" Offset="974-980" Line="25" Message="Constructor 'MySqlDbPoolSqlLayer' can be made private" />
     </Project>
     <Project Name="Compze.Utilities.Testing.DbPool.PostgreSql">
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Utilities.Testing.DbPool.PostgreSql\PgSqlDbPoolSqlLayer.cs" Offset="422-428" Line="15" Message="Class 'PgSqlDbPoolSqlLayer' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Utilities.Testing.DbPool.PostgreSql\PgSqlDbPoolSqlLayer.cs" Offset="487-493" Line="17" Message="Method 'RegisterWith' can be made internal" />
-      <Issue TypeId="MemberCanBePrivate.Global" File="Compze.Utilities.Testing.DbPool.PostgreSql\PgSqlDbPoolSqlLayer.cs" Offset="1059-1065" Line="27" Message="Constructor 'PgSqlDbPoolSqlLayer' can be made private" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Utilities.Testing.DbPool.PostgreSql\PgSqlDbPoolSqlLayer.cs" Offset="422-430" Line="15" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
+      <Issue TypeId="MemberCanBePrivate.Global" File="Compze.Utilities.Testing.DbPool.PostgreSql\PgSqlDbPoolSqlLayer.cs" Offset="1061-1067" Line="27" Message="Constructor 'PgSqlDbPoolSqlLayer' can be made private" />
     </Project>
     <Project Name="Compze.Utilities.Testing.DbPool.Sqlite">
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Utilities.Testing.DbPool.Sqlite\SqliteDbPoolSqlLayer.cs" Offset="341-347" Line="13" Message="Class 'SqliteDbPoolSqlLayer' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Utilities.Testing.DbPool.Sqlite\SqliteDbPoolSqlLayer.cs" Offset="400-406" Line="15" Message="Method 'RegisterWith' can be made internal" />
-      <Issue TypeId="MemberCanBePrivate.Global" File="Compze.Utilities.Testing.DbPool.Sqlite\SqliteDbPoolSqlLayer.cs" Offset="1202-1208" Line="28" Message="Constructor 'SqliteDbPoolSqlLayer' can be made private" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Utilities.Testing.DbPool.Sqlite\SqliteMemoryDbPoolSqlLayer.cs" Offset="359-365" Line="12" Message="Class 'SqliteMemoryDbPoolSqlLayer' can be made internal" />
-      <Issue TypeId="MemberCanBeInternal" File="Compze.Utilities.Testing.DbPool.Sqlite\SqliteMemoryDbPoolSqlLayer.cs" Offset="481-487" Line="15" Message="Method 'RegisterWith' can be made internal" />
-      <Issue TypeId="UnnecessaryWhitespace" File="Compze.Utilities.Testing.DbPool.Sqlite\SqliteMemoryDbPoolSqlLayer.cs" Offset="1028-1029" Line="21" Message="Unnecessary whitespace" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Utilities.Testing.DbPool.Sqlite\SqliteDbPoolSqlLayer.cs" Offset="341-349" Line="13" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
+      <Issue TypeId="MemberCanBePrivate.Global" File="Compze.Utilities.Testing.DbPool.Sqlite\SqliteDbPoolSqlLayer.cs" Offset="1204-1210" Line="28" Message="Constructor 'SqliteDbPoolSqlLayer' can be made private" />
+      <Issue TypeId="ArrangeTypeModifiers" File="Compze.Utilities.Testing.DbPool.Sqlite\SqliteMemoryDbPoolSqlLayer.cs" Offset="359-367" Line="12" Message="Inconsistent modifiers style: redundant 'internal' modifier" />
+      <Issue TypeId="UnnecessaryWhitespace" File="Compze.Utilities.Testing.DbPool.Sqlite\SqliteMemoryDbPoolSqlLayer.cs" Offset="1030-1031" Line="21" Message="Unnecessary whitespace" />
     </Project>
     <Project Name="Compze.Utilities.Testing.Must">
       <Issue TypeId="MemberCanBeInternal" File="Compze.Utilities.Testing.Must\AssertionArgumentInfo.cs" Offset="114-120" Line="5" Message="Property 'Expression' can be made internal" />

@@ -9,7 +9,7 @@ using Xunit.v3;
 
 namespace Compze.Utilities.Testing.XUnit.ComponentCombinations;
 
-public class ComponentCombinationsTheoryDiscoverer : TheoryDiscoverer
+internal class ComponentCombinationsTheoryDiscoverer : TheoryDiscoverer
 {
    public override async ValueTask<IReadOnlyCollection<IXunitTestCase>> Discover(
       ITestFrameworkDiscoveryOptions discoveryOptions,

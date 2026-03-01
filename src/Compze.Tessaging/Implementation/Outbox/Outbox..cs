@@ -16,7 +16,7 @@ using Compze.Utilities.SystemCE.TransactionsCE;
 
 namespace Compze.Tessaging.Implementation.Outbox;
 
-public static class OutboxRegistrar
+internal static class OutboxRegistrar
 {
    public static IComponentRegistrar Outbox(this IComponentRegistrar registrar)
       => registrar.Register(Implementation.Outbox.Outbox.RegisterWith);

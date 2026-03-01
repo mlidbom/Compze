@@ -2,7 +2,7 @@ using Document = Compze.Core.DocumentDb.Internal.SqlLayer.IDocumentDbSqlLayer.Do
 
 namespace Compze.Sql.MySql.Private.DocumentDb;
 
-public partial class MySqlDocumentDbSqlLayer
+internal partial class MySqlDocumentDbSqlLayer
 {
    public const string SchemaCreationSql =
       $"""

@@ -5,7 +5,7 @@ using MySql.Data.MySqlClient;
 
 namespace Compze.Sql.MySql.Private.TEventStore;
 
-public class MySqlTeventStoreConnectionManager(IMySqlConnectionPool sqlConnectionPool)
+internal class MySqlTeventStoreConnectionManager(IMySqlConnectionPool sqlConnectionPool)
 {
    readonly IMySqlConnectionPool _connectionPool = sqlConnectionPool;
 

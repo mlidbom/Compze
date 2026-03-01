@@ -9,7 +9,7 @@ using Microsoft.Data.Sqlite;
 
 namespace Compze.Utilities.Testing.DbPool.Sqlite;
 
-public class SqliteMemoryDbPoolSqlLayer : IDbPoolSqlLayer
+internal class SqliteMemoryDbPoolSqlLayer : IDbPoolSqlLayer
 {
    readonly string _poolId = Guid.NewGuid().ToString();
    public static IComponentRegistrar RegisterWith(IComponentRegistrar registrar) =>

@@ -10,7 +10,7 @@ using Compze.Threading.TasksCE;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Universal;
 
-public class TypermediaConnection : IDisposable
+internal class TypermediaConnection : IDisposable
 {
    public TessageTypesInternal.EndpointInformation EndpointInformation { get; private set; } = null!;
    public IRemoteApiEndpointClient ApiClient { get; private set; } = null!;

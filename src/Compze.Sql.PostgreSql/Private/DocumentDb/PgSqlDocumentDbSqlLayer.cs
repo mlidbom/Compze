@@ -12,7 +12,7 @@ using Schema = Compze.Core.DocumentDb.Internal.SqlLayer.IDocumentDbSqlLayer.Docu
 
 namespace Compze.Sql.PostgreSql.Private.DocumentDb;
 
-public partial class PgSqlDocumentDbSqlLayer : IDocumentDbSqlLayer
+internal partial class PgSqlDocumentDbSqlLayer : IDocumentDbSqlLayer
 {
    readonly IPgSqlConnectionPool _connectionPool;
    readonly PgSqlSqlLayerSchemaManager _schemaManager;

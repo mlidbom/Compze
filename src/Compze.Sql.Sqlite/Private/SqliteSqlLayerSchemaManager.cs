@@ -10,7 +10,7 @@ using Compze.Threading.TasksCE;
 
 namespace Compze.Sql.Sqlite.Private;
 
-public class SqliteSqlLayerSchemaManager(ISqliteConnectionPool connectionPool)
+internal class SqliteSqlLayerSchemaManager(ISqliteConnectionPool connectionPool)
 {
    public static IComponentRegistrar RegisterWith(IComponentRegistrar registrar)
    {

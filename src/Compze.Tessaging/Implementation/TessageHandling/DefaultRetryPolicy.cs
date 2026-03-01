@@ -3,7 +3,7 @@ using Compze.Core.Tessaging.Public;
 
 namespace Compze.Tessaging.Implementation.TessageHandling;
 
-public class DefaultRetryPolicy
+internal class DefaultRetryPolicy
 {
    const int Tries = 5;
    int _remainingTries;

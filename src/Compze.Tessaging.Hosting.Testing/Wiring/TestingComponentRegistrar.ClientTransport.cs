@@ -8,7 +8,7 @@ using Compze.Utilities.SystemCE;
 
 namespace Compze.Tessaging.Hosting.Testing.Wiring;
 
-public static class TestingComponentRegistrarClientTransport
+internal static class TestingComponentRegistrarClientTransport
 {
    /// <summary>Registers only the client-side transport poster for the current test transport (no inbox server).</summary>
    public static IComponentRegistrar CurrentTestsClientTransport(this IComponentRegistrar register) =>

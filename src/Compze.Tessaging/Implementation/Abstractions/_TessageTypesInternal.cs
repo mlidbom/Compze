@@ -19,10 +19,10 @@ namespace Compze.Tessaging.Implementation.Abstractions;
 public static class TessageTypesInternal
 {
 #pragma warning disable CA1040 // Marker interface used for type-routing
-   public interface ITessage;
+   internal interface ITessage;
 #pragma warning restore CA1040
 
-   public class EndpointInformationTuery : TessageTypesInternal.ITessage, IRemotableTuery<EndpointInformation>;
+   internal class EndpointInformationTuery : TessageTypesInternal.ITessage, IRemotableTuery<EndpointInformation>;
 
    public class EndpointInformation
    {
@@ -43,9 +43,9 @@ public static class TessageTypesInternal
       public HashSet<TypeId> HandledTessageTypes { get; private set; }
    }
 
-   public class NetworkTopologyTuery : TessageTypesInternal.ITessage, IRemotableTuery<NetworkTopology>;
+   internal class NetworkTopologyTuery : TessageTypesInternal.ITessage, IRemotableTuery<NetworkTopology>;
 
-   public class NetworkTopology
+   internal class NetworkTopology
    {
       [Obsolete("Called by serializer", error: true)]
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.

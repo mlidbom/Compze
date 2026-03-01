@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Compze.Utilities.DependencyInjection.Microsoft;
 
-public static class LifeStyleConverter
+internal static class LifeStyleConverter
 {
    public static ServiceLifetime AsServiceLifetime(this Lifestyle @this)
    {

@@ -27,7 +27,7 @@ public static class MemoryInboxTransportServerRegistrar
                                   .CreatedBy((EndpointId endpointId, IRemotableTessageSerializer serializer, IServiceLocator serviceLocator) => new MemoryInboxTransportServer(endpointId, serviceLocator, serializer)));
 }
 
-public class MemoryInboxTransportServer : IInboxTransportServer
+internal class MemoryInboxTransportServer : IInboxTransportServer
 {
    readonly IRemotableTessageSerializer _serializer;
    readonly LazyCE<IInbox> _inbox;

@@ -9,7 +9,7 @@ using TessageTable =  Compze.Core.Tessaging.Internal.SqlLayer.IServiceBusSqlLaye
 
 namespace Compze.Sql.MySql.Private.Tessaging;
 
-public partial class MySqlInboxSqlLayer(IMySqlConnectionPool connectionFactory, MySqlSqlLayerSchemaManager schemaManager) : IServiceBusSqlLayer.IInboxSqlLayer
+internal partial class MySqlInboxSqlLayer(IMySqlConnectionPool connectionFactory, MySqlSqlLayerSchemaManager schemaManager) : IServiceBusSqlLayer.IInboxSqlLayer
 {
    readonly IMySqlConnectionPool _connectionFactory = connectionFactory;
    readonly MySqlSqlLayerSchemaManager _schemaManager = schemaManager;

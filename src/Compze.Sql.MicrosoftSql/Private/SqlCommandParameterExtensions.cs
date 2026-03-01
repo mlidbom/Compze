@@ -4,7 +4,7 @@ using Microsoft.Data.SqlClient;
 
 namespace Compze.Sql.MicrosoftSql.Private;
 
-public static class SqlCommandParameterExtensions
+internal static class SqlCommandParameterExtensions
 {
    public static SqlCommand AddParameter(this SqlCommand @this, string name, int value) => AddParameter(@this, name, SqlDbType.Int, value);
    public static SqlCommand AddParameter(this SqlCommand @this, string name, Guid value) => AddParameter(@this, name, SqlDbType.UniqueIdentifier, value);

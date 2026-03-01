@@ -9,7 +9,7 @@ using JetBrains.Annotations;
 
 namespace Compze.Tessaging.Implementation;
 
-public static class ServiceBusTeventStoreTeventPublisherRegistrar
+internal static class ServiceBusTeventStoreTeventPublisherRegistrar
 {
    public static IComponentRegistrar ServiceBusTeventStoreTeventPublisher(this IComponentRegistrar registrar)
       => registrar.Register(Implementation.ServiceBusTeventStoreTeventPublisher.RegisterWith);

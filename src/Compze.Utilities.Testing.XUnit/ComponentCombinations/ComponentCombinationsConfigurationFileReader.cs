@@ -9,7 +9,7 @@ using Compze.Utilities.SystemCE;
 
 namespace Compze.Utilities.Testing.XUnit.ComponentCombinations;
 
-public static class ComponentCombinationsConfigurationFileReader
+internal static class ComponentCombinationsConfigurationFileReader
 {
    static readonly ConcurrentDictionary<string, IReadOnlyList<ComponentCombination>> CombinationsCache = new();
 

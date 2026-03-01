@@ -12,7 +12,7 @@ using Npgsql;
 
 namespace Compze.Utilities.Testing.DbPool.PostgreSql;
 
-public sealed class PgSqlDbPoolSqlLayer : IDbPoolSqlLayer
+internal sealed class PgSqlDbPoolSqlLayer : IDbPoolSqlLayer
 {
    public static IComponentRegistrar RegisterWith(IComponentRegistrar registrar) =>
       registrar.Register(Singleton.For<IDbPoolSqlLayer>()

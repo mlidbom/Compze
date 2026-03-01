@@ -9,7 +9,7 @@ using MySql.Data.MySqlClient;
 
 namespace Compze.Utilities.Testing.DbPool.MySql;
 
-public sealed class MySqlDbPoolSqlLayer : IDbPoolSqlLayer
+internal sealed class MySqlDbPoolSqlLayer : IDbPoolSqlLayer
 {
    public static IComponentRegistrar RegisterWith(IComponentRegistrar registrar) =>
       registrar.Register(Singleton.For<IDbPoolSqlLayer>()

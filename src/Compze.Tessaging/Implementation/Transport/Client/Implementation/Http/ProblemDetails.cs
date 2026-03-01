@@ -31,7 +31,7 @@ namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Http;
    }
 }
 
-public class FailedToExtractProblemDetailsException(HttpResponseMessage response, Exception? innerException = null) : Exception($"""
+internal class FailedToExtractProblemDetailsException(HttpResponseMessage response, Exception? innerException = null) : Exception($"""
                                                                                         Failed to extract problem details from response.
                                                                                         RequestUri: {response.RequestMessage?.RequestUri} 
                                                                                         Status code: {response.StatusCode}

@@ -3,7 +3,7 @@ using Compze.Utilities.DependencyInjection.Abstractions;
 
 namespace Compze.Utilities.DependencyInjection.SimpleInjector;
 
-public static class LifeStyleConverter
+internal static class LifeStyleConverter
 {
    public static global::SimpleInjector.Lifestyle AsSimpleInjectorLifestyle(this Lifestyle @this)
    {

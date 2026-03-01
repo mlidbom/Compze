@@ -5,7 +5,7 @@ using Compze.Utilities.SystemCE.LinqCE;
 
 namespace Compze.Utilities.SystemCE;
 
-public static class ActionCE
+internal static class ActionCE
 {
    public static Action From(Func<unit> action) => action.AsAction();
    public static Action<TParam> From<TParam>(Func<TParam, unit> action) => action.AsAction();

@@ -32,7 +32,7 @@ public static class TransportRegistrar
       => registrar.Register(TessagingRouter.RegisterWith);
 }
 
-public class TypermediaRouter : ITypermediaRouter, IDisposable
+internal class TypermediaRouter : ITypermediaRouter, IDisposable
 {
    public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(

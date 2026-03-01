@@ -157,7 +157,7 @@ public abstract class StrictlyManagedResourceBase<TInheritor> : IStrictlyManaged
 }
 
 ///<summary><see cref="IStrictlyManagedResource"/></summary>
-public class StrictlyManagedResourceWasFinalizedException(Type instanceType, string? reservationCallStack) : Exception(FormatTessage(instanceType, reservationCallStack))
+internal class StrictlyManagedResourceWasFinalizedException(Type instanceType, string? reservationCallStack) : Exception(FormatTessage(instanceType, reservationCallStack))
 {
    static string FormatTessage(Type instanceType, string? reservationCallStack)
       => !reservationCallStack.IsNullEmptyOrWhiteSpace()

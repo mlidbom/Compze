@@ -9,7 +9,7 @@ using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
 
 namespace Compze.Tessaging.Teventive.TeventStore.Refactoring.Migrations;
 
-public abstract class CompleteTeventStoreStreamMutator
+internal abstract class CompleteTeventStoreStreamMutator
 {
    public static ICompleteTeventStreamMutator Create(IReadOnlyList<ITeventMigration> teventMigrationFactories) => teventMigrationFactories.Any()
                                                                                                                   ? new RealMutator(teventMigrationFactories)

@@ -14,7 +14,7 @@ using JetBrains.Annotations;
 
 namespace Compze.Tessaging.Implementation.TessageHandling.Inbox;
 
-public static class InboxRegistrar
+internal static class InboxRegistrar
 {
    public static IComponentRegistrar Inbox(this IComponentRegistrar registrar)
       => registrar.Register(TessageHandling.Inbox.Inbox.RegisterWith);

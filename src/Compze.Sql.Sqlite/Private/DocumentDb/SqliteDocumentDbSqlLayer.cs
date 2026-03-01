@@ -14,7 +14,7 @@ using Schema = Compze.Core.DocumentDb.Internal.SqlLayer.IDocumentDbSqlLayer.Docu
 
 namespace Compze.Sql.Sqlite.Private.DocumentDb;
 
-public partial class SqliteDocumentDbSqlLayer : IDocumentDbSqlLayer
+internal partial class SqliteDocumentDbSqlLayer : IDocumentDbSqlLayer
 {
    readonly ISqliteConnectionPool _connectionPool;
    readonly SqliteSqlLayerSchemaManager _schemaManager;

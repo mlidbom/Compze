@@ -10,7 +10,7 @@ using Compze.Threading.TasksCE;
 
 namespace Compze.Sql.PostgreSql.Private;
 
-public class PgSqlSqlLayerSchemaManager(IPgSqlConnectionPool connectionPool)
+internal class PgSqlSqlLayerSchemaManager(IPgSqlConnectionPool connectionPool)
 {
    public static IComponentRegistrar RegisterWith(IComponentRegistrar registrar)
    {

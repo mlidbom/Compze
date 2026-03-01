@@ -4,7 +4,7 @@ using Compze.Utilities.SystemCE.ReflectionCE;
 
 namespace Compze.Tessaging.Implementation.Transport.Abstractions;
 
-public static class TessageTypeTranslator
+internal static class TessageTypeTranslator
 {
    public static TransportTessageType TransportTessageType(this ITessage tessage) =>
       tessage.GetType().TransportTessageType();

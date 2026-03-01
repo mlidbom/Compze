@@ -13,7 +13,7 @@ using Tevent = Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Tev
 
 namespace Compze.Sql.Sqlite.Private.TEventStore;
 
-public partial class SqliteTeventStoreSqlLayer
+internal partial class SqliteTeventStoreSqlLayer
 {
    public void InsertSingleTaggregateTevents(IReadOnlyList<TeventDataRow> tevents)
    {

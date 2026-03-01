@@ -17,17 +17,17 @@ public abstract class LevelLogger(ILogger logger) : ILevelLogger
    public abstract unit Log(string message, [CallerMemberName] string caller = "");
 }
 
-public class DebugLogger(ILogger logger) : LevelLogger(logger)
+internal class DebugLogger(ILogger logger) : LevelLogger(logger)
 {
    public override unit Log(string message, [CallerMemberName] string caller = "") => Logger.Debug(message, caller);
 }
 
-public class InfoLogger(ILogger logger) : LevelLogger(logger)
+internal class InfoLogger(ILogger logger) : LevelLogger(logger)
 {
    public override unit Log(string message, [CallerMemberName] string caller = "") => Logger.Info(message, caller);
 }
 
-public class WarningLogger(ILogger logger) : LevelLogger(logger)
+internal class WarningLogger(ILogger logger) : LevelLogger(logger)
 {
    public override unit Log(string message, [CallerMemberName] string caller = "") => Logger.Warning(message, caller);
 }

@@ -17,7 +17,7 @@ public static class HttpApiTransportClientRegistrar
       => registrar.Register(Http.HttpTransportMessagePoster.RegisterWith);
 }
 
-public class HttpTransportMessagePoster : ITransportMessagePoster
+internal class HttpTransportMessagePoster : ITransportMessagePoster
 {
    public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<ITransportMessagePoster>()

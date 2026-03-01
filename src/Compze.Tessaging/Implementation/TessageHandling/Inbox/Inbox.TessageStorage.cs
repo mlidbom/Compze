@@ -7,7 +7,7 @@ using Compze.Utilities.SystemCE.ReflectionCE;
 
 namespace Compze.Tessaging.Implementation.TessageHandling.Inbox;
 
-public class InboxTessageStorage(IServiceBusSqlLayer.IInboxSqlLayer sqlLayer) : Inbox.ITessageStorage
+internal class InboxTessageStorage(IServiceBusSqlLayer.IInboxSqlLayer sqlLayer) : Inbox.ITessageStorage
 {
    readonly IServiceBusSqlLayer.IInboxSqlLayer _sqlLayer = sqlLayer;
 

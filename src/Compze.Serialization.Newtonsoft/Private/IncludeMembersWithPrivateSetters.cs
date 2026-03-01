@@ -4,7 +4,7 @@ using Newtonsoft.Json.Serialization;
 
 namespace Compze.Serialization.Newtonsoft.Private;
 
-public class IncludeMembersWithPrivateSetters : IJsonPropertyModifier
+internal class IncludeMembersWithPrivateSetters : IJsonPropertyModifier
 {
    public void ModifyProperty(JsonProperty property, MemberInfo memberInfo, MemberSerialization memberSerialization)
    {

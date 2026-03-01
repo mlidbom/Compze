@@ -18,7 +18,7 @@ namespace Compze.Tessaging.Teventive.TeventStore.Refactoring.Migrations;
 //The performance of this class is extremely important since it is called at least once for every tevent that is loaded from the tevent store when you have any migrations activated. It is called A LOT.
 //This is one of those central classes for which optimization is actually vitally important.
 //Each of the optimizations were done with the help of a profiler and running benchmarks on the tested performance improvements time and time again.
-public class SingleTaggregateInstanceTeventStreamMutator : ISingleTaggregateInstanceTeventStreamMutator
+internal class SingleTaggregateInstanceTeventStreamMutator : ISingleTaggregateInstanceTeventStreamMutator
 {
    readonly TaggregateId _taggregateId;
    readonly ISingleTaggregateInstanceHandlingTeventMigrator[] _teventMigrators;
@@ -132,7 +132,7 @@ public class SingleTaggregateInstanceTeventStreamMutator : ISingleTaggregateInst
    }
 }
 
-public sealed class EndOfTaggregateHistoryTeventPlaceHolder : TaggregateTevent {
+internal sealed class EndOfTaggregateHistoryTeventPlaceHolder : TaggregateTevent {
 #pragma warning disable CS0618 // Type or member is obsolete
     public EndOfTaggregateHistoryTeventPlaceHolder(TaggregateId taggregateId, int i):base(taggregateId) => ((IMutableTaggregateTevent)this).SetTaggregateVersionInternal(i);
 #pragma warning restore CS0618 // Type or member is obsolete

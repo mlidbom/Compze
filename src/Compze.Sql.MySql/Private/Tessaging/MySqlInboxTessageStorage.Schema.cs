@@ -2,7 +2,7 @@ using T = Compze.Core.Tessaging.Internal.SqlLayer.IServiceBusSqlLayer.InboxTessa
 
 namespace Compze.Sql.MySql.Private.Tessaging;
 
-public partial class MySqlInboxSqlLayer
+internal partial class MySqlInboxSqlLayer
 {
    const string MySqlGuidType = "CHAR(36)";
 

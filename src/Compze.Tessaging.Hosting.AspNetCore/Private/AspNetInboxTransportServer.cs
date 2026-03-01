@@ -15,7 +15,7 @@ using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
 namespace Compze.Tessaging.Hosting.AspNetCore.Private;
 
-public class AspNetInboxTransportServer : IInboxTransportServer
+internal class AspNetInboxTransportServer : IInboxTransportServer
 {
    readonly IServiceLocator _serviceLocator;
    WebApplication? _webApplication;

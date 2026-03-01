@@ -3,7 +3,7 @@ using Dispatching = Compze.Core.Tessaging.Internal.SqlLayer.IServiceBusSqlLayer.
 
 namespace Compze.Sql.MicrosoftSql.Private.Tessaging;
 
-public partial class MsSqlOutboxSqlLayer
+internal partial class MsSqlOutboxSqlLayer
 {
    public const string SchemaCreationSql =
       $"""

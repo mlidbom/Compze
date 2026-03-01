@@ -12,7 +12,7 @@ using Compze.Utilities.SystemCE.UsageGuards;
 namespace Compze.Tessaging.Hosting;
 
 
-public static class ServiceBusSessionRegistrar
+internal static class ServiceBusSessionRegistrar
 {
    public static IComponentRegistrar ServiceBusSession(this IComponentRegistrar registrar)
       => registrar.Register(Hosting.ServiceBusSession.RegisterWith);

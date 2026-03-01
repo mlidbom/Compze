@@ -6,7 +6,7 @@ using Compze.Tessaging.Implementation.Transport.Client.Routing.Abstractions;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Routing;
 
-public class AppConfigEndpointRegistry(IConfigurationParameterProvider settingsProvider) : IEndpointRegistry
+internal class AppConfigEndpointRegistry(IConfigurationParameterProvider settingsProvider) : IEndpointRegistry
 {
 #pragma warning disable CA1823
    // ReSharper disable once UnusedMember.Local

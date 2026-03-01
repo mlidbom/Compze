@@ -19,7 +19,7 @@ using Compze.Utilities.SystemCE.TransactionsCE;
 
 namespace Compze.Tessaging.Implementation;
 
-public static class TommandSchedulerRegistrar
+internal static class TommandSchedulerRegistrar
 {
    public static IComponentRegistrar TommandScheduler(this IComponentRegistrar registrar)
       => registrar.Register(Implementation.TommandScheduler.RegisterWith);

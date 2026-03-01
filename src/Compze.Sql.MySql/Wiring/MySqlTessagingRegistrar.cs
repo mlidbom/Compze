@@ -6,7 +6,7 @@ using Compze.Utilities.DependencyInjection.Abstractions;
 
 namespace Compze.Sql.MySql.Wiring;
 
-public static class MySqlTessagingRegistrar
+internal static class MySqlTessagingRegistrar
 {
    public static IComponentRegistrar MySqlTessagingSqlLayer(this IComponentRegistrar registrar) =>
       registrar.Register(

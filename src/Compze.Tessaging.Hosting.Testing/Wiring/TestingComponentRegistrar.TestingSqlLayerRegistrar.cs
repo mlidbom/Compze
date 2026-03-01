@@ -9,7 +9,7 @@ using Compze.Utilities.SystemCE;
 
 namespace Compze.Tessaging.Hosting.Testing.Wiring;
 
-public static class TestingComponentRegistrarTestingSqlLayerRegistrar
+internal static class TestingComponentRegistrarTestingSqlLayerRegistrar
 {
    public static IComponentRegistrar CurrentTestsConfiguredSqlLayer(this IComponentRegistrar register, string connectionStringName) =>
       register.CastTo<TestingComponentRegistrar>()

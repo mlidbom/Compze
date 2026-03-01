@@ -5,7 +5,7 @@ using Npgsql;
 
 namespace Compze.Sql.PostgreSql.Private.TEventStore;
 
-public class PgSqlTeventStoreConnectionManager(IPgSqlConnectionPool sqlConnectionPool)
+internal class PgSqlTeventStoreConnectionManager(IPgSqlConnectionPool sqlConnectionPool)
 {
    readonly IPgSqlConnectionPool _connectionPool = sqlConnectionPool;
 

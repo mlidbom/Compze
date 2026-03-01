@@ -2,7 +2,7 @@ using Tevent = Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Tev
 
 namespace Compze.Sql.MicrosoftSql.Private.TEventStore;
 
-public partial class MsSqlTeventStoreSqlLayer
+internal partial class MsSqlTeventStoreSqlLayer
 {
    public const string SchemaCreationSql =
       $"""

@@ -3,7 +3,7 @@ using Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions
 
 namespace Compze.Tessaging.Teventive.TeventStore;
 
-public static class TaggregateTeventDataConverter
+internal static class TaggregateTeventDataConverter
 {
    public static TaggregateTeventData ToTaggregateTeventData(this ITaggregateTevent @this) => new(@this.Id, @this.TaggregateVersion, @this.TaggregateId, @this.UtcTimeStamp);
 }
