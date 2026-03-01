@@ -2,16 +2,15 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Compze.Threading.TasksCE;
-using Compze.Threading.Utilities;
 
-namespace Compze.Threading;
+namespace Compze.Tessaging.Hosting.Testing.Performance;
 
-public static class ThreadPoolCE
+static class ThreadPoolCE
 {
    public static void TryToEnsureSufficientIdleThreadsToRunTasksConcurrently(int concurrentTaskCount)
    {
       using var waitForAllThreadsToStart = new CountdownEvent(concurrentTaskCount);
-      Task.WaitAll(1.Through(concurrentTaskCount).Select(_ => TaskCE.Run(() =>
+      Task.WaitAll(Enumerable.Range(1, concurrentTaskCount).Select(_ => TaskCE.Run(() =>
       {
          // ReSharper disable AccessToDisposedClosure
          waitForAllThreadsToStart.Signal(1);
