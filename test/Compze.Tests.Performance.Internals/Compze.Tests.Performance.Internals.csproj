@@ -31,12 +31,12 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Sql_Sqlite)' != 'true'">
     <ProjectReference Include="..\..\src\Compze.Sql.Sqlite\Compze.Sql.Sqlite.csproj" />
   </ItemGroup>
-  <!-- Compze.SystemCE.Internals — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_SystemCE_Internals)' == 'true'">
-    <PackageReference Include="Compze.SystemCE.Internals" Version="*-*" />
+  <!-- Compze.SystemCE.Staging — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_SystemCE_Staging)' == 'true'">
+    <PackageReference Include="Compze.SystemCE.Staging" Version="*-*" />
   </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_SystemCE_Internals)' != 'true'">
-    <ProjectReference Include="..\..\src\Compze.SystemCE.Internals\Compze.SystemCE.Internals.csproj" />
+  <ItemGroup Condition="'$(UsePackageReference_Compze_SystemCE_Staging)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.SystemCE.Staging\Compze.SystemCE.Staging.csproj" />
   </ItemGroup>
   <!-- Compze.Threading — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Threading)' == 'true'">

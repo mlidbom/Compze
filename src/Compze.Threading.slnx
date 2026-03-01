@@ -1,5 +1,6 @@
 <Solution>
   <Project Path="Compze.Threading/Compze.Threading.csproj" />
+  <Project Path="Compze.Threading.Staging/Compze.Threading.Staging.csproj" />
   <Project Path="Compze.Threading.Testing/Compze.Threading.Testing.csproj" />
   <Project Path="../test/Compze.Threading.Specifications/Compze.Threading.Specifications.csproj" />
   <Project Path="../test/Compze.Threading.Tests/Compze.Threading.Tests.csproj" />

@@ -16,7 +16,7 @@
     <InternalsVisibleTo Include="Compze.Sql.MySql" />
     <InternalsVisibleTo Include="Compze.Sql.PostgreSql" />
     <InternalsVisibleTo Include="Compze.Sql.Sqlite" />
-    <InternalsVisibleTo Include="Compze.SystemCE.Internals" />
+    <InternalsVisibleTo Include="Compze.SystemCE.Staging" />
     <InternalsVisibleTo Include="Compze.Tessaging" />
     <InternalsVisibleTo Include="Compze.Tessaging.Hosting.AspNetCore" />
     <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Testing" />

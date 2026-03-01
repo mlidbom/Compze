@@ -2,8 +2,10 @@
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
-    <Version>0.2.0-alpha.1</Version>
+    <Version>0.1.0-alpha.1</Version>
+    <Description>Staging area for future Compze.Threading additions. Internal use only — not intended for direct consumption.</Description>
   </PropertyGroup>
+  <Import Project="InternalsVisibleToEveryone.props" />
   <ItemGroup>
     <PackageReference Include="NsDepCop" Version="2.6.0">
       <PrivateAssets>all</PrivateAssets>
@@ -16,20 +18,6 @@
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' != 'true'">
     <ProjectReference Include="..\Compze.Contracts\Compze.Contracts.csproj" />
-  </ItemGroup>
-  <!-- Compze.SystemCE.Staging — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_SystemCE_Staging)' == 'true'">
-    <PackageReference Include="Compze.SystemCE.Staging" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_SystemCE_Staging)' != 'true'">
-    <ProjectReference Include="..\Compze.SystemCE.Staging\Compze.SystemCE.Staging.csproj" />
-  </ItemGroup>
-  <!-- Compze.Threading.Staging — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Threading_Staging)' == 'true'">
-    <PackageReference Include="Compze.Threading.Staging" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Threading_Staging)' != 'true'">
-    <ProjectReference Include="..\Compze.Threading.Staging\Compze.Threading.Staging.csproj" />
   </ItemGroup>
   <!-- Compze.Underscore — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Underscore)' == 'true'">

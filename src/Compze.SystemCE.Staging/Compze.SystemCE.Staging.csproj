@@ -3,7 +3,7 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <Version>0.1.0-alpha.1</Version>
-    <Description>Internal utilities for Compze packages. Not intended for direct consumption.</Description>
+    <Description>Staging area for future Compze.SystemCE additions. Internal use only — not intended for direct consumption.</Description>
   </PropertyGroup>
   <Import Project="InternalsVisibleToEveryone.props" />
   <ItemGroup>
