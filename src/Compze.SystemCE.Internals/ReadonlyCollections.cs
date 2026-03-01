@@ -11,7 +11,7 @@ static class ReadonlyCollections
    public static Dictionary<TKey, TValue> AddToCopy<TKey, TValue>(this IReadOnlyDictionary<TKey, TValue> @this, TKey key, TValue value) where TKey : notnull => new(@this) { { key, value } };
 
    public static Dictionary<TKey, TValue> AddRangeToCopy<TKey, TValue>(this IReadOnlyDictionary<TKey, TValue> @this, IEnumerable<KeyValuePair<TKey, TValue>> range) where TKey : notnull =>
-      new Dictionary<TKey, TValue>(@this)._mutate(me => AddRange(me, range));
+      new Dictionary<TKey, TValue>(@this)._mutate(me => me.AddRange(range));
 
    public static List<T> AddToCopy<T>(this IReadOnlyList<T> @this, T item) => [..@this, item];
 
@@ -28,12 +28,11 @@ static class ReadonlyCollections
       return copy;
    }
 
-   static void AddRange<T>(this ICollection<T> me, IEnumerable<T> toAdd)
+   static void AddRange<T>(this ICollection<T> me, IEnumerable<T> toAdd) => Contract.Argument.NotNull2(me, toAdd)._(() =>
    {
-      Contract.Argument.NotNull(me).NotNull(toAdd);
       foreach(var it in toAdd)
       {
          me.Add(it);
       }
-   }
+   });
 }
