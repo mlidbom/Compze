@@ -1,4 +1,7 @@
 <Project>
+  <PropertyGroup>
+    <Description>Internal utilities for Compze packages. Not intended for direct consumption — do not take a dependency on this package.</Description>
+  </PropertyGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="AccountManagement.API" />
     <InternalsVisibleTo Include="AccountManagement.Domain.Tevents" />
