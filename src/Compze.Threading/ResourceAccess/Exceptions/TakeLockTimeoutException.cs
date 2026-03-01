@@ -3,14 +3,12 @@ using System.Diagnostics;
 
 namespace Compze.Threading.ResourceAccess.Exceptions;
 
-public class TakeLockTimeoutException : Exception
+public class TakeLockTimeoutException(TimeSpan timeout, TimeSpan stackTraceFetchTimeout) :
+   Exception($"Timed out awaiting lock after {timeout}. This likely indicates an in-memory deadlock. See below for the stacktrace of the blocking thread as it disposes the lock.")
 {
    readonly IAwaitableMonitor _monitor = IAwaitableMonitor.WithDefaultTimeout();
-   readonly TimeSpan _timeToWaitForOwningThreadStacktrace;
+   readonly TimeSpan _timeToWaitForOwningThreadStacktrace = stackTraceFetchTimeout;
    string? _blockingThreadStacktrace;
-
-   public TakeLockTimeoutException(TimeSpan timeout, TimeSpan stackTraceFetchTimeout) : base($"Timed out awaiting lock after {timeout}. This likely indicates an in-memory deadlock. See below for the stacktrace of the blocking thread as it disposes the lock.") =>
-      _timeToWaitForOwningThreadStacktrace = stackTraceFetchTimeout;
 
    public override string Message
    {
@@ -21,6 +19,7 @@ public class TakeLockTimeoutException : Exception
          {
             _blockingThreadStacktrace = $"Failed to get blocking thread stack trace. Timed out after: {_timeToWaitForOwningThreadStacktrace}";
          }
+
          return $"""
                  {base.Message}
                  ----- Blocking thread lock disposal stack trace-----
