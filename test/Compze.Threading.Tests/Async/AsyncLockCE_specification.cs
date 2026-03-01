@@ -16,7 +16,7 @@ using static Compze.Utilities.Testing.Must.MustActions;
 
 // ReSharper disable InconsistentNaming
 
-namespace Compze.Tests.Unit.Internals.SystemCE.ThreadingCE.Async;
+namespace Compze.Threading.Tests.Async;
 
 [Collection(nameof(NonParallelCollection))]
 public class AsyncLockCE_specification : UniversalTestBase

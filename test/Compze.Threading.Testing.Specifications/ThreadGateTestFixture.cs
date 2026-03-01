@@ -9,7 +9,7 @@ using Compze.Utilities.SystemCE.ThreadingCE;
 using Compze.Utilities.SystemCE.ThreadingCE.TasksCE;
 using Compze.Utilities.SystemCE.ThreadingCE.Testing;
 
-namespace Compze.Tests.Unit.Internals.Testing.Threading;
+namespace Compze.Threading.Testing.Specifications;
 
 class ThreadGateTestFixture : IDisposable
 {

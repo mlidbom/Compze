@@ -9,7 +9,7 @@ using Xunit;
 
 // ReSharper disable ImplicitlyCapturedClosure
 
-namespace Compze.Tests.Unit.Internals.SystemCE.ThreadingCE;
+namespace Compze.Threading.Tests;
 
 [Collection(nameof(NonParallelCollection))]
 public class MonitorClassApiExploration

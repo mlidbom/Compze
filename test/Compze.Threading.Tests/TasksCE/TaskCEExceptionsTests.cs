@@ -7,7 +7,7 @@ using Compze.Utilities.Testing.Must;
 using Compze.Utilities.Testing.XUnit.BDD;
 using static Compze.Utilities.Testing.Must.MustActions;
 
-namespace Compze.Tests.Unit.Internals.SystemCE.ThreadingCE.TasksCE;
+namespace Compze.Threading.Tests.TasksCE;
 
 public class TaskCEExceptionsTests : UniversalTestBase
 {

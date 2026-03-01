@@ -55,6 +55,7 @@
   <Folder Name="/Compze/">
     <Project Path="Compze.Core/Compze.Core.csproj" />
     <Project Path="Compze.Tessaging/Compze.Tessaging.csproj" />
+    <Project Path="Compze.Threading/Compze.Threading.csproj" />
   </Folder>
   <Folder Name="/Compze/Serialization/">
     <Project Path="Compze.Serialization.Newtonsoft/Compze.Serialization.Newtonsoft.csproj" />
@@ -85,8 +86,6 @@
     <Project Path="Compze.Utilities.DependencyInjection/Compze.Utilities.DependencyInjection.csproj" />
     <Project Path="Compze.Utilities.Logging/Compze.Utilities.Logging.csproj" />
     <Project Path="Compze.Utilities.SystemCE/Compze.Utilities.SystemCE.csproj" />
-    <Project Path="Compze.Utilities.SystemCE.ThreadingCE/Compze.Utilities.SystemCE.ThreadingCE.csproj" />
-    <Project Path="Compze.Utilities.SystemCE.ThreadingCE.Testing/Compze.Utilities.SystemCE.ThreadingCE.Testing.csproj" />
   </Folder>
   <Folder Name="/_Tests/">
     <Project Path="../test/Compze.Utilities.Tests/Compze.Utilities.Tests.csproj" />
@@ -101,6 +100,12 @@
     <Project Path="../test/Compze.Utilities.Testing.XUnit.Tests/Compze.Utilities.Testing.XUnit.Tests.csproj">
       <BuildType Solution="docs|*" Project="Release" />
     </Project>
+    <Project Path="../test/Compze.Threading.Specifications/Compze.Threading.Specifications.csproj" />
+    <Project Path="../test/Compze.Threading.Tests/Compze.Threading.Tests.csproj" />
+    <Project Path="../test/Compze.Threading.Testing.Specifications/Compze.Threading.Testing.Specifications.csproj" />
   </Folder>
   <Project Path="../DevScripts/Scripts.csproj" />
+  <Folder Name="/Compze/Threading/">
+    <Project Path="Compze.Threading.Testing/Compze.Threading.Testing.csproj" />
+  </Folder>
 </Solution>

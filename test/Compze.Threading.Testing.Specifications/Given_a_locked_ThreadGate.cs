@@ -13,7 +13,7 @@ using static Compze.Utilities.Testing.Must.MustActions;
 // ReSharper disable InconsistentNaming
 // ReSharper disable AccessToDisposedClosure
 
-namespace Compze.Tests.Unit.Internals.Testing.Threading;
+namespace Compze.Threading.Testing.Specifications;
 
 [Collection(nameof(NonParallelCollection))]
 public class Given_a_locked_ThreadGate : UniversalTestBase

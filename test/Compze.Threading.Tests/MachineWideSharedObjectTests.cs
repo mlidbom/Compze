@@ -17,7 +17,7 @@ using Newtonsoft.Json;
 
 // ReSharper disable ImplicitlyCapturedClosure
 
-namespace Compze.Tests.Unit.Internals.SystemCE.ThreadingCE;
+namespace Compze.Threading.Tests;
 
 [UsedImplicitly] public class SharedObject
 {
