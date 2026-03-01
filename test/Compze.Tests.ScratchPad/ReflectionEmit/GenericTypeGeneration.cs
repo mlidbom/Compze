@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using Compze.Contracts;
@@ -15,13 +16,13 @@ using Compze.Utilities.Testing.XUnit.BDD;
 
 namespace Compze.Tests.ScratchPad.ReflectionEmit;
 
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
 public interface IUserPublisherIdentifyingTevent<out TWrappedUserTevent> : IPublisherIdentifyingTevent<TWrappedUserTevent>
    where TWrappedUserTevent : IUserTevent;
 
 #pragma warning disable CA1040 //avoid empty interfaces
 public interface IUserTevent : ITevent;
 #pragma warning restore CA1040 //avoid empty interfaces
-
 class UserTevent : IUserTevent;
 
 public class Example
@@ -41,9 +42,9 @@ public class Example
       instance.Tevent.Must().Be(userTevent);
    }
 
-
    static IReadOnlyDictionary<Type, Type> _createdWrapperTypes = new Dictionary<Type, Type>();
    static readonly IMonitor MonitorCE = IMonitor.WithDefaultTimeout();
+
    static Type CreateGenericWrapperTeventType(Type wrapperTeventType)
    {
       if(_createdWrapperTypes.TryGetValue(wrapperTeventType, out var cachedWrapperImplementation))
