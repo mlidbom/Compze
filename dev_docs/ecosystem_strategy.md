@@ -220,38 +220,6 @@ Compze.slnx                                          (monolithic — everything,
 
 ---
 
-## Dependency Direction (Bottom to Top)
-
-```
-Contracts    Functional
-    \           /
-     ThreadingCE
-         |
-      SystemCE
-         |
-      Logging
-         |
-  DependencyInjection
-   /       |       \
-Microsoft  SI    Serilog
-         |
-      Testing (Must, XUnit)
-         |
-   Core / Sql.Common
-   /    |    |    \
-MsSql MySql PgSql Sqlite
-         |
-       DbPool
-         |
-     Tessaging
-     /       \
-TeventStore  AspNetCore
-         |
-  Hosting.Testing
-```
-
----
-
 ## Open Questions
 
 1. **Core's future**: Does `Compze.Core` survive, or do its concepts get redistributed to Tessaging and Sql? It was born from a "minimize projects" strategy that FlexRef obsoletes.
