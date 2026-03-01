@@ -1,31 +1,6 @@
-# Compze Product Packaging Strategy
+# Compze Sub-Product Structure
 
-## Guiding Principles
-
-
-### Why not one big package?
-#### Promotion
-Merging Contracts, Functional, DependencyInjection, DbPool, InterProcessObjects, Testing tooling, etc. into `Compze.Utilities` would produce an unpromptable mess. Nobody knows what that package *is* or whether they need it.
-
-#### Encapsulation
-- Assemblies provide vilibility barries
-- Each sub-project can, and should be, tested fully by its own test suite.
-
-
-### Why not minimize dependencies?
-Compze.* packages freely depend on each other. For us, depending on other Compze libraries is similar to depending on the BCL — we built these abstractions to reuse them. Dog-fooding increases visibility of the ecosystem and is a credibility signal. Internalizing copies creates forks we must maintain for zero user-facing benefit.
-
-### Granularity serves discoverability, not independence
-We are **not** optimizing for "can I use this on a desert island with no other Compze packages." We are optimizing for "can I find this, understand what it does, and decide to adopt it."
-
-### Sub-products should be extractable
-Each sub-product should be conceptually separate even though we use a mono-repo. It should have its own isolated solution, production projects, and test projects. Theoretically we should be able to easily split each into its own repository.
-
-### FlexRef makes this practical
-[Compze.Build.FlexRef](https://www.nuget.org/packages/Compze.Build.FlexRef) lets any `.slnx` include any subset of projects. Flex references become `ProjectReference` when the project is in the solution, `PackageReference` when it's not. This means:
-- Each sub-product can have its own `.slnx` for focused work
-- The monolithic `Compze.slnx` still exists for CI and cross-cutting refactors
-- No duplication or special configuration per solution
+See also: [Product Packaging Strategy](ecosystem_strategy.md)
 
 ---
 
@@ -51,7 +26,7 @@ These are the lowest-level building blocks. Each is a promotable concept in its 
 ---
 
 ### SystemCE
-> Extensions and abstractions over System.* — IO, collections, LINQ, etc.
+> Quality of life extensions and abstractions over System.* — IO, collections, LINQ, etc.
 
 - `src/Compze.Utilities.SystemCE`
 - **Dependencies**: Contracts, Functional, ThreadingCE (below)
@@ -61,7 +36,7 @@ These are the lowest-level building blocks. Each is a promotable concept in its 
 ---
 
 ### Threading
-> Thread-safe primitives, synchronization, resource access, inter-process coordination.
+> Thread safety made easy and reliable.
 
 - `src/Compze.Utilities.SystemCE.ThreadingCE` — core threading primitives (MutexCE, IMonitor, ResourceAccess, etc.)
 - `src/Compze.Utilities.SystemCE.ThreadingCE.Testing` — testing utilities for threading code
@@ -71,10 +46,8 @@ These are the lowest-level building blocks. Each is a promotable concept in its 
 
 ---
 
----
-
 ### DependencyInjection
-> DI container abstractions and pluggable implementations.
+> Minimalistic DI library abstraction layer removing complexity and DI "magic" while making swapping out components in testing a first class supported concern.
 
 - `src/Compze.Utilities.DependencyInjection` — abstractions
 - `src/Compze.Utilities.DependencyInjection.Microsoft` — Microsoft DI implementation
@@ -107,14 +80,6 @@ These are the lowest-level building blocks. Each is a promotable concept in its 
 
 ---
 
-### Core
-> Core framework abstractions (serialization, aggregate roots, value objects, etc.)
-
-- `src/Compze.Core`
-- `src/Compze.Serialization.Newtonsoft`
-- **Dependencies**: Contracts, DependencyInjection, Logging, SystemCE, ThreadingCE
-- **Open question**: Core may not survive long-term. It was designed around minimizing project count to avoid overloading Visual Studio. FlexRef + partial solutions solve that problem far better.
-
 ---
 
 ### Tessaging
@@ -130,7 +95,33 @@ This is the largest sub-product, and the one that composes everything else.
 
 ---
 
-### Cross-Cutting Test Projects
+## Internal Libraries (Not Promoted Separately)
+
+These are published as NuGet packages (since other Compze packages depend on them), but are not intended as standalone offerings for external consumers.
+
+### Core
+Core was designed around minimizing project count to avoid overloading Visual Studio. FlexRef + partial solutions solve that problem far better. We should probably consider removing it
+
+### Sql
+> SQL abstractions and provider implementations. Internal plumbing consumed by DbPool and Tessaging.
+
+- `src/Compze.Sql.Common` — shared SQL infrastructure
+- `src/Compze.Sql.MicrosoftSql`
+- `src/Compze.Sql.MySql`
+- `src/Compze.Sql.PostgreSql`
+- `src/Compze.Sql.Sqlite`
+- **Dependencies**: Contracts, Core, DependencyInjection, Logging, SystemCE, ThreadingCE
+
+### Logging
+> Logging abstractions and Serilog implementation. Potential long-term candidate for promotion, but currently internal.
+
+- `src/Compze.Utilities.Logging` — abstractions
+- `src/Compze.Utilities.Logging.Serilog` — Serilog implementation
+- **Dependencies**: Contracts, Functional, SystemCE, ThreadingCE
+
+---
+
+## Cross-Cutting Test Projects
 
 These projects currently span multiple sub-products. Over time, tests should migrate to their natural homes.
 
@@ -217,34 +208,3 @@ test/
 
 Compze.slnx                                          (monolithic — everything, for CI)
 ```
-
----
-
-## Open Questions
-
-1. **Core's future**: Does `Compze.Core` survive, or do its concepts get redistributed to Tessaging and Sql? It was born from a "minimize projects" strategy that FlexRef obsoletes.
-2. **Naming**: Should extracted sub-products keep the `Compze.Utilities.*` prefix or get shorter names? E.g., `Compze.Threading.InterProcessObject` vs `Compze.Utilities.SystemCE.ThreadingCE.InterProcessObject`.
-3. **Test decomposition timeline**: Splitting the monolithic test projects is gradual, hard work. Each test needs to find its natural sub-product home.
-4. **When to actually restructure directories**: This is a plan, not an immediate action. The classification informs decisions; the directory moves can happen incrementally as sub-products mature.
-
-
-## Internal Libraries (Not Promoted Separately)
-
-These are published as NuGet packages (since other Compze packages depend on them), but are not intended as standalone offerings for external consumers.
-
-### Sql
-> SQL abstractions and provider implementations. Internal plumbing consumed by DbPool and Tessaging.
-
-- `src/Compze.Sql.Common` — shared SQL infrastructure
-- `src/Compze.Sql.MicrosoftSql`
-- `src/Compze.Sql.MySql`
-- `src/Compze.Sql.PostgreSql`
-- `src/Compze.Sql.Sqlite`
-- **Dependencies**: Contracts, Core, DependencyInjection, Logging, SystemCE, ThreadingCE
-
-### Logging
-> Logging abstractions and Serilog implementation. Potential long-term candidate for promotion, but currently internal.
-
-- `src/Compze.Utilities.Logging` — abstractions
-- `src/Compze.Utilities.Logging.Serilog` — Serilog implementation
-- **Dependencies**: Contracts, Functional, SystemCE, ThreadingCE
