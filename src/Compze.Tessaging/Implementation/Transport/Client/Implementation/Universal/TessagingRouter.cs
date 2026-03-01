@@ -117,7 +117,7 @@ public class TessagingRouter : ITessagingRouter, IDisposable
 
    public void Stop() => _stopped = true;
 
-   unit AssertNotStopped() => Contract.State.Assert(!_stopped, () => "router is stopped")._then(unit.Value);
+   ContractAsserter AssertNotStopped() => Contract.State.Assert(!_stopped, () => "router is stopped");
 
    public ITessagingInboxConnection ConnectionForEndpoint(EndpointId endpointId) =>
       AssertNotStopped()._then(() =>
