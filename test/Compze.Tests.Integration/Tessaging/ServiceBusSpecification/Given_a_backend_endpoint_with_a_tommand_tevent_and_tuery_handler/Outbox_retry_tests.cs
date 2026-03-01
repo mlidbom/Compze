@@ -24,10 +24,10 @@ public class Outbox_retry_tests : EndpointHostTestBase
 
       var originalRemoteStorage = RemoteEndpoint.ServiceLocator.Resolve<Outbox.ITessageStorage>();
       var undeliveredTessage = await Await.NotNullAsync(
-         () => originalRemoteStorage.GetUndeliveredTessages(TimeSpan.Zero).FirstOrDefault(it => it.RetryCount > 0),
-         10.Seconds(),
-         10.Milliseconds(),
-         "A tessage with a retry count greater than 0 should have been added to storage");
+                                  () => originalRemoteStorage.GetUndeliveredTessages(TimeSpan.Zero).FirstOrDefault(it => it.RetryCount > 0),
+                                  timeout: 10.Seconds(),
+                                  pollInterval: 10.Milliseconds(),
+                                  "A tessage with a retry count greater than 0 should have been added to storage");
 
       undeliveredTessage.RetryCount.Must().BeGreaterThan(0, "failure should increment retry count");
       undeliveredTessage.LastAttemptTime.Must().NotBeNull();
@@ -39,8 +39,8 @@ public class Outbox_retry_tests : EndpointHostTestBase
 
       MyExactlyOnceTommandHandlerThreadGate.AwaitPassedThroughCountEqualTo(1, WaitTimeout.Seconds(15));
       await Await.Async(() => newRemoteStorage.GetUndeliveredTessages(TimeSpan.Zero).Count == 0,
-                        10.Seconds(),
-                        10.Milliseconds(),
+                        timeout: 10.Seconds(),
+                        pollInterval: 10.Milliseconds(),
                         "Timeout waiting for tessages to be removed from outbox");
 
       originalRemoteStorage.GetUndeliveredTessages(TimeSpan.Zero).Must().HaveCount(0, "the new endpoint after restart should be using the same database");
@@ -54,10 +54,10 @@ public class Outbox_retry_tests : EndpointHostTestBase
 
       var remoteStorage = RemoteEndpoint.ServiceLocator.Resolve<Outbox.ITessageStorage>();
       var undeliveredTessage = await Await.NotNullAsync(
-         () => remoteStorage.GetUndeliveredTessages(TimeSpan.Zero).FirstOrDefault(it => it.RetryCount > 0),
-         10.Seconds(),
-         10.Milliseconds(),
-         "A tessage with a retry count greater than 0 should have been added to storage");
+                                  () => remoteStorage.GetUndeliveredTessages(TimeSpan.Zero).FirstOrDefault(it => it.RetryCount > 0),
+                                  timeout: 10.Seconds(),
+                                  pollInterval: 10.Milliseconds(),
+                                  "A tessage with a retry count greater than 0 should have been added to storage");
       undeliveredTessage.RetryCount.Must().BeGreaterThan(0, "failure should increment retry count");
       undeliveredTessage.LastAttemptTime.Must().NotBeNull();
 
