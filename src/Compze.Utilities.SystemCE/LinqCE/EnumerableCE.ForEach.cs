@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Compze.Functional;
+using Compze.Underscore;
 using JetBrains.Annotations;
 using Compze.Contracts;
 using static Compze.Contracts.Contract;

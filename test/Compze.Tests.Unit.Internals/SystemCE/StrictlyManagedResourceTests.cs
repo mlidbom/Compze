@@ -1,6 +1,6 @@
 using System;
 using Compze.Tests.Infrastructure;
-using Compze.Functional;
+using Compze.Underscore;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.Testing.DbPool.SystemCE;
 using Compze.Utilities.Testing.Must;

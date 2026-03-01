@@ -4,7 +4,7 @@ using JetBrains.Annotations;
 
 // ReSharper disable PossibleMultipleEnumeration
 
-namespace Compze.Functional;
+namespace Compze.Underscore;
 
 public static class ForEachExtensions
 {

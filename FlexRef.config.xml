@@ -17,7 +17,7 @@
   <Package Name="Compze.Utilities.DependencyInjection" />
   <Package Name="Compze.Utilities.DependencyInjection.Microsoft" />
   <Package Name="Compze.Utilities.DependencyInjection.SimpleInjector" />
-  <Package Name="Compze.Functional" />
+  <Package Name="Compze.Underscore" />
   <Package Name="Compze.Utilities.Logging" />
   <Package Name="Compze.Utilities.Logging.Serilog" />
   <Package Name="Compze.Utilities.SystemCE" />

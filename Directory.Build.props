@@ -22,8 +22,6 @@
     <UsePackageReference_Compze_Contracts Condition="'$(UsePackageReference_Compze_Contracts)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Contracts.csproj|'))">true</UsePackageReference_Compze_Contracts>
     <!-- Compze.Core -->
     <UsePackageReference_Compze_Core Condition="'$(UsePackageReference_Compze_Core)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Core.csproj|'))">true</UsePackageReference_Compze_Core>
-    <!-- Compze.Functional -->
-    <UsePackageReference_Compze_Functional Condition="'$(UsePackageReference_Compze_Functional)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Functional.csproj|'))">true</UsePackageReference_Compze_Functional>
     <!-- Compze.Serialization.Newtonsoft -->
     <UsePackageReference_Compze_Serialization_Newtonsoft Condition="'$(UsePackageReference_Compze_Serialization_Newtonsoft)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Serialization.Newtonsoft.csproj|'))">true</UsePackageReference_Compze_Serialization_Newtonsoft>
     <!-- Compze.Sql.Common -->
@@ -48,6 +46,8 @@
     <UsePackageReference_Compze_Threading Condition="'$(UsePackageReference_Compze_Threading)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Threading.csproj|'))">true</UsePackageReference_Compze_Threading>
     <!-- Compze.Threading.Testing -->
     <UsePackageReference_Compze_Threading_Testing Condition="'$(UsePackageReference_Compze_Threading_Testing)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Threading.Testing.csproj|'))">true</UsePackageReference_Compze_Threading_Testing>
+    <!-- Compze.Underscore -->
+    <UsePackageReference_Compze_Underscore Condition="'$(UsePackageReference_Compze_Underscore)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Underscore.csproj|'))">true</UsePackageReference_Compze_Underscore>
     <!-- Compze.Utilities -->
     <UsePackageReference_Compze_Utilities Condition="'$(UsePackageReference_Compze_Utilities)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Utilities.csproj|'))">true</UsePackageReference_Compze_Utilities>
     <!-- Compze.Utilities.DependencyInjection -->

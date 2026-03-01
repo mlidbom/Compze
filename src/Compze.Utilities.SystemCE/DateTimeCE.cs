@@ -1,7 +1,7 @@
 using System;
 using System.Globalization;
 using Compze.Contracts;
-using Compze.Functional;
+using Compze.Underscore;
 
 namespace Compze.Utilities.SystemCE;
 

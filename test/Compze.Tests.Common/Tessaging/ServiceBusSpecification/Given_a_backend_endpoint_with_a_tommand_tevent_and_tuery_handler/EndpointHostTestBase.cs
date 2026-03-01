@@ -14,7 +14,7 @@ using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tessaging.Teventive.TeventStore.Wiring;
 using Compze.Tessaging.TyperMediaApi.EventStore;
 using Compze.Tests.Infrastructure;
-using Compze.Functional;
+using Compze.Underscore;
 using Compze.Threading;
 using Compze.Threading.Testing;
 

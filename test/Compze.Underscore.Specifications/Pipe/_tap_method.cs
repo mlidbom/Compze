@@ -1,7 +1,7 @@
 using Compze.Utilities.Testing.Must;
 using Compze.Utilities.Testing.XUnit.BDD;
 
-namespace Compze.Functional.Specifications.Pipe;
+namespace Compze.Underscore.Specifications.Pipe;
 
 public class _tap_method
 {

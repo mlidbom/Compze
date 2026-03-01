@@ -5,7 +5,7 @@
                 ChildCanDependOnParentImplicitly="true">
    
 	<Allowed From="*" To="Compze.Contracts.*" />
-	<Allowed From="*" To="Compze.Functional.*" />
+	<Allowed From="*" To="Compze.Underscore.*" />
    <Allowed From="*" To="Compze.Threading.*" />
    <Allowed From="*" To="Compze.Utilities.*" />
    <Allowed From="*" To="JetBrains.Annotations.*" />

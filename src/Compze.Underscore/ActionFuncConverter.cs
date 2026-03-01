@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace Compze.Functional;
+namespace Compze.Underscore;
 
 public static class ActionFuncConverter
 {

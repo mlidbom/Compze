@@ -1,7 +1,7 @@
 using System;
 using Compze.Tests.Common.Testing.Sql;
 using Compze.Tests.Unit.Internals;
-using Compze.Functional;
+using Compze.Underscore;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.Testing.DbPool.SystemCE;
 using Compze.Tests.Infrastructure.XUnit;

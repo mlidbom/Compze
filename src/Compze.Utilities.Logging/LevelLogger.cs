@@ -1,5 +1,5 @@
 using System.Runtime.CompilerServices;
-using Compze.Functional;
+using Compze.Underscore;
 
 namespace Compze.Utilities.Logging;
 

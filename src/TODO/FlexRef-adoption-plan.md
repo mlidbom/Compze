@@ -33,7 +33,7 @@ The 23 properties needed:
 <PropertyGroup>
   <!-- Utilities (leaf → high-level) -->
   <UsePackageReference_Compze_Contracts        Condition="..." />
-  <UsePackageReference_Compze_Functional                  Condition="..." />
+  <UsePackageReference_Compze_Underscore                  Condition="..." />
   <UsePackageReference_Compze_Utilities                  Condition="..." />
   <UsePackageReference_Compze_Utilities_SystemCE         Condition="..." />
   <UsePackageReference_Compze_Utilities_SystemCE_ThreadingCE Condition="..." />
@@ -179,7 +179,7 @@ directly.
 
 ```
 Compze.Contracts (leaf)
-├── Compze.Functional
+├── Compze.Underscore
 │   ├── Compze.Utilities
 │   ├── Compze.Utilities.SystemCE.ThreadingCE
 │   │   └── Compze.Utilities.SystemCE

@@ -1,4 +1,4 @@
-# Compze.Functional
+# Compze.Underscore
 
 **Code that reads the way you would describe the algorithm in words, not code that must be read inside out. Powered by the pipe forward operator and friends.**
 

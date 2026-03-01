@@ -20,13 +20,6 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' != 'true'">
     <ProjectReference Include="..\..\src\Compze.Contracts\Compze.Contracts.csproj" />
   </ItemGroup>
-  <!-- Compze.Functional — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Functional)' == 'true'">
-    <PackageReference Include="Compze.Functional" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Functional)' != 'true'">
-    <ProjectReference Include="..\..\src\Compze.Functional\Compze.Functional.csproj" />
-  </ItemGroup>
   <!-- Compze.Tessaging.Hosting.AspNetCore — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_Hosting_AspNetCore)' == 'true'">
     <PackageReference Include="Compze.Tessaging.Hosting.AspNetCore" Version="*-*" />
@@ -61,6 +54,13 @@
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_Threading_Testing)' != 'true'">
     <ProjectReference Include="..\..\src\Compze.Threading.Testing\Compze.Threading.Testing.csproj" />
+  </ItemGroup>
+  <!-- Compze.Underscore — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Underscore)' == 'true'">
+    <PackageReference Include="Compze.Underscore" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Underscore)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.Underscore\Compze.Underscore.csproj" />
   </ItemGroup>
   <!-- Compze.Utilities.DependencyInjection — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_DependencyInjection)' == 'true'">

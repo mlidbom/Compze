@@ -2,7 +2,7 @@ using System.Threading.Tasks;
 using Compze.Utilities.Testing.Must;
 using Compze.Utilities.Testing.XUnit.BDD;
 
-namespace Compze.Functional.Specifications.Pipe;
+namespace Compze.Underscore.Specifications.Pipe;
 
 public class _mutateAsync_method
 {

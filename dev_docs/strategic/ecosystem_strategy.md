@@ -50,7 +50,7 @@ This decouples project classification from directory structure, which is importa
 
 1. **Core dissolves.** Its types redistribute to Teventive (aggregate/event interfaces) and Typermedia (command/query routing). Core was born from a "minimize projects" strategy that FlexRef obsoletes.
 2. **Tessaging becomes thin or disappears.** The Tessaging project either becomes a small project containing only shared interfaces/base classes, or is eliminated entirely. Teventive and Typermedia become top-level sub-products directly under Compze.
-3. **Functional → Unit + Fluent.** `Compze.Functional` is renamed/split: `Compze.Unit` (the `unit` type + Action/Func converters) and `Compze.Fluent` (pipe, tap, mutate, then, forEach). This resolves a circular dependency between Fluent and SystemCE, since SystemCE can depend on Unit without pulling in Fluent's dependency on Unit.
+3. **Functional → Unit + Fluent.** `Compze.Underscore` is renamed/split: `Compze.Unit` (the `unit` type + Action/Func converters) and `Compze.Fluent` (pipe, tap, mutate, then, forEach). This resolves a circular dependency between Fluent and SystemCE, since SystemCE can depend on Unit without pulling in Fluent's dependency on Unit.
 4. **Naming**: Promoted sub-products use short names (`Compze.Threading`, not `Compze.Utilities.SystemCE.ThreadingCE`).
 
 ## Open Questions

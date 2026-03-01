@@ -3,7 +3,7 @@ using Compze.Utilities.Testing.XUnit.BDD;
 
 #pragma warning disable CA1052 // BDD-style nested specification classes cannot be static
 
-namespace Compze.Functional.Specifications.Pipe;
+namespace Compze.Underscore.Specifications.Pipe;
 
 public class _then_method
 {

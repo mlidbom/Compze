@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace Compze.Functional;
+namespace Compze.Underscore;
 
 ///<summary>The functional programming unit concept.
 /// Unifies <see cref="Func{TResult}"/> and <see cref="Action"/>.

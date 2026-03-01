@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Compze.Contracts;
-using Compze.Functional;
+using Compze.Underscore;
 using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
 
 namespace Compze.Utilities.SystemCE.ReflectionCE;

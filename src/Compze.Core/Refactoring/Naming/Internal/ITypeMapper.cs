@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using Compze.Functional;
+using Compze.Underscore;
 
 namespace Compze.Core.Refactoring.Naming.Internal;
 

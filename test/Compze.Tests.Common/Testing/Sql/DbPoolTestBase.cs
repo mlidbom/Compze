@@ -10,7 +10,7 @@ using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.DependencyInjection.Abstractions;
-using Compze.Functional;
+using Compze.Underscore;
 using Compze.Utilities.Testing.DbPool;
 
 namespace Compze.Tests.Common.Testing.Sql;

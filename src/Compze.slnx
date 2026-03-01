@@ -48,9 +48,9 @@
     <Project Path="../test/Compze.Contracts.Specifications/Compze.Contracts.Specifications.csproj" />
     <Project Path="Compze.Contracts/Compze.Contracts.csproj" />
   </Folder>
-  <Folder Name="/Compze.Functional/">
-    <Project Path="../test/Compze.Functional.Specifications/Compze.Functional.Specifications.csproj" />
-    <Project Path="Compze.Functional/Compze.Functional.csproj" />
+  <Folder Name="/Compze.Underscore/">
+    <Project Path="../test/Compze.Underscore.Specifications/Compze.Underscore.Specifications.csproj" />
+    <Project Path="Compze.Underscore/Compze.Underscore.csproj" />
   </Folder>
   <Folder Name="/Compze.Threading/">
     <Project Path="../test/Compze.Threading.Specifications/Compze.Threading.Specifications.csproj" />

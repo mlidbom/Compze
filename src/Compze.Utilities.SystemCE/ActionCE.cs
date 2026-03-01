@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Compze.Functional;
+using Compze.Underscore;
 using Compze.Utilities.SystemCE.LinqCE;
 
 namespace Compze.Utilities.SystemCE;

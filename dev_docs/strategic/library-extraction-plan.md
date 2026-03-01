@@ -22,7 +22,7 @@ This creates a clear boundary between stable utility code and the evolving core 
 ## Why
 
 - **Enforce stability.** Once published, these libraries have a real public API contract. Changes become deliberate.
-- **Attract users.** Small focused libraries with clear value propositions are how people discover a framework. Someone finds `Compze.Functional` via `unit`, likes it, explores further.
+- **Attract users.** Small focused libraries with clear value propositions are how people discover a framework. Someone finds `Compze.Underscore` via `unit`, likes it, explores further.
 - **Developer ergonomics.** Working in a focused solution with 8 projects is dramatically faster than a monolithic 30+ project solution — without sacrificing the ability to see and build everything when needed.
 - **FlexRef enables this.** The same tool that lets us work in subsets of the codebase now lets us treat stable libraries as packages while keeping them as project references in the full solution.
 

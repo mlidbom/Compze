@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 // ReSharper disable InconsistentNaming
 
-namespace Compze.Functional;
+namespace Compze.Underscore;
 
 /// <summary>
 /// Enables chaining method calls in a fluent functional programming style rather than having to use separate lines and temporary variables.

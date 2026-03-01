@@ -1,5 +1,5 @@
 using System;
-using Compze.Functional;
+using Compze.Underscore;
 
 namespace Compze.Threading.ResourceAccess;
 

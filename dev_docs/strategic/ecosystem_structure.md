@@ -18,8 +18,8 @@ These are the lowest-level building blocks. Each is a promotable concept in its 
 
 #### Functional
 > Pipe forward operator, unit type, Action/Func converters, chainable extensions.
-- `src/Compze.Functional`
-- `test/Compze.Functional.Specifications`
+- `src/Compze.Underscore`
+- `test/Compze.Underscore.Specifications`
 - **Dependencies**: _(none)_
 - **Status**: Already published as a separate NuGet package.
 - **Planned**: Rename to `Compze.Fluent` and extract the `unit` type + Action/Func converters into a new `Compze.Unit` package. "Functional" overpromises — the library doesn't address immutability, monads, or other FP tenets. What it provides is fluent, left-to-right chainable code. Extracting `unit` also breaks the circular dependency that would otherwise exist if SystemCE needs to depend on Fluent while Fluent depends on SystemCE.

@@ -1,7 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
-using Compze.Functional;
+using Compze.Underscore;
 using Compze.Utilities.SystemCE;
 
 // ReSharper disable UnusedMember.Global : These functions are very useful for debugging but only used occasionally. Let's keep them around for now.
