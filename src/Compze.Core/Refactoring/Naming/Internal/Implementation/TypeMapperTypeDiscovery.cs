@@ -9,7 +9,7 @@ using Compze.Utilities.SystemCE.ReflectionCE;
 
 namespace Compze.Core.Refactoring.Naming.Internal.Implementation;
 
-public static class TypeMapperTypeDiscovery
+internal static class TypeMapperTypeDiscovery
 {
    public static ISet<Type> GetTypesRequiringMapping(Assembly assembly)
    {

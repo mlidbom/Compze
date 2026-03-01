@@ -17,7 +17,7 @@ using Compze.Threading.ResourceAccess;
 
 namespace Compze.Core.Tessaging.Teventive.Infrastructure;
 
-public static class WrapperTeventImplementationGenerator
+internal static class WrapperTeventImplementationGenerator
 {
    static IReadOnlyDictionary<Type, Func<ITevent, IPublisherIdentifyingTevent<ITevent>>> _wrapperConstructors = new Dictionary<Type, Func<ITevent, IPublisherIdentifyingTevent<ITevent>>>();
    static IReadOnlyDictionary<Type, Type> _createdWrapperTypes = new Dictionary<Type, Type>();

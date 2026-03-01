@@ -20,7 +20,7 @@ using Compze.Utilities.SystemCE.ReflectionCE;
 namespace Compze.Core.DocumentDb.Private;
 
 #pragma warning disable CA1724 // Type name intentionally matches namespace concept
-public sealed class DocumentDb : IDocumentDb
+internal sealed class DocumentDb : IDocumentDb
 {
    public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Scoped.For<IDocumentDb>()
