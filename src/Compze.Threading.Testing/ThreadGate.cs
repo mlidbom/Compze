@@ -4,6 +4,7 @@ using System.Linq;
 using Compze.Contracts;
 using Compze.Underscore;
 using Compze.Threading.ResourceAccess;
+using Compze.Threading.ResourceAccess.Exceptions;
 using Compze.Utilities.SystemCE;
 
 namespace Compze.Threading.Testing;

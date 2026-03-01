@@ -4,6 +4,7 @@ using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Threading;
 using Compze.Threading.ResourceAccess;
+using Compze.Threading.ResourceAccess.Exceptions;
 using Compze.Threading.Testing;
 using Compze.Utilities.Testing.Must;
 using Compze.Utilities.Testing.XUnit.BDD;

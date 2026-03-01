@@ -10,6 +10,7 @@ using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
 using Compze.Threading;
 using Compze.Threading.ResourceAccess;
+using Compze.Threading.ResourceAccess.Exceptions;
 
 namespace Compze.Tessaging.Implementation.Transport;
 

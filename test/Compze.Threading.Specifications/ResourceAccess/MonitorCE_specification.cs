@@ -6,6 +6,7 @@ using Compze.Tests.Infrastructure;
 using Compze.Utilities.SystemCE;
 using Compze.Threading;
 using Compze.Threading.ResourceAccess;
+using Compze.Threading.ResourceAccess.Exceptions;
 using Compze.Threading.TasksCE;
 using Compze.Utilities.Testing.Must;
 using Compze.Utilities.Testing.XUnit.BDD;

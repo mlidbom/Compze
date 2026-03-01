@@ -2,7 +2,7 @@ using System;
 
 namespace Compze.Threading.ResourceAccess;
 
-public static class AwaitableMonitorCEExtensions
+static class AwaitableMonitorCEExtensions
 {
    public static TResult ReadOrUpdate<TResult>(this IAwaitableMonitor @this, Func<TResult?> tryRead, Action updateOnFailedRead)
       where TResult : class =>

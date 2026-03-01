@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using Compze.Contracts;
+using Compze.Threading.ResourceAccess.Exceptions;
 using Compze.Threading.Utilities;
 
 namespace Compze.Threading.ResourceAccess;

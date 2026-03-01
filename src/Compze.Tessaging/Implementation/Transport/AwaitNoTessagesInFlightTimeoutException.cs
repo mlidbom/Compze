@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using Compze.Threading.ResourceAccess;
+using Compze.Threading.ResourceAccess.Exceptions;
 
 namespace Compze.Tessaging.Implementation.Transport;
 

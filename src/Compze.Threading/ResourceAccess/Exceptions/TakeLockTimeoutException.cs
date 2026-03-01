@@ -1,7 +1,7 @@
 using System;
 using System.Diagnostics;
 
-namespace Compze.Threading.ResourceAccess;
+namespace Compze.Threading.ResourceAccess.Exceptions;
 
 public class TakeLockTimeoutException : Exception
 {
