@@ -10,6 +10,7 @@ using Compze.Threading;
 using Compze.Threading.ResourceAccess;
 using Compze.Threading.TasksCE;
 using Compze.Threading.Testing;
+using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 using Compze.Utilities.Testing.Must;
 using Compze.Utilities.Testing.XUnit.BDD;
 using JetBrains.Annotations;

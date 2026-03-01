@@ -1,9 +1,10 @@
 using System;
 using System.Text;
-using Compze.Utilities.SystemCE;
+using Compze.Threading;
+using Compze.Threading.ResourceAccess;
 using Compze.Utilities.SystemCE.IOCE;
 
-namespace Compze.Threading.ResourceAccess;
+namespace Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 
 public abstract class MachineWideSharedObject
 {
