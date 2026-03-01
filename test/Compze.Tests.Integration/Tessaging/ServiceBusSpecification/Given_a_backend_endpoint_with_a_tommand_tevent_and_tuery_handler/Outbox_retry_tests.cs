@@ -3,6 +3,7 @@ using Compze.Utilities.SystemCE;
 using System.Linq;
 using System.Threading.Tasks;
 using Compze.Tessaging.Hosting;
+using Compze.Core.Tessaging.Internal.SqlLayer;
 using Compze.Tessaging.Implementation.Outbox;
 using Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
 using Compze.Tests.Infrastructure;
@@ -23,13 +24,16 @@ public class Outbox_retry_tests : EndpointHostTestBase
       RemoteEndpoint.ExecuteServerRequestInTransaction(session => session.Send(new MyExactlyOnceTommand()));
 
       var originalRemoteStorage = RemoteEndpoint.ServiceLocator.Resolve<Outbox.ITessageStorage>();
-      await Await.Async(() => originalRemoteStorage.GetUndeliveredTessages(TimeSpan.Zero).Any(it => it.RetryCount > 0),
+      IServiceBusSqlLayer.UndeliveredTessage? undeliveredTessage = null;
+      await Await.Async(() =>
+                        {
+                           undeliveredTessage = originalRemoteStorage.GetUndeliveredTessages(TimeSpan.Zero).FirstOrDefault(it => it.RetryCount > 0);
+                           return undeliveredTessage != null;
+                        },
                         10.Seconds(),
                         10.Milliseconds(),
                         "A tessage with a retry count greater than 0 should have been added to storage");
-
-      var undeliveredTessage = originalRemoteStorage.GetUndeliveredTessages(TimeSpan.Zero)[0];
-      undeliveredTessage.RetryCount.Must().BeGreaterThan(0, "failure should increment retry count");
+      undeliveredTessage!.RetryCount.Must().BeGreaterThan(0, "failure should increment retry count");
       undeliveredTessage.LastAttemptTime.Must().NotBeNull();
 
       await Host.DisposeAsyncWithoutWaitingForEndpointsToBeAtRest();
@@ -53,13 +57,17 @@ public class Outbox_retry_tests : EndpointHostTestBase
       RemoteEndpoint.ExecuteServerRequestInTransaction(session => session.Send(new MyExactlyOnceTommand()));
 
       var remoteStorage = RemoteEndpoint.ServiceLocator.Resolve<Outbox.ITessageStorage>();
-      await Await.Async(() => remoteStorage.GetUndeliveredTessages(TimeSpan.Zero).Any(it => it.RetryCount > 0),
+      IServiceBusSqlLayer.UndeliveredTessage? undeliveredTessage = null;
+      await Await.Async(() =>
+                        {
+                           undeliveredTessage = remoteStorage.GetUndeliveredTessages(TimeSpan.Zero).FirstOrDefault(it => it.RetryCount > 0);
+                           return undeliveredTessage != null;
+                        },
                         10.Seconds(),
                         10.Milliseconds(),
                         "A tessage with a retry count greater than 0 should have been added to storage");
 
-      var undeliveredTessage = remoteStorage.GetUndeliveredTessages(TimeSpan.Zero)[0];
-      undeliveredTessage.RetryCount.Must().BeGreaterThan(0, "failure should increment retry count");
+      undeliveredTessage!.RetryCount.Must().BeGreaterThan(0, "failure should increment retry count");
       undeliveredTessage.LastAttemptTime.Must().NotBeNull();
 
       await Host.DisposeAsyncWithoutWaitingForEndpointsToBeAtRest();

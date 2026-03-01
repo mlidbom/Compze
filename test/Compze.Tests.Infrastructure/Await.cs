@@ -12,9 +12,9 @@ public static class Await
       {
          if(condition())
             return;
-         await Task.Delay(10);
+         await Task.Delay(pollInterval);
       }
 
-      throw new Exception("Timeout waiting for condition to become true");
+      throw new Exception(failureTessage);
    }
 }
