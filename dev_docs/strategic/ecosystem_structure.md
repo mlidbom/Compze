@@ -17,11 +17,12 @@ These are the lowest-level building blocks. Each is a promotable concept in its 
 - **Status**: Already published as a separate NuGet package.
 
 #### Functional
-> Functional programming extensions for C#.
+> Pipe forward operator, unit type, Action/Func converters, chainable extensions.
 - `src/Compze.Functional`
 - `test/Compze.Functional.Specifications`
 - **Dependencies**: _(none)_
 - **Status**: Already published as a separate NuGet package.
+- **Planned**: Rename to `Compze.Fluent` and extract the `unit` type + Action/Func converters into a new `Compze.Unit` package. "Functional" overpromises — the library doesn't address immutability, monads, or other FP tenets. What it provides is fluent, left-to-right chainable code. Extracting `unit` also breaks the circular dependency that would otherwise exist if SystemCE needs to depend on Fluent while Fluent depends on SystemCE.
 
 ---
 
@@ -29,7 +30,7 @@ These are the lowest-level building blocks. Each is a promotable concept in its 
 > Quality of life extensions and abstractions over System.* — IO, collections, LINQ, etc.
 
 - `src/Compze.Utilities.SystemCE`
-- **Dependencies**: Contracts, Functional, ThreadingCE (below)
+- **Dependencies**: Contracts, Functional
 - **Status**: Published as NuGet package.
 - **Note**: Contains `MachineWideSharedObject` which may move to its own sub-product under Threading.
 
@@ -41,7 +42,7 @@ These are the lowest-level building blocks. Each is a promotable concept in its 
 - `src/Compze.Utilities.SystemCE.ThreadingCE` — core threading primitives (MutexCE, IMonitor, ResourceAccess, etc.)
 - `src/Compze.Utilities.SystemCE.ThreadingCE.Testing` — testing utilities for threading code
 - _Candidate_: `Compze.Threading.InterProcessObject` — `MachineWideSharedObject` extracted from SystemCE
-- **Dependencies**: Contracts, Functional
+- **Dependencies**: Contracts, Functional, SystemCE
 - **Test projects**: Currently tested within `Compze.Tests.Unit.Internals` and `Compze.Tests.Performance.Internals` — would need dedicated test projects.
 
 ---
@@ -80,8 +81,6 @@ These are the lowest-level building blocks. Each is a promotable concept in its 
 
 ---
 
----
-
 ### Tessaging
 > Type-based messaging (Typermedia) + Teventive programming.
 
@@ -92,6 +91,7 @@ This is the largest sub-product, and the one that composes everything else.
 - `src/Compze.Tessaging.Hosting.AspNetCore` — ASP.NET Core hosting
 - `src/Compze.Tessaging.Hosting.Testing` — testing host (the "hub" project, 23 direct references)
 - **Dependencies**: Nearly everything — Contracts, Core, Functional, Sql, DI, Logging, SystemCE, ThreadingCE, Serialization, Testing, DbPool
+- **Planned**: Extract Teventive and Typermedia as top-level sub-products (`Compze.Teventive`, `Compze.Typermedia`). Tessaging itself either survives as a thin shared abstraction layer (interfaces and base classes only) or is eliminated entirely, with its contents absorbed into Teventive and Typermedia.
 
 ---
 
@@ -100,7 +100,7 @@ This is the largest sub-product, and the one that composes everything else.
 These are published as NuGet packages (since other Compze packages depend on them), but are not intended as standalone offerings for external consumers.
 
 ### Core
-Core was designed around minimizing project count to avoid overloading Visual Studio. FlexRef + partial solutions solve that problem far better. We should probably consider removing it
+Core was designed around minimizing project count to avoid overloading Visual Studio. FlexRef + partial solutions solve that problem far better. **Planned**: Dissolve Core — aggregate/event interfaces move to Teventive, command/query routing moves to Typermedia.
 
 ### Sql
 > SQL abstractions and provider implementations. Internal plumbing consumed by DbPool and Tessaging.
@@ -113,7 +113,7 @@ Core was designed around minimizing project count to avoid overloading Visual St
 - **Dependencies**: Contracts, Core, DependencyInjection, Logging, SystemCE, ThreadingCE
 
 ### Logging
-> Logging abstractions and Serilog implementation. Potential long-term candidate for promotion, but currently internal.
+> Logging abstractions and Serilog implementation. Internal — the overall design is not yet settled for general use.
 
 - `src/Compze.Utilities.Logging` — abstractions
 - `src/Compze.Utilities.Logging.Serilog` — Serilog implementation
@@ -136,75 +136,4 @@ These projects currently span multiple sub-products. Over time, tests should mig
 | `test/Compze.Tests.CodePolicies` | Policy enforcement across all projects | Stays at root (references everything by design) |
 | `test/Compze.Tests.ScratchPad` | Experimental/scratch | Stays at root |
 
-**Strategy**: Black-box testing. Tests that compose many things belong with the sub-product doing the composing (Tessaging, Teventive). Partial duplication across sub-products is fine.
-
----
-
-## Possible Future Directory Layout
-
-```
-products/
-  Contracts/
-    src/Compze.Contracts/
-    test/Compze.Contracts.Specifications/
-    Contracts.slnx
-
-  Functional/
-    src/Compze.Functional/
-    test/Compze.Functional.Specifications/
-    Functional.slnx
-
-  Threading/
-    src/Compze.Utilities.SystemCE.ThreadingCE/
-    src/Compze.Utilities.SystemCE.ThreadingCE.Testing/
-    src/Compze.Threading.InterProcessObject/          (new, extracted from SystemCE)
-    test/Compze.Threading.Tests/
-    Threading.slnx
-
-  SystemCE/
-    src/Compze.Utilities.SystemCE/
-    test/Compze.SystemCE.Tests/
-    SystemCE.slnx
-
-  DependencyInjection/
-    src/Compze.Utilities.DependencyInjection/
-    src/Compze.Utilities.DependencyInjection.Microsoft/
-    src/Compze.Utilities.DependencyInjection.SimpleInjector/
-    test/Compze.DependencyInjection.Tests/
-    DependencyInjection.slnx
-
-  Testing/
-    src/Compze.Utilities.Testing.Must/
-    src/Compze.Utilities.Testing.XUnit/
-    test/Compze.Utilities.Testing.XUnit.Tests/
-    Testing.slnx
-
-  DbPool/
-    src/Compze.Utilities.Testing.DbPool/
-    src/Compze.Utilities.Testing.DbPool.MicrosoftSql/
-    src/Compze.Utilities.Testing.DbPool.MySql/
-    src/Compze.Utilities.Testing.DbPool.PostgreSql/
-    src/Compze.Utilities.Testing.DbPool.Sqlite/
-    test/Compze.DbPool.Tests/
-    DbPool.slnx
-
-  Tessaging/
-    src/Compze.Core/                                  (if it survives)
-    src/Compze.Serialization.Newtonsoft/
-    src/Compze.Tessaging/
-    src/Compze.Tessaging.Teventive.TeventStore/
-    src/Compze.Tessaging.Hosting.AspNetCore/
-    src/Compze.Tessaging.Hosting.Testing/
-    test/Compze.Tests.Common/
-    test/Compze.Tests.Infrastructure/
-    test/Compze.Tests.Unit/
-    test/Compze.Tests.Integration/
-    test/Compze.Tests.Performance.Internals/
-    Tessaging.slnx
-
-test/
-  Compze.Tests.CodePolicies/                          (stays at root — references everything)
-  Compze.Tests.ScratchPad/                            (stays at root — experimental)
-
-Compze.slnx                                          (monolithic — everything, for CI)
-```
+**Strategy**: Black-box testing. Tests that compose many things belong with the sub-product doing the composing. Partial duplication across sub-products is fine.
