@@ -1,4 +1,3 @@
-using System;
 using Compze.Utilities.Testing.Must;
 using Compze.Utilities.Testing.XUnit.BDD;
 
@@ -17,27 +16,14 @@ public class Then_operator
    public class with_func
    {
       [XF] public void returns_the_func_result_ignoring_the_piped_value() =>
-         "ignored"._((() => 42)).Must().Be(42);
+         "ignored"._(() => 42).Must().Be(42);
 
       [XF] public void the_func_is_invoked()
       {
          var invoked = false;
-         "ignored"._((() => { invoked = true; return 0; }));
+         "ignored"._(() => { invoked = true; return 0; });
          invoked.Must().BeTrue();
       }
    }
 
-   public class with_action
-   {
-      [XF] public void executes_the_action_and_returns_unit()
-      {
-         var executed = false;
-         var result = "ignored"._((Action)(() => { executed = true; }));
-         executed.Must().BeTrue();
-         result.Must().Be(unit.Value);
-      }
-
-      [XF] public void the_return_value_is_unit() =>
-         "ignored"._((Action)(() => { })).Must().Be(unit.Value);
-   }
 }

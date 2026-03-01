@@ -49,11 +49,12 @@ Pipeline overloads:
 #### Fluent with static use. No wasted lines. The contract reads like part of the method declaration.
 ```csharp
 void Transfer(Account from, Account to, decimal amount) => 
-    Contract.Argument.NotNull2(from, to).Assert(amount > 0).State.NotDisposed(_disposed, this)._then(() => {
-        //method implementation here
-    });
+    Contract.Argument.NotNull2(from, to).Assert(amount > 0).State.NotDisposed(_disposed, this)
+        ._tap(_ => {
+            //method implementation here
+        });
 ```
-**Note, the _then method is from Compze.Fluent. You may want to check it out.**
+**Note, the _tap method is from Compze.Functional. You may want to check it out.**
 
 #### Classic style. Pretty verbose in our opinion
 ```csharp

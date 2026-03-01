@@ -26,17 +26,4 @@ public class _then_method
       }
    }
 
-   public class with_action
-   {
-      [XF] public void executes_the_action_and_returns_unit()
-      {
-         var executed = false;
-         var result = "ignored"._then(() => { executed = true; });
-         executed.Must().BeTrue();
-         result.Must().Be(unit.Value);
-      }
-
-      [XF] public void the_return_value_is_unit() =>
-         "ignored"._then(() => { }).Must().Be(unit.Value);
-   }
 }
