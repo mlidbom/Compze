@@ -118,7 +118,7 @@ public class ThreadGate : IThreadGate
    ThreadGate(WaitTimeout defaultTimeout, string? name = null)
    {
       Name = name ?? Guid.NewGuid().ToString();
-      _monitor = IAwaitableMonitor.New(new LockTimeout(defaultTimeout.Value), defaultTimeout);
+      _monitor = IAwaitableMonitor.New(LockTimeout.Default, defaultTimeout);
       DefaultTimeout = defaultTimeout;
    }
 

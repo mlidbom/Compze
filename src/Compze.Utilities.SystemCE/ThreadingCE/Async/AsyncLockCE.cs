@@ -11,11 +11,7 @@ namespace Compze.Utilities.SystemCE.ThreadingCE.Async;
 
 public interface IAsyncLockCE : IDisposable
 {
-   static readonly LockTimeout DefaultLockTimeout = new(CompzeEnvironment.IsNCrunch
-                                                           ? 45.Seconds() //Tests timeout at 60 seconds. We want locks to timeout faster so that the blocking stack traces turn up in the test output so we can diagnose the deadlocks.
-                                                           : 2.Minutes()); //MsSql default query timeout is 30 seconds. Default .Net transaction timeout is 60. If we reach 2 minutes it is highly likely that we have an in-memory deadlock.
-
-   static IAsyncLockCE WithDefaultTimeout() => new AsyncLockCE(DefaultLockTimeout);
+   static IAsyncLockCE WithDefaultTimeout() => new AsyncLockCE(LockTimeout.Default);
    static IAsyncLockCE New(LockTimeout timeout) => new AsyncLockCE(timeout);
 
    Task<unit> LockedAsync(Func<Task> lockedAction);
@@ -23,7 +19,7 @@ public interface IAsyncLockCE : IDisposable
    unit Locked(Action lockedAction);
    TReturn Locked<TReturn>(Func<TReturn> lockedAction);
 
-   void SetTimeToWaitForStackTrace(TimeSpan timeToWaitForStackTrace);
+   void SetTimeToWaitForStackTrace(WaitTimeout timeToWaitForStackTrace);
 
 
    public class AsyncLockCE : IAsyncLockCE
@@ -33,9 +29,9 @@ public interface IAsyncLockCE : IDisposable
       readonly LockTimeout _timeout;
       readonly Lock _timeoutLock = new();
 
-      static readonly TimeSpan DefaultTimeToWaitForStackTrace = 1.Seconds();
+      static readonly WaitTimeout DefaultTimeToWaitForStackTrace = WaitTimeout.Seconds(1);
 
-      TimeSpan _stackTraceFetchTimeout;
+      WaitTimeout _stackTraceFetchTimeout;
       IReadOnlyList<AsyncLockTimeoutException> _timeOutExceptionsOnOtherThreads = new List<AsyncLockTimeoutException>();
 
       public AsyncLockCE(LockTimeout timeout)
@@ -44,7 +40,7 @@ public interface IAsyncLockCE : IDisposable
          _stackTraceFetchTimeout = DefaultTimeToWaitForStackTrace;
       }
 
-      public void SetTimeToWaitForStackTrace(TimeSpan timeToWaitForStackTrace) => _stackTraceFetchTimeout = timeToWaitForStackTrace;
+      public void SetTimeToWaitForStackTrace(WaitTimeout timeToWaitForStackTrace) => _stackTraceFetchTimeout = timeToWaitForStackTrace;
 
       public async Task<unit> LockedAsync(Func<Task> lockedAction) => await LockedAsync(lockedAction.AsFunc()).caf();
 

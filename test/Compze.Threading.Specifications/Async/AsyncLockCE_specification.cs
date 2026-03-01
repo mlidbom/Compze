@@ -363,7 +363,7 @@ public class AsyncLockCE_specification : UniversalTestBase
       [XF] public async Task exception_message_includes_blocking_thread_stack_trace()
       {
          using var asyncLock = IAsyncLockCE.New(LockTimeout.Milliseconds(50));
-         asyncLock.SetTimeToWaitForStackTrace(500.Milliseconds());
+         asyncLock.SetTimeToWaitForStackTrace(WaitTimeout.Seconds(.5));
          var firstTaskTookLockGate = ThreadGate.Closed(WaitTimeout.Seconds(30));
 
          var firstTask = TaskCE.Run(() => HoldLockInMethodSoItWillBeInTheCapturedCallStack(asyncLock, firstTaskTookLockGate));

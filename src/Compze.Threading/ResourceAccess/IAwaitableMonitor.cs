@@ -5,7 +5,7 @@ namespace Compze.Threading.ResourceAccess;
 public partial interface IAwaitableMonitor
 {
    public static IAwaitableMonitor WithDefaultTimeout() => IMonitor.CreateAwaitableWithDefaultTimeout();
-   public static IAwaitableMonitor New(LockTimeout lockTimeout, WaitTimeout? waitTimeout = null) => IMonitor.CreateAwaitableWithTimeouts(lockTimeout, waitTimeout ?? new WaitTimeout(lockTimeout.Value));
+   public static IAwaitableMonitor New(LockTimeout lockTimeout, WaitTimeout? waitTimeout = null) => IMonitor.CreateAwaitableWithTimeouts(lockTimeout, waitTimeout ?? WaitTimeout.Default);
 
    LockTimeout LockTimeout { get; }
    WaitTimeout WaitTimeout { get; }
@@ -21,5 +21,5 @@ public partial interface IAwaitableMonitor
 
    long ContentionCount { get; }
 
-   void SetTimeToWaitForStackTrace(TimeSpan timeToWaitForStackTrace);
+   void SetTimeToWaitForStackTrace(WaitTimeout timeToWaitForStackTrace);
 }

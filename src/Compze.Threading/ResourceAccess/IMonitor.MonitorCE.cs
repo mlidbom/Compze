@@ -34,7 +34,7 @@ public partial interface IMonitor
       public WaitTimeout WaitTimeout { get; }
       public long ContentionCount => _monitor.ContentionCount;
 
-      public void SetTimeToWaitForStackTrace(TimeSpan timeToWaitForStackTrace) => _stackTraceFetchTimeout = timeToWaitForStackTrace;
+      public void SetTimeToWaitForStackTrace(WaitTimeout timeToWaitForStackTrace) => _stackTraceFetchTimeout = timeToWaitForStackTrace;
 
       readonly ThinMonitorWrapper _monitor = new();
       readonly Lock _timeoutLock = new();
@@ -42,9 +42,9 @@ public partial interface IMonitor
       readonly IDisposable _readLock;
       readonly IDisposable _updateLock;
 
-      static readonly TimeSpan DefaultTimeToWaitForStackTrace = 1.Seconds();
+      static readonly WaitTimeout DefaultTimeToWaitForStackTrace = WaitTimeout.Seconds(1);
 
-      TimeSpan _stackTraceFetchTimeout;
+      WaitTimeout _stackTraceFetchTimeout;
 
       public MonitorCE(LockTimeout lockTimeout, WaitTimeout waitTimeout)
       {
@@ -96,16 +96,23 @@ public partial interface IMonitor
 
          try
          {
-            while(!condition())
+            if(actualWaitTimeout.IsInfinite)
             {
-               var waitTimeRemaining = actualWaitTimeout - DateTimeCE.TimeElapsedSince(waitStartedAt);
-               if(waitTimeRemaining.None())
+               while(!condition())
+                  _monitor.ReleaseLockAndReacquireItOnPulseOrTimeout(Timeout.InfiniteTimeSpan);
+            } else
+            {
+               while(!condition())
                {
-                  takenLock.Dispose();
-                  return null;
-               }
+                  var waitTimeRemaining = actualWaitTimeout - DateTimeCE.TimeElapsedSince(waitStartedAt);
+                  if(waitTimeRemaining.None())
+                  {
+                     takenLock.Dispose();
+                     return null;
+                  }
 
-               _monitor.ReleaseLockAndReacquireItOnPulseOrTimeout(waitTimeRemaining);
+                  _monitor.ReleaseLockAndReacquireItOnPulseOrTimeout(waitTimeRemaining);
+               }
             }
          }
          catch

@@ -54,7 +54,7 @@ public class When_scheduling_tommands_to_be_sent_in_the_future : UniversalTestBa
       var inOneHour = new ScheduledTommand();
       _endpoint.ExecuteServerRequestInTransaction(session => session.ScheduleSend(now + 2.Seconds(), inOneHour));
 
-      _receivedTommandGate.TryAwaitPassedThroughCountEqualTo(1, timeout: new WaitTimeout(TimeSpan.FromSeconds(.5)))
+      _receivedTommandGate.TryAwaitPassedThroughCountEqualTo(1, timeout: WaitTimeout.Milliseconds(500))
                           .Must().Be(false);
    }
 

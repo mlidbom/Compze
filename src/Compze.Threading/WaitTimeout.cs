@@ -1,4 +1,6 @@
 using System;
+using System.Threading;
+// ReSharper disable UnusedMember.Global
 
 namespace Compze.Threading;
 
@@ -6,12 +8,19 @@ public readonly struct WaitTimeout(TimeSpan value) : IEquatable<WaitTimeout>
 {
    public TimeSpan Value { get; } = value;
 
-   public static WaitTimeout Milliseconds(int milliseconds) => new(TimeSpan.FromMilliseconds(milliseconds));
+   public static WaitTimeout Milliseconds(long milliseconds) => new(TimeSpan.FromMilliseconds(milliseconds));
    public static WaitTimeout Milliseconds(double milliseconds) => new(TimeSpan.FromMilliseconds(milliseconds));
-   public static WaitTimeout Seconds(int seconds) => new(TimeSpan.FromSeconds(seconds));
+   public static WaitTimeout Seconds(long seconds) => new(TimeSpan.FromSeconds(seconds));
    public static WaitTimeout Seconds(double seconds) => new(TimeSpan.FromSeconds(seconds));
-   public static WaitTimeout Minutes(int minutes) => new(TimeSpan.FromMinutes(minutes));
+   public static WaitTimeout Minutes(long minutes) => new(TimeSpan.FromMinutes(minutes));
    public static WaitTimeout Minutes(double minutes) => new(TimeSpan.FromMinutes(minutes));
+
+   public static readonly WaitTimeout Infinite = new(Timeout.InfiniteTimeSpan);
+
+   /// <summary>The default wait timeout: Infinite. Unlike with locks, nothing says that a wait has to complete within any particular time span in general.</summary>
+   public static readonly WaitTimeout Default = Infinite;
+
+   public bool IsInfinite => Value == Timeout.InfiniteTimeSpan;
 
    public TimeSpan ToTimeSpan() => Value;
    public static implicit operator TimeSpan(WaitTimeout timeout) => timeout.Value;

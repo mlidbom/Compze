@@ -54,7 +54,7 @@ public class MonitorCE_specification : UniversalTestBase
       {
          using(monitor.TakeUpdateLock()) {}
 
-         Invoking(() => TaskCE.Run(() => monitor.TakeUpdateLock(timeout: LockTimeout.Milliseconds(100))).Wait())
+         Invoking(() => TaskCE.Run(() => monitor.TakeUpdateLock(timeout: LockTimeout.Seconds(.1))).Wait())
            .Must().Throw<Exception>();
       }
 
@@ -108,19 +108,19 @@ public class MonitorCE_specification : UniversalTestBase
    public class An_exception_is_thrown_by_EnterUpdateLock_if_lock_is_not_acquired_within_timeout : UniversalTestBase
    {
       [XF, EnableRdi(false)] public void Exception_is_ObjectLockTimedOutException() =>
-         RunScenario(ownerThreadBlockTime: 20.Milliseconds(), timeToWaitForStackTrace: 30.Seconds(), monitorTimeout: 10.Milliseconds()).Must().BeExactType<TakeLockTimeoutException>();
+         RunScenario(ownerThreadBlockTime: 20.Milliseconds(), timeToWaitForStackTrace: WaitTimeout.Seconds(30), monitorTimeout: LockTimeout.Milliseconds(10)).Must().BeExactType<TakeLockTimeoutException>();
 
       [XF, EnableRdi(false)] public void If_owner_thread_blocks_for_less_than_fetchStackTraceTimeout_Exception_contains_owning_threads_stack_trace() =>
-         RunScenario(ownerThreadBlockTime: 50.Milliseconds(), timeToWaitForStackTrace: 30.Seconds(), monitorTimeout: 15.Milliseconds()).Message.Must().Contain(nameof(DisposeInMethodSoItWillBeInTheCapturedCallStack));
+         RunScenario(ownerThreadBlockTime: 50.Milliseconds(), timeToWaitForStackTrace: WaitTimeout.Seconds(30), monitorTimeout: LockTimeout.Milliseconds(15)).Message.Must().Contain(nameof(DisposeInMethodSoItWillBeInTheCapturedCallStack));
 
       [XF] public void If_owner_thread_blocks_for_more_than_fetchStackTraceTimeout_Exception_does_not_contain_owning_threads_stack_trace() =>
-         RunScenario(ownerThreadBlockTime: 60.Milliseconds(), timeToWaitForStackTrace: 1.Milliseconds(), monitorTimeout: 5.Milliseconds()).Message.Must().NotContain(nameof(DisposeInMethodSoItWillBeInTheCapturedCallStack));
+         RunScenario(ownerThreadBlockTime: 60.Milliseconds(), timeToWaitForStackTrace: WaitTimeout.Milliseconds(1), monitorTimeout: LockTimeout.Milliseconds(5)).Message.Must().NotContain(nameof(DisposeInMethodSoItWillBeInTheCapturedCallStack));
 
       internal static void DisposeInMethodSoItWillBeInTheCapturedCallStack(IDisposable disposable) => disposable.Dispose();
 
-      static Exception RunScenario(TimeSpan ownerThreadBlockTime, TimeSpan monitorTimeout, TimeSpan? timeToWaitForStackTrace = null)
+      static Exception RunScenario(TimeSpan ownerThreadBlockTime, LockTimeout monitorTimeout, WaitTimeout? timeToWaitForStackTrace = null)
       {
-         var monitor = IAwaitableMonitor.New(new LockTimeout(monitorTimeout));
+         var monitor = IAwaitableMonitor.New(monitorTimeout);
          if(timeToWaitForStackTrace.HasValue)
          {
             monitor.SetTimeToWaitForStackTrace(timeToWaitForStackTrace.Value);
