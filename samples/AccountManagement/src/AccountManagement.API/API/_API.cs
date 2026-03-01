@@ -15,7 +15,7 @@ namespace AccountManagement.API;
 /// A generic browser type can then be used to navigate the whole API remotely.
 /// For .Net clients the next class in this file is a far more convenient way to consume the API.
 /// </summary>
-public static class AccountWebClientApi
+internal static class AccountWebClientApi
 {
    public static TessageTypes.Remotable.NonTransactional.Tueries.NewableResultLink<StartResource> Start => new();
 }

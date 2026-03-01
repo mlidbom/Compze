@@ -63,23 +63,23 @@ public class AnimalTevent : TaggregateTevent, IAnimalTevent
    protected AnimalTevent(){}
    AnimalTevent(TaggregateId taggregateId):base(taggregateId){ }
 
-    public class Born : AnimalTevent, IAnimalTevent.Born
+    internal class Born : AnimalTevent, IAnimalTevent.Born
    {
       public Born(TaggregateId taggregateId) : base(taggregateId){}
    }
 }
 
 
-public interface ICatTevent<out T> : IAnimalTevent<T> where T : IAnimalTevent { }
-public interface ICatTevent : IAnimalTevent {}
-public class CatTevent<T>(T tevent) : AnimalTevent<T>(tevent) where T : IAnimalTevent {}
-public class CatTevent : AnimalTevent, ICatTevent{}
+internal interface ICatTevent<out T> : IAnimalTevent<T> where T : IAnimalTevent { }
+internal interface ICatTevent : IAnimalTevent {}
+internal class CatTevent<T>(T tevent) : AnimalTevent<T>(tevent) where T : IAnimalTevent {}
+internal class CatTevent : AnimalTevent, ICatTevent{}
 
 
-public interface IDogTevent<out T> : IAnimalTevent<T> where T : IAnimalTevent { }
-public interface IDogTevent : IAnimalTevent {}
-public class DogTevent<T>(T tevent) : AnimalTevent<T>(tevent) where T : IAnimalTevent {}
-public class DogTevent : AnimalTevent, IDogTevent{}
+internal interface IDogTevent<out T> : IAnimalTevent<T> where T : IAnimalTevent { }
+internal interface IDogTevent : IAnimalTevent {}
+internal class DogTevent<T>(T tevent) : AnimalTevent<T>(tevent) where T : IAnimalTevent {}
+internal class DogTevent : AnimalTevent, IDogTevent{}
 
 
 

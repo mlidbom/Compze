@@ -9,22 +9,22 @@ using Compze.Core.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public;
 // ReSharper disable InconsistentNaming
 namespace Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId.Domain.Tevents;
 
-public class CompositeTaggregateTevent<T>(T tevent) : TaggregateIdentifyingTevent<T>(tevent), ICompositeTaggregateTevent<T> where T : ICompositeTaggregateTevent {
+internal class CompositeTaggregateTevent<T>(T tevent) : TaggregateIdentifyingTevent<T>(tevent), ICompositeTaggregateTevent<T> where T : ICompositeTaggregateTevent {
 
 }
-public abstract class CompositeTaggregateTevent : TaggregateTevent, ICompositeTaggregateTevent
+internal abstract class CompositeTaggregateTevent : TaggregateTevent, ICompositeTaggregateTevent
 {
    protected CompositeTaggregateTevent() {}
    protected CompositeTaggregateTevent(TaggregateId taggregateId) : base(taggregateId) {}
 
-   public class Created(TaggregateId id, string name) : CompositeTaggregateTevent(id), ICompositeTaggregateTevent.Created
+   internal class Created(TaggregateId id, string name) : CompositeTaggregateTevent(id), ICompositeTaggregateTevent.Created
    {
       public string Name { get; } = name;
    }
 
    public abstract class Component : CompositeTaggregateTevent, ICompositeTaggregateTevent.Component
    {
-      public class Renamed(string name) : Component, ICompositeTaggregateTevent.Component.Renamed
+      internal class Renamed(string name) : Component, ICompositeTaggregateTevent.Component.Renamed
       {
          public string Name { get; } = name;
       }
@@ -65,7 +65,7 @@ public abstract class CompositeTaggregateTevent : TaggregateTevent, ICompositeTa
             public string Name { get; } = name;
          }
 
-         public class Removed : Entity, ICompositeTaggregateTevent.Component.Entity.Removed;
+         internal class Removed : Entity, ICompositeTaggregateTevent.Component.Entity.Removed;
       }
    }
 
@@ -92,12 +92,12 @@ public abstract class CompositeTaggregateTevent : TaggregateTevent, ICompositeTa
          public string Name { get; }
       }
 
-      public class Renamed(string name) : Entity, ICompositeTaggregateTevent.Entity.Renamed
+      internal class Renamed(string name) : Entity, ICompositeTaggregateTevent.Entity.Renamed
       {
          public string Name { get; } = name;
       }
 
-      public class Removed : Entity, ICompositeTaggregateTevent.Entity.Removed;
+      internal class Removed : Entity, ICompositeTaggregateTevent.Entity.Removed;
 
       public abstract class NestedEntity : Entity, ICompositeTaggregateTevent.Entity.NestedEntity
       {

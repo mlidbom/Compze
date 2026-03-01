@@ -11,7 +11,7 @@ public interface ILevelLogger
    unit Log(string message, [CallerMemberName] string caller = "");
 }
 
-public abstract class LevelLogger(ILogger logger) : ILevelLogger
+internal abstract class LevelLogger(ILogger logger) : ILevelLogger
 {
    protected ILogger Logger { get; } = logger;
    public abstract unit Log(string message, [CallerMemberName] string caller = "");

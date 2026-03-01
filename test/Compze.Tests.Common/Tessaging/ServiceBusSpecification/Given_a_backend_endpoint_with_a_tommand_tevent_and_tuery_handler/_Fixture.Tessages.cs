@@ -25,11 +25,11 @@ public class MyAtMostOnceTypermediaTommandWithResult : TessageTypes.Remotable.At
 
 public class MyTueryResult;
 public class MyTuery : TessageTypes.Remotable.NonTransactional.Tueries.Tuery<MyTueryResult>;
-public class MyExactlyOnceTevent : TaggregateTevent, IMyExactlyOnceTevent;
-public interface IMyExactlyOnceTevent : ITaggregateTevent;
+internal class MyExactlyOnceTevent : TaggregateTevent, IMyExactlyOnceTevent;
+internal interface IMyExactlyOnceTevent : ITaggregateTevent;
 public class MyExactlyOnceTommand : TessageTypes.Remotable.ExactlyOnce.Tommand;
 
-public class MyUpdateTaggregateTommand : TessageTypes.Remotable.AtMostOnce.AtMostOnceTypermediaTommand
+internal class MyUpdateTaggregateTommand : TessageTypes.Remotable.AtMostOnce.AtMostOnceTypermediaTommand
 {
    [Obsolete("Used by serializer", error: true)]
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
@@ -86,7 +86,7 @@ public class MyTaggregateTevent : TaggregateTevent, IMyTaggregateTevent
    protected MyTaggregateTevent() {}
    protected MyTaggregateTevent(TaggregateId accountId) : base(accountId) {}
 
-   public class Created(TaggregateId accountId) : MyTaggregateTevent(accountId), IMyTaggregateTevent.Created;
+   internal class Created(TaggregateId accountId) : MyTaggregateTevent(accountId), IMyTaggregateTevent.Created;
 
-   public class Updated : MyTaggregateTevent, IMyTaggregateTevent.Updated;
+   internal class Updated : MyTaggregateTevent, IMyTaggregateTevent.Updated;
 }

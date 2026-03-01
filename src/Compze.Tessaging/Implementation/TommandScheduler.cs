@@ -25,7 +25,7 @@ internal static class TommandSchedulerRegistrar
       => registrar.Register(Implementation.TommandScheduler.RegisterWith);
 }
 
-public class TommandScheduler(IOutbox transport, ITaskRunner taskRunner) : IDisposable
+internal class TommandScheduler(IOutbox transport, ITaskRunner taskRunner) : IDisposable
 {
    public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<TommandScheduler>()

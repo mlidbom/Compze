@@ -8,8 +8,8 @@ using System;
 // ReSharper disable InconsistentNaming
 namespace Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId.Domain.Tevents;
 
-public interface ICompositeTaggregateTevent<out T> : ITaggregateIdentifyingTevent<T> where T : ICompositeTaggregateTevent;
-public interface ICompositeTaggregateTevent : ITaggregateTevent
+internal interface ICompositeTaggregateTevent<out T> : ITaggregateIdentifyingTevent<T> where T : ICompositeTaggregateTevent;
+internal interface ICompositeTaggregateTevent : ITaggregateTevent
 {
    interface Created : ICompositeTaggregateTevent, ITaggregateCreatedTevent, PropertyUpdated.Name;
 
