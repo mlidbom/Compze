@@ -30,8 +30,8 @@ public partial interface IMonitor
       public IDisposable? TryTakeUpdateLockWhen(Func<bool> condition, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null) =>
          TryTakeLockWhen(condition, LockType.Update, throwOnFailedLock: false, waitTimeout: waitTimeout, lockTimeout: lockTimeout);
 
-      public LockTimeout LockTimeout { get; }
-      public WaitTimeout WaitTimeout { get; }
+      LockTimeout LockTimeout { get; }
+      WaitTimeout WaitTimeout { get; }
       public long ContentionCount => _monitor.ContentionCount;
 
       public void SetTimeToWaitForStackTrace(WaitTimeout timeToWaitForStackTrace) => _stackTraceFetchTimeout = timeToWaitForStackTrace;

@@ -7,10 +7,12 @@ namespace Compze.Core.Tessaging.Teventive.TeventStore.Refactoring.Migrations.Pub
 public interface ITeventMigration
 {
    // ReSharper disable UnusedMember.Global
+   // ReSharper disable UnusedMemberInSuper.Global
    Guid Id { get; }//Todo: Complete persisting of migrations including writing this data to the store.
    string Name { get; }
    string Description { get; }
    bool Done { get; }
+   // ReSharper restore UnusedMemberInSuper.Global
    // ReSharper restore UnusedMember.Global
 
    ///<summary>The tevent interface that is the root of the tevent hierarchy for the taggregate whose tevents this migration modifies</summary>
