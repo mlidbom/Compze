@@ -5,7 +5,7 @@ using Compze.Utilities.Testing.XUnit.BDD;
 
 namespace Compze.Underscore.Specifications.Pipe;
 
-public class _then_method
+public static class _then_method
 {
    public class with_constant_value
    {

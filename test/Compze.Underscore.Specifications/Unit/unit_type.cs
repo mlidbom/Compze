@@ -42,7 +42,7 @@ public class unit_type
       }
    }
 
-   public class Func_method
+   public static class Func_method
    {
       public class with_zero_parameters
       {

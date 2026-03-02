@@ -9,12 +9,13 @@ using Newtonsoft.Json;
 
 namespace AccountManagement.Domain.Tevents;
 
+// ReSharper disable once ClassNeverInstantiated.Global
 public class AccountTevent<T>(T tevent) : TaggregateIdentifyingTevent<T>(tevent), IAccountTevent<T> where T : IAccountTevent;
 
 public class AccountTevent : TaggregateTevent, IAccountTevent
 {
    protected AccountTevent() {}
-   protected AccountTevent(AccountId accountId) : base(accountId) {}
+   AccountTevent(AccountId accountId) : base(accountId) {}
 
    public class UserRegistered : AccountTevent, IAccountTevent.UserRegistered
    {

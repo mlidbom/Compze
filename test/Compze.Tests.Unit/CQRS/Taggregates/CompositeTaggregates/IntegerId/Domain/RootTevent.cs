@@ -2,6 +2,7 @@ using Compze.Core.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using JetBrains.Annotations;
+// ReSharper disable ClassNeverInstantiated.Global
 
 #pragma warning disable CA1812 //Uninstantiated class (used via reflection)
 #pragma warning disable CS0108 //Hides inherited member.

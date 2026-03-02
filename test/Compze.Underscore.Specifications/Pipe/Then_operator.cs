@@ -6,7 +6,7 @@ using Compze.Utilities.Testing.XUnit.BDD;
 
 namespace Compze.Underscore.Specifications.Pipe;
 
-public class Then_operator
+public static class Then_operator
 {
    public class with_constant_value
    {

@@ -60,16 +60,16 @@ public partial class Password
       // ReSharper disable once MemberHidesStaticFromOuterClass
       internal static IEnumerable<ValidationResult> Validate(string password, IValidatableObject owner, Expression<Func<object>> passwordMember)
       {
-         var policyFailures = Policy.GetPolicyFailures(password).ToList();
+         var policyFailures = GetPolicyFailures(password).ToList();
          if (policyFailures.Any())
          {
             yield return policyFailures.First() switch
             {
-               Policy.Failures.BorderedByWhitespace => owner.CreateValidationResult(RegisterAccountTommandResources.Password_BorderedByWhitespace, passwordMember),
-               Policy.Failures.MissingLowerCaseCharacter => owner.CreateValidationResult(RegisterAccountTommandResources.Password_MissingLowerCaseCharacter, passwordMember),
-               Policy.Failures.MissingUppercaseCharacter => owner.CreateValidationResult(RegisterAccountTommandResources.Password_MissingUpperCaseCharacter, passwordMember),
-               Policy.Failures.ShorterThanFourCharacters => owner.CreateValidationResult(RegisterAccountTommandResources.Password_ShorterThanFourCharacters, passwordMember),
-               Policy.Failures.Null => throw new Exception("Null should have been caught by the Required attribute"),
+               Failures.BorderedByWhitespace => owner.CreateValidationResult(RegisterAccountTommandResources.Password_BorderedByWhitespace, passwordMember),
+               Failures.MissingLowerCaseCharacter => owner.CreateValidationResult(RegisterAccountTommandResources.Password_MissingLowerCaseCharacter, passwordMember),
+               Failures.MissingUppercaseCharacter => owner.CreateValidationResult(RegisterAccountTommandResources.Password_MissingUpperCaseCharacter, passwordMember),
+               Failures.ShorterThanFourCharacters => owner.CreateValidationResult(RegisterAccountTommandResources.Password_ShorterThanFourCharacters, passwordMember),
+               Failures.Null => throw new Exception("Null should have been caught by the Required attribute"),
                _ => throw new Exception($"Unknown password failure type {policyFailures.First()}")
             };
          }

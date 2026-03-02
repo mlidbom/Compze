@@ -6,10 +6,12 @@ using Compze.Threading;
 using Compze.Utilities.Testing.Must;
 using Compze.Utilities.Testing.XUnit.BDD;
 using Xunit;
+// ReSharper disable AccessToDisposedClosure
 
 namespace Compze.Utilities.Tests.SystemCE.ThreadingCE;
 
-public class RunOnce_specification
+
+public static class RunOnce_specification
 {
    public class RunIfFirstCall
    {

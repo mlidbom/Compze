@@ -25,7 +25,7 @@ public class TypeMapper : ITypeMapper
 {
    internal static IComponentRegistrar RegisterWith(IComponentRegistrar registrar) =>
       registrar.Register(Singleton.For<ITypeMapper, TypeMapper>()
-                                  .Instance(TypeMapper.Instance));
+                                  .Instance(Instance));
 
    TypeMapper() {}
    public static readonly ITypeMapper Instance = new TypeMapper();

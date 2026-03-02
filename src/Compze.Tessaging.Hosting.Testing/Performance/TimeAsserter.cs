@@ -172,17 +172,13 @@ public static class TimeAsserter
                               ? ""
                               : $" {Percent(executionSummary.Total, maxTotal.Value)} of {nameof(maxTotal)}: {maxTotal.FormatReadable()}";
 
-      if(iterations > 1)
-      {
-         Log.Info($"""
+      Log.Info(iterations > 1
+                  ? $"""
 
-                      Total:   {executionSummary.Total.FormatReadable()} {maxTotalReport}
-                      Average: {executionSummary.Average.FormatReadable()} {maxAverageReport}
-                   """);
-      } else
-      {
-         Log.Info($"Total:   {executionSummary.Total.FormatReadable()} {maxTotalReport} ");
-      }
+                        Total:   {executionSummary.Total.FormatReadable()} {maxTotalReport}
+                        Average: {executionSummary.Average.FormatReadable()} {maxAverageReport}
+                     """
+                  : $"Total:   {executionSummary.Total.FormatReadable()} {maxTotalReport} ");
 
       if(executionSummary is StopwatchCE.TimedThreadedExecutionSummary threadedSummary)
       {

@@ -14,7 +14,7 @@ public static partial class Constructor
       internal static Func<TInstance> DefaultInstanceFactory<TInstance>() =>
          typeof(IStaticInstancePropertySingleton<TInstance>).IsAssignableFrom(typeof(TInstance))
             ? CompileStaticInstancePropertyDelegate<TInstance>()
-            : Compile.ForType<TInstance>().DefaultConstructor();
+            : ForType<TInstance>().DefaultConstructor();
 
       static PropertyInfo? ImplicitImplementationProperty<TInstance>() => typeof(TInstance).GetProperties(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
                                                                                            .SingleOrDefault(prop => prop.Name == nameof(IStaticInstancePropertySingleton<TInstance>.Instance) && prop.PropertyType == typeof(TInstance));
@@ -25,8 +25,8 @@ public static partial class Constructor
          return typeof(TInstance)
                .GetProperties(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
                .SingleOrDefault(prop =>
-                                   prop.Name.ContainsCE(nameof(IStaticInstancePropertySingleton<TInstance>)) &&
-                                   prop.Name.ContainsCE(nameof(IStaticInstancePropertySingleton<TInstance>.Instance)) &&
+                                   prop.Name.ContainsCE(nameof(IStaticInstancePropertySingleton<>)) &&
+                                   prop.Name.ContainsCE(nameof(IStaticInstancePropertySingleton<>.Instance)) &&
                                    prop.PropertyType == typeof(TInstance))._assert().NotNull();
       }
 

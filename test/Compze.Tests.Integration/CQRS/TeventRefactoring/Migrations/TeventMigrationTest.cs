@@ -600,7 +600,7 @@ public class TeventMigrationTest : TeventMigrationTestBase
       TeventStorageTestHelper.StripSteventhDecimalPointFromSecondFractionOnUtcUpdateTime(firstProcessHistory);
       TeventStorageTestHelper.StripSteventhDecimalPointFromSecondFractionOnUtcUpdateTime(secondProcessHistory);
 
-      TeventMigrationTestBase.AssertStreamsAreIdenticalExceptForEventIds(firstProcessHistory, secondProcessHistory, "Both process histories should be identical");
+      AssertStreamsAreIdenticalExceptForEventIds(firstProcessHistory, secondProcessHistory, "Both process histories should be identical");
 
       ITeventStore PersistingTeventStore() => serviceLocator.Resolve<ITeventStore>();
 
