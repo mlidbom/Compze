@@ -28,9 +28,11 @@ public abstract partial class SelfGeneratingQueryModel<TQueryModel, TTaggregateT
               .IgnoreUnhandled<TEntityRemovedTevent>();
          }
 
-         public new static CollectionManager CreateSelfManagingCollection(TComponent parent) => new(parent: parent, appliersRegistrar: parent.RegisterTeventAppliers());
+         public new static ICollectionManager CreateSelfManagingCollection(TComponent parent) => new CollectionManager(parent: parent, appliersRegistrar: parent.RegisterTeventAppliers());
 
-         public new class CollectionManager : QueryModelEntityCollectionManager<TComponent, TEntity, TEntityId, TEntityTevent, TEntityCreatedTevent, TEntityRemovedTevent, TTeventEntityIdGetter>
+         public interface ICollectionManager : IQueryModelEntityCollectionManager<TEntity, TEntityId>;
+
+         new class CollectionManager : QueryModelEntityCollectionManager<TComponent, TEntity, TEntityId, TEntityTevent, TEntityCreatedTevent, TEntityRemovedTevent, TTeventEntityIdGetter>, ICollectionManager
          {
             internal CollectionManager(TComponent parent, ITeventHandlerRegistrar<TEntityTevent> appliersRegistrar) : base(parent, appliersRegistrar) {}
          }

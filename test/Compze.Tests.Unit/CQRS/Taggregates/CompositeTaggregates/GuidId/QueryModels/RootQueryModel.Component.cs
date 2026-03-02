@@ -15,7 +15,7 @@ partial class Component : RootQueryModel.Component<Component, ICompositeTaggrega
         .For<ICompositeTaggregateTevent.Component.PropertyUpdated.Name>(e => Name = e.Name);
    }
 
-   readonly Component.Entity.CollectionManager _entities;
+   readonly Component.Entity.ICollectionManager _entities;
    // ReSharper disable once NotAccessedField.Local
    public NestedComponent CComponent { get; private set; }
 

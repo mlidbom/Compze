@@ -7,6 +7,4 @@ interface ITessagingInboxConnection
 {
     TessageTypesInternal.EndpointInformation EndpointInformation { get; }
     void EnqueueForDelivery(IExactlyOnceTessage tessage);
-    void StartDelivery();
-    void StopDelivery();
 }

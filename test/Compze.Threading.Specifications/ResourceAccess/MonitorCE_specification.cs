@@ -122,7 +122,7 @@ public class MonitorCE_specification : UniversalTestBase
          var monitor = IAwaitableMonitor.New(monitorTimeout);
          if(timeToWaitForStackTrace.HasValue)
          {
-            monitor.SetTimeToWaitForStackTrace(timeToWaitForStackTrace.Value);
+            ((IMonitorInternals)monitor).SetTimeToWaitForStackTrace(timeToWaitForStackTrace.Value);
          }
 
          using var threadOneHasTakenUpdateLock = new ManualResetEvent(false);

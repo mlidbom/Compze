@@ -18,5 +18,5 @@ namespace Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId.QueryMo
    }
 
    public IReadonlyQueryModelEntityCollection<RemovableNestedEntity, Guid> Entities => _entities.Entities;
-   readonly RemovableNestedEntity.CollectionManager _entities;
+   readonly RemovableNestedEntity.ICollectionManager _entities;
 }

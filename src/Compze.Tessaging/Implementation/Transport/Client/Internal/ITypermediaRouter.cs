@@ -6,7 +6,6 @@ namespace Compze.Tessaging.Implementation.Transport.Client.Internal;
 
 public interface ITypermediaRouter
 {
-    Task ConnectAsync(EndPointAddress remoteEndpointAddress);
     Task DiscoverAndConnectAsync(EndPointAddress seedAddress);
     void Start();
     void Stop();
