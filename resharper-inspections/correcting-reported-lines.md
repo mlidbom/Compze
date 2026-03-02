@@ -33,6 +33,10 @@ public TaggregateId TaggregateId { get; set; }
 
 Same general approach: read, understand context, apply. The pitfalls above (serialization, cross-assembly, override chains) apply to all visibility/accessibility inspections.
 
+### MemberCanBePrivate — Overloaded Methods
+
+When ReSharper reports that one overload can be private, verify which overload it means. A common pattern is a `public` convenience overload that delegates to a `private` implementation overload. Making the wrong one private breaks external callers. Always read the file to confirm which overload is the entry point before changing visibility.
+
 ## Verification
 
 1. **Build**: Catches access modifier conflicts (CS0507, CS0117, CS1929, etc.)
