@@ -9,7 +9,7 @@
 
 ```powershell
 jb inspectcode src/Compze.AllProjects.slnx `
-   --output=inspection-results.xml `
+   --output=inspection-results.sarif `
    --severity=SUGGESTION `
    --include="**/*.cs" `
    --exclude="**/_docs/**"
@@ -18,27 +18,27 @@ jb inspectcode src/Compze.AllProjects.slnx `
 Key flags:
 - `--severity` controls the minimum severity: `HINT`, `SUGGESTION`, `WARNING`, `ERROR`
 - `--include` / `--exclude` use glob patterns to scope which files are analyzed
-- `--output` writes XML results
+- `--output` writes SARIF (JSON) results
 
 ## Parsing the Output
 
-The XML output has `<Issue>` elements. Parse with PowerShell to get a workable list:
+The output is SARIF (JSON) format. Parse with PowerShell to get a workable list:
 
 ```powershell
-[xml]$xml = Get-Content inspection-results.xml
-$issues = $xml.Report.Issues.Project.Issue
+$sarif = Get-Content inspection-results.sarif -Raw | ConvertFrom-Json
+$results = $sarif.runs[0].results
 
 # Filter to a specific inspection type
-$filtered = $issues | Where-Object { $_.TypeId -eq 'MemberCanBeInternal' }
+$filtered = $results | Where-Object { $_.ruleId -eq 'MemberCanBeInternal' }
 
-# Format as a readable list grouped by file
+# Format as a readable list
 $filtered | ForEach-Object {
-   $kind = if ($_.Types) { $_.Types[1] } else { '?' }
-   "$($_.File) | L$($_.Line) | $kind | $($_.Message)"
+   $loc = $_.locations[0].physicalLocation
+   "$($loc.artifactLocation.uri):$($loc.region.startLine) — $($_.message.text)"
 }
 ```
 
-Common `TypeId` values: `MemberCanBeInternal`, `MemberCanBePrivate`, `UnusedMember.Global`, `ClassCanBeSealed.Global`, etc.
+Common `ruleId` values: `MemberCanBeInternal`, `MemberCanBePrivate`, `UnusedMember.Global`, `ClassCanBeSealed.Global`, etc.
 
 ## Workflow
 
