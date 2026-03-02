@@ -12,7 +12,7 @@ public class SkipComponentSpecificationsCollection
 
    SkipComponentSpecificationsCollection(IReadOnlyList<SkipComponentSpecification> skippedComponents) => _skippedComponents = skippedComponents;
 
-   public static SkipComponentSpecificationsCollection FromComponentsAndReasons(IReadOnlyList<Enum> components, string[] reasons)
+   internal static SkipComponentSpecificationsCollection FromComponentsAndReasons(IReadOnlyList<Enum> components, string[] reasons)
    {
       if(components.Count != reasons.Length)
          throw new ArgumentException("Number of components must match number of reasons");
@@ -23,6 +23,6 @@ public class SkipComponentSpecificationsCollection
    }
 
    /// <summary>Finds the first skipped component that matches the given combination, if any.</summary>
-   public SkipComponentSpecification? SkippedComponentFor(ComponentCombination combination) =>
+   internal SkipComponentSpecification? SkippedComponentFor(ComponentCombination combination) =>
       _skippedComponents.FirstOrDefault(exclusion => exclusion.Skips(combination));
 }

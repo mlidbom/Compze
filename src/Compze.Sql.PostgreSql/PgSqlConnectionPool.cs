@@ -17,9 +17,9 @@ public interface IPgSqlConnectionPool : IDbConnectionPool<ICompzeNpgsqlConnectio
    {
       readonly LazyCE<IDbConnectionPool<ICompzeNpgsqlConnection, NpgsqlCommand>> _pool;
 
-      public PgSqlConnectionPool(string connectionString) : this(() => connectionString) {}
+      internal PgSqlConnectionPool(string connectionString) : this(() => connectionString) {}
 
-      public PgSqlConnectionPool(Func<string> getConnectionString)
+      internal PgSqlConnectionPool(Func<string> getConnectionString)
       {
          _pool = new LazyCE<IDbConnectionPool<ICompzeNpgsqlConnection, NpgsqlCommand>>(
             () =>

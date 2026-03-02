@@ -12,8 +12,8 @@ public static class ThreadGateExtensions
    extension(IThreadGate @this)
    {
       public IThreadGate Await(Func<bool> condition) => @this.Await(@this.DefaultTimeout, condition);
-      public IThreadGate Await(WaitTimeout timeout, Func<bool> condition) => @this.ExecuteWithExclusiveLockWhen(timeout, condition, () => {});
-      public IThreadGate AwaitClosed() => @this.Await(() => !@this.IsOpen);
+      internal IThreadGate Await(WaitTimeout timeout, Func<bool> condition) => @this.ExecuteWithExclusiveLockWhen(timeout, condition, () => {});
+      internal IThreadGate AwaitClosed() => @this.Await(() => !@this.IsOpen);
       public IThreadGate AwaitQueueLengthEqualTo(int length) => @this.Await(() => @this.Queued == length);
       public IThreadGate AwaitQueueLengthEqualTo(int length, WaitTimeout timeout) => @this.Await(timeout, () => @this.Queued == length);
       public bool TryAwaitQueueLengthEqualTo(int length, WaitTimeout timeout) => @this.TryAwait(timeout, () => @this.Queued == length);

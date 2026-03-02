@@ -14,7 +14,7 @@ public interface ICompzeMySqlConnection : IPoolableConnection, ICompzeDbConnecti
    {
       MySqlConnection Connection { get; }
 
-      public CompzeMySqlConnection(string connectionString) => Connection = new MySqlConnection(connectionString);
+      internal CompzeMySqlConnection(string connectionString) => Connection = new MySqlConnection(connectionString);
 
       public void Open() => Connection.Open();
       public async Task OpenAsync() => await Connection.OpenAsync().caf();

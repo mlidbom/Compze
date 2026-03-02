@@ -14,7 +14,7 @@ public partial class DocumentDbSession
       readonly Dictionary<Type, Dictionary<string, string>> _persistentValues;
       DocumentKey Key { get; set; }
 
-      public DocumentItem(DocumentKey key, IDocumentDb backingStore, Dictionary<Type, Dictionary<string, string>> persistentValues)
+      internal DocumentItem(DocumentKey key, IDocumentDb backingStore, Dictionary<Type, Dictionary<string, string>> persistentValues)
       {
          _backingStore = backingStore;
          _persistentValues = persistentValues;
@@ -22,22 +22,22 @@ public partial class DocumentDbSession
       }
 
       object? Document { get; set; }
-      public bool IsDeleted { get; private set; }
+      internal bool IsDeleted { get; private set; }
       bool IsInBackingStore { get; set; }
 
       bool ScheduledForAdding => !IsInBackingStore && !IsDeleted && Document != null;
       bool ScheduledForRemoval => IsInBackingStore && IsDeleted;
       bool ScheduledForUpdate => IsInBackingStore && !IsDeleted;
 
-      public void Delete() => IsDeleted = true;
+      internal void Delete() => IsDeleted = true;
 
-      public void Save(object document)
+      internal void Save(object document)
       {
          Document = document._assert().NotNull();
          IsDeleted = false;
       }
 
-      public void DocumentLoadedFromBackingStore(object document)
+      internal void DocumentLoadedFromBackingStore(object document)
       {
          Document = Document = document._assert().NotNull();
          IsInBackingStore = true;
@@ -45,7 +45,7 @@ public partial class DocumentDbSession
 
       readonly ReentrancyGuard _reentrancyGuard = new();
 
-      public void CommitChangesToBackingStore() => _reentrancyGuard.ExecuteIfNotReEntering(() =>
+      internal void CommitChangesToBackingStore() => _reentrancyGuard.ExecuteIfNotReEntering(() =>
       {
          if(ScheduledForAdding)
          {

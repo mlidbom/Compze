@@ -21,18 +21,18 @@ public class EntitiesByIdAndTypeCache
       data[key] = value;
    });
 
-   public void Remove(object id, Type documentType) => _data.Locked(data =>
+   internal void Remove(object id, Type documentType) => _data.Locked(data =>
    {
       IdAndType.Create(id, documentType)
                ._assert(data.Remove, it => $"No object with id: {it} of type: {documentType.FullName} is present");
    });
 
-   public IList<KeyValuePair<string, object>> GetAll() =>
+   internal IList<KeyValuePair<string, object>> GetAll() =>
       _data.Locked(data => data
                         .Select(pair => KeyValuePair.Create(pair.Key.Id, pair.Value))
                         .ToList());
 
-   public bool Contains(Type type, object id) => ContainsInternal(IdAndType.Create(id, type));
+   internal bool Contains(Type type, object id) => ContainsInternal(IdAndType.Create(id, type));
 
    public bool TryGet<T>(object id, out T value) =>
       _data.LockedOut((data, out value) =>
@@ -55,9 +55,9 @@ public class EntitiesByIdAndTypeCache
 
    bool ContainsInternal(IdAndType key) => _data.Locked(it => it.TryGetValue(key, out _));
 
-   public readonly record struct IdAndType(string Id, Type DocumentType)
+   internal readonly record struct IdAndType(string Id, Type DocumentType)
    {
-      public static IdAndType Create(object id, Type type) =>
+      internal static IdAndType Create(object id, Type type) =>
          new(id._assert().NotNull().ToStringNotNull().ToUpperInvariant().TrimEnd(trimChar: ' '), type);
    }
 }

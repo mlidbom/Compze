@@ -20,7 +20,7 @@ public static class CollectionCE
    }
 
    ///<summary>Add all instances in <param name="toAdd"> to the collection <param name="me"></param>.</param></summary>
-   public static void AddRange<T>(this ICollection<T> me, IEnumerable<T> toAdd)
+   internal static void AddRange<T>(this ICollection<T> me, IEnumerable<T> toAdd)
    {
       Argument.NotNull(me).NotNull(toAdd);
       toAdd.ForEach(me.Add);

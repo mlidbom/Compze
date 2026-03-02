@@ -16,7 +16,7 @@ public abstract class ComponentCombinationsTheoryAttribute :
    TheoryAttribute,
    IDataAttribute
 {
-   public bool UseTestMethodArgument { get; }
+   internal bool UseTestMethodArgument { get; }
    public object[]? Skipped { get; init; }
    public string[]? SkipReasons { get; init; }
    public Type? OnlyConsider { get; init; }

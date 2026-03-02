@@ -11,16 +11,16 @@ public static partial class EnumerableCE
    /// </summary>
    public readonly struct IterationSpecification : IEquatable<IterationSpecification>
    {
-      public IterationSpecification(int startValue, int stepSize)
+      internal IterationSpecification(int startValue, int stepSize)
       {
          StartValue = startValue;
          StepSize = stepSize;
       }
       /// <summary/>
-      public int StartValue { get; }
+      internal int StartValue { get; }
 
       /// <summary/>
-      public int StepSize { get; }
+      internal int StepSize { get; }
 
       public bool Equals(IterationSpecification other) => StartValue == other.StartValue && StepSize == other.StepSize;
       public override bool Equals(object? obj) => obj is IterationSpecification other && Equals(other);

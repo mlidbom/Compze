@@ -34,7 +34,7 @@ public interface IAsyncLockCE : IDisposable
       WaitTimeout _stackTraceFetchTimeout;
       IReadOnlyList<AsyncLockTimeoutException> _timeOutExceptionsOnOtherThreads = new List<AsyncLockTimeoutException>();
 
-      public AsyncLockCE(LockTimeout timeout)
+      internal AsyncLockCE(LockTimeout timeout)
       {
          _timeout = timeout;
          _stackTraceFetchTimeout = DefaultTimeToWaitForStackTrace;

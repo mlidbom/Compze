@@ -19,7 +19,7 @@ public interface ICompzeSqliteConnection : IPoolableConnection, ICompzeDbConnect
       SqliteTransaction? _transaction;
       readonly VolatileLambdaTransactionParticipant _transactionParticipant;
 
-      public CompzeSqliteConnection(string connectionString)
+      internal CompzeSqliteConnection(string connectionString)
       {
          Connection = new SqliteConnection(connectionString);
 

@@ -11,9 +11,9 @@ public class TessageHandlerRegistrarWithDependencyInjectionSupport
       ServiceLocator = serviceLocator;
    }
 
-   public ITessageHandlerRegistrar Register { get; }
+   internal ITessageHandlerRegistrar Register { get; }
 
    LazyCE<IServiceLocator> ServiceLocator { get; }
 
-   public TService Resolve<TService>() where TService : class => ServiceLocator.Value.Resolve<TService>();
+   internal TService Resolve<TService>() where TService : class => ServiceLocator.Value.Resolve<TService>();
 }

@@ -21,7 +21,7 @@ public static class TransportTessage
 
       ITessage? _tessage;
 
-      public ITessage DeserializeTessageAndCacheForNextCall()
+      internal ITessage DeserializeTessageAndCacheForNextCall()
       {
          if(_tessage == null)
          {
@@ -46,15 +46,15 @@ public static class TransportTessage
 
    public class OutGoing
    {
-      public bool IsExactlyOnceDeliveryTessage { get; }
-      public IRemotableTessage Tessage { get; }
+      internal bool IsExactlyOnceDeliveryTessage { get; }
+      internal IRemotableTessage Tessage { get; }
       internal readonly TessageId TessageId;
 
       internal readonly TypeId Type;
       internal readonly string Body;
       internal readonly TransportTessageType TessageTypeEnum;
 
-      public static OutGoing Create(IRemotableTessage tessage, ITypeMapper typeMapper, IRemotableTessageSerializer serializer)
+      internal static OutGoing Create(IRemotableTessage tessage, ITypeMapper typeMapper, IRemotableTessageSerializer serializer)
       {
          var tessageId = (tessage as IAtMostOnceTessage)?.Id ?? new TessageId();
          var body = serializer.SerializeTessage(tessage);

@@ -14,7 +14,7 @@ namespace Compze.Core.Time.Testing.Public;
 
 public class TestingTimeSourceAdapter
 {
-   public static readonly TestingTimeSourceAdapter Instance  = new ();
+   internal static readonly TestingTimeSourceAdapter Instance  = new ();
 
    TestingTimeSourceAdapter(){}
 

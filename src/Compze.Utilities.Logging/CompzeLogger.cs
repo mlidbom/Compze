@@ -19,10 +19,10 @@ public static class CompzeLogger
    public static ILogger For(Type loggingType) => LoggerFactoryMethod(loggingType);
 
    public static Func<Type, ILogger> LoggerFactoryMethod { get; set; } = ConsoleLogger.Create;
-   public static class LogCache<T>
+   internal static class LogCache<T>
    {
       // ReSharper disable once StaticFieldInGenericType
-      public static readonly ILogger Logger = LoggerFactoryMethod(typeof(T));
+      internal static readonly ILogger Logger = LoggerFactoryMethod(typeof(T));
    }
 
    // ReSharper disable once FieldCanBeMadeReadOnly.Global It is meant to be settable

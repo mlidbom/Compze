@@ -11,7 +11,7 @@ public class AsyncLockTimeoutException : Exception
    readonly WaitTimeout _timeToWaitForOwningThreadStacktrace;
    string? _blockingThreadStacktrace;
 
-   public AsyncLockTimeoutException(LockTimeout timeout, WaitTimeout stackTraceFetchTimeout) : base($"Timed out awaiting async lock after {timeout}. This likely indicates an in-memory deadlock. See below for the stacktrace of the blocking thread as it disposes the lock.") =>
+   internal AsyncLockTimeoutException(LockTimeout timeout, WaitTimeout stackTraceFetchTimeout) : base($"Timed out awaiting async lock after {timeout}. This likely indicates an in-memory deadlock. See below for the stacktrace of the blocking thread as it disposes the lock.") =>
       _timeToWaitForOwningThreadStacktrace = stackTraceFetchTimeout;
 
    public override string Message
@@ -32,6 +32,6 @@ public class AsyncLockTimeoutException : Exception
       }
    }
 
-   public void SetBlockingThreadsDisposeStackTrace(StackTrace blockingThreadStackTrace) =>
+   internal void SetBlockingThreadsDisposeStackTrace(StackTrace blockingThreadStackTrace) =>
       _monitor.Update(() => _blockingThreadStacktrace = blockingThreadStackTrace.ToString());
 }

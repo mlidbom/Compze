@@ -20,7 +20,7 @@ public class NewtonsoftTeventStoreSerializer : ITeventStoreSerializer
 
    readonly RenamingSupportingJsonSerializer _serializer;
 
-   public static IComponentRegistrar RegisterWith(IComponentRegistrar registrar)
+   internal static IComponentRegistrar RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(
          Singleton.For<ITeventStoreSerializer>()
                   .CreatedBy((ITypeMapper typeMapper) => new NewtonsoftTeventStoreSerializer(typeMapper)));

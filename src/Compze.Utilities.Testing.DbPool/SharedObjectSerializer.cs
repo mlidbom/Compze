@@ -6,9 +6,9 @@ using MemoryPack;
 
 namespace Compze.Utilities.Testing.DbPool;
 
-public class MemoryPackDbPoolStateSerializer : ISharedObjectSerializer<DbPoolState>
+internal class MemoryPackDbPoolStateSerializer : ISharedObjectSerializer<DbPoolState>
 {
-   public static readonly MemoryPackDbPoolStateSerializer Instance = new();
+   internal static readonly MemoryPackDbPoolStateSerializer Instance = new();
    MemoryPackDbPoolStateSerializer(){}
    public string Serialize(DbPoolState instance) => Convert.ToBase64String(MemoryPackSerializer.Serialize(instance));
 

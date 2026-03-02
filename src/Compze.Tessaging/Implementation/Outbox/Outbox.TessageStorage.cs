@@ -16,10 +16,10 @@ namespace Compze.Tessaging.Implementation.Outbox;
 
 public partial class Outbox
 {
-   public class TessageStorage : ITessageStorage
+   internal class TessageStorage : ITessageStorage
    {
       // ReSharper disable once MemberHidesStaticFromOuterClass
-      public static void RegisterWith(IComponentRegistrar registrar)
+      internal static void RegisterWith(IComponentRegistrar registrar)
          => registrar.Register(Singleton.For<ITessageStorage>()
                                         .CreatedBy((IServiceBusSqlLayer.IOutboxSqlLayer sqlLayer, ITypeMapper typeMapper, IRemotableTessageSerializer serializer)
                                                       => new TessageStorage(sqlLayer, typeMapper, serializer)));

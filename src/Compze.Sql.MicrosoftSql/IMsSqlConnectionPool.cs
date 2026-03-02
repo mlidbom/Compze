@@ -17,7 +17,7 @@ public interface IMsSqlConnectionPool : IDbConnectionPool<ICompzeMsSqlConnection
    {
       readonly LazyCE<IDbConnectionPool<ICompzeMsSqlConnection, SqlCommand>> _pool;
 
-      public MsSqlConnectionPool(Func<string> getConnectionString)
+      internal MsSqlConnectionPool(Func<string> getConnectionString)
       {
          _pool = new LazyCE<IDbConnectionPool<ICompzeMsSqlConnection, SqlCommand>>(
             () =>

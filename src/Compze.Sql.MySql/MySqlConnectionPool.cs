@@ -17,7 +17,7 @@ public interface IMySqlConnectionPool : IDbConnectionPool<ICompzeMySqlConnection
    {
       readonly LazyCE<IDbConnectionPool<ICompzeMySqlConnection, MySqlCommand>> _pool;
 
-      public MySqlConnectionPool(Func<string> getConnectionString)
+      internal MySqlConnectionPool(Func<string> getConnectionString)
       {
          _pool = new LazyCE<IDbConnectionPool<ICompzeMySqlConnection, MySqlCommand>>(
             () =>

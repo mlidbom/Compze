@@ -84,7 +84,7 @@ internal static class TaggregateTypeValidator<TDomainClass, TTeventImplementatio
       // ReSharper disable once StaticMemberInGenericType (This is exactly the effect we are after...)
       static bool _validated;
 
-      public static void AssertValid(ITypeMapper typeMapper)
+      internal static void AssertValid(ITypeMapper typeMapper)
       {
          if(_validated) return;
 

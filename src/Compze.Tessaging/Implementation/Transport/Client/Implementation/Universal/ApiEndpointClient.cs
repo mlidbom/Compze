@@ -40,7 +40,7 @@ public class ApiEndpointClient(
       return await _transportMessagePoster.PostAsync<TResult>(tessage, _remoteAddress).caf();
    }
 
-   public static async Task<(ApiEndpointClient, TessageTypesInternal.EndpointInformation)> BootstrapConnectionToEndpoint(ITransportMessagePoster transportMessagePoster,
+   internal static async Task<(ApiEndpointClient, TessageTypesInternal.EndpointInformation)> BootstrapConnectionToEndpoint(ITransportMessagePoster transportMessagePoster,
                                                                                                                           EndPointAddress remoteAddress,
                                                                                                                           ITypeMapper typeMapper,
                                                                                                                           IRemotableTessageSerializer serializer)

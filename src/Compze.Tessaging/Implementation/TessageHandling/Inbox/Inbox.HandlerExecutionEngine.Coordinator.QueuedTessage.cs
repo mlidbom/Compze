@@ -33,8 +33,8 @@ public partial class Inbox
             readonly IServiceLocator _serviceLocator;
             readonly ITessageHandlerRegistry _handlerRegistry;
 
-            public Task<object?> Task => _taskCompletionSource.Task;
-            public TessageId TessageId { get; }
+            internal Task<object?> Task => _taskCompletionSource.Task;
+            internal TessageId TessageId { get; }
 
             const string ExecuteTaskName = $"{nameof(HandlerExecutionTask)}_{nameof(Execute)}";
 
@@ -137,7 +137,7 @@ public partial class Inbox
                }
             }
 
-            public HandlerExecutionTask(TransportTessage.InComing transportTessage, Coordinator coordinator, ITaskRunner taskRunner, ITessageStorage tessageStorage, IServiceLocator serviceLocator, ITessageHandlerRegistry handlerRegistry)
+            internal HandlerExecutionTask(TransportTessage.InComing transportTessage, Coordinator coordinator, ITaskRunner taskRunner, ITessageStorage tessageStorage, IServiceLocator serviceLocator, ITessageHandlerRegistry handlerRegistry)
             {
                TessageId = transportTessage.TessageId;
                TransportTessage = transportTessage;

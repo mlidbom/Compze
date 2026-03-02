@@ -23,7 +23,7 @@ internal static class InboxRegistrar
 #pragma warning disable CA1724 // Type name intentionally matches namespace concept
 [UsedImplicitly] partial class Inbox : IInbox, IAsyncDisposable
 {
-   public static void RegisterWith(IComponentRegistrar registrar)
+   internal static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(
          Singleton.For<Inbox.ITessageStorage>()
                   .CreatedBy((IServiceBusSqlLayer.IInboxSqlLayer sqlLayer)

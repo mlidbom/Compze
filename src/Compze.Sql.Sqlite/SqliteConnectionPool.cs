@@ -17,7 +17,7 @@ public interface ISqliteConnectionPool : IDbConnectionPool<ICompzeSqliteConnecti
    {
       readonly LazyCE<IDbConnectionPool<ICompzeSqliteConnection, SqliteCommand>> _pool;
 
-      public SqliteConnectionPool(Func<string> getConnectionString)
+      internal SqliteConnectionPool(Func<string> getConnectionString)
       {
          _pool = new LazyCE<IDbConnectionPool<ICompzeSqliteConnection, SqliteCommand>>(
             () =>

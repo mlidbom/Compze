@@ -40,7 +40,7 @@ public readonly struct ReadOrder : IComparable<ReadOrder>, IEquatable<ReadOrder>
 
    public SqlDecimal ToSqlDecimal() => ToCorrectIntegerAndFractionDigits(SqlDecimal.Parse(ToString()));
 
-   public ReadOrder NextIntegerOrder => new(_integerPart + 1, 0);
+   internal ReadOrder NextIntegerOrder => new(_integerPart + 1, 0);
 
    public static ReadOrder Parse(string value, bool bypassScaleTest = false)
    {
