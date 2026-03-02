@@ -5,7 +5,7 @@ $script:CompzeRoot = Split-Path -Parent $PSScriptRoot
 
 # Common paths used across multiple functions
 $script:CompzeSrcRoot = Join-Path $script:CompzeRoot "src"
-$script:CompzeSolutionPath = Join-Path $script:CompzeSrcRoot "Compze.slnx"
+$script:CompzeSolutionPath = Join-Path $script:CompzeSrcRoot "Compze.AllProjects.slnx"
 
 # Import all function files from the Functions directory and collect function names
 $functionFiles = @()

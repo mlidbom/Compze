@@ -22,7 +22,7 @@ Compze is a .NET framework for building expressive domains through:
 
 - **Language**: C# (.NET 9+, see `src/global.json`)
 - **Testing**: xUnit
-- **Build System**: MSBuild (.NET SDK), solution file: `src/Compze.slnx`
+- **Build System**: MSBuild (.NET SDK), solution file: `src/Compze.AllProjects.slnx`
 - **Dependency Injection**: Pluggable (Microsoft DI, SimpleInjector)
 - **Persistence**: Pluggable (SQLite in-memory, SQL Server, PostgreSQL, MySQL)
 - **Serialization**: Pluggable (Newtonsoft)
@@ -40,7 +40,7 @@ Compze is a .NET framework for building expressive domains through:
 ```powershell
 C-Build                  # Build the solution (preferred)
 C-Build -Clean           # Deep clean then build
-dotnet build src/Compze.slnx  # Alternative: direct .NET CLI
+dotnet build src/Compze.AllProjects.slnx  # Alternative: direct .NET CLI
 ```
 
 ### Running Tests
@@ -54,7 +54,7 @@ C-Test -Clean                  # Deep clean + build + test
 C-Test -FullGitReset           # Full git clean + build + test
 
 # Running a subset of tests (no DevScripts support, use dotnet directly)
-dotnet test src/Compze.slnx --no-build --filter "FullyQualifiedName~MyTestClass"
+dotnet test src/Compze.AllProjects.slnx --no-build --filter "FullyQualifiedName~MyTestClass"
 ```
 
 ### Test Configuration
@@ -71,7 +71,7 @@ The solution uses a **flat layout** — each project has its own top-level direc
 
 ```
 src/
-  Compze.slnx                         # Solution file
+  Compze.AllProjects.slnx                         # Solution file
   Directory.Build.props                # Shared MSBuild properties (do not modify)
   TestUsingPluggableComponentCombinations  # Active test config (do not modify)
   Compze.Core/                         # Core abstractions

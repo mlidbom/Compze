@@ -23,7 +23,7 @@ function C-Merge-Project {
     The name of the project to merge back into its parent (e.g., "Compze.Wiring.Testing")
     
     .PARAMETER SolutionPath
-    Path to the main solution file (defaults to src\Compze.slnx)
+    Path to the main solution file (defaults to src\Compze.AllProjects.slnx)
     
     .EXAMPLE
     C-Merge-Project -Project Compze.Wiring.Testing

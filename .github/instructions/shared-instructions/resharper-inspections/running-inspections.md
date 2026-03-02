@@ -8,7 +8,7 @@
 ## Running an Inspection
 
 ```powershell
-jb inspectcode src/Compze.slnx `
+jb inspectcode src/Compze.AllProjects.slnx `
    --output=inspection-results.xml `
    --severity=SUGGESTION `
    --include="**/*.cs" `

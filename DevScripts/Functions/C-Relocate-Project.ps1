@@ -14,7 +14,7 @@ function C-Relocate-Project {
     The full name of the project to relocate
     
     .PARAMETER SolutionPath
-    Path to the solution file (defaults to src\Compze.slnx)
+    Path to the solution file (defaults to src\Compze.AllProjects.slnx)
     #>
     [CmdletBinding()]
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseApprovedVerbs', '')]

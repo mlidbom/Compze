@@ -108,7 +108,7 @@ Recreate subset `.slnx` files (relative to `src/`). Planned solutions:
 
 | Solution | Projects | Use case |
 |----------|----------|----------|
-| `Compze.slnx` (existing) | All 51 | Full development, CI |
+| `Compze.AllProjects.slnx` (existing) | All 51 | Full development, CI |
 | `Compze.Utilities.slnx` | 13 src + 3 test | Working on utility libraries |
 | `Compze.Utilities.Testing.slnx` | 3 src + 2 test | Working on test infrastructure |
 | `Compze.WithoutUtilities.slnx` | 11 src + 0 test | Working on higher-level Compze libs |
@@ -149,13 +149,13 @@ Ensure local package workflow works smoothly:
 
 ### Phase 7: Verify
 
-- [x] Full solution (`Compze.slnx`) builds and all tests pass (1164/1164)
+- [x] Full solution (`Compze.AllProjects.slnx`) builds and all tests pass (1164/1164)
 - [x] Each subset solution builds with correct PackageReferences
 - [x] NCrunch works in full solution
 - [x] NCrunch works in subset solutions
-- [x] `dotnet build src/Compze.slnx` (CLI, no solution context) still works
+- [x] `dotnet build src/Compze.AllProjects.slnx` (CLI, no solution context) still works
   (falls through to ProjectReference — the safe default)
-- [x] CI (`dotnet build src/Compze.slnx`) passes
+- [x] CI (`dotnet build src/Compze.AllProjects.slnx`) passes
 
 ### Phase 8: Consider Moving Scripts to FlexRef Project
 

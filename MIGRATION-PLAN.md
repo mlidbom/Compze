@@ -124,7 +124,7 @@ src/
   Samples/
   msbuild/
   SolutionStructure/
-  Compze.slnx
+  Compze.AllProjects.slnx
 test/
   Compze.Tests.Unit/
   Compze.Tests.Unit.Internals/
@@ -176,7 +176,7 @@ test/Directory.Build.props          ← <IsTestProject>true</IsTestProject>, imp
 
 All `<ProjectReference>` relative paths need recalculating from the new project locations. The migration script handles this automatically.
 
-### 5. Regenerate Solution File (`Compze.slnx`)
+### 5. Regenerate Solution File (`Compze.AllProjects.slnx`)
 
 Update all `<Project Path="...">` entries and solution folder structure.
 
@@ -216,7 +216,7 @@ A PowerShell migration script is the best approach because:
 ### Script Algorithm (pseudocode)
 
 ```
-1. Parse Compze.slnx to build project list with current paths
+1. Parse Compze.AllProjects.slnx to build project list with current paths
 2. Compute target paths for each project
 3. Sort by nesting depth (deepest first)
 4. For each project (deepest first):
@@ -226,7 +226,7 @@ A PowerShell migration script is the best approach because:
 5. For ALL csproj files: recalculate ProjectReference relative paths
 6. Remove <Compile Remove>, <EmbeddedResource Remove>, <None Remove> sections 
    that were for child project exclusions (keep _docs exclusions)
-7. Rewrite Compze.slnx with updated paths
+7. Rewrite Compze.AllProjects.slnx with updated paths
 8. Restructure Directory.Build.props files
 9. Update msbuild .props paths
 10. Update Website.csproj _docs globs

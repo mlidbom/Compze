@@ -22,7 +22,7 @@ function C-Rename-Project {
     The new name for the project (e.g., "Compze.Common.Configuration")
     
     .PARAMETER SolutionPath
-    Path to the solution file (defaults to src\Compze.slnx)
+    Path to the solution file (defaults to src\Compze.AllProjects.slnx)
     
     .EXAMPLE
     C-Rename-Project -Old Compze.Tessaging.Hosting.Configuration -New Compze.Common.Configuration
