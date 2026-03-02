@@ -34,13 +34,6 @@ public class Entity<TEntity, TKey> : IEntity<TKey>
       protected set => _id = Contract.Argument.NotNull(value)._then(value);
    }
 
-   ///<summary>Gets the id of the instance bypassing contract validation. Should probably never be used except by infrastructure code.</summary>
-   [Obsolete(ObsoleteMessage.ForInternalUseOnly)]
-#pragma warning disable CA1024 //No matter what the analyzer might think, this is not a good property.
-   protected EntityId<TKey> GetIdBypassContractValidation() => _id;
-#pragma warning restore CA1024
-
-
    ///<summary>Returns a string similar to: MyType:MyId</summary>
    public override string ToString() => $"{GetType().Name}:{Id}";
 }
