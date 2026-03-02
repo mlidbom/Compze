@@ -34,7 +34,7 @@ class ExceptionJsonConverter : JsonConverter
       writer.WriteEndObject();
    }
 
-   public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
+   public override object ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
    {
       // We don't need to deserialize in tests
       throw new NotImplementedException("Exception deserialization is not supported");

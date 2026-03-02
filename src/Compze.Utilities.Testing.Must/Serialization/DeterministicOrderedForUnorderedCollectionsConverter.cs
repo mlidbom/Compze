@@ -90,7 +90,7 @@ class DeterministicOrderedForUnorderedCollectionsConverter : JsonConverter
       throw new InvalidOperationException($"Unexpected type: {objectType}");
    }
 
-   public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
+   public override object ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
    {
       // We only need this for comparison, not deserialization
       throw new NotImplementedException("Deserialization is not needed for comparison");

@@ -6,7 +6,7 @@ namespace Compze.Utilities.Testing.Must;
 
 public static class Must_BeTrue_BeFalse
 {
-   public static IAssertionContext<bool>? BeTrue(this IAssertionContext<bool> context)
+   public static IAssertionContext<bool> BeTrue(this IAssertionContext<bool> context)
       => context.SatisfyInternal(it => it == true,
                                           messageOverride: _ =>
                                              $"""
@@ -17,7 +17,7 @@ public static class Must_BeTrue_BeFalse
                                               to be true, but it was false
                                               """);
 
-   public static IAssertionContext<bool>? BeFalse(this IAssertionContext<bool> context)
+   public static IAssertionContext<bool> BeFalse(this IAssertionContext<bool> context)
       => context.SatisfyInternal(it => it == false,
                                  messageOverride: _ =>
                                     $"""
