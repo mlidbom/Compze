@@ -46,7 +46,7 @@ public static class AppDomainExtensionsTests
          var allTypes = System.AppDomain.CurrentDomain.AllCompzeTypes();
 
          var publicTypes = allTypes.Where(type => type.IsPublic || type.IsNestedPublic).ToList();
-         var internalTypes = allTypes.Where(type => !type.IsPublic && !type.IsNestedPublic && !type.IsNestedPrivate && !type.IsNestedFamily && !type.IsNestedFamORAssem && !type.IsNestedFamANDAssem).ToList();
+         var internalTypes = allTypes.Where(type => type is { IsPublic: false, IsNestedPublic: false, IsNestedPrivate: false, IsNestedFamily: false, IsNestedFamORAssem: false, IsNestedFamANDAssem: false }).ToList();
 
          publicTypes.Must().NotBeEmpty("there should be public types in Compze assemblies");
          internalTypes.Must().NotBeEmpty("there should be internal types in Compze assemblies");
@@ -69,7 +69,7 @@ public static class AppDomainExtensionsTests
          CompzeAssemblyLoader.EnsureAllCompzeAssembliesAreLoaded();
 
          var allTypes = System.AppDomain.CurrentDomain.AllCompzeTypes();
-         var structs = allTypes.Where(type => type.IsValueType && !type.IsEnum).ToList();
+         var structs = allTypes.Where(type => type is { IsValueType: true, IsEnum: false }).ToList();
 
          structs.Must().NotBeEmpty("there should be structs in Compze assemblies");
       }

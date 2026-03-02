@@ -93,7 +93,7 @@ static class TypeMapperTypeDiscovery
    static void CollectClosedGenericTypes(Type type, Assembly targetAssembly, HashSet<Type> collectedTypes)
    {
       // If this is a closed generic type (generic but not a generic type definition)
-      if(type.IsGenericType && !type.IsGenericTypeDefinition)
+      if(type is { IsGenericType: true, IsGenericTypeDefinition: false })
       {
          // Check if any of the type arguments are defined in the target assembly
          var typeArguments = type.GetGenericArguments();
