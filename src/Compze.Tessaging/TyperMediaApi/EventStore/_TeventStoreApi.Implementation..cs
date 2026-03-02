@@ -22,10 +22,10 @@ public partial class TeventStoreApi
          public TaggregateLink() : base() {}
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 
-         public TaggregateLink(TaggregateId id) => Id = id;
+         internal TaggregateLink(TaggregateId id) => Id = id;
          public TaggregateId Id { get; private set; }
 
-         public static void RegisterHandler(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery((TaggregateLink<TTaggregate> tuery, ITeventStoreUpdater updater) => updater.Get<TTaggregate>(tuery.Id));
+         internal static void RegisterHandler(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery((TaggregateLink<TTaggregate> tuery, ITeventStoreUpdater updater) => updater.Get<TTaggregate>(tuery.Id));
       }
 
       public class GetTaggregateHistory<TTevent> : TessageTypes.StrictlyLocal.Tueries.StrictlyLocalTuery<GetTaggregateHistory<TTevent>, IEnumerable<TTevent>> where TTevent : ITaggregateTevent
@@ -33,10 +33,10 @@ public partial class TeventStoreApi
          [Obsolete("for serializer", error: true)]
          public GetTaggregateHistory() => Id = null!;
 
-         public GetTaggregateHistory(TaggregateId id) => Id = id;
+         internal GetTaggregateHistory(TaggregateId id) => Id = id;
          public TaggregateId Id { get; private set; }
 
-         public static void RegisterHandler(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery((GetTaggregateHistory<TTevent> tuery, ITeventStoreReader reader) => reader.GetHistory(tuery.Id).Cast<TTevent>());
+         internal static void RegisterHandler(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery((GetTaggregateHistory<TTevent> tuery, ITeventStoreReader reader) => reader.GetHistory(tuery.Id).Cast<TTevent>());
       }
 
       public class GetReadonlyCopyOfTaggregate<TTaggregate> : TessageTypes.StrictlyLocal.Tueries.StrictlyLocalTuery<GetReadonlyCopyOfTaggregate<TTaggregate>, TTaggregate> where TTaggregate : class, ITaggregate
@@ -46,10 +46,10 @@ public partial class TeventStoreApi
          public GetReadonlyCopyOfTaggregate() : base() {}
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 
-         public GetReadonlyCopyOfTaggregate(TaggregateId id) => Id = id;
+         internal GetReadonlyCopyOfTaggregate(TaggregateId id) => Id = id;
          public TaggregateId Id { get; private set; }
 
-         public static void RegisterHandler(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery((GetReadonlyCopyOfTaggregate<TTaggregate> tuery, ITeventStoreReader reader) => reader.GetReadonlyCopy<TTaggregate>(tuery.Id));
+         internal static void RegisterHandler(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery((GetReadonlyCopyOfTaggregate<TTaggregate> tuery, ITeventStoreReader reader) => reader.GetReadonlyCopy<TTaggregate>(tuery.Id));
       }
 
       public class GetReadonlyCopyOfTaggregateVersion<TTaggregate> : TessageTypes.StrictlyLocal.Tueries.StrictlyLocalTuery<GetReadonlyCopyOfTaggregateVersion<TTaggregate>, TTaggregate> where TTaggregate : class, ITaggregate
@@ -59,7 +59,7 @@ public partial class TeventStoreApi
          public GetReadonlyCopyOfTaggregateVersion() : base() {}
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 
-         public GetReadonlyCopyOfTaggregateVersion(TaggregateId id, int version)
+         internal GetReadonlyCopyOfTaggregateVersion(TaggregateId id, int version)
          {
             Id = id;
             Version = version;
@@ -68,7 +68,7 @@ public partial class TeventStoreApi
          public TaggregateId Id { get; private set; }
          public int Version { get; private set; }
 
-         public static void RegisterHandler(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery((GetReadonlyCopyOfTaggregateVersion<TTaggregate> tuery, ITeventStoreReader reader) => reader.GetReadonlyCopyOfVersion<TTaggregate>(tuery.Id, tuery.Version));
+         internal static void RegisterHandler(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery((GetReadonlyCopyOfTaggregateVersion<TTaggregate> tuery, ITeventStoreReader reader) => reader.GetReadonlyCopyOfVersion<TTaggregate>(tuery.Id, tuery.Version));
       }
    }
 
@@ -77,10 +77,10 @@ public partial class TeventStoreApi
       public class SaveTaggregate<TTaggregate> : TessageTypes.StrictlyLocal.Tommands.StrictlyLocalTommand
          where TTaggregate : class, ITaggregate
       {
-         public SaveTaggregate(TTaggregate entity) => Entity = entity;
+         internal SaveTaggregate(TTaggregate entity) => Entity = entity;
          public TTaggregate Entity { get; private set; }
 
-         public static void RegisterHandler(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTommand((SaveTaggregate<TTaggregate> tommand, ITeventStoreUpdater updater) => updater.Save(tommand.Entity));
+         internal static void RegisterHandler(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTommand((SaveTaggregate<TTaggregate> tommand, ITeventStoreUpdater updater) => updater.Save(tommand.Entity));
       }
    }
 

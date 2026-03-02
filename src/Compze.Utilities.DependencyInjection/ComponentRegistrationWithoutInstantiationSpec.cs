@@ -10,7 +10,7 @@ public class ComponentRegistrationWithoutInstantiationSpec<TService> where TServ
    protected IReadOnlyList<Type> ServiceTypes { get; }
    readonly Lifestyle _lifestyle;
 
-   public ComponentRegistrationWithoutInstantiationSpec(Lifestyle lifestyle, IEnumerable<Type> serviceTypes)
+   internal ComponentRegistrationWithoutInstantiationSpec(Lifestyle lifestyle, IEnumerable<Type> serviceTypes)
    {
       _lifestyle = lifestyle;
       ServiceTypes = serviceTypes.Concat([typeof(TService)]).ToList();

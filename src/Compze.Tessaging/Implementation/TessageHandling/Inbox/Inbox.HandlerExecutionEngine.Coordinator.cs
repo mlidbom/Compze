@@ -21,7 +21,7 @@ public partial class Inbox
    public partial class HandlerExecutionEngine
    {
       //refactor: Consider moving all tessage type specific responsibilities into the tessage class or other class. Probably create more subtypes so that no type checking is required. See also inbox.
-      public partial class Coordinator(ITessagesInFlightTracker globalStateTracker, ITaskRunner taskRunner, ITessageStorage tessageStorage, IServiceLocator serviceLocator, ITessageHandlerRegistry tessageHandlerRegistry, EndpointId endpointId)
+      internal partial class Coordinator(ITessagesInFlightTracker globalStateTracker, ITaskRunner taskRunner, ITessageStorage tessageStorage, IServiceLocator serviceLocator, ITessageHandlerRegistry tessageHandlerRegistry, EndpointId endpointId)
       {
          readonly ITaskRunner _taskRunner = taskRunner;
          readonly ITessageStorage _tessageStorage = tessageStorage;

@@ -11,7 +11,7 @@ using Compze.Threading.TasksCE;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Universal;
 
-public class ApiEndpointClient(
+internal class ApiEndpointClient(
    ITransportMessagePoster transportMessagePoster,
    EndPointAddress remoteAddress,
    ITypeMapper typeMapper,

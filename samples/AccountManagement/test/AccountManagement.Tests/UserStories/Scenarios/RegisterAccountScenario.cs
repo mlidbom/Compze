@@ -15,19 +15,19 @@ public class RegisterAccountScenario(IClient client, string? email = null, strin
    public string Email { get; set; } = email ?? TestData.Emails.CreateUnusedEmail();
    public string Password  { get; set; } = password;
 
-   public RegisterAccountScenario WithAccountId(AccountId acountId)
+   internal RegisterAccountScenario WithAccountId(AccountId acountId)
    {
       AccountId = acountId;
       return this;
    }
 
-   public RegisterAccountScenario WithEmail(string email)
+   internal RegisterAccountScenario WithEmail(string email)
    {
       Email = email;
       return this;
    }
 
-   public RegisterAccountScenario WithPassword(string password)
+   internal RegisterAccountScenario WithPassword(string password)
    {
       Password = password;
       return this;

@@ -4,7 +4,7 @@ public class TeventInsertionSpecification(TaggregateTeventData tevent, int inser
 {
    public TeventInsertionSpecification(TaggregateTeventData tevent) : this(tevent, tevent.TaggregateVersion, tevent.TaggregateVersion) {}
 
-   public TaggregateTeventData Tevent { get; } = tevent;
+   internal TaggregateTeventData Tevent { get; } = tevent;
    public int InsertedVersion { get; } = insertedVersion;
-   public int EffectiveVersion { get; } = effectiveVersion;
+   internal int EffectiveVersion { get; } = effectiveVersion;
 }

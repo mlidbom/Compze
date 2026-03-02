@@ -46,7 +46,7 @@ public static class _Must_Satisfy
       return context;
    }
 
-   public static IAssertionContext SatisfyInternal(this IAssertionContext context,
+   internal static IAssertionContext SatisfyInternal(this IAssertionContext context,
                                                    Func<object, bool> predicate,
                                                    [CallerArgumentExpression(nameof(predicate))]
                                                    string predicateExpression = null!,

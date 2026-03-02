@@ -4,7 +4,7 @@ using System.Linq;
 namespace Compze.Utilities.Testing.XUnit.ComponentCombinations;
 
 /// <summary>Represents a skipped component with a reason.</summary>
-public class SkipComponentSpecification
+internal class SkipComponentSpecification
 {
    readonly Enum _component;
    readonly string _reason;

@@ -10,5 +10,5 @@ public class ControllerBase : Controller
 
 public class CompositeApi
 {
-   public AccountApi Accounts => AccountApi.Instance;
+   internal AccountApi Accounts => AccountApi.Instance;
 }

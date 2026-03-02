@@ -50,6 +50,7 @@ public class MyCreateTaggregateTommand : TessageTypes.Remotable.AtMostOnce.AtMos
 
    public static MyCreateTaggregateTommand Create() => new(new TaggregateId());
 
+   // ReSharper disable once MemberCanBeInternal — Serialized via Newtonsoft
    public TaggregateId TaggregateId { get; set; }
 }
 
@@ -61,9 +62,9 @@ public class MyTaggregate : Taggregate<MyTaggregate, IMyTaggregateTevent, MyTagg
         .IgnoreUnhandled<IMyTaggregateTevent>();
    }
 
-   public void Update() => Publish(new MyTaggregateTevent.Updated());
+   internal void Update() => Publish(new MyTaggregateTevent.Updated());
 
-   public static void Create(TaggregateId id, IInProcessTypermediaNavigator bus)
+   internal static void Create(TaggregateId id, IInProcessTypermediaNavigator bus)
    {
       var created = new MyTaggregate();
       created.Publish(new MyTaggregateTevent.Created(id));

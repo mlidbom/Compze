@@ -6,7 +6,7 @@ namespace Compze.Core.Time.Public;
 public class DateTimeNowTimeSource : IUtcTimeTimeSource
 {
    ///<summary>Returns an instance.</summary>
-   public static readonly DateTimeNowTimeSource Instance = new();
+   internal static readonly DateTimeNowTimeSource Instance = new();
 
    ///<summary>Returns DateTime.UtcNow</summary>
    public DateTime UtcNow => DateTime.UtcNow;

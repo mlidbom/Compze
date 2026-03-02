@@ -9,9 +9,9 @@ public class InstantiationSpec
    public Func<IServiceLocatorKernel, object> FactoryMethod { get; }
    public Type FactoryMethodReturnType { get; }
 
-   public static InstantiationSpec FromInstance(object instance) => new(instance);
+   internal static InstantiationSpec FromInstance(object instance) => new(instance);
 
-   public static InstantiationSpec FromFactoryMethod(Func<IServiceLocatorKernel, object> factoryMethod, Type factoryMethodReturnType) => new(factoryMethod, factoryMethodReturnType);
+   internal static InstantiationSpec FromFactoryMethod(Func<IServiceLocatorKernel, object> factoryMethod, Type factoryMethodReturnType) => new(factoryMethod, factoryMethodReturnType);
 
    InstantiationSpec(Func<IServiceLocatorKernel, object> factoryMethod, Type factoryMethodReturnType)
    {

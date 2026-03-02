@@ -24,8 +24,8 @@ public class TeventModifier(Action<IReadOnlyList<TeventModifier.RefactoredTevent
 {
    public class RefactoredTevent(TaggregateTevent newTevent, TaggregateTeventStorageInformation storageInformation)
    {
-      public TaggregateTevent NewTevent { get; private set; } = newTevent;
-      public TaggregateTeventStorageInformation StorageInformation { get; private set; } = storageInformation;
+      internal TaggregateTevent NewTevent { get; private set; } = newTevent;
+      internal TaggregateTeventStorageInformation StorageInformation { get; private set; } = storageInformation;
    }
 
    readonly Action<IReadOnlyList<RefactoredTevent>> _teventsAddedCallback = teventsAddedCallback;

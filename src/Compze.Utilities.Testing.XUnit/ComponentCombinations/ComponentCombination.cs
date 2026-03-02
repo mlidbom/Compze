@@ -22,7 +22,7 @@ public class ComponentCombination : IXunitSerializable
 
    public override string ToString() => string.Join(Separator, Components.Select(it => it.ToString()));
 
-   public const string Separator = ":";
+   internal const string Separator = ":";
 
    [Obsolete("Called by xUnit deserializer", error: true)]
    public ComponentCombination() => Components = [];
@@ -46,7 +46,7 @@ public class ComponentCombination : IXunitSerializable
       Components = combination.Components;
    }
 
-   public static ComponentCombination FromComponentEnumValues(IEnumerable<Enum> componentEnumValues) => new(componentEnumValues);
+   internal static ComponentCombination FromComponentEnumValues(IEnumerable<Enum> componentEnumValues) => new(componentEnumValues);
 
    public static ComponentCombination FromComponentNamesList(IReadOnlyList<string> componentNames, Type[] componentEnumTypes)
    {
@@ -70,7 +70,7 @@ public class ComponentCombination : IXunitSerializable
 
    static readonly AsyncLocal<LazyCE<ComponentCombination>?> CurrentInternal = new();
 
-   public static async Task<TReturn> RunInContextAsync<TReturn>(
+   internal static async Task<TReturn> RunInContextAsync<TReturn>(
       LazyCE<ComponentCombination> combination,
       Func<Task<TReturn>> executeTest)
    {

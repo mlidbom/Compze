@@ -23,7 +23,7 @@ public static class TypeMapperRegistrar
 
 public class TypeMapper : ITypeMapper
 {
-   public static IComponentRegistrar RegisterWith(IComponentRegistrar registrar) =>
+   internal static IComponentRegistrar RegisterWith(IComponentRegistrar registrar) =>
       registrar.Register(Singleton.For<ITypeMapper, TypeMapper>()
                                   .Instance(TypeMapper.Instance));
 
@@ -280,7 +280,7 @@ public class TypeMapper : ITypeMapper
       internal readonly HashSet<Assembly> CheckedAssemblies = [];
       internal readonly Dictionary<Assembly, string> AssemblyMappingUpdateTessages = new();
 
-      public void Map(Type type, TypeId typeId)
+      internal void Map(Type type, TypeId typeId)
       {
          if(TypeToTypeIdMap.TryGetValue(type, out var existingTypeId))
          {

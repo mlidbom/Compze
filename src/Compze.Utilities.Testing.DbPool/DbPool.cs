@@ -26,7 +26,7 @@ public static class DbPoolRegistrar
 
 public class DbPool : StrictlyManagedResourceBase<DbPool>
 {
-   public static IComponentRegistrar RegisterWith(IComponentRegistrar registrar) =>
+   internal static IComponentRegistrar RegisterWith(IComponentRegistrar registrar) =>
       registrar.Register(Singleton.For<DbPool>()
                                   .CreatedBy((IDbPoolSqlLayer sqlLayer) => new DbPool(sqlLayer))
                                   .DelegateToParentServiceLocatorWhenCloning());
@@ -34,7 +34,7 @@ public class DbPool : StrictlyManagedResourceBase<DbPool>
    readonly IDbPoolSqlLayer _sqlLayer;
    protected MachineWideSharedObject<DbPoolState> MachineWideState { get; }
    static TimeSpan _reservationLength;
-   public const int NumberOfDatabases = 50;
+   internal const int NumberOfDatabases = 50;
 
    public DbPool(IDbPoolSqlLayer sqlLayer) : base(forceStackTraceAllocation: false)
    {

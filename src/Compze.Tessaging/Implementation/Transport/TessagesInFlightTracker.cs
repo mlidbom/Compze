@@ -44,7 +44,7 @@ public class TessagesInFlightTracker(ITypeMapper typeMapper) : ITessagesInFlight
       public required TessageId TessageId { get; init; }
       public required string TypeName { get; init; }
       public required string Body { get; init; }
-      public Dictionary<EndpointId, bool> EndpointDeliveryStatus { get; } = [];
+      internal Dictionary<EndpointId, bool> EndpointDeliveryStatus { get; } = [];
    }
 
    public class NonThreadSafeImplementation(ITypeMapper typeMapper)
@@ -54,9 +54,9 @@ public class TessagesInFlightTracker(ITypeMapper typeMapper) : ITessagesInFlight
 
       readonly List<Exception> _busExceptions = [];
 
-      public IReadOnlyList<Exception> GetExceptions() => _busExceptions.ToList();
+      internal IReadOnlyList<Exception> GetExceptions() => _busExceptions.ToList();
 
-      public void SendingTessageOnTransport(TransportTessage.OutGoing transportTessage, EndpointId remoteEndpointId)
+      internal void SendingTessageOnTransport(TransportTessage.OutGoing transportTessage, EndpointId remoteEndpointId)
       {
          var inFlightTessage = TrackedTessages.GetOrAdd(transportTessage.TessageId,
                                                         () => new InFlightTessage
@@ -69,7 +69,7 @@ public class TessagesInFlightTracker(ITypeMapper typeMapper) : ITessagesInFlight
          inFlightTessage.EndpointDeliveryStatus.TryAdd(remoteEndpointId, false); //Retrying messages must not reset the status of already delivered messages.
       }
 
-      public void DoneWith(TransportTessage.InComing tessage, EndpointId handlingEndpointId, Exception? exception)
+      internal void DoneWith(TransportTessage.InComing tessage, EndpointId handlingEndpointId, Exception? exception)
       {
          var tessageType = _typeMapper.GetType(tessage.TessageTypeId);
          if(tessageType == typeof(TessageTypesInternal.EndpointInformationTuery))
@@ -83,9 +83,9 @@ public class TessagesInFlightTracker(ITypeMapper typeMapper) : ITessagesInFlight
          inFlightTessage.EndpointDeliveryStatus[handlingEndpointId] = true;
       }
 
-      public bool NoTessagesInFlight() => TrackedTessages.Values.SelectMany(it => it.EndpointDeliveryStatus.Values).All(delivered => delivered);
+      internal bool NoTessagesInFlight() => TrackedTessages.Values.SelectMany(it => it.EndpointDeliveryStatus.Values).All(delivered => delivered);
 
-      public IReadOnlyList<InFlightTessage> GetUndeliveredTessages() =>
+      internal IReadOnlyList<InFlightTessage> GetUndeliveredTessages() =>
          TrackedTessages.Values.Where(t => t.EndpointDeliveryStatus.Values.Any(delivered => !delivered)).ToList();
    }
 }

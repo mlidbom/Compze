@@ -35,7 +35,7 @@ namespace Compze.Tessaging.Teventive.TeventStore;
    readonly TeventCache _cache;
    readonly IReadOnlyList<ITeventMigration> _migrationFactories;
 
-   public static void RegisterWith(IComponentRegistrar registrar, Func<IReadOnlyList<ITeventMigration>> migrations)
+   internal static void RegisterWith(IComponentRegistrar registrar, Func<IReadOnlyList<ITeventMigration>> migrations)
       => registrar.Register(Scoped.For<ITeventStore>()
                                   .CreatedBy((ITeventStoreSqlLayer sqlLayer, ITypeMapper typeMapper, ITeventStoreSerializer serializer, TeventCache cache) =>
                                                 new TeventStore(sqlLayer, typeMapper, serializer, cache, migrations())));
@@ -202,8 +202,8 @@ namespace Compze.Tessaging.Teventive.TeventStore;
 
    public class TaggregateTeventWithRefactoringInformation(TaggregateTevent tevent, TaggregateTeventStorageInformation storageInformation)
    {
-      public TaggregateTevent Tevent { get; } = tevent;
-      public TaggregateTeventStorageInformation StorageInformation { get; } = storageInformation;
+      internal TaggregateTevent Tevent { get; } = tevent;
+      internal TaggregateTeventStorageInformation StorageInformation { get; } = storageInformation;
    }
 
    public void Dispose() {}

@@ -10,19 +10,19 @@ public class LoginScenario(IClient client, string email, string password) : Scen
    public string Password { get; set; } = password;
    public string Email { get; set; } = email;
 
-   public LoginScenario WithEmail(string email)
+   internal LoginScenario WithEmail(string email)
    {
       Email = email;
       return this;
    }
 
-   public LoginScenario WithPassword(string password)
+   internal LoginScenario WithPassword(string password)
    {
       Password = password;
       return this;
    }
 
-   public static LoginScenario Create(IClient client)
+   internal static LoginScenario Create(IClient client)
    {
       var registerAccountScenario = new RegisterAccountScenario(client);
       registerAccountScenario.Execute();

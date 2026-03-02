@@ -19,10 +19,10 @@ public partial class Inbox
 {
    public partial class HandlerExecutionEngine
    {
-      public partial class Coordinator
+      internal partial class Coordinator
       {
          // ReSharper disable once MemberCanBePrivate.Local Resharper is just confused....
-         public class HandlerExecutionTask
+         internal class HandlerExecutionTask
          {
             readonly TaskCompletionSource<object?> _taskCompletionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
             internal readonly TransportTessage.InComing TransportTessage;

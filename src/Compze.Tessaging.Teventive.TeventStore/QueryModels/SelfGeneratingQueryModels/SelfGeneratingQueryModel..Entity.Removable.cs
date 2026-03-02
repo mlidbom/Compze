@@ -26,7 +26,7 @@ public abstract partial class SelfGeneratingQueryModel<TQueryModel, TTaggregateT
 
       public new class CollectionManager : QueryModelEntityCollectionManager<TQueryModel, TEntity, TEntityId, TEntityTevent, TEntityCreatedTevent, TEntityRemovedTevent, TTeventEntityIdGetter>
       {
-         public CollectionManager(TQueryModel parent, ITeventHandlerRegistrar<TEntityTevent> appliersRegistrar) : base(parent, appliersRegistrar) {}
+         internal CollectionManager(TQueryModel parent, ITeventHandlerRegistrar<TEntityTevent> appliersRegistrar) : base(parent, appliersRegistrar) {}
       }
    }
 }

@@ -26,7 +26,7 @@ public partial class TessageTypeInspector
    static readonly IMonitor MonitorCE = IMonitor.WithDefaultTimeout();
 
    static IReadOnlySet<Type> _successfullyInspectedSubscribableTypes = new HashSet<Type>();
-   public static void AssertValidForSubscription(Type type)
+   internal static void AssertValidForSubscription(Type type)
    {
       if(_successfullyInspectedSubscribableTypes.Contains(type)) return;
 
@@ -40,7 +40,7 @@ public partial class TessageTypeInspector
    }
 
    static IReadOnlySet<Type> _successfullyInspectedTypes = new HashSet<Type>();
-   public static void AssertValid(Type type)
+   internal static void AssertValid(Type type)
    {
       if(_successfullyInspectedTypes.Contains(type)) return;
 
@@ -59,7 +59,7 @@ public partial class TessageTypeInspector
 
    public abstract class TessageTypeDesignRule
    {
-      public abstract void AssertFulfilledBy(Type type);
+      internal abstract void AssertFulfilledBy(Type type);
    }
 
    public abstract class SimpleTessageTypeDesignRule : TessageTypeDesignRule
@@ -67,7 +67,7 @@ public partial class TessageTypeInspector
       protected abstract bool IsInvalid(Type type);
       protected abstract string CreateTessage(Type type);
 
-      public override void AssertFulfilledBy(Type type)
+      internal override void AssertFulfilledBy(Type type)
       {
          if(IsInvalid(type))
          {
@@ -100,7 +100,7 @@ public partial class TessageTypeInspector
 
    public class WrapperTeventInterfaceMustBeGenericAndDeclareTypeParameterAsAsOutParameter : TessageTypeDesignRule
    {
-      public override void AssertFulfilledBy(Type type)
+      internal override void AssertFulfilledBy(Type type)
       {
          if(type.Is<IPublisherIdentifyingTevent<ITevent>>())
          {

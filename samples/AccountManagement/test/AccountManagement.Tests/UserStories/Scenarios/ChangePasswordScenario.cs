@@ -10,23 +10,23 @@ public class ChangePasswordScenario : ScenarioBase<AccountResource>
 {
    readonly IClient _client;
 
-   public string OldPassword { get; private set; }
-   public string NewPassword { get; private set; }
-   public AccountResource Account { get; private set; }
+   internal string OldPassword { get; private set; }
+   internal string NewPassword { get; private set; }
+   internal AccountResource Account { get; private set; }
 
-   public ChangePasswordScenario WithNewPassword(string newPassword)
+   internal ChangePasswordScenario WithNewPassword(string newPassword)
    {
       NewPassword = newPassword;
       return this;
    }
 
-   public ChangePasswordScenario WithOldPassword(string oldPassword)
+   internal ChangePasswordScenario WithOldPassword(string oldPassword)
    {
       OldPassword = oldPassword;
       return this;
    }
 
-   public static ChangePasswordScenario Create(IClient client)
+   internal static ChangePasswordScenario Create(IClient client)
    {
       var registerAccountScenario = new RegisterAccountScenario(client);
       var account = registerAccountScenario.Execute().Account;
@@ -34,7 +34,7 @@ public class ChangePasswordScenario : ScenarioBase<AccountResource>
       return new ChangePasswordScenario(client, account!, registerAccountScenario.Password, TestData.Passwords.CreateValidPasswordString());
    }
 
-   public ChangePasswordScenario(IClient client, AccountResource account, string oldPassword, string newPassword)
+   internal ChangePasswordScenario(IClient client, AccountResource account, string oldPassword, string newPassword)
    {
       Guard.IsNotNull(account);
       _client = client;

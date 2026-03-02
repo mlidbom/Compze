@@ -15,7 +15,7 @@ namespace Compze.Tests.Infrastructure;
 /// </summary>
 public static class TestFixtureHelper
 {
-   public static void SetupSerilog(ILogEventEnricher? testEnricher, ILogEventSink? testOutputSink = null)
+   internal static void SetupSerilog(ILogEventEnricher? testEnricher, ILogEventSink? testOutputSink = null)
    {
       var config = new LoggerConfiguration()
                   .Enrich.WithMachineName()

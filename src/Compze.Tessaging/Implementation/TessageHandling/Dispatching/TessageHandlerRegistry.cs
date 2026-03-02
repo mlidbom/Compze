@@ -156,14 +156,14 @@ public sealed class TessageHandlerRegistry(ITypeMapper typeMapper) : ITessageHan
 
    public class TeventHandlerRegistration(Type type, Action<ITeventHandlerRegistrar<ITevent>> registerHandlerWithRegistrar)
    {
-      public Type Type { get; } = type;
-      public Action<ITeventHandlerRegistrar<ITevent>> RegisterHandlerWithRegistrar { get; } = registerHandlerWithRegistrar;
+      internal Type Type { get; } = type;
+      internal Action<ITeventHandlerRegistrar<ITevent>> RegisterHandlerWithRegistrar { get; } = registerHandlerWithRegistrar;
    }
 
    public abstract class HandlerWithResultRegistration(Type returnValueType, Func<object, object> handlerMethod)
    {
-      public Type ReturnValueType { get; } = returnValueType;
-      public Func<object, object> HandlerMethod { get; } = handlerMethod;
+      internal Type ReturnValueType { get; } = returnValueType;
+      internal Func<object, object> HandlerMethod { get; } = handlerMethod;
    }
 
    public class TommandHandlerWithResultRegistration<TTommand, TResult>(Func<TTommand, TResult> handlerMethod) : HandlerWithResultRegistration(typeof(TResult),

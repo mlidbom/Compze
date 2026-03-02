@@ -11,7 +11,7 @@ public static partial class Constructor
 {
    public static class Compile
    {
-      public static Func<TInstance> DefaultInstanceFactory<TInstance>() =>
+      internal static Func<TInstance> DefaultInstanceFactory<TInstance>() =>
          typeof(IStaticInstancePropertySingleton<TInstance>).IsAssignableFrom(typeof(TInstance))
             ? CompileStaticInstancePropertyDelegate<TInstance>()
             : Compile.ForType<TInstance>().DefaultConstructor();
@@ -41,13 +41,13 @@ public static partial class Constructor
       public static ConstructorCompiler<object> ForType(Type typeToConstruct) => new(typeToConstruct);
 
       // ReSharper disable once MemberHidesStaticFromOuterClass
-      public static GenericTypeConstructorCompiler ForGenericType(Type genericType) => new(genericType);
+      internal static GenericTypeConstructorCompiler ForGenericType(Type genericType) => new(genericType);
 
       public class GenericTypeConstructorCompiler(Type genericType)
       {
          readonly Type _genericType = genericType;
 
-         public Func<object, object> WithArgument(Type argumentType)
+         internal Func<object, object> WithArgument(Type argumentType)
          {
             var genericTypeDefinition = _genericType.GetGenericTypeDefinition();
             var constructedType = genericTypeDefinition.MakeGenericType(argumentType);
@@ -71,12 +71,12 @@ public static partial class Constructor
       public class ConstructorCompiler<TInstance>
       {
          readonly Type _typeToConstruct;
-         public ConstructorCompiler(Type typeToConstruct) => _typeToConstruct = typeToConstruct;
+         internal ConstructorCompiler(Type typeToConstruct) => _typeToConstruct = typeToConstruct;
 
          public ConstructorCompiler() : this(typeof(TInstance)) {}
 
          Delegate WithArgumentTypes(Type argument1Type) => CompileForSignature(typeof(Func<,>).MakeGenericType(argument1Type, _typeToConstruct));
-         public Func<TInstance> DefaultConstructor() => (Func<TInstance>)CompileForSignature(typeof(Func<>).MakeGenericType(_typeToConstruct));
+         internal Func<TInstance> DefaultConstructor() => (Func<TInstance>)CompileForSignature(typeof(Func<>).MakeGenericType(_typeToConstruct));
          public Func<TArgument1, TInstance> WithArguments<TArgument1>() => (Func<TArgument1, TInstance>)WithArgumentTypes(typeof(TArgument1));
 
          public Func<object, object> WithArgument(Type argument1Type)

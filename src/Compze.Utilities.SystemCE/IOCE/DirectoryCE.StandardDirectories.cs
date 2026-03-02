@@ -3,7 +3,7 @@ using System.IO;
 
 namespace Compze.Utilities.SystemCE.IOCE;
 
-public partial class DirectoryCE
+internal partial class DirectoryCE
 {
 
    internal static class StandardDirectories

@@ -49,7 +49,7 @@ public static class TeventStoreRegistrar
 public class TeventStoreRegistrationBuilder
 {
    readonly TessageHandlerRegistrarWithDependencyInjectionSupport _handlerRegistrar;
-   public TeventStoreRegistrationBuilder(TessageHandlerRegistrarWithDependencyInjectionSupport handlerRegistrar) => _handlerRegistrar = handlerRegistrar;
+   internal TeventStoreRegistrationBuilder(TessageHandlerRegistrarWithDependencyInjectionSupport handlerRegistrar) => _handlerRegistrar = handlerRegistrar;
 
    public TeventStoreRegistrationBuilder HandleTaggregate<TTaggregate, TTevent>()
       where TTaggregate : class, ITaggregate<TTevent>

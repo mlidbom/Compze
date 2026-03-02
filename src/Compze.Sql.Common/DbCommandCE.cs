@@ -14,26 +14,26 @@ namespace Compze.Sql.Common;
 
 public static class DbCommandCE
 {
-   public static object? ExecuteScalar(this DbCommand @this, string commandText) =>
+   internal static object? ExecuteScalar(this DbCommand @this, string commandText) =>
       @this.SetCommandText(commandText).ExecuteScalar();
 
    public static async Task<object?> ExecuteScalarAsync(this DbCommand @this, string commandText) =>
       await @this.SetCommandText(commandText).ExecuteScalarAsync().caf();
 
-   public static int ExecuteNonQuery(this DbCommand @this, string commandText) =>
+   internal static int ExecuteNonQuery(this DbCommand @this, string commandText) =>
       @this.SetCommandText(commandText).ExecuteNonQuery();
 
-   public static async Task<int> ExecuteNonQueryAsync(this DbCommand @this, string commandText) =>
+   internal static async Task<int> ExecuteNonQueryAsync(this DbCommand @this, string commandText) =>
       await @this.SetCommandText(commandText).ExecuteNonQueryAsync().caf();
 
 
-   public static object? PrepareAndExecuteScalar(this DbCommand @this, string commandText) =>
+   internal static object? PrepareAndExecuteScalar(this DbCommand @this, string commandText) =>
       @this.SetCommandText(commandText).PrepareStatement().ExecuteScalar();
 
-   public static int PrepareAndExecuteNonQuery(this DbCommand @this, string commandText) =>
+   internal static int PrepareAndExecuteNonQuery(this DbCommand @this, string commandText) =>
       @this.SetCommandText(commandText).PrepareStatement().ExecuteNonQuery();
 
-   public static async Task<int> PrepareAndExecuteNonQueryAsync(this DbCommand @this, string commandText) =>
+   internal static async Task<int> PrepareAndExecuteNonQueryAsync(this DbCommand @this, string commandText) =>
       await @this.SetCommandText(commandText).PrepareStatement().ExecuteNonQueryAsync().caf();
 
    public static TCommand AppendCommandText<TCommand>(this TCommand @this, string append) where TCommand : DbCommand =>

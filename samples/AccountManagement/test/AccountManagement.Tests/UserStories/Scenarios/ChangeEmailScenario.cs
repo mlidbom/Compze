@@ -10,20 +10,20 @@ public class ChangeAccountEmailScenario : ScenarioBase<AccountResource>
 {
    readonly IClient _client;
 
-   public string NewEmail { get; private set;} = TestData.Emails.CreateUnusedEmail();
-   public Email OldEmail { get; }
+   internal string NewEmail { get; private set;} = TestData.Emails.CreateUnusedEmail();
+   internal Email OldEmail { get; }
 
-   public ChangeAccountEmailScenario WithNewEmail(string newEmail)
+   internal ChangeAccountEmailScenario WithNewEmail(string newEmail)
    {
       NewEmail = newEmail;
       return this;
    }
 
-   public AccountResource Account { get; private set; }
+   internal AccountResource Account { get; private set; }
 
-   public static ChangeAccountEmailScenario Create(IClient client) => new(client, new RegisterAccountScenario(client).Execute().Account!);
+   internal static ChangeAccountEmailScenario Create(IClient client) => new(client, new RegisterAccountScenario(client).Execute().Account!);
 
-   public ChangeAccountEmailScenario(IClient client, AccountResource account)
+   internal ChangeAccountEmailScenario(IClient client, AccountResource account)
    {
       _client = client;
       Account = account;

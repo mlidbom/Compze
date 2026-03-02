@@ -3,7 +3,7 @@ using Compze.Tessaging.Implementation.Transport.Abstractions;
 
 namespace Compze.Tessaging.Implementation.TessageHandling.Dispatching;
 
-public interface ITessageDispatchingRule
+internal interface ITessageDispatchingRule
 {
    bool CanBeDispatched(IExecutingTessagesSnapshot executing, TransportTessage.InComing candidateTessage);
 }

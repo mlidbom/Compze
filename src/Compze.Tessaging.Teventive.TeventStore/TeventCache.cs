@@ -23,7 +23,7 @@ public interface ITeventCache
 
 public class TeventCache : IDisposable, ITeventCache
 {
-   public static void RegisterWith(IComponentRegistrar registrar)
+   internal static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(
          Singleton.For<TeventCache, ITeventCache>()
                   .CreatedBy(() => new TeventCache()));
@@ -65,10 +65,10 @@ public class TeventCache : IDisposable, ITeventCache
          }
       }
 
-      public void Add(TaggregateId taggregateId, Entry entry) => _monitor.Locked(
+      internal void Add(TaggregateId taggregateId, Entry entry) => _monitor.Locked(
          () => CurrentOverlay[taggregateId] = entry);
 
-      public bool TryGet(TaggregateId taggregateId, [NotNullWhen(true)]out Entry? entry)
+      internal bool TryGet(TaggregateId taggregateId, [NotNullWhen(true)]out Entry? entry)
       {
          entry = null;
          if(Transaction.Current == null) return false;
@@ -81,25 +81,25 @@ public class TeventCache : IDisposable, ITeventCache
 
    public class Entry
    {
-      public static readonly Entry Empty = new();
+      internal static readonly Entry Empty = new();
       Entry()
       {
          Tevents = [];
          MaxSeenInsertedVersion = 0;
       }
 
-      public IReadOnlyList<TaggregateTevent> Tevents { get; private set; }
-      public int MaxSeenInsertedVersion { get; private set; }
+      internal IReadOnlyList<TaggregateTevent> Tevents { get; private set; }
+      internal int MaxSeenInsertedVersion { get; private set; }
       int InsertedVersionToTaggregateVersionOffset { get; }
 
-      public Entry(IReadOnlyList<TaggregateTevent> tevents, int maxSeenInsertedVersion)
+      internal Entry(IReadOnlyList<TaggregateTevent> tevents, int maxSeenInsertedVersion)
       {
          Tevents = tevents;
          MaxSeenInsertedVersion = maxSeenInsertedVersion;
          InsertedVersionToTaggregateVersionOffset = MaxSeenInsertedVersion - tevents[^1].TaggregateVersion;
       }
 
-      public TeventInsertionSpecification CreateInsertionSpecificationForNewTevent(ITaggregateTevent tevent)
+      internal TeventInsertionSpecification CreateInsertionSpecificationForNewTevent(ITaggregateTevent tevent)
       {
          if(InsertedVersionToTaggregateVersionOffset > 0)
          {

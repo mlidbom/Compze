@@ -28,7 +28,7 @@ public static class TransportRegistrar
    public static IComponentRegistrar TypermediaTransport(this IComponentRegistrar registrar)
       => registrar.Register(TypermediaRouter.RegisterWith);
 
-   public static IComponentRegistrar TessagingTransport(this IComponentRegistrar registrar)
+   internal static IComponentRegistrar TessagingTransport(this IComponentRegistrar registrar)
       => registrar.Register(TessagingRouter.RegisterWith);
 }
 

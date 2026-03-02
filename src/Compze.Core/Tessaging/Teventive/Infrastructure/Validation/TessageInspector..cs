@@ -9,7 +9,7 @@ namespace Compze.Core.Tessaging.Teventive.Infrastructure.Validation;
 
 public static partial class TessageInspector
 {
-   public static void AssertValid(IReadOnlyList<Type> teventTypesToInspect) => teventTypesToInspect.ForEach(TessageTypeInspector.AssertValid);
+   internal static void AssertValid(IReadOnlyList<Type> teventTypesToInspect) => teventTypesToInspect.ForEach(TessageTypeInspector.AssertValid);
 
    public static void AssertValidForSubscription<TTessage>() => TessageTypeInspector.AssertValidForSubscription(typeof(TTessage));
 

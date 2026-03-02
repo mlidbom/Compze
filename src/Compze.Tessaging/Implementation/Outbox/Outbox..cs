@@ -25,7 +25,7 @@ internal static class OutboxRegistrar
 #pragma warning disable CA1724 // Type name intentionally matches namespace concept
 public partial class Outbox : IOutbox
 {
-   public static void RegisterWith(IComponentRegistrar registrar)
+   internal static void RegisterWith(IComponentRegistrar registrar)
    {
       registrar.Register(Singleton.For<IOutbox>()
                                   .CreatedBy((EndpointConfiguration configuration, ITessagingRouter tessagingRouter, ITessageStorage tessageStorage)

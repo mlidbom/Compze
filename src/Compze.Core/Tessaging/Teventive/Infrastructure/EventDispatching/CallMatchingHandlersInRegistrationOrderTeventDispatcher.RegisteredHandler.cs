@@ -16,7 +16,7 @@ public partial class CallMatchingHandlersInRegistrationOrderTeventDispatcher<TTe
 {
    public abstract class RegisteredHandler
    {
-      public abstract Action<ITevent>? TryCreateHandlerFor(Type teventType);
+      internal abstract Action<ITevent>? TryCreateHandlerFor(Type teventType);
    }
 
    public class RegisteredHandler<THandledTevent>(Action<THandledTevent> handler) : RegisteredHandler where THandledTevent : ITevent
@@ -24,7 +24,7 @@ public partial class CallMatchingHandlersInRegistrationOrderTeventDispatcher<TTe
       //Since handler has specified no preference for wrapper type the most generic of all will do and any wrapped tevent containing a matching tevent should be dispatched to this handler.
       readonly Action<THandledTevent> _handler = handler;
 
-      public override Action<ITevent>? TryCreateHandlerFor(Type teventType)
+      internal override Action<ITevent>? TryCreateHandlerFor(Type teventType)
       {
          if(typeof(THandledTevent).IsAssignableFrom(teventType))
          {
@@ -43,7 +43,7 @@ public partial class CallMatchingHandlersInRegistrationOrderTeventDispatcher<TTe
    {
       readonly Action<THandledWrapperTevent> _handler = handler;
 
-      public override Action<ITevent>? TryCreateHandlerFor(Type teventType) =>
+      internal override Action<ITevent>? TryCreateHandlerFor(Type teventType) =>
          typeof(THandledWrapperTevent).IsAssignableFrom(teventType)
             ? tevent => _handler((THandledWrapperTevent)tevent)
             : null;
