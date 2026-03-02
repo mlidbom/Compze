@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Compze.Contracts;
@@ -20,14 +19,6 @@ static class ReadonlyCollections
 
    public static List<T> AddRangeToCopy<T>(this IReadOnlyList<T> @this, IEnumerable<T> items) =>
       new List<T>(@this)._mutate(me => me.AddRange(items));
-
-   public static T[] AddToCopy<T>(this T[] @this, T itemToAdd)
-   {
-      var copy = new T[@this.Length + 1];
-      Array.Copy(@this, copy, @this.Length);
-      copy[^1] = itemToAdd;
-      return copy;
-   }
 
    [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
    static void AddRange<T>(this ICollection<T> me, IEnumerable<T> toAdd) => Contract.Argument.NotNull2(me, toAdd)._(() =>

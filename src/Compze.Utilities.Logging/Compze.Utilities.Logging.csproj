@@ -28,9 +28,6 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Threading)' == 'true'">
     <PackageReference Include="Compze.Threading" Version="*-*" />
   </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Threading)' != 'true'">
-    <ProjectReference Include="..\Compze.Threading\Compze.Threading.csproj" />
-  </ItemGroup>
   <!-- Compze.Underscore — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Underscore)' == 'true'">
     <PackageReference Include="Compze.Underscore" Version="*-*" />

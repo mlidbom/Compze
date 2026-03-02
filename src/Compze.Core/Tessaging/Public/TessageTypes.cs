@@ -63,7 +63,6 @@ public static class TessageTypes
                public TaggregateLink() {}
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
                public TaggregateLink(TaggregateId taggregateId) => TaggregateId = taggregateId;
-               public TaggregateLink<TResult> WithId(TaggregateId id) => new(id);
                public TaggregateId TaggregateId { get; private set; }
             }
 

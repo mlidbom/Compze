@@ -39,7 +39,7 @@ public class TaskRunnerExceptionHandlingTests : UniversalTestBase
    {
       await CompzeLogger.SuppressLoggingWhileRunningAsync(async () =>
       {
-         var gate = ThreadGate.Open(WaitTimeout.Seconds(10));
+         var gate = ThreadGate.Open(WaitTimeout.Seconds(10), "gate");
 
          _taskRunner.Run("test-task", () => gate.AwaitPassThrough()._then(() => throw new InvalidOperationException("exception1")));
 
@@ -58,7 +58,7 @@ public class TaskRunnerExceptionHandlingTests : UniversalTestBase
    {
       await CompzeLogger.SuppressLoggingWhileRunningAsync(async () =>
       {
-         var gate = ThreadGate.Open(WaitTimeout.Seconds(20));
+         var gate = ThreadGate.Open(WaitTimeout.Seconds(20), "gate");
 
          var exception1 = new InvalidOperationException("exception1");
          var exception2 = new ArgumentException("exception2");

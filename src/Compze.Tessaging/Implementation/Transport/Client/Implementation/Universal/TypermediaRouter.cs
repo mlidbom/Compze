@@ -58,7 +58,7 @@ class TypermediaRouter : ITypermediaRouter, IDisposable
    IReadOnlyDictionary<Type, TypermediaConnection> _tommandHandlerRoutes = new Dictionary<Type, TypermediaConnection>();
    IReadOnlyDictionary<Type, TypermediaConnection> _tueryHandlerRoutes = new Dictionary<Type, TypermediaConnection>();
 
-   public async Task ConnectAsync(EndPointAddress remoteEndpointAddress)
+   async Task ConnectAsync(EndPointAddress remoteEndpointAddress)
    {
       AssertRunning();
 #pragma warning disable CA2000//We are passing this disposable into a collection that we track disposal for

@@ -19,6 +19,6 @@ public class TypeMethods(Type type)
 
    MethodInfo GetToString() => _type.GetMethod("ToString", BindingFlags.Public | BindingFlags.Instance, null, Type.EmptyTypes, null)._assert().NotNull();
 
-   static readonly IReadOnlySet<Type> noMeaningfulOverrideTypes = EnumerableCE.OfTypes<object, ValueType, Enum>().ToHashSet();
-   public bool HasMeaningfulToStringOverride() => !noMeaningfulOverrideTypes.Contains(GetToString().DeclaringType._assert().NotNull());
+   static readonly IReadOnlySet<Type> NoMeaningfulOverrideTypes = EnumerableCE.OfTypes<object, ValueType, Enum>().ToHashSet();
+   public bool HasMeaningfulToStringOverride() => !NoMeaningfulOverrideTypes.Contains(GetToString().DeclaringType._assert().NotNull());
 }

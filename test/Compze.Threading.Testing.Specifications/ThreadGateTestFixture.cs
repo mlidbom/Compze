@@ -33,7 +33,7 @@ class ThreadGateTestFixture : IDisposable
 
    ThreadGateTestFixture()
    {
-      Gate = ThreadGate.Closed(WaitTimeout.Seconds(30));
+      Gate = ThreadGate.Closed(WaitTimeout.Seconds(30), "FixtureGate");
       NumberOfThreads = 10;
    }
 

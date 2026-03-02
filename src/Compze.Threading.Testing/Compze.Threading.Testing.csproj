@@ -45,4 +45,7 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_SystemCE)' != 'true'">
     <ProjectReference Include="..\Compze.Utilities.SystemCE\Compze.Utilities.SystemCE.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Compze.Utilities.Logging\Compze.Utilities.Logging.csproj" />
+  </ItemGroup>
 </Project>

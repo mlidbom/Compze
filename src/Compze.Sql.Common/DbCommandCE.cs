@@ -14,6 +14,8 @@ namespace Compze.Sql.Common;
 
 public static class DbCommandCE
 {
+   static readonly ILogger Log = CompzeLogger.For(typeof(DbCommandCE));
+
    internal static object? ExecuteScalar(this DbCommand @this, string commandText) =>
       @this.SetCommandText(commandText).ExecuteScalar();
 
@@ -25,7 +27,6 @@ public static class DbCommandCE
 
    internal static async Task<int> ExecuteNonQueryAsync(this DbCommand @this, string commandText) =>
       await @this.SetCommandText(commandText).ExecuteNonQueryAsync().caf();
-
 
    internal static object? PrepareAndExecuteScalar(this DbCommand @this, string commandText) =>
       @this.SetCommandText(commandText).PrepareStatement().ExecuteScalar();
@@ -65,38 +66,36 @@ public static class DbCommandCE
    }
 
    static readonly IReadOnlyList<string> ParameterPrefixes = ["@", ":"];
+
    // ReSharper disable once UnusedMember.Global : Only used when debugging,but very useful then
    public static TCommand LogCommand<TCommand>(this TCommand @this) where TCommand : DbCommand
    {
-      ConsoleCE.WriteLine("####################################### Logging command###############################################");
-      ConsoleCE.WriteLine($"""
-                           {nameof(@this.CommandText)}:
-                           {@this.CommandText}
-                           """);
+      Log.Info("####################################### Logging command###############################################");
+      Log.Info($"""
+                {nameof(@this.CommandText)}:
+                {@this.CommandText}
+                """);
 
       var parameters = @this.Parameters.Cast<DbParameter>().ToList();
 
       if(parameters.Any())
       {
-         parameters.ForEach(
-            parameter => Console.WriteLine($"""
-                                            
-                                                {nameof(parameter.ParameterName)}: {parameter.ParameterName}, 
-                                            {nameof(parameter.DbType)}: {parameter.DbType},
-                                            {nameof(parameter.Value)}: {parameter.Value},
-                                            {nameof(parameter.Size)}: {parameter.Size},
-                                            {nameof(parameter.Precision)}: {parameter.Precision},
-                                            {nameof(parameter.Direction)}: {parameter.Direction},
-                                            {nameof(parameter.IsNullable)}: {parameter.IsNullable}
-                                            """.ReplaceCE(Environment.NewLine, "")));
+         parameters.ForEach(parameter => Log.Info($"""
 
-         ConsoleCE.WriteLine("####################################### Hacking values into parameter positions #######################################");
+                                                   {nameof(parameter.ParameterName)}: {parameter.ParameterName}, 
+                                                   {nameof(parameter.DbType)}: {parameter.DbType},
+                                                   {nameof(parameter.Value)}: {parameter.Value},
+                                                   {nameof(parameter.Size)}: {parameter.Size},
+                                                   {nameof(parameter.Precision)}: {parameter.Precision},
+                                                   {nameof(parameter.Direction)}: {parameter.Direction},
+                                                   {nameof(parameter.IsNullable)}: {parameter.IsNullable}
+                                                   """.ReplaceCE(Environment.NewLine, "")));
+
+         Log.Info("####################################### Hacking values into parameter positions #######################################");
          var commandTextWithParameterValues = @this.CommandText;
-         parameters.ForEach(
-            parameter => ParameterPrefixes.ForEach(
-               prefix => commandTextWithParameterValues = commandTextWithParameterValues.ReplaceCE($"{prefix}{parameter.ParameterName}", parameter.Value == DBNull.Value ? "NULL" : parameter.Value?.ToString() ?? "NULL")));
-         Console.WriteLine(commandTextWithParameterValues);
-         ConsoleCE.WriteLine("######################################################################################################");
+         parameters.ForEach(parameter => ParameterPrefixes.ForEach(prefix => commandTextWithParameterValues = commandTextWithParameterValues.ReplaceCE($"{prefix}{parameter.ParameterName}", parameter.Value == DBNull.Value ? "NULL" : parameter.Value?.ToString() ?? "NULL")));
+         Log.Info(commandTextWithParameterValues);
+         Log.Info("######################################################################################################");
       }
 
       return @this;

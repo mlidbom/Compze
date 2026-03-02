@@ -21,14 +21,11 @@ public interface IThreadGate : IThreadGateVisitor
    IThreadGate Close();
 
    IThreadGate SetPostPassThroughAction(Action<ThreadSnapshot> action);
-   IThreadGate SetPassThroughAction(Action<ThreadSnapshot> action);
 
    ///<summary>Blocks until the gate is in a state which satisfies <see cref="condition"/> and then while owning the lock executes <see cref="action"/></summary>
    IThreadGate ExecuteWithExclusiveLockWhen(WaitTimeout timeout, Func<bool> condition, Action action);
 
    bool TryAwait(WaitTimeout timeout, Func<bool> condition);
-
-   Action<ThreadSnapshot> PassThroughAction { get; }
 
    bool IsOpen { get; }
    int Queued { get; }
