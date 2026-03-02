@@ -74,7 +74,7 @@ public readonly struct unit : IEquatable<unit>
          return Value;
       };
 
-   ///<inheritdoc cref="AsyncFunc(Func{Task})"/>
+   ///<inheritdoc cref="AsyncFunc(System.Func{System.Threading.Tasks.Task})"/>
    public static Func<TParam, Task<unit>> AsyncFunc<TParam>(Func<TParam, Task> action) =>
       async param =>
       {
@@ -82,7 +82,7 @@ public readonly struct unit : IEquatable<unit>
          return Value;
       };
 
-   ///<inheritdoc cref="AsyncFunc(Func{Task})"/>
+   ///<inheritdoc cref="AsyncFunc(System.Func{System.Threading.Tasks.Task})"/>
    public static Func<TParam, TParam2, Task<unit>> AsyncFunc<TParam, TParam2>(Func<TParam, TParam2, Task> action) =>
       async (param, param2) =>
       {

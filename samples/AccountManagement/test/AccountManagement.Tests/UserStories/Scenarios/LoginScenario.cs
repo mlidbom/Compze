@@ -22,14 +22,5 @@ public class LoginScenario(IClient client, string email, string password) : Scen
       return this;
    }
 
-   internal static LoginScenario Create(IClient client)
-   {
-      var registerAccountScenario = new RegisterAccountScenario(client);
-      registerAccountScenario.Execute();
-      return new LoginScenario(client, registerAccountScenario.Email, registerAccountScenario.Password);
-   }
-
-   public LoginScenario(IClient client, AccountResource account, string password) : this(client, account.Email.ToString(), password) {}
-
    public override AccountResource.Tommand.LogIn.LoginAttemptResult Execute() => Api.Tommand.Login(Email, Password).ExecuteRequestOn(_client);
 }

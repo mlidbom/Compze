@@ -132,7 +132,7 @@ class SingleTaggregateInstanceTeventStreamMutator : ISingleTaggregateInstanceTev
    }
 }
 
-sealed class EndOfTaggregateHistoryTeventPlaceHolder : TaggregateTevent {
+public sealed class EndOfTaggregateHistoryTeventPlaceHolder : TaggregateTevent {
 #pragma warning disable CS0618 // Type or member is obsolete
     public EndOfTaggregateHistoryTeventPlaceHolder(TaggregateId taggregateId, int i):base(taggregateId) => ((IMutableTaggregateTevent)this).SetTaggregateVersionInternal(i);
 #pragma warning restore CS0618 // Type or member is obsolete

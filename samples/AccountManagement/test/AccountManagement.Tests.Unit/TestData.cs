@@ -1,4 +1,3 @@
-using System.Threading;
 using Xunit;
 
 
@@ -41,10 +40,6 @@ static class TestData
 
    internal static class Emails
    {
-      static int _registeredAccounts = 1;
-
-      internal static string CreateUnusedEmail() => $"test.test@test{Interlocked.Increment(ref _registeredAccounts)}.se";
-
       public static TheoryData<string?, string> InvalidEmailsTestData =>
          new()
          {

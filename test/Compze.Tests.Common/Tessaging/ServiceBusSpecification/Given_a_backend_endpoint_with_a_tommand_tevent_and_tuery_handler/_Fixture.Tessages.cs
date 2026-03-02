@@ -35,9 +35,9 @@ class MyUpdateTaggregateTommand : TessageTypes.Remotable.AtMostOnce.AtMostOnceTy
 {
    [Obsolete("Used by serializer", error: true)]
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+   // ReSharper disable once UnusedMember.Global
    public MyUpdateTaggregateTommand() {}
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
-   public MyUpdateTaggregateTommand(TaggregateId taggregateId) => TaggregateId = taggregateId;
    public TaggregateId TaggregateId { get; private set; }
 }
 

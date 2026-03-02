@@ -34,7 +34,7 @@ class ChangePasswordScenario : ScenarioBase<AccountResource>
       return new ChangePasswordScenario(client, account!, registerAccountScenario.Password, TestData.Passwords.CreateValidPasswordString());
    }
 
-   internal ChangePasswordScenario(IClient client, AccountResource account, string oldPassword, string newPassword)
+   ChangePasswordScenario(IClient client, AccountResource account, string oldPassword, string newPassword)
    {
       Guard.IsNotNull(account);
       _client = client;

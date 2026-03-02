@@ -27,7 +27,7 @@ public interface ISingleTaggregateInstanceHandlingTeventMigrator
    ///<summary>
    /// <para>Inspect one tevent and if required mutate the tevent stream by calling methods on the modifier</para>
    /// <para>Called once for each tevent in the taggregate's history. </para>
-   /// <para>Then it is called once with an instance of <see cref="EndOfTaggregateHistoryTeventPlaceHolder"/>. </para>
+   /// <para>Then it is called once with an instance of <c>EndOfTaggregateHistoryTeventPlaceHolder</c>. </para>
    /// </summary>
    void MigrateTevent(ITaggregateTevent tevent, ITeventModifier modifier);
 }

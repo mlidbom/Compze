@@ -13,14 +13,5 @@ static class AwaitableMonitorCEExtensions
             updateOnFailedRead();
             return tryRead() ?? throw new Exception($"{nameof(tryRead)} returned null even after {nameof(updateOnFailedRead)} had been called.");
          }));
-
-      public TResult ReadOrUpdate<TResult>(Func<bool> canRead, Func<TResult> read, Action update) =>
-         @this.Read(() => canRead()
-                             ? read()
-                             : @this.Update(() =>
-                             {
-                                update();
-                                return read();
-                             }));
    }
 }
