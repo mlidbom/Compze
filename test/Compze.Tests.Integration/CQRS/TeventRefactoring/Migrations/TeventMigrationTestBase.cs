@@ -18,7 +18,6 @@ using Compze.Underscore;
 using Compze.Utilities.Logging;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.Testing.Must;
-using AssertionFailedException = Compze.Contracts.Exceptions.AssertionFailedException;
 
 // ReSharper disable AccessToModifiedClosure
 

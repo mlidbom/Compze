@@ -47,9 +47,17 @@ static class TaskRunnerRegistrar
 #pragma warning disable CA1031 //This is specifically designed for making sure that exceptions thrown in places where they cannot be surfaced directly, are not just ignored
             catch(Exception exception)
             {
-#pragma warning restore CA1031
-               _exceptionReporter.ReportException(exception);
+               try
+               {
+                  this.Log().Error(exception, $"TaskRunner caught an exception while running task: {taskName}");
+                  throw new TaskRunnerException(exception, $"Running task {taskName} threw exception");
+               }
+               catch(TaskRunnerException taskRunnerException)
+               {
+                  _exceptionReporter.ReportException(taskRunnerException);
+               }
             }
+#pragma warning restore CA1031
          });
 
          _inProgressTasks.Update(it => it.Add(task));
