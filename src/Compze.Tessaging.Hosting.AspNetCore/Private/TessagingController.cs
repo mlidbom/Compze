@@ -15,7 +15,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Compze.Tessaging.Hosting.AspNetCore.Private;
 #pragma warning disable CA1031 //We catch all exceptions here to route them back to the client.
 
-internal class TessagingController : ControllerBase
+class TessagingController : ControllerBase
 {
    internal static void RegisterWith(IComponentRegistrar registrar) =>
       registrar.Register(Scoped.For<TessagingController>()

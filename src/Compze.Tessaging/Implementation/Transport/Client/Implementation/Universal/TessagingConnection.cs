@@ -17,7 +17,7 @@ using Compze.Threading.TasksCE;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Universal;
 
-internal class TessagingConnection(
+class TessagingConnection(
    ITessagesInFlightTracker tessagesInFlightTracker,
    EndPointAddress remoteAddress,
    ITypeMapper typeMapper,

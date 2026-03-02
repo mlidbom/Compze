@@ -5,7 +5,7 @@ using Npgsql;
 
 namespace Compze.Sql.PostgreSql.Private;
 
-internal static class MyNpgsqlCommandExtensions
+static class MyNpgsqlCommandExtensions
 {
    public static IReadOnlyList<T> ExecuteReaderAndSelect<T>(this NpgsqlCommand @this, Func<NpgsqlDataReader, T> select) =>
       DbCommandCE.ExecuteReaderAndSelect(@this, select);

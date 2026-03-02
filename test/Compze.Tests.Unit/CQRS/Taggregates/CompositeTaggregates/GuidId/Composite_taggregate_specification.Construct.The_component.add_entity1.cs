@@ -79,7 +79,6 @@ public static partial class Composite_taggregate_specification
 {
    public partial class After_constructing_root_taggregate_with_name_root_and_slaving_a_tuery_model_to_the_taggregates_tevents
    {
-      public partial class The_component
-      {}
+      public partial class The_component;
    }
 }

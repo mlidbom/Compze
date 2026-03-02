@@ -5,16 +5,16 @@ using Microsoft.Data.Sqlite;
 
 namespace Compze.Sql.Sqlite.Private;
 
-internal static class SqliteCommandParameterExtensions
+static class SqliteCommandParameterExtensions
 {
    public static SqliteCommand AddParameter(this SqliteCommand @this, string name, int value) => AddParameter(@this, name, SqliteType.Integer, value);
    public static SqliteCommand AddParameter(this SqliteCommand @this, string name, long value) => AddParameter(@this, name, SqliteType.Integer, value);
    public static SqliteCommand AddParameter(this SqliteCommand @this, string name, Guid value) => AddParameter(@this, name, SqliteType.Text, value.ToString());
-   
+
    // Store DateTime as INTEGER (Ticks) for full precision and efficient storage/comparisons
-   public static SqliteCommand AddDateTime2Parameter(this SqliteCommand @this, string name, DateTime value) 
+   public static SqliteCommand AddDateTime2Parameter(this SqliteCommand @this, string name, DateTime value)
       => AddParameter(@this, name, SqliteType.Integer, value.ToUniversalTimeSafely().Ticks);
-   
+
    public static SqliteCommand AddVarcharParameter(this SqliteCommand @this, string name, int length, string value) => AddParameter(@this, name, SqliteType.Text, value);
    public static SqliteCommand AddMediumTextParameter(this SqliteCommand @this, string name, string value) => AddParameter(@this, name, SqliteType.Text, value);
 

@@ -53,9 +53,7 @@ public class PublicSettersAndFieldsAreDisallowedTests : UniversalTestBase
       }
    }
 
-   public class RootTevent<T>(T tevent) : TaggregateIdentifyingTevent<T>(tevent), IRootTevent<T> where T : IRootTevent {
-
-   }
+   public class RootTevent<T>(T tevent) : TaggregateIdentifyingTevent<T>(tevent), IRootTevent<T> where T : IRootTevent;
    public abstract class RootTevent : TaggregateTevent, IRootTevent
    {
       public string Public1 { get; set; } = string.Empty;

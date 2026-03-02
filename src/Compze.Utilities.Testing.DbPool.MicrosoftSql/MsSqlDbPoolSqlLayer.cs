@@ -7,7 +7,7 @@ using Microsoft.Data.SqlClient;
 
 namespace Compze.Utilities.Testing.DbPool.MicrosoftSql;
 
-internal class MsSqlDbPoolSqlLayer : IDbPoolSqlLayer
+class MsSqlDbPoolSqlLayer : IDbPoolSqlLayer
 {
    public static IComponentRegistrar RegisterWith(IComponentRegistrar registrar) =>
       registrar.Register(Singleton.For<IDbPoolSqlLayer>()

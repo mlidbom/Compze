@@ -1,6 +1,6 @@
 namespace Compze.Core.Public;
 
-internal static class ObsoleteMessage
+static class ObsoleteMessage
 {
     public const string ForInternalUseOnly = @"
 This member breaks encapsulation and framework guarantees if used incorrectly.

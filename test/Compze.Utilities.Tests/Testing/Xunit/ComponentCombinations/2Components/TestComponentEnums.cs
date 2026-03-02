@@ -7,7 +7,7 @@ namespace Compze.Utilities.Tests.Testing.Xunit.ComponentCombinations._2Component
 /// Serializer component dimension for pluggable components testing.
 /// Each enum value corresponds to a component in the TestUsingPluggableComponentCombinations file.
 /// </summary>
-internal enum Serializer
+enum Serializer
 {
    Microsoft,
    Newtonsoft
@@ -17,26 +17,26 @@ internal enum Serializer
 /// SQL layer component dimension for pluggable components testing.
 /// Each enum value corresponds to a component in the TestUsingPluggableComponentCombinations file.
 /// </summary>
-internal enum SqlLayer
+enum SqlLayer
 {
    MsSql,
    Postgre,
    MySql
 }
 
-internal enum DIContainer
+enum DIContainer
 {
    Microsoft,
    SimpleInjector
 }
 
-internal enum TeventStore
+enum TeventStore
 {
    InMemory,
    SqlServer
 }
 
-internal enum TessageBus
+enum TessageBus
 {
    InProcess,
    RabbitMQ

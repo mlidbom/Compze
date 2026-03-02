@@ -31,7 +31,7 @@ public class PerformanceTest : UniversalTestBase
    protected override async Task InitializeAsyncInternal()
    {
       _host = TestingEndpointHost.Create();
-      var endpoint = new AccountManagementServerDomainBootstrapper().RegisterWith(_host);
+      var endpoint = AccountManagementServerDomainBootstrapper.RegisterWith(_host);
       await _host.StartAsync().caf();
       _client = await TestClient.ConnectTo(endpoint.Address!).caf();
       _scenarioApi = new AccountScenarioApi(_client);

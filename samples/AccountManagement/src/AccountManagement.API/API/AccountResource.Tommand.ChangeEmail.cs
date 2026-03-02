@@ -12,13 +12,13 @@ public partial class AccountResource
    {
       public class ChangeEmail : TessageTypes.Remotable.AtMostOnce.AtMostOnceTypermediaTommand
       {
-         [JsonConstructor]public ChangeEmail(AccountId accountId, string email) : base()
+         [JsonConstructor]public ChangeEmail(AccountId accountId, string email)
          {
             AccountId = accountId;
             Email = email;
          }
 
-         internal ChangeEmail(AccountId accountId):base() => AccountId = accountId;
+         internal ChangeEmail(AccountId accountId) => AccountId = accountId;
 
          [Required] [TaggregateId] public AccountId AccountId { get; set; }
          [Required] [Email] public string Email { get; set; } = string.Empty;

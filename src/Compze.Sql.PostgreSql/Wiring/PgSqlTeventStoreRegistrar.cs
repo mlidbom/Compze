@@ -6,7 +6,7 @@ using Compze.Utilities.DependencyInjection.Abstractions;
 
 namespace Compze.Sql.PostgreSql.Wiring;
 
-internal static class PgSqlTeventStoreRegistrar
+static class PgSqlTeventStoreRegistrar
 {
    public static IComponentRegistrar PgSqlTeventStoreSqlLayer(this IComponentRegistrar registrar) =>
       registrar.Register(

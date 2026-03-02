@@ -20,7 +20,7 @@ public interface ITaskRunner
    Thread RunOnNamedThread(string threadName, ThreadStart threadLoop, ThreadPriority priority = ThreadPriority.Normal);
 }
 
-internal static class TaskRunnerRegistrar
+static class TaskRunnerRegistrar
 {
    public static IComponentRegistrar TaskRunner(this IComponentRegistrar registrar)
       => registrar.Register(TaskRunnerCore.RegisterWith);

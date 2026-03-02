@@ -15,9 +15,7 @@ namespace Compze.Tests.Common.CQRS.TeventRefactoring.Migrations
    public interface ITestTaggregateTevent<out T> : ITaggregateIdentifyingTevent<T> where T : ITestTaggregateTevent;
    public interface ITestTaggregateTevent : ITaggregateTevent;
 
-   public class TestTaggregateTevent<T>(T tevent) : TaggregateIdentifyingTevent<T>(tevent), ITestTaggregateTevent<T> where T : ITestTaggregateTevent
-   {
-   }
+   public class TestTaggregateTevent<T>(T tevent) : TaggregateIdentifyingTevent<T>(tevent), ITestTaggregateTevent<T> where T : ITestTaggregateTevent;
 
    public abstract class TestTaggregateTevent : TaggregateTevent, ITestTaggregateTevent;
 
@@ -27,8 +25,8 @@ namespace Compze.Tests.Common.CQRS.TeventRefactoring.Migrations
 
       // ReSharper disable ClassNeverInstantiated.Global
       public class Ec1 : EcAbstract;
-      internal class Ec2 : EcAbstract;
-      internal class Ec3 : EcAbstract;
+      class Ec2 : EcAbstract;
+      class Ec3 : EcAbstract;
       public class E1 : TestTaggregateTevent;
       public class E2 : TestTaggregateTevent;
       public class E3 : TestTaggregateTevent;

@@ -10,7 +10,7 @@ using Newtonsoft.Json.Serialization;
 
 namespace Compze.Utilities.Testing.Must.Serialization;
 
-internal static class TestingJsonSettings
+static class TestingJsonSettings
 {
    public static readonly JsonSerializerSettings AllMembers = CreateSettings(new AllMembersContractResolver());
    public static readonly JsonSerializerSettings InternalAndPublicMembers = CreateSettings(new InternalMembersContractResolver());

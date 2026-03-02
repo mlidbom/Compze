@@ -25,7 +25,7 @@ public class Startup
    {
       Configuration = configuration;
       _host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateWithServiceLocatorAndCurrentTestsPluggableComponents());
-      _endpoint = new AccountManagementServerDomainBootstrapper().RegisterWith(_host);
+      _endpoint = AccountManagementServerDomainBootstrapper.RegisterWith(_host);
    }
 
    // ReSharper disable once MemberCanBePrivate.Global

@@ -15,9 +15,9 @@ public partial class AccountResource
       {
          [Obsolete("Used by serializer", error:true)]
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
-         public ChangePassword() : base() {}
+         public ChangePassword() {}
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
-         public ChangePassword(AccountId accountId):base() => AccountId = accountId;
+         public ChangePassword(AccountId accountId) => AccountId = accountId;
 
          [Required] [TaggregateId] public AccountId AccountId { get; set; }
          [Required] public string OldPassword { get; set; } = string.Empty;

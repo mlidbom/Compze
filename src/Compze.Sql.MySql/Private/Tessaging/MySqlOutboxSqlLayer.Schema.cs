@@ -3,7 +3,7 @@ using D = Compze.Core.Tessaging.Internal.SqlLayer.IServiceBusSqlLayer.OutboxTess
 
 namespace Compze.Sql.MySql.Private.Tessaging;
 
-internal partial class MySqlOutboxSqlLayer
+partial class MySqlOutboxSqlLayer
 {
    const string MySqlGuidType = "CHAR(36)";
 

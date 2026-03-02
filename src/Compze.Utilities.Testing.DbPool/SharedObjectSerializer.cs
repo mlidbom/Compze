@@ -6,7 +6,7 @@ using MemoryPack;
 
 namespace Compze.Utilities.Testing.DbPool;
 
-internal class MemoryPackDbPoolStateSerializer : ISharedObjectSerializer<DbPoolState>
+class MemoryPackDbPoolStateSerializer : ISharedObjectSerializer<DbPoolState>
 {
    internal static readonly MemoryPackDbPoolStateSerializer Instance = new();
    MemoryPackDbPoolStateSerializer(){}

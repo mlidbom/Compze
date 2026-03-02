@@ -7,7 +7,7 @@ using Compze.Utilities.SystemCE;
 
 namespace Compze.Utilities.Testing.Must;
 
-internal static class AssertionContextWriter
+static class AssertionContextWriter
 {
    public static string AssertionCode(this IAssertionContext context, string method, string? predicate = null) => $"{context.Expression}.Must().{method}({predicate})";
 

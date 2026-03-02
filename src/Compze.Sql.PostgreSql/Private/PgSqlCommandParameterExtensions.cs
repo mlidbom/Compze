@@ -6,7 +6,7 @@ using NpgsqlTypes;
 
 namespace Compze.Sql.PostgreSql.Private;
 
-internal static class NpgsqlCommandParameterExtensions
+static class NpgsqlCommandParameterExtensions
 {
    public static NpgsqlCommand AddParameter(this NpgsqlCommand @this, string name, int value) => AddParameter(@this, name, NpgsqlDbType.Integer, value);
    public static NpgsqlCommand AddParameter(this NpgsqlCommand @this, string name, Guid value) => AddParameter(@this, name, NpgsqlDbType.Uuid, value);

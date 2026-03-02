@@ -89,9 +89,7 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
       public interface UserRegistered : IUserTevent, ITaggregateCreatedTevent;
    }
 
-   public class UserTevent<T>(T tevent) : TaggregateIdentifyingTevent<T>(tevent), IUserTevent<T> where T : IUserTevent {
-
-   }
+   public class UserTevent<T>(T tevent) : TaggregateIdentifyingTevent<T>(tevent), IUserTevent<T> where T : IUserTevent;
    public class UserTevent : TaggregateTevent, IUserTevent
    {
       protected UserTevent() {}
@@ -112,10 +110,10 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
       }
    }
 
-   public interface IUserRegistrarTevent<out T> : ITaggregateIdentifyingTevent<T> where T : IUserRegistrarTevent {}
-   public interface IUserRegistrarTevent : ITaggregateTevent {}
+   public interface IUserRegistrarTevent<out T> : ITaggregateIdentifyingTevent<T> where T : IUserRegistrarTevent;
+   public interface IUserRegistrarTevent : ITaggregateTevent;
 
-   public class UserRegistrarTevent<T>(T tevent) : TaggregateIdentifyingTevent<T>(tevent), IUserRegistrarTevent<T> where T : IUserRegistrarTevent {}
+   public class UserRegistrarTevent<T>(T tevent) : TaggregateIdentifyingTevent<T>(tevent), IUserRegistrarTevent<T> where T : IUserRegistrarTevent;
 
    public class UserRegistrarTevent : TaggregateTevent, IUserRegistrarTevent
    {

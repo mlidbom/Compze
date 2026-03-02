@@ -3,7 +3,7 @@ using Xunit.v3;
 
 namespace Compze.Utilities.Testing.XUnit;
 
-internal class ArgumentDiscardingTestCase : ConstructorArgumentForwardingTestCase
+class ArgumentDiscardingTestCase : ConstructorArgumentForwardingTestCase
 {
    // ReSharper disable once UnusedMember.Global
    [Obsolete("Called by deserializer", error: true)]

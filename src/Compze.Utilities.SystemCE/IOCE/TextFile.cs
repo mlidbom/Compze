@@ -3,7 +3,7 @@ using System.Text;
 
 namespace Compze.Utilities.SystemCE.IOCE;
 
-internal class TextFile : FileCE
+class TextFile : FileCE
 {
    readonly Encoding _encoding;
    internal TextFile(FileInfo fileInfo, Encoding encoding) : base(fileInfo) => _encoding = encoding;

@@ -10,7 +10,7 @@ namespace Compze.Utilities.Testing.Must.Serialization;
 /// <summary>
 /// Ensures dictionaries and sets serialize in a deterministic order for reliable comparison.
 /// </summary>
-internal class DeterministicOrderedForUnorderedCollectionsConverter : JsonConverter
+class DeterministicOrderedForUnorderedCollectionsConverter : JsonConverter
 {
    public override bool CanConvert(Type objectType) =>
       objectType.ImplementsGenericInterface(typeof(IDictionary<,>)) ||

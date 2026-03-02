@@ -12,7 +12,7 @@ public class SetupTest : UniversalTestBase
    [PCT] public async Task TestSetup()
    {
       var host = TestingEndpointHost.Create();
-      var endpoint = new AccountManagementServerDomainBootstrapper().RegisterWith(host);
+      var endpoint = AccountManagementServerDomainBootstrapper.RegisterWith(host);
       await host.StartAsync().caf();
       await using var client = await TestClient.ConnectTo(endpoint.Address!).caf();
       await host.DisposeAsync().caf();

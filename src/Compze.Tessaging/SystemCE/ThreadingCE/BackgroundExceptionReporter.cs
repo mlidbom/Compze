@@ -7,7 +7,7 @@ using Compze.Threading.ResourceAccess;
 
 namespace Compze.Tessaging.SystemCE.ThreadingCE;
 
-internal static class BackgroundExceptionReporterRegistrar
+static class BackgroundExceptionReporterRegistrar
 {
    public static IComponentRegistrar BackgroundExceptionReporter(this IComponentRegistrar registrar)
       => registrar.Register(BackgroundExceptionReporterCore.RegisterWith);

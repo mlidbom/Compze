@@ -7,7 +7,7 @@ using Compze.Core.Tessaging.Teventive.TeventStore.Public.Exceptions;
 
 namespace Compze.Tessaging.Teventive.TeventStore;
 
-internal static class TaggregateHistoryValidator
+static class TaggregateHistoryValidator
 {
    public static void ValidateHistory(TaggregateId taggregateId, IReadOnlyList<ITaggregateTevent> history)
    {

@@ -19,7 +19,7 @@ public abstract class UserStoryTest : UniversalTestBase
    protected UserStoryTest()
    {
       Host = TestingEndpointHost.Create();
-      _endpoint = new AccountManagementServerDomainBootstrapper().RegisterWith(Host);
+      _endpoint = AccountManagementServerDomainBootstrapper.RegisterWith(Host);
    }
 
    protected override async Task InitializeAsyncInternal()

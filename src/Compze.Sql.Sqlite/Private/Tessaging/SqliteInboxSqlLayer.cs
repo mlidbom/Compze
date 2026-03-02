@@ -9,7 +9,7 @@ using TessageTable =  Compze.Core.Tessaging.Internal.SqlLayer.IServiceBusSqlLaye
 
 namespace Compze.Sql.Sqlite.Private.Tessaging;
 
-internal partial class SqliteInboxSqlLayer(ISqliteConnectionPool connectionFactory, SqliteSqlLayerSchemaManager schemaManager) : IServiceBusSqlLayer.IInboxSqlLayer
+partial class SqliteInboxSqlLayer(ISqliteConnectionPool connectionFactory, SqliteSqlLayerSchemaManager schemaManager) : IServiceBusSqlLayer.IInboxSqlLayer
 {
    readonly ISqliteConnectionPool _connectionFactory = connectionFactory;
    readonly SqliteSqlLayerSchemaManager _schemaManager = schemaManager;
@@ -34,8 +34,8 @@ internal partial class SqliteInboxSqlLayer(ISqliteConnectionPool connectionFacto
               .AddMediumTextParameter(TessageTable.Body, serializedTessage)
               .ExecuteNonQuery();
 
-            return affectedRows == 0 
-               ? IServiceBusSqlLayer.SaveTessageResult.Duplicate 
+            return affectedRows == 0
+               ? IServiceBusSqlLayer.SaveTessageResult.Duplicate
                : IServiceBusSqlLayer.SaveTessageResult.NewTessage;
          });
    }

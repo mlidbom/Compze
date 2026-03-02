@@ -14,7 +14,7 @@ public interface IAssertionContext<out T> : IAssertionContext
    T Actual { get; }
 }
 
-internal abstract class AssertionContext : IAssertionContext
+abstract class AssertionContext : IAssertionContext
 {
    public const string RemoveLine = nameof(RemoveLine);
 
@@ -37,7 +37,7 @@ internal abstract class AssertionContext : IAssertionContext
    public static readonly string Separator = "-".Repeat(50).Join();
 }
 
-internal class AssertionContext<T> : AssertionContext, IAssertionContext<T>
+class AssertionContext<T> : AssertionContext, IAssertionContext<T>
 {
    public AssertionContext(T actual, string expression) : base(actual, expression) => Actual = actual;
 

@@ -4,7 +4,7 @@ using Compze.Utilities.Tests.Testing.Xunit.ComponentCombinations._2Components;
 
 namespace Compze.Utilities.Tests.Testing.Xunit.ComponentCombinations._5Components.ArgumentPassing;
 
-internal sealed class ArgumentPassingFiveComponentsPCTAttribute(
+sealed class ArgumentPassingFiveComponentsPCTAttribute(
    [CallerFilePath] string? sourceFilePath = null,
    [CallerLineNumber] int sourceLineNumber = -1)
    : ComponentCombinationsTheoryAttribute<Serializer, SqlLayer, DIContainer, TeventStore, TessageBus>(

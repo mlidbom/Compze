@@ -13,4 +13,4 @@ namespace Compze.Utilities.Testing.XUnit.BDD;
 public sealed class XFAttribute(
    [CallerFilePath] string? sourceFilePath = null,
    [CallerLineNumber] int sourceLineNumber = -1)
-   : ExclusiveFactAttribute(sourceFilePath, sourceLineNumber) {}
+   : ExclusiveFactAttribute(sourceFilePath, sourceLineNumber);

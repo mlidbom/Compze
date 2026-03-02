@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc.Controllers;
 namespace Compze.Tessaging.Hosting.AspNetCore.Private;
 
 /// <summary>Custom controller activator that creates controllers using Compze's DI container.</summary>
-internal class  CompzeControllerActivator : IControllerActivator
+class  CompzeControllerActivator : IControllerActivator
 {
    public static void RegisterWith(IComponentRegistrar register)
       => register.Register(Singleton.For<CompzeControllerActivator>()

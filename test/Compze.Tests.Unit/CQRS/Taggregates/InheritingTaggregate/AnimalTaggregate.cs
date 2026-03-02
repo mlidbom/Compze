@@ -47,16 +47,16 @@ class DogTaggregate : AnimalTaggregate
 }
 
 
-interface IAnimalTevent<out T> : ITaggregateIdentifyingTevent<T> where T : IAnimalTevent {}
+interface IAnimalTevent<out T> : ITaggregateIdentifyingTevent<T> where T : IAnimalTevent;
 
 interface IAnimalTevent : ITaggregateTevent
 {
 #pragma warning disable CA1715 // Nested event interface follows semantic events naming convention (compze.net/paradigms/semantic-events/event-naming.html)
-   interface Born : IAnimalTevent, ITaggregateCreatedTevent{}
+   interface Born : IAnimalTevent, ITaggregateCreatedTevent;
 #pragma warning restore CA1715
 }
 
-class AnimalTevent<T>(T tevent) : TaggregateIdentifyingTevent<T>(tevent), IAnimalTevent<T> where T : IAnimalTevent{}
+class AnimalTevent<T>(T tevent) : TaggregateIdentifyingTevent<T>(tevent), IAnimalTevent<T> where T : IAnimalTevent;
 
 class AnimalTevent : TaggregateTevent, IAnimalTevent
 {
@@ -69,17 +69,14 @@ class AnimalTevent : TaggregateTevent, IAnimalTevent
    }
 }
 
-
-internal interface ICatTevent<out T> : IAnimalTevent<T> where T : IAnimalTevent { }
-internal interface ICatTevent : IAnimalTevent {}
-internal class CatTevent<T>(T tevent) : AnimalTevent<T>(tevent) where T : IAnimalTevent {}
-internal class CatTevent : AnimalTevent, ICatTevent{}
-
-
-internal interface IDogTevent<out T> : IAnimalTevent<T> where T : IAnimalTevent { }
-internal interface IDogTevent : IAnimalTevent {}
-internal class DogTevent<T>(T tevent) : AnimalTevent<T>(tevent) where T : IAnimalTevent {}
-internal class DogTevent : AnimalTevent, IDogTevent{}
+interface ICatTevent<out T> : IAnimalTevent<T> where T : IAnimalTevent;
+interface ICatTevent : IAnimalTevent;
+class CatTevent<T>(T tevent) : AnimalTevent<T>(tevent) where T : IAnimalTevent;
+class CatTevent : AnimalTevent, ICatTevent;
+interface IDogTevent<out T> : IAnimalTevent<T> where T : IAnimalTevent;
+interface IDogTevent : IAnimalTevent;
+class DogTevent<T>(T tevent) : AnimalTevent<T>(tevent) where T : IAnimalTevent;
+class DogTevent : AnimalTevent, IDogTevent;
 
 
 

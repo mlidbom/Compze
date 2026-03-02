@@ -14,7 +14,7 @@ public class WhenSomethingHappens
    }
 
 
-   [ArgumentPassingOneComponentPCT] public void ComponentCombinationCurrentIsAvailableInConstructor(ComponentCombination combination) => 
+   [ArgumentPassingOneComponentPCT] public void ComponentCombinationCurrentIsAvailableInConstructor(ComponentCombination combination) =>
       PrintSerializer(combination);
 
    [ArgumentPassingOneComponentPCT] public void ThisIsTheCase(ComponentCombination combination) =>

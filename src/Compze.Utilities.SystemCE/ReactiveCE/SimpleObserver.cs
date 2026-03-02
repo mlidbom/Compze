@@ -3,7 +3,7 @@ using System.Runtime.ExceptionServices;
 
 namespace Compze.Utilities.SystemCE.ReactiveCE;
 
-internal class SimpleObserver<TTevent> : IObserver<TTevent>
+class SimpleObserver<TTevent> : IObserver<TTevent>
 {
    readonly Action<TTevent> _onNext;
    readonly Action<Exception> _onError;

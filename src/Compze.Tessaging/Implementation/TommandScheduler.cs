@@ -19,13 +19,13 @@ using Compze.Utilities.SystemCE.TransactionsCE;
 
 namespace Compze.Tessaging.Implementation;
 
-internal static class TommandSchedulerRegistrar
+static class TommandSchedulerRegistrar
 {
    public static IComponentRegistrar TommandScheduler(this IComponentRegistrar registrar)
       => registrar.Register(Implementation.TommandScheduler.RegisterWith);
 }
 
-internal class TommandScheduler(IOutbox transport, ITaskRunner taskRunner) : IDisposable
+class TommandScheduler(IOutbox transport, ITaskRunner taskRunner) : IDisposable
 {
    public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<TommandScheduler>()
@@ -74,7 +74,7 @@ internal class TommandScheduler(IOutbox transport, ITaskRunner taskRunner) : IDi
       }
    }
 
-   bool HasPassedSendTime(ScheduledTommand tessage) => UtcTimeSource.UtcNow >= tessage.SendAt;
+   static bool HasPassedSendTime(ScheduledTommand tessage) => UtcTimeSource.UtcNow >= tessage.SendAt;
 
    const string SendTaskName = $"{nameof(TommandScheduler)}_Send";
    void Send(ScheduledTommand scheduledTommand)

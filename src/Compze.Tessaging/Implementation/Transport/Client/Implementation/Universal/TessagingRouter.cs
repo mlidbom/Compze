@@ -24,7 +24,7 @@ using Compze.Threading.TasksCE;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Universal;
 
-internal class TessagingRouter : ITessagingRouter, IDisposable
+class TessagingRouter : ITessagingRouter, IDisposable
 {
    public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<ITessagingRouter>().CreatedBy(

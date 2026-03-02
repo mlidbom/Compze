@@ -19,7 +19,7 @@ using static Compze.Contracts.Contract;
 
 namespace Compze.Tessaging.Hosting;
 
-internal class Endpoint : IEndpoint
+class Endpoint : IEndpoint
 {
    public class ServerComponents(TommandScheduler tommandScheduler, IInbox inbox, IOutbox outbox) : IDisposable
    {

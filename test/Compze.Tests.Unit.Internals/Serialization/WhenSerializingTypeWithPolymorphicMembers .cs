@@ -73,12 +73,12 @@ namespace Compze.Tests.Unit.Internals.Serialization
 
       class TypeA : BaseTypeA
       {
-         public class TypeAA : TypeA {}
+         public class TypeAA : TypeA;
       }
 
       class TypeB : BaseTypeA
       {
-         public class TypeBB : TypeB {}
+         public class TypeBB : TypeB;
       }
 
       class Root

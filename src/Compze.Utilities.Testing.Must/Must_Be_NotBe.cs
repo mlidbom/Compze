@@ -139,7 +139,7 @@ public static class Must_Be_NotBe
    public static IAssertionContext<TValue> Not_be_equal_to_according_to_any_supported_comparison_method_in_any_direction_internal<TValue>(this IAssertionContext<TValue> context, TValue unexpected, [CallerArgumentExpression(nameof(unexpected))] string unexpectedExpression = null!)
    {
       if(unexpected is null && context.Actual is null)
-         throw new AssertionFailedException($"Both values are null, so they are equal");
+         throw new AssertionFailedException("Both values are null, so they are equal");
 
       if(unexpected is null || context.Actual is null)
          return context; // One is null, the other isn't, so they're not equal

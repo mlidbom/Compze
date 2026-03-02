@@ -13,8 +13,7 @@ namespace Compze.Tessaging.Hosting.Testing.Wiring;
 public static class ContainerCloner
 {
    static readonly ILogger Log = CompzeLogger.For(typeof(ContainerCloner));
-   public class ContainerIsClonedMarkerClass
-   {}
+   public class ContainerIsClonedMarkerClass;
 
    static readonly IReadOnlyList<Type> TypesThatAreFacadesForTheContainer = EnumerableCE.OfTypes<IDependencyInjectionContainer, IServiceLocator, SimpleInjectorDependencyInjectionContainer>()
                                                                                         .ToList();

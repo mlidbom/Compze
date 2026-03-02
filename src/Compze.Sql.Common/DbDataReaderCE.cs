@@ -3,7 +3,7 @@ using System.Data.Common;
 
 namespace Compze.Sql.Common;
 
-internal static class DbDataReaderCE
+static class DbDataReaderCE
 {
    //Urgent: In all sql layers, replace all manual implementation of this.
    public static Guid GetGuidFromString(this DbDataReader @this, int index) => Guid.Parse(@this.GetString(index));

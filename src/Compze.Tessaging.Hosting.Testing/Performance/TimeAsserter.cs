@@ -133,10 +133,10 @@ public static class TimeAsserter
             }
 
             PrintSummary(executionSummary, iterations, maxAverage, maxTotal);
-            Log.Info($"""
-                      ############################## DONE
-                      
-                      """);
+            Log.Info("""
+                     ############################## DONE
+
+                     """);
             return executionSummary;
          }
          finally

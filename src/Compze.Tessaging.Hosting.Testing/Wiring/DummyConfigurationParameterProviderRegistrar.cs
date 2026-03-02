@@ -5,7 +5,7 @@ using Compze.Utilities.DependencyInjection.Abstractions;
 
 namespace Compze.Tessaging.Hosting.Testing.Wiring;
 
-internal static class DummyConfigurationParameterProviderRegistrar
+static class DummyConfigurationParameterProviderRegistrar
 {
    public static IComponentRegistrar DummyConfigurationParameterProvider(this IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<IConfigurationParameterProvider>()

@@ -11,23 +11,23 @@ public interface ILevelLogger
    unit Log(string message, [CallerMemberName] string caller = "");
 }
 
-internal abstract class LevelLogger(ILogger logger) : ILevelLogger
+abstract class LevelLogger(ILogger logger) : ILevelLogger
 {
    protected ILogger Logger { get; } = logger;
    public abstract unit Log(string message, [CallerMemberName] string caller = "");
 }
 
-internal class DebugLogger(ILogger logger) : LevelLogger(logger)
+class DebugLogger(ILogger logger) : LevelLogger(logger)
 {
    public override unit Log(string message, [CallerMemberName] string caller = "") => Logger.Debug(message, caller);
 }
 
-internal class InfoLogger(ILogger logger) : LevelLogger(logger)
+class InfoLogger(ILogger logger) : LevelLogger(logger)
 {
    public override unit Log(string message, [CallerMemberName] string caller = "") => Logger.Info(message, caller);
 }
 
-internal class WarningLogger(ILogger logger) : LevelLogger(logger)
+class WarningLogger(ILogger logger) : LevelLogger(logger)
 {
    public override unit Log(string message, [CallerMemberName] string caller = "") => Logger.Warning(message, caller);
 }

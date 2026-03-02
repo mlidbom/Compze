@@ -19,7 +19,7 @@ public partial class Inbox
 {
    public partial class HandlerExecutionEngine
    {
-      internal partial class Coordinator
+      partial class Coordinator
       {
          // ReSharper disable once MemberCanBePrivate.Local Resharper is just confused....
          internal class HandlerExecutionTask

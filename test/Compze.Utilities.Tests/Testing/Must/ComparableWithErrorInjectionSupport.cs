@@ -3,8 +3,8 @@ using System.Collections;
 
 namespace Compze.Utilities.Tests.Testing.Must;
 
-class ComparableWithErrorInjectionSupport : IEquatable<ComparableWithErrorInjectionSupport>, 
-                                             IComparable<ComparableWithErrorInjectionSupport>, 
+class ComparableWithErrorInjectionSupport : IEquatable<ComparableWithErrorInjectionSupport>,
+                                             IComparable<ComparableWithErrorInjectionSupport>,
                                              IComparable,
                                              IStructuralEquatable,
                                              IStructuralComparable

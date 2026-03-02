@@ -32,12 +32,12 @@ public class LifestyleValidationTests : UniversalTestBase
    }
 
 
-   interface IScopedService {}
-   class ScopedService : IScopedService {}
+   interface IScopedService;
+   class ScopedService : IScopedService;
 
-   interface ISingletonService {}
+   interface ISingletonService;
 #pragma warning disable CS9113 // Parameter is unread.
-   class SingletonServiceDependingOnScoped(IScopedService _) : ISingletonService {}
+   class SingletonServiceDependingOnScoped(IScopedService _) : ISingletonService;
 #pragma warning restore CS9113 // Parameter is unread.
 
 }

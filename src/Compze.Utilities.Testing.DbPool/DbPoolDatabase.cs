@@ -9,7 +9,7 @@ namespace Compze.Utilities.Testing.DbPool;
 [MemoryPackable]
 public partial class DbPoolDatabase
 {
-   const string PoolDatabaseNamePrefix = $"Compze_DbPool_";
+   const string PoolDatabaseNamePrefix = "Compze_DbPool_";
 
    public int Id { get; private set; }
    public bool IsReserved { get; private set; }

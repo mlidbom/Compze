@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Compze.Threading.TasksCE;
 
-internal static partial class TaskCE
+static partial class TaskCE
 {
    ///<summary>
    /// Return Task.ReturnValue

@@ -14,7 +14,7 @@ using TessageTable = Compze.Core.Tessaging.Internal.SqlLayer.IServiceBusSqlLayer
 
 namespace Compze.Sql.Sqlite.Private.Tessaging;
 
-internal partial class SqliteOutboxSqlLayer(ISqliteConnectionPool connectionFactory, SqliteSqlLayerSchemaManager schemaManager) : IServiceBusSqlLayer.IOutboxSqlLayer
+partial class SqliteOutboxSqlLayer(ISqliteConnectionPool connectionFactory, SqliteSqlLayerSchemaManager schemaManager) : IServiceBusSqlLayer.IOutboxSqlLayer
 {
    readonly ISqliteConnectionPool _connectionFactory = connectionFactory;
    readonly SqliteSqlLayerSchemaManager _schemaManager = schemaManager;
@@ -105,7 +105,7 @@ internal partial class SqliteOutboxSqlLayer(ISqliteConnectionPool connectionFact
          command =>
          {
             var tessages = new List<IServiceBusSqlLayer.UndeliveredTessage>();
-            
+
             command
                .SetCommandText(
                    $"""
@@ -125,7 +125,7 @@ internal partial class SqliteOutboxSqlLayer(ISqliteConnectionPool connectionFact
 
                     """)
                .AddVarcharParameter("cutoffTime", 50, cutoffTime.ToString("O"));
-            
+
             using var reader = command.ExecuteReader();
             while(reader.Read())
             {
@@ -137,7 +137,7 @@ internal partial class SqliteOutboxSqlLayer(ISqliteConnectionPool connectionFact
                   retryCount: reader.GetInt32(4),
                   lastAttemptTime: reader.IsDBNull(5) ? null : DateTime.Parse(reader.GetString(5), CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind)));
             }
-            
+
             return tessages;
          });
    }
@@ -148,7 +148,7 @@ internal partial class SqliteOutboxSqlLayer(ISqliteConnectionPool connectionFact
          command =>
          {
             var tessages = new List<IServiceBusSqlLayer.UndeliveredTessage>();
-            
+
             command
                .SetCommandText(
                    $"""
@@ -167,7 +167,7 @@ internal partial class SqliteOutboxSqlLayer(ISqliteConnectionPool connectionFact
 
                     """)
                .AddVarcharParameter("endpointId", 36, endpointId.ToString());
-            
+
             using var reader = command.ExecuteReader();
             while(reader.Read())
             {
@@ -179,7 +179,7 @@ internal partial class SqliteOutboxSqlLayer(ISqliteConnectionPool connectionFact
                   retryCount: reader.GetInt32(4),
                   lastAttemptTime: reader.IsDBNull(5) ? null : DateTime.Parse(reader.GetString(5), CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind)));
             }
-            
+
             return tessages;
          });
    }

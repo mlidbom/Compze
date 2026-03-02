@@ -47,9 +47,7 @@ interface IUserTevent<out T> : ITaggregateIdentifyingTevent<T> where T : IUserTe
 interface IUserTevent : ITaggregateTevent;
 
 // ReSharper disable once ClassNeverInstantiated.Global
-class UserTevent<T>(T tevent) : TaggregateIdentifyingTevent<T>(tevent), IUserTevent<T> where T : IUserTevent {
-
-}
+class UserTevent<T>(T tevent) : TaggregateIdentifyingTevent<T>(tevent), IUserTevent<T> where T : IUserTevent;
 abstract class UserTevent : TaggregateTevent, IUserTevent
 {
    protected UserTevent() {}

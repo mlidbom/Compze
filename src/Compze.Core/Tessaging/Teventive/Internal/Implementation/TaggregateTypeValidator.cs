@@ -17,7 +17,7 @@ namespace Compze.Core.Tessaging.Teventive.Internal.Implementation;
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface)]
 public sealed class AllowPublicSettersAttribute : Attribute;
 
-internal static class TaggregateTypeValidator<TDomainClass, TTeventImplementation, TTevent>
+static class TaggregateTypeValidator<TDomainClass, TTeventImplementation, TTevent>
 {
    public static void AssertStaticStructureIsValid()
    {

@@ -6,7 +6,7 @@ using Compze.Threading.ResourceAccess;
 
 namespace Compze.Utilities.SystemCE.TransactionsCE;
 
-internal static class VolatileLambdaTransactionParticipantExtensions
+static class VolatileLambdaTransactionParticipantExtensions
 {
    static readonly IThreadShared<Dictionary<string, VolatileLambdaTransactionParticipant>> Participants = IThreadShared.WithDefaultTimeouts<Dictionary<string, VolatileLambdaTransactionParticipant>>();
 

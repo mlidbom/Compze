@@ -9,7 +9,7 @@ using Compze.Utilities.SystemCE.ReflectionCE;
 
 namespace Compze.Utilities.Logging;
 
-internal static class ExceptionTessageBuilder
+static class ExceptionTessageBuilder
 {
    const string LineSeparator = "----------------------------------------------------";
    const string IndentWith = "   ";

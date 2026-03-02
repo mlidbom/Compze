@@ -9,10 +9,9 @@ using Compze.Core.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public;
 // ReSharper disable InconsistentNaming
 namespace Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId.Domain.Tevents;
 
-internal class CompositeTaggregateTevent<T>(T tevent) : TaggregateIdentifyingTevent<T>(tevent), ICompositeTaggregateTevent<T> where T : ICompositeTaggregateTevent {
+class CompositeTaggregateTevent<T>(T tevent) : TaggregateIdentifyingTevent<T>(tevent), ICompositeTaggregateTevent<T> where T : ICompositeTaggregateTevent;
 
-}
-internal abstract class CompositeTaggregateTevent : TaggregateTevent, ICompositeTaggregateTevent
+abstract class CompositeTaggregateTevent : TaggregateTevent, ICompositeTaggregateTevent
 {
    protected CompositeTaggregateTevent() {}
    protected CompositeTaggregateTevent(TaggregateId taggregateId) : base(taggregateId) {}

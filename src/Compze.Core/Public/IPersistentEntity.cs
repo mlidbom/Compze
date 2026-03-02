@@ -40,9 +40,7 @@ public interface IEntity : IEntity<Guid>
    new EntityId Id { get; }
 }
 
-public interface ITentity : IEntity
-{
-}
+public interface ITentity : IEntity;
 
 /// <summary>
 /// Given the <see cref="Guid"/> IDs only constraint of <see cref="IEntity"/>, we provide this interface

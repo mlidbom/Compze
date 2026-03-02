@@ -146,7 +146,7 @@ public abstract class StrictlyManagedResourceBase<TInheritor> : IStrictlyManaged
    protected bool Disposed{ get; private set; }
    readonly StrictlyManagedResource<StrictlyManagedResourceBase<TInheritor>> _strictlyManagedResource;
 
-   protected StrictlyManagedResourceBase(bool forceStackTraceAllocation = false, bool needsFileInfo = false) => 
+   protected StrictlyManagedResourceBase(bool forceStackTraceAllocation = false, bool needsFileInfo = false) =>
       _strictlyManagedResource = new StrictlyManagedResource<StrictlyManagedResourceBase<TInheritor>>(forceStackTraceAllocation, needsFileInfo, instance:this);
 
    public virtual void Dispose()
@@ -157,7 +157,7 @@ public abstract class StrictlyManagedResourceBase<TInheritor> : IStrictlyManaged
 }
 
 ///<summary><see cref="IStrictlyManagedResource"/></summary>
-internal class StrictlyManagedResourceWasFinalizedException(Type instanceType, string? reservationCallStack) : Exception(FormatTessage(instanceType, reservationCallStack))
+class StrictlyManagedResourceWasFinalizedException(Type instanceType, string? reservationCallStack) : Exception(FormatTessage(instanceType, reservationCallStack))
 {
    static string FormatTessage(Type instanceType, string? reservationCallStack)
       => !reservationCallStack.IsNullEmptyOrWhiteSpace()

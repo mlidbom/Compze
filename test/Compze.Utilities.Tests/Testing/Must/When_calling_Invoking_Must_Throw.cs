@@ -36,17 +36,17 @@ public class When_calling_Invoking_Must_Throw : UniversalTestBase
                                         .Which.Message;
 
             [XF] public void is_the_full_formatted_message()
-               => ExceptionMessage().Must().Be($"""
+               => ExceptionMessage().Must().Be("""
 
-                                                --------------------------------------------------
-                                                Failing assertion:
-                                                --------------------------------------------------
-                                                Invoking(() => throw new InvalidOperationException("wrong")).Must().Throw<ArgumentException>()
-                                                --------------------------------------------------
-                                                Expected a System.ArgumentException 
-                                                but got a System.InvalidOperationException
-                                                --------------------------------------------------
-                                                """);
+                                               --------------------------------------------------
+                                               Failing assertion:
+                                               --------------------------------------------------
+                                               Invoking(() => throw new InvalidOperationException("wrong")).Must().Throw<ArgumentException>()
+                                               --------------------------------------------------
+                                               Expected a System.ArgumentException 
+                                               but got a System.InvalidOperationException
+                                               --------------------------------------------------
+                                               """);
          }
       }
    }

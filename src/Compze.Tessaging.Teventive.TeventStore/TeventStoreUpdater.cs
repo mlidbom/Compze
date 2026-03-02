@@ -20,7 +20,7 @@ using static Compze.Contracts.Contract;
 
 namespace Compze.Tessaging.Teventive.TeventStore;
 
-internal class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
+class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
 {
    readonly ITeventStoreTeventPublisher _teventStoreTeventPublisher;
    readonly ITeventStore _store;

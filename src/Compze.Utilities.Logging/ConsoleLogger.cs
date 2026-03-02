@@ -2,7 +2,7 @@ using System;
 
 namespace Compze.Utilities.Logging;
 
-internal class ConsoleLogger : Logger
+class ConsoleLogger : Logger
 {
    readonly Type _type;
    ConsoleLogger(Type type) => _type = type;
@@ -20,7 +20,7 @@ internal class ConsoleLogger : Logger
    protected override void WarningInternal(Exception exception, string message, string caller) =>
       ConsoleCE.WriteLine($"{DateTime.Now:HH:mm:ss.fff} WRN {LogSourceFormatter.Format(_type.Name, caller)} ### {message}, \n: Exception: {exception}");
 
-   protected override void InfoInternal(string message, string caller) => 
+   protected override void InfoInternal(string message, string caller) =>
       ConsoleCE.WriteLine($"{DateTime.Now:HH:mm:ss.fff} INF {LogSourceFormatter.Format(_type.Name, caller)} ### {message}");
 
    protected override void DebugInternal(string message, string caller) =>

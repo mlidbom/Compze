@@ -1,5 +1,6 @@
 using AccountManagement.API;
 using Microsoft.AspNetCore.Mvc;
+// ReSharper disable MemberCanBeMadeStatic.Global
 
 namespace AccountManagement.UI.MVC.Views;
 

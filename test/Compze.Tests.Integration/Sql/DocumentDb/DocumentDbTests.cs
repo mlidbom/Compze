@@ -612,7 +612,7 @@ public class DocumentDbTests : DocumentDbTestsBase
     }
 
     [PCT]
-    public void ThrowsExceptionIfYouTryToCreateAnIHasPersistentIdentityWithNoId() => 
+    public void ThrowsExceptionIfYouTryToCreateAnIHasPersistentIdentityWithNoId() =>
        Invoking(() => new User(Guid.Empty)).Must().Throw<Exception>();
 
     [PCT]

@@ -45,7 +45,7 @@ public static class TessageTypes
 
          public class AtMostOnceTypermediaTommand<TResult> : AtMostOnceTypermediaTommand, IAtMostOnceTommand<TResult>
          {
-            protected AtMostOnceTypermediaTommand() : base() {}
+            protected AtMostOnceTypermediaTommand() {}
          }
       }
 
@@ -61,7 +61,7 @@ public static class TessageTypes
             {
                [Obsolete("Used by serializer", error:true)]
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
-               public EntityLink() : base() {}
+               public EntityLink() {}
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
                public EntityLink(EntityId entityId) => EntityId = entityId;
                public EntityLink<TResult> WithId(EntityId id) => new(id);
@@ -72,7 +72,7 @@ public static class TessageTypes
             {
                [Obsolete("Used by serializer", error:true)]
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
-               public TaggregateLink() : base() {}
+               public TaggregateLink() {}
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
                public TaggregateLink(TaggregateId taggregateId) => TaggregateId = taggregateId;
                public TaggregateLink<TResult> WithId(TaggregateId id) => new(id);

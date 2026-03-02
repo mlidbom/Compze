@@ -45,9 +45,7 @@ class User : Taggregate<User, IUserTevent, UserTevent, IUserTevent<IUserTevent>,
 interface IUserTevent<out T> : ITaggregateIdentifyingTevent<T> where T : IUserTevent;
 interface IUserTevent : ITaggregateTevent;
 
-class UserTevent<T>(T tevent) : TaggregateIdentifyingTevent<T>(tevent), IUserTevent<T> where T : IUserTevent {
-
-}
+class UserTevent<T>(T tevent) : TaggregateIdentifyingTevent<T>(tevent), IUserTevent<T> where T : IUserTevent;
 abstract class UserTevent : TaggregateTevent, IUserTevent
 {
    protected UserTevent() {}

@@ -9,7 +9,7 @@ namespace Compze.Utilities.Testing.XUnit;
 /// classes that get their data from existing test cases do not need to perform all this ceremony
 /// of passing arguments along, losing the actual logic in the noise
 /// </summary>
-internal abstract class ConstructorArgumentForwardingTestCase : XunitTestCase
+abstract class ConstructorArgumentForwardingTestCase : XunitTestCase
 {
    // ReSharper disable once UnusedMember.Global
    [Obsolete("Called by deserializer", error: true)]

@@ -16,7 +16,7 @@ static class Application
       var host = EndpointHost.Production.Create(() => new SimpleInjectorDependencyInjectionContainer());
 #pragma warning restore CA2000
       await using var _ = host.caf();
-      new AccountManagementServerDomainBootstrapper().RegisterWith(host);
+      AccountManagementServerDomainBootstrapper.RegisterWith(host);
       await host.StartAsync().caf();
       Console.WriteLine("Press enter to exit");
       Console.ReadLine();

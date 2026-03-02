@@ -31,11 +31,11 @@ public static partial class TessageInspector
    }
 
    public class MissingTransactionException(ITessage tessage) :
-      TransactionPolicyViolationException($"{tessage.GetType().FullName} is {typeof(IMustBeSentTransactionally).FullName} but there is no transaction.") {}
+      TransactionPolicyViolationException($"{tessage.GetType().FullName} is {typeof(IMustBeSentTransactionally).FullName} but there is no transaction.");
 
    public class TransactionPresentException(ITessage tessage) :
-      TransactionPolicyViolationException($"{tessage.GetType().FullName} is {typeof(ICannotBeSentRemotelyFromWithinTransaction).FullName} but there is a transaction.") {}
+      TransactionPolicyViolationException($"{tessage.GetType().FullName} is {typeof(ICannotBeSentRemotelyFromWithinTransaction).FullName} but there is a transaction.");
 
    public class MissingTessageIdException(ITessage tessage) :
-      ArgumentException($"{nameof(IAtMostOnceTessage.Id)} was Guid.Empty for tessage of type: {tessage.GetType().FullName}") {}
+      ArgumentException($"{nameof(IAtMostOnceTessage.Id)} was Guid.Empty for tessage of type: {tessage.GetType().FullName}");
 }

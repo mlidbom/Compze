@@ -9,7 +9,7 @@ namespace Compze.Underscore;
 /// Simply return unit.Value instead of void from methods with no return value,
 /// or use <see cref="From"/> to avoid that pesky extra line:
 /// <code>
-///   public unit DoSomething() => unit.From(() => 
+///   public unit DoSomething() => unit.From(() =>
 ///   {
 ///      //Do something here
 ///   });

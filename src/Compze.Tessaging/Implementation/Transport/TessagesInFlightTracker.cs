@@ -90,7 +90,7 @@ public class TessagesInFlightTracker(ITypeMapper typeMapper) : ITessagesInFlight
    }
 }
 
-internal class NullOpTessagesInFlightTracker : ITessagesInFlightTracker
+class NullOpTessagesInFlightTracker : ITessagesInFlightTracker
 {
    public IReadOnlyList<Exception> GetExceptions() => [];
    public void SendingTessageOnTransport(TransportTessage.OutGoing transportTessage, EndpointId remoteEndpointId) {}

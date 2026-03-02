@@ -5,7 +5,7 @@ using Newtonsoft.Json.Serialization;
 
 namespace Compze.Serialization.Newtonsoft.Private;
 
-internal class CompositeContractResolver(params IJsonPropertyModifier[] modifiers) : DefaultContractResolver
+class CompositeContractResolver(params IJsonPropertyModifier[] modifiers) : DefaultContractResolver
 {
    readonly IJsonPropertyModifier[] _modifiers = modifiers;
 

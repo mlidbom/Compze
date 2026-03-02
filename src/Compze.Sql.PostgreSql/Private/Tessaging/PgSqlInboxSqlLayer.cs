@@ -9,7 +9,7 @@ using TessageTable =  Compze.Core.Tessaging.Internal.SqlLayer.IServiceBusSqlLaye
 
 namespace Compze.Sql.PostgreSql.Private.Tessaging;
 
-internal partial class PgSqlInboxSqlLayer(IPgSqlConnectionPool connectionFactory, PgSqlSqlLayerSchemaManager schemaManager) : IServiceBusSqlLayer.IInboxSqlLayer
+partial class PgSqlInboxSqlLayer(IPgSqlConnectionPool connectionFactory, PgSqlSqlLayerSchemaManager schemaManager) : IServiceBusSqlLayer.IInboxSqlLayer
 {
    readonly IPgSqlConnectionPool _connectionFactory = connectionFactory;
    readonly PgSqlSqlLayerSchemaManager _schemaManager = schemaManager;
@@ -36,8 +36,8 @@ internal partial class PgSqlInboxSqlLayer(IPgSqlConnectionPool connectionFactory
               .PrepareStatement()
               .ExecuteNonQuery();
 
-            return affectedRows == 0 
-               ? IServiceBusSqlLayer.SaveTessageResult.Duplicate 
+            return affectedRows == 0
+               ? IServiceBusSqlLayer.SaveTessageResult.Duplicate
                : IServiceBusSqlLayer.SaveTessageResult.NewTessage;
          });
    }

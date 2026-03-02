@@ -12,7 +12,7 @@ public static class CartesianProductGenerator
    public static IReadOnlyList<IReadOnlyList<T>> CartesianProduct<T>(this IEnumerable<IReadOnlyList<T>> enumerable)
    {
       var lists = (enumerable as IReadOnlyList<IReadOnlyList<T>>) ?? enumerable.ToList();
-      
+
       if(lists.Count == 0)
          return [[]];
 

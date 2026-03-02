@@ -82,9 +82,7 @@ public interface IPublisherIdentifyingTevent<out TTevent> : ITevent
 }
 
 public interface IRemotablePublisherIdentifyingTevent<out TTeventInterface> : IPublisherIdentifyingTevent<TTeventInterface>, IRemotableTevent
-   where TTeventInterface : IExactlyOnceTevent
-{
-}
+   where TTeventInterface : IExactlyOnceTevent;
 
 
 public interface IExactlyOncePublisherIdentifyingTevent<out TTeventInterface> : IRemotablePublisherIdentifyingTevent<TTeventInterface>, IExactlyOnceTevent

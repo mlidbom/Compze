@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Compze.Utilities.SystemCE.IOCE;
 
-internal partial class DirectoryCE : FileSystemInfoCE
+partial class DirectoryCE : FileSystemInfoCE
 {
 #pragma warning disable CA1024 // Use properties. No, because that would imply that it is part of the instance state and that changing properties in it would change instance state.
    internal DirectoryInfo GetDirectoryInfo() => new(AbsolutePath);

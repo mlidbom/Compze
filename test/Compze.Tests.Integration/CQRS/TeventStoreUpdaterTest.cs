@@ -412,7 +412,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
       });
    }
 
-   [PCT(Skipped = [SqlLayer.Sqlite, SqlLayer.SqliteMemory], 
+   [PCT(Skipped = [SqlLayer.Sqlite, SqlLayer.SqliteMemory],
         SkipReasons = ["Sqlite is not really designed for high concurrency, we have not been able to get this working with SQLite",
                        "Sqlite is not really designed for high concurrency, we have not been able to get this working with SQLite"])]
    public void Concurrent_read_only_access_to_taggregate_history_can_occur_in_parallel()

@@ -9,7 +9,7 @@ using Compze.Utilities.SystemCE.ReflectionCE;
 
 namespace Compze.Core.Refactoring.Naming.Internal.Implementation;
 
-internal static class TypeMapperTypeDiscovery
+static class TypeMapperTypeDiscovery
 {
    public static ISet<Type> GetTypesRequiringMapping(Assembly assembly)
    {
@@ -76,7 +76,7 @@ internal static class TypeMapperTypeDiscovery
 
    static bool IsAssemblyWeShouldExamine(Assembly assembly)
    {
-      if(assembly.IsDynamic || assembly.FullName == null) 
+      if(assembly.IsDynamic || assembly.FullName == null)
          return false;
 
       const string compzeAssemblyNamesStart = "Compze.";

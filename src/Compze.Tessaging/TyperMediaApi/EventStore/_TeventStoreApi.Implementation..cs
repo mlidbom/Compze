@@ -19,7 +19,7 @@ public partial class TeventStoreApi
       {
          [Obsolete("Used by serializer", error:true)]
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
-         public TaggregateLink() : base() {}
+         public TaggregateLink() {}
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 
          internal TaggregateLink(TaggregateId id) => Id = id;
@@ -43,7 +43,7 @@ public partial class TeventStoreApi
       {
          [Obsolete("Used by serializer", error:true)]
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
-         public GetReadonlyCopyOfTaggregate() : base() {}
+         public GetReadonlyCopyOfTaggregate() {}
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 
          internal GetReadonlyCopyOfTaggregate(TaggregateId id) => Id = id;
@@ -56,7 +56,7 @@ public partial class TeventStoreApi
       {
          [Obsolete("Used by serializer", error:true)]
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
-         public GetReadonlyCopyOfTaggregateVersion() : base() {}
+         public GetReadonlyCopyOfTaggregateVersion() {}
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 
          internal GetReadonlyCopyOfTaggregateVersion(TaggregateId id, int version)

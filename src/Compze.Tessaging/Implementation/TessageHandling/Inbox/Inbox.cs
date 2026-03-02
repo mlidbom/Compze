@@ -14,7 +14,7 @@ using JetBrains.Annotations;
 
 namespace Compze.Tessaging.Implementation.TessageHandling.Inbox;
 
-internal static class InboxRegistrar
+static class InboxRegistrar
 {
    public static IComponentRegistrar Inbox(this IComponentRegistrar registrar)
       => registrar.Register(TessageHandling.Inbox.Inbox.RegisterWith);
@@ -52,7 +52,7 @@ internal static class InboxRegistrar
 
    public async Task StartAsync()
    {
-      this.Log().Info($"Starting");
+      this.Log().Info("Starting");
       _handlerExecutionEngine.Start();
       var storageStartTask = _storage.StartAsync();
       await Task.WhenAll(storageStartTask, _transportServer.StartAsync()).caf();

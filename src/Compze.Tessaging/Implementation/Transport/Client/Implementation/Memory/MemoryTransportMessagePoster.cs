@@ -15,7 +15,7 @@ public static class MemoryTransportMessagePosterApiTransportClientRegistrar
       => registrar.Register(MemoryTransportMessagePoster.RegisterWith);
 }
 
-internal class MemoryTransportMessagePoster : ITransportMessagePoster
+class MemoryTransportMessagePoster : ITransportMessagePoster
 {
    public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<ITransportMessagePoster>()

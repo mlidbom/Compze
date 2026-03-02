@@ -6,7 +6,7 @@ using Compze.Utilities.SystemCE.LinqCE;
 
 namespace Compze.Utilities.Testing.XUnit.ComponentCombinations;
 
-internal class ComponentCombinationsConfigurationFileLine
+class ComponentCombinationsConfigurationFileLine
 {
    const string Wildcard = "*";
    readonly IReadOnlyList<Type> _componentTypes;

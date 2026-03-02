@@ -9,9 +9,7 @@ using Newtonsoft.Json;
 
 namespace AccountManagement.Domain.Tevents;
 
-public class AccountTevent<T>(T tevent) : TaggregateIdentifyingTevent<T>(tevent), IAccountTevent<T> where T : IAccountTevent
-{
-}
+public class AccountTevent<T>(T tevent) : TaggregateIdentifyingTevent<T>(tevent), IAccountTevent<T> where T : IAccountTevent;
 
 public class AccountTevent : TaggregateTevent, IAccountTevent
 {

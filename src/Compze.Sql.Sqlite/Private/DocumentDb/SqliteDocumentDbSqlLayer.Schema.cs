@@ -2,7 +2,7 @@ using Document = Compze.Core.DocumentDb.Internal.SqlLayer.IDocumentDbSqlLayer.Do
 
 namespace Compze.Sql.Sqlite.Private.DocumentDb;
 
-internal partial class SqliteDocumentDbSqlLayer
+partial class SqliteDocumentDbSqlLayer
 {
    public const string SchemaCreationSql =
       $"""

@@ -6,7 +6,7 @@ using Compze.Utilities.SystemCE;
 
 namespace Compze.Tessaging.Hosting.Testing.Wiring;
 
-internal static class TestingComponentRegistrarSerializer
+static class TestingComponentRegistrarSerializer
 {
    public static IComponentRegistrar CurrentTestsSerializersIfNotClonedContainer(this IComponentRegistrar register) =>
       register.CastTo<TestingComponentRegistrar>().CurrentTestsSerializersIfNotClonedContainer();

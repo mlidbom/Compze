@@ -10,7 +10,7 @@ using Compze.Threading.TasksCE;
 
 namespace Compze.Sql.MicrosoftSql.Private;
 
-internal class MsSqlSqlLayerSchemaManager(IMsSqlConnectionPool connectionPool)
+class MsSqlSqlLayerSchemaManager(IMsSqlConnectionPool connectionPool)
 {
    public static IComponentRegistrar RegisterWith(IComponentRegistrar registrar)
    {

@@ -18,7 +18,7 @@ namespace Compze.Tessaging.Hosting.AspNetCore.Private;
 
 #pragma warning disable CA1031 //Here we catch all exceptions so we can transmit them back to the client
 
-internal class TypermediaController : ControllerBase
+class TypermediaController : ControllerBase
 {
    internal static void RegisterWith(IComponentRegistrar registrar) =>
       registrar.Register(

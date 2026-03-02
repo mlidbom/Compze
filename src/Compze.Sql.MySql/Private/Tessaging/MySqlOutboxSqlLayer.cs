@@ -13,7 +13,7 @@ using TessageTable = Compze.Core.Tessaging.Internal.SqlLayer.IServiceBusSqlLayer
 
 namespace Compze.Sql.MySql.Private.Tessaging;
 
-internal partial class MySqlOutboxSqlLayer(IMySqlConnectionPool connectionFactory, MySqlSqlLayerSchemaManager schemaManager) : IServiceBusSqlLayer.IOutboxSqlLayer
+partial class MySqlOutboxSqlLayer(IMySqlConnectionPool connectionFactory, MySqlSqlLayerSchemaManager schemaManager) : IServiceBusSqlLayer.IOutboxSqlLayer
 {
    readonly IMySqlConnectionPool _connectionFactory = connectionFactory;
    readonly MySqlSqlLayerSchemaManager _schemaManager = schemaManager;
@@ -105,7 +105,7 @@ internal partial class MySqlOutboxSqlLayer(IMySqlConnectionPool connectionFactor
          command =>
          {
             var tessages = new List<IServiceBusSqlLayer.UndeliveredTessage>();
-            
+
             command
                .SetCommandText(
                    $"""
@@ -125,7 +125,7 @@ internal partial class MySqlOutboxSqlLayer(IMySqlConnectionPool connectionFactor
 
                     """)
                .AddDateTime2Parameter("cutoffTime", cutoffTime);
-            
+
             using var reader = command.ExecuteReader();
             while(reader.Read())
             {
@@ -137,7 +137,7 @@ internal partial class MySqlOutboxSqlLayer(IMySqlConnectionPool connectionFactor
                   retryCount: reader.GetInt32(4),
                   lastAttemptTime: reader.IsDBNull(5) ? null : reader.GetDateTime(5)));
             }
-            
+
             return tessages;
          });
    }
@@ -148,7 +148,7 @@ internal partial class MySqlOutboxSqlLayer(IMySqlConnectionPool connectionFactor
          command =>
          {
             var tessages = new List<IServiceBusSqlLayer.UndeliveredTessage>();
-            
+
             command
                .SetCommandText(
                    $"""
@@ -167,7 +167,7 @@ internal partial class MySqlOutboxSqlLayer(IMySqlConnectionPool connectionFactor
 
                     """)
                .AddParameter("endpointId", endpointId.Value);
-            
+
             using var reader = command.ExecuteReader();
             while(reader.Read())
             {
@@ -179,7 +179,7 @@ internal partial class MySqlOutboxSqlLayer(IMySqlConnectionPool connectionFactor
                   retryCount: reader.GetInt32(4),
                   lastAttemptTime: reader.IsDBNull(5) ? null : reader.GetDateTime(5)));
             }
-            
+
             return tessages;
          });
    }

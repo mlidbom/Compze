@@ -3,7 +3,7 @@ using MySql.Data.MySqlClient;
 namespace Compze.Sql.MySql;
 
 //We will most likely want to make higher level policy based on this information, so let's start concentrating it here rather than spreading it everywhere.
-internal static class SqlExceptions
+static class SqlExceptions
 {
 #pragma warning disable CA1724 // Type name intentionally matches namespace concept
    internal static class MySql

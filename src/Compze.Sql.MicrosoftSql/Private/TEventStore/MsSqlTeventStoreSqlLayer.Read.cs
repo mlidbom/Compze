@@ -12,7 +12,7 @@ using Tevent = Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Tev
 
 namespace Compze.Sql.MicrosoftSql.Private.TEventStore;
 
-internal partial class MsSqlTeventStoreSqlLayer(MsSqlTeventStoreConnectionManager connectionManager, MsSqlSqlLayerSchemaManager schemaManager) : ITeventStoreSqlLayer
+partial class MsSqlTeventStoreSqlLayer(MsSqlTeventStoreConnectionManager connectionManager, MsSqlSqlLayerSchemaManager schemaManager) : ITeventStoreSqlLayer
 {
    readonly MsSqlTeventStoreConnectionManager _connectionManager = connectionManager;
    readonly MsSqlSqlLayerSchemaManager _schemaManager = schemaManager;

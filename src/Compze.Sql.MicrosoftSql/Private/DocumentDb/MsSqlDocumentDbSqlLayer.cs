@@ -16,7 +16,7 @@ using Schema = Compze.Core.DocumentDb.Internal.SqlLayer.IDocumentDbSqlLayer.Docu
 
 namespace Compze.Sql.MicrosoftSql.Private.DocumentDb;
 
-internal partial class MsSqlDocumentDbSqlLayer : IDocumentDbSqlLayer
+partial class MsSqlDocumentDbSqlLayer : IDocumentDbSqlLayer
 {
    public static IComponentRegistrar RegisterWith(IComponentRegistrar registrar) =>
       registrar.Register(

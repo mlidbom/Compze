@@ -3,7 +3,7 @@ using Lock = Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Taggr
 
 namespace Compze.Sql.Sqlite.Private.TEventStore;
 
-internal partial class SqliteTeventStoreSqlLayer
+partial class SqliteTeventStoreSqlLayer
 {
    public const string SchemaCreationSql =
       $"""

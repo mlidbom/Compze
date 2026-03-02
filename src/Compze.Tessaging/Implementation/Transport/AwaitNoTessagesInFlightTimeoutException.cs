@@ -7,7 +7,7 @@ using Compze.Threading.ResourceAccess.Exceptions;
 
 namespace Compze.Tessaging.Implementation.Transport;
 
-internal class AwaitNoTessagesInFlightTimeoutException(AwaitingConditionTimeoutException innerException, IReadOnlyList<TessagesInFlightTracker.InFlightTessage> undeliveredTessages)
+class AwaitNoTessagesInFlightTimeoutException(AwaitingConditionTimeoutException innerException, IReadOnlyList<TessagesInFlightTracker.InFlightTessage> undeliveredTessages)
    : Exception(FormatMessage(undeliveredTessages), innerException)
 {
    public IReadOnlyList<TessagesInFlightTracker.InFlightTessage> UndeliveredTessages { get; } = undeliveredTessages;

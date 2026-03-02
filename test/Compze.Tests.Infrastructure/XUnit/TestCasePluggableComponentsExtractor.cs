@@ -21,7 +21,7 @@ static class TestCasePluggableComponentsExtractor
       catch(Exception ex)
       {
          if(throwOnFailure)
-            throw new Exception($"The current test does not appear to be a pluggable components test, ", ex);
+            throw new Exception("The current test does not appear to be a pluggable components test, ", ex);
          return null;
       }
    }
