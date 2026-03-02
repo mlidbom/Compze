@@ -67,7 +67,7 @@ namespace Compze.Tests.Unit.Internals.Serialization
       class BaseTypeA
       {
          //Use the full type name to ensure that our code does not get confused by the types containing properties containing the type names.
-         public BaseTypeA() => Value = GetType().FullName!;
+         protected BaseTypeA() => Value = GetType().FullName!;
          public string Value { get; private set; }
       }
 

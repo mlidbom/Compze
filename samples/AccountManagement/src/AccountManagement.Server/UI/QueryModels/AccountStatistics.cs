@@ -28,10 +28,10 @@ static class AccountStatistics
            .For<IAccountTevent.LoginFailed>(_ => NumberOfFailedLogins++);
       }
 
-      public int NumberOfAccounts { get; private set; }
-      public int NumberOfLoginsAttempts { get; private set; }
-      public int NumberOfSuccessfulLogins { get; private set; }
-      public int NumberOfFailedLogins { get; private set; }
+      int NumberOfAccounts { get; set; }
+      int NumberOfLoginsAttempts { get; set; }
+      int NumberOfSuccessfulLogins { get; set; }
+      int NumberOfFailedLogins { get; set; }
 
       //Since this is a singleton tuery model and not bound to a specific Taggregate's tevents we override the Id member to always be the singleton Id.
       public override EntityId Id => new(StaticId);

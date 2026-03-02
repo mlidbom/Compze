@@ -16,7 +16,8 @@ class MsSqlTeventStoreConnectionManager(IMsSqlConnectionPool sqlConnectionPool)
    }
 
    public void UseCommand([InstantHandle]Action<SqlCommand> action) => UseCommand(false, action);
-   public void UseCommand(bool suppressTransactionWarning, [InstantHandle] Action<SqlCommand> action)
+
+   void UseCommand(bool suppressTransactionWarning, [InstantHandle] Action<SqlCommand> action)
    {
       AssertTransactionPolicy(suppressTransactionWarning);
       _connectionPool.UseCommand(action);

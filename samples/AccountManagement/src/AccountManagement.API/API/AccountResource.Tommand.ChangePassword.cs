@@ -4,6 +4,7 @@ using Compze.Core.Tessaging.Public;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+// ReSharper disable PropertyCanBeMadeInitOnly.Local
 
 namespace AccountManagement.API;
 
@@ -20,8 +21,8 @@ public partial class AccountResource
          public ChangePassword(AccountId accountId) => AccountId = accountId;
 
          [Required] [TaggregateId] public AccountId AccountId { get; set; }
-         [Required] public string OldPassword { get; set; } = string.Empty;
-         [Required] public string NewPassword { get; set; } = string.Empty;
+         [Required] public string OldPassword { get; private set; } = string.Empty;
+         [Required] public string NewPassword { get; private set; } = string.Empty;
 
          public IEnumerable<ValidationResult> Validate(ValidationContext validationContext) => Domain.Passwords.Password.Policy.Validate(NewPassword, this, () => NewPassword);
 

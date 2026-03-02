@@ -6,7 +6,7 @@ using Compze.Tessaging.Hosting;
 
 namespace AccountManagement.UserStories.Scenarios;
 
-public class ChangePasswordScenario : ScenarioBase<AccountResource>
+class ChangePasswordScenario : ScenarioBase<AccountResource>
 {
    readonly IClient _client;
 

@@ -37,13 +37,13 @@ public static partial class Constructor
          return Expression.Lambda<Func<TInstance>>(Expression.Property(null, instanceProperty)).Compile();
       }
 
-      public static ConstructorCompiler<TTypeToConstruct> ForType<TTypeToConstruct>() => new();
+      internal static ConstructorCompiler<TTypeToConstruct> ForType<TTypeToConstruct>() => new();
       public static ConstructorCompiler<object> ForType(Type typeToConstruct) => new(typeToConstruct);
 
       // ReSharper disable once MemberHidesStaticFromOuterClass
       internal static GenericTypeConstructorCompiler ForGenericType(Type genericType) => new(genericType);
 
-      public class GenericTypeConstructorCompiler(Type genericType)
+      internal class GenericTypeConstructorCompiler(Type genericType)
       {
          readonly Type _genericType = genericType;
 
@@ -73,7 +73,7 @@ public static partial class Constructor
          readonly Type _typeToConstruct;
          internal ConstructorCompiler(Type typeToConstruct) => _typeToConstruct = typeToConstruct;
 
-         public ConstructorCompiler() : this(typeof(TInstance)) {}
+         internal ConstructorCompiler() : this(typeof(TInstance)) {}
 
          Delegate WithArgumentTypes(Type argument1Type) => CompileForSignature(typeof(Func<,>).MakeGenericType(argument1Type, _typeToConstruct));
          internal Func<TInstance> DefaultConstructor() => (Func<TInstance>)CompileForSignature(typeof(Func<>).MakeGenericType(_typeToConstruct));

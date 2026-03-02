@@ -16,7 +16,8 @@ class SqliteTeventStoreConnectionManager(ISqliteConnectionPool sqlConnectionPool
    }
 
    public void UseCommand([InstantHandle]Action<SqliteCommand> action) => UseCommand(false, action);
-   public void UseCommand(bool suppressTransactionWarning, [InstantHandle] Action<SqliteCommand> action)
+
+   void UseCommand(bool suppressTransactionWarning, [InstantHandle] Action<SqliteCommand> action)
    {
       AssertTransactionPolicy(suppressTransactionWarning);
       _connectionPool.UseCommand(action);

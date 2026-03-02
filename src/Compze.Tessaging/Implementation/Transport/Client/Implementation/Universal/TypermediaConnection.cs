@@ -27,7 +27,7 @@ class TypermediaConnection(
 
    public async Task InitAsync()
    {
-      (var apiClient, var endpointInformation) = await ApiEndpointClient.BootstrapConnectionToEndpoint(_transportMessagePoster, _remoteAddress, _typeMapper, _serializer).caf();
+      var (apiClient, endpointInformation) = await ApiEndpointClient.BootstrapConnectionToEndpoint(_transportMessagePoster, _remoteAddress, _typeMapper, _serializer).caf();
       ApiClient = apiClient;
       EndpointInformation = endpointInformation;
    }

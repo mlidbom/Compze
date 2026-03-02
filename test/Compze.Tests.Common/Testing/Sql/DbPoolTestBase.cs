@@ -39,7 +39,7 @@ public abstract class DbPoolTestBase : UniversalTestBase
    protected DbPool ResolvePool() =>
       _serviceLocator.Resolve<DbPool>();
 
-   public static void UseConnection(string connectionString, DbPool pool, Action<ICompzeDbConnection> func)
+   protected static void UseConnection(string connectionString, DbPool pool, Action<ICompzeDbConnection> func)
    {
       switch(TestEnv.SqlLayer)
       {

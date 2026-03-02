@@ -12,6 +12,8 @@ using Compze.Utilities.Testing.Must;
 // ReSharper disable MemberHidesStaticFromOuterClass
 // ReSharper disable InconsistentNaming
 // ReSharper disable UnusedAutoPropertyAccessor.Global
+// ReSharper disable UnusedMemberHierarchy.Global
+// ReSharper disable MemberCanBeProtected.Global
 
 namespace Compze.Tests.Unit.Internals.Serialization
 {

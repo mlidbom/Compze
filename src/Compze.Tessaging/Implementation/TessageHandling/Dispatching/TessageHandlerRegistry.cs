@@ -28,7 +28,7 @@ public static class TessageHandlerRegistryRegistrar
 }
 
 //performance: Use static caching + indexing trick for storing and retrieving values throughout this class. TueryTypeIndexFor<TTuery>.Index. Etc
-public sealed class TessageHandlerRegistry(ITypeMapper typeMapper) : ITessageHandlerRegistrar, ITessageHandlerRegistry
+sealed class TessageHandlerRegistry(ITypeMapper typeMapper) : ITessageHandlerRegistrar, ITessageHandlerRegistry
 {
    readonly ITypeMapper _typeMapper = typeMapper;
    IReadOnlyDictionary<Type, Action<object>> _tommandHandlers = new Dictionary<Type, Action<object>>();

@@ -46,7 +46,7 @@ public class MyCreateTaggregateTommand : TessageTypes.Remotable.AtMostOnce.AtMos
    MyCreateTaggregateTommand() {}
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 
-   public MyCreateTaggregateTommand(TaggregateId taggregateId) => TaggregateId = taggregateId;
+   MyCreateTaggregateTommand(TaggregateId taggregateId) => TaggregateId = taggregateId;
 
    public static MyCreateTaggregateTommand Create() => new(new TaggregateId());
 
@@ -85,7 +85,7 @@ public class MyTaggregateTevent<T>(T tevent) : TaggregateIdentifyingTevent<T>(te
 public class MyTaggregateTevent : TaggregateTevent, IMyTaggregateTevent
 {
    MyTaggregateTevent() {}
-   protected MyTaggregateTevent(TaggregateId accountId) : base(accountId) {}
+   MyTaggregateTevent(TaggregateId accountId) : base(accountId) {}
 
    internal class Created(TaggregateId accountId) : MyTaggregateTevent(accountId), IMyTaggregateTevent.Created;
 

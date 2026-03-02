@@ -22,7 +22,7 @@ public static partial class Composite_taggregate_specification
                   {
                      public class After_calling_entity1_Remove : After_calling_entity2_Remove
                      {
-                        public After_calling_entity1_Remove() => _entity1.Remove();
+                        protected After_calling_entity1_Remove() => _entity1.Remove();
 
                         public class The_Entities_collection___ : After_calling_entity1_Remove
                         {

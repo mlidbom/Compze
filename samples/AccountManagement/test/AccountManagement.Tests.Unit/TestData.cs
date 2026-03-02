@@ -11,12 +11,12 @@ static class TestData
 {
    internal static class Passwords
    {
-      internal const string ValidPassword = "Pass";
+      const string ValidPassword = "Pass";
 
       internal static class Invalid
       {
          public const string? Null = null;
-         public static readonly string EmptyString = string.Empty;
+         static readonly string EmptyString = string.Empty;
          public static readonly string ShorterThanFourCharacters = ValidPassword[..3];
          public const string BorderedByWhiteSpaceAtEnd = $"{ValidPassword} ";
          const string BorderedByWhiteSpaceAtBeginning = $" {ValidPassword}";

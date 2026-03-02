@@ -15,7 +15,7 @@ public class Dog : IEntity
 public class Person : Entity<Person>
 {
    public Person() {}
-   public Person(Guid id): base(id) {}
+   protected Person(Guid id): base(id) {}
 }
 
 public class User : Person

@@ -12,13 +12,13 @@ namespace AccountManagement.API;
    internal TueriesResource Tueries { get; private set; } = new();
 
 #pragma warning disable CA1724 // Type names should not match namespaces
-   public class TueriesResource
+   internal class TueriesResource
 #pragma warning restore CA1724 // Type names should not match namespaces
    {
       internal TessageTypes.Remotable.NonTransactional.Tueries.TaggregateLink<AccountResource> AccountById(AccountId accountId) => new(accountId);
    }
 
-   public class TommandsResource
+   internal class TommandsResource
    {
       internal AccountResource.Tommand.LogIn Login { get; private set; } = AccountResource.Tommand.LogIn.Create();
       internal AccountResource.Tommand.Register Register { get; private set; } = AccountResource.Tommand.Register.Create();

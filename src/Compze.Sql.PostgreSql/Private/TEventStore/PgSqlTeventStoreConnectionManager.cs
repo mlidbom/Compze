@@ -16,7 +16,8 @@ class PgSqlTeventStoreConnectionManager(IPgSqlConnectionPool sqlConnectionPool)
    }
 
    public void UseCommand([InstantHandle]Action<NpgsqlCommand> action) => UseCommand(false, action);
-   public void UseCommand(bool suppressTransactionWarning, [InstantHandle] Action<NpgsqlCommand> action)
+
+   void UseCommand(bool suppressTransactionWarning, [InstantHandle] Action<NpgsqlCommand> action)
    {
       AssertTransactionPolicy(suppressTransactionWarning);
       _connectionPool.UseCommand(action);
