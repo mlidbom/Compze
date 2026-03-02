@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Compze.Core.Public;
 using Compze.Core.Tessaging.Teventive.Public;
 
@@ -13,7 +14,7 @@ public interface ITeventStoreUpdater : IDisposable
    void Save<TTaggregate>(TTaggregate taggregate) where TTaggregate : class, ITaggregate;
 
    /// <summary>Tries to get the specified instance. Returns false and sets the result to null if the taggregate did not exist.</summary>
-   bool TryGet<TTaggregate>(TaggregateId taggregateId, out TTaggregate? result) where TTaggregate : class, ITaggregate;
+   bool TryGet<TTaggregate>(TaggregateId taggregateId, [NotNullWhen(true)]out TTaggregate? result) where TTaggregate : class, ITaggregate;
 
    /// <summary>Deletes a taggregate from the store.</summary>
    void Delete(TaggregateId taggregateId);

@@ -34,6 +34,15 @@ public static class PipeAssert
       return @this;
    }
 
+   ///<summary>Throws <see cref="AssertionFailedException"/> if <paramref name="predicate"/> returns false when applied to <paramref name="this"/>. The exception message includes the predicate source expression and the value.</summary>
+   [MethodImpl(MethodImplOptions.AggressiveInlining)]
+   public static bool _assert([DoesNotReturnIf(false)]bool @this,
+                              [CallerArgumentExpression(nameof(@this))] string? thisExpression = null)
+   {
+      if(!@this) ThrowAssertionFailed($"Assertion failed: {thisExpression}.{nameof(_assert)}() ## the value of {thisExpression} was: {@this}");
+      return @this;
+   }
+
    ///<summary>Throws <see cref="AssertionFailedException"/> with message from <paramref name="messageFactory"/> if <paramref name="predicate"/> returns false when applied to <paramref name="this"/>. The factory is only invoked on failure, avoiding allocation in the success path.</summary>
    [MethodImpl(MethodImplOptions.AggressiveInlining)]
    public static T _assert<T>(this T @this, Predicate<T> predicate, Func<T, string> messageFactory)

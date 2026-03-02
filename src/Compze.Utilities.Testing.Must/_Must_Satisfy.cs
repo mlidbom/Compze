@@ -8,7 +8,10 @@ using Compze.Utilities.SystemCE;
 
 namespace Compze.Utilities.Testing.Must;
 
-public record SatisfyCallInfo<T>(string PredicateExpression, Func<T, bool> Predicate, Func<T, string>? FailureMessage, string CallingMethod, IReadOnlyList<ExpressionValue>? UsedArguments);
+
+// ReSharper disable NotAccessedPositionalProperty.Global
+public record SatisfyCallInfo<T>(string PredicateExpression, Func<T, string>? FailureMessage, string CallingMethod, IReadOnlyList<ExpressionValue>? UsedArguments);
+// ReSharper restore NotAccessedPositionalProperty.Global
 
 public static class _Must_Satisfy
 {
@@ -68,7 +71,7 @@ public static class _Must_Satisfy
       {
          if(messageOverride != null)
          {
-            throw new AssertionFailedException(messageOverride.Invoke(new SatisfyCallInfo<T>(predicateExpression, predicate, failureMessage, caller, expressionValues)));
+            throw new AssertionFailedException(messageOverride.Invoke(new SatisfyCallInfo<T>(predicateExpression, failureMessage, caller, expressionValues)));
          }
 
          var message = $"""

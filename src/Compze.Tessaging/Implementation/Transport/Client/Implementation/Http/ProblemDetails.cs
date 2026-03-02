@@ -11,11 +11,11 @@ namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Http;
 #pragma warning disable CA1812 // Instantiated via JSON deserialization
 [UsedImplicitly] class ProblemDetails
 {
-   public string Type { get; set; } = "";
-   public string Title { get; set; } = "";
-   public int Status { get; set; }
-   public string Detail { get; set; } = "";
-   public string Instance { get; set; } = "";
+   public string Type { get; init; } = "";
+   public string Title { get; init; } = "";
+   public int Status { get; init; }
+   public string Detail { get; init; } = "";
+   public string Instance { get; init; } = "";
 
    public static async Task<ProblemDetails> FromResponse(HttpResponseMessage response)
    {

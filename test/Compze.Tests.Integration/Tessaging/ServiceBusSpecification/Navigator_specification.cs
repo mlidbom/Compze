@@ -109,7 +109,7 @@ public class Navigator_specification : UniversalTestBase
                                                                   Id = new TessageId()
                                                                };
 
-      public string Name { get; private set; } = "";
+      public string Name { get; private init; } = "";
    }
 
    protected internal class UserRegisteredConfirmationResource(string name)
