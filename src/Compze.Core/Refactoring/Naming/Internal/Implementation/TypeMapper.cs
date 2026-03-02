@@ -118,9 +118,9 @@ public class TypeMapper : ITypeMapper
       }
    }
 
-   static readonly ReentrancyGuard _reentrancyGuard = new();
+   static readonly ReentrancyGuard ReentrancyGuard = new();
 
-   static void EnsureAllCurrentlyLoadedAssembliesHaveBeenCheckedForRequiredMappings() => _reentrancyGuard.ExecuteIfNotReEntering(() =>
+   static void EnsureAllCurrentlyLoadedAssembliesHaveBeenCheckedForRequiredMappings() => ReentrancyGuard.ExecuteIfNotReEntering(() =>
    {
       State.Locked(state =>
       {
@@ -145,7 +145,7 @@ public class TypeMapper : ITypeMapper
             }
          }
 
-         if(_reentrancyGuard.GetAndClearReentryWasAttempted())
+         if(ReentrancyGuard.GetAndClearReentryWasAttempted())
          {
             EnsureAllCurrentlyLoadedAssembliesHaveBeenCheckedForRequiredMappings();
          }

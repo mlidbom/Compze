@@ -52,7 +52,7 @@ public sealed class StrictlyManagedResource<TManagedResource> : IStrictlyManaged
    static readonly IMonitor StaticMonitor = IMonitor.New();
    readonly bool _collectStackTraces;
    // ReSharper disable once StaticMemberInGenericType
-   static bool CollectStackTracesByDefault = StrictlyManagedResources.CollectStackTracesByDefault;
+   static bool _collectStackTracesByDefault = StrictlyManagedResources.CollectStackTracesByDefault;
 
    public StrictlyManagedResource(bool forceStackTraceCollection = false, bool needsFileInfo = false, TManagedResource? instance = null)
    {
@@ -101,10 +101,10 @@ public sealed class StrictlyManagedResource<TManagedResource> : IStrictlyManaged
                      //Todo: Log metric here.
                      using(StaticMonitor.TakeLock())
                      {
-                        if(!CollectStackTracesByDefault)
+                        if(!_collectStackTracesByDefault)
                         {
                            this.Log().Warning($"Enabling collection of stacktraces for {ManagedType.GetFullNameCompilable()} since it is not always disposed.");
-                           CollectStackTracesByDefault = true;
+                           _collectStackTracesByDefault = true;
                         }
                      }
                   }

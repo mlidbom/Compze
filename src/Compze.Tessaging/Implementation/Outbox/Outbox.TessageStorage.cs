@@ -14,7 +14,7 @@ using Compze.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Tessaging.Implementation.Outbox;
 
-public partial class Outbox
+partial class Outbox
 {
    internal class TessageStorage : ITessageStorage
    {

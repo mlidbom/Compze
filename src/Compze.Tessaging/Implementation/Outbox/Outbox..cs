@@ -22,7 +22,7 @@ static class OutboxRegistrar
 }
 
 #pragma warning disable CA1724 // Type name intentionally matches namespace concept
-public partial class Outbox : IOutbox
+partial class Outbox : IOutbox
 {
    internal static void RegisterWith(IComponentRegistrar registrar)
    {
