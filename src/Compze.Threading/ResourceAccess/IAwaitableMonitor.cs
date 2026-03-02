@@ -4,8 +4,10 @@ namespace Compze.Threading.ResourceAccess;
 
 public partial interface IAwaitableMonitor
 {
-   public static IAwaitableMonitor WithDefaultTimeout() => IMonitor.CreateAwaitableWithDefaultTimeout();
-   public static IAwaitableMonitor New(LockTimeout lockTimeout, WaitTimeout? waitTimeout = null) => IMonitor.CreateAwaitableWithTimeouts(lockTimeout, waitTimeout ?? WaitTimeout.Default);
+   public static IAwaitableMonitor WithDefaultTimeout() => new MonitorCE(LockTimeout.Default, WaitTimeout.Default);
+   public static IAwaitableMonitor New(LockTimeout lockTimeout, WaitTimeout? waitTimeout = null) => new MonitorCE(lockTimeout, waitTimeout);
+
+   internal static IMonitor NewIMonitor(LockTimeout? timeout = null) => new MonitorCE(timeout, WaitTimeout.Default);
 
    IDisposable TakeReadLock(LockTimeout? timeout = null);
    IDisposable TakeUpdateLock(LockTimeout? timeout = null);

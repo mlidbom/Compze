@@ -8,7 +8,7 @@ using Compze.Threading.Utilities;
 
 namespace Compze.Threading.ResourceAccess;
 
-public partial interface IMonitor
+public partial interface IAwaitableMonitor
 {
 #pragma warning disable CA1001 //By creating the locks only once in the constructor usages become zero-allocation operations.
    private class MonitorCE : IMonitor, IAwaitableMonitor, IMonitorInternals
@@ -46,10 +46,10 @@ public partial interface IMonitor
 
       WaitTimeout _stackTraceFetchTimeout;
 
-      public MonitorCE(LockTimeout lockTimeout, WaitTimeout waitTimeout)
+      public MonitorCE(LockTimeout? lockTimeout, WaitTimeout? waitTimeout)
       {
-         LockTimeout = lockTimeout;
-         WaitTimeout = waitTimeout;
+         LockTimeout = lockTimeout ?? LockTimeout.Default;
+         WaitTimeout = waitTimeout ?? WaitTimeout.Default;
          _readLock = new LockDisposer(ReleaseLock);
          _updateLock = new LockDisposer(() =>
          {
