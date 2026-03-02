@@ -28,8 +28,6 @@ public static partial class TessageInspector
             throw new MissingTransactionException(tessage);
          case ICannotBeSentRemotelyFromWithinTransaction when Transaction.Current != null:
             throw new TransactionPresentException(tessage);
-         case IAtMostOnceTessage atMostOnce when atMostOnce.Id == null:
-            throw new MissingTessageIdException(tessage);
       }
 #pragma warning restore IDE0010
    }

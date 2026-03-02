@@ -72,7 +72,7 @@ public abstract class EndpointHostTestBase : UniversalTestBase
    protected override async Task DisposeAsyncInternal()
    {
       OpenGates();
-      if(Client != null) await Client.DisposeAsync();
+      await Client.DisposeAsync();
       await Host.DisposeAsync();
       _rootContainer.Dispose();
    }
