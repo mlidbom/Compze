@@ -8,6 +8,7 @@ using Compze.Tessaging.TyperMediaApi.EventStore;
 
 // ReSharper disable ClassNeverInstantiated.Global
 // ReSharper disable InconsistentNaming for testing
+// ReSharper disable once UnusedAutoPropertyAccessor.Local
 
 #pragma warning disable IDE1006 //Reviewed OK: Test Naming Styles
 #pragma warning disable CA1724  // Type names should not match namespaces

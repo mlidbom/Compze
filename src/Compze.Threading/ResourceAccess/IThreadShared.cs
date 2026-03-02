@@ -68,7 +68,7 @@ public interface IThreadShared
 
       public TResult ReadOrUpdate<TResult>(Func<TShared, TResult?> tryRead, Action<TShared> updateOnFailedRead, LockTimeout? timeout = null)
          where TResult : class =>
-         _awaitableMonitor.ReadOrUpdate(() => tryRead(_shared), () => updateOnFailedRead(_shared));
+         _awaitableMonitor.ReadOrUpdate(() => tryRead(_shared), () => updateOnFailedRead(_shared), timeout);
 
       public TResult ReadWhen<TResult>(Func<TShared, TResult> read, Func<TShared, bool> condition, WaitTimeout? timeout = null) => _awaitableMonitor.ReadWhen(() => read(_shared), () => condition(_shared), timeout);
 
