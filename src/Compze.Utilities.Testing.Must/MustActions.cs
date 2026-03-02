@@ -1,8 +1,8 @@
 using System;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
-using Compze.Threading.TasksCE;
 using JetBrains.Annotations;
 
 namespace Compze.Utilities.Testing.Must;

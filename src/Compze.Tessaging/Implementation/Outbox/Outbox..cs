@@ -6,10 +6,10 @@ using Compze.Core.Tessaging.Public;
 using Compze.Tessaging.Implementation.Abstractions;
 using Compze.Tessaging.Implementation.Transport.Client.Internal;
 using Compze.Contracts;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE.LinqCE;
-using Compze.Threading.TasksCE;
 using Compze.Utilities.Logging;
 using Compze.Utilities.SystemCE.TransactionsCE;
 

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Compze.Contracts;
 using Compze.Underscore;
 
@@ -28,6 +29,7 @@ static class ReadonlyCollections
       return copy;
    }
 
+   [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
    static void AddRange<T>(this ICollection<T> me, IEnumerable<T> toAdd) => Contract.Argument.NotNull2(me, toAdd)._(() =>
    {
       foreach(var it in toAdd)

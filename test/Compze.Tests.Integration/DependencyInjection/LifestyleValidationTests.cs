@@ -3,7 +3,6 @@ using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.DependencyInjection;
 using Compze.Tests.Infrastructure.XUnit;
-using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Testing.Must;
 using static Compze.Utilities.Testing.Must.MustActions;
 
@@ -14,13 +13,12 @@ public class LifestyleValidationTests : UniversalTestBase
    [PCTDIContainer]
    public void Should_throw_when_singleton_depends_on_scoped_service()
    {
-      IComponentRegistrar registrar = new TestingComponentRegistrar();
       using var container = TestEnv.DIContainer.CreateWithServiceLocatorAndCurrentTestsPluggableComponents();
 
       var exception = Invoking(() =>
       {
          // ReSharper disable once AccessToDisposedClosure
-         var locator = container.Register(
+         _ = container.Register(
             Scoped.For<IScopedService>().CreatedBy(() => new ScopedService()),
             Singleton.For<ISingletonService>().CreatedBy((IScopedService scoped) => new SingletonServiceDependingOnScoped(scoped))
          ).ServiceLocator;

@@ -1,7 +1,7 @@
 using System;
 using System.Data.Common;
 using System.Threading.Tasks;
-using Compze.Threading.TasksCE;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Sql.Common.Abstractions;
 

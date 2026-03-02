@@ -56,7 +56,7 @@ public static partial class TypeCE
    static readonly ConcurrentDictionary<Type, List<Type>> GenericInterfacesByType = new();
 
    static IEnumerable<Type> ListGenericInterfaces(this Type @this) =>
-      GenericInterfacesByType.GetOrAdd(@this, it => it.GetInterfaces().Where(it => it.IsGenericType).ToList());
+      GenericInterfacesByType.GetOrAdd(@this, it => it.GetInterfaces().Where(it2 => it2.IsGenericType).ToList());
 
    public static bool ImplementsGenericInterface(this Type @this, Type implementedGenericInterface) =>
       @this.ListGenericInterfaces(implementedGenericInterface).Any();

@@ -4,7 +4,7 @@ using Compze.Tessaging.Hosting.Testing.Tessaging;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.Tests.Infrastructure;
 using System.Threading.Tasks;
-using Compze.Threading.TasksCE;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 
 namespace AccountManagement.UserStories;
 
@@ -13,7 +13,7 @@ public abstract class UserStoryTest : UniversalTestBase
    ITestingEndpointHost Host { get; set; }
    readonly IEndpoint _endpoint;
    IClient _client = null!;
-   internal AccountScenarioApi Scenario => new(_client!);
+   internal AccountScenarioApi Scenario => new(_client);
 
    protected UserStoryTest()
    {

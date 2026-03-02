@@ -35,7 +35,4 @@ public static partial class TessageInspector
 
    public class TransactionPresentException(ITessage tessage) :
       TransactionPolicyViolationException($"{tessage.GetType().FullName} is {typeof(ICannotBeSentRemotelyFromWithinTransaction).FullName} but there is a transaction.");
-
-   public class MissingTessageIdException(ITessage tessage) :
-      ArgumentException($"{nameof(IAtMostOnceTessage.Id)} was Guid.Empty for tessage of type: {tessage.GetType().FullName}");
 }

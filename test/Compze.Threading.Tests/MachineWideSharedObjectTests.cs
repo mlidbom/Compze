@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Compze.Contracts;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Threading.ResourceAccess;
-using Compze.Threading.TasksCE;
 using Compze.Threading.Testing;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 using Compze.Utilities.Testing.Must;
@@ -34,7 +34,7 @@ class SharedObjectSerializer : ISharedObjectSerializer<SharedObject>
 
 public class MachineWideSharedObjectTests : UniversalTestBase
 {
-   readonly List<MachineWideSharedObject<SharedObject>> _created = new();
+   readonly List<MachineWideSharedObject<SharedObject>> _created = [];
 
    protected override void DisposeInternal() => _created.ForEach(obj => obj.Delete());
 

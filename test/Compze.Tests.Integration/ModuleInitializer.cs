@@ -10,6 +10,7 @@ public static class IntegrationTestsModuleInitializer
    public static void Initialize()
    {
       //We just need to force the Compze.Tests.Infrastructure assembly to load so that the initializers in that assembly runs
+      // ReSharper disable once UnusedVariable
       var ignored = typeof(Compze.Tests.Infrastructure.TestFixtureHelper);
    }
 }

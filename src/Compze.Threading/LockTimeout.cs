@@ -1,6 +1,6 @@
 using Compze.Threading.Utilities;
 using System;
-using System.Diagnostics.CodeAnalysis;
+
 // ReSharper disable UnusedMember.Global
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable MemberCanBeInternal

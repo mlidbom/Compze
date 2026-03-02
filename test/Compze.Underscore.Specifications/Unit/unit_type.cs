@@ -19,6 +19,7 @@ public class unit_type
 
       [XF] public void Equals_returns_true_for_a_boxed_unit() => unit.Value.Equals((object)unit.Value).Must().BeTrue();
 
+      // ReSharper disable once SuspiciousTypeConversion.Global
       [XF] public void Equals_returns_false_for_a_non_unit_object() => unit.Value.Equals("not a unit").Must().BeFalse();
 
       [XF] public void Equals_returns_false_for_null() => unit.Value.Equals(null).Must().BeFalse();

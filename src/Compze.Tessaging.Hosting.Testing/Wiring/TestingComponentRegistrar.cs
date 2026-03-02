@@ -14,7 +14,7 @@ using Compze.Utilities.Testing.DbPool;
 
 namespace Compze.Tessaging.Hosting.Testing.Wiring;
 
-public class TestingComponentRegistrar : ComponentRegistrar
+class TestingComponentRegistrar : ComponentRegistrar
 {
    readonly IDictionary<Type, object> _testingRegistrars;
 

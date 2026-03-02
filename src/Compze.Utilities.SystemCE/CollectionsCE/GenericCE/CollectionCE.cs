@@ -13,16 +13,12 @@ public static class CollectionCE
    ///<summary>Remove entries matching the condition from the collection.</summary>
    public static IReadOnlyList<T> RemoveWhere<T>(this ICollection<T> me, Func<T, bool> condition)
    {
-      Argument.NotNull(me).NotNull(condition);
+      Argument.NotNull2(me, condition);
       var removed = me.Where(condition).ToList();
       removed.ForEach(removeMe => me.Remove(removeMe));
       return removed;
    }
 
    ///<summary>Add all instances in <param name="toAdd"> to the collection <param name="me"></param>.</param></summary>
-   internal static void AddRange<T>(this ICollection<T> me, IEnumerable<T> toAdd)
-   {
-      Argument.NotNull(me).NotNull(toAdd);
-      toAdd.ForEach(me.Add);
-   }
+   internal static void AddRange<T>(this ICollection<T> me, IEnumerable<T> toAdd) => toAdd.ForEach(me.Add);
 }

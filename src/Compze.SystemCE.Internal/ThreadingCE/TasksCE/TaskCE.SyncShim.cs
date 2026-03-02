@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 // ReSharper disable MethodSupportsCancellation
 
-namespace Compze.Threading.TasksCE;
+namespace Compze.SystemCE.ThreadingCE.TasksCE;
 
 static partial class TaskCE
 {

@@ -1,6 +1,6 @@
 using System;
 using System.Threading.Tasks;
-using Compze.Threading.TasksCE;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Utilities.SystemCE.ThreadingCE;
 
 namespace Compze.Utilities.SystemCE;

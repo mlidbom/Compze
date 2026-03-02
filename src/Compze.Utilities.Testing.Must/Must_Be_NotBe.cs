@@ -21,7 +21,7 @@ public static class Must_Be_NotBe
          return context.Be_transitively_equal_to_according_to_every_supported_comparison_method_and_hashcode_internal(expectedAsActual, expectedExpression);
       }
 
-      if(context.Actual is TExpected actualAsExpected)
+      if(context.Actual is TExpected)
       {
          context.Cast<TExpected>().Be_transitively_equal_to_according_to_every_supported_comparison_method_and_hashcode_internal(expected, expectedExpression).Cast<TValue>();
       }

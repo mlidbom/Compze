@@ -2,11 +2,11 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.SystemCE;
 using Compze.Threading.ResourceAccess;
 using Compze.Threading.ResourceAccess.Exceptions;
-using Compze.Threading.TasksCE;
 using Compze.Utilities.Testing.Must;
 using Compze.Utilities.Testing.XUnit.BDD;
 using NCrunch.Framework;
@@ -63,21 +63,21 @@ public class MonitorCE_specification : UniversalTestBase
    public class When_a_thread_waiting_in_TakeUpdateLockWhen_is_interrupted : MonitorCE_specification
    {
       readonly IAwaitableMonitor _monitor = IAwaitableMonitor.New(LockTimeout.Seconds(30));
-      readonly Thread _waitingThread;
       readonly ManualResetEventSlim _threadIsWaiting = new(false);
       readonly ManualResetEventSlim _threadCompleted = new(false);
       Exception? _thrownException;
 
       public When_a_thread_waiting_in_TakeUpdateLockWhen_is_interrupted()
       {
-         _waitingThread = new Thread(() =>
+         var waitingThread = new Thread(() =>
          {
             try
             {
                _threadIsWaiting.Set();
                _monitor.TakeUpdateLockWhen(() => false);
             }
-#pragma warning disable CA1031 //We need to capture whatever exception Thread.Interrupt causes to assert on it
+#pragma warning disable CA1031
+            //We need to capture whatever exception Thread.Interrupt causes to assert on it
             catch(Exception ex)
             {
 #pragma warning restore CA1031
@@ -89,10 +89,10 @@ public class MonitorCE_specification : UniversalTestBase
             }
          }) { IsBackground = true };
 
-         _waitingThread.Start();
+         waitingThread.Start();
          _threadIsWaiting.Wait();
          Thread.Sleep(50.Milliseconds());
-         _waitingThread.Interrupt();
+         waitingThread.Interrupt();
          _threadCompleted.Wait(5.Seconds()).Must().BeTrue();
       }
 

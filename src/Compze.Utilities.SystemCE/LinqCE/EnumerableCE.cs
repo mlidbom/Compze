@@ -4,6 +4,8 @@ using System.Linq;
 using Compze.Contracts;
 using static Compze.Contracts.Contract;
 
+// ReSharper disable PossibleMultipleEnumeration
+
 namespace Compze.Utilities.SystemCE.LinqCE;
 
 /// <summary/>
@@ -17,20 +19,10 @@ public static partial class EnumerableCE
    /// <typeparam name="T"></typeparam>
    /// <param name="values"></param>
    /// <returns></returns>
-   public static IEnumerable<T> Create<T>(params T[] values)
-   {
-      Argument.NotNull(values);
-      return values;
-   }
+   public static IEnumerable<T> Create<T>(params T[] values) => values;
 
-   /// <summary>
-   /// Adds <paramref name="instances"/> to the end of <paramref name="source"/>
-   /// </summary>
-   static IEnumerable<T> Append<T>(this IEnumerable<T> source, params T[] instances)
-   {
-      Argument.NotNull(source).NotNull(instances);
-      return source.Concat(instances);
-   }
+   /// <summary>Adds <paramref name="instances"/> to the end of <paramref name="source"/></summary>
+   static IEnumerable<T> Append<T>(this IEnumerable<T> source, params T[] instances) => source.Concat(instances);
 
    //Add these so that we don't waste effort enumerating these types to check if any entries exist.
    public static bool None<T>(this List<T> me) => me.Count == 0;
@@ -41,13 +33,8 @@ public static partial class EnumerableCE
    /// <para>The inversion of Enumerable.Any() .</para>
    /// <para>Returns true if <paramref name="me"/> contains no elements.</para>
    /// </summary>
-   /// <returns>true if <paramref name="me"/> contains no objects. Otherwise false.</returns>
-   public static bool None<T>(this IEnumerable<T> me, Func<T,bool> condition)
-   {
-      Argument.NotNull(me).NotNull(condition);
-
-      return !me.Any(condition);
-   }
+   /// <returns>true if <paramref name="me"/> contains no objects, otherwise false.</returns>
+   public static bool None<T>(this IEnumerable<T> me, Func<T, bool> condition) => !me.Any(condition);
 
    /// <summary>
    /// Chops an IEnumerable up into <paramref name="size"/> sized chunks.
@@ -76,7 +63,6 @@ public static partial class EnumerableCE
          yield return yielded == size ? next : next.Take(yielded);
       }
    }
-
 
    /// <summary>
    /// Acting on an <see cref="IEnumerable{T}"/> <paramref name="me"/> where T is an <see cref="IEnumerable{TChild}"/>

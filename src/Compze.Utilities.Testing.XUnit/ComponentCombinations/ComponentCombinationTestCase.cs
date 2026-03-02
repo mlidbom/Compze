@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Utilities.SystemCE;
-using Compze.Threading.TasksCE;
 using Xunit.Sdk;
 using Xunit.v3;
 
@@ -32,7 +32,7 @@ class ComponentCombinationTestCase : ConstructorArgumentForwardingTestCase, ISel
       ) =>
       _useTestMethodArguments = useTestMethodArguments;
 
-   ComponentCombination combination => (ComponentCombination)TestMethodArguments![0]!;
+   ComponentCombination combination => (ComponentCombination)TestMethodArguments[0]!;
 
    protected override void Serialize(IXunitSerializationInfo info)
    {

@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 using Compze.Contracts;
 using Compze.Core.DocumentDb.Public;
 using Compze.Core.Public;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tests.Common.Sql.DocumentDb;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Tests.Infrastructure.XUnit;
-using Compze.Threading.TasksCE;
 using Compze.Utilities.SystemCE.UsageGuards;
 using Compze.Utilities.Testing.Must;
 using static Compze.Utilities.Testing.Must.MustActions;
@@ -625,10 +625,10 @@ public class DocumentDbTests : DocumentDbTestsBase
             updater.Save(user1);
             updater.Save(user2);
 
-            var people = reader.GetAll<User>([user1.Id]);
+            var people = reader.GetAll<User>([user1.Id]).ToList();
 
-            people.ToList().Must().HaveCount(1);
-            people.Must().Contain(user1);
+            people.Must().HaveCount(1)
+                  .Contain(user1);
         });
     }
 

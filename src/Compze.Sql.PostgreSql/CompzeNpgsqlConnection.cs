@@ -1,7 +1,7 @@
 using System.Data.Common;
 using System.Threading.Tasks;
 using Compze.Sql.Common.Abstractions;
-using Compze.Threading.TasksCE;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 using Npgsql;
 
 namespace Compze.Sql.PostgreSql;

@@ -10,7 +10,7 @@ using Compze.Utilities.Logging;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Compze.Threading.TasksCE;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Tessaging.Implementation.Outbox;
 

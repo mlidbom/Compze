@@ -8,7 +8,7 @@ using Compze.Utilities.Logging;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Compze.Threading.TasksCE;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Threading;
 using Compze.Threading.Testing;
 using Compze.Utilities.Testing.Must;

@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Compze.Core.Tessaging.Hosting.Public;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Underscore;
-using Compze.Threading.TasksCE;
 
 namespace Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 

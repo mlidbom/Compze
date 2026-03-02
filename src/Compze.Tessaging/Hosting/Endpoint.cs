@@ -11,8 +11,8 @@ using Compze.Tessaging.Implementation.Transport.Client.Routing.Abstractions;
 using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Logging;
-using Compze.Threading.TasksCE;
 using Compze.Contracts;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 using static Compze.Contracts.Contract;
 
 namespace Compze.Tessaging.Hosting;

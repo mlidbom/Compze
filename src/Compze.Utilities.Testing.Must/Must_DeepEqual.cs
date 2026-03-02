@@ -13,7 +13,7 @@ namespace Compze.Utilities.Testing.Must;
 
 public class EquivalencyConfig<TValue>
 {
-   internal HashSet<MemberInfo> ExcludedMembers { get; } = new();
+   internal HashSet<MemberInfo> ExcludedMembers { get; } = [];
    internal bool TypesIgnored { get; private set; }
 
    public EquivalencyConfig<TValue> ExcludeTypeMember<TMember>(Expression<Func<TValue, TMember>> memberExpression) =>

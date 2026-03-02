@@ -1,9 +1,9 @@
 using System;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.SystemCE;
-using Compze.Threading.TasksCE;
 using Compze.Threading.Testing;
 using Compze.Utilities.SystemCE.ThreadingCE.Async;
 using Compze.Utilities.Testing.Must;
@@ -156,7 +156,7 @@ public class AsyncLockCE_specification : UniversalTestBase
       {
          using var asyncLock = IAsyncLockCE.WithDefaultTimeout();
 
-         var task = Task.Run(() => asyncLock.Locked(() => Task.Run(() => asyncLock.Locked(() => {}))));
+         Task.Run(() => asyncLock.Locked(() => Task.Run(() => asyncLock.Locked(() => {})))).Wait();
       }
 
       [XF] public void it_allows_reentrant_calls_from_same_async_context_while_blocking_calls_from_same_thread()

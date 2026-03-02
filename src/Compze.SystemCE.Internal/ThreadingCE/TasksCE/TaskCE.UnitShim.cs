@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using Compze.Underscore;
 
-namespace Compze.Threading.TasksCE;
+namespace Compze.SystemCE.ThreadingCE.TasksCE;
 
 static class TaskUnit
 {

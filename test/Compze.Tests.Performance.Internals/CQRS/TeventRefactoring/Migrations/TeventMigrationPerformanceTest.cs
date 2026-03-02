@@ -26,7 +26,6 @@ namespace Compze.Tests.Performance.Internals.CQRS.TeventRefactoring.Migrations;
 [LongRunning]
 public class TeventMigrationPerformanceTest : TeventMigrationTestBase
 {
-   readonly List<TaggregateTevent> _history;
    readonly TestTaggregate _taggregate;
    readonly IServiceLocator? _container;
    IReadOnlyList<ITeventMigration> _currentMigrations;
@@ -43,12 +42,12 @@ public class TeventMigrationPerformanceTest : TeventMigrationTestBase
 
       _taggregate = UtcTimeSource.Test.FrozenAtUtcNow()
                                      .Run(() => TestTaggregate.FromTevents(new TaggregateId(), historyTypes));
-      _history = _taggregate.History.Cast<TaggregateTevent>().ToList();
+      var history = _taggregate.History.Cast<TaggregateTevent>().ToList();
 
       _currentMigrations = Enumerable.Empty<ITeventMigration>().ToList();
       _container = CreateServiceLocatorForTeventStoreType(migrationsFactory: () => _currentMigrations);
 
-      _container.ExecuteTransactionInIsolatedScope(() => _container.Resolve<ITeventStore>().SaveSingleTaggregateTevents(_history));
+      _container.ExecuteTransactionInIsolatedScope(() => _container.Resolve<ITeventStore>().SaveSingleTaggregateTevents(history));
    }
 
    protected override async Task DisposeAsyncInternal()

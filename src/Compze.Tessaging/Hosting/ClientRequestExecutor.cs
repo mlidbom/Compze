@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Core.Tessaging.Typermedia.Public;
-using Compze.Threading.TasksCE;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Tessaging.Hosting;
 

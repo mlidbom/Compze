@@ -17,7 +17,7 @@ public static partial class Constructor
             : ForType<TInstance>().DefaultConstructor();
 
       static PropertyInfo? ImplicitImplementationProperty<TInstance>() => typeof(TInstance).GetProperties(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
-                                                                                           .SingleOrDefault(prop => prop.Name == nameof(IStaticInstancePropertySingleton<TInstance>.Instance) && prop.PropertyType == typeof(TInstance));
+                                                                                           .SingleOrDefault(prop => prop.Name == nameof(IStaticInstancePropertySingleton<>.Instance) && prop.PropertyType == typeof(TInstance));
 
       static PropertyInfo ExplicitImplementationProperty<TInstance>()
       {
