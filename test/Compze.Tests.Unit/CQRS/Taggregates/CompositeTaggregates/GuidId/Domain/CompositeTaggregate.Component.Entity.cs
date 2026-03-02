@@ -2,6 +2,8 @@ using System;
 using Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId.Domain.Tevents;
 using JetBrains.Annotations;
 
+// ReSharper disable RedundantNameQualifier
+
 namespace Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId.Domain;
 
 partial class Component

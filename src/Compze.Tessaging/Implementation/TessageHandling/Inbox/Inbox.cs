@@ -25,14 +25,14 @@ static class InboxRegistrar
 {
    internal static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(
-         Singleton.For<Inbox.ITessageStorage>()
+         Singleton.For<ITessageStorage>()
                   .CreatedBy((IServiceBusSqlLayer.IInboxSqlLayer sqlLayer)
                                 => new InboxTessageStorage(sqlLayer)),
-         Singleton.For<Inbox.HandlerExecutionEngine>()
-                  .CreatedBy((ITessagesInFlightTracker globalStateTracker, ITessageHandlerRegistry handlerRegistry, IServiceLocator serviceLocator, Inbox.ITessageStorage storage, ITaskRunner taskRunner, EndpointConfiguration configuration)
-                                => new Inbox.HandlerExecutionEngine(globalStateTracker, handlerRegistry, serviceLocator, storage, taskRunner, configuration.Id)),
+         Singleton.For<HandlerExecutionEngine>()
+                  .CreatedBy((ITessagesInFlightTracker globalStateTracker, ITessageHandlerRegistry handlerRegistry, IServiceLocator serviceLocator, ITessageStorage storage, ITaskRunner taskRunner, EndpointConfiguration configuration)
+                                => new HandlerExecutionEngine(globalStateTracker, handlerRegistry, serviceLocator, storage, taskRunner, configuration.Id)),
          Singleton.For<IInbox>()
-                  .CreatedBy((IServiceLocator serviceLocator, Inbox.HandlerExecutionEngine handlerExecutionEngine, Inbox.ITessageStorage tessageStorage, IDependencyInjectionContainer container, IInboxTransportServer transportServer)
+                  .CreatedBy((IServiceLocator serviceLocator, HandlerExecutionEngine handlerExecutionEngine, ITessageStorage tessageStorage, IDependencyInjectionContainer container, IInboxTransportServer transportServer)
                                 => new Inbox(serviceLocator, handlerExecutionEngine, tessageStorage, container, transportServer))
       );
 

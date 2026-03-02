@@ -9,6 +9,7 @@ using JetBrains.Annotations;
 using static Compze.Utilities.Testing.Must.MustActions;
 // ReSharper disable ClassNeverInstantiated.Local
 // ReSharper disable PossibleInterfaceMemberAmbiguity
+// ReSharper disable RedundantNameQualifier
 
 // ReSharper disable InconsistentNaming
 #pragma warning disable CA1715 //Interfaces without I prefix

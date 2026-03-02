@@ -14,7 +14,7 @@ namespace Compze.Tessaging.Typermedia;
 public static class RemoteHypermediaNavigatorRegistrar
 {
    public static IComponentRegistrar RemoteHypermediaNavigator(this IComponentRegistrar registrar)
-      => registrar.Register(Typermedia.RemoteTypermediaNavigator.RegisterWith);
+      => registrar.Register(RemoteTypermediaNavigator.RegisterWith);
 }
 
 //Todo: Build a pipeline to handle things like tommand validation, caching layers etc. Don't explicitly check for rules and optimization here with duplication across the class.

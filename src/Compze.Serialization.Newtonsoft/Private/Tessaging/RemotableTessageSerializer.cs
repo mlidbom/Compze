@@ -10,7 +10,7 @@ namespace Compze.Serialization.Newtonsoft.Private.Tessaging;
 static class RemotableTessageSerializerRegistrar
 {
    public static IComponentRegistrar NewtonSoftRemotableTessageSerializer(this IComponentRegistrar registrar)
-      => registrar.Register(Tessaging.NewtonsoftRemotableTessageSerializer.RegisterWith);
+      => registrar.Register(NewtonsoftRemotableTessageSerializer.RegisterWith);
 }
 
 class NewtonsoftRemotableTessageSerializer : IRemotableTessageSerializer

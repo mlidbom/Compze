@@ -14,7 +14,7 @@ namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Http;
 public static class HttpApiTransportClientRegistrar
 {
    public static IComponentRegistrar HttpApiTransportClient(this IComponentRegistrar registrar)
-      => registrar.Register(Http.HttpTransportMessagePoster.RegisterWith);
+      => registrar.Register(HttpTransportMessagePoster.RegisterWith);
 }
 
 class HttpTransportMessagePoster : ITransportMessagePoster
