@@ -29,10 +29,11 @@ public static class TessageTypesInternal
    public class EndpointInformation
    {
       [Obsolete("Called by serializer", error: true)]
+      // ReSharper disable MemberCanBeInternal — Called by serializer via reflection
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
-      // ReSharper disable once MemberCanBeInternal — Called by serializer via reflection
       public EndpointInformation() {}
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+      // ReSharper restore MemberCanBeInternal
 
       public EndpointInformation(IEnumerable<TypeId> handledRemoteTessageTypeIds, EndpointConfiguration configuration)
       {
