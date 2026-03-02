@@ -16,6 +16,7 @@ using Compze.Tessaging.Implementation.Transport.Client.Routing.Abstractions;
 
 namespace Compze.Tessaging.Implementation.Abstractions;
 
+// ReSharper disable once MemberCanBeInternal — Serialized across assemblies via Newtonsoft reflection
 public static class TessageTypesInternal
 {
 #pragma warning disable CA1040 // Marker interface used for type-routing
@@ -24,10 +25,12 @@ public static class TessageTypesInternal
 
    internal class EndpointInformationTuery : TessageTypesInternal.ITessage, IRemotableTuery<EndpointInformation>;
 
+   // ReSharper disable once MemberCanBeInternal — Serialized across assemblies via Newtonsoft reflection
    public class EndpointInformation
    {
       [Obsolete("Called by serializer", error: true)]
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+      // ReSharper disable once MemberCanBeInternal — Called by serializer via reflection
       public EndpointInformation() {}
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 
@@ -38,9 +41,11 @@ public static class TessageTypesInternal
          HandledTessageTypes = [..handledRemoteTessageTypeIds];
       }
 
+      // ReSharper disable MemberCanBeInternal — Serialized across assemblies via Newtonsoft reflection
       public string Name { get; private set; }
       public EndpointId Id { get; private set; }
       public HashSet<TypeId> HandledTessageTypes { get; private set; }
+      // ReSharper restore MemberCanBeInternal
    }
 
    internal class NetworkTopologyTuery : TessageTypesInternal.ITessage, IRemotableTuery<NetworkTopology>;
