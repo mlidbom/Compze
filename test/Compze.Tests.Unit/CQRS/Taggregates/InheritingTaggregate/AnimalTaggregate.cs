@@ -22,7 +22,7 @@ class AnimalTaggregate : Taggregate<AnimalTaggregate, IAnimalTevent, AnimalTeven
 
 class CatTaggregate : AnimalTaggregate
 {
-   public CatTaggregate(){}
+   private CatTaggregate(){}
    protected override Type WrapperTEventImplementation => typeof(CatTevent<CatTevent>);
 
    public static CatTaggregate RegisterBirth()

@@ -43,7 +43,7 @@ public class MyCreateTaggregateTommand : TessageTypes.Remotable.AtMostOnce.AtMos
 {
    [Obsolete("Used by serializer", error: true)]
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
-   public MyCreateTaggregateTommand() {}
+   private MyCreateTaggregateTommand() {}
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 
    public MyCreateTaggregateTommand(TaggregateId taggregateId) => TaggregateId = taggregateId;
@@ -56,7 +56,7 @@ public class MyCreateTaggregateTommand : TessageTypes.Remotable.AtMostOnce.AtMos
 
 public class MyTaggregate : Taggregate<MyTaggregate, IMyTaggregateTevent, MyTaggregateTevent, IMyTaggregateTevent<IMyTaggregateTevent>, MyTaggregateTevent<MyTaggregateTevent>>
 {
-   public MyTaggregate()
+   private MyTaggregate()
    {
       RegisterTeventAppliers()
         .IgnoreUnhandled<IMyTaggregateTevent>();
@@ -84,7 +84,7 @@ public class MyTaggregateTevent<T>(T tevent) : TaggregateIdentifyingTevent<T>(te
 
 public class MyTaggregateTevent : TaggregateTevent, IMyTaggregateTevent
 {
-   protected MyTaggregateTevent() {}
+   private MyTaggregateTevent() {}
    protected MyTaggregateTevent(TaggregateId accountId) : base(accountId) {}
 
    internal class Created(TaggregateId accountId) : MyTaggregateTevent(accountId), IMyTaggregateTevent.Created;

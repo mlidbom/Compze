@@ -14,7 +14,7 @@ class CompositeTaggregateTevent<T>(T tevent) : TaggregateIdentifyingTevent<T>(te
 abstract class CompositeTaggregateTevent : TaggregateTevent, ICompositeTaggregateTevent
 {
    protected CompositeTaggregateTevent() {}
-   protected CompositeTaggregateTevent(TaggregateId taggregateId) : base(taggregateId) {}
+   private CompositeTaggregateTevent(TaggregateId taggregateId) : base(taggregateId) {}
 
    internal class Created(TaggregateId id, string name) : CompositeTaggregateTevent(id), ICompositeTaggregateTevent.Created
    {
@@ -38,7 +38,7 @@ abstract class CompositeTaggregateTevent : TaggregateTevent, ICompositeTaggregat
 
       public new abstract class Entity : Component, ICompositeTaggregateTevent.Component.Entity
       {
-         public Guid EntityId { get; protected set; }
+         public Guid EntityId { get; private set; }
 
 #pragma warning disable CA1812 // Used via reflection in taggregate infrastructure
          [UsedImplicitly] public class IdGetterSetter : IGetSetTaggregateEntityTeventEntityId<Guid, Entity, ICompositeTaggregateTevent.Component.Entity>
@@ -70,7 +70,7 @@ abstract class CompositeTaggregateTevent : TaggregateTevent, ICompositeTaggregat
 
    public abstract class Entity : CompositeTaggregateTevent, ICompositeTaggregateTevent.Entity
    {
-      public Guid EntityId { get; protected set; }
+      public Guid EntityId { get; private set; }
 
 #pragma warning disable CA1812 // Used via reflection in taggregate infrastructure
       [UsedImplicitly] public class IdGetterSetter : IGetSetTaggregateEntityTeventEntityId<Guid, Entity, ICompositeTaggregateTevent.Entity>
@@ -100,7 +100,7 @@ abstract class CompositeTaggregateTevent : TaggregateTevent, ICompositeTaggregat
 
       public abstract class NestedEntity : Entity, ICompositeTaggregateTevent.Entity.NestedEntity
       {
-         public Guid NestedEntityId { get; protected set; }
+         public Guid NestedEntityId { get; private set; }
 
 #pragma warning disable CA1812 // Used via reflection in taggregate infrastructure
          [UsedImplicitly] public new class IdGetterSetter : IGetSetTaggregateEntityTeventEntityId<Guid, NestedEntity, ICompositeTaggregateTevent.Entity.NestedEntity>

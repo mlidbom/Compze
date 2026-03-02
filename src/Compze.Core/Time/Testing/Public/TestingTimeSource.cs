@@ -29,7 +29,7 @@ public class TestingTimeSourceAdapter
    public TimeSourceOverride FrozenAtUtc(DateTime time) => new(FrozenUtc(time));
    public TimeSourceOverride FrozenAtUtc(string time) => new(FrozenUtc(time));
 
-   public class ConstantTimeSource(DateTime time) : IUtcTimeTimeSource
+   private class ConstantTimeSource(DateTime time) : IUtcTimeTimeSource
    {
       public DateTime UtcNow { get; } = time.TruncateToMicroseconds(); //Some of our supported databases only have microsecond precision, and we compare the entire contents of our objects in tests.
     }

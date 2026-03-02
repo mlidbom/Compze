@@ -9,7 +9,7 @@ namespace Compze.Utilities.Testing.Must;
 
 static class AssertionContextWriter
 {
-   public static string AssertionCode(this IAssertionContext context, string method, string? predicate = null) => $"{context.Expression}.Must().{method}({predicate})";
+   private static string AssertionCode(this IAssertionContext context, string method, string? predicate = null) => $"{context.Expression}.Must().{method}({predicate})";
 
    public static string FailingAssertionHeading(this IAssertionContext context, string method, string? predicate = null) =>
       $"""

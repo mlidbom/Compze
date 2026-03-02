@@ -12,11 +12,11 @@ public static class EnumCE
 
    public static bool IsValid(this Enum value) => Values(value).Contains(value);
 
-   public static IReadOnlySet<TEnum> Values<TEnum>() where TEnum : struct, Enum
+   private static IReadOnlySet<TEnum> Values<TEnum>() where TEnum : struct, Enum
       => TypeCache<TEnum>.ValidValues;
 
-   public static IReadOnlySet<Enum> Values(Type enumType) => Cache.GetOrAdd(enumType, type => Enum.GetValues(type).Cast<Enum>().ToHashSet());
-   public static IReadOnlySet<Enum> Values(Enum value) => Values(value.GetType());
+   private static IReadOnlySet<Enum> Values(Type enumType) => Cache.GetOrAdd(enumType, type => Enum.GetValues(type).Cast<Enum>().ToHashSet());
+   private static IReadOnlySet<Enum> Values(Enum value) => Values(value.GetType());
 
    static class TypeCache<T> where T : struct, Enum
    {

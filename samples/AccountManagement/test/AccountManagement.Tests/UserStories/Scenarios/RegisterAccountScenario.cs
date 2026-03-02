@@ -11,9 +11,9 @@ public class RegisterAccountScenario(IClient client, string? email = null, strin
 {
    readonly IClient _client = client;
 
-   public AccountId AccountId { get; set; } = new();
-   public string Email { get; set; } = email ?? TestData.Emails.CreateUnusedEmail();
-   public string Password  { get; set; } = password;
+   public AccountId AccountId { get; private set; } = new();
+   public string Email { get; private set; } = email ?? TestData.Emails.CreateUnusedEmail();
+   public string Password  { get; private set; } = password;
 
    internal RegisterAccountScenario WithAccountId(AccountId acountId)
    {

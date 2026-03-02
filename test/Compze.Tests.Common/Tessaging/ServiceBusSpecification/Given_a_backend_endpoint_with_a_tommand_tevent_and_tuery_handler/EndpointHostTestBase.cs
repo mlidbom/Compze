@@ -30,7 +30,7 @@ namespace Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_
 public abstract class EndpointHostTestBase : UniversalTestBase
 {
    static readonly WaitTimeout _timeout = WaitTimeout.Seconds(10);
-   public ITestingEndpointHost Host { get; set; } = null!;
+   public ITestingEndpointHost Host { get; private set; } = null!;
    public IThreadGate MyExactlyOnceTommandHandlerThreadGate { get; }
    public IThreadGate TommandHandlerWithResultThreadGate { get; }
    public IThreadGate MyCreateTaggregateTommandHandlerThreadGate { get; }
@@ -40,7 +40,7 @@ public abstract class EndpointHostTestBase : UniversalTestBase
    public IThreadGate TeventHandlerThreadGate { get; }
    public IThreadGate TueryHandlerThreadGate { get; }
 
-   public IReadOnlyList<IThreadGate> AllGates  { get; }
+   private IReadOnlyList<IThreadGate> AllGates  { get; }
 
    public IEndpoint BackendEndPoint { get; private set; } = null!;
    protected IClient Client { get; private set; } = null!;

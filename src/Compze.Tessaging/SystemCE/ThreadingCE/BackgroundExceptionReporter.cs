@@ -12,7 +12,7 @@ static class BackgroundExceptionReporterRegistrar
    public static IComponentRegistrar BackgroundExceptionReporter(this IComponentRegistrar registrar)
       => registrar.Register(BackgroundExceptionReporterCore.RegisterWith);
 
-   public class BackgroundExceptionReporterCore : IBackgroundExceptionReporter
+   private class BackgroundExceptionReporterCore : IBackgroundExceptionReporter
    {
       public static void RegisterWith(IComponentRegistrar registrar)
          => registrar.Register(Singleton.For<IBackgroundExceptionReporter>().CreatedBy(() => new BackgroundExceptionReporterCore()));

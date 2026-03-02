@@ -14,13 +14,13 @@ static class TestData
 
       internal static class Invalid
       {
-         public const string? Null = null;
-         public static readonly string EmptyString = string.Empty;
-         public static readonly string ShorterThanFourCharacters = ValidPassword[..3];
-         public const string BorderedByWhiteSpaceAtEnd = $"{ValidPassword} ";
-         public const string BorderedByWhiteSpaceAtBeginning = $" {ValidPassword}";
-         public static readonly string MissingUpperCaseCharacter = ValidPassword.ToLowerInvariant();
-         public static readonly string MissingLowercaseCharacter = ValidPassword.ToUpperInvariant();
+         private const string? Null = null;
+         private static readonly string EmptyString = string.Empty;
+         private static readonly string ShorterThanFourCharacters = ValidPassword[..3];
+         private const string BorderedByWhiteSpaceAtEnd = $"{ValidPassword} ";
+         private const string BorderedByWhiteSpaceAtBeginning = $" {ValidPassword}";
+         private static readonly string MissingUpperCaseCharacter = ValidPassword.ToLowerInvariant();
+         private static readonly string MissingLowercaseCharacter = ValidPassword.ToUpperInvariant();
 
          public static readonly string?[] All =
          [

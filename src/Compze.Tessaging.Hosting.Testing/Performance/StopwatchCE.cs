@@ -18,7 +18,7 @@ public static class StopwatchCE
    ///<summary>Measures how long it takes to execute <paramref name="action"/></summary>
    public static TimeSpan TimeExecution([InstantHandle] Action action) => new Stopwatch().TimeExecution(action);
 
-   public static async Task<TimeSpan> TimeExecutionAsync([InstantHandle] Func<Task> action) => await new Stopwatch().TimeExecutionAsync(action);
+   static async Task<TimeSpan> TimeExecutionAsync([InstantHandle] Func<Task> action) => await new Stopwatch().TimeExecutionAsync(action);
 
    ///<summary>Measures how long it takes to execute <paramref name="action"/></summary>
    static TimeSpan TimeExecution(this Stopwatch @this, [InstantHandle] Action action)

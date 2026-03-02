@@ -154,21 +154,21 @@ public sealed class TessageHandlerRegistry(ITypeMapper typeMapper) : ITessageHan
                          .ToHashSet();
    }
 
-   public class TeventHandlerRegistration(Type type, Action<ITeventHandlerRegistrar<ITevent>> registerHandlerWithRegistrar)
+   private class TeventHandlerRegistration(Type type, Action<ITeventHandlerRegistrar<ITevent>> registerHandlerWithRegistrar)
    {
       internal Type Type { get; } = type;
       internal Action<ITeventHandlerRegistrar<ITevent>> RegisterHandlerWithRegistrar { get; } = registerHandlerWithRegistrar;
    }
 
-   public abstract class HandlerWithResultRegistration(Type returnValueType, Func<object, object> handlerMethod)
+   private abstract class HandlerWithResultRegistration(Type returnValueType, Func<object, object> handlerMethod)
    {
       internal Type ReturnValueType { get; } = returnValueType;
       internal Func<object, object> HandlerMethod { get; } = handlerMethod;
    }
 
-   public class TommandHandlerWithResultRegistration<TTommand, TResult>(Func<TTommand, TResult> handlerMethod) : HandlerWithResultRegistration(typeof(TResult),
+   private class TommandHandlerWithResultRegistration<TTommand, TResult>(Func<TTommand, TResult> handlerMethod) : HandlerWithResultRegistration(typeof(TResult),
                                                                                                                                         tommand => handlerMethod((TTommand)tommand)!);
 
-   public class TueryHandlerRegistration<TTuery, TResult>(Func<TTuery, TResult> handlerMethod) : HandlerWithResultRegistration(typeof(TResult),
+   private class TueryHandlerRegistration<TTuery, TResult>(Func<TTuery, TResult> handlerMethod) : HandlerWithResultRegistration(typeof(TResult),
                                                                                                                         tommand => handlerMethod((TTuery)tommand)!);
 }

@@ -24,7 +24,7 @@ class InProcessTypermediaNavigator : IInProcessTypermediaNavigator
    readonly ITessageHandlerRegistry _handlerRegistry;
    readonly IUsageGuard _contextGuard;
 
-   public InProcessTypermediaNavigator(ITessageHandlerRegistry handlerRegistry)
+   private InProcessTypermediaNavigator(ITessageHandlerRegistry handlerRegistry)
    {
       _handlerRegistry = handlerRegistry;
       _contextGuard = new CombinationUsageGuard(new SingleTransactionUsageGuard(this));

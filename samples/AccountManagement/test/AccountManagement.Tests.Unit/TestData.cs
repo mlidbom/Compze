@@ -19,7 +19,7 @@ static class TestData
          public static readonly string EmptyString = string.Empty;
          public static readonly string ShorterThanFourCharacters = ValidPassword[..3];
          public const string BorderedByWhiteSpaceAtEnd = $"{ValidPassword} ";
-         public const string BorderedByWhiteSpaceAtBeginning = $" {ValidPassword}";
+         private const string BorderedByWhiteSpaceAtBeginning = $" {ValidPassword}";
          public static readonly string MissingUpperCaseCharacter = ValidPassword.ToLowerInvariant();
          public static readonly string MissingLowercaseCharacter = ValidPassword.ToUpperInvariant();
 

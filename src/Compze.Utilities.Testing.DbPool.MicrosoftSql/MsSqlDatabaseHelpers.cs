@@ -35,7 +35,7 @@ static class MsSqlDatabaseHelpers
 
                                           """;
 
-   public const string SetReadCommittedSnapshotOnStatement = """
+   private const string SetReadCommittedSnapshotOnStatement = """
 
                                                                declare @databaseName varchar(1000)
                                                                select @databaseName = DB_NAME()

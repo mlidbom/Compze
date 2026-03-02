@@ -9,7 +9,7 @@ namespace Compze.Serialization.Newtonsoft;
 
 static class RenamingAndNonPublicMembersSupportingJsonSettings
 {
-   public static readonly JsonSerializerSettings Default =
+   static readonly JsonSerializerSettings Default =
       new()
       {
          TypeNameHandling = TypeNameHandling.Auto,

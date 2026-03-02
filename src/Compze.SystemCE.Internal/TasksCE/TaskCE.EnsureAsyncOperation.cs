@@ -42,7 +42,7 @@ static partial class TaskCE
 
    static readonly TaskFactory DefaultSchedulerDenyChildAttachTaskFactory = new(CancellationToken.None, TaskCreationOptions.DenyChildAttach, TaskContinuationOptions.None, TaskScheduler.Default);
 #pragma warning disable CA2008 // Do not create tasks without passing a TaskScheduler We just did. On the line above...
-   public static Task RunOnDedicatedThread(Action action) => RunOnDedicatedThread(action.AsFunc());
+   static Task RunOnDedicatedThread(Action action) => RunOnDedicatedThread(action.AsFunc());
    public static Task<T> RunOnDedicatedThread<T>(Func<T> func) => DefaultSchedulerDenyChildAttachTaskFactory.StartNew(func, TaskCreationOptions.LongRunning);
 #pragma warning restore CA2008 // Do not create tasks without passing a TaskScheduler
 

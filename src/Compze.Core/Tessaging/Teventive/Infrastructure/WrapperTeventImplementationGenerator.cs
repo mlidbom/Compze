@@ -26,7 +26,7 @@ static class WrapperTeventImplementationGenerator
 
    static readonly IMonitor MonitorCE = IMonitor.WithDefaultTimeout();
 
-   public static class WrapperConstructorCache<TWrapperTevent, TWrappedTevent>
+   private static class WrapperConstructorCache<TWrapperTevent, TWrappedTevent>
       where TWrapperTevent : IPublisherIdentifyingTevent<TWrappedTevent>
       where TWrappedTevent : ITevent
    {

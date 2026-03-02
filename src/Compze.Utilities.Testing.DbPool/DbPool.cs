@@ -32,11 +32,11 @@ public class DbPool : StrictlyManagedResourceBase<DbPool>
                                   .DelegateToParentServiceLocatorWhenCloning());
 
    readonly IDbPoolSqlLayer _sqlLayer;
-   protected MachineWideSharedObject<DbPoolState> MachineWideState { get; }
+   private MachineWideSharedObject<DbPoolState> MachineWideState { get; }
    static TimeSpan _reservationLength;
    internal const int NumberOfDatabases = 50;
 
-   public DbPool(IDbPoolSqlLayer sqlLayer) : base(forceStackTraceAllocation: false)
+   private DbPool(IDbPoolSqlLayer sqlLayer) : base(forceStackTraceAllocation: false)
    {
       _sqlLayer = sqlLayer;
       _reservationLength = System.Diagnostics.Debugger.IsAttached ? 10.Minutes() : 65.Seconds();

@@ -43,7 +43,7 @@ public static class TestFixtureHelper
       CompzeLogger.LoggerFactoryMethod = SerilogLogger.Create;
    }
 
-   public class ShortSourceContextEnricher : ILogEventEnricher
+   private class ShortSourceContextEnricher : ILogEventEnricher
    {
       public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
       {

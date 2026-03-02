@@ -25,7 +25,7 @@ static class TaskRunnerRegistrar
    public static IComponentRegistrar TaskRunner(this IComponentRegistrar registrar)
       => registrar.Register(TaskRunnerCore.RegisterWith);
 
-   public class TaskRunnerCore : ITaskRunner, IDisposable
+   private class TaskRunnerCore : ITaskRunner, IDisposable
    {
       public static void RegisterWith(IComponentRegistrar registrar)
          => registrar.Register(Singleton.For<ITaskRunner>().CreatedBy((IBackgroundExceptionReporter exceptionReporter) => new TaskRunnerCore(exceptionReporter)));

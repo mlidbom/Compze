@@ -91,7 +91,7 @@ class TommandScheduler(IOutbox transport, ITaskRunner taskRunner) : IDisposable
 
    public void Stop() => _scheduledTessagesTimer?.Dispose();
 
-   public class ScheduledTommand(DateTime sendAt, IExactlyOnceTommand tommand)
+   private class ScheduledTommand(DateTime sendAt, IExactlyOnceTommand tommand)
    {
       public DateTime SendAt { get; } = sendAt.ToUniversalTimeSafely();
       public IExactlyOnceTommand Tommand { get; } = tommand;

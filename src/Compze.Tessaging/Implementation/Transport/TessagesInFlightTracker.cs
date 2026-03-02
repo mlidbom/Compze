@@ -47,10 +47,10 @@ public class TessagesInFlightTracker(ITypeMapper typeMapper) : ITessagesInFlight
       internal Dictionary<EndpointId, bool> EndpointDeliveryStatus { get; } = [];
    }
 
-   public class NonThreadSafeImplementation(ITypeMapper typeMapper)
+   private class NonThreadSafeImplementation(ITypeMapper typeMapper)
    {
       readonly ITypeMapper _typeMapper = typeMapper;
-      internal readonly Dictionary<TessageId, InFlightTessage> TrackedTessages = [];
+      readonly Dictionary<TessageId, InFlightTessage> TrackedTessages = [];
 
       readonly List<Exception> _busExceptions = [];
 

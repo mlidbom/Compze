@@ -30,7 +30,7 @@ abstract class RootTevent : TaggregateTevent, IRootTevent
 
       public abstract class Entity : Component, IRootTevent.Component.Entity
       {
-         public int EntityId { get; protected set; }
+         public int EntityId { get; private set; }
 
          [UsedImplicitly] public class IdGetterSetter : IGetSetTaggregateEntityTeventEntityId<int, Entity, IRootTevent.Component.Entity>
          {
@@ -60,7 +60,7 @@ abstract class RootTevent : TaggregateTevent, IRootTevent
 
    public abstract class Entity : RootTevent, IRootTevent.Entity
    {
-      public int EntityId { get; protected set; }
+      public int EntityId { get; private set; }
 
 #pragma warning disable CA1812 // Used via reflection in taggregate infrastructure
       [UsedImplicitly] public class IdGetterSetter : IGetSetTaggregateEntityTeventEntityId<int, Entity, IRootTevent.Entity>
@@ -90,7 +90,7 @@ abstract class RootTevent : TaggregateTevent, IRootTevent
 
       public abstract class NestedEntity : Entity, IRootTevent.Entity.NestedEntity
       {
-         public int NestedEntityId { get; protected set; }
+         public int NestedEntityId { get; private set; }
 
 #pragma warning disable CA1812 // Used via reflection in taggregate infrastructure
          [UsedImplicitly] public new class IdGetterSetter : NestedEntity, IGetSetTaggregateEntityTeventEntityId<int, NestedEntity, IRootTevent.Entity.NestedEntity>

@@ -4,7 +4,7 @@ namespace Compze.Utilities.DependencyInjection;
 
 public static class ComponentRegistrationExtensions
 {
-   public class ComponentPromise<TService> where TService : class
+   private class ComponentPromise<TService> where TService : class
    {
       internal TService Resolve(IServiceLocatorKernel kernel) =>
          kernel.Resolve<TService>();

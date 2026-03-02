@@ -18,7 +18,7 @@ public static class TeventStoreRegistrar
 
    public static TeventStoreRegistrationBuilder RegisterTeventStore(this IEndpointBuilder @this) => @this.RegisterTeventStore(EmptyMigrationsArray);
 
-   public static TeventStoreRegistrationBuilder RegisterTeventStore(this IEndpointBuilder @this, IReadOnlyList<ITeventMigration> migrations)
+   private static TeventStoreRegistrationBuilder RegisterTeventStore(this IEndpointBuilder @this, IReadOnlyList<ITeventMigration> migrations)
    {
       @this.Container.Register().TeventStore(@this.Configuration.ConnectionStringName, migrations);
       return new TeventStoreRegistrationBuilder(@this.RegisterHandlers);
@@ -27,7 +27,7 @@ public static class TeventStoreRegistrar
    public static IComponentRegistrar TeventStore(this IComponentRegistrar registrar, string connectionName) =>
       registrar.TeventStore(connectionName, EmptyMigrationsArray);
 
-   public static IComponentRegistrar TeventStore(this IComponentRegistrar @this,
+   private static IComponentRegistrar TeventStore(this IComponentRegistrar @this,
                                                  string connectionName,
                                                  IReadOnlyList<ITeventMigration> migrations) =>
       @this.TeventStoreForFlexibleTesting(connectionName, () => migrations);

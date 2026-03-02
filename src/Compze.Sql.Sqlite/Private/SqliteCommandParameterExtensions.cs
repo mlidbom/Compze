@@ -18,7 +18,7 @@ static class SqliteCommandParameterExtensions
    public static SqliteCommand AddVarcharParameter(this SqliteCommand @this, string name, int length, string value) => AddParameter(@this, name, SqliteType.Text, value);
    public static SqliteCommand AddMediumTextParameter(this SqliteCommand @this, string name, string value) => AddParameter(@this, name, SqliteType.Text, value);
 
-   public static SqliteCommand AddParameter(this SqliteCommand @this, SqliteParameter parameter)
+   private static SqliteCommand AddParameter(this SqliteCommand @this, SqliteParameter parameter)
    {
       @this.Parameters.Add(parameter);
       return @this;

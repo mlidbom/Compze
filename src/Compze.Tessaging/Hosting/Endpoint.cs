@@ -21,7 +21,7 @@ namespace Compze.Tessaging.Hosting;
 
 class Endpoint : IEndpoint
 {
-   public class ServerComponents(TommandScheduler tommandScheduler, IInbox inbox, IOutbox outbox) : IDisposable
+   private class ServerComponents(TommandScheduler tommandScheduler, IInbox inbox, IOutbox outbox) : IDisposable
    {
       internal readonly TommandScheduler TommandScheduler = tommandScheduler;
       internal readonly IInbox Inbox = inbox;

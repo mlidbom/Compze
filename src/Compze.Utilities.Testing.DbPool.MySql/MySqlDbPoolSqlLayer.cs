@@ -22,7 +22,7 @@ sealed class MySqlDbPoolSqlLayer : IDbPoolSqlLayer
 
    readonly IThreadShared<MySqlConnectionStringBuilder> _connectionStringBuilder;
 
-   public MySqlDbPoolSqlLayer()
+   private MySqlDbPoolSqlLayer()
    {
       var masterConnectionString = Environment.GetEnvironmentVariable(ConnectionStringConfigurationParameterName)
                                 ?? "Server=localhost;Database=mysql;Uid=root;Pwd=Development!1;";

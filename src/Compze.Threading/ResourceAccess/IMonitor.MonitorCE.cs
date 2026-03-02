@@ -160,7 +160,7 @@ public partial interface IMonitor
          }
       }
 
-      public enum LockType
+      private enum LockType
       {
          Read = 0,
          Update = 1

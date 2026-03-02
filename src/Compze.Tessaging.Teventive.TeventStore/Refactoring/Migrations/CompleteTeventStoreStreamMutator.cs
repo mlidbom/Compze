@@ -15,7 +15,7 @@ abstract class CompleteTeventStoreStreamMutator
                                                                                                                   ? new RealMutator(teventMigrationFactories)
                                                                                                                   : new OnlySerializeVersionsMutator();
 
-   public class OnlySerializeVersionsMutator : ICompleteTeventStreamMutator
+   private class OnlySerializeVersionsMutator : ICompleteTeventStreamMutator
    {
       readonly Dictionary<TaggregateId, int> _taggregateVersions = new();
 
@@ -33,7 +33,7 @@ abstract class CompleteTeventStoreStreamMutator
       }
    }
 
-   public class RealMutator(IReadOnlyList<ITeventMigration> teventMigrationFactories) : ICompleteTeventStreamMutator
+   private class RealMutator(IReadOnlyList<ITeventMigration> teventMigrationFactories) : ICompleteTeventStreamMutator
    {
       readonly IReadOnlyList<ITeventMigration> _teventMigrationFactories = teventMigrationFactories;
       readonly Dictionary<TaggregateId, ISingleTaggregateInstanceTeventStreamMutator> _taggregateMutatorsCache = new();

@@ -25,7 +25,7 @@ class SqliteDbPoolSqlLayer : IDbPoolSqlLayer
 
    const string ConnectionStringConfigurationParameterName = "COMPOSABLE_SQLITE_DATABASE_POOL_BASE_DIRECTORY";
 
-   public SqliteDbPoolSqlLayer()
+   private SqliteDbPoolSqlLayer()
    {
       _baseDirectory = Environment.GetEnvironmentVariable(ConnectionStringConfigurationParameterName)
                     ?? Path.Combine(Path.GetTempPath(), "CompzeDbPool", "Sqlite");

@@ -19,7 +19,7 @@ public readonly struct PipeAssertTarget<T>(T value, string? valueExpression)
 
    /// <summary>The caller-site expression that produced <see cref="Value"/>.</summary>
    [EditorBrowsable(EditorBrowsableState.Never)]
-   public string? ValueExpression { get; } = valueExpression;
+   private string? ValueExpression { get; } = valueExpression;
 
    /// <summary>Throws <see cref="AssertionFailedException"/> with the specified message. Use this from custom assertion extension methods.</summary>
    [MethodImpl(MethodImplOptions.AggressiveInlining)]

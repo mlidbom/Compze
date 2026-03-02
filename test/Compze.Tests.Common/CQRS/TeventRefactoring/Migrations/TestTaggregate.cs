@@ -45,7 +45,7 @@ namespace Compze.Tests.Common.CQRS.TeventRefactoring.Migrations
    {
       public void Publish(params TestTaggregateTevent[] tevents) => tevents.ForEach(base.Publish);
 
-      public TestTaggregate() => SetupAppliers();
+      private TestTaggregate() => SetupAppliers();
 
       void SetupAppliers()
       {
@@ -53,7 +53,7 @@ namespace Compze.Tests.Common.CQRS.TeventRefactoring.Migrations
            .For<ITestTaggregateTevent>(e => _history.Add(e));
       }
 
-      public TestTaggregate(params TestTaggregateTevent[] tevents) : this()
+      private TestTaggregate(params TestTaggregateTevent[] tevents) : this()
       {
          if(tevents.First() is not ITaggregateCreatedTevent) throw new Exception($"First tevent must be {nameof(ITaggregateCreatedTevent)}");
 
