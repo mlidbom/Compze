@@ -15,7 +15,7 @@ public static class TestingComponentRegistrarDbPool
    public static IComponentRegistrar CurrentTestsDbPoolIfNotCloneContainer(this IComponentRegistrar register) =>
       register.CastTo<TestingComponentRegistrar>().CurrentTestsDbPoolIfNotCloneContainer();
 
-   private static IComponentRegistrar CurrentTestsDbPoolIfNotCloneContainer(this TestingComponentRegistrar @this)
+   static IComponentRegistrar CurrentTestsDbPoolIfNotCloneContainer(this TestingComponentRegistrar @this)
    {
       if(@this.Container().IsClone())
       {

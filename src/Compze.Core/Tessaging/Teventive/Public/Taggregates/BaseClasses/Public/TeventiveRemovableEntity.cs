@@ -36,7 +36,7 @@ public abstract class TeventiveRemovableEntity<TParent,
     public new static ICollectionManager CreateSelfManagingCollection(TParent parent)
         => new CollectionManager(parent);
 
-    private new class CollectionManager : Tentity<TParent, TParentTevent, TParentTeventImplementation, TEntity, TEntityId, TEntityTeventImplementation, TEntityTevent, TEntityCreatedTevent, TEntityTeventIdGetterSetter>.CollectionManager
+    new class CollectionManager : Tentity<TParent, TParentTevent, TParentTeventImplementation, TEntity, TEntityId, TEntityTeventImplementation, TEntityTevent, TEntityCreatedTevent, TEntityTeventIdGetterSetter>.CollectionManager
     {
         public CollectionManager(TParent parent): base(parent)
         {

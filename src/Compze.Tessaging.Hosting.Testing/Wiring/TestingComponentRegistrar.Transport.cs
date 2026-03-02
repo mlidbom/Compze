@@ -12,7 +12,7 @@ static class TestingComponentRegistrarTransport
    public static IComponentRegistrar CurrentTestsTransport(this IComponentRegistrar register) =>
       register.CastTo<TestingComponentRegistrar>().CurrentTestsTransport();
 
-   private static IComponentRegistrar CurrentTestsTransport(this TestingComponentRegistrar @this)
+   static IComponentRegistrar CurrentTestsTransport(this TestingComponentRegistrar @this)
    {
       switch(TestEnv.Transport)
       {

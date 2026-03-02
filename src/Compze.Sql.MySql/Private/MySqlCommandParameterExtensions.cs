@@ -12,7 +12,7 @@ static class MySqlCommandParameterExtensions
    public static MySqlCommand AddVarcharParameter(this MySqlCommand @this, string name, int length, string value) => AddParameter(@this, name, MySqlDbType.VarString, value, length);
    public static MySqlCommand AddMediumTextParameter(this MySqlCommand @this, string name, string value) => AddParameter(@this, name, MySqlDbType.MediumText, value, -1);
 
-   private static MySqlCommand AddParameter(this MySqlCommand @this, MySqlParameter parameter)
+   static MySqlCommand AddParameter(this MySqlCommand @this, MySqlParameter parameter)
    {
       @this.Parameters.Add(parameter);
       return @this;

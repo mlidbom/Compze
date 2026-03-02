@@ -34,7 +34,7 @@ public class TeventCache : IDisposable, ITeventCache
       _transactionalOverlay = new TransactionalOverlay(this);
    }
 
-   private class TransactionalOverlay(TeventCache teventCache)
+   class TransactionalOverlay(TeventCache teventCache)
    {
       readonly TeventCache _parent = teventCache;
       readonly IMonitor _monitor = IMonitor.WithDefaultTimeout();

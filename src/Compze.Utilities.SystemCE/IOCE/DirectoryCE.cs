@@ -12,7 +12,7 @@ partial class DirectoryCE : FileSystemInfoCE
    internal DirectoryInfo GetDirectoryInfo() => new(AbsolutePath);
 #pragma warning restore CA1024 // Use properties
 
-   private DirectoryCE(DirectoryInfo directoryInfo) : base(directoryInfo){}
+   DirectoryCE(DirectoryInfo directoryInfo) : base(directoryInfo){}
 
    internal DirectoryCE GetOrCreateDirectory(string subDirectory)
    {
@@ -32,7 +32,7 @@ partial class DirectoryCE : FileSystemInfoCE
       return TextFile.Create(this, fileName, encoding, createInitialContent?.Invoke() ?? "");
    }
 
-   private FileCE? TryGetFile(string fileName) => (GetDirectoryInfo().GetFiles().SingleOrDefault(it => it.Name == fileName) is {} fileInfo) ? new FileCE(fileInfo) : null;
+   FileCE? TryGetFile(string fileName) => (GetDirectoryInfo().GetFiles().SingleOrDefault(it => it.Name == fileName) is {} fileInfo) ? new FileCE(fileInfo) : null;
 
    DirectoryInfo? TryGetSubDirector(string name) => GetDirectoryInfo().GetDirectories().SingleOrDefault(it => it.Name == name);
 

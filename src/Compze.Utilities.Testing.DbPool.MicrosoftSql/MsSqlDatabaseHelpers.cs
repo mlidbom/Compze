@@ -35,14 +35,14 @@ static class MsSqlDatabaseHelpers
 
                                           """;
 
-   private const string SetReadCommittedSnapshotOnStatement = """
+   const string SetReadCommittedSnapshotOnStatement = """
 
-                                                               declare @databaseName varchar(1000)
-                                                               select @databaseName = DB_NAME()
-                                                               declare @sql nvarchar(500)
-                                                               set @sql = 'ALTER DATABASE [' + @databaseName +  '] SET READ_COMMITTED_SNAPSHOT ON'
-                                                               exec sp_executesql @sql
-                                                               """;
+                                                      declare @databaseName varchar(1000)
+                                                      select @databaseName = DB_NAME()
+                                                      declare @sql nvarchar(500)
+                                                      set @sql = 'ALTER DATABASE [' + @databaseName +  '] SET READ_COMMITTED_SNAPSHOT ON'
+                                                      exec sp_executesql @sql
+                                                      """;
 
    public static void DropAllObjectsAndSetReadCommittedSnapshotIsolationLevel(this ICompzeMsSqlConnection connection)
    {

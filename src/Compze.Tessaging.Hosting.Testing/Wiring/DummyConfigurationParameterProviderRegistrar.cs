@@ -11,7 +11,7 @@ static class DummyConfigurationParameterProviderRegistrar
       => registrar.Register(Singleton.For<IConfigurationParameterProvider>()
                                      .CreatedBy(() => new DummyConfigurationParameterProviderCore()));
 
-   private class DummyConfigurationParameterProviderCore : IConfigurationParameterProvider
+   class DummyConfigurationParameterProviderCore : IConfigurationParameterProvider
    {
       public string GetString(string parameterName, string? valueIfMissing = null) => throw new NotImplementedException();
    }

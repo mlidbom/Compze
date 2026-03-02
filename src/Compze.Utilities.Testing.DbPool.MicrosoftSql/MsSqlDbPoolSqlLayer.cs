@@ -19,7 +19,7 @@ class MsSqlDbPoolSqlLayer : IDbPoolSqlLayer
 
    const string ConnectionStringConfigurationParameterName = "COMPOSABLE_MSSQL_DATABASE_POOL_MASTER_CONNECTIONSTRING";
 
-   private MsSqlDbPoolSqlLayer()
+   MsSqlDbPoolSqlLayer()
    {
       _masterConnectionString = Environment.GetEnvironmentVariable(ConnectionStringConfigurationParameterName)
                              ?? "Data Source=localhost;Initial Catalog=master;Integrated Security=True;TrustServerCertificate=True;";

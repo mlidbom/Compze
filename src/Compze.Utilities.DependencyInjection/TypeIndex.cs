@@ -10,12 +10,12 @@ namespace Compze.Utilities.DependencyInjection;
 public abstract class TypeIndex<TInheritor> where TInheritor : TypeIndex<TInheritor>
 {
    static readonly IMonitor MonitorCE = IMonitor.WithDefaultTimeout();
-   private static int ServiceCount { get; set; }
+   static int ServiceCount { get; set; }
    static IReadOnlyDictionary<Type, int> _map = new Dictionary<Type, int>();
 
    static Type[] _backMap = [];
 
-   private static int For(Type type)
+   static int For(Type type)
    {
       if(_map.TryGetValue(type, out var value))
          return value;

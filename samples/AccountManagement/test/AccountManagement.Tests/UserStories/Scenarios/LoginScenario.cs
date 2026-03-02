@@ -7,8 +7,8 @@ namespace AccountManagement.UserStories.Scenarios;
 public class LoginScenario(IClient client, string email, string password) : ScenarioBase<AccountResource.Tommand.LogIn.LoginAttemptResult>
 {
    readonly IClient _client = client;
-   private string Password { get; set; } = password;
-   private string Email { get; set; } = email;
+   string Password { get; set; } = password;
+   string Email { get; set; } = email;
 
    internal LoginScenario WithEmail(string email)
    {

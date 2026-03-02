@@ -52,12 +52,12 @@ class ComponentCombinationsConfigurationFileLine
 
    Enum ComponentValue(int componentTypeIndex, string componentName) => (Enum)Enum.Parse(_componentTypes[componentTypeIndex], componentName);
 
-   private readonly record struct WildcardComponent(Type ComponentType)
+   readonly record struct WildcardComponent(Type ComponentType)
    {
       public IReadOnlyList<Enum> AllComponents => Enum.GetValues(ComponentType).Cast<Enum>().ToReadOnlyList();
    }
 
-   private class WildCardComponentCombination(IReadOnlyList<Enum> components)
+   class WildCardComponentCombination(IReadOnlyList<Enum> components)
    {
       readonly IReadOnlyList<Enum> _components = components;
       public Enum ComponentFor(Type componentType) => _components.Single(predicate: it => it.GetType() == componentType);

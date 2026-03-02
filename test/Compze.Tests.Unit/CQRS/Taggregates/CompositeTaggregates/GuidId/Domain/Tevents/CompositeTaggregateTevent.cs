@@ -14,7 +14,7 @@ class CompositeTaggregateTevent<T>(T tevent) : TaggregateIdentifyingTevent<T>(te
 abstract class CompositeTaggregateTevent : TaggregateTevent, ICompositeTaggregateTevent
 {
    protected CompositeTaggregateTevent() {}
-   private CompositeTaggregateTevent(TaggregateId taggregateId) : base(taggregateId) {}
+   CompositeTaggregateTevent(TaggregateId taggregateId) : base(taggregateId) {}
 
    internal class Created(TaggregateId id, string name) : CompositeTaggregateTevent(id), ICompositeTaggregateTevent.Created
    {

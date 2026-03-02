@@ -14,7 +14,7 @@ static class NpgsqlCommandParameterExtensions
    public static NpgsqlCommand AddVarcharParameter(this NpgsqlCommand @this, string name, int length, string value) => AddParameter(@this, name, NpgsqlDbType.Varchar, value, length);
    public static NpgsqlCommand AddMediumTextParameter(this NpgsqlCommand @this, string name, string value) => AddParameter(@this, name, NpgsqlDbType.Text, value, -1);
 
-   private static NpgsqlCommand AddParameter(this NpgsqlCommand @this, NpgsqlParameter parameter)
+   static NpgsqlCommand AddParameter(this NpgsqlCommand @this, NpgsqlParameter parameter)
    {
       @this.Parameters.Add(parameter);
       return @this;

@@ -26,7 +26,7 @@ abstract class AssertionContext : IAssertionContext
       Expression = this.NormalizeExpressionIndentation(expression);
    }
 
-   private object? ActualUntyped { get; }
+   object? ActualUntyped { get; }
 
 #pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
 #pragma warning disable CS8604 // Possible null reference argument.

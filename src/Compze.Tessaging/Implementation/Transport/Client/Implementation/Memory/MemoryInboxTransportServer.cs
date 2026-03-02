@@ -49,7 +49,7 @@ class MemoryInboxTransportServer : IInboxTransportServer
 
    public Uri Address { get; }
 
-   private bool Running { get; set; }
+   bool Running { get; set; }
    public ValueTask DisposeAsync() => ValueTask.CompletedTask;
 
    public Task StartAsync()

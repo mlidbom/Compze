@@ -13,7 +13,7 @@ namespace Compze.Tests.Performance.Internals.Tessaging.Hypermedia;
 
 public abstract class PerformanceTestBase : UniversalTestBase
 {
-   private ITestingEndpointHost Host { get; set; }
+   ITestingEndpointHost Host { get; set; }
    protected IEndpoint ServerEndpoint { get; set; }
    public IClient Client { get; private set; } = null!;
    protected IInProcessTypermediaNavigator InProcessNavigator => ServerEndpoint.ServiceLocator.Resolve<IInProcessTypermediaNavigator>();

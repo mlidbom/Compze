@@ -92,7 +92,7 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
    public class UserTevent<T>(T tevent) : TaggregateIdentifyingTevent<T>(tevent), IUserTevent<T> where T : IUserTevent;
    public class UserTevent : TaggregateTevent, IUserTevent
    {
-      private UserTevent() {}
+      UserTevent() {}
       protected UserTevent(TaggregateId taggregateId) : base(taggregateId) {}
 
       public class UserRegisteredTevent(TaggregateId userId) : UserTevent(userId), IUserTevent.UserRegistered;
@@ -117,7 +117,7 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
 
    public class UserRegistrarTevent : TaggregateTevent, IUserRegistrarTevent
    {
-      private UserRegistrarTevent() {}
+      UserRegistrarTevent() {}
       protected UserRegistrarTevent(TaggregateId taggregateId) : base(taggregateId) {}
 
       public class Created() : UserRegistrarTevent(UserRegistrarTaggregate.SingletonId), ITaggregateCreatedTevent;

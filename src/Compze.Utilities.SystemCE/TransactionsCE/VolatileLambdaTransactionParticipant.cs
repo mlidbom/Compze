@@ -35,7 +35,7 @@ public class VolatileLambdaTransactionParticipant : VolatileTransactionParticipa
    internal VolatileLambdaTransactionParticipant AddPrepareTasks(params Action[] tasks) =>
       this._mutate(_ => _prepareTasks.AddRange(tasks));
 
-   private VolatileLambdaTransactionParticipant AddRollbackTasks(params Action[] tasks) =>
+   VolatileLambdaTransactionParticipant AddRollbackTasks(params Action[] tasks) =>
       this._mutate(_ => _rollbackTasks.AddRange(tasks));
 
    protected override void OnCommit() => _commitTasks.InvokeAll();

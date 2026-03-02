@@ -40,7 +40,7 @@ public abstract class EndpointHostTestBase : UniversalTestBase
    public IThreadGate TeventHandlerThreadGate { get; }
    public IThreadGate TueryHandlerThreadGate { get; }
 
-   private IReadOnlyList<IThreadGate> AllGates  { get; }
+   IReadOnlyList<IThreadGate> AllGates  { get; }
 
    public IEndpoint BackendEndPoint { get; private set; } = null!;
    protected IClient Client { get; private set; } = null!;

@@ -24,7 +24,7 @@ sealed class PgSqlDbPoolSqlLayer : IDbPoolSqlLayer
    const string ConnectionStringConfigurationParameterName = "COMPOSABLE_PGSQL_DATABASE_POOL_MASTER_CONNECTIONSTRING";
    readonly IThreadShared<NpgsqlConnectionStringBuilder> _connectionStringBuilder;
 
-   private PgSqlDbPoolSqlLayer()
+   PgSqlDbPoolSqlLayer()
    {
       var masterConnectionString = Environment.GetEnvironmentVariable(ConnectionStringConfigurationParameterName)
                                 ?? "Host=localhost;Database=postgres;Username=postgres;Password=Development!1;";

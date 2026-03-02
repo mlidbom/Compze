@@ -21,7 +21,7 @@ public static class LogSourceFormatter
    /// Shortens nested class names: "Inbox+HandlerExecutionEngine+Coordinator" becomes "Inbox+".
    /// Non-nested names are returned as-is.
    /// </summary>
-   private static string ShortenNestedClass(string className)
+   static string ShortenNestedClass(string className)
    {
       var plusIndex = className.IndexOfOrdinal('+');
       return plusIndex >= 0 ? className[..(plusIndex + 1)] : className;

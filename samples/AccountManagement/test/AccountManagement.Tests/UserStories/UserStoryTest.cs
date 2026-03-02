@@ -11,7 +11,7 @@ namespace AccountManagement.UserStories;
 
 public abstract class UserStoryTest : UniversalTestBase
 {
-   private ITestingEndpointHost Host { get; set; }
+   ITestingEndpointHost Host { get; set; }
    readonly IEndpoint _endpoint;
    IClient _client = null!;
    internal AccountScenarioApi Scenario => new(_client!);

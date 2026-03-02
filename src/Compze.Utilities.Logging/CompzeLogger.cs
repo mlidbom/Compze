@@ -19,7 +19,8 @@ public static class CompzeLogger
    public static ILogger For(Type loggingType) => LoggerFactoryMethod(loggingType);
 
    public static Func<Type, ILogger> LoggerFactoryMethod { get; set; } = ConsoleLogger.Create;
-   private static class LogCache<T>
+
+   static class LogCache<T>
    {
       // ReSharper disable once StaticFieldInGenericType
       internal static readonly ILogger Logger = LoggerFactoryMethod(typeof(T));

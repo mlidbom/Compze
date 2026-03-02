@@ -19,7 +19,7 @@ public static class GatedCodeSectionExtensions
       return @this;
    }
 
-   private static IGatedCodeSection LetOneThreadEnter(this IGatedCodeSection @this)
+   static IGatedCodeSection LetOneThreadEnter(this IGatedCodeSection @this)
    {
       @this.AssertIsEmpty();
       @this.EntranceGate.AwaitLetOneThreadPassThrough();
@@ -48,10 +48,10 @@ public static class GatedCodeSectionExtensions
       }
    }
 
-   private static bool IsEmpty(this IGatedCodeSection @this)
+   static bool IsEmpty(this IGatedCodeSection @this)
       => @this.EntranceGate.Passed == @this.ExitGate.Passed;
 
-   private static IGatedCodeSection AssertIsEmpty(this IGatedCodeSection @this)
+   static IGatedCodeSection AssertIsEmpty(this IGatedCodeSection @this)
    {
       Contract.State.Assert(@this.IsEmpty(), () => $"{nameof(IGatedCodeSection)} must be empty when calling this method");
       return @this;

@@ -273,7 +273,7 @@ public class TypeMapper : ITypeMapper
       return new Exception(fixTessage.ToString());
    }
 
-   private class MappingState
+   class MappingState
    {
       internal readonly Dictionary<Type, TypeId> TypeToTypeIdMap = new();
       internal readonly Dictionary<TypeId, Type> TypeIdToTypeMap = new();

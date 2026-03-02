@@ -10,10 +10,10 @@ public static class ExpressionUtil
    public static MemberInfo ExtractFinalMemberInfo(this LambdaExpression lambda) =>
       lambda.Body.ExtractFinalMemberInfo();
 
-   private static MemberInfo ExtractFinalMemberInfo(this Expression expression) =>
+   static MemberInfo ExtractFinalMemberInfo(this Expression expression) =>
       expression.ExtractFinalMemberAccessExpression().Member;
 
-   private static MemberExpression ExtractFinalMemberAccessExpression(this Expression expression)
+   static MemberExpression ExtractFinalMemberAccessExpression(this Expression expression)
    {
       try
       {

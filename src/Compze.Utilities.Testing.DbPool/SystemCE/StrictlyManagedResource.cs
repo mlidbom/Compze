@@ -52,7 +52,7 @@ public sealed class StrictlyManagedResource<TManagedResource> : IStrictlyManaged
    static readonly IMonitor StaticMonitor = IMonitor.WithDefaultTimeout();
    readonly bool _collectStackTraces;
    // ReSharper disable once StaticMemberInGenericType
-   private static bool CollectStackTracesByDefault = StrictlyManagedResources.CollectStackTracesByDefault;
+   static bool CollectStackTracesByDefault = StrictlyManagedResources.CollectStackTracesByDefault;
 
    public StrictlyManagedResource(bool forceStackTraceCollection = false, bool needsFileInfo = false, TManagedResource? instance = null)
    {
