@@ -1,7 +1,6 @@
 using Compze.Core.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
-using Compze.Core.Tessaging.Teventive.TeventStore.Public;
 using JetBrains.Annotations;
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
@@ -30,14 +29,6 @@ class User : Taggregate<User,IUserTevent, UserTevent, IUserTevent<IUserTevent>, 
    }
 
    public void Register(string email, string password, TaggregateId id) => Publish(new UserRegistered(id, email, password));
-
-   public static User Register(ITeventStoreUpdater taggregates, string email, string password, TaggregateId id)
-   {
-      var user = new User();
-      user.Register(email, password, id);
-      taggregates.Save(user);
-      return user;
-   }
 
    public void ChangePassword(string password) => Publish(new UserChangedPassword(password));
 

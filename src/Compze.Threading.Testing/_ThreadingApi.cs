@@ -20,7 +20,6 @@ public interface IThreadGate : IThreadGateVisitor
    ///<summary>Blocks all threads from passing.</summary>
    IThreadGate Close();
 
-   IThreadGate SetPrePassThroughAction(Action<ThreadSnapshot> action);
    IThreadGate SetPostPassThroughAction(Action<ThreadSnapshot> action);
    IThreadGate SetPassThroughAction(Action<ThreadSnapshot> action);
 
@@ -37,10 +36,7 @@ public interface IThreadGate : IThreadGateVisitor
    int Passed { get; }
    WaitTimeout DefaultTimeout { get; }
 
-   IReadOnlyList<ThreadSnapshot> RequestedThreads { get; }
-   IReadOnlyList<ThreadSnapshot> QueuedThreads { get; }
    IReadOnlyList<ThreadSnapshot> PassedThrough { get; }
-   unit EnableLogging(bool enable = true);
 }
 
 ///<summary>A block of code with <see cref="ThreadGate"/>s for <see cref="EntranceGate"/> and <see cref="ExitGate"/>. Useful for controlling multithreaded code for testing purposes.</summary>

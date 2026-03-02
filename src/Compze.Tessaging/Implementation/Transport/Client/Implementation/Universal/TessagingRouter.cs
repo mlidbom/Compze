@@ -30,7 +30,7 @@ class TessagingRouter : ITessagingRouter, IDisposable
             (ITessagesInFlightTracker tessagesInFlightTracker, ITypeMapper typeMapper, IRemotableTessageSerializer serializer, ITransportMessagePoster transportMessagePoster, Outbox.Outbox.ITessageStorage tessageStorage, ITaskRunner taskRunner, IBackgroundExceptionReporter exceptionReporter)
                => new TessagingRouter(tessagesInFlightTracker, typeMapper, serializer, transportMessagePoster, tessageStorage, taskRunner, exceptionReporter)));
 
-   readonly IMonitor _monitor = IMonitor.WithDefaultTimeout();
+   readonly IMonitor _monitor = IMonitor.New();
    readonly ITessagesInFlightTracker _tessagesInFlightTracker;
    readonly ITypeMapper _typeMapper;
    readonly IRemotableTessageSerializer _serializer;

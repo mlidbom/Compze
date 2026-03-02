@@ -38,7 +38,7 @@ public class MonitorCEPerformanceTests : UniversalTestBase
    {
       long Value { get; set; }
 
-      readonly IMonitor _monitor = IMonitor.WithDefaultTimeout();
+      readonly IMonitor _monitor = IMonitor.New();
       readonly IAwaitableMonitor _awaitableMonitor = IAwaitableMonitor.WithDefaultTimeout();
 
       internal long Read_Unsafe() => Value;

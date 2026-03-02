@@ -42,7 +42,7 @@ class TessagingConnection(
    {
       public IExactlyOnceTessage Tessage => (IExactlyOnceTessage)TransportTessage.Tessage;
    }
-   readonly IThreadShared<Queue<PendingDelivery>> _queue = IThreadShared.WithDefaultTimeouts(new Queue<PendingDelivery>());
+   readonly IThreadShared<Queue<PendingDelivery>> _queue = IThreadShared.New(new Queue<PendingDelivery>());
    readonly AutoResetEvent _signal = new(false);
    readonly CancellationTokenSource _cancellationSource = new();
    Thread? _sendLoopThread;

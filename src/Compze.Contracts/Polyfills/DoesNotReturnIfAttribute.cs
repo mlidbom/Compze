@@ -5,5 +5,6 @@ namespace System.Diagnostics.CodeAnalysis;
 [AttributeUsage(AttributeTargets.Parameter)]
 sealed class DoesNotReturnIfAttribute(bool parameterValue) : Attribute
 {
+   // ReSharper disable once UnusedMember.Global
    public bool ParameterValue { get; } = parameterValue;
 }

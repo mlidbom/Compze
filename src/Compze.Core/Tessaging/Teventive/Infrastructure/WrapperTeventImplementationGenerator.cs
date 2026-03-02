@@ -23,7 +23,7 @@ static class WrapperTeventImplementationGenerator
 
    static string DescribeParameterList(IEnumerable<Type> parameterTypes) => parameterTypes.Select(parameterType => parameterType.FullNameNotNull()).Join(", ");
 
-   static readonly IMonitor MonitorCE = IMonitor.WithDefaultTimeout();
+   static readonly IMonitor MonitorCE = IMonitor.New();
 
    static class WrapperConstructorCache<TWrapperTevent, TWrappedTevent>
       where TWrapperTevent : IPublisherIdentifyingTevent<TWrappedTevent>

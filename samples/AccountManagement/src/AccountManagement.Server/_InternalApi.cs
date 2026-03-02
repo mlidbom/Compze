@@ -22,8 +22,6 @@ static class InternalApi
 
       internal TeventStoreApi.TueryApi.TaggregateLink<Account> GetForUpdate(TaggregateId id) => TeventStore.Tueries.GetForUpdate<Account>(id);
 
-      internal TeventStoreApi.TueryApi.GetReadonlyCopyOfTaggregate<Account> GetReadOnlyCopy(TaggregateId id) => TeventStore.Tueries.GetReadOnlyCopy<Account>(id);
-
       internal TeventStoreApi.TueryApi.GetReadonlyCopyOfTaggregateVersion<Account> GetReadOnlyCopyOfVersion(TaggregateId id, int version) => TeventStore.Tueries.GetReadOnlyCopyOfVersion<Account>(id, version);
 
       internal class TryGetByEmailTuery : IStrictlyLocalTuery<TryGetByEmailTuery, Account?>

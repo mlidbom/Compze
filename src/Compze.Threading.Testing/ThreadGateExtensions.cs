@@ -1,8 +1,6 @@
 using System;
-using System.Threading.Tasks;
 using System.Transactions;
 using Compze.Contracts;
-using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Utilities.SystemCE.TransactionsCE.Testing;
 
 namespace Compze.Threading.Testing;
@@ -27,16 +25,5 @@ public static class ThreadGateExtensions
          Contract.State.NotNull(Transaction.Current);
          Transaction.Current.FailOnPrepare(exception);
       });
-
-      public Task<IThreadGate> ThrowOnNextPassThroughAsync(Func<ThreadSnapshot, Exception> exceptionFactory)
-      {
-         var currentPassthroughAction = @this.PassThroughAction;
-         var currentPassedThroughCountPlusOne = @this.PassedThrough.Count + 1;
-         @this.SetPassThroughAction(threadSnapshot => throw exceptionFactory(threadSnapshot));
-         return @this.ExecuteWithExclusiveLockWhenAsync(WaitTimeout.Minutes(1), () => currentPassedThroughCountPlusOne == @this.PassedThrough.Count, () => @this.SetPassThroughAction(currentPassthroughAction));
-      }
-
-      Task<IThreadGate> ExecuteWithExclusiveLockWhenAsync(WaitTimeout timeout, Func<bool> condition, Action action)
-         => TaskCE.Run(() => @this.ExecuteWithExclusiveLockWhen(timeout, condition, action));
    }
 }

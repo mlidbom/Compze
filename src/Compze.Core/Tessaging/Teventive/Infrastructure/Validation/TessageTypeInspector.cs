@@ -23,7 +23,7 @@ public partial class TessageTypeInspector
       new WrapperTeventInterfaceMustBeGenericAndDeclareTypeParameterAsAsOutParameter()
    ];
 
-   static readonly IMonitor MonitorCE = IMonitor.WithDefaultTimeout();
+   static readonly IMonitor MonitorCE = IMonitor.New();
 
    static IReadOnlySet<Type> _successfullyInspectedSubscribableTypes = new HashSet<Type>();
    internal static void AssertValidForSubscription(Type type)

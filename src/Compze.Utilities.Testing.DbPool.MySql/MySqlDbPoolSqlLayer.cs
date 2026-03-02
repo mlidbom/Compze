@@ -27,7 +27,7 @@ sealed class MySqlDbPoolSqlLayer : IDbPoolSqlLayer
                                 ?? "Server=localhost;Database=mysql;Uid=root;Pwd=Development!1;";
 
       _masterConnectionPool = IMySqlConnectionPool.CreateInstance(masterConnectionString);
-      _connectionStringBuilder = IThreadShared.WithDefaultTimeouts(new MySqlConnectionStringBuilder(masterConnectionString));
+      _connectionStringBuilder = IThreadShared.New(new MySqlConnectionStringBuilder(masterConnectionString));
    }
 
    public string ConnectionStringFor(DbPoolDatabase db)
