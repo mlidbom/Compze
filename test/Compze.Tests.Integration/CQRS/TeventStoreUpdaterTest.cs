@@ -13,6 +13,7 @@ using Compze.Core.Tessaging.Teventive.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.Public;
 using Compze.Core.Wiring.Testing.Internal;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 using JetBrains.Annotations;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
@@ -26,7 +27,6 @@ using Compze.Utilities.SystemCE.TransactionsCE.Testing;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Tests.Infrastructure.XUnit;
-using Compze.Threading.TasksCE;
 using Compze.Threading;
 using Compze.Threading.Testing;
 using Compze.Utilities.SystemCE.UsageGuards;
@@ -412,7 +412,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
       });
    }
 
-   [PCT(Skipped = [SqlLayer.Sqlite, SqlLayer.SqliteMemory], 
+   [PCT(Skipped = [SqlLayer.Sqlite, SqlLayer.SqliteMemory],
         SkipReasons = ["Sqlite is not really designed for high concurrency, we have not been able to get this working with SQLite",
                        "Sqlite is not really designed for high concurrency, we have not been able to get this working with SQLite"])]
    public void Concurrent_read_only_access_to_taggregate_history_can_occur_in_parallel()
@@ -558,8 +558,8 @@ public class TeventStoreUpdaterTest : UniversalTestBase
          user.ChangeEmail("newemail@somewhere.not");
       });
 
-      var getHistorySection = GatedCodeSection.New(WaitTimeout.Seconds(30));
-      var changeEmailSection = GatedCodeSection.New(WaitTimeout.Seconds(30));
+      var getHistorySection = GatedCodeSection.New(WaitTimeout.Seconds(30), "getHistorySection");
+      var changeEmailSection = GatedCodeSection.New(WaitTimeout.Seconds(30), "changeEmailSection");
 
       const int threads = 2;
       var tasks = 1.Through(threads).Select(_ => TaskCE.Run(UpdateEmail)).ToArray();
@@ -612,8 +612,8 @@ public class TeventStoreUpdaterTest : UniversalTestBase
          user.ChangeEmail("newemail@somewhere.not");
       });
 
-      var changeEmailSection = GatedCodeSection.New(WaitTimeout.Seconds(20));
-      var hasFetchedUser = ThreadGate.Open(WaitTimeout.Seconds(20));
+      var changeEmailSection = GatedCodeSection.New(WaitTimeout.Seconds(20), "changeEmailSection");
+      var hasFetchedUser = ThreadGate.Open(WaitTimeout.Seconds(20), "hasFetchedUser");
 
       const int threads = 2;
 
@@ -641,7 +641,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
          var userHistory = ((ITeventStoreReader)session).GetHistory(user.Id)
                                                        .ToArray(); //Reading the taggregate will throw an exception if the history is invalid.
          userHistory.Length.Must()
-                    .Be(threads + 2); //Make sure that all of the transactions completed
+                    .Be(threads + 2); //Make sure that all the transactions completed
       });
       return;
 

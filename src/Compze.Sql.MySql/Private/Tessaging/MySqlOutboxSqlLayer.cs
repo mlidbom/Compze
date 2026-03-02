@@ -7,13 +7,13 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Compze.Core.Refactoring.Naming.Internal;
-using Compze.Threading.TasksCE;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 using DispatchingTable = Compze.Core.Tessaging.Internal.SqlLayer.IServiceBusSqlLayer.OutboxTessageDispatchingTableSchemaStrings;
 using TessageTable = Compze.Core.Tessaging.Internal.SqlLayer.IServiceBusSqlLayer.OutboxTessagesDatabaseSchemaStrings;
 
 namespace Compze.Sql.MySql.Private.Tessaging;
 
-public partial class MySqlOutboxSqlLayer(IMySqlConnectionPool connectionFactory, MySqlSqlLayerSchemaManager schemaManager) : IServiceBusSqlLayer.IOutboxSqlLayer
+partial class MySqlOutboxSqlLayer(IMySqlConnectionPool connectionFactory, MySqlSqlLayerSchemaManager schemaManager) : IServiceBusSqlLayer.IOutboxSqlLayer
 {
    readonly IMySqlConnectionPool _connectionFactory = connectionFactory;
    readonly MySqlSqlLayerSchemaManager _schemaManager = schemaManager;
@@ -100,12 +100,12 @@ public partial class MySqlOutboxSqlLayer(IMySqlConnectionPool connectionFactory,
    public IReadOnlyList<IServiceBusSqlLayer.UndeliveredTessage> GetUndeliveredTessages(TimeSpan olderThan)
    {
       var cutoffTime = DateTime.UtcNow - olderThan;
-      
+
       return _connectionFactory.UseCommand(
          command =>
          {
             var tessages = new List<IServiceBusSqlLayer.UndeliveredTessage>();
-            
+
             command
                .SetCommandText(
                    $"""
@@ -125,7 +125,7 @@ public partial class MySqlOutboxSqlLayer(IMySqlConnectionPool connectionFactory,
 
                     """)
                .AddDateTime2Parameter("cutoffTime", cutoffTime);
-            
+
             using var reader = command.ExecuteReader();
             while(reader.Read())
             {
@@ -137,7 +137,7 @@ public partial class MySqlOutboxSqlLayer(IMySqlConnectionPool connectionFactory,
                   retryCount: reader.GetInt32(4),
                   lastAttemptTime: reader.IsDBNull(5) ? null : reader.GetDateTime(5)));
             }
-            
+
             return tessages;
          });
    }
@@ -148,7 +148,7 @@ public partial class MySqlOutboxSqlLayer(IMySqlConnectionPool connectionFactory,
          command =>
          {
             var tessages = new List<IServiceBusSqlLayer.UndeliveredTessage>();
-            
+
             command
                .SetCommandText(
                    $"""
@@ -167,7 +167,7 @@ public partial class MySqlOutboxSqlLayer(IMySqlConnectionPool connectionFactory,
 
                     """)
                .AddParameter("endpointId", endpointId.Value);
-            
+
             using var reader = command.ExecuteReader();
             while(reader.Read())
             {
@@ -179,7 +179,7 @@ public partial class MySqlOutboxSqlLayer(IMySqlConnectionPool connectionFactory,
                   retryCount: reader.GetInt32(4),
                   lastAttemptTime: reader.IsDBNull(5) ? null : reader.GetDateTime(5)));
             }
-            
+
             return tessages;
          });
    }

@@ -36,8 +36,7 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
    {
    }
 
-
-   protected Taggregate(TaggregateId id) : base(id)
+   Taggregate(TaggregateId id) : base(id)
    {
       Contract.Argument.Assert(typeof(TTaggregateTevent).IsInterface);
       _teventHandlersDispatcher.Register().IgnoreUnhandled<TTaggregateTevent>();

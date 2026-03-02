@@ -5,10 +5,7 @@ using Compze.Core.Tessaging.Public;
 namespace Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 
 public interface ITaggregateIdentifyingTevent<out TTeventInterface> : IExactlyOncePublisherIdentifyingTevent<TTeventInterface>
-   where TTeventInterface : ITaggregateTevent
-{
-
-}
+   where TTeventInterface : ITaggregateTevent;
 
 public interface ITaggregateTevent : IExactlyOnceTevent
 {

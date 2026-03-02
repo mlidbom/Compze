@@ -34,6 +34,8 @@
     <UsePackageReference_Compze_Sql_PostgreSql Condition="'$(UsePackageReference_Compze_Sql_PostgreSql)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Sql.PostgreSql.csproj|'))">true</UsePackageReference_Compze_Sql_PostgreSql>
     <!-- Compze.Sql.Sqlite -->
     <UsePackageReference_Compze_Sql_Sqlite Condition="'$(UsePackageReference_Compze_Sql_Sqlite)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Sql.Sqlite.csproj|'))">true</UsePackageReference_Compze_Sql_Sqlite>
+    <!-- Compze.SystemCE.Internal -->
+    <UsePackageReference_Compze_SystemCE_Internal Condition="'$(UsePackageReference_Compze_SystemCE_Internal)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.SystemCE.Internal.csproj|'))">true</UsePackageReference_Compze_SystemCE_Internal>
     <!-- Compze.Tessaging -->
     <UsePackageReference_Compze_Tessaging Condition="'$(UsePackageReference_Compze_Tessaging)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Tessaging.csproj|'))">true</UsePackageReference_Compze_Tessaging>
     <!-- Compze.Tessaging.Hosting.AspNetCore -->
@@ -44,6 +46,8 @@
     <UsePackageReference_Compze_Tessaging_Teventive_TeventStore Condition="'$(UsePackageReference_Compze_Tessaging_Teventive_TeventStore)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Tessaging.Teventive.TeventStore.csproj|'))">true</UsePackageReference_Compze_Tessaging_Teventive_TeventStore>
     <!-- Compze.Threading -->
     <UsePackageReference_Compze_Threading Condition="'$(UsePackageReference_Compze_Threading)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Threading.csproj|'))">true</UsePackageReference_Compze_Threading>
+    <!-- Compze.Threading.Internal -->
+    <UsePackageReference_Compze_Threading_Internal Condition="'$(UsePackageReference_Compze_Threading_Internal)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Threading.Internal.csproj|'))">true</UsePackageReference_Compze_Threading_Internal>
     <!-- Compze.Threading.Testing -->
     <UsePackageReference_Compze_Threading_Testing Condition="'$(UsePackageReference_Compze_Threading_Testing)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Threading.Testing.csproj|'))">true</UsePackageReference_Compze_Threading_Testing>
     <!-- Compze.Underscore -->

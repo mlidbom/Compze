@@ -11,7 +11,7 @@ public static partial class TimeSpanCE
 
    public static TimeSpan DivideBy(this TimeSpan @this, double divideBy) => TimeSpan.FromTicks((long)(@this.Ticks / divideBy));
 
-   public static string ToStringInvariant(this TimeSpan @this, string format) => @this.ToString(format, CultureInfo.InvariantCulture);
+   static string ToStringInvariant(this TimeSpan @this, string format) => @this.ToString(format, CultureInfo.InvariantCulture);
 
    public static string FormatReadable(this TimeSpan? time) => time == null ? "" : time.Value.FormatReadable();
 

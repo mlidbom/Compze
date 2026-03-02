@@ -7,17 +7,17 @@ using Compze.Threading.ResourceAccess;
 
 namespace Compze.Tessaging.SystemCE.ThreadingCE;
 
-public static class BackgroundExceptionReporterRegistrar
+static class BackgroundExceptionReporterRegistrar
 {
    public static IComponentRegistrar BackgroundExceptionReporter(this IComponentRegistrar registrar)
       => registrar.Register(BackgroundExceptionReporterCore.RegisterWith);
 
-   public class BackgroundExceptionReporterCore : IBackgroundExceptionReporter
+   class BackgroundExceptionReporterCore : IBackgroundExceptionReporter
    {
       public static void RegisterWith(IComponentRegistrar registrar)
          => registrar.Register(Singleton.For<IBackgroundExceptionReporter>().CreatedBy(() => new BackgroundExceptionReporterCore()));
 
-      readonly IThreadShared<List<Exception>> _collectedExceptions = IThreadShared.WithDefaultTimeouts(new List<Exception>());
+      readonly IThreadShared<List<Exception>> _collectedExceptions = IThreadShared.New(new List<Exception>());
 
       public void ReportException(Exception exception)
       {

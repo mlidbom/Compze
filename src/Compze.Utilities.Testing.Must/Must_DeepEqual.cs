@@ -13,8 +13,8 @@ namespace Compze.Utilities.Testing.Must;
 
 public class EquivalencyConfig<TValue>
 {
-   public HashSet<MemberInfo> ExcludedMembers { get; } = new();
-   public bool TypesIgnored { get; private set; }
+   internal HashSet<MemberInfo> ExcludedMembers { get; } = [];
+   internal bool TypesIgnored { get; private set; }
 
    public EquivalencyConfig<TValue> ExcludeTypeMember<TMember>(Expression<Func<TValue, TMember>> memberExpression) =>
       ExcludedMembers.Add(memberExpression.ExtractFinalMemberInfo())
@@ -73,7 +73,7 @@ public static class Must_DeepEqual
       var actualJson = JsonConvert.SerializeObject(context.Actual, serializerSettings);
       var expectedJson = JsonConvert.SerializeObject(expected, serializerSettings);
 
-      return context.SatisfyInternal(it => actualJson == expectedJson,
+      return context.SatisfyInternal(_ => actualJson == expectedJson,
                                      messageOverride: _ =>
                                         $"""
                                          {context.FailingAssertionHeading(nameof(DeepEqual), [new(expectedExpression, expected)])}

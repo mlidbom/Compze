@@ -14,7 +14,7 @@ using Compze.Utilities.Testing.DbPool;
 
 namespace Compze.Tessaging.Hosting.Testing.Wiring;
 
-public class TestingComponentRegistrar : ComponentRegistrar
+class TestingComponentRegistrar : ComponentRegistrar
 {
    readonly IDictionary<Type, object> _testingRegistrars;
 
@@ -42,7 +42,7 @@ public class TestingComponentRegistrar : ComponentRegistrar
 
    public override IComponentRegistrar Clone() => new TestingComponentRegistrar();
 
-   public class MsSqlDbPoolRegistrar(IComponentRegistrar registrar) : MsSqlSqlConnectionPoolRegistrar.ITestingRegistrar
+   class MsSqlDbPoolRegistrar(IComponentRegistrar registrar) : MsSqlSqlConnectionPoolRegistrar.ITestingRegistrar
    {
       readonly IComponentRegistrar _registrar = registrar;
 
@@ -53,7 +53,7 @@ public class TestingComponentRegistrar : ComponentRegistrar
                                                                                                                IMsSqlConnectionPool.CreateInstance(() => dbPool.ConnectionStringFor(connectionStringName))));
    }
 
-   public class MySqlDbPoolRegistrar(IComponentRegistrar registrar) : MySqlConnectionPoolRegistrar.ITestingRegistrar
+   class MySqlDbPoolRegistrar(IComponentRegistrar registrar) : MySqlConnectionPoolRegistrar.ITestingRegistrar
    {
       readonly IComponentRegistrar _registrar = registrar;
 
@@ -64,7 +64,7 @@ public class TestingComponentRegistrar : ComponentRegistrar
                                                                                                                IMySqlConnectionPool.CreateInstance(() => dbPool.ConnectionStringFor(connectionStringName))));
    }
 
-   public class PostgreSqlSqlDbPoolRegistrar(IComponentRegistrar registrar) : PgSqlConnectionPoolRegistrar.ITestingRegistrar
+   class PostgreSqlSqlDbPoolRegistrar(IComponentRegistrar registrar) : PgSqlConnectionPoolRegistrar.ITestingRegistrar
    {
       readonly IComponentRegistrar _registrar = registrar;
 
@@ -74,7 +74,7 @@ public class TestingComponentRegistrar : ComponentRegistrar
                                                                                                  .CreatedBy((DbPool pool) => IPgSqlConnectionPool.CreateInstance1(() => pool.ConnectionStringFor(connectionStringName))));
    }
 
-   public class SqliteSqlDbPoolRegistrar(IComponentRegistrar registrar) : SqliteConnectionPoolRegistrar.ITestingRegistrar
+   class SqliteSqlDbPoolRegistrar(IComponentRegistrar registrar) : SqliteConnectionPoolRegistrar.ITestingRegistrar
    {
       readonly IComponentRegistrar _registrar = registrar;
 
@@ -84,7 +84,7 @@ public class TestingComponentRegistrar : ComponentRegistrar
                                                                                                  .CreatedBy((DbPool pool) => ISqliteConnectionPool.CreateInstance(() => pool.ConnectionStringFor(connectionStringName))));
    }
 
-   public class SqliteMemoryDbPoolRegistrar(IComponentRegistrar registrar) : SqliteMemoryConnectionPoolRegistrar.ITestingRegistrar
+   class SqliteMemoryDbPoolRegistrar(IComponentRegistrar registrar) : SqliteMemoryConnectionPoolRegistrar.ITestingRegistrar
    {
       readonly IComponentRegistrar _registrar = registrar;
 

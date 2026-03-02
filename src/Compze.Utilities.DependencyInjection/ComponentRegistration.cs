@@ -11,8 +11,8 @@ public abstract class ComponentRegistration
    public IReadOnlySet<Type> ServiceTypes { get; }
    public InstantiationSpec InstantiationSpec { get; }
    public Lifestyle Lifestyle { get; }
-   public IReadOnlyList<Type> DependencyTypes { get; }
-   public bool ProvidesService(Type service) => ServiceTypes.Contains(service);
+   internal IReadOnlyList<Type> DependencyTypes { get; }
+   internal bool ProvidesService(Type service) => ServiceTypes.Contains(service);
 
    protected ComponentRegistration(Lifestyle lifestyle,
                                   IEnumerable<Type> serviceTypes,
@@ -67,7 +67,7 @@ public class ComponentRegistration<TService> : ComponentRegistration where TServ
 
    public override object Resolve(IServiceLocator serviceLocator) => serviceLocator.Resolve<TService>();
 
-   public ComponentRegistration(Lifestyle lifestyle,
+   internal ComponentRegistration(Lifestyle lifestyle,
                                   IEnumerable<Type> serviceTypes,
                                   InstantiationSpec instantiationSpec,
                                   IEnumerable<Type> dependencyTypes)

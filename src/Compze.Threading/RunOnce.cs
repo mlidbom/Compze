@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
+using JetBrains.Annotations;
 
 namespace Compze.Threading;
 
@@ -13,7 +14,7 @@ public class RunOnce
 
    public bool IsFirstCall() => _ran == 0 && Interlocked.CompareExchange(ref _ran, 1, 0) == 0;
 
-   public void RunIfFirstCall(Action action)
+   public void RunIfFirstCall([InstantHandle]Action action)
    {
       if(IsFirstCall())
       {

@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Compze.Core.Tessaging.Hosting.Public;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Underscore;
-using Compze.Threading.TasksCE;
 
 namespace Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 
@@ -13,7 +13,7 @@ public class TestingEndpointHost : TestingEndpointHostBase
 {
    IDependencyInjectionContainer? _ownedContainer = null;
 
-   public TestingEndpointHost(IComponentRegistrar registrar, IDependencyInjectionContainer rootContainer) : base(registrar, rootContainer.Clone) {}
+   TestingEndpointHost(IDependencyInjectionContainer rootContainer) : base(rootContainer.Clone) {}
 
    public static ITestingEndpointHost Create(IDependencyInjectionContainer? rootContainer = null)
    {
@@ -22,7 +22,7 @@ public class TestingEndpointHost : TestingEndpointHostBase
                                                   ._mutate(it => it.Register().CurrentTestsDbPoolIfNotCloneContainer());
 #pragma warning restore CA2000 // We are passing this disposable into a constructor of an object we don't own
 
-      var host = new TestingEndpointHost(new TestingComponentRegistrar(), usedContainer);
+      var host = new TestingEndpointHost(usedContainer);
 
       if(rootContainer == null)
       {

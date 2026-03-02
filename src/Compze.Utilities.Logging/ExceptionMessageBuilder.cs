@@ -4,12 +4,10 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using Compze.Utilities.SystemCE;
-using Compze.Utilities.SystemCE.ReflectionCE;
-
 
 namespace Compze.Utilities.Logging;
 
-public static class ExceptionTessageBuilder
+static class ExceptionTessageBuilder
 {
    const string LineSeparator = "----------------------------------------------------";
    const string IndentWith = "   ";

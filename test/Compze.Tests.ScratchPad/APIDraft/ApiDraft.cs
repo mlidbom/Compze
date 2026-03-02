@@ -1,4 +1,5 @@
 // ReSharper disable CheckNamespace
+// ReSharper disable UnusedType.Global
 namespace ServiceBusApi;
 
 interface ICentralServer;

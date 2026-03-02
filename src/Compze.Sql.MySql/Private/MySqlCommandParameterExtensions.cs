@@ -4,7 +4,7 @@ using MySql.Data.MySqlClient;
 
 namespace Compze.Sql.MySql.Private;
 
-public static class MySqlCommandParameterExtensions
+static class MySqlCommandParameterExtensions
 {
    public static MySqlCommand AddParameter(this MySqlCommand @this, string name, int value) => AddParameter(@this, name, MySqlDbType.Int32, value);
    public static MySqlCommand AddParameter(this MySqlCommand @this, string name, Guid value) => AddParameter(@this, name, MySqlDbType.Guid, value);
@@ -12,7 +12,7 @@ public static class MySqlCommandParameterExtensions
    public static MySqlCommand AddVarcharParameter(this MySqlCommand @this, string name, int length, string value) => AddParameter(@this, name, MySqlDbType.VarString, value, length);
    public static MySqlCommand AddMediumTextParameter(this MySqlCommand @this, string name, string value) => AddParameter(@this, name, MySqlDbType.MediumText, value, -1);
 
-   public static MySqlCommand AddParameter(this MySqlCommand @this, MySqlParameter parameter)
+   static MySqlCommand AddParameter(this MySqlCommand @this, MySqlParameter parameter)
    {
       @this.Parameters.Add(parameter);
       return @this;

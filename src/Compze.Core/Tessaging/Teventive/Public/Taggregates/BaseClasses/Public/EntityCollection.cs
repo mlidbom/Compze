@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Compze.Core.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public;
 
-public class EntityCollection<TEntity, TEntityId> : IReadOnlyEntityCollection<TEntity, TEntityId> where TEntityId : notnull
+class EntityCollection<TEntity, TEntityId> : IReadOnlyEntityCollection<TEntity, TEntityId> where TEntityId : notnull
 {
    readonly Dictionary<TEntityId, TEntity> _entities = new();
    readonly List<TEntity> _entitiesInCreationOrder = [];

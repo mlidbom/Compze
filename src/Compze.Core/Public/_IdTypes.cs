@@ -19,6 +19,7 @@ public class EntityId(Guid id) : EntityId<Guid>(id)
 
 public class TentityId(Guid id) : EntityId(id)
 {
+   // ReSharper disable once UnusedMember.Global
    public TentityId() : this(Guid.NewGuid()) {}
 }
 

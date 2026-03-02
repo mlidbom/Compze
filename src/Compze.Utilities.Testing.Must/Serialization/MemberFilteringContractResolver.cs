@@ -8,7 +8,7 @@ using Newtonsoft.Json.Serialization;
 
 namespace Compze.Utilities.Testing.Must.Serialization;
 
-public abstract class MemberFilteringContractResolver : DefaultContractResolver
+abstract class MemberFilteringContractResolver : DefaultContractResolver
 {
    protected override JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization)
    {

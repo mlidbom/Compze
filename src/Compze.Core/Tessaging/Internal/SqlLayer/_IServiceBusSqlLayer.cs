@@ -58,10 +58,6 @@ public interface IServiceBusSqlLayer
       public EndpointId TargetEndpointId { get; } = targetEndpointId;
       public int RetryCount { get; } = retryCount;
       public DateTime? LastAttemptTime { get; } = lastAttemptTime;
-
-      // Exponential backoff: 0.5s, 1s, 2s, 4s, 8s, 16s, 32s, 64s (capped)
-      public bool IsDueForRetry => LastAttemptTime is null
-                                || DateTime.UtcNow >= LastAttemptTime.Value + TimeSpan.FromSeconds(0.5 * Math.Pow(2, Math.Min(RetryCount, 7)));
    }
 
    public static class InboxTessageDatabaseSchemaStrings

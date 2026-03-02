@@ -7,15 +7,15 @@ using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.Tests.Infrastructure;
 using System;
 using System.Threading.Tasks;
-using Compze.Threading.TasksCE;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Tests.Performance.Internals.Tessaging.Hypermedia;
 
 public abstract class PerformanceTestBase : UniversalTestBase
 {
-   protected ITestingEndpointHost Host { get; set; }
+   ITestingEndpointHost Host { get; set; }
    protected IEndpoint ServerEndpoint { get; set; }
-   public IClient Client { get; set; } = null!;
+   protected IClient Client { get; private set; } = null!;
    protected IInProcessTypermediaNavigator InProcessNavigator => ServerEndpoint.ServiceLocator.Resolve<IInProcessTypermediaNavigator>();
 
    protected PerformanceTestBase()

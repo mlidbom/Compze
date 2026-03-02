@@ -1,25 +1,24 @@
-using AccountManagement.API;
 using AccountManagement.UserStories.Scenarios;
 using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Tessaging.Hosting.Testing.Tessaging;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.Tests.Infrastructure;
 using System.Threading.Tasks;
-using Compze.Threading.TasksCE;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 
 namespace AccountManagement.UserStories;
 
 public abstract class UserStoryTest : UniversalTestBase
 {
-   protected ITestingEndpointHost Host { get; set; }
+   ITestingEndpointHost Host { get; set; }
    readonly IEndpoint _endpoint;
    IClient _client = null!;
-   internal AccountScenarioApi Scenario => new(_client!);
+   internal AccountScenarioApi Scenario => new(_client);
 
    protected UserStoryTest()
    {
       Host = TestingEndpointHost.Create();
-      _endpoint = new AccountManagementServerDomainBootstrapper().RegisterWith(Host);
+      _endpoint = AccountManagementServerDomainBootstrapper.RegisterWith(Host);
    }
 
    protected override async Task InitializeAsyncInternal()

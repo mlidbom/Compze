@@ -2,7 +2,7 @@ using Tessage = Compze.Core.Tessaging.Internal.SqlLayer.IServiceBusSqlLayer.Inbo
 
 namespace Compze.Sql.MicrosoftSql.Private.Tessaging;
 
-public partial class MsSqlInboxSqlLayer
+partial class MsSqlInboxSqlLayer
 {
    public const string SchemaCreationSql =
       $"""

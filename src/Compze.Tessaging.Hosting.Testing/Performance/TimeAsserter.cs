@@ -2,11 +2,11 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Compze.Contracts;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Utilities.Logging;
 using Compze.Utilities.SystemCE;
 using JetBrains.Annotations;
 using Compze.Threading;
-using Compze.Threading.TasksCE;
 
 namespace Compze.Tessaging.Hosting.Testing.Performance;
 
@@ -133,10 +133,10 @@ public static class TimeAsserter
             }
 
             PrintSummary(executionSummary, iterations, maxAverage, maxTotal);
-            Log.Info($"""
-                      ############################## DONE
-                      
-                      """);
+            Log.Info("""
+                     ############################## DONE
+
+                     """);
             return executionSummary;
          }
          finally
@@ -172,17 +172,13 @@ public static class TimeAsserter
                               ? ""
                               : $" {Percent(executionSummary.Total, maxTotal.Value)} of {nameof(maxTotal)}: {maxTotal.FormatReadable()}";
 
-      if(iterations > 1)
-      {
-         Log.Info($"""
+      Log.Info(iterations > 1
+                  ? $"""
 
-                      Total:   {executionSummary.Total.FormatReadable()} {maxTotalReport}
-                      Average: {executionSummary.Average.FormatReadable()} {maxAverageReport}
-                   """);
-      } else
-      {
-         Log.Info($"Total:   {executionSummary.Total.FormatReadable()} {maxTotalReport} ");
-      }
+                        Total:   {executionSummary.Total.FormatReadable()} {maxTotalReport}
+                        Average: {executionSummary.Average.FormatReadable()} {maxAverageReport}
+                     """
+                  : $"Total:   {executionSummary.Total.FormatReadable()} {maxTotalReport} ");
 
       if(executionSummary is StopwatchCE.TimedThreadedExecutionSummary threadedSummary)
       {
@@ -200,5 +196,5 @@ public static class TimeAsserter
 
    static string Percent(TimeSpan percent, TimeSpan of) => $"{(int)(percent.TotalMilliseconds / of.TotalMilliseconds * 100)}%";
 
-   public class TimeOutException(string message) : Exception(message);
+   class TimeOutException(string message) : Exception(message);
 }

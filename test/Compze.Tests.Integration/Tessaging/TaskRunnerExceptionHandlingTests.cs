@@ -6,10 +6,9 @@ using Compze.Tests.Infrastructure.XUnit;
 using Compze.Underscore;
 using Compze.Utilities.Logging;
 using System;
-using Compze.Utilities.SystemCE;
 using System.Linq;
 using System.Threading.Tasks;
-using Compze.Threading.TasksCE;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Threading;
 using Compze.Threading.Testing;
 using Compze.Utilities.Testing.Must;
@@ -27,10 +26,7 @@ public class TaskRunnerExceptionHandlingTests : UniversalTestBase
    public TaskRunnerExceptionHandlingTests()
    {
       _host = TestingEndpointHost.Create();
-      var endpoint = _host.RegisterEndpoint(
-         "endpoint",
-         new EndpointId(Guid.Parse("A1B2C3D4-E5F6-4748-9ABC-DEF012345678")),
-         builder => {});
+      var endpoint = _host.RegisterEndpoint("endpoint", new EndpointId(Guid.Parse("A1B2C3D4-E5F6-4748-9ABC-DEF012345678")), _ => {});
 
       _taskRunner = endpoint.ServiceLocator.Resolve<ITaskRunner>();
    }
@@ -43,7 +39,7 @@ public class TaskRunnerExceptionHandlingTests : UniversalTestBase
    {
       await CompzeLogger.SuppressLoggingWhileRunningAsync(async () =>
       {
-         var gate = ThreadGate.Open(WaitTimeout.Seconds(10));
+         var gate = ThreadGate.Open(WaitTimeout.Seconds(10), "gate");
 
          _taskRunner.Run("test-task", () => gate.AwaitPassThrough()._then(() => throw new InvalidOperationException("exception1")));
 
@@ -53,7 +49,7 @@ public class TaskRunnerExceptionHandlingTests : UniversalTestBase
          var taggregateException = await disposeAction.Must().ThrowAsync<AggregateException>();
 
          var flattened = taggregateException.Which.Flatten();
-         flattened.InnerExceptions.Must().SatisfyInternal(it => it.Any(e => e is InvalidOperationException && e.Message == "exception1"));
+         flattened.InnerExceptions.Must().SatisfyInternal(it => it.Any(e => e.InnerException is InvalidOperationException && e.InnerException.Message == "exception1"));
       });
    }
 
@@ -62,15 +58,15 @@ public class TaskRunnerExceptionHandlingTests : UniversalTestBase
    {
       await CompzeLogger.SuppressLoggingWhileRunningAsync(async () =>
       {
-         var gate = ThreadGate.Open(WaitTimeout.Seconds(20));
+         var gate = ThreadGate.Open(WaitTimeout.Seconds(20), "gate");
 
-         var _exception1 = new InvalidOperationException("exception1");
-         var _exception2 = new ArgumentException("exception2");
-         var _exception3 = new NotSupportedException("exception3");
+         var exception1 = new InvalidOperationException("exception1");
+         var exception2 = new ArgumentException("exception2");
+         var exception3 = new NotSupportedException("exception3");
 
-         _taskRunner.Run("test-task-1", () => gate.AwaitPassThrough()._then(() => throw _exception1));
-         _taskRunner.Run("test-task-2", () => gate.AwaitPassThrough()._then(() => throw _exception2));
-         _taskRunner.Run("test-task-3", () => gate.AwaitPassThrough()._then(() => throw _exception3));
+         _taskRunner.Run("test-task-1", () => gate.AwaitPassThrough()._then(() => throw exception1));
+         _taskRunner.Run("test-task-2", () => gate.AwaitPassThrough()._then(() => throw exception2));
+         _taskRunner.Run("test-task-3", () => gate.AwaitPassThrough()._then(() => throw exception3));
 
          gate.AwaitPassedThroughCountEqualTo(3);
 
@@ -80,9 +76,9 @@ public class TaskRunnerExceptionHandlingTests : UniversalTestBase
            .InnerExceptions
            .Must()
            .HaveCount(3)
-           .Contain(_exception1)
-           .Contain(_exception2)
-           .Contain(_exception3);
+           .Satisfy(it => it.Any(ex => ex.InnerException == exception1))
+           .Satisfy(it => it.Any(ex => ex.InnerException == exception2))
+           .Satisfy(it => it.Any(ex => ex.InnerException == exception3));
       });
    }
 }

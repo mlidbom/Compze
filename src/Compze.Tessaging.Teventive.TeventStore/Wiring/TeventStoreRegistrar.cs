@@ -18,7 +18,7 @@ public static class TeventStoreRegistrar
 
    public static TeventStoreRegistrationBuilder RegisterTeventStore(this IEndpointBuilder @this) => @this.RegisterTeventStore(EmptyMigrationsArray);
 
-   public static TeventStoreRegistrationBuilder RegisterTeventStore(this IEndpointBuilder @this, IReadOnlyList<ITeventMigration> migrations)
+   static TeventStoreRegistrationBuilder RegisterTeventStore(this IEndpointBuilder @this, IReadOnlyList<ITeventMigration> migrations)
    {
       @this.Container.Register().TeventStore(@this.Configuration.ConnectionStringName, migrations);
       return new TeventStoreRegistrationBuilder(@this.RegisterHandlers);
@@ -27,9 +27,9 @@ public static class TeventStoreRegistrar
    public static IComponentRegistrar TeventStore(this IComponentRegistrar registrar, string connectionName) =>
       registrar.TeventStore(connectionName, EmptyMigrationsArray);
 
-   public static IComponentRegistrar TeventStore(this IComponentRegistrar @this,
-                                                 string connectionName,
-                                                 IReadOnlyList<ITeventMigration> migrations) =>
+   static IComponentRegistrar TeventStore(this IComponentRegistrar @this,
+                                          string connectionName,
+                                          IReadOnlyList<ITeventMigration> migrations) =>
       @this.TeventStoreForFlexibleTesting(connectionName, () => migrations);
 
    public static IComponentRegistrar TeventStoreForFlexibleTesting(this IComponentRegistrar registrar,
@@ -49,7 +49,7 @@ public static class TeventStoreRegistrar
 public class TeventStoreRegistrationBuilder
 {
    readonly TessageHandlerRegistrarWithDependencyInjectionSupport _handlerRegistrar;
-   public TeventStoreRegistrationBuilder(TessageHandlerRegistrarWithDependencyInjectionSupport handlerRegistrar) => _handlerRegistrar = handlerRegistrar;
+   internal TeventStoreRegistrationBuilder(TessageHandlerRegistrarWithDependencyInjectionSupport handlerRegistrar) => _handlerRegistrar = handlerRegistrar;
 
    public TeventStoreRegistrationBuilder HandleTaggregate<TTaggregate, TTevent>()
       where TTaggregate : class, ITaggregate<TTevent>

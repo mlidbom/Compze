@@ -6,12 +6,12 @@ public class InstantiationSpec
 {
    public object? SingletonInstance { get; }
    public object RunFactoryMethod(IServiceLocatorKernel kern) => FactoryMethod(kern);
-   public Func<IServiceLocatorKernel, object> FactoryMethod { get; }
+   Func<IServiceLocatorKernel, object> FactoryMethod { get; }
    public Type FactoryMethodReturnType { get; }
 
-   public static InstantiationSpec FromInstance(object instance) => new(instance);
+   internal static InstantiationSpec FromInstance(object instance) => new(instance);
 
-   public static InstantiationSpec FromFactoryMethod(Func<IServiceLocatorKernel, object> factoryMethod, Type factoryMethodReturnType) => new(factoryMethod, factoryMethodReturnType);
+   internal static InstantiationSpec FromFactoryMethod(Func<IServiceLocatorKernel, object> factoryMethod, Type factoryMethodReturnType) => new(factoryMethod, factoryMethodReturnType);
 
    InstantiationSpec(Func<IServiceLocatorKernel, object> factoryMethod, Type factoryMethodReturnType)
    {

@@ -4,6 +4,7 @@ using Compze.Core.Configuration.Internal;
 using Compze.Core.Refactoring.Naming.Internal.Implementation;
 using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Core.Tessaging.Hosting.TessageHandling.Registration.Public;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Configuration;
 using Compze.Tessaging.Implementation;
 using Compze.Tessaging.Implementation.Abstractions;
@@ -21,13 +22,12 @@ using Compze.Tessaging.Typermedia;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE;
-using Compze.Threading.TasksCE;
 
 // ReSharper disable ImplicitlyCapturedClosure it is very much intentional :)
 
 namespace Compze.Tessaging.Hosting;
 
-public class ServerEndpointBuilder : IEndpointBuilder, IAsyncDisposable, IDisposable
+class ServerEndpointBuilder : IEndpointBuilder, IAsyncDisposable, IDisposable
 {
    bool _builtSuccessfully;
 
@@ -46,7 +46,6 @@ public class ServerEndpointBuilder : IEndpointBuilder, IAsyncDisposable, IDispos
       TessageTypesInternal.RegisterHandlers(RegisterHandlers);
       var serviceLocator = Container.ServiceLocator;
       var endpoint = new Endpoint(serviceLocator,
-                                  serviceLocator.Resolve<ITessagesInFlightTracker>(),
                                   serviceLocator.Resolve<ITessagingRouter>(),
                                   serviceLocator.Resolve<IEndpointRegistry>(),
                                   Configuration);

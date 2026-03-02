@@ -5,7 +5,7 @@ using Microsoft.Data.Sqlite;
 
 namespace Compze.Sql.Sqlite.Private;
 
-public static class SqliteCommandExtensions
+static class SqliteCommandExtensions
 {
    public static IReadOnlyList<T> ExecuteReaderAndSelect<T>(this SqliteCommand @this, Func<SqliteDataReader, T> select) =>
       DbCommandCE.ExecuteReaderAndSelect(@this, select);

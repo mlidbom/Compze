@@ -14,7 +14,6 @@ namespace Compze.Core.Public;
 /// Any application requiring other types of Ids, such as natural keys, must manage those themselves and store them in another property on the entities.
 /// Compze does intend to implement support to make implementing such alternative IDs simpler in the future,
 /// not by removing this constraint, but by adding a support for a second identity property that is not required to fulfil the below requirements for the main ID.
-/// A placeholder for such a second identity property is provided by the <see cref="IHasAlternativeId{TId}"/> interface.
 ///
 /// Rationale:
 /// First:
@@ -40,19 +39,4 @@ public interface IEntity : IEntity<Guid>
    new EntityId Id { get; }
 }
 
-public interface ITentity : IEntity
-{
-}
-
-/// <summary>
-/// Given the <see cref="Guid"/> IDs only constraint of <see cref="IEntity"/>, we provide this interface
-/// for applications that need to manage other types of IDs, such as natural keys.
-/// Compze does not currently provide any infrastructure support for such alternative IDs,
-/// but intends to do so in the future and if you implement this interface
-/// you will be as prepared to leverage such future support as possible.
-/// </summary>
-/// <typeparam name="TId"></typeparam>
-public interface IHasAlternativeId<TId> where TId : IEquatable<TId>
-{
-    EntityId<TId> AlternativeId { get; }
-}
+public interface ITentity : IEntity;

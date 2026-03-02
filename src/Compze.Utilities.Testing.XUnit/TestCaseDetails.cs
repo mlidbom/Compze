@@ -4,7 +4,7 @@ using Xunit.v3;
 namespace Compze.Utilities.Testing.XUnit;
 
 // ReSharper disable PrimaryConstructorParameterCaptureDisallowed
-public class TestCaseDetails(
+class TestCaseDetails(
    (string TestCaseDisplayName,
       bool Explicit,
       Type[]? SkipExceptions,

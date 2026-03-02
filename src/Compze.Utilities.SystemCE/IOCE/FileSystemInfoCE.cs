@@ -6,9 +6,7 @@ namespace Compze.Utilities.SystemCE.IOCE;
 
 public abstract class FileSystemInfoCE : IEquatable<FileSystemInfoCE>
 {
-   public string AbsolutePath { get; }
-
-   protected abstract FileSystemInfo GetFileSystemInfo();
+   protected string AbsolutePath { get; }
 
    protected FileSystemInfoCE(FileSystemInfo info)
    {

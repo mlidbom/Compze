@@ -51,7 +51,7 @@ public class NestedEntitiesTests : UniversalTestBase
       root.Entities.Contains(entity2.Id).Must().Be(false);
       root.Entities.InCreationOrder.Count.Must().Be(1);
       root.Invoking(it => it.Entities.Get(entity2.Id)).Must().Throw<Exception>();
-      root.Invoking(it => { var __ = it.Entities[entity2.Id]; }).Must().Throw<Exception>();
+      root.Invoking(it => { _ = it.Entities[entity2.Id]; }).Must().Throw<Exception>();
 
       entity1.Remove();
       root.Entities.Contains(entity1.Id).Must().Be(false);
@@ -103,13 +103,13 @@ public class NestedEntitiesTests : UniversalTestBase
       root.Entities.Contains(entity2.Id).Must().Be(false);
       root.Entities.InCreationOrder.Count.Must().Be(1);
       root.Invoking(it => it.Entities.Get(entity2.Id)).Must().Throw<Exception>();
-      root.Invoking(it => { var __ = it.Entities[entity2.Id]; }).Must().Throw<Exception>();
+      root.Invoking(it => { _ = it.Entities[entity2.Id]; }).Must().Throw<Exception>();
 
       entity1.Remove();
       root.Entities.Contains(entity1.Id).Must().Be(false);
       root.Entities.InCreationOrder.Count.Must().Be(0);
       root.Invoking(it => it.Entities.Get(entity1.Id)).Must().Throw<Exception>();
-      root.Invoking(it => { var __ = it.Entities[entity1.Id]; }).Must().Throw<Exception>();
+      root.Invoking(it => { _ = it.Entities[entity1.Id]; }).Must().Throw<Exception>();
    }
 
 
@@ -145,13 +145,13 @@ public class NestedEntitiesTests : UniversalTestBase
       root.Entities.Contains(entity2.Id).Must().Be(false);
       root.Entities.InCreationOrder.Count.Must().Be(1);
       root.Invoking(it => it.Entities.Get(entity2.Id)).Must().Throw<Exception>();
-      root.Invoking(it => { var __ = it.Entities[entity2.Id]; }).Must().Throw<Exception>();
+      root.Invoking(it => { _ = it.Entities[entity2.Id]; }).Must().Throw<Exception>();
 
       entity1.Remove();
       root.Entities.Contains(entity1.Id).Must().Be(false);
       root.Entities.InCreationOrder.Count.Must().Be(0);
       root.Invoking(it => it.Entities.Get(entity1.Id)).Must().Throw<Exception>();
-      root.Invoking(it => { var __ = it.Entities[entity1.Id]; }).Must().Throw<Exception>();
+      root.Invoking(it => { _ = it.Entities[entity1.Id]; }).Must().Throw<Exception>();
    }
 
 }

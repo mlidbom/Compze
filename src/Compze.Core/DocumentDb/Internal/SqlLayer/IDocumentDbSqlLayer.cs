@@ -18,9 +18,9 @@ public interface IDocumentDbSqlLayer
 
    public class ReadRow(Guid typeId, string serializedDocument)
    {
-      public Guid TypeId { get; } = typeId;
+      internal Guid TypeId { get; } = typeId;
 
-      public string SerializedDocument { get; } = serializedDocument;
+      internal string SerializedDocument { get; } = serializedDocument;
    }
 
    public class WriteRow(string id, string serializedDocument, DateTime updateTime, TypeId typeId)

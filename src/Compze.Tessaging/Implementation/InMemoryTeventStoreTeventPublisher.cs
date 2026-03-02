@@ -14,16 +14,14 @@ public static class InMemoryTeventStoreTeventPublisherRegistrar
       => registrar.Register(Implementation.InMemoryTeventStoreTeventPublisher.RegisterWith);
 }
 
-[UsedImplicitly] class InMemoryTeventStoreTeventPublisher : ITeventStoreTeventPublisher
+[UsedImplicitly] class InMemoryTeventStoreTeventPublisher(ITessageHandlerRegistry handlerRegistry) : ITeventStoreTeventPublisher
 {
    public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<ITeventStoreTeventPublisher>()
                                      .CreatedBy((ITessageHandlerRegistry tessageHandlerRegistry)
                                                    => new InMemoryTeventStoreTeventPublisher(tessageHandlerRegistry)));
 
-   readonly ITessageHandlerRegistry _handlerRegistry;
-
-   public InMemoryTeventStoreTeventPublisher(ITessageHandlerRegistry handlerRegistry) => _handlerRegistry = handlerRegistry;
+   readonly ITessageHandlerRegistry _handlerRegistry = handlerRegistry;
 
    void ITeventStoreTeventPublisher.Publish(ITaggregateTevent tevent)
    {

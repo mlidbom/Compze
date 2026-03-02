@@ -34,7 +34,7 @@ public partial class Inbox
       readonly Coordinator _coordinator = new(globalStateTracker, taskRunner, storage, serviceLocator, handlerRegistry, endpointId);
       readonly ITaskRunner _taskRunner = taskRunner;
 
-      public void Enqueue(TransportTessage.InComing transportTessage)
+      internal void Enqueue(TransportTessage.InComing transportTessage)
       {
          this.Log().Debug($"Enqueueing {transportTessage.TessageTypeEnum} tessage {transportTessage.TessageId}");
          _coordinator.EnqueueTessageTask(transportTessage);
@@ -56,7 +56,7 @@ public partial class Inbox
          // ReSharper disable once FunctionNeverReturns
       }
 
-      public void Start()
+      internal void Start()
       {
          this.Log().Info("Starting");
          _awaitDispatchableTessageThread = _taskRunner.RunOnNamedThread(
@@ -65,7 +65,7 @@ public partial class Inbox
             ThreadPriority.AboveNormal);
       }
 
-      public void Stop()
+      internal void Stop()
       {
          this.Log().Info("Stopping");
          _awaitDispatchableTessageThread?.InterruptAndJoin();

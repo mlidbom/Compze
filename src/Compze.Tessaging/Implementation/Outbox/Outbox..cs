@@ -1,31 +1,30 @@
 using System.Linq;
 using System.Threading.Tasks;
 using System.Transactions;
-using Compze.Core.Public;
 using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Core.Tessaging.Public;
 using Compze.Tessaging.Implementation.Abstractions;
 using Compze.Tessaging.Implementation.Transport.Client.Internal;
 using Compze.Contracts;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE.LinqCE;
-using Compze.Threading.TasksCE;
 using Compze.Utilities.Logging;
 using Compze.Utilities.SystemCE.TransactionsCE;
 
 namespace Compze.Tessaging.Implementation.Outbox;
 
-public static class OutboxRegistrar
+static class OutboxRegistrar
 {
    public static IComponentRegistrar Outbox(this IComponentRegistrar registrar)
       => registrar.Register(Implementation.Outbox.Outbox.RegisterWith);
 }
 
 #pragma warning disable CA1724 // Type name intentionally matches namespace concept
-public partial class Outbox : IOutbox
+partial class Outbox : IOutbox
 {
-   public static void RegisterWith(IComponentRegistrar registrar)
+   internal static void RegisterWith(IComponentRegistrar registrar)
    {
       registrar.Register(Singleton.For<IOutbox>()
                                   .CreatedBy((EndpointConfiguration configuration, ITessagingRouter tessagingRouter, ITessageStorage tessageStorage)

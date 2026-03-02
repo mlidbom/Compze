@@ -5,7 +5,6 @@ using Compze.Core.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions;
 using Compze.Sql.Common;
 using Compze.Contracts;
-using Compze.Underscore;
 using Compze.Utilities.SystemCE;
 using Npgsql;
 using NpgsqlTypes;
@@ -16,7 +15,7 @@ using Lock = Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Taggr
 namespace Compze.Sql.PostgreSql.Private.TEventStore;
 
 //Performance: explore PgSql alternatives to commented out MSSql hints throughout the sql layer.
-public partial class PgSqlTeventStoreSqlLayer
+partial class PgSqlTeventStoreSqlLayer
 {
    public void InsertSingleTaggregateTevents(IReadOnlyList<TeventDataRow> tevents)
    {

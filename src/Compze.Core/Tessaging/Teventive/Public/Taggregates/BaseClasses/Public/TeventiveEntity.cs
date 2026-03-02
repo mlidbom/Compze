@@ -55,10 +55,12 @@ public abstract class Tentity<TParent,
       base.Publish(tevent);
    }
 
-   // ReSharper disable once UnusedMember.Global todo: write tests.
-   public static CollectionManager CreateSelfManagingCollection(TParent parent) => new(parent);
+   public interface ICollectionManager : IEntityCollectionManager<TTentity, TTentityId, TTentityTevent, TTentityTeventImplementation, TTentityCreatedTevent>;
 
-   public class CollectionManager : IEntityCollectionManager<TTentity, TTentityId, TTentityTevent, TTentityTeventImplementation, TTentityCreatedTevent>
+   // ReSharper disable once UnusedMember.Global todo: write tests.
+   public static ICollectionManager CreateSelfManagingCollection(TParent parent) => new CollectionManager(parent);
+
+   internal class CollectionManager : ICollectionManager
    {
       protected static readonly TTentityTeventIdGetterSetter IdGetter = Constructor.For<TTentityTeventIdGetterSetter>.DefaultConstructor.Instance();
 

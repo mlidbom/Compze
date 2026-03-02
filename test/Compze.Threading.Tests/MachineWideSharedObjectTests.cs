@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Compze.Contracts;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
-using Compze.Threading;
 using Compze.Threading.ResourceAccess;
-using Compze.Threading.TasksCE;
 using Compze.Threading.Testing;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 using Compze.Utilities.Testing.Must;
@@ -35,7 +34,7 @@ class SharedObjectSerializer : ISharedObjectSerializer<SharedObject>
 
 public class MachineWideSharedObjectTests : UniversalTestBase
 {
-   readonly List<MachineWideSharedObject<SharedObject>> _created = new();
+   readonly List<MachineWideSharedObject<SharedObject>> _created = [];
 
    protected override void DisposeInternal() => _created.ForEach(obj => obj.Delete());
 
@@ -112,11 +111,11 @@ public class MachineWideSharedObjectTests : UniversalTestBase
    [XF] public async Task Update_blocks_GetCopy_and_Update_from_both_same_and_other_instances()
    {
       var timeout = WaitTimeout.Seconds(15);
-      var updateGate = ThreadGate.Closed(timeout);
-      var conflictingUpdateSectionSameInstance = GatedCodeSection.New(timeout);
-      var conflictingUpdateSectionOtherInstance = GatedCodeSection.New(timeout);
-      var conflictingGetCopySectionSameInstance = GatedCodeSection.New(timeout);
-      var conflictingGetCopySectionOtherInstance = GatedCodeSection.New(timeout);
+      var updateGate = ThreadGate.Closed(timeout, "updateGate");
+      var conflictingUpdateSectionSameInstance = GatedCodeSection.New(timeout, "conflictingUpdateSectionSameInstance");
+      var conflictingUpdateSectionOtherInstance = GatedCodeSection.New(timeout, "conflictingUpdateSectionOtherInstance");
+      var conflictingGetCopySectionSameInstance = GatedCodeSection.New(timeout, "conflictingGetCopySectionSameInstance");
+      var conflictingGetCopySectionOtherInstance = GatedCodeSection.New(timeout, "conflictingGetCopySectionOtherInstance");
 
       IList<IGatedCodeSection> conflictingSections =
       [

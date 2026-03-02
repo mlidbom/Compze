@@ -8,7 +8,10 @@ using Compze.Utilities.SystemCE;
 
 namespace Compze.Utilities.Testing.Must;
 
-public record SatisfyCallInfo<T>(string PredicateExpression, Func<T, bool> Predicate, Func<T, string>? FailureMessage, string CallingMethod, IReadOnlyList<ExpressionValue>? UsedArguments) {}
+
+// ReSharper disable NotAccessedPositionalProperty.Global
+public record SatisfyCallInfo<T>(string PredicateExpression, Func<T, string>? FailureMessage, string CallingMethod, IReadOnlyList<ExpressionValue>? UsedArguments);
+// ReSharper restore NotAccessedPositionalProperty.Global
 
 public static class _Must_Satisfy
 {
@@ -37,7 +40,7 @@ public static class _Must_Satisfy
          string CustomFailureMessage() =>
             failureMessage != null
                ? $"""
-                  {failureMessage?.Invoke(context.Actual)}
+                  {failureMessage(context.Actual)}
                   {AssertionContext.Separator}
                   """
                : AssertionContext.RemoveLine;
@@ -46,7 +49,7 @@ public static class _Must_Satisfy
       return context;
    }
 
-   public static IAssertionContext SatisfyInternal(this IAssertionContext context,
+   internal static IAssertionContext SatisfyInternal(this IAssertionContext context,
                                                    Func<object, bool> predicate,
                                                    [CallerArgumentExpression(nameof(predicate))]
                                                    string predicateExpression = null!,
@@ -68,7 +71,7 @@ public static class _Must_Satisfy
       {
          if(messageOverride != null)
          {
-            throw new AssertionFailedException(messageOverride.Invoke(new SatisfyCallInfo<T>(predicateExpression, predicate, failureMessage, caller, expressionValues)));
+            throw new AssertionFailedException(messageOverride.Invoke(new SatisfyCallInfo<T>(predicateExpression, failureMessage, caller, expressionValues)));
          }
 
          var message = $"""
@@ -91,7 +94,7 @@ public static class _Must_Satisfy
          string CustomFailureMessage() =>
             failureMessage != null
                ? $"""
-                  {failureMessage?.Invoke(context.Actual)}
+                  {failureMessage(context.Actual)}
                   {AssertionContext.Separator}
                   """
                : AssertionContext.RemoveLine;

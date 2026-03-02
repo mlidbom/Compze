@@ -3,7 +3,7 @@ using Compze.Core.Public;
 
 namespace AccountManagement.API.ValidationAttributes;
 
-public sealed class TaggregateIdAttribute : ValidationAttributeBase
+sealed class TaggregateIdAttribute : ValidationAttributeBase
 {
    protected override bool InternalIsValid(object value) => value is TaggregateId;
 }

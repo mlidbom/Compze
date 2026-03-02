@@ -9,7 +9,7 @@ namespace Compze.Core.Tessaging.Teventive.Infrastructure.Validation;
 
 public static partial class TessageInspector
 {
-   public static void AssertValid(IReadOnlyList<Type> teventTypesToInspect) => teventTypesToInspect.ForEach(TessageTypeInspector.AssertValid);
+   internal static void AssertValid(IReadOnlyList<Type> teventTypesToInspect) => teventTypesToInspect.ForEach(TessageTypeInspector.AssertValid);
 
    public static void AssertValidForSubscription<TTessage>() => TessageTypeInspector.AssertValidForSubscription(typeof(TTessage));
 
@@ -28,8 +28,6 @@ public static partial class TessageInspector
             throw new MissingTransactionException(tessage);
          case ICannotBeSentRemotelyFromWithinTransaction when Transaction.Current != null:
             throw new TransactionPresentException(tessage);
-         case IAtMostOnceTessage atMostOnce when atMostOnce.Id == null:
-            throw new MissingTessageIdException(tessage);
       }
 #pragma warning restore IDE0010
    }

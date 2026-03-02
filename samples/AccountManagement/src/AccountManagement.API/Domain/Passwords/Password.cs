@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Linq.Expressions;
 using Newtonsoft.Json;
 
@@ -40,5 +39,5 @@ public partial class Password
       }
    }
 
-   public static IEnumerable<ValidationResult> Validate(string password, IValidatableObject owner, Expression<Func<object>> passwordMember) => Policy.Validate(password, owner, passwordMember);
+   internal static IEnumerable<ValidationResult> Validate(string password, IValidatableObject owner, Expression<Func<object>> passwordMember) => Policy.Validate(password, owner, passwordMember);
 }

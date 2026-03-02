@@ -49,10 +49,10 @@ public interface IStrictlyManagedResource : IDisposable;
 public sealed class StrictlyManagedResource<TManagedResource> : IStrictlyManagedResource where TManagedResource : class, IStrictlyManagedResource
 {
    // ReSharper disable once StaticMemberInGenericType
-   static readonly IMonitor StaticMonitor = IMonitor.WithDefaultTimeout();
+   static readonly IMonitor StaticMonitor = IMonitor.New();
    readonly bool _collectStackTraces;
    // ReSharper disable once StaticMemberInGenericType
-   internal static bool CollectStackTracesByDefault = StrictlyManagedResources.CollectStackTracesByDefault;
+   static bool _collectStackTracesByDefault = StrictlyManagedResources.CollectStackTracesByDefault;
 
    public StrictlyManagedResource(bool forceStackTraceCollection = false, bool needsFileInfo = false, TManagedResource? instance = null)
    {
@@ -101,10 +101,10 @@ public sealed class StrictlyManagedResource<TManagedResource> : IStrictlyManaged
                      //Todo: Log metric here.
                      using(StaticMonitor.TakeLock())
                      {
-                        if(!CollectStackTracesByDefault)
+                        if(!_collectStackTracesByDefault)
                         {
                            this.Log().Warning($"Enabling collection of stacktraces for {ManagedType.GetFullNameCompilable()} since it is not always disposed.");
-                           CollectStackTracesByDefault = true;
+                           _collectStackTracesByDefault = true;
                         }
                      }
                   }
@@ -146,7 +146,7 @@ public abstract class StrictlyManagedResourceBase<TInheritor> : IStrictlyManaged
    protected bool Disposed{ get; private set; }
    readonly StrictlyManagedResource<StrictlyManagedResourceBase<TInheritor>> _strictlyManagedResource;
 
-   protected StrictlyManagedResourceBase(bool forceStackTraceAllocation = false, bool needsFileInfo = false) => 
+   protected StrictlyManagedResourceBase(bool forceStackTraceAllocation = false, bool needsFileInfo = false) =>
       _strictlyManagedResource = new StrictlyManagedResource<StrictlyManagedResourceBase<TInheritor>>(forceStackTraceAllocation, needsFileInfo, instance:this);
 
    public virtual void Dispose()
@@ -157,7 +157,7 @@ public abstract class StrictlyManagedResourceBase<TInheritor> : IStrictlyManaged
 }
 
 ///<summary><see cref="IStrictlyManagedResource"/></summary>
-public class StrictlyManagedResourceWasFinalizedException(Type instanceType, string? reservationCallStack) : Exception(FormatTessage(instanceType, reservationCallStack))
+class StrictlyManagedResourceWasFinalizedException(Type instanceType, string? reservationCallStack) : Exception(FormatTessage(instanceType, reservationCallStack))
 {
    static string FormatTessage(Type instanceType, string? reservationCallStack)
       => !reservationCallStack.IsNullEmptyOrWhiteSpace()

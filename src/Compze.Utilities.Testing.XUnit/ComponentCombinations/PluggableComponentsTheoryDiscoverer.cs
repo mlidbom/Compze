@@ -1,15 +1,14 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Compze.Threading.TasksCE;
-using Xunit.Internal;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 using Xunit.Sdk;
 using Xunit.v3;
 
 namespace Compze.Utilities.Testing.XUnit.ComponentCombinations;
 
-public class ComponentCombinationsTheoryDiscoverer : TheoryDiscoverer
+#pragma warning  disable CA1812 // Avoid uninstantiated internal classes # this is used by xUnit via reflection
+class ComponentCombinationsTheoryDiscoverer : TheoryDiscoverer
 {
    public override async ValueTask<IReadOnlyCollection<IXunitTestCase>> Discover(
       ITestFrameworkDiscoveryOptions discoveryOptions,
@@ -31,8 +30,7 @@ public class ComponentCombinationsTheoryDiscoverer : TheoryDiscoverer
 
                                    return new ComponentCombinationTestCase(
                                       testCase: xunitTestCase,
-                                      useTestMethodArguments: pctAttribute.UseTestMethodArgument,
-                                      traits: testMethod.Traits.ToReadWrite(StringComparer.OrdinalIgnoreCase)
+                                      useTestMethodArguments: pctAttribute.UseTestMethodArgument
                                    );
                                 })
                                .ToArray();

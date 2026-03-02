@@ -1,8 +1,8 @@
 using Compze.Core.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
-using Compze.Core.Tessaging.Teventive.TeventStore.Public;
 using JetBrains.Annotations;
+// ReSharper disable UnusedAutoPropertyAccessor.Global
 
 namespace Compze.Tests.Unit.CQRS.Taggregates;
 #pragma warning disable CA1812 //Uninstantiated class (used via reflection)
@@ -30,14 +30,6 @@ class User : Taggregate<User,IUserTevent, UserTevent, IUserTevent<IUserTevent>, 
 
    public void Register(string email, string password, TaggregateId id) => Publish(new UserRegistered(id, email, password));
 
-   public static User Register(ITeventStoreUpdater taggregates, string email, string password, TaggregateId id)
-   {
-      var user = new User();
-      user.Register(email, password, id);
-      taggregates.Save(user);
-      return user;
-   }
-
    public void ChangePassword(string password) => Publish(new UserChangedPassword(password));
 
    public void ChangeEmail(string email) => Publish(new UserChangedEmail(email));
@@ -47,9 +39,7 @@ interface IUserTevent<out T> : ITaggregateIdentifyingTevent<T> where T : IUserTe
 interface IUserTevent : ITaggregateTevent;
 
 // ReSharper disable once ClassNeverInstantiated.Global
-class UserTevent<T>(T tevent) : TaggregateIdentifyingTevent<T>(tevent), IUserTevent<T> where T : IUserTevent {
-
-}
+class UserTevent<T>(T tevent) : TaggregateIdentifyingTevent<T>(tevent), IUserTevent<T> where T : IUserTevent;
 abstract class UserTevent : TaggregateTevent, IUserTevent
 {
    protected UserTevent() {}

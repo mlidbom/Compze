@@ -28,8 +28,6 @@ public static class TessageTypes
       public static class Tommands
       {
          public abstract class StrictlyLocalTommand : IStrictlyLocalTommand;
-
-         public abstract class StrictlyLocalTommand<TResult> : IStrictlyLocalTommand<TResult>;
       }
    }
 
@@ -45,7 +43,7 @@ public static class TessageTypes
 
          public class AtMostOnceTypermediaTommand<TResult> : AtMostOnceTypermediaTommand, IAtMostOnceTommand<TResult>
          {
-            protected AtMostOnceTypermediaTommand() : base() {}
+            protected AtMostOnceTypermediaTommand() {}
          }
       }
 
@@ -57,33 +55,15 @@ public static class TessageTypes
             public abstract class Tuery<TResult> : IRemotableTuery<TResult>;
 #pragma warning restore CA1724 //Class name conflicts with namespace name.
 
-            public class EntityLink<TResult> : Remotable.NonTransactional.Tueries.Tuery<TResult> where TResult : IEntity<Guid>
-            {
-               [Obsolete("Used by serializer", error:true)]
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
-               public EntityLink() : base() {}
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
-               public EntityLink(EntityId entityId) => EntityId = entityId;
-               public EntityLink<TResult> WithId(EntityId id) => new(id);
-               public EntityId EntityId { get; private set; }
-            }
-
             public class TaggregateLink<TResult> : Remotable.NonTransactional.Tueries.Tuery<TResult>
             {
                [Obsolete("Used by serializer", error:true)]
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
-               public TaggregateLink() : base() {}
+               // ReSharper disable once UnusedMember.Global
+               public TaggregateLink() {}
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
                public TaggregateLink(TaggregateId taggregateId) => TaggregateId = taggregateId;
-               public TaggregateLink<TResult> WithId(TaggregateId id) => new(id);
                public TaggregateId TaggregateId { get; private set; }
-            }
-
-            ///<summary>Implement <see cref="IRemotableCreateMyOwnResultTuery{TResult}"/> by passing a func to this base class.</summary>
-            public abstract class FuncResultTuery<TResult>(Func<TResult> factory) : Tuery<TResult>, IRemotableCreateMyOwnResultTuery<TResult>
-            {
-               readonly Func<TResult> _factory = factory;
-               public TResult CreateResult() => _factory();
             }
 
             /// <summary>Implements <see cref="IRemotableCreateMyOwnResultTuery{TResult}"/> by calling the default constructor on <typeparamref name="TResult"/></summary>

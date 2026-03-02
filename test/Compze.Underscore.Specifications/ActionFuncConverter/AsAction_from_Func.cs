@@ -6,7 +6,7 @@ using Compze.Utilities.Testing.XUnit.BDD;
 
 namespace Compze.Underscore.Specifications.ActionFuncConverter;
 
-public class AsAction_from_Func
+public static class AsAction_from_Func
 {
    public class with_zero_parameters
    {

@@ -1,11 +1,6 @@
-using System;
-using Compze.Utilities.SystemCE;
-using System.Linq;
 using System.Threading.Tasks;
 using Compze.Tessaging.Hosting;
-using Compze.Tessaging.Implementation.Outbox;
 using Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
-using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Threading;
 using Compze.Threading.Testing;
@@ -22,45 +17,11 @@ public class Outbox_retry_tests : EndpointHostTestBase
       await BackendEndPoint.StopListeningComponentsAsync();
       RemoteEndpoint.ExecuteServerRequestInTransaction(session => session.Send(new MyExactlyOnceTommand()));
 
-      var originalRemoteStorage = RemoteEndpoint.ServiceLocator.Resolve<Outbox.ITessageStorage>();
-      var undeliveredTessage = await Await.NotNullAsync(
-                                  () => originalRemoteStorage.GetUndeliveredTessages(TimeSpan.Zero).FirstOrDefault(it => it.RetryCount > 0),
-                                  timeout: 10.Seconds(),
-                                  pollInterval: 10.Milliseconds(),
-                                  "A tessage with a retry count greater than 0 should have been added to storage");
-
-      undeliveredTessage.RetryCount.Must().BeGreaterThan(0, "failure should increment retry count");
-      undeliveredTessage.LastAttemptTime.Must().NotBeNull();
+      MyExactlyOnceTommandHandlerThreadGate.TryAwaitPassedThroughCountEqualTo(1, WaitTimeout.Seconds(1)).Must().BeFalse();
 
       await Host.DisposeAsyncWithoutWaitingForEndpointsToBeAtRest();
       await StartHostAsync();
 
-      var newRemoteStorage = RemoteEndpoint.ServiceLocator.Resolve<Outbox.ITessageStorage>();
-
       MyExactlyOnceTommandHandlerThreadGate.AwaitPassedThroughCountEqualTo(1, WaitTimeout.Seconds(15));
-      await Await.Async(() => newRemoteStorage.GetUndeliveredTessages(TimeSpan.Zero).Count == 0,
-                        timeout: 10.Seconds(),
-                        pollInterval: 10.Milliseconds(),
-                        "Timeout waiting for tessages to be removed from outbox");
-
-      originalRemoteStorage.GetUndeliveredTessages(TimeSpan.Zero).Must().HaveCount(0, "the new endpoint after restart should be using the same database");
-   }
-
-   [PCT]
-   public async Task Outbox_records_failure()
-   {
-      await BackendEndPoint.StopListeningComponentsAsync();
-      RemoteEndpoint.ExecuteServerRequestInTransaction(session => session.Send(new MyExactlyOnceTommand()));
-
-      var remoteStorage = RemoteEndpoint.ServiceLocator.Resolve<Outbox.ITessageStorage>();
-      var undeliveredTessage = await Await.NotNullAsync(
-                                  () => remoteStorage.GetUndeliveredTessages(TimeSpan.Zero).FirstOrDefault(it => it.RetryCount > 0),
-                                  timeout: 10.Seconds(),
-                                  pollInterval: 10.Milliseconds(),
-                                  "A tessage with a retry count greater than 0 should have been added to storage");
-      undeliveredTessage.RetryCount.Must().BeGreaterThan(0, "failure should increment retry count");
-      undeliveredTessage.LastAttemptTime.Must().NotBeNull();
-
-      await Host.DisposeAsyncWithoutWaitingForEndpointsToBeAtRest();
    }
 }

@@ -1,6 +1,6 @@
 namespace Compze.Tessaging.Implementation.Transport.Abstractions;
 
-public enum TransportTessageType
+enum TransportTessageType
 {
    //0 is intentionally NOT used, it marks the possibility of serialization errors etc.
    Invalid = 0,

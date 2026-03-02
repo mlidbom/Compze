@@ -19,7 +19,7 @@ namespace Compze.Core.DocumentDb.Private;
 // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
 public partial class DocumentDbSession : IDocumentDbSession
 {
-   public static void RegisterWith(IComponentRegistrar registrar) =>
+   internal static void RegisterWith(IComponentRegistrar registrar) =>
       registrar.Register(Scoped.For<IDocumentDbSession, IDocumentDbUpdater, IDocumentDbReader, IDocumentDbBulkReader>()
                                .CreatedBy((IDocumentDb documentDb) => new ContextEnsuringWrapper(new DocumentDbSession(documentDb))));
 
@@ -27,7 +27,7 @@ public partial class DocumentDbSession : IDocumentDbSession
    {
       readonly UsageGuard<DocumentDbSession> _guarded;
 
-      public ContextEnsuringWrapper(DocumentDbSession wrapped)
+      internal ContextEnsuringWrapper(DocumentDbSession wrapped)
       {
          _guarded = new UsageGuard<DocumentDbSession>(wrapped,
                                                       new CombinationUsageGuard(

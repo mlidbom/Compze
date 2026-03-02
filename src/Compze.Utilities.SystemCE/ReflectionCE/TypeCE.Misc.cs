@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Compze.Contracts;
-using Compze.Underscore;
 using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
 
 namespace Compze.Utilities.SystemCE.ReflectionCE;
@@ -18,8 +17,8 @@ public class TypeMethods(Type type)
 {
    readonly Type _type = type;
 
-   public MethodInfo GetToString() => _type.GetMethod("ToString", BindingFlags.Public | BindingFlags.Instance, null, Type.EmptyTypes, null)._assert().NotNull();
+   MethodInfo GetToString() => _type.GetMethod("ToString", BindingFlags.Public | BindingFlags.Instance, null, Type.EmptyTypes, null)._assert().NotNull();
 
-   static readonly IReadOnlySet<Type> noMeaningfulOverrideTypes = EnumerableCE.OfTypes<object, ValueType, Enum>().ToHashSet();
-   public bool HasMeaningfulToStringOverride() => !noMeaningfulOverrideTypes.Contains(GetToString().DeclaringType._assert().NotNull());
+   static readonly IReadOnlySet<Type> NoMeaningfulOverrideTypes = EnumerableCE.OfTypes<object, ValueType, Enum>().ToHashSet();
+   public bool HasMeaningfulToStringOverride() => !NoMeaningfulOverrideTypes.Contains(GetToString().DeclaringType._assert().NotNull());
 }

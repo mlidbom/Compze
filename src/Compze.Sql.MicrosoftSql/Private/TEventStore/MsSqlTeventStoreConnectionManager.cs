@@ -5,7 +5,7 @@ using Microsoft.Data.SqlClient;
 
 namespace Compze.Sql.MicrosoftSql.Private.TEventStore;
 
-public class MsSqlTeventStoreConnectionManager(IMsSqlConnectionPool sqlConnectionPool)
+class MsSqlTeventStoreConnectionManager(IMsSqlConnectionPool sqlConnectionPool)
 {
    readonly IMsSqlConnectionPool _connectionPool = sqlConnectionPool;
 
@@ -16,7 +16,8 @@ public class MsSqlTeventStoreConnectionManager(IMsSqlConnectionPool sqlConnectio
    }
 
    public void UseCommand([InstantHandle]Action<SqlCommand> action) => UseCommand(false, action);
-   public void UseCommand(bool suppressTransactionWarning, [InstantHandle] Action<SqlCommand> action)
+
+   void UseCommand(bool suppressTransactionWarning, [InstantHandle] Action<SqlCommand> action)
    {
       AssertTransactionPolicy(suppressTransactionWarning);
       _connectionPool.UseCommand(action);

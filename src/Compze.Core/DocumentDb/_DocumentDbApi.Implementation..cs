@@ -11,28 +11,28 @@ public partial class DocumentDbApi
    {
       public class GetDocumentForUpdate<TDocument> : TessageTypes.StrictlyLocal.Tueries.StrictlyLocalTuery<GetDocumentForUpdate<TDocument>, TDocument>
       {
-         public GetDocumentForUpdate(Guid id) => Id = id;
+         internal GetDocumentForUpdate(Guid id) => Id = id;
          Guid Id { get; set; }
 
-         public static void RegisterHandler(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery(
+         internal static void RegisterHandler(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery(
             (GetDocumentForUpdate<TDocument> tuery, IDocumentDbUpdater updater) => updater.GetForUpdate<TDocument>(tuery.Id));
       }
 
       public class TryGetDocument<TDocument> : TessageTypes.StrictlyLocal.Tueries.StrictlyLocalTuery<TryGetDocument<TDocument>, TDocument?>
       {
-         public TryGetDocument(string id) => Id = id;
+         internal TryGetDocument(string id) => Id = id;
          string Id { get; set; }
 
-         public static void RegisterHandler(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery(
+         internal static void RegisterHandler(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery(
             (TryGetDocument<TDocument> tuery, IDocumentDbReader updater) => updater.TryGet<TDocument>(tuery.Id, out var document) ? document : default);
       }
 
       public class GetReadonlyCopyOfDocument<TDocument> : TessageTypes.StrictlyLocal.Tueries.StrictlyLocalTuery<GetReadonlyCopyOfDocument<TDocument>, TDocument>
       {
-         public GetReadonlyCopyOfDocument(Guid id) => Id = id;
+         internal GetReadonlyCopyOfDocument(Guid id) => Id = id;
          Guid Id { get; set; }
 
-         public static void RegisterHandler(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery(
+         internal static void RegisterHandler(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery(
             (GetReadonlyCopyOfDocument<TDocument> tuery, IDocumentDbReader reader) => reader.Get<TDocument>(tuery.Id));
       }
    }
@@ -41,16 +41,16 @@ public partial class DocumentDbApi
    {
       public class DeleteDocument<TDocument> : TessageTypes.StrictlyLocal.Tommands.StrictlyLocalTommand
       {
-         public DeleteDocument(string key) => Key = key;
+         internal DeleteDocument(string key) => Key = key;
          string Key { get; }
 
-         public static void RegisterHandler(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTommand(
+         internal static void RegisterHandler(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTommand(
             (DeleteDocument<TDocument> command, IDocumentDbUpdater updater) => updater.Delete<TDocument>(command.Key));
       }
 
       public class SaveDocument<TDocument> : TessageTypes.StrictlyLocal.Tommands.StrictlyLocalTommand
       {
-         public SaveDocument(string key, TDocument entity)
+         internal SaveDocument(string key, TDocument entity)
          {
             Key = key;
             Entity = entity;
@@ -59,8 +59,8 @@ public partial class DocumentDbApi
          string Key { get; }
          TDocument Entity { get; }
 
-         public static void RegisterHandler(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTommand(
-            (DocumentDbApi.Tommand.SaveDocument<TDocument> command, IDocumentDbUpdater updater) => updater.Save(command.Key, command.Entity));
+         internal static void RegisterHandler(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTommand(
+            (SaveDocument<TDocument> command, IDocumentDbUpdater updater) => updater.Save(command.Key, command.Entity));
       }
    }
 

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Compze.Utilities.Testing.Must;
@@ -25,7 +26,7 @@ public class When_calling_Must_NotBeEmpty : UniversalTestBase
                     .Throw<AssertionFailedException>();
 
    [XF] public void it_throws_for_empty_array()
-      => MustActions.Invoking(() => new int[0].Must().NotBeEmpty())
+      => MustActions.Invoking(() => Array.Empty<int>().Must().NotBeEmpty())
                     .Must()
                     .Throw<AssertionFailedException>();
 

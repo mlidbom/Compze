@@ -6,9 +6,9 @@ using Compze.Threading.ResourceAccess;
 
 namespace Compze.Utilities.SystemCE.TransactionsCE;
 
-public static class VolatileLambdaTransactionParticipantExtensions
+static class VolatileLambdaTransactionParticipantExtensions
 {
-   static readonly IThreadShared<Dictionary<string, VolatileLambdaTransactionParticipant>> Participants = IThreadShared.WithDefaultTimeouts<Dictionary<string, VolatileLambdaTransactionParticipant>>();
+   static readonly IThreadShared<Dictionary<string, VolatileLambdaTransactionParticipant>> Participants = IThreadShared.New(new Dictionary<string, VolatileLambdaTransactionParticipant>());
 
    public static Transaction AddCommitTasks(this Transaction @this, params Action[] actions) => UseParticipant(@this, part => part.AddCommitTasks(actions));
    public static Transaction AddPrepareTasks(this Transaction @this, params Action[] actions) => UseParticipant(@this, part => part.AddPrepareTasks(actions));

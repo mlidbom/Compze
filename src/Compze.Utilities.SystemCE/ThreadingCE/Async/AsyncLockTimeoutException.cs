@@ -8,10 +8,10 @@ namespace Compze.Utilities.SystemCE.ThreadingCE.Async;
 public class AsyncLockTimeoutException : Exception
 {
    readonly IAwaitableMonitor _monitor = IAwaitableMonitor.WithDefaultTimeout();
-   readonly TimeSpan _timeToWaitForOwningThreadStacktrace;
+   readonly WaitTimeout _timeToWaitForOwningThreadStacktrace;
    string? _blockingThreadStacktrace;
 
-   public AsyncLockTimeoutException(TimeSpan timeout, TimeSpan stackTraceFetchTimeout) : base($"Timed out awaiting async lock after {timeout}. This likely indicates an in-memory deadlock. See below for the stacktrace of the blocking thread as it disposes the lock.") =>
+   internal AsyncLockTimeoutException(LockTimeout timeout, WaitTimeout stackTraceFetchTimeout) : base($"Timed out awaiting async lock after {timeout}. This likely indicates an in-memory deadlock. See below for the stacktrace of the blocking thread as it disposes the lock.") =>
       _timeToWaitForOwningThreadStacktrace = stackTraceFetchTimeout;
 
    public override string Message
@@ -19,7 +19,7 @@ public class AsyncLockTimeoutException : Exception
       get
       {
          //Todo: Blocking loggers and similar in production is not great: This only happens on in-memory deadlocks though, so it does not seem too urgent.
-         if(!_monitor.TryAwait(() => _blockingThreadStacktrace != null, new WaitTimeout(_timeToWaitForOwningThreadStacktrace)))
+         if(!_monitor.TryAwait(() => _blockingThreadStacktrace != null, _timeToWaitForOwningThreadStacktrace))
          {
             _blockingThreadStacktrace = $"Failed to get blocking thread stack trace. Timed out after: {_timeToWaitForOwningThreadStacktrace}";
          }
@@ -32,6 +32,6 @@ public class AsyncLockTimeoutException : Exception
       }
    }
 
-   public void SetBlockingThreadsDisposeStackTrace(StackTrace blockingThreadStackTrace) =>
+   internal void SetBlockingThreadsDisposeStackTrace(StackTrace blockingThreadStackTrace) =>
       _monitor.Update(() => _blockingThreadStacktrace = blockingThreadStackTrace.ToString());
 }

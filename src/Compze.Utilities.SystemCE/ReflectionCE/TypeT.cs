@@ -4,19 +4,20 @@ namespace Compze.Utilities.SystemCE.ReflectionCE;
 
 public static class TypeTExtensions
 {
+   // ReSharper disable once UnusedParameter.Global
    public static Type<T> DeclaredType<T>(this T @this) => Type<T>.Instance;
 }
 
 public class Type<T>
 {
-   public static readonly Type<T> Instance = new();
+   internal static readonly Type<T> Instance = new();
    Type() {}
    public TypeOperators Operators => TypeOperators.Instance;
 
    public class TypeOperators
    {
       // ReSharper disable once MemberHidesStaticFromOuterClass
-      public static readonly TypeOperators Instance = new();
+      internal static readonly TypeOperators Instance = new();
       TypeOperators() {}
       public Func<T, T, bool>? Equality { get; } = TryGetBooleanOperator("op_Equality");
       public Func<T, T, bool>? InEquality { get; } = TryGetBooleanOperator("op_Inequality");

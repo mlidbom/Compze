@@ -7,13 +7,13 @@ using Compze.Utilities.DependencyInjection.Abstractions;
 
 namespace Compze.Serialization.Newtonsoft.Private.Tessaging;
 
-public static class RemotableTessageSerializerRegistrar
+static class RemotableTessageSerializerRegistrar
 {
    public static IComponentRegistrar NewtonSoftRemotableTessageSerializer(this IComponentRegistrar registrar)
-      => registrar.Register(Tessaging.NewtonsoftRemotableTessageSerializer.RegisterWith);
+      => registrar.Register(NewtonsoftRemotableTessageSerializer.RegisterWith);
 }
 
-public class NewtonsoftRemotableTessageSerializer : IRemotableTessageSerializer
+class NewtonsoftRemotableTessageSerializer : IRemotableTessageSerializer
 {
    readonly RenamingSupportingJsonSerializer _serializer;
 

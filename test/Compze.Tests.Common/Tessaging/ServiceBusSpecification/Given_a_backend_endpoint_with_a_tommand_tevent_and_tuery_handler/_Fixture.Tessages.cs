@@ -8,10 +8,13 @@ using Compze.Tessaging.TyperMediaApi.EventStore;
 
 // ReSharper disable ClassNeverInstantiated.Global
 // ReSharper disable InconsistentNaming for testing
+// ReSharper disable once UnusedAutoPropertyAccessor.Local
 
 #pragma warning disable IDE1006 //Reviewed OK: Test Naming Styles
 #pragma warning disable CA1724  // Type names should not match namespaces
 #pragma warning disable CA1715  // Interfaces should start with I
+#pragma warning  disable CA1812 // Avoid uninstantiated internal classes # used via reflection
+#pragma warning  disable CA1812 // Avoid uninstantiated internal classes # used via reflection
 
 namespace Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
 
@@ -19,23 +22,23 @@ public class MyTommandResult;
 
 public class MyAtMostOnceTypermediaTommandWithResult : TessageTypes.Remotable.AtMostOnce.AtMostOnceTypermediaTommand<MyTommandResult>
 {
-   MyAtMostOnceTypermediaTommandWithResult() : base() {}
+   MyAtMostOnceTypermediaTommandWithResult() {}
    public static MyAtMostOnceTypermediaTommandWithResult Create() => new() { Id = new TessageId() };
 }
 
 public class MyTueryResult;
 public class MyTuery : TessageTypes.Remotable.NonTransactional.Tueries.Tuery<MyTueryResult>;
-public class MyExactlyOnceTevent : TaggregateTevent, IMyExactlyOnceTevent;
-public interface IMyExactlyOnceTevent : ITaggregateTevent;
+class MyExactlyOnceTevent : TaggregateTevent, IMyExactlyOnceTevent;
+interface IMyExactlyOnceTevent : ITaggregateTevent;
 public class MyExactlyOnceTommand : TessageTypes.Remotable.ExactlyOnce.Tommand;
 
-public class MyUpdateTaggregateTommand : TessageTypes.Remotable.AtMostOnce.AtMostOnceTypermediaTommand
+class MyUpdateTaggregateTommand : TessageTypes.Remotable.AtMostOnce.AtMostOnceTypermediaTommand
 {
    [Obsolete("Used by serializer", error: true)]
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+   // ReSharper disable once UnusedMember.Global
    public MyUpdateTaggregateTommand() {}
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
-   public MyUpdateTaggregateTommand(TaggregateId taggregateId) => TaggregateId = taggregateId;
    public TaggregateId TaggregateId { get; private set; }
 }
 
@@ -43,27 +46,29 @@ public class MyCreateTaggregateTommand : TessageTypes.Remotable.AtMostOnce.AtMos
 {
    [Obsolete("Used by serializer", error: true)]
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
-   public MyCreateTaggregateTommand() {}
+   // ReSharper disable once UnusedMember.Local
+   MyCreateTaggregateTommand() {}
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 
-   public MyCreateTaggregateTommand(TaggregateId taggregateId) => TaggregateId = taggregateId;
+   MyCreateTaggregateTommand(TaggregateId taggregateId) => TaggregateId = taggregateId;
 
    public static MyCreateTaggregateTommand Create() => new(new TaggregateId());
 
+   // ReSharper disable once MemberCanBeInternal — Serialized via Newtonsoft
    public TaggregateId TaggregateId { get; set; }
 }
 
 public class MyTaggregate : Taggregate<MyTaggregate, IMyTaggregateTevent, MyTaggregateTevent, IMyTaggregateTevent<IMyTaggregateTevent>, MyTaggregateTevent<MyTaggregateTevent>>
 {
-   public MyTaggregate()
+   MyTaggregate()
    {
       RegisterTeventAppliers()
         .IgnoreUnhandled<IMyTaggregateTevent>();
    }
 
-   public void Update() => Publish(new MyTaggregateTevent.Updated());
+   internal void Update() => Publish(new MyTaggregateTevent.Updated());
 
-   public static void Create(TaggregateId id, IInProcessTypermediaNavigator bus)
+   internal static void Create(TaggregateId id, IInProcessTypermediaNavigator bus)
    {
       var created = new MyTaggregate();
       created.Publish(new MyTaggregateTevent.Created(id));
@@ -79,14 +84,14 @@ public interface IMyTaggregateTevent : ITaggregateTevent
    public interface Updated : IMyTaggregateTevent;
 }
 
-public class MyTaggregateTevent<T>(T tevent) : TaggregateIdentifyingTevent<T>(tevent), IMyTaggregateTevent<T> where T : IMyTaggregateTevent {}
+public class MyTaggregateTevent<T>(T tevent) : TaggregateIdentifyingTevent<T>(tevent), IMyTaggregateTevent<T> where T : IMyTaggregateTevent;
 
 public class MyTaggregateTevent : TaggregateTevent, IMyTaggregateTevent
 {
-   protected MyTaggregateTevent() {}
-   protected MyTaggregateTevent(TaggregateId accountId) : base(accountId) {}
+   MyTaggregateTevent() {}
+   MyTaggregateTevent(TaggregateId accountId) : base(accountId) {}
 
-   public class Created(TaggregateId accountId) : MyTaggregateTevent(accountId), IMyTaggregateTevent.Created;
+   internal class Created(TaggregateId accountId) : MyTaggregateTevent(accountId), IMyTaggregateTevent.Created;
 
-   public class Updated : MyTaggregateTevent, IMyTaggregateTevent.Updated;
+   internal class Updated : MyTaggregateTevent, IMyTaggregateTevent.Updated;
 }

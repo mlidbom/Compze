@@ -5,7 +5,7 @@ using Npgsql;
 
 namespace Compze.Sql.PostgreSql.Private.TEventStore;
 
-public class PgSqlTeventStoreConnectionManager(IPgSqlConnectionPool sqlConnectionPool)
+class PgSqlTeventStoreConnectionManager(IPgSqlConnectionPool sqlConnectionPool)
 {
    readonly IPgSqlConnectionPool _connectionPool = sqlConnectionPool;
 
@@ -16,7 +16,8 @@ public class PgSqlTeventStoreConnectionManager(IPgSqlConnectionPool sqlConnectio
    }
 
    public void UseCommand([InstantHandle]Action<NpgsqlCommand> action) => UseCommand(false, action);
-   public void UseCommand(bool suppressTransactionWarning, [InstantHandle] Action<NpgsqlCommand> action)
+
+   void UseCommand(bool suppressTransactionWarning, [InstantHandle] Action<NpgsqlCommand> action)
    {
       AssertTransactionPolicy(suppressTransactionWarning);
       _connectionPool.UseCommand(action);

@@ -1,17 +1,20 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Compze.Contracts;
 using Compze.Underscore;
 using Compze.Threading.ResourceAccess;
+using Compze.Threading.ResourceAccess.Exceptions;
+using Compze.Utilities.Logging;
 using Compze.Utilities.SystemCE;
 
 namespace Compze.Threading.Testing;
 
 public class ThreadGate : IThreadGate
 {
-   public static IThreadGate Closed(WaitTimeout timeout, string? name = null) => new ThreadGate(timeout, name);
-   public static IThreadGate Open(WaitTimeout timeout, string? name = null) => new ThreadGate(timeout, name).Open();
+   public static IThreadGate Closed(WaitTimeout timeout, string name) => new ThreadGate(timeout, name);
+   public static IThreadGate Open(WaitTimeout timeout, string name) => new ThreadGate(timeout, name).Open();
 
    public WaitTimeout DefaultTimeout { get; }
 
@@ -21,11 +24,7 @@ public class ThreadGate : IThreadGate
    public int Passed => _monitor.Read(() => _passedThreads.Count);
    public int Requested => _monitor.Read(() => _requestsThreads.Count);
 
-   public IReadOnlyList<ThreadSnapshot> RequestedThreads => _monitor.Read(() => _requestsThreads.ToList());
-   public IReadOnlyList<ThreadSnapshot> QueuedThreads => _monitor.Read(() => _queuedThreads.ToList());
    public IReadOnlyList<ThreadSnapshot> PassedThrough => _monitor.Read(() => _passedThreads.ToList());
-   public unit EnableLogging(bool enable = true) => unit.From(() => _enableLogging = enable);
-   public Action<ThreadSnapshot> PassThroughAction => _monitor.Read(() => _passThroughAction);
 
    public IThreadGate Open()
    {
@@ -53,8 +52,6 @@ public class ThreadGate : IThreadGate
    public bool TryAwait(WaitTimeout timeout, Func<bool> condition) => _monitor.TryAwait(condition, timeout);
 
    public IThreadGate SetPostPassThroughAction(Action<ThreadSnapshot> action) => this._mutate(_ => _monitor.Update(() => _postPassThroughAction = action));
-   public IThreadGate SetPrePassThroughAction(Action<ThreadSnapshot> action) => this._mutate(_ => _monitor.Update(() => _prePassThroughAction = action));
-   public IThreadGate SetPassThroughAction(Action<ThreadSnapshot> action) => this._mutate(_ => _monitor.Update(() => _passThroughAction = action));
 
    public IThreadGate ExecuteWithExclusiveLockWhen(WaitTimeout timeout, Func<bool> condition, Action action)
    {
@@ -107,8 +104,6 @@ public class ThreadGate : IThreadGate
 
          _queuedThreads.Remove(currentThread);
          _passedThreads.Add(currentThread);
-         _prePassThroughAction.Invoke(currentThread);
-         _passThroughAction.Invoke(currentThread);
          _postPassThroughAction.Invoke(currentThread);
       }
       return unit.Value;
@@ -117,7 +112,7 @@ public class ThreadGate : IThreadGate
    ThreadGate(WaitTimeout defaultTimeout, string? name = null)
    {
       Name = name ?? Guid.NewGuid().ToString();
-      _monitor = IAwaitableMonitor.New(new LockTimeout(defaultTimeout.Value), defaultTimeout);
+      _monitor = IAwaitableMonitor.New(LockTimeout.Default, defaultTimeout);
       DefaultTimeout = defaultTimeout;
    }
 
@@ -125,24 +120,15 @@ public class ThreadGate : IThreadGate
 
    IDisposable LogMethodEntryExit(string method) => _monitor.Update(() =>
    {
-      Log($"Entering {method}");
-      return new Disposable(() => _monitor.Update(() => Log($"Exiting  {method}")));
+      Log($"Thread:{Thread.CurrentThread.GetHashCode()} Entering gate method:{Name}.{method}");
+      return new Disposable(() => _monitor.Update(() => Log($"Thread:{Thread.CurrentThread.GetHashCode()} Exiting gate method:{Name}.{method}")));
 
-      void Log(string tevent)
-      {
-         if(!_enableLogging) return;
-
-         var tessage = $"{tevent} {this}";
-         Console.WriteLine(tessage);
-      }
+      void Log(string tevent) => this.Log().Info($"{tevent} {this}");
    });
 
    string Name { get; }
    readonly IAwaitableMonitor _monitor;
    bool _lockOnNextPass;
-   bool _enableLogging = false;
-   Action<ThreadSnapshot> _passThroughAction = _ => {};
-   Action<ThreadSnapshot> _prePassThroughAction = _ => {};
    Action<ThreadSnapshot> _postPassThroughAction = _ => {};
    readonly List<ThreadSnapshot> _requestsThreads = [];
    readonly LinkedList<ThreadSnapshot> _queuedThreads = [];

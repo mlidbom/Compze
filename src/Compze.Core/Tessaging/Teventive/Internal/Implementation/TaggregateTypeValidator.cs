@@ -17,7 +17,7 @@ namespace Compze.Core.Tessaging.Teventive.Internal.Implementation;
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface)]
 public sealed class AllowPublicSettersAttribute : Attribute;
 
-public static class TaggregateTypeValidator<TDomainClass, TTeventImplementation, TTevent>
+static class TaggregateTypeValidator<TDomainClass, TTeventImplementation, TTevent>
 {
    public static void AssertStaticStructureIsValid()
    {
@@ -79,12 +79,12 @@ public static class TaggregateTypeValidator<TDomainClass, TTeventImplementation,
 
    public void AssertIsValid<TTaggregate>() => ValidatorFor<TTaggregate>.AssertValid(_typeMapper);
 
-   public static class ValidatorFor<TTaggregate>
+   static class ValidatorFor<TTaggregate>
    {
       // ReSharper disable once StaticMemberInGenericType (This is exactly the effect we are after...)
       static bool _validated;
 
-      public static void AssertValid(ITypeMapper typeMapper)
+      internal static void AssertValid(ITypeMapper typeMapper)
       {
          if(_validated) return;
 

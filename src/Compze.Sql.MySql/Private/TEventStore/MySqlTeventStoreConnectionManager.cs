@@ -5,7 +5,7 @@ using MySql.Data.MySqlClient;
 
 namespace Compze.Sql.MySql.Private.TEventStore;
 
-public class MySqlTeventStoreConnectionManager(IMySqlConnectionPool sqlConnectionPool)
+class MySqlTeventStoreConnectionManager(IMySqlConnectionPool sqlConnectionPool)
 {
    readonly IMySqlConnectionPool _connectionPool = sqlConnectionPool;
 
@@ -16,7 +16,8 @@ public class MySqlTeventStoreConnectionManager(IMySqlConnectionPool sqlConnectio
    }
 
    public void UseCommand([InstantHandle]Action<MySqlCommand> action) => UseCommand(false, action);
-   public void UseCommand(bool suppressTransactionWarning, [InstantHandle] Action<MySqlCommand> action)
+
+   void UseCommand(bool suppressTransactionWarning, [InstantHandle] Action<MySqlCommand> action)
    {
       AssertTransactionPolicy(suppressTransactionWarning);
       _connectionPool.UseCommand(action);

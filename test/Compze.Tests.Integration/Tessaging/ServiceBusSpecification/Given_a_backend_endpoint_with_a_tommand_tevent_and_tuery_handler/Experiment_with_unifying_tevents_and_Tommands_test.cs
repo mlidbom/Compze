@@ -75,7 +75,7 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
 
    [PCT] public void Can_register_user_and_fetch_user_resource()
    {
-      var registrationResult = _client.ExecuteRequest(navigator => UserRegistrarTaggregate.RegisterUser(navigator));
+      var registrationResult = _client.ExecuteRequest(UserRegistrarTaggregate.RegisterUser);
 
       var user = _client.ExecuteRequest(navigator => navigator.Get(registrationResult.UserLink));
 
@@ -89,13 +89,10 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
       public interface UserRegistered : IUserTevent, ITaggregateCreatedTevent;
    }
 
-   public class UserTevent<T>(T tevent) : TaggregateIdentifyingTevent<T>(tevent), IUserTevent<T> where T : IUserTevent {
-
-   }
+   public class UserTevent<T>(T tevent) : TaggregateIdentifyingTevent<T>(tevent), IUserTevent<T> where T : IUserTevent;
    public class UserTevent : TaggregateTevent, IUserTevent
    {
-      protected UserTevent() {}
-      protected UserTevent(TaggregateId taggregateId) : base(taggregateId) {}
+      UserTevent(TaggregateId taggregateId) : base(taggregateId) {}
 
       public class UserRegisteredTevent(TaggregateId userId) : UserTevent(userId), IUserTevent.UserRegistered;
    }
@@ -112,15 +109,14 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
       }
    }
 
-   public interface IUserRegistrarTevent<out T> : ITaggregateIdentifyingTevent<T> where T : IUserRegistrarTevent {}
-   public interface IUserRegistrarTevent : ITaggregateTevent {}
+   public interface IUserRegistrarTevent<out T> : ITaggregateIdentifyingTevent<T> where T : IUserRegistrarTevent;
+   public interface IUserRegistrarTevent : ITaggregateTevent;
 
-   public class UserRegistrarTevent<T>(T tevent) : TaggregateIdentifyingTevent<T>(tevent), IUserRegistrarTevent<T> where T : IUserRegistrarTevent {}
+   public class UserRegistrarTevent<T>(T tevent) : TaggregateIdentifyingTevent<T>(tevent), IUserRegistrarTevent<T> where T : IUserRegistrarTevent;
 
    public class UserRegistrarTevent : TaggregateTevent, IUserRegistrarTevent
    {
-      protected UserRegistrarTevent() {}
-      protected UserRegistrarTevent(TaggregateId taggregateId) : base(taggregateId) {}
+      UserRegistrarTevent(TaggregateId taggregateId) : base(taggregateId) {}
 
       public class Created() : UserRegistrarTevent(UserRegistrarTaggregate.SingletonId), ITaggregateCreatedTevent;
    }

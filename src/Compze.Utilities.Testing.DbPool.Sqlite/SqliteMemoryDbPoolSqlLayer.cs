@@ -4,12 +4,11 @@ using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Threading.ResourceAccess;
-using Compze.Utilities.Testing.DbPool;
 using Microsoft.Data.Sqlite;
 
 namespace Compze.Utilities.Testing.DbPool.Sqlite;
 
-public class SqliteMemoryDbPoolSqlLayer : IDbPoolSqlLayer
+class SqliteMemoryDbPoolSqlLayer : IDbPoolSqlLayer
 {
    readonly string _poolId = Guid.NewGuid().ToString();
    public static IComponentRegistrar RegisterWith(IComponentRegistrar registrar) =>
@@ -18,8 +17,8 @@ public class SqliteMemoryDbPoolSqlLayer : IDbPoolSqlLayer
                                   .DelegateToParentServiceLocatorWhenCloning());
 
    // Keep one connection open per database to prevent the in-memory database from disappearing when the last connection is closed
-   readonly IThreadShared<IDictionary<string, SqliteConnection>> _keepInMemoryDatabaseAliveConnections = 
-      IThreadShared.WithDefaultTimeouts(new Dictionary<string, SqliteConnection>());
+   readonly IThreadShared<IDictionary<string, SqliteConnection>> _keepInMemoryDatabaseAliveConnections =
+      IThreadShared.New(new Dictionary<string, SqliteConnection>());
 
    public string ConnectionStringFor(DbPoolDatabase db)
    {

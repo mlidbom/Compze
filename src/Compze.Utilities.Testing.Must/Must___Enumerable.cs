@@ -12,11 +12,11 @@ public static class Must___Enumerable
       where TCollection : System.Collections.IEnumerable
       => context.SatisfyInternal(it => it.Cast<object>().Count() == count, failureMessage: it => $"Expected count to be {count} but it was {it.Cast<IEnumerable<object>>().Count()}", expressionValues: [new (predicateExpression, count)]);
 
-   public static IAssertionContext<TCollection> BeEmpty<TCollection>(this IAssertionContext<TCollection> context, string? message = null!)
+   public static IAssertionContext<TCollection> BeEmpty<TCollection>(this IAssertionContext<TCollection> context)
       where TCollection : System.Collections.IEnumerable
-      => context.SatisfyInternal(it => !it.Cast<object>().Any(), failureMessage: it => $"but it contained {it.Cast<object>().Count()} items");
+      => context.SatisfyInternal(it => !it.Cast<object>().Any());
 
-   public static IAssertionContext<TCollection> NotBeEmpty<TCollection>(this IAssertionContext<TCollection> context, string? message = null!)
+   public static IAssertionContext<TCollection> NotBeEmpty<TCollection>(this IAssertionContext<TCollection> context)
       where TCollection : System.Collections.IEnumerable
       => context.SatisfyInternal(it => it.Cast<object>().Any());
 

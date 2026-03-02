@@ -6,11 +6,11 @@ using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Threading;
 using Compze.Utilities.SystemCE.TransactionsCE;
 using System.Threading.Tasks;
-using Compze.Threading.TasksCE;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Sql.MicrosoftSql.Private;
 
-public class MsSqlSqlLayerSchemaManager(IMsSqlConnectionPool connectionPool)
+class MsSqlSqlLayerSchemaManager(IMsSqlConnectionPool connectionPool)
 {
    public static IComponentRegistrar RegisterWith(IComponentRegistrar registrar)
    {

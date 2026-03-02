@@ -2,7 +2,7 @@ using System.Reflection;
 
 namespace Compze.Utilities.Testing.Must.Serialization;
 
-public class InternalMembersContractResolver : MemberFilteringContractResolver
+class InternalMembersContractResolver : MemberFilteringContractResolver
 {
    protected override bool ShouldInclude(PropertyInfo property) =>
       property.GetMethod is { IsPublic: true } or { IsAssembly: true } or { IsFamilyOrAssembly: true } or { IsFamily: true };

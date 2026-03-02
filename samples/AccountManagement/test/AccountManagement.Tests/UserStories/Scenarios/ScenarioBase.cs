@@ -11,5 +11,5 @@ public abstract class ScenarioBase<TResult>
    public abstract TResult Execute();
 
 
-   public CaughtException<TException> ExecutingShouldThrow<TException>() where TException : Exception => this.Invoking(it => it.Execute()).Must().Throw<TException>();
+   internal CaughtException<TException> ExecutingShouldThrow<TException>() where TException : Exception => this.Invoking(it => it.Execute()).Must().Throw<TException>();
 }

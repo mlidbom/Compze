@@ -7,7 +7,7 @@ namespace Compze.Utilities.Testing.Must.Serialization;
 /// Custom converter that prevents serialization of Exception objects to avoid stack overflow
 /// caused by circular references in Exception properties (InnerException, Data, etc.)
 /// </summary>
-public class ExceptionJsonConverter : JsonConverter
+class ExceptionJsonConverter : JsonConverter
 {
    public override bool CanConvert(Type objectType) => typeof(Exception).IsAssignableFrom(objectType);
 
@@ -21,20 +21,20 @@ public class ExceptionJsonConverter : JsonConverter
 
       var exception = (Exception)value;
       writer.WriteStartObject();
-      
+
       writer.WritePropertyName("$type");
       writer.WriteValue(exception.GetType().FullName);
-      
+
       writer.WritePropertyName("Message");
       writer.WriteValue(exception.Message);
-      
+
       writer.WritePropertyName("_SerializationNote");
       writer.WriteValue("Full exception serialization skipped to prevent stack overflow from circular references");
-      
+
       writer.WriteEndObject();
    }
 
-   public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
+   public override object ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
    {
       // We don't need to deserialize in tests
       throw new NotImplementedException("Exception deserialization is not supported");

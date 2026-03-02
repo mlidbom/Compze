@@ -1,8 +1,8 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tests.Infrastructure;
-using Compze.Threading.TasksCE;
 using Compze.Utilities.Testing.Must;
 using Compze.Utilities.Testing.XUnit.BDD;
 using static Compze.Utilities.Testing.Must.MustActions;

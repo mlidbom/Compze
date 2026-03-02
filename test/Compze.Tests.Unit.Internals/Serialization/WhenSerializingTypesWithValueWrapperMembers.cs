@@ -4,6 +4,7 @@ using Compze.Core.Public;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Underscore;
 using Compze.Utilities.Testing.Must;
+// ReSharper disable UnusedAutoPropertyAccessor.Local
 
 // ReSharper disable UnusedMember.Global
 
@@ -11,6 +12,8 @@ using Compze.Utilities.Testing.Must;
 // ReSharper disable MemberHidesStaticFromOuterClass
 // ReSharper disable InconsistentNaming
 // ReSharper disable UnusedAutoPropertyAccessor.Global
+// ReSharper disable UnusedMemberHierarchy.Global
+// ReSharper disable MemberCanBeProtected.Global
 
 namespace Compze.Tests.Unit.Internals.Serialization
 {

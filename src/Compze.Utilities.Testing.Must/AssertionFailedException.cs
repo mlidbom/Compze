@@ -2,7 +2,7 @@ using System;
 
 namespace Compze.Utilities.Testing.Must;
 
-public class AssertionFailedException(string message, Exception? inner = null) : 
+public class AssertionFailedException(string message, Exception? inner = null) :
    Exception($"""
               
               {message}

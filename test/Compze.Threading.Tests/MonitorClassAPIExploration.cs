@@ -1,7 +1,6 @@
 using System;
 using System.Threading;
 using Compze.Utilities.SystemCE;
-using Compze.Threading;
 using Compze.Threading.Testing;
 using Compze.Utilities.Testing.Must;
 using Compze.Utilities.Testing.XUnit.BDD;
@@ -28,8 +27,8 @@ public class MonitorClassApiExploration
    {
       var guarded = new object();
 
-      var threadOneWaitsOnLockSection = GatedCodeSection.New(WaitTimeout.Seconds(30)).Open();
-      var threadTwoHasAcquiredLockAndWishesToReleaseItGate = ThreadGate.Closed(WaitTimeout.Seconds(30));
+      var threadOneWaitsOnLockSection = GatedCodeSection.New(WaitTimeout.Seconds(30), "threadOneWaitsOnLockSection").Open();
+      var threadTwoHasAcquiredLockAndWishesToReleaseItGate = ThreadGate.Closed(WaitTimeout.Seconds(30), "threadTwoHasAcquiredLockAndWishesToReleaseItGate");
 
       var waitTimeout = 100.Milliseconds();
 
@@ -67,8 +66,8 @@ public class MonitorClassApiExploration
    {
       var guarded = new object();
 
-      var threadOneWaitsOnLockSection = GatedCodeSection.New(WaitTimeout.Seconds(30)).Open();
-      var threadTwoHasAcquiredLockAndWishesToReleaseItGate = ThreadGate.Closed(WaitTimeout.Seconds(30));
+      var threadOneWaitsOnLockSection = GatedCodeSection.New(WaitTimeout.Seconds(30), "threadOneWaitsOnLockSection").Open();
+      var threadTwoHasAcquiredLockAndWishesToReleaseItGate = ThreadGate.Closed(WaitTimeout.Seconds(30), "threadTwoHasAcquiredLockAndWishesToReleaseItGate");
 
       var waitTimeout = TimeSpan.FromMilliseconds(int.MaxValue);
 

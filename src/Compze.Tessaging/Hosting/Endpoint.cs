@@ -6,22 +6,20 @@ using Compze.Core.Tessaging.Transport.Internal;
 using Compze.Tessaging.Implementation;
 using Compze.Tessaging.Implementation.Abstractions;
 using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
-using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Tessaging.Implementation.Transport.Client.Internal;
 using Compze.Tessaging.Implementation.Transport.Client.Routing.Abstractions;
 using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Logging;
-using Compze.Utilities.SystemCE;
-using Compze.Threading.TasksCE;
 using Compze.Contracts;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 using static Compze.Contracts.Contract;
 
 namespace Compze.Tessaging.Hosting;
 
-public class Endpoint : IEndpoint
+class Endpoint : IEndpoint
 {
-   public class ServerComponents(TommandScheduler tommandScheduler, IInbox inbox, IOutbox outbox) : IDisposable
+   class ServerComponents(TommandScheduler tommandScheduler, IInbox inbox, IOutbox outbox) : IDisposable
    {
       internal readonly TommandScheduler TommandScheduler = tommandScheduler;
       internal readonly IInbox Inbox = inbox;
@@ -33,14 +31,12 @@ public class Endpoint : IEndpoint
    readonly EndpointConfiguration _configuration;
 
    public Endpoint(IServiceLocator serviceLocator,
-                   ITessagesInFlightTracker globalStateTracker,
                    ITessagingRouter tessagingRouter,
                    IEndpointRegistry endpointRegistry,
                    EndpointConfiguration configuration)
    {
       Argument.NotNull(serviceLocator).NotNull(configuration);
       ServiceLocator = serviceLocator;
-      _globalStateTracker = globalStateTracker;
       _tessagingRouter = tessagingRouter;
       _configuration = configuration;
       _endpointRegistry = endpointRegistry;
@@ -50,7 +46,6 @@ public class Endpoint : IEndpoint
    public IServiceLocator ServiceLocator { get; }
 
    public EndPointAddress? Address => _serverComponents?.Inbox.Address;
-   readonly ITessagesInFlightTracker _globalStateTracker;
    readonly ITessagingRouter _tessagingRouter;
    readonly IEndpointRegistry _endpointRegistry;
 

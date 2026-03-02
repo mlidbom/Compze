@@ -3,20 +3,14 @@ using System.Collections;
 
 namespace Compze.Utilities.Tests.Testing.Must;
 
-class ComparableWithErrorInjectionSupport : IEquatable<ComparableWithErrorInjectionSupport>, 
-                                             IComparable<ComparableWithErrorInjectionSupport>, 
-                                             IComparable,
-                                             IStructuralEquatable,
-                                             IStructuralComparable
+class ComparableWithErrorInjectionSupport(int value, BreakComparableMethod breakComparableMethod = BreakComparableMethod.None) : IEquatable<ComparableWithErrorInjectionSupport>,
+                                                                                                                                 IComparable<ComparableWithErrorInjectionSupport>,
+                                                                                                                                 IComparable,
+                                                                                                                                 IStructuralEquatable,
+                                                                                                                                 IStructuralComparable
 {
-   readonly int _value;
-   readonly BreakComparableMethod _breakComparableMethod;
-
-   public ComparableWithErrorInjectionSupport(int value, BreakComparableMethod breakComparableMethod = BreakComparableMethod.None)
-   {
-      _value = value;
-      _breakComparableMethod = breakComparableMethod;
-   }
+   readonly int _value = value;
+   readonly BreakComparableMethod _breakComparableMethod = breakComparableMethod;
 
    public override bool Equals(object? obj)
    {

@@ -1,8 +1,8 @@
 using System;
 using System.Threading.Tasks;
 using System.Transactions;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Underscore;
-using Compze.Threading.TasksCE;
 using JetBrains.Annotations;
 
 namespace Compze.Utilities.SystemCE.TransactionsCE;
@@ -28,9 +28,7 @@ public static class TransactionScopeCe
 
    public static async Task SuppressAmbientAsync(Func<Task> action) => await ExecuteAsync(action, TransactionScopeOption.Suppress).caf();
 
-
-
-   public static async Task ExecuteAsync([InstantHandle] Func<Task> action, TransactionScopeOption option = TransactionScopeOption.Required)
+   static async Task ExecuteAsync([InstantHandle] Func<Task> action, TransactionScopeOption option = TransactionScopeOption.Required)
    {
       using var transactionScope = new TransactionScope(option,
                                                         new TransactionOptions { IsolationLevel = IsolationLevel.Serializable },
@@ -41,9 +39,7 @@ public static class TransactionScopeCe
 
    public static async Task<TResult> SuppressAmbientAsync<TResult>(Func<Task<TResult>> action) => await ExecuteAsync(action, TransactionScopeOption.Suppress).caf();
 
-
-
-   public static async Task<TResult> ExecuteAsync<TResult>([InstantHandle] Func<Task<TResult>> action, TransactionScopeOption option = TransactionScopeOption.Required)
+   static async Task<TResult> ExecuteAsync<TResult>([InstantHandle] Func<Task<TResult>> action, TransactionScopeOption option = TransactionScopeOption.Required)
    {
       using var transactionScope = new TransactionScope(option,
                                                         new TransactionOptions { IsolationLevel = IsolationLevel.Serializable },

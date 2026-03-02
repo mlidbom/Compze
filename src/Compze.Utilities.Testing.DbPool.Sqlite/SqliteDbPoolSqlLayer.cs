@@ -5,12 +5,11 @@ using System.Linq;
 using System.Threading;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
-using Compze.Utilities.Testing.DbPool;
 using Microsoft.Data.Sqlite;
 
 namespace Compze.Utilities.Testing.DbPool.Sqlite;
 
-public class SqliteDbPoolSqlLayer : IDbPoolSqlLayer
+class SqliteDbPoolSqlLayer : IDbPoolSqlLayer
 {
    public static IComponentRegistrar RegisterWith(IComponentRegistrar registrar) =>
       registrar.Register(Singleton.For<IDbPoolSqlLayer>()
@@ -25,7 +24,7 @@ public class SqliteDbPoolSqlLayer : IDbPoolSqlLayer
 
    const string ConnectionStringConfigurationParameterName = "COMPOSABLE_SQLITE_DATABASE_POOL_BASE_DIRECTORY";
 
-   public SqliteDbPoolSqlLayer()
+   SqliteDbPoolSqlLayer()
    {
       _baseDirectory = Environment.GetEnvironmentVariable(ConnectionStringConfigurationParameterName)
                     ?? Path.Combine(Path.GetTempPath(), "CompzeDbPool", "Sqlite");

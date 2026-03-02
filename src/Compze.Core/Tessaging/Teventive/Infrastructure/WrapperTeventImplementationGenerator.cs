@@ -5,7 +5,6 @@ using System.Linq.Expressions;
 using System.Reflection;
 using Compze.Contracts;
 using Compze.Core.Tessaging.Public;
-using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
 using Compze.Utilities.SystemCE.ReflectionCE.EmitCE;
@@ -17,16 +16,16 @@ using Compze.Threading.ResourceAccess;
 
 namespace Compze.Core.Tessaging.Teventive.Infrastructure;
 
-public static class WrapperTeventImplementationGenerator
+static class WrapperTeventImplementationGenerator
 {
    static IReadOnlyDictionary<Type, Func<ITevent, IPublisherIdentifyingTevent<ITevent>>> _wrapperConstructors = new Dictionary<Type, Func<ITevent, IPublisherIdentifyingTevent<ITevent>>>();
    static IReadOnlyDictionary<Type, Type> _createdWrapperTypes = new Dictionary<Type, Type>();
 
    static string DescribeParameterList(IEnumerable<Type> parameterTypes) => parameterTypes.Select(parameterType => parameterType.FullNameNotNull()).Join(", ");
 
-   static readonly IMonitor MonitorCE = IMonitor.WithDefaultTimeout();
+   static readonly IMonitor MonitorCE = IMonitor.New();
 
-   public static class WrapperConstructorCache<TWrapperTevent, TWrappedTevent>
+   static class WrapperConstructorCache<TWrapperTevent, TWrappedTevent>
       where TWrapperTevent : IPublisherIdentifyingTevent<TWrappedTevent>
       where TWrappedTevent : ITevent
    {
@@ -105,7 +104,7 @@ public static class WrapperTeventImplementationGenerator
 
          wrappedTeventTypeParameter.SetInterfaceConstraints(requiredTeventInterface);
 
-         var (wrappedTeventField, _) = wrapperTeventBuilder.ImplementProperty(nameof(IPublisherIdentifyingTevent<ITaggregateTevent>.Tevent), wrappedTeventTypeParameter);
+         var (wrappedTeventField, _) = wrapperTeventBuilder.ImplementProperty(nameof(IPublisherIdentifyingTevent<>.Tevent), wrappedTeventTypeParameter);
 
          wrapperTeventBuilder.ImplementConstructor(wrappedTeventField);
 

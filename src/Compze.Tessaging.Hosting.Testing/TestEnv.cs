@@ -13,14 +13,14 @@ public static partial class TestEnv
       if(XunitDiscoverer?.Invoke() is {} xunitComponents)
          return xunitComponents;
 
-      throw new Exception($"No components provider found any components");
+      throw new Exception("No components provider found any components");
    }
 
-   public static Serializer Serializer => GetComponents().Serializer;
+   internal static Serializer Serializer => GetComponents().Serializer;
 
    public static SqlLayer SqlLayer => GetComponents().SqlLayer;
 
    public static DIContainer DIContainer => GetComponents().DiContainer;
 
-   public static Transport Transport => GetComponents().Transport;
+   internal static Transport Transport => GetComponents().Transport;
 }

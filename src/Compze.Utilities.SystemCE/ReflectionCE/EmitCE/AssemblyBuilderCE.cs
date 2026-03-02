@@ -15,7 +15,7 @@ public static class AssemblyBuilderCE
    static AssemblyBuilderCE()
    {
       var assembly = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName($"{nameof(AssemblyBuilderCE)}_dynamic_assembly"), AssemblyBuilderAccess.Run);
-      Module = IThreadShared.WithDefaultTimeouts(assembly.DefineDynamicModule(assembly.GetName().Name._assert().NotNull()));
+      Module = IThreadShared.New(assembly.DefineDynamicModule(assembly.GetName().Name._assert().NotNull()));
    }
 }
 
@@ -23,6 +23,7 @@ public static class TypeBuilderCE
 {
    const MethodAttributes PropertyAccessorAttributes = MethodAttributes.Public | MethodAttributes.SpecialName | MethodAttributes.HideBySig;
 
+   // ReSharper disable once UnusedTupleComponentInReturnValue
    public static (FieldInfo, PropertyInfo) ImplementProperty(this TypeBuilder typeBuilder, string propertyName, Type propertyType)
    {
       var fieldBuilder = typeBuilder.DefineField($"_{propertyName}",

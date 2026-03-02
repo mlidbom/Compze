@@ -3,16 +3,15 @@ using System.Threading.Tasks;
 using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Core.Tessaging.Transport.Internal;
 using Compze.Core.Tessaging.Typermedia.Public;
-using Compze.Core.Wiring.Testing.Internal;
 using Compze.Tessaging.Configuration;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tessaging.Implementation.Transport.Client.Implementation.Universal;
 using Compze.Tessaging.Implementation.Transport.Client.Internal;
 using Compze.Tessaging.Typermedia;
 using Compze.Core.Refactoring.Naming.Internal.Implementation;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
-using Compze.Threading.TasksCE;
 
 namespace Compze.Tessaging.Hosting.Testing.Tessaging;
 

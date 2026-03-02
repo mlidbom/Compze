@@ -4,11 +4,10 @@ namespace Compze.Threading.ResourceAccess;
 
 public partial interface IAwaitableMonitor
 {
-   public static IAwaitableMonitor WithDefaultTimeout() => IMonitor.CreateAwaitableWithDefaultTimeout();
-   public static IAwaitableMonitor New(LockTimeout lockTimeout, WaitTimeout? waitTimeout = null) => IMonitor.CreateAwaitableWithTimeouts(lockTimeout, waitTimeout ?? new WaitTimeout(lockTimeout.Value));
+   public static IAwaitableMonitor WithDefaultTimeout() => new MonitorCE(LockTimeout.Default, WaitTimeout.Default);
+   public static IAwaitableMonitor New(LockTimeout lockTimeout, WaitTimeout? waitTimeout = null) => new MonitorCE(lockTimeout, waitTimeout);
 
-   LockTimeout LockTimeout { get; }
-   WaitTimeout WaitTimeout { get; }
+   internal static IMonitor NewIMonitor(LockTimeout? timeout = null) => new MonitorCE(timeout, WaitTimeout.Default);
 
    IDisposable TakeReadLock(LockTimeout? timeout = null);
    IDisposable TakeUpdateLock(LockTimeout? timeout = null);
@@ -18,8 +17,4 @@ public partial interface IAwaitableMonitor
 
    IDisposable? TryTakeReadLockWhen(Func<bool> condition, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null);
    IDisposable? TryTakeUpdateLockWhen(Func<bool> condition, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null);
-
-   long ContentionCount { get; }
-
-   void SetTimeToWaitForStackTrace(TimeSpan timeToWaitForStackTrace);
 }

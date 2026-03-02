@@ -7,9 +7,9 @@ using Newtonsoft.Json;
 
 namespace Compze.Serialization.Newtonsoft;
 
-public static class RenamingAndNonPublicMembersSupportingJsonSettings
+static class RenamingAndNonPublicMembersSupportingJsonSettings
 {
-   public static readonly JsonSerializerSettings Default =
+   static readonly JsonSerializerSettings Default =
       new()
       {
          TypeNameHandling = TypeNameHandling.Auto,

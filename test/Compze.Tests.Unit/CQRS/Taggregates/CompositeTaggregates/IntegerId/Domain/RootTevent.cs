@@ -2,6 +2,7 @@ using Compze.Core.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using JetBrains.Annotations;
+// ReSharper disable ClassNeverInstantiated.Global
 
 #pragma warning disable CA1812 //Uninstantiated class (used via reflection)
 #pragma warning disable CS0108 //Hides inherited member.
@@ -10,9 +11,7 @@ using JetBrains.Annotations;
 // ReSharper disable InconsistentNaming
 namespace Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.IntegerId.Domain;
 
-class RootTevent<T>(T tevent) : TaggregateIdentifyingTevent<T>(tevent), IRootTevent<T> where T : IRootTevent {
-
-}
+class RootTevent<T>(T tevent) : TaggregateIdentifyingTevent<T>(tevent), IRootTevent<T> where T : IRootTevent;
 abstract class RootTevent : TaggregateTevent, IRootTevent
 {
    protected RootTevent() {}
@@ -32,7 +31,7 @@ abstract class RootTevent : TaggregateTevent, IRootTevent
 
       public abstract class Entity : Component, IRootTevent.Component.Entity
       {
-         public int EntityId { get; protected set; }
+         public int EntityId { get; private set; }
 
          [UsedImplicitly] public class IdGetterSetter : IGetSetTaggregateEntityTeventEntityId<int, Entity, IRootTevent.Component.Entity>
          {
@@ -62,7 +61,7 @@ abstract class RootTevent : TaggregateTevent, IRootTevent
 
    public abstract class Entity : RootTevent, IRootTevent.Entity
    {
-      public int EntityId { get; protected set; }
+      public int EntityId { get; private set; }
 
 #pragma warning disable CA1812 // Used via reflection in taggregate infrastructure
       [UsedImplicitly] public class IdGetterSetter : IGetSetTaggregateEntityTeventEntityId<int, Entity, IRootTevent.Entity>
@@ -92,7 +91,7 @@ abstract class RootTevent : TaggregateTevent, IRootTevent
 
       public abstract class NestedEntity : Entity, IRootTevent.Entity.NestedEntity
       {
-         public int NestedEntityId { get; protected set; }
+         public int NestedEntityId { get; private set; }
 
 #pragma warning disable CA1812 // Used via reflection in taggregate infrastructure
          [UsedImplicitly] public new class IdGetterSetter : NestedEntity, IGetSetTaggregateEntityTeventEntityId<int, NestedEntity, IRootTevent.Entity.NestedEntity>

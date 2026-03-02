@@ -1,4 +1,3 @@
-using System.Threading;
 using Xunit;
 
 
@@ -11,15 +10,15 @@ static class TestData
 {
    internal static class Passwords
    {
-      internal const string ValidPassword = "Pass";
+      const string ValidPassword = "Pass";
 
       internal static class Invalid
       {
          public const string? Null = null;
-         public static readonly string EmptyString = string.Empty;
+         static readonly string EmptyString = string.Empty;
          public static readonly string ShorterThanFourCharacters = ValidPassword[..3];
          public const string BorderedByWhiteSpaceAtEnd = $"{ValidPassword} ";
-         public const string BorderedByWhiteSpaceAtBeginning = $" {ValidPassword}";
+         const string BorderedByWhiteSpaceAtBeginning = $" {ValidPassword}";
          public static readonly string MissingUpperCaseCharacter = ValidPassword.ToLowerInvariant();
          public static readonly string MissingLowercaseCharacter = ValidPassword.ToUpperInvariant();
 
@@ -41,10 +40,6 @@ static class TestData
 
    internal static class Emails
    {
-      static int _registeredAccounts = 1;
-
-      internal static string CreateUnusedEmail() => $"test.test@test{Interlocked.Increment(ref _registeredAccounts)}.se";
-
       public static TheoryData<string?, string> InvalidEmailsTestData =>
          new()
          {

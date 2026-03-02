@@ -6,6 +6,7 @@ using Compze.Core.Refactoring.Naming.Internal;
 using Compze.Core.Serialization.Internal;
 using Compze.Core.Tessaging.Public;
 using Compze.Core.Tessaging.Transport.Internal;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Implementation.Abstractions;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Tessaging.Implementation.Transport.Client.Internal;
@@ -13,11 +14,10 @@ using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Utilities.Logging;
 using Compze.Threading.ResourceAccess;
 using Compze.Utilities.SystemCE;
-using Compze.Threading.TasksCE;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Universal;
 
-public class TessagingConnection(
+class TessagingConnection(
    ITessagesInFlightTracker tessagesInFlightTracker,
    EndPointAddress remoteAddress,
    ITypeMapper typeMapper,
@@ -42,7 +42,7 @@ public class TessagingConnection(
    {
       public IExactlyOnceTessage Tessage => (IExactlyOnceTessage)TransportTessage.Tessage;
    }
-   readonly IThreadShared<Queue<PendingDelivery>> _queue = IThreadShared.WithDefaultTimeouts(new Queue<PendingDelivery>());
+   readonly IThreadShared<Queue<PendingDelivery>> _queue = IThreadShared.New(new Queue<PendingDelivery>());
    readonly AutoResetEvent _signal = new(false);
    readonly CancellationTokenSource _cancellationSource = new();
    Thread? _sendLoopThread;

@@ -7,13 +7,13 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Compze.Core.Refactoring.Naming.Internal;
-using Compze.Threading.TasksCE;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 using DispatchingTable = Compze.Core.Tessaging.Internal.SqlLayer.IServiceBusSqlLayer.OutboxTessageDispatchingTableSchemaStrings;
 using TessageTable = Compze.Core.Tessaging.Internal.SqlLayer.IServiceBusSqlLayer.OutboxTessagesDatabaseSchemaStrings;
 
 namespace Compze.Sql.MicrosoftSql.Private.Tessaging;
 
-public partial class MsSqlOutboxSqlLayer(IMsSqlConnectionPool connectionFactory, MsSqlSqlLayerSchemaManager schemaManager) : IServiceBusSqlLayer.IOutboxSqlLayer
+partial class MsSqlOutboxSqlLayer(IMsSqlConnectionPool connectionFactory, MsSqlSqlLayerSchemaManager schemaManager) : IServiceBusSqlLayer.IOutboxSqlLayer
 {
    readonly IMsSqlConnectionPool _connectionFactory = connectionFactory;
    readonly MsSqlSqlLayerSchemaManager _schemaManager = schemaManager;

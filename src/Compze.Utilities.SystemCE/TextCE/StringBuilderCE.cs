@@ -2,14 +2,14 @@ using System;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Text;
+// ReSharper disable MethodOverloadWithOptionalParameter
 
 namespace Compze.Utilities.SystemCE.TextCE;
 
 public static class StringBuilderCE
 {
    public static StringBuilder AppendInvariant(this StringBuilder @this,
-                                               [InterpolatedStringHandlerArgument(nameof(@this))] ref AppendInvariantHandler handler) =>
-      @this;
+                                               [InterpolatedStringHandlerArgument(nameof(@this))] ref AppendInvariantHandler _) => @this;
 
    [InterpolatedStringHandler]
    public ref struct AppendInvariantHandler(int literalLength, int formattedCount, StringBuilder stringBuilder)

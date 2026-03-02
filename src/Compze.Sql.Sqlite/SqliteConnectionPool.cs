@@ -2,8 +2,8 @@ using System;
 using System.Threading.Tasks;
 using Compze.Sql.Common;
 using Compze.Sql.Common.Abstractions;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Utilities.SystemCE;
-using Compze.Threading.TasksCE;
 using Microsoft.Data.Sqlite;
 
 namespace Compze.Sql.Sqlite;
@@ -17,7 +17,7 @@ public interface ISqliteConnectionPool : IDbConnectionPool<ICompzeSqliteConnecti
    {
       readonly LazyCE<IDbConnectionPool<ICompzeSqliteConnection, SqliteCommand>> _pool;
 
-      public SqliteConnectionPool(Func<string> getConnectionString)
+      internal SqliteConnectionPool(Func<string> getConnectionString)
       {
          _pool = new LazyCE<IDbConnectionPool<ICompzeSqliteConnection, SqliteCommand>>(
             () =>

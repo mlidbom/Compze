@@ -1,7 +1,7 @@
 using System.Data.Common;
 using System.Threading.Tasks;
 using Compze.Sql.Common.Abstractions;
-using Compze.Threading.TasksCE;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 using Microsoft.Data.SqlClient;
 
 namespace Compze.Sql.MicrosoftSql;
@@ -14,7 +14,7 @@ public interface ICompzeMsSqlConnection : IPoolableConnection, ICompzeDbConnecti
    {
       SqlConnection Connection { get; }
 
-      public CompzeMsSqlConnection(string connectionString) => Connection = new SqlConnection(connectionString);
+      internal CompzeMsSqlConnection(string connectionString) => Connection = new SqlConnection(connectionString);
 
       public void Open() => Connection.Open();
       public async Task OpenAsync() => await Connection.OpenAsync().caf();

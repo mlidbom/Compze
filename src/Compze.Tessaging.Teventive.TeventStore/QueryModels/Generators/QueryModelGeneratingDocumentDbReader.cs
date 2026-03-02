@@ -45,9 +45,9 @@ public class QueryModelGeneratingQueryModelReader : IVersioningQueryModelReader
       throw new NoSuchDocumentException(key, typeof(TValue));
    }
 
-   public virtual bool TryGet<TDocument>(EntityId key, [MaybeNullWhen(false)] out TDocument document) => TryGetVersion(key, out document);
+   protected virtual bool TryGet<TDocument>(EntityId key, [MaybeNullWhen(false)] out TDocument document) => TryGetVersion(key, out document);
 
-   public virtual bool TryGetVersion<TDocument>(EntityId key, [MaybeNullWhen(false)] out TDocument document, int version = -1)
+   protected virtual bool TryGetVersion<TDocument>(EntityId key, [MaybeNullWhen(false)] out TDocument document, int version = -1)
    {
       var requiresVersioning = version > 0;
       _usageGuard.EnsureAccessValid();
@@ -107,7 +107,7 @@ public class QueryModelGeneratingQueryModelReader : IVersioningQueryModelReader
    public virtual IEnumerable<TValue> GetAll<TValue>(IEnumerable<EntityId> ids) where TValue : IEntity
    {
       _usageGuard.EnsureAccessValid();
-      return ids.Select(id => Get<TValue>(id)).ToList();
+      return ids.Select(Get<TValue>).ToList();
    }
 
    IEnumerable<IVersioningQueryModelGenerator<TDocument>> VersionedGeneratorsForDocumentType<TDocument>() => _documentGenerators.OfType<IVersioningQueryModelGenerator<TDocument>>().ToList();

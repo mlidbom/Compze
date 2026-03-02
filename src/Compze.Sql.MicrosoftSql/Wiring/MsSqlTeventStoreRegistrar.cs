@@ -6,7 +6,7 @@ using Compze.Utilities.DependencyInjection.Abstractions;
 
 namespace Compze.Sql.MicrosoftSql.Wiring;
 
-public static class MsSqlTeventStoreRegistrar
+static class MsSqlTeventStoreRegistrar
 {
    public static IComponentRegistrar MsSqlTeventStoreSqlLayer(this IComponentRegistrar registrar) =>
       registrar.MsSqlSqlLayerSchemaManager()

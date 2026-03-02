@@ -6,10 +6,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Underscore;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Threading.ResourceAccess;
-using Compze.Threading.TasksCE;
 
 namespace Compze.Tessaging.SystemCE.ThreadingCE;
 
@@ -20,18 +20,18 @@ public interface ITaskRunner
    Thread RunOnNamedThread(string threadName, ThreadStart threadLoop, ThreadPriority priority = ThreadPriority.Normal);
 }
 
-public static class TaskRunnerRegistrar
+static class TaskRunnerRegistrar
 {
    public static IComponentRegistrar TaskRunner(this IComponentRegistrar registrar)
       => registrar.Register(TaskRunnerCore.RegisterWith);
 
-   public class TaskRunnerCore : ITaskRunner, IDisposable
+   class TaskRunnerCore : ITaskRunner, IDisposable
    {
       public static void RegisterWith(IComponentRegistrar registrar)
          => registrar.Register(Singleton.For<ITaskRunner>().CreatedBy((IBackgroundExceptionReporter exceptionReporter) => new TaskRunnerCore(exceptionReporter)));
 
       readonly IBackgroundExceptionReporter _exceptionReporter;
-      readonly IThreadShared<List<Thread>> _threads = IThreadShared.WithDefaultTimeouts(new List<Thread>());
+      readonly IThreadShared<List<Thread>> _threads = IThreadShared.New(new List<Thread>());
       readonly IAwaitableThreadShared<HashSet<Task>> _inProgressTasks = IAwaitableThreadShared.WithDefaultTimeouts(new HashSet<Task>());
 
       TaskRunnerCore(IBackgroundExceptionReporter exceptionReporter) => _exceptionReporter = exceptionReporter;
@@ -47,13 +47,21 @@ public static class TaskRunnerRegistrar
 #pragma warning disable CA1031 //This is specifically designed for making sure that exceptions thrown in places where they cannot be surfaced directly, are not just ignored
             catch(Exception exception)
             {
-#pragma warning restore CA1031
-               _exceptionReporter.ReportException(exception);
+               try
+               {
+                  this.Log().Error(exception, $"TaskRunner caught an exception while running task: {taskName}");
+                  throw new TaskRunnerException(exception, $"Running task {taskName} threw exception");
+               }
+               catch(TaskRunnerException taskRunnerException)
+               {
+                  _exceptionReporter.ReportException(taskRunnerException);
+               }
             }
+#pragma warning restore CA1031
          });
 
          _inProgressTasks.Update(it => it.Add(task));
-         task.ContinueWithCE(completedTask => _inProgressTasks.Update(it => it.Remove(task))); //While surprising to me, completedTask and task are NOT the same object.
+         task.ContinueWithCE(_ => _inProgressTasks.Update(it => it.Remove(task))); //While surprising to me, completedTask and task are NOT the same object.
       }
 
       public void Run(string taskName, Func<unit> task) => Run(taskName, () => { task(); });

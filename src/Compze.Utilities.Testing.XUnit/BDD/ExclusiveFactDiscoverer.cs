@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Compze.Threading.TasksCE;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 using Xunit.Internal;
 using Xunit.Sdk;
 using Xunit.v3;
@@ -9,7 +9,7 @@ using Xunit.v3;
 namespace Compze.Utilities.Testing.XUnit.BDD;
 
 #pragma warning disable CA1812 // Avoid uninstantiated internal classes : This class is instantiated by xUnit via reflection.
-public class ExclusiveFactDiscoverer : IXunitTestCaseDiscoverer
+class ExclusiveFactDiscoverer : IXunitTestCaseDiscoverer
 {
    public async ValueTask<IReadOnlyCollection<IXunitTestCase>> Discover(
       ITestFrameworkDiscoveryOptions discoveryOptions,

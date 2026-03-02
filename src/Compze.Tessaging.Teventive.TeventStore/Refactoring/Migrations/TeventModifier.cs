@@ -6,7 +6,6 @@ using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions;
 using Compze.Core.Tessaging.Teventive.TeventStore.Refactoring.Migrations.Public;
 using Compze.Contracts;
-using Compze.Underscore;
 using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
 using Compze.Utilities.SystemCE.LinqCE;
 
@@ -24,8 +23,8 @@ public class TeventModifier(Action<IReadOnlyList<TeventModifier.RefactoredTevent
 {
    public class RefactoredTevent(TaggregateTevent newTevent, TaggregateTeventStorageInformation storageInformation)
    {
-      public TaggregateTevent NewTevent { get; private set; } = newTevent;
-      public TaggregateTeventStorageInformation StorageInformation { get; private set; } = storageInformation;
+      internal TaggregateTevent NewTevent { get; private set; } = newTevent;
+      internal TaggregateTeventStorageInformation StorageInformation { get; private set; } = storageInformation;
    }
 
    readonly Action<IReadOnlyList<RefactoredTevent>> _teventsAddedCallback = teventsAddedCallback;

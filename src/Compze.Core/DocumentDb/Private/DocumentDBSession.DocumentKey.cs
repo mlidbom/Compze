@@ -7,7 +7,7 @@ public partial class DocumentDbSession
 {
    public class DocumentKey : IEquatable<DocumentKey>
    {
-      public DocumentKey(object id, Type type)
+      internal DocumentKey(object id, Type type)
       {
          if(type.IsInterface)
          {
@@ -53,7 +53,7 @@ public partial class DocumentDbSession
 
       public override string ToString() => $"Id: {Id}, Type: {Type}";
 
-      public string Id { get; }
+      internal string Id { get; }
       Type Type { get;  }
 
    }

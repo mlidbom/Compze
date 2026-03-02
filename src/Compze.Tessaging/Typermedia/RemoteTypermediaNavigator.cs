@@ -2,10 +2,10 @@ using System.Threading.Tasks;
 using Compze.Core.Tessaging.Public;
 using Compze.Core.Tessaging.Teventive.Infrastructure.Validation;
 using Compze.Core.Tessaging.Typermedia.Public;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Implementation.Transport.Client.Internal;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
-using Compze.Threading.TasksCE;
 using JetBrains.Annotations;
 
 namespace Compze.Tessaging.Typermedia;
@@ -14,18 +14,17 @@ namespace Compze.Tessaging.Typermedia;
 public static class RemoteHypermediaNavigatorRegistrar
 {
    public static IComponentRegistrar RemoteHypermediaNavigator(this IComponentRegistrar registrar)
-      => registrar.Register(Typermedia.RemoteTypermediaNavigator.RegisterWith);
+      => registrar.Register(RemoteTypermediaNavigator.RegisterWith);
 }
 
 //Todo: Build a pipeline to handle things like tommand validation, caching layers etc. Don't explicitly check for rules and optimization here with duplication across the class.
-[UsedImplicitly] class RemoteTypermediaNavigator : IRemoteTypermediaNavigator
+[UsedImplicitly] class RemoteTypermediaNavigator(ITypermediaRouter typermediaRouter) : IRemoteTypermediaNavigator
 {
    public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Scoped.For<IRemoteTypermediaNavigator>()
                                   .CreatedBy((ITypermediaRouter typermediaRouter) => new RemoteTypermediaNavigator(typermediaRouter)));
 
-   readonly ITypermediaRouter _typermediaRouter;
-   public RemoteTypermediaNavigator(ITypermediaRouter typermediaRouter) => _typermediaRouter = typermediaRouter;
+   readonly ITypermediaRouter _typermediaRouter = typermediaRouter;
 
    public void Post(IAtMostOnceTypermediaTommand tommand) => PostAsync(tommand).WaitUnwrappingException();
 

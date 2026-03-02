@@ -2,7 +2,7 @@ using Tessage = Compze.Core.Tessaging.Internal.SqlLayer.IServiceBusSqlLayer.Inbo
 
 namespace Compze.Sql.PostgreSql.Private.Tessaging;
 
-public partial class PgSqlInboxSqlLayer
+partial class PgSqlInboxSqlLayer
 {
    const string PgSqlGuidType = "UUID";
 

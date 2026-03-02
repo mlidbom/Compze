@@ -7,9 +7,9 @@ using Compze.Utilities.SystemCE;
 
 namespace Compze.Utilities.Testing.Must;
 
-public static class AssertionContextWriter
+static class AssertionContextWriter
 {
-   public static string AssertionCode(this IAssertionContext context, string method, string? predicate = null) => $"{context.Expression}.Must().{method}({predicate})";
+   static string AssertionCode(this IAssertionContext context, string method, string? predicate = null) => $"{context.Expression}.Must().{method}({predicate})";
 
    public static string FailingAssertionHeading(this IAssertionContext context, string method, string? predicate = null) =>
       $"""
@@ -109,6 +109,7 @@ public static class AssertionContextWriter
    public static string Diff(this IAssertionContext context, object expected, object actual, string? oldFileName = null, string? newFileName = null) =>
       context.Diff(Serialize(expected), Serialize(actual), oldFileName, newFileName);
 
+   // ReSharper disable once UnusedParameter.Global
    public static string Diff(this IAssertionContext context, string expected, string actual, string? oldFileName = null, string? newFileName = null) =>
       $"""
        Diff:
@@ -119,6 +120,7 @@ public static class AssertionContextWriter
 
    static string Serialize(object? obj) => obj != null ? JsonConvert.SerializeObject(obj, TestingJsonSettings.AllMembers) : "null";
 
+   // ReSharper disable once UnusedParameter.Global
    public static string NormalizeExpressionIndentation(this IAssertionContext context, string expression)
    {
       var lines = expression.Split(Environment.NewLine);

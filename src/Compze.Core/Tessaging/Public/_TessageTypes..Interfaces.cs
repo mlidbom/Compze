@@ -1,4 +1,5 @@
 using Compze.Core.Public;
+// ReSharper disable MemberCanBeInternal
 
 #pragma warning disable CA1040 //We define a number of empty marker interfaces here that are vital for framework functionality
 // ReSharper disable UnusedTypeParameter
@@ -10,7 +11,8 @@ namespace Compze.Core.Tessaging.Public;
 public interface ITessage;
 public interface ITevent : ITessage;
 public interface ITommand : ITessage;
-public interface IFireAndForgetTommand : ITommand;
+//todo: Should the commented out type below exist?
+//public interface IFireAndForgetTommand : ITommand;
 
 //Transactional behavior marker interfaces
 public interface IMustBeSentTransactionally : ITessage;
@@ -35,7 +37,8 @@ public interface ICreateMyOwnResultTuery<out TResult> : ITuery<TResult>
 //The concrete types implementing the interfaces might have been remotable, making for lost guarantees.
 //With the strictly local message types we can implement behavioral guarantees in frameworks, forbidding nonsensical combinations.
 public interface IStrictlyLocalTessage;
-public interface IStrictlyLocalTevent : ITevent, IStrictlyLocalTessage;
+//todo: Should the commented out type below exist?
+//public interface IStrictlyLocalTevent : ITevent, IStrictlyLocalTessage;
 public interface IStrictlyLocalTommand : ITommand, IMustBeSentTransactionally, IStrictlyLocalTessage;
 public interface IStrictlyLocalTommand<out TResult> : ITommand<TResult>, IStrictlyLocalTommand;
 public interface IStrictlyLocalTuery<TTuery, out TResult> : ITuery<TResult>, IStrictlyLocalTessage where TTuery : IStrictlyLocalTuery<TTuery, TResult>;
@@ -81,9 +84,7 @@ public interface IPublisherIdentifyingTevent<out TTevent> : ITevent
 }
 
 public interface IRemotablePublisherIdentifyingTevent<out TTeventInterface> : IPublisherIdentifyingTevent<TTeventInterface>, IRemotableTevent
-   where TTeventInterface : IExactlyOnceTevent
-{
-}
+   where TTeventInterface : IExactlyOnceTevent;
 
 
 public interface IExactlyOncePublisherIdentifyingTevent<out TTeventInterface> : IRemotablePublisherIdentifyingTevent<TTeventInterface>, IExactlyOnceTevent

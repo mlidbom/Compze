@@ -1,5 +1,3 @@
 namespace Compze.Core.Serialization.Internal;
 
-public interface IDocumentDbSerializer : IJsonSerializer
-{
-}
+public interface IDocumentDbSerializer : IJsonSerializer;

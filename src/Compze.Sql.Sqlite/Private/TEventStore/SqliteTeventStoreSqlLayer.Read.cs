@@ -10,7 +10,7 @@ using Tevent = Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Tev
 
 namespace Compze.Sql.Sqlite.Private.TEventStore;
 
-public partial class SqliteTeventStoreSqlLayer(SqliteTeventStoreConnectionManager connectionManager, SqliteSqlLayerSchemaManager schemaManager) : ITeventStoreSqlLayer
+partial class SqliteTeventStoreSqlLayer(SqliteTeventStoreConnectionManager connectionManager, SqliteSqlLayerSchemaManager schemaManager) : ITeventStoreSqlLayer
 {
    readonly SqliteTeventStoreConnectionManager _connectionManager = connectionManager;
    readonly SqliteSqlLayerSchemaManager _schemaManager = schemaManager;
@@ -64,7 +64,7 @@ public partial class SqliteTeventStoreSqlLayer(SqliteTeventStoreConnectionManage
                                                                                  AND {Tevent.EffectiveVersion} > 0
                                                                              ORDER BY {Tevent.ReadOrderIntegerPart} ASC, {Tevent.ReadOrderFractionPart} ASC
                                                                              """)
-                                                            .AddVarcharParameter(Tevent.TaggregateId, 36, taggregateId.ToString())
+                                                            .AddMediumTextParameter(Tevent.TaggregateId, taggregateId.ToString())
                                                             .AddParameter("CachedVersion", startAfterInsertedVersion)
                                                             .ExecuteReaderAndSelect(ReadDataRow)
                                                             .ToList());

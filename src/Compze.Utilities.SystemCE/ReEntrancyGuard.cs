@@ -11,7 +11,7 @@ public class ReentrancyGuard
    public unit ExecuteIfNotReEntering(Action action) =>
       ExecuteIfNotReEntering(action.AsFunc());
 
-   public unit ExecuteIfNotReEntering(Func<unit> action)
+   unit ExecuteIfNotReEntering(Func<unit> action)
    {
       if(_isExecuting)
       {

@@ -31,8 +31,8 @@ public class When_calling_Must_BeExactType : UniversalTestBase
 
    public class with_a_derived_type : When_calling_Must_BeExactType
    {
-      class Base { }
-      class Derived : Base { }
+      class Base;
+      class Derived : Base;
 
       [XF] public void it_throws_when_expecting_base_type()
       {

@@ -2,7 +2,7 @@ using System;
 
 namespace Compze.Tessaging.SystemCE.ThreadingCE;
 
-public static class BackgroundExceptionReporterExtensions
+static class BackgroundExceptionReporterExtensions
 {
    public static void RunSwallowingAndReportingAnyExceptions(this IBackgroundExceptionReporter @this, Action action)
    {

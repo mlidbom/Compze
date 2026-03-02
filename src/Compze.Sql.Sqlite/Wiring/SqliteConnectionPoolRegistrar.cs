@@ -24,6 +24,7 @@ public static class SqliteConnectionPoolRegistrar
       return registrar;
    }
 
+   // ReSharper disable once UnusedMethodReturnValue.Local
    static IComponentRegistrar SqliteProductionConnectionPool(this IComponentRegistrar registrar, string connectionStringName)
       => registrar.Register(
          Singleton.For<ISqliteConnectionPool>()

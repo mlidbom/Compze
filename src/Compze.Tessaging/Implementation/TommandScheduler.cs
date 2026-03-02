@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Compze.Core.Tessaging.Public;
 using Compze.Core.Time.Public;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Implementation.Abstractions;
 using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Utilities.DependencyInjection;
@@ -14,18 +15,17 @@ using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Threading;
 using Compze.Threading.ResourceAccess;
-using Compze.Threading.TasksCE;
 using Compze.Utilities.SystemCE.TransactionsCE;
 
 namespace Compze.Tessaging.Implementation;
 
-public static class TommandSchedulerRegistrar
+static class TommandSchedulerRegistrar
 {
    public static IComponentRegistrar TommandScheduler(this IComponentRegistrar registrar)
       => registrar.Register(Implementation.TommandScheduler.RegisterWith);
 }
 
-public class TommandScheduler(IOutbox transport, ITaskRunner taskRunner) : IDisposable
+class TommandScheduler(IOutbox transport, ITaskRunner taskRunner) : IDisposable
 {
    public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<TommandScheduler>()
@@ -74,7 +74,7 @@ public class TommandScheduler(IOutbox transport, ITaskRunner taskRunner) : IDisp
       }
    }
 
-   bool HasPassedSendTime(ScheduledTommand tessage) => UtcTimeSource.UtcNow >= tessage.SendAt;
+   static bool HasPassedSendTime(ScheduledTommand tessage) => UtcTimeSource.UtcNow >= tessage.SendAt;
 
    const string SendTaskName = $"{nameof(TommandScheduler)}_Send";
    void Send(ScheduledTommand scheduledTommand)
@@ -91,7 +91,7 @@ public class TommandScheduler(IOutbox transport, ITaskRunner taskRunner) : IDisp
 
    public void Stop() => _scheduledTessagesTimer?.Dispose();
 
-   public class ScheduledTommand(DateTime sendAt, IExactlyOnceTommand tommand)
+   class ScheduledTommand(DateTime sendAt, IExactlyOnceTommand tommand)
    {
       public DateTime SendAt { get; } = sendAt.ToUniversalTimeSafely();
       public IExactlyOnceTommand Tommand { get; } = tommand;

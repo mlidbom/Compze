@@ -28,7 +28,7 @@ public static class TessageHandlerRegistryRegistrar
 }
 
 //performance: Use static caching + indexing trick for storing and retrieving values throughout this class. TueryTypeIndexFor<TTuery>.Index. Etc
-public sealed class TessageHandlerRegistry(ITypeMapper typeMapper) : ITessageHandlerRegistrar, ITessageHandlerRegistry
+sealed class TessageHandlerRegistry(ITypeMapper typeMapper) : ITessageHandlerRegistrar, ITessageHandlerRegistry
 {
    readonly ITypeMapper _typeMapper = typeMapper;
    IReadOnlyDictionary<Type, Action<object>> _tommandHandlers = new Dictionary<Type, Action<object>>();
@@ -37,7 +37,7 @@ public sealed class TessageHandlerRegistry(ITypeMapper typeMapper) : ITessageHan
    IReadOnlyDictionary<Type, HandlerWithResultRegistration> _tommandHandlersReturningResults = new Dictionary<Type, HandlerWithResultRegistration>();
    IReadOnlyList<TeventHandlerRegistration> _teventHandlerRegistrations = new List<TeventHandlerRegistration>();
 
-   readonly IMonitor _monitor = IMonitor.WithDefaultTimeout();
+   readonly IMonitor _monitor = IMonitor.New();
 
    ITessageHandlerRegistrar ITessageHandlerRegistrar.ForTevent<TTevent>(Action<TTevent> handler) => _monitor.Locked(() =>
    {
@@ -154,21 +154,21 @@ public sealed class TessageHandlerRegistry(ITypeMapper typeMapper) : ITessageHan
                          .ToHashSet();
    }
 
-   public class TeventHandlerRegistration(Type type, Action<ITeventHandlerRegistrar<ITevent>> registerHandlerWithRegistrar)
+   class TeventHandlerRegistration(Type type, Action<ITeventHandlerRegistrar<ITevent>> registerHandlerWithRegistrar)
    {
-      public Type Type { get; } = type;
-      public Action<ITeventHandlerRegistrar<ITevent>> RegisterHandlerWithRegistrar { get; } = registerHandlerWithRegistrar;
+      internal Type Type { get; } = type;
+      internal Action<ITeventHandlerRegistrar<ITevent>> RegisterHandlerWithRegistrar { get; } = registerHandlerWithRegistrar;
    }
 
-   public abstract class HandlerWithResultRegistration(Type returnValueType, Func<object, object> handlerMethod)
+   abstract class HandlerWithResultRegistration(Type returnValueType, Func<object, object> handlerMethod)
    {
-      public Type ReturnValueType { get; } = returnValueType;
-      public Func<object, object> HandlerMethod { get; } = handlerMethod;
+      internal Type ReturnValueType { get; } = returnValueType;
+      internal Func<object, object> HandlerMethod { get; } = handlerMethod;
    }
 
-   public class TommandHandlerWithResultRegistration<TTommand, TResult>(Func<TTommand, TResult> handlerMethod) : HandlerWithResultRegistration(typeof(TResult),
+   class TommandHandlerWithResultRegistration<TTommand, TResult>(Func<TTommand, TResult> handlerMethod) : HandlerWithResultRegistration(typeof(TResult),
                                                                                                                                         tommand => handlerMethod((TTommand)tommand)!);
 
-   public class TueryHandlerRegistration<TTuery, TResult>(Func<TTuery, TResult> handlerMethod) : HandlerWithResultRegistration(typeof(TResult),
+   class TueryHandlerRegistration<TTuery, TResult>(Func<TTuery, TResult> handlerMethod) : HandlerWithResultRegistration(typeof(TResult),
                                                                                                                         tommand => handlerMethod((TTuery)tommand)!);
 }

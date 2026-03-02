@@ -4,10 +4,10 @@ using System.Data.Common;
 using System.Threading.Tasks;
 using System.Transactions;
 using Compze.Sql.Common.Abstractions;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
 using Compze.Threading;
 using Compze.Threading.ResourceAccess;
-using Compze.Threading.TasksCE;
 using Compze.Utilities.SystemCE.TransactionsCE;
 
 // ReSharper disable StaticMemberInGenericType
@@ -81,7 +81,7 @@ public abstract partial class DbConnectionPool<TConnection, TCommand>
    public class TransactionAffinityDbConnectionPool(string connectionString, Func<string, TConnection> createConnection) : DefaultDbConnectionPool(connectionString, createConnection)
    {
       readonly IThreadShared<Dictionary<string, Task<TConnection>>> _transactionConnections =
-         IThreadShared.WithDefaultTimeouts<Dictionary<string, Task<TConnection>>>();
+         IThreadShared.New(new Dictionary<string, Task<TConnection>>());
 
       public override async Task<TResult> UseConnectionAsync<TResult>(Func<TConnection, Task<TResult>> func)
       {

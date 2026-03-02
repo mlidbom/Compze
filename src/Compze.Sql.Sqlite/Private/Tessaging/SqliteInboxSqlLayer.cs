@@ -2,14 +2,13 @@ using Compze.Core.Public;
 using Compze.Core.Refactoring.Naming.Internal;
 using Compze.Core.Tessaging.Internal.SqlLayer;
 using Compze.Sql.Common;
-using Compze.Contracts;
 using System.Threading.Tasks;
-using Compze.Threading.TasksCE;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 using TessageTable =  Compze.Core.Tessaging.Internal.SqlLayer.IServiceBusSqlLayer.InboxTessageDatabaseSchemaStrings;
 
 namespace Compze.Sql.Sqlite.Private.Tessaging;
 
-public partial class SqliteInboxSqlLayer(ISqliteConnectionPool connectionFactory, SqliteSqlLayerSchemaManager schemaManager) : IServiceBusSqlLayer.IInboxSqlLayer
+partial class SqliteInboxSqlLayer(ISqliteConnectionPool connectionFactory, SqliteSqlLayerSchemaManager schemaManager) : IServiceBusSqlLayer.IInboxSqlLayer
 {
    readonly ISqliteConnectionPool _connectionFactory = connectionFactory;
    readonly SqliteSqlLayerSchemaManager _schemaManager = schemaManager;
@@ -29,13 +28,13 @@ public partial class SqliteInboxSqlLayer(ISqliteConnectionPool connectionFactory
                    ON CONFLICT ({TessageTable.TessageId}) DO NOTHING
 
                    """)
-              .AddVarcharParameter(TessageTable.TessageId, 36, tessageId.ToString())
-              .AddVarcharParameter(TessageTable.TypeId, 36, typeId.ToString())
+              .AddMediumTextParameter(TessageTable.TessageId, tessageId.ToString())
+              .AddMediumTextParameter(TessageTable.TypeId, typeId.ToString())
               .AddMediumTextParameter(TessageTable.Body, serializedTessage)
               .ExecuteNonQuery();
 
-            return affectedRows == 0 
-               ? IServiceBusSqlLayer.SaveTessageResult.Duplicate 
+            return affectedRows == 0
+               ? IServiceBusSqlLayer.SaveTessageResult.Duplicate
                : IServiceBusSqlLayer.SaveTessageResult.NewTessage;
          });
    }
@@ -54,7 +53,7 @@ public partial class SqliteInboxSqlLayer(ISqliteConnectionPool connectionFactory
                        AND {TessageTable.Status} = {(int)InboxTessageStatus.UnHandled}
 
                    """)
-              .AddVarcharParameter(TessageTable.TessageId, 36, tessageId.ToString())
+              .AddMediumTextParameter(TessageTable.TessageId, tessageId.ToString())
               .ExecuteNonQuery());
    }
 
@@ -74,10 +73,10 @@ public partial class SqliteInboxSqlLayer(ISqliteConnectionPool connectionFactory
                         WHERE {TessageTable.TessageId} = @{TessageTable.TessageId}
 
                         """)
-                   .AddVarcharParameter(TessageTable.TessageId, 36, tessageId.ToString())
+                   .AddMediumTextParameter(TessageTable.TessageId, tessageId.ToString())
                    .AddMediumTextParameter(TessageTable.ExceptionStackTrace, exceptionStackTrace)
                    .AddMediumTextParameter(TessageTable.ExceptionTessage, exceptionTessage)
-                   .AddVarcharParameter(TessageTable.ExceptionType, 500, exceptionType)
+                   .AddMediumTextParameter(TessageTable.ExceptionType, exceptionType)
                    .ExecuteNonQuery());
    }
 
@@ -93,7 +92,7 @@ public partial class SqliteInboxSqlLayer(ISqliteConnectionPool connectionFactory
                         WHERE {TessageTable.TessageId} = @{TessageTable.TessageId}
                             AND {TessageTable.Status} = {(int)InboxTessageStatus.UnHandled}
                         """)
-                   .AddVarcharParameter(TessageTable.TessageId, 36, tessageId.ToString())
+                   .AddMediumTextParameter(TessageTable.TessageId, tessageId.ToString())
                    .ExecuteNonQuery());
    }
 

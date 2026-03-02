@@ -2,8 +2,8 @@ using System;
 using System.Threading.Tasks;
 using Compze.Sql.Common;
 using Compze.Sql.Common.Abstractions;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Utilities.SystemCE;
-using Compze.Threading.TasksCE;
 using Microsoft.Data.SqlClient;
 
 namespace Compze.Sql.MicrosoftSql;
@@ -17,7 +17,7 @@ public interface IMsSqlConnectionPool : IDbConnectionPool<ICompzeMsSqlConnection
    {
       readonly LazyCE<IDbConnectionPool<ICompzeMsSqlConnection, SqlCommand>> _pool;
 
-      public MsSqlConnectionPool(Func<string> getConnectionString)
+      internal MsSqlConnectionPool(Func<string> getConnectionString)
       {
          _pool = new LazyCE<IDbConnectionPool<ICompzeMsSqlConnection, SqlCommand>>(
             () =>

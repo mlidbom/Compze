@@ -5,7 +5,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Compze.Utilities.SystemCE;
-using Compze.Threading;
 using JetBrains.Annotations;
 
 namespace Compze.Tessaging.Hosting.Testing.Performance;
@@ -18,7 +17,7 @@ public static class StopwatchCE
    ///<summary>Measures how long it takes to execute <paramref name="action"/></summary>
    public static TimeSpan TimeExecution([InstantHandle] Action action) => new Stopwatch().TimeExecution(action);
 
-   public static async Task<TimeSpan> TimeExecutionAsync([InstantHandle] Func<Task> action) => await new Stopwatch().TimeExecutionAsync(action);
+   static async Task<TimeSpan> TimeExecutionAsync([InstantHandle] Func<Task> action) => await new Stopwatch().TimeExecutionAsync(action);
 
    ///<summary>Measures how long it takes to execute <paramref name="action"/></summary>
    static TimeSpan TimeExecution(this Stopwatch @this, [InstantHandle] Action action)
@@ -39,7 +38,7 @@ public static class StopwatchCE
    }
 
    // ReSharper disable once MethodOverloadWithOptionalParameter
-   public static async Task<TimedExecutionSummary> TimeExecutionAsync([InstantHandle] Func<Task> action, int iterations = 1)
+   internal static async Task<TimedExecutionSummary> TimeExecutionAsync([InstantHandle] Func<Task> action, int iterations = 1)
    {
       var total = await TimeExecutionAsync(
                      async () =>
@@ -68,7 +67,7 @@ public static class StopwatchCE
       return new TimedExecutionSummary(iterations, total);
    }
 
-   public static TimedExecutionSummary TimeExecutionThreadedLowOverhead([InstantHandle] Action action, int iterations = 1, int maxDegreeOfParallelism = -1)
+   internal static TimedExecutionSummary TimeExecutionThreadedLowOverhead([InstantHandle] Action action, int iterations = 1, int maxDegreeOfParallelism = -1)
    {
       maxDegreeOfParallelism = maxDegreeOfParallelism == -1
                                   ? Math.Max(Environment.ProcessorCount / 2, 4)
@@ -120,7 +119,7 @@ public static class StopwatchCE
    {
       int Iterations { get; } = iterations;
       public TimeSpan Total { get; } = total;
-      public TimeSpan Average => (Total.TotalMilliseconds / Iterations).Milliseconds();
+      internal TimeSpan Average => (Total.TotalMilliseconds / Iterations).Milliseconds();
    }
 
    public class TimedThreadedExecutionSummary(int iterations, IReadOnlyList<TimeSpan> individualExecutionTimes, TimeSpan total, string description = "")

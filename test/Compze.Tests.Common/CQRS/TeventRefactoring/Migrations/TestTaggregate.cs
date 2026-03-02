@@ -9,15 +9,14 @@ using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
 
 // ReSharper disable ClassNeverInstantiated.Global
+#pragma warning  disable CA1812 // Avoid uninstantiated internal classes # used via reflection
 
 namespace Compze.Tests.Common.CQRS.TeventRefactoring.Migrations
 {
    public interface ITestTaggregateTevent<out T> : ITaggregateIdentifyingTevent<T> where T : ITestTaggregateTevent;
    public interface ITestTaggregateTevent : ITaggregateTevent;
 
-   public class TestTaggregateTevent<T>(T tevent) : TaggregateIdentifyingTevent<T>(tevent), ITestTaggregateTevent<T> where T : ITestTaggregateTevent
-   {
-   }
+   public class TestTaggregateTevent<T>(T tevent) : TaggregateIdentifyingTevent<T>(tevent), ITestTaggregateTevent<T> where T : ITestTaggregateTevent;
 
    public abstract class TestTaggregateTevent : TaggregateTevent, ITestTaggregateTevent;
 
@@ -27,8 +26,8 @@ namespace Compze.Tests.Common.CQRS.TeventRefactoring.Migrations
 
       // ReSharper disable ClassNeverInstantiated.Global
       public class Ec1 : EcAbstract;
-      public class Ec2 : EcAbstract;
-      public class Ec3 : EcAbstract;
+      class Ec2 : EcAbstract;
+      class Ec3 : EcAbstract;
       public class E1 : TestTaggregateTevent;
       public class E2 : TestTaggregateTevent;
       public class E3 : TestTaggregateTevent;
@@ -47,7 +46,7 @@ namespace Compze.Tests.Common.CQRS.TeventRefactoring.Migrations
    {
       public void Publish(params TestTaggregateTevent[] tevents) => tevents.ForEach(base.Publish);
 
-      public TestTaggregate() => SetupAppliers();
+      TestTaggregate() => SetupAppliers();
 
       void SetupAppliers()
       {
@@ -55,7 +54,7 @@ namespace Compze.Tests.Common.CQRS.TeventRefactoring.Migrations
            .For<ITestTaggregateTevent>(e => _history.Add(e));
       }
 
-      public TestTaggregate(params TestTaggregateTevent[] tevents) : this()
+      TestTaggregate(params TestTaggregateTevent[] tevents) : this()
       {
          if(tevents.First() is not ITaggregateCreatedTevent) throw new Exception($"First tevent must be {nameof(ITaggregateCreatedTevent)}");
 

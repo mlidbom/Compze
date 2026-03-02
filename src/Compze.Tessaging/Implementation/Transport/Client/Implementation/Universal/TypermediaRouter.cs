@@ -12,6 +12,7 @@ using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Tessaging.Implementation.Transport.Client.Internal;
 using Compze.Contracts;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Underscore;
@@ -19,7 +20,6 @@ using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
 using Compze.Threading;
 using Compze.Threading.ResourceAccess;
-using Compze.Threading.TasksCE;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Universal;
 
@@ -28,11 +28,11 @@ public static class TransportRegistrar
    public static IComponentRegistrar TypermediaTransport(this IComponentRegistrar registrar)
       => registrar.Register(TypermediaRouter.RegisterWith);
 
-   public static IComponentRegistrar TessagingTransport(this IComponentRegistrar registrar)
+   internal static IComponentRegistrar TessagingTransport(this IComponentRegistrar registrar)
       => registrar.Register(TessagingRouter.RegisterWith);
 }
 
-public class TypermediaRouter : ITypermediaRouter, IDisposable
+class TypermediaRouter : ITypermediaRouter, IDisposable
 {
    public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(
@@ -50,7 +50,7 @@ public class TypermediaRouter : ITypermediaRouter, IDisposable
    readonly ITypeMapper _typeMapper;
    readonly IRemotableTessageSerializer _serializer;
    readonly ITransportMessagePoster _transportMessagePoster;
-   readonly IMonitor _monitor = IMonitor.WithDefaultTimeout();
+   readonly IMonitor _monitor = IMonitor.New();
 
 
    bool _running;
@@ -58,7 +58,7 @@ public class TypermediaRouter : ITypermediaRouter, IDisposable
    IReadOnlyDictionary<Type, TypermediaConnection> _tommandHandlerRoutes = new Dictionary<Type, TypermediaConnection>();
    IReadOnlyDictionary<Type, TypermediaConnection> _tueryHandlerRoutes = new Dictionary<Type, TypermediaConnection>();
 
-   public async Task ConnectAsync(EndPointAddress remoteEndpointAddress)
+   async Task ConnectAsync(EndPointAddress remoteEndpointAddress)
    {
       AssertRunning();
 #pragma warning disable CA2000//We are passing this disposable into a collection that we track disposal for
@@ -83,7 +83,7 @@ public class TypermediaRouter : ITypermediaRouter, IDisposable
       var topologyTueryTessage = TransportTessage.OutGoing.Create(topologyTuery, _typeMapper, _serializer);
       var topology = await _transportMessagePoster.PostAsync<TessageTypesInternal.NetworkTopology>(topologyTueryTessage, seedAddress).caf();
 
-      await Task.WhenAll(topology.EndpointAddresses.Select(address => ConnectAsync(address))).caf();
+      await Task.WhenAll(topology.EndpointAddresses.Select(ConnectAsync)).caf();
    }
 
    void RegisterRoutes(TypermediaConnection connection, ISet<TypeId> handledTypeIds)

@@ -1,6 +1,5 @@
 using System;
 using System.Threading;
-using Compze.Underscore;
 using JetBrains.Annotations;
 
 namespace Compze.Threading;
@@ -13,8 +12,6 @@ public class MutexCE
       _mutex = Mutex.TryOpenExisting(mutexName, out var mutex)
                   ? mutex
                   : new Mutex(initiallyOwned: false, name: mutexName);
-
-   public void Locked([InstantHandle] Action action) => Locked(action.AsFunc());
 
    public TResult Locked<TResult>([InstantHandle] Func<TResult> func)
    {

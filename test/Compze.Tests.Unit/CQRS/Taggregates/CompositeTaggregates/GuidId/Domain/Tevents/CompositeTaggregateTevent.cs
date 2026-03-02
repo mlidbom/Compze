@@ -3,28 +3,30 @@ using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using JetBrains.Annotations;
 using System;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public;
+// ReSharper disable ClassNeverInstantiated.Global
 
 // ReSharper disable MemberHidesStaticFromOuterClass
 // ReSharper disable RedundantNameQualifier
 // ReSharper disable InconsistentNaming
+#pragma warning  disable CA1812 // Avoid uninstantiated internal classes # used via reflection
+
 namespace Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId.Domain.Tevents;
 
-public class CompositeTaggregateTevent<T>(T tevent) : TaggregateIdentifyingTevent<T>(tevent), ICompositeTaggregateTevent<T> where T : ICompositeTaggregateTevent {
+class CompositeTaggregateTevent<T>(T tevent) : TaggregateIdentifyingTevent<T>(tevent), ICompositeTaggregateTevent<T> where T : ICompositeTaggregateTevent;
 
-}
-public abstract class CompositeTaggregateTevent : TaggregateTevent, ICompositeTaggregateTevent
+abstract class CompositeTaggregateTevent : TaggregateTevent, ICompositeTaggregateTevent
 {
    protected CompositeTaggregateTevent() {}
-   protected CompositeTaggregateTevent(TaggregateId taggregateId) : base(taggregateId) {}
+   CompositeTaggregateTevent(TaggregateId taggregateId) : base(taggregateId) {}
 
-   public class Created(TaggregateId id, string name) : CompositeTaggregateTevent(id), ICompositeTaggregateTevent.Created
+   internal class Created(TaggregateId id, string name) : CompositeTaggregateTevent(id), ICompositeTaggregateTevent.Created
    {
       public string Name { get; } = name;
    }
 
    public abstract class Component : CompositeTaggregateTevent, ICompositeTaggregateTevent.Component
    {
-      public class Renamed(string name) : Component, ICompositeTaggregateTevent.Component.Renamed
+      internal class Renamed(string name) : Component, ICompositeTaggregateTevent.Component.Renamed
       {
          public string Name { get; } = name;
       }
@@ -39,7 +41,7 @@ public abstract class CompositeTaggregateTevent : TaggregateTevent, ICompositeTa
 
       public new abstract class Entity : Component, ICompositeTaggregateTevent.Component.Entity
       {
-         public Guid EntityId { get; protected set; }
+         public Guid EntityId { get; private set; }
 
 #pragma warning disable CA1812 // Used via reflection in taggregate infrastructure
          [UsedImplicitly] public class IdGetterSetter : IGetSetTaggregateEntityTeventEntityId<Guid, Entity, ICompositeTaggregateTevent.Component.Entity>
@@ -65,13 +67,42 @@ public abstract class CompositeTaggregateTevent : TaggregateTevent, ICompositeTa
             public string Name { get; } = name;
          }
 
-         public class Removed : Entity, ICompositeTaggregateTevent.Component.Entity.Removed;
+         internal class Removed : Entity, ICompositeTaggregateTevent.Component.Entity.Removed;
+      }
+
+      public abstract class NonRemovableEntity : Component, ICompositeTaggregateTevent.Component.NonRemovableEntity
+      {
+         public Guid NonRemovableEntityId { get; private set; }
+
+#pragma warning disable CA1812 // Used via reflection in taggregate infrastructure
+         [UsedImplicitly] public class IdGetterSetter : IGetSetTaggregateEntityTeventEntityId<Guid, NonRemovableEntity, ICompositeTaggregateTevent.Component.NonRemovableEntity>
+#pragma warning restore CA1812
+         {
+            public void SetEntityId(NonRemovableEntity tevent, Guid id) => tevent.NonRemovableEntityId = id;
+            public Guid GetId(ICompositeTaggregateTevent.Component.NonRemovableEntity tevent) => tevent.NonRemovableEntityId;
+         }
+
+         public new class Created : NonRemovableEntity, ICompositeTaggregateTevent.Component.NonRemovableEntity.Created
+         {
+            public Created(Guid nonRemovableEntityId, string name)
+            {
+               NonRemovableEntityId = nonRemovableEntityId;
+               Name = name;
+            }
+
+            public string Name { get; }
+         }
+
+         public new class Renamed(string name) : NonRemovableEntity, ICompositeTaggregateTevent.Component.NonRemovableEntity.Renamed
+         {
+            public string Name { get; } = name;
+         }
       }
    }
 
    public abstract class Entity : CompositeTaggregateTevent, ICompositeTaggregateTevent.Entity
    {
-      public Guid EntityId { get; protected set; }
+      public Guid EntityId { get; private set; }
 
 #pragma warning disable CA1812 // Used via reflection in taggregate infrastructure
       [UsedImplicitly] public class IdGetterSetter : IGetSetTaggregateEntityTeventEntityId<Guid, Entity, ICompositeTaggregateTevent.Entity>
@@ -92,16 +123,16 @@ public abstract class CompositeTaggregateTevent : TaggregateTevent, ICompositeTa
          public string Name { get; }
       }
 
-      public class Renamed(string name) : Entity, ICompositeTaggregateTevent.Entity.Renamed
+      internal class Renamed(string name) : Entity, ICompositeTaggregateTevent.Entity.Renamed
       {
          public string Name { get; } = name;
       }
 
-      public class Removed : Entity, ICompositeTaggregateTevent.Entity.Removed;
+      internal class Removed : Entity, ICompositeTaggregateTevent.Entity.Removed;
 
       public abstract class NestedEntity : Entity, ICompositeTaggregateTevent.Entity.NestedEntity
       {
-         public Guid NestedEntityId { get; protected set; }
+         public Guid NestedEntityId { get; private set; }
 
 #pragma warning disable CA1812 // Used via reflection in taggregate infrastructure
          [UsedImplicitly] public new class IdGetterSetter : IGetSetTaggregateEntityTeventEntityId<Guid, NestedEntity, ICompositeTaggregateTevent.Entity.NestedEntity>

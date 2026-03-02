@@ -23,13 +23,13 @@ public static class TypeMapperRegistrar
 
 public class TypeMapper : ITypeMapper
 {
-   public static IComponentRegistrar RegisterWith(IComponentRegistrar registrar) =>
+   internal static IComponentRegistrar RegisterWith(IComponentRegistrar registrar) =>
       registrar.Register(Singleton.For<ITypeMapper, TypeMapper>()
-                                  .Instance(TypeMapper.Instance));
+                                  .Instance(Instance));
 
    TypeMapper() {}
    public static readonly ITypeMapper Instance = new TypeMapper();
-   static readonly IThreadShared<MappingState> State = IThreadShared.WithDefaultTimeouts<MappingState>();
+   static readonly IThreadShared<MappingState> State = IThreadShared.New(new MappingState());
 
    static TypeMapper()
    {
@@ -118,9 +118,9 @@ public class TypeMapper : ITypeMapper
       }
    }
 
-   static readonly ReentrancyGuard _reentrancyGuard = new();
+   static readonly ReentrancyGuard ReentrancyGuard = new();
 
-   static void EnsureAllCurrentlyLoadedAssembliesHaveBeenCheckedForRequiredMappings() => _reentrancyGuard.ExecuteIfNotReEntering(() =>
+   static void EnsureAllCurrentlyLoadedAssembliesHaveBeenCheckedForRequiredMappings() => ReentrancyGuard.ExecuteIfNotReEntering(() =>
    {
       State.Locked(state =>
       {
@@ -145,7 +145,7 @@ public class TypeMapper : ITypeMapper
             }
          }
 
-         if(_reentrancyGuard.GetAndClearReentryWasAttempted())
+         if(ReentrancyGuard.GetAndClearReentryWasAttempted())
          {
             EnsureAllCurrentlyLoadedAssembliesHaveBeenCheckedForRequiredMappings();
          }
@@ -273,14 +273,14 @@ public class TypeMapper : ITypeMapper
       return new Exception(fixTessage.ToString());
    }
 
-   public class MappingState
+   class MappingState
    {
       internal readonly Dictionary<Type, TypeId> TypeToTypeIdMap = new();
       internal readonly Dictionary<TypeId, Type> TypeIdToTypeMap = new();
       internal readonly HashSet<Assembly> CheckedAssemblies = [];
       internal readonly Dictionary<Assembly, string> AssemblyMappingUpdateTessages = new();
 
-      public void Map(Type type, TypeId typeId)
+      internal void Map(Type type, TypeId typeId)
       {
          if(TypeToTypeIdMap.TryGetValue(type, out var existingTypeId))
          {

@@ -12,6 +12,4 @@ public interface ILogger
    unit Warning(Exception exception, string message, [CallerMemberName] string caller = "");
    unit Info(string message, [CallerMemberName] string caller = "");
    unit Debug(string message, [CallerMemberName] string caller = "");
-
-   unit NCrunch(string message, [CallerMemberName] string caller = "") => Warning($"NCR:{message}", caller);
 }

@@ -1,0 +1,59 @@
+<Project>
+  <PropertyGroup>
+    <Description>Internal utilities for Compze packages. Not intended for direct consumption — do not take a dependency on this package.</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="AccountManagement.API" />
+    <InternalsVisibleTo Include="AccountManagement.Domain.Tevents" />
+    <InternalsVisibleTo Include="AccountManagement.Server" />
+    <InternalsVisibleTo Include="AccountManagement.Tests" />
+    <InternalsVisibleTo Include="AccountManagement.Tests.PerformanceInternals" />
+    <InternalsVisibleTo Include="AccountManagement.Tests.Unit" />
+    <InternalsVisibleTo Include="AccountManagement.UI.MVC" />
+    <InternalsVisibleTo Include="Compze.Contracts" />
+    <InternalsVisibleTo Include="Compze.Contracts.Specifications" />
+    <InternalsVisibleTo Include="Compze.Core" />
+    <InternalsVisibleTo Include="Compze.Serialization.Newtonsoft" />
+    <InternalsVisibleTo Include="Compze.Sql.Common" />
+    <InternalsVisibleTo Include="Compze.Sql.MicrosoftSql" />
+    <InternalsVisibleTo Include="Compze.Sql.MySql" />
+    <InternalsVisibleTo Include="Compze.Sql.PostgreSql" />
+    <InternalsVisibleTo Include="Compze.Sql.Sqlite" />
+    <InternalsVisibleTo Include="Compze.SystemCE.Internal" />
+    <InternalsVisibleTo Include="Compze.Tessaging" />
+    <InternalsVisibleTo Include="Compze.Tessaging.Hosting.AspNetCore" />
+    <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Testing" />
+    <InternalsVisibleTo Include="Compze.Tessaging.Teventive.TeventStore" />
+    <InternalsVisibleTo Include="Compze.Tests.CodePolicies" />
+    <InternalsVisibleTo Include="Compze.Tests.Common" />
+    <InternalsVisibleTo Include="Compze.Tests.Infrastructure" />
+    <InternalsVisibleTo Include="Compze.Tests.Integration" />
+    <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
+    <InternalsVisibleTo Include="Compze.Tests.ScratchPad" />
+    <InternalsVisibleTo Include="Compze.Tests.Unit" />
+    <InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />
+    <InternalsVisibleTo Include="Compze.Threading" />
+    <InternalsVisibleTo Include="Compze.Threading.Specifications" />
+    <InternalsVisibleTo Include="Compze.Threading.Internal" />
+    <InternalsVisibleTo Include="Compze.Threading.Testing" />
+    <InternalsVisibleTo Include="Compze.Threading.Testing.Specifications" />
+    <InternalsVisibleTo Include="Compze.Threading.Tests" />
+    <InternalsVisibleTo Include="Compze.Underscore" />
+    <InternalsVisibleTo Include="Compze.Underscore.Specifications" />
+    <InternalsVisibleTo Include="Compze.Utilities.DependencyInjection" />
+    <InternalsVisibleTo Include="Compze.Utilities.DependencyInjection.Microsoft" />
+    <InternalsVisibleTo Include="Compze.Utilities.DependencyInjection.SimpleInjector" />
+    <InternalsVisibleTo Include="Compze.Utilities.Logging" />
+    <InternalsVisibleTo Include="Compze.Utilities.Logging.Serilog" />
+    <InternalsVisibleTo Include="Compze.Utilities.SystemCE" />
+    <InternalsVisibleTo Include="Compze.Utilities.Testing.DbPool" />
+    <InternalsVisibleTo Include="Compze.Utilities.Testing.DbPool.MicrosoftSql" />
+    <InternalsVisibleTo Include="Compze.Utilities.Testing.DbPool.MySql" />
+    <InternalsVisibleTo Include="Compze.Utilities.Testing.DbPool.PostgreSql" />
+    <InternalsVisibleTo Include="Compze.Utilities.Testing.DbPool.Sqlite" />
+    <InternalsVisibleTo Include="Compze.Utilities.Testing.Must" />
+    <InternalsVisibleTo Include="Compze.Utilities.Testing.XUnit" />
+    <InternalsVisibleTo Include="Compze.Utilities.Testing.XUnit.Tests" />
+    <InternalsVisibleTo Include="Compze.Utilities.Tests" />
+  </ItemGroup>
+</Project>

@@ -25,7 +25,7 @@ public class StrictlyManagedResourceTests : UniversalTestBase
                                                                       _ = new StrictlyManagedResource<MyClass>();
                                                                    });
 
-                                                                   Invoking(() => UncatchableExceptionsGatherer.ForceFullGcAllGenerationsAndWaitForFinalizersConsumeAndThrowAnyGatheredExceptions())
+                                                                   Invoking(UncatchableExceptionsGatherer.ForceFullGcAllGenerationsAndWaitForFinalizersConsumeAndThrowAnyGatheredExceptions)
                                                                      .Must().Throw<AggregateException>()
                                                                      .Which.InnerExceptions.Must().HaveCount(1);
                                                                 }));

@@ -10,7 +10,7 @@ namespace Compze.Utilities.Testing.Must.Serialization;
 /// <summary>
 /// Ensures dictionaries and sets serialize in a deterministic order for reliable comparison.
 /// </summary>
-public class DeterministicOrderedForUnorderedCollectionsConverter : JsonConverter
+class DeterministicOrderedForUnorderedCollectionsConverter : JsonConverter
 {
    public override bool CanConvert(Type objectType) =>
       objectType.ImplementsGenericInterface(typeof(IDictionary<,>)) ||
@@ -90,7 +90,7 @@ public class DeterministicOrderedForUnorderedCollectionsConverter : JsonConverte
       throw new InvalidOperationException($"Unexpected type: {objectType}");
    }
 
-   public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
+   public override object ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
    {
       // We only need this for comparison, not deserialization
       throw new NotImplementedException("Deserialization is not needed for comparison");

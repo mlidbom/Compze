@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using System.Transactions;
 using Compze.Sql.Common.Abstractions;
 using Compze.Contracts;
-using Compze.Threading.TasksCE;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Utilities.SystemCE.TransactionsCE;
 using Microsoft.Data.Sqlite;
 
@@ -19,7 +19,7 @@ public interface ICompzeSqliteConnection : IPoolableConnection, ICompzeDbConnect
       SqliteTransaction? _transaction;
       readonly VolatileLambdaTransactionParticipant _transactionParticipant;
 
-      public CompzeSqliteConnection(string connectionString)
+      internal CompzeSqliteConnection(string connectionString)
       {
          Connection = new SqliteConnection(connectionString);
 

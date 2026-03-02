@@ -3,7 +3,7 @@ using Lock = Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Taggr
 
 namespace Compze.Sql.PostgreSql.Private.TEventStore;
 
-public partial class PgSqlTeventStoreSqlLayer
+partial class PgSqlTeventStoreSqlLayer
 {
    const string PgSqlGuidType = "UUID";
 

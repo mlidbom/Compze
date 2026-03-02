@@ -15,9 +15,8 @@ using Compze.Utilities.SystemCE;
 using System;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
-using Compze.Threading.TasksCE;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Utilities.Testing.Must;
-using Compze.Utilities.Testing.XUnit.BDD;
 using AccountId = AccountManagement.Domain.AccountId;
 
 namespace AccountManagement;
@@ -31,7 +30,7 @@ public class PerformanceTest : UniversalTestBase
    protected override async Task InitializeAsyncInternal()
    {
       _host = TestingEndpointHost.Create();
-      var endpoint = new AccountManagementServerDomainBootstrapper().RegisterWith(_host);
+      var endpoint = AccountManagementServerDomainBootstrapper.RegisterWith(_host);
       await _host.StartAsync().caf();
       _client = await TestClient.ConnectTo(endpoint.Address!).caf();
       _scenarioApi = new AccountScenarioApi(_client);

@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
-using Compze.Threading.ResourceAccess;
+using Compze.Threading.ResourceAccess.Exceptions;
 
 namespace Compze.Tessaging.Implementation.Transport;
 
-public class AwaitNoTessagesInFlightTimeoutException(AwaitingConditionTimeoutException innerException, IReadOnlyList<TessagesInFlightTracker.InFlightTessage> undeliveredTessages)
-   : AwaitingConditionTimeoutException(innerException, FormatMessage(undeliveredTessages))
+class AwaitNoTessagesInFlightTimeoutException(AwaitingConditionTimeoutException innerException, IReadOnlyList<TessagesInFlightTracker.InFlightTessage> undeliveredTessages)
+   : Exception(FormatMessage(undeliveredTessages), innerException)
 {
    public IReadOnlyList<TessagesInFlightTracker.InFlightTessage> UndeliveredTessages { get; } = undeliveredTessages;
 

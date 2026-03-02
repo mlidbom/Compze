@@ -1,13 +1,12 @@
 using System;
 using System.Threading.Tasks;
-using Compze.Threading;
-using Compze.Threading.TasksCE;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Utilities.SystemCE.ThreadingCE;
 
 namespace Compze.Utilities.SystemCE;
 
 ///<summary>Simple utility class that calls the supplied action when the instance is disposed. Gets rid of the need to create a ton of small classes to do cleanup.</summary>
-public sealed class AsyncDisposable : IAsyncDisposable
+sealed class AsyncDisposable : IAsyncDisposable
 {
    readonly Func<Task> _dispose;
 

@@ -29,11 +29,11 @@ public static class FailExecutionOnProcessExitIfTestsThrewUncatchableExceptions
             {
                // ignore this might be overkill, but with the pretty much undiagnosable NCrunch trouble we keep seeing I figure better safe than sorry.
             }
-            Console.Error.WriteLine($"""
-                                     ========================================
-                                          UNCATCHABLE EXCEPTIONS DETECTED
-                                     ========================================
-                                     """);
+            Console.Error.WriteLine("""
+                                    ========================================
+                                         UNCATCHABLE EXCEPTIONS DETECTED
+                                    ========================================
+                                    """);
             Console.Error.WriteLine(ex);
          }
       };

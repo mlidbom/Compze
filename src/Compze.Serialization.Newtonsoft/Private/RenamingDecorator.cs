@@ -5,7 +5,7 @@ using Compze.Utilities.SystemCE;
 
 namespace Compze.Serialization.Newtonsoft.Private;
 
-public class RenamingDecorator(ITypeMapper typeMapper)
+class RenamingDecorator(ITypeMapper typeMapper)
 {
    readonly ITypeMapper _typeMapper = typeMapper;
 

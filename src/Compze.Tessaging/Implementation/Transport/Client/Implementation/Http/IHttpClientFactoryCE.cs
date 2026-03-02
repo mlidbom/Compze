@@ -5,7 +5,7 @@ using Compze.Utilities.DependencyInjection.Abstractions;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Http;
 
-public interface IHttpClientFactoryCE
+interface IHttpClientFactoryCE
 {
    HttpClient CreateClient();
 }
@@ -16,7 +16,7 @@ public static class HttpClientFactoryCERegistrar
       => registrar.Register(Http.HttpClientFactoryCE.RegisterWith);
 }
 
-public class HttpClientFactoryCE : IHttpClientFactoryCE
+class HttpClientFactoryCE : IHttpClientFactoryCE
 {
    public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(

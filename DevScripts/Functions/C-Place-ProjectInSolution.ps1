@@ -13,7 +13,7 @@ function C-Place-ProjectInSolution {
     The name of the project to place in the solution
     
     .PARAMETER SolutionPath
-    Path to the solution file (defaults to src\Compze.slnx)
+    Path to the solution file (defaults to src\Compze.AllProjects.slnx)
     
     .EXAMPLE
     C-Place-ProjectInSolution Compze.Common.Configuration

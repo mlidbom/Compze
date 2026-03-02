@@ -6,31 +6,28 @@ using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Tessaging.Implementation.Transport;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Contracts;
-using Compze.Utilities.DependencyInjection;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Logging;
 using Compze.Utilities.SystemCE.LinqCE;
-using Compze.Threading.TasksCE;
 
 namespace Compze.Tessaging.Hosting;
 
 public class EndpointHost : IEndpointHost
 {
-   readonly IComponentRegistrar _registrar;
    readonly Func<IDependencyInjectionContainer> _containerFactory;
    protected IList<IEndpoint> Endpoints { get; } = [];
    internal ITessagesInFlightTracker TessagesInFlightTracker;
 
-   protected EndpointHost(IComponentRegistrar registrar, Func<IDependencyInjectionContainer> containerFactory)
+   protected EndpointHost(Func<IDependencyInjectionContainer> containerFactory)
    {
-      _registrar = registrar;
       _containerFactory = containerFactory;
       TessagesInFlightTracker = new NullOpTessagesInFlightTracker();
    }
 
    public static class Production
    {
-      public static IEndpointHost Create(Func<IDependencyInjectionContainer> containerFactory) => new EndpointHost(new ComponentRegistrar(), containerFactory);
+      public static IEndpointHost Create(Func<IDependencyInjectionContainer> containerFactory) => new EndpointHost(containerFactory);
    }
 
    public virtual IEndpoint RegisterEndpoint(string name, EndpointId id, Action<IEndpointBuilder> setup) => InternalRegisterEndpoint(new EndpointConfiguration(name, id), setup);

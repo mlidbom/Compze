@@ -3,7 +3,7 @@ using D = Compze.Core.Tessaging.Internal.SqlLayer.IServiceBusSqlLayer.OutboxTess
 
 namespace Compze.Sql.Sqlite.Private.Tessaging;
 
-public partial class SqliteOutboxSqlLayer
+partial class SqliteOutboxSqlLayer
 {
    public const string SchemaCreationSql =
       $"""

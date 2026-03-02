@@ -31,7 +31,7 @@ Theoretically we should be able to easily split each sub-project into its own re
 ### FlexRef makes this practical
 [Compze.Build.FlexRef](https://www.nuget.org/packages/Compze.Build.FlexRef) lets any `.slnx` include any subset of projects. Flex references become `ProjectReference` when the project is in the solution, `PackageReference` when it's not. This means:
 - Each sub-product can have its own `.slnx` for focused work
-- The monolithic `Compze.slnx` still exists for CI and cross-cutting refactors
+- The monolithic `Compze.AllProjects.slnx` still exists for CI and cross-cutting refactors
 - No duplication or special configuration per solution
 
 ### Versioning

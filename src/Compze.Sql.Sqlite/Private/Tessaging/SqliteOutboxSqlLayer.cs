@@ -8,13 +8,13 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Threading.Tasks;
 using Compze.Core.Refactoring.Naming.Internal;
-using Compze.Threading.TasksCE;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 using DispatchingTable = Compze.Core.Tessaging.Internal.SqlLayer.IServiceBusSqlLayer.OutboxTessageDispatchingTableSchemaStrings;
 using TessageTable = Compze.Core.Tessaging.Internal.SqlLayer.IServiceBusSqlLayer.OutboxTessagesDatabaseSchemaStrings;
 
 namespace Compze.Sql.Sqlite.Private.Tessaging;
 
-public partial class SqliteOutboxSqlLayer(ISqliteConnectionPool connectionFactory, SqliteSqlLayerSchemaManager schemaManager) : IServiceBusSqlLayer.IOutboxSqlLayer
+partial class SqliteOutboxSqlLayer(ISqliteConnectionPool connectionFactory, SqliteSqlLayerSchemaManager schemaManager) : IServiceBusSqlLayer.IOutboxSqlLayer
 {
    readonly ISqliteConnectionPool _connectionFactory = connectionFactory;
    readonly SqliteSqlLayerSchemaManager _schemaManager = schemaManager;
@@ -33,8 +33,8 @@ public partial class SqliteOutboxSqlLayer(ISqliteConnectionPool connectionFactor
                        VALUES (@{TessageTable.TessageId}, @{TessageTable.TypeIdGuidValue}, @{TessageTable.SerializedTessage});
 
                    """)
-              .AddVarcharParameter(TessageTable.TessageId, 36, tessageWithReceivers.TessageId.ToString())
-              .AddVarcharParameter(TessageTable.TypeIdGuidValue, 36, tessageWithReceivers.TypeId.ToString())
+              .AddMediumTextParameter(TessageTable.TessageId, tessageWithReceivers.TessageId.ToString())
+              .AddMediumTextParameter(TessageTable.TypeIdGuidValue, tessageWithReceivers.TypeId.ToString())
               .AddMediumTextParameter(TessageTable.SerializedTessage, tessageWithReceivers.SerializedTessage)
               .AddParameter(DispatchingTable.IsReceived, 0);
 
@@ -46,7 +46,7 @@ public partial class SqliteOutboxSqlLayer(ISqliteConnectionPool connectionFactor
                                                             ({DispatchingTable.TessageId},  {DispatchingTable.EndpointId},          {DispatchingTable.IsReceived}) 
                                                     VALUES (@{DispatchingTable.TessageId}, @{DispatchingTable.EndpointId}_{index}, @{DispatchingTable.IsReceived});
 
-                                                """).AddVarcharParameter($"{DispatchingTable.EndpointId}_{index}", 36, endpointId.ToString()));
+                                                """).AddMediumTextParameter($"{DispatchingTable.EndpointId}_{index}", endpointId.ToString()));
 
             command.ExecuteNonQuery();
          });
@@ -66,8 +66,8 @@ public partial class SqliteOutboxSqlLayer(ISqliteConnectionPool connectionFactor
                             AND {DispatchingTable.IsReceived} = 0
 
                         """)
-                   .AddVarcharParameter(DispatchingTable.TessageId, 36, tessageId.ToString())
-                   .AddVarcharParameter(DispatchingTable.EndpointId, 36, endpointId.ToString())
+                   .AddMediumTextParameter(DispatchingTable.TessageId, tessageId.ToString())
+                   .AddMediumTextParameter(DispatchingTable.EndpointId, endpointId.ToString())
                    .ExecuteNonQuery());
 
       return affectedRows == 1
@@ -90,9 +90,9 @@ public partial class SqliteOutboxSqlLayer(ISqliteConnectionPool connectionFactor
                             AND {DispatchingTable.EndpointId} = @{DispatchingTable.EndpointId}
 
                         """)
-                   .AddVarcharParameter(DispatchingTable.TessageId, 36, tessageId.ToString())
-                   .AddVarcharParameter(DispatchingTable.EndpointId, 36, endpointId.ToString())
-                   .AddVarcharParameter(DispatchingTable.LastAttemptTime, 50, DateTime.UtcNow.ToString("O"))
+                   .AddMediumTextParameter(DispatchingTable.TessageId, tessageId.ToString())
+                   .AddMediumTextParameter(DispatchingTable.EndpointId, endpointId.ToString())
+                   .AddMediumTextParameter(DispatchingTable.LastAttemptTime, DateTime.UtcNow.ToString("O"))
                    .AddMediumTextParameter(DispatchingTable.FailureReason, failureReason)
                    .ExecuteNonQuery());
    }
@@ -100,12 +100,12 @@ public partial class SqliteOutboxSqlLayer(ISqliteConnectionPool connectionFactor
    public IReadOnlyList<IServiceBusSqlLayer.UndeliveredTessage> GetUndeliveredTessages(TimeSpan olderThan)
    {
       var cutoffTime = DateTime.UtcNow - olderThan;
-      
+
       return _connectionFactory.UseCommand(
          command =>
          {
             var tessages = new List<IServiceBusSqlLayer.UndeliveredTessage>();
-            
+
             command
                .SetCommandText(
                    $"""
@@ -124,8 +124,8 @@ public partial class SqliteOutboxSqlLayer(ISqliteConnectionPool connectionFactor
                     ORDER BY d.{DispatchingTable.RetryCount}, d.{DispatchingTable.LastAttemptTime}
 
                     """)
-               .AddVarcharParameter("cutoffTime", 50, cutoffTime.ToString("O"));
-            
+               .AddMediumTextParameter("cutoffTime", cutoffTime.ToString("O"));
+
             using var reader = command.ExecuteReader();
             while(reader.Read())
             {
@@ -137,7 +137,7 @@ public partial class SqliteOutboxSqlLayer(ISqliteConnectionPool connectionFactor
                   retryCount: reader.GetInt32(4),
                   lastAttemptTime: reader.IsDBNull(5) ? null : DateTime.Parse(reader.GetString(5), CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind)));
             }
-            
+
             return tessages;
          });
    }
@@ -148,7 +148,7 @@ public partial class SqliteOutboxSqlLayer(ISqliteConnectionPool connectionFactor
          command =>
          {
             var tessages = new List<IServiceBusSqlLayer.UndeliveredTessage>();
-            
+
             command
                .SetCommandText(
                    $"""
@@ -166,8 +166,8 @@ public partial class SqliteOutboxSqlLayer(ISqliteConnectionPool connectionFactor
                     ORDER BY d.{DispatchingTable.RetryCount}, d.{DispatchingTable.LastAttemptTime}
 
                     """)
-               .AddVarcharParameter("endpointId", 36, endpointId.ToString());
-            
+               .AddMediumTextParameter("endpointId", endpointId.ToString());
+
             using var reader = command.ExecuteReader();
             while(reader.Read())
             {
@@ -179,7 +179,7 @@ public partial class SqliteOutboxSqlLayer(ISqliteConnectionPool connectionFactor
                   retryCount: reader.GetInt32(4),
                   lastAttemptTime: reader.IsDBNull(5) ? null : DateTime.Parse(reader.GetString(5), CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind)));
             }
-            
+
             return tessages;
          });
    }

@@ -5,7 +5,7 @@ using Microsoft.Data.Sqlite;
 
 namespace Compze.Sql.Sqlite.Private.TEventStore;
 
-public class SqliteTeventStoreConnectionManager(ISqliteConnectionPool sqlConnectionPool)
+class SqliteTeventStoreConnectionManager(ISqliteConnectionPool sqlConnectionPool)
 {
    readonly ISqliteConnectionPool _connectionPool = sqlConnectionPool;
 
@@ -16,7 +16,8 @@ public class SqliteTeventStoreConnectionManager(ISqliteConnectionPool sqlConnect
    }
 
    public void UseCommand([InstantHandle]Action<SqliteCommand> action) => UseCommand(false, action);
-   public void UseCommand(bool suppressTransactionWarning, [InstantHandle] Action<SqliteCommand> action)
+
+   void UseCommand(bool suppressTransactionWarning, [InstantHandle] Action<SqliteCommand> action)
    {
       AssertTransactionPolicy(suppressTransactionWarning);
       _connectionPool.UseCommand(action);

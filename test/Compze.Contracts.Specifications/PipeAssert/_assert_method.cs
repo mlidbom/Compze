@@ -8,7 +8,7 @@ using AssertionFailedException = Compze.Contracts.Exceptions.AssertionFailedExce
 
 namespace Compze.Contracts.Specifications.PipeAssert;
 
-public class _assert_method
+public static class _assert_method
 {
    public class called_with_only_a_predicate
    {

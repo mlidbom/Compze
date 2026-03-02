@@ -4,13 +4,11 @@ using Compze.Utilities.Tests.Testing.Xunit.ComponentCombinations._2Components;
 
 namespace Compze.Utilities.Tests.Testing.Xunit.ComponentCombinations._3Components.Wildcards;
 
-public sealed class WildcardTestAttribute(
+sealed class WildcardTestAttribute(
    [CallerFilePath] string? sourceFilePath = null,
    [CallerLineNumber] int sourceLineNumber = -1)
    : ComponentCombinationsTheoryAttribute<Serializer, SqlLayer, DIContainer>(
       configurationFileName: "TestUsingWildcards",
       useTestMethodArgument: true,
       sourceFilePath: sourceFilePath,
-      sourceLineNumber: sourceLineNumber)
-{
-}
+      sourceLineNumber: sourceLineNumber);

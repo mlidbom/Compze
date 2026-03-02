@@ -14,9 +14,9 @@ public class TessageTypeInspector_throws_TessageTypeDesignViolationException_if_
    static void AssertInvalidForSending<TTessage>() => Invoking(TessageInspector.AssertValid<TTessage>).Must().Throw<TessageTypeInspector.TessageTypeDesignViolationException>();
    static void AssertInvalidForSubscription<TTessage>() => Invoking(TessageInspector.AssertValidForSubscription<TTessage>).Must().Throw<TessageTypeInspector.TessageTypeDesignViolationException>();
 
-   public class Inspecting_type_for_subscription_ : UniversalTestBase
+   public class Inspecting_type_for_subscription_ : TessageTypeInspector_throws_TessageTypeDesignViolationException_if_
    {
-      public class Type_implements_Wrapper_tevent_interface_but_ : UniversalTestBase
+      public class Type_implements_Wrapper_tevent_interface_but_ : Inspecting_type_for_subscription_
       {
          [XF] public void Is_not_generic() => AssertInvalidForSubscription<INonGenericPublisherIdentifyingTevent>();
 
@@ -24,9 +24,9 @@ public class TessageTypeInspector_throws_TessageTypeDesignViolationException_if_
       }
    }
 
-   public class Inspecting_type_for_sending_and_ : UniversalTestBase
+   public class Inspecting_type_for_sending_and_ : TessageTypeInspector_throws_TessageTypeDesignViolationException_if_
    {
-      public class Type_implements_Wrapper_tevent_interface_but_ : UniversalTestBase
+      public class Type_implements_Wrapper_tevent_interface_but_ : Inspecting_type_for_sending_and_
       {
          [XF] public void Is_not_generic() => AssertInvalidForSubscription<INonGenericPublisherIdentifyingTevent>();
 

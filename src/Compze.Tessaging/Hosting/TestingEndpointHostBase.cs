@@ -5,18 +5,17 @@ using System.Threading.Tasks;
 using Compze.Core.Refactoring.Naming.Internal.Implementation;
 using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Core.Tessaging.Transport.Internal;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Implementation.Transport;
 using Compze.Tessaging.Implementation.Transport.Client.Routing.Abstractions;
 using Compze.Utilities.DependencyInjection.Abstractions;
-using Compze.Utilities.SystemCE;
 using Compze.Threading;
-using Compze.Threading.TasksCE;
 
 namespace Compze.Tessaging.Hosting;
 
 public abstract class TestingEndpointHostBase : EndpointHost, ITestingEndpointHost, IEndpointRegistry
 {
-   protected TestingEndpointHostBase(IComponentRegistrar registrar, Func<IDependencyInjectionContainer> containerFactory) : base(registrar, containerFactory) =>
+   protected TestingEndpointHostBase(Func<IDependencyInjectionContainer> containerFactory) : base(containerFactory) =>
       TessagesInFlightTracker = new TessagesInFlightTracker(TypeMapper.Instance);
 
    public IEnumerable<EndPointAddress> ServerEndpointAddresses => Endpoints.Where(it => it.Address is not null)
@@ -34,7 +33,7 @@ public abstract class TestingEndpointHostBase : EndpointHost, ITestingEndpointHo
       if(!_disposed)
       {
          _disposed = true;
-         List<Exception> unHandledExceptions = new();
+         List<Exception> unHandledExceptions = [];
          if(waitForEndpointsToBeAtRest)
          {
             try

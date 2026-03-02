@@ -8,7 +8,7 @@ class Root : Taggregate<Root, IRootTevent, RootTevent, IRootTevent<IRootTevent>,
 {
    static int _instances;
    public string Name { get; private set; } = string.Empty;
-   readonly RemovableEntity.CollectionManager _entities;
+   readonly RemovableEntity.ICollectionManager _entities;
    public Component Component { get; private set; }
 
    public Root(string name)
@@ -40,7 +40,7 @@ class Component : Root.Component<Component, IRootTevent.Component, RootTevent.Co
    }
 
    public IReadOnlyEntityCollection<Entity, int> Entities => _entities.Entities;
-   readonly Entity.CollectionManager _entities;
+   readonly Entity.ICollectionManager _entities;
 
    public void Rename(string name) => Publish(new RootTevent.Component.Renamed(name));
    public Entity AddEntity(string name) => _entities.AddByPublishing(new RootTevent.Component.Entity.Created(++_instances, name));
@@ -87,12 +87,13 @@ class Component : Root.Component<Component, IRootTevent.Component, RootTevent.Co
    }
 
    public IReadOnlyEntityCollection<RemovableNestedEntity, int> Entities => _entities.Entities;
-   readonly RemovableNestedEntity.CollectionManager _entities;
+   readonly RemovableNestedEntity.ICollectionManager _entities;
 
    public void Rename(string name) => Publish(new RootTevent.Entity.Renamed(name));
    public void Remove() => Publish(new RootTevent.Entity.Removed());
 
 #pragma warning disable CA1812 // Used via reflection in taggregate infrastructure
+   // ReSharper disable once ClassNeverInstantiated.Global
    public class RemovableNestedEntity : RemovableEntity<RemovableNestedEntity,
 #pragma warning restore CA1812
       int,

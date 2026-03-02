@@ -1,4 +1,3 @@
-using System;
 using System.Globalization;
 using Compze.Utilities.Logging;
 using Compze.Utilities.Logging.Serilog;
@@ -15,7 +14,7 @@ namespace Compze.Tests.Infrastructure;
 /// </summary>
 public static class TestFixtureHelper
 {
-   public static void SetupSerilog(ILogEventEnricher? testEnricher, ILogEventSink? testOutputSink = null)
+   internal static void SetupSerilog(ILogEventEnricher? testEnricher, ILogEventSink? testOutputSink = null)
    {
       var config = new LoggerConfiguration()
                   .Enrich.WithMachineName()
@@ -43,7 +42,7 @@ public static class TestFixtureHelper
       CompzeLogger.LoggerFactoryMethod = SerilogLogger.Create;
    }
 
-   public class ShortSourceContextEnricher : ILogEventEnricher
+   class ShortSourceContextEnricher : ILogEventEnricher
    {
       public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
       {

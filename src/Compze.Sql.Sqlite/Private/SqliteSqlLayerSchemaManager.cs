@@ -6,11 +6,11 @@ using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Threading;
 using Compze.Utilities.SystemCE.TransactionsCE;
 using System.Threading.Tasks;
-using Compze.Threading.TasksCE;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Sql.Sqlite.Private;
 
-public class SqliteSqlLayerSchemaManager(ISqliteConnectionPool connectionPool)
+class SqliteSqlLayerSchemaManager(ISqliteConnectionPool connectionPool)
 {
    public static IComponentRegistrar RegisterWith(IComponentRegistrar registrar)
    {

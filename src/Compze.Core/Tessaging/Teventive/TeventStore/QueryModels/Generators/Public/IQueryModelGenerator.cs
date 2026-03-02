@@ -6,7 +6,7 @@ namespace Compze.Core.Tessaging.Teventive.TeventStore.QueryModels.Generators.Pub
 public interface IQueryModelGenerator;
 #pragma warning restore CA1040 //avoid empty interfaces
 
-public interface IQueryModelGenerator<TDocument> : IQueryModelGenerator
+public interface IQueryModelGenerator<out TDocument> : IQueryModelGenerator
 {
    TDocument? TryGenerate(EntityId id);
 }

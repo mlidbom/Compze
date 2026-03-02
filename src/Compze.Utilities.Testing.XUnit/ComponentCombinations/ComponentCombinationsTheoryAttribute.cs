@@ -12,28 +12,23 @@ using Xunit.v3;
 namespace Compze.Utilities.Testing.XUnit.ComponentCombinations;
 
 [XunitTestCaseDiscoverer(typeof(ComponentCombinationsTheoryDiscoverer))]
-public abstract class ComponentCombinationsTheoryAttribute :
-   TheoryAttribute,
-   IDataAttribute
+public abstract class ComponentCombinationsTheoryAttribute(
+   string configurationFileName,
+   Type[] componentEnumTypes,
+   bool useTestMethodArgument,
+   string? sourceFilePath = null,
+   int sourceLineNumber = -1)
+   :
+      TheoryAttribute(sourceFilePath, sourceLineNumber),
+      IDataAttribute
 {
-   public bool UseTestMethodArgument { get; }
+   internal bool UseTestMethodArgument { get; } = useTestMethodArgument;
    public object[]? Skipped { get; init; }
    public string[]? SkipReasons { get; init; }
    public Type? OnlyConsider { get; init; }
 
-   readonly Type[] _componentEnumTypes;
-   readonly string _configurationFileName;
-
-   protected ComponentCombinationsTheoryAttribute(string configurationFileName,
-                                                  Type[] componentEnumTypes,
-                                                  bool useTestMethodArgument,
-                                                  string? sourceFilePath = null,
-                                                  int sourceLineNumber = -1) : base(sourceFilePath, sourceLineNumber)
-   {
-      UseTestMethodArgument = useTestMethodArgument;
-      _configurationFileName = configurationFileName;
-      _componentEnumTypes = componentEnumTypes;
-   }
+   readonly Type[] _componentEnumTypes = componentEnumTypes;
+   readonly string _configurationFileName = configurationFileName;
 
    string? ValidateConfiguration()
    {

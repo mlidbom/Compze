@@ -2,7 +2,6 @@ using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Tessaging;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.Utilities.DependencyInjection.Abstractions;
-using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
 using System;
 using System.Collections.Generic;
@@ -30,7 +29,7 @@ namespace Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_
 public abstract class EndpointHostTestBase : UniversalTestBase
 {
    static readonly WaitTimeout _timeout = WaitTimeout.Seconds(10);
-   public ITestingEndpointHost Host { get; set; } = null!;
+   protected ITestingEndpointHost Host { get; private set; } = null!;
    public IThreadGate MyExactlyOnceTommandHandlerThreadGate { get; }
    public IThreadGate TommandHandlerWithResultThreadGate { get; }
    public IThreadGate MyCreateTaggregateTommandHandlerThreadGate { get; }
@@ -40,9 +39,9 @@ public abstract class EndpointHostTestBase : UniversalTestBase
    public IThreadGate TeventHandlerThreadGate { get; }
    public IThreadGate TueryHandlerThreadGate { get; }
 
-   public IReadOnlyList<IThreadGate> AllGates  { get; }
+   IReadOnlyList<IThreadGate> AllGates  { get; }
 
-   public IEndpoint BackendEndPoint { get; private set; } = null!;
+   protected IEndpoint BackendEndPoint { get; private set; } = null!;
    protected IClient Client { get; private set; } = null!;
    protected IEndpoint RemoteEndpoint { get; private set; } = null!;
 
@@ -73,7 +72,7 @@ public abstract class EndpointHostTestBase : UniversalTestBase
    protected override async Task DisposeAsyncInternal()
    {
       OpenGates();
-      if(Client != null) await Client.DisposeAsync();
+      await Client.DisposeAsync();
       await Host.DisposeAsync();
       _rootContainer.Dispose();
    }

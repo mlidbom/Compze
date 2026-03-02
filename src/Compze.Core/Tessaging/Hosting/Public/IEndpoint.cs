@@ -7,12 +7,11 @@ namespace Compze.Core.Tessaging.Hosting.Public;
 
 public interface IEndpoint : IAsyncDisposable
 {
-    EndpointId Id { get; }
-    IServiceLocator ServiceLocator { get; }
-    EndPointAddress? Address { get; }
-    bool IsRunning { get; }
-    Task StartListeningComponentsAsync();
-    Task StartSendingComponentsAsync();
-    Task StopListeningComponentsAsync();
-    Task StopSendingComponentsAsync();
+   IServiceLocator ServiceLocator { get; }
+   EndPointAddress? Address { get; }
+   bool IsRunning { get; }
+   Task StartListeningComponentsAsync();
+   Task StartSendingComponentsAsync();
+   Task StopListeningComponentsAsync();
+   Task StopSendingComponentsAsync();
 }

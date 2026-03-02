@@ -5,33 +5,24 @@ namespace Compze.Threading.ResourceAccess;
 
 public interface IThreadShared
 {
-   public static IThreadShared<TShared> WithDefaultTimeouts<TShared>() where TShared : new() =>
-      new LockCEThreadShared<TShared>(new TShared(), IMonitor.WithDefaultTimeout());
-
-   public static IThreadShared<TShared> WithDefaultTimeouts<TShared>(TShared shared) =>
-      new LockCEThreadShared<TShared>(shared, IMonitor.WithDefaultTimeout());
-
-   public static IThreadShared<TShared> New<TShared>(LockTimeout lockTimeout) where TShared : new() =>
-      new LockCEThreadShared<TShared>(new TShared(), IMonitor.New(lockTimeout));
-
-   public static IThreadShared<TShared> New<TShared>(TShared shared, LockTimeout lockTimeout) =>
+   public static IThreadShared<TShared> New<TShared>(TShared shared, LockTimeout? lockTimeout = null) =>
       new LockCEThreadShared<TShared>(shared, IMonitor.New(lockTimeout));
 
    // Single implementation for both IThreadShared<T> and IAwaitableThreadShared<T>.
-   public class LockCEThreadShared<TShared> : IThreadShared<TShared>, IAwaitableThreadShared<TShared>
+   class LockCEThreadShared<TShared> : IThreadShared<TShared>, IAwaitableThreadShared<TShared>
    {
       readonly IMonitor _monitor;
       readonly IAwaitableMonitor _awaitableMonitor;
       readonly TShared _shared;
 
-      public LockCEThreadShared(TShared shared, IMonitor monitor)
+      internal LockCEThreadShared(TShared shared, IMonitor monitor)
       {
          _shared = shared;
          _monitor = monitor;
          _awaitableMonitor = (IAwaitableMonitor)monitor;
       }
 
-      public LockCEThreadShared(TShared shared, IAwaitableMonitor awaitableMonitor)
+      internal LockCEThreadShared(TShared shared, IAwaitableMonitor awaitableMonitor)
       {
          _shared = shared;
          _monitor = (IMonitor)awaitableMonitor;
@@ -68,7 +59,7 @@ public interface IThreadShared
 
       public TResult ReadOrUpdate<TResult>(Func<TShared, TResult?> tryRead, Action<TShared> updateOnFailedRead, LockTimeout? timeout = null)
          where TResult : class =>
-         _awaitableMonitor.ReadOrUpdate(() => tryRead(_shared), () => updateOnFailedRead(_shared));
+         _awaitableMonitor.ReadOrUpdate(() => tryRead(_shared), () => updateOnFailedRead(_shared), timeout);
 
       public TResult ReadWhen<TResult>(Func<TShared, TResult> read, Func<TShared, bool> condition, WaitTimeout? timeout = null) => _awaitableMonitor.ReadWhen(() => read(_shared), () => condition(_shared), timeout);
 

@@ -3,8 +3,7 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Compze.Contracts;
-using Compze.Utilities.SystemCE;
-using Compze.Threading.TasksCE;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 using JetBrains.Annotations;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Http;
@@ -12,11 +11,11 @@ namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Http;
 #pragma warning disable CA1812 // Instantiated via JSON deserialization
 [UsedImplicitly] class ProblemDetails
 {
-   public string Type { get; set; } = "";
-   public string Title { get; set; } = "";
-   public int Status { get; set; }
-   public string Detail { get; set; } = "";
-   public string Instance { get; set; } = "";
+   public string Type { get; init; } = "";
+   public string Title { get; init; } = "";
+   public int Status { get; init; }
+   public string Detail { get; init; } = "";
+   public string Instance { get; init; } = "";
 
    public static async Task<ProblemDetails> FromResponse(HttpResponseMessage response)
    {
@@ -31,9 +30,9 @@ namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Http;
    }
 }
 
-public class FailedToExtractProblemDetailsException(HttpResponseMessage response, Exception? innerException = null) : Exception($"""
-                                                                                        Failed to extract problem details from response.
-                                                                                        RequestUri: {response.RequestMessage?.RequestUri} 
-                                                                                        Status code: {response.StatusCode}
-                                                                                        Reason: {response.ReasonPhrase}
-                                                                                        """, innerException);
+class FailedToExtractProblemDetailsException(HttpResponseMessage response, Exception? innerException = null) : Exception($"""
+                                                                                                                          Failed to extract problem details from response.
+                                                                                                                          RequestUri: {response.RequestMessage?.RequestUri} 
+                                                                                                                          Status code: {response.StatusCode}
+                                                                                                                          Reason: {response.ReasonPhrase}
+                                                                                                                          """, innerException);

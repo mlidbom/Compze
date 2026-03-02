@@ -23,7 +23,7 @@ public record Email
       StringValue = stringValue;
    }
 
-   public static bool IsValidEmail(string emailAddress)
+   internal static bool IsValidEmail(string emailAddress)
    {
       if(string.IsNullOrWhiteSpace(emailAddress)) return false;
       if(!BasicEmailValidationRegex.IsMatch(emailAddress)) return false;

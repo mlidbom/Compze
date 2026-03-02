@@ -2,8 +2,8 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Compze.Contracts;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Utilities.SystemCE;
-using Compze.Threading.TasksCE;
 using Compze.Utilities.Testing.Must;
 using Xunit.Sdk;
 

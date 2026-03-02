@@ -29,7 +29,7 @@ function C-Run-TestRun {
     - FailedTests: Array of failed test objects with FullName and DisplayName properties
     
     .EXAMPLE
-    $result = C-Run-TestRun -SolutionPath "C:\Dev\Compze\src\Compze.slnx"
+    $result = C-Run-TestRun -SolutionPath "C:\Dev\Compze\src\Compze.AllProjects.slnx"
     if ($result.Failed -gt 0) { Write-Host "Tests failed!" }
     
     .EXAMPLE

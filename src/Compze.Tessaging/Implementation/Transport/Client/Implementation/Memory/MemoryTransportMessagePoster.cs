@@ -5,7 +5,7 @@ using Compze.Utilities.DependencyInjection.Abstractions;
 using System.Threading.Tasks;
 using Compze.Core.Refactoring.Naming.Internal;
 using Compze.Core.Serialization.Internal;
-using Compze.Threading.TasksCE;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Memory;
 
@@ -15,7 +15,7 @@ public static class MemoryTransportMessagePosterApiTransportClientRegistrar
       => registrar.Register(MemoryTransportMessagePoster.RegisterWith);
 }
 
-public class MemoryTransportMessagePoster : ITransportMessagePoster
+class MemoryTransportMessagePoster : ITransportMessagePoster
 {
    public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<ITransportMessagePoster>()

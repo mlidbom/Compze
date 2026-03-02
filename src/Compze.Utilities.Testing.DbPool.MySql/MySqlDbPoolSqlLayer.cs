@@ -4,12 +4,11 @@ using Compze.Sql.MySql;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Threading.ResourceAccess;
-using Compze.Utilities.Testing.DbPool;
 using MySql.Data.MySqlClient;
 
 namespace Compze.Utilities.Testing.DbPool.MySql;
 
-public sealed class MySqlDbPoolSqlLayer : IDbPoolSqlLayer
+sealed class MySqlDbPoolSqlLayer : IDbPoolSqlLayer
 {
    public static IComponentRegistrar RegisterWith(IComponentRegistrar registrar) =>
       registrar.Register(Singleton.For<IDbPoolSqlLayer>()
@@ -22,13 +21,13 @@ public sealed class MySqlDbPoolSqlLayer : IDbPoolSqlLayer
 
    readonly IThreadShared<MySqlConnectionStringBuilder> _connectionStringBuilder;
 
-   public MySqlDbPoolSqlLayer()
+   MySqlDbPoolSqlLayer()
    {
       var masterConnectionString = Environment.GetEnvironmentVariable(ConnectionStringConfigurationParameterName)
                                 ?? "Server=localhost;Database=mysql;Uid=root;Pwd=Development!1;";
 
       _masterConnectionPool = IMySqlConnectionPool.CreateInstance(masterConnectionString);
-      _connectionStringBuilder = IThreadShared.WithDefaultTimeouts(new MySqlConnectionStringBuilder(masterConnectionString));
+      _connectionStringBuilder = IThreadShared.New(new MySqlConnectionStringBuilder(masterConnectionString));
    }
 
    public string ConnectionStringFor(DbPoolDatabase db)

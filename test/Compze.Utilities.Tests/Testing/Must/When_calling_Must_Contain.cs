@@ -47,13 +47,13 @@ public class When_calling_Must_Contain : UniversalTestBase
    {
       public class contains_the_item : with_a_HashSet_that
       {
-         readonly HashSet<double> _set = new() { 1.1, 2.2, 3.3 };
+         readonly HashSet<double> _set = [1.1, 2.2, 3.3];
          [XF] public void it_does_not_throw() => _set.Must().Contain(2.2);
       }
 
       public class does_not_contain_the_item : When_calling_Must_Contain
       {
-         readonly HashSet<double> _set = new() { 1.1, 2.2, 3.3 };
+         readonly HashSet<double> _set = [1.1, 2.2, 3.3];
          [XF] public void it_throws() => Invoking(() => _set.Must().Contain(4.4)).Must().Throw<AssertionFailedException>();
       }
    }

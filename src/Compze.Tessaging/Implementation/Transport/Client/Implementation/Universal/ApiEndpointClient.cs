@@ -1,17 +1,16 @@
 using System.Threading.Tasks;
 using Compze.Core.Refactoring.Naming.Internal;
 using Compze.Core.Serialization.Internal;
-using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Core.Tessaging.Public;
 using Compze.Core.Tessaging.Transport.Internal;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Implementation.Abstractions;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Tessaging.Implementation.Transport.Client.Internal;
-using Compze.Threading.TasksCE;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Universal;
 
-public class ApiEndpointClient(
+class ApiEndpointClient(
    ITransportMessagePoster transportMessagePoster,
    EndPointAddress remoteAddress,
    ITypeMapper typeMapper,
@@ -40,7 +39,7 @@ public class ApiEndpointClient(
       return await _transportMessagePoster.PostAsync<TResult>(tessage, _remoteAddress).caf();
    }
 
-   public static async Task<(ApiEndpointClient, TessageTypesInternal.EndpointInformation)> BootstrapConnectionToEndpoint(ITransportMessagePoster transportMessagePoster,
+   internal static async Task<(ApiEndpointClient, TessageTypesInternal.EndpointInformation)> BootstrapConnectionToEndpoint(ITransportMessagePoster transportMessagePoster,
                                                                                                                           EndPointAddress remoteAddress,
                                                                                                                           ITypeMapper typeMapper,
                                                                                                                           IRemotableTessageSerializer serializer)

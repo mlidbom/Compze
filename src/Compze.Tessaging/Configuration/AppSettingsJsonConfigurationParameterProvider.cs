@@ -18,7 +18,7 @@ namespace Compze.Tessaging.Configuration
    ///<summary>Fetches configuration variables from the application configuration file.</summary>
    public class AppSettingsJsonConfigurationParameterProvider : IConfigurationParameterProvider, IStaticInstancePropertySingleton<IConfigurationParameterProvider>
    {
-      public static void RegisterWith(IComponentRegistrar registrar)
+      internal static void RegisterWith(IComponentRegistrar registrar)
          => registrar.Register(Singleton.For<IConfigurationParameterProvider>()
                                         .CreatedBy(() => new AppSettingsJsonConfigurationParameterProvider()));
 

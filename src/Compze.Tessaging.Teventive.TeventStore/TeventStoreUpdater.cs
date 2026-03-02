@@ -20,7 +20,7 @@ using static Compze.Contracts.Contract;
 
 namespace Compze.Tessaging.Teventive.TeventStore;
 
-public class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
+class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
 {
    readonly ITeventStoreTeventPublisher _teventStoreTeventPublisher;
    readonly ITeventStore _store;
@@ -174,7 +174,7 @@ public class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
       }
    }
 
-   TTaggregate CreateInstance<TTaggregate>() where TTaggregate : ITaggregate
+   static TTaggregate CreateInstance<TTaggregate>() where TTaggregate : ITaggregate
    {
       var taggregate = Constructor.For<TTaggregate>.DefaultConstructor.Instance();
       return taggregate;

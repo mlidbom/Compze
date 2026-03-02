@@ -6,8 +6,3 @@ public interface IConfigurationParameterProvider
    ///<summary>Gets a string configuration value.</summary>
    string GetString(string parameterName, string? valueIfMissing = null);
 }
-
-public static class ConfigurationParameterProvider
-{
-   public static bool GetBoolean(this IConfigurationParameterProvider @this, string parameterName, bool? valueIfMissing = null) => bool.Parse(@this.GetString(parameterName, valueIfMissing?.ToString()));
-}

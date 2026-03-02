@@ -11,12 +11,11 @@ using Compze.Utilities.Logging;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Compze.Core.Refactoring.Naming.Internal;
 using Compze.Core.Serialization.Internal;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Underscore;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
-using Compze.Threading.TasksCE;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Memory;
 
@@ -27,7 +26,7 @@ public static class MemoryInboxTransportServerRegistrar
                                   .CreatedBy((EndpointId endpointId, IRemotableTessageSerializer serializer, IServiceLocator serviceLocator) => new MemoryInboxTransportServer(endpointId, serviceLocator, serializer)));
 }
 
-public class MemoryInboxTransportServer : IInboxTransportServer
+class MemoryInboxTransportServer : IInboxTransportServer
 {
    readonly IRemotableTessageSerializer _serializer;
    readonly LazyCE<IInbox> _inbox;
@@ -49,7 +48,7 @@ public class MemoryInboxTransportServer : IInboxTransportServer
 
    public Uri Address { get; }
 
-   public bool Running { get; private set; }
+   bool Running { get; set; }
    public ValueTask DisposeAsync() => ValueTask.CompletedTask;
 
    public Task StartAsync()

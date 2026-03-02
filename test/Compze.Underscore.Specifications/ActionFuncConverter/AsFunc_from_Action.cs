@@ -1,5 +1,4 @@
 using System;
-using System.Threading.Tasks;
 using Compze.Utilities.Testing.Must;
 using Compze.Utilities.Testing.XUnit.BDD;
 
@@ -7,7 +6,7 @@ using Compze.Utilities.Testing.XUnit.BDD;
 
 namespace Compze.Underscore.Specifications.ActionFuncConverter;
 
-public class AsFunc_from_Action
+public static class AsFunc_from_Action
 {
    public class with_zero_parameters
    {

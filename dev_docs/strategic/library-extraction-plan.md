@@ -15,7 +15,7 @@ This creates a clear boundary between stable utility code and the evolving core 
 
 ## Solution Strategy
 
-- **`Compze.slnx` stays monolithic** — all projects, all tests. Used for CI, cross-cutting refactors, and as the source of truth.
+- **`Compze.AllProjects.slnx` stays monolithic** — all projects, all tests. Used for CI, cross-cutting refactors, and as the source of truth.
 - **Focused solutions** (e.g., `Compze.Utilities.slnx`, `Compze.Tessaging.slnx`) are created for daily development — faster IDE, less noise, same code.
 - **FlexRef** makes this frictionless. Projects outside the focused solution are consumed as NuGet packages automatically. Open a different solution and they become project references. No configuration, no switching — it just works.
 
@@ -87,4 +87,4 @@ Each layer depends only on the ones above it. Libraries within the same tier may
 6. Set version to `0.8.0-beta.1`
 7. Publish to NuGet
 8. Update core Compze to consume via package reference in focused solutions
-9. Create/update focused `.slnx` files as needed (monolithic `Compze.slnx` always keeps all projects)
+9. Create/update focused `.slnx` files as needed (monolithic `Compze.AllProjects.slnx` always keeps all projects)

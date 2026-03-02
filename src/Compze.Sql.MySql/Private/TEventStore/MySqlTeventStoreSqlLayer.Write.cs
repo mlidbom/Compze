@@ -5,7 +5,6 @@ using Compze.Core.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions;
 using Compze.Sql.Common;
 using Compze.Contracts;
-using Compze.Underscore;
 using Compze.Utilities.SystemCE;
 using MySql.Data.MySqlClient;
 using ReadOrder = Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions.ReadOrder;
@@ -14,7 +13,7 @@ using Tevent = Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Tev
 namespace Compze.Sql.MySql.Private.TEventStore;
 
 //Performance: explore MySql alternatives to commented out MSSql hints throughout the sql layer.
-public partial class MySqlTeventStoreSqlLayer
+partial class MySqlTeventStoreSqlLayer
 {
    public void InsertSingleTaggregateTevents(IReadOnlyList<TeventDataRow> tevents)
    {

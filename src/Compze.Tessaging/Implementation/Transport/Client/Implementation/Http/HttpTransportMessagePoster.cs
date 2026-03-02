@@ -3,21 +3,21 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Compze.Core.Serialization.Internal;
 using Compze.Core.Tessaging.Transport.Internal;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
-using Compze.Threading.TasksCE;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Http;
 
 public static class HttpApiTransportClientRegistrar
 {
    public static IComponentRegistrar HttpApiTransportClient(this IComponentRegistrar registrar)
-      => registrar.Register(Http.HttpTransportMessagePoster.RegisterWith);
+      => registrar.Register(HttpTransportMessagePoster.RegisterWith);
 }
 
-public class HttpTransportMessagePoster : ITransportMessagePoster
+class HttpTransportMessagePoster : ITransportMessagePoster
 {
    public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<ITransportMessagePoster>()

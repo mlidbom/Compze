@@ -20,8 +20,8 @@ public class When_calling_Must_BeAssignableTo : UniversalTestBase
 
    public class with_an_object_of_a_derived_type : When_calling_Must_BeAssignableTo
    {
-      class Base { }
-      class Derived : Base { }
+      class Base;
+      class Derived : Base;
 
       [XF] public void it_does_not_throw()
       {
@@ -32,8 +32,8 @@ public class When_calling_Must_BeAssignableTo : UniversalTestBase
 
    public class with_an_object_that_implements_an_interface : When_calling_Must_BeAssignableTo
    {
-      interface ITest { }
-      class TestClass : ITest { }
+      interface ITest;
+      class TestClass : ITest;
 
       [XF] public void it_does_not_throw()
       {

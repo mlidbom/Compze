@@ -15,4 +15,4 @@ namespace Compze.Utilities.Testing.XUnit.BDD;
 public class ExclusiveFactAttribute(
    [CallerFilePath] string? sourceFilePath = null,
    [CallerLineNumber] int sourceLineNumber = -1) :
-   FactAttribute(sourceFilePath, sourceLineNumber) {}
+   FactAttribute(sourceFilePath, sourceLineNumber);

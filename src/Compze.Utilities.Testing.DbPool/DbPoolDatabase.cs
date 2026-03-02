@@ -9,7 +9,7 @@ namespace Compze.Utilities.Testing.DbPool;
 [MemoryPackable]
 public partial class DbPoolDatabase
 {
-   const string PoolDatabaseNamePrefix = $"Compze_DbPool_";
+   const string PoolDatabaseNamePrefix = "Compze_DbPool_";
 
    public int Id { get; private set; }
    public bool IsReserved { get; private set; }
@@ -24,7 +24,7 @@ public partial class DbPoolDatabase
    public DbPoolDatabase(int id) => Id = id;
    public DbPoolDatabase(string name) : this(IdFromName(name)) { }
 
-   public bool ShouldBeReleased => IsReserved && ReservationExpirationTime < DateTime.UtcNow;
+   internal bool ShouldBeReleased => IsReserved && ReservationExpirationTime < DateTime.UtcNow;
 
    static int IdFromName(string name)
    {
@@ -32,7 +32,7 @@ public partial class DbPoolDatabase
       return IntCE.ParseInvariant(nameIndex);
    }
 
-   public DbPoolDatabase Release()
+   internal DbPoolDatabase Release()
    {
       Contract.State.Assert(IsReserved);
       IsReserved = false;
@@ -49,7 +49,7 @@ public partial class DbPoolDatabase
       return this;
    }
 
-   public DbPoolDatabase Reserve(string reservationName, Guid poolId, TimeSpan reservationLength)
+   internal DbPoolDatabase Reserve(string reservationName, Guid poolId, TimeSpan reservationLength)
    {
       Contract.State.Assert(!IsReserved);
 

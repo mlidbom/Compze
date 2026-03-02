@@ -3,7 +3,7 @@ using Compze.Utilities.Testing.XUnit.ComponentCombinations;
 
 namespace Compze.Utilities.Tests.Testing.Xunit.ComponentCombinations._2Components.NotArgumentPassing;
 
-public sealed class NotArgumentPassingTwoComponentsPCTAttribute(
+sealed class NotArgumentPassingTwoComponentsPCTAttribute(
    [CallerFilePath] string? sourceFilePath = null,
    [CallerLineNumber] int sourceLineNumber = -1)
    : ComponentCombinationsTheoryAttribute<Serializer, SqlLayer>(

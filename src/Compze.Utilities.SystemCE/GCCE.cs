@@ -4,7 +4,7 @@ using Compze.Underscore;
 namespace Compze.Utilities.SystemCE;
 
 // ReSharper disable once InconsistentNaming
-public static class GCCE
+static class GCCE
 {
    public static unit ForceFullGcAllGenerationsAndWaitForFinalizers() => unit.From(() =>
    {

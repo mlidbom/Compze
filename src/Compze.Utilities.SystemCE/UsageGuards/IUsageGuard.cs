@@ -7,16 +7,11 @@ public interface IUsageGuard
    void EnsureAccessValid();
 }
 
-public class UsageGuard<TWrapped> where TWrapped : notnull
+public class UsageGuard<TWrapped>(TWrapped wrapped, IUsageGuard guard)
+   where TWrapped : notnull
 {
-   readonly TWrapped _wrapped;
-   readonly IUsageGuard _guard;
-
-   public UsageGuard(TWrapped wrapped, IUsageGuard guard)
-   {
-      _wrapped = wrapped;
-      _guard = guard;
-   }
+   readonly TWrapped _wrapped = wrapped;
+   readonly IUsageGuard _guard = guard;
 
    public TWrapped Wrapped
    {

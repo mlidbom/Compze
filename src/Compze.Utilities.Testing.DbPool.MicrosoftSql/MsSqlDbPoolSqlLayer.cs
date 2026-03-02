@@ -2,12 +2,11 @@ using System;
 using Compze.Sql.MicrosoftSql;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
-using Compze.Utilities.Testing.DbPool;
 using Microsoft.Data.SqlClient;
 
 namespace Compze.Utilities.Testing.DbPool.MicrosoftSql;
 
-public class MsSqlDbPoolSqlLayer : IDbPoolSqlLayer
+class MsSqlDbPoolSqlLayer : IDbPoolSqlLayer
 {
    public static IComponentRegistrar RegisterWith(IComponentRegistrar registrar) =>
       registrar.Register(Singleton.For<IDbPoolSqlLayer>()
@@ -19,7 +18,7 @@ public class MsSqlDbPoolSqlLayer : IDbPoolSqlLayer
 
    const string ConnectionStringConfigurationParameterName = "COMPOSABLE_MSSQL_DATABASE_POOL_MASTER_CONNECTIONSTRING";
 
-   public MsSqlDbPoolSqlLayer()
+   MsSqlDbPoolSqlLayer()
    {
       _masterConnectionString = Environment.GetEnvironmentVariable(ConnectionStringConfigurationParameterName)
                              ?? "Data Source=localhost;Initial Catalog=master;Integrated Security=True;TrustServerCertificate=True;";

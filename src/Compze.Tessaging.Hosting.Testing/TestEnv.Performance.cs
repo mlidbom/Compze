@@ -37,7 +37,7 @@ public static partial class TestEnv
    }
 
 #pragma warning disable CA1724 // Type names should not match namespaces
-   public static class Performance
+   internal static class Performance
 #pragma warning restore CA1724 // Type names should not match namespaces
    {
       public static readonly bool AreOptimizationsDisabled = typeof(TestEnv).Assembly.GetCustomAttribute<DebuggableAttribute>()!.IsJITOptimizerDisabled;

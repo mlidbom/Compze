@@ -2,9 +2,7 @@ using System;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
-using Compze.Threading;
-using Compze.Threading.ResourceAccess;
-using Compze.Threading.Testing;
+using Compze.Threading.ResourceAccess.Exceptions;
 using Compze.Utilities.Testing.Must;
 using Compze.Utilities.Testing.XUnit.BDD;
 using Xunit;
@@ -19,7 +17,7 @@ namespace Compze.Threading.Testing.Specifications;
 public class Given_a_locked_ThreadGate : UniversalTestBase
 {
    [XF] public void Calling_AllowOneThreadToPassThrough_throws_an_AwaitingConditionTimedOutException_since_no_threads_are_waiting_to_pass()
-      => Invoking(() => ThreadGate.Closed(WaitTimeout.Milliseconds(20)).AwaitLetOneThreadPassThrough()).Must().Throw<AwaitingConditionTimeoutException>();
+      => Invoking(() => ThreadGate.Closed(WaitTimeout.Milliseconds(20), "testGate").AwaitLetOneThreadPassThrough()).Must().Throw<AwaitingConditionTimeoutException>();
 
    public class After_starting_10_threads_that_all_call_PassThrough : UniversalTestBase
    {

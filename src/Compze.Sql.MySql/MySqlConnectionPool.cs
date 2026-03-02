@@ -2,8 +2,8 @@ using System;
 using System.Threading.Tasks;
 using Compze.Sql.Common;
 using Compze.Sql.Common.Abstractions;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Utilities.SystemCE;
-using Compze.Threading.TasksCE;
 using MySql.Data.MySqlClient;
 
 namespace Compze.Sql.MySql;
@@ -17,7 +17,7 @@ public interface IMySqlConnectionPool : IDbConnectionPool<ICompzeMySqlConnection
    {
       readonly LazyCE<IDbConnectionPool<ICompzeMySqlConnection, MySqlCommand>> _pool;
 
-      public MySqlConnectionPool(Func<string> getConnectionString)
+      internal MySqlConnectionPool(Func<string> getConnectionString)
       {
          _pool = new LazyCE<IDbConnectionPool<ICompzeMySqlConnection, MySqlCommand>>(
             () =>

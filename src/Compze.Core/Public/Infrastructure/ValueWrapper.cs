@@ -4,13 +4,11 @@ using Compze.Utilities.SystemCE;
 namespace Compze.Core.Public.Infrastructure;
 
 #pragma warning disable CA1033 //We are using explicit interface implementation to hide this from the public interface
-public class ValueWrapper<TValue>(TValue value) : IEquatable<ValueWrapper<TValue>>,
-                                                                    ISingleUntypedPrimitiveValueWrapper
+public class ValueWrapper<TValue>(TValue value) : IEquatable<ValueWrapper<TValue>>
    where TValue : IEquatable<TValue>
 {
    // ReSharper disable once MemberCanBePrivate.Global
    public TValue Value { get; private set; } = value;
-   object ISingleUntypedPrimitiveValueWrapper.UntypedPrimitiveValue => Value;
 
    public bool Equals(ValueWrapper<TValue>? other) => other != null
                                                    && IsConsideredTypeCompatibleForEquality(other)

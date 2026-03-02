@@ -12,7 +12,6 @@ using Compze.Core.Time.Public;
 using Compze.Contracts;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
-using Compze.Underscore;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
@@ -20,7 +19,7 @@ using Compze.Utilities.SystemCE.ReflectionCE;
 namespace Compze.Core.DocumentDb.Private;
 
 #pragma warning disable CA1724 // Type name intentionally matches namespace concept
-public sealed class DocumentDb : IDocumentDb
+sealed class DocumentDb : IDocumentDb
 {
    public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Scoped.For<IDocumentDb>()

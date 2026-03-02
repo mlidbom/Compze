@@ -1,7 +1,7 @@
 using System;
 
 // ReSharper disable All
-namespace AccountManagement.Server;
+namespace AccountManagement;
 
 #pragma warning disable IDE1006,IDE0001,IDE0002,IDE0003,IDE0004,IDE0005,IDE0055,CA1050,CA1707,CA1716
 

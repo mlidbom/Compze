@@ -67,18 +67,18 @@ namespace Compze.Tests.Unit.Internals.Serialization
       class BaseTypeA
       {
          //Use the full type name to ensure that our code does not get confused by the types containing properties containing the type names.
-         public BaseTypeA() => Value = GetType().FullName!;
+         protected BaseTypeA() => Value = GetType().FullName!;
          public string Value { get; private set; }
       }
 
       class TypeA : BaseTypeA
       {
-         public class TypeAA : TypeA {}
+         public class TypeAA : TypeA;
       }
 
       class TypeB : BaseTypeA
       {
-         public class TypeBB : TypeB {}
+         public class TypeBB : TypeB;
       }
 
       class Root

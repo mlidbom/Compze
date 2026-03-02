@@ -8,13 +8,13 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Compze.Core.Refactoring.Naming.Internal;
-using Compze.Threading.TasksCE;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 using DispatchingTable = Compze.Core.Tessaging.Internal.SqlLayer.IServiceBusSqlLayer.OutboxTessageDispatchingTableSchemaStrings;
 using TessageTable = Compze.Core.Tessaging.Internal.SqlLayer.IServiceBusSqlLayer.OutboxTessagesDatabaseSchemaStrings;
 
 namespace Compze.Sql.PostgreSql.Private.Tessaging;
 
-public partial class PgSqlOutboxSqlLayer(IPgSqlConnectionPool connectionFactory, PgSqlSqlLayerSchemaManager schemaManager) : IServiceBusSqlLayer.IOutboxSqlLayer
+partial class PgSqlOutboxSqlLayer(IPgSqlConnectionPool connectionFactory, PgSqlSqlLayerSchemaManager schemaManager) : IServiceBusSqlLayer.IOutboxSqlLayer
 {
    readonly IPgSqlConnectionPool _connectionFactory = connectionFactory;
    readonly PgSqlSqlLayerSchemaManager _schemaManager = schemaManager;
@@ -105,12 +105,12 @@ public partial class PgSqlOutboxSqlLayer(IPgSqlConnectionPool connectionFactory,
    public IReadOnlyList<IServiceBusSqlLayer.UndeliveredTessage> GetUndeliveredTessages(TimeSpan olderThan)
    {
       var cutoffTime = DateTime.UtcNow - olderThan;
-      
+
       return _connectionFactory.UseCommand(
          command =>
          {
             var tessages = new List<IServiceBusSqlLayer.UndeliveredTessage>();
-            
+
             command
                .SetCommandText(
                    $"""
@@ -131,7 +131,7 @@ public partial class PgSqlOutboxSqlLayer(IPgSqlConnectionPool connectionFactory,
                     """)
                .AddTimestampWithTimeZone("cutoffTime", cutoffTime)
                .PrepareStatement();
-            
+
             using var reader = command.ExecuteReader();
             while(reader.Read())
             {
@@ -143,7 +143,7 @@ public partial class PgSqlOutboxSqlLayer(IPgSqlConnectionPool connectionFactory,
                   retryCount: reader.GetInt32(4),
                   lastAttemptTime: reader.IsDBNull(5) ? null : reader.GetDateTime(5)));
             }
-            
+
             return tessages;
          });
    }
@@ -154,7 +154,7 @@ public partial class PgSqlOutboxSqlLayer(IPgSqlConnectionPool connectionFactory,
          command =>
          {
             var tessages = new List<IServiceBusSqlLayer.UndeliveredTessage>();
-            
+
             command
                .SetCommandText(
                    $"""
@@ -174,7 +174,7 @@ public partial class PgSqlOutboxSqlLayer(IPgSqlConnectionPool connectionFactory,
                     """)
                .AddParameter("endpointId", endpointId.Value)
                .PrepareStatement();
-            
+
             using var reader = command.ExecuteReader();
             while(reader.Read())
             {
@@ -186,7 +186,7 @@ public partial class PgSqlOutboxSqlLayer(IPgSqlConnectionPool connectionFactory,
                   retryCount: reader.GetInt32(4),
                   lastAttemptTime: reader.IsDBNull(5) ? null : reader.GetDateTime(5)));
             }
-            
+
             return tessages;
          });
    }

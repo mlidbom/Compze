@@ -26,7 +26,7 @@ partial class RemovableEntity :
     }
 
     public IReadOnlyEntityCollection<RemovableNestedEntity, Guid> Entities => _entities.Entities;
-    readonly RemovableNestedEntity.CollectionManager _entities;
+    readonly RemovableNestedEntity.ICollectionManager _entities;
 
     public void Rename(string name) => Publish(new CompositeTaggregateTevent.Entity.Renamed(name));
     public void Remove() => Publish(new CompositeTaggregateTevent.Entity.Removed());

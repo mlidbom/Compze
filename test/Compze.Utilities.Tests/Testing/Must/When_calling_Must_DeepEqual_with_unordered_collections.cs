@@ -95,6 +95,7 @@ public class When_calling_Must_DeepEqual_with_unordered_collections : UniversalT
 
       class TestObject
       {
+         // ReSharper disable once UnusedAutoPropertyAccessor.Local
          public HashSet<string> Items { get; set; } = [];
       }
 

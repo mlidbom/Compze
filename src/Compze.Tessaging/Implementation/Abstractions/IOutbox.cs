@@ -3,7 +3,7 @@ using Compze.Core.Tessaging.Public;
 
 namespace Compze.Tessaging.Implementation.Abstractions;
 
-public interface IOutbox
+interface IOutbox
 {
     Task StartAsync();
     Task StopAsync();

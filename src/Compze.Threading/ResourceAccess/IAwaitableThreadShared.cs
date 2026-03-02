@@ -5,14 +5,8 @@ namespace Compze.Threading.ResourceAccess;
 
 public interface IAwaitableThreadShared
 {
-   public static IAwaitableThreadShared<TShared> WithDefaultTimeouts<TShared>() where TShared : new() =>
-      new IThreadShared.LockCEThreadShared<TShared>(new TShared(), IAwaitableMonitor.WithDefaultTimeout());
-
    public static IAwaitableThreadShared<TShared> WithDefaultTimeouts<TShared>(TShared shared) =>
       new IThreadShared.LockCEThreadShared<TShared>(shared, IAwaitableMonitor.WithDefaultTimeout());
-
-   public static IAwaitableThreadShared<TShared> New<TShared>(LockTimeout lockTimeout, WaitTimeout? waitTimeout = null) where TShared : new() =>
-      new IThreadShared.LockCEThreadShared<TShared>(new TShared(), IAwaitableMonitor.New(lockTimeout, waitTimeout));
 
    public static IAwaitableThreadShared<TShared> New<TShared>(TShared shared, LockTimeout lockTimeout, WaitTimeout? waitTimeout = null) =>
       new IThreadShared.LockCEThreadShared<TShared>(shared, IAwaitableMonitor.New(lockTimeout, waitTimeout));
@@ -37,5 +31,5 @@ public interface IAwaitableThreadShared<out TShared>
    unit Update(Action<TShared> update, LockTimeout? timeout = null) => Update(update.AsFunc(), timeout);
    unit UpdateWhen(Action<TShared> update, Func<TShared, bool> condition, WaitTimeout? timeout = null) => UpdateWhen(update.AsFunc(), condition, timeout);
 
-   unit Await(Func<TShared, bool> condition, WaitTimeout? timeout = null) => ReadWhen(it => {}, condition, timeout);
+   unit Await(Func<TShared, bool> condition, WaitTimeout? timeout = null) => ReadWhen(_ => {}, condition, timeout);
 }

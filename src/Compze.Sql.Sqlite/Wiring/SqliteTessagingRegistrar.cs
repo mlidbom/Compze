@@ -6,7 +6,7 @@ using Compze.Utilities.DependencyInjection.Abstractions;
 
 namespace Compze.Sql.Sqlite.Wiring;
 
-public static class SqliteTessagingRegistrar
+static class SqliteTessagingRegistrar
 {
    public static IComponentRegistrar SqliteTessagingSqlLayer(this IComponentRegistrar registrar) =>
       registrar.Register(

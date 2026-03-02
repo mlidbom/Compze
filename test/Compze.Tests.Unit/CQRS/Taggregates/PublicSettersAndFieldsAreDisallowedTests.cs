@@ -7,6 +7,10 @@ using Compze.Utilities.Testing.Must;
 using Compze.Utilities.Testing.XUnit.BDD;
 using JetBrains.Annotations;
 using static Compze.Utilities.Testing.Must.MustActions;
+// ReSharper disable ClassNeverInstantiated.Local
+// ReSharper disable PossibleInterfaceMemberAmbiguity
+// ReSharper disable RedundantNameQualifier
+#pragma warning disable IDE0051
 
 // ReSharper disable InconsistentNaming
 #pragma warning disable CA1715 //Interfaces without I prefix
@@ -44,19 +48,13 @@ public class PublicSettersAndFieldsAreDisallowedTests : UniversalTestBase
          public interface Component : Entity
          {
             string Public2 { get; set; }
-
-            public interface NestedComponent : Component
-            {
-               string Public3 { get; set; }
-            }
          }
       }
    }
 
-   public class RootTevent<T>(T tevent) : TaggregateIdentifyingTevent<T>(tevent), IRootTevent<T> where T : IRootTevent {
+   class RootTevent<T>(T tevent) : TaggregateIdentifyingTevent<T>(tevent), IRootTevent<T> where T : IRootTevent;
 
-   }
-   public abstract class RootTevent : TaggregateTevent, IRootTevent
+   abstract class RootTevent : TaggregateTevent, IRootTevent
    {
       public string Public1 { get; set; } = string.Empty;
 
@@ -90,16 +88,11 @@ public class PublicSettersAndFieldsAreDisallowedTests : UniversalTestBase
             public class Component : Entity, IRootTevent.Entity.Component
          {
             public string Public2 { get; set; } = string.Empty;
-
-            public class NestedComponent : Component, IRootTevent.Entity.Component.NestedComponent
-            {
-               public string Public3 { get; set; } = string.Empty;
-            }
          }
       }
    }
 
-   class Root() : Taggregate<Root, IRootTevent, RootTevent, IRootTevent<IRootTevent>, RootTevent<RootTevent>>()
+   class Root : Taggregate<Root, IRootTevent, RootTevent, IRootTevent<IRootTevent>, RootTevent<RootTevent>>
    {
       public class AggComponent(Root parent) : Root.Component<AggComponent, IRootTevent.Component, RootTevent.Component>(parent)
       {

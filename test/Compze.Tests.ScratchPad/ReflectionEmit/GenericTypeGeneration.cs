@@ -1,11 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using Compze.Contracts;
 using Compze.Core.Tessaging.Public;
-using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
-using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
 using Compze.Utilities.SystemCE.ReflectionCE.EmitCE;
 using Compze.Threading;
@@ -15,13 +14,13 @@ using Compze.Utilities.Testing.XUnit.BDD;
 
 namespace Compze.Tests.ScratchPad.ReflectionEmit;
 
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
 public interface IUserPublisherIdentifyingTevent<out TWrappedUserTevent> : IPublisherIdentifyingTevent<TWrappedUserTevent>
    where TWrappedUserTevent : IUserTevent;
 
 #pragma warning disable CA1040 //avoid empty interfaces
 public interface IUserTevent : ITevent;
 #pragma warning restore CA1040 //avoid empty interfaces
-
 class UserTevent : IUserTevent;
 
 public class Example
@@ -41,9 +40,9 @@ public class Example
       instance.Tevent.Must().Be(userTevent);
    }
 
-
    static IReadOnlyDictionary<Type, Type> _createdWrapperTypes = new Dictionary<Type, Type>();
-   static readonly IMonitor MonitorCE = IMonitor.WithDefaultTimeout();
+   static readonly IMonitor MonitorCE = IMonitor.New();
+
    static Type CreateGenericWrapperTeventType(Type wrapperTeventType)
    {
       if(_createdWrapperTypes.TryGetValue(wrapperTeventType, out var cachedWrapperImplementation))
@@ -78,7 +77,7 @@ public class Example
 
             wrappedTeventTypeParameter.SetInterfaceConstraints(requiredTeventInterface);
 
-            var (wrappedTeventField, _) = wrapperTeventBuilder.ImplementProperty(nameof(IPublisherIdentifyingTevent<ITaggregateTevent>.Tevent), wrappedTeventTypeParameter);
+            var (wrappedTeventField, _) = wrapperTeventBuilder.ImplementProperty(nameof(IPublisherIdentifyingTevent<>.Tevent), wrappedTeventTypeParameter);
 
             wrapperTeventBuilder.ImplementConstructor(wrappedTeventField);
 

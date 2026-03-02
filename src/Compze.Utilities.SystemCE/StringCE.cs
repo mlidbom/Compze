@@ -2,8 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
-using Compze.Contracts;
-using static Compze.Contracts.Contract;
 
 namespace Compze.Utilities.SystemCE;
 
@@ -17,26 +15,11 @@ public static partial class StringCE
    public static bool IsNullEmptyOrWhiteSpace(this string? @this) => string.IsNullOrWhiteSpace(@this);
 
    /// <summary>Delegates to <see cref="string.Join(string,string[])"/> </summary>
-   public static string Join(this IEnumerable<string> @this, string separator)
-   {
-      Argument.NotNull(@this).NotNull(separator);
-
-      return string.Join(separator, @this.ToArray());
-   }
-
-   public static string RemoveLeadingNewLines(this string @this)
-   {
-      while(@this.StartsWithCE(Environment.NewLine))
-      {
-         @this = @this[Environment.NewLine.Length..];
-      }
-
-      return @this;
-   }
+   public static string Join(this IEnumerable<string> @this, string separator) => string.Join(separator, @this);
 
    public static string RemoveLinesWhere(this string @this, Func<string, bool> predicate) => @this.Split(Environment.NewLine)
-                                                                                             .Where(it => !predicate(it))
-                                                                                             .JoinLines();
+                                                                                                  .Where(it => !predicate(it))
+                                                                                                  .JoinLines();
 
    public static string Pluralize(this int count, string theString) => count == 1 ? theString : $"{theString}s";
 }

@@ -23,8 +23,6 @@ public readonly struct ReadOrder : IComparable<ReadOrder>, IEquatable<ReadOrder>
 
    public static readonly ReadOrder Zero = new(0, 0);
 
-   public static ReadOrder FromLong(long readOrder) => new(readOrder, 0);
-
    public static ReadOrder FromParts(long integerPart, long fractionPart) => new(integerPart, fractionPart);
 
    static readonly BigInteger MaxOffset = BigInteger.Parse("1".PadRight(IntegerDigits, '0'), CultureInfo.InvariantCulture);
@@ -40,7 +38,7 @@ public readonly struct ReadOrder : IComparable<ReadOrder>, IEquatable<ReadOrder>
 
    public SqlDecimal ToSqlDecimal() => ToCorrectIntegerAndFractionDigits(SqlDecimal.Parse(ToString()));
 
-   public ReadOrder NextIntegerOrder => new(_integerPart + 1, 0);
+   internal ReadOrder NextIntegerOrder => new(_integerPart + 1, 0);
 
    public static ReadOrder Parse(string value, bool bypassScaleTest = false)
    {

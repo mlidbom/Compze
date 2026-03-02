@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 
 namespace Compze.Serialization.Newtonsoft.Private.TeventStore;
 
-public static class NewtonsoftTeventStoreSerializerRegistrar
+static class NewtonsoftTeventStoreSerializerRegistrar
 {
    public static IComponentRegistrar NewtonsoftTeventStoreSerializer(this IComponentRegistrar registrar) =>
       TeventStore.NewtonsoftTeventStoreSerializer.RegisterWith(registrar);
@@ -16,16 +16,16 @@ public static class NewtonsoftTeventStoreSerializerRegistrar
 
 public class NewtonsoftTeventStoreSerializer : ITeventStoreSerializer
 {
-   public static readonly JsonSerializerSettings JsonSettings = Newtonsoft.RenamingAndNonPublicMembersSupportingJsonSettings.TeventStore;
+   public static readonly JsonSerializerSettings JsonSettings = RenamingAndNonPublicMembersSupportingJsonSettings.TeventStore;
 
    readonly RenamingSupportingJsonSerializer _serializer;
 
-   public static IComponentRegistrar RegisterWith(IComponentRegistrar registrar)
+   internal static IComponentRegistrar RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(
          Singleton.For<ITeventStoreSerializer>()
                   .CreatedBy((ITypeMapper typeMapper) => new NewtonsoftTeventStoreSerializer(typeMapper)));
 
-   public NewtonsoftTeventStoreSerializer(ITypeMapper typeMapper) => _serializer = new RenamingSupportingJsonSerializer(JsonSettings, typeMapper);
+   NewtonsoftTeventStoreSerializer(ITypeMapper typeMapper) => _serializer = new RenamingSupportingJsonSerializer(JsonSettings, typeMapper);
 
    public string Serialize(TaggregateTevent tevent) => _serializer.Serialize(tevent);
    public ITaggregateTevent Deserialize(Type teventType, string json) => (ITaggregateTevent)_serializer.Deserialize(teventType, json);

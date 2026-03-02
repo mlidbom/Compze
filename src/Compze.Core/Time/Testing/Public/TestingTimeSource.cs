@@ -2,10 +2,9 @@ using System;
 using System.Globalization;
 using System.Threading.Tasks;
 using Compze.Core.Time.Public;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Underscore;
 using Compze.Utilities.SystemCE;
-using Compze.Threading;
-using Compze.Threading.TasksCE;
 using Compze.Utilities.SystemCE.ThreadingCE;
 
 // ReSharper disable MemberCanBeMadeStatic.Local
@@ -14,7 +13,7 @@ namespace Compze.Core.Time.Testing.Public;
 
 public class TestingTimeSourceAdapter
 {
-   public static readonly TestingTimeSourceAdapter Instance  = new ();
+   internal static readonly TestingTimeSourceAdapter Instance  = new ();
 
    TestingTimeSourceAdapter(){}
 
@@ -29,7 +28,7 @@ public class TestingTimeSourceAdapter
    public TimeSourceOverride FrozenAtUtc(DateTime time) => new(FrozenUtc(time));
    public TimeSourceOverride FrozenAtUtc(string time) => new(FrozenUtc(time));
 
-   public class ConstantTimeSource(DateTime time) : IUtcTimeTimeSource
+   class ConstantTimeSource(DateTime time) : IUtcTimeTimeSource
    {
       public DateTime UtcNow { get; } = time.TruncateToMicroseconds(); //Some of our supported databases only have microsecond precision, and we compare the entire contents of our objects in tests.
     }

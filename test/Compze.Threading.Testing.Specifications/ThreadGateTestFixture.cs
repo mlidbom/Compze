@@ -3,11 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Compze.Utilities.SystemCE;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Utilities.SystemCE.LinqCE;
-using Compze.Threading;
-using Compze.Threading.TasksCE;
-using Compze.Threading.Testing;
 
 namespace Compze.Threading.Testing.Specifications;
 
@@ -36,7 +33,7 @@ class ThreadGateTestFixture : IDisposable
 
    ThreadGateTestFixture()
    {
-      Gate = ThreadGate.Closed(WaitTimeout.Seconds(30));
+      Gate = ThreadGate.Closed(WaitTimeout.Seconds(30), "FixtureGate");
       NumberOfThreads = 10;
    }
 

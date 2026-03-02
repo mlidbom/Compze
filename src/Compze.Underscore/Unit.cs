@@ -9,7 +9,7 @@ namespace Compze.Underscore;
 /// Simply return unit.Value instead of void from methods with no return value,
 /// or use <see cref="From"/> to avoid that pesky extra line:
 /// <code>
-///   public unit DoSomething() => unit.From(() => 
+///   public unit DoSomething() => unit.From(() =>
 ///   {
 ///      //Do something here
 ///   });
@@ -74,7 +74,7 @@ public readonly struct unit : IEquatable<unit>
          return Value;
       };
 
-   ///<inheritdoc cref="AsyncFunc(Func{Task})"/>
+   ///<inheritdoc cref="AsyncFunc(System.Func{System.Threading.Tasks.Task})"/>
    public static Func<TParam, Task<unit>> AsyncFunc<TParam>(Func<TParam, Task> action) =>
       async param =>
       {
@@ -82,7 +82,7 @@ public readonly struct unit : IEquatable<unit>
          return Value;
       };
 
-   ///<inheritdoc cref="AsyncFunc(Func{Task})"/>
+   ///<inheritdoc cref="AsyncFunc(System.Func{System.Threading.Tasks.Task})"/>
    public static Func<TParam, TParam2, Task<unit>> AsyncFunc<TParam, TParam2>(Func<TParam, TParam2, Task> action) =>
       async (param, param2) =>
       {
@@ -97,8 +97,10 @@ public readonly struct unit : IEquatable<unit>
    //and the random hashcode better than the default for a zero value struct due to less risk of ending up in an over-populated bucket in hash based collections.
    public bool Equals(unit _) => true;
    public override bool Equals(object? obj) => obj is unit;
+   // ReSharper disable UnusedParameter.Global
    public static bool operator ==(unit _, unit __) => true;
    public static bool operator !=(unit _, unit __) => false;
+   // ReSharper restore UnusedParameter.Global
 
    public override int GetHashCode() => 392576489;
 }

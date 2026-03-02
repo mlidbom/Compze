@@ -10,9 +10,9 @@ using Compze.Tessaging.TyperMediaApi.EventStore;
 
 namespace AccountManagement;
 
-public class AccountManagementServerDomainBootstrapper
+public static class AccountManagementServerDomainBootstrapper
 {
-   public IEndpoint RegisterWith(IEndpointHost host)
+   public static IEndpoint RegisterWith(IEndpointHost host)
    {
       return host.RegisterEndpoint(name: "AccountManagement",
                                    id: new EndpointId(Guid.Parse(input: "1A1BE9C8-C8F6-4E38-ABFB-F101E5EDB00D")),

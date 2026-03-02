@@ -7,7 +7,6 @@ using Compze.Core.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions;
 using Compze.Sql.Common;
 using Compze.Contracts;
-using Compze.Underscore;
 using Compze.Utilities.SystemCE;
 using Microsoft.Data.SqlClient;
 using ReadOrder = Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions.ReadOrder;
@@ -15,7 +14,7 @@ using Tevent = Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Tev
 
 namespace Compze.Sql.MicrosoftSql.Private.TEventStore;
 
-public partial class MsSqlTeventStoreSqlLayer
+partial class MsSqlTeventStoreSqlLayer
 {
    public void InsertSingleTaggregateTevents(IReadOnlyList<TeventDataRow> tevents)
    {

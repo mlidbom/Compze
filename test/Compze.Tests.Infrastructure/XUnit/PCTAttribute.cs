@@ -15,7 +15,7 @@ public class PCTAttribute(
       configurationFileName: "TestUsingPluggableComponentCombinations",
       useTestMethodArgument: false,
       sourceFilePath: sourceFilePath,
-      sourceLineNumber: sourceLineNumber) {}
+      sourceLineNumber: sourceLineNumber);
 
 public sealed class PCTSerializerAttribute : PCTAttribute
 {

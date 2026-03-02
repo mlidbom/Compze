@@ -12,7 +12,7 @@ public class SeqTests : UniversalTestBase
    [XF]
    public void CreateShouldEnumerateAllParamsInOrder()
    {
-      var oneToTen = 1.Through(10);
+      var oneToTen = 1.Through(10).ToList();
       EnumerableCE.Create(oneToTen.ToArray()).Must().SequenceEqual(oneToTen);
    }
 }

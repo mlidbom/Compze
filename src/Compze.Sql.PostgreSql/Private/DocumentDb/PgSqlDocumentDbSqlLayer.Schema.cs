@@ -2,7 +2,7 @@ using Document = Compze.Core.DocumentDb.Internal.SqlLayer.IDocumentDbSqlLayer.Do
 
 namespace Compze.Sql.PostgreSql.Private.DocumentDb;
 
-public partial class PgSqlDocumentDbSqlLayer
+partial class PgSqlDocumentDbSqlLayer
 {
    public const string SchemaCreationSql =
       $"""

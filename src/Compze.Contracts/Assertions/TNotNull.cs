@@ -4,6 +4,7 @@ using System.Runtime.CompilerServices;
 namespace Compze.Contracts;
 
 /// <summary>Null-check assertion extensions for <see cref="ContractAsserter"/>.</summary>
+// ReSharper disable once InconsistentNaming
 public static class TNotNull
 {
    extension(ContractAsserter @this)

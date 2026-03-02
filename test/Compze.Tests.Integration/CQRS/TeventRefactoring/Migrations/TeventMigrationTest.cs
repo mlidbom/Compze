@@ -28,7 +28,7 @@ public class TeventMigrationTest : TeventMigrationTestBase
    [PCT]
    public async Task Base_class_method_should_detect_incorrect_type_order()
    {
-      await this.InvokingAsync(_ => RunMigrationTestAsync<Exception>(
+      await this.InvokingAsync(_ => RunMigrationTestAsync(
                                   new MigrationScenario(
                                      EnumerableCE.OfTypes<Ec1, E1, Ef, Ef>(),
                                      EnumerableCE.OfTypes<Ec1, Ef, E2, Ef>())))
@@ -244,7 +244,7 @@ public class TeventMigrationTest : TeventMigrationTestBase
    public async Task Given_Ec1_E1_before_E1_E2_after_E2_E3_throws_NonIdempotentMigrationDetectedException()
    {
       await this.InvokingAsync(_ =>
-                                  RunMigrationTestAsync<NonIdempotentMigrationDetectedException>(
+                                  RunMigrationTestAsync(
                                      new MigrationScenario(
                                         EnumerableCE.OfTypes<Ec1, E1>(),
                                         EnumerableCE.OfTypes<Ec1, E2, E3, E1>(),
@@ -600,7 +600,7 @@ public class TeventMigrationTest : TeventMigrationTestBase
       TeventStorageTestHelper.StripSteventhDecimalPointFromSecondFractionOnUtcUpdateTime(firstProcessHistory);
       TeventStorageTestHelper.StripSteventhDecimalPointFromSecondFractionOnUtcUpdateTime(secondProcessHistory);
 
-      TeventMigrationTestBase.AssertStreamsAreIdenticalExceptForEventIds(firstProcessHistory, secondProcessHistory, "Both process histories should be identical");
+      AssertStreamsAreIdenticalExceptForEventIds(firstProcessHistory, secondProcessHistory, "Both process histories should be identical");
 
       ITeventStore PersistingTeventStore() => serviceLocator.Resolve<ITeventStore>();
 

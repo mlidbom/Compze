@@ -2,9 +2,9 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Compze.Core.Tessaging.Transport.Internal;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
-using Compze.Threading.TasksCE;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
@@ -15,7 +15,7 @@ using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
 namespace Compze.Tessaging.Hosting.AspNetCore.Private;
 
-public class AspNetInboxTransportServer : IInboxTransportServer
+class AspNetInboxTransportServer : IInboxTransportServer
 {
    readonly IServiceLocator _serviceLocator;
    WebApplication? _webApplication;

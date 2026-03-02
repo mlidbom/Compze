@@ -2,6 +2,9 @@ using System;
 using Compze.Core.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
+// ReSharper disable ClassNeverInstantiated.Global
+// ReSharper disable UnusedAutoPropertyAccessor.Global
+#pragma warning  disable CA1812 // Avoid uninstantiated internal classes # used via reflection
 
 namespace Compze.Tests.Unit.CQRS.Taggregates.InheritingTaggregate;
 
@@ -22,7 +25,7 @@ class AnimalTaggregate : Taggregate<AnimalTaggregate, IAnimalTevent, AnimalTeven
 
 class CatTaggregate : AnimalTaggregate
 {
-   public CatTaggregate(){}
+   CatTaggregate(){}
    protected override Type WrapperTEventImplementation => typeof(CatTevent<CatTevent>);
 
    public static CatTaggregate RegisterBirth()
@@ -47,39 +50,31 @@ class DogTaggregate : AnimalTaggregate
 }
 
 
-public interface IAnimalTevent<out T> : ITaggregateIdentifyingTevent<T> where T : IAnimalTevent {}
+interface IAnimalTevent<out T> : ITaggregateIdentifyingTevent<T> where T : IAnimalTevent;
 
-public interface IAnimalTevent : ITaggregateTevent
+interface IAnimalTevent : ITaggregateTevent
 {
 #pragma warning disable CA1715 // Nested event interface follows semantic events naming convention (compze.net/paradigms/semantic-events/event-naming.html)
-   interface Born : IAnimalTevent, ITaggregateCreatedTevent{}
+   interface Born : IAnimalTevent, ITaggregateCreatedTevent;
 #pragma warning restore CA1715
 }
 
-public class AnimalTevent<T>(T tevent) : TaggregateIdentifyingTevent<T>(tevent), IAnimalTevent<T> where T : IAnimalTevent{}
+class AnimalTevent<T>(T tevent) : TaggregateIdentifyingTevent<T>(tevent), IAnimalTevent<T> where T : IAnimalTevent;
 
-public class AnimalTevent : TaggregateTevent, IAnimalTevent
+class AnimalTevent : TaggregateTevent, IAnimalTevent
 {
    protected AnimalTevent(){}
    AnimalTevent(TaggregateId taggregateId):base(taggregateId){ }
 
-    public class Born : AnimalTevent, IAnimalTevent.Born
-   {
-      public Born(TaggregateId taggregateId) : base(taggregateId){}
-   }
+    internal class Born(TaggregateId taggregateId) : AnimalTevent(taggregateId), IAnimalTevent.Born;
 }
 
-
-public interface ICatTevent<out T> : IAnimalTevent<T> where T : IAnimalTevent { }
-public interface ICatTevent : IAnimalTevent {}
-public class CatTevent<T>(T tevent) : AnimalTevent<T>(tevent) where T : IAnimalTevent {}
-public class CatTevent : AnimalTevent, ICatTevent{}
-
-
-public interface IDogTevent<out T> : IAnimalTevent<T> where T : IAnimalTevent { }
-public interface IDogTevent : IAnimalTevent {}
-public class DogTevent<T>(T tevent) : AnimalTevent<T>(tevent) where T : IAnimalTevent {}
-public class DogTevent : AnimalTevent, IDogTevent{}
+interface ICatTevent : IAnimalTevent;
+class CatTevent<T>(T tevent) : AnimalTevent<T>(tevent) where T : IAnimalTevent;
+class CatTevent : AnimalTevent, ICatTevent;
+interface IDogTevent : IAnimalTevent;
+class DogTevent<T>(T tevent) : AnimalTevent<T>(tevent) where T : IAnimalTevent;
+class DogTevent : AnimalTevent, IDogTevent;
 
 
 

@@ -8,7 +8,7 @@ using DiffPlex.Renderer;
 
 namespace Compze.Utilities.Testing.Must;
 
-public static class DiffGenerator
+static class DiffGenerator
 {
    public static string CreateDiff(string expected, string actual, string? oldFileName = null, string? newFileName = null)
    {

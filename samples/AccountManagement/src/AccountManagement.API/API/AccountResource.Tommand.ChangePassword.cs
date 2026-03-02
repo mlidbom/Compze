@@ -4,6 +4,7 @@ using Compze.Core.Tessaging.Public;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+// ReSharper disable PropertyCanBeMadeInitOnly.Local
 
 namespace AccountManagement.API;
 
@@ -15,13 +16,13 @@ public partial class AccountResource
       {
          [Obsolete("Used by serializer", error:true)]
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
-         public ChangePassword() : base() {}
+         public ChangePassword() {}
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
-         public ChangePassword(AccountId accountId):base() => AccountId = accountId;
+         public ChangePassword(AccountId accountId) => AccountId = accountId;
 
          [Required] [TaggregateId] public AccountId AccountId { get; set; }
-         [Required] public string OldPassword { get; set; } = string.Empty;
-         [Required] public string NewPassword { get; set; } = string.Empty;
+         [Required] public string OldPassword { get; private set; } = string.Empty;
+         [Required] public string NewPassword { get; private set; } = string.Empty;
 
          public IEnumerable<ValidationResult> Validate(ValidationContext validationContext) => Domain.Passwords.Password.Policy.Validate(NewPassword, this, () => NewPassword);
 

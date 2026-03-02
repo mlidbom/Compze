@@ -4,6 +4,7 @@ using Compze.Tests.Infrastructure;
 using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
 using Compze.Utilities.Testing.Must;
 using Compze.Utilities.Testing.XUnit.BDD;
+// ReSharper disable PreferConcreteValueOverDefault
 
 namespace Compze.Tests.Unit.Internals.SystemCE.CollectionsCE.GenericCE;
 
@@ -15,7 +16,7 @@ public static class DictionaryExtensionsGetOrAddWhenKey
    const string Key = "key";
    const int ResultOfDefaultConstructor = new();
 
-   
+
    public class DictionaryExtensions_GetOrAdd_When_Key_Is_Not_Present : UniversalTestBase
    {
       [XF]
@@ -35,7 +36,7 @@ public static class DictionaryExtensionsGetOrAddWhenKey
       }
    }
 
-   
+
    public class DictionaryExtensions_GetOrAdd_When_Key_Is_Present : UniversalTestBase
    {
       [XF]
@@ -57,7 +58,7 @@ public static class DictionaryExtensionsGetOrAddWhenKey
    }
 
 
-   
+
    public class DictionaryExtensions_GetOrAddDefault_When_Key_Is_Not_Present: UniversalTestBase
    {
       [XF]
@@ -77,7 +78,7 @@ public static class DictionaryExtensionsGetOrAddWhenKey
       }
    }
 
-   
+
    public class DictionaryExtensions_GetOrAddDefault_When_Key_Is_Present: UniversalTestBase
    {
       [XF]

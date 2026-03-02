@@ -1,10 +1,9 @@
 using System;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.SystemCE;
-using Compze.Threading;
-using Compze.Threading.TasksCE;
 using Compze.Threading.Testing;
 using Compze.Utilities.SystemCE.ThreadingCE.Async;
 using Compze.Utilities.Testing.Must;
@@ -38,8 +37,8 @@ public class AsyncLockCE_specification : UniversalTestBase
       [XF] public async Task it_blocks_concurrent_calls()
       {
          using var asyncLock = IAsyncLockCE.WithDefaultTimeout();
-         var firstTaskTookLockGate = ThreadGate.Closed(WaitTimeout.Seconds(30));
-         var secondTaskTookLockGate = ThreadGate.Open(WaitTimeout.Seconds(30));
+         var firstTaskTookLockGate = ThreadGate.Closed(WaitTimeout.Seconds(30), "firstTaskTookLock");
+         var secondTaskTookLockGate = ThreadGate.Open(WaitTimeout.Seconds(30), "secondTaskTookLock");
 
          var firstTask = asyncLock.LockedAsync(async () =>
          {
@@ -84,8 +83,8 @@ public class AsyncLockCE_specification : UniversalTestBase
       [XF] public async Task it_blocks_concurrent_calls()
       {
          using var asyncLock = IAsyncLockCE.WithDefaultTimeout();
-         var task1TookLockGate = ThreadGate.Closed(WaitTimeout.Seconds(30));
-         var task2TookLockGate = ThreadGate.Open(WaitTimeout.Seconds(30));
+         var task1TookLockGate = ThreadGate.Closed(WaitTimeout.Seconds(30), "task1TookLockGate");
+         var task2TookLockGate = ThreadGate.Open(WaitTimeout.Seconds(30), "task2TookLockGate");
 
          var task1 = asyncLock.LockedAsync(async () =>
          {
@@ -130,8 +129,8 @@ public class AsyncLockCE_specification : UniversalTestBase
       [XF] public async Task it_blocks_concurrent_calls_from_different_threads()
       {
          using var asyncLock = IAsyncLockCE.WithDefaultTimeout();
-         var task1TookLockGate = ThreadGate.Closed(WaitTimeout.Seconds(30));
-         var task2TookLockGate = ThreadGate.Open(WaitTimeout.Seconds(30));
+         var task1TookLockGate = ThreadGate.Closed(WaitTimeout.Seconds(30), "task1TookLock");
+         var task2TookLockGate = ThreadGate.Open(WaitTimeout.Seconds(30), "task2TookLock");
 
          var task1 = TaskCE.Run(() => asyncLock.Locked(() => task1TookLockGate.AwaitPassThrough()));
 
@@ -157,18 +156,17 @@ public class AsyncLockCE_specification : UniversalTestBase
       {
          using var asyncLock = IAsyncLockCE.WithDefaultTimeout();
 
-         var task = Task.Run(() => asyncLock.Locked(() => Task.Run(() => asyncLock.Locked(() => {}))));
+         Task.Run(() => asyncLock.Locked(() => Task.Run(() => asyncLock.Locked(() => {})))).Wait();
       }
 
       [XF] public void it_allows_reentrant_calls_from_same_async_context_while_blocking_calls_from_same_thread()
       {
          using var asyncLock = IAsyncLockCE.WithDefaultTimeout();
-         var firstTaskTookLockGate = ThreadGate.Closed(WaitTimeout.Seconds(30));
-         var firstTaskNestedTaskTookLockGate = ThreadGate.Open(WaitTimeout.Seconds(30));
+         var firstTaskTookLockGate = ThreadGate.Closed(WaitTimeout.Seconds(30), "firstTaskTookLock");
+         var firstTaskNestedTaskTookLockGate = ThreadGate.Open(WaitTimeout.Seconds(30), "firstTaskNestedTaskTookLock");
 
-         var secondTaskStartedGate = ThreadGate.Open(WaitTimeout.Seconds(30));
-         var secondTaskGotLockGate = ThreadGate.Open(WaitTimeout.Seconds(30));
-
+         var secondTaskStartedGate = ThreadGate.Open(WaitTimeout.Seconds(30), "secondTaskStarted");
+         var secondTaskGotLockGate = ThreadGate.Open(WaitTimeout.Seconds(30), "secondTaskGotLock");
          var firstTask = Task.Run(() => asyncLock.Locked(() =>
          {
             firstTaskTookLockGate.AwaitPassThrough();
@@ -206,8 +204,8 @@ public class AsyncLockCE_specification : UniversalTestBase
       [XF] public async Task it_blocks_concurrent_calls_from_different_threads()
       {
          using var asyncLock = IAsyncLockCE.WithDefaultTimeout();
-         var task1TookLockGate = ThreadGate.Closed(WaitTimeout.Seconds(30));
-         var task2TookLockGate = ThreadGate.Open(WaitTimeout.Seconds(30));
+         var task1TookLockGate = ThreadGate.Closed(WaitTimeout.Seconds(30), "task1TookLock");
+         var task2TookLockGate = ThreadGate.Open(WaitTimeout.Seconds(30), "task2TookLock");
 
          var task1 = TaskCE.Run(() => asyncLock.Locked(() => task1TookLockGate.AwaitPassThrough()));
 
@@ -314,7 +312,7 @@ public class AsyncLockCE_specification : UniversalTestBase
       [XF] public async Task LockedAsync_throws_AsyncLockTimeoutException()
       {
          using var asyncLock = IAsyncLockCE.New(LockTimeout.Milliseconds(50));
-         var firstTaskTookLockGate = ThreadGate.Closed(WaitTimeout.Seconds(30));
+         var firstTaskTookLockGate = ThreadGate.Closed(WaitTimeout.Seconds(30), "firstTaskTookLockGate");
 
          var firstTask = asyncLock.LockedAsync(async () =>
          {
@@ -335,7 +333,7 @@ public class AsyncLockCE_specification : UniversalTestBase
       [XF] public async Task Locked_throws_AsyncLockTimeoutException()
       {
          using var asyncLock = IAsyncLockCE.New(LockTimeout.Milliseconds(50));
-         var firstTaskTookLockGate = ThreadGate.Closed(WaitTimeout.Seconds(30));
+         var firstTaskTookLockGate = ThreadGate.Closed(WaitTimeout.Seconds(30), "firstTaskTookLockGate");
 
          var firstTask = TaskCE.Run(() => asyncLock.Locked(() => firstTaskTookLockGate.AwaitPassThrough()));
 
@@ -363,8 +361,8 @@ public class AsyncLockCE_specification : UniversalTestBase
       [XF] public async Task exception_message_includes_blocking_thread_stack_trace()
       {
          using var asyncLock = IAsyncLockCE.New(LockTimeout.Milliseconds(50));
-         asyncLock.SetTimeToWaitForStackTrace(500.Milliseconds());
-         var firstTaskTookLockGate = ThreadGate.Closed(WaitTimeout.Seconds(30));
+         asyncLock.SetTimeToWaitForStackTrace(WaitTimeout.Seconds(.5));
+         var firstTaskTookLockGate = ThreadGate.Closed(WaitTimeout.Seconds(30), "firstTaskTookLockGate");
 
          var firstTask = TaskCE.Run(() => HoldLockInMethodSoItWillBeInTheCapturedCallStack(asyncLock, firstTaskTookLockGate));
 

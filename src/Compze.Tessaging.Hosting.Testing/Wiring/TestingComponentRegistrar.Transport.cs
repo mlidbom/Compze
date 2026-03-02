@@ -7,12 +7,12 @@ using Compze.Utilities.SystemCE;
 
 namespace Compze.Tessaging.Hosting.Testing.Wiring;
 
-public static class TestingComponentRegistrarTransport
+static class TestingComponentRegistrarTransport
 {
    public static IComponentRegistrar CurrentTestsTransport(this IComponentRegistrar register) =>
       register.CastTo<TestingComponentRegistrar>().CurrentTestsTransport();
 
-   public static IComponentRegistrar CurrentTestsTransport(this TestingComponentRegistrar @this)
+   static IComponentRegistrar CurrentTestsTransport(this TestingComponentRegistrar @this)
    {
       switch(TestEnv.Transport)
       {

@@ -8,13 +8,13 @@ using Compze.Utilities.SystemCE.UsageGuards;
 
 namespace Compze.Tessaging.Typermedia;
 
-public static class LocalHypermediaNavigatorRegistrar
+static class LocalHypermediaNavigatorRegistrar
 {
    public static IComponentRegistrar InProcessHypermediaNavigator(this IComponentRegistrar registrar)
-      => registrar.Register(Typermedia.InProcessTypermediaNavigator.RegisterWith);
+      => registrar.Register(InProcessTypermediaNavigator.RegisterWith);
 }
 
-public class InProcessTypermediaNavigator : IInProcessTypermediaNavigator
+class InProcessTypermediaNavigator : IInProcessTypermediaNavigator
 {
    public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Scoped.For<IInProcessTypermediaNavigator>()
@@ -24,7 +24,7 @@ public class InProcessTypermediaNavigator : IInProcessTypermediaNavigator
    readonly ITessageHandlerRegistry _handlerRegistry;
    readonly IUsageGuard _contextGuard;
 
-   public InProcessTypermediaNavigator(ITessageHandlerRegistry handlerRegistry)
+   InProcessTypermediaNavigator(ITessageHandlerRegistry handlerRegistry)
    {
       _handlerRegistry = handlerRegistry;
       _contextGuard = new CombinationUsageGuard(new SingleTransactionUsageGuard(this));
