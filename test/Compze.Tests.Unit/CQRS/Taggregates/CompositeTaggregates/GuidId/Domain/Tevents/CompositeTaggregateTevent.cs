@@ -69,6 +69,35 @@ abstract class CompositeTaggregateTevent : TaggregateTevent, ICompositeTaggregat
 
          internal class Removed : Entity, ICompositeTaggregateTevent.Component.Entity.Removed;
       }
+
+      public abstract class NonRemovableEntity : Component, ICompositeTaggregateTevent.Component.NonRemovableEntity
+      {
+         public Guid NonRemovableEntityId { get; private set; }
+
+#pragma warning disable CA1812 // Used via reflection in taggregate infrastructure
+         [UsedImplicitly] public class IdGetterSetter : IGetSetTaggregateEntityTeventEntityId<Guid, NonRemovableEntity, ICompositeTaggregateTevent.Component.NonRemovableEntity>
+#pragma warning restore CA1812
+         {
+            public void SetEntityId(NonRemovableEntity tevent, Guid id) => tevent.NonRemovableEntityId = id;
+            public Guid GetId(ICompositeTaggregateTevent.Component.NonRemovableEntity tevent) => tevent.NonRemovableEntityId;
+         }
+
+         public new class Created : NonRemovableEntity, ICompositeTaggregateTevent.Component.NonRemovableEntity.Created
+         {
+            public Created(Guid nonRemovableEntityId, string name)
+            {
+               NonRemovableEntityId = nonRemovableEntityId;
+               Name = name;
+            }
+
+            public string Name { get; }
+         }
+
+         public new class Renamed(string name) : NonRemovableEntity, ICompositeTaggregateTevent.Component.NonRemovableEntity.Renamed
+         {
+            public string Name { get; } = name;
+         }
+      }
    }
 
    public abstract class Entity : CompositeTaggregateTevent, ICompositeTaggregateTevent.Entity

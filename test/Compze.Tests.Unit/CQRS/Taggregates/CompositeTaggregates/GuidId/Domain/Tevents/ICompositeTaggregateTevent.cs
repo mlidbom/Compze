@@ -66,6 +66,23 @@ interface ICompositeTaggregateTevent : ITaggregateTevent
             }
          }
       }
+
+      public interface NonRemovableEntity : Component
+      {
+         Guid NonRemovableEntityId { get; }
+
+         public interface Created : NonRemovableEntity, PropertyUpdated.Name;
+
+         interface Renamed : NonRemovableEntity, PropertyUpdated.Name;
+
+         public interface PropertyUpdated : NonRemovableEntity
+         {
+            public interface Name : PropertyUpdated
+            {
+               string Name { get; }
+            }
+         }
+      }
    }
 
    public interface Entity : ICompositeTaggregateTevent
