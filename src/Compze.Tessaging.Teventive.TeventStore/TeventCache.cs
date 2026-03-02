@@ -4,7 +4,6 @@ using Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions
 using Compze.Contracts;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
-using Compze.Underscore;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.TransactionsCE;
 using Microsoft.Extensions.Caching.Memory;

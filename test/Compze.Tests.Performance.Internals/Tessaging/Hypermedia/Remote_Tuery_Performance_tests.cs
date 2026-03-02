@@ -5,7 +5,6 @@ using Compze.Core.Tessaging.Public;
 using Compze.Core.Tessaging.Typermedia.Public;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Performance;
-using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Tests.Infrastructure.XUnit;

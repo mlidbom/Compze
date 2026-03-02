@@ -2,7 +2,6 @@ using System;
 using Compze.Sql.MicrosoftSql;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
-using Compze.Utilities.Testing.DbPool;
 using Microsoft.Data.SqlClient;
 
 namespace Compze.Utilities.Testing.DbPool.MicrosoftSql;

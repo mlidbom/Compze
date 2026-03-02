@@ -37,7 +37,7 @@ public static class _Must_Satisfy
          string CustomFailureMessage() =>
             failureMessage != null
                ? $"""
-                  {failureMessage?.Invoke(context.Actual)}
+                  {failureMessage(context.Actual)}
                   {AssertionContext.Separator}
                   """
                : AssertionContext.RemoveLine;
@@ -91,7 +91,7 @@ public static class _Must_Satisfy
          string CustomFailureMessage() =>
             failureMessage != null
                ? $"""
-                  {failureMessage?.Invoke(context.Actual)}
+                  {failureMessage(context.Actual)}
                   {AssertionContext.Separator}
                   """
                : AssertionContext.RemoveLine;

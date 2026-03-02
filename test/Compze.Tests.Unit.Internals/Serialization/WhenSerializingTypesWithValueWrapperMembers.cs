@@ -4,6 +4,7 @@ using Compze.Core.Public;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Underscore;
 using Compze.Utilities.Testing.Must;
+// ReSharper disable UnusedAutoPropertyAccessor.Local
 
 // ReSharper disable UnusedMember.Global
 

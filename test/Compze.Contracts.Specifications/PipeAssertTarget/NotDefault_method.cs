@@ -1,5 +1,4 @@
 using System;
-using Compze.Contracts.Exceptions;
 using Compze.Utilities.Testing.Must;
 using Compze.Utilities.Testing.XUnit.BDD;
 using static Compze.Utilities.Testing.Must.MustActions;

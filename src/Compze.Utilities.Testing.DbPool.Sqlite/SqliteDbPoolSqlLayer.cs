@@ -5,7 +5,6 @@ using System.Linq;
 using System.Threading;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
-using Compze.Utilities.Testing.DbPool;
 using Microsoft.Data.Sqlite;
 
 namespace Compze.Utilities.Testing.DbPool.Sqlite;

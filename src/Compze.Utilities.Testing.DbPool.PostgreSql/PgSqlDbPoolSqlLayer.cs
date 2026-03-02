@@ -5,7 +5,6 @@ using Compze.Sql.PostgreSql;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Threading.ResourceAccess;
-using Compze.Utilities.Testing.DbPool;
 using Npgsql;
 
 #pragma warning disable CA1308 // Normalize strings to uppercase

@@ -1,4 +1,5 @@
 using JetBrains.Annotations;
+// ReSharper disable UnusedAutoPropertyAccessor.Global
 
 namespace Compze.Tests.Performance.Internals.SystemCE.ThreadingCE;
 

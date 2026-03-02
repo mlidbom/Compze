@@ -83,7 +83,7 @@ class TypermediaRouter : ITypermediaRouter, IDisposable
       var topologyTueryTessage = TransportTessage.OutGoing.Create(topologyTuery, _typeMapper, _serializer);
       var topology = await _transportMessagePoster.PostAsync<TessageTypesInternal.NetworkTopology>(topologyTueryTessage, seedAddress).caf();
 
-      await Task.WhenAll(topology.EndpointAddresses.Select(address => ConnectAsync(address))).caf();
+      await Task.WhenAll(topology.EndpointAddresses.Select(ConnectAsync)).caf();
    }
 
    void RegisterRoutes(TypermediaConnection connection, ISet<TypeId> handledTypeIds)

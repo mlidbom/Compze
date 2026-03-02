@@ -5,7 +5,6 @@ using Compze.Core.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions;
 using Compze.Sql.Common;
 using Compze.Contracts;
-using Compze.Underscore;
 using Compze.Utilities.SystemCE;
 using Npgsql;
 using NpgsqlTypes;

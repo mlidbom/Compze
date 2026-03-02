@@ -6,7 +6,6 @@ using Compze.Core.Refactoring.Naming.Internal;
 using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Tessaging.Implementation.Abstractions;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
-using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
 using Compze.Threading;
 using Compze.Threading.ResourceAccess;

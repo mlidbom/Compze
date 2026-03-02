@@ -4,7 +4,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.SystemCE;
-using Compze.Threading;
 using Compze.Threading.ResourceAccess;
 using Compze.Threading.ResourceAccess.Exceptions;
 using Compze.Threading.TasksCE;

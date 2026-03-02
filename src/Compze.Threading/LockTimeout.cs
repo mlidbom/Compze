@@ -1,8 +1,10 @@
-using System;
 using Compze.Threading.Utilities;
+using System;
+using System.Diagnostics.CodeAnalysis;
 // ReSharper disable UnusedMember.Global
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable MemberCanBeInternal
+// ReSharper disable HeuristicUnreachableCode
 
 namespace Compze.Threading;
 
@@ -11,9 +13,11 @@ public readonly struct LockTimeout(TimeSpan value) : IEquatable<LockTimeout>
    public TimeSpan Value { get; } = value;
 
    /// <summary>Default lock timeout: 45 seconds under NCrunch (to surface deadlocks before the 60s test timeout), 2 minutes otherwise.</summary>
+#pragma warning disable CS0162
    public static readonly LockTimeout Default = CompzeEnvironment.IsNCrunch
                                                    ? Seconds(45)
                                                    : Minutes(2);
+#pragma warning restore CS0162
 
    public static LockTimeout Milliseconds(long milliseconds) => new(TimeSpan.FromMilliseconds(milliseconds));
    public static LockTimeout Milliseconds(double milliseconds) => new(TimeSpan.FromMilliseconds(milliseconds));

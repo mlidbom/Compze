@@ -2,6 +2,7 @@ using System;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Text;
+// ReSharper disable MethodOverloadWithOptionalParameter
 
 namespace Compze.Utilities.SystemCE.TextCE;
 

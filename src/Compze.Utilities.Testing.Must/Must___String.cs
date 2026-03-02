@@ -19,7 +19,7 @@ public static class Must___String
       context.SatisfyInternal(it => it.EndsWithCE(expected),expressionValues: [new(expectedExpression, expected)]);
 
    public static IAssertionContext<string?> BeNullOrEmpty(this IAssertionContext<string?> context) =>
-      context.SatisfyInternal(it => string.IsNullOrEmpty(it));
+      context.SatisfyInternal(string.IsNullOrEmpty);
 
    public static IAssertionContext<string> NotBeNullOrEmpty(this IAssertionContext<string?> context) =>
       context.SatisfyInternal(it => !string.IsNullOrEmpty(it))!;

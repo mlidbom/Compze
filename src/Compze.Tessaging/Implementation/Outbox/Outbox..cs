@@ -1,7 +1,6 @@
 using System.Linq;
 using System.Threading.Tasks;
 using System.Transactions;
-using Compze.Core.Public;
 using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Core.Tessaging.Public;
 using Compze.Tessaging.Implementation.Abstractions;

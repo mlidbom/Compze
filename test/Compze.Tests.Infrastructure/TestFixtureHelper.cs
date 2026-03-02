@@ -1,4 +1,3 @@
-using System;
 using System.Globalization;
 using Compze.Utilities.Logging;
 using Compze.Utilities.Logging.Serilog;

@@ -46,11 +46,6 @@ public class PublicSettersAndFieldsAreDisallowedTests : UniversalTestBase
          public interface Component : Entity
          {
             string Public2 { get; set; }
-
-            public interface NestedComponent : Component
-            {
-               string Public3 { get; set; }
-            }
          }
       }
    }

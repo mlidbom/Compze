@@ -13,6 +13,7 @@ using Compze.Core.Tessaging.Public;
 using Compze.Core.Tessaging.Transport.Internal;
 using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
 using Compze.Tessaging.Implementation.Transport.Client.Routing.Abstractions;
+// ReSharper disable UnusedAutoPropertyAccessor.Global
 
 namespace Compze.Tessaging.Implementation.Abstractions;
 

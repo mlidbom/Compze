@@ -10,7 +10,6 @@ using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tests.Common.Sql.DocumentDb;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.DependencyInjection;
-using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Threading.TasksCE;
@@ -100,7 +99,7 @@ public class DocumentDbTests : DocumentDbTestsBase
 
         UseInScope(reader =>
         {
-            var fetchedIndividually = ids.Select(id => reader.Get<User>(id))
+            var fetchedIndividually = ids.Select(reader.Get<User>)
                                        .ToArray();
             var fetchedWithGetAll = reader.GetAll<User>(ids)
                                         .ToArray();

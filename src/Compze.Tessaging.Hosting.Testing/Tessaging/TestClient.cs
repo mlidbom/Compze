@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Core.Tessaging.Transport.Internal;
 using Compze.Core.Tessaging.Typermedia.Public;
-using Compze.Core.Wiring.Testing.Internal;
 using Compze.Tessaging.Configuration;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tessaging.Implementation.Transport.Client.Implementation.Universal;

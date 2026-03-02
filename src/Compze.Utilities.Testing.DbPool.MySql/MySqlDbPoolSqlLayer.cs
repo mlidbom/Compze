@@ -4,7 +4,6 @@ using Compze.Sql.MySql;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Threading.ResourceAccess;
-using Compze.Utilities.Testing.DbPool;
 using MySql.Data.MySqlClient;
 
 namespace Compze.Utilities.Testing.DbPool.MySql;

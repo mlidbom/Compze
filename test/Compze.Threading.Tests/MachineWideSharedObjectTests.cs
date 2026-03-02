@@ -6,7 +6,6 @@ using Compze.Contracts;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
-using Compze.Threading;
 using Compze.Threading.ResourceAccess;
 using Compze.Threading.TasksCE;
 using Compze.Threading.Testing;

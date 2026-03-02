@@ -11,7 +11,6 @@ using Compze.Utilities.Logging;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Compze.Core.Refactoring.Naming.Internal;
 using Compze.Core.Serialization.Internal;
 using Compze.Underscore;
 using Compze.Utilities.SystemCE;

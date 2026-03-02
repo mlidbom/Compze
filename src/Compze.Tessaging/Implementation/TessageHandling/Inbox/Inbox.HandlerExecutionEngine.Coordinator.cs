@@ -12,7 +12,6 @@ using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Logging;
 using Compze.Threading.ResourceAccess;
 using Compze.Contracts;
-using static Compze.Contracts.Contract;
 
 namespace Compze.Tessaging.Implementation.TessageHandling.Inbox;
 

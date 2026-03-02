@@ -9,7 +9,6 @@ using Compze.Tessaging.Implementation.Transport.Client.Implementation.Http;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Logging;
-using Compze.Utilities.SystemCE;
 using Compze.Threading.TasksCE;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

@@ -3,7 +3,6 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.SystemCE;
-using Compze.Threading;
 using Compze.Threading.TasksCE;
 using Compze.Threading.Testing;
 using Compze.Utilities.SystemCE.ThreadingCE.Async;

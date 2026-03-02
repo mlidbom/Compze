@@ -23,6 +23,7 @@ public static class TypeBuilderCE
 {
    const MethodAttributes PropertyAccessorAttributes = MethodAttributes.Public | MethodAttributes.SpecialName | MethodAttributes.HideBySig;
 
+   // ReSharper disable once UnusedTupleComponentInReturnValue
    public static (FieldInfo, PropertyInfo) ImplementProperty(this TypeBuilder typeBuilder, string propertyName, Type propertyType)
    {
       var fieldBuilder = typeBuilder.DefineField($"_{propertyName}",

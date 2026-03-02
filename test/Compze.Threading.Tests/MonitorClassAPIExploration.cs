@@ -1,7 +1,6 @@
 using System;
 using System.Threading;
 using Compze.Utilities.SystemCE;
-using Compze.Threading;
 using Compze.Threading.Testing;
 using Compze.Utilities.Testing.Must;
 using Compze.Utilities.Testing.XUnit.BDD;

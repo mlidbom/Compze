@@ -75,7 +75,7 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
 
    [PCT] public void Can_register_user_and_fetch_user_resource()
    {
-      var registrationResult = _client.ExecuteRequest(navigator => UserRegistrarTaggregate.RegisterUser(navigator));
+      var registrationResult = _client.ExecuteRequest(UserRegistrarTaggregate.RegisterUser);
 
       var user = _client.ExecuteRequest(navigator => navigator.Get(registrationResult.UserLink));
 
