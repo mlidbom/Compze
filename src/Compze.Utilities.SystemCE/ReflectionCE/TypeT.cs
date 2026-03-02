@@ -4,6 +4,7 @@ namespace Compze.Utilities.SystemCE.ReflectionCE;
 
 public static class TypeTExtensions
 {
+   // ReSharper disable once UnusedParameter.Global
    public static Type<T> DeclaredType<T>(this T @this) => Type<T>.Instance;
 }
 

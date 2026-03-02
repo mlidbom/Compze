@@ -59,7 +59,6 @@ abstract class ConstructorArgumentForwardingTestCase : XunitTestCase
    /// if it is, that value is used for that argument
    /// </summary>
    protected ConstructorArgumentForwardingTestCase(XunitTestCase testCase,
-                                                   IXunitTestMethod? testMethod = null,
                                                    string? testCaseDisplayName = null,
                                                    string? uniqueID = null,
                                                    bool? @explicit = null,

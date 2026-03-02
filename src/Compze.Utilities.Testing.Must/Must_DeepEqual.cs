@@ -73,7 +73,7 @@ public static class Must_DeepEqual
       var actualJson = JsonConvert.SerializeObject(context.Actual, serializerSettings);
       var expectedJson = JsonConvert.SerializeObject(expected, serializerSettings);
 
-      return context.SatisfyInternal(it => actualJson == expectedJson,
+      return context.SatisfyInternal(_ => actualJson == expectedJson,
                                      messageOverride: _ =>
                                         $"""
                                          {context.FailingAssertionHeading(nameof(DeepEqual), [new(expectedExpression, expected)])}

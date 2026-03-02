@@ -18,6 +18,7 @@ using Compze.Underscore;
 using Compze.Utilities.Logging;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.Testing.Must;
+using AssertionFailedException = Compze.Contracts.Exceptions.AssertionFailedException;
 
 // ReSharper disable AccessToModifiedClosure
 
@@ -28,34 +29,27 @@ public abstract class TeventMigrationTestBase : UniversalTestBase
 {
    static ILogger Log => CompzeLogger.For<TeventMigrationTestBase>();
 
-   internal static async Task RunMigrationTestAsync(params MigrationScenario[] scenarios) => await RunMigrationTestAsync(expectedException: null, scenarios);
-
-   internal static async Task RunMigrationTestAsync<TException>(params MigrationScenario[] scenarios) where TException : Exception
-      => await RunMigrationTestAsync(expectedException: typeof(TException), scenarios);
-
-   static async Task RunMigrationTestAsync(Type? expectedException, params MigrationScenario[] scenarios)
+   internal static async Task RunMigrationTestAsync(params MigrationScenario[] scenarios)
    {
       Log.Info($"###############$$$$$$$Running {scenarios.Length} scenario(s)");
 
       IList<ITeventMigration> migrations = new List<ITeventMigration>();
       var serviceLocator = CreateServiceLocatorForTeventStoreType(() => migrations.ToArray());
       await using var locator = serviceLocator;
-      await UtcTimeSource.Test.FrozenAtUtcNow().RunAsync(
-         async () =>
-         {
-            var scenarioIndex = 1;
+      await UtcTimeSource.Test.FrozenAtUtcNow().RunAsync(async () =>
+      {
+         var scenarioIndex = 1;
 
-            foreach(var migrationScenario in scenarios)
+         foreach(var migrationScenario in scenarios)
+         {
+            await UtcTimeSource.Test.FrozenAtUtc(UtcTimeSource.UtcNow + 1.Hours()).RunAsync(async () =>
             {
-               await UtcTimeSource.Test.FrozenAtUtc(UtcTimeSource.UtcNow + 1.Hours()).RunAsync(
-                  async () =>
-                  {
-                     migrations = migrationScenario.Migrations.ToList();
-                     await RunScenarioWithTeventStoreType(migrationScenario, serviceLocator, migrations, scenarioIndex++);
-                     return unit.Value;
-                  });
-            }
-         });
+               migrations = migrationScenario.Migrations.ToList();
+               await RunScenarioWithTeventStoreType(migrationScenario, serviceLocator, migrations, scenarioIndex++);
+               return unit.Value;
+            });
+         }
+      });
    }
 
    static async Task RunScenarioWithTeventStoreType(MigrationScenario scenario, IServiceLocator serviceLocator, IList<ITeventMigration> migrations, int indexOfScenarioInBatch)
@@ -73,9 +67,9 @@ public abstract class TeventMigrationTestBase : UniversalTestBase
       Log.Info($"\n########Running Scenario {indexOfScenarioInBatch}");
 
       var original = UtcTimeSource.Test.FrozenAtUtcNow()
-                                      .Run(() =>
-                                              TestTaggregate.FromTevents(scenario.TaggregateId, scenario.OriginalHistory)
-                                                            .History.ToList());
+                                  .Run(() =>
+                                          TestTaggregate.FromTevents(scenario.TaggregateId, scenario.OriginalHistory)
+                                                        .History.ToList());
 
       Log.Info("Original History: ");
       original.ForEach(e => Log.Info($"      {e}"));
@@ -89,94 +83,93 @@ public abstract class TeventMigrationTestBase : UniversalTestBase
       Log.Info("Expected History: ");
       expected.ForEach(e => Log.Info($"      {e}"));
 
-      await UtcTimeSource.Test.FrozenAtUtc(UtcTimeSource.UtcNow + 1.Hours()).RunAsync(
-         async () =>
+      await UtcTimeSource.Test.FrozenAtUtc(UtcTimeSource.UtcNow + 1.Hours()).RunAsync(async () =>
+      {
+         serviceLocator.ExecuteTransactionInIsolatedScope(() => serviceLocator.Resolve<ITeventStoreUpdater>()
+                                                                              .Save(initialTaggregate));
+         startingMigrations.ForEach(migrations.Add);
+         ClearCache(serviceLocator);
+
+         var migratedHistory = serviceLocator.ExecuteTransactionInIsolatedScope(() => serviceLocator.Resolve<ITeventStoreUpdater>()
+                                                                                                    .Get<TestTaggregate>(initialTaggregate.Id))
+                                             .History;
+
+         AssertStreamsAreIdenticalExceptForEventIds(expected, migratedHistory, "Loaded un-cached taggregate");
+
+         var migratedCachedHistory = serviceLocator.ExecuteTransactionInIsolatedScope(() => serviceLocator.Resolve<ITeventStoreUpdater>()
+                                                                                                          .Get<TestTaggregate>(initialTaggregate.Id))
+                                                   .History;
+         AssertStreamsAreIdenticalExceptForEventIds(expected, migratedCachedHistory, "Loaded cached taggregate");
+
+         Log.Info("  Streaming all tevents in store");
+         var streamedTevents = serviceLocator.ExecuteTransactionInIsolatedScope(() => serviceLocator.Resolve<ITeventStore>()
+                                                                                                    .ListAllTeventsForTestingPurposesAbsolutelyNotUsableForARealTeventStoreOfAnySize()
+                                                                                                    .ToList());
+
+         AssertStreamsAreIdenticalExceptForEventIds(expectedCompleteTeventStoreStream, streamedTevents, "Streaming all tevents in store");
+
+         //Make sure that other processes that might be using the same taggregate also keep working as we persist the migrations.
+         var clonedServiceLocator = serviceLocator.Clone();
+         await using(clonedServiceLocator)
          {
-            serviceLocator.ExecuteTransactionInIsolatedScope(() => serviceLocator.Resolve<ITeventStoreUpdater>()
-                                                                                 .Save(initialTaggregate));
-            startingMigrations.ForEach(migrations.Add);
-            ClearCache(serviceLocator);
-
-            var migratedHistory = serviceLocator.ExecuteTransactionInIsolatedScope(() => serviceLocator.Resolve<ITeventStoreUpdater>()
-                                                                                                       .Get<TestTaggregate>(initialTaggregate.Id))
-                                                .History;
-
-            AssertStreamsAreIdenticalExceptForEventIds(expected, migratedHistory, "Loaded un-cached taggregate");
-
-            var migratedCachedHistory = serviceLocator.ExecuteTransactionInIsolatedScope(() => serviceLocator.Resolve<ITeventStoreUpdater>()
-                                                                                                             .Get<TestTaggregate>(initialTaggregate.Id))
-                                                      .History;
-            AssertStreamsAreIdenticalExceptForEventIds(expected, migratedCachedHistory, "Loaded cached taggregate");
-
-            Log.Info("  Streaming all tevents in store");
-            var streamedTevents = serviceLocator.ExecuteTransactionInIsolatedScope(() => serviceLocator.Resolve<ITeventStore>()
-                                                                                                       .ListAllTeventsForTestingPurposesAbsolutelyNotUsableForARealTeventStoreOfAnySize()
-                                                                                                       .ToList());
-
-            AssertStreamsAreIdenticalExceptForEventIds(expectedCompleteTeventStoreStream, streamedTevents, "Streaming all tevents in store");
-
-            //Make sure that other processes that might be using the same taggregate also keep working as we persist the migrations.
-            var clonedServiceLocator = serviceLocator.Clone();
-            await using(clonedServiceLocator)
-            {
-               migratedHistory = clonedServiceLocator.ExecuteTransactionInIsolatedScope(() => clonedServiceLocator.Resolve<ITeventStoreUpdater>()
-                                                                                                                  .Get<TestTaggregate>(initialTaggregate.Id))
-                                                     .History;
-               AssertStreamsAreIdenticalExceptForEventIds(expected, migratedHistory, "Loaded taggregate");
-
-               Log.Info("  Persisting migrations");
-               using(serviceLocator.BeginScope())
-               {
-                  serviceLocator.Resolve<ITeventStore>()
-                                .PersistMigrations();
-               }
-
-               migratedHistory = serviceLocator.ExecuteTransactionInIsolatedScope(() => serviceLocator.Resolve<ITeventStoreUpdater>()
-                                                                                                      .Get<TestTaggregate>(initialTaggregate.Id))
-                                               .History;
-               AssertStreamsAreIdenticalExceptForEventIds(expected, migratedHistory, "Loaded taggregate");
-
-               migratedHistory = clonedServiceLocator.ExecuteTransactionInIsolatedScope(() => clonedServiceLocator.Resolve<ITeventStoreUpdater>()
-                                                                                                                  .Get<TestTaggregate>(initialTaggregate.Id))
-                                                     .History;
-            }
-
+            migratedHistory = clonedServiceLocator.ExecuteTransactionInIsolatedScope(() => clonedServiceLocator.Resolve<ITeventStoreUpdater>()
+                                                                                                               .Get<TestTaggregate>(initialTaggregate.Id))
+                                                  .History;
             AssertStreamsAreIdenticalExceptForEventIds(expected, migratedHistory, "Loaded taggregate");
 
-            Log.Info("Streaming all tevents in store");
-            streamedTevents = serviceLocator.ExecuteTransactionInIsolatedScope(() => serviceLocator.Resolve<ITeventStore>()
-                                                                                                   .ListAllTeventsForTestingPurposesAbsolutelyNotUsableForARealTeventStoreOfAnySize()
-                                                                                                   .ToList());
-            AssertStreamsAreIdenticalExceptForEventIds(expectedCompleteTeventStoreStream, streamedTevents, "Streaming all tevents in store");
-
-            Log.Info("  Disable all migrations so that none are used when reading from the tevent stores");
-            migrations.Clear();
+            Log.Info("  Persisting migrations");
+            using(serviceLocator.BeginScope())
+            {
+               serviceLocator.Resolve<ITeventStore>()
+                             .PersistMigrations();
+            }
 
             migratedHistory = serviceLocator.ExecuteTransactionInIsolatedScope(() => serviceLocator.Resolve<ITeventStoreUpdater>()
                                                                                                    .Get<TestTaggregate>(initialTaggregate.Id))
                                             .History;
-            AssertStreamsAreIdenticalExceptForEventIds(expected, migratedHistory, "loaded taggregate");
-
-            Log.Info("Streaming all tevents in store");
-            streamedTevents = serviceLocator.ExecuteTransactionInIsolatedScope(() => serviceLocator.Resolve<ITeventStore>()
-                                                                                                   .ListAllTeventsForTestingPurposesAbsolutelyNotUsableForARealTeventStoreOfAnySize()
-                                                                                                   .ToList());
-            AssertStreamsAreIdenticalExceptForEventIds(expectedCompleteTeventStoreStream, streamedTevents, "Streaming all tevents in store");
-
-            Log.Info("Cloning service locator / starting new instance of application");
-            var clonedServiceLocator2 = serviceLocator.Clone();
-            await using var serviceLocator2 = clonedServiceLocator2;
-            migratedHistory = clonedServiceLocator2.ExecuteTransactionInIsolatedScope(() => clonedServiceLocator2.Resolve<ITeventStoreUpdater>()
-                                                                                                                 .Get<TestTaggregate>(initialTaggregate.Id))
-                                                   .History;
             AssertStreamsAreIdenticalExceptForEventIds(expected, migratedHistory, "Loaded taggregate");
 
-            Log.Info("Streaming all tevents in store");
-            streamedTevents = clonedServiceLocator2.ExecuteTransactionInIsolatedScope(() => clonedServiceLocator2.Resolve<ITeventStore>()
-                                                                                                                 .ListAllTeventsForTestingPurposesAbsolutelyNotUsableForARealTeventStoreOfAnySize()
-                                                                                                                 .ToList());
-            AssertStreamsAreIdenticalExceptForEventIds(expectedCompleteTeventStoreStream, streamedTevents, "Streaming all tevents in store");
-         });
+            migratedHistory = clonedServiceLocator.ExecuteTransactionInIsolatedScope(() => clonedServiceLocator.Resolve<ITeventStoreUpdater>()
+                                                                                                               .Get<TestTaggregate>(initialTaggregate.Id))
+                                                  .History;
+         }
+
+         AssertStreamsAreIdenticalExceptForEventIds(expected, migratedHistory, "Loaded taggregate");
+
+         Log.Info("Streaming all tevents in store");
+         streamedTevents = serviceLocator.ExecuteTransactionInIsolatedScope(() => serviceLocator.Resolve<ITeventStore>()
+                                                                                                .ListAllTeventsForTestingPurposesAbsolutelyNotUsableForARealTeventStoreOfAnySize()
+                                                                                                .ToList());
+         AssertStreamsAreIdenticalExceptForEventIds(expectedCompleteTeventStoreStream, streamedTevents, "Streaming all tevents in store");
+
+         Log.Info("  Disable all migrations so that none are used when reading from the tevent stores");
+         migrations.Clear();
+
+         migratedHistory = serviceLocator.ExecuteTransactionInIsolatedScope(() => serviceLocator.Resolve<ITeventStoreUpdater>()
+                                                                                                .Get<TestTaggregate>(initialTaggregate.Id))
+                                         .History;
+         AssertStreamsAreIdenticalExceptForEventIds(expected, migratedHistory, "loaded taggregate");
+
+         Log.Info("Streaming all tevents in store");
+         streamedTevents = serviceLocator.ExecuteTransactionInIsolatedScope(() => serviceLocator.Resolve<ITeventStore>()
+                                                                                                .ListAllTeventsForTestingPurposesAbsolutelyNotUsableForARealTeventStoreOfAnySize()
+                                                                                                .ToList());
+         AssertStreamsAreIdenticalExceptForEventIds(expectedCompleteTeventStoreStream, streamedTevents, "Streaming all tevents in store");
+
+         Log.Info("Cloning service locator / starting new instance of application");
+         var clonedServiceLocator2 = serviceLocator.Clone();
+         await using var serviceLocator2 = clonedServiceLocator2;
+         migratedHistory = clonedServiceLocator2.ExecuteTransactionInIsolatedScope(() => clonedServiceLocator2.Resolve<ITeventStoreUpdater>()
+                                                                                                              .Get<TestTaggregate>(initialTaggregate.Id))
+                                                .History;
+         AssertStreamsAreIdenticalExceptForEventIds(expected, migratedHistory, "Loaded taggregate");
+
+         Log.Info("Streaming all tevents in store");
+         streamedTevents = clonedServiceLocator2.ExecuteTransactionInIsolatedScope(() => clonedServiceLocator2.Resolve<ITeventStore>()
+                                                                                                              .ListAllTeventsForTestingPurposesAbsolutelyNotUsableForARealTeventStoreOfAnySize()
+                                                                                                              .ToList());
+         AssertStreamsAreIdenticalExceptForEventIds(expectedCompleteTeventStoreStream, streamedTevents, "Streaming all tevents in store");
+      });
    }
 
    protected static void ClearCache(IServiceLocator serviceLocator)
@@ -196,7 +189,8 @@ public abstract class TeventMigrationTestBase : UniversalTestBase
 
    internal static void AssertStreamsAreIdenticalExceptForEventIds(IReadOnlyList<ITaggregateTevent> expected, IReadOnlyList<ITaggregateTevent> migratedHistory, string descriptionOfHistory)
    {
-         migratedHistory.ToList().Must()
-                        .DeepEqualPrivate(expected.ToList(), config => config.ExcludeTypeMember(it => it.First().Id));
+      Log.Info($"Comparing histories for : {descriptionOfHistory}");
+      migratedHistory.ToList().Must()
+                     .DeepEqualPrivate(expected.ToList(), config => config.ExcludeTypeMember(it => it.First().Id));
    }
 }

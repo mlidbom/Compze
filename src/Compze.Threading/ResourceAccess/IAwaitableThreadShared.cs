@@ -37,5 +37,5 @@ public interface IAwaitableThreadShared<out TShared>
    unit Update(Action<TShared> update, LockTimeout? timeout = null) => Update(update.AsFunc(), timeout);
    unit UpdateWhen(Action<TShared> update, Func<TShared, bool> condition, WaitTimeout? timeout = null) => UpdateWhen(update.AsFunc(), condition, timeout);
 
-   unit Await(Func<TShared, bool> condition, WaitTimeout? timeout = null) => ReadWhen(it => {}, condition, timeout);
+   unit Await(Func<TShared, bool> condition, WaitTimeout? timeout = null) => ReadWhen(_ => {}, condition, timeout);
 }

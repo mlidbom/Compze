@@ -97,8 +97,10 @@ public readonly struct unit : IEquatable<unit>
    //and the random hashcode better than the default for a zero value struct due to less risk of ending up in an over-populated bucket in hash based collections.
    public bool Equals(unit _) => true;
    public override bool Equals(object? obj) => obj is unit;
+   // ReSharper disable UnusedParameter.Global
    public static bool operator ==(unit _, unit __) => true;
    public static bool operator !=(unit _, unit __) => false;
+   // ReSharper restore UnusedParameter.Global
 
    public override int GetHashCode() => 392576489;
 }

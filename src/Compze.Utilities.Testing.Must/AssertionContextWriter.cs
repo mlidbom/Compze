@@ -109,6 +109,7 @@ static class AssertionContextWriter
    public static string Diff(this IAssertionContext context, object expected, object actual, string? oldFileName = null, string? newFileName = null) =>
       context.Diff(Serialize(expected), Serialize(actual), oldFileName, newFileName);
 
+   // ReSharper disable once UnusedParameter.Global
    public static string Diff(this IAssertionContext context, string expected, string actual, string? oldFileName = null, string? newFileName = null) =>
       $"""
        Diff:
@@ -119,6 +120,7 @@ static class AssertionContextWriter
 
    static string Serialize(object? obj) => obj != null ? JsonConvert.SerializeObject(obj, TestingJsonSettings.AllMembers) : "null";
 
+   // ReSharper disable once UnusedParameter.Global
    public static string NormalizeExpressionIndentation(this IAssertionContext context, string expression)
    {
       var lines = expression.Split(Environment.NewLine);

@@ -1,9 +1,7 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Compze.SystemCE.ThreadingCE.TasksCE;
-using Xunit.Internal;
 using Xunit.Sdk;
 using Xunit.v3;
 
@@ -32,8 +30,7 @@ class ComponentCombinationsTheoryDiscoverer : TheoryDiscoverer
 
                                    return new ComponentCombinationTestCase(
                                       testCase: xunitTestCase,
-                                      useTestMethodArguments: pctAttribute.UseTestMethodArgument,
-                                      traits: testMethod.Traits.ToReadWrite(StringComparer.OrdinalIgnoreCase)
+                                      useTestMethodArguments: pctAttribute.UseTestMethodArgument
                                    );
                                 })
                                .ToArray();

@@ -6,5 +6,6 @@ namespace Compze.Serialization.Newtonsoft.Private;
 
 interface IJsonPropertyModifier
 {
+   // ReSharper disable once UnusedParameter.Global
    void ModifyProperty(JsonProperty property, MemberInfo memberInfo, MemberSerialization memberSerialization);
 }

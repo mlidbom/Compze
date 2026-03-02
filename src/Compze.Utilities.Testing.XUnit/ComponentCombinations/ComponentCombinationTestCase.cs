@@ -23,16 +23,12 @@ class ComponentCombinationTestCase : ConstructorArgumentForwardingTestCase, ISel
    [Obsolete("Called by deserializer", error: true)]
    public ComponentCombinationTestCase() {}
 
-   public ComponentCombinationTestCase(
-      XunitTestCase testCase,
-      bool useTestMethodArguments,
-      Dictionary<string, HashSet<string>> traits)
-      : base(testCase,
-             testCaseDisplayName: ReplaceArgumentNames(testCase.TestCaseDisplayName)
-      ) =>
+   // ReSharper disable once ConvertToPrimaryConstructor
+   public ComponentCombinationTestCase(XunitTestCase testCase, bool useTestMethodArguments)
+      : base(testCase, testCaseDisplayName: ReplaceArgumentNames(testCase.TestCaseDisplayName)) =>
       _useTestMethodArguments = useTestMethodArguments;
 
-   ComponentCombination combination => (ComponentCombination)TestMethodArguments[0]!;
+   ComponentCombination Combination => (ComponentCombination)TestMethodArguments[0]!;
 
    protected override void Serialize(IXunitSerializationInfo info)
    {
@@ -54,7 +50,7 @@ class ComponentCombinationTestCase : ConstructorArgumentForwardingTestCase, ISel
       CancellationTokenSource cancellationTokenSource)
    {
       return await ComponentCombination.RunInContextAsync(
-                new LazyCE<ComponentCombination>(() => combination),
+                new LazyCE<ComponentCombination>(() => Combination),
                 async () => await XunitRunnerHelper.RunXunitTestCase(
                                _useTestMethodArguments ? this : new ArgumentDiscardingTestCase(this),
                                messageBus,
