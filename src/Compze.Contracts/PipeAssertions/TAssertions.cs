@@ -6,6 +6,7 @@ using Compze.Contracts.Exceptions;
 namespace Compze.Contracts;
 
 /// <summary>Extension methods on <see cref="PipeAssertTarget{T}"/>.</summary>
+// ReSharper disable once InconsistentNaming
 public static class TAssertions
 {
    ///<summary>Throws <see cref="AssertionFailedException"/> if the value is null. Returns the value as non-nullable on success.</summary>

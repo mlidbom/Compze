@@ -26,10 +26,7 @@ public class TaskRunnerExceptionHandlingTests : UniversalTestBase
    public TaskRunnerExceptionHandlingTests()
    {
       _host = TestingEndpointHost.Create();
-      var endpoint = _host.RegisterEndpoint(
-         "endpoint",
-         new EndpointId(Guid.Parse("A1B2C3D4-E5F6-4748-9ABC-DEF012345678")),
-         builder => {});
+      var endpoint = _host.RegisterEndpoint("endpoint", new EndpointId(Guid.Parse("A1B2C3D4-E5F6-4748-9ABC-DEF012345678")), _ => {});
 
       _taskRunner = endpoint.ServiceLocator.Resolve<ITaskRunner>();
    }
@@ -63,13 +60,13 @@ public class TaskRunnerExceptionHandlingTests : UniversalTestBase
       {
          var gate = ThreadGate.Open(WaitTimeout.Seconds(20));
 
-         var _exception1 = new InvalidOperationException("exception1");
-         var _exception2 = new ArgumentException("exception2");
-         var _exception3 = new NotSupportedException("exception3");
+         var exception1 = new InvalidOperationException("exception1");
+         var exception2 = new ArgumentException("exception2");
+         var exception3 = new NotSupportedException("exception3");
 
-         _taskRunner.Run("test-task-1", () => gate.AwaitPassThrough()._then(() => throw _exception1));
-         _taskRunner.Run("test-task-2", () => gate.AwaitPassThrough()._then(() => throw _exception2));
-         _taskRunner.Run("test-task-3", () => gate.AwaitPassThrough()._then(() => throw _exception3));
+         _taskRunner.Run("test-task-1", () => gate.AwaitPassThrough()._then(() => throw exception1));
+         _taskRunner.Run("test-task-2", () => gate.AwaitPassThrough()._then(() => throw exception2));
+         _taskRunner.Run("test-task-3", () => gate.AwaitPassThrough()._then(() => throw exception3));
 
          gate.AwaitPassedThroughCountEqualTo(3);
 
@@ -79,9 +76,9 @@ public class TaskRunnerExceptionHandlingTests : UniversalTestBase
            .InnerExceptions
            .Must()
            .HaveCount(3)
-           .Contain(_exception1)
-           .Contain(_exception2)
-           .Contain(_exception3);
+           .Contain(exception1)
+           .Contain(exception2)
+           .Contain(exception3);
       });
    }
 }
