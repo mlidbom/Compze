@@ -49,4 +49,3 @@ repomix*.xml
 /InternalsVisibleTo-Test-Results.log
 /src/TestUsingPluggableComponentCombinations
 /src/TestUsingPluggableComponentCombinations.defaults
-/inspect-report.xml
