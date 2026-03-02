@@ -17,13 +17,14 @@ public abstract class UniversalTestBase : IDisposable, IAsyncLifetime
    //As long as we have no such issues, leave it at false and the tests run much faster.
    // ReSharper disable once ConvertToConstant.Local
 #pragma warning disable IDE0044
-   static bool ResourceLeakDebugMode = false;
+   // ReSharper disable once FieldCanBeMadeReadOnly.Local
+   static bool _resourceLeakDebugMode = false;
 #pragma warning restore IDE0044
 
    public void Dispose()
    {
       DisposeInternal();
-      if(ResourceLeakDebugMode)
+      if(_resourceLeakDebugMode)
       {
          UncatchableExceptionsGatherer.ForceFullGcAllGenerationsAndWaitForFinalizersConsumeAndThrowAnyGatheredExceptions();
       }
