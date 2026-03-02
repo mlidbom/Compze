@@ -8,8 +8,6 @@ public abstract class FileSystemInfoCE : IEquatable<FileSystemInfoCE>
 {
    protected string AbsolutePath { get; }
 
-   protected abstract FileSystemInfo GetFileSystemInfo();
-
    protected FileSystemInfoCE(FileSystemInfo info)
    {
       Contract.Argument.Assert(info.Exists)

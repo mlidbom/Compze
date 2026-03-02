@@ -11,8 +11,6 @@ namespace Compze.Utilities.SystemCE.LinqCE;
 /// <summary/>
 public static partial class EnumerableCE
 {
-   public static IEnumerable<T> WhereNotNull<T>(this IEnumerable<T?> @this) => @this.Where(it => it is not null).Cast<T>();
-
    /// <summary>
    /// Creates an enumerable consisting of the passed parameter values is order.
    /// </summary>

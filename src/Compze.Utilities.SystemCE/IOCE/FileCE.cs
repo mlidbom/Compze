@@ -9,6 +9,4 @@ class FileCE : FileSystemInfoCE
 #pragma warning restore CA1024
 
    internal FileCE(FileInfo fileInfo) : base(fileInfo){}
-
-   protected override FileSystemInfo GetFileSystemInfo() => GetFileInfo();
 }

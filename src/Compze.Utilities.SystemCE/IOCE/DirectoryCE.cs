@@ -35,6 +35,4 @@ partial class DirectoryCE : FileSystemInfoCE
    FileCE? TryGetFile(string fileName) => (GetDirectoryInfo().GetFiles().SingleOrDefault(it => it.Name == fileName) is {} fileInfo) ? new FileCE(fileInfo) : null;
 
    DirectoryInfo? TryGetSubDirector(string name) => GetDirectoryInfo().GetDirectories().SingleOrDefault(it => it.Name == name);
-
-   protected override FileSystemInfo GetFileSystemInfo() => GetDirectoryInfo();
 }
