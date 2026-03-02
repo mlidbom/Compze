@@ -1,6 +1,7 @@
 using AccountManagement.Domain;
 using Compze.Core.Tessaging.Public;
 using JetBrains.Annotations;
+// ReSharper disable MemberCanBeMadeStatic.Global
 
 namespace AccountManagement.API;
 

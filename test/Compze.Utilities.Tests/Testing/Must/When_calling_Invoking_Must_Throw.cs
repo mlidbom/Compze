@@ -30,10 +30,10 @@ public class When_calling_Invoking_Must_Throw : UniversalTestBase
 
          public class and_the_exception_message : Throw_throws
          {
-            string ExceptionMessage() => Invoking(() => Invoking(() => throw new InvalidOperationException("wrong"))
-                                                       .Must().Throw<ArgumentException>())
-                                        .Must().Throw<AssertionFailedException>()
-                                        .Which.Message;
+            static string ExceptionMessage() => Invoking(() => Invoking(() => throw new InvalidOperationException("wrong"))
+                                                              .Must().Throw<ArgumentException>())
+                                               .Must().Throw<AssertionFailedException>()
+                                               .Which.Message;
 
             [XF] public void is_the_full_formatted_message()
                => ExceptionMessage().Must().Be("""
@@ -64,15 +64,15 @@ public class When_calling_Invoking_Must_Throw : UniversalTestBase
 
          public class and_the_exception_message : Throw_throws
          {
-            string ExceptionMessage() => Invoking(() => Invoking(() =>
-                                                        { /* do nothing */
-                                                        })
-                                                       .Must()
-                                                       .Throw<InvalidOperationException>())
-                                        .Must()
-                                        .Throw<AssertionFailedException>()
-                                        .Which
-                                        .Message;
+            static string ExceptionMessage() => Invoking(() => Invoking(() =>
+                                                               { /* do nothing */
+                                                               })
+                                                              .Must()
+                                                              .Throw<InvalidOperationException>())
+                                               .Must()
+                                               .Throw<AssertionFailedException>()
+                                               .Which
+                                               .Message;
 
             [XF] public void is_the_full_formatted_message()
                => ExceptionMessage().Must().Be("""

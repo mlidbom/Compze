@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 using Compze.Core.Public;
 using Compze.Threading.TasksCE;
 using Compze.Utilities.Testing.Must;
-
+// ReSharper disable MemberCanBeMadeStatic.Global
 // ReSharper disable MemberCanBeMadeStatic.Local
 
 namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification;

@@ -28,9 +28,9 @@ public abstract class TeventMigrationTestBase : UniversalTestBase
 {
    static ILogger Log => CompzeLogger.For<TeventMigrationTestBase>();
 
-   internal async Task RunMigrationTestAsync(params MigrationScenario[] scenarios) => await RunMigrationTestAsync(expectedException: null, scenarios);
+   internal static async Task RunMigrationTestAsync(params MigrationScenario[] scenarios) => await RunMigrationTestAsync(expectedException: null, scenarios);
 
-   internal async Task RunMigrationTestAsync<TException>(params MigrationScenario[] scenarios) where TException : Exception
+   internal static async Task RunMigrationTestAsync<TException>(params MigrationScenario[] scenarios) where TException : Exception
       => await RunMigrationTestAsync(expectedException: typeof(TException), scenarios);
 
    static async Task RunMigrationTestAsync(Type? expectedException, params MigrationScenario[] scenarios)
