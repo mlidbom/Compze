@@ -83,7 +83,7 @@ public class unit_type
       }
    }
 
-   public class AsyncFunc_method
+   public static class AsyncFunc_method
    {
       public class with_zero_parameters
       {

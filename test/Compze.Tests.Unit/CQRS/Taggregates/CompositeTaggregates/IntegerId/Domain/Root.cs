@@ -93,6 +93,7 @@ class Component : Root.Component<Component, IRootTevent.Component, RootTevent.Co
    public void Remove() => Publish(new RootTevent.Entity.Removed());
 
 #pragma warning disable CA1812 // Used via reflection in taggregate infrastructure
+   // ReSharper disable once ClassNeverInstantiated.Global
    public class RemovableNestedEntity : RemovableEntity<RemovableNestedEntity,
 #pragma warning restore CA1812
       int,

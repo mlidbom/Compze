@@ -7,7 +7,8 @@ namespace Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId.Domain;
 [UsedImplicitly] partial class RemovableEntity
 {
 #pragma warning disable CA1812 // Used via reflection in taggregate infrastructure
-    public class RemovableNestedEntity :
+   // ReSharper disable once ClassNeverInstantiated.Global
+   public class RemovableNestedEntity :
 #pragma warning restore CA1812
         RemovableEntity.RemovableEntity<
             RemovableNestedEntity,
