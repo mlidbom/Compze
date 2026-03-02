@@ -12,6 +12,8 @@ using Compze.Tessaging.TyperMediaApi.EventStore;
 #pragma warning disable IDE1006 //Reviewed OK: Test Naming Styles
 #pragma warning disable CA1724  // Type names should not match namespaces
 #pragma warning disable CA1715  // Interfaces should start with I
+#pragma warning  disable CA1812 // Avoid uninstantiated internal classes # used via reflection
+#pragma warning  disable CA1812 // Avoid uninstantiated internal classes # used via reflection
 
 namespace Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
 

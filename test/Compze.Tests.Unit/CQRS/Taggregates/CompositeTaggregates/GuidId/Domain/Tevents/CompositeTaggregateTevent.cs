@@ -8,6 +8,8 @@ using Compze.Core.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public;
 // ReSharper disable MemberHidesStaticFromOuterClass
 // ReSharper disable RedundantNameQualifier
 // ReSharper disable InconsistentNaming
+#pragma warning  disable CA1812 // Avoid uninstantiated internal classes # used via reflection
+
 namespace Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId.Domain.Tevents;
 
 class CompositeTaggregateTevent<T>(T tevent) : TaggregateIdentifyingTevent<T>(tevent), ICompositeTaggregateTevent<T> where T : ICompositeTaggregateTevent;

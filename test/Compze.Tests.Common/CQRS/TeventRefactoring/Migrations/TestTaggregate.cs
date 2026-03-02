@@ -9,6 +9,7 @@ using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
 
 // ReSharper disable ClassNeverInstantiated.Global
+#pragma warning  disable CA1812 // Avoid uninstantiated internal classes # used via reflection
 
 namespace Compze.Tests.Common.CQRS.TeventRefactoring.Migrations
 {

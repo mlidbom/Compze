@@ -9,6 +9,7 @@ using Xunit.v3;
 
 namespace Compze.Utilities.Testing.XUnit.ComponentCombinations;
 
+#pragma warning  disable CA1812 // Avoid uninstantiated internal classes # this is used by xUnit via reflection
 class ComponentCombinationsTheoryDiscoverer : TheoryDiscoverer
 {
    public override async ValueTask<IReadOnlyCollection<IXunitTestCase>> Discover(

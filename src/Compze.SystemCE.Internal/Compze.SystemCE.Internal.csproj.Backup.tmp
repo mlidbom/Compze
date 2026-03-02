@@ -3,7 +3,7 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <Version>0.1.0-alpha.1</Version>
-    <RootNamespace>Compze.Threading</RootNamespace>
+    <RootNamespace></RootNamespace>
   </PropertyGroup>
   <Import Project="..\msbuild\InternalsVisibleToEveryone.props" />
   <ItemGroup>
