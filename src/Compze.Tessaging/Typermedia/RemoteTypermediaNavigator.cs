@@ -18,14 +18,13 @@ public static class RemoteHypermediaNavigatorRegistrar
 }
 
 //Todo: Build a pipeline to handle things like tommand validation, caching layers etc. Don't explicitly check for rules and optimization here with duplication across the class.
-[UsedImplicitly] class RemoteTypermediaNavigator : IRemoteTypermediaNavigator
+[UsedImplicitly] class RemoteTypermediaNavigator(ITypermediaRouter typermediaRouter) : IRemoteTypermediaNavigator
 {
    public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Scoped.For<IRemoteTypermediaNavigator>()
                                   .CreatedBy((ITypermediaRouter typermediaRouter) => new RemoteTypermediaNavigator(typermediaRouter)));
 
-   readonly ITypermediaRouter _typermediaRouter;
-   public RemoteTypermediaNavigator(ITypermediaRouter typermediaRouter) => _typermediaRouter = typermediaRouter;
+   readonly ITypermediaRouter _typermediaRouter = typermediaRouter;
 
    public void Post(IAtMostOnceTypermediaTommand tommand) => PostAsync(tommand).WaitUnwrappingException();
 

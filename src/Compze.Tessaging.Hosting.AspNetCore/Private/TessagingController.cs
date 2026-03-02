@@ -15,7 +15,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace Compze.Tessaging.Hosting.AspNetCore.Private;
 #pragma warning disable CA1031 //We catch all exceptions here to route them back to the client.
 
-class TessagingController : ControllerBase
+class TessagingController(IRemotableTessageSerializer serializer, ITypeMapper typeMapper, IInbox inbox, Inbox.HandlerExecutionEngine handlerExecutionEngine)
+   : ControllerBase(serializer, typeMapper, inbox, handlerExecutionEngine)
 {
    internal static void RegisterWith(IComponentRegistrar registrar) =>
       registrar.Register(Scoped.For<TessagingController>()
@@ -24,9 +25,6 @@ class TessagingController : ControllerBase
                                            IInbox inbox,
                                            Inbox.HandlerExecutionEngine handlerExecutionEngine)
                                              => new TessagingController(serializer, typeMapper, inbox, handlerExecutionEngine)));
-
-   public TessagingController(IRemotableTessageSerializer serializer, ITypeMapper typeMapper, IInbox inbox, Inbox.HandlerExecutionEngine handlerExecutionEngine) :
-      base(serializer, typeMapper, inbox, handlerExecutionEngine) {}
 
    [HttpPost(HttpConstants.Routes.Tessaging.Tevent)]
    public async Task<IActionResult> Tevent()

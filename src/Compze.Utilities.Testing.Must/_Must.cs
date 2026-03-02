@@ -37,9 +37,7 @@ abstract class AssertionContext : IAssertionContext
    public static readonly string Separator = "-".Repeat(50).Join();
 }
 
-class AssertionContext<T> : AssertionContext, IAssertionContext<T>
+class AssertionContext<T>(T actual, string expression) : AssertionContext(actual, expression), IAssertionContext<T>
 {
-   public AssertionContext(T actual, string expression) : base(actual, expression) => Actual = actual;
-
-   public T Actual { get; }
+   public T Actual { get; } = actual;
 }

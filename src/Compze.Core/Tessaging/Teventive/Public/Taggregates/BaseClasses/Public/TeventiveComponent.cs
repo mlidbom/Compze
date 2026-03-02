@@ -49,19 +49,16 @@ public abstract class TeventiveComponent<TParent,
 
     public abstract class Component<TEcComponent,
                                     TEcComponentTeventImplementation,
-                                    TEcComponentTevent> :
-        TeventiveComponent<TComponent,
-            TComponentTevent,
-            TComponentTeventImplementation,
-            TEcComponent,
-            TEcComponentTevent,
-            TEcComponentTeventImplementation>
-        where TEcComponentTevent : class, TComponentTevent
-        where TEcComponentTeventImplementation : TComponentTeventImplementation, TEcComponentTevent
-        where TEcComponent : Component<TEcComponent, TEcComponentTeventImplementation, TEcComponentTevent>
-    {
-        protected Component(TComponent parent) : base(parent) {}
-    }
+                                    TEcComponentTevent>(TComponent parent) :
+       TeventiveComponent<TComponent,
+          TComponentTevent,
+          TComponentTeventImplementation,
+          TEcComponent,
+          TEcComponentTevent,
+          TEcComponentTeventImplementation>(parent)
+       where TEcComponentTevent : class, TComponentTevent
+       where TEcComponentTeventImplementation : TComponentTeventImplementation, TEcComponentTevent
+       where TEcComponent : Component<TEcComponent, TEcComponentTeventImplementation, TEcComponentTevent>;
 
     protected ITeventHandlerRegistrar<TComponentTevent> RegisterTeventAppliers() => _teventAppliersTeventDispatcher.Register();
 
@@ -70,26 +67,23 @@ public abstract class TeventiveComponent<TParent,
                                  TEntityTevent,
                                  TEntityTeventImplementation,
                                  TEntityCreatedTevent,
-                                 TEntityTeventIdGetterSetter> :
-        Tentity<
-            TComponent,
-            TComponentTevent,
-            TComponentTeventImplementation,
-            TEntity,
-            TEntityId,
-            TEntityTeventImplementation,
-            TEntityTevent,
-            TEntityCreatedTevent,
-            TEntityTeventIdGetterSetter>
-        where TEntityId : struct
-        where TEntityTevent : class, TComponentTevent
-        where TEntityTeventImplementation : TComponentTeventImplementation, TEntityTevent
-        where TEntityCreatedTevent : TEntityTevent
-        where TEntity : Entity<TEntity, TEntityId, TEntityTevent, TEntityTeventImplementation, TEntityCreatedTevent, TEntityTeventIdGetterSetter>
-        where TEntityTeventIdGetterSetter : IGetSetTaggregateEntityTeventEntityId<TEntityId, TEntityTeventImplementation, TEntityTevent>
-    {
-        protected Entity(TComponent taggregate) : base(taggregate) {}
-    }
+                                 TEntityTeventIdGetterSetter>(TComponent taggregate) :
+       Tentity<
+          TComponent,
+          TComponentTevent,
+          TComponentTeventImplementation,
+          TEntity,
+          TEntityId,
+          TEntityTeventImplementation,
+          TEntityTevent,
+          TEntityCreatedTevent,
+          TEntityTeventIdGetterSetter>(taggregate)
+       where TEntityId : struct
+       where TEntityTevent : class, TComponentTevent
+       where TEntityTeventImplementation : TComponentTeventImplementation, TEntityTevent
+       where TEntityCreatedTevent : TEntityTevent
+       where TEntity : Entity<TEntity, TEntityId, TEntityTevent, TEntityTeventImplementation, TEntityCreatedTevent, TEntityTeventIdGetterSetter>
+       where TEntityTeventIdGetterSetter : IGetSetTaggregateEntityTeventEntityId<TEntityId, TEntityTeventImplementation, TEntityTevent>;
 
     public abstract class RemovableEntity<TEntity,
                                           TEntityId,
@@ -97,26 +91,23 @@ public abstract class TeventiveComponent<TParent,
                                           TEntityTeventImplementation,
                                           TEntityCreatedTevent,
                                           TEntityRemovedTevent,
-                                          TEntityTeventIdGetterSetter> :
-        TeventiveRemovableEntity<
-            TComponent,
-            TComponentTevent,
-            TComponentTeventImplementation,
-            TEntity,
-            TEntityId,
-            TEntityTevent,
-            TEntityTeventImplementation,
-            TEntityCreatedTevent,
-            TEntityRemovedTevent,
-            TEntityTeventIdGetterSetter>
-        where TEntityId : struct
-        where TEntityTevent : class, TComponentTevent
-        where TEntityTeventImplementation : TComponentTeventImplementation, TEntityTevent
-        where TEntityCreatedTevent : TEntityTevent
-        where TEntityRemovedTevent : TEntityTevent
-        where TEntity : RemovableEntity<TEntity, TEntityId, TEntityTevent, TEntityTeventImplementation, TEntityCreatedTevent, TEntityRemovedTevent, TEntityTeventIdGetterSetter>
-        where TEntityTeventIdGetterSetter : IGetSetTaggregateEntityTeventEntityId<TEntityId, TEntityTeventImplementation, TEntityTevent>
-    {
-        protected RemovableEntity(TComponent taggregate) : base(taggregate) {}
-    }
+                                          TEntityTeventIdGetterSetter>(TComponent taggregate) :
+       TeventiveRemovableEntity<
+          TComponent,
+          TComponentTevent,
+          TComponentTeventImplementation,
+          TEntity,
+          TEntityId,
+          TEntityTevent,
+          TEntityTeventImplementation,
+          TEntityCreatedTevent,
+          TEntityRemovedTevent,
+          TEntityTeventIdGetterSetter>(taggregate)
+       where TEntityId : struct
+       where TEntityTevent : class, TComponentTevent
+       where TEntityTeventImplementation : TComponentTeventImplementation, TEntityTevent
+       where TEntityCreatedTevent : TEntityTevent
+       where TEntityRemovedTevent : TEntityTevent
+       where TEntity : RemovableEntity<TEntity, TEntityId, TEntityTevent, TEntityTeventImplementation, TEntityCreatedTevent, TEntityRemovedTevent, TEntityTeventIdGetterSetter>
+       where TEntityTeventIdGetterSetter : IGetSetTaggregateEntityTeventEntityId<TEntityId, TEntityTeventImplementation, TEntityTevent>;
 }

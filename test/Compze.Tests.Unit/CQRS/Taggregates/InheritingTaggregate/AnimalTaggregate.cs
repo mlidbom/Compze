@@ -63,10 +63,7 @@ class AnimalTevent : TaggregateTevent, IAnimalTevent
    protected AnimalTevent(){}
    AnimalTevent(TaggregateId taggregateId):base(taggregateId){ }
 
-    internal class Born : AnimalTevent, IAnimalTevent.Born
-   {
-      public Born(TaggregateId taggregateId) : base(taggregateId){}
-   }
+    internal class Born(TaggregateId taggregateId) : AnimalTevent(taggregateId), IAnimalTevent.Born;
 }
 
 interface ICatTevent<out T> : IAnimalTevent<T> where T : IAnimalTevent;

@@ -10,27 +10,20 @@ using Compze.Threading.TasksCE;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Universal;
 
-class TypermediaConnection : IDisposable
+class TypermediaConnection(
+   EndPointAddress remoteAddress,
+   ITypeMapper typeMapper,
+   IRemotableTessageSerializer serializer,
+   ITransportMessagePoster transportMessagePoster)
+   : IDisposable
 {
    public TessageTypesInternal.EndpointInformation EndpointInformation { get; private set; } = null!;
    public IRemoteApiEndpointClient ApiClient { get; private set; } = null!;
 
-   readonly EndPointAddress _remoteAddress;
-   readonly ITypeMapper _typeMapper;
-   readonly IRemotableTessageSerializer _serializer;
-   readonly ITransportMessagePoster _transportMessagePoster;
-
-   public TypermediaConnection(
-      EndPointAddress remoteAddress,
-      ITypeMapper typeMapper,
-      IRemotableTessageSerializer serializer,
-      ITransportMessagePoster transportMessagePoster)
-   {
-      _remoteAddress = remoteAddress;
-      _typeMapper = typeMapper;
-      _serializer = serializer;
-      _transportMessagePoster = transportMessagePoster;
-   }
+   readonly EndPointAddress _remoteAddress = remoteAddress;
+   readonly ITypeMapper _typeMapper = typeMapper;
+   readonly IRemotableTessageSerializer _serializer = serializer;
+   readonly ITransportMessagePoster _transportMessagePoster = transportMessagePoster;
 
    public async Task InitAsync()
    {

@@ -10,9 +10,7 @@ namespace Compze.Tests.Unit.Internals.SystemCE.ConfigurationCE;
 
 public class AppConfigConfigurationParameterProviderTests: UniversalTestBase
 {
-   readonly IConfigurationParameterProvider _provider;
-
-   public AppConfigConfigurationParameterProviderTests() => _provider = AppSettingsJsonConfigurationParameterProvider.Instance;
+   readonly IConfigurationParameterProvider _provider = AppSettingsJsonConfigurationParameterProvider.Instance;
 
    [XF] public void ParameterProvider_should_return_the_value_specified_in_the_configuration_file() =>
       _provider.GetString("KeyTest1").Must().Be("ValueTest1");

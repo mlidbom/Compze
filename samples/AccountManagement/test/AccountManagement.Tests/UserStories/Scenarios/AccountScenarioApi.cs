@@ -4,10 +4,9 @@ using Compze.Core.Tessaging.Hosting.Public;
 
 namespace AccountManagement.UserStories.Scenarios;
 
-public class AccountScenarioApi
+public class AccountScenarioApi(IClient client)
 {
-   readonly IClient _client;
-   public AccountScenarioApi(IClient client) => _client = client;
+   readonly IClient _client = client;
 
    public RegisterAccountScenario Register => new(_client);
 

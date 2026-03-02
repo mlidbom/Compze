@@ -9,11 +9,8 @@ class ExclusiveFactTestCase : ConstructorArgumentForwardingTestCase
    // ReSharper disable once UnusedMember.Global
    public ExclusiveFactTestCase() {}
 
-   public ExclusiveFactTestCase(
-      TestCaseDetails details,
-      Dictionary<string, HashSet<string>> traits)
-      : base(details,
-             traits: traits)
-   {
-   }
+#pragma warning disable IDE0290
+   public ExclusiveFactTestCase(TestCaseDetails details, Dictionary<string, HashSet<string>> traits)
+      : base(details, traits: traits) {}
+#pragma warning restore IDE0290
 }

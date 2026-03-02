@@ -15,21 +15,15 @@ static class ServiceBusTeventStoreTeventPublisherRegistrar
       => registrar.Register(Implementation.ServiceBusTeventStoreTeventPublisher.RegisterWith);
 }
 
-[UsedImplicitly] class ServiceBusTeventStoreTeventPublisher : ITeventStoreTeventPublisher
+[UsedImplicitly] class ServiceBusTeventStoreTeventPublisher(IOutbox outbox, ITessageHandlerRegistry handlerRegistry) : ITeventStoreTeventPublisher
 {
    public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<ITeventStoreTeventPublisher>()
                                      .CreatedBy((IOutbox outbox, ITessageHandlerRegistry tessageHandlerRegistry)
                                                    => new ServiceBusTeventStoreTeventPublisher(outbox, tessageHandlerRegistry)));
 
-   readonly IOutbox _outbox;
-   readonly ITessageHandlerRegistry _handlerRegistry;
-
-   public ServiceBusTeventStoreTeventPublisher(IOutbox outbox, ITessageHandlerRegistry handlerRegistry)
-   {
-      _outbox = outbox;
-      _handlerRegistry = handlerRegistry;
-   }
+   readonly IOutbox _outbox = outbox;
+   readonly ITessageHandlerRegistry _handlerRegistry = handlerRegistry;
 
    void ITeventStoreTeventPublisher.Publish(ITaggregateTevent tevent)
    {

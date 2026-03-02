@@ -11,16 +11,13 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Compze.Utilities.DependencyInjection.Microsoft;
 
-public sealed class MicrosoftDependencyInjectionContainer : DependencyInjectionContainerBase, IServiceLocator, IServiceLocatorKernel, IMicrosoftContainerInternals
+public sealed class MicrosoftDependencyInjectionContainer(IComponentRegistrar? register = null) : DependencyInjectionContainerBase(register), IServiceLocator, IServiceLocatorKernel, IMicrosoftContainerInternals
 {
-   readonly IServiceCollection _services;
+   readonly IServiceCollection _services = new ServiceCollection();
    ServiceProvider? _serviceProvider;
    bool _isDisposed;
 
    readonly AsyncLocal<IServiceScope?> _scopeCache = new();
-
-   public MicrosoftDependencyInjectionContainer(IComponentRegistrar? register = null) : base(register) =>
-      _services = new ServiceCollection();
 
    protected override IDependencyInjectionContainer RegisterInContainer(ComponentRegistration[] registrations)
    {
