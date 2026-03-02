@@ -64,7 +64,7 @@ partial class SqliteTeventStoreSqlLayer(SqliteTeventStoreConnectionManager conne
                                                                                  AND {Tevent.EffectiveVersion} > 0
                                                                              ORDER BY {Tevent.ReadOrderIntegerPart} ASC, {Tevent.ReadOrderFractionPart} ASC
                                                                              """)
-                                                            .AddVarcharParameter(Tevent.TaggregateId, 36, taggregateId.ToString())
+                                                            .AddMediumTextParameter(Tevent.TaggregateId, taggregateId.ToString())
                                                             .AddParameter("CachedVersion", startAfterInsertedVersion)
                                                             .ExecuteReaderAndSelect(ReadDataRow)
                                                             .ToList());

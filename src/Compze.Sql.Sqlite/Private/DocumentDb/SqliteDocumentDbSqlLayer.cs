@@ -28,9 +28,9 @@ partial class SqliteDocumentDbSqlLayer(ISqliteConnectionPool connectionPool, Sql
          {
             connection.UseCommand(
                command => command.SetCommandText($"UPDATE {Schema.TableName} SET {Schema.Value} = @{Schema.Value}, {Schema.Updated} = @{Schema.Updated} WHERE {Schema.Id} = @{Schema.Id} AND {Schema.ValueTypeId} = @{Schema.ValueTypeId}")
-                                 .AddVarcharParameter(Schema.Id, 500, writeRow.Id)
+                                 .AddMediumTextParameter(Schema.Id, writeRow.Id)
                                  .AddDateTime2Parameter(Schema.Updated, writeRow.UpdateTime)
-                                 .AddVarcharParameter(Schema.ValueTypeId, 36, writeRow.TypeId.ToString())
+                                 .AddMediumTextParameter(Schema.ValueTypeId, writeRow.TypeId.ToString())
                                  .AddMediumTextParameter(Schema.Value, writeRow.SerializedDocument)
                                  .ExecuteNonQuery());
          }
@@ -47,7 +47,7 @@ partial class SqliteDocumentDbSqlLayer(ISqliteConnectionPool connectionPool, Sql
                                             SELECT {Schema.Value}, {Schema.ValueTypeId} FROM {Schema.TableName} 
                                             WHERE {Schema.Id}=@{Schema.Id} AND {Schema.ValueTypeId} {TypeInClause(acceptableTypeIds)}
                                             """)
-                           .AddVarcharParameter(Schema.Id, 500, idString)
+                           .AddMediumTextParameter(Schema.Id, idString)
                            .ExecuteReaderAndSelect(reader => new IDocumentDbSqlLayer.ReadRow(Guid.Parse(reader.GetString(1)), reader.GetString(0))));
       if(documents.Count < 1)
       {
@@ -69,8 +69,8 @@ partial class SqliteDocumentDbSqlLayer(ISqliteConnectionPool connectionPool, Sql
          {
 
             command.SetCommandText($"INSERT INTO {Schema.TableName}({Schema.Id}, {Schema.ValueTypeId}, {Schema.Value}, {Schema.Created}, {Schema.Updated}) VALUES(@{Schema.Id}, @{Schema.ValueTypeId}, @{Schema.Value}, @{Schema.Created}, @{Schema.Updated})")
-                   .AddVarcharParameter(Schema.Id, 500, row.Id)
-                   .AddVarcharParameter(Schema.ValueTypeId, 36, row.TypeId.ToString())
+                   .AddMediumTextParameter(Schema.Id, row.Id)
+                   .AddMediumTextParameter(Schema.ValueTypeId, row.TypeId.ToString())
                    .AddDateTime2Parameter(Schema.Created, row.UpdateTime)
                    .AddDateTime2Parameter(Schema.Updated, row.UpdateTime)
                    .AddMediumTextParameter(Schema.Value, row.SerializedDocument)
@@ -89,7 +89,7 @@ partial class SqliteDocumentDbSqlLayer(ISqliteConnectionPool connectionPool, Sql
       return _connectionPool.UseCommand(
          command =>
             command.SetCommandText($"DELETE FROM {Schema.TableName} WHERE {Schema.Id} = @{Schema.Id} AND {Schema.ValueTypeId} {TypeInClause(acceptableTypes)}")
-                   .AddVarcharParameter(Schema.Id, 500, idString)
+                   .AddMediumTextParameter(Schema.Id, idString)
                    .ExecuteNonQuery());
    }
 

@@ -33,8 +33,8 @@ partial class SqliteOutboxSqlLayer(ISqliteConnectionPool connectionFactory, Sqli
                        VALUES (@{TessageTable.TessageId}, @{TessageTable.TypeIdGuidValue}, @{TessageTable.SerializedTessage});
 
                    """)
-              .AddVarcharParameter(TessageTable.TessageId, 36, tessageWithReceivers.TessageId.ToString())
-              .AddVarcharParameter(TessageTable.TypeIdGuidValue, 36, tessageWithReceivers.TypeId.ToString())
+              .AddMediumTextParameter(TessageTable.TessageId, tessageWithReceivers.TessageId.ToString())
+              .AddMediumTextParameter(TessageTable.TypeIdGuidValue, tessageWithReceivers.TypeId.ToString())
               .AddMediumTextParameter(TessageTable.SerializedTessage, tessageWithReceivers.SerializedTessage)
               .AddParameter(DispatchingTable.IsReceived, 0);
 
@@ -46,7 +46,7 @@ partial class SqliteOutboxSqlLayer(ISqliteConnectionPool connectionFactory, Sqli
                                                             ({DispatchingTable.TessageId},  {DispatchingTable.EndpointId},          {DispatchingTable.IsReceived}) 
                                                     VALUES (@{DispatchingTable.TessageId}, @{DispatchingTable.EndpointId}_{index}, @{DispatchingTable.IsReceived});
 
-                                                """).AddVarcharParameter($"{DispatchingTable.EndpointId}_{index}", 36, endpointId.ToString()));
+                                                """).AddMediumTextParameter($"{DispatchingTable.EndpointId}_{index}", endpointId.ToString()));
 
             command.ExecuteNonQuery();
          });
@@ -66,8 +66,8 @@ partial class SqliteOutboxSqlLayer(ISqliteConnectionPool connectionFactory, Sqli
                             AND {DispatchingTable.IsReceived} = 0
 
                         """)
-                   .AddVarcharParameter(DispatchingTable.TessageId, 36, tessageId.ToString())
-                   .AddVarcharParameter(DispatchingTable.EndpointId, 36, endpointId.ToString())
+                   .AddMediumTextParameter(DispatchingTable.TessageId, tessageId.ToString())
+                   .AddMediumTextParameter(DispatchingTable.EndpointId, endpointId.ToString())
                    .ExecuteNonQuery());
 
       return affectedRows == 1
@@ -90,9 +90,9 @@ partial class SqliteOutboxSqlLayer(ISqliteConnectionPool connectionFactory, Sqli
                             AND {DispatchingTable.EndpointId} = @{DispatchingTable.EndpointId}
 
                         """)
-                   .AddVarcharParameter(DispatchingTable.TessageId, 36, tessageId.ToString())
-                   .AddVarcharParameter(DispatchingTable.EndpointId, 36, endpointId.ToString())
-                   .AddVarcharParameter(DispatchingTable.LastAttemptTime, 50, DateTime.UtcNow.ToString("O"))
+                   .AddMediumTextParameter(DispatchingTable.TessageId, tessageId.ToString())
+                   .AddMediumTextParameter(DispatchingTable.EndpointId, endpointId.ToString())
+                   .AddMediumTextParameter(DispatchingTable.LastAttemptTime, DateTime.UtcNow.ToString("O"))
                    .AddMediumTextParameter(DispatchingTable.FailureReason, failureReason)
                    .ExecuteNonQuery());
    }
@@ -124,7 +124,7 @@ partial class SqliteOutboxSqlLayer(ISqliteConnectionPool connectionFactory, Sqli
                     ORDER BY d.{DispatchingTable.RetryCount}, d.{DispatchingTable.LastAttemptTime}
 
                     """)
-               .AddVarcharParameter("cutoffTime", 50, cutoffTime.ToString("O"));
+               .AddMediumTextParameter("cutoffTime", cutoffTime.ToString("O"));
 
             using var reader = command.ExecuteReader();
             while(reader.Read())
@@ -166,7 +166,7 @@ partial class SqliteOutboxSqlLayer(ISqliteConnectionPool connectionFactory, Sqli
                     ORDER BY d.{DispatchingTable.RetryCount}, d.{DispatchingTable.LastAttemptTime}
 
                     """)
-               .AddVarcharParameter("endpointId", 36, endpointId.ToString());
+               .AddMediumTextParameter("endpointId", endpointId.ToString());
 
             using var reader = command.ExecuteReader();
             while(reader.Read())

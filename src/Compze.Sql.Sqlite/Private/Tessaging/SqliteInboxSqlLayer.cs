@@ -28,8 +28,8 @@ partial class SqliteInboxSqlLayer(ISqliteConnectionPool connectionFactory, Sqlit
                    ON CONFLICT ({TessageTable.TessageId}) DO NOTHING
 
                    """)
-              .AddVarcharParameter(TessageTable.TessageId, 36, tessageId.ToString())
-              .AddVarcharParameter(TessageTable.TypeId, 36, typeId.ToString())
+              .AddMediumTextParameter(TessageTable.TessageId, tessageId.ToString())
+              .AddMediumTextParameter(TessageTable.TypeId, typeId.ToString())
               .AddMediumTextParameter(TessageTable.Body, serializedTessage)
               .ExecuteNonQuery();
 
@@ -53,7 +53,7 @@ partial class SqliteInboxSqlLayer(ISqliteConnectionPool connectionFactory, Sqlit
                        AND {TessageTable.Status} = {(int)InboxTessageStatus.UnHandled}
 
                    """)
-              .AddVarcharParameter(TessageTable.TessageId, 36, tessageId.ToString())
+              .AddMediumTextParameter(TessageTable.TessageId, tessageId.ToString())
               .ExecuteNonQuery());
    }
 
@@ -73,10 +73,10 @@ partial class SqliteInboxSqlLayer(ISqliteConnectionPool connectionFactory, Sqlit
                         WHERE {TessageTable.TessageId} = @{TessageTable.TessageId}
 
                         """)
-                   .AddVarcharParameter(TessageTable.TessageId, 36, tessageId.ToString())
+                   .AddMediumTextParameter(TessageTable.TessageId, tessageId.ToString())
                    .AddMediumTextParameter(TessageTable.ExceptionStackTrace, exceptionStackTrace)
                    .AddMediumTextParameter(TessageTable.ExceptionTessage, exceptionTessage)
-                   .AddVarcharParameter(TessageTable.ExceptionType, 500, exceptionType)
+                   .AddMediumTextParameter(TessageTable.ExceptionType, exceptionType)
                    .ExecuteNonQuery());
    }
 
@@ -92,7 +92,7 @@ partial class SqliteInboxSqlLayer(ISqliteConnectionPool connectionFactory, Sqlit
                         WHERE {TessageTable.TessageId} = @{TessageTable.TessageId}
                             AND {TessageTable.Status} = {(int)InboxTessageStatus.UnHandled}
                         """)
-                   .AddVarcharParameter(TessageTable.TessageId, 36, tessageId.ToString())
+                   .AddMediumTextParameter(TessageTable.TessageId, tessageId.ToString())
                    .ExecuteNonQuery());
    }
 

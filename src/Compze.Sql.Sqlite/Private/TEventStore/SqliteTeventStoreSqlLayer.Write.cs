@@ -41,10 +41,10 @@ partial class SqliteTeventStoreSqlLayer
                                                                                              """)}
 
                                          """)
-                                    .AddVarcharParameter(Tevent.TaggregateId, 36, data.TaggregateId.ToString())
+                                    .AddMediumTextParameter(Tevent.TaggregateId, data.TaggregateId.ToString())
                                     .AddParameter(Tevent.InsertedVersion, data.StorageInformation.InsertedVersion)
-                                    .AddVarcharParameter(Tevent.TeventType, 36, data.TeventType.ToString())
-                                    .AddVarcharParameter(Tevent.TeventId, 36, data.TeventId.ToString())
+                                    .AddMediumTextParameter(Tevent.TeventType, data.TeventType.ToString())
+                                    .AddMediumTextParameter(Tevent.TeventId, data.TeventId.ToString())
                                     .AddDateTime2Parameter(Tevent.UtcTimeStamp, data.UtcTimeStamp)
                                     .AddMediumTextParameter(Tevent.Tevent, data.TeventJson)
                                     .AddParameter(Tevent.ReadOrderIntegerPart, (data.StorageInformation.ReadOrder ?? ReadOrder.Zero).IntegerPart)
@@ -99,7 +99,7 @@ partial class SqliteTeventStoreSqlLayer
          command =>
          {
             command.CommandText = selectStatement;
-            command.AddVarcharParameter(Tevent.TeventId, 36, teventId.ToString());
+            command.AddMediumTextParameter(Tevent.TeventId, teventId.ToString());
             using var reader = command.ExecuteReader();
             reader.Read();
 
@@ -118,7 +118,7 @@ partial class SqliteTeventStoreSqlLayer
          command =>
          {
             command.SetCommandText($"DELETE FROM {Tevent.TableName} WHERE {Tevent.TaggregateId} = @{Tevent.TaggregateId};")
-                   .AddVarcharParameter(Tevent.TaggregateId, 36, taggregateId.ToString())
+                   .AddMediumTextParameter(Tevent.TaggregateId, taggregateId.ToString())
                    .ExecuteNonQuery()._assert(rowsAffected => rowsAffected > 0);
          });
    }
