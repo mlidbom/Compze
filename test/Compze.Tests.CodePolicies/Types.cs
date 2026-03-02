@@ -29,10 +29,7 @@ public static class Types
                                 .Where(type => type.IsPublic || type.IsNestedPublic)
                                 .ToList();
 
-               publicTypes.Must().BeEmpty($"""
-                                           All types in *.Abstractions.Internal namespaces should be internal, but we found public types:
-                                           {publicTypes.Select(t => t.FullName ?? t.Name).JoinLines().Indent()}
-                                           """);
+               publicTypes.Must().BeEmpty();
             }
          }
       }
