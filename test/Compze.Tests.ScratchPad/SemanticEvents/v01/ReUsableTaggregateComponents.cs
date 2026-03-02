@@ -4,7 +4,7 @@ using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 #pragma warning disable 414
 #pragma warning disable IDE0059 // Unnecessary assignment of a value
 
-namespace Compze.Tests.ScratchPad.SemanticTevents.v01;
+namespace Compze.Tests.ScratchPad.SemanticEvents.v01;
 
 //todo: Implement the ability to use this pattern in the taggregate root and ensure that routing on the bus also work correctly.
 interface ITaggregate1Tevent : ITaggregateTevent{}

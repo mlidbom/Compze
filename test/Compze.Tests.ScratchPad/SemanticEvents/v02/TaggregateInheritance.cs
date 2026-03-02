@@ -6,7 +6,7 @@ using System;
 #pragma warning disable IDE0051 // Remove unused private members
 
 //When persisting tevent we would only persist the wrapped part. Thus changing from unwrapped-uninheritable to inheritable does not break storage and maybe one could even move tevents between clases in the hierarchy?
-namespace Compze.Tests.ScratchPad.SemanticTevents.v02;
+namespace Compze.Tests.ScratchPad.SemanticEvents.v02;
 
 interface ITevent {}
 

@@ -4,7 +4,7 @@ using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 #pragma warning disable IDE0059 // Unnecessary assignment of a value
 #pragma warning disable IDE0051 // Remove unused private members
 
-namespace Compze.Tests.ScratchPad.SemanticTevents.v01;
+namespace Compze.Tests.ScratchPad.SemanticEvents.v01;
 
 //todo: Try implementing inheritable taggregate and see how it goes.
 //When persisting tevent we would only persist the wrapped part. Thus changing from unwrapped-uninheritable to inheritable does not break storage.

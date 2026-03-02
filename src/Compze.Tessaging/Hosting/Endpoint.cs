@@ -6,7 +6,6 @@ using Compze.Core.Tessaging.Transport.Internal;
 using Compze.Tessaging.Implementation;
 using Compze.Tessaging.Implementation.Abstractions;
 using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
-using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Tessaging.Implementation.Transport.Client.Internal;
 using Compze.Tessaging.Implementation.Transport.Client.Routing.Abstractions;
 using Compze.Tessaging.SystemCE.ThreadingCE;
@@ -32,14 +31,12 @@ class Endpoint : IEndpoint
    readonly EndpointConfiguration _configuration;
 
    public Endpoint(IServiceLocator serviceLocator,
-                   ITessagesInFlightTracker globalStateTracker,
                    ITessagingRouter tessagingRouter,
                    IEndpointRegistry endpointRegistry,
                    EndpointConfiguration configuration)
    {
       Argument.NotNull(serviceLocator).NotNull(configuration);
       ServiceLocator = serviceLocator;
-      _globalStateTracker = globalStateTracker;
       _tessagingRouter = tessagingRouter;
       _configuration = configuration;
       _endpointRegistry = endpointRegistry;
@@ -49,7 +46,6 @@ class Endpoint : IEndpoint
    public IServiceLocator ServiceLocator { get; }
 
    public EndPointAddress? Address => _serverComponents?.Inbox.Address;
-   readonly ITessagesInFlightTracker _globalStateTracker;
    readonly ITessagingRouter _tessagingRouter;
    readonly IEndpointRegistry _endpointRegistry;
 

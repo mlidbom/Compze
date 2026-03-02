@@ -46,7 +46,6 @@ class ServerEndpointBuilder : IEndpointBuilder, IAsyncDisposable, IDisposable
       TessageTypesInternal.RegisterHandlers(RegisterHandlers);
       var serviceLocator = Container.ServiceLocator;
       var endpoint = new Endpoint(serviceLocator,
-                                  serviceLocator.Resolve<ITessagesInFlightTracker>(),
                                   serviceLocator.Resolve<ITessagingRouter>(),
                                   serviceLocator.Resolve<IEndpointRegistry>(),
                                   Configuration);
