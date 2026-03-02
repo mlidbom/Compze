@@ -89,11 +89,6 @@ public class PublicSettersAndFieldsAreDisallowedTests : UniversalTestBase
             public class Component : Entity, IRootTevent.Entity.Component
          {
             public string Public2 { get; set; } = string.Empty;
-
-            public class NestedComponent : Component, IRootTevent.Entity.Component.NestedComponent
-            {
-               public string Public3 { get; set; } = string.Empty;
-            }
          }
       }
    }

@@ -66,11 +66,9 @@ class AnimalTevent : TaggregateTevent, IAnimalTevent
     internal class Born(TaggregateId taggregateId) : AnimalTevent(taggregateId), IAnimalTevent.Born;
 }
 
-interface ICatTevent<out T> : IAnimalTevent<T> where T : IAnimalTevent;
 interface ICatTevent : IAnimalTevent;
 class CatTevent<T>(T tevent) : AnimalTevent<T>(tevent) where T : IAnimalTevent;
 class CatTevent : AnimalTevent, ICatTevent;
-interface IDogTevent<out T> : IAnimalTevent<T> where T : IAnimalTevent;
 interface IDogTevent : IAnimalTevent;
 class DogTevent<T>(T tevent) : AnimalTevent<T>(tevent) where T : IAnimalTevent;
 class DogTevent : AnimalTevent, IDogTevent;
