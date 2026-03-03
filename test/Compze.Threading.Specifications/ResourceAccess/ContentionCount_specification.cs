@@ -5,6 +5,7 @@ using Compze.Threading.ResourceAccess;
 using Compze.Utilities.Testing.Must;
 using Compze.Utilities.Testing.XUnit.BDD;
 using Xunit;
+// ReSharper disable AccessToDisposedClosure
 
 namespace Compze.Threading.Specifications.ResourceAccess;
 

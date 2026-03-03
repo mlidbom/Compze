@@ -56,7 +56,6 @@ public partial class Inbox
             public IReadOnlyList<TransportTessage.InComing> AtMostOnceTommands => _executingAtMostOnceTommands;
             public IReadOnlyList<TransportTessage.InComing> ExactlyOnceTommands => _executingExactlyOnceTommands;
             public IReadOnlyList<TransportTessage.InComing> ExactlyOnceTevents => _executingExactlyOnceTevents;
-            public IReadOnlyList<TransportTessage.InComing> ExecutingTueries => _executingNonTransactionalTueries;
 
             readonly List<HandlerExecutionTask> _tessagesWaitingToExecute = [];
 
@@ -105,7 +104,6 @@ public partial class Inbox
                      _executingExactlyOnceTommands.Add(dispatchable.TransportTessage);
                      break;
                   case TransportTessageType.TyperMediaTuery:
-                     _executingNonTransactionalTueries.Add(dispatchable.TransportTessage);
                      break;
                   default:
                      throw new ArgumentOutOfRangeException();
@@ -135,7 +133,6 @@ public partial class Inbox
                      _globalStateTracker.DoneWith(doneExecuting.TransportTessage, _endpointId, exception);
                      break;
                   case TransportTessageType.TyperMediaTuery:
-                     _executingNonTransactionalTueries.Remove(doneExecuting.TransportTessage);
                      break;
                   default:
                      throw new ArgumentOutOfRangeException();
@@ -146,7 +143,6 @@ public partial class Inbox
             readonly List<TransportTessage.InComing> _executingExactlyOnceTommands = [];
             readonly List<TransportTessage.InComing> _executingAtMostOnceTommands = [];
             readonly List<TransportTessage.InComing> _executingExactlyOnceTevents = [];
-            readonly List<TransportTessage.InComing> _executingNonTransactionalTueries = [];
          }
       }
    }
