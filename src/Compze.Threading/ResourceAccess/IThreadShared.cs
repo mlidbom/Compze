@@ -3,30 +3,35 @@ namespace Compze.Threading.ResourceAccess;
 public interface IThreadShared
 {
    public static IThreadShared<TShared> New<TShared>(TShared shared, LockTimeout? lockTimeout = null) =>
-      new LockCEThreadShared<TShared>(shared, IMonitor.New(lockTimeout));
+      new ThreadShared<TShared>(shared, IMonitor.New(lockTimeout));
+
+   public static IThreadShared<TShared> New<TShared>(TShared shared, IMonitor monitor) =>
+      new ThreadShared<TShared>(shared, monitor);
 
    // Single implementation for both IThreadShared<T> and IAwaitableThreadShared<T>.
-   class LockCEThreadShared<TShared> : IThreadShared<TShared>, IAwaitableThreadShared<TShared>
+   class ThreadShared<TShared> : IThreadShared<TShared>, IAwaitableThreadShared<TShared>
    {
-      readonly IMonitor _monitor;
-      readonly IAwaitableMonitor _awaitableMonitor;
       readonly TShared _shared;
+      readonly IAwaitableMonitor _awaitableMonitor;
 
-      internal LockCEThreadShared(TShared shared, IMonitor monitor)
+      public IMonitor Monitor { get; }
+      IAwaitableMonitor IAwaitableThreadShared<TShared>.Monitor => _awaitableMonitor;
+
+      internal ThreadShared(TShared shared, IMonitor monitor)
       {
          _shared = shared;
-         _monitor = monitor;
+         Monitor = monitor;
          _awaitableMonitor = (IAwaitableMonitor)monitor;
       }
 
-      internal LockCEThreadShared(TShared shared, IAwaitableMonitor awaitableMonitor)
+      internal ThreadShared(TShared shared, IAwaitableMonitor awaitableMonitor)
       {
          _shared = shared;
-         _monitor = (IMonitor)awaitableMonitor;
+         Monitor = (IMonitor)awaitableMonitor;
          _awaitableMonitor = awaitableMonitor;
       }
 
-      public TResult Locked<TResult>(Func<TShared, TResult> func, LockTimeout? timeout = null) => _monitor.Locked(() => func(_shared), timeout);
+      public TResult Locked<TResult>(Func<TShared, TResult> func, LockTimeout? timeout = null) => Monitor.Locked(() => func(_shared), timeout);
 
       public TResult Read<TResult>(Func<TShared, TResult> read, LockTimeout? timeout = null) => _awaitableMonitor.Read(() => read(_shared), timeout);
 
@@ -40,6 +45,8 @@ public interface IThreadShared
 
 public interface IThreadShared<out TShared>
 {
+   IMonitor Monitor { get; }
+
    TResult Locked<TResult>(Func<TShared, TResult> func, LockTimeout? timeout = null);
 
    unit Locked(Action<TShared> action, LockTimeout? timeout = null) => Locked(action.ToFunc(), timeout);

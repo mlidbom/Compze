@@ -4,12 +4,20 @@ public interface IAwaitableThreadShared
 {
    public static IAwaitableThreadShared<TShared> New<TShared>(TShared shared, LockTimeout? lockTimeout = null, WaitTimeout? waitTimeout = null) =>
       IAwaitableThreadShared<TShared>.New(shared, lockTimeout, waitTimeout);
+
+   public static IAwaitableThreadShared<TShared> New<TShared>(TShared shared, IAwaitableMonitor monitor) =>
+      new IThreadShared.ThreadShared<TShared>(shared, monitor);
 }
 
 public interface IAwaitableThreadShared<out TShared>
 {
    public static IAwaitableThreadShared<TShared> New(TShared shared, LockTimeout? lockTimeout = null, WaitTimeout? waitTimeout = null) =>
-      new IThreadShared.LockCEThreadShared<TShared>(shared, IAwaitableMonitor.New(lockTimeout, waitTimeout));
+      new IThreadShared.ThreadShared<TShared>(shared, IAwaitableMonitor.New(lockTimeout, waitTimeout));
+
+   public static IAwaitableThreadShared<TShared> New(TShared shared, IAwaitableMonitor monitor) =>
+      new IThreadShared.ThreadShared<TShared>(shared, monitor);
+
+   IAwaitableMonitor Monitor { get; }
 
    //core
    TResult Read<TResult>(Func<TShared, TResult> read, LockTimeout? timeout = null);

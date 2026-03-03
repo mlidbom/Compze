@@ -5,4 +5,5 @@ public partial interface IMonitor
    public static IMonitor New(LockTimeout? timeout = null) => IAwaitableMonitor.NewIMonitor(timeout);
 
    IDisposable TakeLock(LockTimeout? timeout = null);
+   long ContentionCount { get; }
 }

@@ -1,6 +1,7 @@
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE.LinqCE;
-
+//todo: test coverage and remove the suppression
+// ReSharper disable UnusedMember.Global
 namespace Compze.Utilities.DependencyInjection;
 
 public static class Scoped
