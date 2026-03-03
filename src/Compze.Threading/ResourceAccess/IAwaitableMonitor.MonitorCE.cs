@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
-using Compze.Contracts;
 using Compze.Threading.ResourceAccess.Exceptions;
 using Compze.Threading.Utilities;
 
@@ -157,7 +156,6 @@ public partial interface IAwaitableMonitor
 
       class ThinMonitorWrapper
       {
-         static readonly TimeSpan InfiniteTimeOut = -1.Milliseconds(); //https://learn.microsoft.com/en-us/dotnet/api/system.threading.monitor.tryenter?view=net-9.0
          readonly object _lockObject = new();
          long _contentionCount = 0;
          public long ContentionCount => _contentionCount;
