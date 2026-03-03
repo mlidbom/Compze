@@ -75,12 +75,6 @@ public sealed class MicrosoftDependencyInjectionContainer(IComponentRegistrar? r
       return CurrentProvider().GetRequiredService(serviceType);
    }
 
-   public TComponent[] ResolveAll<TComponent>() where TComponent : class
-   {
-      Contract.State.NotDisposed(_isDisposed, this);
-      return CurrentProvider().GetServices<TComponent>().ToArray();
-   }
-
    TComponent IServiceLocatorKernel.Resolve<TComponent>()
    {
       Contract.State.NotDisposed(_isDisposed, this);
