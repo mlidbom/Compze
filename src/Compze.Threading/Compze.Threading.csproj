@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
-    <Version>0.2.0-alpha.1</Version>
+    <Version>0.5.0-beta.1</Version>
      <Description>Pit of success threading primitives. Impossible to forget to lock. Automatically resolves and diagnoses deadlocks, including both the involved stack traces in the exception.</Description>
   </PropertyGroup>
   <ItemGroup>
