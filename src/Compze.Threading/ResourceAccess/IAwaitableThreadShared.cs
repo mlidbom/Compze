@@ -11,8 +11,6 @@ public interface IAwaitableThreadShared
 
 public interface IAwaitableThreadShared<out TShared>
 {
-
-
    public static IAwaitableThreadShared<TShared> New(TShared shared, LockTimeout? lockTimeout = null, WaitTimeout? waitTimeout = null) =>
       new IThreadShared.LockCEThreadShared<TShared>(shared, IAwaitableMonitor.New(lockTimeout, waitTimeout));
 

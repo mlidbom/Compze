@@ -7,8 +7,8 @@ Pit of success threading primitives. Impossible to forget to lock. Automatically
 With the tools built into the BCL:
 
 - Nothing stops you from accessing shared state without locking. 
-- Forget once and you have a bug. 
-- Deadlocks hang forever with no diagnostics.
+- Forget once and you have an intermittent bug is often incredibly hard to diagnose.
+- Deadlocks hang forever bringing production software to a grinding permantent halt.
 
 Usage requires constant vigilance. Getting it disastrously wrong is all too easy.
 
@@ -16,9 +16,11 @@ Usage requires constant vigilance. Getting it disastrously wrong is all too easy
 
 ### Automatic Deadlock Resolution with Dual Stack Traces
 
-Every lock acquisition in all the abstractions shown below use a timeout internally. When deadlocks occur the timeout elapses and we capture **both stack traces** in the exception thrown: the thread that was blocked and the thread that was blocking it. No more guessing which thread held the lock. If the "winning" thread does not promptly release the lock after the deadlock is resolved its stacktrace will not occur in the exception, but both stack traces will be logged when it does release so the full diagnostic information you need will be there in the logs.
+Every lock acquisition in all the abstractions shown below use a timeout internally. When deadlocks occur the timeout elapses and we capture **both stack traces** in the exception thrown: the thread that was blocked and the thread that was blocking it. No more guessing which thread held the lock. 
 
-### `IThreadShared<T>` — Make Forgetting to Lock Impossible.
+> 💡 If the "winning" thread does not promptly release the lock after the deadlock is resolved its stacktrace will not occur in the exception, but both stack traces will be logged when it does release so the full diagnostic information you need will be there in the logs.
+
+### `IThreadShared<T>` Make Forgetting to Lock Impossible.
 
 ```csharp
 class MyThreadSafeClass
@@ -32,7 +34,7 @@ class MyThreadSafeClass
 }
 ```
 
-> **💡 Note: There is no way to access the dictionary without acquiring the lock. This resolves whole categories of bugs in one fell swoop.**
+> **💡 Note: There is no way to access the PrivateImplementation instance without acquiring the lock. This resolves whole categories of bugs in one fell swoop.**
 
 ### `IAwaitableThreadShared<T>` — Condition Waits with Read/Update Semantics
 
@@ -47,7 +49,7 @@ class WorkTracker
 
     void Dispose()
     {
-        _inner.Await(it => it.IsEmpty); // Block until a condition is met
+        _inner.UpdateWhen(it => it.IsEmpty, it => it.Dispose());
     }
 
     class PrivateImplementation{/**/}
@@ -91,7 +93,7 @@ class WorkTracker
 
 ### Lower-Level — `IMonitor` and `IAwaitableMonitor`
 
-#### Wrap all logic in all public methods inside calls to _monitor:
+#### Wrap all logic in existing public methods inside calls to _monitor to quickly migrate existing classes:
 ```csharp
 class MyThreadSafe
 {
@@ -103,7 +105,7 @@ class MyThreadSafe
     });
 }
 
-class AwaitableThreadSafe
+class MyAwaitableThreadSafe
 {
     IAwaitableMonitor _monitor = IAwaitableMonitor.New();
 
@@ -123,19 +125,25 @@ class RiskyExample
 
     public void ReadSomething()
     {
+        ...
         using(_monitor.TakeReadLock()) { /* read */ }
+        ...
     }
 
     public void UpdateSomething()
     {
+        ...
         using(_monitor.TakeUpdateLock()) { /* update, notifies waiters */ }
+        ...
     }
 
     public void WaitThenRead()
     {
+        ...
         using(_monitor.TakeReadLockWhen(() => ready)) { /* waits for condition, then reads */ }
+        ...
     }
 }
 ```
 
-> **💡 Note: Think carefully before doing this. Much of the problems with BCL primitives come right back** 
+> **💡 WARNING: Think carefully before doing this. Much of the problems with BCL primitives come right back. Profile before you assume that more granular locking is needed for performance. It is far more rare than you may think.** 
