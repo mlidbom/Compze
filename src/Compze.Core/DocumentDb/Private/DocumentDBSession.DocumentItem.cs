@@ -50,7 +50,7 @@ public partial class DocumentDbSession
          if(ScheduledForAdding)
          {
             IsInBackingStore = true;
-            _backingStore.Add(Key.Id, Document, _persistentValues);
+            _backingStore.Add(Key.Id, Document._assert().NotNull(), _persistentValues);
          } else if(ScheduledForRemoval)
          {
             var docType = Document!.GetType();

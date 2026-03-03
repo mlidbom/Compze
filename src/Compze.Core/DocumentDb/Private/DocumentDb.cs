@@ -45,7 +45,7 @@ sealed class DocumentDb : IDocumentDb
    // I don't see any simple fix for this. I think we should just rip out the polymorphism support. It is too complex to manage and reason about, and the use cases are limited.
    bool IDocumentDb.TryGet<TDocument>(object id, [NotNullWhen(true)] out TDocument? value, Dictionary<Type, Dictionary<string, string>> persistentTDocuments, bool useUpdateLock) where TDocument : class
    {
-      value = default;
+      value = null;
       var idString = GetIdString(id);
 
       if(!_sqlLayer.TryGet(idString, AcceptableTypeIds<TDocument>(), useUpdateLock, out var readRow)) return false;

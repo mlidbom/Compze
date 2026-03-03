@@ -52,7 +52,7 @@ public class QueryModelGeneratingQueryModelReader : IVersioningQueryModelReader
       var requiresVersioning = version > 0;
       _usageGuard.EnsureAccessValid();
 
-      document = default;
+      document = null;
 
       if(!HandlesDocumentType<TDocument>(requireVersioningSupport: requiresVersioning))
       {

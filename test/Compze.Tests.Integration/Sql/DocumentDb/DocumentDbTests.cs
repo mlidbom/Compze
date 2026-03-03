@@ -59,7 +59,7 @@ public class DocumentDbTests : DocumentDbTestsBase
 
         var users = ids.Select(id => new User(id.Value)).ToArray();
 
-        UseInTransactionalScope((_, updater) => users.ForEach(user => updater.Save(user)));
+        UseInTransactionalScope((_, updater) => users.ForEach(updater.Save));
 
         UseInScope(reader => reader.GetAll<User>(ids.Take(5))
                                    .Select(fetched => fetched.Id)
@@ -77,7 +77,7 @@ public class DocumentDbTests : DocumentDbTestsBase
         var users = ids.Select(id => new User(id.Value))
                        .ToArray();
 
-        UseInTransactionalScope((_, updater) => users.ForEach(user => updater.Save(user)));
+        UseInTransactionalScope((_, updater) => users.ForEach(updater.Save));
 
         UseInScope(reader => Invoking(
                       () => reader.GetAll<User>(ids.Take(5)
@@ -95,7 +95,7 @@ public class DocumentDbTests : DocumentDbTestsBase
 
         var users = ids.Select(id => new User(id.Value)).ToArray();
 
-        UseInTransactionalScope((_, updater) => users.ForEach(user => updater.Save(user)));
+        UseInTransactionalScope((_, updater) => users.ForEach(updater.Save));
 
         UseInScope(reader =>
         {
