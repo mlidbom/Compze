@@ -4,6 +4,11 @@ All notable changes to Compze.Utilities.SystemCE.ThreadingCE will be documented 
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.5.0-beta.1
+
+- Major refactorings of the public interfaces
+- README updates
+
 ## 0.2.0-alpha.1
 
 Refactoring.
