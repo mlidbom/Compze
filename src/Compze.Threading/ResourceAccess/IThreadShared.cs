@@ -33,10 +33,6 @@ public interface IThreadShared
 
       public TResult Read<TResult>(Func<TShared, TResult> read, LockTimeout? timeout = null) => _awaitableMonitor.Read(() => read(_shared), timeout);
 
-      public TResult ReadOrUpdate<TResult>(Func<TShared, TResult?> tryRead, Action<TShared> updateOnFailedRead, LockTimeout? timeout = null)
-         where TResult : class =>
-         _awaitableMonitor.ReadOrUpdate(() => tryRead(_shared), () => updateOnFailedRead(_shared), timeout);
-
       public TResult ReadWhen<TResult>(Func<TShared, bool> condition, Func<TShared, TResult> read, WaitTimeout? timeout = null) => _awaitableMonitor.ReadWhen(() => condition(_shared), () => read(_shared), timeout);
 
       public TResult Update<TResult>(Func<TShared, TResult> update, LockTimeout? timeout = null) => _awaitableMonitor.Update(() => update(_shared), timeout);
