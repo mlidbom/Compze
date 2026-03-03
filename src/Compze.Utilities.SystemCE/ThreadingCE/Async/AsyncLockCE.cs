@@ -48,7 +48,7 @@ public interface IAsyncLockCE : IDisposable
       {
          if(_lockEntranceCount.Value == 0)
          {
-            if(!await _semaphore.WaitAsync(_timeout).caf())
+            if(!await _semaphore.WaitAsync(_timeout.Value).caf())
             {
                throw RegisterTimeoutException();
             }
@@ -65,7 +65,7 @@ public interface IAsyncLockCE : IDisposable
       {
          if(_lockEntranceCount.Value == 0)
          {
-            if(!_semaphore.Wait(_timeout))
+            if(!_semaphore.Wait(_timeout.Value))
             {
                throw RegisterTimeoutException();
             }

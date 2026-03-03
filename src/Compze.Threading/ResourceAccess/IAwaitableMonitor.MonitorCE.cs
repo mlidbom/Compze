@@ -78,40 +78,39 @@ public partial interface IAwaitableMonitor
 
       IDisposable? TryTakeLockWhen(Func<bool> condition, LockType lockType, bool throwOnFailedLock, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null)
       {
-         var actualWaitTimeout = waitTimeout ?? WaitTimeout;
-         var actualLockTimeout = lockTimeout ?? LockTimeout;
+         var effectiveWaitTimeout = waitTimeout ?? WaitTimeout;
+         var effectiveLockTimeout = lockTimeout ?? LockTimeout;
 
          var waitStartedAt = DateTime.UtcNow;
 
          IDisposable takenLock;
          if(throwOnFailedLock)
          {
-            takenLock = TakeLock(lockType, actualLockTimeout);
+            takenLock = TakeLock(lockType, effectiveLockTimeout);
          } else
          {
-            var attemptedLock = TryTakeLock(lockType, actualLockTimeout);
+            var attemptedLock = TryTakeLock(lockType, effectiveLockTimeout);
             if(attemptedLock == null) return null;
             takenLock = attemptedLock;
          }
 
          try
          {
-            if(actualWaitTimeout.IsInfinite)
+            if(effectiveWaitTimeout.IsInfinite)
             {
                while(!condition())
-                  _monitor.ReleaseLockAndReacquireItOnPulseOrTimeout(Timeout.InfiniteTimeSpan);
+                  _monitor.ReleaseLockAndReacquireItOnPulseOrTimeout(WaitTimeout.Infinite);
             } else
             {
                while(!condition())
                {
-                  var waitTimeRemaining = actualWaitTimeout - DateTimeCE.TimeElapsedSince(waitStartedAt);
-                  if(waitTimeRemaining.None())
+                  if(effectiveWaitTimeout.IsExpired(waitStartedAt))
                   {
                      takenLock.Dispose();
                      return null;
                   }
 
-                  _monitor.ReleaseLockAndReacquireItOnPulseOrTimeout(waitTimeRemaining);
+                  _monitor.ReleaseLockAndReacquireItOnPulseOrTimeout(effectiveWaitTimeout.TimeRemaining(waitStartedAt));
                }
             }
          }
@@ -173,16 +172,14 @@ public partial interface IAwaitableMonitor
          long _contentionCount = 0;
          public long ContentionCount => _contentionCount;
 
-         public bool TryTakeLock(TimeSpan timeout)
+         public bool TryTakeLock(LockTimeout timeout)
          {
-            Contract.Argument.Assert(timeout != InfiniteTimeOut, () => "Infinite timeouts are not supported");
-
             if(Monitor.TryEnter(_lockObject)) return true; //This will never block, calling it is essentially free and allows us to collect contention statistics
             Interlocked.Increment(ref _contentionCount);
-            return Monitor.TryEnter(_lockObject, timeout);
+            return Monitor.TryEnter(_lockObject, timeout.Value);
          }
 
-         public void ReleaseLockAndReacquireItOnPulseOrTimeout(TimeSpan timeout) => Monitor.Wait(_lockObject, timeout);
+         public void ReleaseLockAndReacquireItOnPulseOrTimeout(WaitTimeout timeout) => Monitor.Wait(_lockObject, timeout.Value);
 
          public void ReleaseLock() => Monitor.Exit(_lockObject);
 
