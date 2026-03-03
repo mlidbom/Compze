@@ -31,11 +31,11 @@ partial class SqliteTeventStoreSqlLayer(SqliteTeventStoreConnectionManager conne
    }
 
    static TeventDataRow ReadDataRow(SqliteDataReader teventReader) => new(
-      teventType: new TypeId(Guid.Parse(teventReader.GetString(0))),
+      teventType: new TypeId(teventReader.GetGuidFromString(0)),
       teventJson: teventReader.GetString(1),
-      teventId: new TessageId(Guid.Parse(teventReader.GetString(4))),
+      teventId: new TessageId(teventReader.GetGuidFromString(4)),
       taggregateVersion: teventReader.GetInt32(3),
-      taggregateId: new TaggregateId(Guid.Parse(teventReader.GetString(2))),
+      taggregateId: new TaggregateId(teventReader.GetGuidFromString(2)),
       // DateTime stored as Ticks (INTEGER) for full precision
       utcTimeStamp: new DateTime(teventReader.GetInt64(5), DateTimeKind.Utc),
       storageInformation: new TaggregateTeventStorageInformation
@@ -43,7 +43,7 @@ partial class SqliteTeventStoreSqlLayer(SqliteTeventStoreConnectionManager conne
                              ReadOrder = ReadOrder.FromParts(teventReader.GetInt64(10), teventReader.GetInt64(11)),
                              InsertedVersion = teventReader.GetInt32(9),
                              EffectiveVersion = teventReader.GetInt32(3),
-                             RefactoringInformation = (teventReader.IsDBNull(7) ? (Guid?)null : Guid.Parse(teventReader.GetString(7)), teventReader.IsDBNull(8) ? (int?)null : teventReader.GetInt32(8))switch
+                             RefactoringInformation = (teventReader.IsDBNull(7) ? (Guid?)null : teventReader.GetGuidFromString(7), teventReader.IsDBNull(8) ? (int?)null : teventReader.GetInt32(8))switch
                              {
                                 (null, null)               => null,
                                 ({} targetTevent, {} type) => new TaggregateTeventRefactoringInformation(new TessageId(targetTevent), (TaggregateTeventRefactoringType)type),
@@ -114,7 +114,7 @@ partial class SqliteTeventStoreSqlLayer(SqliteTeventStoreConnectionManager conne
                                                                                       WHERE {Tevent.EffectiveVersion} = 1 
                                                                                       ORDER BY {Tevent.ReadOrderIntegerPart} ASC, {Tevent.ReadOrderFractionPart} ASC
                                                                                       """)
-                                                                     .ExecuteReaderAndSelect(reader => new CreationTeventRow(taggregateId: new TaggregateId(Guid.Parse(reader.GetString(0))), typeId: Guid.Parse(reader.GetString(1)))));
+                                                                     .ExecuteReaderAndSelect(reader => new CreationTeventRow(taggregateId: new TaggregateId(reader.GetGuidFromString(0)), typeId: reader.GetGuidFromString(1))));
    }
 }
 

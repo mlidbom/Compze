@@ -106,7 +106,7 @@ partial class MsSqlDocumentDbSqlLayer : IDocumentDbSqlLayer
    {
       EnsureInitialized();
       return _connectionPool.UseCommand(command => command.SetCommandText($"SELECT {Schema.Id} FROM {Schema.TableName} WHERE {Schema.ValueTypeId} {TypeInClause(acceptableTypes)}")
-                                                          .ExecuteReaderAndSelect(reader => Guid.Parse(reader.GetString(0)))); //urgent: Huh, we store string but require them to be Guid!?
+                                                          .ExecuteReaderAndSelect(reader => reader.GetGuidFromString(0))); //urgent: Huh, we store string but require them to be Guid!?
    }
 
    public IReadOnlyList<IDocumentDbSqlLayer.ReadRow> GetAll(IEnumerable<Guid> ids, IReadOnlySet<TypeId> acceptableTypes)

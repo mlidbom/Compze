@@ -96,7 +96,7 @@ partial class MySqlDocumentDbSqlLayer(IMySqlConnectionPool connectionPool, MySql
       EnsureInitialized();
       return _connectionPool.UseCommand(
          command => command.SetCommandText($"SELECT {Schema.Id} FROM {Schema.TableName} WHERE {Schema.ValueTypeId} {TypeInClause(acceptableTypes)}")
-                           .ExecuteReaderAndSelect(reader => Guid.Parse(reader.GetString(0))));
+                           .ExecuteReaderAndSelect(reader => reader.GetGuidFromString(0)));
    }
 
    public IReadOnlyList<IDocumentDbSqlLayer.ReadRow> GetAll(IEnumerable<Guid> ids, IReadOnlySet<TypeId> acceptableTypes)

@@ -130,10 +130,10 @@ partial class SqliteOutboxSqlLayer(ISqliteConnectionPool connectionFactory, Sqli
             while(reader.Read())
             {
                tessages.Add(new IServiceBusSqlLayer.UndeliveredTessage(
-                  tessageId: new TessageId(Guid.Parse(reader.GetString(0))),
-                  typeId: new TypeId(Guid.Parse(reader.GetString(1))),
+                  tessageId: new TessageId(reader.GetGuidFromString(0)),
+                  typeId: new TypeId(reader.GetGuidFromString(1)),
                   serializedTessage: reader.GetString(2),
-                  targetEndpointId: new EndpointId(Guid.Parse(reader.GetString(3))),
+                  targetEndpointId: new EndpointId(reader.GetGuidFromString(3)),
                   retryCount: reader.GetInt32(4),
                   lastAttemptTime: reader.IsDBNull(5) ? null : DateTime.Parse(reader.GetString(5), CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind)));
             }
@@ -172,10 +172,10 @@ partial class SqliteOutboxSqlLayer(ISqliteConnectionPool connectionFactory, Sqli
             while(reader.Read())
             {
                tessages.Add(new IServiceBusSqlLayer.UndeliveredTessage(
-                  tessageId: new TessageId(Guid.Parse(reader.GetString(0))),
-                  typeId: new TypeId(Guid.Parse(reader.GetString(1))),
+                  tessageId: new TessageId(reader.GetGuidFromString(0)),
+                  typeId: new TypeId(reader.GetGuidFromString(1)),
                   serializedTessage: reader.GetString(2),
-                  targetEndpointId: new EndpointId(Guid.Parse(reader.GetString(3))),
+                  targetEndpointId: new EndpointId(reader.GetGuidFromString(3)),
                   retryCount: reader.GetInt32(4),
                   lastAttemptTime: reader.IsDBNull(5) ? null : DateTime.Parse(reader.GetString(5), CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind)));
             }

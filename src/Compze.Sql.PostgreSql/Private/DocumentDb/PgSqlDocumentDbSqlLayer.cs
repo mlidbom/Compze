@@ -101,7 +101,7 @@ partial class PgSqlDocumentDbSqlLayer(IPgSqlConnectionPool connectionPool, PgSql
       return _connectionPool.UseCommand(
          command => command.SetCommandText($"SELECT {Schema.Id} FROM {Schema.TableName} WHERE {Schema.ValueTypeId} {TypeInClause(acceptableTypes)}")
                            .PrepareStatement()//Performance: Does this work in Npgsql when there are no parameters? Should we have parameters?
-                           .ExecuteReaderAndSelect(reader => Guid.Parse(reader.GetString(0))));
+                           .ExecuteReaderAndSelect(reader => reader.GetGuidFromString(0)));
    }
 
    public IReadOnlyList<IDocumentDbSqlLayer.ReadRow> GetAll(IEnumerable<Guid> ids, IReadOnlySet<TypeId> acceptableTypes)

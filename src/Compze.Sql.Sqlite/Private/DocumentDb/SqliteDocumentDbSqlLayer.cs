@@ -48,7 +48,7 @@ partial class SqliteDocumentDbSqlLayer(ISqliteConnectionPool connectionPool, Sql
                                             WHERE {Schema.Id}=@{Schema.Id} AND {Schema.ValueTypeId} {TypeInClause(acceptableTypeIds)}
                                             """)
                            .AddMediumTextParameter(Schema.Id, idString)
-                           .ExecuteReaderAndSelect(reader => new IDocumentDbSqlLayer.ReadRow(Guid.Parse(reader.GetString(1)), reader.GetString(0))));
+                           .ExecuteReaderAndSelect(reader => new IDocumentDbSqlLayer.ReadRow(reader.GetGuidFromString(1), reader.GetString(0))));
       if(documents.Count < 1)
       {
          document = null;
@@ -98,7 +98,7 @@ partial class SqliteDocumentDbSqlLayer(ISqliteConnectionPool connectionPool, Sql
       EnsureInitialized();
       return _connectionPool.UseCommand(
          command => command.SetCommandText($"SELECT {Schema.Id} FROM {Schema.TableName} WHERE {Schema.ValueTypeId} {TypeInClause(acceptableTypes)}")
-                           .ExecuteReaderAndSelect(reader => Guid.Parse(reader.GetString(0))));
+                           .ExecuteReaderAndSelect(reader => reader.GetGuidFromString(0)));
    }
 
    public IReadOnlyList<IDocumentDbSqlLayer.ReadRow> GetAll(IEnumerable<Guid> ids, IReadOnlySet<TypeId> acceptableTypes)
@@ -109,7 +109,7 @@ partial class SqliteDocumentDbSqlLayer(ISqliteConnectionPool connectionPool, Sql
                                             SELECT {Schema.Id}, {Schema.Value}, {Schema.ValueTypeId} FROM {Schema.TableName} WHERE {Schema.ValueTypeId} {TypeInClause(acceptableTypes)} 
                                                                                AND {Schema.Id} IN('
                                             """ + ids.Select(id => id.ToString()).Join("','") + "')")
-                           .ExecuteReaderAndSelect(reader => new IDocumentDbSqlLayer.ReadRow(Guid.Parse(reader.GetString(2)), reader.GetString(1))));
+                           .ExecuteReaderAndSelect(reader => new IDocumentDbSqlLayer.ReadRow(reader.GetGuidFromString(2), reader.GetString(1))));
    }
 
    public IReadOnlyList<IDocumentDbSqlLayer.ReadRow> GetAll(IReadOnlySet<TypeId> acceptableTypes)
