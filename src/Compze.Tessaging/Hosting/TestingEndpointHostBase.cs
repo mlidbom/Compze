@@ -38,7 +38,7 @@ public abstract class TestingEndpointHostBase : EndpointHost, ITestingEndpointHo
          {
             try
             {
-               WaitForEndpointsToBeAtRest(timeoutOverride: WaitTimeout.Seconds(10));
+               WaitForEndpointsToBeAtRest(WaitTimeout.Seconds(10));
             }
 #pragma warning disable CA1031
             catch(Exception e)

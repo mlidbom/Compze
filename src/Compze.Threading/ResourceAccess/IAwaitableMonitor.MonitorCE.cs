@@ -18,13 +18,13 @@ public partial interface IAwaitableMonitor
       public IDisposable TakeUpdateLock(LockTimeout? timeout = null) => TakeLock(LockType.Update, timeout);
 
       public IDisposable TakeReadLockWhen(Func<bool> condition, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null) =>
-         TakeLockWhen(condition, LockType.Read, waitTimeout: waitTimeout, lockTimeout: lockTimeout);
+         TakeLockWhen(condition, LockType.Read, waitTimeout, lockTimeout);
 
       public IDisposable TakeUpdateLockWhen(Func<bool> condition, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null) =>
-         TakeLockWhen(condition, LockType.Update, waitTimeout: waitTimeout, lockTimeout: lockTimeout);
+         TakeLockWhen(condition, LockType.Update, waitTimeout, lockTimeout);
 
       public IDisposable? TryTakeReadLockWhen(Func<bool> condition, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null) =>
-         TryTakeLockWhen(condition, LockType.Read, waitTimeout: waitTimeout, lockTimeout: lockTimeout);
+         TryTakeLockWhen(condition, LockType.Read, waitTimeout, lockTimeout);
 
       LockTimeout LockTimeout { get; }
       WaitTimeout WaitTimeout { get; }
@@ -68,7 +68,7 @@ public partial interface IAwaitableMonitor
       IDisposable TakeLock(LockType lockType, LockTimeout? lockTimeout = null) => TryTakeLock(lockType, lockTimeout) ?? throw RegisterTimeoutException();
 
       IDisposable TakeLockWhen(Func<bool> condition, LockType lockType, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null) =>
-         TryTakeLockWhen(condition, lockType, waitTimeout: waitTimeout, lockTimeout: lockTimeout) ?? throw new AwaitingConditionTimeoutException();
+         TryTakeLockWhen(condition, lockType, waitTimeout, lockTimeout) ?? throw new AwaitingConditionTimeoutException();
 
       IDisposable? TryTakeLock(LockType lockType, LockTimeout? timeout = null) => _monitor.TryTakeLock(timeout ?? LockTimeout) ? LockFor(lockType) : null;
 

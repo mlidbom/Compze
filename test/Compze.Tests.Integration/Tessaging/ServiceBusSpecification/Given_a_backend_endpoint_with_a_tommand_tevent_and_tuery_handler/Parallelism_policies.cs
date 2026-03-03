@@ -43,7 +43,7 @@ public class Parallelism_policies : EndpointHostTestBase
       Client.ExecuteRequest(session => session.Post(MyCreateTaggregateTommand.Create()));
 
       MyRemoteTaggregateTeventHandlerThreadGate.AwaitQueueLengthEqualTo(1)
-                                             .TryAwaitQueueLengthEqualTo(2, timeout: WaitTimeout.Milliseconds(100)).Must().Be(false);
+                                             .TryAwaitQueueLengthEqualTo(2, WaitTimeout.Milliseconds(100)).Must().Be(false);
    }
 
    [PCT] public void Two_exactly_once_tommand_handlers_cannot_execute_in_parallel()
@@ -67,7 +67,7 @@ public class Parallelism_policies : EndpointHostTestBase
             session.PostAsync(MyCreateTaggregateTommand.Create())));
 
       MyCreateTaggregateTommandHandlerThreadGate.AwaitQueueLengthEqualTo(1)
-                                               .TryAwaitQueueLengthEqualTo(2, timeout: WaitTimeout.Milliseconds(100)).Must().Be(false);
+                                               .TryAwaitQueueLengthEqualTo(2, WaitTimeout.Milliseconds(100)).Must().Be(false);
 
       OpenGates();
       await commandsCompleted;
