@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Contracts;
 using static Compze.Contracts.Contract;
 
@@ -18,7 +17,4 @@ public static class CollectionCE
       removed.ForEach(removeMe => me.Remove(removeMe));
       return removed;
    }
-
-   ///<summary>Add all instances in <param name="toAdd"> to the collection <param name="me"></param>.</param></summary>
-   internal static void AddRange<T>(this ICollection<T> me, IEnumerable<T> toAdd) => toAdd.ForEach(me.Add);
 }
