@@ -36,26 +36,26 @@ public readonly struct Unit : IEquatable<Unit>
    ///   ITakeFunc(Unit.Func(anInstance.VoidMethod));
    /// </code>
    /// </summary>
-   public static Func<Unit> Func(Action action) => action.AsFunc();
+   public static Func<Unit> Func(Action action) => action.ToFunc();
 
    ///<inheritdoc cref="Func(Action)"/>
-   public static Func<TParam, Unit> Func<TParam>(Action<TParam> action) => action.AsFunc();
+   public static Func<TParam, Unit> Func<TParam>(Action<TParam> action) => action.ToFunc();
 
    ///<inheritdoc cref="Func(Action)"/>
-   public static Func<TParam, TParam2, Unit> Func<TParam, TParam2>(Action<TParam, TParam2> action) => action.AsFunc();
+   public static Func<TParam, TParam2, Unit> Func<TParam, TParam2>(Action<TParam, TParam2> action) => action.ToFunc();
 
    ///<summary>Creates a <see cref="Func{TResult}"/> returning <see cref="Task{T}"/> of <see cref="Unit"/> from a <see cref="Func{TResult}"/> returning <see cref="Task"/>, making it easy to call methods that take a typed async func when what you have is a void-returning async method group.
    /// <code>
    ///   ITakeAsyncFunc(Unit.AsyncFunc(anInstance.AsyncVoidMethod));
    /// </code>
    /// </summary>
-   public static Func<Task<Unit>> AsyncFunc(Func<Task> action) => action.AsFunc();
+   public static Func<Task<Unit>> AsyncFunc(Func<Task> action) => action.ToFunc();
 
    ///<inheritdoc cref="AsyncFunc(System.Func{System.Threading.Tasks.Task})"/>
-   public static Func<TParam, Task<Unit>> AsyncFunc<TParam>(Func<TParam, Task> action) => action.AsFunc();
+   public static Func<TParam, Task<Unit>> AsyncFunc<TParam>(Func<TParam, Task> action) => action.ToFunc();
 
    ///<inheritdoc cref="AsyncFunc(System.Func{System.Threading.Tasks.Task})"/>
-   public static Func<TParam, TParam2, Task<Unit>> AsyncFunc<TParam, TParam2>(Func<TParam, TParam2, Task> action) => action.AsFunc();
+   public static Func<TParam, TParam2, Task<Unit>> AsyncFunc<TParam, TParam2>(Func<TParam, TParam2, Task> action) => action.ToFunc();
 
     public override string ToString() => "()";
 

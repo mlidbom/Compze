@@ -15,7 +15,7 @@ public static class AsAction_from_Func
       {
          var executed = false;
          Func<unit> func = () => { executed = true; return unit.Value; };
-         func.AsAction()();
+         func.ToAction()();
          executed.Must().BeTrue();
       }
    }
@@ -26,7 +26,7 @@ public static class AsAction_from_Func
       {
          var captured = "";
          Func<string, unit> func = s => { captured = s; return unit.Value; };
-         func.AsAction()("hello");
+         func.ToAction()("hello");
          captured.Must().Be("hello");
       }
    }
@@ -38,7 +38,7 @@ public static class AsAction_from_Func
          var capturedA = "";
          var capturedB = 0;
          Func<string, int, unit> func = (s, i) => { capturedA = s; capturedB = i; return unit.Value; };
-         func.AsAction()("hello", 42);
+         func.ToAction()("hello", 42);
          capturedA.Must().Be("hello");
          capturedB.Must().Be(42);
       }

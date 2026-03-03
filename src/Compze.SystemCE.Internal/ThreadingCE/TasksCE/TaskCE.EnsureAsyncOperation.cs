@@ -11,7 +11,7 @@ static partial class TaskCE
    /// Like Task.Run, but this one guarantees that the task runs on a different thread from the caller, eliminating subtle and hard to debug problems in the case where Task.Run occasionally does NOT run on a different thread
    /// Also guarantees that any continuations are executed asynchronously rather than inline, another thing that occasionally may not be the case otherwise, again causing hard to debug issues.
    /// </summary>
-   public static Task Run(Action action) => Run(action.AsFunc());
+   public static Task Run(Action action) => Run(action.ToFunc());
 
    ///<summary>
    /// Like Task.Run, but this one guarantees that the task runs on a different thread from the caller, eliminating subtle and hard to debug problems in the case where Task.Run occasionally does NOT run on a different thread
@@ -43,7 +43,7 @@ static partial class TaskCE
    static readonly TaskFactory DefaultSchedulerDenyChildAttachTaskFactory = new(CancellationToken.None, TaskCreationOptions.DenyChildAttach, TaskContinuationOptions.None, TaskScheduler.Default);
 #pragma warning disable CA2008 // Do not create tasks without passing a TaskScheduler We just did. On the line above...
    // ReSharper disable once UnusedMember.Local
-   static Task RunOnDedicatedThread(Action action) => RunOnDedicatedThread(action.AsFunc());
+   static Task RunOnDedicatedThread(Action action) => RunOnDedicatedThread(action.ToFunc());
    static Task<T> RunOnDedicatedThread<T>(Func<T> func) => DefaultSchedulerDenyChildAttachTaskFactory.StartNew(func, TaskCreationOptions.LongRunning);
 #pragma warning restore CA2008 // Do not create tasks without passing a TaskScheduler
 

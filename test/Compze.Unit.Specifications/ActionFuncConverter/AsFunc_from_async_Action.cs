@@ -16,7 +16,7 @@ public static class AsFunc_from_async_Action
       {
          var executed = false;
          Func<Task> action = async () => { await Task.Yield(); executed = true; };
-         var result = await action.AsFunc()();
+         var result = await action.ToFunc()();
          executed.Must().BeTrue();
          result.Must().Be(unit.Value);
       }
@@ -28,7 +28,7 @@ public static class AsFunc_from_async_Action
       {
          var captured = "";
          Func<string, Task> action = async s => { await Task.Yield(); captured = s; };
-         var result = await action.AsFunc()("hello");
+         var result = await action.ToFunc()("hello");
          captured.Must().Be("hello");
          result.Must().Be(unit.Value);
       }
@@ -41,7 +41,7 @@ public static class AsFunc_from_async_Action
          var capturedA = "";
          var capturedB = 0;
          Func<string, int, Task> action = async (s, i) => { await Task.Yield(); capturedA = s; capturedB = i; };
-         var result = await action.AsFunc()("hello", 42);
+         var result = await action.ToFunc()("hello", 42);
          capturedA.Must().Be("hello");
          capturedB.Must().Be(42);
          result.Must().Be(unit.Value);

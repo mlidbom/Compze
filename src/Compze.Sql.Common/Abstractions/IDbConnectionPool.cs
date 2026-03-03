@@ -12,7 +12,7 @@ public interface IDbConnectionPool<out TConnection, out TCommand>
 {
    TResult UseConnection<TResult>(Func<TConnection, TResult> func);
 
-   void UseConnection(Action<TConnection> action) => UseConnection(action.AsFunc());
+   void UseConnection(Action<TConnection> action) => UseConnection(action.ToFunc());
 
    Task<TResult> UseConnectionAsync<TResult>(Func<TConnection, Task<TResult>> func);
 

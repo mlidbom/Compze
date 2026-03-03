@@ -45,5 +45,5 @@ public interface IThreadShared<out TShared>
 {
    TResult Locked<TResult>(Func<TShared, TResult> func, LockTimeout? timeout = null);
 
-   unit Locked(Action<TShared> action, LockTimeout? timeout = null) => Locked(action.AsFunc(), timeout);
+   unit Locked(Action<TShared> action, LockTimeout? timeout = null) => Locked(action.ToFunc(), timeout);
 }

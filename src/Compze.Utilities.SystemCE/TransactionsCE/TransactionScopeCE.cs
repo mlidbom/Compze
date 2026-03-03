@@ -9,7 +9,7 @@ namespace Compze.Utilities.SystemCE.TransactionsCE;
 
 public static class TransactionScopeCe
 {
-   public static void Execute([InstantHandle] Action action, TransactionScopeOption option = TransactionScopeOption.Required) => Execute(action.AsFunc(), option);
+   public static void Execute([InstantHandle] Action action, TransactionScopeOption option = TransactionScopeOption.Required) => Execute(action.ToFunc(), option);
 
    public static void SuppressAmbient(Action action) => Execute(action, TransactionScopeOption.Suppress);
 

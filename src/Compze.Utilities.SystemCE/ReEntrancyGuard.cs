@@ -9,7 +9,7 @@ public class ReentrancyGuard
    bool _reentryWasAttempted = false;
 
    public unit ExecuteIfNotReEntering(Action action) =>
-      ExecuteIfNotReEntering(action.AsFunc());
+      ExecuteIfNotReEntering(action.ToFunc());
 
    unit ExecuteIfNotReEntering(Func<unit> action)
    {
