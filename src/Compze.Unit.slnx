@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="Compze.Unit/Compze.Unit.csproj" />
+  <Project Path="../test/Compze.Unit.Specifications/Compze.Unit.Specifications.csproj" />
+</Solution>

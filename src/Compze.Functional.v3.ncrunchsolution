@@ -21,6 +21,7 @@
       <Value>UsePackageReference_Compze_Threading = true</Value>
       <Value>UsePackageReference_Compze_Threading_Internal = true</Value>
       <Value>UsePackageReference_Compze_Threading_Testing = true</Value>
+      <Value>UsePackageReference_Compze_Unit = true</Value>
       <Value>UsePackageReference_Compze_Utilities = true</Value>
       <Value>UsePackageReference_Compze_Utilities_DependencyInjection = true</Value>
       <Value>UsePackageReference_Compze_Utilities_DependencyInjection_Microsoft = true</Value>

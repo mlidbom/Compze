@@ -52,6 +52,10 @@
     <Project Path="../test/Compze.Underscore.Specifications/Compze.Underscore.Specifications.csproj" />
     <Project Path="Compze.Underscore/Compze.Underscore.csproj" />
   </Folder>
+  <Folder Name="/Compze.Unit/">
+    <Project Path="../test/Compze.Unit.Specifications/Compze.Unit.Specifications.csproj" />
+    <Project Path="Compze.Unit/Compze.Unit.csproj" />
+  </Folder>
   <Folder Name="/Compze.Threading/">
     <Project Path="../test/Compze.Threading.Specifications/Compze.Threading.Specifications.csproj" />
     <Project Path="../test/Compze.Threading.Testing.Specifications/Compze.Threading.Testing.Specifications.csproj" />

@@ -38,14 +38,18 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Underscore)' != 'true'">
     <ProjectReference Include="..\Compze.Underscore\Compze.Underscore.csproj" />
   </ItemGroup>
+  <!-- Compze.Utilities.Logging — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Logging)' == 'true'">
+    <PackageReference Include="Compze.Utilities.Logging" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Logging)' != 'true'">
+    <ProjectReference Include="..\Compze.Utilities.Logging\Compze.Utilities.Logging.csproj" />
+  </ItemGroup>
   <!-- Compze.Utilities.SystemCE — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_SystemCE)' == 'true'">
     <PackageReference Include="Compze.Utilities.SystemCE" Version="*-*" />
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_SystemCE)' != 'true'">
     <ProjectReference Include="..\Compze.Utilities.SystemCE\Compze.Utilities.SystemCE.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Compze.Utilities.Logging\Compze.Utilities.Logging.csproj" />
   </ItemGroup>
 </Project>

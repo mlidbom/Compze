@@ -1,6 +1,5 @@
 <SolutionConfiguration>
   <Settings>
-    <AllowParallelTestExecution>True</AllowParallelTestExecution>
     <CustomBuildProperties>
       <Value>UsePackageReference_Compze_Contracts = true</Value>
       <Value>UsePackageReference_Compze_Core = true</Value>
@@ -19,7 +18,6 @@
       <Value>UsePackageReference_Compze_Threading_Internal = true</Value>
       <Value>UsePackageReference_Compze_Threading_Testing = true</Value>
       <Value>UsePackageReference_Compze_Underscore = true</Value>
-      <Value>UsePackageReference_Compze_Unit = true</Value>
       <Value>UsePackageReference_Compze_Utilities = true</Value>
       <Value>UsePackageReference_Compze_Utilities_DependencyInjection = true</Value>
       <Value>UsePackageReference_Compze_Utilities_DependencyInjection_Microsoft = true</Value>
@@ -35,8 +33,5 @@
       <Value>UsePackageReference_Compze_Utilities_Testing_Must = true</Value>
       <Value>UsePackageReference_Compze_Utilities_Testing_XUnit = true</Value>
     </CustomBuildProperties>
-    <EnableRDI>False</EnableRDI>
-    <RdiConfigured>True</RdiConfigured>
-    <SolutionConfigured>True</SolutionConfigured>
   </Settings>
 </SolutionConfiguration>

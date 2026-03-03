@@ -13,4 +13,11 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
+  <!-- Compze.Unit — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Unit)' == 'true'">
+    <PackageReference Include="Compze.Unit" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Unit)' != 'true'">
+    <ProjectReference Include="..\Compze.Unit\Compze.Unit.csproj" />
+  </ItemGroup>
 </Project>

@@ -1,11 +1,12 @@
 using System;
 using System.Threading.Tasks;
+using Compze.Underscore;
 using Compze.Utilities.Testing.Must;
 using Compze.Utilities.Testing.XUnit.BDD;
 
 #pragma warning disable CA1052 // BDD-style nested specification classes cannot be static
 
-namespace Compze.Underscore.Specifications.ActionFuncConverter;
+namespace Compze.Unit.Specifications.ActionFuncConverter;
 
 public static class AsFunc_from_async_Action
 {

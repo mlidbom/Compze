@@ -52,6 +52,8 @@
     <UsePackageReference_Compze_Threading_Testing Condition="'$(UsePackageReference_Compze_Threading_Testing)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Threading.Testing.csproj|'))">true</UsePackageReference_Compze_Threading_Testing>
     <!-- Compze.Underscore -->
     <UsePackageReference_Compze_Underscore Condition="'$(UsePackageReference_Compze_Underscore)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Underscore.csproj|'))">true</UsePackageReference_Compze_Underscore>
+    <!-- Compze.Unit -->
+    <UsePackageReference_Compze_Unit Condition="'$(UsePackageReference_Compze_Unit)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Unit.csproj|'))">true</UsePackageReference_Compze_Unit>
     <!-- Compze.Utilities -->
     <UsePackageReference_Compze_Utilities Condition="'$(UsePackageReference_Compze_Utilities)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Utilities.csproj|'))">true</UsePackageReference_Compze_Utilities>
     <!-- Compze.Utilities.DependencyInjection -->
