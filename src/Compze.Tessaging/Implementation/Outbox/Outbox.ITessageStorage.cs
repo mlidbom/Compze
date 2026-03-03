@@ -12,7 +12,6 @@ partial class Outbox
       void SaveTessage(IExactlyOnceTessage tessage, params EndpointId[] receiverEndpointIds);
       void MarkAsReceived(TessageId tessageId, EndpointId receiverId);
       void RecordDeliveryFailure(TessageId tessageId, EndpointId receiverId, Exception? exception);
-      IReadOnlyList<IServiceBusSqlLayer.UndeliveredTessage> GetUndeliveredTessages(TimeSpan olderThan);
       IReadOnlyList<IServiceBusSqlLayer.UndeliveredTessage> GetUndeliveredTessagesForEndpoint(EndpointId endpointId);
       Task StartAsync();
    }

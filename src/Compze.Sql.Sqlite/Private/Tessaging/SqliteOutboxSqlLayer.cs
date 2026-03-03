@@ -94,51 +94,6 @@ partial class SqliteOutboxSqlLayer(ISqliteConnectionPool connectionFactory, Sqli
                    .ExecuteNonQuery());
    }
 
-   public IReadOnlyList<IServiceBusSqlLayer.UndeliveredTessage> GetUndeliveredTessages(TimeSpan olderThan)
-   {
-      var cutoffTime = DateTime.UtcNow - olderThan;
-
-      return _connectionFactory.UseCommand(
-         command =>
-         {
-            var tessages = new List<IServiceBusSqlLayer.UndeliveredTessage>();
-
-            command
-               .SetCommandText(
-                   $"""
-
-                    SELECT m.{TessageTable.TessageId}, 
-                           m.{TessageTable.TypeIdGuidValue}, 
-                           m.{TessageTable.SerializedTessage},
-                           d.{DispatchingTable.EndpointId},
-                           d.{DispatchingTable.RetryCount},
-                           d.{DispatchingTable.LastAttemptTime}
-                    FROM {TessageTable.TableName} m
-                    INNER JOIN {DispatchingTable.TableName} d ON m.{TessageTable.TessageId} = d.{DispatchingTable.TessageId}
-                    WHERE d.{DispatchingTable.IsReceived} = 0
-                      AND (d.{DispatchingTable.LastAttemptTime} IS NULL 
-                           OR d.{DispatchingTable.LastAttemptTime} < @cutoffTime)
-                    ORDER BY d.{DispatchingTable.RetryCount}, d.{DispatchingTable.LastAttemptTime}
-
-                    """)
-               .AddMediumTextParameter("cutoffTime", cutoffTime.ToString("O"));
-
-            using var reader = command.ExecuteReader();
-            while(reader.Read())
-            {
-               tessages.Add(new IServiceBusSqlLayer.UndeliveredTessage(
-                  tessageId: new TessageId(reader.GetGuidFromString(0)),
-                  typeId: new TypeId(reader.GetGuidFromString(1)),
-                  serializedTessage: reader.GetString(2),
-                  targetEndpointId: new EndpointId(reader.GetGuidFromString(3)),
-                  retryCount: reader.GetInt32(4),
-                  lastAttemptTime: reader.IsDBNull(5) ? null : DateTime.Parse(reader.GetString(5), CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind)));
-            }
-
-            return tessages;
-         });
-   }
-
    public IReadOnlyList<IServiceBusSqlLayer.UndeliveredTessage> GetUndeliveredTessagesForEndpoint(EndpointId endpointId)
    {
       return _connectionFactory.UseCommand(

@@ -61,9 +61,6 @@ partial class Outbox
          _sqlLayer.RecordDeliveryFailure(tessageId, receiverId, failureReason);
       }
 
-      public IReadOnlyList<IServiceBusSqlLayer.UndeliveredTessage> GetUndeliveredTessages(TimeSpan olderThan) =>
-         _sqlLayer.GetUndeliveredTessages(olderThan);
-
       public IReadOnlyList<IServiceBusSqlLayer.UndeliveredTessage> GetUndeliveredTessagesForEndpoint(EndpointId endpointId) =>
          _sqlLayer.GetUndeliveredTessagesForEndpoint(endpointId);
 
