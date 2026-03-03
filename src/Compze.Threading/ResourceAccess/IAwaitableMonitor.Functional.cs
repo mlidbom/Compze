@@ -10,6 +10,11 @@ public partial interface IAwaitableMonitor
       using(TakeReadLock(timeout)) return func();
    }
 
+   TReturn ReadWhen<TReturn>(Func<bool> condition, Func<TReturn> func, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null)
+   {
+      using(TakeReadLockWhen(condition, waitTimeout: waitTimeout, lockTimeout: lockTimeout)) return func();
+   }
+
    unit Update(Action action, LockTimeout? timeout = null) => Update(action.AsFunc(), timeout);
 
    T Update<T>(Func<T> func, LockTimeout? timeout = null)
@@ -17,13 +22,11 @@ public partial interface IAwaitableMonitor
       using(TakeUpdateLock(timeout)) return func();
    }
 
-   TReturn ReadWhen<TReturn>(Func<bool> condition, Func<TReturn> func, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null)
-   {
-      using(TakeReadLockWhen(condition, waitTimeout, lockTimeout)) return func();
-   }
+   unit UpdateWhen<TReturn>(Func<bool> condition, Action action, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null) =>
+      UpdateWhen(condition, action.AsFunc(), waitTimeout, lockTimeout);
 
    TReturn UpdateWhen<TReturn>(Func<bool> condition, Func<TReturn> func, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null)
    {
-      using(TakeUpdateLockWhen(condition, waitTimeout, lockTimeout)) return func();
+      using(TakeUpdateLockWhen(condition, waitTimeout: waitTimeout, lockTimeout: lockTimeout)) return func();
    }
 }

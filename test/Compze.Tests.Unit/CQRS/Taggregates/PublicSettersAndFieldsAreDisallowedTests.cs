@@ -10,6 +10,7 @@ using static Compze.Utilities.Testing.Must.MustActions;
 // ReSharper disable ClassNeverInstantiated.Local
 // ReSharper disable PossibleInterfaceMemberAmbiguity
 // ReSharper disable RedundantNameQualifier
+// ReSharper disable UnusedMember.Global
 #pragma warning disable IDE0051
 
 // ReSharper disable InconsistentNaming

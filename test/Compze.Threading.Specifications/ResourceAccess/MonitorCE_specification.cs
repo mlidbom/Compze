@@ -122,7 +122,9 @@ public class MonitorCE_specification : UniversalTestBase
          var monitor = IAwaitableMonitor.New(monitorTimeout);
          if(timeToWaitForStackTrace.HasValue)
          {
+#pragma warning disable CS0618 // Type or member is obsolete
             ((IMonitorInternals)monitor).SetTimeToWaitForStackTrace(timeToWaitForStackTrace.Value);
+#pragma warning restore CS0618 // Type or member is obsolete
          }
 
          using var threadOneHasTakenUpdateLock = new ManualResetEvent(false);
