@@ -4,6 +4,10 @@ All notable changes to Compze.Utilities.SystemCE.ThreadingCE.Testing will be doc
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.2.0-alpha.2
+
+- update to the latest Compze.Threading
+
 ## 0.2.0-alpha.1
 
 Refactoring.
