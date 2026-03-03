@@ -1,5 +1,3 @@
-using System;
-
 namespace Compze.Threading.ResourceAccess;
 
 public static class MonitorCEExtensions

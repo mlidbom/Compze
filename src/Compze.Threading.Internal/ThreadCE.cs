@@ -1,5 +1,3 @@
-using System.Threading;
-
 namespace Compze.Threading;
 
 static class ThreadCE

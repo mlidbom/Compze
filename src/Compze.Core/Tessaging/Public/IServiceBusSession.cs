@@ -1,5 +1,3 @@
-using System;
-
 namespace Compze.Core.Tessaging.Public;
 
 ///<summary>Dispatches tessages between processes.</summary>

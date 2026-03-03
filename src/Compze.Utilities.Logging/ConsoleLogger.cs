@@ -1,5 +1,3 @@
-using System;
-
 namespace Compze.Utilities.Logging;
 
 class ConsoleLogger : Logger

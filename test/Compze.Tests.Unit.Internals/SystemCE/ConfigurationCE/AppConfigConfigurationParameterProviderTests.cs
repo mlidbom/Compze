@@ -1,4 +1,3 @@
-using System;
 using Compze.Core.Configuration.Internal;
 using Compze.Tessaging.Configuration;
 using Compze.Tests.Infrastructure;

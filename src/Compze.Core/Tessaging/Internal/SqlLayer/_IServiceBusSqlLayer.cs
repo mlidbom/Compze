@@ -1,10 +1,6 @@
 using Compze.Core.Public;
 using Compze.Core.Refactoring.Naming.Internal;
 using Compze.Core.Tessaging.Hosting.Public;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Compze.Core.Tessaging.Internal.SqlLayer;
 
@@ -50,23 +46,14 @@ public interface IServiceBusSqlLayer
       public IEnumerable<EndpointId> ReceiverEndpointIds { get; } = receiverEndpointIds.ToList();
    }
 
-   public class UndeliveredTessage
+   public class UndeliveredTessage(TessageId tessageId, TypeId typeId, string serializedTessage, EndpointId targetEndpointId, int retryCount, DateTime? lastAttemptTime)
    {
-      public UndeliveredTessage(TessageId tessageId, TypeId typeId, string serializedTessage, EndpointId targetEndpointId, int retryCount, DateTime? lastAttemptTime)
-      {
-         TessageId = tessageId;
-         TypeId = typeId;
-         SerializedTessage = serializedTessage;
-         TargetEndpointId = targetEndpointId;
-         RetryCount = retryCount;
-         LastAttemptTime = lastAttemptTime;
-      }
-      public TessageId TessageId { get; }
-      public TypeId TypeId { get; }
-      public string SerializedTessage { get; }
-      public EndpointId TargetEndpointId { get; }
-      public int RetryCount { get; }
-      public DateTime? LastAttemptTime { get; }
+      public TessageId TessageId { get; } = tessageId;
+      public TypeId TypeId { get; } = typeId;
+      public string SerializedTessage { get; } = serializedTessage;
+      public EndpointId TargetEndpointId { get; } = targetEndpointId;
+      public int RetryCount { get; } = retryCount;
+      public DateTime? LastAttemptTime { get; } = lastAttemptTime;
    }
 
    public static class InboxTessageDatabaseSchemaStrings

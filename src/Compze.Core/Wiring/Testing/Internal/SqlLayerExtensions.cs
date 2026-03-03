@@ -1,5 +1,3 @@
-using System;
-
 namespace Compze.Core.Wiring.Testing.Internal;
 
 /// <summary>

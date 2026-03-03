@@ -1,6 +1,3 @@
-using System;
-using Compze.Utilities.SystemCE;
-
 namespace Compze.Core.DocumentDb.Private;
 
 public partial class DocumentDbSession

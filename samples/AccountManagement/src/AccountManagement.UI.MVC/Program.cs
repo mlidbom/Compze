@@ -1,5 +1,3 @@
-using Microsoft.AspNetCore.Builder;
-
 namespace AccountManagement.UI.MVC;
 
 static class Program

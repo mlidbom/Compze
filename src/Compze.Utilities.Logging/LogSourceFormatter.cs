@@ -1,5 +1,3 @@
-using Compze.Utilities.SystemCE;
-
 namespace Compze.Utilities.Logging;
 
 public static class LogSourceFormatter

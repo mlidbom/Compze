@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Compze.Contracts;
 
 namespace Compze.Utilities.SystemCE;

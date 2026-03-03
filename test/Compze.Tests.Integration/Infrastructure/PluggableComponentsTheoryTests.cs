@@ -21,7 +21,7 @@ public class PluggableComponentsTheoryTests : UniversalTestBase
       // Test the ValueForDb functionality (alias for SqlLayer.ValueFor)
       var testValue = TestEnv.SqlLayer.ValueFor(msSql: "SQL Server", mySql: "MySQL", pgSql: "PostgreSQL", sqlite: "SQLite", sqliteMemory: "SQLiteMemory");
 
-      System.Console.WriteLine($"  ValueForDb result: {testValue}");
+      Console.WriteLine($"  ValueForDb result: {testValue}");
       testValue.Must().NotBeNull();
 
       // Verify the value matches the current sql layer
@@ -32,7 +32,7 @@ public class PluggableComponentsTheoryTests : UniversalTestBase
          SqlLayer.PgSql        => "PostgreSQL",
          SqlLayer.Sqlite       => "SQLite",
          SqlLayer.SqliteMemory => "SQLiteMemory",
-         _                     => throw new System.Exception($"Unexpected sql layer: {TestEnv.SqlLayer}")
+         _                     => throw new Exception($"Unexpected sql layer: {TestEnv.SqlLayer}")
       };
 
       testValue.Must().Be(expectedValue);
@@ -55,7 +55,7 @@ public class PluggableComponentsTheoryTests : UniversalTestBase
          SqlLayer.PgSql        => 3,
          SqlLayer.Sqlite       => 4,
          SqlLayer.SqliteMemory => 5,
-         _                     => throw new System.Exception($"Unexpected sql layer: {TestEnv.SqlLayer}")
+         _                     => throw new Exception($"Unexpected sql layer: {TestEnv.SqlLayer}")
       });
    }
 }

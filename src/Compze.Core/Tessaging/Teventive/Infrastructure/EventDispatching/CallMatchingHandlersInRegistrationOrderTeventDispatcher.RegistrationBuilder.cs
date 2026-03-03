@@ -1,6 +1,5 @@
 // ReSharper disable ForCanBeConvertedToForeach this file needs these optimizations...
 
-using System;
 using Compze.Core.Tessaging.Public;
 using Compze.Core.Tessaging.Teventive.Infrastructure.Validation;
 using Compze.Core.Tessaging.Teventive.Public;

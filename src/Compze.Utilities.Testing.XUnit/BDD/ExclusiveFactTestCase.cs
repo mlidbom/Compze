@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-
 namespace Compze.Utilities.Testing.XUnit.BDD;
 
 class ExclusiveFactTestCase : ConstructorArgumentForwardingTestCase

@@ -1,4 +1,3 @@
-using System;
 using System.Runtime.ExceptionServices;
 
 namespace Compze.Utilities.SystemCE.ReactiveCE;

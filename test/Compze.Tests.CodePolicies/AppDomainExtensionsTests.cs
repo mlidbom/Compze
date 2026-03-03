@@ -1,4 +1,3 @@
-using System.Linq;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.Testing.Must;
 using Compze.Utilities.Testing.XUnit.BDD;
@@ -14,8 +13,8 @@ public static class AppDomainExtensionsTests
       {
          CompzeAssemblyLoader.EnsureAllCompzeAssembliesAreLoaded();
 
-         var allTypes = System.AppDomain.CurrentDomain.AllCompzeTypes();
-         var compzeAssemblies = System.AppDomain.CurrentDomain
+         var allTypes = AppDomain.CurrentDomain.AllCompzeTypes();
+         var compzeAssemblies = AppDomain.CurrentDomain
                                       .GetAssemblies()
                                       .Where(assembly => assembly.GetName().Name?.StartsWithCE("Compze.") == true)
                                       .ToList();
@@ -39,7 +38,7 @@ public static class AppDomainExtensionsTests
       {
          CompzeAssemblyLoader.EnsureAllCompzeAssembliesAreLoaded();
 
-         var allTypes = System.AppDomain.CurrentDomain.AllCompzeTypes();
+         var allTypes = AppDomain.CurrentDomain.AllCompzeTypes();
 
          var publicTypes = allTypes.Where(type => type.IsPublic || type.IsNestedPublic).ToList();
          var internalTypes = allTypes.Where(type => type is { IsPublic: false, IsNestedPublic: false, IsNestedPrivate: false, IsNestedFamily: false, IsNestedFamORAssem: false, IsNestedFamANDAssem: false }).ToList();
@@ -53,7 +52,7 @@ public static class AppDomainExtensionsTests
       {
          CompzeAssemblyLoader.EnsureAllCompzeAssembliesAreLoaded();
 
-         var allTypes = System.AppDomain.CurrentDomain.AllCompzeTypes();
+         var allTypes = AppDomain.CurrentDomain.AllCompzeTypes();
          var classes = allTypes.Where(type => type.IsClass).ToList();
 
          classes.Must().NotBeEmpty();
@@ -64,7 +63,7 @@ public static class AppDomainExtensionsTests
       {
          CompzeAssemblyLoader.EnsureAllCompzeAssembliesAreLoaded();
 
-         var allTypes = System.AppDomain.CurrentDomain.AllCompzeTypes();
+         var allTypes = AppDomain.CurrentDomain.AllCompzeTypes();
          var structs = allTypes.Where(type => type is { IsValueType: true, IsEnum: false }).ToList();
 
          structs.Must().NotBeEmpty();
@@ -75,7 +74,7 @@ public static class AppDomainExtensionsTests
       {
          CompzeAssemblyLoader.EnsureAllCompzeAssembliesAreLoaded();
 
-         var allTypes = System.AppDomain.CurrentDomain.AllCompzeTypes();
+         var allTypes = AppDomain.CurrentDomain.AllCompzeTypes();
          var interfaces = allTypes.Where(type => type.IsInterface).ToList();
 
          interfaces.Must().NotBeEmpty();

@@ -15,7 +15,7 @@ public class _tap_method
 
    [XF] public void returns_the_same_reference_for_reference_types()
    {
-      var list = new System.Collections.Generic.List<int>();
+      var list = new List<int>();
       var result = list._tap(l => l.Add(42));
       ReferenceEquals(result, list).Must().BeTrue();
       result.Count.Must().Be(1);

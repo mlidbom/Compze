@@ -1,5 +1,3 @@
-using System;
-using System.Threading.Tasks;
 using Compze.Core.Configuration.Internal;
 using Compze.Core.Refactoring.Naming.Internal.Implementation;
 using Compze.Core.Tessaging.Hosting.Public;
@@ -21,7 +19,6 @@ using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Tessaging.Typermedia;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
-using Compze.Utilities.SystemCE;
 
 // ReSharper disable ImplicitlyCapturedClosure it is very much intentional :)
 

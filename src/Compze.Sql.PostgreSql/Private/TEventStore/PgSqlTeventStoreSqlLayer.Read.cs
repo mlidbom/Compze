@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Transactions;
 using Compze.Core.Public;
 using Compze.Core.Refactoring.Naming.Internal;

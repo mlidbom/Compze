@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 using Compze.Core.Refactoring.Naming.Internal;
 using Compze.Core.Serialization.Internal;
 using Compze.Core.Tessaging.Public;
@@ -13,7 +9,6 @@ using Compze.Tessaging.Implementation.Transport.Client.Internal;
 using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Utilities.Logging;
 using Compze.Threading.ResourceAccess;
-using Compze.Utilities.SystemCE;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Universal;
 

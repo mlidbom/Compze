@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace Compze.Utilities.Testing.DbPool;
 
 public interface IDbPoolSqlLayer

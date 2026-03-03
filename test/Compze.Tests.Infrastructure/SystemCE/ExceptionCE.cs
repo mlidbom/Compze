@@ -1,5 +1,3 @@
-using System;
-
 namespace Compze.Tests.Infrastructure.SystemCE;
 
 public static class ExceptionCE

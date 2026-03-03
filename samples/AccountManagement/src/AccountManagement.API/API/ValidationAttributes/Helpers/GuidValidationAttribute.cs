@@ -1,5 +1,3 @@
-using System;
-
 namespace AccountManagement.API.ValidationAttributes.Helpers;
 
 public abstract class GuidValidationAttribute : ValidationAttributeBase

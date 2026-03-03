@@ -1,6 +1,3 @@
-using Compze.Underscore;
-using System;
-
 namespace Compze.Threading.ResourceAccess;
 
 public partial interface IAwaitableMonitor

@@ -1,4 +1,3 @@
-using System;
 using AccountManagement.Domain;
 using AccountManagement.Domain.Tevents;
 using AccountManagement.UI;

@@ -1,11 +1,9 @@
-using System;
-using Compze.Underscore;
 using Compze.Utilities.Testing.Must;
 using Compze.Utilities.Testing.XUnit.BDD;
 
 #pragma warning disable CA1052 // BDD-style nested specification classes cannot be static
 
-namespace Compze.Unit.Specifications.ActionFuncConverter;
+namespace Compze.UnitSpecifications.ActionFuncConverter;
 
 public static class AsAction_from_Func
 {

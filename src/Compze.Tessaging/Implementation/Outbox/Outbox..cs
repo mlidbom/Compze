@@ -1,5 +1,3 @@
-using System.Linq;
-using System.Threading.Tasks;
 using System.Transactions;
 using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Core.Tessaging.Public;
@@ -9,7 +7,6 @@ using Compze.Contracts;
 using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
-using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.Logging;
 using Compze.Utilities.SystemCE.TransactionsCE;
 
@@ -45,7 +42,7 @@ partial class Outbox : IOutbox
 
    public void PublishTransactionally(IExactlyOnceTevent exactlyOnceTevent)
    {
-      Contract.State.NotNull(Transaction.Current);
+      State.NotNull(Transaction.Current);
       this.Log().Debug($"Publishing tevent {exactlyOnceTevent.Id} ({exactlyOnceTevent.GetType().Name})");
       var connections = _tessagingRouter.SubscriberConnectionsFor(exactlyOnceTevent)
                                         .Where(connection => connection.EndpointInformation.Id != _configuration.Id)
@@ -63,7 +60,7 @@ partial class Outbox : IOutbox
 
    public void SendTransactionally(IExactlyOnceTommand exactlyOnceTommand)
    {
-      Contract.State.NotNull(Transaction.Current);
+      State.NotNull(Transaction.Current);
       this.Log().Debug($"Sending tommand {exactlyOnceTommand.Id} ({exactlyOnceTommand.GetType().Name})");
       var connection = _tessagingRouter.ConnectionToHandlerFor(exactlyOnceTommand);
 
@@ -80,7 +77,7 @@ partial class Outbox : IOutbox
 
    public async Task StartAsync()
    {
-      Contract.State.Assert(!_running);
+      State.Assert(!_running);
       this.Log().Info("Starting");
 
       await _storage.StartAsync().caf();
@@ -93,7 +90,7 @@ partial class Outbox : IOutbox
 
    public async Task StopAsync()
    {
-      Contract.State.Assert(_running);
+      State.Assert(_running);
       this.Log().Info("Stopping");
       _running = false;
 

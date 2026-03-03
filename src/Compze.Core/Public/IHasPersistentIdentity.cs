@@ -1,5 +1,3 @@
-using System;
-
 namespace Compze.Core.Public;
 
 /// <summary>Anything that can be uniquely identified using its id over any number of persist/load cycles.</summary>

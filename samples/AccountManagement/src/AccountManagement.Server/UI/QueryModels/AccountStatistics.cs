@@ -1,5 +1,3 @@
-using System;
-using System.Threading;
 using AccountManagement.Domain.Tevents;
 using Compze.Core.DocumentDb;
 using Compze.Core.Public;

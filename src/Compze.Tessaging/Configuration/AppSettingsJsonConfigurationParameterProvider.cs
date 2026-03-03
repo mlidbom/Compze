@@ -1,9 +1,6 @@
-using System;
-using System.IO;
 using Compze.Core.Configuration.Internal;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
-using Compze.Utilities.SystemCE;
 using Microsoft.Extensions.Configuration;
 
 namespace Compze.Tessaging.Configuration

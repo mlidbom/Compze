@@ -1,4 +1,3 @@
-using System;
 using System.Diagnostics;
 using Compze.Utilities.Logging;
 using Compze.Utilities.SystemCE;

@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Tessaging.Implementation.Transport;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
@@ -9,7 +5,6 @@ using Compze.Contracts;
 using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Logging;
-using Compze.Utilities.SystemCE.LinqCE;
 
 namespace Compze.Tessaging.Hosting;
 
@@ -47,7 +42,7 @@ public class EndpointHost : IEndpointHost
 
    public async Task StartAsync()
    {
-         Contract.State.Assert(!_isStarted, Endpoints.None(endpoint => endpoint.IsRunning));
+         State.Assert(!_isStarted, Endpoints.None(endpoint => endpoint.IsRunning));
          this.Log().Info($"Starting with {Endpoints.Count} endpoint(s)");
 
          await Task.WhenAll(Endpoints.Select(endpointToStart => endpointToStart.StartListeningComponentsAsync())).WithAggregateExceptions().caf();

@@ -4,10 +4,7 @@ using Compze.Core.Refactoring.Naming.Internal;
 using Compze.Sql.Common;
 using Compze.Utilities.SystemCE;
 using MySql.Data.MySqlClient;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using Schema = Compze.Core.DocumentDb.Internal.SqlLayer.IDocumentDbSqlLayer.DocumentTableSchemaStrings;
 
 namespace Compze.Sql.MySql.Private.DocumentDb;

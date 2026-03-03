@@ -1,6 +1,3 @@
-using System;
-using Compze.Underscore;
-
 namespace Compze.Threading.ResourceAccess;
 
 public interface IAwaitableThreadShared

@@ -1,4 +1,3 @@
-using System;
 using Compze.Core.Wiring.Testing.Internal;
 
 namespace Compze.Tessaging.Hosting.Testing;

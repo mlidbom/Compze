@@ -1,12 +1,8 @@
-using System;
-using System.Collections.Generic;
 using Compze.Core.Public;
 using Compze.Core.Tessaging.Teventive.Internal.Implementation;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Core.Time.Public;
 using Compze.Contracts;
-using Compze.Utilities.SystemCE;
-using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.ReactiveCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
 
@@ -38,7 +34,7 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
 
    Taggregate(TaggregateId id) : base(id)
    {
-      Contract.Argument.Assert(typeof(TTaggregateTevent).IsInterface);
+      Argument.Assert(typeof(TTaggregateTevent).IsInterface);
       _teventHandlersDispatcher.Register().IgnoreUnhandled<TTaggregateTevent>();
    }
 
@@ -56,7 +52,7 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
 
    protected TTevent Publish<TTevent>(TTevent tevent) where TTevent : TTaggregateTeventImplementation
    {
-      Contract.State.Assert(!_applyingTevents, () => "You cannot raise tevents from within tevent appliers");
+      State.Assert(!_applyingTevents, () => "You cannot raise tevents from within tevent appliers");
 
       var wrapped = WrapEvent(tevent);
 
@@ -116,7 +112,7 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
 
    void AssertInvariantsAreMetInternal()
    {
-      Contract.Invariant.Assert(Id != null, Id.Value != Guid.Empty);
+      Invariant.Assert(Id != null, Id.Value != Guid.Empty);
       AssertInvariantsAreMet();
    }
 
@@ -139,7 +135,7 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
 
    void ITaggregate.LoadFromHistory(IEnumerable<ITaggregateTevent> history)
    {
-      Contract.State.Assert(Version == 0, () => $"You can only call {nameof(ITaggregate.LoadFromHistory)} on an empty Taggregate with {nameof(Version)} == 0");
+      State.Assert(Version == 0, () => $"You can only call {nameof(ITaggregate.LoadFromHistory)} on an empty Taggregate with {nameof(Version)} == 0");
       history.ForEach(theTevent => ApplyTevent((TTaggregateTevent)theTevent));
       AssertInvariantsAreMetInternal();
    }

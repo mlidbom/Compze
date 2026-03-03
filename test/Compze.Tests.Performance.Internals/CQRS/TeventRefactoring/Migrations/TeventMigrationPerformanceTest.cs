@@ -15,10 +15,6 @@ using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Compze.Contracts;
 
 namespace Compze.Tests.Performance.Internals.CQRS.TeventRefactoring.Migrations;

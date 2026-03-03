@@ -1,7 +1,3 @@
-using Compze.Underscore;
-using Compze.Utilities.SystemCE.LinqCE;
-using System.IO;
-
 namespace Compze.Utilities.SystemCE.IOCE;
 
 static class PathCE

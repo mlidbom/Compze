@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace Compze.SystemCE;
 
 static class ReadOnlyDictionaryCE

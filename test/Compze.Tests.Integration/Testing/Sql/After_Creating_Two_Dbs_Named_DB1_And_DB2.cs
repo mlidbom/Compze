@@ -1,4 +1,3 @@
-using System;
 using Compze.Core.Wiring.Testing.Internal;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tests.Common.Testing.Sql;

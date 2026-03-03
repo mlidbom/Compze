@@ -1,8 +1,5 @@
 // ReSharper disable ForCanBeConvertedToForeach this file needs these optimizations...
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Compze.Core.Tessaging.Public;
 using Compze.Core.Tessaging.Teventive.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;

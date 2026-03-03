@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using Compze.Contracts;
 using Compze.Core.DocumentDb.Public;
 using Compze.Core.Public;
@@ -11,7 +6,6 @@ using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tests.Common.Sql.DocumentDb;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.DependencyInjection;
-using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Utilities.SystemCE.UsageGuards;
 using Compze.Utilities.Testing.Must;

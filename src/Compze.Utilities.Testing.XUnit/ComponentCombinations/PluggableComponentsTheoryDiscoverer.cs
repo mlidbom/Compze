@@ -1,6 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Compze.SystemCE.ThreadingCE.TasksCE;
 using Xunit.Sdk;
 using Xunit.v3;

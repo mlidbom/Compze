@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using Compze.Sql.MySql.Private.DocumentDb;
 using Compze.Sql.MySql.Private.Tessaging;
 using Compze.Sql.MySql.Private.TEventStore;

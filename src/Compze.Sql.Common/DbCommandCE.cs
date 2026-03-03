@@ -1,14 +1,7 @@
-using System;
-using System.Collections.Generic;
 using System.Data.Common;
-using System.Linq;
-using System.Threading.Tasks;
 using Compze.Contracts;
 using Compze.SystemCE.ThreadingCE.TasksCE;
-using Compze.Underscore;
 using Compze.Utilities.Logging;
-using Compze.Utilities.SystemCE;
-using Compze.Utilities.SystemCE.LinqCE;
 
 namespace Compze.Sql.Common;
 
@@ -40,7 +33,7 @@ public static class DbCommandCE
 
    public static TCommand PrepareStatement<TCommand>(this TCommand @this) where TCommand : DbCommand
    {
-      Contract.State.Assert(@this.CommandText.Length > 0, () => "Cannot prepare statement with empty CommandText");
+      State.Assert(@this.CommandText.Length > 0, () => "Cannot prepare statement with empty CommandText");
       return @this._mutate(me => me.Prepare());
    }
 

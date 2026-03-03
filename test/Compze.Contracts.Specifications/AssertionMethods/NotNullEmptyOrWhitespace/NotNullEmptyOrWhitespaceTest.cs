@@ -1,5 +1,3 @@
-using System;
-
 namespace Compze.Contracts.Specifications.AssertionMethods.NotNullEmptyOrWhitespace;
 
 public abstract class NotNullEmptyOrWhitespaceTest : AssertionMethodsTest

@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using Compze.Underscore;
-
 namespace Compze.Threading.Testing;
 
 public interface IThreadGateVisitor

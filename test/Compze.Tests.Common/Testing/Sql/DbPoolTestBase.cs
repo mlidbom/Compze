@@ -1,5 +1,3 @@
-using System;
-using System.Threading.Tasks;
 using Compze.Core.Wiring.Testing.Internal;
 using Compze.Sql.Common.Abstractions;
 using Compze.Sql.MicrosoftSql;

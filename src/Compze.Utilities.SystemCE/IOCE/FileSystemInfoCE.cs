@@ -1,6 +1,4 @@
 using Compze.Contracts;
-using System;
-using System.IO;
 
 namespace Compze.Utilities.SystemCE.IOCE;
 
@@ -10,7 +8,7 @@ public abstract class FileSystemInfoCE : IEquatable<FileSystemInfoCE>
 
    protected FileSystemInfoCE(FileSystemInfo info)
    {
-      Contract.Argument.Assert(info.Exists)
+      Argument.Assert(info.Exists)
             .Assert(Path.IsPathRooted(info.FullName), () => $"{info.FullName} is not an absolute Path. Only absolute paths are supported in order to eliminate the brittleness of an implicit dependency on Environment.CurrentDirectory");
       AbsolutePath = info.FullName;
    }

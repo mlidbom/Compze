@@ -1,6 +1,3 @@
-using System;
-using System.Net.Http;
-using System.Threading.Tasks;
 using Compze.Core.Serialization.Internal;
 using Compze.Core.Tessaging.Transport.Internal;
 using Compze.SystemCE.ThreadingCE.TasksCE;

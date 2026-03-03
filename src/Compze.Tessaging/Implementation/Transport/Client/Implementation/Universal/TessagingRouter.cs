@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Compze.Core.Refactoring.Naming.Internal;
 using Compze.Core.Serialization.Internal;
 using Compze.Core.Tessaging.Hosting.Public;
@@ -13,10 +9,8 @@ using Compze.Tessaging.Implementation.Transport.Client.Internal;
 using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Contracts;
 using Compze.SystemCE.ThreadingCE.TasksCE;
-using Compze.Underscore;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
-using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
 using Compze.Threading;
 using Compze.Threading.ResourceAccess;
@@ -116,7 +110,7 @@ class TessagingRouter : ITessagingRouter, IDisposable
 
    public void Stop() => _stopped = true;
 
-   ContractAsserter AssertNotStopped() => Contract.State.Assert(!_stopped, () => "router is stopped");
+   ContractAsserter AssertNotStopped() => State.Assert(!_stopped, () => "router is stopped");
 
    public ITessagingInboxConnection ConnectionToHandlerFor(IRemotableTommand tommand) =>
       AssertNotStopped()._then(() =>

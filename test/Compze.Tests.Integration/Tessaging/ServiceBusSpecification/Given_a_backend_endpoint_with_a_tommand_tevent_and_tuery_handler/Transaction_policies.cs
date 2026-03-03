@@ -1,4 +1,3 @@
-using System.Linq;
 using System.Transactions;
 using Compze.Contracts;
 using Compze.Tessaging.Hosting;

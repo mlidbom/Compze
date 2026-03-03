@@ -8,13 +8,8 @@ using Compze.Contracts;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Logging;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Compze.Core.Serialization.Internal;
 using Compze.SystemCE.ThreadingCE.TasksCE;
-using Compze.Underscore;
-using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Memory;
@@ -53,7 +48,7 @@ class MemoryInboxTransportServer : IInboxTransportServer
 
    public Task StartAsync()
    {
-      Contract.State.Assert(!Running);
+      State.Assert(!Running);
       this.Log().Info($"Binding at {Address}");
       Running = true;
       InMemoryTransportNetwork.BindServerToAddress(new EndPointAddress(Address), this);

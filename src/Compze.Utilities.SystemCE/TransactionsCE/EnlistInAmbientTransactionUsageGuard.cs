@@ -1,4 +1,3 @@
-using System;
 using System.Transactions;
 using Compze.Utilities.SystemCE.UsageGuards;
 

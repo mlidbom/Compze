@@ -1,5 +1,3 @@
-using System;
-
 namespace Compze.Threading.ResourceAccess;
 
 [Obsolete("For internal use only")]

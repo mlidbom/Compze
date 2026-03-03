@@ -1,4 +1,3 @@
-using System;
 using Compze.Underscore;
 using Compze.Sql.Common;
 using Compze.Sql.PostgreSql;

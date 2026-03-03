@@ -1,4 +1,3 @@
-using System;
 using Compze.Core.Public;
 
 // ReSharper disable RedundantNameQualifier

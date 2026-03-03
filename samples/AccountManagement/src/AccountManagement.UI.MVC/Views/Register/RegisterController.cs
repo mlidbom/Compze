@@ -1,4 +1,3 @@
-using System;
 using AccountManagement.API;
 using AccountManagement.Domain.Registration;
 using Compze.Core.Tessaging.Typermedia.Public;

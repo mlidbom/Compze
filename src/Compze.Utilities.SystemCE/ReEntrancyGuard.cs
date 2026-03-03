@@ -1,6 +1,3 @@
-using System;
-using Compze.Underscore;
-
 namespace Compze.Utilities.SystemCE;
 
 public class ReentrancyGuard

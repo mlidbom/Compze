@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
 namespace Compze.Utilities.SystemCE;
 
 ///<summary>Contains extensions on <see cref="string"/></summary>

@@ -5,6 +5,9 @@
   <Import Project="msbuild\EnablePackageValidation.props" />
   <!-- Ensure test configuration file exists before build -->
   <Import Project="msbuild\EnsurePluggableComponentsConfigExists.props" />
+	<PropertyGroup>
+      <ImplicitUsings>enable</ImplicitUsings>
+	</PropertyGroup>
   <!-- Enable latest analyzer rules for all projects -->
   <PropertyGroup>
     <AnalysisLevel>latest-all</AnalysisLevel>

@@ -1,5 +1,3 @@
-using System;
-
 namespace Compze.Utilities.Tests.Testing.Xunit.ComponentCombinations._2Components.NotArgumentPassing;
 
 public class WhenAllPermutationsAreSkipped

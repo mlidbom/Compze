@@ -1,5 +1,3 @@
-using System;
-
 namespace Compze.Utilities.Logging;
 
 public static class ExceptionLogger

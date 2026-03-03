@@ -1,5 +1,3 @@
-using System;
-
 namespace Compze.Core.Time.Public;
 
 ///<summary>Simply returns DateTime.UtcNow</summary>

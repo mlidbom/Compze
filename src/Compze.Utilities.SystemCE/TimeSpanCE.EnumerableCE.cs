@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
 namespace Compze.Utilities.SystemCE;
 
 ///<summary>Methods like Sum,Min,Average etc for IEnumerable&lt;TimeSpan&gt;</summary>

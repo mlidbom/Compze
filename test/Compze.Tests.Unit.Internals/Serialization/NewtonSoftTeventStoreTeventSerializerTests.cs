@@ -2,10 +2,8 @@ using Compze.Core.Public;
 using Compze.Core.Tessaging.Teventive.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Tests.Infrastructure.XUnit;
-using Compze.Utilities.SystemCE;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
-using System;
 using Compze.Utilities.Testing.Must;
 
 namespace Compze.Tests.Unit.Internals.Serialization;

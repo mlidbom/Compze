@@ -1,4 +1,3 @@
-using System;
 using AccountManagement.API;
 using Compze.Utilities.Testing.Must;
 

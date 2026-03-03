@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using Compze.Sql.MicrosoftSql;
 using Compze.Sql.MicrosoftSql.Wiring;
 using Compze.Sql.MySql;

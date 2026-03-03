@@ -1,4 +1,3 @@
-using System;
 using Compze.Contracts;
 
 namespace Compze.Threading.Utilities;
@@ -11,7 +10,7 @@ class LockDisposer : IDisposable
    ///<summary>Constructs an instance that will call <param name="action"> when disposed.</param></summary>
    public LockDisposer(Action action)
    {
-      Contract.Argument.NotNull(action);
+      Argument.NotNull(action);
       _action = action;
    }
 

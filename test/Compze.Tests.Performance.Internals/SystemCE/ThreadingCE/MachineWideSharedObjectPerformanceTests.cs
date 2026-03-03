@@ -3,7 +3,6 @@ using Compze.Tests.Infrastructure;
 using Compze.Utilities.SystemCE;
 using Compze.Threading.ResourceAccess;
 using Newtonsoft.Json;
-using System;
 using Compze.Contracts;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 using Compze.Utilities.Testing.XUnit.BDD;

@@ -1,4 +1,3 @@
-using System;
 using Compze.Core.Public;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.Testing.Must;

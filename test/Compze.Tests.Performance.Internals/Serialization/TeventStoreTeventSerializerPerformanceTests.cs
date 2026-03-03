@@ -11,8 +11,6 @@ using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
 using Newtonsoft.Json;
-using System;
-using System.Linq;
 
 namespace Compze.Tests.Performance.Internals.Serialization;
 

@@ -1,18 +1,13 @@
-using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using Compze.Core.DocumentDb.Infrastructure;
 using Compze.Core.DocumentDb.Internal.SqlLayer.Exceptions;
 using Compze.Core.DocumentDb.Public;
 using Compze.Core.Public;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
-using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.TransactionsCE;
 using Compze.Utilities.SystemCE.UsageGuards;
 using Compze.Contracts;
-using static Compze.Contracts.Contract;
 
 namespace Compze.Core.DocumentDb.Private;
 

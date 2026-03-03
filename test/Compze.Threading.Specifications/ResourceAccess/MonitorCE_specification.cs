@@ -1,7 +1,3 @@
-using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.SystemCE;

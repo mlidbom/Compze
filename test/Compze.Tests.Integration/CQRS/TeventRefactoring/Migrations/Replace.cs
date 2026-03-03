@@ -1,11 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.Refactoring.Migrations.Public;
 using Compze.Tessaging.Teventive.TeventStore.Refactoring.Migrations;
 using Compze.Tests.Common.CQRS.TeventRefactoring.Migrations;
-using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
 
 namespace Compze.Tests.Integration.CQRS.TeventRefactoring.Migrations;

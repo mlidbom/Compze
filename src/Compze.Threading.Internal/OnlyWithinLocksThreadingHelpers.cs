@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace Compze.Threading;
 
 static class OnlyWithinLocksThreadingHelpers

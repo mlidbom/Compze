@@ -1,4 +1,3 @@
-using System;
 using System.Data;
 using Compze.Utilities.SystemCE;
 using Microsoft.Data.Sqlite;

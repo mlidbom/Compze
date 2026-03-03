@@ -1,6 +1,3 @@
-using System;
-using System.IO;
-
 namespace Compze.Utilities.SystemCE.IOCE;
 
 partial class DirectoryCE

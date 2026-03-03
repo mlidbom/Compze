@@ -1,7 +1,4 @@
-using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using Compze.Core.DocumentDb.Infrastructure;
 using Compze.Core.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.QueryModels.Generators.Public;

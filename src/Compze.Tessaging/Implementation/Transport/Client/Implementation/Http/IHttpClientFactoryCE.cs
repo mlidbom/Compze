@@ -1,5 +1,3 @@
-using System;
-using System.Net.Http;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 

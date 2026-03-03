@@ -1,4 +1,3 @@
-using System;
 using Compze.Core.Wiring.Testing.Internal;
 using Compze.Serialization.Newtonsoft.Wiring;
 using Compze.Utilities.DependencyInjection.Abstractions;

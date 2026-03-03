@@ -1,8 +1,5 @@
-using System.Collections.Generic;
-using System.Linq;
 using Compze.Core.Tessaging.Teventive.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
-using Compze.Utilities.SystemCE.LinqCE;
 
 namespace Compze.Tests.Integration.CQRS;
 

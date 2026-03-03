@@ -1,5 +1,3 @@
-using System;
-
 namespace Compze.Core.DocumentDb.Internal.SqlLayer.Exceptions;
 
 public class AttemptToSaveAlreadyPersistedValueException(object key, object value) :

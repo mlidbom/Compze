@@ -1,4 +1,3 @@
-using System;
 using Compze.Core.Wiring.Testing.Internal;
 using Compze.Tessaging.Hosting.AspNetCore.Wiring;
 using Compze.Tessaging.Implementation.Transport.Client.Implementation.Memory;

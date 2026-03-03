@@ -1,7 +1,4 @@
-using System;
 using Compze.Tests.Infrastructure;
-using Compze.Underscore;
-using Compze.Utilities.SystemCE;
 using Compze.Utilities.Testing.DbPool.SystemCE;
 using Compze.Utilities.Testing.Must;
 using Compze.Utilities.Testing.XUnit.BDD;

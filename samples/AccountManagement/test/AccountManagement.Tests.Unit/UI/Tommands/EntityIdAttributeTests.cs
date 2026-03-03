@@ -1,4 +1,3 @@
-using System;
 using AccountManagement.API.ValidationAttributes;
 using AccountManagement.Tests.Unit.UI.Tommands.UserTommands;
 using Compze.Tests.Infrastructure;

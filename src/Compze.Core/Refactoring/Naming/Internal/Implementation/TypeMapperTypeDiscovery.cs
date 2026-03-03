@@ -1,10 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using Compze.Core.Public;
 using Compze.Core.Tessaging.Public;
-using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
 
 namespace Compze.Core.Refactoring.Naming.Internal.Implementation;

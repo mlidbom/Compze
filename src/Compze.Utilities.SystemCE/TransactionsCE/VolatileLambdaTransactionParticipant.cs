@@ -1,8 +1,5 @@
-using System;
-using System.Collections.Generic;
 using System.Transactions;
 using Compze.Contracts;
-using Compze.Underscore;
 
 namespace Compze.Utilities.SystemCE.TransactionsCE;
 
@@ -47,7 +44,7 @@ public class VolatileLambdaTransactionParticipant : VolatileTransactionParticipa
       _onEnlist?.Invoke();
       Transaction.Current!.TransactionCompleted += (_, parameters) =>
       {
-         Contract.Argument.NotNull(parameters.Transaction);
+         Argument.NotNull(parameters.Transaction);
          _onTransactionCompleted?.Invoke(parameters.Transaction.TransactionInformation.Status);
       };
    }

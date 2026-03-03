@@ -1,5 +1,3 @@
-using System.IO;
-
 namespace Compze.Utilities.SystemCE.IOCE;
 
 class FileCE : FileSystemInfoCE

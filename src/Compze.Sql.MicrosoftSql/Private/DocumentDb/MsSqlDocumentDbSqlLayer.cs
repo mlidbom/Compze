@@ -8,10 +8,7 @@ using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Underscore;
 using Compze.Utilities.SystemCE;
 using Microsoft.Data.SqlClient;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using Schema = Compze.Core.DocumentDb.Internal.SqlLayer.IDocumentDbSqlLayer.DocumentTableSchemaStrings;
 
 namespace Compze.Sql.MicrosoftSql.Private.DocumentDb;

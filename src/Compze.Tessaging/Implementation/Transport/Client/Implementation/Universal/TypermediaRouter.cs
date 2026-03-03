@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Compze.Core.Refactoring.Naming.Internal;
 using Compze.Core.Serialization.Internal;
 using Compze.Core.Tessaging.Hosting.Public;
@@ -15,8 +11,6 @@ using Compze.Contracts;
 using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
-using Compze.Underscore;
-using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
 using Compze.Threading;
 using Compze.Threading.ResourceAccess;
@@ -143,7 +137,7 @@ class TypermediaRouter : ITypermediaRouter, IDisposable
       return await connection.ApiClient.GetAsync(tuery).caf();
    }
 
-   public void Start() => Contract.State.Assert(!_running, () => "already running")
+   public void Start() => State.Assert(!_running, () => "already running")
                                 ._then(_running = true);
 
    public void Stop() => AssertRunning()._then(() =>
@@ -167,5 +161,5 @@ class TypermediaRouter : ITypermediaRouter, IDisposable
       }
    }
 
-   unit AssertRunning() => Contract.State.Assert(_running, () => "not running")._then(unit.Value);
+   unit AssertRunning() => State.Assert(_running, () => "not running")._then(unit.Value);
 }

@@ -1,5 +1,3 @@
-using System;
-using System.Threading.Tasks;
 using Compze.Utilities.SystemCE;
 using Xunit;
 // ReSharper disable VirtualMemberNeverOverridden.Global

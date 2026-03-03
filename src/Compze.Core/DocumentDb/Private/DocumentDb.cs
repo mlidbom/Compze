@@ -1,7 +1,4 @@
-using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using Compze.Core.DocumentDb.Internal.SqlLayer;
 using Compze.Core.DocumentDb.Internal.SqlLayer.Exceptions;
 using Compze.Core.DocumentDb.Public;
@@ -12,7 +9,6 @@ using Compze.Core.Time.Public;
 using Compze.Contracts;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
-using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
 
@@ -62,7 +58,7 @@ sealed class DocumentDb : IDocumentDb
 
    public void Add<TDocument>(object id, TDocument value, Dictionary<Type, Dictionary<string, string>> persistentValues) where TDocument : class
    {
-      Contract.Argument.Assert(value is not null);
+      Argument.Assert(value is not null);
 
       var idString = GetIdString(id);
       var serializedDocument = _serializer.Serialize(value);

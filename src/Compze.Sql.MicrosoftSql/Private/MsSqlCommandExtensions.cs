@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using Compze.Sql.Common;
 using Microsoft.Data.SqlClient;
 

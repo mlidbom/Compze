@@ -1,7 +1,5 @@
-using System;
 using System.Diagnostics;
 using Compze.Contracts;
-using Compze.Underscore;
 
 namespace Compze.Core.Public;
 
@@ -31,7 +29,7 @@ public class Entity<TEntity, TKey> : IEntity<TKey>
    {
       get => _id._assert(it => !it.Value.Equals(default));
       [Obsolete(ObsoleteMessage.ForInternalUseOnly)]
-      protected set => _id = Contract.Argument.NotNull(value)._then(value);
+      protected set => _id = Argument.NotNull(value)._then(value);
    }
 
    ///<summary>Returns a string similar to: MyType:MyId</summary>

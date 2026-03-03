@@ -1,7 +1,4 @@
-using System;
-using System.Net.Http;
 using System.Net.Http.Json;
-using System.Threading.Tasks;
 using Compze.Contracts;
 using Compze.SystemCE.ThreadingCE.TasksCE;
 using JetBrains.Annotations;

@@ -1,5 +1,3 @@
-using System;
-
 namespace Compze.Utilities.DependencyInjection;
 
 public static class ComponentRegistrationExtensions

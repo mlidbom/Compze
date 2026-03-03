@@ -1,10 +1,6 @@
-using System;
 using System.Globalization;
-using System.Threading.Tasks;
 using Compze.Core.Time.Public;
 using Compze.SystemCE.ThreadingCE.TasksCE;
-using Compze.Underscore;
-using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ThreadingCE;
 
 // ReSharper disable MemberCanBeMadeStatic.Local

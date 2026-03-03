@@ -1,4 +1,3 @@
-using System.Threading;
 using System.Transactions;
 
 namespace Compze.Utilities.SystemCE.UsageGuards;

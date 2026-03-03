@@ -1,10 +1,7 @@
-using System;
 using System.Data.SqlTypes;
 using System.Globalization;
-using System.Linq;
 using System.Numerics;
 using Compze.Contracts;
-using Compze.Utilities.SystemCE.LinqCE;
 
 namespace Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions;
 
@@ -43,7 +40,7 @@ public readonly struct ReadOrder : IComparable<ReadOrder>, IEquatable<ReadOrder>
    public static ReadOrder Parse(string value, bool bypassScaleTest = false)
    {
       var parts = value.Split(".");
-      Contract.Argument.Assert(parts.Length == 2);
+      Argument.Assert(parts.Length == 2);
       var order = parts[0];
       var offset = parts[1];
       if(order[0] == '-') throw new ArgumentException("We do not use negative numbers");

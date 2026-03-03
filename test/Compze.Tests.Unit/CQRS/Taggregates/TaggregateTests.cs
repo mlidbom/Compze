@@ -5,7 +5,6 @@ using Compze.Core.Time.Public;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.SystemCE.ReactiveCE;
 using Compze.Utilities.Testing.XUnit.BDD;
-using System.Collections.Generic;
 using Compze.Core.Public;
 using Compze.Utilities.Testing.Must;
 

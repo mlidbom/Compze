@@ -1,7 +1,4 @@
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Threading;
 using Compze.Threading.ResourceAccess.Exceptions;
 using Compze.Threading.Utilities;
 

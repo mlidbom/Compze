@@ -1,4 +1,3 @@
-using System;
 using System.Transactions;
 using JetBrains.Annotations;
 using Npgsql;

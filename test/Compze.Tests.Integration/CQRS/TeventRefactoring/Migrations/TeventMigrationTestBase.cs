@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.Refactoring.Migrations.Public;
@@ -14,9 +10,7 @@ using Compze.Tests.Common.CQRS.TeventRefactoring.Migrations;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
-using Compze.Underscore;
 using Compze.Utilities.Logging;
-using Compze.Utilities.SystemCE;
 using Compze.Utilities.Testing.Must;
 
 // ReSharper disable AccessToModifiedClosure

@@ -1,4 +1,3 @@
-using System;
 using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Core.Tessaging.Public;
 using Compze.Utilities.DependencyInjection;

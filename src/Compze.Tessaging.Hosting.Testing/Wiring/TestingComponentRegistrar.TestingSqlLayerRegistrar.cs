@@ -1,4 +1,3 @@
-using System;
 using Compze.Core.Wiring.Testing.Internal;
 using Compze.Sql.MicrosoftSql.Wiring;
 using Compze.Sql.MySql.Wiring;

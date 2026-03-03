@@ -1,6 +1,5 @@
 using Serilog.Core;
 using Serilog.Events;
-using System.Collections.Generic;
 using Compze.Utilities.Testing.XUnit.ComponentCombinations;
 using Xunit;
 

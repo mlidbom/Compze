@@ -1,5 +1,3 @@
-using System;
-
 namespace Compze.Core.Serialization.Internal;
 
 public interface IJsonSerializer

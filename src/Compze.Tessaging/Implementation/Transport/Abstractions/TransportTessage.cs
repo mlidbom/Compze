@@ -3,7 +3,6 @@ using Compze.Core.Refactoring.Naming.Internal;
 using Compze.Core.Serialization.Internal;
 using Compze.Core.Tessaging.Public;
 using Compze.Contracts;
-using System;
 
 namespace Compze.Tessaging.Implementation.Transport.Abstractions;
 
@@ -27,7 +26,7 @@ public static class TransportTessage
          {
             _tessage = _serializer.DeserializeTessage(_tessageType, Body);
 
-            Contract.State.Assert(_tessage is not IExactlyOnceTessage actualTessage || TessageId == actualTessage.Id);
+            State.Assert(_tessage is not IExactlyOnceTessage actualTessage || TessageId == actualTessage.Id);
          }
 
          return _tessage;

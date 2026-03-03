@@ -1,4 +1,3 @@
-using System;
 using Compze.Utilities.Testing.XUnit.ComponentCombinations;
 
 namespace Compze.Tests.Infrastructure.XUnit;

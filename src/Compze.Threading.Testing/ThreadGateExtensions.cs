@@ -1,4 +1,3 @@
-using System;
 using System.Transactions;
 using Compze.Contracts;
 using Compze.Utilities.SystemCE.TransactionsCE.Testing;
@@ -22,7 +21,7 @@ public static class ThreadGateExtensions
 
       public IThreadGate FailTransactionOnPreparePostPassThrough(Exception exception) => @this.SetPostPassThroughAction(_ =>
       {
-         Contract.State.NotNull(Transaction.Current);
+         State.NotNull(Transaction.Current);
          Transaction.Current.FailOnPrepare(exception);
       });
    }

@@ -1,4 +1,3 @@
-using System;
 using Compze.Core.DocumentDb.Public;
 using Compze.Core.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Core.Tessaging.Public;

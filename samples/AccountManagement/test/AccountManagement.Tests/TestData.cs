@@ -1,7 +1,3 @@
-using System.Collections.Generic;
-using System.Threading;
-
-
 #pragma warning disable CA1308 // Normalize strings to uppercase
 
 namespace AccountManagement;

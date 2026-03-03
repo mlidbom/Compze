@@ -1,6 +1,5 @@
 using Compze.Core.Public;
 using Compze.Core.Refactoring.Naming.Internal;
-using System;
 
 namespace Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions;
 

@@ -1,5 +1,3 @@
-using System;
-using System.Threading;
 using Compze.Contracts;
 
 namespace Compze.Utilities.SystemCE;
@@ -13,7 +11,7 @@ public class Disposable : IDisposable
    ///<summary>Constructs an instance that will call <param name="onDispose"> when disposed.</param></summary>
    public Disposable(Action onDispose)
    {
-      Contract.Argument.NotNull(onDispose);
+      Argument.NotNull(onDispose);
       _onDispose = onDispose;
    }
 

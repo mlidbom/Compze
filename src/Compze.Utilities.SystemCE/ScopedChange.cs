@@ -1,5 +1,3 @@
-using System;
-
 namespace Compze.Utilities.SystemCE;
 
 public static class ScopedChange

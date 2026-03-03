@@ -1,9 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using Compze.Contracts;
-using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
+using EnumerableCE = Compze.Utilities.SystemCE.CollectionsCE.GenericCE.EnumerableCE;
 
 namespace Compze.Utilities.SystemCE.ReflectionCE;
 

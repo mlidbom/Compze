@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using System.Transactions;
 using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
 using Compze.Threading.ResourceAccess;

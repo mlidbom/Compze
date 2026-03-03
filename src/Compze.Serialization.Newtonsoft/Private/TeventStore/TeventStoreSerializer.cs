@@ -1,4 +1,3 @@
-using System;
 using Compze.Core.Refactoring.Naming.Internal;
 using Compze.Core.Serialization.Internal;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;

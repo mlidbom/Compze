@@ -1,6 +1,4 @@
 using Compze.Threading.Utilities;
-using System;
-using System.Threading;
 using Compze.Contracts;
 
 // ReSharper disable UnusedMember.Global
@@ -12,11 +10,8 @@ namespace Compze.Threading;
 
 public readonly struct LockTimeout : IEquatable<LockTimeout>
 {
-   public LockTimeout(TimeSpan value)
-   {
-      Contract.Argument.Assert(value != Timeout.InfiniteTimeSpan);
-      Value = value;
-   }
+   public LockTimeout(TimeSpan value) => Argument.Assert(value != Timeout.InfiniteTimeSpan)
+                                                 ._(Value = value);
 
    public TimeSpan Value { get; }
 

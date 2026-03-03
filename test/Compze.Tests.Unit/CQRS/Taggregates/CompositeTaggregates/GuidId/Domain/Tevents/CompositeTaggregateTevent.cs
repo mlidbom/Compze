@@ -1,7 +1,6 @@
 using Compze.Core.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using JetBrains.Annotations;
-using System;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public;
 // ReSharper disable ClassNeverInstantiated.Global
 

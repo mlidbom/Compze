@@ -1,7 +1,4 @@
-using System;
-using System.Collections.Generic;
 using System.Data.Common;
-using System.Threading.Tasks;
 using System.Transactions;
 using Compze.Sql.Common.Abstractions;
 using Compze.SystemCE.ThreadingCE.TasksCE;

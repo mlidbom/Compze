@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using AccountManagement.UserStories.Scenarios;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Utilities.Testing.Must;

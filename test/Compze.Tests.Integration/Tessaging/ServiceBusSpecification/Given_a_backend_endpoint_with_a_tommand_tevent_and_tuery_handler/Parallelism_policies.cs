@@ -1,9 +1,6 @@
-using System.Linq;
-using System.Threading.Tasks;
 using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Hosting;
 using Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
-using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Threading;
 using Compze.Threading.Testing;

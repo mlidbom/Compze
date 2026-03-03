@@ -1,4 +1,3 @@
-using System;
 using Compze.Core.Tessaging.Public;
 
 namespace Compze.Core.Tessaging.Hosting.TessageHandling.Registration.Public;

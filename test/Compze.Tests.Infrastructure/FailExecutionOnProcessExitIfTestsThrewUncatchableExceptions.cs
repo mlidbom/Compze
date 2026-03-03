@@ -1,4 +1,3 @@
-using System;
 using System.Runtime.CompilerServices;
 using Compze.Utilities.Logging;
 using Compze.Utilities.SystemCE;

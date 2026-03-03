@@ -1,4 +1,3 @@
-using System;
 using System.Text.RegularExpressions;
 using Compze.Core.Refactoring.Naming.Internal;
 using Compze.Utilities.SystemCE;
@@ -16,7 +15,6 @@ class RenamingDecorator(ITypeMapper typeMapper)
 
    public string ReplaceTypeNames(string json) => FindTypeNames.Value.Replace(json, ReplaceTypeNamesWithTypeIds);
 
-   //urgent: Apparently this code is not executed. We urgently need tests to verify that we actually replace type names in the JSon
    string ReplaceTypeNamesWithTypeIds(Match match)
    {
       var type = Type.GetType(match.Groups[1].Value);

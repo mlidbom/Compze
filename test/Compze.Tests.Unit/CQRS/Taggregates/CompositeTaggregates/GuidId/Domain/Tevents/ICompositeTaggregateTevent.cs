@@ -1,5 +1,5 @@
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
-using System;
+
 // ReSharper disable PossibleInterfaceMemberAmbiguity
 
 #pragma warning disable CA1715 //Interfaces without I prefix

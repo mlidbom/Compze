@@ -1,7 +1,5 @@
-using System;
 using System.Globalization;
 using Compze.Contracts;
-using Compze.Underscore;
 
 namespace Compze.Utilities.SystemCE;
 
@@ -20,7 +18,7 @@ public static class DateTimeCE
 
    ///<summary>Ensures that a DateTime instance has a Kind specified so that it can be accurately stored, restored, and passed between systems with different time zones without losing information</summary>
    static DateTime AssertHasKind(this DateTime @this) =>
-      Contract.Argument.Assert(@this.Kind != DateTimeKind.Unspecified,
+      Argument.Assert(@this.Kind != DateTimeKind.Unspecified,
                          () => """
                                This DateTime instance does not have a Kind specified. 
                                This means that it is impossible to accurately persist and restore, or serialize between systems, because it is impossible to know if it refers to the current TimeZone or to UTC timezone. 

@@ -1,5 +1,3 @@
-using System;
-
 namespace Compze.Core.Tessaging.Teventive.Infrastructure.Validation;
 
 public static partial class TessageTypeInspector

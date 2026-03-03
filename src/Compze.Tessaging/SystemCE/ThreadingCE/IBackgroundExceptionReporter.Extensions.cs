@@ -1,5 +1,3 @@
-using System;
-
 namespace Compze.Tessaging.SystemCE.ThreadingCE;
 
 static class BackgroundExceptionReporterExtensions

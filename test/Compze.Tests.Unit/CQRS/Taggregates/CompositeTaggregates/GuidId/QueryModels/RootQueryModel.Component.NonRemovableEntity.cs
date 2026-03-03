@@ -1,4 +1,3 @@
-using System;
 using Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId.Domain.Tevents;
 using JetBrains.Annotations;
 

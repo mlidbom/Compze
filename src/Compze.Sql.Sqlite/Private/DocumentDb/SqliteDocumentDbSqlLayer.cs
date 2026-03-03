@@ -6,10 +6,7 @@ using Compze.Contracts;
 using Compze.Underscore;
 using Compze.Utilities.SystemCE;
 using Microsoft.Data.Sqlite;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using Schema = Compze.Core.DocumentDb.Internal.SqlLayer.IDocumentDbSqlLayer.DocumentTableSchemaStrings;
 
 namespace Compze.Sql.Sqlite.Private.DocumentDb;

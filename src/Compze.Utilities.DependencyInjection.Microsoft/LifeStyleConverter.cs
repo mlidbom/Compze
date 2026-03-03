@@ -1,5 +1,4 @@
 using Compze.Utilities.DependencyInjection.Abstractions;
-using System;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Compze.Utilities.DependencyInjection.Microsoft;

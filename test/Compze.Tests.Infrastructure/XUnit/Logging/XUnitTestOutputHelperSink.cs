@@ -1,4 +1,3 @@
-using System.IO;
 using Compze.Utilities.SystemCE;
 using Serilog.Core;
 using Serilog.Events;

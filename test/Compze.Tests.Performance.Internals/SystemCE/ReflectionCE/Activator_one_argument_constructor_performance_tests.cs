@@ -1,4 +1,3 @@
-using System;
 using System.Reflection;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Performance;

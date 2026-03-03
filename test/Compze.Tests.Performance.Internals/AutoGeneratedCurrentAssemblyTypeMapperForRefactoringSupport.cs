@@ -1,4 +1,3 @@
-using System;
 using Compze.Tests.Performance.Internals.Serialization;
 
 // ReSharper disable All

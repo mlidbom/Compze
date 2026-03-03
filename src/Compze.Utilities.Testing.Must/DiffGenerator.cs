@@ -1,5 +1,3 @@
-using System;
-using System.Linq;
 using System.Text;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.TextCE;
