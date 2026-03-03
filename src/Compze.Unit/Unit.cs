@@ -57,17 +57,17 @@ public readonly struct Unit : IEquatable<Unit>
    ///<inheritdoc cref="AsyncFunc(System.Func{System.Threading.Tasks.Task})"/>
    public static Func<TParam, TParam2, Task<Unit>> AsyncFunc<TParam, TParam2>(Func<TParam, TParam2, Task> action) => action.ToFunc();
 
-    public override string ToString() => "()";
+   public override string ToString() => "()";
 
    //we manually implement equality, not because it's required for correctness, but for performance,
-   //this should be a bit more performant than the built-in,
-   //and the random hashcode better than the default for a zero value struct due to less risk of ending up in an over-populated bucket in hash based collections.
    public bool Equals(Unit _) => true;
    public override bool Equals(object? obj) => obj is Unit;
+
    // ReSharper disable UnusedParameter.Global
    public static bool operator ==(Unit _, Unit __) => true;
    public static bool operator !=(Unit _, Unit __) => false;
    // ReSharper restore UnusedParameter.Global
 
+   //The random hashcode better than the default for a zero value struct. Less risk of ending up in an over-populated bucket in hash based collections.
    public override int GetHashCode() => 392576489;
 }
