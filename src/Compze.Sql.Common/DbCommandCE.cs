@@ -1,4 +1,3 @@
-using System.Data.Common;
 using Compze.Contracts;
 using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Utilities.Logging;

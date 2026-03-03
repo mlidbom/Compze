@@ -1,5 +1,3 @@
-using System.Data.Common;
-using Compze.Sql.Common.Abstractions;
 using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
 using Compze.Threading.ResourceAccess;
 

@@ -1,4 +1,3 @@
-using System.Data.Common;
 using Compze.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Sql.Common.Abstractions;

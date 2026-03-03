@@ -1,6 +1,4 @@
-using System.Data.Common;
 using System.Transactions;
-using Compze.Sql.Common.Abstractions;
 using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
 using Compze.Threading;

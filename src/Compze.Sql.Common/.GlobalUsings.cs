@@ -5,3 +5,6 @@ global using Compze.Underscore;
 global using Compze.Utilities.SystemCE;
 global using Compze.Utilities.SystemCE.LinqCE;
 global using static Compze.Contracts.Contract;
+
+global using System.Data.Common;
+global using Compze.Sql.Common.Abstractions;

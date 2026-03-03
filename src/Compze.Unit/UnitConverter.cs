@@ -1,5 +1,3 @@
-
-
 // ReSharper disable MemberCanBeInternal
 
 namespace Compze.Unit;
