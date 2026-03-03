@@ -17,26 +17,26 @@ public class TessagesInFlightTracker(ITypeMapper typeMapper) : ITessagesInFlight
 {
    readonly IAwaitableThreadShared<NonThreadSafeImplementation> _implementation = IAwaitableThreadShared.New(new NonThreadSafeImplementation(typeMapper));
 
-   public IReadOnlyList<Exception> GetExceptions() => _implementation.Update(implementation => implementation.GetExceptions());
+   public IReadOnlyList<Exception> GetExceptions() => _implementation.Update(it => it.GetExceptions());
 
    //performance: Do we care about tueries here? Could we exclude them and lessen the contention a lot?
    public void SendingTessageOnTransport(TransportTessage.OutGoing transportTessage, EndpointId remoteEndpointId) =>
-      _implementation.Update(implementation => implementation.SendingTessageOnTransport(transportTessage, remoteEndpointId));
+      _implementation.Update(it => it.SendingTessageOnTransport(transportTessage, remoteEndpointId));
 
    public void AwaitNoTessagesInFlight(WaitTimeout? timeoutOverride)
    {
       try
       {
-         _implementation.Await(implementation => implementation.NoTessagesInFlight(), timeoutOverride ?? WaitTimeout.Seconds(10));
+         _implementation.Await(it => it.NoTessagesInFlight(), timeoutOverride ?? WaitTimeout.Seconds(10));
       }
       catch(AwaitingConditionTimeoutException e)
       {
-         throw _implementation.Read(implementation => new AwaitNoTessagesInFlightTimeoutException(innerException: e, undeliveredTessages: implementation.GetUndeliveredTessages()));
+         throw _implementation.Read(it => new AwaitNoTessagesInFlightTimeoutException(innerException: e, undeliveredTessages: it.GetUndeliveredTessages()));
       }
    }
 
    public void DoneWith(TransportTessage.InComing tessage, EndpointId handlingEndpointId, Exception? exception) =>
-      _implementation.Update(implementation => implementation.DoneWith(tessage, handlingEndpointId, exception));
+      _implementation.Update(it => it.DoneWith(tessage, handlingEndpointId, exception));
 
    public class InFlightTessage
    {
