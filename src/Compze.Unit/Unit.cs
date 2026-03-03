@@ -13,12 +13,11 @@ namespace Compze.Unit;
 ///      //Do something here
 ///   });
 /// </code>
-/// Within the Compze solution, a global using alias maps this to the lowercase name:
+/// We personally prefer using a global using alias that maps this to the lowercase name:
 /// <c>global using unit = Compze.Unit.Unit;</c>
 /// </summary>
 public readonly struct Unit : IEquatable<Unit>
 {
-   // ReSharper disable once MemberCanBeInternal
    public static readonly Unit Value = default;
 
    ///<summary>Executes the action and returns Unit making for easily returning Unit without extra lines:
