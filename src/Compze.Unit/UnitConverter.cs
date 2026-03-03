@@ -37,10 +37,10 @@ public static class UnitConverterExtensions
       /// </summary>
       public static Func<Task<Unit>> AsyncFunc(Func<Task> action) => action.ToFunc();
 
-      ///<inheritdoc cref="AsyncFunc(Func{Task})"/>
+      ///<inheritdoc cref="AsyncFunc(System.Func{System.Threading.Tasks.Task})"/>
       public static Func<TParam, Task<Unit>> AsyncFunc<TParam>(Func<TParam, Task> action) => action.ToFunc();
 
-      ///<inheritdoc cref="AsyncFunc(Func{Task})"/>
+      ///<inheritdoc cref="AsyncFunc(System.Func{System.Threading.Tasks.Task})"/>
       public static Func<TParam, TParam2, Task<Unit>> AsyncFunc<TParam, TParam2>(Func<TParam, TParam2, Task> action) => action.ToFunc();
    }
 }
