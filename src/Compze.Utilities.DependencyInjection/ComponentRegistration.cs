@@ -32,8 +32,6 @@ public abstract class ComponentRegistration
    }
 
    public abstract ComponentRegistration CreateCloneRegistration(IServiceLocator currentLocator);
-
-   public abstract object Resolve(IServiceLocator serviceLocator);
 }
 
 public class ComponentRegistration<TService> : ComponentRegistration where TService : class
@@ -64,8 +62,6 @@ public class ComponentRegistration<TService> : ComponentRegistration where TServ
          dependencyTypes: DependencyTypes
       );
    }
-
-   public override object Resolve(IServiceLocator serviceLocator) => serviceLocator.Resolve<TService>();
 
    internal ComponentRegistration(Lifestyle lifestyle,
                                   IEnumerable<Type> serviceTypes,

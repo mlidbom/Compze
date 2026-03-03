@@ -23,7 +23,6 @@ class MySqlTeventStoreConnectionManager(IMySqlConnectionPool sqlConnectionPool)
       _connectionPool.UseCommand(action);
    }
 
-   public TResult UseCommand<TResult>([InstantHandle]Func<MySqlCommand, TResult> action) => UseCommand(false, action);
    public TResult UseCommand<TResult>(bool suppressTransactionWarning, [InstantHandle] Func<MySqlCommand, TResult> action)
    {
       AssertTransactionPolicy(suppressTransactionWarning);

@@ -104,12 +104,6 @@ public class QueryModelGeneratingQueryModelReader : IVersioningQueryModelReader
                                                                             ? VersionedGeneratorsForDocumentType<TDocument>().Any()
                                                                             : GetGeneratorsForDocumentType<TDocument>().Any();
 
-   public virtual IEnumerable<TValue> GetAll<TValue>(IEnumerable<EntityId> ids) where TValue : class, IEntity
-   {
-      _usageGuard.EnsureAccessValid();
-      return ids.Select(Get<TValue>).ToList();
-   }
-
    IEnumerable<IVersioningQueryModelGenerator<TDocument>> VersionedGeneratorsForDocumentType<TDocument>() => _documentGenerators.OfType<IVersioningQueryModelGenerator<TDocument>>().ToList();
 
    IEnumerable<IQueryModelGenerator<TDocument>> GetGeneratorsForDocumentType<TDocument>() => _documentGenerators.OfType<IQueryModelGenerator<TDocument>>().ToList();

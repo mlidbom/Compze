@@ -37,7 +37,6 @@ public interface IDependencyInjectionContainer : IDisposable, IAsyncDisposable
 public interface IServiceLocator : IDisposable, IAsyncDisposable
 {
    TComponent Resolve<TComponent>() where TComponent : class;
-   TComponent[] ResolveAll<TComponent>() where TComponent : class;
    object Resolve(Type serviceType);
    IDisposable BeginScope();
 }
