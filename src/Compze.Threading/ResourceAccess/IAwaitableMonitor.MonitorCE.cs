@@ -25,10 +25,10 @@ public partial interface IAwaitableMonitor
          TakeLockWhen(condition, LockType.Update, waitTimeout: waitTimeout, lockTimeout: lockTimeout);
 
       public IDisposable? TryTakeReadLockWhen(Func<bool> condition, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null) =>
-         TryTakeLockWhen(condition, LockType.Read, throwOnFailedLock: false, waitTimeout: waitTimeout, lockTimeout: lockTimeout);
+         TryTakeLockWhen(condition, LockType.Read, waitTimeout: waitTimeout, lockTimeout: lockTimeout);
 
       public IDisposable? TryTakeUpdateLockWhen(Func<bool> condition, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null) =>
-         TryTakeLockWhen(condition, LockType.Update, throwOnFailedLock: false, waitTimeout: waitTimeout, lockTimeout: lockTimeout);
+         TryTakeLockWhen(condition, LockType.Update, waitTimeout: waitTimeout, lockTimeout: lockTimeout);
 
       LockTimeout LockTimeout { get; }
       WaitTimeout WaitTimeout { get; }
@@ -72,28 +72,18 @@ public partial interface IAwaitableMonitor
       IDisposable TakeLock(LockType lockType, LockTimeout? lockTimeout = null) => TryTakeLock(lockType, lockTimeout) ?? throw RegisterTimeoutException();
 
       IDisposable TakeLockWhen(Func<bool> condition, LockType lockType, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null) =>
-         TryTakeLockWhen(condition, lockType, throwOnFailedLock: true, waitTimeout: waitTimeout, lockTimeout: lockTimeout) ?? throw new AwaitingConditionTimeoutException();
+         TryTakeLockWhen(condition, lockType, waitTimeout: waitTimeout, lockTimeout: lockTimeout) ?? throw new AwaitingConditionTimeoutException();
 
       IDisposable? TryTakeLock(LockType lockType, LockTimeout? timeout = null) => _monitor.TryTakeLock(timeout ?? LockTimeout) ? LockFor(lockType) : null;
 
-      IDisposable? TryTakeLockWhen(Func<bool> condition, LockType lockType, bool throwOnFailedLock, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null)
+      IDisposable? TryTakeLockWhen(Func<bool> condition, LockType lockType, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null)
       {
          var effectiveWaitTimeout = waitTimeout ?? WaitTimeout;
          var effectiveLockTimeout = lockTimeout ?? LockTimeout;
 
          var waitStartedAt = DateTime.UtcNow;
 
-         IDisposable takenLock;
-         if(throwOnFailedLock)
-         {
-            takenLock = TakeLock(lockType, effectiveLockTimeout);
-         } else
-         {
-            var attemptedLock = TryTakeLock(lockType, effectiveLockTimeout);
-            if(attemptedLock == null) return null;
-            takenLock = attemptedLock;
-         }
-
+         IDisposable takenLock = TakeLock(lockType, effectiveLockTimeout);
          try
          {
             if(effectiveWaitTimeout.IsInfinite)
