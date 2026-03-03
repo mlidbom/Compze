@@ -60,7 +60,7 @@ public partial class Inbox
             public IReadOnlyList<TransportTessage.InComing> AtMostOnceTommands => _executingAtMostOnceTommands;
             public IReadOnlyList<TransportTessage.InComing> ExactlyOnceTommands => _executingExactlyOnceTommands;
             public IReadOnlyList<TransportTessage.InComing> ExactlyOnceTevents => _executingExactlyOnceTevents;
-            public IReadOnlyList<TransportTessage.InComing> ExecutingNonTransactionalTueries => _executingNonTransactionalTueries;
+            public IReadOnlyList<TransportTessage.InComing> ExecutingTueries => _executingNonTransactionalTueries;
 
             readonly List<HandlerExecutionTask> _tessagesWaitingToExecute = [];
 
