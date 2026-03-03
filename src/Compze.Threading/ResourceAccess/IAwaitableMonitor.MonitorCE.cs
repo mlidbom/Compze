@@ -26,9 +26,6 @@ public partial interface IAwaitableMonitor
       public IDisposable? TryTakeReadLockWhen(Func<bool> condition, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null) =>
          TryTakeLockWhen(condition, LockType.Read, waitTimeout: waitTimeout, lockTimeout: lockTimeout);
 
-      public IDisposable? TryTakeUpdateLockWhen(Func<bool> condition, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null) =>
-         TryTakeLockWhen(condition, LockType.Update, waitTimeout: waitTimeout, lockTimeout: lockTimeout);
-
       LockTimeout LockTimeout { get; }
       WaitTimeout WaitTimeout { get; }
       public long ContentionCount => _monitor.ContentionCount;
