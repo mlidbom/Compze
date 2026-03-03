@@ -29,7 +29,7 @@ public class VolatileLambdaTransactionParticipant : VolatileTransactionParticipa
       if(onRollback != null) AddRollbackTasks(onRollback);
    }
 
-   internal VolatileLambdaTransactionParticipant AddCommitTasks(params Action[] tasks) =>
+   VolatileLambdaTransactionParticipant AddCommitTasks(params Action[] tasks) =>
       this._mutate(_ => _commitTasks.AddRange(tasks));
 
    internal VolatileLambdaTransactionParticipant AddPrepareTasks(params Action[] tasks) =>

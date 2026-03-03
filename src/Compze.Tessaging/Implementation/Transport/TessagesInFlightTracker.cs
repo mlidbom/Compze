@@ -49,7 +49,7 @@ public class TessagesInFlightTracker(ITypeMapper typeMapper) : ITessagesInFlight
    class NonThreadSafeImplementation(ITypeMapper typeMapper)
    {
       readonly ITypeMapper _typeMapper = typeMapper;
-      readonly Dictionary<TessageId, InFlightTessage> TrackedTessages = [];
+      readonly Dictionary<TessageId, InFlightTessage> _trackedTessages = [];
 
       readonly List<Exception> _busExceptions = [];
 
@@ -57,13 +57,13 @@ public class TessagesInFlightTracker(ITypeMapper typeMapper) : ITessagesInFlight
 
       internal void SendingTessageOnTransport(TransportTessage.OutGoing transportTessage, EndpointId remoteEndpointId)
       {
-         var inFlightTessage = TrackedTessages.GetOrAdd(transportTessage.TessageId,
-                                                        () => new InFlightTessage
-                                                              {
-                                                                 TessageId = transportTessage.TessageId,
-                                                                 TypeName = _typeMapper.GetType(transportTessage.Type).FullName ?? transportTessage.Type.ToString(),
-                                                                 Body = transportTessage.Body
-                                                              });
+         var inFlightTessage = _trackedTessages.GetOrAdd(transportTessage.TessageId,
+                                                         () => new InFlightTessage
+                                                               {
+                                                                  TessageId = transportTessage.TessageId,
+                                                                  TypeName = _typeMapper.GetType(transportTessage.Type).FullName ?? transportTessage.Type.ToString(),
+                                                                  Body = transportTessage.Body
+                                                               });
 
          inFlightTessage.EndpointDeliveryStatus.TryAdd(remoteEndpointId, false); //Retrying messages must not reset the status of already delivered messages.
       }
@@ -78,14 +78,14 @@ public class TessagesInFlightTracker(ITypeMapper typeMapper) : ITessagesInFlight
             _busExceptions.Add(exception);
          }
 
-         var inFlightTessage = TrackedTessages[tessage.TessageId];
+         var inFlightTessage = _trackedTessages[tessage.TessageId];
          inFlightTessage.EndpointDeliveryStatus[handlingEndpointId] = true;
       }
 
-      internal bool NoTessagesInFlight() => TrackedTessages.Values.SelectMany(it => it.EndpointDeliveryStatus.Values).All(delivered => delivered);
+      internal bool NoTessagesInFlight() => _trackedTessages.Values.SelectMany(it => it.EndpointDeliveryStatus.Values).All(delivered => delivered);
 
       internal IReadOnlyList<InFlightTessage> GetUndeliveredTessages() =>
-         TrackedTessages.Values.Where(t => t.EndpointDeliveryStatus.Values.Any(delivered => !delivered)).ToList();
+         _trackedTessages.Values.Where(t => t.EndpointDeliveryStatus.Values.Any(delivered => !delivered)).ToList();
    }
 }
 

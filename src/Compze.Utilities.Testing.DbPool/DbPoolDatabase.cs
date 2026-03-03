@@ -42,13 +42,6 @@ public partial class DbPoolDatabase
       return this;
    }
 
-   public DbPoolDatabase Clean()
-   {
-      Contract.State.Assert(!IsClean);
-      IsClean = true;
-      return this;
-   }
-
    internal DbPoolDatabase Reserve(string reservationName, Guid poolId, TimeSpan reservationLength)
    {
       Contract.State.Assert(!IsReserved);

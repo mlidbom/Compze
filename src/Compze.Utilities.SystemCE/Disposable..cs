@@ -25,6 +25,4 @@ public class Disposable : IDisposable
          _onDispose();
       }
    }
-
-   public static readonly IDisposable NullOp = new Disposable(ActionCE.NullOp);
 }

@@ -79,19 +79,6 @@ public static partial class Constructor
          internal Func<TInstance> DefaultConstructor() => (Func<TInstance>)CompileForSignature(typeof(Func<>).MakeGenericType(_typeToConstruct));
          public Func<TArgument1, TInstance> WithArguments<TArgument1>() => (Func<TArgument1, TInstance>)WithArgumentTypes(typeof(TArgument1));
 
-         public Func<object, object> WithArgument(Type argument1Type)
-         {
-            var constructor = WithArgumentTypes(argument1Type);
-
-            var parameter = Expression.Parameter(typeof(object), "arg");
-            var parameterCastToCorrectType = Expression.Convert(parameter, argument1Type);
-            var constructorInvocation = Expression.Invoke(Expression.Constant(constructor), parameterCastToCorrectType);
-            var castReturnValueToObject = Expression.Convert(constructorInvocation, typeof(object));
-            var lambdaForWholeSequence = Expression.Lambda<Func<object, object>>(castReturnValueToObject, parameter);
-
-            return lambdaForWholeSequence.Compile();
-         }
-
          static Delegate CompileForSignature(Type delegateType)
          {
             var delegateTypeGenericArgumentTypes = delegateType.GetGenericArguments();

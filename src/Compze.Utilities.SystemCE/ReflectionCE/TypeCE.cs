@@ -44,9 +44,6 @@ public static partial class TypeCE
       return me.GetInterfaces().Contains(implemented);
    });
 
-   public static Type GetGenericInterface(this Type @this, Type implementedGenericInterface) =>
-      @this.ListGenericInterfaces(implementedGenericInterface).Single();
-
    static IEnumerable<Type> ListGenericInterfaces(this Type @this, Type genericInterface)
    {
       return @this.ListGenericInterfaces()
@@ -71,33 +68,7 @@ public static partial class TypeCE
       }
    }
 
-   public static bool InHerits(this Type @this, Type baseClass) =>
-      baseClass.IsGenericTypeDefinition
-         ? @this.InheritsFromGenericClassDefinition(baseClass)
-         : @this.ClassInheritanceChain().Any(it => it == baseClass);
-
-   public static Type GetGenericBaseClass(this Type @this, Type genericBaseClassTypeDefinition) =>
-      @this.TryGetGenericBaseClass(genericBaseClassTypeDefinition) ?? throw new Exception($"{@this.FullName} does not inherit from {genericBaseClassTypeDefinition.FullName}");
-
-   static Type? TryGetGenericBaseClass(this Type @this, Type genericBaseClassTypeDefinition) =>
-      @this.GenericBaseClasses()
-           .SingleOrDefault(it => it.GetGenericTypeDefinition() == genericBaseClassTypeDefinition);
-
-   static IEnumerable<Type> GenericBaseClasses(this Type @this) =>
-      @this.ClassInheritanceChain()
-           .Where(it => it.IsGenericType);
-
-   static IEnumerable<Type> GenericBaseClassGenericTypeDefinitions(this Type @this) =>
-      @this.GenericBaseClasses()
-           .Select(it => it.GetGenericTypeDefinition());
-
-   static bool InheritsFromGenericClassDefinition(this Type @this, Type genericBaseClass) =>
-      @this.GenericBaseClassGenericTypeDefinitions()
-           .Any(it => it == genericBaseClass);
-
    public static bool IsOpenGenericType(this Type type) => type.ContainsGenericParameters;
-
-   public static bool Is<TOther>(this object @this) => @this is TOther;
 
    public static bool Is<TOther>(this Type @this) => typeof(TOther).IsAssignableFrom(@this);
 

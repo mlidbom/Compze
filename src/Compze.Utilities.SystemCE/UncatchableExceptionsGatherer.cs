@@ -17,8 +17,6 @@ public static class UncatchableExceptionsGatherer
 
    public static unit Register(Exception exception) => MonitorCE.Locked(() => _exceptions.Add(exception));
 
-   public static IReadOnlyList<Exception> Exceptions => _exceptions.ToList();
-
    static unit ConsumeAndThrowAnyExceptionsGathered() => MonitorCE.Locked(() =>
    {
       var exceptions = _exceptions;

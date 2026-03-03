@@ -25,6 +25,7 @@ public class ComponentCombination : IXunitSerializable
    internal const string Separator = ":";
 
    [Obsolete("Called by xUnit deserializer", error: true)]
+   // ReSharper disable once UnusedMember.Global
    public ComponentCombination() => Components = [];
 
    ComponentCombination(IEnumerable<Enum> components) => Components = components.ToList();
