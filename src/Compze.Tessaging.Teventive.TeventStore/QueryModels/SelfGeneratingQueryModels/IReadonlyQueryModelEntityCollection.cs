@@ -3,10 +3,10 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Compze.Tessaging.Teventive.TeventStore.QueryModels.SelfGeneratingQueryModels;
 
-public interface IReadonlyQueryModelEntityCollection<TEntity, in TEntityId> : IEnumerable<TEntity>
+public interface IReadonlyQueryModelEntityCollection<TEntity, in TEntityId> : IEnumerable<TEntity> where TEntity : class
 {
    IReadOnlyList<TEntity> InCreationOrder { get; }
-   bool TryGet(TEntityId id, [MaybeNullWhen(false)]out TEntity component);
+   bool TryGet(TEntityId id, [NotNullWhen(true)]out TEntity? component);
    bool Contains(TEntityId id);
    TEntity Get(TEntityId id);
    TEntity this[TEntityId id] { get; }

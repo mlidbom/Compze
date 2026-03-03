@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Compze.Core.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public;
 
-class EntityCollection<TEntity, TEntityId> : IReadOnlyEntityCollection<TEntity, TEntityId> where TEntityId : notnull
+class EntityCollection<TEntity, TEntityId> : IReadOnlyEntityCollection<TEntity, TEntityId> where TEntity : class where TEntityId : notnull
 {
    readonly Dictionary<TEntityId, TEntity> _entities = new();
    readonly List<TEntity> _entitiesInCreationOrder = [];
@@ -12,7 +12,7 @@ class EntityCollection<TEntity, TEntityId> : IReadOnlyEntityCollection<TEntity, 
 
    public IReadOnlyList<TEntity> InCreationOrder => _entitiesInCreationOrder;
 
-   public bool TryGet(TEntityId id, [MaybeNullWhen(false)]out TEntity component) => _entities.TryGetValue(id, out component);
+   public bool TryGet(TEntityId id, [NotNullWhen(true)]out TEntity? component) => _entities.TryGetValue(id, out component);
    public bool Contains(TEntityId id) => _entities.ContainsKey(id);
    public TEntity Get(TEntityId id) => _entities[id];
    public TEntity this[TEntityId id] => _entities[id];

@@ -21,7 +21,7 @@ public static class DocumentDbRegistrar
 
 public class DocumentDbRegistrationBuilder
 {
-   public DocumentDbRegistrationBuilder HandleDocumentType<TDocument>(TessageHandlerRegistrarWithDependencyInjectionSupport registrar)
+   public DocumentDbRegistrationBuilder HandleDocumentType<TDocument>(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) where TDocument : class
    {
       DocumentDbApi.HandleDocumentType<TDocument>(registrar);
       return this;

@@ -23,7 +23,7 @@ public class QueryModelGeneratingQueryModelReader : IVersioningQueryModelReader
       _usageGuard = new SingleThreadUseGuard(this);
    }
 
-   public virtual TValue Get<TValue>(EntityId key)
+   public virtual TValue Get<TValue>(EntityId key) where TValue : class
    {
       _usageGuard.EnsureAccessValid();
       if(TryGet(key, out TValue? value))
@@ -34,7 +34,7 @@ public class QueryModelGeneratingQueryModelReader : IVersioningQueryModelReader
       throw new NoSuchDocumentException(key, typeof(TValue));
    }
 
-   public virtual TValue GetVersion<TValue>(EntityId key, int version)
+   public virtual TValue GetVersion<TValue>(EntityId key, int version) where TValue : class
    {
       _usageGuard.EnsureAccessValid();
       if(TryGetVersion(key, out TValue? value, version))
@@ -45,9 +45,9 @@ public class QueryModelGeneratingQueryModelReader : IVersioningQueryModelReader
       throw new NoSuchDocumentException(key, typeof(TValue));
    }
 
-   protected virtual bool TryGet<TDocument>(EntityId key, [MaybeNullWhen(false)] out TDocument document) => TryGetVersion(key, out document);
+   protected virtual bool TryGet<TDocument>(EntityId key, [NotNullWhen(true)] out TDocument? document) where TDocument : class => TryGetVersion(key, out document);
 
-   protected virtual bool TryGetVersion<TDocument>(EntityId key, [MaybeNullWhen(false)] out TDocument document, int version = -1)
+   protected virtual bool TryGetVersion<TDocument>(EntityId key, [NotNullWhen(true)] out TDocument? document, int version = -1) where TDocument : class
    {
       var requiresVersioning = version > 0;
       _usageGuard.EnsureAccessValid();
@@ -104,7 +104,7 @@ public class QueryModelGeneratingQueryModelReader : IVersioningQueryModelReader
                                                                             ? VersionedGeneratorsForDocumentType<TDocument>().Any()
                                                                             : GetGeneratorsForDocumentType<TDocument>().Any();
 
-   public virtual IEnumerable<TValue> GetAll<TValue>(IEnumerable<EntityId> ids) where TValue : IEntity
+   public virtual IEnumerable<TValue> GetAll<TValue>(IEnumerable<EntityId> ids) where TValue : class, IEntity
    {
       _usageGuard.EnsureAccessValid();
       return ids.Select(Get<TValue>).ToList();

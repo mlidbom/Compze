@@ -40,9 +40,9 @@ public partial class DocumentDbSession : IDocumentDbSession
 
       public void Dispose() => Guarded.Dispose();
 
-      public TValue Get<TValue>(object key) => Guarded.Get<TValue>(key);
+      public TValue Get<TValue>(object key) where TValue : class => Guarded.Get<TValue>(key);
 
-      public bool TryGet<TValue>(object key, [MaybeNullWhen(false)] out TValue document) => Guarded.TryGet(key, out document);
+      public bool TryGet<TValue>(object key, [NotNullWhen(true)] out TValue? document) where TValue : class => Guarded.TryGet(key, out document);
 
       public IEnumerable<T> GetAll<T>(IEnumerable<EntityId<Guid>> ids) where T : IEntity<Guid> => Guarded.GetAll<T>(ids);
 
@@ -50,15 +50,15 @@ public partial class DocumentDbSession : IDocumentDbSession
 
       public IEnumerable<Guid> GetAllIds<T>() where T : IEntity<Guid> => Guarded.GetAllIds<T>();
 
-      public TValue GetForUpdate<TValue>(object key) => Guarded.GetForUpdate<TValue>(key);
+      public TValue GetForUpdate<TValue>(object key) where TValue : class => Guarded.GetForUpdate<TValue>(key);
 
-      public void Save<TValue>(object id, TValue value) => Guarded.Save(id, value);
+      public void Save<TValue>(object id, TValue value) where TValue : class => Guarded.Save(id, value);
 
-      public void Delete<TEntity>(object id) => Guarded.Delete<TEntity>(id);
+      public void Delete<TEntity>(object id) where TEntity : class => Guarded.Delete<TEntity>(id);
 
-      public void Save<TEntity>(TEntity entity) where TEntity : IEntity<Guid> => Guarded.Save(entity);
+      public void Save<TEntity>(TEntity entity) where TEntity : class, IEntity<Guid> => Guarded.Save(entity);
 
-      public void Delete<TEntity>(TEntity entity) where TEntity : IEntity<Guid> => Guarded.Delete(entity);
+      public void Delete<TEntity>(TEntity entity) where TEntity : class, IEntity<Guid> => Guarded.Delete(entity);
    }
 
    readonly EntitiesByIdAndTypeCache _entitiesByIdAndType = new();
@@ -69,9 +69,9 @@ public partial class DocumentDbSession : IDocumentDbSession
 
    DocumentDbSession(IDocumentDb backingStore) => _backingStore = backingStore;
 
-   public virtual bool TryGet<TValue>(object key, [MaybeNullWhen(false)] out TValue document) => TryGetInternal(key, typeof(TValue), out document, useUpdateLock: false);
+   public virtual bool TryGet<TValue>(object key, [NotNullWhen(true)] out TValue? document) where TValue : class => TryGetInternal(key, typeof(TValue), out document, useUpdateLock: false);
 
-   bool TryGetInternal<TValue>(object key, Type documentType, [MaybeNullWhen(false)] out TValue value, bool useUpdateLock)
+   bool TryGetInternal<TValue>(object key, Type documentType, [NotNullWhen(true)] out TValue? value, bool useUpdateLock) where TValue : class
    {
       if(documentType.IsInterface)
       {
@@ -110,7 +110,7 @@ public partial class DocumentDbSession : IDocumentDbSession
       GetDocumentItem(key, value.GetType()).DocumentLoadedFromBackingStore(value);
    }
 
-   public virtual TValue GetForUpdate<TValue>(object key) =>
+   public virtual TValue GetForUpdate<TValue>(object key) where TValue : class =>
       GetInternal<TValue>(key, useUpdateLock: true);
 
    public IEnumerable<TValue> GetAll<TValue>(IEnumerable<EntityId<Guid>> ids) where TValue : IEntity<Guid>
@@ -132,21 +132,21 @@ public partial class DocumentDbSession : IDocumentDbSession
       return results;
    }
 
-   public virtual TValue Get<TValue>(object key)
+   public virtual TValue Get<TValue>(object key) where TValue : class
    {
       if(TryGet(key, out TValue? value)) return value._assert().NotNull();
 
       throw new NoSuchDocumentException(key, typeof(TValue));
    }
 
-   TValue GetInternal<TValue>(object key, bool useUpdateLock)
+   TValue GetInternal<TValue>(object key, bool useUpdateLock) where TValue : class
    {
       if(TryGetInternal(key, typeof(TValue), out TValue? value, useUpdateLock)) return value._assert().NotNull();
 
       throw new NoSuchDocumentException(key, typeof(TValue));
    }
 
-   public virtual void Save<TValue>(object id, TValue value)
+   public virtual void Save<TValue>(object id, TValue value) where TValue : class
    {
       Argument.Assert(value is not null);
 
@@ -162,11 +162,11 @@ public partial class DocumentDbSession : IDocumentDbSession
       documentItem.CommitChangesToBackingStore();
    }
 
-   public virtual void Save<TEntity>(TEntity entity) where TEntity : IEntity<Guid> => Save(entity.Id, entity);
+   public virtual void Save<TEntity>(TEntity entity) where TEntity : class, IEntity<Guid> => Save(entity.Id, entity);
 
-   public virtual void Delete<TEntity>(TEntity entity) where TEntity : IEntity<Guid> => Delete<TEntity>(entity.Id);
+   public virtual void Delete<TEntity>(TEntity entity) where TEntity : class, IEntity<Guid> => Delete<TEntity>(entity.Id);
 
-   public virtual void Delete<T>(object id)
+   public virtual void Delete<T>(object id) where T : class
    {
       if(!TryGet(id, out T? _))
       {

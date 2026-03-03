@@ -57,7 +57,7 @@ class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
       return result;
    }
 
-   public bool TryGet<TTaggregate>(TaggregateId taggregateId, [MaybeNullWhen(false)] out TTaggregate taggregate) where TTaggregate : class, ITaggregate
+   public bool TryGet<TTaggregate>(TaggregateId taggregateId, [NotNullWhen(true)] out TTaggregate? taggregate) where TTaggregate : class, ITaggregate
    {
       _taggregateTypeValidator.AssertIsValid<TTaggregate>();
       _usageGuard.EnsureAccessValid();

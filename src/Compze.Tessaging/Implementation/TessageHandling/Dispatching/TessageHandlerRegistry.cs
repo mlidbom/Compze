@@ -86,7 +86,7 @@ sealed class TessageHandlerRegistry(ITypeMapper typeMapper) : ITessageHandlerReg
       throw new NoHandlerException(tessage.GetType());
    }
 
-   bool TryGetTommandHandler(ITommand tessage, [MaybeNullWhen(false)]out Action<object> handler) =>
+   bool TryGetTommandHandler(ITommand tessage, [NotNullWhen(true)]out Action<object>? handler) =>
       _tommandHandlers.TryGetValue(tessage.GetType(), out handler);
 
    public Func<ITommand, object> GetTommandHandlerWithReturnValue(Type tommandType) => _tommandHandlersReturningResults[tommandType].HandlerMethod;

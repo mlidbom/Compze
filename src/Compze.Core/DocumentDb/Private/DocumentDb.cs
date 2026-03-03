@@ -43,7 +43,7 @@ sealed class DocumentDb : IDocumentDb
    // Save<Animal>("1", new Cat()); // Same ID, different concrete types
    // This creates two documents with the same logical ID but different type GUIDs. Tuerying Get<Animal>("1") becomes ambiguous.
    // I don't see any simple fix for this. I think we should just rip out the polymorphism support. It is too complex to manage and reason about, and the use cases are limited.
-   bool IDocumentDb.TryGet<TDocument>(object id, [MaybeNullWhen(false)] out TDocument value, Dictionary<Type, Dictionary<string, string>> persistentTDocuments, bool useUpdateLock)
+   bool IDocumentDb.TryGet<TDocument>(object id, [NotNullWhen(true)] out TDocument? value, Dictionary<Type, Dictionary<string, string>> persistentTDocuments, bool useUpdateLock) where TDocument : class
    {
       value = default;
       var idString = GetIdString(id);
@@ -60,7 +60,7 @@ sealed class DocumentDb : IDocumentDb
       return true;
    }
 
-   public void Add<TDocument>(object id, TDocument value, Dictionary<Type, Dictionary<string, string>> persistentValues)
+   public void Add<TDocument>(object id, TDocument value, Dictionary<Type, Dictionary<string, string>> persistentValues) where TDocument : class
    {
       Contract.Argument.Assert(value is not null);
 

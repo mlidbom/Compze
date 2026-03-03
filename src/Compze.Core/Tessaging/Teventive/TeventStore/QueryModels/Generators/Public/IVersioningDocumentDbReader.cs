@@ -4,10 +4,10 @@ namespace Compze.Core.Tessaging.Teventive.TeventStore.QueryModels.Generators.Pub
 
 public interface IQueryModelReader
 {
-   TValue Get<TValue>(EntityId key);
+   TValue Get<TValue>(EntityId key) where TValue : class;
 }
 
 public interface IVersioningQueryModelReader : IQueryModelReader
 {
-   TValue GetVersion<TValue>(EntityId key, int version);
+   TValue GetVersion<TValue>(EntityId key, int version) where TValue : class;
 }

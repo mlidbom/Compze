@@ -30,15 +30,14 @@ public class EntitiesByIdAndTypeCache
    });
 
    internal IList<KeyValuePair<string, object>> GetAll() =>
-      _data.Locked(data => data
-                        .Select(pair => KeyValuePair.Create(pair.Key.Id, pair.Value))
-                        .ToList());
+      _data.Locked(it => it.Select(pair => KeyValuePair.Create(pair.Key.Id, pair.Value))
+                           .ToList());
 
    internal bool Contains(Type type, object id) => ContainsInternal(IdAndType.Create(id, type));
 
-   public bool TryGet<T>(object id, [NotNullWhen(true)] out T? value)
+   public bool TryGet<T>(object id, [NotNullWhen(true)] out T? value) where T : class
    {
-      var result = _data.Locked(data => TryGetToTuple.Call<IdAndType, object>(data.TryGetValue, IdAndType.Create(id, typeof(T))));
+      var result = _data.Locked(it => TryGetToTuple.Call<IdAndType, object>(it.TryGetValue, IdAndType.Create(id, typeof(T))));
       value = (T)result.Value!;
       return result.Success;
    }

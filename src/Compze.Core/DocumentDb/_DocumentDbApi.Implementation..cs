@@ -9,7 +9,7 @@ public partial class DocumentDbApi
 {
    public partial class TueryApi
    {
-      public class GetDocumentForUpdate<TDocument> : TessageTypes.StrictlyLocal.Tueries.StrictlyLocalTuery<GetDocumentForUpdate<TDocument>, TDocument>
+      public class GetDocumentForUpdate<TDocument> : TessageTypes.StrictlyLocal.Tueries.StrictlyLocalTuery<GetDocumentForUpdate<TDocument>, TDocument> where TDocument : class
       {
          internal GetDocumentForUpdate(Guid id) => Id = id;
          Guid Id { get; set; }
@@ -18,7 +18,7 @@ public partial class DocumentDbApi
             (GetDocumentForUpdate<TDocument> tuery, IDocumentDbUpdater updater) => updater.GetForUpdate<TDocument>(tuery.Id));
       }
 
-      public class TryGetDocument<TDocument> : TessageTypes.StrictlyLocal.Tueries.StrictlyLocalTuery<TryGetDocument<TDocument>, TDocument?>
+      public class TryGetDocument<TDocument> : TessageTypes.StrictlyLocal.Tueries.StrictlyLocalTuery<TryGetDocument<TDocument>, TDocument?> where TDocument : class
       {
          internal TryGetDocument(string id) => Id = id;
          string Id { get; set; }
@@ -27,7 +27,7 @@ public partial class DocumentDbApi
             (TryGetDocument<TDocument> tuery, IDocumentDbReader updater) => updater.TryGet<TDocument>(tuery.Id, out var document) ? document : default);
       }
 
-      public class GetReadonlyCopyOfDocument<TDocument> : TessageTypes.StrictlyLocal.Tueries.StrictlyLocalTuery<GetReadonlyCopyOfDocument<TDocument>, TDocument>
+      public class GetReadonlyCopyOfDocument<TDocument> : TessageTypes.StrictlyLocal.Tueries.StrictlyLocalTuery<GetReadonlyCopyOfDocument<TDocument>, TDocument> where TDocument : class
       {
          internal GetReadonlyCopyOfDocument(Guid id) => Id = id;
          Guid Id { get; set; }
@@ -39,7 +39,7 @@ public partial class DocumentDbApi
 
    public partial class Tommand
    {
-      public class DeleteDocument<TDocument> : TessageTypes.StrictlyLocal.Tommands.StrictlyLocalTommand
+      public class DeleteDocument<TDocument> : TessageTypes.StrictlyLocal.Tommands.StrictlyLocalTommand where TDocument : class
       {
          internal DeleteDocument(string key) => Key = key;
          string Key { get; }
@@ -48,7 +48,7 @@ public partial class DocumentDbApi
             (DeleteDocument<TDocument> command, IDocumentDbUpdater updater) => updater.Delete<TDocument>(command.Key));
       }
 
-      public class SaveDocument<TDocument> : TessageTypes.StrictlyLocal.Tommands.StrictlyLocalTommand
+      public class SaveDocument<TDocument> : TessageTypes.StrictlyLocal.Tommands.StrictlyLocalTommand where TDocument : class
       {
          internal SaveDocument(string key, TDocument entity)
          {
@@ -64,7 +64,7 @@ public partial class DocumentDbApi
       }
    }
 
-   public static void HandleDocumentType<TDocument>(TessageHandlerRegistrarWithDependencyInjectionSupport registrar)
+   public static void HandleDocumentType<TDocument>(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) where TDocument : class
    {
       TueryApi.TryGetDocument<TDocument>.RegisterHandler(registrar);
       TueryApi.GetReadonlyCopyOfDocument<TDocument>.RegisterHandler(registrar);

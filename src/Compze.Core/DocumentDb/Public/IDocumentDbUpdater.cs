@@ -6,10 +6,10 @@ namespace Compze.Core.DocumentDb.Public;
 public interface IDocumentDbUpdater
 {
    /// <summary>Like Get but, if supported by implementing class, eagerly locks the instance in the database.</summary>
-   TValue GetForUpdate<TValue>(object key);
+   TValue GetForUpdate<TValue>(object key) where TValue : class;
 
-   void Save<TValue>(object id, TValue value);
-   void Delete<TEntity>(object id);
-   void Save<TEntity>(TEntity entity) where TEntity : IEntity<Guid>;
-   void Delete<TEntity>(TEntity entity) where TEntity : IEntity<Guid>;
+   void Save<TValue>(object id, TValue value) where TValue : class;
+   void Delete<TEntity>(object id) where TEntity : class;
+   void Save<TEntity>(TEntity entity) where TEntity : class, IEntity<Guid>;
+   void Delete<TEntity>(TEntity entity) where TEntity : class, IEntity<Guid>;
 }
