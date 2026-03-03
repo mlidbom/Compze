@@ -41,8 +41,4 @@ public interface ICompzeDbConnection<out TCommand> : ICompzeDbConnection
 
    object? ExecuteScalar(string commandText) => UseCommand(command => command.ExecuteScalar(commandText));
 
-   int PrepareAndExecuteNonQuery(string commandText) => UseCommand(command => command.PrepareAndExecuteNonQuery(commandText));
-
-   async Task<int> PrepareAndExecuteNonQueryAsync(string commandText) =>
-      await UseCommandAsync(async command => await command.PrepareAndExecuteNonQueryAsync(commandText).caf()).caf();
 }

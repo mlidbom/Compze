@@ -75,7 +75,6 @@ public sealed class SimpleInjectorDependencyInjectionContainer : DependencyInjec
 
    public TComponent Resolve<TComponent>() where TComponent : class => _container.GetInstance<TComponent>();
    public object Resolve(Type serviceType) => _container.GetInstance(serviceType);
-   public TComponent[] ResolveAll<TComponent>() where TComponent : class => _container.GetAllInstances<TComponent>().ToArray();
    IDisposable IServiceLocator.BeginScope() => AsyncScopedLifestyle.BeginScope(_container);
 
    public override void Dispose() => _container.Dispose();
