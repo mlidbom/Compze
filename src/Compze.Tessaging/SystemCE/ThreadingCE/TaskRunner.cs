@@ -32,7 +32,7 @@ static class TaskRunnerRegistrar
 
       readonly IBackgroundExceptionReporter _exceptionReporter;
       readonly IThreadShared<List<Thread>> _threads = IThreadShared.New(new List<Thread>());
-      readonly IAwaitableThreadShared<HashSet<Task>> _inProgressTasks = IAwaitableThreadShared.WithDefaultTimeouts(new HashSet<Task>());
+      readonly IAwaitableThreadShared<HashSet<Task>> _inProgressTasks = IAwaitableThreadShared.New(new HashSet<Task>());
 
       TaskRunnerCore(IBackgroundExceptionReporter exceptionReporter) => _exceptionReporter = exceptionReporter;
 

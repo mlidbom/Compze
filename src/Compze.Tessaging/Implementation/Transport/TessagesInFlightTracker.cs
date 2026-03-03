@@ -15,7 +15,7 @@ namespace Compze.Tessaging.Implementation.Transport;
 
 public class TessagesInFlightTracker(ITypeMapper typeMapper) : ITessagesInFlightTracker
 {
-   readonly IAwaitableThreadShared<NonThreadSafeImplementation> _implementation = IAwaitableThreadShared.WithDefaultTimeouts(new NonThreadSafeImplementation(typeMapper));
+   readonly IAwaitableThreadShared<NonThreadSafeImplementation> _implementation = IAwaitableThreadShared.New(new NonThreadSafeImplementation(typeMapper));
 
    public IReadOnlyList<Exception> GetExceptions() => _implementation.Update(implementation => implementation.GetExceptions());
 

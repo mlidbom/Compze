@@ -5,15 +5,17 @@ namespace Compze.Threading.ResourceAccess;
 
 public interface IAwaitableThreadShared
 {
-   public static IAwaitableThreadShared<TShared> WithDefaultTimeouts<TShared>(TShared shared) =>
-      new IThreadShared.LockCEThreadShared<TShared>(shared, IAwaitableMonitor.WithDefaultTimeout());
-
-   public static IAwaitableThreadShared<TShared> New<TShared>(TShared shared, LockTimeout lockTimeout, WaitTimeout? waitTimeout = null) =>
-      new IThreadShared.LockCEThreadShared<TShared>(shared, IAwaitableMonitor.New(lockTimeout, waitTimeout));
+   public static IAwaitableThreadShared<TShared> New<TShared>(TShared shared, LockTimeout? lockTimeout = null, WaitTimeout? waitTimeout = null) =>
+      IAwaitableThreadShared<TShared>.New(shared, lockTimeout, waitTimeout);
 }
 
 public interface IAwaitableThreadShared<out TShared>
 {
+
+
+   public static IAwaitableThreadShared<TShared> New(TShared shared, LockTimeout? lockTimeout = null, WaitTimeout? waitTimeout = null) =>
+      new IThreadShared.LockCEThreadShared<TShared>(shared, IAwaitableMonitor.New(lockTimeout, waitTimeout));
+
    //core
    TResult Read<TResult>(Func<TShared, TResult> read, LockTimeout? timeout = null);
    TResult ReadWhen<TResult>(Func<TShared, bool> condition, Func<TShared, TResult> read, WaitTimeout? timeout = null);

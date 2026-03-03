@@ -26,7 +26,7 @@ public partial class Inbox
          readonly ITessageStorage _tessageStorage = tessageStorage;
          readonly IServiceLocator _serviceLocator = serviceLocator;
          readonly ITessageHandlerRegistry _tessageHandlerRegistry = tessageHandlerRegistry;
-         readonly IAwaitableThreadShared<NonThreadsafeImplementation> _implementation = IAwaitableThreadShared.WithDefaultTimeouts(new NonThreadsafeImplementation(globalStateTracker, endpointId));
+         readonly IAwaitableThreadShared<NonThreadsafeImplementation> _implementation = IAwaitableThreadShared.New(new NonThreadsafeImplementation(globalStateTracker, endpointId));
 
          internal HandlerExecutionTask AwaitExecutableHandlerExecutionTask(IReadOnlyList<ITessageDispatchingRule> dispatchingRules)
          {
