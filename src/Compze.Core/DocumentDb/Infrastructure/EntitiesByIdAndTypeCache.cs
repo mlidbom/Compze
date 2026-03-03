@@ -37,8 +37,8 @@ public class EntitiesByIdAndTypeCache
 
    public bool TryGet<T>(object id, [NotNullWhen(true)] out T? value) where T : class
    {
-      var result = _data.Locked(it => TryGetToTuple.Call<IdAndType, object>(it.TryGetValue, IdAndType.Create(id, typeof(T))));
-      value = (T)result.Value!;
+      var result = _data.Locked(it => it.TryGetTuple(IdAndType.Create(id, typeof(T))));
+      value = (T?)result.Value;
       return result.Success;
    }
 

@@ -37,11 +37,11 @@ public interface IThreadShared
          where TResult : class =>
          _awaitableMonitor.ReadOrUpdate(() => tryRead(_shared), () => updateOnFailedRead(_shared), timeout);
 
-      public TResult ReadWhen<TResult>(Func<TShared, TResult> read, Func<TShared, bool> condition, WaitTimeout? timeout = null) => _awaitableMonitor.ReadWhen(() => read(_shared), () => condition(_shared), timeout);
+      public TResult ReadWhen<TResult>(Func<TShared, bool> condition, Func<TShared, TResult> read, WaitTimeout? timeout = null) => _awaitableMonitor.ReadWhen(() => condition(_shared), () => read(_shared), timeout);
 
       public TResult Update<TResult>(Func<TShared, TResult> update, LockTimeout? timeout = null) => _awaitableMonitor.Update(() => update(_shared), timeout);
 
-      public TResult UpdateWhen<TResult>(Func<TShared, TResult> update, Func<TShared, bool> condition, WaitTimeout? timeout = null) => _awaitableMonitor.UpdateWhen(() => update(_shared), () => condition(_shared), timeout);
+      public TResult UpdateWhen<TResult>(Func<TShared, bool> condition, Func<TShared, TResult> update, WaitTimeout? timeout = null) => _awaitableMonitor.UpdateWhen(() => condition(_shared), () => update(_shared), timeout);
    }
 }
 
