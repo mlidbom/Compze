@@ -22,9 +22,6 @@ public class AsyncActionSpec(Func<Task> action, string expression)
 
 public static class MustActions
 {
-   public static IAssertionContext<Action> Must<T>(this Func<T> func, [CallerArgumentExpression(nameof(func))] string expression = null!) => Invoking(func, expression).Must();
-   public static IAssertionContext<Action> Must(this Action action, [CallerArgumentExpression(nameof(action))] string expression = null!) => Invoking(action, expression).Must();
-
    public static ActionSpec Invoking<T>([InstantHandle]Func<T> action, [CallerArgumentExpression(nameof(action))] string expression = null!) => new(() => action(), expression);
    public static ActionSpec Invoking([InstantHandle]Action action, [CallerArgumentExpression(nameof(action))] string expression = null!) => new(action, expression);
 
