@@ -3,8 +3,7 @@ using Compze.Utilities.SystemCE;
 
 namespace Compze.Threading.Testing;
 
-//urgent: Consider whether, this should share a monitor among all the parts and encapsulate more things to be able to provide synchronization guarantees.
-//possibly, for the gates themselves, it should expose only readonly interfaces and provide any mutating methods explicitly.
+//urgent: This must share a monitor among all the parts and encapsulate more things to be able to provide synchronization guarantees. Examining, or mutating, a section under a lock must guarantee non-mutating gates.
 public class GatedCodeSection : IGatedCodeSection
 {
    public IThreadGate EntranceGate { get; }
