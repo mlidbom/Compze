@@ -19,6 +19,7 @@ public partial class TeventStoreApi
       {
          [Obsolete("Used by serializer", error:true)]
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+         // ReSharper disable once UnusedMember.Global
          public TaggregateLink() {}
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 
@@ -31,6 +32,7 @@ public partial class TeventStoreApi
       public class GetTaggregateHistory<TTevent> : TessageTypes.StrictlyLocal.Tueries.StrictlyLocalTuery<GetTaggregateHistory<TTevent>, IEnumerable<TTevent>> where TTevent : ITaggregateTevent
       {
          [Obsolete("for serializer", error: true)]
+         // ReSharper disable once UnusedMember.Global
          public GetTaggregateHistory() => Id = null!;
 
          internal GetTaggregateHistory(TaggregateId id) => Id = id;
@@ -43,6 +45,7 @@ public partial class TeventStoreApi
       {
          [Obsolete("Used by serializer", error:true)]
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+         // ReSharper disable once UnusedMember.Global
          public GetReadonlyCopyOfTaggregate() {}
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 
@@ -56,6 +59,7 @@ public partial class TeventStoreApi
       {
          [Obsolete("Used by serializer", error:true)]
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+         // ReSharper disable once UnusedMember.Global
          public GetReadonlyCopyOfTaggregateVersion() {}
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 

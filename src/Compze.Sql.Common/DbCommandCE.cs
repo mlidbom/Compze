@@ -19,17 +19,12 @@ public static class DbCommandCE
    internal static object? ExecuteScalar(this DbCommand @this, string commandText) =>
       @this.SetCommandText(commandText).ExecuteScalar();
 
-   public static async Task<object?> ExecuteScalarAsync(this DbCommand @this, string commandText) =>
-      await @this.SetCommandText(commandText).ExecuteScalarAsync().caf();
 
    internal static int ExecuteNonQuery(this DbCommand @this, string commandText) =>
       @this.SetCommandText(commandText).ExecuteNonQuery();
 
    internal static async Task<int> ExecuteNonQueryAsync(this DbCommand @this, string commandText) =>
       await @this.SetCommandText(commandText).ExecuteNonQueryAsync().caf();
-
-   internal static object? PrepareAndExecuteScalar(this DbCommand @this, string commandText) =>
-      @this.SetCommandText(commandText).PrepareStatement().ExecuteScalar();
 
    internal static int PrepareAndExecuteNonQuery(this DbCommand @this, string commandText) =>
       @this.SetCommandText(commandText).PrepareStatement().ExecuteNonQuery();
@@ -47,12 +42,6 @@ public static class DbCommandCE
    {
       Contract.State.Assert(@this.CommandText.Length > 0, () => "Cannot prepare statement with empty CommandText");
       return @this._mutate(me => me.Prepare());
-   }
-
-   public static async Task<TCommand> PrepareStatementAsync<TCommand>(this TCommand @this) where TCommand : DbCommand
-   {
-      Contract.State.Assert(@this.CommandText.Length > 0, () => "Cannot prepare statement with empty CommandText");
-      return await @this._mutateAsync(async me => await me.PrepareAsync().caf()).caf();
    }
 
    public static IReadOnlyList<T> ExecuteReaderAndSelect<T, TCommand, TReader>(this TCommand @this, Func<TReader, T> select)

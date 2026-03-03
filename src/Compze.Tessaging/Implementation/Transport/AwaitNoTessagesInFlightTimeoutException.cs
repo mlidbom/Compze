@@ -10,8 +10,6 @@ namespace Compze.Tessaging.Implementation.Transport;
 class AwaitNoTessagesInFlightTimeoutException(AwaitingConditionTimeoutException innerException, IReadOnlyList<TessagesInFlightTracker.InFlightTessage> undeliveredTessages)
    : Exception(FormatMessage(undeliveredTessages), innerException)
 {
-   public IReadOnlyList<TessagesInFlightTracker.InFlightTessage> UndeliveredTessages { get; } = undeliveredTessages;
-
    static string FormatMessage(IReadOnlyList<TessagesInFlightTracker.InFlightTessage> undeliveredTessages)
    {
       var sb = new StringBuilder();

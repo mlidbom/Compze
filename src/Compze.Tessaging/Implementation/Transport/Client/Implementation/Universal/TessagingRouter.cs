@@ -118,12 +118,6 @@ class TessagingRouter : ITessagingRouter, IDisposable
 
    ContractAsserter AssertNotStopped() => Contract.State.Assert(!_stopped, () => "router is stopped");
 
-   public ITessagingInboxConnection ConnectionForEndpoint(EndpointId endpointId) =>
-      AssertNotStopped()._then(() =>
-         _connections.TryGetValue(endpointId, out var connection)
-            ? connection
-            : throw new InvalidOperationException($"No connection found for endpoint {endpointId}"));
-
    public ITessagingInboxConnection ConnectionToHandlerFor(IRemotableTommand tommand) =>
       AssertNotStopped()._then(() =>
          _tommandHandlerRoutes.TryGetValue(tommand.GetType(), out var connection)

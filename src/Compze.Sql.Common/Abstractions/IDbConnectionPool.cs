@@ -25,12 +25,6 @@ public interface IDbConnectionPool<out TConnection, out TCommand>
    async Task<int> ExecuteNonQueryAsync(string commandText) =>
       await UseConnectionAsync(async connection => await connection.ExecuteNonQueryAsync(commandText).caf()).caf();
 
-   int PrepareAndExecuteNonQuery(string commandText) =>
-      UseConnection(connection => connection.PrepareAndExecuteNonQuery(commandText));
-
-   async Task<int> PrepareAndExecuteNonQueryAsync(string commandText) =>
-      await UseConnectionAsync(async connection => await connection.PrepareAndExecuteNonQueryAsync(commandText).caf()).caf();
-
    void UseCommand(Action<TCommand> action) =>
       UseConnection(connection => connection.UseCommand(action));
 
