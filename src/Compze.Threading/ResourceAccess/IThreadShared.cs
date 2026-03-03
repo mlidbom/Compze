@@ -31,31 +31,7 @@ public interface IThreadShared
 
       public TResult Locked<TResult>(Func<TShared, TResult> func, LockTimeout? timeout = null) => _monitor.Locked(() => func(_shared), timeout);
 
-      public TReturn LockedOut<TReturn, TOut>(OutReadFunc<TShared, TReturn, TOut> func, out TOut result, LockTimeout? timeout = null)
-      {
-         using(_monitor.TakeLock(timeout))
-         {
-            return func(_shared, out result);
-         }
-      }
-
       public TResult Read<TResult>(Func<TShared, TResult> read, LockTimeout? timeout = null) => _awaitableMonitor.Read(() => read(_shared), timeout);
-
-      public TReturn ReadOut<TReturn, TOut>(OutReadFunc<TShared, TReturn, TOut> readOut, out TOut result, LockTimeout? timeout = null)
-      {
-         using(_awaitableMonitor.TakeReadLock(timeout))
-         {
-            return readOut(_shared, out result);
-         }
-      }
-
-      public TReturn ReadOutWhen<TReturn, TOut>(OutReadFunc<TShared, TReturn, TOut> readOut, Func<TShared, bool> condition, out TOut result, WaitTimeout? timeout = null)
-      {
-         using(_awaitableMonitor.TakeReadLockWhen(() => condition(_shared), timeout))
-         {
-            return readOut(_shared, out result);
-         }
-      }
 
       public TResult ReadOrUpdate<TResult>(Func<TShared, TResult?> tryRead, Action<TShared> updateOnFailedRead, LockTimeout? timeout = null)
          where TResult : class =>
@@ -69,12 +45,9 @@ public interface IThreadShared
    }
 }
 
-public delegate TReturn OutReadFunc<in TShared, out TReturn, TOut>(TShared shared, out TOut result);
-
 public interface IThreadShared<out TShared>
 {
    TResult Locked<TResult>(Func<TShared, TResult> func, LockTimeout? timeout = null);
-   TReturn LockedOut<TReturn, TOut>(OutReadFunc<TShared, TReturn, TOut> func, out TOut result, LockTimeout? timeout = null);
 
    unit Locked(Action<TShared> action, LockTimeout? timeout = null) => Locked(action.AsFunc(), timeout);
 }

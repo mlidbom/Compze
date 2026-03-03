@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Compze.Contracts;
+using Compze.SystemCE;
 using Compze.Utilities.SystemCE;
 using Compze.Threading.ResourceAccess;
 using static Compze.Contracts.Contract;
@@ -34,19 +36,12 @@ public class EntitiesByIdAndTypeCache
 
    internal bool Contains(Type type, object id) => ContainsInternal(IdAndType.Create(id, type));
 
-   public bool TryGet<T>(object id, out T value) =>
-      _data.LockedOut((data, out value) =>
-                    {
-                       if(data.TryGetValue(IdAndType.Create(id, typeof(T)), out var found))
-                       {
-                          value = (T)found;
-                          return true;
-                       }
-
-                       value = default!;
-                       return false;
-                    },
-                    out value);
+   public bool TryGet<T>(object id, [NotNullWhen(true)] out T? value)
+   {
+      var result = _data.Locked(data => TryGetToTuple.Call<IdAndType, object>(data.TryGetValue, IdAndType.Create(id, typeof(T))));
+      value = (T)result.Value!;
+      return result.Success;
+   }
 
    void AssertNotPresent(IdAndType key)
    {

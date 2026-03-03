@@ -15,9 +15,6 @@ public interface IAwaitableThreadShared
 public interface IAwaitableThreadShared<out TShared>
 {
    //core
-   TReturn ReadOut<TReturn, TOut>(OutReadFunc<TShared, TReturn, TOut> readOut, out TOut result, LockTimeout? timeout = null);
-   TReturn ReadOutWhen<TReturn, TOut>(OutReadFunc<TShared, TReturn, TOut> readOut, Func<TShared, bool> condition, out TOut result, WaitTimeout? timeout = null);
-
    TResult Read<TResult>(Func<TShared, TResult> read, LockTimeout? timeout = null);
    TResult ReadWhen<TResult>(Func<TShared, TResult> read, Func<TShared, bool> condition, WaitTimeout? timeout = null);
    TResult Update<TResult>(Func<TShared, TResult> update, LockTimeout? timeout = null);
