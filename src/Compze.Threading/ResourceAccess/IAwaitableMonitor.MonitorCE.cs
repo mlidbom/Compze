@@ -46,7 +46,7 @@ public partial interface IAwaitableMonitor
 
       WaitTimeout _stackTraceFetchTimeout;
 
-      public MonitorCE(LockTimeout? lockTimeout, WaitTimeout? waitTimeout)
+      public MonitorCE(LockTimeout? lockTimeout = null, WaitTimeout? waitTimeout = null)
       {
          LockTimeout = lockTimeout ?? LockTimeout.Default;
          WaitTimeout = waitTimeout ?? WaitTimeout.Default;
