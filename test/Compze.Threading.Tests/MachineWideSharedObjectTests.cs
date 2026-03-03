@@ -112,10 +112,10 @@ public class MachineWideSharedObjectTests : UniversalTestBase
    {
       var timeout = WaitTimeout.Seconds(15);
       var updateGate = ThreadGate.Closed(timeout, "updateGate");
-      var conflictingUpdateSectionSameInstance = GatedCodeSection.New(timeout, "conflictingUpdateSectionSameInstance");
-      var conflictingUpdateSectionOtherInstance = GatedCodeSection.New(timeout, "conflictingUpdateSectionOtherInstance");
-      var conflictingGetCopySectionSameInstance = GatedCodeSection.New(timeout, "conflictingGetCopySectionSameInstance");
-      var conflictingGetCopySectionOtherInstance = GatedCodeSection.New(timeout, "conflictingGetCopySectionOtherInstance");
+      var conflictingUpdateSectionSameInstance = GatedCodeSection.Closed(timeout, "conflictingUpdateSectionSameInstance");
+      var conflictingUpdateSectionOtherInstance = GatedCodeSection.Closed(timeout, "conflictingUpdateSectionOtherInstance");
+      var conflictingGetCopySectionSameInstance = GatedCodeSection.Closed(timeout, "conflictingGetCopySectionSameInstance");
+      var conflictingGetCopySectionOtherInstance = GatedCodeSection.Closed(timeout, "conflictingGetCopySectionOtherInstance");
 
       IList<IGatedCodeSection> conflictingSections =
       [

@@ -12,13 +12,6 @@ public static class GatedCodeSectionExtensions
       return @this;
    }
 
-   public static IGatedCodeSection Close(this IGatedCodeSection @this)
-   {
-      @this.EntranceGate.Close();
-      @this.ExitGate.Close();
-      return @this;
-   }
-
    static IGatedCodeSection LetOneThreadEnter(this IGatedCodeSection @this)
    {
       @this.AssertIsEmpty();
