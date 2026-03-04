@@ -1,5 +1,4 @@
-using Compze.Utilities.SystemCE;
-using Xunit;
+
 // ReSharper disable VirtualMemberNeverOverridden.Global
 
 namespace Compze.Utilities.Tests;

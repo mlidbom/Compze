@@ -1,5 +1,4 @@
-using Compze.Utilities.Testing.Must;
-using Compze.Utilities.Testing.XUnit.BDD;
+
 
 // ReSharper disable InconsistentNaming
 
@@ -25,7 +24,7 @@ public class When_calling_Must_DeepEqual_with_unordered_collections : UniversalT
 
          public class DeepEqual_throws_AssertionFailedException_ : with_on_item_different
          {
-            string ExceptionMessage() => MustActions.Invoking(() => _expected.Must().DeepEqual(_one_differing_item)).Must().Throw<AssertionFailedException>().Which.Message;
+            string ExceptionMessage() => Invoking(() => _expected.Must().DeepEqual(_one_differing_item)).Must().Throw<AssertionFailedException>().Which.Message;
             [XF] public void with_the_message_()
                => ExceptionMessage().Must().Be("""
                                                

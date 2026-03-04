@@ -19,7 +19,7 @@ public static class UnitConverterExtensions
 
       ///<summary>Creates a <see cref="Func{TResult}"/> returning <see cref="Unit"/> from an <see cref="Action"/>.
       /// <code>
-      ///   ITakeFunc(Unit.Func(anInstance.VoidMethod));
+      ///   MethodThatTakesFunc(Unit.Func(anInstance.VoidMethod));
       /// </code>
       /// </summary>
       public static Func<Unit> Func(Action action) => action.ToFunc();
@@ -32,7 +32,7 @@ public static class UnitConverterExtensions
 
       ///<summary>Creates a <see cref="Func{TResult}"/> returning <see cref="Task"/> of <see cref="Unit"/> from a task-returning async method group.
       /// <code>
-      ///   ITakeAsyncFunc(Unit.AsyncFunc(anInstance.TaskReturningMethod));
+      ///   MethodThatTakesAsyncFunc(Unit.AsyncFunc(anInstance.TaskReturningMethod));
       /// </code>
       /// </summary>
       public static Func<Task<Unit>> AsyncFunc(Func<Task> action) => action.ToFunc();

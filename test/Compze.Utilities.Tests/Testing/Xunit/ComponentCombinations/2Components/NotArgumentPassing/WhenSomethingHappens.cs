@@ -1,5 +1,4 @@
 using Compze.Utilities.Testing.XUnit.ComponentCombinations;
-using Xunit;
 
 namespace Compze.Utilities.Tests.Testing.Xunit.ComponentCombinations._2Components.NotArgumentPassing;
 

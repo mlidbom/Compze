@@ -1,5 +1,3 @@
-using Compze.Utilities.Testing.XUnit.BDD;
-
 namespace Compze.Utilities.Tests.Testing.Xunit.BDD;
 
 public class WhenATestIsMarkedAsSkip

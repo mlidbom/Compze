@@ -1,6 +1,3 @@
-using Compze.Utilities.Testing.Must;
-using Compze.Utilities.Testing.XUnit.BDD;
-using static Compze.Utilities.Testing.Must.MustActions;
 using AssertionFailedException = Compze.Utilities.Testing.Must.AssertionFailedException;
 
 #pragma warning disable CA1861

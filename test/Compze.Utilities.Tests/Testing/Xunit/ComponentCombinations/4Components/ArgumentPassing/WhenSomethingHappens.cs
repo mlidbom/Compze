@@ -1,6 +1,5 @@
 using Compze.Utilities.Testing.XUnit.ComponentCombinations;
 using Compze.Utilities.Tests.Testing.Xunit.ComponentCombinations._2Components;
-using Xunit;
 
 namespace Compze.Utilities.Tests.Testing.Xunit.ComponentCombinations._4Components.ArgumentPassing;
 

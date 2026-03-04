@@ -1,6 +1,3 @@
-using Compze.Utilities.Testing.Must;
-using Compze.Utilities.Testing.XUnit.BDD;
-
 #pragma warning disable CA1861
 #pragma warning disable CA1825
 
@@ -18,17 +15,17 @@ public class When_calling_Must_NotBeEmpty : UniversalTestBase
       => Enumerable.Range(1, 5).Must().NotBeEmpty();
 
    [XF] public void it_throws_for_empty_collection()
-      => MustActions.Invoking(() => new List<int>().Must().NotBeEmpty())
+      => Invoking(() => new List<int>().Must().NotBeEmpty())
                     .Must()
                     .Throw<AssertionFailedException>();
 
    [XF] public void it_throws_for_empty_array()
-      => MustActions.Invoking(() => Array.Empty<int>().Must().NotBeEmpty())
+      => Invoking(() => Array.Empty<int>().Must().NotBeEmpty())
                     .Must()
                     .Throw<AssertionFailedException>();
 
    [XF] public void it_throws_for_empty_enumerable()
-      => MustActions.Invoking(() => Enumerable.Empty<string>().Must().NotBeEmpty())
+      => Invoking(() => Enumerable.Empty<string>().Must().NotBeEmpty())
                     .Must()
                     .Throw<AssertionFailedException>();
 }

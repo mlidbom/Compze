@@ -1,8 +1,5 @@
 using System.Collections.Concurrent;
 using Compze.Threading;
-using Compze.Utilities.Testing.Must;
-using Compze.Utilities.Testing.XUnit.BDD;
-using Xunit;
 
 namespace Compze.Utilities.Tests.SystemCE.ThreadingCE;
 
