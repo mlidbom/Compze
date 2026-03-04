@@ -15,4 +15,39 @@
     </PackageReference>
     <PackageReference Include="xunit.v3" Version="3.1.0" />
   </ItemGroup>
+  <!-- Compze.DbPool — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DbPool)' == 'true'">
+    <PackageReference Include="Compze.DbPool" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DbPool)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.DbPool\Compze.DbPool.csproj" />
+  </ItemGroup>
+  <!-- Compze.DbPool.MicrosoftSql — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DbPool_MicrosoftSql)' == 'true'">
+    <PackageReference Include="Compze.DbPool.MicrosoftSql" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DbPool_MicrosoftSql)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.DbPool.MicrosoftSql\Compze.DbPool.MicrosoftSql.csproj" />
+  </ItemGroup>
+  <!-- Compze.DbPool.MySql — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DbPool_MySql)' == 'true'">
+    <PackageReference Include="Compze.DbPool.MySql" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DbPool_MySql)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.DbPool.MySql\Compze.DbPool.MySql.csproj" />
+  </ItemGroup>
+  <!-- Compze.DbPool.PostgreSql — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DbPool_PostgreSql)' == 'true'">
+    <PackageReference Include="Compze.DbPool.PostgreSql" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DbPool_PostgreSql)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.DbPool.PostgreSql\Compze.DbPool.PostgreSql.csproj" />
+  </ItemGroup>
+  <!-- Compze.DbPool.Sqlite — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DbPool_Sqlite)' == 'true'">
+    <PackageReference Include="Compze.DbPool.Sqlite" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DbPool_Sqlite)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.DbPool.Sqlite\Compze.DbPool.Sqlite.csproj" />
+  </ItemGroup>
 </Project>
