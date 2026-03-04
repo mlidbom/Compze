@@ -1,30 +1,44 @@
 # Compze.Contracts
 
-Fluent, chainable runtime assertions for preconditions, invariants, and state checks — with `CallerArgumentExpression` support for clear failure messages.
+ Fluent, chainable runtime assertions for preconditions, invariants, and state checks — with `CallerArgumentExpression` support for clear failure messages.
 
-### Assertion types each supporting every assert method
 
-| Entry point | Throws on failure | Use for |
-|---|---|---|
-| `Contract.Argument` | `ArgumentAssertionFailedException` / `ArgumentNullException` | Method parameter validation |
-| `Contract.State` | `StateAssertionFailedException` | Enforcing state requirements for the requested operation|
-| `Contract.Invariant` | `InvariantAssertionFailedException` | Class invariant enforcement |
+### Quick start
 
-All entry points return a `ContractAsserter` that supports fluent chaining.
+#### Fluent with static use. No wasted lines. The contract reads like part of the method declaration.
+```csharp
+void Transfer(Account from, Account to, decimal amount) => 
+    Argument.NotNull2(from, to).Assert(amount > 0).State.NotDisposed(_disposed, this)._then(() => {
+        //method implementation here
+    });
+```
+**Note, the _then method is from Compze.Fluent. You may want to check it out.**
 
-### Assertion methods
-
-| Method | Description |
-|---|---|
-| `.Assert(condition, ...)` | Boolean checks |
-| `.Assert(condition, messageFactory)` | Boolean check with lazy message creation on failure |
-| `.NotNull(value)` | Null check (also `NotNull2`, `NotNull3`, `NotNull4` for multiple values) |
-| `.NotDefault(value)` | Default-value check for structs (also 2/3/4-value overloads) |
-| `.NotNullOrEmpty(string)` | Rejects null or empty strings |
-| `.NotNullEmptyOrWhitespace(string)` | Rejects null, empty, or whitespace-only strings |
-| `.NotDisposed(isDisposed, instance)` | Throws `ObjectDisposedException` |
+#### Classic style. Pretty verbose in our opinion
+```csharp
+void Transfer(Account from, Account to, decimal amount)
+{
+    Contract.Argument.NotNull2(from, to);
+    Contract.Argument.Assert(amount > 0);
+    Contract.State.NotDisposed(_disposed, this);
+    //method implementation here
+}
+```
 
 **All the assertion methods that do not take an explicit separate argument for the message use `CallerArgumentExpression` to ensure that you can know exactly what assertion failed**
+
+#### Mixing it up with Compze.Fluent
+```csharp
+public OperationResult SomeBusinessMethod(Guid userId) =>
+    userId
+    ._assert().NotDefault()
+    ._(LoadFromDatabase)
+    ._tap(it => { /*log*/ })
+    ._assert(MayExecuteThisOperation)
+    ._(ActualOperationLogic)
+    ._tap(it => { /*log*/ })
+    ._assert(ResultIsWhatWeExpected);
+```
 
 ### Pipeline assertions
 
@@ -44,40 +58,6 @@ Pipeline overloads:
 
 **All the assertion methods that do not take an explicit separate argument for the message use `CallerArgumentExpression` to ensure that you can know exactly what assertion failed**
 
-### Quick start
-
-#### Fluent with static use. No wasted lines. The contract reads like part of the method declaration.
-```csharp
-void Transfer(Account from, Account to, decimal amount) => 
-    Contract.Argument.NotNull2(from, to).Assert(amount > 0).State.NotDisposed(_disposed, this)._then(() => {
-        //method implementation here
-    });
-```
-**Note, the _then method is from Compze.Fluent. You may want to check it out.**
-
-#### Classic style. Pretty verbose in our opinion
-```csharp
-void Transfer(Account from, Account to, decimal amount)
-{
-    Contract.Argument.NotNull2(from, to);
-    Contract.Argument.Assert(amount > 0);
-    Contract.State.NotDisposed(_disposed, this);
-    //method implementation here
-}
-```
-
-#### Mixing it up with Compze.Fluent
-```csharp
-public OperationResult SomeBusinessMethod(Guid userId) =>
-    userId
-    ._assert().NotDefault()
-    ._(LoadFromDatabase)
-    ._tap(it => { /*log*/ })
-    ._assert(MayExecuteThisOperation)
-    ._(ActualOperationLogic)
-    ._tap(it => { /*log*/ })
-    ._assert(ResultIsWhatWeExpected);
-```
 
 ### Custom assertion extensions
 
