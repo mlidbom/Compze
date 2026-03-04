@@ -1,6 +1,6 @@
 namespace Compze.Unit;
 
-public static class ActionFuncConverter
+public static class UnitConvert
 {
    //<action-to-func>
 
@@ -12,10 +12,10 @@ public static class ActionFuncConverter
       };
 
    public static Func<TParam, Unit> ToFunc<TParam>(this Action<TParam> @this) =>
-      param => Unit.From(() => @this(param));
+      param => Unit.Invoke(() => @this(param));
 
    public static Func<TParam, TParam2, Unit> ToFunc<TParam, TParam2>(this Action<TParam, TParam2> @this) =>
-      (param, param2) => Unit.From(() => @this(param, param2));
+      (param, param2) => Unit.Invoke(() => @this(param, param2));
 
    //</action-to-func>
 

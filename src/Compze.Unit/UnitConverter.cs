@@ -8,10 +8,10 @@ public static class UnitConverterExtensions
    {
       ///<summary>Executes the action and returns Unit
       /// <code>
-      ///   Unit Method() => Unit.From(() => AVoidMethod())
+      ///   Unit Method() => Unit.Invoke(() => AVoidMethod())
       /// </code>
       /// </summary>
-      public static Unit From(Action action)
+      public static Unit Invoke(Action action)
       {
          action();
          return Unit.Value;

@@ -6,9 +6,9 @@ namespace Compze.Unit;
 ///<summary>The functional programming unit concept.
 /// Unifies <see cref="Func{TResult}"/> and <see cref="Action"/>.
 /// Simply return Unit.Value from methods with no return value instead of declaring them as void,
-/// or use <see cref="UnitConverterExtensions.From"/> to avoid that pesky extra line:
+/// or use <see cref="UnitConverterExtensions.Invoke"/> to avoid that pesky extra line:
 /// <code>
-///   public Unit DoSomething() => Unit.From(() =>
+///   public Unit DoSomething() => Unit.Invoke(() =>
 ///   {
 ///      //Do something here
 ///   });

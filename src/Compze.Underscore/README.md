@@ -36,21 +36,23 @@ Primary methods:
 
 ## The Unit type
 
-### Like void but without splitting `Action<T>` from `Func<T,T2>`
-In .NET `Action<T>` and `Func<T, T2>` are not compatible, resulting in tons of code needing one version for action and one for Func. Unit is the solution. Methods with no meaningful return value return unit removing incompatibility since unit is a value, a single uniform value. 
+> `Unit` is provided by the [Compze.Unit](https://www.nuget.org/packages/Compze.Unit) package.
 
-### Painlessly convert void methods to unit returning methods that will participate frictionlessly in piping:
+### Like void but without splitting `Action<T>` from `Func<T,T2>`
+In .NET `Action<T>` and `Func<T, T2>` are not compatible, resulting in tons of code needing one version for action and one for Func. Unit is the solution. Methods with no meaningful return value return Unit removing incompatibility since Unit is a value, a single uniform value. 
+
+### Painlessly convert void methods to Unit returning methods that will participate frictionlessly in piping:
 ```csharp
-public unit Log(string message) => unit.From(() => Console.WriteLine(message));
+public Unit Log(string message) => Unit.Invoke(() => Console.WriteLine(message));
 ```
 
-### Convert between `Action<T>` and `Func<T,unit>`
+### Convert between `Action<T>` and `Func<T,Unit>`
 ```csharp
 Action anAction = SomeVoidMethod;
-Func<unit> aUnitFunc = anAction.AsFunc();
-var anotherAction = aUnitFunc.AsAction(); 
+Func<Unit> aUnitFunc = anAction.ToFunc();
+var anotherAction = aUnitFunc.ToAction(); 
 
-var something = AMethodTakingAFunc(unit.Func(SomeVoidMethod));
+var something = AMethodTakingAFunc(Unit.Func(SomeVoidMethod));
 ```
 
 

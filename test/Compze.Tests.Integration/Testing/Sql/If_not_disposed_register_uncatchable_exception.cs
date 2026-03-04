@@ -17,7 +17,7 @@ public class If_not_disposed_ : DbPoolTestBase
       StrictlyManagedResources.SuppressLoggingWhileExecuting(() =>
                                                                 UncatchableExceptionsGatherer.TestingMonitor.Locked(() =>
                                                                 {
-                                                                   unit.From(() =>
+                                                                   unit.Invoke(() =>
                                                                    {
                                                                       _ = CreateServiceLocator().Resolve<DbPool>();
                                                                    });

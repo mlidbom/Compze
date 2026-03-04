@@ -92,7 +92,7 @@ IDisposable TakeReadLock(TimeSpan? timeout = null);
 IDisposable TakeUpdateLock(TimeSpan? timeout = null);
 
 // Default — delegates Action overload to Func overload
-unit Read(Action action, TimeSpan? timeout = null) => Read(action.AsFunc(), timeout);
+unit Read(Action action, TimeSpan? timeout = null) => Read(action.ToFunc(), timeout);
 
 // Default — delegates to abstract TakeReadLock
 TReturn Read<TReturn>(Func<TReturn> func, TimeSpan? timeout = null)
