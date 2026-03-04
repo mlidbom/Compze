@@ -1,58 +1,70 @@
 # Compze.Unit
 
-**The functional programming `Unit` type for .NET — unifies `Action` and `Func` so void methods participate fully in generic pipelines.**
+**Plugs the whole in the BCL where Unit should be.**
 
-## The problem
+Functional programminc languages do not have void. Just Unit as the value returned by method with no meaningful thing to return.
 
-In .NET `Action<T>` and `Func<T, TResult>` are not compatible, resulting in tons of code needing one version for Action and one for Func. `Unit` is the solution. Methods with no meaningful return value return `Unit` removing the incompatibility since `Unit` is a value — a single uniform value.
+If C# was designed today, there's good reason to believe that void would never have existed. Because `void` creates a gaping rift in the type system. You can't use it as a generic argument, return it from a `Func<T>`, or store it in a variable. This forces every generic API to maintain parallel versions — one for `Func<T, TResult>`, one for `Action<T>`.
 
-## Painlessly convert void methods to Unit-returning methods
+Now .NET can hardly remove void at this point, but the BCL certainly could include a Unit type. Sadly in spite of years and years of discussion, a unit type has still not made it into the BCL.
+
+If you want a Unit type the current choices are to roll your own, or take a dependency on some large library that happens to include a Unit type.
+
+This tiny library's whole purpose is to change that.
+
+## Usage
+
+### Return `Unit` instead of `void`
 
 ```csharp
+// Before — can't be used with Func<T, TResult> APIs
+public void Log(string message) => Console.WriteLine(message);
+
+// After — works everywhere Func<T, TResult> is expected
 public Unit Log(string message) => Unit.Invoke(() => Console.WriteLine(message));
 ```
 
-## Convert between `Action` and `Func<Unit>`
-
-Extension methods on `Action` and `Func<Unit>` (and their async equivalents) make conversions trivial:
+### Convert between `Action` and `Func<Unit>`
 
 ```csharp
-Action anAction = SomeVoidMethod;
-Func<Unit> aUnitFunc = anAction.ToFunc();
-Action backToAction = aUnitFunc.ToAction();
+Action<string> voidMethod = Console.WriteLine;
+
+// Action → Func
+Func<string, Unit> funcVersion = voidMethod.ToFunc();
+
+// Func → Action
+Action<string> backToAction = funcVersion.ToAction();
 ```
 
-Async conversions follow the same pattern:
+### Async conversions
 
 ```csharp
-Func<Task> asyncAction = SomeAsyncMethod;
-Func<Task<Unit>> asyncFunc = asyncAction.ToAsyncFunc();
-Func<Task> backToAsyncAction = asyncFunc.ToAsyncAction();
+Func<string, Task> asyncVoid = WriteToFileAsync;
+
+// Func<Task> → Func<Task<Unit>>
+Func<string, Task<Unit>> asyncFunc = asyncVoid.ToAsyncFunc();
+
+// Func<Task<Unit>> → Func<Task>
+Func<string, Task> backToAsyncVoid = asyncFunc.ToAsyncAction();
 ```
 
-All conversions support 0, 1, and 2 parameter arities.
+### Wrap an action as a `Unit`-returning expression
 
-## API summary
+```csharp
+// Sync
+Unit result = Unit.Invoke(() => Console.WriteLine("done"));
 
-| Extension method | Conversion |
-|---|---|
-| `Action.ToFunc()` | `Action` → `Func<Unit>` |
-| `Func<Unit>.ToAction()` | `Func<Unit>` → `Action` |
-| `Func<Task>.ToAsyncFunc()` | `Func<Task>` → `Func<Task<Unit>>` |
-| `Func<Task<Unit>>.ToAsyncAction()` | `Func<Task<Unit>>` → `Func<Task>` |
-
-| Static method | Purpose |
-|---|---|
-| `Unit.Invoke(action)` | Execute an `Action` and return `Unit` |
-| `Unit.InvokeAsync(asyncAction)` | Await a `Func<Task>` and return `Unit` |
+// Async
+Task<Unit> asyncResult = Unit.InvokeAsync(() => SomeAsyncMethod());
+```
 
 ## Related packages
 
 | Package | Description |
 |---------|-------------|
-| [Compze.Underscore](https://www.nuget.org/packages/Compze.Underscore) | Pipe forward operator and friends — `Unit` enables void methods to participate in pipelines |
+| [Compze.Underscore](https://www.nuget.org/packages/Compze.Underscore) | Pipe-forward operator and fluent chaining — `Unit` enables void methods to participate in pipelines |
 | [Compze.Contracts](https://www.nuget.org/packages/Compze.Contracts) | Design-by-contract assertions |
 
 ## License
 
-Apache-2.0
+[Apache-2.0](../../LICENSE.txt)
