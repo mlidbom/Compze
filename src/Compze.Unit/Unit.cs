@@ -17,7 +17,7 @@ namespace Compze.Unit;
 /// </summary>
 #pragma warning disable CA1724 //Same name as the namespace
 [Serializable]
-public readonly partial struct Unit : IEquatable<Unit>, IComparable<Unit>
+public readonly partial struct Unit : IEquatable<Unit>, IComparable<Unit>, IComparable
 {
    public static readonly Unit Value = default;
 
@@ -32,6 +32,13 @@ public readonly partial struct Unit : IEquatable<Unit>, IComparable<Unit>
    [Pure] public override int GetHashCode() => 0;
 
    [Pure] public int CompareTo(Unit _) => 0;
+
+   [Pure] public int CompareTo(object? obj) => obj switch
+   {
+      null => 1,
+      Unit => 0,
+      _    => throw new ArgumentException($"Object must be of type {nameof(Unit)}")
+   };
 
    [Pure] public static implicit operator Unit(ValueTuple _) => Value;
    [Pure] public static implicit operator ValueTuple(Unit _) => default;
