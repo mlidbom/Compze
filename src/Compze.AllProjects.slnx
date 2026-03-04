@@ -56,6 +56,10 @@
     <Project Path="../test/Compze.Unit.Specifications/Compze.Unit.Specifications.csproj" />
     <Project Path="Compze.Unit/Compze.Unit.csproj" />
   </Folder>
+  <Folder Name="/Compze.SystemCE/">
+    <Project Path="Compze.SystemCE.Internal/Compze.SystemCE.Internal.csproj" />
+    <Project Path="Compze.Utilities.SystemCE/Compze.Utilities.SystemCE.csproj" />
+  </Folder>
   <Folder Name="/Compze.Threading/">
     <Project Path="../test/Compze.Threading.Specifications/Compze.Threading.Specifications.csproj" />
     <Project Path="../test/Compze.Threading.Testing.Specifications/Compze.Threading.Testing.Specifications.csproj" />
@@ -84,13 +88,11 @@
     <Project Path="Compze.Tessaging.Teventive.TeventStore/Compze.Tessaging.Teventive.TeventStore.csproj" />
   </Folder>
   <Folder Name="/Compze/Utilities/">
-    <Project Path="Compze.SystemCE.Internal/Compze.SystemCE.Internal.csproj" />
     <Project Path="Compze.Utilities.DependencyInjection.Microsoft/Compze.Utilities.DependencyInjection.Microsoft.csproj" />
     <Project Path="Compze.Utilities.DependencyInjection.SimpleInjector/Compze.Utilities.DependencyInjection.SimpleInjector.csproj" />
     <Project Path="Compze.Utilities.DependencyInjection/Compze.Utilities.DependencyInjection.csproj" />
     <Project Path="Compze.Utilities.Logging.Serilog/Compze.Utilities.Logging.Serilog.csproj" />
     <Project Path="Compze.Utilities.Logging/Compze.Utilities.Logging.csproj" />
-    <Project Path="Compze.Utilities.SystemCE/Compze.Utilities.SystemCE.csproj" />
     <Project Path="Compze.Utilities.Testing.DbPool.MicrosoftSql/Compze.Utilities.Testing.DbPool.MicrosoftSql.csproj" />
     <Project Path="Compze.Utilities.Testing.DbPool.MySql/Compze.Utilities.Testing.DbPool.MySql.csproj" />
     <Project Path="Compze.Utilities.Testing.DbPool.PostgreSql/Compze.Utilities.Testing.DbPool.PostgreSql.csproj" />
