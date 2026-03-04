@@ -2,8 +2,8 @@
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
-    <Version>0.2.0-alpha.1</Version>
-    <Description>Microsoft SQL Server support for the Compze framework.</Description>
+    <Version>0.2.0-alpha.2</Version>
+     <Description>For Compze internal use only. Do not take a direct dependency on this package</Description>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.3" />

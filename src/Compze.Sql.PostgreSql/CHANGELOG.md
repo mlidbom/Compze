@@ -4,6 +4,10 @@ All notable changes to Compze.Sql.PostgreSql will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.2.0-alpha.2
+
+- README update.
+
 ## 0.2.0-alpha.1
 
 Refactoring.
