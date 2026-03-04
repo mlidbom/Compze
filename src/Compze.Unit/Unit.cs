@@ -1,3 +1,4 @@
+using System.Diagnostics.Contracts;
 
 // ReSharper disable UnusedParameter.Global
 
@@ -20,15 +21,15 @@ public readonly partial struct Unit : IEquatable<Unit>, IComparable<Unit>
 {
    public static readonly Unit Value = default;
 
-   public override string ToString() => "()";
+   [Pure] public override string ToString() => "()";
 
-   public bool Equals(Unit _) => true;
-   public override bool Equals(object? obj) => obj is Unit;
+   [Pure] public bool Equals(Unit _) => true;
+   [Pure] public override bool Equals(object? obj) => obj is Unit;
 
-   public static bool operator ==(Unit _, Unit __) => true;
-   public static bool operator !=(Unit _, Unit __) => false;
+   [Pure] public static bool operator ==(Unit _, Unit __) => true;
+   [Pure] public static bool operator !=(Unit _, Unit __) => false;
 
-   public override int GetHashCode() => 0;
+   [Pure] public override int GetHashCode() => 0;
 
-   public int CompareTo(Unit _) => 0;
+   [Pure] public int CompareTo(Unit _) => 0;
 }
