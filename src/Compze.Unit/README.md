@@ -1,8 +1,8 @@
 # Compze.Unit
 
-**Plugs the whole in the BCL where Unit should be.**
+**Plugs the hole in the BCL where Unit should be.**
 
-Functional programminc languages do not have void. Just Unit as the value returned by method with no meaningful thing to return.
+Functional programming languages do not have void. Just Unit as the value returned by methods with no meaningful thing to return.
 
 If C# was designed today, there's good reason to believe that void would never have existed. Because `void` creates a gaping rift in the type system. You can't use it as a generic argument, return it from a `Func<T>`, or store it in a variable. This forces every generic API to maintain parallel versions — one for `Func<T, TResult>`, one for `Action<T>`.
 
@@ -62,7 +62,7 @@ Task<Unit> asyncResult = Unit.InvokeAsync(() => SomeAsyncMethod());
 
 | Package | Description |
 |---------|-------------|
-| [Compze.Underscore](https://www.nuget.org/packages/Compze.Underscore) | Pipe-forward operator and fluent chaining — `Unit` enables void methods to participate in pipelines |
+| [Compze.Underscore](https://www.nuget.org/packages/Compze.Underscore) | Code that reads the way you would describe the algorithm in words. Powered by the pipe forward operator and friends. |
 | [Compze.Contracts](https://www.nuget.org/packages/Compze.Contracts) | Design-by-contract assertions |
 
 ## License
