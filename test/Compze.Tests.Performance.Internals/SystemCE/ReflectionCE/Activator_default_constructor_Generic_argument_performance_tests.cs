@@ -4,7 +4,7 @@ using Compze.Tests.Infrastructure;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
 using Compze.Must;
-using Compze.xUnit.BDD;
+using Compze.xUnitBDD;
 using JetBrains.Annotations;
 
 #pragma warning disable CA1806 // Do not ignore method results

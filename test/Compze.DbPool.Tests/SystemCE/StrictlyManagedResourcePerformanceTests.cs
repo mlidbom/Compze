@@ -2,7 +2,7 @@ using Compze.DbPool.SystemCE;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Performance;
 using Compze.Tests.Infrastructure;
-using Compze.xUnit.BDD;
+using Compze.xUnitBDD;
 
 // ReSharper disable StringLiteralTypo
 

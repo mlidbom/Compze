@@ -1,5 +1,5 @@
 using Compze.Must;
-using Compze.xUnit.BDD;
+using Compze.xUnitBDD;
 // ReSharper disable PreferConcreteValueOverDefault
 
 namespace Compze.Contracts.Specifications.AssertionMethods.NotDefault;

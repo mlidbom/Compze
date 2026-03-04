@@ -1,6 +1,6 @@
 using Compze.Contracts.Exceptions;
 using Compze.Must;
-using Compze.xUnit.BDD;
+using Compze.xUnitBDD;
 using static Compze.Must.MustActions;
 // ReSharper disable PreferConcreteValueOverDefault
 

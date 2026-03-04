@@ -3,7 +3,7 @@ using Compze.Tests.Infrastructure;
 using Compze.Utilities.SystemCE;
 using Compze.Threading.ResourceAccess;
 using Compze.Must;
-using Compze.xUnit.BDD;
+using Compze.xUnitBDD;
 using Xunit;
 // ReSharper disable AccessToDisposedClosure
 

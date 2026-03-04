@@ -1,6 +1,6 @@
 using Compze.Utilities.SystemCE;
 using Compze.Must;
-using Compze.xUnit.BDD;
+using Compze.xUnitBDD;
 
 namespace Compze.Tests.CodePolicies;
 

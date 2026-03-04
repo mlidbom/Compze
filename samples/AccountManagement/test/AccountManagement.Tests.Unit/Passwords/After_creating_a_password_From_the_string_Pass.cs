@@ -1,7 +1,7 @@
 using AccountManagement.Domain.Passwords;
 using Compze.Tests.Infrastructure;
 using Compze.Must;
-using Compze.xUnit.BDD;
+using Compze.xUnitBDD;
 
 // ReSharper disable InconsistentNaming
 

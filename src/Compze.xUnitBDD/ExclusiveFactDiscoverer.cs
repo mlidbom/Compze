@@ -1,8 +1,9 @@
+using Compze.xUnit;
 using Xunit.Internal;
 using Xunit.Sdk;
 using Xunit.v3;
 
-namespace Compze.xUnit.BDD;
+namespace Compze.xUnitBDD;
 
 #pragma warning disable CA1812 // Avoid uninstantiated internal classes : This class is instantiated by xUnit via reflection.
 class ExclusiveFactDiscoverer : IXunitTestCaseDiscoverer

@@ -1,6 +1,6 @@
 using Compze.Core.Public;
 using Compze.Must;
-using Compze.xUnit.BDD;
+using Compze.xUnitBDD;
 // ReSharper disable SuspiciousTypeConversion.Global
 // ReSharper disable InconsistentNaming
 // ReSharper disable ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract

@@ -1,6 +1,6 @@
 using System.Globalization;
 using Compze.Must;
-using Compze.xUnit.BDD;
+using Compze.xUnitBDD;
 
 namespace Compze.Underscore.Specifications.Pipe;
 

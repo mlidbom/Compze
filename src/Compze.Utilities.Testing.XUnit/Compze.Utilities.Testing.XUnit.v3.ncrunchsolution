@@ -34,7 +34,7 @@
       <Value>UsePackageReference_Compze_Utilities_Logging = true</Value>
       <Value>UsePackageReference_Compze_Utilities_Logging_Serilog = true</Value>
       <Value>UsePackageReference_Compze_Utilities_SystemCE = true</Value>
-      <Value>UsePackageReference_Compze_xUnit_BDD = true</Value>
+      <Value>UsePackageReference_Compze_xUnitBDD = true</Value>
     </CustomBuildProperties>
   </Settings>
 </SolutionConfiguration>

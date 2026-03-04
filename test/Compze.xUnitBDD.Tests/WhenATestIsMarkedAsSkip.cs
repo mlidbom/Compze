@@ -1,4 +1,4 @@
-namespace Compze.xUnit.BDD.Tests;
+namespace Compze.xUnitBDD.Tests;
 
 public class WhenATestIsMarkedAsSkip
 {

@@ -3,7 +3,7 @@ using Compze.Core.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Tests.Infrastructure;
 using Compze.Must;
-using Compze.xUnit.BDD;
+using Compze.xUnitBDD;
 using JetBrains.Annotations;
 using static Compze.Must.MustActions;
 // ReSharper disable ClassNeverInstantiated.Local

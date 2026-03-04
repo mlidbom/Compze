@@ -1,4 +1,4 @@
-using Compze.xUnit.BDD;
+using Compze.xUnitBDD;
 
 namespace Compze.Tests.Unit.CQRS.Taggregates.InheritingTaggregate;
 

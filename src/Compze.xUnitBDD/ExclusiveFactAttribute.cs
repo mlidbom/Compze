@@ -1,16 +1,18 @@
 using System.Runtime.CompilerServices;
+using Xunit;
+using Xunit.v3;
 
 // ReSharper disable ExplicitCallerInfoArgument
 
-namespace Compze.xUnit.BDD;
+namespace Compze.xUnitBDD;
 
 /// <summary>
-/// Short alias for <see cref="ExclusiveFactAttribute"/>
 /// Exclusive Fact attribute.
 /// This attribute will run the test exclusively for the class that declares the test. It will not be executed when inheriting classes run their tests.
 /// This enables us to use BDD style nested classes with inheritance to achieve specification like testing, without an explosion of duplicated test runs.
 /// </summary>
-public sealed class XFAttribute(
+[XunitTestCaseDiscoverer(typeof(ExclusiveFactDiscoverer))]
+public class ExclusiveFactAttribute(
    [CallerFilePath] string? sourceFilePath = null,
-   [CallerLineNumber] int sourceLineNumber = -1)
-   : ExclusiveFactAttribute(sourceFilePath, sourceLineNumber);
+   [CallerLineNumber] int sourceLineNumber = -1) :
+   FactAttribute(sourceFilePath, sourceLineNumber);

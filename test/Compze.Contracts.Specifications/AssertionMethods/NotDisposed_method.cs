@@ -1,5 +1,5 @@
 using Compze.Must;
-using Compze.xUnit.BDD;
+using Compze.xUnitBDD;
 using static Compze.Must.MustActions;
 
 #pragma warning disable CA1052

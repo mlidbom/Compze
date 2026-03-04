@@ -5,7 +5,7 @@ using Compze.Threading.ResourceAccess;
 using Newtonsoft.Json;
 using Compze.Contracts;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
-using Compze.xUnit.BDD;
+using Compze.xUnitBDD;
 
 namespace Compze.Tests.Performance.Internals.SystemCE.ThreadingCE;
 

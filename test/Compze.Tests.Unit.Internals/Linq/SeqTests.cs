@@ -1,6 +1,6 @@
 using Compze.Tests.Infrastructure;
 using Compze.Must;
-using Compze.xUnit.BDD;
+using Compze.xUnitBDD;
 
 namespace Compze.Tests.Unit.Internals.Linq;
 

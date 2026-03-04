@@ -3,7 +3,7 @@ using Compze.Tessaging.Hosting.Testing.Performance;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.SystemCE;
 using Compze.Threading.ResourceAccess;
-using Compze.xUnit.BDD;
+using Compze.xUnitBDD;
 
 // ReSharper disable UnusedMethodReturnValue.Local
 // ReSharper disable MemberCanBeMadeStatic.Local

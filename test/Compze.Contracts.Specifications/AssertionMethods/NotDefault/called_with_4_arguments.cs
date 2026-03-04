@@ -1,5 +1,5 @@
 using Compze.Must;
-using Compze.xUnit.BDD;
+using Compze.xUnitBDD;
 // ReSharper disable PreferConcreteValueOverDefault
 
 #pragma warning disable CA1052

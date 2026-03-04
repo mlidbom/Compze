@@ -4,13 +4,13 @@
     <Nullable>enable</Nullable>
     <IsTestProject>false</IsTestProject>
     <Version>0.1.0-alpha.1</Version>
-    <Description>Internal shared xUnit extensibility foundation for the Compze framework. Not intended for direct consumption — depend on Compze.xUnit.BDD or Compze.xUnit.ComponentCombinations instead.</Description>
+    <Description>Internal shared xUnit extensibility foundation for the Compze framework. Not intended for direct consumption — depend on Compze.xUnitBDD or Compze.xUnit.ComponentCombinations instead.</Description>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="xunit.v3.extensibility.core" Version="3.1.0" />
   </ItemGroup>
   <ItemGroup>
-    <InternalsVisibleTo Include="Compze.xUnit.BDD" />
+    <InternalsVisibleTo Include="Compze.xUnitBDD" />
     <InternalsVisibleTo Include="Compze.xUnit.ComponentCombinations" />
     <InternalsVisibleTo Include="Compze.Utilities.Testing.XUnit" />
   </ItemGroup>

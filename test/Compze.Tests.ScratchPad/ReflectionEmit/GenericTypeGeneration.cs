@@ -7,7 +7,7 @@ using Compze.Utilities.SystemCE.ReflectionCE.EmitCE;
 using Compze.Threading;
 using Compze.Threading.ResourceAccess;
 using Compze.Must;
-using Compze.xUnit.BDD;
+using Compze.xUnitBDD;
 
 namespace Compze.Tests.ScratchPad.ReflectionEmit;
 

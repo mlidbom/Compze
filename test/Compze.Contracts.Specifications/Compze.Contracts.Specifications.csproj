@@ -40,11 +40,11 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_SystemCE)' != 'true'">
     <ProjectReference Include="..\..\src\Compze.Utilities.SystemCE\Compze.Utilities.SystemCE.csproj" />
   </ItemGroup>
-  <!-- Compze.xUnit.BDD — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_xUnit_BDD)' == 'true'">
-    <PackageReference Include="Compze.xUnit.BDD" Version="*-*" />
+  <!-- Compze.xUnitBDD — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_xUnitBDD)' == 'true'">
+    <PackageReference Include="Compze.xUnitBDD" Version="*-*" />
   </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_xUnit_BDD)' != 'true'">
-    <ProjectReference Include="..\..\src\Compze.xUnit.BDD\Compze.xUnit.BDD.csproj" />
+  <ItemGroup Condition="'$(UsePackageReference_Compze_xUnitBDD)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.xUnitBDD\Compze.xUnitBDD.csproj" />
   </ItemGroup>
 </Project>

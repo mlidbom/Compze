@@ -1,7 +1,7 @@
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
 using Compze.Must;
-using Compze.xUnit.BDD;
+using Compze.xUnitBDD;
 // ReSharper disable PreferConcreteValueOverDefault
 
 namespace Compze.Tests.Unit.Internals.SystemCE.CollectionsCE.GenericCE;

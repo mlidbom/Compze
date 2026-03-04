@@ -1,7 +1,7 @@
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.DependencyInjection.Microsoft;
 using Compze.Must;
-using Compze.xUnit.BDD;
+using Compze.xUnitBDD;
 
 namespace Compze.Tests.Integration.DependencyInjection;
 
