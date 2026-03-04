@@ -58,7 +58,7 @@ Specifications declared at a level assert the outcome of the accumulated context
 ### Complete example
 
 ```csharp
-using Compze.Utilities.Testing.Must;
+using Compze.Must;
 using Compze.Utilities.Testing.XUnit.BDD;
 
 namespace OurApplication.Specifications.UserAccounts.Registration;
@@ -180,7 +180,7 @@ collection.Must().HaveCount(5);
 ```
 
 ### Exception assertions
-Import `using static Compze.Utilities.Testing.Must.MustActions;` then:
+Import `using static Compze.Must.MustActions;` then:
 ```csharp
 Invoking(() => action()).Must().Throw<SomeException>();
 await InvokingAsync(async () => await asyncAction()).Must().ThrowAsync<SomeException>();
