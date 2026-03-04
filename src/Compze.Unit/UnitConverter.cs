@@ -6,17 +6,6 @@ public static class UnitConverterExtensions
 {
    extension(Unit)
    {
-      ///<summary>Executes the action and returns Unit
-      /// <code>
-      ///   Unit Method() => Unit.Invoke(() => AVoidMethod())
-      /// </code>
-      /// </summary>
-      public static Unit Invoke(Action action)
-      {
-         action();
-         return Unit.Value;
-      }
-
       ///<summary>Creates a <see cref="Func{TResult}"/> returning <see cref="Unit"/> from an <see cref="Action"/>.
       /// <code>
       ///   MethodThatTakesFunc(Unit.Func(anInstance.VoidMethod));

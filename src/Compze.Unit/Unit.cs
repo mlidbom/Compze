@@ -6,7 +6,7 @@ namespace Compze.Unit;
 ///<summary>The functional programming unit concept.
 /// Unifies <see cref="Func{TResult}"/> and <see cref="Action"/>.
 /// Simply return Unit.Value from methods with no return value instead of declaring them as void,
-/// or use <see cref="UnitConverterExtensions.Invoke"/> to avoid that pesky extra line:
+/// or use <see cref="Invoke"/> to avoid that pesky extra line:
 /// <code>
 ///   public Unit DoSomething() => Unit.Invoke(() =>
 ///   {
@@ -30,4 +30,15 @@ public readonly struct Unit : IEquatable<Unit>
    public static bool operator !=(Unit _, Unit __) => false;
 
    public override int GetHashCode() => 392576489;
+
+   ///<summary>Executes the action and returns Unit
+   /// <code>
+   ///   Unit Method() => Unit.Invoke(() => AVoidMethod())
+   /// </code>
+   /// </summary>
+   public static Unit Invoke(Action action)
+   {
+      action();
+      return Value;
+   }
 }
