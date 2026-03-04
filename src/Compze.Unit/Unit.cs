@@ -27,5 +27,5 @@ public readonly partial struct Unit : IEquatable<Unit>
    public static bool operator ==(Unit _, Unit __) => true;
    public static bool operator !=(Unit _, Unit __) => false;
 
-   public override int GetHashCode() => 392576489;
+   public override int GetHashCode() => 0;
 }
