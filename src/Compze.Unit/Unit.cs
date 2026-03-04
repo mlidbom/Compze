@@ -41,4 +41,15 @@ public readonly struct Unit : IEquatable<Unit>
       action();
       return Value;
    }
+
+   ///<summary>Awaits the async action and returns Unit
+   /// <code>
+   ///   Task&lt;Unit&gt; Method() => Unit.InvokeAsync(() => AnAsyncVoidMethod())
+   /// </code>
+   /// </summary>
+   public static async Task<Unit> InvokeAsync(Func<Task> action)
+   {
+      await action().ConfigureAwait(false);
+      return Value;
+   }
 }

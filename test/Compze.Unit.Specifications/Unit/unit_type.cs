@@ -43,6 +43,17 @@ public class unit_type
       }
    }
 
+   public class InvokeAsync_method
+   {
+      [XF] public async Task executes_the_async_action_and_returns_unit()
+      {
+         var executed = false;
+         var result = await unit.InvokeAsync(async () => { await Task.Yield(); executed = true; });
+         executed.Must().BeTrue();
+         result.Must().Be(unit.Value);
+      }
+   }
+
    public static class Func_method
    {
       public class with_zero_parameters
