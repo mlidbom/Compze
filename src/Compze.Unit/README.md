@@ -14,7 +14,7 @@ It consists of just the Unit struct, with a single possible value, and some stat
 
 ## Usage
 
-### Return `Unit` instead of `void`
+### Return `Unit` instead of declaring the method `void`
 
 ```csharp
 // Before — can't be used with Func<T, TResult> APIs
@@ -54,27 +54,23 @@ Action<string> backToAction2 = UnitConvert.ToAction((string it) => Unit.Value);
 Action<string> backToAction3 = stringFunc3.ToAction();
 ```
 
-### Async conversions
+### Convert between `Func<Task>` and `Func<Task<Unit>>`
 
 ```csharp
-Func<string, Task> asyncVoid = WriteToFileAsync;
+Func<string, Task> asyncAction = StringTakingAsyncAction;
 
 // Func<Task> → Func<Task<Unit>>
-Func<string, Task<Unit>> asyncFunc = asyncVoid.ToAsyncFunc();
+Func<string, Task<Unit>> asyncFunc1 = UnitConvert.ToAsyncFunc(StringTakingAsyncAction);
+Func<string, Task<Unit>> asyncFunc2 = UnitConvert.ToAsyncFunc((string it) => StringTakingAsyncAction(it));
+Func<string, Task<Unit>> asyncFunc3 = asyncAction.ToAsyncFunc();
+
 
 // Func<Task<Unit>> → Func<Task>
-Func<string, Task> backToAsyncVoid = asyncFunc.ToAsyncAction();
+Func<string, Task> backToAsyncAction1 = UnitConvert.ToAsyncAction(asyncFunc1);
+Func<string, Task> backToAsyncAction2 = UnitConvert.ToAsyncAction((string it) => Task.FromResult(Unit.Value));
+Func<string, Task> backToAsyncAction3 = asyncFunc3.ToAsyncAction();
 ```
 
-### Wrap an action as a `Unit`-returning expression
-
-```csharp
-// Sync
-Unit result = Unit.Invoke(() => Console.WriteLine("done"));
-
-// Async
-Task<Unit> asyncResult = Unit.InvokeAsync(() => SomeAsyncMethod());
-```
 
 ## Related packages
 
