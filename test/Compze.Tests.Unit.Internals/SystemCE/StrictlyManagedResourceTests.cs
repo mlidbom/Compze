@@ -17,7 +17,7 @@ public class StrictlyManagedResourceTests : UniversalTestBase
       StrictlyManagedResources.SuppressLoggingWhileExecuting(() =>
                                                                 UncatchableExceptionsGatherer.TestingMonitor.Locked(() =>
                                                                 {
-                                                                   unit.Invoke(() =>
+                                                                   UnitConvert.Invoke(() =>
                                                                    {
                                                                       _ = new StrictlyManagedResource<MyClass>();
                                                                    });

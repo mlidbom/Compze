@@ -37,7 +37,7 @@ public class unit_type
       [XF] public void executes_the_action_and_returns_unit()
       {
          var executed = false;
-         var result = unit.Invoke(() => executed = true);
+         var result = UnitConvert.Invoke((Action)(() => executed = true));
          executed.Must().BeTrue();
          result.Must().Be(unit.Value);
       }
