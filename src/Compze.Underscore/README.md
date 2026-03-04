@@ -34,28 +34,6 @@ Primary methods:
 > **Note:** The `_assert()` method used in the examples above comes from [Compze.Contracts](https://www.nuget.org/packages/Compze.Contracts) — you may want to check it out.
 
 
-## The Unit type
-
-> `Unit` is provided by the [Compze.Unit](https://www.nuget.org/packages/Compze.Unit) package.
-
-### Like void but without splitting `Action<T>` from `Func<T,T2>`
-In .NET `Action<T>` and `Func<T, T2>` are not compatible, resulting in tons of code needing one version for action and one for Func. Unit is the solution. Methods with no meaningful return value return Unit removing incompatibility since Unit is a value, a single uniform value. 
-
-### Painlessly convert void methods to Unit returning methods that will participate frictionlessly in piping:
-```csharp
-public Unit Log(string message) => Unit.Invoke(() => Console.WriteLine(message));
-```
-
-### Convert between `Action<T>` and `Func<T,Unit>`
-```csharp
-Action anAction = SomeVoidMethod;
-Func<Unit> aUnitFunc = anAction.ToFunc();
-var anotherAction = aUnitFunc.ToAction(); 
-
-var something = AMethodTakingAFunc(Unit.Func(SomeVoidMethod));
-```
-
-
 ## What's with the naming?
 
 These extensions apply to *every* type, so name collisions and polluting auto-complete lists are a very real concern. _camelCase provides:
@@ -66,12 +44,11 @@ These extensions apply to *every* type, so name collisions and polluting auto-co
 
 `._(` as the pipeline operator has the same advantages and keeps something you will be using constantly as short as possible.
 
-Lower case `unit` is sort of a wish for the future and the way we think it should be. We hope our unit will eventually be replaced by a language keyword and built in type.
-
 ## Related packages
 
 | Package | Description |
 |---------|-------------|
+| [Compze.Unit](https://www.nuget.org/packages/Compze.Unit) | The `Unit` type — unifies `Action` and `Func`, enabling void methods to participate in pipelines |
 | [Compze.Contracts](https://www.nuget.org/packages/Compze.Contracts) | Design-by-contract assertions, including the `_assert()` pipeline operator |
 
 ## License
