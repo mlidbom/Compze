@@ -13,8 +13,6 @@ namespace Compze.Unit;
 ///      //Do something here
 ///   });
 /// </code>
-/// We personally prefer using a global using alias that maps this to the lowercase name:
-/// <c>global using unit = Compze.Unit;</c>
 /// </summary>
 #pragma warning disable CA1724 //Same name as the namespace
 public readonly partial struct Unit : IEquatable<Unit>
