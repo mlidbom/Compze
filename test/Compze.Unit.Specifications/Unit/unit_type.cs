@@ -123,4 +123,86 @@ public class unit_type
          }
       }
    }
+
+   public static class Action_method
+   {
+      public class with_zero_parameters
+      {
+         [XF] public void wraps_the_Func_returning_unit_into_an_Action()
+         {
+            var executed = false;
+            Func<unit> func = () => { executed = true; return unit.Value; };
+            var action = unit.Action(func);
+            action();
+            executed.Must().BeTrue();
+         }
+      }
+
+      public class with_one_parameter
+      {
+         [XF] public void passes_the_parameter_to_the_wrapped_Func()
+         {
+            var captured = "";
+            Func<string, unit> func = s => { captured = s; return unit.Value; };
+            var action = unit.Action<string>(func);
+            action("hello");
+            captured.Must().Be("hello");
+         }
+      }
+
+      public class with_two_parameters
+      {
+         [XF] public void passes_both_parameters_to_the_wrapped_Func()
+         {
+            var capturedA = "";
+            var capturedB = 0;
+            Func<string, int, unit> func = (s, i) => { capturedA = s; capturedB = i; return unit.Value; };
+            var action = unit.Action<string, int>(func);
+            action("hello", 42);
+            capturedA.Must().Be("hello");
+            capturedB.Must().Be(42);
+         }
+      }
+   }
+
+   public static class AsyncAction_method
+   {
+      public class with_zero_parameters
+      {
+         [XF] public async Task wraps_the_async_Func_returning_Task_of_unit_into_a_Func_returning_Task()
+         {
+            var executed = false;
+            Func<Task<unit>> func = async () => { await Task.Yield(); executed = true; return unit.Value; };
+            var action = unit.AsyncAction(func);
+            await action();
+            executed.Must().BeTrue();
+         }
+      }
+
+      public class with_one_parameter
+      {
+         [XF] public async Task passes_the_parameter_to_the_wrapped_async_Func()
+         {
+            var captured = "";
+            Func<string, Task<unit>> func = async s => { await Task.Yield(); captured = s; return unit.Value; };
+            var action = unit.AsyncAction<string>(func);
+            await action("hello");
+            captured.Must().Be("hello");
+         }
+      }
+
+      public class with_two_parameters
+      {
+         [XF] public async Task passes_both_parameters_to_the_wrapped_async_Func()
+         {
+            var capturedA = "";
+            var capturedB = 0;
+            Func<string, int, Task<unit>> func = async (s, i) => { await Task.Yield(); capturedA = s; capturedB = i; return unit.Value; };
+            var action = unit.AsyncAction<string, int>(func);
+            await action("hello", 42);
+            capturedA.Must().Be("hello");
+            capturedB.Must().Be(42);
+         }
+      }
+   }
 }

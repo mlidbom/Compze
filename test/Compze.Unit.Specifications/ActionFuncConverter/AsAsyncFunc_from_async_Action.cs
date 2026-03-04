@@ -5,7 +5,7 @@ using Compze.Utilities.Testing.XUnit.BDD;
 
 namespace Compze.UnitSpecifications.ActionFuncConverter;
 
-public static class AsFunc_from_async_Action
+public static class AsAsyncFunc_from_async_Action
 {
    public class with_zero_parameters
    {

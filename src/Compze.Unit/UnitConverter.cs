@@ -35,12 +35,38 @@ public static class UnitConverterExtensions
       ///   MethodThatTakesAsyncFunc(Unit.AsyncFunc(anInstance.TaskReturningMethod));
       /// </code>
       /// </summary>
-      public static Func<Task<Unit>> AsyncFunc(Func<Task> action) => action.ToFunc();
+      public static Func<Task<Unit>> AsyncFunc(Func<Task> action) => action.ToAsyncFunc();
 
       ///<inheritdoc cref="AsyncFunc(System.Func{System.Threading.Tasks.Task})"/>
-      public static Func<TParam, Task<Unit>> AsyncFunc<TParam>(Func<TParam, Task> action) => action.ToFunc();
+      public static Func<TParam, Task<Unit>> AsyncFunc<TParam>(Func<TParam, Task> action) => action.ToAsyncFunc();
 
       ///<inheritdoc cref="AsyncFunc(System.Func{System.Threading.Tasks.Task})"/>
-      public static Func<TParam, TParam2, Task<Unit>> AsyncFunc<TParam, TParam2>(Func<TParam, TParam2, Task> action) => action.ToFunc();
+      public static Func<TParam, TParam2, Task<Unit>> AsyncFunc<TParam, TParam2>(Func<TParam, TParam2, Task> action) => action.ToAsyncFunc();
+
+      ///<summary>Creates an <see cref="Action"/> from a <see cref="Func{TResult}"/> returning <see cref="Unit"/>.
+      /// <code>
+      ///   MethodThatTakesAction(Unit.Action(anInstance.FuncReturningUnit));
+      /// </code>
+      /// </summary>
+      public static Action Action(Func<Unit> func) => func.ToAction();
+
+      ///<inheritdoc cref="Action(System.Func{Unit})"/>
+      public static Action<TParam> Action<TParam>(Func<TParam, Unit> func) => func.ToAction();
+
+      ///<inheritdoc cref="Action(System.Func{Unit})"/>
+      public static Action<TParam, TParam2> Action<TParam, TParam2>(Func<TParam, TParam2, Unit> func) => func.ToAction();
+
+      ///<summary>Creates a <see cref="Func{TResult}"/> returning <see cref="Task"/> from a <see cref="Func{TResult}"/> returning <see cref="Task"/> of <see cref="Unit"/>.
+      /// <code>
+      ///   MethodThatTakesAsyncAction(Unit.AsyncAction(anInstance.AsyncFuncReturningTaskOfUnit));
+      /// </code>
+      /// </summary>
+      public static Func<Task> AsyncAction(Func<Task<Unit>> func) => func.ToAsyncAction();
+
+      ///<inheritdoc cref="AsyncAction(System.Func{System.Threading.Tasks.Task{Unit}})"/>
+      public static Func<TParam, Task> AsyncAction<TParam>(Func<TParam, Task<Unit>> func) => func.ToAsyncAction();
+
+      ///<inheritdoc cref="AsyncAction(System.Func{System.Threading.Tasks.Task{Unit}})"/>
+      public static Func<TParam, TParam2, Task> AsyncAction<TParam, TParam2>(Func<TParam, TParam2, Task<Unit>> func) => func.ToAsyncAction();
    }
 }

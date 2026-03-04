@@ -37,7 +37,7 @@ public interface IAsyncLockCE : IDisposable
 
       public void SetTimeToWaitForStackTrace(WaitTimeout timeToWaitForStackTrace) => _stackTraceFetchTimeout = timeToWaitForStackTrace;
 
-      public async Task<unit> LockedAsync(Func<Task> lockedAction) => await LockedAsync(lockedAction.ToFunc()).caf();
+      public async Task<unit> LockedAsync(Func<Task> lockedAction) => await LockedAsync(lockedAction.ToAsyncFunc()).caf();
 
       public async Task<TReturn> LockedAsync<TReturn>(Func<Task<TReturn>> lockedAction)
       {
