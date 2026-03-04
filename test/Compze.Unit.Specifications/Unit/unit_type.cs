@@ -1,5 +1,6 @@
 using Compze.Utilities.Testing.Must;
 using Compze.Utilities.Testing.XUnit.BDD;
+// ReSharper disable InvokeAsExtensionMember
 #pragma warning disable IDE0039
 #pragma warning disable CS8981
 
