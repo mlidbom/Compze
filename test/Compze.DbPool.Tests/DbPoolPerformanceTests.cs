@@ -6,9 +6,7 @@ using Compze.Sql.Sqlite;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Performance;
 using Compze.Utilities.Logging;
-using Compze.Utilities.SystemCE;
 using Compze.Tests.Infrastructure.XUnit;
-using Compze.DbPool;
 
 namespace Compze.DbPool.Tests;
 

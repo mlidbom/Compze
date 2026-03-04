@@ -1,6 +1,5 @@
 using Compze.DbPool.SystemCE;
 using Compze.Tests.Infrastructure.XUnit;
-using Compze.Utilities.SystemCE;
 using Compze.Utilities.Testing.Must;
 using Xunit;
 using static Compze.Utilities.Testing.Must.MustActions;
@@ -17,7 +16,7 @@ public class If_not_disposed_ : DbPoolTestBase
                                                                 {
                                                                    unit.Invoke(() =>
                                                                    {
-                                                                      _ = CreateServiceLocator().Resolve<global::Compze.DbPool.DbPool>();
+                                                                      _ = CreateServiceLocator().Resolve<DbPool>();
                                                                    });
 
                                                                    Invoking(UncatchableExceptionsGatherer.ForceFullGcAllGenerationsAndWaitForFinalizersConsumeAndThrowAnyGatheredExceptions)

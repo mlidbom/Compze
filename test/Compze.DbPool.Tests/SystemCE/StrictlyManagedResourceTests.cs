@@ -1,12 +1,12 @@
-using Compze.Tests.Infrastructure;
 using Compze.DbPool.SystemCE;
+using Compze.Tests.Infrastructure;
 using Compze.Utilities.Testing.Must;
 using Compze.Utilities.Testing.XUnit.BDD;
 using JetBrains.Annotations;
 using Xunit;
 using static Compze.Utilities.Testing.Must.MustActions;
 
-namespace Compze.Tests.Unit.Internals.SystemCE;
+namespace Compze.DbPool.Tests.SystemCE;
 
 [Collection(nameof(NonParallelCollection))]
 public class StrictlyManagedResourceTests : UniversalTestBase
