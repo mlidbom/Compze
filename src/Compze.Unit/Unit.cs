@@ -29,11 +29,13 @@ public readonly partial struct Unit : IEquatable<Unit>, IComparable<Unit>, IComp
 
    ///<summary>Always returns <see langword="true"/>. All <see cref="Unit"/> values are equal.</summary>
    [Pure] public bool Equals(Unit _) => true;
+
    ///<summary>Returns <see langword="true"/> if <paramref name="obj"/> is a <see cref="Unit"/>; otherwise <see langword="false"/>.</summary>
    [Pure] public override bool Equals(object? obj) => obj is Unit;
 
    ///<summary>Always returns <see langword="true"/>. All <see cref="Unit"/> values are equal.</summary>
    [Pure] public static bool operator ==(Unit _, Unit __) => true;
+
    ///<summary>Always returns <see langword="false"/>. All <see cref="Unit"/> values are equal.</summary>
    [Pure] public static bool operator !=(Unit _, Unit __) => false;
 
@@ -53,6 +55,7 @@ public readonly partial struct Unit : IEquatable<Unit>, IComparable<Unit>, IComp
 
    ///<summary>Converts a <see cref="ValueTuple"/> to <see cref="Unit"/>.</summary>
    [Pure] public static implicit operator Unit(ValueTuple _) => Value;
+
    ///<summary>Converts a <see cref="Unit"/> to <see cref="ValueTuple"/>.</summary>
    [Pure] public static implicit operator ValueTuple(Unit _) => default;
 }
