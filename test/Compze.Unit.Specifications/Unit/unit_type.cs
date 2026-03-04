@@ -50,7 +50,7 @@ public class unit_type
          [XF] public void wraps_the_action_into_a_Func_returning_unit()
          {
             var executed = false;
-            var func = unit.Func(() => { executed = true; });
+            var func = UnitConvert.ToFunc(() => { executed = true; });
             var result = func();
             executed.Must().BeTrue();
             result.Must().Be(unit.Value);
@@ -62,7 +62,7 @@ public class unit_type
          [XF] public void passes_the_parameter_to_the_wrapped_action()
          {
             var captured = "";
-            var func = unit.Func<string>(s => { captured = s; });
+            var func = UnitConvert.ToFunc<string>(s => { captured = s; });
             var result = func("hello");
             captured.Must().Be("hello");
             result.Must().Be(unit.Value);
@@ -75,7 +75,7 @@ public class unit_type
          {
             var capturedA = "";
             var capturedB = 0;
-            var func = unit.Func<string, int>((s, i) => { capturedA = s; capturedB = i; });
+            var func = UnitConvert.ToFunc<string, int>((s, i) => { capturedA = s; capturedB = i; });
             var result = func("hello", 42);
             capturedA.Must().Be("hello");
             capturedB.Must().Be(42);
@@ -91,7 +91,7 @@ public class unit_type
          [XF] public async Task wraps_the_async_action_into_a_Func_returning_Task_of_unit()
          {
             var executed = false;
-            var func = unit.AsyncFunc(async () => { await Task.Yield(); executed = true; });
+            var func = UnitConvert.ToAsyncFunc(async () => { await Task.Yield(); executed = true; });
             var result = await func();
             executed.Must().BeTrue();
             result.Must().Be(unit.Value);
@@ -103,7 +103,7 @@ public class unit_type
          [XF] public async Task passes_the_parameter_to_the_wrapped_async_action()
          {
             var captured = "";
-            var func = unit.AsyncFunc<string>(async s => { await Task.Yield(); captured = s; });
+            var func = UnitConvert.ToAsyncFunc<string>(async s => { await Task.Yield(); captured = s; });
             var result = await func("hello");
             captured.Must().Be("hello");
             result.Must().Be(unit.Value);
@@ -116,7 +116,7 @@ public class unit_type
          {
             var capturedA = "";
             var capturedB = 0;
-            var func = unit.AsyncFunc<string, int>(async (s, i) => { await Task.Yield(); capturedA = s; capturedB = i; });
+            var func = UnitConvert.ToAsyncFunc<string, int>(async (s, i) => { await Task.Yield(); capturedA = s; capturedB = i; });
             var result = await func("hello", 42);
             capturedA.Must().Be("hello");
             capturedB.Must().Be(42);
@@ -133,7 +133,7 @@ public class unit_type
          {
             var executed = false;
             Func<unit> func = () => { executed = true; return unit.Value; };
-            var action = unit.Action(func);
+            var action = UnitConvert.ToAction(func);
             action();
             executed.Must().BeTrue();
          }
@@ -145,7 +145,7 @@ public class unit_type
          {
             var captured = "";
             Func<string, unit> func = s => { captured = s; return unit.Value; };
-            var action = unit.Action(func);
+            var action = UnitConvert.ToAction(func);
             action("hello");
             captured.Must().Be("hello");
          }
@@ -158,7 +158,7 @@ public class unit_type
             var capturedA = "";
             var capturedB = 0;
             Func<string, int, unit> func = (s, i) => { capturedA = s; capturedB = i; return unit.Value; };
-            var action = unit.Action(func);
+            var action = UnitConvert.ToAction(func);
             action("hello", 42);
             capturedA.Must().Be("hello");
             capturedB.Must().Be(42);
@@ -174,7 +174,7 @@ public class unit_type
          {
             var executed = false;
             Func<Task<unit>> func = async () => { await Task.Yield(); executed = true; return unit.Value; };
-            var action = unit.AsyncAction(func);
+            var action = UnitConvert.ToAsyncAction(func);
             await action();
             executed.Must().BeTrue();
          }
@@ -186,7 +186,7 @@ public class unit_type
          {
             var captured = "";
             Func<string, Task<unit>> func = async s => { await Task.Yield(); captured = s; return unit.Value; };
-            var action = unit.AsyncAction(func);
+            var action = UnitConvert.ToAsyncAction(func);
             await action("hello");
             captured.Must().Be("hello");
          }
@@ -199,7 +199,7 @@ public class unit_type
             var capturedA = "";
             var capturedB = 0;
             Func<string, int, Task<unit>> func = async (s, i) => { await Task.Yield(); capturedA = s; capturedB = i; return unit.Value; };
-            var action = unit.AsyncAction(func);
+            var action = UnitConvert.ToAsyncAction(func);
             await action("hello", 42);
             capturedA.Must().Be("hello");
             capturedB.Must().Be(42);
