@@ -15,7 +15,7 @@ namespace Compze.Unit;
 /// </code>
 /// </summary>
 #pragma warning disable CA1724 //Same name as the namespace
-public readonly partial struct Unit : IEquatable<Unit>
+public readonly partial struct Unit : IEquatable<Unit>, IComparable<Unit>
 {
    public static readonly Unit Value = default;
 
@@ -28,4 +28,6 @@ public readonly partial struct Unit : IEquatable<Unit>
    public static bool operator !=(Unit _, Unit __) => false;
 
    public override int GetHashCode() => 0;
+
+   public int CompareTo(Unit _) => 0;
 }

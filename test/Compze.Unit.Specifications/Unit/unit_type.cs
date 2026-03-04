@@ -1,5 +1,6 @@
 using Compze.Utilities.Testing.Must;
 using Compze.Utilities.Testing.XUnit.BDD;
+using static Compze.Utilities.Testing.Must.MustActions;
 #pragma warning disable IDE0039
 
 #pragma warning disable CA1052 // BDD-style nested specification classes cannot be static
@@ -31,6 +32,11 @@ public class unit_type
       [XF] public void GetHashCode_returns_the_same_value_for_all_instances() => unit.Value.GetHashCode().Must().Be(unit.Value.GetHashCode());
    }
 #pragma warning restore CS8981
+
+   public class comparison
+   {
+      [XF] public void CompareTo_returns_zero_for_another_unit() => unit.Value.CompareTo(unit.Value).Must().Be(0);
+   }
 
    public class From_method
    {
