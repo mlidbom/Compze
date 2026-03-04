@@ -16,6 +16,8 @@ namespace Compze.Unit;
 /// </code>
 /// </summary>
 #pragma warning disable CA1724 //Same name as the namespace
+#pragma warning disable CA1036 // All Unit values are equal — ordering operators would be trivially true/false
+#pragma warning disable CA2225 // Implicit conversions to/from ValueTuple are sufficient; named alternatives add no value for a type with a single possible value
 [Serializable]
 public readonly partial struct Unit : IEquatable<Unit>, IComparable<Unit>, IComparable
 {
