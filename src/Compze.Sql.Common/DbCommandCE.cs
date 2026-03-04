@@ -18,12 +18,6 @@ public static class DbCommandCE
    internal static async Task<int> ExecuteNonQueryAsync(this DbCommand @this, string commandText) =>
       await @this.SetCommandText(commandText).ExecuteNonQueryAsync().caf();
 
-   internal static int PrepareAndExecuteNonQuery(this DbCommand @this, string commandText) =>
-      @this.SetCommandText(commandText).PrepareStatement().ExecuteNonQuery();
-
-   internal static async Task<int> PrepareAndExecuteNonQueryAsync(this DbCommand @this, string commandText) =>
-      await @this.SetCommandText(commandText).PrepareStatement().ExecuteNonQueryAsync().caf();
-
    public static TCommand AppendCommandText<TCommand>(this TCommand @this, string append) where TCommand : DbCommand =>
       @this._mutate(me => me.CommandText += append);
 
