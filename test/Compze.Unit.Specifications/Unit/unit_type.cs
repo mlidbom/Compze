@@ -1,6 +1,6 @@
 using Compze.Utilities.Testing.Must;
 using Compze.Utilities.Testing.XUnit.BDD;
-using Compze.Unit;
+
 #pragma warning disable CS8981
 
 #pragma warning disable CA1052 // BDD-style nested specification classes cannot be static
@@ -56,7 +56,7 @@ public class unit_type
       [XF] public void executes_the_action_and_returns_unit()
       {
          var executed = false;
-         var result = UnitConvert.Invoke(() => executed = true);
+         var result = unit.Invoke(() => executed = true);
          executed.Must().BeTrue();
          result.Must().Be(unit.Value);
       }
