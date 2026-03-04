@@ -14,5 +14,9 @@ public readonly partial struct Unit
    ///   Task&lt;Unit&gt; Method() => Unit.InvokeAsync(() => AnAsyncVoidMethod())
    /// </code>
    /// </summary>
-   public static async Task<Unit> InvokeAsync(Func<Task> action) => await UnitConvert.InvokeAsync(action);
+   public static async Task<Unit> InvokeAsync(Func<Task> action)
+   {
+         await action().ConfigureAwait(false);
+         return Value;
+   }
 }
