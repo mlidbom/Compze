@@ -3,6 +3,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <Version>0.8.0</Version>
     <Description>Plugs the hole in the BCL where Unit should be.</Description>
     <PackageTags>compze;functional;unit;void;csharp</PackageTags>
