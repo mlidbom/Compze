@@ -44,6 +44,7 @@ All conversions support 0, 1, and 2 parameter arities.
 | Static method | Purpose |
 |---|---|
 | `Unit.Invoke(action)` | Execute an `Action` and return `Unit` |
+| `Unit.InvokeAsync(asyncAction)` | Await a `Func<Task>` and return `Unit` |
 
 ## Related packages
 
