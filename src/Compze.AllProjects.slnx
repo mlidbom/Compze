@@ -63,10 +63,14 @@
     <Project Path="Compze.Utilities.Testing.DbPool.Sqlite/Compze.Utilities.Testing.DbPool.Sqlite.csproj" />
     <Project Path="Compze.Utilities.Testing.DbPool/Compze.Utilities.Testing.DbPool.csproj" />
   </Folder>
-  <Folder Name="/Compze.DependencyInjection/">
+  <Folder Name="/Compze.Internal.DependencyInjection/">
     <Project Path="Compze.Utilities.DependencyInjection.Microsoft/Compze.Utilities.DependencyInjection.Microsoft.csproj" />
     <Project Path="Compze.Utilities.DependencyInjection.SimpleInjector/Compze.Utilities.DependencyInjection.SimpleInjector.csproj" />
     <Project Path="Compze.Utilities.DependencyInjection/Compze.Utilities.DependencyInjection.csproj" />
+  </Folder>
+  <Folder Name="/Compze.Internal.Logging/">
+    <Project Path="Compze.Utilities.Logging.Serilog/Compze.Utilities.Logging.Serilog.csproj" />
+    <Project Path="Compze.Utilities.Logging/Compze.Utilities.Logging.csproj" />
   </Folder>
   <Folder Name="/Compze.Internal.Serialization/">
     <Project Path="Compze.Serialization.Newtonsoft/Compze.Serialization.Newtonsoft.csproj" />
@@ -77,10 +81,6 @@
     <Project Path="Compze.Sql.MySql/Compze.Sql.MySql.csproj" />
     <Project Path="Compze.Sql.PostgreSql/Compze.Sql.PostgreSql.csproj" />
     <Project Path="Compze.Sql.Sqlite/Compze.Sql.Sqlite.csproj" />
-  </Folder>
-  <Folder Name="/Compze.Logging/">
-    <Project Path="Compze.Utilities.Logging.Serilog/Compze.Utilities.Logging.Serilog.csproj" />
-    <Project Path="Compze.Utilities.Logging/Compze.Utilities.Logging.csproj" />
   </Folder>
   <Folder Name="/Compze.Must/">
     <Project Path="Compze.Utilities.Testing.Must/Compze.Utilities.Testing.Must.csproj" />
