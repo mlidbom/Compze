@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <Version>0.2.0-alpha.1</Version>
+    <Description>PostgreSQL database pool support for Compze integration testing.</Description>
+  </PropertyGroup>
+  <!-- Compze.DbPool — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DbPool)' == 'true'">
+    <PackageReference Include="Compze.DbPool" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DbPool)' != 'true'">
+    <ProjectReference Include="..\Compze.DbPool\Compze.DbPool.csproj" />
+  </ItemGroup>
+  <!-- Compze.Sql.PostgreSql — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Sql_PostgreSql)' == 'true'">
+    <PackageReference Include="Compze.Sql.PostgreSql" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Sql_PostgreSql)' != 'true'">
+    <ProjectReference Include="..\Compze.Sql.PostgreSql\Compze.Sql.PostgreSql.csproj" />
+  </ItemGroup>
+</Project>

@@ -1,11 +1,11 @@
 using Compze.Core.Wiring.Testing.Internal;
-using Compze.Utilities.Testing.DbPool.MicrosoftSql;
-using Compze.Utilities.Testing.DbPool.MySql;
-using Compze.Utilities.Testing.DbPool.PostgreSql;
-using Compze.Utilities.Testing.DbPool.Sqlite;
+using Compze.DbPool.MicrosoftSql;
+using Compze.DbPool.MySql;
+using Compze.DbPool.PostgreSql;
+using Compze.DbPool.Sqlite;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE;
-using Compze.Utilities.Testing.DbPool;
+using Compze.DbPool;
 
 namespace Compze.Tessaging.Hosting.Testing.Wiring;
 
@@ -18,7 +18,7 @@ public static class TestingComponentRegistrarDbPool
    {
       if(@this.Container().IsClone())
       {
-         if(!@this.Container().IsRegistered<DbPool>())
+         if(!@this.Container().IsRegistered<global::Compze.DbPool.DbPool>())
             throw new Exception("The DbPool must be registered in the root container before any cloning. You cannot register it directly in a cloned container");
 
          return @this;

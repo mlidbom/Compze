@@ -8,7 +8,6 @@ using Compze.Sql.Sqlite;
 using Compze.Sql.Sqlite.Wiring;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
-using Compze.Utilities.Testing.DbPool;
 
 namespace Compze.Tessaging.Hosting.Testing.Wiring;
 
@@ -47,7 +46,7 @@ class TestingComponentRegistrar : ComponentRegistrar
       public IComponentRegistrar Register(string connectionStringName) => _registrar.CurrentTestsDbPoolIfNotCloneContainer()
                                                                                     .Register(
                                                                                         Singleton.For<IMsSqlConnectionPool>()
-                                                                                                 .CreatedBy((DbPool dbPool) =>
+                                                                                                 .CreatedBy((global::Compze.DbPool.DbPool dbPool) =>
                                                                                                                IMsSqlConnectionPool.CreateInstance(() => dbPool.ConnectionStringFor(connectionStringName))));
    }
 
@@ -58,7 +57,7 @@ class TestingComponentRegistrar : ComponentRegistrar
       public IComponentRegistrar Register(string connectionStringName) => _registrar.CurrentTestsDbPoolIfNotCloneContainer()
                                                                                     .Register(
                                                                                         Singleton.For<IMySqlConnectionPool>()
-                                                                                                 .CreatedBy((DbPool dbPool) =>
+                                                                                                 .CreatedBy((global::Compze.DbPool.DbPool dbPool) =>
                                                                                                                IMySqlConnectionPool.CreateInstance(() => dbPool.ConnectionStringFor(connectionStringName))));
    }
 
@@ -69,7 +68,7 @@ class TestingComponentRegistrar : ComponentRegistrar
       public IComponentRegistrar Register(string connectionStringName) => _registrar.CurrentTestsDbPoolIfNotCloneContainer()
                                                                                     .Register(
                                                                                         Singleton.For<IPgSqlConnectionPool>()
-                                                                                                 .CreatedBy((DbPool pool) => IPgSqlConnectionPool.CreateInstance1(() => pool.ConnectionStringFor(connectionStringName))));
+                                                                                                 .CreatedBy((global::Compze.DbPool.DbPool pool) => IPgSqlConnectionPool.CreateInstance1(() => pool.ConnectionStringFor(connectionStringName))));
    }
 
    class SqliteSqlDbPoolRegistrar(IComponentRegistrar registrar) : SqliteConnectionPoolRegistrar.ITestingRegistrar
@@ -79,7 +78,7 @@ class TestingComponentRegistrar : ComponentRegistrar
       public IComponentRegistrar Register(string connectionStringName) => _registrar.CurrentTestsDbPoolIfNotCloneContainer()
                                                                                     .Register(
                                                                                         Singleton.For<ISqliteConnectionPool>()
-                                                                                                 .CreatedBy((DbPool pool) => ISqliteConnectionPool.CreateInstance(() => pool.ConnectionStringFor(connectionStringName))));
+                                                                                                 .CreatedBy((global::Compze.DbPool.DbPool pool) => ISqliteConnectionPool.CreateInstance(() => pool.ConnectionStringFor(connectionStringName))));
    }
 
    class SqliteMemoryDbPoolRegistrar(IComponentRegistrar registrar) : SqliteMemoryConnectionPoolRegistrar.ITestingRegistrar
@@ -89,6 +88,6 @@ class TestingComponentRegistrar : ComponentRegistrar
       public IComponentRegistrar Register(string connectionStringName) => _registrar.CurrentTestsDbPoolIfNotCloneContainer()
                                                                                     .Register(
                                                                                         Singleton.For<ISqliteConnectionPool>()
-                                                                                                 .CreatedBy((DbPool pool) => ISqliteConnectionPool.CreateInstance(() => pool.ConnectionStringFor(connectionStringName))));
+                                                                                                 .CreatedBy((global::Compze.DbPool.DbPool pool) => ISqliteConnectionPool.CreateInstance(() => pool.ConnectionStringFor(connectionStringName))));
    }
 }

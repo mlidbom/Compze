@@ -1,5 +1,5 @@
 using Compze.Tests.Infrastructure;
-using Compze.Utilities.Testing.DbPool.SystemCE;
+using Compze.DbPool.SystemCE;
 using Compze.Utilities.Testing.Must;
 using Compze.Utilities.Testing.XUnit.BDD;
 using JetBrains.Annotations;

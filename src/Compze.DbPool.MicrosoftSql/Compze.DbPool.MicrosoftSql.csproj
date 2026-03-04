@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <Version>0.2.0-alpha.1</Version>
+    <Description>Empty SQL Server databases on demand for integration testing etc.</Description>
+  </PropertyGroup>
+  <!-- Compze.DbPool — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DbPool)' == 'true'">
+    <PackageReference Include="Compze.DbPool" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DbPool)' != 'true'">
+    <ProjectReference Include="..\Compze.DbPool\Compze.DbPool.csproj" />
+  </ItemGroup>
+  <!-- Compze.Sql.MicrosoftSql — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Sql_MicrosoftSql)' == 'true'">
+    <PackageReference Include="Compze.Sql.MicrosoftSql" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Sql_MicrosoftSql)' != 'true'">
+    <ProjectReference Include="..\Compze.Sql.MicrosoftSql\Compze.Sql.MicrosoftSql.csproj" />
+  </ItemGroup>
+</Project>

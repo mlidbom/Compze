@@ -2,11 +2,6 @@
   <Folder Name="/Compze.Utilities.Testing/">
     <Project Path="Compze.Utilities.Testing.Must/Compze.Utilities.Testing.Must.csproj" />
     <Project Path="Compze.Utilities.Testing.XUnit/Compze.Utilities.Testing.XUnit.csproj" />
-    <Project Path="Compze.Utilities.Testing.DbPool.MicrosoftSql/Compze.Utilities.Testing.DbPool.MicrosoftSql.csproj" />
-    <Project Path="Compze.Utilities.Testing.DbPool.MySql/Compze.Utilities.Testing.DbPool.MySql.csproj" />
-    <Project Path="Compze.Utilities.Testing.DbPool.PostgreSql/Compze.Utilities.Testing.DbPool.PostgreSql.csproj" />
-    <Project Path="Compze.Utilities.Testing.DbPool.Sqlite/Compze.Utilities.Testing.DbPool.Sqlite.csproj" />
-    <Project Path="Compze.Utilities.Testing.DbPool/Compze.Utilities.Testing.DbPool.csproj" />
   </Folder>
   <Folder Name="/_Tests/">
     <Project Path="../test/Compze.Utilities.Tests/Compze.Utilities.Tests.csproj" />

@@ -89,7 +89,7 @@ src/
   Compze.Utilities.DependencyInjection.Microsoft/   # Microsoft DI
   Compze.Utilities.DependencyInjection.SimpleInjector/ # SimpleInjector DI
   Compze.Utilities.Logging.Serilog/    # Serilog logging
-  Compze.Utilities.Testing.DbPool/     # Database pool for testing
+  Compze.DbPool/                       # Database pool for testing
   Compze.Utilities.Testing.Must/       # Must assertion library
   Compze.Utilities.Testing.XUnit/      # xUnit testing infrastructure
   Websites/Website/                    # DocFX documentation site

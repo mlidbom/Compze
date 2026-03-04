@@ -60,13 +60,6 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_SystemCE_Internal)' != 'true'">
     <ProjectReference Include="..\..\src\Compze.SystemCE.Internal\Compze.SystemCE.Internal.csproj" />
   </ItemGroup>
-  <!-- Compze.Utilities.Testing.DbPool — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Testing_DbPool)' == 'true'">
-    <PackageReference Include="Compze.Utilities.Testing.DbPool" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Testing_DbPool)' != 'true'">
-    <ProjectReference Include="..\..\src\Compze.Utilities.Testing.DbPool\Compze.Utilities.Testing.DbPool.csproj" />
-  </ItemGroup>
   <!-- Compze.Utilities.Testing.Must — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Testing_Must)' == 'true'">
     <PackageReference Include="Compze.Utilities.Testing.Must" Version="*-*" />

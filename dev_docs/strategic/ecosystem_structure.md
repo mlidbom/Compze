@@ -71,12 +71,12 @@ These are the lowest-level building blocks. Each is a promotable concept in its 
 ### DbPool
 > Cross-process test database pooling with pluggable SQL providers.
 
-- `src/Compze.Utilities.Testing.DbPool` — core pooling (uses `MachineWideSharedObject` for cross-process state)
-- `src/Compze.Utilities.Testing.DbPool.MicrosoftSql`
-- `src/Compze.Utilities.Testing.DbPool.MySql`
-- `src/Compze.Utilities.Testing.DbPool.PostgreSql`
-- `src/Compze.Utilities.Testing.DbPool.Sqlite`
-- `test/Compze.Utilities.Tests` (partially — DbPool tests live here)
+- `src/Compze.DbPool` — core pooling (uses `MachineWideSharedObject` for cross-process state)
+- `src/Compze.DbPool.MicrosoftSql`
+- `src/Compze.DbPool.MySql`
+- `src/Compze.DbPool.PostgreSql`
+- `src/Compze.DbPool.Sqlite`
+- `test/Compze.DbPool.Tests` — DbPool tests
 - **Dependencies**: Contracts, Functional, DependencyInjection, Logging, SystemCE, ThreadingCE, Sql (internal)
 
 ---

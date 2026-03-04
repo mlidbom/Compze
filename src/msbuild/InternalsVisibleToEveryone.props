@@ -46,11 +46,12 @@
     <InternalsVisibleTo Include="Compze.Utilities.Logging" />
     <InternalsVisibleTo Include="Compze.Utilities.Logging.Serilog" />
     <InternalsVisibleTo Include="Compze.Utilities.SystemCE" />
-    <InternalsVisibleTo Include="Compze.Utilities.Testing.DbPool" />
-    <InternalsVisibleTo Include="Compze.Utilities.Testing.DbPool.MicrosoftSql" />
-    <InternalsVisibleTo Include="Compze.Utilities.Testing.DbPool.MySql" />
-    <InternalsVisibleTo Include="Compze.Utilities.Testing.DbPool.PostgreSql" />
-    <InternalsVisibleTo Include="Compze.Utilities.Testing.DbPool.Sqlite" />
+    <InternalsVisibleTo Include="Compze.DbPool" />
+    <InternalsVisibleTo Include="Compze.DbPool.MicrosoftSql" />
+    <InternalsVisibleTo Include="Compze.DbPool.MySql" />
+    <InternalsVisibleTo Include="Compze.DbPool.PostgreSql" />
+    <InternalsVisibleTo Include="Compze.DbPool.Sqlite" />
+    <InternalsVisibleTo Include="Compze.DbPool.Tests" />
     <InternalsVisibleTo Include="Compze.Utilities.Testing.Must" />
     <InternalsVisibleTo Include="Compze.Utilities.Testing.XUnit" />
     <InternalsVisibleTo Include="Compze.Utilities.Testing.XUnit.Tests" />

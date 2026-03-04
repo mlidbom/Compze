@@ -3,6 +3,11 @@
     <AllowParallelTestExecution>True</AllowParallelTestExecution>
     <CustomBuildProperties>
       <Value>UsePackageReference_Compze_Contracts = true</Value>
+      <Value>UsePackageReference_Compze_DbPool = true</Value>
+      <Value>UsePackageReference_Compze_DbPool_MicrosoftSql = true</Value>
+      <Value>UsePackageReference_Compze_DbPool_MySql = true</Value>
+      <Value>UsePackageReference_Compze_DbPool_PostgreSql = true</Value>
+      <Value>UsePackageReference_Compze_DbPool_Sqlite = true</Value>
       <Value>UsePackageReference_Compze_SystemCE_Internal = true</Value>
       <Value>UsePackageReference_Compze_Threading = true</Value>
       <Value>UsePackageReference_Compze_Threading_Internal = true</Value>
@@ -16,11 +21,6 @@
       <Value>UsePackageReference_Compze_Utilities_Logging = true</Value>
       <Value>UsePackageReference_Compze_Utilities_Logging_Serilog = true</Value>
       <Value>UsePackageReference_Compze_Utilities_SystemCE = true</Value>
-      <Value>UsePackageReference_Compze_Utilities_Testing_DbPool = true</Value>
-      <Value>UsePackageReference_Compze_Utilities_Testing_DbPool_MicrosoftSql = true</Value>
-      <Value>UsePackageReference_Compze_Utilities_Testing_DbPool_MySql = true</Value>
-      <Value>UsePackageReference_Compze_Utilities_Testing_DbPool_PostgreSql = true</Value>
-      <Value>UsePackageReference_Compze_Utilities_Testing_DbPool_Sqlite = true</Value>
       <Value>UsePackageReference_Compze_Utilities_Testing_Must = true</Value>
       <Value>UsePackageReference_Compze_Utilities_Testing_XUnit = true</Value>
     </CustomBuildProperties>

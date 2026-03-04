@@ -22,6 +22,16 @@
     <UsePackageReference_Compze_Contracts Condition="'$(UsePackageReference_Compze_Contracts)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Contracts.csproj|'))">true</UsePackageReference_Compze_Contracts>
     <!-- Compze.Core -->
     <UsePackageReference_Compze_Core Condition="'$(UsePackageReference_Compze_Core)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Core.csproj|'))">true</UsePackageReference_Compze_Core>
+    <!-- Compze.DbPool -->
+    <UsePackageReference_Compze_DbPool Condition="'$(UsePackageReference_Compze_DbPool)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.DbPool.csproj|'))">true</UsePackageReference_Compze_DbPool>
+    <!-- Compze.DbPool.MicrosoftSql -->
+    <UsePackageReference_Compze_DbPool_MicrosoftSql Condition="'$(UsePackageReference_Compze_DbPool_MicrosoftSql)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.DbPool.MicrosoftSql.csproj|'))">true</UsePackageReference_Compze_DbPool_MicrosoftSql>
+    <!-- Compze.DbPool.MySql -->
+    <UsePackageReference_Compze_DbPool_MySql Condition="'$(UsePackageReference_Compze_DbPool_MySql)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.DbPool.MySql.csproj|'))">true</UsePackageReference_Compze_DbPool_MySql>
+    <!-- Compze.DbPool.PostgreSql -->
+    <UsePackageReference_Compze_DbPool_PostgreSql Condition="'$(UsePackageReference_Compze_DbPool_PostgreSql)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.DbPool.PostgreSql.csproj|'))">true</UsePackageReference_Compze_DbPool_PostgreSql>
+    <!-- Compze.DbPool.Sqlite -->
+    <UsePackageReference_Compze_DbPool_Sqlite Condition="'$(UsePackageReference_Compze_DbPool_Sqlite)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.DbPool.Sqlite.csproj|'))">true</UsePackageReference_Compze_DbPool_Sqlite>
     <!-- Compze.Serialization.Newtonsoft -->
     <UsePackageReference_Compze_Serialization_Newtonsoft Condition="'$(UsePackageReference_Compze_Serialization_Newtonsoft)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Serialization.Newtonsoft.csproj|'))">true</UsePackageReference_Compze_Serialization_Newtonsoft>
     <!-- Compze.Sql.Common -->
@@ -68,16 +78,6 @@
     <UsePackageReference_Compze_Utilities_Logging_Serilog Condition="'$(UsePackageReference_Compze_Utilities_Logging_Serilog)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Utilities.Logging.Serilog.csproj|'))">true</UsePackageReference_Compze_Utilities_Logging_Serilog>
     <!-- Compze.Utilities.SystemCE -->
     <UsePackageReference_Compze_Utilities_SystemCE Condition="'$(UsePackageReference_Compze_Utilities_SystemCE)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Utilities.SystemCE.csproj|'))">true</UsePackageReference_Compze_Utilities_SystemCE>
-    <!-- Compze.Utilities.Testing.DbPool -->
-    <UsePackageReference_Compze_Utilities_Testing_DbPool Condition="'$(UsePackageReference_Compze_Utilities_Testing_DbPool)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Utilities.Testing.DbPool.csproj|'))">true</UsePackageReference_Compze_Utilities_Testing_DbPool>
-    <!-- Compze.Utilities.Testing.DbPool.MicrosoftSql -->
-    <UsePackageReference_Compze_Utilities_Testing_DbPool_MicrosoftSql Condition="'$(UsePackageReference_Compze_Utilities_Testing_DbPool_MicrosoftSql)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Utilities.Testing.DbPool.MicrosoftSql.csproj|'))">true</UsePackageReference_Compze_Utilities_Testing_DbPool_MicrosoftSql>
-    <!-- Compze.Utilities.Testing.DbPool.MySql -->
-    <UsePackageReference_Compze_Utilities_Testing_DbPool_MySql Condition="'$(UsePackageReference_Compze_Utilities_Testing_DbPool_MySql)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Utilities.Testing.DbPool.MySql.csproj|'))">true</UsePackageReference_Compze_Utilities_Testing_DbPool_MySql>
-    <!-- Compze.Utilities.Testing.DbPool.PostgreSql -->
-    <UsePackageReference_Compze_Utilities_Testing_DbPool_PostgreSql Condition="'$(UsePackageReference_Compze_Utilities_Testing_DbPool_PostgreSql)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Utilities.Testing.DbPool.PostgreSql.csproj|'))">true</UsePackageReference_Compze_Utilities_Testing_DbPool_PostgreSql>
-    <!-- Compze.Utilities.Testing.DbPool.Sqlite -->
-    <UsePackageReference_Compze_Utilities_Testing_DbPool_Sqlite Condition="'$(UsePackageReference_Compze_Utilities_Testing_DbPool_Sqlite)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Utilities.Testing.DbPool.Sqlite.csproj|'))">true</UsePackageReference_Compze_Utilities_Testing_DbPool_Sqlite>
     <!-- Compze.Utilities.Testing.Must -->
     <UsePackageReference_Compze_Utilities_Testing_Must Condition="'$(UsePackageReference_Compze_Utilities_Testing_Must)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Utilities.Testing.Must.csproj|'))">true</UsePackageReference_Compze_Utilities_Testing_Must>
     <!-- Compze.Utilities.Testing.XUnit -->
