@@ -23,4 +23,11 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Must)' != 'true'">
     <ProjectReference Include="..\..\..\..\src\Compze.Must\Compze.Must.csproj" />
   </ItemGroup>
+  <!-- Compze.xUnit.BDD — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_xUnit_BDD)' == 'true'">
+    <PackageReference Include="Compze.xUnit.BDD" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_xUnit_BDD)' != 'true'">
+    <ProjectReference Include="..\..\..\..\src\Compze.xUnit.BDD\Compze.xUnit.BDD.csproj" />
+  </ItemGroup>
 </Project>

@@ -50,4 +50,11 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_DbPool_Sqlite)' != 'true'">
     <ProjectReference Include="..\..\src\Compze.DbPool.Sqlite\Compze.DbPool.Sqlite.csproj" />
   </ItemGroup>
+  <!-- Compze.xUnit.BDD — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_xUnit_BDD)' == 'true'">
+    <PackageReference Include="Compze.xUnit.BDD" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_xUnit_BDD)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.xUnit.BDD\Compze.xUnit.BDD.csproj" />
+  </ItemGroup>
 </Project>

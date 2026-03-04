@@ -106,9 +106,11 @@
     <Project Path="Compze.Threading/Compze.Threading.csproj" />
   </Folder>
   <Folder Name="/Compze.xUnit/">
-    <Project Path="../test/Compze.Utilities.Testing.XUnit.Tests/Compze.Utilities.Testing.XUnit.Tests.csproj">
+    <Project Path="../test/Compze.xUnit.BDD.Tests/Compze.xUnit.BDD.Tests.csproj">
       <BuildType Solution="docs|*" Project="Release" />
     </Project>
+    <Project Path="Compze.xUnit/Compze.xUnit.csproj" />
+    <Project Path="Compze.xUnit.BDD/Compze.xUnit.BDD.csproj" />
     <Project Path="Compze.Utilities.Testing.XUnit/Compze.Utilities.Testing.XUnit.csproj" />
   </Folder>
   <Folder Name="/_Tests/">

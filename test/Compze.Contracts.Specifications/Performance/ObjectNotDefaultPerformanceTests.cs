@@ -1,7 +1,7 @@
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Performance;
 using Compze.Utilities.SystemCE;
-using Compze.Utilities.Testing.XUnit.BDD;
+using Compze.xUnit.BDD;
 
 namespace Compze.Contracts.Specifications.Performance;
 

@@ -1,6 +1,6 @@
 using Compze.Tests.Infrastructure;
 using Compze.Must;
-using Compze.Utilities.Testing.XUnit.BDD;
+using Compze.xUnit.BDD;
 using ReadOrder = Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions.ReadOrder;
 using static Compze.Must.MustActions;
 

@@ -1,5 +1,5 @@
 using Compze.Must;
-using Compze.Utilities.Testing.XUnit.BDD;
+using Compze.xUnit.BDD;
 using static Compze.Must.MustActions;
 using AssertionFailedException = Compze.Contracts.Exceptions.AssertionFailedException;
 

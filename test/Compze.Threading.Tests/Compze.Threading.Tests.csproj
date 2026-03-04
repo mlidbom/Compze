@@ -66,4 +66,11 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Testing_XUnit)' != 'true'">
     <ProjectReference Include="..\..\src\Compze.Utilities.Testing.XUnit\Compze.Utilities.Testing.XUnit.csproj" />
   </ItemGroup>
+  <!-- Compze.xUnit.BDD — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_xUnit_BDD)' == 'true'">
+    <PackageReference Include="Compze.xUnit.BDD" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_xUnit_BDD)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.xUnit.BDD\Compze.xUnit.BDD.csproj" />
+  </ItemGroup>
 </Project>

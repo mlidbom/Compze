@@ -2,7 +2,7 @@ using Compze.Core.Configuration.Internal;
 using Compze.Tessaging.Configuration;
 using Compze.Tests.Infrastructure;
 using Compze.Must;
-using Compze.Utilities.Testing.XUnit.BDD;
+using Compze.xUnit.BDD;
 using static Compze.Must.MustActions;
 
 namespace Compze.Tests.Unit.Internals.SystemCE.ConfigurationCE;

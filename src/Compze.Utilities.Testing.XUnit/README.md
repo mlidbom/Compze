@@ -40,7 +40,7 @@ OurApplication
 
 ```csharp
 using Compze.Must;
-using Compze.Utilities.Testing.XUnit.BDD;
+using Compze.xUnit.BDD;
 
 namespace OurApplication.Specifications.UserAccounts.Registration;
 

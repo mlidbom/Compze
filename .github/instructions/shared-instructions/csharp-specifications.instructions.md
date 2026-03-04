@@ -59,7 +59,7 @@ Specifications declared at a level assert the outcome of the accumulated context
 
 ```csharp
 using Compze.Must;
-using Compze.Utilities.Testing.XUnit.BDD;
+using Compze.xUnit.BDD;
 
 namespace OurApplication.Specifications.UserAccounts.Registration;
 

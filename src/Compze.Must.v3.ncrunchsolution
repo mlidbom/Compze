@@ -33,6 +33,8 @@
       <Value>UsePackageReference_Compze_Utilities_Logging_Serilog = true</Value>
       <Value>UsePackageReference_Compze_Utilities_SystemCE = true</Value>
       <Value>UsePackageReference_Compze_Utilities_Testing_XUnit = true</Value>
+      <Value>UsePackageReference_Compze_xUnit = true</Value>
+      <Value>UsePackageReference_Compze_xUnit_BDD = true</Value>
     </CustomBuildProperties>
     <EnableRDI>False</EnableRDI>
     <RdiConfigured>True</RdiConfigured>

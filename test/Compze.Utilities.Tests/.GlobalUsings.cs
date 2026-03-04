@@ -8,4 +8,4 @@ global using static Compze.Contracts.Contract;
 global using static Compze.Must.MustActions;
 global using Xunit;
 global using Compze.Must;
-global using Compze.Utilities.Testing.XUnit.BDD;
+global using Compze.xUnit.BDD;

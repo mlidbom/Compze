@@ -1,6 +1,6 @@
 using Xunit.v3;
 
-namespace Compze.Utilities.Testing.XUnit;
+namespace Compze.xUnit;
 
 /// <summary>
 /// The purpose of this class is just to act as a go-between so that

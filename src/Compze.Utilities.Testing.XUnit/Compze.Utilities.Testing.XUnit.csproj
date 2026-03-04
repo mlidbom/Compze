@@ -63,4 +63,11 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_SystemCE)' != 'true'">
     <ProjectReference Include="..\Compze.Utilities.SystemCE\Compze.Utilities.SystemCE.csproj" />
   </ItemGroup>
+  <!-- Compze.xUnit — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_xUnit)' == 'true'">
+    <PackageReference Include="Compze.xUnit" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_xUnit)' != 'true'">
+    <ProjectReference Include="..\Compze.xUnit\Compze.xUnit.csproj" />
+  </ItemGroup>
 </Project>

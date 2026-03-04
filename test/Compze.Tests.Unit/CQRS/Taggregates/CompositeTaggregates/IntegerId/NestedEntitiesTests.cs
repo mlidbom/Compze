@@ -1,7 +1,7 @@
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.IntegerId.Domain;
 using Compze.Must;
-using Compze.Utilities.Testing.XUnit.BDD;
+using Compze.xUnit.BDD;
 
 // ReSharper disable ImplicitlyCapturedClosure
 

@@ -82,5 +82,9 @@
     <UsePackageReference_Compze_Utilities_SystemCE Condition="'$(UsePackageReference_Compze_Utilities_SystemCE)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Utilities.SystemCE.csproj|'))">true</UsePackageReference_Compze_Utilities_SystemCE>
     <!-- Compze.Utilities.Testing.XUnit -->
     <UsePackageReference_Compze_Utilities_Testing_XUnit Condition="'$(UsePackageReference_Compze_Utilities_Testing_XUnit)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Utilities.Testing.XUnit.csproj|'))">true</UsePackageReference_Compze_Utilities_Testing_XUnit>
+    <!-- Compze.xUnit -->
+    <UsePackageReference_Compze_xUnit Condition="'$(UsePackageReference_Compze_xUnit)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.xUnit.csproj|'))">true</UsePackageReference_Compze_xUnit>
+    <!-- Compze.xUnit.BDD -->
+    <UsePackageReference_Compze_xUnit_BDD Condition="'$(UsePackageReference_Compze_xUnit_BDD)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.xUnit.BDD.csproj|'))">true</UsePackageReference_Compze_xUnit_BDD>
   </PropertyGroup>
 </Project>

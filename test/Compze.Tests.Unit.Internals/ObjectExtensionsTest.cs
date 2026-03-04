@@ -1,6 +1,6 @@
 using Compze.Tests.Infrastructure;
 using Compze.Must;
-using Compze.Utilities.Testing.XUnit.BDD;
+using Compze.xUnit.BDD;
 
 namespace Compze.Tests.Unit.Internals;
 

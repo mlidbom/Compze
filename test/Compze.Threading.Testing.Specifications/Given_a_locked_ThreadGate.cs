@@ -3,7 +3,7 @@ using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Threading.ResourceAccess.Exceptions;
 using Compze.Must;
-using Compze.Utilities.Testing.XUnit.BDD;
+using Compze.xUnit.BDD;
 using Xunit;
 using static Compze.Must.MustActions;
 

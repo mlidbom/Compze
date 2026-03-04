@@ -1,5 +1,5 @@
 using Compze.Must;
-using Compze.Utilities.Testing.XUnit.BDD;
+using Compze.xUnit.BDD;
 
 #pragma warning disable CS8981
 

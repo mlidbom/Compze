@@ -10,5 +10,6 @@
     <Project Path="../../Threading/Testing/Compze.Utilities.Threading.Testing.csproj" />
   </Folder>
   <Project Path="Compze.Utilities.Testing.XUnit.csproj" />
-  <Project Path="Tests/Compze.Utilities.Testing.XUnit.Tests.csproj" />
+  <Project Path="../Compze.xUnit/Compze.xUnit.csproj" />
+  <Project Path="../../test/Compze.Utilities.Tests/Compze.Utilities.Tests.csproj" />
 </Solution>

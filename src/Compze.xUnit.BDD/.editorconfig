@@ -1,0 +1,4 @@
+[*.cs]
+charset = utf-8
+
+dotnet_diagnostic.CA1813.severity = none # We have attributes designed to be inherited

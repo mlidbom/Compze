@@ -1,4 +1,4 @@
-namespace Compze.Utilities.Testing.XUnit.BDD;
+namespace Compze.xUnit.BDD;
 
 class ExclusiveFactTestCase : ConstructorArgumentForwardingTestCase
 {

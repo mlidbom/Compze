@@ -1,9 +1,8 @@
-using Compze.SystemCE.ThreadingCE.TasksCE;
 using Xunit.Internal;
 using Xunit.Sdk;
 using Xunit.v3;
 
-namespace Compze.Utilities.Testing.XUnit.BDD;
+namespace Compze.xUnit.BDD;
 
 #pragma warning disable CA1812 // Avoid uninstantiated internal classes : This class is instantiated by xUnit via reflection.
 class ExclusiveFactDiscoverer : IXunitTestCaseDiscoverer
@@ -17,7 +16,7 @@ class ExclusiveFactDiscoverer : IXunitTestCaseDiscoverer
       var currentType = testMethod.TestClass.Class;
 
       if(declaringType != currentType) //We only run these tests for the classes that declares them.
-         return await ValueTask.FromResult<IReadOnlyCollection<IXunitTestCase>>([]).caf();
+         return await ValueTask.FromResult<IReadOnlyCollection<IXunitTestCase>>([]).ConfigureAwait(false);
 
       var details = TestIntrospectionHelper.GetTestCaseDetails(discoveryOptions, testMethod, factAttribute);
 
@@ -27,7 +26,7 @@ class ExclusiveFactDiscoverer : IXunitTestCaseDiscoverer
          traits: testMethod.Traits.ToReadWrite(StringComparer.OrdinalIgnoreCase)
       );
 
-      return await ValueTask.FromResult<IReadOnlyCollection<IXunitTestCase>>([testCase]).caf();
+      return await ValueTask.FromResult<IReadOnlyCollection<IXunitTestCase>>([testCase]).ConfigureAwait(false);
    }
 }
 #pragma warning restore CA1812 // Avoid uninstantiated internal classes : This class is instantiated by xUnit via reflection.

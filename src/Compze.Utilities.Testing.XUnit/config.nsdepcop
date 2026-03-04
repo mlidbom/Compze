@@ -7,4 +7,7 @@
    <Allowed From="*"
             To="Xunit.*"/>
 
+   <Allowed From="*"
+            To="Compze.xUnit"/>
+
 </NsDepCopConfig>

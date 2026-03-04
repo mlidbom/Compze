@@ -5,7 +5,7 @@ using Compze.Tests.Infrastructure;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
 using Compze.Must;
-using Compze.Utilities.Testing.XUnit.BDD;
+using Compze.xUnit.BDD;
 using JetBrains.Annotations;
 
 #pragma warning disable IDE1006 //Reviewed OK: Test Naming Styles
