@@ -13,7 +13,7 @@ using Compze.Tests.Infrastructure.XUnit;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Core.Public;
-using Compze.Utilities.Testing.Must;
+using Compze.Must;
 
 #pragma warning disable CA1715 //Interfaces without I prefix
 // ReSharper disable MemberCanBeInternal for testing

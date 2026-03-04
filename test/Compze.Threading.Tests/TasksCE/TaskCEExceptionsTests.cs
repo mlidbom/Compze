@@ -1,8 +1,8 @@
 using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tests.Infrastructure;
-using Compze.Utilities.Testing.Must;
+using Compze.Must;
 using Compze.Utilities.Testing.XUnit.BDD;
-using static Compze.Utilities.Testing.Must.MustActions;
+using static Compze.Must.MustActions;
 
 namespace Compze.Threading.Tests.TasksCE;
 

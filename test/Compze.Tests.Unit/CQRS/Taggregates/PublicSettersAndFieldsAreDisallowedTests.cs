@@ -2,10 +2,10 @@ using Compze.Core.Tessaging.Teventive.Internal.Implementation;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Tests.Infrastructure;
-using Compze.Utilities.Testing.Must;
+using Compze.Must;
 using Compze.Utilities.Testing.XUnit.BDD;
 using JetBrains.Annotations;
-using static Compze.Utilities.Testing.Must.MustActions;
+using static Compze.Must.MustActions;
 // ReSharper disable ClassNeverInstantiated.Local
 // ReSharper disable PossibleInterfaceMemberAmbiguity
 // ReSharper disable RedundantNameQualifier

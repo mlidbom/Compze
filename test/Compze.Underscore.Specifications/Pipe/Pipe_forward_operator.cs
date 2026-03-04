@@ -1,5 +1,5 @@
 using System.Globalization;
-using Compze.Utilities.Testing.Must;
+using Compze.Must;
 using Compze.Utilities.Testing.XUnit.BDD;
 
 namespace Compze.Underscore.Specifications.Pipe;

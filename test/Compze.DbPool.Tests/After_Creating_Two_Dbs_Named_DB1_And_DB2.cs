@@ -1,7 +1,7 @@
 using Compze.Core.Wiring.Testing.Internal;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tests.Infrastructure.XUnit;
-using Compze.Utilities.Testing.Must;
+using Compze.Must;
 
 namespace Compze.DbPool.Tests;
 

@@ -3,7 +3,7 @@ using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tests.Infrastructure;
 using Compze.Utilities.DependencyInjection;
 using Compze.Tests.Infrastructure.XUnit;
-using Compze.Utilities.Testing.Must;
+using Compze.Must;
 
 namespace Compze.Tests.Integration.DependencyInjection;
 

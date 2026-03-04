@@ -188,7 +188,7 @@ Compze.Contracts (leaf)
 │   │               ├── Compze.Utilities.DependencyInjection.Microsoft
 │   │               ├── Compze.Utilities.DependencyInjection.SimpleInjector
 │   │               ├── Compze.Utilities.Logging.Serilog
-│   │               ├── Compze.Utilities.Testing.Must
+│   │               ├── Compze.Must
 │   │               ├── Compze.Utilities.Testing.XUnit
 │   │               └── Compze.Core
 │   │                   ├── Compze.Serialization.Newtonsoft

@@ -53,19 +53,19 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Core)' != 'true'">
     <ProjectReference Include="..\..\src\Compze.Core\Compze.Core.csproj" />
   </ItemGroup>
+  <!-- Compze.Must — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Must)' == 'true'">
+    <PackageReference Include="Compze.Must" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Must)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.Must\Compze.Must.csproj" />
+  </ItemGroup>
   <!-- Compze.SystemCE.Internal — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_SystemCE_Internal)' == 'true'">
     <PackageReference Include="Compze.SystemCE.Internal" Version="*-*" />
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_SystemCE_Internal)' != 'true'">
     <ProjectReference Include="..\..\src\Compze.SystemCE.Internal\Compze.SystemCE.Internal.csproj" />
-  </ItemGroup>
-  <!-- Compze.Utilities.Testing.Must — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Testing_Must)' == 'true'">
-    <PackageReference Include="Compze.Utilities.Testing.Must" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Testing_Must)' != 'true'">
-    <ProjectReference Include="..\..\src\Compze.Utilities.Testing.Must\Compze.Utilities.Testing.Must.csproj" />
   </ItemGroup>
   <!-- Compze.Utilities.Testing.XUnit — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Testing_XUnit)' == 'true'">

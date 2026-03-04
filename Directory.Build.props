@@ -32,6 +32,8 @@
     <UsePackageReference_Compze_DbPool_PostgreSql Condition="'$(UsePackageReference_Compze_DbPool_PostgreSql)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.DbPool.PostgreSql.csproj|'))">true</UsePackageReference_Compze_DbPool_PostgreSql>
     <!-- Compze.DbPool.Sqlite -->
     <UsePackageReference_Compze_DbPool_Sqlite Condition="'$(UsePackageReference_Compze_DbPool_Sqlite)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.DbPool.Sqlite.csproj|'))">true</UsePackageReference_Compze_DbPool_Sqlite>
+    <!-- Compze.Must -->
+    <UsePackageReference_Compze_Must Condition="'$(UsePackageReference_Compze_Must)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Must.csproj|'))">true</UsePackageReference_Compze_Must>
     <!-- Compze.Serialization.Newtonsoft -->
     <UsePackageReference_Compze_Serialization_Newtonsoft Condition="'$(UsePackageReference_Compze_Serialization_Newtonsoft)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Serialization.Newtonsoft.csproj|'))">true</UsePackageReference_Compze_Serialization_Newtonsoft>
     <!-- Compze.Sql.Common -->
@@ -78,8 +80,6 @@
     <UsePackageReference_Compze_Utilities_Logging_Serilog Condition="'$(UsePackageReference_Compze_Utilities_Logging_Serilog)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Utilities.Logging.Serilog.csproj|'))">true</UsePackageReference_Compze_Utilities_Logging_Serilog>
     <!-- Compze.Utilities.SystemCE -->
     <UsePackageReference_Compze_Utilities_SystemCE Condition="'$(UsePackageReference_Compze_Utilities_SystemCE)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Utilities.SystemCE.csproj|'))">true</UsePackageReference_Compze_Utilities_SystemCE>
-    <!-- Compze.Utilities.Testing.Must -->
-    <UsePackageReference_Compze_Utilities_Testing_Must Condition="'$(UsePackageReference_Compze_Utilities_Testing_Must)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Utilities.Testing.Must.csproj|'))">true</UsePackageReference_Compze_Utilities_Testing_Must>
     <!-- Compze.Utilities.Testing.XUnit -->
     <UsePackageReference_Compze_Utilities_Testing_XUnit Condition="'$(UsePackageReference_Compze_Utilities_Testing_XUnit)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Utilities.Testing.XUnit.csproj|'))">true</UsePackageReference_Compze_Utilities_Testing_XUnit>
   </PropertyGroup>

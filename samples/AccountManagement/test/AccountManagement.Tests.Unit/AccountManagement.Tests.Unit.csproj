@@ -16,11 +16,11 @@
     <PackageReference Include="xunit.v3" Version="3.1.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
   </ItemGroup>
-  <!-- Compze.Utilities.Testing.Must — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Testing_Must)' == 'true'">
-    <PackageReference Include="Compze.Utilities.Testing.Must" Version="*-*" />
+  <!-- Compze.Must — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Must)' == 'true'">
+    <PackageReference Include="Compze.Must" Version="*-*" />
   </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Testing_Must)' != 'true'">
-    <ProjectReference Include="..\..\..\..\src\Compze.Utilities.Testing.Must\Compze.Utilities.Testing.Must.csproj" />
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Must)' != 'true'">
+    <ProjectReference Include="..\..\..\..\src\Compze.Must\Compze.Must.csproj" />
   </ItemGroup>
 </Project>

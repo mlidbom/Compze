@@ -8,8 +8,8 @@ using Compze.Tests.Infrastructure;
 using Compze.Utilities.DependencyInjection;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Utilities.SystemCE.UsageGuards;
-using Compze.Utilities.Testing.Must;
-using static Compze.Utilities.Testing.Must.MustActions;
+using Compze.Must;
+using static Compze.Must.MustActions;
 
 // ReSharper disable AccessToDisposedClosure
 

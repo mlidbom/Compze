@@ -1,6 +1,6 @@
 using AccountManagement.API;
 using Compze.Tests.Infrastructure;
-using Compze.Utilities.Testing.Must;
+using Compze.Must;
 using Compze.Utilities.Testing.XUnit.BDD;
 
 namespace AccountManagement.Tests.Unit.UI.Tommands.UserTommands;

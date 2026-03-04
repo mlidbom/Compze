@@ -7,8 +7,8 @@ using Compze.Utilities.Logging;
 using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Threading;
 using Compze.Threading.Testing;
-using Compze.Utilities.Testing.Must;
-using static Compze.Utilities.Testing.Must.MustActions;
+using Compze.Must;
+using static Compze.Must.MustActions;
 
 namespace Compze.Tests.Integration.Tessaging;
 

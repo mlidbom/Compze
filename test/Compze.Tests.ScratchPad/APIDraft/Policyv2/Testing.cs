@@ -1,6 +1,6 @@
 using System.Collections.Concurrent;
 using Compze.Utilities.SystemCE;
-using Compze.Utilities.Testing.Must;
+using Compze.Must;
 
 // ReSharper disable All
 #pragma warning disable //Reviewed OK: This is API experimental code that is never ever used.

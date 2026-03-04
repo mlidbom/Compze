@@ -1,6 +1,6 @@
 using Compze.Utilities.SystemCE;
 using Compze.Threading.Testing;
-using Compze.Utilities.Testing.Must;
+using Compze.Must;
 using Compze.Utilities.Testing.XUnit.BDD;
 using Xunit;
 

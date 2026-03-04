@@ -1,5 +1,5 @@
 using AccountManagement.API;
-using Compze.Utilities.Testing.Must;
+using Compze.Must;
 
 namespace AccountManagement.UserStories.Scenarios;
 

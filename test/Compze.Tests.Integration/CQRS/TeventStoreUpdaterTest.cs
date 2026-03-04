@@ -23,7 +23,7 @@ using Compze.Tests.Infrastructure.XUnit;
 using Compze.Threading;
 using Compze.Threading.Testing;
 using Compze.Utilities.SystemCE.UsageGuards;
-using Compze.Utilities.Testing.Must;
+using Compze.Must;
 using EnumerableCE = Compze.Utilities.SystemCE.LinqCE.EnumerableCE;
 
 // ReSharper disable AccessToDisposedClosure

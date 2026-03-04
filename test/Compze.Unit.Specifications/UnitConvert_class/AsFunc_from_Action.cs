@@ -1,4 +1,4 @@
-using Compze.Utilities.Testing.Must;
+using Compze.Must;
 using Compze.Utilities.Testing.XUnit.BDD;
 
 #pragma warning disable CA1052 // BDD-style nested specification classes cannot be static

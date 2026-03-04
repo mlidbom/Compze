@@ -23,7 +23,7 @@
   <Package Name="Compze.Utilities.SystemCE" />
   <Package Name="Compze.Utilities.SystemCE.ThreadingCE" />
   <Package Name="Compze.Utilities.Testing.DbPool" />
-  <Package Name="Compze.Utilities.Testing.Must" />
+  <Package Name="Compze.Must" />
   <Package Name="Compze.Utilities.Testing.XUnit" />
   -->
 </FlexRef>

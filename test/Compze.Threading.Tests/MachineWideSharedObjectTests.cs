@@ -6,7 +6,7 @@ using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Threading.ResourceAccess;
 using Compze.Threading.Testing;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
-using Compze.Utilities.Testing.Must;
+using Compze.Must;
 using Compze.Utilities.Testing.XUnit.BDD;
 using JetBrains.Annotations;
 using Newtonsoft.Json;

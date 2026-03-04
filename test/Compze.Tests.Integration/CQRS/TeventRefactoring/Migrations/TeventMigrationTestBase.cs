@@ -11,7 +11,7 @@ using Compze.Tests.Infrastructure;
 using Compze.Utilities.DependencyInjection;
 using Compze.Utilities.DependencyInjection.Abstractions;
 using Compze.Utilities.Logging;
-using Compze.Utilities.Testing.Must;
+using Compze.Must;
 
 // ReSharper disable AccessToModifiedClosure
 

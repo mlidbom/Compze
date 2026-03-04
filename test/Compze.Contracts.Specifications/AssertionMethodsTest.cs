@@ -1,5 +1,5 @@
-using Compze.Utilities.Testing.Must;
-using static Compze.Utilities.Testing.Must.MustActions;
+using Compze.Must;
+using static Compze.Must.MustActions;
 
 namespace Compze.Contracts.Specifications;
 

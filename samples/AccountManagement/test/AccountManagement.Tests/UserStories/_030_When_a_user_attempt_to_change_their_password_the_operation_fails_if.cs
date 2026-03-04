@@ -1,6 +1,6 @@
 using Compze.Utilities.SystemCE.LinqCE;
 using Compze.Tests.Infrastructure.XUnit;
-using Compze.Utilities.Testing.Must;
+using Compze.Must;
 
 namespace AccountManagement.UserStories;
 

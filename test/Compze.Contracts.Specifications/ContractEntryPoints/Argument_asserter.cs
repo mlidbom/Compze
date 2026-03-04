@@ -1,7 +1,7 @@
 using Compze.Contracts.Exceptions;
-using Compze.Utilities.Testing.Must;
+using Compze.Must;
 using Compze.Utilities.Testing.XUnit.BDD;
-using static Compze.Utilities.Testing.Must.MustActions;
+using static Compze.Must.MustActions;
 // ReSharper disable PreferConcreteValueOverDefault
 
 #pragma warning disable CA1052

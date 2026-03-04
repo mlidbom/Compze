@@ -1,8 +1,8 @@
 using Compze.DbPool.SystemCE;
 using Compze.Tests.Infrastructure.XUnit;
-using Compze.Utilities.Testing.Must;
+using Compze.Must;
 using Xunit;
-using static Compze.Utilities.Testing.Must.MustActions;
+using static Compze.Must.MustActions;
 
 namespace Compze.DbPool.Tests;
 

@@ -84,7 +84,8 @@
     <Project Path="Compze.Sql.Sqlite/Compze.Sql.Sqlite.csproj" />
   </Folder>
   <Folder Name="/Compze.Must/">
-    <Project Path="Compze.Utilities.Testing.Must/Compze.Utilities.Testing.Must.csproj" />
+    <Project Path="../test/Compze.Must.Specifications/Compze.Must.Specifications.csproj" />
+    <Project Path="Compze.Must/Compze.Must.csproj" />
   </Folder>
   <Folder Name="/Compze.SystemCE/">
     <Project Path="Compze.SystemCE.Internal/Compze.SystemCE.Internal.csproj" />

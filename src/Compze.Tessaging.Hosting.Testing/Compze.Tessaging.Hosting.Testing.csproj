@@ -65,6 +65,13 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_DbPool_Sqlite)' != 'true'">
     <ProjectReference Include="..\Compze.DbPool.Sqlite\Compze.DbPool.Sqlite.csproj" />
   </ItemGroup>
+  <!-- Compze.Must — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Must)' == 'true'">
+    <PackageReference Include="Compze.Must" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Must)' != 'true'">
+    <ProjectReference Include="..\Compze.Must\Compze.Must.csproj" />
+  </ItemGroup>
   <!-- Compze.Serialization.Newtonsoft — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Serialization_Newtonsoft)' == 'true'">
     <PackageReference Include="Compze.Serialization.Newtonsoft" Version="*-*" />
@@ -176,12 +183,5 @@
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_SystemCE)' != 'true'">
     <ProjectReference Include="..\Compze.Utilities.SystemCE\Compze.Utilities.SystemCE.csproj" />
-  </ItemGroup>
-  <!-- Compze.Utilities.Testing.Must — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Testing_Must)' == 'true'">
-    <PackageReference Include="Compze.Utilities.Testing.Must" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Testing_Must)' != 'true'">
-    <ProjectReference Include="..\Compze.Utilities.Testing.Must\Compze.Utilities.Testing.Must.csproj" />
   </ItemGroup>
 </Project>

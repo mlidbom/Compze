@@ -52,7 +52,7 @@
     <InternalsVisibleTo Include="Compze.DbPool.PostgreSql" />
     <InternalsVisibleTo Include="Compze.DbPool.Sqlite" />
     <InternalsVisibleTo Include="Compze.DbPool.Tests" />
-    <InternalsVisibleTo Include="Compze.Utilities.Testing.Must" />
+    <InternalsVisibleTo Include="Compze.Must" />
     <InternalsVisibleTo Include="Compze.Utilities.Testing.XUnit" />
     <InternalsVisibleTo Include="Compze.Utilities.Testing.XUnit.Tests" />
     <InternalsVisibleTo Include="Compze.Utilities.Tests" />

@@ -13,7 +13,7 @@ This package provides database lifecycle management for integration tests:
 
 | Package | Description |
 |---------|-------------|
-| [Compze.Utilities.Testing.Must](https://www.nuget.org/packages/Compze.Utilities.Testing.Must) | Fluent assertions |
+| [Compze.Must](https://www.nuget.org/packages/Compze.Must) | Fluent assertions |
 | [Compze.Utilities.Testing.XUnit](https://www.nuget.org/packages/Compze.Utilities.Testing.XUnit) | xUnit utilities |
 
 ## License

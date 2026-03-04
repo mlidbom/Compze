@@ -127,7 +127,7 @@ Run against `src/Compze.AllProjects.slnx` at WARNING severity: **1,398 issues ac
 | Compze.Tessaging | 154 |
 | Compze.Utilities.SystemCE | 132 |
 | Compze.Tests.Unit | 106 |
-| Compze.Utilities.Testing.Must | 97 |
+| Compze.Must | 97 |
 | Compze.Sql.Sqlite | 59 |
 | Compze.Sql.PostgreSql | 56 |
 | Compze.Sql.MySql | 53 |

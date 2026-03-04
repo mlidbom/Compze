@@ -61,7 +61,7 @@ These are the lowest-level building blocks. Each is a promotable concept in its 
 ### Testing
 > Test infrastructure, assertion libraries, xUnit integration.
 
-- `src/Compze.Utilities.Testing.Must` — assertion library
+- `src/Compze.Must` — assertion library
 - `src/Compze.Utilities.Testing.XUnit` — xUnit integration and base classes
 - `test/Compze.Utilities.Testing.XUnit.Tests`
 - **Dependencies**: Contracts, Functional, DependencyInjection, Logging, SystemCE, ThreadingCE

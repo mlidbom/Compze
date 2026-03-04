@@ -39,7 +39,7 @@ OurApplication
 ### Tests in this style look like this
 
 ```csharp
-using Compze.Utilities.Testing.Must;
+using Compze.Must;
 using Compze.Utilities.Testing.XUnit.BDD;
 
 namespace OurApplication.Specifications.UserAccounts.Registration;
@@ -138,7 +138,7 @@ dotnet add package Compze.Utilities.Testing.XUnit
 
 | Package | Description |
 |---------|-------------|
-| [Compze.Utilities.Testing.Must](https://www.nuget.org/packages/Compze.Utilities.Testing.Must) | Fluent assertions (`Must().Be()`, `Must().Throw<>()`, etc.) |
+| [Compze.Must](https://www.nuget.org/packages/Compze.Must) | Fluent assertions (`Must().Be()`, `Must().Throw<>()`, etc.) |
 | [Compze.Tessaging.Hosting.Testing](https://www.nuget.org/packages/Compze.Tessaging.Hosting.Testing) | Full integration testing infrastructure |
 | [Compze.Utilities.Testing.DbPool](https://www.nuget.org/packages/Compze.Utilities.Testing.DbPool) | Database pool management for tests |
 

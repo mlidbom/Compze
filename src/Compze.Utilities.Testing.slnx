@@ -1,6 +1,5 @@
 <Solution>
   <Folder Name="/Compze.Utilities.Testing/">
-    <Project Path="Compze.Utilities.Testing.Must/Compze.Utilities.Testing.Must.csproj" />
     <Project Path="Compze.Utilities.Testing.XUnit/Compze.Utilities.Testing.XUnit.csproj" />
   </Folder>
   <Folder Name="/_Tests/">
