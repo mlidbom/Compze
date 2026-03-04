@@ -2,8 +2,10 @@
   <Project Path="Compze.Threading/Compze.Threading.csproj" />
   <Project Path="Compze.Threading.Internal/Compze.Threading.Internal.csproj" />
   <Project Path="Compze.Threading.Testing/Compze.Threading.Testing.csproj" />
-  <Project Path="../test/Compze.Tests.Infrastructure/Compze.Tests.Infrastructure.csproj" />
-  <Project Path="../test/Compze.Threading.Specifications/Compze.Threading.Specifications.csproj" />
-  <Project Path="../test/Compze.Threading.Tests/Compze.Threading.Tests.csproj" />
-  <Project Path="../test/Compze.Threading.Testing.Specifications/Compze.Threading.Testing.Specifications.csproj" />
+  <Folder Name="/Specifications/">
+    <Project Path="../test/Compze.Tests.Infrastructure/Compze.Tests.Infrastructure.csproj" />
+    <Project Path="../test/Compze.Threading.Specifications/Compze.Threading.Specifications.csproj" />
+    <Project Path="../test/Compze.Threading.Testing.Specifications/Compze.Threading.Testing.Specifications.csproj" />
+    <Project Path="../test/Compze.Threading.Tests/Compze.Threading.Tests.csproj" />
+  </Folder>
 </Solution>

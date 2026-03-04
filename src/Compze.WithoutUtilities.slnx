@@ -1,21 +1,28 @@
 <Solution>
-  <Folder Name="/Compze/">
-    <Project Path="Compze.Core/Compze.Core.csproj" />
-    <Project Path="Compze.Tessaging/Compze.Tessaging.csproj" />
-  </Folder>
-  <Folder Name="/Compze/Serialization/">
-    <Project Path="Compze.Serialization.Newtonsoft/Compze.Serialization.Newtonsoft.csproj" />
-  </Folder>
-  <Folder Name="/Compze/Sql/">
+  <Folder Name="/Compze.Internal.Sql/">
     <Project Path="Compze.Sql.Common/Compze.Sql.Common.csproj" />
     <Project Path="Compze.Sql.MicrosoftSql/Compze.Sql.MicrosoftSql.csproj" />
     <Project Path="Compze.Sql.MySql/Compze.Sql.MySql.csproj" />
     <Project Path="Compze.Sql.PostgreSql/Compze.Sql.PostgreSql.csproj" />
     <Project Path="Compze.Sql.Sqlite/Compze.Sql.Sqlite.csproj" />
   </Folder>
-  <Folder Name="/Compze/Tessaging/">
+  <Folder Name="/Compze.Tessaging/">
     <Project Path="Compze.Tessaging.Hosting.AspNetCore/Compze.Tessaging.Hosting.AspNetCore.csproj" />
     <Project Path="Compze.Tessaging.Hosting.Testing/Compze.Tessaging.Hosting.Testing.csproj" />
     <Project Path="Compze.Tessaging.Teventive.TeventStore/Compze.Tessaging.Teventive.TeventStore.csproj" />
+    <Project Path="Compze.Tessaging/Compze.Tessaging.csproj" />
   </Folder>
+  <Folder Name="/Tests/">
+    <Project Path="../test/Compze.Tests.CodePolicies/Compze.Tests.CodePolicies.csproj" />
+    <Project Path="../test/Compze.Tests.Common/Compze.Tests.Common.csproj" />
+    <Project Path="../test/Compze.Tests.Infrastructure/Compze.Tests.Infrastructure.csproj" />
+    <Project Path="../test/Compze.Tests.Integration/Compze.Tests.Integration.csproj" />
+    <Project Path="../test/Compze.Tests.Performance.Internals/Compze.Tests.Performance.Internals.csproj" />
+    <Project Path="../test/Compze.Tests.ScratchPad/Compze.Tests.ScratchPad.csproj" />
+    <Project Path="../test/Compze.Tests.Unit.Internals/Compze.Tests.Unit.Internals.csproj" />
+    <Project Path="../test/Compze.Tests.Unit/Compze.Tests.Unit.csproj" />
+    <Project Path="../test/Compze.Utilities.Tests/Compze.Utilities.Tests.csproj" />
+  </Folder>
+  <Project Path="Compze.Core/Compze.Core.csproj" />
+  <Project Path="Compze.Serialization.Newtonsoft/Compze.Serialization.Newtonsoft.csproj" />
 </Solution>

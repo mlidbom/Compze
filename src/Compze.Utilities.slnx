@@ -1,10 +1,7 @@
 <Solution>
   <Folder Name="/Compze.Utilities/">
-    <Project Path="Compze.Contracts/Compze.Contracts.csproj" />
-    <Project Path="Compze.Underscore/Compze.Underscore.csproj" />
     <Project Path="Compze.Utilities/Compze.Utilities.csproj" />
     <Project Path="Compze.Utilities.SystemCE/Compze.Utilities.SystemCE.csproj" />
-    <Project Path="Compze.Threading/Compze.Threading.csproj" />
     <Project Path="Compze.Utilities.Logging/Compze.Utilities.Logging.csproj" />
     <Project Path="Compze.Utilities.DependencyInjection/Compze.Utilities.DependencyInjection.csproj" />
     <Project Path="Compze.Utilities.DependencyInjection.Microsoft/Compze.Utilities.DependencyInjection.Microsoft.csproj" />
@@ -16,7 +13,6 @@
   </Folder>
   <Folder Name="/_Tests/">
     <Project Path="../test/Compze.Utilities.Tests/Compze.Utilities.Tests.csproj" />
-    <Project Path="../test/Compze.Underscore.Specifications/Compze.Underscore.Specifications.csproj" />
     <Project Path="../test/Compze.Utilities.Testing.XUnit.Tests/Compze.Utilities.Testing.XUnit.Tests.csproj" />
   </Folder>
 </Solution>
