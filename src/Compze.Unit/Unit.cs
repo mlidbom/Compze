@@ -15,6 +15,7 @@ namespace Compze.Unit;
 /// </code>
 /// </summary>
 #pragma warning disable CA1724 //Same name as the namespace
+[Serializable]
 public readonly partial struct Unit : IEquatable<Unit>, IComparable<Unit>
 {
    public static readonly Unit Value = default;
