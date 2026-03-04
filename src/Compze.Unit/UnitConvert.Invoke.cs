@@ -2,7 +2,7 @@ namespace Compze.Unit;
 
 public static partial class UnitConvert
 {
-   public static Unit Invoke(this Action @this)
+   public static Unit Invoke(Action @this)
    {
       @this();
       return Unit.Value;
