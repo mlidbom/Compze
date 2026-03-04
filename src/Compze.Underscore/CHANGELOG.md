@@ -4,6 +4,6 @@ All notable changes to Compze.Utilities.SystemCE.ThreadingCE will be documented 
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
-## 0.6.0
+## 0.5.0-beta
 
 - Initial release

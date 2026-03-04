@@ -2,7 +2,7 @@
    <PropertyGroup>
       <TargetFramework>net10.0</TargetFramework>
       <Nullable>enable</Nullable>
-      <Version>0.1.0-alpha.1</Version>
+      <Version>0.2.1-alpha</Version>
       <RootNamespace>Compze.SystemCE</RootNamespace>
       <Description>For Compze internal use only. Do not take a dependency on this package</Description>
    </PropertyGroup>
