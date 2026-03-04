@@ -1,5 +1,6 @@
 <SolutionConfiguration>
   <Settings>
+    <AllowParallelTestExecution>True</AllowParallelTestExecution>
     <CustomBuildProperties>
       <Value>UsePackageReference_Compze_Contracts = true</Value>
       <Value>UsePackageReference_Compze_Core = true</Value>
@@ -31,5 +32,8 @@
       <Value>UsePackageReference_Compze_Utilities_Testing_Must = true</Value>
       <Value>UsePackageReference_Compze_Utilities_Testing_XUnit = true</Value>
     </CustomBuildProperties>
+    <EnableRDI>False</EnableRDI>
+    <RdiConfigured>True</RdiConfigured>
+    <SolutionConfigured>True</SolutionConfigured>
   </Settings>
 </SolutionConfiguration>
