@@ -1,5 +1,6 @@
 using Compze.Utilities.Testing.Must;
 using Compze.Utilities.Testing.XUnit.BDD;
+#pragma warning disable IDE0039
 
 #pragma warning disable CA1052 // BDD-style nested specification classes cannot be static
 
@@ -144,7 +145,7 @@ public class unit_type
          {
             var captured = "";
             Func<string, unit> func = s => { captured = s; return unit.Value; };
-            var action = unit.Action<string>(func);
+            var action = unit.Action(func);
             action("hello");
             captured.Must().Be("hello");
          }
@@ -157,7 +158,7 @@ public class unit_type
             var capturedA = "";
             var capturedB = 0;
             Func<string, int, unit> func = (s, i) => { capturedA = s; capturedB = i; return unit.Value; };
-            var action = unit.Action<string, int>(func);
+            var action = unit.Action(func);
             action("hello", 42);
             capturedA.Must().Be("hello");
             capturedB.Must().Be(42);
@@ -185,7 +186,7 @@ public class unit_type
          {
             var captured = "";
             Func<string, Task<unit>> func = async s => { await Task.Yield(); captured = s; return unit.Value; };
-            var action = unit.AsyncAction<string>(func);
+            var action = unit.AsyncAction(func);
             await action("hello");
             captured.Must().Be("hello");
          }
@@ -198,7 +199,7 @@ public class unit_type
             var capturedA = "";
             var capturedB = 0;
             Func<string, int, Task<unit>> func = async (s, i) => { await Task.Yield(); capturedA = s; capturedB = i; return unit.Value; };
-            var action = unit.AsyncAction<string, int>(func);
+            var action = unit.AsyncAction(func);
             await action("hello", 42);
             capturedA.Must().Be("hello");
             capturedB.Must().Be(42);

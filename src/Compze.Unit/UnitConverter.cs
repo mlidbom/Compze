@@ -24,10 +24,10 @@ public static class UnitConverterExtensions
       /// </summary>
       public static Func<Unit> Func(Action action) => action.ToFunc();
 
-      ///<inheritdoc cref="Func(Action)"/>
+      ///<inheritdoc cref="Func(System.Action)"/>
       public static Func<TParam, Unit> Func<TParam>(Action<TParam> action) => action.ToFunc();
 
-      ///<inheritdoc cref="Func(Action)"/>
+      ///<inheritdoc cref="Func(System.Action)"/>
       public static Func<TParam, TParam2, Unit> Func<TParam, TParam2>(Action<TParam, TParam2> action) => action.ToFunc();
 
       ///<summary>Creates a <see cref="Func{TResult}"/> returning <see cref="Task"/> of <see cref="Unit"/> from a task-returning async method group.
