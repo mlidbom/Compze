@@ -4,6 +4,7 @@
     <Nullable>enable</Nullable>
     <Version>0.1.0-alpha.1</Version>
     <RootNamespace>Compze.Threading</RootNamespace>
+     <Description>For Compze internal use only. Do not take a dependency on this package</Description>
   </PropertyGroup>
   <Import Project="..\msbuild\InternalsVisibleToEveryone.props" />
   <ItemGroup>
@@ -25,5 +26,11 @@
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_Underscore)' != 'true'">
     <ProjectReference Include="..\Compze.Underscore\Compze.Underscore.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="README.md">
+      <PackagePath></PackagePath>
+      <Pack>true</Pack>
+    </None>
   </ItemGroup>
 </Project>
