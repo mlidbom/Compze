@@ -10,8 +10,8 @@ public static partial class UnitConvert
       };
 
    public static Func<TParam, Unit> ToFunc<TParam>(this Action<TParam> @this) =>
-      param => UnitConvert.Invoke(() => @this(param));
+      param => Invoke(() => @this(param));
 
    public static Func<TParam1, TParam2, Unit> ToFunc<TParam1, TParam2>(this Action<TParam1, TParam2> @this) =>
-      (param, param2) => UnitConvert.Invoke(() => @this(param, param2));
+      (param, param2) => Invoke(() => @this(param, param2));
 }

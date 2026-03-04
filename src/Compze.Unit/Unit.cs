@@ -17,7 +17,7 @@ namespace Compze.Unit;
 /// <c>global using unit = Compze.Unit;</c>
 /// </summary>
 #pragma warning disable CA1724 //Same name as the namespace
-public readonly struct Unit : IEquatable<Unit>
+public readonly partial struct Unit : IEquatable<Unit>
 {
    public static readonly Unit Value = default;
 
@@ -30,18 +30,4 @@ public readonly struct Unit : IEquatable<Unit>
    public static bool operator !=(Unit _, Unit __) => false;
 
    public override int GetHashCode() => 392576489;
-
-   ///<summary>Executes the action and returns Unit
-   /// <code>
-   ///   Unit Method() => Unit.Invoke(() => AVoidMethod())
-   /// </code>
-   /// </summary>
-   public static Unit Invoke(Action action) => UnitConvert.Invoke(action);
-
-   ///<summary>Awaits the async action and returns Unit
-   /// <code>
-   ///   Task&lt;Unit&gt; Method() => Unit.InvokeAsync(() => AnAsyncVoidMethod())
-   /// </code>
-   /// </summary>
-   public static async Task<Unit> InvokeAsync(Func<Task> action) => await UnitConvert.InvokeAsync(action);
 }
