@@ -38,6 +38,21 @@ public class unit_type
       [XF] public void CompareTo_returns_zero_for_another_unit() => unit.Value.CompareTo(unit.Value).Must().Be(0);
    }
 
+   public class implicit_conversion
+   {
+      [XF] public void Unit_converts_implicitly_to_ValueTuple()
+      {
+         ValueTuple vt = unit.Value;
+         vt.Must().Be(default(ValueTuple));
+      }
+
+      [XF] public void ValueTuple_converts_implicitly_to_Unit()
+      {
+         unit u = default(ValueTuple);
+         u.Must().Be(unit.Value);
+      }
+   }
+
    public class From_method
    {
       [XF] public void executes_the_action_and_returns_unit()

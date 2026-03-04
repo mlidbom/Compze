@@ -32,4 +32,7 @@ public readonly partial struct Unit : IEquatable<Unit>, IComparable<Unit>
    [Pure] public override int GetHashCode() => 0;
 
    [Pure] public int CompareTo(Unit _) => 0;
+
+   [Pure] public static implicit operator Unit(ValueTuple _) => Value;
+   [Pure] public static implicit operator ValueTuple(Unit _) => default;
 }
