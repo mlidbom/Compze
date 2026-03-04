@@ -4,7 +4,7 @@
     <Nullable>enable</Nullable>
     <Version>0.3.0-alpha</Version>
     <RootNamespace>Compze.Threading</RootNamespace>
-     <Description>For Compze internal use only. Do not take a dependency on this package</Description>
+    <Description>For Compze internal use only. Do not take a dependency on this package</Description>
   </PropertyGroup>
   <Import Project="..\msbuild\InternalsVisibleToEveryone.props" />
   <ItemGroup>
@@ -12,6 +12,12 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="README.md">
+      <PackagePath></PackagePath>
+      <Pack>true</Pack>
+    </None>
   </ItemGroup>
   <!-- Compze.Contracts — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' == 'true'">
@@ -26,11 +32,5 @@
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_Underscore)' != 'true'">
     <ProjectReference Include="..\Compze.Underscore\Compze.Underscore.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Update="README.md">
-      <PackagePath></PackagePath>
-      <Pack>true</Pack>
-    </None>
   </ItemGroup>
 </Project>
