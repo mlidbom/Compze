@@ -4,7 +4,7 @@ using Compze.Must;
 using Compze.xUnitBDD;
 // ReSharper disable PreferConcreteValueOverDefault
 
-namespace Compze.Tests.Unit.Internals.SystemCE.CollectionsCE.GenericCE;
+namespace Compze.Internals.SystemCE.Tests.CollectionsCE.GenericCE;
 
 public static class DictionaryExtensionsGetOrAddWhenKey
 {

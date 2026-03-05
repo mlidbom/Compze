@@ -1,7 +1,10 @@
 using System.Collections.Concurrent;
+using Compze.Must;
 using Compze.Threading;
+using Compze.xUnitBDD;
+using Xunit;
 
-namespace Compze.Utilities.Tests.SystemCE.ThreadingCE;
+namespace Compze.Threading.Tests;
 
 #pragma warning disable CA1052 // Static holder class used for test organization
 public static class RunOnceAsync_specification

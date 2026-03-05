@@ -5,7 +5,7 @@ using Compze.xUnitBDD;
 using JetBrains.Annotations;
 #pragma warning disable CS8620 // Argument cannot be used for parameter due to differences in the nullability of reference types.
 
-namespace Compze.Tests.Unit.GenericAbstractions;
+namespace Compze.Internals.SystemCE.Tests;
 
 public class IStaticInstancePropertySingleton_tests : UniversalTestBase
 {

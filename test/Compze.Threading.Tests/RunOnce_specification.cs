@@ -1,9 +1,12 @@
 using System.Collections.Concurrent;
+using Compze.Must;
 using Compze.Threading;
+using Compze.xUnitBDD;
+using Xunit;
 
 // ReSharper disable AccessToDisposedClosure
 
-namespace Compze.Utilities.Tests.SystemCE.ThreadingCE;
+namespace Compze.Threading.Tests;
 
 
 public static class RunOnce_specification
