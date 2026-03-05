@@ -1,5 +1,5 @@
 using Compze.Tests.Infrastructure.XUnit;
-using Compze.Tests.Unit.Internals.Serialization.OriginalTypes;
+using Compze.Internals.Serialization.Newtonsoft.Specifications.OriginalTypes;
 using Compze.Must;
 
 // ReSharper disable UnusedMember.Global
@@ -9,7 +9,7 @@ using Compze.Must;
 // ReSharper disable InconsistentNaming
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
-namespace Compze.Tests.Unit.Internals.Serialization
+namespace Compze.Internals.Serialization.Newtonsoft.Specifications
 {
    public class WhenSerializingTypeWithPolymorphicMembers : SerializerTest
    {
@@ -21,28 +21,28 @@ namespace Compze.Tests.Unit.Internals.Serialization
                     {
                       "ATypeProperty": {
                         "$type": "645544b7-e56c-4e3c-81cd-149e9be90bd7",
-                        "Value": "Compze.Tests.Unit.Internals.Serialization.OriginalTypes.TypeA"
+                        "Value": "Compze.Internals.Serialization.Newtonsoft.Specifications.OriginalTypes.TypeA"
                       },
                       "BTypeProperty": {
                         "$type": "acd2c07a-d3d1-4217-9e71-b13c2775e86d",
-                        "Value": "Compze.Tests.Unit.Internals.Serialization.OriginalTypes.TypeB"
+                        "Value": "Compze.Internals.Serialization.Newtonsoft.Specifications.OriginalTypes.TypeB"
                       },
                       "ListOfAType": [
                         {
                           "$type": "645544b7-e56c-4e3c-81cd-149e9be90bd7",
-                          "Value": "Compze.Tests.Unit.Internals.Serialization.OriginalTypes.TypeA"
+                          "Value": "Compze.Internals.Serialization.Newtonsoft.Specifications.OriginalTypes.TypeA"
                         },
                         {
                           "$type": "acd2c07a-d3d1-4217-9e71-b13c2775e86d",
-                          "Value": "Compze.Tests.Unit.Internals.Serialization.OriginalTypes.TypeB"
+                          "Value": "Compze.Internals.Serialization.Newtonsoft.Specifications.OriginalTypes.TypeB"
                         },
                         {
                           "$type": "f583784b-29d2-499b-a205-59ea6ef57cb3",
-                          "Value": "Compze.Tests.Unit.Internals.Serialization.OriginalTypes.TypeA+TypeAA"
+                          "Value": "Compze.Internals.Serialization.Newtonsoft.Specifications.OriginalTypes.TypeA+TypeAA"
                         },
                         {
                           "$type": "d65a7c6a-eeb5-485a-a86a-cd4ac8ca99cf",
-                          "Value": "Compze.Tests.Unit.Internals.Serialization.OriginalTypes.TypeB+TypeBB"
+                          "Value": "Compze.Internals.Serialization.Newtonsoft.Specifications.OriginalTypes.TypeB+TypeBB"
                         }
                       ]
                     }

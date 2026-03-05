@@ -9,7 +9,7 @@ using Compze.Must;
 // ReSharper disable InconsistentNaming
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
-namespace Compze.Tests.Unit.Internals.Serialization;
+namespace Compze.Internals.Serialization.Newtonsoft.Specifications;
 
 public class When_serializing_polymorphic_wrapper_objects : SerializerTest
 {

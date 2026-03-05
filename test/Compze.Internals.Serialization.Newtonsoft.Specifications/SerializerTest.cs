@@ -5,7 +5,7 @@ using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tests.Infrastructure;
 using Compze.DependencyInjection.Abstractions;
 
-namespace Compze.Tests.Unit.Internals.Serialization;
+namespace Compze.Internals.Serialization.Newtonsoft.Specifications;
 
 public class SerializerTest : UniversalTestBase
 {

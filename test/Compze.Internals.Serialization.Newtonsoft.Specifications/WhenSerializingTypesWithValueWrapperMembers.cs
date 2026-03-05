@@ -12,7 +12,7 @@ using Compze.Must;
 // ReSharper disable UnusedMemberHierarchy.Global
 // ReSharper disable MemberCanBeProtected.Global
 
-namespace Compze.Tests.Unit.Internals.Serialization
+namespace Compze.Internals.Serialization.Newtonsoft.Specifications
 {
    public class When_serializing_types_with_ValueWrapper_members : SerializerTest
    {
@@ -65,14 +65,6 @@ namespace Compze.Tests.Unit.Internals.Serialization
          public PersonId() : this(Guid.NewGuid()) {}
       }
 
-      internal class Person(PersonId id)
-      {
-         [Obsolete("for serializer")]
-         public Person():this(new PersonId()) {}
-
-         public virtual PersonId Id { get; private set; } = id;
-      }
-
       internal class UserId(Guid id) : PersonId(id)
       {
          public UserId() : this(Guid.NewGuid()){}
@@ -81,6 +73,14 @@ namespace Compze.Tests.Unit.Internals.Serialization
       internal class User(UserId id) : Person(id)
       {
          public override UserId Id => (UserId)base.Id;
+      }
+
+      internal class Person(PersonId id)
+      {
+         [Obsolete("for serializer")]
+         public Person():this(new PersonId()) {}
+
+         public virtual PersonId Id { get; private set; } = id;
       }
 
       class Root

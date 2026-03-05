@@ -6,7 +6,7 @@ using JetBrains.Annotations;
 using Newtonsoft.Json;
 using Compze.Must;
 
-namespace Compze.Tests.Unit.Internals.Serialization;
+namespace Compze.Internals.Serialization.Newtonsoft.Specifications;
 
 public class NewtonSoftTeventStoreTeventSerializerTests : SerializerTest
 {
