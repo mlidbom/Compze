@@ -96,25 +96,25 @@
   <Folder Name="/Compze.DependencyInjection/Specifications/">
     <Project Path="../test/Compze.DependencyInjection.Specifications/Compze.DependencyInjection.Specifications.csproj" />
   </Folder>
-  <Folder Name="/Compze.Internals.Logging/">
+  <Folder Name="/Compze.Internals/" />
+  <Folder Name="/Compze.Internals/Compze.Internals.Logging/">
     <Project Path="Compze.Internals.Logging.Serilog/Compze.Internals.Logging.Serilog.csproj" />
     <Project Path="Compze.Internals.Logging/Compze.Internals.Logging.csproj" />
   </Folder>
-  <Folder Name="/Compze.Internals.Serialization/">
+  <Folder Name="/Compze.Internals/Compze.Internals.Serialization/">
     <Project Path="Compze.Internals.Serialization.Newtonsoft/Compze.Internals.Serialization.Newtonsoft.csproj" />
   </Folder>
-  <Folder Name="/Compze.Internals.Sql/">
+  <Folder Name="/Compze.Internals/Compze.Internals.Sql/">
     <Project Path="Compze.Internals.Sql.Common/Compze.Internals.Sql.Common.csproj" />
     <Project Path="Compze.Internals.Sql.MicrosoftSql/Compze.Internals.Sql.MicrosoftSql.csproj" />
     <Project Path="Compze.Internals.Sql.MySql/Compze.Internals.Sql.MySql.csproj" />
     <Project Path="Compze.Internals.Sql.PostgreSql/Compze.Internals.Sql.PostgreSql.csproj" />
     <Project Path="Compze.Internals.Sql.Sqlite/Compze.Internals.Sql.Sqlite.csproj" />
   </Folder>
-  <Folder Name="/Compze.Internals.SystemCE/">
+  <Folder Name="/Compze.Internals/Compze.Internals.SystemCE/">
     <Project Path="Compze.Internals.SystemCE.Core/Compze.Internals.SystemCE.Core.csproj" />
     <Project Path="Compze.Internals.SystemCE/Compze.Internals.SystemCE.csproj" />
   </Folder>
-  <Folder Name="/Compze.Internals/" />
   <Folder Name="/Compze.Must/">
     <Project Path="Compze.Must/Compze.Must.csproj" />
   </Folder>
@@ -128,7 +128,6 @@
     <Project Path="Compze.Tessaging/Compze.Tessaging.csproj" />
   </Folder>
   <Folder Name="/Compze.Threading/">
-    <Project Path="Compze.Threading.Internal/Compze.Threading.Internal.csproj" />
     <Project Path="Compze.Threading.Testing/Compze.Threading.Testing.csproj" />
     <Project Path="Compze.Threading/Compze.Threading.csproj" />
   </Folder>
@@ -151,4 +150,7 @@
   </Folder>
   <Project Path="../DevScripts/Scripts.csproj" />
   <Project Path="Compze.Core/Compze.Core.csproj" />
+  <Folder Name="/Compze/Internals/">
+    <Project Path="Compze.Internals.Threading/Compze.Internals.Threading.csproj" />
+  </Folder>
 </Solution>

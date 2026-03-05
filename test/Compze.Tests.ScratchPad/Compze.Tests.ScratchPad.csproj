@@ -77,12 +77,12 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Threading)' != 'true'">
     <ProjectReference Include="..\..\src\Compze.Threading\Compze.Threading.csproj" />
   </ItemGroup>
-  <!-- Compze.Threading.Internal — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Threading_Internal)' == 'true'">
-    <PackageReference Include="Compze.Threading.Internal" Version="*-*" />
+  <!-- Compze.Internals.Threading — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Threading)' == 'true'">
+    <PackageReference Include="Compze.Internals.Threading" Version="*-*" />
   </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Threading_Internal)' != 'true'">
-    <ProjectReference Include="..\..\src\Compze.Threading.Internal\Compze.Threading.Internal.csproj" />
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Threading)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.Internals.Threading\Compze.Internals.Threading.csproj" />
   </ItemGroup>
   <!-- Compze.Underscore — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Underscore)' == 'true'">

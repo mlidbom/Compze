@@ -30,8 +30,9 @@ These are the lowest-level building blocks. Each is a promotable concept in its 
 > Quality of life extensions and abstractions over System.* — IO, collections, LINQ, etc.
 
 - `src/Compze.Internals.SystemCE`
+- `src/Compze.Internals.SystemCE.Core` — foundational primitives (collections, tasks) that SystemCE itself depends on
 - **Dependencies**: Contracts, Functional
-- **Status**: Published as NuGet package.
+- **Status**: Published as NuGet package (internal).
 - **Note**: Contains `MachineWideSharedObject` which may move to its own sub-product under Threading.
 
 ---
@@ -39,8 +40,9 @@ These are the lowest-level building blocks. Each is a promotable concept in its 
 ### Threading
 > Thread safety made easy and reliable.
 
-- `src/Compze.Internals.SystemCE.ThreadingCE` — core threading primitives (MutexCE, IMonitor, ResourceAccess, etc.)
-- `src/Compze.Internals.SystemCE.ThreadingCE.Testing` — testing utilities for threading code
+- `src/Compze.Threading` — core threading primitives (MutexCE, IMonitor, ResourceAccess, etc.)
+- `src/Compze.Internals.Threading` — internal threading implementation
+- `src/Compze.Threading.Testing` — testing utilities for threading code
 - _Candidate_: `Compze.Threading.InterProcessObject` — `MachineWideSharedObject` extracted from SystemCE
 - **Dependencies**: Contracts, Functional, SystemCE
 - **Test projects**: Currently tested within `Compze.Tests.Unit.Internals` and `Compze.Tests.Performance.Internals` — would need dedicated test projects.
@@ -95,9 +97,9 @@ This is the largest sub-product, and the one that composes everything else.
 
 ---
 
-## Internal Libraries (Not Promoted Separately)
+## Internal Libraries (`Compze.Internals.*`)
 
-These are published as NuGet packages (since other Compze packages depend on them), but are not intended as standalone offerings for external consumers.
+These are published as NuGet packages (since other Compze packages depend on them), but are **not intended as standalone offerings for external consumers**. They use the `Compze.Internals.*` naming prefix to clearly signal this. The API may change without notice. A future analyzer will prohibit client code from referencing `Compze.Internals.*` namespaces.
 
 ### Core
 Core was designed around minimizing project count to avoid overloading Visual Studio. FlexRef + partial solutions solve that problem far better. **Planned**: Dissolve Core — aggregate/event interfaces move to Teventive, command/query routing moves to Typermedia.
@@ -111,6 +113,12 @@ Core was designed around minimizing project count to avoid overloading Visual St
 - `src/Compze.Internals.Sql.PostgreSql`
 - `src/Compze.Internals.Sql.Sqlite`
 - **Dependencies**: Contracts, Core, DependencyInjection, Logging, SystemCE, ThreadingCE
+
+### Serialization
+> Serialization implementations. Internal — pluggable implementation detail.
+
+- `src/Compze.Internals.Serialization.Newtonsoft` — Newtonsoft.Json serialization
+- **Dependencies**: Core, Newtonsoft.Json
 
 ### Logging
 > Logging abstractions and Serilog implementation. Internal — the overall design is not yet settled for general use.

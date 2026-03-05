@@ -51,11 +51,13 @@ This creates a clear boundary between stable utility code and the evolving core 
 | **DependencyInjection** | Fluent DI with lifestyle validation (singleton-depends-on-scoped detection), type-safe factory registration | Contracts, Functional, SystemCE, ThreadingCE | Remove phantom Logging reference. Core API is clean. Consider whether transaction support should be separate. |
 | **DbPool** | Machine-wide database pool for integration testing — reserves/releases databases across parallel test processes | 8 Compze packages (most incidental) | Move `IDbPoolSqlLayer`, `DbPoolDatabase`, `DbPoolId` into DbPool (currently in Sql.Common). Move `MachineWideSharedObject` + `MutexCE` in. Replace Compze logging with `Microsoft.Extensions.Logging`. Inline trivial SystemCE usages. |
 
-### Not extracting (stays internal)
+### Not extracting (stays internal under `Compze.Internals.*`)
 
 | Library | Reason |
 |---------|--------|
-| **Logging** | Coupled to `unit`, custom `ILogger` — not valuable enough externally to warrant the extraction effort. Primarily serves Compze internals. |
+| **Logging** | Coupled to `unit`, custom `ILogger` — not valuable enough externally to warrant the extraction effort. Primarily serves Compze internals. Now `Compze.Internals.Logging`. |
+| **Serialization** | Pluggable implementation detail (Newtonsoft.Json). Consumers use the serialization through Tessaging, not directly. Now `Compze.Internals.Serialization.Newtonsoft`. |
+| **Sql** | Internal SQL plumbing consumed by DbPool and Tessaging. Now `Compze.Internals.Sql.*`. |
 
 ## Dependency Flow (post-extraction)
 

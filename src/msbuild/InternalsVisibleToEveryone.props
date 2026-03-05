@@ -34,7 +34,7 @@
     <InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />
     <InternalsVisibleTo Include="Compze.Threading" />
     <InternalsVisibleTo Include="Compze.Threading.Specifications" />
-    <InternalsVisibleTo Include="Compze.Threading.Internal" />
+    <InternalsVisibleTo Include="Compze.Internals.Threading" />
     <InternalsVisibleTo Include="Compze.Threading.Testing" />
     <InternalsVisibleTo Include="Compze.Threading.Testing.Specifications" />
     <InternalsVisibleTo Include="Compze.Threading.Tests" />

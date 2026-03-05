@@ -22,7 +22,7 @@ Compze.* packages freely depend on each other. We built these abstractions to he
 We are **not** optimizing for "can I use this on a desert island with no other Compze packages."
 
 ### Package names describe what they are, not where they live in a hierarchy
-Drop the `Compze.Utilities.*` prefix for promoted sub-products. `Compze.Threading` says what it is. `Compze.Internals.SystemCE.ThreadingCE` describes a path in a monolith. Package names should be self-explanatory — the internal organizational history is not the consumer's concern.
+Drop the `Compze.Utilities.*` prefix for promoted sub-products. `Compze.Threading` says what it is. `Compze.Utilities.SystemCE.ThreadingCE` describes a path in a monolith. Package names should be self-explanatory — the internal organizational history is not the consumer's concern.
 
 ### Sub-products should be extractable
 Each sub-product should have its own solution, production projects, and test projects. Unless doing cross-cutting refactoring these should be the best way to work on the sub-project.
@@ -51,7 +51,8 @@ This decouples project classification from directory structure, which is importa
 1. **Core dissolves.** Its types redistribute to Teventive (aggregate/event interfaces) and Typermedia (command/query routing). Core was born from a "minimize projects" strategy that FlexRef obsoletes.
 2. **Tessaging becomes thin or disappears.** The Tessaging project either becomes a small project containing only shared interfaces/base classes, or is eliminated entirely. Teventive and Typermedia become top-level sub-products directly under Compze.
 3. **Functional → Unit + Fluent.** `Compze.Underscore` is renamed/split: `Compze.Unit` (the `unit` type + Action/Func converters) and `Compze.Fluent` (pipe, tap, mutate, then, forEach). This resolves a circular dependency between Fluent and SystemCE, since SystemCE can depend on Unit without pulling in Fluent's dependency on Unit.
-4. **Naming**: Promoted sub-products use short names (`Compze.Threading`, not `Compze.Internals.SystemCE.ThreadingCE`).
+4. **Naming**: Promoted sub-products use short names (`Compze.Threading`, not `Compze.Utilities.SystemCE.ThreadingCE`).
+5. **`Compze.Internals.*` convention.** Projects that are split out for encapsulation, reuse, and architectural clarity — but are not suitable for general consumption — use the `Compze.Internals.*` naming prefix. These are published as NuGet packages (other Compze packages depend on them), but consumers should not take direct dependencies on them. The API may change without notice. A future analyzer will prohibit client code from using types from `Compze.Internals.*` namespaces. Current internal projects: Logging, Serialization.Newtonsoft, Sql.*, SystemCE, SystemCE.Core, Threading.
 
 ## Open Questions
 
