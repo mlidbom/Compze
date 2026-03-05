@@ -7,6 +7,9 @@
     <Description>Internal shared xUnit extensibility foundation for the Compze framework. Not intended for direct consumption — depend on Compze.xUnitBDD or Compze.xUnit.ComponentCombinations instead.</Description>
   </PropertyGroup>
   <ItemGroup>
+    <AdditionalFiles Include="config.nsdepcop" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="xunit.v3.extensibility.core" Version="3.1.0" />
   </ItemGroup>
   <ItemGroup>
