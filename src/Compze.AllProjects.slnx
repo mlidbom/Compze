@@ -114,9 +114,12 @@
     <Project Path="Compze.Internals.SystemCE.Core/Compze.Internals.SystemCE.Core.csproj" />
     <Project Path="Compze.Internals.SystemCE/Compze.Internals.SystemCE.csproj" />
   </Folder>
+  <Folder Name="/Compze.Internals/" />
   <Folder Name="/Compze.Must/">
-    <Project Path="../test/Compze.Must.Specifications/Compze.Must.Specifications.csproj" />
     <Project Path="Compze.Must/Compze.Must.csproj" />
+  </Folder>
+  <Folder Name="/Compze.Must/Specifications/">
+    <Project Path="../test/Compze.Must.Specifications/Compze.Must.Specifications.csproj" />
   </Folder>
   <Folder Name="/Compze.Tessaging/">
     <Project Path="Compze.Tessaging.Hosting.AspNetCore/Compze.Tessaging.Hosting.AspNetCore.csproj" />
