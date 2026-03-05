@@ -7,6 +7,11 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
+  <Folder Name="/Compze.xUnit/Specifications/">
+    <Project Path="../test/Compze.xUnitBDD.Tests/Compze.xUnitBDD.Tests.csproj">
+      <BuildType Solution="docs|*" Project="Release" />
+    </Project>
+  </Folder>
   <Folder Name="/_Samples/" />
   <Folder Name="/_Samples/AccountManagement/">
     <Project Path="../samples/AccountManagement/src/AccountManagement.API/AccountManagement.API.csproj" />
@@ -106,9 +111,6 @@
     <Project Path="Compze.Threading/Compze.Threading.csproj" />
   </Folder>
   <Folder Name="/Compze.xUnit/">
-    <Project Path="../test/Compze.xUnitBDD.Tests/Compze.xUnitBDD.Tests.csproj">
-      <BuildType Solution="docs|*" Project="Release" />
-    </Project>
     <Project Path="Compze.xUnit/Compze.xUnit.csproj" />
     <Project Path="Compze.xUnitBDD/Compze.xUnitBDD.csproj" />
     <Project Path="Compze.Utilities.Testing.XUnit/Compze.Utilities.Testing.XUnit.csproj" />
