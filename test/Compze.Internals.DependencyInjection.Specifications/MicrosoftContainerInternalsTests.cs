@@ -1,11 +1,10 @@
-using Compze.Tests.Infrastructure;
 using Compze.Utilities.DependencyInjection.Microsoft;
 using Compze.Must;
 using Compze.xUnitBDD;
 
-namespace Compze.Tests.Integration.DependencyInjection;
+namespace Compze.Internals.DependencyInjection.Specifications;
 
-public class MicrosoftContainerInternalsTests : UniversalTestBase
+public class MicrosoftContainerInternalsTests
 {
    [XF]
    public void Container_implements_IMicrosoftContainerInternals_explicitly()

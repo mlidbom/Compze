@@ -1,19 +1,16 @@
-using Compze.Tessaging.Hosting.Testing;
-using Compze.Tessaging.Hosting.Testing.Wiring;
-using Compze.Tests.Infrastructure;
+using Compze.Internals.DependencyInjection.Specifications.Infrastructure;
 using Compze.Utilities.DependencyInjection;
-using Compze.Tests.Infrastructure.XUnit;
 using Compze.Must;
 using static Compze.Must.MustActions;
 
-namespace Compze.Tests.Integration.DependencyInjection;
+namespace Compze.Internals.DependencyInjection.Specifications;
 
-public class LifestyleValidationTests : UniversalTestBase
+public class LifestyleValidationTests
 {
-   [PCTDIContainer]
+   [DependencyInjectionContainerMatrix]
    public void Should_throw_when_singleton_depends_on_scoped_service()
    {
-      using var container = TestEnv.DIContainer.CreateWithServiceLocatorAndCurrentTestsPluggableComponents();
+      using var container = DependencyInjectionContainerFactory.CreateContainer();
 
       var exception = Invoking(() =>
       {

@@ -1,11 +1,10 @@
-using Compze.Tests.Infrastructure;
 using Compze.Utilities.DependencyInjection.SimpleInjector;
 using Compze.Must;
 using Compze.xUnitBDD;
 
-namespace Compze.Tests.Integration.DependencyInjection;
+namespace Compze.Internals.DependencyInjection.Specifications;
 
-public class SimpleInjectorContainerInternalsTests : UniversalTestBase
+public class SimpleInjectorContainerInternalsTests
 {
    [XF]
    public void Container_implements_ISimpleInjectorContainerInternals_explicitly()
