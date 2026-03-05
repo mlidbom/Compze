@@ -1,5 +1,0 @@
-<Solution>
-  <Project Path="Compze.xUnitBDD.csproj" />
-  <Project Path="../Compze.xUnit/Compze.xUnit.csproj" />
-  <Project Path="../../test/Compze.xUnitBDD.Tests/Compze.xUnitBDD.Tests.csproj" />
-</Solution>
