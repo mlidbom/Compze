@@ -102,11 +102,11 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_SystemCE)' != 'true'">
     <ProjectReference Include="..\..\src\Compze.Utilities.SystemCE\Compze.Utilities.SystemCE.csproj" />
   </ItemGroup>
-  <!-- Compze.Utilities.Testing.XUnit — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Testing_XUnit)' == 'true'">
-    <PackageReference Include="Compze.Utilities.Testing.XUnit" Version="*-*" />
+  <!-- Compze.xUnitMatrix — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_xUnitMatrix)' == 'true'">
+    <PackageReference Include="Compze.xUnitMatrix" Version="*-*" />
   </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Testing_XUnit)' != 'true'">
-    <ProjectReference Include="..\..\src\Compze.Utilities.Testing.XUnit\Compze.Utilities.Testing.XUnit.csproj" />
+  <ItemGroup Condition="'$(UsePackageReference_Compze_xUnitMatrix)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.xUnitMatrix\Compze.xUnitMatrix.csproj" />
   </ItemGroup>
 </Project>

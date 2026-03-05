@@ -5,40 +5,6 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
   <ItemGroup>
-    <None Update="Testing\Xunit\TestUsingArgumentPassingFiveComponentsPCTAttribute">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <TargetPath>%(Filename)</TargetPath>
-    </None>
-    <None Update="Testing\Xunit\TestUsingArgumentPassingFourComponentsPCTAttribute">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <TargetPath>%(Filename)</TargetPath>
-    </None>
-    <None Update="Testing\Xunit\TestUsingArgumentPassingOneComponentsPCTAttribute">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <TargetPath>%(Filename)</TargetPath>
-    </None>
-    <None Update="Testing\Xunit\TestUsingArgumentPassingThreeComponentsPCTAttribute">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <TargetPath>%(Filename)</TargetPath>
-    </None>
-    <None Update="Testing\Xunit\TestUsingArgumentPassingTwoComponentsPCTAttribute">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <TargetPath>%(Filename)</TargetPath>
-    </None>
-    <None Update="Testing\Xunit\TestUsingNotArgumentPassingOneComponentsPCTAttribute">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <TargetPath>%(Filename)</TargetPath>
-    </None>
-    <None Update="Testing\Xunit\TestUsingNotArgumentPassingTwoComponentsPCTAttribute">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <TargetPath>%(Filename)</TargetPath>
-    </None>
-    <None Update="Testing\Xunit\TestUsingWildcards">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <TargetPath>%(Filename)</TargetPath>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
     <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
       <PrivateAssets>all</PrivateAssets>
@@ -66,13 +32,6 @@
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_SystemCE_Internal)' != 'true'">
     <ProjectReference Include="..\..\src\Compze.SystemCE.Internal\Compze.SystemCE.Internal.csproj" />
-  </ItemGroup>
-  <!-- Compze.Utilities.Testing.XUnit — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Testing_XUnit)' == 'true'">
-    <PackageReference Include="Compze.Utilities.Testing.XUnit" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Testing_XUnit)' != 'true'">
-    <ProjectReference Include="..\..\src\Compze.Utilities.Testing.XUnit\Compze.Utilities.Testing.XUnit.csproj" />
   </ItemGroup>
   <!-- Compze.xUnitBDD — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_xUnitBDD)' == 'true'">

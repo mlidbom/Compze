@@ -1,0 +1,70 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Update="TestUsingArgumentPassingFiveComponentsPCTAttribute">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>%(Filename)</TargetPath>
+    </None>
+    <None Update="TestUsingArgumentPassingFourComponentsPCTAttribute">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>%(Filename)</TargetPath>
+    </None>
+    <None Update="TestUsingArgumentPassingOneComponentsPCTAttribute">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>%(Filename)</TargetPath>
+    </None>
+    <None Update="TestUsingArgumentPassingThreeComponentsPCTAttribute">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>%(Filename)</TargetPath>
+    </None>
+    <None Update="TestUsingArgumentPassingTwoComponentsPCTAttribute">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>%(Filename)</TargetPath>
+    </None>
+    <None Update="TestUsingNotArgumentPassingOneComponentsPCTAttribute">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>%(Filename)</TargetPath>
+    </None>
+    <None Update="TestUsingNotArgumentPassingTwoComponentsPCTAttribute">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>%(Filename)</TargetPath>
+    </None>
+    <None Update="TestUsingWildcards">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>%(Filename)</TargetPath>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="xunit.v3" Version="3.1.0" />
+  </ItemGroup>
+  <!-- Compze.Must — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Must)' == 'true'">
+    <PackageReference Include="Compze.Must" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Must)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.Must\Compze.Must.csproj" />
+  </ItemGroup>
+  <!-- Compze.Utilities.SystemCE — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_SystemCE)' == 'true'">
+    <PackageReference Include="Compze.Utilities.SystemCE" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_SystemCE)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.Utilities.SystemCE\Compze.Utilities.SystemCE.csproj" />
+  </ItemGroup>
+  <!-- Compze.xUnitMatrix — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_xUnitMatrix)' == 'true'">
+    <PackageReference Include="Compze.xUnitMatrix" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_xUnitMatrix)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.xUnitMatrix\Compze.xUnitMatrix.csproj" />
+  </ItemGroup>
+</Project>

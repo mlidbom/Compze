@@ -2,10 +2,6 @@
 
 Testing utilities for deterministic multi-threaded tests in [Compze](https://github.com/mlidbom/Compze).
 
-## What is Compze?
-
-Compze is a .NET framework for building expressive domains through **Teventive programming** and **Typermedia APIs**. [Learn more](https://compze.net/)
-
 ## What's in this package?
 
 Deterministic threading test infrastructure: thread gates, gated code sections, and snapshot utilities for writing reliable multi-threaded tests.

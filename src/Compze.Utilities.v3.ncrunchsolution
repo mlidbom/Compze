@@ -28,6 +28,7 @@
       <Value>UsePackageReference_Compze_Unit = true</Value>
       <Value>UsePackageReference_Compze_xUnit = true</Value>
       <Value>UsePackageReference_Compze_xUnitBDD = true</Value>
+      <Value>UsePackageReference_Compze_xUnitMatrix = true</Value>
     </CustomBuildProperties>
     <EnableRDI>False</EnableRDI>
     <RdiConfigured>True</RdiConfigured>

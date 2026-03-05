@@ -1,7 +1,7 @@
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tests.Infrastructure.XUnit.Logging;
 using System.Runtime.CompilerServices;
-using Compze.Utilities.Testing.XUnit.ComponentCombinations;
+using Compze.xUnitMatrix;
 
 namespace Compze.Tests.Infrastructure.XUnit;
 

@@ -1,8 +1,8 @@
 <Solution>
-  <Folder Name="/Compze.Utilities.Testing/">
-    <Project Path="Compze.Utilities.Testing.XUnit/Compze.Utilities.Testing.XUnit.csproj" />
-  </Folder>
+  <Project Path="Compze.xUnitMatrix/Compze.xUnitMatrix.csproj" />
+  <Project Path="Compze.xUnit/Compze.xUnit.csproj" />
   <Folder Name="/_Tests/">
+    <Project Path="../test/Compze.xUnitMatrix.Tests/Compze.xUnitMatrix.Tests.csproj" />
     <Project Path="../test/Compze.Utilities.Tests/Compze.Utilities.Tests.csproj" />
   </Folder>
 </Solution>

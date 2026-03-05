@@ -1,6 +1,6 @@
 using System.Runtime.CompilerServices;
 using Compze.Core.Wiring.Testing.Internal;
-using Compze.Utilities.Testing.XUnit.ComponentCombinations;
+using Compze.xUnitMatrix;
 
 // ReSharper disable ExplicitCallerInfoArgument
 

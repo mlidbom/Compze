@@ -189,7 +189,7 @@ Compze.Contracts (leaf)
 │   │               ├── Compze.Utilities.DependencyInjection.SimpleInjector
 │   │               ├── Compze.Utilities.Logging.Serilog
 │   │               ├── Compze.Must
-│   │               ├── Compze.Utilities.Testing.XUnit
+│   │               ├── Compze.xUnitMatrix
 │   │               └── Compze.Core
 │   │                   ├── Compze.Serialization.Newtonsoft
 │   │                   ├── Compze.Sql.Common
@@ -215,5 +215,5 @@ Compze.Contracts (leaf)
 - **test→test and sample→sample references**: Stay as regular
   `ProjectReference` — they are never published as NuGet packages.
 - **Duplicate ProjectReference**: `Compze.Tests.Infrastructure` has a
-  duplicate reference to `Compze.Utilities.Testing.XUnit` — should be
+  duplicate reference to `Compze.xUnitMatrix` — should be
   cleaned up during Phase 2.

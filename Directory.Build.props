@@ -80,11 +80,11 @@
     <UsePackageReference_Compze_Utilities_Logging_Serilog Condition="'$(UsePackageReference_Compze_Utilities_Logging_Serilog)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Utilities.Logging.Serilog.csproj|'))">true</UsePackageReference_Compze_Utilities_Logging_Serilog>
     <!-- Compze.Utilities.SystemCE -->
     <UsePackageReference_Compze_Utilities_SystemCE Condition="'$(UsePackageReference_Compze_Utilities_SystemCE)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Utilities.SystemCE.csproj|'))">true</UsePackageReference_Compze_Utilities_SystemCE>
-    <!-- Compze.Utilities.Testing.XUnit -->
-    <UsePackageReference_Compze_Utilities_Testing_XUnit Condition="'$(UsePackageReference_Compze_Utilities_Testing_XUnit)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Utilities.Testing.XUnit.csproj|'))">true</UsePackageReference_Compze_Utilities_Testing_XUnit>
     <!-- Compze.xUnit -->
     <UsePackageReference_Compze_xUnit Condition="'$(UsePackageReference_Compze_xUnit)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.xUnit.csproj|'))">true</UsePackageReference_Compze_xUnit>
     <!-- Compze.xUnitBDD -->
     <UsePackageReference_Compze_xUnitBDD Condition="'$(UsePackageReference_Compze_xUnitBDD)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.xUnitBDD.csproj|'))">true</UsePackageReference_Compze_xUnitBDD>
+    <!-- Compze.xUnitMatrix -->
+    <UsePackageReference_Compze_xUnitMatrix Condition="'$(UsePackageReference_Compze_xUnitMatrix)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.xUnitMatrix.csproj|'))">true</UsePackageReference_Compze_xUnitMatrix>
   </PropertyGroup>
 </Project>

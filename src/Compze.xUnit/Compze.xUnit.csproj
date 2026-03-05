@@ -14,7 +14,6 @@
   </ItemGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="Compze.xUnitBDD" />
-    <InternalsVisibleTo Include="Compze.xUnit.ComponentCombinations" />
-    <InternalsVisibleTo Include="Compze.Utilities.Testing.XUnit" />
+    <InternalsVisibleTo Include="Compze.xUnitMatrix" />
   </ItemGroup>
 </Project>

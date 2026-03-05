@@ -43,7 +43,7 @@ dotnet add package Compze.Tessaging.Hosting.Testing
 | [Compze.Tessaging](https://www.nuget.org/packages/Compze.Tessaging) | Messaging infrastructure |
 | [Compze.Tessaging.Hosting.AspNetCore](https://www.nuget.org/packages/Compze.Tessaging.Hosting.AspNetCore) | ASP.NET Core hosting |
 | [Compze.Must](https://www.nuget.org/packages/Compze.Must) | Fluent assertions |
-| [Compze.Utilities.Testing.XUnit](https://www.nuget.org/packages/Compze.Utilities.Testing.XUnit) | xUnit utilities |
+| [Compze.xUnitMatrix](https://www.nuget.org/packages/Compze.xUnitMatrix) | xUnit utilities |
 
 ## License
 

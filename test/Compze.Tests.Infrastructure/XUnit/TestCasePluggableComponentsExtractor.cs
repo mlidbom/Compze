@@ -1,4 +1,4 @@
-using Compze.Utilities.Testing.XUnit.ComponentCombinations;
+using Compze.xUnitMatrix;
 
 namespace Compze.Tests.Infrastructure.XUnit;
 

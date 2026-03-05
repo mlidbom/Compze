@@ -2,10 +2,6 @@
 
 [SimpleInjector](https://www.nuget.org/packages/SimpleInjector) integration for the [Compze](https://github.com/mlidbom/Compze) framework.
 
-## What is Compze?
-
-Compze is a .NET framework for building expressive domains through **Teventive programming** and **Typermedia APIs**. [Learn more](https://compze.net/)
-
 ## What's in this package?
 
 This package provides a SimpleInjector adapter for Compze's dependency injection abstractions:

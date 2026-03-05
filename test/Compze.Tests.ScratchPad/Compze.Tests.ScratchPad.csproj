@@ -91,13 +91,6 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_SystemCE)' != 'true'">
     <ProjectReference Include="..\..\src\Compze.Utilities.SystemCE\Compze.Utilities.SystemCE.csproj" />
   </ItemGroup>
-  <!-- Compze.Utilities.Testing.XUnit — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Testing_XUnit)' == 'true'">
-    <PackageReference Include="Compze.Utilities.Testing.XUnit" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Testing_XUnit)' != 'true'">
-    <ProjectReference Include="..\..\src\Compze.Utilities.Testing.XUnit\Compze.Utilities.Testing.XUnit.csproj" />
-  </ItemGroup>
   <!-- Compze.xUnitBDD — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_xUnitBDD)' == 'true'">
     <PackageReference Include="Compze.xUnitBDD" Version="*-*" />

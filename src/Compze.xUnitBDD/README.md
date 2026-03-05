@@ -131,7 +131,7 @@ The key technique: each nested class **inherits from its parent**, gaining acces
 ## Installation
 
 ```shell
-dotnet add package Compze.Utilities.Testing.XUnit
+dotnet add package Compze.xUnitMatrix
 ```
 
 ## Related packages

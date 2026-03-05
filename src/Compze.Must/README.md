@@ -2,12 +2,6 @@
 
 Fluent assertion library for [Compze](https://github.com/mlidbom/Compze) testing.
 
-## What is Compze?
-
-Compze is a .NET framework for building expressive domains through **Teventive programming** and **Typermedia APIs**. [Learn more](https://compze.net/)
-
-## What's in this package?
-
 A strict-by-default fluent assertion library with rich failure diagnostics:
 
 - **Fluent API** — Chain assertions naturally: `value.Must().Be(expected)`
@@ -48,7 +42,7 @@ dotnet add package Compze.Must
 | Package | Description |
 |---------|-------------|
 | [Compze.Tessaging.Hosting.Testing](https://www.nuget.org/packages/Compze.Tessaging.Hosting.Testing) | Full testing infrastructure |
-| [Compze.Utilities.Testing.XUnit](https://www.nuget.org/packages/Compze.Utilities.Testing.XUnit) | xUnit utilities |
+| [Compze.xUnitMatrix](https://www.nuget.org/packages/Compze.xUnitMatrix) | xUnit utilities |
 | [Compze.Utilities.Testing.DbPool](https://www.nuget.org/packages/Compze.Utilities.Testing.DbPool) | Database pool management |
 
 ## License

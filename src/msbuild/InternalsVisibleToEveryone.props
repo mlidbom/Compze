@@ -53,8 +53,8 @@
     <InternalsVisibleTo Include="Compze.DbPool.Sqlite" />
     <InternalsVisibleTo Include="Compze.DbPool.Tests" />
     <InternalsVisibleTo Include="Compze.Must" />
-    <InternalsVisibleTo Include="Compze.Utilities.Testing.XUnit" />
-    <InternalsVisibleTo Include="Compze.Utilities.Testing.XUnit.Tests" />
+    <InternalsVisibleTo Include="Compze.xUnitMatrix" />
+    <InternalsVisibleTo Include="Compze.xUnitMatrix.Tests" />
     <InternalsVisibleTo Include="Compze.Utilities.Tests" />
   </ItemGroup>
 </Project>

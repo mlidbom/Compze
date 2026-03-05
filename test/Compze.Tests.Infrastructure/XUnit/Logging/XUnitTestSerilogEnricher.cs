@@ -1,6 +1,6 @@
 using Serilog.Core;
 using Serilog.Events;
-using Compze.Utilities.Testing.XUnit.ComponentCombinations;
+using Compze.xUnitMatrix;
 using Xunit;
 
 namespace Compze.Tests.Infrastructure.XUnit.Logging;
