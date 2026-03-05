@@ -4,7 +4,7 @@ applyTo: "test/**/*.cs"
 
 # Compze-Specific Test Conventions
 
-For full BDD rationale and examples, see [src/Compze.Utilities.Testing.XUnit/README.md](../../src/Compze.Utilities.Testing.XUnit/README.md).
+For full BDD rationale and examples, see [src/Compze.Utilities.Testing.XUnit/README.md](../../src/Compze.XUnitBDD/README.md).
 
 ## Test Attributes (local test infrastructure)
 
