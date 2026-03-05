@@ -2,10 +2,6 @@
 
 **Matrix testing for xUnit v3** — run tests across all combinations of pluggable components via a configuration file and custom theory attributes.
 
-## What is Compze?
-
-Compze is a .NET framework for building expressive domains through **Teventive programming** and **Typermedia APIs**. [Learn more](https://compze.net/)
-
 ## What's in this package?
 
 A framework for running tests against every combination of pluggable components (persistence layers, DI containers, serializers, transports, etc.) defined in a configuration file.
@@ -53,12 +49,6 @@ public class When_saving_data
       // ... test with current combination
    }
 }
-```
-
-## Installation
-
-```shell
-dotnet add package Compze.xUnitMatrix
 ```
 
 ## Related packages

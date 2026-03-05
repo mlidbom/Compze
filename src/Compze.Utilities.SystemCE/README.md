@@ -2,10 +2,6 @@
 
 Extensions and utilities for .NET `System` types in [Compze](https://github.com/mlidbom/Compze).
 
-## What is Compze?
-
-Compze is a .NET framework for building expressive domains through **Teventive programming** and **Typermedia APIs**. [Learn more](https://compze.net/)
-
 ## What's in this package?
 
 A comprehensive set of extension methods and utility classes enhancing common .NET types — strings, collections, enums, reflection, IO, transactions, reactive, and LINQ.
