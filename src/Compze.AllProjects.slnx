@@ -7,7 +7,10 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Folder Name="/Compze.xUnit/Specifications/">
+  <Folder Name="/Compze.xUnitBDD/">
+    <Project Path="Compze.xUnitBDD/Compze.xUnitBDD.csproj" />
+  </Folder>
+  <Folder Name="/Compze.xUnitBDD/Specifications/">
     <Project Path="../test/Compze.xUnitBDD.Tests/Compze.xUnitBDD.Tests.csproj">
       <BuildType Solution="docs|*" Project="Release" />
     </Project>
@@ -112,7 +115,6 @@
   </Folder>
   <Folder Name="/Compze.xUnit/">
     <Project Path="Compze.xUnit/Compze.xUnit.csproj" />
-    <Project Path="Compze.xUnitBDD/Compze.xUnitBDD.csproj" />
     <Project Path="Compze.Utilities.Testing.XUnit/Compze.Utilities.Testing.XUnit.csproj" />
   </Folder>
   <Folder Name="/_Tests/">
