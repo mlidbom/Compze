@@ -1,8 +1,8 @@
 using Compze.Core.DocumentDb.Internal.SqlLayer;
 using Compze.Sql.MySql.Private;
 using Compze.Sql.MySql.Private.DocumentDb;
-using Compze.Utilities.DependencyInjection;
-using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.DependencyInjection;
+using Compze.DependencyInjection.Abstractions;
 
 namespace Compze.Sql.MySql.Wiring;
 

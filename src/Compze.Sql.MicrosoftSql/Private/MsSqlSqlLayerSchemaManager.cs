@@ -1,8 +1,8 @@
 using Compze.Sql.MicrosoftSql.Private.DocumentDb;
 using Compze.Sql.MicrosoftSql.Private.Tessaging;
 using Compze.Sql.MicrosoftSql.Private.TEventStore;
-using Compze.Utilities.DependencyInjection;
-using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.DependencyInjection;
+using Compze.DependencyInjection.Abstractions;
 using Compze.Threading;
 using Compze.Utilities.SystemCE.TransactionsCE;
 using Compze.SystemCE.ThreadingCE.TasksCE;

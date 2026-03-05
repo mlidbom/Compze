@@ -3,7 +3,7 @@ using Compze.DbPool.MicrosoftSql;
 using Compze.DbPool.MySql;
 using Compze.DbPool.PostgreSql;
 using Compze.DbPool.Sqlite;
-using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE;
 using Compze.DbPool;
 

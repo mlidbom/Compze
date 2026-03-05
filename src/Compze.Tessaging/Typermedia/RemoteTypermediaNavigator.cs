@@ -3,8 +3,8 @@ using Compze.Core.Tessaging.Teventive.Infrastructure.Validation;
 using Compze.Core.Tessaging.Typermedia.Public;
 using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Implementation.Transport.Client.Internal;
-using Compze.Utilities.DependencyInjection;
-using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.DependencyInjection;
+using Compze.DependencyInjection.Abstractions;
 using JetBrains.Annotations;
 
 namespace Compze.Tessaging.Typermedia;

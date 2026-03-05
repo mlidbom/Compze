@@ -1,7 +1,7 @@
 using Compze.Core.DocumentDb.Private;
 using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Core.Tessaging.Hosting.TessageHandling.Registration.Public;
-using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.DependencyInjection.Abstractions;
 
 namespace Compze.Core.DocumentDb.Wiring;
 

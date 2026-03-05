@@ -9,7 +9,7 @@ Each project lives in its own top-level directory under `src/` (library) or `tes
 
 Examples:
   - `src/Compze.Core/Compze.Core.csproj`
-  - `src/Compze.Utilities.DependencyInjection.Microsoft/Compze.Utilities.DependencyInjection.Microsoft.csproj`
+  - `src/Compze.DependencyInjection.Microsoft/Compze.DependencyInjection.Microsoft.csproj`
   - `test/Compze.Tests.Unit/Compze.Tests.Unit.csproj`
 
 ## Solution Folder Organization

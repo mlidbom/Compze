@@ -1,7 +1,7 @@
 using Compze.Core.Tessaging.Transport.Internal;
 using Compze.SystemCE.ThreadingCE.TasksCE;
-using Compze.Utilities.DependencyInjection;
-using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.DependencyInjection;
+using Compze.DependencyInjection.Abstractions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;

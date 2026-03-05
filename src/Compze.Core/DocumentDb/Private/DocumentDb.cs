@@ -7,8 +7,8 @@ using Compze.Core.Refactoring.Naming.Internal;
 using Compze.Core.Serialization.Internal;
 using Compze.Core.Time.Public;
 using Compze.Contracts;
-using Compze.Utilities.DependencyInjection;
-using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.DependencyInjection;
+using Compze.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
 

@@ -1,6 +1,6 @@
 using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Core.Tessaging.Public;
-using Compze.Utilities.DependencyInjection;
+using Compze.DependencyInjection;
 
 namespace Compze.Tessaging.Hosting;
 

@@ -2,8 +2,8 @@ using Compze.Sql.MySql.Private.DocumentDb;
 using Compze.Sql.MySql.Private.Tessaging;
 using Compze.Sql.MySql.Private.TEventStore;
 using Compze.SystemCE.ThreadingCE.TasksCE;
-using Compze.Utilities.DependencyInjection;
-using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.DependencyInjection;
+using Compze.DependencyInjection.Abstractions;
 using Compze.Threading;
 using Compze.Utilities.SystemCE.TransactionsCE;
 

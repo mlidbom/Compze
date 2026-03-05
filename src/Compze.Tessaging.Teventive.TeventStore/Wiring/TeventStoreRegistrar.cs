@@ -6,7 +6,7 @@ using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.Refactoring.Migrations.Public;
 using Compze.Tessaging.TyperMediaApi.EventStore;
 using Compze.Contracts;
-using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.DependencyInjection.Abstractions;
 
 namespace Compze.Tessaging.Teventive.TeventStore.Wiring;
 

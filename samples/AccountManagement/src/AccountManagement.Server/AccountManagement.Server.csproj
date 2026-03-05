@@ -29,6 +29,20 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Core)' != 'true'">
     <ProjectReference Include="..\..\..\..\src\Compze.Core\Compze.Core.csproj" />
   </ItemGroup>
+  <!-- Compze.DependencyInjection — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection)' == 'true'">
+    <PackageReference Include="Compze.DependencyInjection" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection)' != 'true'">
+    <ProjectReference Include="..\..\..\..\src\Compze.DependencyInjection\Compze.DependencyInjection.csproj" />
+  </ItemGroup>
+  <!-- Compze.DependencyInjection.SimpleInjector — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection_SimpleInjector)' == 'true'">
+    <PackageReference Include="Compze.DependencyInjection.SimpleInjector" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection_SimpleInjector)' != 'true'">
+    <ProjectReference Include="..\..\..\..\src\Compze.DependencyInjection.SimpleInjector\Compze.DependencyInjection.SimpleInjector.csproj" />
+  </ItemGroup>
   <!-- Compze.Sql.MicrosoftSql — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Sql_MicrosoftSql)' == 'true'">
     <PackageReference Include="Compze.Sql.MicrosoftSql" Version="*-*" />
@@ -70,20 +84,6 @@
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_Threading)' != 'true'">
     <ProjectReference Include="..\..\..\..\src\Compze.Threading\Compze.Threading.csproj" />
-  </ItemGroup>
-  <!-- Compze.Utilities.DependencyInjection — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_DependencyInjection)' == 'true'">
-    <PackageReference Include="Compze.Utilities.DependencyInjection" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_DependencyInjection)' != 'true'">
-    <ProjectReference Include="..\..\..\..\src\Compze.Utilities.DependencyInjection\Compze.Utilities.DependencyInjection.csproj" />
-  </ItemGroup>
-  <!-- Compze.Utilities.DependencyInjection.SimpleInjector — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_DependencyInjection_SimpleInjector)' == 'true'">
-    <PackageReference Include="Compze.Utilities.DependencyInjection.SimpleInjector" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_DependencyInjection_SimpleInjector)' != 'true'">
-    <ProjectReference Include="..\..\..\..\src\Compze.Utilities.DependencyInjection.SimpleInjector\Compze.Utilities.DependencyInjection.SimpleInjector.csproj" />
   </ItemGroup>
   <!-- Compze.Utilities.Logging — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Logging)' == 'true'">

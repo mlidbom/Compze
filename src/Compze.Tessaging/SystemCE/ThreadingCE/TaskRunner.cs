@@ -1,5 +1,5 @@
-using Compze.Utilities.DependencyInjection;
-using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.DependencyInjection;
+using Compze.DependencyInjection.Abstractions;
 using Compze.Utilities.Logging;
 using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Threading.ResourceAccess;

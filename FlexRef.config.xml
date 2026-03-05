@@ -14,9 +14,9 @@
   <Package Name="Compze.Tessaging.Teventive.TeventStore" />
   <Package Name="Compze.Utilities" />
   <Package Name="Compze.Contracts" />
-  <Package Name="Compze.Utilities.DependencyInjection" />
-  <Package Name="Compze.Utilities.DependencyInjection.Microsoft" />
-  <Package Name="Compze.Utilities.DependencyInjection.SimpleInjector" />
+  <Package Name="Compze.DependencyInjection" />
+  <Package Name="Compze.DependencyInjection.Microsoft" />
+  <Package Name="Compze.DependencyInjection.SimpleInjector" />
   <Package Name="Compze.Underscore" />
   <Package Name="Compze.Utilities.Logging" />
   <Package Name="Compze.Utilities.Logging.Serilog" />

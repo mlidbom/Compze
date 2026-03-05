@@ -1,7 +1,7 @@
 using Compze.Core.Tessaging.Hosting.Public;
 using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Hosting.Testing.Wiring;
-using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.DependencyInjection.Abstractions;
 using Compze.Underscore;
 
 namespace Compze.Tessaging.Hosting.Testing.Tessaging.Buses;

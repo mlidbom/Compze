@@ -34,6 +34,13 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Core)' != 'true'">
     <ProjectReference Include="..\Compze.Core\Compze.Core.csproj" />
   </ItemGroup>
+  <!-- Compze.DependencyInjection — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection)' == 'true'">
+    <PackageReference Include="Compze.DependencyInjection" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection)' != 'true'">
+    <ProjectReference Include="..\Compze.DependencyInjection\Compze.DependencyInjection.csproj" />
+  </ItemGroup>
   <!-- Compze.Sql.Common — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Sql_Common)' == 'true'">
     <PackageReference Include="Compze.Sql.Common" Version="*-*" />
@@ -68,13 +75,6 @@
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_Underscore)' != 'true'">
     <ProjectReference Include="..\Compze.Underscore\Compze.Underscore.csproj" />
-  </ItemGroup>
-  <!-- Compze.Utilities.DependencyInjection — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_DependencyInjection)' == 'true'">
-    <PackageReference Include="Compze.Utilities.DependencyInjection" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_DependencyInjection)' != 'true'">
-    <ProjectReference Include="..\Compze.Utilities.DependencyInjection\Compze.Utilities.DependencyInjection.csproj" />
   </ItemGroup>
   <!-- Compze.Utilities.Logging — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Logging)' == 'true'">

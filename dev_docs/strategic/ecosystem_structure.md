@@ -50,9 +50,9 @@ These are the lowest-level building blocks. Each is a promotable concept in its 
 ### DependencyInjection
 > Minimalistic DI library abstraction layer removing complexity and DI "magic" while making swapping out components in testing a first class supported concern.
 
-- `src/Compze.Utilities.DependencyInjection` — abstractions
-- `src/Compze.Utilities.DependencyInjection.Microsoft` — Microsoft DI implementation
-- `src/Compze.Utilities.DependencyInjection.SimpleInjector` — SimpleInjector implementation
+- `src/Compze.DependencyInjection` — abstractions
+- `src/Compze.DependencyInjection.Microsoft` — Microsoft DI implementation
+- `src/Compze.DependencyInjection.SimpleInjector` — SimpleInjector implementation
 - **Dependencies**: Contracts, Functional, Logging, SystemCE, ThreadingCE
 - **Test projects**: Currently tested within `Compze.Tests.Unit.Internals` and `Compze.Tests.Integration` — would need dedicated test projects.
 

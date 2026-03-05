@@ -32,6 +32,12 @@
     <UsePackageReference_Compze_DbPool_PostgreSql Condition="'$(UsePackageReference_Compze_DbPool_PostgreSql)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.DbPool.PostgreSql.csproj|'))">true</UsePackageReference_Compze_DbPool_PostgreSql>
     <!-- Compze.DbPool.Sqlite -->
     <UsePackageReference_Compze_DbPool_Sqlite Condition="'$(UsePackageReference_Compze_DbPool_Sqlite)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.DbPool.Sqlite.csproj|'))">true</UsePackageReference_Compze_DbPool_Sqlite>
+    <!-- Compze.DependencyInjection -->
+    <UsePackageReference_Compze_DependencyInjection Condition="'$(UsePackageReference_Compze_DependencyInjection)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.DependencyInjection.csproj|'))">true</UsePackageReference_Compze_DependencyInjection>
+    <!-- Compze.DependencyInjection.Microsoft -->
+    <UsePackageReference_Compze_DependencyInjection_Microsoft Condition="'$(UsePackageReference_Compze_DependencyInjection_Microsoft)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.DependencyInjection.Microsoft.csproj|'))">true</UsePackageReference_Compze_DependencyInjection_Microsoft>
+    <!-- Compze.DependencyInjection.SimpleInjector -->
+    <UsePackageReference_Compze_DependencyInjection_SimpleInjector Condition="'$(UsePackageReference_Compze_DependencyInjection_SimpleInjector)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.DependencyInjection.SimpleInjector.csproj|'))">true</UsePackageReference_Compze_DependencyInjection_SimpleInjector>
     <!-- Compze.Must -->
     <UsePackageReference_Compze_Must Condition="'$(UsePackageReference_Compze_Must)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Must.csproj|'))">true</UsePackageReference_Compze_Must>
     <!-- Compze.Serialization.Newtonsoft -->
@@ -68,12 +74,6 @@
     <UsePackageReference_Compze_Unit Condition="'$(UsePackageReference_Compze_Unit)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Unit.csproj|'))">true</UsePackageReference_Compze_Unit>
     <!-- Compze.Utilities -->
     <UsePackageReference_Compze_Utilities Condition="'$(UsePackageReference_Compze_Utilities)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Utilities.csproj|'))">true</UsePackageReference_Compze_Utilities>
-    <!-- Compze.Utilities.DependencyInjection -->
-    <UsePackageReference_Compze_Utilities_DependencyInjection Condition="'$(UsePackageReference_Compze_Utilities_DependencyInjection)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Utilities.DependencyInjection.csproj|'))">true</UsePackageReference_Compze_Utilities_DependencyInjection>
-    <!-- Compze.Utilities.DependencyInjection.Microsoft -->
-    <UsePackageReference_Compze_Utilities_DependencyInjection_Microsoft Condition="'$(UsePackageReference_Compze_Utilities_DependencyInjection_Microsoft)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Utilities.DependencyInjection.Microsoft.csproj|'))">true</UsePackageReference_Compze_Utilities_DependencyInjection_Microsoft>
-    <!-- Compze.Utilities.DependencyInjection.SimpleInjector -->
-    <UsePackageReference_Compze_Utilities_DependencyInjection_SimpleInjector Condition="'$(UsePackageReference_Compze_Utilities_DependencyInjection_SimpleInjector)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Utilities.DependencyInjection.SimpleInjector.csproj|'))">true</UsePackageReference_Compze_Utilities_DependencyInjection_SimpleInjector>
     <!-- Compze.Utilities.Logging -->
     <UsePackageReference_Compze_Utilities_Logging Condition="'$(UsePackageReference_Compze_Utilities_Logging)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Utilities.Logging.csproj|'))">true</UsePackageReference_Compze_Utilities_Logging>
     <!-- Compze.Utilities.Logging.Serilog -->

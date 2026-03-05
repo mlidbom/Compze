@@ -1,5 +1,5 @@
-using Compze.Utilities.DependencyInjection;
-using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.DependencyInjection;
+using Compze.DependencyInjection.Abstractions;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Http;
 

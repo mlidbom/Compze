@@ -4,8 +4,8 @@ using Compze.Core.Serialization.Internal;
 using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Core.Tessaging.Internal.SqlLayer;
 using Compze.Core.Tessaging.Public;
-using Compze.Utilities.DependencyInjection;
-using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.DependencyInjection;
+using Compze.DependencyInjection.Abstractions;
 using Compze.Utilities.Logging;
 using Compze.SystemCE.ThreadingCE.TasksCE;
 

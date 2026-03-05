@@ -1,6 +1,6 @@
 using Compze.Core.DocumentDb.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.Public;
-using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.DependencyInjection.Abstractions;
 
 namespace Compze.Tests.Infrastructure;
 

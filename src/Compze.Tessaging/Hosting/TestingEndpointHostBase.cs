@@ -4,7 +4,7 @@ using Compze.Core.Tessaging.Transport.Internal;
 using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Implementation.Transport;
 using Compze.Tessaging.Implementation.Transport.Client.Routing.Abstractions;
-using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.DependencyInjection.Abstractions;
 using Compze.Threading;
 
 namespace Compze.Tessaging.Hosting;

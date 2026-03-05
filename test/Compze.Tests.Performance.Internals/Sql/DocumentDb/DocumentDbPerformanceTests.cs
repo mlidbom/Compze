@@ -4,7 +4,7 @@ using Compze.Tessaging.Hosting.Testing.Performance;
 using Compze.Tests.Common.Sql.DocumentDb;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
-using Compze.Utilities.DependencyInjection;
+using Compze.DependencyInjection;
 using Compze.Utilities.SystemCE;
 
 

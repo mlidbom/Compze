@@ -40,9 +40,9 @@
     <InternalsVisibleTo Include="Compze.Threading.Tests" />
     <InternalsVisibleTo Include="Compze.Underscore" />
     <InternalsVisibleTo Include="Compze.Underscore.Specifications" />
-    <InternalsVisibleTo Include="Compze.Utilities.DependencyInjection" />
-    <InternalsVisibleTo Include="Compze.Utilities.DependencyInjection.Microsoft" />
-    <InternalsVisibleTo Include="Compze.Utilities.DependencyInjection.SimpleInjector" />
+    <InternalsVisibleTo Include="Compze.DependencyInjection" />
+    <InternalsVisibleTo Include="Compze.DependencyInjection.Microsoft" />
+    <InternalsVisibleTo Include="Compze.DependencyInjection.SimpleInjector" />
     <InternalsVisibleTo Include="Compze.Utilities.Logging" />
     <InternalsVisibleTo Include="Compze.Utilities.Logging.Serilog" />
     <InternalsVisibleTo Include="Compze.Utilities.SystemCE" />

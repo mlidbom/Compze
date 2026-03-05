@@ -86,8 +86,8 @@ src/
   Compze.Tessaging.Hosting.Testing/    # Testing hosting
   Compze.Tessaging.Teventive.TeventStore/ # TeventStore
   Compze.Utilities/                    # Diverse utilities
-  Compze.Utilities.DependencyInjection.Microsoft/   # Microsoft DI
-  Compze.Utilities.DependencyInjection.SimpleInjector/ # SimpleInjector DI
+  Compze.DependencyInjection.Microsoft/   # Microsoft DI
+  Compze.DependencyInjection.SimpleInjector/ # SimpleInjector DI
   Compze.Utilities.Logging.Serilog/    # Serilog logging
   Compze.DbPool/                       # Database pool for testing
   Compze.Must/       # Must assertion library

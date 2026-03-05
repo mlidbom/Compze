@@ -17,8 +17,8 @@ using Compze.Tessaging.Implementation.Transport.Client.Routing;
 using Compze.Tessaging.Implementation.Transport.Client.Routing.Abstractions;
 using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Tessaging.Typermedia;
-using Compze.Utilities.DependencyInjection;
-using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.DependencyInjection;
+using Compze.DependencyInjection.Abstractions;
 
 // ReSharper disable ImplicitlyCapturedClosure it is very much intentional :)
 

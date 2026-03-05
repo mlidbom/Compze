@@ -1,6 +1,6 @@
 using Compze.Core.Wiring.Testing.Internal;
 using Compze.Serialization.Newtonsoft.Wiring;
-using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE;
 
 namespace Compze.Tessaging.Hosting.Testing.Wiring;

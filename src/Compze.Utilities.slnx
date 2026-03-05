@@ -3,9 +3,9 @@
     <Project Path="Compze.Utilities/Compze.Utilities.csproj" />
     <Project Path="Compze.Utilities.SystemCE/Compze.Utilities.SystemCE.csproj" />
     <Project Path="Compze.Utilities.Logging/Compze.Utilities.Logging.csproj" />
-    <Project Path="Compze.Utilities.DependencyInjection/Compze.Utilities.DependencyInjection.csproj" />
-    <Project Path="Compze.Utilities.DependencyInjection.Microsoft/Compze.Utilities.DependencyInjection.Microsoft.csproj" />
-    <Project Path="Compze.Utilities.DependencyInjection.SimpleInjector/Compze.Utilities.DependencyInjection.SimpleInjector.csproj" />
+    <Project Path="Compze.DependencyInjection/Compze.DependencyInjection.csproj" />
+    <Project Path="Compze.DependencyInjection.Microsoft/Compze.DependencyInjection.Microsoft.csproj" />
+    <Project Path="Compze.DependencyInjection.SimpleInjector/Compze.DependencyInjection.SimpleInjector.csproj" />
     <Project Path="Compze.Utilities.Logging.Serilog/Compze.Utilities.Logging.Serilog.csproj" />
     <Project Path="Compze.Utilities.Testing.DbPool/Compze.Utilities.Testing.DbPool.csproj" />
   </Folder>

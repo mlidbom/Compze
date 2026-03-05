@@ -1,8 +1,8 @@
 using Compze.Sql.PostgreSql.Private.DocumentDb;
 using Compze.Sql.PostgreSql.Private.Tessaging;
 using Compze.Sql.PostgreSql.Private.TEventStore;
-using Compze.Utilities.DependencyInjection;
-using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.DependencyInjection;
+using Compze.DependencyInjection.Abstractions;
 using Compze.Threading;
 using Compze.Utilities.SystemCE.TransactionsCE;
 using Compze.SystemCE.ThreadingCE.TasksCE;

@@ -24,8 +24,8 @@ dotnet add package Compze.Utilities
 | Package | Description |
 |---------|-------------|
 | [Compze.Core](https://www.nuget.org/packages/Compze.Core) | Core abstractions |
-| [Compze.Utilities.DependencyInjection.Microsoft](https://www.nuget.org/packages/Compze.Utilities.DependencyInjection.Microsoft) | Microsoft DI integration |
-| [Compze.Utilities.DependencyInjection.SimpleInjector](https://www.nuget.org/packages/Compze.Utilities.DependencyInjection.SimpleInjector) | SimpleInjector integration |
+| [Compze.DependencyInjection.Microsoft](https://www.nuget.org/packages/Compze.DependencyInjection.Microsoft) | Microsoft DI integration |
+| [Compze.DependencyInjection.SimpleInjector](https://www.nuget.org/packages/Compze.DependencyInjection.SimpleInjector) | SimpleInjector integration |
 | [Compze.Utilities.Logging.Serilog](https://www.nuget.org/packages/Compze.Utilities.Logging.Serilog) | Serilog integration |
 
 ## License

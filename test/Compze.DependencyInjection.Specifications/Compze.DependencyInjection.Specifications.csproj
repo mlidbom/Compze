@@ -1,0 +1,70 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Update="TestUsingDependencyInjectionContainers">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>%(Filename)</TargetPath>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="xunit.v3" Version="3.1.0" />
+  </ItemGroup>
+  <!-- Compze.Core — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Core)' == 'true'">
+    <PackageReference Include="Compze.Core" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Core)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.Core\Compze.Core.csproj" />
+  </ItemGroup>
+  <!-- Compze.DependencyInjection — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection)' == 'true'">
+    <PackageReference Include="Compze.DependencyInjection" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.DependencyInjection\Compze.DependencyInjection.csproj" />
+  </ItemGroup>
+  <!-- Compze.DependencyInjection.Microsoft — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection_Microsoft)' == 'true'">
+    <PackageReference Include="Compze.DependencyInjection.Microsoft" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection_Microsoft)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.DependencyInjection.Microsoft\Compze.DependencyInjection.Microsoft.csproj" />
+  </ItemGroup>
+  <!-- Compze.DependencyInjection.SimpleInjector — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection_SimpleInjector)' == 'true'">
+    <PackageReference Include="Compze.DependencyInjection.SimpleInjector" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection_SimpleInjector)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.DependencyInjection.SimpleInjector\Compze.DependencyInjection.SimpleInjector.csproj" />
+  </ItemGroup>
+  <!-- Compze.Must — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Must)' == 'true'">
+    <PackageReference Include="Compze.Must" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Must)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.Must\Compze.Must.csproj" />
+  </ItemGroup>
+  <!-- Compze.xUnitBDD — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_xUnitBDD)' == 'true'">
+    <PackageReference Include="Compze.xUnitBDD" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_xUnitBDD)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.xUnitBDD\Compze.xUnitBDD.csproj" />
+  </ItemGroup>
+  <!-- Compze.xUnitMatrix — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_xUnitMatrix)' == 'true'">
+    <PackageReference Include="Compze.xUnitMatrix" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_xUnitMatrix)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.xUnitMatrix\Compze.xUnitMatrix.csproj" />
+  </ItemGroup>
+</Project>

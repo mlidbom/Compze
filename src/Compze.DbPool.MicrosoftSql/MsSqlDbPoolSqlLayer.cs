@@ -1,6 +1,6 @@
 using Compze.Sql.MicrosoftSql;
-using Compze.Utilities.DependencyInjection;
-using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.DependencyInjection;
+using Compze.DependencyInjection.Abstractions;
 using Microsoft.Data.SqlClient;
 
 namespace Compze.DbPool.MicrosoftSql;

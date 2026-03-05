@@ -3,8 +3,8 @@ using Compze.Core.Tessaging.Transport.Internal;
 using Compze.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
-using Compze.Utilities.DependencyInjection;
-using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.DependencyInjection;
+using Compze.DependencyInjection.Abstractions;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Http;
 

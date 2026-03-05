@@ -1,5 +1,5 @@
 using Compze.Core.Tessaging.Transport.Internal;
-using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.DependencyInjection.Abstractions;
 
 namespace Compze.Core.Tessaging.Hosting.Public;
 

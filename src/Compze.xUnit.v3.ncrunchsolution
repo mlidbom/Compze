@@ -26,9 +26,9 @@
       <Value>UsePackageReference_Compze_Underscore = true</Value>
       <Value>UsePackageReference_Compze_Unit = true</Value>
       <Value>UsePackageReference_Compze_Utilities = true</Value>
-      <Value>UsePackageReference_Compze_Utilities_DependencyInjection = true</Value>
-      <Value>UsePackageReference_Compze_Utilities_DependencyInjection_Microsoft = true</Value>
-      <Value>UsePackageReference_Compze_Utilities_DependencyInjection_SimpleInjector = true</Value>
+      <Value>UsePackageReference_Compze_DependencyInjection = true</Value>
+      <Value>UsePackageReference_Compze_DependencyInjection_Microsoft = true</Value>
+      <Value>UsePackageReference_Compze_DependencyInjection_SimpleInjector = true</Value>
       <Value>UsePackageReference_Compze_Utilities_Logging = true</Value>
       <Value>UsePackageReference_Compze_Utilities_Logging_Serilog = true</Value>
       <Value>UsePackageReference_Compze_Utilities_SystemCE = true</Value>

@@ -1,6 +1,6 @@
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Performance;
-using Compze.Utilities.DependencyInjection;
+using Compze.DependencyInjection;
 using Compze.Utilities.SystemCE;
 using Compze.Tests.Infrastructure.XUnit;
 

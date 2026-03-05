@@ -1,7 +1,7 @@
-using Compze.Utilities.DependencyInjection;
-using Compze.Utilities.DependencyInjection.Abstractions;
-using Compze.Utilities.DependencyInjection.Microsoft;
-using Compze.Utilities.DependencyInjection.SimpleInjector;
+using Compze.DependencyInjection;
+using Compze.DependencyInjection.Abstractions;
+using Compze.DependencyInjection.Microsoft;
+using Compze.DependencyInjection.SimpleInjector;
 using Compze.Utilities.Logging;
 using Compze.Utilities.SystemCE.LinqCE;
 

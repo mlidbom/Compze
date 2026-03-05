@@ -78,13 +78,13 @@
   <Folder Name="/Compze.DbPool/Specifications/">
     <Project Path="../test/Compze.DbPool.Tests/Compze.DbPool.Tests.csproj" />
   </Folder>
-  <Folder Name="/Compze.Internals.DependencyInjection/">
-    <Project Path="Compze.Utilities.DependencyInjection.Microsoft/Compze.Utilities.DependencyInjection.Microsoft.csproj" />
-    <Project Path="Compze.Utilities.DependencyInjection.SimpleInjector/Compze.Utilities.DependencyInjection.SimpleInjector.csproj" />
-    <Project Path="Compze.Utilities.DependencyInjection/Compze.Utilities.DependencyInjection.csproj" />
+  <Folder Name="/Compze.DependencyInjection/">
+    <Project Path="Compze.DependencyInjection.Microsoft/Compze.DependencyInjection.Microsoft.csproj" />
+    <Project Path="Compze.DependencyInjection.SimpleInjector/Compze.DependencyInjection.SimpleInjector.csproj" />
+    <Project Path="Compze.DependencyInjection/Compze.DependencyInjection.csproj" />
   </Folder>
-  <Folder Name="/Compze.Internals.DependencyInjection/Specifications/">
-    <Project Path="../test/Compze.Internals.DependencyInjection.Specifications/Compze.Internals.DependencyInjection.Specifications.csproj" />
+  <Folder Name="/Compze.DependencyInjection/Specifications/">
+    <Project Path="../test/Compze.DependencyInjection.Specifications/Compze.DependencyInjection.Specifications.csproj" />
   </Folder>
   <Folder Name="/Compze.Internal.Logging/">
     <Project Path="Compze.Utilities.Logging.Serilog/Compze.Utilities.Logging.Serilog.csproj" />

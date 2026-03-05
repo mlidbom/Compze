@@ -1,12 +1,12 @@
 using Compze.Contracts;
-using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.DependencyInjection.Abstractions;
 using Compze.Utilities.Logging;
 using Compze.Utilities.SystemCE;
 using Compze.Utilities.SystemCE.ReflectionCE;
 using Compze.Utilities.SystemCE.TransactionsCE;
 using Compze.Threading;
 using Compze.DbPool.SystemCE;
-using Compze.Utilities.DependencyInjection;
+using Compze.DependencyInjection;
 using Compze.Threading.ResourceAccess;
 using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
 

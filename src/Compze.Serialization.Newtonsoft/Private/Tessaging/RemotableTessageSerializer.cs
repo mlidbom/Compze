@@ -1,8 +1,8 @@
 using Compze.Core.Refactoring.Naming.Internal;
 using Compze.Core.Serialization.Internal;
 using Compze.Core.Tessaging.Public;
-using Compze.Utilities.DependencyInjection;
-using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.DependencyInjection;
+using Compze.DependencyInjection.Abstractions;
 
 namespace Compze.Serialization.Newtonsoft.Private.Tessaging;
 

@@ -3,8 +3,8 @@ using System.Globalization;
 using System.Reflection;
 using System.Text;
 using Compze.Core.Tessaging.Public;
-using Compze.Utilities.DependencyInjection;
-using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.DependencyInjection;
+using Compze.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE.ReflectionCE;
 using Compze.Threading.ResourceAccess;
 

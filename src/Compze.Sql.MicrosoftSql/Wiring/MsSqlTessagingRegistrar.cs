@@ -1,8 +1,8 @@
 using Compze.Core.Tessaging.Internal.SqlLayer;
 using Compze.Sql.MicrosoftSql.Private;
 using Compze.Sql.MicrosoftSql.Private.Tessaging;
-using Compze.Utilities.DependencyInjection;
-using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.DependencyInjection;
+using Compze.DependencyInjection.Abstractions;
 
 namespace Compze.Sql.MicrosoftSql.Wiring;
 

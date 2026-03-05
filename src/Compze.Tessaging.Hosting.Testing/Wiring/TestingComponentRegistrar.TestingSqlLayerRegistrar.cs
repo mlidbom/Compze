@@ -3,7 +3,7 @@ using Compze.Sql.MicrosoftSql.Wiring;
 using Compze.Sql.MySql.Wiring;
 using Compze.Sql.PostgreSql.Wiring;
 using Compze.Sql.Sqlite.Wiring;
-using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE;
 
 namespace Compze.Tessaging.Hosting.Testing.Wiring;

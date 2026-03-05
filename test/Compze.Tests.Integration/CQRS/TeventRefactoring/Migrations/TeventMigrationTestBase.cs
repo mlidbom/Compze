@@ -8,8 +8,8 @@ using Compze.Tessaging.Teventive.TeventStore;
 using Compze.Tessaging.Teventive.TeventStore.Wiring;
 using Compze.Tests.Common.CQRS.TeventRefactoring.Migrations;
 using Compze.Tests.Infrastructure;
-using Compze.Utilities.DependencyInjection;
-using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.DependencyInjection;
+using Compze.DependencyInjection.Abstractions;
 using Compze.Utilities.Logging;
 using Compze.Must;
 

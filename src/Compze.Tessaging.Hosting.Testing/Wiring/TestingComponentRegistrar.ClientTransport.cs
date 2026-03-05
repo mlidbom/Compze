@@ -1,7 +1,7 @@
 using Compze.Core.Wiring.Testing.Internal;
 using Compze.Tessaging.Implementation.Transport.Client.Implementation.Http;
 using Compze.Tessaging.Implementation.Transport.Client.Implementation.Memory;
-using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.DependencyInjection.Abstractions;
 using Compze.Utilities.SystemCE;
 
 namespace Compze.Tessaging.Hosting.Testing.Wiring;

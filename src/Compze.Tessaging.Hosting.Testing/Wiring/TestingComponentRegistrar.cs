@@ -6,8 +6,8 @@ using Compze.Sql.PostgreSql;
 using Compze.Sql.PostgreSql.Wiring;
 using Compze.Sql.Sqlite;
 using Compze.Sql.Sqlite.Wiring;
-using Compze.Utilities.DependencyInjection;
-using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.DependencyInjection;
+using Compze.DependencyInjection.Abstractions;
 
 namespace Compze.Tessaging.Hosting.Testing.Wiring;
 

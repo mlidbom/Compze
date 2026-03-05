@@ -6,7 +6,7 @@ using Compze.Core.Time.Public;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tests.Common.CQRS.TeventRefactoring.Migrations;
 using Compze.Tests.Common.CQRS.TeventRefactoring.Migrations.Tevents;
-using Compze.Utilities.DependencyInjection;
+using Compze.DependencyInjection;
 using Compze.Utilities.SystemCE.TransactionsCE;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Must;

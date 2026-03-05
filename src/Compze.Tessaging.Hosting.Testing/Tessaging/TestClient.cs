@@ -8,8 +8,8 @@ using Compze.Tessaging.Implementation.Transport.Client.Internal;
 using Compze.Tessaging.Typermedia;
 using Compze.Core.Refactoring.Naming.Internal.Implementation;
 using Compze.SystemCE.ThreadingCE.TasksCE;
-using Compze.Utilities.DependencyInjection;
-using Compze.Utilities.DependencyInjection.Abstractions;
+using Compze.DependencyInjection;
+using Compze.DependencyInjection.Abstractions;
 
 namespace Compze.Tessaging.Hosting.Testing.Tessaging;
 
