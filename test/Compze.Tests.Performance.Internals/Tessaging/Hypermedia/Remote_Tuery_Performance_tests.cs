@@ -2,8 +2,8 @@ using Compze.Core.Tessaging.Public;
 using Compze.Core.Tessaging.Typermedia.Public;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Performance;
-using Compze.Utilities.SystemCE;
-using Compze.Utilities.SystemCE.LinqCE;
+using Compze.Internals.SystemCE;
+using Compze.Internals.SystemCE.LinqCE;
 using Compze.Tests.Infrastructure.XUnit;
 using CreatesItsOwnResultTuery = Compze.Core.Tessaging.Public.TessageTypes.Remotable.NonTransactional.Tueries.NewableResultLink<Compze.Tests.Performance.Internals.Tessaging.Hypermedia.PerformanceTestBase.MyTueryResult>;
 

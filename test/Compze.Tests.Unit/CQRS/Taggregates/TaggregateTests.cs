@@ -3,7 +3,7 @@ using Compze.Core.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Core.Time.Public;
 using Compze.Tests.Infrastructure;
-using Compze.Utilities.SystemCE.ReactiveCE;
+using Compze.Internals.SystemCE.ReactiveCE;
 using Compze.xUnitBDD;
 using Compze.Core.Public;
 using Compze.Must;

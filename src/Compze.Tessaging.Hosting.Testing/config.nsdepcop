@@ -16,7 +16,7 @@
             To="Compze.Core.*.Wiring.*" />
 
 	<Allowed From="Compze.Tessaging.Hosting.Testing.*"
-            To="Compze.Serialization.Newtonsoft.Wiring.*" />
+            To="Compze.Internals.Serialization.Newtonsoft.Wiring.*" />
 
 	<!-- Inherited from former parent Tessaging/config.nsdepcop -->
 	<Allowed From="Compze.Tessaging.*"

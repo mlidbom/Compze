@@ -1,7 +1,7 @@
 using System.Globalization;
-using Compze.Utilities.Logging;
-using Compze.Utilities.Logging.Serilog;
-using Compze.Utilities.SystemCE;
+using Compze.Internals.Logging;
+using Compze.Internals.Logging.Serilog;
+using Compze.Internals.SystemCE;
 using Serilog;
 using Serilog.Core;
 using Serilog.Events;

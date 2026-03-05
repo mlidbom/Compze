@@ -1,6 +1,6 @@
 using System.Reflection;
 using Compze.Core.Tessaging.Public;
-using Compze.Utilities.SystemCE.ReflectionCE;
+using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Threading;
 using Compze.Threading.ResourceAccess;
 

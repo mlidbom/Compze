@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Compze.Tessaging.Hosting.Abstractions;
 using Compze.Tessaging.Teventive.TeventStore.Abstractions;
-using Compze.Utilities.SystemCE;
+using Compze.Internals.SystemCE;
 using static System.Console;
 // ReSharper disable NotAccessedVariable
 // ReSharper disable RedundantAssignment

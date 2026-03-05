@@ -1,6 +1,6 @@
-using Compze.SystemCE.ThreadingCE.TasksCE;
+using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 using Compze.DependencyInjection.Abstractions;
-using Compze.Utilities.SystemCE.TransactionsCE;
+using Compze.Internals.SystemCE.TransactionsCE;
 using JetBrains.Annotations;
 
 namespace Compze.DependencyInjection;

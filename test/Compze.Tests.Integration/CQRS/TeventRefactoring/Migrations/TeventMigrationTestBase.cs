@@ -10,7 +10,7 @@ using Compze.Tests.Common.CQRS.TeventRefactoring.Migrations;
 using Compze.Tests.Infrastructure;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
-using Compze.Utilities.Logging;
+using Compze.Internals.Logging;
 using Compze.Must;
 
 // ReSharper disable AccessToModifiedClosure

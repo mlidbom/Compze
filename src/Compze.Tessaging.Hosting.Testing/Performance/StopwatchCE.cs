@@ -1,6 +1,6 @@
 using System.Collections.Concurrent;
 using System.Diagnostics;
-using Compze.Utilities.SystemCE;
+using Compze.Internals.SystemCE;
 using JetBrains.Annotations;
 
 namespace Compze.Tessaging.Hosting.Testing.Performance;

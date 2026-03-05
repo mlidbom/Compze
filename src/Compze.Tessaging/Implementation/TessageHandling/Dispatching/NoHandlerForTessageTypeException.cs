@@ -1,4 +1,4 @@
-using Compze.Utilities.SystemCE.ReflectionCE;
+using Compze.Internals.SystemCE.ReflectionCE;
 
 namespace Compze.Tessaging.Implementation.TessageHandling.Dispatching;
 

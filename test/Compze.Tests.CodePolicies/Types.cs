@@ -1,4 +1,4 @@
-using Compze.Utilities.SystemCE;
+using Compze.Internals.SystemCE;
 using Compze.Must;
 using Compze.xUnitBDD;
 

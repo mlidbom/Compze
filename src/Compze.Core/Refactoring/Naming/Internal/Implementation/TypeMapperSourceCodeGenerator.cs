@@ -1,7 +1,7 @@
 using System.Globalization;
 using System.Reflection;
 using System.Text;
-using Compze.Utilities.SystemCE.ReflectionCE;
+using Compze.Internals.SystemCE.ReflectionCE;
 
 namespace Compze.Core.Refactoring.Naming.Internal.Implementation;
 

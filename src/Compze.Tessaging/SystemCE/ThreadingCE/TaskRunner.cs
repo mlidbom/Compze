@@ -1,7 +1,7 @@
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
-using Compze.Utilities.Logging;
-using Compze.SystemCE.ThreadingCE.TasksCE;
+using Compze.Internals.Logging;
+using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 using Compze.Threading.ResourceAccess;
 
 namespace Compze.Tessaging.SystemCE.ThreadingCE;

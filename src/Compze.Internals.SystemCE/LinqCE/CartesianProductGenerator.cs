@@ -1,0 +1,45 @@
+namespace Compze.Internals.SystemCE.LinqCE;
+
+public static class CartesianProductGenerator
+{
+   /// <summary>
+   /// Generates the cartesian product (all possible combinations) of multiple lists.
+   /// Example: [[A,B], [X,Y]] → [[A,X], [A,Y], [B,X], [B,Y]]
+   /// </summary>
+   public static IReadOnlyList<IReadOnlyList<T>> CartesianProduct<T>(this IEnumerable<IReadOnlyList<T>> enumerable)
+   {
+      var lists = (enumerable as IReadOnlyList<IReadOnlyList<T>>) ?? enumerable.ToList();
+
+      if(lists.Count == 0)
+         return [[]];
+
+      // Calculate total combinations upfront: product of all list sizes
+      var totalCombinations = 1;
+      foreach(var list in lists)
+      {
+         totalCombinations *= list.Count;
+      }
+
+      var result = new List<IReadOnlyList<T>>(totalCombinations);
+
+      // Generate each combination by treating the combination index like a mixed-radix number
+      // where each position has a different "base" (the size of that list)
+      for(int combinationIndex = 0; combinationIndex < totalCombinations; combinationIndex++)
+      {
+         var combination = new T[lists.Count];
+         var remainingIndex = combinationIndex;
+
+         for(int listPosition = lists.Count - 1; listPosition >= 0; listPosition--)
+         {
+            var currentList = lists[listPosition];
+            var indexInCurrentList = remainingIndex % currentList.Count;
+            combination[listPosition] = currentList[indexInCurrentList];
+            remainingIndex /= currentList.Count;
+         }
+
+         result.Add(combination);
+      }
+
+      return result;
+   }
+}

@@ -1,8 +1,8 @@
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Performance;
 using Compze.Tests.Infrastructure;
-using Compze.Utilities.SystemCE;
-using Compze.Utilities.SystemCE.ReflectionCE;
+using Compze.Internals.SystemCE;
+using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Must;
 using Compze.xUnitBDD;
 using JetBrains.Annotations;

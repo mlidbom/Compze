@@ -1,5 +1,5 @@
 using System.Collections;
-using Compze.Utilities.SystemCE.ReflectionCE;
+using Compze.Internals.SystemCE.ReflectionCE;
 using Newtonsoft.Json;
 
 namespace Compze.Must.Serialization;

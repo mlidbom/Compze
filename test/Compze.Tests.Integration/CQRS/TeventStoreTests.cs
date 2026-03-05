@@ -4,7 +4,7 @@ using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tests.Infrastructure;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
-using Compze.Utilities.SystemCE.TransactionsCE;
+using Compze.Internals.SystemCE.TransactionsCE;
 using System.Transactions;
 using Compze.Core.Tessaging.Teventive.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;

@@ -1,6 +1,6 @@
 using Compze.Core.Public.Infrastructure;
 using Compze.Contracts;
-using Compze.Utilities.SystemCE.ReflectionCE;
+using Compze.Internals.SystemCE.ReflectionCE;
 
 namespace Compze.Core.Public;
 

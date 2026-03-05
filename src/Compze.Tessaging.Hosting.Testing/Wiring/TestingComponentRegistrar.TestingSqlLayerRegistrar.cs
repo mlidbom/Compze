@@ -1,10 +1,10 @@
 using Compze.Core.Wiring.Testing.Internal;
-using Compze.Sql.MicrosoftSql.Wiring;
-using Compze.Sql.MySql.Wiring;
-using Compze.Sql.PostgreSql.Wiring;
-using Compze.Sql.Sqlite.Wiring;
+using Compze.Internals.Sql.MicrosoftSql.Wiring;
+using Compze.Internals.Sql.MySql.Wiring;
+using Compze.Internals.Sql.PostgreSql.Wiring;
+using Compze.Internals.Sql.Sqlite.Wiring;
 using Compze.DependencyInjection.Abstractions;
-using Compze.Utilities.SystemCE;
+using Compze.Internals.SystemCE;
 
 namespace Compze.Tessaging.Hosting.Testing.Wiring;
 

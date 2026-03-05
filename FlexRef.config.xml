@@ -2,12 +2,12 @@
   <AutoDiscover />
   <!-- Alternatively, list packages explicitly instead of using AutoDiscover:
   <Package Name="Compze.Core" />
-  <Package Name="Compze.Serialization.Newtonsoft" />
-  <Package Name="Compze.Sql.Common" />
-  <Package Name="Compze.Sql.MicrosoftSql" />
-  <Package Name="Compze.Sql.MySql" />
-  <Package Name="Compze.Sql.PostgreSql" />
-  <Package Name="Compze.Sql.Sqlite" />
+  <Package Name="Compze.Internals.Serialization.Newtonsoft" />
+  <Package Name="Compze.Internals.Sql.Common" />
+  <Package Name="Compze.Internals.Sql.MicrosoftSql" />
+  <Package Name="Compze.Internals.Sql.MySql" />
+  <Package Name="Compze.Internals.Sql.PostgreSql" />
+  <Package Name="Compze.Internals.Sql.Sqlite" />
   <Package Name="Compze.Tessaging" />
   <Package Name="Compze.Tessaging.Hosting.AspNetCore" />
   <Package Name="Compze.Tessaging.Hosting.Testing" />
@@ -18,10 +18,10 @@
   <Package Name="Compze.DependencyInjection.Microsoft" />
   <Package Name="Compze.DependencyInjection.SimpleInjector" />
   <Package Name="Compze.Underscore" />
-  <Package Name="Compze.Utilities.Logging" />
-  <Package Name="Compze.Utilities.Logging.Serilog" />
-  <Package Name="Compze.Utilities.SystemCE" />
-  <Package Name="Compze.Utilities.SystemCE.ThreadingCE" />
+  <Package Name="Compze.Internals.Logging" />
+  <Package Name="Compze.Internals.Logging.Serilog" />
+  <Package Name="Compze.Internals.SystemCE" />
+  <Package Name="Compze.Internals.SystemCE.ThreadingCE" />
   <Package Name="Compze.Utilities.Testing.DbPool" />
   <Package Name="Compze.Must" />
   <Package Name="Compze.Utilities.Testing.XUnit" />

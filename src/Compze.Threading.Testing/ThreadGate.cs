@@ -1,7 +1,7 @@
 using Compze.Contracts;
 using Compze.Threading.ResourceAccess;
 using Compze.Threading.ResourceAccess.Exceptions;
-using Compze.Utilities.Logging;
+using Compze.Internals.Logging;
 
 namespace Compze.Threading.Testing;
 

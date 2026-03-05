@@ -1,4 +1,4 @@
-using Compze.Utilities.SystemCE;
+using Compze.Internals.SystemCE;
 
 namespace Compze.Tests.CodePolicies;
 

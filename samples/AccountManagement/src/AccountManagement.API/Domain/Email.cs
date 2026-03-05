@@ -1,5 +1,5 @@
 using System.Text.RegularExpressions;
-using Compze.Utilities.SystemCE;
+using Compze.Internals.SystemCE;
 using Newtonsoft.Json;
 
 namespace AccountManagement.Domain;

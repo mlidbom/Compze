@@ -6,10 +6,10 @@ The SQL layer uses **pure ADO.NET** with raw SQL string literals, duplicated acr
 
 | Project | Driver |
 |---------|--------|
-| `Compze.Sql.MicrosoftSql` | `Microsoft.Data.SqlClient` |
-| `Compze.Sql.MySql` | `MySql.Data` |
-| `Compze.Sql.PostgreSql` | `Npgsql` |
-| `Compze.Sql.Sqlite` | `Microsoft.Data.Sqlite` |
+| `Compze.Internals.Sql.MicrosoftSql` | `Microsoft.Data.SqlClient` |
+| `Compze.Internals.Sql.MySql` | `MySql.Data` |
+| `Compze.Internals.Sql.PostgreSql` | `Npgsql` |
+| `Compze.Internals.Sql.Sqlite` | `Microsoft.Data.Sqlite` |
 
 Each functional area (DocumentDb, Inbox, Outbox, TeventStore, DbPool, Schema) is **fully reimplemented per provider**. There is no query builder, no dialect abstraction — every SQL string is hand-written per engine.
 
@@ -124,7 +124,7 @@ linq2db generates SQL and maps results — no change tracking, no identity maps,
 
 **Worth pursuing.** Start with a proof-of-concept branch converting DocumentDb only:
 
-1. Add `linq2db` NuGet reference to one provider project (e.g., `Compze.Sql.Sqlite`)
+1. Add `linq2db` NuGet reference to one provider project (e.g., `Compze.Internals.Sql.Sqlite`)
 2. Rewrite `SqliteDocumentDbSqlLayer` using linq2db
 3. Verify tests pass unchanged
 4. If successful, create a single dialect-agnostic `DocumentDbSqlLayer` and remove the 4 provider-specific copies

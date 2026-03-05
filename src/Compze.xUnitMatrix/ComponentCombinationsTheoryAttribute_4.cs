@@ -1,4 +1,4 @@
-using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
+using Compze.Internals.SystemCE.CollectionsCE.GenericCE;
 
 // ReSharper disable ExplicitCallerInfoArgument
 

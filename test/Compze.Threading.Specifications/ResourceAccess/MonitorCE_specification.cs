@@ -1,6 +1,6 @@
-using Compze.SystemCE.ThreadingCE.TasksCE;
+using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 using Compze.Tests.Infrastructure;
-using Compze.Utilities.SystemCE;
+using Compze.Internals.SystemCE;
 using Compze.Threading.ResourceAccess;
 using Compze.Threading.ResourceAccess.Exceptions;
 using Compze.Must;

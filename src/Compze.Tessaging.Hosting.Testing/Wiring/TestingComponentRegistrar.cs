@@ -1,11 +1,11 @@
-using Compze.Sql.MicrosoftSql;
-using Compze.Sql.MicrosoftSql.Wiring;
-using Compze.Sql.MySql;
-using Compze.Sql.MySql.Wiring;
-using Compze.Sql.PostgreSql;
-using Compze.Sql.PostgreSql.Wiring;
-using Compze.Sql.Sqlite;
-using Compze.Sql.Sqlite.Wiring;
+using Compze.Internals.Sql.MicrosoftSql;
+using Compze.Internals.Sql.MicrosoftSql.Wiring;
+using Compze.Internals.Sql.MySql;
+using Compze.Internals.Sql.MySql.Wiring;
+using Compze.Internals.Sql.PostgreSql;
+using Compze.Internals.Sql.PostgreSql.Wiring;
+using Compze.Internals.Sql.Sqlite;
+using Compze.Internals.Sql.Sqlite.Wiring;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 

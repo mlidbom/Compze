@@ -1,5 +1,5 @@
 using Compze.Core.Tessaging.Public;
-using Compze.SystemCE.ThreadingCE.TasksCE;
+using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 
 namespace Compze.Core.Tessaging.Typermedia.Public;
 

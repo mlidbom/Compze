@@ -2,7 +2,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
 using Compze.Tessaging.Hosting.Testing.Performance;
-using Compze.Utilities.SystemCE;
+using Compze.Internals.SystemCE;
 
 namespace Compze.Tessaging.Hosting.Testing;
 

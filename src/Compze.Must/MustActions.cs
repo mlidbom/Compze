@@ -1,6 +1,6 @@
 using System.Runtime.CompilerServices;
-using Compze.SystemCE.ThreadingCE.TasksCE;
-using Compze.Utilities.SystemCE.ReflectionCE;
+using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
+using Compze.Internals.SystemCE.ReflectionCE;
 using JetBrains.Annotations;
 
 namespace Compze.Must;

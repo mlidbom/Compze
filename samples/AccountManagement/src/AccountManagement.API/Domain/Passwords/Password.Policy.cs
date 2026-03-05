@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq.Expressions;
 using AccountManagement.API;
 using AccountManagement.Extensions;
-using Compze.Utilities.SystemCE.ComponentModelCE.DataAnnotationsCE;
+using Compze.Internals.SystemCE.ComponentModelCE.DataAnnotationsCE;
 
 namespace AccountManagement.Domain.Passwords;
 

@@ -4,8 +4,8 @@ using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions;
 using Compze.Tessaging.Teventive.TeventStore.Refactoring.Migrations;
 using Compze.Contracts;
-using Compze.Utilities.SystemCE;
-using Compze.Utilities.SystemCE.LinqCE;
+using Compze.Internals.SystemCE;
+using Compze.Internals.SystemCE.LinqCE;
 using ReadOrder = Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions.ReadOrder;
 
 namespace Compze.Tessaging.Teventive.TeventStore;

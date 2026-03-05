@@ -1,7 +1,7 @@
 using System.Diagnostics;
-using Compze.Utilities.Logging;
-using Compze.Utilities.SystemCE;
-using Compze.Utilities.SystemCE.ReflectionCE;
+using Compze.Internals.Logging;
+using Compze.Internals.SystemCE;
+using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Threading.ResourceAccess;
 
 namespace Compze.DbPool.SystemCE;

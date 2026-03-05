@@ -1,14 +1,14 @@
 using Compze.Contracts;
 using Compze.DependencyInjection.Abstractions;
-using Compze.Utilities.Logging;
-using Compze.Utilities.SystemCE;
-using Compze.Utilities.SystemCE.ReflectionCE;
-using Compze.Utilities.SystemCE.TransactionsCE;
+using Compze.Internals.Logging;
+using Compze.Internals.SystemCE;
+using Compze.Internals.SystemCE.ReflectionCE;
+using Compze.Internals.SystemCE.TransactionsCE;
 using Compze.Threading;
 using Compze.DbPool.SystemCE;
 using Compze.DependencyInjection;
 using Compze.Threading.ResourceAccess;
-using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.Internals.SystemCE.ThreadingCE.ResourceAccess;
 
 #pragma warning disable CA1724 //I don't care that the class uses the same name as the namespace
 

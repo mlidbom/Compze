@@ -1,4 +1,4 @@
-using Compze.Utilities.SystemCE;
+using Compze.Internals.SystemCE;
 using Compze.Threading.Testing;
 using Compze.Must;
 using Compze.xUnitBDD;

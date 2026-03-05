@@ -1,5 +1,5 @@
 using Compze.Contracts;
-using Compze.Utilities.SystemCE;
+using Compze.Internals.SystemCE;
 using JetBrains.Annotations;
 using MemoryPack;
 

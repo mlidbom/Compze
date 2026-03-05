@@ -5,7 +5,7 @@ using System.Text;
 using Compze.Core.Tessaging.Public;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
-using Compze.Utilities.SystemCE.ReflectionCE;
+using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Threading.ResourceAccess;
 
 namespace Compze.Core.Refactoring.Naming.Internal.Implementation;

@@ -4,11 +4,11 @@ using Compze.Core.Tessaging.Public;
 using Compze.Tessaging.Implementation.Abstractions;
 using Compze.Tessaging.Implementation.Transport.Client.Internal;
 using Compze.Contracts;
-using Compze.SystemCE.ThreadingCE.TasksCE;
+using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
-using Compze.Utilities.Logging;
-using Compze.Utilities.SystemCE.TransactionsCE;
+using Compze.Internals.Logging;
+using Compze.Internals.SystemCE.TransactionsCE;
 
 namespace Compze.Tessaging.Implementation.Outbox;
 

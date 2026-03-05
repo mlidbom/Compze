@@ -1,5 +1,5 @@
 using System.Collections.Concurrent;
-using Compze.Utilities.SystemCE;
+using Compze.Internals.SystemCE;
 using Compze.Must;
 
 // ReSharper disable All

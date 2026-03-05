@@ -1,4 +1,4 @@
-using Compze.Utilities.SystemCE;
+using Compze.Internals.SystemCE;
 using Xunit;
 
 namespace Compze.Tests.Infrastructure;

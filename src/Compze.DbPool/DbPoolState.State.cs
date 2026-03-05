@@ -1,5 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
-using Compze.Utilities.SystemCE.LinqCE;
+using Compze.Internals.SystemCE.LinqCE;
 using JetBrains.Annotations;
 using MemoryPack;
 

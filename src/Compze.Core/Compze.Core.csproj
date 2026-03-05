@@ -38,12 +38,26 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection)' != 'true'">
     <ProjectReference Include="..\Compze.DependencyInjection\Compze.DependencyInjection.csproj" />
   </ItemGroup>
-  <!-- Compze.SystemCE.Internal — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_SystemCE_Internal)' == 'true'">
-    <PackageReference Include="Compze.SystemCE.Internal" Version="*-*" />
+  <!-- Compze.Internals.Logging — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Logging)' == 'true'">
+    <PackageReference Include="Compze.Internals.Logging" Version="*-*" />
   </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_SystemCE_Internal)' != 'true'">
-    <ProjectReference Include="..\Compze.SystemCE.Internal\Compze.SystemCE.Internal.csproj" />
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Logging)' != 'true'">
+    <ProjectReference Include="..\Compze.Internals.Logging\Compze.Internals.Logging.csproj" />
+  </ItemGroup>
+  <!-- Compze.Internals.SystemCE — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_SystemCE)' == 'true'">
+    <PackageReference Include="Compze.Internals.SystemCE" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_SystemCE)' != 'true'">
+    <ProjectReference Include="..\Compze.Internals.SystemCE\Compze.Internals.SystemCE.csproj" />
+  </ItemGroup>
+  <!-- Compze.Internals.SystemCE.Core — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_SystemCE_Core)' == 'true'">
+    <PackageReference Include="Compze.Internals.SystemCE.Core" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_SystemCE_Core)' != 'true'">
+    <ProjectReference Include="..\Compze.Internals.SystemCE.Core\Compze.Internals.SystemCE.Core.csproj" />
   </ItemGroup>
   <!-- Compze.Threading — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Threading)' == 'true'">
@@ -58,19 +72,5 @@
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_Threading_Internal)' != 'true'">
     <ProjectReference Include="..\Compze.Threading.Internal\Compze.Threading.Internal.csproj" />
-  </ItemGroup>
-  <!-- Compze.Utilities.Logging — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Logging)' == 'true'">
-    <PackageReference Include="Compze.Utilities.Logging" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Logging)' != 'true'">
-    <ProjectReference Include="..\Compze.Utilities.Logging\Compze.Utilities.Logging.csproj" />
-  </ItemGroup>
-  <!-- Compze.Utilities.SystemCE — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_SystemCE)' == 'true'">
-    <PackageReference Include="Compze.Utilities.SystemCE" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_SystemCE)' != 'true'">
-    <ProjectReference Include="..\Compze.Utilities.SystemCE\Compze.Utilities.SystemCE.csproj" />
   </ItemGroup>
 </Project>

@@ -16,19 +16,26 @@
     </PackageReference>
     <PackageReference Include="xunit.v3" Version="3.1.0" />
   </ItemGroup>
+  <!-- Compze.Internals.SystemCE — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_SystemCE)' == 'true'">
+    <PackageReference Include="Compze.Internals.SystemCE" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_SystemCE)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.Internals.SystemCE\Compze.Internals.SystemCE.csproj" />
+  </ItemGroup>
+  <!-- Compze.Internals.SystemCE.Core — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_SystemCE_Core)' == 'true'">
+    <PackageReference Include="Compze.Internals.SystemCE.Core" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_SystemCE_Core)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.Internals.SystemCE.Core\Compze.Internals.SystemCE.Core.csproj" />
+  </ItemGroup>
   <!-- Compze.Must — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Must)' == 'true'">
     <PackageReference Include="Compze.Must" Version="*-*" />
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_Must)' != 'true'">
     <ProjectReference Include="..\..\src\Compze.Must\Compze.Must.csproj" />
-  </ItemGroup>
-  <!-- Compze.SystemCE.Internal — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_SystemCE_Internal)' == 'true'">
-    <PackageReference Include="Compze.SystemCE.Internal" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_SystemCE_Internal)' != 'true'">
-    <ProjectReference Include="..\..\src\Compze.SystemCE.Internal\Compze.SystemCE.Internal.csproj" />
   </ItemGroup>
   <!-- Compze.Threading — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Threading)' == 'true'">
@@ -43,13 +50,6 @@
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_Threading_Testing)' != 'true'">
     <ProjectReference Include="..\..\src\Compze.Threading.Testing\Compze.Threading.Testing.csproj" />
-  </ItemGroup>
-  <!-- Compze.Utilities.SystemCE — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_SystemCE)' == 'true'">
-    <PackageReference Include="Compze.Utilities.SystemCE" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_SystemCE)' != 'true'">
-    <ProjectReference Include="..\..\src\Compze.Utilities.SystemCE\Compze.Utilities.SystemCE.csproj" />
   </ItemGroup>
   <!-- Compze.xUnitBDD — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_xUnitBDD)' == 'true'">

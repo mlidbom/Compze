@@ -29,7 +29,7 @@ These are the lowest-level building blocks. Each is a promotable concept in its 
 ### SystemCE
 > Quality of life extensions and abstractions over System.* — IO, collections, LINQ, etc.
 
-- `src/Compze.Utilities.SystemCE`
+- `src/Compze.Internals.SystemCE`
 - **Dependencies**: Contracts, Functional
 - **Status**: Published as NuGet package.
 - **Note**: Contains `MachineWideSharedObject` which may move to its own sub-product under Threading.
@@ -39,8 +39,8 @@ These are the lowest-level building blocks. Each is a promotable concept in its 
 ### Threading
 > Thread safety made easy and reliable.
 
-- `src/Compze.Utilities.SystemCE.ThreadingCE` — core threading primitives (MutexCE, IMonitor, ResourceAccess, etc.)
-- `src/Compze.Utilities.SystemCE.ThreadingCE.Testing` — testing utilities for threading code
+- `src/Compze.Internals.SystemCE.ThreadingCE` — core threading primitives (MutexCE, IMonitor, ResourceAccess, etc.)
+- `src/Compze.Internals.SystemCE.ThreadingCE.Testing` — testing utilities for threading code
 - _Candidate_: `Compze.Threading.InterProcessObject` — `MachineWideSharedObject` extracted from SystemCE
 - **Dependencies**: Contracts, Functional, SystemCE
 - **Test projects**: Currently tested within `Compze.Tests.Unit.Internals` and `Compze.Tests.Performance.Internals` — would need dedicated test projects.
@@ -105,18 +105,18 @@ Core was designed around minimizing project count to avoid overloading Visual St
 ### Sql
 > SQL abstractions and provider implementations. Internal plumbing consumed by DbPool and Tessaging.
 
-- `src/Compze.Sql.Common` — shared SQL infrastructure
-- `src/Compze.Sql.MicrosoftSql`
-- `src/Compze.Sql.MySql`
-- `src/Compze.Sql.PostgreSql`
-- `src/Compze.Sql.Sqlite`
+- `src/Compze.Internals.Sql.Common` — shared SQL infrastructure
+- `src/Compze.Internals.Sql.MicrosoftSql`
+- `src/Compze.Internals.Sql.MySql`
+- `src/Compze.Internals.Sql.PostgreSql`
+- `src/Compze.Internals.Sql.Sqlite`
 - **Dependencies**: Contracts, Core, DependencyInjection, Logging, SystemCE, ThreadingCE
 
 ### Logging
 > Logging abstractions and Serilog implementation. Internal — the overall design is not yet settled for general use.
 
-- `src/Compze.Utilities.Logging` — abstractions
-- `src/Compze.Utilities.Logging.Serilog` — Serilog implementation
+- `src/Compze.Internals.Logging` — abstractions
+- `src/Compze.Internals.Logging.Serilog` — Serilog implementation
 - **Dependencies**: Contracts, Functional, SystemCE, ThreadingCE
 
 ---

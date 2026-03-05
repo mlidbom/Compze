@@ -5,7 +5,7 @@ using Compze.Tests.Common.Sql.DocumentDb;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.DependencyInjection;
-using Compze.Utilities.SystemCE;
+using Compze.Internals.SystemCE;
 
 
 namespace Compze.Tests.Performance.Internals.Sql.DocumentDb;

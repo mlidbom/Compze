@@ -1,5 +1,5 @@
 using Compze.Core.Tessaging.Public;
-using Compze.Utilities.SystemCE.ReflectionCE;
+using Compze.Internals.SystemCE.ReflectionCE;
 
 namespace Compze.Tessaging.Implementation.Transport.Abstractions;
 

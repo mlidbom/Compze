@@ -1,15 +1,15 @@
 using Compze.Core.Public;
 using Compze.Core.Refactoring.Naming.Internal.Implementation;
 using Compze.Core.Serialization.Internal;
-using Compze.Serialization.Newtonsoft.Private.TeventStore;
+using Compze.Internals.Serialization.Newtonsoft.Private.TeventStore;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Performance;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.DependencyInjection.Abstractions;
-using Compze.Utilities.SystemCE;
-using Compze.Utilities.SystemCE.LinqCE;
+using Compze.Internals.SystemCE;
+using Compze.Internals.SystemCE.LinqCE;
 using Newtonsoft.Json;
 
 namespace Compze.Tests.Performance.Internals.Serialization;

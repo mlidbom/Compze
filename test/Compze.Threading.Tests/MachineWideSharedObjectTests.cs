@@ -1,11 +1,11 @@
 using Compze.Contracts;
-using Compze.SystemCE.ThreadingCE.TasksCE;
+using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 using Compze.Tests.Infrastructure;
-using Compze.Utilities.SystemCE;
-using Compze.Utilities.SystemCE.LinqCE;
+using Compze.Internals.SystemCE;
+using Compze.Internals.SystemCE.LinqCE;
 using Compze.Threading.ResourceAccess;
 using Compze.Threading.Testing;
-using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.Internals.SystemCE.ThreadingCE.ResourceAccess;
 using Compze.Must;
 using Compze.xUnitBDD;
 using JetBrains.Annotations;

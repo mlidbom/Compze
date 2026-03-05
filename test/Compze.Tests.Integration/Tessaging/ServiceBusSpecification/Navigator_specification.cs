@@ -8,7 +8,7 @@ using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Core.Public;
-using Compze.SystemCE.ThreadingCE.TasksCE;
+using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 using Compze.Must;
 // ReSharper disable MemberCanBeMadeStatic.Global
 // ReSharper disable MemberCanBeMadeStatic.Local

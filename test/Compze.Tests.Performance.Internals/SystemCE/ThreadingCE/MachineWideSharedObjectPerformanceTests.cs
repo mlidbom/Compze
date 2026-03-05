@@ -1,10 +1,10 @@
 using Compze.Tessaging.Hosting.Testing.Performance;
 using Compze.Tests.Infrastructure;
-using Compze.Utilities.SystemCE;
+using Compze.Internals.SystemCE;
 using Compze.Threading.ResourceAccess;
 using Newtonsoft.Json;
 using Compze.Contracts;
-using Compze.Utilities.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.Internals.SystemCE.ThreadingCE.ResourceAccess;
 using Compze.xUnitBDD;
 
 namespace Compze.Tests.Performance.Internals.SystemCE.ThreadingCE;

@@ -13,8 +13,8 @@ using Compze.Tests.Infrastructure.XUnit;
 using Compze.Tests.Integration.CQRS.TeventRefactoring.Migrations;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
-using Compze.Utilities.SystemCE;
-using Compze.Utilities.SystemCE.LinqCE;
+using Compze.Internals.SystemCE;
+using Compze.Internals.SystemCE.LinqCE;
 using Compze.Contracts;
 
 namespace Compze.Tests.Performance.Internals.CQRS.TeventRefactoring.Migrations;

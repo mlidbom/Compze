@@ -1,11 +1,11 @@
 using Compze.Core.Wiring.Testing.Internal;
-using Compze.Sql.MicrosoftSql;
-using Compze.Sql.MySql;
-using Compze.Sql.PostgreSql;
-using Compze.Sql.Sqlite;
+using Compze.Internals.Sql.MicrosoftSql;
+using Compze.Internals.Sql.MySql;
+using Compze.Internals.Sql.PostgreSql;
+using Compze.Internals.Sql.Sqlite;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Performance;
-using Compze.Utilities.Logging;
+using Compze.Internals.Logging;
 using Compze.Tests.Infrastructure.XUnit;
 
 namespace Compze.DbPool.Tests;

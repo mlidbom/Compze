@@ -2,7 +2,7 @@ using Compze.Core.Configuration.Internal;
 using Compze.Core.Refactoring.Naming.Internal.Implementation;
 using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Core.Tessaging.Hosting.TessageHandling.Registration.Public;
-using Compze.SystemCE.ThreadingCE.TasksCE;
+using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 using Compze.Tessaging.Configuration;
 using Compze.Tessaging.Implementation;
 using Compze.Tessaging.Implementation.Abstractions;

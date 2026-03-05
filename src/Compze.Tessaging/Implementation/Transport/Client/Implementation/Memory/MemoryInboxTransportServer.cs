@@ -7,10 +7,10 @@ using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Contracts;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
-using Compze.Utilities.Logging;
+using Compze.Internals.Logging;
 using Compze.Core.Serialization.Internal;
-using Compze.SystemCE.ThreadingCE.TasksCE;
-using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
+using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
+using Compze.Internals.SystemCE.CollectionsCE.GenericCE;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Memory;
 

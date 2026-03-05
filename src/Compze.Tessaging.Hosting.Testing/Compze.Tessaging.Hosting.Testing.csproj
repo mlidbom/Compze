@@ -86,54 +86,68 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection_SimpleInjector)' != 'true'">
     <ProjectReference Include="..\Compze.DependencyInjection.SimpleInjector\Compze.DependencyInjection.SimpleInjector.csproj" />
   </ItemGroup>
+  <!-- Compze.Internals.Logging — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Logging)' == 'true'">
+    <PackageReference Include="Compze.Internals.Logging" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Logging)' != 'true'">
+    <ProjectReference Include="..\Compze.Internals.Logging\Compze.Internals.Logging.csproj" />
+  </ItemGroup>
+  <!-- Compze.Internals.Serialization.Newtonsoft — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Serialization_Newtonsoft)' == 'true'">
+    <PackageReference Include="Compze.Internals.Serialization.Newtonsoft" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Serialization_Newtonsoft)' != 'true'">
+    <ProjectReference Include="..\Compze.Internals.Serialization.Newtonsoft\Compze.Internals.Serialization.Newtonsoft.csproj" />
+  </ItemGroup>
+  <!-- Compze.Internals.Sql.MicrosoftSql — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Sql_MicrosoftSql)' == 'true'">
+    <PackageReference Include="Compze.Internals.Sql.MicrosoftSql" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Sql_MicrosoftSql)' != 'true'">
+    <ProjectReference Include="..\Compze.Internals.Sql.MicrosoftSql\Compze.Internals.Sql.MicrosoftSql.csproj" />
+  </ItemGroup>
+  <!-- Compze.Internals.Sql.MySql — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Sql_MySql)' == 'true'">
+    <PackageReference Include="Compze.Internals.Sql.MySql" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Sql_MySql)' != 'true'">
+    <ProjectReference Include="..\Compze.Internals.Sql.MySql\Compze.Internals.Sql.MySql.csproj" />
+  </ItemGroup>
+  <!-- Compze.Internals.Sql.PostgreSql — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Sql_PostgreSql)' == 'true'">
+    <PackageReference Include="Compze.Internals.Sql.PostgreSql" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Sql_PostgreSql)' != 'true'">
+    <ProjectReference Include="..\Compze.Internals.Sql.PostgreSql\Compze.Internals.Sql.PostgreSql.csproj" />
+  </ItemGroup>
+  <!-- Compze.Internals.Sql.Sqlite — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Sql_Sqlite)' == 'true'">
+    <PackageReference Include="Compze.Internals.Sql.Sqlite" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Sql_Sqlite)' != 'true'">
+    <ProjectReference Include="..\Compze.Internals.Sql.Sqlite\Compze.Internals.Sql.Sqlite.csproj" />
+  </ItemGroup>
+  <!-- Compze.Internals.SystemCE — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_SystemCE)' == 'true'">
+    <PackageReference Include="Compze.Internals.SystemCE" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_SystemCE)' != 'true'">
+    <ProjectReference Include="..\Compze.Internals.SystemCE\Compze.Internals.SystemCE.csproj" />
+  </ItemGroup>
+  <!-- Compze.Internals.SystemCE.Core — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_SystemCE_Core)' == 'true'">
+    <PackageReference Include="Compze.Internals.SystemCE.Core" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_SystemCE_Core)' != 'true'">
+    <ProjectReference Include="..\Compze.Internals.SystemCE.Core\Compze.Internals.SystemCE.Core.csproj" />
+  </ItemGroup>
   <!-- Compze.Must — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Must)' == 'true'">
     <PackageReference Include="Compze.Must" Version="*-*" />
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_Must)' != 'true'">
     <ProjectReference Include="..\Compze.Must\Compze.Must.csproj" />
-  </ItemGroup>
-  <!-- Compze.Serialization.Newtonsoft — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Serialization_Newtonsoft)' == 'true'">
-    <PackageReference Include="Compze.Serialization.Newtonsoft" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Serialization_Newtonsoft)' != 'true'">
-    <ProjectReference Include="..\Compze.Serialization.Newtonsoft\Compze.Serialization.Newtonsoft.csproj" />
-  </ItemGroup>
-  <!-- Compze.Sql.MicrosoftSql — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Sql_MicrosoftSql)' == 'true'">
-    <PackageReference Include="Compze.Sql.MicrosoftSql" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Sql_MicrosoftSql)' != 'true'">
-    <ProjectReference Include="..\Compze.Sql.MicrosoftSql\Compze.Sql.MicrosoftSql.csproj" />
-  </ItemGroup>
-  <!-- Compze.Sql.MySql — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Sql_MySql)' == 'true'">
-    <PackageReference Include="Compze.Sql.MySql" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Sql_MySql)' != 'true'">
-    <ProjectReference Include="..\Compze.Sql.MySql\Compze.Sql.MySql.csproj" />
-  </ItemGroup>
-  <!-- Compze.Sql.PostgreSql — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Sql_PostgreSql)' == 'true'">
-    <PackageReference Include="Compze.Sql.PostgreSql" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Sql_PostgreSql)' != 'true'">
-    <ProjectReference Include="..\Compze.Sql.PostgreSql\Compze.Sql.PostgreSql.csproj" />
-  </ItemGroup>
-  <!-- Compze.Sql.Sqlite — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Sql_Sqlite)' == 'true'">
-    <PackageReference Include="Compze.Sql.Sqlite" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Sql_Sqlite)' != 'true'">
-    <ProjectReference Include="..\Compze.Sql.Sqlite\Compze.Sql.Sqlite.csproj" />
-  </ItemGroup>
-  <!-- Compze.SystemCE.Internal — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_SystemCE_Internal)' == 'true'">
-    <PackageReference Include="Compze.SystemCE.Internal" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_SystemCE_Internal)' != 'true'">
-    <ProjectReference Include="..\Compze.SystemCE.Internal\Compze.SystemCE.Internal.csproj" />
   </ItemGroup>
   <!-- Compze.Tessaging — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging)' == 'true'">
@@ -169,19 +183,5 @@
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_Underscore)' != 'true'">
     <ProjectReference Include="..\Compze.Underscore\Compze.Underscore.csproj" />
-  </ItemGroup>
-  <!-- Compze.Utilities.Logging — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Logging)' == 'true'">
-    <PackageReference Include="Compze.Utilities.Logging" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Logging)' != 'true'">
-    <ProjectReference Include="..\Compze.Utilities.Logging\Compze.Utilities.Logging.csproj" />
-  </ItemGroup>
-  <!-- Compze.Utilities.SystemCE — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_SystemCE)' == 'true'">
-    <PackageReference Include="Compze.Utilities.SystemCE" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_SystemCE)' != 'true'">
-    <ProjectReference Include="..\Compze.Utilities.SystemCE\Compze.Utilities.SystemCE.csproj" />
   </ItemGroup>
 </Project>

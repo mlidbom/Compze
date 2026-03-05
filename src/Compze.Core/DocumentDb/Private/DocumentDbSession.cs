@@ -5,8 +5,8 @@ using Compze.Core.DocumentDb.Public;
 using Compze.Core.Public;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
-using Compze.Utilities.SystemCE.TransactionsCE;
-using Compze.Utilities.SystemCE.UsageGuards;
+using Compze.Internals.SystemCE.TransactionsCE;
+using Compze.Internals.SystemCE.UsageGuards;
 using Compze.Contracts;
 
 namespace Compze.Core.DocumentDb.Private;

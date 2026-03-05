@@ -1,7 +1,7 @@
-﻿<ProjectConfiguration>
+<ProjectConfiguration>
   <Settings>
     <AdditionalFilesToIncludeForProject>
-      <Value>..\Compze.Utilities.SystemCE\**.*</Value>
+      <Value>..\Compze.Internals.SystemCE\**.*</Value>
     </AdditionalFilesToIncludeForProject>
   </Settings>
 </ProjectConfiguration>

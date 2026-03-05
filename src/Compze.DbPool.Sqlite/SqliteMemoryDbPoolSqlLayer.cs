@@ -1,6 +1,6 @@
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
-using Compze.Utilities.SystemCE.LinqCE;
+using Compze.Internals.SystemCE.LinqCE;
 using Compze.Threading.ResourceAccess;
 using Microsoft.Data.Sqlite;
 

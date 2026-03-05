@@ -1,15 +1,15 @@
 using Compze.Core.Tessaging.Public;
 using Compze.Core.Time.Public;
-using Compze.SystemCE.ThreadingCE.TasksCE;
+using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 using Compze.Tessaging.Implementation.Abstractions;
 using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
-using Compze.Utilities.Logging;
-using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
+using Compze.Internals.Logging;
+using Compze.Internals.SystemCE.CollectionsCE.GenericCE;
 using Compze.Threading;
 using Compze.Threading.ResourceAccess;
-using Compze.Utilities.SystemCE.TransactionsCE;
+using Compze.Internals.SystemCE.TransactionsCE;
 
 namespace Compze.Tessaging.Implementation;
 

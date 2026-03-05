@@ -1,4 +1,4 @@
-# Compze.Utilities.SystemCE.ThreadingCE.Testing
+# Compze.Internals.SystemCE.ThreadingCE.Testing
 
 Testing utilities for deterministic multi-threaded tests in [Compze](https://github.com/mlidbom/Compze).
 
@@ -31,7 +31,7 @@ section.ExitGate.Open();    // Allow threads to exit
 ## Installation
 
 ```shell
-dotnet add package Compze.Utilities.SystemCE.ThreadingCE.Testing
+dotnet add package Compze.Internals.SystemCE.ThreadingCE.Testing
 ```
 
 ## License

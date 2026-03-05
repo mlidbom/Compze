@@ -15,11 +15,11 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_DbPool)' != 'true'">
     <ProjectReference Include="..\Compze.DbPool\Compze.DbPool.csproj" />
   </ItemGroup>
-  <!-- Compze.Sql.Sqlite — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Sql_Sqlite)' == 'true'">
-    <PackageReference Include="Compze.Sql.Sqlite" Version="*-*" />
+  <!-- Compze.Internals.Sql.Sqlite — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Sql_Sqlite)' == 'true'">
+    <PackageReference Include="Compze.Internals.Sql.Sqlite" Version="*-*" />
   </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Sql_Sqlite)' != 'true'">
-    <ProjectReference Include="..\Compze.Sql.Sqlite\Compze.Sql.Sqlite.csproj" />
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Sql_Sqlite)' != 'true'">
+    <ProjectReference Include="..\Compze.Internals.Sql.Sqlite\Compze.Internals.Sql.Sqlite.csproj" />
   </ItemGroup>
 </Project>

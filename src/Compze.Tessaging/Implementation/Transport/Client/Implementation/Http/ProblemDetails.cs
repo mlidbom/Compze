@@ -1,6 +1,6 @@
 using System.Net.Http.Json;
 using Compze.Contracts;
-using Compze.SystemCE.ThreadingCE.TasksCE;
+using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 using JetBrains.Annotations;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Http;

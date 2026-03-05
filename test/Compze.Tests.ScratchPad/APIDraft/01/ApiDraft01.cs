@@ -1,4 +1,4 @@
-using Compze.Utilities.SystemCE.LinqCE;
+using Compze.Internals.SystemCE.LinqCE;
 
 // ReSharper disable All
 #pragma warning disable //Reviewed OK: This is API experimental code that is never ever used.

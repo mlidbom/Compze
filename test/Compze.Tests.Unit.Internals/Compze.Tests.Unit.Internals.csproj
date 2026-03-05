@@ -32,6 +32,20 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection)' != 'true'">
     <ProjectReference Include="..\..\src\Compze.DependencyInjection\Compze.DependencyInjection.csproj" />
   </ItemGroup>
+  <!-- Compze.Internals.Logging — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Logging)' == 'true'">
+    <PackageReference Include="Compze.Internals.Logging" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Logging)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.Internals.Logging\Compze.Internals.Logging.csproj" />
+  </ItemGroup>
+  <!-- Compze.Internals.SystemCE — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_SystemCE)' == 'true'">
+    <PackageReference Include="Compze.Internals.SystemCE" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_SystemCE)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.Internals.SystemCE\Compze.Internals.SystemCE.csproj" />
+  </ItemGroup>
   <!-- Compze.Must — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Must)' == 'true'">
     <PackageReference Include="Compze.Must" Version="*-*" />
@@ -59,20 +73,6 @@
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_Underscore)' != 'true'">
     <ProjectReference Include="..\..\src\Compze.Underscore\Compze.Underscore.csproj" />
-  </ItemGroup>
-  <!-- Compze.Utilities.Logging — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Logging)' == 'true'">
-    <PackageReference Include="Compze.Utilities.Logging" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Logging)' != 'true'">
-    <ProjectReference Include="..\..\src\Compze.Utilities.Logging\Compze.Utilities.Logging.csproj" />
-  </ItemGroup>
-  <!-- Compze.Utilities.SystemCE — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_SystemCE)' == 'true'">
-    <PackageReference Include="Compze.Utilities.SystemCE" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_SystemCE)' != 'true'">
-    <ProjectReference Include="..\..\src\Compze.Utilities.SystemCE\Compze.Utilities.SystemCE.csproj" />
   </ItemGroup>
   <!-- Compze.xUnitBDD — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_xUnitBDD)' == 'true'">

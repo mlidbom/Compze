@@ -1,6 +1,6 @@
 using Compze.Tessaging.Hosting.Testing.Performance;
 using Compze.Tests.Infrastructure;
-using Compze.Utilities.SystemCE;
+using Compze.Internals.SystemCE;
 using Compze.xUnitBDD;
 
 namespace Compze.Tests.Performance.Internals.Testing.Performance;

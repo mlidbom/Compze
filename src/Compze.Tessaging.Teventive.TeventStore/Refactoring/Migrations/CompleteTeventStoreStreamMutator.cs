@@ -3,7 +3,7 @@ using Compze.Core.Tessaging.Teventive.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.Refactoring.Migrations.Internal;
 using Compze.Core.Tessaging.Teventive.TeventStore.Refactoring.Migrations.Public;
-using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
+using Compze.Internals.SystemCE.CollectionsCE.GenericCE;
 
 namespace Compze.Tessaging.Teventive.TeventStore.Refactoring.Migrations;
 

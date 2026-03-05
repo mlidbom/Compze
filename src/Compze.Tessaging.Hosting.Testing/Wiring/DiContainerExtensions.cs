@@ -9,7 +9,7 @@ using Compze.DependencyInjection.Abstractions;
 using Compze.DependencyInjection.Microsoft;
 using Compze.DependencyInjection.SimpleInjector;
 using Compze.Underscore;
-using Compze.Utilities.Logging;
+using Compze.Internals.Logging;
 using JetBrains.Annotations;
 
 namespace Compze.Tessaging.Hosting.Testing.Wiring;

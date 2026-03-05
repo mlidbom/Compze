@@ -1,6 +1,6 @@
 using Compze.Core.Serialization.Internal;
 using Compze.Core.Tessaging.Transport.Internal;
-using Compze.SystemCE.ThreadingCE.TasksCE;
+using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.DependencyInjection;

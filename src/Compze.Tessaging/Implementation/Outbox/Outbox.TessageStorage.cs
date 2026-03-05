@@ -6,8 +6,8 @@ using Compze.Core.Tessaging.Internal.SqlLayer;
 using Compze.Core.Tessaging.Public;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
-using Compze.Utilities.Logging;
-using Compze.SystemCE.ThreadingCE.TasksCE;
+using Compze.Internals.Logging;
+using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 
 namespace Compze.Tessaging.Implementation.Outbox;
 

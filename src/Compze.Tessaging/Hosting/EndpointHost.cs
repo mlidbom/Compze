@@ -2,9 +2,9 @@ using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Tessaging.Implementation.Transport;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Contracts;
-using Compze.SystemCE.ThreadingCE.TasksCE;
+using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 using Compze.DependencyInjection.Abstractions;
-using Compze.Utilities.Logging;
+using Compze.Internals.Logging;
 
 namespace Compze.Tessaging.Hosting;
 

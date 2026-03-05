@@ -1,9 +1,9 @@
 using System.Runtime.CompilerServices;
-using Compze.SystemCE.ThreadingCE.TasksCE;
+using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 using Compze.Tests.Infrastructure;
-using Compze.Utilities.SystemCE;
+using Compze.Internals.SystemCE;
 using Compze.Threading.Testing;
-using Compze.Utilities.SystemCE.ThreadingCE.Async;
+using Compze.Internals.SystemCE.ThreadingCE.Async;
 using Compze.Must;
 using Compze.xUnitBDD;
 using Xunit;

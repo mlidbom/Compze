@@ -4,7 +4,7 @@ using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.Refactoring.Migrations.Internal;
 using Compze.Core.Tessaging.Teventive.TeventStore.Refactoring.Migrations.Public;
 using Compze.Contracts;
-using Compze.Utilities.SystemCE.LinqCE;
+using Compze.Internals.SystemCE.LinqCE;
 
 // ReSharper disable ForCanBeConvertedToForeach
 

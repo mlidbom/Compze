@@ -75,12 +75,12 @@ src/
   Directory.Build.props                # Shared MSBuild properties (do not modify)
   TestUsingPluggableComponentCombinations  # Active test config (do not modify)
   Compze.Core/                         # Core abstractions
-  Compze.Serialization.Newtonsoft/     # Newtonsoft serialization
-  Compze.Sql.Common/                   # SQL persistence (common)
-  Compze.Sql.MicrosoftSql/             # SQL Server persistence
-  Compze.Sql.MySql/                    # MySQL persistence
-  Compze.Sql.PostgreSql/               # PostgreSQL persistence
-  Compze.Sql.Sqlite/                   # SQLite persistence
+  Compze.Internals.Serialization.Newtonsoft/     # Newtonsoft serialization
+  Compze.Internals.Sql.Common/                   # SQL persistence (common)
+  Compze.Internals.Sql.MicrosoftSql/             # SQL Server persistence
+  Compze.Internals.Sql.MySql/                    # MySQL persistence
+  Compze.Internals.Sql.PostgreSql/               # PostgreSQL persistence
+  Compze.Internals.Sql.Sqlite/                   # SQLite persistence
   Compze.Tessaging/                    # Type-based messaging + Teventive
   Compze.Tessaging.Hosting.AspNetCore/ # ASP.NET Core hosting
   Compze.Tessaging.Hosting.Testing/    # Testing hosting
@@ -88,7 +88,7 @@ src/
   Compze.Utilities/                    # Diverse utilities
   Compze.DependencyInjection.Microsoft/   # Microsoft DI
   Compze.DependencyInjection.SimpleInjector/ # SimpleInjector DI
-  Compze.Utilities.Logging.Serilog/    # Serilog logging
+  Compze.Internals.Logging.Serilog/    # Serilog logging
   Compze.DbPool/                       # Database pool for testing
   Compze.Must/       # Must assertion library
   Compze.Utilities.Testing.XUnit/      # xUnit testing infrastructure

@@ -1,6 +1,6 @@
 using System.Collections;
 using System.Runtime.CompilerServices;
-using Compze.Utilities.SystemCE.ReflectionCE;
+using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Must.Serialization;
 using Newtonsoft.Json;
 

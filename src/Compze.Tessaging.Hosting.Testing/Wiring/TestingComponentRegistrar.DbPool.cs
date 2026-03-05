@@ -4,7 +4,7 @@ using Compze.DbPool.MySql;
 using Compze.DbPool.PostgreSql;
 using Compze.DbPool.Sqlite;
 using Compze.DependencyInjection.Abstractions;
-using Compze.Utilities.SystemCE;
+using Compze.Internals.SystemCE;
 using Compze.DbPool;
 
 namespace Compze.Tessaging.Hosting.Testing.Wiring;

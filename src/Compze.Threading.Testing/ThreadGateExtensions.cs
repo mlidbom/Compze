@@ -1,6 +1,6 @@
 using System.Transactions;
 using Compze.Contracts;
-using Compze.Utilities.SystemCE.TransactionsCE.Testing;
+using Compze.Internals.SystemCE.TransactionsCE.Testing;
 
 namespace Compze.Threading.Testing;
 

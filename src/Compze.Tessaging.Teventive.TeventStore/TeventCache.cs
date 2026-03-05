@@ -4,8 +4,8 @@ using Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions
 using Compze.Contracts;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
-using Compze.Utilities.SystemCE;
-using Compze.Utilities.SystemCE.TransactionsCE;
+using Compze.Internals.SystemCE;
+using Compze.Internals.SystemCE.TransactionsCE;
 using Microsoft.Extensions.Caching.Memory;
 using System.Diagnostics.CodeAnalysis;
 using System.Transactions;

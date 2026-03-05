@@ -1,10 +1,10 @@
 <Solution>
   <Folder Name="/Compze.Internal.Sql/">
-    <Project Path="Compze.Sql.Common/Compze.Sql.Common.csproj" />
-    <Project Path="Compze.Sql.MicrosoftSql/Compze.Sql.MicrosoftSql.csproj" />
-    <Project Path="Compze.Sql.MySql/Compze.Sql.MySql.csproj" />
-    <Project Path="Compze.Sql.PostgreSql/Compze.Sql.PostgreSql.csproj" />
-    <Project Path="Compze.Sql.Sqlite/Compze.Sql.Sqlite.csproj" />
+    <Project Path="Compze.Internals.Sql.Common/Compze.Internals.Sql.Common.csproj" />
+    <Project Path="Compze.Internals.Sql.MicrosoftSql/Compze.Internals.Sql.MicrosoftSql.csproj" />
+    <Project Path="Compze.Internals.Sql.MySql/Compze.Internals.Sql.MySql.csproj" />
+    <Project Path="Compze.Internals.Sql.PostgreSql/Compze.Internals.Sql.PostgreSql.csproj" />
+    <Project Path="Compze.Internals.Sql.Sqlite/Compze.Internals.Sql.Sqlite.csproj" />
   </Folder>
   <Folder Name="/Compze.Tessaging/">
     <Project Path="Compze.Tessaging.Hosting.AspNetCore/Compze.Tessaging.Hosting.AspNetCore.csproj" />
@@ -24,5 +24,5 @@
     <Project Path="../test/Compze.Utilities.Tests/Compze.Utilities.Tests.csproj" />
   </Folder>
   <Project Path="Compze.Core/Compze.Core.csproj" />
-  <Project Path="Compze.Serialization.Newtonsoft/Compze.Serialization.Newtonsoft.csproj" />
+  <Project Path="Compze.Internals.Serialization.Newtonsoft/Compze.Internals.Serialization.Newtonsoft.csproj" />
 </Solution>

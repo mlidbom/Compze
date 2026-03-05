@@ -3,7 +3,7 @@ using Compze.Core.Tessaging.Teventive.Public;
 using Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId.Domain;
 using Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId.Domain.Tevents;
 using Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId.QueryModels;
-using Compze.Utilities.SystemCE.ReactiveCE;
+using Compze.Internals.SystemCE.ReactiveCE;
 using Compze.Must;
 using Compze.xUnitBDD;
 

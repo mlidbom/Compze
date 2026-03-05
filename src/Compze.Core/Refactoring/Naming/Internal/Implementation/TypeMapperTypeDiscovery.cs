@@ -1,7 +1,7 @@
 using System.Reflection;
 using Compze.Core.Public;
 using Compze.Core.Tessaging.Public;
-using Compze.Utilities.SystemCE.ReflectionCE;
+using Compze.Internals.SystemCE.ReflectionCE;
 
 namespace Compze.Core.Refactoring.Naming.Internal.Implementation;
 

@@ -1,4 +1,4 @@
-using Compze.Utilities.SystemCE;
+using Compze.Internals.SystemCE;
 using Serilog.Core;
 using Serilog.Events;
 using Serilog.Formatting.Display;

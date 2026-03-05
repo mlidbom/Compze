@@ -1,5 +1,5 @@
 using System.Text;
-using Compze.Utilities.SystemCE.TextCE;
+using Compze.Internals.SystemCE.TextCE;
 using DiffPlex;
 using DiffPlex.Renderer;
 

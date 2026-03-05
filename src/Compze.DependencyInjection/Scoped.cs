@@ -1,5 +1,5 @@
 using Compze.DependencyInjection.Abstractions;
-using Compze.Utilities.SystemCE.LinqCE;
+using Compze.Internals.SystemCE.LinqCE;
 //todo: test coverage and remove the suppression
 // ReSharper disable UnusedMember.Global
 namespace Compze.DependencyInjection;

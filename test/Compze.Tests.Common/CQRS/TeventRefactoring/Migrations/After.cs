@@ -1,8 +1,8 @@
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.Refactoring.Migrations.Public;
 using Compze.Tessaging.Teventive.TeventStore.Refactoring.Migrations;
-using Compze.Utilities.SystemCE.LinqCE;
-using Compze.Utilities.SystemCE.ReflectionCE;
+using Compze.Internals.SystemCE.LinqCE;
+using Compze.Internals.SystemCE.ReflectionCE;
 
 namespace Compze.Tests.Common.CQRS.TeventRefactoring.Migrations;
 

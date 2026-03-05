@@ -1,6 +1,6 @@
 using Compze.Tests.Infrastructure;
-using Compze.Utilities.SystemCE;
-using Compze.Utilities.SystemCE.LinqCE;
+using Compze.Internals.SystemCE;
+using Compze.Internals.SystemCE.LinqCE;
 using Compze.Threading.ResourceAccess.Exceptions;
 using Compze.Must;
 using Compze.xUnitBDD;

@@ -1,6 +1,6 @@
 using System.Runtime.CompilerServices;
-using Compze.Utilities.Logging;
-using Compze.Utilities.SystemCE;
+using Compze.Internals.Logging;
+using Compze.Internals.SystemCE;
 
 namespace Compze.Tests.Infrastructure;
 

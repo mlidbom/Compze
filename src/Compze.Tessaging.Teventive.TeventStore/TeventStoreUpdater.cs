@@ -1,8 +1,8 @@
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
-using Compze.Utilities.SystemCE.LinqCE;
-using Compze.Utilities.SystemCE.ReactiveCE;
-using Compze.Utilities.SystemCE.ReflectionCE;
+using Compze.Internals.SystemCE.LinqCE;
+using Compze.Internals.SystemCE.ReactiveCE;
+using Compze.Internals.SystemCE.ReflectionCE;
 using System.Diagnostics.CodeAnalysis;
 using Compze.Core.Public;
 using Compze.Core.Tessaging.Teventive.Internal;
@@ -11,7 +11,7 @@ using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.Internal;
 using Compze.Core.Tessaging.Teventive.TeventStore.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.Public.Exceptions;
-using Compze.Utilities.SystemCE.UsageGuards;
+using Compze.Internals.SystemCE.UsageGuards;
 using Compze.Contracts;
 using static Compze.Contracts.Contract;
 

@@ -26,7 +26,7 @@ dotnet add package Compze.Utilities
 | [Compze.Core](https://www.nuget.org/packages/Compze.Core) | Core abstractions |
 | [Compze.DependencyInjection.Microsoft](https://www.nuget.org/packages/Compze.DependencyInjection.Microsoft) | Microsoft DI integration |
 | [Compze.DependencyInjection.SimpleInjector](https://www.nuget.org/packages/Compze.DependencyInjection.SimpleInjector) | SimpleInjector integration |
-| [Compze.Utilities.Logging.Serilog](https://www.nuget.org/packages/Compze.Utilities.Logging.Serilog) | Serilog integration |
+| [Compze.Internals.Logging.Serilog](https://www.nuget.org/packages/Compze.Internals.Logging.Serilog) | Serilog integration |
 
 ## License
 

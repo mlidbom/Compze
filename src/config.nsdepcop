@@ -8,7 +8,7 @@
    <Allowed From="*" To="Compze.DependencyInjection.*" />
 	
    <Allowed From="*" To="Compze.Unit" />
-   <Allowed From="*" To="Compze.SystemCE.*" />
+   <Allowed From="*" To="Compze.Internals.*" />
    <Allowed From="*" To="Compze.Contracts.*" />
    <Allowed From="*" To="Compze.Underscore.*" />
    <Allowed From="*" To="Compze.Threading.*" />

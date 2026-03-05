@@ -2,7 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using Compze.Core.DocumentDb.Infrastructure;
 using Compze.Core.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.QueryModels.Generators.Public;
-using Compze.Utilities.SystemCE.UsageGuards;
+using Compze.Internals.SystemCE.UsageGuards;
 using Compze.Contracts;
 
 namespace Compze.Tessaging.Teventive.TeventStore.QueryModels.Generators;

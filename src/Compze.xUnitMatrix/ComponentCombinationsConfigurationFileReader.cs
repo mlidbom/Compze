@@ -1,6 +1,6 @@
 using System.Collections.Concurrent;
 using Compze.Contracts;
-using Compze.Utilities.SystemCE;
+using Compze.Internals.SystemCE;
 
 namespace Compze.xUnitMatrix;
 

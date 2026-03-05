@@ -9,8 +9,8 @@ using Compze.Core.Time.Public;
 using Compze.Contracts;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
-using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
-using Compze.Utilities.SystemCE.ReflectionCE;
+using Compze.Internals.SystemCE.CollectionsCE.GenericCE;
+using Compze.Internals.SystemCE.ReflectionCE;
 
 namespace Compze.Core.DocumentDb.Private;
 

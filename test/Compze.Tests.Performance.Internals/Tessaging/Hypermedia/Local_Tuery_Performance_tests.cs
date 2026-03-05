@@ -1,7 +1,7 @@
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Performance;
 using Compze.DependencyInjection;
-using Compze.Utilities.SystemCE;
+using Compze.Internals.SystemCE;
 using Compze.Tests.Infrastructure.XUnit;
 
 namespace Compze.Tests.Performance.Internals.Tessaging.Hypermedia;

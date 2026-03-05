@@ -4,8 +4,8 @@ using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.QueryModels;
 using Compze.Core.Tessaging.Teventive.TeventStore.QueryModels.Generators.Public;
-using Compze.Utilities.SystemCE.LinqCE;
-using Compze.Utilities.SystemCE.ReflectionCE;
+using Compze.Internals.SystemCE.LinqCE;
+using Compze.Internals.SystemCE.ReflectionCE;
 using JetBrains.Annotations;
 
 namespace Compze.Tessaging.Teventive.TeventStore.QueryModels.Generators;

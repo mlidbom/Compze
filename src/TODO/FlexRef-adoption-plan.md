@@ -181,22 +181,22 @@ directly.
 Compze.Contracts (leaf)
 ├── Compze.Underscore
 │   ├── Compze.Utilities
-│   ├── Compze.Utilities.SystemCE.ThreadingCE
-│   │   └── Compze.Utilities.SystemCE
-│   │       └── Compze.Utilities.Logging
+│   ├── Compze.Internals.SystemCE.ThreadingCE
+│   │   └── Compze.Internals.SystemCE
+│   │       └── Compze.Internals.Logging
 │   │           └── Compze.Utilities.DependencyInjection
 │   │               ├── Compze.Utilities.DependencyInjection.Microsoft
 │   │               ├── Compze.Utilities.DependencyInjection.SimpleInjector
-│   │               ├── Compze.Utilities.Logging.Serilog
+│   │               ├── Compze.Internals.Logging.Serilog
 │   │               ├── Compze.Must
 │   │               ├── Compze.xUnitMatrix
 │   │               └── Compze.Core
-│   │                   ├── Compze.Serialization.Newtonsoft
-│   │                   ├── Compze.Sql.Common
-│   │                   │   ├── Compze.Sql.MicrosoftSql
-│   │                   │   ├── Compze.Sql.MySql
-│   │                   │   ├── Compze.Sql.PostgreSql
-│   │                   │   ├── Compze.Sql.Sqlite
+│   │                   ├── Compze.Internals.Serialization.Newtonsoft
+│   │                   ├── Compze.Internals.Sql.Common
+│   │                   │   ├── Compze.Internals.Sql.MicrosoftSql
+│   │                   │   ├── Compze.Internals.Sql.MySql
+│   │                   │   ├── Compze.Internals.Sql.PostgreSql
+│   │                   │   ├── Compze.Internals.Sql.Sqlite
 │   │                   │   └── Compze.Tessaging
 │   │                   │       ├── Compze.Tessaging.Hosting.AspNetCore
 │   │                   │       └── Compze.Tessaging.Teventive.TeventStore

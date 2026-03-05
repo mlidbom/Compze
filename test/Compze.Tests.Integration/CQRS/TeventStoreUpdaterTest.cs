@@ -8,23 +8,23 @@ using Compze.Core.Tessaging.Teventive.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.Public;
 using Compze.Core.Wiring.Testing.Internal;
-using Compze.SystemCE.ThreadingCE.TasksCE;
+using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 using JetBrains.Annotations;
-using Compze.Utilities.SystemCE.TransactionsCE;
+using Compze.Internals.SystemCE.TransactionsCE;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Performance;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.SystemCE;
-using Compze.Utilities.SystemCE.TransactionsCE.Testing;
+using Compze.Internals.SystemCE.TransactionsCE.Testing;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Threading;
 using Compze.Threading.Testing;
-using Compze.Utilities.SystemCE.UsageGuards;
+using Compze.Internals.SystemCE.UsageGuards;
 using Compze.Must;
-using EnumerableCE = Compze.Utilities.SystemCE.LinqCE.EnumerableCE;
+using EnumerableCE = Compze.Internals.SystemCE.LinqCE.EnumerableCE;
 
 // ReSharper disable AccessToDisposedClosure
 

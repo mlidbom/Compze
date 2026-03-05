@@ -2,8 +2,8 @@ using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.DependencyInjection.Microsoft;
 using Compze.DependencyInjection.SimpleInjector;
-using Compze.Utilities.Logging;
-using Compze.Utilities.SystemCE.LinqCE;
+using Compze.Internals.Logging;
+using Compze.Internals.SystemCE.LinqCE;
 
 namespace Compze.Tessaging.Hosting.Testing.Wiring;
 

@@ -125,14 +125,14 @@ Run against `src/Compze.AllProjects.slnx` at WARNING severity: **1,398 issues ac
 |---|---|
 | Compze.Core | 169 |
 | Compze.Tessaging | 154 |
-| Compze.Utilities.SystemCE | 132 |
+| Compze.Internals.SystemCE | 132 |
 | Compze.Tests.Unit | 106 |
 | Compze.Must | 97 |
-| Compze.Sql.Sqlite | 59 |
-| Compze.Sql.PostgreSql | 56 |
-| Compze.Sql.MySql | 53 |
+| Compze.Internals.Sql.Sqlite | 59 |
+| Compze.Internals.Sql.PostgreSql | 56 |
+| Compze.Internals.Sql.MySql | 53 |
 | Compze.Tessaging.Teventive.TeventStore | 47 |
-| Compze.Sql.MicrosoftSql | 45 |
+| Compze.Internals.Sql.MicrosoftSql | 45 |
 
 ### Visibility Reduction Opportunity
 

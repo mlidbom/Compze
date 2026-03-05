@@ -1,5 +1,5 @@
-using Compze.SystemCE.ThreadingCE.TasksCE;
-using Compze.Utilities.SystemCE.LinqCE;
+using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
+using Compze.Internals.SystemCE.LinqCE;
 
 namespace Compze.Threading.Testing.Specifications;
 

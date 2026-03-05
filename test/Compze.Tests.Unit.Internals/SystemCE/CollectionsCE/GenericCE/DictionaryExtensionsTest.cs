@@ -1,5 +1,5 @@
 using Compze.Tests.Infrastructure;
-using Compze.Utilities.SystemCE.CollectionsCE.GenericCE;
+using Compze.Internals.SystemCE.CollectionsCE.GenericCE;
 using Compze.Must;
 using Compze.xUnitBDD;
 // ReSharper disable PreferConcreteValueOverDefault

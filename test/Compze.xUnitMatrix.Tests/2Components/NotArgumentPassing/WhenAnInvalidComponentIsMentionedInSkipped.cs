@@ -1,6 +1,6 @@
 using System.Reflection;
 using Compze.Contracts;
-using Compze.SystemCE.ThreadingCE.TasksCE;
+using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 using Xunit.Sdk;
 
 namespace Compze.xUnitMatrix.Tests._2Components.NotArgumentPassing;

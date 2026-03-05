@@ -1,7 +1,7 @@
 using Compze.Core.Tessaging.Internal.SqlLayer;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Contracts;
-using Compze.Utilities.SystemCE.ReflectionCE;
+using Compze.Internals.SystemCE.ReflectionCE;
 
 namespace Compze.Tessaging.Implementation.TessageHandling.Inbox;
 

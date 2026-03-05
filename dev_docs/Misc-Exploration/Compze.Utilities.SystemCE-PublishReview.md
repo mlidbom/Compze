@@ -1,6 +1,6 @@
-# Compze.Utilities.SystemCE — Public vs Internal Review
+# Compze.Internals.SystemCE — Public vs Internal Review
 
-Review of all types in `Compze.Utilities.SystemCE` to determine whether each is a good fit for a published NuGet package or should be moved to `Compze.SystemCE.Internal`.
+Review of all types in `Compze.Internals.SystemCE` to determine whether each is a good fit for a published NuGet package or should be moved to `Compze.Internals.SystemCE.Core`.
 
 **Guiding criteria:**
 - **Publish**: Genuinely useful general-purpose utility that users of the framework would benefit from. Stable API surface. Clear, unsurprising semantics.
@@ -191,4 +191,4 @@ These are implementation details, niche infrastructure, or not polished enough f
 
 ### Score: ~15 types worth publishing, ~29 types better off internal
 
-The project has a significant amount of pure framework infrastructure mixed in with genuinely useful general-purpose utilities. Moving the infrastructure types to `Compze.SystemCE.Internal` would result in a leaner, more focused public package.
+The project has a significant amount of pure framework infrastructure mixed in with genuinely useful general-purpose utilities. Moving the infrastructure types to `Compze.Internals.SystemCE.Core` would result in a leaner, more focused public package.

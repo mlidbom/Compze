@@ -68,7 +68,7 @@ public static class TessageTypes
             /// <summary>Implements <see cref="IRemotableCreateMyOwnResultTuery{TResult}"/> by calling the default constructor on <typeparamref name="TResult"/></summary>
             public class NewableResultLink<TResult> : Tuery<TResult>, IRemotableCreateMyOwnResultTuery<TResult>
             {
-               static readonly Func<TResult> Constructor = Utilities.SystemCE.ReflectionCE.Constructor.For<TResult>.DefaultConstructor.Instance;
+               static readonly Func<TResult> Constructor = Compze.Internals.SystemCE.ReflectionCE.Constructor.For<TResult>.DefaultConstructor.Instance;
                public TResult CreateResult() => Constructor();
             }
          }
