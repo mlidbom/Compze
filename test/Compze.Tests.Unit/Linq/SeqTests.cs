@@ -2,7 +2,7 @@ using Compze.Tests.Infrastructure;
 using Compze.Must;
 using Compze.xUnitBDD;
 
-namespace Compze.Tests.Unit.Internals.Linq;
+namespace Compze.Tests.Unit.Linq;
 
 
 public class SeqTests : UniversalTestBase

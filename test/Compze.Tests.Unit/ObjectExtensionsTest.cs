@@ -2,7 +2,7 @@ using Compze.Tests.Infrastructure;
 using Compze.Must;
 using Compze.xUnitBDD;
 
-namespace Compze.Tests.Unit.Internals;
+namespace Compze.Tests.Unit;
 
 
 public class ObjectExtensionsTest : UniversalTestBase

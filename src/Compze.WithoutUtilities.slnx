@@ -19,7 +19,6 @@
     <Project Path="../test/Compze.Tests.Integration/Compze.Tests.Integration.csproj" />
     <Project Path="../test/Compze.Tests.Performance.Internals/Compze.Tests.Performance.Internals.csproj" />
     <Project Path="../test/Compze.Tests.ScratchPad/Compze.Tests.ScratchPad.csproj" />
-    <Project Path="../test/Compze.Tests.Unit.Internals/Compze.Tests.Unit.Internals.csproj" />
     <Project Path="../test/Compze.Tests.Unit/Compze.Tests.Unit.csproj" />
   </Folder>
   <Project Path="Compze.Core/Compze.Core.csproj" />

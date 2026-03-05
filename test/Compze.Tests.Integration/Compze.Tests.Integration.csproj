@@ -7,7 +7,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Compze.Tests.Common\Compze.Tests.Common.csproj" />
     <ProjectReference Include="..\Compze.Tests.Infrastructure\Compze.Tests.Infrastructure.csproj" />
-    <ProjectReference Include="..\Compze.Tests.Unit.Internals\Compze.Tests.Unit.Internals.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />

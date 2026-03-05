@@ -9,7 +9,6 @@
     <ProjectReference Include="..\Compze.Tests.Infrastructure\Compze.Tests.Infrastructure.csproj" />
     <ProjectReference Include="..\Compze.Tests.Integration\Compze.Tests.Integration.csproj" />
     <ProjectReference Include="..\Compze.Tests.ScratchPad\Compze.Tests.ScratchPad.csproj" />
-    <ProjectReference Include="..\Compze.Tests.Unit.Internals\Compze.Tests.Unit.Internals.csproj" />
     <ProjectReference Include="..\Compze.Tests.Unit\Compze.Tests.Unit.csproj" />
   </ItemGroup>
   <ItemGroup>

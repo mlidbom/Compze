@@ -3,7 +3,7 @@ using Compze.Tests.Infrastructure;
 using Compze.Must;
 using Compze.xUnitBDD;
 
-namespace Compze.Tests.Unit.Internals.KeyValueStorage;
+namespace Compze.Tests.Unit.KeyValueStorage;
 
 
 public class DocumentDBSession_DocumentKeyTests : UniversalTestBase

@@ -4,7 +4,7 @@ using Compze.Tests.Infrastructure;
 using Compze.xUnitBDD;
 using static Compze.Must.MustActions;
 
-namespace Compze.Tests.Unit.Internals.Tessaging;
+namespace Compze.Tests.Unit.Tessaging;
 
 interface INonGenericPublisherIdentifyingTevent : IPublisherIdentifyingTevent<ITevent>;
 interface INonCovariantParameterPublisherIdentifyingTevent : IPublisherIdentifyingTevent<ITevent>;

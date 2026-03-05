@@ -31,7 +31,6 @@
     <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
     <InternalsVisibleTo Include="Compze.Tests.ScratchPad" />
     <InternalsVisibleTo Include="Compze.Tests.Unit" />
-    <InternalsVisibleTo Include="Compze.Tests.Unit.Internals" />
     <InternalsVisibleTo Include="Compze.Threading" />
     <InternalsVisibleTo Include="Compze.Threading.Specifications" />
     <InternalsVisibleTo Include="Compze.Internals.Threading" />

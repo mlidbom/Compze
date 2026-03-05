@@ -5,7 +5,7 @@ using Compze.Must;
 using Compze.xUnitBDD;
 using static Compze.Must.MustActions;
 
-namespace Compze.Tests.Unit.Internals.SystemCE.ConfigurationCE;
+namespace Compze.Tests.Unit.SystemCE.ConfigurationCE;
 
 public class AppConfigConfigurationParameterProviderTests: UniversalTestBase
 {
