@@ -117,6 +117,9 @@
     <Project Path="Compze.Internals.SystemCE.Core/Compze.Internals.SystemCE.Core.csproj" />
     <Project Path="Compze.Internals.SystemCE/Compze.Internals.SystemCE.csproj" />
   </Folder>
+  <Folder Name="/Compze.Internals/Compze.Internals.SystemCE/Tests/">
+    <Project Path="../test/Compze.Internals.SystemCE.Tests/Compze.Internals.SystemCE.Tests.csproj" />
+  </Folder>
   <Folder Name="/Compze.Must/">
     <Project Path="Compze.Must/Compze.Must.csproj" />
   </Folder>

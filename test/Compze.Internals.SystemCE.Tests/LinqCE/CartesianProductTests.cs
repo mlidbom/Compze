@@ -1,6 +1,6 @@
 #pragma warning disable CA1861 //we want the collections inline
 
-namespace Compze.Utilities.Tests.SystemCE.LinqCE;
+namespace Compze.Internals.SystemCE.Tests.LinqCE;
 
 public class CartesianProductTests
 {
