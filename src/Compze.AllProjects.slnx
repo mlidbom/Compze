@@ -65,12 +65,14 @@
     <Project Path="Compze.Unit/Compze.Unit.csproj" />
   </Folder>
   <Folder Name="/Compze.DbPool/">
-    <Project Path="../test/Compze.DbPool.Tests/Compze.DbPool.Tests.csproj" />
     <Project Path="Compze.DbPool/Compze.DbPool.csproj" />
     <Project Path="Compze.DbPool.MicrosoftSql/Compze.DbPool.MicrosoftSql.csproj" />
     <Project Path="Compze.DbPool.MySql/Compze.DbPool.MySql.csproj" />
     <Project Path="Compze.DbPool.PostgreSql/Compze.DbPool.PostgreSql.csproj" />
     <Project Path="Compze.DbPool.Sqlite/Compze.DbPool.Sqlite.csproj" />
+  </Folder>
+  <Folder Name="/Compze.DbPool/Specifications/">
+    <Project Path="../test/Compze.DbPool.Tests/Compze.DbPool.Tests.csproj" />
   </Folder>
   <Folder Name="/Compze.Internal.DependencyInjection/">
     <Project Path="Compze.Utilities.DependencyInjection.Microsoft/Compze.Utilities.DependencyInjection.Microsoft.csproj" />
