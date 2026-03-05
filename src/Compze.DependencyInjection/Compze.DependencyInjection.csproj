@@ -45,6 +45,13 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Underscore)' != 'true'">
     <ProjectReference Include="..\Compze.Underscore\Compze.Underscore.csproj" />
   </ItemGroup>
+  <!-- Compze.Unit — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Unit)' == 'true'">
+    <PackageReference Include="Compze.Unit" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Unit)' != 'true'">
+    <ProjectReference Include="..\Compze.Unit\Compze.Unit.csproj" />
+  </ItemGroup>
   <!-- Compze.Utilities.Logging — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Utilities_Logging)' == 'true'">
     <PackageReference Include="Compze.Utilities.Logging" Version="*-*" />

@@ -16,8 +16,10 @@
     </Project>
   </Folder>
   <Folder Name="/Compze.xUnitMatrix/">
-    <Project Path="../test/Compze.xUnitMatrix.Tests/Compze.xUnitMatrix.Tests.csproj" />
     <Project Path="Compze.xUnitMatrix/Compze.xUnitMatrix.csproj" />
+  </Folder>
+  <Folder Name="/Compze.xUnitMatrix/Specifications/">
+    <Project Path="../test/Compze.xUnitMatrix.Tests/Compze.xUnitMatrix.Tests.csproj" />
   </Folder>
   <Folder Name="/_Samples/" />
   <Folder Name="/_Samples/AccountManagement/">
@@ -57,23 +59,30 @@
     <Project Path="SolutionStructure/Solution.TODO.csproj" />
   </Folder>
   <Folder Name="/Compze.Contracts/">
-    <Project Path="../test/Compze.Contracts.Specifications/Compze.Contracts.Specifications.csproj" />
     <Project Path="Compze.Contracts/Compze.Contracts.csproj" />
   </Folder>
+  <Folder Name="/Compze.Threading/Specifications/">
+    <Project Path="../test/Compze.Threading.Specifications/Compze.Threading.Specifications.csproj" />
+    <Project Path="../test/Compze.Threading.Testing.Specifications/Compze.Threading.Testing.Specifications.csproj" />
+  </Folder>
   <Folder Name="/Compze.Underscore/">
-    <Project Path="../test/Compze.Underscore.Specifications/Compze.Underscore.Specifications.csproj" />
     <Project Path="Compze.Underscore/Compze.Underscore.csproj" />
   </Folder>
+  <Folder Name="/Compze.Underscore/Specifications/">
+    <Project Path="../test/Compze.Underscore.Specifications/Compze.Underscore.Specifications.csproj" />
+  </Folder>
   <Folder Name="/Compze.Unit/">
-    <Project Path="../test/Compze.Unit.Specifications/Compze.Unit.Specifications.csproj" />
     <Project Path="Compze.Unit/Compze.Unit.csproj" />
   </Folder>
+  <Folder Name="/Compze.Contracts/Specifications/">
+    <Project Path="../test/Compze.Contracts.Specifications/Compze.Contracts.Specifications.csproj" />
+  </Folder>
   <Folder Name="/Compze.DbPool/">
-    <Project Path="Compze.DbPool/Compze.DbPool.csproj" />
     <Project Path="Compze.DbPool.MicrosoftSql/Compze.DbPool.MicrosoftSql.csproj" />
     <Project Path="Compze.DbPool.MySql/Compze.DbPool.MySql.csproj" />
     <Project Path="Compze.DbPool.PostgreSql/Compze.DbPool.PostgreSql.csproj" />
     <Project Path="Compze.DbPool.Sqlite/Compze.DbPool.Sqlite.csproj" />
+    <Project Path="Compze.DbPool/Compze.DbPool.csproj" />
   </Folder>
   <Folder Name="/Compze.DbPool/Specifications/">
     <Project Path="../test/Compze.DbPool.Tests/Compze.DbPool.Tests.csproj" />
@@ -93,7 +102,7 @@
   <Folder Name="/Compze.Internal.Serialization/">
     <Project Path="Compze.Serialization.Newtonsoft/Compze.Serialization.Newtonsoft.csproj" />
   </Folder>
-  <Folder Name="/Compze.Internal.Sql/">
+  <Folder Name="/Compze.Internals.Sql/">
     <Project Path="Compze.Sql.Common/Compze.Sql.Common.csproj" />
     <Project Path="Compze.Sql.MicrosoftSql/Compze.Sql.MicrosoftSql.csproj" />
     <Project Path="Compze.Sql.MySql/Compze.Sql.MySql.csproj" />
@@ -115,12 +124,13 @@
     <Project Path="Compze.Tessaging/Compze.Tessaging.csproj" />
   </Folder>
   <Folder Name="/Compze.Threading/">
-    <Project Path="../test/Compze.Threading.Specifications/Compze.Threading.Specifications.csproj" />
-    <Project Path="../test/Compze.Threading.Testing.Specifications/Compze.Threading.Testing.Specifications.csproj" />
     <Project Path="../test/Compze.Threading.Tests/Compze.Threading.Tests.csproj" />
     <Project Path="Compze.Threading.Internal/Compze.Threading.Internal.csproj" />
     <Project Path="Compze.Threading.Testing/Compze.Threading.Testing.csproj" />
     <Project Path="Compze.Threading/Compze.Threading.csproj" />
+  </Folder>
+  <Folder Name="/Compze.Unit/Specifications/">
+    <Project Path="../test/Compze.Unit.Specifications/Compze.Unit.Specifications.csproj" />
   </Folder>
   <Folder Name="/Compze.xUnit/">
     <Project Path="Compze.xUnit/Compze.xUnit.csproj" />
