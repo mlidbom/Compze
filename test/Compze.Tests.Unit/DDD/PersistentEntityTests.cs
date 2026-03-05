@@ -5,40 +5,31 @@ using Compze.xUnitBDD;
 
 namespace Compze.Tests.Unit.DDD;
 
-
 #pragma warning disable CA1508 //Avoid dead conditional code
 
 public class EntityTests : UniversalTestBase
 {
    class Person : Entity<Person>
    {
-      public Person()
-      {
-      }
+      public Person() {}
 
-      public Person(Guid id) : base(id)
-      {
-      }
+      public Person(Guid id) : base(id) {}
    }
 
-   [XF]
-   public void InstanceEqualsItself()
+   [XF] public void InstanceEqualsItself()
    {
       var person = new Person();
       AssertAreEqual(person, person);
    }
 
-   [XF]
-   public void IntstanceNotEqualToinstanceWithOtherId()
+   [XF] public void IntstanceNotEqualToinstanceWithOtherId()
    {
       var lhs = new Person(Guid.NewGuid());
       var rhs = new Person(Guid.NewGuid());
       AssertAreNotEqual(lhs, rhs);
    }
 
-
-   [XF]
-   public void ComparisonWithRhsNullReturnsFalse()
+   [XF] public void ComparisonWithRhsNullReturnsFalse()
    {
       var lhs = new Person();
       lhs.Equals(null!).Must().BeFalse();
@@ -46,16 +37,14 @@ public class EntityTests : UniversalTestBase
       (lhs == null).Must().BeFalse();
    }
 
-   [XF]
-   public void ComparisonWithLhsNullReturnsFalse()
+   [XF] public void ComparisonWithLhsNullReturnsFalse()
    {
       var rhs = new Person();
       // ReSharper disable once ConditionIsAlwaysTrueOrFalse
       (null == rhs).Must().BeFalse();
    }
 
-   [XF]
-   public void ComparisonWithLhsNullAndRhsNullReturnsTrue()
+   [XF] public void ComparisonWithLhsNullAndRhsNullReturnsTrue()
    {
       Person? rhs = null;
       Person? lhs = null;

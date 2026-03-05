@@ -9,7 +9,5 @@
     <Project Path="Compze.Internals.Logging.Serilog/Compze.Internals.Logging.Serilog.csproj" />
     <Project Path="Compze.Utilities.Testing.DbPool/Compze.Utilities.Testing.DbPool.csproj" />
   </Folder>
-  <Folder Name="/_Tests/">
-    <Project Path="../test/Compze.Utilities.Tests/Compze.Utilities.Tests.csproj" />
-  </Folder>
+
 </Solution>
