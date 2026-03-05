@@ -17,6 +17,7 @@
    <Allowed From="*" To="System.*" />
 
    <Allowed From="Compze.*" To="Compze.Core.*.Public" />
+   <Allowed From="Compze.Internals.*" To="Compze.Core.*.Internal.*" />
    <Allowed From="Compze.*.Internal.*" To="Compze.Core.*.Internal.*" />
    <Allowed From="Compze.*.Private.*" To="Compze.Core.*.Internal.*" />
 

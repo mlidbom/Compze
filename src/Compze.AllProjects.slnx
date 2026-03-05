@@ -96,7 +96,9 @@
   <Folder Name="/Compze.DependencyInjection/Specifications/">
     <Project Path="../test/Compze.DependencyInjection.Specifications/Compze.DependencyInjection.Specifications.csproj" />
   </Folder>
-  <Folder Name="/Compze.Internals/" />
+  <Folder Name="/Compze.Internals/">
+    <Project Path="Compze.Internals.Threading/Compze.Internals.Threading.csproj" />
+  </Folder>
   <Folder Name="/Compze.Internals/Compze.Internals.Logging/">
     <Project Path="Compze.Internals.Logging.Serilog/Compze.Internals.Logging.Serilog.csproj" />
     <Project Path="Compze.Internals.Logging/Compze.Internals.Logging.csproj" />
@@ -150,7 +152,4 @@
   </Folder>
   <Project Path="../DevScripts/Scripts.csproj" />
   <Project Path="Compze.Core/Compze.Core.csproj" />
-  <Folder Name="/Compze/Internals/">
-    <Project Path="Compze.Internals.Threading/Compze.Internals.Threading.csproj" />
-  </Folder>
 </Solution>
