@@ -3,5 +3,6 @@
 <NsDepCopConfig IsEnabled="true"
                 InheritanceDepth="10">
 
+   <Allowed From="*" To="Compze.DependencyInjection.Abstractions" />
 
 </NsDepCopConfig>

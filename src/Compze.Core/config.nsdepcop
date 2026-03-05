@@ -2,7 +2,7 @@
 
 <NsDepCopConfig IsEnabled="true"
                 InheritanceDepth="10">
-
+	
 
    <Allowed From="Compze.Core.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public"
             To="Compze.Core.Tessaging.Teventive.Internal.Implementation" />
