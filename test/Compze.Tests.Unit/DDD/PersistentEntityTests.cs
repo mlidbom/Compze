@@ -22,7 +22,7 @@ public class EntityTests : UniversalTestBase
       AssertAreEqual(person, person);
    }
 
-   [XF] public void IntstanceNotEqualToinstanceWithOtherId()
+   [XF] public void InstanceNotEqualToInstanceWithOtherId()
    {
       var lhs = new Person(Guid.NewGuid());
       var rhs = new Person(Guid.NewGuid());
