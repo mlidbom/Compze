@@ -1,8 +1,8 @@
 <Solution>
   <Project Path="Compze.Internals.SystemCE/Compze.Internals.SystemCE.csproj" />
-  <Project Path="../test/Compze.Tests.Infrastructure/Compze.Tests.Infrastructure.csproj" />
   <Project Path="Compze.Internals.SystemCE.Core/Compze.Internals.SystemCE.Core.csproj" />
   <Folder Name="/Tests/">
     <Project Path="../test/Compze.Internals.SystemCE.Tests/Compze.Internals.SystemCE.Tests.csproj" />
+    <Project Path="../test/Compze.Tests.Infrastructure/Compze.Tests.Infrastructure.csproj" />
   </Folder>
 </Solution>
