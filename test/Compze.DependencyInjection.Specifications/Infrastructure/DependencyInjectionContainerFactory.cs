@@ -1,4 +1,4 @@
-using Compze.Core.Wiring.Testing.Internal;
+using Compze.Abstractions.Wiring.Testing.Internal;
 using Compze.DependencyInjection.Abstractions;
 using Compze.DependencyInjection.Microsoft;
 using Compze.DependencyInjection.SimpleInjector;

@@ -2,7 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using Compze.Core.DocumentDb.Infrastructure;
 using Compze.Core.DocumentDb.Internal.SqlLayer.Exceptions;
 using Compze.Core.DocumentDb.Public;
-using Compze.Core.Public;
+using Compze.Abstractions.Public;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.TransactionsCE;

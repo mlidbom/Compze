@@ -1,6 +1,6 @@
 using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Core.Tessaging.Hosting.TessageHandling.Registration.Public;
-using Compze.Core.Tessaging.Public;
+using Compze.Abstractions.Tessaging.Public;
 using Compze.Core.Tessaging.Typermedia.Public;
 using Compze.Tessaging.Hosting.Testing.Tessaging;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;

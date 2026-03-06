@@ -1,5 +1,5 @@
-using Compze.Core.Refactoring.Naming.Internal;
-using Compze.Core.Serialization.Internal;
+using Compze.Abstractions.Refactoring.Naming.Internal;
+using Compze.Abstractions.Serialization.Internal;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 

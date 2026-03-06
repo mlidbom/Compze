@@ -1,4 +1,4 @@
-using Compze.Core.Wiring.Testing.Internal;
+using Compze.Abstractions.Wiring.Testing.Internal;
 using Compze.Tessaging.Implementation.Transport.Client.Implementation.Http;
 using Compze.Tessaging.Implementation.Transport.Client.Implementation.Memory;
 using Compze.DependencyInjection.Abstractions;

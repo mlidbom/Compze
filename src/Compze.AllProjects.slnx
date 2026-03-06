@@ -21,6 +21,12 @@
   <Folder Name="/Compze.xUnitMatrix/Specifications/">
     <Project Path="../test/Compze.xUnitMatrix.Tests/Compze.xUnitMatrix.Tests.csproj" />
   </Folder>
+  <Folder Name="/Compze.Abstractions/">
+    <Project Path="Compze.Abstractions/Compze.Abstractions.csproj" />
+  </Folder>
+  <Folder Name="/Compze.Abstractions/Specifications/">
+    <Project Path="../test/Compze.Abstractions.Specifications/Compze.Abstractions.Specifications.csproj" />
+  </Folder>
   <Folder Name="/_Samples/" />
   <Folder Name="/_Samples/AccountManagement/">
     <Project Path="../samples/AccountManagement/src/AccountManagement.API/AccountManagement.API.csproj" />

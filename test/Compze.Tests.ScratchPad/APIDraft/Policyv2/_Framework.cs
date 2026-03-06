@@ -2,7 +2,7 @@
 #pragma warning disable //Reviewed OK: This is API experimental code that is never ever used.
 
 using System;
-using Compze.Core.Tessaging.Public;
+using Compze.Abstractions.Tessaging.Public;
 
 namespace Compze.Tests.ScratchPad.APIDraft.Policyv2;
 

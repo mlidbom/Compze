@@ -1,6 +1,6 @@
 using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Core.Tessaging.Hosting.TessageHandling.Registration.Public;
-using Compze.Core.Tessaging.Public;
+using Compze.Abstractions.Tessaging.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.Public;
@@ -12,7 +12,7 @@ using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
-using Compze.Core.Public;
+using Compze.Abstractions.Public;
 using Compze.Must;
 
 #pragma warning disable CA1715 //Interfaces without I prefix

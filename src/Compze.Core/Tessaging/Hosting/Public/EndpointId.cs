@@ -1,4 +1,4 @@
-using Compze.Core.Public;
+using Compze.Abstractions.Public;
 using JetBrains.Annotations;
 
 namespace Compze.Core.Tessaging.Hosting.Public;

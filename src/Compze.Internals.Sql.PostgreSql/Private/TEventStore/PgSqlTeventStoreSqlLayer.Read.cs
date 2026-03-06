@@ -1,6 +1,6 @@
 using System.Transactions;
-using Compze.Core.Public;
-using Compze.Core.Refactoring.Naming.Internal;
+using Compze.Abstractions.Public;
+using Compze.Abstractions.Refactoring.Naming.Internal;
 using Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions;
 using Compze.Internals.Sql.Common;
 using Npgsql;

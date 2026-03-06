@@ -1,5 +1,5 @@
 using AccountManagement.API.ValidationAttributes.Helpers;
-using Compze.Core.Public;
+using Compze.Abstractions.Public;
 
 namespace AccountManagement.API.ValidationAttributes;
 

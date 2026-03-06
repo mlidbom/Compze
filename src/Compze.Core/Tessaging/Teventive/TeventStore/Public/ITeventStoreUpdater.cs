@@ -1,5 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
-using Compze.Core.Public;
+using Compze.Abstractions.Public;
 using Compze.Core.Tessaging.Teventive.Public;
 
 namespace Compze.Core.Tessaging.Teventive.TeventStore.Public;

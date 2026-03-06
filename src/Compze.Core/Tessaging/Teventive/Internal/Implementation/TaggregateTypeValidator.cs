@@ -1,5 +1,5 @@
 using System.Reflection;
-using Compze.Core.Refactoring.Naming.Internal;
+using Compze.Abstractions.Refactoring.Naming.Internal;
 using Compze.Core.Tessaging.Teventive.Infrastructure.Validation;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public;
 using Compze.DependencyInjection;

@@ -1,4 +1,4 @@
-using Compze.Core.Public;
+using Compze.Abstractions.Public;
 
 // ReSharper disable MemberCanBeMadeStatic.Global we want composable fluent APIs. No statics please.
 

@@ -2,8 +2,8 @@ using Compze.Core.Tessaging.Transport.Internal;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
-using Compze.Core.Refactoring.Naming.Internal;
-using Compze.Core.Serialization.Internal;
+using Compze.Abstractions.Refactoring.Naming.Internal;
+using Compze.Abstractions.Serialization.Internal;
 using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Memory;

@@ -1,4 +1,4 @@
-using Compze.Core.Configuration.Internal;
+using Compze.Abstractions.Configuration.Internal;
 using Compze.Core.Tessaging.Transport.Internal;
 using Compze.Tessaging.Implementation.Transport.Client.Routing.Abstractions;
 

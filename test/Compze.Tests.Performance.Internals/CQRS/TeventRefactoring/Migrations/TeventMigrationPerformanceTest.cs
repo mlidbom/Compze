@@ -1,9 +1,9 @@
-using Compze.Core.Public;
+using Compze.Abstractions.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.Refactoring.Migrations.Public;
-using Compze.Core.Time.Public;
-using Compze.Core.Wiring.Testing.Internal;
+using Compze.Abstractions.Time.Public;
+using Compze.Abstractions.Wiring.Testing.Internal;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Performance;
 using Compze.Tessaging.Hosting.Testing.Wiring;

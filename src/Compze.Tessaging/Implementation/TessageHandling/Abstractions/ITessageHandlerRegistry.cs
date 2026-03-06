@@ -1,5 +1,5 @@
-using Compze.Core.Refactoring.Naming.Internal;
-using Compze.Core.Tessaging.Public;
+using Compze.Abstractions.Refactoring.Naming.Internal;
+using Compze.Abstractions.Tessaging.Public;
 using Compze.Core.Tessaging.Teventive.Public;
 
 namespace Compze.Tessaging.Implementation.TessageHandling.Abstractions;

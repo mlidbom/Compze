@@ -1,7 +1,7 @@
 using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Core.Tessaging.Hosting.TessageHandling.Registration.Public;
-using Compze.Core.Tessaging.Public;
-using Compze.Core.Time.Public;
+using Compze.Abstractions.Tessaging.Public;
+using Compze.Abstractions.Time.Public;
 using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.Tests.Infrastructure;

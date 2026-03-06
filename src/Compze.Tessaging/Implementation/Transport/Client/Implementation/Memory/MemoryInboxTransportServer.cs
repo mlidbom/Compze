@@ -8,7 +8,7 @@ using Compze.Contracts;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
-using Compze.Core.Serialization.Internal;
+using Compze.Abstractions.Serialization.Internal;
 using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 using Compze.Internals.SystemCE.CollectionsCE.GenericCE;
 

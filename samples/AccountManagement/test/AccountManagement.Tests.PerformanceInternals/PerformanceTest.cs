@@ -2,7 +2,7 @@ using AccountManagement.API;
 using AccountManagement.Domain.Registration;
 using AccountManagement.UserStories.Scenarios;
 using Compze.Core.Tessaging.Hosting.Public;
-using Compze.Core.Wiring.Testing.Internal;
+using Compze.Abstractions.Wiring.Testing.Internal;
 using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Performance;

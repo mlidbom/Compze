@@ -1,4 +1,4 @@
-using Compze.Core.Tessaging.Public;
+using Compze.Abstractions.Tessaging.Public;
 
 namespace Compze.Core.Tessaging.Teventive.Infrastructure.Validation;
 

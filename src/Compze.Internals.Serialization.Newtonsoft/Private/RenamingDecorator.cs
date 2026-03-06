@@ -1,5 +1,5 @@
 using System.Text.RegularExpressions;
-using Compze.Core.Refactoring.Naming.Internal;
+using Compze.Abstractions.Refactoring.Naming.Internal;
 using Compze.Internals.SystemCE;
 
 namespace Compze.Internals.Serialization.Newtonsoft.Private;

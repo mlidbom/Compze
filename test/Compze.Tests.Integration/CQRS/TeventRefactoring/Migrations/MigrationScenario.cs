@@ -1,4 +1,4 @@
-using Compze.Core.Public;
+using Compze.Abstractions.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.Refactoring.Migrations.Public;
 
 namespace Compze.Tests.Integration.CQRS.TeventRefactoring.Migrations;

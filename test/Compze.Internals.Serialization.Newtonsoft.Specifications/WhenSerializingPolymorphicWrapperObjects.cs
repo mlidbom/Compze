@@ -1,4 +1,4 @@
-using Compze.Core.Public;
+using Compze.Abstractions.Public;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Must;
 

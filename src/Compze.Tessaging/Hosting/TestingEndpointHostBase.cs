@@ -1,4 +1,4 @@
-using Compze.Core.Refactoring.Naming.Internal.Implementation;
+using Compze.Abstractions.Refactoring.Naming.Internal.Implementation;
 using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Core.Tessaging.Transport.Internal;
 using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;

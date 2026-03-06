@@ -1,9 +1,9 @@
-using Compze.Core.Public;
-using Compze.Core.Refactoring.Naming.Internal;
-using Compze.Core.Serialization.Internal;
+using Compze.Abstractions.Public;
+using Compze.Abstractions.Refactoring.Naming.Internal;
+using Compze.Abstractions.Serialization.Internal;
 using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Core.Tessaging.Internal.SqlLayer;
-using Compze.Core.Tessaging.Public;
+using Compze.Abstractions.Tessaging.Public;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;

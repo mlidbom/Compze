@@ -1,5 +1,5 @@
-using Compze.Core.Tessaging.Public;
-using Compze.Core.Time.Public;
+using Compze.Abstractions.Tessaging.Public;
+using Compze.Abstractions.Time.Public;
 using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 using Compze.Tessaging.Implementation.Abstractions;
 using Compze.Tessaging.SystemCE.ThreadingCE;

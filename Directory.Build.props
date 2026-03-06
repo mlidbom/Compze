@@ -18,6 +18,8 @@
   <Import Project="$(MSBuildThisFileDirectory)build\FlexRef.props" />
   <!-- Per-dependency auto-detection managed by FlexRef -->
   <PropertyGroup>
+    <!-- Compze.Abstractions -->
+    <UsePackageReference_Compze_Abstractions Condition="'$(UsePackageReference_Compze_Abstractions)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Abstractions.csproj|'))">true</UsePackageReference_Compze_Abstractions>
     <!-- Compze.Contracts -->
     <UsePackageReference_Compze_Contracts Condition="'$(UsePackageReference_Compze_Contracts)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Contracts.csproj|'))">true</UsePackageReference_Compze_Contracts>
     <!-- Compze.Core -->

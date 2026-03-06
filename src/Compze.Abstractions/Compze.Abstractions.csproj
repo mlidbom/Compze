@@ -1,0 +1,56 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <Version>0.1.0-alpha.1</Version>
+    <Description>Core abstractions for the Compze framework: entity IDs, message type contracts, time sources, serialization interfaces, and type mapping infrastructure.</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="NsDepCop" Version="2.6.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+  <!-- Compze.Contracts — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' == 'true'">
+    <PackageReference Include="Compze.Contracts" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' != 'true'">
+    <ProjectReference Include="..\Compze.Contracts\Compze.Contracts.csproj" />
+  </ItemGroup>
+  <!-- Compze.DependencyInjection — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection)' == 'true'">
+    <PackageReference Include="Compze.DependencyInjection" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection)' != 'true'">
+    <ProjectReference Include="..\Compze.DependencyInjection\Compze.DependencyInjection.csproj" />
+  </ItemGroup>
+  <!-- Compze.Internals.SystemCE — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_SystemCE)' == 'true'">
+    <PackageReference Include="Compze.Internals.SystemCE" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_SystemCE)' != 'true'">
+    <ProjectReference Include="..\Compze.Internals.SystemCE\Compze.Internals.SystemCE.csproj" />
+  </ItemGroup>
+  <!-- Compze.Internals.SystemCE.Core — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_SystemCE_Core)' == 'true'">
+    <PackageReference Include="Compze.Internals.SystemCE.Core" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_SystemCE_Core)' != 'true'">
+    <ProjectReference Include="..\Compze.Internals.SystemCE.Core\Compze.Internals.SystemCE.Core.csproj" />
+  </ItemGroup>
+  <!-- Compze.Internals.Threading — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Threading)' == 'true'">
+    <PackageReference Include="Compze.Internals.Threading" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Threading)' != 'true'">
+    <ProjectReference Include="..\Compze.Internals.Threading\Compze.Internals.Threading.csproj" />
+  </ItemGroup>
+  <!-- Compze.Threading — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Threading)' == 'true'">
+    <PackageReference Include="Compze.Threading" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Threading)' != 'true'">
+    <ProjectReference Include="..\Compze.Threading\Compze.Threading.csproj" />
+  </ItemGroup>
+</Project>

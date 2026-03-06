@@ -1,6 +1,6 @@
 using Compze.Contracts;
 using Compze.Core.DocumentDb.Public;
-using Compze.Core.Public;
+using Compze.Abstractions.Public;
 using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tests.Common.Sql.DocumentDb;

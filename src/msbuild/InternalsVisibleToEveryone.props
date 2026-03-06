@@ -13,6 +13,8 @@
     <InternalsVisibleTo Include="Compze.Contracts" />
     <InternalsVisibleTo Include="Compze.Contracts.Specifications" />
     <InternalsVisibleTo Include="Compze.Core" />
+    <InternalsVisibleTo Include="Compze.Abstractions" />
+    <InternalsVisibleTo Include="Compze.Abstractions.Specifications" />
     <InternalsVisibleTo Include="Compze.Internals.Serialization.Newtonsoft" />
     <InternalsVisibleTo Include="Compze.Internals.Sql.Common" />
     <InternalsVisibleTo Include="Compze.Internals.Sql.MicrosoftSql" />

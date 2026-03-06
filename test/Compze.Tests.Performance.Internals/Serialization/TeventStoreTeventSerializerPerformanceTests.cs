@@ -1,5 +1,5 @@
-using Compze.Core.Public;
-using Compze.Core.Refactoring.Naming.Internal.Implementation;
+using Compze.Abstractions.Public;
+using Compze.Abstractions.Refactoring.Naming.Internal.Implementation;
 using Compze.Core.Serialization.Internal;
 using Compze.Internals.Serialization.Newtonsoft.Private.TeventStore;
 using Compze.Tessaging.Hosting.Testing;

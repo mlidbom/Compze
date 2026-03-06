@@ -5,6 +5,7 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Compze.Abstractions.Specifications\Compze.Abstractions.Specifications.csproj" />
     <ProjectReference Include="..\Compze.Tests.Common\Compze.Tests.Common.csproj" />
     <ProjectReference Include="..\Compze.Tests.Infrastructure\Compze.Tests.Infrastructure.csproj" />
     <ProjectReference Include="..\Compze.Tests.Integration\Compze.Tests.Integration.csproj" />

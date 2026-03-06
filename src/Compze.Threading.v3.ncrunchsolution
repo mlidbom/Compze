@@ -2,6 +2,7 @@
   <Settings>
     <AllowParallelTestExecution>True</AllowParallelTestExecution>
     <CustomBuildProperties>
+      <Value>UsePackageReference_Compze_Abstractions = true</Value>
       <Value>UsePackageReference_Compze_Contracts = true</Value>
       <Value>UsePackageReference_Compze_Core = true</Value>
       <Value>UsePackageReference_Compze_DbPool = true</Value>

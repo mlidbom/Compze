@@ -1,6 +1,6 @@
 using Compze.Core.DocumentDb.Wiring;
-using Compze.Core.Refactoring.Naming.Internal.Implementation;
-using Compze.Core.Wiring.Testing.Internal;
+using Compze.Abstractions.Refactoring.Naming.Internal.Implementation;
+using Compze.Abstractions.Wiring.Testing.Internal;
 using Compze.Tessaging.Implementation;
 using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
 using Compze.Tessaging.Teventive.TeventStore.Wiring;

@@ -1,6 +1,6 @@
-using Compze.Core.Refactoring.Naming.Internal;
-using Compze.Core.Serialization.Internal;
-using Compze.Core.Tessaging.Public;
+using Compze.Abstractions.Refactoring.Naming.Internal;
+using Compze.Abstractions.Serialization.Internal;
+using Compze.Abstractions.Tessaging.Public;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 

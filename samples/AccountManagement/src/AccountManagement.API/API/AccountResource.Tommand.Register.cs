@@ -1,7 +1,7 @@
 using AccountManagement.API.ValidationAttributes;
 using AccountManagement.Domain;
-using Compze.Core.Public;
-using Compze.Core.Tessaging.Public;
+using Compze.Abstractions.Public;
+using Compze.Abstractions.Tessaging.Public;
 using JetBrains.Annotations;
 using System.ComponentModel.DataAnnotations;
 // ReSharper disable MemberCanBeMadeStatic.Global Because we want these members to be accessed through the fluent API we don't want to make them static.

@@ -1,4 +1,4 @@
-using Compze.Core.Public;
+using Compze.Abstractions.Public;
 
 namespace Compze.Core.DocumentDb.Public;
 

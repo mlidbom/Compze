@@ -1,5 +1,5 @@
 using System.Transactions;
-using Compze.Core.Public;
+using Compze.Abstractions.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions;
 using Compze.Tessaging.Teventive.TeventStore.Refactoring.Migrations;

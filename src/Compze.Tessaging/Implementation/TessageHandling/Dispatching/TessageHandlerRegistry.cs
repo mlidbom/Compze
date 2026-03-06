@@ -1,7 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
-using Compze.Core.Refactoring.Naming.Internal;
+using Compze.Abstractions.Refactoring.Naming.Internal;
 using Compze.Core.Tessaging.Hosting.TessageHandling.Registration.Public;
-using Compze.Core.Tessaging.Public;
+using Compze.Abstractions.Tessaging.Public;
 using Compze.Core.Tessaging.Teventive.Infrastructure.Validation;
 using Compze.Core.Tessaging.Teventive.Public;
 using Compze.Internals.SystemCE.Core.CollectionsCE.GenericCE;

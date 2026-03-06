@@ -1,4 +1,4 @@
-using Compze.Core.Wiring.Testing.Internal;
+using Compze.Abstractions.Wiring.Testing.Internal;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;

@@ -1,6 +1,6 @@
 using AccountManagement.Domain.Tevents;
 using Compze.Core.DocumentDb;
-using Compze.Core.Public;
+using Compze.Abstractions.Public;
 using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Core.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Core.Tessaging.Typermedia.Public;

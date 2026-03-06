@@ -1,13 +1,13 @@
 using System.Collections.ObjectModel;
 using System.Transactions;
 using Compze.Contracts;
-using Compze.Core.Public;
+using Compze.Abstractions.Public;
 using Compze.Core.Tessaging.Hosting.TessageHandling.Registration.Public;
-using Compze.Core.Tessaging.Public;
+using Compze.Abstractions.Tessaging.Public;
 using Compze.Core.Tessaging.Teventive.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.Public;
-using Compze.Core.Wiring.Testing.Internal;
+using Compze.Abstractions.Wiring.Testing.Internal;
 using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 using JetBrains.Annotations;
 using Compze.Internals.SystemCE.TransactionsCE;

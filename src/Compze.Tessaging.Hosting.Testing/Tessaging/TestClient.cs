@@ -6,7 +6,7 @@ using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tessaging.Implementation.Transport.Client.Implementation.Universal;
 using Compze.Tessaging.Implementation.Transport.Client.Internal;
 using Compze.Tessaging.Typermedia;
-using Compze.Core.Refactoring.Naming.Internal.Implementation;
+using Compze.Abstractions.Refactoring.Naming.Internal.Implementation;
 using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;

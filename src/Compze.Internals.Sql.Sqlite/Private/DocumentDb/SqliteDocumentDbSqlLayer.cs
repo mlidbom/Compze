@@ -1,6 +1,6 @@
 using Compze.Core.DocumentDb.Internal.SqlLayer;
 using Compze.Core.DocumentDb.Internal.SqlLayer.Exceptions;
-using Compze.Core.Refactoring.Naming.Internal;
+using Compze.Abstractions.Refactoring.Naming.Internal;
 using Compze.Internals.Sql.Common;
 using Compze.Contracts;
 using Compze.Underscore;

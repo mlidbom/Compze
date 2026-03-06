@@ -1,7 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using Compze.Contracts;
-using Compze.Core.Tessaging.Public;
+using Compze.Abstractions.Tessaging.Public;
 using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Internals.SystemCE.ReflectionCE.EmitCE;
 using Compze.Threading;

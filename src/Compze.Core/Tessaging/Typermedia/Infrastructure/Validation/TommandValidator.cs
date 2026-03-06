@@ -1,5 +1,5 @@
 using System.ComponentModel.DataAnnotations;
-using Compze.Core.Tessaging.Public;
+using Compze.Abstractions.Tessaging.Public;
 using Compze.Core.Tessaging.Typermedia.Public;
 
 namespace Compze.Core.Tessaging.Typermedia.Infrastructure.Validation;

@@ -1,4 +1,4 @@
-using Compze.Core.Wiring.Testing.Internal;
+using Compze.Abstractions.Wiring.Testing.Internal;
 using Compze.DbPool.MicrosoftSql;
 using Compze.DbPool.MySql;
 using Compze.DbPool.PostgreSql;

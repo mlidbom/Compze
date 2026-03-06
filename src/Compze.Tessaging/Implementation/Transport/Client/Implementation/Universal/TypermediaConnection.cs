@@ -1,5 +1,5 @@
-using Compze.Core.Refactoring.Naming.Internal;
-using Compze.Core.Serialization.Internal;
+using Compze.Abstractions.Refactoring.Naming.Internal;
+using Compze.Abstractions.Serialization.Internal;
 using Compze.Core.Tessaging.Transport.Internal;
 using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 using Compze.Tessaging.Implementation.Abstractions;
