@@ -2,6 +2,7 @@ using Compze.Abstractions.Refactoring.Naming.Internal.Implementation;
 using Compze.Abstractions.Serialization.Internal;
 using Compze.Core.Serialization.Internal;
 using Compze.Tessaging.Hosting.Testing;
+using Compze.Internals.Testing;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tests.Infrastructure;
 using Compze.DependencyInjection.Abstractions;

@@ -5,6 +5,7 @@ using Compze.DbPool.PostgreSql;
 using Compze.DbPool.Sqlite;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE;
+using Compze.Internals.Testing;
 using Compze.DbPool;
 
 namespace Compze.Tessaging.Hosting.Testing.Wiring;

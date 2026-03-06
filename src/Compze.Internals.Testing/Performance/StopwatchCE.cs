@@ -3,7 +3,7 @@ using System.Diagnostics;
 using Compze.Internals.SystemCE;
 using JetBrains.Annotations;
 
-namespace Compze.Tessaging.Hosting.Testing.Performance;
+namespace Compze.Internals.Testing.Performance;
 
 //ncrunch: no coverage start
 

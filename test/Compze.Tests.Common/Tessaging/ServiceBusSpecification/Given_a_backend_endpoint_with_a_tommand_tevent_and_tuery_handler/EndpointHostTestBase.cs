@@ -1,4 +1,5 @@
 using Compze.Tessaging.Hosting.Testing;
+using Compze.Internals.Testing;
 using Compze.Tessaging.Hosting.Testing.Tessaging;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.DependencyInjection.Abstractions;

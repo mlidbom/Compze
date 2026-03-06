@@ -1,4 +1,4 @@
-using Compze.Tessaging.Hosting.Testing.Performance;
+using Compze.Internals.Testing.Performance;
 using Compze.Tests.Infrastructure;
 using Compze.Internals.SystemCE;
 using Compze.xUnitBDD;

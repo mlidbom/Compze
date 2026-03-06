@@ -5,7 +5,7 @@ using Compze.Internals.SystemCE;
 using JetBrains.Annotations;
 using Compze.Threading;
 
-namespace Compze.Tessaging.Hosting.Testing.Performance;
+namespace Compze.Internals.Testing.Performance;
 
 public static class TimeAsserter
 {

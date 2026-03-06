@@ -24,6 +24,7 @@
       <Value>UsePackageReference_Compze_Internals_Sql_Sqlite = true</Value>
       <Value>UsePackageReference_Compze_Internals_SystemCE = true</Value>
       <Value>UsePackageReference_Compze_Internals_SystemCE_Core = true</Value>
+      <Value>UsePackageReference_Compze_Internals_Testing = true</Value>
       <Value>UsePackageReference_Compze_Internals_Threading = true</Value>
       <Value>UsePackageReference_Compze_Tessaging = true</Value>
       <Value>UsePackageReference_Compze_Tessaging_Abstractions = true</Value>

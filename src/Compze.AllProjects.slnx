@@ -7,25 +7,72 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Folder Name="/Compze.xUnitBDD/">
-    <Project Path="Compze.xUnitBDD/Compze.xUnitBDD.csproj" />
-  </Folder>
-  <Folder Name="/Compze.xUnitBDD/Specifications/">
-    <Project Path="../test/Compze.xUnitBDD.Tests/Compze.xUnitBDD.Tests.csproj">
-      <BuildType Solution="docs|*" Project="Release" />
-    </Project>
-  </Folder>
-  <Folder Name="/Compze.xUnitMatrix/">
-    <Project Path="Compze.xUnitMatrix/Compze.xUnitMatrix.csproj" />
-  </Folder>
-  <Folder Name="/Compze.xUnitMatrix/Specifications/">
-    <Project Path="../test/Compze.xUnitMatrix.Tests/Compze.xUnitMatrix.Tests.csproj" />
-  </Folder>
   <Folder Name="/Compze.Abstractions/">
     <Project Path="Compze.Abstractions/Compze.Abstractions.csproj" />
   </Folder>
   <Folder Name="/Compze.Abstractions/Specifications/">
     <Project Path="../test/Compze.Abstractions.Specifications/Compze.Abstractions.Specifications.csproj" />
+  </Folder>
+  <Folder Name="/Utilities/" />
+  <Folder Name="/Utilities/Compze.Contracts/">
+    <Project Path="Compze.Contracts/Compze.Contracts.csproj" />
+  </Folder>
+  <Folder Name="/Utilities/Compze.Contracts/Specifications/">
+    <Project Path="../test/Compze.Contracts.Specifications/Compze.Contracts.Specifications.csproj" />
+  </Folder>
+  <Folder Name="/Utilities/Compze.DbPool/">
+    <Project Path="Compze.DbPool.MicrosoftSql/Compze.DbPool.MicrosoftSql.csproj" />
+    <Project Path="Compze.DbPool.MySql/Compze.DbPool.MySql.csproj" />
+    <Project Path="Compze.DbPool.PostgreSql/Compze.DbPool.PostgreSql.csproj" />
+    <Project Path="Compze.DbPool.Sqlite/Compze.DbPool.Sqlite.csproj" />
+    <Project Path="Compze.DbPool/Compze.DbPool.csproj" />
+  </Folder>
+  <Folder Name="/Utilities/Compze.DbPool/Specifications/">
+    <Project Path="../test/Compze.DbPool.Tests/Compze.DbPool.Tests.csproj" />
+  </Folder>
+  <Folder Name="/Utilities/Compze.Must/">
+    <Project Path="Compze.Must/Compze.Must.csproj" />
+  </Folder>
+  <Folder Name="/Utilities/Compze.Must/Specifications/">
+    <Project Path="../test/Compze.Must.Specifications/Compze.Must.Specifications.csproj" />
+  </Folder>
+  <Folder Name="/Utilities/Compze.Threading/">
+    <Project Path="Compze.Threading.Testing/Compze.Threading.Testing.csproj" />
+    <Project Path="Compze.Threading/Compze.Threading.csproj" />
+  </Folder>
+  <Folder Name="/Utilities/Compze.Threading/Specifications/">
+    <Project Path="../test/Compze.Threading.Specifications/Compze.Threading.Specifications.csproj" />
+    <Project Path="../test/Compze.Threading.Testing.Specifications/Compze.Threading.Testing.Specifications.csproj" />
+    <Project Path="../test/Compze.Threading.Tests/Compze.Threading.Tests.csproj" />
+  </Folder>
+  <Folder Name="/Utilities/Compze.Underscore/">
+    <Project Path="Compze.Underscore/Compze.Underscore.csproj" />
+  </Folder>
+  <Folder Name="/Utilities/Compze.Underscore/Specifications/">
+    <Project Path="../test/Compze.Underscore.Specifications/Compze.Underscore.Specifications.csproj" />
+  </Folder>
+  <Folder Name="/Utilities/Compze.Unit/">
+    <Project Path="Compze.Unit/Compze.Unit.csproj" />
+  </Folder>
+  <Folder Name="/Utilities/Compze.Unit/Specifications/">
+    <Project Path="../test/Compze.Unit.Specifications/Compze.Unit.Specifications.csproj" />
+  </Folder>
+  <Folder Name="/Utilities/Compze.xUnit/">
+    <Project Path="Compze.xUnit/Compze.xUnit.csproj" />
+  </Folder>
+  <Folder Name="/Utilities/Compze.xUnitBDD/">
+    <Project Path="Compze.xUnitBDD/Compze.xUnitBDD.csproj" />
+  </Folder>
+  <Folder Name="/Utilities/Compze.xUnitBDD/Specifications/">
+    <Project Path="../test/Compze.xUnitBDD.Tests/Compze.xUnitBDD.Tests.csproj">
+      <BuildType Solution="docs|*" Project="Release" />
+    </Project>
+  </Folder>
+  <Folder Name="/Utilities/Compze.xUnitMatrix/">
+    <Project Path="Compze.xUnitMatrix/Compze.xUnitMatrix.csproj" />
+  </Folder>
+  <Folder Name="/Utilities/Compze.xUnitMatrix/Specifications/">
+    <Project Path="../test/Compze.xUnitMatrix.Tests/Compze.xUnitMatrix.Tests.csproj" />
   </Folder>
   <Folder Name="/_Samples/" />
   <Folder Name="/_Samples/AccountManagement/">
@@ -63,36 +110,6 @@
     <Project Path="SolutionStructure/Solution.TestConfig.csproj" />
     <Project Path="SolutionStructure/Solution.TODO.csproj" />
   </Folder>
-  <Folder Name="/Compze.Contracts/">
-    <Project Path="Compze.Contracts/Compze.Contracts.csproj" />
-  </Folder>
-  <Folder Name="/Compze.Threading/Specifications/">
-    <Project Path="../test/Compze.Threading.Specifications/Compze.Threading.Specifications.csproj" />
-    <Project Path="../test/Compze.Threading.Testing.Specifications/Compze.Threading.Testing.Specifications.csproj" />
-    <Project Path="../test/Compze.Threading.Tests/Compze.Threading.Tests.csproj" />
-  </Folder>
-  <Folder Name="/Compze.Underscore/">
-    <Project Path="Compze.Underscore/Compze.Underscore.csproj" />
-  </Folder>
-  <Folder Name="/Compze.Underscore/Specifications/">
-    <Project Path="../test/Compze.Underscore.Specifications/Compze.Underscore.Specifications.csproj" />
-  </Folder>
-  <Folder Name="/Compze.Unit/">
-    <Project Path="Compze.Unit/Compze.Unit.csproj" />
-  </Folder>
-  <Folder Name="/Compze.Contracts/Specifications/">
-    <Project Path="../test/Compze.Contracts.Specifications/Compze.Contracts.Specifications.csproj" />
-  </Folder>
-  <Folder Name="/Compze.DbPool/">
-    <Project Path="Compze.DbPool.MicrosoftSql/Compze.DbPool.MicrosoftSql.csproj" />
-    <Project Path="Compze.DbPool.MySql/Compze.DbPool.MySql.csproj" />
-    <Project Path="Compze.DbPool.PostgreSql/Compze.DbPool.PostgreSql.csproj" />
-    <Project Path="Compze.DbPool.Sqlite/Compze.DbPool.Sqlite.csproj" />
-    <Project Path="Compze.DbPool/Compze.DbPool.csproj" />
-  </Folder>
-  <Folder Name="/Compze.DbPool/Specifications/">
-    <Project Path="../test/Compze.DbPool.Tests/Compze.DbPool.Tests.csproj" />
-  </Folder>
   <Folder Name="/Compze.DependencyInjection/">
     <Project Path="Compze.DependencyInjection.Microsoft/Compze.DependencyInjection.Microsoft.csproj" />
     <Project Path="Compze.DependencyInjection.SimpleInjector/Compze.DependencyInjection.SimpleInjector.csproj" />
@@ -128,12 +145,6 @@
   <Folder Name="/Compze.Internals/Compze.Internals.SystemCE/Tests/">
     <Project Path="../test/Compze.Internals.SystemCE.Tests/Compze.Internals.SystemCE.Tests.csproj" />
   </Folder>
-  <Folder Name="/Compze.Must/">
-    <Project Path="Compze.Must/Compze.Must.csproj" />
-  </Folder>
-  <Folder Name="/Compze.Must/Specifications/">
-    <Project Path="../test/Compze.Must.Specifications/Compze.Must.Specifications.csproj" />
-  </Folder>
   <Folder Name="/Compze.Tessaging/">
     <Project Path="Compze.Tessaging.Abstractions/Compze.Tessaging.Abstractions.csproj" />
     <Project Path="Compze.Tessaging.Hosting.AspNetCore/Compze.Tessaging.Hosting.AspNetCore.csproj" />
@@ -141,27 +152,17 @@
     <Project Path="Compze.Tessaging.Teventive.TeventStore/Compze.Tessaging.Teventive.TeventStore.csproj" />
     <Project Path="Compze.Tessaging/Compze.Tessaging.csproj" />
   </Folder>
-  <Folder Name="/Compze.Threading/">
-    <Project Path="Compze.Threading.Testing/Compze.Threading.Testing.csproj" />
-    <Project Path="Compze.Threading/Compze.Threading.csproj" />
-  </Folder>
   <Folder Name="/Compze.Typermedia/">
-    <Project Path="Compze.Typermedia/Compze.Typermedia.csproj" />
     <Project Path="Compze.Typermedia.Client/Compze.Typermedia.Client.csproj" />
-    <Project Path="Compze.Typermedia.Hosting/Compze.Typermedia.Hosting.csproj" />
-    <Project Path="Compze.Typermedia.Hosting.Testing/Compze.Typermedia.Hosting.Testing.csproj" />
     <Project Path="Compze.Typermedia.Hosting.AspNetCore/Compze.Typermedia.Hosting.AspNetCore.csproj" />
+    <Project Path="Compze.Typermedia.Hosting.Testing/Compze.Typermedia.Hosting.Testing.csproj" />
+    <Project Path="Compze.Typermedia.Hosting/Compze.Typermedia.Hosting.csproj" />
+    <Project Path="Compze.Typermedia/Compze.Typermedia.csproj" />
   </Folder>
   <Folder Name="/Compze.Typermedia/Specifications/">
-    <Project Path="../test/Compze.Typermedia.Specifications/Compze.Typermedia.Specifications.csproj" />
     <Project Path="../test/Compze.Typermedia.Client.Specifications/Compze.Typermedia.Client.Specifications.csproj" />
     <Project Path="../test/Compze.Typermedia.Hosting.Specifications/Compze.Typermedia.Hosting.Specifications.csproj" />
-  </Folder>
-  <Folder Name="/Compze.Unit/Specifications/">
-    <Project Path="../test/Compze.Unit.Specifications/Compze.Unit.Specifications.csproj" />
-  </Folder>
-  <Folder Name="/Compze.xUnit/">
-    <Project Path="Compze.xUnit/Compze.xUnit.csproj" />
+    <Project Path="../test/Compze.Typermedia.Specifications/Compze.Typermedia.Specifications.csproj" />
   </Folder>
   <Folder Name="/_Tests/">
     <Project Path="../test/Compze.Tests.CodePolicies/Compze.Tests.CodePolicies.csproj" />
@@ -172,11 +173,12 @@
     <Project Path="../test/Compze.Tests.ScratchPad/Compze.Tests.ScratchPad.csproj" />
     <Project Path="../test/Compze.Tests.Unit/Compze.Tests.Unit.csproj" />
   </Folder>
-  <Project Path="../DevScripts/Scripts.csproj" />
   <Folder Name="/Compze.Core/">
     <Project Path="Compze.Core/Compze.Core.csproj" />
   </Folder>
   <Folder Name="/Compze.DocumentDb/">
     <Project Path="Compze.DocumentDb/Compze.DocumentDb.csproj" />
   </Folder>
+  <Project Path="../DevScripts/Scripts.csproj" />
+  <Project Path="Compze.Internals.Testing/Compze.Internals.Testing.csproj" />
 </Solution>

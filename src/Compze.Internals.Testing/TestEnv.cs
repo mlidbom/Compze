@@ -1,13 +1,13 @@
 using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
-using Compze.Tessaging.Hosting.Testing.Performance;
+using Compze.Internals.Testing.Performance;
 using Compze.Internals.SystemCE;
 
-namespace Compze.Tessaging.Hosting.Testing;
+namespace Compze.Internals.Testing;
 
 ///<summary>TestEnvironment class. Shortened name since it is referenced statically and has nested types</summary>
-public static partial class TestEnv
+public static class TestEnv
 {
     ///<summary>if we are running instrumented, returns the original multiplied by <paramref name="instrumented"/>, if we are running unoptimized, returns the original multiplied by <paramref name="instrumented"/>, otherwise returns the original</summary>
    public static TimeSpan EnvMultiply(this TimeSpan original, double instrumented = 1.0, double unoptimized = 1.0) =>

@@ -3,6 +3,7 @@ using Compze.Core.Tessaging.Teventive.TeventStore.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.Refactoring.Migrations.Public;
 using Compze.Abstractions.Time.Public;
 using Compze.Tessaging.Hosting.Testing;
+using Compze.Internals.Testing;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tessaging.Teventive.TeventStore;
 using Compze.Tessaging.Teventive.TeventStore.Wiring;

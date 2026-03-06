@@ -1,4 +1,5 @@
 using Compze.Tessaging.Hosting.Testing;
+using Compze.Internals.Testing;
 using Compze.Tests.Infrastructure.XUnit.Logging;
 using System.Runtime.CompilerServices;
 using Compze.xUnitMatrix;
