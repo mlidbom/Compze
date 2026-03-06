@@ -135,6 +135,7 @@
     <Project Path="../test/Compze.Must.Specifications/Compze.Must.Specifications.csproj" />
   </Folder>
   <Folder Name="/Compze.Tessaging/">
+    <Project Path="Compze.Tessaging.Abstractions/Compze.Tessaging.Abstractions.csproj" />
     <Project Path="Compze.Tessaging.Hosting.AspNetCore/Compze.Tessaging.Hosting.AspNetCore.csproj" />
     <Project Path="Compze.Tessaging.Hosting.Testing/Compze.Tessaging.Hosting.Testing.csproj" />
     <Project Path="Compze.Tessaging.Teventive.TeventStore/Compze.Tessaging.Teventive.TeventStore.csproj" />
@@ -162,9 +163,6 @@
   <Project Path="../DevScripts/Scripts.csproj" />
   <Folder Name="/Compze.Core/">
     <Project Path="Compze.Core/Compze.Core.csproj" />
-  </Folder>
-  <Folder Name="/Compze.Tessaging.Abstractions/">
-    <Project Path="Compze.Tessaging.Abstractions/Compze.Tessaging.Abstractions.csproj" />
   </Folder>
   <Folder Name="/Compze.DocumentDb/">
     <Project Path="Compze.DocumentDb/Compze.DocumentDb.csproj" />
