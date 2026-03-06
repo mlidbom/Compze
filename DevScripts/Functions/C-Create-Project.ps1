@@ -72,7 +72,7 @@ function C-Create-Project {
 <Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net9.0</TargetFramework>
+		<TargetFramework>net10.0</TargetFramework>
 		<Nullable>enable</Nullable>
 	</PropertyGroup>
 
@@ -81,6 +81,6 @@ function C-Create-Project {
     
     Set-Content -Path $csprojPath -Value $csprojContent -NoNewline -Encoding UTF8
     
-    # Step 4: Add project to solution and organize in correct folder
-    C-Place-ProjectInSolution -ProjectName $ProjectName
+    # Step 4: Add project to solution (at solution root — arrange in folders manually)
+    Ensure-ProjectIsInSolution -ProjectName $ProjectName -SolutionPath $SolutionPath
 }

@@ -115,7 +115,6 @@ Discover all commands: `C-Get-Commands` or `C-<Tab>` in PowerShell. Key commands
 | `C-Create-Project` | Create new projects with proper structure |
 | `C-Delete-Project` | Delete a project |
 | `C-Rename-Project` | Rename a project |
-| `C-Relocate-Project` | Move a project to a new location |
 | `C-Split-Project` | Split a project into multiple |
 | `C-Merge-Project` | Merge projects |
 | `C-FlexRef-Sync` | Sync FlexRef infrastructure after reference changes |
