@@ -15,6 +15,7 @@ using Compze.DependencyInjection.Abstractions;
 using Compze.Abstractions.Public;
 using Compze.Must;
 using Compze.Typermedia;
+using Compze.Typermedia.HandlerRegistration;
 
 #pragma warning disable CA1715 //Interfaces without I prefix
 // ReSharper disable MemberCanBeInternal for testing

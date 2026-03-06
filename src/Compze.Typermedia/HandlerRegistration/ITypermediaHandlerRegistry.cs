@@ -1,7 +1,7 @@
 using Compze.Abstractions.Refactoring.Naming.Internal;
 using Compze.Abstractions.Tessaging.Public;
 
-namespace Compze.Typermedia;
+namespace Compze.Typermedia.HandlerRegistration;
 
 public interface ITypermediaHandlerRegistry
 {

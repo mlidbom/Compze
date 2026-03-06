@@ -9,6 +9,8 @@ using Compze.Abstractions.Public;
 using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 using Compze.Must;
 using Compze.Typermedia;
+using Compze.Typermedia.HandlerRegistration;
+
 // ReSharper disable MemberCanBeMadeStatic.Global
 // ReSharper disable MemberCanBeMadeStatic.Local
 

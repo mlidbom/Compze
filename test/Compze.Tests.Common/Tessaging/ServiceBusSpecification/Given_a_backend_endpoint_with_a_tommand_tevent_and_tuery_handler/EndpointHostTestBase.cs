@@ -15,6 +15,7 @@ using Compze.Underscore;
 using Compze.Threading;
 using Compze.Threading.Testing;
 using Compze.Typermedia;
+using Compze.Typermedia.HandlerRegistration;
 
 // ReSharper disable ClassNeverInstantiated.Global
 // ReSharper disable InconsistentNaming for testing

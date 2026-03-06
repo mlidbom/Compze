@@ -1,7 +1,7 @@
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE;
 
-namespace Compze.Typermedia;
+namespace Compze.Typermedia.HandlerRegistration;
 
 public class TypermediaHandlerRegistrarWithDependencyInjectionSupport(ITypermediaHandlerRegistrar registrar, LazyCE<IServiceLocator> serviceLocator)
 {

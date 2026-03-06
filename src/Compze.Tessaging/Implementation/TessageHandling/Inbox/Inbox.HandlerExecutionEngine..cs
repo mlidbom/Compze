@@ -8,6 +8,7 @@ using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
 using Compze.Threading;
+using Compze.Typermedia.HandlerRegistration;
 
 namespace Compze.Tessaging.Implementation.TessageHandling.Inbox;
 

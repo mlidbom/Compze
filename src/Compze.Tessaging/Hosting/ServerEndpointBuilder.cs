@@ -21,6 +21,7 @@ using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Tessaging.Typermedia;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
+using Compze.Typermedia.HandlerRegistration;
 
 // ReSharper disable ImplicitlyCapturedClosure it is very much intentional :)
 

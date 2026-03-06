@@ -2,6 +2,7 @@ using Compze.DocumentDb.Private;
 using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Typermedia;
+using Compze.Typermedia.HandlerRegistration;
 
 namespace Compze.DocumentDb.Wiring;
 

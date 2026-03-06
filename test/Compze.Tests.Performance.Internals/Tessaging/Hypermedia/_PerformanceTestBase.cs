@@ -6,6 +6,7 @@ using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.Tests.Infrastructure;
 using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 using Compze.Typermedia;
+using Compze.Typermedia.HandlerRegistration;
 
 namespace Compze.Tests.Performance.Internals.Tessaging.Hypermedia;
 

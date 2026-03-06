@@ -10,6 +10,7 @@ using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
 using Compze.Threading.ResourceAccess;
 using Compze.Contracts;
+using Compze.Typermedia.HandlerRegistration;
 
 namespace Compze.Tessaging.Implementation.TessageHandling.Inbox;
 

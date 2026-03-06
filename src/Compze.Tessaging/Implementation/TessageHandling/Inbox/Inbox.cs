@@ -10,6 +10,7 @@ using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
+using Compze.Typermedia.HandlerRegistration;
 using JetBrains.Annotations;
 
 namespace Compze.Tessaging.Implementation.TessageHandling.Inbox;

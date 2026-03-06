@@ -4,6 +4,7 @@ using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registrati
 using JetBrains.Annotations;
 using AccountLink = Compze.Tessaging.TyperMediaApi.EventStore.TeventStoreApi.TueryApi.TaggregateLink<AccountManagement.Domain.Account>;
 using Compze.Typermedia;
+using Compze.Typermedia.HandlerRegistration;
 
 namespace AccountManagement.Domain;
 

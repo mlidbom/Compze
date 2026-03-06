@@ -9,6 +9,7 @@ using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
 using Compze.Internals.SystemCE.TransactionsCE;
+using Compze.Typermedia.HandlerRegistration;
 
 namespace Compze.Tessaging.Implementation.TessageHandling.Inbox;
 

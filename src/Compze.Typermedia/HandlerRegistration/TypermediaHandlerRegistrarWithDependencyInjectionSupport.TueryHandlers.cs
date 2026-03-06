@@ -1,6 +1,6 @@
 using Compze.Abstractions.Tessaging.Public;
 
-namespace Compze.Typermedia;
+namespace Compze.Typermedia.HandlerRegistration;
 
 public static partial class TypermediaHandlerRegistrarWithDependencyInjectionSupportExtensions
 {

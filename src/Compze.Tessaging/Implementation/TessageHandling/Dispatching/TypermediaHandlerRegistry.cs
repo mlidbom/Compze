@@ -9,6 +9,7 @@ using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Threading;
 using Compze.Threading.ResourceAccess;
+using Compze.Typermedia.HandlerRegistration;
 
 namespace Compze.Tessaging.Implementation.TessageHandling.Dispatching;
 

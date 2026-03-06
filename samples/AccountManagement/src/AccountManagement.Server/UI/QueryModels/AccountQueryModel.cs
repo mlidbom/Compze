@@ -8,6 +8,7 @@ using Compze.Abstractions.Tessaging.Public;
 using Compze.Tessaging.Teventive.TeventStore.QueryModels.SelfGeneratingQueryModels;
 using Compze.Tessaging.TyperMediaApi.EventStore;
 using Compze.Typermedia;
+using Compze.Typermedia.HandlerRegistration;
 
 namespace AccountManagement.UI.QueryModels;
 

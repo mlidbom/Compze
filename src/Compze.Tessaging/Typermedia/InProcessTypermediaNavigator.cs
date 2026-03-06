@@ -5,6 +5,7 @@ using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.UsageGuards;
 using Compze.Typermedia;
+using Compze.Typermedia.HandlerRegistration;
 
 namespace Compze.Tessaging.Typermedia;
 
