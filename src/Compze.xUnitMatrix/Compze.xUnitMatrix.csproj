@@ -7,9 +7,6 @@
     <Description>xUnit v3 matrix testing — run tests across all combinations of pluggable components via a configuration file and custom theory attributes.</Description>
   </PropertyGroup>
   <ItemGroup>
-    <AdditionalFiles Include="config.nsdepcop" />
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
     <PackageReference Include="xunit.v3.extensibility.core" Version="3.1.0" />
   </ItemGroup>

@@ -6,12 +6,6 @@
     <Description>Core abstractions for the Compze framework including entity IDs, messaging contracts, and event sourcing interfaces.</Description>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="NsDepCop" Version="2.6.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-  </ItemGroup>
-  <ItemGroup>
     <Folder Include="Serialization\Internal\DbPool\" />
   </ItemGroup>
   <!-- Exclude _docs files from compilation but keep them visible.

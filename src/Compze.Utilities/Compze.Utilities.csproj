@@ -6,12 +6,6 @@
     <Description>Core utilities for the Compze framework including dependency injection abstractions, system extensions, and threading helpers.</Description>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="NsDepCop" Version="2.6.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-  </ItemGroup>
-  <ItemGroup>
     <Folder Include="SystemCE\TextCE\" />
     <Folder Include="SystemCE\ThreadingCE\Async\" />
   </ItemGroup>

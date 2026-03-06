@@ -8,12 +8,6 @@
   </PropertyGroup>
   <Import Project="..\msbuild\InternalsVisibleToEveryone.props" />
   <ItemGroup>
-    <PackageReference Include="NsDepCop" Version="2.6.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Update="README.md">
       <PackagePath></PackagePath>
       <Pack>true</Pack>

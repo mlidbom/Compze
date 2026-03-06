@@ -8,10 +8,4 @@
       <PackageTags>contracts;assertions;preconditions;invariants;guard-clauses;fluent</PackageTags>
       <GenerateDocumentationFile>true</GenerateDocumentationFile>
    </PropertyGroup>
-   <ItemGroup>
-      <PackageReference Include="NsDepCop" Version="2.6.0">
-         <PrivateAssets>all</PrivateAssets>
-         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      </PackageReference>
-   </ItemGroup>
 </Project>

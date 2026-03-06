@@ -59,7 +59,6 @@
   <Folder Name="/~Solution Structure/">
     <Project Path="msbuild/Solution.Build.csproj" />
     <Project Path="SolutionStructure/Solution.EditorConfigs.csproj" />
-    <Project Path="SolutionStructure/Solution.NsDepCop.csproj" />
     <Project Path="SolutionStructure/Solution.README.csproj" />
     <Project Path="SolutionStructure/Solution.TestConfig.csproj" />
     <Project Path="SolutionStructure/Solution.TODO.csproj" />
