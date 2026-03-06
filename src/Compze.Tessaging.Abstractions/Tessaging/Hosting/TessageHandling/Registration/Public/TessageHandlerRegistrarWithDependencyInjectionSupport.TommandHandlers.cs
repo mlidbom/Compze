@@ -8,7 +8,7 @@ public static partial class TessageHandlerRegistrarWithDependencyInjectionSuppor
       this TessageHandlerRegistrarWithDependencyInjectionSupport @this,
       Action<TTommand> handler) where TTommand : ITommand
    {
-      @this.Register.ForTommand(handler);
+      @this.TessagingRegistrar.ForTommand(handler);
       return @this;
    }
 
@@ -17,7 +17,7 @@ public static partial class TessageHandlerRegistrarWithDependencyInjectionSuppor
       Action<TTommand, TDependency1> handler) where TTommand : ITommand
                                               where TDependency1 : class
    {
-      @this.Register.ForTommand<TTommand>(tommand => handler(tommand, @this.Resolve<TDependency1>()));
+      @this.TessagingRegistrar.ForTommand<TTommand>(tommand => handler(tommand, @this.Resolve<TDependency1>()));
       return @this;
    }
 }

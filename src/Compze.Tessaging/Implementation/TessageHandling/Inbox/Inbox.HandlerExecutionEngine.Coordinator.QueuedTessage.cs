@@ -27,7 +27,8 @@ public partial class Inbox
             readonly ITaskRunner _taskRunner;
             readonly ITessageStorage _tessageStorage;
             readonly IServiceLocator _serviceLocator;
-            readonly ITessageHandlerRegistry _handlerRegistry;
+            readonly ITessageHandlerRegistry _tessagingHandlerRegistry;
+            readonly ITypermediaHandlerRegistry _typermediaHandlerRegistry;
 
             internal Task<object?> Task => _taskCompletionSource.Task;
             internal TessageId TessageId { get; }
@@ -133,7 +134,7 @@ public partial class Inbox
                }
             }
 
-            internal HandlerExecutionTask(TransportTessage.InComing transportTessage, Coordinator coordinator, ITaskRunner taskRunner, ITessageStorage tessageStorage, IServiceLocator serviceLocator, ITessageHandlerRegistry handlerRegistry)
+            internal HandlerExecutionTask(TransportTessage.InComing transportTessage, Coordinator coordinator, ITaskRunner taskRunner, ITessageStorage tessageStorage, IServiceLocator serviceLocator, ITessageHandlerRegistry tessagingHandlerRegistry, ITypermediaHandlerRegistry typermediaHandlerRegistry)
             {
                TessageId = transportTessage.TessageId;
                TransportTessage = transportTessage;
@@ -141,7 +142,8 @@ public partial class Inbox
                _taskRunner = taskRunner;
                _tessageStorage = tessageStorage;
                _serviceLocator = serviceLocator;
-               _handlerRegistry = handlerRegistry;
+               _tessagingHandlerRegistry = tessagingHandlerRegistry;
+               _typermediaHandlerRegistry = typermediaHandlerRegistry;
                _tessageTask = CreateTessageTask();
             }
 
@@ -151,30 +153,30 @@ public partial class Inbox
                {
                   TransportTessageType.ExactlyOnceTevent => tessage =>
                   {
-                     var teventHandlers = _handlerRegistry.GetTeventHandlers(tessage.GetType());
+                     var teventHandlers = _tessagingHandlerRegistry.GetTeventHandlers(tessage.GetType());
                      teventHandlers.ForEach(handler => handler((IExactlyOnceTevent)tessage));
                      return null;
                   },
                   TransportTessageType.TypermediaAtMostOnceTommandWithReturnValue => tessage =>
                   {
-                     var tommandHandler = _handlerRegistry.GetTommandHandlerWithReturnValue(tessage.GetType());
+                     var tommandHandler = _typermediaHandlerRegistry.GetTommandHandlerWithReturnValue(tessage.GetType());
                      return tommandHandler((IAtMostOnceTypermediaTommand)tessage);
                   },
                   TransportTessageType.TypermediaAtMostOnceTommand => tessage =>
                   {
-                     var tommandHandler = _handlerRegistry.GetTommandHandler(tessage.GetType());
+                     var tommandHandler = _tessagingHandlerRegistry.GetTommandHandler(tessage.GetType());
                      tommandHandler((IAtMostOnceTypermediaTommand)tessage);
                      return unit.Value; //Todo:Properly handle tommands with and without return values
                   },
                   TransportTessageType.ExactlyOnceTommand => tessage =>
                   {
-                     var tommandHandler = _handlerRegistry.GetTommandHandler(tessage.GetType());
+                     var tommandHandler = _tessagingHandlerRegistry.GetTommandHandler(tessage.GetType());
                      tommandHandler((IExactlyOnceTommand)tessage);
                      return unit.Value; //Todo:Properly handle tommands with and without return values
                   },
                   TransportTessageType.TyperMediaTuery => actualTessage =>
                   {
-                     var tueryHandler = _handlerRegistry.GetTueryHandler(actualTessage.GetType());
+                     var tueryHandler = _typermediaHandlerRegistry.GetTueryHandler(actualTessage.GetType());
                      //todo: Double dispatch instead of casting?
                      return tueryHandler((ITuery<object>)actualTessage);
                   },

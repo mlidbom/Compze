@@ -2,9 +2,10 @@ using Compze.DependencyInjection.Abstractions;
 
 namespace Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 
-public class TessageHandlerRegistrarWithDependencyInjectionSupport(ITessageHandlerRegistrar register, LazyCE<IServiceLocator> serviceLocator)
+public class TessageHandlerRegistrarWithDependencyInjectionSupport(ITessageHandlerRegistrar tessagingRegistrar, ITypermediaHandlerRegistrar typermediaRegistrar, LazyCE<IServiceLocator> serviceLocator)
 {
-   internal ITessageHandlerRegistrar Register { get; } = register;
+   internal ITessageHandlerRegistrar TessagingRegistrar { get; } = tessagingRegistrar;
+   internal ITypermediaHandlerRegistrar TypermediaRegistrar { get; } = typermediaRegistrar;
 
    LazyCE<IServiceLocator> ServiceLocator { get; } = serviceLocator;
 
