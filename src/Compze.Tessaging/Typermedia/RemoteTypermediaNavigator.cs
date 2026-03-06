@@ -1,6 +1,7 @@
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Core.Tessaging.Teventive.Infrastructure.Validation;
 using Compze.Core.Tessaging.Typermedia.Public;
+using Compze.Tessaging.Abstractions.Tessaging.Typermedia.Public;
 using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 using Compze.Tessaging.Implementation.Transport.Client.Internal;
 using Compze.DependencyInjection;

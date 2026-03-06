@@ -1,6 +1,7 @@
 using Compze.Abstractions.Refactoring.Naming.Internal;
 using Compze.Abstractions.Serialization.Internal;
 using Compze.Core.Tessaging.Hosting.Public;
+using Compze.Tessaging.Abstractions.Tessaging.Hosting.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Core.Tessaging.Transport.Internal;
 using Compze.Tessaging.Implementation.Abstractions;

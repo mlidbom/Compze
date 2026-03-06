@@ -1,6 +1,8 @@
 using Compze.Core.Tessaging.Hosting.Public;
+using Compze.Tessaging.Abstractions.Tessaging.Hosting.Public;
 using Compze.Core.Tessaging.Transport.Internal;
 using Compze.Core.Tessaging.Typermedia.Public;
+using Compze.Tessaging.Abstractions.Tessaging.Typermedia.Public;
 using Compze.Tessaging.Configuration;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tessaging.Implementation.Transport.Client.Implementation.Universal;

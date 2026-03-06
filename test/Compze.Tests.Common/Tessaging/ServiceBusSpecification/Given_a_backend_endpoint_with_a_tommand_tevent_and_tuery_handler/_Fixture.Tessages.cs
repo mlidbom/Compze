@@ -3,6 +3,7 @@ using Compze.Abstractions.Tessaging.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Core.Tessaging.Typermedia.Public;
+using Compze.Tessaging.Abstractions.Tessaging.Typermedia.Public;
 using Compze.Tessaging.TyperMediaApi.EventStore;
 
 // ReSharper disable ClassNeverInstantiated.Global

@@ -2,6 +2,7 @@ using Compze.Abstractions.Public;
 using Compze.Abstractions.Refactoring.Naming.Internal;
 using Compze.Abstractions.Serialization.Internal;
 using Compze.Core.Tessaging.Hosting.Public;
+using Compze.Tessaging.Abstractions.Tessaging.Hosting.Public;
 using Compze.Core.Tessaging.Internal.SqlLayer;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.DependencyInjection;

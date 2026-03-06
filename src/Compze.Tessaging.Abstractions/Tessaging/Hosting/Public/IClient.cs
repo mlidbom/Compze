@@ -1,6 +1,6 @@
-using Compze.Core.Tessaging.Typermedia.Public;
+using Compze.Tessaging.Abstractions.Tessaging.Typermedia.Public;
 
-namespace Compze.Core.Tessaging.Hosting.Public;
+namespace Compze.Tessaging.Abstractions.Tessaging.Hosting.Public;
 
 public interface IClient : IAsyncDisposable
 {

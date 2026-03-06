@@ -5,6 +5,7 @@ using AccountManagement.UI.QueryModels;
 using Compze.DocumentDb.Wiring;
 using Compze.Core.DocumentDb.Wiring;
 using Compze.Core.Tessaging.Hosting.Public;
+using Compze.Tessaging.Abstractions.Tessaging.Hosting.Public;
 using Compze.Tessaging.Teventive.TeventStore.Wiring;
 using Compze.Tessaging.TyperMediaApi.EventStore;
 

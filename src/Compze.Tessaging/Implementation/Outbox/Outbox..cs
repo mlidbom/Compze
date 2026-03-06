@@ -1,5 +1,6 @@
 using System.Transactions;
 using Compze.Core.Tessaging.Hosting.Public;
+using Compze.Tessaging.Abstractions.Tessaging.Hosting.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Tessaging.Implementation.Abstractions;
 using Compze.Tessaging.Implementation.Transport.Client.Internal;

@@ -1,5 +1,7 @@
 using Compze.Core.Tessaging.Hosting.Public;
+using Compze.Tessaging.Abstractions.Tessaging.Hosting.Public;
 using Compze.Core.Tessaging.Typermedia.Public;
+using Compze.Tessaging.Abstractions.Tessaging.Typermedia.Public;
 using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Hosting.Testing;
