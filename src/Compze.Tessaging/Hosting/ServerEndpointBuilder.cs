@@ -37,12 +37,13 @@ class ServerEndpointBuilder : IEndpointBuilder, IAsyncDisposable, IDisposable
    readonly IEndpointHost _host;
    public EndpointConfiguration Configuration { get; }
 
-   public TessageHandlerRegistrarWithDependencyInjectionSupport RegisterHandlers { get; }
+   public TessageHandlerRegistrarWithDependencyInjectionSupport RegisterTessagingHandlers { get; }
+   public TypermediaHandlerRegistrarWithDependencyInjectionSupport RegisterTypermediaHandlers { get; }
 
    public IEndpoint Build()
    {
       SetupContainer();
-      TessageTypesInternal.RegisterHandlers(RegisterHandlers);
+      TessageTypesInternal.RegisterHandlers(RegisterTypermediaHandlers);
       var serviceLocator = Container.ServiceLocator;
       var endpoint = new Endpoint(serviceLocator,
                                   serviceLocator.Resolve<ITessagingRouter>(),
@@ -62,7 +63,9 @@ class ServerEndpointBuilder : IEndpointBuilder, IAsyncDisposable, IDisposable
 
       _tessagingRegistry = new TessageHandlerRegistry(TypeMapper.Instance);
       _typermediaRegistry = new TypermediaHandlerRegistry(TypeMapper.Instance);
-      RegisterHandlers = new TessageHandlerRegistrarWithDependencyInjectionSupport(_tessagingRegistry, _typermediaRegistry, new LazyCE<IServiceLocator>(() => Container.ServiceLocator));
+      var serviceLocator = new LazyCE<IServiceLocator>(() => Container.ServiceLocator);
+      RegisterTessagingHandlers = new TessageHandlerRegistrarWithDependencyInjectionSupport(_tessagingRegistry, serviceLocator);
+      RegisterTypermediaHandlers = new TypermediaHandlerRegistrarWithDependencyInjectionSupport(_typermediaRegistry, serviceLocator);
    }
 
    void SetupContainer()

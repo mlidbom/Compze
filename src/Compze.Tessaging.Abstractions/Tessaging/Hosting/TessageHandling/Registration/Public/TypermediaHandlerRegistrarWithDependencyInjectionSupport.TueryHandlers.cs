@@ -2,55 +2,55 @@ using Compze.Abstractions.Tessaging.Public;
 
 namespace Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 
-public static partial class TessageHandlerRegistrarWithDependencyInjectionSupportExtensions
+public static partial class TypermediaHandlerRegistrarWithDependencyInjectionSupportExtensions
 {
-   public static TessageHandlerRegistrarWithDependencyInjectionSupport ForTuery<TTuery, TResult>(
-      this TessageHandlerRegistrarWithDependencyInjectionSupport @this,
+   public static TypermediaHandlerRegistrarWithDependencyInjectionSupport ForTuery<TTuery, TResult>(
+      this TypermediaHandlerRegistrarWithDependencyInjectionSupport @this,
       Func<TTuery, TResult> handler) where TTuery : ITuery<TResult>
    {
-      @this.TypermediaRegistrar.ForTuery(handler);
+      @this.Registrar.ForTuery(handler);
       return @this;
    }
 
-   public static TessageHandlerRegistrarWithDependencyInjectionSupport ForTuery<TTuery, TDependency1, TResult>(
-      this TessageHandlerRegistrarWithDependencyInjectionSupport @this,
+   public static TypermediaHandlerRegistrarWithDependencyInjectionSupport ForTuery<TTuery, TDependency1, TResult>(
+      this TypermediaHandlerRegistrarWithDependencyInjectionSupport @this,
       Func<TTuery, TDependency1, TResult> handler) where TTuery : ITuery<TResult>
                                                    where TDependency1 : class
    {
-      @this.TypermediaRegistrar.ForTuery<TTuery, TResult>(tuery => handler(tuery, @this.Resolve<TDependency1>()));
+      @this.Registrar.ForTuery<TTuery, TResult>(tuery => handler(tuery, @this.Resolve<TDependency1>()));
       return @this;
    }
 
-   public static TessageHandlerRegistrarWithDependencyInjectionSupport ForTuery<TTuery, TDependency1, TDependency2, TResult>(
-      this TessageHandlerRegistrarWithDependencyInjectionSupport @this,
+   public static TypermediaHandlerRegistrarWithDependencyInjectionSupport ForTuery<TTuery, TDependency1, TDependency2, TResult>(
+      this TypermediaHandlerRegistrarWithDependencyInjectionSupport @this,
       Func<TTuery, TDependency1, TDependency2, TResult> handler) where TTuery : ITuery<TResult>
                                                                  where TDependency1 : class
                                                                  where TDependency2 : class
    {
-      @this.TypermediaRegistrar.ForTuery<TTuery, TResult>(tuery => handler(tuery, @this.Resolve<TDependency1>(), @this.Resolve<TDependency2>()));
+      @this.Registrar.ForTuery<TTuery, TResult>(tuery => handler(tuery, @this.Resolve<TDependency1>(), @this.Resolve<TDependency2>()));
       return @this;
    }
 
-   public static TessageHandlerRegistrarWithDependencyInjectionSupport ForTuery<TTuery, TDependency1, TDependency2, TDependency3, TResult>(
-      this TessageHandlerRegistrarWithDependencyInjectionSupport @this,
+   public static TypermediaHandlerRegistrarWithDependencyInjectionSupport ForTuery<TTuery, TDependency1, TDependency2, TDependency3, TResult>(
+      this TypermediaHandlerRegistrarWithDependencyInjectionSupport @this,
       Func<TTuery, TDependency1, TDependency2, TDependency3, TResult> handler) where TTuery : ITuery<TResult>
                                                                                where TDependency1 : class
                                                                                where TDependency2 : class
                                                                                where TDependency3 : class
    {
-      @this.TypermediaRegistrar.ForTuery<TTuery, TResult>(tuery => handler(tuery, @this.Resolve<TDependency1>(), @this.Resolve<TDependency2>(), @this.Resolve<TDependency3>()));
+      @this.Registrar.ForTuery<TTuery, TResult>(tuery => handler(tuery, @this.Resolve<TDependency1>(), @this.Resolve<TDependency2>(), @this.Resolve<TDependency3>()));
       return @this;
    }
 
-   public static TessageHandlerRegistrarWithDependencyInjectionSupport ForTuery<TTuery, TDependency1, TDependency2, TDependency3, TDependency4, TResult>(
-      this TessageHandlerRegistrarWithDependencyInjectionSupport @this,
+   public static TypermediaHandlerRegistrarWithDependencyInjectionSupport ForTuery<TTuery, TDependency1, TDependency2, TDependency3, TDependency4, TResult>(
+      this TypermediaHandlerRegistrarWithDependencyInjectionSupport @this,
       Func<TTuery, TDependency1, TDependency2, TDependency3, TDependency4, TResult> handler) where TTuery : ITuery<TResult>
                                                                                               where TDependency1 : class
                                                                                               where TDependency2 : class
                                                                                               where TDependency3 : class
                                                                                               where TDependency4 : class
    {
-      @this.TypermediaRegistrar.ForTuery<TTuery, TResult>(tuery => handler(tuery, @this.Resolve<TDependency1>(), @this.Resolve<TDependency2>(), @this.Resolve<TDependency3>(), @this.Resolve<TDependency4>()));
+      @this.Registrar.ForTuery<TTuery, TResult>(tuery => handler(tuery, @this.Resolve<TDependency1>(), @this.Resolve<TDependency2>(), @this.Resolve<TDependency3>(), @this.Resolve<TDependency4>()));
       return @this;
    }
 }

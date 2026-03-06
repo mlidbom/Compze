@@ -20,7 +20,7 @@ public static class TeventStoreRegistrar
    static TeventStoreRegistrationBuilder RegisterTeventStore(this IEndpointBuilder @this, IReadOnlyList<ITeventMigration> migrations)
    {
       @this.Container.Register().TeventStore(@this.Configuration.ConnectionStringName, migrations);
-      return new TeventStoreRegistrationBuilder(@this.RegisterHandlers);
+      return new TeventStoreRegistrationBuilder(@this.RegisterTessagingHandlers, @this.RegisterTypermediaHandlers);
    }
 
    public static IComponentRegistrar TeventStore(this IComponentRegistrar registrar, string connectionName) =>
@@ -47,14 +47,19 @@ public static class TeventStoreRegistrar
 
 public class TeventStoreRegistrationBuilder
 {
-   readonly TessageHandlerRegistrarWithDependencyInjectionSupport _handlerRegistrar;
-   internal TeventStoreRegistrationBuilder(TessageHandlerRegistrarWithDependencyInjectionSupport handlerRegistrar) => _handlerRegistrar = handlerRegistrar;
+   readonly TessageHandlerRegistrarWithDependencyInjectionSupport _tessagingRegistrar;
+   readonly TypermediaHandlerRegistrarWithDependencyInjectionSupport _typermediaRegistrar;
+   internal TeventStoreRegistrationBuilder(TessageHandlerRegistrarWithDependencyInjectionSupport tessagingRegistrar, TypermediaHandlerRegistrarWithDependencyInjectionSupport typermediaRegistrar)
+   {
+      _tessagingRegistrar = tessagingRegistrar;
+      _typermediaRegistrar = typermediaRegistrar;
+   }
 
    public TeventStoreRegistrationBuilder HandleTaggregate<TTaggregate, TTevent>()
       where TTaggregate : class, ITaggregate<TTevent>
       where TTevent : ITaggregateTevent
    {
-      TeventStoreApi.RegisterHandlersForTaggregate<TTaggregate, TTevent>(_handlerRegistrar);
+      TeventStoreApi.RegisterHandlersForTaggregate<TTaggregate, TTevent>(_tessagingRegistrar, _typermediaRegistrar);
       return this;
    }
 }

@@ -64,7 +64,7 @@ public static class TessageTypesInternal
       public IReadOnlyList<EndPointAddress> EndpointAddresses { get; private set; }
    }
 
-   public static void RegisterHandlers(TessageHandlerRegistrarWithDependencyInjectionSupport registrar)
+   public static void RegisterHandlers(TypermediaHandlerRegistrarWithDependencyInjectionSupport registrar)
    {
       registrar.ForTuery((EndpointInformationTuery _, TypeMapper _, ITessageHandlerRegistry tessagingRegistry, ITypermediaHandlerRegistry typermediaRegistry, EndpointConfiguration configuration) =>
                             new EndpointInformation(tessagingRegistry.HandledRemoteTessageTypeIds().Concat(typermediaRegistry.HandledRemoteTypermediaTypeIds()), configuration));

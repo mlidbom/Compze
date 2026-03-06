@@ -12,7 +12,7 @@ namespace AccountManagement.UI;
 
 static class AccountUIAdapter
 {
-   public static void Login(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTommandWithResult(
+   public static void Login(TypermediaHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTommandWithResult(
       (AccountResource.Tommand.LogIn logIn, IInProcessTypermediaNavigator navigator) =>
       {
          var email = Email.Parse(logIn.Email);
@@ -39,7 +39,7 @@ static class AccountUIAdapter
       (AccountResource.Tommand.ChangeEmail tommand, IInProcessTypermediaNavigator navigator) =>
          navigator.Execute(InternalApi.Tueries.GetForUpdate(tommand.AccountId)).ChangeEmail(Email.Parse(tommand.Email)));
 
-   internal static void Register(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTommandWithResult(
+   internal static void Register(TypermediaHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTommandWithResult(
       (AccountResource.Tommand.Register tommand, IInProcessTypermediaNavigator bus) =>
       {
          var (status, account) = Account.Register(tommand.AccountId, Email.Parse(tommand.Email), new Password(tommand.Password), bus);
@@ -51,7 +51,7 @@ static class AccountUIAdapter
          };
       });
 
-   internal static void GetById(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery(
+   internal static void GetById(TypermediaHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery(
       (TessageTypes.Remotable.NonTransactional.Tueries.TaggregateLink<AccountResource> accountTuery, IInProcessTypermediaNavigator navigator)
          => new AccountResource(navigator.Execute(InternalApi.AccountQueryModel.Tueries.Get(accountTuery.TaggregateId))));
 }

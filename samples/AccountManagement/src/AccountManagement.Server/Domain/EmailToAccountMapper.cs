@@ -25,7 +25,7 @@ namespace AccountManagement.Domain;
          navigator.Execute(DocumentDb.Tommands.Save(newEmail.StringValue, InternalApi.Tueries.GetForUpdate(emailUpdated.TaggregateId)));
       });
 
-   internal static void TryGetAccountByEmail(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery(
+   internal static void TryGetAccountByEmail(TypermediaHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery(
       (InternalApi.Tuery.TryGetByEmailTuery tuery, IInProcessTypermediaNavigator navigator) =>
          navigator.Execute(DocumentDb.Tueries.TryGet<AccountLink>(tuery.Email.StringValue)) is { } accountLink
             ? navigator.Execute(accountLink)

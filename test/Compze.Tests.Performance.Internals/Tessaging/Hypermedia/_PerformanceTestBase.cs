@@ -27,7 +27,7 @@ public abstract class PerformanceTestBase : UniversalTestBase
          new EndpointId(Guid.Parse("DDD0A67C-D2A2-4197-9AF8-38B6AEDF8FA7")),
          builder =>
          {
-            builder.RegisterHandlers
+            builder.RegisterTypermediaHandlers
                    .ForTuery((MyRemoteTuery _) => new MyTueryResult())
                    .ForTuery((MyLocalStrictlyLocalTuery _) => new MyTueryResult());
          });

@@ -30,20 +30,20 @@ public static class AccountManagementServerDomainBootstrapper
              .HandleTaggregate<Account, IAccountTevent>();
 
       builder.RegisterDocumentDb()
-             .HandleDocumentType<TeventStoreApi.TueryApi.TaggregateLink<Account>>(builder.RegisterHandlers)
-             .HandleDocumentType<AccountStatistics.SingletonStatisticsQueryModel>(builder.RegisterHandlers);
+             .HandleDocumentType<TeventStoreApi.TueryApi.TaggregateLink<Account>>(builder.RegisterTessagingHandlers, builder.RegisterTypermediaHandlers)
+             .HandleDocumentType<AccountStatistics.SingletonStatisticsQueryModel>(builder.RegisterTessagingHandlers, builder.RegisterTypermediaHandlers);
    }
 
    static void RegisterHandlers(IEndpointBuilder builder)
    {
-      UIAdapterLayer.Register(builder.RegisterHandlers);
+      UIAdapterLayer.Register(builder.RegisterTessagingHandlers, builder.RegisterTypermediaHandlers);
 
       //todo: This should not be called synchronously. We should have it in a separate consistency boundary so that it does not slow down every operation on an account.
       AccountStatistics.Register(builder);
 
-      AccountQueryModel.Api.RegisterHandlers(builder.RegisterHandlers);
+      AccountQueryModel.Api.RegisterHandlers(builder.RegisterTypermediaHandlers);
 
-      EmailToAccountMapper.UpdateMappingWhenEmailChanges(builder.RegisterHandlers);
-      EmailToAccountMapper.TryGetAccountByEmail(builder.RegisterHandlers);
+      EmailToAccountMapper.UpdateMappingWhenEmailChanges(builder.RegisterTessagingHandlers);
+      EmailToAccountMapper.TryGetAccountByEmail(builder.RegisterTypermediaHandlers);
    }
 }

@@ -13,7 +13,7 @@ public partial class DocumentDbApi
          internal GetDocumentForUpdate(Guid id) => Id = id;
          Guid Id { get; set; }
 
-         internal static void RegisterHandler(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery(
+         internal static void RegisterHandler(TypermediaHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery(
             (GetDocumentForUpdate<TDocument> tuery, IDocumentDbUpdater updater) => updater.GetForUpdate<TDocument>(tuery.Id));
       }
 
@@ -22,7 +22,7 @@ public partial class DocumentDbApi
          internal TryGetDocument(string id) => Id = id;
          string Id { get; set; }
 
-         internal static void RegisterHandler(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery(
+         internal static void RegisterHandler(TypermediaHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery(
             (TryGetDocument<TDocument> tuery, IDocumentDbReader updater) => updater.TryGet<TDocument>(tuery.Id, out var document) ? document : null);
       }
 
@@ -31,7 +31,7 @@ public partial class DocumentDbApi
          internal GetReadonlyCopyOfDocument(Guid id) => Id = id;
          Guid Id { get; set; }
 
-         internal static void RegisterHandler(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery(
+         internal static void RegisterHandler(TypermediaHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery(
             (GetReadonlyCopyOfDocument<TDocument> tuery, IDocumentDbReader reader) => reader.Get<TDocument>(tuery.Id));
       }
    }
@@ -63,13 +63,13 @@ public partial class DocumentDbApi
       }
    }
 
-   public static void HandleDocumentType<TDocument>(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) where TDocument : class
+   public static void HandleDocumentType<TDocument>(TessageHandlerRegistrarWithDependencyInjectionSupport tessagingRegistrar, TypermediaHandlerRegistrarWithDependencyInjectionSupport typermediaRegistrar) where TDocument : class
    {
-      TueryApi.TryGetDocument<TDocument>.RegisterHandler(registrar);
-      TueryApi.GetReadonlyCopyOfDocument<TDocument>.RegisterHandler(registrar);
-      TueryApi.GetDocumentForUpdate<TDocument>.RegisterHandler(registrar);
-      Tommand.SaveDocument<TDocument>.RegisterHandler(registrar);
-      Tommand.DeleteDocument<TDocument>.RegisterHandler(registrar);
+      TueryApi.TryGetDocument<TDocument>.RegisterHandler(typermediaRegistrar);
+      TueryApi.GetReadonlyCopyOfDocument<TDocument>.RegisterHandler(typermediaRegistrar);
+      TueryApi.GetDocumentForUpdate<TDocument>.RegisterHandler(typermediaRegistrar);
+      Tommand.SaveDocument<TDocument>.RegisterHandler(tessagingRegistrar);
+      Tommand.DeleteDocument<TDocument>.RegisterHandler(tessagingRegistrar);
    }
 
 }

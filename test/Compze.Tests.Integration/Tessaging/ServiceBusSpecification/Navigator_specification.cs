@@ -32,7 +32,7 @@ public class Navigator_specification : UniversalTestBase
          new EndpointId(Guid.Parse("3A1B6A8C-D232-476C-A15A-9C8295413210")),
          builder =>
          {
-            builder.RegisterHandlers
+            builder.RegisterTypermediaHandlers
                    .ForTuery((GetUserTuery tuery) => tueryResults.Single(result => result.Name == tuery.Name))
                    .ForTuery((UserApiStartPageTuery _) => new UserApiStartPage())
                    .ForTommandWithResult((RegisterUserTypermediaTommand typermediaTommand, IServiceBusSession _) =>
