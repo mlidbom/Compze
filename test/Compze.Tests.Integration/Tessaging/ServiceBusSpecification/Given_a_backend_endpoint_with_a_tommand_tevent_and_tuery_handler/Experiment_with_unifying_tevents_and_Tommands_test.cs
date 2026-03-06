@@ -42,8 +42,10 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
          {
             builder.Container.Register().TeventStore(builder.Configuration.ConnectionStringName);
 
-            builder.RegisterHandlers
-                   .ForTevent((IUserTevent.UserRegistered _) => {})
+            builder.RegisterTessagingHandlers
+                   .ForTevent((IUserTevent.UserRegistered _) => {});
+
+            builder.RegisterTypermediaHandlers
                    .ForTuery((GetUserTuery tuery, ITeventStoreReader teventReader) => new UserResource(teventReader.GetHistory(tuery.UserId)))
                    .ForTommandWithResult((UserRegistrarTommand.RegisterUserTypermediaTommand typermediaTommand, ITeventStoreUpdater store) =>
                     {

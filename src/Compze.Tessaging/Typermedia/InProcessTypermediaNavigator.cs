@@ -19,15 +19,17 @@ class InProcessTypermediaNavigator : IInProcessTypermediaNavigator
 {
    public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Scoped.For<IInProcessTypermediaNavigator>()
-                                  .CreatedBy((ITessageHandlerRegistry tessageHandlerRegistry)
-                                                => new InProcessTypermediaNavigator(tessageHandlerRegistry)));
+                                  .CreatedBy((ITessageHandlerRegistry tessagingHandlerRegistry, ITypermediaHandlerRegistry typermediaHandlerRegistry)
+                                                => new InProcessTypermediaNavigator(tessagingHandlerRegistry, typermediaHandlerRegistry)));
 
-   readonly ITessageHandlerRegistry _handlerRegistry;
+   readonly ITessageHandlerRegistry _tessagingHandlerRegistry;
+   readonly ITypermediaHandlerRegistry _typermediaHandlerRegistry;
    readonly IUsageGuard _contextGuard;
 
-   InProcessTypermediaNavigator(ITessageHandlerRegistry handlerRegistry)
+   InProcessTypermediaNavigator(ITessageHandlerRegistry tessagingHandlerRegistry, ITypermediaHandlerRegistry typermediaHandlerRegistry)
    {
-      _handlerRegistry = handlerRegistry;
+      _tessagingHandlerRegistry = tessagingHandlerRegistry;
+      _typermediaHandlerRegistry = typermediaHandlerRegistry;
       _contextGuard = new CombinationUsageGuard(new SingleTransactionUsageGuard(this));
    }
 
@@ -35,7 +37,7 @@ class InProcessTypermediaNavigator : IInProcessTypermediaNavigator
    {
       CommonAssertion(tommand);
 
-      var tommandHandler = _handlerRegistry.GetTommandHandler(tommand);
+      var tommandHandler = _typermediaHandlerRegistry.GetTommandHandler(tommand);
       return tommandHandler.Invoke(tommand);
    }
 
@@ -43,7 +45,7 @@ class InProcessTypermediaNavigator : IInProcessTypermediaNavigator
    {
       CommonAssertion(tommand);
 
-      var tommandHandler = _handlerRegistry.GetTommandHandler(tommand);
+      var tommandHandler = _tessagingHandlerRegistry.GetTommandHandler(tommand);
       tommandHandler.Invoke(tommand);
    }
 
@@ -56,7 +58,7 @@ class InProcessTypermediaNavigator : IInProcessTypermediaNavigator
       if(tuery is ICreateMyOwnResultTuery<TResult> selfCreating)
          return selfCreating.CreateResult();
 
-      var tueryHandler = _handlerRegistry.GetTueryHandler(tuery);
+      var tueryHandler = _typermediaHandlerRegistry.GetTueryHandler(tuery);
       return tueryHandler.Invoke(tuery);
    }
 

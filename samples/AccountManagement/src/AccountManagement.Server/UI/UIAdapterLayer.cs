@@ -4,12 +4,12 @@ namespace AccountManagement.UI;
 
 static class UIAdapterLayer
 {
-   public static void Register(TessageHandlerRegistrarWithDependencyInjectionSupport registrar)
+   public static void Register(TessageHandlerRegistrarWithDependencyInjectionSupport tessagingRegistrar, TypermediaHandlerRegistrarWithDependencyInjectionSupport typermediaRegistrar)
    {
-      AccountUIAdapter.GetById(registrar);
-      AccountUIAdapter.Register(registrar);
-      AccountUIAdapter.ChangeEmail(registrar);
-      AccountUIAdapter.ChangePassword(registrar);
-      AccountUIAdapter.Login(registrar);
+      AccountUIAdapter.GetById(typermediaRegistrar);
+      AccountUIAdapter.Register(typermediaRegistrar);
+      AccountUIAdapter.ChangeEmail(tessagingRegistrar);
+      AccountUIAdapter.ChangePassword(tessagingRegistrar);
+      AccountUIAdapter.Login(typermediaRegistrar);
    }
 }

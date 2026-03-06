@@ -8,7 +8,7 @@ public static partial class TessageHandlerRegistrarWithDependencyInjectionSuppor
       this TessageHandlerRegistrarWithDependencyInjectionSupport @this,
       Action<TTevent> handler) where TTevent : ITevent
    {
-      @this.Register.ForTevent(handler);
+      @this.Registrar.ForTevent(handler);
       return @this;
    }
 
@@ -17,7 +17,7 @@ public static partial class TessageHandlerRegistrarWithDependencyInjectionSuppor
       Action<TTevent, TDependency1> handler) where TTevent : ITevent
                                              where TDependency1 : class
    {
-      @this.Register.ForTevent<TTevent>(tevent => handler(tevent, @this.Resolve<TDependency1>()));
+      @this.Registrar.ForTevent<TTevent>(tevent => handler(tevent, @this.Resolve<TDependency1>()));
       return @this;
    }
 
@@ -27,7 +27,7 @@ public static partial class TessageHandlerRegistrarWithDependencyInjectionSuppor
                                                            where TDependency1 : class
                                                            where TDependency2 : class
    {
-      @this.Register.ForTevent<TTevent>(tevent => handler(tevent, @this.Resolve<TDependency1>(), @this.Resolve<TDependency2>()));
+      @this.Registrar.ForTevent<TTevent>(tevent => handler(tevent, @this.Resolve<TDependency1>(), @this.Resolve<TDependency2>()));
       return @this;
    }
 }

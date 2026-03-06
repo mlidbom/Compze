@@ -23,7 +23,7 @@ public partial class TeventStoreApi
          internal TaggregateLink(TaggregateId id) => Id = id;
          public TaggregateId Id { get; private set; }
 
-         internal static void RegisterHandler(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery((TaggregateLink<TTaggregate> tuery, ITeventStoreUpdater updater) => updater.Get<TTaggregate>(tuery.Id));
+         internal static void RegisterHandler(TypermediaHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery((TaggregateLink<TTaggregate> tuery, ITeventStoreUpdater updater) => updater.Get<TTaggregate>(tuery.Id));
       }
 
       public class GetTaggregateHistory<TTevent> : TessageTypes.StrictlyLocal.Tueries.StrictlyLocalTuery<GetTaggregateHistory<TTevent>, IEnumerable<TTevent>> where TTevent : ITaggregateTevent
@@ -35,7 +35,7 @@ public partial class TeventStoreApi
          internal GetTaggregateHistory(TaggregateId id) => Id = id;
          public TaggregateId Id { get; private set; }
 
-         internal static void RegisterHandler(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery((GetTaggregateHistory<TTevent> tuery, ITeventStoreReader reader) => reader.GetHistory(tuery.Id).Cast<TTevent>());
+         internal static void RegisterHandler(TypermediaHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery((GetTaggregateHistory<TTevent> tuery, ITeventStoreReader reader) => reader.GetHistory(tuery.Id).Cast<TTevent>());
       }
 
       public class GetReadonlyCopyOfTaggregate<TTaggregate> : TessageTypes.StrictlyLocal.Tueries.StrictlyLocalTuery<GetReadonlyCopyOfTaggregate<TTaggregate>, TTaggregate> where TTaggregate : class, ITaggregate
@@ -49,7 +49,7 @@ public partial class TeventStoreApi
          internal GetReadonlyCopyOfTaggregate(TaggregateId id) => Id = id;
          public TaggregateId Id { get; private set; }
 
-         internal static void RegisterHandler(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery((GetReadonlyCopyOfTaggregate<TTaggregate> tuery, ITeventStoreReader reader) => reader.GetReadonlyCopy<TTaggregate>(tuery.Id));
+         internal static void RegisterHandler(TypermediaHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery((GetReadonlyCopyOfTaggregate<TTaggregate> tuery, ITeventStoreReader reader) => reader.GetReadonlyCopy<TTaggregate>(tuery.Id));
       }
 
       public class GetReadonlyCopyOfTaggregateVersion<TTaggregate> : TessageTypes.StrictlyLocal.Tueries.StrictlyLocalTuery<GetReadonlyCopyOfTaggregateVersion<TTaggregate>, TTaggregate> where TTaggregate : class, ITaggregate
@@ -69,7 +69,7 @@ public partial class TeventStoreApi
          public TaggregateId Id { get; private set; }
          public int Version { get; private set; }
 
-         internal static void RegisterHandler(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery((GetReadonlyCopyOfTaggregateVersion<TTaggregate> tuery, ITeventStoreReader reader) => reader.GetReadonlyCopyOfVersion<TTaggregate>(tuery.Id, tuery.Version));
+         internal static void RegisterHandler(TypermediaHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery((GetReadonlyCopyOfTaggregateVersion<TTaggregate> tuery, ITeventStoreReader reader) => reader.GetReadonlyCopyOfVersion<TTaggregate>(tuery.Id, tuery.Version));
       }
    }
 
@@ -85,14 +85,14 @@ public partial class TeventStoreApi
       }
    }
 
-   public static void RegisterHandlersForTaggregate<TTaggregate, TTevent>(TessageHandlerRegistrarWithDependencyInjectionSupport registrar)
+   public static void RegisterHandlersForTaggregate<TTaggregate, TTevent>(TessageHandlerRegistrarWithDependencyInjectionSupport tessagingRegistrar, TypermediaHandlerRegistrarWithDependencyInjectionSupport typermediaRegistrar)
       where TTaggregate : class, ITaggregate<TTevent>
       where TTevent : ITaggregateTevent
    {
-      TommandApi.SaveTaggregate<TTaggregate>.RegisterHandler(registrar);
-      TueryApi.TaggregateLink<TTaggregate>.RegisterHandler(registrar);
-      TueryApi.GetReadonlyCopyOfTaggregate<TTaggregate>.RegisterHandler(registrar);
-      TueryApi.GetReadonlyCopyOfTaggregateVersion<TTaggregate>.RegisterHandler(registrar);
-      TueryApi.GetTaggregateHistory<TTevent>.RegisterHandler(registrar);
+      TommandApi.SaveTaggregate<TTaggregate>.RegisterHandler(tessagingRegistrar);
+      TueryApi.TaggregateLink<TTaggregate>.RegisterHandler(typermediaRegistrar);
+      TueryApi.GetReadonlyCopyOfTaggregate<TTaggregate>.RegisterHandler(typermediaRegistrar);
+      TueryApi.GetReadonlyCopyOfTaggregateVersion<TTaggregate>.RegisterHandler(typermediaRegistrar);
+      TueryApi.GetTaggregateHistory<TTevent>.RegisterHandler(typermediaRegistrar);
    }
 }

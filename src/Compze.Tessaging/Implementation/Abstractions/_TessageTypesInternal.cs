@@ -64,10 +64,10 @@ public static class TessageTypesInternal
       public IReadOnlyList<EndPointAddress> EndpointAddresses { get; private set; }
    }
 
-   public static void RegisterHandlers(TessageHandlerRegistrarWithDependencyInjectionSupport registrar)
+   public static void RegisterHandlers(TypermediaHandlerRegistrarWithDependencyInjectionSupport registrar)
    {
-      registrar.ForTuery((EndpointInformationTuery _, TypeMapper _, ITessageHandlerRegistry registry, EndpointConfiguration configuration) =>
-                            new EndpointInformation(registry.HandledRemoteTessageTypeIds(), configuration));
+      registrar.ForTuery((EndpointInformationTuery _, TypeMapper _, ITessageHandlerRegistry tessagingRegistry, ITypermediaHandlerRegistry typermediaRegistry, EndpointConfiguration configuration) =>
+                            new EndpointInformation(tessagingRegistry.HandledRemoteTessageTypeIds().Concat(typermediaRegistry.HandledRemoteTypermediaTypeIds()), configuration));
 
       registrar.ForTuery((NetworkTopologyTuery _, IEndpointRegistry endpointRegistry) =>
                             new NetworkTopology(endpointRegistry.ServerEndpointAddresses));

@@ -54,6 +54,7 @@ public static class DiContainerExtensions
                .TypeMapper()
                .DummyConfigurationParameterProvider()
                .TessageHandlerRegistry()
+               .TypermediaHandlerRegistry()
                .InMemoryTeventStoreTeventPublisher();
       setup(container.Register());
 

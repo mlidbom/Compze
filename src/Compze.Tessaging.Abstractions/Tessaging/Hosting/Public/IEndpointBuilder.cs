@@ -8,5 +8,6 @@ public interface IEndpointBuilder
 {
     IDependencyInjectionContainer Container { get; }
     EndpointConfiguration Configuration { get; }
-    TessageHandlerRegistrarWithDependencyInjectionSupport RegisterHandlers { get; }
+    TessageHandlerRegistrarWithDependencyInjectionSupport RegisterTessagingHandlers { get; }
+    TypermediaHandlerRegistrarWithDependencyInjectionSupport RegisterTypermediaHandlers { get; }
 }

@@ -32,16 +32,18 @@ class ServerEndpointBuilder : IEndpointBuilder, IAsyncDisposable, IDisposable
    public IDependencyInjectionContainer Container { get; }
 
    readonly ITessagesInFlightTracker _globalStateTracker;
-   readonly TessageHandlerRegistry _registry;
+   readonly TessageHandlerRegistry _tessagingRegistry;
+   readonly TypermediaHandlerRegistry _typermediaRegistry;
    readonly IEndpointHost _host;
    public EndpointConfiguration Configuration { get; }
 
-   public TessageHandlerRegistrarWithDependencyInjectionSupport RegisterHandlers { get; }
+   public TessageHandlerRegistrarWithDependencyInjectionSupport RegisterTessagingHandlers { get; }
+   public TypermediaHandlerRegistrarWithDependencyInjectionSupport RegisterTypermediaHandlers { get; }
 
    public IEndpoint Build()
    {
       SetupContainer();
-      TessageTypesInternal.RegisterHandlers(RegisterHandlers);
+      TessageTypesInternal.RegisterHandlers(RegisterTypermediaHandlers);
       var serviceLocator = Container.ServiceLocator;
       var endpoint = new Endpoint(serviceLocator,
                                   serviceLocator.Resolve<ITessagingRouter>(),
@@ -59,8 +61,11 @@ class ServerEndpointBuilder : IEndpointBuilder, IAsyncDisposable, IDisposable
 
       Configuration = configuration;
 
-      _registry = new TessageHandlerRegistry(TypeMapper.Instance);
-      RegisterHandlers = new TessageHandlerRegistrarWithDependencyInjectionSupport(_registry, new LazyCE<IServiceLocator>(() => Container.ServiceLocator));
+      _tessagingRegistry = new TessageHandlerRegistry(TypeMapper.Instance);
+      _typermediaRegistry = new TypermediaHandlerRegistry(TypeMapper.Instance);
+      var serviceLocator = new LazyCE<IServiceLocator>(() => Container.ServiceLocator);
+      RegisterTessagingHandlers = new TessageHandlerRegistrarWithDependencyInjectionSupport(_tessagingRegistry, serviceLocator);
+      RegisterTypermediaHandlers = new TypermediaHandlerRegistrarWithDependencyInjectionSupport(_typermediaRegistry, serviceLocator);
    }
 
    void SetupContainer()
@@ -98,7 +103,8 @@ class ServerEndpointBuilder : IEndpointBuilder, IAsyncDisposable, IDisposable
          Singleton.For<EndpointId>().Instance(Configuration.Id),
          Singleton.For<IDependencyInjectionContainer>().Instance(Container),
          Singleton.For<EndpointConfiguration>().Instance(Configuration),
-         Singleton.For<ITessageHandlerRegistry, ITessageHandlerRegistrar>().Instance(_registry)
+         Singleton.For<ITessageHandlerRegistry, ITessageHandlerRegistrar>().Instance(_tessagingRegistry),
+         Singleton.For<ITypermediaHandlerRegistry, ITypermediaHandlerRegistrar>().Instance(_typermediaRegistry)
       );
    }
 

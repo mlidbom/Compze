@@ -28,7 +28,7 @@ public class When_scheduling_tommands_to_be_sent_in_the_future : UniversalTestBa
          new EndpointId(Guid.Parse("17ED9DF9-33A8-4DF8-B6EC-6ED97AB2030B")),
          builder =>
          {
-            builder.RegisterHandlers.ForTommand<ScheduledTommand>(_ => _receivedTommandGate.AwaitPassThrough());
+            builder.RegisterTessagingHandlers.ForTommand<ScheduledTommand>(_ => _receivedTommandGate.AwaitPassThrough());
          });
    }
 

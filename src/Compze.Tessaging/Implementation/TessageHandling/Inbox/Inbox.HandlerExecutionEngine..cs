@@ -15,7 +15,8 @@ public partial class Inbox
    // ReSharper disable once ArrangeTypeMemberModifiers Resharper is confused. If I remove Internal my code stops compiling.
    public partial class HandlerExecutionEngine(
       ITessagesInFlightTracker globalStateTracker,
-      ITessageHandlerRegistry handlerRegistry,
+      ITessageHandlerRegistry tessagingHandlerRegistry,
+      ITypermediaHandlerRegistry typermediaHandlerRegistry,
       IServiceLocator serviceLocator,
       ITessageStorage storage,
       ITaskRunner taskRunner,
@@ -29,7 +30,7 @@ public partial class Inbox
          new TommandsAndTeventHandlersDoNotRunInParallelWithEachOtherInTheSameEndpoint()
       ];
 
-      readonly Coordinator _coordinator = new(globalStateTracker, taskRunner, storage, serviceLocator, handlerRegistry, endpointId);
+      readonly Coordinator _coordinator = new(globalStateTracker, taskRunner, storage, serviceLocator, tessagingHandlerRegistry, typermediaHandlerRegistry, endpointId);
       readonly ITaskRunner _taskRunner = taskRunner;
 
       internal void Enqueue(TransportTessage.InComing transportTessage)
