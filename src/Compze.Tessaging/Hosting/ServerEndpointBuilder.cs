@@ -5,6 +5,7 @@ using Compze.Tessaging.Abstractions.Tessaging.Hosting.Public;
 using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 using Compze.Typermedia;
+using Compze.Core.Tessaging.Teventive.Infrastructure.Validation;
 using Compze.Tessaging.Configuration;
 using Compze.Tessaging.Implementation;
 using Compze.Tessaging.Implementation.Abstractions;
@@ -64,7 +65,9 @@ class ServerEndpointBuilder : IEndpointBuilder, IAsyncDisposable, IDisposable
       Configuration = configuration;
 
       _tessagingRegistry = new TessageHandlerRegistry(TypeMapper.Instance);
-      _typermediaRegistry = new TypermediaHandlerRegistry(TypeMapper.Instance);
+      _typermediaRegistry = new TypermediaHandlerRegistry(TypeMapper.Instance,
+                                                          typeValidator: TessageTypeInspector.AssertValid,
+                                                          isInternalTessageType: TessageTypesInternal.IsInternalTessageType);
       var serviceLocator = new LazyCE<IServiceLocator>(() => Container.ServiceLocator);
       RegisterTessagingHandlers = new TessageHandlerRegistrarWithDependencyInjectionSupport(_tessagingRegistry, serviceLocator);
       RegisterTypermediaHandlers = new TypermediaHandlerRegistrarWithDependencyInjectionSupport(_typermediaRegistry, serviceLocator);

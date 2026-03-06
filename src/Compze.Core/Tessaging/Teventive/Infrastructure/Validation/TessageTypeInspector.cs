@@ -36,7 +36,7 @@ public partial class TessageTypeInspector
    }
 
    static IReadOnlySet<Type> _successfullyInspectedTypes = new HashSet<Type>();
-   internal static void AssertValid(Type type)
+   public static void AssertValid(Type type)
    {
       if(_successfullyInspectedTypes.Contains(type)) return;
 

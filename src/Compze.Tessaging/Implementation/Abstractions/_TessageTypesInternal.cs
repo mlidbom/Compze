@@ -25,6 +25,8 @@ public static class TessageTypesInternal
    internal interface ITessage;
 #pragma warning restore CA1040
 
+   public static bool IsInternalTessageType(Type type) => type.IsAssignableTo(typeof(ITessage));
+
    internal class EndpointInformationTuery : TessageTypesInternal.ITessage, IRemotableTuery<EndpointInformation>;
 
    // ReSharper disable once MemberCanBeInternal — Serialized across assemblies via Newtonsoft reflection

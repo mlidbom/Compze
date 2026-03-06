@@ -1,28 +1,16 @@
 using Compze.Abstractions.Refactoring.Naming.Internal;
 using Compze.Abstractions.Tessaging.Public;
-using Compze.Typermedia;
-using Compze.Core.Tessaging.Teventive.Infrastructure.Validation;
-using Compze.Tessaging.Implementation.Abstractions;
-using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
-using Compze.DependencyInjection;
-using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Threading;
 using Compze.Threading.ResourceAccess;
-using Compze.Typermedia.HandlerRegistration;
 
-namespace Compze.Tessaging.Implementation.TessageHandling.Dispatching;
+namespace Compze.Typermedia.HandlerRegistration;
 
-public static class TypermediaHandlerRegistryRegistrar
-{
-   public static IComponentRegistrar TypermediaHandlerRegistry(this IComponentRegistrar registrar)
-      => registrar.Register(Singleton.For<ITypermediaHandlerRegistrar, ITypermediaHandlerRegistry, TypermediaHandlerRegistry>()
-                                     .CreatedBy((ITypeMapper typeMapper) => new TypermediaHandlerRegistry(typeMapper)));
-}
-
-sealed class TypermediaHandlerRegistry(ITypeMapper typeMapper) : ITypermediaHandlerRegistrar, ITypermediaHandlerRegistry
+public class TypermediaHandlerRegistry(ITypeMapper typeMapper, Action<Type> typeValidator, Func<Type, bool> isInternalTessageType) : ITypermediaHandlerRegistrar, ITypermediaHandlerRegistry
 {
    readonly ITypeMapper _typeMapper = typeMapper;
+   readonly Action<Type> _typeValidator = typeValidator;
+   readonly Func<Type, bool> _isInternalTessageType = isInternalTessageType;
    IReadOnlyDictionary<Type, HandlerWithResultRegistration> _tueryHandlers = new Dictionary<Type, HandlerWithResultRegistration>();
    IReadOnlyDictionary<Type, HandlerWithResultRegistration> _tommandHandlersReturningResults = new Dictionary<Type, HandlerWithResultRegistration>();
 
@@ -30,7 +18,7 @@ sealed class TypermediaHandlerRegistry(ITypeMapper typeMapper) : ITypermediaHand
 
    ITypermediaHandlerRegistrar ITypermediaHandlerRegistrar.ForTommand<TTommand, TResult>(Func<TTommand, TResult> handler) => _monitor.Locked(() =>
    {
-      TessageInspector.AssertValid<TTommand>();
+      _typeValidator(typeof(TTommand));
 
       OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _tommandHandlersReturningResults, typeof(TTommand), new TommandHandlerWithResultRegistration<TTommand, TResult>(handler));
       return this;
@@ -38,7 +26,7 @@ sealed class TypermediaHandlerRegistry(ITypeMapper typeMapper) : ITypermediaHand
 
    ITypermediaHandlerRegistrar ITypermediaHandlerRegistrar.ForTuery<TTuery, TResult>(Func<TTuery, TResult> handler) => _monitor.Locked(() =>
    {
-      TessageInspector.AssertValid<TTuery>();
+      _typeValidator(typeof(TTuery));
 
       OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _tueryHandlers, typeof(TTuery), new TueryHandlerRegistration<TTuery, TResult>(handler));
       return this;
@@ -73,7 +61,7 @@ sealed class TypermediaHandlerRegistry(ITypeMapper typeMapper) : ITypermediaHand
       var handledTypes = _tommandHandlersReturningResults.Keys
                                                          .Concat(_tueryHandlers.Keys)
                                                          .Where(tessageType => tessageType.Implements<IRemotableTessage>())
-                                                         .Where(tessageType => !tessageType.Implements<TessageTypesInternal.ITessage>())
+                                                         .Where(tessageType => !_isInternalTessageType(tessageType))
                                                          .ToHashSet();
 
       var remoteResultTypes = _tommandHandlersReturningResults

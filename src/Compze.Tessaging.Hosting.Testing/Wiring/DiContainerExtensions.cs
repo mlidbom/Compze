@@ -2,8 +2,11 @@ using Compze.DocumentDb.Wiring;
 using Compze.Abstractions.Refactoring.Naming.Internal.Implementation;
 using Compze.Abstractions.Wiring.Testing.Internal;
 using Compze.Tessaging.Implementation;
+using Compze.Tessaging.Implementation.Abstractions;
 using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
+using Compze.Core.Tessaging.Teventive.Infrastructure.Validation;
 using Compze.Tessaging.Teventive.TeventStore.Wiring;
+using Compze.Typermedia.HandlerRegistration;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.DependencyInjection.Microsoft;
@@ -54,7 +57,8 @@ public static class DiContainerExtensions
                .TypeMapper()
                .DummyConfigurationParameterProvider()
                .TessageHandlerRegistry()
-               .TypermediaHandlerRegistry()
+               .TypermediaHandlerRegistry(typeValidator: TessageTypeInspector.AssertValid,
+                                          isInternalTessageType: TessageTypesInternal.IsInternalTessageType)
                .InMemoryTeventStoreTeventPublisher();
       setup(container.Register());
 
