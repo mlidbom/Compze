@@ -46,6 +46,8 @@ if (-not $DryRun) {
 $nupkgsPath = "nupkgs"
 
 $allPackages = GetPackagesFromNupkgFiles $nupkgsPath
+# Convention: packages with version 0.0.0-not-published-to-nuget are packable for local consumption only — never publish to NuGet
+$allPackages = $allPackages | Where-Object { $_.Version -ne '0.0.0-not-published-to-nuget' }
 $newPackages = PackagesWithNoMatchingReleaseTag $allPackages
 $newPackages = GetAllReleaseDetails $newPackages
 
