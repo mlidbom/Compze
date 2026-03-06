@@ -1,5 +1,4 @@
 using Compze.DocumentDb.Public;
-using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Typermedia;
 using Compze.Typermedia.HandlerRegistration;
@@ -45,7 +44,7 @@ public partial class DocumentDbApi
          internal DeleteDocument(string key) => Key = key;
          string Key { get; }
 
-         internal static void RegisterHandler(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTommand(
+         internal static void RegisterHandler(TypermediaHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTommand(
             (DeleteDocument<TDocument> command, IDocumentDbUpdater updater) => updater.Delete<TDocument>(command.Key));
       }
 
@@ -60,18 +59,18 @@ public partial class DocumentDbApi
          string Key { get; }
          TDocument Entity { get; }
 
-         internal static void RegisterHandler(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTommand(
+         internal static void RegisterHandler(TypermediaHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTommand(
             (SaveDocument<TDocument> command, IDocumentDbUpdater updater) => updater.Save(command.Key, command.Entity));
       }
    }
 
-   public static void HandleDocumentType<TDocument>(TessageHandlerRegistrarWithDependencyInjectionSupport tessagingRegistrar, TypermediaHandlerRegistrarWithDependencyInjectionSupport typermediaRegistrar) where TDocument : class
+   public static void HandleDocumentType<TDocument>(TypermediaHandlerRegistrarWithDependencyInjectionSupport typermediaRegistrar) where TDocument : class
    {
       TueryApi.TryGetDocument<TDocument>.RegisterHandler(typermediaRegistrar);
       TueryApi.GetReadonlyCopyOfDocument<TDocument>.RegisterHandler(typermediaRegistrar);
       TueryApi.GetDocumentForUpdate<TDocument>.RegisterHandler(typermediaRegistrar);
-      Tommand.SaveDocument<TDocument>.RegisterHandler(tessagingRegistrar);
-      Tommand.DeleteDocument<TDocument>.RegisterHandler(tessagingRegistrar);
+      Tommand.SaveDocument<TDocument>.RegisterHandler(typermediaRegistrar);
+      Tommand.DeleteDocument<TDocument>.RegisterHandler(typermediaRegistrar);
    }
 
 }

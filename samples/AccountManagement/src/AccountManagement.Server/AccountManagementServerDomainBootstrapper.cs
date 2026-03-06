@@ -30,8 +30,8 @@ public static class AccountManagementServerDomainBootstrapper
              .HandleTaggregate<Account, IAccountTevent>();
 
       builder.RegisterDocumentDb()
-             .HandleDocumentType<TeventStoreApi.TueryApi.TaggregateLink<Account>>(builder.RegisterTessagingHandlers, builder.RegisterTypermediaHandlers)
-             .HandleDocumentType<AccountStatistics.SingletonStatisticsQueryModel>(builder.RegisterTessagingHandlers, builder.RegisterTypermediaHandlers);
+             .HandleDocumentType<TeventStoreApi.TueryApi.TaggregateLink<Account>>(builder.RegisterTypermediaHandlers)
+             .HandleDocumentType<AccountStatistics.SingletonStatisticsQueryModel>(builder.RegisterTypermediaHandlers);
    }
 
    static void RegisterHandlers(IEndpointBuilder builder)

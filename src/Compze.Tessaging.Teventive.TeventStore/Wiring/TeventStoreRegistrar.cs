@@ -1,6 +1,5 @@
 using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Tessaging.Abstractions.Tessaging.Hosting.Public;
-using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Typermedia;
 using Compze.Core.Tessaging.Teventive.Internal.Implementation;
 using Compze.Core.Tessaging.Teventive.Public;
@@ -22,7 +21,7 @@ public static class TeventStoreRegistrar
    static TeventStoreRegistrationBuilder RegisterTeventStore(this IEndpointBuilder @this, IReadOnlyList<ITeventMigration> migrations)
    {
       @this.Container.Register().TeventStore(@this.Configuration.ConnectionStringName, migrations);
-      return new TeventStoreRegistrationBuilder(@this.RegisterTessagingHandlers, @this.RegisterTypermediaHandlers);
+      return new TeventStoreRegistrationBuilder(@this.RegisterTypermediaHandlers);
    }
 
    public static IComponentRegistrar TeventStore(this IComponentRegistrar registrar, string connectionName) =>
@@ -49,11 +48,9 @@ public static class TeventStoreRegistrar
 
 public class TeventStoreRegistrationBuilder
 {
-   readonly TessageHandlerRegistrarWithDependencyInjectionSupport _tessagingRegistrar;
    readonly TypermediaHandlerRegistrarWithDependencyInjectionSupport _typermediaRegistrar;
-   internal TeventStoreRegistrationBuilder(TessageHandlerRegistrarWithDependencyInjectionSupport tessagingRegistrar, TypermediaHandlerRegistrarWithDependencyInjectionSupport typermediaRegistrar)
+   internal TeventStoreRegistrationBuilder(TypermediaHandlerRegistrarWithDependencyInjectionSupport typermediaRegistrar)
    {
-      _tessagingRegistrar = tessagingRegistrar;
       _typermediaRegistrar = typermediaRegistrar;
    }
 
@@ -61,7 +58,7 @@ public class TeventStoreRegistrationBuilder
       where TTaggregate : class, ITaggregate<TTevent>
       where TTevent : ITaggregateTevent
    {
-      TeventStoreApi.RegisterHandlersForTaggregate<TTaggregate, TTevent>(_tessagingRegistrar, _typermediaRegistrar);
+      TeventStoreApi.RegisterHandlersForTaggregate<TTaggregate, TTevent>(_typermediaRegistrar);
       return this;
    }
 }

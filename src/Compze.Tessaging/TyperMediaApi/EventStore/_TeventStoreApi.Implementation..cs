@@ -1,6 +1,5 @@
 using Compze.Abstractions.Public;
 using Compze.Abstractions.Tessaging.Public;
-using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Typermedia;
 using Compze.Core.Tessaging.Teventive.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
@@ -84,15 +83,15 @@ public partial class TeventStoreApi
          internal SaveTaggregate(TTaggregate entity) => Entity = entity;
          public TTaggregate Entity { get; private set; }
 
-         internal static void RegisterHandler(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTommand((SaveTaggregate<TTaggregate> tommand, ITeventStoreUpdater updater) => updater.Save(tommand.Entity));
+         internal static void RegisterHandler(TypermediaHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTommand((SaveTaggregate<TTaggregate> tommand, ITeventStoreUpdater updater) => updater.Save(tommand.Entity));
       }
    }
 
-   public static void RegisterHandlersForTaggregate<TTaggregate, TTevent>(TessageHandlerRegistrarWithDependencyInjectionSupport tessagingRegistrar, TypermediaHandlerRegistrarWithDependencyInjectionSupport typermediaRegistrar)
+   public static void RegisterHandlersForTaggregate<TTaggregate, TTevent>(TypermediaHandlerRegistrarWithDependencyInjectionSupport typermediaRegistrar)
       where TTaggregate : class, ITaggregate<TTevent>
       where TTevent : ITaggregateTevent
    {
-      TommandApi.SaveTaggregate<TTaggregate>.RegisterHandler(tessagingRegistrar);
+      TommandApi.SaveTaggregate<TTaggregate>.RegisterHandler(typermediaRegistrar);
       TueryApi.TaggregateLink<TTaggregate>.RegisterHandler(typermediaRegistrar);
       TueryApi.GetReadonlyCopyOfTaggregate<TTaggregate>.RegisterHandler(typermediaRegistrar);
       TueryApi.GetReadonlyCopyOfTaggregateVersion<TTaggregate>.RegisterHandler(typermediaRegistrar);

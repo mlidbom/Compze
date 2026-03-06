@@ -6,7 +6,7 @@ namespace Compze.Typermedia.HandlerRegistration;
 
 public static class TypermediaHandlerRegistryRegistrar
 {
-   public static IComponentRegistrar TypermediaHandlerRegistry(this IComponentRegistrar registrar, Action<Type> typeValidator, Func<Type, bool> isInternalTessageType)
+   public static IComponentRegistrar TypermediaHandlerRegistry(this IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<ITypermediaHandlerRegistrar, ITypermediaHandlerRegistry, TypermediaHandlerRegistry>()
-                                     .CreatedBy((ITypeMapper typeMapper) => new TypermediaHandlerRegistry(typeMapper, typeValidator, isInternalTessageType)));
+                                     .CreatedBy((ITypeMapper typeMapper) => new TypermediaHandlerRegistry(typeMapper)));
 }

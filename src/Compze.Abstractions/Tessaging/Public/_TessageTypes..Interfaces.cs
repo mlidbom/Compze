@@ -37,6 +37,8 @@ public interface ICreateMyOwnResultTuery<out TResult> : ITuery<TResult>
 //The concrete types implementing the interfaces might have been remotable, making for lost guarantees.
 //With the strictly local message types we can implement behavioral guarantees in frameworks, forbidding nonsensical combinations.
 public interface IStrictlyLocalTessage;
+///<summary>Marker interface for infrastructure-internal tessages that should be excluded from remote route advertisement.</summary>
+public interface IInternalInfrastructureTessage;
 //todo: Should the commented out type below exist?
 //public interface IStrictlyLocalTevent : ITevent, IStrictlyLocalTessage;
 public interface IStrictlyLocalTommand : ITommand, IMustBeSentTransactionally, IStrictlyLocalTessage;

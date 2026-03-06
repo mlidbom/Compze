@@ -1,6 +1,6 @@
 using System.Transactions;
 using Compze.Abstractions.Tessaging.Public;
-using Compze.Core.Tessaging.Typermedia.Infrastructure.Validation;
+using Compze.Typermedia.Validation;
 
 namespace Compze.Core.Tessaging.Teventive.Infrastructure.Validation;
 

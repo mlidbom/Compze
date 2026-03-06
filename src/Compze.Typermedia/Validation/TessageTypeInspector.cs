@@ -4,7 +4,7 @@ using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Threading;
 using Compze.Threading.ResourceAccess;
 
-namespace Compze.Core.Tessaging.Teventive.Infrastructure.Validation;
+namespace Compze.Typermedia.Validation;
 
 public partial class TessageTypeInspector
 {
@@ -22,7 +22,7 @@ public partial class TessageTypeInspector
    static readonly IMonitor MonitorCE = IMonitor.New();
 
    static IReadOnlySet<Type> _successfullyInspectedSubscribableTypes = new HashSet<Type>();
-   internal static void AssertValidForSubscription(Type type)
+   public static void AssertValidForSubscription(Type type)
    {
       if(_successfullyInspectedSubscribableTypes.Contains(type)) return;
 
@@ -50,8 +50,10 @@ public partial class TessageTypeInspector
       });
    }
 
-   static void AssertTypeIsValidInternal(Type type) =>
-      TessageTypeDesignRules.ForEach(rule => rule.AssertFulfilledBy(type));
+   static void AssertTypeIsValidInternal(Type type)
+   {
+      foreach(var rule in TessageTypeDesignRules) rule.AssertFulfilledBy(type);
+   }
 
    public abstract class TessageTypeDesignRule
    {

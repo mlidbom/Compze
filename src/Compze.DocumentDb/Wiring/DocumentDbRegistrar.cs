@@ -1,5 +1,4 @@
 using Compze.DocumentDb.Private;
-using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Typermedia;
 using Compze.Typermedia.HandlerRegistration;
@@ -19,9 +18,9 @@ public static class DocumentDbRegistrar
 
 public class DocumentDbRegistrationBuilder
 {
-   public DocumentDbRegistrationBuilder HandleDocumentType<TDocument>(TessageHandlerRegistrarWithDependencyInjectionSupport tessagingRegistrar, TypermediaHandlerRegistrarWithDependencyInjectionSupport typermediaRegistrar) where TDocument : class
+   public DocumentDbRegistrationBuilder HandleDocumentType<TDocument>(TypermediaHandlerRegistrarWithDependencyInjectionSupport typermediaRegistrar) where TDocument : class
    {
-      DocumentDbApi.HandleDocumentType<TDocument>(tessagingRegistrar, typermediaRegistrar);
+      DocumentDbApi.HandleDocumentType<TDocument>(typermediaRegistrar);
       return this;
    }
 }

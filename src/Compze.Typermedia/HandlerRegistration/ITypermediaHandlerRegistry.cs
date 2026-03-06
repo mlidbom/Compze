@@ -5,6 +5,7 @@ namespace Compze.Typermedia.HandlerRegistration;
 
 public interface ITypermediaHandlerRegistry
 {
+   Action<ITommand> GetVoidTommandHandler(ITommand tommand);
    Func<ITommand, object> GetTommandHandlerWithReturnValue(Type tommandType);
    Func<ITuery<object>, object> GetTueryHandler(Type tueryType);
 

@@ -4,7 +4,6 @@ using Compze.Abstractions.Wiring.Testing.Internal;
 using Compze.Tessaging.Implementation;
 using Compze.Tessaging.Implementation.Abstractions;
 using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
-using Compze.Core.Tessaging.Teventive.Infrastructure.Validation;
 using Compze.Tessaging.Teventive.TeventStore.Wiring;
 using Compze.Typermedia.HandlerRegistration;
 using Compze.DependencyInjection;
@@ -57,8 +56,7 @@ public static class DiContainerExtensions
                .TypeMapper()
                .DummyConfigurationParameterProvider()
                .TessageHandlerRegistry()
-               .TypermediaHandlerRegistry(typeValidator: TessageTypeInspector.AssertValid,
-                                          isInternalTessageType: TessageTypesInternal.IsInternalTessageType)
+               .TypermediaHandlerRegistry()
                .InMemoryTeventStoreTeventPublisher();
       setup(container.Register());
 

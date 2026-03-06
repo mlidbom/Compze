@@ -1,8 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using Compze.Abstractions.Tessaging.Public;
-using Compze.Core.Tessaging.Typermedia.Public;
 
-namespace Compze.Core.Tessaging.Typermedia.Infrastructure.Validation;
+namespace Compze.Typermedia.Validation;
 
 public static class TommandValidator
 {

@@ -1,6 +1,6 @@
 using System.Reflection;
 using Compze.Abstractions.Refactoring.Naming.Internal;
-using Compze.Core.Tessaging.Teventive.Infrastructure.Validation;
+using Compze.Typermedia.Validation;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
@@ -105,7 +105,7 @@ static class TaggregateTypeValidator<TDomainClass, TTeventImplementation, TTeven
 
          typeMapper.AssertMappingsExistFor(teventTypesToInspect.Append(typeof(TTaggregate)));
 
-         TessageInspector.AssertValid(teventTypesToInspect);
+         foreach(var teventType in teventTypesToInspect) TessageTypeInspector.AssertValid(teventType);
       }
 
       static IReadOnlyList<Type> GetAllInheritingClassesOrInterfaces(Type type) => type.Assembly.GetTypes()

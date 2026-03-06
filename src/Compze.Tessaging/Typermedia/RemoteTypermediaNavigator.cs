@@ -1,4 +1,5 @@
 using Compze.Abstractions.Tessaging.Public;
+using Compze.Typermedia.Validation;
 using Compze.Core.Tessaging.Teventive.Infrastructure.Validation;
 using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 using Compze.Tessaging.Implementation.Transport.Client.Internal;
