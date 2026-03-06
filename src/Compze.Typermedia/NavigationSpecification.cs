@@ -1,8 +1,7 @@
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
-using Compze.Tessaging.Abstractions.Tessaging.Typermedia.Public;
 
-namespace Compze.Core.Tessaging.Typermedia.Public;
+namespace Compze.Typermedia;
 
 public abstract class NavigationSpecification
 {

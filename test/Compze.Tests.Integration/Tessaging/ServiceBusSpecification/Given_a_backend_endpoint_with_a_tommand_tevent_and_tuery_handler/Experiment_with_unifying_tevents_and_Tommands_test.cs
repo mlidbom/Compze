@@ -5,8 +5,6 @@ using Compze.Abstractions.Tessaging.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.Public;
-using Compze.Core.Tessaging.Typermedia.Public;
-using Compze.Tessaging.Abstractions.Tessaging.Typermedia.Public;
 using Compze.Tessaging.Hosting.Testing.Tessaging;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.Tessaging.Teventive.TeventStore.Wiring;
@@ -16,6 +14,7 @@ using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Abstractions.Public;
 using Compze.Must;
+using Compze.Typermedia;
 
 #pragma warning disable CA1715 //Interfaces without I prefix
 // ReSharper disable MemberCanBeInternal for testing

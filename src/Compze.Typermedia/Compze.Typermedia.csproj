@@ -5,4 +5,18 @@
     <Version>0.1.0-alpha.1</Version>
     <Description>Core Typermedia infrastructure: handler registry, handler dispatch, and request handling for type-routed request-response APIs.</Description>
   </PropertyGroup>
+  <!-- Compze.Abstractions — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Abstractions)' == 'true'">
+    <PackageReference Include="Compze.Abstractions" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Abstractions)' != 'true'">
+    <ProjectReference Include="..\Compze.Abstractions\Compze.Abstractions.csproj" />
+  </ItemGroup>
+  <!-- Compze.Internals.SystemCE.Core — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_SystemCE_Core)' == 'true'">
+    <PackageReference Include="Compze.Internals.SystemCE.Core" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_SystemCE_Core)' != 'true'">
+    <ProjectReference Include="..\Compze.Internals.SystemCE.Core\Compze.Internals.SystemCE.Core.csproj" />
+  </ItemGroup>
 </Project>

@@ -1,6 +1,6 @@
 using Compze.Abstractions.Tessaging.Public;
 
-namespace Compze.Tessaging.Abstractions.Tessaging.Typermedia.Public;
+namespace Compze.Typermedia;
 
 public interface IRemoteTypermediaNavigator
 {

@@ -5,9 +5,8 @@ using AccountManagement.Domain;
 using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Tessaging.Abstractions.Tessaging.Hosting.Public;
 using Compze.Abstractions.Tessaging.Public;
-using Compze.Core.Tessaging.Typermedia.Public;
-using Compze.Tessaging.Abstractions.Tessaging.Typermedia.Public;
 using Compze.Internals.SystemCE;
+using Compze.Typermedia;
 
 namespace AccountManagement.API;
 

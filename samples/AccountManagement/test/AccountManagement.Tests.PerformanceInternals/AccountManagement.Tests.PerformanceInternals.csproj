@@ -60,4 +60,11 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Threading)' != 'true'">
     <ProjectReference Include="..\..\..\..\src\Compze.Threading\Compze.Threading.csproj" />
   </ItemGroup>
+  <!-- Compze.Typermedia — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Typermedia)' == 'true'">
+    <PackageReference Include="Compze.Typermedia" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Typermedia)' != 'true'">
+    <ProjectReference Include="..\..\..\..\src\Compze.Typermedia\Compze.Typermedia.csproj" />
+  </ItemGroup>
 </Project>

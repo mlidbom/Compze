@@ -1,8 +1,7 @@
 using AccountManagement.API;
-using Compze.Core.Tessaging.Typermedia.Public;
-using Compze.Tessaging.Abstractions.Tessaging.Typermedia.Public;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Compze.Typermedia;
 
 namespace AccountManagement.UI.MVC.Views.Login;
 

@@ -1,5 +1,4 @@
 using Compze.Core.Tessaging.Transport.Internal;
-using Compze.Tessaging.Abstractions.Tessaging.Typermedia.Public;
 using Compze.Tessaging.Configuration;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tessaging.Implementation.Transport.Client.Implementation.Universal;
@@ -9,6 +8,7 @@ using Compze.Abstractions.Refactoring.Naming.Internal.Implementation;
 using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
+using Compze.Typermedia;
 
 namespace Compze.Tessaging.Hosting.Testing.Tessaging;
 

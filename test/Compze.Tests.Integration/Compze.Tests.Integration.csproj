@@ -94,6 +94,13 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Threading_Testing)' != 'true'">
     <ProjectReference Include="..\..\src\Compze.Threading.Testing\Compze.Threading.Testing.csproj" />
   </ItemGroup>
+  <!-- Compze.Typermedia — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Typermedia)' == 'true'">
+    <PackageReference Include="Compze.Typermedia" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Typermedia)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.Typermedia\Compze.Typermedia.csproj" />
+  </ItemGroup>
   <!-- Compze.Underscore — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Underscore)' == 'true'">
     <PackageReference Include="Compze.Underscore" Version="*-*" />

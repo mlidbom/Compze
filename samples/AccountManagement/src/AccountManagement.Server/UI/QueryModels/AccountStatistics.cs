@@ -4,10 +4,10 @@ using Compze.Abstractions.Public;
 using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Tessaging.Abstractions.Tessaging.Hosting.Public;
 using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
-using Compze.Core.Tessaging.Typermedia.Public;
-using Compze.Tessaging.Abstractions.Tessaging.Typermedia.Public;
 using Compze.Tessaging.Teventive.TeventStore.QueryModels.SelfGeneratingQueryModels;
 using Compze.DependencyInjection;
+using Compze.Tessaging.Abstractions.Tessaging.Typermedia.Public;
+using Compze.Typermedia;
 
 namespace AccountManagement.UI.QueryModels;
 

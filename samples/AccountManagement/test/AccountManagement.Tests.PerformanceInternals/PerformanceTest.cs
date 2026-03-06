@@ -2,7 +2,6 @@ using AccountManagement.API;
 using AccountManagement.Domain.Registration;
 using AccountManagement.UserStories.Scenarios;
 using Compze.Core.Tessaging.Hosting.Public;
-using Compze.Core.Tessaging.Typermedia.Public;
 using Compze.Abstractions.Wiring.Testing.Internal;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Performance;
@@ -16,6 +15,7 @@ using System.Collections.Concurrent;
 using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 using Compze.Must;
 using AccountId = AccountManagement.Domain.AccountId;
+using Compze.Typermedia;
 
 namespace AccountManagement;
 

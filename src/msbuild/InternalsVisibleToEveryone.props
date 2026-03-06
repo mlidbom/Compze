@@ -41,6 +41,14 @@
     <InternalsVisibleTo Include="Compze.Threading.Testing" />
     <InternalsVisibleTo Include="Compze.Threading.Testing.Specifications" />
     <InternalsVisibleTo Include="Compze.Threading.Tests" />
+    <InternalsVisibleTo Include="Compze.Typermedia" />
+    <InternalsVisibleTo Include="Compze.Typermedia.Client" />
+    <InternalsVisibleTo Include="Compze.Typermedia.Hosting" />
+    <InternalsVisibleTo Include="Compze.Typermedia.Hosting.AspNetCore" />
+    <InternalsVisibleTo Include="Compze.Typermedia.Hosting.Testing" />
+    <InternalsVisibleTo Include="Compze.Typermedia.Specifications" />
+    <InternalsVisibleTo Include="Compze.Typermedia.Client.Specifications" />
+    <InternalsVisibleTo Include="Compze.Typermedia.Hosting.Specifications" />
     <InternalsVisibleTo Include="Compze.Underscore" />
     <InternalsVisibleTo Include="Compze.Underscore.Specifications" />
     <InternalsVisibleTo Include="Compze.DependencyInjection" />
