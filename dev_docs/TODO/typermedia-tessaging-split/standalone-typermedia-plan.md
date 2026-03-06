@@ -20,7 +20,7 @@ Typermedia is async request-response. What the current shared infrastructure pro
 | Server receiving | `Inbox.ExecuteAsync` → storage → engine queue → coordinator → dispatch | Handler invoked directly when request arrives |
 | Concurrency | Readers-writer lock across both paradigms | None needed — caller awaits, concurrency is the caller's responsibility |
 | Message storage | `Inbox.ITessageStorage` saves every message | None — no delivery tracking needed |
-| Discovery | `EndpointInformationTuery` / `NetworkTopologyTuery` through the shared inbox | Same mechanism but served by the new infrastructure |
+| Discovery | `NetworkTopologyTuery` → seed returns all addresses → `EndpointInformationTuery` per address → classify types. All flowing through the full handler pipeline. | Client provides addresses. Each endpoint exposes a transport-level info RPC (not a tuery). No topology query. |
 
 ## Design decisions
 
@@ -29,6 +29,7 @@ Typermedia is async request-response. What the current shared infrastructure pro
 - **No AtMostOnce naming**: The `AtMostOnce` distinction is a tessaging concern (vs exactly-once). Typermedia commands are just commands. The existing `IAtMostOnce*` type names get removed from the new infrastructure.
 - **Async throughout**: Handler invocation is `async Task<TResult>`, not synchronous.
 - **No code sharing**: The existing `TypermediaRouter`, `TypermediaConnection`, `ApiEndpointClient`, `RemoteTypermediaNavigator` stay in the tessaging codebase until Phase 3 deletes them. The new code is fully independent.
+- **No topology discovery**: The client knows which endpoint addresses it wants to talk to. Where it gets the addresses is its own business (config, environment, service discovery sidecar, hardcoded in tests). The framework doesn't model inter-endpoint awareness — that's a tessaging concern (for event distribution). Each endpoint answers "what types do I handle?" when asked, via a transport-level RPC. No `NetworkTopologyTuery`, no seed-based discovery.
 
 ## Project structure
 
@@ -69,13 +70,20 @@ Plus corresponding `.Specifications` projects. Own solution file. Details will b
 ### 1d. Typermedia endpoint hosting
 - `TypermediaEndpoint` — owns a handler registry + request handler + transport server
 - Registers handlers during setup (`ForTuery`/`ForTommand` fluent API)
-- Discovery: handle `EndpointInformationTuery` and `NetworkTopologyTuery` natively so clients can discover capabilities
+- Exposes endpoint info (handled type IDs) via a transport-level RPC:
+  - HTTP: `GET /typermedia/info` → JSON with endpoint ID + handled types
+  - In-memory: direct method call on the server object
+  - Not a tuery — not type-routed, not serialized through the handler pipeline
 
 ### 1e. Client side
-- New `TypermediaRouter` — client-side routing, maintains route tables per message type
-- New `TypermediaConnection` — represents a connection to one remote endpoint
-- New `RemoteTypermediaNavigator` — validates, delegates to router
-- New `TestClient` — `ConnectTo(address)` factory, returns navigator
+- New `TypermediaRouter` — client-side routing, maintains `Dictionary<Type, TypermediaConnection>` route table
+- `ConnectTo(params EndPointAddress[] addresses)` — for each address:
+  1. Call the endpoint's info RPC to get handled type IDs
+  2. Create a `TypermediaConnection` for that address
+  3. Populate route table: message type → connection
+- New `RemoteTypermediaNavigator` — validates message, looks up connection by type in router, delegates
+- New `TestClient` — wraps the above, `ConnectTo(addresses)` factory, exposes `.Navigator`
+- No seed address. No topology query. The client provides the addresses explicitly.
 
 ### 1f. Tests
 - New specifications projects
@@ -87,7 +95,7 @@ Plus corresponding `.Specifications` projects. Own solution file. Details will b
 ### 2a. Endpoint registration
 - Typermedia handlers (`ForTuery`, `ForTommand`) register with the new `TypermediaEndpoint`
 - Tessaging handlers (`ForTevent`, `ForTommand` for exactly-once) stay with the existing tessaging endpoint
-- An endpoint host may contain both a typermedia endpoint and a tessaging endpoint — they share a network address and DI container but have separate handler registries and request handling paths
+- Typermedia and tessaging endpoints are fully separate — separate addresses, separate hosting, separate lifecycles. No shared endpoint.
 
 ### 2b. Navigate to new infrastructure
 - `IRemoteTypermediaNavigator` implementation now goes through the new typermedia transport path
@@ -142,10 +150,6 @@ Plus corresponding `.Specifications` projects. Own solution file. Details will b
 - Delete typermedia-related extension methods from `RemoteHypermediaNavigatorRegistrar`
 - Delete `IAtMostOnceTypermediaTommand`, `IAtMostOnceTommand<TResult>` and related types from `Compze.Abstractions` (replaced by new typermedia message types)
 
-## Open questions
+## No open questions
 
-1. **Mixed endpoints**: After the split, a single address may host both a typermedia endpoint and a tessaging endpoint. Need to decide: same `IEndpointBuilder` that exposes two registrars, or two separate builders?
-
-2. **In-process navigator + tessaging**: `IInProcessTypermediaNavigator` is currently resolved within tessaging handler scopes (e.g., a tevent handler that reads data via a local tuery). After the split, tessaging handlers need access to the typermedia handler registry. This is the one legitimate cross-paradigm dependency — tessaging handlers consuming typermedia read APIs. Solution: `IInProcessTypermediaNavigator` is registered in the shared DI container, backed by the new typermedia registry.
-
-3. **Discovery tueries**: `EndpointInformationTuery` and `NetworkTopologyTuery` are currently internal typermedia tueries handled by the shared inbox. After the split, these are served by the new typermedia infrastructure. But tessaging's `TessagingRouter.ConnectAsync` also uses `EndpointInformationTuery` for route building. Solution: both routers connect to the typermedia endpoint for discovery — tessaging clients need a lightweight typermedia client just for bootstrap.
+All design questions have been resolved during planning.
