@@ -20,14 +20,15 @@ Compze is a .NET framework for building expressive domains through:
 
 ## Tech Stack
 
-- **Language**: C# (.NET 9+, see `src/global.json`)
-- **Testing**: xUnit
+- **Language**: C# (.NET 10, see `src/global.json`)
+- **Testing**: xUnit v3 (via `Compze.xUnit`, `Compze.xUnitBDD`, `Compze.xUnitMatrix`)
 - **Build System**: MSBuild (.NET SDK), solution file: `src/Compze.AllProjects.slnx`
+- **References**: FlexRef — auto-switches between `ProjectReference` and `PackageReference` depending on which projects are in the current solution (see `flexref.instructions.md`)
 - **Dependency Injection**: Pluggable (Microsoft DI, SimpleInjector)
 - **Persistence**: Pluggable (SQLite in-memory, SQL Server, PostgreSQL, MySQL)
 - **Serialization**: Pluggable (Newtonsoft)
 - **Transport**: Pluggable (Memory, AspNetCore)
-- **Documentation**: DocFX (site in `Websites/Website/`)
+- **Documentation**: DocFX (site in `src/Websites/Website/`)
 - **Development Tools**: PowerShell module (`DevScripts/Compze.psm1`)
 
 ## Build and Test
@@ -65,71 +66,31 @@ dotnet test src/Compze.AllProjects.slnx --no-build --filter "FullyQualifiedName~
 
 ## Project Structure
 
-The solution uses a **flat layout** — each project has its own top-level directory:
+Flat layout — each project has its own top-level directory:
 - Library projects: `src/<ProjectName>/<ProjectName>.csproj`
 - Test projects: `test/<ProjectName>/<ProjectName>.csproj`
+- Multiple `.slnx` files exist for different subsets; `Compze.AllProjects.slnx` is the monolith
 
-```
-src/
-  Compze.AllProjects.slnx                         # Solution file
-  Directory.Build.props                # Shared MSBuild properties (do not modify)
-  TestUsingPluggableComponentCombinations  # Active test config (do not modify)
-  Compze.Core/                         # Core abstractions
-  Compze.Internals.Serialization.Newtonsoft/     # Newtonsoft serialization
-  Compze.Internals.Sql.Common/                   # SQL persistence (common)
-  Compze.Internals.Sql.MicrosoftSql/             # SQL Server persistence
-  Compze.Internals.Sql.MySql/                    # MySQL persistence
-  Compze.Internals.Sql.PostgreSql/               # PostgreSQL persistence
-  Compze.Internals.Sql.Sqlite/                   # SQLite persistence
-  Compze.Tessaging/                    # Type-based messaging + Teventive
-  Compze.Tessaging.Hosting.AspNetCore/ # ASP.NET Core hosting
-  Compze.Tessaging.Hosting.Testing/    # Testing hosting
-  Compze.Tessaging.Teventive.TeventStore/ # TeventStore
-  Compze.Utilities/                    # Diverse utilities
-  Compze.DependencyInjection.Microsoft/   # Microsoft DI
-  Compze.DependencyInjection.SimpleInjector/ # SimpleInjector DI
-  Compze.Internals.Logging.Serilog/    # Serilog logging
-  Compze.DbPool/                       # Database pool for testing
-  Compze.Must/       # Must assertion library
-  Compze.Utilities.Testing.XUnit/      # xUnit testing infrastructure
-  Websites/Website/                    # DocFX documentation site
-test/
-  Compze.Tests.CodePolicies/           # Code policy enforcement tests
-  Compze.Tests.Common/                 # Shared test base classes
-  Compze.Tests.Infrastructure/         # Test infrastructure (XUnit attributes, UniversalTestBase)
-  Compze.Tests.Integration/            # Integration tests
-  Compze.Tests.Performance.Internals/  # Performance tests
-  Compze.Tests.ScratchPad/             # Scratch/experimental tests
-  Compze.Tests.Unit/                   # Unit tests
-  Compze.Tests.Unit.Internals/         # Unit tests (internals)
-  Compze.Utilities.Testing.XUnit.Tests/ # Testing framework tests
-  Compze.Utilities.Tests/              # Utility tests
-Samples/                             # Sample applications (AccountManagement)
-DevScripts/                            # PowerShell development automation module
-```
+Discover actual projects by listing `src/` and `test/` directories.
 
-### Naming Conventions
-- **Variables/Methods**: Use descriptive names; long names are acceptable if they improve clarity
+### Test Project Naming
+- **`.Specifications`** — BDD-style specification projects (preferred for new projects): `test/Compze.Contracts.Specifications/`
+- **`.Tests.`** — older integration/unit test projects: `test/Compze.Tests.Integration/`
 
 ## Pluggable Component Testing Pattern
 
 Tests that need to run against all configured pluggable component combinations use this pattern:
 
-1. **Inherit from `UniversalTestBase`** (in `Tests/Infrastructure/`)
-2. **Decorate test methods with `[PCT]`** (Pluggable Component Theory, in `Tests/Infrastructure/XUnit/`)
+1. **Inherit from `UniversalTestBase`** (in `test/Compze.Tests.Infrastructure/`)
+2. **Decorate test methods with `[PCT]`** (Pluggable Component Theory)
 3. **Access current combination via the static `TestEnv` class** — methods take zero parameters
-
 
 **Attribute variants:**
 - `[PCT]` — runs for all 4 component types (SqlLayer × DIContainer × Serializer × Transport)
 - `[PCTSerializer]` — only varies the Serializer component
 - `[PCTDIContainer]` — only varies the DIContainer component
 
-**DO NOT** write one test per pluggable component. The `[PCT]` mechanism automatically tests ALL enabled combinations.
-
-**Good examples to reference:**
-- Simple: `test/Compze.Tests.Integration/Infrastructure/PluggableComponentsTheoryTests.cs`
-- With service locator: `test/Compze.Tests.Common/Sql/DocumentDb/DocumentDbTestsBase.cs`
+**DO NOT** write one test per pluggable component. `[PCT]` automatically tests ALL enabled combinations.
 
 ## Teventive Programming
 - Events use interface inheritance for type-based routing
@@ -138,13 +99,13 @@ Tests that need to run against all configured pluggable component combinations u
 
 ## Documentation Co-Location
 - Documentation lives in `_docs/` folders next to the code it documents
-- Files are excluded from compilation via `Directory.Build.props` (`DefaultItemExcludes`)
-- Included as `None` items for visibility in Solution Explorer and refactoring participation
-- See `src/Documentation-CoLocation.README.md` for full details
+- See `src/Documentation-CoLocation.README.md` for details
 
-## DevScripts Commands
+## DevScripts
 
-Import: `Import-Module <repo>/DevScripts/Compze.psm1 -DisableNameChecking` (add to `$PROFILE`)
+Import: `Import-Module <repo>/DevScripts/Compze.psm1 -DisableNameChecking`
+
+Discover all commands: `C-Get-Commands` or `C-<Tab>` in PowerShell. Key commands:
 
 | Command | Purpose |
 |---------|---------|
@@ -152,18 +113,14 @@ Import: `Import-Module <repo>/DevScripts/Compze.psm1 -DisableNameChecking` (add 
 | `C-Build` | Build the solution |
 | `C-Clean` | Deep clean the solution |
 | `C-Create-Project` | Create new projects with proper structure |
-| `C-Validate-SolutionStructure` | Validate solution structure |
-| `C-Remove-RedundantInternalsVisibleTo` | Clean up unnecessary InternalsVisibleTo attributes |
-| `C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders` | Fix .csproj exclusions |
-| `C-Get-Commands` | List all available commands |
+| `C-Delete-Project` | Delete a project |
 | `C-Rename-Project` | Rename a project |
 | `C-Relocate-Project` | Move a project to a new location |
 | `C-Split-Project` | Split a project into multiple |
 | `C-Merge-Project` | Merge projects |
-
-Type `C-<Tab>` in PowerShell to discover all commands.
+| `C-FlexRef-Sync` | Sync FlexRef infrastructure after reference changes |
+| `C-Validate-SolutionStructure` | Validate solution structure |
 
 ## External Resources
 - [Project Website](https://compze.net/)
 - [Semantic Events Documentation](https://compze.net/paradigms/semantic-events/definition.html)
-- [Development Setup](../DEVELOPMENT.md)
