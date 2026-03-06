@@ -1,9 +1,9 @@
 using System.Text;
 using Compze.Threading;
-using Compze.Threading.ResourceAccess;
+using Compze.Internals.SystemCE;
 using Compze.Internals.SystemCE.IOCE;
 
-namespace Compze.Internals.SystemCE.ThreadingCE.ResourceAccess;
+namespace Compze.DbPool;
 
 public abstract class MachineWideSharedObject
 {

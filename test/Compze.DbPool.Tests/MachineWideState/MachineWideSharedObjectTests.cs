@@ -3,9 +3,9 @@ using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 using Compze.Tests.Infrastructure;
 using Compze.Internals.SystemCE;
 using Compze.Internals.SystemCE.LinqCE;
-using Compze.Threading.ResourceAccess;
 using Compze.Threading.Testing;
-using Compze.Internals.SystemCE.ThreadingCE.ResourceAccess;
+using Compze.Threading;
+using Compze.DbPool;
 using Compze.Must;
 using Compze.xUnitBDD;
 using JetBrains.Annotations;
@@ -13,7 +13,7 @@ using Newtonsoft.Json;
 
 // ReSharper disable ImplicitlyCapturedClosure
 
-namespace Compze.Threading.Tests;
+namespace Compze.DbPool.Tests;
 
 [UsedImplicitly] public class SharedObject
 {

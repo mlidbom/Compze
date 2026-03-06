@@ -1,20 +1,8 @@
 using Compze.Tessaging.Hosting.Testing.Performance;
 using Compze.Tests.Infrastructure;
-using Compze.Internals.SystemCE;
-using Compze.Threading.ResourceAccess;
-using Newtonsoft.Json;
-using Compze.Contracts;
-using Compze.Internals.SystemCE.ThreadingCE.ResourceAccess;
 using Compze.xUnitBDD;
 
-namespace Compze.Tests.Performance.Internals.SystemCE.ThreadingCE;
-
-class SharedObjectSerializer : ISharedObjectSerializer<SharedObject>
-{
-   public string Serialize(SharedObject instance) => JsonConvert.SerializeObject(instance);
-
-   public SharedObject Deserialize(string json) => JsonConvert.DeserializeObject<SharedObject>(json)._assert().NotNull();
-}
+namespace Compze.DbPool.Tests.MachineWideState;
 
 public class MachineWideSharedObjectPerformanceTests : UniversalTestBase
 {

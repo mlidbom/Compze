@@ -1,4 +1,4 @@
-namespace Compze.Threading.ResourceAccess;
+namespace Compze.DbPool;
 
 public interface ISharedObjectSerializer<T> where T : class
 {

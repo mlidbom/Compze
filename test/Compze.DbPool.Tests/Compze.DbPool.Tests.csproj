@@ -54,6 +54,13 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Tests_Infrastructure)' != 'true'">
     <ProjectReference Include="..\Compze.Tests.Infrastructure\Compze.Tests.Infrastructure.csproj" />
   </ItemGroup>
+  <!-- Compze.Threading.Testing — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Threading_Testing)' == 'true'">
+    <PackageReference Include="Compze.Threading.Testing" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Threading_Testing)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.Threading.Testing\Compze.Threading.Testing.csproj" />
+  </ItemGroup>
   <!-- Compze.xUnitBDD — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_xUnitBDD)' == 'true'">
     <PackageReference Include="Compze.xUnitBDD" Version="*-*" />

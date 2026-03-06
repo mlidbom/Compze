@@ -8,7 +8,6 @@ using Compze.Threading;
 using Compze.DbPool.SystemCE;
 using Compze.DependencyInjection;
 using Compze.Threading.ResourceAccess;
-using Compze.Internals.SystemCE.ThreadingCE.ResourceAccess;
 
 #pragma warning disable CA1724 //I don't care that the class uses the same name as the namespace
 
