@@ -145,6 +145,18 @@
     <Project Path="Compze.Threading.Testing/Compze.Threading.Testing.csproj" />
     <Project Path="Compze.Threading/Compze.Threading.csproj" />
   </Folder>
+  <Folder Name="/Compze.Typermedia/">
+    <Project Path="Compze.Typermedia/Compze.Typermedia.csproj" />
+    <Project Path="Compze.Typermedia.Client/Compze.Typermedia.Client.csproj" />
+    <Project Path="Compze.Typermedia.Hosting/Compze.Typermedia.Hosting.csproj" />
+    <Project Path="Compze.Typermedia.Hosting.Testing/Compze.Typermedia.Hosting.Testing.csproj" />
+    <Project Path="Compze.Typermedia.Hosting.AspNetCore/Compze.Typermedia.Hosting.AspNetCore.csproj" />
+  </Folder>
+  <Folder Name="/Compze.Typermedia/Specifications/">
+    <Project Path="../test/Compze.Typermedia.Specifications/Compze.Typermedia.Specifications.csproj" />
+    <Project Path="../test/Compze.Typermedia.Client.Specifications/Compze.Typermedia.Client.Specifications.csproj" />
+    <Project Path="../test/Compze.Typermedia.Hosting.Specifications/Compze.Typermedia.Hosting.Specifications.csproj" />
+  </Folder>
   <Folder Name="/Compze.Unit/Specifications/">
     <Project Path="../test/Compze.Unit.Specifications/Compze.Unit.Specifications.csproj" />
   </Folder>

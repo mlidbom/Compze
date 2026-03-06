@@ -1,0 +1,12 @@
+<Solution>
+  <Project Path="Compze.Typermedia/Compze.Typermedia.csproj" />
+  <Project Path="Compze.Typermedia.Client/Compze.Typermedia.Client.csproj" />
+  <Project Path="Compze.Typermedia.Hosting/Compze.Typermedia.Hosting.csproj" />
+  <Project Path="Compze.Typermedia.Hosting.Testing/Compze.Typermedia.Hosting.Testing.csproj" />
+  <Project Path="Compze.Typermedia.Hosting.AspNetCore/Compze.Typermedia.Hosting.AspNetCore.csproj" />
+  <Folder Name="/Specifications/">
+    <Project Path="../test/Compze.Typermedia.Specifications/Compze.Typermedia.Specifications.csproj" />
+    <Project Path="../test/Compze.Typermedia.Client.Specifications/Compze.Typermedia.Client.Specifications.csproj" />
+    <Project Path="../test/Compze.Typermedia.Hosting.Specifications/Compze.Typermedia.Hosting.Specifications.csproj" />
+  </Folder>
+</Solution>
