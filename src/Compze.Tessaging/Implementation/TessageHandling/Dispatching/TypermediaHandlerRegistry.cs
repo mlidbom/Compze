@@ -1,6 +1,6 @@
 using Compze.Abstractions.Refactoring.Naming.Internal;
-using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Abstractions.Tessaging.Public;
+using Compze.Typermedia;
 using Compze.Core.Tessaging.Teventive.Infrastructure.Validation;
 using Compze.Tessaging.Implementation.Abstractions;
 using Compze.Tessaging.Implementation.TessageHandling.Abstractions;

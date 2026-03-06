@@ -1,6 +1,7 @@
 using Compze.DocumentDb.Public;
 using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Abstractions.Tessaging.Public;
+using Compze.Typermedia;
 
 namespace Compze.DocumentDb;
 

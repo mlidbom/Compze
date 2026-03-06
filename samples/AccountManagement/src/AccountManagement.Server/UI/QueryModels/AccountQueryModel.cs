@@ -4,11 +4,9 @@ using AccountManagement.Domain.Tevents;
 using AccountManagement.Domain.Passwords;
 using CommunityToolkit.Diagnostics;
 using Compze.Abstractions.Public;
-using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Tessaging.Teventive.TeventStore.QueryModels.SelfGeneratingQueryModels;
 using Compze.Tessaging.TyperMediaApi.EventStore;
-using Compze.Tessaging.Abstractions.Tessaging.Typermedia.Public;
 using Compze.Typermedia;
 
 namespace AccountManagement.UI.QueryModels;

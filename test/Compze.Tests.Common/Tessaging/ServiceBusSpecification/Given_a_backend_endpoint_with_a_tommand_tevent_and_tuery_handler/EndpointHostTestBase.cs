@@ -14,7 +14,6 @@ using Compze.Tests.Infrastructure;
 using Compze.Underscore;
 using Compze.Threading;
 using Compze.Threading.Testing;
-using Compze.Tessaging.Abstractions.Tessaging.Typermedia.Public;
 using Compze.Typermedia;
 
 // ReSharper disable ClassNeverInstantiated.Global

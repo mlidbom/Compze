@@ -3,7 +3,6 @@ using Compze.DocumentDb;
 using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 using JetBrains.Annotations;
 using AccountLink = Compze.Tessaging.TyperMediaApi.EventStore.TeventStoreApi.TueryApi.TaggregateLink<AccountManagement.Domain.Account>;
-using Compze.Tessaging.Abstractions.Tessaging.Typermedia.Public;
 using Compze.Typermedia;
 
 namespace AccountManagement.Domain;

@@ -1,6 +1,7 @@
 using Compze.DependencyInjection.Abstractions;
+using Compze.Internals.SystemCE;
 
-namespace Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
+namespace Compze.Typermedia;
 
 public class TypermediaHandlerRegistrarWithDependencyInjectionSupport(ITypermediaHandlerRegistrar registrar, LazyCE<IServiceLocator> serviceLocator)
 {

@@ -1,6 +1,6 @@
 using Compze.Abstractions.Tessaging.Public;
 
-namespace Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
+namespace Compze.Typermedia;
 
 public interface ITypermediaHandlerRegistrar
 {

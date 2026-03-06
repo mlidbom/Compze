@@ -5,7 +5,6 @@ using AccountManagement.Domain.Passwords;
 using AccountManagement.Domain.Registration;
 using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Abstractions.Tessaging.Public;
-using Compze.Tessaging.Abstractions.Tessaging.Typermedia.Public;
 using Compze.Typermedia;
 
 namespace AccountManagement.UI;
