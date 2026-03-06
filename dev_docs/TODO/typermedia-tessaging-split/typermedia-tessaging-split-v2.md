@@ -39,7 +39,7 @@ Their accidental merger was a historical implementation shortcut that created en
 3. Dissolve `InboxConnectionRouter`
 
 ### Strategic
-4. Split handler registration — typermedia (`ForTuery`, `ForTommandWithResult`) vs tessaging (`ForTevent`, fire-and-forget `ForTommand`). The void `ForTommand<T>()` is ambiguous — used by both currently.
+4. [DONE] Split handler registration — `ITypermediaHandlerRegistrar` (`ForTuery`, `ForTommand<T,R>`) vs `ITessageHandlerRegistrar` (`ForTevent`, `ForTommand<T>`). Split handler registries: `TypermediaHandlerRegistry` vs `TessageHandlerRegistry`. Split DI wrappers: `TypermediaHandlerRegistrarWithDependencyInjectionSupport` vs `TessageHandlerRegistrarWithDependencyInjectionSupport`. `IEndpointBuilder` exposes `RegisterTypermediaHandlers` and `RegisterTessagingHandlers`.
 5. Separate handler dispatch — typermedia is single-handler lookup; tessaging is fan-out with ordering/tracking
 6. Separate transport — typermedia gets trivial HTTP transport; kill `ITransportMessagePoster` as shared abstraction
 7. Package topology — Typermedia and Tessaging become independent package families

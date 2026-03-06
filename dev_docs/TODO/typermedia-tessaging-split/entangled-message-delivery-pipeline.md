@@ -18,7 +18,7 @@ Every component involved in delivering a message from caller to handler and back
 ### In-Process Typermedia Navigator [T]
 - **Interface**: `IInProcessTypermediaNavigator` — `src/Compze.Tessaging.Abstractions/Tessaging/Typermedia/Public/IInProcessTypermediaNavigator.cs`
 - **Impl**: `InProcessTypermediaNavigator` — `src/Compze.Tessaging/Typermedia/InProcessTypermediaNavigator.cs`
-- Goes directly to `ITessageHandlerRegistry` — no router, no transport, no inbox, no serialization
+- Goes directly to `ITypermediaHandlerRegistry` (tueries, commands with results) and `ITessageHandlerRegistry` (void commands) — no router, no transport, no inbox, no serialization
 - Must be called within an existing transaction scope (`SingleTransactionUsageGuard`)
 - Registered as Scoped
 
@@ -211,30 +211,43 @@ Every component involved in delivering a message from caller to handler and back
 
 ---
 
-## 9. Handler Registration & Lookup [BOTH]
+## 9. Handler Registration & Lookup [SPLIT]
 
-### Handler Registrar
+### Tessaging Handler Registrar [S]
 - **Interface**: `ITessageHandlerRegistrar` — `src/Compze.Tessaging.Abstractions/Tessaging/Hosting/TessageHandling/Registration/Public/ITessageHandlerRegistrar.cs`
-- Registration methods mix both paradigms:
-  - `ForTevent<TTevent>(handler)` — [S]
-  - `ForTommand<TTommand>(handler)` — [S] (void, fire-and-forget)
-  - `ForTommand<TTommand, TResult>(handler)` — [T] (with result, request-response)
-  - `ForTuery<TTuery, TResult>(handler)` — [T]
+- `ForTevent<TTevent>(handler)` — tevent handlers
+- `ForTommand<TTommand>(handler)` — void command handlers
 
-### Handler Registry
+### Typermedia Handler Registrar [T]
+- **Interface**: `ITypermediaHandlerRegistrar` — `src/Compze.Tessaging.Abstractions/Tessaging/Hosting/TessageHandling/Registration/Public/ITypermediaHandlerRegistrar.cs`
+- `ForTommand<TTommand, TResult>(handler)` — commands with results
+- `ForTuery<TTuery, TResult>(handler)` — tuery handlers
+
+### Tessaging Handler Registry [S]
 - **Interface**: `ITessageHandlerRegistry` — `src/Compze.Tessaging/Implementation/TessageHandling/Dispatching/ITessageHandlerRegistry.cs`
 - **Impl**: `TessageHandlerRegistry` — `src/Compze.Tessaging/Implementation/TessageHandling/Dispatching/TessageHandlerRegistry.cs`
-- Single registry stores all handler types:
-  - `_tommandHandlers` — `Dictionary<Type, Action<object>>` — void commands [S]
-  - `_tommandHandlersReturningResults` — `Dictionary<Type, HandlerWithResultRegistration>` — commands with results [T]
-  - `_tueryHandlers` — `Dictionary<Type, HandlerWithResultRegistration>` — queries [T]
-  - `_teventHandlers` — `Dictionary<Type, IReadOnlyList<Action<ITevent>>>` — events [S], 1:N, `IsAssignableFrom` lookup (Teventive type routing)
-- `HandledRemoteTessageTypeIds()` — advertises all handled types to connecting clients (used by both routers for route building)
+- `_tommandHandlers` — `Dictionary<Type, Action<object>>` — void commands
+- `_teventHandlers` — `Dictionary<Type, IReadOnlyList<Action<ITevent>>>` — events, 1:N, `IsAssignableFrom` lookup (Teventive type routing)
+- `HandledRemoteTessageTypeIds()` — advertises tessaging-handled types
 
-### Handler Registrar With DI Support
-- `TessageHandlerRegistrarWithDependencyInjectionSupport` — `src/Compze.Tessaging/Implementation/TessageHandling/Dispatching/TessageHandlerRegistrarWithDependencyInjectionSupport.cs`
-- Wraps `TessageHandlerRegistry`, resolves handler dependencies from DI before invoking
-- Same mixed registration API as `ITessageHandlerRegistrar`
+### Typermedia Handler Registry [T]
+- **Interface**: `ITypermediaHandlerRegistry` — `src/Compze.Tessaging/Implementation/TessageHandling/Dispatching/ITypermediaHandlerRegistry.cs`
+- **Impl**: `TypermediaHandlerRegistry` — `src/Compze.Tessaging/Implementation/TessageHandling/Dispatching/TypermediaHandlerRegistry.cs`
+- `_tommandHandlersReturningResults` — `Dictionary<Type, HandlerWithResultRegistration>` — commands with results
+- `_tueryHandlers` — `Dictionary<Type, HandlerWithResultRegistration>` — tueries
+- `HandledRemoteTypermediaTypeIds()` — advertises typermedia-handled types
+
+### Tessaging Handler Registrar With DI Support [S]
+- `TessageHandlerRegistrarWithDependencyInjectionSupport` — `src/Compze.Tessaging.Abstractions/Tessaging/Hosting/TessageHandling/Registration/Public/TessageHandlerRegistrarWithDependencyInjectionSupport.cs`
+- Wraps `ITessageHandlerRegistrar` + `IServiceLocator`
+- Extension methods: `ForTevent`, `ForTommand` (void)
+- Exposed as `IEndpointBuilder.RegisterTessagingHandlers`
+
+### Typermedia Handler Registrar With DI Support [T]
+- `TypermediaHandlerRegistrarWithDependencyInjectionSupport` — `src/Compze.Tessaging.Abstractions/Tessaging/Hosting/TessageHandling/Registration/Public/TypermediaHandlerRegistrarWithDependencyInjectionSupport.cs`
+- Wraps `ITypermediaHandlerRegistrar` + `IServiceLocator`
+- Extension methods: `ForTuery`, `ForTommandWithResult`
+- Exposed as `IEndpointBuilder.RegisterTypermediaHandlers`
 
 ---
 
@@ -295,6 +308,11 @@ Every component involved in delivering a message from caller to handler and back
 - ASP.NET controllers: `TypermediaController` [T] vs `TessagingController` [S]
 - Entry points: `IRemoteTypermediaNavigator` [T] vs `IServiceBusSession` [S]
 - Outbox / command scheduler [S] — no typermedia involvement
+- Handler registrars: `ITypermediaHandlerRegistrar` [T] vs `ITessageHandlerRegistrar` [S]
+- Handler registries: `ITypermediaHandlerRegistry` / `TypermediaHandlerRegistry` [T] vs `ITessageHandlerRegistry` / `TessageHandlerRegistry` [S]
+- DI wrappers: `TypermediaHandlerRegistrarWithDependencyInjectionSupport` [T] vs `TessageHandlerRegistrarWithDependencyInjectionSupport` [S]
+- Capability advertisement: `HandledRemoteTypermediaTypeIds()` [T] vs `HandledRemoteTessageTypeIds()` [S]
+- `IEndpointBuilder` exposes `RegisterTypermediaHandlers` [T] and `RegisterTessagingHandlers` [S] as separate properties
 
 ### Still entangled
 | Component | Why it's entangled |
@@ -308,9 +326,6 @@ Every component involved in delivering a message from caller to handler and back
 | `HandlerExecutionEngine` | Single dispatch thread + rules for all message types |
 | Dispatching rules | Typermedia queries blocked by tessaging mutations and vice versa |
 | `HandlerExecutionTask` | Switches on `TransportTessageType` to build handler delegate — knows about all 5 kinds |
-| `ITessageHandlerRegistrar` | Single API for registering tuery, tommand-with-result, void-tommand, and tevent handlers |
-| `TessageHandlerRegistry` | Single registry storing all handler types in mixed dictionaries |
-| `HandledRemoteTessageTypeIds()` | Single capability advertisement used by both routers |
 | `ServerEndpointBuilder` | Wires inbox, outbox, tessaging router, in-process navigator all together |
 | `Endpoint` | Lifecycle manages both typermedia (inbox) and tessaging (router+outbox) |
 | `EndpointHost` | Starts both paradigms' components in a single two-phase startup |
