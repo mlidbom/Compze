@@ -1,6 +1,6 @@
 using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 
-namespace Compze.Tessaging.Hosting.Testing.Performance;
+namespace Compze.Internals.Testing.Performance;
 
 static class ThreadPoolCE
 {

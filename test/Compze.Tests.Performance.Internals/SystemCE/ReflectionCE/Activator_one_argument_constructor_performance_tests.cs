@@ -1,6 +1,6 @@
 using System.Reflection;
-using Compze.Tessaging.Hosting.Testing;
-using Compze.Tessaging.Hosting.Testing.Performance;
+using Compze.Internals.Testing;
+using Compze.Internals.Testing.Performance;
 using Compze.Tests.Infrastructure;
 using Compze.Internals.SystemCE;
 using Compze.Internals.SystemCE.ReflectionCE;

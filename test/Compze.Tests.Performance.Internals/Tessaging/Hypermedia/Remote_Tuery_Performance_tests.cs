@@ -1,6 +1,6 @@
 using Compze.Abstractions.Tessaging.Public;
-using Compze.Tessaging.Hosting.Testing;
-using Compze.Tessaging.Hosting.Testing.Performance;
+using Compze.Internals.Testing;
+using Compze.Internals.Testing.Performance;
 using Compze.Internals.SystemCE;
 using Compze.Internals.SystemCE.LinqCE;
 using Compze.Tests.Infrastructure.XUnit;

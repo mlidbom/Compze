@@ -3,6 +3,7 @@ using Compze.Tessaging.Hosting.AspNetCore.Wiring;
 using Compze.Tessaging.Implementation.Transport.Client.Implementation.Memory;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE;
+using Compze.Internals.Testing;
 
 namespace Compze.Tessaging.Hosting.Testing.Wiring;
 

@@ -1,6 +1,7 @@
 using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Hosting.Testing;
+using Compze.Internals.Testing;
 using Compze.Tessaging.Hosting.Testing.Tessaging;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using JetBrains.Annotations;

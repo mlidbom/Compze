@@ -2,6 +2,7 @@ using Compze.Abstractions.Wiring.Testing.Internal;
 using Compze.Internals.Serialization.Newtonsoft.Wiring;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE;
+using Compze.Internals.Testing;
 
 namespace Compze.Tessaging.Hosting.Testing.Wiring;
 

@@ -1,6 +1,6 @@
 using Compze.DbPool.SystemCE;
-using Compze.Tessaging.Hosting.Testing;
-using Compze.Tessaging.Hosting.Testing.Performance;
+using Compze.Internals.Testing;
+using Compze.Internals.Testing.Performance;
 using Compze.Tests.Infrastructure;
 using Compze.xUnitBDD;
 

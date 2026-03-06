@@ -5,6 +5,7 @@ using Compze.Internals.Sql.MySql;
 using Compze.Internals.Sql.PostgreSql;
 using Compze.Internals.Sql.Sqlite;
 using Compze.Tessaging.Hosting.Testing;
+using Compze.Internals.Testing;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tests.Infrastructure;
 using Compze.DependencyInjection.Abstractions;
