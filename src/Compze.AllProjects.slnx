@@ -119,6 +119,7 @@
     <Project Path="../test/Compze.DependencyInjection.Specifications/Compze.DependencyInjection.Specifications.csproj" />
   </Folder>
   <Folder Name="/Compze.Internals/">
+    <Project Path="Compze.Internals.Testing/Compze.Internals.Testing.csproj" />
     <Project Path="Compze.Internals.Threading/Compze.Internals.Threading.csproj" />
   </Folder>
   <Folder Name="/Compze.Internals/Compze.Internals.Logging/">
@@ -180,5 +181,4 @@
     <Project Path="Compze.DocumentDb/Compze.DocumentDb.csproj" />
   </Folder>
   <Project Path="../DevScripts/Scripts.csproj" />
-  <Project Path="Compze.Internals.Testing/Compze.Internals.Testing.csproj" />
 </Solution>

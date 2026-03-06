@@ -3,6 +3,7 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <Version>0.1.0-alpha.1</Version>
+    <Description>For Compze internal use only. Do not take a dependency on this package</Description>
   </PropertyGroup>
   <!-- Compze.Contracts — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' == 'true'">
