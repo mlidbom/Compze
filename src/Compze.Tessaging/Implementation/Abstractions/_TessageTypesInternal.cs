@@ -5,7 +5,7 @@
 using Compze.Abstractions.Refactoring.Naming.Internal;
 using Compze.Abstractions.Refactoring.Naming.Internal.Implementation;
 using Compze.Core.Tessaging.Hosting.Public;
-using Compze.Core.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
+using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Core.Tessaging.Transport.Internal;
 using Compze.Tessaging.Implementation.TessageHandling.Abstractions;

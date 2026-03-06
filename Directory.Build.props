@@ -24,8 +24,6 @@
     <UsePackageReference_Compze_Contracts Condition="'$(UsePackageReference_Compze_Contracts)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Contracts.csproj|'))">true</UsePackageReference_Compze_Contracts>
     <!-- Compze.Core -->
     <UsePackageReference_Compze_Core Condition="'$(UsePackageReference_Compze_Core)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Core.csproj|'))">true</UsePackageReference_Compze_Core>
-    <!-- Compze.Core.Abstractions -->
-    <UsePackageReference_Compze_Core_Abstractions Condition="'$(UsePackageReference_Compze_Core_Abstractions)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Core.Abstractions.csproj|'))">true</UsePackageReference_Compze_Core_Abstractions>
     <!-- Compze.DbPool -->
     <UsePackageReference_Compze_DbPool Condition="'$(UsePackageReference_Compze_DbPool)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.DbPool.csproj|'))">true</UsePackageReference_Compze_DbPool>
     <!-- Compze.DbPool.MicrosoftSql -->
@@ -70,6 +68,8 @@
     <UsePackageReference_Compze_Must Condition="'$(UsePackageReference_Compze_Must)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Must.csproj|'))">true</UsePackageReference_Compze_Must>
     <!-- Compze.Tessaging -->
     <UsePackageReference_Compze_Tessaging Condition="'$(UsePackageReference_Compze_Tessaging)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Tessaging.csproj|'))">true</UsePackageReference_Compze_Tessaging>
+    <!-- Compze.Tessaging.Abstractions -->
+    <UsePackageReference_Compze_Tessaging_Abstractions Condition="'$(UsePackageReference_Compze_Tessaging_Abstractions)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Tessaging.Abstractions.csproj|'))">true</UsePackageReference_Compze_Tessaging_Abstractions>
     <!-- Compze.Tessaging.Hosting.AspNetCore -->
     <UsePackageReference_Compze_Tessaging_Hosting_AspNetCore Condition="'$(UsePackageReference_Compze_Tessaging_Hosting_AspNetCore)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Tessaging.Hosting.AspNetCore.csproj|'))">true</UsePackageReference_Compze_Tessaging_Hosting_AspNetCore>
     <!-- Compze.Tessaging.Hosting.Testing -->

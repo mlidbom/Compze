@@ -163,8 +163,8 @@
   <Folder Name="/Compze.Core/">
     <Project Path="Compze.Core/Compze.Core.csproj" />
   </Folder>
-  <Folder Name="/Compze.Core.Abstractions/">
-    <Project Path="Compze.Core.Abstractions/Compze.Core.Abstractions.csproj" />
+  <Folder Name="/Compze.Tessaging.Abstractions/">
+    <Project Path="Compze.Tessaging.Abstractions/Compze.Tessaging.Abstractions.csproj" />
   </Folder>
   <Folder Name="/Compze.DocumentDb/">
     <Project Path="Compze.DocumentDb/Compze.DocumentDb.csproj" />

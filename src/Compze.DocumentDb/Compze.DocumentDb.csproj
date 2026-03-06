@@ -19,13 +19,6 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' != 'true'">
     <ProjectReference Include="..\Compze.Contracts\Compze.Contracts.csproj" />
   </ItemGroup>
-  <!-- Compze.Core.Abstractions — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Core_Abstractions)' == 'true'">
-    <PackageReference Include="Compze.Core.Abstractions" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Core_Abstractions)' != 'true'">
-    <ProjectReference Include="..\Compze.Core.Abstractions\Compze.Core.Abstractions.csproj" />
-  </ItemGroup>
   <!-- Compze.DependencyInjection — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection)' == 'true'">
     <PackageReference Include="Compze.DependencyInjection" Version="*-*" />
@@ -46,6 +39,13 @@
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_SystemCE_Core)' != 'true'">
     <ProjectReference Include="..\Compze.Internals.SystemCE.Core\Compze.Internals.SystemCE.Core.csproj" />
+  </ItemGroup>
+  <!-- Compze.Tessaging.Abstractions — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_Abstractions)' == 'true'">
+    <PackageReference Include="Compze.Tessaging.Abstractions" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_Abstractions)' != 'true'">
+    <ProjectReference Include="..\Compze.Tessaging.Abstractions\Compze.Tessaging.Abstractions.csproj" />
   </ItemGroup>
   <!-- Compze.Threading — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Threading)' == 'true'">

@@ -1,6 +1,6 @@
 using Compze.DependencyInjection.Abstractions;
 
-namespace Compze.Core.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
+namespace Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 
 public class TessageHandlerRegistrarWithDependencyInjectionSupport(ITessageHandlerRegistrar register, LazyCE<IServiceLocator> serviceLocator)
 {

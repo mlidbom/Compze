@@ -5,7 +5,6 @@
       <Value>UsePackageReference_Compze_Abstractions = true</Value>
       <Value>UsePackageReference_Compze_Contracts = true</Value>
       <Value>UsePackageReference_Compze_Core = true</Value>
-      <Value>UsePackageReference_Compze_Core_Abstractions = true</Value>
       <Value>UsePackageReference_Compze_DependencyInjection = true</Value>
       <Value>UsePackageReference_Compze_DependencyInjection_Microsoft = true</Value>
       <Value>UsePackageReference_Compze_DependencyInjection_SimpleInjector = true</Value>
@@ -23,6 +22,7 @@
       <Value>UsePackageReference_Compze_Internals_Threading = true</Value>
       <Value>UsePackageReference_Compze_Must = true</Value>
       <Value>UsePackageReference_Compze_Tessaging = true</Value>
+      <Value>UsePackageReference_Compze_Tessaging_Abstractions = true</Value>
       <Value>UsePackageReference_Compze_Tessaging_Hosting_AspNetCore = true</Value>
       <Value>UsePackageReference_Compze_Tessaging_Hosting_Testing = true</Value>
       <Value>UsePackageReference_Compze_Tessaging_Teventive_TeventStore = true</Value>

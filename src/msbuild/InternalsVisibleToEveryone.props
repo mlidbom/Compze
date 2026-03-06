@@ -13,7 +13,7 @@
     <InternalsVisibleTo Include="Compze.Contracts" />
     <InternalsVisibleTo Include="Compze.Contracts.Specifications" />
     <InternalsVisibleTo Include="Compze.Core" />
-    <InternalsVisibleTo Include="Compze.Core.Abstractions" />
+    <InternalsVisibleTo Include="Compze.Tessaging.Abstractions" />
     <InternalsVisibleTo Include="Compze.DocumentDb" />
     <InternalsVisibleTo Include="Compze.Abstractions" />
     <InternalsVisibleTo Include="Compze.Abstractions.Specifications" />

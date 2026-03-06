@@ -4,7 +4,7 @@ using AccountManagement.Domain.Tevents;
 using AccountManagement.Domain.Passwords;
 using CommunityToolkit.Diagnostics;
 using Compze.Abstractions.Public;
-using Compze.Core.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
+using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Core.Tessaging.Typermedia.Public;
 using Compze.Tessaging.Teventive.TeventStore.QueryModels.SelfGeneratingQueryModels;

@@ -1,4 +1,4 @@
-# Compze.Core.Abstractions
+# Compze.Tessaging.Abstractions
 
 Handler registration contracts for the [Compze](https://github.com/mlidbom/Compze) framework.
 
@@ -14,7 +14,7 @@ Compze is a .NET framework for building expressive domains through **Teventive p
 ## Installation
 
 ```shell
-dotnet add package Compze.Core.Abstractions
+dotnet add package Compze.Tessaging.Abstractions
 ```
 
 ## License
