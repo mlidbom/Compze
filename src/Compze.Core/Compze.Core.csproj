@@ -32,12 +32,26 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' != 'true'">
     <ProjectReference Include="..\Compze.Contracts\Compze.Contracts.csproj" />
   </ItemGroup>
+  <!-- Compze.Core.Abstractions — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Core_Abstractions)' == 'true'">
+    <PackageReference Include="Compze.Core.Abstractions" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Core_Abstractions)' != 'true'">
+    <ProjectReference Include="..\Compze.Core.Abstractions\Compze.Core.Abstractions.csproj" />
+  </ItemGroup>
   <!-- Compze.DependencyInjection — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection)' == 'true'">
     <PackageReference Include="Compze.DependencyInjection" Version="*-*" />
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection)' != 'true'">
     <ProjectReference Include="..\Compze.DependencyInjection\Compze.DependencyInjection.csproj" />
+  </ItemGroup>
+  <!-- Compze.DocumentDb — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DocumentDb)' == 'true'">
+    <PackageReference Include="Compze.DocumentDb" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DocumentDb)' != 'true'">
+    <ProjectReference Include="..\Compze.DocumentDb\Compze.DocumentDb.csproj" />
   </ItemGroup>
   <!-- Compze.Internals.Logging — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Logging)' == 'true'">

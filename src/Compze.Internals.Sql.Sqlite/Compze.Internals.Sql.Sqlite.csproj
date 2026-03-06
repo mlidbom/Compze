@@ -6,7 +6,8 @@
     <Description>For Compze internal use only. Do not take a direct dependency on this package</Description>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.1" /></ItemGroup>
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.1" />
+  </ItemGroup>
   <!-- Compze.Core — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Core)' == 'true'">
     <PackageReference Include="Compze.Core" Version="*-*" />

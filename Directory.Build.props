@@ -24,6 +24,8 @@
     <UsePackageReference_Compze_Contracts Condition="'$(UsePackageReference_Compze_Contracts)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Contracts.csproj|'))">true</UsePackageReference_Compze_Contracts>
     <!-- Compze.Core -->
     <UsePackageReference_Compze_Core Condition="'$(UsePackageReference_Compze_Core)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Core.csproj|'))">true</UsePackageReference_Compze_Core>
+    <!-- Compze.Core.Abstractions -->
+    <UsePackageReference_Compze_Core_Abstractions Condition="'$(UsePackageReference_Compze_Core_Abstractions)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Core.Abstractions.csproj|'))">true</UsePackageReference_Compze_Core_Abstractions>
     <!-- Compze.DbPool -->
     <UsePackageReference_Compze_DbPool Condition="'$(UsePackageReference_Compze_DbPool)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.DbPool.csproj|'))">true</UsePackageReference_Compze_DbPool>
     <!-- Compze.DbPool.MicrosoftSql -->
@@ -40,6 +42,8 @@
     <UsePackageReference_Compze_DependencyInjection_Microsoft Condition="'$(UsePackageReference_Compze_DependencyInjection_Microsoft)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.DependencyInjection.Microsoft.csproj|'))">true</UsePackageReference_Compze_DependencyInjection_Microsoft>
     <!-- Compze.DependencyInjection.SimpleInjector -->
     <UsePackageReference_Compze_DependencyInjection_SimpleInjector Condition="'$(UsePackageReference_Compze_DependencyInjection_SimpleInjector)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.DependencyInjection.SimpleInjector.csproj|'))">true</UsePackageReference_Compze_DependencyInjection_SimpleInjector>
+    <!-- Compze.DocumentDb -->
+    <UsePackageReference_Compze_DocumentDb Condition="'$(UsePackageReference_Compze_DocumentDb)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.DocumentDb.csproj|'))">true</UsePackageReference_Compze_DocumentDb>
     <!-- Compze.Internals.Logging -->
     <UsePackageReference_Compze_Internals_Logging Condition="'$(UsePackageReference_Compze_Internals_Logging)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Internals.Logging.csproj|'))">true</UsePackageReference_Compze_Internals_Logging>
     <!-- Compze.Internals.Logging.Serilog -->

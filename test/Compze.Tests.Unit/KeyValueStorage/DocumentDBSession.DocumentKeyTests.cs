@@ -1,4 +1,4 @@
-using Compze.Core.DocumentDb.Private;
+using Compze.DocumentDb.Private;
 using Compze.Tests.Infrastructure;
 using Compze.Must;
 using Compze.xUnitBDD;

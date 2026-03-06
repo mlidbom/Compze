@@ -5,6 +5,7 @@
       <Value>UsePackageReference_Compze_Abstractions = true</Value>
       <Value>UsePackageReference_Compze_Contracts = true</Value>
       <Value>UsePackageReference_Compze_Core = true</Value>
+      <Value>UsePackageReference_Compze_Core_Abstractions = true</Value>
       <Value>UsePackageReference_Compze_DbPool = true</Value>
       <Value>UsePackageReference_Compze_DbPool_MicrosoftSql = true</Value>
       <Value>UsePackageReference_Compze_DbPool_MySql = true</Value>
@@ -13,6 +14,7 @@
       <Value>UsePackageReference_Compze_DependencyInjection = true</Value>
       <Value>UsePackageReference_Compze_DependencyInjection_Microsoft = true</Value>
       <Value>UsePackageReference_Compze_DependencyInjection_SimpleInjector = true</Value>
+      <Value>UsePackageReference_Compze_DocumentDb = true</Value>
       <Value>UsePackageReference_Compze_Internals_Logging = true</Value>
       <Value>UsePackageReference_Compze_Internals_Logging_Serilog = true</Value>
       <Value>UsePackageReference_Compze_Internals_Sql_Common = true</Value>

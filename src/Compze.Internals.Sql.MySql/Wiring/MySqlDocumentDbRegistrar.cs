@@ -1,4 +1,4 @@
-using Compze.Core.DocumentDb.Internal.SqlLayer;
+using Compze.DocumentDb.Internal.SqlLayer;
 using Compze.Internals.Sql.MySql.Private;
 using Compze.Internals.Sql.MySql.Private.DocumentDb;
 using Compze.DependencyInjection;

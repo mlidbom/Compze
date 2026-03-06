@@ -1,4 +1,4 @@
-using Compze.Core.Tessaging.Hosting.TessageHandling.Registration.Public;
+using Compze.Core.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.DependencyInjection.Abstractions;
 
 namespace Compze.Core.Tessaging.Hosting.Public;

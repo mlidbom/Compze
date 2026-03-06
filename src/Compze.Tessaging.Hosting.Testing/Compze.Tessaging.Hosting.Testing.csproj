@@ -10,7 +10,8 @@
     <PackageReference Include="Serilog.Enrichers.Environment" Version="3.0.1" />
     <PackageReference Include="Serilog.Exceptions" Version="8.4.0" />
     <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
-    <PackageReference Include="Serilog.Sinks.Seq" Version="9.0.0" /></ItemGroup>
+    <PackageReference Include="Serilog.Sinks.Seq" Version="9.0.0" />
+  </ItemGroup>
   <!-- Compze.Contracts — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' == 'true'">
     <PackageReference Include="Compze.Contracts" Version="*-*" />

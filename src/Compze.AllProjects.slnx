@@ -160,5 +160,13 @@
     <Project Path="../test/Compze.Tests.Unit/Compze.Tests.Unit.csproj" />
   </Folder>
   <Project Path="../DevScripts/Scripts.csproj" />
-  <Project Path="Compze.Core/Compze.Core.csproj" />
+  <Folder Name="/Compze.Core/">
+    <Project Path="Compze.Core/Compze.Core.csproj" />
+  </Folder>
+  <Folder Name="/Compze.Core.Abstractions/">
+    <Project Path="Compze.Core.Abstractions/Compze.Core.Abstractions.csproj" />
+  </Folder>
+  <Folder Name="/Compze.DocumentDb/">
+    <Project Path="Compze.DocumentDb/Compze.DocumentDb.csproj" />
+  </Folder>
 </Solution>

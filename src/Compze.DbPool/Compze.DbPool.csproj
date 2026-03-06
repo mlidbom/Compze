@@ -6,7 +6,8 @@
     <Description>Empty databases on demand for integration testing etc. Supports SQL Server, MySql, PostgreSQL and SQLite</Description>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="MemoryPack" Version="1.21.4" /></ItemGroup>
+    <PackageReference Include="MemoryPack" Version="1.21.4" />
+  </ItemGroup>
   <!-- Compze.Contracts — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' == 'true'">
     <PackageReference Include="Compze.Contracts" Version="*-*" />

@@ -1,4 +1,4 @@
-using Compze.Core.DocumentDb.Public;
+using Compze.DocumentDb.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.Public;
 using Compze.DependencyInjection.Abstractions;
 

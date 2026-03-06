@@ -1,6 +1,6 @@
 using AccountManagement.Domain.Tevents;
-using Compze.Core.DocumentDb;
-using Compze.Core.Tessaging.Hosting.TessageHandling.Registration.Public;
+using Compze.DocumentDb;
+using Compze.Core.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Core.Tessaging.Typermedia.Public;
 using JetBrains.Annotations;
 using AccountLink = Compze.Tessaging.TyperMediaApi.EventStore.TeventStoreApi.TueryApi.TaggregateLink<AccountManagement.Domain.Account>;

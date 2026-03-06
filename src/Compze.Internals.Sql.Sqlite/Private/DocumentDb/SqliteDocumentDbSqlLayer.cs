@@ -1,5 +1,5 @@
-using Compze.Core.DocumentDb.Internal.SqlLayer;
-using Compze.Core.DocumentDb.Internal.SqlLayer.Exceptions;
+using Compze.DocumentDb.Internal.SqlLayer;
+using Compze.DocumentDb.Internal.SqlLayer.Exceptions;
 using Compze.Abstractions.Refactoring.Naming.Internal;
 using Compze.Internals.Sql.Common;
 using Compze.Contracts;
@@ -7,7 +7,7 @@ using Compze.Underscore;
 using Compze.Internals.SystemCE;
 using Microsoft.Data.Sqlite;
 using System.Diagnostics.CodeAnalysis;
-using Schema = Compze.Core.DocumentDb.Internal.SqlLayer.IDocumentDbSqlLayer.DocumentTableSchemaStrings;
+using Schema = Compze.DocumentDb.Internal.SqlLayer.IDocumentDbSqlLayer.DocumentTableSchemaStrings;
 
 namespace Compze.Internals.Sql.Sqlite.Private.DocumentDb;
 

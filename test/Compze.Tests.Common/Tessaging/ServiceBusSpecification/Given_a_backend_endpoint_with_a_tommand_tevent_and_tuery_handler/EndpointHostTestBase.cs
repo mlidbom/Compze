@@ -4,7 +4,7 @@ using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.LinqCE;
 using Compze.Core.Tessaging.Hosting.Public;
-using Compze.Core.Tessaging.Hosting.TessageHandling.Registration.Public;
+using Compze.Core.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Core.Tessaging.Typermedia.Public;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tessaging.Teventive.TeventStore.Wiring;

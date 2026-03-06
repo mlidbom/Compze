@@ -23,5 +23,7 @@
   </Folder>
   <Project Path="Compze.Abstractions/Compze.Abstractions.csproj" />
   <Project Path="Compze.Core/Compze.Core.csproj" />
+  <Project Path="Compze.Core.Abstractions/Compze.Core.Abstractions.csproj" />
+  <Project Path="Compze.DocumentDb/Compze.DocumentDb.csproj" />
   <Project Path="Compze.Internals.Serialization.Newtonsoft/Compze.Internals.Serialization.Newtonsoft.csproj" />
 </Solution>

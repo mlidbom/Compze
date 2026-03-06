@@ -9,7 +9,8 @@
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Seq.Extensions.Logging" Version="9.0.0" /></ItemGroup>
+    <PackageReference Include="Seq.Extensions.Logging" Version="9.0.0" />
+  </ItemGroup>
   <!-- Compze.Contracts — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' == 'true'">
     <PackageReference Include="Compze.Contracts" Version="*-*" />

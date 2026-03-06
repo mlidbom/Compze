@@ -3,7 +3,7 @@ using AccountManagement.Domain;
 using AccountManagement.Domain.Tevents;
 using AccountManagement.Domain.Passwords;
 using AccountManagement.Domain.Registration;
-using Compze.Core.Tessaging.Hosting.TessageHandling.Registration.Public;
+using Compze.Core.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Core.Tessaging.Typermedia.Public;
 

@@ -1,5 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
-using Compze.Core.DocumentDb.Infrastructure;
+using Compze.DocumentDb.Infrastructure;
 using Compze.Abstractions.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.QueryModels.Generators.Public;
 using Compze.Internals.SystemCE.UsageGuards;

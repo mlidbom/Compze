@@ -1,4 +1,4 @@
-using Compze.Core.DocumentDb.Wiring;
+using Compze.DocumentDb.Wiring;
 using Compze.Abstractions.Refactoring.Naming.Internal.Implementation;
 using Compze.Abstractions.Wiring.Testing.Internal;
 using Compze.Tessaging.Implementation;

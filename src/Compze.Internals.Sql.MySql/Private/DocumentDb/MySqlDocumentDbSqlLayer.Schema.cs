@@ -1,4 +1,4 @@
-using Document = Compze.Core.DocumentDb.Internal.SqlLayer.IDocumentDbSqlLayer.DocumentTableSchemaStrings;
+using Document = Compze.DocumentDb.Internal.SqlLayer.IDocumentDbSqlLayer.DocumentTableSchemaStrings;
 
 namespace Compze.Internals.Sql.MySql.Private.DocumentDb;
 
