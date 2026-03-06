@@ -5,7 +5,7 @@ applyTo: "*.md"
 # Markdown Document Rules
 
 ## Writing style
-- **Be concise.** State conclusions, not the reasoning journey that led to them. If a decision was reached, document the decision — not the debate.
+- **Be concise.** State conclusions, not the full reasoning journey that led to them. If a decision was reached, document the decision — not the entire debate.
 - **No historical baggage.** When updating a document, rewrite it to reflect the current state. Don't append corrections or "new in v2" sections — just write what's true now.
 - **No redundancy.** Don't explain something that's obvious from context. If two things are separate codebases, don't also explain that they don't share transport/dispatch/etc.
 - **When editing an existing document, check if it has grown bloated.** If so, tighten it rather than just appending.
