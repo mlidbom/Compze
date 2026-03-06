@@ -34,7 +34,7 @@ Their accidental merger was a historical implementation shortcut that created en
 ## Next Steps
 
 ### Immediate
-1. Remove `IClient`
+1. [DONE] Remove `IClient`
 2. Separate `RemoteEndpointConnection` — own connection type per paradigm
 3. Dissolve `InboxConnectionRouter`
 
