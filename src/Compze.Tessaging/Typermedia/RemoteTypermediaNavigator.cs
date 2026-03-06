@@ -15,6 +15,9 @@ public static class RemoteHypermediaNavigatorRegistrar
 {
    public static IComponentRegistrar RemoteHypermediaNavigator(this IComponentRegistrar registrar)
       => registrar.Register(RemoteTypermediaNavigator.RegisterWith);
+
+   public static IComponentRegistrar SingletonRemoteHypermediaNavigator(this IComponentRegistrar registrar)
+      => registrar.Register(RemoteTypermediaNavigator.RegisterSingletonWith);
 }
 
 //Todo: Build a pipeline to handle things like tommand validation, caching layers etc. Don't explicitly check for rules and optimization here with duplication across the class.
@@ -23,6 +26,10 @@ public static class RemoteHypermediaNavigatorRegistrar
    public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Scoped.For<IRemoteTypermediaNavigator>()
                                   .CreatedBy((ITypermediaRouter typermediaRouter) => new RemoteTypermediaNavigator(typermediaRouter)));
+
+   internal static void RegisterSingletonWith(IComponentRegistrar registrar)
+      => registrar.Register(Singleton.For<IRemoteTypermediaNavigator>()
+                                     .CreatedBy((ITypermediaRouter typermediaRouter) => new RemoteTypermediaNavigator(typermediaRouter)));
 
    readonly ITypermediaRouter _typermediaRouter = typermediaRouter;
 

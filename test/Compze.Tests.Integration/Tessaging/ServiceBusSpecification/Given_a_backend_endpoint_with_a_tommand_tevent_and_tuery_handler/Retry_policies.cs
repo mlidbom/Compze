@@ -16,7 +16,7 @@ public class Retry_policies_AtMostOnceTommand_when_tommand_handler_fails : Endpo
       const string exceptionTessage = "82369B6E-80D4-4E64-92B6-A564A7195CC5";
       MyCreateTaggregateTommandHandlerThreadGate.FailTransactionOnPreparePostPassThrough(new Exception(exceptionTessage));
 
-      Invoking(() => Client.ExecuteRequest(navigator => navigator.Post(MyCreateTaggregateTommand.Create())))
+      Invoking(() => Navigator.Post(MyCreateTaggregateTommand.Create()))
                                     .Must().Throw<TessageDispatchingFailedException>();
       await Task.CompletedTask;
    }

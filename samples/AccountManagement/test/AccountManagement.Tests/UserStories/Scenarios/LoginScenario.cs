@@ -1,13 +1,12 @@
 using AccountManagement.API;
-using Compze.Core.Tessaging.Hosting.Public;
-using Compze.Tessaging.Abstractions.Tessaging.Hosting.Public;
-using Compze.Tessaging.Hosting;
+using Compze.Core.Tessaging.Typermedia.Public;
+using Compze.Tessaging.Abstractions.Tessaging.Typermedia.Public;
 
 namespace AccountManagement.UserStories.Scenarios;
 
-public class LoginScenario(IClient client, string email, string password) : ScenarioBase<AccountResource.Tommand.LogIn.LoginAttemptResult>
+public class LoginScenario(IRemoteTypermediaNavigator navigator, string email, string password) : ScenarioBase<AccountResource.Tommand.LogIn.LoginAttemptResult>
 {
-   readonly IClient _client = client;
+   readonly IRemoteTypermediaNavigator _navigator = navigator;
    string Password { get; set; } = password;
    string Email { get; set; } = email;
 
@@ -23,5 +22,5 @@ public class LoginScenario(IClient client, string email, string password) : Scen
       return this;
    }
 
-   public override AccountResource.Tommand.LogIn.LoginAttemptResult Execute() => Api.Tommand.Login(Email, Password).ExecuteRequestOn(_client);
+   public override AccountResource.Tommand.LogIn.LoginAttemptResult Execute() => _navigator.Navigate(Api.Tommand.Login(Email, Password));
 }

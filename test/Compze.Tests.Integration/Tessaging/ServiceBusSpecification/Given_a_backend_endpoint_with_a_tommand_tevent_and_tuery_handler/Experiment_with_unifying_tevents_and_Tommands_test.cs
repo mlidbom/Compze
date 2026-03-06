@@ -29,7 +29,7 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
    readonly ITestingEndpointHost _host;
 
    IServiceLocator _userDomainServiceLocator = null!;
-   IClient _client = null!;
+   TestClient _client = null!;
    readonly IEndpoint _userManagementDomainEndpoint;
 
    public Experiment_with_unifying_tevents_and_tommands_test()
@@ -73,9 +73,9 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
 
    [PCT] public void Can_register_user_and_fetch_user_resource()
    {
-      var registrationResult = _client.ExecuteRequest(UserRegistrarTaggregate.RegisterUser);
+      var registrationResult = UserRegistrarTaggregate.RegisterUser(_client.Navigator);
 
-      var user = _client.ExecuteRequest(navigator => navigator.Get(registrationResult.UserLink));
+      var user = _client.Navigator.Get(registrationResult.UserLink);
 
       user.Must().NotBeNull();
       user.History.Count().Must().Be(1);

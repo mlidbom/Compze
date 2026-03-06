@@ -65,14 +65,13 @@ public class RemoteTueryPerformanceTests : PerformanceTestBase
       return;
 
       //ncrunch: no coverage start
-      void RunRequest() =>
-         Client.ExecuteRequest(navigator =>
+      void RunRequest()
+      {
+         for(var i = 0; i < tueriesPerRequest; i++)
          {
-            for(var i = 0; i < tueriesPerRequest; i++)
-            {
-               navigator.Navigate(navigationSpecification);
-            }
-         });
+            Navigator.Navigate(navigationSpecification);
+         }
+      }
    }
 
    async Task RunAsyncScenario(int requests, int tueriesPerRequest, TimeSpan maxTotal, IRemotableTuery<MyTueryResult> tuery)
@@ -89,10 +88,9 @@ public class RemoteTueryPerformanceTests : PerformanceTestBase
 
       //ncrunch: no coverage start
       async Task RunRequestAsync() =>
-         await Client.ExecuteRequestAsync(
-            async navigator => await Task.WhenAll(1.Through(tueriesPerRequest)
-                                            .Select(_ => navigator.NavigateAsync(navigationSpecification))
-                                            .ToArray()));
+         await Task.WhenAll(1.Through(tueriesPerRequest)
+                                            .Select(_ => Navigator.NavigateAsync(navigationSpecification))
+                                            .ToArray());
 
       async Task RunScenarioAsync() => await Task.WhenAll(1.Through(requests).Select(_ => RunRequestAsync()).ToArray());
    }

@@ -10,15 +10,15 @@ namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification.Given_a_bac
 public class Transaction_policies_internal : EndpointHostTestBase
 {
    [PCT] public async Task Calling_PostRemoteAsync_within_a_transaction_with_AtLeastOnceTommand_throws_TransactionPolicyViolationException() =>
-      await InvokingAsync(() => TransactionScopeCe.Execute(() => Client.ExecuteRequest(session => session.PostAsync(MyAtMostOnceTypermediaTommandWithResult.Create()))))
+      await InvokingAsync(() => TransactionScopeCe.Execute(() => Navigator.PostAsync(MyAtMostOnceTypermediaTommandWithResult.Create())))
            .Must().ThrowAsync<TessageInspector.TransactionPolicyViolationException>();
 
    [PCT] public async Task Calling_GetRemoteAsync_within_a_transaction_with_Tuery_throws_TransactionPolicyViolationException() =>
-      await InvokingAsync(() => TransactionScopeCe.Execute(() => Client.ExecuteRequest(session => session.GetAsync(new MyTuery()))))
+      await InvokingAsync(() => TransactionScopeCe.Execute(() => Navigator.GetAsync(new MyTuery())))
            .Must().ThrowAsync<TessageInspector.TransactionPolicyViolationException>();
 
    [PCT] public void Calling_PostRemoteAsync_within_a_transaction_AtLeastOnceTommand_throws_TransactionPolicyViolationException() =>
-      Invoking(() => TransactionScopeCe.Execute(() => Client.ExecuteRequest(session => session.Post(MyAtMostOnceTypermediaTommandWithResult.Create()))))
+      Invoking(() => TransactionScopeCe.Execute(() => Navigator.Post(MyAtMostOnceTypermediaTommandWithResult.Create())))
         .Must().Throw<TessageInspector.TransactionPolicyViolationException>();
 
    [PCT] public void Calling_PostRemoteAsync_without_a_transaction_with_ExactlyOnceTommand_throws_TransactionPolicyViolationException() =>
@@ -26,6 +26,6 @@ public class Transaction_policies_internal : EndpointHostTestBase
         .Must().Throw<TessageInspector.TransactionPolicyViolationException>();
 
    [PCT] public void Calling_GetRemote_within_a_transaction_with_Tuery_throws_TransactionPolicyViolationException() =>
-      Invoking(() => TransactionScopeCe.Execute(() => Client.ExecuteRequest(session => session.Get(new MyTuery()))))
+      Invoking(() => TransactionScopeCe.Execute(() => Navigator.Get(new MyTuery())))
         .Must().Throw<TessageInspector.TransactionPolicyViolationException>();
 }

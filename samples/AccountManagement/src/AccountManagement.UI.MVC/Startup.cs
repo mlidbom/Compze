@@ -1,8 +1,5 @@
 using Compze.Core.Tessaging.Hosting.Public;
-using Compze.Tessaging.Abstractions.Tessaging.Hosting.Public;
-using Compze.Core.Tessaging.Typermedia.Public;
 using Compze.Tessaging.Abstractions.Tessaging.Typermedia.Public;
-using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Tessaging;
@@ -15,7 +12,7 @@ public class Startup
 {
    readonly IEndpointHost _host;
    readonly IEndpoint _endpoint;
-   IClient _client = null!;
+   TestClient _client = null!;
 
    public Startup(IConfiguration configuration)
    {
@@ -36,7 +33,7 @@ public class Startup
 
       _client = TestClient.ConnectTo(_endpoint.Address!).GetAwaiter().GetResult();
       services.AddHttpContextAccessor();
-      services.AddScoped(sp => (IRemoteTypermediaNavigator)sp.GetRequiredService<IHttpContextAccessor>().HttpContext!.Items[typeof(IRemoteTypermediaNavigator)]!);
+      services.AddScoped(_ => _client.Navigator);
    }
 
    // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -57,12 +54,6 @@ public class Startup
 
 
       app.UseRouting();
-
-      app.Use(async (ctx, next) => await _client.ExecuteRequestAsync(async navigator =>
-      {
-         ctx.Items[typeof(IRemoteTypermediaNavigator)] = navigator;
-         await next.Invoke().caf();
-      }).caf());
 
       app.UseEndpoints(endpoints =>
       {

@@ -15,7 +15,8 @@ public abstract class PerformanceTestBase : UniversalTestBase
 {
    ITestingEndpointHost Host { get; set; }
    protected IEndpoint ServerEndpoint { get; set; }
-   protected IClient Client { get; private set; } = null!;
+   protected TestClient Client { get; private set; } = null!;
+   protected IRemoteTypermediaNavigator Navigator => Client.Navigator;
    protected IInProcessTypermediaNavigator InProcessNavigator => ServerEndpoint.ServiceLocator.Resolve<IInProcessTypermediaNavigator>();
 
    protected PerformanceTestBase()

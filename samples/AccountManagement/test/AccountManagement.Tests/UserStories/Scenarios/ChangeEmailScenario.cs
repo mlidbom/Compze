@@ -1,16 +1,13 @@
 using AccountManagement.API;
 using AccountManagement.Domain;
-using Compze.Core.Tessaging.Hosting.Public;
-using Compze.Tessaging.Abstractions.Tessaging.Hosting.Public;
 using Compze.Core.Tessaging.Typermedia.Public;
 using Compze.Tessaging.Abstractions.Tessaging.Typermedia.Public;
-using Compze.Tessaging.Hosting;
 
 namespace AccountManagement.UserStories.Scenarios;
 
 class ChangeAccountEmailScenario : ScenarioBase<AccountResource>
 {
-   readonly IClient _client;
+   readonly IRemoteTypermediaNavigator _navigator;
 
    internal string NewEmail { get; private set;} = TestData.Emails.CreateUnusedEmail();
    internal Email OldEmail { get; }
@@ -23,19 +20,19 @@ class ChangeAccountEmailScenario : ScenarioBase<AccountResource>
 
    internal AccountResource Account { get; private set; }
 
-   internal static ChangeAccountEmailScenario Create(IClient client) => new(client, new RegisterAccountScenario(client).Execute().Account!);
+   internal static ChangeAccountEmailScenario Create(IRemoteTypermediaNavigator navigator) => new(navigator, new RegisterAccountScenario(navigator).Execute().Account!);
 
-   internal ChangeAccountEmailScenario(IClient client, AccountResource account)
+   internal ChangeAccountEmailScenario(IRemoteTypermediaNavigator navigator, AccountResource account)
    {
-      _client = client;
+      _navigator = navigator;
       Account = account;
       OldEmail = Account.Email;
    }
 
    public override AccountResource Execute()
    {
-      Account.Tommands.ChangeEmail.WithEmail(NewEmail).Post().ExecuteRequestOn(_client);
+      Account.Tommands.ChangeEmail.WithEmail(NewEmail).Post().NavigateOn(_navigator);
 
-      return Account = Api.Tuery.AccountById(Account.Id).ExecuteRequestOn(_client);
+      return Account = _navigator.Navigate(Api.Tuery.AccountById(Account.Id));
    }
 }

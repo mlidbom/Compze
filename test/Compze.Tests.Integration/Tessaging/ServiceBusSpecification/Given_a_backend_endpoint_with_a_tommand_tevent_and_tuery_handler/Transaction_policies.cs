@@ -23,7 +23,7 @@ public class Transaction_policies : EndpointHostTestBase
 
    [PCT] public void Tommand_handler_with_result_runs_in_transaction_with_isolation_level_Serializable()
    {
-      var tommandResult = Client.ExecuteRequest(navigator => navigator.Post(MyAtMostOnceTypermediaTommandWithResult.Create()));
+      var tommandResult = Navigator.Post(MyAtMostOnceTypermediaTommandWithResult.Create());
 
       tommandResult.Must().NotBeNull();
 
@@ -36,7 +36,7 @@ public class Transaction_policies : EndpointHostTestBase
 
    [PCT] public void Tevent_handler_runs_in_transaction_with_isolation_level_Serializable()
    {
-      Client.ExecuteRequest(session => session.Post(MyCreateTaggregateTommand.Create()));
+      Navigator.Post(MyCreateTaggregateTommand.Create());
 
       var transaction = MyRemoteTaggregateTeventHandlerThreadGate.AwaitPassedThroughCountEqualTo(1)
                                                                  .PassedThrough.Single().Transaction;
@@ -47,7 +47,7 @@ public class Transaction_policies : EndpointHostTestBase
 
    [PCT] public void Tuery_handler_does_not_run_in_transaction()
    {
-      Client.ExecuteRequest(session => session.Get(new MyTuery()));
+      Navigator.Get(new MyTuery());
 
       TueryHandlerThreadGate.AwaitPassedThroughCountEqualTo(1)
                             .PassedThrough.Single().Transaction.Must().BeNull();

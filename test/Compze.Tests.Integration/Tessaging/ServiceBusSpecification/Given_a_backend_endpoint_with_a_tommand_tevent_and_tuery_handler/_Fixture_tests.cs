@@ -22,14 +22,14 @@ public class EndpointHostTest_Tests : EndpointHostTestBase
    [PCT]  public async Task If_tommand_handler_with_result_throws_disposing_host_throws_AggregateException_containing_the_thrown_exception_and_SendAsync_throws_TessageDispatchingFailedException()
    {
       TommandHandlerWithResultThreadGate.ThrowPostPassThrough(_thrownException);
-      await InvokingAsync(async () => await Client.ExecuteRequestAsync(async session => await session.PostAsync(MyAtMostOnceTypermediaTommandWithResult.Create())))
+      await InvokingAsync(async () => await Navigator.PostAsync(MyAtMostOnceTypermediaTommandWithResult.Create()))
                          .Must().ThrowAsync<TessageDispatchingFailedException>();
    }
 
    [PCT]  public async Task If_tevent_handler_throws_disposing_host_throws_AggregateException_containing_the_thrown_exception()
    {
       MyRemoteTaggregateTeventHandlerThreadGate.ThrowPostPassThrough(_thrownException);
-      Client.ExecuteRequest(session => session.Post(MyCreateTaggregateTommand.Create()));
+      Navigator.Post(MyCreateTaggregateTommand.Create());
       await AssertDisposingHostThrowsAggregateExceptionHierarchyContainingThrownExceptionAsANonAggregateException();
    }
 
@@ -37,7 +37,7 @@ public class EndpointHostTest_Tests : EndpointHostTestBase
    {
       TueryHandlerThreadGate.ThrowPostPassThrough(_thrownException);
       //urgent: this seems to do some pretty strange async related things
-      await InvokingAsync(() => Client.ExecuteRequestAsync(session => session.GetAsync(new MyTuery())))
+      await InvokingAsync(() => Navigator.GetAsync(new MyTuery()))
                          .Must().ThrowAsync<TessageDispatchingFailedException>();
    }
 

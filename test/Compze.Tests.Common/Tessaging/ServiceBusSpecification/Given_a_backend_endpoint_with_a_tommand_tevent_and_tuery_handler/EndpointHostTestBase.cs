@@ -41,7 +41,8 @@ public abstract class EndpointHostTestBase : UniversalTestBase
    IReadOnlyList<IThreadGate> AllGates  { get; }
 
    protected IEndpoint BackendEndPoint { get; private set; } = null!;
-   protected IClient Client { get; private set; } = null!;
+   protected TestClient Client { get; private set; } = null!;
+   protected IRemoteTypermediaNavigator Navigator => Client.Navigator;
    protected IEndpoint RemoteEndpoint { get; private set; } = null!;
 
    readonly IDependencyInjectionContainer _rootContainer;

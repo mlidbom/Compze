@@ -1,15 +1,14 @@
 using AccountManagement.API;
 using AccountManagement.Domain;
 using AccountManagement.Domain.Registration;
-using Compze.Core.Tessaging.Hosting.Public;
-using Compze.Tessaging.Abstractions.Tessaging.Hosting.Public;
-using Compze.Tessaging.Hosting;
+using Compze.Core.Tessaging.Typermedia.Public;
+using Compze.Tessaging.Abstractions.Tessaging.Typermedia.Public;
 
 namespace AccountManagement.UserStories.Scenarios;
 
-public class RegisterAccountScenario(IClient client, string? email = null, string password = TestData.Passwords.ValidPassword) : ScenarioBase<(AccountResource.Tommand.Register.RegistrationAttemptResult Result, AccountResource? Account)>
+public class RegisterAccountScenario(IRemoteTypermediaNavigator navigator, string? email = null, string password = TestData.Passwords.ValidPassword) : ScenarioBase<(AccountResource.Tommand.Register.RegistrationAttemptResult Result, AccountResource? Account)>
 {
-   readonly IClient _client = client;
+   readonly IRemoteTypermediaNavigator _navigator = navigator;
 
    public AccountId AccountId { get; private set; } = new();
    public string Email { get; private set; } = email ?? TestData.Emails.CreateUnusedEmail();
@@ -35,11 +34,11 @@ public class RegisterAccountScenario(IClient client, string? email = null, strin
 
    public override (AccountResource.Tommand.Register.RegistrationAttemptResult Result, AccountResource? Account) Execute()
    {
-      var registrationAttemptResult = _client.ExecuteRequest(Api.Tommand.Register(AccountId, Email, Password));
+      var registrationAttemptResult = _navigator.Navigate(Api.Tommand.Register(AccountId, Email, Password));
 
       return registrationAttemptResult.Status switch
       {
-         RegistrationAttemptStatus.Successful             => (registrationAttemptResult, Api.Tuery.AccountById(AccountId).ExecuteRequestOn(_client)),
+         RegistrationAttemptStatus.Successful             => (registrationAttemptResult, _navigator.Navigate(Api.Tuery.AccountById(AccountId))),
          RegistrationAttemptStatus.EmailAlreadyRegistered => (registrationAttemptResult, null),
          _                                                => throw new ArgumentOutOfRangeException()
       };

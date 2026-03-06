@@ -4,7 +4,6 @@ using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registrati
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Core.Tessaging.Typermedia.Public;
 using Compze.Tessaging.Abstractions.Tessaging.Typermedia.Public;
-using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Hosting.Testing.Tessaging;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.Tests.Infrastructure;
@@ -21,7 +20,7 @@ public class Navigator_specification : UniversalTestBase
 {
    readonly ITestingEndpointHost _host;
    readonly IEndpoint _endpoint;
-   IClient _client = null!;
+   TestClient _client = null!;
 
    public Navigator_specification()
    {
@@ -59,13 +58,13 @@ public class Navigator_specification : UniversalTestBase
 
    [PCT]  public void Can_get_tommand_result()
    {
-      var tommandResult1 = _client.ExecuteRequest(navigator => navigator.Post(RegisterUserTypermediaTommand.Create("new-user-name")));
+      var tommandResult1 = _client.Navigator.Post(RegisterUserTypermediaTommand.Create("new-user-name"));
       tommandResult1.Name.Must().Be("new-user-name");
    }
 
    [PCT]  public void Can_navigate_to_startpage_execute_tommand_and_follow_tommand_result_link_to_the_created_resource()
    {
-      var userResource = _client.ExecuteRequest(NavigationSpecification.Get(UserApiStartPage.Self)
+      var userResource = _client.Navigator.Navigate(NavigationSpecification.Get(UserApiStartPage.Self)
                                                                                      .Post(startpage => startpage.RegisterUser("new-user-name"))
                                                                                      .Get(registerUserResult => registerUserResult.User));
 
@@ -74,11 +73,11 @@ public class Navigator_specification : UniversalTestBase
 
    [PCT]  public async Task Can_navigate_async_to_startpage_execute_tommand_and_follow_tommand_result_link_to_the_created_resource()
    {
-      var userResource = _client.ExecuteRequestAsync(NavigationSpecification.Get(UserApiStartPage.Self)
+      var userResource = await _client.Navigator.NavigateAsync(NavigationSpecification.Get(UserApiStartPage.Self)
                                                                                     .Post(startpage => startpage.RegisterUser("new-user-name"))
                                                                                     .Get(registerUserResult => registerUserResult.User));
 
-      (await userResource).Name.Must().Be("new-user-name");
+      userResource.Name.Must().Be("new-user-name");
    }
 
    protected internal class UserApiStartPage

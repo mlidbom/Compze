@@ -15,8 +15,7 @@ public class Parallelism_policies : EndpointHostTestBase
       TueryHandlerThreadGate.Close();
 
       var tasks = Task.WhenAll(1.Through(5)
-                                .Select(_ => Client.ExecuteRequestAsync(session =>
-                                                                                          session.GetAsync(new MyTuery()))));
+                                .Select(_ => Navigator.GetAsync(new MyTuery())));
 
       TueryHandlerThreadGate.AwaitQueueLengthEqualTo(5);
       OpenGates();
@@ -26,7 +25,7 @@ public class Parallelism_policies : EndpointHostTestBase
    [PCT] public async Task Five_tuery_handlers_can_execute_in_parallel_when_using_Tuery()
    {
       TueryHandlerThreadGate.Close();
-      var tasks = 1.Through(5).Select(_ => TaskCE.Run(() => Client.ExecuteRequest(session => session.Get(new MyTuery())))).ToList();
+      var tasks = 1.Through(5).Select(_ => TaskCE.Run(() => Navigator.Get(new MyTuery()))).ToList();
 
       TueryHandlerThreadGate.AwaitQueueLengthEqualTo(5);
       TueryHandlerThreadGate.Open();
@@ -36,8 +35,8 @@ public class Parallelism_policies : EndpointHostTestBase
    [PCT] public void Two_tevent_handlers_cannot_execute_in_parallel()
    {
       MyRemoteTaggregateTeventHandlerThreadGate.Close();
-      Client.ExecuteRequest(session => session.Post(MyCreateTaggregateTommand.Create()));
-      Client.ExecuteRequest(session => session.Post(MyCreateTaggregateTommand.Create()));
+      Navigator.Post(MyCreateTaggregateTommand.Create());
+      Navigator.Post(MyCreateTaggregateTommand.Create());
 
       MyRemoteTaggregateTeventHandlerThreadGate.AwaitQueueLengthEqualTo(1)
                                              .TryAwaitQueueLengthEqualTo(2, WaitTimeout.Milliseconds(100)).Must().Be(false);
@@ -58,10 +57,9 @@ public class Parallelism_policies : EndpointHostTestBase
    {
       CloseGates();
 
-      var commandsCompleted = Client.ExecuteRequestAsync(async session =>
-         await Task.WhenAll(
-            session.PostAsync(MyCreateTaggregateTommand.Create()),
-            session.PostAsync(MyCreateTaggregateTommand.Create())));
+      var commandsCompleted = Task.WhenAll(
+            Navigator.PostAsync(MyCreateTaggregateTommand.Create()),
+            Navigator.PostAsync(MyCreateTaggregateTommand.Create()));
 
       MyCreateTaggregateTommandHandlerThreadGate.AwaitQueueLengthEqualTo(1)
                                                .TryAwaitQueueLengthEqualTo(2, WaitTimeout.Milliseconds(100)).Must().Be(false);

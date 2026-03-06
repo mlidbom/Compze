@@ -9,11 +9,8 @@ public class Async_behavior_test : EndpointHostTestBase
    {
       TueryHandlerThreadGate.Close();
 
-      await Client.ExecuteRequestAsync(async session =>
-      {
-         var tuery = session.GetAsync(new MyTuery());
-         TueryHandlerThreadGate.Open();
-         await tuery;
-      });
+      var tuery = Navigator.GetAsync(new MyTuery());
+      TueryHandlerThreadGate.Open();
+      await tuery;
    }
 }

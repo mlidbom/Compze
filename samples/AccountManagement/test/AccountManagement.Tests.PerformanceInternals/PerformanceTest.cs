@@ -2,9 +2,8 @@ using AccountManagement.API;
 using AccountManagement.Domain.Registration;
 using AccountManagement.UserStories.Scenarios;
 using Compze.Core.Tessaging.Hosting.Public;
-using Compze.Tessaging.Abstractions.Tessaging.Hosting.Public;
+using Compze.Core.Tessaging.Typermedia.Public;
 using Compze.Abstractions.Wiring.Testing.Internal;
-using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Performance;
 using Compze.Tessaging.Hosting.Testing.Tessaging;
@@ -23,7 +22,7 @@ namespace AccountManagement;
 public class PerformanceTest : UniversalTestBase
 {
    ITestingEndpointHost? _host;
-   IClient? _client;
+   TestClient? _client;
    AccountScenarioApi? _scenarioApi;
 
    protected override async Task InitializeAsyncInternal()
@@ -32,7 +31,7 @@ public class PerformanceTest : UniversalTestBase
       var endpoint = AccountManagementServerDomainBootstrapper.RegisterWith(_host);
       await _host.StartAsync().caf();
       _client = await TestClient.ConnectTo(endpoint.Address!).caf();
-      _scenarioApi = new AccountScenarioApi(_client);
+      _scenarioApi = new AccountScenarioApi(_client.Navigator);
       //Warmup
       StopwatchCE.TimeExecutionThreaded(() => _scenarioApi.Register.Execute(), iterations: 10);
    }
@@ -81,7 +80,7 @@ public class PerformanceTest : UniversalTestBase
                                    action: () =>
                                    {
                                       var accountId = accountsReader.Next().Id;
-                                      _client!.ExecuteRequest(AccountApi.Instance.Tuery.AccountById(accountId)).Id.Must().Be(accountId);
+                                      _client!.Navigator.Navigate(AccountApi.Instance.Tuery.AccountById(accountId)).Id.Must().Be(accountId);
                                    },
                                    iterations: fetches,
                                    maxTotal: 20.Milliseconds());
@@ -97,7 +96,7 @@ public class PerformanceTest : UniversalTestBase
             var registerAccountScenario = _scenarioApi!.Register;
             var result = registerAccountScenario.Execute().Result;
             result.Status.Must().Be(RegistrationAttemptStatus.Successful);
-            _client!.ExecuteRequest(AccountApi.Instance.Tuery.AccountById(result.RegisteredAccount!.Id)).Id.Must().Be(result.RegisteredAccount.Id);
+            _client!.Navigator.Navigate(AccountApi.Instance.Tuery.AccountById(result.RegisteredAccount!.Id)).Id.Must().Be(result.RegisteredAccount.Id);
             created.Add((registerAccountScenario.Email, registerAccountScenario.Password, registerAccountScenario.AccountId));
          },
          iterations: accountCount);

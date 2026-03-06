@@ -1,4 +1,4 @@
-using Compze.Tessaging.Hosting;
+using Compze.Core.Tessaging.Typermedia.Public;
 using Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Must;
@@ -9,21 +9,21 @@ namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification.Given_a_bac
 
 public class Client_tests : EndpointHostTestBase
 {
-   [PCT] public void Can_execute_tuery_via_IClient()
+   [PCT] public void Can_execute_tuery_via_Navigator()
    {
-      var result = Client.ExecuteRequest(navigator => navigator.Get(new MyTuery()));
+      var result = Navigator.Get(new MyTuery());
       result.Must().NotBeNull();
    }
 
-   [PCT] public void Can_post_tommand_via_IClient()
+   [PCT] public void Can_post_tommand_via_Navigator()
    {
-      var result = Client.ExecuteRequest(navigator => navigator.Post(MyAtMostOnceTypermediaTommandWithResult.Create()));
+      var result = Navigator.Post(MyAtMostOnceTypermediaTommandWithResult.Create());
       result.Must().NotBeNull();
    }
 
-   [PCT] public void Can_execute_tuery_via_IClient_using_NavigationSpecification()
+   [PCT] public void Can_execute_tuery_via_Navigator_using_NavigationSpecification()
    {
-      var result = Client.ExecuteRequest(Core.Tessaging.Typermedia.Public.NavigationSpecification.Get(new MyTuery()));
+      var result = Navigator.Navigate(NavigationSpecification.Get(new MyTuery()));
       result.Must().NotBeNull();
    }
 }

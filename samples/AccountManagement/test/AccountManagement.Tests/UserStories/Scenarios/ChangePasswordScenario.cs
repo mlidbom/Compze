@@ -1,16 +1,13 @@
 using AccountManagement.API;
 using CommunityToolkit.Diagnostics;
-using Compze.Core.Tessaging.Hosting.Public;
-using Compze.Tessaging.Abstractions.Tessaging.Hosting.Public;
 using Compze.Core.Tessaging.Typermedia.Public;
 using Compze.Tessaging.Abstractions.Tessaging.Typermedia.Public;
-using Compze.Tessaging.Hosting;
 
 namespace AccountManagement.UserStories.Scenarios;
 
 class ChangePasswordScenario : ScenarioBase<AccountResource>
 {
-   readonly IClient _client;
+   readonly IRemoteTypermediaNavigator _navigator;
 
    internal string OldPassword { get; private set; }
    internal string NewPassword { get; private set; }
@@ -28,18 +25,18 @@ class ChangePasswordScenario : ScenarioBase<AccountResource>
       return this;
    }
 
-   internal static ChangePasswordScenario Create(IClient client)
+   internal static ChangePasswordScenario Create(IRemoteTypermediaNavigator navigator)
    {
-      var registerAccountScenario = new RegisterAccountScenario(client);
+      var registerAccountScenario = new RegisterAccountScenario(navigator);
       var account = registerAccountScenario.Execute().Account;
 
-      return new ChangePasswordScenario(client, account!, registerAccountScenario.Password, TestData.Passwords.CreateValidPasswordString());
+      return new ChangePasswordScenario(navigator, account!, registerAccountScenario.Password, TestData.Passwords.CreateValidPasswordString());
    }
 
-   ChangePasswordScenario(IClient client, AccountResource account, string oldPassword, string newPassword)
+   ChangePasswordScenario(IRemoteTypermediaNavigator navigator, AccountResource account, string oldPassword, string newPassword)
    {
       Guard.IsNotNull(account);
-      _client = client;
+      _navigator = navigator;
       Account = account;
       OldPassword = oldPassword;
       NewPassword = newPassword;
@@ -47,8 +44,8 @@ class ChangePasswordScenario : ScenarioBase<AccountResource>
 
    public override AccountResource Execute()
    {
-      Account.Tommands.ChangePassword.WithValues(OldPassword, NewPassword).Post().ExecuteRequestOn(_client);
+      Account.Tommands.ChangePassword.WithValues(OldPassword, NewPassword).Post().NavigateOn(_navigator);
 
-      return Account = Api.Tuery.AccountById(Account.Id).ExecuteRequestOn(_client);
+      return Account = _navigator.Navigate(Api.Tuery.AccountById(Account.Id));
    }
 }
