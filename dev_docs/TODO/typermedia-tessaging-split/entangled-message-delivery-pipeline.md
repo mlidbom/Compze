@@ -92,6 +92,19 @@ Created `ITypermediaTransport` — Typermedia's own transport abstraction replac
 - `MemoryInboxTransportServer` still resolves `TypermediaHandlerExecutor` to bind it in `InMemoryTypermediaNetwork` during startup — both paradigms share the same endpoint address. Full decoupling deferred to Phase 5.
 - `TessagingRouter` and `TessagingConnection` depend on `ITypermediaTransport` for bootstrap — **this is wrong**. Discovery queries (`EndpointInformationTuery`, `NetworkTopologyTuery`) are mistyped as Typermedia tueries. They are plain address-targeted request/response, not type-routed. See Section 12 for details. Fixing this should precede or be part of Phase 5.
 
+### Phase 4b — Retype Discovery as Infrastructure (prerequisite for Phase 5)
+
+Discovery queries are currently mistyped as Typermedia tueries (`IRemotableTuery<T>`). This creates a false dependency: `TessagingRouter`/`TessagingConnection` depend on `ITypermediaTransport` just to send a request to a known address.
+
+**The type hierarchy now supports this fix.** `IQuery<T>` exists as a plain address-targeted query type that is NOT type-routed (see Type Hierarchy section below). Discovery queries should implement `IQuery<T>` directly, not `IRemotableTuery<T>`.
+
+Steps:
+- Retype `EndpointInformationTuery` and `NetworkTopologyTuery` from `IRemotableTuery<T>` to `IQuery<T>`
+- Create a simple infrastructure request/response transport (serialize, POST to known address, deserialize) — shared by both paradigms
+- Move discovery handler registration out of `TypermediaHandlerRegistrarWithDependencyInjectionSupport` into its own infrastructure handler mechanism
+- Remove `ITypermediaTransport` dependency from `TessagingRouter` and `TessagingConnection`
+- Remove `ITypermediaTransport` registration from server endpoint containers (only needed there because of discovery mistyping)
+
 ### Phase 5 — Separate Hosting
 
 Each paradigm gets its own hosting lifecycle.
@@ -104,7 +117,7 @@ Each paradigm gets its own hosting lifecycle.
 
 ### Recommended next step
 
-Phase 5 — separating hosting. The Typermedia executor binding in `MemoryInboxTransportServer` and the `TypermediaController` registration in `AspNetInboxTransportServer` should move to their own Typermedia hosting components.
+Phase 4b — retype discovery as infrastructure. This unblocks Phase 5 by eliminating the false `ITypermediaTransport` dependency in Tessaging.
 
 ---
 
@@ -422,7 +435,7 @@ Consequences of the current mistyping:
 - Discovery handlers are registered as Typermedia tuery handlers in every endpoint, creating a hard dependency from hosting to Typermedia
 - It spreads the false impression that "discovery is fundamentally a Typermedia mechanism" — it is not
 
-**Fix:** These should be plain infrastructure messages with their own simple request/response mechanism (serialize, POST to known address, deserialize response). No type routing, no Typermedia registry, no `ITypermediaTransport`. Both Tessaging and Typermedia routers can then bootstrap independently using this shared infrastructure layer.
+**Fix (Phase 4b):** Retype these as `IQuery<T>` (the plain address-targeted query type from the message hierarchy — see Section 13). Create a simple infrastructure request/response mechanism (serialize, POST to known address, deserialize response). No type routing, no Typermedia registry, no `ITypermediaTransport`. Both Tessaging and Typermedia routers can then bootstrap independently using this shared infrastructure layer.
 
 ### Internal Tueries (currently mistyped)
 - `TessageTypesInternal` — `src/Compze.Tessaging/Implementation/Abstractions/_TessageTypesInternal.cs`
@@ -430,6 +443,52 @@ Consequences of the current mistyping:
 - `NetworkTopologyTuery : IRemotableTuery<NetworkTopology>` — returns all endpoint addresses
 - Both are currently registered as typermedia tuery handlers in every endpoint — **should not be**
 - Used by both `TypermediaRouter` (topology discovery) and `TessagingRouter` (endpoint info bootstrap)
+
+---
+
+## 13. Message Type Hierarchy
+
+Defined in `src/Compze.Abstractions/Tessaging/Public/_TessageTypes..Interfaces.cs`.
+
+The hierarchy has three layers: plain messages (no routing semantics), type-routed tessages, and paradigm-specific specializations.
+
+```
+IMessage                          — any message, no routing implied
+├── IEvent                        — something happened
+├── ICommand                      — do something (void)
+│   └── ICommand<TResult>         — do something, return result
+├── IQuery<TResult>               — ask something, get answer
+│
+└── ITessage : IMessage            — TYPE-ROUTED messages (routing by .NET type hierarchy)
+    ├── ITevent : IEvent           — type-routed event
+    ├── ITommand : ICommand        — type-routed command (void)
+    │
+    ├── ITypermediaTessage         — Typermedia paradigm marker
+    │   └── ITyperMediaTessage<TResult>
+    │       ├── ITommand<TResult> : ITommand, ICommand<TResult>  — type-routed command with result
+    │       └── ITuery<TResult> : IQuery<TResult>                — type-routed query (Tuery IS-A Query)
+    │
+    ├── IRemotableTessage          — can cross endpoint boundaries
+    │   ├── IRemotableTevent
+    │   ├── IRemotableTommand / IRemotableTommand<TResult>
+    │   └── IRemotableTuery<TResult>
+    │
+    ├── IAtMostOnceTessage          — at-most-once delivery guarantee (has TessageId)
+    │   ├── IAtMostOnceTypermediaTommand
+    │   └── IAtMostOnceTommand<TResult>
+    │
+    └── IExactlyOnceTessage         — exactly-once delivery (inbox/outbox)
+        ├── IExactlyOnceTevent
+        └── IExactlyOnceTommand
+```
+
+### Key design insight: `IMessage` vs `ITessage`
+
+- **`IMessage`** is the root. `IQuery<T>`, `ICommand`, `IEvent` live here. These carry no routing semantics — they are plain messages sent to a specific known address.
+- **`ITessage : IMessage`** adds type routing. Everything below `ITessage` uses .NET type compatibility for routing decisions.
+- **`ITuery<T> : IQuery<T>`** — a Tuery IS-A Query, but a type-routed one. The converse is not true: a plain `IQuery<T>` is NOT a Tuery and NOT type-routed.
+
+This distinction is critical for discovery: `EndpointInformationTuery` and `NetworkTopologyTuery` are address-targeted queries (`IQuery<T>`) that are currently mistyped as type-routed tueries (`IRemotableTuery<T>`). See Section 12.
 
 ---
 
