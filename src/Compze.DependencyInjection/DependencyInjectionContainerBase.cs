@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.LinqCE;
+using Compze.Threading;
 
 namespace Compze.DependencyInjection;
 
@@ -9,7 +10,7 @@ public abstract class DependencyInjectionContainerBase : IDependencyInjectionCon
    readonly List<ComponentRegistration> _registeredComponents = [];
    readonly Dictionary<Type, ComponentRegistration> _transientRegistrations = new();
    readonly IComponentRegistrar _registrar;
-   bool _transientTrackersRegistered;
+   readonly RunOnce _registerTransientInstanceTrackers = new();
 
    protected DependencyInjectionContainerBase(IComponentRegistrar? registrar)
    {
@@ -22,6 +23,13 @@ public abstract class DependencyInjectionContainerBase : IDependencyInjectionCon
 
    public IDependencyInjectionContainer Register(params ComponentRegistration[] registrations)
    {
+      _registerTransientInstanceTrackers.RunIfFirstCall(() =>
+         RegisterInContainer(
+         [
+            Scoped.For<ScopedTransientInstanceTracker>().CreatedBy(() => new ScopedTransientInstanceTracker()),
+            Singleton.For<SingletonTransientInstanceTracker>().CreatedBy(() => new SingletonTransientInstanceTracker())
+         ]));
+
       ValidateNoDuplicateRegistrations(registrations);
       _registeredComponents.AddRange(registrations);
 
@@ -35,23 +43,7 @@ public abstract class DependencyInjectionContainerBase : IDependencyInjectionCon
             _transientRegistrations[serviceType] = registration;
       }
 
-      EnsureTransientTrackersRegistered(registrations);
-
       return this;
-   }
-
-   void EnsureTransientTrackersRegistered(ComponentRegistration[] registrations)
-   {
-      if(_transientTrackersRegistered || registrations.None(it => it.Lifestyle == Lifestyle.TrackedTransient))
-         return;
-
-      _transientTrackersRegistered = true;
-
-      RegisterInContainer(
-      [
-         Scoped.For<ScopedTransientInstanceTracker>().CreatedBy(() => new ScopedTransientInstanceTracker()),
-         Singleton.For<SingletonTransientInstanceTracker>().CreatedBy(() => new SingletonTransientInstanceTracker())
-      ]);
    }
 
    protected bool TryCreateTransientInstance(Type serviceType, IServiceLocatorKernel kernel, [NotNullWhen(true)] out object? instance)
