@@ -42,20 +42,53 @@ Removed dead Typermedia code from the Tessaging execution pipeline:
 - Removed Typermedia no-op branches from `Coordinator.Dispatching` and `DoneDispatching`
 - Removed `ITypermediaHandlerRegistry` dependency from `HandlerExecutionEngine`, `Coordinator`, and `HandlerExecutionTask` — the Tessaging pipeline no longer knows about Typermedia registries
 
-**Remaining:** Phase 4 — giving Typermedia its own transport.
+### Phase 4 — Typermedia Gets Its Own Transport ✅ DONE
 
-### Phase 4 — Typermedia Gets Its Own Transport
+Created `ITypermediaTransport` — Typermedia's own transport abstraction replacing `ApiEndpointClient` + `ITransportMessagePoster` for all Typermedia messages.
 
-Eliminate shared transport abstractions.
+**New interface** (`src/Compze.Tessaging/Implementation/Transport/Client/Internal/ITypermediaTransport.cs`):
+- `GetAsync<TResult>(tuery, address)` — tueries
+- `PostAsync<TResult>(command, address)` — commands with results
+- `PostAsync(command, address)` — void commands
 
-- Replace `ApiEndpointClient` → `ITransportMessagePoster` with a Typermedia-specific transport:
-  - **Memory:** Direct function call to `TypermediaHandlerExecutor` (no serialization needed in-process).
-  - **HTTP:** Direct `HttpClient` call to existing `/typermedia/*` endpoints.
-- Create `TypermediaMemoryTransportServer` to replace the Typermedia branches in `MemoryInboxTransportServer`.
-- Typermedia stops using `TransportTessage`, `TransportTessageType`, `ITransportMessagePoster`.
-- Remove Typermedia values from `TransportTessageType` enum.
-- Remove Typermedia branches from `HttpTransportMessagePoster` and `MemoryInboxTransportServer`.
-- `TransportTessage` becomes Tessaging-only (resolves the `//todo: split out TyperMediaTransportTessage`).
+**Memory transport** (`src/Compze.Tessaging/Implementation/Transport/Client/Implementation/Memory/MemoryTypermediaTransport.cs`):
+- Looks up `TypermediaHandlerExecutor` from `InMemoryTypermediaNetwork` by address
+- Calls executor directly — no `TransportTessage` wrapping
+- Round-trip serializes responses (simulates network boundary for reference isolation)
+- Runs via `Task.Run` to avoid DI scope issues
+- Wraps exceptions in `TessageDispatchingFailedException` (matching previous behavior)
+
+**HTTP transport** (`src/Compze.Tessaging/Implementation/Transport/Client/Implementation/Http/HttpTypermediaTransport.cs`):
+- Serializes using `IRemotableTessageSerializer` + `ITypeMapper`
+- Posts directly to `/typermedia/tuery`, `/typermedia/tommand-with-result`, `/typermedia/tommand-no-result`
+- Own error handling with `ProblemDetails` deserialization
+
+**Memory network** (`src/Compze.Tessaging/Implementation/Transport/Client/Implementation/Memory/InMemoryTypermediaNetwork.cs`):
+- Static `ConcurrentDictionary<EndPointAddress, TypermediaHandlerExecutor>`
+- `MemoryInboxTransportServer.StartAsync/StopAsync` binds/unbinds executor alongside the tessaging server binding
+
+**Router changes:**
+- `TypermediaRouter` depends on `ITypermediaTransport` instead of `ITransportMessagePoster` + `IRemotableTessageSerializer`
+- `DiscoverAndConnectAsync` sends `NetworkTopologyTuery` directly via `ITypermediaTransport`
+- `ConnectAsync` sends `EndpointInformationTuery` via `ITypermediaTransport` (no `ApiEndpointClient.BootstrapConnectionToEndpoint`)
+- `PostAsync`/`GetAsync` delegate to `_transport.PostAsync(cmd, connection.Address)` / `_transport.GetAsync(tuery, connection.Address)`
+
+**Connection simplification:**
+- `TypermediaConnection` reduced to a data class: just holds `EndPointAddress` + `EndpointInformation` (no longer `IDisposable`)
+- `TessagingConnection.InitAsync()` bootstraps via `ITypermediaTransport.GetAsync(EndpointInformationTuery)` instead of `TransportTessage.OutGoing` + `ITransportMessagePoster`
+
+**Dead code removed:**
+- Deleted `ApiEndpointClient` and `IRemoteApiEndpointClient`
+- Removed `ITransportMessagePoster.PostAsync<TResult>` — no tessaging messages return results
+- Removed `MemoryInboxTransportServer.PostAsync<TResult>` — only had Typermedia branches
+- Removed Typermedia branches from `MemoryInboxTransportServer.PostAsync` and `HttpTransportMessagePoster.GetRelativeUriForTessage`
+- Removed `HttpTransportMessagePoster._serializer` and `MemoryInboxTransportServer._serializer`
+- Removed `TransportTessageType.TypermediaAtMostOnceTommand`, `TypermediaAtMostOnceTommandWithReturnValue`, `TyperMediaTuery`
+- Removed Typermedia branches from `TessageTypeTranslator`
+- Removed `//todo: split out TyperMediaTransportTessage` — resolved; `TransportTessage` is now tessaging-only
+- Removed dead Typermedia check from `TommandsAndTeventHandlersDoNotRunInParallelWithEachOtherInTheSameEndpoint` dispatching rule
+
+**Residual entanglement:** `MemoryInboxTransportServer` still resolves `TypermediaHandlerExecutor` to bind it in `InMemoryTypermediaNetwork` during startup — both paradigms share the same endpoint address. Full decoupling deferred to Phase 5.
 
 ### Phase 5 — Separate Hosting
 
@@ -65,10 +98,11 @@ Each paradigm gets its own hosting lifecycle.
 - `Endpoint` lifecycle decoupled — Typermedia server startup independent of Tessaging outbox/router startup.
 - `AspNetInboxTransportServer` either splits into two servers or Typermedia gets its own `WebApplication` setup.
 - `EndpointHost` orchestrates both but they don't block each other.
+- `MemoryInboxTransportServer` stops binding `TypermediaHandlerExecutor` — that moves to a Typermedia-specific server component.
 
 ### Recommended next step
 
-Phase 4 — giving Typermedia its own transport. Replace `ApiEndpointClient` → `ITransportMessagePoster` with Typermedia-specific transport (memory: direct function call, HTTP: direct HttpClient call).
+Phase 5 — separating hosting. The Typermedia executor binding in `MemoryInboxTransportServer` and the `TypermediaController` registration in `AspNetInboxTransportServer` should move to their own Typermedia hosting components.
 
 ---
 
@@ -111,10 +145,11 @@ Every component involved in delivering a message from caller to handler and back
 - **Impl**: `TypermediaRouter` — `src/Compze.Tessaging/Implementation/Transport/Client/Implementation/Universal/TypermediaRouter.cs`
 - DI registration: `Singleton.For<ITypermediaRouter, ITypermediaRouting>()` — both interfaces resolved from same instance
 - Client-side only. Registered on the client, not per server endpoint.
+- Depends on `ITypermediaTransport` (no `ITransportMessagePoster` dependency)
 - Maintains route tables: `Dictionary<Type, TypermediaConnection>` for commands and queries
-- `PostAsync(cmd)` → look up `TypermediaConnection` by message type → `connection.ApiClient.PostAsync(cmd)`
-- `GetAsync(tuery)` → look up `TypermediaConnection` by tuery type → `connection.ApiClient.GetAsync(tuery)`
-- Discovery: `DiscoverAndConnectAsync(seedAddress)` → sends `NetworkTopologyTuery` to seed → gets all endpoint addresses → connects to each
+- `PostAsync(cmd)` → look up `TypermediaConnection` by message type → `_transport.PostAsync(cmd, connection.Address)`
+- `GetAsync(tuery)` → look up `TypermediaConnection` by tuery type → `_transport.GetAsync(tuery, connection.Address)`
+- Discovery: `DiscoverAndConnectAsync(seedAddress)` → `_transport.GetAsync(NetworkTopologyTuery, seedAddress)` → connects to each
 - Route population: `RegisterRoutes` classifies `EndpointInformation.HandledTessageTypes` — keeps `IAtMostOnceTypermediaTommand` and `IRemotableTuery<object>`, silently skips exactly-once types
 
 ### Tessaging Router [S]
@@ -132,9 +167,9 @@ Every component involved in delivering a message from caller to handler and back
 
 ### Typermedia Connection [T]
 - `TypermediaConnection` — `src/Compze.Tessaging/Implementation/Transport/Client/Implementation/Universal/TypermediaConnection.cs`
-- Holds `IRemoteApiEndpointClient` (the `ApiClient`) and `EndpointInformation`
-- `InitAsync()` → sends `EndpointInformationTuery` to discover handled types
-- Stateless — no queues, no background threads
+- Data class: holds `EndPointAddress` + `EndpointInformation`
+- No longer `IDisposable` — no resources to manage
+- Created by `TypermediaRouter.ConnectAsync` after bootstrap tuery returns endpoint info
 
 ### Tessaging Connection [S]
 - `TessagingConnection` — `src/Compze.Tessaging/Implementation/Transport/Client/Implementation/Universal/TessagingConnection.cs`
@@ -148,55 +183,59 @@ Every component involved in delivering a message from caller to handler and back
 
 ## 4. Serialization & Transport Message Wrapping
 
-### ApiEndpointClient [T]
-- **Interface**: `IRemoteApiEndpointClient` — `src/Compze.Tessaging/Implementation/Transport/Client/Internal/IRemoteApiEndpointClient.cs`
-- **Impl**: `ApiEndpointClient` — `src/Compze.Tessaging/Implementation/Transport/Client/Implementation/Universal/ApiEndpointClient.cs`
-- Wraps the message: `TransportTessage.OutGoing.Create(message, typeMapper, serializer)` → serializes body to JSON, maps type to `TypeId`, classifies to `TransportTessageType`
-- Delegates to `ITransportMessagePoster.PostAsync(tessage, address)`
-- Also handles `BootstrapConnectionToEndpoint` (sends `EndpointInformationTuery`)
-
-### TransportTessage [BOTH]
+### TransportTessage [S]
 - `TransportTessage` — `src/Compze.Tessaging/Implementation/Transport/Abstractions/TransportTessage.cs`
 - **`OutGoing`**: `Body` (serialized JSON), `Type` (TypeId), `TessageId`, `TessageTypeEnum`
 - **`InComing`**: same fields + `_tessageType` (resolved .NET Type) + lazy `DeserializeTessageAndCacheForNextCall()`
-- The envelope type is shared — carries both paradigms' messages
+- Now tessaging-only — Typermedia no longer uses `TransportTessage`
 
-### TransportTessageType [BOTH]
+### TransportTessageType [S]
 - `TransportTessageType` — `src/Compze.Tessaging/Implementation/Transport/Abstractions/TransportTessageType.cs`
-- Enum values mix both paradigms:
-  - `ExactlyOnceTevent` (S)
-  - `ExactlyOnceTommand` (S)
-  - `TypermediaAtMostOnceTommand` (T)
-  - `TypermediaAtMostOnceTommandWithReturnValue` (T)
-  - `TyperMediaTuery` (T)
+- Tessaging-only values:
+  - `ExactlyOnceTevent`
+  - `ExactlyOnceTommand`
 
 ---
 
 ## 5. Transport Layer
 
-### Transport Message Poster [BOTH]
-- **Interface**: `ITransportMessagePoster` — `src/Compze.Tessaging/Implementation/Transport/Abstractions/ITransportMessagePoster.cs`
-- Shared abstraction. Both `ApiEndpointClient` (typermedia) and `TessagingConnection` (tessaging) use this.
+### Typermedia Transport [T]
+- **Interface**: `ITypermediaTransport` — `src/Compze.Tessaging/Implementation/Transport/Client/Internal/ITypermediaTransport.cs`
+- `GetAsync<TResult>(tuery, address)`, `PostAsync<TResult>(command, address)`, `PostAsync(command, address)`
+- Registered in both client containers and server endpoint containers (server needs it for `TessagingConnection` bootstrap)
 
-### Memory Transport Poster [BOTH]
+### Memory Typermedia Transport [T]
+- `MemoryTypermediaTransport` — `src/Compze.Tessaging/Implementation/Transport/Client/Implementation/Memory/MemoryTypermediaTransport.cs`
+- Looks up `TypermediaHandlerExecutor` from `InMemoryTypermediaNetwork` by address
+- Calls executor directly, round-trip serializes responses, wraps exceptions
+
+### HTTP Typermedia Transport [T]
+- `HttpTypermediaTransport` — `src/Compze.Tessaging/Implementation/Transport/Client/Implementation/Http/HttpTypermediaTransport.cs`
+- Serializes via `IRemotableTessageSerializer` + `ITypeMapper`, posts to `/typermedia/*` routes
+- Deserializes responses, handles `ProblemDetails` errors
+
+### In-Memory Typermedia Network [T]
+- `InMemoryTypermediaNetwork` — `src/Compze.Tessaging/Implementation/Transport/Client/Implementation/Memory/InMemoryTypermediaNetwork.cs`
+- Static `ConcurrentDictionary<EndPointAddress, TypermediaHandlerExecutor>`
+- Bound/unbound by `MemoryInboxTransportServer.StartAsync/StopAsync`
+
+### Tessaging Transport Message Poster [S]
+- **Interface**: `ITransportMessagePoster` — `src/Compze.Tessaging/Implementation/Transport/Abstractions/ITransportMessagePoster.cs`
+- Tessaging-only. Single method: `PostAsync(tessage, address)` — no generic return variant.
+
+### Memory Transport Poster [S]
 - `MemoryTransportMessagePoster` — `src/Compze.Tessaging/Implementation/Transport/Client/Implementation/Memory/MemoryTransportMessagePoster.cs`
 - Converts `OutGoing` → `InComing`, calls `InMemoryTransportNetwork.GetServer(address).PostAsync(incoming)`
-- Direct in-process call, no network
 
-### HTTP Transport Poster [BOTH]
+### HTTP Transport Poster [S]
 - `HttpTransportMessagePoster` — `src/Compze.Tessaging/Implementation/Transport/Client/Implementation/Http/HttpTransportMessagePoster.cs`
-- Sends HTTP POST. Routes to different URL paths by `TransportTessageType`:
-  - `TyperMediaTuery` → `/typermedia/tuery`
-  - `TypermediaAtMostOnceTommandWithReturnValue` → `/typermedia/tommand-with-result`
-  - `TypermediaAtMostOnceTommand` → `/typermedia/tommand-no-result`
-  - `ExactlyOnceTevent` → `/tessaging/tevent`
-  - `ExactlyOnceTommand` → `/tessaging/tommand`
-- Response deserialized via `IRemotableTessageSerializer.DeserializeResponse<TResult>(json)`
+- Routes by `TransportTessageType`: `ExactlyOnceTevent` → `/tessaging/tevent`, `ExactlyOnceTommand` → `/tessaging/tommand`
+- No serializer dependency (fire-and-forget, no result deserialization)
 
-### In-Memory Transport Network [BOTH]
+### In-Memory Transport Network [S]
 - `InMemoryTransportNetwork` — `src/Compze.Tessaging/Implementation/Transport/Client/Implementation/Memory/InMemoryTransportNetwork.cs`
 - Static `ConcurrentDictionary<EndPointAddress, MemoryInboxTransportServer>`
-- Global address book for in-memory endpoints
+- Tessaging-only address book for in-memory endpoints
 
 ---
 
@@ -206,14 +245,12 @@ Every component involved in delivering a message from caller to handler and back
 - `IInboxTransportServer` — `src/Compze.Core/Tessaging/Transport/Internal/IInboxTransportServer.cs`
 - `Address`, `StartAsync()`, `StopAsync()`
 
-### Memory Inbox Transport Server [BOTH]
+### Memory Inbox Transport Server [S+binding]
 - `MemoryInboxTransportServer` — `src/Compze.Tessaging/Implementation/Transport/Client/Implementation/Memory/MemoryInboxTransportServer.cs`
-- Switches on `TessageTypeEnum`:
-  - `TypermediaAtMostOnceTommandWithReturnValue` → `TypermediaHandlerExecutor.ExecuteTommandWithResult` via `Task.Run`
-  - `TyperMediaTuery` → `TypermediaHandlerExecutor.ExecuteTuery` via `Task.Run`
-  - `TypermediaAtMostOnceTommand` → `TypermediaHandlerExecutor.ExecuteVoidTommand` via `Task.Run`
-  - `ExactlyOnceTevent` / `ExactlyOnceTommand` → `Inbox.ReceiveAsync(tessage)` (enqueue, fire-and-forget)
-- Typermedia branches no longer touch Inbox or HandlerExecutionEngine
+- Tessaging-only dispatch: `ExactlyOnceTevent` / `ExactlyOnceTommand` → `Inbox.ReceiveAsync(tessage)`
+- No `PostAsync<TResult>` — removed (was Typermedia-only)
+- No `_serializer` dependency — removed
+- On startup, also binds `TypermediaHandlerExecutor` in `InMemoryTypermediaNetwork` (pragmatic coupling, Phase 5 will decouple)
 
 ### ASP.NET Core Inbox Transport Server [BOTH]
 - `AspNetInboxTransportServer` — `src/Compze.Tessaging.Hosting.AspNetCore/Private/AspNetInboxTransportServer.cs`
@@ -413,13 +450,19 @@ Every component involved in delivering a message from caller to handler and back
 - Phase 3 dead code removal: `Inbox.ExecuteAsync`, `HandlerExecutionEngine.ExecuteAsync`, `HandlerExecutionTask.ExecuteTuery`, Typermedia branches from `HandlerExecutionTask.CreateTessageTask`/`Coordinator.Dispatching`/`Coordinator.DoneDispatching` all removed. `ITypermediaHandlerRegistry` dependency removed from `HandlerExecutionEngine`, `Coordinator`, and `HandlerExecutionTask`.
 - `TypermediaController` separated from `ControllerBase`: now inherits `Controller` directly, deserializes via `IRemotableTessageSerializer` + `ITypeMapper` (no `TransportTessage.InComing`), uses `RunOutsideScope` to escape middleware DI scope. `ControllerBase` is now Tessaging-only (removed `Serializer` and `HandlerExecutionEngine` properties, removed `IInbox`/`HandlerExecutionEngine` from `TessagingController` constructor).
 
-### Still entangled (transport + hosting — Phases 4+5)
+### Transport separated (Phase 4 — done)
+- `ITypermediaTransport` [T] — Typermedia's own transport (`MemoryTypermediaTransport`, `HttpTypermediaTransport`)
+- `ITransportMessagePoster` [S] — now tessaging-only (no `PostAsync<TResult>`, no Typermedia branches)
+- `TransportTessage` / `TransportTessageType` [S] — tessaging-only (Typermedia values removed from enum)
+- `InMemoryTypermediaNetwork` [T] — Typermedia's own address book
+- `InMemoryTransportNetwork` [S] — tessaging-only address book
+- `ApiEndpointClient` / `IRemoteApiEndpointClient` — deleted
+- `TessagingConnection` bootstraps via `ITypermediaTransport` (discovery is a Typermedia mechanism)
+
+### Still entangled (hosting — Phase 5)
 | Component | Why it's entangled |
 |---|---|
-| `ITransportMessagePoster` | Single abstraction carrying both paradigms' messages |
-| `TransportTessage` / `TransportTessageType` | Single envelope type with enum discriminating 5 message kinds across both paradigms |
-| `InMemoryTransportNetwork` | Single address book for all endpoints regardless of paradigm |
-| `MemoryInboxTransportServer` | Still dispatches both paradigms (executor for Typermedia, Inbox for Tessaging) |
+| `MemoryInboxTransportServer` | Binds `TypermediaHandlerExecutor` in `InMemoryTypermediaNetwork` during startup |
 | `AspNetInboxTransportServer` | Hosts both `TypermediaController` and `TessagingController` |
 | `ServerEndpointBuilder` | Wires inbox, outbox, tessaging router, in-process navigator, and typermedia executor all together |
 | `Endpoint` | Lifecycle manages both typermedia and tessaging components |
