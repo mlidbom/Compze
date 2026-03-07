@@ -6,6 +6,70 @@
 >
 > Typermedia must stand completely on its own: its own transport, its own handler execution, its own hosting. Tessaging likewise keeps its own full pipeline. Typermedia messages leave the Tessaging pipeline entirely. Every `[BOTH]` tag below represents work to be done, not architecture to be preserved.
 
+---
+
+## Extraction Strategy — Inside-Out, Five Phases
+
+Work from the handler execution outward. Each phase is independently shippable and leaves tests green.
+
+### Phase 1 — Typermedia Handler Executor (`Compze.Typermedia.Hosting`)
+
+Give Typermedia its own handler execution, completely bypassing Inbox and HandlerExecutionEngine.
+
+Create `TypermediaHandlerExecutor` in `Compze.Typermedia.Hosting`:
+- `ExecuteTueryAsync(message)` — deserialize, look up in `ITypermediaHandlerRegistry`, call handler, return result. No transaction, no scope management beyond isolation.
+- `ExecuteTommandWithResultAsync(message)` — same but wrapped in `TransactionScope`.
+- `ExecuteVoidTommandAsync(message)` — same, no return value.
+
+Typermedia handler execution is trivially simple compared to Tessaging's — no retry policy, no in-flight tracking, no dispatch queue, no ordering constraints.
+
+### Phase 2 — Redirect Server Entry Points
+
+Typermedia messages stop flowing through Inbox/HandlerExecutionEngine.
+
+- Wire `TypermediaController` to use `TypermediaHandlerExecutor` directly instead of `Inbox.ExecuteAsync` / `HandlerExecutionEngine.ExecuteAsync`.
+- Wire `MemoryInboxTransportServer`'s Typermedia branches (`TypermediaAtMostOnceTommand`, `TypermediaAtMostOnceTommandWithReturnValue`, `TyperMediaTuery`) to use `TypermediaHandlerExecutor`.
+
+After this: Typermedia never touches `Inbox`, `HandlerExecutionEngine`, `Coordinator`, `QueuedTessage`, or `Inbox.ITessageStorage`.
+
+### Phase 3 — Clean Up Tessaging Internals
+
+Remove dead Typermedia code from the Tessaging execution pipeline.
+
+- Remove `Inbox.ExecuteAsync` (was only used by Typermedia).
+- Remove Typermedia branches from `QueuedTessage` switch statements.
+- Remove Typermedia branches from `Coordinator`.
+- `HandlerExecutionEngine` simplifies to Tessaging-only.
+- `Inbox.ITessageStorage` no longer touched by Typermedia.
+
+### Phase 4 — Typermedia Gets Its Own Transport
+
+Eliminate shared transport abstractions.
+
+- Replace `ApiEndpointClient` → `ITransportMessagePoster` with a Typermedia-specific transport:
+  - **Memory:** Direct function call to `TypermediaHandlerExecutor` (no serialization needed in-process).
+  - **HTTP:** Direct `HttpClient` call to existing `/typermedia/*` endpoints.
+- Create `TypermediaMemoryTransportServer` to replace the Typermedia branches in `MemoryInboxTransportServer`.
+- Typermedia stops using `TransportTessage`, `TransportTessageType`, `ITransportMessagePoster`.
+- Remove Typermedia values from `TransportTessageType` enum.
+- Remove Typermedia branches from `HttpTransportMessagePoster` and `MemoryInboxTransportServer`.
+- `TransportTessage` becomes Tessaging-only (resolves the `//todo: split out TyperMediaTransportTessage`).
+
+### Phase 5 — Separate Hosting
+
+Each paradigm gets its own hosting lifecycle.
+
+- `ServerEndpointBuilder` stops registering Typermedia handler executor infrastructure (or Typermedia gets its own builder).
+- `Endpoint` lifecycle decoupled — Typermedia server startup independent of Tessaging outbox/router startup.
+- `AspNetInboxTransportServer` either splits into two servers or Typermedia gets its own `WebApplication` setup.
+- `EndpointHost` orchestrates both but they don't block each other.
+
+### Recommended starting point
+
+Phases 1+2 together are the highest-impact unit of work. They break the core entanglement (Typermedia flowing through Tessaging's execution engine) and are low-risk — adding a new code path and redirecting to it, not restructuring existing code. Everything after that is cleanup enabled by the new execution path.
+
+---
+
 Every component involved in delivering a message from caller to handler and back, with entanglement status.
 
 **Legend**: [T] = Typermedia only, [S] = Tessaging only, [BOTH] = entangled (to be separated)
