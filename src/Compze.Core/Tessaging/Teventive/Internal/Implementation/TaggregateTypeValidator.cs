@@ -1,6 +1,6 @@
 using System.Reflection;
 using Compze.Abstractions.Refactoring.Naming.Internal;
-using Compze.Typermedia.Validation;
+using Compze.Abstractions.Tessaging.Validation;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;

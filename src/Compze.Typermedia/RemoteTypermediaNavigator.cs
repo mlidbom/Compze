@@ -1,64 +1,60 @@
 using Compze.Abstractions.Tessaging.Public;
-using Compze.Typermedia.Validation;
-using Compze.Core.Tessaging.Teventive.Infrastructure.Validation;
 using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
-using Compze.Tessaging.Implementation.Transport.Client.Internal;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
+using Compze.Abstractions.Tessaging.Validation;
 using JetBrains.Annotations;
-using Compze.Typermedia;
 
-namespace Compze.Tessaging.Typermedia;
+namespace Compze.Typermedia;
 
-
-public static class RemoteHypermediaNavigatorRegistrar
+public static class RemoteTypermediaNavigatorRegistrar
 {
-   public static IComponentRegistrar RemoteHypermediaNavigator(this IComponentRegistrar registrar)
-      => registrar.Register(RemoteTypermediaNavigator.RegisterWith);
+   public static IComponentRegistrar RemoteTypermediaNavigator(this IComponentRegistrar registrar)
+      => registrar.Register(Compze.Typermedia.RemoteTypermediaNavigator.RegisterWith);
 
-   public static IComponentRegistrar SingletonRemoteHypermediaNavigator(this IComponentRegistrar registrar)
-      => registrar.Register(RemoteTypermediaNavigator.RegisterSingletonWith);
+   public static IComponentRegistrar SingletonRemoteTypermediaNavigator(this IComponentRegistrar registrar)
+      => registrar.Register(Compze.Typermedia.RemoteTypermediaNavigator.RegisterSingletonWith);
 }
 
 //Todo: Build a pipeline to handle things like tommand validation, caching layers etc. Don't explicitly check for rules and optimization here with duplication across the class.
-[UsedImplicitly] class RemoteTypermediaNavigator(ITypermediaRouter typermediaRouter) : IRemoteTypermediaNavigator
+[UsedImplicitly] class RemoteTypermediaNavigator(ITypermediaRouting typermediaRouting) : IRemoteTypermediaNavigator
 {
    public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Scoped.For<IRemoteTypermediaNavigator>()
-                                  .CreatedBy((ITypermediaRouter typermediaRouter) => new RemoteTypermediaNavigator(typermediaRouter)));
+                                  .CreatedBy((ITypermediaRouting typermediaRouting) => new RemoteTypermediaNavigator(typermediaRouting)));
 
    internal static void RegisterSingletonWith(IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<IRemoteTypermediaNavigator>()
-                                     .CreatedBy((ITypermediaRouter typermediaRouter) => new RemoteTypermediaNavigator(typermediaRouter)));
+                                     .CreatedBy((ITypermediaRouting typermediaRouting) => new RemoteTypermediaNavigator(typermediaRouting)));
 
-   readonly ITypermediaRouter _typermediaRouter = typermediaRouter;
+   readonly ITypermediaRouting _typermediaRouting = typermediaRouting;
 
    public void Post(IAtMostOnceTypermediaTommand tommand) => PostAsync(tommand).WaitUnwrappingException();
 
    public Task PostAsync(IAtMostOnceTypermediaTommand tommand)
    {
-      TessageInspector.AssertValidToSendRemote(tommand);
-      return _typermediaRouter.PostAsync(tommand);
+      TessageValidator.AssertValidToSendRemote(tommand);
+      return _typermediaRouting.PostAsync(tommand);
    }
 
    public TResult Post<TResult>(IAtMostOnceTommand<TResult> typermediaTommand) => PostAsync(typermediaTommand).ResultUnwrappingException();
 
    public Task<TResult> PostAsync<TResult>(IAtMostOnceTommand<TResult> typermediaTommand)
    {
-      TessageInspector.AssertValidToSendRemote(typermediaTommand);
-      return _typermediaRouter.PostAsync(typermediaTommand);
+      TessageValidator.AssertValidToSendRemote(typermediaTommand);
+      return _typermediaRouting.PostAsync(typermediaTommand);
    }
 
    public async Task<TResult> GetAsync<TResult>(IRemotableTuery<TResult> tuery)
    {
-      TessageInspector.AssertValidToSendRemote(tuery);
+      TessageValidator.AssertValidToSendRemote(tuery);
       if(tuery is ICreateMyOwnResultTuery<TResult> selfCreating)
          return await Task.FromResult(selfCreating.CreateResult()).caf();
 
       return await GetAsyncAfterFastPathOptimization(tuery).caf();
    }
 
-   async Task<TResult> GetAsyncAfterFastPathOptimization<TResult>(IRemotableTuery<TResult> tuery) => await _typermediaRouter.GetAsync(tuery).caf();
+   async Task<TResult> GetAsyncAfterFastPathOptimization<TResult>(IRemotableTuery<TResult> tuery) => await _typermediaRouting.GetAsync(tuery).caf();
 
    TResult IRemoteTypermediaNavigator.Get<TResult>(IRemotableTuery<TResult> tuery) => GetAsync(tuery).ResultUnwrappingException();
 }

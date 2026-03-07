@@ -1,7 +1,7 @@
 // ReSharper disable ForCanBeConvertedToForeach this file needs these optimizations...
 
 using Compze.Abstractions.Tessaging.Public;
-using Compze.Typermedia.Validation;
+using Compze.Abstractions.Tessaging.Validation;
 using Compze.Core.Tessaging.Teventive.Public;
 using Compze.Internals.SystemCE.ReflectionCE;
 

@@ -1,7 +1,7 @@
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Internals.SystemCE.UsageGuards;
 using Compze.Typermedia.HandlerRegistration;
-using Compze.Typermedia.Validation;
+using Compze.Abstractions.Tessaging.Validation;
 
 namespace Compze.Typermedia;
 
@@ -42,6 +42,6 @@ class InProcessTypermediaNavigator(ITypermediaHandlerRegistry typermediaHandlerR
    void CommonAssertion(ITessage tessage)
    {
       _contextGuard.EnsureAccessValid();
-      TypermediaValidator.AssertValidToExecuteLocally(tessage);
+      TessageValidator.AssertValidToExecuteLocally(tessage);
    }
 }

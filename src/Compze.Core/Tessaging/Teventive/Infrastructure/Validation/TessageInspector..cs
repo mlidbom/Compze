@@ -1,6 +1,5 @@
-using System.Transactions;
 using Compze.Abstractions.Tessaging.Public;
-using Compze.Typermedia.Validation;
+using Compze.Abstractions.Tessaging.Validation;
 
 namespace Compze.Core.Tessaging.Teventive.Infrastructure.Validation;
 
@@ -12,34 +11,7 @@ public static partial class TessageInspector
 
    public static void AssertValid<TTessage>() => TessageTypeInspector.AssertValid(typeof(TTessage));
 
-   public static void AssertValidToSendRemote(ITessage tessage)
-   {
-      CommonAssertions(tessage);
+   public static void AssertValidToSendRemote(ITessage tessage) => TessageValidator.AssertValidToSendRemote(tessage);
 
-#pragma warning disable IDE0010
-      switch(tessage)
-      {
-         case IStrictlyLocalTessage strictlyLocalTessage:
-            throw new AttemptToSendStrictlyLocalTessageRemotelyException(strictlyLocalTessage);
-         case IMustBeSentTransactionally when Transaction.Current == null:
-            throw new MissingTransactionException(tessage);
-         case ICannotBeSentRemotelyFromWithinTransaction when Transaction.Current != null:
-            throw new TransactionPresentException(tessage);
-      }
-#pragma warning restore IDE0010
-   }
-
-   public static void AssertValidToExecuteLocally(ITessage tessage)
-   {
-      CommonAssertions(tessage);
-
-      if(tessage is IMustBeSentTransactionally && Transaction.Current == null)
-         throw new MissingTransactionException(tessage);
-   }
-
-   static void CommonAssertions(ITessage tessage)
-   {
-      TessageTypeInspector.AssertValid(tessage.GetType());
-      if(tessage is ITommand tommand) TommandValidator.AssertTommandIsValid(tommand);
-   }
+   public static void AssertValidToExecuteLocally(ITessage tessage) => TessageValidator.AssertValidToExecuteLocally(tessage);
 }

@@ -15,6 +15,7 @@ using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Threading;
 using Compze.Threading.ResourceAccess;
+using Compze.Typermedia;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Universal;
 
@@ -31,7 +32,7 @@ class TypermediaRouter : ITypermediaRouter, IDisposable
 {
    public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(
-            Singleton.For<ITypermediaRouter>().CreatedBy(
+            Singleton.For<ITypermediaRouter, ITypermediaRouting>().CreatedBy(
                (ITypeMapper typeMapper, IRemotableTessageSerializer serializer, ITransportMessagePoster transportMessagePoster)
                   => new TypermediaRouter(typeMapper, serializer, transportMessagePoster)));
 

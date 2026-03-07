@@ -1,4 +1,4 @@
-namespace Compze.Typermedia.Validation;
+namespace Compze.Abstractions.Tessaging.Validation;
 
 public static partial class TessageTypeInspector
 {

@@ -4,7 +4,7 @@ using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Threading;
 using Compze.Threading.ResourceAccess;
 
-namespace Compze.Typermedia.Validation;
+namespace Compze.Abstractions.Tessaging.Validation;
 
 public partial class TessageTypeInspector
 {

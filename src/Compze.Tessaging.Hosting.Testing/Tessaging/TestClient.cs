@@ -3,7 +3,6 @@ using Compze.Tessaging.Configuration;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tessaging.Implementation.Transport.Client.Implementation.Universal;
 using Compze.Tessaging.Implementation.Transport.Client.Internal;
-using Compze.Tessaging.Typermedia;
 using Compze.Abstractions.Refactoring.Naming.Internal.Implementation;
 using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 using Compze.DependencyInjection;
@@ -38,7 +37,7 @@ public class TestClient : IAsyncDisposable
                .JSonAppConfigFileConfigurationParameterProvider()
                .TypeMapper()
                .TypermediaTransport()
-               .SingletonRemoteHypermediaNavigator();
+               .SingletonRemoteTypermediaNavigator();
 
       var client = new TestClient(container.ServiceLocator);
       client._typermediaRouter.Start();

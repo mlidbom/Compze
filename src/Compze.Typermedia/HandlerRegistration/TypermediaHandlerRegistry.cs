@@ -3,7 +3,7 @@ using Compze.Abstractions.Tessaging.Public;
 using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Threading;
 using Compze.Threading.ResourceAccess;
-using Compze.Typermedia.Validation;
+using Compze.Abstractions.Tessaging.Validation;
 
 namespace Compze.Typermedia.HandlerRegistration;
 

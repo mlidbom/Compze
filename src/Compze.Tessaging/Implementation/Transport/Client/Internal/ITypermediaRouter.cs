@@ -1,15 +1,11 @@
-using Compze.Abstractions.Tessaging.Public;
 using Compze.Core.Tessaging.Transport.Internal;
+using Compze.Typermedia;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Internal;
 
-public interface ITypermediaRouter
+public interface ITypermediaRouter : ITypermediaRouting
 {
     Task DiscoverAndConnectAsync(EndPointAddress seedAddress);
     void Start();
     void Stop();
-
-    Task PostAsync(IAtMostOnceTypermediaTommand tommand);
-    Task<TTommandResult> PostAsync<TTommandResult>(IAtMostOnceTommand<TTommandResult> typermediaTommand);
-    Task<TTueryResult> GetAsync<TTueryResult>(IRemotableTuery<TTueryResult> tuery);
 }
