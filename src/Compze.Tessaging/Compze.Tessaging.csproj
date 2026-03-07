@@ -86,6 +86,13 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Typermedia)' != 'true'">
     <ProjectReference Include="..\Compze.Typermedia\Compze.Typermedia.csproj" />
   </ItemGroup>
+  <!-- Compze.Typermedia.Hosting — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Typermedia_Hosting)' == 'true'">
+    <PackageReference Include="Compze.Typermedia.Hosting" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Typermedia_Hosting)' != 'true'">
+    <ProjectReference Include="..\Compze.Typermedia.Hosting\Compze.Typermedia.Hosting.csproj" />
+  </ItemGroup>
   <!-- Compze.Underscore — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Underscore)' == 'true'">
     <PackageReference Include="Compze.Underscore" Version="*-*" />

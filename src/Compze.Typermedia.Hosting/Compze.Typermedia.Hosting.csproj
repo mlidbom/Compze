@@ -5,4 +5,32 @@
     <Version>0.1.0-alpha.1</Version>
     <Description>Typermedia server hosting: endpoint builder, endpoint host, and in-memory transport server.</Description>
   </PropertyGroup>
+  <!-- Compze.DependencyInjection — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection)' == 'true'">
+    <PackageReference Include="Compze.DependencyInjection" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection)' != 'true'">
+    <ProjectReference Include="..\Compze.DependencyInjection\Compze.DependencyInjection.csproj" />
+  </ItemGroup>
+  <!-- Compze.Internals.Logging — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Logging)' == 'true'">
+    <PackageReference Include="Compze.Internals.Logging" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Logging)' != 'true'">
+    <ProjectReference Include="..\Compze.Internals.Logging\Compze.Internals.Logging.csproj" />
+  </ItemGroup>
+  <!-- Compze.Internals.SystemCE — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_SystemCE)' == 'true'">
+    <PackageReference Include="Compze.Internals.SystemCE" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_SystemCE)' != 'true'">
+    <ProjectReference Include="..\Compze.Internals.SystemCE\Compze.Internals.SystemCE.csproj" />
+  </ItemGroup>
+  <!-- Compze.Typermedia — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Typermedia)' == 'true'">
+    <PackageReference Include="Compze.Typermedia" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Typermedia)' != 'true'">
+    <ProjectReference Include="..\Compze.Typermedia\Compze.Typermedia.csproj" />
+  </ItemGroup>
 </Project>

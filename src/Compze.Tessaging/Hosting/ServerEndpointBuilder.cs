@@ -5,6 +5,7 @@ using Compze.Tessaging.Abstractions.Tessaging.Hosting.Public;
 using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 using Compze.Typermedia;
+using Compze.Typermedia.Hosting;
 using Compze.Tessaging.Configuration;
 using Compze.Tessaging.Implementation;
 using Compze.Tessaging.Implementation.Abstractions;
@@ -99,6 +100,8 @@ class ServerEndpointBuilder : IEndpointBuilder, IAsyncDisposable, IDisposable
               .ServiceBusTeventStoreTeventPublisher()
               .ServiceBusSession()
               .InProcessTypermediaNavigator();
+
+      TypermediaHandlerExecutor.RegisterWith(Container.Register());
 
       Container.Register(
          Singleton.For<EndpointId>().Instance(Configuration.Id),

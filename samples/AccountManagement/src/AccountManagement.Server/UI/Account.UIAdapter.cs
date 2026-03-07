@@ -3,7 +3,6 @@ using AccountManagement.Domain;
 using AccountManagement.Domain.Tevents;
 using AccountManagement.Domain.Passwords;
 using AccountManagement.Domain.Registration;
-using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Typermedia;
 using Compze.Typermedia.HandlerRegistration;
@@ -31,11 +30,11 @@ static class AccountUIAdapter
          }
       });
 
-   internal static void ChangePassword(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTommand(
+   internal static void ChangePassword(TypermediaHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTommand(
       (AccountResource.Tommand.ChangePassword tommand, IInProcessTypermediaNavigator navigator) =>
          navigator.Execute(InternalApi.Tueries.GetForUpdate(tommand.AccountId)).ChangePassword(tommand.OldPassword, new Password(tommand.NewPassword)));
 
-   internal static void ChangeEmail(TessageHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTommand(
+   internal static void ChangeEmail(TypermediaHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTommand(
       (AccountResource.Tommand.ChangeEmail tommand, IInProcessTypermediaNavigator navigator) =>
          navigator.Execute(InternalApi.Tueries.GetForUpdate(tommand.AccountId)).ChangeEmail(Email.Parse(tommand.Email)));
 

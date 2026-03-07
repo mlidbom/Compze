@@ -78,6 +78,7 @@ public class TypermediaHandlerRegistry(ITypeMapper typeMapper) : ITypermediaHand
    {
       var handledTypes = _tommandHandlersReturningResults.Keys
                                                          .Concat(_tueryHandlers.Keys)
+                                                         .Concat(_voidTommandHandlers.Keys)
                                                          .Where(tessageType => tessageType.Implements<IRemotableTessage>())
                                                          .Where(tessageType => !tessageType.Implements<IInternalInfrastructureTessage>())
                                                          .ToHashSet();

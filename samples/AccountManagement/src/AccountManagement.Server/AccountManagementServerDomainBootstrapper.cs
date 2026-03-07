@@ -36,7 +36,7 @@ public static class AccountManagementServerDomainBootstrapper
 
    static void RegisterHandlers(IEndpointBuilder builder)
    {
-      UIAdapterLayer.Register(builder.RegisterTessagingHandlers, builder.RegisterTypermediaHandlers);
+      UIAdapterLayer.Register(builder.RegisterTypermediaHandlers);
 
       //todo: This should not be called synchronously. We should have it in a separate consistency boundary so that it does not slow down every operation on an account.
       AccountStatistics.Register(builder);
