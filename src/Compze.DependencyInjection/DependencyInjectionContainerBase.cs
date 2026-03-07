@@ -42,7 +42,7 @@ public abstract class DependencyInjectionContainerBase : IDependencyInjectionCon
 
    void EnsureTransientTrackersRegistered(ComponentRegistration[] registrations)
    {
-      if(_transientTrackersRegistered || !registrations.Any(it => it.Lifestyle == Lifestyle.TrackedTransient))
+      if(_transientTrackersRegistered || registrations.None(it => it.Lifestyle == Lifestyle.TrackedTransient))
          return;
 
       _transientTrackersRegistered = true;
