@@ -23,10 +23,9 @@ public sealed class AutofacDependencyInjectionContainer : DependencyInjectionCon
          if(registration.InstantiationSpec.SingletonInstance is {} instance)
          {
             registration.ServiceTypes.ForEach(serviceType =>
-               _containerBuilder.RegisterInstance(instance).As(serviceType));
+               _containerBuilder.RegisterInstance(instance).As(serviceType).ExternallyOwned());
          } else
          {
-            var firstServiceType = registration.ServiceTypes.First();
             _containerBuilder.Register(_ => registration.InstantiationSpec.RunFactoryMethod(this))
                              .As(registration.ServiceTypes.ToArray())
                              .WithCompzeLifestyle(registration.Lifestyle);
