@@ -17,7 +17,7 @@ public static class TestingComponentRegistrarDbPool
 
    static IComponentRegistrar CurrentTestsDbPoolIfNotCloneContainer(this TestingComponentRegistrar @this)
    {
-      if(@this.Container().IsClone())
+      if(@this.Container().IsClone)
       {
          if(!@this.Container().IsRegistered<global::Compze.DbPool.DbPool>())
             throw new Exception("The DbPool must be registered in the root container before any cloning. You cannot register it directly in a cloned container");

@@ -17,6 +17,9 @@ public sealed class MicrosoftDependencyInjectionContainer : DependencyInjectionC
 
    public MicrosoftDependencyInjectionContainer(IComponentRegistrar? register = null) : base(register) {}
 
+   protected override DependencyInjectionContainerBase CreateEmptyClone() =>
+      new MicrosoftDependencyInjectionContainer(Register().Clone());
+
    protected override IDependencyInjectionContainer RegisterInContainer(ComponentRegistration[] registrations)
    {
       foreach(var registration in registrations)
