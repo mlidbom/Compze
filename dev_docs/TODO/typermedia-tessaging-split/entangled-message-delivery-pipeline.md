@@ -1,8 +1,14 @@
 # Message Delivery Pipeline — Component Inventory
 
+> **CRITICAL PRINCIPLE: Existing entanglement is NOT a sign that entanglement should remain.**
+>
+> Today, the Inbox, HandlerExecutionEngine, transport layer, and hosting all serve both Typermedia and Tessaging through shared code. This is the problem, not a design constraint. The correct response to "these two paradigms share an execution engine" is NOT "find a cleaner shared abstraction" — it is "give each paradigm its own execution path."
+>
+> Typermedia must stand completely on its own: its own transport, its own handler execution, its own hosting. Tessaging likewise keeps its own full pipeline. Typermedia messages leave the Tessaging pipeline entirely. Every `[BOTH]` tag below represents work to be done, not architecture to be preserved.
+
 Every component involved in delivering a message from caller to handler and back, with entanglement status.
 
-**Legend**: [T] = Typermedia only, [S] = Tessaging only, [BOTH] = entangled
+**Legend**: [T] = Typermedia only, [S] = Tessaging only, [BOTH] = entangled (to be separated)
 
 ---
 
