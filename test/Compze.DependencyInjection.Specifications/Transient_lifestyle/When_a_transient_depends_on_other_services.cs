@@ -1,8 +1,7 @@
 using Compze.DependencyInjection.Specifications.Infrastructure;
 using Compze.Must;
-using static Compze.Must.MustActions;
 
-namespace Compze.DependencyInjection.Specifications;
+namespace Compze.DependencyInjection.Specifications.Transient_lifestyle;
 
 public class When_a_transient_depends_on_other_services
 {

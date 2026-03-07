@@ -1,7 +1,7 @@
 using Compze.DependencyInjection.Specifications.Infrastructure;
 using Compze.Must;
 
-namespace Compze.DependencyInjection.Specifications;
+namespace Compze.DependencyInjection.Specifications.Transient_lifestyle;
 
 public class When_resolving_an_untracked_transient
 {
