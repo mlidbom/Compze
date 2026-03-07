@@ -69,7 +69,7 @@ public class TessagesInFlightTracker(ITypeMapper typeMapper) : ITessagesInFlight
       internal void DoneWith(TransportTessage.InComing tessage, EndpointId handlingEndpointId, Exception? exception)
       {
          var tessageType = _typeMapper.GetType(tessage.TessageTypeId);
-         if(tessageType == typeof(TessageTypesInternal.EndpointInformationTuery))
+         if(tessageType == typeof(TessageTypesInternal.EndpointInformationQuery))
             return; //this is an initial endpoint information request though which the endpoint IDs we use to track tessages is first established.
          if(exception != null)
          {

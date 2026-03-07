@@ -1,6 +1,7 @@
 using Compze.Abstractions.Wiring.Testing.Internal;
 using Compze.Tessaging.Implementation.Transport.Client.Implementation.Http;
 using Compze.Tessaging.Implementation.Transport.Client.Implementation.Memory;
+using Compze.Tessaging.Implementation.Transport.Infrastructure;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE;
 using Compze.Internals.Testing;
@@ -19,9 +20,11 @@ static class TestingComponentRegistrarClientTransport
       {
          case Transport.AspNetCore:
             return @this.HttpClientFactoryCE()
-                        .HttpTypermediaTransport();
+                        .HttpTypermediaTransport()
+                        .HttpInfrastructureQueryTransport();
          case Transport.Memory:
-            return @this.MemoryTypermediaTransport();
+            return @this.MemoryTypermediaTransport()
+                        .MemoryInfrastructureQueryTransport();
          default:
             throw new ArgumentOutOfRangeException();
       }

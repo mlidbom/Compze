@@ -6,12 +6,11 @@ using Compze.Abstractions.Refactoring.Naming.Internal;
 using Compze.Abstractions.Refactoring.Naming.Internal.Implementation;
 using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Tessaging.Abstractions.Tessaging.Hosting.Public;
-using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Core.Tessaging.Transport.Internal;
 using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
 using Compze.Tessaging.Implementation.Transport.Client.Routing.Abstractions;
-using Compze.Typermedia;
+using Compze.Tessaging.Implementation.Transport.Infrastructure;
 using Compze.Typermedia.HandlerRegistration;
 
 // ReSharper disable UnusedAutoPropertyAccessor.Global
@@ -25,7 +24,7 @@ public static class TessageTypesInternal
    internal interface ITessage : IInternalInfrastructureTessage;
 #pragma warning restore CA1040
 
-   internal class EndpointInformationTuery : TessageTypesInternal.ITessage, IRemotableTuery<EndpointInformation>;
+   internal class EndpointInformationQuery : TessageTypesInternal.ITessage, IQuery<EndpointInformation>;
 
    // ReSharper disable once MemberCanBeInternal — Serialized across assemblies via Newtonsoft reflection
    public class EndpointInformation
@@ -52,7 +51,7 @@ public static class TessageTypesInternal
       // ReSharper restore MemberCanBeInternal
    }
 
-   internal class NetworkTopologyTuery : TessageTypesInternal.ITessage, IRemotableTuery<NetworkTopology>;
+   internal class NetworkTopologyQuery : TessageTypesInternal.ITessage, IQuery<NetworkTopology>;
 
    internal class NetworkTopology
    {
@@ -67,12 +66,12 @@ public static class TessageTypesInternal
       public IReadOnlyList<EndPointAddress> EndpointAddresses { get; private set; }
    }
 
-   public static void RegisterHandlers(TypermediaHandlerRegistrarWithDependencyInjectionSupport registrar)
+   internal static void RegisterInfrastructureQueryHandlers(InfrastructureQueryRegistrarWithDependencyInjectionSupport registrar)
    {
-      registrar.ForTuery((EndpointInformationTuery _, TypeMapper _, ITessageHandlerRegistry tessagingRegistry, ITypermediaHandlerRegistry typermediaRegistry, EndpointConfiguration configuration) =>
+      registrar.ForQuery((EndpointInformationQuery _, TypeMapper _, ITessageHandlerRegistry tessagingRegistry, ITypermediaHandlerRegistry typermediaRegistry, EndpointConfiguration configuration) =>
                             new EndpointInformation(tessagingRegistry.HandledRemoteTessageTypeIds().Concat(typermediaRegistry.HandledRemoteTypermediaTypeIds()), configuration));
 
-      registrar.ForTuery((NetworkTopologyTuery _, IEndpointRegistry endpointRegistry) =>
+      registrar.ForQuery((NetworkTopologyQuery _, IEndpointRegistry endpointRegistry) =>
                             new NetworkTopology(endpointRegistry.ServerEndpointAddresses));
    }
 }

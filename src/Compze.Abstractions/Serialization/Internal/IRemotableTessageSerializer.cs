@@ -4,8 +4,8 @@ namespace Compze.Abstractions.Serialization.Internal;
 
 public interface IRemotableTessageSerializer
 {
-   string SerializeTessage(IRemotableTessage tessage);
-   IRemotableTessage DeserializeTessage(Type tessageType, string json);
+   string SerializeTessage(IMessage tessage);
+   IMessage DeserializeTessage(Type tessageType, string json);
 
    string SerializeResponse(object response);
    TResponse DeserializeResponse<TResponse>(string json);

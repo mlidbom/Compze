@@ -23,7 +23,7 @@ public static class TransportTessage
       {
          if(_tessage == null)
          {
-            _tessage = _serializer.DeserializeTessage(_tessageType, Body);
+            _tessage = (ITessage)_serializer.DeserializeTessage(_tessageType, Body);
 
             State.Assert(_tessage is not IExactlyOnceTessage actualTessage || TessageId == actualTessage.Id);
          }

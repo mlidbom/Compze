@@ -18,7 +18,7 @@ class TessagingConnection(
    ITypeMapper typeMapper,
    IRemotableTessageSerializer serializer,
    ITransportMessagePoster transportMessagePoster,
-   ITypermediaTransport typermediaTransport,
+   IInfrastructureQueryTransport infrastructureQueryTransport,
    Outbox.Outbox.ITessageStorage tessageStorage,
    ITaskRunner taskRunner,
    IBackgroundExceptionReporter exceptionReporter) : ITessagingInboxConnection, IDisposable
@@ -30,7 +30,7 @@ class TessagingConnection(
    readonly ITypeMapper _typeMapper = typeMapper;
    readonly IRemotableTessageSerializer _serializer = serializer;
    readonly ITransportMessagePoster _transportMessagePoster = transportMessagePoster;
-   readonly ITypermediaTransport _typermediaTransport = typermediaTransport;
+   readonly IInfrastructureQueryTransport _infrastructureQueryTransport = infrastructureQueryTransport;
    readonly Outbox.Outbox.ITessageStorage _tessageStorage = tessageStorage;
    readonly ITaskRunner _taskRunner = taskRunner;
    readonly IBackgroundExceptionReporter _exceptionReporter = exceptionReporter;
@@ -48,7 +48,7 @@ class TessagingConnection(
 
    public async Task InitAsync()
    {
-      EndpointInformation = await _typermediaTransport.GetAsync(new TessageTypesInternal.EndpointInformationTuery(), _remoteAddress).caf();
+      EndpointInformation = await _infrastructureQueryTransport.GetAsync(new TessageTypesInternal.EndpointInformationQuery(), _remoteAddress).caf();
    }
 
    // Delivery management — enqueue for the send loop to process

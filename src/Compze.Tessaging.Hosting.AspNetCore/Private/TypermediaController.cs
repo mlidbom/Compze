@@ -101,7 +101,7 @@ class TypermediaController : Controller
       using var reader = new StreamReader(HttpContext.Request.Body);
       var json = await reader.ReadToEndAsync().caf();
 
-      return _serializer.DeserializeTessage(tessageType, json);
+      return (ITessage)_serializer.DeserializeTessage(tessageType, json);
    }
 
    // The ASP.NET middleware creates a DI scope (via ExecuteInIsolatedScopeAsync) that flows through AsyncLocal.

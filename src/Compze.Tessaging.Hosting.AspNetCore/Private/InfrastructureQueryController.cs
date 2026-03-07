@@ -1,0 +1,71 @@
+using Compze.Contracts;
+using Compze.Abstractions.Public;
+using Compze.Abstractions.Refactoring.Naming.Internal;
+using Compze.Abstractions.Serialization.Internal;
+using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
+using Compze.Tessaging.Implementation.Transport.Client.Implementation.Http;
+using Compze.Tessaging.Implementation.Transport.Infrastructure;
+using Compze.DependencyInjection;
+using Compze.DependencyInjection.Abstractions;
+using Compze.Internals.Logging;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+
+namespace Compze.Tessaging.Hosting.AspNetCore.Private;
+
+#pragma warning disable CA1031
+
+class InfrastructureQueryController : Controller
+{
+   readonly IRemotableTessageSerializer _serializer;
+   readonly ITypeMapper _typeMapper;
+   readonly InfrastructureQueryExecutor _executor;
+
+   internal static void RegisterWith(IComponentRegistrar registrar) =>
+      registrar.Register(
+         Scoped.For<InfrastructureQueryController>()
+               .CreatedBy((IRemotableTessageSerializer serializer,
+                           ITypeMapper typeMapper,
+                           InfrastructureQueryExecutor executor)
+                             => new InfrastructureQueryController(serializer, typeMapper, executor)));
+
+   InfrastructureQueryController(IRemotableTessageSerializer serializer,
+                                 ITypeMapper typeMapper,
+                                 InfrastructureQueryExecutor executor)
+   {
+      _serializer = serializer;
+      _typeMapper = typeMapper;
+      _executor = executor;
+   }
+
+   [HttpPost(HttpConstants.Routes.Infrastructure.Query)]
+   public async Task<IActionResult> Query()
+   {
+      var typeIdStr = Request.Headers[HttpConstants.Headers.PayLoadTypeId][0]._assert().NotNull();
+      var typeId = new TypeId(Guid.Parse(typeIdStr));
+      var queryType = _typeMapper.GetType(typeId);
+
+      using var reader = new StreamReader(HttpContext.Request.Body);
+      var json = await reader.ReadToEndAsync().caf();
+
+      var query = _serializer.DeserializeTessage(queryType, json);
+
+      try
+      {
+         var result = await RunOutsideScope(() => _executor.ExecuteQuery(query)).caf();
+         var resultJson = _serializer.SerializeResponse(result);
+         return Ok(resultJson);
+      }
+      catch(Exception exception)
+      {
+         this.Log().Warning(exception, "Exception handling infrastructure query");
+         return Problem(statusCode: StatusCodes.Status500InternalServerError, type: exception.GetType().FullName, detail: exception.ToString());
+      }
+   }
+
+   static Task<T> RunOutsideScope<T>(Func<T> action)
+   {
+      using(ExecutionContext.SuppressFlow())
+         return Task.Run(action);
+   }
+}

@@ -92,18 +92,47 @@ Created `ITypermediaTransport` — Typermedia's own transport abstraction replac
 - `MemoryInboxTransportServer` still resolves `TypermediaHandlerExecutor` to bind it in `InMemoryTypermediaNetwork` during startup — both paradigms share the same endpoint address. Full decoupling deferred to Phase 5.
 - `TessagingRouter` and `TessagingConnection` depend on `ITypermediaTransport` for bootstrap — **this is wrong**. Discovery queries (`EndpointInformationTuery`, `NetworkTopologyTuery`) are mistyped as Typermedia tueries. They are plain address-targeted request/response, not type-routed. See Section 12 for details. Fixing this should precede or be part of Phase 5.
 
-### Phase 4b — Retype Discovery as Infrastructure (prerequisite for Phase 5)
+### Phase 4b — Retype Discovery as Infrastructure ✅ DONE
 
-Discovery queries are currently mistyped as Typermedia tueries (`IRemotableTuery<T>`). This creates a false dependency: `TessagingRouter`/`TessagingConnection` depend on `ITypermediaTransport` just to send a request to a known address.
+Discovery queries are no longer mistyped as Typermedia tueries. They are now plain `IQuery<T>` messages dispatched via a new infrastructure transport layer, independent of both Typermedia and Tessaging.
 
-**The type hierarchy now supports this fix.** `IQuery<T>` exists as a plain address-targeted query type that is NOT type-routed (see Type Hierarchy section below). Discovery queries should implement `IQuery<T>` directly, not `IRemotableTuery<T>`.
+**Retyped queries:**
+- `EndpointInformationQuery : IQuery<EndpointInformation>` (was `EndpointInformationTuery : IRemotableTuery<EndpointInformation>`)
+- `NetworkTopologyQuery : IQuery<NetworkTopology>` (was `NetworkTopologyTuery : IRemotableTuery<NetworkTopology>`)
 
-Steps:
-- Retype `EndpointInformationTuery` and `NetworkTopologyTuery` from `IRemotableTuery<T>` to `IQuery<T>`
-- Create a simple infrastructure request/response transport (serialize, POST to known address, deserialize) — shared by both paradigms
-- Move discovery handler registration out of `TypermediaHandlerRegistrarWithDependencyInjectionSupport` into its own infrastructure handler mechanism
-- Remove `ITypermediaTransport` dependency from `TessagingRouter` and `TessagingConnection`
-- Remove `ITypermediaTransport` registration from server endpoint containers (only needed there because of discovery mistyping)
+**New infrastructure transport layer:**
+- `IInfrastructureQueryTransport` — `src/Compze.Tessaging/Implementation/Transport/Client/Internal/IInfrastructureQueryTransport.cs` — `GetAsync<TResult>(IQuery<TResult> query, EndPointAddress address)`
+- `MemoryInfrastructureQueryTransportImplementation` — `src/Compze.Tessaging/Implementation/Transport/Infrastructure/MemoryInfrastructureQueryTransport.cs` — looks up `InfrastructureQueryExecutor` from `InMemoryInfrastructureNetwork`, round-trip serializes responses
+- `HttpInfrastructureQueryTransportImplementation` — `src/Compze.Tessaging/Implementation/Transport/Infrastructure/HttpInfrastructureQueryTransport.cs` — serializes query, POSTs to `/internal/infrastructure/query`, deserializes response
+
+**New server-side handler mechanism:**
+- `InfrastructureQueryExecutor` — `src/Compze.Tessaging/Implementation/Transport/Infrastructure/InfrastructureQueryExecutor.cs` — holds `Dictionary<Type, Func<object, object>>` handlers, executes in isolated DI scope (no transactions, no retries). Registered as Singleton.
+- `InfrastructureQueryRegistrarWithDependencyInjectionSupport` — `src/Compze.Tessaging/Implementation/Transport/Infrastructure/InfrastructureQueryRegistrarWithDependencyInjectionSupport.cs` — DI-aware handler registration (same pattern as `TypermediaHandlerRegistrarWithDependencyInjectionSupport`)
+- `InfrastructureQueryController` — `src/Compze.Tessaging.Hosting.AspNetCore/Private/InfrastructureQueryController.cs` — ASP.NET controller for `/internal/infrastructure/query`
+
+**New in-memory network:**
+- `InMemoryInfrastructureNetwork` — `src/Compze.Tessaging/Implementation/Transport/Infrastructure/InMemoryInfrastructureNetwork.cs` — static `ConcurrentDictionary<EndPointAddress, InfrastructureQueryExecutor>`
+- `MemoryInboxTransportServer` binds/unbinds `InfrastructureQueryExecutor` alongside the tessaging server and typermedia executor
+
+**Handler registration moved:**
+- `TessageTypesInternal.RegisterInfrastructureQueryHandlers(registrar)` replaces `TessageTypesInternal.RegisterHandlers(registrar)` — uses `InfrastructureQueryRegistrarWithDependencyInjectionSupport` instead of `TypermediaHandlerRegistrarWithDependencyInjectionSupport`
+- `ServerEndpointBuilder.Build()` registers `InfrastructureQueryExecutor` and calls the new registrar
+
+**Dependencies cleaned:**
+- `TypermediaRouter` depends on `IInfrastructureQueryTransport` for discovery (no longer uses `ITypermediaTransport` for discovery queries)
+- `TessagingRouter` depends on `IInfrastructureQueryTransport` instead of `ITypermediaTransport` — **the false Tessaging→Typermedia dependency is eliminated**
+- `TessagingConnection` depends on `IInfrastructureQueryTransport` instead of `ITypermediaTransport`
+
+**Serializer widened:**
+- `IRemotableTessageSerializer.SerializeTessage` now takes `IMessage` (was `IRemotableTessage`) — infrastructure queries implement `IMessage` but not `IRemotableTessage`
+- `IRemotableTessageSerializer.DeserializeTessage` now returns `IMessage` (was `IRemotableTessage`) — callers that need `ITessage` add explicit cast
+
+**TypeMapper fix:**
+- `CheckAssemblyForRequiredMappings` no longer early-returns when type discovery finds no required types — always loads the auto-generated mapper if it exists. This fixes a bug where manually-added mappings (e.g., `List<EndPointAddress>`) were silently dropped when the assembly's auto-discovered types changed.
+
+**Residual entanglement:**
+- `MemoryInboxTransportServer` still binds `TypermediaHandlerExecutor` AND `InfrastructureQueryExecutor` — both paradigms share the same endpoint address. Phase 5 will decouple.
+- `TypermediaRouter` still depends on `ITypermediaTransport` for actual Typermedia operations (correct) but ALSO `IInfrastructureQueryTransport` for discovery — this is the right split.
 
 ### Phase 5 — Separate Hosting
 
@@ -117,7 +146,7 @@ Each paradigm gets its own hosting lifecycle.
 
 ### Recommended next step
 
-Phase 4b — retype discovery as infrastructure. This unblocks Phase 5 by eliminating the false `ITypermediaTransport` dependency in Tessaging.
+Phase 5 — separate hosting. With discovery decoupled, Tessaging no longer depends on Typermedia internals.
 
 ---
 
@@ -160,18 +189,18 @@ Every component involved in delivering a message from caller to handler and back
 - **Impl**: `TypermediaRouter` — `src/Compze.Tessaging/Implementation/Transport/Client/Implementation/Universal/TypermediaRouter.cs`
 - DI registration: `Singleton.For<ITypermediaRouter, ITypermediaRouting>()` — both interfaces resolved from same instance
 - Client-side only. Registered on the client, not per server endpoint.
-- Depends on `ITypermediaTransport` (no `ITransportMessagePoster` dependency)
+- Depends on `ITypermediaTransport` for operations and `IInfrastructureQueryTransport` for discovery
 - Maintains route tables: `Dictionary<Type, TypermediaConnection>` for commands and queries
 - `PostAsync(cmd)` → look up `TypermediaConnection` by message type → `_transport.PostAsync(cmd, connection.Address)`
 - `GetAsync(tuery)` → look up `TypermediaConnection` by tuery type → `_transport.GetAsync(tuery, connection.Address)`
-- Discovery: `DiscoverAndConnectAsync(seedAddress)` → `_transport.GetAsync(NetworkTopologyTuery, seedAddress)` → connects to each
+- Discovery: `DiscoverAndConnectAsync(seedAddress)` → `_infrastructureQueryTransport.GetAsync(NetworkTopologyQuery, seedAddress)` → connects to each
 - Route population: `RegisterRoutes` classifies `EndpointInformation.HandledTessageTypes` — keeps `IAtMostOnceTypermediaTommand` and `IRemotableTuery<object>`, silently skips exactly-once types
 
 ### Tessaging Router [S]
 - **Interface**: `ITessagingRouter` — `src/Compze.Tessaging/Implementation/Transport/Client/Internal/ITessagingRouter.cs`
 - **Impl**: `TessagingRouter` — `src/Compze.Tessaging/Implementation/Transport/Client/Implementation/Universal/TessagingRouter.cs`
 - Server-side. Registered per endpoint.
-- Additional dependencies: `ITessagesInFlightTracker`, `Outbox.ITessageStorage`, `ITaskRunner`, `IBackgroundExceptionReporter`
+- Additional dependencies: `ITessagesInFlightTracker`, `IInfrastructureQueryTransport`, `Outbox.ITessageStorage`, `ITaskRunner`, `IBackgroundExceptionReporter`
 - `ConnectionToHandlerFor(cmd)` → returns single `ITessagingInboxConnection` (1:1 routing)
 - `SubscriberConnectionsFor(tevent)` → returns multiple connections (fan-out, `IsInstanceOfType` matching)
 - Route population: classifies types — keeps `IExactlyOnceTevent` and `IExactlyOnceTommand`, silently skips typermedia types
@@ -217,7 +246,7 @@ Every component involved in delivering a message from caller to handler and back
 ### Typermedia Transport [T]
 - **Interface**: `ITypermediaTransport` — `src/Compze.Tessaging/Implementation/Transport/Client/Internal/ITypermediaTransport.cs`
 - `GetAsync<TResult>(tuery, address)`, `PostAsync<TResult>(command, address)`, `PostAsync(command, address)`
-- Registered in both client containers and server endpoint containers (server needs it for `TessagingConnection` bootstrap)
+- Registered in client containers for Typermedia operations only (no longer needed in server endpoint containers for discovery)
 
 ### Memory Typermedia Transport [T]
 - `MemoryTypermediaTransport` — `src/Compze.Tessaging/Implementation/Transport/Client/Implementation/Memory/MemoryTypermediaTransport.cs`
@@ -232,6 +261,25 @@ Every component involved in delivering a message from caller to handler and back
 ### In-Memory Typermedia Network [T]
 - `InMemoryTypermediaNetwork` — `src/Compze.Tessaging/Implementation/Transport/Client/Implementation/Memory/InMemoryTypermediaNetwork.cs`
 - Static `ConcurrentDictionary<EndPointAddress, TypermediaHandlerExecutor>`
+- Bound/unbound by `MemoryInboxTransportServer.StartAsync/StopAsync`
+
+### Infrastructure Query Transport [INFRASTRUCTURE]
+- **Interface**: `IInfrastructureQueryTransport` — `src/Compze.Tessaging/Implementation/Transport/Client/Internal/IInfrastructureQueryTransport.cs`
+- `GetAsync<TResult>(IQuery<TResult> query, EndPointAddress address)` — serialize, POST to known address, deserialize response
+- Shared by both Typermedia and Tessaging routers for discovery
+
+### Memory Infrastructure Query Transport [INFRASTRUCTURE]
+- `MemoryInfrastructureQueryTransportImplementation` — `src/Compze.Tessaging/Implementation/Transport/Infrastructure/MemoryInfrastructureQueryTransport.cs`
+- Looks up `InfrastructureQueryExecutor` from `InMemoryInfrastructureNetwork` by address
+- Round-trip serializes responses (simulates network boundary)
+
+### HTTP Infrastructure Query Transport [INFRASTRUCTURE]
+- `HttpInfrastructureQueryTransportImplementation` — `src/Compze.Tessaging/Implementation/Transport/Infrastructure/HttpInfrastructureQueryTransport.cs`
+- POSTs to `/internal/infrastructure/query`, handles `ProblemDetails` errors
+
+### In-Memory Infrastructure Network [INFRASTRUCTURE]
+- `InMemoryInfrastructureNetwork` — `src/Compze.Tessaging/Implementation/Transport/Infrastructure/InMemoryInfrastructureNetwork.cs`
+- Static `ConcurrentDictionary<EndPointAddress, InfrastructureQueryExecutor>`
 - Bound/unbound by `MemoryInboxTransportServer.StartAsync/StopAsync`
 
 ### Tessaging Transport Message Poster [S]
@@ -265,12 +313,12 @@ Every component involved in delivering a message from caller to handler and back
 - Tessaging-only dispatch: `ExactlyOnceTevent` / `ExactlyOnceTommand` → `Inbox.ReceiveAsync(tessage)`
 - No `PostAsync<TResult>` — removed (was Typermedia-only)
 - No `_serializer` dependency — removed
-- On startup, also binds `TypermediaHandlerExecutor` in `InMemoryTypermediaNetwork` (pragmatic coupling, Phase 5 will decouple)
+- On startup, binds `TypermediaHandlerExecutor` in `InMemoryTypermediaNetwork` AND `InfrastructureQueryExecutor` in `InMemoryInfrastructureNetwork` (pragmatic coupling, Phase 5 will decouple)
 
 ### ASP.NET Core Inbox Transport Server [BOTH]
 - `AspNetInboxTransportServer` — `src/Compze.Tessaging.Hosting.AspNetCore/Private/AspNetInboxTransportServer.cs`
 - Starts `WebApplication` on a random port
-- Hosts two controllers:
+- Hosts three controllers:
 
 ### Typermedia Controller [T]
 - `TypermediaController` — `src/Compze.Tessaging.Hosting.AspNetCore/Private/TypermediaController.cs`
@@ -285,6 +333,12 @@ Every component involved in delivering a message from caller to handler and back
 - `TessagingController` — `src/Compze.Tessaging.Hosting.AspNetCore/Private/TessagingController.cs`
 - `/tessaging/tevent` → `Inbox.ReceiveAsync`
 - `/tessaging/tommand` → `Inbox.ReceiveAsync`
+
+### Infrastructure Query Controller [INFRASTRUCTURE]
+- `InfrastructureQueryController` — `src/Compze.Tessaging.Hosting.AspNetCore/Private/InfrastructureQueryController.cs`
+- `/internal/infrastructure/query` → `InfrastructureQueryExecutor.ExecuteQuery`
+- Deserializes via `IRemotableTessageSerializer` + `ITypeMapper`
+- Uses `RunOutsideScope` to escape ASP.NET middleware DI scope
 
 ### Controller Base [S]
 - `ControllerBase` — `src/Compze.Tessaging.Hosting.AspNetCore/Private/ControllerBase.cs`
@@ -424,25 +478,18 @@ Every component involved in delivering a message from caller to handler and back
 
 ---
 
-## 12. Discovery [INFRASTRUCTURE — currently mistyped as Typermedia]
+## 12. Discovery [INFRASTRUCTURE — now correctly typed]
 
-### ⚠️ Key architectural insight: Discovery is NOT Typermedia
+### Discovery is NOT Typermedia (resolved)
 
-`EndpointInformationTuery` and `NetworkTopologyTuery` are currently typed as `IRemotableTuery<T>` (Typermedia tueries). **This is wrong.** They are plain infrastructure request/response calls sent to a specific known address — they are NOT type-routed. Typermedia's defining characteristic is type-based routing; these queries go to a specific already-known endpoint, which is just plain HTTP + serialization.
+Discovery queries are now correctly typed as `IQuery<T>` — plain infrastructure request/response, not type-routed. They use the `IInfrastructureQueryTransport` layer shared by both paradigms.
 
-Consequences of the current mistyping:
-- Tessaging depends on Typermedia's internal transport (`ITypermediaTransport`) just to bootstrap connections
-- Discovery handlers are registered as Typermedia tuery handlers in every endpoint, creating a hard dependency from hosting to Typermedia
-- It spreads the false impression that "discovery is fundamentally a Typermedia mechanism" — it is not
-
-**Fix (Phase 4b):** Retype these as `IQuery<T>` (the plain address-targeted query type from the message hierarchy — see Section 13). Create a simple infrastructure request/response mechanism (serialize, POST to known address, deserialize response). No type routing, no Typermedia registry, no `ITypermediaTransport`. Both Tessaging and Typermedia routers can then bootstrap independently using this shared infrastructure layer.
-
-### Internal Tueries (currently mistyped)
+### Infrastructure Queries
 - `TessageTypesInternal` — `src/Compze.Tessaging/Implementation/Abstractions/_TessageTypesInternal.cs`
-- `EndpointInformationTuery : IRemotableTuery<EndpointInformation>` — returns endpoint ID + handled message type IDs
-- `NetworkTopologyTuery : IRemotableTuery<NetworkTopology>` — returns all endpoint addresses
-- Both are currently registered as typermedia tuery handlers in every endpoint — **should not be**
-- Used by both `TypermediaRouter` (topology discovery) and `TessagingRouter` (endpoint info bootstrap)
+- `EndpointInformationQuery : IQuery<EndpointInformation>` — returns endpoint ID + handled message type IDs
+- `NetworkTopologyQuery : IQuery<NetworkTopology>` — returns all endpoint addresses
+- Registered as infrastructure query handlers via `InfrastructureQueryRegistrarWithDependencyInjectionSupport`
+- Used by both `TypermediaRouter` (topology discovery) and `TessagingConnection` (endpoint info bootstrap)
 
 ---
 
@@ -488,7 +535,7 @@ IMessage                          — any message, no routing implied
 - **`ITessage : IMessage`** adds type routing. Everything below `ITessage` uses .NET type compatibility for routing decisions.
 - **`ITuery<T> : IQuery<T>`** — a Tuery IS-A Query, but a type-routed one. The converse is not true: a plain `IQuery<T>` is NOT a Tuery and NOT type-routed.
 
-This distinction is critical for discovery: `EndpointInformationTuery` and `NetworkTopologyTuery` are address-targeted queries (`IQuery<T>`) that are currently mistyped as type-routed tueries (`IRemotableTuery<T>`). See Section 12.
+This distinction is critical for discovery: `EndpointInformationQuery` and `NetworkTopologyQuery` are correctly typed as `IQuery<T>` — plain address-targeted queries, not type-routed tueries. See Section 12.
 
 ---
 
@@ -529,15 +576,22 @@ This distinction is critical for discovery: `EndpointInformationTuery` and `Netw
 - `InMemoryTypermediaNetwork` [T] — Typermedia's own address book
 - `InMemoryTransportNetwork` [S] — tessaging-only address book
 - `ApiEndpointClient` / `IRemoteApiEndpointClient` — deleted
-- `TessagingConnection` bootstraps via `ITypermediaTransport` — **wrong**: see Section 12, discovery is not Typermedia
 
-### Still entangled (discovery mistyping + hosting — next phases)
+### Discovery decoupled (Phase 4b — done)
+- `EndpointInformationQuery` / `NetworkTopologyQuery` — retyped from `IRemotableTuery<T>` to `IQuery<T>` — no longer Typermedia messages
+- `IInfrastructureQueryTransport` [INFRASTRUCTURE] — shared infrastructure transport for both paradigms
+- `MemoryInfrastructureQueryTransportImplementation` / `HttpInfrastructureQueryTransportImplementation` — transport implementations
+- `InfrastructureQueryExecutor` [INFRASTRUCTURE] — server-side handler for infrastructure queries
+- `InfrastructureQueryController` [INFRASTRUCTURE] — ASP.NET controller for HTTP infrastructure queries
+- `InMemoryInfrastructureNetwork` [INFRASTRUCTURE] — memory address book for infrastructure executors
+- `TessagingRouter` / `TessagingConnection` — now depend on `IInfrastructureQueryTransport` instead of `ITypermediaTransport` — **Tessaging→Typermedia dependency eliminated**
+- `TypermediaRouter` — uses `IInfrastructureQueryTransport` for discovery, `ITypermediaTransport` for operations (correct split)
+
+### Still entangled (hosting — next phase)
 | Component | Why it's entangled |
 |---|---|
-| `EndpointInformationTuery` / `NetworkTopologyTuery` | Mistyped as `IRemotableTuery<T>` (Typermedia) — forces Tessaging to depend on `ITypermediaTransport` for plain address-targeted request/response. Should be infrastructure messages, not Typermedia. |
-| `TessagingRouter` / `TessagingConnection` | Depends on `ITypermediaTransport` solely because discovery queries are mistyped as Typermedia tueries |
-| `MemoryInboxTransportServer` | Binds `TypermediaHandlerExecutor` in `InMemoryTypermediaNetwork` during startup |
-| `AspNetInboxTransportServer` | Hosts both `TypermediaController` and `TessagingController` |
-| `ServerEndpointBuilder` | Wires inbox, outbox, tessaging router, in-process navigator, and typermedia executor all together |
+| `MemoryInboxTransportServer` | Binds `TypermediaHandlerExecutor` AND `InfrastructureQueryExecutor` in their respective in-memory networks during startup |
+| `AspNetInboxTransportServer` | Hosts `TypermediaController`, `TessagingController`, and `InfrastructureQueryController` |
+| `ServerEndpointBuilder` | Wires inbox, outbox, tessaging router, in-process navigator, typermedia executor, and infrastructure query executor all together |
 | `Endpoint` | Lifecycle manages both typermedia and tessaging components |
 | `EndpointHost` | Starts both paradigms' components in a single two-phase startup |

@@ -31,17 +31,19 @@ class TypermediaRouter : ITypermediaRouter, IDisposable
    public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(
             Singleton.For<ITypermediaRouter, ITypermediaRouting>().CreatedBy(
-               (ITypeMapper typeMapper, ITypermediaTransport transport)
-                  => new TypermediaRouter(typeMapper, transport)));
+               (ITypeMapper typeMapper, ITypermediaTransport transport, IInfrastructureQueryTransport infrastructureQueryTransport)
+                  => new TypermediaRouter(typeMapper, transport, infrastructureQueryTransport)));
 
-   TypermediaRouter(ITypeMapper typeMapper, ITypermediaTransport transport)
+   TypermediaRouter(ITypeMapper typeMapper, ITypermediaTransport transport, IInfrastructureQueryTransport infrastructureQueryTransport)
    {
       _typeMapper = typeMapper;
       _transport = transport;
+      _infrastructureQueryTransport = infrastructureQueryTransport;
    }
 
    readonly ITypeMapper _typeMapper;
    readonly ITypermediaTransport _transport;
+   readonly IInfrastructureQueryTransport _infrastructureQueryTransport;
    readonly IMonitor _monitor = IMonitor.New();
 
    bool _running;
@@ -52,7 +54,7 @@ class TypermediaRouter : ITypermediaRouter, IDisposable
    async Task ConnectAsync(EndPointAddress remoteEndpointAddress)
    {
       AssertRunning();
-      var endpointInformation = await _transport.GetAsync(new TessageTypesInternal.EndpointInformationTuery(), remoteEndpointAddress).caf();
+      var endpointInformation = await _infrastructureQueryTransport.GetAsync(new TessageTypesInternal.EndpointInformationQuery(), remoteEndpointAddress).caf();
       var connection = new TypermediaConnection(remoteEndpointAddress, endpointInformation);
 
       using(_monitor.TakeLock())
@@ -67,7 +69,7 @@ class TypermediaRouter : ITypermediaRouter, IDisposable
    public async Task DiscoverAndConnectAsync(EndPointAddress seedAddress)
    {
       AssertRunning();
-      var topology = await _transport.GetAsync(new TessageTypesInternal.NetworkTopologyTuery(), seedAddress).caf();
+      var topology = await _infrastructureQueryTransport.GetAsync(new TessageTypesInternal.NetworkTopologyQuery(), seedAddress).caf();
 
       await Task.WhenAll(topology.EndpointAddresses.Select(ConnectAsync)).caf();
    }

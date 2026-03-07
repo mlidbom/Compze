@@ -12,6 +12,11 @@ public static class HttpConstants
          public const string TommandWithResult = "internal/rpc/tommand-with-result";
       }
 
+      public static class Infrastructure
+      {
+         public const string Query = "internal/infrastructure/query";
+      }
+
       public static class Tessaging
       {
          public const string Tevent = "internal/tessaging/tevent";

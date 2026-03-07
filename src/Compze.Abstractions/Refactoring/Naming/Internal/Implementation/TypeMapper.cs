@@ -150,7 +150,6 @@ public class TypeMapper : ITypeMapper
    static void CheckAssemblyForRequiredMappings(Assembly assembly, MappingState state)
    {
       var typesRequiringMapping = TypeMapperTypeDiscovery.GetTypesRequiringMapping(assembly);
-      if(!typesRequiringMapping.Any()) return;
 
       var assemblyTypeMapperTypes = assembly.GetTypes()
                                             .Where(t => t.Name == TypeMapperSourceCodeGenerator.MappingClassName)
@@ -165,9 +164,13 @@ public class TypeMapper : ITypeMapper
 
       if(assemblyTypeMapperType == null)
       {
-         // Store the tessage for later use if type mapping fails
-         var tessage = BuildTessageDescribingHowToAddMissingMappings(assembly);
-         state.AssemblyMappingUpdateTessages[assembly] = tessage;
+         if(typesRequiringMapping.Count > 0)
+         {
+            // Store the tessage for later use if type mapping fails
+            var tessage = BuildTessageDescribingHowToAddMissingMappings(assembly);
+            state.AssemblyMappingUpdateTessages[assembly] = tessage;
+         }
+
          return;
       }
 

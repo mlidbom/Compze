@@ -18,6 +18,7 @@ using Compze.Tessaging.Implementation.Transport.Client.Implementation.Universal;
 using Compze.Tessaging.Implementation.Transport.Client.Internal;
 using Compze.Tessaging.Implementation.Transport.Client.Routing;
 using Compze.Tessaging.Implementation.Transport.Client.Routing.Abstractions;
+using Compze.Tessaging.Implementation.Transport.Infrastructure;
 using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
@@ -45,7 +46,7 @@ class ServerEndpointBuilder : IEndpointBuilder, IAsyncDisposable, IDisposable
    public IEndpoint Build()
    {
       SetupContainer();
-      TessageTypesInternal.RegisterHandlers(RegisterTypermediaHandlers);
+      RegisterInfrastructureQueryHandlers();
       var serviceLocator = Container.ServiceLocator;
       var endpoint = new Endpoint(serviceLocator,
                                   serviceLocator.Resolve<ITessagingRouter>(),
@@ -53,6 +54,14 @@ class ServerEndpointBuilder : IEndpointBuilder, IAsyncDisposable, IDisposable
                                   Configuration);
       _builtSuccessfully = true;
       return endpoint;
+   }
+
+   void RegisterInfrastructureQueryHandlers()
+   {
+      var executor = Container.ServiceLocator.Resolve<InfrastructureQueryExecutor>();
+      var serviceLocator = new LazyCE<IServiceLocator>(() => Container.ServiceLocator);
+      var registrar = new InfrastructureQueryRegistrarWithDependencyInjectionSupport(executor, serviceLocator);
+      TessageTypesInternal.RegisterInfrastructureQueryHandlers(registrar);
    }
 
    public ServerEndpointBuilder(IEndpointHost host, ITessagesInFlightTracker globalStateTracker, IDependencyInjectionContainer container, EndpointConfiguration configuration)
@@ -102,6 +111,7 @@ class ServerEndpointBuilder : IEndpointBuilder, IAsyncDisposable, IDisposable
               .InProcessTypermediaNavigator();
 
       TypermediaHandlerExecutor.RegisterWith(Container.Register());
+      InfrastructureQueryExecutor.RegisterWith(Container.Register());
 
       Container.Register(
          Singleton.For<EndpointId>().Instance(Configuration.Id),
