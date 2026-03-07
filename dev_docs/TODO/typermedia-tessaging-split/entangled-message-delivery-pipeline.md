@@ -197,14 +197,12 @@ Every component involved in delivering a message from caller to handler and back
 - `TryGetDispatchableTessage` — scans waiting list, applies all dispatching rules, caps at 20 concurrent handlers
 - Blocks until a task is dispatchable
 
-### Dispatching Rules [BOTH]
+### Dispatching Rules [S]
 - `Inbox.TessageDispatchingRules` — `src/Compze.Tessaging/Implementation/TessageHandling/Inbox/Inbox.TessageDispatchingRules.cs`
 - `ITessageDispatchingRule` — `src/Compze.Tessaging/Implementation/TessageHandling/Dispatching/ITessageDispatchingRule.cs`
-- Two rules, both apply to all message types:
-  1. **`TueriesExecuteAfterAllTommandsAndTeventsAreDone`** — queries wait until zero commands/events are executing
-  2. **`TommandsAndTeventHandlersDoNotRunInParallelWithEachOtherInTheSameEndpoint`** — commands/events wait until zero other commands/events are executing
-- Combined effect: readers-writer lock. Multiple queries can run in parallel, but mutations are serialized and exclude queries.
-- **Entanglement**: Typermedia queries are delayed by in-progress tessaging commands/events. Tessaging events are delayed by in-progress typermedia commands. Neither paradigm needs to know about the other's concurrency — this coupling is artificial.
+- One rule: **`TommandsAndTeventHandlersDoNotRunInParallelWithEachOtherInTheSameEndpoint`** — serializes ExactlyOnce commands and events. Typermedia messages (`TyperMediaTuery`, `TypermediaAtMostOnceTommand`, `TypermediaAtMostOnceTommandWithReturnValue`) bypass this rule entirely.
+- `IExecutingTessagesSnapshot` tracks only `ExactlyOnceTommands` and `ExactlyOnceTevents` — no typermedia state.
+- Typermedia commands/queries run in parallel with each other and with tessaging mutations. SQLite in-memory deadlocks under this parallelism (its connection pool uses a single-writer lock), so multithreaded SQLite tests are skipped.
 
 ### HandlerExecutionTask [BOTH]
 - `Inbox.HandlerExecutionEngine.Coordinator.QueuedTessage` — `src/Compze.Tessaging/Implementation/TessageHandling/Inbox/Inbox.HandlerExecutionEngine.Coordinator.QueuedTessage.cs`
@@ -335,6 +333,7 @@ Every component involved in delivering a message from caller to handler and back
 - `IInternalInfrastructureTessage` marker added in `Compze.Abstractions` — lets `TypermediaHandlerRegistry` filter infrastructure types without depending on tessaging internals
 - Void command support added to `ITypermediaHandlerRegistrar`/`TypermediaHandlerRegistry`
 - `InProcessTypermediaNavigator` dispatches void commands through typermedia registry (no longer needs `ITessageHandlerRegistry`)
+- Dispatching rules disentangled: removed `TueriesExecuteAfterAllTommandsAndTeventsAreDone` rule entirely. Remaining rule (`TommandsAndTeventHandlersDoNotRunInParallelWithEachOtherInTheSameEndpoint`) now only serializes ExactlyOnce tessaging messages — typermedia commands and queries bypass it. `IExecutingTessagesSnapshot` no longer tracks AtMostOnce commands.
 
 ### Still entangled
 | Component | Why it's entangled |
@@ -346,7 +345,7 @@ Every component involved in delivering a message from caller to handler and back
 | `AspNetInboxTransportServer` | Hosts both `TypermediaController` and `TessagingController` |
 | `IInbox` / `Inbox` | `ExecuteAsync` serves typermedia, `ReceiveAsync` serves tessaging — both go through the same engine |
 | `HandlerExecutionEngine` | Single dispatch thread + rules for all message types |
-| Dispatching rules | Typermedia queries blocked by tessaging mutations and vice versa |
+| Dispatching rules | Rule itself is now [S]-only, but typermedia messages still flow through the engine that evaluates them |
 | `HandlerExecutionTask` | Switches on `TransportTessageType` to build handler delegate — knows about all 5 kinds |
 | `ServerEndpointBuilder` | Wires inbox, outbox, tessaging router, in-process navigator all together |
 | `Endpoint` | Lifecycle manages both typermedia (inbox) and tessaging (router+outbox) |
