@@ -13,7 +13,7 @@ static class TestingComponentRegistrarSerializer
 
    public static IComponentRegistrar CurrentTestsSerializersIfNotClonedContainer(this TestingComponentRegistrar @this)
    {
-      if(@this.Container().IsClone())
+      if(@this.Container().IsClone)
          return @this;
 
       switch(TestEnv.Serializer)

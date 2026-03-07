@@ -68,6 +68,12 @@ public sealed class SimpleInjectorDependencyInjectionContainer : DependencyInjec
       }
    }
 
+   protected override DependencyInjectionContainerBase CreateEmptyClone() =>
+      new SimpleInjectorDependencyInjectionContainer(Register().Clone());
+
+   protected override IReadOnlyList<Type> ContainerFacadeServiceTypes { get; } =
+      [typeof(IDependencyInjectionContainer), typeof(IServiceLocator), typeof(SimpleInjectorDependencyInjectionContainer)];
+
    Container ISimpleInjectorContainerInternals.Container => _container;
 
    protected override bool IsInScope() => global::SimpleInjector.Lifestyle.Scoped.GetCurrentScope(_container) != null;

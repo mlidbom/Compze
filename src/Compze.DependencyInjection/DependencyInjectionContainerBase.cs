@@ -1,5 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using Compze.DependencyInjection.Abstractions;
+using Compze.Internals.Logging;
 using Compze.Internals.SystemCE.LinqCE;
 using Compze.Threading;
 
@@ -7,10 +8,14 @@ namespace Compze.DependencyInjection;
 
 public abstract class DependencyInjectionContainerBase : IDependencyInjectionContainer
 {
+   static readonly ILogger Log = CompzeLogger.For(typeof(DependencyInjectionContainerBase));
+
    readonly List<ComponentRegistration> _registeredComponents = [];
    readonly Dictionary<Type, ComponentRegistration> _transientRegistrations = new();
    readonly IComponentRegistrar _registrar;
    readonly RunOnce _registerTransientInstanceTrackers = new();
+
+   public bool IsClone { get; private set; }
 
    protected DependencyInjectionContainerBase(IComponentRegistrar? registrar)
    {
@@ -20,6 +25,27 @@ public abstract class DependencyInjectionContainerBase : IDependencyInjectionCon
 
    public abstract void Dispose();
    public abstract ValueTask DisposeAsync();
+
+   protected virtual IReadOnlyList<Type> ContainerFacadeServiceTypes { get; } =
+      [typeof(IDependencyInjectionContainer), typeof(IServiceLocator)];
+
+   protected abstract DependencyInjectionContainerBase CreateEmptyClone();
+
+   public IDependencyInjectionContainer Clone()
+   {
+      Log.Info($"Cloning IDependencyInjectionContainer: {GetHashCode()}");
+      var sourceServiceLocator = ServiceLocator;
+      var cloneContainer = CreateEmptyClone();
+      cloneContainer.IsClone = true;
+
+      cloneContainer.Register(Singleton.For<IServiceLocator>().CreatedBy(() => cloneContainer.ServiceLocator));
+
+      RegisteredComponents()
+        .Where(component => ContainerFacadeServiceTypes.None(facadeType => component.ServiceTypes.Contains(facadeType)))
+        .ForEach(action: registration => cloneContainer.Register(registration.CreateCloneRegistration(sourceServiceLocator)));
+
+      return cloneContainer;
+   }
 
    public IDependencyInjectionContainer Register(params ComponentRegistration[] registrations)
    {

@@ -28,6 +28,8 @@ public interface IDependencyInjectionContainer : IDisposable, IAsyncDisposable
    IDependencyInjectionContainer Register(params ComponentRegistration[] registrations);
    IEnumerable<ComponentRegistration> RegisteredComponents();
    IServiceLocator ServiceLocator { get; }
+   bool IsClone { get; }
+   IDependencyInjectionContainer Clone();
    bool IsRegistered<TComponent>() where TComponent : class => RegisteredComponents().Any(it => it.ServiceTypes.Contains(typeof(TComponent)));
 }
 
