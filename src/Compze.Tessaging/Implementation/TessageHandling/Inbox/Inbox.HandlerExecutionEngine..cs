@@ -28,7 +28,6 @@ public partial class Inbox
 
       readonly IReadOnlyList<ITessageDispatchingRule> _dispatchingRules =
       [
-         new TueriesExecuteAfterAllTommandsAndTeventsAreDone(),
          new TommandsAndTeventHandlersDoNotRunInParallelWithEachOtherInTheSameEndpoint()
       ];
 
