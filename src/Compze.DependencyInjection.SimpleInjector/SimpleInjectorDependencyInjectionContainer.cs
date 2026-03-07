@@ -70,12 +70,31 @@ public sealed class SimpleInjectorDependencyInjectionContainer : DependencyInjec
 
    Container ISimpleInjectorContainerInternals.Container => _container;
 
-   public TComponent Resolve<TComponent>() where TComponent : class => _container.GetInstance<TComponent>();
-   public object Resolve(Type serviceType) => _container.GetInstance(serviceType);
+   protected override bool IsInScope() => global::SimpleInjector.Lifestyle.Scoped.GetCurrentScope(_container) != null;
+
+   public TComponent Resolve<TComponent>() where TComponent : class
+   {
+      if(TryCreateTransientInstance(typeof(TComponent), this, out var transientInstance))
+         return (TComponent)transientInstance;
+      return _container.GetInstance<TComponent>();
+   }
+
+   public object Resolve(Type serviceType)
+   {
+      if(TryCreateTransientInstance(serviceType, this, out var transientInstance))
+         return transientInstance;
+      return _container.GetInstance(serviceType);
+   }
+
    IDisposable IServiceLocator.BeginScope() => AsyncScopedLifestyle.BeginScope(_container);
 
    public override void Dispose() => _container.Dispose();
    public override async ValueTask DisposeAsync() => await _container.DisposeAsync().caf();
 
-   TComponent IServiceLocatorKernel.Resolve<TComponent>() => _container.GetInstance<TComponent>();
+   TComponent IServiceLocatorKernel.Resolve<TComponent>()
+   {
+      if(TryCreateTransientInstance(typeof(TComponent), this, out var transientInstance))
+         return (TComponent)transientInstance;
+      return _container.GetInstance<TComponent>();
+   }
 }

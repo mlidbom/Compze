@@ -7,13 +7,15 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Compze.DependencyInjection.Microsoft;
 
-public sealed class MicrosoftDependencyInjectionContainer(IComponentRegistrar? register = null) : DependencyInjectionContainerBase(register), IServiceLocator, IServiceLocatorKernel, IMicrosoftContainerInternals
+public sealed class MicrosoftDependencyInjectionContainer : DependencyInjectionContainerBase, IServiceLocator, IServiceLocatorKernel, IMicrosoftContainerInternals
 {
    readonly IServiceCollection _services = new ServiceCollection();
    ServiceProvider? _serviceProvider;
    bool _isDisposed;
 
    readonly AsyncLocal<IServiceScope?> _scopeCache = new();
+
+   public MicrosoftDependencyInjectionContainer(IComponentRegistrar? register = null) : base(register) {}
 
    protected override IDependencyInjectionContainer RegisterInContainer(ComponentRegistration[] registrations)
    {
@@ -63,21 +65,29 @@ public sealed class MicrosoftDependencyInjectionContainer(IComponentRegistrar? r
       return _scopeCache.Value != null ? _scopeCache.Value.ServiceProvider : _serviceProvider._assert().NotNull();
    }
 
+   protected override bool IsInScope() => _scopeCache.Value != null;
+
    public TComponent Resolve<TComponent>() where TComponent : class
    {
       Contract.State.NotDisposed(_isDisposed, this);
+      if(TryCreateTransientInstance(typeof(TComponent), this, out var transientInstance))
+         return (TComponent)transientInstance;
       return CurrentProvider().GetRequiredService<TComponent>();
    }
 
    public object Resolve(Type serviceType)
    {
       Contract.State.NotDisposed(_isDisposed, this);
+      if(TryCreateTransientInstance(serviceType, this, out var transientInstance))
+         return transientInstance;
       return CurrentProvider().GetRequiredService(serviceType);
    }
 
    TComponent IServiceLocatorKernel.Resolve<TComponent>()
    {
       Contract.State.NotDisposed(_isDisposed, this);
+      if(TryCreateTransientInstance(typeof(TComponent), this, out var transientInstance))
+         return (TComponent)transientInstance;
       return CurrentProvider().GetRequiredService<TComponent>();
    }
 
