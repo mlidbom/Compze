@@ -88,7 +88,9 @@ Created `ITypermediaTransport` — Typermedia's own transport abstraction replac
 - Removed `//todo: split out TyperMediaTransportTessage` — resolved; `TransportTessage` is now tessaging-only
 - Removed dead Typermedia check from `TommandsAndTeventHandlersDoNotRunInParallelWithEachOtherInTheSameEndpoint` dispatching rule
 
-**Residual entanglement:** `MemoryInboxTransportServer` still resolves `TypermediaHandlerExecutor` to bind it in `InMemoryTypermediaNetwork` during startup — both paradigms share the same endpoint address. Full decoupling deferred to Phase 5.
+**Residual entanglement:**
+- `MemoryInboxTransportServer` still resolves `TypermediaHandlerExecutor` to bind it in `InMemoryTypermediaNetwork` during startup — both paradigms share the same endpoint address. Full decoupling deferred to Phase 5.
+- `TessagingRouter` and `TessagingConnection` depend on `ITypermediaTransport` for bootstrap — **this is wrong**. Discovery queries (`EndpointInformationTuery`, `NetworkTopologyTuery`) are mistyped as Typermedia tueries. They are plain address-targeted request/response, not type-routed. See Section 12 for details. Fixing this should precede or be part of Phase 5.
 
 ### Phase 5 — Separate Hosting
 
@@ -409,14 +411,25 @@ Every component involved in delivering a message from caller to handler and back
 
 ---
 
-## 12. Discovery [T uses, S uses, mechanism is T]
+## 12. Discovery [INFRASTRUCTURE — currently mistyped as Typermedia]
 
-### Internal Tueries
+### ⚠️ Key architectural insight: Discovery is NOT Typermedia
+
+`EndpointInformationTuery` and `NetworkTopologyTuery` are currently typed as `IRemotableTuery<T>` (Typermedia tueries). **This is wrong.** They are plain infrastructure request/response calls sent to a specific known address — they are NOT type-routed. Typermedia's defining characteristic is type-based routing; these queries go to a specific already-known endpoint, which is just plain HTTP + serialization.
+
+Consequences of the current mistyping:
+- Tessaging depends on Typermedia's internal transport (`ITypermediaTransport`) just to bootstrap connections
+- Discovery handlers are registered as Typermedia tuery handlers in every endpoint, creating a hard dependency from hosting to Typermedia
+- It spreads the false impression that "discovery is fundamentally a Typermedia mechanism" — it is not
+
+**Fix:** These should be plain infrastructure messages with their own simple request/response mechanism (serialize, POST to known address, deserialize response). No type routing, no Typermedia registry, no `ITypermediaTransport`. Both Tessaging and Typermedia routers can then bootstrap independently using this shared infrastructure layer.
+
+### Internal Tueries (currently mistyped)
 - `TessageTypesInternal` — `src/Compze.Tessaging/Implementation/Abstractions/_TessageTypesInternal.cs`
 - `EndpointInformationTuery : IRemotableTuery<EndpointInformation>` — returns endpoint ID + handled message type IDs
 - `NetworkTopologyTuery : IRemotableTuery<NetworkTopology>` — returns all endpoint addresses
-- Both are typermedia tueries, registered as tuery handlers in every endpoint
-- Used by both `TypermediaRouter` (topology discovery) and `TessagingConnection` (endpoint info bootstrap)
+- Both are currently registered as typermedia tuery handlers in every endpoint — **should not be**
+- Used by both `TypermediaRouter` (topology discovery) and `TessagingRouter` (endpoint info bootstrap)
 
 ---
 
@@ -457,11 +470,13 @@ Every component involved in delivering a message from caller to handler and back
 - `InMemoryTypermediaNetwork` [T] — Typermedia's own address book
 - `InMemoryTransportNetwork` [S] — tessaging-only address book
 - `ApiEndpointClient` / `IRemoteApiEndpointClient` — deleted
-- `TessagingConnection` bootstraps via `ITypermediaTransport` (discovery is a Typermedia mechanism)
+- `TessagingConnection` bootstraps via `ITypermediaTransport` — **wrong**: see Section 12, discovery is not Typermedia
 
-### Still entangled (hosting — Phase 5)
+### Still entangled (discovery mistyping + hosting — next phases)
 | Component | Why it's entangled |
 |---|---|
+| `EndpointInformationTuery` / `NetworkTopologyTuery` | Mistyped as `IRemotableTuery<T>` (Typermedia) — forces Tessaging to depend on `ITypermediaTransport` for plain address-targeted request/response. Should be infrastructure messages, not Typermedia. |
+| `TessagingRouter` / `TessagingConnection` | Depends on `ITypermediaTransport` solely because discovery queries are mistyped as Typermedia tueries |
 | `MemoryInboxTransportServer` | Binds `TypermediaHandlerExecutor` in `InMemoryTypermediaNetwork` during startup |
 | `AspNetInboxTransportServer` | Hosts both `TypermediaController` and `TessagingController` |
 | `ServerEndpointBuilder` | Wires inbox, outbox, tessaging router, in-process navigator, and typermedia executor all together |
