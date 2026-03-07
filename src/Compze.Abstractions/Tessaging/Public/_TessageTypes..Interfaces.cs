@@ -1,4 +1,5 @@
 using Compze.Abstractions.Public;
+using static Compze.Abstractions.Tessaging.Public.TessageTypes.Remotable.NonTransactional.Tueries;
 // ReSharper disable MemberCanBeInternal
 
 #pragma warning disable CA1040 //We define a number of empty marker interfaces here that are vital for framework functionality
@@ -6,11 +7,19 @@ using Compze.Abstractions.Public;
 
 namespace Compze.Abstractions.Tessaging.Public;
 
-//Note that we do not handle messages that don't encode meaning and routing through types, that is: IMessage.
-//That's why ITessage is the ultimate root of our hierarchy of meaning, not IMessage
-public interface ITessage;
-public interface ITevent : ITessage;
-public interface ITommand : ITessage;
+
+//Ordinary plain old messages, not necessarily type routed
+public interface IMessage;
+public interface IEvent : IMessage;
+public interface ICommand : IMessage;
+public interface ICommand<out TResult> : ICommand;
+public interface IQuery<out TResult>;
+
+//From here on down everything is Tessages. Type routed messages.
+public interface ITessage : IMessage;
+public interface ITevent : ITessage, IEvent;
+public interface ITommand : ITessage, ICommand;
+
 //todo: Should the commented out type below exist?
 //public interface IFireAndForgetTommand : ITommand;
 
@@ -25,13 +34,14 @@ public interface ICannotBeSentRemotelyFromWithinTransaction : ITessage;
 public interface ITypermediaTessage : ICannotBeSentRemotelyFromWithinTransaction;
 public interface ITyperMediaTessage<out TResult> : ITypermediaTessage;
 public interface ITommand<out TResult> : ITommand, ITyperMediaTessage<TResult>;
-public interface ITuery<out TResult> : ITyperMediaTessage<TResult>;
+public interface ITuery<out TResult> : IQuery<TResult>, ITyperMediaTessage<TResult>;
 
 ///<summary>Many resources in a hypermedia API do not actually need access to backend data. The data in the tuery is sufficient to create the result. For such tueries implement this interface. That way no network roundtrip is required to perform the tuery.</summary>
 public interface ICreateMyOwnResultTuery<out TResult> : ITuery<TResult>
 {
    TResult CreateResult();
 }
+
 
 //Note that when you look at a strictly local tessage you have guarantees about its behavior that you don't have looking at just tessage with the absence of an explicit IRemotable declaration.
 //The concrete types implementing the interfaces might have been remotable, making for lost guarantees.
