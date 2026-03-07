@@ -4,19 +4,16 @@ using Compze.Abstractions.Refactoring.Naming.Internal;
 using Compze.Abstractions.Serialization.Internal;
 using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
-using Compze.Tessaging.Implementation.TessageHandling.Inbox;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Tessaging.Implementation.Transport.Client.Implementation.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Compze.Tessaging.Hosting.AspNetCore.Private;
 
-public abstract class ControllerBase(IRemotableTessageSerializer serializer, ITypeMapper typeMapper, IInbox inbox, Inbox.HandlerExecutionEngine handlerExecutionEngine) : Controller
+public abstract class ControllerBase(IRemotableTessageSerializer serializer, ITypeMapper typeMapper, IInbox inbox) : Controller
 {
    readonly ITypeMapper _typeMapper = typeMapper;
    protected IInbox Inbox { get; } = inbox;
-   protected IRemotableTessageSerializer Serializer { get; } = serializer;
-   protected Inbox.HandlerExecutionEngine HandlerExecutionEngine { get; } = handlerExecutionEngine;
 
    protected async Task<TransportTessage.InComing> CreateIncomingTessage()
    {
@@ -27,6 +24,6 @@ public abstract class ControllerBase(IRemotableTessageSerializer serializer, ITy
       using var reader = new StreamReader(HttpContext.Request.Body);
       var tueryJson = await reader.ReadToEndAsync().caf();
 
-      return new TransportTessage.InComing(tueryJson, typeId, tessageId, _typeMapper, Serializer);
+      return new TransportTessage.InComing(tueryJson, typeId, tessageId, _typeMapper, serializer);
    }
 }

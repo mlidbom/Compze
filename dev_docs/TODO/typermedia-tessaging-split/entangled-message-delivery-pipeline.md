@@ -23,11 +23,13 @@ Work from the handler execution outward. Each phase is independently shippable a
 
 **Server redirects completed:**
 - `MemoryInboxTransportServer`: Typermedia branches deserialize and call executor via `Task.Run` (preserving async dispatch for parallelism tests)
-- `TypermediaController`: All three endpoints deserialize and call executor directly
+- `TypermediaController`: All three endpoints deserialize directly via `IRemotableTessageSerializer` (no `TransportTessage.InComing`), call executor via `RunOutsideScope` to escape the ASP.NET middleware's DI scope
 
 **Registration fix:** Void Typermedia commands were historically registered in the tessaging handler registry. Moved to `RegisterTypermediaHandlers` where they belong (test fixtures + AccountManagement sample). `HandledRemoteTypermediaTypeIds()` updated to include `_voidTommandHandlers`.
 
 **Residual entanglement:** `TypermediaController` still inherits `ControllerBase` which takes `IInbox` + `HandlerExecutionEngine` constructor args (unused by TypermediaController), and uses shared serialization (`IRemotableTessageSerializer`, `TransportTessage.InComing`). Needs investigation.
+
+**TypermediaController separated from ControllerBase:** `TypermediaController` now inherits `Controller` directly — no longer depends on `ControllerBase`, `IInbox`, `HandlerExecutionEngine`, or `TransportTessage.InComing`. It deserializes HTTP requests itself using `IRemotableTessageSerializer` + `ITypeMapper` and serializes responses directly. `ControllerBase` is now Tessaging-only (removed `Serializer` and `HandlerExecutionEngine` properties). Key detail: the ASP.NET middleware creates a DI scope via `ExecuteInIsolatedScopeAsync`, and since the DI container tracks scopes via `AsyncLocal`, the executor's `ExecuteInIsolatedScope` would fail with nested scope error. Solution: `RunOutsideScope` uses `ExecutionContext.SuppressFlow()` + `Task.Run` to escape the middleware scope, matching what `MemoryInboxTransportServer` does.
 
 ### Phase 3 — Clean Up Tessaging Internals ✅ DONE
 
@@ -40,7 +42,7 @@ Removed dead Typermedia code from the Tessaging execution pipeline:
 - Removed Typermedia no-op branches from `Coordinator.Dispatching` and `DoneDispatching`
 - Removed `ITypermediaHandlerRegistry` dependency from `HandlerExecutionEngine`, `Coordinator`, and `HandlerExecutionTask` — the Tessaging pipeline no longer knows about Typermedia registries
 
-**Remaining:** `TypermediaController` → `ControllerBase` inheritance cleanup (shared serializer investigation needed first).
+**Remaining:** Phase 4 — giving Typermedia its own transport.
 
 ### Phase 4 — Typermedia Gets Its Own Transport
 
@@ -66,7 +68,7 @@ Each paradigm gets its own hosting lifecycle.
 
 ### Recommended next step
 
-Investigate the shared serializer situation (`IRemotableTessageSerializer`, `TransportTessage.InComing`) to determine how to break `TypermediaController`'s `ControllerBase` dependency. Then Phase 4 — giving Typermedia its own transport.
+Phase 4 — giving Typermedia its own transport. Replace `ApiEndpointClient` → `ITransportMessagePoster` with Typermedia-specific transport (memory: direct function call, HTTP: direct HttpClient call).
 
 ---
 
@@ -223,12 +225,19 @@ Every component involved in delivering a message from caller to handler and back
 - `/typermedia/tuery` → `TypermediaHandlerExecutor.ExecuteTuery`
 - `/typermedia/tommand-with-result` → `TypermediaHandlerExecutor.ExecuteTommandWithResult`
 - `/typermedia/tommand-no-result` → `TypermediaHandlerExecutor.ExecuteVoidTommand`
-- Still inherits `ControllerBase` (for `CreateIncomingTessage`), taking unused `IInbox`/`HandlerExecutionEngine` args — cleanup target
+- Inherits `Controller` directly — no dependency on `ControllerBase`, `IInbox`, or `HandlerExecutionEngine`
+- Deserializes HTTP requests using `IRemotableTessageSerializer` + `ITypeMapper` (no `TransportTessage.InComing`)
+- Uses `RunOutsideScope` (`ExecutionContext.SuppressFlow()` + `Task.Run`) to escape ASP.NET middleware DI scope
 
 ### Tessaging Controller [S]
 - `TessagingController` — `src/Compze.Tessaging.Hosting.AspNetCore/Private/TessagingController.cs`
 - `/tessaging/tevent` → `Inbox.ReceiveAsync`
 - `/tessaging/tommand` → `Inbox.ReceiveAsync`
+
+### Controller Base [S]
+- `ControllerBase` — `src/Compze.Tessaging.Hosting.AspNetCore/Private/ControllerBase.cs`
+- Now Tessaging-only: provides `IInbox` and `CreateIncomingTessage()` to `TessagingController`
+- `Serializer` and `HandlerExecutionEngine` properties removed
 
 ---
 
@@ -402,11 +411,7 @@ Every component involved in delivering a message from caller to handler and back
 - `TypermediaHandlerExecutor` created in `Compze.Typermedia.Hosting` — gives Typermedia its own handler execution path, bypassing Inbox/HandlerExecutionEngine
 - Void Typermedia commands (`IAtMostOnceTypermediaTommand`) moved from `RegisterTessagingHandlers` to `RegisterTypermediaHandlers` (test fixtures + AccountManagement sample). `HandledRemoteTypermediaTypeIds()` updated to include void command handlers.
 - Phase 3 dead code removal: `Inbox.ExecuteAsync`, `HandlerExecutionEngine.ExecuteAsync`, `HandlerExecutionTask.ExecuteTuery`, Typermedia branches from `HandlerExecutionTask.CreateTessageTask`/`Coordinator.Dispatching`/`Coordinator.DoneDispatching` all removed. `ITypermediaHandlerRegistry` dependency removed from `HandlerExecutionEngine`, `Coordinator`, and `HandlerExecutionTask`.
-
-### Remaining cleanup
-| Component | Issue |
-|---|---|
-| `TypermediaController` → `ControllerBase` inheritance | Takes `IInbox` + `HandlerExecutionEngine` it doesn't use; uses shared serializer (`IRemotableTessageSerializer`, `TransportTessage.InComing`) |
+- `TypermediaController` separated from `ControllerBase`: now inherits `Controller` directly, deserializes via `IRemotableTessageSerializer` + `ITypeMapper` (no `TransportTessage.InComing`), uses `RunOutsideScope` to escape middleware DI scope. `ControllerBase` is now Tessaging-only (removed `Serializer` and `HandlerExecutionEngine` properties, removed `IInbox`/`HandlerExecutionEngine` from `TessagingController` constructor).
 
 ### Still entangled (transport + hosting — Phases 4+5)
 | Component | Why it's entangled |
