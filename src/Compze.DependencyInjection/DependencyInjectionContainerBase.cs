@@ -86,15 +86,32 @@ public abstract class DependencyInjectionContainerBase : IDependencyInjectionCon
 
    protected void AssertLifeStyleCombinationsAreValid()
    {
-      _registeredComponents.Where(it => it.Lifestyle == Lifestyle.Singleton)
-                           .ForEach(singleton =>
-                            {
-                               foreach(var dependencyType in singleton.DependencyTypes)
-                               {
-                                  _registeredComponents
-                                    .Where(it => it.ProvidesService(dependencyType) && it.Lifestyle != Lifestyle.Singleton)
-                                    .ForEach(invalidDependency => throw new InvalidLifeStyleCombinationException(singleton, invalidDependency, dependencyType));
-                               }
-                            });
+      _registeredComponents.ForEach(consumer =>
+      {
+         foreach(var dependencyType in consumer.DependencyTypes)
+         {
+            _registeredComponents
+              .Where(it => it.ProvidesService(dependencyType))
+              .Where(dependency => IsInvalidLifestyleCombination(consumer, dependency))
+              .ForEach(invalidDependency => throw new InvalidLifeStyleCombinationException(consumer, invalidDependency, dependencyType));
+         }
+      });
+   }
+
+   static bool IsInvalidLifestyleCombination(ComponentRegistration consumer, ComponentRegistration dependency)
+   {
+      if(consumer.Lifestyle == Lifestyle.Singleton)
+         return dependency.Lifestyle switch
+         {
+            Lifestyle.Singleton => false,
+            Lifestyle.Scoped => true,
+            _ => !dependency.AllowSingletonDependent
+         };
+
+      if(consumer.Lifestyle == Lifestyle.Scoped)
+         return dependency.Lifestyle is Lifestyle.TrackedTransient or Lifestyle.UntrackedTransient
+                && !dependency.AllowScopedDependent;
+
+      return false;
    }
 }

@@ -9,12 +9,16 @@ public abstract class ComponentRegistration
    public InstantiationSpec InstantiationSpec { get; }
    public Lifestyle Lifestyle { get; }
    internal IReadOnlyList<Type> DependencyTypes { get; }
+   internal bool AllowSingletonDependent { get; }
+   internal bool AllowScopedDependent { get; }
    internal bool ProvidesService(Type service) => ServiceTypes.Contains(service);
 
    protected ComponentRegistration(Lifestyle lifestyle,
                                   IEnumerable<Type> serviceTypes,
                                   InstantiationSpec instantiationSpec,
-                                  IEnumerable<Type> dependencyTypes)
+                                  IEnumerable<Type> dependencyTypes,
+                                  bool allowSingletonDependent = false,
+                                  bool allowScopedDependent = false)
    {
       serviceTypes = serviceTypes.ToList();
 
@@ -26,6 +30,8 @@ public abstract class ComponentRegistration
       InstantiationSpec = instantiationSpec;
       Lifestyle = lifestyle;
       DependencyTypes = dependencyTypes.ToList();
+      AllowSingletonDependent = allowSingletonDependent;
+      AllowScopedDependent = allowScopedDependent;
    }
 
    public abstract ComponentRegistration CreateCloneRegistration(IServiceLocator currentLocator);
@@ -48,7 +54,7 @@ public class ComponentRegistration<TService> : ComponentRegistration where TServ
    {
       if(!ShouldDelegateToParentWhenCloning)
       {
-         return new ComponentRegistration<TService>(Lifestyle, ServiceTypes, InstantiationSpec, DependencyTypes);
+         return new ComponentRegistration<TService>(Lifestyle, ServiceTypes, InstantiationSpec, DependencyTypes, AllowSingletonDependent, AllowScopedDependent);
       }
 
       Contract.State.Assert(Lifestyle == Lifestyle.Singleton, () => "Only Singletons can delegate to parent container when cloning, because otherwise both containers would attempt to dispose the component");
@@ -63,6 +69,8 @@ public class ComponentRegistration<TService> : ComponentRegistration where TServ
    internal ComponentRegistration(Lifestyle lifestyle,
                                   IEnumerable<Type> serviceTypes,
                                   InstantiationSpec instantiationSpec,
-                                  IEnumerable<Type> dependencyTypes)
-      : base(lifestyle, serviceTypes, instantiationSpec, dependencyTypes) {}
+                                  IEnumerable<Type> dependencyTypes,
+                                  bool allowSingletonDependent = false,
+                                  bool allowScopedDependent = false)
+      : base(lifestyle, serviceTypes, instantiationSpec, dependencyTypes, allowSingletonDependent, allowScopedDependent) {}
 }

@@ -65,6 +65,102 @@ public class LifestyleValidationTests
       exception.Message.Must().Contain("UntrackedTransient");
    }
 
+   [DependencyInjectionContainerMatrix]
+   public void Should_allow_singleton_depending_on_tracked_transient_with_AllowSingletonDependent()
+   {
+      using var container = DependencyInjectionContainerFactory.CreateContainer();
+      container.Register(
+         TrackedTransient.For<ITransientService>().AllowSingletonDependent().CreatedBy(() => new TransientService()),
+         Singleton.For<ISingletonService>().CreatedBy((ITransientService t) => new SingletonServiceDependingOnTransient(t))
+      );
+
+      var serviceLocator = container.ServiceLocator;
+      serviceLocator.Resolve<ISingletonService>().Must().NotBeNull();
+   }
+
+   [DependencyInjectionContainerMatrix]
+   public void Should_allow_singleton_depending_on_untracked_transient_with_AllowSingletonDependent()
+   {
+      using var container = DependencyInjectionContainerFactory.CreateContainer();
+      container.Register(
+         UntrackedTransient.For<IUntrackedTransientService>().AllowSingletonDependent().CreatedBy(() => new UntrackedTransientService()),
+         Singleton.For<ISingletonService>().CreatedBy((IUntrackedTransientService t) => new SingletonServiceDependingOnUntrackedTransient(t))
+      );
+
+      var serviceLocator = container.ServiceLocator;
+      serviceLocator.Resolve<ISingletonService>().Must().NotBeNull();
+   }
+
+   [DependencyInjectionContainerMatrix]
+   public void Should_throw_when_scoped_depends_on_tracked_transient()
+   {
+      using var container = DependencyInjectionContainerFactory.CreateContainer();
+
+      var exception = Invoking(() =>
+      {
+         // ReSharper disable once AccessToDisposedClosure
+         _ = container.Register(
+            TrackedTransient.For<ITransientService>().CreatedBy(() => new TransientService()),
+            Scoped.For<IScopedService>().CreatedBy((ITransientService t) => new ScopedServiceDependingOnTrackedTransient(t))
+         ).ServiceLocator;
+      }).Must().Throw<InvalidLifeStyleCombinationException>().Which;
+
+      exception.Message.Must().Contain("Invalid lifestyle combination");
+      exception.Message.Must().Contain("Scoped");
+      exception.Message.Must().Contain("TrackedTransient");
+   }
+
+   [DependencyInjectionContainerMatrix]
+   public void Should_throw_when_scoped_depends_on_untracked_transient()
+   {
+      using var container = DependencyInjectionContainerFactory.CreateContainer();
+
+      var exception = Invoking(() =>
+      {
+         // ReSharper disable once AccessToDisposedClosure
+         _ = container.Register(
+            UntrackedTransient.For<IUntrackedTransientService>().CreatedBy(() => new UntrackedTransientService()),
+            Scoped.For<IScopedService>().CreatedBy((IUntrackedTransientService t) => new ScopedServiceDependingOnUntrackedTransient(t))
+         ).ServiceLocator;
+      }).Must().Throw<InvalidLifeStyleCombinationException>().Which;
+
+      exception.Message.Must().Contain("Invalid lifestyle combination");
+      exception.Message.Must().Contain("Scoped");
+      exception.Message.Must().Contain("UntrackedTransient");
+   }
+
+   [DependencyInjectionContainerMatrix]
+   public void Should_allow_scoped_depending_on_tracked_transient_with_AllowScopedDependent()
+   {
+      using var container = DependencyInjectionContainerFactory.CreateContainer();
+      container.Register(
+         TrackedTransient.For<ITransientService>().AllowScopedDependent().CreatedBy(() => new TransientService()),
+         Scoped.For<IScopedService>().CreatedBy((ITransientService t) => new ScopedServiceDependingOnTrackedTransient(t))
+      );
+
+      var serviceLocator = container.ServiceLocator;
+      using(serviceLocator.BeginScope())
+      {
+         serviceLocator.Resolve<IScopedService>().Must().NotBeNull();
+      }
+   }
+
+   [DependencyInjectionContainerMatrix]
+   public void Should_allow_scoped_depending_on_untracked_transient_with_AllowScopedDependent()
+   {
+      using var container = DependencyInjectionContainerFactory.CreateContainer();
+      container.Register(
+         UntrackedTransient.For<IUntrackedTransientService>().AllowScopedDependent().CreatedBy(() => new UntrackedTransientService()),
+         Scoped.For<IScopedService>().CreatedBy((IUntrackedTransientService t) => new ScopedServiceDependingOnUntrackedTransient(t))
+      );
+
+      var serviceLocator = container.ServiceLocator;
+      using(serviceLocator.BeginScope())
+      {
+         serviceLocator.Resolve<IScopedService>().Must().NotBeNull();
+      }
+   }
+
    interface IScopedService;
    class ScopedService : IScopedService;
 
@@ -83,6 +179,8 @@ public class LifestyleValidationTests
    class UntrackedTransientService : IUntrackedTransientService;
 #pragma warning disable CS9113 // Parameter is unread.
    class SingletonServiceDependingOnUntrackedTransient(IUntrackedTransientService _) : ISingletonService;
+   class ScopedServiceDependingOnTrackedTransient(ITransientService _) : IScopedService;
+   class ScopedServiceDependingOnUntrackedTransient(IUntrackedTransientService _) : IScopedService;
 #pragma warning restore CS9113 // Parameter is unread.
 
 }
