@@ -52,19 +52,4 @@ public class Parallelism_policies : EndpointHostTestBase
       MyExactlyOnceTommandHandlerThreadGate.AwaitQueueLengthEqualTo(1)
                               .TryAwaitQueueLengthEqualTo(2, timeout: WaitTimeout.Milliseconds(100)).Must().Be(false);
    }
-
-   [PCT] public async Task Two_AtMostOnce_tommand_handlers_from_the_same_session_cannot_execute_in_parallel()
-   {
-      CloseGates();
-
-      var commandsCompleted = Task.WhenAll(
-            Navigator.PostAsync(MyCreateTaggregateTommand.Create()),
-            Navigator.PostAsync(MyCreateTaggregateTommand.Create()));
-
-      MyCreateTaggregateTommandHandlerThreadGate.AwaitQueueLengthEqualTo(1)
-                                               .TryAwaitQueueLengthEqualTo(2, WaitTimeout.Milliseconds(100)).Must().Be(false);
-
-      OpenGates();
-      await commandsCompleted;
-   }
 }

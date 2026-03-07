@@ -12,7 +12,7 @@ public partial class Inbox
       {
          if(candidateTessage.TessageTypeEnum == TransportTessageType.TyperMediaTuery) return true;
 
-         return executing.AtMostOnceTommands.None() && executing.ExactlyOnceTommands.None() && executing.ExactlyOnceTevents.None();
+         return executing.ExactlyOnceTommands.None() && executing.ExactlyOnceTevents.None();
       }
    }
 }
