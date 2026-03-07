@@ -13,7 +13,7 @@ public interface IMessage;
 public interface IEvent : IMessage;
 public interface ICommand : IMessage;
 public interface ICommand<out TResult> : ICommand;
-public interface IQuery<out TResult>;
+public interface IQuery<out TResult> : IMessage;
 
 //From here on down everything is Tessages. Type routed messages.
 public interface ITessage : IMessage;
