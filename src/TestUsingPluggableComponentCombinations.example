@@ -15,6 +15,12 @@ SqliteMemory:Microsoft:Newtonsoft:Memory
 #Sqlite:SimpleInjector:Newtonsoft:Memory
 #SqliteMemory:SimpleInjector:Newtonsoft:Memory
 
+#MsSql:Autofac:Newtonsoft:Memory
+#PgSql:Autofac:Newtonsoft:Memory
+#MySql:Autofac:Newtonsoft:Memory
+#Sqlite:Autofac:Newtonsoft:Memory
+#SqliteMemory:Autofac:Newtonsoft:Memory
+
 #MsSql:Microsoft:Newtonsoft:AspNetCore
 #PgSql:Microsoft:Newtonsoft:AspNetCore
 #MySql:Microsoft:Newtonsoft:AspNetCore
@@ -26,3 +32,9 @@ SqliteMemory:Microsoft:Newtonsoft:Memory
 #MySql:SimpleInjector:Newtonsoft:AspNetCore
 #Sqlite:SimpleInjector:Newtonsoft:AspNetCore
 #SqliteMemory:SimpleInjector:Newtonsoft:AspNetCore
+
+#MsSql:Autofac:Newtonsoft:AspNetCore
+#PgSql:Autofac:Newtonsoft:AspNetCore
+#MySql:Autofac:Newtonsoft:AspNetCore
+#Sqlite:Autofac:Newtonsoft:AspNetCore
+#SqliteMemory:Autofac:Newtonsoft:AspNetCore

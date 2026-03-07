@@ -1,5 +1,6 @@
 using Compze.Abstractions.Wiring.Testing.Internal;
 using Compze.DependencyInjection.Abstractions;
+using Compze.DependencyInjection.Autofac;
 using Compze.DependencyInjection.Microsoft;
 using Compze.DependencyInjection.SimpleInjector;
 using Compze.xUnitMatrix;
@@ -15,6 +16,7 @@ static class DependencyInjectionContainerFactory
       {
          DIContainer.SimpleInjector => new SimpleInjectorDependencyInjectionContainer(),
          DIContainer.Microsoft      => new MicrosoftDependencyInjectionContainer(),
+         DIContainer.Autofac        => new AutofacDependencyInjectionContainer(),
          _                          => throw new ArgumentOutOfRangeException()
       };
 }

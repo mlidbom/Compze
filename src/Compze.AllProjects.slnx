@@ -111,6 +111,7 @@
     <Project Path="SolutionStructure/Solution.TODO.csproj" />
   </Folder>
   <Folder Name="/Compze.DependencyInjection/">
+    <Project Path="Compze.DependencyInjection.Autofac/Compze.DependencyInjection.Autofac.csproj" />
     <Project Path="Compze.DependencyInjection.Microsoft/Compze.DependencyInjection.Microsoft.csproj" />
     <Project Path="Compze.DependencyInjection.SimpleInjector/Compze.DependencyInjection.SimpleInjector.csproj" />
     <Project Path="Compze.DependencyInjection/Compze.DependencyInjection.csproj" />

@@ -36,6 +36,8 @@
     <UsePackageReference_Compze_DbPool_Sqlite Condition="'$(UsePackageReference_Compze_DbPool_Sqlite)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.DbPool.Sqlite.csproj|'))">true</UsePackageReference_Compze_DbPool_Sqlite>
     <!-- Compze.DependencyInjection -->
     <UsePackageReference_Compze_DependencyInjection Condition="'$(UsePackageReference_Compze_DependencyInjection)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.DependencyInjection.csproj|'))">true</UsePackageReference_Compze_DependencyInjection>
+    <!-- Compze.DependencyInjection.Autofac -->
+    <UsePackageReference_Compze_DependencyInjection_Autofac Condition="'$(UsePackageReference_Compze_DependencyInjection_Autofac)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.DependencyInjection.Autofac.csproj|'))">true</UsePackageReference_Compze_DependencyInjection_Autofac>
     <!-- Compze.DependencyInjection.Microsoft -->
     <UsePackageReference_Compze_DependencyInjection_Microsoft Condition="'$(UsePackageReference_Compze_DependencyInjection_Microsoft)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.DependencyInjection.Microsoft.csproj|'))">true</UsePackageReference_Compze_DependencyInjection_Microsoft>
     <!-- Compze.DependencyInjection.SimpleInjector -->

@@ -32,6 +32,13 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection)' != 'true'">
     <ProjectReference Include="..\..\src\Compze.DependencyInjection\Compze.DependencyInjection.csproj" />
   </ItemGroup>
+  <!-- Compze.DependencyInjection.Autofac — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection_Autofac)' == 'true'">
+    <PackageReference Include="Compze.DependencyInjection.Autofac" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection_Autofac)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.DependencyInjection.Autofac\Compze.DependencyInjection.Autofac.csproj" />
+  </ItemGroup>
   <!-- Compze.DependencyInjection.Microsoft — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection_Microsoft)' == 'true'">
     <PackageReference Include="Compze.DependencyInjection.Microsoft" Version="*-*" />

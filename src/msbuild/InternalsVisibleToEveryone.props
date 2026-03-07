@@ -53,6 +53,7 @@
     <InternalsVisibleTo Include="Compze.Underscore" />
     <InternalsVisibleTo Include="Compze.Underscore.Specifications" />
     <InternalsVisibleTo Include="Compze.DependencyInjection" />
+    <InternalsVisibleTo Include="Compze.DependencyInjection.Autofac" />
     <InternalsVisibleTo Include="Compze.DependencyInjection.Microsoft" />
     <InternalsVisibleTo Include="Compze.DependencyInjection.SimpleInjector" />
     <InternalsVisibleTo Include="Compze.Internals.Logging" />
