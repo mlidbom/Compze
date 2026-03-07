@@ -6,7 +6,6 @@ using Compze.Contracts;
 
 namespace Compze.Tessaging.Implementation.Transport.Abstractions;
 
-//todo: split out TyperMediaTransportTessage
 public static class TransportTessage
 {
    public class InComing

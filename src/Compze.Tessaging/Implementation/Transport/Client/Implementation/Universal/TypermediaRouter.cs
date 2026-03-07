@@ -1,12 +1,10 @@
 using Compze.Abstractions.Refactoring.Naming.Internal;
-using Compze.Abstractions.Serialization.Internal;
 using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Tessaging.Abstractions.Tessaging.Hosting.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Core.Tessaging.Transport.Internal;
 using Compze.Tessaging.Implementation.Abstractions;
 using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
-using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Tessaging.Implementation.Transport.Client.Internal;
 using Compze.Contracts;
 using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
@@ -33,21 +31,18 @@ class TypermediaRouter : ITypermediaRouter, IDisposable
    public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(
             Singleton.For<ITypermediaRouter, ITypermediaRouting>().CreatedBy(
-               (ITypeMapper typeMapper, IRemotableTessageSerializer serializer, ITransportMessagePoster transportMessagePoster)
-                  => new TypermediaRouter(typeMapper, serializer, transportMessagePoster)));
+               (ITypeMapper typeMapper, ITypermediaTransport transport)
+                  => new TypermediaRouter(typeMapper, transport)));
 
-   TypermediaRouter(ITypeMapper typeMapper, IRemotableTessageSerializer serializer, ITransportMessagePoster transportMessagePoster)
+   TypermediaRouter(ITypeMapper typeMapper, ITypermediaTransport transport)
    {
       _typeMapper = typeMapper;
-      _serializer = serializer;
-      _transportMessagePoster = transportMessagePoster;
+      _transport = transport;
    }
 
    readonly ITypeMapper _typeMapper;
-   readonly IRemotableTessageSerializer _serializer;
-   readonly ITransportMessagePoster _transportMessagePoster;
+   readonly ITypermediaTransport _transport;
    readonly IMonitor _monitor = IMonitor.New();
-
 
    bool _running;
    IReadOnlyDictionary<EndpointId, TypermediaConnection> _connections = new Dictionary<EndpointId, TypermediaConnection>();
@@ -57,11 +52,8 @@ class TypermediaRouter : ITypermediaRouter, IDisposable
    async Task ConnectAsync(EndPointAddress remoteEndpointAddress)
    {
       AssertRunning();
-#pragma warning disable CA2000//We are passing this disposable into a collection that we track disposal for
-      var connection = new TypermediaConnection(remoteEndpointAddress, _typeMapper, _serializer, _transportMessagePoster);
-#pragma warning restore CA2000
-
-      await connection.InitAsync().caf();
+      var endpointInformation = await _transport.GetAsync(new TessageTypesInternal.EndpointInformationTuery(), remoteEndpointAddress).caf();
+      var connection = new TypermediaConnection(remoteEndpointAddress, endpointInformation);
 
       using(_monitor.TakeLock())
       {
@@ -75,9 +67,7 @@ class TypermediaRouter : ITypermediaRouter, IDisposable
    public async Task DiscoverAndConnectAsync(EndPointAddress seedAddress)
    {
       AssertRunning();
-      var topologyTuery = new TessageTypesInternal.NetworkTopologyTuery();
-      var topologyTueryTessage = TransportTessage.OutGoing.Create(topologyTuery, _typeMapper, _serializer);
-      var topology = await _transportMessagePoster.PostAsync<TessageTypesInternal.NetworkTopology>(topologyTueryTessage, seedAddress).caf();
+      var topology = await _transport.GetAsync(new TessageTypesInternal.NetworkTopologyTuery(), seedAddress).caf();
 
       await Task.WhenAll(topology.EndpointAddresses.Select(ConnectAsync)).caf();
    }
@@ -122,21 +112,21 @@ class TypermediaRouter : ITypermediaRouter, IDisposable
    {
       AssertRunning();
       var connection = ConnectionToHandlerFor(tommand);
-      await connection.ApiClient.PostAsync(tommand).caf();
+      await _transport.PostAsync(tommand, connection.Address).caf();
    }
 
    public async Task<TTommandResult> PostAsync<TTommandResult>(IAtMostOnceTommand<TTommandResult> typermediaTommand)
    {
       AssertRunning();
       var connection = ConnectionToHandlerFor(typermediaTommand);
-      return await connection.ApiClient.PostAsync(typermediaTommand).caf();
+      return await _transport.PostAsync(typermediaTommand, connection.Address).caf();
    }
 
    public async Task<TTueryResult> GetAsync<TTueryResult>(IRemotableTuery<TTueryResult> tuery)
    {
       AssertRunning();
       var connection = ConnectionToHandlerFor(tuery);
-      return await connection.ApiClient.GetAsync(tuery).caf();
+      return await _transport.GetAsync(tuery, connection.Address).caf();
    }
 
    public void Start() => State.Assert(!_running, () => "already running")
@@ -158,8 +148,6 @@ class TypermediaRouter : ITypermediaRouter, IDisposable
          {
             Stop();
          }
-
-         _connections.Values.DisposeAll();
       }
    }
 

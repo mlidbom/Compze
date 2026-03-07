@@ -19,9 +19,9 @@ static class TestingComponentRegistrarClientTransport
       {
          case Transport.AspNetCore:
             return @this.HttpClientFactoryCE()
-                        .HttpApiTransportClient();
+                        .HttpTypermediaTransport();
          case Transport.Memory:
-            return @this.MemoryApiTransportClient();
+            return @this.MemoryTypermediaTransport();
          default:
             throw new ArgumentOutOfRangeException();
       }

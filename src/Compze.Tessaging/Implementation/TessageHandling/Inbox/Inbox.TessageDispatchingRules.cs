@@ -8,11 +8,7 @@ public partial class Inbox
 {
    public class TommandsAndTeventHandlersDoNotRunInParallelWithEachOtherInTheSameEndpoint : ITessageDispatchingRule
    {
-      public bool CanBeDispatched(IExecutingTessagesSnapshot executing, TransportTessage.InComing candidateTessage)
-      {
-         if(candidateTessage.TessageTypeEnum == TransportTessageType.TyperMediaTuery) return true;
-
-         return executing.ExactlyOnceTommands.None() && executing.ExactlyOnceTevents.None();
-      }
+      public bool CanBeDispatched(IExecutingTessagesSnapshot executing, TransportTessage.InComing candidateTessage) =>
+         executing.ExactlyOnceTommands.None() && executing.ExactlyOnceTevents.None();
    }
 }

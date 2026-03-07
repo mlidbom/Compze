@@ -20,7 +20,8 @@ static class TestingComponentRegistrarTransport
             return @this.AspNetCoreTransport();
          case Transport.Memory:
             return @this.MemoryTransport()
-                        .MemoryApiTransportClient();
+                        .MemoryApiTransportClient()
+                        .MemoryTypermediaTransport();
          default:
             throw new ArgumentOutOfRangeException();
       }

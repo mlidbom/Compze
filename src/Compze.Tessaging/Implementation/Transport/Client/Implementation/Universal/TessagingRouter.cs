@@ -22,14 +22,15 @@ class TessagingRouter : ITessagingRouter, IDisposable
 {
    public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<ITessagingRouter>().CreatedBy(
-            (ITessagesInFlightTracker tessagesInFlightTracker, ITypeMapper typeMapper, IRemotableTessageSerializer serializer, ITransportMessagePoster transportMessagePoster, Outbox.Outbox.ITessageStorage tessageStorage, ITaskRunner taskRunner, IBackgroundExceptionReporter exceptionReporter)
-               => new TessagingRouter(tessagesInFlightTracker, typeMapper, serializer, transportMessagePoster, tessageStorage, taskRunner, exceptionReporter)));
+            (ITessagesInFlightTracker tessagesInFlightTracker, ITypeMapper typeMapper, IRemotableTessageSerializer serializer, ITransportMessagePoster transportMessagePoster, ITypermediaTransport typermediaTransport, Outbox.Outbox.ITessageStorage tessageStorage, ITaskRunner taskRunner, IBackgroundExceptionReporter exceptionReporter)
+               => new TessagingRouter(tessagesInFlightTracker, typeMapper, serializer, transportMessagePoster, typermediaTransport, tessageStorage, taskRunner, exceptionReporter)));
 
    readonly IMonitor _monitor = IMonitor.New();
    readonly ITessagesInFlightTracker _tessagesInFlightTracker;
    readonly ITypeMapper _typeMapper;
    readonly IRemotableTessageSerializer _serializer;
    readonly ITransportMessagePoster _transportMessagePoster;
+   readonly ITypermediaTransport _typermediaTransport;
    readonly Outbox.Outbox.ITessageStorage _tessageStorage;
    readonly ITaskRunner _taskRunner;
    readonly IBackgroundExceptionReporter _exceptionReporter;
@@ -41,12 +42,13 @@ class TessagingRouter : ITessagingRouter, IDisposable
    IReadOnlyList<(Type TeventType, TessagingConnection Connection)> _teventSubscriberRoutes = new List<(Type TeventType, TessagingConnection Connection)>();
    IReadOnlyDictionary<Type, IReadOnlyList<TessagingConnection>> _teventSubscriberRouteCache = new Dictionary<Type, IReadOnlyList<TessagingConnection>>();
 
-   TessagingRouter(ITessagesInFlightTracker tessagesInFlightTracker, ITypeMapper typeMapper, IRemotableTessageSerializer serializer, ITransportMessagePoster transportMessagePoster, Outbox.Outbox.ITessageStorage tessageStorage, ITaskRunner taskRunner, IBackgroundExceptionReporter exceptionReporter)
+   TessagingRouter(ITessagesInFlightTracker tessagesInFlightTracker, ITypeMapper typeMapper, IRemotableTessageSerializer serializer, ITransportMessagePoster transportMessagePoster, ITypermediaTransport typermediaTransport, Outbox.Outbox.ITessageStorage tessageStorage, ITaskRunner taskRunner, IBackgroundExceptionReporter exceptionReporter)
    {
       _tessagesInFlightTracker = tessagesInFlightTracker;
       _typeMapper = typeMapper;
       _serializer = serializer;
       _transportMessagePoster = transportMessagePoster;
+      _typermediaTransport = typermediaTransport;
       _tessageStorage = tessageStorage;
       _taskRunner = taskRunner;
       _exceptionReporter = exceptionReporter;
@@ -56,7 +58,7 @@ class TessagingRouter : ITessagingRouter, IDisposable
    {
       AssertNotStopped();
 #pragma warning disable CA2000//We are passing this disposable into a collection that we track disposal for
-      var connection = new TessagingConnection(_tessagesInFlightTracker, remoteEndpointAddress, _typeMapper, _serializer, _transportMessagePoster, _tessageStorage, _taskRunner, _exceptionReporter);
+      var connection = new TessagingConnection(_tessagesInFlightTracker, remoteEndpointAddress, _typeMapper, _serializer, _transportMessagePoster, _typermediaTransport, _tessageStorage, _taskRunner, _exceptionReporter);
 #pragma warning restore CA2000
 
       await connection.InitAsync().caf();

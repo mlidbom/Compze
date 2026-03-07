@@ -1,4 +1,3 @@
-using Compze.Abstractions.Serialization.Internal;
 using Compze.Core.Tessaging.Transport.Internal;
 using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
@@ -18,25 +17,11 @@ class HttpTransportMessagePoster : ITransportMessagePoster
 {
    public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<ITransportMessagePoster>()
-                                     .CreatedBy((IHttpClientFactoryCE factory, IRemotableTessageSerializer serializer) => new HttpTransportMessagePoster(factory, serializer)));
+                                     .CreatedBy((IHttpClientFactoryCE factory) => new HttpTransportMessagePoster(factory)));
 
    readonly IHttpClientFactoryCE _httpClientFactory;
-   readonly IRemotableTessageSerializer _serializer;
 
-   HttpTransportMessagePoster(IHttpClientFactoryCE httpClientFactory, IRemotableTessageSerializer serializer)
-   {
-      _httpClientFactory = httpClientFactory;
-      _serializer = serializer;
-   }
-
-   public async Task<TResult> PostAsync<TResult>(TransportTessage.OutGoing tessage, EndPointAddress endPointAddress)
-   {
-      var response = await PostAsyncInternal(tessage, new Uri(endPointAddress.Uri, GetRelativeUriForTessage(tessage))).caf();
-
-      var resultJson = await response.Content.ReadAsStringAsync().caf();
-      var result = _serializer.DeserializeResponse<TResult>(resultJson);
-      return result;
-   }
+   HttpTransportMessagePoster(IHttpClientFactoryCE httpClientFactory) => _httpClientFactory = httpClientFactory;
 
    static string GetRelativeUriForTessage(TransportTessage.OutGoing message)
    {
@@ -44,14 +29,8 @@ class HttpTransportMessagePoster : ITransportMessagePoster
       {
          case TransportTessageType.ExactlyOnceTevent:
             return HttpConstants.Routes.Tessaging.Tevent;
-         case TransportTessageType.TypermediaAtMostOnceTommand:
-            return HttpConstants.Routes.Typermedia.TommandNoResult;
-         case TransportTessageType.TypermediaAtMostOnceTommandWithReturnValue:
-            return HttpConstants.Routes.Typermedia.TommandWithResult;
          case TransportTessageType.ExactlyOnceTommand:
             return HttpConstants.Routes.Tessaging.Tommand;
-         case TransportTessageType.TyperMediaTuery:
-            return HttpConstants.Routes.Typermedia.Tuery;
          default:
             throw new ArgumentOutOfRangeException();
       }

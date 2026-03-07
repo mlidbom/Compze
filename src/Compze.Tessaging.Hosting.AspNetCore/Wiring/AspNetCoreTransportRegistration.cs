@@ -9,6 +9,7 @@ public static class AspNetCoreTransportRegistrar
    public static IComponentRegistrar AspNetCoreTransport(this IComponentRegistrar registrar) =>
       registrar.HttpClientFactoryCE()
                .HttpApiTransportClient()
+               .HttpTypermediaTransport()
                .Register(CompzeControllerActivator.RegisterWith,
                          AspNetInboxTransportServer.RegisterWith,
                          TypermediaController.RegisterWith,
