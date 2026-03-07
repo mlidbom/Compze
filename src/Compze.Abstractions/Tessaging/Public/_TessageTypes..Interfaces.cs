@@ -1,5 +1,4 @@
 using Compze.Abstractions.Public;
-using static Compze.Abstractions.Tessaging.Public.TessageTypes.Remotable.NonTransactional.Tueries;
 // ReSharper disable MemberCanBeInternal
 
 #pragma warning disable CA1040 //We define a number of empty marker interfaces here that are vital for framework functionality
@@ -33,7 +32,7 @@ public interface ICannotBeSentRemotelyFromWithinTransaction : ITessage;
 //Typermedia
 public interface ITypermediaTessage : ICannotBeSentRemotelyFromWithinTransaction;
 public interface ITyperMediaTessage<out TResult> : ITypermediaTessage;
-public interface ITommand<out TResult> : ITommand, ITyperMediaTessage<TResult>;
+public interface ITommand<out TResult> : ITommand, ICommand<TResult>, ITyperMediaTessage<TResult>;
 public interface ITuery<out TResult> : IQuery<TResult>, ITyperMediaTessage<TResult>;
 
 ///<summary>Many resources in a hypermedia API do not actually need access to backend data. The data in the tuery is sufficient to create the result. For such tueries implement this interface. That way no network roundtrip is required to perform the tuery.</summary>
