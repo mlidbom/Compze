@@ -7,6 +7,13 @@
 - **Performance tests**: If they fail, rerun. Repeated failures are NOT acceptable — do not report success.
 - **`COMPOSABLE_MACHINE_SLOWNESS`**: Set this environment variable (e.g., `5.0`) to adjust performance test timing expectations on slow machines.
 
+### Honesty About Blockers — MANDATORY
+- **REFUSE to start work when you lack what you need to succeed.** If the target design is unclear, if you don't know what the end state should look like, if the instructions leave a fundamental gap — SAY SO immediately. Do not guess. Do not substitute a cosmetic change for a structural one. Do not defer the real problem to a later phase.
+- **Moving files is not separating concerns.** If you would need to add a cross-reference back to make it compile, the dependency hasn't changed — you are renaming the entanglement, not removing it. Call this out instead of shipping it.
+- **Ask the design question upfront.** When structural work requires a design decision you cannot make alone — "What should the plugin mechanism look like?", "Should these be separate endpoints or one?" — stop and ask. The user can answer in 30 seconds what would take you hours of wrong guessing.
+- **Name what you don't know.** "I don't know how X should work after this change" is always preferable to silently preserving the old architecture and reporting success.
+- **Never hide behind "existing architecture."** Existing entanglement is not a constraint — it is the problem to be solved. "That's how it works today" is never a reason to keep it that way.
+
 ### Common Pitfalls
 - **Don't write one test per pluggable component** — use `[PCT]` (see Pluggable Component Testing below).
 - **DevScripts must be imported** before using `C-*` commands — don't assume they're loaded. Import with: `Import-Module <repo>/DevScripts/Compze.psm1 -DisableNameChecking`
