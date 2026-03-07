@@ -77,10 +77,9 @@ public class When_a_transient_depends_on_other_services
    class SingletonDependency : ISingletonDependency;
 
    interface IServiceWithDependency;
-#pragma warning disable CS9113 // Parameter is unread.
    class ServiceWithDependency(ISingletonDependency dependency) : IServiceWithDependency
    {
-      public ISingletonDependency Dependency => dependency;
+      public ISingletonDependency Dependency { get; } = dependency;
    }
 
    interface ITransientDependency;
@@ -89,7 +88,6 @@ public class When_a_transient_depends_on_other_services
    interface IServiceWithTransientDependency;
    class ServiceWithTransientDependency(ITransientDependency dependency) : IServiceWithTransientDependency
    {
-      public ITransientDependency Dependency => dependency;
+      public ITransientDependency Dependency { get; } = dependency;
    }
-#pragma warning restore CS9113 // Parameter is unread.
 }
