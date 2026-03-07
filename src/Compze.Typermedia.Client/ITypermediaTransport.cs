@@ -1,7 +1,7 @@
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Core.Tessaging.Transport.Internal;
 
-namespace Compze.Tessaging.Implementation.Transport.Client.Internal;
+namespace Compze.Typermedia.Client;
 
 interface ITypermediaTransport
 {

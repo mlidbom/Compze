@@ -93,6 +93,13 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Typermedia)' != 'true'">
     <ProjectReference Include="..\Compze.Typermedia\Compze.Typermedia.csproj" />
   </ItemGroup>
+  <!-- Compze.Typermedia.Client — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Typermedia_Client)' == 'true'">
+    <PackageReference Include="Compze.Typermedia.Client" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Typermedia_Client)' != 'true'">
+    <ProjectReference Include="..\Compze.Typermedia.Client\Compze.Typermedia.Client.csproj" />
+  </ItemGroup>
   <!-- Compze.Typermedia.Hosting — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Typermedia_Hosting)' == 'true'">
     <PackageReference Include="Compze.Typermedia.Hosting" Version="*-*" />

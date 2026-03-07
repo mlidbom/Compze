@@ -1,7 +1,6 @@
 using Compze.Abstractions.Wiring.Testing.Internal;
 using Compze.Internals.Transport;
-using Compze.Tessaging.Implementation.Transport.Client.Implementation.Http;
-using Compze.Tessaging.Implementation.Transport.Client.Implementation.Memory;
+using Compze.Typermedia.Client;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE;
 using Compze.Internals.Testing;

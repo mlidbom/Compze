@@ -1,30 +1,22 @@
 using Compze.Abstractions.Refactoring.Naming.Internal;
-using Compze.Core.Tessaging.Hosting.Public;
-using Compze.Tessaging.Abstractions.Tessaging.Hosting.Public;
 using Compze.Abstractions.Tessaging.Public;
+using Compze.Abstractions.Tessaging.Hosting.Public;
 using Compze.Core.Tessaging.Transport.Internal;
-using Compze.Tessaging.Implementation.Abstractions;
-using Compze.Internals.Transport;
-using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
-using Compze.Tessaging.Implementation.Transport.Client.Internal;
 using Compze.Contracts;
 using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
+using Compze.Internals.SystemCE.ReflectionCE;
+using Compze.Internals.Transport;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
-using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Threading;
 using Compze.Threading.ResourceAccess;
-using Compze.Typermedia;
 
-namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Universal;
+namespace Compze.Typermedia.Client;
 
-public static class TransportRegistrar
+public static class TypermediaRouterRegistrar
 {
-   public static IComponentRegistrar TypermediaTransport(this IComponentRegistrar registrar)
-      => registrar.Register(TypermediaRouter.RegisterWith);
-
-   internal static IComponentRegistrar TessagingTransport(this IComponentRegistrar registrar)
-      => registrar.Register(TessagingRouter.RegisterWith);
+   public static IComponentRegistrar TypermediaRouter(this IComponentRegistrar registrar)
+      => registrar.Register(Client.TypermediaRouter.RegisterWith);
 }
 
 class TypermediaRouter : ITypermediaRouter, IDisposable
@@ -55,7 +47,7 @@ class TypermediaRouter : ITypermediaRouter, IDisposable
    async Task ConnectAsync(EndPointAddress remoteEndpointAddress)
    {
       AssertRunning();
-      var endpointInformation = await _infrastructureQueryTransport.GetAsync(new TessageTypesInternal.EndpointInformationQuery(), remoteEndpointAddress).caf();
+      var endpointInformation = await _infrastructureQueryTransport.GetAsync(new EndpointInformationQuery(), remoteEndpointAddress).caf();
       var connection = new TypermediaConnection(remoteEndpointAddress, endpointInformation);
 
       using(_monitor.TakeLock())
@@ -70,7 +62,7 @@ class TypermediaRouter : ITypermediaRouter, IDisposable
    public async Task DiscoverAndConnectAsync(EndPointAddress seedAddress)
    {
       AssertRunning();
-      var topology = await _infrastructureQueryTransport.GetAsync(new TessageTypesInternal.NetworkTopologyQuery(), seedAddress).caf();
+      var topology = await _infrastructureQueryTransport.GetAsync(new NetworkTopologyQuery(), seedAddress).caf();
 
       await Task.WhenAll(topology.EndpointAddresses.Select(ConnectAsync)).caf();
    }
@@ -104,12 +96,12 @@ class TypermediaRouter : ITypermediaRouter, IDisposable
    TypermediaConnection ConnectionToHandlerFor(IAtMostOnceTypermediaTommand tommand) =>
       _tommandHandlerRoutes.TryGetValue(tommand.GetType(), out var connection)
          ? connection
-         : throw new NoHandlerForTessageTypeException(tommand.GetType());
+         : throw new NoHandlerForTypermediaTypeException(tommand.GetType());
 
    TypermediaConnection ConnectionToHandlerFor<TTuery>(IRemotableTuery<TTuery> tuery) =>
       _tueryHandlerRoutes.TryGetValue(tuery.GetType(), out var connection)
          ? connection
-         : throw new NoHandlerForTessageTypeException(tuery.GetType());
+         : throw new NoHandlerForTypermediaTypeException(tuery.GetType());
 
    public async Task PostAsync(IAtMostOnceTypermediaTommand tommand)
    {

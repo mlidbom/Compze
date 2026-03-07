@@ -5,16 +5,15 @@ using Compze.Abstractions.Tessaging.Public;
 using Compze.Core.Tessaging.Transport.Internal;
 using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 using Compze.Internals.Transport;
-using Compze.Tessaging.Implementation.Transport.Client.Internal;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 
-namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Http;
+namespace Compze.Typermedia.Client;
 
 public static class HttpTypermediaTransportRegistrar
 {
    public static IComponentRegistrar HttpTypermediaTransport(this IComponentRegistrar registrar)
-      => registrar.Register(Implementation.Http.HttpTypermediaTransport.RegisterWith);
+      => registrar.Register(Client.HttpTypermediaTransport.RegisterWith);
 }
 
 class HttpTypermediaTransport : ITypermediaTransport

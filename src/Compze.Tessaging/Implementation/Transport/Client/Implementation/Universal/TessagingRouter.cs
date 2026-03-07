@@ -1,7 +1,6 @@
 using Compze.Abstractions.Refactoring.Naming.Internal;
 using Compze.Abstractions.Serialization.Internal;
-using Compze.Core.Tessaging.Hosting.Public;
-using Compze.Tessaging.Abstractions.Tessaging.Hosting.Public;
+using Compze.Abstractions.Tessaging.Hosting.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Core.Tessaging.Transport.Internal;
 using Compze.Internals.Transport;
@@ -18,6 +17,12 @@ using Compze.Threading;
 using Compze.Threading.ResourceAccess;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Universal;
+
+static class TessagingTransportRegistrar
+{
+   internal static IComponentRegistrar TessagingTransport(this IComponentRegistrar registrar)
+      => registrar.Register(TessagingRouter.RegisterWith);
+}
 
 class TessagingRouter : ITessagingRouter, IDisposable
 {

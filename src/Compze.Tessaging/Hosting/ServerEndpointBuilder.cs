@@ -1,7 +1,8 @@
 using Compze.Abstractions.Configuration.Internal;
 using Compze.Abstractions.Refactoring.Naming.Internal.Implementation;
-using Compze.Core.Tessaging.Hosting.Public;
+using Compze.Abstractions.Tessaging.Hosting.Public;
 using Compze.Tessaging.Abstractions.Tessaging.Hosting.Public;
+using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 using Compze.Typermedia;

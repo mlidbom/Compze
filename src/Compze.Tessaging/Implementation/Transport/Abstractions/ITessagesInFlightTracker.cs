@@ -1,5 +1,4 @@
-using Compze.Core.Tessaging.Hosting.Public;
-using Compze.Tessaging.Abstractions.Tessaging.Hosting.Public;
+using Compze.Abstractions.Tessaging.Hosting.Public;
 using Compze.Threading;
 
 namespace Compze.Tessaging.Implementation.Transport.Abstractions;

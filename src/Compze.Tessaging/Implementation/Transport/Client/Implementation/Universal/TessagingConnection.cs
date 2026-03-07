@@ -24,7 +24,7 @@ class TessagingConnection(
    ITaskRunner taskRunner,
    IBackgroundExceptionReporter exceptionReporter) : ITessagingInboxConnection, IDisposable
 {
-   public TessageTypesInternal.EndpointInformation EndpointInformation { get; private set; } = null!;
+   public EndpointInformation EndpointInformation { get; private set; } = null!;
 
    readonly ITessagesInFlightTracker _tessagesInFlightTracker = tessagesInFlightTracker;
    readonly EndPointAddress _remoteAddress = remoteAddress;
@@ -49,7 +49,7 @@ class TessagingConnection(
 
    public async Task InitAsync()
    {
-      EndpointInformation = await _infrastructureQueryTransport.GetAsync(new TessageTypesInternal.EndpointInformationQuery(), _remoteAddress).caf();
+      EndpointInformation = await _infrastructureQueryTransport.GetAsync(new EndpointInformationQuery(), _remoteAddress).caf();
    }
 
    // Delivery management — enqueue for the send loop to process

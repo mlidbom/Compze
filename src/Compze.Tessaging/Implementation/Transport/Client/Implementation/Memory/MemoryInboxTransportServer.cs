@@ -1,5 +1,4 @@
-using Compze.Core.Tessaging.Hosting.Public;
-using Compze.Tessaging.Abstractions.Tessaging.Hosting.Public;
+using Compze.Abstractions.Tessaging.Hosting.Public;
 using Compze.Core.Tessaging.Transport.Internal;
 using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
 using Compze.Internals.Transport;
@@ -10,6 +9,7 @@ using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
 using Compze.Internals.SystemCE.CollectionsCE.GenericCE;
 using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
+using Compze.Typermedia.Client;
 using Compze.Typermedia.Hosting;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Memory;

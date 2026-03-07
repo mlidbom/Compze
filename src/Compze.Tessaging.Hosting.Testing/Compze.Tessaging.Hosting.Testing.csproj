@@ -187,6 +187,13 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Typermedia)' != 'true'">
     <ProjectReference Include="..\Compze.Typermedia\Compze.Typermedia.csproj" />
   </ItemGroup>
+  <!-- Compze.Typermedia.Client — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Typermedia_Client)' == 'true'">
+    <PackageReference Include="Compze.Typermedia.Client" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Typermedia_Client)' != 'true'">
+    <ProjectReference Include="..\Compze.Typermedia.Client\Compze.Typermedia.Client.csproj" />
+  </ItemGroup>
   <!-- Compze.Underscore — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Underscore)' == 'true'">
     <PackageReference Include="Compze.Underscore" Version="*-*" />

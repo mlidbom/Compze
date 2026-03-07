@@ -1,3 +1,4 @@
+using Compze.Abstractions.Tessaging.Hosting.Public;
 using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Typermedia;

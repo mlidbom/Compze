@@ -55,6 +55,7 @@ class AspNetInboxTransportServer : IInboxTransportServer
       {
          it.ApplicationParts.Add(new AssemblyPart(GetType().Assembly));
          it.ApplicationParts.Add(new AssemblyPart(typeof(Compze.Internals.Transport.AspNet.InfrastructureQueryController).Assembly));
+         it.ApplicationParts.Add(new AssemblyPart(typeof(Compze.Typermedia.Hosting.AspNetCore.TypermediaController).Assembly));
          it.FeatureProviders.Add(new InternalControllerFeatureProvider());
       });
 

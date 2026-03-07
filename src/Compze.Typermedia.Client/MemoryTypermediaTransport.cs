@@ -3,17 +3,16 @@ using Compze.Abstractions.Tessaging.Public;
 using Compze.Core.Tessaging.Transport.Internal;
 using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 using Compze.Internals.Transport;
-using Compze.Tessaging.Implementation.Transport.Client.Internal;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
 
-namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Memory;
+namespace Compze.Typermedia.Client;
 
 public static class MemoryTypermediaTransportRegistrar
 {
    public static IComponentRegistrar MemoryTypermediaTransport(this IComponentRegistrar registrar)
-      => registrar.Register(Implementation.Memory.MemoryTypermediaTransport.RegisterWith);
+      => registrar.Register(Client.MemoryTypermediaTransport.RegisterWith);
 }
 
 class MemoryTypermediaTransport : ITypermediaTransport

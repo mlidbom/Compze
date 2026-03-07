@@ -2,9 +2,9 @@ using System.Collections.Concurrent;
 using Compze.Core.Tessaging.Transport.Internal;
 using Compze.Typermedia.Hosting;
 
-namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Memory;
+namespace Compze.Typermedia.Client;
 
-static class InMemoryTypermediaNetwork
+public static class InMemoryTypermediaNetwork
 {
    static readonly ConcurrentDictionary<EndPointAddress, TypermediaHandlerExecutor> Executors = new();
 

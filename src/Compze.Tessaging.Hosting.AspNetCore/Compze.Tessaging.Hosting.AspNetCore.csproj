@@ -74,12 +74,26 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Threading)' != 'true'">
     <ProjectReference Include="..\Compze.Threading\Compze.Threading.csproj" />
   </ItemGroup>
+  <!-- Compze.Typermedia.Client — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Typermedia_Client)' == 'true'">
+    <PackageReference Include="Compze.Typermedia.Client" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Typermedia_Client)' != 'true'">
+    <ProjectReference Include="..\Compze.Typermedia.Client\Compze.Typermedia.Client.csproj" />
+  </ItemGroup>
   <!-- Compze.Typermedia.Hosting — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Typermedia_Hosting)' == 'true'">
     <PackageReference Include="Compze.Typermedia.Hosting" Version="*-*" />
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_Typermedia_Hosting)' != 'true'">
     <ProjectReference Include="..\Compze.Typermedia.Hosting\Compze.Typermedia.Hosting.csproj" />
+  </ItemGroup>
+  <!-- Compze.Typermedia.Hosting.AspNetCore — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Typermedia_Hosting_AspNetCore)' == 'true'">
+    <PackageReference Include="Compze.Typermedia.Hosting.AspNetCore" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Typermedia_Hosting_AspNetCore)' != 'true'">
+    <ProjectReference Include="..\Compze.Typermedia.Hosting.AspNetCore\Compze.Typermedia.Hosting.AspNetCore.csproj" />
   </ItemGroup>
   <!-- Compze.Underscore — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Underscore)' == 'true'">

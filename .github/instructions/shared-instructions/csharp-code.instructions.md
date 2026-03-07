@@ -50,7 +50,6 @@ applyTo: "**/*.cs"
 ## Using Directives
 
 - Place at file top, outside namespace.
-- No global usings files — each file has its own explicit usings.
 - Prefer `using static Compze.Contracts.Assert;` to call `Argument.NotNull()`, `State.Is()` etc. without the `Assert.` prefix.
 
 ## Null Handling

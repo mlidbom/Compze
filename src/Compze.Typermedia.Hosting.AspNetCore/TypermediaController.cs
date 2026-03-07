@@ -12,17 +12,17 @@ using Compze.Typermedia.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Compze.Tessaging.Hosting.AspNetCore.Private;
+namespace Compze.Typermedia.Hosting.AspNetCore;
 
 #pragma warning disable CA1031 //Here we catch all exceptions so we can transmit them back to the client
 
-class TypermediaController : Controller
+public class TypermediaController : Controller
 {
    readonly IRemotableTessageSerializer _serializer;
    readonly ITypeMapper _typeMapper;
    readonly TypermediaHandlerExecutor _executor;
 
-   internal static void RegisterWith(IComponentRegistrar registrar) =>
+   public static void RegisterWith(IComponentRegistrar registrar) =>
       registrar.Register(
          Scoped.For<TypermediaController>()
                .CreatedBy((IRemotableTessageSerializer serializer,
