@@ -19,6 +19,8 @@ class TransientInstanceTracker : IDisposable, IAsyncDisposable
       {
          if(instance is IDisposable disposable)
             disposable.Dispose();
+         else if(instance is IAsyncDisposable asyncDisposable)
+            asyncDisposable.DisposeAsync().AsTask().GetAwaiter().GetResult();
       }
    }
 

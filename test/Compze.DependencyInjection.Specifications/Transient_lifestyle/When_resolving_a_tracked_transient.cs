@@ -43,6 +43,30 @@ public class When_resolving_a_tracked_transient
          instance1!.IsDisposed.Must().BeTrue();
          instance2!.IsDisposed.Must().BeTrue();
       }
+
+      [DependencyInjectionContainerMatrix]
+      public void async_disposable_only_instances_are_disposed_when_container_is_disposed()
+      {
+         var instance1 = default(AsyncOnlyDisposableService);
+         var instance2 = default(AsyncOnlyDisposableService);
+
+         {
+            var container = DependencyInjectionContainerFactory.CreateContainer();
+            container.Register(TrackedTransient.For<IAsyncOnlyDisposableService>().CreatedBy(() => new AsyncOnlyDisposableService()));
+
+            var serviceLocator = container.ServiceLocator;
+            instance1 = (AsyncOnlyDisposableService)serviceLocator.Resolve<IAsyncOnlyDisposableService>();
+            instance2 = (AsyncOnlyDisposableService)serviceLocator.Resolve<IAsyncOnlyDisposableService>();
+
+            instance1.IsDisposed.Must().BeFalse();
+            instance2.IsDisposed.Must().BeFalse();
+
+            container.Dispose();
+         }
+
+         instance1!.IsDisposed.Must().BeTrue();
+         instance2!.IsDisposed.Must().BeTrue();
+      }
    }
 
    public class within_a_scope : When_resolving_a_tracked_transient
@@ -96,5 +120,16 @@ public class When_resolving_a_tracked_transient
    {
       public bool IsDisposed { get; set; }
       public void Dispose() => IsDisposed = true;
+   }
+
+   interface IAsyncOnlyDisposableService;
+   class AsyncOnlyDisposableService : IAsyncOnlyDisposableService, IAsyncDisposable
+   {
+      public bool IsDisposed { get; set; }
+      public ValueTask DisposeAsync()
+      {
+         IsDisposed = true;
+         return ValueTask.CompletedTask;
+      }
    }
 }
