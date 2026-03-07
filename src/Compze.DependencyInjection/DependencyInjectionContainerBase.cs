@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.LinqCE;
 
@@ -6,7 +7,9 @@ namespace Compze.DependencyInjection;
 public abstract class DependencyInjectionContainerBase : IDependencyInjectionContainer
 {
    readonly List<ComponentRegistration> _registeredComponents = [];
+   readonly Dictionary<Type, ComponentRegistration> _transientRegistrations = new();
    readonly IComponentRegistrar _registrar;
+   bool _transientTrackersRegistered;
 
    protected DependencyInjectionContainerBase(IComponentRegistrar? registrar)
    {
@@ -21,8 +24,55 @@ public abstract class DependencyInjectionContainerBase : IDependencyInjectionCon
    {
       ValidateNoDuplicateRegistrations(registrations);
       _registeredComponents.AddRange(registrations);
-      return RegisterInContainer(registrations);
+
+      var containerRegistrations = registrations.Where(it => it.Lifestyle is not (Lifestyle.TrackedTransient or Lifestyle.UntrackedTransient)).ToArray();
+      if(containerRegistrations.Length > 0)
+         RegisterInContainer(containerRegistrations);
+
+      foreach(var registration in registrations.Where(it => it.Lifestyle is Lifestyle.TrackedTransient or Lifestyle.UntrackedTransient))
+      {
+         foreach(var serviceType in registration.ServiceTypes)
+            _transientRegistrations[serviceType] = registration;
+      }
+
+      EnsureTransientTrackersRegistered(registrations);
+
+      return this;
    }
+
+   void EnsureTransientTrackersRegistered(ComponentRegistration[] registrations)
+   {
+      if(_transientTrackersRegistered || !registrations.Any(it => it.Lifestyle == Lifestyle.TrackedTransient))
+         return;
+
+      _transientTrackersRegistered = true;
+
+      RegisterInContainer(
+      [
+         Scoped.For<ScopedTransientInstanceTracker>().CreatedBy(() => new ScopedTransientInstanceTracker()),
+         Singleton.For<SingletonTransientInstanceTracker>().CreatedBy(() => new SingletonTransientInstanceTracker())
+      ]);
+   }
+
+   protected bool TryCreateTransientInstance(Type serviceType, IServiceLocatorKernel kernel, [NotNullWhen(true)] out object? instance)
+   {
+      if(_transientRegistrations.TryGetValue(serviceType, out var registration))
+      {
+         instance = registration.InstantiationSpec.RunFactoryMethod(kernel);
+         if(registration.Lifestyle == Lifestyle.TrackedTransient)
+         {
+            TransientInstanceTracker tracker = IsInScope()
+               ? kernel.Resolve<ScopedTransientInstanceTracker>()
+               : kernel.Resolve<SingletonTransientInstanceTracker>();
+            tracker.Track(instance);
+         }
+         return true;
+      }
+      instance = null;
+      return false;
+   }
+
+   protected abstract bool IsInScope();
 
    public IComponentRegistrar Register() => _registrar;
 

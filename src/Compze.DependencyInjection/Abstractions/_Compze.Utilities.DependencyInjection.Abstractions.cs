@@ -41,5 +41,7 @@ public interface IServiceLocator : IDisposable, IAsyncDisposable
 public enum Lifestyle
 {
    Singleton,
-   Scoped
+   Scoped,
+   TrackedTransient,
+   UntrackedTransient
 }
