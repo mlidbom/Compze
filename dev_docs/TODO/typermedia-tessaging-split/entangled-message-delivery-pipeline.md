@@ -1,24 +1,31 @@
 # Message Delivery Pipeline — Component Inventory
 
+> **CRITICAL PRINCIPLE: Existing entanglement is NOT a sign that entanglement should remain.**
+>
+> Today, the Inbox, HandlerExecutionEngine, transport layer, and hosting all serve both Typermedia and Tessaging through shared code. This is the problem, not a design constraint. The correct response to "these two paradigms share an execution engine" is NOT "find a cleaner shared abstraction" — it is "give each paradigm its own execution path."
+>
+> Typermedia must stand completely on its own: its own transport, its own handler execution, its own hosting. Tessaging likewise keeps its own full pipeline. Typermedia messages leave the Tessaging pipeline entirely. Every `[BOTH]` tag below represents work to be done, not architecture to be preserved.
+
 Every component involved in delivering a message from caller to handler and back, with entanglement status.
 
-**Legend**: [T] = Typermedia only, [S] = Tessaging only, [BOTH] = entangled
+**Legend**: [T] = Typermedia only, [S] = Tessaging only, [BOTH] = entangled (to be separated)
 
 ---
 
 ## 1. Caller-Side Entry Points
 
 ### Remote Typermedia Navigator [T]
-- **Interface**: `IRemoteTypermediaNavigator` — `src/Compze.Tessaging.Abstractions/Tessaging/Typermedia/Public/IRemoteTypermediaNavigator.cs`
-- **Impl**: `RemoteTypermediaNavigator` — `src/Compze.Tessaging/Typermedia/RemoteTypermediaNavigator.cs`
-- Validates message, delegates to `ITypermediaRouter`
+- **Interface**: `IRemoteTypermediaNavigator` — `src/Compze.Typermedia/IRemoteTypermediaNavigator.cs`
+- **Impl**: `RemoteTypermediaNavigator` — `src/Compze.Typermedia/RemoteTypermediaNavigator.cs`
+- Validates message via `TessageValidator.AssertValidToSendRemote` (shared validation in `Compze.Abstractions`)
+- Delegates to `ITypermediaRouting` — narrow routing interface in `Compze.Typermedia` (no lifecycle methods)
 - Sync methods are blocking wrappers over async
 - Fast path: `ICreateMyOwnResultTuery<T>` returns instantly without hitting transport
 
 ### In-Process Typermedia Navigator [T]
-- **Interface**: `IInProcessTypermediaNavigator` — `src/Compze.Tessaging.Abstractions/Tessaging/Typermedia/Public/IInProcessTypermediaNavigator.cs`
-- **Impl**: `InProcessTypermediaNavigator` — `src/Compze.Tessaging/Typermedia/InProcessTypermediaNavigator.cs`
-- Goes directly to `ITypermediaHandlerRegistry` (tueries, commands with results) and `ITessageHandlerRegistry` (void commands) — no router, no transport, no inbox, no serialization
+- **Interface**: `IInProcessTypermediaNavigator` — `src/Compze.Typermedia/IInProcessTypermediaNavigator.cs`
+- **Impl**: `InProcessTypermediaNavigator` — `src/Compze.Typermedia/InProcessTypermediaNavigator.cs`
+- Goes directly to `ITypermediaHandlerRegistry` (tueries, commands with results, void commands) — no router, no transport, no inbox, no serialization
 - Must be called within an existing transaction scope (`SingleTransactionUsageGuard`)
 - Registered as Scoped
 
@@ -33,8 +40,10 @@ Every component involved in delivering a message from caller to handler and back
 ## 2. Client-Side Routing
 
 ### Typermedia Router [T]
-- **Interface**: `ITypermediaRouter` — `src/Compze.Tessaging/Implementation/Transport/Client/Internal/ITypermediaRouter.cs`
+- **Narrow interface**: `ITypermediaRouting` — `src/Compze.Typermedia/ITypermediaRouting.cs` — `PostAsync`, `GetAsync` only. Used by `RemoteTypermediaNavigator`.
+- **Full interface**: `ITypermediaRouter : ITypermediaRouting` — `src/Compze.Tessaging/Implementation/Transport/Client/Internal/ITypermediaRouter.cs` — adds lifecycle: `Start`, `Stop`, `DiscoverAndConnectAsync`
 - **Impl**: `TypermediaRouter` — `src/Compze.Tessaging/Implementation/Transport/Client/Implementation/Universal/TypermediaRouter.cs`
+- DI registration: `Singleton.For<ITypermediaRouter, ITypermediaRouting>()` — both interfaces resolved from same instance
 - Client-side only. Registered on the client, not per server endpoint.
 - Maintains route tables: `Dictionary<Type, TypermediaConnection>` for commands and queries
 - `PostAsync(cmd)` → look up `TypermediaConnection` by message type → `connection.ApiClient.PostAsync(cmd)`
@@ -219,23 +228,26 @@ Every component involved in delivering a message from caller to handler and back
 - `ForTommand<TTommand>(handler)` — void command handlers
 
 ### Typermedia Handler Registrar [T]
-- **Interface**: `ITypermediaHandlerRegistrar` — `src/Compze.Tessaging.Abstractions/Tessaging/Hosting/TessageHandling/Registration/Public/ITypermediaHandlerRegistrar.cs`
+- **Interface**: `ITypermediaHandlerRegistrar` — `src/Compze.Typermedia/HandlerRegistration/ITypermediaHandlerRegistrar.cs`
+- `ForTommand<TTommand>(handler)` — void commands
 - `ForTommand<TTommand, TResult>(handler)` — commands with results
 - `ForTuery<TTuery, TResult>(handler)` — tuery handlers
 
 ### Tessaging Handler Registry [S]
-- **Interface**: `ITessageHandlerRegistry` — `src/Compze.Tessaging/Implementation/TessageHandling/Dispatching/ITessageHandlerRegistry.cs`
+- **Interface**: `ITessageHandlerRegistry` — `src/Compze.Tessaging/Implementation/TessageHandling/Abstractions/ITessageHandlerRegistry.cs`
 - **Impl**: `TessageHandlerRegistry` — `src/Compze.Tessaging/Implementation/TessageHandling/Dispatching/TessageHandlerRegistry.cs`
 - `_tommandHandlers` — `Dictionary<Type, Action<object>>` — void commands
 - `_teventHandlers` — `Dictionary<Type, IReadOnlyList<Action<ITevent>>>` — events, 1:N, `IsAssignableFrom` lookup (Teventive type routing)
 - `HandledRemoteTessageTypeIds()` — advertises tessaging-handled types
 
 ### Typermedia Handler Registry [T]
-- **Interface**: `ITypermediaHandlerRegistry` — `src/Compze.Tessaging/Implementation/TessageHandling/Dispatching/ITypermediaHandlerRegistry.cs`
-- **Impl**: `TypermediaHandlerRegistry` — `src/Compze.Tessaging/Implementation/TessageHandling/Dispatching/TypermediaHandlerRegistry.cs`
+- **Interface**: `ITypermediaHandlerRegistry` — `src/Compze.Typermedia/HandlerRegistration/ITypermediaHandlerRegistry.cs`
+- **Impl**: `TypermediaHandlerRegistry` — `src/Compze.Typermedia/HandlerRegistration/TypermediaHandlerRegistry.cs`
+- `_voidTommandHandlers` — `Dictionary<Type, Action<object>>` — void commands
 - `_tommandHandlersReturningResults` — `Dictionary<Type, HandlerWithResultRegistration>` — commands with results
 - `_tueryHandlers` — `Dictionary<Type, HandlerWithResultRegistration>` — tueries
 - `HandledRemoteTypermediaTypeIds()` — advertises typermedia-handled types
+- Filters out `IInternalInfrastructureTessage` types from remote advertisement
 
 ### Tessaging Handler Registrar With DI Support [S]
 - `TessageHandlerRegistrarWithDependencyInjectionSupport` — `src/Compze.Tessaging.Abstractions/Tessaging/Hosting/TessageHandling/Registration/Public/TessageHandlerRegistrarWithDependencyInjectionSupport.cs`
@@ -244,9 +256,9 @@ Every component involved in delivering a message from caller to handler and back
 - Exposed as `IEndpointBuilder.RegisterTessagingHandlers`
 
 ### Typermedia Handler Registrar With DI Support [T]
-- `TypermediaHandlerRegistrarWithDependencyInjectionSupport` — `src/Compze.Tessaging.Abstractions/Tessaging/Hosting/TessageHandling/Registration/Public/TypermediaHandlerRegistrarWithDependencyInjectionSupport.cs`
+- `TypermediaHandlerRegistrarWithDependencyInjectionSupport` — `src/Compze.Typermedia/HandlerRegistration/TypermediaHandlerRegistrarWithDependencyInjectionSupport.cs`
 - Wraps `ITypermediaHandlerRegistrar` + `IServiceLocator`
-- Extension methods: `ForTuery`, `ForTommandWithResult`
+- Extension methods: `ForTuery`, `ForTommand` (void), `ForTommandWithResult`
 - Exposed as `IEndpointBuilder.RegisterTypermediaHandlers`
 
 ---
@@ -280,7 +292,7 @@ Every component involved in delivering a message from caller to handler and back
 ### Server Endpoint Builder [BOTH]
 - `ServerEndpointBuilder` — `src/Compze.Tessaging/Hosting/ServerEndpointBuilder.cs`
 - `Build()` registers in DI: `TessagingTransport` (TessagingRouter), `Inbox`, `Outbox`, `ServiceBusSession`, `InProcessHypermediaNavigator`, `TommandScheduler`, internal tessage type handlers
-- Note: `ITypermediaRouter` and `IRemoteTypermediaNavigator` are NOT registered here — they are client-side only
+- Note: `ITypermediaRouter`/`ITypermediaRouting` and `IRemoteTypermediaNavigator` are NOT registered here — they are client-side only
 
 ### Endpoint [BOTH]
 - `Endpoint` — `src/Compze.Tessaging/Hosting/Endpoint.cs`
@@ -313,6 +325,16 @@ Every component involved in delivering a message from caller to handler and back
 - DI wrappers: `TypermediaHandlerRegistrarWithDependencyInjectionSupport` [T] vs `TessageHandlerRegistrarWithDependencyInjectionSupport` [S]
 - Capability advertisement: `HandledRemoteTypermediaTypeIds()` [T] vs `HandledRemoteTessageTypeIds()` [S]
 - `IEndpointBuilder` exposes `RegisterTypermediaHandlers` [T] and `RegisterTessagingHandlers` [S] as separate properties
+
+### Moved to correct projects (recently completed)
+- `IRemoteTypermediaNavigator`, `RemoteTypermediaNavigator` → `Compze.Typermedia` (was in `Compze.Tessaging`)
+- `IInProcessTypermediaNavigator`, `InProcessTypermediaNavigator` → `Compze.Typermedia` (was in `Compze.Tessaging`)
+- `ITypermediaHandlerRegistrar`, `ITypermediaHandlerRegistry`, `TypermediaHandlerRegistry`, `TypermediaHandlerRegistrarWithDependencyInjectionSupport` → `Compze.Typermedia` (was in `Compze.Tessaging`/`Compze.Tessaging.Abstractions`)
+- `TessageTypeInspector`, `TommandValidator`, `TessageValidator` → `Compze.Abstractions` (shared validation, no cross-dependency)
+- `ITypermediaRouting` created in `Compze.Typermedia` — narrow routing interface (`PostAsync`/`GetAsync`). `ITypermediaRouter` extends it, adding lifecycle methods. `RemoteTypermediaNavigator` depends only on `ITypermediaRouting`.
+- `IInternalInfrastructureTessage` marker added in `Compze.Abstractions` — lets `TypermediaHandlerRegistry` filter infrastructure types without depending on tessaging internals
+- Void command support added to `ITypermediaHandlerRegistrar`/`TypermediaHandlerRegistry`
+- `InProcessTypermediaNavigator` dispatches void commands through typermedia registry (no longer needs `ITessageHandlerRegistry`)
 
 ### Still entangled
 | Component | Why it's entangled |
