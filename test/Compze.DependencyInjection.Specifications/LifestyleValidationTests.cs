@@ -47,7 +47,7 @@ public class LifestyleValidationTests
    }
 
    [DependencyInjectionContainerMatrix]
-   public void Should_throw_when_singleton_depends_on_untracked_transient_service()
+   public void Should_throw_when_singleton_depends_on_transient_service()
    {
       using var container = DependencyInjectionContainerFactory.CreateContainer();
 
@@ -55,14 +55,14 @@ public class LifestyleValidationTests
       {
          // ReSharper disable once AccessToDisposedClosure
          _ = container.Register(
-            UntrackedTransient.For<IUntrackedTransientService>().CreatedBy(() => new UntrackedTransientService()),
-            Singleton.For<ISingletonService>().CreatedBy((IUntrackedTransientService transient) => new SingletonServiceDependingOnUntrackedTransient(transient))
+            Transient.For<ITransientService2>().CreatedBy(() => new TransientService2()),
+            Singleton.For<ISingletonService>().CreatedBy((ITransientService2 transient) => new SingletonServiceDependingOnTransient2(transient))
          ).ServiceLocator;
       }).Must().Throw<InvalidLifeStyleCombinationException>().Which;
 
       exception.Message.Must().Contain("Invalid lifestyle combination");
       exception.Message.Must().Contain("Singleton");
-      exception.Message.Must().Contain("UntrackedTransient");
+      exception.Message.Must().Contain("Transient");
    }
 
    [DependencyInjectionContainerMatrix]
@@ -79,12 +79,12 @@ public class LifestyleValidationTests
    }
 
    [DependencyInjectionContainerMatrix]
-   public void Should_allow_singleton_depending_on_untracked_transient_with_AllowSingletonDependent()
+   public void Should_allow_singleton_depending_on_transient_with_AllowSingletonDependent()
    {
       using var container = DependencyInjectionContainerFactory.CreateContainer();
       container.Register(
-         UntrackedTransient.For<IUntrackedTransientService>().AllowSingletonDependent().CreatedBy(() => new UntrackedTransientService()),
-         Singleton.For<ISingletonService>().CreatedBy((IUntrackedTransientService t) => new SingletonServiceDependingOnUntrackedTransient(t))
+         Transient.For<ITransientService2>().AllowSingletonDependent().CreatedBy(() => new TransientService2()),
+         Singleton.For<ISingletonService>().CreatedBy((ITransientService2 t) => new SingletonServiceDependingOnTransient2(t))
       );
 
       var serviceLocator = container.ServiceLocator;
@@ -111,7 +111,7 @@ public class LifestyleValidationTests
    }
 
    [DependencyInjectionContainerMatrix]
-   public void Should_throw_when_scoped_depends_on_untracked_transient()
+   public void Should_throw_when_scoped_depends_on_transient()
    {
       using var container = DependencyInjectionContainerFactory.CreateContainer();
 
@@ -119,14 +119,14 @@ public class LifestyleValidationTests
       {
          // ReSharper disable once AccessToDisposedClosure
          _ = container.Register(
-            UntrackedTransient.For<IUntrackedTransientService>().CreatedBy(() => new UntrackedTransientService()),
-            Scoped.For<IScopedService>().CreatedBy((IUntrackedTransientService t) => new ScopedServiceDependingOnUntrackedTransient(t))
+            Transient.For<ITransientService2>().CreatedBy(() => new TransientService2()),
+            Scoped.For<IScopedService>().CreatedBy((ITransientService2 t) => new ScopedServiceDependingOnTransient2(t))
          ).ServiceLocator;
       }).Must().Throw<InvalidLifeStyleCombinationException>().Which;
 
       exception.Message.Must().Contain("Invalid lifestyle combination");
       exception.Message.Must().Contain("Scoped");
-      exception.Message.Must().Contain("UntrackedTransient");
+      exception.Message.Must().Contain("Transient");
    }
 
    [DependencyInjectionContainerMatrix]
@@ -146,12 +146,12 @@ public class LifestyleValidationTests
    }
 
    [DependencyInjectionContainerMatrix]
-   public void Should_allow_scoped_depending_on_untracked_transient_with_AllowScopedDependent()
+   public void Should_allow_scoped_depending_on_transient_with_AllowScopedDependent()
    {
       using var container = DependencyInjectionContainerFactory.CreateContainer();
       container.Register(
-         UntrackedTransient.For<IUntrackedTransientService>().AllowScopedDependent().CreatedBy(() => new UntrackedTransientService()),
-         Scoped.For<IScopedService>().CreatedBy((IUntrackedTransientService t) => new ScopedServiceDependingOnUntrackedTransient(t))
+         Transient.For<ITransientService2>().AllowScopedDependent().CreatedBy(() => new TransientService2()),
+         Scoped.For<IScopedService>().CreatedBy((ITransientService2 t) => new ScopedServiceDependingOnTransient2(t))
       );
 
       var serviceLocator = container.ServiceLocator;
@@ -175,12 +175,12 @@ public class LifestyleValidationTests
    class SingletonServiceDependingOnTransient(ITransientService _) : ISingletonService;
 #pragma warning restore CS9113 // Parameter is unread.
 
-   interface IUntrackedTransientService;
-   class UntrackedTransientService : IUntrackedTransientService;
+   interface ITransientService2;
+   class TransientService2 : ITransientService2;
 #pragma warning disable CS9113 // Parameter is unread.
-   class SingletonServiceDependingOnUntrackedTransient(IUntrackedTransientService _) : ISingletonService;
+   class SingletonServiceDependingOnTransient2(ITransientService2 _) : ISingletonService;
    class ScopedServiceDependingOnTrackedTransient(ITransientService _) : IScopedService;
-   class ScopedServiceDependingOnUntrackedTransient(IUntrackedTransientService _) : IScopedService;
+   class ScopedServiceDependingOnTransient2(ITransientService2 _) : IScopedService;
 #pragma warning restore CS9113 // Parameter is unread.
 
 }

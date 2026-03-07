@@ -8,9 +8,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ### Added
 
-- Support for TrackedTransient and UntrackedTransient lifestyles
-	- UntrackedTransient matching the behavior of transients in SimpleInjector
+- Support for TrackedTransient and Transient lifestyles
+	- Transient (formerly UntrackedTransient) matching the behavior of transients in SimpleInjector
 	- TrackedTransient matching the behavior of transients in Microsoft.Extensions.DependencyInjection
+- Captive dependency validation: rejects Singleton→Transient and Scoped→Transient by default
+	- Opt-in via `.AllowSingletonDependent()` and `.AllowScopedDependent()` on transient registrations
 
 ## 0.2.0-alpha.1
 

@@ -3,7 +3,7 @@ using Compze.Must;
 
 namespace Compze.DependencyInjection.Specifications.Transient_lifestyle;
 
-public class When_resolving_an_untracked_transient
+public class When_resolving_a_transient
 {
    [DependencyInjectionContainerMatrix]
    public void each_resolve_returns_a_new_instance()
@@ -58,7 +58,7 @@ public class When_resolving_an_untracked_transient
    }
 
    [DependencyInjectionContainerMatrix]
-   public void untracked_transient_can_depend_on_a_singleton()
+   public void transient_can_depend_on_a_singleton()
    {
       using var container = DependencyInjectionContainerFactory.CreateContainer();
       container.Register(

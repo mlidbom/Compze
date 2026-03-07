@@ -56,13 +56,13 @@ public class DuplicateRegistrationTests
    }
 
    [DependencyInjectionContainerMatrix]
-   public void Registering_same_untracked_transient_service_twice_throws_InvalidOperationException()
+   public void Registering_same_transient_service_twice_throws_InvalidOperationException()
    {
       using var container = DependencyInjectionContainerFactory.CreateContainer();
 
-      container.Register(UntrackedTransient.For<ITestService>().CreatedBy(() => new TestService()));
+      container.Register(Transient.For<ITestService>().CreatedBy(() => new TestService()));
 
-      container.Invoking(it => it.Register(UntrackedTransient.For<ITestService>().CreatedBy(() => new TestService())))
+      container.Invoking(it => it.Register(Transient.For<ITestService>().CreatedBy(() => new TestService())))
                .Must()
                .Throw<InvalidOperationException>()
                .Which.Message.Must()

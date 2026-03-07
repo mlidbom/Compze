@@ -33,11 +33,11 @@ public abstract class DependencyInjectionContainerBase : IDependencyInjectionCon
       ValidateNoDuplicateRegistrations(registrations);
       _registeredComponents.AddRange(registrations);
 
-      var containerRegistrations = registrations.Where(it => it.Lifestyle is not (Lifestyle.TrackedTransient or Lifestyle.UntrackedTransient)).ToArray();
+      var containerRegistrations = registrations.Where(it => it.Lifestyle is not (Lifestyle.TrackedTransient or Lifestyle.Transient)).ToArray();
       if(containerRegistrations.Length > 0)
          RegisterInContainer(containerRegistrations);
 
-      foreach(var registration in registrations.Where(it => it.Lifestyle is Lifestyle.TrackedTransient or Lifestyle.UntrackedTransient))
+      foreach(var registration in registrations.Where(it => it.Lifestyle is Lifestyle.TrackedTransient or Lifestyle.Transient))
       {
          foreach(var serviceType in registration.ServiceTypes)
             _transientRegistrations[serviceType] = registration;
@@ -109,7 +109,7 @@ public abstract class DependencyInjectionContainerBase : IDependencyInjectionCon
          };
 
       if(consumer.Lifestyle == Lifestyle.Scoped)
-         return dependency.Lifestyle is Lifestyle.TrackedTransient or Lifestyle.UntrackedTransient
+         return dependency.Lifestyle is Lifestyle.TrackedTransient or Lifestyle.Transient
                 && !dependency.AllowScopedDependent;
 
       return false;

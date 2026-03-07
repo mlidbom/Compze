@@ -3,7 +3,7 @@ using Compze.Internals.SystemCE.LinqCE;
 // ReSharper disable UnusedMember.Global
 namespace Compze.DependencyInjection;
 
-public static class UntrackedTransient
+public static class Transient
 {
    public static TransientRegistrationWithoutInstantiationSpec<TService1> For<TService1, TService2, TService3, TService4, TService5, TService6, TService7, TService8, TService9>() where TService1 : class => For<TService1>(EnumerableCE.OfTypes<TService2, TService3, TService4, TService5, TService6, TService7, TService8, TService9>());
    public static TransientRegistrationWithoutInstantiationSpec<TService1> For<TService1, TService2, TService3, TService4, TService5, TService6, TService7, TService8>() where TService1 : class => For<TService1>(EnumerableCE.OfTypes<TService2, TService3, TService4, TService5, TService6, TService7, TService8>());
