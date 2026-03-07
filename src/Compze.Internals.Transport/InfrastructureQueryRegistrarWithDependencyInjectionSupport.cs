@@ -2,9 +2,9 @@ using Compze.Abstractions.Tessaging.Public;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE;
 
-namespace Compze.Tessaging.Implementation.Transport.Infrastructure;
+namespace Compze.Internals.Transport;
 
-class InfrastructureQueryRegistrarWithDependencyInjectionSupport(InfrastructureQueryExecutor executor, LazyCE<IServiceLocator> serviceLocator)
+public class InfrastructureQueryRegistrarWithDependencyInjectionSupport(InfrastructureQueryExecutor executor, LazyCE<IServiceLocator> serviceLocator)
 {
    readonly InfrastructureQueryExecutor _executor = executor;
    readonly LazyCE<IServiceLocator> _serviceLocator = serviceLocator;

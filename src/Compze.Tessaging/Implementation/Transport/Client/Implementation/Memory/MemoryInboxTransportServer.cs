@@ -2,9 +2,8 @@ using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Tessaging.Abstractions.Tessaging.Hosting.Public;
 using Compze.Core.Tessaging.Transport.Internal;
 using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
-using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
+using Compze.Internals.Transport;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
-using Compze.Tessaging.Implementation.Transport.Infrastructure;
 using Compze.Contracts;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
@@ -91,7 +90,7 @@ class MemoryInboxTransportServer : IInboxTransportServer
       catch(Exception ex)
       {
          this.Log().Warning(ex, $"Failed to dispatch tessage {incomingTessage.TessageId}");
-         throw new TessageDispatchingFailedException(ex.ToString());
+         throw new MessageDispatchingFailedException(ex.ToString());
       }
    }
 }

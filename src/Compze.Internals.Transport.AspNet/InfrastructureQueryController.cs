@@ -3,25 +3,24 @@ using Compze.Abstractions.Public;
 using Compze.Abstractions.Refactoring.Naming.Internal;
 using Compze.Abstractions.Serialization.Internal;
 using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
-using Compze.Tessaging.Implementation.Transport.Client.Implementation.Http;
-using Compze.Tessaging.Implementation.Transport.Infrastructure;
+using Compze.Internals.Transport;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Compze.Tessaging.Hosting.AspNetCore.Private;
+namespace Compze.Internals.Transport.AspNet;
 
 #pragma warning disable CA1031
 
-class InfrastructureQueryController : Controller
+public class InfrastructureQueryController : Controller
 {
    readonly IRemotableTessageSerializer _serializer;
    readonly ITypeMapper _typeMapper;
    readonly InfrastructureQueryExecutor _executor;
 
-   internal static void RegisterWith(IComponentRegistrar registrar) =>
+   public static void RegisterWith(IComponentRegistrar registrar) =>
       registrar.Register(
          Scoped.For<InfrastructureQueryController>()
                .CreatedBy((IRemotableTessageSerializer serializer,

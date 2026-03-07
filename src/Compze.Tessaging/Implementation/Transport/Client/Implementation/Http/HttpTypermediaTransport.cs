@@ -4,7 +4,7 @@ using Compze.Abstractions.Serialization.Internal;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Core.Tessaging.Transport.Internal;
 using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
-using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
+using Compze.Internals.Transport;
 using Compze.Tessaging.Implementation.Transport.Client.Internal;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
@@ -69,7 +69,7 @@ class HttpTypermediaTransport : ITypermediaTransport
       {
          var problemDetails = await ProblemDetails.FromResponse(response).caf();
 
-         throw new TessageDispatchingFailedException($"""
+         throw new MessageDispatchingFailedException($"""
                                                       Uri:        {requestUri}
                                                       StatusCode: {response.StatusCode}
                                                       Type:       {tessage.GetType().FullName}

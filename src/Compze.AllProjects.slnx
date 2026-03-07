@@ -181,4 +181,6 @@
     <Project Path="Compze.DocumentDb/Compze.DocumentDb.csproj" />
   </Folder>
   <Project Path="../DevScripts/Scripts.csproj" />
+  <Project Path="Compze.Internals.Transport/Compze.Internals.Transport.csproj" />
+  <Project Path="Compze.Internals.Transport.AspNet/Compze.Internals.Transport.AspNet.csproj" />
 </Solution>

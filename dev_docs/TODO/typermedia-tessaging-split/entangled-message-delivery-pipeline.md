@@ -56,7 +56,7 @@ Created `ITypermediaTransport` — Typermedia's own transport abstraction replac
 - Calls executor directly — no `TransportTessage` wrapping
 - Round-trip serializes responses (simulates network boundary for reference isolation)
 - Runs via `Task.Run` to avoid DI scope issues
-- Wraps exceptions in `TessageDispatchingFailedException` (matching previous behavior)
+- Wraps exceptions in `MessageDispatchingFailedException` (matching previous behavior)
 
 **HTTP transport** (`src/Compze.Tessaging/Implementation/Transport/Client/Implementation/Http/HttpTypermediaTransport.cs`):
 - Serializes using `IRemotableTessageSerializer` + `ITypeMapper`
@@ -133,6 +133,40 @@ Discovery queries are no longer mistyped as Typermedia tueries. They are now pla
 **Residual entanglement:**
 - `MemoryInboxTransportServer` still binds `TypermediaHandlerExecutor` AND `InfrastructureQueryExecutor` — both paradigms share the same endpoint address. Phase 5 will decouple.
 - `TypermediaRouter` still depends on `ITypermediaTransport` for actual Typermedia operations (correct) but ALSO `IInfrastructureQueryTransport` for discovery — this is the right split.
+
+### Phase 4c — Extract Shared Transport to Own Projects ✅ DONE
+
+All shared transport infrastructure extracted from `Compze.Tessaging` into two new projects, eliminating paradigm-specific ownership of common transport code.
+
+**New projects:**
+- `Compze.Internals.Transport` (`src/Compze.Internals.Transport/`) — shared transport infrastructure, paradigm-neutral
+- `Compze.Internals.Transport.AspNet` (`src/Compze.Internals.Transport.AspNet/`) — ASP.NET Core controller for infrastructure queries
+
+**Types moved to `Compze.Internals.Transport` (namespace: `Compze.Internals.Transport`):**
+- `IInfrastructureQueryTransport` — was `Compze.Tessaging.Implementation.Transport.Client.Internal`
+- `InfrastructureQueryExecutor` — was `Compze.Tessaging.Implementation.Transport.Infrastructure`
+- `InfrastructureQueryRegistrarWithDependencyInjectionSupport` — was same
+- `InMemoryInfrastructureNetwork` — was same
+- `MemoryInfrastructureQueryTransportImplementation` + `MemoryInfrastructureQueryTransportRegistrar` — was same
+- `HttpInfrastructureQueryTransportImplementation` + `HttpInfrastructureQueryTransportRegistrar` — was same
+- `HttpConstants` — was `Compze.Tessaging.Implementation.Transport.Client.Implementation.Http`
+- `IHttpClientFactoryCE` + `HttpClientFactoryCE` + `HttpClientFactoryCERegistrar` — was same
+- `ProblemDetails` + `FailedToExtractProblemDetailsException` — was same
+- `MessageDispatchingFailedException` — **renamed** from `TessageDispatchingFailedException` (was `Compze.Tessaging.Implementation.TessageHandling.Dispatching`)
+
+**Types moved to `Compze.Internals.Transport.AspNet` (namespace: `Compze.Internals.Transport.AspNet`):**
+- `InfrastructureQueryController` — was `Compze.Tessaging.Hosting.AspNetCore.Private`
+
+**Access modifiers widened** (from internal to public, required for cross-assembly access):
+- `IInfrastructureQueryTransport`, `InfrastructureQueryRegistrarWithDependencyInjectionSupport`, `InMemoryInfrastructureNetwork`, `ProblemDetails`, `IHttpClientFactoryCE`, `InfrastructureQueryController`
+
+**ASP.NET controller discovery fix:**
+- `AspNetInboxTransportServer.StartServerAsync()` now adds `Compze.Internals.Transport.AspNet` assembly to `ApplicationPartManager` alongside its own assembly
+
+**Dependency direction:**
+- `Compze.Tessaging` → `Compze.Internals.Transport` (for shared types)
+- `Compze.Tessaging.Hosting.AspNetCore` → `Compze.Internals.Transport.AspNet` (for controller registration)
+- Both new projects are paradigm-neutral — no reference to Tessaging or Typermedia
 
 ### Phase 5 — Separate Hosting
 

@@ -1,9 +1,9 @@
 using System.Collections.Concurrent;
 using Compze.Core.Tessaging.Transport.Internal;
 
-namespace Compze.Tessaging.Implementation.Transport.Infrastructure;
+namespace Compze.Internals.Transport;
 
-static class InMemoryInfrastructureNetwork
+public static class InMemoryInfrastructureNetwork
 {
    static readonly ConcurrentDictionary<EndPointAddress, InfrastructureQueryExecutor> Executors = new();
 

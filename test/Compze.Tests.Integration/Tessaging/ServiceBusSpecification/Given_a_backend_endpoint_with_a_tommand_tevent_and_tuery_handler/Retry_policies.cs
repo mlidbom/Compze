@@ -1,4 +1,4 @@
-using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
+using Compze.Internals.Transport;
 using Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Threading;
@@ -17,7 +17,7 @@ public class Retry_policies_AtMostOnceTommand_when_tommand_handler_fails : Endpo
       MyCreateTaggregateTommandHandlerThreadGate.FailTransactionOnPreparePostPassThrough(new Exception(exceptionTessage));
 
       Invoking(() => Navigator.Post(MyCreateTaggregateTommand.Create()))
-                                    .Must().Throw<TessageDispatchingFailedException>();
+                                    .Must().Throw<MessageDispatchingFailedException>();
       await Task.CompletedTask;
    }
 

@@ -17,6 +17,8 @@
       <Value>UsePackageReference_Compze_Internals_SystemCE_Core = true</Value>
       <Value>UsePackageReference_Compze_Internals_Testing = true</Value>
       <Value>UsePackageReference_Compze_Internals_Threading = true</Value>
+      <Value>UsePackageReference_Compze_Internals_Transport = true</Value>
+      <Value>UsePackageReference_Compze_Internals_Transport_AspNet = true</Value>
       <Value>UsePackageReference_Compze_Must = true</Value>
       <Value>UsePackageReference_Compze_Threading = true</Value>
       <Value>UsePackageReference_Compze_Threading_Testing = true</Value>

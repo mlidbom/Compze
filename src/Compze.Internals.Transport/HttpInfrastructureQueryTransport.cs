@@ -4,13 +4,10 @@ using Compze.Abstractions.Serialization.Internal;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Core.Tessaging.Transport.Internal;
 using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
-using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
-using Compze.Tessaging.Implementation.Transport.Client.Implementation.Http;
-using Compze.Tessaging.Implementation.Transport.Client.Internal;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 
-namespace Compze.Tessaging.Implementation.Transport.Infrastructure;
+namespace Compze.Internals.Transport;
 
 public static class HttpInfrastructureQueryTransportRegistrar
 {
@@ -50,7 +47,7 @@ class HttpInfrastructureQueryTransportImplementation : IInfrastructureQueryTrans
       {
          var problemDetails = await ProblemDetails.FromResponse(response).caf();
 
-         throw new TessageDispatchingFailedException($"""
+         throw new MessageDispatchingFailedException($"""
                                                       Uri:        {requestUri}
                                                       StatusCode: {response.StatusCode}
                                                       Type:       {query.GetType().FullName}

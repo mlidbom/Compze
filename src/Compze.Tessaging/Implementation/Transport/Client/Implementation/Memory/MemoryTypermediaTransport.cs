@@ -2,7 +2,7 @@ using Compze.Abstractions.Serialization.Internal;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Core.Tessaging.Transport.Internal;
 using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
-using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
+using Compze.Internals.Transport;
 using Compze.Tessaging.Implementation.Transport.Client.Internal;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
@@ -36,7 +36,7 @@ class MemoryTypermediaTransport : ITypermediaTransport
       catch(Exception ex)
       {
          this.Log().Warning(ex, $"Failed to dispatch tuery {tuery.GetType().FullName}");
-         throw new TessageDispatchingFailedException(ex.ToString());
+         throw new MessageDispatchingFailedException(ex.ToString());
       }
    }
 
@@ -50,7 +50,7 @@ class MemoryTypermediaTransport : ITypermediaTransport
       catch(Exception ex)
       {
          this.Log().Warning(ex, $"Failed to dispatch command {command.GetType().FullName}");
-         throw new TessageDispatchingFailedException(ex.ToString());
+         throw new MessageDispatchingFailedException(ex.ToString());
       }
    }
 
@@ -64,7 +64,7 @@ class MemoryTypermediaTransport : ITypermediaTransport
       catch(Exception ex)
       {
          this.Log().Warning(ex, $"Failed to dispatch command {command.GetType().FullName}");
-         throw new TessageDispatchingFailedException(ex.ToString());
+         throw new MessageDispatchingFailedException(ex.ToString());
       }
    }
 

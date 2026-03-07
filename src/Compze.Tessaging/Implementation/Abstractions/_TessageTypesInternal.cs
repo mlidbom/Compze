@@ -10,7 +10,7 @@ using Compze.Abstractions.Tessaging.Public;
 using Compze.Core.Tessaging.Transport.Internal;
 using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
 using Compze.Tessaging.Implementation.Transport.Client.Routing.Abstractions;
-using Compze.Tessaging.Implementation.Transport.Infrastructure;
+using Compze.Internals.Transport;
 using Compze.Typermedia.HandlerRegistration;
 
 // ReSharper disable UnusedAutoPropertyAccessor.Global

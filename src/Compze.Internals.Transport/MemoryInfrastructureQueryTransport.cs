@@ -2,13 +2,12 @@ using Compze.Abstractions.Serialization.Internal;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Core.Tessaging.Transport.Internal;
 using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
-using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
-using Compze.Tessaging.Implementation.Transport.Client.Internal;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
+using Compze.Underscore;
 
-namespace Compze.Tessaging.Implementation.Transport.Infrastructure;
+namespace Compze.Internals.Transport;
 
 public static class MemoryInfrastructureQueryTransportRegistrar
 {
@@ -36,7 +35,7 @@ class MemoryInfrastructureQueryTransportImplementation : IInfrastructureQueryTra
       catch(Exception ex)
       {
          this.Log().Warning(ex, $"Failed to dispatch infrastructure query {query.GetType().FullName}");
-         throw new TessageDispatchingFailedException(ex.ToString());
+         throw new MessageDispatchingFailedException(ex.ToString());
       }
    }
 

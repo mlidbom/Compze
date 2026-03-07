@@ -1,6 +1,6 @@
-namespace Compze.Tessaging.Implementation.TessageHandling.Dispatching;
+namespace Compze.Internals.Transport;
 
-public class TessageDispatchingFailedException(string remoteExceptionAsString) : Exception($"""
+public class MessageDispatchingFailedException(string remoteExceptionAsString) : Exception($"""
                                                                                             Dispatching tessage failed. Remote exception tessage: 
                                                                                             {remoteExceptionAsString} 
                                                                                             """);

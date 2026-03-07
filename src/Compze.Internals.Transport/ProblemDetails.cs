@@ -3,10 +3,10 @@ using Compze.Contracts;
 using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 using JetBrains.Annotations;
 
-namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Http;
+namespace Compze.Internals.Transport;
 
 #pragma warning disable CA1812 // Instantiated via JSON deserialization
-[UsedImplicitly] class ProblemDetails
+[UsedImplicitly] public class ProblemDetails
 {
    public string Type { get; init; } = "";
    public string Title { get; init; } = "";

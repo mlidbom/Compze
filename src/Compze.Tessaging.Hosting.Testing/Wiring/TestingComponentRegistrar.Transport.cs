@@ -1,7 +1,7 @@
 using Compze.Abstractions.Wiring.Testing.Internal;
 using Compze.Tessaging.Hosting.AspNetCore.Wiring;
 using Compze.Tessaging.Implementation.Transport.Client.Implementation.Memory;
-using Compze.Tessaging.Implementation.Transport.Infrastructure;
+using Compze.Internals.Transport;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE;
 using Compze.Internals.Testing;

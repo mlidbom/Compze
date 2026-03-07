@@ -29,6 +29,8 @@
     <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Testing" />
     <InternalsVisibleTo Include="Compze.Tessaging.Teventive.TeventStore" />
     <InternalsVisibleTo Include="Compze.Internals.Testing" />
+    <InternalsVisibleTo Include="Compze.Internals.Transport" />
+    <InternalsVisibleTo Include="Compze.Internals.Transport.AspNet" />
     <InternalsVisibleTo Include="Compze.Tests.CodePolicies" />
     <InternalsVisibleTo Include="Compze.Tests.Common" />
     <InternalsVisibleTo Include="Compze.Tests.Infrastructure" />

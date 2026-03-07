@@ -18,7 +18,7 @@ using Compze.Tessaging.Implementation.Transport.Client.Implementation.Universal;
 using Compze.Tessaging.Implementation.Transport.Client.Internal;
 using Compze.Tessaging.Implementation.Transport.Client.Routing;
 using Compze.Tessaging.Implementation.Transport.Client.Routing.Abstractions;
-using Compze.Tessaging.Implementation.Transport.Infrastructure;
+using Compze.Internals.Transport;
 using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;

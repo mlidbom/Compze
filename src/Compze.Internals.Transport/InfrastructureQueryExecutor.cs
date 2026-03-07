@@ -5,7 +5,7 @@ using Compze.Internals.Logging;
 using Compze.Threading;
 using Compze.Threading.ResourceAccess;
 
-namespace Compze.Tessaging.Implementation.Transport.Infrastructure;
+namespace Compze.Internals.Transport;
 
 public class InfrastructureQueryExecutor
 {

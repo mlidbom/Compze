@@ -1,6 +1,6 @@
 using System.Transactions;
 using Compze.Tessaging.Hosting;
-using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
+using Compze.Internals.Transport;
 using Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
 using Compze.Internals.SystemCE.TransactionsCE.Testing;
 using Compze.Tests.Infrastructure.XUnit;
@@ -71,7 +71,7 @@ public class Exactly_once_guarantee_tests : EndpointHostTestBase
       MyCreateTaggregateTommandHandlerThreadGate.FailTransactionOnPreparePostPassThrough(new Exception(exceptionTessage));
 
       var frontEndException = Invoking(() => Navigator.Post(MyCreateTaggregateTommand.Create()))
-                                    .Must().Throw<TessageDispatchingFailedException>().Which;
+                                    .Must().Throw<MessageDispatchingFailedException>().Which;
 
       frontEndException.Message.Must().Contain(exceptionTessage);
 
