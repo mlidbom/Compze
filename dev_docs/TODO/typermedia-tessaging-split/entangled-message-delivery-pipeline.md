@@ -27,18 +27,20 @@ Work from the handler execution outward. Each phase is independently shippable a
 
 **Registration fix:** Void Typermedia commands were historically registered in the tessaging handler registry. Moved to `RegisterTypermediaHandlers` where they belong (test fixtures + AccountManagement sample). `HandledRemoteTypermediaTypeIds()` updated to include `_voidTommandHandlers`.
 
-**Residual entanglement:** `TypermediaController` still inherits `ControllerBase` which takes `IInbox` + `HandlerExecutionEngine` constructor args (unused by TypermediaController). Clean up in Phase 3.
+**Residual entanglement:** `TypermediaController` still inherits `ControllerBase` which takes `IInbox` + `HandlerExecutionEngine` constructor args (unused by TypermediaController), and uses shared serialization (`IRemotableTessageSerializer`, `TransportTessage.InComing`). Needs investigation.
 
-### Phase 3 — Clean Up Tessaging Internals
+### Phase 3 — Clean Up Tessaging Internals ✅ DONE
 
-Remove dead Typermedia code from the Tessaging execution pipeline.
+Removed dead Typermedia code from the Tessaging execution pipeline:
 
-- Remove `Inbox.ExecuteAsync` — no longer called by anything.
-- Remove Typermedia branches from `QueuedTessage` switch statements.
-- Remove Typermedia branches from `Coordinator`.
-- `HandlerExecutionEngine` simplifies to Tessaging-only.
-- `Inbox.ITessageStorage` no longer touched by Typermedia.
-- Break `TypermediaController`'s inheritance of `ControllerBase` — it no longer needs `IInbox` or `HandlerExecutionEngine`. Extract the deserialization helper (`CreateIncomingTessage`) it still uses.
+- Removed `IInbox.ExecuteAsync` and `Inbox.ExecuteAsync` — was only used by Typermedia
+- Removed `HandlerExecutionEngine.ExecuteAsync` — was only used by Typermedia tueries
+- Removed `HandlerExecutionTask.ExecuteTuery` — no tueries flow through the engine
+- Removed 3 Typermedia branches from `HandlerExecutionTask.CreateTessageTask` switch: `TypermediaAtMostOnceTommandWithReturnValue`, `TypermediaAtMostOnceTommand`, `TyperMediaTuery`
+- Removed Typermedia no-op branches from `Coordinator.Dispatching` and `DoneDispatching`
+- Removed `ITypermediaHandlerRegistry` dependency from `HandlerExecutionEngine`, `Coordinator`, and `HandlerExecutionTask` — the Tessaging pipeline no longer knows about Typermedia registries
+
+**Remaining:** `TypermediaController` → `ControllerBase` inheritance cleanup (shared serializer investigation needed first).
 
 ### Phase 4 — Typermedia Gets Its Own Transport
 
@@ -64,7 +66,7 @@ Each paradigm gets its own hosting lifecycle.
 
 ### Recommended next step
 
-Phase 3 is pure cleanup — removing dead code paths that nothing calls anymore. Low-risk, high-clarity improvement. Phase 4 is the next structural change (giving Typermedia its own transport).
+Investigate the shared serializer situation (`IRemotableTessageSerializer`, `TransportTessage.InComing`) to determine how to break `TypermediaController`'s `ControllerBase` dependency. Then Phase 4 — giving Typermedia its own transport.
 
 ---
 
@@ -232,53 +234,51 @@ Every component involved in delivering a message from caller to handler and back
 
 ## 7. Inbox
 
-### Inbox [BOTH → cleanup target]
+### Inbox [S]
 - **Interface**: `IInbox` — `src/Compze.Tessaging/Implementation/TessageHandling/Abstractions/IInbox.cs`
 - **Impl**: `Inbox` — `src/Compze.Tessaging/Implementation/TessageHandling/Inbox/Inbox.cs`
-- Two entry points:
+- Single entry point:
   - `ReceiveAsync(tessage)` — fire-and-forget: save to storage (dedup) → `HandlerExecutionEngine.Enqueue(tessage)` → return immediately
-  - `ExecuteAsync(tessage)` — request-response: **no longer called** — was only used by Typermedia. Dead code, remove in Phase 3.
+- `ExecuteAsync` removed — was only used by Typermedia
 
 ### Inbox Message Storage [S]
 - `Inbox.ITessageStorage` — `src/Compze.Tessaging/Implementation/TessageHandling/Inbox/Inbox.ITessageStorage.cs`
 - `Inbox.TessageStorage` — `src/Compze.Tessaging/Implementation/TessageHandling/Inbox/Inbox.TessageStorage.cs`
 - Tracks incoming messages: save, mark succeeded, record exception, mark failed
 - Delegates to `IServiceBusSqlLayer.IInboxSqlLayer`
-- Note: Typermedia messages also go through this (via `Inbox.ExecuteAsync`) even though they don't need exactly-once tracking
+- Now Tessaging-only — Typermedia no longer flows through inbox storage
 
 ---
 
-## 8. Handler Execution Engine [BOTH]
+## 8. Handler Execution Engine [S]
 
-### HandlerExecutionEngine [BOTH → cleanup target]
+### HandlerExecutionEngine [S]
 - `Inbox.HandlerExecutionEngine` — `src/Compze.Tessaging/Implementation/TessageHandling/Inbox/Inbox.HandlerExecutionEngine..cs`
 - Runs a dedicated thread that dequeues and dispatches `HandlerExecutionTask`s
 - `Enqueue(tessage)` → create task → add to queue → return immediately (fire-and-forget)
-- `ExecuteAsync(tessage)` → **no longer called** — was only used by Typermedia tueries via MemoryInboxTransportServer. Dead code, remove in Phase 3.
+- `ExecuteAsync` removed — was only used by Typermedia
+- No longer depends on `ITypermediaHandlerRegistry`
 
-### Coordinator
+### Coordinator [S]
 - `Inbox.HandlerExecutionEngine.Coordinator` — `src/Compze.Tessaging/Implementation/TessageHandling/Inbox/Inbox.HandlerExecutionEngine.Coordinator.cs`
 - `TryGetDispatchableTessage` — scans waiting list, applies all dispatching rules, caps at 20 concurrent handlers
 - Blocks until a task is dispatchable
+- `Dispatching`/`DoneDispatching` now only handle `ExactlyOnceTevent` and `ExactlyOnceTommand` — Typermedia branches removed
+- No longer depends on `ITypermediaHandlerRegistry`
 
 ### Dispatching Rules [S]
 - `Inbox.TessageDispatchingRules` — `src/Compze.Tessaging/Implementation/TessageHandling/Inbox/Inbox.TessageDispatchingRules.cs`
 - `ITessageDispatchingRule` — `src/Compze.Tessaging/Implementation/TessageHandling/Dispatching/ITessageDispatchingRule.cs`
-- One rule: **`TommandsAndTeventHandlersDoNotRunInParallelWithEachOtherInTheSameEndpoint`** — serializes ExactlyOnce commands and events. Typermedia messages (`TyperMediaTuery`, `TypermediaAtMostOnceTommand`, `TypermediaAtMostOnceTommandWithReturnValue`) bypass this rule entirely.
-- `IExecutingTessagesSnapshot` tracks only `ExactlyOnceTommands` and `ExactlyOnceTevents` — no typermedia state.
-- Typermedia commands/queries run in parallel with each other and with tessaging mutations. SQLite in-memory deadlocks under this parallelism (its connection pool uses a single-writer lock), so multithreaded SQLite tests are skipped.
+- One rule: **`TommandsAndTeventHandlersDoNotRunInParallelWithEachOtherInTheSameEndpoint`** — serializes ExactlyOnce commands and events.
+- `IExecutingTessagesSnapshot` tracks only `ExactlyOnceTommands` and `ExactlyOnceTevents`.
 
-### HandlerExecutionTask [BOTH → cleanup target]
+### HandlerExecutionTask [S]
 - `Inbox.HandlerExecutionEngine.Coordinator.QueuedTessage` — `src/Compze.Tessaging/Implementation/TessageHandling/Inbox/Inbox.HandlerExecutionEngine.Coordinator.QueuedTessage.cs`
 - Constructor switches on `TransportTessageType` to build the handler invocation delegate:
   - `ExactlyOnceTevent` → get all tevent handlers → call each in sequence
-  - `TypermediaAtMostOnceTommandWithReturnValue` → **dead branch** (no longer enqueued)
-  - `TypermediaAtMostOnceTommand` → **dead branch** (no longer enqueued)
   - `ExactlyOnceTommand` → get void tommand handler → call
-  - `TyperMediaTuery` → **dead branch** (no longer enqueued)
-- Execution paths:
-  - **Queries** → `ExecuteTuery()`: **dead code** (no tueries flow through engine anymore)
-  - **Everything else** → `ExecuteTransactionalTessage()`: `TransactionScope` + `BeginScope()`, retry policy on failure
+- Execution: `ExecuteTransactionalTessage()` — `TransactionScope` + `BeginScope()`, retry policy on failure
+- No longer depends on `ITypermediaHandlerRegistry`
 
 ---
 
@@ -401,16 +401,12 @@ Every component involved in delivering a message from caller to handler and back
 - Dispatching rules disentangled: removed `TueriesExecuteAfterAllTommandsAndTeventsAreDone` rule entirely. Remaining rule (`TommandsAndTeventHandlersDoNotRunInParallelWithEachOtherInTheSameEndpoint`) now only serializes ExactlyOnce tessaging messages — typermedia commands and queries bypass it. `IExecutingTessagesSnapshot` no longer tracks AtMostOnce commands.
 - `TypermediaHandlerExecutor` created in `Compze.Typermedia.Hosting` — gives Typermedia its own handler execution path, bypassing Inbox/HandlerExecutionEngine
 - Void Typermedia commands (`IAtMostOnceTypermediaTommand`) moved from `RegisterTessagingHandlers` to `RegisterTypermediaHandlers` (test fixtures + AccountManagement sample). `HandledRemoteTypermediaTypeIds()` updated to include void command handlers.
+- Phase 3 dead code removal: `Inbox.ExecuteAsync`, `HandlerExecutionEngine.ExecuteAsync`, `HandlerExecutionTask.ExecuteTuery`, Typermedia branches from `HandlerExecutionTask.CreateTessageTask`/`Coordinator.Dispatching`/`Coordinator.DoneDispatching` all removed. `ITypermediaHandlerRegistry` dependency removed from `HandlerExecutionEngine`, `Coordinator`, and `HandlerExecutionTask`.
 
-### Dead code to remove (Phase 3)
-| Component | Dead code |
+### Remaining cleanup
+| Component | Issue |
 |---|---|
-| `Inbox.ExecuteAsync` | No longer called — was Typermedia's entry point |
-| `HandlerExecutionEngine.ExecuteAsync` | No longer called — was Typermedia tuery's entry point |
-| `QueuedTessage` Typermedia branches | `TypermediaAtMostOnceTommand`, `TypermediaAtMostOnceTommandWithReturnValue`, `TyperMediaTuery` — never enqueued |
-| `QueuedTessage.ExecuteTuery` | No tueries flow through engine |
-| `TypermediaController` → `ControllerBase` inheritance | Takes `IInbox` + `HandlerExecutionEngine` it doesn't use |
-| `Inbox.ITessageStorage` | Typermedia no longer goes through inbox storage |
+| `TypermediaController` → `ControllerBase` inheritance | Takes `IInbox` + `HandlerExecutionEngine` it doesn't use; uses shared serializer (`IRemotableTessageSerializer`, `TransportTessage.InComing`) |
 
 ### Still entangled (transport + hosting — Phases 4+5)
 | Component | Why it's entangled |

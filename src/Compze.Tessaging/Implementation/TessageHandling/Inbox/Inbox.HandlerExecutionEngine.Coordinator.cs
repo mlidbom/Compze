@@ -3,14 +3,12 @@ using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Tessaging.Abstractions.Tessaging.Hosting.Public;
 using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
 using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
-using Compze.Typermedia;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
 using Compze.Threading.ResourceAccess;
 using Compze.Contracts;
-using Compze.Typermedia.HandlerRegistration;
 
 namespace Compze.Tessaging.Implementation.TessageHandling.Inbox;
 
@@ -19,13 +17,12 @@ public partial class Inbox
    public partial class HandlerExecutionEngine
    {
       //refactor: Consider moving all tessage type specific responsibilities into the tessage class or other class. Probably create more subtypes so that no type checking is required. See also inbox.
-      partial class Coordinator(ITessagesInFlightTracker globalStateTracker, ITaskRunner taskRunner, ITessageStorage tessageStorage, IServiceLocator serviceLocator, ITessageHandlerRegistry tessagingHandlerRegistry, ITypermediaHandlerRegistry typermediaHandlerRegistry, EndpointId endpointId)
+      partial class Coordinator(ITessagesInFlightTracker globalStateTracker, ITaskRunner taskRunner, ITessageStorage tessageStorage, IServiceLocator serviceLocator, ITessageHandlerRegistry tessagingHandlerRegistry, EndpointId endpointId)
       {
          readonly ITaskRunner _taskRunner = taskRunner;
          readonly ITessageStorage _tessageStorage = tessageStorage;
          readonly IServiceLocator _serviceLocator = serviceLocator;
          readonly ITessageHandlerRegistry _tessagingHandlerRegistry = tessagingHandlerRegistry;
-         readonly ITypermediaHandlerRegistry _typermediaHandlerRegistry = typermediaHandlerRegistry;
          readonly IAwaitableThreadShared<NonThreadsafeImplementation> _implementation = IAwaitableThreadShared.New(new NonThreadsafeImplementation(globalStateTracker, endpointId));
 
          internal HandlerExecutionTask AwaitExecutableHandlerExecutionTask(IReadOnlyList<ITessageDispatchingRule> dispatchingRules)
@@ -38,7 +35,7 @@ public partial class Inbox
          internal Task<object?> EnqueueTessageTask(TransportTessage.InComing tessage) => _implementation.Update(implementation =>
          {
             this.Log().Debug($"Enqueueing {tessage.TessageTypeEnum} tessage {tessage.TessageId}");
-            var inflightTessage = new HandlerExecutionTask(tessage, this, _taskRunner, _tessageStorage, _serviceLocator, _tessagingHandlerRegistry, _typermediaHandlerRegistry);
+            var inflightTessage = new HandlerExecutionTask(tessage, this, _taskRunner, _tessageStorage, _serviceLocator, _tessagingHandlerRegistry);
             implementation.EnqueueTessageTask(inflightTessage);
             return inflightTessage.Task;
          });
@@ -99,13 +96,8 @@ public partial class Inbox
                   case TransportTessageType.ExactlyOnceTevent:
                      _executingExactlyOnceTevents.Add(dispatchable.TransportTessage);
                      break;
-                  case TransportTessageType.TypermediaAtMostOnceTommandWithReturnValue:
-                  case TransportTessageType.TypermediaAtMostOnceTommand:
-                     break;
                   case TransportTessageType.ExactlyOnceTommand:
                      _executingExactlyOnceTommands.Add(dispatchable.TransportTessage);
-                     break;
-                  case TransportTessageType.TyperMediaTuery:
                      break;
                   default:
                      throw new ArgumentOutOfRangeException();
@@ -126,14 +118,9 @@ public partial class Inbox
                      _executingExactlyOnceTevents.Remove(doneExecuting.TransportTessage);
                      _globalStateTracker.DoneWith(doneExecuting.TransportTessage, _endpointId, exception);
                      break;
-                  case TransportTessageType.TypermediaAtMostOnceTommandWithReturnValue:
-                  case TransportTessageType.TypermediaAtMostOnceTommand:
-                     break;
                   case TransportTessageType.ExactlyOnceTommand:
                      _executingExactlyOnceTommands.Remove(doneExecuting.TransportTessage);
                      _globalStateTracker.DoneWith(doneExecuting.TransportTessage, _endpointId, exception);
-                     break;
-                  case TransportTessageType.TyperMediaTuery:
                      break;
                   default:
                      throw new ArgumentOutOfRangeException();

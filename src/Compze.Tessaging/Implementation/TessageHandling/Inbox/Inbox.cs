@@ -5,12 +5,10 @@ using Compze.Core.Tessaging.Transport.Internal;
 using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
-using Compze.Typermedia;
 using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
-using Compze.Typermedia.HandlerRegistration;
 using JetBrains.Annotations;
 
 namespace Compze.Tessaging.Implementation.TessageHandling.Inbox;
@@ -30,8 +28,8 @@ static class InboxRegistrar
                   .CreatedBy((IServiceBusSqlLayer.IInboxSqlLayer sqlLayer)
                                 => new InboxTessageStorage(sqlLayer)),
          Singleton.For<HandlerExecutionEngine>()
-                  .CreatedBy((ITessagesInFlightTracker globalStateTracker, ITessageHandlerRegistry tessagingHandlerRegistry, ITypermediaHandlerRegistry typermediaHandlerRegistry, IServiceLocator serviceLocator, ITessageStorage storage, ITaskRunner taskRunner, EndpointConfiguration configuration)
-                                => new HandlerExecutionEngine(globalStateTracker, tessagingHandlerRegistry, typermediaHandlerRegistry, serviceLocator, storage, taskRunner, configuration.Id)),
+                  .CreatedBy((ITessagesInFlightTracker globalStateTracker, ITessageHandlerRegistry tessagingHandlerRegistry, IServiceLocator serviceLocator, ITessageStorage storage, ITaskRunner taskRunner, EndpointConfiguration configuration)
+                                => new HandlerExecutionEngine(globalStateTracker, tessagingHandlerRegistry, serviceLocator, storage, taskRunner, configuration.Id)),
          Singleton.For<IInbox>()
                   .CreatedBy((IServiceLocator serviceLocator, HandlerExecutionEngine handlerExecutionEngine, ITessageStorage tessageStorage, IDependencyInjectionContainer container, IInboxTransportServer transportServer)
                                 => new Inbox(serviceLocator, handlerExecutionEngine, tessageStorage, container, transportServer))
@@ -73,20 +71,6 @@ static class InboxRegistrar
 
       _handlerExecutionEngine.Enqueue(tessage);
       return Task.CompletedTask;
-   }
-
-   public async Task<object?> ExecuteAsync(TransportTessage.InComing tessage)
-   {
-      this.Log().Debug($"Executing {tessage.TessageTypeEnum} tessage {tessage.TessageId}");
-      var saveResult = _storage.SaveIncomingTessage(tessage);
-
-      if(saveResult == IServiceBusSqlLayer.SaveTessageResult.Duplicate)
-      {
-         this.Log().Debug($"Skipping duplicate tessage {tessage.TessageId}");
-         return null;
-      }
-
-      return await _handlerExecutionEngine.ExecuteAsync(tessage).caf();
    }
 
    public async Task StopAsync()

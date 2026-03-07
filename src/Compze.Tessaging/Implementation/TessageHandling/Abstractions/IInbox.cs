@@ -10,5 +10,4 @@ public interface IInbox
    Task StopAsync();
 
    Task ReceiveAsync(TransportTessage.InComing tessage);
-   Task<object?> ExecuteAsync(TransportTessage.InComing tessage);
 }
