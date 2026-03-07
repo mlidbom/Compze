@@ -161,6 +161,44 @@ public class LifestyleValidationTests
       }
    }
 
+   [DependencyInjectionContainerMatrix]
+   public void Should_throw_when_tracked_transient_depends_on_scoped_service()
+   {
+      using var container = DependencyInjectionContainerFactory.CreateContainer();
+
+      var exception = Invoking(() =>
+      {
+         // ReSharper disable once AccessToDisposedClosure
+         _ = container.Register(
+            Scoped.For<IScopedService>().CreatedBy(() => new ScopedService()),
+            TrackedTransient.For<ITransientService>().CreatedBy((IScopedService scoped) => new TrackedTransientDependingOnScoped(scoped))
+         ).ServiceLocator;
+      }).Must().Throw<InvalidLifeStyleCombinationException>().Which;
+
+      exception.Message.Must().Contain("Invalid lifestyle combination");
+      exception.Message.Must().Contain("TrackedTransient");
+      exception.Message.Must().Contain("Scoped");
+   }
+
+   [DependencyInjectionContainerMatrix]
+   public void Should_throw_when_transient_depends_on_scoped_service()
+   {
+      using var container = DependencyInjectionContainerFactory.CreateContainer();
+
+      var exception = Invoking(() =>
+      {
+         // ReSharper disable once AccessToDisposedClosure
+         _ = container.Register(
+            Scoped.For<IScopedService>().CreatedBy(() => new ScopedService()),
+            Transient.For<ITransientService2>().CreatedBy((IScopedService scoped) => new TransientDependingOnScoped(scoped))
+         ).ServiceLocator;
+      }).Must().Throw<InvalidLifeStyleCombinationException>().Which;
+
+      exception.Message.Must().Contain("Invalid lifestyle combination");
+      exception.Message.Must().Contain("Transient");
+      exception.Message.Must().Contain("Scoped");
+   }
+
    interface IScopedService;
    class ScopedService : IScopedService;
 
@@ -181,6 +219,8 @@ public class LifestyleValidationTests
    class SingletonServiceDependingOnTransient2(ITransientService2 _) : ISingletonService;
    class ScopedServiceDependingOnTrackedTransient(ITransientService _) : IScopedService;
    class ScopedServiceDependingOnTransient2(ITransientService2 _) : IScopedService;
+   class TrackedTransientDependingOnScoped(IScopedService _) : ITransientService;
+   class TransientDependingOnScoped(IScopedService _) : ITransientService2;
 #pragma warning restore CS9113 // Parameter is unread.
 
 }

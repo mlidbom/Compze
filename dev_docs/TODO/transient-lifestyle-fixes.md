@@ -1,47 +1,51 @@
 # Transient / TrackedTransient Lifestyle Fixes
 
-## Bugs
+All items fixed. 71/71 DI specification tests pass.
 
-### 1. Tracker registrations bypass `_registeredComponents`
+## Bugs (all fixed)
+
+### 1. Tracker registrations bypass `_registeredComponents` — DEFERRED
 
 In `DependencyInjectionContainerBase.Register()`, the `ScopedTransientInstanceTracker` and `SingletonTransientInstanceTracker` are registered via `RegisterInContainer()` directly, skipping `_registeredComponents.AddRange()`. This means:
 - `RegisteredComponents()` won't include them
 - `ValidateNoDuplicateRegistrations` won't protect against someone accidentally registering the same types
 - `AssertLifeStyleCombinationsAreValid` won't validate their dependencies
 
-**Fix:** Route them through the normal `Register()` path, or explicitly add them to `_registeredComponents`.
+Adding them to `_registeredComponents` breaks `ContainerCloner` — the clone triggers `_registerTransientInstanceTrackers.RunIfFirstCall()` a second time causing duplicate registration. Needs a more careful solution that either filters them out of `RegisteredComponents()` or marks them as infrastructure-internal registrations that the cloner should skip.
 
-### 2. Race condition in `TransientInstanceTracker` — missing disposal guard
+### 2. ~~Race condition in `TransientInstanceTracker` — missing disposal guard~~ FIXED
 
-`Track()` can be called after `Dispose()` starts draining the bag, leaking instances. Add a `_disposed` flag and use `Contract.State.NotDisposed` from Compze.Contracts in `Track()` to reject late arrivals.
+Added `_isDisposed` flag. `Track()` now calls `Contract.State.NotDisposed(_isDisposed, this)`. Both `Dispose()` and `DisposeAsync()` set the flag before draining.
 
-### 3. Lifestyle validation allows Transient/TrackedTransient → Scoped dependency
+### 3. ~~Lifestyle validation allows Transient/TrackedTransient → Scoped dependency~~ FIXED
 
-`IsInvalidLifestyleCombination` returns `false` (always valid) when the consumer is `Transient` or `TrackedTransient`, regardless of the dependency's lifestyle. A transient depending on a scoped service passes validation but blows up at runtime if resolved outside a scope.
+`IsInvalidLifestyleCombination` now returns `true` when consumer is `Transient`/`TrackedTransient` and dependency is `Scoped`.
 
-**Fix:** When consumer is `Transient`/`TrackedTransient` and dependency is `Scoped`, flag it as invalid (or at least require an explicit opt-in).
+### 4. ~~`CreateCloneRegistration` drops allow-flags on delegating path~~ FIXED
 
-### 4. `CreateCloneRegistration` drops allow-flags on delegating path
+The `ShouldDelegateToParentWhenCloning` path in `ComponentRegistration<TService>.CreateCloneRegistration` now passes `AllowSingletonDependent` and `AllowScopedDependent` through.
 
-In `ComponentRegistration<TService>.CreateCloneRegistration`, the `ShouldDelegateToParentWhenCloning` path creates a new singleton-instance registration but does not pass `AllowSingletonDependent` or `AllowScopedDependent`. If the original registration had those flags, the clone silently loses them.
+## Test Coverage Gaps (all fixed)
 
-**Fix:** Pass the flags through on both paths.
+### 5. ~~Duplicate test file~~ FIXED
 
-## Test Coverage Gaps
+Deleted `When_resolving_a_transient.cs`. Kept `When_resolving_an_untracked_transient.cs` (clearer name contrasting with tracked).
 
-### 5. Duplicate test file
+### 6. ~~Missing async disposal tests for tracked transients~~ FIXED
 
-`When_resolving_a_transient.cs` and `When_resolving_an_untracked_transient.cs` test identical code paths with identical assertions. Delete one.
+Added to `When_resolving_a_tracked_transient`:
+- `without_a_scope.disposable_instances_are_disposed_when_container_is_disposed_async`
+- `without_a_scope.async_disposable_only_instances_are_disposed_when_container_is_disposed_async`
+- `within_a_scope.async_disposable_only_instances_are_disposed_when_scope_is_disposed`
 
-### 6. Missing async disposal tests for tracked transients
+### 7. ~~Missing untracked transient dependency tests~~ FIXED
 
-- No `DisposeAsync` test for tracked transients **within a scope** (only sync `IDisposable` tested in scope).
-- No `DisposeAsync` test at the **container level** — all tracked transient tests use `container.Dispose()`, never `await container.DisposeAsync()`. The `TransientInstanceTracker.DisposeAsync` codepath is untested.
+Added to `When_a_transient_depends_on_other_services`:
+- `untracked_transient_can_depend_on_a_singleton`
+- `untracked_transient_can_depend_on_another_untracked_transient`
 
-### 7. Missing untracked transient dependency tests
+### 8. ~~Missing test for transient → scoped dependency behavior~~ FIXED
 
-`When_a_transient_depends_on_other_services` only uses `TrackedTransient`. No equivalent for untracked `Transient` depending on another `Transient`.
-
-### 8. Missing test for transient → scoped dependency behavior
-
-Once bug #3 is fixed, add tests documenting the expected validation behavior when a transient depends on a scoped service.
+Added to `LifestyleValidationTests`:
+- `Should_throw_when_tracked_transient_depends_on_scoped_service`
+- `Should_throw_when_transient_depends_on_scoped_service`

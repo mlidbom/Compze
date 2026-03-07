@@ -112,6 +112,9 @@ public abstract class DependencyInjectionContainerBase : IDependencyInjectionCon
          return dependency.Lifestyle is Lifestyle.TrackedTransient or Lifestyle.Transient
                 && !dependency.AllowScopedDependent;
 
+      if(consumer.Lifestyle is Lifestyle.TrackedTransient or Lifestyle.Transient)
+         return dependency.Lifestyle == Lifestyle.Scoped;
+
       return false;
    }
 }

@@ -62,7 +62,9 @@ public class ComponentRegistration<TService> : ComponentRegistration where TServ
          lifestyle: Lifestyle.Singleton,
          serviceTypes: ServiceTypes,
          instantiationSpec: InstantiationSpec.FromInstance(currentLocator.Resolve<TService>()),
-         dependencyTypes: DependencyTypes
+         dependencyTypes: DependencyTypes,
+         allowSingletonDependent: AllowSingletonDependent,
+         allowScopedDependent: AllowScopedDependent
       );
    }
 

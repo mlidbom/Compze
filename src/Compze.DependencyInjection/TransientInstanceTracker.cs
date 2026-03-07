@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using Compze.Contracts;
 using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 
 namespace Compze.DependencyInjection;
@@ -6,15 +7,18 @@ namespace Compze.DependencyInjection;
 class TransientInstanceTracker : IDisposable, IAsyncDisposable
 {
    readonly ConcurrentBag<object> _trackedInstances = [];
+   bool _isDisposed;
 
    internal void Track(object instance)
    {
+      Contract.State.NotDisposed(_isDisposed, this);
       if(instance is IDisposable or IAsyncDisposable)
          _trackedInstances.Add(instance);
    }
 
    public void Dispose()
    {
+      _isDisposed = true;
       while(_trackedInstances.TryTake(out var instance))
       {
          if(instance is IDisposable disposable)
@@ -26,6 +30,7 @@ class TransientInstanceTracker : IDisposable, IAsyncDisposable
 
    public async ValueTask DisposeAsync()
    {
+      _isDisposed = true;
       while(_trackedInstances.TryTake(out var instance))
       {
          if(instance is IAsyncDisposable asyncDisposable)
