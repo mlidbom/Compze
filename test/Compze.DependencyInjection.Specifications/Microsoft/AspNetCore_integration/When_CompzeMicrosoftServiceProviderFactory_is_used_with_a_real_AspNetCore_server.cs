@@ -1,5 +1,6 @@
 using System.Net;
 using Compze.DependencyInjection.Microsoft;
+using Compze.DependencyInjection.Microsoft.Extensions.Hosting;
 using Compze.Must;
 using Compze.xUnitBDD;
 using Microsoft.AspNetCore.Builder;
@@ -43,7 +44,7 @@ public class When_CompzeMicrosoftServiceProviderFactory_is_used_with_a_real_AspN
 
       var builder = WebApplication.CreateBuilder();
       builder.WebHost.UseUrls("http://127.0.0.1:0");
-      builder.Host.UseServiceProviderFactory(new CompzeMicrosoftServiceProviderFactory(_compzeContainer));
+      new HostableMicrosoftContainer(_compzeContainer).UseAsServiceProviderFor(builder.Host);
 
       _app = builder.Build();
 

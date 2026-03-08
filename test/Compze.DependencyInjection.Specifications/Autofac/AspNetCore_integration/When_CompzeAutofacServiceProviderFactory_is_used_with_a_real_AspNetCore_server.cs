@@ -1,5 +1,6 @@
 using System.Net;
 using Compze.DependencyInjection.Autofac;
+using Compze.DependencyInjection.Autofac.Extensions.Hosting;
 using Compze.Must;
 using Compze.xUnitBDD;
 using Microsoft.AspNetCore.Builder;
@@ -43,7 +44,7 @@ public class When_CompzeAutofacServiceProviderFactory_is_used_with_a_real_AspNet
 
       var builder = WebApplication.CreateBuilder();
       builder.WebHost.UseUrls("http://127.0.0.1:0");
-      builder.Host.UseServiceProviderFactory(new CompzeAutofacServiceProviderFactory(_compzeContainer));
+      new HostableAutofacContainer(_compzeContainer).UseAsServiceProviderFor(builder.Host);
 
       _app = builder.Build();
 
