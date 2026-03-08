@@ -4,4 +4,4 @@
 //Empty/Whitespace lines are ignored
 
 
-SqliteMemory:Microsoft:Newtonsoft:Memory
+SqliteMemory:Microsoft:Newtonsoft:AspNetCore
