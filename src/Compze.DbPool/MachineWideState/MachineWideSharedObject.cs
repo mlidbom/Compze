@@ -23,7 +23,7 @@ public enum CorruptionAction
 public sealed class MachineWideSharedObject<TObject> : MachineWideSharedObject where TObject : class, new()
 {
    readonly TextFile _file;
-   readonly MutexCE _synchronizer;
+   readonly IMutex _synchronizer;
    readonly ISharedObjectSerializer<TObject> _serializer;
    readonly CorruptionAction _corruptionAction;
 
@@ -34,7 +34,7 @@ public sealed class MachineWideSharedObject<TObject> : MachineWideSharedObject w
       _serializer = serializer;
       _corruptionAction = corruptionAction;
       var fileName = PathCE.ReplaceInvalidCharactersWith(name, '_');
-      _synchronizer = MutexCE.GlobalNamed(fileName);
+      _synchronizer = IMutex.GlobalNamed(fileName);
 
       _file = _synchronizer.Locked(() => DataDirectory.Value.GetOrCreateTextFile(fileName, Encoding.UTF8, CreateDefaultJson));
    }

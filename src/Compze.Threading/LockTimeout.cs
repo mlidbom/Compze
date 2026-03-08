@@ -36,6 +36,7 @@ public readonly struct LockTimeout : IEquatable<LockTimeout>
    public static bool operator !=(LockTimeout left, LockTimeout right) => !left.Equals(right);
 
    public static implicit operator TimeSpan(LockTimeout value) => value.Value;
+   public TimeSpan ToTimeSpan() => this;
 
    public override string ToString() => Value.ToString();
 }

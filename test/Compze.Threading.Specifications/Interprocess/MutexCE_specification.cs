@@ -18,11 +18,11 @@ public class MutexCE_specification : UniversalTestBase
    public class GlobalNamed : MutexCE_specification
    {
       [XF] public void throws_ArgumentException_when_name_contains_backslash() =>
-         Invoking(() => MutexCE.GlobalNamed(@"name\with\backslash")).Must().Throw<ArgumentException>();
+         Invoking(() => IMutex.GlobalNamed(@"name\with\backslash")).Must().Throw<ArgumentException>();
 
       [XF] public void succeeds_with_a_simple_name()
       {
-         using var mutex = MutexCE.GlobalNamed("MutexCE_specification.GlobalNamed.simple_name");
+         using var mutex = IMutex.GlobalNamed("MutexCE_specification.GlobalNamed.simple_name");
          mutex.Must().NotBeNull();
       }
    }
@@ -30,11 +30,11 @@ public class MutexCE_specification : UniversalTestBase
    public class LocalNamed : MutexCE_specification
    {
       [XF] public void throws_ArgumentException_when_name_contains_backslash() =>
-         Invoking(() => MutexCE.LocalNamed(@"name\with\backslash")).Must().Throw<ArgumentException>();
+         Invoking(() => IMutex.LocalNamed(@"name\with\backslash")).Must().Throw<ArgumentException>();
 
       [XF] public void succeeds_with_a_simple_name()
       {
-         using var mutex = MutexCE.LocalNamed("MutexCE_specification.LocalNamed.simple_name");
+         using var mutex = IMutex.LocalNamed("MutexCE_specification.LocalNamed.simple_name");
          mutex.Must().NotBeNull();
       }
    }
@@ -43,13 +43,13 @@ public class MutexCE_specification : UniversalTestBase
    {
       [XF] public void returns_the_value_from_the_function()
       {
-         using var mutex = MutexCE.GlobalNamed("MutexCE_specification.Locked_with_Func.returns_value");
+         using var mutex = IMutex.GlobalNamed("MutexCE_specification.Locked_with_Func.returns_value");
          mutex.Locked(() => 42).Must().Be(42);
       }
 
       [XF] public void provides_mutual_exclusion_across_threads()
       {
-         using var mutex = MutexCE.GlobalNamed("MutexCE_specification.Locked_with_Func.mutual_exclusion");
+         using var mutex = IMutex.GlobalNamed("MutexCE_specification.Locked_with_Func.mutual_exclusion");
          var insideLockSection = GatedCodeSection.Closed(WaitTimeout.Seconds(30), "insideLock");
 
          using var runner = TestingTaskRunner.WithTimeout(30.Seconds());
@@ -64,14 +64,14 @@ public class MutexCE_specification : UniversalTestBase
 
       [XF] public void supports_reentrant_locking_from_the_same_thread()
       {
-         using var mutex = MutexCE.GlobalNamed("MutexCE_specification.Locked_with_Func.reentrant");
+         using var mutex = IMutex.GlobalNamed("MutexCE_specification.Locked_with_Func.reentrant");
          var result = mutex.Locked(() => mutex.Locked(() => 42));
          result.Must().Be(42);
       }
 
       [XF] public void propagates_exceptions_from_the_function()
       {
-         using var mutex = MutexCE.GlobalNamed("MutexCE_specification.Locked_with_Func.propagates_exceptions");
+         using var mutex = IMutex.GlobalNamed("MutexCE_specification.Locked_with_Func.propagates_exceptions");
          Invoking(() => mutex.Locked<int>(() => throw new InvalidOperationException("test")))
            .Must().Throw<InvalidOperationException>()
            .Which.Message.Must().Be("test");
@@ -79,7 +79,7 @@ public class MutexCE_specification : UniversalTestBase
 
       [XF] public void releases_the_mutex_even_when_the_function_throws()
       {
-         using var mutex = MutexCE.GlobalNamed("MutexCE_specification.Locked_with_Func.releases_on_throw");
+         using var mutex = IMutex.GlobalNamed("MutexCE_specification.Locked_with_Func.releases_on_throw");
 
          try { mutex.Locked<int>(() => throw new InvalidOperationException()); }
          catch(InvalidOperationException) { }
@@ -97,7 +97,7 @@ public class MutexCE_specification : UniversalTestBase
    {
       [XF] public void executes_the_action()
       {
-         using var mutex = MutexCE.GlobalNamed("MutexCE_specification.Locked_with_Action.executes");
+         using var mutex = IMutex.GlobalNamed("MutexCE_specification.Locked_with_Action.executes");
          var executed = false;
          mutex.Locked(() => executed = true);
          executed.Must().BeTrue();
@@ -108,9 +108,9 @@ public class MutexCE_specification : UniversalTestBase
    {
       [XF] public void does_not_invoke_callback_when_mutex_is_not_abandoned()
       {
-         using var mutex = MutexCE.GlobalNamed("MutexCE_specification.onAbandoned.not_invoked");
          var callbackInvoked = false;
-         mutex.Locked(() => 0, onAbandonedMutex: () => callbackInvoked = true);
+         using var mutex = IMutex.GlobalNamed("MutexCE_specification.onAbandoned.not_invoked", onAbandonedMutex: () => callbackInvoked = true);
+         mutex.Locked(() => 0);
          callbackInvoked.Must().BeFalse();
       }
    }
@@ -119,13 +119,13 @@ public class MutexCE_specification : UniversalTestBase
    {
       [XF] public void can_be_disposed_without_error()
       {
-         var mutex = MutexCE.GlobalNamed("MutexCE_specification.Dispose.no_error");
+         var mutex = IMutex.GlobalNamed("MutexCE_specification.Dispose.no_error");
          mutex.Dispose();
       }
 
       [XF] public void calling_Locked_after_Dispose_throws()
       {
-         var mutex = MutexCE.GlobalNamed("MutexCE_specification.Dispose.Locked_after_Dispose");
+         var mutex = IMutex.GlobalNamed("MutexCE_specification.Dispose.Locked_after_Dispose");
          mutex.Dispose();
          Invoking(() => mutex.Locked(() => 0)).Must().Throw<ObjectDisposedException>();
       }
@@ -136,8 +136,8 @@ public class MutexCE_specification : UniversalTestBase
       [XF] public void synchronize_with_each_other()
       {
          const string name = "MutexCE_specification.SameName.synchronize";
-         using var mutex1 = MutexCE.GlobalNamed(name);
-         using var mutex2 = MutexCE.GlobalNamed(name);
+         using var mutex1 = IMutex.GlobalNamed(name);
+         using var mutex2 = IMutex.GlobalNamed(name);
 
          var insideLockSection = GatedCodeSection.Closed(WaitTimeout.Seconds(30), "insideLock");
 
