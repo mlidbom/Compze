@@ -10,6 +10,9 @@
       <Value>UsePackageReference_Compze_DbPool_MySql = true</Value>
       <Value>UsePackageReference_Compze_DbPool_PostgreSql = true</Value>
       <Value>UsePackageReference_Compze_DbPool_Sqlite = true</Value>
+      <Value>UsePackageReference_Compze_DependencyInjection_Autofac_Extensions_Hosting = true</Value>
+      <Value>UsePackageReference_Compze_DependencyInjection_Extensions_Hosting = true</Value>
+      <Value>UsePackageReference_Compze_DependencyInjection_Microsoft_Extensions_Hosting = true</Value>
       <Value>UsePackageReference_Compze_DocumentDb = true</Value>
       <Value>UsePackageReference_Compze_Hosting = true</Value>
       <Value>UsePackageReference_Compze_Internals_Logging = true</Value>

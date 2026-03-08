@@ -33,7 +33,7 @@ public sealed class MachineWideSharedObject<TObject> : MachineWideSharedObject w
       _serializer = serializer;
       _corruptionAction = corruptionAction;
       var fileName = PathCE.ReplaceInvalidCharactersWith(name, '_');
-      _synchronizer = MutexCE.ForMutexNamed(fileName);
+      _synchronizer = MutexCE.GlobalNamed(fileName);
 
       _file = _synchronizer.Locked(() => DataDirectory.Value.GetOrCreateTextFile(fileName, Encoding.UTF8, CreateDefaultJson));
    }

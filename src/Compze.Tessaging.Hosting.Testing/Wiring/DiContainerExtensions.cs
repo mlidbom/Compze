@@ -8,6 +8,7 @@ using Compze.Tessaging.Teventive.TeventStore.Wiring;
 using Compze.Typermedia.HandlerRegistration;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
+using Compze.DependencyInjection.Autofac;
 using Compze.DependencyInjection.Microsoft;
 using Compze.DependencyInjection.SimpleInjector;
 using Compze.Underscore;
@@ -44,6 +45,7 @@ public static class DiContainerExtensions
       {
          DIContainer.SimpleInjector => new SimpleInjectorDependencyInjectionContainer(new TestingComponentRegistrar()),
          DIContainer.Microsoft      => new MicrosoftDependencyInjectionContainer(new TestingComponentRegistrar()),
+         DIContainer.Autofac        => new AutofacDependencyInjectionContainer(new TestingComponentRegistrar()),
          _                          => throw new ArgumentOutOfRangeException()
       };
 

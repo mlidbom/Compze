@@ -46,7 +46,7 @@ public class TypermediaController : Controller
 
       try
       {
-         var tueryResponse = await RunOutsideScope(() => _executor.ExecuteTuery(tessage)).caf();
+         var tueryResponse = await Task.Run(() => _executor.ExecuteTuery(tessage)).caf();
          var tueryResponseJson = _serializer.SerializeResponse(tueryResponse);
          return Ok(tueryResponseJson);
       }
@@ -64,7 +64,7 @@ public class TypermediaController : Controller
 
       try
       {
-         var tommandResponse = await RunOutsideScope(() => _executor.ExecuteTommandWithResult(tessage)).caf();
+         var tommandResponse = await Task.Run(() => _executor.ExecuteTommandWithResult(tessage)).caf();
          var tommandResponseJson = _serializer.SerializeResponse(tommandResponse);
          return Ok(tommandResponseJson);
       }
@@ -82,7 +82,7 @@ public class TypermediaController : Controller
 
       try
       {
-         await RunOutsideScope(() => { _executor.ExecuteVoidTommand((IAtMostOnceTypermediaTommand)tessage); return (object?)null; }).caf();
+         await Task.Run(() => _executor.ExecuteVoidTommand((IAtMostOnceTypermediaTommand)tessage)).caf();
          return Ok();
       }
       catch(Exception exception)
@@ -104,12 +104,4 @@ public class TypermediaController : Controller
       return (ITessage)_serializer.DeserializeTessage(tessageType, json);
    }
 
-   // The ASP.NET middleware creates a DI scope (via ExecuteInIsolatedScopeAsync) that flows through AsyncLocal.
-   // The executor needs to create its own scope, but nested scopes aren't supported.
-   // SuppressFlow prevents the middleware's scope from flowing into Task.Run.
-   static Task<T> RunOutsideScope<T>(Func<T> action)
-   {
-      using(ExecutionContext.SuppressFlow())
-         return Task.Run(action);
-   }
 }

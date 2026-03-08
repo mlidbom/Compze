@@ -6,4 +6,6 @@ public interface IMicrosoftContainerInternals
 {
    IServiceCollection ServiceCollection { get; }
    IServiceProvider ServiceProvider { get; }
+   void PushExternalScope(IServiceScope scope);
+   void PopExternalScope();
 }

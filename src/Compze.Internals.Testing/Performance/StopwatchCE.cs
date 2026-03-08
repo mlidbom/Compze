@@ -1,6 +1,7 @@
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using Compze.Internals.SystemCE;
+using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 using JetBrains.Annotations;
 
 namespace Compze.Internals.Testing.Performance;
@@ -13,7 +14,7 @@ public static class StopwatchCE
    ///<summary>Measures how long it takes to execute <paramref name="action"/></summary>
    public static TimeSpan TimeExecution([InstantHandle] Action action) => new Stopwatch().TimeExecution(action);
 
-   static async Task<TimeSpan> TimeExecutionAsync([InstantHandle] Func<Task> action) => await new Stopwatch().TimeExecutionAsync(action);
+   static async Task<TimeSpan> TimeExecutionAsync([InstantHandle] Func<Task> action) => await new Stopwatch().TimeExecutionAsync(action).caf();
 
    ///<summary>Measures how long it takes to execute <paramref name="action"/></summary>
    static TimeSpan TimeExecution(this Stopwatch @this, [InstantHandle] Action action)
@@ -29,7 +30,7 @@ public static class StopwatchCE
    {
       @this.Reset();
       @this.Start();
-      await action();
+      await action().caf();
       return @this.Elapsed;
    }
 
@@ -41,9 +42,9 @@ public static class StopwatchCE
                      {
                         for(var i = 0; i < iterations; i++)
                         {
-                           await action();
+                           await action().caf();
                         }
-                     });
+                     }).caf();
 
       return new TimedExecutionSummary(iterations, total);
    }

@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using Compze.Contracts;
 using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 using Compze.DependencyInjection.Abstractions;
@@ -13,7 +14,7 @@ public sealed class MicrosoftDependencyInjectionContainer : DependencyInjectionC
    ServiceProvider? _serviceProvider;
    bool _isDisposed;
 
-   readonly AsyncLocal<IServiceScope?> _scopeCache = new();
+   readonly AsyncLocal<ImmutableStack<IServiceScope>> _scopeStack = new();
 
    public MicrosoftDependencyInjectionContainer(IComponentRegistrar? register = null) : base(register) {}
 
@@ -62,13 +63,16 @@ public sealed class MicrosoftDependencyInjectionContainer : DependencyInjectionC
       }
    }
 
+   ImmutableStack<IServiceScope> ScopeStack => _scopeStack.Value ?? ImmutableStack<IServiceScope>.Empty;
+
    IServiceProvider CurrentProvider()
    {
       Contract.State.NotDisposed(_isDisposed, this);
-      return _scopeCache.Value != null ? _scopeCache.Value.ServiceProvider : _serviceProvider._assert().NotNull();
+      var stack = ScopeStack;
+      return !stack.IsEmpty ? stack.Peek().ServiceProvider : _serviceProvider._assert().NotNull();
    }
 
-   protected override bool IsInScope() => _scopeCache.Value != null;
+   protected override bool IsInScope() => !ScopeStack.IsEmpty;
 
    public TComponent Resolve<TComponent>() where TComponent : class
    {
@@ -96,27 +100,38 @@ public sealed class MicrosoftDependencyInjectionContainer : DependencyInjectionC
 
    IDisposable IServiceLocator.BeginScope()
    {
-      Contract.State.NotDisposed(_isDisposed, this)
-            .Assert(_scopeCache.Value == null, () => "Scope already exists. Nested scopes are not supported.");
+      Contract.State.NotDisposed(_isDisposed, this);
 
-      _scopeCache.Value = CurrentProvider().CreateAsyncScope();
+      var scope = _serviceProvider._assert().NotNull().CreateAsyncScope();
+      _scopeStack.Value = ScopeStack.Push(scope);
 
       return new Disposable(() =>
       {
-         Contract.State.Assert(_scopeCache.Value != null, () => "Attempt to dispose scope from a context that is not within the scope.");
-         _scopeCache.Value.Dispose();
-         _scopeCache.Value = null;
+         var stack = ScopeStack;
+         Contract.State.Assert(!stack.IsEmpty, () => "Attempt to dispose scope from a context that is not within the scope.");
+         stack.Peek().Dispose();
+         _scopeStack.Value = stack.Pop();
       });
    }
 
    IServiceCollection IMicrosoftContainerInternals.ServiceCollection => _services;
    IServiceProvider IMicrosoftContainerInternals.ServiceProvider => _serviceProvider._assert().NotNull();
 
+   void IMicrosoftContainerInternals.PushExternalScope(IServiceScope scope) =>
+      _scopeStack.Value = ScopeStack.Push(scope);
+
+   void IMicrosoftContainerInternals.PopExternalScope()
+   {
+      var stack = ScopeStack;
+      Contract.State.Assert(!stack.IsEmpty, () => "Attempt to pop scope from a context that has no external scope.");
+      _scopeStack.Value = stack.Pop();
+   }
+
    public override void Dispose()
    {
       if(!_isDisposed)
       {
-         Contract.State.Assert(_scopeCache.Value == null, () => "Scopes must be disposed before the container");
+         Contract.State.Assert(ScopeStack.IsEmpty, () => "Scopes must be disposed before the container");
          _isDisposed = true;
          _serviceProvider?.Dispose();
          _serviceProvider = null;
@@ -127,7 +142,7 @@ public sealed class MicrosoftDependencyInjectionContainer : DependencyInjectionC
    {
       if(!_isDisposed)
       {
-         Contract.State.Assert(_scopeCache.Value == null, () => "Scopes must be disposed before the container");
+         Contract.State.Assert(ScopeStack.IsEmpty, () => "Scopes must be disposed before the container");
          _isDisposed = true;
          if(_serviceProvider != null)
          {
