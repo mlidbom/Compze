@@ -33,7 +33,7 @@ public class Startup
 
       _host.Start();
 
-      _client = TestClient.ConnectTo(_endpoint.Address!).GetAwaiter().GetResult();
+      _client = TestClient.ConnectTo(_endpoint.TypermediaAddress!).GetAwaiter().GetResult();
       services.AddHttpContextAccessor();
       services.AddScoped(_ => _client.Navigator);
    }

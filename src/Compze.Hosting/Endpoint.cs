@@ -11,6 +11,7 @@ using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
 using Compze.Contracts;
 using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
+using Compze.Typermedia.Hosting;
 
 namespace Compze.Hosting;
 
@@ -43,10 +44,14 @@ class Endpoint : IEndpoint
    public IServiceLocator ServiceLocator { get; }
 
    public EndPointAddress? Address => _serverComponents?.Inbox.Address;
+   public EndPointAddress? TypermediaAddress => _typermediaTransportServer?.Address is { } uri ? new EndPointAddress(uri) : null;
    readonly ITessagingRouter _tessagingRouter;
    readonly IEndpointRegistry _endpointRegistry;
 
    ServerComponents? _serverComponents;
+#pragma warning disable CA2213 // Disposed by the DI container
+   ITypermediaTransportServer? _typermediaTransportServer;
+#pragma warning restore CA2213
 
    public bool IsRunning => _isListening && _isSending;
    bool _isListening = false;
@@ -61,10 +66,11 @@ class Endpoint : IEndpoint
       RunSanityChecks();
 
       _serverComponents = new ServerComponents(ServiceLocator.Resolve<TommandScheduler>(), ServiceLocator.Resolve<IInbox>(), ServiceLocator.Resolve<IOutbox>());
+      _typermediaTransportServer = ServiceLocator.Resolve<ITypermediaTransportServer>();
 
-      await Task.WhenAll(_serverComponents.Inbox.StartAsync(), _serverComponents.TommandScheduler.StartAsync()).caf();
+      await Task.WhenAll(_serverComponents.Inbox.StartAsync(), _serverComponents.TommandScheduler.StartAsync(), _typermediaTransportServer.StartAsync()).caf();
 
-      this.Log().Info($"Endpoint '{_configuration.Name}' ({Id}) listening at {Address}");
+      this.Log().Info($"Endpoint '{_configuration.Name}' ({Id}) listening at {Address} (tessaging) and {TypermediaAddress} (typermedia)");
    }
 
    public async Task StartSendingComponentsAsync()
@@ -109,6 +115,9 @@ class Endpoint : IEndpoint
          _isListening = false;
          if(_serverComponents != null)
             await _serverComponents.Inbox.StopAsync().caf();
+
+         if(_typermediaTransportServer != null)
+            await _typermediaTransportServer.StopAsync().caf();
 
          _tessagingRouter.Stop();
       }

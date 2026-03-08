@@ -25,7 +25,7 @@ public class TestClient : IAsyncDisposable
       Navigator = serviceLocator.Resolve<IRemoteTypermediaNavigator>();
    }
 
-   public static async Task<TestClient> ConnectTo(EndPointAddress seedAddress)
+   public static async Task<TestClient> ConnectTo(EndPointAddress typermediaAddress)
    {
 #pragma warning disable CA2000 // We are passing this disposable into a constructor of an object we don't own
         var container = TestEnv.DIContainer.CreateWithServiceLocator();
@@ -40,7 +40,7 @@ public class TestClient : IAsyncDisposable
 
       var client = new TestClient(container.ServiceLocator);
       client._typermediaRouter.Start();
-      await client._typermediaRouter.ConnectAsync(seedAddress).caf();
+      await client._typermediaRouter.ConnectAsync(typermediaAddress).caf();
       return client;
    }
 

@@ -61,7 +61,7 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
    {
       await _host.StartAsync();
 
-      _client = await TestClient.ConnectTo(_userManagementDomainEndpoint.Address!);
+      _client = await TestClient.ConnectTo(_userManagementDomainEndpoint.TypermediaAddress!);
 
       _userDomainServiceLocator = _userManagementDomainEndpoint.ServiceLocator;
 

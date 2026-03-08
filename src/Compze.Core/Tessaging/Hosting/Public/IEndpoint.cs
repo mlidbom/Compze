@@ -7,6 +7,7 @@ public interface IEndpoint : IAsyncDisposable
 {
    IServiceLocator ServiceLocator { get; }
    EndPointAddress? Address { get; }
+   EndPointAddress? TypermediaAddress { get; }
    bool IsRunning { get; }
    Task StartListeningComponentsAsync();
    Task StartSendingComponentsAsync();

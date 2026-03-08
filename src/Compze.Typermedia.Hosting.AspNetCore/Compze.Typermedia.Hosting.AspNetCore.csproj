@@ -7,6 +7,7 @@
   </PropertyGroup>
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Seq.Extensions.Logging" Version="9.0.0" />
   </ItemGroup>
   <!-- Compze.Contracts — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' == 'true'">
@@ -28,6 +29,13 @@
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Transport)' != 'true'">
     <ProjectReference Include="..\Compze.Internals.Transport\Compze.Internals.Transport.csproj" />
+  </ItemGroup>
+  <!-- Compze.Internals.Transport.AspNet — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Transport_AspNet)' == 'true'">
+    <PackageReference Include="Compze.Internals.Transport.AspNet" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Transport_AspNet)' != 'true'">
+    <ProjectReference Include="..\Compze.Internals.Transport.AspNet\Compze.Internals.Transport.AspNet.csproj" />
   </ItemGroup>
   <!-- Compze.Typermedia.Hosting — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Typermedia_Hosting)' == 'true'">

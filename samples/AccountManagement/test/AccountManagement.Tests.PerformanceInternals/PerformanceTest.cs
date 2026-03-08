@@ -32,7 +32,7 @@ public class PerformanceTest : UniversalTestBase
       _host = TestingEndpointHost.Create();
       var endpoint = AccountManagementServerDomainBootstrapper.RegisterWith(_host);
       await _host.StartAsync().caf();
-      _client = await TestClient.ConnectTo(endpoint.Address!).caf();
+      _client = await TestClient.ConnectTo(endpoint.TypermediaAddress!).caf();
       _scenarioApi = new AccountScenarioApi(_client.Navigator);
       //Warmup
       StopwatchCE.TimeExecution(() => _scenarioApi.Register.Execute(), iterations: 10);

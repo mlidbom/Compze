@@ -17,7 +17,8 @@ public static class AspNetCoreTransportRegistrar
                .HttpInfrastructureQueryTransport()
                .Register(CompzeControllerActivator.RegisterWith,
                          AspNetInboxTransportServer.RegisterWith,
-                         TypermediaController.RegisterWith,
                          InfrastructureQueryController.RegisterWith,
-                         TessagingController.RegisterWith);
+                         TessagingController.RegisterWith,
+                         TypermediaController.RegisterWith,
+                         TypermediaTransportServer.RegisterWith);
 }

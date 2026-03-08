@@ -36,7 +36,7 @@ public abstract class PerformanceTestBase : UniversalTestBase
    protected override async Task InitializeAsyncInternal()
    {
       await Host.StartAsync().caf();
-      Client = await TestClient.ConnectTo(ServerEndpoint.Address!).caf();
+      Client = await TestClient.ConnectTo(ServerEndpoint.TypermediaAddress!).caf();
    }
 
    protected override async Task DisposeAsyncInternal()

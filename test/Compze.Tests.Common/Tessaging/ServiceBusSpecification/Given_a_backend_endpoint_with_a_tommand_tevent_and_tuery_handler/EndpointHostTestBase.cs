@@ -131,7 +131,7 @@ public abstract class EndpointHostTestBase : UniversalTestBase
    {
       InitializeHost();
       await Host.StartAsync();
-      Client = await TestClient.ConnectTo(BackendEndPoint.Address!);
+      Client = await TestClient.ConnectTo(BackendEndPoint.TypermediaAddress!);
    }
 
    protected void CloseGates() => AllGates.ForEach(gate => gate.Close());
