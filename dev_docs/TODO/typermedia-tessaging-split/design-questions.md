@@ -14,13 +14,15 @@ Transports are fully separate: each paradigm gets its own server, its own port, 
 
 ---
 
-## 2. ~~How does the endpoint builder become paradigm-neutral?~~ DECIDED (two phases)
+## 2. ~~How does the endpoint builder become paradigm-neutral?~~ Phase 1 DONE
 
-**Phase 1 (now): Move `ServerEndpointBuilder`, `IEndpointBuilder`, and `Endpoint` to `Compze.Hosting`.**
+**Phase 1: DONE.** `Compze.Hosting` created. Moved `ServerEndpointBuilder`, `Endpoint`, `EndpointHost`, and `TestingEndpointHostBase` there.
 
-`Compze.Hosting` is a new project that openly references both `Compze.Tessaging` and `Compze.Typermedia`. It's honest about what it does — it combines both paradigms into one endpoint. After this move, `Compze.Tessaging` and `Compze.Typermedia` have zero references to each other.
+`IEndpointBuilder` stays in `Compze.Tessaging.Abstractions` (needed by `Compze.Core`'s `IEndpointHost` and `DocumentDbRegistrar`). The `RegisterTypermediaHandlers` property was removed from the interface — it's now an extension method in `Compze.Hosting.EndpointBuilderTypermediaExtensions` that casts to `ServerEndpointBuilder`. Callers add `using Compze.Hosting;` and call `builder.RegisterTypermediaHandlers()` (method, not property).
 
-**Phase 2 (future): Make `Compze.Hosting` optional.** A user who only wants Typermedia shouldn't need Tessaging as a transitive dependency. This means splitting the builder into paradigm-specific composable pieces. But this is a feature for after the untangling is done — the code will be in the right place to do it.
+`Compze.Tessaging` has zero Typermedia references — all three flex references (`Compze.Typermedia`, `.Client`, `.Hosting`) removed. `Compze.Tessaging.Abstractions` also Typermedia-free. `Compze.DocumentDb` got an explicit `Compze.Typermedia` reference (was previously transitive through `Compze.Tessaging.Abstractions`).
+
+**Phase 2 (future): Make `Compze.Hosting` optional.** A user who only wants Typermedia shouldn't need Tessaging as a transitive dependency. This means splitting the builder into paradigm-specific composable pieces. The code is now in the right place to do it.
 
 ---
 
@@ -88,7 +90,7 @@ Follows the same pattern as Q2: the test infrastructure that bridges both paradi
 | # | Question | Status |
 |---|----------|--------|
 | 1 | Unified or split endpoints? | **DECIDED** — one endpoint, shared container, separate transports |
-| 2 | How does the builder become paradigm-neutral? | **DECIDED** — move to `Compze.Hosting` now; make it optional later |
+| 2 | ~~Builder paradigm-neutral~~ | **Phase 1 DONE** — `Compze.Hosting` created; Phase 2 (optional hosting) future |
 | 3 | ~~Discovery~~ | **DONE** — separate discovery queries |
 | 4 | Transport servers? | **DECIDED** — fully separate servers, separate ports |
 | 5 | ~~Event store bridge~~ | **DONE** — `Compze.Tessaging.Teventive.TeventStore.Typermedia` |
@@ -96,8 +98,8 @@ Follows the same pattern as Q2: the test infrastructure that bridges both paradi
 
 ## Next steps
 
-1. Create `Compze.Hosting` — move `ServerEndpointBuilder`, `IEndpointBuilder`, `Endpoint` there
+1. ~~Create `Compze.Hosting`~~ — **DONE**
 2. Separate transport servers fully (own ports, own lifecycle) — replace `ISupplementalTransportServer` pattern
 3. Move test bridge infrastructure to `Compze.Hosting.Testing`
 
-After these steps, `Compze.Tessaging` and `Compze.Typermedia` have zero references to each other. All cross-paradigm code lives in projects whose names say "I combine things": `Compze.Hosting`, `Compze.Hosting.Testing`, `Compze.Tessaging.Teventive.TeventStore.Typermedia`.
+`Compze.Tessaging` and `Compze.Typermedia` now have zero references to each other. All cross-paradigm code lives in projects whose names say "I combine things": `Compze.Hosting`, `Compze.Hosting.Testing`, `Compze.Tessaging.Teventive.TeventStore.Typermedia`.
