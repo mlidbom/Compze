@@ -4,7 +4,7 @@ namespace Compze.Threading.ResourceAccess.Exceptions;
 
 public class TakeLockTimeoutException(string message) : Exception(message) {}
 
-class TakeMutexLockTimeoutException(LockTimeout timeout, WaitTimeout stackTraceFetchTimeout) : TakeLockTimeoutException($"Timed out awaiting lock after {timeout}. This likely indicates an in-memory deadlock. See below for the stacktrace of the blocking thread as it disposes the lock.")
+class TakeMonitorLockTimeoutException(LockTimeout timeout, WaitTimeout stackTraceFetchTimeout) : TakeLockTimeoutException($"Timed out awaiting lock after {timeout}. This likely indicates an in-memory deadlock. See below for the stacktrace of the blocking thread as it disposes the lock.")
 {
    readonly IAwaitableLock _lock = IAwaitableLock.WithDefaultTimeout();
    readonly WaitTimeout _timeToWaitForOwningThreadStacktrace = stackTraceFetchTimeout;
