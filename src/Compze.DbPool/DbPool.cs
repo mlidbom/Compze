@@ -39,15 +39,15 @@ public class DbPool : StrictlyManagedResourceBase<DbPool>
       MachineWideState = MachineWideSharedObject<DbPoolState>.For(sqlLayer.GetType().GetFullNameCompilable(), MemoryPackDbPoolStateSerializer.Instance, CorruptionAction.ReplaceContentWithDefaultAndThrow);
    }
 
-   readonly IMonitor _monitor = IMonitor.New(LockTimeout.Seconds(30));
+   readonly ILock _lock = ILock.New(LockTimeout.Seconds(30));
    readonly Guid _poolId = Guid.NewGuid();
    IReadOnlyList<DbPoolDatabase> _transientCache = new List<DbPoolDatabase>();
 
    static ILogger _log = CompzeLogger.For<DbPool>();
 
-   public void SetLogLevel(LogLevel logLevel) => _monitor.Locked(() => _log = _log.WithLogLevel(logLevel));
+   public void SetLogLevel(LogLevel logLevel) => _lock.Locked(() => _log = _log.WithLogLevel(logLevel));
 
-   public string ConnectionStringFor(string reservationName) => _monitor.Locked(() =>
+   public string ConnectionStringFor(string reservationName) => _lock.Locked(() =>
    {
       Contract.State.NotDisposed(Disposed, this);
 
@@ -96,7 +96,7 @@ public class DbPool : StrictlyManagedResourceBase<DbPool>
       return _sqlLayer.ConnectionStringFor(reservedDatabase);
    });
 
-   public override void Dispose() => _monitor.Locked(() =>
+   public override void Dispose() => _lock.Locked(() =>
    {
       if(Disposed) return;
       base.Dispose();

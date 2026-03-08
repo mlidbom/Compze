@@ -34,7 +34,7 @@ public class TeventCache : IDisposable, ITeventCache
    class TransactionalOverlay(TeventCache teventCache)
    {
       readonly TeventCache _parent = teventCache;
-      readonly IMonitor _monitor = IMonitor.New();
+      readonly ILock _lock = ILock.New();
 
       readonly IThreadShared<Dictionary<string, Dictionary<TaggregateId, Entry>>> _overlays = IThreadShared.New(new Dictionary<string, Dictionary<TaggregateId, Entry>>());
 
@@ -62,14 +62,14 @@ public class TeventCache : IDisposable, ITeventCache
          }
       }
 
-      internal void Add(TaggregateId taggregateId, Entry entry) => _monitor.Locked(
+      internal void Add(TaggregateId taggregateId, Entry entry) => _lock.Locked(
          () => CurrentOverlay[taggregateId] = entry);
 
       internal bool TryGet(TaggregateId taggregateId, [NotNullWhen(true)]out Entry? entry)
       {
          entry = null;
          if(Transaction.Current == null) return false;
-         using(_monitor.TakeLock())
+         using(_lock.TakeLock())
          {
             return CurrentOverlay.TryGetValue(taggregateId, out entry);
          }

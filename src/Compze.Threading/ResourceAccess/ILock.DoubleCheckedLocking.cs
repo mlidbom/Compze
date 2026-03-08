@@ -2,7 +2,7 @@ namespace Compze.Threading.ResourceAccess;
 
 public static class MonitorCEExtensions
 {
-   public static TResult DoubleCheckedLocking<TResult>(this IMonitor @this, Func<TResult?> tryRead, Action updateOnFailedRead)
+   public static TResult DoubleCheckedLocking<TResult>(this ILock @this, Func<TResult?> tryRead, Action updateOnFailedRead)
       where TResult : class =>
       tryRead() ?? @this.Locked(() =>
       {

@@ -2,7 +2,7 @@ namespace Compze.Threading.ResourceAccess;
 
 public interface IAwaitableThreadShared<out TShared>
 {
-   IAwaitableMonitor Monitor { get; }
+   IAwaitableLock Lock { get; }
 
    //core
    TResult Read<TResult>(Func<TShared, TResult> read, LockTimeout? timeout = null);
@@ -20,26 +20,26 @@ public interface IAwaitableThreadShared<out TShared>
 public interface IAwaitableThreadShared
 {
    public static IAwaitableThreadShared<TShared> New<TShared>(TShared shared, LockTimeout? lockTimeout = null, WaitTimeout? waitTimeout = null) =>
-      new AwaitableThreadShared<TShared>(shared, IAwaitableMonitor.New(lockTimeout, waitTimeout));
+      new AwaitableThreadShared<TShared>(shared, IAwaitableLock.New(lockTimeout, waitTimeout));
 
-   public static IAwaitableThreadShared<TShared> New<TShared>(TShared shared, IAwaitableMonitor monitor) =>
-      new AwaitableThreadShared<TShared>(shared, monitor);
+   public static IAwaitableThreadShared<TShared> New<TShared>(TShared shared, IAwaitableLock @lock) =>
+      new AwaitableThreadShared<TShared>(shared, @lock);
 
-   class AwaitableThreadShared<TShared>(TShared shared, IAwaitableMonitor monitor) : IAwaitableThreadShared<TShared>
+   class AwaitableThreadShared<TShared>(TShared shared, IAwaitableLock @lock) : IAwaitableThreadShared<TShared>
    {
       readonly TShared _shared = shared;
-      public IAwaitableMonitor Monitor { get; } = monitor;
+      public IAwaitableLock Lock { get; } = @lock;
 
       public TResult Read<TResult>(Func<TShared, TResult> read, LockTimeout? timeout = null) =>
-         Monitor.Read(() => read(_shared), timeout);
+         Lock.Read(() => read(_shared), timeout);
 
       public TResult ReadWhen<TResult>(Func<TShared, bool> condition, Func<TShared, TResult> read, WaitTimeout? timeout = null) =>
-         Monitor.ReadWhen(() => condition(_shared), () => read(_shared), timeout);
+         Lock.ReadWhen(() => condition(_shared), () => read(_shared), timeout);
 
       public TResult Update<TResult>(Func<TShared, TResult> update, LockTimeout? timeout = null) =>
-         Monitor.Update(() => update(_shared), timeout);
+         Lock.Update(() => update(_shared), timeout);
 
       public TResult UpdateWhen<TResult>(Func<TShared, bool> condition, Func<TShared, TResult> update, WaitTimeout? timeout = null) =>
-         Monitor.UpdateWhen(() => condition(_shared), () => update(_shared), timeout);
+         Lock.UpdateWhen(() => condition(_shared), () => update(_shared), timeout);
    }
 }

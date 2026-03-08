@@ -31,7 +31,7 @@ class TessagingRouter : ITessagingRouter, IDisposable
             (ITessagesInFlightTracker tessagesInFlightTracker, ITypeMapper typeMapper, IRemotableTessageSerializer serializer, ITransportMessagePoster transportMessagePoster, IInfrastructureQueryTransport infrastructureQueryTransport, Outbox.Outbox.ITessageStorage tessageStorage, ITaskRunner taskRunner, IBackgroundExceptionReporter exceptionReporter)
                => new TessagingRouter(tessagesInFlightTracker, typeMapper, serializer, transportMessagePoster, infrastructureQueryTransport, tessageStorage, taskRunner, exceptionReporter)));
 
-   readonly IMonitor _monitor = IMonitor.New();
+   readonly ILock _lock = ILock.New();
    readonly ITessagesInFlightTracker _tessagesInFlightTracker;
    readonly ITypeMapper _typeMapper;
    readonly IRemotableTessageSerializer _serializer;
@@ -69,7 +69,7 @@ class TessagingRouter : ITessagingRouter, IDisposable
 
       await connection.InitAsync().caf();
 
-      using(_monitor.TakeLock())
+      using(_lock.TakeLock())
       {
          OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _connections, connection.EndpointInformation.Id, connection);
          RegisterRoutes(connection, connection.EndpointInformation.HandledTessageTypes);
@@ -137,7 +137,7 @@ class TessagingRouter : ITessagingRouter, IDisposable
                                  .Select(route => route.Connection)
                                  .ToArray();
 
-      using(_monitor.TakeLock())
+      using(_lock.TakeLock())
       {
          OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _teventSubscriberRouteCache, tevent.GetType(), subscriberConnections);
       }

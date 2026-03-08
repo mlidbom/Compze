@@ -37,7 +37,7 @@ class TypermediaRouter : ITypermediaRouter, IDisposable
    readonly ITypeMapper _typeMapper;
    readonly ITypermediaTransport _transport;
    readonly IInfrastructureQueryTransport _infrastructureQueryTransport;
-   readonly IMonitor _monitor = IMonitor.New();
+   readonly ILock _lock = ILock.New();
 
    bool _running;
    IReadOnlyDictionary<EndpointId, TypermediaConnection> _connections = new Dictionary<EndpointId, TypermediaConnection>();
@@ -50,7 +50,7 @@ class TypermediaRouter : ITypermediaRouter, IDisposable
       var endpointInformation = await _infrastructureQueryTransport.GetAsync(new TypermediaEndpointInformationQuery(), endpointAddress).caf();
       var connection = new TypermediaConnection(endpointAddress, endpointInformation);
 
-      using(_monitor.TakeLock())
+      using(_lock.TakeLock())
       {
          OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _connections, connection.EndpointInformation.Id, connection);
 

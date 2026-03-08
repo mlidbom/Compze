@@ -18,7 +18,7 @@ public class MonitorCE_specification : UniversalTestBase
 {
    [XF] public void When_one_thread_has_UpdateLock_other_thread_is_blocked_until_first_thread_disposes_lock_()
    {
-      var monitor = IAwaitableMonitor.New(LockTimeout.Seconds(1));
+      var monitor = IAwaitableLock.New(LockTimeout.Seconds(1));
 
       var updateLock = monitor.TakeUpdateLock();
 
@@ -44,7 +44,7 @@ public class MonitorCE_specification : UniversalTestBase
 
    [XF] public void Owning_thread_can_reenter_the_lock_and_the_lock_is_only_exited_when_releasing_the_outermost_lock()
    {
-      var monitor = IAwaitableMonitor.New(LockTimeout.Seconds(1));
+      var monitor = IAwaitableLock.New(LockTimeout.Seconds(1));
       using(monitor.TakeUpdateLock())
       {
          using(monitor.TakeUpdateLock()) {}
@@ -58,7 +58,7 @@ public class MonitorCE_specification : UniversalTestBase
 
    public class When_a_thread_waiting_in_TakeUpdateLockWhen_is_interrupted : MonitorCE_specification
    {
-      readonly IAwaitableMonitor _monitor = IAwaitableMonitor.New(LockTimeout.Seconds(30));
+      readonly IAwaitableLock _lock = IAwaitableLock.New(LockTimeout.Seconds(30));
       readonly ManualResetEventSlim _threadIsWaiting = new(false);
       readonly ManualResetEventSlim _threadCompleted = new(false);
       Exception? _thrownException;
@@ -70,7 +70,7 @@ public class MonitorCE_specification : UniversalTestBase
             try
             {
                _threadIsWaiting.Set();
-               _monitor.TakeUpdateLockWhen(() => false);
+               _lock.TakeUpdateLockWhen(() => false);
             }
 #pragma warning disable CA1031
             //We need to capture whatever exception Thread.Interrupt causes to assert on it
@@ -96,7 +96,7 @@ public class MonitorCE_specification : UniversalTestBase
 
       [XF] public void lock_is_released_so_other_threads_can_acquire_it()
       {
-         using(_monitor.TakeUpdateLock(LockTimeout.Seconds(1))) {}
+         using(_lock.TakeUpdateLock(LockTimeout.Seconds(1))) {}
       }
    }
 
@@ -115,11 +115,11 @@ public class MonitorCE_specification : UniversalTestBase
 
       static Exception RunScenario(TimeSpan ownerThreadBlockTime, LockTimeout monitorTimeout, WaitTimeout? timeToWaitForStackTrace = null)
       {
-         var monitor = IAwaitableMonitor.New(monitorTimeout);
+         var monitor = IAwaitableLock.New(monitorTimeout);
          if(timeToWaitForStackTrace.HasValue)
          {
 #pragma warning disable CS0618 // Type or member is obsolete
-            ((IMonitorInternals)monitor).SetTimeToWaitForStackTrace(timeToWaitForStackTrace.Value);
+            ((ILockInternals)monitor).SetTimeToWaitForStackTrace(timeToWaitForStackTrace.Value);
 #pragma warning restore CS0618 // Type or member is obsolete
          }
 

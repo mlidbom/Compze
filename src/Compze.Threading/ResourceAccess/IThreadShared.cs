@@ -2,7 +2,7 @@ namespace Compze.Threading.ResourceAccess;
 
 public interface IThreadShared<out TShared>
 {
-   IMonitor Monitor { get; }
+   ILock Lock { get; }
 
    TResult Locked<TResult>(Func<TShared, TResult> func, LockTimeout? timeout = null);
 
@@ -12,17 +12,17 @@ public interface IThreadShared<out TShared>
 public interface IThreadShared
 {
    public static IThreadShared<TShared> New<TShared>(TShared shared, LockTimeout? lockTimeout = null) =>
-      new ThreadShared<TShared>(shared, IMonitor.New(lockTimeout));
+      new ThreadShared<TShared>(shared, ILock.New(lockTimeout));
 
-   public static IThreadShared<TShared> New<TShared>(TShared shared, IMonitor monitor) =>
-      new ThreadShared<TShared>(shared, monitor);
+   public static IThreadShared<TShared> New<TShared>(TShared shared, ILock @lock) =>
+      new ThreadShared<TShared>(shared, @lock);
 
-   class ThreadShared<TShared>(TShared shared, IMonitor monitor) : IThreadShared<TShared>
+   class ThreadShared<TShared>(TShared shared, ILock @lock) : IThreadShared<TShared>
    {
       readonly TShared _shared = shared;
-      public IMonitor Monitor { get; } = monitor;
+      public ILock Lock { get; } = @lock;
 
       public TResult Locked<TResult>(Func<TShared, TResult> func, LockTimeout? timeout = null) =>
-         Monitor.Locked(() => func(_shared), timeout);
+         Lock.Locked(() => func(_shared), timeout);
    }
 }

@@ -11,11 +11,11 @@ public class InfrastructureQueryExecutor
 {
    readonly IServiceLocator _serviceLocator;
    IReadOnlyDictionary<Type, Func<object, object>> _queryHandlers = new Dictionary<Type, Func<object, object>>();
-   readonly IMonitor _monitor = IMonitor.New();
+   readonly ILock _lock = ILock.New();
 
    InfrastructureQueryExecutor(IServiceLocator serviceLocator) => _serviceLocator = serviceLocator;
 
-   public void RegisterQueryHandler<TQuery, TResult>(Func<TQuery, TResult> handler) where TQuery : IQuery<TResult> => _monitor.Locked(() =>
+   public void RegisterQueryHandler<TQuery, TResult>(Func<TQuery, TResult> handler) where TQuery : IQuery<TResult> => _lock.Locked(() =>
       OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _queryHandlers, typeof(TQuery), query => handler((TQuery)query)!));
 
    public object ExecuteQuery(IMessage query)

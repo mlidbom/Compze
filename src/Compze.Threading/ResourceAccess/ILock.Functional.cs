@@ -1,6 +1,6 @@
 namespace Compze.Threading.ResourceAccess;
 
-public partial interface IMonitor
+public partial interface ILock
 {
    unit Locked(Action action, LockTimeout? timeout = null) => Locked(action.ToFunc(), timeout);
 

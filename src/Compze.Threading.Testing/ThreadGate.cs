@@ -14,16 +14,16 @@ public class ThreadGate : IThreadGate
 
    public bool IsOpen { get; private set; }
 
-   public int Queued => _monitor.Read(() => _queuedThreads.Count);
-   public int Passed => _monitor.Read(() => _passedThreads.Count);
-   public int Requested => _monitor.Read(() => _requestsThreads.Count);
+   public int Queued => _lock.Read(() => _queuedThreads.Count);
+   public int Passed => _lock.Read(() => _passedThreads.Count);
+   public int Requested => _lock.Read(() => _requestsThreads.Count);
 
-   public IReadOnlyList<ThreadSnapshot> PassedThrough => _monitor.Read(() => _passedThreads.ToList());
+   public IReadOnlyList<ThreadSnapshot> PassedThrough => _lock.Read(() => _passedThreads.ToList());
 
    public IThreadGate Open()
    {
       using var _ = LogMethodEntryExit(nameof(Open));
-      _monitor.Update(() =>
+      _lock.Update(() =>
       {
          IsOpen = true;
          _lockOnNextPass = false;
@@ -34,7 +34,7 @@ public class ThreadGate : IThreadGate
    public IThreadGate AwaitLetOneThreadPassThrough()
    {
       using var _ = LogMethodEntryExit(nameof(AwaitLetOneThreadPassThrough));
-      _monitor.Update(() =>
+      _lock.Update(() =>
       {
          State.Assert(!IsOpen);
          IsOpen = true;
@@ -43,15 +43,15 @@ public class ThreadGate : IThreadGate
       return this.AwaitClosed();
    }
 
-   public bool TryAwait(WaitTimeout timeout, Func<bool> condition) => _monitor.TryAwait(condition, timeout);
+   public bool TryAwait(WaitTimeout timeout, Func<bool> condition) => _lock.TryAwait(condition, timeout);
 
-   public IThreadGate SetPostPassThroughAction(Action<ThreadSnapshot> action) => this._mutate(_ => _monitor.Update(() => _postPassThroughAction = action));
+   public IThreadGate SetPostPassThroughAction(Action<ThreadSnapshot> action) => this._mutate(_ => _lock.Update(() => _postPassThroughAction = action));
 
    public IThreadGate ExecuteWithExclusiveLockWhen(WaitTimeout timeout, Func<bool> condition, Action action)
    {
       try
       {
-         using(_monitor.TakeUpdateLockWhen(condition, timeout))
+         using(_lock.TakeUpdateLockWhen(condition, timeout))
          {
             action();
          }
@@ -72,7 +72,7 @@ public class ThreadGate : IThreadGate
    public IThreadGate Close()
    {
       using var _ = LogMethodEntryExit(nameof(Close));
-      _monitor.Update(() => IsOpen = false);
+      _lock.Update(() => IsOpen = false);
       return this;
    }
 
@@ -82,13 +82,13 @@ public class ThreadGate : IThreadGate
 
       var currentThread = new ThreadSnapshot();
 
-      _monitor.Update(() =>
+      _lock.Update(() =>
       {
          _requestsThreads.Add(currentThread);
          _queuedThreads.AddLast(currentThread);
       });
 
-      using(_monitor.TakeUpdateLockWhen(() => IsOpen))
+      using(_lock.TakeUpdateLockWhen(() => IsOpen))
       {
          if(_lockOnNextPass)
          {
@@ -106,22 +106,22 @@ public class ThreadGate : IThreadGate
    ThreadGate(WaitTimeout defaultTimeout, string? name = null)
    {
       Name = name ?? Guid.NewGuid().ToString();
-      _monitor = IAwaitableMonitor.New(LockTimeout.Default, defaultTimeout);
+      _lock = IAwaitableLock.New(LockTimeout.Default, defaultTimeout);
       DefaultTimeout = defaultTimeout;
    }
 
    public override string ToString() => $"{nameof(ThreadGate)} {{ {nameof(Name)}: {Name} {nameof(IsOpen)} : {IsOpen}, {nameof(Queued)}: {Queued}, {nameof(Passed)}: {Passed}, {nameof(Requested)}: {Requested} }}";
 
-   IDisposable LogMethodEntryExit(string method) => _monitor.Update(() =>
+   IDisposable LogMethodEntryExit(string method) => _lock.Update(() =>
    {
       Log($"Thread:{Thread.CurrentThread.GetHashCode()} Entering gate method:{Name}.{method}");
-      return new Disposable(() => _monitor.Update(() => Log($"Thread:{Thread.CurrentThread.GetHashCode()} Exiting gate method:{Name}.{method}")));
+      return new Disposable(() => _lock.Update(() => Log($"Thread:{Thread.CurrentThread.GetHashCode()} Exiting gate method:{Name}.{method}")));
 
       void Log(string tevent) => this.Log().Info($"{tevent} {this}");
    });
 
    string Name { get; }
-   readonly IAwaitableMonitor _monitor;
+   readonly IAwaitableLock _lock;
    bool _lockOnNextPass;
    Action<ThreadSnapshot> _postPassThroughAction = _ => {};
    readonly List<ThreadSnapshot> _requestsThreads = [];

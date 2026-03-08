@@ -12,7 +12,7 @@ public class If_not_disposed_ : DbPoolTestBase
    [PCT] public void Register_uncatchable_exception()
    {
       StrictlyManagedResources.SuppressLoggingWhileExecuting(() =>
-                                                                UncatchableExceptionsGatherer.TestingMonitor.Locked(() =>
+                                                                UncatchableExceptionsGatherer.TestingLock.Locked(() =>
                                                                 {
                                                                    unit.Invoke(() =>
                                                                    {

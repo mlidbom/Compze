@@ -16,7 +16,7 @@ public class ContentionCount_specification : UniversalTestBase
    {
       [XF] public void Is_zero_when_no_contention_occurs()
       {
-         var monitor = IMonitor.New();
+         var monitor = ILock.New();
 
          using(monitor.TakeLock()) {}
          using(monitor.TakeLock()) {}
@@ -26,7 +26,7 @@ public class ContentionCount_specification : UniversalTestBase
 
       [XF] public void Increments_when_another_thread_contends_for_the_lock()
       {
-         var monitor = IMonitor.New(LockTimeout.Seconds(5));
+         var monitor = ILock.New(LockTimeout.Seconds(5));
          using var blockerHoldsLock = new ManualResetEventSlim(false);
          using var contenderIsWaiting = new ManualResetEventSlim(false);
 
@@ -51,7 +51,7 @@ public class ContentionCount_specification : UniversalTestBase
    {
       [XF] public void Is_zero_when_no_contention_occurs()
       {
-         var monitor = IAwaitableMonitor.New();
+         var monitor = IAwaitableLock.New();
 
          using(monitor.TakeUpdateLock()) {}
          using(monitor.TakeReadLock()) {}
@@ -61,7 +61,7 @@ public class ContentionCount_specification : UniversalTestBase
 
       [XF] public void Increments_when_another_thread_contends_for_the_lock()
       {
-         var monitor = IAwaitableMonitor.New(LockTimeout.Seconds(5));
+         var monitor = IAwaitableLock.New(LockTimeout.Seconds(5));
          using var contenderIsWaiting = new ManualResetEventSlim(false);
 
          var blockingLock = monitor.TakeUpdateLock();
@@ -87,18 +87,18 @@ public class ContentionCount_specification : UniversalTestBase
       {
          var shared = IThreadShared.New(new object());
 
-         using(shared.Monitor.TakeLock()) {}
+         using(shared.Lock.TakeLock()) {}
 
-         shared.Monitor.ContentionCount.Must().Be(0L);
+         shared.Lock.ContentionCount.Must().Be(0L);
       }
 
       [XF] public void Shared_instances_with_same_monitor_report_same_ContentionCount()
       {
-         var monitor = IMonitor.New();
+         var monitor = ILock.New();
          var sharedA = IThreadShared.New(new object(), monitor);
          var sharedB = IThreadShared.New(new object(), monitor);
 
-         sharedA.Monitor.Must().Be(sharedB.Monitor);
+         sharedA.Lock.Must().Be(sharedB.Lock);
       }
    }
 
@@ -110,12 +110,12 @@ public class ContentionCount_specification : UniversalTestBase
 
          shared.Update(_ => {});
 
-         shared.Monitor.ContentionCount.Must().Be(0L);
+         shared.Lock.ContentionCount.Must().Be(0L);
       }
 
       [XF] public void Shared_instances_with_same_monitor_share_contention_tracking()
       {
-         var monitor = IAwaitableMonitor.New(LockTimeout.Seconds(5));
+         var monitor = IAwaitableLock.New(LockTimeout.Seconds(5));
          var sharedA = IAwaitableThreadShared.New(new object(), monitor);
          var sharedB = IAwaitableThreadShared.New(new object(), monitor);
          using var contenderIsWaiting = new ManualResetEventSlim(false);
@@ -133,8 +133,8 @@ public class ContentionCount_specification : UniversalTestBase
 
          Task.WaitAll(contenderTask);
 
-         sharedA.Monitor.ContentionCount.Must().BeGreaterThanOrEqualTo(1);
-         sharedA.Monitor.ContentionCount.Must().Be(sharedB.Monitor.ContentionCount);
+         sharedA.Lock.ContentionCount.Must().BeGreaterThanOrEqualTo(1);
+         sharedA.Lock.ContentionCount.Must().Be(sharedB.Lock.ContentionCount);
       }
    }
 }

@@ -1,8 +1,8 @@
 namespace Compze.Threading.ResourceAccess;
 
-public partial interface IMonitor
+public partial interface ILock
 {
-   public static IMonitor New(LockTimeout? timeout = null) => IAwaitableMonitor.NewIMonitor(timeout);
+   public static ILock New(LockTimeout? timeout = null) => IAwaitableLock.NewIMonitor(timeout);
 
    IDisposable TakeLock(LockTimeout? timeout = null);
    long ContentionCount { get; }

@@ -14,9 +14,9 @@ public sealed class TypermediaHandlerRegistry(ITypeMapper typeMapper) : ITyperme
    IReadOnlyDictionary<Type, HandlerWithResultRegistration> _tommandHandlersReturningResults = new Dictionary<Type, HandlerWithResultRegistration>();
    IReadOnlyDictionary<Type, Action<object>> _voidTommandHandlers = new Dictionary<Type, Action<object>>();
 
-   readonly IMonitor _monitor = IMonitor.New();
+   readonly ILock _lock = ILock.New();
 
-   ITypermediaHandlerRegistrar ITypermediaHandlerRegistrar.ForTommand<TTommand>(Action<TTommand> handler) => _monitor.Locked(() =>
+   ITypermediaHandlerRegistrar ITypermediaHandlerRegistrar.ForTommand<TTommand>(Action<TTommand> handler) => _lock.Locked(() =>
    {
       TessageTypeInspector.AssertValid(typeof(TTommand));
 
@@ -24,7 +24,7 @@ public sealed class TypermediaHandlerRegistry(ITypeMapper typeMapper) : ITyperme
       return this;
    });
 
-   ITypermediaHandlerRegistrar ITypermediaHandlerRegistrar.ForTommand<TTommand, TResult>(Func<TTommand, TResult> handler) => _monitor.Locked(() =>
+   ITypermediaHandlerRegistrar ITypermediaHandlerRegistrar.ForTommand<TTommand, TResult>(Func<TTommand, TResult> handler) => _lock.Locked(() =>
    {
       TessageTypeInspector.AssertValid(typeof(TTommand));
 
@@ -32,7 +32,7 @@ public sealed class TypermediaHandlerRegistry(ITypeMapper typeMapper) : ITyperme
       return this;
    });
 
-   ITypermediaHandlerRegistrar ITypermediaHandlerRegistrar.ForTuery<TTuery, TResult>(Func<TTuery, TResult> handler) => _monitor.Locked(() =>
+   ITypermediaHandlerRegistrar ITypermediaHandlerRegistrar.ForTuery<TTuery, TResult>(Func<TTuery, TResult> handler) => _lock.Locked(() =>
    {
       TessageTypeInspector.AssertValid(typeof(TTuery));
 

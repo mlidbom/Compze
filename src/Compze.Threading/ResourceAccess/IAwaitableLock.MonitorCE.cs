@@ -4,11 +4,11 @@ using Compze.Threading.Utilities;
 
 namespace Compze.Threading.ResourceAccess;
 
-public partial interface IAwaitableMonitor
+public partial interface IAwaitableLock
 {
 #pragma warning disable CA1001 //By creating the locks only once in the constructor usages become zero-allocation operations.
 #pragma warning disable CS0618 // Type or member is obsolete
-   private class MonitorCE : IMonitor, IAwaitableMonitor, IMonitorInternals
+   private class LockCE : ILock, IAwaitableLock, ILockInternals
 #pragma warning restore CS0618 // Type or member is obsolete
 #pragma warning restore CA1001
    {
@@ -41,7 +41,7 @@ public partial interface IAwaitableMonitor
 
       WaitTimeout _stackTraceFetchTimeout;
 
-      public MonitorCE(LockTimeout? lockTimeout = null, WaitTimeout? waitTimeout = null)
+      public LockCE(LockTimeout? lockTimeout = null, WaitTimeout? waitTimeout = null)
       {
          LockTimeout = lockTimeout ?? LockTimeout.Default;
          WaitTimeout = waitTimeout ?? WaitTimeout.Default;
