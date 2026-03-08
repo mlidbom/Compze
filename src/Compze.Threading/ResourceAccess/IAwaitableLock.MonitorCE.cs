@@ -114,13 +114,13 @@ public partial interface IAwaitableLock
          _monitor.ReleaseLock();
       }
 
-      IReadOnlyList<TakeLockTimeoutException> _timeOutExceptionsOnOtherThreads = new List<TakeLockTimeoutException>();
+      IReadOnlyList<TakeMutexLockTimeoutException> _timeOutExceptionsOnOtherThreads = new List<TakeMutexLockTimeoutException>();
 
       Exception RegisterTimeoutException()
       {
          lock(_timeoutLock)
          {
-            var exception = new TakeLockTimeoutException(LockTimeout, _stackTraceFetchTimeout);
+            var exception = new TakeMutexLockTimeoutException(LockTimeout, _stackTraceFetchTimeout);
             OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _timeOutExceptionsOnOtherThreads, exception);
             return exception;
          }
@@ -139,7 +139,7 @@ public partial interface IAwaitableLock
                   exception.SetBlockingThreadsDisposeStackTrace(stackTrace);
                }
 
-               Interlocked.Exchange(ref _timeOutExceptionsOnOtherThreads, new List<TakeLockTimeoutException>());
+               Interlocked.Exchange(ref _timeOutExceptionsOnOtherThreads, new List<TakeMutexLockTimeoutException>());
             }
          }
       }
