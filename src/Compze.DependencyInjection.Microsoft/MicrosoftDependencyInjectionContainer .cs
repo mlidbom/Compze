@@ -117,6 +117,16 @@ public sealed class MicrosoftDependencyInjectionContainer : DependencyInjectionC
    IServiceCollection IMicrosoftContainerInternals.ServiceCollection => _services;
    IServiceProvider IMicrosoftContainerInternals.ServiceProvider => _serviceProvider._assert().NotNull();
 
+   void IMicrosoftContainerInternals.PushExternalScope(IServiceScope scope) =>
+      _scopeStack.Value = ScopeStack.Push(scope);
+
+   void IMicrosoftContainerInternals.PopExternalScope()
+   {
+      var stack = ScopeStack;
+      Contract.State.Assert(!stack.IsEmpty, () => "Attempt to pop scope from a context that has no external scope.");
+      _scopeStack.Value = stack.Pop();
+   }
+
    public override void Dispose()
    {
       if(!_isDisposed)
