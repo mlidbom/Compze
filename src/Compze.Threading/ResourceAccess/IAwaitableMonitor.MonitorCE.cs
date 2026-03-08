@@ -160,10 +160,10 @@ public partial interface IAwaitableMonitor
          {
             if(Monitor.TryEnter(_lockObject)) return true; //This will never block, calling it is essentially free and allows us to collect contention statistics
             Interlocked.Increment(ref _contentionCount);
-            return Monitor.TryEnter(_lockObject, timeout.Value);
+            return Monitor.TryEnter(_lockObject, timeout);
          }
 
-         public void ReleaseLockAndReacquireItOnPulseOrTimeout(WaitTimeout timeout) => Monitor.Wait(_lockObject, timeout.Value);
+         public void ReleaseLockAndReacquireItOnPulseOrTimeout(WaitTimeout timeout) => Monitor.Wait(_lockObject, timeout);
 
          public void ReleaseLock() => Monitor.Exit(_lockObject);
 

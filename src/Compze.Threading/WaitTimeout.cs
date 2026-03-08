@@ -38,5 +38,7 @@ public readonly struct WaitTimeout(TimeSpan value) : IEquatable<WaitTimeout>
    public static bool operator ==(WaitTimeout left, WaitTimeout right) => left.Equals(right);
    public static bool operator !=(WaitTimeout left, WaitTimeout right) => !left.Equals(right);
 
+   public static implicit operator TimeSpan(WaitTimeout value) => value.Value;
+
    public override string ToString() => Value.ToString();
 }

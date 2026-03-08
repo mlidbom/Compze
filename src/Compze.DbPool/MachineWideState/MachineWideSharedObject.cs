@@ -2,6 +2,7 @@ using System.Text;
 using Compze.Threading;
 using Compze.Internals.SystemCE;
 using Compze.Internals.SystemCE.IOCE;
+using Compze.Threading.Interprocess;
 
 namespace Compze.DbPool;
 

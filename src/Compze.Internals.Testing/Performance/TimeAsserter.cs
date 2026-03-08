@@ -4,6 +4,7 @@ using Compze.Internals.Logging;
 using Compze.Internals.SystemCE;
 using JetBrains.Annotations;
 using Compze.Threading;
+using Compze.Threading.Interprocess;
 
 namespace Compze.Internals.Testing.Performance;
 
