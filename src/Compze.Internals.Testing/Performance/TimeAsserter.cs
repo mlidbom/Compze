@@ -57,7 +57,7 @@ public static class TimeAsserter
                                                                             [InstantHandle] Func<Task>? tearDownAsync = null) =>
       await InternalExecuteAsync(() => StopwatchCE.TimeExecutionAsync(action, iterations), iterations, maxAverage, maxTotal, description, setup, tearDown, maxTries, tearDownAsync);
 
-   static readonly MutexCE Mutex = MutexCE.ForMutexNamed("Compze.TimeAsserter.PerformanceTestLock");
+   static readonly MutexCE Mutex = MutexCE.GlobalNamed("Compze.TimeAsserter.PerformanceTestLock");
 
    static TReturnValue InternalExecute<TReturnValue>([InstantHandle] Func<TReturnValue> runScenario,
                                                      int iterations,
