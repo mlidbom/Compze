@@ -1,4 +1,5 @@
 using Autofac;
+using Autofac.Core.Lifetime;
 using Compze.Contracts;
 using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 using Compze.DependencyInjection.Abstractions;
@@ -44,10 +45,24 @@ public sealed class AutofacDependencyInjectionContainer : DependencyInjectionCon
          {
             _runVerifications.RunIfFirstCall(AssertLifeStyleCombinationsAreValid);
             _container = _containerBuilder.Build();
+            SubscribeToExternalScopeTracking(_container);
          }
 
          return this;
       }
+   }
+
+   void SubscribeToExternalScopeTracking(ILifetimeScope scope) =>
+      scope.ChildLifetimeScopeBeginning += OnChildLifetimeScopeBeginning;
+
+   void OnChildLifetimeScopeBeginning(object? sender, LifetimeScopeBeginningEventArgs eventArgs)
+   {
+      var childScope = eventArgs.LifetimeScope;
+      var previousScope = _currentScope.Value;
+      _currentScope.Value = childScope;
+
+      SubscribeToExternalScopeTracking(childScope);
+      childScope.CurrentScopeEnding += (_, _) => _currentScope.Value = previousScope;
    }
 
    protected override DependencyInjectionContainerBase CreateEmptyClone() =>
@@ -83,14 +98,7 @@ public sealed class AutofacDependencyInjectionContainer : DependencyInjectionCon
       return CurrentScope().Resolve<TComponent>();
    }
 
-   IDisposable IServiceLocator.BeginScope()
-   {
-      var parentScope = CurrentScope();
-      var childScope = parentScope.BeginLifetimeScope();
-      _currentScope.Value = childScope;
-
-      return new ScopeDisposer(childScope, _currentScope, parentScope == _container ? null : parentScope);
-   }
+   IDisposable IServiceLocator.BeginScope() => new ScopeDisposer(CurrentScope().BeginLifetimeScope());
 
    public override void Dispose() => _container?.Dispose();
    public override async ValueTask DisposeAsync()
@@ -99,16 +107,10 @@ public sealed class AutofacDependencyInjectionContainer : DependencyInjectionCon
          await _container.DisposeAsync().caf();
    }
 
-   sealed class ScopeDisposer(ILifetimeScope scope, AsyncLocal<ILifetimeScope?> currentScope, ILifetimeScope? parentScope) : IDisposable
+   sealed class ScopeDisposer(ILifetimeScope scope) : IDisposable
    {
       readonly ILifetimeScope _scope = scope;
-      readonly AsyncLocal<ILifetimeScope?> _currentScope = currentScope;
-      readonly ILifetimeScope? _parentScope = parentScope;
 
-      public void Dispose()
-      {
-         _scope.Dispose();
-         _currentScope.Value = _parentScope;
-      }
+      public void Dispose() => _scope.Dispose();
    }
 }
