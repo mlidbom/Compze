@@ -72,6 +72,7 @@ public sealed class AutofacDependencyInjectionContainer : DependencyInjectionCon
       [typeof(IDependencyInjectionContainer), typeof(IServiceLocator), typeof(AutofacDependencyInjectionContainer)];
 
    ILifetimeScope IAutofacContainerInternals.LifetimeScope => _container._assert().NotNull();
+   ContainerBuilder IAutofacContainerInternals.ContainerBuilder => _containerBuilder;
 
    ILifetimeScope CurrentScope() => _currentScope.Value ?? _container._assert().NotNull();
 
