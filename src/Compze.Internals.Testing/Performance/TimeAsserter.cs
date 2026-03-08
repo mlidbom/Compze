@@ -55,7 +55,7 @@ public static class TimeAsserter
                                                                             [InstantHandle] Action? setup = null,
                                                                             [InstantHandle] Action? tearDown = null,
                                                                             [InstantHandle] Func<Task>? tearDownAsync = null) =>
-      await InternalExecuteAsync(() => StopwatchCE.TimeExecutionAsync(action, iterations), iterations, maxAverage, maxTotal, description, setup, tearDown, maxTries, tearDownAsync);
+      await InternalExecuteAsync(() => StopwatchCE.TimeExecutionAsync(action, iterations), iterations, maxAverage, maxTotal, description, setup, tearDown, maxTries, tearDownAsync).caf();
 
    static readonly MutexCE Mutex = MutexCE.GlobalNamed("Compze.TimeAsserter.PerformanceTestLock");
 
@@ -84,7 +84,7 @@ public static class TimeAsserter
             tearDownAsync().WaitUnwrappingException();
          else
             tearDown?.Invoke();
-      }, maxTries)));
+      }, maxTries))).caf();
 
    static TReturnValue RunScenarioWithRetries<TReturnValue>([InstantHandle] Func<TReturnValue> runScenario,
                                                             int iterations,

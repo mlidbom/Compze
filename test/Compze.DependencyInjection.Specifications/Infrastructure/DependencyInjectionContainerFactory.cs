@@ -26,9 +26,11 @@ static class DependencyInjectionContainerFactory
    public static (IDependencyInjectionContainer Container, IHostableContainer Hostable) CreateHostableContainer() =>
       CurrentDIContainer switch
       {
+#pragma warning disable CA2000
          DIContainer.Microsoft => CreateHostablePair(new MicrosoftDependencyInjectionContainer()),
          DIContainer.Autofac   => CreateHostablePair(new AutofacDependencyInjectionContainer()),
          _                     => throw new ArgumentOutOfRangeException()
+#pragma warning restore CA2000
       };
 
    static (IDependencyInjectionContainer, IHostableContainer) CreateHostablePair(MicrosoftDependencyInjectionContainer container) =>

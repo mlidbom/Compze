@@ -8,7 +8,7 @@ namespace Compze.DependencyInjection;
 
 public abstract class DependencyInjectionContainerBase : IDependencyInjectionContainer
 {
-   static readonly ILogger Log = CompzeLogger.For(typeof(DependencyInjectionContainerBase));
+   static readonly ILogger Log = CompzeLogger.For<DependencyInjectionContainerBase>();
 
    readonly List<ComponentRegistration> _registeredComponents = [];
    readonly Dictionary<Type, ComponentRegistration> _transientRegistrations = new();

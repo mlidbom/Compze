@@ -28,10 +28,10 @@ class CompzeMicrosoftServiceProviderFactory(MicrosoftDependencyInjectionContaine
    public IServiceProvider CreateServiceProvider(IServiceCollection services)
    {
       var innerProvider = services.BuildServiceProvider(new ServiceProviderOptions
-      {
-         ValidateOnBuild = true,
-         ValidateScopes = true
-      });
+                                                        {
+                                                           ValidateOnBuild = true,
+                                                           ValidateScopes = true
+                                                        });
 
       return new CompzeMicrosoftServiceProvider(_compzeContainer, innerProvider);
    }
@@ -58,10 +58,12 @@ class CompzeMicrosoftServiceProvider(MicrosoftDependencyInjectionContainer compz
 
    public IServiceScope CreateScope()
    {
+#pragma warning disable CA2000
       var innerScope = _innerProvider.CreateScope();
       var internals = (IMicrosoftContainerInternals)_compzeContainer;
       internals.PushExternalScope(innerScope);
       return new CompzeMicrosoftServiceScope(this, innerScope, internals);
+#pragma warning restore CA2000
    }
 
    public void Dispose() => _innerProvider.Dispose();

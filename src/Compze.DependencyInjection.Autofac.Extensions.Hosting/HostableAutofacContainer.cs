@@ -40,7 +40,9 @@ class CompzeAutofacServiceProvider(AutofacDependencyInjectionContainer container
    public object? GetService(Type serviceType)
    {
       try { return _container.Resolve(serviceType); }
+#pragma warning disable CA1031
       catch { return null; }
+#pragma warning restore CA1031
    }
 
    public object GetRequiredService(Type serviceType) => _container.Resolve(serviceType);

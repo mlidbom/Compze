@@ -4,6 +4,7 @@ using Compze.Must;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+#pragma warning disable CA2234
 
 namespace Compze.DependencyInjection.Specifications.AspNetCore_integration;
 
