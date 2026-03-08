@@ -1,36 +1,26 @@
 # Design Questions — Typermedia/Tessaging Separation
 
-These are the questions that must be answered before the real separation work can proceed. Without answers, the only thing that can be done is cosmetic file moves — which don't change the dependency graph.
-
-Ordered by importance: each question's answer constrains the answers to subsequent questions.
+Questions that needed answers before the separation work could proceed. Most are now decided.
 
 ---
 
-## 1. Is an endpoint one thing or two?
+## 1. ~~Is an endpoint one thing or two?~~ DECIDED
 
-Today a single `EndpointId` + `EndPointAddress` hosts both a Tessaging pipeline (inbox, outbox, event store) and a Typermedia pipeline (handler executor, handler registry). `ServerEndpointBuilder` wires both into one DI container. `IEndpointBuilder` exposes both `RegisterTessagingHandlers` and `RegisterTypermediaHandlers`.
+**Decision: One endpoint, shared container, separate transports.**
 
-**The question**: Should an endpoint remain a single concept that can host multiple paradigm pipelines? Or should a Typermedia endpoint and a Tessaging endpoint be fully independent — separate `EndpointId`, separate address, separate DI container, separate lifecycle?
+Most services will use both Typermedia and Tessaging. Sharing a DI container is practical — both paradigms access the same domain services. But the endpoint is neither Tessaging nor Typermedia — it's a host for both.
 
-**Why it matters**: This is the foundation. If endpoints stay unified, we need a plugin mechanism inside the endpoint. If they split, each paradigm owns its entire stack and the shared infrastructure shrinks to just "how do you run multiple endpoints in one process."
-
-**Trade-off**: Unified endpoints are simpler operationally (one address, one container, one startup). Split endpoints are simpler architecturally (zero shared wiring) but mean two containers, two addresses, two discovery entries per logical service.
+Transports are fully separate: each paradigm gets its own server, its own port, its own lifecycle. No shared address. This applies to both in-memory and ASP.NET transports.
 
 ---
 
-## 2. How does the endpoint builder become paradigm-neutral?
+## 2. ~~How does the endpoint builder become paradigm-neutral?~~ DECIDED (two phases)
 
-`IEndpointBuilder` currently hard-codes both registrar properties. `ServerEndpointBuilder` hard-codes creation of both handler registries, calls `TypermediaHandlerExecutor.RegisterWith()`, registers `InProcessTypermediaNavigator`, etc.
+**Phase 1 (now): Move `ServerEndpointBuilder`, `IEndpointBuilder`, and `Endpoint` to `Compze.Hosting`.**
 
-**The question**: What replaces the hard-coded wiring? Options include:
+`Compze.Hosting` is a new project that openly references both `Compze.Tessaging` and `Compze.Typermedia`. It's honest about what it does — it combines both paradigms into one endpoint. After this move, `Compze.Tessaging` and `Compze.Typermedia` have zero references to each other.
 
-- **(a) Callback/contributor pattern**: `IEndpointBuilder` exposes only `Container` and `Configuration`. Each paradigm provides an `IEndpointContributor` (or similar) that receives the builder and registers its own infrastructure. User code calls `builder.UseTypermedia(setup => ...)` and `builder.UseTessaging(setup => ...)` as extension methods.
-
-- **(b) Separate builders entirely**: `TypermediaEndpointBuilder` and `TessagingEndpointBuilder` are independent classes. No shared `IEndpointBuilder`. User code creates whichever they need (or both, if the answer to question 1 is "unified").
-
-- **(c) Something else?**
-
-**Why it matters**: This determines whether `Compze.Tessaging` can stop referencing `Compze.Typermedia` entirely. Until the builder is paradigm-neutral, every endpoint hard-wires both systems.
+**Phase 2 (future): Make `Compze.Hosting` optional.** A user who only wants Typermedia shouldn't need Tessaging as a transitive dependency. This means splitting the builder into paradigm-specific composable pieces. But this is a feature for after the untangling is done — the code will be in the right place to do it.
 
 ---
 
@@ -49,22 +39,17 @@ Each paradigm now advertises its own handled types independently via its own inf
 
 ---
 
-## 4. ~~How do transport servers become paradigm-neutral?~~ RESOLVED (Memory transport)
+## 4. ~~How do transport servers become paradigm-neutral?~~ DECIDED
 
-**Decision: hybrid of (a) and (b) — supplemental transport servers with a shared interface.**
+**Decision: Fully separate servers, separate ports.**
 
-For the memory transport:
+Each paradigm owns its entire transport stack — its own server, its own port/address, its own lifecycle. No shared address, no shared `ISupplementalTransportServer`, no address-passing from one paradigm to another.
 
-- `ISupplementalTransportServer` (new, in `Compze.Core`) defines `StartAsync(EndPointAddress)` / `StopAsync()` — a paradigm-neutral lifecycle interface
-- `MemoryTypermediaTransportServer` (in `Compze.Typermedia.Client`) binds/unbinds `TypermediaHandlerExecutor` to `InMemoryTypermediaNetwork`
-- `MemoryInfrastructureTransportServer` (in `Compze.Internals.Transport`) binds/unbinds `InfrastructureQueryExecutor` to `InMemoryInfrastructureNetwork`
-- `MemoryInboxTransportServer` now only binds the Tessaging inbox — no Typermedia imports
-- `Endpoint` resolves `IReadOnlyList<ISupplementalTransportServer>` and starts/stops them alongside the inbox, passing the inbox address
-- The transport registrar (`TestingComponentRegistrar.Transport`) assembles the list
+This applies to both memory and ASP.NET transports. For ASP.NET, Typermedia starts its own `WebApplication` on its own port instead of sharing the Tessaging `WebApplication`.
 
-**Result**: `MemoryInboxTransportServer` no longer references `Compze.Typermedia.Client` or `Compze.Typermedia.Hosting`.
+**Note**: The current codebase has an intermediate `ISupplementalTransportServer` pattern where `Endpoint` starts supplemental servers alongside the inbox. This should be replaced with the fully separate approach as part of the implementation.
 
-**Still open for ASP.NET**: `AspNetInboxTransportServer` still hard-codes all controller assemblies. The same `ISupplementalTransportServer` pattern could work — each paradigm registers its own ASP.NET controller parts — but this is deferred to the hosting design question (#2).
+**Trade-off**: Two servers per endpoint means more startup cost in tests. This is an optimization problem with known solutions (lazy startup, start only what the test needs) — not a reason to keep the transports entangled.
 
 ---
 
@@ -94,19 +79,25 @@ No circular dependencies. `Compze.Tessaging.Teventive.TeventStore` is now Typerm
 
 `TestClient` creates an `ITypermediaRouter`, discovers endpoints, and exposes `IRemoteTypermediaNavigator`. The testing component registrars wire up both Tessaging and Typermedia transports (memory or HTTP). `DiContainerExtensions` registers Typermedia handler registries for tests.
 
-**The question**: Should tests that exercise Typermedia use Typermedia-specific test infrastructure, or should there be one unified test harness?
-
-This likely follows naturally from the answers to questions 1-4 — if the builder is paradigm-neutral, the test wiring follows. But it's worth calling out because `TestClient` is a direct consumer of `ITypermediaRouter` and `IRemoteTypermediaNavigator`, and it lives in a Tessaging project.
+Follows the same pattern as Q2: the test infrastructure that bridges both paradigms moves to `Compze.Hosting.Testing` (or similar). `TestClient` lives there because it's a consumer of both paradigms. Tessaging-only and Typermedia-only test infrastructure stays in their respective projects.
 
 ---
 
 ## Summary
 
-| # | Question | Status | Key constraint |
-|---|----------|--------|---------------|
-| 1 | Unified or split endpoints? | **OPEN** | Determines whether we need a plugin mechanism or separate stacks |
-| 2 | How does the builder become paradigm-neutral? | **OPEN** | Needed to break `Tessaging.Abstractions → Typermedia` |
-| 3 | ~~How does discovery become paradigm-neutral?~~ | **RESOLVED** — separate discovery queries | `TessageTypesInternal` no longer references `ITypermediaHandlerRegistry` |
-| 4 | ~~How do transport servers become paradigm-neutral?~~ | **RESOLVED** (memory) — supplemental transport servers | `MemoryInboxTransportServer` is now pure Tessaging; ASP.NET still open |
-| 5 | ~~Where does the event store bridge live?~~ | **RESOLVED** — `Compze.Tessaging.Teventive.TeventStore.Typermedia` | `TyperMediaApi/EventStore/` gone from `Compze.Tessaging` |
-| 6 | What about test infrastructure? | **OPEN** | Follows from 1-2, but `TestClient` needs a home |
+| # | Question | Status |
+|---|----------|--------|
+| 1 | Unified or split endpoints? | **DECIDED** — one endpoint, shared container, separate transports |
+| 2 | How does the builder become paradigm-neutral? | **DECIDED** — move to `Compze.Hosting` now; make it optional later |
+| 3 | ~~Discovery~~ | **DONE** — separate discovery queries |
+| 4 | Transport servers? | **DECIDED** — fully separate servers, separate ports |
+| 5 | ~~Event store bridge~~ | **DONE** — `Compze.Tessaging.Teventive.TeventStore.Typermedia` |
+| 6 | Test infrastructure? | **DECIDED** — follows Q2: bridge code moves to `Compze.Hosting.Testing` |
+
+## Next steps
+
+1. Create `Compze.Hosting` — move `ServerEndpointBuilder`, `IEndpointBuilder`, `Endpoint` there
+2. Separate transport servers fully (own ports, own lifecycle) — replace `ISupplementalTransportServer` pattern
+3. Move test bridge infrastructure to `Compze.Hosting.Testing`
+
+After these steps, `Compze.Tessaging` and `Compze.Typermedia` have zero references to each other. All cross-paradigm code lives in projects whose names say "I combine things": `Compze.Hosting`, `Compze.Hosting.Testing`, `Compze.Tessaging.Teventive.TeventStore.Typermedia`.
