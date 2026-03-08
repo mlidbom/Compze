@@ -1,6 +1,6 @@
 using Compze.Abstractions.Tessaging.Hosting.Public;
-using Compze.Tessaging.Abstractions.Tessaging.Hosting.Public;
 using Compze.Core.Tessaging.Hosting.Public;
+using Compze.Tessaging.Abstractions.Tessaging.Hosting.Public;
 using Compze.Tessaging.Implementation.Transport;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Contracts;
@@ -8,7 +8,7 @@ using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
 
-namespace Compze.Tessaging.Hosting;
+namespace Compze.Hosting;
 
 public class EndpointHost : IEndpointHost
 {

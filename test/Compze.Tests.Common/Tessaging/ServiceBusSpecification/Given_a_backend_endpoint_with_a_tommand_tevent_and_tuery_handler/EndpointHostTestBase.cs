@@ -5,6 +5,7 @@ using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.LinqCE;
 using Compze.Abstractions.Tessaging.Hosting.Public;
+using Compze.Hosting;
 using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Tessaging.Hosting.Testing.Wiring;
@@ -95,7 +96,7 @@ public abstract class EndpointHostTestBase : UniversalTestBase
                    .ForTevent((IMyExactlyOnceTevent _) => TeventHandlerThreadGate.AwaitPassThrough())
                    .ForTevent((IMyTaggregateTevent _) => MyLocalTaggregateTeventHandlerThreadGate.AwaitPassThrough());
 
-            builder.RegisterTypermediaHandlers
+            builder.RegisterTypermediaHandlers()
                    .ForTommand((MyCreateTaggregateTommand tommand, IInProcessTypermediaNavigator navigator) =>
                     {
                        MyCreateTaggregateTommandHandlerThreadGate.AwaitPassThrough();

@@ -1,4 +1,5 @@
 using Compze.Abstractions.Tessaging.Hosting.Public;
+using Compze.Hosting;
 using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Tessaging.Hosting.Testing.Tessaging;
@@ -26,7 +27,7 @@ public abstract class PerformanceTestBase : UniversalTestBase
          new EndpointId(Guid.Parse("DDD0A67C-D2A2-4197-9AF8-38B6AEDF8FA7")),
          builder =>
          {
-            builder.RegisterTypermediaHandlers
+            builder.RegisterTypermediaHandlers()
                    .ForTuery((MyRemoteTuery _) => new MyTueryResult())
                    .ForTuery((MyLocalStrictlyLocalTuery _) => new MyTueryResult());
          });

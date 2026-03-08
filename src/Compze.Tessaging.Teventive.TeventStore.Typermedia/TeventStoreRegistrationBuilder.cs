@@ -1,4 +1,5 @@
 using Compze.Abstractions.Tessaging.Hosting.Public;
+using Compze.Hosting;
 using Compze.Tessaging.Abstractions.Tessaging.Hosting.Public;
 using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Core.Tessaging.Teventive.Public;
@@ -14,7 +15,7 @@ public static class TeventStoreTypermediaRegistrar
    public static TeventStoreRegistrationBuilder RegisterTeventStore(this IEndpointBuilder @this)
    {
       @this.Container.Register().TeventStore(@this.Configuration.ConnectionStringName);
-      return new TeventStoreRegistrationBuilder(@this.RegisterTypermediaHandlers);
+      return new TeventStoreRegistrationBuilder(@this.RegisterTypermediaHandlers());
    }
 }
 

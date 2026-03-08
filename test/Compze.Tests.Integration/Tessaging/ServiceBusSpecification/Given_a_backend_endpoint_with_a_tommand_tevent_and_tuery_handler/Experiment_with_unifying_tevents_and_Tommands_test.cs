@@ -1,4 +1,5 @@
 using Compze.Abstractions.Tessaging.Hosting.Public;
+using Compze.Hosting;
 using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
@@ -46,7 +47,7 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
             builder.RegisterTessagingHandlers
                    .ForTevent((IUserTevent.UserRegistered _) => {});
 
-            builder.RegisterTypermediaHandlers
+            builder.RegisterTypermediaHandlers()
                    .ForTuery((GetUserTuery tuery, ITeventStoreReader teventReader) => new UserResource(teventReader.GetHistory(tuery.UserId)))
                    .ForTommandWithResult((UserRegistrarTommand.RegisterUserTypermediaTommand typermediaTommand, ITeventStoreUpdater store) =>
                     {

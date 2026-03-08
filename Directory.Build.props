@@ -42,6 +42,8 @@
     <UsePackageReference_Compze_DependencyInjection_SimpleInjector Condition="'$(UsePackageReference_Compze_DependencyInjection_SimpleInjector)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.DependencyInjection.SimpleInjector.csproj|'))">true</UsePackageReference_Compze_DependencyInjection_SimpleInjector>
     <!-- Compze.DocumentDb -->
     <UsePackageReference_Compze_DocumentDb Condition="'$(UsePackageReference_Compze_DocumentDb)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.DocumentDb.csproj|'))">true</UsePackageReference_Compze_DocumentDb>
+    <!-- Compze.Hosting -->
+    <UsePackageReference_Compze_Hosting Condition="'$(UsePackageReference_Compze_Hosting)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Hosting.csproj|'))">true</UsePackageReference_Compze_Hosting>
     <!-- Compze.Internals.Logging -->
     <UsePackageReference_Compze_Internals_Logging Condition="'$(UsePackageReference_Compze_Internals_Logging)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Internals.Logging.csproj|'))">true</UsePackageReference_Compze_Internals_Logging>
     <!-- Compze.Internals.Logging.Serilog -->

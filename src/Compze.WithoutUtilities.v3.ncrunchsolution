@@ -11,6 +11,7 @@
       <Value>UsePackageReference_Compze_DependencyInjection = true</Value>
       <Value>UsePackageReference_Compze_DependencyInjection_Microsoft = true</Value>
       <Value>UsePackageReference_Compze_DependencyInjection_SimpleInjector = true</Value>
+      <Value>UsePackageReference_Compze_Hosting = true</Value>
       <Value>UsePackageReference_Compze_Internals_Logging = true</Value>
       <Value>UsePackageReference_Compze_Internals_Logging_Serilog = true</Value>
       <Value>UsePackageReference_Compze_Internals_SystemCE = true</Value>

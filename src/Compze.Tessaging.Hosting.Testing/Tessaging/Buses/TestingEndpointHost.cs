@@ -1,4 +1,5 @@
 using Compze.Abstractions.Tessaging.Hosting.Public;
+using Compze.Hosting;
 using Compze.Tessaging.Abstractions.Tessaging.Hosting.Public;
 using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;

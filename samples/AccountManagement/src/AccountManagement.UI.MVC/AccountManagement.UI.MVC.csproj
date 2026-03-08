@@ -29,6 +29,13 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection)' != 'true'">
     <ProjectReference Include="..\..\..\..\src\Compze.DependencyInjection\Compze.DependencyInjection.csproj" />
   </ItemGroup>
+  <!-- Compze.Hosting — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Hosting)' == 'true'">
+    <PackageReference Include="Compze.Hosting" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Hosting)' != 'true'">
+    <ProjectReference Include="..\..\..\..\src\Compze.Hosting\Compze.Hosting.csproj" />
+  </ItemGroup>
   <!-- Compze.Internals.Logging — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Logging)' == 'true'">
     <PackageReference Include="Compze.Internals.Logging" Version="*-*" />

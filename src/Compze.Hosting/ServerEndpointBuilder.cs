@@ -1,14 +1,15 @@
 using Compze.Abstractions.Configuration.Internal;
 using Compze.Abstractions.Refactoring.Naming.Internal.Implementation;
 using Compze.Abstractions.Tessaging.Hosting.Public;
-using Compze.Tessaging.Abstractions.Tessaging.Hosting.Public;
 using Compze.Core.Tessaging.Hosting.Public;
+using Compze.Tessaging.Abstractions.Tessaging.Hosting.Public;
 using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 using Compze.Typermedia;
 using Compze.Typermedia.Client;
 using Compze.Typermedia.Hosting;
 using Compze.Tessaging.Configuration;
+using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Implementation;
 using Compze.Tessaging.Implementation.Abstractions;
 using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
@@ -28,7 +29,7 @@ using Compze.Typermedia.HandlerRegistration;
 
 // ReSharper disable ImplicitlyCapturedClosure it is very much intentional :)
 
-namespace Compze.Tessaging.Hosting;
+namespace Compze.Hosting;
 
 class ServerEndpointBuilder : IEndpointBuilder, IAsyncDisposable, IDisposable
 {

@@ -3,7 +3,7 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <Version>0.1.0-alpha.1</Version>
-    <Description>Document database for the Compze framework: typed document storage, reading, updating, and bulk operations.</Description>
+    <Description>Combined hosting for Tessaging and Typermedia endpoints — shared DI container, separate transports.</Description>
   </PropertyGroup>
   <!-- Compze.Abstractions — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Abstractions)' == 'true'">
@@ -19,12 +19,26 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' != 'true'">
     <ProjectReference Include="..\Compze.Contracts\Compze.Contracts.csproj" />
   </ItemGroup>
+  <!-- Compze.Core — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Core)' == 'true'">
+    <PackageReference Include="Compze.Core" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Core)' != 'true'">
+    <ProjectReference Include="..\Compze.Core\Compze.Core.csproj" />
+  </ItemGroup>
   <!-- Compze.DependencyInjection — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection)' == 'true'">
     <PackageReference Include="Compze.DependencyInjection" Version="*-*" />
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection)' != 'true'">
     <ProjectReference Include="..\Compze.DependencyInjection\Compze.DependencyInjection.csproj" />
+  </ItemGroup>
+  <!-- Compze.Internals.Logging — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Logging)' == 'true'">
+    <PackageReference Include="Compze.Internals.Logging" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Logging)' != 'true'">
+    <ProjectReference Include="..\Compze.Internals.Logging\Compze.Internals.Logging.csproj" />
   </ItemGroup>
   <!-- Compze.Internals.SystemCE — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_SystemCE)' == 'true'">
@@ -39,6 +53,20 @@
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_SystemCE_Core)' != 'true'">
     <ProjectReference Include="..\Compze.Internals.SystemCE.Core\Compze.Internals.SystemCE.Core.csproj" />
+  </ItemGroup>
+  <!-- Compze.Internals.Transport — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Transport)' == 'true'">
+    <PackageReference Include="Compze.Internals.Transport" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Transport)' != 'true'">
+    <ProjectReference Include="..\Compze.Internals.Transport\Compze.Internals.Transport.csproj" />
+  </ItemGroup>
+  <!-- Compze.Tessaging — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging)' == 'true'">
+    <PackageReference Include="Compze.Tessaging" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging)' != 'true'">
+    <ProjectReference Include="..\Compze.Tessaging\Compze.Tessaging.csproj" />
   </ItemGroup>
   <!-- Compze.Tessaging.Abstractions — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_Abstractions)' == 'true'">
@@ -60,5 +88,33 @@
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_Typermedia)' != 'true'">
     <ProjectReference Include="..\Compze.Typermedia\Compze.Typermedia.csproj" />
+  </ItemGroup>
+  <!-- Compze.Typermedia.Client — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Typermedia_Client)' == 'true'">
+    <PackageReference Include="Compze.Typermedia.Client" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Typermedia_Client)' != 'true'">
+    <ProjectReference Include="..\Compze.Typermedia.Client\Compze.Typermedia.Client.csproj" />
+  </ItemGroup>
+  <!-- Compze.Typermedia.Hosting — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Typermedia_Hosting)' == 'true'">
+    <PackageReference Include="Compze.Typermedia.Hosting" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Typermedia_Hosting)' != 'true'">
+    <ProjectReference Include="..\Compze.Typermedia.Hosting\Compze.Typermedia.Hosting.csproj" />
+  </ItemGroup>
+  <!-- Compze.Underscore — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Underscore)' == 'true'">
+    <PackageReference Include="Compze.Underscore" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Underscore)' != 'true'">
+    <ProjectReference Include="..\Compze.Underscore\Compze.Underscore.csproj" />
+  </ItemGroup>
+  <!-- Compze.Unit — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Unit)' == 'true'">
+    <PackageReference Include="Compze.Unit" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Unit)' != 'true'">
+    <ProjectReference Include="..\Compze.Unit\Compze.Unit.csproj" />
   </ItemGroup>
 </Project>

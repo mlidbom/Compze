@@ -8,7 +8,7 @@ using Compze.Tessaging.Implementation.Transport.Client.Routing.Abstractions;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Threading;
 
-namespace Compze.Tessaging.Hosting;
+namespace Compze.Hosting;
 
 public abstract class TestingEndpointHostBase : EndpointHost, ITestingEndpointHost, IEndpointRegistry
 {

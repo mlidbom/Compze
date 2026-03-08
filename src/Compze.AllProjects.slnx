@@ -184,4 +184,5 @@
   <Project Path="Compze.Internals.Transport/Compze.Internals.Transport.csproj" />
   <Project Path="Compze.Internals.Transport.AspNet/Compze.Internals.Transport.AspNet.csproj" />
   <Project Path="Compze.Tessaging.Teventive.TeventStore.Typermedia/Compze.Tessaging.Teventive.TeventStore.Typermedia.csproj" />
+  <Project Path="Compze.Hosting/Compze.Hosting.csproj" />
 </Solution>

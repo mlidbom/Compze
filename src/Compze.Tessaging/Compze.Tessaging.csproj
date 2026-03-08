@@ -6,6 +6,9 @@
     <Description>Messaging infrastructure for the Compze framework including command, query, and event handling.</Description>
   </PropertyGroup>
   <ItemGroup>
+    <InternalsVisibleTo Include="Compze.Hosting" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="9.0.9" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.9" />
   </ItemGroup>
@@ -85,27 +88,6 @@
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_Threading)' != 'true'">
     <ProjectReference Include="..\Compze.Threading\Compze.Threading.csproj" />
-  </ItemGroup>
-  <!-- Compze.Typermedia — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Typermedia)' == 'true'">
-    <PackageReference Include="Compze.Typermedia" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Typermedia)' != 'true'">
-    <ProjectReference Include="..\Compze.Typermedia\Compze.Typermedia.csproj" />
-  </ItemGroup>
-  <!-- Compze.Typermedia.Client — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Typermedia_Client)' == 'true'">
-    <PackageReference Include="Compze.Typermedia.Client" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Typermedia_Client)' != 'true'">
-    <ProjectReference Include="..\Compze.Typermedia.Client\Compze.Typermedia.Client.csproj" />
-  </ItemGroup>
-  <!-- Compze.Typermedia.Hosting — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Typermedia_Hosting)' == 'true'">
-    <PackageReference Include="Compze.Typermedia.Hosting" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Typermedia_Hosting)' != 'true'">
-    <ProjectReference Include="..\Compze.Typermedia.Hosting\Compze.Typermedia.Hosting.csproj" />
   </ItemGroup>
   <!-- Compze.Underscore — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Underscore)' == 'true'">

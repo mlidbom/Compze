@@ -5,6 +5,7 @@ using AccountManagement.UI.QueryModels;
 using Compze.DocumentDb.Wiring;
 using Compze.Core.DocumentDb.Wiring;
 using Compze.Abstractions.Tessaging.Hosting.Public;
+using Compze.Hosting;
 using Compze.Tessaging.Abstractions.Tessaging.Hosting.Public;
 using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Tessaging.Teventive.TeventStore.Wiring;
@@ -31,20 +32,20 @@ public static class AccountManagementServerDomainBootstrapper
              .HandleTaggregate<Account, IAccountTevent>();
 
       builder.RegisterDocumentDb()
-             .HandleDocumentType<TeventStoreApi.TueryApi.TaggregateLink<Account>>(builder.RegisterTypermediaHandlers)
-             .HandleDocumentType<AccountStatistics.SingletonStatisticsQueryModel>(builder.RegisterTypermediaHandlers);
+             .HandleDocumentType<TeventStoreApi.TueryApi.TaggregateLink<Account>>(builder.RegisterTypermediaHandlers())
+             .HandleDocumentType<AccountStatistics.SingletonStatisticsQueryModel>(builder.RegisterTypermediaHandlers());
    }
 
    static void RegisterHandlers(IEndpointBuilder builder)
    {
-      UIAdapterLayer.Register(builder.RegisterTypermediaHandlers);
+      UIAdapterLayer.Register(builder.RegisterTypermediaHandlers());
 
       //todo: This should not be called synchronously. We should have it in a separate consistency boundary so that it does not slow down every operation on an account.
       AccountStatistics.Register(builder);
 
-      AccountQueryModel.Api.RegisterHandlers(builder.RegisterTypermediaHandlers);
+      AccountQueryModel.Api.RegisterHandlers(builder.RegisterTypermediaHandlers());
 
       EmailToAccountMapper.UpdateMappingWhenEmailChanges(builder.RegisterTessagingHandlers);
-      EmailToAccountMapper.TryGetAccountByEmail(builder.RegisterTypermediaHandlers);
+      EmailToAccountMapper.TryGetAccountByEmail(builder.RegisterTypermediaHandlers());
    }
 }

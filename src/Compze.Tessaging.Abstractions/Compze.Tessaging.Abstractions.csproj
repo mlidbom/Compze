@@ -26,11 +26,4 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_SystemCE)' != 'true'">
     <ProjectReference Include="..\Compze.Internals.SystemCE\Compze.Internals.SystemCE.csproj" />
   </ItemGroup>
-  <!-- Compze.Typermedia — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Typermedia)' == 'true'">
-    <PackageReference Include="Compze.Typermedia" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Typermedia)' != 'true'">
-    <ProjectReference Include="..\Compze.Typermedia\Compze.Typermedia.csproj" />
-  </ItemGroup>
 </Project>
