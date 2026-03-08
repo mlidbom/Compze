@@ -6,8 +6,9 @@ public class ComponentRegistrationWithoutInstantiationSpec<TService> where TServ
 {
    protected IReadOnlyList<Type> ServiceTypes { get; }
    readonly Lifestyle _lifestyle;
-   protected bool AllowSingletonDependent { get; set; }
-   protected bool AllowScopedDependent { get; set; }
+
+   protected bool SingletonDependentAllowed { get; set; }
+   protected bool ScopedDependentAllowed { get; set; }
 
    internal ComponentRegistrationWithoutInstantiationSpec(Lifestyle lifestyle, IEnumerable<Type> serviceTypes)
    {
@@ -26,8 +27,8 @@ public class ComponentRegistrationWithoutInstantiationSpec<TService> where TServ
                                                  InstantiationSpec.FromFactoryMethod(serviceLocator => factoryMethod(serviceLocator),
                                                                                      implementationType),
                                                  dependencyTypes,
-                                                 AllowSingletonDependent,
-                                                 AllowScopedDependent);
+                                                 SingletonDependentAllowed,
+                                                 ScopedDependentAllowed);
    }
 
    protected void AssertImplementsAllServices(Type implementationType)
