@@ -4,7 +4,7 @@ namespace Compze.Typermedia.Client;
 
 public interface ITypermediaRouter : ITypermediaRouting
 {
-    Task DiscoverAndConnectAsync(EndPointAddress seedAddress);
+    Task ConnectAsync(EndPointAddress endpointAddress);
     void Start();
     void Stop();
 }

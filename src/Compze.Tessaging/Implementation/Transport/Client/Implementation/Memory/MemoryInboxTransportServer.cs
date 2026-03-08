@@ -1,7 +1,6 @@
 using Compze.Abstractions.Tessaging.Hosting.Public;
 using Compze.Core.Tessaging.Transport.Internal;
 using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
-using Compze.Internals.Transport;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Contracts;
 using Compze.DependencyInjection;
@@ -9,8 +8,7 @@ using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
 using Compze.Internals.SystemCE.CollectionsCE.GenericCE;
 using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
-using Compze.Typermedia.Client;
-using Compze.Typermedia.Hosting;
+using Compze.Internals.Transport;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Memory;
 
@@ -24,15 +22,11 @@ public static class MemoryInboxTransportServerRegistrar
 class MemoryInboxTransportServer : IInboxTransportServer
 {
    readonly LazyCE<IInbox> _inbox;
-   readonly LazyCE<TypermediaHandlerExecutor> _typermediaExecutor;
-   readonly LazyCE<InfrastructureQueryExecutor> _infrastructureQueryExecutor;
    static readonly Dictionary<EndpointId, int> EndpointIdToInstanceCounts = new();
 
    public MemoryInboxTransportServer(EndpointId endpointId, IServiceLocator serviceLocator)
    {
       _inbox = new LazyCE<IInbox>(serviceLocator.Resolve<IInbox>);
-      _typermediaExecutor = new LazyCE<TypermediaHandlerExecutor>(serviceLocator.Resolve<TypermediaHandlerExecutor>);
-      _infrastructureQueryExecutor = new LazyCE<InfrastructureQueryExecutor>(serviceLocator.Resolve<InfrastructureQueryExecutor>);
 
       lock(EndpointIdToInstanceCounts)
       {
@@ -53,8 +47,6 @@ class MemoryInboxTransportServer : IInboxTransportServer
       Running = true;
       var endPointAddress = new EndPointAddress(Address);
       InMemoryTransportNetwork.BindServerToAddress(endPointAddress, this);
-      InMemoryTypermediaNetwork.BindExecutor(endPointAddress, _typermediaExecutor.Value);
-      InMemoryInfrastructureNetwork.BindExecutor(endPointAddress, _infrastructureQueryExecutor.Value);
       return Task.CompletedTask;
    }
 
@@ -64,8 +56,6 @@ class MemoryInboxTransportServer : IInboxTransportServer
       Running = false;
       var endPointAddress = new EndPointAddress(Address);
       InMemoryTransportNetwork.UnBindAddress(endPointAddress);
-      InMemoryTypermediaNetwork.UnBind(endPointAddress);
-      InMemoryInfrastructureNetwork.UnBind(endPointAddress);
       return Task.CompletedTask;
    }
 

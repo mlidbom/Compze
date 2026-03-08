@@ -16,11 +16,12 @@ namespace Compze.Tessaging.Hosting;
 
 class Endpoint : IEndpoint
 {
-   class ServerComponents(TommandScheduler tommandScheduler, IInbox inbox, IOutbox outbox) : IDisposable
+   class ServerComponents(TommandScheduler tommandScheduler, IInbox inbox, IOutbox outbox, IReadOnlyList<ISupplementalTransportServer> supplementalTransportServers) : IDisposable
    {
       internal readonly TommandScheduler TommandScheduler = tommandScheduler;
       internal readonly IInbox Inbox = inbox;
       internal readonly IOutbox Outbox = outbox;
+      internal readonly IReadOnlyList<ISupplementalTransportServer> SupplementalTransportServers = supplementalTransportServers;
 
       public void Dispose() => TommandScheduler.Dispose();
    }
@@ -60,9 +61,14 @@ class Endpoint : IEndpoint
 
       RunSanityChecks();
 
-      _serverComponents = new ServerComponents(ServiceLocator.Resolve<TommandScheduler>(), ServiceLocator.Resolve<IInbox>(), ServiceLocator.Resolve<IOutbox>());
+      _serverComponents = new ServerComponents(ServiceLocator.Resolve<TommandScheduler>(), ServiceLocator.Resolve<IInbox>(), ServiceLocator.Resolve<IOutbox>(), ServiceLocator.Resolve<IReadOnlyList<ISupplementalTransportServer>>());
 
       await Task.WhenAll(_serverComponents.Inbox.StartAsync(), _serverComponents.TommandScheduler.StartAsync()).caf();
+
+      var address = _serverComponents.Inbox.Address;
+      foreach(var supplementalServer in _serverComponents.SupplementalTransportServers)
+         await supplementalServer.StartAsync(address).caf();
+
       this.Log().Info($"Endpoint '{_configuration.Name}' ({Id}) listening at {Address}");
    }
 
@@ -108,6 +114,8 @@ class Endpoint : IEndpoint
          _isListening = false;
          if(_serverComponents != null)
          {
+            foreach(var supplementalServer in _serverComponents.SupplementalTransportServers)
+               await supplementalServer.StopAsync().caf();
             await _serverComponents.Inbox.StopAsync().caf();
          }
 

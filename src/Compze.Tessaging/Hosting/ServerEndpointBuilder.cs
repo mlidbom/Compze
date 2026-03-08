@@ -6,6 +6,7 @@ using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 using Compze.Typermedia;
+using Compze.Typermedia.Client;
 using Compze.Typermedia.Hosting;
 using Compze.Tessaging.Configuration;
 using Compze.Tessaging.Implementation;
@@ -63,6 +64,7 @@ class ServerEndpointBuilder : IEndpointBuilder, IAsyncDisposable, IDisposable
       var serviceLocator = new LazyCE<IServiceLocator>(() => Container.ServiceLocator);
       var registrar = new InfrastructureQueryRegistrarWithDependencyInjectionSupport(executor, serviceLocator);
       TessageTypesInternal.RegisterInfrastructureQueryHandlers(registrar);
+      TypermediaInfrastructureQueryRegistration.RegisterQueryHandlers(registrar);
    }
 
    public ServerEndpointBuilder(IEndpointHost host, ITessagesInFlightTracker globalStateTracker, IDependencyInjectionContainer container, EndpointConfiguration configuration)

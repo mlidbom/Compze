@@ -82,6 +82,8 @@
     <UsePackageReference_Compze_Tessaging_Hosting_Testing Condition="'$(UsePackageReference_Compze_Tessaging_Hosting_Testing)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Tessaging.Hosting.Testing.csproj|'))">true</UsePackageReference_Compze_Tessaging_Hosting_Testing>
     <!-- Compze.Tessaging.Teventive.TeventStore -->
     <UsePackageReference_Compze_Tessaging_Teventive_TeventStore Condition="'$(UsePackageReference_Compze_Tessaging_Teventive_TeventStore)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Tessaging.Teventive.TeventStore.csproj|'))">true</UsePackageReference_Compze_Tessaging_Teventive_TeventStore>
+    <!-- Compze.Tessaging.Teventive.TeventStore.Typermedia -->
+    <UsePackageReference_Compze_Tessaging_Teventive_TeventStore_Typermedia Condition="'$(UsePackageReference_Compze_Tessaging_Teventive_TeventStore_Typermedia)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Tessaging.Teventive.TeventStore.Typermedia.csproj|'))">true</UsePackageReference_Compze_Tessaging_Teventive_TeventStore_Typermedia>
     <!-- Compze.Tests.Infrastructure -->
     <UsePackageReference_Compze_Tests_Infrastructure Condition="'$(UsePackageReference_Compze_Tests_Infrastructure)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Tests.Infrastructure.csproj|'))">true</UsePackageReference_Compze_Tests_Infrastructure>
     <!-- Compze.Threading -->

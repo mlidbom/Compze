@@ -3,14 +3,12 @@
 // ReSharper disable MemberHidesStaticFromOuterClass
 
 using Compze.Abstractions.Refactoring.Naming.Internal;
-using Compze.Abstractions.Refactoring.Naming.Internal.Implementation;
 using Compze.Abstractions.Tessaging.Hosting.Public;
 using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
 using Compze.Tessaging.Implementation.Transport.Client.Routing.Abstractions;
 using Compze.Internals.Transport;
-using Compze.Typermedia.HandlerRegistration;
 
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
@@ -25,8 +23,8 @@ public static class TessageTypesInternal
 
    internal static void RegisterInfrastructureQueryHandlers(InfrastructureQueryRegistrarWithDependencyInjectionSupport registrar)
    {
-      registrar.ForQuery((EndpointInformationQuery _, TypeMapper _, ITessageHandlerRegistry tessagingRegistry, ITypermediaHandlerRegistry typermediaRegistry, EndpointConfiguration configuration) =>
-                            new EndpointInformation(tessagingRegistry.HandledRemoteTessageTypeIds().Concat(typermediaRegistry.HandledRemoteTypermediaTypeIds()), configuration));
+      registrar.ForQuery((EndpointInformationQuery _, ITessageHandlerRegistry tessagingRegistry, EndpointConfiguration configuration) =>
+                            new EndpointInformation(tessagingRegistry.HandledRemoteTessageTypeIds(), configuration));
 
       registrar.ForQuery((NetworkTopologyQuery _, IEndpointRegistry endpointRegistry) =>
                             new NetworkTopology(endpointRegistry.ServerEndpointAddresses));

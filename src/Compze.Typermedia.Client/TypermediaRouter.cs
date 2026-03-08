@@ -1,6 +1,6 @@
 using Compze.Abstractions.Refactoring.Naming.Internal;
-using Compze.Abstractions.Tessaging.Public;
 using Compze.Abstractions.Tessaging.Hosting.Public;
+using Compze.Abstractions.Tessaging.Public;
 using Compze.Core.Tessaging.Transport.Internal;
 using Compze.Contracts;
 using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
@@ -44,27 +44,19 @@ class TypermediaRouter : ITypermediaRouter, IDisposable
    IReadOnlyDictionary<Type, TypermediaConnection> _tommandHandlerRoutes = new Dictionary<Type, TypermediaConnection>();
    IReadOnlyDictionary<Type, TypermediaConnection> _tueryHandlerRoutes = new Dictionary<Type, TypermediaConnection>();
 
-   async Task ConnectAsync(EndPointAddress remoteEndpointAddress)
+   public async Task ConnectAsync(EndPointAddress endpointAddress)
    {
       AssertRunning();
-      var endpointInformation = await _infrastructureQueryTransport.GetAsync(new EndpointInformationQuery(), remoteEndpointAddress).caf();
-      var connection = new TypermediaConnection(remoteEndpointAddress, endpointInformation);
+      var endpointInformation = await _infrastructureQueryTransport.GetAsync(new TypermediaEndpointInformationQuery(), endpointAddress).caf();
+      var connection = new TypermediaConnection(endpointAddress, endpointInformation);
 
       using(_monitor.TakeLock())
       {
          OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _connections, connection.EndpointInformation.Id, connection);
 
          //urgent: we can't have routes be discovered at startup based on the assumption that all endpoints are up...
-         RegisterRoutes(connection, connection.EndpointInformation.HandledTessageTypes);
+         RegisterRoutes(connection, connection.EndpointInformation.HandledTypermediaTypes);
       }
-   }
-
-   public async Task DiscoverAndConnectAsync(EndPointAddress seedAddress)
-   {
-      AssertRunning();
-      var topology = await _infrastructureQueryTransport.GetAsync(new NetworkTopologyQuery(), seedAddress).caf();
-
-      await Task.WhenAll(topology.EndpointAddresses.Select(ConnectAsync)).caf();
    }
 
    void RegisterRoutes(TypermediaConnection connection, ISet<TypeId> handledTypeIds)

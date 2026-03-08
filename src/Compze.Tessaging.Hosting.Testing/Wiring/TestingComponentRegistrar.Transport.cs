@@ -1,8 +1,10 @@
 using Compze.Abstractions.Wiring.Testing.Internal;
+using Compze.Core.Tessaging.Transport.Internal;
 using Compze.Tessaging.Hosting.AspNetCore.Wiring;
 using Compze.Tessaging.Implementation.Transport.Client.Implementation.Memory;
 using Compze.Typermedia.Client;
 using Compze.Internals.Transport;
+using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE;
 using Compze.Internals.Testing;
@@ -24,9 +26,18 @@ static class TestingComponentRegistrarTransport
             return @this.MemoryTransport()
                         .MemoryApiTransportClient()
                         .MemoryTypermediaTransport()
-                        .MemoryInfrastructureQueryTransport();
+                        .MemoryInfrastructureQueryTransport()
+                        .MemoryTypermediaTransportServer()
+                        .MemoryInfrastructureTransportServer()
+                        .MemorySupplementalTransportServers();
          default:
             throw new ArgumentOutOfRangeException();
       }
    }
+
+   static IComponentRegistrar MemorySupplementalTransportServers(this IComponentRegistrar registrar) =>
+      registrar.Register(
+         Singleton.For<IReadOnlyList<ISupplementalTransportServer>>()
+                  .CreatedBy((MemoryTypermediaTransportServer typermedia, MemoryInfrastructureTransportServer infrastructure)
+                                => (IReadOnlyList<ISupplementalTransportServer>)[typermedia, infrastructure]));
 }

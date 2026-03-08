@@ -37,6 +37,7 @@
       <Value>UsePackageReference_Compze_Tessaging_Hosting_AspNetCore = true</Value>
       <Value>UsePackageReference_Compze_Tessaging_Hosting_Testing = true</Value>
       <Value>UsePackageReference_Compze_Tessaging_Teventive_TeventStore = true</Value>
+      <Value>UsePackageReference_Compze_Tessaging_Teventive_TeventStore_Typermedia = true</Value>
       <Value>UsePackageReference_Compze_Tests_Infrastructure = true</Value>
       <Value>UsePackageReference_Compze_Threading = true</Value>
       <Value>UsePackageReference_Compze_Threading_Testing = true</Value>

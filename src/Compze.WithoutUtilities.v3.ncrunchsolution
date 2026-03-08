@@ -20,6 +20,7 @@
       <Value>UsePackageReference_Compze_Internals_Transport = true</Value>
       <Value>UsePackageReference_Compze_Internals_Transport_AspNet = true</Value>
       <Value>UsePackageReference_Compze_Must = true</Value>
+      <Value>UsePackageReference_Compze_Tessaging_Teventive_TeventStore_Typermedia = true</Value>
       <Value>UsePackageReference_Compze_Threading = true</Value>
       <Value>UsePackageReference_Compze_Threading_Testing = true</Value>
       <Value>UsePackageReference_Compze_Typermedia = true</Value>

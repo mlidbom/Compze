@@ -40,7 +40,7 @@ public class TestClient : IAsyncDisposable
 
       var client = new TestClient(container.ServiceLocator);
       client._typermediaRouter.Start();
-      await client._typermediaRouter.DiscoverAndConnectAsync(seedAddress).caf();
+      await client._typermediaRouter.ConnectAsync(seedAddress).caf();
       return client;
    }
 
