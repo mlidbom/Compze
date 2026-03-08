@@ -4,14 +4,23 @@ After extracting `Compze.Typermedia.Client` and `Compze.Typermedia.Hosting.AspNe
 
 ## Summary
 
-| Tessaging project | References | Files | Root cause |
-|---|---|---|---|
-| **Tessaging.Abstractions** | Typermedia | 1 | `IEndpointBuilder` exposes `TypermediaHandlerRegistrarWithDependencyInjectionSupport` |
-| **Tessaging** | Typermedia, Typermedia.Client, Typermedia.Hosting | 4 | Dual-pipeline setup, transport binding, discovery, event store API bridge |
-| **Tessaging.Hosting.AspNetCore** | Typermedia.Client, Typermedia.Hosting.AspNetCore | 2 | Shared ASP.NET host registers both controllers and transports |
-| **Tessaging.Hosting.Testing** | Typermedia, Typermedia.Client | 4 | Test wiring mirrors production; `TestClient` is Typermedia-aware |
+| Tessaging project | References | Files | Root cause | Status |
+|---|---|---|---|---|
+| **Tessaging.Abstractions** | Typermedia | 1 | `IEndpointBuilder` exposes `TypermediaHandlerRegistrarWithDependencyInjectionSupport` | Open — hosting question |
+| **Tessaging** | Typermedia, Typermedia.Client, Typermedia.Hosting | 1 | `ServerEndpointBuilder` dual-pipeline setup | Open — hosting question |
+| **Tessaging.Hosting.AspNetCore** | Typermedia.Client, Typermedia.Hosting.AspNetCore | 2 | Shared ASP.NET host registers both controllers and transports | Open — hosting question |
+| **Tessaging.Hosting.Testing** | Typermedia, Typermedia.Client | 4 | Test wiring mirrors production; `TestClient` is Typermedia-aware | Open — follows hosting |
 
 `Compze.Tessaging.Teventive.TeventStore` has **no** Typermedia references — it is already fully decoupled.
+
+### Resolved coupling (removed in this iteration)
+
+| Former coupling | Resolution |
+|---|---|
+| `_TessageTypesInternal` → `ITypermediaHandlerRegistry` | Separate discovery: `TypermediaEndpointInformationQuery` in `Compze.Typermedia.Client` |
+| `MemoryInboxTransportServer` → `TypermediaHandlerExecutor` + `InMemoryTypermediaNetwork` | `MemoryTypermediaTransportServer` + `ISupplementalTransportServer` |
+| `MemoryInboxTransportServer` → `InfrastructureQueryExecutor` + `InMemoryInfrastructureNetwork` | `MemoryInfrastructureTransportServer` + `ISupplementalTransportServer` |
+| `TyperMediaApi/EventStore/` in `Compze.Tessaging` | Moved to `Compze.Tessaging.Teventive.TeventStore.Typermedia` bridge project |
 
 ---
 
@@ -58,57 +67,23 @@ The `ServerEndpointBuilder` is the implementation of `IEndpointBuilder`. It:
 
 **To remove**: Extract Typermedia wiring into a pluggable component. For example, define an `IEndpointPipelineContributor` interface with a `Configure(IComponentRegistrar)` method that `ServerEndpointBuilder` calls without knowing what it registers. Typermedia would provide its own contributor.
 
-### 2b. MemoryInboxTransportServer.cs — Transport binding
+### 2b. ~~MemoryInboxTransportServer.cs~~ — RESOLVED
 
-**References**: `Compze.Typermedia.Client` (for `InMemoryTypermediaNetwork`), `Compze.Typermedia.Hosting` (for `TypermediaHandlerExecutor`)
+**Previously**: `MemoryInboxTransportServer` resolved `TypermediaHandlerExecutor` and `InfrastructureQueryExecutor` and bound them into `InMemoryTypermediaNetwork` and `InMemoryInfrastructureNetwork` during start/stop.
 
-When the memory transport server starts, it binds executors into three separate in-memory networks:
-```csharp
-InMemoryTransportNetwork.BindServerToAddress(address, this);           // Tessaging
-InMemoryTypermediaNetwork.BindExecutor(address, _typermediaExecutor);  // Typermedia ← here
-InMemoryInfrastructureNetwork.BindExecutor(address, _infrastructureQueryExecutor);
-```
+**Now**: `MemoryInboxTransportServer` only binds the Tessaging inbox. Typermedia and infrastructure bindings are handled by `MemoryTypermediaTransportServer` and `MemoryInfrastructureTransportServer` respectively, started via `ISupplementalTransportServer` from `Endpoint`.
 
-On stop, it unbinds all three.
+### 2c. ~~_TessageTypesInternal.cs~~ — RESOLVED
 
-**Why it exists**: One transport server hosts all three message paradigms. It must bind/unbind all of them.
+**Previously**: `RegisterInfrastructureQueryHandlers` resolved both `ITessageHandlerRegistry` and `ITypermediaHandlerRegistry` to build a combined `EndpointInformation` response.
 
-**To remove**: Make binding pluggable. The transport server could accept a list of `ITransportNetworkBinding` objects that each know how to bind/unbind their own network. Typermedia would register its own binding. Alternatively, have each paradigm register its own `IInboxTransportServer` implementation.
+**Now**: `_TessageTypesInternal` only returns Tessaging handled types. Typermedia types are advertised through a separate `TypermediaEndpointInformationQuery` (in `Compze.Typermedia.Client`), registered by `TypermediaInfrastructureQueryRegistration` from `ServerEndpointBuilder`.
 
-### 2c. _TessageTypesInternal.cs — Endpoint discovery
+### 2d. ~~TyperMediaApi/EventStore/~~ — RESOLVED
 
-**References**: `Compze.Typermedia.HandlerRegistration` (for `ITypermediaHandlerRegistry`)
+**Previously**: `_TeventStoreApi.Implementation..cs` in `Compze.Tessaging` registered event store operations as Typermedia handlers.
 
-The `RegisterInfrastructureQueryHandlers` method builds the `EndpointInformation` response by concatenating handled types from BOTH registries:
-```csharp
-new EndpointInformation(
-    tessagingRegistry.HandledRemoteTessageTypeIds()
-        .Concat(typermediaRegistry.HandledRemoteTypermediaTypeIds()),  // ← Typermedia
-    configuration);
-```
-
-**Why it exists**: Routers need to know ALL message types an endpoint handles — both Tessaging and Typermedia — to route correctly. The discovery query must aggregate types from both registries.
-
-**To remove**: Make type advertisement pluggable. Define an `IHandledTypeProvider` interface that each paradigm implements. The infrastructure query handler would resolve all `IHandledTypeProvider` instances and concatenate their results. Neither registry would need to be known by name.
-
-### 2d. TyperMediaApi/EventStore/_TeventStoreApi.Implementation..cs — Event store API bridge
-
-**References**: `Compze.Typermedia`, `Compze.Typermedia.HandlerRegistration`
-
-This file registers event store operations (get aggregate, get history, save, etc.) as Typermedia handlers:
-```csharp
-public static void RegisterHandlersForTaggregate<TTaggregate, TTevent>(
-    TypermediaHandlerRegistrarWithDependencyInjectionSupport typermediaRegistrar) // ← Typermedia
-{
-    TommandApi.SaveTaggregate<TTaggregate>.RegisterHandler(typermediaRegistrar);
-    TueryApi.TaggregateLink<TTaggregate>.RegisterHandler(typermediaRegistrar);
-    // ... etc
-}
-```
-
-**Why it exists**: This is genuine cross-concern code — it bridges the event store (a Tessaging-domain concept) into the Typermedia API layer so aggregates can be queried/saved via Typermedia.
-
-**To remove**: Move the `TyperMediaApi/EventStore/` folder out of `Compze.Tessaging` into a bridge project (e.g., `Compze.Tessaging.Typermedia` or `Compze.Tessaging.Teventive.TeventStore.Typermedia`). This code explicitly bridges two paradigms, so it belongs in neither — it should live in a project that references both.
+**Now**: Moved to `Compze.Tessaging.Teventive.TeventStore.Typermedia` bridge project, along with `TeventStoreRegistrationBuilder` and `TeventStoreTypermediaRegistrar`. The `TyperMediaApi/EventStore/` folder no longer exists in `Compze.Tessaging`.
 
 ---
 
@@ -176,13 +151,13 @@ The `TestClient` class is a test helper that creates an `ITypermediaRouter`, con
 
 Three structural patterns create all of the coupling:
 
-1. **Dual-pipeline endpoint**: A single endpoint hosts both Tessaging and Typermedia handler registries, and the builder/DI setup must know about both. (§1, §2a)
+1. **Dual-pipeline endpoint**: A single endpoint hosts both Tessaging and Typermedia handler registries, and the builder/DI setup must know about both. (§1, §2a) — **OPEN**
 
-2. **Unified transport**: One transport server (Memory or ASP.NET) carries messages for all paradigms. Starting, stopping, binding, and registering controllers is done in one place. (§2b, §3a, §3b)
+2. ~~**Unified transport**~~: — **RESOLVED** for memory transport via `ISupplementalTransportServer`. ASP.NET still open (§3a, §3b).
 
-3. **Aggregated discovery**: Infrastructure queries report handled types from all paradigms so routers can find endpoints. (§2c)
+3. ~~**Aggregated discovery**~~: — **RESOLVED** via separate `TypermediaEndpointInformationQuery`.
 
-The event store API bridge (§2d) is a fourth, distinct pattern — genuine cross-paradigm business logic that bridges two domains.
+The event store API bridge (§2d) — **RESOLVED** via `Compze.Tessaging.Teventive.TeventStore.Typermedia`.
 
 ## Dependency direction
 

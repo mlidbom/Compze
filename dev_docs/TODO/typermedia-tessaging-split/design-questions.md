@@ -34,51 +34,59 @@ Today a single `EndpointId` + `EndPointAddress` hosts both a Tessaging pipeline 
 
 ---
 
-## 3. How does endpoint discovery become paradigm-neutral?
+## 3. ~~How does endpoint discovery become paradigm-neutral?~~ RESOLVED
 
-`TessageTypesInternal.RegisterInfrastructureQueryHandlers` resolves both `ITessageHandlerRegistry` and `ITypermediaHandlerRegistry` to build the `EndpointInformation` response — a single flat list of all handled type IDs. Routers on the client side then split this list by checking `IAtMostOnceTypermediaTommand` vs `IExactlyOnceTommand` etc.
+**Decision: (b) Separate discovery queries.**
 
-**The question**: Should each paradigm advertise its own handled types independently? Options:
+Each paradigm now advertises its own handled types independently via its own infrastructure query:
 
-- **(a) Pluggable type providers**: Define `IHandledTypeProvider` with a method like `IEnumerable<TypeId> GetHandledTypeIds()`. Each paradigm registers its own. The infrastructure query handler resolves all of them and concatenates. Neither registry is referenced by name.
+- `EndpointInformationQuery` (in `TessageTypesInternal`) returns only Tessaging handled types from `ITessageHandlerRegistry`
+- `TypermediaEndpointInformationQuery` (new, in `Compze.Typermedia.Client`) returns only Typermedia handled types from `ITypermediaHandlerRegistry`
+- `TypermediaRouter.ConnectAsync(address)` queries the Typermedia-specific query instead of the combined one
+- The Typermedia discovery handler is registered by `TypermediaInfrastructureQueryRegistration` from `ServerEndpointBuilder`
 
-- **(b) Separate discovery queries**: Typermedia has its own `TypermediaEndpointInformationQuery` and Tessaging has its own. Each router queries only its own.
-
-- **(c) Keep aggregated discovery but invert the dependency**: The infrastructure query handler resolves types via an interface that both registries implement, rather than knowing both concrete types.
-
-**Why it matters**: This is the coupling point that forces `Compze.Tessaging` (where `TessageTypesInternal` lives) to reference `Compze.Typermedia` (for `ITypermediaHandlerRegistry`).
-
----
-
-## 4. How do transport servers become paradigm-neutral?
-
-`MemoryInboxTransportServer` currently resolves `TypermediaHandlerExecutor` and `InfrastructureQueryExecutor` from the DI container and binds them into their respective in-memory networks during `StartAsync`. On the ASP.NET side, `AspNetInboxTransportServer` adds controller assemblies for all three paradigms. One server does everything.
-
-**The question**: How should transport server startup work?
-
-- **(a) Pluggable bindings**: The transport server accepts a list of `ITransportBinding` objects. Each paradigm registers its own binding (e.g., `TypermediaMemoryBinding` that knows how to bind/unbind `TypermediaHandlerExecutor` to `InMemoryTypermediaNetwork`). The server calls `binding.Bind(address)` / `binding.Unbind(address)` without knowing what it's binding.
-
-- **(b) Separate servers per paradigm**: `MemoryTypermediaTransportServer`, `MemoryTessagingTransportServer`, `MemoryInfrastructureTransportServer` — each owns its own binding. The endpoint starts all of them.
-
-- **(c) One ASP.NET host, pluggable controller discovery**: For HTTP, keep a single `WebApplication` but have each paradigm register its own assembly parts via a callback rather than the transport server hard-coding them.
-
-**Why it matters**: This is the coupling that forces `Compze.Tessaging` to reference `Compze.Typermedia.Client` and `Compze.Typermedia.Hosting`.
+**Result**: `_TessageTypesInternal` no longer references `ITypermediaHandlerRegistry`. The `TypeMapper` dependency was also removed (it was unused — passed as `_`).
 
 ---
 
-## 5. Where does the event store API bridge live?
+## 4. ~~How do transport servers become paradigm-neutral?~~ RESOLVED (Memory transport)
 
-`Compze.Tessaging/TyperMediaApi/EventStore/_TeventStoreApi.Implementation..cs` registers event store operations (get aggregate, save aggregate, get history, etc.) as Typermedia handlers. `TeventStoreRegistrar` (in `Compze.Tessaging.Teventive.TeventStore`) calls this code and passes the Typermedia handler registrar.
+**Decision: hybrid of (a) and (b) — supplemental transport servers with a shared interface.**
 
-This isn't accidental entanglement — it's genuine cross-paradigm bridging. The event store is a Tessaging/Teventive concept. Exposing its operations as Typermedia tueries/tommands is an explicit design choice.
+For the memory transport:
 
-**The question**: Where should this bridge code live?
+- `ISupplementalTransportServer` (new, in `Compze.Core`) defines `StartAsync(EndPointAddress)` / `StopAsync()` — a paradigm-neutral lifecycle interface
+- `MemoryTypermediaTransportServer` (in `Compze.Typermedia.Client`) binds/unbinds `TypermediaHandlerExecutor` to `InMemoryTypermediaNetwork`
+- `MemoryInfrastructureTransportServer` (in `Compze.Internals.Transport`) binds/unbinds `InfrastructureQueryExecutor` to `InMemoryInfrastructureNetwork`
+- `MemoryInboxTransportServer` now only binds the Tessaging inbox — no Typermedia imports
+- `Endpoint` resolves `IReadOnlyList<ISupplementalTransportServer>` and starts/stops them alongside the inbox, passing the inbox address
+- The transport registrar (`TestingComponentRegistrar.Transport`) assembles the list
 
-- **(a) Dedicated bridge project**: e.g. `Compze.Tessaging.Teventive.TeventStore.Typermedia` — references both sides, belongs to neither.
-- **(b) In the Typermedia project tree**: The Typermedia handlers for event store operations live in a Typermedia project that references the event store.
-- **(c) Keep it in Tessaging**: Accept that this specific code is cross-paradigm and keep it where it is, but make it the *only* Typermedia reference in the Tessaging tree.
+**Result**: `MemoryInboxTransportServer` no longer references `Compze.Typermedia.Client` or `Compze.Typermedia.Hosting`.
 
-**Why it matters**: This is the one coupling that might be *correct* — it exists because we genuinely want event store operations available over Typermedia. But it should be a *choice*, not a *structural dependency*.
+**Still open for ASP.NET**: `AspNetInboxTransportServer` still hard-codes all controller assemblies. The same `ISupplementalTransportServer` pattern could work — each paradigm registers its own ASP.NET controller parts — but this is deferred to the hosting design question (#2).
+
+---
+
+## 5. ~~Where does the event store API bridge live?~~ RESOLVED
+
+**Decision: (a) Dedicated bridge project — `Compze.Tessaging.Teventive.TeventStore.Typermedia`.**
+
+The bridge project was created with the following contents:
+
+- `_TeventStoreApi..cs` + `_TeventStoreApi.Implementation..cs` — moved from `Compze.Tessaging/TyperMediaApi/EventStore/`
+- `TeventStoreRegistrationBuilder` — the fluent builder that calls `TeventStoreApi.RegisterHandlersForTaggregate`. Moved from `Compze.Tessaging.Teventive.TeventStore`
+- `TeventStoreTypermediaRegistrar.RegisterTeventStore(IEndpointBuilder)` — the extension method that returns `TeventStoreRegistrationBuilder`
+
+**Dependency arrows**:
+- Bridge → `Compze.Typermedia` (for handler registration)
+- Bridge → `Compze.Tessaging.Teventive.TeventStore` (for `TeventStoreRegistrar.TeventStore()`)
+- Bridge → `Compze.Tessaging.Abstractions` (for `IEndpointBuilder`)
+- Bridge → `Compze.Core` (for teventive types)
+
+No circular dependencies. `Compze.Tessaging.Teventive.TeventStore` is now Typermedia-free — it only exposes `IComponentRegistrar` extension methods for DI-level registration.
+
+**Result**: The `TyperMediaApi/EventStore/` folder is gone from `Compze.Tessaging`. Callers keep the same `using Compze.Tessaging.Teventive.TeventStore.Wiring` namespace — they just add a project reference to the bridge.
 
 ---
 
@@ -94,11 +102,11 @@ This likely follows naturally from the answers to questions 1-4 — if the build
 
 ## Summary
 
-| # | Question | Key constraint |
-|---|----------|---------------|
-| 1 | Unified or split endpoints? | Determines whether we need a plugin mechanism or separate stacks |
-| 2 | How does the builder become paradigm-neutral? | Needed to break `Tessaging.Abstractions → Typermedia` |
-| 3 | How does discovery become paradigm-neutral? | Needed to break `TessageTypesInternal → ITypermediaHandlerRegistry` |
-| 4 | How do transport servers become paradigm-neutral? | Needed to break `Tessaging → Typermedia.Client` + `Typermedia.Hosting` |
-| 5 | Where does the event store bridge live? | Cross-paradigm code needs a home |
-| 6 | What about test infrastructure? | Follows from 1-4, but `TestClient` needs a home |
+| # | Question | Status | Key constraint |
+|---|----------|--------|---------------|
+| 1 | Unified or split endpoints? | **OPEN** | Determines whether we need a plugin mechanism or separate stacks |
+| 2 | How does the builder become paradigm-neutral? | **OPEN** | Needed to break `Tessaging.Abstractions → Typermedia` |
+| 3 | ~~How does discovery become paradigm-neutral?~~ | **RESOLVED** — separate discovery queries | `TessageTypesInternal` no longer references `ITypermediaHandlerRegistry` |
+| 4 | ~~How do transport servers become paradigm-neutral?~~ | **RESOLVED** (memory) — supplemental transport servers | `MemoryInboxTransportServer` is now pure Tessaging; ASP.NET still open |
+| 5 | ~~Where does the event store bridge live?~~ | **RESOLVED** — `Compze.Tessaging.Teventive.TeventStore.Typermedia` | `TyperMediaApi/EventStore/` gone from `Compze.Tessaging` |
+| 6 | What about test infrastructure? | **OPEN** | Follows from 1-2, but `TestClient` needs a home |
