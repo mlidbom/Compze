@@ -22,14 +22,13 @@ Work from the handler execution outward. Each phase is independently shippable a
 - All handler lookup goes through `ITypermediaHandlerRegistry` — no tessaging registry involvement
 
 **Server redirects completed:**
-- `MemoryInboxTransportServer`: Typermedia branches deserialize and call executor via `Task.Run` (preserving async dispatch for parallelism tests)
 - `TypermediaController`: All three endpoints deserialize directly via `IRemotableTessageSerializer` (no `TransportTessage.InComing`), call executor via `RunOutsideScope` to escape the ASP.NET middleware's DI scope
 
 **Registration fix:** Void Typermedia commands were historically registered in the tessaging handler registry. Moved to `RegisterTypermediaHandlers` where they belong (test fixtures + AccountManagement sample). `HandledRemoteTypermediaTypeIds()` updated to include `_voidTommandHandlers`.
 
 **Residual entanglement:** `TypermediaController` still inherits `ControllerBase` which takes `IInbox` + `HandlerExecutionEngine` constructor args (unused by TypermediaController), and uses shared serialization (`IRemotableTessageSerializer`, `TransportTessage.InComing`). Needs investigation.
 
-**TypermediaController separated from ControllerBase:** `TypermediaController` now inherits `Controller` directly — no longer depends on `ControllerBase`, `IInbox`, `HandlerExecutionEngine`, or `TransportTessage.InComing`. It deserializes HTTP requests itself using `IRemotableTessageSerializer` + `ITypeMapper` and serializes responses directly. `ControllerBase` is now Tessaging-only (removed `Serializer` and `HandlerExecutionEngine` properties). Key detail: the ASP.NET middleware creates a DI scope via `ExecuteInIsolatedScopeAsync`, and since the DI container tracks scopes via `AsyncLocal`, the executor's `ExecuteInIsolatedScope` would fail with nested scope error. Solution: `RunOutsideScope` uses `ExecutionContext.SuppressFlow()` + `Task.Run` to escape the middleware scope, matching what `MemoryInboxTransportServer` does.
+**TypermediaController separated from ControllerBase:** `TypermediaController` now inherits `Controller` directly — no longer depends on `ControllerBase`, `IInbox`, `HandlerExecutionEngine`, or `TransportTessage.InComing`. It deserializes HTTP requests itself using `IRemotableTessageSerializer` + `ITypeMapper` and serializes responses directly. `ControllerBase` is now Tessaging-only (removed `Serializer` and `HandlerExecutionEngine` properties). Key detail: the ASP.NET middleware creates a DI scope via `ExecuteInIsolatedScopeAsync`, and since the DI container tracks scopes via `AsyncLocal`, the executor's `ExecuteInIsolatedScope` would fail with nested scope error. Solution: `RunOutsideScope` uses `ExecutionContext.SuppressFlow()` + `Task.Run` to escape the middleware scope.
 
 ### Phase 3 — Clean Up Tessaging Internals ✅ DONE
 
@@ -51,21 +50,10 @@ Created `ITypermediaTransport` — Typermedia's own transport abstraction replac
 - `PostAsync<TResult>(command, address)` — commands with results
 - `PostAsync(command, address)` — void commands
 
-**Memory transport** (`src/Compze.Tessaging/Implementation/Transport/Client/Implementation/Memory/MemoryTypermediaTransport.cs`):
-- Looks up `TypermediaHandlerExecutor` from `InMemoryTypermediaNetwork` by address
-- Calls executor directly — no `TransportTessage` wrapping
-- Round-trip serializes responses (simulates network boundary for reference isolation)
-- Runs via `Task.Run` to avoid DI scope issues
-- Wraps exceptions in `MessageDispatchingFailedException` (matching previous behavior)
-
-**HTTP transport** (`src/Compze.Tessaging/Implementation/Transport/Client/Implementation/Http/HttpTypermediaTransport.cs`):
+**HTTP transport** (`src/Compze.Typermedia.Client/HttpTypermediaTransport.cs`):
 - Serializes using `IRemotableTessageSerializer` + `ITypeMapper`
 - Posts directly to `/typermedia/tuery`, `/typermedia/tommand-with-result`, `/typermedia/tommand-no-result`
 - Own error handling with `ProblemDetails` deserialization
-
-**Memory network** (`src/Compze.Tessaging/Implementation/Transport/Client/Implementation/Memory/InMemoryTypermediaNetwork.cs`):
-- Static `ConcurrentDictionary<EndPointAddress, TypermediaHandlerExecutor>`
-- `MemoryInboxTransportServer.StartAsync/StopAsync` binds/unbinds executor alongside the tessaging server binding
 
 **Router changes:**
 - `TypermediaRouter` depends on `ITypermediaTransport` instead of `ITransportMessagePoster` + `IRemotableTessageSerializer`
@@ -80,17 +68,12 @@ Created `ITypermediaTransport` — Typermedia's own transport abstraction replac
 **Dead code removed:**
 - Deleted `ApiEndpointClient` and `IRemoteApiEndpointClient`
 - Removed `ITransportMessagePoster.PostAsync<TResult>` — no tessaging messages return results
-- Removed `MemoryInboxTransportServer.PostAsync<TResult>` — only had Typermedia branches
-- Removed Typermedia branches from `MemoryInboxTransportServer.PostAsync` and `HttpTransportMessagePoster.GetRelativeUriForTessage`
-- Removed `HttpTransportMessagePoster._serializer` and `MemoryInboxTransportServer._serializer`
 - Removed `TransportTessageType.TypermediaAtMostOnceTommand`, `TypermediaAtMostOnceTommandWithReturnValue`, `TyperMediaTuery`
 - Removed Typermedia branches from `TessageTypeTranslator`
 - Removed `//todo: split out TyperMediaTransportTessage` — resolved; `TransportTessage` is now tessaging-only
 - Removed dead Typermedia check from `TommandsAndTeventHandlersDoNotRunInParallelWithEachOtherInTheSameEndpoint` dispatching rule
 
-**Residual entanglement:**
-- `MemoryInboxTransportServer` still resolves `TypermediaHandlerExecutor` to bind it in `InMemoryTypermediaNetwork` during startup — both paradigms share the same endpoint address. Full decoupling deferred to Phase 5.
-- `TessagingRouter` and `TessagingConnection` depend on `ITypermediaTransport` for bootstrap — **this is wrong**. Discovery queries (`EndpointInformationTuery`, `NetworkTopologyTuery`) are mistyped as Typermedia tueries. They are plain address-targeted request/response, not type-routed. See Section 12 for details. Fixing this should precede or be part of Phase 5.
+**Residual entanglement:** None from Phase 4 — memory transport was removed entirely (see Phase 4d), eliminating the shared endpoint address coupling. Discovery queries were also separated in Phase 4b.
 
 ### Phase 4b — Retype Discovery as Infrastructure ✅ DONE
 
@@ -101,18 +84,13 @@ Discovery queries are no longer mistyped as Typermedia tueries. They are now pla
 - `NetworkTopologyQuery : IQuery<NetworkTopology>` (was `NetworkTopologyTuery : IRemotableTuery<NetworkTopology>`)
 
 **New infrastructure transport layer:**
-- `IInfrastructureQueryTransport` — `src/Compze.Tessaging/Implementation/Transport/Client/Internal/IInfrastructureQueryTransport.cs` — `GetAsync<TResult>(IQuery<TResult> query, EndPointAddress address)`
-- `MemoryInfrastructureQueryTransportImplementation` — `src/Compze.Tessaging/Implementation/Transport/Infrastructure/MemoryInfrastructureQueryTransport.cs` — looks up `InfrastructureQueryExecutor` from `InMemoryInfrastructureNetwork`, round-trip serializes responses
-- `HttpInfrastructureQueryTransportImplementation` — `src/Compze.Tessaging/Implementation/Transport/Infrastructure/HttpInfrastructureQueryTransport.cs` — serializes query, POSTs to `/internal/infrastructure/query`, deserializes response
+- `IInfrastructureQueryTransport` — `src/Compze.Internals.Transport/IInfrastructureQueryTransport.cs` — `GetAsync<TResult>(IQuery<TResult> query, EndPointAddress address)`
+- `HttpInfrastructureQueryTransportImplementation` — `src/Compze.Internals.Transport/HttpInfrastructureQueryTransport.cs` — serializes query, POSTs to `/internal/infrastructure/query`, deserializes response
 
 **New server-side handler mechanism:**
-- `InfrastructureQueryExecutor` — `src/Compze.Tessaging/Implementation/Transport/Infrastructure/InfrastructureQueryExecutor.cs` — holds `Dictionary<Type, Func<object, object>>` handlers, executes in isolated DI scope (no transactions, no retries). Registered as Singleton.
-- `InfrastructureQueryRegistrarWithDependencyInjectionSupport` — `src/Compze.Tessaging/Implementation/Transport/Infrastructure/InfrastructureQueryRegistrarWithDependencyInjectionSupport.cs` — DI-aware handler registration (same pattern as `TypermediaHandlerRegistrarWithDependencyInjectionSupport`)
-- `InfrastructureQueryController` — `src/Compze.Tessaging.Hosting.AspNetCore/Private/InfrastructureQueryController.cs` — ASP.NET controller for `/internal/infrastructure/query`
-
-**New in-memory network:**
-- `InMemoryInfrastructureNetwork` — `src/Compze.Tessaging/Implementation/Transport/Infrastructure/InMemoryInfrastructureNetwork.cs` — static `ConcurrentDictionary<EndPointAddress, InfrastructureQueryExecutor>`
-- `MemoryInboxTransportServer` binds/unbinds `InfrastructureQueryExecutor` alongside the tessaging server and typermedia executor
+- `InfrastructureQueryExecutor` — `src/Compze.Internals.Transport/InfrastructureQueryExecutor.cs` — holds `Dictionary<Type, Func<object, object>>` handlers, executes in isolated DI scope (no transactions, no retries). Registered as Singleton.
+- `InfrastructureQueryRegistrarWithDependencyInjectionSupport` — `src/Compze.Internals.Transport/InfrastructureQueryRegistrarWithDependencyInjectionSupport.cs` — DI-aware handler registration (same pattern as `TypermediaHandlerRegistrarWithDependencyInjectionSupport`)
+- `InfrastructureQueryController` — `src/Compze.Internals.Transport.AspNet/InfrastructureQueryController.cs` — ASP.NET controller for `/internal/infrastructure/query`
 
 **Handler registration moved:**
 - `TessageTypesInternal.RegisterInfrastructureQueryHandlers(registrar)` replaces `TessageTypesInternal.RegisterHandlers(registrar)` — uses `InfrastructureQueryRegistrarWithDependencyInjectionSupport` instead of `TypermediaHandlerRegistrarWithDependencyInjectionSupport`
@@ -130,9 +108,7 @@ Discovery queries are no longer mistyped as Typermedia tueries. They are now pla
 **TypeMapper fix:**
 - `CheckAssemblyForRequiredMappings` no longer early-returns when type discovery finds no required types — always loads the auto-generated mapper if it exists. This fixes a bug where manually-added mappings (e.g., `List<EndPointAddress>`) were silently dropped when the assembly's auto-discovered types changed.
 
-**Residual entanglement:**
-- `MemoryInboxTransportServer` still binds `TypermediaHandlerExecutor` AND `InfrastructureQueryExecutor` — both paradigms share the same endpoint address. Phase 5 will decouple.
-- `TypermediaRouter` still depends on `ITypermediaTransport` for actual Typermedia operations (correct) but ALSO `IInfrastructureQueryTransport` for discovery — this is the right split.
+**Residual entanglement:** None — memory transport removed in Phase 4d, eliminating the shared address binding between paradigms.
 
 ### Phase 4c — Extract Shared Transport to Own Projects ✅ DONE
 
@@ -146,8 +122,6 @@ All shared transport infrastructure extracted from `Compze.Tessaging` into two n
 - `IInfrastructureQueryTransport` — was `Compze.Tessaging.Implementation.Transport.Client.Internal`
 - `InfrastructureQueryExecutor` — was `Compze.Tessaging.Implementation.Transport.Infrastructure`
 - `InfrastructureQueryRegistrarWithDependencyInjectionSupport` — was same
-- `InMemoryInfrastructureNetwork` — was same
-- `MemoryInfrastructureQueryTransportImplementation` + `MemoryInfrastructureQueryTransportRegistrar` — was same
 - `HttpInfrastructureQueryTransportImplementation` + `HttpInfrastructureQueryTransportRegistrar` — was same
 - `HttpConstants` — was `Compze.Tessaging.Implementation.Transport.Client.Implementation.Http`
 - `IHttpClientFactoryCE` + `HttpClientFactoryCE` + `HttpClientFactoryCERegistrar` — was same
@@ -168,6 +142,30 @@ All shared transport infrastructure extracted from `Compze.Tessaging` into two n
 - `Compze.Tessaging.Hosting.AspNetCore` → `Compze.Internals.Transport.AspNet` (for controller registration)
 - Both new projects are paradigm-neutral — no reference to Tessaging or Typermedia
 
+### Phase 4d — Remove Memory Transport Entirely ✅ DONE
+
+Memory transport was a pure test performance optimization that had become the primary source of cross-paradigm coupling. ASP.NET transport already had full paradigm separation (each paradigm has its own controller, own routes, no shared address). Memory transport forced all paradigms to share a single endpoint address via `ISupplementalTransportServer`, creating artificial coupling that blocked further separation.
+
+**Deleted 11 files:**
+- `src/Compze.Tessaging/Implementation/Transport/Client/Implementation/Memory/` (entire directory: `MemoryInboxTransportServer`, `MemoryTransportMessagePoster`, `InMemoryTransportNetwork`)
+- `src/Compze.Typermedia.Client/MemoryTypermediaTransportServer.cs`, `MemoryTypermediaTransport.cs`, `InMemoryTypermediaNetwork.cs`
+- `src/Compze.Internals.Transport/MemoryInfrastructureTransportServer.cs`, `MemoryInfrastructureQueryTransport.cs`, `InMemoryInfrastructureNetwork.cs`
+- `src/Compze.Core/Tessaging/Transport/Internal/ISupplementalTransportServer.cs`
+
+**Simplified:**
+- `Endpoint.cs` — removed `IReadOnlyList<ISupplementalTransportServer>` from `ServerComponents`, removed supplemental server start/stop loops
+- `AspNetCoreTransportRegistrar` — removed empty `ISupplementalTransportServer` list registration
+- `TestingComponentRegistrar.Transport.cs` — replaced `switch(TestEnv.Transport)` with direct `AspNetCoreTransport()` call
+- `TestingComponentRegistrar.ClientTransport.cs` — replaced switch with direct HTTP registration
+- `Transport` enum — removed `Memory = 2`, only `AspNetCore = 1` remains
+- Config files (`.defaults`, `.example`, `.github-ci`) — all `:Memory` lines changed to `:AspNetCore`
+
+**Coupling eliminated:**
+- 3 static `ConcurrentDictionary` in-memory networks (address→executor registries) — gone
+- `ISupplementalTransportServer` interface and 2 implementations — gone
+- Shared endpoint address binding between paradigms — gone
+- All transport branching (memory vs HTTP) in test infrastructure — gone
+
 ### Phase 5 — Separate Hosting
 
 Each paradigm gets its own hosting lifecycle.
@@ -176,11 +174,10 @@ Each paradigm gets its own hosting lifecycle.
 - `Endpoint` lifecycle decoupled — Typermedia server startup independent of Tessaging outbox/router startup.
 - `AspNetInboxTransportServer` either splits into two servers or Typermedia gets its own `WebApplication` setup.
 - `EndpointHost` orchestrates both but they don't block each other.
-- `MemoryInboxTransportServer` stops binding `TypermediaHandlerExecutor` — that moves to a Typermedia-specific server component.
 
 ### Recommended next step
 
-Phase 5 — separate hosting. With discovery decoupled, Tessaging no longer depends on Typermedia internals.
+Phase 5 — separate hosting. With discovery decoupled and memory transport removed, the remaining entanglement is purely in hosting lifecycle: `ServerEndpointBuilder`, `Endpoint`, `EndpointHost`, and `AspNetInboxTransportServer` all wire both paradigms together. Each of these needs to become paradigm-neutral or split.
 
 ---
 
@@ -278,76 +275,42 @@ Every component involved in delivering a message from caller to handler and back
 ## 5. Transport Layer
 
 ### Typermedia Transport [T]
-- **Interface**: `ITypermediaTransport` — `src/Compze.Tessaging/Implementation/Transport/Client/Internal/ITypermediaTransport.cs`
+- **Interface**: `ITypermediaTransport` — `src/Compze.Typermedia.Client/ITypermediaTransport.cs`
 - `GetAsync<TResult>(tuery, address)`, `PostAsync<TResult>(command, address)`, `PostAsync(command, address)`
-- Registered in client containers for Typermedia operations only (no longer needed in server endpoint containers for discovery)
-
-### Memory Typermedia Transport [T]
-- `MemoryTypermediaTransport` — `src/Compze.Tessaging/Implementation/Transport/Client/Implementation/Memory/MemoryTypermediaTransport.cs`
-- Looks up `TypermediaHandlerExecutor` from `InMemoryTypermediaNetwork` by address
-- Calls executor directly, round-trip serializes responses, wraps exceptions
+- HTTP-only (memory transport removed)
 
 ### HTTP Typermedia Transport [T]
-- `HttpTypermediaTransport` — `src/Compze.Tessaging/Implementation/Transport/Client/Implementation/Http/HttpTypermediaTransport.cs`
+- `HttpTypermediaTransport` — `src/Compze.Typermedia.Client/HttpTypermediaTransport.cs`
 - Serializes via `IRemotableTessageSerializer` + `ITypeMapper`, posts to `/typermedia/*` routes
 - Deserializes responses, handles `ProblemDetails` errors
 
-### In-Memory Typermedia Network [T]
-- `InMemoryTypermediaNetwork` — `src/Compze.Tessaging/Implementation/Transport/Client/Implementation/Memory/InMemoryTypermediaNetwork.cs`
-- Static `ConcurrentDictionary<EndPointAddress, TypermediaHandlerExecutor>`
-- Bound/unbound by `MemoryInboxTransportServer.StartAsync/StopAsync`
-
 ### Infrastructure Query Transport [INFRASTRUCTURE]
-- **Interface**: `IInfrastructureQueryTransport` — `src/Compze.Tessaging/Implementation/Transport/Client/Internal/IInfrastructureQueryTransport.cs`
+- **Interface**: `IInfrastructureQueryTransport` — `src/Compze.Internals.Transport/IInfrastructureQueryTransport.cs`
 - `GetAsync<TResult>(IQuery<TResult> query, EndPointAddress address)` — serialize, POST to known address, deserialize response
 - Shared by both Typermedia and Tessaging routers for discovery
-
-### Memory Infrastructure Query Transport [INFRASTRUCTURE]
-- `MemoryInfrastructureQueryTransportImplementation` — `src/Compze.Tessaging/Implementation/Transport/Infrastructure/MemoryInfrastructureQueryTransport.cs`
-- Looks up `InfrastructureQueryExecutor` from `InMemoryInfrastructureNetwork` by address
-- Round-trip serializes responses (simulates network boundary)
+- HTTP-only (memory transport removed)
 
 ### HTTP Infrastructure Query Transport [INFRASTRUCTURE]
-- `HttpInfrastructureQueryTransportImplementation` — `src/Compze.Tessaging/Implementation/Transport/Infrastructure/HttpInfrastructureQueryTransport.cs`
+- `HttpInfrastructureQueryTransportImplementation` — `src/Compze.Internals.Transport/HttpInfrastructureQueryTransport.cs`
 - POSTs to `/internal/infrastructure/query`, handles `ProblemDetails` errors
-
-### In-Memory Infrastructure Network [INFRASTRUCTURE]
-- `InMemoryInfrastructureNetwork` — `src/Compze.Tessaging/Implementation/Transport/Infrastructure/InMemoryInfrastructureNetwork.cs`
-- Static `ConcurrentDictionary<EndPointAddress, InfrastructureQueryExecutor>`
-- Bound/unbound by `MemoryInboxTransportServer.StartAsync/StopAsync`
 
 ### Tessaging Transport Message Poster [S]
 - **Interface**: `ITransportMessagePoster` — `src/Compze.Tessaging/Implementation/Transport/Abstractions/ITransportMessagePoster.cs`
 - Tessaging-only. Single method: `PostAsync(tessage, address)` — no generic return variant.
-
-### Memory Transport Poster [S]
-- `MemoryTransportMessagePoster` — `src/Compze.Tessaging/Implementation/Transport/Client/Implementation/Memory/MemoryTransportMessagePoster.cs`
-- Converts `OutGoing` → `InComing`, calls `InMemoryTransportNetwork.GetServer(address).PostAsync(incoming)`
+- HTTP-only (memory transport removed)
 
 ### HTTP Transport Poster [S]
 - `HttpTransportMessagePoster` — `src/Compze.Tessaging/Implementation/Transport/Client/Implementation/Http/HttpTransportMessagePoster.cs`
 - Routes by `TransportTessageType`: `ExactlyOnceTevent` → `/tessaging/tevent`, `ExactlyOnceTommand` → `/tessaging/tommand`
 - No serializer dependency (fire-and-forget, no result deserialization)
 
-### In-Memory Transport Network [S]
-- `InMemoryTransportNetwork` — `src/Compze.Tessaging/Implementation/Transport/Client/Implementation/Memory/InMemoryTransportNetwork.cs`
-- Static `ConcurrentDictionary<EndPointAddress, MemoryInboxTransportServer>`
-- Tessaging-only address book for in-memory endpoints
-
 ---
 
 ## 6. Server-Side Receiving
 
-### Inbox Transport Server Interface [BOTH]
+### Inbox Transport Server Interface [S]
 - `IInboxTransportServer` — `src/Compze.Core/Tessaging/Transport/Internal/IInboxTransportServer.cs`
 - `Address`, `StartAsync()`, `StopAsync()`
-
-### Memory Inbox Transport Server [S+binding]
-- `MemoryInboxTransportServer` — `src/Compze.Tessaging/Implementation/Transport/Client/Implementation/Memory/MemoryInboxTransportServer.cs`
-- Tessaging-only dispatch: `ExactlyOnceTevent` / `ExactlyOnceTommand` → `Inbox.ReceiveAsync(tessage)`
-- No `PostAsync<TResult>` — removed (was Typermedia-only)
-- No `_serializer` dependency — removed
-- On startup, binds `TypermediaHandlerExecutor` in `InMemoryTypermediaNetwork` AND `InfrastructureQueryExecutor` in `InMemoryInfrastructureNetwork` (pragmatic coupling, Phase 5 will decouple)
 
 ### ASP.NET Core Inbox Transport Server [BOTH]
 - `AspNetInboxTransportServer` — `src/Compze.Tessaging.Hosting.AspNetCore/Private/AspNetInboxTransportServer.cs`
@@ -604,27 +567,32 @@ This distinction is critical for discovery: `EndpointInformationQuery` and `Netw
 - `TypermediaController` separated from `ControllerBase`: now inherits `Controller` directly, deserializes via `IRemotableTessageSerializer` + `ITypeMapper` (no `TransportTessage.InComing`), uses `RunOutsideScope` to escape middleware DI scope. `ControllerBase` is now Tessaging-only (removed `Serializer` and `HandlerExecutionEngine` properties, removed `IInbox`/`HandlerExecutionEngine` from `TessagingController` constructor).
 
 ### Transport separated (Phase 4 — done)
-- `ITypermediaTransport` [T] — Typermedia's own transport (`MemoryTypermediaTransport`, `HttpTypermediaTransport`)
-- `ITransportMessagePoster` [S] — now tessaging-only (no `PostAsync<TResult>`, no Typermedia branches)
+- `ITypermediaTransport` [T] — Typermedia's own transport (HTTP-only)
+- `ITransportMessagePoster` [S] — now tessaging-only (HTTP-only, no `PostAsync<TResult>`, no Typermedia branches)
 - `TransportTessage` / `TransportTessageType` [S] — tessaging-only (Typermedia values removed from enum)
-- `InMemoryTypermediaNetwork` [T] — Typermedia's own address book
-- `InMemoryTransportNetwork` [S] — tessaging-only address book
 - `ApiEndpointClient` / `IRemoteApiEndpointClient` — deleted
 
 ### Discovery decoupled (Phase 4b — done)
 - `EndpointInformationQuery` / `NetworkTopologyQuery` — retyped from `IRemotableTuery<T>` to `IQuery<T>` — no longer Typermedia messages
-- `IInfrastructureQueryTransport` [INFRASTRUCTURE] — shared infrastructure transport for both paradigms
-- `MemoryInfrastructureQueryTransportImplementation` / `HttpInfrastructureQueryTransportImplementation` — transport implementations
+- `IInfrastructureQueryTransport` [INFRASTRUCTURE] — shared infrastructure transport for both paradigms (HTTP-only)
+- `HttpInfrastructureQueryTransportImplementation` — transport implementation
 - `InfrastructureQueryExecutor` [INFRASTRUCTURE] — server-side handler for infrastructure queries
 - `InfrastructureQueryController` [INFRASTRUCTURE] — ASP.NET controller for HTTP infrastructure queries
-- `InMemoryInfrastructureNetwork` [INFRASTRUCTURE] — memory address book for infrastructure executors
 - `TessagingRouter` / `TessagingConnection` — now depend on `IInfrastructureQueryTransport` instead of `ITypermediaTransport` — **Tessaging→Typermedia dependency eliminated**
 - `TypermediaRouter` — uses `IInfrastructureQueryTransport` for discovery, `ITypermediaTransport` for operations (correct split)
+
+### Memory transport removed (Phase 4d — done)
+- Deleted all memory transport files: `MemoryInboxTransportServer`, `MemoryTransportMessagePoster`, `InMemoryTransportNetwork`, `MemoryTypermediaTransport`, `MemoryTypermediaTransportServer`, `InMemoryTypermediaNetwork`, `MemoryInfrastructureQueryTransport`, `MemoryInfrastructureTransportServer`, `InMemoryInfrastructureNetwork`
+- Deleted `ISupplementalTransportServer` interface and all implementations — existed solely for memory transport
+- Removed `Transport.Memory` from enum — only `AspNetCore` remains
+- Simplified `Endpoint.StartListeningComponentsAsync/StopListeningComponentsAsync` — removed supplemental server loops
+- Simplified test registrars — removed transport switch statements, direct ASP.NET wiring
+- Updated all config files (`.defaults`, `.example`, `.github-ci`) — only `AspNetCore` combinations
+- Impact: all 3 cross-paradigm transport coupling points (shared endpoint address, Typermedia executor binding, infrastructure executor binding) eliminated. Phase 5 is now purely about hosting lifecycle.
 
 ### Still entangled (hosting — next phase)
 | Component | Why it's entangled |
 |---|---|
-| `MemoryInboxTransportServer` | Binds `TypermediaHandlerExecutor` AND `InfrastructureQueryExecutor` in their respective in-memory networks during startup |
 | `AspNetInboxTransportServer` | Hosts `TypermediaController`, `TessagingController`, and `InfrastructureQueryController` |
 | `ServerEndpointBuilder` | Wires inbox, outbox, tessaging router, in-process navigator, typermedia executor, and infrastructure query executor all together |
 | `Endpoint` | Lifecycle manages both typermedia and tessaging components |

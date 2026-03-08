@@ -10,7 +10,7 @@ Questions that needed answers before the separation work could proceed. Most are
 
 Most services will use both Typermedia and Tessaging. Sharing a DI container is practical — both paradigms access the same domain services. But the endpoint is neither Tessaging nor Typermedia — it's a host for both.
 
-Transports are fully separate: each paradigm gets its own server, its own port, its own lifecycle. No shared address. This applies to both in-memory and ASP.NET transports.
+Transports are fully separate: each paradigm gets its own server, its own port, its own lifecycle. No shared address.
 
 ---
 
@@ -45,13 +45,13 @@ Each paradigm now advertises its own handled types independently via its own inf
 
 **Decision: Fully separate servers, separate ports.**
 
-Each paradigm owns its entire transport stack — its own server, its own port/address, its own lifecycle. No shared address, no shared `ISupplementalTransportServer`, no address-passing from one paradigm to another.
+Each paradigm owns its entire transport stack — its own server, its own port/address, its own lifecycle. No shared address.
 
-This applies to both memory and ASP.NET transports. For ASP.NET, Typermedia starts its own `WebApplication` on its own port instead of sharing the Tessaging `WebApplication`.
+For ASP.NET, Typermedia starts its own `WebApplication` on its own port instead of sharing the Tessaging `WebApplication`.
 
-**Note**: The current codebase has an intermediate `ISupplementalTransportServer` pattern where `Endpoint` starts supplemental servers alongside the inbox. This should be replaced with the fully separate approach as part of the implementation.
+**Blocker removed**: The `ISupplementalTransportServer` pattern was removed when memory transport was deleted (Phase 4d). Memory transport was the sole reason that pattern existed — ASP.NET never needed it. With memory transport gone, `Endpoint` no longer manages supplemental servers.
 
-**Trade-off**: Two servers per endpoint means more startup cost in tests. This is an optimization problem with known solutions (lazy startup, start only what the test needs) — not a reason to keep the transports entangled.
+**Remaining work**: `AspNetInboxTransportServer` still hosts all three controllers (`TypermediaController`, `TessagingController`, `InfrastructureQueryController`) in a single `WebApplication` on a single port. Typermedia needs its own Kestrel instance.
 
 ---
 
@@ -79,7 +79,7 @@ No circular dependencies. `Compze.Tessaging.Teventive.TeventStore` is now Typerm
 
 ## 6. What about test infrastructure?
 
-`TestClient` creates an `ITypermediaRouter`, discovers endpoints, and exposes `IRemoteTypermediaNavigator`. The testing component registrars wire up both Tessaging and Typermedia transports (memory or HTTP). `DiContainerExtensions` registers Typermedia handler registries for tests.
+`TestClient` creates an `ITypermediaRouter`, discovers endpoints, and exposes `IRemoteTypermediaNavigator`. The testing component registrars wire up both Tessaging and Typermedia transports. `DiContainerExtensions` registers Typermedia handler registries for tests.
 
 Follows the same pattern as Q2: the test infrastructure that bridges both paradigms moves to `Compze.Hosting.Testing` (or similar). `TestClient` lives there because it's a consumer of both paradigms. Tessaging-only and Typermedia-only test infrastructure stays in their respective projects.
 
@@ -92,14 +92,15 @@ Follows the same pattern as Q2: the test infrastructure that bridges both paradi
 | 1 | Unified or split endpoints? | **DECIDED** — one endpoint, shared container, separate transports |
 | 2 | ~~Builder paradigm-neutral~~ | **Phase 1 DONE** — `Compze.Hosting` created; Phase 2 (optional hosting) future |
 | 3 | ~~Discovery~~ | **DONE** — separate discovery queries |
-| 4 | Transport servers? | **DECIDED** — fully separate servers, separate ports |
+| 4 | ~~Transport servers~~ | **DECIDED** — `ISupplementalTransportServer` removed; separate Kestrel instances not yet implemented |
 | 5 | ~~Event store bridge~~ | **DONE** — `Compze.Tessaging.Teventive.TeventStore.Typermedia` |
 | 6 | Test infrastructure? | **DECIDED** — follows Q2: bridge code moves to `Compze.Hosting.Testing` |
 
 ## Next steps
 
 1. ~~Create `Compze.Hosting`~~ — **DONE**
-2. Separate transport servers fully (own ports, own lifecycle) — replace `ISupplementalTransportServer` pattern
-3. Move test bridge infrastructure to `Compze.Hosting.Testing`
+2. ~~Remove `ISupplementalTransportServer` pattern~~ — **DONE** (removed with memory transport, Phase 4d)
+3. Separate ASP.NET transport servers fully (Typermedia gets own `WebApplication` on own port)
+4. Move test bridge infrastructure to `Compze.Hosting.Testing`
 
 `Compze.Tessaging` and `Compze.Typermedia` now have zero references to each other. All cross-paradigm code lives in projects whose names say "I combine things": `Compze.Hosting`, `Compze.Hosting.Testing`, `Compze.Tessaging.Teventive.TeventStore.Typermedia`.
