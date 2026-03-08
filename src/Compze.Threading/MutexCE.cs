@@ -8,14 +8,14 @@ namespace Compze.Threading;
 
 public class MutexCE
 {
-   Mutex _mutex;
+   readonly Mutex _mutex;
 
    MutexCE(string mutexName) => _mutex = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
                                             ? WindowsGlobalMutex(mutexName)
                                             : NonWindowsGlobalMutex(mutexName);
 
    [SupportedOSPlatform("windows")]
-   Mutex WindowsGlobalMutex(string mutexName)
+   static Mutex WindowsGlobalMutex(string mutexName)
    {
       // Global\ mutexes need an explicit ACL granting cross-session access.
       // Without this, Session 0 (services) and interactive sessions can't share the mutex
