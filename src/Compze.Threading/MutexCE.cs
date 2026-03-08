@@ -28,12 +28,7 @@ public class MutexCE
       return MutexAcl.Create(initiallyOwned: false, $@"Global\{mutexName}", out _, security);
    }
 
-   static Mutex NonWindowsGlobalMutex(string mutexName)
-   {
-      return Mutex.TryOpenExisting(mutexName, out var mutex)
-                ? mutex
-                : new Mutex(initiallyOwned: false, name: mutexName);
-   }
+   static Mutex NonWindowsGlobalMutex(string mutexName) => new(initiallyOwned: false, name: mutexName);
 
    public TResult Locked<TResult>([InstantHandle] Func<TResult> func)
    {
