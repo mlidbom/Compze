@@ -33,7 +33,4 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Underscore)' != 'true'">
     <ProjectReference Include="..\Compze.Underscore\Compze.Underscore.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="System.Threading.AccessControl" Version="9.0.3" />
-  </ItemGroup>
 </Project>
