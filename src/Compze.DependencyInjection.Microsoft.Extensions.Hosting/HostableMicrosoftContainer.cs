@@ -66,8 +66,17 @@ class CompzeMicrosoftServiceProvider(MicrosoftDependencyInjectionContainer compz
 #pragma warning restore CA2000
    }
 
-   public void Dispose() => _innerProvider.Dispose();
-   public ValueTask DisposeAsync() => _innerProvider.DisposeAsync();
+   public void Dispose()
+   {
+      _innerProvider.Dispose();
+      _compzeContainer.Dispose();
+   }
+
+   public async ValueTask DisposeAsync()
+   {
+      await _innerProvider.DisposeAsync().ConfigureAwait(false);
+      await _compzeContainer.DisposeAsync().ConfigureAwait(false);
+   }
 }
 
 class CompzeMicrosoftServiceScope(CompzeMicrosoftServiceProvider serviceProvider, IServiceScope innerScope, IMicrosoftContainerInternals compzeInternals) : IServiceScope
