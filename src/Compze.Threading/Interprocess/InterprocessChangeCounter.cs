@@ -27,6 +27,7 @@ class InterprocessChangeCounter : IDisposable
 
       Directory.CreateDirectory(Path.GetDirectoryName(backingFilePath)!);
 
+      #pragma warning disable CA2000
       var backingFileStream = new FileStream(
          backingFilePath,
          FileMode.OpenOrCreate,
@@ -34,6 +35,7 @@ class InterprocessChangeCounter : IDisposable
          FileShare.ReadWrite,
          bufferSize: 1,
          FileOptions.None);
+#pragma warning restore CA2000
 
       if(backingFileStream.Length < CounterSize)
          backingFileStream.SetLength(CounterSize);

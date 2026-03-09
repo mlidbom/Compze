@@ -5,7 +5,7 @@ namespace Compze.Threading.Interprocess;
 public partial interface ISignalingAwaitableMutex
 {
 #pragma warning disable CS0618 // Type or member is obsolete
-   class SignalingAwaitableMutexCE : ISignalingAwaitableMutex, ILockInternals
+   private class SignalingAwaitableMutexCE : ISignalingAwaitableMutex, ILockInternals
 #pragma warning restore CS0618 // Type or member is obsolete
    {
       static readonly PollingInterval CounterPollingInterval = PollingInterval.Milliseconds(1);
@@ -27,8 +27,8 @@ public partial interface ISignalingAwaitableMutex
          };
 
          _mutex = global
-            ? IMutex.Global(name, lockTimeout, wrappedOnAbandonedMutex)
-            : IMutex.Local(name, lockTimeout, wrappedOnAbandonedMutex);
+                     ? IMutex.Global(name, lockTimeout, wrappedOnAbandonedMutex)
+                     : IMutex.Local(name, lockTimeout, wrappedOnAbandonedMutex);
 
          WaitTimeout = waitTimeout ?? WaitTimeout.Default;
       }
@@ -122,7 +122,9 @@ public partial interface ISignalingAwaitableMutex
 
       class UpdateLockDisposer(InterprocessChangeCounter changeCounter, IDisposable mutexLock) : IDisposable
       {
+#pragma warning disable CA2213
          readonly InterprocessChangeCounter _changeCounter = changeCounter;
+#pragma warning disable CA2213
          readonly IDisposable _mutexLock = mutexLock;
 
          public void Dispose()

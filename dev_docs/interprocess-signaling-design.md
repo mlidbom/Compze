@@ -84,7 +84,7 @@ Tested via: `[PCTAwaitableLock]` attribute — all existing `IAwaitableLock` spe
 
 ### Two-tier polling
 - **Fast counter poll** (default 1ms): reads the MMF counter — nanosecond memory read, detects normal update lock releases
-- **Safety probe** (500ms): if the counter hasn't changed for 500ms, probes the mutex with a zero-timeout `TakeLock`:
+- **Safety probe** (50ms): if the counter hasn't changed for 50ms, probes the mutex with a zero-timeout `TakeLock`:
   - **Abandoned mutex**: `AbandonedMutexException` fires → wrapped `onAbandonedMutex` callback increments the counter → next 1ms poll sees the change → outer loop acquires mutex and evaluates the condition
   - **Mutex available (not abandoned)**: acquired and immediately released, no condition check, back to counter polling
   - **Mutex held by another process**: `TakeLockTimeoutException` caught and swallowed — holder is alive, back to counter polling
