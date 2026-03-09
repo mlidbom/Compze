@@ -14,7 +14,7 @@ public partial interface ISignalingAwaitableMutex
       readonly IMutex _mutex;
       readonly InterprocessChangeCounter _changeCounter;
 
-      public SignalingAwaitableMutexCE(string name, bool global, LockTimeout? lockTimeout, WaitTimeout? waitTimeout, Action? onAbandonedMutex)
+      internal SignalingAwaitableMutexCE(string name, bool global, LockTimeout? lockTimeout, WaitTimeout? waitTimeout, Action? onAbandonedMutex)
       {
          _changeCounter = new InterprocessChangeCounter(name, global);
 
