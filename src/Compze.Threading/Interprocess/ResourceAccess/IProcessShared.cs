@@ -6,10 +6,10 @@ public interface IProcessShared
 {
 #pragma warning disable CA2000
    public static IProcessShared<TShared> Global<TShared>(string name, TShared shared, LockTimeout? timeout, Action? onAbandonedMutexException) =>
-      New(shared, IMutex.GlobalNamed(name, timeout, onAbandonedMutexException));
+      New(shared, IMutex.Global(name, timeout, onAbandonedMutexException));
 
    public static IProcessShared<TShared> Local<TShared>(string name, TShared shared, LockTimeout? timeout, Action? onAbandonedMutexException) =>
-      New(shared, IMutex.LocalNamed(name, timeout, onAbandonedMutexException));
+      New(shared, IMutex.Local(name, timeout, onAbandonedMutexException));
 #pragma warning restore CA2000
 
    public static IProcessShared<TShared> New<TShared>(TShared shared, IMutex @lock) =>

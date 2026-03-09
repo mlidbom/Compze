@@ -8,11 +8,11 @@ namespace Compze.Threading.Interprocess;
 public partial interface IPollingAwaitableMutex : IMutex, IAwaitableLock
 {
    ///<summary>Returns an <see cref="IPollingAwaitableMutex"/> that synchronizes across all processes and user login sessions on the machine.</summary>
-   public static IPollingAwaitableMutex GlobalNamed(string name, LockTimeout? lockTimeout = null, WaitTimeout? waitTimeout = null, PollingInterval? pollingInterval = null, Action? onAbandonedMutex = null) =>
+   public static IPollingAwaitableMutex Global(string name, LockTimeout? lockTimeout = null, WaitTimeout? waitTimeout = null, PollingInterval? pollingInterval = null, Action? onAbandonedMutex = null) =>
       new PollingAwaitableMutexCE(name, global: true, lockTimeout, waitTimeout, pollingInterval, onAbandonedMutex);
 
    ///<summary>Returns an <see cref="IPollingAwaitableMutex"/> that synchronizes across all processes within a single user login session on the machine.</summary>
-   public static IPollingAwaitableMutex LocalNamed(string name, LockTimeout? lockTimeout = null, WaitTimeout? waitTimeout = null, PollingInterval? pollingInterval = null, Action? onAbandonedMutex = null) =>
+   public static IPollingAwaitableMutex Local(string name, LockTimeout? lockTimeout = null, WaitTimeout? waitTimeout = null, PollingInterval? pollingInterval = null, Action? onAbandonedMutex = null) =>
       new PollingAwaitableMutexCE(name, global: false, lockTimeout, waitTimeout, pollingInterval, onAbandonedMutex);
 
    PollingInterval PollingInterval { get; }

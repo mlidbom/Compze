@@ -27,8 +27,8 @@ public partial interface ISignalingAwaitableMutex
          };
 
          _mutex = global
-            ? IMutex.GlobalNamed(name, lockTimeout, wrappedOnAbandonedMutex)
-            : IMutex.LocalNamed(name, lockTimeout, wrappedOnAbandonedMutex);
+            ? IMutex.Global(name, lockTimeout, wrappedOnAbandonedMutex)
+            : IMutex.Local(name, lockTimeout, wrappedOnAbandonedMutex);
 
          WaitTimeout = waitTimeout ?? WaitTimeout.Default;
       }

@@ -25,7 +25,7 @@ class LockFactory<TTest> : IDisposable
    IMutex CreateMutex(LockTimeout? timeout)
    {
       var uniqueName = $"{typeof(TTest).FullName}.{Interlocked.Increment(ref _counter)}";
-      var mutex = IMutex.GlobalNamed(uniqueName, timeout);
+      var mutex = IMutex.Global(uniqueName, timeout);
       _disposables.Add(mutex);
       return mutex;
    }

@@ -14,8 +14,8 @@ public partial interface IPollingAwaitableMutex
       public PollingAwaitableMutexCE(string name, bool global, LockTimeout? lockTimeout, WaitTimeout? waitTimeout, PollingInterval? pollingInterval, Action? onAbandonedMutex)
       {
          _mutex = global
-            ? GlobalNamed(name, lockTimeout, onAbandonedMutex)
-            : LocalNamed(name, lockTimeout, onAbandonedMutex);
+            ? Global(name, lockTimeout, onAbandonedMutex)
+            : Local(name, lockTimeout, onAbandonedMutex);
 
          WaitTimeout = waitTimeout ?? WaitTimeout.Default;
          PollingInterval = pollingInterval ?? PollingInterval.Default;

@@ -26,7 +26,7 @@ class AwaitableLockFactory<TTest> : IDisposable
    IPollingAwaitableMutex CreatePollingAwaitableMutex(LockTimeout? lockTimeout, WaitTimeout? waitTimeout)
    {
       var uniqueName = $"{typeof(TTest).FullName}.{Interlocked.Increment(ref _counter)}";
-      var mutex = IPollingAwaitableMutex.GlobalNamed(uniqueName, lockTimeout, waitTimeout, PollingInterval.Milliseconds(10));
+      var mutex = IPollingAwaitableMutex.Global(uniqueName, lockTimeout, waitTimeout, PollingInterval.Milliseconds(10));
       _disposables.Add(mutex);
       return mutex;
    }
@@ -34,7 +34,7 @@ class AwaitableLockFactory<TTest> : IDisposable
    ISignalingAwaitableMutex CreateSignalingAwaitableMutex(LockTimeout? lockTimeout, WaitTimeout? waitTimeout)
    {
       var uniqueName = $"{typeof(TTest).FullName}.{Interlocked.Increment(ref _counter)}";
-      var mutex = ISignalingAwaitableMutex.GlobalNamed(uniqueName, lockTimeout, waitTimeout);
+      var mutex = ISignalingAwaitableMutex.Global(uniqueName, lockTimeout, waitTimeout);
       _disposables.Add(mutex);
       return mutex;
    }

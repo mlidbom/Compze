@@ -7,6 +7,7 @@ using Compze.Threading.Testing;
 using Compze.xUnitBDD;
 using Xunit;
 using static Compze.Must.MustActions;
+// ReSharper disable InconsistentNaming
 
 // ReSharper disable AccessToDisposedClosure
 
@@ -16,38 +17,38 @@ namespace Compze.Threading.Specifications.Interprocess;
 [Collection(nameof(NonParallelCollection))]
 public class MutexCE_specification : UniversalTestBase
 {
-   public class GlobalNamed : MutexCE_specification
+   public class Global : MutexCE_specification
    {
       [XF] public void throws_ArgumentException_when_name_contains_backslash() =>
-         Invoking(() => IMutex.GlobalNamed(@"name\with\backslash")).Must().Throw<ArgumentException>();
+         Invoking(() => IMutex.Global(@"name\with\backslash")).Must().Throw<ArgumentException>();
 
       [XF] public void succeeds_with_a_simple_name()
       {
-         using var mutex = IMutex.GlobalNamed("MutexCE_specification.GlobalNamed.simple_name");
+         using var mutex = IMutex.Global("MutexCE_specification.Global.simple_name");
          mutex.Must().NotBeNull();
       }
 
       [XF] public void IsGlobal_is_true()
       {
-         using var mutex = IMutex.GlobalNamed("MutexCE_specification.GlobalNamed.IsGlobal");
+         using var mutex = IMutex.Global("MutexCE_specification.Global.IsGlobal");
          mutex.IsGlobal.Must().BeTrue();
       }
 
       [XF] public void Name_is_prefixed_with_Global()
       {
-         using var mutex = IMutex.GlobalNamed("MutexCE_specification.GlobalNamed.Name");
-         mutex.Name.Must().Be(@"Global\MutexCE_specification.GlobalNamed.Name");
+         using var mutex = IMutex.Global("MutexCE_specification.Global.Name");
+         mutex.Name.Must().Be(@"Global\MutexCE_specification.Global.Name");
       }
 
       [XF] public void LockTimeout_defaults_to_LockTimeout_Default()
       {
-         using var mutex = IMutex.GlobalNamed("MutexCE_specification.GlobalNamed.LockTimeout_default");
+         using var mutex = IMutex.Global("MutexCE_specification.Global.LockTimeout_default");
          mutex.LockTimeout.Must().Be(LockTimeout.Default);
       }
 
       [XF] public void LockTimeout_returns_the_timeout_specified_at_creation()
       {
-         using var mutex = IMutex.GlobalNamed("MutexCE_specification.GlobalNamed.LockTimeout_custom", LockTimeout.Seconds(7));
+         using var mutex = IMutex.Global("MutexCE_specification.Global.LockTimeout_custom", LockTimeout.Seconds(7));
          mutex.LockTimeout.Must().Be(LockTimeout.Seconds(7));
       }
    }
@@ -55,35 +56,35 @@ public class MutexCE_specification : UniversalTestBase
    public class LocalNamed : MutexCE_specification
    {
       [XF] public void throws_ArgumentException_when_name_contains_backslash() =>
-         Invoking(() => IMutex.LocalNamed(@"name\with\backslash")).Must().Throw<ArgumentException>();
+         Invoking(() => IMutex.Local(@"name\with\backslash")).Must().Throw<ArgumentException>();
 
       [XF] public void succeeds_with_a_simple_name()
       {
-         using var mutex = IMutex.LocalNamed("MutexCE_specification.LocalNamed.simple_name");
+         using var mutex = IMutex.Local("MutexCE_specification.LocalNamed.simple_name");
          mutex.Must().NotBeNull();
       }
 
       [XF] public void IsGlobal_is_false()
       {
-         using var mutex = IMutex.LocalNamed("MutexCE_specification.LocalNamed.IsGlobal");
+         using var mutex = IMutex.Local("MutexCE_specification.LocalNamed.IsGlobal");
          mutex.IsGlobal.Must().BeFalse();
       }
 
       [XF] public void Name_is_prefixed_with_Local()
       {
-         using var mutex = IMutex.LocalNamed("MutexCE_specification.LocalNamed.Name");
+         using var mutex = IMutex.Local("MutexCE_specification.LocalNamed.Name");
          mutex.Name.Must().Be(@"Local\MutexCE_specification.LocalNamed.Name");
       }
 
       [XF] public void LockTimeout_defaults_to_LockTimeout_Default()
       {
-         using var mutex = IMutex.LocalNamed("MutexCE_specification.LocalNamed.LockTimeout_default");
+         using var mutex = IMutex.Local("MutexCE_specification.LocalNamed.LockTimeout_default");
          mutex.LockTimeout.Must().Be(LockTimeout.Default);
       }
 
       [XF] public void LockTimeout_returns_the_timeout_specified_at_creation()
       {
-         using var mutex = IMutex.LocalNamed("MutexCE_specification.LocalNamed.LockTimeout_custom", LockTimeout.Seconds(7));
+         using var mutex = IMutex.Local("MutexCE_specification.LocalNamed.LockTimeout_custom", LockTimeout.Seconds(7));
          mutex.LockTimeout.Must().Be(LockTimeout.Seconds(7));
       }
    }
@@ -93,7 +94,7 @@ public class MutexCE_specification : UniversalTestBase
       [XF] public void does_not_invoke_callback_when_mutex_is_not_abandoned()
       {
          var callbackInvoked = false;
-         using var mutex = IMutex.GlobalNamed("MutexCE_specification.onAbandoned.not_invoked", onAbandonedMutex: () => callbackInvoked = true);
+         using var mutex = IMutex.Global("MutexCE_specification.onAbandoned.not_invoked", onAbandonedMutex: () => callbackInvoked = true);
          mutex.Locked(() => 0);
          callbackInvoked.Must().BeFalse();
       }
@@ -103,25 +104,25 @@ public class MutexCE_specification : UniversalTestBase
    {
       [XF] public void can_be_disposed_without_error()
       {
-         var mutex = IMutex.GlobalNamed("MutexCE_specification.Dispose.no_error");
+         var mutex = IMutex.Global("MutexCE_specification.Dispose.no_error");
          mutex.Dispose();
       }
 
       [XF] public void calling_Locked_after_Dispose_throws()
       {
-         var mutex = IMutex.GlobalNamed("MutexCE_specification.Dispose.Locked_after_Dispose");
+         var mutex = IMutex.Global("MutexCE_specification.Dispose.Locked_after_Dispose");
          mutex.Dispose();
          Invoking(() => mutex.Locked(() => 0)).Must().Throw<ObjectDisposedException>();
       }
    }
 
-   public class Two_IMutex_instances_with_the_same_GlobalNamed_name : MutexCE_specification
+   public class Two_IMutex_instances_with_the_same_Global_name : MutexCE_specification
    {
       [XF] public void synchronize_with_each_other()
       {
          const string name = "MutexCE_specification.SameName.synchronize";
-         using var mutex1 = IMutex.GlobalNamed(name);
-         using var mutex2 = IMutex.GlobalNamed(name);
+         using var mutex1 = IMutex.Global(name);
+         using var mutex2 = IMutex.Global(name);
 
          var insideLockSection = GatedCodeSection.Closed(WaitTimeout.Seconds(30), "insideLock");
 
