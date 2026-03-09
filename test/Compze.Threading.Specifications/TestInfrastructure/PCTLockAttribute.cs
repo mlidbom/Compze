@@ -5,7 +5,7 @@ using Compze.xUnitMatrix;
 
 namespace Compze.Threading.Specifications.TestInfrastructure;
 
-public sealed class PCTLockAttribute(
+sealed class PCTLockAttribute(
    [CallerFilePath] string? sourceFilePath = null,
    [CallerLineNumber] int sourceLineNumber = -1)
    : ComponentCombinationsTheoryAttribute<LockImplementation>(
