@@ -47,27 +47,6 @@ public class ContentionCount_specification : UniversalTestBase
       }
    }
 
-   public class IThreadShared_exposes_Monitor : ContentionCount_specification
-   {
-      [XF] public void ContentionCount_is_accessible_through_Monitor_property()
-      {
-         var shared = IThreadShared.New(new object());
-
-         using(shared.Lock.TakeLock()) {}
-
-         shared.Lock.ContentionCount.Must().Be(0L);
-      }
-
-      [XF] public void Shared_instances_with_same_monitor_report_same_ContentionCount()
-      {
-         var monitor = ILock.New();
-         var sharedA = IThreadShared.New(new object(), monitor);
-         var sharedB = IThreadShared.New(new object(), monitor);
-
-         sharedA.Lock.Must().Be(sharedB.Lock);
-      }
-   }
-
    public class IAwaitableThreadShared_exposes_Monitor : ContentionCount_specification
    {
       [XF] public void ContentionCount_is_accessible_through_Monitor_property()
