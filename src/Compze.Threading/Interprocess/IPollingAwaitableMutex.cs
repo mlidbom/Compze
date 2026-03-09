@@ -5,7 +5,7 @@ namespace Compze.Threading.Interprocess;
 /// Condition waiting is implemented via polling — the mutex is periodically acquired and the condition checked.
 /// This is less efficient than in-process monitor-based waiting but enables cross-process condition synchronization.
 /// </summary>
-public partial interface IPollingAwaitableMutex : IMutex, IAwaitableLock
+public partial interface IPollingAwaitableMutex : IAwaitableMutex
 {
    ///<summary>Returns an <see cref="IPollingAwaitableMutex"/> that synchronizes across all processes and user login sessions on the machine.</summary>
    public static IPollingAwaitableMutex Global(string name, LockTimeout? lockTimeout = null, WaitTimeout? waitTimeout = null, PollingInterval? pollingInterval = null, Action? onAbandonedMutex = null) =>

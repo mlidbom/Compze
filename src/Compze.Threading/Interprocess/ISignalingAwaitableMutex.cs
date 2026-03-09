@@ -5,7 +5,7 @@ namespace Compze.Threading.Interprocess;
 /// Uses an <see cref="InterprocessChangeCounter"/> to avoid evaluating the user condition on every poll interval.
 /// The condition is only evaluated when the counter changes (i.e., an update lock was released).
 /// </summary>
-public partial interface ISignalingAwaitableMutex : IMutex, IAwaitableLock
+public partial interface ISignalingAwaitableMutex : IAwaitableMutex
 {
    public static ISignalingAwaitableMutex Global(string name, LockTimeout? lockTimeout = null, WaitTimeout? waitTimeout = null, Action? onAbandonedMutex = null) =>
       new SignalingAwaitableMutexCE(name, global: true, lockTimeout, waitTimeout, onAbandonedMutex);
