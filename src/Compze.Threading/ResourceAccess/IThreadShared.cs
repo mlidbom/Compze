@@ -17,7 +17,7 @@ public interface IThreadShared
    public static IThreadShared<TShared> New<TShared>(TShared shared, ILock @lock) =>
       new ThreadShared<TShared>(shared, @lock);
 
-   class ThreadShared<TShared>(TShared shared, ILock @lock) : IThreadShared<TShared>
+   internal class ThreadShared<TShared>(TShared shared, ILock @lock) : IThreadShared<TShared>
    {
       readonly TShared _shared = shared;
       public ILock Lock { get; } = @lock;
