@@ -70,15 +70,16 @@ public class ILock_specification : UniversalTestBase
       [PCTLock] public void provides_mutual_exclusion_across_threads()
       {
          var @lock = _lockFactory.CreateLock(LockTimeout.Seconds(30));
-         var insideLockSection = GatedCodeSection.Closed(WaitTimeout.Seconds(30), "insideLock");
+         var insideLockGate = ThreadGate.Closed(WaitTimeout.Seconds(30), "insideLock");
 
          _runner.Run(
-            () => @lock.Locked(() => insideLockSection.Enter().Dispose()),
-            () => @lock.Locked(() => insideLockSection.Enter().Dispose()));
+            () => @lock.Locked(() => insideLockGate.AwaitPassThrough()),
+            () => @lock.Locked(() => insideLockGate.AwaitPassThrough()));
 
-         insideLockSection.LetOneThreadEnterAndReachExit();
-         insideLockSection.EntranceGate.TryAwaitQueueLengthEqualTo(1, WaitTimeout.Milliseconds(50)).Must().BeFalse();
-         insideLockSection.Open();
+         insideLockGate.AwaitQueueLengthEqualTo(1);
+         insideLockGate.TryAwaitQueueLengthEqualTo(2, WaitTimeout.Milliseconds(50)).Must().BeFalse();
+         insideLockGate.Open();
+         insideLockGate.AwaitPassedThroughCountEqualTo(2);
       }
 
       [PCTLock] public void supports_reentrant_locking_from_the_same_thread()
@@ -95,11 +96,7 @@ public class ILock_specification : UniversalTestBase
          try { @lock.Locked<int>(() => throw new InvalidOperationException()); }
          catch(InvalidOperationException) { }
 
-         var secondThreadGotLock = ThreadGate.Open(WaitTimeout.Seconds(30), "secondThreadGotLock");
-
-         _runner.Run(() => @lock.Locked(() => secondThreadGotLock.AwaitPassThrough()));
-
-         secondThreadGotLock.AwaitPassedThroughCountEqualTo(1);
+         TaskCE.Run(() => @lock.Locked(() => {})).Wait();
       }
    }
 
