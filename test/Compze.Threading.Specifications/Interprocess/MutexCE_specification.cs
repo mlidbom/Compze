@@ -3,6 +3,7 @@ using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 using Compze.Must;
 using Compze.Tests.Infrastructure;
 using Compze.Threading.Interprocess;
+using Compze.Threading.Specifications.TestInfrastructure;
 using Compze.Threading.Testing;
 using Compze.xUnitBDD;
 using Xunit;
