@@ -9,44 +9,10 @@ using Xunit;
 
 namespace Compze.Threading.Specifications.ResourceAccess;
 
+///<summary>ILock ContentionCount is tested in ILock_specification via [PCTLock]. This file covers IAwaitableLock, IThreadShared, and IAwaitableThreadShared ContentionCount.</summary>
 [Collection(nameof(NonParallelCollection))]
 public class ContentionCount_specification : UniversalTestBase
 {
-   public class IMonitor_ContentionCount : ContentionCount_specification
-   {
-      [XF] public void Is_zero_when_no_contention_occurs()
-      {
-         var monitor = ILock.New();
-
-         using(monitor.TakeLock()) {}
-         using(monitor.TakeLock()) {}
-
-         monitor.ContentionCount.Must().Be(0L);
-      }
-
-      [XF] public void Increments_when_another_thread_contends_for_the_lock()
-      {
-         var monitor = ILock.New(LockTimeout.Seconds(5));
-         using var blockerHoldsLock = new ManualResetEventSlim(false);
-         using var contenderIsWaiting = new ManualResetEventSlim(false);
-
-         var blockingLock = monitor.TakeLock();
-         var contenderTask = TaskCE.Run(() =>
-         {
-            contenderIsWaiting.Set();
-            using(monitor.TakeLock()) {}
-         });
-
-         contenderIsWaiting.Wait();
-         Thread.Sleep(50.Milliseconds());
-         blockingLock.Dispose();
-
-         Task.WaitAll(contenderTask);
-
-         monitor.ContentionCount.Must().BeGreaterThanOrEqualTo(1);
-      }
-   }
-
    public class IAwaitableMonitor_ContentionCount : ContentionCount_specification
    {
       [XF] public void Is_zero_when_no_contention_occurs()

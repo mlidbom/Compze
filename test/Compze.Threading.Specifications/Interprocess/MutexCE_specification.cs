@@ -12,6 +12,7 @@ using static Compze.Must.MustActions;
 
 namespace Compze.Threading.Specifications.Interprocess;
 
+///<summary>IMutex-specific specifications. ILock contract behavior (mutual exclusion, reentrancy, Locked, etc.) is tested in ILock_specification via [PCTLock].</summary>
 [Collection(nameof(NonParallelCollection))]
 public class MutexCE_specification : UniversalTestBase
 {
@@ -36,71 +37,6 @@ public class MutexCE_specification : UniversalTestBase
       {
          using var mutex = IMutex.LocalNamed("MutexCE_specification.LocalNamed.simple_name");
          mutex.Must().NotBeNull();
-      }
-   }
-
-   public class Locked_with_Func : MutexCE_specification
-   {
-      [XF] public void returns_the_value_from_the_function()
-      {
-         using var mutex = IMutex.GlobalNamed("MutexCE_specification.Locked_with_Func.returns_value");
-         mutex.Locked(() => 42).Must().Be(42);
-      }
-
-      [XF] public void provides_mutual_exclusion_across_threads()
-      {
-         using var mutex = IMutex.GlobalNamed("MutexCE_specification.Locked_with_Func.mutual_exclusion");
-         var insideLockSection = GatedCodeSection.Closed(WaitTimeout.Seconds(30), "insideLock");
-
-         using var runner = TestingTaskRunner.WithTimeout(30.Seconds());
-         runner.Run(
-            () => mutex.Locked(() => insideLockSection.Enter().Dispose()),
-            () => mutex.Locked(() => insideLockSection.Enter().Dispose()));
-
-         insideLockSection.LetOneThreadEnterAndReachExit();
-         insideLockSection.EntranceGate.TryAwaitQueueLengthEqualTo(1, WaitTimeout.Milliseconds(50)).Must().BeFalse();
-         insideLockSection.Open();
-      }
-
-      [XF] public void supports_reentrant_locking_from_the_same_thread()
-      {
-         using var mutex = IMutex.GlobalNamed("MutexCE_specification.Locked_with_Func.reentrant");
-         var result = mutex.Locked(() => mutex.Locked(() => 42));
-         result.Must().Be(42);
-      }
-
-      [XF] public void propagates_exceptions_from_the_function()
-      {
-         using var mutex = IMutex.GlobalNamed("MutexCE_specification.Locked_with_Func.propagates_exceptions");
-         Invoking(() => mutex.Locked<int>(() => throw new InvalidOperationException("test")))
-           .Must().Throw<InvalidOperationException>()
-           .Which.Message.Must().Be("test");
-      }
-
-      [XF] public void releases_the_mutex_even_when_the_function_throws()
-      {
-         using var mutex = IMutex.GlobalNamed("MutexCE_specification.Locked_with_Func.releases_on_throw");
-
-         try { mutex.Locked<int>(() => throw new InvalidOperationException()); }
-         catch(InvalidOperationException) { }
-
-         var secondThreadGotLock = ThreadGate.Open(WaitTimeout.Seconds(30), "secondThreadGotLock");
-
-         using var runner = TestingTaskRunner.WithTimeout(30.Seconds());
-         runner.Run(() => mutex.Locked(() => secondThreadGotLock.AwaitPassThrough()));
-
-         secondThreadGotLock.AwaitPassedThroughCountEqualTo(1);
-      }
-   }
-
-   public class Locked_with_Action : MutexCE_specification
-   {
-      [XF] public void executes_the_action()
-      {
-         using var mutex = IMutex.GlobalNamed("MutexCE_specification.Locked_with_Action.executes");
-         var executed = false;
-         mutex.Locked(() => executed = true);
-         executed.Must().BeTrue();
       }
    }
 
@@ -131,7 +67,7 @@ public class MutexCE_specification : UniversalTestBase
       }
    }
 
-   public class Two_MutexCE_instances_with_the_same_GlobalNamed_name : MutexCE_specification
+   public class Two_IMutex_instances_with_the_same_GlobalNamed_name : MutexCE_specification
    {
       [XF] public void synchronize_with_each_other()
       {
