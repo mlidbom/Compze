@@ -11,7 +11,9 @@ namespace Compze.Threading.Interprocess;
 
 public partial interface IMutex
 {
-   private class MutexCE : IMutex
+#pragma warning disable CS0618 // Type or member is obsolete
+   private class MutexCE : IMutex, ILockInternals
+#pragma warning restore CS0618 // Type or member is obsolete
    {
       readonly Mutex _mutex;
       readonly LockTimeout _lockTimeout;
@@ -19,11 +21,13 @@ public partial interface IMutex
 #pragma warning disable CA2213
       readonly IDisposable _lockDisposer;
 #pragma warning restore CA2213
-      readonly Lock _timeoutLock = new();
+      readonly ILock _timeoutLock = New();
       long _contentionCount;
 
       static readonly WaitTimeout DefaultTimeToWaitForStackTrace = WaitTimeout.Seconds(1);
-      readonly WaitTimeout _stackTraceFetchTimeout = DefaultTimeToWaitForStackTrace;
+      WaitTimeout _stackTraceFetchTimeout = DefaultTimeToWaitForStackTrace;
+
+      public void SetTimeToWaitForStackTrace(WaitTimeout timeToWaitForStackTrace) => _stackTraceFetchTimeout = timeToWaitForStackTrace;
 
       public MutexCE(string mutexName, LockTimeout? lockTimeout, Action? onAbandonedMutex)
       {
@@ -92,22 +96,19 @@ public partial interface IMutex
 
       IReadOnlyList<TakeMutexLockTimeoutException> _timeOutExceptionsOnOtherThreads = new List<TakeMutexLockTimeoutException>();
 
-      Exception RegisterTimeoutException()
+      Exception RegisterTimeoutException() => _timeoutLock.Locked(() =>
       {
-         lock(_timeoutLock)
-         {
-            var exception = new TakeMutexLockTimeoutException(_lockTimeout, _stackTraceFetchTimeout);
-            OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _timeOutExceptionsOnOtherThreads, exception);
-            return exception;
-         }
-      }
+         var exception = new TakeMutexLockTimeoutException(_lockTimeout, _stackTraceFetchTimeout);
+         OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _timeOutExceptionsOnOtherThreads, exception);
+         return exception;
+      });
 
       void UpdateAnyRegisteredTimeoutExceptions()
       {
          // ReSharper disable once InconsistentlySynchronizedField
          if(_timeOutExceptionsOnOtherThreads.Count > 0)
          {
-            lock(_timeoutLock)
+            _timeoutLock.Locked(() =>
             {
                var stackTrace = new StackTrace(fNeedFileInfo: true);
                foreach(var exception in _timeOutExceptionsOnOtherThreads)
@@ -116,7 +117,7 @@ public partial interface IMutex
                }
 
                Interlocked.Exchange(ref _timeOutExceptionsOnOtherThreads, new List<TakeMutexLockTimeoutException>());
-            }
+            });
          }
       }
 
