@@ -1,4 +1,5 @@
 using Compze.Threading.Exceptions;
+// ReSharper disable ConvertToPrimaryConstructor
 
 namespace Compze.Threading.Interprocess;
 
