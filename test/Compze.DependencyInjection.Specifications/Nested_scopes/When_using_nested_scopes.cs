@@ -174,6 +174,6 @@ public class When_using_nested_scopes
 interface IDisposableScopedService;
 class DisposableScopedService : IDisposableScopedService, IDisposable
 {
-   public bool IsDisposed { get; set; }
+   public bool IsDisposed { get; private set; }
    public void Dispose() => IsDisposed = true;
 }

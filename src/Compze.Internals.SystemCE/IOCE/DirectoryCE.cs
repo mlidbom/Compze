@@ -3,7 +3,7 @@ using System.Text;
 
 namespace Compze.Internals.SystemCE.IOCE;
 
-partial class DirectoryCE : FileSystemInfoCE
+public partial class DirectoryCE : FileSystemInfoCE
 {
 #pragma warning disable CA1024 // Use properties. No, because that would imply that it is part of the instance state and that changing properties in it would change instance state.
    internal DirectoryInfo GetDirectoryInfo() => new(AbsolutePath);
@@ -11,7 +11,7 @@ partial class DirectoryCE : FileSystemInfoCE
 
    DirectoryCE(DirectoryInfo directoryInfo) : base(directoryInfo){}
 
-   internal DirectoryCE GetOrCreateDirectory(string subDirectory)
+   public DirectoryCE GetOrCreateDirectory(string subDirectory)
    {
       if(TryGetSubDirector(subDirectory) is {} subdirectory)
       {
@@ -21,7 +21,7 @@ partial class DirectoryCE : FileSystemInfoCE
       return new DirectoryCE(GetDirectoryInfo().CreateSubdirectory(subDirectory));
    }
 
-   internal TextFile GetOrCreateTextFile(string fileName, Encoding? encoding = null, Func<string>? createInitialContent = null)
+   public TextFile GetOrCreateTextFile(string fileName, Encoding? encoding = null, Func<string>? createInitialContent = null)
    {
       if(TryGetFile(fileName) is {} existingFile)
          return new TextFile(existingFile.GetFileInfo(), encoding ?? Encoding.UTF8);

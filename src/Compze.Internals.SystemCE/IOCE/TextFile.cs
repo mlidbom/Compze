@@ -2,13 +2,13 @@ using System.Text;
 
 namespace Compze.Internals.SystemCE.IOCE;
 
-class TextFile : FileCE
+public class TextFile : FileCE
 {
    readonly Encoding _encoding;
    internal TextFile(FileInfo fileInfo, Encoding encoding) : base(fileInfo) => _encoding = encoding;
 
-   internal void WriteAllText(string text) => File.WriteAllText(GetFileInfo().FullName, text, _encoding);
-   internal string ReadAllText() => File.ReadAllText(GetFileInfo().FullName, _encoding);
+   public void WriteAllText(string text) => File.WriteAllText(GetFileInfo().FullName, text, _encoding);
+   public string ReadAllText() => File.ReadAllText(GetFileInfo().FullName, _encoding);
 
    internal static TextFile Create(DirectoryCE directory, string name, Encoding? encoding = null, string content = "")
    {

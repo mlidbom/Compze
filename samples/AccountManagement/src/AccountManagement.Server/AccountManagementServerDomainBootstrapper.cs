@@ -7,8 +7,7 @@ using Compze.Abstractions.Tessaging.Hosting.Public;
 using Compze.Hosting;
 using Compze.Tessaging.Abstractions.Tessaging.Hosting.Public;
 using Compze.Core.Tessaging.Hosting.Public;
-using Compze.Tessaging.Teventive.TeventStore.Wiring;
-using Compze.Tessaging.TyperMediaApi.EventStore;
+using Compze.Tessaging.Teventive.TeventStore.Typermedia;
 
 namespace AccountManagement;
 

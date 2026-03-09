@@ -4,11 +4,12 @@ namespace Compze.Threading;
 
 public readonly struct PollingInterval : IEquatable<PollingInterval>
 {
-   public PollingInterval(TimeSpan value) => Argument.Assert(value > TimeSpan.Zero)
-                                                     ._(Value = value);
+   PollingInterval(TimeSpan value) => Argument.Assert(value > TimeSpan.Zero)
+                                              ._(Value = value);
 
-   public TimeSpan Value { get; }
+   TimeSpan Value { get; }
 
+   // ReSharper disable once MemberCanBeInternal
    public static readonly PollingInterval Default = Milliseconds(50);
 
    public static PollingInterval Milliseconds(long milliseconds) => new(TimeSpan.FromMilliseconds(milliseconds));

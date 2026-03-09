@@ -1,8 +1,8 @@
 namespace Compze.Threading;
 
-public static class IAwaitableLockCEExtensions
+public static class IAwaitableMonitorDoubleCheckedLocking
 {
-   public static TResult DoubleCheckedLocking<TResult>(this IAwaitableLock @this, Func<TResult?> tryRead, Action updateOnFailedRead)
+   public static TResult DoubleCheckedLocking<TResult>(this IAwaitableMonitor @this, Func<TResult?> tryRead, Action updateOnFailedRead)
       where TResult : class =>
       tryRead() ?? @this.Read(() =>
       {

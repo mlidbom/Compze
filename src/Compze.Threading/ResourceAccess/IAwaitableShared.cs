@@ -1,3 +1,5 @@
+// ReSharper disable ConvertToPrimaryConstructor
+
 namespace Compze.Threading.ResourceAccess;
 
 public interface IAwaitableShared
@@ -5,10 +7,17 @@ public interface IAwaitableShared
    public static IAwaitableShared<TShared> New<TShared>(TShared shared, IAwaitableLock @lock) =>
       new AwaitableShared<TShared>(shared, @lock);
 
-   internal class AwaitableShared<TShared>(TShared shared, IAwaitableLock @lock) : IAwaitableShared<TShared>
+   internal class AwaitableShared<TShared> : IAwaitableShared<TShared>
    {
-      readonly TShared _shared = shared;
-      public IAwaitableLock Lock { get; } = @lock;
+      readonly TShared _shared;
+
+      public AwaitableShared(TShared shared, IAwaitableLock @lock)
+      {
+         _shared = shared;
+         Lock = @lock;
+      }
+
+      public IAwaitableLock Lock { get; }
 
       public TResult Read<TResult>(Func<TShared, TResult> read, LockTimeout? timeout = null) =>
          Lock.Read(() => read(_shared), timeout);

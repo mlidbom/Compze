@@ -8,15 +8,13 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Compze.DependencyInjection.Microsoft;
 
-public sealed class MicrosoftDependencyInjectionContainer : DependencyInjectionContainerBase, IServiceLocator, IServiceLocatorKernel, IMicrosoftContainerInternals
+public sealed class MicrosoftDependencyInjectionContainer(IComponentRegistrar? register = null) : DependencyInjectionContainerBase(register), IServiceLocator, IServiceLocatorKernel, IMicrosoftContainerInternals
 {
    readonly IServiceCollection _services = new ServiceCollection();
    ServiceProvider? _serviceProvider;
    bool _isDisposed;
 
    readonly AsyncLocal<ImmutableStack<IServiceScope>> _scopeStack = new();
-
-   public MicrosoftDependencyInjectionContainer(IComponentRegistrar? register = null) : base(register) {}
 
    protected override DependencyInjectionContainerBase CreateEmptyClone() =>
       new MicrosoftDependencyInjectionContainer(Register().Clone());

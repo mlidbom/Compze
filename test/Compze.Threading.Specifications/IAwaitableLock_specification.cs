@@ -5,7 +5,6 @@ using Compze.Tests.Infrastructure;
 using Compze.Threading.Exceptions;
 using Compze.Threading.Specifications.TestInfrastructure;
 using Compze.Threading.Testing;
-using Compze.xUnitBDD;
 using Xunit;
 using static Compze.Must.MustActions;
 

@@ -3,7 +3,7 @@ using Compze.Abstractions.Tessaging.Validation;
 
 namespace Compze.Core.Tessaging.Teventive.Infrastructure.Validation;
 
-public static partial class TessageInspector
+public static class TessageInspector
 {
    internal static void AssertValid(IReadOnlyList<Type> teventTypesToInspect) => teventTypesToInspect.ForEach(TessageTypeInspector.AssertValid);
 

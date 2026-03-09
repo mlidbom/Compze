@@ -7,7 +7,7 @@ using Compze.Typermedia.HandlerRegistration;
 
 // ReSharper disable MemberCanBePrivate.Global they are public so that serializers work
 
-namespace Compze.Tessaging.TyperMediaApi.EventStore;
+namespace Compze.Tessaging.Teventive.TeventStore.Typermedia;
 
 public partial class TeventStoreApi
 {

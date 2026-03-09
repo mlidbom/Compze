@@ -19,7 +19,7 @@ public static class TransportTessage
 
       ITessage? _tessage;
 
-      public ITessage DeserializeTessageAndCacheForNextCall()
+      internal ITessage DeserializeTessageAndCacheForNextCall()
       {
          if(_tessage == null)
          {

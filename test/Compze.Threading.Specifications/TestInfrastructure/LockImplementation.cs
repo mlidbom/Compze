@@ -1,6 +1,6 @@
 namespace Compze.Threading.Specifications.TestInfrastructure;
 
-public enum LockImplementation
+enum LockImplementation
 {
    Monitor,
    Mutex

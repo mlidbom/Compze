@@ -21,7 +21,7 @@ public class When_resolving_an_untracked_transient
    [DependencyInjectionContainerMatrix]
    public void disposable_instances_are_not_disposed_by_the_container()
    {
-      var instance = default(DisposableService);
+      DisposableService instance;
 
       {
          var container = DependencyInjectionContainerFactory.CreateContainer();
@@ -35,7 +35,7 @@ public class When_resolving_an_untracked_transient
          container.Dispose();
       }
 
-      instance!.IsDisposed.Must().BeFalse();
+      instance.IsDisposed.Must().BeFalse();
    }
 
    [DependencyInjectionContainerMatrix]
@@ -80,7 +80,7 @@ public class When_resolving_an_untracked_transient
    interface IDisposableService;
    class DisposableService : IDisposableService, IDisposable
    {
-      public bool IsDisposed { get; set; }
+      public bool IsDisposed { get; private set; }
       public void Dispose() => IsDisposed = true;
    }
 
@@ -90,7 +90,6 @@ public class When_resolving_an_untracked_transient
    interface IServiceWithDependency;
    class ServiceWithDependency(ISingletonDependency dependency) : IServiceWithDependency
    {
-      readonly ISingletonDependency _dependency = dependency;
-      public ISingletonDependency Dependency => _dependency;
+      public ISingletonDependency Dependency { get; } = dependency;
    }
 }

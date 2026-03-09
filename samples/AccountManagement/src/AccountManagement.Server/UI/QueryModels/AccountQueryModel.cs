@@ -6,7 +6,7 @@ using CommunityToolkit.Diagnostics;
 using Compze.Abstractions.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Tessaging.Teventive.TeventStore.QueryModels.SelfGeneratingQueryModels;
-using Compze.Tessaging.TyperMediaApi.EventStore;
+using Compze.Tessaging.Teventive.TeventStore.Typermedia;
 using Compze.Typermedia;
 using Compze.Typermedia.HandlerRegistration;
 

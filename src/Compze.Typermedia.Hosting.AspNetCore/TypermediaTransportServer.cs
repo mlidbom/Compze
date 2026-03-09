@@ -47,7 +47,7 @@ public class TypermediaTransportServer : ITypermediaTransportServer
       builder.Services.AddControllers().ConfigureApplicationPartManager(it =>
       {
          it.ApplicationParts.Add(new AssemblyPart(typeof(TypermediaController).Assembly));
-         it.ApplicationParts.Add(new AssemblyPart(typeof(Compze.Internals.Transport.AspNet.InfrastructureQueryController).Assembly));
+         it.ApplicationParts.Add(new AssemblyPart(typeof(Internals.Transport.AspNet.InfrastructureQueryController).Assembly));
          it.FeatureProviders.Add(new InternalControllerFeatureProvider());
       });
 
@@ -72,12 +72,14 @@ public class TypermediaTransportServer : ITypermediaTransportServer
 
    class ServiceLocatorControllerActivator(IServiceLocator serviceLocator) : IControllerActivator
    {
-      public object Create(ControllerContext context) => serviceLocator.Resolve(context.ActionDescriptor.ControllerTypeInfo.AsType());
+      readonly IServiceLocator _serviceLocator1 = serviceLocator;
+
+      public object Create(ControllerContext context) => _serviceLocator1.Resolve(context.ActionDescriptor.ControllerTypeInfo.AsType());
       public void Release(ControllerContext context, object controller) {}
    }
 
    class InternalControllerFeatureProvider : ControllerFeatureProvider
    {
-      protected override bool IsController(TypeInfo typeInfo) => typeInfo.AsType().IsSubclassOf(typeof(Microsoft.AspNetCore.Mvc.Controller));
+      protected override bool IsController(TypeInfo typeInfo) => typeInfo.AsType().IsSubclassOf(typeof(Controller));
    }
 }

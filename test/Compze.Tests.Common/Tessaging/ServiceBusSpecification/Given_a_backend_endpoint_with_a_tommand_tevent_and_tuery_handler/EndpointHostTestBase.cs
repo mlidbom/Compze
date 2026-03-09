@@ -9,8 +9,7 @@ using Compze.Hosting;
 using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Tessaging.Hosting.Testing.Wiring;
-using Compze.Tessaging.Teventive.TeventStore.Wiring;
-using Compze.Tessaging.TyperMediaApi.EventStore;
+using Compze.Tessaging.Teventive.TeventStore.Typermedia;
 using Compze.Tests.Infrastructure;
 using Compze.Underscore;
 using Compze.Threading;
@@ -43,7 +42,7 @@ public abstract class EndpointHostTestBase : UniversalTestBase
    IReadOnlyList<IThreadGate> AllGates  { get; }
 
    protected IEndpoint BackendEndPoint { get; private set; } = null!;
-   protected TestClient Client { get; private set; } = null!;
+   TestClient Client { get; set; } = null!;
    protected IRemoteTypermediaNavigator Navigator => Client.Navigator;
    protected IEndpoint RemoteEndpoint { get; private set; } = null!;
 

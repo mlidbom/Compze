@@ -14,6 +14,7 @@ namespace Compze.Threading.Specifications.ResourceAccess;
 public class ContentionCount_specification : UniversalTestBase
 {
    readonly AwaitableLockFactory<ContentionCount_specification> _lockFactory = new();
+   readonly TestingTaskRunner _runner = new(30.Seconds());
 
    protected override void DisposeInternal() => _lockFactory.Dispose();
 
@@ -35,8 +36,7 @@ public class ContentionCount_specification : UniversalTestBase
 
          var blockingLock = @lock.TakeUpdateLock();
 
-         using var runner = TestingTaskRunner.WithTimeout(30.Seconds());
-         runner.Run(() => { using(@lock.TakeUpdateLock()) {} });
+         _runner.Run(() => { using(@lock.TakeUpdateLock()) {} });
 
          SpinWait.SpinUntil(() => @lock.ContentionCount >= 1, 5.Seconds()).Must().BeTrue();
 
@@ -70,6 +70,7 @@ public class ContentionCount_specification : UniversalTestBase
 
          blockingLock.Dispose();
 
+         // ReSharper disable once DisposeOnUsingVariable
          runner.Dispose();
 
          sharedA.Lock.ContentionCount.Must().BeGreaterThanOrEqualTo(1);

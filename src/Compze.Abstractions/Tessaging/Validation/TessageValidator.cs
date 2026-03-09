@@ -61,13 +61,13 @@ public static class TessageValidator
                                                            """;
    }
 
-   public class MissingTransactionException(ITessage tessage) :
+   class MissingTransactionException(ITessage tessage) :
       TransactionPolicyViolationException($"{tessage.GetType().FullName} is {typeof(IMustBeSentTransactionally).FullName} but there is no transaction.");
 
-   public class TransactionPresentException(ITessage tessage) :
+   class TransactionPresentException(ITessage tessage) :
       TransactionPolicyViolationException($"{tessage.GetType().FullName} is {typeof(ICannotBeSentRemotelyFromWithinTransaction).FullName} but there is a transaction.");
 
-   public class AttemptToSendStrictlyLocalTessageRemotelyException(IStrictlyLocalTessage tessage) : Exception(RemoteSendOfStrictlyLocalTessageTessage(tessage))
+   class AttemptToSendStrictlyLocalTessageRemotelyException(IStrictlyLocalTessage tessage) : Exception(RemoteSendOfStrictlyLocalTessageTessage(tessage))
    {
       static string RemoteSendOfStrictlyLocalTessageTessage(IStrictlyLocalTessage tessage) => $"""
 

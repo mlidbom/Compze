@@ -4,7 +4,6 @@
     <Nullable>enable</Nullable>
     <Version>0.2.1-alpha</Version>
   </PropertyGroup>
-  <Import Project="..\msbuild\InternalsVisibleToEveryone.props" />
   <!-- Compze.Contracts — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' == 'true'">
     <PackageReference Include="Compze.Contracts" Version="*-*" />

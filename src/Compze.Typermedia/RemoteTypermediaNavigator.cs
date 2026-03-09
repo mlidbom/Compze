@@ -10,10 +10,10 @@ namespace Compze.Typermedia;
 public static class RemoteTypermediaNavigatorRegistrar
 {
    public static IComponentRegistrar RemoteTypermediaNavigator(this IComponentRegistrar registrar)
-      => registrar.Register(Compze.Typermedia.RemoteTypermediaNavigator.RegisterWith);
+      => registrar.Register(Typermedia.RemoteTypermediaNavigator.RegisterWith);
 
    public static IComponentRegistrar SingletonRemoteTypermediaNavigator(this IComponentRegistrar registrar)
-      => registrar.Register(Compze.Typermedia.RemoteTypermediaNavigator.RegisterSingletonWith);
+      => registrar.Register(Typermedia.RemoteTypermediaNavigator.RegisterSingletonWith);
 }
 
 //Todo: Build a pipeline to handle things like tommand validation, caching layers etc. Don't explicitly check for rules and optimization here with duplication across the class.

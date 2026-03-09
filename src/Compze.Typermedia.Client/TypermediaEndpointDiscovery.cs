@@ -6,7 +6,7 @@ using Compze.Typermedia.HandlerRegistration;
 
 namespace Compze.Typermedia.Client;
 
-public class TypermediaEndpointInformationQuery : IQuery<TypermediaEndpointInformation>;
+class TypermediaEndpointInformationQuery : IQuery<TypermediaEndpointInformation>;
 
 // ReSharper disable once MemberCanBeInternal — Serialized across assemblies via Newtonsoft reflection
 public class TypermediaEndpointInformation
@@ -19,7 +19,7 @@ public class TypermediaEndpointInformation
 #pragma warning restore CS8618
    // ReSharper restore MemberCanBeInternal
 
-   public TypermediaEndpointInformation(IEnumerable<TypeId> handledTypermediaTypeIds, EndpointConfiguration configuration)
+   internal TypermediaEndpointInformation(IEnumerable<TypeId> handledTypermediaTypeIds, EndpointConfiguration configuration)
    {
       Id = configuration.Id;
       Name = configuration.Name;

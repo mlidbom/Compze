@@ -34,7 +34,7 @@ public abstract class ComponentRegistration
       AllowScopedDependent = allowScopedDependent;
    }
 
-   public abstract ComponentRegistration CreateCloneRegistration(IServiceLocator currentLocator);
+   internal abstract ComponentRegistration CreateCloneRegistration(IServiceLocator currentLocator);
 }
 
 public class ComponentRegistration<TService> : ComponentRegistration where TService : class
@@ -50,7 +50,7 @@ public class ComponentRegistration<TService> : ComponentRegistration where TServ
       return this;
    }
 
-   public override ComponentRegistration CreateCloneRegistration(IServiceLocator currentLocator)
+   internal override ComponentRegistration CreateCloneRegistration(IServiceLocator currentLocator)
    {
       if(!ShouldDelegateToParentWhenCloning)
       {

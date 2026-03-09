@@ -4,6 +4,7 @@ using System.Runtime.CompilerServices;
 namespace Compze.Contracts;
 
 /// <summary>Disposed-state assertion extension for <see cref="ContractAsserter"/>.</summary>
+// ReSharper disable once InconsistentNaming
 public static class IDisposableNotDisposed
 {
    [MethodImpl(MethodImplOptions.AggressiveInlining)]

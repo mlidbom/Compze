@@ -1,17 +1,17 @@
 using Compze.Contracts;
 using Compze.DbPool.MachineWideState;
 using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
-using Compze.Tests.Infrastructure;
-using Compze.Threading.Testing;
-using Compze.Threading;
 using Compze.Must;
+using Compze.Tests.Infrastructure;
+using Compze.Threading;
+using Compze.Threading.Testing;
 using Compze.xUnitBDD;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 
 // ReSharper disable ImplicitlyCapturedClosure
 
-namespace Compze.DbPool.Tests;
+namespace Compze.DbPool.Tests.MachineWideState;
 
 [UsedImplicitly] public class SharedObject
 {

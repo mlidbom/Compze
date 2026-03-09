@@ -4,11 +4,14 @@ namespace Compze.Threading.Interprocess.ResourceAccess;
 
 public interface IAwaitableProcessShared
 {
+#pragma warning disable CA2000
    public static IAwaitableProcessShared<TShared> Global<TShared>(string name, TShared shared, LockTimeout? lockTimeout = null, WaitTimeout? waitTimeout = null, PollingInterval? pollingInterval = null, Action? onAbandonedMutexException = null) =>
       New(shared, IPollingAwaitableMutex.GlobalNamed(name, lockTimeout, waitTimeout, pollingInterval, onAbandonedMutexException));
 
    public static IAwaitableProcessShared<TShared> Local<TShared>(string name, TShared shared, LockTimeout? lockTimeout = null, WaitTimeout? waitTimeout = null, PollingInterval? pollingInterval = null, Action? onAbandonedMutexException = null) =>
       New(shared, IPollingAwaitableMutex.LocalNamed(name, lockTimeout, waitTimeout, pollingInterval, onAbandonedMutexException));
+
+#pragma warning restore CA2000
 
    public static IAwaitableProcessShared<TShared> New<TShared>(TShared shared, IPollingAwaitableMutex mutex) =>
       new AwaitableProcessShared<TShared>(shared, mutex);

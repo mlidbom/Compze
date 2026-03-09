@@ -82,8 +82,9 @@ class CompzeMicrosoftServiceScope(CompzeMicrosoftServiceProvider serviceProvider
 {
    readonly IServiceScope _innerScope = innerScope;
    readonly IMicrosoftContainerInternals _compzeInternals = compzeInternals;
+   readonly CompzeMicrosoftServiceProvider _serviceProvider = serviceProvider;
 
-   public IServiceProvider ServiceProvider => serviceProvider;
+   public IServiceProvider ServiceProvider => _serviceProvider;
 
    public void Dispose()
    {

@@ -3,6 +3,7 @@ using System.Runtime.CompilerServices;
 namespace Compze.Contracts;
 
 /// <summary>Default-value assertion extensions for <see cref="ContractAsserter"/>.</summary>
+// ReSharper disable once InconsistentNaming
 public static class TStructNotDefault
 {
    extension(ContractAsserter @this)

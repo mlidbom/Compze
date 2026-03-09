@@ -1,9 +1,9 @@
 namespace Compze.Internals.SystemCE.IOCE;
 
-partial class DirectoryCE
+public partial class DirectoryCE
 {
 
-   internal static class StandardDirectories
+   public static class StandardDirectories
    {
       static DirectoryCE GetStandardDirectory(Environment.SpecialFolder folder)
       {

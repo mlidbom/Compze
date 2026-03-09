@@ -8,14 +8,12 @@ using Compze.Threading;
 
 namespace Compze.DependencyInjection.Autofac;
 
-public sealed class AutofacDependencyInjectionContainer : DependencyInjectionContainerBase, IServiceLocator, IServiceLocatorKernel, IAutofacContainerInternals
+public sealed class AutofacDependencyInjectionContainer(IComponentRegistrar? register = null) : DependencyInjectionContainerBase(register), IServiceLocator, IServiceLocatorKernel, IAutofacContainerInternals
 {
    readonly ContainerBuilder _containerBuilder = new();
    IContainer? _container;
 
    readonly AsyncLocal<ILifetimeScope?> _currentScope = new();
-
-   public AutofacDependencyInjectionContainer(IComponentRegistrar? register = null) : base(register) {}
 
    protected override IDependencyInjectionContainer RegisterInContainer(ComponentRegistration[] registrations)
    {

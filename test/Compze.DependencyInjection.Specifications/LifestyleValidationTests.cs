@@ -1,5 +1,4 @@
 using Compze.DependencyInjection.Specifications.Infrastructure;
-using Compze.DependencyInjection;
 using Compze.Must;
 using static Compze.Must.MustActions;
 

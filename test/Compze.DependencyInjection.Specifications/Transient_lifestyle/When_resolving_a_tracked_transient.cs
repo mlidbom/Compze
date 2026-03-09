@@ -23,8 +23,8 @@ public class When_resolving_a_tracked_transient
       [DependencyInjectionContainerMatrix]
       public void disposable_instances_are_disposed_when_container_is_disposed()
       {
-         var instance1 = default(DisposableService);
-         var instance2 = default(DisposableService);
+         DisposableService instance1;
+         DisposableService instance2;
 
          {
             var container = DependencyInjectionContainerFactory.CreateContainer();
@@ -40,15 +40,15 @@ public class When_resolving_a_tracked_transient
             container.Dispose();
          }
 
-         instance1!.IsDisposed.Must().BeTrue();
-         instance2!.IsDisposed.Must().BeTrue();
+         instance1.IsDisposed.Must().BeTrue();
+         instance2.IsDisposed.Must().BeTrue();
       }
 
       [DependencyInjectionContainerMatrix]
       public void async_disposable_only_instances_are_disposed_when_container_is_disposed()
       {
-         var instance1 = default(AsyncOnlyDisposableService);
-         var instance2 = default(AsyncOnlyDisposableService);
+         AsyncOnlyDisposableService instance1;
+         AsyncOnlyDisposableService instance2;
 
          {
             var container = DependencyInjectionContainerFactory.CreateContainer();
@@ -64,15 +64,15 @@ public class When_resolving_a_tracked_transient
             container.Dispose();
          }
 
-         instance1!.IsDisposed.Must().BeTrue();
-         instance2!.IsDisposed.Must().BeTrue();
+         instance1.IsDisposed.Must().BeTrue();
+         instance2.IsDisposed.Must().BeTrue();
       }
 
       [DependencyInjectionContainerMatrix]
       public async Task disposable_instances_are_disposed_when_container_is_disposed_async()
       {
-         var instance1 = default(DisposableService);
-         var instance2 = default(DisposableService);
+         DisposableService instance1;
+         DisposableService instance2;
 
          {
             var container = DependencyInjectionContainerFactory.CreateContainer();
@@ -88,15 +88,15 @@ public class When_resolving_a_tracked_transient
             await container.DisposeAsync();
          }
 
-         instance1!.IsDisposed.Must().BeTrue();
-         instance2!.IsDisposed.Must().BeTrue();
+         instance1.IsDisposed.Must().BeTrue();
+         instance2.IsDisposed.Must().BeTrue();
       }
 
       [DependencyInjectionContainerMatrix]
       public async Task async_disposable_only_instances_are_disposed_when_container_is_disposed_async()
       {
-         var instance1 = default(AsyncOnlyDisposableService);
-         var instance2 = default(AsyncOnlyDisposableService);
+         AsyncOnlyDisposableService instance1;
+         AsyncOnlyDisposableService instance2;
 
          {
             var container = DependencyInjectionContainerFactory.CreateContainer();
@@ -112,8 +112,8 @@ public class When_resolving_a_tracked_transient
             await container.DisposeAsync();
          }
 
-         instance1!.IsDisposed.Must().BeTrue();
-         instance2!.IsDisposed.Must().BeTrue();
+         instance1.IsDisposed.Must().BeTrue();
+         instance2.IsDisposed.Must().BeTrue();
       }
    }
 
@@ -190,14 +190,14 @@ public class When_resolving_a_tracked_transient
    interface IDisposableService;
    class DisposableService : IDisposableService, IDisposable
    {
-      public bool IsDisposed { get; set; }
+      public bool IsDisposed { get; private set; }
       public void Dispose() => IsDisposed = true;
    }
 
    interface IAsyncOnlyDisposableService;
    class AsyncOnlyDisposableService : IAsyncOnlyDisposableService, IAsyncDisposable
    {
-      public bool IsDisposed { get; set; }
+      public bool IsDisposed { get; private set; }
       public ValueTask DisposeAsync()
       {
          IsDisposed = true;

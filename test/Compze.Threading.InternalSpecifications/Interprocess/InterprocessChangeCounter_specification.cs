@@ -123,6 +123,7 @@ public class InterprocessChangeCounter_specification : UniversalTestBase
                                  .Select(_ => new Thread(() =>
                                  {
                                     for(var i = 0; i < incrementsPerThread; i++)
+                                       // ReSharper disable once AccessToDisposedClosure
                                        counter.Increment();
                                  }))
                                  .ToList();
