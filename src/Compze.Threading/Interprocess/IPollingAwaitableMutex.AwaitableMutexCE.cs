@@ -2,15 +2,15 @@ using Compze.Threading.Exceptions;
 
 namespace Compze.Threading.Interprocess;
 
-public partial interface IAwaitableMutex
+public partial interface IPollingAwaitableMutex
 {
 #pragma warning disable CS0618 // Type or member is obsolete
-   private class AwaitableMutexCE : IAwaitableMutex, ILockInternals
+   private class PollingAwaitableMutexCE : IPollingAwaitableMutex, ILockInternals
 #pragma warning restore CS0618 // Type or member is obsolete
    {
       readonly IMutex _mutex;
 
-      public AwaitableMutexCE(string name, bool global, LockTimeout? lockTimeout, WaitTimeout? waitTimeout, PollingInterval? pollingInterval, Action? onAbandonedMutex)
+      public PollingAwaitableMutexCE(string name, bool global, LockTimeout? lockTimeout, WaitTimeout? waitTimeout, PollingInterval? pollingInterval, Action? onAbandonedMutex)
       {
          _mutex = global
             ? IMutex.GlobalNamed(name, lockTimeout, onAbandonedMutex)

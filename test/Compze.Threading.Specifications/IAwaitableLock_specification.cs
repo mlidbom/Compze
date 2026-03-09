@@ -17,16 +17,20 @@ namespace Compze.Threading.Specifications;
 public class IAwaitableLock_specification : UniversalTestBase
 {
    readonly AwaitableLockFactory<IAwaitableLock_specification> _lockFactory = new();
+   readonly TestingTaskRunner _runner = TestingTaskRunner.WithTimeout(30.Seconds());
 
-   protected override void DisposeInternal() => _lockFactory.Dispose();
+   protected override void DisposeInternal()
+   {
+      _runner.Dispose();
+      _lockFactory.Dispose();
+   }
 
    [PCTAwaitableLock] public void When_one_thread_has_UpdateLock_other_thread_is_blocked_until_first_thread_disposes_lock_()
    {
       var @lock = _lockFactory.CreateAwaitableLock(LockTimeout.Seconds(30));
       var insideLockSection = GatedCodeSection.Closed(WaitTimeout.Seconds(30), "insideLock");
 
-      using var runner = TestingTaskRunner.WithTimeout(30.Seconds());
-      runner.Run(
+      _runner.Run(
          () => { using(@lock.TakeUpdateLock()) insideLockSection.Enter().Dispose(); },
          () => { using(@lock.TakeUpdateLock()) insideLockSection.Enter().Dispose(); });
 
@@ -130,8 +134,7 @@ public class IAwaitableLock_specification : UniversalTestBase
          var conditionMet = false;
          var lockAcquired = ThreadGate.Open(WaitTimeout.Seconds(5), "afterLockAcquired");
 
-         using var runner = TestingTaskRunner.WithTimeout(5.Seconds());
-         runner.Run(() =>
+         _runner.Run(() =>
          {
             using(@lock.TakeUpdateLockWhen(() => conditionMet))
             {
@@ -196,8 +199,7 @@ public class IAwaitableLock_specification : UniversalTestBase
          var conditionMet = false;
          var awaitCompleted = ThreadGate.Open(WaitTimeout.Seconds(5), "awaitCompleted");
 
-         using var runner = TestingTaskRunner.WithTimeout(5.Seconds());
-         runner.Run(() =>
+         _runner.Run(() =>
          {
             @lock.TryAwait(() => conditionMet).Must().BeTrue();
             awaitCompleted.AwaitPassThrough();
