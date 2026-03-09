@@ -5,7 +5,7 @@ using Compze.Internals.SystemCE.CollectionsCE.GenericCE;
 namespace Compze.xUnitMatrix;
 
 public abstract class ComponentCombinationsTheoryAttribute<TComponent1>(
-   string configurationFileName,
+   string? configurationFileName,
    bool useTestMethodArgument,
    string? sourceFilePath = null,
    int sourceLineNumber = -1)

@@ -1,4 +1,5 @@
 using System.Reflection;
+using Compze.Internals.SystemCE.LinqCE;
 using Xunit;
 using Xunit.Sdk;
 using Xunit.v3;
@@ -9,7 +10,7 @@ namespace Compze.xUnitMatrix;
 
 [XunitTestCaseDiscoverer(typeof(ComponentCombinationsTheoryDiscoverer))]
 public abstract class ComponentCombinationsTheoryAttribute(
-   string configurationFileName,
+   string? configurationFileName,
    Type[] componentEnumTypes,
    bool useTestMethodArgument,
    string? sourceFilePath = null,
@@ -24,7 +25,7 @@ public abstract class ComponentCombinationsTheoryAttribute(
    public Type? OnlyConsider { get; init; }
 
    readonly Type[] _componentEnumTypes = componentEnumTypes;
-   readonly string _configurationFileName = configurationFileName;
+   readonly string? _configurationFileName = configurationFileName;
 
    string? ValidateConfiguration()
    {
@@ -91,8 +92,7 @@ public abstract class ComponentCombinationsTheoryAttribute(
 
       try
       {
-         var combinations = ComponentCombinationsConfigurationFileReader
-                           .GetCombinations(_configurationFileName, _componentEnumTypes, OnlyConsiderComponentIndex)
+         var combinations = GetCombinations()
                            .Select(ITheoryDataRow (combination) => new TheoryDataRow(combination) // Pass combination object as argument
                                                                    {
                                                                       Skip = SkipComponentSpecifications.SkippedComponentFor(combination)?.ToString()
@@ -114,6 +114,32 @@ public abstract class ComponentCombinationsTheoryAttribute(
    int? OnlyConsiderComponentIndex => OnlyConsider == null
                                          ? null
                                          : _componentEnumTypes.ToList().IndexOf(OnlyConsider);
+
+   IReadOnlyList<ComponentCombination> GetCombinations() =>
+      _configurationFileName != null
+         ? ComponentCombinationsConfigurationFileReader.GetCombinations(_configurationFileName, _componentEnumTypes, OnlyConsiderComponentIndex)
+         : AllCombinationsFromEnumTypes(_componentEnumTypes, OnlyConsiderComponentIndex);
+
+   static IReadOnlyList<ComponentCombination> AllCombinationsFromEnumTypes(Type[] componentEnumTypes, int? onlyConsiderComponentIndex)
+   {
+      var allEnumValues = componentEnumTypes
+                         .Select(type => Enum.GetValues(type).Cast<Enum>().ToArray() as IReadOnlyList<Enum>)
+                         .ToList();
+
+      var combinations = allEnumValues
+                        .CartesianProduct()
+                        .Select(ComponentCombination.FromComponentEnumValues)
+                        .ToList();
+
+      if(onlyConsiderComponentIndex is {} index)
+      {
+         return combinations
+               .DistinctBy(it => it.Components[index])
+               .ToList();
+      }
+
+      return combinations;
+   }
 
    public bool SupportsDiscoveryEnumeration() => true;
 }
