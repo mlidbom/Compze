@@ -3,7 +3,7 @@ using Compze.Internals.SystemCE;
 using Compze.Internals.SystemCE.IOCE;
 using Compze.Threading.Interprocess;
 
-namespace Compze.DbPool;
+namespace Compze.DbPool.MachineWideState;
 
 public abstract class MachineWideSharedObject
 {

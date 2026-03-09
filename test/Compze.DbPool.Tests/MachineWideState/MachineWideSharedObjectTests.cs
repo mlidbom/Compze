@@ -1,4 +1,5 @@
 using Compze.Contracts;
+using Compze.DbPool.MachineWideState;
 using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 using Compze.Tests.Infrastructure;
 using Compze.Threading.Testing;

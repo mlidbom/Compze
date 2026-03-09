@@ -1,4 +1,5 @@
 using Compze.Contracts;
+using Compze.DbPool.MachineWideState;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
 using Compze.Internals.SystemCE;

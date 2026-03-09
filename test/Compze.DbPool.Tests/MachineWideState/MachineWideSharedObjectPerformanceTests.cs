@@ -1,3 +1,4 @@
+using Compze.DbPool.MachineWideState;
 using Compze.Internals.Testing.Performance;
 using Compze.Tests.Infrastructure;
 using Compze.xUnitBDD;

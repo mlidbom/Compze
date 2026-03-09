@@ -1,7 +1,7 @@
 using Compze.Contracts;
 using MemoryPack;
 
-namespace Compze.DbPool;
+namespace Compze.DbPool.MachineWideState;
 
 class MemoryPackDbPoolStateSerializer : ISharedObjectSerializer<DbPoolState>
 {

@@ -1,4 +1,4 @@
-namespace Compze.DbPool;
+namespace Compze.DbPool.MachineWideState;
 
 public interface ISharedObjectSerializer<T> where T : class
 {
