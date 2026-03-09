@@ -9,7 +9,7 @@ using Xunit;
 
 namespace Compze.Threading.Specifications.ResourceAccess;
 
-///<summary>ILock ContentionCount is tested in ILock_specification via [PCTLock]. This file covers IAwaitableLock, IThreadShared, and IAwaitableThreadShared ContentionCount.</summary>
+///<summary>ILock ContentionCount is tested in ILock_specification via [PCTLock]. IThreadShared is tested in IThreadShared_specification. This file covers IAwaitableLock and IAwaitableThreadShared ContentionCount.</summary>
 [Collection(nameof(NonParallelCollection))]
 public class ContentionCount_specification : UniversalTestBase
 {
