@@ -33,7 +33,4 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Underscore)' != 'true'">
     <ProjectReference Include="..\Compze.Underscore\Compze.Underscore.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Interprocess\ResourceAccess\" />
-  </ItemGroup>
 </Project>

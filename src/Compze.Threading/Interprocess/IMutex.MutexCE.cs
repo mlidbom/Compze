@@ -1,11 +1,11 @@
+using Compze.Threading.ResourceAccess;
+using Compze.Threading.ResourceAccess.Exceptions;
+using Compze.Threading.Utilities;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 using System.Security.AccessControl;
 using System.Security.Principal;
-using Compze.Threading.ResourceAccess;
-using Compze.Threading.ResourceAccess.Exceptions;
-using Compze.Threading.Utilities;
 
 namespace Compze.Threading.Interprocess;
 
@@ -16,7 +16,7 @@ public partial interface IMutex
 #pragma warning restore CS0618 // Type or member is obsolete
    {
       readonly Mutex _mutex;
-      readonly LockTimeout _lockTimeout;
+      public LockTimeout LockTimeout { get; }
       readonly Action? _onAbandonedMutex;
 #pragma warning disable CA2213
       readonly IDisposable _lockDisposer;
@@ -29,35 +29,36 @@ public partial interface IMutex
 
       public void SetTimeToWaitForStackTrace(WaitTimeout timeToWaitForStackTrace) => _stackTraceFetchTimeout = timeToWaitForStackTrace;
 
-      public MutexCE(string mutexName, LockTimeout? lockTimeout, Action? onAbandonedMutex)
+      public bool IsGlobal { get; }
+      public string Name { get; }
+
+      public MutexCE(string name, bool global, LockTimeout? lockTimeout, Action? onAbandonedMutex)
       {
-         _lockTimeout = lockTimeout ?? LockTimeout.Default;
+         if(name.Contains('\\', StringComparison.Ordinal)) throw new ArgumentException("Name must not contain backslashes", nameof(name));
+
+         IsGlobal = global;
+
+         Name = global ? $@"Global\{name}" : $@"Local\{name}";
+
+         LockTimeout = lockTimeout ?? LockTimeout.Default;
          _onAbandonedMutex = onAbandonedMutex;
-         _mutex = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
-                     ? WindowsGlobalMutex(mutexName)
-                     : NonWindowsGlobalMutex(mutexName);
+         if(IsGlobal && RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+         {
+            _mutex = WindowsGlobalMutex(name: Name);
+         } else
+         {
+            _mutex = new(initiallyOwned: false, name: Name);
+         }
+
          _lockDisposer = new LockDisposer(ReleaseLock);
       }
 
-      ///<summary>On windows a global mutex must be configured with certain access rules or access will fail with exceptions.</summary>
-      [SupportedOSPlatform("windows")]
-      static Mutex WindowsGlobalMutex(string mutexName)
-      {
-         var security = new MutexSecurity();
-         security.AddAccessRule(new MutexAccessRule(
-                                   new SecurityIdentifier(WellKnownSidType.WorldSid, domainSid: null),
-                                   MutexRights.FullControl,
-                                   AccessControlType.Allow));
-         return MutexAcl.Create(initiallyOwned: false, mutexName, out _, security);
-      }
-
-      static Mutex NonWindowsGlobalMutex(string mutexName) => new(initiallyOwned: false, name: mutexName);
 
       public long ContentionCount => Interlocked.Read(ref _contentionCount);
 
       public IDisposable TakeLock(LockTimeout? timeout = null)
       {
-         var effectiveTimeout = timeout ?? _lockTimeout;
+         var effectiveTimeout = timeout ?? LockTimeout;
 
          bool acquired;
          try
@@ -88,6 +89,18 @@ public partial interface IMutex
          return _lockDisposer;
       }
 
+      ///<summary>Creates a mutex configured with certain access rules required on windows to prevent exceptions when used across login sessions.</summary>
+      [SupportedOSPlatform("windows")]
+      static Mutex WindowsGlobalMutex(string name)
+      {
+         var security = new MutexSecurity();
+         security.AddAccessRule(new MutexAccessRule(
+                                   new SecurityIdentifier(WellKnownSidType.WorldSid, domainSid: null),
+                                   MutexRights.FullControl,
+                                   AccessControlType.Allow));
+         return MutexAcl.Create(initiallyOwned: false, name, out _, security);
+      }
+
       void ReleaseLock()
       {
          UpdateAnyRegisteredTimeoutExceptions();
@@ -98,7 +111,7 @@ public partial interface IMutex
 
       Exception RegisterTimeoutException() => _timeoutLock.Locked(() =>
       {
-         var exception = new TakeMutexLockTimeoutException(_lockTimeout, _stackTraceFetchTimeout);
+         var exception = new TakeMutexLockTimeoutException(LockTimeout, _stackTraceFetchTimeout);
          OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _timeOutExceptionsOnOtherThreads, exception);
          return exception;
       });

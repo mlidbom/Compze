@@ -25,8 +25,8 @@ public partial interface IAwaitableLock
       public IDisposable? TryTakeReadLockWhen(Func<bool> condition, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null) =>
          TryTakeLockWhen(condition, LockType.Read, waitTimeout, lockTimeout);
 
-      LockTimeout LockTimeout { get; }
-      WaitTimeout WaitTimeout { get; }
+      public LockTimeout LockTimeout { get; }
+      public WaitTimeout WaitTimeout { get; }
       public long ContentionCount => _monitor.ContentionCount;
 
       public void SetTimeToWaitForStackTrace(WaitTimeout timeToWaitForStackTrace) => _stackTraceFetchTimeout = timeToWaitForStackTrace;

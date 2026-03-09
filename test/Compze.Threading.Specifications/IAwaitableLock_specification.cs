@@ -47,6 +47,36 @@ public class IAwaitableLock_specification : UniversalTestBase
       TaskCE.Run(() => monitor.TakeUpdateLock(LockTimeout.Milliseconds(0))).Wait();
    }
 
+   public class LockTimeout_property : IAwaitableLock_specification
+   {
+      [XF] public void defaults_to_LockTimeout_Default_when_no_timeout_is_specified()
+      {
+         var @lock = IAwaitableLock.New();
+         @lock.LockTimeout.Must().Be(LockTimeout.Default);
+      }
+
+      [XF] public void returns_the_timeout_specified_at_creation()
+      {
+         var @lock = IAwaitableLock.New(lockTimeout: LockTimeout.Seconds(7));
+         @lock.LockTimeout.Must().Be(LockTimeout.Seconds(7));
+      }
+   }
+
+   public class WaitTimeout_property : IAwaitableLock_specification
+   {
+      [XF] public void defaults_to_WaitTimeout_Default_when_no_timeout_is_specified()
+      {
+         var @lock = IAwaitableLock.New();
+         @lock.WaitTimeout.Must().Be(WaitTimeout.Default);
+      }
+
+      [XF] public void returns_the_timeout_specified_at_creation()
+      {
+         var @lock = IAwaitableLock.New(waitTimeout: WaitTimeout.Seconds(7));
+         @lock.WaitTimeout.Must().Be(WaitTimeout.Seconds(7));
+      }
+   }
+
    public class When_a_thread_waiting_in_TakeUpdateLockWhen_is_interrupted : IAwaitableLock_specification
    {
       readonly IAwaitableLock _lock = IAwaitableLock.New(LockTimeout.Seconds(30));

@@ -15,5 +15,7 @@ public partial interface IAwaitableLock
 
    IDisposable? TryTakeReadLockWhen(Func<bool> condition, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null);
 
+   LockTimeout LockTimeout { get; }
+   WaitTimeout WaitTimeout { get; }
    long ContentionCount { get; }
 }

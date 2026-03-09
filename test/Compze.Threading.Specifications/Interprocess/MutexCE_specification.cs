@@ -27,6 +27,30 @@ public class MutexCE_specification : UniversalTestBase
          using var mutex = IMutex.GlobalNamed("MutexCE_specification.GlobalNamed.simple_name");
          mutex.Must().NotBeNull();
       }
+
+      [XF] public void IsGlobal_is_true()
+      {
+         using var mutex = IMutex.GlobalNamed("MutexCE_specification.GlobalNamed.IsGlobal");
+         mutex.IsGlobal.Must().BeTrue();
+      }
+
+      [XF] public void Name_is_prefixed_with_Global()
+      {
+         using var mutex = IMutex.GlobalNamed("MutexCE_specification.GlobalNamed.Name");
+         mutex.Name.Must().Be(@"Global\MutexCE_specification.GlobalNamed.Name");
+      }
+
+      [XF] public void LockTimeout_defaults_to_LockTimeout_Default()
+      {
+         using var mutex = IMutex.GlobalNamed("MutexCE_specification.GlobalNamed.LockTimeout_default");
+         mutex.LockTimeout.Must().Be(LockTimeout.Default);
+      }
+
+      [XF] public void LockTimeout_returns_the_timeout_specified_at_creation()
+      {
+         using var mutex = IMutex.GlobalNamed("MutexCE_specification.GlobalNamed.LockTimeout_custom", LockTimeout.Seconds(7));
+         mutex.LockTimeout.Must().Be(LockTimeout.Seconds(7));
+      }
    }
 
    public class LocalNamed : MutexCE_specification
@@ -38,6 +62,30 @@ public class MutexCE_specification : UniversalTestBase
       {
          using var mutex = IMutex.LocalNamed("MutexCE_specification.LocalNamed.simple_name");
          mutex.Must().NotBeNull();
+      }
+
+      [XF] public void IsGlobal_is_false()
+      {
+         using var mutex = IMutex.LocalNamed("MutexCE_specification.LocalNamed.IsGlobal");
+         mutex.IsGlobal.Must().BeFalse();
+      }
+
+      [XF] public void Name_is_prefixed_with_Local()
+      {
+         using var mutex = IMutex.LocalNamed("MutexCE_specification.LocalNamed.Name");
+         mutex.Name.Must().Be(@"Local\MutexCE_specification.LocalNamed.Name");
+      }
+
+      [XF] public void LockTimeout_defaults_to_LockTimeout_Default()
+      {
+         using var mutex = IMutex.LocalNamed("MutexCE_specification.LocalNamed.LockTimeout_default");
+         mutex.LockTimeout.Must().Be(LockTimeout.Default);
+      }
+
+      [XF] public void LockTimeout_returns_the_timeout_specified_at_creation()
+      {
+         using var mutex = IMutex.LocalNamed("MutexCE_specification.LocalNamed.LockTimeout_custom", LockTimeout.Seconds(7));
+         mutex.LockTimeout.Must().Be(LockTimeout.Seconds(7));
       }
    }
 

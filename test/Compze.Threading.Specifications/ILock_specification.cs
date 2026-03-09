@@ -112,6 +112,21 @@ public class ILock_specification : UniversalTestBase
       }
    }
 
+   public class LockTimeout_property : ILock_specification
+   {
+      [PCTLock] public void defaults_to_LockTimeout_Default_when_no_timeout_is_specified()
+      {
+         var @lock = _lockFactory.CreateLock();
+         @lock.LockTimeout.Must().Be(LockTimeout.Default);
+      }
+
+      [PCTLock] public void returns_the_timeout_specified_at_creation()
+      {
+         var @lock = _lockFactory.CreateLock(LockTimeout.Seconds(7));
+         @lock.LockTimeout.Must().Be(LockTimeout.Seconds(7));
+      }
+   }
+
    public class ContentionCount : ILock_specification
    {
       [PCTLock] public void is_zero_when_no_contention_occurs()
