@@ -14,14 +14,8 @@ namespace Compze.Threading.Specifications;
 [Collection(nameof(NonParallelCollection))]
 public class ILock_specification : UniversalTestBase
 {
-   readonly LockFactory<ILock_specification> _lockFactory;
-   readonly TestingTaskRunner _runner;
-
-   public ILock_specification()
-   {
-      _runner = new TestingTaskRunner(timeout:30.Seconds());
-      _lockFactory = new LockFactory<ILock_specification>();
-   }
+   readonly LockFactory<ILock_specification> _lockFactory = new();
+   readonly TestingTaskRunner _runner = new(timeout:30.Seconds());
 
    protected override void DisposeInternal()
    {
