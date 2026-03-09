@@ -1,5 +1,4 @@
 using Compze.Threading.Interprocess;
-using Compze.Threading.ResourceAccess;
 using Compze.xUnitMatrix;
 
 namespace Compze.Threading.Specifications.TestInfrastructure;

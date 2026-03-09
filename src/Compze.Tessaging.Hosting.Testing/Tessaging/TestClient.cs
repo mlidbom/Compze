@@ -4,7 +4,6 @@ using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Typermedia.Client;
 using Compze.Abstractions.Refactoring.Naming.Internal.Implementation;
 using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
-using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Typermedia;
 using Compze.Internals.Testing;

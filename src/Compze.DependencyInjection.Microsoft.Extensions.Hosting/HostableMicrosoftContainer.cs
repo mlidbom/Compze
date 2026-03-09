@@ -1,5 +1,4 @@
 using Compze.DependencyInjection.Extensions.Hosting;
-using Compze.DependencyInjection.Microsoft;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 

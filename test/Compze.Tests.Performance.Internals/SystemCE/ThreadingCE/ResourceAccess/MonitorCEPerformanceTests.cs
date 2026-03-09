@@ -3,7 +3,6 @@ using Compze.Internals.Testing.Performance;
 using Compze.Tests.Infrastructure;
 using Compze.Internals.SystemCE;
 using Compze.Threading;
-using Compze.Threading.ResourceAccess;
 using Compze.xUnitBDD;
 
 // ReSharper disable UnusedMethodReturnValue.Local

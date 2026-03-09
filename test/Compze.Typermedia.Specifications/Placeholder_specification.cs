@@ -1,4 +1,3 @@
-using Compze.Typermedia;
 using Xunit;
 
 namespace Compze.Typermedia.Specifications;

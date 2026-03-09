@@ -14,7 +14,6 @@ using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Threading;
-using Compze.Threading.ResourceAccess;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Universal;
 

@@ -5,7 +5,6 @@ using Compze.Abstractions.Tessaging.Public;
 using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Internals.SystemCE.ReflectionCE.EmitCE;
 using Compze.Threading;
-using Compze.Threading.ResourceAccess;
 
 // ReSharper disable UnusedTypeParameter : todo: We'll keep the unused stuff for reference for now. If it is not used during the refactoring of wrapped tevent dispatching, ditch it.
 // ReSharper disable UnusedMember.Global

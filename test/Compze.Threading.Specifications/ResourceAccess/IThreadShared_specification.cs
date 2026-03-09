@@ -2,7 +2,6 @@ using Compze.Must;
 using Compze.Tests.Infrastructure;
 using Compze.Threading.ResourceAccess;
 using Compze.Threading.Specifications.TestInfrastructure;
-using Compze.xUnitBDD;
 using Xunit;
 
 namespace Compze.Threading.Specifications.ResourceAccess;
@@ -18,13 +17,13 @@ public class IThreadShared_specification : UniversalTestBase
    {
       [PCTLock] public void returns_the_value_from_the_function()
       {
-         var shared = IThreadShared.New(42, _lockFactory.CreateLock());
+         var shared = IShared.New(42, _lockFactory.CreateLock());
          shared.Locked(value => value).Must().Be(42);
       }
 
       [PCTLock] public void provides_the_shared_value_to_the_function()
       {
-         var shared = IThreadShared.New("hello", _lockFactory.CreateLock());
+         var shared = IShared.New("hello", _lockFactory.CreateLock());
          shared.Locked(value => value.Length).Must().Be(5);
       }
    }
@@ -34,7 +33,7 @@ public class IThreadShared_specification : UniversalTestBase
       [PCTLock] public void executes_the_action_with_the_shared_value()
       {
          var list = new List<int>();
-         var shared = IThreadShared.New(list, _lockFactory.CreateLock());
+         var shared = IShared.New(list, _lockFactory.CreateLock());
          shared.Locked(value => value.Add(42));
          list.Must().HaveCount(1);
       }
@@ -45,7 +44,7 @@ public class IThreadShared_specification : UniversalTestBase
       [PCTLock] public void exposes_ContentionCount()
       {
          var @lock = _lockFactory.CreateLock();
-         var shared = IThreadShared.New(new object(), @lock);
+         var shared = IShared.New(new object(), @lock);
 
          using(shared.Lock.TakeLock()) {}
 
@@ -55,8 +54,8 @@ public class IThreadShared_specification : UniversalTestBase
       [PCTLock] public void shared_instances_with_same_lock_report_same_Lock()
       {
          var @lock = _lockFactory.CreateLock();
-         var sharedA = IThreadShared.New(new object(), @lock);
-         var sharedB = IThreadShared.New(new object(), @lock);
+         var sharedA = IShared.New(new object(), @lock);
+         var sharedB = IShared.New(new object(), @lock);
 
          sharedA.Lock.Must().Be(sharedB.Lock);
       }

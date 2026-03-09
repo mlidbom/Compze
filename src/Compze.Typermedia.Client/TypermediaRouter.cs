@@ -9,7 +9,6 @@ using Compze.Internals.Transport;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Threading;
-using Compze.Threading.ResourceAccess;
 
 namespace Compze.Typermedia.Client;
 

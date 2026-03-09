@@ -1,5 +1,4 @@
 using Compze.Tessaging.Abstractions.Tessaging.Hosting.Public;
-using Compze.Typermedia;
 using Compze.Typermedia.HandlerRegistration;
 
 namespace Compze.Hosting;

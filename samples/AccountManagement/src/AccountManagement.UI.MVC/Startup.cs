@@ -1,4 +1,3 @@
-using Compze.Abstractions.Tessaging.Hosting.Public;
 using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Hosting;
 using Compze.Tessaging.Hosting.Testing;
@@ -6,7 +5,6 @@ using Compze.Internals.Testing;
 using Compze.Tessaging.Hosting.Testing.Tessaging;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using JetBrains.Annotations;
-using Compze.Typermedia;
 
 namespace AccountManagement.UI.MVC;
 

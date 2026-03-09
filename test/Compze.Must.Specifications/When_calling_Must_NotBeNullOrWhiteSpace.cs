@@ -1,5 +1,3 @@
-using AssertionFailedException = Compze.Must.AssertionFailedException;
-
 #pragma warning disable CS8620 // Argument cannot be used for parameter due to differences in the nullability of reference types.
 
 // ReSharper disable InconsistentNaming

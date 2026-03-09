@@ -2,7 +2,6 @@ using AccountManagement.Domain;
 using AccountManagement.Domain.Tevents;
 using AccountManagement.UI;
 using AccountManagement.UI.QueryModels;
-using Compze.DocumentDb.Wiring;
 using Compze.Core.DocumentDb.Wiring;
 using Compze.Abstractions.Tessaging.Hosting.Public;
 using Compze.Hosting;

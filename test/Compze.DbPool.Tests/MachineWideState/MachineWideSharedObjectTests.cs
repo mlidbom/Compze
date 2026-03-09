@@ -1,11 +1,8 @@
 using Compze.Contracts;
 using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 using Compze.Tests.Infrastructure;
-using Compze.Internals.SystemCE;
-using Compze.Internals.SystemCE.LinqCE;
 using Compze.Threading.Testing;
 using Compze.Threading;
-using Compze.DbPool;
 using Compze.Must;
 using Compze.xUnitBDD;
 using JetBrains.Annotations;

@@ -1,4 +1,3 @@
-using Autofac;
 using Compze.DependencyInjection.Autofac;
 using Compze.Must;
 using Compze.xUnitBDD;

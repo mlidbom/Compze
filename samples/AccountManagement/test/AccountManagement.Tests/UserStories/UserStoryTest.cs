@@ -1,5 +1,4 @@
 using AccountManagement.UserStories.Scenarios;
-using Compze.Abstractions.Tessaging.Hosting.Public;
 using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Tessaging.Hosting.Testing.Tessaging;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;

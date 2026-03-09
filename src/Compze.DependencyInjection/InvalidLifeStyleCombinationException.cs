@@ -1,5 +1,3 @@
-using Compze.DependencyInjection.Abstractions;
-
 namespace Compze.DependencyInjection;
 
 public class InvalidLifeStyleCombinationException : Exception

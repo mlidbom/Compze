@@ -1,7 +1,5 @@
 using Compze.Tests.Infrastructure;
 using Compze.Internals.SystemCE.ReflectionCE;
-using Compze.Must;
-using Compze.xUnitBDD;
 using JetBrains.Annotations;
 #pragma warning disable CS8620 // Argument cannot be used for parameter due to differences in the nullability of reference types.
 

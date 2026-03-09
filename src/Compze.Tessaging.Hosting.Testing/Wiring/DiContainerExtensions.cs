@@ -2,7 +2,6 @@ using Compze.DocumentDb.Wiring;
 using Compze.Abstractions.Refactoring.Naming.Internal.Implementation;
 using Compze.Abstractions.Wiring.Testing.Internal;
 using Compze.Tessaging.Implementation;
-using Compze.Tessaging.Implementation.Abstractions;
 using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
 using Compze.Tessaging.Teventive.TeventStore.Wiring;
 using Compze.Typermedia.HandlerRegistration;

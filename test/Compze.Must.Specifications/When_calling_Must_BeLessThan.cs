@@ -1,4 +1,4 @@
-using AssertionFailedException = Compze.Must.AssertionFailedException;
+
 
 // ReSharper disable InconsistentNaming
 

@@ -1,5 +1,4 @@
 using Compze.Contracts;
-using Compze.Threading.ResourceAccess;
 using Compze.Internals.Logging;
 using Compze.Threading.Exceptions;
 

@@ -1,9 +1,7 @@
 using Compze.Contracts;
-using Compze.Abstractions.Public;
 using Compze.Abstractions.Refactoring.Naming.Internal;
 using Compze.Abstractions.Serialization.Internal;
 using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
-using Compze.Internals.Transport;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;

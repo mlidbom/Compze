@@ -1,5 +1,4 @@
 using System.Runtime.CompilerServices;
-using Compze.xUnitMatrix;
 using Compze.xUnitMatrix.Tests._2Components;
 
 namespace Compze.xUnitMatrix.Tests._3Components.Wildcards;

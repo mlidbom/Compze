@@ -1,5 +1,3 @@
-using Compze.xUnitMatrix;
-
 namespace Compze.xUnitMatrix.Tests._3Components.Wildcards;
 
 public class WildcardExpansionTests(ITestOutputHelper testOutputHelper)

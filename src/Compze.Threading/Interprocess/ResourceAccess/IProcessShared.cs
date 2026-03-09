@@ -13,7 +13,7 @@ public interface IProcessShared
    public static IProcessShared<TShared> New<TShared>(TShared shared, IMutex @lock) =>
       new ProcessShared<TShared>(shared, @lock);
 
-   internal class ProcessShared<TShared>(TShared shared, IMutex @lock) : IThreadShared.ThreadShared<TShared>(shared, @lock), IProcessShared<TShared>
+   internal class ProcessShared<TShared>(TShared shared, IMutex mutex) : IShared.Shared<TShared>(shared, mutex), IProcessShared<TShared>
    {
       public IMutex Mutex => (IMutex)Lock;
    }

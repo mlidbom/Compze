@@ -3,7 +3,6 @@ using Compze.Abstractions.Serialization.Internal;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Core.Tessaging.Transport.Internal;
 using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
-using Compze.Tessaging.Implementation.Abstractions;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Internals.Transport;
 using Compze.Tessaging.Implementation.Transport.Client.Internal;

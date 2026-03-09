@@ -2,9 +2,7 @@
 // ReSharper disable UnusedTypeParameter
 // ReSharper disable MemberHidesStaticFromOuterClass
 
-using Compze.Abstractions.Refactoring.Naming.Internal;
 using Compze.Abstractions.Tessaging.Hosting.Public;
-using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
 using Compze.Tessaging.Implementation.Transport.Client.Routing.Abstractions;

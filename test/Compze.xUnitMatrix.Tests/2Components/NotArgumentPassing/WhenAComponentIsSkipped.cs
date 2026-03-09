@@ -1,5 +1,3 @@
-using Compze.xUnitMatrix;
-
 namespace Compze.xUnitMatrix.Tests._2Components.NotArgumentPassing;
 
 public class WhenAComponentIsSkipped

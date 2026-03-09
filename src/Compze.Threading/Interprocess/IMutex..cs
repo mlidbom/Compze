@@ -1,5 +1,3 @@
-using Compze.Threading.ResourceAccess;
-
 namespace Compze.Threading.Interprocess;
 
 ///<summary>

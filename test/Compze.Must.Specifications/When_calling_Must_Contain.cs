@@ -1,5 +1,4 @@
 using System.Collections.ObjectModel;
-using AssertionFailedException = Compze.Must.AssertionFailedException;
 
 // ReSharper disable InconsistentNaming
 

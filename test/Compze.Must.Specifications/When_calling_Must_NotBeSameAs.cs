@@ -1,5 +1,4 @@
 using Compze.Abstractions.Public.Infrastructure;
-using AssertionFailedException = Compze.Must.AssertionFailedException;
 
 // ReSharper disable InconsistentNaming
 

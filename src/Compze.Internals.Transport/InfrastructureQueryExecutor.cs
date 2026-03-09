@@ -3,7 +3,6 @@ using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
 using Compze.Threading;
-using Compze.Threading.ResourceAccess;
 
 namespace Compze.Internals.Transport;
 

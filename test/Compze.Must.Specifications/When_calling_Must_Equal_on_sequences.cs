@@ -1,5 +1,3 @@
-using AssertionFailedException = Compze.Must.AssertionFailedException;
-
 #pragma warning disable CA1861
 // ReSharper disable InconsistentNaming
 

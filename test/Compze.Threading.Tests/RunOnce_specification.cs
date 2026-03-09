@@ -1,6 +1,5 @@
 using System.Collections.Concurrent;
 using Compze.Must;
-using Compze.Threading;
 using Compze.xUnitBDD;
 using Xunit;
 

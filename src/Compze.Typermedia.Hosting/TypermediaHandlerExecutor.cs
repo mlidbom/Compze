@@ -2,7 +2,6 @@ using Compze.Abstractions.Tessaging.Public;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
-using Compze.Internals.SystemCE.TransactionsCE;
 using Compze.Typermedia.HandlerRegistration;
 
 namespace Compze.Typermedia.Hosting;
