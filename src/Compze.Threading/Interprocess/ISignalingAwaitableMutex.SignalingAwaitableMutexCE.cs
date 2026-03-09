@@ -8,13 +8,13 @@ public partial interface ISignalingAwaitableMutex
    class SignalingAwaitableMutexCE : ISignalingAwaitableMutex, ILockInternals
 #pragma warning restore CS0618 // Type or member is obsolete
    {
-      static readonly PollingInterval DefaultCounterPollingInterval = PollingInterval.Milliseconds(1);
+      static readonly PollingInterval CounterPollingInterval = PollingInterval.Milliseconds(1);
       static readonly TimeSpan SafetyCheckInterval = TimeSpan.FromMilliseconds(50);
 
       readonly IMutex _mutex;
       readonly InterprocessChangeCounter _changeCounter;
 
-      public SignalingAwaitableMutexCE(string name, bool global, LockTimeout? lockTimeout, WaitTimeout? waitTimeout, PollingInterval? pollingInterval, Action? onAbandonedMutex)
+      public SignalingAwaitableMutexCE(string name, bool global, LockTimeout? lockTimeout, WaitTimeout? waitTimeout, Action? onAbandonedMutex)
       {
          _changeCounter = new InterprocessChangeCounter(name, global);
 
@@ -31,13 +31,11 @@ public partial interface ISignalingAwaitableMutex
             : IMutex.LocalNamed(name, lockTimeout, wrappedOnAbandonedMutex);
 
          WaitTimeout = waitTimeout ?? WaitTimeout.Default;
-         PollingInterval = pollingInterval ?? DefaultCounterPollingInterval;
       }
 
       public LockTimeout LockTimeout => _mutex.LockTimeout;
       public long ContentionCount => _mutex.ContentionCount;
       public WaitTimeout WaitTimeout { get; }
-      public PollingInterval PollingInterval { get; }
       public bool IsGlobal => _mutex.IsGlobal;
       public string Name => _mutex.Name;
 
@@ -106,7 +104,7 @@ public partial interface ISignalingAwaitableMutex
                   abandonedMutexCheckInterval = DateTime.UtcNow + SafetyCheckInterval;
                }
 
-               Thread.Sleep(PollingInterval);
+               Thread.Sleep(CounterPollingInterval);
             }
          }
       }

@@ -7,11 +7,9 @@ namespace Compze.Threading.Interprocess;
 /// </summary>
 public partial interface ISignalingAwaitableMutex : IMutex, IAwaitableLock
 {
-   public static ISignalingAwaitableMutex GlobalNamed(string name, LockTimeout? lockTimeout = null, WaitTimeout? waitTimeout = null, PollingInterval? pollingInterval = null, Action? onAbandonedMutex = null) =>
-      new SignalingAwaitableMutexCE(name, global: true, lockTimeout, waitTimeout, pollingInterval, onAbandonedMutex);
+   public static ISignalingAwaitableMutex GlobalNamed(string name, LockTimeout? lockTimeout = null, WaitTimeout? waitTimeout = null, Action? onAbandonedMutex = null) =>
+      new SignalingAwaitableMutexCE(name, global: true, lockTimeout, waitTimeout, onAbandonedMutex);
 
-   public static ISignalingAwaitableMutex LocalNamed(string name, LockTimeout? lockTimeout = null, WaitTimeout? waitTimeout = null, PollingInterval? pollingInterval = null, Action? onAbandonedMutex = null) =>
-      new SignalingAwaitableMutexCE(name, global: false, lockTimeout, waitTimeout, pollingInterval, onAbandonedMutex);
-
-   PollingInterval PollingInterval { get; }
+   public static ISignalingAwaitableMutex LocalNamed(string name, LockTimeout? lockTimeout = null, WaitTimeout? waitTimeout = null, Action? onAbandonedMutex = null) =>
+      new SignalingAwaitableMutexCE(name, global: false, lockTimeout, waitTimeout, onAbandonedMutex);
 }
