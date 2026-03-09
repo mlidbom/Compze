@@ -128,20 +128,20 @@ public class IAwaitableLock_specification : UniversalTestBase
       {
          var @lock = _lockFactory.CreateAwaitableLock(LockTimeout.Seconds(5), WaitTimeout.Seconds(5));
          var conditionMet = false;
-         var setConditionGate = ThreadGate.Closed(WaitTimeout.Seconds(5), "setCondition");
+         var lockAcquired = ThreadGate.Open(WaitTimeout.Seconds(5), "afterLockAcquired");
 
          using var runner = TestingTaskRunner.WithTimeout(5.Seconds());
          runner.Run(() =>
          {
-            setConditionGate.AwaitPassThrough();
-            @lock.Update(() => conditionMet = true);
+            using(@lock.TakeUpdateLockWhen(() => conditionMet))
+            {
+               lockAcquired.AwaitPassThrough();
+            }
          });
 
-         // Let the background thread through so it sets the condition
-         setConditionGate.Open();
-
-         using var taken = @lock.TakeUpdateLockWhen(() => conditionMet);
-         conditionMet.Must().BeTrue();
+         lockAcquired.TryAwaitPassedThroughCountEqualTo(1, WaitTimeout.Milliseconds(100)).Must().BeFalse();
+         @lock.Update(() => conditionMet = true);
+         lockAcquired.AwaitPassedThroughCountEqualTo(1);
       }
 
       [PCTAwaitableLock] public void Throws_AwaitingConditionTimeoutException_when_condition_never_becomes_true() =>
@@ -194,19 +194,18 @@ public class IAwaitableLock_specification : UniversalTestBase
       {
          var @lock = _lockFactory.CreateAwaitableLock(LockTimeout.Seconds(5), WaitTimeout.Seconds(5));
          var conditionMet = false;
-         var setConditionGate = ThreadGate.Closed(WaitTimeout.Seconds(5), "setCondition");
+         var awaitCompleted = ThreadGate.Open(WaitTimeout.Seconds(5), "awaitCompleted");
 
          using var runner = TestingTaskRunner.WithTimeout(5.Seconds());
          runner.Run(() =>
          {
-            setConditionGate.AwaitPassThrough();
-            @lock.Update(() => conditionMet = true);
+            @lock.TryAwait(() => conditionMet).Must().BeTrue();
+            awaitCompleted.AwaitPassThrough();
          });
 
-         // Let the background thread through so it sets the condition
-         setConditionGate.Open();
-
-         @lock.TryAwait(() => conditionMet).Must().BeTrue();
+         awaitCompleted.TryAwaitPassedThroughCountEqualTo(1, WaitTimeout.Milliseconds(100)).Must().BeFalse();
+         @lock.Update(() => conditionMet = true);
+         awaitCompleted.AwaitPassedThroughCountEqualTo(1);
       }
 
       [PCTAwaitableLock] public void Returns_false_when_condition_never_becomes_true_within_timeout()
