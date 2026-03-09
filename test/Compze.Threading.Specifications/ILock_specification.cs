@@ -14,9 +14,20 @@ namespace Compze.Threading.Specifications;
 [Collection(nameof(NonParallelCollection))]
 public class ILock_specification : UniversalTestBase
 {
-   readonly LockFactory<ILock_specification> _lockFactory = new();
+   readonly LockFactory<ILock_specification> _lockFactory;
+   readonly TestingTaskRunner _runner;
 
-   protected override void DisposeInternal() => _lockFactory.Dispose();
+   public ILock_specification()
+   {
+      _runner = new TestingTaskRunner(timeout:30.Seconds());
+      _lockFactory = new LockFactory<ILock_specification>();
+   }
+
+   protected override void DisposeInternal()
+   {
+      _runner.Dispose();
+      _lockFactory.Dispose();
+   }
 
    public class Locked_with_Func : ILock_specification
    {
@@ -61,8 +72,7 @@ public class ILock_specification : UniversalTestBase
          var @lock = _lockFactory.CreateLock(LockTimeout.Seconds(30));
          var insideLockSection = GatedCodeSection.Closed(WaitTimeout.Seconds(30), "insideLock");
 
-         using var runner = TestingTaskRunner.WithTimeout(30.Seconds());
-         runner.Run(
+         _runner.Run(
             () => @lock.Locked(() => insideLockSection.Enter().Dispose()),
             () => @lock.Locked(() => insideLockSection.Enter().Dispose()));
 
@@ -87,8 +97,7 @@ public class ILock_specification : UniversalTestBase
 
          var secondThreadGotLock = ThreadGate.Open(WaitTimeout.Seconds(30), "secondThreadGotLock");
 
-         using var runner = TestingTaskRunner.WithTimeout(30.Seconds());
-         runner.Run(() => @lock.Locked(() => secondThreadGotLock.AwaitPassThrough()));
+         _runner.Run(() => @lock.Locked(() => secondThreadGotLock.AwaitPassThrough()));
 
          secondThreadGotLock.AwaitPassedThroughCountEqualTo(1);
       }
@@ -112,8 +121,7 @@ public class ILock_specification : UniversalTestBase
 
          var blockingLock = @lock.TakeLock();
 
-         using var runner = TestingTaskRunner.WithTimeout(30.Seconds());
-         runner.Run(() => { using(@lock.TakeLock()) {} });
+         _runner.Run(() => { using(@lock.TakeLock()) {} });
 
          SpinWait.SpinUntil(() => @lock.ContentionCount >= 1, 5.Seconds()).Must().BeTrue();
 
