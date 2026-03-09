@@ -11,6 +11,7 @@ namespace Compze.Threading.Specifications.ResourceAccess;
 
 ///<summary>ILock ContentionCount is tested in ILock_specification via [PCTLock]. IThreadShared is tested in IThreadShared_specification. This file covers IAwaitableLock and IAwaitableThreadShared ContentionCount.</summary>
 [Collection(nameof(NonParallelCollection))]
+// ReSharper disable once InconsistentNaming
 public class ContentionCount_specification : UniversalTestBase
 {
    readonly AwaitableLockFactory<ContentionCount_specification> _lockFactory = new();

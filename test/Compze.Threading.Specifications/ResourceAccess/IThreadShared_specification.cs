@@ -3,6 +3,7 @@ using Compze.Tests.Infrastructure;
 using Compze.Threading.ResourceAccess;
 using Compze.Threading.Specifications.TestInfrastructure;
 using Xunit;
+// ReSharper disable InconsistentNaming
 
 namespace Compze.Threading.Specifications.ResourceAccess;
 

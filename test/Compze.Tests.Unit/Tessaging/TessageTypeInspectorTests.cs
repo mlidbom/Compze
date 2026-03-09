@@ -4,6 +4,7 @@ using Compze.Core.Tessaging.Teventive.Infrastructure.Validation;
 using Compze.Tests.Infrastructure;
 using Compze.xUnitBDD;
 using static Compze.Must.MustActions;
+// ReSharper disable InconsistentNaming
 
 namespace Compze.Tests.Unit.Tessaging;
 

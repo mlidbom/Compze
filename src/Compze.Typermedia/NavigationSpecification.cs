@@ -11,20 +11,20 @@ public abstract class NavigationSpecification
    internal static NavigationSpecification<TResult> Post<TResult>(IAtMostOnceTommand<TResult> typermediaTommand) => NavigationSpecification<TResult>.Post(typermediaTommand);
 
    public void NavigateOn(IRemoteTypermediaNavigator busSession) => NavigateOnAsync(busSession).WaitUnwrappingException();
-   public abstract Task NavigateOnAsync(IRemoteTypermediaNavigator busSession);
+   protected abstract Task NavigateOnAsync(IRemoteTypermediaNavigator busSession);
 
    class VoidTommand(IAtMostOnceTypermediaTommand tommand) : NavigationSpecification
    {
       readonly IAtMostOnceTypermediaTommand _tommand = tommand;
 
-      public override async Task NavigateOnAsync(IRemoteTypermediaNavigator busSession) => await busSession.PostAsync(_tommand).caf();
+      protected override async Task NavigateOnAsync(IRemoteTypermediaNavigator busSession) => await busSession.PostAsync(_tommand).caf();
    }
 }
 
 public abstract class NavigationSpecification<TResult>
 {
    public TResult NavigateOn(IRemoteTypermediaNavigator busSession) => NavigateOnAsync(busSession).ResultUnwrappingException();
-   public abstract Task<TResult> NavigateOnAsync(IRemoteTypermediaNavigator busSession);
+   internal abstract Task<TResult> NavigateOnAsync(IRemoteTypermediaNavigator busSession);
 
    public NavigationSpecification<TNext> Select<TNext>(Func<TResult, TNext> select) => new NavigationSpecification<TNext>.SelectTuery<TResult>(this, select);
 
@@ -46,7 +46,7 @@ public abstract class NavigationSpecification<TResult>
          _select = select;
       }
 
-      public override async Task<TResult> NavigateOnAsync(IRemoteTypermediaNavigator busSession)
+      internal override async Task<TResult> NavigateOnAsync(IRemoteTypermediaNavigator busSession)
       {
          var previousResult = await _previous.NavigateOnAsync(busSession).caf();
          return _select(previousResult);
@@ -59,7 +59,7 @@ public abstract class NavigationSpecification<TResult>
 
       internal StartTuery(IRemotableTuery<TResult> start) => _start = start;
 
-      public override async Task<TResult> NavigateOnAsync(IRemoteTypermediaNavigator busSession) => await busSession.GetAsync(_start).caf();
+      internal override async Task<TResult> NavigateOnAsync(IRemoteTypermediaNavigator busSession) => await busSession.GetAsync(_start).caf();
    }
 
    class StartTommand : NavigationSpecification<TResult>
@@ -68,7 +68,7 @@ public abstract class NavigationSpecification<TResult>
 
       internal StartTommand(IAtMostOnceTommand<TResult> start) => _start = start;
 
-      public override async Task<TResult> NavigateOnAsync(IRemoteTypermediaNavigator busSession) => await busSession.PostAsync(_start).caf();
+      internal override async Task<TResult> NavigateOnAsync(IRemoteTypermediaNavigator busSession) => await busSession.PostAsync(_start).caf();
    }
 
    class ContinuationTuery<TPrevious> : NavigationSpecification<TResult>
@@ -82,7 +82,7 @@ public abstract class NavigationSpecification<TResult>
          _nextTuery = nextTuery;
       }
 
-      public override async Task<TResult> NavigateOnAsync(IRemoteTypermediaNavigator busSession)
+      internal override async Task<TResult> NavigateOnAsync(IRemoteTypermediaNavigator busSession)
       {
          var previousResult = await _previous.NavigateOnAsync(busSession).caf();
          var currentTuery = _nextTuery(previousResult);
@@ -100,7 +100,7 @@ public abstract class NavigationSpecification<TResult>
          _next = next;
       }
 
-      public override async Task<TResult> NavigateOnAsync(IRemoteTypermediaNavigator busSession)
+      internal override async Task<TResult> NavigateOnAsync(IRemoteTypermediaNavigator busSession)
       {
          var previousResult = await _previous.NavigateOnAsync(busSession).caf();
          var currentTommand = _next(previousResult);
@@ -118,7 +118,7 @@ public abstract class NavigationSpecification<TResult>
          _next = next;
       }
 
-      public override async Task NavigateOnAsync(IRemoteTypermediaNavigator busSession)
+      protected override async Task NavigateOnAsync(IRemoteTypermediaNavigator busSession)
       {
          var previousResult = await _previous.NavigateOnAsync(busSession).caf();
          var currentTommand = _next(previousResult);

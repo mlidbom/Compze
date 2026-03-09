@@ -1,5 +1,6 @@
 using Compze.DependencyInjection.Specifications.Infrastructure;
 using Compze.Must;
+// ReSharper disable InconsistentNaming
 
 namespace Compze.DependencyInjection.Specifications.Transient_lifestyle;
 
