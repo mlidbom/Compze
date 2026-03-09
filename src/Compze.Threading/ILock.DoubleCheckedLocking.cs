@@ -1,4 +1,4 @@
-namespace Compze.Threading.ResourceAccess;
+namespace Compze.Threading;
 
 public static class MonitorCEExtensions
 {

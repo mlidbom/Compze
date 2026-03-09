@@ -37,7 +37,7 @@ class TypermediaRouter : ITypermediaRouter, IDisposable
    readonly ITypeMapper _typeMapper;
    readonly ITypermediaTransport _transport;
    readonly IInfrastructureQueryTransport _infrastructureQueryTransport;
-   readonly ILock _lock = ILock.New();
+   readonly IMonitor _lock = IMonitor.New();
 
    bool _running;
    IReadOnlyDictionary<EndpointId, TypermediaConnection> _connections = new Dictionary<EndpointId, TypermediaConnection>();

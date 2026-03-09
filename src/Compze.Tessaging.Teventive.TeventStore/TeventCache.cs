@@ -9,6 +9,7 @@ using Compze.Internals.SystemCE.TransactionsCE;
 using Microsoft.Extensions.Caching.Memory;
 using System.Diagnostics.CodeAnalysis;
 using System.Transactions;
+using Compze.Threading;
 using Compze.Threading.ResourceAccess;
 
 namespace Compze.Tessaging.Teventive.TeventStore;
@@ -34,7 +35,7 @@ public class TeventCache : IDisposable, ITeventCache
    class TransactionalOverlay(TeventCache teventCache)
    {
       readonly TeventCache _parent = teventCache;
-      readonly ILock _lock = ILock.New();
+      readonly IMonitor _lock = IMonitor.New();
 
       readonly IThreadShared<Dictionary<string, Dictionary<TaggregateId, Entry>>> _overlays = IThreadShared.New(new Dictionary<string, Dictionary<TaggregateId, Entry>>());
 

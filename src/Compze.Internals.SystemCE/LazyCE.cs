@@ -1,3 +1,4 @@
+using Compze.Threading;
 using Compze.Threading.ResourceAccess;
 
 namespace Compze.Internals.SystemCE;
@@ -5,7 +6,7 @@ namespace Compze.Internals.SystemCE;
 public class LazyCE<TValue>(Func<TValue> factory)
    where TValue : class
 {
-   readonly ILock _lock = ILock.New();
+   readonly IMonitor _lock = IMonitor.New();
    TValue? _value;
    readonly Func<TValue> _factory = factory;
 

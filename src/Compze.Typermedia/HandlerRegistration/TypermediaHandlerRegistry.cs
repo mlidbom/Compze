@@ -14,7 +14,7 @@ public sealed class TypermediaHandlerRegistry(ITypeMapper typeMapper) : ITyperme
    IReadOnlyDictionary<Type, HandlerWithResultRegistration> _tommandHandlersReturningResults = new Dictionary<Type, HandlerWithResultRegistration>();
    IReadOnlyDictionary<Type, Action<object>> _voidTommandHandlers = new Dictionary<Type, Action<object>>();
 
-   readonly ILock _lock = ILock.New();
+   readonly IMonitor _lock = IMonitor.New();
 
    ITypermediaHandlerRegistrar ITypermediaHandlerRegistrar.ForTommand<TTommand>(Action<TTommand> handler) => _lock.Locked(() =>
    {

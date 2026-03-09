@@ -10,7 +10,7 @@ using Xunit;
 
 namespace Compze.Threading.Specifications.ResourceAccess;
 
-///<summary>ILock ContentionCount is tested in ILock_specification via [PCTLock]. IThreadShared is tested in IThreadShared_specification. This file covers IAwaitableLock and IAwaitableThreadShared ContentionCount.</summary>
+///<summary>ILock ContentionCount is tested in ILock_specification via [PCTLock]. IThreadShared is tested in IThreadShared_specification. This file covers IAwaitableMonitor and IAwaitableThreadShared ContentionCount.</summary>
 [Collection(nameof(NonParallelCollection))]
 public class ContentionCount_specification : UniversalTestBase
 {
@@ -18,7 +18,7 @@ public class ContentionCount_specification : UniversalTestBase
    {
       [XF] public void Is_zero_when_no_contention_occurs()
       {
-         var monitor = IAwaitableLock.New();
+         var monitor = IAwaitableMonitor.New();
 
          using(monitor.TakeUpdateLock()) {}
          using(monitor.TakeReadLock()) {}
@@ -28,7 +28,7 @@ public class ContentionCount_specification : UniversalTestBase
 
       [XF] public void Increments_when_another_thread_contends_for_the_lock()
       {
-         var monitor = IAwaitableLock.New(LockTimeout.Seconds(30));
+         var monitor = IAwaitableMonitor.New(LockTimeout.Seconds(30));
 
          var blockingLock = monitor.TakeUpdateLock();
 
@@ -54,7 +54,7 @@ public class ContentionCount_specification : UniversalTestBase
 
       [XF] public void Shared_instances_with_same_monitor_share_contention_tracking()
       {
-         var monitor = IAwaitableLock.New(LockTimeout.Seconds(30));
+         var monitor = IAwaitableMonitor.New(LockTimeout.Seconds(30));
          var sharedA = IAwaitableThreadShared.New(new object(), monitor);
          var sharedB = IAwaitableThreadShared.New(new object(), monitor);
 

@@ -1,6 +1,6 @@
 using Compze.Threading.ResourceAccess;
 
-namespace Compze.Threading.Interprocess;
+namespace Compze.Threading.Interprocess.ResourceAccess;
 
 public interface IProcessShared
 {
@@ -19,7 +19,7 @@ public interface IProcessShared
    }
 }
 
-public interface IProcessShared<out TShared> : IThreadShared<TShared>
+public interface IProcessShared<out TShared> : IShared<TShared>
 {
    IMutex Mutex { get; }
 }

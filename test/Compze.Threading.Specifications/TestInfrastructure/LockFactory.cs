@@ -17,7 +17,7 @@ class LockFactory<TTest> : IDisposable
    {
       return CurrentLockImplementation switch
       {
-         LockImplementation.Monitor => ILock.New(timeout),
+         LockImplementation.Monitor => IMonitor.New(timeout),
          LockImplementation.Mutex => CreateMutex(timeout),
          _ => throw new ArgumentOutOfRangeException()
       };

@@ -31,7 +31,7 @@ sealed class TessageHandlerRegistry(ITypeMapper typeMapper) : ITessageHandlerReg
    IReadOnlyDictionary<Type, IReadOnlyList<Action<ITevent>>> _teventHandlers = new Dictionary<Type, IReadOnlyList<Action<ITevent>>>();
    IReadOnlyList<TeventHandlerRegistration> _teventHandlerRegistrations = new List<TeventHandlerRegistration>();
 
-   readonly ILock _lock = ILock.New();
+   readonly IMonitor _lock = IMonitor.New();
 
    ITessageHandlerRegistrar ITessageHandlerRegistrar.ForTevent<TTevent>(Action<TTevent> handler) => _lock.Locked(() =>
    {

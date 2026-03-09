@@ -2,7 +2,7 @@ namespace Compze.Threading.ResourceAccess;
 
 public interface IAwaitableThreadShared<out TShared>
 {
-   IAwaitableLock Lock { get; }
+   IAwaitableMonitor Lock { get; }
 
    //core
    TResult Read<TResult>(Func<TShared, TResult> read, LockTimeout? timeout = null);
@@ -20,15 +20,15 @@ public interface IAwaitableThreadShared<out TShared>
 public interface IAwaitableThreadShared
 {
    public static IAwaitableThreadShared<TShared> New<TShared>(TShared shared, LockTimeout? lockTimeout = null, WaitTimeout? waitTimeout = null) =>
-      new AwaitableThreadShared<TShared>(shared, IAwaitableLock.New(lockTimeout, waitTimeout));
+      new AwaitableThreadShared<TShared>(shared, IAwaitableMonitor.New(lockTimeout, waitTimeout));
 
-   public static IAwaitableThreadShared<TShared> New<TShared>(TShared shared, IAwaitableLock @lock) =>
+   public static IAwaitableThreadShared<TShared> New<TShared>(TShared shared, IAwaitableMonitor @lock) =>
       new AwaitableThreadShared<TShared>(shared, @lock);
 
-   class AwaitableThreadShared<TShared>(TShared shared, IAwaitableLock @lock) : IAwaitableThreadShared<TShared>
+   class AwaitableThreadShared<TShared>(TShared shared, IAwaitableMonitor @lock) : IAwaitableThreadShared<TShared>
    {
       readonly TShared _shared = shared;
-      public IAwaitableLock Lock { get; } = @lock;
+      public IAwaitableMonitor Lock { get; } = @lock;
 
       public TResult Read<TResult>(Func<TShared, TResult> read, LockTimeout? timeout = null) =>
          Lock.Read(() => read(_shared), timeout);

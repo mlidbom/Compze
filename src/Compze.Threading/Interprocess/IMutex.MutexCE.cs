@@ -1,5 +1,5 @@
 using Compze.Threading.ResourceAccess;
-using Compze.Threading.ResourceAccess.Exceptions;
+using Compze.Threading.Exceptions;
 using Compze.Threading.Utilities;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
@@ -21,7 +21,7 @@ public partial interface IMutex
 #pragma warning disable CA2213
       readonly IDisposable _lockDisposer;
 #pragma warning restore CA2213
-      readonly ILock _timeoutLock = New();
+      readonly IMonitor _timeoutLock = IMonitor.New();
       long _contentionCount;
 
       static readonly WaitTimeout DefaultTimeToWaitForStackTrace = WaitTimeout.Seconds(1);

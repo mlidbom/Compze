@@ -1,3 +1,4 @@
+using Compze.Threading;
 using Compze.Threading.ResourceAccess;
 
 namespace Compze.Tests.Infrastructure.SystemCE.CollectionsCE.ConcurrentCE;
@@ -10,7 +11,7 @@ public static class ConcurrentCircularReader
 public class ConcurrentCircularReader<T>(IEnumerable<T> source)
 {
    readonly T[] _items = source.ToArray();
-   readonly ILock _lock = ILock.New();
+   readonly IMonitor _lock = IMonitor.New();
    int _current = -1;
 
    public T Next() => _lock.Locked(() =>

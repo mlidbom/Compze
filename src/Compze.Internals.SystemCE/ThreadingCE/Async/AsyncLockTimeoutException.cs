@@ -6,7 +6,7 @@ namespace Compze.Internals.SystemCE.ThreadingCE.Async;
 
 public class AsyncLockTimeoutException : Exception
 {
-   readonly IAwaitableLock _lock = IAwaitableLock.WithDefaultTimeout();
+   readonly IAwaitableMonitor _lock = IAwaitableMonitor.WithDefaultTimeout();
    readonly WaitTimeout _timeToWaitForOwningThreadStacktrace;
    string? _blockingThreadStacktrace;
 

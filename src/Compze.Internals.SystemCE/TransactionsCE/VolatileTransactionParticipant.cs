@@ -20,7 +20,7 @@ public abstract class VolatileTransactionParticipant(EnlistmentOptions enlistmen
    // ReSharper disable once VirtualMemberNeverOverridden.Global
    protected virtual void OnInDoubt() {}
 
-   readonly ILock _lock = ILock.New(LockTimeout.Seconds(30));
+   readonly IMonitor _lock = IMonitor.New(LockTimeout.Seconds(30));
    Transaction? _enlistedIn;
    public void EnsureEnlistedInAnyAmbientTransaction() => _lock.Locked(() =>
    {

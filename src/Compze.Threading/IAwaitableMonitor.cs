@@ -1,11 +1,11 @@
-namespace Compze.Threading.ResourceAccess;
+namespace Compze.Threading;
 
-public partial interface IAwaitableLock
+public partial interface IAwaitableMonitor : ILockInfo
 {
-   public static IAwaitableLock WithDefaultTimeout() => new LockCE();
-   public static IAwaitableLock New(LockTimeout? lockTimeout = null, WaitTimeout? waitTimeout = null) => new LockCE(lockTimeout, waitTimeout);
+   public static IAwaitableMonitor WithDefaultTimeout() => new LockCE();
+   public static IAwaitableMonitor New(LockTimeout? lockTimeout = null, WaitTimeout? waitTimeout = null) => new LockCE(lockTimeout, waitTimeout);
 
-   internal static ILock NewIMonitor(LockTimeout? timeout = null) => new LockCE(timeout);
+   internal static IMonitor NewIMonitor(LockTimeout? timeout = null) => new LockCE(timeout);
 
    IDisposable TakeReadLock(LockTimeout? timeout = null);
    IDisposable TakeUpdateLock(LockTimeout? timeout = null);
@@ -15,7 +15,5 @@ public partial interface IAwaitableLock
 
    IDisposable? TryTakeReadLockWhen(Func<bool> condition, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null);
 
-   LockTimeout LockTimeout { get; }
    WaitTimeout WaitTimeout { get; }
-   long ContentionCount { get; }
 }

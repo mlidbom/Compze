@@ -39,7 +39,7 @@ public class DbPool : StrictlyManagedResourceBase<DbPool>
       MachineWideState = MachineWideSharedObject<DbPoolState>.For(sqlLayer.GetType().GetFullNameCompilable(), MemoryPackDbPoolStateSerializer.Instance, CorruptionAction.ReplaceContentWithDefaultAndThrow);
    }
 
-   readonly ILock _lock = ILock.New(LockTimeout.Seconds(30));
+   readonly IMonitor _lock = IMonitor.New(LockTimeout.Seconds(30));
    readonly Guid _poolId = Guid.NewGuid();
    IReadOnlyList<DbPoolDatabase> _transientCache = new List<DbPoolDatabase>();
 

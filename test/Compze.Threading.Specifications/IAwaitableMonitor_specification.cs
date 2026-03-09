@@ -16,7 +16,7 @@ using static Compze.Must.MustActions;
 namespace Compze.Threading.Specifications;
 
 [Collection(nameof(NonParallelCollection))]
-public class IAwaitableLock_specification : UniversalTestBase
+public class IAwaitableMonitor_specification : UniversalTestBase
 {
    [XF] public void When_one_thread_has_UpdateLock_other_thread_is_blocked_until_first_thread_disposes_lock_()
    {
@@ -47,7 +47,7 @@ public class IAwaitableLock_specification : UniversalTestBase
       TaskCE.Run(() => monitor.TakeUpdateLock(LockTimeout.Milliseconds(0))).Wait();
    }
 
-   public class LockTimeout_property : IAwaitableLock_specification
+   public class LockTimeout_property : IAwaitableMonitor_specification
    {
       [XF] public void defaults_to_LockTimeout_Default_when_no_timeout_is_specified()
       {
@@ -62,7 +62,7 @@ public class IAwaitableLock_specification : UniversalTestBase
       }
    }
 
-   public class WaitTimeout_property : IAwaitableLock_specification
+   public class WaitTimeout_property : IAwaitableMonitor_specification
    {
       [XF] public void defaults_to_WaitTimeout_Default_when_no_timeout_is_specified()
       {
@@ -77,7 +77,7 @@ public class IAwaitableLock_specification : UniversalTestBase
       }
    }
 
-   public class When_a_thread_waiting_in_TakeUpdateLockWhen_is_interrupted : IAwaitableLock_specification
+   public class When_a_thread_waiting_in_TakeUpdateLockWhen_is_interrupted : IAwaitableMonitor_specification
    {
       readonly IAwaitableMonitor _lock = IAwaitableMonitor.New(LockTimeout.Seconds(30));
       readonly ManualResetEventSlim _threadIsWaiting = new(false);

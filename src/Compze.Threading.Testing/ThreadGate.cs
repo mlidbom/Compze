@@ -1,7 +1,7 @@
 using Compze.Contracts;
 using Compze.Threading.ResourceAccess;
-using Compze.Threading.ResourceAccess.Exceptions;
 using Compze.Internals.Logging;
+using Compze.Threading.Exceptions;
 
 namespace Compze.Threading.Testing;
 
@@ -106,7 +106,7 @@ public class ThreadGate : IThreadGate
    ThreadGate(WaitTimeout defaultTimeout, string? name = null)
    {
       Name = name ?? Guid.NewGuid().ToString();
-      _lock = IAwaitableLock.New(LockTimeout.Default, defaultTimeout);
+      _lock = IAwaitableMonitor.New(LockTimeout.Default, defaultTimeout);
       DefaultTimeout = defaultTimeout;
    }
 
@@ -121,7 +121,7 @@ public class ThreadGate : IThreadGate
    });
 
    string Name { get; }
-   readonly IAwaitableLock _lock;
+   readonly IAwaitableMonitor _lock;
    bool _lockOnNextPass;
    Action<ThreadSnapshot> _postPassThroughAction = _ => {};
    readonly List<ThreadSnapshot> _requestsThreads = [];

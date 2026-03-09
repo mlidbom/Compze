@@ -1,6 +1,6 @@
 using System.Globalization;
 using System.Text;
-using Compze.Threading.ResourceAccess.Exceptions;
+using Compze.Threading.Exceptions;
 
 namespace Compze.Tessaging.Implementation.Transport;
 

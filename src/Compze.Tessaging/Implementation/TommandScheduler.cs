@@ -30,7 +30,7 @@ class TommandScheduler(IOutbox transport, ITaskRunner taskRunner) : IDisposable
    readonly ITaskRunner _taskRunner = taskRunner;
    Timer? _scheduledTessagesTimer;
    readonly List<ScheduledTommand> _scheduledTessages = [];
-   readonly ILock _lock = ILock.New(LockTimeout.Seconds(1));
+   readonly IMonitor _lock = IMonitor.New(LockTimeout.Seconds(1));
 
    public async Task StartAsync()
    {

@@ -2,6 +2,7 @@ using System.Diagnostics;
 using Compze.Internals.Logging;
 using Compze.Internals.SystemCE;
 using Compze.Internals.SystemCE.ReflectionCE;
+using Compze.Threading;
 using Compze.Threading.ResourceAccess;
 
 namespace Compze.DbPool.SystemCE;
@@ -48,7 +49,7 @@ public interface IStrictlyManagedResource : IDisposable;
 public sealed class StrictlyManagedResource<TManagedResource> : IStrictlyManagedResource where TManagedResource : class, IStrictlyManagedResource
 {
    // ReSharper disable once StaticMemberInGenericType
-   static readonly ILock StaticLock = ILock.New();
+   static readonly IMonitor StaticLock = IMonitor.New();
    readonly bool _collectStackTraces;
    // ReSharper disable once StaticMemberInGenericType
    static bool _collectStackTracesByDefault = StrictlyManagedResources.CollectStackTracesByDefault;

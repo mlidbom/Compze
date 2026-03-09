@@ -1,10 +1,10 @@
 using System.Diagnostics;
 
-namespace Compze.Threading.ResourceAccess.Exceptions;
+namespace Compze.Threading.Exceptions;
 
 public class TakeLockTimeoutException : Exception
 {
-   readonly IAwaitableLock _lock = IAwaitableLock.WithDefaultTimeout();
+   readonly IAwaitableMonitor _lock = IAwaitableMonitor.WithDefaultTimeout();
    readonly WaitTimeout _timeToWaitForOwningThreadStacktrace;
    string? _blockingThreadStacktrace;
 

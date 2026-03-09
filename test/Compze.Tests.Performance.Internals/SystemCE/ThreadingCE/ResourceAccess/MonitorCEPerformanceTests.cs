@@ -2,6 +2,7 @@ using Compze.Internals.Testing;
 using Compze.Internals.Testing.Performance;
 using Compze.Tests.Infrastructure;
 using Compze.Internals.SystemCE;
+using Compze.Threading;
 using Compze.Threading.ResourceAccess;
 using Compze.xUnitBDD;
 
@@ -37,8 +38,8 @@ public class MonitorCEPerformanceTests : UniversalTestBase
    {
       long Value { get; set; }
 
-      readonly ILock _lock = ILock.New();
-      readonly IAwaitableLock _awaitableLock = IAwaitableLock.WithDefaultTimeout();
+      readonly IMonitor _lock = IMonitor.New();
+      readonly IAwaitableMonitor _awaitableLock = IAwaitableMonitor.WithDefaultTimeout();
 
       internal long Read_Unsafe() => Value;
 

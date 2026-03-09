@@ -19,7 +19,7 @@ static class WrapperTeventImplementationGenerator
 
    static string DescribeParameterList(IEnumerable<Type> parameterTypes) => parameterTypes.Select(parameterType => parameterType.FullNameNotNull()).Join(", ");
 
-   static readonly ILock LockCE = ILock.New();
+   static readonly IMonitor LockCE = IMonitor.New();
 
    static class WrapperConstructorCache<TWrapperTevent, TWrappedTevent>
       where TWrapperTevent : IPublisherIdentifyingTevent<TWrappedTevent>

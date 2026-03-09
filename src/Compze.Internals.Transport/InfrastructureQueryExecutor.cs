@@ -11,7 +11,7 @@ public class InfrastructureQueryExecutor
 {
    readonly IServiceLocator _serviceLocator;
    IReadOnlyDictionary<Type, Func<object, object>> _queryHandlers = new Dictionary<Type, Func<object, object>>();
-   readonly ILock _lock = ILock.New();
+   readonly IMonitor _lock = IMonitor.New();
 
    InfrastructureQueryExecutor(IServiceLocator serviceLocator) => _serviceLocator = serviceLocator;
 

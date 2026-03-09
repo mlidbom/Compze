@@ -1,4 +1,4 @@
-namespace Compze.Threading.ResourceAccess;
+namespace Compze.Threading;
 
 public interface ILockInternals
 {

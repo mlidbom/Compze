@@ -6,8 +6,8 @@ using Compze.Tessaging.Implementation.Abstractions;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Internals.SystemCE.CollectionsCE.GenericCE;
 using Compze.Threading;
+using Compze.Threading.Exceptions;
 using Compze.Threading.ResourceAccess;
-using Compze.Threading.ResourceAccess.Exceptions;
 
 namespace Compze.Tessaging.Implementation.Transport;
 

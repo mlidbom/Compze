@@ -1,4 +1,4 @@
-namespace Compze.Threading.ResourceAccess.Exceptions;
+namespace Compze.Threading.Exceptions;
 
 public class AwaitingConditionTimeoutException : Exception
 {

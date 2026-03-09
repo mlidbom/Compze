@@ -1,14 +1,14 @@
 using System.Diagnostics;
-using Compze.Threading.ResourceAccess.Exceptions;
+using Compze.Threading.Exceptions;
 using Compze.Threading.Utilities;
 
-namespace Compze.Threading.ResourceAccess;
+namespace Compze.Threading;
 
-public partial interface IAwaitableLock
+public partial interface IAwaitableMonitor
 {
 #pragma warning disable CA1001 //By creating the locks only once in the constructor usages become zero-allocation operations.
 #pragma warning disable CS0618 // Type or member is obsolete
-   private class LockCE : ILock, IAwaitableLock, ILockInternals
+   private class LockCE : IAwaitableMonitor, IMonitor, ILockInternals
 #pragma warning restore CS0618 // Type or member is obsolete
 #pragma warning restore CA1001
    {
