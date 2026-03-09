@@ -2,9 +2,13 @@
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Version>0.3.0-alpha</Version>
     <Description>Pit of success threading primitives. Impossible to forget to lock. Automatically resolves and diagnoses deadlocks, including both the involved stack traces in the exception.</Description>
   </PropertyGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Compze.Threading.InternalSpecifications" />
+  </ItemGroup>
   <!-- Compze.Contracts — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' == 'true'">
     <PackageReference Include="Compze.Contracts" Version="*-*" />

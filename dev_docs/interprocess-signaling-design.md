@@ -12,15 +12,28 @@ Replace the polling-based `IPollingAwaitableMutex` (where user condition code ru
 
 This moves polling from "acquire lock + run expensive user condition every interval" to "read a single cache line every interval" — orders of magnitude cheaper.
 
-## Standalone Primitive: `IInterprocessSignal`
+## Shared Change Counter: `InterprocessChangeCounter` (IMPLEMENTED)
 
-Build and test the signaling mechanism in isolation before integrating with the awaitable mutex.
+Internal class in `src/Compze.Threading/Interprocess/InterprocessChangeCounter.cs`
+Specs: `test/Compze.Threading.InternalSpecifications/Interprocess/InterprocessChangeCounter_specification.cs`
+
+This is NOT a signaling primitive — it's a shared counter used as a building block by the awaitable mutex. The mutex owns all polling and waiting logic; this class only provides cheap cross-process change detection.
 
 API surface:
-- `Signal()` — increments the counter
-- `Version` / `CurrentSignalCount` — reads the current counter value
-- `IDisposable` — cleanup of handles/files
-- Named, with Global/Local variants (matching `IMutex` conventions)
+- `new InterprocessChangeCounter(name, global)` — constructor, named with Global/Local prefix matching `IMutex` conventions
+- `Increment()` — atomically increments the counter (called by lock holder after modifying state)
+- `Count` — reads the current counter (nanosecond memory read, no syscall). Consumers compare against a previously observed value to detect changes.
+- `IsGlobal`, `Name` — identity properties
+- `IDisposable` — cleanup of MMF handles
+
+### Implementation details
+- Internal class (not public API) — `InternalsVisibleTo` only to `Compze.Threading.InternalSpecifications`
+- Thread-safe: uses `Interlocked.Increment`/`Read` on an unsafe pointer into the MMF — no external locking needed
+- Counter is `long` (8 bytes)
+- File-backed `MemoryMappedFile` on all platforms (single code path)
+- Backing files: `{TempPath}/Compze/Signals/{Global_name}` or `{TempPath}/Compze/Signals/{Local_name}`
+- Backing files persist across process restarts — counter values accumulate. Consumers must use delta comparison, not absolute values
+- Name validation: rejects null/empty/whitespace and backslashes (same as `IMutex`)
 
 ## Cross-Platform Implementation
 
