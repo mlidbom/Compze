@@ -14,6 +14,7 @@ class InterprocessChangeCounter : IDisposable
    readonly MemoryMappedFile _memoryMappedFile;
    readonly MemoryMappedViewAccessor _accessor;
    readonly unsafe long* _counterPointer;
+   bool _disposed;
 
    public bool IsGlobal { get; }
    public string Name { get; }
@@ -59,9 +60,20 @@ class InterprocessChangeCounter : IDisposable
       }
    }
 
-   public unsafe void Increment() => Interlocked.Increment(ref Unsafe.AsRef<long>(_counterPointer));
+   public unsafe void Increment()
+   {
+      ObjectDisposedException.ThrowIf(_disposed, this);
+      Interlocked.Increment(ref Unsafe.AsRef<long>(_counterPointer));
+   }
 
-   public unsafe long Count => Interlocked.Read(ref Unsafe.AsRef<long>(_counterPointer));
+   public unsafe long Count
+   {
+      get
+      {
+         ObjectDisposedException.ThrowIf(_disposed, this);
+         return Interlocked.Read(ref Unsafe.AsRef<long>(_counterPointer));
+      }
+   }
 
    static string DeriveBackingFilePath(string name)
    {
@@ -71,6 +83,8 @@ class InterprocessChangeCounter : IDisposable
 
    public void Dispose()
    {
+      if(_disposed) return;
+      _disposed = true;
       _accessor.SafeMemoryMappedViewHandle.ReleasePointer();
       _accessor.Dispose();
       _memoryMappedFile.Dispose();

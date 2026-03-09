@@ -144,5 +144,26 @@ public class InterprocessChangeCounter_specification : UniversalTestBase
          var counter = new InterprocessChangeCounter("InterprocessChangeCounter_specification.Dispose.no_error", global: true);
          counter.Dispose();
       }
+
+      [XF] public void can_be_disposed_twice_without_error()
+      {
+         var counter = new InterprocessChangeCounter("InterprocessChangeCounter_specification.Dispose.double_dispose", global: true);
+         counter.Dispose();
+         counter.Dispose();
+      }
+
+      [XF] public void Increment_after_Dispose_throws_ObjectDisposedException()
+      {
+         var counter = new InterprocessChangeCounter("InterprocessChangeCounter_specification.Dispose.Increment_after", global: true);
+         counter.Dispose();
+         Invoking(() => counter.Increment()).Must().Throw<ObjectDisposedException>();
+      }
+
+      [XF] public void Count_after_Dispose_throws_ObjectDisposedException()
+      {
+         var counter = new InterprocessChangeCounter("InterprocessChangeCounter_specification.Dispose.Count_after", global: true);
+         counter.Dispose();
+         Invoking(() => _ = counter.Count).Must().Throw<ObjectDisposedException>();
+      }
    }
 }
