@@ -1,6 +1,6 @@
 namespace Compze.Threading;
 
-public partial interface IAwaitableMonitor
+public partial interface IAwaitableLock
 {
    bool TryAwait(Func<bool> condition, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null)
    {

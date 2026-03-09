@@ -1,6 +1,6 @@
 namespace Compze.Threading;
 
-public partial interface IAwaitableMonitor
+public partial interface IAwaitableLock
 {
    TReturn Read<TReturn>(Func<TReturn> func, LockTimeout? timeout = null)
    {

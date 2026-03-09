@@ -9,32 +9,36 @@ using Xunit;
 
 namespace Compze.Threading.Specifications.ResourceAccess;
 
-///<summary>ILock ContentionCount is tested in ILock_specification via [PCTLock]. IThreadShared is tested in IThreadShared_specification. This file covers IAwaitableMonitor and IAwaitableThreadShared ContentionCount.</summary>
+///<summary>ILock ContentionCount is tested in ILock_specification via [PCTLock]. IThreadShared is tested in IThreadShared_specification. This file covers IAwaitableLock and IAwaitableThreadShared ContentionCount.</summary>
 [Collection(nameof(NonParallelCollection))]
 public class ContentionCount_specification : UniversalTestBase
 {
-   public class IAwaitableMonitor_ContentionCount : ContentionCount_specification
+   readonly AwaitableLockFactory<ContentionCount_specification> _lockFactory = new();
+
+   protected override void DisposeInternal() => _lockFactory.Dispose();
+
+   public class IAwaitableLock_ContentionCount : ContentionCount_specification
    {
-      [XF] public void Is_zero_when_no_contention_occurs()
+      [PCTAwaitableLock] public void Is_zero_when_no_contention_occurs()
       {
-         var monitor = IAwaitableMonitor.New();
+         var @lock = _lockFactory.CreateAwaitableLock();
 
-         using(monitor.TakeUpdateLock()) {}
-         using(monitor.TakeReadLock()) {}
+         using(@lock.TakeUpdateLock()) {}
+         using(@lock.TakeReadLock()) {}
 
-         monitor.ContentionCount.Must().Be(0L);
+         @lock.ContentionCount.Must().Be(0L);
       }
 
-      [XF] public void Increments_when_another_thread_contends_for_the_lock()
+      [PCTAwaitableLock] public void Increments_when_another_thread_contends_for_the_lock()
       {
-         var monitor = IAwaitableMonitor.New(LockTimeout.Seconds(30));
+         var @lock = _lockFactory.CreateAwaitableLock(LockTimeout.Seconds(30));
 
-         var blockingLock = monitor.TakeUpdateLock();
+         var blockingLock = @lock.TakeUpdateLock();
 
          using var runner = TestingTaskRunner.WithTimeout(30.Seconds());
-         runner.Run(() => { using(monitor.TakeUpdateLock()) {} });
+         runner.Run(() => { using(@lock.TakeUpdateLock()) {} });
 
-         SpinWait.SpinUntil(() => monitor.ContentionCount >= 1, 5.Seconds()).Must().BeTrue();
+         SpinWait.SpinUntil(() => @lock.ContentionCount >= 1, 5.Seconds()).Must().BeTrue();
 
          blockingLock.Dispose();
       }

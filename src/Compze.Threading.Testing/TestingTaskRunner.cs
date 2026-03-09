@@ -12,8 +12,14 @@ public sealed class TestingTaskRunner(TimeSpan timeout) : IDisposable, IAsyncDis
 
    public static TestingTaskRunner WithTimeout(TimeSpan timeout) => new(timeout);
 
-   public TestingTaskRunner Run(params Action[] tasks)
-      => tasks.ForEach(it => _monitoredTasks.Add(TaskCE.Run(it)))._then(this);
+   public Task Run(Action action)
+   {
+      var task = TaskCE.Run(action);
+      _monitoredTasks.Add(task);
+      return task;
+   }
+
+   public IReadOnlyList<Task> Run(params Action[] tasks) => tasks.Select(Run).ToList();
 
    public void Dispose() => DisposeAsync().WaitUnwrappingException();
    public async ValueTask DisposeAsync() => await WaitForTasksToCompleteAsync().caf();

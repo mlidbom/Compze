@@ -16,156 +16,203 @@ namespace Compze.Threading.Specifications;
 [Collection(nameof(NonParallelCollection))]
 public class IAwaitableLock_specification : UniversalTestBase
 {
-   [XF] public void When_one_thread_has_UpdateLock_other_thread_is_blocked_until_first_thread_disposes_lock_()
+   readonly AwaitableLockFactory<IAwaitableLock_specification> _lockFactory = new();
+
+   protected override void DisposeInternal() => _lockFactory.Dispose();
+
+   [PCTAwaitableLock] public void When_one_thread_has_UpdateLock_other_thread_is_blocked_until_first_thread_disposes_lock_()
    {
-      var monitor = IAwaitableMonitor.New(LockTimeout.Seconds(30));
+      var @lock = _lockFactory.CreateAwaitableLock(LockTimeout.Seconds(30));
       var insideLockSection = GatedCodeSection.Closed(WaitTimeout.Seconds(30), "insideLock");
 
       using var runner = TestingTaskRunner.WithTimeout(30.Seconds());
       runner.Run(
-         () => { using(monitor.TakeUpdateLock()) insideLockSection.Enter().Dispose(); },
-         () => { using(monitor.TakeUpdateLock()) insideLockSection.Enter().Dispose(); });
+         () => { using(@lock.TakeUpdateLock()) insideLockSection.Enter().Dispose(); },
+         () => { using(@lock.TakeUpdateLock()) insideLockSection.Enter().Dispose(); });
 
       insideLockSection.LetOneThreadEnterAndReachExit();
       insideLockSection.EntranceGate.TryAwaitQueueLengthEqualTo(1, WaitTimeout.Milliseconds(50)).Must().BeFalse();
       insideLockSection.Open();
    }
 
-   [XF] public void Owning_thread_can_reenter_the_lock_and_the_lock_is_only_exited_when_releasing_the_outermost_lock()
-   {
-      var monitor = IAwaitableMonitor.New(LockTimeout.Seconds(1));
-      using(monitor.TakeUpdateLock())
-      {
-         using(monitor.TakeUpdateLock()) {}
-
-         Invoking(() => TaskCE.Run(() => monitor.TakeUpdateLock(LockTimeout.Seconds(.1))).Wait())
-           .Must().Throw<Exception>();
-      }
-
-      TaskCE.Run(() => monitor.TakeUpdateLock(LockTimeout.Milliseconds(0))).Wait();
-   }
-
    public class LockTimeout_property : IAwaitableLock_specification
    {
-      [XF] public void defaults_to_LockTimeout_Default_when_no_timeout_is_specified()
+      [PCTAwaitableLock] public void defaults_to_LockTimeout_Default_when_no_timeout_is_specified()
       {
-         var @lock = IAwaitableMonitor.New();
+         var @lock = _lockFactory.CreateAwaitableLock();
          @lock.LockTimeout.Must().Be(LockTimeout.Default);
       }
 
-      [XF] public void returns_the_timeout_specified_at_creation()
+      [PCTAwaitableLock] public void returns_the_timeout_specified_at_creation()
       {
-         var @lock = IAwaitableMonitor.New(lockTimeout: LockTimeout.Seconds(7));
+         var @lock = _lockFactory.CreateAwaitableLock(lockTimeout: LockTimeout.Seconds(7));
          @lock.LockTimeout.Must().Be(LockTimeout.Seconds(7));
       }
    }
 
    public class WaitTimeout_property : IAwaitableLock_specification
    {
-      [XF] public void defaults_to_WaitTimeout_Default_when_no_timeout_is_specified()
+      [PCTAwaitableLock] public void defaults_to_WaitTimeout_Default_when_no_timeout_is_specified()
       {
-         var @lock = IAwaitableMonitor.New();
+         var @lock = _lockFactory.CreateAwaitableLock();
          @lock.WaitTimeout.Must().Be(WaitTimeout.Default);
       }
 
-      [XF] public void returns_the_timeout_specified_at_creation()
+      [PCTAwaitableLock] public void returns_the_timeout_specified_at_creation()
       {
-         var @lock = IAwaitableMonitor.New(waitTimeout: WaitTimeout.Seconds(7));
+         var @lock = _lockFactory.CreateAwaitableLock(waitTimeout: WaitTimeout.Seconds(7));
          @lock.WaitTimeout.Must().Be(WaitTimeout.Seconds(7));
       }
    }
 
-   public class When_a_thread_waiting_in_TakeUpdateLockWhen_is_interrupted : IAwaitableLock_specification
+   public class An_exception_is_thrown_by_TakeUpdateLock_if_lock_is_not_acquired_within_timeout : IAwaitableLock_specification
    {
-      readonly IAwaitableMonitor _lock = IAwaitableMonitor.New(LockTimeout.Seconds(30));
-      readonly ManualResetEventSlim _threadIsWaiting = new(false);
-      readonly ManualResetEventSlim _threadCompleted = new(false);
-      Exception? _thrownException;
-
-      public When_a_thread_waiting_in_TakeUpdateLockWhen_is_interrupted()
-      {
-         var waitingThread = new Thread(() =>
-         {
-            try
-            {
-               _threadIsWaiting.Set();
-               _lock.TakeUpdateLockWhen(() => false);
-            }
-#pragma warning disable CA1031
-            //We need to capture whatever exception Thread.Interrupt causes to assert on it
-            catch(Exception ex)
-            {
-#pragma warning restore CA1031
-               _thrownException = ex;
-            }
-            finally
-            {
-               _threadCompleted.Set();
-            }
-         }) { IsBackground = true };
-
-         waitingThread.Start();
-         _threadIsWaiting.Wait();
-         Thread.Sleep(50.Milliseconds());
-         waitingThread.Interrupt();
-         _threadCompleted.Wait(5.Seconds()).Must().BeTrue();
-      }
-
-      [XF] public void throws_ThreadInterruptedException() => _thrownException.Must().NotBeNull().BeExactType<ThreadInterruptedException>();
-
-      [XF] public void lock_is_released_so_other_threads_can_acquire_it()
-      {
-         using(_lock.TakeUpdateLock(LockTimeout.Seconds(1))) {}
-      }
-   }
-
-   public class An_exception_is_thrown_by_EnterUpdateLock_if_lock_is_not_acquired_within_timeout : UniversalTestBase
-   {
-      [XF] public void Exception_is_ObjectLockTimedOutException() =>
+      [PCTAwaitableLock] public void Exception_is_TakeLockTimeoutException() =>
          RunScenario(ownerThreadBlockTime: 20.Milliseconds(), LockTimeout.Milliseconds(10), WaitTimeout.Seconds(30)).Must().BeAssignableTo<TakeLockTimeoutException>();
 
-      [XF] public void If_owner_thread_blocks_for_less_than_fetchStackTraceTimeout_Exception_contains_owning_threads_stack_trace() =>
+      [PCTAwaitableLock] public void If_owner_thread_blocks_for_less_than_fetchStackTraceTimeout_Exception_contains_owning_threads_stack_trace() =>
          RunScenario(ownerThreadBlockTime: 50.Milliseconds(), LockTimeout.Milliseconds(15), WaitTimeout.Seconds(30)).Message.Must().Contain(nameof(DisposeInMethodSoItWillBeInTheCapturedCallStack));
 
-      [XF] public void If_owner_thread_blocks_for_more_than_fetchStackTraceTimeout_Exception_does_not_contain_owning_threads_stack_trace() =>
+      [PCTAwaitableLock] public void If_owner_thread_blocks_for_more_than_fetchStackTraceTimeout_Exception_does_not_contain_owning_threads_stack_trace() =>
          RunScenario(ownerThreadBlockTime: 60.Milliseconds(), LockTimeout.Milliseconds(5), WaitTimeout.Milliseconds(1)).Message.Must().NotContain(nameof(DisposeInMethodSoItWillBeInTheCapturedCallStack));
 
       internal static void DisposeInMethodSoItWillBeInTheCapturedCallStack(IDisposable disposable) => disposable.Dispose();
 
-      static Exception RunScenario(TimeSpan ownerThreadBlockTime, LockTimeout monitorTimeout, WaitTimeout? timeToWaitForStackTrace = null)
+      Exception RunScenario(TimeSpan ownerThreadBlockTime, LockTimeout lockTimeout, WaitTimeout? timeToWaitForStackTrace = null)
       {
-         var monitor = IAwaitableMonitor.New(monitorTimeout);
+         var @lock = _lockFactory.CreateAwaitableLock(lockTimeout);
          if(timeToWaitForStackTrace.HasValue)
          {
 #pragma warning disable CS0618 // Type or member is obsolete
-            ((ILockInternals)monitor).SetTimeToWaitForStackTrace(timeToWaitForStackTrace.Value);
+            ((ILockInternals)@lock).SetTimeToWaitForStackTrace(timeToWaitForStackTrace.Value);
 #pragma warning restore CS0618 // Type or member is obsolete
          }
 
          using var threadOneHasTakenUpdateLock = new ManualResetEvent(false);
-         using var threadTwoIsAboutToTryToEnterUpdateLock = new ManualResetEvent(false);
+         using var threadTwoIsAboutToTryToTakeUpdateLock = new ManualResetEvent(false);
 
          TaskCE.Run(() =>
          {
-            var @lock = monitor.TakeUpdateLock();
+            var takenLock = @lock.TakeUpdateLock();
             threadOneHasTakenUpdateLock.Set();
-            threadTwoIsAboutToTryToEnterUpdateLock.WaitOne();
+            threadTwoIsAboutToTryToTakeUpdateLock.WaitOne();
             Thread.Sleep(ownerThreadBlockTime);
-            DisposeInMethodSoItWillBeInTheCapturedCallStack(@lock);
+            DisposeInMethodSoItWillBeInTheCapturedCallStack(takenLock);
          });
 
          threadOneHasTakenUpdateLock.WaitOne();
 
          var thrownException = Invoking(() => TaskCE.Run(() =>
                                                      {
-                                                        threadTwoIsAboutToTryToEnterUpdateLock.Set();
-                                                        monitor.TakeUpdateLock();
+                                                        threadTwoIsAboutToTryToTakeUpdateLock.Set();
+                                                        @lock.TakeUpdateLock();
                                                      })
                                                     .Wait())
                               .Must().Throw<AggregateException>()
                               .Which.InnerExceptions.Single();
 
          return thrownException;
+      }
+   }
+
+   public class TakeUpdateLockWhen : IAwaitableLock_specification
+   {
+      [PCTAwaitableLock] public void Returns_lock_when_condition_is_immediately_true()
+      {
+         var @lock = _lockFactory.CreateAwaitableLock(LockTimeout.Seconds(5), WaitTimeout.Seconds(5));
+         using var taken = @lock.TakeUpdateLockWhen(() => true);
+         taken.Must().NotBeNull();
+      }
+
+      [PCTAwaitableLock] public void Waits_until_condition_becomes_true()
+      {
+         var @lock = _lockFactory.CreateAwaitableLock(LockTimeout.Seconds(5), WaitTimeout.Seconds(5));
+         var conditionMet = false;
+         var setConditionGate = ThreadGate.Closed(WaitTimeout.Seconds(5), "setCondition");
+
+         using var runner = TestingTaskRunner.WithTimeout(5.Seconds());
+         runner.Run(() =>
+         {
+            setConditionGate.AwaitPassThrough();
+            @lock.Update(() => conditionMet = true);
+         });
+
+         // Let the background thread through so it sets the condition
+         setConditionGate.Open();
+
+         using var taken = @lock.TakeUpdateLockWhen(() => conditionMet);
+         conditionMet.Must().BeTrue();
+      }
+
+      [PCTAwaitableLock] public void Throws_AwaitingConditionTimeoutException_when_condition_never_becomes_true() =>
+         Invoking(() => _lockFactory.CreateAwaitableLock(LockTimeout.Seconds(5), WaitTimeout.Milliseconds(100))
+                                    .TakeUpdateLockWhen(() => false))
+        .Must().Throw<AwaitingConditionTimeoutException>();
+   }
+
+   public class TakeReadLockWhen : IAwaitableLock_specification
+   {
+      [PCTAwaitableLock] public void Returns_lock_when_condition_is_immediately_true()
+      {
+         var @lock = _lockFactory.CreateAwaitableLock(LockTimeout.Seconds(5), WaitTimeout.Seconds(5));
+         using var taken = @lock.TakeReadLockWhen(() => true);
+         taken.Must().NotBeNull();
+      }
+
+      [PCTAwaitableLock] public void Throws_AwaitingConditionTimeoutException_when_condition_never_becomes_true() =>
+         Invoking(() => _lockFactory.CreateAwaitableLock(LockTimeout.Seconds(5), WaitTimeout.Milliseconds(100))
+                                    .TakeReadLockWhen(() => false))
+        .Must().Throw<AwaitingConditionTimeoutException>();
+   }
+
+   public class TryTakeReadLockWhen : IAwaitableLock_specification
+   {
+      [PCTAwaitableLock] public void Returns_lock_when_condition_is_immediately_true()
+      {
+         var @lock = _lockFactory.CreateAwaitableLock(LockTimeout.Seconds(5), WaitTimeout.Seconds(5));
+         using var taken = @lock.TryTakeReadLockWhen(() => true);
+         taken.Must().NotBeNull();
+      }
+
+      [PCTAwaitableLock] public void Returns_null_when_condition_never_becomes_true()
+      {
+         var @lock = _lockFactory.CreateAwaitableLock(LockTimeout.Seconds(5), WaitTimeout.Milliseconds(100));
+         var result = @lock.TryTakeReadLockWhen(() => false);
+         result.Must().BeNull();
+      }
+   }
+
+   public class TryAwait : IAwaitableLock_specification
+   {
+      [PCTAwaitableLock] public void Returns_true_when_condition_is_immediately_true()
+      {
+         var @lock = _lockFactory.CreateAwaitableLock(LockTimeout.Seconds(5), WaitTimeout.Seconds(5));
+         @lock.TryAwait(() => true).Must().BeTrue();
+      }
+
+      [PCTAwaitableLock] public void Returns_true_when_condition_becomes_true_within_timeout()
+      {
+         var @lock = _lockFactory.CreateAwaitableLock(LockTimeout.Seconds(5), WaitTimeout.Seconds(5));
+         var conditionMet = false;
+         var setConditionGate = ThreadGate.Closed(WaitTimeout.Seconds(5), "setCondition");
+
+         using var runner = TestingTaskRunner.WithTimeout(5.Seconds());
+         runner.Run(() =>
+         {
+            setConditionGate.AwaitPassThrough();
+            @lock.Update(() => conditionMet = true);
+         });
+
+         // Let the background thread through so it sets the condition
+         setConditionGate.Open();
+
+         @lock.TryAwait(() => conditionMet).Must().BeTrue();
+      }
+
+      [PCTAwaitableLock] public void Returns_false_when_condition_never_becomes_true_within_timeout()
+      {
+         var @lock = _lockFactory.CreateAwaitableLock(LockTimeout.Seconds(5), WaitTimeout.Milliseconds(100));
+         @lock.TryAwait(() => false).Must().BeFalse();
       }
    }
 }
