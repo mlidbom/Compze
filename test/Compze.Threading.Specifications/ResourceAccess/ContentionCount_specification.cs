@@ -1,12 +1,12 @@
+using Compze.Internals.SystemCE;
 using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 using Compze.Tests.Infrastructure;
-using Compze.Internals.SystemCE;
 using Compze.Threading.ResourceAccess;
 using Compze.Must;
 using Compze.Threading.Specifications.TestInfrastructure;
+using Compze.Threading.Testing;
 using Compze.xUnitBDD;
 using Xunit;
-// ReSharper disable AccessToDisposedClosure
 
 namespace Compze.Threading.Specifications.ResourceAccess;
 
@@ -28,23 +28,16 @@ public class ContentionCount_specification : UniversalTestBase
 
       [XF] public void Increments_when_another_thread_contends_for_the_lock()
       {
-         var monitor = IAwaitableLock.New(LockTimeout.Seconds(5));
-         using var contenderIsWaiting = new ManualResetEventSlim(false);
+         var monitor = IAwaitableLock.New(LockTimeout.Seconds(30));
 
          var blockingLock = monitor.TakeUpdateLock();
-         var contenderTask = TaskCE.Run(() =>
-         {
-            contenderIsWaiting.Set();
-            using(monitor.TakeUpdateLock()) {}
-         });
 
-         contenderIsWaiting.Wait();
-         Thread.Sleep(50.Milliseconds());
+         using var runner = TestingTaskRunner.WithTimeout(30.Seconds());
+         runner.Run(() => { using(monitor.TakeUpdateLock()) {} });
+
+         SpinWait.SpinUntil(() => monitor.ContentionCount >= 1, 5.Seconds()).Must().BeTrue();
+
          blockingLock.Dispose();
-
-         Task.WaitAll(contenderTask);
-
-         monitor.ContentionCount.Must().BeGreaterThanOrEqualTo(1);
       }
    }
 
@@ -61,23 +54,20 @@ public class ContentionCount_specification : UniversalTestBase
 
       [XF] public void Shared_instances_with_same_monitor_share_contention_tracking()
       {
-         var monitor = IAwaitableLock.New(LockTimeout.Seconds(5));
+         var monitor = IAwaitableLock.New(LockTimeout.Seconds(30));
          var sharedA = IAwaitableThreadShared.New(new object(), monitor);
          var sharedB = IAwaitableThreadShared.New(new object(), monitor);
-         using var contenderIsWaiting = new ManualResetEventSlim(false);
 
          var blockingLock = monitor.TakeUpdateLock();
-         var contenderTask = TaskCE.Run(() =>
-         {
-            contenderIsWaiting.Set();
-            sharedB.Update(_ => {});
-         });
 
-         contenderIsWaiting.Wait();
-         Thread.Sleep(50.Milliseconds());
+         using var runner = TestingTaskRunner.WithTimeout(30.Seconds());
+         runner.Run(() => sharedB.Update(_ => {}));
+
+         SpinWait.SpinUntil(() => monitor.ContentionCount >= 1, 5.Seconds()).Must().BeTrue();
+
          blockingLock.Dispose();
 
-         Task.WaitAll(contenderTask);
+         runner.Dispose();
 
          sharedA.Lock.ContentionCount.Must().BeGreaterThanOrEqualTo(1);
          sharedA.Lock.ContentionCount.Must().Be(sharedB.Lock.ContentionCount);
