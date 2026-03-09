@@ -1,5 +1,7 @@
 namespace Compze.Threading.Interprocess;
 
-public interface IAwaitableMutex : IMutex, IAwaitableLock
+public interface IAwaitableMutex : IAwaitableLock, IDisposable
 {
+   bool IsGlobal { get; }
+   string Name { get; }
 }

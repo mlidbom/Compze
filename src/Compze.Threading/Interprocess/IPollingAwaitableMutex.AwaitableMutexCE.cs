@@ -15,8 +15,8 @@ public partial interface IPollingAwaitableMutex
       public PollingAwaitableMutexCE(string name, bool global, LockTimeout? lockTimeout, WaitTimeout? waitTimeout, PollingInterval? pollingInterval, Action? onAbandonedMutex)
       {
          _mutex = global
-                     ? Global(name, lockTimeout, onAbandonedMutex)
-                     : Local(name, lockTimeout, onAbandonedMutex);
+                     ? IMutex.Global(name, lockTimeout, onAbandonedMutex)
+                     : IMutex.Local(name, lockTimeout, onAbandonedMutex);
 
          WaitTimeout = waitTimeout ?? WaitTimeout.Default;
          PollingInterval = pollingInterval ?? PollingInterval.Default;
@@ -29,12 +29,8 @@ public partial interface IPollingAwaitableMutex
       public bool IsGlobal => _mutex.IsGlobal;
       public string Name => _mutex.Name;
 
-      public IDisposable TakeLock(LockTimeout? timeout = null) => _mutex.TakeLock(timeout);
-
-      public IDisposable? TryTakeLock(LockTimeout? timeout = null) => _mutex.TryTakeLock(timeout);
-
-      public IDisposable TakeReadLock(LockTimeout? timeout = null) => TakeLock(timeout);
-      public IDisposable TakeUpdateLock(LockTimeout? timeout = null) => TakeLock(timeout);
+      public IDisposable TakeReadLock(LockTimeout? timeout = null) => _mutex.TakeLock(timeout);
+      public IDisposable TakeUpdateLock(LockTimeout? timeout = null) => _mutex.TakeLock(timeout);
 
       public IDisposable TakeReadLockWhen(Func<bool> condition, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null) =>
          TryTakeLockWhen(condition, waitTimeout, lockTimeout) ?? throw new AwaitingConditionTimeoutException();
@@ -54,7 +50,7 @@ public partial interface IPollingAwaitableMutex
 
          while(true)
          {
-            IDisposable takenLock = TakeLock(effectiveLockTimeout);
+            IDisposable takenLock = _mutex.TakeLock(effectiveLockTimeout);
             try
             {
                if(condition()) return takenLock;

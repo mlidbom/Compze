@@ -39,10 +39,6 @@ public partial interface ISignalingAwaitableMutex
       public bool IsGlobal => _mutex.IsGlobal;
       public string Name => _mutex.Name;
 
-      public IDisposable TakeLock(LockTimeout? timeout = null) => _mutex.TakeLock(timeout);
-
-      public IDisposable? TryTakeLock(LockTimeout? timeout = null) => _mutex.TryTakeLock(timeout);
-
       public IDisposable TakeReadLock(LockTimeout? timeout = null) => _mutex.TakeLock(timeout);
 
       public IDisposable TakeUpdateLock(LockTimeout? timeout = null)
