@@ -8,19 +8,30 @@ public partial interface ISignalingAwaitableMutex
    class SignalingAwaitableMutexCE : ISignalingAwaitableMutex, ILockInternals
 #pragma warning restore CS0618 // Type or member is obsolete
    {
+      static readonly PollingInterval DefaultCounterPollingInterval = PollingInterval.Milliseconds(1);
+      static readonly TimeSpan SafetyCheckInterval = TimeSpan.FromMilliseconds(50);
+
       readonly IMutex _mutex;
       readonly InterprocessChangeCounter _changeCounter;
 
       public SignalingAwaitableMutexCE(string name, bool global, LockTimeout? lockTimeout, WaitTimeout? waitTimeout, PollingInterval? pollingInterval, Action? onAbandonedMutex)
       {
-         _mutex = global
-            ? IMutex.GlobalNamed(name, lockTimeout, onAbandonedMutex)
-            : IMutex.LocalNamed(name, lockTimeout, onAbandonedMutex);
-
          _changeCounter = new InterprocessChangeCounter(name, global);
 
+         // Wrap the user's callback so abandoned-mutex detection also increments the counter,
+         // waking any thread stuck in the counter-polling loop.
+         Action wrappedOnAbandonedMutex = () =>
+         {
+            _changeCounter.Increment();
+            onAbandonedMutex?.Invoke();
+         };
+
+         _mutex = global
+            ? IMutex.GlobalNamed(name, lockTimeout, wrappedOnAbandonedMutex)
+            : IMutex.LocalNamed(name, lockTimeout, wrappedOnAbandonedMutex);
+
          WaitTimeout = waitTimeout ?? WaitTimeout.Default;
-         PollingInterval = pollingInterval ?? PollingInterval.Default;
+         PollingInterval = pollingInterval ?? DefaultCounterPollingInterval;
       }
 
       public LockTimeout LockTimeout => _mutex.LockTimeout;
@@ -31,6 +42,8 @@ public partial interface ISignalingAwaitableMutex
       public string Name => _mutex.Name;
 
       public IDisposable TakeLock(LockTimeout? timeout = null) => _mutex.TakeLock(timeout);
+
+      public IDisposable? TryTakeLock(LockTimeout? timeout = null) => _mutex.TryTakeLock(timeout);
 
       public IDisposable TakeReadLock(LockTimeout? timeout = null) => _mutex.TakeLock(timeout);
 
@@ -80,15 +93,25 @@ public partial interface ISignalingAwaitableMutex
             if(!effectiveWaitTimeout.IsInfinite && effectiveWaitTimeout.IsExpired(waitStartedAt))
                return null;
 
+            var abandonedMutexCheckInterval = DateTime.UtcNow + SafetyCheckInterval;
+
             while(_changeCounter.Count == baseline)
             {
                if(!effectiveWaitTimeout.IsInfinite && effectiveWaitTimeout.IsExpired(waitStartedAt))
                   return null;
 
+               if(DateTime.UtcNow >= abandonedMutexCheckInterval)
+               {
+                  TryTakeMutexLockToDetectAbandonedMutexExceptionsTriggeringCounterIncrement();
+                  abandonedMutexCheckInterval = DateTime.UtcNow + SafetyCheckInterval;
+               }
+
                Thread.Sleep(PollingInterval);
             }
          }
       }
+
+      void TryTakeMutexLockToDetectAbandonedMutexExceptionsTriggeringCounterIncrement() => _mutex.TryTakeLock(LockTimeout.Zero)?.Dispose();
 
       public void SetTimeToWaitForStackTrace(WaitTimeout timeToWaitForStackTrace) =>
          ((ILockInternals)_mutex).SetTimeToWaitForStackTrace(timeToWaitForStackTrace);
@@ -101,10 +124,13 @@ public partial interface ISignalingAwaitableMutex
 
       class UpdateLockDisposer(InterprocessChangeCounter changeCounter, IDisposable mutexLock) : IDisposable
       {
+         readonly InterprocessChangeCounter _changeCounter = changeCounter;
+         readonly IDisposable _mutexLock = mutexLock;
+
          public void Dispose()
          {
-            changeCounter.Increment();
-            mutexLock.Dispose();
+            _changeCounter.Increment();
+            _mutexLock.Dispose();
          }
       }
    }

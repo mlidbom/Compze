@@ -16,4 +16,6 @@ public partial interface IMutex : ILock, IDisposable
 
    bool IsGlobal { get; }
    string Name { get; }
+
+   internal IDisposable? TryTakeLock(LockTimeout? timeout = null);
 }

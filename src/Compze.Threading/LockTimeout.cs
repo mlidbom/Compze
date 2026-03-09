@@ -29,6 +29,8 @@ public readonly struct LockTimeout : IEquatable<LockTimeout>
    public static LockTimeout Minutes(long minutes) => new(TimeSpan.FromMinutes(minutes));
    public static LockTimeout Minutes(double minutes) => new(TimeSpan.FromMinutes(minutes));
 
+   public static LockTimeout Zero => new(TimeSpan.Zero);
+
    public bool Equals(LockTimeout other) => Value.Equals(other.Value);
    public override bool Equals(object? obj) => obj is LockTimeout other && Equals(other);
    public override int GetHashCode() => Value.GetHashCode();

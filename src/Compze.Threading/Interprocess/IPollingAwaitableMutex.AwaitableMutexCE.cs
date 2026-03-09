@@ -30,6 +30,8 @@ public partial interface IPollingAwaitableMutex
 
       public IDisposable TakeLock(LockTimeout? timeout = null) => _mutex.TakeLock(timeout);
 
+      public IDisposable? TryTakeLock(LockTimeout? timeout = null) => _mutex.TryTakeLock(timeout);
+
       public IDisposable TakeReadLock(LockTimeout? timeout = null) => TakeLock(timeout);
       public IDisposable TakeUpdateLock(LockTimeout? timeout = null) => TakeLock(timeout);
 

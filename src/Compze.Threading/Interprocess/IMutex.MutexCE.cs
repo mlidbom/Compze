@@ -55,7 +55,9 @@ public partial interface IMutex
 
       public long ContentionCount => Interlocked.Read(ref _contentionCount);
 
-      public IDisposable TakeLock(LockTimeout? timeout = null)
+      public IDisposable TakeLock(LockTimeout? timeout = null) => TryTakeLock(timeout) ?? throw RegisterTimeoutException();
+
+      public IDisposable? TryTakeLock(LockTimeout? timeout = null)
       {
          var effectiveTimeout = timeout ?? LockTimeout;
 
@@ -63,7 +65,7 @@ public partial interface IMutex
          try
          {
             acquired = _mutex.WaitOne(TimeSpan.Zero);
-            if(!acquired)
+            if(!acquired && timeout != TimeSpan.Zero)
             {
                Interlocked.Increment(ref _contentionCount);
                try
@@ -73,7 +75,7 @@ public partial interface IMutex
                catch(AbandonedMutexException)
                {
                   _onAbandonedMutex?.Invoke();
-                  acquired = true; // The mutex IS acquired when this exception is thrown. https://learn.microsoft.com/en-us/dotnet/api/System.Threading.AbandonedMutexException
+                  acquired = true;
                }
             }
          }
@@ -83,9 +85,7 @@ public partial interface IMutex
             acquired = true;
          }
 
-         if(!acquired) throw RegisterTimeoutException();
-
-         return _lockDisposer;
+         return acquired ? _lockDisposer : null;
       }
 
       ///<summary>Creates a mutex configured with certain access rules required on windows to prevent exceptions when used across login sessions.</summary>
