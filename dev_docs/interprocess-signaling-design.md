@@ -69,12 +69,26 @@ If the signaler dies **after modifying shared state but before incrementing the 
 
 This is critical — without it, a process crash between state modification and signaling creates a silent missed-update bug.
 
-## Integration with Awaitable Mutex
+## Integration with Awaitable Mutex: `ISignalingAwaitableMutex` (IMPLEMENTED)
 
-Once `IInterprocessSignal` is proven:
-- The awaitable mutex's lock release increments the signal counter when the holder performed an update
-- Watchers loop: read MMF counter → if changed, acquire mutex → evaluate condition → if not met, continue waiting
-- Abandoned mutex detection triggers an implicit signal (watcher evaluates condition despite no counter change)
+Interface: `src/Compze.Threading/Interprocess/ISignalingAwaitableMutex.cs`
+Implementation: `src/Compze.Threading/Interprocess/ISignalingAwaitableMutex.SignalingAwaitableMutexCE.cs`
+Tested via: `[PCTAwaitableLock]` attribute — all existing `IAwaitableLock` specs now run against Monitor, PollingMutex, *and* SignalingMutex
+
+### How it works
+- Wraps an `IMutex` + `InterprocessChangeCounter` with the same name
+- `TakeUpdateLock()` returns an `UpdateLockDisposer` that increments the change counter *before* releasing the mutex
+- `TakeReadLock()` returns the plain mutex lock (no counter increment)
+- Wait loop (`TryTakeLockWhen`): snapshot counter → acquire mutex → check condition → if false, release → poll counter until changed → repeat
+- The user condition only runs when an update lock was released somewhere — never on a blind timer
+
+### Design decisions
+- Separate from `IPollingAwaitableMutex` (exploratory — not replacing the proven polling version yet)
+- Added `SignalingMutex` to `AwaitableLockImplementation` enum — all `[PCTAwaitableLock]` tests automatically cover it
+- Polling interval for the signaling mutex in tests is 1ms (vs 10ms for polling mutex) since the counter read is a nanosecond memory read
+
+### Not yet implemented
+- Abandoned mutex as implicit signal (currently uses the same `onAbandonedMutex` callback as the underlying `IMutex`)
 
 ## User condition only runs on updates
 

@@ -17,15 +17,24 @@ class AwaitableLockFactory<TTest> : IDisposable
       return CurrentImplementation switch
       {
          AwaitableLockImplementation.Monitor => IAwaitableMonitor.New(lockTimeout, waitTimeout),
-         AwaitableLockImplementation.Mutex => CreateAwaitableMutex(lockTimeout, waitTimeout),
+         AwaitableLockImplementation.Mutex => CreatePollingAwaitableMutex(lockTimeout, waitTimeout),
+         AwaitableLockImplementation.SignalingMutex => CreateSignalingAwaitableMutex(lockTimeout, waitTimeout),
          _ => throw new ArgumentOutOfRangeException()
       };
    }
 
-   IPollingAwaitableMutex CreateAwaitableMutex(LockTimeout? lockTimeout, WaitTimeout? waitTimeout)
+   IPollingAwaitableMutex CreatePollingAwaitableMutex(LockTimeout? lockTimeout, WaitTimeout? waitTimeout)
    {
       var uniqueName = $"{typeof(TTest).FullName}.{Interlocked.Increment(ref _counter)}";
       var mutex = IPollingAwaitableMutex.GlobalNamed(uniqueName, lockTimeout, waitTimeout, PollingInterval.Milliseconds(10));
+      _disposables.Add(mutex);
+      return mutex;
+   }
+
+   ISignalingAwaitableMutex CreateSignalingAwaitableMutex(LockTimeout? lockTimeout, WaitTimeout? waitTimeout)
+   {
+      var uniqueName = $"{typeof(TTest).FullName}.{Interlocked.Increment(ref _counter)}";
+      var mutex = ISignalingAwaitableMutex.GlobalNamed(uniqueName, lockTimeout, waitTimeout, PollingInterval.Milliseconds(1));
       _disposables.Add(mutex);
       return mutex;
    }
