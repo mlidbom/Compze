@@ -6,10 +6,7 @@ namespace Compze.DependencyInjection.Specifications.Nested_scopes;
 interface IScopedService;
 class ScopedService : IScopedService;
 
-interface IScopedCounter
-{
-   int Value { get; }
-}
+interface IScopedCounter;
 
 class ScopedCounter : IScopedCounter
 {

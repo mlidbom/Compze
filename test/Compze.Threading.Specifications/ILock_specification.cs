@@ -69,8 +69,8 @@ public class ILock_specification : UniversalTestBase
          var insideLockGate = ThreadGate.Closed(WaitTimeout.Seconds(30), "insideLock");
 
          _runner.Run(
-            () => @lock.Locked(() => insideLockGate.AwaitPassThrough()),
-            () => @lock.Locked(() => insideLockGate.AwaitPassThrough()));
+            () => @lock.Locked(insideLockGate.AwaitPassThrough),
+            () => @lock.Locked(insideLockGate.AwaitPassThrough));
 
          insideLockGate.AwaitQueueLengthEqualTo(1);
          insideLockGate.TryAwaitQueueLengthEqualTo(2, WaitTimeout.Milliseconds(50)).Must().BeFalse();

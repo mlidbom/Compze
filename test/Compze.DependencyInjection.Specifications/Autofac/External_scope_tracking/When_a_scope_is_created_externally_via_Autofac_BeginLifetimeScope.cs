@@ -1,6 +1,7 @@
 using Compze.DependencyInjection.Autofac;
 using Compze.Must;
 using Compze.xUnitBDD;
+// ReSharper disable InconsistentNaming
 
 namespace Compze.DependencyInjection.Specifications.Autofac.External_scope_tracking;
 

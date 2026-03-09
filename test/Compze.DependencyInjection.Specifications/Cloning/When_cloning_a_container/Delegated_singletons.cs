@@ -95,5 +95,6 @@ class DelegatedDependency : IDelegatedDependency;
 
 class SingletonWithDelegatedDep(IDelegatedDependency dep) : ISingletonService
 {
+   // ReSharper disable once UnusedMember.Global
    public IDelegatedDependency Dep { get; } = dep;
 }

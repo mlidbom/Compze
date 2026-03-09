@@ -113,5 +113,6 @@ interface IDependency;
 class Dependency : IDependency;
 class MultiTypeServiceWithDep(IDependency dep) : IServiceA, IServiceB
 {
+   // ReSharper disable once UnusedMember.Global
    public IDependency Dep { get; } = dep;
 }

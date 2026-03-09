@@ -39,14 +39,6 @@ public static class ServiceLocatorTransactionRunner
       }
    }
 
-   public static async Task<TResult> ExecuteInIsolatedScopeAsync<TResult>(this IServiceLocator me, [InstantHandle]Func<Task<TResult>> function)
-   {
-      using (me.BeginScope())
-      {
-         return await function().caf();
-      }
-   }
-
    public static async Task ExecuteInIsolatedScopeAsync(this IServiceLocator me, [InstantHandle]Func<Task> action)
    {
       using (me.BeginScope())
