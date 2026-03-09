@@ -7,10 +7,6 @@ class InterprocessChangeCounter : IDisposable
 {
    const int CounterSize = sizeof(long);
 
-   readonly string _backingFilePath;
-#pragma warning disable CA2213 // MemoryMappedFile.CreateFromFile with leaveOpen:false takes ownership and disposes the stream
-   readonly FileStream _backingFileStream;
-#pragma warning restore CA2213
    readonly MemoryMappedFile _memoryMappedFile;
    readonly MemoryMappedViewAccessor _accessor;
    readonly unsafe long* _counterPointer;
@@ -27,23 +23,23 @@ class InterprocessChangeCounter : IDisposable
       IsGlobal = global;
       Name = global ? $@"Global\{name}" : $@"Local\{name}";
 
-      _backingFilePath = DeriveBackingFilePath(Name);
+      var backingFilePath = DeriveBackingFilePath(Name);
 
-      Directory.CreateDirectory(Path.GetDirectoryName(_backingFilePath)!);
+      Directory.CreateDirectory(Path.GetDirectoryName(backingFilePath)!);
 
-      _backingFileStream = new FileStream(
-         _backingFilePath,
+      var backingFileStream = new FileStream(
+         backingFilePath,
          FileMode.OpenOrCreate,
          FileAccess.ReadWrite,
          FileShare.ReadWrite,
          bufferSize: 1,
          FileOptions.None);
 
-      if(_backingFileStream.Length < CounterSize)
-         _backingFileStream.SetLength(CounterSize);
+      if(backingFileStream.Length < CounterSize)
+         backingFileStream.SetLength(CounterSize);
 
       _memoryMappedFile = MemoryMappedFile.CreateFromFile(
-         _backingFileStream,
+         backingFileStream,
          mapName: null,
          capacity: CounterSize,
          MemoryMappedFileAccess.ReadWrite,
@@ -54,6 +50,7 @@ class InterprocessChangeCounter : IDisposable
 
       unsafe
       {
+         //The point of this unsafe code is that it enables us to use Interlocked.* below, giving us atomic updates and reads without an interprocess mutex just for that.
          byte* pointer = null;
          _accessor.SafeMemoryMappedViewHandle.AcquirePointer(ref pointer);
          _counterPointer = (long*)(pointer + _accessor.PointerOffset);
