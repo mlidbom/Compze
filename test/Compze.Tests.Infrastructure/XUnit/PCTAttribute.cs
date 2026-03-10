@@ -24,12 +24,3 @@ public sealed class PCTSerializerAttribute : PCTAttribute
                                                                                       sourceLineNumber: sourceLineNumber) =>
       OnlyConsider = typeof(Serializer);
 }
-
-// ReSharper disable once InconsistentNaming
-public sealed class PCTDIContainerAttribute : PCTAttribute
-{
-   public PCTDIContainerAttribute([CallerFilePath] string? sourceFilePath = null,
-                                  [CallerLineNumber] int sourceLineNumber = -1) : base(sourceFilePath: sourceFilePath,
-                                                                                       sourceLineNumber: sourceLineNumber) =>
-      OnlyConsider = typeof(DIContainer);
-}
