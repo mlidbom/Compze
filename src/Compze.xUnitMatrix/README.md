@@ -9,8 +9,8 @@ A framework for running tests against every combination of pluggable components 
 - **Configuration-driven** — Define component combinations in a text file (`Component1:Component2:...`), one per line
 - **Wildcard expansion** — Use `*` to expand all values of an enum component
 - **Skip support** — Skip specific component values with reasons
-- **Generic attributes** — `ComponentCombinationsTheoryAttribute<T1>` through `<T1..T5>` for 1–5 component dimensions
-- **Context flow** — `ComponentCombination.Current` gives test code access to the active combination via `AsyncLocal`
+- **Generic attributes** — `MatrixTheoryAttribute<T1>` through `<T1..T5>` for 1–5 component dimensions
+- **Context flow** — `MatrixCombination.Current` gives test code access to the active combination via `AsyncLocal`
 
 ### Quick start
 
@@ -32,7 +32,7 @@ SqliteMemory:SimpleInjector
 using Compze.xUnitMatrix;
 
 public class MyMatrixAttribute(string? sourceFilePath = null, int sourceLineNumber = -1)
-   : ComponentCombinationsTheoryAttribute<PersistenceLayer, DIContainer>(
+   : MatrixTheoryAttribute<PersistenceLayer, DIContainer>(
       configurationFileName: "TestUsingComponents",
       useTestMethodArgument: false,
       sourceFilePath: sourceFilePath,
@@ -45,7 +45,7 @@ public class When_saving_data
 {
    [MyMatrix] public void Data_round_trips()
    {
-      var combination = ComponentCombination.Current;
+      var combination = MatrixCombination.Current;
       // ... test with current combination
    }
 }

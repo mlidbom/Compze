@@ -9,17 +9,17 @@ public class WhenSomethingHappens
    public WhenSomethingHappens(ITestOutputHelper testOutputHelper)
    {
       _testOutputHelper = testOutputHelper;
-      _testOutputHelper.WriteLine($"Serializer enum: {ComponentCombination.Current.Serializer()}");
+      _testOutputHelper.WriteLine($"Serializer enum: {MatrixCombination.Current.Serializer()}");
    }
 
-   [NotArgumentPassingOneComponentsPCT] public void ComponentCombinationCurrentIsAvailableInConstructor() {}
+   [NotArgumentPassingOneComponentsPCT] public void MatrixCombinationCurrentIsAvailableInConstructor() {}
 
    [NotArgumentPassingOneComponentsPCT] public void ThisIsTheCase() =>
-      _testOutputHelper.WriteLine($"Serializer enum: {ComponentCombination.Current.Serializer()}");
+      _testOutputHelper.WriteLine($"Serializer enum: {MatrixCombination.Current.Serializer()}");
 
    public class AndSomethingElseHappens(ITestOutputHelper testOutputHelper) : WhenSomethingHappens(testOutputHelper)
    {
       [NotArgumentPassingOneComponentsPCT] public void ThisIsAlsoTheCase() =>
-         _testOutputHelper.WriteLine($"Serializer enum: {ComponentCombination.Current.Serializer()}");
+         _testOutputHelper.WriteLine($"Serializer enum: {MatrixCombination.Current.Serializer()}");
    }
 }

@@ -5,7 +5,7 @@ using Xunit.v3;
 namespace Compze.xUnitMatrix;
 
 #pragma warning  disable CA1812 // Avoid uninstantiated internal classes # this is used by xUnit via reflection
-class ComponentCombinationsTheoryDiscoverer : TheoryDiscoverer
+class MatrixTheoryDiscoverer : TheoryDiscoverer
 {
    public override async ValueTask<IReadOnlyCollection<IXunitTestCase>> Discover(
       ITestFrameworkDiscoveryOptions discoveryOptions,
@@ -17,7 +17,7 @@ class ComponentCombinationsTheoryDiscoverer : TheoryDiscoverer
 
       var baseCases = await base.Discover(discoveryOptions, testMethod, factAttribute).caf();
 
-      var pctAttribute = (ComponentCombinationsTheoryAttribute)factAttribute;
+      var pctAttribute = (MatrixTheoryAttribute)factAttribute;
 
       var testCases = baseCases.Select(testCaseInterface =>
                                 {
@@ -25,7 +25,7 @@ class ComponentCombinationsTheoryDiscoverer : TheoryDiscoverer
                                    if(testCaseInterface is not XunitTestCase xunitTestCase)
                                       return testCaseInterface;
 
-                                   return new ComponentCombinationTestCase(
+                                   return new MatrixCombinationTestCase(
                                       testCase: xunitTestCase,
                                       useTestMethodArguments: pctAttribute.UseTestMethodArgument
                                    );

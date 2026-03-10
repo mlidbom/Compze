@@ -8,7 +8,7 @@ namespace Compze.Threading.Specifications.TestInfrastructure;
 sealed class PCTAwaitableLockAttribute(
    [CallerFilePath] string? sourceFilePath = null,
    [CallerLineNumber] int sourceLineNumber = -1)
-   : ComponentCombinationsTheoryAttribute<AwaitableLockImplementation>(
+   : MatrixTheoryAttribute<AwaitableLockImplementation>(
       configurationFileName: null,
       useTestMethodArgument: false,
       sourceFilePath: sourceFilePath,

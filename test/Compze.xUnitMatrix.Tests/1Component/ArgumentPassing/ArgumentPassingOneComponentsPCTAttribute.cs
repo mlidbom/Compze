@@ -6,7 +6,7 @@ namespace Compze.xUnitMatrix.Tests._1Component.ArgumentPassing;
 sealed class ArgumentPassingOneComponentPCTAttribute(
    [CallerFilePath] string? sourceFilePath = null,
    [CallerLineNumber] int sourceLineNumber = -1)
-   : ComponentCombinationsTheoryAttribute<Serializer>(
+   : MatrixTheoryAttribute<Serializer>(
       configurationFileName: "TestUsingArgumentPassingOneComponentsPCTAttribute",
       useTestMethodArgument:true,
       sourceFilePath: sourceFilePath,

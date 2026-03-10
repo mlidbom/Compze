@@ -1,6 +1,5 @@
 using Serilog.Core;
 using Serilog.Events;
-using Compze.xUnitMatrix;
 using Xunit;
 
 namespace Compze.Tests.Infrastructure.XUnit.Logging;
@@ -12,7 +11,7 @@ class XUnitTestSerilogEnricher : ILogEventEnricher
    {
       var testCase = TestContext.Current.TestCase;
 
-      var pluggableComponents = ComponentCombination.TryGetCurrent()?.TryExtractPluggableComponents();
+      var pluggableComponents = TestCasePluggableComponentsExtractor.TryExtractPluggableComponents();
 
       logTevent.AddOrUpdateProperty(
          propertyFactory.CreateProperty("XUnit",

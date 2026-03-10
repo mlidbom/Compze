@@ -1,27 +1,23 @@
-using Compze.xUnitMatrix;
+using Compze.Tessaging.Hosting.Testing;
 
 namespace Compze.Tests.Infrastructure.XUnit;
 
 static class TestCasePluggableComponentsExtractor
 {
-   public static Tessaging.Hosting.Testing.PluggableComponents ToPluggableComponents(this ComponentCombination? combination) =>
-      combination.TryExtractPluggableComponents(throwOnFailure: true)!.Value;
+   public static PluggableComponents ToPluggableComponents() =>
+      new(PCTAttribute.SqlLayer, PCTAttribute.DIContainer, PCTAttribute.Serializer, PCTAttribute.Transport);
 
-   public static Tessaging.Hosting.Testing.PluggableComponents? TryExtractPluggableComponents(this ComponentCombination? combination,
-                                                                                              bool throwOnFailure = false)
+   public static PluggableComponents? TryExtractPluggableComponents()
    {
-      if(combination == null)
-         throw new Exception("No component context has been set");
-
       try
       {
-         return Tessaging.Hosting.Testing.PluggableComponents.FromEnums(combination.Components);
+         return ToPluggableComponents();
       }
-      catch(Exception ex)
+#pragma warning disable CA1031 // We need to catch all exceptions to return null for non-PCT tests
+      catch
       {
-         if(throwOnFailure)
-            throw new Exception("The current test does not appear to be a pluggable components test, ", ex);
          return null;
       }
+#pragma warning restore CA1031
    }
 }

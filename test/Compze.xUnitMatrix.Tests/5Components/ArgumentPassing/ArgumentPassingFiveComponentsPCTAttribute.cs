@@ -6,7 +6,7 @@ namespace Compze.xUnitMatrix.Tests._5Components.ArgumentPassing;
 sealed class ArgumentPassingFiveComponentsPCTAttribute(
    [CallerFilePath] string? sourceFilePath = null,
    [CallerLineNumber] int sourceLineNumber = -1)
-   : ComponentCombinationsTheoryAttribute<Serializer, SqlLayer, DIContainer, TeventStore, TessageBus>(
+   : MatrixTheoryAttribute<Serializer, SqlLayer, DIContainer, TeventStore, TessageBus>(
       configurationFileName: "TestUsingArgumentPassingFiveComponentsPCTAttribute",
       useTestMethodArgument: true,
       sourceFilePath: sourceFilePath,

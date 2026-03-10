@@ -2,13 +2,16 @@ using System.Runtime.CompilerServices;
 using Compze.Abstractions.Wiring.Testing.Internal;
 using Compze.xUnitMatrix;
 
-namespace Compze.DependencyInjection.Specifications.Infrastructure;
+namespace Compze.Tests.Infrastructure.XUnit;
 
-sealed class DependencyInjectionContainerMatrixAttribute(
+public sealed class PCTSerializerAttribute(
    [CallerFilePath] string? sourceFilePath = null,
    [CallerLineNumber] int sourceLineNumber = -1)
-   : MatrixTheoryAttribute<DIContainer>(
+   : MatrixTheoryAttribute<Serializer>(
       configurationFileName: null,
       useTestMethodArgument: false,
       sourceFilePath: sourceFilePath,
-      sourceLineNumber: sourceLineNumber);
+      sourceLineNumber: sourceLineNumber)
+{
+   public static Serializer Serializer => CurrentComponent1;
+}

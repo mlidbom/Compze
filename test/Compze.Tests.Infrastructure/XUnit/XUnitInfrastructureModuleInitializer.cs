@@ -2,7 +2,6 @@ using Compze.Tessaging.Hosting.Testing;
 using Compze.Internals.Testing;
 using Compze.Tests.Infrastructure.XUnit.Logging;
 using System.Runtime.CompilerServices;
-using Compze.xUnitMatrix;
 
 namespace Compze.Tests.Infrastructure.XUnit;
 
@@ -13,6 +12,6 @@ public static class XUnitInfrastructureModuleInitializer
    {
       TestFixtureHelper.SetupSerilog(new XUnitTestSerilogEnricher(), new XUnitTestOutputHelperSink());
 
-      TestEnv.XunitDiscoverer = () => ComponentCombination.Current.ToPluggableComponents();
+      TestEnv.XunitDiscoverer = TestCasePluggableComponentsExtractor.TryExtractPluggableComponents;
    }
 }

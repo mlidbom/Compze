@@ -12,7 +12,7 @@ namespace Compze.DependencyInjection.Specifications.Infrastructure;
 
 static class DependencyInjectionContainerFactory
 {
-   static DIContainer CurrentDIContainer => (DIContainer)ComponentCombination.Current.Components[0];
+   static DIContainer CurrentDIContainer => (DIContainer)MatrixCombination.Current.Components[0];
 
    public static IDependencyInjectionContainer CreateContainer() =>
       CurrentDIContainer switch

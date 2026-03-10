@@ -8,7 +8,7 @@ namespace Compze.Threading.Specifications.TestInfrastructure;
 sealed class PCTLockAttribute(
    [CallerFilePath] string? sourceFilePath = null,
    [CallerLineNumber] int sourceLineNumber = -1)
-   : ComponentCombinationsTheoryAttribute<LockImplementation>(
+   : MatrixTheoryAttribute<LockImplementation>(
       configurationFileName: null,
       useTestMethodArgument: false,
       sourceFilePath: sourceFilePath,

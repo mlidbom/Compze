@@ -10,7 +10,7 @@ class LockFactory<TTest> : IDisposable
    readonly List<IDisposable> _disposables = [];
 
    // ReSharper disable once MemberCanBeMadeStatic.Local
-   LockImplementation CurrentLockImplementation => (LockImplementation)ComponentCombination.Current.Components[0];
+   LockImplementation CurrentLockImplementation => (LockImplementation)MatrixCombination.Current.Components[0];
 
    public ILock CreateLock(LockTimeout? timeout = null)
    {

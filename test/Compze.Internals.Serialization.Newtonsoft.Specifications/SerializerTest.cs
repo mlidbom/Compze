@@ -6,8 +6,8 @@ using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Serialization.Newtonsoft.Wiring;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tests.Infrastructure;
+using Compze.Tests.Infrastructure.XUnit;
 using Compze.Underscore;
-using Compze.xUnitMatrix;
 
 namespace Compze.Internals.Serialization.Newtonsoft.Specifications;
 
@@ -20,7 +20,7 @@ public class SerializerTest : UniversalTestBase
 
    protected SerializerTest()
    {
-      var serializer = (Serializer)ComponentCombination.Current.Components.Single(c => c is Serializer);
+      var serializer = PCTSerializerAttribute.Serializer;
 #pragma warning disable CA2000 // We are disposing this disposable in DisposeInternal
       _container = DIContainer.Microsoft
                              .CreateEmpty()

@@ -6,7 +6,7 @@ namespace Compze.xUnitMatrix.Tests._3Components.ArgumentPassing;
 sealed class ArgumentPassingThreeComponentsPCTAttribute(
    [CallerFilePath] string? sourceFilePath = null,
    [CallerLineNumber] int sourceLineNumber = -1)
-   : ComponentCombinationsTheoryAttribute<Serializer, SqlLayer, DIContainer>(
+   : MatrixTheoryAttribute<Serializer, SqlLayer, DIContainer>(
       configurationFileName: "TestUsingArgumentPassingThreeComponentsPCTAttribute",
       useTestMethodArgument: true,
       sourceFilePath: sourceFilePath,

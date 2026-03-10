@@ -6,7 +6,7 @@ using Xunit.v3;
 
 namespace Compze.xUnitMatrix;
 
-class ComponentCombinationTestCase : ConstructorArgumentForwardingTestCase, ISelfExecutingXunitTestCase
+class MatrixCombinationTestCase : ConstructorArgumentForwardingTestCase, ISelfExecutingXunitTestCase
 {
    bool _useTestMethodArguments;
 
@@ -17,14 +17,14 @@ class ComponentCombinationTestCase : ConstructorArgumentForwardingTestCase, ISel
 
    // ReSharper disable once UnusedMember.Global
    [Obsolete("Called by deserializer", error: true)]
-   public ComponentCombinationTestCase() {}
+   public MatrixCombinationTestCase() {}
 
    // ReSharper disable once ConvertToPrimaryConstructor
-   public ComponentCombinationTestCase(XunitTestCase testCase, bool useTestMethodArguments)
+   public MatrixCombinationTestCase(XunitTestCase testCase, bool useTestMethodArguments)
       : base(testCase, testCaseDisplayName: ReplaceArgumentNames(testCase.TestCaseDisplayName)) =>
       _useTestMethodArguments = useTestMethodArguments;
 
-   ComponentCombination Combination => (ComponentCombination)TestMethodArguments[0]!;
+   MatrixCombination Combination => (MatrixCombination)TestMethodArguments[0]!;
 
    protected override void Serialize(IXunitSerializationInfo info)
    {
@@ -45,8 +45,8 @@ class ComponentCombinationTestCase : ConstructorArgumentForwardingTestCase, ISel
       ExceptionAggregator aggregator,
       CancellationTokenSource cancellationTokenSource)
    {
-      return await ComponentCombination.RunInContextAsync(
-                new LazyCE<ComponentCombination>(() => Combination),
+      return await MatrixCombination.RunInContextAsync(
+                new LazyCE<MatrixCombination>(() => Combination),
                 async () => await XunitRunnerHelper.RunXunitTestCase(
                                _useTestMethodArguments ? this : new ArgumentDiscardingTestCase(this),
                                messageBus,

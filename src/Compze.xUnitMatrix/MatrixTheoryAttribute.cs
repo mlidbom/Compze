@@ -8,8 +8,8 @@ using Xunit.v3;
 
 namespace Compze.xUnitMatrix;
 
-[XunitTestCaseDiscoverer(typeof(ComponentCombinationsTheoryDiscoverer))]
-public abstract class ComponentCombinationsTheoryAttribute(
+[XunitTestCaseDiscoverer(typeof(MatrixTheoryDiscoverer))]
+public abstract class MatrixTheoryAttribute(
    string? configurationFileName,
    Type[] componentEnumTypes,
    bool useTestMethodArgument,
@@ -52,7 +52,7 @@ public abstract class ComponentCombinationsTheoryAttribute(
 
    IReadOnlyList<Enum> SkippedComponents => Skipped?.Cast<Enum>().ToList() ?? [];
 
-   SkipComponentSpecificationsCollection SkipComponentSpecifications => SkipComponentSpecificationsCollection.FromComponentsAndReasons(SkippedComponents, SkipReasons ?? []);
+   MatrixSkipSpecification MatrixSkipSpecification => MatrixSkipSpecification.FromComponentsAndReasons(SkippedComponents, SkipReasons ?? []);
 
 #pragma warning disable CA1033 // Interface methods should be callable by child types. We can't, that would hide the base class methods
    bool? IDataAttribute.Explicit => Explicit;
@@ -91,7 +91,7 @@ public abstract class ComponentCombinationsTheoryAttribute(
          var combinations = GetCombinations()
                            .Select(ITheoryDataRow (combination) => new TheoryDataRow(combination) // Pass combination object as argument
                                                                    {
-                                                                      Skip = SkipComponentSpecifications.SkippedComponentFor(combination)?.ToString()
+                                                                      Skip = MatrixSkipSpecification.SkippedComponentFor(combination)?.ToString()
                                                                    })
                            .ToArray();
          return new ValueTask<IReadOnlyCollection<ITheoryDataRow>>(combinations);
@@ -107,12 +107,12 @@ public abstract class ComponentCombinationsTheoryAttribute(
       }
    }
 
-   IReadOnlyList<ComponentCombination> GetCombinations() =>
+   IReadOnlyList<MatrixCombination> GetCombinations() =>
       _configurationFileName != null
-         ? ComponentCombinationsConfigurationFileReader.GetCombinations(_configurationFileName, _componentEnumTypes)
+         ? MatrixConfigurationFileReader.GetCombinations(_configurationFileName, _componentEnumTypes)
          : AllCombinationsFromEnumTypes(_componentEnumTypes);
 
-   static IReadOnlyList<ComponentCombination> AllCombinationsFromEnumTypes(Type[] componentEnumTypes)
+   static IReadOnlyList<MatrixCombination> AllCombinationsFromEnumTypes(Type[] componentEnumTypes)
    {
       var allEnumValues = componentEnumTypes
                          .Select(type => Enum.GetValues(type).Cast<Enum>().ToArray() as IReadOnlyList<Enum>)
@@ -120,9 +120,22 @@ public abstract class ComponentCombinationsTheoryAttribute(
 
       return allEnumValues
             .CartesianProduct()
-            .Select(ComponentCombination.FromComponentEnumValues)
+            .Select(MatrixCombination.FromComponentEnumValues)
             .ToList();
    }
 
    public bool SupportsDiscoveryEnumeration() => true;
+
+   protected static TComponent GetCurrentComponent<TComponent>(int index) where TComponent : Enum
+   {
+      var combination = MatrixCombination.Current;
+      if(index >= combination.Components.Count)
+         throw new InvalidOperationException($"The current test combination has {combination.Components.Count} component(s), but component at index {index} ({typeof(TComponent).Name}) was requested.");
+
+      var component = combination.Components[index];
+      if(component is not TComponent typed)
+         throw new InvalidOperationException($"Expected component at index {index} to be {typeof(TComponent).Name}, but found {component.GetType().Name}.");
+
+      return typed;
+   }
 }

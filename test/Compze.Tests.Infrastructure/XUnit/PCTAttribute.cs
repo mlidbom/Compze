@@ -11,18 +11,14 @@ namespace Compze.Tests.Infrastructure.XUnit;
 public class PCTAttribute(
    [CallerFilePath] string? sourceFilePath = null,
    [CallerLineNumber] int sourceLineNumber = -1)
-   : ComponentCombinationsTheoryAttribute<SqlLayer, DIContainer, Serializer, Transport>(
+   : MatrixTheoryAttribute<SqlLayer, DIContainer, Serializer, Transport>(
       configurationFileName: "TestUsingPluggableComponentCombinations",
       useTestMethodArgument: false,
       sourceFilePath: sourceFilePath,
-      sourceLineNumber: sourceLineNumber);
-
-public sealed class PCTSerializerAttribute(
-   [CallerFilePath] string? sourceFilePath = null,
-   [CallerLineNumber] int sourceLineNumber = -1)
-   : ComponentCombinationsTheoryAttribute<Serializer>(
-      configurationFileName: null,
-      useTestMethodArgument: false,
-      sourceFilePath: sourceFilePath,
-      sourceLineNumber: sourceLineNumber);
-
+      sourceLineNumber: sourceLineNumber)
+{
+   public static SqlLayer SqlLayer => CurrentComponent1;
+   public static DIContainer DIContainer => CurrentComponent2;
+   public static Serializer Serializer => CurrentComponent3;
+   public static Transport Transport => CurrentComponent4;
+}

@@ -9,20 +9,20 @@ public class WhenSomethingHappens
    public WhenSomethingHappens(ITestOutputHelper testOutputHelper)
    {
       _testOutputHelper = testOutputHelper;
-      PrintSerializer(ComponentCombination.Current);
+      PrintSerializer(MatrixCombination.Current);
    }
 
-   [ArgumentPassingFiveComponentsPCT] public void ComponentCombinationCurrentIsAvailableInConstructor(ComponentCombination combination) =>
+   [ArgumentPassingFiveComponentsPCT] public void MatrixCombinationCurrentIsAvailableInConstructor(MatrixCombination combination) =>
       PrintSerializer(combination);
 
-   [ArgumentPassingFiveComponentsPCT] public void ThisIsTheCase(ComponentCombination combination) =>
+   [ArgumentPassingFiveComponentsPCT] public void ThisIsTheCase(MatrixCombination combination) =>
       PrintSerializer(combination);
 
    public class AndSomethingElseHappens(ITestOutputHelper testOutputHelper) : WhenSomethingHappens(testOutputHelper)
    {
-      [ArgumentPassingFiveComponentsPCT] public void ThisIsAlsoTheCase(ComponentCombination combination) =>
+      [ArgumentPassingFiveComponentsPCT] public void ThisIsAlsoTheCase(MatrixCombination combination) =>
          PrintSerializer(combination);
    }
 
-   void PrintSerializer(ComponentCombination combination) => _testOutputHelper.WriteLine($"Serializer enum: {combination.Serializer()}");
+   void PrintSerializer(MatrixCombination combination) => _testOutputHelper.WriteLine($"Serializer enum: {combination.Serializer()}");
 }

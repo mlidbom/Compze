@@ -4,11 +4,11 @@ using Compze.Internals.SystemCE;
 
 namespace Compze.xUnitMatrix;
 
-static class ComponentCombinationsConfigurationFileReader
+static class MatrixConfigurationFileReader
 {
-   static readonly ConcurrentDictionary<string, IReadOnlyList<ComponentCombination>> CombinationsCache = new();
+   static readonly ConcurrentDictionary<string, IReadOnlyList<MatrixCombination>> CombinationsCache = new();
 
-   public static IReadOnlyList<ComponentCombination> GetCombinations(string configurationFileName, Type[] componentEnumTypes)
+   public static IReadOnlyList<MatrixCombination> GetCombinations(string configurationFileName, Type[] componentEnumTypes)
    {
       return CombinationsCache.GetOrAdd(
          configurationFileName,
@@ -18,13 +18,13 @@ static class ComponentCombinationsConfigurationFileReader
    const string Comment = "//";
    const char SkipCombination = '#';
 
-   static IReadOnlyList<ComponentCombination> ReadFile(Type[] componentTypes, string fileName) =>
+   static IReadOnlyList<MatrixCombination> ReadFile(Type[] componentTypes, string fileName) =>
       ReadFileLines(fileName)
         .Select(it => it.Trim())
         .Where(it => !it.IsNullEmptyOrWhiteSpace())
         .Where(it => !it.StartsWithCE(Comment))
         .Where(it => !it.StartsWith(SkipCombination))
-        .Select(it => new ComponentCombinationsConfigurationFileLine(componentTypes, it))
+        .Select(it => new MatrixConfigurationFileLine(componentTypes, it))
         .SelectMany(it => it.ExpandWildcardsIntoConcretePermutations())
         .OrderBy(it => it.ToString())
         .DistinctBy(it => it.ToString())

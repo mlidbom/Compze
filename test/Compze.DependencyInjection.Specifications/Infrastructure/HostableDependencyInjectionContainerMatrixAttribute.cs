@@ -4,7 +4,7 @@ using Compze.xUnitMatrix;
 
 namespace Compze.DependencyInjection.Specifications.Infrastructure;
 
-sealed class HostableDependencyInjectionContainerMatrixAttribute : ComponentCombinationsTheoryAttribute<DIContainer>
+sealed class HostableDependencyInjectionContainerMatrixAttribute : MatrixTheoryAttribute<DIContainer>
 {
    public HostableDependencyInjectionContainerMatrixAttribute([CallerFilePath] string? sourceFilePath = null,
                                                               [CallerLineNumber] int sourceLineNumber = -1) : base(configurationFileName: null,

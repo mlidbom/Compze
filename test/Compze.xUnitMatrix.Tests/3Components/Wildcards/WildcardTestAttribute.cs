@@ -6,7 +6,7 @@ namespace Compze.xUnitMatrix.Tests._3Components.Wildcards;
 sealed class WildcardTestAttribute(
    [CallerFilePath] string? sourceFilePath = null,
    [CallerLineNumber] int sourceLineNumber = -1)
-   : ComponentCombinationsTheoryAttribute<Serializer, SqlLayer, DIContainer>(
+   : MatrixTheoryAttribute<Serializer, SqlLayer, DIContainer>(
       configurationFileName: "TestUsingWildcards",
       useTestMethodArgument: true,
       sourceFilePath: sourceFilePath,

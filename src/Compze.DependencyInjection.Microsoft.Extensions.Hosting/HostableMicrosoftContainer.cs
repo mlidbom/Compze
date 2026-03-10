@@ -82,7 +82,9 @@ class CompzeMicrosoftServiceScope(CompzeMicrosoftServiceProvider serviceProvider
 {
    readonly IServiceScope _innerScope = innerScope;
    readonly IMicrosoftContainerInternals _compzeInternals = compzeInternals;
+#pragma warning disable CA2213
    readonly CompzeMicrosoftServiceProvider _serviceProvider = serviceProvider;
+#pragma warning restore CA2213
 
    public IServiceProvider ServiceProvider => _serviceProvider;
 

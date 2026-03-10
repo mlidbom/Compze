@@ -1,12 +1,12 @@
 namespace Compze.xUnitMatrix;
 
 /// <summary>Represents a skipped component with a reason.</summary>
-class SkipComponentSpecification
+class ComponentSkipSpecification
 {
    readonly Enum _component;
    readonly string _reason;
 
-   internal SkipComponentSpecification(Enum component, string reason)
+   internal ComponentSkipSpecification(Enum component, string reason)
    {
       _component = component ?? throw new ArgumentNullException(nameof(component));
       _reason = reason ?? throw new ArgumentNullException(nameof(reason));
@@ -15,7 +15,7 @@ class SkipComponentSpecification
          throw new ArgumentException("Reason cannot be empty", nameof(reason));
    }
 
-   internal bool Skips(ComponentCombination combination) =>
+   internal bool Skips(MatrixCombination combination) =>
       combination.Components.Any(c => c.Equals(_component));
 
    public override string ToString() => $"{_component}: {_reason}";
