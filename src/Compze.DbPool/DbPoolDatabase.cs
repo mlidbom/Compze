@@ -12,7 +12,6 @@ public partial class DbPoolDatabase
 
    public int Id { get; private set; }
    public bool IsReserved { get; private set; }
-   public bool IsClean { get; private set; } = true;
    public DateTime ReservationExpirationTime { get; private set; } = DateTime.MinValue;
    public string ReservationName { get; private set; } = string.Empty;
    public Guid? ReservedByPoolId { get; private set; } = null;
@@ -35,7 +34,6 @@ public partial class DbPoolDatabase
    {
       Contract.State.Assert(IsReserved);
       IsReserved = false;
-      IsClean = false;
       ReservationName = string.Empty;
       ReservedByPoolId = null;
       return this;
@@ -52,5 +50,5 @@ public partial class DbPoolDatabase
       return this;
    }
 
-   public override string ToString() => $"{nameof(Id)}: {Id}, {nameof(IsReserved)}: {IsReserved}, {nameof(IsClean)}: {IsClean}, {nameof(ReservationExpirationTime)}: {ReservationExpirationTime}, {nameof(ReservationName)}:{ReservationName}, {nameof(ReservedByPoolId)}:{ReservedByPoolId}";
+   public override string ToString() => $"{nameof(Id)}: {Id}, {nameof(IsReserved)}: {IsReserved}, {nameof(ReservationExpirationTime)}: {ReservationExpirationTime}, {nameof(ReservationName)}:{ReservationName}, {nameof(ReservedByPoolId)}:{ReservedByPoolId}";
 }
