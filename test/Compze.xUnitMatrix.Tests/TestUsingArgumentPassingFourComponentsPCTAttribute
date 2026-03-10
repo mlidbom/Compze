@@ -1,6 +1,6 @@
-// Test configuration file for pluggable component combinations
-// Lines starting with "//" are comments
-// Lines starting with "#" are ignored/excluded combinations
+# Test configuration file for pluggable component combinations
+# Lines starting with "#" are comments
+
 
 Microsoft:MsSql:Microsoft:InMemory
 Microsoft:Postgre:Microsoft:InMemory

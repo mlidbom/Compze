@@ -15,15 +15,13 @@ static class MatrixConfigurationFileReader
          fileName => ReadFile(componentEnumTypes, fileName));
    }
 
-   const string Comment = "//";
-   const char SkipCombination = '#';
+   const char Comment = '#';
 
    static IReadOnlyList<MatrixCombination> ReadFile(Type[] componentTypes, string fileName) =>
       ReadFileLines(fileName)
         .Select(it => it.Trim())
         .Where(it => !it.IsNullEmptyOrWhiteSpace())
-        .Where(it => !it.StartsWithCE(Comment))
-        .Where(it => !it.StartsWith(SkipCombination))
+        .Where(it => !it.StartsWith(Comment))
         .Select(it => new MatrixConfigurationFileLine(componentTypes, it))
         .SelectMany(it => it.ExpandWildcardsIntoConcretePermutations())
         .OrderBy(it => it.ToString())

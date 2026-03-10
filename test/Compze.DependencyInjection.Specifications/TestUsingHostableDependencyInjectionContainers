@@ -1,7 +1,7 @@
-// Hostable DependencyInjection container matrix
-// Tests run once per container listed here
-// Format: one DIContainer enum value per line
-// Comment out with # to skip
+# Hostable DependencyInjection container matrix
+# Tests run once per container listed here
+# Format: one DIContainer enum value per line
+# Comment out with # to skip
 
 Microsoft
 Autofac

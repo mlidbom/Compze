@@ -1,5 +1,5 @@
-// Test configuration file using wildcards
-// Lines starting with "//" are comments
-// Use "*" as a wildcard to generate all combinations for that component type
+# Test configuration file using wildcards
+# Lines starting with "#" are comments
+# Use "*" as a wildcard to generate all combinations for that component type
 
 Microsoft:*:Microsoft

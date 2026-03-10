@@ -1,7 +1,7 @@
-//When running tests, all tests that uses dependency injection and persistence will 
-//be executed once for every configured combination of components in this file.
-//Format is PersistenceLayer:DIContainer. Comment out the ones you do not want with #. 
-//Empty/Whitespace lines are ignored
+#When running tests, all tests that uses dependency injection and persistence will 
+#be executed once for every configured combination of components in this file.
+#Format is PersistenceLayer:DIContainer. Comment out the ones you do not want with #. 
+#Empty/Whitespace lines are ignored
 
 
 SqliteMemory:Microsoft:Newtonsoft:AspNetCore

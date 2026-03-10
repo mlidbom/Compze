@@ -89,12 +89,13 @@ For more than 5 dimensions, inherit directly from the non-generic `MatrixTheoryA
 Sometimes you don't want to run every combination. A configuration file lets you list exactly which combinations to run — one per line, or with `*` as an auto-expanding wildcard:
 
 ```
+# Only run these specific combinations
 SqliteMemory:Autofac
 SqliteMemory:SimpleInjector
 *:Microsoft
 ```
 
-The `*` on the third line expands to `MicrosoftSql:Microsoft`, `PostgreSql:Microsoft`, `MySql:Microsoft` — five combinations total from three lines. Lines starting with `//` are comments.
+The `*` on the third line expands to `MicrosoftSql:Microsoft`, `PostgreSql:Microsoft`, `MySql:Microsoft` — five combinations total from three lines. Lines starting with `#` are comments.
 
 Pass the file name as `configurationFileName` in your attribute constructor instead of `null`.
 
