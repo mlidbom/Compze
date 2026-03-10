@@ -7,6 +7,7 @@ using Compze.Internals.SystemCE;
 using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Internals.SystemCE.TransactionsCE;
 using Compze.Threading;
+using Compze.Threading.ResourceAccess;
 
 #pragma warning disable CA1724 //I don't care that the class uses the same name as the namespace
 
@@ -38,19 +39,18 @@ public class DbPool : StrictlyManagedResourceBase<DbPool>
       _machineWideState = new DbPoolMachineWideState(sqlLayer.GetType().GetFullNameCompilable());
    }
 
-   readonly IMonitor _lock = IMonitor.New(LockTimeout.Seconds(30));
+   readonly IThreadShared<List<DbPoolDatabase>> _reservedDatabases = IThreadShared.New(new List<DbPoolDatabase>(), LockTimeout.Seconds(30));
    readonly Guid _poolId = Guid.NewGuid();
-   IReadOnlyList<DbPoolDatabase> _transientCache = new List<DbPoolDatabase>();
 
    static ILogger _log = CompzeLogger.For<DbPool>();
 
-   public void SetLogLevel(LogLevel logLevel) => _lock.Locked(() => _log = _log.WithLogLevel(logLevel));
+   public void SetLogLevel(LogLevel logLevel) => _reservedDatabases.Locked(_ => _log = _log.WithLogLevel(logLevel));
 
-   public string ConnectionStringFor(string reservationName) => _lock.Locked(() =>
+   public string ConnectionStringFor(string reservationName) => _reservedDatabases.Locked(reservedDatabases =>
    {
       Contract.State.NotDisposed(Disposed, this);
 
-      var reservedDatabase = _transientCache.SingleOrDefault(db => db.ReservationName == reservationName);
+      var reservedDatabase = reservedDatabases.SingleOrDefault(db => db.ReservationName == reservationName);
       if(reservedDatabase != null)
       {
          _log.Debug($"Retrieved reserved pool database from cache: {reservedDatabase.Id}");
@@ -59,7 +59,7 @@ public class DbPool : StrictlyManagedResourceBase<DbPool>
 
       reservedDatabase = _machineWideState.ReserveDatabase(reservationName, _poolId, _reservationLength);
       _log.Info($"Reserved pool database: {reservedDatabase.Name}");
-      OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _transientCache, reservedDatabase);
+      reservedDatabases.Add(reservedDatabase);
 
       try
       {
@@ -77,11 +77,11 @@ public class DbPool : StrictlyManagedResourceBase<DbPool>
       return _sqlLayer.ConnectionStringFor(reservedDatabase);
    });
 
-   public override void Dispose() => _lock.Locked(() =>
+   public override void Dispose() => _reservedDatabases.Locked(reservedDatabases =>
    {
       if(Disposed) return;
       base.Dispose();
-      _sqlLayer.Dispose(_transientCache);
+      _sqlLayer.Dispose(reservedDatabases);
       _machineWideState.ReleaseReservationsFor(_poolId);
    });
 }

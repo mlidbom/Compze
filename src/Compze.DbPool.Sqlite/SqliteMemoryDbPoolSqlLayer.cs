@@ -43,14 +43,14 @@ class SqliteMemoryDbPoolSqlLayer : IDbPoolSqlLayer
 
    public void Dispose(IReadOnlyList<DbPoolDatabase> reservedDatabases)
    {
-      _keepInMemoryDatabaseAliveConnections.Locked(cons =>
+      _keepInMemoryDatabaseAliveConnections.Locked(keepAliveConnections =>
       {
-         cons.Values.ForEach(connection =>
+         keepAliveConnections.Values.ForEach(connection =>
          {
             SqliteConnection.ClearPool(connection);
             connection.Dispose();
          });
-         cons.Clear();
+         keepAliveConnections.Clear();
       });
    }
 

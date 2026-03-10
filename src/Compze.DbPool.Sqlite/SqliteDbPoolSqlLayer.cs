@@ -1,5 +1,7 @@
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
+using Compze.Internals.SystemCE;
+using Compze.Internals.SystemCE.LinqCE;
 using Microsoft.Data.Sqlite;
 
 namespace Compze.DbPool.Sqlite;
@@ -12,6 +14,7 @@ class SqliteDbPoolSqlLayer : IDbPoolSqlLayer
                                   .DelegateToParentServiceLocatorWhenCloning());
 
    readonly string _baseDirectory;
+
    // Without a unique name we can end up with another test re-creating a deleted database,
    // causing very odd behavior in tests that should just have exploded with the message that
    // their database is gone due to premature disposing of the pool. Yes, this really happened.
@@ -42,44 +45,38 @@ class SqliteDbPoolSqlLayer : IDbPoolSqlLayer
 
    public void ResetDatabase(DbPoolDatabase db)
    {
-      using var connection = new SqliteConnection(ConnectionStringFor(db));
-      SqliteConnection.ClearPool(connection);
-      DeleteDbFile(db);
+      Delete(db);
       using var dbCreatingConnection = new SqliteConnection(ConnectionStringFor(db));
       dbCreatingConnection.Open();
    }
 
-   void DeleteDbFile(DbPoolDatabase db) => File.Delete(CreateDbPath(db)); //File.Delete does not throw on non-existent, files, so we can save one file system access by not checking for existence
-
    string CreateDbPath(DbPoolDatabase db) => Path.Combine(_baseDirectory, $"{db.Name}_{_poolId}.db");
 
-   public void Dispose(IReadOnlyList<DbPoolDatabase> reservedDatabases)
+   public void Dispose(IReadOnlyList<DbPoolDatabase> reservedDatabases) => reservedDatabases.ForEach(Delete);
+
+   void Delete(DbPoolDatabase db)
    {
-      // Sqlite sometimes takes a moment to release the files, so we retry in a loop
-      const int maxCleanupAttempts = 1000;
-      for(var attempt = 1; attempt <= maxCleanupAttempts; attempt++)
+      // Sqlite sometimes takes a moment to release the files, so we retry in a loop for a maximum of 10 seconds
+      var startTime = DateTime.UtcNow;
+      while(true)
       {
-         foreach(var db in reservedDatabases)
+         try
          {
-            try
-            {
-               using var connection = new SqliteConnection(ConnectionStringFor(db));
-               SqliteConnection.ClearPool(connection);
-               DeleteDbFile(db);
-               reservedDatabases = reservedDatabases.Where(it => it != db).ToList();
-            }
-            catch
-            {
-               if(attempt == maxCleanupAttempts)
-               {
-                  throw new Exception($"Failed to clean up database {CreateDbPath(db)}");
-               }
-
-               Thread.Sleep(TimeSpan.FromMilliseconds(10));
-            }
+            using var connection = new SqliteConnection(ConnectionStringFor(db));
+            SqliteConnection.ClearPool(connection);
+            File.Delete(CreateDbPath(db));
+            return;
          }
+         catch(Exception ex)
+         {
+            if(DateTime.UtcNow - startTime > 10.Seconds())
+            {
+               throw new Exception($"Failed to clean up database {CreateDbPath(db)}", ex);
+            }
 
-         if(reservedDatabases.Count == 0) break;
+            Thread.Sleep(TimeSpan.FromMilliseconds(10));
+         }
       }
    }
+
 }
