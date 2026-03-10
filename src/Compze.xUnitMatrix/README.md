@@ -71,10 +71,10 @@ The constructor does setup using the current combination. Each test method is ju
 
 ### Skipping specific combinations
 
-Some combinations may not be supported. Skip them with a reason — the test shows as skipped rather than missing:
+Some combinations may not be supported. Skip them with a reason:
 
 ```csharp
-[MyMatrix(Skipped = [PersistenceLayer.MySql], SkipReasons = ["MySQL doesn't support this feature"])]
+[MyMatrix(Skipped = [PersistenceLayer.SqliteMemory], SkipReasons = ["Sqlite doesn't support this feature"])]
 public void Uses_advanced_sql_feature() { }
 ```
 
