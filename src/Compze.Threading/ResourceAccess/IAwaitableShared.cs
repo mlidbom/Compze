@@ -44,6 +44,8 @@ public interface IAwaitableShared<out TShared>
    TResult UpdateWhen<TResult>(Func<TShared, bool> condition, Func<TShared, TResult> update, WaitTimeout? timeout = null);
 
    //Default implementations
+   unit Read(Action<TShared> read, LockTimeout? timeout = null) => Read(read.ToFunc(), timeout);
+
    unit Update(Action<TShared> update, LockTimeout? timeout = null) => Update(update.ToFunc(), timeout);
    unit UpdateWhen(Func<TShared, bool> condition, Action<TShared> update, WaitTimeout? timeout = null) => UpdateWhen(condition, update.ToFunc(), timeout);
 

@@ -1,7 +1,9 @@
 using System.Text;
 using Compze.Internals.SystemCE;
 using Compze.Internals.SystemCE.IOCE;
+using Compze.Threading;
 using Compze.Threading.Interprocess;
+using Compze.Threading.Interprocess.ResourceAccess;
 
 namespace Compze.DbPool.MachineWideState;
 
@@ -19,38 +21,77 @@ public enum CorruptionAction
    ReplaceContentWithDefaultAndThrow = 1
 }
 
-public sealed class MachineWideSharedObject<TObject> : MachineWideSharedObject where TObject : class, new()
+public interface IMachineWideSharedObject<out TObject> : IAwaitableProcessShared<TObject>
+{
+   void Delete();
+}
+
+public sealed class MachineWideSharedObject<TObject> : MachineWideSharedObject, IMachineWideSharedObject<TObject> where TObject : class, new()
 {
    readonly TextFile _file;
-   readonly IMutex _synchronizer;
+   readonly ISignalingAwaitableMutex _synchronizer;
    readonly ISharedObjectSerializer<TObject> _serializer;
    readonly CorruptionAction _corruptionAction;
 
-   public static MachineWideSharedObject<TObject> For(string name, ISharedObjectSerializer<TObject> serializer, CorruptionAction corruptionAction) => new(name, serializer, corruptionAction);
+   public static IMachineWideSharedObject<TObject> For(string name, ISharedObjectSerializer<TObject> serializer, CorruptionAction corruptionAction) => new MachineWideSharedObject<TObject>(name, serializer, corruptionAction);
 
    MachineWideSharedObject(string name, ISharedObjectSerializer<TObject> serializer, CorruptionAction corruptionAction)
    {
       _serializer = serializer;
       _corruptionAction = corruptionAction;
       var fileName = PathCE.ReplaceInvalidCharactersWith(name, '_');
-      _synchronizer = IMutex.Global(fileName);
+      _synchronizer = ISignalingAwaitableMutex.Global(fileName);
 
-      _file = _synchronizer.Locked(() => DataDirectory.Value.GetOrCreateTextFile(fileName, Encoding.UTF8, CreateDefaultJson));
+      _file = _synchronizer.Update(() => DataDirectory.Value.GetOrCreateTextFile(fileName, Encoding.UTF8, CreateDefaultJson));
    }
 
-   string CreateDefaultJson() => _serializer.Serialize(new TObject());
+   public IAwaitableLock Lock => _synchronizer;
+   public IAwaitableMutex Mutex => _synchronizer;
 
-   public TObject Update(Action<TObject> action) => _synchronizer.Locked(() =>
+   public TResult Read<TResult>(Func<TObject, TResult> read, LockTimeout? timeout = null)
    {
-      var instance = Load();
-      action(instance);
-      Save(instance);
-      return instance;
-   });
+      using(_synchronizer.TakeReadLock(timeout))
+      {
+         return read(Load());
+      }
+   }
 
-   public TObject GetCopy() => _synchronizer.Locked(Load);
+   public TResult ReadWhen<TResult>(Func<TObject, bool> condition, Func<TObject, TResult> read, WaitTimeout? timeout = null)
+   {
+      TObject? loaded = null;
+      using(_synchronizer.TakeReadLockWhen(() => condition(loaded = Load()), timeout))
+      {
+         return read(loaded!);
+      }
+   }
+
+   public TResult Update<TResult>(Func<TObject, TResult> update, LockTimeout? timeout = null)
+   {
+      using(_synchronizer.TakeUpdateLock(timeout))
+      {
+         var instance = Load();
+         var result = update(instance);
+         Save(instance);
+         return result;
+      }
+   }
+
+   public TResult UpdateWhen<TResult>(Func<TObject, bool> condition, Func<TObject, TResult> update, WaitTimeout? timeout = null)
+   {
+      TObject? loaded = null;
+      using(_synchronizer.TakeUpdateLockWhen(() => condition(loaded = Load()), timeout))
+      {
+         var result = update(loaded!);
+         Save(loaded!);
+         return result;
+      }
+   }
+
+   public TObject GetCopy() => Read(obj => obj);
 
    public void Delete() => _file.GetFileInfo().Delete();
+
+   string CreateDefaultJson() => _serializer.Serialize(new TObject());
 
    void Save(TObject instance)
    {

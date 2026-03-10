@@ -1,13 +1,15 @@
 using Compze.Contracts;
 using Compze.DbPool.MachineWideState;
+using Compze.DbPool.SystemCE;
+using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
 using Compze.Internals.SystemCE;
 using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Internals.SystemCE.TransactionsCE;
 using Compze.Threading;
-using Compze.DbPool.SystemCE;
-using Compze.DependencyInjection;
+using Compze.Threading.Exceptions;
+using Compze.Threading.Interprocess.ResourceAccess;
 
 #pragma warning disable CA1724 //I don't care that the class uses the same name as the namespace
 
@@ -27,7 +29,7 @@ public class DbPool : StrictlyManagedResourceBase<DbPool>
                                   .DelegateToParentServiceLocatorWhenCloning());
 
    readonly IDbPoolSqlLayer _sqlLayer;
-   MachineWideSharedObject<DbPoolState> MachineWideState { get; }
+   IMachineWideSharedObject<DbPoolState> MachineWideState { get; }
    static TimeSpan _reservationLength;
    internal const int NumberOfDatabases = 50;
 
@@ -59,25 +61,20 @@ public class DbPool : StrictlyManagedResourceBase<DbPool>
          return _sqlLayer.ConnectionStringFor(reservedDatabase);
       }
 
-      var startTime = DateTime.UtcNow;
-      var timeoutAt = startTime + 45.Seconds();
-      while(reservedDatabase == null)
+      try
       {
-         if(DateTime.UtcNow > timeoutAt) throw new Exception("Timed out waiting for database. Have you missed disposing a database pool? Please check your logs for errors about non-disposed pools.");
-
-         MachineWideState.Update(machineWide =>
-         {
-            if(machineWide.TryReserve(reservationName, _poolId, _reservationLength, out reservedDatabase))
+         MachineWideState.UpdateWhen(
+            state => state.TryReserve(reservationName, _poolId, _reservationLength, out reservedDatabase),
+            _ =>
             {
-               _log.Info($"Reserved pool database: {reservedDatabase.Name}");
+               _log.Info($"Reserved pool database: {reservedDatabase!.Name}");
                OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _transientCache, reservedDatabase);
-            }
-         });
-
-         if(reservedDatabase == null)
-         {
-            Thread.Sleep(10);
-         }
+            },
+            WaitTimeout.Seconds(45));
+      }
+      catch(AwaitingConditionTimeoutException)
+      {
+         throw new Exception("Timed out waiting for database. Have you missed disposing a database pool? Please check your logs for errors about non-disposed pools.");
       }
 
       try
