@@ -8,20 +8,11 @@ static class ComponentCombinationsConfigurationFileReader
 {
    static readonly ConcurrentDictionary<string, IReadOnlyList<ComponentCombination>> CombinationsCache = new();
 
-   public static IReadOnlyList<ComponentCombination> GetCombinations(string configurationFileName, Type[] componentEnumTypes, int? onlyConsiderComponentIndex = null)
+   public static IReadOnlyList<ComponentCombination> GetCombinations(string configurationFileName, Type[] componentEnumTypes)
    {
-      var combinations = CombinationsCache.GetOrAdd(
+      return CombinationsCache.GetOrAdd(
          configurationFileName,
          fileName => ReadFile(componentEnumTypes, fileName));
-
-      if(onlyConsiderComponentIndex is {} index)
-      {
-         return combinations
-               .DistinctBy(it => it.Components[index])
-               .ToList();
-      }
-
-      return combinations;
    }
 
    const string Comment = "//";

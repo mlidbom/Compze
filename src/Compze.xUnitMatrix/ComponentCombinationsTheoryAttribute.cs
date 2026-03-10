@@ -22,7 +22,6 @@ public abstract class ComponentCombinationsTheoryAttribute(
    internal bool UseTestMethodArgument { get; } = useTestMethodArgument;
    public object[]? Skipped { get; init; }
    public string[]? SkipReasons { get; init; }
-   public Type? OnlyConsider { get; init; }
 
    readonly Type[] _componentEnumTypes = componentEnumTypes;
    readonly string? _configurationFileName = configurationFileName;
@@ -47,9 +46,6 @@ public abstract class ComponentCombinationsTheoryAttribute(
 
       if(Skipped?.Length != SkipReasons?.Length)
          return "Number of skipped components must match number of skip reasons";
-
-      if(OnlyConsider != null && !_componentEnumTypes.Contains(OnlyConsider))
-         return $"{nameof(OnlyConsider)} is not one of the component types";
 
       return null;
    }
@@ -111,34 +107,21 @@ public abstract class ComponentCombinationsTheoryAttribute(
       }
    }
 
-   int? OnlyConsiderComponentIndex => OnlyConsider == null
-                                         ? null
-                                         : _componentEnumTypes.ToList().IndexOf(OnlyConsider);
-
    IReadOnlyList<ComponentCombination> GetCombinations() =>
       _configurationFileName != null
-         ? ComponentCombinationsConfigurationFileReader.GetCombinations(_configurationFileName, _componentEnumTypes, OnlyConsiderComponentIndex)
-         : AllCombinationsFromEnumTypes(_componentEnumTypes, OnlyConsiderComponentIndex);
+         ? ComponentCombinationsConfigurationFileReader.GetCombinations(_configurationFileName, _componentEnumTypes)
+         : AllCombinationsFromEnumTypes(_componentEnumTypes);
 
-   static IReadOnlyList<ComponentCombination> AllCombinationsFromEnumTypes(Type[] componentEnumTypes, int? onlyConsiderComponentIndex)
+   static IReadOnlyList<ComponentCombination> AllCombinationsFromEnumTypes(Type[] componentEnumTypes)
    {
       var allEnumValues = componentEnumTypes
                          .Select(type => Enum.GetValues(type).Cast<Enum>().ToArray() as IReadOnlyList<Enum>)
                          .ToList();
 
-      var combinations = allEnumValues
-                        .CartesianProduct()
-                        .Select(ComponentCombination.FromComponentEnumValues)
-                        .ToList();
-
-      if(onlyConsiderComponentIndex is {} index)
-      {
-         return combinations
-               .DistinctBy(it => it.Components[index])
-               .ToList();
-      }
-
-      return combinations;
+      return allEnumValues
+            .CartesianProduct()
+            .Select(ComponentCombination.FromComponentEnumValues)
+            .ToList();
    }
 
    public bool SupportsDiscoveryEnumeration() => true;

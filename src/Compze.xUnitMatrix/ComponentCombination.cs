@@ -66,9 +66,7 @@ public class ComponentCombination : IXunitSerializable
 
    static readonly AsyncLocal<LazyCE<ComponentCombination>?> CurrentInternal = new();
 
-   internal static async Task<TReturn> RunInContextAsync<TReturn>(
-      LazyCE<ComponentCombination> combination,
-      Func<Task<TReturn>> executeTest)
+   internal static async Task<TReturn> RunInContextAsync<TReturn>(LazyCE<ComponentCombination> combination, Func<Task<TReturn>> executeTest)
    {
       CurrentInternal.Value = combination;
       try

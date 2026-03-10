@@ -17,10 +17,12 @@ public class PCTAttribute(
       sourceFilePath: sourceFilePath,
       sourceLineNumber: sourceLineNumber);
 
-public sealed class PCTSerializerAttribute : PCTAttribute
-{
-   public PCTSerializerAttribute([CallerFilePath] string? sourceFilePath = null,
-                                 [CallerLineNumber] int sourceLineNumber = -1) : base(sourceFilePath: sourceFilePath,
-                                                                                      sourceLineNumber: sourceLineNumber) =>
-      OnlyConsider = typeof(Serializer);
-}
+public sealed class PCTSerializerAttribute(
+   [CallerFilePath] string? sourceFilePath = null,
+   [CallerLineNumber] int sourceLineNumber = -1)
+   : ComponentCombinationsTheoryAttribute<Serializer>(
+      configurationFileName: null,
+      useTestMethodArgument: false,
+      sourceFilePath: sourceFilePath,
+      sourceLineNumber: sourceLineNumber);
+
