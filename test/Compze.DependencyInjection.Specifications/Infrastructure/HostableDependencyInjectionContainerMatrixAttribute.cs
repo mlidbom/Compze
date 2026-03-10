@@ -4,11 +4,14 @@ using Compze.xUnitMatrix;
 
 namespace Compze.DependencyInjection.Specifications.Infrastructure;
 
-sealed class HostableDependencyInjectionContainerMatrixAttribute(
-   [CallerFilePath] string? sourceFilePath = null,
-   [CallerLineNumber] int sourceLineNumber = -1)
-   : ComponentCombinationsTheoryAttribute<DIContainer>(
-      configurationFileName: "TestUsingHostableDependencyInjectionContainers",
-      useTestMethodArgument: false,
-      sourceFilePath: sourceFilePath,
-      sourceLineNumber: sourceLineNumber);
+sealed class HostableDependencyInjectionContainerMatrixAttribute : ComponentCombinationsTheoryAttribute<DIContainer>
+{
+   public HostableDependencyInjectionContainerMatrixAttribute([CallerFilePath] string? sourceFilePath = null,
+                                                              [CallerLineNumber] int sourceLineNumber = -1) : base(configurationFileName: null,
+                                                                                                                   useTestMethodArgument: false,
+                                                                                                                   sourceFilePath: sourceFilePath,
+                                                                                                                   sourceLineNumber: sourceLineNumber)
+   {
+      Skipped = [DIContainer.SimpleInjector];
+   }
+}

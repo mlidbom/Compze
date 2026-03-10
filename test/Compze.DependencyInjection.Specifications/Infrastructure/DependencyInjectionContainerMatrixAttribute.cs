@@ -8,7 +8,7 @@ sealed class DependencyInjectionContainerMatrixAttribute(
    [CallerFilePath] string? sourceFilePath = null,
    [CallerLineNumber] int sourceLineNumber = -1)
    : ComponentCombinationsTheoryAttribute<DIContainer>(
-      configurationFileName: "TestUsingDependencyInjectionContainers",
+      configurationFileName: null,
       useTestMethodArgument: false,
       sourceFilePath: sourceFilePath,
       sourceLineNumber: sourceLineNumber);
