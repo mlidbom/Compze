@@ -1,7 +1,6 @@
 using System.Text;
 
-
-namespace Compze.Internals.SystemCE.IOCE;
+namespace Compze.Internals.SystemCE.Core.IOCE;
 
 public partial class DirectoryCE : FileSystemInfoCE
 {

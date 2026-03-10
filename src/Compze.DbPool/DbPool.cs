@@ -8,6 +8,7 @@ using Compze.Internals.SystemCE;
 using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Internals.SystemCE.TransactionsCE;
 using Compze.Threading;
+using Compze.Threading.Interprocess.ResourceAccess;
 
 #pragma warning disable CA1724 //I don't care that the class uses the same name as the namespace
 
@@ -27,7 +28,7 @@ public class DbPool : StrictlyManagedResourceBase<DbPool>
                                   .DelegateToParentServiceLocatorWhenCloning());
 
    readonly IDbPoolSqlLayer _sqlLayer;
-   IMachineWideSharedObject<DbPoolState> MachineWideState { get; }
+   IFileBackedProcessShared<DbPoolState> MachineWideState { get; }
    static TimeSpan _reservationLength;
    internal const int NumberOfDatabases = 50;
 
@@ -36,7 +37,7 @@ public class DbPool : StrictlyManagedResourceBase<DbPool>
       _sqlLayer = sqlLayer;
       _reservationLength = System.Diagnostics.Debugger.IsAttached ? 10.Minutes() : 65.Seconds();
 
-      MachineWideState = MachineWideSharedObject<DbPoolState>.For(sqlLayer.GetType().GetFullNameCompilable(), MemoryPackDbPoolStateSerializer.Instance, CorruptionAction.ReplaceContentWithDefaultAndThrow);
+      MachineWideState = IAwaitableProcessShared.GlobalFileBacked(sqlLayer.GetType().GetFullNameCompilable(), MemoryPackDbPoolStateSerializer.Instance, () => new DbPoolState(), CorruptionAction.ReplaceContentWithDefaultAndThrow);
    }
 
    readonly IMonitor _lock = IMonitor.New(LockTimeout.Seconds(30));

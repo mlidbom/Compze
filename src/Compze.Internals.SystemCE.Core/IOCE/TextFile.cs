@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace Compze.Internals.SystemCE.IOCE;
+namespace Compze.Internals.SystemCE.Core.IOCE;
 
 public class TextFile : FileCE
 {

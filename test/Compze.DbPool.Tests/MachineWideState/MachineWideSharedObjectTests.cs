@@ -1,9 +1,9 @@
 using Compze.Contracts;
-using Compze.DbPool.MachineWideState;
 using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 using Compze.Must;
 using Compze.Tests.Infrastructure;
 using Compze.Threading;
+using Compze.Threading.Interprocess.ResourceAccess;
 using Compze.Threading.Testing;
 using Compze.xUnitBDD;
 using JetBrains.Annotations;
@@ -28,13 +28,13 @@ class SharedObjectSerializer : ISharedObjectSerializer<SharedObject>
 
 public class MachineWideSharedObjectTests : UniversalTestBase
 {
-   readonly List<IMachineWideSharedObject<SharedObject>> _created = [];
+   readonly List<IFileBackedProcessShared<SharedObject>> _created = [];
 
    protected override void DisposeInternal() => _created.ForEach(obj => obj.Delete());
 
-   IMachineWideSharedObject<SharedObject> CreateAndDeleteFileWhenTestCompletes(string name)
+   IFileBackedProcessShared<SharedObject> CreateAndDeleteFileWhenTestCompletes(string name)
    {
-      var created = MachineWideSharedObject<SharedObject>.For(name, new SharedObjectSerializer(), CorruptionAction.ThrowException);
+      var created = IAwaitableProcessShared.GlobalFileBacked(name, new SharedObjectSerializer(), () => new SharedObject(), CorruptionAction.ThrowException);
       _created.Add(created);
       return created;
    }

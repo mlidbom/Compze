@@ -1,13 +1,13 @@
-using Compze.DbPool.MachineWideState;
 using Compze.Internals.Testing.Performance;
 using Compze.Tests.Infrastructure;
+using Compze.Threading.Interprocess.ResourceAccess;
 using Compze.xUnitBDD;
 
 namespace Compze.DbPool.Tests.MachineWideState;
 
 public class MachineWideSharedObjectPerformanceTests : UniversalTestBase
 {
-   readonly IMachineWideSharedObject<SharedObject> _shared = MachineWideSharedObject<SharedObject>.For(Guid.NewGuid().ToString(), new SharedObjectSerializer(), CorruptionAction.ThrowException);
+   readonly IFileBackedProcessShared<SharedObject> _shared = IAwaitableProcessShared.GlobalFileBacked(Guid.NewGuid().ToString(), new SharedObjectSerializer(), () => new SharedObject(), CorruptionAction.ThrowException);
 
    protected override void DisposeInternal() => _shared.Delete();
 

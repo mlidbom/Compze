@@ -2,7 +2,7 @@ using Compze.Threading.ResourceAccess;
 
 namespace Compze.Threading.Interprocess.ResourceAccess;
 
-public interface IAwaitableProcessShared
+public partial interface IAwaitableProcessShared
 {
 #pragma warning disable CA2000
    public static IAwaitableProcessShared<TShared> GlobalPolling<TShared>(string name, TShared shared, LockTimeout? lockTimeout = null, WaitTimeout? waitTimeout = null, PollingInterval? pollingInterval = null, Action? onAbandonedMutexException = null) =>
