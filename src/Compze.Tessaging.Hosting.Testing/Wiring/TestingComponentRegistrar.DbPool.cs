@@ -28,20 +28,14 @@ public static class TestingComponentRegistrarDbPool
       @this.CurrentTestsSerializersIfNotClonedContainer();
 
       @this.DbPool();
-      switch(TestEnv.SqlLayer)
+      return TestEnv.SqlLayer switch
       {
-         case SqlLayer.MsSql:
-            return @this.MsSqlDbPoolSqlLayer();
-         case SqlLayer.MySql:
-            return @this.MySqlDbPoolSqlLayer();
-         case SqlLayer.PgSql:
-            return @this.PgSqlDbPoolSqlLayer();
-         case SqlLayer.Sqlite:
-            return @this.SqliteDbPoolSqlLayer();
-         case SqlLayer.SqliteMemory:
-            return @this.SqliteMemoryDbPoolSqlLayer();
-         default:
-            throw new ArgumentOutOfRangeException();
-      }
+         SqlLayer.MsSql        => @this.MsSqlDbPoolSqlLayer(),
+         SqlLayer.MySql        => @this.MySqlDbPoolSqlLayer(),
+         SqlLayer.PgSql        => @this.PgSqlDbPoolSqlLayer(),
+         SqlLayer.Sqlite       => @this.SqliteDbPoolSqlLayer(),
+         SqlLayer.SqliteMemory => @this.SqliteMemoryDbPoolSqlLayer(),
+         _                     => throw new ArgumentOutOfRangeException()
+      };
    }
 }
