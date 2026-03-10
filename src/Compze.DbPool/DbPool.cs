@@ -15,14 +15,14 @@ namespace Compze.DbPool;
 public static class DbPoolRegistrar
 {
    public static IComponentRegistrar DbPool(this IComponentRegistrar registrar) =>
-      Compze.DbPool.DbPool.RegisterWith(registrar);
+      Compze.DbPool.DbPool.RegisterWith(registrar, System.Diagnostics.Debugger.IsAttached ? 10.Minutes() : 65.Seconds());
 }
 
 public class DbPool : StrictlyManagedResourceBase<DbPool>
 {
-   internal static IComponentRegistrar RegisterWith(IComponentRegistrar registrar) =>
+   internal static IComponentRegistrar RegisterWith(IComponentRegistrar registrar, TimeSpan reservationLength) =>
       registrar.Register(Singleton.For<DbPool>()
-                                  .CreatedBy((IDbPoolSqlLayer sqlLayer) => new DbPool(sqlLayer))
+                                  .CreatedBy((IDbPoolSqlLayer sqlLayer) => new DbPool(sqlLayer, reservationLength))
                                   .DelegateToParentServiceLocatorWhenCloning());
 
    readonly IDbPoolSqlLayer _sqlLayer;
@@ -30,10 +30,10 @@ public class DbPool : StrictlyManagedResourceBase<DbPool>
    static TimeSpan _reservationLength;
    internal const int NumberOfDatabases = 50;
 
-   DbPool(IDbPoolSqlLayer sqlLayer) : base(forceStackTraceAllocation: false)
+   DbPool(IDbPoolSqlLayer sqlLayer, TimeSpan reservationLength) : base(forceStackTraceAllocation: false)
    {
       _sqlLayer = sqlLayer;
-      _reservationLength = System.Diagnostics.Debugger.IsAttached ? 10.Minutes() : 65.Seconds();
+      _reservationLength = reservationLength;
 
       _machineWideState = new DbPoolMachineWideState(sqlLayer.GetType().GetFullNameCompilable());
    }
@@ -51,10 +51,9 @@ public class DbPool : StrictlyManagedResourceBase<DbPool>
       Contract.State.NotDisposed(Disposed, this);
 
       var reservedDatabase = _transientCache.SingleOrDefault(db => db.ReservationName == reservationName);
-      // ReSharper disable once ConditionIsAlwaysTrueOrFalse
       if(reservedDatabase != null)
       {
-         _log.Debug($"Retrieved reserved pool database: {reservedDatabase.Id}");
+         _log.Debug($"Retrieved reserved pool database from cache: {reservedDatabase.Id}");
          return _sqlLayer.ConnectionStringFor(reservedDatabase);
       }
 
