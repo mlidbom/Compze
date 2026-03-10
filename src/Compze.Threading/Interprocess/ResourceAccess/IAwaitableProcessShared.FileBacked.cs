@@ -10,14 +10,7 @@ public partial interface IAwaitableProcessShared
                                                                           .GetOrCreateDirectory("Compze")
                                                                           .GetOrCreateDirectory("SharedFiles"));
 
-   public static IFileBackedProcessShared<TShared> GlobalFileBacked<TShared>(
-      string name,
-      ISharedObjectSerializer<TShared> serializer,
-      Func<TShared> createDefault,
-      CorruptionAction corruptionAction) where TShared : class
-      => new FileBackedProcessShared<TShared>(name, serializer, createDefault, corruptionAction);
-
-   sealed class FileBackedProcessShared<TObject> : IFileBackedProcessShared<TObject> where TObject : class
+   private sealed class FileBackedProcessShared<TObject> : IFileBackedProcessShared<TObject> where TObject : class
    {
       readonly TextFile _file;
       readonly ISignalingAwaitableMutex _synchronizer;

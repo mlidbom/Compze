@@ -1,5 +1,4 @@
 using Compze.Contracts;
-using Compze.DbPool.MachineWideState;
 using Compze.DbPool.SystemCE;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
@@ -8,7 +7,6 @@ using Compze.Internals.SystemCE;
 using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Internals.SystemCE.TransactionsCE;
 using Compze.Threading;
-using Compze.Threading.Interprocess.ResourceAccess;
 
 #pragma warning disable CA1724 //I don't care that the class uses the same name as the namespace
 
@@ -28,7 +26,7 @@ public class DbPool : StrictlyManagedResourceBase<DbPool>
                                   .DelegateToParentServiceLocatorWhenCloning());
 
    readonly IDbPoolSqlLayer _sqlLayer;
-   IFileBackedProcessShared<DbPoolState> MachineWideState { get; }
+   readonly DbPoolMachineWideState _machineWideState;
    static TimeSpan _reservationLength;
    internal const int NumberOfDatabases = 50;
 
@@ -37,7 +35,7 @@ public class DbPool : StrictlyManagedResourceBase<DbPool>
       _sqlLayer = sqlLayer;
       _reservationLength = System.Diagnostics.Debugger.IsAttached ? 10.Minutes() : 65.Seconds();
 
-      MachineWideState = IAwaitableProcessShared.GlobalFileBacked(sqlLayer.GetType().GetFullNameCompilable(), MemoryPackDbPoolStateSerializer.Instance, () => new DbPoolState(), CorruptionAction.ReplaceContentWithDefaultAndThrow);
+      _machineWideState = new DbPoolMachineWideState(sqlLayer.GetType().GetFullNameCompilable());
    }
 
    readonly IMonitor _lock = IMonitor.New(LockTimeout.Seconds(30));
@@ -60,33 +58,9 @@ public class DbPool : StrictlyManagedResourceBase<DbPool>
          return _sqlLayer.ConnectionStringFor(reservedDatabase);
       }
 
-      var overallDeadline = DateTime.UtcNow + 45.Seconds();
-      while(true)
-      {
-         var timeUntilNextLeaseExpiration = MachineWideState.Read(state =>
-         {
-            var expiration = state.EarliestReservationExpiration;
-            return expiration > DateTime.UtcNow ? expiration - DateTime.UtcNow : TimeSpan.Zero;
-         });
-
-         var remainingTime = overallDeadline - DateTime.UtcNow;
-         if(remainingTime <= TimeSpan.Zero)
-            throw new Exception("Timed out waiting for database. Have you missed disposing a database pool? Please check your logs for errors about non-disposed pools.");
-
-         var waitTimeout = new WaitTimeout(remainingTime < timeUntilNextLeaseExpiration ? remainingTime : timeUntilNextLeaseExpiration);
-
-         if(MachineWideState.TryUpdateWhen(
-               state => state.TryReserve(reservationName, _poolId, _reservationLength, out reservedDatabase),
-               _ =>
-               {
-                  _log.Info($"Reserved pool database: {reservedDatabase!.Name}");
-                  OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _transientCache, reservedDatabase);
-               },
-               waitTimeout))
-         {
-            break;
-         }
-      }
+      reservedDatabase = _machineWideState.ReserveDatabase(reservationName, _poolId, _reservationLength);
+      _log.Info($"Reserved pool database: {reservedDatabase.Name}");
+      OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _transientCache, reservedDatabase);
 
       try
       {
@@ -109,6 +83,6 @@ public class DbPool : StrictlyManagedResourceBase<DbPool>
       if(Disposed) return;
       base.Dispose();
       _sqlLayer.Dispose(_transientCache);
-      MachineWideState.Update(machineWide => machineWide.ReleaseReservationsFor(_poolId));
+      _machineWideState.ReleaseReservationsFor(_poolId);
    });
 }

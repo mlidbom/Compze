@@ -19,6 +19,9 @@ public partial interface IAwaitableProcessShared
 
 #pragma warning restore CA2000
 
+   public static IFileBackedProcessShared<TShared> GlobalFileBacked<TShared>(string name, ISharedObjectSerializer<TShared> serializer, Func<TShared> createDefault,CorruptionAction corruptionAction) where TShared : class
+      => new FileBackedProcessShared<TShared>(name, serializer, createDefault, corruptionAction);
+
    public static IAwaitableProcessShared<TShared> New<TShared>(TShared shared, IAwaitableMutex mutex) =>
       new AwaitableProcessShared<TShared>(shared, mutex);
 
