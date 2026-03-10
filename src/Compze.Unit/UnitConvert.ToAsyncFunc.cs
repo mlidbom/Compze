@@ -7,7 +7,7 @@ public static partial class UnitConvert
       async () =>
       {
          await @this().ConfigureAwait(false);
-         return Unit.Value;
+         return unit;
       };
 
    ///<summary>Converts a <see cref="Func{T, TResult}"/> returning <see cref="Task"/> to one returning <see cref="Task{TResult}"/> of <see cref="Unit"/>.</summary>
@@ -15,7 +15,7 @@ public static partial class UnitConvert
       async param =>
       {
          await @this(param).ConfigureAwait(false);
-         return Unit.Value;
+         return unit;
       };
 
    ///<summary>Converts a <see cref="Func{T1, T2, TResult}"/> returning <see cref="Task"/> to one returning <see cref="Task{TResult}"/> of <see cref="Unit"/>.</summary>
@@ -23,6 +23,6 @@ public static partial class UnitConvert
       async (param, param2) =>
       {
          await @this(param, param2).ConfigureAwait(false);
-         return Unit.Value;
+         return unit;
       };
 }
