@@ -16,7 +16,7 @@ public static class AppDomainExtensionsTests
          var allTypes = AppDomain.CurrentDomain.AllCompzeTypes();
          var compzeAssemblies = AppDomain.CurrentDomain
                                       .GetAssemblies()
-                                      .Where(assembly => assembly.GetName().Name?.StartsWithCE("Compze.") == true)
+                                      .Where(assembly => assembly.GetName().Name?.StartsWithOrdinal("Compze.") == true)
                                       .ToList();
 
          compzeAssemblies.Must().NotBeEmpty();

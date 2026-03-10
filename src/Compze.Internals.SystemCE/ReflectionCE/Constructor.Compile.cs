@@ -22,8 +22,8 @@ public static partial class Constructor
          return typeof(TInstance)
                .GetProperties(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
                .SingleOrDefault(prop =>
-                                   prop.Name.ContainsCE(nameof(IStaticInstancePropertySingleton<>)) &&
-                                   prop.Name.ContainsCE(nameof(IStaticInstancePropertySingleton<>.Instance)) &&
+                                   prop.Name.ContainsOrdinal(nameof(IStaticInstancePropertySingleton<>)) &&
+                                   prop.Name.ContainsOrdinal(nameof(IStaticInstancePropertySingleton<>.Instance)) &&
                                    prop.PropertyType == typeof(TInstance))._assert().NotNull();
       }
 

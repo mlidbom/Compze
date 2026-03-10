@@ -99,9 +99,9 @@ partial class PgSqlTeventStoreSqlLayer
                                       .ExecuteReader();
             reader.Read();
 
-            var effectiveReadOrder = reader.GetString(0).ReplaceCE(",", ".");
-            var previousTeventReadOrder = (reader[1] as string)?.ReplaceCE(",", ".");
-            var nextTeventReadOrder = (reader[2] as string)?.ReplaceCE(",", ".");
+            var effectiveReadOrder = reader.GetString(0).ReplaceOrdinal(",", ".");
+            var previousTeventReadOrder = (reader[1] as string)?.ReplaceOrdinal(",", ".");
+            var nextTeventReadOrder = (reader[2] as string)?.ReplaceOrdinal(",", ".");
             neighborhood = new TeventNeighborhood(effectiveReadOrder: ReadOrder.Parse(effectiveReadOrder),
                                                  previousTeventReadOrder: previousTeventReadOrder == null ? null : new ReadOrder?(ReadOrder.Parse(previousTeventReadOrder)),
                                                  nextTeventReadOrder: nextTeventReadOrder == null ? null : new ReadOrder?(ReadOrder.Parse(nextTeventReadOrder)));

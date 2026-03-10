@@ -64,11 +64,11 @@ public static class DbCommandCE
                                                    {nameof(parameter.Precision)}: {parameter.Precision},
                                                    {nameof(parameter.Direction)}: {parameter.Direction},
                                                    {nameof(parameter.IsNullable)}: {parameter.IsNullable}
-                                                   """.ReplaceCE(Environment.NewLine, "")));
+                                                   """.ReplaceOrdinal(Environment.NewLine, "")));
 
          Log.Info("####################################### Hacking values into parameter positions #######################################");
          var commandTextWithParameterValues = @this.CommandText;
-         parameters.ForEach(parameter => ParameterPrefixes.ForEach(prefix => commandTextWithParameterValues = commandTextWithParameterValues.ReplaceCE($"{prefix}{parameter.ParameterName}", parameter.Value == DBNull.Value ? "NULL" : parameter.Value?.ToString() ?? "NULL")));
+         parameters.ForEach(parameter => ParameterPrefixes.ForEach(prefix => commandTextWithParameterValues = commandTextWithParameterValues.ReplaceOrdinal($"{prefix}{parameter.ParameterName}", parameter.Value == DBNull.Value ? "NULL" : parameter.Value?.ToString() ?? "NULL")));
          Log.Info(commandTextWithParameterValues);
          Log.Info("######################################################################################################");
       }

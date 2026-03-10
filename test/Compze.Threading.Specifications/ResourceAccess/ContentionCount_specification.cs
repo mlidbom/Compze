@@ -33,7 +33,7 @@ public class ContentionCount_specification : UniversalTestBase
 
       [PCTAwaitableLock] public void Increments_when_another_thread_contends_for_the_lock()
       {
-         var @lock = _lockFactory.CreateAwaitableLock(LockTimeout.Seconds(30));
+         var @lock = _lockFactory.CreateAwaitableLock();
 
          var blockingLock = @lock.TakeUpdateLock();
 

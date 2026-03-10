@@ -51,7 +51,7 @@ static class AssertionContextWriter
          var toString = value.ToString();
          if(toString == json) //A simple type for which Newtonsoft just outputs ToString()
          {
-            if(expression.ReplaceCE("\"", "") == toString) //an inline constant
+            if(expression.ReplaceOrdinal("\"", "") == toString) //an inline constant
             {
                return $"""
                        {expression} was a {value.GetType().GetFullNameCompilable()}

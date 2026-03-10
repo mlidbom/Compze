@@ -46,7 +46,7 @@ public partial class DocumentDbSession
          return Equals(key);
       }
 
-      public override int GetHashCode() => Id.GetHashcodeCE();
+      public override int GetHashCode() => Id.GetHashcodeOrdinal();
 
       public override string ToString() => $"Id: {Id}, Type: {Type}";
 

@@ -226,6 +226,6 @@ public partial class TeventStore
    static bool IsRecoverableSqlException(Exception exception)
    {
       var tessage = exception.Message.ToUpperInvariant();
-      return tessage.ContainsCE("TIMEOUT") || tessage.ContainsCE("DEADLOCK");
+      return tessage.ContainsOrdinal("TIMEOUT") || tessage.ContainsOrdinal("DEADLOCK");
    }
 }

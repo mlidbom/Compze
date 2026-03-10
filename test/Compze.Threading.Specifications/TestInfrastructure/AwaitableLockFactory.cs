@@ -12,6 +12,8 @@ class AwaitableLockFactory<TTest> : IDisposable
    // ReSharper disable once MemberCanBeMadeStatic.Local
    AwaitableLockImplementation CurrentImplementation => (AwaitableLockImplementation)MatrixCombination.Current.Components[0];
 
+   public IAwaitableLock CreateAwaitableLock(WaitTimeout waitTimeout) => CreateAwaitableLock(null, waitTimeout);
+   public IAwaitableLock CreateAwaitableLock(LockTimeout lockTimeout) => CreateAwaitableLock(lockTimeout, null);
    public IAwaitableLock CreateAwaitableLock(LockTimeout? lockTimeout = null, WaitTimeout? waitTimeout = null)
    {
       return CurrentImplementation switch

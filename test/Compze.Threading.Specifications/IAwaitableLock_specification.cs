@@ -30,8 +30,14 @@ public class IAwaitableLock_specification : UniversalTestBase
       var insideLockSection = GatedCodeSection.Closed(WaitTimeout.Seconds(30), "insideLock");
 
       _runner.Run(
-         () => { using(@lock.TakeUpdateLock()) insideLockSection.Enter().Dispose(); },
-         () => { using(@lock.TakeUpdateLock()) insideLockSection.Enter().Dispose(); });
+         () =>
+         {
+            using(@lock.TakeUpdateLock()) insideLockSection.Enter().Dispose();
+         },
+         () =>
+         {
+            using(@lock.TakeUpdateLock()) insideLockSection.Enter().Dispose();
+         });
 
       insideLockSection.LetOneThreadEnterAndReachExit();
       insideLockSection.EntranceGate.TryAwaitQueueLengthEqualTo(1, WaitTimeout.Milliseconds(50)).Must().BeFalse();
@@ -48,7 +54,7 @@ public class IAwaitableLock_specification : UniversalTestBase
 
       [PCTAwaitableLock] public void returns_the_timeout_specified_at_creation()
       {
-         var @lock = _lockFactory.CreateAwaitableLock(lockTimeout: LockTimeout.Seconds(7));
+         var @lock = _lockFactory.CreateAwaitableLock(LockTimeout.Seconds(7));
          @lock.LockTimeout.Must().Be(LockTimeout.Seconds(7));
       }
    }
@@ -63,7 +69,7 @@ public class IAwaitableLock_specification : UniversalTestBase
 
       [PCTAwaitableLock] public void returns_the_timeout_specified_at_creation()
       {
-         var @lock = _lockFactory.CreateAwaitableLock(waitTimeout: WaitTimeout.Seconds(7));
+         var @lock = _lockFactory.CreateAwaitableLock(WaitTimeout.Seconds(7));
          @lock.WaitTimeout.Must().Be(WaitTimeout.Seconds(7));
       }
    }
@@ -122,16 +128,16 @@ public class IAwaitableLock_specification : UniversalTestBase
    {
       [PCTAwaitableLock] public void Returns_lock_when_condition_is_immediately_true()
       {
-         var @lock = _lockFactory.CreateAwaitableLock(LockTimeout.Seconds(5), WaitTimeout.Seconds(5));
+         var @lock = _lockFactory.CreateAwaitableLock();
          using var taken = @lock.TakeUpdateLockWhen(() => true);
          taken.Must().NotBeNull();
       }
 
       [PCTAwaitableLock] public void Waits_until_condition_becomes_true()
       {
-         var @lock = _lockFactory.CreateAwaitableLock(LockTimeout.Seconds(5), WaitTimeout.Seconds(5));
+         var @lock = _lockFactory.CreateAwaitableLock();
          var conditionMet = false;
-         var lockAcquired = ThreadGate.Open(WaitTimeout.Seconds(5), "afterLockAcquired");
+         var lockAcquired = ThreadGate.Open(WaitTimeout.Seconds(10), "afterLockAcquired");
 
          _runner.Run(() =>
          {
@@ -147,38 +153,38 @@ public class IAwaitableLock_specification : UniversalTestBase
       }
 
       [PCTAwaitableLock] public void Throws_AwaitingConditionTimeoutException_when_condition_never_becomes_true() =>
-         Invoking(() => _lockFactory.CreateAwaitableLock(LockTimeout.Seconds(5), WaitTimeout.Milliseconds(100))
+         Invoking(() => _lockFactory.CreateAwaitableLock(WaitTimeout.Milliseconds(100))
                                     .TakeUpdateLockWhen(() => false))
-        .Must().Throw<AwaitingConditionTimeoutException>();
+           .Must().Throw<AwaitingConditionTimeoutException>();
    }
 
    public class TakeReadLockWhen : IAwaitableLock_specification
    {
       [PCTAwaitableLock] public void Returns_lock_when_condition_is_immediately_true()
       {
-         var @lock = _lockFactory.CreateAwaitableLock(LockTimeout.Seconds(5), WaitTimeout.Seconds(5));
+         var @lock = _lockFactory.CreateAwaitableLock();
          using var taken = @lock.TakeReadLockWhen(() => true);
          taken.Must().NotBeNull();
       }
 
       [PCTAwaitableLock] public void Throws_AwaitingConditionTimeoutException_when_condition_never_becomes_true() =>
-         Invoking(() => _lockFactory.CreateAwaitableLock(LockTimeout.Seconds(5), WaitTimeout.Milliseconds(100))
+         Invoking(() => _lockFactory.CreateAwaitableLock(WaitTimeout.Milliseconds(100))
                                     .TakeReadLockWhen(() => false))
-        .Must().Throw<AwaitingConditionTimeoutException>();
+           .Must().Throw<AwaitingConditionTimeoutException>();
    }
 
    public class TryTakeReadLockWhen : IAwaitableLock_specification
    {
       [PCTAwaitableLock] public void Returns_lock_when_condition_is_immediately_true()
       {
-         var @lock = _lockFactory.CreateAwaitableLock(LockTimeout.Seconds(5), WaitTimeout.Seconds(5));
+         var @lock = _lockFactory.CreateAwaitableLock();
          using var taken = @lock.TryTakeReadLockWhen(() => true);
          taken.Must().NotBeNull();
       }
 
       [PCTAwaitableLock] public void Returns_null_when_condition_never_becomes_true()
       {
-         var @lock = _lockFactory.CreateAwaitableLock(LockTimeout.Seconds(5), WaitTimeout.Milliseconds(100));
+         var @lock = _lockFactory.CreateAwaitableLock(WaitTimeout.Milliseconds(100));
          var result = @lock.TryTakeReadLockWhen(() => false);
          result.Must().BeNull();
       }
@@ -188,13 +194,13 @@ public class IAwaitableLock_specification : UniversalTestBase
    {
       [PCTAwaitableLock] public void Returns_true_when_condition_is_immediately_true()
       {
-         var @lock = _lockFactory.CreateAwaitableLock(LockTimeout.Seconds(5), WaitTimeout.Seconds(5));
+         var @lock = _lockFactory.CreateAwaitableLock();
          @lock.TryAwait(() => true).Must().BeTrue();
       }
 
       [PCTAwaitableLock] public void Returns_true_when_condition_becomes_true_within_timeout()
       {
-         var @lock = _lockFactory.CreateAwaitableLock(LockTimeout.Seconds(5), WaitTimeout.Seconds(5));
+         var @lock = _lockFactory.CreateAwaitableLock();
          var conditionMet = false;
          var awaitCompleted = ThreadGate.Open(WaitTimeout.Seconds(5), "awaitCompleted");
 
@@ -211,7 +217,7 @@ public class IAwaitableLock_specification : UniversalTestBase
 
       [PCTAwaitableLock] public void Returns_false_when_condition_never_becomes_true_within_timeout()
       {
-         var @lock = _lockFactory.CreateAwaitableLock(LockTimeout.Seconds(5), WaitTimeout.Milliseconds(100));
+         var @lock = _lockFactory.CreateAwaitableLock(WaitTimeout.Milliseconds(100));
          @lock.TryAwait(() => false).Must().BeFalse();
       }
    }

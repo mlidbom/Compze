@@ -26,9 +26,9 @@ public record Email
    {
       if(string.IsNullOrWhiteSpace(emailAddress)) return false;
       if(!BasicEmailValidationRegex.IsMatch(emailAddress)) return false;
-      if(emailAddress.ContainsCE("..")) return false;
+      if(emailAddress.ContainsOrdinal("..")) return false;
       // ReSharper disable once ConvertIfStatementToReturnStatement
-      if(emailAddress.ContainsCE("@.") || emailAddress.ContainsCE(".@")) return false;
+      if(emailAddress.ContainsOrdinal("@.") || emailAddress.ContainsOrdinal(".@")) return false;
 
       return true;
    }
