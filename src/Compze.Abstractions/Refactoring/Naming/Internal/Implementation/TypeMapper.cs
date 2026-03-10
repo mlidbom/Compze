@@ -96,7 +96,7 @@ public class TypeMapper : ITypeMapper
       });
    }
 
-   public unit AssertMappingsExistFor(IEnumerable<Type> typesThatRequireMappings) => State.Locked(state =>
+   public Unit AssertMappingsExistFor(IEnumerable<Type> typesThatRequireMappings) => State.Locked(state =>
    {
       var missing = typesThatRequireMappings.Where(type => !state.TypeToTypeIdMap.ContainsKey(type)).ToList();
       if(missing.Any()) throw BuildExceptionDescribingHowToAddMissingMappings(missing);

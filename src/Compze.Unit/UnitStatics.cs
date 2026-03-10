@@ -1,8 +1,8 @@
-namespace Compze.Unit;
+namespace Compze.SystemCE;
 
 ///<summary>
-/// Use <code>>global using static Compze.Unit.UnitStatics;</code> to make unit available as a value globally.
-///then you can write just <code>return unit;</code> instead of <code>return Unit.Value;</code>
+/// Use <code>>global using static Compze.Unit.UnitStatics;</code> to make Unit available as a value globally.
+///then you can write just <code>return unit;</code> instead of <code>return unit;</code>
 /// </summary>
 public static class UnitStatics
 {

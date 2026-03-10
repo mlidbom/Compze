@@ -1,4 +1,4 @@
-namespace Compze.Unit;
+namespace Compze.SystemCE;
 
 public static partial class UnitConvert
 {

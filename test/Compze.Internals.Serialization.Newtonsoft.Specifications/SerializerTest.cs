@@ -7,7 +7,6 @@ using Compze.Internals.Serialization.Newtonsoft.Wiring;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
-using Compze.Underscore;
 
 namespace Compze.Internals.Serialization.Newtonsoft.Specifications;
 

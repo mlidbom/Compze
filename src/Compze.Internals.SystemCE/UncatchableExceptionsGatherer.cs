@@ -1,3 +1,4 @@
+using Compze.SystemCE;
 using Compze.Threading;
 
 namespace Compze.Internals.SystemCE;
@@ -10,9 +11,9 @@ public static class UncatchableExceptionsGatherer
    ///<summary>If writing tests to ensure uncatchable exceptions are registered, you need to prevent others from running similar tests at the same time. Use this monitor for that</summary>
    public static readonly IMonitor TestingLock = IMonitor.New(LockTimeout.Seconds(1));
 
-   public static unit Register(Exception exception) => LockCE.Locked(() => _exceptions.Add(exception));
+   public static Unit Register(Exception exception) => LockCE.Locked(() => _exceptions.Add(exception));
 
-   static unit ConsumeAndThrowAnyExceptionsGathered() => LockCE.Locked(() =>
+   static Unit ConsumeAndThrowAnyExceptionsGathered() => LockCE.Locked(() =>
    {
       var exceptions = _exceptions;
       _exceptions = [];
@@ -20,7 +21,7 @@ public static class UncatchableExceptionsGatherer
          throw new AggregateException(exceptions);
    });
 
-   public static unit ForceFullGcAllGenerationsAndWaitForFinalizersConsumeAndThrowAnyGatheredExceptions()
+   public static Unit ForceFullGcAllGenerationsAndWaitForFinalizersConsumeAndThrowAnyGatheredExceptions()
    {
       GCCE.ForceFullGcAllGenerationsAndWaitForFinalizers();
       return ConsumeAndThrowAnyExceptionsGathered();

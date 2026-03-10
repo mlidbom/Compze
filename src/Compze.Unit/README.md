@@ -6,7 +6,7 @@ Functional programming languages do not have void. Just Unit as the value return
 
 If C# were designed today, there's good reason to believe that void would never have been part of C#. Because `void` creates a gaping rift in the type system. It is not a type, so you can't use it as a generic argument, return it from a `Func<T>`, or store it in a variable. This forces every generic API to maintain parallel versions — one for `Func<T, TResult>`, one for `Action<T>`.
 
-Despite many years of debate, a unit type has still not made it into the BCL. If you want a Unit type, the current choices are to roll your own, or take a dependency on some large library that happens to include a Unit type.
+Despite many years of debate, a Unit type has still not made it into the BCL. If you want a Unit type, the current choices are to roll your own, or take a dependency on some large library that happens to include a Unit type.
 
 This tiny library exists to change that.
 

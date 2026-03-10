@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
+using Compze.SystemCE;
 using Compze.Threading;
 
 namespace Compze.Internals.SystemCE.ThreadingCE.Async;
@@ -9,9 +10,9 @@ public interface IAsyncLockCE : IDisposable
    static IAsyncLockCE WithDefaultTimeout() => new AsyncLockCE(LockTimeout.Default);
    static IAsyncLockCE New(LockTimeout timeout) => new AsyncLockCE(timeout);
 
-   Task<unit> LockedAsync(Func<Task> lockedAction);
+   Task<Unit> LockedAsync(Func<Task> lockedAction);
    Task<TReturn> LockedAsync<TReturn>(Func<Task<TReturn>> lockedAction);
-   unit Locked(Action lockedAction);
+   Unit Locked(Action lockedAction);
    TReturn Locked<TReturn>(Func<TReturn> lockedAction);
 
    void SetTimeToWaitForStackTrace(WaitTimeout timeToWaitForStackTrace);
@@ -37,7 +38,7 @@ public interface IAsyncLockCE : IDisposable
 
       public void SetTimeToWaitForStackTrace(WaitTimeout timeToWaitForStackTrace) => _stackTraceFetchTimeout = timeToWaitForStackTrace;
 
-      public async Task<unit> LockedAsync(Func<Task> lockedAction) => await LockedAsync(lockedAction.ToAsyncFunc()).caf();
+      public async Task<Unit> LockedAsync(Func<Task> lockedAction) => await LockedAsync(lockedAction.ToAsyncFunc()).caf();
 
       public async Task<TReturn> LockedAsync<TReturn>(Func<Task<TReturn>> lockedAction)
       {
@@ -54,7 +55,7 @@ public interface IAsyncLockCE : IDisposable
          return await lockedAction().caf();
       }
 
-      public unit Locked(Action lockedAction) => Locked(lockedAction.ToFunc());
+      public Unit Locked(Action lockedAction) => Locked(lockedAction.ToFunc());
 
       public TReturn Locked<TReturn>(Func<TReturn> lockedAction)
       {

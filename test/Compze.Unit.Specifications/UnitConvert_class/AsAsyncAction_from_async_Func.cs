@@ -12,7 +12,7 @@ public static class AsAsyncAction_from_async_Func
       [XF] public async Task the_converted_async_Action_invokes_the_async_Func()
       {
          var executed = false;
-         Func<Task<unit>> func = async () => { await Task.Yield(); executed = true; return unit.Value; };
+         Func<Task<Unit>> func = async () => { await Task.Yield(); executed = true; return unit; };
          await func.ToAsyncAction()();
          executed.Must().BeTrue();
       }
@@ -23,7 +23,7 @@ public static class AsAsyncAction_from_async_Func
       [XF] public async Task the_converted_async_Action_passes_the_parameter_to_the_async_Func()
       {
          var captured = "";
-         Func<string, Task<unit>> func = async s => { await Task.Yield(); captured = s; return unit.Value; };
+         Func<string, Task<Unit>> func = async s => { await Task.Yield(); captured = s; return unit; };
          await func.ToAsyncAction()("hello");
          captured.Must().Be("hello");
       }
@@ -35,7 +35,7 @@ public static class AsAsyncAction_from_async_Func
       {
          var capturedA = "";
          var capturedB = 0;
-         Func<string, int, Task<unit>> func = async (s, i) => { await Task.Yield(); capturedA = s; capturedB = i; return unit.Value; };
+         Func<string, int, Task<Unit>> func = async (s, i) => { await Task.Yield(); capturedA = s; capturedB = i; return unit; };
          await func.ToAsyncAction()("hello", 42);
          capturedA.Must().Be("hello");
          capturedB.Must().Be(42);

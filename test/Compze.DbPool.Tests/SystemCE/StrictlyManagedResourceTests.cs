@@ -1,6 +1,7 @@
 using Compze.DbPool.SystemCE;
 using Compze.Tests.Infrastructure;
 using Compze.Must;
+using Compze.SystemCE;
 using Compze.xUnitBDD;
 using JetBrains.Annotations;
 using Xunit;
@@ -17,7 +18,7 @@ public class StrictlyManagedResourceTests : UniversalTestBase
       StrictlyManagedResources.SuppressLoggingWhileExecuting(() =>
                                                                 UncatchableExceptionsGatherer.TestingLock.Locked(() =>
                                                                 {
-                                                                   unit.Invoke(() =>
+                                                                   Unit.Invoke(() =>
                                                                    {
                                                                       _ = new StrictlyManagedResource<MyClass>();
                                                                    });

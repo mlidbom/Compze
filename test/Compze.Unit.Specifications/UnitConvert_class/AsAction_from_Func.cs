@@ -12,7 +12,7 @@ public static class AsAction_from_Func
       [XF] public void the_converted_Action_invokes_the_Func()
       {
          var executed = false;
-         Func<unit> func = () => { executed = true; return unit.Value; };
+         Func<Unit> func = () => { executed = true; return unit; };
          func.ToAction()();
          executed.Must().BeTrue();
       }
@@ -23,7 +23,7 @@ public static class AsAction_from_Func
       [XF] public void the_converted_Action_passes_the_parameter_to_the_Func()
       {
          var captured = "";
-         Func<string, unit> func = s => { captured = s; return unit.Value; };
+         Func<string, Unit> func = s => { captured = s; return unit; };
          func.ToAction()("hello");
          captured.Must().Be("hello");
       }
@@ -35,7 +35,7 @@ public static class AsAction_from_Func
       {
          var capturedA = "";
          var capturedB = 0;
-         Func<string, int, unit> func = (s, i) => { capturedA = s; capturedB = i; return unit.Value; };
+         Func<string, int, Unit> func = (s, i) => { capturedA = s; capturedB = i; return unit; };
          func.ToAction()("hello", 42);
          capturedA.Must().Be("hello");
          capturedB.Must().Be(42);

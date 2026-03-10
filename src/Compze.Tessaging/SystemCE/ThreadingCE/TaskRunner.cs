@@ -9,7 +9,7 @@ namespace Compze.Tessaging.SystemCE.ThreadingCE;
 public interface ITaskRunner
 {
    void Run(string taskName, Action action);
-   void Run(string taskName, Func<unit> task);
+   void Run(string taskName, Func<Unit> task);
    Thread RunOnNamedThread(string threadName, ThreadStart threadLoop, ThreadPriority priority = ThreadPriority.Normal);
 }
 
@@ -57,7 +57,7 @@ static class TaskRunnerRegistrar
          task.ContinueWithCE(_ => _inProgressTasks.Update(it => it.Remove(task))); //While surprising to me, completedTask and task are NOT the same object.
       }
 
-      public void Run(string taskName, Func<unit> task) => Run(taskName, () => { task(); });
+      public void Run(string taskName, Func<Unit> task) => Run(taskName, () => { task(); });
 
       public Thread RunOnNamedThread(string threadName, ThreadStart threadLoop, ThreadPriority priority = ThreadPriority.Normal)
       {

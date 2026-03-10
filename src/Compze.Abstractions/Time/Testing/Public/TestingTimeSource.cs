@@ -33,11 +33,11 @@ public class TestingTimeSourceAdapter
    {
       readonly IUtcTimeTimeSource _theOverride = theOverride;
 
-      public unit Run(Action action) => Run(action.ToFunc());
+      public Unit Run(Action action) => Run(action.ToFunc());
 
       public TResult Run<TResult>(Func<TResult> action) => RunAsync(action.AsAsync()).ResultUnwrappingException();
 
-      public async Task<unit> RunAsync(Func<Task> action) => await RunAsync(action.ToAsyncFunc()).caf();
+      public async Task<Unit> RunAsync(Func<Task> action) => await RunAsync(action.ToAsyncFunc()).caf();
 
       public async Task<TResult> RunAsync<TResult>(Func<Task<TResult>> action)
       {

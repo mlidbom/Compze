@@ -137,5 +137,5 @@ class TypermediaRouter : ITypermediaRouter, IDisposable
       }
    }
 
-   unit AssertRunning() => State.Assert(_running, () => "not running")._then(unit.Value);
+   Unit AssertRunning() => State.Assert(_running, () => "not running")._then(unit);
 }

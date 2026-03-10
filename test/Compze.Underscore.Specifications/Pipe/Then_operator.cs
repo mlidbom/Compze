@@ -33,10 +33,10 @@ public static class Then_operator
          var executed = false;
          var result = "ignored"._((Action)(() => { executed = true; }));
          executed.Must().BeTrue();
-         result.Must().Be(unit.Value);
+         result.Must().Be(unit);
       }
 
       [XF] public void the_return_value_is_unit() =>
-         "ignored"._((Action)(() => { })).Must().Be(unit.Value);
+         "ignored"._((Action)(() => { })).Must().Be(unit);
    }
 }

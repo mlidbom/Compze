@@ -15,7 +15,7 @@ public static class AsFunc_from_Action
          Action action = () => executed = true;
          var result = action.ToFunc()();
          executed.Must().BeTrue();
-         result.Must().Be(unit.Value);
+         result.Must().Be(Unit.Value);
       }
    }
 
@@ -27,7 +27,7 @@ public static class AsFunc_from_Action
          Action<string> action = s => captured = s;
          var result = action.ToFunc()("hello");
          captured.Must().Be("hello");
-         result.Must().Be(unit.Value);
+         result.Must().Be(Unit.Value);
       }
    }
 
@@ -41,7 +41,7 @@ public static class AsFunc_from_Action
          var result = action.ToFunc()("hello", 42);
          capturedA.Must().Be("hello");
          capturedB.Must().Be(42);
-         result.Must().Be(unit.Value);
+         result.Must().Be(Unit.Value);
       }
    }
 }

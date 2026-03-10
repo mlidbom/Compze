@@ -2,11 +2,11 @@ using System.Diagnostics.Contracts;
 
 // ReSharper disable UnusedParameter.Global
 
-namespace Compze.Unit;
+namespace Compze.SystemCE;
 
-///<summary>The functional programming unit concept.
+///<summary>The functional programming Unit concept.
 /// Unifies <see cref="Func{TResult}"/> and <see cref="Action"/>.
-/// Simply return Unit.Value from methods with no return value instead of declaring them as void,
+/// Simply return unit from methods with no return value instead of declaring them as void,
 /// or use <see cref="Invoke"/> to avoid that pesky extra line:
 /// <code>
 ///   public Unit DoSomething() => Unit.Invoke(() =>

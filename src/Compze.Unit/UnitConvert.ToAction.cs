@@ -1,4 +1,4 @@
-namespace Compze.Unit;
+namespace Compze.SystemCE;
 
 ///<summary>Provides conversions between <see cref="Action"/> and <see cref="Func{TResult}"/> delegate families
 /// using <see cref="Unit"/> as the return type, bridging the void / value-type gap in the .NET type system.

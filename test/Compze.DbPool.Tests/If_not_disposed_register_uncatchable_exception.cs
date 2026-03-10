@@ -1,6 +1,7 @@
 using Compze.DbPool.SystemCE;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Must;
+using Compze.SystemCE;
 using Xunit;
 using static Compze.Must.MustActions;
 
@@ -14,7 +15,7 @@ public class If_not_disposed_ : DbPoolTestBase
       StrictlyManagedResources.SuppressLoggingWhileExecuting(() =>
                                                                 UncatchableExceptionsGatherer.TestingLock.Locked(() =>
                                                                 {
-                                                                   unit.Invoke(() =>
+                                                                   Unit.Invoke(() =>
                                                                    {
                                                                       _ = CreateServiceLocator().Resolve<DbPool>();
                                                                    });

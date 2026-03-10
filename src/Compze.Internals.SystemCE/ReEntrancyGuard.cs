@@ -1,3 +1,5 @@
+using Compze.SystemCE;
+
 namespace Compze.Internals.SystemCE;
 
 public class ReentrancyGuard
@@ -5,15 +7,15 @@ public class ReentrancyGuard
    bool _isExecuting = false;
    bool _reentryWasAttempted = false;
 
-   public unit ExecuteIfNotReEntering(Action action) =>
+   public Unit ExecuteIfNotReEntering(Action action) =>
       ExecuteIfNotReEntering(action.ToFunc());
 
-   unit ExecuteIfNotReEntering(Func<unit> action)
+   Unit ExecuteIfNotReEntering(Func<Unit> action)
    {
       if(_isExecuting)
       {
          _reentryWasAttempted = true;
-         return unit.Value;
+         return unit;
       }
 
       using(ScopedChange.Enter(() => _isExecuting = true, () => _isExecuting = false))

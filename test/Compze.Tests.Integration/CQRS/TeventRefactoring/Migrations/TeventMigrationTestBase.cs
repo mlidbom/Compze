@@ -40,7 +40,7 @@ public abstract class TeventMigrationTestBase : UniversalTestBase
             {
                migrations = migrationScenario.Migrations.ToList();
                await RunScenarioWithTeventStoreType(migrationScenario, serviceLocator, migrations, scenarioIndex++);
-               return unit.Value;
+               return unit;
             });
          }
       });

@@ -2,6 +2,8 @@
 
 // ReSharper disable InconsistentNaming
 
+using Compze.SystemCE;
+
 namespace Compze.Underscore;
 
 /// <summary>
@@ -38,8 +40,8 @@ public static class Pipe
    ///<summary>Invokes <paramref name="func"/>, ignoring the previous value. Useful for chaining calls where the previous result is irrelevant.</summary>
    public static TResult _<TValue, TResult>(this TValue _, Func<TResult> func) => func();
 
-   ///<summary> Executes <paramref name="action"/>, ignoring the previous value, and returns a <see cref="unit"/>.  Useful for chaining statements that return void.</summary>
-   public static unit _<TValue>(this TValue _, Action action) => unit.Invoke(action);
+   ///<summary> Executes <paramref name="action"/>, ignoring the previous value, and returns a <see cref="Unit"/>.  Useful for chaining statements that return void.</summary>
+   public static Unit _<TValue>(this TValue _, Action action) => Unit.Invoke(action);
 
    ///<summary> Returns <paramref name="value"/>, ignoring the previous value.  Useful for chaining calls where a constant value is needed.</summary>
    public static TResult _then<TValue, TResult>(this TValue _, TResult value) => value;
@@ -47,8 +49,8 @@ public static class Pipe
    ///<summary>Invokes <paramref name="func"/>, ignoring the previous value. Useful for chaining calls where the previous result is irrelevant.</summary>
    public static TResult _then<TValue, TResult>(this TValue _, Func<TResult> func) => func();
 
-   ///<summary> Executes <paramref name="action"/>, ignoring the previous value, and returns a <see cref="unit"/>.  Useful for chaining statements that return void.</summary>
-   public static unit _then<TValue>(this TValue _, Action action) => unit.Invoke(action);
+   ///<summary> Executes <paramref name="action"/>, ignoring the previous value, and returns a <see cref="Unit"/>.  Useful for chaining statements that return void.</summary>
+   public static Unit _then<TValue>(this TValue _, Action action) => Unit.Invoke(action);
 
    ///<summary>Mutates <paramref name="it"/> using <paramref name="mutate"/> and returns <paramref name="it"/></summary>
    public static async Task<T> _mutateAsync<T>(this T it, Func<T, Task> mutate)

@@ -2,7 +2,7 @@ namespace Compze.Threading.Testing;
 
 public interface IThreadGateVisitor
 {
-   unit AwaitPassThrough();
+   Unit AwaitPassThrough();
 }
 
 public interface IThreadGate : IThreadGateVisitor

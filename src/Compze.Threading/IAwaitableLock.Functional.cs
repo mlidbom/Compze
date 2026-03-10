@@ -1,3 +1,5 @@
+using Compze.SystemCE;
+
 namespace Compze.Threading;
 
 public partial interface IAwaitableLock
@@ -12,14 +14,14 @@ public partial interface IAwaitableLock
       using(TakeReadLockWhen(condition, waitTimeout: waitTimeout, lockTimeout: lockTimeout)) return func();
    }
 
-   unit Update(Action action, LockTimeout? timeout = null) => Update(action.ToFunc(), timeout);
+   Unit Update(Action action, LockTimeout? timeout = null) => Update(action.ToFunc(), timeout);
 
    T Update<T>(Func<T> func, LockTimeout? timeout = null)
    {
       using(TakeUpdateLock(timeout)) return func();
    }
 
-   unit UpdateWhen<TReturn>(Func<bool> condition, Action action, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null) =>
+   Unit UpdateWhen<TReturn>(Func<bool> condition, Action action, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null) =>
       UpdateWhen(condition, action.ToFunc(), waitTimeout, lockTimeout);
 
    TReturn UpdateWhen<TReturn>(Func<bool> condition, Func<TReturn> func, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null)

@@ -1,4 +1,4 @@
-namespace Compze.Unit;
+namespace Compze.SystemCE;
 
 /// <summary>Extensions for invoking Action and returning unit.</summary>
 public static class UnitInvokeExtensions

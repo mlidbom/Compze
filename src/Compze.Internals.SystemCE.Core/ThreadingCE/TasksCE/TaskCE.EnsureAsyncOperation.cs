@@ -1,3 +1,5 @@
+using Compze.SystemCE;
+
 namespace Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 
 public static partial class TaskCE

@@ -1,1 +1,1 @@
-global using static Compze.Unit.UnitStatics;
+global using static Compze.SystemCE.UnitStatics;

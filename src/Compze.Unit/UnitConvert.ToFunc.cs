@@ -1,4 +1,4 @@
-namespace Compze.Unit;
+namespace Compze.SystemCE;
 
 public static partial class UnitConvert
 {
@@ -7,7 +7,7 @@ public static partial class UnitConvert
       () =>
       {
          @this();
-         return Unit.Value;
+         return unit;
       };
 
    ///<summary>Converts an <see cref="Action{T}"/> to a <see cref="Func{T, TResult}"/> returning <see cref="Unit"/>.</summary>

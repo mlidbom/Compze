@@ -1,3 +1,4 @@
+using Compze.SystemCE;
 using System.Runtime.CompilerServices;
 
 namespace Compze.Internals.Logging;
@@ -7,28 +8,28 @@ namespace Compze.Internals.Logging;
 
 public interface ILevelLogger
 {
-   unit Log(string message, [CallerMemberName] string caller = "");
+   Unit Log(string message, [CallerMemberName] string caller = "");
 }
 
 abstract class LevelLogger(ILogger logger) : ILevelLogger
 {
    protected ILogger Logger { get; } = logger;
-   public abstract unit Log(string message, [CallerMemberName] string caller = "");
+   public abstract Unit Log(string message, [CallerMemberName] string caller = "");
 }
 
 class DebugLogger(ILogger logger) : LevelLogger(logger)
 {
-   public override unit Log(string message, [CallerMemberName] string caller = "") => Logger.Debug(message, caller);
+   public override Unit Log(string message, [CallerMemberName] string caller = "") => Logger.Debug(message, caller);
 }
 
 class InfoLogger(ILogger logger) : LevelLogger(logger)
 {
-   public override unit Log(string message, [CallerMemberName] string caller = "") => Logger.Info(message, caller);
+   public override Unit Log(string message, [CallerMemberName] string caller = "") => Logger.Info(message, caller);
 }
 
 class WarningLogger(ILogger logger) : LevelLogger(logger)
 {
-   public override unit Log(string message, [CallerMemberName] string caller = "") => Logger.Warning(message, caller);
+   public override Unit Log(string message, [CallerMemberName] string caller = "") => Logger.Warning(message, caller);
 }
 
 public static class LevelLoggerILoggerExtensions
