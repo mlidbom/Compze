@@ -1,6 +1,6 @@
 namespace Compze.Threading;
 
-static class ThreadCE
+public static class ThreadCE
 {
    public static void InterruptAndJoin(this Thread @this)
    {

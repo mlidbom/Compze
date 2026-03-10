@@ -1,6 +1,6 @@
 namespace Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 
-static class TaskCEExceptionHandling
+public static class TaskCEExceptionHandling
 {
    /// <summary>
    /// Ensures that if this task fails, the thrown exception is an AggregateException

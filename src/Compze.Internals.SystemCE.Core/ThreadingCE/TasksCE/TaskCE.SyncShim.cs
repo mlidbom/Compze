@@ -4,7 +4,7 @@ using System.Runtime.ExceptionServices;
 
 namespace Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 
-static partial class TaskCE
+public static partial class TaskCE
 {
    ///<summary>
    /// Return Task.ReturnValue

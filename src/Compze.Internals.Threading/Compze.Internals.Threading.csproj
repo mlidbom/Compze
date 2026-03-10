@@ -6,7 +6,6 @@
     <RootNamespace>Compze.Threading</RootNamespace>
     <Description>For Compze internal use only. Do not take a dependency on this package</Description>
   </PropertyGroup>
-  <Import Project="..\msbuild\InternalsVisibleToEveryone.props" />
   <ItemGroup>
     <None Update="README.md">
       <PackagePath></PackagePath>

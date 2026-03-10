@@ -37,7 +37,7 @@ sealed class TessageHandlerRegistry(ITypeMapper typeMapper) : ITessageHandlerReg
       _teventHandlers.TryGetValue(typeof(TTevent), out var currentTeventSubscribers);
       currentTeventSubscribers ??= new List<Action<ITevent>>();
 
-      OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _teventHandlers, typeof(TTevent), ReadonlyCollectionsCE.AddToCopy(currentTeventSubscribers, tevent => handler((TTevent)tevent)));
+      OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _teventHandlers, typeof(TTevent), currentTeventSubscribers.AddToCopy(tevent => handler((TTevent)tevent)));
       OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _teventHandlerRegistrations, new TeventHandlerRegistration(typeof(TTevent), registrar => registrar.For(handler)));
       return this;
    });

@@ -5,7 +5,6 @@
     <Version>0.2.1-alpha</Version>
     <Description>For Compze internal use only. Do not take a dependency on this package</Description>
   </PropertyGroup>
-  <Import Project="..\msbuild\InternalsVisibleToEveryone.props" />
   <!-- Compze.Contracts — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' == 'true'">
     <PackageReference Include="Compze.Contracts" Version="*-*" />

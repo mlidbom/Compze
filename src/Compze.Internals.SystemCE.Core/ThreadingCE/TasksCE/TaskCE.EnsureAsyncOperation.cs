@@ -1,6 +1,6 @@
 namespace Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 
-static partial class TaskCE
+public static partial class TaskCE
 {
    ///<summary>
    /// Like Task.Run, but this one guarantees that the task runs on a different thread from the caller, eliminating subtle and hard to debug problems in the case where Task.Run occasionally does NOT run on a different thread

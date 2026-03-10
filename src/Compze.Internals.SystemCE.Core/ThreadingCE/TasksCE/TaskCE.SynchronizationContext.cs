@@ -1,9 +1,8 @@
-using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
 namespace Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 
-[SuppressMessage("ReSharper", "InconsistentNaming")] static class ConfigureAwaitCE
+public static class ConfigureAwaitCE
 {
     ///<summary>
     /// Abbreviated version of <see cref="Task.ConfigureAwait(bool)"/> with <c>continueOnCapturedContext: false</c>.
