@@ -37,5 +37,10 @@ namespace Compze.DbPool;
 
    public void ReleaseReservationsFor(Guid poolId) => DatabasesReservedBy(poolId).ForEach(db => db.Release());
 
+   public DateTime EarliestReservationExpiration => Databases.Where(db => db.IsReserved)
+                                                             .Select(db => db.ReservationExpirationTime)
+                                                             .DefaultIfEmpty(DateTime.MaxValue)
+                                                             .Min();
+
    IReadOnlyList<DbPoolDatabase> DatabasesReservedBy(Guid poolId) => Databases.Where(db => db.IsReserved && db.ReservedByPoolId == poolId).ToList();
 }

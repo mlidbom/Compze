@@ -56,7 +56,7 @@ public partial interface ISignalingAwaitableMutex
       public IDisposable? TryTakeReadLockWhen(Func<bool> condition, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null) =>
          TryTakeLockWhen(condition, waitTimeout, lockTimeout, isUpdate: false);
 
-      IDisposable? TryTakeUpdateLockWhen(Func<bool> condition, WaitTimeout? waitTimeout, LockTimeout? lockTimeout) =>
+      public IDisposable? TryTakeUpdateLockWhen(Func<bool> condition, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null) =>
          TryTakeLockWhen(condition, waitTimeout, lockTimeout, isUpdate: true);
 
       IDisposable? TryTakeLockWhen(Func<bool> condition, WaitTimeout? waitTimeout, LockTimeout? lockTimeout, bool isUpdate)

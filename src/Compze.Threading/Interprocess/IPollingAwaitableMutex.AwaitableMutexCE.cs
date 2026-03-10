@@ -41,6 +41,9 @@ public partial interface IPollingAwaitableMutex
       public IDisposable? TryTakeReadLockWhen(Func<bool> condition, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null) =>
          TryTakeLockWhen(condition, waitTimeout, lockTimeout);
 
+      public IDisposable? TryTakeUpdateLockWhen(Func<bool> condition, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null) =>
+         TryTakeLockWhen(condition, waitTimeout, lockTimeout);
+
       IDisposable? TryTakeLockWhen(Func<bool> condition, WaitTimeout? waitTimeout, LockTimeout? lockTimeout)
       {
          var effectiveWaitTimeout = waitTimeout ?? WaitTimeout;

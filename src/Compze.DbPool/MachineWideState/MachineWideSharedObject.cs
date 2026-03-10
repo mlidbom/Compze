@@ -87,6 +87,16 @@ public sealed class MachineWideSharedObject<TObject> : MachineWideSharedObject, 
       }
    }
 
+   public bool TryUpdateWhen(Func<TObject, bool> condition, Action<TObject> action, WaitTimeout? timeout = null)
+   {
+      TObject? loaded = null;
+      using var updateLock = _synchronizer.TryTakeUpdateLockWhen(() => condition(loaded = Load()), timeout);
+      if(updateLock == null) return false;
+      action(loaded!);
+      Save(loaded!);
+      return true;
+   }
+
    public TObject GetCopy() => Read(obj => obj);
 
    public void Delete() => _file.GetFileInfo().Delete();

@@ -30,6 +30,9 @@ public interface IAwaitableShared
 
       public TResult UpdateWhen<TResult>(Func<TShared, bool> condition, Func<TShared, TResult> update, WaitTimeout? timeout = null) =>
          Lock.UpdateWhen(() => condition(_shared), () => update(_shared), timeout);
+
+      public bool TryUpdateWhen(Func<TShared, bool> condition, Action<TShared> update, WaitTimeout? timeout = null) =>
+         Lock.TryUpdateWhen(() => condition(_shared), () => update(_shared), timeout);
    }
 }
 
@@ -50,4 +53,6 @@ public interface IAwaitableShared<out TShared>
    unit UpdateWhen(Func<TShared, bool> condition, Action<TShared> update, WaitTimeout? timeout = null) => UpdateWhen(condition, update.ToFunc(), timeout);
 
    unit Await(Func<TShared, bool> condition, WaitTimeout? timeout = null) => ReadWhen(condition, _ => unit.Value, timeout);
+
+   bool TryUpdateWhen(Func<TShared, bool> condition, Action<TShared> update, WaitTimeout? timeout = null);
 }

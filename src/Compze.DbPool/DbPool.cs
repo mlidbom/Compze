@@ -8,7 +8,6 @@ using Compze.Internals.SystemCE;
 using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Internals.SystemCE.TransactionsCE;
 using Compze.Threading;
-using Compze.Threading.Exceptions;
 
 #pragma warning disable CA1724 //I don't care that the class uses the same name as the namespace
 
@@ -60,20 +59,32 @@ public class DbPool : StrictlyManagedResourceBase<DbPool>
          return _sqlLayer.ConnectionStringFor(reservedDatabase);
       }
 
-      try
+      var overallDeadline = DateTime.UtcNow + 45.Seconds();
+      while(true)
       {
-         MachineWideState.UpdateWhen(
-            state => state.TryReserve(reservationName, _poolId, _reservationLength, out reservedDatabase),
-            _ =>
-            {
-               _log.Info($"Reserved pool database: {reservedDatabase!.Name}");
-               OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _transientCache, reservedDatabase);
-            },
-            WaitTimeout.Seconds(45));
-      }
-      catch(AwaitingConditionTimeoutException)
-      {
-         throw new Exception("Timed out waiting for database. Have you missed disposing a database pool? Please check your logs for errors about non-disposed pools.");
+         var timeUntilNextLeaseExpiration = MachineWideState.Read(state =>
+         {
+            var expiration = state.EarliestReservationExpiration;
+            return expiration > DateTime.UtcNow ? expiration - DateTime.UtcNow : TimeSpan.Zero;
+         });
+
+         var remainingTime = overallDeadline - DateTime.UtcNow;
+         if(remainingTime <= TimeSpan.Zero)
+            throw new Exception("Timed out waiting for database. Have you missed disposing a database pool? Please check your logs for errors about non-disposed pools.");
+
+         var waitTimeout = new WaitTimeout(remainingTime < timeUntilNextLeaseExpiration ? remainingTime : timeUntilNextLeaseExpiration);
+
+         if(MachineWideState.TryUpdateWhen(
+               state => state.TryReserve(reservationName, _poolId, _reservationLength, out reservedDatabase),
+               _ =>
+               {
+                  _log.Info($"Reserved pool database: {reservedDatabase!.Name}");
+                  OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _transientCache, reservedDatabase);
+               },
+               waitTimeout))
+         {
+            break;
+         }
       }
 
       try

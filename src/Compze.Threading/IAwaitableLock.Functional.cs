@@ -26,4 +26,12 @@ public partial interface IAwaitableLock
    {
       using(TakeUpdateLockWhen(condition, waitTimeout: waitTimeout, lockTimeout: lockTimeout)) return func();
    }
+
+   bool TryUpdateWhen(Func<bool> condition, Action action, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null)
+   {
+      using var updateLock = TryTakeUpdateLockWhen(condition, waitTimeout, lockTimeout);
+      if(updateLock == null) return false;
+      action();
+      return true;
+   }
 }
