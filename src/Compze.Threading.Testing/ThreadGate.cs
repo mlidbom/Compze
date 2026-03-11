@@ -42,15 +42,15 @@ class ThreadGate : IThreadGate
       return ((IThreadGate)this).AwaitClosed();
    }
 
-   public bool TryAwait(Func<bool> condition, WaitTimeout? timeout) => _lock.TryAwait(condition, timeout);
+   public bool TryAwait(Func<IThreadGate, bool> condition, WaitTimeout? timeout) => _lock.TryAwait(() => condition(this), timeout);
 
    public IThreadGate SetPostPassThroughAction(Action<ThreadSnapshot> action) => this._mutate(_ => _lock.Update(() => _postPassThroughAction = action));
 
-   public IThreadGate ExecuteWithExclusiveLockWhen(Func<bool> condition, Action action, WaitTimeout? timeout = null)
+   public IThreadGate ExecuteWithExclusiveLockWhen(Func<IThreadGate, bool> condition, Action action, WaitTimeout? timeout = null)
    {
       try
       {
-         using(_lock.TakeUpdateLockWhen(condition, timeout))
+         using(_lock.TakeUpdateLockWhen(() => condition(this), timeout))
          {
             action();
          }

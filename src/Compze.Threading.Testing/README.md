@@ -92,8 +92,8 @@ This is the key pattern for testing blocking behavior deterministically:
 
 You can await any condition of the gate using TryAwait or Await manually:
 ```csharp
-gate.TryAwait(() => gate.Passed > 2, WaitTimeout.Seconds(1)).Must().BeTrue(); //All TryAwait* methods Returns false on failure
-gate.Await(() => gate.Passed > 2, WaitTimeout.Seconds(1)); //All Await* methods throw on failure
+gate.TryAwait(it => it.Passed > 2, WaitTimeout.Seconds(1)).Must().BeTrue(); //All TryAwait* methods Returns false on failure
+gate.Await(it => it.Passed > 2, WaitTimeout.Seconds(1)); //All Await* methods throw on failure
 ```
 
 For all the common needs there are predefined convenience methods
@@ -126,7 +126,7 @@ Run an action while holding the gate's internal lock, but only when a condition 
 
 ```csharp
 gate.ExecuteWithExclusiveLockWhen(
-   condition: () => gate.Queued == 3,
+   condition: it => it.Queued == 3,
    action: () => { /* runs with exclusive access to gate state */ }
 );
 ```

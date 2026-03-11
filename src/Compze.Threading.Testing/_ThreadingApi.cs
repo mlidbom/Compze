@@ -22,9 +22,9 @@ public partial interface IThreadGate : IThreadGateVisitor
    IThreadGate SetPostPassThroughAction(Action<ThreadSnapshot> action);
 
    ///<summary>Blocks until the gate is in a state which satisfies <see cref="condition"/> and then while owning the lock executes <see cref="action"/></summary>
-   IThreadGate ExecuteWithExclusiveLockWhen(Func<bool> condition, Action action, WaitTimeout? timeout = null);
+   IThreadGate ExecuteWithExclusiveLockWhen(Func<IThreadGate, bool> condition, Action action, WaitTimeout? timeout = null);
 
-   bool TryAwait(Func<bool> condition, WaitTimeout? timeout = null);
+   bool TryAwait(Func<IThreadGate, bool> condition, WaitTimeout? timeout = null);
 
    bool IsOpen { get; }
    int Queued { get; }
