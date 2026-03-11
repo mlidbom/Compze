@@ -25,7 +25,7 @@ public partial interface IThreadGate
    ///<summary>Blocks until <see cref="Passed"/> equals <paramref name="count"/> or <paramref name="timeout"/> expires. Returns false if <paramref name="timeout"/> expires, else true. Uses <see cref="WaitTimeout"/> if <paramref name="timeout"/> is null.</summary>
    bool TryAwaitPassedThroughCountEqualTo(int count, WaitTimeout? timeout = null) => TryAwait(@this => @this.Passed == count, timeout);
 
-   ///<summary>Injects an action that throws <paramref name="exception"/> when the next thread exits <see cref="IThreadGateVisitor.AwaitPassThrough"/></summary>
+   ///<summary>Injects an action that throws <paramref name="exception"/> when threads exit <see cref="IThreadGateVisitor.AwaitPassThrough"/>.</summary>
    IThreadGate ThrowPostPassThrough(Exception exception) => SetPostPassThroughAction(_ => throw exception);
 
    ///<summary>Fails the transaction of threads calling <see cref="IThreadGateVisitor.AwaitPassThrough"/> with <paramref name="exception"/> on prepare.</summary>
