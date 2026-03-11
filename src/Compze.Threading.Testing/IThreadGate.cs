@@ -2,6 +2,19 @@ using Compze.Threading.Exceptions;
 
 namespace Compze.Threading.Testing;
 
+///<summary>
+///
+/// Observes and controls the behavior of calls to <see cref="IThreadGateVisitor.AwaitPassThrough"/> in order to control threads to deterministically test how they behave in race conditions.<br/>
+/// <br/>
+/// <see cref="IsOpen"/> controls whether <see cref="IThreadGateVisitor.AwaitPassThrough"/> blocks or not.<br/>
+/// When the gate is closed one thread at a time can be allowed through by calling <see cref="AwaitLetOneThreadPassThrough"/><br/>
+/// <br/>
+/// Registers information about the calling thread in <see cref="IThreadGate.Requested"/> and <see cref="IThreadGate.Queued"/> immediately and in<br/>
+/// <see cref="IThreadGate.PassedThrough"/>, <see cref="IThreadGate.Passed"/> and <see cref="IThreadGate.Queued"/> (decrementing) before the thread exits the gate.
+///
+/// By using <see cref="TryAwait"/> and the various extension methods based on it, combined with <see cref="AwaitLetOneThreadPassThrough"/> and <see cref="Open"/> and <see cref="Close"/><br/>
+/// test code can deterministically coordinate threads to trigger the specific race condition they wish to test.
+/// </summary>
 public partial interface IThreadGate : IThreadGateVisitor
 {
    ///<summary>Returns a new <see cref="IThreadGate"/> with <c><see cref="IsOpen"/> == false</c>, using the supplied <paramref name="timeout"/> and <paramref name="name"/>. Auto generates a name if none is supplied.</summary>
