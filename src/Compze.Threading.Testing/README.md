@@ -90,19 +90,19 @@ This is the key pattern for testing blocking behavior deterministically:
 
 ### Awaiting State
 
-Every property has corresponding await methods for deterministic synchronization:
-
+You can await any condition of the gate using TryAwait or Await manually:
 ```csharp
-// Block until condition is met (throws on timeout)
+gate.TryAwait(() => gate.Passed > 2, WaitTimeout.Seconds(1)).Must().BeTrue(); //All TryAwait* methods Returns false on failure
+gate.Await(() => gate.Passed > 2, WaitTimeout.Seconds(1)); //All Await* methods throw on failure
+```
+
+For all the common needs there are predefined convenience methods
+```csharp
 gate.AwaitQueueLengthEqualTo(5);
 gate.AwaitPassedThroughCountEqualTo(3);
 
-// Try-pattern: returns false on timeout instead of throwing
-gate.TryAwaitQueueLengthEqualTo(5, WaitTimeout.Milliseconds(50));
-gate.TryAwaitPassedThroughCountEqualTo(3, WaitTimeout.Milliseconds(50));
-
-// Generic condition awaiting
-gate.TryAwait(() => gate.Passed > 2, WaitTimeout.Seconds(1));
+gate.TryAwaitQueueLengthEqualTo(5, WaitTimeout.Milliseconds(50)).Must().BeTrue();
+gate.TryAwaitPassedThroughCountEqualTo(3, WaitTimeout.Milliseconds(50)).Must().BeTrue();
 ```
 
 ### Post-Pass-Through Actions
