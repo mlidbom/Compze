@@ -9,11 +9,12 @@ namespace Compze.Threading.Testing;
 /// <see cref="IsOpen"/> controls whether <see cref="IThreadGateVisitor.AwaitPassThrough"/> blocks or not.<br/>
 /// When the gate is closed one thread at a time can be allowed through by calling <see cref="AwaitLetOneThreadPassThrough"/><br/>
 /// <br/>
-/// Registers information about the calling thread in <see cref="IThreadGate.Requested"/> and <see cref="IThreadGate.Queued"/> immediately and in<br/>
+/// When <see cref="IThreadGateVisitor.AwaitPassThrough"/> the gate registers information about the calling thread in <see cref="IThreadGate.Requested"/> and <see cref="IThreadGate.Queued"/> immediately and in<br/>
 /// <see cref="IThreadGate.PassedThrough"/>, <see cref="IThreadGate.Passed"/> and <see cref="IThreadGate.Queued"/> (decrementing) before the thread exits the gate.
 ///
-/// By using <see cref="TryAwait"/> and the various extension methods based on it, combined with <see cref="AwaitLetOneThreadPassThrough"/> and <see cref="Open"/> and <see cref="Close"/><br/>
-/// test code can deterministically coordinate threads to trigger the specific race condition they wish to test.
+/// Test code can deterministically coordinate threads to trigger the specific race condition they wish to test by using <see cref="TryAwait"/><br/>
+/// and the various default interface methods and extension methods based on it, combined with <see cref="AwaitLetOneThreadPassThrough"/> and <see cref="Open"/> and <see cref="Close"/><br/>
+/// 
 /// </summary>
 public partial interface IThreadGate : IThreadGateVisitor
 {
