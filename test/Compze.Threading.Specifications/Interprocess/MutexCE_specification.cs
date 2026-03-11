@@ -124,16 +124,23 @@ public class MutexCE_specification : UniversalTestBase
          using var mutex1 = IMutex.Global(name);
          using var mutex2 = IMutex.Global(name);
 
-         var insideLockSection = IGatedCodeSection.NewClosed(WaitTimeout.Seconds(30), "insideLock");
+         var insideMutex = IThreadGate.NewClosed(WaitTimeout.Seconds(30), "insideMutex");
 
          using var runner = TestingTaskRunner.WithTimeout(30.Seconds());
          runner.Run(
-            () => mutex1.Locked(() => insideLockSection.Execute(() => {})),
-            () => mutex2.Locked(() => insideLockSection.Execute(() => {})));
+            () => mutex1.Locked(() => insideMutex.AwaitPassThrough()),
+            () => mutex2.Locked(() => insideMutex.AwaitPassThrough()));
 
-         insideLockSection.LetOneThreadEnterAndReachExit();
-         insideLockSection.EntranceGate.TryAwaitQueueLengthEqualTo(1, WaitTimeout.Milliseconds(50)).Must().BeFalse();
-         insideLockSection.Open();
+         // One thread acquired the mutex and is now blocked at the closed gate — still holding the mutex
+         insideMutex.AwaitQueueLengthEqualTo(1);
+
+         // The other thread can't reach the gate because the mutex blocks it
+         insideMutex.TryAwaitQueueLengthEqualTo(2, WaitTimeout.Milliseconds(50)).Must().BeFalse();
+
+         insideMutex.Open();
+
+         // Both threads pass through — the second was unblocked once the first released the mutex
+         insideMutex.AwaitPassedThroughCountEqualTo(2);
       }
    }
 }

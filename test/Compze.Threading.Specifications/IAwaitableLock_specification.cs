@@ -27,21 +27,28 @@ public class IAwaitableLock_specification : UniversalTestBase
    [PCTAwaitableLock] public void When_one_thread_has_UpdateLock_other_thread_is_blocked_until_first_thread_disposes_lock_()
    {
       var @lock = _lockFactory.CreateAwaitableLock(LockTimeout.Seconds(30));
-      var insideLockSection = IGatedCodeSection.NewClosed(WaitTimeout.Seconds(30), "insideLock");
+      var insideLock = IThreadGate.NewClosed(WaitTimeout.Seconds(30), "insideLock");
 
       _runner.Run(
          () =>
          {
-            using(@lock.TakeUpdateLock()) insideLockSection.Execute(() => {});
+            using(@lock.TakeUpdateLock()) insideLock.AwaitPassThrough();
          },
          () =>
          {
-            using(@lock.TakeUpdateLock()) insideLockSection.Execute(() => {});
+            using(@lock.TakeUpdateLock()) insideLock.AwaitPassThrough();
          });
 
-      insideLockSection.LetOneThreadEnterAndReachExit();
-      insideLockSection.EntranceGate.TryAwaitQueueLengthEqualTo(1, WaitTimeout.Milliseconds(50)).Must().BeFalse();
-      insideLockSection.Open();
+      // One thread acquired the lock and is now blocked at the closed gate — still holding the lock
+      insideLock.AwaitQueueLengthEqualTo(1);
+
+      // The other thread can't reach the gate because the lock blocks it
+      insideLock.TryAwaitQueueLengthEqualTo(2, WaitTimeout.Milliseconds(50)).Must().BeFalse();
+
+      insideLock.Open();
+
+      // Both threads pass through — the second was unblocked once the first released the lock
+      insideLock.AwaitPassedThroughCountEqualTo(2);
    }
 
    public class LockTimeout_property : IAwaitableLock_specification
