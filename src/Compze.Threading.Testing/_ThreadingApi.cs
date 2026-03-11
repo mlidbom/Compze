@@ -38,7 +38,8 @@ public partial interface IThreadGate : IThreadGateVisitor
 ///<summary>A block of code with <see cref="ThreadGate"/>s for <see cref="EntranceGate"/> and <see cref="ExitGate"/>. Useful for controlling multithreaded code for testing purposes.</summary>
 public partial interface IGatedCodeSection
 {
-   static IGatedCodeSection NewClosed(WaitTimeout timeout, string name) => GatedCodeSection.NewClosed(timeout, name);
+   static IGatedCodeSection NewClosed(WaitTimeout timeout, string name) => new GatedCodeSection(timeout, name);
+   static IGatedCodeSection NewOpen(WaitTimeout timeout, string name) => NewClosed(timeout, name).Open();
 
    IThreadGate EntranceGate { get; }
    IThreadGate ExitGate { get; }

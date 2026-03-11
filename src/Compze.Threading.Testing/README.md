@@ -159,7 +159,7 @@ section.ExitGate.AwaitLetOneThreadPassThrough();
 Or open both gates for transparent instrumentation:
 
 ```csharp
-var section = IGatedCodeSection.NewClosed(WaitTimeout.Seconds(5), "observe").Open();
+var section = IGatedCodeSection.NewOpen(WaitTimeout.Seconds(5), "observe");
 
 runner.Run(() => section.Execute(() => DoWork()));
 
