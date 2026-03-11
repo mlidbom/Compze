@@ -131,10 +131,8 @@ public class MutexCE_specification : UniversalTestBase
             () => mutex1.Locked(() => insideMutex.AwaitPassThrough()),
             () => mutex2.Locked(() => insideMutex.AwaitPassThrough()));
 
-         // One thread acquired the mutex and is now blocked at the closed gate — still holding the mutex
-         insideMutex.AwaitQueueLengthEqualTo(1);
+         insideMutex.TryAwaitQueueLengthEqualTo(1).Must().BeTrue();
 
-         // The other thread can't reach the gate because the mutex blocks it
          insideMutex.TryAwaitQueueLengthEqualTo(2, WaitTimeout.Milliseconds(50)).Must().BeFalse();
 
          insideMutex.Open();

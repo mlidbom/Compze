@@ -15,7 +15,7 @@ public class Tuery_policies : EndpointHostTestBase
       var tueriesResults = Task.WhenAll(1.Through(5)
                                          .Select(_ => Navigator.GetAsync(myTuery)));
 
-      TueryHandlerThreadGate.AwaitQueueLengthEqualTo(length: 5);
+      TueryHandlerThreadGate.AwaitQueueLengthEqualTo(5);
       TueryHandlerThreadGate.Open();
 
       await tueriesResults;
