@@ -4,6 +4,11 @@ All notable changes to Compze.Internals.SystemCE.ThreadingCE.Testing will be doc
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.5.0-alpha
+- Refactoring the public API
+- README updates
+- Doc comments on every public type and method
+
 ## 0.2.1-alpha
 
 - update to the latest Compze.Threading
