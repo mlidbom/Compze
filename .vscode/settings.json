@@ -1,3 +1,8 @@
 {
-    "sarif-viewer.connectToGithubCodeScanning": "off"
+    "sarif-viewer.connectToGithubCodeScanning": "off",
+        "files.exclude": {
+        "**/bin": true,
+        "**/obj": true,
+        "nupkgs": true
+    }
 }
