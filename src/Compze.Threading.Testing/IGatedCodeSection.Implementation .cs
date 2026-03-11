@@ -2,16 +2,18 @@ namespace Compze.Threading.Testing;
 
 public partial interface IGatedCodeSection
 {
-   //urgent: This must share a monitor among all the parts and encapsulate more things to be able to provide synchronization guarantees. Examining, or mutating, a section under a lock must guarantee non-mutating gates.
    private class Implementation : IGatedCodeSection
    {
+      readonly IAwaitableMonitor _sharedLock;
+
       public IThreadGate EntranceGate { get; }
       public IThreadGate ExitGate { get; }
 
       internal Implementation(WaitTimeout timeout, string name)
       {
-         EntranceGate = IThreadGate.NewClosed(timeout, $"{name}.Entrance");
-         ExitGate = IThreadGate.NewClosed(timeout, $"{name}.Exit");
+         _sharedLock = IAwaitableMonitor.New(LockTimeout.Default, timeout);
+         EntranceGate = IThreadGate.NewClosed(timeout, _sharedLock, $"{name}.Entrance");
+         ExitGate = IThreadGate.NewClosed(timeout, _sharedLock, $"{name}.Exit");
       }
 
       public IDisposable Enter()
@@ -19,5 +21,7 @@ public partial interface IGatedCodeSection
          EntranceGate.AwaitPassThrough();
          return new Disposable(() => ExitGate.AwaitPassThrough());
       }
+
+      public TReturn ExecuteWithExclusiveLock<TReturn>(Func<IGatedCodeSection, TReturn> action) => _sharedLock.Update(() => action(this));
    }
 }

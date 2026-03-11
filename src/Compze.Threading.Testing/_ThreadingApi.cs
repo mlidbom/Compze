@@ -10,6 +10,8 @@ public partial interface IThreadGate : IThreadGateVisitor
    static IThreadGate NewClosed(WaitTimeout timeout, string? name = null) => new Implementation(timeout, name);
    static IThreadGate NewOpen(WaitTimeout timeout, string? name = null) => NewClosed(timeout, name).Open();
 
+   internal static IThreadGate NewClosed(WaitTimeout timeout, IAwaitableMonitor sharedLock, string? name = null) => new Implementation(timeout, sharedLock, name);
+
    ///<summary>Opens the gate and lets all threads through.</summary>
    IThreadGate Open();
 
@@ -44,4 +46,7 @@ public partial interface IGatedCodeSection
    IThreadGate EntranceGate { get; }
    IThreadGate ExitGate { get; }
    IDisposable Enter();
+
+   ///<summary>Executes <paramref name="action"/> while holding the shared lock that guards both gates.</summary>
+   TReturn ExecuteWithExclusiveLock<TReturn>(Func<IGatedCodeSection, TReturn> action);
 }

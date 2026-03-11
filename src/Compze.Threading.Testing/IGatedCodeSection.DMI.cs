@@ -13,7 +13,7 @@ public partial interface IGatedCodeSection
 
    IGatedCodeSection LetOneThreadEnterAndReachExit()
    {
-      State.Assert(EntranceGate.Passed == ExitGate.Passed, () => $"{nameof(IGatedCodeSection)} must be empty when calling this method");
+      ExecuteWithExclusiveLock(it => State.Assert(it.EntranceGate.Passed == it.ExitGate.Passed, () => $"{nameof(IGatedCodeSection)} must be empty when calling this method"));
       EntranceGate.AwaitLetOneThreadPassThrough();
       ExitGate.AwaitQueueLengthEqualTo(1);
       return this;
@@ -25,6 +25,9 @@ public partial interface IGatedCodeSection
       ExitGate.AwaitLetOneThreadPassThrough();
       return this;
    }
+
+   ///<summary>Executes <paramref name="action"/> while holding the shared lock that guards both gates.</summary>
+   void ExecuteWithExclusiveLock(Action<IGatedCodeSection> action) => ExecuteWithExclusiveLock(action.ToFunc());
 
    void Execute(Action action)
    {

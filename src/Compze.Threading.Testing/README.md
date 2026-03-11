@@ -156,6 +156,24 @@ section.ExitGate.Queued.Must().Be(1);
 section.ExitGate.AwaitLetOneThreadPassThrough();
 ```
 
+### Shared Lock and ExecuteWithExclusiveLock
+
+Both gates in a `GatedCodeSection` share a single underlying monitor. `ExecuteWithExclusiveLock` lets you atomically inspect or mutate state across both gates:
+
+```csharp
+// Atomically read state from both gates
+var snapshot = section.ExecuteWithExclusiveLock(it => (it.EntranceGate.Passed, it.ExitGate.Queued));
+
+// Atomically open both gates
+section.ExecuteWithExclusiveLock(it =>
+{
+   it.EntranceGate.Open();
+   it.ExitGate.Open();
+});
+```
+
+> **WARNING:** Awaiting operations (`AwaitLetOneThreadPassThrough`, `AwaitQueueLengthEqualTo`, etc.) release the lock while waiting — just like `Monitor.Wait`. This means `ExecuteWithExclusiveLock` does **not** provide exclusivity across awaiting calls. Use it for atomic reads and non-blocking mutations, not for wrapping operations that block waiting for threads to pass.
+
 Or open both gates for transparent instrumentation:
 
 ```csharp

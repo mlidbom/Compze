@@ -104,10 +104,12 @@ public partial interface IThreadGate
          return unit;
       }
 
-      internal Implementation(WaitTimeout waitTimeout, string? name = null)
+      internal Implementation(WaitTimeout waitTimeout, string? name = null) : this(waitTimeout, IAwaitableMonitor.New(LockTimeout.Default, waitTimeout), name) {}
+
+      internal Implementation(WaitTimeout waitTimeout, IAwaitableMonitor sharedLock, string? name = null)
       {
          Name = name ?? Guid.NewGuid().ToString();
-         _lock = IAwaitableMonitor.New(LockTimeout.Default, waitTimeout);
+         _lock = sharedLock;
          WaitTimeout = waitTimeout;
       }
 
