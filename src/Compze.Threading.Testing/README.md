@@ -1,6 +1,6 @@
 # Compze.Threading.Testing
 
-Observe and deterministically control threads in your tests. Trigger that race condition every single test run. Say goodby to Thread.Sleep + Prayer. `IThreadGate` gives complete control and observability. For example: Await all threads being queued at the gate, then let just one pass through.
+Observe and deterministically coordinate threads in your tests. Trigger that race condition every single test run. Say goodby to Thread.Sleep + Prayer. `IThreadGate` gives complete control and observability.
 
 ## ThreadGate
 
@@ -27,7 +27,7 @@ A **closed** gate blocks threads. You control exactly when and how many pass.
 ```csharp
 var gate = IThreadGate.NewClosed(WaitTimeout.Seconds(5), "barrier");
 
-// Background threads block here
+// Threads block at `AwaitPassThrough`
 runner.Run(() => { gate.AwaitPassThrough(); DoWork(); });
 runner.Run(() => { gate.AwaitPassThrough(); DoWork(); });
 
@@ -35,14 +35,14 @@ runner.Run(() => { gate.AwaitPassThrough(); DoWork(); });
 gate.AwaitQueueLengthEqualTo(2);
 
 // Release them one at a time
-gate.AwaitLetOneThreadPassThrough();   // exactly one thread proceeds
-gate.AwaitLetOneThreadPassThrough();   // the second thread proceeds
+gate.AwaitLetOneThreadPassThrough();   // one runs DoWork
+gate.AwaitLetOneThreadPassThrough();   // the second thread runs DoWork
 
 // Or release all at once
 gate.Open();
 ```
 
-`AwaitLetOneThreadPassThrough()` opens the gate for exactly one thread, then re-closes it. The call blocks until that thread has actually passed.
+`AwaitLetOneThreadPassThrough()` lets deterministically lets exactly one thread pass the gate. The call blocks until that thread has actually passed.
 
 #### 2. Gate as Instrumentation Point
 
