@@ -8,21 +8,20 @@ public partial interface ISignalingAwaitableMutex
    private class SignalingAwaitableMutexCE : ISignalingAwaitableMutex, ILockInternals
 #pragma warning restore CS0618 // Type or member is obsolete
    {
-      static readonly PollingInterval CounterPollingInterval = PollingInterval.Milliseconds(1);
-      static readonly TimeSpan SafetyCheckInterval = TimeSpan.FromMilliseconds(50);
+      static readonly TimeSpan AbandonedMutexCheckInterval = TimeSpan.FromMilliseconds(50);
 
       readonly IMutex _mutex;
-      readonly InterprocessChangeCounter _changeCounter;
+      readonly InterprocessSignal _signal;
 
       internal SignalingAwaitableMutexCE(string name, bool global, LockTimeout? lockTimeout, WaitTimeout? waitTimeout, Action? onAbandonedMutex)
       {
-         _changeCounter = new InterprocessChangeCounter(name, global);
+         _signal = new InterprocessSignal(name, global);
 
-         // Wrap the user's callback so abandoned-mutex detection also increments the counter,
-         // waking any thread stuck in the counter-polling loop.
+         // Wrap the user's callback so abandoned-mutex detection also raises the signal,
+         // waking any thread stuck waiting for a signal.
          Action wrappedOnAbandonedMutex = () =>
          {
-            _changeCounter.Increment();
+            _signal.Raise();
             onAbandonedMutex?.Invoke();
          };
 
@@ -44,7 +43,7 @@ public partial interface ISignalingAwaitableMutex
       public IDisposable TakeUpdateLock(LockTimeout? timeout = null)
       {
          var mutexLock = _mutex.TakeLock(timeout);
-         return new UpdateLockDisposer(_changeCounter, mutexLock);
+         return new UpdateLockDisposer(_signal, mutexLock);
       }
 
       public IDisposable TakeReadLockWhen(Func<bool> condition, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null) =>
@@ -68,13 +67,13 @@ public partial interface ISignalingAwaitableMutex
 
          while(true)
          {
-            var baseline = _changeCounter.Count;
+            _signal.Snapshot();
 
             IDisposable mutexLock = _mutex.TakeLock(effectiveLockTimeout);
             try
             {
                if(condition())
-                  return isUpdate ? new UpdateLockDisposer(_changeCounter, mutexLock) : mutexLock;
+                  return isUpdate ? new UpdateLockDisposer(_signal, mutexLock) : mutexLock;
             }
             catch
             {
@@ -87,45 +86,35 @@ public partial interface ISignalingAwaitableMutex
             if(!effectiveWaitTimeout.IsInfinite && effectiveWaitTimeout.IsExpired(waitStartedAt))
                return null;
 
-            var abandonedMutexCheckInterval = DateTime.UtcNow + SafetyCheckInterval;
-
-            while(_changeCounter.Count == baseline)
+            while(!_signal.TryAwait(AbandonedMutexCheckInterval))
             {
                if(!effectiveWaitTimeout.IsInfinite && effectiveWaitTimeout.IsExpired(waitStartedAt))
                   return null;
 
-               if(DateTime.UtcNow >= abandonedMutexCheckInterval)
-               {
-                  TryTakeMutexLockToDetectAbandonedMutexExceptionsTriggeringCounterIncrement();
-                  abandonedMutexCheckInterval = DateTime.UtcNow + SafetyCheckInterval;
-               }
-
-               Thread.Sleep(CounterPollingInterval);
+               _mutex.TryTakeLock(LockTimeout.Zero)?.Dispose();
             }
          }
       }
-
-      void TryTakeMutexLockToDetectAbandonedMutexExceptionsTriggeringCounterIncrement() => _mutex.TryTakeLock(LockTimeout.Zero)?.Dispose();
 
       public void SetTimeToWaitForStackTrace(WaitTimeout timeToWaitForStackTrace) =>
          ((ILockInternals)_mutex).SetTimeToWaitForStackTrace(timeToWaitForStackTrace);
 
       public void Dispose()
       {
-         _changeCounter.Dispose();
+         _signal.Dispose();
          _mutex.Dispose();
       }
 
-      class UpdateLockDisposer(InterprocessChangeCounter changeCounter, IDisposable mutexLock) : IDisposable
+      class UpdateLockDisposer(InterprocessSignal signal, IDisposable mutexLock) : IDisposable
       {
 #pragma warning disable CA2213
-         readonly InterprocessChangeCounter _changeCounter = changeCounter;
+         readonly InterprocessSignal _signal = signal;
 #pragma warning disable CA2213
          readonly IDisposable _mutexLock = mutexLock;
 
          public void Dispose()
          {
-            _changeCounter.Increment();
+            _signal.Raise();
             _mutexLock.Dispose();
          }
       }

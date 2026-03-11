@@ -4,12 +4,12 @@ using Compze.Threading.Exceptions;
 
 namespace Compze.Threading.Testing;
 
-public class ThreadGate : IThreadGate
+class ThreadGate : IThreadGate
 {
-   public static IThreadGate Closed(WaitTimeout timeout, string name) => new ThreadGate(timeout, name);
-   public static IThreadGate Open(WaitTimeout timeout, string name) => new ThreadGate(timeout, name).Open();
+   internal static IThreadGate NewClosed(WaitTimeout timeout, string? name = null) => new ThreadGate(timeout, name);
+   internal static IThreadGate NewOpen(WaitTimeout timeout, string? name = null) => new ThreadGate(timeout, name).Open();
 
-   public WaitTimeout DefaultTimeout { get; }
+   public WaitTimeout WaitTimeout { get; }
 
    public bool IsOpen { get; private set; }
 
@@ -39,14 +39,14 @@ public class ThreadGate : IThreadGate
          IsOpen = true;
          _lockOnNextPass = true;
       });
-      return this.AwaitClosed();
+      return ((IThreadGate)this).AwaitClosed();
    }
 
-   public bool TryAwait(WaitTimeout timeout, Func<bool> condition) => _lock.TryAwait(condition, timeout);
+   public bool TryAwait(Func<bool> condition, WaitTimeout? timeout) => _lock.TryAwait(condition, timeout);
 
    public IThreadGate SetPostPassThroughAction(Action<ThreadSnapshot> action) => this._mutate(_ => _lock.Update(() => _postPassThroughAction = action));
 
-   public IThreadGate ExecuteWithExclusiveLockWhen(WaitTimeout timeout, Func<bool> condition, Action action)
+   public IThreadGate ExecuteWithExclusiveLockWhen(Func<bool> condition, Action action, WaitTimeout? timeout = null)
    {
       try
       {
@@ -102,11 +102,11 @@ public class ThreadGate : IThreadGate
       return unit;
    }
 
-   ThreadGate(WaitTimeout defaultTimeout, string? name = null)
+   ThreadGate(WaitTimeout waitTimeout, string? name = null)
    {
       Name = name ?? Guid.NewGuid().ToString();
-      _lock = IAwaitableMonitor.New(LockTimeout.Default, defaultTimeout);
-      DefaultTimeout = defaultTimeout;
+      _lock = IAwaitableMonitor.New(LockTimeout.Default, waitTimeout);
+      WaitTimeout = waitTimeout;
    }
 
    public override string ToString() => $"{nameof(ThreadGate)} {{ {nameof(Name)}: {Name} {nameof(IsOpen)} : {IsOpen}, {nameof(Queued)}: {Queued}, {nameof(Passed)}: {Passed}, {nameof(Requested)}: {Requested} }}";

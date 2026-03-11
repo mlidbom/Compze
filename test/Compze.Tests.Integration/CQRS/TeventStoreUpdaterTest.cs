@@ -552,8 +552,8 @@ public class TeventStoreUpdaterTest : UniversalTestBase
          user.ChangeEmail("newemail@somewhere.not");
       });
 
-      var getHistorySection = GatedCodeSection.Closed(WaitTimeout.Seconds(30), "getHistorySection");
-      var changeEmailSection = GatedCodeSection.Closed(WaitTimeout.Seconds(30), "changeEmailSection");
+      var getHistorySection = IGatedCodeSection.NewClosed(WaitTimeout.Seconds(30), "getHistorySection");
+      var changeEmailSection = IGatedCodeSection.NewClosed(WaitTimeout.Seconds(30), "changeEmailSection");
 
       const int threads = 2;
       var tasks = 1.Through(threads).Select(_ => TaskCE.Run(UpdateEmail)).ToArray();
@@ -606,8 +606,8 @@ public class TeventStoreUpdaterTest : UniversalTestBase
          user.ChangeEmail("newemail@somewhere.not");
       });
 
-      var changeEmailSection = GatedCodeSection.Closed(WaitTimeout.Seconds(20), "changeEmailSection");
-      var hasFetchedUser = ThreadGate.Open(WaitTimeout.Seconds(20), "hasFetchedUser");
+      var changeEmailSection = IGatedCodeSection.NewClosed(WaitTimeout.Seconds(20), "changeEmailSection");
+      var hasFetchedUser = IThreadGate.NewOpen(WaitTimeout.Seconds(20), "hasFetchedUser");
 
       const int threads = 2;
 

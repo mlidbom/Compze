@@ -1,17 +1,17 @@
 namespace Compze.Threading.Testing;
 
 //urgent: This must share a monitor among all the parts and encapsulate more things to be able to provide synchronization guarantees. Examining, or mutating, a section under a lock must guarantee non-mutating gates.
-public class GatedCodeSection : IGatedCodeSection
+class GatedCodeSection : IGatedCodeSection
 {
    public IThreadGate EntranceGate { get; }
    public IThreadGate ExitGate { get; }
 
-   public static IGatedCodeSection Closed(WaitTimeout timeout, string name) => new GatedCodeSection(timeout, name);
+   internal static IGatedCodeSection NewClosed(WaitTimeout timeout, string name) => new GatedCodeSection(timeout, name);
 
    GatedCodeSection(WaitTimeout timeout, string name)
    {
-      EntranceGate = ThreadGate.Closed(timeout, $"{name}.Entrance");
-      ExitGate = ThreadGate.Closed(timeout, $"{name}.Exit");
+      EntranceGate = IThreadGate.NewClosed(timeout, $"{name}.Entrance");
+      ExitGate = IThreadGate.NewClosed(timeout, $"{name}.Exit");
    }
 
    public IDisposable Enter()

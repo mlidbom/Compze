@@ -66,7 +66,7 @@ public class ILock_specification : UniversalTestBase
       [PCTLock] public void provides_mutual_exclusion_across_threads()
       {
          var @lock = _lockFactory.CreateLock(LockTimeout.Seconds(30));
-         var insideLockGate = ThreadGate.Closed(WaitTimeout.Seconds(30), "insideLock");
+         var insideLockGate = IThreadGate.NewClosed(WaitTimeout.Seconds(30), "insideLock");
 
          _runner.Run(
             () => @lock.Locked(insideLockGate.AwaitPassThrough),

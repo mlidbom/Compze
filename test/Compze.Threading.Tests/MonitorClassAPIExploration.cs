@@ -25,8 +25,8 @@ public class MonitorClassApiExploration
    {
       var guarded = new object();
 
-      var threadOneWaitsOnLockSection = GatedCodeSection.Closed(WaitTimeout.Seconds(30), "threadOneWaitsOnLockSection").Open();
-      var threadTwoHasAcquiredLockAndWishesToReleaseItGate = ThreadGate.Closed(WaitTimeout.Seconds(30), "threadTwoHasAcquiredLockAndWishesToReleaseItGate");
+      var threadOneWaitsOnLockSection = IGatedCodeSection.NewClosed(WaitTimeout.Seconds(30), "threadOneWaitsOnLockSection").Open();
+      var threadTwoHasAcquiredLockAndWishesToReleaseItGate = IThreadGate.NewClosed(WaitTimeout.Seconds(30), "threadTwoHasAcquiredLockAndWishesToReleaseItGate");
 
       var waitTimeout = 100.Milliseconds();
 
@@ -64,8 +64,8 @@ public class MonitorClassApiExploration
    {
       var guarded = new object();
 
-      var threadOneWaitsOnLockSection = GatedCodeSection.Closed(WaitTimeout.Seconds(30), "threadOneWaitsOnLockSection").Open();
-      var threadTwoHasAcquiredLockAndWishesToReleaseItGate = ThreadGate.Closed(WaitTimeout.Seconds(30), "threadTwoHasAcquiredLockAndWishesToReleaseItGate");
+      var threadOneWaitsOnLockSection = IGatedCodeSection.NewClosed(WaitTimeout.Seconds(30), "threadOneWaitsOnLockSection").Open();
+      var threadTwoHasAcquiredLockAndWishesToReleaseItGate = IThreadGate.NewClosed(WaitTimeout.Seconds(30), "threadTwoHasAcquiredLockAndWishesToReleaseItGate");
 
       var waitTimeout = TimeSpan.FromMilliseconds(int.MaxValue);
 

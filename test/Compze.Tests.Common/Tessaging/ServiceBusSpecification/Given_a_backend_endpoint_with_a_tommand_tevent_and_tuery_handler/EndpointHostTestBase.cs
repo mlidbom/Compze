@@ -57,14 +57,14 @@ public abstract class EndpointHostTestBase : UniversalTestBase
 
       AllGates =
       [
-         MyExactlyOnceTommandHandlerThreadGate = ThreadGate.Open(_timeout, nameof(MyExactlyOnceTommandHandlerThreadGate)),
-         TommandHandlerWithResultThreadGate = ThreadGate.Open(_timeout, nameof(TommandHandlerWithResultThreadGate)),
-         MyCreateTaggregateTommandHandlerThreadGate = ThreadGate.Open(_timeout, nameof(MyCreateTaggregateTommandHandlerThreadGate)),
-         MyUpdateTaggregateTommandHandlerThreadGate = ThreadGate.Open(_timeout, nameof(MyUpdateTaggregateTommandHandlerThreadGate)),
-         MyRemoteTaggregateTeventHandlerThreadGate = ThreadGate.Open(_timeout, nameof(MyRemoteTaggregateTeventHandlerThreadGate)),
-         MyLocalTaggregateTeventHandlerThreadGate = ThreadGate.Open(_timeout, nameof(MyLocalTaggregateTeventHandlerThreadGate)),
-         TeventHandlerThreadGate = ThreadGate.Open(_timeout, nameof(TeventHandlerThreadGate)),
-         TueryHandlerThreadGate = ThreadGate.Open(_timeout, nameof(TueryHandlerThreadGate))
+         MyExactlyOnceTommandHandlerThreadGate = IThreadGate.NewOpen(_timeout, nameof(MyExactlyOnceTommandHandlerThreadGate)),
+         TommandHandlerWithResultThreadGate = IThreadGate.NewOpen(_timeout, nameof(TommandHandlerWithResultThreadGate)),
+         MyCreateTaggregateTommandHandlerThreadGate = IThreadGate.NewOpen(_timeout, nameof(MyCreateTaggregateTommandHandlerThreadGate)),
+         MyUpdateTaggregateTommandHandlerThreadGate = IThreadGate.NewOpen(_timeout, nameof(MyUpdateTaggregateTommandHandlerThreadGate)),
+         MyRemoteTaggregateTeventHandlerThreadGate = IThreadGate.NewOpen(_timeout, nameof(MyRemoteTaggregateTeventHandlerThreadGate)),
+         MyLocalTaggregateTeventHandlerThreadGate = IThreadGate.NewOpen(_timeout, nameof(MyLocalTaggregateTeventHandlerThreadGate)),
+         TeventHandlerThreadGate = IThreadGate.NewOpen(_timeout, nameof(TeventHandlerThreadGate)),
+         TueryHandlerThreadGate = IThreadGate.NewOpen(_timeout, nameof(TueryHandlerThreadGate))
       ];
    }
 

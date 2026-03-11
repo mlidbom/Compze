@@ -27,7 +27,7 @@ public class IAwaitableLock_specification : UniversalTestBase
    [PCTAwaitableLock] public void When_one_thread_has_UpdateLock_other_thread_is_blocked_until_first_thread_disposes_lock_()
    {
       var @lock = _lockFactory.CreateAwaitableLock(LockTimeout.Seconds(30));
-      var insideLockSection = GatedCodeSection.Closed(WaitTimeout.Seconds(30), "insideLock");
+      var insideLockSection = IGatedCodeSection.NewClosed(WaitTimeout.Seconds(30), "insideLock");
 
       _runner.Run(
          () =>
@@ -137,7 +137,7 @@ public class IAwaitableLock_specification : UniversalTestBase
       {
          var @lock = _lockFactory.CreateAwaitableLock();
          var conditionMet = false;
-         var lockAcquired = ThreadGate.Open(WaitTimeout.Seconds(10), "afterLockAcquired");
+         var lockAcquired = IThreadGate.NewOpen(WaitTimeout.Seconds(10), "afterLockAcquired");
 
          _runner.Run(() =>
          {
@@ -202,7 +202,7 @@ public class IAwaitableLock_specification : UniversalTestBase
       {
          var @lock = _lockFactory.CreateAwaitableLock();
          var conditionMet = false;
-         var awaitCompleted = ThreadGate.Open(WaitTimeout.Seconds(5), "awaitCompleted");
+         var awaitCompleted = IThreadGate.NewOpen(WaitTimeout.Seconds(5), "awaitCompleted");
 
          _runner.Run(() =>
          {

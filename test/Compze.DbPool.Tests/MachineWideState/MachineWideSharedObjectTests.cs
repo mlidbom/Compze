@@ -94,11 +94,11 @@ public class MachineWideSharedObjectTests : UniversalTestBase
    [XF] public async Task Update_blocks_GetCopy_and_Update_from_both_same_and_other_instances()
    {
       var timeout = WaitTimeout.Seconds(15);
-      var updateGate = ThreadGate.Closed(timeout, "updateGate");
-      var conflictingUpdateSectionSameInstance = GatedCodeSection.Closed(timeout, "conflictingUpdateSectionSameInstance");
-      var conflictingUpdateSectionOtherInstance = GatedCodeSection.Closed(timeout, "conflictingUpdateSectionOtherInstance");
-      var conflictingGetCopySectionSameInstance = GatedCodeSection.Closed(timeout, "conflictingGetCopySectionSameInstance");
-      var conflictingGetCopySectionOtherInstance = GatedCodeSection.Closed(timeout, "conflictingGetCopySectionOtherInstance");
+      var updateGate = IThreadGate.NewClosed(timeout, "updateGate");
+      var conflictingUpdateSectionSameInstance = IGatedCodeSection.NewClosed(timeout, "conflictingUpdateSectionSameInstance");
+      var conflictingUpdateSectionOtherInstance = IGatedCodeSection.NewClosed(timeout, "conflictingUpdateSectionOtherInstance");
+      var conflictingGetCopySectionSameInstance = IGatedCodeSection.NewClosed(timeout, "conflictingGetCopySectionSameInstance");
+      var conflictingGetCopySectionOtherInstance = IGatedCodeSection.NewClosed(timeout, "conflictingGetCopySectionOtherInstance");
 
       IList<IGatedCodeSection> conflictingSections =
       [

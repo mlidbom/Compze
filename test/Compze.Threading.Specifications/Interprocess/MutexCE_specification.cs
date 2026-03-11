@@ -124,7 +124,7 @@ public class MutexCE_specification : UniversalTestBase
          using var mutex1 = IMutex.Global(name);
          using var mutex2 = IMutex.Global(name);
 
-         var insideLockSection = GatedCodeSection.Closed(WaitTimeout.Seconds(30), "insideLock");
+         var insideLockSection = IGatedCodeSection.NewClosed(WaitTimeout.Seconds(30), "insideLock");
 
          using var runner = TestingTaskRunner.WithTimeout(30.Seconds());
          runner.Run(
