@@ -29,11 +29,5 @@ public partial interface IGatedCodeSection
    ///<summary>Executes <paramref name="action"/> while holding the shared lock that guards both gates.</summary>
    void ExecuteWithExclusiveLock(Action<IGatedCodeSection> action) => ExecuteWithExclusiveLock(action.ToFunc());
 
-   void Execute(Action action)
-   {
-      using(Enter())
-      {
-         action();
-      }
-   }
+   Unit Execute(Action action) => Execute(action.ToFunc());
 }

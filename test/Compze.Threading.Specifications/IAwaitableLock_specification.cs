@@ -32,11 +32,11 @@ public class IAwaitableLock_specification : UniversalTestBase
       _runner.Run(
          () =>
          {
-            using(@lock.TakeUpdateLock()) insideLockSection.Enter().Dispose();
+            using(@lock.TakeUpdateLock()) insideLockSection.Execute(() => {});
          },
          () =>
          {
-            using(@lock.TakeUpdateLock()) insideLockSection.Enter().Dispose();
+            using(@lock.TakeUpdateLock()) insideLockSection.Execute(() => {});
          });
 
       insideLockSection.LetOneThreadEnterAndReachExit();

@@ -577,18 +577,15 @@ public class TeventStoreUpdaterTest : UniversalTestBase
       void UpdateEmail() =>
          UseInScope(session =>
          {
-            using(getHistorySection.Enter())
-            {
-               ((ITeventStoreReader)session).GetHistory(user.Id);
-            }
+            getHistorySection.Execute(() => ((ITeventStoreReader)session).GetHistory(user.Id));
 
             TransactionScopeCe.Execute(() =>
             {
-               using(changeEmailSection.Enter())
+               changeEmailSection.Execute(() =>
                {
                   var userToUpdate = session.Get<User>(user.Id);
                   userToUpdate.ChangeEmail($"newemail_{userToUpdate.Version}@somewhere.not");
-               }
+               });
             });
          });
    }
@@ -642,12 +639,12 @@ public class TeventStoreUpdaterTest : UniversalTestBase
       void UpdateEmail() =>
          UseInTransactionalScope(session =>
          {
-            using(changeEmailSection.Enter())
+            changeEmailSection.Execute(() =>
             {
                var userToUpdate = session.Get<User>(user.Id);
                hasFetchedUser.AwaitPassThrough();
                userToUpdate.ChangeEmail($"newemail_{userToUpdate.Version}@somewhere.not");
-            }
+            });
          });
    }
 

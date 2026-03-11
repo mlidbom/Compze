@@ -128,8 +128,8 @@ public class MutexCE_specification : UniversalTestBase
 
          using var runner = TestingTaskRunner.WithTimeout(30.Seconds());
          runner.Run(
-            () => mutex1.Locked(() => insideLockSection.Enter().Dispose()),
-            () => mutex2.Locked(() => insideLockSection.Enter().Dispose()));
+            () => mutex1.Locked(() => insideLockSection.Execute(() => {})),
+            () => mutex2.Locked(() => insideLockSection.Execute(() => {})));
 
          insideLockSection.LetOneThreadEnterAndReachExit();
          insideLockSection.EntranceGate.TryAwaitQueueLengthEqualTo(1, WaitTimeout.Milliseconds(50)).Must().BeFalse();

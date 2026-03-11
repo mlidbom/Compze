@@ -16,10 +16,17 @@ public partial interface IGatedCodeSection
          ExitGate = IThreadGate.NewClosed(timeout, _sharedLock, $"{name}.Exit");
       }
 
-      public IDisposable Enter()
+      public TReturn Execute<TReturn>(Func<TReturn> func)
       {
          EntranceGate.AwaitPassThrough();
-         return new Disposable(() => ExitGate.AwaitPassThrough());
+         try
+         {
+            return func();
+         }
+         finally
+         {
+            ExitGate.AwaitPassThrough();
+         }
       }
 
       public TReturn ExecuteWithExclusiveLock<TReturn>(Func<IGatedCodeSection, TReturn> action) => _sharedLock.Update(() => action(this));

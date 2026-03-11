@@ -45,7 +45,8 @@ public partial interface IGatedCodeSection
 
    IThreadGate EntranceGate { get; }
    IThreadGate ExitGate { get; }
-   IDisposable Enter();
+
+   TReturn Execute<TReturn>(Func<TReturn> func);
 
    ///<summary>Executes <paramref name="action"/> while holding the shared lock that guards both gates.</summary>
    TReturn ExecuteWithExclusiveLock<TReturn>(Func<IGatedCodeSection, TReturn> action);
