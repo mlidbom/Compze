@@ -13,8 +13,8 @@ public partial interface IThreadGate : IThreadGateVisitor
    ///<summary>Opens the gate and lets all threads through.</summary>
    IThreadGate Open();
 
-   ///<summary>Lets a single thread pass.</summary>
-   IThreadGate AwaitLetOneThreadPassThrough();
+   ///<summary>Lets a single thread pass and returns the snapshot of the thread that passed.</summary>
+   ThreadSnapshot AwaitLetOneThreadPassThrough();
 
    ///<summary>Blocks all threads from passing.</summary>
    IThreadGate Close();

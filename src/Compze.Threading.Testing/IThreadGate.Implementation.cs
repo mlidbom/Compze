@@ -29,16 +29,19 @@ public partial interface IThreadGate
          return this;
       }
 
-      public IThreadGate AwaitLetOneThreadPassThrough()
+      public ThreadSnapshot AwaitLetOneThreadPassThrough()
       {
          using var _ = LogMethodEntryExit(nameof(AwaitLetOneThreadPassThrough));
+         var passedBefore = 0;
          _lock.Update(() =>
          {
             State.Assert(!IsOpen);
+            passedBefore = _passedThreads.Count;
             IsOpen = true;
             _lockOnNextPass = true;
          });
-         return ((IThreadGate)this).AwaitClosed();
+         ((IThreadGate)this).AwaitClosed();
+         return _lock.Read(() => _passedThreads[passedBefore]);
       }
 
       public bool TryAwait(Func<IThreadGate, bool> condition, WaitTimeout? timeout) => _lock.TryAwait(() => condition(this), timeout);

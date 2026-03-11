@@ -42,7 +42,7 @@ gate.AwaitLetOneThreadPassThrough();   // the second thread runs DoWork
 gate.Open();
 ```
 
-`AwaitLetOneThreadPassThrough()` lets deterministically lets exactly one thread pass the gate. The call blocks until that thread has actually passed.
+`AwaitLetOneThreadPassThrough()` deterministically lets exactly one thread pass the gate. The call blocks until that thread has actually passed and returns its `ThreadSnapshot`.
 
 #### 2. Gate as Instrumentation Point
 
