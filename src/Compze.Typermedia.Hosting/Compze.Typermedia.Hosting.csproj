@@ -3,6 +3,8 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <Version>0.1.0-alpha.1</Version>
+    <!-- TODO: Remove once all public API members have XML documentation comments -->
+    <NoWarn>CS1591</NoWarn>
     <Description>Typermedia server hosting: endpoint builder, endpoint host, and in-memory transport server.</Description>
   </PropertyGroup>
   <!-- Compze.DependencyInjection — flex reference -->

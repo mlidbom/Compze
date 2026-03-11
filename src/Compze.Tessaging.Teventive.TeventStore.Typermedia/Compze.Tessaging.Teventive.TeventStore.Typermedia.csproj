@@ -3,6 +3,8 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <Version>0.1.0-alpha.1</Version>
+    <!-- TODO: Remove once all public API members have XML documentation comments -->
+    <NoWarn>CS1591</NoWarn>
     <Description>Typermedia API bridge for the Compze event store — exposes event store operations as Typermedia tueries and tommands.</Description>
   </PropertyGroup>
   <!-- Compze.Abstractions — flex reference -->

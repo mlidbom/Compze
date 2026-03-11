@@ -18,6 +18,7 @@
   <Import Project="msbuild\IncludeTestAppSettings.props" Condition="'$(IsTestProject)' == 'true'" />
   <!-- NuGet package metadata for library projects -->
   <PropertyGroup Condition="'$(IsTestProject)' != 'true' AND '$(IsPackable)' != 'false'">
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <Authors>Lidbom Solutions AB</Authors>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/mlidbom/Compze</PackageProjectUrl>
