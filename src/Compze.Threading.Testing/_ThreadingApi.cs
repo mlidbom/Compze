@@ -2,52 +2,9 @@ namespace Compze.Threading.Testing;
 
 public interface IThreadGateVisitor
 {
+   ///<summary>Blocks if <see cref="IThreadGate.IsOpen"/> is false and no uncompleted call to <see cref="IThreadGate.AwaitLetOneThreadPassThrough"/> is active.
+   /// The gate registers information about the calling thread in <see cref="IThreadGate.Requested"/> and <see cref="IThreadGate.Queued"/> immediately and in
+   /// <see cref="IThreadGate.PassedThrough"/>, <see cref="IThreadGate.Passed"/> and <see cref="IThreadGate.Queued"/> (decrementing) before the thread exits the gate.
+   /// </summary>
    Unit AwaitPassThrough();
-}
-
-public partial interface IThreadGate : IThreadGateVisitor
-{
-   static IThreadGate NewClosed(WaitTimeout timeout, string? name = null) => new Implementation(timeout, name);
-   static IThreadGate NewOpen(WaitTimeout timeout, string? name = null) => NewClosed(timeout, name).Open();
-
-   internal static IThreadGate NewClosed(WaitTimeout timeout, IAwaitableMonitor sharedLock, string? name = null) => new Implementation(timeout, sharedLock, name);
-
-   ///<summary>Opens the gate and lets all threads through.</summary>
-   IThreadGate Open();
-
-   ///<summary>Lets a single thread pass and returns the snapshot of the thread that passed.</summary>
-   ThreadSnapshot AwaitLetOneThreadPassThrough();
-
-   ///<summary>Blocks all threads from passing.</summary>
-   IThreadGate Close();
-
-   IThreadGate SetPostPassThroughAction(Action<ThreadSnapshot> action);
-
-   ///<summary>Blocks until the gate is in a state which satisfies <see cref="condition"/> and then while owning the lock executes <see cref="action"/></summary>
-   IThreadGate ExecuteWithExclusiveLockWhen(Func<IThreadGate, bool> condition, Action action, WaitTimeout? timeout = null);
-
-   bool TryAwait(Func<IThreadGate, bool> condition, WaitTimeout? timeout = null);
-
-   bool IsOpen { get; }
-   int Queued { get; }
-   int Requested { get; }
-   int Passed { get; }
-   WaitTimeout WaitTimeout { get; }
-
-   IReadOnlyList<ThreadSnapshot> PassedThrough { get; }
-}
-
-///<summary>A block of code with <see cref="ThreadGate"/>s for <see cref="EntranceGate"/> and <see cref="ExitGate"/>. Useful for controlling multithreaded code for testing purposes.</summary>
-public partial interface IGatedCodeSection
-{
-   static IGatedCodeSection NewClosed(WaitTimeout timeout, string name) => new Implementation(timeout, name);
-   static IGatedCodeSection NewOpen(WaitTimeout timeout, string name) => NewClosed(timeout, name).Open();
-
-   IThreadGate EntranceGate { get; }
-   IThreadGate ExitGate { get; }
-
-   TReturn Execute<TReturn>(Func<TReturn> func);
-
-   ///<summary>Executes <paramref name="action"/> while holding the shared lock that guards both gates.</summary>
-   TReturn ExecuteWithExclusiveLock<TReturn>(Func<IGatedCodeSection, TReturn> action);
 }
