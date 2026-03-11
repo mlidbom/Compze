@@ -7,7 +7,7 @@ namespace Compze.SystemCE;
 ///<summary>The functional programming Unit concept.
 /// Unifies <see cref="Func{TResult}"/> and <see cref="Action"/>.
 /// Simply return unit from methods with no return value instead of declaring them as void,
-/// or use <see cref="Invoke"/> to avoid that pesky extra line:
+/// or use <see cref="UnitConvert.Invoke"/> to avoid that pesky extra line (requires C# 14 or later to invoke as an extension on the type):
 /// <code>
 ///   public Unit DoSomething() => Unit.Invoke(() =>
 ///   {
@@ -15,19 +15,17 @@ namespace Compze.SystemCE;
 ///   });
 /// </code>
 /// </summary>
-#pragma warning disable CA1724 //Same name as the namespace
-#pragma warning disable CA1036 // All Unit values are equal — ordering operators would be trivially true/false
 #pragma warning disable CA2225 // Implicit conversions to/from ValueTuple are sufficient; named alternatives add no value for a type with a single possible value
 [Serializable]
-public readonly partial struct Unit : IEquatable<Unit>, IComparable<Unit>, IComparable
+public readonly struct Unit : IEquatable<Unit>, IComparable<Unit>, IComparable
 {
    ///<summary>The single value of the <see cref="Unit"/> type.</summary>
    public static readonly Unit Value = default;
 
-   ///<summary>Always returns <c>"()"</c>.</summary>
+   ///<summary>Returns <c>"()"</c>.</summary>
    [Pure] public override string ToString() => "()";
 
-   ///<summary>Always returns <see langword="true"/>. All <see cref="Unit"/> values are equal.</summary>
+   ///<summary>Returns <see langword="true"/>. All <see cref="Unit"/> values are equal.</summary>
    [Pure] public bool Equals(Unit _) => true;
 
    ///<summary>Returns <see langword="true"/> if <paramref name="obj"/> is a <see cref="Unit"/>; otherwise <see langword="false"/>.</summary>
@@ -36,13 +34,13 @@ public readonly partial struct Unit : IEquatable<Unit>, IComparable<Unit>, IComp
    ///<summary>Always returns <see langword="true"/>. All <see cref="Unit"/> values are equal.</summary>
    [Pure] public static bool operator ==(Unit _, Unit __) => true;
 
-   ///<summary>Always returns <see langword="false"/>. All <see cref="Unit"/> values are equal.</summary>
+   ///<summary>Returns <see langword="false"/>. All <see cref="Unit"/> values are equal.</summary>
    [Pure] public static bool operator !=(Unit _, Unit __) => false;
 
-   ///<summary>Always returns <c>0</c>.</summary>
+   ///<summary>Returns <c>0</c>.</summary>
    [Pure] public override int GetHashCode() => 0;
 
-   ///<summary>Always returns <c>0</c>. All <see cref="Unit"/> values are equal.</summary>
+   ///<summary>Returns <c>0</c>. All <see cref="Unit"/> values are equal.</summary>
    [Pure] public int CompareTo(Unit _) => 0;
 
    ///<summary>Returns <c>0</c> if <paramref name="obj"/> is a <see cref="Unit"/>; <c>1</c> if <see langword="null"/>; otherwise throws.</summary>

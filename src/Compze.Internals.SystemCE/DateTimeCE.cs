@@ -10,7 +10,7 @@ public static class DateTimeCE
    // Start by writing tests exploring how the sql layers and the serializer deals with DateTime instances with all three different kinds when serialized/persisted with one timezone and then read/deserialized in another.
    // How are they converted? Do you get the same Kind back? Does the value change?
    //todo: Do we also need ToLocalTimeSafely?
-   ///<summary>Like <see cref="DateTime.ToUniversalTime"/> except it will throw an exception if <paramref name="@this"/>.Kind == <see cref="DateTimeKind.Unspecified"/> instead of assuming that Kind == <see cref="DateTimeKind.Local"/> and converting based on that assumption like <see cref="DateTime.ToUniversalTime"/> does.</summary>
+   ///<summary>Like <see cref="DateTime.ToUniversalTime"/> except it will throw an exception if <paramref name="this"/>.Kind == <see cref="DateTimeKind.Unspecified"/> instead of assuming that Kind == <see cref="DateTimeKind.Local"/> and converting based on that assumption like <see cref="DateTime.ToUniversalTime"/> does.</summary>
    public static DateTime ToUniversalTimeSafely(this DateTime @this) => @this.AssertHasKind().ToUniversalTime();
 
    ///<summary>Parses a DateTime string using invariant culture to avoid locale-dependent behavior</summary>
