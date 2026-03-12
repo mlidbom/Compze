@@ -22,10 +22,24 @@ namespace Compze.DbPool.Tests.MachineWideState;
 
 class SharedObjectSerializer : ISharedObjectSerializer<SharedObject>
 {
-   public string Serialize(SharedObject instance) => Convert.ToBase64String(MemoryPackSerializer.Serialize(instance));
+   static SharedObjectSerializer()
+   {
+      // Force JIT + formatter registration so the cost in profiling isn't attributed to the first real call.
+      var warmup = MemoryPackSerializer.Serialize(new SharedObject());
+      MemoryPackSerializer.Deserialize<SharedObject>(warmup);
+   }
 
-   public SharedObject Deserialize(string json) =>
-      MemoryPackSerializer.Deserialize<SharedObject>(Convert.FromBase64String(json))._assert().NotNull();
+   public string Serialize(SharedObject instance)
+   {
+      var inArray = MemoryPackSerializer.Serialize(instance);
+      return Convert.ToBase64String(inArray);
+   }
+
+   public SharedObject Deserialize(string json)
+   {
+      var fromBase64String = Convert.FromBase64String(json);
+      return MemoryPackSerializer.Deserialize<SharedObject>(fromBase64String)._assert().NotNull();
+   }
 }
 
 public class MachineWideSharedObjectTests : UniversalTestBase
