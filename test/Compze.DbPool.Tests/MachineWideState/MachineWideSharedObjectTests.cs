@@ -1,11 +1,11 @@
 using Compze.Abstractions.Wiring.Testing.Internal;
 using Compze.Contracts;
+using Compze.InterprocessObject;
 using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 using Compze.Must;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Threading;
-using Compze.Threading.Interprocess.ResourceAccess;
 using Compze.Threading.Testing;
 using Compze.xUnitBDD;
 using JetBrains.Annotations;
@@ -22,7 +22,7 @@ namespace Compze.DbPool.Tests.MachineWideState;
    public string Name { get; set; } = "Default";
 }
 
-class SharedObjectSerializer : ISharedObjectSerializer<SharedObject>
+class SharedObjectSerializer : IInterprocessObjectSerializer<SharedObject>
 {
    static SharedObjectSerializer()
    {
@@ -38,16 +38,16 @@ class SharedObjectSerializer : ISharedObjectSerializer<SharedObject>
 
 public class MachineWideSharedObjectTests : UniversalTestBase
 {
-   readonly List<IFileBackedProcessShared<SharedObject>> _created = [];
+   readonly List<IInterprocessObject<SharedObject>> _created = [];
 
    protected override void DisposeInternal() => _created.ForEach(obj => obj.Delete());
 
-   IFileBackedProcessShared<SharedObject> CreateAndDeleteFileWhenTestCompletes(string name)
+   IInterprocessObject<SharedObject> CreateAndDeleteFileWhenTestCompletes(string name)
    {
       var created = PCTBackingStoreAttribute.BackingStore switch
       {
-         ProcessSharedBackingStore.File => IAwaitableProcessShared.GlobalFileBacked(name, new SharedObjectSerializer(), () => new SharedObject(), CorruptionAction.ThrowException),
-         ProcessSharedBackingStore.MemoryMapped => IAwaitableProcessShared.GlobalMemoryMappedFileBacked(name, new SharedObjectSerializer(), () => new SharedObject(), CorruptionAction.ThrowException, maxCapacityInBytes: 4 * 1024),
+         ProcessSharedBackingStore.File => IInterprocessObject.CreateFileBacked(name, new SharedObjectSerializer(), () => new SharedObject(), CorruptionAction.ThrowException),
+         ProcessSharedBackingStore.MemoryMapped => IInterprocessObject.Create(name, new SharedObjectSerializer(), () => new SharedObject(), CorruptionAction.ThrowException, maxCapacityInBytes: 4 * 1024),
          _ => throw new ArgumentOutOfRangeException()
       };
       _created.Add(created);

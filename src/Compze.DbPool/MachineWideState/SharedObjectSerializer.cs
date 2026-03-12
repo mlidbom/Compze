@@ -1,10 +1,10 @@
 using Compze.Contracts;
-using Compze.Threading.Interprocess.ResourceAccess;
+using Compze.InterprocessObject;
 using MemoryPack;
 
 namespace Compze.DbPool.MachineWideState;
 
-class MemoryPackDbPoolStateSerializer : ISharedObjectSerializer<DbPoolState>
+class MemoryPackDbPoolStateSerializer : IInterprocessObjectSerializer<DbPoolState>
 {
    internal static readonly MemoryPackDbPoolStateSerializer Instance = new();
 

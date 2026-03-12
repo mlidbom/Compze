@@ -1,16 +1,16 @@
 using Compze.DbPool.MachineWideState;
+using Compze.InterprocessObject;
 using Compze.Internals.SystemCE;
 using Compze.Threading;
-using Compze.Threading.Interprocess.ResourceAccess;
 
 namespace Compze.DbPool;
 
 class DbPoolMachineWideState
 {
-   readonly IFileBackedProcessShared<DbPoolState> _shared;
+   readonly IInterprocessObject<DbPoolState> _shared;
 
    internal DbPoolMachineWideState(string uniqueName) =>
-      _shared = IAwaitableProcessShared.GlobalMemoryMappedFileBacked(
+      _shared = IInterprocessObject.Create(
          uniqueName,
          MemoryPackDbPoolStateSerializer.Instance,
          () => new DbPoolState(),

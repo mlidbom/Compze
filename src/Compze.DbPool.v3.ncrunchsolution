@@ -28,6 +28,8 @@
       <Value>UsePackageReference_Compze_Internals_Threading = true</Value>
       <Value>UsePackageReference_Compze_Internals_Transport = true</Value>
       <Value>UsePackageReference_Compze_Internals_Transport_AspNet = true</Value>
+      <Value>UsePackageReference_Compze_InterprocessObject = true</Value>
+      <Value>UsePackageReference_Compze_InterprocessObject_MemoryPack = true</Value>
       <Value>UsePackageReference_Compze_Must = true</Value>
       <Value>UsePackageReference_Compze_Tessaging = true</Value>
       <Value>UsePackageReference_Compze_Tessaging_Abstractions = true</Value>

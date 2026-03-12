@@ -1,9 +1,13 @@
-using Compze.Internals.SystemCE.Core.IOCE;
 using Compze.Threading.ResourceAccess;
 
 namespace Compze.Threading.Interprocess.ResourceAccess;
 
-///<summary>Factory for creating <see cref="IAwaitableProcessShared{TShared}"/> instances that protect a shared object with a cross-process <see cref="IAwaitableMutex"/>.</summary>
+///<summary>Factory for creating <see cref="IAwaitableProcessShared{TShared}"/> instances that protect a shared object with a cross-process <see cref="IAwaitableMutex"/>.
+///<para><b>NOTE:</b> The shared object is NOT shared across processes — each process holds its own instance in its own memory space.
+/// The mutex coordinates <em>timing</em> so only one process enters the critical section at a time.
+/// This is useful for protecting access to an external resource (file, port, database) rather than for sharing data between processes.
+/// For genuine cross-process shared state, use <c>Compze.InterprocessObject</c> instead.</para>
+///</summary>
 public partial interface IAwaitableProcessShared
 {
 #pragma warning disable CA2000
@@ -24,26 +28,6 @@ public partial interface IAwaitableProcessShared
       New(shared, ISignalingAwaitableMutex.Local(name, lockTimeout, waitTimeout, onAbandonedMutexException));
 
 #pragma warning restore CA2000
-
-   ///<summary>Returns a new <see cref="IFileBackedProcessShared{TShared}"/> that persists the shared object to a regular file, synchronized with a global <see cref="ISignalingAwaitableMutex"/>.
-   ///<para>Every read and update performs filesystem I/O (full read or write of the file). The file size matches the serialized data — there is no size limit.</para>
-   ///<para>Use this when simplicity matters more than throughput, or when the shared object may grow without a predictable upper bound.
-   /// For high-frequency access, consider <see cref="GlobalMemoryMappedFileBacked{TShared}"/> instead.</para>
-   ///</summary>
-   public static IFileBackedProcessShared<TShared> GlobalFileBacked<TShared>(string name, ISharedObjectSerializer<TShared> serializer, Func<TShared> createDefault, CorruptionAction corruptionAction) where TShared : class
-      => new FileBackedProcessShared<TShared>(name, fileName => DataDirectory.Value.GetOrCreateBinaryFile(fileName), serializer, createDefault, corruptionAction);
-
-   ///<summary>Returns a new <see cref="IFileBackedProcessShared{TShared}"/> that persists the shared object to a memory-mapped file, synchronized with a global <see cref="ISignalingAwaitableMutex"/>.
-   ///<para>Reads and writes are direct memory copies — no filesystem I/O per operation — making this significantly faster than <see cref="GlobalFileBacked{TShared}"/> for frequent access.
-   /// Like the regular file-backed version, the data is persisted to a real file on disk and survives process restarts and reboots.</para>
-   ///<para><b>WARNING:</b> <paramref name="maxCapacityInBytes"/> is a hard ceiling in bytes. If the serialized object exceeds this size, writes will throw <see cref="InvalidOperationException"/>.
-   /// The backing file on disk is always allocated at the full <paramref name="maxCapacityInBytes"/> size, regardless of how much data is actually stored.</para>
-   ///<para>This is a safety limit, not a performance tuning knob. Unused capacity has negligible cost — the OS only commits physical memory for pages actually written.
-   /// Really, the only real meaningful constraint is when serialization time becomes a problem in your specific usage scenario.
-   /// Set it comfortably above your worst-case serialized size.</para>
-   ///</summary>
-   public static IFileBackedProcessShared<TShared> GlobalMemoryMappedFileBacked<TShared>(string name, ISharedObjectSerializer<TShared> serializer, Func<TShared> createDefault, CorruptionAction corruptionAction, int maxCapacityInBytes) where TShared : class
-      => new FileBackedProcessShared<TShared>(name, fileName => new MemoryMappedBinaryFile(DataDirectory.Value.GetFilePath(fileName + ".mmf"), maxCapacityInBytes), serializer, createDefault, corruptionAction);
 
    ///<summary>Returns a new <see cref="IAwaitableProcessShared{TShared}"/> that protects <paramref name="shared"/> with the supplied <paramref name="mutex"/>.</summary>
    public static IAwaitableProcessShared<TShared> New<TShared>(TShared shared, IAwaitableMutex mutex) =>

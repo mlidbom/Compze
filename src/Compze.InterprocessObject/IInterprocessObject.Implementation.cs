@@ -1,23 +1,20 @@
 using Compze.Internals.SystemCE.Core.IOCE;
+using Compze.Threading;
+using Compze.Threading.Interprocess;
 
-namespace Compze.Threading.Interprocess.ResourceAccess;
+namespace Compze.InterprocessObject;
 
-public partial interface IAwaitableProcessShared
+public partial interface IInterprocessObject
 {
-   static readonly Lazy<DirectoryCE> DataDirectory = new(() => DirectoryCE.StandardDirectories
-                                                                          .LocalApplicationData
-                                                                          .GetOrCreateDirectory("Compze")
-                                                                          .GetOrCreateDirectory("SharedFiles"));
-
-   private sealed class FileBackedProcessShared<TObject> : IFileBackedProcessShared<TObject> where TObject : class
+   sealed class InterprocessObjectImplementation<TObject> : IInterprocessObject<TObject> where TObject : class
    {
       readonly IBinaryFile _file;
       readonly ISignalingAwaitableMutex _synchronizer;
-      readonly ISharedObjectSerializer<TObject> _serializer;
+      readonly IInterprocessObjectSerializer<TObject> _serializer;
       readonly Func<TObject> _createDefault;
       readonly CorruptionAction _corruptionAction;
 
-      public FileBackedProcessShared(string name, Func<string, IBinaryFile> createBinaryFile, ISharedObjectSerializer<TObject> serializer, Func<TObject> createDefault, CorruptionAction corruptionAction)
+      public InterprocessObjectImplementation(string name, Func<string, IBinaryFile> createBinaryFile, IInterprocessObjectSerializer<TObject> serializer, Func<TObject> createDefault, CorruptionAction corruptionAction)
       {
          _serializer = serializer;
          _createDefault = createDefault;
@@ -34,29 +31,26 @@ public partial interface IAwaitableProcessShared
          });
       }
 
-      public IAwaitableCriticalSection CriticalSection => _synchronizer;
-      public IAwaitableMutex Mutex => _synchronizer;
-
-      public TResult Read<TResult>(Func<TObject, TResult> read, LockTimeout? timeout = null)
+      public TResult Read<TResult>(Func<TObject, TResult> read)
       {
-         using(_synchronizer.TakeReadLock(timeout))
+         using(_synchronizer.TakeReadLock())
          {
             return read(Load());
          }
       }
 
-      public TResult ReadWhen<TResult>(Func<TObject, bool> condition, Func<TObject, TResult> read, WaitTimeout? timeout = null)
+      public TResult ReadWhen<TResult>(Func<TObject, bool> condition, Func<TObject, TResult> read, TimeSpan? timeout = null)
       {
          TObject? loaded = null;
-         using(_synchronizer.TakeReadLockWhen(() => condition(loaded = Load()), timeout))
+         using(_synchronizer.TakeReadLockWhen(() => condition(loaded = Load()), timeout != null ? new WaitTimeout(timeout.Value) : null))
          {
             return read(loaded!);
          }
       }
 
-      public TResult Update<TResult>(Func<TObject, TResult> update, LockTimeout? timeout = null)
+      public TResult Update<TResult>(Func<TObject, TResult> update)
       {
-         using(_synchronizer.TakeUpdateLock(timeout))
+         using(_synchronizer.TakeUpdateLock())
          {
             var instance = Load();
             var result = update(instance);
@@ -65,10 +59,10 @@ public partial interface IAwaitableProcessShared
          }
       }
 
-      public TResult UpdateWhen<TResult>(Func<TObject, bool> condition, Func<TObject, TResult> update, WaitTimeout? timeout = null)
+      public TResult UpdateWhen<TResult>(Func<TObject, bool> condition, Func<TObject, TResult> update, TimeSpan? timeout = null)
       {
          TObject? loaded = null;
-         using(_synchronizer.TakeUpdateLockWhen(() => condition(loaded = Load()), timeout))
+         using(_synchronizer.TakeUpdateLockWhen(() => condition(loaded = Load()), timeout != null ? new WaitTimeout(timeout.Value) : null))
          {
             var result = update(loaded!);
             Save(loaded!);
@@ -76,12 +70,12 @@ public partial interface IAwaitableProcessShared
          }
       }
 
-      public bool TryUpdateWhen(Func<TObject, bool> condition, Action<TObject> action, WaitTimeout? timeout = null)
+      public bool TryUpdateWhen(Func<TObject, bool> condition, Action<TObject> update, TimeSpan? timeout = null)
       {
          TObject? loaded = null;
-         using var updateLock = _synchronizer.TryTakeUpdateLockWhen(() => condition(loaded = Load()), timeout);
+         using var updateLock = _synchronizer.TryTakeUpdateLockWhen(() => condition(loaded = Load()), timeout != null ? new WaitTimeout(timeout.Value) : null);
          if(updateLock == null) return false;
-         action(loaded!);
+         update(loaded!);
          Save(loaded!);
          return true;
       }

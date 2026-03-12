@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <Version>0.1.0-alpha.1</Version>
+    <!-- TODO: Remove once all public API members have XML documentation comments -->
+    <NoWarn>CS1591</NoWarn>
+    <Description>MemoryPack support for Compze.InterprocessObject. Create an object shared between processes in a single line of code.</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="MemoryPack" Version="1.21.4" />
+  </ItemGroup>
+  <!-- Compze.Contracts — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' == 'true'">
+    <PackageReference Include="Compze.Contracts" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' != 'true'">
+    <ProjectReference Include="..\Compze.Contracts\Compze.Contracts.csproj" />
+  </ItemGroup>
+  <!-- Compze.InterprocessObject — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_InterprocessObject)' == 'true'">
+    <PackageReference Include="Compze.InterprocessObject" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_InterprocessObject)' != 'true'">
+    <ProjectReference Include="..\Compze.InterprocessObject\Compze.InterprocessObject.csproj" />
+  </ItemGroup>
+</Project>

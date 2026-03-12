@@ -30,6 +30,10 @@
   <Folder Name="/Utilities/Compze.DbPool/Specifications/">
     <Project Path="../test/Compze.DbPool.Tests/Compze.DbPool.Tests.csproj" />
   </Folder>
+  <Folder Name="/Utilities/Compze.InterprocessObject/">
+    <Project Path="Compze.InterprocessObject.MemoryPack/Compze.InterprocessObject.MemoryPack.csproj" />
+    <Project Path="Compze.InterprocessObject/Compze.InterprocessObject.csproj" />
+  </Folder>
   <Folder Name="/Utilities/Compze.Must/">
     <Project Path="Compze.Must/Compze.Must.csproj" />
   </Folder>

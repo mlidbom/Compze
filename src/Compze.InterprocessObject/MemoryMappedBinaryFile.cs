@@ -1,7 +1,7 @@
 using System.IO.MemoryMappedFiles;
 using Compze.Internals.SystemCE.Core.IOCE;
 
-namespace Compze.Threading.Interprocess;
+namespace Compze.InterprocessObject;
 
 class MemoryMappedBinaryFile : IBinaryFile, IDisposable
 {
@@ -76,15 +76,17 @@ class MemoryMappedBinaryFile : IBinaryFile, IDisposable
       if(backingFileStream.Length < totalSize)
          backingFileStream.SetLength(totalSize);
 
+      var mappingSize = Math.Max(totalSize, backingFileStream.Length);
+
       _memoryMappedFile = MemoryMappedFile.CreateFromFile(
          backingFileStream,
          mapName: null,
-         capacity: totalSize,
+         capacity: mappingSize,
          MemoryMappedFileAccess.ReadWrite,
          HandleInheritability.None,
          leaveOpen: false);
 
-      _accessor = _memoryMappedFile.CreateViewAccessor(0, totalSize, MemoryMappedFileAccess.ReadWrite);
+      _accessor = _memoryMappedFile.CreateViewAccessor(0, mappingSize, MemoryMappedFileAccess.ReadWrite);
 
       byte* pointer = null;
       _accessor.SafeMemoryMappedViewHandle.AcquirePointer(ref pointer);

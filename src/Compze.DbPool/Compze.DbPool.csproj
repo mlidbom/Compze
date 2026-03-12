@@ -52,6 +52,13 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Threading)' != 'true'">
     <ProjectReference Include="..\Compze.Internals.Threading\Compze.Internals.Threading.csproj" />
   </ItemGroup>
+  <!-- Compze.InterprocessObject — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_InterprocessObject)' == 'true'">
+    <PackageReference Include="Compze.InterprocessObject" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_InterprocessObject)' != 'true'">
+    <ProjectReference Include="..\Compze.InterprocessObject\Compze.InterprocessObject.csproj" />
+  </ItemGroup>
   <!-- Compze.Threading — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Threading)' == 'true'">
     <PackageReference Include="Compze.Threading" Version="*-*" />

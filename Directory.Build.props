@@ -80,6 +80,10 @@
     <UsePackageReference_Compze_Internals_Transport Condition="'$(UsePackageReference_Compze_Internals_Transport)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Internals.Transport.csproj|'))">true</UsePackageReference_Compze_Internals_Transport>
     <!-- Compze.Internals.Transport.AspNet -->
     <UsePackageReference_Compze_Internals_Transport_AspNet Condition="'$(UsePackageReference_Compze_Internals_Transport_AspNet)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Internals.Transport.AspNet.csproj|'))">true</UsePackageReference_Compze_Internals_Transport_AspNet>
+    <!-- Compze.InterprocessObject -->
+    <UsePackageReference_Compze_InterprocessObject Condition="'$(UsePackageReference_Compze_InterprocessObject)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.InterprocessObject.csproj|'))">true</UsePackageReference_Compze_InterprocessObject>
+    <!-- Compze.InterprocessObject.MemoryPack -->
+    <UsePackageReference_Compze_InterprocessObject_MemoryPack Condition="'$(UsePackageReference_Compze_InterprocessObject_MemoryPack)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.InterprocessObject.MemoryPack.csproj|'))">true</UsePackageReference_Compze_InterprocessObject_MemoryPack>
     <!-- Compze.Must -->
     <UsePackageReference_Compze_Must Condition="'$(UsePackageReference_Compze_Must)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Must.csproj|'))">true</UsePackageReference_Compze_Must>
     <!-- Compze.Tessaging -->
