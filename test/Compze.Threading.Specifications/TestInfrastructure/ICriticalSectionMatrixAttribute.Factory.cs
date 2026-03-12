@@ -26,7 +26,7 @@ partial class ICriticalSectionMatrixAttribute
          };
       }
 
-      static string UniqueName() => $"{typeof(TTest).FullName}.{Interlocked.Increment(ref _counter)}";
+      static string UniqueName() => $"{typeof(TTest).FullName}.P{Environment.ProcessId}.{Interlocked.Increment(ref _counter)}";
 
       public void Dispose()
       {

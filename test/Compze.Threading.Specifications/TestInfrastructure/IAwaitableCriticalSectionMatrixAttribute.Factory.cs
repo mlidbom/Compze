@@ -29,7 +29,7 @@ partial class IAwaitableCriticalSectionMatrixAttribute
 
       IPollingAwaitableMutex CreatePollingAwaitableMutex(LockTimeout? lockTimeout, WaitTimeout? waitTimeout)
       {
-         var uniqueName = $"{typeof(TTest).FullName}.{Interlocked.Increment(ref _counter)}";
+         var uniqueName = $"{typeof(TTest).FullName}.P{Environment.ProcessId}.{Interlocked.Increment(ref _counter)}";
          var mutex = IPollingAwaitableMutex.Global(uniqueName, lockTimeout, waitTimeout, PollingInterval.Milliseconds(10));
          _disposables.Add(mutex);
          return mutex;
@@ -37,7 +37,7 @@ partial class IAwaitableCriticalSectionMatrixAttribute
 
       ISignalingAwaitableMutex CreateSignalingAwaitableMutex(LockTimeout? lockTimeout, WaitTimeout? waitTimeout)
       {
-         var uniqueName = $"{typeof(TTest).FullName}.{Interlocked.Increment(ref _counter)}";
+         var uniqueName = $"{typeof(TTest).FullName}.P{Environment.ProcessId}.{Interlocked.Increment(ref _counter)}";
          var mutex = ISignalingAwaitableMutex.Global(uniqueName, lockTimeout, waitTimeout);
          _disposables.Add(mutex);
          return mutex;
