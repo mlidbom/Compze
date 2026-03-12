@@ -101,21 +101,21 @@ Total unique IAwaitableShared\<T\> variants: **8**
 
 **Coverage: Complete** — all ICriticalSection implementations (Monitor + Global/Local Mutex) are tested.
 
-### [IAwaitableCriticalSectionMatrix] — `AwaitableCriticalSectionImplementation` enum
+### [IAwaitableCriticalSectionMatrix] — `IAwaitableCriticalSectionMatrixAttribute.Implementation` enum
 
 | Value | Creates | Scope |
 |---|---|---|
 | `Monitor` | `IAwaitableMonitor.New()` | In-process |
-| `Mutex` | `IPollingAwaitableMutex.Global()` | **Global only** |
-| `SignalingMutex` | `ISignalingAwaitableMutex.Global()` | **Global only** |
+| `GlobalPollingMutex` | `IPollingAwaitableMutex.Global()` | Global |
+| `LocalPollingMutex` | `IPollingAwaitableMutex.Local()` | Local |
+| `GlobalSignalingMutex` | `ISignalingAwaitableMutex.Global()` | Global |
+| `LocalSignalingMutex` | `ISignalingAwaitableMutex.Local()` | Local |
 
 **Used by:**
 - `IAwaitableCriticalSection_specification` — tests TakeUpdateLock, TakeReadLock, TakeUpdateLockWhen, cursor-based waits
 - `ContentionCount_specification` — tests contention tracking
 
-**Missing from matrix:**
-- `IPollingAwaitableMutex.Local()` — never tested
-- `ISignalingAwaitableMutex.Local()` — never tested
+**Coverage: Complete** — all IAwaitableCriticalSection implementations (Monitor + Global/Local × Polling/Signaling Mutex) are tested.
 
 ### [InterprocessObjectMatrix] — `InterprocessObjectBackingStore` enum
 
@@ -140,15 +140,9 @@ All ICriticalSection implementations are now in the matrix: Monitor, GlobalMutex
 
 (The earlier analysis incorrectly assumed awaitable mutex types implement ICriticalSection. They don't — `ICriticalSection` and `IAwaitableCriticalSection` are parallel branches under `ILockInfo`.)
 
-### Gap 2: IAwaitableCriticalSection — missing Local scope variants
+### ~~Gap 2: IAwaitableCriticalSection — RESOLVED~~
 
-| Should be in `AwaitableCriticalSectionImplementation` | Currently tested | Status |
-|---|---|---|
-| Monitor | Yes | ✅ |
-| Global PollingAwaitableMutex | Yes | ✅ |
-| Global SignalingAwaitableMutex | Yes | ✅ |
-| Local PollingAwaitableMutex | No | ❌ |
-| Local SignalingAwaitableMutex | No | ❌ |
+All IAwaitableCriticalSection implementations are now in the matrix: Monitor, GlobalPollingMutex, LocalPollingMutex, GlobalSignalingMutex, LocalSignalingMutex.
 
 ### Gap 3: IShared\<T\> — only tested as IThreadShared, not IProcessShared
 
@@ -191,7 +185,7 @@ No test file exists that tests the `IAwaitableProcessShared<T>` interface contra
 | Attribute | Enum | Values | Dimensions | Tests against interface |
 |---|---|---|---|---|
 | `[ICriticalSectionMatrix]` | `ICriticalSectionMatrixAttribute.Implementation` | Monitor, GlobalMutex, LocalMutex | 3 | ICriticalSection, IShared |
-| `[IAwaitableCriticalSectionMatrix]` | `IAwaitableCriticalSectionMatrixAttribute.Implementation` | Monitor, Mutex, SignalingMutex | 3 | IAwaitableCriticalSection |
+| `[IAwaitableCriticalSectionMatrix]` | `IAwaitableCriticalSectionMatrixAttribute.Implementation` | Monitor, GlobalPollingMutex, LocalPollingMutex, GlobalSignalingMutex, LocalSignalingMutex | 5 | IAwaitableCriticalSection |
 | `[InterprocessObjectMatrix]` | `InterprocessObjectBackingStore` | File, MemoryMapped | 2 | IInterprocessObject |
 
 ### Missing — interfaces with no specification testing all implementations
@@ -199,13 +193,13 @@ No test file exists that tests the `IAwaitableProcessShared<T>` interface contra
 | Interface | Has specification? | Implementations never tested against it |
 |---|---|---|
 | `ICriticalSection` | ✅ (`ICriticalSection_specification`) | **All covered** (Monitor, GlobalMutex, LocalMutex) |
-| `IAwaitableCriticalSection` | ✅ (`IAwaitableCriticalSection_specification`) | Local PollingMutex, Local SignalingMutex |
+| `IAwaitableCriticalSection` | ✅ (`IAwaitableCriticalSection_specification`) | **All covered** (Monitor, Global/Local × Polling/Signaling Mutex) |
 | `IShared<T>` | Partial (`IThreadShared_specification`) | ProcessShared (Global/Local) |
 | `IAwaitableShared<T>` | ❌ **No specification** | All 8 implementations |
 | `IProcessShared<T>` | Partial (XF, not matrix) | Global/Local not matrix-varied |
 | `IAwaitableProcessShared<T>` | ❌ **No specification** | All 6 implementations |
 | `IInterprocessObject<T>` | Partial (persistence only) | Never tested as IAwaitableShared/IAwaitableProcessShared |
 
-### Missing — scope dimension
+### ~~Missing — scope dimension~~ RESOLVED
 
-The `ICriticalSectionMatrix` now covers Global/Local for `IMutex`. The `IAwaitableCriticalSectionMatrix` still only tests Global scope — Local variants of `IPollingAwaitableMutex` and `ISignalingAwaitableMutex` are untested.
+Both `ICriticalSectionMatrix` and `IAwaitableCriticalSectionMatrix` now cover Global/Local for all mutex types.

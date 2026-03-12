@@ -5,7 +5,9 @@ partial class IAwaitableCriticalSectionMatrixAttribute
    public enum Implementation
    {
       Monitor,
-      Mutex,
-      SignalingMutex
+      GlobalPollingMutex,
+      LocalPollingMutex,
+      GlobalSignalingMutex,
+      LocalSignalingMutex
    }
 }
