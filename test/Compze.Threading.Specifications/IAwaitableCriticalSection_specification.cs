@@ -15,18 +15,18 @@ namespace Compze.Threading.Specifications;
 [Collection(nameof(NonParallelCollection))]
 public class IAwaitableLock_specification : UniversalTestBase
 {
-   readonly AwaitableCriticalSectionFactory<IAwaitableLock_specification> _lockFactory = new();
+   readonly IAwaitableCriticalSectionMatrixAttribute.Factory<IAwaitableLock_specification> _factory = new();
    readonly TestingTaskRunner _runner = TestingTaskRunner.WithTimeout(30.Seconds());
 
    protected override void DisposeInternal()
    {
       _runner.Dispose();
-      _lockFactory.Dispose();
+      _factory.Dispose();
    }
 
    [IAwaitableCriticalSectionMatrix] public void When_one_thread_has_UpdateLock_other_thread_is_blocked_until_first_thread_disposes_lock_()
    {
-      var criticalSection = _lockFactory.CreateAwaitableLock(LockTimeout.Seconds(30));
+      var criticalSection = _factory.Create(LockTimeout.Seconds(30));
       var insideLock = IThreadGate.NewClosed(WaitTimeout.Seconds(30), "insideLock");
 
       _runner.Run(
@@ -55,13 +55,13 @@ public class IAwaitableLock_specification : UniversalTestBase
    {
       [IAwaitableCriticalSectionMatrix] public void defaults_to_LockTimeout_Default_when_no_timeout_is_specified()
       {
-         var criticalSection = _lockFactory.CreateAwaitableLock();
+         var criticalSection = _factory.Create();
          criticalSection.LockTimeout.Must().Be(LockTimeout.Default);
       }
 
       [IAwaitableCriticalSectionMatrix] public void returns_the_timeout_specified_at_creation()
       {
-         var criticalSection = _lockFactory.CreateAwaitableLock(LockTimeout.Seconds(7));
+         var criticalSection = _factory.Create(LockTimeout.Seconds(7));
          criticalSection.LockTimeout.Must().Be(LockTimeout.Seconds(7));
       }
    }
@@ -70,13 +70,13 @@ public class IAwaitableLock_specification : UniversalTestBase
    {
       [IAwaitableCriticalSectionMatrix] public void defaults_to_WaitTimeout_Default_when_no_timeout_is_specified()
       {
-         var criticalSection = _lockFactory.CreateAwaitableLock();
+         var criticalSection = _factory.Create();
          criticalSection.WaitTimeout.Must().Be(WaitTimeout.Default);
       }
 
       [IAwaitableCriticalSectionMatrix] public void returns_the_timeout_specified_at_creation()
       {
-         var criticalSection = _lockFactory.CreateAwaitableLock(WaitTimeout.Seconds(7));
+         var criticalSection = _factory.Create(WaitTimeout.Seconds(7));
          criticalSection.WaitTimeout.Must().Be(WaitTimeout.Seconds(7));
       }
    }
@@ -96,7 +96,7 @@ public class IAwaitableLock_specification : UniversalTestBase
 
       Exception RunScenario(TimeSpan ownerThreadBlockTime, LockTimeout lockTimeout, WaitTimeout? timeToWaitForStackTrace = null)
       {
-         var criticalSection = _lockFactory.CreateAwaitableLock(lockTimeout);
+         var criticalSection = _factory.Create(lockTimeout);
          if(timeToWaitForStackTrace.HasValue)
          {
 #pragma warning disable CS0618 // Type or member is obsolete
@@ -135,14 +135,14 @@ public class IAwaitableLock_specification : UniversalTestBase
    {
       [IAwaitableCriticalSectionMatrix] public void Returns_lock_when_condition_is_immediately_true()
       {
-         var criticalSection = _lockFactory.CreateAwaitableLock();
+         var criticalSection = _factory.Create();
          using var taken = criticalSection.TakeUpdateLockWhen(() => true);
          taken.Must().NotBeNull();
       }
 
       [IAwaitableCriticalSectionMatrix] public void Waits_until_condition_becomes_true()
       {
-         var criticalSection = _lockFactory.CreateAwaitableLock();
+         var criticalSection = _factory.Create();
          var conditionMet = false;
          var lockAcquired = IThreadGate.NewOpen(WaitTimeout.Seconds(10), "afterLockAcquired");
 
@@ -160,7 +160,7 @@ public class IAwaitableLock_specification : UniversalTestBase
       }
 
       [IAwaitableCriticalSectionMatrix] public void Throws_AwaitingConditionTimeoutException_when_condition_never_becomes_true() =>
-         Invoking(() => _lockFactory.CreateAwaitableLock(WaitTimeout.Milliseconds(100))
+         Invoking(() => _factory.Create(WaitTimeout.Milliseconds(100))
                                     .TakeUpdateLockWhen(() => false))
            .Must().Throw<AwaitingConditionTimeoutException>();
    }
@@ -169,13 +169,13 @@ public class IAwaitableLock_specification : UniversalTestBase
    {
       [IAwaitableCriticalSectionMatrix] public void Returns_lock_when_condition_is_immediately_true()
       {
-         var criticalSection = _lockFactory.CreateAwaitableLock();
+         var criticalSection = _factory.Create();
          using var taken = criticalSection.TakeReadLockWhen(() => true);
          taken.Must().NotBeNull();
       }
 
       [IAwaitableCriticalSectionMatrix] public void Throws_AwaitingConditionTimeoutException_when_condition_never_becomes_true() =>
-         Invoking(() => _lockFactory.CreateAwaitableLock(WaitTimeout.Milliseconds(100))
+         Invoking(() => _factory.Create(WaitTimeout.Milliseconds(100))
                                     .TakeReadLockWhen(() => false))
            .Must().Throw<AwaitingConditionTimeoutException>();
    }
@@ -184,14 +184,14 @@ public class IAwaitableLock_specification : UniversalTestBase
    {
       [IAwaitableCriticalSectionMatrix] public void Returns_lock_when_condition_is_immediately_true()
       {
-         var criticalSection = _lockFactory.CreateAwaitableLock();
+         var criticalSection = _factory.Create();
          using var taken = criticalSection.TryTakeReadLockWhen(() => true);
          taken.Must().NotBeNull();
       }
 
       [IAwaitableCriticalSectionMatrix] public void Returns_null_when_condition_never_becomes_true()
       {
-         var criticalSection = _lockFactory.CreateAwaitableLock(WaitTimeout.Milliseconds(100));
+         var criticalSection = _factory.Create(WaitTimeout.Milliseconds(100));
          var result = criticalSection.TryTakeReadLockWhen(() => false);
          result.Must().BeNull();
       }
@@ -201,13 +201,13 @@ public class IAwaitableLock_specification : UniversalTestBase
    {
       [IAwaitableCriticalSectionMatrix] public void Returns_true_when_condition_is_immediately_true()
       {
-         var criticalSection = _lockFactory.CreateAwaitableLock();
+         var criticalSection = _factory.Create();
          criticalSection.TryAwait(() => true).Must().BeTrue();
       }
 
       [IAwaitableCriticalSectionMatrix] public void Returns_true_when_condition_becomes_true_within_timeout()
       {
-         var criticalSection = _lockFactory.CreateAwaitableLock();
+         var criticalSection = _factory.Create();
          var conditionMet = false;
          var awaitCompleted = IThreadGate.NewOpen(WaitTimeout.Seconds(5), "awaitCompleted");
 
@@ -224,7 +224,7 @@ public class IAwaitableLock_specification : UniversalTestBase
 
       [IAwaitableCriticalSectionMatrix] public void Returns_false_when_condition_never_becomes_true_within_timeout()
       {
-         var criticalSection = _lockFactory.CreateAwaitableLock(WaitTimeout.Milliseconds(100));
+         var criticalSection = _factory.Create(WaitTimeout.Milliseconds(100));
          criticalSection.TryAwait(() => false).Must().BeFalse();
       }
    }

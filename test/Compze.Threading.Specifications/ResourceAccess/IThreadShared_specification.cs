@@ -10,21 +10,21 @@ namespace Compze.Threading.Specifications.ResourceAccess;
 [Collection(nameof(NonParallelCollection))]
 public class IThreadShared_specification : UniversalTestBase
 {
-   readonly CriticalSectionFactory<IThreadShared_specification> _lockFactory = new();
+   readonly ICriticalSectionMatrixAttribute.Factory<IThreadShared_specification> _factory = new();
 
-   protected override void DisposeInternal() => _lockFactory.Dispose();
+   protected override void DisposeInternal() => _factory.Dispose();
 
    public class Locked_with_Func : IThreadShared_specification
    {
       [ICriticalSectionMatrix] public void returns_the_value_from_the_function()
       {
-         var shared = IShared.New(42, _lockFactory.CreateLock());
+         var shared = IShared.New(42, _factory.Create());
          shared.Locked(value => value).Must().Be(42);
       }
 
       [ICriticalSectionMatrix] public void provides_the_shared_value_to_the_function()
       {
-         var shared = IShared.New("hello", _lockFactory.CreateLock());
+         var shared = IShared.New("hello", _factory.Create());
          shared.Locked(value => value.Length).Must().Be(5);
       }
    }
@@ -34,7 +34,7 @@ public class IThreadShared_specification : UniversalTestBase
       [ICriticalSectionMatrix] public void executes_the_action_with_the_shared_value()
       {
          var list = new List<int>();
-         var shared = IShared.New(list, _lockFactory.CreateLock());
+         var shared = IShared.New(list, _factory.Create());
          shared.Locked(value => value.Add(42));
          list.Must().HaveCount(1);
       }
@@ -44,7 +44,7 @@ public class IThreadShared_specification : UniversalTestBase
    {
       [ICriticalSectionMatrix] public void exposes_ContentionCount()
       {
-         var criticalSection = _lockFactory.CreateLock();
+         var criticalSection = _factory.Create();
          var shared = IShared.New(new object(), criticalSection);
 
          using(shared.CriticalSection.TakeLock()) {}
@@ -54,7 +54,7 @@ public class IThreadShared_specification : UniversalTestBase
 
       [ICriticalSectionMatrix] public void shared_instances_with_same_lock_report_same_Lock()
       {
-         var criticalSection = _lockFactory.CreateLock();
+         var criticalSection = _factory.Create();
          var sharedA = IShared.New(new object(), criticalSection);
          var sharedB = IShared.New(new object(), criticalSection);
 

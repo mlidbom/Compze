@@ -5,10 +5,11 @@ using Compze.xUnitMatrix;
 
 namespace Compze.Threading.Specifications.TestInfrastructure;
 
-sealed class IAwaitableCriticalSectionMatrixAttribute(
+#pragma warning disable CA1813 // Avoid unsealed attributes — partial classes cannot use sealed keyword
+partial class IAwaitableCriticalSectionMatrixAttribute(
    [CallerFilePath] string? sourceFilePath = null,
    [CallerLineNumber] int sourceLineNumber = -1)
-   : MatrixTheoryAttribute<AwaitableCriticalSectionImplementation>(
+   : MatrixTheoryAttribute<IAwaitableCriticalSectionMatrixAttribute.Implementation>(
       configurationFileName: null,
       useTestMethodArgument: false,
       sourceFilePath: sourceFilePath,

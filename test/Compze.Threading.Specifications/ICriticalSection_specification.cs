@@ -16,26 +16,26 @@ namespace Compze.Threading.Specifications;
 [Collection(nameof(NonParallelCollection))]
 public class ILock_specification : UniversalTestBase
 {
-   readonly CriticalSectionFactory<ILock_specification> _lockFactory = new();
+   readonly ICriticalSectionMatrixAttribute.Factory<ILock_specification> _factory = new();
    readonly TestingTaskRunner _runner = new(timeout: 30.Seconds());
 
    protected override void DisposeInternal()
    {
       _runner.Dispose();
-      _lockFactory.Dispose();
+      _factory.Dispose();
    }
 
    public class Locked_with_Func : ILock_specification
    {
       [ICriticalSectionMatrix] public void returns_the_value_from_the_function()
       {
-         var criticalSection = _lockFactory.CreateLock();
+         var criticalSection = _factory.Create();
          criticalSection.Locked(() => 42).Must().Be(42);
       }
 
       [ICriticalSectionMatrix] public void propagates_exceptions_from_the_function()
       {
-         var criticalSection = _lockFactory.CreateLock();
+         var criticalSection = _factory.Create();
          Invoking(() => criticalSection.Locked<int>(() => throw new InvalidOperationException("test")))
            .Must().Throw<InvalidOperationException>()
            .Which.Message.Must().Be("test");
@@ -46,7 +46,7 @@ public class ILock_specification : UniversalTestBase
    {
       [ICriticalSectionMatrix] public void executes_the_action()
       {
-         var criticalSection = _lockFactory.CreateLock();
+         var criticalSection = _factory.Create();
          var executed = false;
          criticalSection.Locked(() => executed = true);
          executed.Must().BeTrue();
@@ -54,7 +54,7 @@ public class ILock_specification : UniversalTestBase
 
       [ICriticalSectionMatrix] public void propagates_exceptions_from_the_function()
       {
-         var criticalSection = _lockFactory.CreateLock();
+         var criticalSection = _factory.Create();
          Invoking(() => criticalSection.Locked(() => throw new InvalidOperationException("test")))
            .Must().Throw<InvalidOperationException>()
            .Which.Message.Must().Be("test");
@@ -65,7 +65,7 @@ public class ILock_specification : UniversalTestBase
    {
       [ICriticalSectionMatrix] public void provides_mutual_exclusion_across_threads()
       {
-         var criticalSection = _lockFactory.CreateLock(LockTimeout.Seconds(30));
+         var criticalSection = _factory.Create(LockTimeout.Seconds(30));
          var insideLockGate = IThreadGate.NewClosed(WaitTimeout.Seconds(30), "insideLock");
 
          _runner.Run(
@@ -80,14 +80,14 @@ public class ILock_specification : UniversalTestBase
 
       [ICriticalSectionMatrix] public void supports_reentrant_locking_from_the_same_thread()
       {
-         var criticalSection = _lockFactory.CreateLock();
+         var criticalSection = _factory.Create();
          var result = criticalSection.Locked(() => criticalSection.Locked(() => 42));
          result.Must().Be(42);
       }
 
       [ICriticalSectionMatrix] public void releases_the_lock_even_when_the_function_throws()
       {
-         var criticalSection = _lockFactory.CreateLock(LockTimeout.Seconds(30));
+         var criticalSection = _factory.Create(LockTimeout.Seconds(30));
 
          try { criticalSection.Locked<int>(() => throw new InvalidOperationException()); }
          catch(InvalidOperationException) {}
@@ -97,7 +97,7 @@ public class ILock_specification : UniversalTestBase
 
       [ICriticalSectionMatrix] public void owning_thread_can_reenter_and_lock_is_only_released_when_outermost_lock_is_disposed()
       {
-         var criticalSection = _lockFactory.CreateLock(LockTimeout.Seconds(1));
+         var criticalSection = _factory.Create(LockTimeout.Seconds(1));
          using(criticalSection.TakeLock())
          {
             using(criticalSection.TakeLock()) {}
@@ -114,13 +114,13 @@ public class ILock_specification : UniversalTestBase
    {
       [ICriticalSectionMatrix] public void defaults_to_LockTimeout_Default_when_no_timeout_is_specified()
       {
-         var criticalSection = _lockFactory.CreateLock();
+         var criticalSection = _factory.Create();
          criticalSection.LockTimeout.Must().Be(LockTimeout.Default);
       }
 
       [ICriticalSectionMatrix] public void returns_the_timeout_specified_at_creation()
       {
-         var criticalSection = _lockFactory.CreateLock(LockTimeout.Seconds(7));
+         var criticalSection = _factory.Create(LockTimeout.Seconds(7));
          criticalSection.LockTimeout.Must().Be(LockTimeout.Seconds(7));
       }
    }
@@ -129,7 +129,7 @@ public class ILock_specification : UniversalTestBase
    {
       [ICriticalSectionMatrix] public void is_zero_when_no_contention_occurs()
       {
-         var criticalSection = _lockFactory.CreateLock();
+         var criticalSection = _factory.Create();
 
          using(criticalSection.TakeLock()) {}
 
@@ -140,7 +140,7 @@ public class ILock_specification : UniversalTestBase
 
       [ICriticalSectionMatrix] public void increments_when_another_thread_contends_for_the_lock()
       {
-         var criticalSection = _lockFactory.CreateLock(LockTimeout.Seconds(30));
+         var criticalSection = _factory.Create(LockTimeout.Seconds(30));
 
          var blockingLock = criticalSection.TakeLock();
 
@@ -170,7 +170,7 @@ public class ILock_specification : UniversalTestBase
 
       Exception RunScenario(TimeSpan ownerThreadBlockTime, LockTimeout monitorTimeout, WaitTimeout? timeToWaitForStackTrace = null)
       {
-         var criticalSection = _lockFactory.CreateLock(monitorTimeout);
+         var criticalSection = _factory.Create(monitorTimeout);
          if(timeToWaitForStackTrace.HasValue)
          {
 #pragma warning disable CS0618 // Type or member is obsolete

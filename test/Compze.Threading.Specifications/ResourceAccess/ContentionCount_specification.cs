@@ -14,16 +14,16 @@ namespace Compze.Threading.Specifications.ResourceAccess;
 // ReSharper disable once InconsistentNaming
 public class ContentionCount_specification : UniversalTestBase
 {
-   readonly AwaitableCriticalSectionFactory<ContentionCount_specification> _lockFactory = new();
+   readonly IAwaitableCriticalSectionMatrixAttribute.Factory<ContentionCount_specification> _factory = new();
    readonly TestingTaskRunner _runner = new(30.Seconds());
 
-   protected override void DisposeInternal() => _lockFactory.Dispose();
+   protected override void DisposeInternal() => _factory.Dispose();
 
    public class IAwaitableCriticalSection_ContentionCount : ContentionCount_specification
    {
       [IAwaitableCriticalSectionMatrix] public void Is_zero_when_no_contention_occurs()
       {
-         var criticalSection = _lockFactory.CreateAwaitableLock();
+         var criticalSection = _factory.Create();
 
          using(criticalSection.TakeUpdateLock()) {}
          using(criticalSection.TakeReadLock()) {}
@@ -33,7 +33,7 @@ public class ContentionCount_specification : UniversalTestBase
 
       [IAwaitableCriticalSectionMatrix] public void Increments_when_another_thread_contends_for_the_lock()
       {
-         var criticalSection = _lockFactory.CreateAwaitableLock();
+         var criticalSection = _factory.Create();
 
          var blockingLock = criticalSection.TakeUpdateLock();
 
