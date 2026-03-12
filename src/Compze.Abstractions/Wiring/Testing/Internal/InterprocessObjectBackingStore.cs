@@ -1,6 +1,6 @@
 namespace Compze.Abstractions.Wiring.Testing.Internal;
 
-public enum ProcessSharedBackingStore
+public enum InterprocessObjectBackingStore
 {
    File = 1,
    MemoryMapped = 2

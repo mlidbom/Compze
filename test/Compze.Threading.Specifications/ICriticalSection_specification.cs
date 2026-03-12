@@ -16,7 +16,7 @@ namespace Compze.Threading.Specifications;
 [Collection(nameof(NonParallelCollection))]
 public class ILock_specification : UniversalTestBase
 {
-   readonly LockFactory<ILock_specification> _lockFactory = new();
+   readonly CriticalSectionFactory<ILock_specification> _lockFactory = new();
    readonly TestingTaskRunner _runner = new(timeout: 30.Seconds());
 
    protected override void DisposeInternal()
@@ -27,13 +27,13 @@ public class ILock_specification : UniversalTestBase
 
    public class Locked_with_Func : ILock_specification
    {
-      [PCTLock] public void returns_the_value_from_the_function()
+      [ICriticalSectionMatrix] public void returns_the_value_from_the_function()
       {
          var criticalSection = _lockFactory.CreateLock();
          criticalSection.Locked(() => 42).Must().Be(42);
       }
 
-      [PCTLock] public void propagates_exceptions_from_the_function()
+      [ICriticalSectionMatrix] public void propagates_exceptions_from_the_function()
       {
          var criticalSection = _lockFactory.CreateLock();
          Invoking(() => criticalSection.Locked<int>(() => throw new InvalidOperationException("test")))
@@ -44,7 +44,7 @@ public class ILock_specification : UniversalTestBase
 
    public class Locked_with_Action : ILock_specification
    {
-      [PCTLock] public void executes_the_action()
+      [ICriticalSectionMatrix] public void executes_the_action()
       {
          var criticalSection = _lockFactory.CreateLock();
          var executed = false;
@@ -52,7 +52,7 @@ public class ILock_specification : UniversalTestBase
          executed.Must().BeTrue();
       }
 
-      [PCTLock] public void propagates_exceptions_from_the_function()
+      [ICriticalSectionMatrix] public void propagates_exceptions_from_the_function()
       {
          var criticalSection = _lockFactory.CreateLock();
          Invoking(() => criticalSection.Locked(() => throw new InvalidOperationException("test")))
@@ -63,7 +63,7 @@ public class ILock_specification : UniversalTestBase
 
    public class TakeLock : ILock_specification
    {
-      [PCTLock] public void provides_mutual_exclusion_across_threads()
+      [ICriticalSectionMatrix] public void provides_mutual_exclusion_across_threads()
       {
          var criticalSection = _lockFactory.CreateLock(LockTimeout.Seconds(30));
          var insideLockGate = IThreadGate.NewClosed(WaitTimeout.Seconds(30), "insideLock");
@@ -78,14 +78,14 @@ public class ILock_specification : UniversalTestBase
          insideLockGate.AwaitPassedThroughCountEqualTo(2);
       }
 
-      [PCTLock] public void supports_reentrant_locking_from_the_same_thread()
+      [ICriticalSectionMatrix] public void supports_reentrant_locking_from_the_same_thread()
       {
          var criticalSection = _lockFactory.CreateLock();
          var result = criticalSection.Locked(() => criticalSection.Locked(() => 42));
          result.Must().Be(42);
       }
 
-      [PCTLock] public void releases_the_lock_even_when_the_function_throws()
+      [ICriticalSectionMatrix] public void releases_the_lock_even_when_the_function_throws()
       {
          var criticalSection = _lockFactory.CreateLock(LockTimeout.Seconds(30));
 
@@ -95,7 +95,7 @@ public class ILock_specification : UniversalTestBase
          TaskCE.Run(() => criticalSection.Locked(() => {})).Wait();
       }
 
-      [PCTLock] public void owning_thread_can_reenter_and_lock_is_only_released_when_outermost_lock_is_disposed()
+      [ICriticalSectionMatrix] public void owning_thread_can_reenter_and_lock_is_only_released_when_outermost_lock_is_disposed()
       {
          var criticalSection = _lockFactory.CreateLock(LockTimeout.Seconds(1));
          using(criticalSection.TakeLock())
@@ -112,13 +112,13 @@ public class ILock_specification : UniversalTestBase
 
    public class LockTimeout_property : ILock_specification
    {
-      [PCTLock] public void defaults_to_LockTimeout_Default_when_no_timeout_is_specified()
+      [ICriticalSectionMatrix] public void defaults_to_LockTimeout_Default_when_no_timeout_is_specified()
       {
          var criticalSection = _lockFactory.CreateLock();
          criticalSection.LockTimeout.Must().Be(LockTimeout.Default);
       }
 
-      [PCTLock] public void returns_the_timeout_specified_at_creation()
+      [ICriticalSectionMatrix] public void returns_the_timeout_specified_at_creation()
       {
          var criticalSection = _lockFactory.CreateLock(LockTimeout.Seconds(7));
          criticalSection.LockTimeout.Must().Be(LockTimeout.Seconds(7));
@@ -127,7 +127,7 @@ public class ILock_specification : UniversalTestBase
 
    public class ContentionCount : ILock_specification
    {
-      [PCTLock] public void is_zero_when_no_contention_occurs()
+      [ICriticalSectionMatrix] public void is_zero_when_no_contention_occurs()
       {
          var criticalSection = _lockFactory.CreateLock();
 
@@ -138,7 +138,7 @@ public class ILock_specification : UniversalTestBase
          criticalSection.ContentionCount.Must().Be(0L);
       }
 
-      [PCTLock] public void increments_when_another_thread_contends_for_the_lock()
+      [ICriticalSectionMatrix] public void increments_when_another_thread_contends_for_the_lock()
       {
          var criticalSection = _lockFactory.CreateLock(LockTimeout.Seconds(30));
 
@@ -157,13 +157,13 @@ public class ILock_specification : UniversalTestBase
 
    public class An_exception_is_thrown_by_TakeLock_if_lock_is_not_acquired_within_timeout : ILock_specification
    {
-      [PCTLock] public void Exception_is_TakeLockTimeoutException() =>
+      [ICriticalSectionMatrix] public void Exception_is_TakeLockTimeoutException() =>
          RunScenario(ownerThreadBlockTime: 20.Milliseconds(), LockTimeout.Milliseconds(10), WaitTimeout.Seconds(30)).Must().BeAssignableTo<TakeLockTimeoutException>();
 
-      [PCTLock] public void If_owner_thread_blocks_for_less_than_fetchStackTraceTimeout_Exception_contains_owning_threads_stack_trace() =>
+      [ICriticalSectionMatrix] public void If_owner_thread_blocks_for_less_than_fetchStackTraceTimeout_Exception_contains_owning_threads_stack_trace() =>
          RunScenario(ownerThreadBlockTime: 50.Milliseconds(), LockTimeout.Milliseconds(15), WaitTimeout.Seconds(30)).Message.Must().Contain(nameof(DisposeInMethodSoItWillBeInTheCapturedCallStack));
 
-      [PCTLock] public void If_owner_thread_blocks_for_more_than_fetchStackTraceTimeout_Exception_does_not_contain_owning_threads_stack_trace() =>
+      [ICriticalSectionMatrix] public void If_owner_thread_blocks_for_more_than_fetchStackTraceTimeout_Exception_does_not_contain_owning_threads_stack_trace() =>
          RunScenario(ownerThreadBlockTime: 60.Milliseconds(), LockTimeout.Milliseconds(5), WaitTimeout.Milliseconds(1)).Message.Must().NotContain(nameof(DisposeInMethodSoItWillBeInTheCapturedCallStack));
 
       internal static void DisposeInMethodSoItWillBeInTheCapturedCallStack(IDisposable disposable) => disposable.Dispose();

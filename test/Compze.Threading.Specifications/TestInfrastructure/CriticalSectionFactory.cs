@@ -3,21 +3,21 @@ using Compze.xUnitMatrix;
 
 namespace Compze.Threading.Specifications.TestInfrastructure;
 
-class LockFactory<TTest> : IDisposable
+class CriticalSectionFactory<TTest> : IDisposable
 {
    // ReSharper disable once StaticMemberInGenericType
    static long _counter;
    readonly List<IDisposable> _disposables = [];
 
    // ReSharper disable once MemberCanBeMadeStatic.Local
-   LockImplementation CurrentLockImplementation => (LockImplementation)MatrixCombination.Current.Components[0];
+   CriticalSectionImplementation CurrentLockImplementation => (CriticalSectionImplementation)MatrixCombination.Current.Components[0];
 
    public ICriticalSection CreateLock(LockTimeout? timeout = null)
    {
       return CurrentLockImplementation switch
       {
-         LockImplementation.Monitor => IMonitor.New(timeout),
-         LockImplementation.Mutex => CreateMutex(timeout),
+         CriticalSectionImplementation.Monitor => IMonitor.New(timeout),
+         CriticalSectionImplementation.Mutex => CreateMutex(timeout),
          _ => throw new ArgumentOutOfRangeException()
       };
    }

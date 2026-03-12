@@ -4,14 +4,14 @@ using Compze.xUnitMatrix;
 
 namespace Compze.Tests.Infrastructure.XUnit;
 
-public sealed class PCTBackingStoreAttribute(
+public sealed class InterprocessObjectMatrixAttribute(
    [CallerFilePath] string? sourceFilePath = null,
    [CallerLineNumber] int sourceLineNumber = -1)
-   : MatrixTheoryAttribute<ProcessSharedBackingStore>(
+   : MatrixTheoryAttribute<InterprocessObjectBackingStore>(
       configurationFileName: null,
       useTestMethodArgument: false,
       sourceFilePath: sourceFilePath,
       sourceLineNumber: sourceLineNumber)
 {
-   public static ProcessSharedBackingStore BackingStore => CurrentComponent1;
+   public static InterprocessObjectBackingStore BackingStore => CurrentComponent1;
 }

@@ -3,14 +3,14 @@ using Compze.xUnitMatrix;
 
 namespace Compze.Threading.Specifications.TestInfrastructure;
 
-class AwaitableLockFactory<TTest> : IDisposable
+class AwaitableCriticalSectionFactory<TTest> : IDisposable
 {
    // ReSharper disable once StaticMemberInGenericType
    static long _counter;
    readonly List<IDisposable> _disposables = [];
 
    // ReSharper disable once MemberCanBeMadeStatic.Local
-   AwaitableLockImplementation CurrentImplementation => (AwaitableLockImplementation)MatrixCombination.Current.Components[0];
+   AwaitableCriticalSectionImplementation CurrentImplementation => (AwaitableCriticalSectionImplementation)MatrixCombination.Current.Components[0];
 
    public IAwaitableCriticalSection CreateAwaitableLock(WaitTimeout waitTimeout) => CreateAwaitableLock(null, waitTimeout);
    public IAwaitableCriticalSection CreateAwaitableLock(LockTimeout lockTimeout) => CreateAwaitableLock(lockTimeout, null);
@@ -18,9 +18,9 @@ class AwaitableLockFactory<TTest> : IDisposable
    {
       return CurrentImplementation switch
       {
-         AwaitableLockImplementation.Monitor => IAwaitableMonitor.New(lockTimeout, waitTimeout),
-         AwaitableLockImplementation.Mutex => CreatePollingAwaitableMutex(lockTimeout, waitTimeout),
-         AwaitableLockImplementation.SignalingMutex => CreateSignalingAwaitableMutex(lockTimeout, waitTimeout),
+         AwaitableCriticalSectionImplementation.Monitor => IAwaitableMonitor.New(lockTimeout, waitTimeout),
+         AwaitableCriticalSectionImplementation.Mutex => CreatePollingAwaitableMutex(lockTimeout, waitTimeout),
+         AwaitableCriticalSectionImplementation.SignalingMutex => CreateSignalingAwaitableMutex(lockTimeout, waitTimeout),
          _ => throw new ArgumentOutOfRangeException()
       };
    }

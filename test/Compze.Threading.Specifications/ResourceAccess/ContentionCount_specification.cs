@@ -9,19 +9,19 @@ using Xunit;
 
 namespace Compze.Threading.Specifications.ResourceAccess;
 
-///<summary>ICriticalSection ContentionCount is tested in ICriticalSection_specification via [PCTLock]. IThreadShared is tested in IThreadShared_specification. This file covers IAwaitableCriticalSection and IAwaitableThreadShared ContentionCount.</summary>
+///<summary>ICriticalSection ContentionCount is tested in ICriticalSection_specification via [ICriticalSectionMatrix]. IThreadShared is tested in IThreadShared_specification. This file covers IAwaitableCriticalSection and IAwaitableThreadShared ContentionCount.</summary>
 [Collection(nameof(NonParallelCollection))]
 // ReSharper disable once InconsistentNaming
 public class ContentionCount_specification : UniversalTestBase
 {
-   readonly AwaitableLockFactory<ContentionCount_specification> _lockFactory = new();
+   readonly AwaitableCriticalSectionFactory<ContentionCount_specification> _lockFactory = new();
    readonly TestingTaskRunner _runner = new(30.Seconds());
 
    protected override void DisposeInternal() => _lockFactory.Dispose();
 
    public class IAwaitableCriticalSection_ContentionCount : ContentionCount_specification
    {
-      [PCTAwaitableLock] public void Is_zero_when_no_contention_occurs()
+      [IAwaitableCriticalSectionMatrix] public void Is_zero_when_no_contention_occurs()
       {
          var criticalSection = _lockFactory.CreateAwaitableLock();
 
@@ -31,7 +31,7 @@ public class ContentionCount_specification : UniversalTestBase
          criticalSection.ContentionCount.Must().Be(0L);
       }
 
-      [PCTAwaitableLock] public void Increments_when_another_thread_contends_for_the_lock()
+      [IAwaitableCriticalSectionMatrix] public void Increments_when_another_thread_contends_for_the_lock()
       {
          var criticalSection = _lockFactory.CreateAwaitableLock();
 

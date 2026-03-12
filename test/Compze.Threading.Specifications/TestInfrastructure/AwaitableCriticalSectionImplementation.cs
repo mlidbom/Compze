@@ -1,6 +1,6 @@
 namespace Compze.Threading.Specifications.TestInfrastructure;
 
-enum AwaitableLockImplementation
+enum AwaitableCriticalSectionImplementation
 {
    Monitor,
    Mutex,

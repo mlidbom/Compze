@@ -73,7 +73,7 @@ This is critical — without it, a process crash between state modification and 
 
 Interface: `src/Compze.Threading/Interprocess/ISignalingAwaitableMutex.cs`
 Implementation: `src/Compze.Threading/Interprocess/ISignalingAwaitableMutex.SignalingAwaitableMutexCE.cs`
-Tested via: `[PCTAwaitableLock]` attribute — all existing `IAwaitableCriticalSection` specs now run against Monitor, PollingMutex, *and* SignalingMutex
+Tested via: `[IAwaitableCriticalSectionMatrix]` attribute — all existing `IAwaitableCriticalSection` specs now run against Monitor, PollingMutex, *and* SignalingMutex
 
 ### How it works
 - Wraps an `IMutex` + `InterprocessChangeCounter` with the same name
@@ -97,7 +97,7 @@ Tested via: `[PCTAwaitableLock]` attribute — all existing `IAwaitableCriticalS
 
 ### Design decisions
 - Separate from `IPollingAwaitableMutex` (exploratory — not replacing the proven polling version yet)
-- Added `SignalingMutex` to `AwaitableLockImplementation` enum — all `[PCTAwaitableLock]` tests automatically cover it
+- Added `SignalingMutex` to `AwaitableCriticalSectionImplementation` enum — all `[IAwaitableCriticalSectionMatrix]` tests automatically cover it
 - Default counter polling interval is 1ms (vs 50ms for polling mutex) since the counter read is a nanosecond memory read
 
 ## User condition only runs on updates

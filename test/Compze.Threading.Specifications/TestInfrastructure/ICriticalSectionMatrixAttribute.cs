@@ -5,10 +5,10 @@ using Compze.xUnitMatrix;
 
 namespace Compze.Threading.Specifications.TestInfrastructure;
 
-sealed class PCTLockAttribute(
+sealed class ICriticalSectionMatrixAttribute(
    [CallerFilePath] string? sourceFilePath = null,
    [CallerLineNumber] int sourceLineNumber = -1)
-   : MatrixTheoryAttribute<LockImplementation>(
+   : MatrixTheoryAttribute<CriticalSectionImplementation>(
       configurationFileName: null,
       useTestMethodArgument: false,
       sourceFilePath: sourceFilePath,

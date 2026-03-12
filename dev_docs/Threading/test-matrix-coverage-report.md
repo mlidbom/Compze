@@ -81,7 +81,7 @@ Total unique IAwaitableShared\<T\> variants: **8**
 
 ## Current Matrix Attributes
 
-### [PCTLock] — `LockImplementation` enum
+### [ICriticalSectionMatrix] — `CriticalSectionImplementation` enum
 
 | Value | Creates | Scope |
 |---|---|---|
@@ -96,7 +96,7 @@ Total unique IAwaitableShared\<T\> variants: **8**
 - `IMutex.Local()` — Local Mutex never tested via matrix
 - No PollingAwaitableMutex or SignalingAwaitableMutex as ICriticalSection (they implement ICriticalSection too)
 
-### [PCTAwaitableLock] — `AwaitableLockImplementation` enum
+### [IAwaitableCriticalSectionMatrix] — `AwaitableCriticalSectionImplementation` enum
 
 | Value | Creates | Scope |
 |---|---|---|
@@ -112,7 +112,7 @@ Total unique IAwaitableShared\<T\> variants: **8**
 - `IPollingAwaitableMutex.Local()` — never tested
 - `ISignalingAwaitableMutex.Local()` — never tested
 
-### [PCTBackingStore] — `ProcessSharedBackingStore` enum
+### [InterprocessObjectMatrix] — `InterprocessObjectBackingStore` enum
 
 | Value | Creates |
 |---|---|
@@ -131,9 +131,9 @@ Total unique IAwaitableShared\<T\> variants: **8**
 
 ### Gap 1: ICriticalSection — missing implementations in matrix
 
-The `LockImplementation` enum has **2 values**. There should be **7** (or at least 4 if we ignore scope):
+The `CriticalSectionImplementation` enum has **2 values**. There should be **7** (or at least 4 if we ignore scope):
 
-| Should be in `LockImplementation` | Currently tested | Status |
+| Should be in `CriticalSectionImplementation` | Currently tested | Status |
 |---|---|---|
 | Monitor | Yes | ✅ |
 | Global Mutex | Yes | ✅ |
@@ -145,7 +145,7 @@ The `LockImplementation` enum has **2 values**. There should be **7** (or at lea
 
 ### Gap 2: IAwaitableCriticalSection — missing Local scope variants
 
-| Should be in `AwaitableLockImplementation` | Currently tested | Status |
+| Should be in `AwaitableCriticalSectionImplementation` | Currently tested | Status |
 |---|---|---|
 | Monitor | Yes | ✅ |
 | Global PollingAwaitableMutex | Yes | ✅ |
@@ -155,7 +155,7 @@ The `LockImplementation` enum has **2 values**. There should be **7** (or at lea
 
 ### Gap 3: IShared\<T\> — only tested as IThreadShared, not IProcessShared
 
-`IThreadShared_specification` uses `[PCTLock]` to create an `IShared.New(value, lock)` — a bare `IShared<T>`.
+`IThreadShared_specification` uses `[ICriticalSectionMatrix]` to create an `IShared.New(value, lock)` — a bare `IShared<T>`.
 
 **What's never tested:**
 - `IProcessShared<T>` against the `IShared<T>` specification (it IS-A `IShared<T>` but its `Locked()` is never matrix-tested — only property-level [XF] tests exist)
@@ -193,9 +193,9 @@ No test file exists that tests the `IAwaitableProcessShared<T>` interface contra
 
 | Attribute | Enum | Values | Dimensions | Tests against interface |
 |---|---|---|---|---|
-| `[PCTLock]` | `LockImplementation` | Monitor, Mutex | 2 | ICriticalSection, IShared |
-| `[PCTAwaitableLock]` | `AwaitableLockImplementation` | Monitor, Mutex, SignalingMutex | 3 | IAwaitableCriticalSection |
-| `[PCTBackingStore]` | `ProcessSharedBackingStore` | File, MemoryMapped | 2 | IInterprocessObject |
+| `[ICriticalSectionMatrix]` | `CriticalSectionImplementation` | Monitor, Mutex | 2 | ICriticalSection, IShared |
+| `[IAwaitableCriticalSectionMatrix]` | `AwaitableCriticalSectionImplementation` | Monitor, Mutex, SignalingMutex | 3 | IAwaitableCriticalSection |
+| `[InterprocessObjectMatrix]` | `InterprocessObjectBackingStore` | File, MemoryMapped | 2 | IInterprocessObject |
 
 ### Missing — interfaces with no specification testing all implementations
 

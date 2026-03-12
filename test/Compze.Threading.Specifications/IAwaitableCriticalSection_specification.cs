@@ -15,7 +15,7 @@ namespace Compze.Threading.Specifications;
 [Collection(nameof(NonParallelCollection))]
 public class IAwaitableLock_specification : UniversalTestBase
 {
-   readonly AwaitableLockFactory<IAwaitableLock_specification> _lockFactory = new();
+   readonly AwaitableCriticalSectionFactory<IAwaitableLock_specification> _lockFactory = new();
    readonly TestingTaskRunner _runner = TestingTaskRunner.WithTimeout(30.Seconds());
 
    protected override void DisposeInternal()
@@ -24,7 +24,7 @@ public class IAwaitableLock_specification : UniversalTestBase
       _lockFactory.Dispose();
    }
 
-   [PCTAwaitableLock] public void When_one_thread_has_UpdateLock_other_thread_is_blocked_until_first_thread_disposes_lock_()
+   [IAwaitableCriticalSectionMatrix] public void When_one_thread_has_UpdateLock_other_thread_is_blocked_until_first_thread_disposes_lock_()
    {
       var criticalSection = _lockFactory.CreateAwaitableLock(LockTimeout.Seconds(30));
       var insideLock = IThreadGate.NewClosed(WaitTimeout.Seconds(30), "insideLock");
@@ -53,13 +53,13 @@ public class IAwaitableLock_specification : UniversalTestBase
 
    public class LockTimeout_property : IAwaitableLock_specification
    {
-      [PCTAwaitableLock] public void defaults_to_LockTimeout_Default_when_no_timeout_is_specified()
+      [IAwaitableCriticalSectionMatrix] public void defaults_to_LockTimeout_Default_when_no_timeout_is_specified()
       {
          var criticalSection = _lockFactory.CreateAwaitableLock();
          criticalSection.LockTimeout.Must().Be(LockTimeout.Default);
       }
 
-      [PCTAwaitableLock] public void returns_the_timeout_specified_at_creation()
+      [IAwaitableCriticalSectionMatrix] public void returns_the_timeout_specified_at_creation()
       {
          var criticalSection = _lockFactory.CreateAwaitableLock(LockTimeout.Seconds(7));
          criticalSection.LockTimeout.Must().Be(LockTimeout.Seconds(7));
@@ -68,13 +68,13 @@ public class IAwaitableLock_specification : UniversalTestBase
 
    public class WaitTimeout_property : IAwaitableLock_specification
    {
-      [PCTAwaitableLock] public void defaults_to_WaitTimeout_Default_when_no_timeout_is_specified()
+      [IAwaitableCriticalSectionMatrix] public void defaults_to_WaitTimeout_Default_when_no_timeout_is_specified()
       {
          var criticalSection = _lockFactory.CreateAwaitableLock();
          criticalSection.WaitTimeout.Must().Be(WaitTimeout.Default);
       }
 
-      [PCTAwaitableLock] public void returns_the_timeout_specified_at_creation()
+      [IAwaitableCriticalSectionMatrix] public void returns_the_timeout_specified_at_creation()
       {
          var criticalSection = _lockFactory.CreateAwaitableLock(WaitTimeout.Seconds(7));
          criticalSection.WaitTimeout.Must().Be(WaitTimeout.Seconds(7));
@@ -83,13 +83,13 @@ public class IAwaitableLock_specification : UniversalTestBase
 
    public class An_exception_is_thrown_by_TakeUpdateLock_if_lock_is_not_acquired_within_timeout : IAwaitableLock_specification
    {
-      [PCTAwaitableLock] public void Exception_is_TakeLockTimeoutException() =>
+      [IAwaitableCriticalSectionMatrix] public void Exception_is_TakeLockTimeoutException() =>
          RunScenario(ownerThreadBlockTime: 20.Milliseconds(), LockTimeout.Milliseconds(10), WaitTimeout.Seconds(30)).Must().BeAssignableTo<TakeLockTimeoutException>();
 
-      [PCTAwaitableLock] public void If_owner_thread_blocks_for_less_than_fetchStackTraceTimeout_Exception_contains_owning_threads_stack_trace() =>
+      [IAwaitableCriticalSectionMatrix] public void If_owner_thread_blocks_for_less_than_fetchStackTraceTimeout_Exception_contains_owning_threads_stack_trace() =>
          RunScenario(ownerThreadBlockTime: 50.Milliseconds(), LockTimeout.Milliseconds(15), WaitTimeout.Seconds(30)).Message.Must().Contain(nameof(DisposeInMethodSoItWillBeInTheCapturedCallStack));
 
-      [PCTAwaitableLock] public void If_owner_thread_blocks_for_more_than_fetchStackTraceTimeout_Exception_does_not_contain_owning_threads_stack_trace() =>
+      [IAwaitableCriticalSectionMatrix] public void If_owner_thread_blocks_for_more_than_fetchStackTraceTimeout_Exception_does_not_contain_owning_threads_stack_trace() =>
          RunScenario(ownerThreadBlockTime: 60.Milliseconds(), LockTimeout.Milliseconds(5), WaitTimeout.Milliseconds(1)).Message.Must().NotContain(nameof(DisposeInMethodSoItWillBeInTheCapturedCallStack));
 
       internal static void DisposeInMethodSoItWillBeInTheCapturedCallStack(IDisposable disposable) => disposable.Dispose();
@@ -133,14 +133,14 @@ public class IAwaitableLock_specification : UniversalTestBase
 
    public class TakeUpdateLockWhen : IAwaitableLock_specification
    {
-      [PCTAwaitableLock] public void Returns_lock_when_condition_is_immediately_true()
+      [IAwaitableCriticalSectionMatrix] public void Returns_lock_when_condition_is_immediately_true()
       {
          var criticalSection = _lockFactory.CreateAwaitableLock();
          using var taken = criticalSection.TakeUpdateLockWhen(() => true);
          taken.Must().NotBeNull();
       }
 
-      [PCTAwaitableLock] public void Waits_until_condition_becomes_true()
+      [IAwaitableCriticalSectionMatrix] public void Waits_until_condition_becomes_true()
       {
          var criticalSection = _lockFactory.CreateAwaitableLock();
          var conditionMet = false;
@@ -159,7 +159,7 @@ public class IAwaitableLock_specification : UniversalTestBase
          lockAcquired.AwaitPassedThroughCountEqualTo(1);
       }
 
-      [PCTAwaitableLock] public void Throws_AwaitingConditionTimeoutException_when_condition_never_becomes_true() =>
+      [IAwaitableCriticalSectionMatrix] public void Throws_AwaitingConditionTimeoutException_when_condition_never_becomes_true() =>
          Invoking(() => _lockFactory.CreateAwaitableLock(WaitTimeout.Milliseconds(100))
                                     .TakeUpdateLockWhen(() => false))
            .Must().Throw<AwaitingConditionTimeoutException>();
@@ -167,14 +167,14 @@ public class IAwaitableLock_specification : UniversalTestBase
 
    public class TakeReadLockWhen : IAwaitableLock_specification
    {
-      [PCTAwaitableLock] public void Returns_lock_when_condition_is_immediately_true()
+      [IAwaitableCriticalSectionMatrix] public void Returns_lock_when_condition_is_immediately_true()
       {
          var criticalSection = _lockFactory.CreateAwaitableLock();
          using var taken = criticalSection.TakeReadLockWhen(() => true);
          taken.Must().NotBeNull();
       }
 
-      [PCTAwaitableLock] public void Throws_AwaitingConditionTimeoutException_when_condition_never_becomes_true() =>
+      [IAwaitableCriticalSectionMatrix] public void Throws_AwaitingConditionTimeoutException_when_condition_never_becomes_true() =>
          Invoking(() => _lockFactory.CreateAwaitableLock(WaitTimeout.Milliseconds(100))
                                     .TakeReadLockWhen(() => false))
            .Must().Throw<AwaitingConditionTimeoutException>();
@@ -182,14 +182,14 @@ public class IAwaitableLock_specification : UniversalTestBase
 
    public class TryTakeReadLockWhen : IAwaitableLock_specification
    {
-      [PCTAwaitableLock] public void Returns_lock_when_condition_is_immediately_true()
+      [IAwaitableCriticalSectionMatrix] public void Returns_lock_when_condition_is_immediately_true()
       {
          var criticalSection = _lockFactory.CreateAwaitableLock();
          using var taken = criticalSection.TryTakeReadLockWhen(() => true);
          taken.Must().NotBeNull();
       }
 
-      [PCTAwaitableLock] public void Returns_null_when_condition_never_becomes_true()
+      [IAwaitableCriticalSectionMatrix] public void Returns_null_when_condition_never_becomes_true()
       {
          var criticalSection = _lockFactory.CreateAwaitableLock(WaitTimeout.Milliseconds(100));
          var result = criticalSection.TryTakeReadLockWhen(() => false);
@@ -199,13 +199,13 @@ public class IAwaitableLock_specification : UniversalTestBase
 
    public class TryAwait : IAwaitableLock_specification
    {
-      [PCTAwaitableLock] public void Returns_true_when_condition_is_immediately_true()
+      [IAwaitableCriticalSectionMatrix] public void Returns_true_when_condition_is_immediately_true()
       {
          var criticalSection = _lockFactory.CreateAwaitableLock();
          criticalSection.TryAwait(() => true).Must().BeTrue();
       }
 
-      [PCTAwaitableLock] public void Returns_true_when_condition_becomes_true_within_timeout()
+      [IAwaitableCriticalSectionMatrix] public void Returns_true_when_condition_becomes_true_within_timeout()
       {
          var criticalSection = _lockFactory.CreateAwaitableLock();
          var conditionMet = false;
@@ -222,7 +222,7 @@ public class IAwaitableLock_specification : UniversalTestBase
          awaitCompleted.AwaitPassedThroughCountEqualTo(1);
       }
 
-      [PCTAwaitableLock] public void Returns_false_when_condition_never_becomes_true_within_timeout()
+      [IAwaitableCriticalSectionMatrix] public void Returns_false_when_condition_never_becomes_true_within_timeout()
       {
          var criticalSection = _lockFactory.CreateAwaitableLock(WaitTimeout.Milliseconds(100));
          criticalSection.TryAwait(() => false).Must().BeFalse();
