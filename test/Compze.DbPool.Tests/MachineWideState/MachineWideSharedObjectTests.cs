@@ -7,13 +7,14 @@ using Compze.Threading.Interprocess.ResourceAccess;
 using Compze.Threading.Testing;
 using Compze.xUnitBDD;
 using JetBrains.Annotations;
-using Newtonsoft.Json;
+using MemoryPack;
 
 // ReSharper disable ImplicitlyCapturedClosure
 
 namespace Compze.DbPool.Tests.MachineWideState;
 
-[UsedImplicitly] public class SharedObject
+[MemoryPackable]
+[UsedImplicitly] public partial class SharedObject
 {
    // ReSharper disable once MemberCanBeInternal
    public string Name { get; set; } = "Default";
@@ -21,9 +22,10 @@ namespace Compze.DbPool.Tests.MachineWideState;
 
 class SharedObjectSerializer : ISharedObjectSerializer<SharedObject>
 {
-   public string Serialize(SharedObject instance) => JsonConvert.SerializeObject(instance);
+   public string Serialize(SharedObject instance) => Convert.ToBase64String(MemoryPackSerializer.Serialize(instance));
 
-   public SharedObject Deserialize(string json) => JsonConvert.DeserializeObject<SharedObject>(json)._assert().NotNull();
+   public SharedObject Deserialize(string json) =>
+      MemoryPackSerializer.Deserialize<SharedObject>(Convert.FromBase64String(json))._assert().NotNull();
 }
 
 public class MachineWideSharedObjectTests : UniversalTestBase
