@@ -1,7 +1,7 @@
 namespace Compze.Threading.Interprocess;
 
 /// <summary>
-/// An <see cref="IAwaitableLock"/> backed by a system <see cref="Mutex"/> for cross-process synchronization.
+/// An <see cref="IAwaitableCriticalSection"/> backed by a system <see cref="Mutex"/> for cross-process synchronization.
 /// Uses an <see cref="InterprocessChangeCounter"/> to avoid evaluating the user condition on every poll interval.
 /// The condition is only evaluated when the counter changes (i.e., an update lock was released).
 /// </summary>

@@ -29,22 +29,22 @@ public partial interface IPollingAwaitableMutex
       public bool IsGlobal => _mutex.IsGlobal;
       public string Name => _mutex.Name;
 
-      public IDisposable TakeReadLock(LockTimeout? timeout = null) => _mutex.TakeLock(timeout);
-      public IDisposable TakeUpdateLock(LockTimeout? timeout = null) => _mutex.TakeLock(timeout);
+      public IReadLock TakeReadLock(LockTimeout? timeout = null) => (IReadLock)_mutex.TakeLock(timeout);
+      public IUpdateLock TakeUpdateLock(LockTimeout? timeout = null) => (IUpdateLock)_mutex.TakeLock(timeout);
 
-      public IDisposable TakeReadLockWhen(Func<bool> condition, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null) =>
-         TryTakeLockWhen(condition, waitTimeout, lockTimeout) ?? throw new AwaitingConditionTimeoutException();
+      public IReadLock TakeReadLockWhen(Func<bool> condition, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null) =>
+         (IReadLock)(TryTakeLockWhen(condition, waitTimeout, lockTimeout) ?? throw new AwaitingConditionTimeoutException());
 
-      public IDisposable TakeUpdateLockWhen(Func<bool> condition, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null) =>
-         TryTakeLockWhen(condition, waitTimeout, lockTimeout) ?? throw new AwaitingConditionTimeoutException();
+      public IUpdateLock TakeUpdateLockWhen(Func<bool> condition, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null) =>
+         (IUpdateLock)(TryTakeLockWhen(condition, waitTimeout, lockTimeout) ?? throw new AwaitingConditionTimeoutException());
 
-      public IDisposable? TryTakeReadLockWhen(Func<bool> condition, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null) =>
-         TryTakeLockWhen(condition, waitTimeout, lockTimeout);
+      public IReadLock? TryTakeReadLockWhen(Func<bool> condition, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null) =>
+         (IReadLock?)TryTakeLockWhen(condition, waitTimeout, lockTimeout);
 
-      public IDisposable? TryTakeUpdateLockWhen(Func<bool> condition, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null) =>
-         TryTakeLockWhen(condition, waitTimeout, lockTimeout);
+      public IUpdateLock? TryTakeUpdateLockWhen(Func<bool> condition, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null) =>
+         (IUpdateLock?)TryTakeLockWhen(condition, waitTimeout, lockTimeout);
 
-      IDisposable? TryTakeLockWhen(Func<bool> condition, WaitTimeout? waitTimeout, LockTimeout? lockTimeout)
+      ILock? TryTakeLockWhen(Func<bool> condition, WaitTimeout? waitTimeout, LockTimeout? lockTimeout)
       {
          var effectiveWaitTimeout = waitTimeout ?? WaitTimeout;
          var effectiveLockTimeout = lockTimeout ?? LockTimeout;
@@ -53,7 +53,7 @@ public partial interface IPollingAwaitableMutex
 
          while(true)
          {
-            IDisposable takenLock = _mutex.TakeLock(effectiveLockTimeout);
+            ILock takenLock = _mutex.TakeLock(effectiveLockTimeout);
             try
             {
                if(condition()) return takenLock;

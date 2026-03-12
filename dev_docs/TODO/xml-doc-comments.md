@@ -32,7 +32,7 @@
 ### Phase 2: Document high-impact APIs first
 Prioritize projects where AI misuse has been observed or where consumer-facing APIs are most critical:
 1. **Compze.Threading.Testing** — `IThreadGate`, `IGatedCodeSection` (direct cause of repeated AI errors)
-2. **Compze.Threading** — `IMutex`, `IAwaitableLock`, `WaitTimeout`, `LockTimeout`
+2. **Compze.Threading** — `IMutex`, `IAwaitableCriticalSection`, `WaitTimeout`, `LockTimeout`
 3. **Compze.Must** — assertion API used everywhere
 4. **Compze.DependencyInjection** — `IServiceLocator`, container registration APIs
 5. **Compze.Tessaging** — core messaging abstractions

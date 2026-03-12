@@ -2,7 +2,7 @@ using Compze.SystemCE;
 
 namespace Compze.Threading;
 
-public partial interface IAwaitableLock
+public partial interface IAwaitableCriticalSection
 {
    ///<summary>Acquires a read lock, executes <paramref name="func"/> and returns its result, then releases the lock.</summary>
    TReturn Read<TReturn>(Func<TReturn> func, LockTimeout? timeout = null)

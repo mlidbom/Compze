@@ -93,7 +93,7 @@ class WorkTracker
 
 ### Lower-Level — `IMonitor` and `IAwaitableMonitor`
 
-> **CRITICAL:** The `*When` methods (`TakeReadLockWhen`, `TakeUpdateLockWhen`, `ReadWhen`, `UpdateWhen`, `Await`, etc.) **release the lock while waiting** for a condition, just like `Monitor.Wait`. When the condition is met, the lock is reacquired before the method returns. This means that if you hold the lock and call a waiting method, other threads can acquire the lock during the wait. All `IAwaitableLock` implementations — including `IAwaitableMonitor`, `ISignalingAwaitableMutex`, and `IPollingAwaitableMutex` — share this behavior.
+> **CRITICAL:** The `*When` methods (`TakeReadLockWhen`, `TakeUpdateLockWhen`, `ReadWhen`, `UpdateWhen`, `Await`, etc.) **release the lock while waiting** for a condition, just like `Monitor.Wait`. When the condition is met, the lock is reacquired before the method returns. This means that if you hold the lock and call a waiting method, other threads can acquire the lock during the wait. All `IAwaitableCriticalSection` implementations — including `IAwaitableMonitor`, `ISignalingAwaitableMutex`, and `IPollingAwaitableMutex` — share this behavior.
 
 #### Wrap all logic in existing public methods inside calls to _monitor to quickly migrate existing classes:
 ```csharp

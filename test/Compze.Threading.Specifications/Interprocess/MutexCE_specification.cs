@@ -13,7 +13,7 @@ using static Compze.Must.MustActions;
 
 namespace Compze.Threading.Specifications.Interprocess;
 
-///<summary>IMutex-specific specifications. ILock contract behavior (mutual exclusion, reentrancy, Locked, etc.) is tested in ILock_specification via [PCTLock].</summary>
+///<summary>IMutex-specific specifications. ICriticalSection contract behavior (mutual exclusion, reentrancy, Locked, etc.) is tested in ICriticalSection_specification via [PCTLock].</summary>
 [Collection(nameof(NonParallelCollection))]
 public class MutexCE_specification : UniversalTestBase
 {

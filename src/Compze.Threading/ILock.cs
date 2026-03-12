@@ -1,8 +1,6 @@
 namespace Compze.Threading;
 
-///<summary>A mutual-exclusion lock. Dispose the returned <see cref="IDisposable"/> to release the lock.</summary>
-public partial interface ILock : ILockInfo
+///<summary>A held lock on an <see cref="ICriticalSection"/>. Calling dispose releases the lock.</summary>
+public interface ILock : IDisposable
 {
-   ///<summary>Acquires the lock, blocking until it is available or <paramref name="timeout"/> expires. Throws <exception cref="Exceptions.TakeLockTimeoutException"/> if <paramref name="timeout"/> expires. Uses <see cref="ILockInfo.LockTimeout"/> if <paramref name="timeout"/> is null.</summary>
-   IDisposable TakeLock(LockTimeout? timeout = null);
 }

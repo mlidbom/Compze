@@ -38,25 +38,25 @@ public partial interface ISignalingAwaitableMutex
       public bool IsGlobal => _mutex.IsGlobal;
       public string Name => _mutex.Name;
 
-      public IDisposable TakeReadLock(LockTimeout? timeout = null) => _mutex.TakeLock(timeout);
+      public IReadLock TakeReadLock(LockTimeout? timeout = null) => (IReadLock)_mutex.TakeLock(timeout);
 
-      public IDisposable TakeUpdateLock(LockTimeout? timeout = null)
+      public IUpdateLock TakeUpdateLock(LockTimeout? timeout = null)
       {
          var mutexLock = _mutex.TakeLock(timeout);
          return new UpdateLockDisposer(_signal, mutexLock);
       }
 
-      public IDisposable TakeReadLockWhen(Func<bool> condition, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null) =>
-         TryTakeReadLockWhen(condition, waitTimeout, lockTimeout) ?? throw new AwaitingConditionTimeoutException();
+      public IReadLock TakeReadLockWhen(Func<bool> condition, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null) =>
+         (IReadLock?)TryTakeLockWhen(condition, waitTimeout, lockTimeout, isUpdate: false) ?? throw new AwaitingConditionTimeoutException();
 
-      public IDisposable TakeUpdateLockWhen(Func<bool> condition, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null) =>
-         TryTakeUpdateLockWhen(condition, waitTimeout, lockTimeout) ?? throw new AwaitingConditionTimeoutException();
+      public IUpdateLock TakeUpdateLockWhen(Func<bool> condition, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null) =>
+         (IUpdateLock?)TryTakeLockWhen(condition, waitTimeout, lockTimeout, isUpdate: true) ?? throw new AwaitingConditionTimeoutException();
 
-      public IDisposable? TryTakeReadLockWhen(Func<bool> condition, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null) =>
-         TryTakeLockWhen(condition, waitTimeout, lockTimeout, isUpdate: false);
+      public IReadLock? TryTakeReadLockWhen(Func<bool> condition, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null) =>
+         (IReadLock?)TryTakeLockWhen(condition, waitTimeout, lockTimeout, isUpdate: false);
 
-      public IDisposable? TryTakeUpdateLockWhen(Func<bool> condition, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null) =>
-         TryTakeLockWhen(condition, waitTimeout, lockTimeout, isUpdate: true);
+      public IUpdateLock? TryTakeUpdateLockWhen(Func<bool> condition, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null) =>
+         (IUpdateLock?)TryTakeLockWhen(condition, waitTimeout, lockTimeout, isUpdate: true);
 
       IDisposable? TryTakeLockWhen(Func<bool> condition, WaitTimeout? waitTimeout, LockTimeout? lockTimeout, bool isUpdate)
       {
@@ -69,11 +69,11 @@ public partial interface ISignalingAwaitableMutex
          {
             _signal.Snapshot();
 
-            IDisposable mutexLock = _mutex.TakeLock(effectiveLockTimeout);
+            ILock mutexLock = _mutex.TakeLock(effectiveLockTimeout);
             try
             {
                if(condition())
-                  return isUpdate ? new UpdateLockDisposer(_signal, mutexLock) : mutexLock;
+                  return isUpdate ? new UpdateLockDisposer(_signal, mutexLock) : (IReadLock)mutexLock;
             }
             catch
             {
@@ -105,11 +105,11 @@ public partial interface ISignalingAwaitableMutex
          _mutex.Dispose();
       }
 
-      class UpdateLockDisposer(InterprocessSignal signal, IDisposable mutexLock) : IDisposable
+      class UpdateLockDisposer(InterprocessSignal signal, IDisposable mutexLock) : IUpdateLock
       {
 #pragma warning disable CA2213
          readonly InterprocessSignal _signal = signal;
-#pragma warning disable CA2213
+#pragma warning restore CA2213
          readonly IDisposable _mutexLock = mutexLock;
 
          public void Dispose()

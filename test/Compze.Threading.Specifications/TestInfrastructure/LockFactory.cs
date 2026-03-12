@@ -12,7 +12,7 @@ class LockFactory<TTest> : IDisposable
    // ReSharper disable once MemberCanBeMadeStatic.Local
    LockImplementation CurrentLockImplementation => (LockImplementation)MatrixCombination.Current.Components[0];
 
-   public ILock CreateLock(LockTimeout? timeout = null)
+   public ICriticalSection CreateLock(LockTimeout? timeout = null)
    {
       return CurrentLockImplementation switch
       {

@@ -1,6 +1,6 @@
 namespace Compze.Threading;
 
-public partial interface IAwaitableLock
+public partial interface IAwaitableCriticalSection
 {
    ///<summary>Blocks until <paramref name="condition"/> returns true or <paramref name="waitTimeout"/> expires. Returns false if the wait times out, else true.</summary>
    bool TryAwait(Func<bool> condition, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null)

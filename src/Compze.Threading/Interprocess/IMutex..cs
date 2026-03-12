@@ -1,10 +1,10 @@
 namespace Compze.Threading.Interprocess;
 
 ///<summary>
-/// An <see cref="ILock"/> implementation backed by a system <see cref="Mutex"/> for cross-process synchronization.
+/// An <see cref="ICriticalSection"/> implementation backed by a system <see cref="Mutex"/> for cross-process synchronization.
 /// Unlike in-process locks, a mutex owns a system resource and must be disposed.
 /// </summary>
-public partial interface IMutex : ILock, IDisposable
+public partial interface IMutex : ICriticalSection, IDisposable
 {
    ///<summary>Returns an <see cref="IMutex"/> that synchronizes across all processes and user login sessions on the machine.</summary>
    public static IMutex Global(string name, LockTimeout? lockTimeout = null, Action? onAbandonedMutex = null) =>
@@ -20,5 +20,5 @@ public partial interface IMutex : ILock, IDisposable
    string Name { get; }
 
    ///<summary>Attempts to acquire the mutex within <paramref name="timeout"/>. Returns null if the timeout expires. Uses <see cref="ILockInfo.LockTimeout"/> if <paramref name="timeout"/> is null.</summary>
-   internal IDisposable? TryTakeLock(LockTimeout? timeout = null);
+   internal ILock? TryTakeLock(LockTimeout? timeout = null);
 }

@@ -9,7 +9,7 @@ using Xunit;
 
 namespace Compze.Threading.Specifications.ResourceAccess;
 
-///<summary>ILock ContentionCount is tested in ILock_specification via [PCTLock]. IThreadShared is tested in IThreadShared_specification. This file covers IAwaitableLock and IAwaitableThreadShared ContentionCount.</summary>
+///<summary>ICriticalSection ContentionCount is tested in ICriticalSection_specification via [PCTLock]. IThreadShared is tested in IThreadShared_specification. This file covers IAwaitableCriticalSection and IAwaitableThreadShared ContentionCount.</summary>
 [Collection(nameof(NonParallelCollection))]
 // ReSharper disable once InconsistentNaming
 public class ContentionCount_specification : UniversalTestBase
@@ -19,7 +19,7 @@ public class ContentionCount_specification : UniversalTestBase
 
    protected override void DisposeInternal() => _lockFactory.Dispose();
 
-   public class IAwaitableLock_ContentionCount : ContentionCount_specification
+   public class IAwaitableCriticalSection_ContentionCount : ContentionCount_specification
    {
       [PCTAwaitableLock] public void Is_zero_when_no_contention_occurs()
       {

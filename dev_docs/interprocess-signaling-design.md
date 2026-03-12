@@ -73,7 +73,7 @@ This is critical — without it, a process crash between state modification and 
 
 Interface: `src/Compze.Threading/Interprocess/ISignalingAwaitableMutex.cs`
 Implementation: `src/Compze.Threading/Interprocess/ISignalingAwaitableMutex.SignalingAwaitableMutexCE.cs`
-Tested via: `[PCTAwaitableLock]` attribute — all existing `IAwaitableLock` specs now run against Monitor, PollingMutex, *and* SignalingMutex
+Tested via: `[PCTAwaitableLock]` attribute — all existing `IAwaitableCriticalSection` specs now run against Monitor, PollingMutex, *and* SignalingMutex
 
 ### How it works
 - Wraps an `IMutex` + `InterprocessChangeCounter` with the same name

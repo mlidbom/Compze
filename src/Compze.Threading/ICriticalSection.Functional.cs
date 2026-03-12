@@ -2,7 +2,7 @@ using Compze.SystemCE;
 
 namespace Compze.Threading;
 
-public partial interface ILock
+public partial interface ICriticalSection
 {
    ///<summary>Acquires the lock, executes <paramref name="action"/>, then releases the lock.</summary>
    Unit Locked(Action action, LockTimeout? timeout = null) => Locked(action.ToFunc(), timeout);

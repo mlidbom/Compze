@@ -1,7 +1,7 @@
 namespace Compze.Threading.Interprocess;
 
 ///<summary>
-/// An <see cref="IAwaitableLock"/> implementation backed by a system <see cref="Mutex"/> for cross-process synchronization.
+/// An <see cref="IAwaitableCriticalSection"/> implementation backed by a system <see cref="Mutex"/> for cross-process synchronization.
 /// Condition waiting is implemented via polling — the mutex is periodically acquired and the condition checked.
 /// This is less efficient than in-process monitor-based waiting but enables cross-process condition synchronization.
 /// </summary>

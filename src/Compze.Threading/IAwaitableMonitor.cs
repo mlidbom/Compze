@@ -1,7 +1,7 @@
 namespace Compze.Threading;
 
-///<summary>An in-process <see cref="IAwaitableLock"/> backed by a monitor. Threads blocked in condition-wait methods are woken when an update lock is released.</summary>
-public partial interface IAwaitableMonitor : IAwaitableLock
+///<summary>An in-process <see cref="IAwaitableCriticalSection"/> backed by a monitor. Threads blocked in condition-wait methods are woken when an update lock is released.</summary>
+public partial interface IAwaitableMonitor : IAwaitableCriticalSection
 {
    ///<summary>Returns a new <see cref="IAwaitableMonitor"/> using default timeouts.</summary>
    public static IAwaitableMonitor WithDefaultTimeout() => new MonitorCE();

@@ -2,8 +2,8 @@ using Compze.Contracts;
 
 namespace Compze.Threading.Utilities;
 
-///<summary>Simple utility class that calls the supplied action when the instance is disposed. Calls for each dispose call, there is no check.</summary>
-class LockDisposer : IDisposable
+///<summary>Simple utility class that calls the supplied action when the instance is disposed. Implements all lock token interfaces so it can be returned as any of them.</summary>
+class LockDisposer : ILock, IReadLock, IUpdateLock
 {
    readonly Action _action;
 

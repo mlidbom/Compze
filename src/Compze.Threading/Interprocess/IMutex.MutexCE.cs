@@ -18,7 +18,7 @@ public partial interface IMutex
       public LockTimeout LockTimeout { get; }
       readonly Action? _onAbandonedMutex;
 #pragma warning disable CA2213
-      readonly IDisposable _lockDisposer;
+      readonly LockDisposer _lockDisposer;
 #pragma warning restore CA2213
       readonly IMonitor _timeoutLock = IMonitor.New();
       long _contentionCount;
@@ -55,9 +55,9 @@ public partial interface IMutex
 
       public long ContentionCount => Interlocked.Read(ref _contentionCount);
 
-      public IDisposable TakeLock(LockTimeout? timeout = null) => TryTakeLock(timeout) ?? throw RegisterTimeoutException();
+      public ILock TakeLock(LockTimeout? timeout = null) => TryTakeLock(timeout) ?? throw RegisterTimeoutException();
 
-      public IDisposable? TryTakeLock(LockTimeout? timeout = null)
+      public ILock? TryTakeLock(LockTimeout? timeout = null)
       {
          var effectiveTimeout = timeout ?? LockTimeout;
 

@@ -4,24 +4,24 @@ using Compze.SystemCE;
 
 namespace Compze.Threading.ResourceAccess;
 
-///<summary>Factory for creating <see cref="IAwaitableShared{TShared}"/> instances that protect a shared object with an <see cref="IAwaitableLock"/>.</summary>
+///<summary>Factory for creating <see cref="IAwaitableShared{TShared}"/> instances that protect a shared object with an <see cref="IAwaitableCriticalSection"/>.</summary>
 public interface IAwaitableShared
 {
    ///<summary>Returns a new <see cref="IAwaitableShared{TShared}"/> that protects <paramref name="shared"/> with <paramref name="lock"/>.</summary>
-   public static IAwaitableShared<TShared> New<TShared>(TShared shared, IAwaitableLock @lock) =>
+   public static IAwaitableShared<TShared> New<TShared>(TShared shared, IAwaitableCriticalSection @lock) =>
       new AwaitableShared<TShared>(shared, @lock);
 
    internal class AwaitableShared<TShared> : IAwaitableShared<TShared>
    {
       readonly TShared _shared;
 
-      public AwaitableShared(TShared shared, IAwaitableLock @lock)
+      public AwaitableShared(TShared shared, IAwaitableCriticalSection @lock)
       {
          _shared = shared;
          Lock = @lock;
       }
 
-      public IAwaitableLock Lock { get; }
+      public IAwaitableCriticalSection Lock { get; }
 
       public TResult Read<TResult>(Func<TShared, TResult> read, LockTimeout? timeout = null) =>
          Lock.Read(() => read(_shared), timeout);
@@ -44,7 +44,7 @@ public interface IAwaitableShared
 public interface IAwaitableShared<out TShared>
 {
    ///<summary>The underlying lock used to protect access.</summary>
-   IAwaitableLock Lock { get; }
+   IAwaitableCriticalSection Lock { get; }
 
    //core
    ///<summary>Acquires a read lock, passes the shared object to <paramref name="read"/>, returns the result, then releases the lock.</summary>
