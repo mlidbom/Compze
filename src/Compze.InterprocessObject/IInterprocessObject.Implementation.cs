@@ -1,6 +1,7 @@
 using Compze.Internals.SystemCE.Core.IOCE;
 using Compze.Threading;
 using Compze.Threading.Interprocess;
+using Compze.Threading.ResourceAccess;
 
 namespace Compze.InterprocessObject;
 
@@ -31,26 +32,29 @@ public partial interface IInterprocessObject
          });
       }
 
-      public TResult Read<TResult>(Func<TObject, TResult> read)
+      public IAwaitableCriticalSection CriticalSection => _synchronizer;
+      public IAwaitableMutex Mutex => _synchronizer;
+
+      public TResult Read<TResult>(Func<TObject, TResult> read, LockTimeout? timeout = null)
       {
-         using(_synchronizer.TakeReadLock())
+         using(_synchronizer.TakeReadLock(timeout))
          {
             return read(Load());
          }
       }
 
-      public TResult ReadWhen<TResult>(Func<TObject, bool> condition, Func<TObject, TResult> read, TimeSpan? timeout = null)
+      public TResult ReadWhen<TResult>(Func<TObject, bool> condition, Func<TObject, TResult> read, WaitTimeout? timeout = null)
       {
          TObject? loaded = null;
-         using(_synchronizer.TakeReadLockWhen(() => condition(loaded = Load()), timeout != null ? new WaitTimeout(timeout.Value) : null))
+         using(_synchronizer.TakeReadLockWhen(() => condition(loaded = Load()), timeout))
          {
             return read(loaded!);
          }
       }
 
-      public TResult Update<TResult>(Func<TObject, TResult> update)
+      public TResult Update<TResult>(Func<TObject, TResult> update, LockTimeout? timeout = null)
       {
-         using(_synchronizer.TakeUpdateLock())
+         using(_synchronizer.TakeUpdateLock(timeout))
          {
             var instance = Load();
             var result = update(instance);
@@ -59,10 +63,10 @@ public partial interface IInterprocessObject
          }
       }
 
-      public TResult UpdateWhen<TResult>(Func<TObject, bool> condition, Func<TObject, TResult> update, TimeSpan? timeout = null)
+      public TResult UpdateWhen<TResult>(Func<TObject, bool> condition, Func<TObject, TResult> update, WaitTimeout? timeout = null)
       {
          TObject? loaded = null;
-         using(_synchronizer.TakeUpdateLockWhen(() => condition(loaded = Load()), timeout != null ? new WaitTimeout(timeout.Value) : null))
+         using(_synchronizer.TakeUpdateLockWhen(() => condition(loaded = Load()), timeout))
          {
             var result = update(loaded!);
             Save(loaded!);
@@ -70,10 +74,10 @@ public partial interface IInterprocessObject
          }
       }
 
-      public bool TryUpdateWhen(Func<TObject, bool> condition, Action<TObject> update, TimeSpan? timeout = null)
+      public bool TryUpdateWhen(Func<TObject, bool> condition, Action<TObject> update, WaitTimeout? timeout = null)
       {
          TObject? loaded = null;
-         using var updateLock = _synchronizer.TryTakeUpdateLockWhen(() => condition(loaded = Load()), timeout != null ? new WaitTimeout(timeout.Value) : null);
+         using var updateLock = _synchronizer.TryTakeUpdateLockWhen(() => condition(loaded = Load()), timeout);
          if(updateLock == null) return false;
          update(loaded!);
          Save(loaded!);
