@@ -11,21 +11,19 @@ public partial interface IAwaitableProcessShared
 
    private sealed class FileBackedProcessShared<TObject> : IFileBackedProcessShared<TObject> where TObject : class
    {
-      readonly BinaryFile _file;
+      readonly IBinaryFile _file;
       readonly ISignalingAwaitableMutex _synchronizer;
       readonly ISharedObjectSerializer<TObject> _serializer;
       readonly Func<TObject> _createDefault;
       readonly CorruptionAction _corruptionAction;
 
-      public FileBackedProcessShared(string name, ISharedObjectSerializer<TObject> serializer, Func<TObject> createDefault, CorruptionAction corruptionAction)
+      public FileBackedProcessShared(ISignalingAwaitableMutex synchronizer, IBinaryFile file, ISharedObjectSerializer<TObject> serializer, Func<TObject> createDefault, CorruptionAction corruptionAction)
       {
+         _synchronizer = synchronizer;
+         _file = file;
          _serializer = serializer;
          _createDefault = createDefault;
          _corruptionAction = corruptionAction;
-         var fileName = PathCE.ReplaceInvalidCharactersWith(name, '_');
-         _synchronizer = ISignalingAwaitableMutex.Global(fileName);
-
-         _file = _synchronizer.Update(() => DataDirectory.Value.GetOrCreateBinaryFile(fileName, () => serializer.Serialize(createDefault())));
       }
 
       public IAwaitableCriticalSection CriticalSection => _synchronizer;
@@ -80,13 +78,9 @@ public partial interface IAwaitableProcessShared
          return true;
       }
 
-      public void Delete() => _file.GetFileInfo().Delete();
+      public void Delete() => _file.Delete();
 
-      void Save(TObject instance)
-      {
-         var serialized = _serializer.Serialize(instance);
-         _file.WriteAllBytes(serialized);
-      }
+      void Save(TObject instance) => _file.WriteAllBytes(_serializer.Serialize(instance));
 
       TObject Load()
       {
@@ -101,7 +95,7 @@ public partial interface IAwaitableProcessShared
                throw new Exception($"""Failed to deserialize object from file {_file}""",
                                    exception);
 
-            _file.GetFileInfo().Delete();
+            _file.Delete();
             _file.WriteAllBytes(_serializer.Serialize(_createDefault()));
 
             throw new Exception($"""

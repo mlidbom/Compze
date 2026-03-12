@@ -20,6 +20,8 @@ public partial class DirectoryCE : FileSystemInfoCE
       return new DirectoryCE(GetDirectoryInfo().CreateSubdirectory(subDirectory));
    }
 
+   public string GetFilePath(string fileName) => Path.Combine(GetDirectoryInfo().FullName, fileName);
+
    public TextFile GetOrCreateTextFile(string fileName, Encoding? encoding = null, Func<string>? createInitialContent = null)
    {
       if(TryGetFile(fileName) is {} existingFile)

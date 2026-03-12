@@ -1,3 +1,4 @@
+using Compze.Internals.SystemCE.Core.IOCE;
 using Compze.Threading.ResourceAccess;
 
 namespace Compze.Threading.Interprocess.ResourceAccess;
@@ -25,8 +26,29 @@ public partial interface IAwaitableProcessShared
 #pragma warning restore CA2000
 
    ///<summary>Returns a new <see cref="IFileBackedProcessShared{TShared}"/> that persists the shared object to a file, synchronized with a global <see cref="ISignalingAwaitableMutex"/>.</summary>
-   public static IFileBackedProcessShared<TShared> GlobalFileBacked<TShared>(string name, ISharedObjectSerializer<TShared> serializer, Func<TShared> createDefault,CorruptionAction corruptionAction) where TShared : class
-      => new FileBackedProcessShared<TShared>(name, serializer, createDefault, corruptionAction);
+   public static IFileBackedProcessShared<TShared> GlobalFileBacked<TShared>(string name, ISharedObjectSerializer<TShared> serializer, Func<TShared> createDefault, CorruptionAction corruptionAction) where TShared : class
+   {
+      var fileName = PathCE.ReplaceInvalidCharactersWith(name, '_');
+      var synchronizer = ISignalingAwaitableMutex.Global(fileName);
+      var file = synchronizer.Update(() => DataDirectory.Value.GetOrCreateBinaryFile(fileName, () => serializer.Serialize(createDefault())));
+      return new FileBackedProcessShared<TShared>(synchronizer, file, serializer, createDefault, corruptionAction);
+   }
+
+   ///<summary>Returns a new <see cref="IFileBackedProcessShared{TShared}"/> that persists the shared object to a memory-mapped file, synchronized with a global <see cref="ISignalingAwaitableMutex"/>.</summary>
+   public static IFileBackedProcessShared<TShared> GlobalMemoryMappedFileBacked<TShared>(string name, ISharedObjectSerializer<TShared> serializer, Func<TShared> createDefault, CorruptionAction corruptionAction, int maxCapacity = 256 * 1024) where TShared : class
+   {
+      var fileName = PathCE.ReplaceInvalidCharactersWith(name, '_');
+      var synchronizer = ISignalingAwaitableMutex.Global(fileName);
+      var file = synchronizer.Update(() =>
+      {
+         var filePath = DataDirectory.Value.GetFilePath(fileName + ".mmf");
+         var mmf = new MemoryMappedBinaryFile(filePath, maxCapacity);
+         if(mmf.ReadAllBytes().Length == 0)
+            mmf.WriteAllBytes(serializer.Serialize(createDefault()));
+         return mmf;
+      });
+      return new FileBackedProcessShared<TShared>(synchronizer, file, serializer, createDefault, corruptionAction);
+   }
 
    ///<summary>Returns a new <see cref="IAwaitableProcessShared{TShared}"/> that protects <paramref name="shared"/> with the supplied <paramref name="mutex"/>.</summary>
    public static IAwaitableProcessShared<TShared> New<TShared>(TShared shared, IAwaitableMutex mutex) =>

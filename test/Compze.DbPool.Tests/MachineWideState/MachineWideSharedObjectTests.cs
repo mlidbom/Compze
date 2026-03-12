@@ -1,7 +1,9 @@
+using Compze.Abstractions.Wiring.Testing.Internal;
 using Compze.Contracts;
 using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 using Compze.Must;
 using Compze.Tests.Infrastructure;
+using Compze.Tests.Infrastructure.XUnit;
 using Compze.Threading;
 using Compze.Threading.Interprocess.ResourceAccess;
 using Compze.Threading.Testing;
@@ -42,19 +44,24 @@ public class MachineWideSharedObjectTests : UniversalTestBase
 
    IFileBackedProcessShared<SharedObject> CreateAndDeleteFileWhenTestCompletes(string name)
    {
-      var created = IAwaitableProcessShared.GlobalFileBacked(name, new SharedObjectSerializer(), () => new SharedObject(), CorruptionAction.ThrowException);
+      var created = PCTBackingStoreAttribute.BackingStore switch
+      {
+         ProcessSharedBackingStore.File => IAwaitableProcessShared.GlobalFileBacked(name, new SharedObjectSerializer(), () => new SharedObject(), CorruptionAction.ThrowException),
+         ProcessSharedBackingStore.MemoryMapped => IAwaitableProcessShared.GlobalMemoryMappedFileBacked(name, new SharedObjectSerializer(), () => new SharedObject(), CorruptionAction.ThrowException),
+         _ => throw new ArgumentOutOfRangeException()
+      };
       _created.Add(created);
       return created;
    }
 
-   [XF] public void Create()
+   [PCTBackingStore] public void Create()
    {
       var name = Guid.NewGuid().ToString();
       var shared = CreateAndDeleteFileWhenTestCompletes(name);
       shared.Read(it => it.Name.Must().Be("Default"));
    }
 
-   [XF] public void Create_update_and_get()
+   [PCTBackingStore] public void Create_update_and_get()
    {
       var name = Guid.NewGuid().ToString();
       var shared = CreateAndDeleteFileWhenTestCompletes(name);
@@ -67,7 +74,7 @@ public class MachineWideSharedObjectTests : UniversalTestBase
       shared.Read(it => it.Name.Must().Be("Updated"));
    }
 
-   [XF] public void Two_instances_with_same_name_share_data()
+   [PCTBackingStore] public void Two_instances_with_same_name_share_data()
    {
       var name = Guid.NewGuid().ToString();
       var shared1 = CreateAndDeleteFileWhenTestCompletes(name);
@@ -82,7 +89,7 @@ public class MachineWideSharedObjectTests : UniversalTestBase
       shared2.Read(it => it.Name.Must().Be("Updated"));
    }
 
-   [XF] public void Persistent_Once_all_instance_are_disposed_data_is_retained()
+   [PCTBackingStore] public void Persistent_Once_all_instance_are_disposed_data_is_retained()
    {
       const string name = "40BD77DF-7C32-4B28-9A49-DA2CE202CC4F";
       var newName = Guid.NewGuid().ToString();
@@ -99,7 +106,7 @@ public class MachineWideSharedObjectTests : UniversalTestBase
       shared.Read(it => it.Name.Must().Be(newName));
    }
 
-   [XF] public async Task Update_blocks_GetCopy_and_Update_from_both_same_and_other_instances()
+   [PCTBackingStore] public async Task Update_blocks_GetCopy_and_Update_from_both_same_and_other_instances()
    {
       var timeout = WaitTimeout.Seconds(15);
       var updateGate = IThreadGate.NewClosed(timeout, "updateGate");
