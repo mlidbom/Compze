@@ -26,17 +26,17 @@ public class IAwaitableLock_specification : UniversalTestBase
 
    [PCTAwaitableLock] public void When_one_thread_has_UpdateLock_other_thread_is_blocked_until_first_thread_disposes_lock_()
    {
-      var @lock = _lockFactory.CreateAwaitableLock(LockTimeout.Seconds(30));
+      var criticalSection = _lockFactory.CreateAwaitableLock(LockTimeout.Seconds(30));
       var insideLock = IThreadGate.NewClosed(WaitTimeout.Seconds(30), "insideLock");
 
       _runner.Run(
          () =>
          {
-            using(@lock.TakeUpdateLock()) insideLock.AwaitPassThrough();
+            using(criticalSection.TakeUpdateLock()) insideLock.AwaitPassThrough();
          },
          () =>
          {
-            using(@lock.TakeUpdateLock()) insideLock.AwaitPassThrough();
+            using(criticalSection.TakeUpdateLock()) insideLock.AwaitPassThrough();
          });
 
       // One thread acquired the lock and is now blocked at the closed gate — still holding the lock
@@ -55,14 +55,14 @@ public class IAwaitableLock_specification : UniversalTestBase
    {
       [PCTAwaitableLock] public void defaults_to_LockTimeout_Default_when_no_timeout_is_specified()
       {
-         var @lock = _lockFactory.CreateAwaitableLock();
-         @lock.LockTimeout.Must().Be(LockTimeout.Default);
+         var criticalSection = _lockFactory.CreateAwaitableLock();
+         criticalSection.LockTimeout.Must().Be(LockTimeout.Default);
       }
 
       [PCTAwaitableLock] public void returns_the_timeout_specified_at_creation()
       {
-         var @lock = _lockFactory.CreateAwaitableLock(LockTimeout.Seconds(7));
-         @lock.LockTimeout.Must().Be(LockTimeout.Seconds(7));
+         var criticalSection = _lockFactory.CreateAwaitableLock(LockTimeout.Seconds(7));
+         criticalSection.LockTimeout.Must().Be(LockTimeout.Seconds(7));
       }
    }
 
@@ -70,14 +70,14 @@ public class IAwaitableLock_specification : UniversalTestBase
    {
       [PCTAwaitableLock] public void defaults_to_WaitTimeout_Default_when_no_timeout_is_specified()
       {
-         var @lock = _lockFactory.CreateAwaitableLock();
-         @lock.WaitTimeout.Must().Be(WaitTimeout.Default);
+         var criticalSection = _lockFactory.CreateAwaitableLock();
+         criticalSection.WaitTimeout.Must().Be(WaitTimeout.Default);
       }
 
       [PCTAwaitableLock] public void returns_the_timeout_specified_at_creation()
       {
-         var @lock = _lockFactory.CreateAwaitableLock(WaitTimeout.Seconds(7));
-         @lock.WaitTimeout.Must().Be(WaitTimeout.Seconds(7));
+         var criticalSection = _lockFactory.CreateAwaitableLock(WaitTimeout.Seconds(7));
+         criticalSection.WaitTimeout.Must().Be(WaitTimeout.Seconds(7));
       }
    }
 
@@ -96,11 +96,11 @@ public class IAwaitableLock_specification : UniversalTestBase
 
       Exception RunScenario(TimeSpan ownerThreadBlockTime, LockTimeout lockTimeout, WaitTimeout? timeToWaitForStackTrace = null)
       {
-         var @lock = _lockFactory.CreateAwaitableLock(lockTimeout);
+         var criticalSection = _lockFactory.CreateAwaitableLock(lockTimeout);
          if(timeToWaitForStackTrace.HasValue)
          {
 #pragma warning disable CS0618 // Type or member is obsolete
-            ((ILockInternals)@lock).SetTimeToWaitForStackTrace(timeToWaitForStackTrace.Value);
+            ((ILockInternals)criticalSection).SetTimeToWaitForStackTrace(timeToWaitForStackTrace.Value);
 #pragma warning restore CS0618 // Type or member is obsolete
          }
 
@@ -109,7 +109,7 @@ public class IAwaitableLock_specification : UniversalTestBase
 
          TaskCE.Run(() =>
          {
-            var takenLock = @lock.TakeUpdateLock();
+            var takenLock = criticalSection.TakeUpdateLock();
             threadOneHasTakenUpdateLock.Set();
             threadTwoIsAboutToTryToTakeUpdateLock.WaitOne();
             Thread.Sleep(ownerThreadBlockTime);
@@ -121,7 +121,7 @@ public class IAwaitableLock_specification : UniversalTestBase
          var thrownException = Invoking(() => TaskCE.Run(() =>
                                                      {
                                                         threadTwoIsAboutToTryToTakeUpdateLock.Set();
-                                                        @lock.TakeUpdateLock();
+                                                        criticalSection.TakeUpdateLock();
                                                      })
                                                     .Wait())
                               .Must().Throw<AggregateException>()
@@ -135,27 +135,27 @@ public class IAwaitableLock_specification : UniversalTestBase
    {
       [PCTAwaitableLock] public void Returns_lock_when_condition_is_immediately_true()
       {
-         var @lock = _lockFactory.CreateAwaitableLock();
-         using var taken = @lock.TakeUpdateLockWhen(() => true);
+         var criticalSection = _lockFactory.CreateAwaitableLock();
+         using var taken = criticalSection.TakeUpdateLockWhen(() => true);
          taken.Must().NotBeNull();
       }
 
       [PCTAwaitableLock] public void Waits_until_condition_becomes_true()
       {
-         var @lock = _lockFactory.CreateAwaitableLock();
+         var criticalSection = _lockFactory.CreateAwaitableLock();
          var conditionMet = false;
          var lockAcquired = IThreadGate.NewOpen(WaitTimeout.Seconds(10), "afterLockAcquired");
 
          _runner.Run(() =>
          {
-            using(@lock.TakeUpdateLockWhen(() => conditionMet))
+            using(criticalSection.TakeUpdateLockWhen(() => conditionMet))
             {
                lockAcquired.AwaitPassThrough();
             }
          });
 
          lockAcquired.TryAwaitPassedThroughCountEqualTo(1, WaitTimeout.Milliseconds(100)).Must().BeFalse();
-         @lock.Update(() => conditionMet = true);
+         criticalSection.Update(() => conditionMet = true);
          lockAcquired.AwaitPassedThroughCountEqualTo(1);
       }
 
@@ -169,8 +169,8 @@ public class IAwaitableLock_specification : UniversalTestBase
    {
       [PCTAwaitableLock] public void Returns_lock_when_condition_is_immediately_true()
       {
-         var @lock = _lockFactory.CreateAwaitableLock();
-         using var taken = @lock.TakeReadLockWhen(() => true);
+         var criticalSection = _lockFactory.CreateAwaitableLock();
+         using var taken = criticalSection.TakeReadLockWhen(() => true);
          taken.Must().NotBeNull();
       }
 
@@ -184,15 +184,15 @@ public class IAwaitableLock_specification : UniversalTestBase
    {
       [PCTAwaitableLock] public void Returns_lock_when_condition_is_immediately_true()
       {
-         var @lock = _lockFactory.CreateAwaitableLock();
-         using var taken = @lock.TryTakeReadLockWhen(() => true);
+         var criticalSection = _lockFactory.CreateAwaitableLock();
+         using var taken = criticalSection.TryTakeReadLockWhen(() => true);
          taken.Must().NotBeNull();
       }
 
       [PCTAwaitableLock] public void Returns_null_when_condition_never_becomes_true()
       {
-         var @lock = _lockFactory.CreateAwaitableLock(WaitTimeout.Milliseconds(100));
-         var result = @lock.TryTakeReadLockWhen(() => false);
+         var criticalSection = _lockFactory.CreateAwaitableLock(WaitTimeout.Milliseconds(100));
+         var result = criticalSection.TryTakeReadLockWhen(() => false);
          result.Must().BeNull();
       }
    }
@@ -201,31 +201,31 @@ public class IAwaitableLock_specification : UniversalTestBase
    {
       [PCTAwaitableLock] public void Returns_true_when_condition_is_immediately_true()
       {
-         var @lock = _lockFactory.CreateAwaitableLock();
-         @lock.TryAwait(() => true).Must().BeTrue();
+         var criticalSection = _lockFactory.CreateAwaitableLock();
+         criticalSection.TryAwait(() => true).Must().BeTrue();
       }
 
       [PCTAwaitableLock] public void Returns_true_when_condition_becomes_true_within_timeout()
       {
-         var @lock = _lockFactory.CreateAwaitableLock();
+         var criticalSection = _lockFactory.CreateAwaitableLock();
          var conditionMet = false;
          var awaitCompleted = IThreadGate.NewOpen(WaitTimeout.Seconds(5), "awaitCompleted");
 
          _runner.Run(() =>
          {
-            @lock.TryAwait(() => conditionMet).Must().BeTrue();
+            criticalSection.TryAwait(() => conditionMet).Must().BeTrue();
             awaitCompleted.AwaitPassThrough();
          });
 
          awaitCompleted.TryAwaitPassedThroughCountEqualTo(1, WaitTimeout.Milliseconds(100)).Must().BeFalse();
-         @lock.Update(() => conditionMet = true);
+         criticalSection.Update(() => conditionMet = true);
          awaitCompleted.AwaitPassedThroughCountEqualTo(1);
       }
 
       [PCTAwaitableLock] public void Returns_false_when_condition_never_becomes_true_within_timeout()
       {
-         var @lock = _lockFactory.CreateAwaitableLock(WaitTimeout.Milliseconds(100));
-         @lock.TryAwait(() => false).Must().BeFalse();
+         var criticalSection = _lockFactory.CreateAwaitableLock(WaitTimeout.Milliseconds(100));
+         criticalSection.TryAwait(() => false).Must().BeFalse();
       }
    }
 }

@@ -7,44 +7,44 @@ namespace Compze.Threading.ResourceAccess;
 ///<summary>Factory for creating <see cref="IAwaitableShared{TShared}"/> instances that protect a shared object with an <see cref="IAwaitableCriticalSection"/>.</summary>
 public interface IAwaitableShared
 {
-   ///<summary>Returns a new <see cref="IAwaitableShared{TShared}"/> that protects <paramref name="shared"/> with <paramref name="lock"/>.</summary>
-   public static IAwaitableShared<TShared> New<TShared>(TShared shared, IAwaitableCriticalSection @lock) =>
-      new AwaitableShared<TShared>(shared, @lock);
+   ///<summary>Returns a new <see cref="IAwaitableShared{TShared}"/> that protects <paramref name="shared"/> with <paramref name="criticalSection"/>.</summary>
+   public static IAwaitableShared<TShared> New<TShared>(TShared shared, IAwaitableCriticalSection criticalSection) =>
+      new AwaitableShared<TShared>(shared, criticalSection);
 
    internal class AwaitableShared<TShared> : IAwaitableShared<TShared>
    {
       readonly TShared _shared;
 
-      public AwaitableShared(TShared shared, IAwaitableCriticalSection @lock)
+      public AwaitableShared(TShared shared, IAwaitableCriticalSection criticalSection)
       {
          _shared = shared;
-         Lock = @lock;
+         CriticalSection = criticalSection;
       }
 
-      public IAwaitableCriticalSection Lock { get; }
+      public IAwaitableCriticalSection CriticalSection { get; }
 
       public TResult Read<TResult>(Func<TShared, TResult> read, LockTimeout? timeout = null) =>
-         Lock.Read(() => read(_shared), timeout);
+         CriticalSection.Read(() => read(_shared), timeout);
 
       public TResult ReadWhen<TResult>(Func<TShared, bool> condition, Func<TShared, TResult> read, WaitTimeout? timeout = null) =>
-         Lock.ReadWhen(() => condition(_shared), () => read(_shared), timeout);
+         CriticalSection.ReadWhen(() => condition(_shared), () => read(_shared), timeout);
 
       public TResult Update<TResult>(Func<TShared, TResult> update, LockTimeout? timeout = null) =>
-         Lock.Update(() => update(_shared), timeout);
+         CriticalSection.Update(() => update(_shared), timeout);
 
       public TResult UpdateWhen<TResult>(Func<TShared, bool> condition, Func<TShared, TResult> update, WaitTimeout? timeout = null) =>
-         Lock.UpdateWhen(() => condition(_shared), () => update(_shared), timeout);
+         CriticalSection.UpdateWhen(() => condition(_shared), () => update(_shared), timeout);
 
       public bool TryUpdateWhen(Func<TShared, bool> condition, Action<TShared> update, WaitTimeout? timeout = null) =>
-         Lock.TryUpdateWhen(() => condition(_shared), () => update(_shared), timeout);
+         CriticalSection.TryUpdateWhen(() => condition(_shared), () => update(_shared), timeout);
    }
 }
 
 ///<summary>Provides lock-protected access to a shared object of type <typeparamref name="TShared"/> with read/update semantics and condition-based waiting.</summary>
 public interface IAwaitableShared<out TShared>
 {
-   ///<summary>The underlying lock used to protect access.</summary>
-   IAwaitableCriticalSection Lock { get; }
+   ///<summary>The underlying critical section used to protect access.</summary>
+   IAwaitableCriticalSection CriticalSection { get; }
 
    //core
    ///<summary>Acquires a read lock, passes the shared object to <paramref name="read"/>, returns the result, then releases the lock.</summary>

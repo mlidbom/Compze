@@ -5,7 +5,7 @@ namespace Compze.Threading.Exceptions;
 ///<summary>Thrown when a lock acquisition attempt times out. Includes the blocking thread's stack trace when available, to help diagnose deadlocks.</summary>
 public class TakeLockTimeoutException : Exception
 {
-   readonly IAwaitableMonitor _lock = IAwaitableMonitor.WithDefaultTimeout();
+   readonly IAwaitableMonitor _monitor = IAwaitableMonitor.WithDefaultTimeout();
    readonly WaitTimeout _timeToWaitForOwningThreadStacktrace;
    string? _blockingThreadStacktrace;
 
@@ -17,7 +17,7 @@ public class TakeLockTimeoutException : Exception
       get
       {
          //Todo: Blocking loggers and similar in production is not great: This only happens on deadlocks though, so it does not seem too urgent.
-         if(!_lock.TryAwait(() => _blockingThreadStacktrace != null, _timeToWaitForOwningThreadStacktrace))
+         if(!_monitor.TryAwait(() => _blockingThreadStacktrace != null, _timeToWaitForOwningThreadStacktrace))
          {
             _blockingThreadStacktrace = $"Failed to get blocking thread stack trace. Timed out after: {_timeToWaitForOwningThreadStacktrace}";
          }
@@ -32,7 +32,7 @@ public class TakeLockTimeoutException : Exception
    }
 
    internal void SetBlockingThreadsDisposeStackTrace(StackTrace blockingThreadStackTrace) =>
-      _lock.Update(() => _blockingThreadStacktrace = blockingThreadStackTrace.ToString());
+      _monitor.Update(() => _blockingThreadStacktrace = blockingThreadStackTrace.ToString());
 }
 
 ///<summary>Thrown when an in-process monitor lock acquisition times out after <see cref="LockTimeout"/>.</summary>

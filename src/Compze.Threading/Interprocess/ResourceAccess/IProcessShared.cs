@@ -15,13 +15,13 @@ public interface IProcessShared
       New(shared, IMutex.Local(name, timeout, onAbandonedMutexException));
 #pragma warning restore CA2000
 
-   ///<summary>Returns a new <see cref="IProcessShared{TShared}"/> that protects <paramref name="shared"/> with the supplied <paramref name="lock"/>.</summary>
-   public static IProcessShared<TShared> New<TShared>(TShared shared, IMutex @lock) =>
-      new ProcessShared<TShared>(shared, @lock);
+   ///<summary>Returns a new <see cref="IProcessShared{TShared}"/> that protects <paramref name="shared"/> with the supplied <paramref name="mutex"/>.</summary>
+   public static IProcessShared<TShared> New<TShared>(TShared shared, IMutex mutex) =>
+      new ProcessShared<TShared>(shared, mutex);
 
    internal class ProcessShared<TShared>(TShared shared, IMutex mutex) : IShared.Shared<TShared>(shared, mutex), IProcessShared<TShared>
    {
-      public IMutex Mutex => (IMutex)Lock;
+      public IMutex Mutex => (IMutex)CriticalSection;
    }
 }
 

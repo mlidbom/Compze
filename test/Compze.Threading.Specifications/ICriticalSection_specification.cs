@@ -29,14 +29,14 @@ public class ILock_specification : UniversalTestBase
    {
       [PCTLock] public void returns_the_value_from_the_function()
       {
-         var @lock = _lockFactory.CreateLock();
-         @lock.Locked(() => 42).Must().Be(42);
+         var criticalSection = _lockFactory.CreateLock();
+         criticalSection.Locked(() => 42).Must().Be(42);
       }
 
       [PCTLock] public void propagates_exceptions_from_the_function()
       {
-         var @lock = _lockFactory.CreateLock();
-         Invoking(() => @lock.Locked<int>(() => throw new InvalidOperationException("test")))
+         var criticalSection = _lockFactory.CreateLock();
+         Invoking(() => criticalSection.Locked<int>(() => throw new InvalidOperationException("test")))
            .Must().Throw<InvalidOperationException>()
            .Which.Message.Must().Be("test");
       }
@@ -46,16 +46,16 @@ public class ILock_specification : UniversalTestBase
    {
       [PCTLock] public void executes_the_action()
       {
-         var @lock = _lockFactory.CreateLock();
+         var criticalSection = _lockFactory.CreateLock();
          var executed = false;
-         @lock.Locked(() => executed = true);
+         criticalSection.Locked(() => executed = true);
          executed.Must().BeTrue();
       }
 
       [PCTLock] public void propagates_exceptions_from_the_function()
       {
-         var @lock = _lockFactory.CreateLock();
-         Invoking(() => @lock.Locked(() => throw new InvalidOperationException("test")))
+         var criticalSection = _lockFactory.CreateLock();
+         Invoking(() => criticalSection.Locked(() => throw new InvalidOperationException("test")))
            .Must().Throw<InvalidOperationException>()
            .Which.Message.Must().Be("test");
       }
@@ -65,12 +65,12 @@ public class ILock_specification : UniversalTestBase
    {
       [PCTLock] public void provides_mutual_exclusion_across_threads()
       {
-         var @lock = _lockFactory.CreateLock(LockTimeout.Seconds(30));
+         var criticalSection = _lockFactory.CreateLock(LockTimeout.Seconds(30));
          var insideLockGate = IThreadGate.NewClosed(WaitTimeout.Seconds(30), "insideLock");
 
          _runner.Run(
-            () => @lock.Locked(insideLockGate.AwaitPassThrough),
-            () => @lock.Locked(insideLockGate.AwaitPassThrough));
+            () => criticalSection.Locked(insideLockGate.AwaitPassThrough),
+            () => criticalSection.Locked(insideLockGate.AwaitPassThrough));
 
          insideLockGate.AwaitQueueLengthEqualTo(1);
          insideLockGate.TryAwaitQueueLengthEqualTo(2, WaitTimeout.Milliseconds(50)).Must().BeFalse();
@@ -80,33 +80,33 @@ public class ILock_specification : UniversalTestBase
 
       [PCTLock] public void supports_reentrant_locking_from_the_same_thread()
       {
-         var @lock = _lockFactory.CreateLock();
-         var result = @lock.Locked(() => @lock.Locked(() => 42));
+         var criticalSection = _lockFactory.CreateLock();
+         var result = criticalSection.Locked(() => criticalSection.Locked(() => 42));
          result.Must().Be(42);
       }
 
       [PCTLock] public void releases_the_lock_even_when_the_function_throws()
       {
-         var @lock = _lockFactory.CreateLock(LockTimeout.Seconds(30));
+         var criticalSection = _lockFactory.CreateLock(LockTimeout.Seconds(30));
 
-         try { @lock.Locked<int>(() => throw new InvalidOperationException()); }
+         try { criticalSection.Locked<int>(() => throw new InvalidOperationException()); }
          catch(InvalidOperationException) {}
 
-         TaskCE.Run(() => @lock.Locked(() => {})).Wait();
+         TaskCE.Run(() => criticalSection.Locked(() => {})).Wait();
       }
 
       [PCTLock] public void owning_thread_can_reenter_and_lock_is_only_released_when_outermost_lock_is_disposed()
       {
-         var @lock = _lockFactory.CreateLock(LockTimeout.Seconds(1));
-         using(@lock.TakeLock())
+         var criticalSection = _lockFactory.CreateLock(LockTimeout.Seconds(1));
+         using(criticalSection.TakeLock())
          {
-            using(@lock.TakeLock()) {}
+            using(criticalSection.TakeLock()) {}
 
-            Invoking(() => TaskCE.Run(() => @lock.TakeLock(LockTimeout.Seconds(.1))).Wait())
+            Invoking(() => TaskCE.Run(() => criticalSection.TakeLock(LockTimeout.Seconds(.1))).Wait())
               .Must().Throw<Exception>();
          }
 
-         TaskCE.Run(() => @lock.TakeLock(LockTimeout.Milliseconds(0))).Wait();
+         TaskCE.Run(() => criticalSection.TakeLock(LockTimeout.Milliseconds(0))).Wait();
       }
    }
 
@@ -114,14 +114,14 @@ public class ILock_specification : UniversalTestBase
    {
       [PCTLock] public void defaults_to_LockTimeout_Default_when_no_timeout_is_specified()
       {
-         var @lock = _lockFactory.CreateLock();
-         @lock.LockTimeout.Must().Be(LockTimeout.Default);
+         var criticalSection = _lockFactory.CreateLock();
+         criticalSection.LockTimeout.Must().Be(LockTimeout.Default);
       }
 
       [PCTLock] public void returns_the_timeout_specified_at_creation()
       {
-         var @lock = _lockFactory.CreateLock(LockTimeout.Seconds(7));
-         @lock.LockTimeout.Must().Be(LockTimeout.Seconds(7));
+         var criticalSection = _lockFactory.CreateLock(LockTimeout.Seconds(7));
+         criticalSection.LockTimeout.Must().Be(LockTimeout.Seconds(7));
       }
    }
 
@@ -129,27 +129,27 @@ public class ILock_specification : UniversalTestBase
    {
       [PCTLock] public void is_zero_when_no_contention_occurs()
       {
-         var @lock = _lockFactory.CreateLock();
+         var criticalSection = _lockFactory.CreateLock();
 
-         using(@lock.TakeLock()) {}
+         using(criticalSection.TakeLock()) {}
 
-         using(@lock.TakeLock()) {}
+         using(criticalSection.TakeLock()) {}
 
-         @lock.ContentionCount.Must().Be(0L);
+         criticalSection.ContentionCount.Must().Be(0L);
       }
 
       [PCTLock] public void increments_when_another_thread_contends_for_the_lock()
       {
-         var @lock = _lockFactory.CreateLock(LockTimeout.Seconds(30));
+         var criticalSection = _lockFactory.CreateLock(LockTimeout.Seconds(30));
 
-         var blockingLock = @lock.TakeLock();
+         var blockingLock = criticalSection.TakeLock();
 
          _runner.Run(() =>
          {
-            using(@lock.TakeLock()) {}
+            using(criticalSection.TakeLock()) {}
          });
 
-         SpinWait.SpinUntil(() => @lock.ContentionCount >= 1, 5.Seconds()).Must().BeTrue();
+         SpinWait.SpinUntil(() => criticalSection.ContentionCount >= 1, 5.Seconds()).Must().BeTrue();
 
          blockingLock.Dispose();
       }
@@ -170,11 +170,11 @@ public class ILock_specification : UniversalTestBase
 
       Exception RunScenario(TimeSpan ownerThreadBlockTime, LockTimeout monitorTimeout, WaitTimeout? timeToWaitForStackTrace = null)
       {
-         var @lock = _lockFactory.CreateLock(monitorTimeout);
+         var criticalSection = _lockFactory.CreateLock(monitorTimeout);
          if(timeToWaitForStackTrace.HasValue)
          {
 #pragma warning disable CS0618 // Type or member is obsolete
-            ((ILockInternals)@lock).SetTimeToWaitForStackTrace(timeToWaitForStackTrace.Value);
+            ((ILockInternals)criticalSection).SetTimeToWaitForStackTrace(timeToWaitForStackTrace.Value);
 #pragma warning restore CS0618 // Type or member is obsolete
          }
 
@@ -183,7 +183,7 @@ public class ILock_specification : UniversalTestBase
 
          TaskCE.Run(() =>
          {
-            var takenLock = @lock.TakeLock();
+            var takenLock = criticalSection.TakeLock();
             threadOneHasTakenLock.Set();
             threadTwoIsAboutToTryToTakeLock.WaitOne();
             Thread.Sleep(ownerThreadBlockTime);
@@ -195,7 +195,7 @@ public class ILock_specification : UniversalTestBase
          var thrownException = Invoking(() => TaskCE.Run(() =>
                                                      {
                                                         threadTwoIsAboutToTryToTakeLock.Set();
-                                                        @lock.TakeLock();
+                                                        criticalSection.TakeLock();
                                                      })
                                                     .Wait())
                               .Must().Throw<AggregateException>()

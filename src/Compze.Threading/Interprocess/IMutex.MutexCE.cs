@@ -20,7 +20,7 @@ public partial interface IMutex
 #pragma warning disable CA2213
       readonly LockDisposer _lockDisposer;
 #pragma warning restore CA2213
-      readonly IMonitor _timeoutLock = IMonitor.New();
+      readonly IMonitor _timeoutMonitor = IMonitor.New();
       long _contentionCount;
 
       static readonly WaitTimeout DefaultTimeToWaitForStackTrace = WaitTimeout.Seconds(1);
@@ -108,7 +108,7 @@ public partial interface IMutex
 
       IReadOnlyList<TakeMutexLockTimeoutException> _timeOutExceptionsOnOtherThreads = new List<TakeMutexLockTimeoutException>();
 
-      Exception RegisterTimeoutException() => _timeoutLock.Locked(() =>
+      Exception RegisterTimeoutException() => _timeoutMonitor.Locked(() =>
       {
          var exception = new TakeMutexLockTimeoutException(LockTimeout, _stackTraceFetchTimeout);
          OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _timeOutExceptionsOnOtherThreads, exception);
@@ -120,7 +120,7 @@ public partial interface IMutex
          // ReSharper disable once InconsistentlySynchronizedField
          if(_timeOutExceptionsOnOtherThreads.Count > 0)
          {
-            _timeoutLock.Locked(() =>
+            _timeoutMonitor.Locked(() =>
             {
                var stackTrace = new StackTrace(fNeedFileInfo: true);
                foreach(var exception in _timeOutExceptionsOnOtherThreads)

@@ -14,9 +14,9 @@ public interface IThreadShared
    public static IThreadShared<TShared> New<TShared>(TShared shared, LockTimeout? lockTimeout = null) =>
       new ThreadShared<TShared>(shared, IMonitor.New(lockTimeout));
 
-   ///<summary>Returns a new <see cref="IThreadShared{TShared}"/> that protects <paramref name="shared"/> with the supplied <paramref name="lock"/>.</summary>
-   public static IThreadShared<TShared> New<TShared>(TShared shared, IMonitor @lock) =>
-      new ThreadShared<TShared>(shared, @lock);
+   ///<summary>Returns a new <see cref="IThreadShared{TShared}"/> that protects <paramref name="shared"/> with the supplied <paramref name="monitor"/>.</summary>
+   public static IThreadShared<TShared> New<TShared>(TShared shared, IMonitor monitor) =>
+      new ThreadShared<TShared>(shared, monitor);
 
    internal class ThreadShared<TShared>(TShared shared, IMonitor monitor) : IShared.Shared<TShared>(shared, monitor), IThreadShared<TShared>
    {

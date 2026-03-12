@@ -44,21 +44,21 @@ public class IThreadShared_specification : UniversalTestBase
    {
       [PCTLock] public void exposes_ContentionCount()
       {
-         var @lock = _lockFactory.CreateLock();
-         var shared = IShared.New(new object(), @lock);
+         var criticalSection = _lockFactory.CreateLock();
+         var shared = IShared.New(new object(), criticalSection);
 
-         using(shared.Lock.TakeLock()) {}
+         using(shared.CriticalSection.TakeLock()) {}
 
-         shared.Lock.ContentionCount.Must().Be(0L);
+         shared.CriticalSection.ContentionCount.Must().Be(0L);
       }
 
       [PCTLock] public void shared_instances_with_same_lock_report_same_Lock()
       {
-         var @lock = _lockFactory.CreateLock();
-         var sharedA = IShared.New(new object(), @lock);
-         var sharedB = IShared.New(new object(), @lock);
+         var criticalSection = _lockFactory.CreateLock();
+         var sharedA = IShared.New(new object(), criticalSection);
+         var sharedB = IShared.New(new object(), criticalSection);
 
-         sharedA.Lock.Must().Be(sharedB.Lock);
+         sharedA.CriticalSection.Must().Be(sharedB.CriticalSection);
       }
    }
 }

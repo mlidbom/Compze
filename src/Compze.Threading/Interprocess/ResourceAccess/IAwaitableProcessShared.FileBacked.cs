@@ -29,7 +29,7 @@ public partial interface IAwaitableProcessShared
          _file = _synchronizer.Update(() => DataDirectory.Value.GetOrCreateTextFile(fileName, Encoding.UTF8, CreateDefaultJson));
       }
 
-      public IAwaitableCriticalSection Lock => _synchronizer;
+      public IAwaitableCriticalSection CriticalSection => _synchronizer;
       public IAwaitableMutex Mutex => _synchronizer;
 
       public TResult Read<TResult>(Func<TObject, TResult> read, LockTimeout? timeout = null)

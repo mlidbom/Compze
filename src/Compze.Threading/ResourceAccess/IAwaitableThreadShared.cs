@@ -14,9 +14,9 @@ public interface IAwaitableThreadShared
    public static IAwaitableThreadShared<TShared> New<TShared>(TShared shared, LockTimeout? lockTimeout = null, WaitTimeout? waitTimeout = null) =>
       new AwaitableThreadShared<TShared>(shared, IAwaitableMonitor.New(lockTimeout, waitTimeout));
 
-   ///<summary>Returns a new <see cref="IAwaitableThreadShared{TShared}"/> that protects <paramref name="shared"/> with the supplied <paramref name="lock"/>.</summary>
-   public static IAwaitableThreadShared<TShared> New<TShared>(TShared shared, IAwaitableMonitor @lock) =>
-      new AwaitableThreadShared<TShared>(shared, @lock);
+   ///<summary>Returns a new <see cref="IAwaitableThreadShared{TShared}"/> that protects <paramref name="shared"/> with the supplied <paramref name="monitor"/>.</summary>
+   public static IAwaitableThreadShared<TShared> New<TShared>(TShared shared, IAwaitableMonitor monitor) =>
+      new AwaitableThreadShared<TShared>(shared, monitor);
 
    internal class AwaitableThreadShared<TShared>(TShared shared, IAwaitableMonitor monitor) : IAwaitableShared.AwaitableShared<TShared>(shared, monitor), IAwaitableThreadShared<TShared>
    {
