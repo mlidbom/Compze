@@ -121,7 +121,7 @@ class TessagingRouter : ITessagingRouter, IDisposable
    ContractAsserter AssertNotStopped() => State.Assert(!_stopped, () => "router is stopped");
 
    public ITessagingInboxConnection ConnectionToHandlerFor(IRemotableTommand tommand) =>
-      AssertNotStopped()._then(() =>
+      AssertNotStopped().__(() =>
          _tommandHandlerRoutes.TryGetValue(tommand.GetType(), out var connection)
             ? connection
             : throw new NoHandlerForTessageTypeException(tommand.GetType()));

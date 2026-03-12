@@ -11,7 +11,7 @@ public static class LevelLoggerExtensions
    public static IDisposable LogMethodEntryExit(this ILevelLogger @this, [CallerMemberName] string caller = "") =>
 #pragma warning disable CA2000// We are passing this out of the method...
       @this.Log("Entering", caller)
-           ._then(new Disposable(() => @this.Log("Exiting", caller)));
+           .__(new Disposable(() => @this.Log("Exiting", caller)));
 #pragma warning restore CA2000
 
    public static IDisposable LogMethodExecutionTime(this ILevelLogger @this, [CallerMemberName] string caller = "")
@@ -20,6 +20,6 @@ public static class LevelLoggerExtensions
    public static IDisposable LogEntryExit(this ILevelLogger @this, string message = "", [CallerMemberName] string caller = "") =>
 #pragma warning disable CA2000// We are passing this disposable out of the method
       @this.Log($"Entering {message}", caller)
-           ._then(new Disposable(() => @this.Log($"Exiting {message}", caller)));
+           .__(new Disposable(() => @this.Log($"Exiting {message}", caller)));
 #pragma warning restore CA2000
 }

@@ -12,7 +12,7 @@ public interface IComponentRegistrar
 
    IComponentRegistrar Register(params Action<IComponentRegistrar>[] registrationMethods)
       => registrationMethods.ForEach(it => it(this))
-                            ._then(this);
+                            .__(this);
 
    IDependencyInjectionContainer Container();
 

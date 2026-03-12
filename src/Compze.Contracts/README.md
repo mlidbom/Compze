@@ -8,11 +8,11 @@
 #### Fluent with static use. No wasted lines. The contract reads like part of the method declaration.
 ```csharp
 void Transfer(Account from, Account to, decimal amount) => 
-    Argument.NotNull2(from, to).Assert(amount > 0).State.NotDisposed(_disposed, this)._then(() => {
+    Argument.NotNull2(from, to).Assert(amount > 0).State.NotDisposed(_disposed, this).__(() => {
         //method implementation here
     });
 ```
-**Note, the _then method is from Compze.Fluent. You may want to check it out.**
+**Note, the __ method is from Compze.Underscore. You may want to check it out.**
 
 #### Classic style. Pretty verbose in our opinion
 ```csharp

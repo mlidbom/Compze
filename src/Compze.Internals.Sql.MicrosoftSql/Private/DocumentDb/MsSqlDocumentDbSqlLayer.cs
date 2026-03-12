@@ -123,7 +123,7 @@ partial class MsSqlDocumentDbSqlLayer : IDocumentDbSqlLayer
                                                           .ExecuteReaderAndSelect(reader => new IDocumentDbSqlLayer.ReadRow(reader.GetGuid(2), reader.GetString(1))));
    }
 
-   static string TypeInClause(IReadOnlySet<TypeId> acceptableTypeIds) => Contract.Argument.Assert(acceptableTypeIds.Any())._then("IN( '" + acceptableTypeIds.Select(guid => guid.ToString()).Join("', '") + "')\n");
+   static string TypeInClause(IReadOnlySet<TypeId> acceptableTypeIds) => Contract.Argument.Assert(acceptableTypeIds.Any()).__("IN( '" + acceptableTypeIds.Select(guid => guid.ToString()).Join("', '") + "')\n");
 
    static string UseUpdateLock(bool useUpdateLock) => useUpdateLock ? "With(UPDLOCK, ROWLOCK)" : "";
 

@@ -27,12 +27,10 @@ var result = initialValue
 ```
 
 Primary methods:
-- `._()` - the pipe forward operator.
-- `.__()` — the `then` operator. Ignores the previous value and starts over with a value or by invoking a Func.
+- `._()` - the pipe forward operator. Think Linq `Select`, but for every object there is.
+- `.__()` — the then operator overloads. Ignores the previous value and starts over with a value or by invoking a Func.
 - `._tap()` — execute side effect, return original value
-- `._mutate()` — intent-declaring alias for `_tap`
-
-`.__` has a named alias `_then()` for contexts where you prefer readability over brevity.
+- `._mutate()` — intent-declaring alias for `_tap`. Declaring "I'm mutating `it` here" 
 
 > **Note:** The `_assert()` method used in the examples above comes from [Compze.Contracts](https://www.nuget.org/packages/Compze.Contracts) — you may want to check it out.
 
@@ -47,7 +45,7 @@ These extensions apply to *every* type, so name collisions and polluting auto-co
 
 ### Why _ "operators", not words?
 
-`._` and `.__` should be thought of as **operators**:  they glue expressions together, like `+` or `|>` in other languages. Naming them with words (`.Pipe(`, `.Then(`) makes the code stutter. Imagine if `variable.Member.MethodName()` had to be written as `variable.DOT.Member.Invoke(MethodName)` and you should see what we mean:
+`._(` and `.__(` should be thought of as **operators**:  they glue expressions together, like `+` or `|>` in other languages. Naming them with words (`.Pipe(`, `.Then(`) makes the code stutter. Imagine if `file.Open()` had to be written as `file.DOT.Invoke(Open)` and you should see what we mean you don't want words for . and ():
 
 ```csharp
 // Words — reads like narrating your own code, constantly removing your focus from the parts that actually matter:
@@ -56,8 +54,6 @@ return result.Pipe(DoSomething).Then(returnValue)
 // Operators — reads like just the logic:
 return result._(DoSomething).__(returnValue)
 ```
-
-`._(` is the pipe-forward operator. `.__(` is the discard-and-continue operator. One underscore = "transform this value." Two underscores = "ignore this value." The double-underscore echoes C#'s own `_` discard — extended from "I don't care about this variable" to "I don't care about the previous result."
 
 ## Related packages
 

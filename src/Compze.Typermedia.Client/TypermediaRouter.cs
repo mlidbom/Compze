@@ -116,9 +116,9 @@ class TypermediaRouter : ITypermediaRouter, IDisposable
    }
 
    public void Start() => State.Assert(!_running, () => "already running")
-                                ._then(_running = true);
+                                .__(_running = true);
 
-   public void Stop() => AssertRunning()._then(() =>
+   public void Stop() => AssertRunning().__(() =>
    {
       _running = false;
    });
@@ -137,5 +137,5 @@ class TypermediaRouter : ITypermediaRouter, IDisposable
       }
    }
 
-   Unit AssertRunning() => State.Assert(_running, () => "not running")._then(unit);
+   Unit AssertRunning() => State.Assert(_running, () => "not running").__(unit);
 }

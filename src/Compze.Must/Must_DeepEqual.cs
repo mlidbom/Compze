@@ -14,7 +14,7 @@ public class EquivalencyConfig<TValue>
 
    public EquivalencyConfig<TValue> ExcludeTypeMember<TMember>(Expression<Func<TValue, TMember>> memberExpression) =>
       ExcludedMembers.Add(memberExpression.ExtractFinalMemberInfo())
-                     ._then(this);
+                     .__(this);
 
    public EquivalencyConfig<TValue> IgnoreTypes() => this._mutate(it => it.TypesIgnored = true);
 }
