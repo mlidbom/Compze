@@ -15,5 +15,6 @@ public partial interface IPollingAwaitableMutex : IAwaitableMutex
    public static IPollingAwaitableMutex Local(string name, LockTimeout? lockTimeout = null, WaitTimeout? waitTimeout = null, PollingInterval? pollingInterval = null, Action? onAbandonedMutex = null) =>
       new PollingAwaitableMutexCE(name, global: false, lockTimeout, waitTimeout, pollingInterval, onAbandonedMutex);
 
+   ///<summary>The interval between polling attempts when waiting for a condition to become true.</summary>
    PollingInterval PollingInterval { get; }
 }

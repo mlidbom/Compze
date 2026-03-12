@@ -7,9 +7,11 @@ namespace Compze.Threading.Interprocess;
 /// </summary>
 public partial interface ISignalingAwaitableMutex : IAwaitableMutex
 {
+   ///<summary>Returns an <see cref="ISignalingAwaitableMutex"/> that synchronizes across all processes and user login sessions on the machine.</summary>
    public static ISignalingAwaitableMutex Global(string name, LockTimeout? lockTimeout = null, WaitTimeout? waitTimeout = null, Action? onAbandonedMutex = null) =>
       new SignalingAwaitableMutexCE(name, global: true, lockTimeout, waitTimeout, onAbandonedMutex);
 
+   ///<summary>Returns an <see cref="ISignalingAwaitableMutex"/> that synchronizes across all processes within a single user login session on the machine.</summary>
    public static ISignalingAwaitableMutex Local(string name, LockTimeout? lockTimeout = null, WaitTimeout? waitTimeout = null, Action? onAbandonedMutex = null) =>
       new SignalingAwaitableMutexCE(name, global: false, lockTimeout, waitTimeout, onAbandonedMutex);
 }

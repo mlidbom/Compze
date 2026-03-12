@@ -14,8 +14,11 @@ public partial interface IMutex : ILock, IDisposable
    public static IMutex Local(string name, LockTimeout? lockTimeout = null, Action? onAbandonedMutex = null) =>
       new MutexCE(name, global:false, lockTimeout, onAbandonedMutex);
 
+   ///<summary>True if the mutex synchronizes across all user login sessions on the machine; false if scoped to the current session.</summary>
    bool IsGlobal { get; }
+   ///<summary>The system name of the mutex, including the <c>Global\</c> or <c>Local\</c> prefix.</summary>
    string Name { get; }
 
+   ///<summary>Attempts to acquire the mutex within <paramref name="timeout"/>. Returns null if the timeout expires. Uses <see cref="ILockInfo.LockTimeout"/> if <paramref name="timeout"/> is null.</summary>
    internal IDisposable? TryTakeLock(LockTimeout? timeout = null);
 }

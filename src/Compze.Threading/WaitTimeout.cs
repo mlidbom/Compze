@@ -6,22 +6,32 @@ using Compze.Contracts;
 
 namespace Compze.Threading;
 
+///<summary>A strongly-typed duration used for condition-wait timeouts. Supports <see cref="Infinite"/> to wait indefinitely.</summary>
 public readonly struct WaitTimeout(TimeSpan value) : IEquatable<WaitTimeout>
 {
+   ///<summary>The underlying <see cref="TimeSpan"/> value.</summary>
    public TimeSpan Value { get; } = value;
 
+   ///<summary>Returns a <see cref="WaitTimeout"/> of <paramref name="milliseconds"/> duration.</summary>
    public static WaitTimeout Milliseconds(long milliseconds) => new(TimeSpan.FromMilliseconds(milliseconds));
+   ///<summary>Returns a <see cref="WaitTimeout"/> of <paramref name="milliseconds"/> duration.</summary>
    public static WaitTimeout Milliseconds(double milliseconds) => new(TimeSpan.FromMilliseconds(milliseconds));
+   ///<summary>Returns a <see cref="WaitTimeout"/> of <paramref name="seconds"/> duration.</summary>
    public static WaitTimeout Seconds(long seconds) => new(TimeSpan.FromSeconds(seconds));
+   ///<summary>Returns a <see cref="WaitTimeout"/> of <paramref name="seconds"/> duration.</summary>
    public static WaitTimeout Seconds(double seconds) => new(TimeSpan.FromSeconds(seconds));
+   ///<summary>Returns a <see cref="WaitTimeout"/> of <paramref name="minutes"/> duration.</summary>
    public static WaitTimeout Minutes(long minutes) => new(TimeSpan.FromMinutes(minutes));
+   ///<summary>Returns a <see cref="WaitTimeout"/> of <paramref name="minutes"/> duration.</summary>
    public static WaitTimeout Minutes(double minutes) => new(TimeSpan.FromMinutes(minutes));
 
+   ///<summary>A <see cref="WaitTimeout"/> that never expires.</summary>
    public static readonly WaitTimeout Infinite = new(Timeout.InfiniteTimeSpan);
 
    /// <summary>The default wait timeout: Infinite. Unlike with locks, nothing says that a wait has to complete within any particular time span in general.</summary>
    public static readonly WaitTimeout Default = Infinite;
 
+   ///<summary>True if this timeout represents an infinite wait.</summary>
    public bool IsInfinite => Value == Timeout.InfiniteTimeSpan;
 
    internal bool IsExpired(DateTime waitStarted) =>
