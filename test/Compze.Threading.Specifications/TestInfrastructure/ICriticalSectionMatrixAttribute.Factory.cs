@@ -1,4 +1,5 @@
 using Compze.Threading.Interprocess;
+using Compze.Underscore;
 using Compze.xUnitMatrix;
 
 namespace Compze.Threading.Specifications.TestInfrastructure;
@@ -18,20 +19,14 @@ partial class ICriticalSectionMatrixAttribute
       {
          return CurrentImplementation switch
          {
-            Implementation.Monitor => IMonitor.New(timeout),
-            Implementation.GlobalMutex => CreateMutex(global: true, timeout),
-            Implementation.LocalMutex => CreateMutex(global: false, timeout),
-            _ => throw new ArgumentOutOfRangeException()
+            Implementation.Monitor     => IMonitor.New(timeout),
+            Implementation.GlobalMutex => UniqueName()._(it => IMutex.Global(it, timeout))._tap(_disposables.Add),
+            Implementation.LocalMutex  => UniqueName()._(it => IMutex.Local(it, timeout))._tap(_disposables.Add),
+            _                          => throw new ArgumentOutOfRangeException()
          };
       }
 
-      IMutex CreateMutex(bool global, LockTimeout? timeout)
-      {
-         var uniqueName = $"{typeof(TTest).FullName}.{Interlocked.Increment(ref _counter)}";
-         var mutex = global ? IMutex.Global(uniqueName, timeout) : IMutex.Local(uniqueName, timeout);
-         _disposables.Add(mutex);
-         return mutex;
-      }
+      static string UniqueName() => $"{typeof(TTest).FullName}.{Interlocked.Increment(ref _counter)}";
 
       public void Dispose()
       {
