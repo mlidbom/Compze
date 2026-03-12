@@ -17,13 +17,21 @@ public partial interface IAwaitableProcessShared
       readonly Func<TObject> _createDefault;
       readonly CorruptionAction _corruptionAction;
 
-      public FileBackedProcessShared(ISignalingAwaitableMutex synchronizer, IBinaryFile file, ISharedObjectSerializer<TObject> serializer, Func<TObject> createDefault, CorruptionAction corruptionAction)
+      public FileBackedProcessShared(string name, Func<string, IBinaryFile> createBinaryFile, ISharedObjectSerializer<TObject> serializer, Func<TObject> createDefault, CorruptionAction corruptionAction)
       {
-         _synchronizer = synchronizer;
-         _file = file;
          _serializer = serializer;
          _createDefault = createDefault;
          _corruptionAction = corruptionAction;
+         var fileName = PathCE.ReplaceInvalidCharactersWith(name, '_');
+         _synchronizer = ISignalingAwaitableMutex.Global(fileName);
+
+         _file = _synchronizer.Update(() =>
+         {
+            var file = createBinaryFile(fileName);
+            if(file.ReadAllBytes().Length == 0)
+               file.WriteAllBytes(serializer.Serialize(createDefault()));
+            return file;
+         });
       }
 
       public IAwaitableCriticalSection CriticalSection => _synchronizer;
