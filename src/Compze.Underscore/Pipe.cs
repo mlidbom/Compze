@@ -1,5 +1,3 @@
-
-
 // ReSharper disable InconsistentNaming
 
 using Compze.SystemCE;
@@ -21,8 +19,17 @@ namespace Compze.Underscore;
 /// </summary>
 public static class Pipe
 {
-   ///<summary>passes <paramref name="it"/> to <paramref name="func"/> and returns the result. It is the pipe forward operator that is missing in C#. If you start using it, soon ._( will become the missing operator in your mind.</summary>
+   ///<summary>The pipe forward operator. Passes <paramref name="it"/> to <paramref name="func"/> and returns the result.</summary>
    public static TResult _<TThis, TResult>(this TThis it, Func<TThis, TResult> func) => func(it);
+
+   ///<summary>The then/discard operator. Returns <paramref name="value"/>, ignoring the previous value.</summary>
+   public static TResult __<TValue, TResult>(this TValue _, TResult value) => value;
+
+   ///<summary>The then/discard operator. Invokes <paramref name="func"/>, ignoring the previous value.</summary>
+   public static TResult __<TValue, TResult>(this TValue _, Func<TResult> func) => func();
+
+   ///<summary>The then/discard operator. Executes <paramref name="action"/>, and returns <see cref="Unit.Value"/>, ignoring the previous value.</summary>
+   public static Unit __<TValue>(this TValue _, Action action) => Unit.Invoke(action);
 
    ///<summary>Passes <paramref name="it"/> to <paramref name="tap"/> and returns <paramref name="it"/></summary>
    public static T _tap<T>(this T it, Action<T> tap)
@@ -33,15 +40,6 @@ public static class Pipe
 
    ///<summary>An alias for <see cref="_tap{T}"/> which declares that your intent is to mutate <paramref name="it"/>.</summary>
    public static T _mutate<T>(this T it, Action<T> mutate) => it._tap(mutate);
-
-   ///<summary> Returns <paramref name="value"/>, ignoring the previous value.</summary>
-   public static TResult __<TValue, TResult>(this TValue _, TResult value) => value;
-
-   ///<summary>Invokes <paramref name="func"/>, ignoring the previous value.</summary>
-   public static TResult __<TValue, TResult>(this TValue _, Func<TResult> func) => func();
-
-   ///<summary> Executes <paramref name="action"/>, and returns <see cref="Unit.Value"/>, ignoring the previous value.</summary>
-   public static Unit __<TValue>(this TValue _, Action action) => Unit.Invoke(action);
 
    ///<summary>Mutates <paramref name="it"/> using <paramref name="mutate"/> and returns <paramref name="it"/></summary>
    public static async Task<T> _mutateAsync<T>(this T it, Func<T, Task> mutate)
