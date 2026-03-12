@@ -1,4 +1,5 @@
 using Compze.Threading.Interprocess;
+using Compze.Underscore;
 using Compze.xUnitMatrix;
 
 namespace Compze.Threading.Specifications.TestInfrastructure;
@@ -16,32 +17,23 @@ partial class IAwaitableCriticalSectionMatrixAttribute
 
       public IAwaitableCriticalSection Create(WaitTimeout waitTimeout) => Create(null, waitTimeout);
       public IAwaitableCriticalSection Create(LockTimeout lockTimeout) => Create(lockTimeout, null);
+
       public IAwaitableCriticalSection Create(LockTimeout? lockTimeout = null, WaitTimeout? waitTimeout = null)
       {
          return CurrentImplementation switch
          {
             Implementation.Monitor => IAwaitableMonitor.New(lockTimeout, waitTimeout),
-            Implementation.Mutex => CreatePollingAwaitableMutex(lockTimeout, waitTimeout),
-            Implementation.SignalingMutex => CreateSignalingAwaitableMutex(lockTimeout, waitTimeout),
+            Implementation.Mutex => UniqueName()
+                                   ._(it => IPollingAwaitableMutex.Global(it, lockTimeout, waitTimeout, PollingInterval.Milliseconds(10)))
+                                   ._tap(_disposables.Add),
+            Implementation.SignalingMutex => UniqueName()
+                                            ._(it => ISignalingAwaitableMutex.Global(it, lockTimeout, waitTimeout))
+                                            ._tap(_disposables.Add),
             _ => throw new ArgumentOutOfRangeException()
          };
       }
 
-      IPollingAwaitableMutex CreatePollingAwaitableMutex(LockTimeout? lockTimeout, WaitTimeout? waitTimeout)
-      {
-         var uniqueName = $"{typeof(TTest).FullName}.P{Environment.ProcessId}.{Interlocked.Increment(ref _counter)}";
-         var mutex = IPollingAwaitableMutex.Global(uniqueName, lockTimeout, waitTimeout, PollingInterval.Milliseconds(10));
-         _disposables.Add(mutex);
-         return mutex;
-      }
-
-      ISignalingAwaitableMutex CreateSignalingAwaitableMutex(LockTimeout? lockTimeout, WaitTimeout? waitTimeout)
-      {
-         var uniqueName = $"{typeof(TTest).FullName}.P{Environment.ProcessId}.{Interlocked.Increment(ref _counter)}";
-         var mutex = ISignalingAwaitableMutex.Global(uniqueName, lockTimeout, waitTimeout);
-         _disposables.Add(mutex);
-         return mutex;
-      }
+      static string UniqueName() => $"{typeof(TTest).FullName}.P{Environment.ProcessId}.{Interlocked.Increment(ref _counter)}";
 
       public void Dispose()
       {
