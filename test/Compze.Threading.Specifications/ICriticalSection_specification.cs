@@ -14,9 +14,9 @@ using static Compze.Must.MustActions;
 namespace Compze.Threading.Specifications;
 
 [Collection(nameof(NonParallelCollection))]
-public class ILock_specification : UniversalTestBase
+public class ICriticalSection_specification : UniversalTestBase
 {
-   readonly ICriticalSectionMatrixAttribute.Factory<ILock_specification> _factory = new();
+   readonly ICriticalSectionMatrixAttribute.Factory<ICriticalSection_specification> _factory = new();
    readonly TestingTaskRunner _runner = new(timeout: 30.Seconds());
 
    protected override void DisposeInternal()
@@ -25,7 +25,7 @@ public class ILock_specification : UniversalTestBase
       _factory.Dispose();
    }
 
-   public class Locked_with_Func : ILock_specification
+   public class Locked_with_Func : ICriticalSection_specification
    {
       [ICriticalSectionMatrix] public void returns_the_value_from_the_function()
       {
@@ -42,7 +42,7 @@ public class ILock_specification : UniversalTestBase
       }
    }
 
-   public class Locked_with_Action : ILock_specification
+   public class Locked_with_Action : ICriticalSection_specification
    {
       [ICriticalSectionMatrix] public void executes_the_action()
       {
@@ -61,7 +61,7 @@ public class ILock_specification : UniversalTestBase
       }
    }
 
-   public class TakeLock : ILock_specification
+   public class TakeLock : ICriticalSection_specification
    {
       [ICriticalSectionMatrix] public void provides_mutual_exclusion_across_threads()
       {
@@ -110,7 +110,7 @@ public class ILock_specification : UniversalTestBase
       }
    }
 
-   public class LockTimeout_property : ILock_specification
+   public class LockTimeout_property : ICriticalSection_specification
    {
       [ICriticalSectionMatrix] public void defaults_to_LockTimeout_Default_when_no_timeout_is_specified()
       {
@@ -125,7 +125,7 @@ public class ILock_specification : UniversalTestBase
       }
    }
 
-   public class ContentionCount : ILock_specification
+   public class ContentionCount : ICriticalSection_specification
    {
       [ICriticalSectionMatrix] public void is_zero_when_no_contention_occurs()
       {
@@ -155,7 +155,7 @@ public class ILock_specification : UniversalTestBase
       }
    }
 
-   public class An_exception_is_thrown_by_TakeLock_if_lock_is_not_acquired_within_timeout : ILock_specification
+   public class An_exception_is_thrown_by_TakeLock_if_lock_is_not_acquired_within_timeout : ICriticalSection_specification
    {
       [ICriticalSectionMatrix] public void Exception_is_TakeLockTimeoutException() =>
          RunScenario(ownerThreadBlockTime: 20.Milliseconds(), LockTimeout.Milliseconds(10), WaitTimeout.Seconds(30)).Must().BeAssignableTo<TakeLockTimeoutException>();

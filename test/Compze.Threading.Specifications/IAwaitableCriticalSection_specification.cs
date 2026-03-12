@@ -13,9 +13,9 @@ using static Compze.Must.MustActions;
 namespace Compze.Threading.Specifications;
 
 [Collection(nameof(NonParallelCollection))]
-public class IAwaitableLock_specification : UniversalTestBase
+public class IAwaitableCriticalSection_specification : UniversalTestBase
 {
-   readonly IAwaitableCriticalSectionMatrixAttribute.Factory<IAwaitableLock_specification> _factory = new();
+   readonly IAwaitableCriticalSectionMatrixAttribute.Factory<IAwaitableCriticalSection_specification> _factory = new();
    readonly TestingTaskRunner _runner = TestingTaskRunner.WithTimeout(30.Seconds());
 
    protected override void DisposeInternal()
@@ -51,7 +51,7 @@ public class IAwaitableLock_specification : UniversalTestBase
       insideLock.AwaitPassedThroughCountEqualTo(2);
    }
 
-   public class LockTimeout_property : IAwaitableLock_specification
+   public class LockTimeout_property : IAwaitableCriticalSection_specification
    {
       [IAwaitableCriticalSectionMatrix] public void defaults_to_LockTimeout_Default_when_no_timeout_is_specified()
       {
@@ -66,7 +66,7 @@ public class IAwaitableLock_specification : UniversalTestBase
       }
    }
 
-   public class WaitTimeout_property : IAwaitableLock_specification
+   public class WaitTimeout_property : IAwaitableCriticalSection_specification
    {
       [IAwaitableCriticalSectionMatrix] public void defaults_to_WaitTimeout_Default_when_no_timeout_is_specified()
       {
@@ -81,7 +81,7 @@ public class IAwaitableLock_specification : UniversalTestBase
       }
    }
 
-   public class An_exception_is_thrown_by_TakeUpdateLock_if_lock_is_not_acquired_within_timeout : IAwaitableLock_specification
+   public class An_exception_is_thrown_by_TakeUpdateLock_if_lock_is_not_acquired_within_timeout : IAwaitableCriticalSection_specification
    {
       [IAwaitableCriticalSectionMatrix] public void Exception_is_TakeLockTimeoutException() =>
          RunScenario(ownerThreadBlockTime: 20.Milliseconds(), LockTimeout.Milliseconds(10), WaitTimeout.Seconds(30)).Must().BeAssignableTo<TakeLockTimeoutException>();
@@ -131,7 +131,7 @@ public class IAwaitableLock_specification : UniversalTestBase
       }
    }
 
-   public class TakeUpdateLockWhen : IAwaitableLock_specification
+   public class TakeUpdateLockWhen : IAwaitableCriticalSection_specification
    {
       [IAwaitableCriticalSectionMatrix] public void Returns_lock_when_condition_is_immediately_true()
       {
@@ -165,7 +165,7 @@ public class IAwaitableLock_specification : UniversalTestBase
            .Must().Throw<AwaitingConditionTimeoutException>();
    }
 
-   public class TakeReadLockWhen : IAwaitableLock_specification
+   public class TakeReadLockWhen : IAwaitableCriticalSection_specification
    {
       [IAwaitableCriticalSectionMatrix] public void Returns_lock_when_condition_is_immediately_true()
       {
@@ -180,7 +180,7 @@ public class IAwaitableLock_specification : UniversalTestBase
            .Must().Throw<AwaitingConditionTimeoutException>();
    }
 
-   public class TryTakeReadLockWhen : IAwaitableLock_specification
+   public class TryTakeReadLockWhen : IAwaitableCriticalSection_specification
    {
       [IAwaitableCriticalSectionMatrix] public void Returns_lock_when_condition_is_immediately_true()
       {
@@ -197,7 +197,7 @@ public class IAwaitableLock_specification : UniversalTestBase
       }
    }
 
-   public class TryAwait : IAwaitableLock_specification
+   public class TryAwait : IAwaitableCriticalSection_specification
    {
       [IAwaitableCriticalSectionMatrix] public void Returns_true_when_condition_is_immediately_true()
       {

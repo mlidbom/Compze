@@ -178,27 +178,74 @@ No test file exists that tests the `IAwaitableProcessShared<T>` interface contra
 
 ---
 
+## Testing Philosophy
+
+**Test at the abstraction level, not the implementation level.** Every interface gets full contract tests against all implementations, regardless of whether the current implementation is a thin wrapper. Reasons:
+
+- Implementations may change — an `IAwaitableShared` might someday do its own locking instead of delegating to `IAwaitableCriticalSection`.
+- Interactions between lock types and shared wrappers may have subtle glitches that can't be predicted by code inspection.
+- Specifications should guarantee correctness independently at each level of the type hierarchy.
+
+**No shortcuts based on implementation knowledge.** Even if `IShared.Locked()` currently just delegates to `ICriticalSection.Locked()`, the `IShared` spec still tests locking behavior fully. The specs are contracts, not implementation audits.
+
+**Ordering:** Matrix attributes & specs first → full test coverage → stress tests & performance tests last.
+
+---
+
+## Plan: New Matrix Attributes
+
+| Attribute | Enum values | Factory creates via |
+|---|---|---|
+| `[ISharedMatrix]` | Monitor, GlobalMutex, LocalMutex | `IShared.New(value, criticalSection)` |
+| `[IProcessSharedMatrix]` | GlobalMutex, LocalMutex | `IProcessShared.Global/Local(name, value, ...)` |
+| `[IAwaitableSharedMatrix]` | Monitor, GlobalPollingMutex, LocalPollingMutex, GlobalSignalingMutex, LocalSignalingMutex | `IAwaitableShared.New(value, criticalSection)` |
+| `[IAwaitableProcessSharedMatrix]` | GlobalPollingMutex, LocalPollingMutex, GlobalSignalingMutex, LocalSignalingMutex | `IAwaitableProcessShared.GlobalPolling/LocalPolling/GlobalSignaling/LocalSignaling(...)` |
+
+Each attribute follows the established pattern: partial class with nested `Implementation` enum and `Factory<TTest>`.
+
+## Plan: New Specification Files
+
+| Spec file | Tests interface | Matrix attribute | Full contract? |
+|---|---|---|---|
+| `IShared_specification` | `IShared<T>` | `[ISharedMatrix]` | Yes — Locked, CriticalSection property, contention |
+| `IProcessShared_specification` | `IProcessShared<T>` | `[IProcessSharedMatrix]` | Yes — full IShared contract + Mutex property |
+| `IAwaitableShared_specification` | `IAwaitableShared<T>` | `[IAwaitableSharedMatrix]` | Yes — Read, Update, ReadWhen, UpdateWhen, TryUpdateWhen, Await, CriticalSection property |
+| `IAwaitableProcessShared_specification` | `IAwaitableProcessShared<T>` | `[IAwaitableProcessSharedMatrix]` | Yes — full IAwaitableShared contract + Mutex property |
+
+Existing `IThreadShared_specification` to be refactored: rename to `IShared_specification`, use `[ISharedMatrix]`.
+
+---
+
 ## Summary: What we have vs what we need
 
 ### Matrix attributes — current
 
 | Attribute | Enum | Values | Dimensions | Tests against interface |
 |---|---|---|---|---|
-| `[ICriticalSectionMatrix]` | `ICriticalSectionMatrixAttribute.Implementation` | Monitor, GlobalMutex, LocalMutex | 3 | ICriticalSection, IShared |
+| `[ICriticalSectionMatrix]` | `ICriticalSectionMatrixAttribute.Implementation` | Monitor, GlobalMutex, LocalMutex | 3 | ICriticalSection |
 | `[IAwaitableCriticalSectionMatrix]` | `IAwaitableCriticalSectionMatrixAttribute.Implementation` | Monitor, GlobalPollingMutex, LocalPollingMutex, GlobalSignalingMutex, LocalSignalingMutex | 5 | IAwaitableCriticalSection |
 | `[InterprocessObjectMatrix]` | `InterprocessObjectBackingStore` | File, MemoryMapped | 2 | IInterprocessObject |
 
-### Missing — interfaces with no specification testing all implementations
+### Matrix attributes — planned
 
-| Interface | Has specification? | Implementations never tested against it |
+| Attribute | Enum values | Tests against interface |
 |---|---|---|
-| `ICriticalSection` | ✅ (`ICriticalSection_specification`) | **All covered** (Monitor, GlobalMutex, LocalMutex) |
-| `IAwaitableCriticalSection` | ✅ (`IAwaitableCriticalSection_specification`) | **All covered** (Monitor, Global/Local × Polling/Signaling Mutex) |
-| `IShared<T>` | Partial (`IThreadShared_specification`) | ProcessShared (Global/Local) |
-| `IAwaitableShared<T>` | ❌ **No specification** | All 8 implementations |
-| `IProcessShared<T>` | Partial (XF, not matrix) | Global/Local not matrix-varied |
-| `IAwaitableProcessShared<T>` | ❌ **No specification** | All 6 implementations |
-| `IInterprocessObject<T>` | Partial (persistence only) | Never tested as IAwaitableShared/IAwaitableProcessShared |
+| `[ISharedMatrix]` | Monitor, GlobalMutex, LocalMutex | IShared\<T\> |
+| `[IProcessSharedMatrix]` | GlobalMutex, LocalMutex | IProcessShared\<T\> |
+| `[IAwaitableSharedMatrix]` | Monitor, GlobalPollingMutex, LocalPollingMutex, GlobalSignalingMutex, LocalSignalingMutex | IAwaitableShared\<T\> |
+| `[IAwaitableProcessSharedMatrix]` | GlobalPollingMutex, LocalPollingMutex, GlobalSignalingMutex, LocalSignalingMutex | IAwaitableProcessShared\<T\> |
+
+### Interface coverage — current and planned
+
+| Interface | Has specification? | Status |
+|---|---|---|
+| `ICriticalSection` | ✅ `ICriticalSection_specification` | **Complete** |
+| `IAwaitableCriticalSection` | ✅ `IAwaitableCriticalSection_specification` | **Complete** |
+| `IShared<T>` | Partial (`IThreadShared_specification`) | **Planned**: `IShared_specification` with `[ISharedMatrix]` |
+| `IProcessShared<T>` | Partial (XF, not matrix) | **Planned**: `IProcessShared_specification` with `[IProcessSharedMatrix]` |
+| `IAwaitableShared<T>` | ❌ None | **Planned**: `IAwaitableShared_specification` with `[IAwaitableSharedMatrix]` |
+| `IAwaitableProcessShared<T>` | ❌ None | **Planned**: `IAwaitableProcessShared_specification` with `[IAwaitableProcessSharedMatrix]` |
+| `IInterprocessObject<T>` | Partial (persistence only) | Separate concern — persistence/backing store tested via `[InterprocessObjectMatrix]` |
 
 ### ~~Missing — scope dimension~~ RESOLVED
 
