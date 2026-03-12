@@ -10,7 +10,7 @@ class DbPoolMachineWideState
    readonly IFileBackedProcessShared<DbPoolState> _shared;
 
    internal DbPoolMachineWideState(string uniqueName) =>
-      _shared = IAwaitableProcessShared.GlobalFileBacked(
+      _shared = IAwaitableProcessShared.GlobalMemoryMappedFileBacked(
          uniqueName,
          MemoryPackDbPoolStateSerializer.Instance,
          () => new DbPoolState(),

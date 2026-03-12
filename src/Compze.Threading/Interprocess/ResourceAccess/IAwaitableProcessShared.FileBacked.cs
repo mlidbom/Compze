@@ -80,7 +80,11 @@ public partial interface IAwaitableProcessShared
 
       public void Delete() => _file.Delete();
 
-      void Save(TObject instance) => _file.WriteAllBytes(_serializer.Serialize(instance));
+      void Save(TObject instance)
+      {
+         var serialized = _serializer.Serialize(instance);
+         _file.WriteAllBytes(serialized);
+      }
 
       TObject Load()
       {
