@@ -47,7 +47,7 @@ public class MachineWideSharedObjectTests : UniversalTestBase
       var created = PCTBackingStoreAttribute.BackingStore switch
       {
          ProcessSharedBackingStore.File => IAwaitableProcessShared.GlobalFileBacked(name, new SharedObjectSerializer(), () => new SharedObject(), CorruptionAction.ThrowException),
-         ProcessSharedBackingStore.MemoryMapped => IAwaitableProcessShared.GlobalMemoryMappedFileBacked(name, new SharedObjectSerializer(), () => new SharedObject(), CorruptionAction.ThrowException),
+         ProcessSharedBackingStore.MemoryMapped => IAwaitableProcessShared.GlobalMemoryMappedFileBacked(name, new SharedObjectSerializer(), () => new SharedObject(), CorruptionAction.ThrowException, maxCapacityInBytes: 4 * 1024),
          _ => throw new ArgumentOutOfRangeException()
       };
       _created.Add(created);

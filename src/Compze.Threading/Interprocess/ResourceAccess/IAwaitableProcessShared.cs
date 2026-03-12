@@ -29,9 +29,12 @@ public partial interface IAwaitableProcessShared
    public static IFileBackedProcessShared<TShared> GlobalFileBacked<TShared>(string name, ISharedObjectSerializer<TShared> serializer, Func<TShared> createDefault, CorruptionAction corruptionAction) where TShared : class
       => new FileBackedProcessShared<TShared>(name, fileName => DataDirectory.Value.GetOrCreateBinaryFile(fileName), serializer, createDefault, corruptionAction);
 
-   ///<summary>Returns a new <see cref="IFileBackedProcessShared{TShared}"/> that persists the shared object to a memory-mapped file, synchronized with a global <see cref="ISignalingAwaitableMutex"/>.</summary>
-   public static IFileBackedProcessShared<TShared> GlobalMemoryMappedFileBacked<TShared>(string name, ISharedObjectSerializer<TShared> serializer, Func<TShared> createDefault, CorruptionAction corruptionAction, int maxCapacity = 256 * 1024) where TShared : class
-      => new FileBackedProcessShared<TShared>(name, fileName => new MemoryMappedBinaryFile(DataDirectory.Value.GetFilePath(fileName + ".mmf"), maxCapacity), serializer, createDefault, corruptionAction);
+   ///<summary>Returns a new <see cref="IFileBackedProcessShared{TShared}"/> that persists the shared object to a memory-mapped file, synchronized with a global <see cref="ISignalingAwaitableMutex"/>.
+   ///<para><b>WARNING:</b> <paramref name="maxCapacityInBytes"/> is a hard ceiling in bytes. If the serialized object exceeds this size, writes will throw <see cref="InvalidOperationException"/>. Choose a capacity that comfortably accommodates the largest expected serialized size.</para>
+   ///<para>The OS only commits physical memory for pages actually written, so specifying a generous capacity does not waste RAM — only address space.</para>
+   ///</summary>
+   public static IFileBackedProcessShared<TShared> GlobalMemoryMappedFileBacked<TShared>(string name, ISharedObjectSerializer<TShared> serializer, Func<TShared> createDefault, CorruptionAction corruptionAction, int maxCapacityInBytes) where TShared : class
+      => new FileBackedProcessShared<TShared>(name, fileName => new MemoryMappedBinaryFile(DataDirectory.Value.GetFilePath(fileName + ".mmf"), maxCapacityInBytes), serializer, createDefault, corruptionAction);
 
    ///<summary>Returns a new <see cref="IAwaitableProcessShared{TShared}"/> that protects <paramref name="shared"/> with the supplied <paramref name="mutex"/>.</summary>
    public static IAwaitableProcessShared<TShared> New<TShared>(TShared shared, IAwaitableMutex mutex) =>

@@ -8,16 +8,16 @@ class MemoryMappedBinaryFile : IBinaryFile, IDisposable
    const int HeaderSize = sizeof(int);
 
    readonly string _filePath;
-   readonly int _maxCapacity;
+   readonly int _maxCapacityInBytes;
 
    MemoryMappedFile? _memoryMappedFile;
    MemoryMappedViewAccessor? _accessor;
    unsafe byte* _basePointer;
 
-   public MemoryMappedBinaryFile(string filePath, int maxCapacity)
+   public MemoryMappedBinaryFile(string filePath, int maxCapacityInBytes)
    {
       _filePath = filePath;
-      _maxCapacity = maxCapacity;
+      _maxCapacityInBytes = maxCapacityInBytes;
       EnsureMapping();
    }
 
@@ -33,8 +33,8 @@ class MemoryMappedBinaryFile : IBinaryFile, IDisposable
 
    public unsafe void WriteAllBytes(byte[] bytes)
    {
-      if(bytes.Length > _maxCapacity)
-         throw new InvalidOperationException($"Data size {bytes.Length} exceeds maximum capacity {_maxCapacity}");
+      if(bytes.Length > _maxCapacityInBytes)
+         throw new InvalidOperationException($"Data size {bytes.Length} exceeds maximum capacity {_maxCapacityInBytes} bytes");
       EnsureMapping();
       *(int*)_basePointer = bytes.Length;
       bytes.AsSpan().CopyTo(new Span<byte>(_basePointer + HeaderSize, bytes.Length));
@@ -61,7 +61,7 @@ class MemoryMappedBinaryFile : IBinaryFile, IDisposable
 
       Directory.CreateDirectory(Path.GetDirectoryName(_filePath)!);
 
-      var totalSize = HeaderSize + _maxCapacity;
+      var totalSize = HeaderSize + _maxCapacityInBytes;
 
 #pragma warning disable CA2000
       var backingFileStream = new FileStream(

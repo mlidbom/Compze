@@ -14,7 +14,8 @@ class DbPoolMachineWideState
          uniqueName,
          MemoryPackDbPoolStateSerializer.Instance,
          () => new DbPoolState(),
-         CorruptionAction.ReplaceContentWithDefaultAndThrow);
+         CorruptionAction.ReplaceContentWithDefaultAndThrow,
+         maxCapacityInBytes: 64 * 1024);
 
    internal DbPoolDatabase ReserveDatabase(string reservationName, Guid poolId, TimeSpan reservationLength)
    {
