@@ -15,24 +15,49 @@ public OperationResult SomeBusinessMethod(Guid userId) =>
     ._assert(ResultIsWhatWeExpected);
 ```
 
-## Pipe forward operator
-
-Chain operations fluently with `._()`:
+## `._(` The Pipe forward operator. Invokes the next step in a pipeline, passing the previous value as the `it` parameter.
 
 ```csharp
 var result = initialValue
-    ._(Transform)
+    ._(it => Transform(it))
     ._(Validate)
     ._(Format);
 ```
 
-Primary methods:
-- `._()` - the pipe forward operator. Think Linq `Select`, but for every object there is.
-- `.__()` — the then operator overloads. Ignores the previous value and starts over with a value or by invoking a Func.
-- `._tap()` — execute side effect, return original value
-- `._mutate()` — intent-declaring alias for `_tap`. Declaring "I'm mutating `it` here" 
 
-> **Note:** The `_assert()` method used in the examples above comes from [Compze.Contracts](https://www.nuget.org/packages/Compze.Contracts) — you may want to check it out.
+## `.__(` The then/discard operator. Ignores the previous value in the pipeline and starts over with a value or by invoking a Func or Action
+
+
+```csharp
+string ValidatedName(string name) => Argument.Assert(!string.IsNullOrWhiteSpace(name))
+    .__(DoSomething(name));
+
+IDisposable StartOperation(string name) => _logger.Log($"Starting {name}")
+    .__(() => new OperationScope(name));
+
+Unit EnsureInitialized() => State.Assert(!_disposed).__(() => 
+{
+    /*logic here */
+});
+```
+
+## `._tap()` — side effect, then continue
+
+Executes a side effect on `it` without changing the pipeline value:
+
+```csharp
+return userId
+    ._tap(it => _logger.Log($"processing user {it}"))
+    ._(DoSomething);
+```
+
+## `._mutate()` — mutate and return
+
+Declares that you're modifying `it` in-place and returning `it` for further chaining:
+
+```csharp
+public static Command SetText(this Command @this, string text) => @this._mutate(it => it.CommandText = text);
+```
 
 
 ## What's with the naming?
@@ -43,17 +68,19 @@ These extensions apply to *every* type, so name collisions and polluting auto-co
 - **Clear visuals** — instantly recognizable as something other than regular methods.
 - **Great discoverability** — type `._` and all these extensions are right there grouped together.
 
-### Why _ "operators", not words?
+### _ "operators", vs words
 
-`._(` and `.__(` should be thought of as **operators**:  they glue expressions together, like `+` or `|>` in other languages. Naming them with words (`.Pipe(`, `.Then(`) makes the code stutter. Imagine if `file.Open()` had to be written as `file.DOT.Invoke(Open)` and you should see what we mean you don't want words for . and ():
+`._(` and `.__(` should be thought of as **operators**:  they glue expressions together, like `.`, `()`, or `|>` in other languages. Naming them with words (`.Pipe(`, `.Then(`) makes the code stutter. Imagine if `file.Open()` had to be written as `file.DOT.Invoke(Open)` and you should see what we mean. You don't want words for `.` and `()`, nor do you want them for `._(` or `.__(`:
 
 ```csharp
-// Words — reads like narrating your own code, constantly removing your focus from the parts that actually matter:
-return result.Pipe(DoSomething).Then(returnValue)
+// Compare:
+return startValue.Pipe(DoSomething).Then(returnValue)
 
-// Operators — reads like just the logic:
-return result._(DoSomething).__(returnValue)
+// And
+return startValue._(DoSomething).__(returnValue)
 ```
+
+Once you have internalized the meaning of `._(` and `.__(` the readability of the two play in different leagues.
 
 ## Related packages
 
