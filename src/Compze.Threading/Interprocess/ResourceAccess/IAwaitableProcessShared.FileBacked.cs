@@ -105,13 +105,8 @@ public partial interface IAwaitableProcessShared
             _file.WriteAllBytes(_serializer.Serialize(_createDefault()));
 
             throw new Exception($"""
-
                                  Failed to deserialize object from file {_file}
                                  Deleted the corrupt file and replaced it with the content of a default {typeof(TObject).FullName}.
-                                 The file content (Base64) was: 
-
-                                 {Convert.ToBase64String(data)}
-                                  
                                  """,
                                 exception);
          }
