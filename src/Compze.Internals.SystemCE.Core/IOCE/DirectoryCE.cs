@@ -28,6 +28,14 @@ public partial class DirectoryCE : FileSystemInfoCE
       return TextFile.Create(this, fileName, encoding, createInitialContent?.Invoke() ?? "");
    }
 
+   public BinaryFile GetOrCreateBinaryFile(string fileName, Func<byte[]>? createInitialContent = null)
+   {
+      if(TryGetFile(fileName) is {} existingFile)
+         return new BinaryFile(existingFile.GetFileInfo());
+
+      return BinaryFile.Create(this, fileName, createInitialContent?.Invoke() ?? []);
+   }
+
    FileCE? TryGetFile(string fileName) => (GetDirectoryInfo().GetFiles().SingleOrDefault(it => it.Name == fileName) is {} fileInfo) ? new FileCE(fileInfo) : null;
 
    DirectoryInfo? TryGetSubDirector(string name) => GetDirectoryInfo().GetDirectories().SingleOrDefault(it => it.Name == name);

@@ -29,17 +29,9 @@ class SharedObjectSerializer : ISharedObjectSerializer<SharedObject>
       MemoryPackSerializer.Deserialize<SharedObject>(warmup);
    }
 
-   public string Serialize(SharedObject instance)
-   {
-      var inArray = MemoryPackSerializer.Serialize(instance);
-      return Convert.ToBase64String(inArray);
-   }
+   public byte[] Serialize(SharedObject instance) => MemoryPackSerializer.Serialize(instance);
 
-   public SharedObject Deserialize(string json)
-   {
-      var fromBase64String = Convert.FromBase64String(json);
-      return MemoryPackSerializer.Deserialize<SharedObject>(fromBase64String)._assert().NotNull();
-   }
+   public SharedObject Deserialize(byte[] data) => MemoryPackSerializer.Deserialize<SharedObject>(data)._assert().NotNull();
 }
 
 public class MachineWideSharedObjectTests : UniversalTestBase

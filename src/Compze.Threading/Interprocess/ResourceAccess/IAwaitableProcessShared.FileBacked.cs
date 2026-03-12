@@ -1,4 +1,3 @@
-using System.Text;
 using Compze.Internals.SystemCE.Core.IOCE;
 
 namespace Compze.Threading.Interprocess.ResourceAccess;
@@ -12,7 +11,7 @@ public partial interface IAwaitableProcessShared
 
    private sealed class FileBackedProcessShared<TObject> : IFileBackedProcessShared<TObject> where TObject : class
    {
-      readonly TextFile _file;
+      readonly BinaryFile _file;
       readonly ISignalingAwaitableMutex _synchronizer;
       readonly ISharedObjectSerializer<TObject> _serializer;
       readonly Func<TObject> _createDefault;
@@ -26,7 +25,7 @@ public partial interface IAwaitableProcessShared
          var fileName = PathCE.ReplaceInvalidCharactersWith(name, '_');
          _synchronizer = ISignalingAwaitableMutex.Global(fileName);
 
-         _file = _synchronizer.Update(() => DataDirectory.Value.GetOrCreateTextFile(fileName, Encoding.UTF8, CreateDefaultJson));
+         _file = _synchronizer.Update(() => DataDirectory.Value.GetOrCreateBinaryFile(fileName, () => serializer.Serialize(createDefault())));
       }
 
       public IAwaitableCriticalSection CriticalSection => _synchronizer;
@@ -83,20 +82,18 @@ public partial interface IAwaitableProcessShared
 
       public void Delete() => _file.GetFileInfo().Delete();
 
-      string CreateDefaultJson() => _serializer.Serialize(_createDefault());
-
       void Save(TObject instance)
       {
-         var json = _serializer.Serialize(instance);
-         _file.WriteAllText(json);
+         var serialized = _serializer.Serialize(instance);
+         _file.WriteAllBytes(serialized);
       }
 
       TObject Load()
       {
-         var json = _file.ReadAllText();
+         var data = _file.ReadAllBytes();
          try
          {
-            return _serializer.Deserialize(json);
+            return _serializer.Deserialize(data);
          }
          catch(Exception exception)
          {
@@ -105,16 +102,15 @@ public partial interface IAwaitableProcessShared
                                    exception);
 
             _file.GetFileInfo().Delete();
-            var defaultJson = CreateDefaultJson();
-            _file.WriteAllText(defaultJson);
+            _file.WriteAllBytes(_serializer.Serialize(_createDefault()));
 
             throw new Exception($"""
 
                                  Failed to deserialize object from file {_file}
                                  Deleted the corrupt file and replaced it with the content of a default {typeof(TObject).FullName}.
-                                 The file content was: 
+                                 The file content (Base64) was: 
 
-                                 {json}
+                                 {Convert.ToBase64String(data)}
                                   
                                  """,
                                 exception);
