@@ -20,7 +20,7 @@ static class ReadonlyCollections
       new List<T>(@this)._mutate(me => me.AddRange(items));
 
    [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
-   static void AddRange<T>(this ICollection<T> me, IEnumerable<T> toAdd) => Contract.Argument.NotNull2(me, toAdd)._(() =>
+   static void AddRange<T>(this ICollection<T> me, IEnumerable<T> toAdd) => Contract.Argument.NotNull2(me, toAdd).__(() =>
    {
       foreach(var it in toAdd)
       {

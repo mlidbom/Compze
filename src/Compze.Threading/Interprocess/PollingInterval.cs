@@ -6,7 +6,7 @@ namespace Compze.Threading;
 public readonly struct PollingInterval : IEquatable<PollingInterval>
 {
    PollingInterval(TimeSpan value) => Argument.Assert(value > TimeSpan.Zero)
-                                              ._(Value = value);
+                                              .__(Value = value);
 
    TimeSpan Value { get; }
 

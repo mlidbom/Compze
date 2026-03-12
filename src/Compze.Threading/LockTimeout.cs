@@ -13,7 +13,7 @@ public readonly struct LockTimeout : IEquatable<LockTimeout>
 {
    ///<summary>Creates a <see cref="LockTimeout"/> with the specified <paramref name="value"/>. Throws if <paramref name="value"/> is <see cref="Timeout.InfiniteTimeSpan"/>.</summary>
    public LockTimeout(TimeSpan value) => Argument.Assert(value != Timeout.InfiniteTimeSpan)
-                                                 ._(Value = value);
+                                                 .__(Value = value);
 
    ///<summary>The underlying <see cref="TimeSpan"/> value.</summary>
    public TimeSpan Value { get; }

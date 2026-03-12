@@ -36,11 +36,11 @@ public readonly struct WaitTimeout(TimeSpan value) : IEquatable<WaitTimeout>
 
    internal bool IsExpired(DateTime waitStarted) =>
       Argument.Assert(this != Infinite)
-              ._(DateTime.UtcNow - waitStarted >= Value);
+              .__(DateTime.UtcNow - waitStarted >= Value);
 
    internal WaitTimeout TimeRemaining(DateTime waitStarted) =>
       Argument.Assert(this != Infinite)
-              ._(new WaitTimeout(TimeSpan.FromTicks(Math.Max(0, (Value - (DateTime.UtcNow - waitStarted)).Ticks))));
+              .__(new WaitTimeout(TimeSpan.FromTicks(Math.Max(0, (Value - (DateTime.UtcNow - waitStarted)).Ticks))));
 
    public bool Equals(WaitTimeout other) => Value.Equals(other.Value);
    public override bool Equals(object? obj) => obj is WaitTimeout other && Equals(other);

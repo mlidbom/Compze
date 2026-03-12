@@ -22,7 +22,7 @@ public static partial class TypeCE
    }
 
    ///<returns>true if <paramref name="me"/> implements the interface: <paramref name="implemented"/>. By definition true if <paramref name="me"/> == <paramref name="implemented"/>.</returns>
-   public static bool Implements(this Type me, Type implemented) => Argument.NotNull2(me, implemented).Assert(implemented.IsInterface)._(() =>
+   public static bool Implements(this Type me, Type implemented) => Argument.NotNull2(me, implemented).Assert(implemented.IsInterface).__(() =>
    {
       if(me == implemented) { return true; }
 
