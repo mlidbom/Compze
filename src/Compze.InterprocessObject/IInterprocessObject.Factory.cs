@@ -21,7 +21,14 @@ public partial interface IInterprocessObject
    /// Really, the only real meaningful constraint is when serialization time becomes a problem in your specific usage scenario.</para>
    ///</summary>
    public static IInterprocessObject<T> Create<T>(string name, IInterprocessObjectSerializer<T> serializer, Func<T> createDefault, CorruptionAction corruptionAction, int maxCapacityInBytes, LockTimeout? lockTimeout = null, WaitTimeout? waitTimeout = null) where T : class
-      => new InterprocessObjectImplementation<T>(name, fileName => new MemoryMappedBinaryFile(DataDirectory.Value.GetFilePath(fileName + ".mmf"), maxCapacityInBytes), serializer, createDefault, corruptionAction, lockTimeout, waitTimeout);
+      => CreateInternal(name, isGlobal: true, serializer, createDefault, corruptionAction, maxCapacityInBytes, lockTimeout, waitTimeout);
+
+   ///<summary>Creates a new <see cref="IInterprocessObject{T}"/> backed by a memory-mapped file, synchronized with a session-local cross-process mutex.</summary>
+   public static IInterprocessObject<T> CreateLocal<T>(string name, IInterprocessObjectSerializer<T> serializer, Func<T> createDefault, CorruptionAction corruptionAction, int maxCapacityInBytes, LockTimeout? lockTimeout = null, WaitTimeout? waitTimeout = null) where T : class
+      => CreateInternal(name, isGlobal: false, serializer, createDefault, corruptionAction, maxCapacityInBytes, lockTimeout, waitTimeout);
+
+   static IInterprocessObject<T> CreateInternal<T>(string name, bool isGlobal, IInterprocessObjectSerializer<T> serializer, Func<T> createDefault, CorruptionAction corruptionAction, int maxCapacityInBytes, LockTimeout? lockTimeout, WaitTimeout? waitTimeout) where T : class
+      => new InterprocessObjectImplementation<T>(name, isGlobal, fileName => new MemoryMappedBinaryFile(DataDirectory.Value.GetFilePath(fileName + ".mmf"), maxCapacityInBytes), serializer, createDefault, corruptionAction, lockTimeout, waitTimeout);
 
    ///<summary>Creates a new <see cref="IInterprocessObject{T}"/> backed by a regular file, synchronized with a global cross-process mutex.
    ///<para>Every read and update performs filesystem I/O (full read or write of the file). The file size matches the serialized data — there is no size limit.</para>
@@ -29,5 +36,12 @@ public partial interface IInterprocessObject
    /// For high-frequency access, consider <see cref="Create{T}"/> instead.</para>
    ///</summary>
    public static IInterprocessObject<T> CreateFileBacked<T>(string name, IInterprocessObjectSerializer<T> serializer, Func<T> createDefault, CorruptionAction corruptionAction, LockTimeout? lockTimeout = null, WaitTimeout? waitTimeout = null) where T : class
-      => new InterprocessObjectImplementation<T>(name, fileName => DataDirectory.Value.GetOrCreateBinaryFile(fileName), serializer, createDefault, corruptionAction, lockTimeout, waitTimeout);
+      => CreateFileBackedInternal(name, isGlobal: true, serializer, createDefault, corruptionAction, lockTimeout, waitTimeout);
+
+   ///<summary>Creates a new <see cref="IInterprocessObject{T}"/> backed by a regular file, synchronized with a session-local cross-process mutex.</summary>
+   public static IInterprocessObject<T> CreateFileBackedLocal<T>(string name, IInterprocessObjectSerializer<T> serializer, Func<T> createDefault, CorruptionAction corruptionAction, LockTimeout? lockTimeout = null, WaitTimeout? waitTimeout = null) where T : class
+      => CreateFileBackedInternal(name, isGlobal: false, serializer, createDefault, corruptionAction, lockTimeout, waitTimeout);
+
+   static IInterprocessObject<T> CreateFileBackedInternal<T>(string name, bool isGlobal, IInterprocessObjectSerializer<T> serializer, Func<T> createDefault, CorruptionAction corruptionAction, LockTimeout? lockTimeout, WaitTimeout? waitTimeout) where T : class
+      => new InterprocessObjectImplementation<T>(name, isGlobal, fileName => DataDirectory.Value.GetOrCreateBinaryFile(fileName), serializer, createDefault, corruptionAction, lockTimeout, waitTimeout);
 }

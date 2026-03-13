@@ -1,5 +1,6 @@
 using Compze.Internals.SystemCE.LinqCE;
 using Compze.InterprocessObject;
+using Compze.InterprocessObject.MemoryPack;
 using Compze.Threading.Interprocess.ResourceAccess;
 using Compze.Underscore;
 using Compze.xUnitMatrix;
@@ -17,7 +18,7 @@ partial class IAwaitableProcessSharedMatrixAttribute
       Implementation CurrentImplementation => (Implementation)MatrixCombination.Current.Components[0];
 
       public bool CurrentImplementationIsGlobal => CurrentImplementation is Implementation.GlobalPollingMutex or Implementation.GlobalSignalingMutex
-                                                                                                              or Implementation.InterprocessObjectMemoryMapped or Implementation.InterprocessObjectFileBacked;
+                                                                                                              or Implementation.GlobalInterprocessObjectMemoryMapped or Implementation.GlobalInterprocessObjectFileBacked;
 
       public IAwaitableProcessShared<SharedTestValue> Create(SharedTestValue shared, LockTimeout? lockTimeout = null, WaitTimeout? waitTimeout = null)
       {
@@ -31,10 +32,14 @@ partial class IAwaitableProcessSharedMatrixAttribute
                                                                           ._tap(_disposables.Add),
             Implementation.LocalSignalingMutex => IAwaitableProcessShared.LocalSignaling(UniqueName(), shared, lockTimeout, waitTimeout)
                                                                          ._tap(_disposables.Add),
-            Implementation.InterprocessObjectMemoryMapped => IInterprocessObject.Create(UniqueName(), new SharedTestValueSerializer(), () => shared, CorruptionAction.ThrowException, maxCapacityInBytes: 4 * 1024, lockTimeout, waitTimeout)
-                                                                                ._tap(_interprocessObjects.Add),
-            Implementation.InterprocessObjectFileBacked => IInterprocessObject.CreateFileBacked(UniqueName(), new SharedTestValueSerializer(), () => shared, CorruptionAction.ThrowException, lockTimeout, waitTimeout)
-                                                                              ._tap(_interprocessObjects.Add),
+            Implementation.GlobalInterprocessObjectMemoryMapped => MemoryPackInterprocessObject.New<SharedTestValue>(UniqueName(), () => shared, CorruptionAction.ThrowException, maxCapacityInBytes: 4 * 1024, lockTimeout, waitTimeout)
+                                                                                               ._tap(_interprocessObjects.Add),
+            Implementation.GlobalInterprocessObjectFileBacked => MemoryPackInterprocessObject.NewFileBacked<SharedTestValue>(UniqueName(), () => shared, CorruptionAction.ThrowException, lockTimeout, waitTimeout)
+                                                                                             ._tap(_interprocessObjects.Add),
+            Implementation.LocalInterprocessObjectMemoryMapped => MemoryPackInterprocessObject.NewLocal<SharedTestValue>(UniqueName(), () => shared, CorruptionAction.ThrowException, maxCapacityInBytes: 4 * 1024, lockTimeout, waitTimeout)
+                                                                                              ._tap(_interprocessObjects.Add),
+            Implementation.LocalInterprocessObjectFileBacked => MemoryPackInterprocessObject.NewFileBackedLocal<SharedTestValue>(UniqueName(), () => shared, CorruptionAction.ThrowException, lockTimeout, waitTimeout)
+                                                                                            ._tap(_interprocessObjects.Add),
             _ => throw new ArgumentOutOfRangeException()
          };
       }

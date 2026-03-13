@@ -9,7 +9,9 @@ partial class IAwaitableSharedMatrixAttribute
       LocalPollingMutex,
       GlobalSignalingMutex,
       LocalSignalingMutex,
-      InterprocessObjectMemoryMapped,
-      InterprocessObjectFileBacked
+      GlobalInterprocessObjectMemoryMapped,
+      GlobalInterprocessObjectFileBacked,
+      LocalInterprocessObjectMemoryMapped,
+      LocalInterprocessObjectFileBacked
    }
 }

@@ -14,13 +14,15 @@ public partial interface IInterprocessObject
       readonly Func<TObject> _createDefault;
       readonly CorruptionAction _corruptionAction;
 
-      public InterprocessObjectImplementation(string name, Func<string, IBinaryFile> createBinaryFile, IInterprocessObjectSerializer<TObject> serializer, Func<TObject> createDefault, CorruptionAction corruptionAction, LockTimeout? lockTimeout = null, WaitTimeout? waitTimeout = null)
+      public InterprocessObjectImplementation(string name, bool isGlobal, Func<string, IBinaryFile> createBinaryFile, IInterprocessObjectSerializer<TObject> serializer, Func<TObject> createDefault, CorruptionAction corruptionAction, LockTimeout? lockTimeout = null, WaitTimeout? waitTimeout = null)
       {
          _serializer = serializer;
          _createDefault = createDefault;
          _corruptionAction = corruptionAction;
          var fileName = PathCE.ReplaceInvalidCharactersWith(name, '_');
-         _synchronizer = ISignalingAwaitableMutex.Global(fileName, lockTimeout, waitTimeout);
+         _synchronizer = isGlobal
+            ? ISignalingAwaitableMutex.Global(fileName, lockTimeout, waitTimeout)
+            : ISignalingAwaitableMutex.Local(fileName, lockTimeout, waitTimeout);
 
          _file = _synchronizer.Update(() =>
          {
