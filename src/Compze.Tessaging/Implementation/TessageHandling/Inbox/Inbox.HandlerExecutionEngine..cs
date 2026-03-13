@@ -5,7 +5,6 @@ using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
-using Compze.Threading;
 
 namespace Compze.Tessaging.Implementation.TessageHandling.Inbox;
 
@@ -58,8 +57,12 @@ public partial class Inbox
       internal void Stop()
       {
          this.Log().Info("Stopping");
-         _awaitDispatchableTessageThread?.InterruptAndJoin();
-         _awaitDispatchableTessageThread = null;
+         if(_awaitDispatchableTessageThread != null)
+         {
+            _awaitDispatchableTessageThread.Interrupt();
+            _awaitDispatchableTessageThread.Join();
+            _awaitDispatchableTessageThread = null;
+         }
          this.Log().Info("Stopped");
       }
    }

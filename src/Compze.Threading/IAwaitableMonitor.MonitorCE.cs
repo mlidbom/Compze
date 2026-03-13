@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Compze.Internals.SystemCE.Core.CollectionsCE.GenericCE;
 using Compze.Threading.Exceptions;
 using Compze.Threading.Utilities;
 
@@ -124,7 +125,7 @@ public partial interface IAwaitableMonitor
          lock(_timeoutLock)
          {
             var exception = new TakeMonitorLockTimeoutException(LockTimeout, _stackTraceFetchTimeout);
-            OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _timeOutExceptionsOnOtherThreads, exception);
+            _timeOutExceptionsOnOtherThreads = _timeOutExceptionsOnOtherThreads.AddToCopy(exception);
             return exception;
          }
       }

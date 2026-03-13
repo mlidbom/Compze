@@ -20,12 +20,12 @@ public partial interface IAwaitableProcessShared
       new AwaitableProcessShared<TShared>(shared, IPollingAwaitableMutex.Local(name, lockTimeout, waitTimeout, pollingInterval, onAbandonedMutexException));
 
    ///<summary>Returns a new <see cref="IAwaitableProcessShared{TShared}"/> using a global <see cref="ISignalingAwaitableMutex"/>.</summary>
-   public static IAwaitableProcessShared<TShared> GlobalSignaling<TShared>(string name, TShared shared, LockTimeout? lockTimeout = null, WaitTimeout? waitTimeout = null, Action? onAbandonedMutexException = null) =>
-      new AwaitableProcessShared<TShared>(shared, ISignalingAwaitableMutex.Global(name, lockTimeout, waitTimeout, onAbandonedMutexException));
+   public static IAwaitableProcessShared<TShared> GlobalSignaling<TShared>(string name, DirectoryInfo directory, TShared shared, LockTimeout? lockTimeout = null, WaitTimeout? waitTimeout = null, Action? onAbandonedMutexException = null) =>
+      new AwaitableProcessShared<TShared>(shared, ISignalingAwaitableMutex.Global(name, directory, lockTimeout, waitTimeout, onAbandonedMutexException));
 
    ///<summary>Returns a new <see cref="IAwaitableProcessShared{TShared}"/> using a local <see cref="ISignalingAwaitableMutex"/>.</summary>
-   public static IAwaitableProcessShared<TShared> LocalSignaling<TShared>(string name, TShared shared, LockTimeout? lockTimeout = null, WaitTimeout? waitTimeout = null, Action? onAbandonedMutexException = null) =>
-      new AwaitableProcessShared<TShared>(shared, ISignalingAwaitableMutex.Local(name, lockTimeout, waitTimeout, onAbandonedMutexException));
+   public static IAwaitableProcessShared<TShared> LocalSignaling<TShared>(string name, DirectoryInfo directory, TShared shared, LockTimeout? lockTimeout = null, WaitTimeout? waitTimeout = null, Action? onAbandonedMutexException = null) =>
+      new AwaitableProcessShared<TShared>(shared, ISignalingAwaitableMutex.Local(name, directory, lockTimeout, waitTimeout, onAbandonedMutexException));
 #pragma warning restore CA2000
 
    internal class AwaitableProcessShared<TShared>(TShared shared, IAwaitableMutex mutex) : IAwaitableShared.AwaitableShared<TShared>(shared, mutex), IAwaitableProcessShared<TShared>

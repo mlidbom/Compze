@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 using System.Security.AccessControl;
 using System.Security.Principal;
+using Compze.Internals.SystemCE.Core.CollectionsCE.GenericCE;
 
 namespace Compze.Threading.Interprocess;
 
@@ -111,7 +112,7 @@ public partial interface IMutex
       Exception RegisterTimeoutException() => _timeoutMonitor.Locked(() =>
       {
          var exception = new TakeMutexLockTimeoutException(LockTimeout, _stackTraceFetchTimeout);
-         OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _timeOutExceptionsOnOtherThreads, exception);
+         _timeOutExceptionsOnOtherThreads = _timeOutExceptionsOnOtherThreads.AddToCopy(exception);
          return exception;
       });
 

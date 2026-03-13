@@ -13,9 +13,9 @@ public partial interface ISignalingAwaitableMutex
       readonly IMutex _mutex;
       readonly InterprocessSignal _signal;
 
-      internal SignalingAwaitableMutexCE(string name, bool global, LockTimeout? lockTimeout, WaitTimeout? waitTimeout, Action? onAbandonedMutex)
+      internal SignalingAwaitableMutexCE(string name, bool global, DirectoryInfo directory, LockTimeout? lockTimeout, WaitTimeout? waitTimeout, Action? onAbandonedMutex)
       {
-         _signal = new InterprocessSignal(name);
+         _signal = new InterprocessSignal(name, directory);
 
          // Wrap the user's callback so abandoned-mutex detection also raises the signal,
          // waking any thread stuck waiting for a signal.

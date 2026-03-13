@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Compze.Internals.SystemCE.Core.CollectionsCE.GenericCE;
 using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 using Compze.SystemCE;
 using Compze.Threading;
@@ -87,7 +88,7 @@ public interface IAsyncLockCE : IDisposable
          lock(_timeoutLock)
          {
             var exception = new AsyncLockTimeoutException(_timeout, _stackTraceFetchTimeout);
-            OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _timeOutExceptionsOnOtherThreads, exception);
+            _timeOutExceptionsOnOtherThreads = _timeOutExceptionsOnOtherThreads.AddToCopy(exception);
             return exception;
          }
       }

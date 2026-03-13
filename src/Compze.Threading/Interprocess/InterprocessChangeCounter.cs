@@ -12,17 +12,9 @@ class InterprocessChangeCounter : IDisposable
    readonly unsafe long* _counterPointer;
    bool _disposed;
 
-   public string Name { get; }
-
-   public InterprocessChangeCounter(string name)
+   public InterprocessChangeCounter(FileInfo backingFile)
    {
-      if(string.IsNullOrWhiteSpace(name)) throw new ArgumentException("Name must not be null, empty, or whitespace", nameof(name));
-
-      Name = name;
-
-      var backingFilePath = DeriveBackingFilePath(name);
-
-      Directory.CreateDirectory(Path.GetDirectoryName(backingFilePath)!);
+      var backingFilePath = backingFile.FullName;
 
       #pragma warning disable CA2000
       var backingFileStream = new FileStream(
@@ -69,12 +61,6 @@ class InterprocessChangeCounter : IDisposable
          ObjectDisposedException.ThrowIf(_disposed, this);
          return Interlocked.Read(ref Unsafe.AsRef<long>(_counterPointer));
       }
-   }
-
-   static string DeriveBackingFilePath(string name)
-   {
-      var safeName = name.Replace('\\', '_');
-      return Path.Combine(Path.GetTempPath(), "Compze", "Signals", safeName);
    }
 
    public void Dispose()

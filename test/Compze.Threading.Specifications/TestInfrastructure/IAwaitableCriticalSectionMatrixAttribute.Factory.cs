@@ -8,6 +8,8 @@ partial class IAwaitableCriticalSectionMatrixAttribute
 {
    public class Factory<TTest> : IDisposable
    {
+      static readonly DirectoryInfo TestDirectory = new DirectoryInfo(Path.Combine(Path.GetTempPath(), "Compze", "Tests", "Signals"))._mutate(it => it.Create());
+
       // ReSharper disable once StaticMemberInGenericType
       static long _counter;
       readonly List<IDisposable> _disposables = [];
@@ -30,10 +32,10 @@ partial class IAwaitableCriticalSectionMatrixAttribute
                                                   ._(it => IPollingAwaitableMutex.Local(it, lockTimeout, waitTimeout, PollingInterval.Milliseconds(10)))
                                                   ._tap(_disposables.Add),
             Implementation.GlobalSignalingMutex => UniqueName()
-                                                  ._(it => ISignalingAwaitableMutex.Global(it, lockTimeout, waitTimeout))
+                                                  ._(it => ISignalingAwaitableMutex.Global(it, TestDirectory, lockTimeout, waitTimeout))
                                                   ._tap(_disposables.Add),
             Implementation.LocalSignalingMutex  => UniqueName()
-                                                  ._(it => ISignalingAwaitableMutex.Local(it, lockTimeout, waitTimeout))
+                                                  ._(it => ISignalingAwaitableMutex.Local(it, TestDirectory, lockTimeout, waitTimeout))
                                                   ._tap(_disposables.Add),
             _ => throw new ArgumentOutOfRangeException()
          };

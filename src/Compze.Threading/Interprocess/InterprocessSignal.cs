@@ -12,9 +12,13 @@ class InterprocessSignal : IDisposable
    readonly InterprocessChangeCounter _counter;
    long _baseline;
 
-   public InterprocessSignal(string name)
+   public InterprocessSignal(string name, DirectoryInfo directory)
    {
-      _counter = new InterprocessChangeCounter(name);
+      if(string.IsNullOrWhiteSpace(name)) throw new ArgumentException("Name must not be null, empty, or whitespace", nameof(name));
+      if(!directory.Exists) throw new DirectoryNotFoundException($"Directory does not exist: {directory.FullName}");
+
+      var backingFile = new FileInfo(Path.Combine(directory.FullName, name.Replace('\\', '_') + ".signal"));
+      _counter = new InterprocessChangeCounter(backingFile);
       _baseline = _counter.Count;
    }
 

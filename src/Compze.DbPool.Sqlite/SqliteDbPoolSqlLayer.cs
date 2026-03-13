@@ -1,6 +1,7 @@
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE;
+using Compze.Internals.SystemCE.Core.IOCE;
 using Compze.Internals.SystemCE.LinqCE;
 using Microsoft.Data.Sqlite;
 
@@ -13,29 +14,30 @@ class SqliteDbPoolSqlLayer : IDbPoolSqlLayer
                                   .CreatedBy(() => new SqliteDbPoolSqlLayer())
                                   .DelegateToParentServiceLocatorWhenCloning());
 
-   readonly string _baseDirectory;
+   readonly DirectoryInfo _baseDirectory;
 
    // Without a unique name we can end up with another test re-creating a deleted database,
    // causing very odd behavior in tests that should just have exploded with the message that
    // their database is gone due to premature disposing of the pool. Yes, this really happened.
    readonly string _poolId = Guid.NewGuid().ToString();
 
-   const string ConnectionStringConfigurationParameterName = "COMPOSABLE_SQLITE_DATABASE_POOL_BASE_DIRECTORY";
+   const string DbDirectoryEnvironmentVariableName = "COMPOSABLE_SQLITE_DATABASE_POOL_BASE_DIRECTORY";
 
    SqliteDbPoolSqlLayer()
    {
-      _baseDirectory = Environment.GetEnvironmentVariable(ConnectionStringConfigurationParameterName)
-                    ?? Path.Combine(Path.GetTempPath(), "CompzeDbPool", "Sqlite");
+      _baseDirectory = new DirectoryInfo(
+         Environment.GetEnvironmentVariable(DbDirectoryEnvironmentVariableName)
+      ?? Path.Combine(Path.GetTempPath(), "CompzeDbPool", "Sqlite"));
 
-      Directory.CreateDirectory(_baseDirectory);
+      _baseDirectory.Create();
    }
 
    public string ConnectionStringFor(DbPoolDatabase db)
    {
-      var dbPath = CreateDbPath(db);
+      var dbFile = FileInfoFor(db);
       return new SqliteConnectionStringBuilder
              {
-                DataSource = dbPath,
+                DataSource = dbFile.FullName,
                 Mode = SqliteOpenMode.ReadWriteCreate,
                 Cache = SqliteCacheMode.Shared
              }.ConnectionString;
@@ -50,7 +52,7 @@ class SqliteDbPoolSqlLayer : IDbPoolSqlLayer
       dbCreatingConnection.Open();
    }
 
-   string CreateDbPath(DbPoolDatabase db) => Path.Combine(_baseDirectory, $"{db.Name}_{_poolId}.db");
+   FileInfo FileInfoFor(DbPoolDatabase db) => _baseDirectory.File($"{db.Name}_{_poolId}.db");
 
    public void Dispose(IReadOnlyList<DbPoolDatabase> reservedDatabases) => reservedDatabases.ForEach(Delete);
 
@@ -64,14 +66,14 @@ class SqliteDbPoolSqlLayer : IDbPoolSqlLayer
          {
             using var connection = new SqliteConnection(ConnectionStringFor(db));
             SqliteConnection.ClearPool(connection);
-            File.Delete(CreateDbPath(db));
+            FileInfoFor(db).Delete();
             return;
          }
          catch(Exception ex)
          {
             if(DateTime.UtcNow - startTime > 10.Seconds())
             {
-               throw new Exception($"Failed to clean up database {CreateDbPath(db)}", ex);
+               throw new Exception($"Failed to clean up database {FileInfoFor(db).FullName}", ex);
             }
 
             Thread.Sleep(TimeSpan.FromMilliseconds(10));

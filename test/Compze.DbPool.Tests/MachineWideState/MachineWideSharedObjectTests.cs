@@ -37,6 +37,7 @@ class SharedObjectSerializer : IInterprocessObjectSerializer<SharedObject>
 
 public class MachineWideSharedObjectTests : UniversalTestBase
 {
+   static readonly DirectoryInfo TestDirectory = new DirectoryInfo(Path.Combine(Path.GetTempPath(), "Compze", "Tests", "SharedObjects"))._mutate(it => it.Create());
    readonly List<IInterprocessObject<SharedObject>> _created = [];
 
    protected override void DisposeInternal() => _created.ForEach(obj => obj.Delete());
@@ -45,8 +46,8 @@ public class MachineWideSharedObjectTests : UniversalTestBase
    {
       var created = InterprocessObjectMatrixAttribute.BackingStore switch
       {
-         InterprocessObjectBackingStore.File => IInterprocessObject.NewGlobalFileBacked(name, new SharedObjectSerializer(), () => new SharedObject(), CorruptionAction.ThrowException),
-         InterprocessObjectBackingStore.MemoryMapped => IInterprocessObject.NewGlobal(name, new SharedObjectSerializer(), () => new SharedObject(), CorruptionAction.ThrowException, maxCapacityInBytes: 4 * 1024),
+         InterprocessObjectBackingStore.File => IInterprocessObject.NewGlobalFileBacked(name, new SharedObjectSerializer(), () => new SharedObject(), CorruptionAction.ThrowException, TestDirectory),
+         InterprocessObjectBackingStore.MemoryMapped => IInterprocessObject.NewGlobal(name, new SharedObjectSerializer(), () => new SharedObject(), CorruptionAction.ThrowException, maxCapacityInBytes: 4 * 1024, TestDirectory),
          _ => throw new ArgumentOutOfRangeException()
       };
       _created.Add(created);

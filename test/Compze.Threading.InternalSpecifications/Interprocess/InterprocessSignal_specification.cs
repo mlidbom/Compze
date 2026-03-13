@@ -4,8 +4,10 @@ using Compze.Tests.Infrastructure;
 using Compze.Threading.Interprocess;
 using Compze.Threading.InternalSpecifications.TestInfrastructure;
 using Compze.Threading.Testing;
+using Compze.Underscore;
 using Compze.xUnitBDD;
 using Xunit;
+using static Compze.Must.MustActions;
 
 // ReSharper disable InconsistentNaming
 
@@ -14,12 +16,26 @@ namespace Compze.Threading.InternalSpecifications.Interprocess;
 [Collection(nameof(NonParallelCollection))]
 public class InterprocessSignal_specification : UniversalTestBase
 {
+   static readonly DirectoryInfo TestDirectory = new DirectoryInfo(Path.Combine(Path.GetTempPath(), "Compze", "Tests", "Signals"))._mutate(it => it.Create());
+
    readonly TestingTaskRunner _runner = new(10.Seconds());
-   readonly InterprocessSignal _signal = new InterprocessSignal(Guid.NewGuid().ToString());
+   readonly InterprocessSignal _signal = new(Guid.NewGuid().ToString(), TestDirectory);
    protected override void DisposeInternal()
    {
       _runner.Dispose();
       _signal.Dispose();
+   }
+
+   public class Construction : InterprocessSignal_specification
+   {
+      [XF] public void throws_ArgumentException_when_name_is_empty() =>
+         Invoking(() => new InterprocessSignal("", TestDirectory)).Must().Throw<ArgumentException>();
+
+      [XF] public void throws_ArgumentException_when_name_is_whitespace() =>
+         Invoking(() => new InterprocessSignal("   ", TestDirectory)).Must().Throw<ArgumentException>();
+
+      [XF] public void throws_DirectoryNotFoundException_when_directory_does_not_exist() =>
+         Invoking(() => new InterprocessSignal("test", new DirectoryInfo(Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString())))).Must().Throw<DirectoryNotFoundException>();
    }
 
    public class TryAwait : InterprocessSignal_specification
@@ -88,8 +104,8 @@ public class InterprocessSignal_specification : UniversalTestBase
       [XF] public void one_raises_the_other_detects()
       {
          const string name = "InterprocessSignal_specification.TwoInstances.cross_detect";
-         using var raiser = new InterprocessSignal(name);
-         using var waiter = new InterprocessSignal(name);
+         using var raiser = new InterprocessSignal(name, TestDirectory);
+         using var waiter = new InterprocessSignal(name, TestDirectory);
 
          raiser.Raise();
          waiter.TryAwait(TimeSpan.FromMilliseconds(100)).Must().BeTrue();
