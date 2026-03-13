@@ -2,9 +2,9 @@
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
-    <Version>0.2.1-alpha</Version>
+    <Version>0.2.1-internal</Version>
     <!-- TODO: Remove once all public API members have XML documentation comments -->
-    <NoWarn>CS1591</NoWarn>
+    <Description>For Compze internal use only. Do not take a direct dependency on this package.</Description>
   </PropertyGroup>
   <!-- Compze.Contracts — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' == 'true'">
