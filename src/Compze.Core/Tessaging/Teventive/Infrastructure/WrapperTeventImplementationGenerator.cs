@@ -2,6 +2,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using Compze.Contracts;
 using Compze.Abstractions.Tessaging.Public;
+using Compze.Internals.SystemCE.Core.CollectionsCE.GenericCE;
 using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Internals.SystemCE.ReflectionCE.EmitCE;
 using Compze.Threading;
@@ -43,8 +44,11 @@ static class WrapperTeventImplementationGenerator
    public static Func<ITevent, IPublisherIdentifyingTevent<ITevent>> ConstructorFor(Type wrappedTeventType) =>
       LockCE.DoubleCheckedLocking(
          tryRead: () => _wrapperConstructors.GetValueOrDefault(wrappedTeventType),
-         updateOnFailedRead: () => OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _wrapperConstructors, wrappedTeventType, CreateConstructorFor(wrappedTeventType))
-      );
+         updateOnFailedRead: () =>
+         {
+            Func<ITevent, IPublisherIdentifyingTevent<ITevent>> value = CreateConstructorFor(wrappedTeventType);
+            _wrapperConstructors = _wrapperConstructors.AddToCopy(wrappedTeventType, value);
+         });
 
    static Func<ITevent, IPublisherIdentifyingTevent<ITevent>> CreateConstructorFor(Type wrappedTeventType)
    {
@@ -106,7 +110,7 @@ static class WrapperTeventImplementationGenerator
          return wrapperTeventBuilder.CreateType()._assert().NotNull();
       });
 
-      OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _createdWrapperTypes, wrapperTeventType, genericWrapperTeventType);
+      _createdWrapperTypes = _createdWrapperTypes.AddToCopy(wrapperTeventType, genericWrapperTeventType);
 
       return genericWrapperTeventType;
    }

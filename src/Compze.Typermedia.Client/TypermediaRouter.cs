@@ -8,6 +8,7 @@ using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Internals.Transport;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
+using Compze.Internals.SystemCE.Core.CollectionsCE.GenericCE;
 using Compze.Threading;
 
 namespace Compze.Typermedia.Client;
@@ -51,7 +52,7 @@ class TypermediaRouter : ITypermediaRouter, IDisposable
 
       using(_lock.TakeLock())
       {
-         OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _connections, connection.EndpointInformation.Id, connection);
+         _connections = _connections.AddToCopy(connection.EndpointInformation.Id, connection);
 
          //urgent: we can't have routes be discovered at startup based on the assumption that all endpoints are up...
          RegisterRoutes(connection, connection.EndpointInformation.HandledTypermediaTypes);
@@ -78,10 +79,10 @@ class TypermediaRouter : ITypermediaRouter, IDisposable
       }
 
       if(tommandHandlerRoutes.Count > 0)
-         OnlyWithinLocksThreadingHelpers.AddRangeToCopyAndReplace(ref _tommandHandlerRoutes, tommandHandlerRoutes);
+         _tommandHandlerRoutes = _tommandHandlerRoutes.AddRangeToCopy(tommandHandlerRoutes);
 
       if(tueryHandlerRoutes.Count > 0)
-         OnlyWithinLocksThreadingHelpers.AddRangeToCopyAndReplace(ref _tueryHandlerRoutes, tueryHandlerRoutes);
+         _tueryHandlerRoutes = _tueryHandlerRoutes.AddRangeToCopy(tueryHandlerRoutes);
    }
 
    TypermediaConnection ConnectionToHandlerFor(IAtMostOnceTypermediaTommand tommand) =>

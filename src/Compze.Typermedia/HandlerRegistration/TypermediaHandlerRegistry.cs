@@ -3,6 +3,7 @@ using Compze.Abstractions.Tessaging.Public;
 using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Threading;
 using Compze.Abstractions.Tessaging.Validation;
+using Compze.Internals.SystemCE.Core.CollectionsCE.GenericCE;
 
 namespace Compze.Typermedia.HandlerRegistration;
 
@@ -19,7 +20,7 @@ public sealed class TypermediaHandlerRegistry(ITypeMapper typeMapper) : ITyperme
    {
       TessageTypeInspector.AssertValid(typeof(TTommand));
 
-      OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _voidTommandHandlers, typeof(TTommand), tommand => handler((TTommand)tommand));
+      _voidTommandHandlers = _voidTommandHandlers.AddToCopy(typeof(TTommand), tommand => handler((TTommand)tommand));
       return this;
    });
 
@@ -27,7 +28,7 @@ public sealed class TypermediaHandlerRegistry(ITypeMapper typeMapper) : ITyperme
    {
       TessageTypeInspector.AssertValid(typeof(TTommand));
 
-      OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _tommandHandlersReturningResults, typeof(TTommand), new TommandHandlerWithResultRegistration<TTommand, TResult>(handler));
+      _tommandHandlersReturningResults = _tommandHandlersReturningResults.AddToCopy(typeof(TTommand), new TommandHandlerWithResultRegistration<TTommand, TResult>(handler));
       return this;
    });
 
@@ -35,7 +36,7 @@ public sealed class TypermediaHandlerRegistry(ITypeMapper typeMapper) : ITyperme
    {
       TessageTypeInspector.AssertValid(typeof(TTuery));
 
-      OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _tueryHandlers, typeof(TTuery), new TueryHandlerRegistration<TTuery, TResult>(handler));
+      _tueryHandlers = _tueryHandlers.AddToCopy(typeof(TTuery), new TueryHandlerRegistration<TTuery, TResult>(handler));
       return this;
    });
 

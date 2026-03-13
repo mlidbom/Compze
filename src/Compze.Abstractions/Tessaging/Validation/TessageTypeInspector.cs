@@ -1,5 +1,6 @@
 using System.Reflection;
 using Compze.Abstractions.Tessaging.Public;
+using Compze.Internals.SystemCE.Core.CollectionsCE.GenericCE;
 using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Threading;
 
@@ -30,7 +31,7 @@ public partial class TessageTypeInspector
          if(!type.Is<ITevent>()) throw new Exception($"You can only subscribe to subtypes of {typeof(ITevent).GetFullNameCompilable()}");
          if(!type.IsInterface) throw new Exception($"{type.GetFullNameCompilable()} is not an interface. You can only subscribe to tevent interfaces because as soon as you subscribe to classes you loose the guarantees of semantic routing since classes do not support multiple inheritance.");
          AssertTypeIsValidInternal(type);
-         OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _successfullyInspectedSubscribableTypes, type);
+         _successfullyInspectedSubscribableTypes = _successfullyInspectedSubscribableTypes.AddToCopy(type);
       });
    }
 
@@ -45,7 +46,7 @@ public partial class TessageTypeInspector
 
          AssertTypeIsValidInternal(type);
 
-         OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _successfullyInspectedTypes, type);
+         _successfullyInspectedTypes = _successfullyInspectedTypes.AddToCopy(type);
       });
    }
 

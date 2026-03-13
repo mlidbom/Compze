@@ -2,6 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using Compze.Contracts;
 using Compze.Abstractions.Tessaging.Public;
+using Compze.Internals.SystemCE.Core.CollectionsCE.GenericCE;
 using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Internals.SystemCE.ReflectionCE.EmitCE;
 using Compze.Threading;
@@ -80,7 +81,7 @@ public class Example
             return wrapperTeventBuilder.CreateType()._assert().NotNull();
          });
 
-         OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _createdWrapperTypes, wrapperTeventType, genericWrapperTeventType);
+         _createdWrapperTypes = _createdWrapperTypes.AddToCopy(wrapperTeventType, genericWrapperTeventType);
 
          return genericWrapperTeventType;
       });

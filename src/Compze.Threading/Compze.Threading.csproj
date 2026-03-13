@@ -25,10 +25,6 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_SystemCE_Core)' != 'true'">
     <ProjectReference Include="..\Compze.Internals.SystemCE.Core\Compze.Internals.SystemCE.Core.csproj" />
   </ItemGroup>
-  <!-- Compze.Internals.Threading — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Threading)' == 'true'">
-    <PackageReference Include="Compze.Internals.Threading" Version="*-*" />
-  </ItemGroup>
   <!-- Compze.Underscore — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Underscore)' == 'true'">
     <PackageReference Include="Compze.Underscore" Version="*-*" />

@@ -2,6 +2,7 @@ using Compze.Abstractions.Tessaging.Public;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
+using Compze.Internals.SystemCE.Core.CollectionsCE.GenericCE;
 using Compze.Threading;
 
 namespace Compze.Internals.Transport;
@@ -15,7 +16,10 @@ public class InfrastructureQueryExecutor
    InfrastructureQueryExecutor(IServiceLocator serviceLocator) => _serviceLocator = serviceLocator;
 
    public void RegisterQueryHandler<TQuery, TResult>(Func<TQuery, TResult> handler) where TQuery : IQuery<TResult> => _lock.Locked(() =>
-      OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _queryHandlers, typeof(TQuery), query => handler((TQuery)query)!));
+   {
+      Func<object, object> value = query => handler((TQuery)query)!;
+      _queryHandlers = _queryHandlers.AddToCopy(typeof(TQuery), value);
+   });
 
    public object ExecuteQuery(IMessage query)
    {

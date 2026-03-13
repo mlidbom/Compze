@@ -129,7 +129,6 @@
   </Folder>
   <Folder Name="/Compze.Internals/">
     <Project Path="Compze.Internals.Testing/Compze.Internals.Testing.csproj" />
-    <Project Path="Compze.Internals.Threading/Compze.Internals.Threading.csproj" />
   </Folder>
   <Folder Name="/Compze.Internals/Compze.Internals.Logging/">
     <Project Path="Compze.Internals.Logging.Serilog/Compze.Internals.Logging.Serilog.csproj" />

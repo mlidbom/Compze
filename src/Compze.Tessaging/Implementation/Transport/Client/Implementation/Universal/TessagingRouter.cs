@@ -14,6 +14,7 @@ using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Threading;
+using Compze.Internals.SystemCE.Core.CollectionsCE.GenericCE;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Universal;
 
@@ -70,7 +71,7 @@ class TessagingRouter : ITessagingRouter, IDisposable
 
       using(_lock.TakeLock())
       {
-         OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _connections, connection.EndpointInformation.Id, connection);
+         _connections = _connections.AddToCopy(connection.EndpointInformation.Id, connection);
          RegisterRoutes(connection, connection.EndpointInformation.HandledTessageTypes);
       }
    }
@@ -108,12 +109,14 @@ class TessagingRouter : ITessagingRouter, IDisposable
 
       if(teventSubscribers.Count > 0)
       {
-         OnlyWithinLocksThreadingHelpers.AddRangeToCopyAndReplace(ref _teventSubscriberRoutes, teventSubscribers);
+         _teventSubscriberRoutes = _teventSubscriberRoutes.AddRangeToCopy(teventSubscribers);
          _teventSubscriberRouteCache = new Dictionary<Type, IReadOnlyList<TessagingConnection>>();
       }
 
       if(tommandHandlerRoutes.Count > 0)
-         OnlyWithinLocksThreadingHelpers.AddRangeToCopyAndReplace(ref _tommandHandlerRoutes, tommandHandlerRoutes);
+      {
+         _tommandHandlerRoutes = _tommandHandlerRoutes.AddRangeToCopy(tommandHandlerRoutes);
+      }
    }
 
    public void Stop() => _stopped = true;
@@ -138,7 +141,7 @@ class TessagingRouter : ITessagingRouter, IDisposable
 
       using(_lock.TakeLock())
       {
-         OnlyWithinLocksThreadingHelpers.AddToCopyAndReplace(ref _teventSubscriberRouteCache, tevent.GetType(), subscriberConnections);
+         _teventSubscriberRouteCache = _teventSubscriberRouteCache.AddToCopy(tevent.GetType(), subscriberConnections);
       }
 
       return subscriberConnections;
