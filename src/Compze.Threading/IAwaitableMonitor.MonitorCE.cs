@@ -125,7 +125,7 @@ public partial interface IAwaitableMonitor
          lock(_timeoutLock)
          {
             var exception = new TakeMonitorLockTimeoutException(LockTimeout, _stackTraceFetchTimeout);
-            _timeOutExceptionsOnOtherThreads = _timeOutExceptionsOnOtherThreads.AddToCopy(exception);
+            _timeOutExceptionsOnOtherThreads = [.._timeOutExceptionsOnOtherThreads, exception];
             return exception;
          }
       }

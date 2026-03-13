@@ -18,7 +18,7 @@ public class RunOnceAsync
       {
          try
          {
-            await action().caf();
+            await action().ConfigureAwait(false);
             _completed.TrySetResult();
          }
          catch(Exception ex)
@@ -28,7 +28,7 @@ public class RunOnceAsync
          }
       } else
       {
-         await _completed.Task.caf();
+         await _completed.Task.ConfigureAwait(false);
       }
    }
 }

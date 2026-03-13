@@ -112,7 +112,7 @@ public partial interface IMutex
       Exception RegisterTimeoutException() => _timeoutMonitor.Locked(() =>
       {
          var exception = new TakeMutexLockTimeoutException(LockTimeout, _stackTraceFetchTimeout);
-         _timeOutExceptionsOnOtherThreads = _timeOutExceptionsOnOtherThreads.AddToCopy(exception);
+         _timeOutExceptionsOnOtherThreads = [.._timeOutExceptionsOnOtherThreads, exception];
          return exception;
       });
 
