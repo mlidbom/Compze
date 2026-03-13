@@ -1,4 +1,3 @@
-using Compze.Threading.Interprocess;
 using Compze.Threading.Interprocess.ResourceAccess;
 using Compze.Threading.ResourceAccess;
 using Compze.Underscore;

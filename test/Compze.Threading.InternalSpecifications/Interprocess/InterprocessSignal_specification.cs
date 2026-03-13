@@ -1,5 +1,4 @@
 using Compze.Internals.SystemCE;
-using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 using Compze.Must;
 using Compze.Tests.Infrastructure;
 using Compze.Threading.Interprocess;

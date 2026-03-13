@@ -5,7 +5,6 @@ using Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endp
 using Compze.Internals.SystemCE.TransactionsCE.Testing;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Threading;
-using Compze.Threading.Testing;
 using Compze.Must;
 using static Compze.Must.MustActions;
 

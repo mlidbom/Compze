@@ -1,9 +1,6 @@
 using Compze.Must;
 using Compze.Tests.Infrastructure;
-using Compze.Threading.Interprocess.ResourceAccess;
-using Compze.Threading.ResourceAccess;
 using Compze.Threading.Specifications.TestInfrastructure;
-using Compze.xUnitBDD;
 using Xunit;
 // ReSharper disable InconsistentNaming
 

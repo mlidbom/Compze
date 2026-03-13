@@ -7,7 +7,6 @@ using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Threading;
 using Compze.Threading.Testing;
-using Compze.xUnitBDD;
 using JetBrains.Annotations;
 using MemoryPack;
 

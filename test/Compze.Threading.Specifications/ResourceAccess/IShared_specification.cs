@@ -1,7 +1,6 @@
 using Compze.Internals.SystemCE;
 using Compze.Must;
 using Compze.Tests.Infrastructure;
-using Compze.Threading.ResourceAccess;
 using Compze.Threading.Specifications.TestInfrastructure;
 using Compze.Threading.Testing;
 using Xunit;

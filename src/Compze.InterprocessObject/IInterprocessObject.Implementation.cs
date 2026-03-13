@@ -1,7 +1,6 @@
 using Compze.Internals.SystemCE.Core.IOCE;
 using Compze.Threading;
 using Compze.Threading.Interprocess;
-using Compze.Threading.ResourceAccess;
 
 namespace Compze.InterprocessObject;
 
