@@ -1,4 +1,5 @@
 using Compze.Internals.SystemCE.Core.IOCE;
+using Compze.Threading;
 
 namespace Compze.InterprocessObject;
 
@@ -19,14 +20,14 @@ public partial interface IInterprocessObject
    /// Set it comfortably above your worst-case serialized size.
    /// Really, the only real meaningful constraint is when serialization time becomes a problem in your specific usage scenario.</para>
    ///</summary>
-   public static IInterprocessObject<T> Create<T>(string name, IInterprocessObjectSerializer<T> serializer, Func<T> createDefault, CorruptionAction corruptionAction, int maxCapacityInBytes) where T : class
-      => new InterprocessObjectImplementation<T>(name, fileName => new MemoryMappedBinaryFile(DataDirectory.Value.GetFilePath(fileName + ".mmf"), maxCapacityInBytes), serializer, createDefault, corruptionAction);
+   public static IInterprocessObject<T> Create<T>(string name, IInterprocessObjectSerializer<T> serializer, Func<T> createDefault, CorruptionAction corruptionAction, int maxCapacityInBytes, LockTimeout? lockTimeout = null, WaitTimeout? waitTimeout = null) where T : class
+      => new InterprocessObjectImplementation<T>(name, fileName => new MemoryMappedBinaryFile(DataDirectory.Value.GetFilePath(fileName + ".mmf"), maxCapacityInBytes), serializer, createDefault, corruptionAction, lockTimeout, waitTimeout);
 
    ///<summary>Creates a new <see cref="IInterprocessObject{T}"/> backed by a regular file, synchronized with a global cross-process mutex.
    ///<para>Every read and update performs filesystem I/O (full read or write of the file). The file size matches the serialized data — there is no size limit.</para>
    ///<para>Use this when simplicity matters more than throughput, or when the shared object may grow without a predictable upper bound.
    /// For high-frequency access, consider <see cref="Create{T}"/> instead.</para>
    ///</summary>
-   public static IInterprocessObject<T> CreateFileBacked<T>(string name, IInterprocessObjectSerializer<T> serializer, Func<T> createDefault, CorruptionAction corruptionAction) where T : class
-      => new InterprocessObjectImplementation<T>(name, fileName => DataDirectory.Value.GetOrCreateBinaryFile(fileName), serializer, createDefault, corruptionAction);
+   public static IInterprocessObject<T> CreateFileBacked<T>(string name, IInterprocessObjectSerializer<T> serializer, Func<T> createDefault, CorruptionAction corruptionAction, LockTimeout? lockTimeout = null, WaitTimeout? waitTimeout = null) where T : class
+      => new InterprocessObjectImplementation<T>(name, fileName => DataDirectory.Value.GetOrCreateBinaryFile(fileName), serializer, createDefault, corruptionAction, lockTimeout, waitTimeout);
 }

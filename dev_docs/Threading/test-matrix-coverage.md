@@ -1,5 +1,5 @@
 # The goal
-We want utilize matrix test attributes to run all tests for our interfaces against all implementations of those interfaces and all significant configuration variations of those interaces to achive full test coverage without duplicating the same tests over and over for different implementations and configurations.
+We want utilize matrix test attributes to run all tests for our interfaces against all implementations of those interfaces and all significant configuration variations of those interfaces to achive full test coverage without duplicating the same tests over and over for different implementations and configurations.
 
 This document details the current state and what we need to change to reach that goal.
 

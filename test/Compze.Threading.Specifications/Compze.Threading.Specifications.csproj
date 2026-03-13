@@ -5,6 +5,7 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="MemoryPack" Version="1.21.4" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
     <PackageReference Include="NCrunch.Framework" Version="5.11.0" />
     <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
@@ -26,6 +27,13 @@
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_SystemCE_Core)' != 'true'">
     <ProjectReference Include="..\..\src\Compze.Internals.SystemCE.Core\Compze.Internals.SystemCE.Core.csproj" />
+  </ItemGroup>
+  <!-- Compze.InterprocessObject — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_InterprocessObject)' == 'true'">
+    <PackageReference Include="Compze.InterprocessObject" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_InterprocessObject)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.InterprocessObject\Compze.InterprocessObject.csproj" />
   </ItemGroup>
   <!-- Compze.Must — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Must)' == 'true'">

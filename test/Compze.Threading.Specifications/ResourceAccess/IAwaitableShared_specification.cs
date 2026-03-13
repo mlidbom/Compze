@@ -27,14 +27,14 @@ public class IAwaitableShared_specification : UniversalTestBase
    {
       [IAwaitableSharedMatrix] public void returns_the_value_from_the_function()
       {
-         var shared = _factory.Create(42);
-         shared.Read(value => value).Must().Be(42);
+         var shared = _factory.Create(new SharedTestValue { Value = 42 });
+         shared.Read(v => v.Value).Must().Be(42);
       }
 
       [IAwaitableSharedMatrix] public void provides_the_shared_value_to_the_function()
       {
-         var shared = _factory.Create("hello");
-         shared.Read(value => value.Length).Must().Be(5);
+         var shared = _factory.Create(new SharedTestValue { Items = [1, 2, 3, 4, 5] });
+         shared.Read(v => v.Items.Count).Must().Be(5);
       }
    }
 
@@ -42,10 +42,9 @@ public class IAwaitableShared_specification : UniversalTestBase
    {
       [IAwaitableSharedMatrix] public void executes_the_action_with_the_shared_value()
       {
-         var captured = new List<int>();
-         var shared = _factory.Create(captured);
-         shared.Read(value => value.Count);
-         captured.Must().HaveCount(0);
+         var shared = _factory.Create(new SharedTestValue());
+         shared.Read(v => v.Items.Count);
+         shared.Read(v => v.Items.Count).Must().Be(0);
       }
    }
 
@@ -53,14 +52,14 @@ public class IAwaitableShared_specification : UniversalTestBase
    {
       [IAwaitableSharedMatrix] public void returns_the_value_from_the_function()
       {
-         var shared = _factory.Create(42);
-         shared.Update(value => value + 1).Must().Be(43);
+         var shared = _factory.Create(new SharedTestValue { Value = 42 });
+         shared.Update(v => v.Value + 1).Must().Be(43);
       }
 
       [IAwaitableSharedMatrix] public void provides_the_shared_value_to_the_function()
       {
-         var shared = _factory.Create("hello");
-         shared.Update(value => value.Length).Must().Be(5);
+         var shared = _factory.Create(new SharedTestValue { Items = [1, 2, 3, 4, 5] });
+         shared.Update(v => v.Items.Count).Must().Be(5);
       }
    }
 
@@ -68,14 +67,13 @@ public class IAwaitableShared_specification : UniversalTestBase
    {
       [IAwaitableSharedMatrix] public void executes_the_action_with_the_shared_value()
       {
-         var list = new List<int>();
-         var shared = _factory.Create(list);
-         shared.Update(value => value.Add(42));
-         list.Must().HaveCount(1);
+         var shared = _factory.Create(new SharedTestValue());
+         shared.Update(v => v.Items.Add(42));
+         shared.Read(v => v.Items.Count).Must().Be(1);
       }
    }
 
-   static void AssertAllAccessMethodsFail(IAwaitableShared<object> shared)
+   static void AssertAllAccessMethodsFail(IAwaitableShared<SharedTestValue> shared)
    {
       Invoking(() => shared.Read(_ => 0, LockTimeout.Milliseconds(10)))
         .Must().Throw<TakeLockTimeoutException>();
@@ -90,7 +88,7 @@ public class IAwaitableShared_specification : UniversalTestBase
         .Must().Throw<TakeLockTimeoutException>();
    }
 
-   static void AssertAllAccessMethodsSucceed(IAwaitableShared<object> shared)
+   static void AssertAllAccessMethodsSucceed(IAwaitableShared<SharedTestValue> shared)
    {
       shared.Read(_ => 0, LockTimeout.Milliseconds(100));
       shared.Read(_ => {}, LockTimeout.Milliseconds(100));
@@ -98,7 +96,7 @@ public class IAwaitableShared_specification : UniversalTestBase
       shared.Update(_ => {}, LockTimeout.Milliseconds(100));
    }
 
-   static void AssertAllAccessMethodsFailsWhileGateIsClosedAllSucceedAfterOpeningGate(IAwaitableShared<object> shared, IThreadGate insideLock)
+   static void AssertAllAccessMethodsFailsWhileGateIsClosedAllSucceedAfterOpeningGate(IAwaitableShared<SharedTestValue> shared, IThreadGate insideLock)
    {
       AssertAllAccessMethodsFail(shared);
       insideLock.Open();
@@ -108,9 +106,9 @@ public class IAwaitableShared_specification : UniversalTestBase
 
    public class No_other_thread_can_access_the_the_shared_data : IAwaitableShared_specification
    {
-      void AssertAccessMethodExcludesAllOtherAccess(Action<IAwaitableShared<object>, IThreadGate> accessMethodUnderTest)
+      void AssertAccessMethodExcludesAllOtherAccess(Action<IAwaitableShared<SharedTestValue>, IThreadGate> accessMethodUnderTest)
       {
-         var shared = _factory.Create(new object(), LockTimeout.Seconds(30));
+         var shared = _factory.Create(new SharedTestValue(), LockTimeout.Seconds(30));
          var insideLock = IThreadGate.NewClosed(WaitTimeout.Seconds(30), "insideLock");
 
          _runner.Run(() => accessMethodUnderTest(shared, insideLock));
@@ -136,30 +134,30 @@ public class IAwaitableShared_specification : UniversalTestBase
    {
       [IAwaitableSharedMatrix] public void returns_value_when_condition_is_immediately_true()
       {
-         var shared = _factory.Create(42);
-         shared.ReadWhen(_ => true, value => value).Must().Be(42);
+         var shared = _factory.Create(new SharedTestValue { Value = 42 });
+         shared.ReadWhen(_ => true, v => v.Value).Must().Be(42);
       }
 
       [IAwaitableSharedMatrix] public void waits_until_condition_becomes_true_then_returns_value()
       {
-         var shared = _factory.Create(new List<int>(), LockTimeout.Seconds(30), WaitTimeout.Seconds(30));
+         var shared = _factory.Create(new SharedTestValue(), LockTimeout.Seconds(30), WaitTimeout.Seconds(30));
          var readCompleted = IThreadGate.NewOpen(WaitTimeout.Seconds(10), "readCompleted");
 
          _runner.Run(() =>
          {
-            shared.ReadWhen(list => list.Count > 0, list => list[0]).Must().Be(99);
+            shared.ReadWhen(v => v.Items.Count > 0, v => v.Items[0]).Must().Be(99);
             readCompleted.AwaitPassThrough();
          });
 
          readCompleted.TryAwaitPassedThroughCountEqualTo(1, WaitTimeout.Milliseconds(100)).Must().BeFalse();
-         shared.Update(list => list.Add(99));
+         shared.Update(v => v.Items.Add(99));
          readCompleted.AwaitPassedThroughCountEqualTo(1);
       }
 
       [IAwaitableSharedMatrix] public void throws_AwaitingConditionTimeoutException_when_condition_never_becomes_true()
       {
-         var shared = _factory.Create(0, waitTimeout: WaitTimeout.Milliseconds(100));
-         Invoking(() => shared.ReadWhen(_ => false, value => value))
+         var shared = _factory.Create(new SharedTestValue(), waitTimeout: WaitTimeout.Milliseconds(100));
+         Invoking(() => shared.ReadWhen(_ => false, v => v.Value))
            .Must().Throw<AwaitingConditionTimeoutException>();
       }
    }
@@ -168,30 +166,30 @@ public class IAwaitableShared_specification : UniversalTestBase
    {
       [IAwaitableSharedMatrix] public void returns_value_when_condition_is_immediately_true()
       {
-         var shared = _factory.Create(42);
-         shared.UpdateWhen(_ => true, value => value + 1).Must().Be(43);
+         var shared = _factory.Create(new SharedTestValue { Value = 42 });
+         shared.UpdateWhen(_ => true, v => v.Value + 1).Must().Be(43);
       }
 
       [IAwaitableSharedMatrix] public void waits_until_condition_becomes_true_then_executes_update()
       {
-         var shared = _factory.Create(new List<int>(), LockTimeout.Seconds(30), WaitTimeout.Seconds(30));
+         var shared = _factory.Create(new SharedTestValue(), LockTimeout.Seconds(30), WaitTimeout.Seconds(30));
          var updateCompleted = IThreadGate.NewOpen(WaitTimeout.Seconds(10), "updateCompleted");
 
          _runner.Run(() =>
          {
-            shared.UpdateWhen(list => list.Count > 0, list => list[0]);
+            shared.UpdateWhen(v => v.Items.Count > 0, v => v.Items[0]);
             updateCompleted.AwaitPassThrough();
          });
 
          updateCompleted.TryAwaitPassedThroughCountEqualTo(1, WaitTimeout.Milliseconds(100)).Must().BeFalse();
-         shared.Update(list => list.Add(42));
+         shared.Update(v => v.Items.Add(42));
          updateCompleted.AwaitPassedThroughCountEqualTo(1);
       }
 
       [IAwaitableSharedMatrix] public void throws_AwaitingConditionTimeoutException_when_condition_never_becomes_true()
       {
-         var shared = _factory.Create(0, waitTimeout: WaitTimeout.Milliseconds(100));
-         Invoking(() => shared.UpdateWhen(_ => false, value => value))
+         var shared = _factory.Create(new SharedTestValue(), waitTimeout: WaitTimeout.Milliseconds(100));
+         Invoking(() => shared.UpdateWhen(_ => false, v => v.Value))
            .Must().Throw<AwaitingConditionTimeoutException>();
       }
    }
@@ -200,10 +198,9 @@ public class IAwaitableShared_specification : UniversalTestBase
    {
       [IAwaitableSharedMatrix] public void executes_action_when_condition_is_immediately_true()
       {
-         var list = new List<int> { 1 };
-         var shared = _factory.Create(list);
-         shared.UpdateWhen(l => l.Count > 0, l => l.Add(2));
-         list.Must().HaveCount(2);
+         var shared = _factory.Create(new SharedTestValue { Items = [1] });
+         shared.UpdateWhen(v => v.Items.Count > 0, v => v.Items.Add(2));
+         shared.Read(v => v.Items.Count).Must().Be(2);
       }
    }
 
@@ -211,31 +208,30 @@ public class IAwaitableShared_specification : UniversalTestBase
    {
       [IAwaitableSharedMatrix] public void returns_true_and_executes_update_when_condition_is_immediately_true()
       {
-         var list = new List<int>();
-         var shared = _factory.Create(list);
-         shared.TryUpdateWhen(_ => true, l => l.Add(42)).Must().BeTrue();
-         list.Must().HaveCount(1);
+         var shared = _factory.Create(new SharedTestValue());
+         shared.TryUpdateWhen(_ => true, v => v.Items.Add(42)).Must().BeTrue();
+         shared.Read(v => v.Items.Count).Must().Be(1);
       }
 
       [IAwaitableSharedMatrix] public void returns_true_when_condition_becomes_true_within_timeout()
       {
-         var shared = _factory.Create(new List<int>(), LockTimeout.Seconds(30), WaitTimeout.Seconds(30));
+         var shared = _factory.Create(new SharedTestValue(), LockTimeout.Seconds(30), WaitTimeout.Seconds(30));
          var tryCompleted = IThreadGate.NewOpen(WaitTimeout.Seconds(10), "tryCompleted");
 
          _runner.Run(() =>
          {
-            shared.TryUpdateWhen(list => list.Count > 0, list => list.Add(99)).Must().BeTrue();
+            shared.TryUpdateWhen(v => v.Items.Count > 0, v => v.Items.Add(99)).Must().BeTrue();
             tryCompleted.AwaitPassThrough();
          });
 
          tryCompleted.TryAwaitPassedThroughCountEqualTo(1, WaitTimeout.Milliseconds(100)).Must().BeFalse();
-         shared.Update(list => list.Add(1));
+         shared.Update(v => v.Items.Add(1));
          tryCompleted.AwaitPassedThroughCountEqualTo(1);
       }
 
       [IAwaitableSharedMatrix] public void returns_false_when_condition_never_becomes_true_within_timeout()
       {
-         var shared = _factory.Create(0, waitTimeout: WaitTimeout.Milliseconds(100));
+         var shared = _factory.Create(new SharedTestValue(), waitTimeout: WaitTimeout.Milliseconds(100));
          shared.TryUpdateWhen(_ => false, _ => {}).Must().BeFalse();
       }
    }
@@ -244,29 +240,29 @@ public class IAwaitableShared_specification : UniversalTestBase
    {
       [IAwaitableSharedMatrix] public void returns_immediately_when_condition_is_already_true()
       {
-         var shared = _factory.Create(42);
+         var shared = _factory.Create(new SharedTestValue { Value = 42 });
          shared.Await(_ => true);
       }
 
       [IAwaitableSharedMatrix] public void waits_until_condition_becomes_true()
       {
-         var shared = _factory.Create(new List<int>(), LockTimeout.Seconds(30), WaitTimeout.Seconds(30));
+         var shared = _factory.Create(new SharedTestValue(), LockTimeout.Seconds(30), WaitTimeout.Seconds(30));
          var awaitCompleted = IThreadGate.NewOpen(WaitTimeout.Seconds(10), "awaitCompleted");
 
          _runner.Run(() =>
          {
-            shared.Await(list => list.Count > 0);
+            shared.Await(v => v.Items.Count > 0);
             awaitCompleted.AwaitPassThrough();
          });
 
          awaitCompleted.TryAwaitPassedThroughCountEqualTo(1, WaitTimeout.Milliseconds(100)).Must().BeFalse();
-         shared.Update(list => list.Add(1));
+         shared.Update(v => v.Items.Add(1));
          awaitCompleted.AwaitPassedThroughCountEqualTo(1);
       }
 
       [IAwaitableSharedMatrix] public void throws_AwaitingConditionTimeoutException_when_condition_never_becomes_true()
       {
-         var shared = _factory.Create(0, waitTimeout: WaitTimeout.Milliseconds(100));
+         var shared = _factory.Create(new SharedTestValue(), waitTimeout: WaitTimeout.Milliseconds(100));
          Invoking(() => shared.Await(_ => false))
            .Must().Throw<AwaitingConditionTimeoutException>();
       }
@@ -276,7 +272,7 @@ public class IAwaitableShared_specification : UniversalTestBase
    {
       [IAwaitableSharedMatrix] public void exposes_ContentionCount()
       {
-         var shared = _factory.Create(new object());
+         var shared = _factory.Create(new SharedTestValue());
 
          using(shared.CriticalSection.TakeUpdateLock()) {}
 
@@ -285,8 +281,8 @@ public class IAwaitableShared_specification : UniversalTestBase
 
       [IAwaitableSharedMatrix] public void independently_created_shared_instances_have_different_CriticalSections()
       {
-         var sharedA = _factory.Create(new object());
-         var sharedB = _factory.Create(new object());
+         var sharedA = _factory.Create(new SharedTestValue());
+         var sharedB = _factory.Create(new SharedTestValue());
 
          sharedA.CriticalSection.Must().NotBe(sharedB.CriticalSection);
       }
