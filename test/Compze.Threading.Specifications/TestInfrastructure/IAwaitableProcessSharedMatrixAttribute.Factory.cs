@@ -1,3 +1,4 @@
+using Compze.Internals.SystemCE.LinqCE;
 using Compze.InterprocessObject;
 using Compze.Threading.Interprocess.ResourceAccess;
 using Compze.Underscore;
@@ -42,14 +43,9 @@ partial class IAwaitableProcessSharedMatrixAttribute
 
       public void Dispose()
       {
-         foreach(var obj in _interprocessObjects)
-         {
-            obj.Delete();
-            obj.Dispose();
-         }
-
-         foreach(var disposable in _disposables)
-            disposable.Dispose();
+         _interprocessObjects.ForEach(it => it.Delete());
+         _disposables.Concat(_interprocessObjects)
+                     .ForEach(it => it.Dispose());
       }
    }
 }
