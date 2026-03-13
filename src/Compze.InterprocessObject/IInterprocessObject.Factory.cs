@@ -20,11 +20,11 @@ public partial interface IInterprocessObject
    /// Set it comfortably above your worst-case serialized size.
    /// Really, the only real meaningful constraint is when serialization time becomes a problem in your specific usage scenario.</para>
    ///</summary>
-   public static IInterprocessObject<T> Create<T>(string name, IInterprocessObjectSerializer<T> serializer, Func<T> createDefault, CorruptionAction corruptionAction, int maxCapacityInBytes, LockTimeout? lockTimeout = null, WaitTimeout? waitTimeout = null) where T : class
+   public static IInterprocessObject<T> NewGlobal<T>(string name, IInterprocessObjectSerializer<T> serializer, Func<T> createDefault, CorruptionAction corruptionAction, int maxCapacityInBytes, LockTimeout? lockTimeout = null, WaitTimeout? waitTimeout = null) where T : class
       => CreateInternal(name, isGlobal: true, serializer, createDefault, corruptionAction, maxCapacityInBytes, lockTimeout, waitTimeout);
 
    ///<summary>Creates a new <see cref="IInterprocessObject{T}"/> backed by a memory-mapped file, synchronized with a session-local cross-process mutex.</summary>
-   public static IInterprocessObject<T> CreateLocal<T>(string name, IInterprocessObjectSerializer<T> serializer, Func<T> createDefault, CorruptionAction corruptionAction, int maxCapacityInBytes, LockTimeout? lockTimeout = null, WaitTimeout? waitTimeout = null) where T : class
+   public static IInterprocessObject<T> NewLocal<T>(string name, IInterprocessObjectSerializer<T> serializer, Func<T> createDefault, CorruptionAction corruptionAction, int maxCapacityInBytes, LockTimeout? lockTimeout = null, WaitTimeout? waitTimeout = null) where T : class
       => CreateInternal(name, isGlobal: false, serializer, createDefault, corruptionAction, maxCapacityInBytes, lockTimeout, waitTimeout);
 
    static IInterprocessObject<T> CreateInternal<T>(string name, bool isGlobal, IInterprocessObjectSerializer<T> serializer, Func<T> createDefault, CorruptionAction corruptionAction, int maxCapacityInBytes, LockTimeout? lockTimeout, WaitTimeout? waitTimeout) where T : class
@@ -33,13 +33,13 @@ public partial interface IInterprocessObject
    ///<summary>Creates a new <see cref="IInterprocessObject{T}"/> backed by a regular file, synchronized with a global cross-process mutex.
    ///<para>Every read and update performs filesystem I/O (full read or write of the file). The file size matches the serialized data — there is no size limit.</para>
    ///<para>Use this when simplicity matters more than throughput, or when the shared object may grow without a predictable upper bound.
-   /// For high-frequency access, consider <see cref="Create{T}"/> instead.</para>
+   /// For high-frequency access, consider <see cref="NewGlobal{T}"/> instead.</para>
    ///</summary>
-   public static IInterprocessObject<T> CreateFileBacked<T>(string name, IInterprocessObjectSerializer<T> serializer, Func<T> createDefault, CorruptionAction corruptionAction, LockTimeout? lockTimeout = null, WaitTimeout? waitTimeout = null) where T : class
+   public static IInterprocessObject<T> NewGlobalFileBacked<T>(string name, IInterprocessObjectSerializer<T> serializer, Func<T> createDefault, CorruptionAction corruptionAction, LockTimeout? lockTimeout = null, WaitTimeout? waitTimeout = null) where T : class
       => CreateFileBackedInternal(name, isGlobal: true, serializer, createDefault, corruptionAction, lockTimeout, waitTimeout);
 
    ///<summary>Creates a new <see cref="IInterprocessObject{T}"/> backed by a regular file, synchronized with a session-local cross-process mutex.</summary>
-   public static IInterprocessObject<T> CreateFileBackedLocal<T>(string name, IInterprocessObjectSerializer<T> serializer, Func<T> createDefault, CorruptionAction corruptionAction, LockTimeout? lockTimeout = null, WaitTimeout? waitTimeout = null) where T : class
+   public static IInterprocessObject<T> NewLocalFileBacked<T>(string name, IInterprocessObjectSerializer<T> serializer, Func<T> createDefault, CorruptionAction corruptionAction, LockTimeout? lockTimeout = null, WaitTimeout? waitTimeout = null) where T : class
       => CreateFileBackedInternal(name, isGlobal: false, serializer, createDefault, corruptionAction, lockTimeout, waitTimeout);
 
    static IInterprocessObject<T> CreateFileBackedInternal<T>(string name, bool isGlobal, IInterprocessObjectSerializer<T> serializer, Func<T> createDefault, CorruptionAction corruptionAction, LockTimeout? lockTimeout, WaitTimeout? waitTimeout) where T : class

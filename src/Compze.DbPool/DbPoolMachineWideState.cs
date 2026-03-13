@@ -10,7 +10,7 @@ class DbPoolMachineWideState
    readonly IInterprocessObject<DbPoolState> _shared;
 
    internal DbPoolMachineWideState(string uniqueName) =>
-      _shared = IInterprocessObject.Create(
+      _shared = IInterprocessObject.NewGlobal(
          uniqueName,
          MemoryPackDbPoolStateSerializer.Instance,
          () => new DbPoolState(),

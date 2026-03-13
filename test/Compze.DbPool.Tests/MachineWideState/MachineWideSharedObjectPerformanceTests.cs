@@ -7,7 +7,7 @@ namespace Compze.DbPool.Tests.MachineWideState;
 
 public class MachineWideSharedObjectPerformanceTests : UniversalTestBase
 {
-   readonly IInterprocessObject<SharedObject> _shared = IInterprocessObject.CreateFileBacked(Guid.NewGuid().ToString(), new SharedObjectSerializer(), () => new SharedObject(), CorruptionAction.ThrowException);
+   readonly IInterprocessObject<SharedObject> _shared = IInterprocessObject.NewGlobalFileBacked(Guid.NewGuid().ToString(), new SharedObjectSerializer(), () => new SharedObject(), CorruptionAction.ThrowException);
 
    protected override void DisposeInternal() => _shared.Delete();
 

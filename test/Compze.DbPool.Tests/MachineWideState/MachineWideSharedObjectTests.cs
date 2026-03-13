@@ -45,8 +45,8 @@ public class MachineWideSharedObjectTests : UniversalTestBase
    {
       var created = InterprocessObjectMatrixAttribute.BackingStore switch
       {
-         InterprocessObjectBackingStore.File => IInterprocessObject.CreateFileBacked(name, new SharedObjectSerializer(), () => new SharedObject(), CorruptionAction.ThrowException),
-         InterprocessObjectBackingStore.MemoryMapped => IInterprocessObject.Create(name, new SharedObjectSerializer(), () => new SharedObject(), CorruptionAction.ThrowException, maxCapacityInBytes: 4 * 1024),
+         InterprocessObjectBackingStore.File => IInterprocessObject.NewGlobalFileBacked(name, new SharedObjectSerializer(), () => new SharedObject(), CorruptionAction.ThrowException),
+         InterprocessObjectBackingStore.MemoryMapped => IInterprocessObject.NewGlobal(name, new SharedObjectSerializer(), () => new SharedObject(), CorruptionAction.ThrowException, maxCapacityInBytes: 4 * 1024),
          _ => throw new ArgumentOutOfRangeException()
       };
       _created.Add(created);
