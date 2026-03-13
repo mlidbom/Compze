@@ -8,7 +8,7 @@ public partial class DirectoryCE : FileSystemInfoCE
    internal DirectoryInfo GetDirectoryInfo() => new(AbsolutePath);
 #pragma warning restore CA1024 // Use properties
 
-   DirectoryCE(DirectoryInfo directoryInfo) : base(directoryInfo){}
+   public DirectoryCE(DirectoryInfo directoryInfo) : base(directoryInfo){}
 
    public DirectoryCE GetOrCreateDirectory(string subDirectory)
    {

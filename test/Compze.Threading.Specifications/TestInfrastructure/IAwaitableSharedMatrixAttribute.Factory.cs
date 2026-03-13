@@ -31,13 +31,13 @@ partial class IAwaitableSharedMatrixAttribute
                                                                           ._tap(_disposables.Add),
             Implementation.LocalSignalingMutex => IAwaitableProcessShared.LocalSignaling(UniqueName(), shared, lockTimeout, waitTimeout)
                                                                          ._tap(_disposables.Add),
-            Implementation.GlobalInterprocessObjectMemoryMapped => MemoryPackInterprocessObject.NewGlobal(UniqueName(), () => shared, CorruptionAction.ThrowException, maxCapacityInBytes: 4 * 1024, lockTimeout, waitTimeout)
+            Implementation.GlobalInterprocessObjectMemoryMapped => MemoryPackInterprocessObject.NewGlobal(UniqueName(), () => shared, CorruptionAction.ThrowException, maxCapacityInBytes: 4 * 1024, lockTimeout: lockTimeout, waitTimeout: waitTimeout)
                                                                                                ._tap(_interprocessObjects.Add),
-            Implementation.GlobalInterprocessObjectFileBacked => MemoryPackInterprocessObject.NewGlobalFileBacked(UniqueName(), () => shared, CorruptionAction.ThrowException, lockTimeout, waitTimeout)
+            Implementation.GlobalInterprocessObjectFileBacked => MemoryPackInterprocessObject.NewGlobalFileBacked(UniqueName(), () => shared, CorruptionAction.ThrowException, lockTimeout: lockTimeout, waitTimeout: waitTimeout)
                                                                                              ._tap(_interprocessObjects.Add),
-            Implementation.LocalInterprocessObjectMemoryMapped => MemoryPackInterprocessObject.NewLocal(UniqueName(), () => shared, CorruptionAction.ThrowException, maxCapacityInBytes: 4 * 1024, lockTimeout, waitTimeout)
+            Implementation.LocalInterprocessObjectMemoryMapped => MemoryPackInterprocessObject.NewLocal(UniqueName(), () => shared, CorruptionAction.ThrowException, maxCapacityInBytes: 4 * 1024, lockTimeout: lockTimeout, waitTimeout: waitTimeout)
                                                                                               ._tap(_interprocessObjects.Add),
-            Implementation.LocalInterprocessObjectFileBacked => MemoryPackInterprocessObject.NewLocalFileBacked(UniqueName(), () => shared, CorruptionAction.ThrowException, lockTimeout, waitTimeout)
+            Implementation.LocalInterprocessObjectFileBacked => MemoryPackInterprocessObject.NewLocalFileBacked(UniqueName(), () => shared, CorruptionAction.ThrowException, lockTimeout: lockTimeout, waitTimeout: waitTimeout)
                                                                                             ._tap(_interprocessObjects.Add),
             _ => throw new ArgumentOutOfRangeException()
          };

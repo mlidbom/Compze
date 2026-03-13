@@ -12,18 +12,15 @@ class InterprocessChangeCounter : IDisposable
    readonly unsafe long* _counterPointer;
    bool _disposed;
 
-   public bool IsGlobal { get; }
    public string Name { get; }
 
-   public InterprocessChangeCounter(string name, bool global)
+   public InterprocessChangeCounter(string name)
    {
       if(string.IsNullOrWhiteSpace(name)) throw new ArgumentException("Name must not be null, empty, or whitespace", nameof(name));
-      if(name.Contains('\\', StringComparison.Ordinal)) throw new ArgumentException("Name must not contain backslashes", nameof(name));
 
-      IsGlobal = global;
-      Name = global ? $@"Global\{name}" : $@"Local\{name}";
+      Name = name;
 
-      var backingFilePath = DeriveBackingFilePath(Name);
+      var backingFilePath = DeriveBackingFilePath(name);
 
       Directory.CreateDirectory(Path.GetDirectoryName(backingFilePath)!);
 

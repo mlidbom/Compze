@@ -12,9 +12,9 @@ class InterprocessSignal : IDisposable
    readonly InterprocessChangeCounter _counter;
    long _baseline;
 
-   public InterprocessSignal(string name, bool global)
+   public InterprocessSignal(string name)
    {
-      _counter = new InterprocessChangeCounter(name, global);
+      _counter = new InterprocessChangeCounter(name);
       _baseline = _counter.Count;
    }
 

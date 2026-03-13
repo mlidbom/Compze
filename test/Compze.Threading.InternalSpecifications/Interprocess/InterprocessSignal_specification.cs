@@ -15,7 +15,7 @@ namespace Compze.Threading.InternalSpecifications.Interprocess;
 public class InterprocessSignal_specification : UniversalTestBase
 {
    readonly TestingTaskRunner _runner = new(10.Seconds());
-   readonly InterprocessSignal _signal = new InterprocessSignal(Guid.NewGuid().ToString(), global: true);
+   readonly InterprocessSignal _signal = new InterprocessSignal(Guid.NewGuid().ToString());
    protected override void DisposeInternal()
    {
       _runner.Dispose();
@@ -83,13 +83,13 @@ public class InterprocessSignal_specification : UniversalTestBase
       }
    }
 
-   public class Two_instances_with_the_same_global_name : InterprocessSignal_specification
+   public class Two_instances_with_the_same_name : InterprocessSignal_specification
    {
       [XF] public void one_raises_the_other_detects()
       {
          const string name = "InterprocessSignal_specification.TwoInstances.cross_detect";
-         using var raiser = new InterprocessSignal(name, global: true);
-         using var waiter = new InterprocessSignal(name, global: true);
+         using var raiser = new InterprocessSignal(name);
+         using var waiter = new InterprocessSignal(name);
 
          raiser.Raise();
          waiter.TryAwait(TimeSpan.FromMilliseconds(100)).Must().BeTrue();
