@@ -7,6 +7,7 @@ using Compze.Threading.Specifications.TestInfrastructure;
 using Compze.Threading.Testing;
 using Xunit;
 using static Compze.Must.MustActions;
+
 // ReSharper disable InconsistentNaming
 
 // ReSharper disable AccessToDisposedClosure
@@ -112,17 +113,11 @@ public class ICriticalSection_specification : UniversalTestBase
 
    public class LockTimeout_property : ICriticalSection_specification
    {
-      [ICriticalSectionMatrix] public void defaults_to_LockTimeout_Default_when_no_timeout_is_specified()
-      {
-         var criticalSection = _factory.Create();
-         criticalSection.LockTimeout.Must().Be(LockTimeout.Default);
-      }
+      [ICriticalSectionMatrix] public void defaults_to_LockTimeout_Default_when_no_timeout_is_specified() =>
+         _factory.Create().LockTimeout.Must().Be(LockTimeout.Default);
 
-      [ICriticalSectionMatrix] public void returns_the_timeout_specified_at_creation()
-      {
-         var criticalSection = _factory.Create(LockTimeout.Seconds(7));
-         criticalSection.LockTimeout.Must().Be(LockTimeout.Seconds(7));
-      }
+      [ICriticalSectionMatrix] public void returns_the_timeout_specified_at_creation() =>
+         _factory.Create(LockTimeout.Seconds(7)).LockTimeout.Must().Be(LockTimeout.Seconds(7));
    }
 
    public class ContentionCount : ICriticalSection_specification
@@ -131,9 +126,8 @@ public class ICriticalSection_specification : UniversalTestBase
       {
          var criticalSection = _factory.Create();
 
-         using(criticalSection.TakeLock()) {}
-
-         using(criticalSection.TakeLock()) {}
+         criticalSection.TakeLock().Dispose();
+         criticalSection.TakeLock().Dispose();
 
          criticalSection.ContentionCount.Must().Be(0L);
       }
