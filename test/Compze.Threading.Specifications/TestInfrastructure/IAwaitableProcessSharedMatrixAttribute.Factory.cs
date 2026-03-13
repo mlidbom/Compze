@@ -15,6 +15,8 @@ partial class IAwaitableProcessSharedMatrixAttribute
       // ReSharper disable once MemberCanBeMadeStatic.Local
       Implementation CurrentImplementation => (Implementation)MatrixCombination.Current.Components[0];
 
+      public bool CurrentImplementationIsGlobal => CurrentImplementation is Implementation.GlobalPollingMutex or Implementation.GlobalSignalingMutex;
+
       public IAwaitableProcessShared<TShared> Create<TShared>(TShared shared, LockTimeout? lockTimeout = null, WaitTimeout? waitTimeout = null)
       {
          return CurrentImplementation switch
