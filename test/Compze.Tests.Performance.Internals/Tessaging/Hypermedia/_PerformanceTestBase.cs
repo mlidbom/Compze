@@ -2,10 +2,10 @@ using Compze.Abstractions.Tessaging.Hosting.Public;
 using Compze.Hosting;
 using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Abstractions.Tessaging.Public;
+using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Hosting.Testing.Tessaging;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.Tests.Infrastructure;
-using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 using Compze.Typermedia;
 using Compze.Typermedia.HandlerRegistration;
 

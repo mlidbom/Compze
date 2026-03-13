@@ -48,13 +48,6 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_SystemCE)' != 'true'">
     <ProjectReference Include="..\Compze.Internals.SystemCE\Compze.Internals.SystemCE.csproj" />
   </ItemGroup>
-  <!-- Compze.Internals.SystemCE.Core — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_SystemCE_Core)' == 'true'">
-    <PackageReference Include="Compze.Internals.SystemCE.Core" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_SystemCE_Core)' != 'true'">
-    <ProjectReference Include="..\Compze.Internals.SystemCE.Core\Compze.Internals.SystemCE.Core.csproj" />
-  </ItemGroup>
   <!-- Compze.Internals.Transport.AspNet — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Transport_AspNet)' == 'true'">
     <PackageReference Include="Compze.Internals.Transport.AspNet" Version="*-*" />

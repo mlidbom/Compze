@@ -1,5 +1,5 @@
-using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 using Compze.Internals.SystemCE.ThreadingCE;
+using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 
 // ReSharper disable once ConvertToPrimaryConstructor
 namespace Compze.Internals.SystemCE;

@@ -1,5 +1,5 @@
 using System.IO.MemoryMappedFiles;
-using Compze.Internals.SystemCE.Core.IOCE;
+using Compze.Internals.SystemCE.IOCE;
 
 namespace Compze.InterprocessObject;
 

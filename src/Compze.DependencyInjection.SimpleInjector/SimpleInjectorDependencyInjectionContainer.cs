@@ -1,6 +1,6 @@
-using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.LinqCE;
+using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Threading;
 using SimpleInjector;
 using SimpleInjector.Lifestyles;

@@ -1,11 +1,11 @@
 using Compze.Contracts;
 using Compze.DocumentDb.Public;
 using Compze.Abstractions.Public;
-using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tests.Common.Sql.DocumentDb;
 using Compze.Tests.Infrastructure;
 using Compze.DependencyInjection;
+using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Internals.SystemCE.UsageGuards;
 using Compze.Must;

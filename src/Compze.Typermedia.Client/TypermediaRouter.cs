@@ -3,12 +3,12 @@ using Compze.Abstractions.Tessaging.Hosting.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Core.Tessaging.Transport.Internal;
 using Compze.Contracts;
-using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Internals.Transport;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
-using Compze.Internals.SystemCE.Core.CollectionsCE.GenericCE;
+using Compze.Internals.SystemCE.CollectionsCE.GenericCE;
+using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Threading;
 
 namespace Compze.Typermedia.Client;

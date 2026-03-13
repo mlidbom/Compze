@@ -1,4 +1,4 @@
-namespace Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
+namespace Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 
 public static class TaskCEExceptionHandling
 {

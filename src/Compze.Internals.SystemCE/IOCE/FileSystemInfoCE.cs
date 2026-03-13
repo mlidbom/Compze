@@ -1,6 +1,6 @@
 using Compze.Contracts;
 
-namespace Compze.Internals.SystemCE.Core.IOCE;
+namespace Compze.Internals.SystemCE.IOCE;
 
 public abstract class FileSystemInfoCE : IEquatable<FileSystemInfoCE>
 {

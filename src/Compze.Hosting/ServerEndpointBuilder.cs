@@ -4,7 +4,6 @@ using Compze.Abstractions.Tessaging.Hosting.Public;
 using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Tessaging.Abstractions.Tessaging.Hosting.Public;
 using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
-using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 using Compze.Typermedia;
 using Compze.Typermedia.Client;
 using Compze.Typermedia.Hosting;
@@ -25,6 +24,7 @@ using Compze.Internals.Transport;
 using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
+using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Typermedia.HandlerRegistration;
 
 // ReSharper disable ImplicitlyCapturedClosure it is very much intentional :)

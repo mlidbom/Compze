@@ -2,9 +2,9 @@ using Compze.Abstractions.Tessaging.Hosting.Public;
 using Compze.Hosting;
 using Compze.Tessaging.Abstractions.Tessaging.Hosting.Public;
 using Compze.Core.Tessaging.Hosting.Public;
-using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.DependencyInjection.Abstractions;
+using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Underscore;
 using Compze.Internals.Testing;
 

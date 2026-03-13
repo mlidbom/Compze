@@ -1,6 +1,6 @@
 using Compze.SystemCE;
 
-namespace Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
+namespace Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 
 static class TaskUnit
 {

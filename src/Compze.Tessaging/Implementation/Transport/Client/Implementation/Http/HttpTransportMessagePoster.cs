@@ -1,9 +1,9 @@
 using Compze.Core.Tessaging.Transport.Internal;
-using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 using Compze.Internals.Transport;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
+using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Http;
 

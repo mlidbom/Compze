@@ -1,5 +1,5 @@
-using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 using Compze.Internals.SystemCE;
+using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.xUnit;
 using Xunit.Sdk;
 using Xunit.v3;

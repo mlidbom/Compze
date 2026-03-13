@@ -1,7 +1,7 @@
 using Compze.Abstractions.Wiring.Testing.Internal;
 using Compze.Contracts;
+using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.InterprocessObject;
-using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 using Compze.Must;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;

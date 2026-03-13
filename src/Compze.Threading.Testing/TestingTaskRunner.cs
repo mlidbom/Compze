@@ -1,4 +1,4 @@
-using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
+using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Threading.Testing;
 

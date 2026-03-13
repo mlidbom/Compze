@@ -1,6 +1,6 @@
 using Compze.Contracts;
-using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 using Compze.Internals.Logging;
+using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Internals.Sql.Common;
 

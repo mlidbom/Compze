@@ -9,12 +9,12 @@ using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Tessaging.Implementation.Transport.Client.Internal;
 using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Contracts;
-using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
+using Compze.Internals.SystemCE.CollectionsCE.GenericCE;
 using Compze.Internals.SystemCE.ReflectionCE;
+using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Threading;
-using Compze.Internals.SystemCE.Core.CollectionsCE.GenericCE;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Universal;
 

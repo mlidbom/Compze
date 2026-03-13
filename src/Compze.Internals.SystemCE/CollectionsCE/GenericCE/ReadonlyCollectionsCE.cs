@@ -1,7 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Compze.Contracts;
 
-namespace Compze.Internals.SystemCE.Core.CollectionsCE.GenericCE;
+namespace Compze.Internals.SystemCE.CollectionsCE.GenericCE;
 
 #pragma warning disable CA1002 // Utility extension methods returning List by design for copy-and-add pattern
 public static class ReadonlyCollectionsCE

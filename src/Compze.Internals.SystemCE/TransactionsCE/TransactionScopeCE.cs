@@ -1,5 +1,5 @@
 using System.Transactions;
-using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
+using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.SystemCE;
 using JetBrains.Annotations;
 

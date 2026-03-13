@@ -1,9 +1,9 @@
 using Autofac;
 using Autofac.Core.Lifetime;
 using Compze.Contracts;
-using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.LinqCE;
+using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Threading;
 
 namespace Compze.DependencyInjection.Autofac;

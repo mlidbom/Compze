@@ -1,4 +1,4 @@
-namespace Compze.Internals.SystemCE.Core;
+namespace Compze.Internals.SystemCE;
 
 public static class ReadOnlyDictionaryCE
 {

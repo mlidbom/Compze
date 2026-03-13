@@ -2,7 +2,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using Compze.Contracts;
 using Compze.Abstractions.Tessaging.Public;
-using Compze.Internals.SystemCE.Core.CollectionsCE.GenericCE;
+using Compze.Internals.SystemCE.CollectionsCE.GenericCE;
 using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Internals.SystemCE.ReflectionCE.EmitCE;
 using Compze.Threading;

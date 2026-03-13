@@ -1,4 +1,4 @@
-using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
+using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.SystemCE;
 
 namespace Compze.Internals.Sql.Common.Abstractions;

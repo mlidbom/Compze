@@ -37,13 +37,6 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Logging)' != 'true'">
     <ProjectReference Include="..\Compze.Internals.Logging\Compze.Internals.Logging.csproj" />
   </ItemGroup>
-  <!-- Compze.Internals.SystemCE.Core — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_SystemCE_Core)' == 'true'">
-    <PackageReference Include="Compze.Internals.SystemCE.Core" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_SystemCE_Core)' != 'true'">
-    <ProjectReference Include="..\Compze.Internals.SystemCE.Core\Compze.Internals.SystemCE.Core.csproj" />
-  </ItemGroup>
   <!-- Compze.Internals.Transport — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Transport)' == 'true'">
     <PackageReference Include="Compze.Internals.Transport" Version="*-*" />

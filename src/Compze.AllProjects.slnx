@@ -148,7 +148,6 @@
     <Project Path="Compze.Internals.Sql.Sqlite/Compze.Internals.Sql.Sqlite.csproj" />
   </Folder>
   <Folder Name="/Compze.Internals/Compze.Internals.SystemCE/">
-    <Project Path="Compze.Internals.SystemCE.Core/Compze.Internals.SystemCE.Core.csproj" />
     <Project Path="Compze.Internals.SystemCE/Compze.Internals.SystemCE.csproj" />
   </Folder>
   <Folder Name="/Compze.Internals/Compze.Internals.SystemCE/Tests/">

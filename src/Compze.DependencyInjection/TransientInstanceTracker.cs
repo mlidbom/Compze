@@ -1,6 +1,6 @@
 using System.Collections.Concurrent;
 using Compze.Contracts;
-using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
+using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.DependencyInjection;
 

@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 
-namespace Compze.Internals.SystemCE.Core;
+namespace Compze.Internals.SystemCE;
 
 static class TryGetToTuple
 {

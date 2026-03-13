@@ -13,7 +13,7 @@ using Compze.Tests.Infrastructure.SystemCE.CollectionsCE.ConcurrentCE;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Internals.SystemCE;
 using System.Collections.Concurrent;
-using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
+using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Must;
 using AccountId = AccountManagement.Domain.AccountId;
 using Compze.Typermedia;

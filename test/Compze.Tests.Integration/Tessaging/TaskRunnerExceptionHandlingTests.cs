@@ -5,7 +5,7 @@ using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Internals.Logging;
-using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
+using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Threading;
 using Compze.Threading.Testing;
 using Compze.Must;

@@ -50,13 +50,6 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_SystemCE)' != 'true'">
     <ProjectReference Include="..\..\..\..\src\Compze.Internals.SystemCE\Compze.Internals.SystemCE.csproj" />
   </ItemGroup>
-  <!-- Compze.Internals.SystemCE.Core — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_SystemCE_Core)' == 'true'">
-    <PackageReference Include="Compze.Internals.SystemCE.Core" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_SystemCE_Core)' != 'true'">
-    <ProjectReference Include="..\..\..\..\src\Compze.Internals.SystemCE.Core\Compze.Internals.SystemCE.Core.csproj" />
-  </ItemGroup>
   <!-- Compze.Tessaging.Hosting.Testing — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_Hosting_Testing)' == 'true'">
     <PackageReference Include="Compze.Tessaging.Hosting.Testing" Version="*-*" />

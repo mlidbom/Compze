@@ -2,7 +2,7 @@ using System.Data.Common;
 using System.Transactions;
 using Compze.Internals.Sql.Common.Abstractions;
 using Compze.Contracts;
-using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
+using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Internals.SystemCE.TransactionsCE;
 using Microsoft.Data.Sqlite;
 

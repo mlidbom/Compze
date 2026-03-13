@@ -1,6 +1,6 @@
 using System.Diagnostics;
-using Compze.Internals.SystemCE.Core.CollectionsCE.GenericCE;
-using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
+using Compze.Internals.SystemCE.CollectionsCE.GenericCE;
+using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.SystemCE;
 using Compze.Threading;
 

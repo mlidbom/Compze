@@ -1,8 +1,8 @@
 using Compze.Internals.Sql.Common;
 using Compze.Internals.Sql.Common.Abstractions;
 using Compze.Internals.SystemCE;
+using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Npgsql;
-using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 
 namespace Compze.Internals.Sql.PostgreSql;
 

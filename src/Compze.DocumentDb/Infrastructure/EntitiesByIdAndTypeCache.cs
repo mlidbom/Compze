@@ -1,6 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
 using Compze.Contracts;
-using Compze.Internals.SystemCE.Core;
 using Compze.Threading.ResourceAccess;
 
 namespace Compze.DocumentDb.Infrastructure;

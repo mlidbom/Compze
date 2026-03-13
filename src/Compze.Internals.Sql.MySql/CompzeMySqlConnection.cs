@@ -1,6 +1,6 @@
 using System.Data.Common;
 using Compze.Internals.Sql.Common.Abstractions;
-using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
+using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using MySql.Data.MySqlClient;
 
 namespace Compze.Internals.Sql.MySql;

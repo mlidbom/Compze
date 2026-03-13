@@ -1,4 +1,4 @@
-namespace Compze.Internals.SystemCE.Core.IOCE;
+namespace Compze.Internals.SystemCE.IOCE;
 
 public class BinaryFile : FileCE, IBinaryFile
 {

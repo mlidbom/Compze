@@ -3,9 +3,9 @@ using Compze.Internals.Sql.Sqlite.Private.Tessaging;
 using Compze.Internals.Sql.Sqlite.Private.TEventStore;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
+using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Threading;
 using Compze.Internals.SystemCE.TransactionsCE;
-using Compze.Internals.SystemCE.Core.ThreadingCE.TasksCE;
 
 namespace Compze.Internals.Sql.Sqlite.Private;
 

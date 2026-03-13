@@ -1,4 +1,4 @@
-using Compze.Internals.SystemCE.Core.IOCE;
+using Compze.Internals.SystemCE.IOCE;
 using Compze.Threading;
 
 namespace Compze.InterprocessObject;

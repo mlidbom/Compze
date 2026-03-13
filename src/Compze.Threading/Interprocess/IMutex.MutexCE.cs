@@ -5,7 +5,6 @@ using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 using System.Security.AccessControl;
 using System.Security.Principal;
-using Compze.Internals.SystemCE.Core.CollectionsCE.GenericCE;
 
 namespace Compze.Threading.Interprocess;
 
