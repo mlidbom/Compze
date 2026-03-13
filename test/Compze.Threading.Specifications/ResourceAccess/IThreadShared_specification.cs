@@ -2,6 +2,7 @@ using Compze.Must;
 using Compze.Tests.Infrastructure;
 using Compze.Threading.ResourceAccess;
 using Compze.Threading.Specifications.TestInfrastructure;
+using Compze.xUnitBDD;
 using Xunit;
 // ReSharper disable InconsistentNaming
 
@@ -10,55 +11,21 @@ namespace Compze.Threading.Specifications.ResourceAccess;
 [Collection(nameof(NonParallelCollection))]
 public class IThreadShared_specification : UniversalTestBase
 {
-   readonly ICriticalSectionMatrixAttribute.Factory<IThreadShared_specification> _factory = new();
-
-   protected override void DisposeInternal() => _factory.Dispose();
-
-   public class Locked_with_Func : IThreadShared_specification
+   public class Monitor_property : IThreadShared_specification
    {
-      [ICriticalSectionMatrix] public void returns_the_value_from_the_function()
+      [XF] public void exposes_the_Monitor_used_for_locking()
       {
-         var shared = IShared.New(42, _factory.Create());
-         shared.Locked(value => value).Must().Be(42);
+         var shared = IThreadShared.New(new object());
+         shared.Monitor.Must().NotBeNull();
       }
 
-      [ICriticalSectionMatrix] public void provides_the_shared_value_to_the_function()
+      [XF] public void shared_instances_with_same_Monitor_report_same_Monitor()
       {
-         var shared = IShared.New("hello", _factory.Create());
-         shared.Locked(value => value.Length).Must().Be(5);
-      }
-   }
+         var monitor = IMonitor.New();
+         var sharedA = IThreadShared.New(new object(), monitor);
+         var sharedB = IThreadShared.New(new object(), monitor);
 
-   public class Locked_with_Action : IThreadShared_specification
-   {
-      [ICriticalSectionMatrix] public void executes_the_action_with_the_shared_value()
-      {
-         var list = new List<int>();
-         var shared = IShared.New(list, _factory.Create());
-         shared.Locked(value => value.Add(42));
-         list.Must().HaveCount(1);
-      }
-   }
-
-   public class Lock_property : IThreadShared_specification
-   {
-      [ICriticalSectionMatrix] public void exposes_ContentionCount()
-      {
-         var criticalSection = _factory.Create();
-         var shared = IShared.New(new object(), criticalSection);
-
-         using(shared.CriticalSection.TakeLock()) {}
-
-         shared.CriticalSection.ContentionCount.Must().Be(0L);
-      }
-
-      [ICriticalSectionMatrix] public void shared_instances_with_same_lock_report_same_Lock()
-      {
-         var criticalSection = _factory.Create();
-         var sharedA = IShared.New(new object(), criticalSection);
-         var sharedB = IShared.New(new object(), criticalSection);
-
-         sharedA.CriticalSection.Must().Be(sharedB.CriticalSection);
+         sharedA.Monitor.Must().Be(sharedB.Monitor);
       }
    }
 }

@@ -2,13 +2,9 @@ using Compze.SystemCE;
 
 namespace Compze.Threading.ResourceAccess;
 
-///<summary>Factory for creating <see cref="IShared{TShared}"/> instances that protect a shared object with an <see cref="ICriticalSection"/>.</summary>
+///<summary>Contains the internal base implementation for <see cref="IShared{TShared}"/>.</summary>
 public interface IShared
 {
-   ///<summary>Returns a new <see cref="IShared{TShared}"/> that protects <paramref name="shared"/> with <paramref name="criticalSection"/>.</summary>
-   public static IShared<TShared> New<TShared>(TShared shared, ICriticalSection criticalSection) =>
-      new Shared<TShared>(shared, criticalSection);
-
    internal class Shared<TShared>(TShared shared, ICriticalSection criticalSection) : IShared<TShared>
    {
       readonly TShared _shared = shared;

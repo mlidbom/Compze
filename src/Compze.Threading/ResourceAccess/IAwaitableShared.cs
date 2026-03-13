@@ -4,13 +4,9 @@ using Compze.SystemCE;
 
 namespace Compze.Threading.ResourceAccess;
 
-///<summary>Factory for creating <see cref="IAwaitableShared{TShared}"/> instances that protect a shared object with an <see cref="IAwaitableCriticalSection"/>.</summary>
+///<summary>Contains the internal base implementation for <see cref="IAwaitableShared{TShared}"/>.</summary>
 public interface IAwaitableShared
 {
-   ///<summary>Returns a new <see cref="IAwaitableShared{TShared}"/> that protects <paramref name="shared"/> with <paramref name="criticalSection"/>.</summary>
-   public static IAwaitableShared<TShared> New<TShared>(TShared shared, IAwaitableCriticalSection criticalSection) =>
-      new AwaitableShared<TShared>(shared, criticalSection);
-
    internal class AwaitableShared<TShared> : IAwaitableShared<TShared>
    {
       readonly TShared _shared;
