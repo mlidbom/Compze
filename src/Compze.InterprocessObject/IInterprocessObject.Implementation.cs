@@ -86,6 +86,8 @@ public partial interface IInterprocessObject
 
       public void Delete() => _file.Delete();
 
+      public void Dispose() => _synchronizer.Dispose();
+
       void Save(TObject instance)
       {
          var serialized = _serializer.Serialize(instance);

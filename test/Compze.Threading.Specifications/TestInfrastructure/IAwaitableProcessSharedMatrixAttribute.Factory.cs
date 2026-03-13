@@ -1,4 +1,3 @@
-using Compze.Threading.Interprocess;
 using Compze.Threading.Interprocess.ResourceAccess;
 using Compze.Underscore;
 using Compze.xUnitMatrix;
@@ -20,18 +19,14 @@ partial class IAwaitableProcessSharedMatrixAttribute
       {
          return CurrentImplementation switch
          {
-            Implementation.GlobalPollingMutex   => IAwaitableProcessShared.New(shared, UniqueName()
-                                                  ._(it => IPollingAwaitableMutex.Global(it, lockTimeout, waitTimeout, PollingInterval.Milliseconds(10)))
-                                                  ._tap(_disposables.Add)),
-            Implementation.LocalPollingMutex    => IAwaitableProcessShared.New(shared, UniqueName()
-                                                  ._(it => IPollingAwaitableMutex.Local(it, lockTimeout, waitTimeout, PollingInterval.Milliseconds(10)))
-                                                  ._tap(_disposables.Add)),
-            Implementation.GlobalSignalingMutex => IAwaitableProcessShared.New(shared, UniqueName()
-                                                  ._(it => ISignalingAwaitableMutex.Global(it, lockTimeout, waitTimeout))
-                                                  ._tap(_disposables.Add)),
-            Implementation.LocalSignalingMutex  => IAwaitableProcessShared.New(shared, UniqueName()
-                                                  ._(it => ISignalingAwaitableMutex.Local(it, lockTimeout, waitTimeout))
-                                                  ._tap(_disposables.Add)),
+            Implementation.GlobalPollingMutex   => IAwaitableProcessShared.GlobalPolling(UniqueName(), shared, lockTimeout, waitTimeout, PollingInterval.Milliseconds(10))
+                                                  ._tap(_disposables.Add),
+            Implementation.LocalPollingMutex    => IAwaitableProcessShared.LocalPolling(UniqueName(), shared, lockTimeout, waitTimeout, PollingInterval.Milliseconds(10))
+                                                  ._tap(_disposables.Add),
+            Implementation.GlobalSignalingMutex => IAwaitableProcessShared.GlobalSignaling(UniqueName(), shared, lockTimeout, waitTimeout)
+                                                  ._tap(_disposables.Add),
+            Implementation.LocalSignalingMutex  => IAwaitableProcessShared.LocalSignaling(UniqueName(), shared, lockTimeout, waitTimeout)
+                                                  ._tap(_disposables.Add),
             _ => throw new ArgumentOutOfRangeException()
          };
       }

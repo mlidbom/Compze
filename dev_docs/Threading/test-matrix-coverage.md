@@ -198,7 +198,7 @@ No test file exists that tests the `IAwaitableProcessShared<T>` interface contra
 |---|---|---|
 | `[ISharedMatrix]` | Monitor, GlobalMutex, LocalMutex | `IThreadShared.New()` / `IProcessShared.Global/Local()` |
 | `[IProcessSharedMatrix]` | GlobalMutex, LocalMutex | `IProcessShared.Global/Local()` |
-| `[IAwaitableSharedMatrix]` | Monitor, GlobalPollingMutex, LocalPollingMutex, GlobalSignalingMutex, LocalSignalingMutex | `IAwaitableThreadShared.New()` / `IAwaitableProcessShared.New()` |
+| `[IAwaitableSharedMatrix]` | Monitor, GlobalPollingMutex, LocalPollingMutex, GlobalSignalingMutex, LocalSignalingMutex | `IAwaitableThreadShared.New()` / `IAwaitableProcessShared.GlobalPolling/LocalPolling/GlobalSignaling/LocalSignaling()` |
 | `[IAwaitableProcessSharedMatrix]` | GlobalPollingMutex, LocalPollingMutex, GlobalSignalingMutex, LocalSignalingMutex | `IAwaitableProcessShared.GlobalPolling/LocalPolling/GlobalSignaling/LocalSignaling(...)` |
 
 Each attribute follows the established pattern: partial class with nested `Implementation` enum and `Factory<TTest>`.

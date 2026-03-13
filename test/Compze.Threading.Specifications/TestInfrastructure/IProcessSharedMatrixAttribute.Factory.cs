@@ -1,4 +1,3 @@
-using Compze.Threading.Interprocess;
 using Compze.Threading.Interprocess.ResourceAccess;
 using Compze.Underscore;
 using Compze.xUnitMatrix;
@@ -20,8 +19,8 @@ partial class IProcessSharedMatrixAttribute
       {
          return CurrentImplementation switch
          {
-            Implementation.GlobalMutex => IProcessShared.New(shared, UniqueName()._(it => IMutex.Global(it, timeout))._tap(_disposables.Add)),
-            Implementation.LocalMutex  => IProcessShared.New(shared, UniqueName()._(it => IMutex.Local(it, timeout))._tap(_disposables.Add)),
+            Implementation.GlobalMutex => IProcessShared.Global(UniqueName(), shared, timeout)._tap(_disposables.Add),
+            Implementation.LocalMutex  => IProcessShared.Local(UniqueName(), shared, timeout)._tap(_disposables.Add),
             _                          => throw new ArgumentOutOfRangeException()
          };
       }
