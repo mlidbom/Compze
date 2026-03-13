@@ -149,14 +149,17 @@ All IAwaitableCriticalSection implementations are now in the matrix: Monitor, Gl
 
 `IThreadShared_specification` tests the `IThreadShared`-specific concern: the `Monitor` property.
 
-### Gap 4: IAwaitableShared\<T\> — no specification at all
+### Gap 4: ~~IAwaitableShared\<T\> — no specification at all~~ RESOLVED
 
-There is **no `IAwaitableShared_specification`**. The behaviors inherited from `IAwaitableShared<T>` — `Read`, `Update`, `ReadWhen`, `UpdateWhen`, `TryUpdateWhen`, `Await` — are not tested against varying implementations.
-
-**What's never tested as IAwaitableShared\<T\>:**
-- `IAwaitableThreadShared<T>` (not tested at all except ContentionCount)
-- `IAwaitableProcessShared<T>` (all 4 factory variants: GlobalPolling, LocalPolling, GlobalSignaling, LocalSignaling)
-- `IInterprocessObject<T>` (tested for its own concerns in DbPool.Tests, but never as a generic IAwaitableShared)
+`IAwaitableShared_specification` uses `[IAwaitableSharedMatrix]` to test the full `IAwaitableShared<T>` contract against all 5 variants (Monitor, GlobalPollingMutex, LocalPollingMutex, GlobalSignalingMutex, LocalSignalingMutex). Covers:
+- `Read` (Func and Action overloads)
+- `Update` (Func and Action overloads)
+- Full mutual exclusion — all access methods are blocked while any one holds the lock, all succeed after release
+- `ReadWhen` — immediate, condition-wait, timeout
+- `UpdateWhen` (Func and Action) — immediate, condition-wait, timeout
+- `TryUpdateWhen` — true on immediate/eventual condition, false on timeout
+- `Await` — immediate, condition-wait, timeout
+- `CriticalSection` property — ContentionCount, independent instances
 
 ### Gap 5: IInterprocessObject\<T\> — tested for persistence, not as IAwaitableProcessShared
 
@@ -206,7 +209,7 @@ All factories use the real user-facing factory methods (`IThreadShared.New()`, `
 | `IShared_specification` | `IShared<T>` | `[ISharedMatrix]` | ✅ Done — Locked, CriticalSection property, mutual exclusion |
 | `IThreadShared_specification` | `IThreadShared<T>` | `[XF]` | ✅ Done — Monitor property |
 | `IProcessShared_specification` | `IProcessShared<T>` | `[IProcessSharedMatrix]` | ✅ Exists — Mutex property, IDisposable. Full IShared contract covered by IShared_specification |
-| `IAwaitableShared_specification` | `IAwaitableShared<T>` | `[IAwaitableSharedMatrix]` | ❌ Not yet — Read, Update, ReadWhen, UpdateWhen, TryUpdateWhen, Await, CriticalSection property |
+| `IAwaitableShared_specification` | `IAwaitableShared<T>` | `[IAwaitableSharedMatrix]` | ✅ Done — Read, Update, mutual exclusion, ReadWhen, UpdateWhen, TryUpdateWhen, Await, CriticalSection property |
 | `IAwaitableProcessShared_specification` | `IAwaitableProcessShared<T>` | `[IAwaitableProcessSharedMatrix]` | ❌ Not yet — full IAwaitableShared contract + Mutex property + IDisposable |
 
 ---
@@ -238,7 +241,7 @@ All planned matrix attributes have been implemented. None remaining.
 | `IShared<T>` | ✅ `IShared_specification` | **Complete** — `[ISharedMatrix]` covers Monitor, GlobalMutex, LocalMutex |
 | `IThreadShared<T>` | ✅ `IThreadShared_specification` | **Complete** — tests Monitor property (IShared contract covered by IShared_specification) |
 | `IProcessShared<T>` | ✅ `IProcessShared_specification` | **Partial** — `[IProcessSharedMatrix]` covers Mutex property + IDisposable. IShared contract covered by IShared_specification |
-| `IAwaitableShared<T>` | ❌ None | **Planned**: `IAwaitableShared_specification` with `[IAwaitableSharedMatrix]` |
+| `IAwaitableShared<T>` | ✅ `IAwaitableShared_specification` | **Complete** — `[IAwaitableSharedMatrix]` covers Monitor, GlobalPollingMutex, LocalPollingMutex, GlobalSignalingMutex, LocalSignalingMutex |
 | `IAwaitableProcessShared<T>` | ❌ None | **Planned**: `IAwaitableProcessShared_specification` with `[IAwaitableProcessSharedMatrix]` |
 | `IInterprocessObject<T>` | Partial (persistence only) | Separate concern — persistence/backing store tested via `[InterprocessObjectMatrix]` |
 
