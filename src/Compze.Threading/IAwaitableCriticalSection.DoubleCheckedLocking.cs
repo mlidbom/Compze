@@ -1,7 +1,7 @@
 namespace Compze.Threading;
 
 ///<summary>Extension methods for <see cref="IAwaitableCriticalSection"/>.</summary>
-public static class IAwaitableCriticalSectionDoubleCheckedLocking
+public static class AwaitableCriticalSectionDoubleCheckedLocking
 {
    ///<summary>
    /// <para>

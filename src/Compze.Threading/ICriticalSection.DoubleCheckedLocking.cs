@@ -1,7 +1,7 @@
 namespace Compze.Threading;
 
 ///<summary>Extension methods for <see cref="ICriticalSection"/>.</summary>
-public static class MonitorCEExtensions
+public static class CriticalSectionDoubleCheckedLocking
 {
    ///<summary>
    /// <para>
