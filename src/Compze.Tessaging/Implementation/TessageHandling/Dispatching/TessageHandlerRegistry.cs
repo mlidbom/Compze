@@ -29,9 +29,9 @@ sealed class TessageHandlerRegistry(ITypeMapper typeMapper) : ITessageHandlerReg
    IReadOnlyDictionary<Type, IReadOnlyList<Action<ITevent>>> _teventHandlers = new Dictionary<Type, IReadOnlyList<Action<ITevent>>>();
    IReadOnlyList<TeventHandlerRegistration> _teventHandlerRegistrations = new List<TeventHandlerRegistration>();
 
-   readonly IMonitor _lock = IMonitor.New();
+   readonly IMonitor _monitor = IMonitor.New();
 
-   ITessageHandlerRegistrar ITessageHandlerRegistrar.ForTevent<TTevent>(Action<TTevent> handler) => _lock.Locked(() =>
+   ITessageHandlerRegistrar ITessageHandlerRegistrar.ForTevent<TTevent>(Action<TTevent> handler) => _monitor.Locked(() =>
    {
       TessageInspector.AssertValid<TTevent>();
       _teventHandlers.TryGetValue(typeof(TTevent), out var currentTeventSubscribers);
@@ -43,7 +43,7 @@ sealed class TessageHandlerRegistry(ITypeMapper typeMapper) : ITessageHandlerReg
       return this;
    });
 
-   ITessageHandlerRegistrar ITessageHandlerRegistrar.ForTommand<TTommand>(Action<TTommand> handler) => _lock.Locked(() =>
+   ITessageHandlerRegistrar ITessageHandlerRegistrar.ForTommand<TTommand>(Action<TTommand> handler) => _monitor.Locked(() =>
    {
       TessageInspector.AssertValid<TTommand>();
 

@@ -31,7 +31,7 @@ public class IAwaitableMonitor_specification : UniversalTestBase
 
    public class When_a_thread_waiting_in_TakeUpdateLockWhen_is_interrupted : IAwaitableMonitor_specification
    {
-      readonly IAwaitableMonitor _lock = IAwaitableMonitor.New(LockTimeout.Seconds(30));
+      readonly IAwaitableMonitor _monitor = IAwaitableMonitor.New(LockTimeout.Seconds(30));
       readonly ManualResetEventSlim _threadIsWaiting = new(false);
       readonly ManualResetEventSlim _threadCompleted = new(false);
       Exception? _thrownException;
@@ -43,7 +43,7 @@ public class IAwaitableMonitor_specification : UniversalTestBase
             try
             {
                _threadIsWaiting.Set();
-               _lock.TakeUpdateLockWhen(() => false);
+               _monitor.TakeUpdateLockWhen(() => false);
             }
 #pragma warning disable CA1031
             //We need to capture whatever exception Thread.Interrupt causes to assert on it
@@ -69,7 +69,7 @@ public class IAwaitableMonitor_specification : UniversalTestBase
 
       [XF] public void lock_is_released_so_other_threads_can_acquire_it()
       {
-         using(_lock.TakeUpdateLock(LockTimeout.Seconds(1))) {}
+         using(_monitor.TakeUpdateLock(LockTimeout.Seconds(1))) {}
       }
    }
 }

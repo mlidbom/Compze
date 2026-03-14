@@ -4,15 +4,17 @@ namespace Compze.Threading;
 public static class IAwaitableCriticalSectionDoubleCheckedLocking
 {
    ///<summary>
-   /// Performs thread-safe lazy initialization of <paramref name="field"/> using the double-checked locking pattern
-   /// with read/update lock semantics.<br/>
-   /// First reads <paramref name="field"/> without locking. If null, acquires a read lock, re-reads, and if still null
-   /// acquires an update lock, calls <paramref name="createValue"/>, and atomically publishes the result into
-   /// <paramref name="field"/> via <see cref="Interlocked.Exchange{T}(ref T, T)"/>.<br/>
-   /// The only mutation is this single atomic reference exchange — <paramref name="createValue"/> must not perform
-   /// any shared-state mutations.
+   /// <para>
+   /// WARNING! <paramref name="createFieldValue"/> must not perform any visible state modifications or all thread safety guarantees are lost.<br/>
+   /// </para>
+   /// 
+   /// Performs thread-safe lazy initialization of <paramref name="field"/> using the double-checked locking pattern.<br/>
+   /// First reads <paramref name="field"/> without locking. If null, acquires the lock, re-reads, and if still null
+   /// calls <paramref name="createFieldValue"/> and atomically updates <paramref name="field"/> via
+   /// <see cref="Interlocked.Exchange{T}(ref T, T)"/> and notifies all waiting threads about the update.<br/>
+   /// 
    ///</summary>
-   public static TResult DoubleCheckedLocking<TResult>(this IAwaitableCriticalSection @this, ref TResult? field, Func<TResult> createValue)
+   public static TResult DoubleCheckedLocking<TResult>(this IAwaitableCriticalSection @this, ref TResult? field, Func<TResult> createFieldValue)
       where TResult : class
    {
       var result = field;
@@ -25,7 +27,7 @@ public static class IAwaitableCriticalSectionDoubleCheckedLocking
 
          using(@this.TakeUpdateLock())
          {
-            var newValue = createValue();
+            var newValue = createFieldValue();
             Interlocked.Exchange(ref field!, newValue);
             return newValue;
          }
@@ -33,13 +35,15 @@ public static class IAwaitableCriticalSectionDoubleCheckedLocking
    }
 
    ///<summary>
-   /// Performs thread-safe double-checked locking with read/update lock semantics where the read operation
-   /// (<paramref name="tryRead"/>) may differ from the field being exchanged.<br/>
-   /// First calls <paramref name="tryRead"/> without locking. If it returns null, acquires a read lock, retries,
-   /// and if still null acquires an update lock, calls <paramref name="createUpdatedFieldValue"/>, and atomically
-   /// publishes the result into <paramref name="field"/> via <see cref="Interlocked.Exchange{T}(ref T, T)"/>.<br/>
-   /// The only mutation is this single atomic reference exchange — <paramref name="createUpdatedFieldValue"/> must
-   /// produce a new object rather than mutating the existing one.<br/>
+   /// <para>
+   /// WARNING! <paramref name="createUpdatedFieldValue"/> must not perform any visible state modifications or all thread safety guarantees are lost.<br/>
+   /// </para>
+   /// 
+   /// Performs thread-safe double-checked locking where the read operation is more complex than just reading a nullable field. <br/>
+   /// First calls <paramref name="tryRead"/> without locking. If it returns null, acquires the lock, retries
+   /// <paramref name="tryRead"/>, and if still null calls <paramref name="createUpdatedFieldValue"/> and atomically
+   /// replaces <paramref name="field"/> via <see cref="Interlocked.Exchange{T}(ref T, T)"/> and notifies all waiting threads about the update.<br/>
+   /// 
    /// Throws if <paramref name="tryRead"/> still returns null after the exchange.
    ///</summary>
    public static TResult DoubleCheckedLocking<TResult, TField>(this IAwaitableCriticalSection @this, Func<TResult?> tryRead, ref TField field, Func<TField> createUpdatedFieldValue)

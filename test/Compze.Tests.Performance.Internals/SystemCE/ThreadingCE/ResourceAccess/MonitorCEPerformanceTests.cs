@@ -37,14 +37,14 @@ public class MonitorCEPerformanceTests : UniversalTestBase
    {
       long Value { get; set; }
 
-      readonly IMonitor _lock = IMonitor.New();
+      readonly IMonitor _monitor = IMonitor.New();
       readonly IAwaitableMonitor _awaitableLock = IAwaitableMonitor.WithDefaultTimeout();
 
       internal long Read_Unsafe() => Value;
 
       internal long Read_Locked()
       {
-         lock(_lock) return Read_Unsafe();
+         lock(_monitor) return Read_Unsafe();
       }
 
       internal long Read_MonitorCE_Using_EnterLock()
@@ -62,7 +62,7 @@ public class MonitorCEPerformanceTests : UniversalTestBase
 
       internal void Increment_Locked()
       {
-         lock(_lock) Increment_Unsafe();
+         lock(_monitor) Increment_Unsafe();
       }
 
       internal void Increment_MonitorCE_Using_EnterLock()
