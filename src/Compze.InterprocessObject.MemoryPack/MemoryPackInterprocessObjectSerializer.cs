@@ -4,7 +4,7 @@ using MemoryPack;
 namespace Compze.InterprocessObject.MemoryPack;
 
 ///<summary>An <see cref="IInterprocessObjectSerializer{T}"/> that uses MemoryPack for fast binary serialization.</summary>
-public class MemoryPackInterprocessObjectSerializer<T> : IInterprocessObjectSerializer<T> where T : class
+class MemoryPackInterprocessObjectSerializer<T> : IInterprocessObjectSerializer<T> where T : class
 {
    ///<summary>Shared singleton instance. Safe to reuse — MemoryPack serialization is stateless.</summary>
    public static readonly MemoryPackInterprocessObjectSerializer<T> Instance = new();

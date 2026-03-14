@@ -6,7 +6,7 @@ namespace Compze.InterprocessObject;
 
 public partial interface IInterprocessObject
 {
-   private sealed class InterprocessObjectImplementation<TObject> : IInterprocessObject<TObject> where TObject : class
+   private sealed class Implementation<TObject> : IInterprocessObject<TObject> where TObject : class
    {
       readonly IBinaryFile _file;
       readonly IAwaitableMutex _synchronizer;
@@ -14,7 +14,7 @@ public partial interface IInterprocessObject
       readonly Func<TObject> _createDefault;
       readonly CorruptionAction _corruptionAction;
 
-      public InterprocessObjectImplementation(string name, bool isGlobal, DirectoryInfo directory, int maxCapacityInBytes, IInterprocessObjectSerializer<TObject> serializer, Func<TObject> createDefault, CorruptionAction corruptionAction, LockTimeout? lockTimeout = null, WaitTimeout? waitTimeout = null)
+      public Implementation(string name, bool isGlobal, DirectoryInfo directory, int maxBytes, IInterprocessObjectSerializer<TObject> serializer, Func<TObject> createDefault, CorruptionAction corruptionAction, LockTimeout? lockTimeout = null, WaitTimeout? waitTimeout = null)
       {
          _serializer = serializer;
          _createDefault = createDefault;
@@ -26,7 +26,7 @@ public partial interface IInterprocessObject
 
          _file = _synchronizer.Update(() =>
          {
-            var file = new MemoryMappedBinaryFile(directory.File(fileName + ".mmf"), maxCapacityInBytes);
+            var file = new MemoryMappedBinaryFile(directory.File(fileName + ".mmf"), maxBytes);
             if(file.ReadAllBytes().Length == 0)
                file.WriteAllBytes(serializer.Serialize(createDefault()));
             return file;

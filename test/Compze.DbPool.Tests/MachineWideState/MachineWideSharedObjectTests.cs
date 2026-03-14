@@ -43,7 +43,7 @@ public class MachineWideSharedObjectTests : UniversalTestBase
 
    IInterprocessObject<SharedObject> CreateAndDeleteFileWhenTestCompletes(string name)
    {
-      var created = IInterprocessObject.NewGlobal(name, new SharedObjectSerializer(), () => new SharedObject(), CorruptionAction.ThrowException, maxCapacityInBytes: 4 * 1024, TestDirectory);
+      var created = IInterprocessObject.NewGlobal(name, new SharedObjectSerializer(), () => new SharedObject(), CorruptionAction.ThrowException, maxBytes: 4 * 1024, TestDirectory);
       _created.Add(created);
       return created;
    }

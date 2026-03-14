@@ -5,7 +5,7 @@ namespace Compze.Threading.Interprocess;
 public partial interface IAwaitableMutex
 {
 #pragma warning disable CS0618 // Type or member is obsolete
-   private class AwaitableMutexCE : IAwaitableMutex, ILockInternals
+   private class AwaitableMutex : IAwaitableMutex, ILockInternals
 #pragma warning restore CS0618 // Type or member is obsolete
    {
       static readonly TimeSpan AbandonedMutexCheckInterval = TimeSpan.FromMilliseconds(50);
@@ -13,7 +13,7 @@ public partial interface IAwaitableMutex
       readonly IMutex _mutex;
       readonly InterprocessSignal _signal;
 
-      internal AwaitableMutexCE(string name, bool global, DirectoryInfo directory, LockTimeout? lockTimeout, WaitTimeout? waitTimeout, Action? onAbandonedMutex)
+      internal AwaitableMutex(string name, bool global, DirectoryInfo directory, LockTimeout? lockTimeout, WaitTimeout? waitTimeout, Action? onAbandonedMutex)
       {
          _signal = new InterprocessSignal(name, directory);
 

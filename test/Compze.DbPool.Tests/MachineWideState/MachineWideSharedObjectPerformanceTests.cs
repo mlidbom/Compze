@@ -9,7 +9,7 @@ public class MachineWideSharedObjectPerformanceTests : UniversalTestBase
 {
    static readonly DirectoryInfo TestDirectory = new DirectoryInfo(Path.Combine(Path.GetTempPath(), "Compze", "Tests", "SharedObjects"))._mutate(it => it.Create());
 
-   readonly IInterprocessObject<SharedObject> _shared = IInterprocessObject.NewGlobal(Guid.NewGuid().ToString(), new SharedObjectSerializer(), () => new SharedObject(), CorruptionAction.ThrowException, maxCapacityInBytes: 4 * 1024, TestDirectory);
+   readonly IInterprocessObject<SharedObject> _shared = IInterprocessObject.NewGlobal(Guid.NewGuid().ToString(), new SharedObjectSerializer(), () => new SharedObject(), CorruptionAction.ThrowException, maxBytes: 4 * 1024, TestDirectory);
 
    protected override void DisposeInternal() => _shared.Delete();
 
