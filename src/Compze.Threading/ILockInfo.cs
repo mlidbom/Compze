@@ -1,7 +1,7 @@
 namespace Compze.Threading;
 
 ///<summary>Exposes diagnostic information about a lock.</summary>
-public interface ILockInfo
+public interface ICriticalSectionInfo
 {
    ///<summary>The timeout used when acquiring the lock if no explicit timeout is provided.</summary>
    LockTimeout LockTimeout { get; }

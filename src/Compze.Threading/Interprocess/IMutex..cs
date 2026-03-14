@@ -19,6 +19,6 @@ public partial interface IMutex : ICriticalSection, IDisposable
    ///<summary>The system name of the mutex, including the <c>Global\</c> or <c>Local\</c> prefix.</summary>
    string Name { get; }
 
-   ///<summary>Attempts to acquire the mutex within <paramref name="timeout"/>. Returns null if the timeout expires. Uses <see cref="ILockInfo.LockTimeout"/> if <paramref name="timeout"/> is null.</summary>
+   ///<summary>Attempts to acquire the mutex within <paramref name="timeout"/>. Returns null if the timeout expires. Uses <see cref="ICriticalSectionInfo.LockTimeout"/> if <paramref name="timeout"/> is null.</summary>
    internal ILock? TryTakeLock(LockTimeout? timeout = null);
 }
