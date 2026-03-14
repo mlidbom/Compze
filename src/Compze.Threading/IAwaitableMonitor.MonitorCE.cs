@@ -13,20 +13,20 @@ public partial interface IAwaitableMonitor
 #pragma warning restore CA1001
    {
       public ILock TakeLock(LockTimeout? timeout = null) => TakeLock(LockType.Read, timeout);
-      public IReadLock TakeReadLock(LockTimeout? timeout = null) => (IReadLock)TakeLock(LockType.Read, timeout);
-      public IUpdateLock TakeUpdateLock(LockTimeout? timeout = null) => (IUpdateLock)TakeLock(LockType.Update, timeout);
+      public IReadLock TakeReadLock(LockTimeout? timeout = null) => TakeLock(LockType.Read, timeout);
+      public IUpdateLock TakeUpdateLock(LockTimeout? timeout = null) => TakeLock(LockType.Update, timeout);
 
       public IReadLock TakeReadLockWhen(Func<bool> condition, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null) =>
-         (IReadLock)TakeLockWhen(condition, LockType.Read, waitTimeout, lockTimeout);
+         TakeLockWhen(condition, LockType.Read, waitTimeout, lockTimeout);
 
       public IUpdateLock TakeUpdateLockWhen(Func<bool> condition, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null) =>
-         (IUpdateLock)TakeLockWhen(condition, LockType.Update, waitTimeout, lockTimeout);
+         TakeLockWhen(condition, LockType.Update, waitTimeout, lockTimeout);
 
       public IReadLock? TryTakeReadLockWhen(Func<bool> condition, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null) =>
-         (IReadLock?)TryTakeLockWhen(condition, LockType.Read, waitTimeout, lockTimeout);
+         TryTakeLockWhen(condition, LockType.Read, waitTimeout, lockTimeout);
 
       public IUpdateLock? TryTakeUpdateLockWhen(Func<bool> condition, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null) =>
-         (IUpdateLock?)TryTakeLockWhen(condition, LockType.Update, waitTimeout, lockTimeout);
+         TryTakeLockWhen(condition, LockType.Update, waitTimeout, lockTimeout);
 
       public LockTimeout LockTimeout { get; }
       public WaitTimeout WaitTimeout { get; }
