@@ -1,5 +1,4 @@
 using Compze.Internals.SystemCE;
-using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Must;
 using Compze.Tests.Infrastructure;
 using Compze.Threading.Specifications.TestInfrastructure;
@@ -11,24 +10,10 @@ using static Compze.Must.MustActions;
 
 namespace Compze.Threading.Specifications;
 
-///<summary>Monitor-specific tests that do not apply to polling-based implementations (reentrancy, thread interruption).</summary>
+///<summary>Monitor-specific tests that do not apply to polling-based implementations (thread interruption).</summary>
 [Collection(nameof(NonParallelCollection))]
 public class IAwaitableMonitor_specification : UniversalTestBase
 {
-   [XF] public void Owning_thread_can_reenter_the_lock_and_the_lock_is_only_exited_when_releasing_the_outermost_lock()
-   {
-      var monitor = IAwaitableMonitor.New(LockTimeout.Seconds(1));
-      using(monitor.TakeUpdateLock())
-      {
-         using(monitor.TakeUpdateLock()) {}
-
-         Invoking(() => TaskCE.Run(() => monitor.TakeUpdateLock(LockTimeout.Seconds(.1))).Wait())
-           .Must().Throw<Exception>();
-      }
-
-      TaskCE.Run(() => monitor.TakeUpdateLock(LockTimeout.Milliseconds(0))).Wait();
-   }
-
    public class When_a_thread_waiting_in_TakeUpdateLockWhen_is_interrupted : IAwaitableMonitor_specification
    {
       readonly IAwaitableMonitor _monitor = IAwaitableMonitor.New(LockTimeout.Seconds(30));

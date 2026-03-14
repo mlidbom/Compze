@@ -51,6 +51,23 @@ public class IAwaitableCriticalSection_specification : UniversalTestBase
       insideLock.AwaitPassedThroughCountEqualTo(2);
    }
 
+   public class TakeUpdateLock : IAwaitableCriticalSection_specification
+   {
+      [IAwaitableCriticalSectionMatrix] public void owning_thread_can_reenter_and_lock_is_only_released_when_outermost_lock_is_disposed()
+      {
+         var criticalSection = _factory.Create(LockTimeout.Seconds(1));
+         using(criticalSection.TakeUpdateLock())
+         {
+            using(criticalSection.TakeUpdateLock()) {}
+
+            Invoking(() => TaskCE.Run(() => criticalSection.TakeUpdateLock(LockTimeout.Seconds(.1))).Wait())
+              .Must().Throw<Exception>();
+         }
+
+         TaskCE.Run(() => criticalSection.TakeUpdateLock(LockTimeout.Milliseconds(0))).Wait();
+      }
+   }
+
    public class LockTimeout_property : IAwaitableCriticalSection_specification
    {
       [IAwaitableCriticalSectionMatrix] public void defaults_to_LockTimeout_Default_when_no_timeout_is_specified()
