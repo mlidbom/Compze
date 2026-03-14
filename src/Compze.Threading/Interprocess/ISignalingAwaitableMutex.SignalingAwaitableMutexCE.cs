@@ -67,7 +67,7 @@ public partial interface ISignalingAwaitableMutex
 
          while(true)
          {
-            _signal.Snapshot();
+            var baseline = _signal.Snapshot();
 
             ILock mutexLock = _mutex.TakeLock(effectiveLockTimeout);
             try
@@ -86,7 +86,7 @@ public partial interface ISignalingAwaitableMutex
             if(!effectiveWaitTimeout.IsInfinite && effectiveWaitTimeout.IsExpired(waitStartedAt))
                return null;
 
-            while(!_signal.TryAwait(AbandonedMutexCheckInterval))
+            while(!_signal.TryAwait(AbandonedMutexCheckInterval, ref baseline))
             {
                if(!effectiveWaitTimeout.IsInfinite && effectiveWaitTimeout.IsExpired(waitStartedAt))
                   return null;

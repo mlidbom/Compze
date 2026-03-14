@@ -10,7 +10,6 @@ class InterprocessSignal : IDisposable
    static readonly PollingInterval CounterPollingInterval = PollingInterval.Milliseconds(1);
 
    readonly InterprocessChangeCounter _counter;
-   long _baseline;
 
    public InterprocessSignal(string name, DirectoryInfo directory)
    {
@@ -19,20 +18,19 @@ class InterprocessSignal : IDisposable
 
       var backingFile = new FileInfo(Path.Combine(directory.FullName, name.Replace('\\', '_') + ".signal"));
       _counter = new InterprocessChangeCounter(backingFile);
-      _baseline = _counter.Count;
    }
 
    public void Raise() => _counter.Increment();
 
-   ///<summary>Records the current counter value. Subsequent <see cref="TryAwait"/> calls wait for changes relative to this snapshot.</summary>
-   public void Snapshot() => _baseline = _counter.Count;
+   ///<summary>Returns the current counter value. Pass the result to <see cref="TryAwait"/> to wait for changes relative to this point.</summary>
+   public long Snapshot() => _counter.Count;
 
-   ///<summary>Waits up to <paramref name="timeout"/> for the counter to change from the last snapshot. Returns true if a signal was detected, false on timeout. On success, automatically takes a new snapshot.</summary>
-   public bool TryAwait(TimeSpan timeout)
+   ///<summary>Waits up to <paramref name="timeout"/> for the counter to change from <paramref name="baseline"/>. Returns true if a signal was detected, false on timeout. On success, updates <paramref name="baseline"/> to the current counter value.</summary>
+   public bool TryAwait(TimeSpan timeout, ref long baseline)
    {
       var deadline = DateTime.UtcNow + timeout;
 
-      while(_counter.Count == _baseline)
+      while(_counter.Count == baseline)
       {
          if(DateTime.UtcNow >= deadline)
             return false;
@@ -40,7 +38,7 @@ class InterprocessSignal : IDisposable
          Thread.Sleep(CounterPollingInterval);
       }
 
-      _baseline = _counter.Count;
+      baseline = _counter.Count;
       return true;
    }
 

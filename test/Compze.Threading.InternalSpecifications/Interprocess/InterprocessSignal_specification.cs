@@ -20,6 +20,10 @@ public class InterprocessSignal_specification : UniversalTestBase
 
    readonly TestingTaskRunner _runner = new(10.Seconds());
    readonly InterprocessSignal _signal = new(Guid.NewGuid().ToString(), TestDirectory);
+   long _baseline;
+
+   public InterprocessSignal_specification() => _baseline = _signal.Snapshot();
+
    protected override void DisposeInternal()
    {
       _runner.Dispose();
@@ -43,21 +47,22 @@ public class InterprocessSignal_specification : UniversalTestBase
       [XF] public void returns_true_immediately_when_signal_was_raised_before_call()
       {
          _signal.Raise();
-         _signal.TryAwait(TimeSpan.FromMilliseconds(100)).Must().BeTrue();
+         _signal.TryAwait(TimeSpan.FromMilliseconds(100), ref _baseline).Must().BeTrue();
       }
 
-      [XF] public void returns_false_when_no_signal_is_raised_within_timeout() => _signal.TryAwait(TimeSpan.FromMilliseconds(50)).Must().BeFalse();
+      [XF] public void returns_false_when_no_signal_is_raised_within_timeout() => _signal.TryAwait(TimeSpan.FromMilliseconds(50), ref _baseline).Must().BeFalse();
 
       [XF] public void does_not_return_until_signal_is_raised()
       {
          var beforeAwaitingGate = IThreadGate.NewOpen(WaitTimeout.Seconds(5));
          var afterAwaitingGate = IThreadGate.NewOpen(WaitTimeout.Seconds(5));
+         var localBaseline = _baseline;
 
          _runner.Run(() =>
          {
             beforeAwaitingGate.AwaitPassThrough();
             // ReSharper disable once AccessToDisposedClosure
-            _signal.TryAwait(TimeSpan.FromSeconds(2));
+            _signal.TryAwait(TimeSpan.FromSeconds(2), ref localBaseline);
             afterAwaitingGate.AwaitPassThrough();
          });
 
@@ -71,10 +76,10 @@ public class InterprocessSignal_specification : UniversalTestBase
       [XF] public void returns_false_after_consuming_a_signal_without_new_raise()
       {
          _signal.Raise();
-         _signal.TryAwait(TimeSpan.FromMilliseconds(100)).Must().BeTrue();
+         _signal.TryAwait(TimeSpan.FromMilliseconds(100), ref _baseline).Must().BeTrue();
 
          // No new Raise — should timeout
-         _signal.TryAwait(TimeSpan.FromMilliseconds(50)).Must().BeFalse();
+         _signal.TryAwait(TimeSpan.FromMilliseconds(50), ref _baseline).Must().BeFalse();
       }
    }
 
@@ -83,19 +88,19 @@ public class InterprocessSignal_specification : UniversalTestBase
       [XF] public void resets_baseline_so_previous_raise_is_not_detected()
       {
          _signal.Raise();
-         _signal.Snapshot();
+         _baseline = _signal.Snapshot();
 
          // The raise happened before the snapshot — should not be detected
-         _signal.TryAwait(TimeSpan.FromMilliseconds(50)).Must().BeFalse();
+         _signal.TryAwait(TimeSpan.FromMilliseconds(50), ref _baseline).Must().BeFalse();
       }
 
       [XF] public void allows_detecting_raise_after_snapshot()
       {
          _signal.Raise();
-         _signal.Snapshot();
+         _baseline = _signal.Snapshot();
          _signal.Raise();
 
-         _signal.TryAwait(TimeSpan.FromMilliseconds(100)).Must().BeTrue();
+         _signal.TryAwait(TimeSpan.FromMilliseconds(100), ref _baseline).Must().BeTrue();
       }
    }
 
@@ -107,8 +112,9 @@ public class InterprocessSignal_specification : UniversalTestBase
          using var raiser = new InterprocessSignal(name, TestDirectory);
          using var waiter = new InterprocessSignal(name, TestDirectory);
 
+         var waiterBaseline = waiter.Snapshot();
          raiser.Raise();
-         waiter.TryAwait(TimeSpan.FromMilliseconds(100)).Must().BeTrue();
+         waiter.TryAwait(TimeSpan.FromMilliseconds(100), ref waiterBaseline).Must().BeTrue();
       }
    }
 }
