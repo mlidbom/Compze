@@ -88,7 +88,7 @@ public interface IAsyncLockCE : IDisposable
          lock(_timeoutLock)
          {
             var exception = new AsyncLockTimeoutException(_timeout, _stackTraceFetchTimeout);
-            _timeOutExceptionsOnOtherThreads = _timeOutExceptionsOnOtherThreads.AddToCopy(exception);
+            Interlocked.Exchange(ref _timeOutExceptionsOnOtherThreads, [.._timeOutExceptionsOnOtherThreads, exception]);
             return exception;
          }
       }

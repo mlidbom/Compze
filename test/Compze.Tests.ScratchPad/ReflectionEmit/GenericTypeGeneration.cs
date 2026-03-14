@@ -81,7 +81,7 @@ public class Example
             return wrapperTeventBuilder.CreateType()._assert().NotNull();
          });
 
-         _createdWrapperTypes = _createdWrapperTypes.AddToCopy(wrapperTeventType, genericWrapperTeventType);
+         Interlocked.Exchange(ref _createdWrapperTypes, _createdWrapperTypes.AddToCopy(wrapperTeventType, genericWrapperTeventType));
 
          return genericWrapperTeventType;
       });

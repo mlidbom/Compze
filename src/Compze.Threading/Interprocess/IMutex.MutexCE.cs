@@ -111,7 +111,7 @@ public partial interface IMutex
       Exception RegisterTimeoutException() => _timeoutMonitor.Locked(() =>
       {
          var exception = new TakeMutexLockTimeoutException(LockTimeout, _stackTraceFetchTimeout);
-         _timeOutExceptionsOnOtherThreads = [.._timeOutExceptionsOnOtherThreads, exception];
+         Interlocked.Exchange(ref _timeOutExceptionsOnOtherThreads, [.._timeOutExceptionsOnOtherThreads, exception]);
          return exception;
       });
 
@@ -128,7 +128,7 @@ public partial interface IMutex
                   exception.SetBlockingThreadsDisposeStackTrace(stackTrace);
                }
 
-               Interlocked.Exchange(ref _timeOutExceptionsOnOtherThreads, new List<TakeMutexLockTimeoutException>());
+               Interlocked.Exchange(ref _timeOutExceptionsOnOtherThreads, []);
             });
          }
       }

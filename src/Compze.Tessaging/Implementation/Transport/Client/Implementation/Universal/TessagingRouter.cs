@@ -71,7 +71,7 @@ class TessagingRouter : ITessagingRouter, IDisposable
 
       using(_lock.TakeLock())
       {
-         _connections = _connections.AddToCopy(connection.EndpointInformation.Id, connection);
+         Interlocked.Exchange(ref _connections, _connections.AddToCopy(connection.EndpointInformation.Id, connection));
          RegisterRoutes(connection, connection.EndpointInformation.HandledTessageTypes);
       }
    }
@@ -109,13 +109,13 @@ class TessagingRouter : ITessagingRouter, IDisposable
 
       if(teventSubscribers.Count > 0)
       {
-         _teventSubscriberRoutes = _teventSubscriberRoutes.AddRangeToCopy(teventSubscribers);
-         _teventSubscriberRouteCache = new Dictionary<Type, IReadOnlyList<TessagingConnection>>();
+         Interlocked.Exchange(ref _teventSubscriberRoutes, _teventSubscriberRoutes.AddRangeToCopy(teventSubscribers));
+         Interlocked.Exchange(ref _teventSubscriberRouteCache, new Dictionary<Type, IReadOnlyList<TessagingConnection>>());
       }
 
       if(tommandHandlerRoutes.Count > 0)
       {
-         _tommandHandlerRoutes = _tommandHandlerRoutes.AddRangeToCopy(tommandHandlerRoutes);
+         Interlocked.Exchange(ref _tommandHandlerRoutes, _tommandHandlerRoutes.AddRangeToCopy(tommandHandlerRoutes));
       }
    }
 
@@ -141,7 +141,7 @@ class TessagingRouter : ITessagingRouter, IDisposable
 
       using(_lock.TakeLock())
       {
-         _teventSubscriberRouteCache = _teventSubscriberRouteCache.AddToCopy(tevent.GetType(), subscriberConnections);
+         Interlocked.Exchange(ref _teventSubscriberRouteCache, _teventSubscriberRouteCache.AddToCopy(tevent.GetType(), subscriberConnections));
       }
 
       return subscriberConnections;

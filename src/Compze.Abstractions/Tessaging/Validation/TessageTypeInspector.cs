@@ -31,7 +31,7 @@ public partial class TessageTypeInspector
          if(!type.Is<ITevent>()) throw new Exception($"You can only subscribe to subtypes of {typeof(ITevent).GetFullNameCompilable()}");
          if(!type.IsInterface) throw new Exception($"{type.GetFullNameCompilable()} is not an interface. You can only subscribe to tevent interfaces because as soon as you subscribe to classes you loose the guarantees of semantic routing since classes do not support multiple inheritance.");
          AssertTypeIsValidInternal(type);
-         _successfullyInspectedSubscribableTypes = _successfullyInspectedSubscribableTypes.AddToCopy(type);
+         Interlocked.Exchange(ref _successfullyInspectedSubscribableTypes, _successfullyInspectedSubscribableTypes.AddToCopy(type));
       });
    }
 
@@ -46,7 +46,7 @@ public partial class TessageTypeInspector
 
          AssertTypeIsValidInternal(type);
 
-         _successfullyInspectedTypes = _successfullyInspectedTypes.AddToCopy(type);
+         Interlocked.Exchange(ref _successfullyInspectedTypes, _successfullyInspectedTypes.AddToCopy(type));
       });
    }
 

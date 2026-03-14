@@ -52,7 +52,7 @@ class TypermediaRouter : ITypermediaRouter, IDisposable
 
       using(_lock.TakeLock())
       {
-         _connections = _connections.AddToCopy(connection.EndpointInformation.Id, connection);
+         Interlocked.Exchange(ref _connections, _connections.AddToCopy(connection.EndpointInformation.Id, connection));
 
          //urgent: we can't have routes be discovered at startup based on the assumption that all endpoints are up...
          RegisterRoutes(connection, connection.EndpointInformation.HandledTypermediaTypes);
@@ -79,10 +79,10 @@ class TypermediaRouter : ITypermediaRouter, IDisposable
       }
 
       if(tommandHandlerRoutes.Count > 0)
-         _tommandHandlerRoutes = _tommandHandlerRoutes.AddRangeToCopy(tommandHandlerRoutes);
+         Interlocked.Exchange(ref _tommandHandlerRoutes, _tommandHandlerRoutes.AddRangeToCopy(tommandHandlerRoutes));
 
       if(tueryHandlerRoutes.Count > 0)
-         _tueryHandlerRoutes = _tueryHandlerRoutes.AddRangeToCopy(tueryHandlerRoutes);
+         Interlocked.Exchange(ref _tueryHandlerRoutes, _tueryHandlerRoutes.AddRangeToCopy(tueryHandlerRoutes));
    }
 
    TypermediaConnection ConnectionToHandlerFor(IAtMostOnceTypermediaTommand tommand) =>

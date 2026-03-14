@@ -47,7 +47,7 @@ static class WrapperTeventImplementationGenerator
          updateOnFailedRead: () =>
          {
             Func<ITevent, IPublisherIdentifyingTevent<ITevent>> value = CreateConstructorFor(wrappedTeventType);
-            _wrapperConstructors = _wrapperConstructors.AddToCopy(wrappedTeventType, value);
+            Interlocked.Exchange(ref _wrapperConstructors, _wrapperConstructors.AddToCopy(wrappedTeventType, value));
          });
 
    static Func<ITevent, IPublisherIdentifyingTevent<ITevent>> CreateConstructorFor(Type wrappedTeventType)
@@ -110,7 +110,7 @@ static class WrapperTeventImplementationGenerator
          return wrapperTeventBuilder.CreateType()._assert().NotNull();
       });
 
-      _createdWrapperTypes = _createdWrapperTypes.AddToCopy(wrapperTeventType, genericWrapperTeventType);
+      Interlocked.Exchange(ref _createdWrapperTypes, _createdWrapperTypes.AddToCopy(wrapperTeventType, genericWrapperTeventType));
 
       return genericWrapperTeventType;
    }

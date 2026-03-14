@@ -37,9 +37,9 @@ sealed class TessageHandlerRegistry(ITypeMapper typeMapper) : ITessageHandlerReg
       _teventHandlers.TryGetValue(typeof(TTevent), out var currentTeventSubscribers);
       currentTeventSubscribers ??= new List<Action<ITevent>>();
 
-      IReadOnlyList<Action<ITevent>> value = currentTeventSubscribers.AddToCopy(tevent => handler((TTevent)tevent));
-      _teventHandlers = _teventHandlers.AddToCopy(typeof(TTevent), value);
-      _teventHandlerRegistrations = _teventHandlerRegistrations.AddToCopy(new TeventHandlerRegistration(typeof(TTevent), registrar => registrar.For(handler)));
+      IReadOnlyList<Action<ITevent>> value = [..currentTeventSubscribers, tevent => handler((TTevent)tevent)];
+      Interlocked.Exchange(ref _teventHandlers, _teventHandlers.AddToCopy(typeof(TTevent), value));
+      Interlocked.Exchange(ref _teventHandlerRegistrations, _teventHandlerRegistrations.AddToCopy(new TeventHandlerRegistration(typeof(TTevent), registrar => registrar.For(handler))));
       return this;
    });
 
@@ -52,8 +52,8 @@ sealed class TessageHandlerRegistry(ITypeMapper typeMapper) : ITessageHandlerReg
          throw new Exception($"{typeof(TTommand)} expects a result. You must register a method that returns a result.");
       }
 
-      Action<object> value = tommand => handler((TTommand)tommand);
-      _tommandHandlers = _tommandHandlers.AddToCopy(typeof(TTommand), value);
+      void Value(object tommand) => handler((TTommand)tommand);
+      Interlocked.Exchange(ref _tommandHandlers, _tommandHandlers.AddToCopy(typeof(TTommand), Value));
       return this;
    });
 

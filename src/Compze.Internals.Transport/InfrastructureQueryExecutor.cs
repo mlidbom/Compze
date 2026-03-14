@@ -17,8 +17,8 @@ public class InfrastructureQueryExecutor
 
    public void RegisterQueryHandler<TQuery, TResult>(Func<TQuery, TResult> handler) where TQuery : IQuery<TResult> => _lock.Locked(() =>
    {
-      Func<object, object> value = query => handler((TQuery)query)!;
-      _queryHandlers = _queryHandlers.AddToCopy(typeof(TQuery), value);
+      object Value(object query) => handler((TQuery)query)!;
+      Interlocked.Exchange(ref _queryHandlers, _queryHandlers.AddToCopy(typeof(TQuery), Value));
    });
 
    public object ExecuteQuery(IMessage query)

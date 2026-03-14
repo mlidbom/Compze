@@ -20,7 +20,7 @@ public sealed class TypermediaHandlerRegistry(ITypeMapper typeMapper) : ITyperme
    {
       TessageTypeInspector.AssertValid(typeof(TTommand));
 
-      _voidTommandHandlers = _voidTommandHandlers.AddToCopy(typeof(TTommand), tommand => handler((TTommand)tommand));
+      Interlocked.Exchange(ref _voidTommandHandlers, _voidTommandHandlers.AddToCopy(typeof(TTommand), tommand => handler((TTommand)tommand)));
       return this;
    });
 
@@ -28,7 +28,7 @@ public sealed class TypermediaHandlerRegistry(ITypeMapper typeMapper) : ITyperme
    {
       TessageTypeInspector.AssertValid(typeof(TTommand));
 
-      _tommandHandlersReturningResults = _tommandHandlersReturningResults.AddToCopy(typeof(TTommand), new TommandHandlerWithResultRegistration<TTommand, TResult>(handler));
+      Interlocked.Exchange(ref _tommandHandlersReturningResults, _tommandHandlersReturningResults.AddToCopy(typeof(TTommand), new TommandHandlerWithResultRegistration<TTommand, TResult>(handler)));
       return this;
    });
 
@@ -36,7 +36,7 @@ public sealed class TypermediaHandlerRegistry(ITypeMapper typeMapper) : ITyperme
    {
       TessageTypeInspector.AssertValid(typeof(TTuery));
 
-      _tueryHandlers = _tueryHandlers.AddToCopy(typeof(TTuery), new TueryHandlerRegistration<TTuery, TResult>(handler));
+      Interlocked.Exchange(ref _tueryHandlers, _tueryHandlers.AddToCopy(typeof(TTuery), new TueryHandlerRegistration<TTuery, TResult>(handler)));
       return this;
    });
 
