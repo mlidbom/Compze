@@ -3,6 +3,7 @@ using Compze.Must;
 using Compze.Tests.Infrastructure;
 using Compze.Threading.Specifications.ICriticalSection_.Infrastructure;
 using Compze.Threading.Specifications.TestInfrastructure;
+using Compze.Threading.Testing;
 using Xunit;
 
 // ReSharper disable AccessToDisposedClosure
@@ -19,14 +20,14 @@ public class ICriticalSection_ThreadInterrupt_specification : UniversalTestBase
    public class When_a_thread_blocked_in_TakeLock_is_interrupted : ICriticalSection_ThreadInterrupt_specification
    {
       readonly ICriticalSection _criticalSection;
-      readonly ManualResetEventSlim _threadIsBlocking = new(false);
-      readonly ManualResetEventSlim _threadCompleted = new(false);
-      readonly ManualResetEventSlim _lockHolderCanRelease = new(false);
       Exception? _thrownException;
 
       public When_a_thread_blocked_in_TakeLock_is_interrupted()
       {
          _criticalSection = _factory.Create(LockTimeout.Seconds(30));
+
+         var aboutToBlock = IThreadGate.NewOpen(WaitTimeout.Seconds(5), "aboutToBlock");
+         var threadCompleted = IThreadGate.NewOpen(WaitTimeout.Seconds(5), "threadCompleted");
 
          // Hold the lock so the other thread will block
          using var holdingLock = _criticalSection.TakeLock();
@@ -35,7 +36,7 @@ public class ICriticalSection_ThreadInterrupt_specification : UniversalTestBase
          {
             try
             {
-               _threadIsBlocking.Set();
+               aboutToBlock.AwaitPassThrough();
                _criticalSection.TakeLock();
             }
 #pragma warning disable CA1031
@@ -47,15 +48,15 @@ public class ICriticalSection_ThreadInterrupt_specification : UniversalTestBase
             }
             finally
             {
-               _threadCompleted.Set();
+               threadCompleted.AwaitPassThrough();
             }
          }) { IsBackground = true };
 
          blockedThread.Start();
-         _threadIsBlocking.Wait();
+         aboutToBlock.AwaitPassedThroughCountEqualTo(1);
          Thread.Sleep(50.Milliseconds());
          blockedThread.Interrupt();
-         _threadCompleted.Wait(5.Seconds()).Must().BeTrue();
+         threadCompleted.AwaitPassedThroughCountEqualTo(1);
       }
 
       [ICriticalSectionMatrix] public void throws_ThreadInterruptedException() =>

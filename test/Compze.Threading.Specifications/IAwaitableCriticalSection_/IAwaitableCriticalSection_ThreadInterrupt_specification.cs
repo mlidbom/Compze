@@ -3,6 +3,7 @@ using Compze.Must;
 using Compze.Tests.Infrastructure;
 using Compze.Threading.Specifications.IAwaitableCriticalSection_.Infrastructure;
 using Compze.Threading.Specifications.TestInfrastructure;
+using Compze.Threading.Testing;
 using Xunit;
 
 // ReSharper disable AccessToDisposedClosure
@@ -19,15 +20,15 @@ public class IAwaitableCriticalSection_ThreadInterrupt_specification : Universal
    static (Exception? ThrownException, IAwaitableCriticalSection CriticalSection) InterruptThreadBlockedIn(
       IAwaitableCriticalSection criticalSection, Action<IAwaitableCriticalSection> blockingCall)
    {
-      var threadIsBlocking = new ManualResetEventSlim(false);
-      var threadCompleted = new ManualResetEventSlim(false);
+      var aboutToBlock = IThreadGate.NewOpen(WaitTimeout.Seconds(5), "aboutToBlock");
+      var threadCompleted = IThreadGate.NewOpen(WaitTimeout.Seconds(5), "threadCompleted");
       Exception? thrownException = null;
 
       var blockedThread = new Thread(() =>
       {
          try
          {
-            threadIsBlocking.Set();
+            aboutToBlock.AwaitPassThrough();
             blockingCall(criticalSection);
          }
 #pragma warning disable CA1031
@@ -39,15 +40,15 @@ public class IAwaitableCriticalSection_ThreadInterrupt_specification : Universal
          }
          finally
          {
-            threadCompleted.Set();
+            threadCompleted.AwaitPassThrough();
          }
       }) { IsBackground = true };
 
       blockedThread.Start();
-      threadIsBlocking.Wait();
+      aboutToBlock.AwaitPassedThroughCountEqualTo(1);
       Thread.Sleep(50.Milliseconds());
       blockedThread.Interrupt();
-      threadCompleted.Wait(5.Seconds()).Must().BeTrue();
+      threadCompleted.AwaitPassedThroughCountEqualTo(1);
 
       return (thrownException, criticalSection);
    }
