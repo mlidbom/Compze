@@ -19,7 +19,7 @@ partial class IAwaitableProcessSharedMatrixAttribute
       Implementation CurrentImplementation => (Implementation)MatrixCombination.Current.Components[0];
 
       public bool CurrentImplementationIsGlobal => CurrentImplementation is Implementation.GlobalMutex
-                                                                                                              or Implementation.GlobalInterprocessObjectMemoryMapped or Implementation.GlobalInterprocessObjectFileBacked;
+                                                                                                              or Implementation.GlobalInterprocessObject;
 
       public IAwaitableProcessShared<SharedTestValue> Create(SharedTestValue shared, LockTimeout? lockTimeout = null, WaitTimeout? waitTimeout = null)
       {
@@ -29,14 +29,10 @@ partial class IAwaitableProcessSharedMatrixAttribute
                                                                         ._tap(_disposables.Add),
             Implementation.LocalMutex => IAwaitableProcessShared.Local(UniqueName(), TestDirectory, shared, lockTimeout, waitTimeout)
                                                                        ._tap(_disposables.Add),
-            Implementation.GlobalInterprocessObjectMemoryMapped => MemoryPackInterprocessObject.NewGlobal(UniqueName(), () => shared, CorruptionAction.ThrowException, maxCapacityInBytes: 4 * 1024, TestDirectory, lockTimeout: lockTimeout, waitTimeout: waitTimeout)
+            Implementation.GlobalInterprocessObject => MemoryPackInterprocessObject.NewGlobal(UniqueName(), () => shared, CorruptionAction.ThrowException, maxCapacityInBytes: 4 * 1024, TestDirectory, lockTimeout: lockTimeout, waitTimeout: waitTimeout)
                                                                                                ._tap(_interprocessObjects.Add),
-            Implementation.GlobalInterprocessObjectFileBacked => MemoryPackInterprocessObject.NewGlobalFileBacked(UniqueName(), () => shared, CorruptionAction.ThrowException, TestDirectory, lockTimeout: lockTimeout, waitTimeout: waitTimeout)
-                                                                                             ._tap(_interprocessObjects.Add),
-            Implementation.LocalInterprocessObjectMemoryMapped => MemoryPackInterprocessObject.NewLocal(UniqueName(), () => shared, CorruptionAction.ThrowException, maxCapacityInBytes: 4 * 1024, TestDirectory, lockTimeout: lockTimeout, waitTimeout: waitTimeout)
+            Implementation.LocalInterprocessObject => MemoryPackInterprocessObject.NewLocal(UniqueName(), () => shared, CorruptionAction.ThrowException, maxCapacityInBytes: 4 * 1024, TestDirectory, lockTimeout: lockTimeout, waitTimeout: waitTimeout)
                                                                                               ._tap(_interprocessObjects.Add),
-            Implementation.LocalInterprocessObjectFileBacked => MemoryPackInterprocessObject.NewLocalFileBacked(UniqueName(), () => shared, CorruptionAction.ThrowException, TestDirectory, lockTimeout: lockTimeout, waitTimeout: waitTimeout)
-                                                                                            ._tap(_interprocessObjects.Add),
             _ => throw new ArgumentOutOfRangeException()
          };
       }

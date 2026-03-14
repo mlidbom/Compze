@@ -7,9 +7,7 @@ partial class IAwaitableSharedMatrixAttribute
       Monitor,
       GlobalMutex,
       LocalMutex,
-      GlobalInterprocessObjectMemoryMapped,
-      GlobalInterprocessObjectFileBacked,
-      LocalInterprocessObjectMemoryMapped,
-      LocalInterprocessObjectFileBacked
+      GlobalInterprocessObject,
+      LocalInterprocessObject
    }
 }

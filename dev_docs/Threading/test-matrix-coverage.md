@@ -17,9 +17,7 @@ ILockInfo
 │
 ├── IAwaitableCriticalSection         (TakeUpdateLock, TakeReadLock, TakeUpdateLockWhen)
     ├── IAwaitableMonitor             (in-process)
-    └── IAwaitableMutex               (cross-process, Global/Local)
-        ├── IPollingAwaitableMutex    (condition-wait via polling)
-        └── ISignalingAwaitableMutex  (condition-wait via OS events)
+    └── IAwaitableMutex               (cross-process, Global/Local, signaling-based)
 ```
 
 **Note:** `ICriticalSection` and `IAwaitableCriticalSection` are **parallel branches** under `ILockInfo`, not a parent-child relationship. The awaitable mutex types do NOT implement `ICriticalSection`.
@@ -33,8 +31,8 @@ IShared<T>  ← wraps ICriticalSection
 
 IAwaitableShared<T>  ← wraps IAwaitableCriticalSection
 ├── IAwaitableThreadShared<T>         ← wraps IAwaitableMonitor
-├── IAwaitableProcessShared<T>        ← wraps IAwaitableMutex  (Global/Local × Polling/Signaling)
-│   └── IInterprocessObject<T>        ← wraps ISignalingAwaitableMutex + file  (Global only)
+├── IAwaitableProcessShared<T>        ← wraps IAwaitableMutex  (Global/Local)
+│   └── IInterprocessObject<T>        ← wraps IAwaitableMutex + MMF  (Global/Local)
 ```
 
 ---
@@ -55,10 +53,9 @@ Total unique ICriticalSection implementations: **3 variants** (MonitorCE + Mutex
 | Implementation | Interface | Scope | Factory |
 |---|---|---|---|
 | MonitorCE | IAwaitableMonitor | In-process | `IAwaitableMonitor.New()` |
-| PollingAwaitableMutexCE | IPollingAwaitableMutex | Global/Local | `IPollingAwaitableMutex.Global()` / `.Local()` |
-| SignalingAwaitableMutexCE | ISignalingAwaitableMutex | Global/Local | `ISignalingAwaitableMutex.Global()` / `.Local()` |
+| AwaitableMutexCE | IAwaitableMutex | Global/Local | `IAwaitableMutex.Global()` / `.Local()` |
 
-Total unique IAwaitableCriticalSection variants: **5** (MonitorCE + PollingMutex×2 + SignalingMutex×2)
+Total unique IAwaitableCriticalSection variants: **3** (MonitorCE + AwaitableMutex×2)
 
 ### IShared\<T\> implementations
 
@@ -74,16 +71,12 @@ Total unique IAwaitableCriticalSection variants: **5** (MonitorCE + PollingMutex
 |---|---|---|
 | AwaitableShared\<T\> | Any IAwaitableCriticalSection | Generic |
 | AwaitableThreadShared\<T\> | IAwaitableMonitor | In-process |
-| AwaitableProcessShared\<T\> (via GlobalPolling) | IPollingAwaitableMutex | Global |
-| AwaitableProcessShared\<T\> (via LocalPolling) | IPollingAwaitableMutex | Local |
-| AwaitableProcessShared\<T\> (via GlobalSignaling) | ISignalingAwaitableMutex | Global |
-| AwaitableProcessShared\<T\> (via LocalSignaling) | ISignalingAwaitableMutex | Local |
-| InterprocessObjectImplementation\<T\> (GlobalMMF) | ISignalingAwaitableMutex + MMF | Global |
-| InterprocessObjectImplementation\<T\> (GlobalFile) | ISignalingAwaitableMutex + File | Global |
-| InterprocessObjectImplementation\<T\> (LocalMMF) | ISignalingAwaitableMutex + MMF | Local |
-| InterprocessObjectImplementation\<T\> (LocalFile) | ISignalingAwaitableMutex + File | Local |
+| AwaitableProcessShared\<T\> (via Global) | IAwaitableMutex | Global |
+| AwaitableProcessShared\<T\> (via Local) | IAwaitableMutex | Local |
+| InterprocessObjectImplementation\<T\> (Global) | IAwaitableMutex + MMF | Global |
+| InterprocessObjectImplementation\<T\> (Local) | IAwaitableMutex + MMF | Local |
 
-Total unique IAwaitableShared\<T\> variants: **10**
+Total unique IAwaitableShared\<T\> variants: **6**
 
 ---
 
@@ -107,28 +100,18 @@ Total unique IAwaitableShared\<T\> variants: **10**
 | Value | Creates | Scope |
 |---|---|---|
 | `Monitor` | `IAwaitableMonitor.New()` | In-process |
-| `GlobalPollingMutex` | `IPollingAwaitableMutex.Global()` | Global |
-| `LocalPollingMutex` | `IPollingAwaitableMutex.Local()` | Local |
-| `GlobalSignalingMutex` | `ISignalingAwaitableMutex.Global()` | Global |
-| `LocalSignalingMutex` | `ISignalingAwaitableMutex.Local()` | Local |
+| `GlobalMutex` | `IAwaitableMutex.Global()` | Global |
+| `LocalMutex` | `IAwaitableMutex.Local()` | Local |
 
 **Used by:**
 - `IAwaitableCriticalSection_specification` — tests TakeUpdateLock, TakeReadLock, TakeUpdateLockWhen, cursor-based waits
 - `ContentionCount_specification` — tests contention tracking
 
-**Coverage: Complete** — all IAwaitableCriticalSection implementations (Monitor + Global/Local × Polling/Signaling Mutex) are tested.
+**Coverage: Complete** — all IAwaitableCriticalSection implementations (Monitor + Global/Local Mutex) are tested.
 
-### [InterprocessObjectMatrix] — `InterprocessObjectBackingStore` enum
+### ~~[InterprocessObjectMatrix] — `InterprocessObjectBackingStore` enum~~ REMOVED
 
-| Value | Creates |
-|---|---|
-| `File` | `IInterprocessObject.NewGlobalFileBacked()` |
-| `MemoryMapped` | `IInterprocessObject.NewGlobal()` (MMF) |
-
-**Used by:**
-- `MachineWideSharedObjectTests` — Create, Read/Update, data sharing, persistence, blocking
-
-**Coverage: Persistence-specific** — tests interprocess-object-specific concerns (data sharing, persistence across dispose, backing store variants). The IAwaitableShared and IAwaitableProcessShared contracts are covered by the respective matrix specs which include InterprocessObject variants.
+Removed: FileBacked backing store was eliminated. `MachineWideSharedObjectTests` now uses `[XF]` with `IInterprocessObject.NewGlobal()` (MMF) directly.
 
 ---
 
@@ -142,7 +125,7 @@ All ICriticalSection implementations are now in the matrix: Monitor, GlobalMutex
 
 ### ~~Gap 2: IAwaitableCriticalSection — RESOLVED~~
 
-All IAwaitableCriticalSection implementations are now in the matrix: Monitor, GlobalPollingMutex, LocalPollingMutex, GlobalSignalingMutex, LocalSignalingMutex.
+All IAwaitableCriticalSection implementations are now in the matrix: Monitor, GlobalMutex, LocalMutex.
 
 ### Gap 3: ~~IShared\<T\> — only tested as IThreadShared, not IProcessShared~~ RESOLVED
 
@@ -152,7 +135,7 @@ All IAwaitableCriticalSection implementations are now in the matrix: Monitor, Gl
 
 ### Gap 4: ~~IAwaitableShared\<T\> — no specification at all~~ RESOLVED
 
-`IAwaitableShared_specification` uses `[IAwaitableSharedMatrix]` to test the full `IAwaitableShared<T>` contract against all 9 variants (Monitor, GlobalPollingMutex, LocalPollingMutex, GlobalSignalingMutex, LocalSignalingMutex, GlobalInterprocessObjectMemoryMapped, GlobalInterprocessObjectFileBacked, LocalInterprocessObjectMemoryMapped, LocalInterprocessObjectFileBacked). Covers:
+`IAwaitableShared_specification` uses `[IAwaitableSharedMatrix]` to test the full `IAwaitableShared<T>` contract against all 5 variants (Monitor, GlobalMutex, LocalMutex, GlobalInterprocessObject, LocalInterprocessObject). Covers:
 - `Read` (Func and Action overloads)
 - `Update` (Func and Action overloads)
 - Full mutual exclusion — all access methods are blocked while any one holds the lock, all succeed after release
@@ -164,13 +147,13 @@ All IAwaitableCriticalSection implementations are now in the matrix: Monitor, Gl
 
 ### ~~Gap 5: IInterprocessObject\<T\> — tested for persistence, not as IAwaitableProcessShared~~ RESOLVED
 
-`IInterprocessObject<T>` is now tested as `IAwaitableShared<T>` and `IAwaitableProcessShared<T>` through the `[IAwaitableSharedMatrix]` and `[IAwaitableProcessSharedMatrix]` attributes, which both include all 4 InterprocessObject variants (GlobalMMF, GlobalFile, LocalMMF, LocalFile).
+`IInterprocessObject<T>` is now tested as `IAwaitableShared<T>` and `IAwaitableProcessShared<T>` through the `[IAwaitableSharedMatrix]` and `[IAwaitableProcessSharedMatrix]` attributes, which both include Global and Local InterprocessObject variants.
 
-`MachineWideSharedObjectTests` continues to test interprocess-object-specific concerns (persistence across dispose, data sharing, backing store variants) via `[InterprocessObjectMatrix]`.
+`MachineWideSharedObjectTests` continues to test interprocess-object-specific concerns (persistence across dispose, data sharing) via `[XF]` using MMF-backed objects directly.
 
 ### ~~Gap 6: IAwaitableProcessShared\\<T\\> — no specification at all~~ RESOLVED
 
-`IAwaitableProcessShared_specification` uses `[IAwaitableProcessSharedMatrix]` to test all 8 variants (GlobalPolling, LocalPolling, GlobalSignaling, LocalSignaling, GlobalInterprocessObjectMemoryMapped, GlobalInterprocessObjectFileBacked, LocalInterprocessObjectMemoryMapped, LocalInterprocessObjectFileBacked). Covers Mutex property (IsGlobal, Name, LockTimeout, WaitTimeout) and IDisposable. The `IAwaitableShared<T>` contract is covered by `IAwaitableShared_specification`.
+`IAwaitableProcessShared_specification` uses `[IAwaitableProcessSharedMatrix]` to test all 4 variants (GlobalMutex, LocalMutex, GlobalInterprocessObject, LocalInterprocessObject). Covers Mutex property (IsGlobal, Name, LockTimeout, WaitTimeout) and IDisposable. The `IAwaitableShared<T>` contract is covered by `IAwaitableShared_specification`.
 
 `IAwaitableThreadShared_specification` tests the `IAwaitableThreadShared`-specific concern: the `Monitor` property.
 
@@ -199,10 +182,10 @@ All IAwaitableCriticalSection implementations are now in the matrix: Monitor, Gl
 All planned matrix attributes have been implemented:
 - `[ISharedMatrix]` — Monitor, GlobalMutex, LocalMutex
 - `[IProcessSharedMatrix]` — GlobalMutex, LocalMutex
-- `[IAwaitableSharedMatrix]` — Monitor, GlobalPollingMutex, LocalPollingMutex, GlobalSignalingMutex, LocalSignalingMutex, GlobalInterprocessObjectMemoryMapped, GlobalInterprocessObjectFileBacked, LocalInterprocessObjectMemoryMapped, LocalInterprocessObjectFileBacked
-- `[IAwaitableProcessSharedMatrix]` — GlobalPollingMutex, LocalPollingMutex, GlobalSignalingMutex, LocalSignalingMutex, GlobalInterprocessObjectMemoryMapped, GlobalInterprocessObjectFileBacked, LocalInterprocessObjectMemoryMapped, LocalInterprocessObjectFileBacked
+- `[IAwaitableSharedMatrix]` — Monitor, GlobalMutex, LocalMutex, GlobalInterprocessObject, LocalInterprocessObject
+- `[IAwaitableProcessSharedMatrix]` — GlobalMutex, LocalMutex, GlobalInterprocessObject, LocalInterprocessObject
 
-All factories use the real user-facing factory methods (`IThreadShared.New()`, `IProcessShared.Global/Local()`, `IAwaitableThreadShared.New()`, `IAwaitableProcessShared.GlobalPolling/LocalPolling/GlobalSignaling/LocalSignaling()`, `MemoryPackInterprocessObject.NewGlobal/NewLocal/NewGlobalFileBacked/NewLocalFileBacked()`).
+All factories use the real user-facing factory methods (`IThreadShared.New()`, `IProcessShared.Global/Local()`, `IAwaitableThreadShared.New()`, `IAwaitableProcessShared.Global/Local()`, `MemoryPackInterprocessObject.NewGlobal/NewLocal()`).
 
 ## Plan: New Specification Files
 
@@ -223,12 +206,12 @@ All factories use the real user-facing factory methods (`IThreadShared.New()`, `
 | Attribute | Enum | Values | Dimensions | Tests against interface |
 |---|---|---|---|---|
 | `[ICriticalSectionMatrix]` | `ICriticalSectionMatrixAttribute.Implementation` | Monitor, GlobalMutex, LocalMutex | 3 | ICriticalSection |
-| `[IAwaitableCriticalSectionMatrix]` | `IAwaitableCriticalSectionMatrixAttribute.Implementation` | Monitor, GlobalPollingMutex, LocalPollingMutex, GlobalSignalingMutex, LocalSignalingMutex | 5 | IAwaitableCriticalSection |
-| `[InterprocessObjectMatrix]` | `InterprocessObjectBackingStore` | File, MemoryMapped | 2 | IInterprocessObject |
+| `[IAwaitableCriticalSectionMatrix]` | `IAwaitableCriticalSectionMatrixAttribute.Implementation` | Monitor, GlobalMutex, LocalMutex | 3 | IAwaitableCriticalSection |
+| ~~`[InterprocessObjectMatrix]`~~ | ~~`InterprocessObjectBackingStore`~~ | ~~Removed~~ | ~~—~~ | ~~IInterprocessObject~~ |
 | `[ISharedMatrix]` | `ISharedMatrixAttribute.Implementation` | Monitor, GlobalMutex, LocalMutex | 3 | IShared\<T\> |
 | `[IProcessSharedMatrix]` | `IProcessSharedMatrixAttribute.Implementation` | GlobalMutex, LocalMutex | 2 | IProcessShared\<T\> |
-| `[IAwaitableSharedMatrix]` | `IAwaitableSharedMatrixAttribute.Implementation` | Monitor, GlobalPollingMutex, LocalPollingMutex, GlobalSignalingMutex, LocalSignalingMutex, GlobalInterprocessObjectMemoryMapped, GlobalInterprocessObjectFileBacked, LocalInterprocessObjectMemoryMapped, LocalInterprocessObjectFileBacked | 9 | IAwaitableShared\<T\> |
-| `[IAwaitableProcessSharedMatrix]` | `IAwaitableProcessSharedMatrixAttribute.Implementation` | GlobalPollingMutex, LocalPollingMutex, GlobalSignalingMutex, LocalSignalingMutex, GlobalInterprocessObjectMemoryMapped, GlobalInterprocessObjectFileBacked, LocalInterprocessObjectMemoryMapped, LocalInterprocessObjectFileBacked | 8 | IAwaitableProcessShared\<T\> |
+| `[IAwaitableSharedMatrix]` | `IAwaitableSharedMatrixAttribute.Implementation` | Monitor, GlobalMutex, LocalMutex, GlobalInterprocessObject, LocalInterprocessObject | 5 | IAwaitableShared\<T\> |
+| `[IAwaitableProcessSharedMatrix]` | `IAwaitableProcessSharedMatrixAttribute.Implementation` | GlobalMutex, LocalMutex, GlobalInterprocessObject, LocalInterprocessObject | 4 | IAwaitableProcessShared\<T\> |
 
 ### Matrix attributes — planned
 
@@ -243,10 +226,10 @@ All planned matrix attributes have been implemented. None remaining.
 | `IShared<T>` | ✅ `IShared_specification` | **Complete** — `[ISharedMatrix]` covers Monitor, GlobalMutex, LocalMutex |
 | `IThreadShared<T>` | ✅ `IThreadShared_specification` | **Complete** — tests Monitor property (IShared contract covered by IShared_specification) |
 | `IProcessShared<T>` | ✅ `IProcessShared_specification` | **Partial** — `[IProcessSharedMatrix]` covers Mutex property + IDisposable. IShared contract covered by IShared_specification |
-| `IAwaitableShared<T>` | ✅ `IAwaitableShared_specification` | **Complete** — `[IAwaitableSharedMatrix]` covers all 9 variants (Monitor + 4 AwaitableProcessShared + 4 InterprocessObject) |
+| `IAwaitableShared<T>` | ✅ `IAwaitableShared_specification` | **Complete** — `[IAwaitableSharedMatrix]` covers all 5 variants (Monitor + 2 AwaitableMutex + 2 InterprocessObject) |
 | `IAwaitableThreadShared<T>` | ✅ `IAwaitableThreadShared_specification` | **Complete** — tests Monitor property (IAwaitableShared contract covered by IAwaitableShared_specification) |
-| `IAwaitableProcessShared<T>` | ✅ `IAwaitableProcessShared_specification` | **Complete** — `[IAwaitableProcessSharedMatrix]` covers all 8 variants (4 AwaitableProcessShared + 4 InterprocessObject). IAwaitableShared contract covered by IAwaitableShared_specification |
-| `IInterprocessObject<T>` | ✅ `MachineWideSharedObjectTests` + matrix specs | **Complete** — persistence/backing store tested via `[InterprocessObjectMatrix]`; IAwaitableShared + IAwaitableProcessShared contracts tested via matrix specs |
+| `IAwaitableProcessShared<T>` | ✅ `IAwaitableProcessShared_specification` | **Complete** — `[IAwaitableProcessSharedMatrix]` covers all 4 variants (2 AwaitableMutex + 2 InterprocessObject). IAwaitableShared contract covered by IAwaitableShared_specification |
+| `IInterprocessObject<T>` | ✅ `MachineWideSharedObjectTests` + matrix specs | **Complete** — persistence tested via `[XF]`; IAwaitableShared + IAwaitableProcessShared contracts tested via matrix specs |
 
 ### ~~Missing — scope dimension~~ RESOLVED
 

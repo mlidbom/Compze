@@ -29,19 +29,4 @@ public partial interface IInterprocessObject
 
    static IInterprocessObject<T> CreateInternal<T>(string name, bool isGlobal, IInterprocessObjectSerializer<T> serializer, Func<T> createDefault, CorruptionAction corruptionAction, int maxCapacityInBytes, DirectoryCE directory, LockTimeout? lockTimeout, WaitTimeout? waitTimeout) where T : class
       => new InterprocessObjectImplementation<T>(name, isGlobal, directory.GetDirectoryInfo(), fileName => new MemoryMappedBinaryFile(directory.GetFilePath(fileName + ".mmf"), maxCapacityInBytes), serializer, createDefault, corruptionAction, lockTimeout, waitTimeout);
-
-   ///<summary>Creates a new <see cref="IInterprocessObject{T}"/> backed by a regular file, synchronized with a global cross-process mutex.
-   ///<para>Every read and update performs filesystem I/O (full read or write of the file). The file size matches the serialized data — there is no size limit.</para>
-   ///<para>Use this when simplicity matters more than throughput, or when the shared object may grow without a predictable upper bound.
-   /// For high-frequency access, consider <see cref="NewGlobal{T}"/> instead.</para>
-   ///</summary>
-   public static IInterprocessObject<T> NewGlobalFileBacked<T>(string name, IInterprocessObjectSerializer<T> serializer, Func<T> createDefault, CorruptionAction corruptionAction, DirectoryInfo directory, LockTimeout? lockTimeout = null, WaitTimeout? waitTimeout = null) where T : class
-      => CreateFileBackedInternal(name, isGlobal: true, serializer, createDefault, corruptionAction, new DirectoryCE(directory), lockTimeout, waitTimeout);
-
-   ///<summary>Creates a new <see cref="IInterprocessObject{T}"/> backed by a regular file, synchronized with a session-local cross-process mutex.</summary>
-   public static IInterprocessObject<T> NewLocalFileBacked<T>(string name, IInterprocessObjectSerializer<T> serializer, Func<T> createDefault, CorruptionAction corruptionAction, DirectoryInfo directory, LockTimeout? lockTimeout = null, WaitTimeout? waitTimeout = null) where T : class
-      => CreateFileBackedInternal(name, isGlobal: false, serializer, createDefault, corruptionAction, new DirectoryCE(directory), lockTimeout, waitTimeout);
-
-   static IInterprocessObject<T> CreateFileBackedInternal<T>(string name, bool isGlobal, IInterprocessObjectSerializer<T> serializer, Func<T> createDefault, CorruptionAction corruptionAction, DirectoryCE directory, LockTimeout? lockTimeout, WaitTimeout? waitTimeout) where T : class
-      => new InterprocessObjectImplementation<T>(name, isGlobal, directory.GetDirectoryInfo(), fileName => directory.GetOrCreateBinaryFile(fileName), serializer, createDefault, corruptionAction, lockTimeout, waitTimeout);
 }

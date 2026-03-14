@@ -1,12 +1,11 @@
-using Compze.Abstractions.Wiring.Testing.Internal;
 using Compze.Contracts;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.InterprocessObject;
 using Compze.Must;
 using Compze.Tests.Infrastructure;
-using Compze.Tests.Infrastructure.XUnit;
 using Compze.Threading;
 using Compze.Threading.Testing;
+using Compze.xUnitBDD;
 using JetBrains.Annotations;
 using MemoryPack;
 
@@ -44,24 +43,19 @@ public class MachineWideSharedObjectTests : UniversalTestBase
 
    IInterprocessObject<SharedObject> CreateAndDeleteFileWhenTestCompletes(string name)
    {
-      var created = InterprocessObjectMatrixAttribute.BackingStore switch
-      {
-         InterprocessObjectBackingStore.File => IInterprocessObject.NewGlobalFileBacked(name, new SharedObjectSerializer(), () => new SharedObject(), CorruptionAction.ThrowException, TestDirectory),
-         InterprocessObjectBackingStore.MemoryMapped => IInterprocessObject.NewGlobal(name, new SharedObjectSerializer(), () => new SharedObject(), CorruptionAction.ThrowException, maxCapacityInBytes: 4 * 1024, TestDirectory),
-         _ => throw new ArgumentOutOfRangeException()
-      };
+      var created = IInterprocessObject.NewGlobal(name, new SharedObjectSerializer(), () => new SharedObject(), CorruptionAction.ThrowException, maxCapacityInBytes: 4 * 1024, TestDirectory);
       _created.Add(created);
       return created;
    }
 
-   [InterprocessObjectMatrix] public void Create()
+   [XF] public void Create()
    {
       var name = Guid.NewGuid().ToString();
       var shared = CreateAndDeleteFileWhenTestCompletes(name);
       shared.Read(it => it.Name.Must().Be("Default"));
    }
 
-   [InterprocessObjectMatrix] public void Create_update_and_get()
+   [XF] public void Create_update_and_get()
    {
       var name = Guid.NewGuid().ToString();
       var shared = CreateAndDeleteFileWhenTestCompletes(name);
@@ -74,7 +68,7 @@ public class MachineWideSharedObjectTests : UniversalTestBase
       shared.Read(it => it.Name.Must().Be("Updated"));
    }
 
-   [InterprocessObjectMatrix] public void Two_instances_with_same_name_share_data()
+   [XF] public void Two_instances_with_same_name_share_data()
    {
       var name = Guid.NewGuid().ToString();
       var shared1 = CreateAndDeleteFileWhenTestCompletes(name);
@@ -89,7 +83,7 @@ public class MachineWideSharedObjectTests : UniversalTestBase
       shared2.Read(it => it.Name.Must().Be("Updated"));
    }
 
-   [InterprocessObjectMatrix] public void Persistent_Once_all_instance_are_disposed_data_is_retained()
+   [XF] public void Persistent_Once_all_instance_are_disposed_data_is_retained()
    {
       const string name = "40BD77DF-7C32-4B28-9A49-DA2CE202CC4F";
       var newName = Guid.NewGuid().ToString();
@@ -106,7 +100,7 @@ public class MachineWideSharedObjectTests : UniversalTestBase
       shared.Read(it => it.Name.Must().Be(newName));
    }
 
-   [InterprocessObjectMatrix] public void After_Delete_a_new_instance_with_the_same_name_gets_the_default_value()
+   [XF] public void After_Delete_a_new_instance_with_the_same_name_gets_the_default_value()
    {
       var name = Guid.NewGuid().ToString();
       var shared = CreateAndDeleteFileWhenTestCompletes(name);
@@ -120,7 +114,7 @@ public class MachineWideSharedObjectTests : UniversalTestBase
       fresh.Read(it => it.Name.Must().Be("Default"));
    }
 
-   [InterprocessObjectMatrix] public async Task Update_blocks_GetCopy_and_Update_from_both_same_and_other_instances()
+   [XF] public async Task Update_blocks_GetCopy_and_Update_from_both_same_and_other_instances()
    {
       var timeout = WaitTimeout.Seconds(15);
       var updateGate = IThreadGate.NewClosed(timeout, "updateGate");
