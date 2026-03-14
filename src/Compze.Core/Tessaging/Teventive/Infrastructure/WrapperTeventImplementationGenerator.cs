@@ -44,11 +44,8 @@ static class WrapperTeventImplementationGenerator
    public static Func<ITevent, IPublisherIdentifyingTevent<ITevent>> ConstructorFor(Type wrappedTeventType) =>
       LockCE.DoubleCheckedLocking(
          tryRead: () => _wrapperConstructors.GetValueOrDefault(wrappedTeventType),
-         updateOnFailedRead: () =>
-         {
-            Func<ITevent, IPublisherIdentifyingTevent<ITevent>> value = CreateConstructorFor(wrappedTeventType);
-            Interlocked.Exchange(ref _wrapperConstructors, _wrapperConstructors.AddToCopy(wrappedTeventType, value));
-         });
+         field: ref _wrapperConstructors,
+         createUpdatedFieldValue: () => _wrapperConstructors.AddToCopy(wrappedTeventType, CreateConstructorFor(wrappedTeventType)));
 
    static Func<ITevent, IPublisherIdentifyingTevent<ITevent>> CreateConstructorFor(Type wrappedTeventType)
    {

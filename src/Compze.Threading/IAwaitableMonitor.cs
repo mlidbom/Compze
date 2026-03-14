@@ -5,6 +5,7 @@ public partial interface IAwaitableMonitor : IAwaitableCriticalSection
 {
    ///<summary>Returns a new <see cref="IAwaitableMonitor"/> using default timeouts.</summary>
    public static IAwaitableMonitor WithDefaultTimeout() => new MonitorCE();
+
    ///<summary>Returns a new <see cref="IAwaitableMonitor"/> using the supplied timeouts. Uses <see cref="LockTimeout.Default"/> and <see cref="WaitTimeout.Default"/> for null parameters.</summary>
    public static IAwaitableMonitor New(LockTimeout? lockTimeout = null, WaitTimeout? waitTimeout = null) => new MonitorCE(lockTimeout, waitTimeout);
 
