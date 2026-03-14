@@ -14,12 +14,12 @@ public partial interface IInterprocessObject
    /// Really, the only real meaningful constraint is when serialization time becomes a problem in your specific usage scenario.</para>
    ///</summary>
    public static IInterprocessObject<T> NewGlobal<T>(string name, IInterprocessObjectSerializer<T> serializer, Func<T> createDefault, CorruptionAction corruptionAction, int maxCapacityInBytes, DirectoryInfo directory, LockTimeout? lockTimeout = null, WaitTimeout? waitTimeout = null) where T : class
-      => CreateInternal(name, isGlobal: true, serializer, createDefault, corruptionAction, maxCapacityInBytes, new DirectoryCE(directory), lockTimeout, waitTimeout);
+      => CreateInternal(name, isGlobal: true, serializer, createDefault, corruptionAction, maxCapacityInBytes, directory, lockTimeout, waitTimeout);
 
    ///<summary>Creates a new <see cref="IInterprocessObject{T}"/> backed by a memory-mapped file, synchronized with a session-local cross-process mutex.</summary>
    public static IInterprocessObject<T> NewLocal<T>(string name, IInterprocessObjectSerializer<T> serializer, Func<T> createDefault, CorruptionAction corruptionAction, int maxCapacityInBytes, DirectoryInfo directory, LockTimeout? lockTimeout = null, WaitTimeout? waitTimeout = null) where T : class
-      => CreateInternal(name, isGlobal: false, serializer, createDefault, corruptionAction, maxCapacityInBytes, new DirectoryCE(directory), lockTimeout, waitTimeout);
+      => CreateInternal(name, isGlobal: false, serializer, createDefault, corruptionAction, maxCapacityInBytes, directory, lockTimeout, waitTimeout);
 
-   static IInterprocessObject<T> CreateInternal<T>(string name, bool isGlobal, IInterprocessObjectSerializer<T> serializer, Func<T> createDefault, CorruptionAction corruptionAction, int maxCapacityInBytes, DirectoryCE directory, LockTimeout? lockTimeout, WaitTimeout? waitTimeout) where T : class
-      => new InterprocessObjectImplementation<T>(name, isGlobal, directory.GetDirectoryInfo(), fileName => new MemoryMappedBinaryFile(directory.GetFilePath(fileName + ".mmf"), maxCapacityInBytes), serializer, createDefault, corruptionAction, lockTimeout, waitTimeout);
+   static IInterprocessObject<T> CreateInternal<T>(string name, bool isGlobal, IInterprocessObjectSerializer<T> serializer, Func<T> createDefault, CorruptionAction corruptionAction, int maxCapacityInBytes, DirectoryInfo directory, LockTimeout? lockTimeout, WaitTimeout? waitTimeout) where T : class
+      => new InterprocessObjectImplementation<T>(name, isGlobal, directory, maxCapacityInBytes, serializer, createDefault, corruptionAction, lockTimeout, waitTimeout);
 }

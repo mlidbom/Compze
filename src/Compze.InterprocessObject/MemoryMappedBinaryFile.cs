@@ -1,4 +1,5 @@
 using System.IO.MemoryMappedFiles;
+using Compze.Contracts;
 using Compze.Internals.SystemCE.IOCE;
 
 namespace Compze.InterprocessObject;
@@ -7,16 +8,16 @@ class MemoryMappedBinaryFile : IBinaryFile, IDisposable
 {
    const int HeaderSize = sizeof(int);
 
-   readonly string _filePath;
+   readonly FileInfo _file;
    readonly int _maxCapacityInBytes;
 
    MemoryMappedFile? _memoryMappedFile;
    MemoryMappedViewAccessor? _accessor;
    unsafe byte* _basePointer;
 
-   public MemoryMappedBinaryFile(string filePath, int maxCapacityInBytes)
+   public MemoryMappedBinaryFile(FileInfo file, int maxCapacityInBytes)
    {
-      _filePath = filePath;
+      _file = file;
       _maxCapacityInBytes = maxCapacityInBytes;
       EnsureMapping();
    }
@@ -44,7 +45,7 @@ class MemoryMappedBinaryFile : IBinaryFile, IDisposable
    {
       DisposeMapping();
 #pragma warning disable CA1031 // Best-effort file deletion — file may still be held by another mapping to the same backing file
-      try { if(File.Exists(_filePath)) File.Delete(_filePath); }
+      try { if(_file.Exists) _file.Delete(); }
       catch(IOException) { }
 #pragma warning restore CA1031
    }
@@ -59,18 +60,18 @@ class MemoryMappedBinaryFile : IBinaryFile, IDisposable
    {
       if(_memoryMappedFile != null) return;
 
-      Directory.CreateDirectory(Path.GetDirectoryName(_filePath)!);
+      _file.Directory._assert().NotNull().Create();
 
       var totalSize = HeaderSize + _maxCapacityInBytes;
 
 #pragma warning disable CA2000
-      var backingFileStream = new FileStream(
-         _filePath,
-         FileMode.OpenOrCreate,
-         FileAccess.ReadWrite,
-         FileShare.ReadWrite,
-         bufferSize: 1,
-         FileOptions.None);
+      var backingFileStream = _file.Open(new FileStreamOptions
+                                         {
+                                            Mode = FileMode.OpenOrCreate,
+                                            Access = FileAccess.ReadWrite,
+                                            Share = FileShare.ReadWrite,
+                                            BufferSize = 1
+                                         });
 #pragma warning restore CA2000
 
       if(backingFileStream.Length < totalSize)

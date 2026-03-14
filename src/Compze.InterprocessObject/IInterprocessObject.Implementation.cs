@@ -14,7 +14,7 @@ public partial interface IInterprocessObject
       readonly Func<TObject> _createDefault;
       readonly CorruptionAction _corruptionAction;
 
-      public InterprocessObjectImplementation(string name, bool isGlobal, DirectoryInfo directory, Func<string, IBinaryFile> createBinaryFile, IInterprocessObjectSerializer<TObject> serializer, Func<TObject> createDefault, CorruptionAction corruptionAction, LockTimeout? lockTimeout = null, WaitTimeout? waitTimeout = null)
+      public InterprocessObjectImplementation(string name, bool isGlobal, DirectoryInfo directory, int maxCapacityInBytes, IInterprocessObjectSerializer<TObject> serializer, Func<TObject> createDefault, CorruptionAction corruptionAction, LockTimeout? lockTimeout = null, WaitTimeout? waitTimeout = null)
       {
          _serializer = serializer;
          _createDefault = createDefault;
@@ -26,7 +26,7 @@ public partial interface IInterprocessObject
 
          _file = _synchronizer.Update(() =>
          {
-            var file = createBinaryFile(fileName);
+            var file = new MemoryMappedBinaryFile(directory.File(fileName + ".mmf"), maxCapacityInBytes);
             if(file.ReadAllBytes().Length == 0)
                file.WriteAllBytes(serializer.Serialize(createDefault()));
             return file;
