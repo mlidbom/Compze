@@ -37,6 +37,18 @@ public readonly struct Unit : IEquatable<Unit>, IComparable<Unit>, IComparable
    ///<summary>Returns <see langword="false"/>. All <see cref="Unit"/> values are equal.</summary>
    [Pure] public static bool operator !=(Unit _, Unit __) => false;
 
+   ///<summary>Returns <see langword="false"/>. All <see cref="Unit"/> values are equal.</summary>
+   [Pure] public static bool operator <(Unit _, Unit __) => false;
+
+   ///<summary>Returns <see langword="false"/>. All <see cref="Unit"/> values are equal.</summary>
+   [Pure] public static bool operator >(Unit _, Unit __) => false;
+
+   ///<summary>Returns <see langword="true"/>. All <see cref="Unit"/> values are equal.</summary>
+   [Pure] public static bool operator <=(Unit _, Unit __) => true;
+
+   ///<summary>Returns <see langword="true"/>. All <see cref="Unit"/> values are equal.</summary>
+   [Pure] public static bool operator >=(Unit _, Unit __) => true;
+
    ///<summary>Returns <c>0</c>.</summary>
    [Pure] public override int GetHashCode() => 0;
 

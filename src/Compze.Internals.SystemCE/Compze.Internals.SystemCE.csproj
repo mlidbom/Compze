@@ -5,6 +5,7 @@
     <Version>0.2.1-internal</Version>
     <!-- TODO: Remove once all public API members have XML documentation comments -->
     <Description>For Compze internal use only. Do not take a direct dependency on this package.</Description>
+    <NoWarn>CS1591</NoWarn>
   </PropertyGroup>
   <!-- Compze.Contracts — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' == 'true'">
