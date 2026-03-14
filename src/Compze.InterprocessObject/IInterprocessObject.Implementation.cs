@@ -6,7 +6,7 @@ namespace Compze.InterprocessObject;
 
 public partial interface IInterprocessObject
 {
-   sealed class InterprocessObjectImplementation<TObject> : IInterprocessObject<TObject> where TObject : class
+   private sealed class InterprocessObjectImplementation<TObject> : IInterprocessObject<TObject> where TObject : class
    {
       readonly IBinaryFile _file;
       readonly IAwaitableMutex _synchronizer;
