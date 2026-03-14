@@ -6,14 +6,7 @@ namespace Compze.InterprocessObject;
 ///<summary>Factory for creating <see cref="IInterprocessObject{T}"/> instances — strongly-typed objects shared across processes via memory-mapped files.</summary>
 public partial interface IInterprocessObject
 {
-   static readonly Lazy<DirectoryCE> DataDirectory = new(() => DirectoryCE.StandardDirectories
-                                                                          .LocalApplicationData
-                                                                          .GetOrCreateDirectory("Compze")
-                                                                          .GetOrCreateDirectory("SharedFiles"));
-
    ///<summary>Creates a new <see cref="IInterprocessObject{T}"/> backed by a memory-mapped file, synchronized with a global cross-process mutex.
-   ///<para>Reads and writes are direct memory copies — no filesystem I/O per operation — making this the recommended option for most use cases.
-   /// The data is persisted to a real file on disk and survives process restarts and reboots.</para>
    ///<para><b>WARNING:</b> <paramref name="maxCapacityInBytes"/> is a hard ceiling in bytes. If the serialized object exceeds this size, writes will throw <see cref="InvalidOperationException"/>.
    /// The backing file on disk is always allocated at the full <paramref name="maxCapacityInBytes"/> size, regardless of how much data is actually stored.</para>
    ///<para>This is a safety limit, not a performance tuning knob. Unused capacity has negligible cost — the OS only commits physical memory for pages actually written.

@@ -1,12 +1,18 @@
 using Compze.DbPool.MachineWideState;
 using Compze.InterprocessObject;
 using Compze.Internals.SystemCE;
+using Compze.Internals.SystemCE.IOCE;
 using Compze.Threading;
 
 namespace Compze.DbPool;
 
 class DbPoolMachineWideState
 {
+   static readonly Lazy<DirectoryCE> DataDirectory = new(() => DirectoryCE.StandardDirectories
+                                                                          .LocalApplicationData
+                                                                          .GetOrCreateDirectory("Compze")
+                                                                          .GetOrCreateDirectory("SharedFiles"));
+
    readonly IInterprocessObject<DbPoolState> _shared;
 
    internal DbPoolMachineWideState(string uniqueName) =>
@@ -16,7 +22,7 @@ class DbPoolMachineWideState
          () => new DbPoolState(),
          CorruptionAction.ReplaceContentWithDefaultAndThrow,
          maxCapacityInBytes: 64 * 1024,
-         IInterprocessObject.DataDirectory.Value.GetDirectoryInfo());
+         DataDirectory.Value.GetDirectoryInfo());
 
    internal DbPoolDatabase ReserveDatabase(string reservationName, Guid poolId, TimeSpan reservationLength)
    {
