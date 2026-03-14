@@ -22,11 +22,9 @@ Same situation as Gap 1. Lock behavior is covered through matrices, but there's 
 
 ---
 
-## Gap 3: `IInterprocessObject<T>.Delete()` — untested as behavior
+## ~~Gap 3: `IInterprocessObject<T>.Delete()` — untested as behavior~~ RESOLVED
 
-`MachineWideSharedObjectTests.CreateAndDeleteFileWhenTestCompletes()` calls `.Delete()` in cleanup, but no test asserts:
-- After Delete, a new instance with the same name gets the default value (not stale data)
-- After Delete, the backing file/MMF is actually gone
+Test added in `MachineWideSharedObjectTests.After_Delete_a_new_instance_with_the_same_name_gets_the_default_value`.
 
 ---
 
@@ -36,12 +34,13 @@ All test factories use `CorruptionAction.ThrowException`. The alternative behavi
 
 ---
 
-## Gap 5: `DoubleCheckedLocking` extension methods — untested
+## ~~Gap 5: `DoubleCheckedLocking` extension methods — untested~~ RESOLVED
 
-Both `ICriticalSection` and `IAwaitableMonitor` expose a `DoubleCheckedLocking<TResult>` extension method with non-trivial concurrent semantics (optimistic read → lock → recheck pattern). No tests cover:
-- Returns cached value on second call without taking the lock
-- Calls `updateOnFailedRead` exactly once under concurrent access
-- Multiple threads racing to populate all see the same result
+Tests added in `DoubleCheckedLocking_specification` covering both `ICriticalSection` and `IAwaitableMonitor` variants:
+- Returns cached value without calling update
+- Calls update and returns populated value when initially null
+- Throws when tryRead returns null even after update
+- Concurrent callers: update runs exactly once, both get the same result
 
 ---
 
@@ -83,9 +82,9 @@ These strongly-typed duration wrappers have factory methods, operators (`==`, `!
 |-----|--------|--------|----------|
 | 1. PollingInterval property | Low — property exposure only | Small | Low |
 | 2. SignalingAwaitableMutex spec | Very low — no extra surface | Minimal | Skip |
-| 3. Delete() behavior | Medium — untested mutation | Small | Medium |
+| 3. Delete() behavior | ~~Medium~~ | ~~Small~~ | ~~DONE~~ |
 | 4. CorruptionAction | Medium — untested error path | Medium | Medium |
-| 5. DoubleCheckedLocking | Medium — concurrent pattern | Medium | Medium |
+| 5. DoubleCheckedLocking | ~~Medium~~ | ~~Medium~~ | ~~DONE~~ |
 | 6. IProcessShared matrix usage | Cosmetic — coverage is equivalent | Small | Low |
 | 7. Abandoned mutex positive | Low — hard to test reliably | Hard | Skip |
 | 8. Local mutex cross-instance | Low — symmetric with Global | Small | Low |

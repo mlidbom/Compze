@@ -106,6 +106,20 @@ public class MachineWideSharedObjectTests : UniversalTestBase
       shared.Read(it => it.Name.Must().Be(newName));
    }
 
+   [InterprocessObjectMatrix] public void After_Delete_a_new_instance_with_the_same_name_gets_the_default_value()
+   {
+      var name = Guid.NewGuid().ToString();
+      var shared = CreateAndDeleteFileWhenTestCompletes(name);
+
+      shared.Update(it => it.Name = "Updated");
+      shared.Read(it => it.Name.Must().Be("Updated"));
+
+      shared.Delete();
+
+      var fresh = CreateAndDeleteFileWhenTestCompletes(name);
+      fresh.Read(it => it.Name.Must().Be("Default"));
+   }
+
    [InterprocessObjectMatrix] public async Task Update_blocks_GetCopy_and_Update_from_both_same_and_other_instances()
    {
       var timeout = WaitTimeout.Seconds(15);
