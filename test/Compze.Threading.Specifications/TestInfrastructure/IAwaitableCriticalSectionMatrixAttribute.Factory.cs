@@ -24,19 +24,13 @@ partial class IAwaitableCriticalSectionMatrixAttribute
       {
          return CurrentImplementation switch
          {
-            Implementation.Monitor              => IAwaitableMonitor.New(lockTimeout, waitTimeout),
-            Implementation.GlobalPollingMutex   => UniqueName()
-                                                  ._(it => IPollingAwaitableMutex.Global(it, lockTimeout, waitTimeout, PollingInterval.Milliseconds(10)))
-                                                  ._tap(_disposables.Add),
-            Implementation.LocalPollingMutex    => UniqueName()
-                                                  ._(it => IPollingAwaitableMutex.Local(it, lockTimeout, waitTimeout, PollingInterval.Milliseconds(10)))
-                                                  ._tap(_disposables.Add),
-            Implementation.GlobalSignalingMutex => UniqueName()
-                                                  ._(it => ISignalingAwaitableMutex.Global(it, TestDirectory, lockTimeout, waitTimeout))
-                                                  ._tap(_disposables.Add),
-            Implementation.LocalSignalingMutex  => UniqueName()
-                                                  ._(it => ISignalingAwaitableMutex.Local(it, TestDirectory, lockTimeout, waitTimeout))
-                                                  ._tap(_disposables.Add),
+            Implementation.Monitor    => IAwaitableMonitor.New(lockTimeout, waitTimeout),
+            Implementation.GlobalMutex => UniqueName()
+                                          ._(it => IAwaitableMutex.Global(it, TestDirectory, lockTimeout, waitTimeout))
+                                          ._tap(_disposables.Add),
+            Implementation.LocalMutex  => UniqueName()
+                                          ._(it => IAwaitableMutex.Local(it, TestDirectory, lockTimeout, waitTimeout))
+                                          ._tap(_disposables.Add),
             _ => throw new ArgumentOutOfRangeException()
          };
       }

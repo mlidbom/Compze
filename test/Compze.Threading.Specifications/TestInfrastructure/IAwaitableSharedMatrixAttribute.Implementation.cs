@@ -5,10 +5,8 @@ partial class IAwaitableSharedMatrixAttribute
    public enum Implementation
    {
       Monitor,
-      GlobalPollingMutex,
-      LocalPollingMutex,
-      GlobalSignalingMutex,
-      LocalSignalingMutex,
+      GlobalMutex,
+      LocalMutex,
       GlobalInterprocessObjectMemoryMapped,
       GlobalInterprocessObjectFileBacked,
       LocalInterprocessObjectMemoryMapped,

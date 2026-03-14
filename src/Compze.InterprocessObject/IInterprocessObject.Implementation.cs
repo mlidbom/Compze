@@ -9,7 +9,7 @@ public partial interface IInterprocessObject
    sealed class InterprocessObjectImplementation<TObject> : IInterprocessObject<TObject> where TObject : class
    {
       readonly IBinaryFile _file;
-      readonly ISignalingAwaitableMutex _synchronizer;
+      readonly IAwaitableMutex _synchronizer;
       readonly IInterprocessObjectSerializer<TObject> _serializer;
       readonly Func<TObject> _createDefault;
       readonly CorruptionAction _corruptionAction;
@@ -21,8 +21,8 @@ public partial interface IInterprocessObject
          _corruptionAction = corruptionAction;
          var fileName = PathCE.ReplaceInvalidCharactersWith(name, '_');
          _synchronizer = isGlobal
-            ? ISignalingAwaitableMutex.Global(fileName, directory, lockTimeout, waitTimeout)
-            : ISignalingAwaitableMutex.Local(fileName, directory, lockTimeout, waitTimeout);
+            ? IAwaitableMutex.Global(fileName, directory, lockTimeout, waitTimeout)
+            : IAwaitableMutex.Local(fileName, directory, lockTimeout, waitTimeout);
 
          _file = _synchronizer.Update(() =>
          {

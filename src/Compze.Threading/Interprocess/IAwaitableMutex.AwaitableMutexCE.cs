@@ -2,10 +2,10 @@ using Compze.Threading.Exceptions;
 
 namespace Compze.Threading.Interprocess;
 
-public partial interface ISignalingAwaitableMutex
+public partial interface IAwaitableMutex
 {
 #pragma warning disable CS0618 // Type or member is obsolete
-   private class SignalingAwaitableMutexCE : ISignalingAwaitableMutex, ILockInternals
+   private class AwaitableMutexCE : IAwaitableMutex, ILockInternals
 #pragma warning restore CS0618 // Type or member is obsolete
    {
       static readonly TimeSpan AbandonedMutexCheckInterval = TimeSpan.FromMilliseconds(50);
@@ -13,7 +13,7 @@ public partial interface ISignalingAwaitableMutex
       readonly IMutex _mutex;
       readonly InterprocessSignal _signal;
 
-      internal SignalingAwaitableMutexCE(string name, bool global, DirectoryInfo directory, LockTimeout? lockTimeout, WaitTimeout? waitTimeout, Action? onAbandonedMutex)
+      internal AwaitableMutexCE(string name, bool global, DirectoryInfo directory, LockTimeout? lockTimeout, WaitTimeout? waitTimeout, Action? onAbandonedMutex)
       {
          _signal = new InterprocessSignal(name, directory);
 

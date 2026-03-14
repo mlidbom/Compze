@@ -24,14 +24,10 @@ partial class IAwaitableSharedMatrixAttribute
          return CurrentImplementation switch
          {
             Implementation.Monitor => IAwaitableThreadShared.New(shared, lockTimeout, waitTimeout),
-            Implementation.GlobalPollingMutex => IAwaitableProcessShared.GlobalPolling(UniqueName(), shared, lockTimeout, waitTimeout, PollingInterval.Milliseconds(10))
+            Implementation.GlobalMutex => IAwaitableProcessShared.Global(UniqueName(), TestDirectory, shared, lockTimeout, waitTimeout)
                                                                         ._tap(_disposables.Add),
-            Implementation.LocalPollingMutex => IAwaitableProcessShared.LocalPolling(UniqueName(), shared, lockTimeout, waitTimeout, PollingInterval.Milliseconds(10))
+            Implementation.LocalMutex => IAwaitableProcessShared.Local(UniqueName(), TestDirectory, shared, lockTimeout, waitTimeout)
                                                                        ._tap(_disposables.Add),
-            Implementation.GlobalSignalingMutex => IAwaitableProcessShared.GlobalSignaling(UniqueName(), TestDirectory, shared, lockTimeout, waitTimeout)
-                                                                          ._tap(_disposables.Add),
-            Implementation.LocalSignalingMutex => IAwaitableProcessShared.LocalSignaling(UniqueName(), TestDirectory, shared, lockTimeout, waitTimeout)
-                                                                         ._tap(_disposables.Add),
             Implementation.GlobalInterprocessObjectMemoryMapped => MemoryPackInterprocessObject.NewGlobal(UniqueName(), () => shared, CorruptionAction.ThrowException, maxCapacityInBytes: 4 * 1024, TestDirectory, lockTimeout: lockTimeout, waitTimeout: waitTimeout)
                                                                                                ._tap(_interprocessObjects.Add),
             Implementation.GlobalInterprocessObjectFileBacked => MemoryPackInterprocessObject.NewGlobalFileBacked(UniqueName(), () => shared, CorruptionAction.ThrowException, TestDirectory, lockTimeout: lockTimeout, waitTimeout: waitTimeout)

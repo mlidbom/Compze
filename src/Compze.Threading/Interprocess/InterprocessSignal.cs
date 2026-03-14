@@ -7,7 +7,7 @@ namespace Compze.Threading.Interprocess;
 /// </summary>
 class InterprocessSignal : IDisposable
 {
-   static readonly PollingInterval CounterPollingInterval = PollingInterval.Milliseconds(1);
+   static readonly TimeSpan CounterPollingInterval = TimeSpan.FromMilliseconds(1);
 
    readonly InterprocessChangeCounter _counter;
 

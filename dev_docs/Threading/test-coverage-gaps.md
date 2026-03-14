@@ -4,21 +4,15 @@ Review of the full public API surface against existing test files. Matrix covera
 
 ---
 
-## Gap 1: `IPollingAwaitableMutex.PollingInterval` property — untested
+## ~~Gap 1: `IPollingAwaitableMutex.PollingInterval` property — untested~~ ELIMINATED
 
-`IPollingAwaitableMutex` adds `PollingInterval PollingInterval { get; }` beyond `IAwaitableMutex`. No test verifies that the factory-specified polling interval is stored and exposed correctly (the way `MutexCE_specification` tests `LockTimeout` and `IAwaitableProcessShared_specification` tests `WaitTimeout`).
-
-**Lock behavior** is fully covered through `[IAwaitableCriticalSectionMatrix]` and `[IAwaitableProcessSharedMatrix]`, but the interface-specific property is not.
-
-**Where:** Would fit in a new `IPollingAwaitableMutex_specification` or alongside the existing `IAwaitableProcessShared_specification`.
+Polling awaitable mutex removed. `IAwaitableMutex` is now the sole implementation (signaling-based). No `PollingInterval` property exists.
 
 ---
 
-## Gap 2: `ISignalingAwaitableMutex` — no interface-specific spec
+## ~~Gap 2: `ISignalingAwaitableMutex` — no interface-specific spec~~ ELIMINATED
 
-Same situation as Gap 1. Lock behavior is covered through matrices, but there's no test verifying signaling-specific concerns. Unlike polling, signaling has no additional properties, so this is lower priority — the only signaling-specific thing would be verifying that an invalid/missing directory is rejected, but `InterprocessSignal_specification` already tests that for the internal component.
-
-**Verdict:** Low priority. Signaling-specific validation is tested at the `InterprocessSignal` level.
+`ISignalingAwaitableMutex` was collapsed into `IAwaitableMutex`. There is now only one awaitable mutex interface. Signaling-specific validation is tested at the `InterprocessSignal` level.
 
 ---
 
@@ -65,13 +59,12 @@ This is inherently difficult to test (requires killing a process holding a mutex
 
 ---
 
-## Gap 9: `LockTimeout` / `WaitTimeout` / `PollingInterval` — no dedicated value type specs
+## Gap 9: `LockTimeout` / `WaitTimeout` — no dedicated value type specs
 
 These strongly-typed duration wrappers have factory methods, operators (`==`, `!=`), implicit conversions to `TimeSpan`, `ToString()`, and validation logic (e.g., `LockTimeout` rejects `InfiniteTimeSpan`). None of this is systematically tested. They're exercised indirectly through lock specs, but edge cases aren't covered:
 - `LockTimeout` constructor throws on `Timeout.InfiniteTimeSpan`
 - Equality operators
 - Implicit `TimeSpan` conversions
-- `PollingInterval.Default` value
 - `WaitTimeout.Infinite` and `WaitTimeout.IsInfinite`
 
 ---
@@ -80,8 +73,8 @@ These strongly-typed duration wrappers have factory methods, operators (`==`, `!
 
 | Gap | Impact | Effort | Priority |
 |-----|--------|--------|----------|
-| 1. PollingInterval property | Low — property exposure only | Small | Low |
-| 2. SignalingAwaitableMutex spec | Very low — no extra surface | Minimal | Skip |
+| 1. PollingInterval property | ~~Low~~ | ~~Small~~ | ~~ELIMINATED~~ |
+| 2. SignalingAwaitableMutex spec | ~~Very low~~ | ~~Minimal~~ | ~~ELIMINATED~~ |
 | 3. Delete() behavior | ~~Medium~~ | ~~Small~~ | ~~DONE~~ |
 | 4. CorruptionAction | Medium — untested error path | Medium | Medium |
 | 5. DoubleCheckedLocking | ~~Medium~~ | ~~Medium~~ | ~~DONE~~ |
