@@ -3,7 +3,6 @@ using Compze.Must;
 using Compze.Tests.Infrastructure;
 using Compze.Threading.Specifications.TestInfrastructure;
 using Compze.Threading.Testing;
-using Compze.xUnitBDD;
 using Xunit;
 using static Compze.Must.MustActions;
 
@@ -17,34 +16,39 @@ public class DoubleCheckedLocking_specification : UniversalTestBase
 {
    public class On_ICriticalSection : DoubleCheckedLocking_specification
    {
-      readonly ICriticalSection _monitor = IMonitor.New();
+      readonly ICriticalSectionMatrixAttribute.Factory<On_ICriticalSection> _factory = new();
       string? _sharedField;
 
-      [XF] public void returns_the_field_value_without_calling_createValue_when_field_is_non_null()
+      protected override void DisposeInternal() => _factory.Dispose();
+
+      [ICriticalSectionMatrix] public void returns_the_field_value_without_calling_createValue_when_field_is_non_null()
       {
+         var criticalSection = _factory.Create();
          var factoryCalled = false;
          string? field = "cached";
-         var result = _monitor.DoubleCheckedLocking(ref field, () => { factoryCalled = true; return "new"; });
+         var result = criticalSection.DoubleCheckedLocking(ref field, () => { factoryCalled = true; return "new"; });
 
          result.Must().Be("cached");
          factoryCalled.Must().BeFalse();
       }
 
-      [XF] public void creates_the_value_and_exchanges_into_field_when_field_is_null()
+      [ICriticalSectionMatrix] public void creates_the_value_and_exchanges_into_field_when_field_is_null()
       {
+         var criticalSection = _factory.Create();
          string? field = null;
-         var result = _monitor.DoubleCheckedLocking(ref field, () => "populated");
+         var result = criticalSection.DoubleCheckedLocking(ref field, () => "populated");
 
          result.Must().Be("populated");
          field!.Must().Be("populated");
       }
 
-      [XF] public void returns_the_value_from_tryRead_without_calling_createUpdatedFieldValue_when_tryRead_returns_non_null()
+      [ICriticalSectionMatrix] public void returns_the_value_from_tryRead_without_calling_createUpdatedFieldValue_when_tryRead_returns_non_null()
       {
+         var criticalSection = _factory.Create();
          var factoryCalled = false;
          var dict = new Dictionary<string, string> { ["key"] = "value" };
          IReadOnlyDictionary<string, string> field = dict;
-         var result = _monitor.DoubleCheckedLocking(
+         var result = criticalSection.DoubleCheckedLocking(
             tryRead: () => field.GetValueOrDefault("key"),
             field: ref field,
             createUpdatedFieldValue: () => { factoryCalled = true; return field; });
@@ -53,10 +57,11 @@ public class DoubleCheckedLocking_specification : UniversalTestBase
          factoryCalled.Must().BeFalse();
       }
 
-      [XF] public void exchanges_the_field_and_returns_the_tryRead_value_when_tryRead_initially_returns_null()
+      [ICriticalSectionMatrix] public void exchanges_the_field_and_returns_the_tryRead_value_when_tryRead_initially_returns_null()
       {
+         var criticalSection = _factory.Create();
          IReadOnlyDictionary<string, string> field = new Dictionary<string, string>();
-         var result = _monitor.DoubleCheckedLocking(
+         var result = criticalSection.DoubleCheckedLocking(
             tryRead: () => field.GetValueOrDefault("key"),
             field: ref field,
             createUpdatedFieldValue: () => new Dictionary<string, string>(field) { ["key"] = "populated" });
@@ -64,18 +69,20 @@ public class DoubleCheckedLocking_specification : UniversalTestBase
          result.Must().Be("populated");
       }
 
-      [XF] public void throws_when_tryRead_returns_null_even_after_field_exchange()
+      [ICriticalSectionMatrix] public void throws_when_tryRead_returns_null_even_after_field_exchange()
       {
+         var criticalSection = _factory.Create();
          string? field = null;
-         Invoking(() => _monitor.DoubleCheckedLocking<string, string>(
+         Invoking(() => criticalSection.DoubleCheckedLocking<string, string>(
             tryRead: () => null,
             field: ref field!,
             createUpdatedFieldValue: () => "populated"))
            .Must().Throw<Exception>();
       }
 
-      [XF] public void concurrent_callers_all_get_the_same_result_and_createValue_runs_exactly_once()
+      [ICriticalSectionMatrix] public void concurrent_callers_all_get_the_same_result_and_createValue_runs_exactly_once()
       {
+         var criticalSection = _factory.Create(LockTimeout.Seconds(30));
          _sharedField = null;
          var createCount = 0;
          string? resultA = null;
@@ -89,7 +96,7 @@ public class DoubleCheckedLocking_specification : UniversalTestBase
             () =>
             {
                waitingToStart.AwaitPassThrough();
-               resultA = _monitor.DoubleCheckedLocking(ref _sharedField, () =>
+               resultA = criticalSection.DoubleCheckedLocking(ref _sharedField, () =>
                {
                   insideCreateValue.AwaitPassThrough();
                   Interlocked.Increment(ref createCount);
@@ -99,7 +106,7 @@ public class DoubleCheckedLocking_specification : UniversalTestBase
             () =>
             {
                waitingToStart.AwaitPassThrough();
-               resultB = _monitor.DoubleCheckedLocking(ref _sharedField, () =>
+               resultB = criticalSection.DoubleCheckedLocking(ref _sharedField, () =>
                {
                   insideCreateValue.AwaitPassThrough();
                   Interlocked.Increment(ref createCount);
@@ -122,36 +129,41 @@ public class DoubleCheckedLocking_specification : UniversalTestBase
       }
    }
 
-   public class On_IAwaitableMonitor : DoubleCheckedLocking_specification
+   public class On_IAwaitableCriticalSection : DoubleCheckedLocking_specification
    {
-      readonly IAwaitableMonitor _awaitableMonitor = IAwaitableMonitor.New();
+      readonly IAwaitableCriticalSectionMatrixAttribute.Factory<On_IAwaitableCriticalSection> _factory = new();
       string? _sharedField;
 
-      [XF] public void returns_the_field_value_without_calling_createValue_when_field_is_non_null()
+      protected override void DisposeInternal() => _factory.Dispose();
+
+      [IAwaitableCriticalSectionMatrix] public void returns_the_field_value_without_calling_createValue_when_field_is_non_null()
       {
+         var criticalSection = _factory.Create();
          var factoryCalled = false;
          string? field = "cached";
-         var result = _awaitableMonitor.DoubleCheckedLocking(ref field, () => { factoryCalled = true; return "new"; });
+         var result = criticalSection.DoubleCheckedLocking(ref field, () => { factoryCalled = true; return "new"; });
 
          result.Must().Be("cached");
          factoryCalled.Must().BeFalse();
       }
 
-      [XF] public void creates_the_value_and_exchanges_into_field_when_field_is_null()
+      [IAwaitableCriticalSectionMatrix] public void creates_the_value_and_exchanges_into_field_when_field_is_null()
       {
+         var criticalSection = _factory.Create();
          string? field = null;
-         var result = _awaitableMonitor.DoubleCheckedLocking(ref field, () => "populated");
+         var result = criticalSection.DoubleCheckedLocking(ref field, () => "populated");
 
          result.Must().Be("populated");
          field!.Must().Be("populated");
       }
 
-      [XF] public void returns_the_value_from_tryRead_without_calling_createUpdatedFieldValue_when_tryRead_returns_non_null()
+      [IAwaitableCriticalSectionMatrix] public void returns_the_value_from_tryRead_without_calling_createUpdatedFieldValue_when_tryRead_returns_non_null()
       {
+         var criticalSection = _factory.Create();
          var factoryCalled = false;
          var dict = new Dictionary<string, string> { ["key"] = "value" };
          IReadOnlyDictionary<string, string> field = dict;
-         var result = _awaitableMonitor.DoubleCheckedLocking(
+         var result = criticalSection.DoubleCheckedLocking(
             tryRead: () => field.GetValueOrDefault("key"),
             field: ref field,
             createUpdatedFieldValue: () => { factoryCalled = true; return field; });
@@ -160,10 +172,11 @@ public class DoubleCheckedLocking_specification : UniversalTestBase
          factoryCalled.Must().BeFalse();
       }
 
-      [XF] public void exchanges_the_field_and_returns_the_tryRead_value_when_tryRead_initially_returns_null()
+      [IAwaitableCriticalSectionMatrix] public void exchanges_the_field_and_returns_the_tryRead_value_when_tryRead_initially_returns_null()
       {
+         var criticalSection = _factory.Create();
          IReadOnlyDictionary<string, string> field = new Dictionary<string, string>();
-         var result = _awaitableMonitor.DoubleCheckedLocking(
+         var result = criticalSection.DoubleCheckedLocking(
             tryRead: () => field.GetValueOrDefault("key"),
             field: ref field,
             createUpdatedFieldValue: () => new Dictionary<string, string>(field) { ["key"] = "populated" });
@@ -171,18 +184,20 @@ public class DoubleCheckedLocking_specification : UniversalTestBase
          result.Must().Be("populated");
       }
 
-      [XF] public void throws_when_tryRead_returns_null_even_after_field_exchange()
+      [IAwaitableCriticalSectionMatrix] public void throws_when_tryRead_returns_null_even_after_field_exchange()
       {
+         var criticalSection = _factory.Create();
          string? field = null;
-         Invoking(() => _awaitableMonitor.DoubleCheckedLocking<string, string>(
+         Invoking(() => criticalSection.DoubleCheckedLocking<string, string>(
             tryRead: () => null,
             field: ref field!,
             createUpdatedFieldValue: () => "populated"))
            .Must().Throw<Exception>();
       }
 
-      [XF] public void concurrent_callers_all_get_the_same_result_and_createValue_runs_exactly_once()
+      [IAwaitableCriticalSectionMatrix] public void concurrent_callers_all_get_the_same_result_and_createValue_runs_exactly_once()
       {
+         var criticalSection = _factory.Create(LockTimeout.Seconds(30));
          _sharedField = null;
          var createCount = 0;
          string? resultA = null;
@@ -196,7 +211,7 @@ public class DoubleCheckedLocking_specification : UniversalTestBase
             () =>
             {
                waitingToStart.AwaitPassThrough();
-               resultA = _awaitableMonitor.DoubleCheckedLocking(ref _sharedField, () =>
+               resultA = criticalSection.DoubleCheckedLocking(ref _sharedField, () =>
                {
                   insideCreateValue.AwaitPassThrough();
                   Interlocked.Increment(ref createCount);
@@ -206,7 +221,7 @@ public class DoubleCheckedLocking_specification : UniversalTestBase
             () =>
             {
                waitingToStart.AwaitPassThrough();
-               resultB = _awaitableMonitor.DoubleCheckedLocking(ref _sharedField, () =>
+               resultB = criticalSection.DoubleCheckedLocking(ref _sharedField, () =>
                {
                   insideCreateValue.AwaitPassThrough();
                   Interlocked.Increment(ref createCount);
