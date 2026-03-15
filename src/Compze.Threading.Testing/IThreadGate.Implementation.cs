@@ -48,7 +48,7 @@ public partial interface IThreadGate
          {
             var returnValue = _monitor.TryAwait(() => condition(this), timeout);
             return returnValue;
-         }, message: $"condition: '{conditionExpression}'");
+         }, message: $"condition: '{conditionExpression}'", logResult: true);
 
       public IThreadGate SetPostPassThroughAction(Action<ThreadSnapshot> action) => this._mutate(_ => _monitor.Update(() => _postPassThroughAction = action));
 
@@ -121,14 +121,14 @@ public partial interface IThreadGate
       void LogMethodEntry(string method) => _monitor.Read(() => this.Log().Info($"Thread:{Thread.CurrentThread.GetHashCode()} Entering gate method:{Name}.{method} {this}"));
       void LogMethodExit(string method, string message = "") => _monitor.Read(() => this.Log().Info($"Thread:{Thread.CurrentThread.GetHashCode()} Exiting gate method:{Name}.{method} {this} {message}"));
 
-      TResult LogMethodEntryExit<TResult>(Func<TResult> body, string message = "", [CallerMemberName] string method = null!)
+      TResult LogMethodEntryExit<TResult>(Func<TResult> body, string message = "", bool logResult = false, [CallerMemberName] string method = null!)
       {
          var logContext = string.IsNullOrEmpty(message) ? method : $"{method}: {message}";
          LogMethodEntry(logContext);
          try
          {
             var result = body();
-            LogMethodExit(logContext);
+            LogMethodExit(logContext, logResult ? $"Result: {result}" : "");
             return result;
          }
          catch(Exception exception)
