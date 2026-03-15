@@ -1,9 +1,5 @@
 # Threading — Current TODO
 
-## Open Items
+## All gaps resolved
 
-### Test coverage gaps (from `test-coverage-gaps.md`)
-
-| Gap | Description | Priority |
-|-----|-------------|----------|
-| 9 | `LockTimeout` / `WaitTimeout` value type edge cases not systematically tested | Low |
+No remaining test coverage gaps. See `test-coverage-gaps.md` for history.
