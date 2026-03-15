@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 using System.Security.AccessControl;
 using System.Security.Principal;
+using Compze.Threading.SystemCE;
 
 namespace Compze.Threading.Interprocess;
 
@@ -82,8 +83,7 @@ public partial interface IMutex
                      break;
                   }
 
-                  var pollTimeout = remaining < InterruptPollingInterval ? remaining : InterruptPollingInterval;
-                  acquired = _mutex.WaitOne(pollTimeout);
+                  acquired = _mutex.WaitOne(TimeSpan.Min(remaining, InterruptPollingInterval));
                   if(acquired) break;
                }
             }
