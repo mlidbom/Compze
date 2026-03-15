@@ -2,6 +2,7 @@ using Compze.Internals.SystemCE;
 using Compze.Must;
 using Compze.Tests.Infrastructure;
 using Compze.Threading.Interprocess;
+using Compze.Threading.Specifications.ICriticalSection_.Infrastructure;
 using Compze.Threading.Specifications.TestInfrastructure;
 using Compze.Threading.Testing;
 using Compze.xUnitBDD;
@@ -97,6 +98,46 @@ public class MutexCE_specification : UniversalTestBase
          using var mutex = IMutex.Global("MutexCE_specification.onAbandoned.not_invoked", onAbandonedMutex: () => callbackInvoked = true);
          mutex.Locked(() => 0);
          callbackInvoked.Must().BeFalse();
+      }
+
+      [XF] public void invokes_callback_when_acquiring_an_abandoned_mutex()
+      {
+         var callbackInvoked = false;
+         using var mutex = IMutex.Global("MutexCE_specification.onAbandoned.invoked", onAbandonedMutex: () => callbackInvoked = true);
+
+         mutex.Abandon();
+         mutex.TakeLock().Dispose();
+
+         callbackInvoked.Must().BeTrue();
+      }
+
+      [XF] public void acquires_the_lock_successfully_after_abandonment()
+      {
+         using var mutex = IMutex.Global("MutexCE_specification.onAbandoned.acquires_lock");
+
+         mutex.Abandon();
+
+         var lockHandle = mutex.TakeLock();
+         lockHandle.Must().NotBeNull();
+         lockHandle.Dispose();
+      }
+
+      [XF] public void invokes_callback_when_mutex_is_abandoned_while_waiting_for_it()
+      {
+         var callbackInvoked = false;
+         using var mutex = IMutex.Global("MutexCE_specification.onAbandoned.invoked_while_waiting", onAbandonedMutex: () => callbackInvoked = true);
+
+         var triggerAbandonment = mutex.HoldLockUntilAbandoned();
+
+         using var runner = TestingTaskRunner.WithTimeout(30.Seconds());
+         var waitingTask = runner.Run(() => mutex.TakeLock().Dispose());
+
+         SpinWait.SpinUntil(() => mutex.ContentionCount > 0, 10.Seconds());
+
+         triggerAbandonment();
+         waitingTask.Wait(10.Seconds());
+
+         callbackInvoked.Must().BeTrue();
       }
    }
 

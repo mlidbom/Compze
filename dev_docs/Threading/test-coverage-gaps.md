@@ -44,12 +44,14 @@ The `test-matrix-coverage.md` doc says `IProcessShared_specification` uses `[IPr
 
 ---
 
-## Gap 7: `IMutex` — abandoned mutex callback never tested in the positive case
+## ~~Gap 7: `IMutex` — abandoned mutex callback never tested in the positive case~~ RESOLVED
 
-`MutexCE_specification.Locked_with_onAbandonedMutex_callback` tests that the callback is NOT invoked when the mutex isn't abandoned. But no test verifies:
-- The callback IS invoked when another process dies while holding the mutex
+Tests added in `MutexCE_specification.Locked_with_onAbandonedMutex_callback`:
+- `invokes_callback_when_acquiring_an_abandoned_mutex` — verifies callback fires on uncontended abandon (outer catch)
+- `acquires_the_lock_successfully_after_abandonment` — verifies lock acquisition succeeds after abandonment
+- `invokes_callback_when_mutex_is_abandoned_while_waiting_for_it` — verifies callback fires when mutex is abandoned while another thread is waiting (inner catch in polling loop)
 
-This is inherently difficult to test (requires killing a process holding a mutex). May not be worth the complexity.
+Testing helper `IMutexCE.AbandonLock()` and `IMutexCE.HoldLockUntilAbandoned()` added to `Compze.Threading.Testing`.
 
 ---
 
@@ -79,6 +81,6 @@ These strongly-typed duration wrappers have factory methods, operators (`==`, `!
 | 4. CorruptionAction | Medium — untested error path | Medium | Medium |
 | 5. DoubleCheckedLocking | ~~Medium~~ | ~~Medium~~ | ~~DONE~~ |
 | 6. IProcessShared matrix usage | Cosmetic — coverage is equivalent | Small | Low |
-| 7. Abandoned mutex positive | Low — hard to test reliably | Hard | Skip |
+| 7. Abandoned mutex positive | ~~Low — hard to test reliably~~ | ~~Hard~~ | ~~DONE~~ |
 | 8. Local mutex cross-instance | Low — symmetric with Global | Small | Low |
 | 9. Value type specs | Low — indirectly covered | Medium | Low |
