@@ -52,7 +52,6 @@ public partial interface IMutex
          _lockDisposer = new LockDisposer(ReleaseLock);
       }
 
-
       public long ContentionCount => Interlocked.Read(ref _contentionCount);
 
       public ILock TakeLock(LockTimeout? timeout = null) => TryTakeLock(timeout) ?? throw RegisterTimeoutException();
@@ -70,29 +69,22 @@ public partial interface IMutex
             if(!acquired && timeout != TimeSpan.Zero)
             {
                Interlocked.Increment(ref _contentionCount);
-               try
-               {
-                  // Poll so the thread periodically returns to managed code, allowing a pending Thread.Interrupt to fire as ThreadInterruptedException.
-                  // Without this, Mutex.WaitOne on Linux enters an unmanaged wait that is not interruptible, causing Thread.Interrupt to have no effect until the mutex is released.
-                  var deadline = DateTime.UtcNow + effectiveTimeout.ToTimeSpan();
-                  while(true)
-                  {
-                     var remaining = deadline - DateTime.UtcNow;
-                     if(remaining <= TimeSpan.Zero)
-                     {
-                        acquired = false;
-                        break;
-                     }
 
-                     var pollTimeout = remaining < InterruptPollingInterval ? remaining : InterruptPollingInterval;
-                     acquired = _mutex.WaitOne(pollTimeout);
-                     if(acquired) break;
-                  }
-               }
-               catch(AbandonedMutexException)
+               // Poll so the thread periodically returns to managed code, allowing a pending Thread.Interrupt to fire as ThreadInterruptedException.
+               // Without this, Mutex.WaitOne on Linux enters an unmanaged wait that is not interruptible, causing Thread.Interrupt to have no effect until the mutex is released.
+               var deadline = DateTime.UtcNow + effectiveTimeout.ToTimeSpan();
+               while(true)
                {
-                  _onAbandonedMutex?.Invoke();
-                  acquired = true;
+                  var remaining = deadline - DateTime.UtcNow;
+                  if(remaining <= TimeSpan.Zero)
+                  {
+                     acquired = false;
+                     break;
+                  }
+
+                  var pollTimeout = remaining < InterruptPollingInterval ? remaining : InterruptPollingInterval;
+                  acquired = _mutex.WaitOne(pollTimeout);
+                  if(acquired) break;
                }
             }
          }
