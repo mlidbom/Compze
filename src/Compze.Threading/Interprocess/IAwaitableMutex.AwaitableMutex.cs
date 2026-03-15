@@ -65,35 +65,60 @@ public partial interface IAwaitableMutex
 
          var waitStartedAt = DateTime.UtcNow;
 
-         while(true)
+         // Take the lock (reentrant if caller already holds it)
+         ILock mutexLock = _mutex.TakeLock(effectiveLockTimeout);
+         try
          {
-            var baseline = _signal.Snapshot();
-
-            ILock mutexLock = _mutex.TakeLock(effectiveLockTimeout);
-            try
+            while(!condition())
             {
-               if(condition())
-                  return isUpdate ? new UpdateLockDisposer(_signal, mutexLock) : (IReadLock)mutexLock;
-            }
-            catch
-            {
-               mutexLock.Dispose();
-               throw;
-            }
+               // Snapshot the signal baseline while holding the lock — any signal raised after this point will be visible to TryAwait.
+               var baseline = _signal.Snapshot();
 
-            mutexLock.Dispose();
+               // Release ALL nesting levels (including outer locks held by the caller),
+               // analogous to Monitor.Wait() which releases all recursive lock levels.
+               var depth = _mutex.ReleaseAllNestingLevels();
 
-            if(!effectiveWaitTimeout.IsInfinite && effectiveWaitTimeout.IsExpired(waitStartedAt))
-               return null;
+               try
+               {
+                  if(!effectiveWaitTimeout.IsInfinite && effectiveWaitTimeout.IsExpired(waitStartedAt))
+                  {
+                     // Timeout — restore caller's nesting state (our lock level is excluded) and return null
+                     _mutex.ReacquireToNestingDepth(depth - 1, effectiveLockTimeout);
+                     return null;
+                  }
 
-            while(!_signal.TryAwait(AbandonedMutexCheckInterval, ref baseline))
-            {
-               if(!effectiveWaitTimeout.IsInfinite && effectiveWaitTimeout.IsExpired(waitStartedAt))
-                  return null;
+                  while(!_signal.TryAwait(AbandonedMutexCheckInterval, ref baseline))
+                  {
+                     if(!effectiveWaitTimeout.IsInfinite && effectiveWaitTimeout.IsExpired(waitStartedAt))
+                     {
+                        _mutex.ReacquireToNestingDepth(depth - 1, effectiveLockTimeout);
+                        return null;
+                     }
 
-               _mutex.TryTakeLock(LockTimeout.Zero)?.Dispose();
+                     // Probe the mutex to detect abandoned-mutex scenarios (triggers AbandonedMutexException → callback raises signal)
+                     _mutex.TryTakeLock(LockTimeout.Zero)?.Dispose();
+                  }
+               }
+               catch
+               {
+                  // Mirror Monitor.Wait() semantics: always reacquire the lock before letting exceptions propagate.
+                  // This ensures callers' using blocks can dispose locks without hitting "mutex not owned" errors.
+                  _mutex.ReacquireToNestingDepth(depth, effectiveLockTimeout);
+                  throw;
+               }
+
+               // Signal received — reacquire to full depth (including our level) and re-check condition
+               _mutex.ReacquireToNestingDepth(depth, effectiveLockTimeout);
             }
          }
+         catch
+         {
+            mutexLock.Dispose();
+            throw;
+         }
+
+         // Condition is true while holding the lock
+         return isUpdate ? new UpdateLockDisposer(_signal, mutexLock) : (IReadLock)mutexLock;
       }
 
       public void SetTimeToWaitForStackTrace(WaitTimeout timeToWaitForStackTrace) =>

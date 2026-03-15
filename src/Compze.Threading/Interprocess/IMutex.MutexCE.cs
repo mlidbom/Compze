@@ -23,6 +23,7 @@ public partial interface IMutex
 #pragma warning restore CA2213
       readonly IMonitor _timeoutMonitor = IMonitor.New();
       long _contentionCount;
+      readonly ThreadLocal<int> _nestingDepth = new();
 
       static readonly WaitTimeout DefaultTimeToWaitForStackTrace = WaitTimeout.Seconds(1);
       WaitTimeout _stackTraceFetchTimeout = DefaultTimeToWaitForStackTrace;
@@ -94,6 +95,7 @@ public partial interface IMutex
             acquired = true;
          }
 
+         if(acquired) _nestingDepth.Value++;
          return acquired ? _lockDisposer : null;
       }
 
@@ -112,7 +114,24 @@ public partial interface IMutex
       void ReleaseLock()
       {
          UpdateAnyRegisteredTimeoutExceptions();
+         _nestingDepth.Value--;
          _mutex.ReleaseMutex();
+      }
+
+      public int ReleaseAllNestingLevels()
+      {
+         var depth = _nestingDepth.Value;
+         UpdateAnyRegisteredTimeoutExceptions();
+         for(var i = 0; i < depth; i++)
+            _mutex.ReleaseMutex();
+         _nestingDepth.Value = 0;
+         return depth;
+      }
+
+      public void ReacquireToNestingDepth(int depth, LockTimeout? timeout = null)
+      {
+         for(var i = 0; i < depth; i++)
+            TakeLock(timeout);
       }
 
       IReadOnlyList<TakeMutexLockTimeoutException> _timeOutExceptionsOnOtherThreads = new List<TakeMutexLockTimeoutException>();

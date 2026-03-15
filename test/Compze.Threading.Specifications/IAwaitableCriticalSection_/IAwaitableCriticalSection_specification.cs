@@ -181,6 +181,67 @@ public class IAwaitableCriticalSection_specification : UniversalTestBase
          Invoking(() => _factory.Create(WaitTimeout.Milliseconds(100))
                                     .TakeUpdateLockWhen(() => false))
            .Must().Throw<AwaitingConditionTimeoutException>();
+
+      [IAwaitableCriticalSectionMatrix] public void Releases_outer_lock_while_waiting_so_another_thread_can_make_condition_true()
+      {
+         var criticalSection = _factory.Create(LockTimeout.Seconds(30), WaitTimeout.Seconds(30));
+         var conditionMet = false;
+         var innerLockAcquired = IThreadGate.NewOpen(WaitTimeout.Seconds(10), "innerLockAcquired");
+
+         _runner.Run(() =>
+         {
+            using(criticalSection.TakeUpdateLock())
+            {
+               using(criticalSection.TakeUpdateLockWhen(() => conditionMet))
+               {
+                  innerLockAcquired.AwaitPassThrough();
+               }
+            }
+         });
+
+         // The thread is waiting inside TakeUpdateLockWhen — it must have released the outer lock
+         innerLockAcquired.TryAwaitPassedThroughCountEqualTo(1, WaitTimeout.Milliseconds(200)).Must().BeFalse();
+
+         // Another thread can acquire and update — proving the outer lock was released
+         criticalSection.Update(() => conditionMet = true);
+
+         // The waiting thread reacquires and proceeds
+         innerLockAcquired.AwaitPassedThroughCountEqualTo(1);
+      }
+
+      [IAwaitableCriticalSectionMatrix] public void Outer_lock_is_still_held_after_inner_condition_lock_is_disposed()
+      {
+         var criticalSection = _factory.Create(LockTimeout.Seconds(30), WaitTimeout.Seconds(30));
+         var conditionMet = false;
+         var innerLockDisposed = IThreadGate.NewClosed(WaitTimeout.Seconds(10), "innerLockDisposed");
+         var outerLockStillExclusive = IThreadGate.NewClosed(WaitTimeout.Seconds(10), "outerLockStillExclusive");
+
+         _runner.Run(() =>
+         {
+            using(criticalSection.TakeUpdateLock())
+            {
+               using(criticalSection.TakeUpdateLockWhen(() => conditionMet)) {}
+
+               // Inner condition lock is disposed — but we still hold the outer lock
+               innerLockDisposed.AwaitPassThrough();
+
+               // Verify the outer lock is still held by blocking here while the test thread tries to acquire
+               outerLockStillExclusive.AwaitPassThrough();
+            }
+         });
+
+         // Make the condition true so the inner lock can be acquired
+         criticalSection.Update(() => conditionMet = true);
+
+         innerLockDisposed.Open();
+         innerLockDisposed.AwaitPassedThroughCountEqualTo(1);
+
+         // Try to acquire from this thread — should fail because the outer lock is still held
+         Invoking(() => criticalSection.TakeUpdateLock(LockTimeout.Milliseconds(50)))
+           .Must().Throw<Exception>();
+
+         outerLockStillExclusive.Open();
+      }
    }
 
    public class TakeReadLockWhen : IAwaitableCriticalSection_specification
