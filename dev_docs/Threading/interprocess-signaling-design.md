@@ -1,104 +1,71 @@
-# Interprocess Signaling via Memory-Mapped File
+# Interprocess Signaling Design
 
-## Goal
+## Architecture
 
-Replace the polling-based `IPollingAwaitableMutex` (where user condition code runs every poll interval) with a signal-based approach where user condition code only runs when a state change is actually signaled.
+Three layers, bottom to top:
 
-## Mechanism
+### `InterprocessChangeCounter` — shared MMF counter
 
-- A shared `MemoryMappedFile` holds a monotonically increasing `int` counter.
-- **Signaler**: increments the counter (while still holding the mutex, before releasing it).
-- **Watchers**: poll the MMF counter (nanosecond memory read, no syscall, no kernel transition). Only when the counter changes do they acquire the mutex and evaluate the user's condition.
+A cross-process atomic counter backed by a memory-mapped file. Nanosecond reads, no syscall.
 
-This moves polling from "acquire lock + run expensive user condition every interval" to "read a single cache line every interval" — orders of magnitude cheaper.
+- File: `src/Compze.Threading/Interprocess/InterprocessChangeCounter.cs`
+- Specs: `test/Compze.Threading.InternalSpecifications/Interprocess/InterprocessChangeCounter_specification.cs`
+- Constructor takes a `FileInfo` backing file path
+- `Increment()` — atomic `Interlocked.Increment` on an unsafe pointer into the MMF
+- `Count` — atomic `Interlocked.Read` on the same pointer
+- Counter is `long` (8 bytes), file-backed MMF on all platforms (single code path, no Windows-specific `CreateOrOpen`)
+- Internal class — `InternalsVisibleTo` only to `Compze.Threading.InternalSpecifications`
 
-## Shared Change Counter: `InterprocessChangeCounter` (IMPLEMENTED)
+### `InterprocessSignal` — signaling primitive
 
-Internal class in `src/Compze.Threading/Interprocess/InterprocessChangeCounter.cs`
-Specs: `test/Compze.Threading.InternalSpecifications/Interprocess/InterprocessChangeCounter_specification.cs`
+Wraps `InterprocessChangeCounter` with a polling wait API.
 
-This is NOT a signaling primitive — it's a shared counter used as a building block by the awaitable mutex. The mutex owns all polling and waiting logic; this class only provides cheap cross-process change detection.
+- File: `src/Compze.Threading/Interprocess/InterprocessSignal.cs`
+- Constructor takes a name + `DirectoryInfo`; creates backing file at `{directory}/{name}.signal`
+- `Raise()` → `_counter.Increment()`
+- `Snapshot()` → `_counter.Count` (returns baseline for `TryAwait`)
+- `TryAwait(timeout, ref baseline)` — polls the counter at **1ms intervals** (`CounterPollingInterval`). Returns true + updates baseline when counter changes. Returns false on timeout.
 
-API surface:
-- `new InterprocessChangeCounter(name, global)` — constructor, named with Global/Local prefix matching `IMutex` conventions
-- `Increment()` — atomically increments the counter (called by lock holder after modifying state)
-- `Count` — reads the current counter (nanosecond memory read, no syscall). Consumers compare against a previously observed value to detect changes.
-- `IsGlobal`, `Name` — identity properties
-- `IDisposable` — cleanup of MMF handles
+The 1ms poll is effectively free — it's a `Thread.Sleep(1ms)` + a nanosecond memory read. No mutex acquisition, no syscall beyond the sleep.
 
-### Implementation details
-- Internal class (not public API) — `InternalsVisibleTo` only to `Compze.Threading.InternalSpecifications`
-- Thread-safe: uses `Interlocked.Increment`/`Read` on an unsafe pointer into the MMF — no external locking needed
-- Counter is `long` (8 bytes)
-- File-backed `MemoryMappedFile` on all platforms (single code path)
-- Backing files: `{TempPath}/Compze/Signals/{Global_name}` or `{TempPath}/Compze/Signals/{Local_name}`
-- Backing files persist across process restarts — counter values accumulate. Consumers must use delta comparison, not absolute values
-- Name validation: rejects null/empty/whitespace and backslashes (same as `IMutex`)
+### `IAwaitableMutex` / `AwaitableMutex` — condition-wait mutex
 
-## Cross-Platform Implementation
+Wraps `IMutex` + `InterprocessSignal` to implement `IAwaitableCriticalSection`.
 
-Use **file-backed `MemoryMappedFile` on all platforms** (including Windows). No platform-conditional code.
+- Interface: `src/Compze.Threading/Interprocess/IAwaitableMutex .cs`
+- Implementation: `src/Compze.Threading/Interprocess/IAwaitableMutex.AwaitableMutex.cs`
+- Tested via `[IAwaitableCriticalSectionMatrix]` — runs against Monitor, GlobalMutex, LocalMutex
 
-- Windows supports `CreateOrOpen` with just a name (no backing file), but using that would mean two code paths for no real gain.
-- File-backed MMF reads still hit the page cache, not disk. Performance is identical for a 4-byte counter.
-- Single code path = fewer bugs, easier testing, no platform-conditional behavior.
+**Lock operations:**
+- `TakeUpdateLock()` → acquires mutex, returns `UpdateLockDisposer` that raises the signal then releases the mutex on dispose
+- `TakeReadLock()` → acquires mutex, returns lock directly (no signal on dispose)
 
-### File path
-- Derive a deterministic file path from the shared name (e.g., temp directory + name-based filename)
+**Condition wait (`TryTakeLockWhen`):**
+1. Acquire mutex (reentrant if caller already holds it)
+2. Check condition — if true, return lock
+3. Snapshot signal baseline (while holding the lock — ensures no signals are missed)
+4. Release ALL nesting levels via `IMutex.ReleaseAllNestingLevels()` (mirrors `Monitor.Wait()`)
+5. Wait for signal: call `_signal.TryAwait(50ms)` — internally polls the MMF counter at 1ms
+6. If `TryAwait` returns false (no signal in 50ms) → probe mutex with zero-timeout `TryTakeLock` to detect abandoned mutexes, then loop back to step 5
+7. If `TryAwait` returns true (signal detected) → reacquire to full nesting depth, go to step 2
 
-### Creation
-- Use atomic file creation (create-if-not-exists)
-- If the file already exists with a stale counter, that's harmless — worst case is one spurious condition check
+**Two polling rates, different purposes:**
+- **1ms** (inside `InterprocessSignal.TryAwait`): polls the MMF counter. Cost: nanosecond memory read + 1ms sleep. Detects normal `UpdateLock` releases.
+- **50ms** (inside `AwaitableMutex.TryTakeLockWhen`): abandoned-mutex safety probe. Only runs when no signal arrived in 50ms. Probes the mutex with zero-timeout to trigger `AbandonedMutexException` if the holder died.
 
-### Cleanup
-- Backing file in temp directory
-- Files are 4 bytes — negligible. Accept that temp files accumulate and get cleaned by OS, or clean up on dispose if possible.
+**Abandoned mutex handling:**
+- At construction, the user's `onAbandonedMutex` callback is wrapped: abandonment detection also calls `_signal.Raise()`
+- When the 50ms probe detects an abandoned mutex → callback fires → signal raised → `TryAwait` sees the counter change → condition re-evaluated
 
-## Process Death
+**Nesting-aware condition wait:**
+- `MutexCE` tracks per-thread nesting depth via `ThreadLocal<int>`
+- `IMutex.ReleaseAllNestingLevels()` releases all levels, returns the depth
+- `IMutex.ReacquireToNestingDepth(depth)` restores the nesting state
+- On timeout: restores caller's nesting (depth - 1) and returns null
+- On exception: reacquires to full depth before rethrowing (mirrors `Monitor.Wait()`)
 
-### Why it's mostly a non-issue for the MMF counter
-- **Watcher dies**: Zero impact. It just stops reading.
-- **All processes die**: Counter resets or goes stale — harmless, worst case is one spurious condition check on restart.
-- **Signaler dies mid-signal**: See below.
+## Process death
 
-### IMPORTANT: Abandoned mutex = implicit signal
-
-If the signaler dies **after modifying shared state but before incrementing the counter**, watchers would never wake up.
-
-**Solution**: Signal must be incremented **while still holding the mutex, before releasing it.** This makes "signaler dies while holding lock" an abandoned-mutex scenario. When the next process detects the abandoned mutex, it **must treat that as an implicit signal** (i.e., behave as if the counter was incremented).
-
-This is critical — without it, a process crash between state modification and signaling creates a silent missed-update bug.
-
-## Integration with Awaitable Mutex: `ISignalingAwaitableMutex` (IMPLEMENTED)
-
-Interface: `src/Compze.Threading/Interprocess/ISignalingAwaitableMutex.cs`
-Implementation: `src/Compze.Threading/Interprocess/ISignalingAwaitableMutex.SignalingAwaitableMutexCE.cs`
-Tested via: `[IAwaitableCriticalSectionMatrix]` attribute — all existing `IAwaitableCriticalSection` specs now run against Monitor, PollingMutex, *and* SignalingMutex
-
-### How it works
-- Wraps an `IMutex` + `InterprocessChangeCounter` with the same name
-- `TakeUpdateLock()` returns an `UpdateLockDisposer` that increments the change counter *before* releasing the mutex
-- `TakeReadLock()` returns the plain mutex lock (no counter increment)
-- Wait loop (`TryTakeLockWhen`): snapshot counter → acquire mutex → check condition → if false, release → poll counter until changed → repeat
-- The user condition only runs when an update lock was released somewhere — never on a blind timer
-
-### Two-tier polling
-- **Fast counter poll** (1ms): essentially free. Reads the MMF counter — nanosecond memory read, detects normal update lock releases
-- **Safety probe** (50ms): if the counter hasn't changed for 50ms, probes the mutex with a zero-timeout `TakeLock`:
-  - **Abandoned mutex**: `AbandonedMutexException` fires → wrapped `onAbandonedMutex` callback increments the counter → next 1ms poll sees the change → outer loop acquires mutex and evaluates the condition
-  - **Mutex available (not abandoned)**: acquired and immediately released, no condition check, back to counter polling
-  - **Mutex held by another process**: `TakeLockTimeoutException` caught and swallowed — holder is alive, back to counter polling
-- The user condition **never** runs on the safety interval — only when the counter actually changes
-
-### Abandoned mutex handling
-- The user's `onAbandonedMutex` callback is wrapped at construction: abandonment detection also increments the `InterprocessChangeCounter`
-- This means any code path that detects abandonment (safety probe, or normal `TakeLock` in the outer loop) triggers a counter change
-- The counter change wakes the fast-polling loop, which then runs the normal condition-check path
-
-### Design decisions
-- Added `SignalingMutex` to `AwaitableCriticalSectionImplementation` enum — all `[IAwaitableCriticalSectionMatrix]` tests automatically cover it
-- Counter polling interval is 1ms, since the counter read is a nanosecond memory read
-
-## User condition only runs on updates
-
-The user's condition function (likely involving IO, deserialization, etc.) must **only** execute when a signal has been raised — never on a polling interval. The only "polling" is reading the MMF counter, which is a direct memory read with negligible cost.
+- **Watcher dies**: no impact
+- **All processes die**: counter resets or goes stale — harmless, worst case one spurious condition check
+- **Signaler dies after modifying state but before signaling**: abandoned-mutex detection covers this. The 50ms safety probe triggers `AbandonedMutexException` → wrapped callback raises the signal → watchers wake up and re-evaluate

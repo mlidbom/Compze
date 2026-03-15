@@ -47,9 +47,9 @@ The `test-matrix-coverage.md` doc says `IProcessShared_specification` uses `[IPr
 ## ~~Gap 7: `IMutex` — abandoned mutex callback never tested in the positive case~~ RESOLVED
 
 Tests added in `MutexCE_specification.Locked_with_onAbandonedMutex_callback`:
-- `invokes_callback_when_acquiring_an_abandoned_mutex` — verifies callback fires on uncontended abandon (outer catch)
+- `invokes_callback_when_acquiring_an_abandoned_mutex` — verifies callback fires on uncontended abandon
 - `acquires_the_lock_successfully_after_abandonment` — verifies lock acquisition succeeds after abandonment
-- `invokes_callback_when_mutex_is_abandoned_while_waiting_for_it` — verifies callback fires when mutex is abandoned while another thread is waiting (inner catch in polling loop)
+- `invokes_callback_when_mutex_is_abandoned_while_waiting_for_it` — verifies callback fires when mutex is abandoned while another thread is waiting
 
 Testing helper `IMutexCE.AbandonLock()` and `IMutexCE.HoldLockUntilAbandoned()` added to `Compze.Threading.Testing`.
 

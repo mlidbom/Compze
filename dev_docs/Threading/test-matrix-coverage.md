@@ -157,9 +157,9 @@ All IAwaitableCriticalSection implementations are now in the matrix: Monitor, Gl
 
 `IAwaitableThreadShared_specification` tests the `IAwaitableThreadShared`-specific concern: the `Monitor` property.
 
-### Gap 7: ~~IProcessShared — Global/Local not matrix-tested~~ RESOLVED
+### Gap 7: IProcessShared — Global/Local not matrix-tested
 
-`IProcessShared_specification` uses `[IProcessSharedMatrix]` to test Global and Local variants. The factory calls `IProcessShared.Global()` / `IProcessShared.Local()` — the real user-facing factory methods.
+**Partially resolved.** The `[IProcessSharedMatrix]` attribute exists in `test/Compze.Threading.Specifications/IShared_/IProcessShared_/Infrastructure/`, but `IProcessShared_specification` (in `IAwaitableShared_/IAwaitableProcessShared_/`) still uses `[XF]` with manually duplicated `Global` and `Local` nested classes instead of the matrix attribute. Coverage is equivalent (both scopes tested), but the matrix isn't being used.
 
 ---
 
