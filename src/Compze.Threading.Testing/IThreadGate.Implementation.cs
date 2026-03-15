@@ -1,6 +1,7 @@
 using Compze.Contracts;
 using Compze.Internals.Logging;
 using Compze.Threading.Exceptions;
+using System.Runtime.CompilerServices;
 
 namespace Compze.Threading.Testing;
 
@@ -44,12 +45,19 @@ public partial interface IThreadGate
          return _monitor.Read(() => _passedThreads[passedBefore]);
       }
 
-      public bool TryAwait(Func<IThreadGate, bool> condition, WaitTimeout? timeout) => _monitor.TryAwait(() => condition(this), timeout);
+      public bool TryAwait(Func<IThreadGate, bool> condition, WaitTimeout? timeout, [CallerArgumentExpression(nameof(condition))] string? conditionExpression = null!)
+      {
+         LogMethodEntry($"{nameof(TryAwait)}: '{conditionExpression}'");
+         var returnValue = _monitor.TryAwait(() => condition(this), timeout);
+         LogMethodExit($"{nameof(TryAwait)}: '{conditionExpression}' returnValue: {returnValue}");
+         return returnValue;
+      }
 
       public IThreadGate SetPostPassThroughAction(Action<ThreadSnapshot> action) => this._mutate(_ => _monitor.Update(() => _postPassThroughAction = action));
 
-      public IThreadGate ExecuteWithExclusiveLockWhen(Func<IThreadGate, bool> condition, Action action, WaitTimeout? timeout = null)
+      public IThreadGate ExecuteWithExclusiveLockWhen(Func<IThreadGate, bool> condition, Action action, WaitTimeout? timeout = null, [CallerArgumentExpression(nameof(condition))] string? conditionExpression = null!)
       {
+         using var _ = LogMethodEntryExit($"{nameof(ExecuteWithExclusiveLockWhen)}: condition: '{conditionExpression}'");
          try
          {
             using(_monitor.TakeUpdateLockWhen(() => condition(this), timeout))
@@ -101,6 +109,7 @@ public partial interface IThreadGate
             _passedThreads.Add(currentThread);
             _postPassThroughAction.Invoke(currentThread);
          }
+
          return unit;
       }
 
@@ -113,14 +122,15 @@ public partial interface IThreadGate
          WaitTimeout = waitTimeout;
       }
 
-      public override string ToString() => $"{nameof(Implementation)} {{ {nameof(Name)}: {Name} {nameof(IsOpen)} : {IsOpen}, {nameof(Queued)}: {Queued}, {nameof(Passed)}: {Passed}, {nameof(Requested)}: {Requested} }}";
+      public override string ToString() => $"{{ {nameof(Name)}: {Name} {nameof(IsOpen)} : {IsOpen}, {nameof(Queued)}: {Queued}, {nameof(Passed)}: {Passed}, {nameof(Requested)}: {Requested} }}";
+
+      void LogMethodEntry(string method) => _monitor.Read(() => this.Log().Info($"Thread:{Thread.CurrentThread.GetHashCode()} Entering gate method:{Name}.{method} {this}"));
+      void LogMethodExit(string method, string message = "") => _monitor.Read(() => this.Log().Info($"Thread:{Thread.CurrentThread.GetHashCode()} Exiting gate method:{Name}.{method} {this} {message}"));
 
       IDisposable LogMethodEntryExit(string method) => _monitor.Update(() =>
       {
-         Log($"Thread:{Thread.CurrentThread.GetHashCode()} Entering gate method:{Name}.{method}");
-         return new Disposable(() => _monitor.Update(() => Log($"Thread:{Thread.CurrentThread.GetHashCode()} Exiting gate method:{Name}.{method}")));
-
-         void Log(string tevent) => this.Log().Info($"{tevent} {this}");
+         LogMethodEntry(method);
+         return new Disposable(() => LogMethodExit(method));
       });
 
       string Name { get; }

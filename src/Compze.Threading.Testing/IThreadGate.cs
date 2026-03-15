@@ -1,4 +1,5 @@
 using Compze.Threading.Exceptions;
+using System.Runtime.CompilerServices;
 
 namespace Compze.Threading.Testing;
 
@@ -39,10 +40,10 @@ public partial interface IThreadGate : IThreadGateVisitor
    IThreadGate SetPostPassThroughAction(Action<ThreadSnapshot> action);
 
    ///<summary>Blocks until the gate is in a state which satisfies <paramref name="condition"/> then executes <paramref name="action"/>. Throws <exception cref="AwaitingConditionTimeoutException" /> if <paramref name="timeout"/> expires before <paramref name="condition"/> becomes true.</summary>
-   IThreadGate ExecuteWithExclusiveLockWhen(Func<IThreadGate, bool> condition, Action action, WaitTimeout? timeout = null);
+   IThreadGate ExecuteWithExclusiveLockWhen(Func<IThreadGate, bool> condition, Action action, WaitTimeout? timeout = null, [CallerArgumentExpression(nameof(condition))] string? conditionExpression = null!);
 
    ///<summary>Blocks until the gate is in a state which satisfies <paramref name="condition"/> or <paramref name="timeout"/> expires. Returns false if <paramref name="timeout"/> expires, else true.</summary>
-   bool TryAwait(Func<IThreadGate, bool> condition, WaitTimeout? timeout = null);
+   bool TryAwait(Func<IThreadGate, bool> condition, WaitTimeout? timeout = null, [CallerArgumentExpression(nameof(condition))] string? conditionExpression = null!);
 
    ///<summary>If false all callers of <see cref="IThreadGateVisitor.AwaitPassThrough"/> block, otherwise not.</summary>
    bool IsOpen { get; }
