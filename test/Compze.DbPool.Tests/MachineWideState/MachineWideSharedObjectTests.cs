@@ -8,6 +8,7 @@ using Compze.Threading.Testing;
 using Compze.xUnitBDD;
 using JetBrains.Annotations;
 using MemoryPack;
+using static Compze.Must.MustActions;
 
 // ReSharper disable ImplicitlyCapturedClosure
 
@@ -32,6 +33,17 @@ class SharedObjectSerializer : IInterprocessObjectSerializer<SharedObject>
    public byte[] Serialize(SharedObject instance) => MemoryPackSerializer.Serialize(instance);
 
    public SharedObject Deserialize(byte[] data) => MemoryPackSerializer.Deserialize<SharedObject>(data)._assert().NotNull();
+}
+
+class CorruptingSerializer : IInterprocessObjectSerializer<SharedObject>
+{
+   readonly SharedObjectSerializer _inner = new();
+   public bool FailOnDeserialize { get; set; }
+
+   public byte[] Serialize(SharedObject instance) => _inner.Serialize(instance);
+
+   public SharedObject Deserialize(byte[] data) =>
+      FailOnDeserialize ? throw new InvalidOperationException("Simulated deserialization corruption") : _inner.Deserialize(data);
 }
 
 public class MachineWideSharedObjectTests : UniversalTestBase
@@ -157,5 +169,74 @@ public class MachineWideSharedObjectTests : UniversalTestBase
 
       await tasks;
       // ReSharper restore AccessToDisposedClosure
+   }
+}
+
+public class When_deserialization_fails : UniversalTestBase
+{
+   static readonly DirectoryInfo TestDirectory = new DirectoryInfo(Path.Combine(Path.GetTempPath(), "Compze", "Tests", "SharedObjects"))._mutate(it => it.Create());
+   readonly List<IInterprocessObject<SharedObject>> _created = [];
+
+   protected override void DisposeInternal() => _created.ForEach(obj => obj.Delete());
+
+   IInterprocessObject<SharedObject> CreateWithCorruptionAction(string name, CorruptionAction corruptionAction, CorruptingSerializer serializer)
+   {
+      var created = IInterprocessObject.NewGlobal(name, serializer, () => new SharedObject(), corruptionAction, maxBytes: 4 * 1024, TestDirectory);
+      _created.Add(created);
+      return created;
+   }
+
+   public class and_CorruptionAction_is_ReplaceContentWithDefaultAndThrow : When_deserialization_fails
+   {
+      readonly CorruptingSerializer _serializer = new();
+      readonly string _name = Guid.NewGuid().ToString();
+      IInterprocessObject<SharedObject> _shared = null!;
+
+      void SetUpCorruptedObject()
+      {
+         if(_shared != null!) return;
+         _shared = CreateWithCorruptionAction(_name, CorruptionAction.ReplaceContentWithDefaultAndThrow, _serializer);
+         _shared.Update(it => it.Name = "Modified");
+         _serializer.FailOnDeserialize = true;
+      }
+
+      [XF] public void throws_exception_mentioning_replacement()
+      {
+         SetUpCorruptedObject();
+         Invoking(() => _shared.Read(it => it.Name))
+           .Must().Throw<Exception>()
+           .Which.Message.Must().Contain("Deleted the corrupt file");
+      }
+
+      [XF] public void replaces_content_with_default_so_next_read_succeeds()
+      {
+         SetUpCorruptedObject();
+         try { _shared.Read(it => it.Name); } catch { /* expected */ }
+         _serializer.FailOnDeserialize = false;
+         _shared.Read(it => it.Name).Must().Be("Default");
+      }
+   }
+
+   public class and_CorruptionAction_is_ThrowException : When_deserialization_fails
+   {
+      readonly CorruptingSerializer _serializer = new();
+      readonly string _name = Guid.NewGuid().ToString();
+      IInterprocessObject<SharedObject> _shared = null!;
+
+      void SetUpCorruptedObject()
+      {
+         if(_shared != null!) return;
+         _shared = CreateWithCorruptionAction(_name, CorruptionAction.ThrowException, _serializer);
+         _shared.Update(it => it.Name = "Modified");
+         _serializer.FailOnDeserialize = true;
+      }
+
+      [XF] public void throws_exception_without_modifying_the_backing_file()
+      {
+         SetUpCorruptedObject();
+         Invoking(() => _shared.Read(it => it.Name)).Must().Throw<Exception>();
+         _serializer.FailOnDeserialize = false;
+         _shared.Read(it => it.Name).Must().Be("Modified");
+      }
    }
 }

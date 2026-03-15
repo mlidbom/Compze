@@ -22,9 +22,12 @@ Test added in `MachineWideSharedObjectTests.After_Delete_a_new_instance_with_the
 
 ---
 
-## Gap 4: `CorruptionAction.ReplaceContentWithDefaultAndThrow` — untested
+## ~~Gap 4: `CorruptionAction.ReplaceContentWithDefaultAndThrow` — untested~~ RESOLVED
 
-All test factories use `CorruptionAction.ThrowException`. The alternative behavior — replace corrupt content with the default, then throw — is never exercised. This is a real code path in `InterprocessObjectImplementation` that handles deserialization failures.
+Tests added in `When_deserialization_fails` (in `MachineWideSharedObjectTests.cs`):
+- `and_CorruptionAction_is_ReplaceContentWithDefaultAndThrow.throws_exception_mentioning_replacement` — verifies exception message describes the replacement
+- `and_CorruptionAction_is_ReplaceContentWithDefaultAndThrow.replaces_content_with_default_so_next_read_succeeds` — verifies file is replaced and next read returns default
+- `and_CorruptionAction_is_ThrowException.throws_exception_without_modifying_the_backing_file` — verifies the contrast: file untouched, next read returns previously-set value
 
 ---
 
@@ -78,7 +81,7 @@ These strongly-typed duration wrappers have factory methods, operators (`==`, `!
 | 1. PollingInterval property | ~~Low~~ | ~~Small~~ | ~~ELIMINATED~~ |
 | 2. SignalingAwaitableMutex spec | ~~Very low~~ | ~~Minimal~~ | ~~ELIMINATED~~ |
 | 3. Delete() behavior | ~~Medium~~ | ~~Small~~ | ~~DONE~~ |
-| 4. CorruptionAction | Medium — untested error path | Medium | Medium |
+| 4. CorruptionAction | ~~Medium — untested error path~~ | ~~Medium~~ | ~~DONE~~ |
 | 5. DoubleCheckedLocking | ~~Medium~~ | ~~Medium~~ | ~~DONE~~ |
 | 6. IProcessShared matrix usage | Cosmetic — coverage is equivalent | Small | Low |
 | 7. Abandoned mutex positive | ~~Low — hard to test reliably~~ | ~~Hard~~ | ~~DONE~~ |
