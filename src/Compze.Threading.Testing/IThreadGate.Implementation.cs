@@ -57,7 +57,7 @@ public partial interface IThreadGate
 
       public IThreadGate ExecuteWithExclusiveLockWhen(Func<IThreadGate, bool> condition, Action action, WaitTimeout? timeout = null, [CallerArgumentExpression(nameof(condition))] string? conditionExpression = null!)
       {
-         using var _ = LogMethodEntryExit($"{nameof(ExecuteWithExclusiveLockWhen)}: condition: '{conditionExpression}'");
+         LogMethodEntry($"{nameof(ExecuteWithExclusiveLockWhen)}: condition: '{conditionExpression}'");
          try
          {
             using(_monitor.TakeUpdateLockWhen(() => condition(this), timeout))
@@ -67,6 +67,7 @@ public partial interface IThreadGate
          }
          catch(AwaitingConditionTimeoutException parentException)
          {
+            LogMethodExit($"{nameof(ExecuteWithExclusiveLockWhen)}: condition: '{conditionExpression}' Exception: {nameof(AwaitingConditionTimeoutException)}");
             throw new AwaitingConditionTimeoutException(parentException,
                                                         $"""
 
@@ -74,6 +75,7 @@ public partial interface IThreadGate
                                                          {this}
                                                          """);
          }
+         LogMethodExit($"{nameof(ExecuteWithExclusiveLockWhen)}: condition: '{conditionExpression}'");
 
          return this;
       }
