@@ -57,7 +57,7 @@ public partial interface IMutex
 
       public ILock TakeLock(LockTimeout? timeout = null) => TryTakeLock(timeout) ?? throw RegisterTimeoutException();
 
-      static readonly TimeSpan InterruptPollingInterval = TimeSpan.FromMilliseconds(50);
+      static readonly TimeSpan InterruptPollingInterval = TimeSpan.FromSeconds(1);
 
       public ILock? TryTakeLock(LockTimeout? timeout = null)
       {
@@ -72,10 +72,8 @@ public partial interface IMutex
                Interlocked.Increment(ref _contentionCount);
                try
                {
-                  // Poll with short timeouts so the thread periodically returns to managed code,
-                  // allowing a pending Thread.Interrupt to fire as ThreadInterruptedException.
-                  // Without this, Mutex.WaitOne on Linux enters an unmanaged wait that is not
-                  // interruptible, causing Thread.Interrupt to have no effect until the mutex is released.
+                  // Poll so the thread periodically returns to managed code, allowing a pending Thread.Interrupt to fire as ThreadInterruptedException.
+                  // Without this, Mutex.WaitOne on Linux enters an unmanaged wait that is not interruptible, causing Thread.Interrupt to have no effect until the mutex is released.
                   var deadline = DateTime.UtcNow + effectiveTimeout.ToTimeSpan();
                   while(true)
                   {
