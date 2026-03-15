@@ -13,7 +13,7 @@ Create an object shared between processes in a single line of code. Fully atomic
 
 | Package | Description |
 |---------|-------------|
-| [Compze.InterprocessObject.MemoryPack](https://www.nuget.org/packages/Compze.InterprocessObject.MemoryPack) | MemoryPack serializer plugin |
+| [Compze.InterprocessObject.MemoryPack](https://www.nuget.org/packages/Compze.InterprocessObject.MemoryPack) | MemoryPack serializer support |
 
 ## License
 
