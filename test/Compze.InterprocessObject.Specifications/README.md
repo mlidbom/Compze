@@ -1,0 +1,3 @@
+> NOTE: Most of the testing of InterprocessObject comes from the test matrices for IAwaitableCriticalSection in Compze.Threading.Specifications
+
+This project contains only the tests specific to IterProcessObject that do not apply to all IAwaitableCriticalSection implementations.

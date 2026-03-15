@@ -9,7 +9,8 @@ using Compze.xUnitBDD;
 
 namespace Compze.InterprocessObject.Specifications;
 
-public class MachineWideSharedObjectTests : UniversalTestBase
+// NOTE: Most of the testing comes from the test matrices for <see cref="IAwaitableCriticalSection"/> in Compze.Threading.Specifications
+public class InterprocessObjectTests : UniversalTestBase
 {
    static readonly DirectoryInfo TestDirectory = new DirectoryInfo(Path.Combine(Path.GetTempPath(), "Compze", "Tests", "SharedObjects"))._mutate(it => it.Create());
    readonly List<IInterprocessObject<SharedObject>> _created = [];
