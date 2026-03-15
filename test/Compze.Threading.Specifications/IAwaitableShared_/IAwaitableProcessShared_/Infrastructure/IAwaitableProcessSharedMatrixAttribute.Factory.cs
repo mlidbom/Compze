@@ -12,7 +12,7 @@ partial class IAwaitableProcessSharedMatrixAttribute
 {
    public class Factory<TTest> : IDisposable
    {
-      static readonly DirectoryInfo TestDirectory = new DirectoryInfo(Path.Combine(Path.GetTempPath(), "Compze", "Tests", "SharedObjects"))._mutate(it => it.Create());
+      static DirectoryInfo TestDirectory => new DirectoryInfo(Path.Combine(Path.GetTempPath(), "Compze", "Tests", "SharedObjects"))._mutate(it => it.Create());
       readonly List<IDisposable> _disposables = [];
       readonly List<IInterprocessObject<SharedTestValue>> _interprocessObjects = [];
 
