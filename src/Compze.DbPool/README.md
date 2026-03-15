@@ -1,6 +1,6 @@
 # Compze.DbPool
 
-Empty databases on demand for integration testing etc. Supports SQL Server, MySql, PostgreSQL and SQLite
+Empty databases on demand for integration testing etc. Supports SQL Server, MySql, PostgreSQL and SQLite (Disk and memory mode)
 
 ## What's in this package?
 
