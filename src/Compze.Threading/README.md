@@ -83,11 +83,21 @@ class WorkTracker
     readonly IAwaitableThreadShared<MyState> _state = IAwaitableThreadShared.WithDefaultTimeouts(new MyState());
     // or: IAwaitableThreadShared.New(new MyState(), LockTimeout.Seconds(5), WaitTimeout.Seconds(30));
 
-    public int GetValue() => _state.Read(state => state.Value);                                  // read lock
-    public void SetValue(int value) => _state.Update(state => state.Value = value);              // update lock + pulse waiters
-    public int AwaitReady() => _state.ReadWhen(state => state.IsReady, state => state.Value);    // wait for condition, then read
-    public void ProcessWhenReady() => _state.UpdateWhen(state => state.HasWork, state => state.Process()); // wait, then update
-    public void AwaitDone() => _state.Await(state => state.IsDone);                              // block until condition is true
+    // Read under lock. Does NOT wake waiting threads.
+    public int GetValue() => _state.Read(state => state.Value);
+
+    // Update under lock and notify all waiting threads to re-evaluate their conditions
+    public void SetValue(int value) => _state.Update(state => state.Value = value);  
+    
+
+    // Wait for condition to become true, then read while still holding the lock used for checking the condition
+    public int AwaitReady() => _state.ReadWhen(state => state.IsReady, state => state.Value);
+
+    // Wait for condition to become true, then update while still holding the lock used for checking the condition, then notify all waiting threads about the update before releasing the lock.
+    public void ProcessWhenReady() => _state.UpdateWhen(state => state.HasWork, state => state.Process()); 
+
+    // Wait for condition to become true
+    public void AwaitDone() => _state.Await(state => state.IsDone);
 }
 ```
 
@@ -118,7 +128,44 @@ class MyAwaitableThreadSafe
 }
 ```
 
-#### Advanced/rare/risky usages:
+#### Lock the entire method body with a using statement. For very hot path code, where even a lambda allocation might be worth caring about.
+```csharp
+class MyThreadSafe
+{
+    IMonitor _monitor = IMonitor.New();
+    
+    public void DoStuff()
+    {
+        using var lock = _monitor.TakeLock();
+        //implementation here
+    };
+}
+
+class MyAwaitableThreadSafe
+{
+    IAwaitableMonitor _monitor = IAwaitableMonitor.New();
+
+    public AType ReadAType()
+    {
+        using var lock = _monitor.TakeReadLock();
+        return _aField;
+    }
+
+    public void UpdateSomething(AType value)
+    {
+        using var lock = _monitor.TakeUpdateLock();
+        _aField = value;
+    }
+    public AType AwaitValue()
+    {
+        using var lock = _monitor.TakeReadLockWhen(() => _aField != null);
+        return _aField;
+    }
+}
+```
+> **💡 Take*Lock operations are zero allocation, the disposables returned are reused**
+
+#### Lock only in chosen sections of code:  Advanced/rare/risky usage:
 
 ```csharp
 class RiskyExample
@@ -127,23 +174,23 @@ class RiskyExample
 
     public void ReadSomething()
     {
-        ...
+        //Unsynchronized code
         using(_monitor.TakeReadLock()) { /* read */ }
-        ...
+        //Unsynchronized code
     }
 
     public void UpdateSomething()
     {
-        ...
+        //Unsynchronized code
         using(_monitor.TakeUpdateLock()) { /* update, notifies waiters */ }
-        ...
+        //Unsynchronized code
     }
 
     public void WaitThenRead()
     {
-        ...
+        //Unsynchronized code
         using(_monitor.TakeReadLockWhen(() => ready)) { /* waits for condition, then reads */ }
-        ...
+        //Unsynchronized code
     }
 }
 ```
