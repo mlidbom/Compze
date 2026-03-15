@@ -83,7 +83,7 @@ Tested via: `[IAwaitableCriticalSectionMatrix]` attribute — all existing `IAwa
 - The user condition only runs when an update lock was released somewhere — never on a blind timer
 
 ### Two-tier polling
-- **Fast counter poll** (default 1ms): reads the MMF counter — nanosecond memory read, detects normal update lock releases
+- **Fast counter poll** (1ms): essentially free. Reads the MMF counter — nanosecond memory read, detects normal update lock releases
 - **Safety probe** (50ms): if the counter hasn't changed for 50ms, probes the mutex with a zero-timeout `TakeLock`:
   - **Abandoned mutex**: `AbandonedMutexException` fires → wrapped `onAbandonedMutex` callback increments the counter → next 1ms poll sees the change → outer loop acquires mutex and evaluates the condition
   - **Mutex available (not abandoned)**: acquired and immediately released, no condition check, back to counter polling
@@ -96,9 +96,8 @@ Tested via: `[IAwaitableCriticalSectionMatrix]` attribute — all existing `IAwa
 - The counter change wakes the fast-polling loop, which then runs the normal condition-check path
 
 ### Design decisions
-- Separate from `IPollingAwaitableMutex` (exploratory — not replacing the proven polling version yet)
 - Added `SignalingMutex` to `AwaitableCriticalSectionImplementation` enum — all `[IAwaitableCriticalSectionMatrix]` tests automatically cover it
-- Default counter polling interval is 1ms (vs 50ms for polling mutex) since the counter read is a nanosecond memory read
+- Counter polling interval is 1ms, since the counter read is a nanosecond memory read
 
 ## User condition only runs on updates
 

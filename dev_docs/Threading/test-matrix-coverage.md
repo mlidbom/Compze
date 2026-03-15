@@ -20,16 +20,16 @@ ILockInfo
     └── IAwaitableMutex               (cross-process, Global/Local, signaling-based)
 ```
 
-**Note:** `ICriticalSection` and `IAwaitableCriticalSection` are **parallel branches** under `ILockInfo`, not a parent-child relationship. The awaitable mutex types do NOT implement `ICriticalSection`.
+**Note:** `ICriticalSection` and `IAwaitableCriticalSection` are **parallel branches** under `ILockInfo`, not a parent-child relationship. The awaitable types do NOT implement `ICriticalSection`.
 
 ### Shared State
 
 ```
-IShared<T>  ← wraps ICriticalSection
+IShared<T>  ← wraps a T synchronized by an ICriticalSection
 ├── IThreadShared<T>                  ← wraps IMonitor
 ├── IProcessShared<T>                 ← wraps IMutex  (Global/Local)
 
-IAwaitableShared<T>  ← wraps IAwaitableCriticalSection
+IAwaitableShared<T>  ← wraps a T synchronized by an IAwaitableCriticalSection
 ├── IAwaitableThreadShared<T>         ← wraps IAwaitableMonitor
 ├── IAwaitableProcessShared<T>        ← wraps IAwaitableMutex  (Global/Local)
 │   └── IInterprocessObject<T>        ← wraps IAwaitableMutex + MMF  (Global/Local)
