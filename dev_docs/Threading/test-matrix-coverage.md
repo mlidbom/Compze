@@ -157,9 +157,9 @@ All IAwaitableCriticalSection implementations are now in the matrix: Monitor, Gl
 
 `IAwaitableThreadShared_specification` tests the `IAwaitableThreadShared`-specific concern: the `Monitor` property.
 
-### Gap 7: IProcessShared — Global/Local not matrix-tested
+### ~~Gap 7: IProcessShared — Global/Local not matrix-tested~~ RESOLVED
 
-**Partially resolved.** The `[IProcessSharedMatrix]` attribute exists in `test/Compze.Threading.Specifications/IShared_/IProcessShared_/Infrastructure/`, but `IProcessShared_specification` (in `IAwaitableShared_/IAwaitableProcessShared_/`) still uses `[XF]` with manually duplicated `Global` and `Local` nested classes instead of the matrix attribute. Coverage is equivalent (both scopes tested), but the matrix isn't being used.
+Duplicate `Locked` tests removed (covered by `IShared_specification`). Remaining tests assert scope-specific values (`Mutex.IsGlobal`, `Mutex.Name` prefix) — manual Global/Local classes are the correct structure. Unused `[IProcessSharedMatrix]` attribute deleted.
 
 ---
 
@@ -181,7 +181,7 @@ All IAwaitableCriticalSection implementations are now in the matrix: Monitor, Gl
 
 All planned matrix attributes have been implemented:
 - `[ISharedMatrix]` — Monitor, GlobalMutex, LocalMutex
-- `[IProcessSharedMatrix]` — GlobalMutex, LocalMutex
+- ~~`[IProcessSharedMatrix]` — GlobalMutex, LocalMutex~~ (removed — tests are scope-specific, matrix not appropriate)
 - `[IAwaitableSharedMatrix]` — Monitor, GlobalMutex, LocalMutex, GlobalInterprocessObject, LocalInterprocessObject
 - `[IAwaitableProcessSharedMatrix]` — GlobalMutex, LocalMutex, GlobalInterprocessObject, LocalInterprocessObject
 
@@ -193,7 +193,7 @@ All factories use the real user-facing factory methods (`IThreadShared.New()`, `
 |---|---|---|---|
 | `IShared_specification` | `IShared<T>` | `[ISharedMatrix]` | ✅ Done — Locked, CriticalSection property, mutual exclusion |
 | `IThreadShared_specification` | `IThreadShared<T>` | `[XF]` | ✅ Done — Monitor property |
-| `IProcessShared_specification` | `IProcessShared<T>` | `[IProcessSharedMatrix]` | ✅ Exists — Mutex property, IDisposable. Full IShared contract covered by IShared_specification |
+| `IProcessShared_specification` | `IProcessShared<T>` | `[XF]` Global/Local | ✅ Done — Mutex property (scope-specific assertions). IShared contract covered by IShared_specification |
 | `IAwaitableShared_specification` | `IAwaitableShared<T>` | `[IAwaitableSharedMatrix]` | ✅ Done — Read, Update, mutual exclusion, ReadWhen, UpdateWhen, TryUpdateWhen, Await, CriticalSection property |
 | `IAwaitableProcessShared_specification` | `IAwaitableProcessShared<T>` | `[IAwaitableProcessSharedMatrix]` | ✅ Done — Mutex property (IsGlobal, Name, LockTimeout, WaitTimeout), IDisposable. IAwaitableShared contract covered by IAwaitableShared_specification |
 
@@ -209,7 +209,7 @@ All factories use the real user-facing factory methods (`IThreadShared.New()`, `
 | `[IAwaitableCriticalSectionMatrix]` | `IAwaitableCriticalSectionMatrixAttribute.Implementation` | Monitor, GlobalMutex, LocalMutex | 3 | IAwaitableCriticalSection |
 | ~~`[InterprocessObjectMatrix]`~~ | ~~`InterprocessObjectBackingStore`~~ | ~~Removed~~ | ~~—~~ | ~~IInterprocessObject~~ |
 | `[ISharedMatrix]` | `ISharedMatrixAttribute.Implementation` | Monitor, GlobalMutex, LocalMutex | 3 | IShared\<T\> |
-| `[IProcessSharedMatrix]` | `IProcessSharedMatrixAttribute.Implementation` | GlobalMutex, LocalMutex | 2 | IProcessShared\<T\> |
+| ~~`[IProcessSharedMatrix]`~~ | ~~`IProcessSharedMatrixAttribute.Implementation`~~ | ~~Removed~~ | ~~—~~ | ~~IProcessShared\<T\>~~ |
 | `[IAwaitableSharedMatrix]` | `IAwaitableSharedMatrixAttribute.Implementation` | Monitor, GlobalMutex, LocalMutex, GlobalInterprocessObject, LocalInterprocessObject | 5 | IAwaitableShared\<T\> |
 | `[IAwaitableProcessSharedMatrix]` | `IAwaitableProcessSharedMatrixAttribute.Implementation` | GlobalMutex, LocalMutex, GlobalInterprocessObject, LocalInterprocessObject | 4 | IAwaitableProcessShared\<T\> |
 
@@ -225,7 +225,7 @@ All planned matrix attributes have been implemented. None remaining.
 | `IAwaitableCriticalSection` | ✅ `IAwaitableCriticalSection_specification` | **Complete** |
 | `IShared<T>` | ✅ `IShared_specification` | **Complete** — `[ISharedMatrix]` covers Monitor, GlobalMutex, LocalMutex |
 | `IThreadShared<T>` | ✅ `IThreadShared_specification` | **Complete** — tests Monitor property (IShared contract covered by IShared_specification) |
-| `IProcessShared<T>` | ✅ `IProcessShared_specification` | **Partial** — `[IProcessSharedMatrix]` covers Mutex property + IDisposable. IShared contract covered by IShared_specification |
+| `IProcessShared<T>` | ✅ `IProcessShared_specification` | **Complete** — `[XF]` Global/Local tests Mutex property (scope-specific). IShared contract covered by IShared_specification |
 | `IAwaitableShared<T>` | ✅ `IAwaitableShared_specification` | **Complete** — `[IAwaitableSharedMatrix]` covers all 5 variants (Monitor + 2 AwaitableMutex + 2 InterprocessObject) |
 | `IAwaitableThreadShared<T>` | ✅ `IAwaitableThreadShared_specification` | **Complete** — tests Monitor property (IAwaitableShared contract covered by IAwaitableShared_specification) |
 | `IAwaitableProcessShared<T>` | ✅ `IAwaitableProcessShared_specification` | **Complete** — `[IAwaitableProcessSharedMatrix]` covers all 4 variants (2 AwaitableMutex + 2 InterprocessObject). IAwaitableShared contract covered by IAwaitableShared_specification |

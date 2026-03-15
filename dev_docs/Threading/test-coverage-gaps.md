@@ -41,9 +41,9 @@ Tests added in `DoubleCheckedLocking_specification` covering both `ICriticalSect
 
 ---
 
-## Gap 6: `IProcessShared_specification` uses `[XF]` with manual nested classes, not `[IProcessSharedMatrix]`
+## ~~Gap 6: `IProcessShared_specification` uses `[XF]` with manual nested classes~~ RESOLVED
 
-The `test-matrix-coverage.md` doc says `IProcessShared_specification` uses `[IProcessSharedMatrix]`, but the actual code uses `[XF]` with manually duplicated `Global` and `Local` nested classes. The coverage is equivalent (both scopes tested), but it doesn't use the matrix attribute that was specifically created for this purpose.
+Duplicate `Locked` tests removed (covered by `IShared_specification` via `[ISharedMatrix]`). Remaining `Mutex.*` tests are inherently scope-specific (asserting different values per scope), so manual Global/Local classes are correct. Unused `[IProcessSharedMatrix]` attribute deleted.
 
 ---
 

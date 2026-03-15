@@ -5,7 +5,7 @@ using Compze.Threading.Specifications.TestInfrastructure;
 using Compze.xUnitBDD;
 using Xunit;
 
-namespace Compze.Threading.Specifications.IAwaitableShared_.IAwaitableProcessShared_;
+namespace Compze.Threading.Specifications.IShared_.IProcessShared_;
 
 [Collection(nameof(NonParallelCollection))]
 public class IProcessShared_specification : UniversalTestBase
