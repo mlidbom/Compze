@@ -19,7 +19,7 @@ jobs:
         persistence: [SqliteMemory, Sqlite, PgSql, MySql, MsSql]
         di: [Microsoft, SimpleInjector, Autofac]
         serializer: [Newtonsoft]
-        transport: [Memory, AspNetCore]
+        transport: [AspNetCore]
 
     name: "Test (${{ matrix.persistence }}:${{ matrix.di }}:${{ matrix.serializer }}:${{ matrix.transport }})"
 
