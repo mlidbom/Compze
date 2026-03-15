@@ -40,7 +40,7 @@ public partial interface IAwaitableMonitor
       readonly LockDisposer _readLock;
       readonly LockDisposer _updateLock;
 
-      static readonly WaitTimeout DefaultTimeToWaitForStackTrace = WaitTimeout.Seconds(1);
+      static readonly WaitTimeout DefaultTimeToWaitForStackTrace = WaitTimeout.Seconds(10);
 
       WaitTimeout _stackTraceFetchTimeout;
 

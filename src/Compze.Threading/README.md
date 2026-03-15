@@ -7,8 +7,8 @@ Pit of success threading primitives. Impossible to forget to lock. Automatically
 With the tools built into the BCL:
 
 - Nothing stops you from accessing shared state without locking. 
-- Forget once and you have an intermittent bug is often incredibly hard to diagnose.
-- Deadlocks hang forever bringing production software to a grinding permantent halt.
+- Forget once and you have an intermittent bug apt to be very hard to diagnose.
+- Deadlocks hang forever bringing production software to a permantent halt.
 
 Usage requires constant vigilance. Getting it disastrously wrong is all too easy.
 
@@ -16,9 +16,9 @@ Usage requires constant vigilance. Getting it disastrously wrong is all too easy
 
 ### Automatic Deadlock Resolution with Dual Stack Traces
 
-Every lock acquisition in all the abstractions shown below use a timeout internally. When deadlocks occur the timeout elapses and we capture **both stack traces** in the exception thrown: the thread that was blocked and the thread that was blocking it. No more guessing which thread held the lock. 
+Every lock acquisition in all the abstractions shown below use a LockTimeout internally when acquiring locks (default 2 minutes). When deadlocks occur the timeout elapses and we capture **both stack traces** in the exception thrown: the thread that was blocked and the thread that was blocking it. No more guessing which thread held the lock. 
 
-> 💡 If the "winning" thread does not promptly release the lock after the deadlock is resolved its stacktrace will not occur in the exception, but both stack traces will be logged when it does release so the full diagnostic information you need will be there in the logs.
+> 💡 If the "winning" thread does not promptly (within 10 seconds) release the lock after the deadlock is resolved its stacktrace will not occur in the exception.
 
 ### `IThreadShared<T>` Make Forgetting to Lock Impossible.
 

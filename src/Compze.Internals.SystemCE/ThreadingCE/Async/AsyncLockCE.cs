@@ -26,7 +26,7 @@ public interface IAsyncLockCE : IDisposable
       readonly LockTimeout _timeout;
       readonly Lock _timeoutLock = new();
 
-      static readonly WaitTimeout DefaultTimeToWaitForStackTrace = WaitTimeout.Seconds(1);
+      static readonly WaitTimeout DefaultTimeToWaitForStackTrace = WaitTimeout.Seconds(10);
 
       WaitTimeout _stackTraceFetchTimeout;
       IReadOnlyList<AsyncLockTimeoutException> _timeOutExceptionsOnOtherThreads = new List<AsyncLockTimeoutException>();
