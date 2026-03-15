@@ -40,7 +40,10 @@ public partial interface IThreadGate : IThreadGateVisitor
    IThreadGate SetPostPassThroughAction(Action<ThreadSnapshot> action);
 
    ///<summary>Blocks until the gate is in a state which satisfies <paramref name="condition"/> then executes <paramref name="action"/>. Throws <exception cref="AwaitingConditionTimeoutException" /> if <paramref name="timeout"/> expires before <paramref name="condition"/> becomes true.</summary>
-   IThreadGate ExecuteWithExclusiveLockWhen(Func<IThreadGate, bool> condition, Action action, WaitTimeout? timeout = null, [CallerArgumentExpression(nameof(condition))] string? conditionExpression = null!);
+   IThreadGate ExecuteWithExclusiveLockWhen(Func<IThreadGate, bool> condition, Action action, WaitTimeout? timeout = null, [CallerArgumentExpression(nameof(condition))] string? conditionExpression = null!) => ExecuteWithExclusiveLockWhen(condition, action.ToFunc(), timeout, conditionExpression).__(this);
+
+   ///<summary>Blocks until the gate is in a state which satisfies <paramref name="condition"/> then executes <paramref name="func"/>. Throws <exception cref="AwaitingConditionTimeoutException" /> if <paramref name="timeout"/> expires before <paramref name="condition"/> becomes true.</summary>
+   TResult ExecuteWithExclusiveLockWhen<TResult>(Func<IThreadGate, bool> condition, Func<TResult> func, WaitTimeout? timeout = null, [CallerArgumentExpression(nameof(condition))] string? conditionExpression = null!);
 
    ///<summary>Blocks until the gate is in a state which satisfies <paramref name="condition"/> or <paramref name="timeout"/> expires. Returns false if <paramref name="timeout"/> expires, else true.</summary>
    bool TryAwait(Func<IThreadGate, bool> condition, WaitTimeout? timeout = null, [CallerArgumentExpression(nameof(condition))] string? conditionExpression = null!);
