@@ -34,6 +34,9 @@
     <Project Path="Compze.InterprocessObject.MemoryPack/Compze.InterprocessObject.MemoryPack.csproj" />
     <Project Path="Compze.InterprocessObject/Compze.InterprocessObject.csproj" />
   </Folder>
+  <Folder Name="/Utilities/Compze.InterprocessObject/Specifications/">
+    <Project Path="../test/Compze.InterprocessObject.Specifications/Compze.InterprocessObject.Specifications.csproj" />
+  </Folder>
   <Folder Name="/Utilities/Compze.Must/">
     <Project Path="Compze.Must/Compze.Must.csproj" />
   </Folder>
@@ -191,5 +194,6 @@
   <Project Path="../DevScripts/Scripts.csproj" />
   <Project Path="Compze.Internals.Transport/Compze.Internals.Transport.csproj" />
   <Project Path="Compze.Internals.Transport.AspNet/Compze.Internals.Transport.AspNet.csproj" />
+
   <Project Path="Compze.Hosting/Compze.Hosting.csproj" />
 </Solution>

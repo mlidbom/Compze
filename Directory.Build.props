@@ -70,12 +70,8 @@
     <UsePackageReference_Compze_Internals_Sql_Sqlite Condition="'$(UsePackageReference_Compze_Internals_Sql_Sqlite)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Internals.Sql.Sqlite.csproj|'))">true</UsePackageReference_Compze_Internals_Sql_Sqlite>
     <!-- Compze.Internals.SystemCE -->
     <UsePackageReference_Compze_Internals_SystemCE Condition="'$(UsePackageReference_Compze_Internals_SystemCE)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Internals.SystemCE.csproj|'))">true</UsePackageReference_Compze_Internals_SystemCE>
-    <!-- Compze.Internals.SystemCE.Core -->
-    <UsePackageReference_Compze_Internals_SystemCE_Core Condition="'$(UsePackageReference_Compze_Internals_SystemCE_Core)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Internals.SystemCE.Core.csproj|'))">true</UsePackageReference_Compze_Internals_SystemCE_Core>
     <!-- Compze.Internals.Testing -->
     <UsePackageReference_Compze_Internals_Testing Condition="'$(UsePackageReference_Compze_Internals_Testing)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Internals.Testing.csproj|'))">true</UsePackageReference_Compze_Internals_Testing>
-    <!-- Compze.Internals.Threading -->
-    <UsePackageReference_Compze_Internals_Threading Condition="'$(UsePackageReference_Compze_Internals_Threading)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Internals.Threading.csproj|'))">true</UsePackageReference_Compze_Internals_Threading>
     <!-- Compze.Internals.Transport -->
     <UsePackageReference_Compze_Internals_Transport Condition="'$(UsePackageReference_Compze_Internals_Transport)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Internals.Transport.csproj|'))">true</UsePackageReference_Compze_Internals_Transport>
     <!-- Compze.Internals.Transport.AspNet -->

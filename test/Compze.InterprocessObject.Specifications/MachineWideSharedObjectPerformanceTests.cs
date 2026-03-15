@@ -1,11 +1,10 @@
-using Compze.InterprocessObject;
 using Compze.Internals.Testing.Performance;
 using Compze.Tests.Infrastructure;
 using Compze.xUnitBDD;
 
-namespace Compze.DbPool.Tests.MachineWideState;
+namespace Compze.InterprocessObject.Specifications;
 
-public class MachineWideSharedObjectPerformanceTests : UniversalTestBase
+public class PerformanceSpecifications : UniversalTestBase
 {
    static readonly DirectoryInfo TestDirectory = new DirectoryInfo(Path.Combine(Path.GetTempPath(), "Compze", "Tests", "SharedObjects"))._mutate(it => it.Create());
 

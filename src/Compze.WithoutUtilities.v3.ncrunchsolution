@@ -19,9 +19,7 @@
       <Value>UsePackageReference_Compze_Internals_Logging = true</Value>
       <Value>UsePackageReference_Compze_Internals_Logging_Serilog = true</Value>
       <Value>UsePackageReference_Compze_Internals_SystemCE = true</Value>
-      <Value>UsePackageReference_Compze_Internals_SystemCE_Core = true</Value>
       <Value>UsePackageReference_Compze_Internals_Testing = true</Value>
-      <Value>UsePackageReference_Compze_Internals_Threading = true</Value>
       <Value>UsePackageReference_Compze_Internals_Transport = true</Value>
       <Value>UsePackageReference_Compze_Internals_Transport_AspNet = true</Value>
       <Value>UsePackageReference_Compze_InterprocessObject = true</Value>

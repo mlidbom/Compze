@@ -47,13 +47,6 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_DbPool_Sqlite)' != 'true'">
     <ProjectReference Include="..\..\src\Compze.DbPool.Sqlite\Compze.DbPool.Sqlite.csproj" />
   </ItemGroup>
-  <!-- Compze.InterprocessObject — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_InterprocessObject)' == 'true'">
-    <PackageReference Include="Compze.InterprocessObject" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_InterprocessObject)' != 'true'">
-    <ProjectReference Include="..\..\src\Compze.InterprocessObject\Compze.InterprocessObject.csproj" />
-  </ItemGroup>
   <!-- Compze.Tests.Infrastructure — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Tests_Infrastructure)' == 'true'">
     <PackageReference Include="Compze.Tests.Infrastructure" Version="*-*" />

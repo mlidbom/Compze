@@ -1,0 +1,43 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="xunit.v3" Version="3.1.0" />
+  </ItemGroup>
+  <!-- Compze.InterprocessObject — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_InterprocessObject)' == 'true'">
+    <PackageReference Include="Compze.InterprocessObject" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_InterprocessObject)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.InterprocessObject\Compze.InterprocessObject.csproj" />
+  </ItemGroup>
+  <!-- Compze.Tests.Infrastructure — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Tests_Infrastructure)' == 'true'">
+    <PackageReference Include="Compze.Tests.Infrastructure" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Tests_Infrastructure)' != 'true'">
+    <ProjectReference Include="..\Compze.Tests.Infrastructure\Compze.Tests.Infrastructure.csproj" />
+  </ItemGroup>
+  <!-- Compze.Threading.Testing — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Threading_Testing)' == 'true'">
+    <PackageReference Include="Compze.Threading.Testing" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Threading_Testing)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.Threading.Testing\Compze.Threading.Testing.csproj" />
+  </ItemGroup>
+  <!-- Compze.xUnitBDD — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_xUnitBDD)' == 'true'">
+    <PackageReference Include="Compze.xUnitBDD" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_xUnitBDD)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.xUnitBDD\Compze.xUnitBDD.csproj" />
+  </ItemGroup>
+</Project>
