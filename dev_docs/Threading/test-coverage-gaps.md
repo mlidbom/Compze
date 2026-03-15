@@ -4,9 +4,9 @@ Review of the full public API surface against existing test files. Matrix covera
 
 ---
 
-## Gap 1: `IMutex` — Local scope cross-instance synchronization untested
+## ~~Gap 1: `IMutex` — Local scope cross-instance synchronization untested~~ RESOLVED
 
-`Two_IMutex_instances_with_the_same_Global_name.synchronize_with_each_other` exists for Global. No equivalent test for Local scope — verifying that two `IMutex.Local()` instances with the same name synchronize within the same session.
+Added `Two_IMutex_instances_with_the_same_Local_name.synchronize_with_each_other` in `MutexCE_specification`.
 
 ---
 
