@@ -15,17 +15,31 @@ public sealed class AutofacDependencyInjectionContainer(IComponentRegistrar? reg
 
    readonly AsyncLocal<ILifetimeScope?> _currentScope = new();
 
+   readonly RunOnce _registerScopedKernel = new();
+
    protected override IDependencyInjectionContainer RegisterInContainer(ComponentRegistration[] registrations)
    {
+      _registerScopedKernel.RunIfFirstCall(() =>
+         _containerBuilder.Register(ctx =>
+         {
+            var scope = ctx.Resolve<ILifetimeScope>();
+            return new ScopedKernel(this, scope.Resolve);
+         }).InstancePerLifetimeScope());
+
       foreach(var registration in registrations)
       {
          if(registration.InstantiationSpec.SingletonInstance is {} instance)
          {
             registration.ServiceTypes.ForEach(serviceType =>
                _containerBuilder.RegisterInstance(instance).As(serviceType).ExternallyOwned());
+         } else if(registration.Lifestyle == Lifestyle.Singleton)
+         {
+            _containerBuilder.Register(_ => registration.InstantiationSpec.RunFactoryMethod(this))
+                             .As(registration.ServiceTypes.ToArray())
+                             .WithCompzeLifestyle(registration.Lifestyle);
          } else
          {
-            _containerBuilder.Register(ctx => registration.InstantiationSpec.RunFactoryMethod(CreateScopedKernel(ctx.Resolve)))
+            _containerBuilder.Register(ctx => registration.InstantiationSpec.RunFactoryMethod(ctx.Resolve<ScopedKernel>()))
                              .As(registration.ServiceTypes.ToArray())
                              .WithCompzeLifestyle(registration.Lifestyle);
          }
@@ -100,7 +114,7 @@ public sealed class AutofacDependencyInjectionContainer(IComponentRegistrar? reg
    IServiceLocatorScope IServiceLocator.BeginScope()
    {
       var lifetimeScope = CurrentScope().BeginLifetimeScope();
-      var scopedKernel = CreateScopedKernel(type => lifetimeScope.Resolve(type));
+      var scopedKernel = lifetimeScope.Resolve<ScopedKernel>();
       return new ServiceLocatorScope(this, scopedKernel, lifetimeScope);
    }
 

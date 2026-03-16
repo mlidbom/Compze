@@ -90,10 +90,7 @@ public abstract class DependencyInjectionContainerBase : IDependencyInjectionCon
       return false;
    }
 
-   protected IServiceLocatorKernel CreateScopedKernel(Func<Type, object> nativeScopedResolver) =>
-      new ScopedKernel(this, nativeScopedResolver);
-
-   sealed class ScopedKernel(DependencyInjectionContainerBase container, Func<Type, object> nativeScopedResolver) : IServiceLocatorKernel
+   protected sealed class ScopedKernel(DependencyInjectionContainerBase container, Func<Type, object> nativeScopedResolver) : IServiceLocatorKernel
    {
       readonly DependencyInjectionContainerBase _container = container;
       readonly Func<Type, object> _nativeScopedResolver = nativeScopedResolver;

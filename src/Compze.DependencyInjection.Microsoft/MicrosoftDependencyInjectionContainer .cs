@@ -4,6 +4,7 @@ using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE;
 using Compze.Internals.SystemCE.LinqCE;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
+using Compze.Threading;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Compze.DependencyInjection.Microsoft;
@@ -19,8 +20,13 @@ public sealed class MicrosoftDependencyInjectionContainer(IComponentRegistrar? r
    protected override DependencyInjectionContainerBase CreateEmptyClone() =>
       new MicrosoftDependencyInjectionContainer(Register().Clone());
 
+   readonly RunOnce _registerScopedKernel = new();
+
    protected override IDependencyInjectionContainer RegisterInContainer(ComponentRegistration[] registrations)
    {
+      _registerScopedKernel.RunIfFirstCall(() =>
+         _services.AddScoped<ScopedKernel>(sp => new ScopedKernel(this, sp.GetRequiredService)));
+
       foreach(var registration in registrations)
       {
          var lifetime = registration.Lifestyle.AsServiceLifetime();
@@ -31,9 +37,13 @@ public sealed class MicrosoftDependencyInjectionContainer(IComponentRegistrar? r
          } else
          {
             var firstServiceType = registration.ServiceTypes.First();
-            var primaryDescriptor = new ServiceDescriptor(firstServiceType,
-                                                          serviceProvider => registration.InstantiationSpec.RunFactoryMethod(CreateScopedKernel(serviceProvider.GetRequiredService)),
-                                                          lifetime);
+            var primaryDescriptor = registration.Lifestyle == Lifestyle.Singleton
+               ? new ServiceDescriptor(firstServiceType,
+                                       _ => registration.InstantiationSpec.RunFactoryMethod(this),
+                                       lifetime)
+               : new ServiceDescriptor(firstServiceType,
+                                       sp => registration.InstantiationSpec.RunFactoryMethod(sp.GetRequiredService<ScopedKernel>()),
+                                       lifetime);
 
             _services.Add(primaryDescriptor);
 
@@ -102,7 +112,7 @@ public sealed class MicrosoftDependencyInjectionContainer(IComponentRegistrar? r
 
       var scope = _serviceProvider._assert().NotNull().CreateAsyncScope();
       _scopeStack.Value = ScopeStack.Push(scope);
-      var scopedKernel = CreateScopedKernel(scope.ServiceProvider.GetRequiredService);
+      var scopedKernel = scope.ServiceProvider.GetRequiredService<ScopedKernel>();
 
       return new ServiceLocatorScope(this, scopedKernel, scope.ServiceProvider, () =>
       {

@@ -32,20 +32,37 @@ public sealed class SimpleInjectorDependencyInjectionContainer : DependencyInjec
       };
    }
 
+   readonly RunOnce _registerScopedKernel = new();
+
    protected override IDependencyInjectionContainer RegisterInContainer(ComponentRegistration[] registrations)
    {
+      _registerScopedKernel.RunIfFirstCall(() =>
+         _container.Register<ScopedKernel>(() => new ScopedKernel(this, _container.GetInstance),
+                                           global::SimpleInjector.Lifestyle.Scoped));
+
       foreach(var registration in registrations)
       {
          if(registration.InstantiationSpec.SingletonInstance is {} instance)
          {
             registration.ServiceTypes.ForEach(it => _container.RegisterInstance(it, instance));
+         } else if(registration.Lifestyle == Abstractions.Lifestyle.Singleton)
+         {
+            var baseRegistration = global::SimpleInjector.Lifestyle.Singleton
+                                                        .CreateRegistration(
+                                                            registration.InstantiationSpec.FactoryMethodReturnType,
+                                                            () => registration.InstantiationSpec.RunFactoryMethod(this),
+                                                            _container);
+            foreach(var serviceType in registration.ServiceTypes)
+            {
+               _container.AddRegistration(serviceType, baseRegistration);
+            }
          } else
          {
             var baseRegistration = registration.Lifestyle
                                                         .AsSimpleInjectorLifestyle()
                                                         .CreateRegistration(
                                                             registration.InstantiationSpec.FactoryMethodReturnType,
-                                                            () => registration.InstantiationSpec.RunFactoryMethod(CreateScopedKernel(_container.GetInstance)),
+                                                            () => registration.InstantiationSpec.RunFactoryMethod(_container.GetInstance<ScopedKernel>()),
                                                             _container);
             foreach(var serviceType in registration.ServiceTypes)
             {
@@ -95,7 +112,7 @@ public sealed class SimpleInjectorDependencyInjectionContainer : DependencyInjec
    IServiceLocatorScope IServiceLocator.BeginScope()
    {
       var scope = AsyncScopedLifestyle.BeginScope(_container);
-      var scopedKernel = CreateScopedKernel(_container.GetInstance);
+      var scopedKernel = _container.GetInstance<ScopedKernel>();
       return new ServiceLocatorScope(this, scopedKernel, scope);
    }
 
