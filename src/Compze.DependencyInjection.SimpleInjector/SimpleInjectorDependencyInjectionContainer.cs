@@ -92,7 +92,11 @@ public sealed class SimpleInjectorDependencyInjectionContainer : DependencyInjec
       return _container.GetInstance(serviceType);
    }
 
-   IDisposable IServiceLocator.BeginScope() => AsyncScopedLifestyle.BeginScope(_container);
+   IServiceLocatorScope IServiceLocator.BeginScope()
+   {
+      var scope = AsyncScopedLifestyle.BeginScope(_container);
+      return new ServiceLocatorScope(this, scope);
+   }
 
    public override void Dispose() => _container.Dispose();
    public override async ValueTask DisposeAsync() => await _container.DisposeAsync().caf();
@@ -102,5 +106,15 @@ public sealed class SimpleInjectorDependencyInjectionContainer : DependencyInjec
       if(TryCreateTransientInstance(typeof(TComponent), this, out var transientInstance))
          return (TComponent)transientInstance;
       return _container.GetInstance<TComponent>();
+   }
+
+   sealed class ServiceLocatorScope(SimpleInjectorDependencyInjectionContainer container, Scope scope) : IServiceLocatorScope
+   {
+      readonly SimpleInjectorDependencyInjectionContainer _container = container;
+      readonly Scope _scope = scope;
+
+      public TComponent Resolve<TComponent>() where TComponent : class => _container.Resolve<TComponent>();
+      public object Resolve(Type serviceType) => _container.Resolve(serviceType);
+      public void Dispose() => _scope.Dispose();
    }
 }

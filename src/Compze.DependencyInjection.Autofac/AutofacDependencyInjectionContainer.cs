@@ -97,7 +97,11 @@ public sealed class AutofacDependencyInjectionContainer(IComponentRegistrar? reg
       return CurrentScope().Resolve<TComponent>();
    }
 
-   IDisposable IServiceLocator.BeginScope() => new ScopeDisposer(CurrentScope().BeginLifetimeScope());
+   IServiceLocatorScope IServiceLocator.BeginScope()
+   {
+      var lifetimeScope = CurrentScope().BeginLifetimeScope();
+      return new ServiceLocatorScope(this, lifetimeScope);
+   }
 
    public override void Dispose() => _container?.Dispose();
    public override async ValueTask DisposeAsync()
@@ -106,10 +110,14 @@ public sealed class AutofacDependencyInjectionContainer(IComponentRegistrar? reg
          await _container.DisposeAsync().caf();
    }
 
-   sealed class ScopeDisposer(ILifetimeScope scope) : IDisposable
+   sealed class ServiceLocatorScope(AutofacDependencyInjectionContainer container, ILifetimeScope lifetimeScope) : IServiceLocatorScope
    {
-      readonly ILifetimeScope _scope = scope;
+      readonly AutofacDependencyInjectionContainer _container = container;
+      readonly ILifetimeScope _lifetimeScope = lifetimeScope;
 
-      public void Dispose() => _scope.Dispose();
+      public TComponent Resolve<TComponent>() where TComponent : class => _container.Resolve<TComponent>();
+      public object Resolve(Type serviceType) => _container.Resolve(serviceType);
+
+      public void Dispose() => _lifetimeScope.Dispose();
    }
 }

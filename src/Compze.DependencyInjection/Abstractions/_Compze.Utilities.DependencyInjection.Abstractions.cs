@@ -37,7 +37,13 @@ public interface IServiceLocator : IDisposable, IAsyncDisposable
 {
    TComponent Resolve<TComponent>() where TComponent : class;
    object Resolve(Type serviceType);
-   IDisposable BeginScope();
+   IServiceLocatorScope BeginScope();
+}
+
+public interface IServiceLocatorScope : IDisposable
+{
+   TComponent Resolve<TComponent>() where TComponent : class;
+   object Resolve(Type serviceType);
 }
 
 public enum Lifestyle

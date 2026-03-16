@@ -96,14 +96,14 @@ public sealed class MicrosoftDependencyInjectionContainer(IComponentRegistrar? r
       return CurrentProvider().GetRequiredService<TComponent>();
    }
 
-   IDisposable IServiceLocator.BeginScope()
+   IServiceLocatorScope IServiceLocator.BeginScope()
    {
       Contract.State.NotDisposed(_isDisposed, this);
 
       var scope = _serviceProvider._assert().NotNull().CreateAsyncScope();
       _scopeStack.Value = ScopeStack.Push(scope);
 
-      return new Disposable(() =>
+      return new ServiceLocatorScope(this, () =>
       {
          var stack = ScopeStack;
          Contract.State.Assert(!stack.IsEmpty, () => "Attempt to dispose scope from a context that is not within the scope.");
@@ -149,5 +149,15 @@ public sealed class MicrosoftDependencyInjectionContainer(IComponentRegistrar? r
 
          _serviceProvider = null;
       }
+   }
+
+   sealed class ServiceLocatorScope(MicrosoftDependencyInjectionContainer container, Action onDispose) : IServiceLocatorScope
+   {
+      readonly MicrosoftDependencyInjectionContainer _container = container;
+      readonly Action _onDispose = onDispose;
+
+      public TComponent Resolve<TComponent>() where TComponent : class => _container.Resolve<TComponent>();
+      public object Resolve(Type serviceType) => _container.Resolve(serviceType);
+      public void Dispose() => _onDispose();
    }
 }
