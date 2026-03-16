@@ -16,7 +16,6 @@ partial class PgSqlTeventStoreSqlLayer(PgSqlTeventStoreConnectionManager connect
 
    static string CreateSelectClause() => InternalSelect();
 
-   //var lockHint = takeWriteLock ? "With(UPDLOCK, READCOMMITTED, ROWLOCK)" : "With(READCOMMITTED, ROWLOCK)";
    static string CreateLockHint(bool takeWriteLock) => takeWriteLock ? "FOR UPDATE" : "";
 
    static string InternalSelect(int? top = null)
@@ -81,16 +80,12 @@ partial class PgSqlTeventStoreSqlLayer(PgSqlTeventStoreConnectionManager connect
 
       if(takeWriteLock)
       {
-         //Performance: Find a way of doing this so that it does not involve two round trips to the server. If running as single-instance we can use in-memory transactional locking such as in the InMemory Sql Layer to avoid needing this.
-         //Without this hack PostgreSql does not correctly serialize access to taggregates and odds are you would get a lot of failed transactions if an taggregate is "popular"
-         //We prefer predictable performance, even if slightly slower under easy conditions, to services that suddenly virtually stop working completely due to tons of concurrency issues as an taggregate is accessed by many threads.
-         //Pages that led to the below hack: https://tinyurl.com/y7nef75p, https://tinyurl.com/y7c63cny, https://tinyurl.com/y75qlwar
-         _connectionManager.UseCommand(command => command.SetCommandText($"select {Tevent.TaggregateId} from TaggregateLock where TaggregateId = @{Tevent.TaggregateId} for update;")
+         _connectionManager.UseCommand(command => command.SetCommandText($"SELECT pg_advisory_xact_lock(hashtext(cast(@{Tevent.TaggregateId} as text)));")
                                                          .AddParameter(Tevent.TaggregateId, taggregateId.Value)
                                                          .PrepareStatement()
                                                          .ExecuteNonQuery());
 
-         //We took care of the locking on the line above. Since tevents are Append only that lock is sufficient. Suppressing the current transaction keeps PostgreSql from incorrectly detecting a collision and failing our transactions.
+         //Advisory lock serializes access. Since tevents are append-only, the lock is sufficient. Suppressing the current transaction keeps PostgreSql from incorrectly detecting a collision and failing our transactions.
          using var ignore = new TransactionScope(TransactionScopeOption.Suppress);
          return GetHistory();
       } else

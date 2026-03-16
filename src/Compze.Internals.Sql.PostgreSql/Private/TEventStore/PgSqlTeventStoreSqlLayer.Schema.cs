@@ -1,5 +1,4 @@
 using Tevent = Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.TeventTableSchemaStrings;
-using Lock = Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.TaggregateLockTableSchemaStrings;
 
 namespace Compze.Internals.Sql.PostgreSql.Private.TEventStore;
 
@@ -44,13 +43,6 @@ partial class PgSqlTeventStoreSqlLayer
            CREATE INDEX IF NOT EXISTS IX_{Tevent.TableName}_{Tevent.ReadOrder} ON {Tevent.TableName} 
                    ({Tevent.ReadOrder} , {Tevent.EffectiveVersion} );
                    /*INCLUDE ({Tevent.TeventType}, {Tevent.InsertionOrder})*/
-
-
-           CREATE TABLE IF NOT EXISTS {Lock.TableName}
-           (
-               {Lock.TaggregateId} {PgSqlGuidType} NOT NULL,
-               PRIMARY KEY ( {Lock.TaggregateId} )
-           );
 
 
        """;

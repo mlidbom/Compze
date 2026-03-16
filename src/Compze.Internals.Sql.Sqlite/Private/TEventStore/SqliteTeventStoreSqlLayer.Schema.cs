@@ -1,5 +1,4 @@
 using Tevent = Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.TeventTableSchemaStrings;
-using Lock = Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.TaggregateLockTableSchemaStrings;
 
 namespace Compze.Internals.Sql.Sqlite.Private.TEventStore;
 
@@ -35,12 +34,6 @@ partial class SqliteTeventStoreSqlLayer
 
        CREATE INDEX IF NOT EXISTS IX_{Tevent.TableName}_{Tevent.TaggregateId} ON {Tevent.TableName} 
                ({Tevent.TaggregateId}, {Tevent.InsertedVersion}, {Tevent.ReadOrderIntegerPart}, {Tevent.ReadOrderFractionPart});
-
-       CREATE TABLE IF NOT EXISTS {Lock.TableName}
-       (
-           {Lock.TaggregateId} TEXT NOT NULL,
-           PRIMARY KEY ( {Lock.TaggregateId} )
-       );
 
        """;
 

@@ -7,7 +7,6 @@ using Npgsql;
 using NpgsqlTypes;
 using ReadOrder = Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions.ReadOrder;
 using Tevent = Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.TeventTableSchemaStrings;
-using Lock = Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.TaggregateLockTableSchemaStrings;
 
 namespace Compze.Internals.Sql.PostgreSql.Private.TEventStore;
 
@@ -25,8 +24,6 @@ partial class PgSqlTeventStoreSqlLayer
                connection.UseCommand(
                   command => command.SetCommandText(
                                         $"""
-
-                                         {(data.TaggregateVersion > 1 ? "" : $"insert into {Lock.TableName}({Lock.TaggregateId}) values(@{Lock.TaggregateId});")}
 
                                          INSERT INTO {Tevent.TableName} /*With(READCOMMITTED, ROWLOCK)*/
                                          (       {Tevent.TaggregateId},  {Tevent.InsertedVersion},  {Tevent.EffectiveVersion},       {Tevent.ReadOrder},                            {Tevent.TeventType},  {Tevent.TeventId},  {Tevent.UtcTimeStamp},  {Tevent.Tevent},  {Tevent.TargetTevent}, {Tevent.RefactoringType}) 

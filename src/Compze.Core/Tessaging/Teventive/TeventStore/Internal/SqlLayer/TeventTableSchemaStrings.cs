@@ -27,9 +27,3 @@ public static class TeventTableSchemaStrings
    public const string TeventId = nameof(TeventId);
    public const string Tevent = nameof(Tevent);
 }
-
-public static class TaggregateLockTableSchemaStrings
-{
-   public const string TableName = "TaggregateLock";
-   public const string TaggregateId = Tevent.TaggregateId;
-}
