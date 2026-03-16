@@ -6,15 +6,15 @@ Add `CancellationToken` support to all blocking operations in the threading and 
 
 ## API Shape
 
-Optional parameter alongside existing timeouts, backwards compatible:
+Optional parameter alongside existing timeouts, backwards compatible. `CancellationToken` comes first among the optional parameters — it's the one callers actually pass at call sites, while timeouts are structural defaults rarely overridden:
 
 ```csharp
 // ICriticalSection
-ILock TakeLock(LockTimeout? timeout = null, CancellationToken cancellationToken = default);
+ILock TakeLock(CancellationToken cancellationToken = default, LockTimeout? timeout = null);
 
 // IAwaitableCriticalSection
-IUpdateLock TakeUpdateLockWhen(Func<bool> condition, WaitTimeout? waitTimeout = null,
-    LockTimeout? lockTimeout = null, CancellationToken cancellationToken = default);
+IUpdateLock TakeUpdateLockWhen(Func<bool> condition, CancellationToken cancellationToken = default,
+    WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null);
 ```
 
 When triggered: throw `OperationCanceledException`.
