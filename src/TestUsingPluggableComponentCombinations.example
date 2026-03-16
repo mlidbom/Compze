@@ -3,17 +3,12 @@
 #Format is PersistenceLayer:DIContainer. Comment out the ones you do not want with #. 
 #Empty/Whitespace lines are ignored
 
-#MsSql:Microsoft:Newtonsoft:Memory
-#PgSql:Microsoft:Newtonsoft:Memory
-#MySql:Microsoft:Newtonsoft:Memory
-#Sqlite:Microsoft:Newtonsoft:Memory
-SqliteMemory:Microsoft:Newtonsoft:Memory
 
-#MsSql:SimpleInjector:Newtonsoft:Memory
-#PgSql:SimpleInjector:Newtonsoft:Memory
-#MySql:SimpleInjector:Newtonsoft:Memory
-#Sqlite:SimpleInjector:Newtonsoft:Memory
-#SqliteMemory:SimpleInjector:Newtonsoft:Memory
+#MsSql:Autofac:Newtonsoft:AspNetCore
+#PgSql:Autofac:Newtonsoft:AspNetCore
+#MySql:Autofac:Newtonsoft:AspNetCore
+#Sqlite:Autofac:Newtonsoft:AspNetCore
+SqliteMemory:Autofac:Newtonsoft:AspNetCore
 
 #MsSql:Microsoft:Newtonsoft:AspNetCore
 #PgSql:Microsoft:Newtonsoft:AspNetCore
