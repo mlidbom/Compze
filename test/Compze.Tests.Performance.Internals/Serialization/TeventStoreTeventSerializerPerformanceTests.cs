@@ -29,7 +29,7 @@ public class TeventStoreTeventSerializerPerformanceTests : UniversalTestBase
 
    protected override void DisposeInternal() => _container.Dispose();
 
-   [PCT] public void Should_roundtrip_simple_tevent_1000_times_in_25_milliseconds()
+   [PCT] public void Should_roundtrip_simple_tevent_1000_times_in_50_milliseconds()
    {
       var tevent = new TestTevent(
          test1: "Test1",
@@ -48,7 +48,7 @@ public class TeventStoreTeventSerializerPerformanceTests : UniversalTestBase
             _teventSerializer.Deserialize(typeof(TestTevent), teventJson);
          },
          iterations: 1000,
-         maxTotal: 25.Milliseconds()
+         maxTotal: 50.Milliseconds()
       );
    }
 

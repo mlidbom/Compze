@@ -20,12 +20,17 @@ partial class MsSqlTeventStoreSqlLayer(MsSqlTeventStoreConnectionManager connect
    static string InternalSelect(bool takeWriteLock, int? top = null)
    {
       var topClause = top.HasValue ? $"TOP {top.Value} " : "";
-      //todo: Ensure that READCOMMITTED is truly sane here. If so add a comment describing why and why using it is a good idea.
-      var lockHint = takeWriteLock ? "With(UPDLOCK, READCOMMITTED, ROWLOCK)" : "With(READCOMMITTED, ROWLOCK)";
+      var lockHint = "With(READCOMMITTED, ROWLOCK)";
+      var appLockPrefix = takeWriteLock
+         ? $"""
+            DECLARE @LockResource nvarchar(36) = cast(@{Tevent.TaggregateId} as nvarchar(36));
+            EXEC sp_getapplock @Resource = @LockResource, @LockMode = 'Exclusive';
+
+            """
+         : "";
 
       return $"""
-
-              SELECT {topClause} 
+              {appLockPrefix}SELECT {topClause} 
               {Tevent.TeventType}, {Tevent.Tevent}, {Tevent.TaggregateId}, {Tevent.EffectiveVersion}, {Tevent.TeventId}, {Tevent.UtcTimeStamp}, {Tevent.InsertionOrder}, {Tevent.TargetTevent}, {Tevent.RefactoringType}, {Tevent.InsertedVersion}, {Tevent.ReadOrder}
               FROM {Tevent.TableName} {lockHint} 
               """;

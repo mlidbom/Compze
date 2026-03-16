@@ -14,7 +14,7 @@ public static class TransactionScopeCe
    public static TResult Execute<TResult>([InstantHandle] Func<TResult> action, TransactionScopeOption option = TransactionScopeOption.Required)
    {
       using var transactionScope = new TransactionScope(option,
-                                                        new TransactionOptions { IsolationLevel = IsolationLevel.Serializable },
+                                                        new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted },
                                                         TransactionScopeAsyncFlowOption.Enabled);
       var result = action();
       transactionScope.Complete();
@@ -27,7 +27,7 @@ public static class TransactionScopeCe
    static async Task ExecuteAsync([InstantHandle] Func<Task> action, TransactionScopeOption option = TransactionScopeOption.Required)
    {
       using var transactionScope = new TransactionScope(option,
-                                                        new TransactionOptions { IsolationLevel = IsolationLevel.Serializable },
+                                                        new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted },
                                                         TransactionScopeAsyncFlowOption.Enabled);
       await action().caf();
       transactionScope.Complete();

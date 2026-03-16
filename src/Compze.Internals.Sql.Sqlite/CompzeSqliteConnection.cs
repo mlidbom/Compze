@@ -24,7 +24,7 @@ public interface ICompzeSqliteConnection : IPoolableConnection, ICompzeDbConnect
 
          _transactionParticipant = new VolatileLambdaTransactionParticipant(
             enlistmentOptions: EnlistmentOptions.None,
-            onEnlist: () => _transaction = Connection.BeginTransaction(System.Data.IsolationLevel.Serializable),
+            onEnlist: () => _transaction = Connection.BeginTransaction(System.Data.IsolationLevel.ReadCommitted),
             onPrepare: () => {}, // Nothing to do in prepare - SQLite doesn't support two-phase commit
             onCommit: () =>
             {
