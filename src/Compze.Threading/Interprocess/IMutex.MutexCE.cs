@@ -60,11 +60,7 @@ public partial interface IMutex
 
       static readonly TimeSpan CancellationPollingInterval = TimeSpan.FromSeconds(1);
 
-      public ILock? TryTakeLock(LockTimeout? timeout = null) => TryTakeLockCore(timeout);
-
-      ILock? TryTakeLock(LockTimeout? timeout, CancellationToken cancellationToken) => TryTakeLockCore(timeout, cancellationToken);
-
-      ILock? TryTakeLockCore(LockTimeout? timeout, CancellationToken cancellationToken = default)
+      public ILock? TryTakeLock(LockTimeout? timeout = null, CancellationToken cancellationToken = default)
       {
          var effectiveTimeout = timeout ?? LockTimeout;
 

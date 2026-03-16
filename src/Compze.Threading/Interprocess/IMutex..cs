@@ -20,7 +20,7 @@ public partial interface IMutex : ICriticalSection, IDisposable
    string Name { get; }
 
    ///<summary>Attempts to acquire the mutex within <paramref name="timeout"/>. Returns null if the timeout expires. Uses <see cref="ICriticalSectionInfo.LockTimeout"/> if <paramref name="timeout"/> is null.</summary>
-   internal ILock? TryTakeLock(LockTimeout? timeout = null);
+   internal ILock? TryTakeLock(LockTimeout? timeout = null, CancellationToken cancellationToken = default);
 
    ///<summary>Releases all nesting levels held by the current thread and returns the depth that was released. After this call, no thread holds the mutex. Used by <see cref="IAwaitableMutex"/> to implement condition-wait semantics analogous to <see cref="System.Threading.Monitor.Wait(object)"/>.</summary>
    internal int ReleaseAllNestingLevels();
