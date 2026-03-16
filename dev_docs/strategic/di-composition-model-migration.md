@@ -45,7 +45,7 @@ Priority order:
 3. ASP.NET middleware — 2 sites, needs coordination with framework scope model
 4. Tests — ~50 sites, mechanical
 
-### Phase 3: Remove AsyncLocal tracking
+### Phase 3 (Up for debate. We'll see) : Remove AsyncLocal tracking 
 
 Once all callers use explicit scopes, delete the `AsyncLocal` infrastructure from all three container adapters.
 
