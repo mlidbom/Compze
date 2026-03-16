@@ -74,8 +74,8 @@ public abstract class MatrixTheoryAttribute(
                        .SelectMany(attr =>
                         {
                            var attrType = attr.GetType();
-                           var values = (Array)attrType.GetProperty(nameof(SkipAttribute<DayOfWeek>.Values))!.GetValue(attr)!;
-                           var reason = (string)attrType.GetProperty(nameof(SkipAttribute<DayOfWeek>.Reason))!.GetValue(attr)!;
+                           var values = (Array)attrType.GetProperty(nameof(SkipAttribute<>.Values))!.GetValue(attr)!;
+                           var reason = (string)attrType.GetProperty(nameof(SkipAttribute<>.Reason))!.GetValue(attr)!;
                            return values.Cast<Enum>().Select(value => new ComponentSkipSpecification(value, reason));
                         })
                        .ToList();
