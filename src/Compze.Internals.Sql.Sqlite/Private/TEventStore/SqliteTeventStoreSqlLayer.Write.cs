@@ -19,6 +19,7 @@ partial class SqliteTeventStoreSqlLayer
          {
             try
             {
+               var readOrder = data.StorageInformation.ReadOrder ?? ReadOrder.NextTemporaryPlaceholder();
                connection.UseCommand(
                   command => command.SetCommandText(
                                         $"""
@@ -44,8 +45,8 @@ partial class SqliteTeventStoreSqlLayer
                                     .AddMediumTextParameter(Tevent.TeventId, data.TeventId.ToString())
                                     .AddDateTime2Parameter(Tevent.UtcTimeStamp, data.UtcTimeStamp)
                                     .AddMediumTextParameter(Tevent.Tevent, data.TeventJson)
-                                    .AddParameter(Tevent.ReadOrderIntegerPart, (data.StorageInformation.ReadOrder ?? ReadOrder.Zero).IntegerPart)
-                                    .AddParameter(Tevent.ReadOrderFractionPart, (data.StorageInformation.ReadOrder ?? ReadOrder.Zero).FractionPart)
+                                    .AddParameter(Tevent.ReadOrderIntegerPart, readOrder.IntegerPart)
+                                    .AddParameter(Tevent.ReadOrderFractionPart, readOrder.FractionPart)
                                     .AddParameter(Tevent.EffectiveVersion, data.StorageInformation.EffectiveVersion)
                                     .AddNullableParameter(Tevent.TargetTevent, SqliteType.Text, data.StorageInformation.RefactoringInformation?.TargetTevent.ToString())
                                     .AddNullableParameter(Tevent.RefactoringType, SqliteType.Integer, data.StorageInformation.RefactoringInformation?.RefactoringType == null ? null : (int?)data.StorageInformation.RefactoringInformation.RefactoringType)
