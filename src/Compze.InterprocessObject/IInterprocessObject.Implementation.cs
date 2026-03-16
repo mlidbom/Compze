@@ -36,26 +36,26 @@ public partial interface IInterprocessObject
       public IAwaitableCriticalSection CriticalSection => _synchronizer;
       public IAwaitableMutex Mutex => _synchronizer;
 
-      public TResult Read<TResult>(Func<TObject, TResult> read, LockTimeout? timeout = null)
+      public TResult Read<TResult>(Func<TObject, TResult> read, CancellationToken cancellationToken = default, LockTimeout? timeout = null)
       {
-         using(_synchronizer.TakeReadLock(timeout))
+         using(_synchronizer.TakeReadLock(cancellationToken, timeout))
          {
             return read(Load());
          }
       }
 
-      public TResult ReadWhen<TResult>(Func<TObject, bool> condition, Func<TObject, TResult> read, WaitTimeout? timeout = null)
+      public TResult ReadWhen<TResult>(Func<TObject, bool> condition, Func<TObject, TResult> read, CancellationToken cancellationToken = default, WaitTimeout? timeout = null)
       {
          TObject? loaded = null;
-         using(_synchronizer.TakeReadLockWhen(() => condition(loaded = Load()), timeout))
+         using(_synchronizer.TakeReadLockWhen(() => condition(loaded = Load()), cancellationToken, waitTimeout: timeout))
          {
             return read(loaded!);
          }
       }
 
-      public TResult Update<TResult>(Func<TObject, TResult> update, LockTimeout? timeout = null)
+      public TResult Update<TResult>(Func<TObject, TResult> update, CancellationToken cancellationToken = default, LockTimeout? timeout = null)
       {
-         using(_synchronizer.TakeUpdateLock(timeout))
+         using(_synchronizer.TakeUpdateLock(cancellationToken, timeout))
          {
             var instance = Load();
             var result = update(instance);
@@ -64,10 +64,10 @@ public partial interface IInterprocessObject
          }
       }
 
-      public TResult UpdateWhen<TResult>(Func<TObject, bool> condition, Func<TObject, TResult> update, WaitTimeout? timeout = null)
+      public TResult UpdateWhen<TResult>(Func<TObject, bool> condition, Func<TObject, TResult> update, CancellationToken cancellationToken = default, WaitTimeout? timeout = null)
       {
          TObject? loaded = null;
-         using(_synchronizer.TakeUpdateLockWhen(() => condition(loaded = Load()), timeout))
+         using(_synchronizer.TakeUpdateLockWhen(() => condition(loaded = Load()), cancellationToken, waitTimeout: timeout))
          {
             var result = update(loaded!);
             Save(loaded!);
@@ -75,10 +75,10 @@ public partial interface IInterprocessObject
          }
       }
 
-      public bool TryUpdateWhen(Func<TObject, bool> condition, Action<TObject> update, WaitTimeout? timeout = null)
+      public bool TryUpdateWhen(Func<TObject, bool> condition, Action<TObject> update, CancellationToken cancellationToken = default, WaitTimeout? timeout = null)
       {
          TObject? loaded = null;
-         using var updateLock = _synchronizer.TryTakeUpdateLockWhen(() => condition(loaded = Load()), timeout);
+         using var updateLock = _synchronizer.TryTakeUpdateLockWhen(() => condition(loaded = Load()), cancellationToken, waitTimeout: timeout);
          if(updateLock == null) return false;
          update(loaded!);
          Save(loaded!);

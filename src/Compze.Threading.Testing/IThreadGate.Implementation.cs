@@ -51,7 +51,7 @@ public partial interface IThreadGate
       }));
 
       public bool TryAwait(Func<IThreadGate, bool> condition, WaitTimeout? timeout, [CallerArgumentExpression(nameof(condition))] string? conditionExpression = null!) =>
-         _monitor.Read(() => LogMethodEntryExit(() => _monitor.TryAwait(() => condition(this), timeout),
+         _monitor.Read(() => LogMethodEntryExit(() => _monitor.TryAwait(() => condition(this), waitTimeout: timeout),
                                                 message: $"condition: '{conditionExpression}'",
                                                 logResult: true));
 
@@ -60,7 +60,7 @@ public partial interface IThreadGate
                                                      {
                                                         try
                                                         {
-                                                           using(_monitor.TakeUpdateLockWhen(() => condition(this), timeout))
+                                                           using(_monitor.TakeUpdateLockWhen(() => condition(this), waitTimeout: timeout))
                                                            {
                                                               return func();
                                                            }

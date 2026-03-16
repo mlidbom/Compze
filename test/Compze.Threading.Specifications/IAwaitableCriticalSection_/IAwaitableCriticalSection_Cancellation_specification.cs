@@ -65,8 +65,7 @@ public class IAwaitableCriticalSection_Cancellation_specification : UniversalTes
          _criticalSection = _factory.Create(LockTimeout.Seconds(30));
          using var cancellationTrigger = _factory.CreateCancellationTrigger();
          using var holdingLock = _criticalSection.TakeUpdateLock();
-         // TODO: Pass cancellationTrigger.Token to TakeUpdateLock once CancellationToken parameter is added (Phase 3)
-         (_thrownException, _criticalSection) = CancelThreadBlockedIn(_criticalSection, cancellationTrigger, cs => cs.TakeUpdateLock());
+         (_thrownException, _criticalSection) = CancelThreadBlockedIn(_criticalSection, cancellationTrigger, cs => cs.TakeUpdateLock(cancellationTrigger.Token));
       }
 
       [IAwaitableCriticalSectionCancellationMatrix]
@@ -80,7 +79,7 @@ public class IAwaitableCriticalSection_Cancellation_specification : UniversalTes
       public void lock_is_not_orphaned_and_other_threads_can_acquire_it()
       {
          RunScenario();
-         using(_criticalSection.TakeUpdateLock(LockTimeout.Seconds(1))) {}
+         using(_criticalSection.TakeUpdateLock(timeout: LockTimeout.Seconds(1))) {}
       }
    }
 
@@ -96,8 +95,7 @@ public class IAwaitableCriticalSection_Cancellation_specification : UniversalTes
          _criticalSection = _factory.Create(LockTimeout.Seconds(30));
          using var cancellationTrigger = _factory.CreateCancellationTrigger();
          using var holdingLock = _criticalSection.TakeUpdateLock();
-         // TODO: Pass cancellationTrigger.Token to TakeReadLock once CancellationToken parameter is added (Phase 3)
-         (_thrownException, _criticalSection) = CancelThreadBlockedIn(_criticalSection, cancellationTrigger, cs => cs.TakeReadLock());
+         (_thrownException, _criticalSection) = CancelThreadBlockedIn(_criticalSection, cancellationTrigger, cs => cs.TakeReadLock(cancellationTrigger.Token));
       }
 
       [IAwaitableCriticalSectionCancellationMatrix]
@@ -111,7 +109,7 @@ public class IAwaitableCriticalSection_Cancellation_specification : UniversalTes
       public void lock_is_not_orphaned_and_other_threads_can_acquire_it()
       {
          RunScenario();
-         using(_criticalSection.TakeUpdateLock(LockTimeout.Seconds(1))) {}
+         using(_criticalSection.TakeUpdateLock(timeout: LockTimeout.Seconds(1))) {}
       }
    }
 
@@ -126,8 +124,7 @@ public class IAwaitableCriticalSection_Cancellation_specification : UniversalTes
 
          _criticalSection = _factory.Create(LockTimeout.Seconds(30));
          using var cancellationTrigger = _factory.CreateCancellationTrigger();
-         // TODO: Pass cancellationTrigger.Token to TakeUpdateLockWhen once CancellationToken parameter is added (Phase 3)
-         (_thrownException, _criticalSection) = CancelThreadBlockedIn(_criticalSection, cancellationTrigger, cs => cs.TakeUpdateLockWhen(() => false));
+         (_thrownException, _criticalSection) = CancelThreadBlockedIn(_criticalSection, cancellationTrigger, cs => cs.TakeUpdateLockWhen(() => false, cancellationTrigger.Token));
       }
 
       [IAwaitableCriticalSectionCancellationMatrix]
@@ -141,7 +138,7 @@ public class IAwaitableCriticalSection_Cancellation_specification : UniversalTes
       public void lock_is_not_orphaned_and_other_threads_can_acquire_it()
       {
          RunScenario();
-         using(_criticalSection.TakeUpdateLock(LockTimeout.Seconds(1))) {}
+         using(_criticalSection.TakeUpdateLock(timeout: LockTimeout.Seconds(1))) {}
       }
    }
 
@@ -156,8 +153,7 @@ public class IAwaitableCriticalSection_Cancellation_specification : UniversalTes
 
          _criticalSection = _factory.Create(LockTimeout.Seconds(30));
          using var cancellationTrigger = _factory.CreateCancellationTrigger();
-         // TODO: Pass cancellationTrigger.Token to TakeReadLockWhen once CancellationToken parameter is added (Phase 3)
-         (_thrownException, _criticalSection) = CancelThreadBlockedIn(_criticalSection, cancellationTrigger, cs => cs.TakeReadLockWhen(() => false));
+         (_thrownException, _criticalSection) = CancelThreadBlockedIn(_criticalSection, cancellationTrigger, cs => cs.TakeReadLockWhen(() => false, cancellationTrigger.Token));
       }
 
       [IAwaitableCriticalSectionCancellationMatrix]
@@ -171,7 +167,7 @@ public class IAwaitableCriticalSection_Cancellation_specification : UniversalTes
       public void lock_is_not_orphaned_and_other_threads_can_acquire_it()
       {
          RunScenario();
-         using(_criticalSection.TakeUpdateLock(LockTimeout.Seconds(1))) {}
+         using(_criticalSection.TakeUpdateLock(timeout: LockTimeout.Seconds(1))) {}
       }
    }
 
@@ -186,8 +182,7 @@ public class IAwaitableCriticalSection_Cancellation_specification : UniversalTes
 
          _criticalSection = _factory.Create(LockTimeout.Seconds(30));
          using var cancellationTrigger = _factory.CreateCancellationTrigger();
-         // TODO: Pass cancellationTrigger.Token to TryTakeUpdateLockWhen once CancellationToken parameter is added (Phase 3)
-         (_thrownException, _criticalSection) = CancelThreadBlockedIn(_criticalSection, cancellationTrigger, cs => cs.TryTakeUpdateLockWhen(() => false));
+         (_thrownException, _criticalSection) = CancelThreadBlockedIn(_criticalSection, cancellationTrigger, cs => cs.TryTakeUpdateLockWhen(() => false, cancellationTrigger.Token));
       }
 
       [IAwaitableCriticalSectionCancellationMatrix]
@@ -201,7 +196,7 @@ public class IAwaitableCriticalSection_Cancellation_specification : UniversalTes
       public void lock_is_not_orphaned_and_other_threads_can_acquire_it()
       {
          RunScenario();
-         using(_criticalSection.TakeUpdateLock(LockTimeout.Seconds(1))) {}
+         using(_criticalSection.TakeUpdateLock(timeout: LockTimeout.Seconds(1))) {}
       }
    }
 
@@ -216,8 +211,7 @@ public class IAwaitableCriticalSection_Cancellation_specification : UniversalTes
 
          _criticalSection = _factory.Create(LockTimeout.Seconds(30));
          using var cancellationTrigger = _factory.CreateCancellationTrigger();
-         // TODO: Pass cancellationTrigger.Token to TryTakeReadLockWhen once CancellationToken parameter is added (Phase 3)
-         (_thrownException, _criticalSection) = CancelThreadBlockedIn(_criticalSection, cancellationTrigger, cs => cs.TryTakeReadLockWhen(() => false));
+         (_thrownException, _criticalSection) = CancelThreadBlockedIn(_criticalSection, cancellationTrigger, cs => cs.TryTakeReadLockWhen(() => false, cancellationTrigger.Token));
       }
 
       [IAwaitableCriticalSectionCancellationMatrix]
@@ -231,7 +225,7 @@ public class IAwaitableCriticalSection_Cancellation_specification : UniversalTes
       public void lock_is_not_orphaned_and_other_threads_can_acquire_it()
       {
          RunScenario();
-         using(_criticalSection.TakeUpdateLock(LockTimeout.Seconds(1))) {}
+         using(_criticalSection.TakeUpdateLock(timeout: LockTimeout.Seconds(1))) {}
       }
    }
 
@@ -246,8 +240,7 @@ public class IAwaitableCriticalSection_Cancellation_specification : UniversalTes
 
          _criticalSection = _factory.Create(LockTimeout.Seconds(30));
          using var cancellationTrigger = _factory.CreateCancellationTrigger();
-         // TODO: Pass cancellationTrigger.Token to TryAwait once CancellationToken parameter is added (Phase 3)
-         (_thrownException, _criticalSection) = CancelThreadBlockedIn(_criticalSection, cancellationTrigger, cs => cs.TryAwait(() => false));
+         (_thrownException, _criticalSection) = CancelThreadBlockedIn(_criticalSection, cancellationTrigger, cs => cs.TryAwait(() => false, cancellationTrigger.Token));
       }
 
       [IAwaitableCriticalSectionCancellationMatrix]
@@ -261,7 +254,7 @@ public class IAwaitableCriticalSection_Cancellation_specification : UniversalTes
       public void lock_is_not_orphaned_and_other_threads_can_acquire_it()
       {
          RunScenario();
-         using(_criticalSection.TakeUpdateLock(LockTimeout.Seconds(1))) {}
+         using(_criticalSection.TakeUpdateLock(timeout: LockTimeout.Seconds(1))) {}
       }
    }
 }

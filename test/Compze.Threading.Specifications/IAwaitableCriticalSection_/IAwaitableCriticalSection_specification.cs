@@ -61,11 +61,11 @@ public class IAwaitableCriticalSection_specification : UniversalTestBase
          {
             using(criticalSection.TakeUpdateLock()) {}
 
-            Invoking(() => TaskCE.Run(() => criticalSection.TakeUpdateLock(LockTimeout.Seconds(.1))).Wait())
+            Invoking(() => TaskCE.Run(() => criticalSection.TakeUpdateLock(timeout: LockTimeout.Seconds(.1))).Wait())
               .Must().Throw<Exception>();
          }
 
-         TaskCE.Run(() => criticalSection.TakeUpdateLock(LockTimeout.Milliseconds(0))).Wait();
+         TaskCE.Run(() => criticalSection.TakeUpdateLock(timeout: LockTimeout.Milliseconds(0))).Wait();
       }
    }
 
@@ -237,7 +237,7 @@ public class IAwaitableCriticalSection_specification : UniversalTestBase
          innerLockDisposed.AwaitPassedThroughCountEqualTo(1);
 
          // Try to acquire from this thread — should fail because the outer lock is still held
-         Invoking(() => criticalSection.TakeUpdateLock(LockTimeout.Milliseconds(50)))
+         Invoking(() => criticalSection.TakeUpdateLock(timeout: LockTimeout.Milliseconds(50)))
            .Must().Throw<Exception>();
 
          outerLockStillExclusive.Open();

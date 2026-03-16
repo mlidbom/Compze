@@ -12,21 +12,21 @@ public partial interface IAwaitableMonitor
 #pragma warning restore CS0618 // Type or member is obsolete
 #pragma warning restore CA1001
    {
-      public ILock TakeLock(LockTimeout? timeout = null) => TakeLock(LockType.Read, timeout);
-      public IReadLock TakeReadLock(LockTimeout? timeout = null) => TakeLock(LockType.Read, timeout);
-      public IUpdateLock TakeUpdateLock(LockTimeout? timeout = null) => TakeLock(LockType.Update, timeout);
+      public ILock TakeLock(CancellationToken cancellationToken = default, LockTimeout? timeout = null) => TakeLock(LockType.Read, timeout, cancellationToken);
+      public IReadLock TakeReadLock(CancellationToken cancellationToken = default, LockTimeout? timeout = null) => TakeLock(LockType.Read, timeout, cancellationToken);
+      public IUpdateLock TakeUpdateLock(CancellationToken cancellationToken = default, LockTimeout? timeout = null) => TakeLock(LockType.Update, timeout, cancellationToken);
 
-      public IReadLock TakeReadLockWhen(Func<bool> condition, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null) =>
-         TakeLockWhen(condition, LockType.Read, waitTimeout, lockTimeout);
+      public IReadLock TakeReadLockWhen(Func<bool> condition, CancellationToken cancellationToken = default, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null) =>
+         TakeLockWhen(condition, LockType.Read, cancellationToken, waitTimeout, lockTimeout);
 
-      public IUpdateLock TakeUpdateLockWhen(Func<bool> condition, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null) =>
-         TakeLockWhen(condition, LockType.Update, waitTimeout, lockTimeout);
+      public IUpdateLock TakeUpdateLockWhen(Func<bool> condition, CancellationToken cancellationToken = default, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null) =>
+         TakeLockWhen(condition, LockType.Update, cancellationToken, waitTimeout, lockTimeout);
 
-      public IReadLock? TryTakeReadLockWhen(Func<bool> condition, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null) =>
-         TryTakeLockWhen(condition, LockType.Read, waitTimeout, lockTimeout);
+      public IReadLock? TryTakeReadLockWhen(Func<bool> condition, CancellationToken cancellationToken = default, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null) =>
+         TryTakeLockWhen(condition, LockType.Read, cancellationToken, waitTimeout, lockTimeout);
 
-      public IUpdateLock? TryTakeUpdateLockWhen(Func<bool> condition, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null) =>
-         TryTakeLockWhen(condition, LockType.Update, waitTimeout, lockTimeout);
+      public IUpdateLock? TryTakeUpdateLockWhen(Func<bool> condition, CancellationToken cancellationToken = default, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null) =>
+         TryTakeLockWhen(condition, LockType.Update, cancellationToken, waitTimeout, lockTimeout);
 
       public LockTimeout LockTimeout { get; }
       public WaitTimeout WaitTimeout { get; }
@@ -67,31 +67,43 @@ public partial interface IAwaitableMonitor
          };
       }
 
-      LockDisposer TakeLock(LockType lockType, LockTimeout? lockTimeout = null) => TryTakeLock(lockType, lockTimeout) ?? throw RegisterTimeoutException();
+      LockDisposer TakeLock(LockType lockType, LockTimeout? lockTimeout = null, CancellationToken cancellationToken = default) =>
+         TryTakeLock(lockType, lockTimeout, cancellationToken) ?? throw RegisterTimeoutException();
 
-      LockDisposer TakeLockWhen(Func<bool> condition, LockType lockType, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null) =>
-         TryTakeLockWhen(condition, lockType, waitTimeout, lockTimeout) ?? throw new AwaitingConditionTimeoutException();
+      LockDisposer TakeLockWhen(Func<bool> condition, LockType lockType, CancellationToken cancellationToken = default, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null) =>
+         TryTakeLockWhen(condition, lockType, cancellationToken, waitTimeout, lockTimeout) ?? throw new AwaitingConditionTimeoutException();
 
-      LockDisposer? TryTakeLock(LockType lockType, LockTimeout? timeout = null) => _monitor.TryTakeLock(timeout ?? LockTimeout) ? LockFor(lockType) : null;
+      LockDisposer? TryTakeLock(LockType lockType, LockTimeout? timeout = null, CancellationToken cancellationToken = default) =>
+         _monitor.TryTakeLock(timeout ?? LockTimeout, cancellationToken) ? LockFor(lockType) : null;
 
-      LockDisposer? TryTakeLockWhen(Func<bool> condition, LockType lockType, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null)
+      LockDisposer? TryTakeLockWhen(Func<bool> condition, LockType lockType, CancellationToken cancellationToken = default, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null)
       {
          var effectiveWaitTimeout = waitTimeout ?? WaitTimeout;
          var effectiveLockTimeout = lockTimeout ?? LockTimeout;
 
          var waitStartedAt = DateTime.UtcNow;
 
-         IDisposable takenLock = TakeLock(lockType, effectiveLockTimeout);
+         IDisposable takenLock = TakeLock(lockType, effectiveLockTimeout, cancellationToken);
          try
          {
+            // When the token is cancelled, PulseAll wakes any thread blocked in Monitor.Wait so it can observe the cancellation.
+            // The callback acquires the monitor lock briefly — this is safe because the waiting thread has released it via Monitor.Wait.
+            using var registration = cancellationToken.CanBeCanceled
+                                        ? cancellationToken.Register(_monitor.AcquireLockAndNotifyWaitingThreads)
+                                        : default(CancellationTokenRegistration);
+
             if(effectiveWaitTimeout.IsInfinite)
             {
                while(!condition())
+               {
+                  cancellationToken.ThrowIfCancellationRequested();
                   _monitor.ReleaseLockAndReacquireItOnPulseOrTimeout(WaitTimeout.Infinite);
+               }
             } else
             {
                while(!condition())
                {
+                  cancellationToken.ThrowIfCancellationRequested();
                   if(effectiveWaitTimeout.IsExpired(waitStartedAt))
                   {
                      takenLock.Dispose();
@@ -159,11 +171,23 @@ public partial interface IAwaitableMonitor
          long _contentionCount = 0;
          public long ContentionCount => _contentionCount;
 
-         public bool TryTakeLock(LockTimeout timeout)
+         static readonly TimeSpan CancellationPollingInterval = TimeSpan.FromSeconds(1);
+
+         public bool TryTakeLock(LockTimeout timeout, CancellationToken cancellationToken = default)
          {
             if(Monitor.TryEnter(_lockObject)) return true; //This will never block, calling it is essentially free and allows us to collect contention statistics
             Interlocked.Increment(ref _contentionCount);
-            return Monitor.TryEnter(_lockObject, timeout);
+            if(!cancellationToken.CanBeCanceled) return Monitor.TryEnter(_lockObject, timeout);
+
+            // Poll with short intervals so we can respond to cancellation
+            var deadline = DateTime.UtcNow + timeout.ToTimeSpan();
+            while(true)
+            {
+               cancellationToken.ThrowIfCancellationRequested();
+               var remaining = deadline - DateTime.UtcNow;
+               if(remaining <= TimeSpan.Zero) return false;
+               if(Monitor.TryEnter(_lockObject, remaining < CancellationPollingInterval ? remaining : CancellationPollingInterval)) return true;
+            }
          }
 
          public void ReleaseLockAndReacquireItOnPulseOrTimeout(WaitTimeout timeout) => Monitor.Wait(_lockObject, timeout);
@@ -171,6 +195,11 @@ public partial interface IAwaitableMonitor
          public void ReleaseLock() => Monitor.Exit(_lockObject);
 
          public void NotifyWaitingThreadsAboutUpdates() => Monitor.PulseAll(_lockObject); //All threads blocked on Monitor.Wait for our _lockObject will now try and reacquire the lock
+
+         public void AcquireLockAndNotifyWaitingThreads()
+         {
+            lock(_lockObject) Monitor.PulseAll(_lockObject);
+         }
       }
    }
 }

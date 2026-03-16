@@ -40,8 +40,7 @@ public class ICriticalSection_Cancellation_specification : UniversalTestBase
             try
             {
                aboutToBlock.AwaitPassThrough();
-               // TODO: Pass cancellationTrigger.Token to TakeLock once CancellationToken parameter is added (Phase 3)
-               _criticalSection.TakeLock();
+               _criticalSection.TakeLock(cancellationTrigger.Token);
             }
 #pragma warning disable CA1031
             //We need to capture whatever exception cancellation causes to assert on it
@@ -74,7 +73,7 @@ public class ICriticalSection_Cancellation_specification : UniversalTestBase
       public void lock_is_not_orphaned_and_other_threads_can_acquire_it()
       {
          RunScenario();
-         using(_criticalSection.TakeLock(LockTimeout.Seconds(1))) {}
+         using(_criticalSection.TakeLock(timeout: LockTimeout.Seconds(1))) {}
       }
    }
 }

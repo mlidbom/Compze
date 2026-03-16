@@ -24,7 +24,7 @@ public class TessagesInFlightTracker(ITypeMapper typeMapper) : ITessagesInFlight
    {
       try
       {
-         _implementation.Await(it => it.NoTessagesInFlight(), timeoutOverride ?? WaitTimeout.Seconds(10));
+         _implementation.Await(it => it.NoTessagesInFlight(), timeout: timeoutOverride ?? WaitTimeout.Seconds(10));
       }
       catch(AwaitingConditionTimeoutException e)
       {

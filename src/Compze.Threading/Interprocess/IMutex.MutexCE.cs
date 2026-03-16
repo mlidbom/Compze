@@ -56,11 +56,15 @@ public partial interface IMutex
 
       public long ContentionCount => Interlocked.Read(ref _contentionCount);
 
-      public ILock TakeLock(LockTimeout? timeout = null) => TryTakeLock(timeout) ?? throw RegisterTimeoutException();
+      public ILock TakeLock(CancellationToken cancellationToken = default, LockTimeout? timeout = null) => TryTakeLock(timeout, cancellationToken) ?? throw RegisterTimeoutException();
 
-      static readonly TimeSpan InterruptPollingInterval = TimeSpan.FromSeconds(1);
+      static readonly TimeSpan CancellationPollingInterval = TimeSpan.FromSeconds(1);
 
-      public ILock? TryTakeLock(LockTimeout? timeout = null)
+      public ILock? TryTakeLock(LockTimeout? timeout = null) => TryTakeLockCore(timeout);
+
+      ILock? TryTakeLock(LockTimeout? timeout, CancellationToken cancellationToken) => TryTakeLockCore(timeout, cancellationToken);
+
+      ILock? TryTakeLockCore(LockTimeout? timeout, CancellationToken cancellationToken = default)
       {
          var effectiveTimeout = timeout ?? LockTimeout;
 
@@ -72,11 +76,14 @@ public partial interface IMutex
             {
                Interlocked.Increment(ref _contentionCount);
 
-               // Poll so the thread periodically returns to managed code, allowing a pending Thread.Interrupt to fire as ThreadInterruptedException.
-               // Without this, Mutex.WaitOne on Linux enters an unmanaged wait that is not interruptible, causing Thread.Interrupt to have no effect until the mutex is released.
+               // Poll so the thread periodically returns to managed code, allowing:
+               // 1. A pending Thread.Interrupt to fire as ThreadInterruptedException.
+               // 2. A CancellationToken to be checked between iterations.
+               // Without this, Mutex.WaitOne on Linux enters an unmanaged wait that is not interruptible.
                var deadline = DateTime.UtcNow + effectiveTimeout.ToTimeSpan();
                while(true)
                {
+                  cancellationToken.ThrowIfCancellationRequested();
                   var remaining = deadline - DateTime.UtcNow;
                   if(remaining <= TimeSpan.Zero)
                   {
@@ -84,7 +91,7 @@ public partial interface IMutex
                      break;
                   }
 
-                  acquired = _mutex.WaitOne(TimeSpan.Min(remaining, InterruptPollingInterval));
+                  acquired = _mutex.WaitOne(TimeSpan.Min(remaining, CancellationPollingInterval));
                   if(acquired) break;
                }
             }
@@ -131,7 +138,7 @@ public partial interface IMutex
       public void ReacquireToNestingDepth(int depth, LockTimeout? timeout = null)
       {
          for(var i = 0; i < depth; i++)
-            TakeLock(timeout);
+            TakeLock(timeout: timeout);
       }
 
       IReadOnlyList<TakeMutexLockTimeoutException> _timeOutExceptionsOnOtherThreads = new List<TakeMutexLockTimeoutException>();

@@ -43,7 +43,7 @@ class DbPoolMachineWideState
 
          var waitTimeout = new WaitTimeout(remainingTime < timeUntilNextLeaseExpiration ? remainingTime : timeUntilNextLeaseExpiration);
 
-         if(_shared.TryUpdateWhen(state => state.TryReserve(reservationName, poolId, reservationLength, out reserved),_ => {},waitTimeout))
+         if(_shared.TryUpdateWhen(state => state.TryReserve(reservationName, poolId, reservationLength, out reserved),_ => {}, timeout: waitTimeout))
          {
             return reserved!;
          }

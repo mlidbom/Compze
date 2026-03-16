@@ -17,7 +17,7 @@ public class TakeLockTimeoutException : Exception
       get
       {
          //Todo: Blocking loggers and similar in production is not great: This only happens on deadlocks though, so it does not seem too urgent.
-         if(!_monitor.TryAwait(() => _blockingThreadStacktrace != null, _timeToWaitForOwningThreadStacktrace))
+         if(!_monitor.TryAwait(() => _blockingThreadStacktrace != null, waitTimeout: _timeToWaitForOwningThreadStacktrace))
          {
             _blockingThreadStacktrace = $"Failed to get blocking thread stack trace. Timed out after: {_timeToWaitForOwningThreadStacktrace}";
          }
