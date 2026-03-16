@@ -50,3 +50,4 @@ repomix*.xml
 /src/TestUsingPluggableComponentCombinations
 /src/TestUsingPluggableComponentCombinations.defaults
 /inspection-results.sarif
+*.trx

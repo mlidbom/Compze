@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="c2734a05-618b-424a-9b6a-c15fd6216cc3" name="magnu@THREADRIPPER 2026-03-16 01:32:34" runUser="THREADRIPPER\magnu" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-03-16T01:32:34.9329516+01:00" queuing="2026-03-16T01:32:34.9329522+01:00" start="2026-03-16T01:32:31.0531168+01:00" finish="2026-03-16T01:32:34.9416653+01:00" />
+  <TestSettings name="default" id="786553e8-a866-48a2-98b0-5954727fdef7">
+    <Deployment runDeploymentRoot="magnu_THREADRIPPER_2026-03-16_01_32_34" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="40114591-e1e7-4737-911e-d2f070a6acc0" testId="a379d5ff-75e2-d534-4228-2498e64d64a9" testName="Compze.Threading.Specifications.ICriticalSection_.ICriticalSection_Cancellation_specification+When_a_thread_blocked_in_TakeLock_is_cancelled.lock_is_not_orphaned_and_other_threads_can_acquire_it()" computerName="THREADRIPPER" duration="00:00:00.0010000" startTime="2026-03-16T01:32:34.7596943+01:00" endTime="2026-03-16T01:32:34.7682134+01:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="40114591-e1e7-4737-911e-d2f070a6acc0">
+      <Output>
+        <ErrorInfo>
+          <Message>Invalid attribute configuration: 1 is not one of: Compze.Threading.Specifications.ICriticalSection_.Infrastructure.ICriticalSectionMatrixAttribute+Implementation, Compze.Threading.Specifications.TestInfrastructure.CancellationMechanism</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="0f011e7e-af0b-4926-b844-4cc627a4b138" testId="f6366f4f-0e0e-a692-645b-81e6ad87511c" testName="Compze.Threading.Specifications.ICriticalSection_.ICriticalSection_Cancellation_specification+When_a_thread_blocked_in_TakeLock_is_cancelled.throws_expected_cancellation_exception()" computerName="THREADRIPPER" duration="00:00:00.0010000" startTime="2026-03-16T01:32:34.7814970+01:00" endTime="2026-03-16T01:32:34.7815398+01:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0f011e7e-af0b-4926-b844-4cc627a4b138">
+      <Output>
+        <ErrorInfo>
+          <Message>Invalid attribute configuration: 1 is not one of: Compze.Threading.Specifications.ICriticalSection_.Infrastructure.ICriticalSectionMatrixAttribute+Implementation, Compze.Threading.Specifications.TestInfrastructure.CancellationMechanism</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="Compze.Threading.Specifications.ICriticalSection_.ICriticalSection_Cancellation_specification+When_a_thread_blocked_in_TakeLock_is_cancelled.lock_is_not_orphaned_and_other_threads_can_acquire_it()" storage="c:\dev\compze.worktrees\compze_worktree_2\test\compze.threading.specifications\bin\debug\net10.0\compze.threading.specifications.dll" id="a379d5ff-75e2-d534-4228-2498e64d64a9">
+      <Execution id="40114591-e1e7-4737-911e-d2f070a6acc0" />
+      <TestMethod codeBase="C:\Dev\Compze.worktrees\compze_worktree_2\test\Compze.Threading.Specifications\bin\Debug\net10.0\Compze.Threading.Specifications.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Compze.Threading.Specifications.ICriticalSection_.ICriticalSection_Cancellation_specification+When_a_thread_blocked_in_TakeLock_is_cancelled" name="lock_is_not_orphaned_and_other_threads_can_acquire_it" />
+    </UnitTest>
+    <UnitTest name="Compze.Threading.Specifications.ICriticalSection_.ICriticalSection_Cancellation_specification+When_a_thread_blocked_in_TakeLock_is_cancelled.throws_expected_cancellation_exception()" storage="c:\dev\compze.worktrees\compze_worktree_2\test\compze.threading.specifications\bin\debug\net10.0\compze.threading.specifications.dll" id="f6366f4f-0e0e-a692-645b-81e6ad87511c">
+      <Execution id="0f011e7e-af0b-4926-b844-4cc627a4b138" />
+      <TestMethod codeBase="C:\Dev\Compze.worktrees\compze_worktree_2\test\Compze.Threading.Specifications\bin\Debug\net10.0\Compze.Threading.Specifications.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Compze.Threading.Specifications.ICriticalSection_.ICriticalSection_Cancellation_specification+When_a_thread_blocked_in_TakeLock_is_cancelled" name="throws_expected_cancellation_exception" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="a379d5ff-75e2-d534-4228-2498e64d64a9" executionId="40114591-e1e7-4737-911e-d2f070a6acc0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f6366f4f-0e0e-a692-645b-81e6ad87511c" executionId="0f011e7e-af0b-4926-b844-4cc627a4b138" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="2" executed="0" passed="0" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.5+1b188a7b0a (64-bit .NET 10.0.4)&#xD;
+[xUnit.net 00:00:00.55]   Discovering: Compze.Threading.Specifications&#xD;
+[xUnit.net 00:00:01.67]   Discovered:  Compze.Threading.Specifications&#xD;
+[xUnit.net 00:00:02.03]   Starting:    Compze.Threading.Specifications&#xD;
+[xUnit.net 00:00:02.19]       Invalid attribute configuration: 1 is not one of: Compze.Threading.Specifications.ICriticalSection_.Infrastructure.ICriticalSectionMatrixAttribute+Implementation, Compze.Threading.Specifications.TestInfrastructure.CancellationMechanism&#xD;
+[xUnit.net 00:00:02.20]       Invalid attribute configuration: 1 is not one of: Compze.Threading.Specifications.ICriticalSection_.Infrastructure.ICriticalSectionMatrixAttribute+Implementation, Compze.Threading.Specifications.TestInfrastructure.CancellationMechanism&#xD;
+[xUnit.net 00:00:02.21]   Finished:    Compze.Threading.Specifications (ID = '12db472f0e505b0644a4db92533f371ef9c0789025ce3c7542d0288eafe26114')&#xD;
+Test 'Compze.Threading.Specifications.ICriticalSection_.ICriticalSection_Cancellation_specification+When_a_thread_blocked_in_TakeLock_is_cancelled.lock_is_not_orphaned_and_other_threads_can_acquire_it()' was skipped in the test run.&#xD;
+Test 'Compze.Threading.Specifications.ICriticalSection_.ICriticalSection_Cancellation_specification+When_a_thread_blocked_in_TakeLock_is_cancelled.throws_expected_cancellation_exception()' was skipped in the test run.&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="THREADRIPPER" outcome="Warning" timestamp="2026-03-16T01:32:34.8140321+01:00">
+        <Text>[xUnit.net 00:00:02.19]     Compze.Threading.Specifications.ICriticalSection_.ICriticalSection_Cancellation_specification+When_a_thread_blocked_in_TakeLock_is_cancelled.lock_is_not_orphaned_and_other_threads_can_acquire_it() [SKIP]</Text>
+      </RunInfo>
+      <RunInfo computerName="THREADRIPPER" outcome="Warning" timestamp="2026-03-16T01:32:34.8146247+01:00">
+        <Text>[xUnit.net 00:00:02.20]     Compze.Threading.Specifications.ICriticalSection_.ICriticalSection_Cancellation_specification+When_a_thread_blocked_in_TakeLock_is_cancelled.throws_expected_cancellation_exception() [SKIP]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

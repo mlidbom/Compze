@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="6068105d-362f-40c8-8125-21d2349c32c6" name="magnu@THREADRIPPER 2026-03-16 01:32:31" runUser="THREADRIPPER\magnu" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-03-16T01:32:31.2636289+01:00" queuing="2026-03-16T01:32:31.2636295+01:00" start="2026-03-16T01:32:27.0875120+01:00" finish="2026-03-16T01:32:31.2647153+01:00" />
+  <TestSettings name="default" id="e1db6524-760e-48d8-aac8-c7d0cabe60b4">
+    <Deployment runDeploymentRoot="magnu_THREADRIPPER_2026-03-16_01_32_31" />
+  </TestSettings>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="0" executed="0" passed="0" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.01] xUnit.net VSTest Adapter v3.1.5+1b188a7b0a (64-bit .NET 10.0.4)&#xD;
+[xUnit.net 00:00:01.01]   Discovering: Compze.Typermedia.Client.Specifications&#xD;
+[xUnit.net 00:00:02.18]   Discovered:  Compze.Typermedia.Client.Specifications&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="THREADRIPPER" outcome="Warning" timestamp="2026-03-16T01:32:31.0779833+01:00">
+        <Text>No test matches the given testcase filter `FullyQualifiedName~ICriticalSection_Cancellation_specification+When` in C:\Dev\Compze.worktrees\compze_worktree_2\test\Compze.Typermedia.Client.Specifications\bin\Debug\net10.0\Compze.Typermedia.Client.Specifications.dll</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>
