@@ -40,7 +40,7 @@ public class Local_Tuery_performance_tests : PerformanceTestBase
 
       //ncrunch: no coverage start
       void RunRequest() =>
-         ServerEndpoint.ServiceLocator.ExecuteInIsolatedScope(() =>
+         ServerEndpoint.ServiceLocator.ExecuteInIsolatedScope(scope =>
          {
             for(var i = 0; i < tueriesPerRequest; i++)
             {

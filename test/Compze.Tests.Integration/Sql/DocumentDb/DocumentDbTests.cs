@@ -543,7 +543,7 @@ public class DocumentDbTests : DocumentDbTestsBase
         using var wait = new ManualResetEventSlim();
         var task = TaskCE.Run(() =>
         {
-            ServiceLocator.ExecuteInIsolatedScope(() => session = ServiceLocator.DocumentDbSession());
+            ServiceLocator.ExecuteInIsolatedScope(scope => session = scope.DocumentDbSession());
             wait.Set();
         });
         wait.Wait();
@@ -644,9 +644,9 @@ public class DocumentDbTests : DocumentDbTestsBase
             updater.Save(dog);
         });
 
-        ServiceLocator.ExecuteInIsolatedScope(() =>
+        ServiceLocator.ExecuteInIsolatedScope(scope =>
         {
-            var ids = ServiceLocator.DocumentDbBulkReader()
+            var ids = scope.DocumentDbBulkReader()
                                   .GetAllIds<User>()
                                   .ToHashSet();
 
@@ -729,7 +729,7 @@ public class DocumentDbTests : DocumentDbTestsBase
     {
         var cloneServiceLocator = ServiceLocator.Clone();
         await using var serviceLocator = cloneServiceLocator;
-        cloneServiceLocator.ExecuteTransactionInIsolatedScope(() => cloneServiceLocator.DocumentDbUpdater()
+        cloneServiceLocator.ExecuteTransactionInIsolatedScope(scope => scope.DocumentDbUpdater()
                                                                                        .Save(new User(userId)));
     }
 

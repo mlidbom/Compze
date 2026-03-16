@@ -19,7 +19,7 @@ public abstract class DocumentDbTestsBase : UniversalTestBase, IAsyncLifetime
    protected IDocumentDb CreateStore() => ServiceLocator.DocumentDb();
 
    protected void UseInTransactionalScope([InstantHandle] Action<IDocumentDbReader, IDocumentDbUpdater> useSession) =>
-      ServiceLocator.ExecuteTransactionInIsolatedScope(() => useSession(ServiceLocator.DocumentDbReader(), ServiceLocator.DocumentDbUpdater()));
+      ServiceLocator.ExecuteTransactionInIsolatedScope(scope => useSession(scope.DocumentDbReader(), scope.DocumentDbUpdater()));
 
-   protected void UseInScope([InstantHandle] Action<IDocumentDbReader> useSession) => ServiceLocator.ExecuteInIsolatedScope(() => useSession(ServiceLocator.DocumentDbReader()));
+   protected void UseInScope([InstantHandle] Action<IDocumentDbReader> useSession) => ServiceLocator.ExecuteInIsolatedScope(scope => useSession(scope.DocumentDbReader()));
 }

@@ -14,7 +14,7 @@ public class TypermediaHandlerExecutor(IServiceLocator serviceLocator, ITypermed
    public object ExecuteTuery(ITessage tuery)
    {
       this.Log().Debug($"Executing tuery {tuery.GetType().Name}");
-      return _serviceLocator.ExecuteInIsolatedScope(() =>
+      return _serviceLocator.ExecuteInIsolatedScope(scope =>
       {
          var handler = _handlerRegistry.GetTueryHandler(tuery.GetType());
          return handler((ITuery<object>)tuery);
@@ -24,7 +24,7 @@ public class TypermediaHandlerExecutor(IServiceLocator serviceLocator, ITypermed
    public object ExecuteTommandWithResult(ITessage tommand)
    {
       this.Log().Debug($"Executing tommand with result {tommand.GetType().Name}");
-      return ExecuteWithRetry(() => _serviceLocator.ExecuteTransactionInIsolatedScope(() =>
+      return ExecuteWithRetry(() => _serviceLocator.ExecuteTransactionInIsolatedScope(scope =>
       {
          var handler = _handlerRegistry.GetTommandHandlerWithReturnValue(tommand.GetType());
          return handler((IAtMostOnceTypermediaTommand)tommand);
@@ -36,7 +36,7 @@ public class TypermediaHandlerExecutor(IServiceLocator serviceLocator, ITypermed
       this.Log().Debug($"Executing void tommand {tommand.GetType().Name}");
       ExecuteWithRetry<object?>(() =>
       {
-         _serviceLocator.ExecuteTransactionInIsolatedScope(() =>
+         _serviceLocator.ExecuteTransactionInIsolatedScope(scope =>
          {
             var handler = _handlerRegistry.GetVoidTommandHandler(tommand);
             handler(tommand);

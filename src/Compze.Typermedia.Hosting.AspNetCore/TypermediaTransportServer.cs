@@ -63,7 +63,7 @@ public class TypermediaTransportServer : ITypermediaTransportServer
       app.UseRouting();
       app.MapControllers();
 
-      app.Use((_, next) => _serviceLocator.ExecuteInIsolatedScopeAsync(next.Invoke));
+      app.Use((_, next) => _serviceLocator.ExecuteInIsolatedScopeAsync(_ => next.Invoke()));
 
       await app.StartAsync().caf();
 

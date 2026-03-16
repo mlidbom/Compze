@@ -161,7 +161,7 @@ public class When_using_nested_scopes
       {
          var outerInstance = serviceLocator.Resolve<IScopedCounter>();
 
-         var innerInstance = serviceLocator.ExecuteInIsolatedScope(() => serviceLocator.Resolve<IScopedCounter>());
+         var innerInstance = serviceLocator.ExecuteInIsolatedScope(scope => scope.Resolve<IScopedCounter>());
 
          innerInstance.Must().NotBe(outerInstance);
       }

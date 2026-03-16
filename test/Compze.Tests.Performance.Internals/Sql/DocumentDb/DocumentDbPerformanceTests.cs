@@ -16,9 +16,9 @@ public class DocumentDbPerformanceTests : DocumentDbTestsBase
 {
    [PCT] public void Saves_XX_documents_in_100_milliseconds()
    {
-      ServiceLocator.ExecuteInIsolatedScope(() =>
+      ServiceLocator.ExecuteInIsolatedScope(scope =>
       {
-         var updater = ServiceLocator.DocumentDbUpdater();
+         var updater = scope.DocumentDbUpdater();
 
          //Warm up caches etc
          SaveOneNewUserInTransaction();

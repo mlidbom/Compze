@@ -36,7 +36,7 @@ public class TeventStoreTests : UniversalTestBase
    protected override void DisposeInternal() => _serviceLocator.Dispose();
 
    [PCT]
-   public void StreamTeventsSinceReturnsWholeTeventLogWhenFromTeventIdIsNull() => _serviceLocator.ExecuteInIsolatedScope(() =>
+   public void StreamTeventsSinceReturnsWholeTeventLogWhenFromTeventIdIsNull() => _serviceLocator.ExecuteInIsolatedScope(scope =>
    {
       var taggregateId = new TaggregateId();
       var savedEvents = 1.Through(10)
@@ -44,17 +44,17 @@ public class TeventStoreTests : UniversalTestBase
                          .ToList();
       TransactionScopeCe.Execute(() =>
       {
-         TeventStore.SaveSingleTaggregateTevents(savedEvents);
+         scope.TeventStore().SaveSingleTaggregateTevents(savedEvents);
       });
 
-      TeventStore.ListAllTeventsForTestingPurposesAbsolutelyNotUsableForARealTeventStoreOfAnySize().Cast<SomeTevent>()
+      scope.TeventStore().ListAllTeventsForTestingPurposesAbsolutelyNotUsableForARealTeventStoreOfAnySize().Cast<SomeTevent>()
                  .ToList()
                  .Must()
                  .DeepEqual(savedEvents);
    });
 
    [PCT]
-   public void StreamTeventsSinceReturnsWholeTeventLogWhenFetchingALargeNumberOfTevents_EnsureBatchingDoesNotBreakThings() => _serviceLocator.ExecuteInIsolatedScope(() =>
+   public void StreamTeventsSinceReturnsWholeTeventLogWhenFetchingALargeNumberOfTevents_EnsureBatchingDoesNotBreakThings() => _serviceLocator.ExecuteInIsolatedScope(scope =>
    {
       const int batchSize = 100;
       const int moreTeventsThanTheBatchSizeForStreamingTevents = batchSize + 10;
@@ -62,9 +62,9 @@ public class TeventStoreTests : UniversalTestBase
       var savedEvents = 1.Through(moreTeventsThanTheBatchSizeForStreamingTevents)
                          .Select(i => new SomeTevent(taggregateId, i)).ToList();
 
-      TransactionScopeCe.Execute(() => TeventStore.SaveSingleTaggregateTevents(savedEvents));
+      TransactionScopeCe.Execute(() => scope.TeventStore().SaveSingleTaggregateTevents(savedEvents));
 
-      TeventStore.ListAllTeventsForTestingPurposesAbsolutelyNotUsableForARealTeventStoreOfAnySize(batchSize: batchSize)
+      scope.TeventStore().ListAllTeventsForTestingPurposesAbsolutelyNotUsableForARealTeventStoreOfAnySize(batchSize: batchSize)
                  .Cast<SomeTevent>()
                  .ToList()
                  .Must()
@@ -72,7 +72,7 @@ public class TeventStoreTests : UniversalTestBase
    });
 
    [PCT]
-   public void DeleteTeventsDeletesTheTeventsForOnlyTheSpecifiedTaggregate() => _serviceLocator.ExecuteInIsolatedScope(() =>
+   public void DeleteTeventsDeletesTheTeventsForOnlyTheSpecifiedTaggregate() => _serviceLocator.ExecuteInIsolatedScope(scope =>
    {
       var taggregatesWithTevents = 1.Through(10)
                                     .ToDictionary(i => i,
@@ -84,22 +84,22 @@ public class TeventStoreTests : UniversalTestBase
                                                              .ToList();
                                                   });
 
-      TransactionScopeCe.Execute(() => taggregatesWithTevents.ForEach(it => TeventStore.SaveSingleTaggregateTevents(it.Value)));
+      TransactionScopeCe.Execute(() => taggregatesWithTevents.ForEach(it => scope.TeventStore().SaveSingleTaggregateTevents(it.Value)));
       var toRemove = taggregatesWithTevents[2][0].TaggregateId;
       taggregatesWithTevents.Remove(2);
 
-      TransactionScopeCe.Execute(() => TeventStore.DeleteTaggregate(toRemove));
+      TransactionScopeCe.Execute(() => scope.TeventStore().DeleteTaggregate(toRemove));
 
-      taggregatesWithTevents.Select(kvp => TeventStore.GetTaggregateHistory(kvp.Value[0].TaggregateId))
+      taggregatesWithTevents.Select(kvp => scope.TeventStore().GetTaggregateHistory(kvp.Value[0].TaggregateId))
                             .ForEach(stream => stream.Must().HaveCount(10));
 
-      TeventStore.GetTaggregateHistory(toRemove)
+      scope.TeventStore().GetTaggregateHistory(toRemove)
                  .Must()
                  .BeEmpty();
    });
 
    [PCT]
-   public void GetListOfTaggregateIds() => _serviceLocator.ExecuteInIsolatedScope(() =>
+   public void GetListOfTaggregateIds() => _serviceLocator.ExecuteInIsolatedScope(scope =>
    {
       var taggregateIds = 1.Through(10).Select(_ => new TaggregateId()).ToList();
       var taggregatesWithTevents = taggregateIds
@@ -111,16 +111,16 @@ public class TeventStoreTests : UniversalTestBase
                                                              .ToList();
                                                   });
 
-      TransactionScopeCe.Execute(() => taggregatesWithTevents.ForEach(it => TeventStore.SaveSingleTaggregateTevents(it.Value)));
+      TransactionScopeCe.Execute(() => taggregatesWithTevents.ForEach(it => scope.TeventStore().SaveSingleTaggregateTevents(it.Value)));
 
-      var allTaggregateIds = TeventStore.StreamTaggregateIdsInCreationOrder()
+      var allTaggregateIds = scope.TeventStore().StreamTaggregateIdsInCreationOrder()
                                         .ToList();
       allTaggregateIds.Must().DeepEqual(taggregateIds);
    });
 
    //Todo: This does not check that only taggregates of the correct type are returned since there are only tevents of type SomeTevent in the store..
    [PCT]
-   public void GetListOfTaggregateIdsUsingTeventType() => _serviceLocator.ExecuteInIsolatedScope(() =>
+   public void GetListOfTaggregateIdsUsingTeventType() => _serviceLocator.ExecuteInIsolatedScope(scope =>
    {
       var taggregateIds = 1.Through(10).Select(_ => new TaggregateId()).ToList();
 
@@ -133,20 +133,20 @@ public class TeventStoreTests : UniversalTestBase
                                                              .ToList();
                                                   });
 
-      TransactionScopeCe.Execute(() => taggregatesWithTevents.ForEach(it => TeventStore.SaveSingleTaggregateTevents(it.Value)));
-      var allTaggregateIds = TeventStore.StreamTaggregateIdsInCreationOrder<ISomeTevent>()
+      TransactionScopeCe.Execute(() => taggregatesWithTevents.ForEach(it => scope.TeventStore().SaveSingleTaggregateTevents(it.Value)));
+      var allTaggregateIds = scope.TeventStore().StreamTaggregateIdsInCreationOrder<ISomeTevent>()
                                         .ToList();
 
       allTaggregateIds.Must().DeepEqual(taggregateIds);
    });
 
    [PCT]
-   public void Does_not_call_db_in_constructor() => _serviceLocator.ExecuteInIsolatedScope(() => _serviceLocator.Resolve<ITeventStoreUpdater>());
+   public void Does_not_call_db_in_constructor() => _serviceLocator.ExecuteInIsolatedScope(scope => scope.TeventStoreUpdater());
 
    [PCT]
-   public void ShouldNotCacheTeventsSavedDuringFailedTransactionEvenIfReadDuringSameTransaction() => _serviceLocator.ExecuteInIsolatedScope(() =>
+   public void ShouldNotCacheTeventsSavedDuringFailedTransactionEvenIfReadDuringSameTransaction() => _serviceLocator.ExecuteInIsolatedScope(scope =>
    {
-      var teventStore = _serviceLocator.TeventStore();
+      var teventStore = scope.TeventStore();
 
       var user = new User();
       user.Register("email@email.se", "password", new TaggregateId());
@@ -181,9 +181,9 @@ public class TeventStoreTests : UniversalTestBase
          });
       }
 
-      var firstRead = serviceLocator.ExecuteInIsolatedScope(() => serviceLocator.TeventStore().GetTaggregateHistory(user.Id).Single());
+      var firstRead = serviceLocator.ExecuteInIsolatedScope(scope => scope.TeventStore().GetTaggregateHistory(user.Id).Single());
 
-      var secondRead = serviceLocator.ExecuteInIsolatedScope(() => serviceLocator.TeventStore().GetTaggregateHistory(user.Id).Single());
+      var secondRead = serviceLocator.ExecuteInIsolatedScope(scope => scope.TeventStore().GetTaggregateHistory(user.Id).Single());
 
       firstRead.Must().ReferenceEqual(secondRead);
    }

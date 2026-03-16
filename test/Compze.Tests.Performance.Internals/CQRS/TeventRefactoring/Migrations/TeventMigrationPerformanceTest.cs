@@ -10,6 +10,7 @@ using Compze.Internals.Testing.Performance;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tests.Common.CQRS.TeventRefactoring.Migrations;
 using Compze.Tests.Common.CQRS.TeventRefactoring.Migrations.Tevents;
+using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Tests.Integration.CQRS.TeventRefactoring.Migrations;
 using Compze.DependencyInjection;
@@ -44,7 +45,7 @@ public class TeventMigrationPerformanceTest : TeventMigrationTestBase
       _currentMigrations = Enumerable.Empty<ITeventMigration>().ToList();
       _container = CreateServiceLocatorForTeventStoreType(migrationsFactory: () => _currentMigrations);
 
-      _container.ExecuteTransactionInIsolatedScope(() => _container.Resolve<ITeventStore>().SaveSingleTaggregateTevents(history));
+      _container.ExecuteTransactionInIsolatedScope(scope => scope.TeventStore().SaveSingleTaggregateTevents(history));
    }
 
    protected override async Task DisposeAsyncInternal()
@@ -82,7 +83,7 @@ public class TeventMigrationPerformanceTest : TeventMigrationTestBase
 
       return;
 
-      void LoadWithCloneLocator(IServiceLocator locator) => locator.ExecuteTransactionInIsolatedScope(() => locator.Resolve<ITeventStoreUpdater>()
+      void LoadWithCloneLocator(IServiceLocator locator) => locator.ExecuteTransactionInIsolatedScope(scope => scope.TeventStoreUpdater()
                                                                                                                    .Get<TestTaggregate>(_taggregate.Id));
    }
 

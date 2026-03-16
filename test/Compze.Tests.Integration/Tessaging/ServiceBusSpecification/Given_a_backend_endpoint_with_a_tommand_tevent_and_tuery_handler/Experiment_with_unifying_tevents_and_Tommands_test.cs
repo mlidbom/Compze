@@ -65,7 +65,7 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
 
       _userDomainServiceLocator = _userManagementDomainEndpoint.ServiceLocator;
 
-      _userDomainServiceLocator.ExecuteTransactionInIsolatedScope(() => _userDomainServiceLocator.Resolve<ITeventStoreUpdater>().Save(UserRegistrarTaggregate.Create()));
+      _userDomainServiceLocator.ExecuteTransactionInIsolatedScope(scope => scope.TeventStoreUpdater().Save(UserRegistrarTaggregate.Create()));
    }
 
    protected override async Task DisposeAsyncInternal()

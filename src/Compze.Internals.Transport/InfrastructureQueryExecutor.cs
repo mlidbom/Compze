@@ -24,7 +24,7 @@ public class InfrastructureQueryExecutor
    public object ExecuteQuery(IMessage query)
    {
       this.Log().Debug($"Executing infrastructure query {query.GetType().Name}");
-      return _serviceLocator.ExecuteInIsolatedScope(() =>
+      return _serviceLocator.ExecuteInIsolatedScope(scope =>
       {
          if(!_queryHandlers.TryGetValue(query.GetType(), out var handler))
             throw new InvalidOperationException($"No infrastructure query handler registered for {query.GetType().FullName}");

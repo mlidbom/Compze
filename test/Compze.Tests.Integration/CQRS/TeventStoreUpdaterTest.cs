@@ -57,13 +57,13 @@ public class TeventStoreUpdaterTest : UniversalTestBase
    protected override async Task DisposeAsyncInternal() => await _serviceLocator.DisposeAsync().AsTask();
 
    protected void UseInTransactionalScope([InstantHandle] Action<ITeventStoreUpdater> useSession)
-      => _serviceLocator.ExecuteTransactionInIsolatedScope(() => useSession(_serviceLocator.Resolve<ITeventStoreUpdater>()));
+      => _serviceLocator.ExecuteTransactionInIsolatedScope(scope => useSession(scope.TeventStoreUpdater()));
 
    protected TResult UseInTransactionalScope<TResult>([InstantHandle] Func<ITeventStoreUpdater, TResult> useSession)
-      => _serviceLocator.ExecuteTransactionInIsolatedScope(() => useSession(_serviceLocator.Resolve<ITeventStoreUpdater>()));
+      => _serviceLocator.ExecuteTransactionInIsolatedScope(scope => useSession(scope.TeventStoreUpdater()));
 
    public void UseInScope([InstantHandle] Action<ITeventStoreUpdater> useSession)
-      => _serviceLocator.ExecuteInIsolatedScope(() => useSession(_serviceLocator.Resolve<ITeventStoreUpdater>()));
+      => _serviceLocator.ExecuteInIsolatedScope(scope => useSession(scope.TeventStoreUpdater()));
 
    [PCT]
    public void WhenFetchingTaggregateThatDoesNotExistNoSuchAggregateExceptionIsThrown()
@@ -100,10 +100,10 @@ public class TeventStoreUpdaterTest : UniversalTestBase
       using var wait = new ManualResetEventSlim();
       TaskCE.Run(() =>
       {
-         _serviceLocator.ExecuteInIsolatedScope(() =>
+         _serviceLocator.ExecuteInIsolatedScope(scope =>
          {
-            updater = _serviceLocator.Resolve<ITeventStoreUpdater>();
-            reader = _serviceLocator.Resolve<ITeventStoreReader>();
+            updater = scope.TeventStoreUpdater();
+            reader = scope.TeventStoreReader();
          });
          wait.Set();
       });
@@ -500,10 +500,10 @@ public class TeventStoreUpdaterTest : UniversalTestBase
       {
          var clonedServiceLocator = _serviceLocator.Clone();
          await using var serviceLocator = clonedServiceLocator;
-         return clonedServiceLocator.ExecuteTransactionInIsolatedScope(() =>
+         return clonedServiceLocator.ExecuteTransactionInIsolatedScope(scope =>
          {
             // ReSharper disable once AccessToDisposedClosure
-            var session = clonedServiceLocator.Resolve<ITeventStoreUpdater>();
+            var session = scope.TeventStoreUpdater();
             var another = User.Register(session,
                                         "email@email.se",
                                         "password",
