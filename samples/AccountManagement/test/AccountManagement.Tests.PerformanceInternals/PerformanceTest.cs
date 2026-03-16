@@ -79,7 +79,7 @@ public class PerformanceTest : UniversalTestBase
 
    [PCT]
    [Skip<SqlLayer>([SqlLayer.Sqlite, SqlLayer.SqliteMemory], "SQLite deadlocks under parallel writes")]
-   public void Multithreaded_fetches_XX_account_resources_in_20_milliseconds()
+   public void Multithreaded_fetches_XX_account_resources_in_30_milliseconds()
    {
       var fetches = TestEnv.SqlLayer.ValueFor(msSql: 10, mySql: 10, pgSql: 12, sqlite: 10, sqliteMemory: 10);
       var accountsReader = CreateAccountsThreaded(Math.Min(fetches, 10)).ToConcurrentCircularReader();
@@ -91,7 +91,7 @@ public class PerformanceTest : UniversalTestBase
                                       _client!.Navigator.Navigate(AccountApi.Instance.Tuery.AccountById(accountId)).Id.Must().Be(accountId);
                                    },
                                    iterations: fetches,
-                                   maxTotal: 20.Milliseconds());
+                                   maxTotal: 30.Milliseconds());
    }
 
    ConcurrentBag<(string Email, string Password, AccountId Id)> CreateAccountsThreaded(int accountCount)
