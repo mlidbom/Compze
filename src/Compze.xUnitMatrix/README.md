@@ -71,12 +71,23 @@ The constructor does setup using the current combination. Each test method is ju
 
 ### Skipping specific combinations
 
-Some combinations may not be supported. Skip them with a reason:
+Some combinations may not be supported. Skip them with `[Skip<T>]`:
 
 ```csharp
-[MyMatrix(Skipped = [PersistenceLayer.SqliteMemory], SkipReasons = ["Sqlite doesn't support this feature"])]
+[MyMatrix]
+[Skip<PersistenceLayer>(PersistenceLayer.SqliteMemory, "Sqlite doesn't support this feature")]
 public void Uses_advanced_sql_feature() { }
 ```
+
+Multiple values from the same dimension can be skipped with one attribute:
+
+```csharp
+[MyMatrix]
+[Skip<PersistenceLayer>([PersistenceLayer.Sqlite, PersistenceLayer.SqliteMemory], "SQLite deadlocks under parallel writes")]
+public void Multithreaded_test() { }
+```
+
+The generic type parameter ensures the enum type is preserved through IL metadata encoding, and the compiler prevents passing a value from the wrong enum type.
 
 ## Any number of dimensions
 

@@ -20,11 +20,28 @@ public abstract class MatrixTheoryAttribute(
       IDataAttribute
 {
    internal bool UseTestMethodArgument { get; } = useTestMethodArgument;
-   public object[]? Skipped { get; init; }
-   public string[]? SkipReasons { get; init; }
 
    readonly Type[] _componentEnumTypes = componentEnumTypes;
    readonly string? _configurationFileName = configurationFileName;
+   readonly List<ComponentSkipSpecification> _subclassSkipSpecifications = [];
+
+   /// <summary>
+   /// Allows subclasses to skip dimension values in their constructors.
+   /// The enum type is preserved because it flows through a typed C# method call, not IL metadata.
+   /// </summary>
+   protected void SkipValues<TDimension>(TDimension value, string reason)
+      where TDimension : struct, Enum
+   {
+      _subclassSkipSpecifications.Add(new ComponentSkipSpecification(value, reason));
+   }
+
+   /// <inheritdoc cref="SkipValues{TDimension}(TDimension, string)"/>
+   protected void SkipValues<TDimension>(TDimension[] values, string reason)
+      where TDimension : struct, Enum
+   {
+      foreach(var value in values)
+         _subclassSkipSpecifications.Add(new ComponentSkipSpecification(value, reason));
+   }
 
    string? ValidateConfiguration()
    {
@@ -37,22 +54,32 @@ public abstract class MatrixTheoryAttribute(
             return $"Type {type.Name} must be an enum type";
       }
 
-      if(Skipped != null)
-      {
-         var invalidComponent = Skipped.FirstOrDefault(it => !_componentEnumTypes.Contains(it.GetType()));
-         if(invalidComponent != null)
-            return $"{invalidComponent} is not one of: {string.Join(", ", _componentEnumTypes.Select(componentType => componentType.FullName))}";
-      }
+      return null;
+   }
 
-      if(Skipped?.Length != SkipReasons?.Length)
-         return "Number of skipped components must match number of skip reasons";
+   string? ValidateSkipSpecifications(IReadOnlyList<ComponentSkipSpecification> skipSpecifications)
+   {
+      var invalidComponent = skipSpecifications.FirstOrDefault(it => !_componentEnumTypes.Contains(it.ComponentType));
+      if(invalidComponent != null)
+         return $"Skipped component {invalidComponent.ComponentValue} (type {invalidComponent.ComponentType.Name}) is not one of the configured component types: {string.Join(", ", _componentEnumTypes.Select(t => t.Name))}";
 
       return null;
    }
 
-   IReadOnlyList<Enum> SkippedComponents => Skipped?.Cast<Enum>().ToList() ?? [];
-
-   MatrixSkipSpecification MatrixSkipSpecification => MatrixSkipSpecification.FromComponentsAndReasons(SkippedComponents, SkipReasons ?? []);
+   static IReadOnlyList<ComponentSkipSpecification> CollectSkipAttributesFromMethod(MethodInfo testMethod)
+   {
+      var skipAttributeType = typeof(SkipAttribute<>);
+      return testMethod.GetCustomAttributes(inherit: true)
+                       .Where(attr => attr.GetType().IsGenericType && attr.GetType().GetGenericTypeDefinition() == skipAttributeType)
+                       .SelectMany(attr =>
+                        {
+                           var attrType = attr.GetType();
+                           var values = (Array)attrType.GetProperty(nameof(SkipAttribute<DayOfWeek>.Values))!.GetValue(attr)!;
+                           var reason = (string)attrType.GetProperty(nameof(SkipAttribute<DayOfWeek>.Reason))!.GetValue(attr)!;
+                           return values.Cast<Enum>().Select(value => new ComponentSkipSpecification(value, reason));
+                        })
+                       .ToList();
+   }
 
 #pragma warning disable CA1033 // Interface methods should be callable by child types. We can't, that would hide the base class methods
    bool? IDataAttribute.Explicit => Explicit;
@@ -88,10 +115,24 @@ public abstract class MatrixTheoryAttribute(
 
       try
       {
+         var allSkipSpecifications = _subclassSkipSpecifications
+                                    .Concat(CollectSkipAttributesFromMethod(testMethod))
+                                    .ToList();
+
+         var skipValidationError = ValidateSkipSpecifications(allSkipSpecifications);
+         if(skipValidationError != null)
+         {
+            return new ValueTask<IReadOnlyCollection<ITheoryDataRow>>(
+               [
+                  new TheoryDataRow() { Skip = $"Invalid skip configuration: {skipValidationError}" }
+               ]);
+         }
+
+         var matrixSkipSpecification = new MatrixSkipSpecification(allSkipSpecifications);
          var combinations = GetCombinations()
                            .Select(ITheoryDataRow (combination) => new TheoryDataRow(combination) // Pass combination object as argument
                                                                    {
-                                                                      Skip = MatrixSkipSpecification.SkippedComponentFor(combination)?.ToString()
+                                                                      Skip = matrixSkipSpecification.SkippedComponentFor(combination)?.ToString()
                                                                    })
                            .ToArray();
          return new ValueTask<IReadOnlyCollection<ITheoryDataRow>>(combinations);

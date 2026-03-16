@@ -1,6 +1,7 @@
 using System.Reflection;
 using Compze.Contracts;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
+using Compze.xUnitMatrix;
 using Xunit.Sdk;
 
 namespace Compze.xUnitMatrix.Tests._2Components.NotArgumentPassing;
@@ -8,16 +9,16 @@ namespace Compze.xUnitMatrix.Tests._2Components.NotArgumentPassing;
 public class WhenAnInvalidComponentIsMentionedInSkipped
 {
    [NotArgumentPassingTwoComponentsPCT]
+   [Skip<DIContainer>(DIContainer.Microsoft, "test reason")]
    public async Task TheTestIsSkippedWithAnErrorTessage()
    {
       await using var disposalTracker = new DisposalTracker();
-      var testData = await new NotArgumentPassingTwoComponentsPCTAttribute()
-                           {
-                              Skipped = ["nonsense"],
-                              SkipReasons = ["because something"]
-                           }.GetData(MethodBase.GetCurrentMethod()._assert().NotNull().CastTo<MethodInfo>(), disposalTracker).caf();
+
+      var attribute = new NotArgumentPassingTwoComponentsPCTAttribute();
+      var testData = await attribute.GetData(typeof(WhenAnInvalidComponentIsMentionedInSkipped)
+                                            .GetMethod(nameof(TheTestIsSkippedWithAnErrorTessage))._assert().NotNull(), disposalTracker).caf();
 
       testData.Must().HaveCount(1);
-      testData.Single().Skip!.Must().Contain("nonsense");
+      testData.Single().Skip!.Must().Contain("DIContainer");
    }
 }

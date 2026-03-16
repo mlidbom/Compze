@@ -15,6 +15,9 @@ class ComponentSkipSpecification
          throw new ArgumentException("Reason cannot be empty", nameof(reason));
    }
 
+   internal Type ComponentType => _component.GetType();
+   internal Enum ComponentValue => _component;
+
    internal bool Skips(MatrixCombination combination) =>
       combination.Components.Any(c => c.Equals(_component));
 

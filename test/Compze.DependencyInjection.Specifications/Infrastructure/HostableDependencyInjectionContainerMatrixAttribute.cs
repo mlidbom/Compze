@@ -12,6 +12,6 @@ sealed class HostableDependencyInjectionContainerMatrixAttribute : MatrixTheoryA
                                                                                                                    sourceFilePath: sourceFilePath,
                                                                                                                    sourceLineNumber: sourceLineNumber)
    {
-      Skipped = [DIContainer.SimpleInjector];
+      SkipValues(DIContainer.SimpleInjector, "SimpleInjector does not support IServiceProviderIsService needed for ASP.NET Core hosting");
    }
 }

@@ -6,17 +6,7 @@ class MatrixSkipSpecification
 {
    readonly IReadOnlyList<ComponentSkipSpecification> _skippedComponents;
 
-   MatrixSkipSpecification(IReadOnlyList<ComponentSkipSpecification> skippedComponents) => _skippedComponents = skippedComponents;
-
-   internal static MatrixSkipSpecification FromComponentsAndReasons(IReadOnlyList<Enum> components, string[] reasons)
-   {
-      if(components.Count != reasons.Length)
-         throw new ArgumentException("Number of components must match number of reasons");
-
-      return new MatrixSkipSpecification(components
-                                                      .Select((component, index) => new ComponentSkipSpecification(component, reasons[index]))
-                                                      .ToList());
-   }
+   internal MatrixSkipSpecification(IReadOnlyList<ComponentSkipSpecification> skippedComponents) => _skippedComponents = skippedComponents;
 
    /// <summary>Finds the first skipped component that matches the given combination, if any.</summary>
    internal ComponentSkipSpecification? SkippedComponentFor(MatrixCombination combination) =>

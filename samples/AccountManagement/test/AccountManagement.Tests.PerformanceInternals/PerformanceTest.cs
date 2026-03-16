@@ -1,6 +1,7 @@
 using AccountManagement.API;
 using AccountManagement.Domain.Registration;
 using AccountManagement.UserStories.Scenarios;
+using Compze.xUnitMatrix;
 using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Abstractions.Wiring.Testing.Internal;
 using Compze.Tessaging.Hosting.Testing;
@@ -50,7 +51,8 @@ public class PerformanceTest : UniversalTestBase
          iterations: TestEnv.SqlLayer.ValueFor(msSql: 6, mySql: 3, pgSql: 4, sqlite: 3, sqliteMemory:6),
          maxTotal: 100.Milliseconds().EnvMultiply(1.6));
 
-   [PCT(Skipped = [SqlLayer.Sqlite, SqlLayer.SqliteMemory], SkipReasons = ["SQLite deadlocks under parallel writes", "SQLite deadlocks under parallel writes"])]
+   [PCT]
+   [Skip<SqlLayer>([SqlLayer.Sqlite, SqlLayer.SqliteMemory], "SQLite deadlocks under parallel writes")]
    public void Multithreaded_creates_XX_accounts_in_60_milliseconds__db2_memory__msSql__mySql__oracle_pgSql_() =>
       TimeAsserter.ExecuteThreaded(
          description: "Register accounts",
@@ -58,7 +60,8 @@ public class PerformanceTest : UniversalTestBase
          iterations: TestEnv.SqlLayer.ValueFor(msSql: 8, mySql: 2, pgSql: 4, sqlite: 2, sqliteMemory: 2),
          maxTotal: 60.Milliseconds().EnvMultiply(instrumented:2.2, unoptimized:1.4));
 
-   [PCT(Skipped = [SqlLayer.Sqlite, SqlLayer.SqliteMemory], SkipReasons = ["SQLite deadlocks under parallel writes", "SQLite deadlocks under parallel writes"])]
+   [PCT]
+   [Skip<SqlLayer>([SqlLayer.Sqlite, SqlLayer.SqliteMemory], "SQLite deadlocks under parallel writes")]
    public void Multithreaded_logs_in_XX_times_in_100_milliseconds()
    {
       var logins = TestEnv.SqlLayer.ValueFor(msSql: 6, mySql: 3, pgSql: 6, sqlite: 2, sqliteMemory: 3);
@@ -74,7 +77,8 @@ public class PerformanceTest : UniversalTestBase
                                    maxTotal: 100.Milliseconds());
    }
 
-   [PCT(Skipped = [SqlLayer.Sqlite, SqlLayer.SqliteMemory], SkipReasons = ["SQLite deadlocks under parallel writes", "SQLite deadlocks under parallel writes"])]
+   [PCT]
+   [Skip<SqlLayer>([SqlLayer.Sqlite, SqlLayer.SqliteMemory], "SQLite deadlocks under parallel writes")]
    public void Multithreaded_fetches_XX_account_resources_in_20_milliseconds()
    {
       var fetches = TestEnv.SqlLayer.ValueFor(msSql: 10, mySql: 10, pgSql: 12, sqlite: 10, sqliteMemory: 10);

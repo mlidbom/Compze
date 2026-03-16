@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.Transactions;
 using Compze.Contracts;
 using Compze.Abstractions.Public;
+using Compze.xUnitMatrix;
 using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Core.Tessaging.Teventive.Public;
@@ -406,9 +407,8 @@ public class TeventStoreUpdaterTest : UniversalTestBase
       });
    }
 
-   [PCT(Skipped = [SqlLayer.Sqlite, SqlLayer.SqliteMemory],
-        SkipReasons = ["Sqlite is not really designed for high concurrency, we have not been able to get this working with SQLite",
-                       "Sqlite is not really designed for high concurrency, we have not been able to get this working with SQLite"])]
+   [PCT]
+   [Skip<SqlLayer>([SqlLayer.Sqlite, SqlLayer.SqliteMemory], "Sqlite is not really designed for high concurrency, we have not been able to get this working with SQLite")]
    public void Concurrent_read_only_access_to_taggregate_history_can_occur_in_parallel()
    {
       var user = new User();
@@ -590,9 +590,8 @@ public class TeventStoreUpdaterTest : UniversalTestBase
          });
    }
 
-   [PCT(Skipped = [SqlLayer.Sqlite, SqlLayer.SqliteMemory],
-        SkipReasons = ["We have not been able to get this to work with SQLite, and since it is testing concurrency behavior is it somewhat outside of SQLite aims anyway...",
-                       "We have not been able to get this to work with SQLite, and since it is testing concurrency behavior is it somewhat outside of SQLite aims anyway..."])]
+   [PCT]
+   [Skip<SqlLayer>([SqlLayer.Sqlite, SqlLayer.SqliteMemory], "We have not been able to get this to work with SQLite, and since it is testing concurrency behavior is it somewhat outside of SQLite aims anyway...")]
    public void Serializes_access_to_an_taggregate_so_that_concurrent_transactions_succeed()
    {
       var user = new User();
