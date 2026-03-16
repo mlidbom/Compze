@@ -9,22 +9,22 @@ namespace Compze.Threading;
 public partial interface IAwaitableCriticalSection : ICriticalSectionInfo
 {
    ///<summary>Acquires a read lock, blocking until available or <paramref name="timeout"/> expires. Throws <exception cref="Exceptions.TakeLockTimeoutException"/> on timeout. Uses <see cref="ICriticalSectionInfo.LockTimeout"/> if <paramref name="timeout"/> is null.</summary>
-   IReadLock TakeReadLock(LockTimeout? timeout = null);
+   IReadLock TakeReadLock(CancellationToken cancellationToken = default, LockTimeout? timeout = null);
 
    ///<summary>Acquires an update lock, blocking until available or <paramref name="timeout"/> expires. Throws <exception cref="Exceptions.TakeLockTimeoutException"/> on timeout. Uses <see cref="ICriticalSectionInfo.LockTimeout"/> if <paramref name="timeout"/> is null.</summary>
-   IUpdateLock TakeUpdateLock(LockTimeout? timeout = null);
+   IUpdateLock TakeUpdateLock(CancellationToken cancellationToken = default, LockTimeout? timeout = null);
 
    ///<summary>Blocks until <paramref name="condition"/>, then returns a read lock with <paramref name="condition"/> guaranteed to still be true.<br/> Throws <exception cref="Exceptions.AwaitingConditionTimeoutException"/> if <paramref name="waitTimeout"/> expires. Uses <see cref="WaitTimeout"/> and <see cref="ICriticalSectionInfo.LockTimeout"/> for null parameters.</summary>
-   IReadLock TakeReadLockWhen(Func<bool> condition, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null);
+   IReadLock TakeReadLockWhen(Func<bool> condition, CancellationToken cancellationToken = default, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null);
 
    ///<summary>Blocks until <paramref name="condition"/>, then returns an update lock with <paramref name="condition"/> guaranteed to still be true.<br/> Throws <exception cref="Exceptions.AwaitingConditionTimeoutException"/> if <paramref name="waitTimeout"/> expires. Uses <see cref="WaitTimeout"/> and <see cref="ICriticalSectionInfo.LockTimeout"/> for null parameters.</summary>
-   IUpdateLock TakeUpdateLockWhen(Func<bool> condition, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null);
+   IUpdateLock TakeUpdateLockWhen(Func<bool> condition, CancellationToken cancellationToken = default, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null);
 
    ///<summary>Blocks until <paramref name="condition"/> returns true or <paramref name="waitTimeout"/> expires. Uses <see cref="WaitTimeout"/> and <see cref="ICriticalSectionInfo.LockTimeout"/> for null parameters.</summary>
-   IReadLock? TryTakeReadLockWhen(Func<bool> condition, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null);
+   IReadLock? TryTakeReadLockWhen(Func<bool> condition, CancellationToken cancellationToken = default, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null);
 
    ///<summary>Blocks until <paramref name="condition"/> returns true then acquires an update lock. Returns null if <paramref name="waitTimeout"/> expires. Uses <see cref="WaitTimeout"/> and <see cref="ICriticalSectionInfo.LockTimeout"/> for null parameters.</summary>
-   IUpdateLock? TryTakeUpdateLockWhen(Func<bool> condition, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null);
+   IUpdateLock? TryTakeUpdateLockWhen(Func<bool> condition, CancellationToken cancellationToken = default, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null);
 
    ///<summary>The timeout used in condition-wait methods if no explicit wait timeout is provided.</summary>
    WaitTimeout WaitTimeout { get; }

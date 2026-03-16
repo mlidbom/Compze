@@ -52,7 +52,7 @@ public class IShared_specification : UniversalTestBase
    {
       [ISharedMatrix] public void only_one_thread_can_execute_within_Locked_at_a_time()
       {
-         var shared = _factory.Create(new object(), LockTimeout.Seconds(30));
+         var shared = _factory.Create(new object(), timeout: LockTimeout.Seconds(30));
          var insideLockGate = IThreadGate.NewClosed(WaitTimeout.Seconds(30), "insideLock");
 
          _runner.Run(

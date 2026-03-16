@@ -10,7 +10,6 @@ namespace Compze.Threading.Specifications.ICriticalSection_.Infrastructure;
 partial class ICriticalSectionCancellationMatrixAttribute
    : MatrixTheoryAttribute<ICriticalSectionMatrixAttribute.Implementation, CancellationMechanism>
 {
-   // TODO: Remove SkipValues when CancellationToken parameter is added to ICriticalSection (Phase 3)
    public ICriticalSectionCancellationMatrixAttribute(
       [CallerFilePath] string? sourceFilePath = null,
       [CallerLineNumber] int sourceLineNumber = -1)
@@ -18,6 +17,5 @@ partial class ICriticalSectionCancellationMatrixAttribute
          configurationFileName: null,
          useTestMethodArgument: false,
          sourceFilePath: sourceFilePath,
-         sourceLineNumber: sourceLineNumber)
-      => SkipValues(CancellationMechanism.CancellationToken, "CancellationToken parameter not yet added to the interface");
+         sourceLineNumber: sourceLineNumber) { }
 }

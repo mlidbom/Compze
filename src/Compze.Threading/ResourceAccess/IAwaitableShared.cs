@@ -19,20 +19,20 @@ public interface IAwaitableShared
 
       public IAwaitableCriticalSection CriticalSection { get; }
 
-      public TResult Read<TResult>(Func<TShared, TResult> read, LockTimeout? timeout = null) =>
-         CriticalSection.Read(() => read(_shared), timeout);
+      public TResult Read<TResult>(Func<TShared, TResult> read, CancellationToken cancellationToken = default, LockTimeout? timeout = null) =>
+         CriticalSection.Read(() => read(_shared), cancellationToken, timeout);
 
-      public TResult ReadWhen<TResult>(Func<TShared, bool> condition, Func<TShared, TResult> read, WaitTimeout? timeout = null) =>
-         CriticalSection.ReadWhen(() => condition(_shared), () => read(_shared), timeout);
+      public TResult ReadWhen<TResult>(Func<TShared, bool> condition, Func<TShared, TResult> read, CancellationToken cancellationToken = default, WaitTimeout? timeout = null) =>
+         CriticalSection.ReadWhen(() => condition(_shared), () => read(_shared), cancellationToken, waitTimeout: timeout);
 
-      public TResult Update<TResult>(Func<TShared, TResult> update, LockTimeout? timeout = null) =>
-         CriticalSection.Update(() => update(_shared), timeout);
+      public TResult Update<TResult>(Func<TShared, TResult> update, CancellationToken cancellationToken = default, LockTimeout? timeout = null) =>
+         CriticalSection.Update(() => update(_shared), cancellationToken, timeout);
 
-      public TResult UpdateWhen<TResult>(Func<TShared, bool> condition, Func<TShared, TResult> update, WaitTimeout? timeout = null) =>
-         CriticalSection.UpdateWhen(() => condition(_shared), () => update(_shared), timeout);
+      public TResult UpdateWhen<TResult>(Func<TShared, bool> condition, Func<TShared, TResult> update, CancellationToken cancellationToken = default, WaitTimeout? timeout = null) =>
+         CriticalSection.UpdateWhen(() => condition(_shared), () => update(_shared), cancellationToken, waitTimeout: timeout);
 
-      public bool TryUpdateWhen(Func<TShared, bool> condition, Action<TShared> update, WaitTimeout? timeout = null) =>
-         CriticalSection.TryUpdateWhen(() => condition(_shared), () => update(_shared), timeout);
+      public bool TryUpdateWhen(Func<TShared, bool> condition, Action<TShared> update, CancellationToken cancellationToken = default, WaitTimeout? timeout = null) =>
+         CriticalSection.TryUpdateWhen(() => condition(_shared), () => update(_shared), cancellationToken, waitTimeout: timeout);
    }
 }
 
@@ -44,26 +44,26 @@ public interface IAwaitableShared<out TShared>
 
    //core
    ///<summary>Acquires a read lock, passes the shared object to <paramref name="read"/>, returns the result, then releases the lock.</summary>
-   TResult Read<TResult>(Func<TShared, TResult> read, LockTimeout? timeout = null);
+   TResult Read<TResult>(Func<TShared, TResult> read, CancellationToken cancellationToken = default, LockTimeout? timeout = null);
    ///<summary>Blocks until <paramref name="condition"/> returns true for the shared object, then acquires a read lock, executes <paramref name="read"/>, and returns its result.</summary>
-   TResult ReadWhen<TResult>(Func<TShared, bool> condition, Func<TShared, TResult> read, WaitTimeout? timeout = null);
+   TResult ReadWhen<TResult>(Func<TShared, bool> condition, Func<TShared, TResult> read, CancellationToken cancellationToken = default, WaitTimeout? timeout = null);
    ///<summary>Acquires an update lock, passes the shared object to <paramref name="update"/>, returns the result, then releases the lock.</summary>
-   TResult Update<TResult>(Func<TShared, TResult> update, LockTimeout? timeout = null);
+   TResult Update<TResult>(Func<TShared, TResult> update, CancellationToken cancellationToken = default, LockTimeout? timeout = null);
    ///<summary>Blocks until <paramref name="condition"/> returns true for the shared object, then acquires an update lock, executes <paramref name="update"/>, and returns its result.</summary>
-   TResult UpdateWhen<TResult>(Func<TShared, bool> condition, Func<TShared, TResult> update, WaitTimeout? timeout = null);
+   TResult UpdateWhen<TResult>(Func<TShared, bool> condition, Func<TShared, TResult> update, CancellationToken cancellationToken = default, WaitTimeout? timeout = null);
 
    //Default implementations
    ///<summary>Acquires a read lock, passes the shared object to <paramref name="read"/>, then releases the lock.</summary>
-   Unit Read(Action<TShared> read, LockTimeout? timeout = null) => Read(read.ToFunc(), timeout);
+   Unit Read(Action<TShared> read, CancellationToken cancellationToken = default, LockTimeout? timeout = null) => Read(read.ToFunc(), cancellationToken, timeout);
 
    ///<summary>Acquires an update lock, passes the shared object to <paramref name="update"/>, then releases the lock.</summary>
-   Unit Update(Action<TShared> update, LockTimeout? timeout = null) => Update(update.ToFunc(), timeout);
+   Unit Update(Action<TShared> update, CancellationToken cancellationToken = default, LockTimeout? timeout = null) => Update(update.ToFunc(), cancellationToken, timeout);
    ///<summary>Blocks until <paramref name="condition"/> returns true for the shared object, then acquires an update lock and executes <paramref name="update"/>.</summary>
-   Unit UpdateWhen(Func<TShared, bool> condition, Action<TShared> update, WaitTimeout? timeout = null) => UpdateWhen(condition, update.ToFunc(), timeout);
+   Unit UpdateWhen(Func<TShared, bool> condition, Action<TShared> update, CancellationToken cancellationToken = default, WaitTimeout? timeout = null) => UpdateWhen(condition, update.ToFunc(), cancellationToken, timeout);
 
    ///<summary>Blocks until <paramref name="condition"/> returns true for the shared object or <paramref name="timeout"/> expires.</summary>
-   Unit Await(Func<TShared, bool> condition, WaitTimeout? timeout = null) => ReadWhen(condition, _ => unit, timeout);
+   Unit Await(Func<TShared, bool> condition, CancellationToken cancellationToken = default, WaitTimeout? timeout = null) => ReadWhen(condition, _ => unit, cancellationToken, timeout);
 
    ///<summary>Blocks until <paramref name="condition"/> returns true for the shared object, then acquires an update lock and executes <paramref name="update"/>. Returns false if the wait times out, else true.</summary>
-   bool TryUpdateWhen(Func<TShared, bool> condition, Action<TShared> update, WaitTimeout? timeout = null);
+   bool TryUpdateWhen(Func<TShared, bool> condition, Action<TShared> update, CancellationToken cancellationToken = default, WaitTimeout? timeout = null);
 }

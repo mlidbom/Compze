@@ -26,12 +26,13 @@ class InterprocessSignal : IDisposable
    public long Snapshot() => _counter.Count;
 
    ///<summary>Waits up to <paramref name="timeout"/> for the counter to change from <paramref name="baseline"/>. Returns true if a signal was detected, false on timeout. On success, updates <paramref name="baseline"/> to the current counter value.</summary>
-   public bool TryAwait(TimeSpan timeout, ref long baseline)
+   public bool TryAwait(TimeSpan timeout, ref long baseline, CancellationToken cancellationToken = default)
    {
       var deadline = DateTime.UtcNow + timeout;
 
       while(_counter.Count == baseline)
       {
+         cancellationToken.ThrowIfCancellationRequested();
          if(DateTime.UtcNow >= deadline)
             return false;
 

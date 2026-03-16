@@ -76,25 +76,25 @@ public class IAwaitableShared_specification : UniversalTestBase
 
    static void AssertAllAccessMethodsFail(IAwaitableShared<SharedTestValue> shared)
    {
-      Invoking(() => shared.Read(_ => 0, LockTimeout.Milliseconds(10)))
+      Invoking(() => shared.Read(_ => 0, timeout: LockTimeout.Milliseconds(10)))
         .Must().Throw<TakeLockTimeoutException>();
 
-      Invoking(() => shared.Read(_ => {}, LockTimeout.Milliseconds(10)))
+      Invoking(() => shared.Read(_ => {}, timeout: LockTimeout.Milliseconds(10)))
         .Must().Throw<TakeLockTimeoutException>();
 
-      Invoking(() => shared.Update(_ => 0, LockTimeout.Milliseconds(10)))
+      Invoking(() => shared.Update(_ => 0, timeout: LockTimeout.Milliseconds(10)))
         .Must().Throw<TakeLockTimeoutException>();
 
-      Invoking(() => shared.Update(_ => {}, LockTimeout.Milliseconds(10)))
+      Invoking(() => shared.Update(_ => {}, timeout: LockTimeout.Milliseconds(10)))
         .Must().Throw<TakeLockTimeoutException>();
    }
 
    static void AssertAllAccessMethodsSucceed(IAwaitableShared<SharedTestValue> shared)
    {
-      shared.Read(_ => 0, LockTimeout.Milliseconds(100));
-      shared.Read(_ => {}, LockTimeout.Milliseconds(100));
-      shared.Update(_ => 0, LockTimeout.Milliseconds(100));
-      shared.Update(_ => {}, LockTimeout.Milliseconds(100));
+      shared.Read(_ => 0, timeout: LockTimeout.Milliseconds(100));
+      shared.Read(_ => {}, timeout: LockTimeout.Milliseconds(100));
+      shared.Update(_ => 0, timeout: LockTimeout.Milliseconds(100));
+      shared.Update(_ => {}, timeout: LockTimeout.Milliseconds(100));
    }
 
    static void AssertAllAccessMethodsFailsWhileGateIsClosedAllSucceedAfterOpeningGate(IAwaitableShared<SharedTestValue> shared, IThreadGate insideLock)

@@ -64,7 +64,7 @@ public class ICriticalSection_ThreadInterrupt_specification : UniversalTestBase
 
       [ICriticalSectionMatrix] public void lock_is_not_orphaned_and_other_threads_can_acquire_it()
       {
-         using(_criticalSection.TakeLock(LockTimeout.Seconds(1))) {}
+         using(_criticalSection.TakeLock(timeout: LockTimeout.Seconds(1))) {}
       }
    }
 }

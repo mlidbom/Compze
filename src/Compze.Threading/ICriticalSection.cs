@@ -4,5 +4,5 @@ namespace Compze.Threading;
 public partial interface ICriticalSection : ICriticalSectionInfo
 {
    ///<summary>Acquires the lock, blocking until it is available or <paramref name="timeout"/> expires. Throws <exception cref="Exceptions.TakeLockTimeoutException"/> if <paramref name="timeout"/> expires. Uses <see cref="ICriticalSectionInfo.LockTimeout"/> if <paramref name="timeout"/> is null.</summary>
-   ILock TakeLock(LockTimeout? timeout = null);
+   ILock TakeLock(CancellationToken cancellationToken = default, LockTimeout? timeout = null);
 }

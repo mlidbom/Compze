@@ -38,27 +38,27 @@ public partial interface IAwaitableMutex
       public bool IsGlobal => _mutex.IsGlobal;
       public string Name => _mutex.Name;
 
-      public IReadLock TakeReadLock(LockTimeout? timeout = null) => (IReadLock)_mutex.TakeLock(timeout);
+      public IReadLock TakeReadLock(CancellationToken cancellationToken = default, LockTimeout? timeout = null) => (IReadLock)_mutex.TakeLock(cancellationToken, timeout);
 
-      public IUpdateLock TakeUpdateLock(LockTimeout? timeout = null)
+      public IUpdateLock TakeUpdateLock(CancellationToken cancellationToken = default, LockTimeout? timeout = null)
       {
-         var mutexLock = _mutex.TakeLock(timeout);
+         var mutexLock = _mutex.TakeLock(cancellationToken, timeout);
          return new UpdateLockDisposer(_signal, mutexLock);
       }
 
-      public IReadLock TakeReadLockWhen(Func<bool> condition, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null) =>
-         (IReadLock?)TryTakeLockWhen(condition, waitTimeout, lockTimeout, isUpdate: false) ?? throw new AwaitingConditionTimeoutException();
+      public IReadLock TakeReadLockWhen(Func<bool> condition, CancellationToken cancellationToken = default, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null) =>
+         (IReadLock?)TryTakeLockWhen(condition, cancellationToken, waitTimeout, lockTimeout, isUpdate: false) ?? throw new AwaitingConditionTimeoutException();
 
-      public IUpdateLock TakeUpdateLockWhen(Func<bool> condition, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null) =>
-         (IUpdateLock?)TryTakeLockWhen(condition, waitTimeout, lockTimeout, isUpdate: true) ?? throw new AwaitingConditionTimeoutException();
+      public IUpdateLock TakeUpdateLockWhen(Func<bool> condition, CancellationToken cancellationToken = default, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null) =>
+         (IUpdateLock?)TryTakeLockWhen(condition, cancellationToken, waitTimeout, lockTimeout, isUpdate: true) ?? throw new AwaitingConditionTimeoutException();
 
-      public IReadLock? TryTakeReadLockWhen(Func<bool> condition, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null) =>
-         (IReadLock?)TryTakeLockWhen(condition, waitTimeout, lockTimeout, isUpdate: false);
+      public IReadLock? TryTakeReadLockWhen(Func<bool> condition, CancellationToken cancellationToken = default, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null) =>
+         (IReadLock?)TryTakeLockWhen(condition, cancellationToken, waitTimeout, lockTimeout, isUpdate: false);
 
-      public IUpdateLock? TryTakeUpdateLockWhen(Func<bool> condition, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null) =>
-         (IUpdateLock?)TryTakeLockWhen(condition, waitTimeout, lockTimeout, isUpdate: true);
+      public IUpdateLock? TryTakeUpdateLockWhen(Func<bool> condition, CancellationToken cancellationToken = default, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null) =>
+         (IUpdateLock?)TryTakeLockWhen(condition, cancellationToken, waitTimeout, lockTimeout, isUpdate: true);
 
-      IDisposable? TryTakeLockWhen(Func<bool> condition, WaitTimeout? waitTimeout, LockTimeout? lockTimeout, bool isUpdate)
+      IDisposable? TryTakeLockWhen(Func<bool> condition, CancellationToken cancellationToken, WaitTimeout? waitTimeout, LockTimeout? lockTimeout, bool isUpdate)
       {
          var effectiveWaitTimeout = waitTimeout ?? WaitTimeout;
          var effectiveLockTimeout = lockTimeout ?? LockTimeout;
@@ -66,11 +66,13 @@ public partial interface IAwaitableMutex
          var waitStartedAt = DateTime.UtcNow;
 
          // Take the lock (reentrant if caller already holds it)
-         ILock mutexLock = _mutex.TakeLock(effectiveLockTimeout);
+         ILock mutexLock = _mutex.TakeLock(cancellationToken, effectiveLockTimeout);
          try
          {
             while(!condition())
             {
+               cancellationToken.ThrowIfCancellationRequested();
+
                // Snapshot the signal baseline while holding the lock — any signal raised after this point will be visible to TryAwait.
                var baseline = _signal.Snapshot();
 
@@ -87,7 +89,7 @@ public partial interface IAwaitableMutex
                      return null;
                   }
 
-                  while(!_signal.TryAwait(AbandonedMutexCheckInterval, ref baseline))
+                  while(!_signal.TryAwait(AbandonedMutexCheckInterval, ref baseline, cancellationToken))
                   {
                      if(!effectiveWaitTimeout.IsInfinite && effectiveWaitTimeout.IsExpired(waitStartedAt))
                      {

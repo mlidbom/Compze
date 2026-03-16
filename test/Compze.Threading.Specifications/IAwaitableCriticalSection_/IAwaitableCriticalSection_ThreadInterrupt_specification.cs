@@ -76,7 +76,7 @@ public class IAwaitableCriticalSection_ThreadInterrupt_specification : Universal
       [IAwaitableCriticalSectionMatrix] public void lock_is_not_orphaned_and_other_threads_can_acquire_it()
       {
          RunScenario();
-         using(_criticalSection.TakeUpdateLock(LockTimeout.Seconds(1))) {}
+         using(_criticalSection.TakeUpdateLock(timeout: LockTimeout.Seconds(1))) {}
       }
    }
 
@@ -103,7 +103,7 @@ public class IAwaitableCriticalSection_ThreadInterrupt_specification : Universal
       [IAwaitableCriticalSectionMatrix] public void lock_is_not_orphaned_and_other_threads_can_acquire_it()
       {
          RunScenario();
-         using(_criticalSection.TakeUpdateLock(LockTimeout.Seconds(1))) {}
+         using(_criticalSection.TakeUpdateLock(timeout: LockTimeout.Seconds(1))) {}
       }
    }
 
@@ -129,7 +129,7 @@ public class IAwaitableCriticalSection_ThreadInterrupt_specification : Universal
       [IAwaitableCriticalSectionMatrix] public void lock_is_not_orphaned_and_other_threads_can_acquire_it()
       {
          RunScenario();
-         using(_criticalSection.TakeUpdateLock(LockTimeout.Seconds(1))) {}
+         using(_criticalSection.TakeUpdateLock(timeout: LockTimeout.Seconds(1))) {}
       }
    }
 
@@ -155,7 +155,7 @@ public class IAwaitableCriticalSection_ThreadInterrupt_specification : Universal
       [IAwaitableCriticalSectionMatrix] public void lock_is_not_orphaned_and_other_threads_can_acquire_it()
       {
          RunScenario();
-         using(_criticalSection.TakeUpdateLock(LockTimeout.Seconds(1))) {}
+         using(_criticalSection.TakeUpdateLock(timeout: LockTimeout.Seconds(1))) {}
       }
    }
 
@@ -181,7 +181,7 @@ public class IAwaitableCriticalSection_ThreadInterrupt_specification : Universal
       [IAwaitableCriticalSectionMatrix] public void lock_is_not_orphaned_and_other_threads_can_acquire_it()
       {
          RunScenario();
-         using(_criticalSection.TakeUpdateLock(LockTimeout.Seconds(1))) {}
+         using(_criticalSection.TakeUpdateLock(timeout: LockTimeout.Seconds(1))) {}
       }
    }
 
@@ -207,7 +207,7 @@ public class IAwaitableCriticalSection_ThreadInterrupt_specification : Universal
       [IAwaitableCriticalSectionMatrix] public void lock_is_not_orphaned_and_other_threads_can_acquire_it()
       {
          RunScenario();
-         using(_criticalSection.TakeUpdateLock(LockTimeout.Seconds(1))) {}
+         using(_criticalSection.TakeUpdateLock(timeout: LockTimeout.Seconds(1))) {}
       }
    }
 
@@ -233,7 +233,7 @@ public class IAwaitableCriticalSection_ThreadInterrupt_specification : Universal
       [IAwaitableCriticalSectionMatrix] public void lock_is_not_orphaned_and_other_threads_can_acquire_it()
       {
          RunScenario();
-         using(_criticalSection.TakeUpdateLock(LockTimeout.Seconds(1))) {}
+         using(_criticalSection.TakeUpdateLock(timeout: LockTimeout.Seconds(1))) {}
       }
    }
 }

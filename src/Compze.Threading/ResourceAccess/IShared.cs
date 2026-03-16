@@ -10,8 +10,8 @@ public interface IShared
       readonly TShared _shared = shared;
       public ICriticalSection CriticalSection { get; } = criticalSection;
 
-      public TResult Locked<TResult>(Func<TShared, TResult> func, LockTimeout? timeout = null) =>
-         CriticalSection.Locked(() => func(_shared), timeout);
+      public TResult Locked<TResult>(Func<TShared, TResult> func, CancellationToken cancellationToken = default, LockTimeout? timeout = null) =>
+         CriticalSection.Locked(() => func(_shared), cancellationToken, timeout);
    }
 }
 
@@ -22,8 +22,8 @@ public interface IShared<out TShared>
    ICriticalSection CriticalSection { get; }
 
    ///<summary>Acquires the lock, passes the shared object to <paramref name="func"/>, returns the result, then releases the lock.</summary>
-   TResult Locked<TResult>(Func<TShared, TResult> func, LockTimeout? timeout = null);
+   TResult Locked<TResult>(Func<TShared, TResult> func, CancellationToken cancellationToken = default, LockTimeout? timeout = null);
 
    ///<summary>Acquires the lock, passes the shared object to <paramref name="action"/>, then releases the lock.</summary>
-   Unit Locked(Action<TShared> action, LockTimeout? timeout = null) => Locked(action.ToFunc(), timeout);
+   Unit Locked(Action<TShared> action, CancellationToken cancellationToken = default, LockTimeout? timeout = null) => Locked(action.ToFunc(), cancellationToken, timeout);
 }

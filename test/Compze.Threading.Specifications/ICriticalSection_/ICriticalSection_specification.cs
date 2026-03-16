@@ -104,11 +104,11 @@ public class ICriticalSection_specification : UniversalTestBase
          {
             using(criticalSection.TakeLock()) {}
 
-            Invoking(() => TaskCE.Run(() => criticalSection.TakeLock(LockTimeout.Seconds(.1))).Wait())
+            Invoking(() => TaskCE.Run(() => criticalSection.TakeLock(timeout: LockTimeout.Seconds(.1))).Wait())
               .Must().Throw<Exception>();
          }
 
-         TaskCE.Run(() => criticalSection.TakeLock(LockTimeout.Milliseconds(0))).Wait();
+         TaskCE.Run(() => criticalSection.TakeLock(timeout: LockTimeout.Milliseconds(0))).Wait();
       }
    }
 

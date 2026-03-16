@@ -56,33 +56,42 @@ The matrix attribute inherits from `MatrixTheoryAttribute<TImplementation, Cance
 ### Phase 2 — Restructure existing ThreadInterrupt tests (DONE)
 
 - Migrated to 2D matrix, renamed `*_ThreadInterrupt_specification` → `*_Cancellation_specification`
-- CancellationToken dimension skipped via `SkipValues` in attribute constructors (remove when Phase 3-5 land)
-- TODO comments in test methods mark where `cancellationTrigger.Token` needs to be passed once interface parameters exist
+- CancellationToken dimension skipped via `SkipValues` in attribute constructors (remove when Phase 4-5 land)
+- TODO comments in test methods replaced with actual `cancellationTrigger.Token` calls in Phase 3
 
-### Phase 3 — Add CancellationToken to interfaces
+### Phase 3 — Add CancellationToken to interfaces (DONE)
 
-Add `CancellationToken cancellationToken = default` to:
+Added `CancellationToken cancellationToken = default` to all blocking methods:
 
 - `ICriticalSection`: `TakeLock`
-- `IAwaitableCriticalSection`: `TakeReadLock`, `TakeUpdateLock`, `TakeReadLockWhen`, `TakeUpdateLockWhen`, `TryTakeReadLockWhen`, `TryTakeUpdateLockWhen`, `TryAwait`, and all default-implemented functional helpers (`Locked`, `Read`, `Update`, `ReadWhen`, `UpdateWhen`, `TryUpdateWhen`)
+- `ICriticalSection.Functional`: `Locked`
+- `IAwaitableCriticalSection`: `TakeReadLock`, `TakeUpdateLock`, `TakeReadLockWhen`, `TakeUpdateLockWhen`, `TryTakeReadLockWhen`, `TryTakeUpdateLockWhen`
+- `IAwaitableCriticalSection.Functional`: `Read`, `Update`, `ReadWhen`, `UpdateWhen`, `TryUpdateWhen`
+- `IAwaitableCriticalSection.Awaiting`: `TryAwait`
 - `IShared<T>`: `Locked`
 - `IAwaitableShared<T>`: `Read`, `ReadWhen`, `Update`, `UpdateWhen`, `TryUpdateWhen`, `Await`
-- `IProcessShared<T>`, `IAwaitableProcessShared<T>`: same methods as their parent interfaces
 - `InterprocessSignal.TryAwait`
+- `IInterprocessObject.Implementation`: all 5 methods
 
-### Phase 4 — Implement in MonitorCE
+Implementations (MonitorCE, MutexCE, AwaitableMutex) accept the parameter but ignore it. All callers updated to use named parameters where needed. Test TODO markers replaced with actual `cancellationTrigger.Token` arguments. SkipValues updated to "not yet implemented in MonitorCE/MutexCE".
 
-- Condition waits: `CancellationToken.Register(() => Monitor.PulseAll(lockObj))`, check token at top of wait loop
-- Lock acquisition: short-interval `Monitor.TryEnter` loop with token check
+### Phase 4 — Implement in MonitorCE (DONE)
 
-### Phase 5 — Implement in AwaitableMutex / Mutex / InterprocessSignal
+- `ThinMonitorWrapper.TryTakeLock`: when token is cancellable, polls with 50ms `Monitor.TryEnter` intervals checking token between iterations
+- `TryTakeLockWhen` condition waits: caps `Monitor.Wait` interval to 50ms when token is cancellable, checks token at top of each loop iteration
+- Non-cancellable paths unchanged — zero overhead when `CancellationToken.None` is passed
 
-- `InterprocessSignal.TryAwait`: add `token.ThrowIfCancellationRequested()` in 1ms poll loop
-- `AwaitableMutex.TryTakeLockWhen`: check token in 50ms signal-wait loop
-- `Mutex` lock acquisition: short-interval `WaitOne` loop with token check
+### Phase 5 — Implement in AwaitableMutex / Mutex / InterprocessSignal (DONE)
 
-### Phase 6 — Light up the CancellationToken dimension
+- `InterprocessSignal.TryAwait`: `ThrowIfCancellationRequested` added to existing 1ms poll loop
+- `AwaitableMutex.TryTakeLockWhen`: token threaded to `_mutex.TakeLock`, `_signal.TryAwait`, and checked at top of condition loop
+- `MutexCE.TakeLock`/`TryTakeLockCore`: when token is cancellable, polling interval capped to 50ms (min of cancellation and interrupt intervals)
 
-- The restructured tests from Phase 2 now automatically run for both mechanisms via the 2D matrix
+### Phase 6 — Light up the CancellationToken dimension (DONE)
 
-### Phase 7 — Full test suite run
+- Removed `SkipValues` from both `ICriticalSectionCancellationMatrixAttribute` and `IAwaitableCriticalSectionCancellationMatrixAttribute`
+- CancellationToken tests now run for all implementations: Monitor, GlobalMutex, LocalMutex
+
+### Phase 7 — Full test suite run (DONE)
+
+- 2101 passed, 0 failed — CancellationToken dimension fully lit up (10+ new test cases running)
