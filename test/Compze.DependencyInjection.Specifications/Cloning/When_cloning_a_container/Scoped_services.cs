@@ -14,10 +14,8 @@ public class Scoped_services
       using var clone = source.Clone();
       var serviceLocator = clone.ServiceLocator;
 
-      using(serviceLocator.BeginScope())
-      {
-         serviceLocator.Resolve<IScopedService>().Must().NotBeNull();
-      }
+      using var scope = serviceLocator.BeginScope();
+      scope.Resolve<IScopedService>().Must().NotBeNull();
    }
 
    [DependencyInjectionContainerMatrix]
@@ -31,14 +29,14 @@ public class Scoped_services
       IScopedService sourceInstance;
       IScopedService cloneInstance;
 
-      using(source.ServiceLocator.BeginScope())
       {
-         sourceInstance = source.ServiceLocator.Resolve<IScopedService>();
+         using var sourceScope = source.ServiceLocator.BeginScope();
+         sourceInstance = sourceScope.Resolve<IScopedService>();
       }
 
-      using(clone.ServiceLocator.BeginScope())
       {
-         cloneInstance = clone.ServiceLocator.Resolve<IScopedService>();
+         using var cloneScope = clone.ServiceLocator.BeginScope();
+         cloneInstance = cloneScope.Resolve<IScopedService>();
       }
 
       sourceInstance.Must().NotBe(cloneInstance);

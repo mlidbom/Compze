@@ -127,13 +127,11 @@ public class When_resolving_a_tracked_transient
          container.Register(TrackedTransient.For<IMyService>().CreatedBy(() => new MyService()));
 
          var serviceLocator = container.ServiceLocator;
-         using(serviceLocator.BeginScope())
-         {
-            var first = serviceLocator.Resolve<IMyService>();
-            var second = serviceLocator.Resolve<IMyService>();
+         using var scope = serviceLocator.BeginScope();
+         var first = scope.Resolve<IMyService>();
+         var second = scope.Resolve<IMyService>();
 
-            first.Must().NotBe(second);
-         }
+         first.Must().NotBe(second);
       }
 
       [DependencyInjectionContainerMatrix]
@@ -147,10 +145,10 @@ public class When_resolving_a_tracked_transient
          DisposableService instance1;
          DisposableService instance2;
 
-         using(serviceLocator.BeginScope())
          {
-            instance1 = (DisposableService)serviceLocator.Resolve<IDisposableService>();
-            instance2 = (DisposableService)serviceLocator.Resolve<IDisposableService>();
+            using var scope = serviceLocator.BeginScope();
+            instance1 = (DisposableService)scope.Resolve<IDisposableService>();
+            instance2 = (DisposableService)scope.Resolve<IDisposableService>();
 
             instance1.IsDisposed.Must().BeFalse();
             instance2.IsDisposed.Must().BeFalse();
@@ -171,10 +169,10 @@ public class When_resolving_a_tracked_transient
          AsyncOnlyDisposableService instance1;
          AsyncOnlyDisposableService instance2;
 
-         using(serviceLocator.BeginScope())
          {
-            instance1 = (AsyncOnlyDisposableService)serviceLocator.Resolve<IAsyncOnlyDisposableService>();
-            instance2 = (AsyncOnlyDisposableService)serviceLocator.Resolve<IAsyncOnlyDisposableService>();
+            using var scope = serviceLocator.BeginScope();
+            instance1 = (AsyncOnlyDisposableService)scope.Resolve<IAsyncOnlyDisposableService>();
+            instance2 = (AsyncOnlyDisposableService)scope.Resolve<IAsyncOnlyDisposableService>();
 
             instance1.IsDisposed.Must().BeFalse();
             instance2.IsDisposed.Must().BeFalse();

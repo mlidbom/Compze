@@ -529,11 +529,9 @@ public class DocumentDbTests : DocumentDbTestsBase
             updater.Save(new Dog { Id = new EntityId() });
         });
 
-        using (ServiceLocator.BeginScope())
-        {
-            ServiceLocator.DocumentDbBulkReader().GetAll<Dog>().ToList().Must().HaveCount(2);
-            ServiceLocator.DocumentDbBulkReader().GetAll<User>().ToList().Must().HaveCount(2);
-        }
+        using var scope = ServiceLocator.BeginScope();
+        scope.DocumentDbBulkReader().GetAll<Dog>().ToList().Must().HaveCount(2);
+        scope.DocumentDbBulkReader().GetAll<User>().ToList().Must().HaveCount(2);
     }
 
     [PCT]
@@ -594,14 +592,12 @@ public class DocumentDbTests : DocumentDbTestsBase
             updater.Save(person1);
         });
 
-        using (ServiceLocator.BeginScope())
-        {
-            var people = ServiceLocator.DocumentDbBulkReader().GetAll<Person>().Select(it => it.Id).ToHashSet();
+        using var scope = ServiceLocator.BeginScope();
+        var people = scope.DocumentDbBulkReader().GetAll<Person>().Select(it => it.Id).ToHashSet();
 
-            people.Must().HaveCount(2);
-            people.Must().Contain(user1.Id);
-            people.Must().Contain(person1.Id);
-        }
+        people.Must().HaveCount(2);
+        people.Must().Contain(user1.Id);
+        people.Must().Contain(person1.Id);
     }
 
     [PCT]
@@ -691,9 +687,9 @@ public class DocumentDbTests : DocumentDbTestsBase
     [PCT]
     public void DeletingAllObjectsOfATypeLeavesNoSuchObjectsInTheDbButLeavesOtherObjectsInPlaceAndReturnsTheNumberOfDeletedObjects()
     {
-        using (ServiceLocator.BeginScope())
         {
-            var store = CreateStore();
+            using var scope1 = ServiceLocator.BeginScope();
+            var store = scope1.DocumentDb();
 
             var dictionary = new Dictionary<Type, Dictionary<string, string>>();
 
@@ -710,9 +706,9 @@ public class DocumentDbTests : DocumentDbTestsBase
             });
         }
 
-        using (ServiceLocator.BeginScope())
         {
-            var store = CreateStore();
+            using var scope2 = ServiceLocator.BeginScope();
+            var store = scope2.DocumentDb();
             store.GetAll<User>().Must().HaveCount(4);
             store.GetAll<Person>().Must().HaveCount(8); //User inherits person
 
@@ -740,10 +736,8 @@ public class DocumentDbTests : DocumentDbTestsBase
 
         await InsertUsersInOtherDocumentDb(userId);
 
-        using (ServiceLocator.BeginScope())
-        {
-            ServiceLocator.DocumentDbSession().Get<User>(userId);
-        }
+        using var scope3 = ServiceLocator.BeginScope();
+        scope3.DocumentDbSession().Get<User>(userId);
     }
 
     [PCT]
@@ -753,10 +747,8 @@ public class DocumentDbTests : DocumentDbTestsBase
 
         await InsertUsersInOtherDocumentDb(userId);
 
-        using (ServiceLocator.BeginScope())
-        {
-            ServiceLocator.DocumentDbSession().GetAll<User>().Count().Must().Be(1);
-        }
+        using var scope4 = ServiceLocator.BeginScope();
+        scope4.DocumentDbSession().GetAll<User>().Count().Must().Be(1);
     }
 
     [PCT]

@@ -6,58 +6,36 @@ Migrate from Ambient Composition Model (AsyncLocal scope tracking) to Closure Co
 
 ## Current State
 
-- `BeginScope()` returns `IDisposable`, pushes scope onto `AsyncLocal` stack
-- `Resolve<T>()` implicitly reads current scope from `AsyncLocal`
-- Scope objects are never passed as parameters — completely ambient
-- Each container adapter (Microsoft, SimpleInjector, Autofac) maintains its own `AsyncLocal` tracking
+- `BeginScope()` returns `IServiceLocatorScope` with `Resolve<T>()` — Phase 1 complete
+- All test and `ExecuteInIsolatedScope` call sites resolve from the scope object — Phase 2 partially complete
+- AsyncLocal tracking still active in all three container adapters
+- Infrastructure messaging/middleware sites still use ambient resolution
 
 ## Target State
 
-- `BeginScope()` returns a scope object with `Resolve<T>()` and `CreateScope()` capabilities
 - Callers resolve from the scope object they hold, not from ambient context
 - Container adapters become thin wrappers — no `AsyncLocal`, no scope tracking
 - Containers create scopes and forget about them; callers own scope lifetime
 
-## Migration Strategy — Incremental
+## Migration Progress
 
-### Phase 1: Add explicit resolution to scope objects (non-breaking)
+### Phase 1: Add explicit resolution to scope objects — DONE
 
-Change `BeginScope()` return type from `IDisposable` to a new interface (e.g. `IServiceScope`) that has both `IDisposable` and `Resolve<T>()` / `CreateScope()`. AsyncLocal tracking stays. All existing `using(serviceLocator.BeginScope()) { ... }` code continues to work unchanged.
+`BeginScope()` returns `IServiceLocatorScope` with `Resolve<T>()` and `IDisposable`.
 
-### Phase 2: Migrate callers to use explicit scope
+### Phase 2: Migrate callers to use explicit scope — IN PROGRESS
 
-Convert call sites one at a time from:
-```csharp
-using(serviceLocator.BeginScope())
-{
-   var service = serviceLocator.Resolve<T>();
-}
-```
-to:
-```csharp
-using var scope = serviceLocator.BeginScope();
-var service = scope.Resolve<T>();
-```
+**Done:**
+- `ExecuteInIsolatedScope` / `ExecuteTransactionInIsolatedScope` helpers — already used scope correctly in their lambdas (~70 call sites, no changes needed)
+- All test `BeginScope()` sites — 55 sites across 15 files migrated from `using(x.BeginScope()) { x.Resolve<T>(); }` to `using var scope = x.BeginScope(); scope.Resolve<T>();`
 
-Priority order:
-1. `ExecuteInIsolatedScope` / `ExecuteTransactionInIsolatedScope` — ~70 call sites use these, internal change only
-2. Messaging infrastructure (`ExecuteTransactionalTessage`) — ~15 sites
-3. ASP.NET middleware — 2 sites, needs coordination with framework scope model
-4. Tests — ~50 sites, mechanical
+**Remaining:**
+- Infrastructure messaging (`Inbox.HandlerExecutionEngine`, `InfrastructureQueryExecutor`, etc.) — ~15 sites
+- ASP.NET middleware (`AspNetInboxTransportServer`, `TypermediaTransportServer`) — 2 sites, scope parameter currently unused in lambda
 
-### Phase 3 (Up for debate. We'll see) : Remove AsyncLocal tracking 
+### Phase 3: Remove AsyncLocal tracking
 
 Once all callers use explicit scopes, delete the `AsyncLocal` infrastructure from all three container adapters.
-
-## Call Site Inventory
-
-| Category | Sites | Pattern |
-|----------|-------|---------|
-| `ExecuteInIsolatedScope` / `ExecuteTransactionInIsolatedScope` | ~70 | Lambda-based, internal change only |
-| Startup-time `Resolve<T>()` (singletons from root) | ~20 | No scope involved, unchanged |
-| Infrastructure `BeginScope()` (messaging, middleware) | ~15 | Needs explicit scope threading |
-| Test `BeginScope()` | ~50 | Mechanical update |
-| Domain code ambient resolution | 0 | Nothing to change |
 
 ## Key Insight
 

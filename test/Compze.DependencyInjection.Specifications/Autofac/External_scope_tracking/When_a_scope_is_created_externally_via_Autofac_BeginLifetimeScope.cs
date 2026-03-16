@@ -129,9 +129,9 @@ public class When_a_scope_is_created_externally_via_Autofac_BeginLifetimeScope
          using var externalScope = autofacScope.BeginLifetimeScope();
          var externalInstance = container.Resolve<IScopedCounter>();
 
-         using(container.ServiceLocator.BeginScope())
          {
-            var internalInstance = container.Resolve<IScopedCounter>();
+            using var internalScope = container.ServiceLocator.BeginScope();
+            var internalInstance = internalScope.Resolve<IScopedCounter>();
             internalInstance.Must().NotBe(externalInstance);
          }
 
@@ -144,20 +144,18 @@ public class When_a_scope_is_created_externally_via_Autofac_BeginLifetimeScope
          using var container = CreateContainerWithScopedRegistration();
          var rootAutofacScope = ((IAutofacContainerInternals)container).LifetimeScope;
 
-         using(container.ServiceLocator.BeginScope())
+         using var internalScope = container.ServiceLocator.BeginScope();
+         var internalInstance = internalScope.Resolve<IScopedCounter>();
+
+         // ASP.NET Core always creates scopes from the root IServiceScopeFactory
+         using(rootAutofacScope.BeginLifetimeScope())
          {
-            var internalInstance = container.Resolve<IScopedCounter>();
-
-            // ASP.NET Core always creates scopes from the root IServiceScopeFactory
-            using(rootAutofacScope.BeginLifetimeScope())
-            {
-               var externalInstance = container.Resolve<IScopedCounter>();
-               externalInstance.Must().NotBe(internalInstance);
-            }
-
-            // Back to the internal scope
-            container.Resolve<IScopedCounter>().Must().Be(internalInstance);
+            var externalInstance = container.Resolve<IScopedCounter>();
+            externalInstance.Must().NotBe(internalInstance);
          }
+
+         // Back to the internal scope
+         internalScope.Resolve<IScopedCounter>().Must().Be(internalInstance);
       }
    }
 

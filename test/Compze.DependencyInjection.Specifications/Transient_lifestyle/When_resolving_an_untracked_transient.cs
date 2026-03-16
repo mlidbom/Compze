@@ -48,9 +48,9 @@ public class When_resolving_an_untracked_transient
 
       DisposableService instance;
 
-      using(serviceLocator.BeginScope())
       {
-         instance = (DisposableService)serviceLocator.Resolve<IDisposableService>();
+         using var scope = serviceLocator.BeginScope();
+         instance = (DisposableService)scope.Resolve<IDisposableService>();
          instance.IsDisposed.Must().BeFalse();
       }
 

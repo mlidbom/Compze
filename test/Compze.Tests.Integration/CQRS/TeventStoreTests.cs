@@ -167,9 +167,9 @@ public class TeventStoreTests : UniversalTestBase
       using var serviceLocator = TestEnv.DIContainer.SetupTestingServiceLocator();
 
       var user = new User();
-      using(serviceLocator.BeginScope())
       {
-         var teventStore = serviceLocator.TeventStore();
+         using var scope = serviceLocator.BeginScope();
+         var teventStore = scope.TeventStore();
 
          user.Register("email@email.se", "password", new TaggregateId());
 

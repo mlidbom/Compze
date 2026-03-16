@@ -650,15 +650,13 @@ public class TeventStoreUpdaterTest : UniversalTestBase
    [PCT]
    public void If_an_updater_is_used_in_two_transactions_an_exception_is_thrown()
    {
-      using(_serviceLocator.BeginScope())
-      {
-         using var updater = _serviceLocator.Resolve<ITeventStoreUpdater>();
-         var user = new User();
-         user.Register("email@email.se", "password", new TaggregateId());
+      using var scope = _serviceLocator.BeginScope();
+      using var updater = scope.Resolve<ITeventStoreUpdater>();
+      var user = new User();
+      user.Register("email@email.se", "password", new TaggregateId());
 
-         TransactionScopeCe.Execute(() => updater.Save(user));
-         MustActions.Invoking(() => TransactionScopeCe.Execute(() => updater.Get<User>(user.Id)))
-                      .Must().Throw<InvalidOperationException>();
-      }
+      TransactionScopeCe.Execute(() => updater.Save(user));
+      MustActions.Invoking(() => TransactionScopeCe.Execute(() => updater.Get<User>(user.Id)))
+                   .Must().Throw<InvalidOperationException>();
    }
 }

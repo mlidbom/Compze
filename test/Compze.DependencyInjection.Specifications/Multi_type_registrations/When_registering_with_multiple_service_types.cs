@@ -35,13 +35,11 @@ public class When_registering_with_multiple_service_types
 
       var serviceLocator = container.ServiceLocator;
 
-      using(serviceLocator.BeginScope())
-      {
-         var resolvedAsA = serviceLocator.Resolve<IServiceA>();
-         var resolvedAsB = serviceLocator.Resolve<IServiceB>();
+      using var scope = serviceLocator.BeginScope();
+      var resolvedAsA = scope.Resolve<IServiceA>();
+      var resolvedAsB = scope.Resolve<IServiceB>();
 
-         resolvedAsA.Must().Be(resolvedAsB);
-      }
+      resolvedAsA.Must().Be(resolvedAsB);
    }
 
    [DependencyInjectionContainerMatrix]
@@ -55,14 +53,14 @@ public class When_registering_with_multiple_service_types
       var serviceLocator = container.ServiceLocator;
 
       IServiceA fromScope1;
-      using(serviceLocator.BeginScope())
       {
-         fromScope1 = serviceLocator.Resolve<IServiceA>();
+         using var scope1 = serviceLocator.BeginScope();
+         fromScope1 = scope1.Resolve<IServiceA>();
       }
 
-      using(serviceLocator.BeginScope())
       {
-         var fromScope2 = serviceLocator.Resolve<IServiceA>();
+         using var scope2 = serviceLocator.BeginScope();
+         var fromScope2 = scope2.Resolve<IServiceA>();
          fromScope2.Must().NotBe(fromScope1);
       }
    }
@@ -96,14 +94,14 @@ public class When_registering_with_multiple_service_types
       var serviceLocator = container.ServiceLocator;
 
       IServiceA resolvedAsA;
-      using(serviceLocator.BeginScope())
       {
-         resolvedAsA = serviceLocator.Resolve<IServiceA>();
+         using var scope1 = serviceLocator.BeginScope();
+         resolvedAsA = scope1.Resolve<IServiceA>();
       }
 
-      using(serviceLocator.BeginScope())
       {
-         var resolvedAsB = serviceLocator.Resolve<IServiceB>();
+         using var scope2 = serviceLocator.BeginScope();
+         var resolvedAsB = scope2.Resolve<IServiceB>();
          resolvedAsB.Must().Be(resolvedAsA);
       }
    }

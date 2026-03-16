@@ -138,10 +138,8 @@ public class LifestyleValidationTests
       );
 
       var serviceLocator = container.ServiceLocator;
-      using(serviceLocator.BeginScope())
-      {
-         serviceLocator.Resolve<IScopedService>().Must().NotBeNull();
-      }
+      using var scope = serviceLocator.BeginScope();
+      scope.Resolve<IScopedService>().Must().NotBeNull();
    }
 
    [DependencyInjectionContainerMatrix]
@@ -154,10 +152,8 @@ public class LifestyleValidationTests
       );
 
       var serviceLocator = container.ServiceLocator;
-      using(serviceLocator.BeginScope())
-      {
-         serviceLocator.Resolve<IScopedService>().Must().NotBeNull();
-      }
+      using var scope2 = serviceLocator.BeginScope();
+      scope2.Resolve<IScopedService>().Must().NotBeNull();
    }
 
    [DependencyInjectionContainerMatrix]

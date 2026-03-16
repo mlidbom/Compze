@@ -32,10 +32,8 @@ public class Delegated_singletons
                   .DelegateToParentServiceLocatorWhenCloning());
 
       using var clone = source.Clone();
-      using(clone.ServiceLocator.BeginScope())
-      {
-         clone.ServiceLocator.Resolve<ISingletonService>().Must().NotBeNull();
-      }
+      using var scope1 = clone.ServiceLocator.BeginScope();
+      scope1.Resolve<ISingletonService>().Must().NotBeNull();
    }
 
    [DependencyInjectionContainerMatrix]
@@ -53,14 +51,12 @@ public class Delegated_singletons
       using var clone = source.Clone();
 
       var sourceDepInstance = source.ServiceLocator.Resolve<IDelegatedDependency>();
-      using(clone.ServiceLocator.BeginScope())
-      {
-         var cloneService = clone.ServiceLocator.Resolve<ISingletonService>();
-         cloneService.Must().NotBeNull();
+      using var scope2 = clone.ServiceLocator.BeginScope();
+      var cloneService = scope2.Resolve<ISingletonService>();
+      cloneService.Must().NotBeNull();
 
-         var cloneDepInstance = clone.ServiceLocator.Resolve<IDelegatedDependency>();
-         cloneDepInstance.Must().Be(sourceDepInstance);
-      }
+      var cloneDepInstance = scope2.Resolve<IDelegatedDependency>();
+      cloneDepInstance.Must().Be(sourceDepInstance);
    }
 
    [DependencyInjectionContainerMatrix]
@@ -81,10 +77,8 @@ public class Delegated_singletons
       clone.ServiceLocator.Resolve<ISingletonService>();
       clone.ServiceLocator.Resolve<ISingletonService>();
 
-      using(clone.ServiceLocator.BeginScope())
-      {
-         clone.ServiceLocator.Resolve<ISingletonService>();
-      }
+      using var scope3 = clone.ServiceLocator.BeginScope();
+      scope3.Resolve<ISingletonService>();
 
       factoryCallCount.Must().Be(1);
    }

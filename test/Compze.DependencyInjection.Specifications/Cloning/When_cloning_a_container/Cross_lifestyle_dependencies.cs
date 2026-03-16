@@ -15,9 +15,7 @@ public class Cross_lifestyle_dependencies
       );
 
       using var clone = source.Clone();
-      using(clone.ServiceLocator.BeginScope())
-      {
-         clone.ServiceLocator.Resolve<IScopedService>().Must().NotBeNull();
-      }
+      using var scope = clone.ServiceLocator.BeginScope();
+      scope.Resolve<IScopedService>().Must().NotBeNull();
    }
 }

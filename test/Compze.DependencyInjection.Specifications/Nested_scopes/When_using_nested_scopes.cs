@@ -24,13 +24,9 @@ public class When_using_nested_scopes
 
       var serviceLocator = container.ServiceLocator;
 
-      using(serviceLocator.BeginScope())
-      {
-         using(serviceLocator.BeginScope())
-         {
-            serviceLocator.Resolve<IScopedService>().Must().NotBeNull();
-         }
-      }
+      using var outerScope = serviceLocator.BeginScope();
+      using var innerScope = serviceLocator.BeginScope();
+      innerScope.Resolve<IScopedService>().Must().NotBeNull();
    }
 
    [DependencyInjectionContainerMatrix]
@@ -41,16 +37,12 @@ public class When_using_nested_scopes
 
       var serviceLocator = container.ServiceLocator;
 
-      using(serviceLocator.BeginScope())
-      {
-         var outerInstance = serviceLocator.Resolve<IScopedCounter>();
+      using var outerScope = serviceLocator.BeginScope();
+      var outerInstance = outerScope.Resolve<IScopedCounter>();
 
-         using(serviceLocator.BeginScope())
-         {
-            var innerInstance = serviceLocator.Resolve<IScopedCounter>();
-            innerInstance.Must().NotBe(outerInstance);
-         }
-      }
+      using var innerScope = serviceLocator.BeginScope();
+      var innerInstance = innerScope.Resolve<IScopedCounter>();
+      innerInstance.Must().NotBe(outerInstance);
    }
 
    [DependencyInjectionContainerMatrix]
@@ -61,18 +53,16 @@ public class When_using_nested_scopes
 
       var serviceLocator = container.ServiceLocator;
 
-      using(serviceLocator.BeginScope())
+      using var outerScope = serviceLocator.BeginScope();
+      var outerInstance = outerScope.Resolve<IScopedCounter>();
+
       {
-         var outerInstance = serviceLocator.Resolve<IScopedCounter>();
-
-         using(serviceLocator.BeginScope())
-         {
-            serviceLocator.Resolve<IScopedCounter>();
-         }
-
-         var outerInstanceAfterInnerDisposed = serviceLocator.Resolve<IScopedCounter>();
-         outerInstanceAfterInnerDisposed.Must().Be(outerInstance);
+         using var innerScope = serviceLocator.BeginScope();
+         innerScope.Resolve<IScopedCounter>();
       }
+
+      var outerInstanceAfterInnerDisposed = outerScope.Resolve<IScopedCounter>();
+      outerInstanceAfterInnerDisposed.Must().Be(outerInstance);
    }
 
    [DependencyInjectionContainerMatrix]
@@ -83,24 +73,18 @@ public class When_using_nested_scopes
 
       var serviceLocator = container.ServiceLocator;
 
-      using(serviceLocator.BeginScope())
-      {
-         var level1 = serviceLocator.Resolve<IScopedCounter>();
+      using var level1Scope = serviceLocator.BeginScope();
+      var level1 = level1Scope.Resolve<IScopedCounter>();
 
-         using(serviceLocator.BeginScope())
-         {
-            var level2 = serviceLocator.Resolve<IScopedCounter>();
+      using var level2Scope = serviceLocator.BeginScope();
+      var level2 = level2Scope.Resolve<IScopedCounter>();
 
-            using(serviceLocator.BeginScope())
-            {
-               var level3 = serviceLocator.Resolve<IScopedCounter>();
+      using var level3Scope = serviceLocator.BeginScope();
+      var level3 = level3Scope.Resolve<IScopedCounter>();
 
-               level1.Must().NotBe(level2);
-               level2.Must().NotBe(level3);
-               level1.Must().NotBe(level3);
-            }
-         }
-      }
+      level1.Must().NotBe(level2);
+      level2.Must().NotBe(level3);
+      level1.Must().NotBe(level3);
    }
 
    [DependencyInjectionContainerMatrix]
@@ -113,16 +97,12 @@ public class When_using_nested_scopes
 
       var serviceLocator = container.ServiceLocator;
 
-      using(serviceLocator.BeginScope())
-      {
-         var outerSingleton = serviceLocator.Resolve<IScopedService>();
+      using var outerScope = serviceLocator.BeginScope();
+      var outerSingleton = outerScope.Resolve<IScopedService>();
 
-         using(serviceLocator.BeginScope())
-         {
-            var innerSingleton = serviceLocator.Resolve<IScopedService>();
-            innerSingleton.Must().Be(outerSingleton);
-         }
-      }
+      using var innerScope = serviceLocator.BeginScope();
+      var innerSingleton = innerScope.Resolve<IScopedService>();
+      innerSingleton.Must().Be(outerSingleton);
    }
 
    [DependencyInjectionContainerMatrix]
@@ -133,20 +113,18 @@ public class When_using_nested_scopes
 
       var serviceLocator = container.ServiceLocator;
 
-      using(serviceLocator.BeginScope())
+      using var outerScope = serviceLocator.BeginScope();
+      var outerInstance = (DisposableScopedService)outerScope.Resolve<IDisposableScopedService>();
+
+      DisposableScopedService innerInstance;
       {
-         var outerInstance = (DisposableScopedService)serviceLocator.Resolve<IDisposableScopedService>();
-
-         DisposableScopedService innerInstance;
-         using(serviceLocator.BeginScope())
-         {
-            innerInstance = (DisposableScopedService)serviceLocator.Resolve<IDisposableScopedService>();
-            innerInstance.IsDisposed.Must().BeFalse();
-         }
-
-         innerInstance.IsDisposed.Must().BeTrue();
-         outerInstance.IsDisposed.Must().BeFalse();
+         using var innerScope = serviceLocator.BeginScope();
+         innerInstance = (DisposableScopedService)innerScope.Resolve<IDisposableScopedService>();
+         innerInstance.IsDisposed.Must().BeFalse();
       }
+
+      innerInstance.IsDisposed.Must().BeTrue();
+      outerInstance.IsDisposed.Must().BeFalse();
    }
 
    [DependencyInjectionContainerMatrix]
@@ -157,14 +135,12 @@ public class When_using_nested_scopes
 
       var serviceLocator = container.ServiceLocator;
 
-      using(serviceLocator.BeginScope())
-      {
-         var outerInstance = serviceLocator.Resolve<IScopedCounter>();
+      using var outerScope = serviceLocator.BeginScope();
+      var outerInstance = outerScope.Resolve<IScopedCounter>();
 
-         var innerInstance = serviceLocator.ExecuteInIsolatedScope(scope => scope.Resolve<IScopedCounter>());
+      var innerInstance = serviceLocator.ExecuteInIsolatedScope(scope => scope.Resolve<IScopedCounter>());
 
-         innerInstance.Must().NotBe(outerInstance);
-      }
+      innerInstance.Must().NotBe(outerInstance);
    }
 }
 

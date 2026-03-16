@@ -52,9 +52,9 @@ public abstract class TeventMigrationTestBase : UniversalTestBase
       migrations.Clear();
 
       IReadOnlyList<ITaggregateTevent> teventsInStoreAtStart;
-      using(serviceLocator.BeginScope()) //Why is this needed? It fails without it but I do not understand why...
       {
-         var teventStore = serviceLocator.Resolve<ITeventStore>();
+         using var scope = serviceLocator.BeginScope(); //Why is this needed? It fails without it but I do not understand why...
+         var teventStore = scope.Resolve<ITeventStore>();
          teventsInStoreAtStart = teventStore.ListAllTeventsForTestingPurposesAbsolutelyNotUsableForARealTeventStoreOfAnySize();
       }
 
