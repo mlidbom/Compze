@@ -57,7 +57,12 @@ public class TypermediaHandlerExecutor(IServiceLocator serviceLocator, ITypermed
          {
             return action();
          }
-         catch when(--remainingAttempts > 0) { }
+         catch when(--remainingAttempts > 0)
+         {
+#pragma warning disable CS0219 // Variable is assigned but its value is never used
+            int instrumentationPoint = 0;
+#pragma warning restore CS0219 // Variable is assigned but its value is never used
+         }
       }
    }
 #pragma warning restore CA1031
