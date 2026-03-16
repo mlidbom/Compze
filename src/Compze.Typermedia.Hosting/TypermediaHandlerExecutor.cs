@@ -48,7 +48,7 @@ public class TypermediaHandlerExecutor(IServiceLocator serviceLocator, ITypermed
    const int MaxAttempts = 5;
 
 #pragma warning disable CA1031 // Catch-all is intentional — retry any exception, matching DefaultRetryPolicy behavior
-   static TResult ExecuteWithRetry<TResult>(Func<TResult> action)
+   TResult ExecuteWithRetry<TResult>(Func<TResult> action)
    {
       var remainingAttempts = MaxAttempts;
       while(true)
@@ -57,10 +57,11 @@ public class TypermediaHandlerExecutor(IServiceLocator serviceLocator, ITypermed
          {
             return action();
          }
-         catch when(--remainingAttempts > 0)
+         catch(Exception ex) when(--remainingAttempts > 0)
          {
 #pragma warning disable CS0219 // Variable is assigned but its value is never used
             int instrumentationPoint = 0;
+            this.Log().Warning(ex, "Command execution failed. Retrying.");
 #pragma warning restore CS0219 // Variable is assigned but its value is never used
          }
       }

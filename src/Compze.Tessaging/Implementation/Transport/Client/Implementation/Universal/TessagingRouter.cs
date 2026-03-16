@@ -11,7 +11,6 @@ using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Contracts;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
-using Compze.Internals.SystemCE.CollectionsCE.GenericCE;
 using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Threading;
@@ -42,11 +41,12 @@ class TessagingRouter : ITessagingRouter, IDisposable
    readonly IBackgroundExceptionReporter _exceptionReporter;
 
    bool _stopped;
+   bool _disposed;
 
-   IReadOnlyDictionary<EndpointId, TessagingConnection> _connections = new Dictionary<EndpointId, TessagingConnection>();
-   IReadOnlyDictionary<Type, TessagingConnection> _tommandHandlerRoutes = new Dictionary<Type, TessagingConnection>();
-   IReadOnlyList<(Type TeventType, TessagingConnection Connection)> _teventSubscriberRoutes = new List<(Type TeventType, TessagingConnection Connection)>();
-   IReadOnlyDictionary<Type, IReadOnlyList<TessagingConnection>> _teventSubscriberRouteCache = new Dictionary<Type, IReadOnlyList<TessagingConnection>>();
+   readonly Dictionary<EndpointId, TessagingConnection> _connections = new();
+   readonly Dictionary<Type, TessagingConnection> _tommandHandlerRoutes = new();
+   readonly List<(Type TeventType, TessagingConnection Connection)> _teventSubscriberRoutes = [];
+   readonly Dictionary<Type, IReadOnlyList<TessagingConnection>> _teventSubscriberRouteCache = new();
 
    TessagingRouter(ITessagesInFlightTracker tessagesInFlightTracker, ITypeMapper typeMapper, IRemotableTessageSerializer serializer, ITransportMessagePoster transportMessagePoster, IInfrastructureQueryTransport infrastructureQueryTransport, Outbox.Outbox.ITessageStorage tessageStorage, ITaskRunner taskRunner, IBackgroundExceptionReporter exceptionReporter)
    {
@@ -62,94 +62,80 @@ class TessagingRouter : ITessagingRouter, IDisposable
 
    public async Task ConnectAsync(EndPointAddress remoteEndpointAddress)
    {
-      AssertNotStopped();
 #pragma warning disable CA2000//We are passing this disposable into a collection that we track disposal for
       var connection = new TessagingConnection(_tessagesInFlightTracker, remoteEndpointAddress, _typeMapper, _serializer, _transportMessagePoster, _infrastructureQueryTransport, _tessageStorage, _taskRunner, _exceptionReporter);
 #pragma warning restore CA2000
 
       await connection.InitAsync().caf();
 
-      using(_monitor.TakeLock())
+      _monitor.Locked(() =>
       {
-         Interlocked.Exchange(ref _connections, _connections.AddToCopy(connection.EndpointInformation.Id, connection));
+         AssertNotStopped();
+         _connections.Add(connection.EndpointInformation.Id, connection);
          RegisterRoutes(connection, connection.EndpointInformation.HandledTessageTypes);
-      }
+      });
    }
 
-   public void StartDelivery()
+   public void StartDelivery() => _monitor.Locked(() =>
    {
       foreach(var connection in _connections.Values)
          connection.StartDelivery();
-   }
+   });
 
-   public void StopDelivery()
+   public void StopDelivery() => _monitor.Locked(() =>
    {
       foreach(var connection in _connections.Values)
          connection.StopDelivery();
-   }
+   });
 
    void RegisterRoutes(TessagingConnection connection, ISet<TypeId> handledTypeIds)
    {
-      var teventSubscribers = new List<(Type TeventType, TessagingConnection Connection)>();
-      var tommandHandlerRoutes = new Dictionary<Type, TessagingConnection>();
       foreach(var typeId in handledTypeIds)
       {
          if(_typeMapper.TryGetType(typeId, out var tessageType))
          {
             if(tessageType.Is<IExactlyOnceTevent>())
             {
-               teventSubscribers.Add((tessageType, connection));
+               _teventSubscriberRoutes.Add((tessageType, connection));
             } else if(tessageType.Is<IExactlyOnceTommand>())
             {
-               tommandHandlerRoutes.Add(tessageType, connection);
+               _tommandHandlerRoutes.Add(tessageType, connection);
             }
-            //Silently skip typermedia types — those are handled by TypermediaRouter
          }
       }
 
-      if(teventSubscribers.Count > 0)
-      {
-         Interlocked.Exchange(ref _teventSubscriberRoutes, _teventSubscriberRoutes.AddRangeToCopy(teventSubscribers));
-         Interlocked.Exchange(ref _teventSubscriberRouteCache, new Dictionary<Type, IReadOnlyList<TessagingConnection>>());
-      }
-
-      if(tommandHandlerRoutes.Count > 0)
-      {
-         Interlocked.Exchange(ref _tommandHandlerRoutes, _tommandHandlerRoutes.AddRangeToCopy(tommandHandlerRoutes));
-      }
+      _teventSubscriberRouteCache.Clear();
    }
 
-   public void Stop() => _stopped = true;
+   public void Stop() => _monitor.Locked(() => _stopped = true);
 
    ContractAsserter AssertNotStopped() => State.Assert(!_stopped, () => "router is stopped");
 
    public ITessagingInboxConnection ConnectionToHandlerFor(IRemotableTommand tommand) =>
-      AssertNotStopped().__(() =>
-         _tommandHandlerRoutes.TryGetValue(tommand.GetType(), out var connection)
-            ? connection
-            : throw new NoHandlerForTessageTypeException(tommand.GetType()));
+      _monitor.Locked(() =>
+         AssertNotStopped().__(() =>
+            _tommandHandlerRoutes.TryGetValue(tommand.GetType(), out var connection)
+               ? connection
+               : throw new NoHandlerForTessageTypeException(tommand.GetType())));
 
-   public IReadOnlyList<ITessagingInboxConnection> SubscriberConnectionsFor(IExactlyOnceTevent tevent)
-   {
-      AssertNotStopped();
-      if(_teventSubscriberRouteCache.TryGetValue(tevent.GetType(), out var cached)) return cached;
-
-      var subscriberConnections = _teventSubscriberRoutes
-                                 .Where(route => route.TeventType.IsInstanceOfType(tevent))
-                                 .Select(route => route.Connection)
-                                 .ToArray();
-
-      using(_monitor.TakeLock())
+   public IReadOnlyList<ITessagingInboxConnection> SubscriberConnectionsFor(IExactlyOnceTevent tevent) =>
+      _monitor.Locked(() =>
       {
-         Interlocked.Exchange(ref _teventSubscriberRouteCache, _teventSubscriberRouteCache.AddToCopy(tevent.GetType(), subscriberConnections));
-      }
+         AssertNotStopped();
+         var teventType = tevent.GetType();
+         if(!_teventSubscriberRouteCache.TryGetValue(teventType, out var cached))
+         {
+            cached = _teventSubscriberRoutes
+                    .Where(route => route.TeventType.IsInstanceOfType(tevent))
+                    .Select(route => route.Connection)
+                    .ToArray();
+            _teventSubscriberRouteCache[teventType] = cached;
+         }
 
-      return subscriberConnections;
-   }
+         return cached;
+      });
 
-   bool _disposed;
-
-   public void Dispose()
+   public void Dispose() => _monitor.Locked(() =>
    {
       if(!_disposed)
       {
@@ -161,5 +147,5 @@ class TessagingRouter : ITessagingRouter, IDisposable
 
          _connections.Values.DisposeAll();
       }
-   }
+   });
 }
