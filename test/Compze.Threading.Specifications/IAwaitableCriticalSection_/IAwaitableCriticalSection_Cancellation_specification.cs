@@ -69,16 +69,16 @@ public class IAwaitableCriticalSection_Cancellation_specification : UniversalTes
          (_thrownException, _criticalSection) = CancelThreadBlockedIn(_criticalSection, cancellationTrigger, cs => cs.TakeUpdateLock());
       }
 
-      [IAwaitableCriticalSectionCancellationMatrix] public void throws_expected_cancellation_exception()
+      [IAwaitableCriticalSectionCancellationMatrix]
+      public void throws_expected_cancellation_exception()
       {
-         _factory.CurrentCancellationMechanism.SkipCancellationTokenUntilImplemented();
          RunScenario();
          _thrownException.Must().NotBeNull().Satisfy(ex => ex.GetType() == _factory.ExpectedExceptionType);
       }
 
-      [IAwaitableCriticalSectionCancellationMatrix] public void lock_is_not_orphaned_and_other_threads_can_acquire_it()
+      [IAwaitableCriticalSectionCancellationMatrix]
+      public void lock_is_not_orphaned_and_other_threads_can_acquire_it()
       {
-         _factory.CurrentCancellationMechanism.SkipCancellationTokenUntilImplemented();
          RunScenario();
          using(_criticalSection.TakeUpdateLock(LockTimeout.Seconds(1))) {}
       }
@@ -100,16 +100,16 @@ public class IAwaitableCriticalSection_Cancellation_specification : UniversalTes
          (_thrownException, _criticalSection) = CancelThreadBlockedIn(_criticalSection, cancellationTrigger, cs => cs.TakeReadLock());
       }
 
-      [IAwaitableCriticalSectionCancellationMatrix] public void throws_expected_cancellation_exception()
+      [IAwaitableCriticalSectionCancellationMatrix]
+      public void throws_expected_cancellation_exception()
       {
-         _factory.CurrentCancellationMechanism.SkipCancellationTokenUntilImplemented();
          RunScenario();
          _thrownException.Must().NotBeNull().Satisfy(ex => ex.GetType() == _factory.ExpectedExceptionType);
       }
 
-      [IAwaitableCriticalSectionCancellationMatrix] public void lock_is_not_orphaned_and_other_threads_can_acquire_it()
+      [IAwaitableCriticalSectionCancellationMatrix]
+      public void lock_is_not_orphaned_and_other_threads_can_acquire_it()
       {
-         _factory.CurrentCancellationMechanism.SkipCancellationTokenUntilImplemented();
          RunScenario();
          using(_criticalSection.TakeUpdateLock(LockTimeout.Seconds(1))) {}
       }
@@ -130,16 +130,16 @@ public class IAwaitableCriticalSection_Cancellation_specification : UniversalTes
          (_thrownException, _criticalSection) = CancelThreadBlockedIn(_criticalSection, cancellationTrigger, cs => cs.TakeUpdateLockWhen(() => false));
       }
 
-      [IAwaitableCriticalSectionCancellationMatrix] public void throws_expected_cancellation_exception()
+      [IAwaitableCriticalSectionCancellationMatrix]
+      public void throws_expected_cancellation_exception()
       {
-         _factory.CurrentCancellationMechanism.SkipCancellationTokenUntilImplemented();
          RunScenario();
          _thrownException.Must().NotBeNull().Satisfy(ex => ex.GetType() == _factory.ExpectedExceptionType);
       }
 
-      [IAwaitableCriticalSectionCancellationMatrix] public void lock_is_not_orphaned_and_other_threads_can_acquire_it()
+      [IAwaitableCriticalSectionCancellationMatrix]
+      public void lock_is_not_orphaned_and_other_threads_can_acquire_it()
       {
-         _factory.CurrentCancellationMechanism.SkipCancellationTokenUntilImplemented();
          RunScenario();
          using(_criticalSection.TakeUpdateLock(LockTimeout.Seconds(1))) {}
       }
@@ -160,16 +160,16 @@ public class IAwaitableCriticalSection_Cancellation_specification : UniversalTes
          (_thrownException, _criticalSection) = CancelThreadBlockedIn(_criticalSection, cancellationTrigger, cs => cs.TakeReadLockWhen(() => false));
       }
 
-      [IAwaitableCriticalSectionCancellationMatrix] public void throws_expected_cancellation_exception()
+      [IAwaitableCriticalSectionCancellationMatrix]
+      public void throws_expected_cancellation_exception()
       {
-         _factory.CurrentCancellationMechanism.SkipCancellationTokenUntilImplemented();
          RunScenario();
          _thrownException.Must().NotBeNull().Satisfy(ex => ex.GetType() == _factory.ExpectedExceptionType);
       }
 
-      [IAwaitableCriticalSectionCancellationMatrix] public void lock_is_not_orphaned_and_other_threads_can_acquire_it()
+      [IAwaitableCriticalSectionCancellationMatrix]
+      public void lock_is_not_orphaned_and_other_threads_can_acquire_it()
       {
-         _factory.CurrentCancellationMechanism.SkipCancellationTokenUntilImplemented();
          RunScenario();
          using(_criticalSection.TakeUpdateLock(LockTimeout.Seconds(1))) {}
       }
@@ -190,16 +190,16 @@ public class IAwaitableCriticalSection_Cancellation_specification : UniversalTes
          (_thrownException, _criticalSection) = CancelThreadBlockedIn(_criticalSection, cancellationTrigger, cs => cs.TryTakeUpdateLockWhen(() => false));
       }
 
-      [IAwaitableCriticalSectionCancellationMatrix] public void throws_expected_cancellation_exception()
+      [IAwaitableCriticalSectionCancellationMatrix]
+      public void throws_expected_cancellation_exception()
       {
-         _factory.CurrentCancellationMechanism.SkipCancellationTokenUntilImplemented();
          RunScenario();
          _thrownException.Must().NotBeNull().Satisfy(ex => ex.GetType() == _factory.ExpectedExceptionType);
       }
 
-      [IAwaitableCriticalSectionCancellationMatrix] public void lock_is_not_orphaned_and_other_threads_can_acquire_it()
+      [IAwaitableCriticalSectionCancellationMatrix]
+      public void lock_is_not_orphaned_and_other_threads_can_acquire_it()
       {
-         _factory.CurrentCancellationMechanism.SkipCancellationTokenUntilImplemented();
          RunScenario();
          using(_criticalSection.TakeUpdateLock(LockTimeout.Seconds(1))) {}
       }
@@ -220,16 +220,16 @@ public class IAwaitableCriticalSection_Cancellation_specification : UniversalTes
          (_thrownException, _criticalSection) = CancelThreadBlockedIn(_criticalSection, cancellationTrigger, cs => cs.TryTakeReadLockWhen(() => false));
       }
 
-      [IAwaitableCriticalSectionCancellationMatrix] public void throws_expected_cancellation_exception()
+      [IAwaitableCriticalSectionCancellationMatrix]
+      public void throws_expected_cancellation_exception()
       {
-         _factory.CurrentCancellationMechanism.SkipCancellationTokenUntilImplemented();
          RunScenario();
          _thrownException.Must().NotBeNull().Satisfy(ex => ex.GetType() == _factory.ExpectedExceptionType);
       }
 
-      [IAwaitableCriticalSectionCancellationMatrix] public void lock_is_not_orphaned_and_other_threads_can_acquire_it()
+      [IAwaitableCriticalSectionCancellationMatrix]
+      public void lock_is_not_orphaned_and_other_threads_can_acquire_it()
       {
-         _factory.CurrentCancellationMechanism.SkipCancellationTokenUntilImplemented();
          RunScenario();
          using(_criticalSection.TakeUpdateLock(LockTimeout.Seconds(1))) {}
       }
@@ -250,16 +250,16 @@ public class IAwaitableCriticalSection_Cancellation_specification : UniversalTes
          (_thrownException, _criticalSection) = CancelThreadBlockedIn(_criticalSection, cancellationTrigger, cs => cs.TryAwait(() => false));
       }
 
-      [IAwaitableCriticalSectionCancellationMatrix] public void throws_expected_cancellation_exception()
+      [IAwaitableCriticalSectionCancellationMatrix]
+      public void throws_expected_cancellation_exception()
       {
-         _factory.CurrentCancellationMechanism.SkipCancellationTokenUntilImplemented();
          RunScenario();
          _thrownException.Must().NotBeNull().Satisfy(ex => ex.GetType() == _factory.ExpectedExceptionType);
       }
 
-      [IAwaitableCriticalSectionCancellationMatrix] public void lock_is_not_orphaned_and_other_threads_can_acquire_it()
+      [IAwaitableCriticalSectionCancellationMatrix]
+      public void lock_is_not_orphaned_and_other_threads_can_acquire_it()
       {
-         _factory.CurrentCancellationMechanism.SkipCancellationTokenUntilImplemented();
          RunScenario();
          using(_criticalSection.TakeUpdateLock(LockTimeout.Seconds(1))) {}
       }

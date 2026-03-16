@@ -47,18 +47,17 @@ The matrix attribute inherits from `MatrixTheoryAttribute<TImplementation, Cance
 
 ## Phases
 
-### Phase 1 — Test infrastructure
+### Phase 1 — Test infrastructure (DONE)
 
-- Create `CancellationMechanism` enum: `ThreadInterrupt`, `CancellationToken`
-- Create 2D matrix attributes for both `ICriticalSection` and `IAwaitableCriticalSection` (cancellation-specific, inheriting from `MatrixTheoryAttribute<TImplementation, CancellationMechanism>`)
-- The factory exposes the expected exception type and a method to trigger cancellation, derived from the current `CancellationMechanism`
+- `CancellationMechanism` enum (`ThreadInterrupt`, `CancellationToken`) in `TestInfrastructure/`
+- 2D matrix attributes: `ICriticalSectionCancellationMatrixAttribute`, `IAwaitableCriticalSectionCancellationMatrixAttribute` — inherit `MatrixTheoryAttribute<Implementation, CancellationMechanism>`
+- `CancellationFactory` exposes expected exception type and `CancellationTrigger` (abstracts thread interrupt vs CTS)
 
-### Phase 2 — Restructure existing ThreadInterrupt tests
+### Phase 2 — Restructure existing ThreadInterrupt tests (DONE)
 
-- Migrate `ICriticalSection_ThreadInterrupt_specification` and `IAwaitableCriticalSection_ThreadInterrupt_specification` to use the new 2D matrix
-- Initially only the ThreadInterrupt dimension is populated (CancellationToken tests will fail until Phase 4-5)
-- Rename: `*_ThreadInterrupt_specification` → `*_Cancellation_specification` (since it now covers both mechanisms)
-- Run tests — all existing ThreadInterrupt tests must pass identically
+- Migrated to 2D matrix, renamed `*_ThreadInterrupt_specification` → `*_Cancellation_specification`
+- CancellationToken dimension skipped via `SkipValues` in attribute constructors (remove when Phase 3-5 land)
+- TODO comments in test methods mark where `cancellationTrigger.Token` needs to be passed once interface parameters exist
 
 ### Phase 3 — Add CancellationToken to interfaces
 

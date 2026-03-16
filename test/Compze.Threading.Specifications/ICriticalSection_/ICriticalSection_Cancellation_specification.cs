@@ -63,16 +63,16 @@ public class ICriticalSection_Cancellation_specification : UniversalTestBase
          threadCompleted.AwaitPassedThroughCountEqualTo(1);
       }
 
-      [ICriticalSectionCancellationMatrix] public void throws_expected_cancellation_exception()
+      [ICriticalSectionCancellationMatrix]
+      public void throws_expected_cancellation_exception()
       {
-         _factory.CurrentCancellationMechanism.SkipCancellationTokenUntilImplemented();
          RunScenario();
          _thrownException.Must().NotBeNull().Satisfy(ex => ex.GetType() == _factory.ExpectedExceptionType);
       }
 
-      [ICriticalSectionCancellationMatrix] public void lock_is_not_orphaned_and_other_threads_can_acquire_it()
+      [ICriticalSectionCancellationMatrix]
+      public void lock_is_not_orphaned_and_other_threads_can_acquire_it()
       {
-         _factory.CurrentCancellationMechanism.SkipCancellationTokenUntilImplemented();
          RunScenario();
          using(_criticalSection.TakeLock(LockTimeout.Seconds(1))) {}
       }
