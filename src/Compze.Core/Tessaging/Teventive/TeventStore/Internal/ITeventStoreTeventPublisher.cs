@@ -1,8 +1,9 @@
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
+using Compze.DependencyInjection;
 
 namespace Compze.Core.Tessaging.Teventive.TeventStore.Internal;
 
 public interface ITeventStoreTeventPublisher
 {
-   void Publish(ITaggregateTevent aTevent);
+   void Publish(ITaggregateTevent aTevent, IServiceLocatorKernel kernel);
 }

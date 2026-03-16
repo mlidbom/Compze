@@ -1,6 +1,7 @@
 using Compze.Contracts;
 using Compze.Abstractions.Public;
 using Compze.Abstractions.Tessaging.Public;
+using Compze.DependencyInjection;
 using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Tessaging.SystemCE.ThreadingCE;
@@ -22,7 +23,7 @@ public partial class Inbox
             readonly TaskCompletionSource<object?> _taskCompletionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
             internal readonly TransportTessage.InComing TransportTessage;
             readonly Coordinator _coordinator;
-            readonly Func<object, object?> _tessageTask;
+            readonly Func<object, IServiceLocatorKernel, object?> _tessageTask;
             readonly ITaskRunner _taskRunner;
             readonly ITessageStorage _tessageStorage;
             readonly IServiceLocator _serviceLocator;
@@ -63,16 +64,14 @@ public partial class Inbox
                   object? result = null;
                   try
                   {
-                     using(_serviceLocator.BeginScope())
+                     using var scope = _serviceLocator.BeginScope();
+                     result = TransactionScopeCe.Execute(() =>
                      {
-                        result = TransactionScopeCe.Execute(() =>
-                        {
-                           var innerResult = _tessageTask(tessage);
-                           _tessageStorage.MarkAsSucceeded(TransportTessage);
-                           return innerResult;
-                        });
-                        tessageHandlerSucceeded = true;
-                     }
+                        var innerResult = _tessageTask(tessage, scope);
+                        _tessageStorage.MarkAsSucceeded(TransportTessage);
+                        return innerResult;
+                     });
+                     tessageHandlerSucceeded = true;
 
                      this.Log().Debug($"Transactional tessage {TessageId} completed successfully");
                      _taskCompletionSource.SetResult(result);
@@ -120,19 +119,19 @@ public partial class Inbox
             }
 
             //Refactor: Switching should not be necessary. See also inbox.
-            Func<object, object?> CreateTessageTask() =>
+            Func<object, IServiceLocatorKernel, object?> CreateTessageTask() =>
                TransportTessage.TessageTypeEnum switch
                {
-                  TransportTessageType.ExactlyOnceTevent => tessage =>
+                  TransportTessageType.ExactlyOnceTevent => (tessage, kernel) =>
                   {
                      var teventHandlers = _tessagingHandlerRegistry.GetTeventHandlers(tessage.GetType());
-                     teventHandlers.ForEach(handler => handler((IExactlyOnceTevent)tessage));
+                     teventHandlers.ForEach(handler => handler((IExactlyOnceTevent)tessage, kernel));
                      return null;
                   },
-                  TransportTessageType.ExactlyOnceTommand => tessage =>
+                  TransportTessageType.ExactlyOnceTommand => (tessage, kernel) =>
                   {
                      var tommandHandler = _tessagingHandlerRegistry.GetTommandHandler(tessage.GetType());
-                     tommandHandler((IExactlyOnceTommand)tessage);
+                     tommandHandler((IExactlyOnceTommand)tessage, kernel);
                      return unit; //Todo:Properly handle tommands with and without return values
                   },
                   _ => throw new ArgumentOutOfRangeException()

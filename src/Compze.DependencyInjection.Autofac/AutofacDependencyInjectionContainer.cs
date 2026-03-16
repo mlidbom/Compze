@@ -1,6 +1,7 @@
 using Autofac;
 using Autofac.Core.Lifetime;
 using Compze.Contracts;
+using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.LinqCE;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
@@ -20,11 +21,16 @@ public sealed class AutofacDependencyInjectionContainer(IComponentRegistrar? reg
    protected override IDependencyInjectionContainer RegisterInContainer(ComponentRegistration[] registrations)
    {
       _registerScopedKernel.RunIfFirstCall(() =>
+      {
          _containerBuilder.Register(ctx =>
          {
             var scope = ctx.Resolve<ILifetimeScope>();
             return new ScopedKernel(this, scope.Resolve);
-         }).InstancePerLifetimeScope());
+         }).InstancePerLifetimeScope();
+         _containerBuilder.Register(ctx => (IServiceLocatorKernel)ctx.Resolve<ScopedKernel>())
+                          .As<IServiceLocatorKernel>()
+                          .InstancePerLifetimeScope();
+      });
 
       foreach(var registration in registrations)
       {

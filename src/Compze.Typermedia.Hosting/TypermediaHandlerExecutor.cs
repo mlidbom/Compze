@@ -17,7 +17,7 @@ public class TypermediaHandlerExecutor(IServiceLocator serviceLocator, ITypermed
       return _serviceLocator.ExecuteInIsolatedScope(scope =>
       {
          var handler = _handlerRegistry.GetTueryHandler(tuery.GetType());
-         return handler((ITuery<object>)tuery);
+         return handler((ITuery<object>)tuery, scope);
       });
    }
 
@@ -27,7 +27,7 @@ public class TypermediaHandlerExecutor(IServiceLocator serviceLocator, ITypermed
       return ExecuteWithRetry(() => _serviceLocator.ExecuteTransactionInIsolatedScope(scope =>
       {
          var handler = _handlerRegistry.GetTommandHandlerWithReturnValue(tommand.GetType());
-         return handler((IAtMostOnceTypermediaTommand)tommand);
+         return handler((IAtMostOnceTypermediaTommand)tommand, scope);
       }));
    }
 
@@ -39,7 +39,7 @@ public class TypermediaHandlerExecutor(IServiceLocator serviceLocator, ITypermed
          _serviceLocator.ExecuteTransactionInIsolatedScope(scope =>
          {
             var handler = _handlerRegistry.GetVoidTommandHandler(tommand);
-            handler(tommand);
+            handler(tommand, scope);
          });
          return null;
       });

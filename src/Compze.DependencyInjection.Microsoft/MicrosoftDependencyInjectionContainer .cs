@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using Compze.Contracts;
+using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE;
 using Compze.Internals.SystemCE.LinqCE;
@@ -25,7 +26,10 @@ public sealed class MicrosoftDependencyInjectionContainer(IComponentRegistrar? r
    protected override IDependencyInjectionContainer RegisterInContainer(ComponentRegistration[] registrations)
    {
       _registerScopedKernel.RunIfFirstCall(() =>
-         _services.AddScoped<ScopedKernel>(sp => new ScopedKernel(this, sp.GetRequiredService)));
+      {
+         _services.AddScoped<ScopedKernel>(sp => new ScopedKernel(this, sp.GetRequiredService));
+         _services.AddScoped<IServiceLocatorKernel>(sp => sp.GetRequiredService<ScopedKernel>());
+      });
 
       foreach(var registration in registrations)
       {

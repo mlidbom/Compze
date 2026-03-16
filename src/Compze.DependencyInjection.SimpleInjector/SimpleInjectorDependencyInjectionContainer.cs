@@ -1,3 +1,4 @@
+using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.LinqCE;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
@@ -37,8 +38,12 @@ public sealed class SimpleInjectorDependencyInjectionContainer : DependencyInjec
    protected override IDependencyInjectionContainer RegisterInContainer(ComponentRegistration[] registrations)
    {
       _registerScopedKernel.RunIfFirstCall(() =>
+      {
          _container.Register<ScopedKernel>(() => new ScopedKernel(this, _container.GetInstance),
-                                           global::SimpleInjector.Lifestyle.Scoped));
+                                           global::SimpleInjector.Lifestyle.Scoped);
+         _container.Register<IServiceLocatorKernel>(() => _container.GetInstance<ScopedKernel>(),
+                                                    global::SimpleInjector.Lifestyle.Scoped);
+      });
 
       foreach(var registration in registrations)
       {

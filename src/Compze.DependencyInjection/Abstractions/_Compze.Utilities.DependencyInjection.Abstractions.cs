@@ -40,9 +40,8 @@ public interface IServiceLocator : IDisposable, IAsyncDisposable
    IServiceLocatorScope BeginScope();
 }
 
-public interface IServiceLocatorScope : IDisposable
+public interface IServiceLocatorScope : IServiceLocatorKernel, IDisposable
 {
-   TComponent Resolve<TComponent>() where TComponent : class;
    object Resolve(Type serviceType);
 }
 

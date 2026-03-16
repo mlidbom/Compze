@@ -51,7 +51,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
       _teventSpy = new TeventSpy();
 
       _serviceLocator.Resolve<ITessageHandlerRegistrar>()
-                     .ForTevent<IExactlyOnceTevent>(_teventSpy.Receive);
+                     .ForTevent<IExactlyOnceTevent>((tevent, _) => _teventSpy.Receive(tevent));
    }
 
    protected override async Task DisposeAsyncInternal() => await _serviceLocator.DisposeAsync().AsTask();

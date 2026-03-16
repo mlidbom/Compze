@@ -20,6 +20,7 @@ namespace Compze.Tessaging.Teventive.TeventStore;
 class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
 {
    readonly ITeventStoreTeventPublisher _teventStoreTeventPublisher;
+   readonly IServiceLocatorKernel _kernel;
    readonly ITeventStore _store;
    readonly ITaggregateTypeValidator _taggregateTypeValidator;
    readonly IDictionary<TaggregateId, ITaggregate> _idMap = new Dictionary<TaggregateId, ITaggregate>();
@@ -29,10 +30,10 @@ class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
    public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(
          Scoped.For<ITeventStoreUpdater, ITeventStoreReader>()
-               .CreatedBy((ITeventStoreTeventPublisher teventPublisher, ITeventStore teventStore, ITaggregateTypeValidator taggregateTypeValidator) =>
-                             new TeventStoreUpdater(teventPublisher, teventStore, taggregateTypeValidator)));
+               .CreatedBy((ITeventStoreTeventPublisher teventPublisher, ITeventStore teventStore, ITaggregateTypeValidator taggregateTypeValidator, IServiceLocatorKernel kernel) =>
+                             new TeventStoreUpdater(teventPublisher, teventStore, taggregateTypeValidator, kernel)));
 
-   TeventStoreUpdater(ITeventStoreTeventPublisher teventStoreTeventPublisher, ITeventStore store, ITaggregateTypeValidator taggregateTypeValidator)
+   TeventStoreUpdater(ITeventStoreTeventPublisher teventStoreTeventPublisher, ITeventStore store, ITaggregateTypeValidator taggregateTypeValidator, IServiceLocatorKernel kernel)
    {
       Argument.NotNull(teventStoreTeventPublisher).NotNull(store);
 
@@ -40,6 +41,7 @@ class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
       _teventStoreTeventPublisher = teventStoreTeventPublisher;
       _store = store;
       _taggregateTypeValidator = taggregateTypeValidator;
+      _kernel = kernel;
    }
 
    public TTaggregate Get<TTaggregate>(TaggregateId taggregateId) where TTaggregate : class, ITaggregate
@@ -108,7 +110,7 @@ class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
 
          _store.SaveSingleTaggregateTevents(tevents);
 
-         tevents.ForEach(_teventStoreTeventPublisher.Publish);
+         tevents.ForEach(tevent => _teventStoreTeventPublisher.Publish(tevent, _kernel));
       });
 
       _idMap.Add(taggregate.Id, taggregate);
@@ -125,7 +127,7 @@ class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
       }
 
       _store.SaveSingleTaggregateTevents([tevent]);
-      _teventStoreTeventPublisher.Publish(tevent);
+      _teventStoreTeventPublisher.Publish(tevent, _kernel);
    }
 
    public void Delete(TaggregateId taggregateId)

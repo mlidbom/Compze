@@ -1,13 +1,15 @@
 using Compze.Abstractions.Tessaging.Public;
+using Compze.DependencyInjection;
 using Compze.Internals.SystemCE.UsageGuards;
 using Compze.Typermedia.HandlerRegistration;
 using Compze.Abstractions.Tessaging.Validation;
 
 namespace Compze.Typermedia;
 
-class InProcessTypermediaNavigator(ITypermediaHandlerRegistry typermediaHandlerRegistry) : IInProcessTypermediaNavigator
+class InProcessTypermediaNavigator(ITypermediaHandlerRegistry typermediaHandlerRegistry, IServiceLocatorKernel kernel) : IInProcessTypermediaNavigator
 {
    readonly ITypermediaHandlerRegistry _typermediaHandlerRegistry = typermediaHandlerRegistry;
+   readonly IServiceLocatorKernel _kernel = kernel;
    readonly IUsageGuard _contextGuard = new CombinationUsageGuard(new SingleTransactionUsageGuard(typermediaHandlerRegistry));
 
    public TResult Execute<TResult>(IStrictlyLocalTommand<TResult> tommand)
@@ -15,7 +17,7 @@ class InProcessTypermediaNavigator(ITypermediaHandlerRegistry typermediaHandlerR
       CommonAssertion(tommand);
 
       var tommandHandler = _typermediaHandlerRegistry.GetTommandHandler(tommand);
-      return tommandHandler.Invoke(tommand);
+      return tommandHandler.Invoke(tommand, _kernel);
    }
 
    public void Execute(IStrictlyLocalTommand tommand)
@@ -23,7 +25,7 @@ class InProcessTypermediaNavigator(ITypermediaHandlerRegistry typermediaHandlerR
       CommonAssertion(tommand);
 
       var tommandHandler = _typermediaHandlerRegistry.GetVoidTommandHandler(tommand);
-      tommandHandler.Invoke(tommand);
+      tommandHandler.Invoke(tommand, _kernel);
    }
 
    public TResult Execute<TTuery, TResult>(IStrictlyLocalTuery<TTuery, TResult> tuery) where TTuery : IStrictlyLocalTuery<TTuery, TResult>
@@ -36,7 +38,7 @@ class InProcessTypermediaNavigator(ITypermediaHandlerRegistry typermediaHandlerR
          return selfCreating.CreateResult();
 
       var tueryHandler = _typermediaHandlerRegistry.GetTueryHandler(tuery);
-      return tueryHandler.Invoke(tuery);
+      return tueryHandler.Invoke(tuery, _kernel);
    }
 
    void CommonAssertion(ITessage tessage)
