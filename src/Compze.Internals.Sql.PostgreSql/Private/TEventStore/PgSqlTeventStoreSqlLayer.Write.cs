@@ -45,7 +45,7 @@ partial class PgSqlTeventStoreSqlLayer
                                     .AddParameter(Tevent.TeventId, data.TeventId.Value)
                                     .AddTimestampWithTimeZone(Tevent.UtcTimeStamp, data.UtcTimeStamp)
                                     .AddMediumTextParameter(Tevent.Tevent, data.TeventJson)
-                                    .AddParameter(Tevent.ReadOrder, NpgsqlDbType.Varchar, data.StorageInformation.ReadOrder?.ToString() ?? new ReadOrder().ToString())
+                                    .AddParameter(Tevent.ReadOrder, NpgsqlDbType.Varchar, data.StorageInformation.ReadOrder?.ToString() ?? ReadOrder.NextTemporaryPlaceholder().ToString())
                                     .AddParameter(Tevent.EffectiveVersion, NpgsqlDbType.Integer, data.StorageInformation.EffectiveVersion)
                                     .AddNullableParameter(Tevent.TargetTevent, NpgsqlDbType.Uuid, data.StorageInformation.RefactoringInformation?.TargetTevent.Value)
                                     .AddNullableParameter(Tevent.RefactoringType, NpgsqlDbType.Smallint, data.StorageInformation.RefactoringInformation?.RefactoringType == null ? null : (byte?)data.StorageInformation.RefactoringInformation.RefactoringType)

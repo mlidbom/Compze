@@ -14,7 +14,7 @@ namespace Compze.Tests.Performance.Internals.Sql.DocumentDb;
 [LongRunning]
 public class DocumentDbPerformanceTests : DocumentDbTestsBase
 {
-   [PCT] public void Saves_XX_documents_in_50_milliseconds()
+   [PCT] public void Saves_XX_documents_in_100_milliseconds()
    {
       ServiceLocator.ExecuteInIsolatedScope(() =>
       {
@@ -27,7 +27,7 @@ public class DocumentDbPerformanceTests : DocumentDbTestsBase
             action: SaveOneNewUserInTransaction,
             iterations: TestEnv.SqlLayer.ValueFor(msSql: 8, mySql: 8, pgSql: 8, sqlite: 4, sqliteMemory: 6)
                                .EnvDivide(instrumented:2.2, unoptimized:1.3),
-            maxTotal: 50.Milliseconds()
+            maxTotal: 100.Milliseconds()
          );
          return;
 

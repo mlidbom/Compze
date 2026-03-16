@@ -20,6 +20,16 @@ public readonly struct ReadOrder : IComparable<ReadOrder>, IEquatable<ReadOrder>
 
    public static readonly ReadOrder Zero = new(0, 0);
 
+   static long _temporaryPlaceholderCounter;
+   static readonly BigInteger TemporaryPlaceholderIntegerPart = BigInteger.Parse("9999999999999999999", CultureInfo.InvariantCulture);
+
+   // Each call returns a unique ReadOrder with max integer part and an incrementing fractional part.
+   // These are ephemeral — they exist in the UNIQUE index only within an uncommitted transaction
+   // and are immediately replaced by the real InsertionOrder value via the subsequent UPDATE.
+   // Using unique values eliminates contention on the UNIQUE ReadOrder index during concurrent INSERTs.
+   public static ReadOrder NextTemporaryPlaceholder() =>
+      new(TemporaryPlaceholderIntegerPart, Interlocked.Increment(ref _temporaryPlaceholderCounter));
+
    public static ReadOrder FromParts(long integerPart, long fractionPart) => new(integerPart, fractionPart);
 
    static readonly BigInteger MaxOffset = BigInteger.Parse("1".PadRight(IntegerDigits, '0'), CultureInfo.InvariantCulture);

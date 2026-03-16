@@ -29,13 +29,13 @@ partial class MsSqlTeventStoreSqlLayer
                                          (       {Tevent.TaggregateId},  {Tevent.InsertedVersion},  {Tevent.EffectiveVersion},  {Tevent.ReadOrder},  {Tevent.TeventType},  {Tevent.TeventId},  {Tevent.UtcTimeStamp},  {Tevent.Tevent},  {Tevent.TargetTevent}, {Tevent.RefactoringType}) 
                                          VALUES(@{Tevent.TaggregateId}, @{Tevent.InsertedVersion}, @{Tevent.EffectiveVersion}, @{Tevent.ReadOrder}, @{Tevent.TeventType}, @{Tevent.TeventId}, @{Tevent.UtcTimeStamp}, @{Tevent.Tevent}, @{Tevent.TargetTevent},@{Tevent.RefactoringType})
 
+                                         {(data.StorageInformation.ReadOrder != null ? "" : $"""
 
-                                         IF(@{Tevent.ReadOrder} = 0)
-                                         BEGIN
-                                             UPDATE {Tevent.TableName} With(READCOMMITTED, ROWLOCK)
-                                             SET {Tevent.ReadOrder} = cast({Tevent.InsertionOrder} as {Tevent.ReadOrderType})
-                                             WHERE {Tevent.TeventId} = @{Tevent.TeventId}
-                                         END
+                                                                                             UPDATE {Tevent.TableName} With(READCOMMITTED, ROWLOCK)
+                                                                                             SET {Tevent.ReadOrder} = cast({Tevent.InsertionOrder} as {Tevent.ReadOrderType})
+                                                                                             WHERE {Tevent.TeventId} = @{Tevent.TeventId}
+
+                                                                                             """)}
 
                                          """)
                                     .AddParameter(Tevent.TaggregateId, SqlDbType.UniqueIdentifier, data.TaggregateId.Value)
@@ -45,7 +45,7 @@ partial class MsSqlTeventStoreSqlLayer
                                     .AddDateTime2Parameter(Tevent.UtcTimeStamp, data.UtcTimeStamp)
                                     .AddNVarcharMaxParameter(Tevent.Tevent, data.TeventJson)
 
-                                    .AddParameter(Tevent.ReadOrder, SqlDbType.Decimal, data.StorageInformation.ReadOrder?.ToSqlDecimal() ?? new SqlDecimal(0))
+                                    .AddParameter(Tevent.ReadOrder, SqlDbType.Decimal, data.StorageInformation.ReadOrder?.ToSqlDecimal() ?? ReadOrder.NextTemporaryPlaceholder().ToSqlDecimal())
                                     .AddParameter(Tevent.EffectiveVersion, SqlDbType.Int, data.StorageInformation.EffectiveVersion)
                                     .AddNullableParameter(Tevent.TargetTevent, SqlDbType.UniqueIdentifier, data.StorageInformation.RefactoringInformation?.TargetTevent.Value)
                                     .AddNullableParameter(Tevent.RefactoringType, SqlDbType.TinyInt, data.StorageInformation.RefactoringInformation?.RefactoringType == null ? null : (byte?)data.StorageInformation.RefactoringInformation.RefactoringType)

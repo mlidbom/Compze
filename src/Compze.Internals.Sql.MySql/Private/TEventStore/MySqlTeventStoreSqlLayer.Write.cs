@@ -28,10 +28,13 @@ partial class MySqlTeventStoreSqlLayer
                                          (       {Tevent.TaggregateId},  {Tevent.InsertedVersion},  {Tevent.EffectiveVersion},  {Tevent.ReadOrder},  {Tevent.TeventType},  {Tevent.TeventId},  {Tevent.UtcTimeStamp},  {Tevent.Tevent},  {Tevent.TargetTevent}, {Tevent.RefactoringType}) 
                                          VALUES(@{Tevent.TaggregateId}, @{Tevent.InsertedVersion}, @{Tevent.EffectiveVersion}, @{Tevent.ReadOrder}, @{Tevent.TeventType}, @{Tevent.TeventId}, @{Tevent.UtcTimeStamp}, @{Tevent.Tevent}, @{Tevent.TargetTevent},@{Tevent.RefactoringType});
 
-                                         UPDATE {Tevent.TableName} /*With(READCOMMITTED, ROWLOCK)*/
-                                         SET {Tevent.ReadOrder} = cast({Tevent.InsertionOrder} as {Tevent.ReadOrderType})
-                                         WHERE {Tevent.TeventId} = @{Tevent.TeventId} 
-                                         AND @{Tevent.ReadOrder} = '0.0000000000000000000';
+                                         {(data.StorageInformation.ReadOrder != null ? "" : $"""
+
+                                                                                             UPDATE {Tevent.TableName} /*With(READCOMMITTED, ROWLOCK)*/
+                                                                                             SET {Tevent.ReadOrder} = cast({Tevent.InsertionOrder} as {Tevent.ReadOrderType})
+                                                                                             WHERE {Tevent.TeventId} = @{Tevent.TeventId};
+
+                                                                                             """)}
 
                                          """)
                                     .AddParameter(Tevent.TaggregateId, data.TaggregateId.Value)
@@ -41,7 +44,7 @@ partial class MySqlTeventStoreSqlLayer
                                     .AddDateTime2Parameter(Tevent.UtcTimeStamp, data.UtcTimeStamp)
                                     .AddMediumTextParameter(Tevent.Tevent, data.TeventJson)
 
-                                    .AddParameter(Tevent.ReadOrder, MySqlDbType.VarChar, data.StorageInformation.ReadOrder?.ToString() ?? ReadOrder.Zero.ToString())
+                                    .AddParameter(Tevent.ReadOrder, MySqlDbType.VarChar, data.StorageInformation.ReadOrder?.ToString() ?? ReadOrder.NextTemporaryPlaceholder().ToString())
                                     .AddParameter(Tevent.EffectiveVersion, MySqlDbType.Int32, data.StorageInformation.EffectiveVersion)
                                     .AddNullableParameter(Tevent.TargetTevent, MySqlDbType.VarChar, data.StorageInformation.RefactoringInformation?.TargetTevent.Value)
                                     .AddNullableParameter(Tevent.RefactoringType, MySqlDbType.Byte, data.StorageInformation.RefactoringInformation?.RefactoringType == null ? null : (byte?)data.StorageInformation.RefactoringInformation.RefactoringType)
