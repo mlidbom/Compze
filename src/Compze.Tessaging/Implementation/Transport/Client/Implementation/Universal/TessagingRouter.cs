@@ -132,19 +132,16 @@ class TessagingRouter : ITessagingRouter, IDisposable
    public IReadOnlyList<ITessagingInboxConnection> SubscriberConnectionsFor(IExactlyOnceTevent tevent)
    {
       AssertNotStopped();
-      if(_teventSubscriberRouteCache.TryGetValue(tevent.GetType(), out var cached)) return cached;
-
-      var subscriberConnections = _teventSubscriberRoutes
-                                 .Where(route => route.TeventType.IsInstanceOfType(tevent))
-                                 .Select(route => route.Connection)
-                                 .ToArray();
-
-      using(_monitor.TakeLock())
-      {
-         Interlocked.Exchange(ref _teventSubscriberRouteCache, _teventSubscriberRouteCache.AddToCopy(tevent.GetType(), subscriberConnections));
-      }
-
-      return subscriberConnections;
+      var teventType = tevent.GetType();
+      return _monitor.DoubleCheckedLocking(
+         tryRead: () => _teventSubscriberRouteCache.GetValueOrDefault(teventType),
+         field: ref _teventSubscriberRouteCache,
+         createUpdatedFieldValue: () => _teventSubscriberRouteCache.AddToCopy(
+            teventType,
+            _teventSubscriberRoutes
+              .Where(route => route.TeventType.IsInstanceOfType(tevent))
+              .Select(route => route.Connection)
+              .ToArray()));
    }
 
    bool _disposed;
