@@ -38,8 +38,7 @@ class SqliteDbPoolSqlLayer : IDbPoolSqlLayer
       return new SqliteConnectionStringBuilder
              {
                 DataSource = dbFile.FullName,
-                Mode = SqliteOpenMode.ReadWriteCreate,
-                Cache = SqliteCacheMode.Shared
+                Mode = SqliteOpenMode.ReadWriteCreate
              }.ConnectionString;
    }
 
@@ -50,6 +49,9 @@ class SqliteDbPoolSqlLayer : IDbPoolSqlLayer
       Delete(db);
       using var dbCreatingConnection = new SqliteConnection(ConnectionStringFor(db));
       dbCreatingConnection.Open();
+      using var walCommand = dbCreatingConnection.CreateCommand();
+      walCommand.CommandText = "PRAGMA journal_mode=WAL;";
+      walCommand.ExecuteNonQuery();
    }
 
    FileInfo FileInfoFor(DbPoolDatabase db) => _baseDirectory.File($"{db.Name}_{_poolId}.db");

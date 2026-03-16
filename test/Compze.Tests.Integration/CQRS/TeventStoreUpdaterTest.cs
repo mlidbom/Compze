@@ -408,7 +408,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
    }
 
    [PCT]
-   [Skip<SqlLayer>([SqlLayer.Sqlite, SqlLayer.SqliteMemory], "Sqlite is not really designed for high concurrency, we have not been able to get this working with SQLite")]
+   [Skip<SqlLayer>([SqlLayer.SqliteMemory], "In-memory SQLite with shared cache cannot use WAL mode, so BEGIN IMMEDIATE serializes all transactions")]
    public void Concurrent_read_only_access_to_taggregate_history_can_occur_in_parallel()
    {
       var user = new User();
