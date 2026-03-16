@@ -40,7 +40,7 @@ public interface IServiceLocator : IDisposable, IAsyncDisposable
    IServiceLocatorScope BeginScope();
 }
 
-public interface IServiceLocatorScope : IServiceLocatorKernel, IDisposable
+public interface IServiceLocatorScope : IScopeServiceLocator, IDisposable
 {
    object Resolve(Type serviceType);
 }

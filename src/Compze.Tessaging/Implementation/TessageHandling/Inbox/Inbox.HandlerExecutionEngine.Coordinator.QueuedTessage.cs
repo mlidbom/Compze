@@ -23,7 +23,7 @@ public partial class Inbox
             readonly TaskCompletionSource<object?> _taskCompletionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
             internal readonly TransportTessage.InComing TransportTessage;
             readonly Coordinator _coordinator;
-            readonly Func<object, IServiceLocatorKernel, object?> _tessageTask;
+            readonly Func<object, IScopeServiceLocator, object?> _tessageTask;
             readonly ITaskRunner _taskRunner;
             readonly ITessageStorage _tessageStorage;
             readonly IServiceLocator _serviceLocator;
@@ -119,7 +119,7 @@ public partial class Inbox
             }
 
             //Refactor: Switching should not be necessary. See also inbox.
-            Func<object, IServiceLocatorKernel, object?> CreateTessageTask() =>
+            Func<object, IScopeServiceLocator, object?> CreateTessageTask() =>
                TransportTessage.TessageTypeEnum switch
                {
                   TransportTessageType.ExactlyOnceTevent => (tessage, kernel) =>

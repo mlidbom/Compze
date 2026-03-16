@@ -6,10 +6,10 @@ using Compze.Abstractions.Tessaging.Validation;
 
 namespace Compze.Typermedia;
 
-class InProcessTypermediaNavigator(ITypermediaHandlerRegistry typermediaHandlerRegistry, IServiceLocatorKernel kernel) : IInProcessTypermediaNavigator
+class InProcessTypermediaNavigator(ITypermediaHandlerRegistry typermediaHandlerRegistry, IScopeServiceLocator scopeServiceLocator) : IInProcessTypermediaNavigator
 {
    readonly ITypermediaHandlerRegistry _typermediaHandlerRegistry = typermediaHandlerRegistry;
-   readonly IServiceLocatorKernel _kernel = kernel;
+   readonly IScopeServiceLocator _scopeServiceLocator = scopeServiceLocator;
    readonly IUsageGuard _contextGuard = new CombinationUsageGuard(new SingleTransactionUsageGuard(typermediaHandlerRegistry));
 
    public TResult Execute<TResult>(IStrictlyLocalTommand<TResult> tommand)
@@ -17,7 +17,7 @@ class InProcessTypermediaNavigator(ITypermediaHandlerRegistry typermediaHandlerR
       CommonAssertion(tommand);
 
       var tommandHandler = _typermediaHandlerRegistry.GetTommandHandler(tommand);
-      return tommandHandler.Invoke(tommand, _kernel);
+      return tommandHandler.Invoke(tommand, _scopeServiceLocator);
    }
 
    public void Execute(IStrictlyLocalTommand tommand)
@@ -25,7 +25,7 @@ class InProcessTypermediaNavigator(ITypermediaHandlerRegistry typermediaHandlerR
       CommonAssertion(tommand);
 
       var tommandHandler = _typermediaHandlerRegistry.GetVoidTommandHandler(tommand);
-      tommandHandler.Invoke(tommand, _kernel);
+      tommandHandler.Invoke(tommand, _scopeServiceLocator);
    }
 
    public TResult Execute<TTuery, TResult>(IStrictlyLocalTuery<TTuery, TResult> tuery) where TTuery : IStrictlyLocalTuery<TTuery, TResult>
@@ -38,7 +38,7 @@ class InProcessTypermediaNavigator(ITypermediaHandlerRegistry typermediaHandlerR
          return selfCreating.CreateResult();
 
       var tueryHandler = _typermediaHandlerRegistry.GetTueryHandler(tuery);
-      return tueryHandler.Invoke(tuery, _kernel);
+      return tueryHandler.Invoke(tuery, _scopeServiceLocator);
    }
 
    void CommonAssertion(ITessage tessage)

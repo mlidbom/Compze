@@ -28,7 +28,7 @@ public sealed class MicrosoftDependencyInjectionContainer(IComponentRegistrar? r
       _registerScopedKernel.RunIfFirstCall(() =>
       {
          _services.AddScoped<ScopedKernel>(sp => new ScopedKernel(this, sp.GetRequiredService));
-         _services.AddScoped<IServiceLocatorKernel>(sp => sp.GetRequiredService<ScopedKernel>());
+         _services.AddScoped<IScopeServiceLocator>(sp => sp.GetRequiredService<ScopedKernel>());
       });
 
       foreach(var registration in registrations)
@@ -166,10 +166,10 @@ public sealed class MicrosoftDependencyInjectionContainer(IComponentRegistrar? r
       }
    }
 
-   sealed class ServiceLocatorScope(MicrosoftDependencyInjectionContainer container, IServiceLocatorKernel scopedKernel, IServiceProvider scopedProvider, Action onDispose) : IServiceLocatorScope
+   sealed class ServiceLocatorScope(MicrosoftDependencyInjectionContainer container, IScopeServiceLocator scopedKernel, IServiceProvider scopedProvider, Action onDispose) : IServiceLocatorScope
    {
       readonly MicrosoftDependencyInjectionContainer _container = container;
-      readonly IServiceLocatorKernel _scopedKernel = scopedKernel;
+      readonly IScopeServiceLocator _scopedKernel = scopedKernel;
       readonly IServiceProvider _scopedProvider = scopedProvider;
       readonly Action _onDispose = onDispose;
 

@@ -25,10 +25,10 @@ static class ServiceBusTeventStoreTeventPublisherRegistrar
    readonly IOutbox _outbox = outbox;
    readonly ITessageHandlerRegistry _handlerRegistry = handlerRegistry;
 
-   void ITeventStoreTeventPublisher.Publish(ITaggregateTevent tevent, IServiceLocatorKernel kernel)
+   void ITeventStoreTeventPublisher.Publish(ITaggregateTevent tevent, IScopeServiceLocator scopeServiceLocator)
    {
       TessageInspector.AssertValidToSendRemote(tevent);
-      _handlerRegistry.DispatchTevent(tevent, kernel);
+      _handlerRegistry.DispatchTevent(tevent, scopeServiceLocator);
       _outbox.PublishTransactionally(tevent);
    }
 }

@@ -7,12 +7,12 @@ namespace Compze.Tessaging.Implementation.TessageHandling.Abstractions;
 
 public interface ITessageHandlerRegistry
 {
-    Action<object, IServiceLocatorKernel> GetTommandHandler(ITommand tessage);
+    Action<object, IScopeServiceLocator> GetTommandHandler(ITommand tessage);
 
-    Action<ITommand, IServiceLocatorKernel> GetTommandHandler(Type tommandType);
-    IReadOnlyList<Action<ITevent, IServiceLocatorKernel>> GetTeventHandlers(Type teventType);
+    Action<ITommand, IScopeServiceLocator> GetTommandHandler(Type tommandType);
+    IReadOnlyList<Action<ITevent, IScopeServiceLocator>> GetTeventHandlers(Type teventType);
 
-    void DispatchTevent(ITevent tevent, IServiceLocatorKernel kernel);
+    void DispatchTevent(ITevent tevent, IScopeServiceLocator scopeServiceLocator);
 
     ISet<TypeId> HandledRemoteTessageTypeIds();
 }

@@ -24,25 +24,25 @@ public static class TessageHandlerRegistryRegistrar
 sealed class TessageHandlerRegistry(ITypeMapper typeMapper) : ITessageHandlerRegistrar, ITessageHandlerRegistry
 {
    readonly ITypeMapper _typeMapper = typeMapper;
-   IReadOnlyDictionary<Type, Action<object, IServiceLocatorKernel>> _tommandHandlers = new Dictionary<Type, Action<object, IServiceLocatorKernel>>();
-   IReadOnlyDictionary<Type, IReadOnlyList<Action<ITevent, IServiceLocatorKernel>>> _teventHandlers = new Dictionary<Type, IReadOnlyList<Action<ITevent, IServiceLocatorKernel>>>();
+   IReadOnlyDictionary<Type, Action<object, IScopeServiceLocator>> _tommandHandlers = new Dictionary<Type, Action<object, IScopeServiceLocator>>();
+   IReadOnlyDictionary<Type, IReadOnlyList<Action<ITevent, IScopeServiceLocator>>> _teventHandlers = new Dictionary<Type, IReadOnlyList<Action<ITevent, IScopeServiceLocator>>>();
    IReadOnlyList<Type> _registeredTeventTypes = new List<Type>();
 
    readonly IMonitor _monitor = IMonitor.New();
 
-   ITessageHandlerRegistrar ITessageHandlerRegistrar.ForTevent<TTevent>(Action<TTevent, IServiceLocatorKernel> handler) => _monitor.Locked(() =>
+   ITessageHandlerRegistrar ITessageHandlerRegistrar.ForTevent<TTevent>(Action<TTevent, IScopeServiceLocator> handler) => _monitor.Locked(() =>
    {
       TessageInspector.AssertValid<TTevent>();
       _teventHandlers.TryGetValue(typeof(TTevent), out var currentTeventSubscribers);
-      currentTeventSubscribers ??= new List<Action<ITevent, IServiceLocatorKernel>>();
+      currentTeventSubscribers ??= new List<Action<ITevent, IScopeServiceLocator>>();
 
-      IReadOnlyList<Action<ITevent, IServiceLocatorKernel>> value = [..currentTeventSubscribers, (tevent, kernel) => handler((TTevent)tevent, kernel)];
+      IReadOnlyList<Action<ITevent, IScopeServiceLocator>> value = [..currentTeventSubscribers, (tevent, kernel) => handler((TTevent)tevent, kernel)];
       Interlocked.Exchange(ref _teventHandlers, _teventHandlers.AddToCopy(typeof(TTevent), value));
       Interlocked.Exchange(ref _registeredTeventTypes, _registeredTeventTypes.AddToCopy(typeof(TTevent)));
       return this;
    });
 
-   ITessageHandlerRegistrar ITessageHandlerRegistrar.ForTommand<TTommand>(Action<TTommand, IServiceLocatorKernel> handler) => _monitor.Locked(() =>
+   ITessageHandlerRegistrar ITessageHandlerRegistrar.ForTommand<TTommand>(Action<TTommand, IScopeServiceLocator> handler) => _monitor.Locked(() =>
    {
       TessageInspector.AssertValid<TTommand>();
 
@@ -51,32 +51,32 @@ sealed class TessageHandlerRegistry(ITypeMapper typeMapper) : ITessageHandlerReg
          throw new Exception($"{typeof(TTommand)} expects a result. You must register a method that returns a result.");
       }
 
-      void Value(object tommand, IServiceLocatorKernel kernel) => handler((TTommand)tommand, kernel);
+      void Value(object tommand, IScopeServiceLocator kernel) => handler((TTommand)tommand, kernel);
       Interlocked.Exchange(ref _tommandHandlers, _tommandHandlers.AddToCopy(typeof(TTommand), Value));
       return this;
    });
 
-   Action<object, IServiceLocatorKernel> ITessageHandlerRegistry.GetTommandHandler(ITommand tessage)
+   Action<object, IScopeServiceLocator> ITessageHandlerRegistry.GetTommandHandler(ITommand tessage)
    {
       if(TryGetTommandHandler(tessage, out var handler)) return handler;
 
       throw new NoHandlerException(tessage.GetType());
    }
 
-   bool TryGetTommandHandler(ITommand tessage, [NotNullWhen(true)]out Action<object, IServiceLocatorKernel>? handler) =>
+   bool TryGetTommandHandler(ITommand tessage, [NotNullWhen(true)]out Action<object, IScopeServiceLocator>? handler) =>
       _tommandHandlers.TryGetValue(tessage.GetType(), out handler);
 
-   public Action<ITommand, IServiceLocatorKernel> GetTommandHandler(Type tommandType) => _tommandHandlers[tommandType];
+   public Action<ITommand, IScopeServiceLocator> GetTommandHandler(Type tommandType) => _tommandHandlers[tommandType];
 
    //performance: Use static caching trick.
-   public IReadOnlyList<Action<ITevent, IServiceLocatorKernel>> GetTeventHandlers(Type teventType) => _teventHandlers.Where(it => it.Key.IsAssignableFrom(teventType)).SelectMany(it => it.Value).ToList();
+   public IReadOnlyList<Action<ITevent, IScopeServiceLocator>> GetTeventHandlers(Type teventType) => _teventHandlers.Where(it => it.Key.IsAssignableFrom(teventType)).SelectMany(it => it.Value).ToList();
 
-   void ITessageHandlerRegistry.DispatchTevent(ITevent tevent, IServiceLocatorKernel kernel)
+   void ITessageHandlerRegistry.DispatchTevent(ITevent tevent, IScopeServiceLocator scopeServiceLocator)
    {
       var handlers = GetTeventHandlers(tevent.GetType());
       foreach(var handler in handlers)
       {
-         handler(tevent, kernel);
+         handler(tevent, scopeServiceLocator);
       }
    }
 

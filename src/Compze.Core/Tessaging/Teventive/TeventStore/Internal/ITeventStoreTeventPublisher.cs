@@ -5,5 +5,5 @@ namespace Compze.Core.Tessaging.Teventive.TeventStore.Internal;
 
 public interface ITeventStoreTeventPublisher
 {
-   void Publish(ITaggregateTevent aTevent, IServiceLocatorKernel kernel);
+   void Publish(ITaggregateTevent aTevent, IScopeServiceLocator scopeServiceLocator);
 }

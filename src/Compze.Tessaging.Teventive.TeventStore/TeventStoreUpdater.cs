@@ -20,7 +20,7 @@ namespace Compze.Tessaging.Teventive.TeventStore;
 class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
 {
    readonly ITeventStoreTeventPublisher _teventStoreTeventPublisher;
-   readonly IServiceLocatorKernel _kernel;
+   readonly IScopeServiceLocator _scopeServiceLocator;
    readonly ITeventStore _store;
    readonly ITaggregateTypeValidator _taggregateTypeValidator;
    readonly IDictionary<TaggregateId, ITaggregate> _idMap = new Dictionary<TaggregateId, ITaggregate>();
@@ -30,10 +30,10 @@ class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
    public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(
          Scoped.For<ITeventStoreUpdater, ITeventStoreReader>()
-               .CreatedBy((ITeventStoreTeventPublisher teventPublisher, ITeventStore teventStore, ITaggregateTypeValidator taggregateTypeValidator, IServiceLocatorKernel kernel) =>
-                             new TeventStoreUpdater(teventPublisher, teventStore, taggregateTypeValidator, kernel)));
+               .CreatedBy((ITeventStoreTeventPublisher teventPublisher, ITeventStore teventStore, ITaggregateTypeValidator taggregateTypeValidator, IScopeServiceLocator scopeServiceLocator) =>
+                             new TeventStoreUpdater(teventPublisher, teventStore, taggregateTypeValidator, scopeServiceLocator)));
 
-   TeventStoreUpdater(ITeventStoreTeventPublisher teventStoreTeventPublisher, ITeventStore store, ITaggregateTypeValidator taggregateTypeValidator, IServiceLocatorKernel kernel)
+   TeventStoreUpdater(ITeventStoreTeventPublisher teventStoreTeventPublisher, ITeventStore store, ITaggregateTypeValidator taggregateTypeValidator, IScopeServiceLocator scopeServiceLocator)
    {
       Argument.NotNull(teventStoreTeventPublisher).NotNull(store);
 
@@ -41,7 +41,7 @@ class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
       _teventStoreTeventPublisher = teventStoreTeventPublisher;
       _store = store;
       _taggregateTypeValidator = taggregateTypeValidator;
-      _kernel = kernel;
+      _scopeServiceLocator = scopeServiceLocator;
    }
 
    public TTaggregate Get<TTaggregate>(TaggregateId taggregateId) where TTaggregate : class, ITaggregate
@@ -110,7 +110,7 @@ class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
 
          _store.SaveSingleTaggregateTevents(tevents);
 
-         tevents.ForEach(tevent => _teventStoreTeventPublisher.Publish(tevent, _kernel));
+         tevents.ForEach(tevent => _teventStoreTeventPublisher.Publish(tevent, _scopeServiceLocator));
       });
 
       _idMap.Add(taggregate.Id, taggregate);
@@ -127,7 +127,7 @@ class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
       }
 
       _store.SaveSingleTaggregateTevents([tevent]);
-      _teventStoreTeventPublisher.Publish(tevent, _kernel);
+      _teventStoreTeventPublisher.Publish(tevent, _scopeServiceLocator);
    }
 
    public void Delete(TaggregateId taggregateId)

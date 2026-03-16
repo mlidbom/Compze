@@ -27,8 +27,8 @@ public sealed class AutofacDependencyInjectionContainer(IComponentRegistrar? reg
             var scope = ctx.Resolve<ILifetimeScope>();
             return new ScopedKernel(this, scope.Resolve);
          }).InstancePerLifetimeScope();
-         _containerBuilder.Register(ctx => (IServiceLocatorKernel)ctx.Resolve<ScopedKernel>())
-                          .As<IServiceLocatorKernel>()
+         _containerBuilder.Register(ctx => (IScopeServiceLocator)ctx.Resolve<ScopedKernel>())
+                          .As<IScopeServiceLocator>()
                           .InstancePerLifetimeScope();
       });
 
@@ -131,10 +131,10 @@ public sealed class AutofacDependencyInjectionContainer(IComponentRegistrar? reg
          await _container.DisposeAsync().caf();
    }
 
-   sealed class ServiceLocatorScope(AutofacDependencyInjectionContainer container, IServiceLocatorKernel scopedKernel, ILifetimeScope lifetimeScope) : IServiceLocatorScope
+   sealed class ServiceLocatorScope(AutofacDependencyInjectionContainer container, IScopeServiceLocator scopedKernel, ILifetimeScope lifetimeScope) : IServiceLocatorScope
    {
       readonly AutofacDependencyInjectionContainer _container = container;
-      readonly IServiceLocatorKernel _scopedKernel = scopedKernel;
+      readonly IScopeServiceLocator _scopedKernel = scopedKernel;
       readonly ILifetimeScope _lifetimeScope = lifetimeScope;
 
       public TComponent Resolve<TComponent>() where TComponent : class => _scopedKernel.Resolve<TComponent>();

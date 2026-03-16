@@ -41,7 +41,7 @@ public sealed class SimpleInjectorDependencyInjectionContainer : DependencyInjec
       {
          _container.Register<ScopedKernel>(() => new ScopedKernel(this, _container.GetInstance),
                                            global::SimpleInjector.Lifestyle.Scoped);
-         _container.Register<IServiceLocatorKernel>(() => _container.GetInstance<ScopedKernel>(),
+         _container.Register<IScopeServiceLocator>(() => _container.GetInstance<ScopedKernel>(),
                                                     global::SimpleInjector.Lifestyle.Scoped);
       });
 
@@ -131,10 +131,10 @@ public sealed class SimpleInjectorDependencyInjectionContainer : DependencyInjec
       return _container.GetInstance<TComponent>();
    }
 
-   sealed class ServiceLocatorScope(SimpleInjectorDependencyInjectionContainer container, IServiceLocatorKernel scopedKernel, Scope scope) : IServiceLocatorScope
+   sealed class ServiceLocatorScope(SimpleInjectorDependencyInjectionContainer container, IScopeServiceLocator scopedKernel, Scope scope) : IServiceLocatorScope
    {
       readonly SimpleInjectorDependencyInjectionContainer _container = container;
-      readonly IServiceLocatorKernel _scopedKernel = scopedKernel;
+      readonly IScopeServiceLocator _scopedKernel = scopedKernel;
       readonly Scope _scope = scope;
 
       public TComponent Resolve<TComponent>() where TComponent : class => _scopedKernel.Resolve<TComponent>();
