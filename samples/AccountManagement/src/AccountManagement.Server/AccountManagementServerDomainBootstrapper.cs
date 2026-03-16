@@ -15,14 +15,29 @@ public static class AccountManagementServerDomainBootstrapper
 {
    public static IEndpoint RegisterWith(IEndpointHost host)
    {
-      return host.RegisterEndpoint(name: "AccountManagement",
+      var domainEndpoint = host.RegisterEndpoint(name: "AccountManagement",
                                    id: new EndpointId(Guid.Parse(input: "1A1BE9C8-C8F6-4E38-ABFB-F101E5EDB00D")),
                                    setup: builder =>
                                    {
                                       RegisterDomainComponents(builder);
                                       RegisterHandlers(builder);
                                    });
+
+      RegisterAccountStatisticsEndpoint(host);
+
+      return domainEndpoint;
    }
+
+   static void RegisterAccountStatisticsEndpoint(IEndpointHost host) =>
+      host.RegisterEndpoint(name: "AccountManagement.Statistics",
+                            id: new EndpointId(Guid.Parse(input: "B16250DE-4321-4FBD-A0CC-E42C7A1B0B34")),
+                            setup: builder =>
+                            {
+                               builder.RegisterDocumentDb()
+                                      .HandleDocumentType<AccountStatistics.SingletonStatisticsQueryModel>(builder.RegisterTypermediaHandlers());
+
+                               AccountStatistics.Register(builder);
+                            });
 
    static void RegisterDomainComponents(IEndpointBuilder builder)
    {
@@ -30,16 +45,12 @@ public static class AccountManagementServerDomainBootstrapper
              .HandleTaggregate<Account, IAccountTevent>();
 
       builder.RegisterDocumentDb()
-             .HandleDocumentType<TeventStoreApi.TueryApi.TaggregateLink<Account>>(builder.RegisterTypermediaHandlers())
-             .HandleDocumentType<AccountStatistics.SingletonStatisticsQueryModel>(builder.RegisterTypermediaHandlers());
+             .HandleDocumentType<TeventStoreApi.TueryApi.TaggregateLink<Account>>(builder.RegisterTypermediaHandlers());
    }
 
    static void RegisterHandlers(IEndpointBuilder builder)
    {
       UIAdapterLayer.Register(builder.RegisterTypermediaHandlers());
-
-      //todo: This should not be called synchronously. We should have it in a separate consistency boundary so that it does not slow down every operation on an account.
-      AccountStatistics.Register(builder);
 
       AccountQueryModel.Api.RegisterHandlers(builder.RegisterTypermediaHandlers());
 
