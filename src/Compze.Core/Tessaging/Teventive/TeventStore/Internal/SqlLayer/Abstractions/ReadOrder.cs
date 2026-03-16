@@ -20,7 +20,7 @@ public readonly struct ReadOrder : IComparable<ReadOrder>, IEquatable<ReadOrder>
 
    public static readonly ReadOrder Zero = new(0, 0);
 
-   static long _temporaryPlaceholderCounter;
+   static long _temporaryPlaceholderCounter = 1; //It may be ridiculous, but should we ever have long.MaxValue events, starting this at 1 will avoid a collision.
    static readonly BigInteger TemporaryPlaceholderIntegerPart = long.MaxValue;
 
    // Each call returns a unique ReadOrder with max integer part and an incrementing fractional part.
