@@ -45,7 +45,7 @@ public sealed class SimpleInjectorDependencyInjectionContainer : DependencyInjec
                                                         .AsSimpleInjectorLifestyle()
                                                         .CreateRegistration(
                                                             registration.InstantiationSpec.FactoryMethodReturnType,
-                                                            () => registration.InstantiationSpec.RunFactoryMethod(this),
+                                                            () => registration.InstantiationSpec.RunFactoryMethod(CreateScopedKernel(_container.GetInstance)),
                                                             _container);
             foreach(var serviceType in registration.ServiceTypes)
             {
@@ -95,7 +95,8 @@ public sealed class SimpleInjectorDependencyInjectionContainer : DependencyInjec
    IServiceLocatorScope IServiceLocator.BeginScope()
    {
       var scope = AsyncScopedLifestyle.BeginScope(_container);
-      return new ServiceLocatorScope(this, scope);
+      var scopedKernel = CreateScopedKernel(_container.GetInstance);
+      return new ServiceLocatorScope(this, scopedKernel, scope);
    }
 
    public override void Dispose() => _container.Dispose();
@@ -108,13 +109,21 @@ public sealed class SimpleInjectorDependencyInjectionContainer : DependencyInjec
       return _container.GetInstance<TComponent>();
    }
 
-   sealed class ServiceLocatorScope(SimpleInjectorDependencyInjectionContainer container, Scope scope) : IServiceLocatorScope
+   sealed class ServiceLocatorScope(SimpleInjectorDependencyInjectionContainer container, IServiceLocatorKernel scopedKernel, Scope scope) : IServiceLocatorScope
    {
       readonly SimpleInjectorDependencyInjectionContainer _container = container;
+      readonly IServiceLocatorKernel _scopedKernel = scopedKernel;
       readonly Scope _scope = scope;
 
-      public TComponent Resolve<TComponent>() where TComponent : class => _container.Resolve<TComponent>();
-      public object Resolve(Type serviceType) => _container.Resolve(serviceType);
+      public TComponent Resolve<TComponent>() where TComponent : class => _scopedKernel.Resolve<TComponent>();
+
+      public object Resolve(Type serviceType)
+      {
+         if(_container.TryCreateTransientInstance(serviceType, _scopedKernel, out var transientInstance))
+            return transientInstance;
+         return _container._container.GetInstance(serviceType);
+      }
+
       public void Dispose() => _scope.Dispose();
    }
 }

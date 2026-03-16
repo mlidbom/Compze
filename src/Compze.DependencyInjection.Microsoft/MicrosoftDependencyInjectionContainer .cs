@@ -32,7 +32,7 @@ public sealed class MicrosoftDependencyInjectionContainer(IComponentRegistrar? r
          {
             var firstServiceType = registration.ServiceTypes.First();
             var primaryDescriptor = new ServiceDescriptor(firstServiceType,
-                                                          _ => registration.InstantiationSpec.RunFactoryMethod(this),
+                                                          serviceProvider => registration.InstantiationSpec.RunFactoryMethod(CreateScopedKernel(serviceProvider.GetRequiredService)),
                                                           lifetime);
 
             _services.Add(primaryDescriptor);
@@ -102,8 +102,9 @@ public sealed class MicrosoftDependencyInjectionContainer(IComponentRegistrar? r
 
       var scope = _serviceProvider._assert().NotNull().CreateAsyncScope();
       _scopeStack.Value = ScopeStack.Push(scope);
+      var scopedKernel = CreateScopedKernel(scope.ServiceProvider.GetRequiredService);
 
-      return new ServiceLocatorScope(this, () =>
+      return new ServiceLocatorScope(this, scopedKernel, scope.ServiceProvider, () =>
       {
          var stack = ScopeStack;
          Contract.State.Assert(!stack.IsEmpty, () => "Attempt to dispose scope from a context that is not within the scope.");
@@ -151,13 +152,22 @@ public sealed class MicrosoftDependencyInjectionContainer(IComponentRegistrar? r
       }
    }
 
-   sealed class ServiceLocatorScope(MicrosoftDependencyInjectionContainer container, Action onDispose) : IServiceLocatorScope
+   sealed class ServiceLocatorScope(MicrosoftDependencyInjectionContainer container, IServiceLocatorKernel scopedKernel, IServiceProvider scopedProvider, Action onDispose) : IServiceLocatorScope
    {
       readonly MicrosoftDependencyInjectionContainer _container = container;
+      readonly IServiceLocatorKernel _scopedKernel = scopedKernel;
+      readonly IServiceProvider _scopedProvider = scopedProvider;
       readonly Action _onDispose = onDispose;
 
-      public TComponent Resolve<TComponent>() where TComponent : class => _container.Resolve<TComponent>();
-      public object Resolve(Type serviceType) => _container.Resolve(serviceType);
+      public TComponent Resolve<TComponent>() where TComponent : class => _scopedKernel.Resolve<TComponent>();
+
+      public object Resolve(Type serviceType)
+      {
+         if(_container.TryCreateTransientInstance(serviceType, _scopedKernel, out var transientInstance))
+            return transientInstance;
+         return _scopedProvider.GetRequiredService(serviceType);
+      }
+
       public void Dispose() => _onDispose();
    }
 }

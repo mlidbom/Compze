@@ -90,6 +90,22 @@ public abstract class DependencyInjectionContainerBase : IDependencyInjectionCon
       return false;
    }
 
+   protected IServiceLocatorKernel CreateScopedKernel(Func<Type, object> nativeScopedResolver) =>
+      new ScopedKernel(this, nativeScopedResolver);
+
+   sealed class ScopedKernel(DependencyInjectionContainerBase container, Func<Type, object> nativeScopedResolver) : IServiceLocatorKernel
+   {
+      readonly DependencyInjectionContainerBase _container = container;
+      readonly Func<Type, object> _nativeScopedResolver = nativeScopedResolver;
+
+      public TComponent Resolve<TComponent>() where TComponent : class
+      {
+         if(_container.TryCreateTransientInstance(typeof(TComponent), this, out var transientInstance))
+            return (TComponent)transientInstance;
+         return (TComponent)_nativeScopedResolver(typeof(TComponent));
+      }
+   }
+
    protected abstract bool IsInScope();
 
    public IComponentRegistrar Register() => _registrar;
