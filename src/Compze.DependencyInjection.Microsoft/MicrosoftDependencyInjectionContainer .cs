@@ -22,8 +22,8 @@ public sealed class MicrosoftDependencyInjectionContainer(IComponentRegistrar? r
    {
       _registerScopedKernel.RunIfFirstCall(() =>
       {
-         _services.AddScoped<ScopedKernel>(sp => new ScopedKernel(this, sp.GetRequiredService));
-         _services.AddScoped<IScopeServiceLocator>(sp => sp.GetRequiredService<ScopedKernel>());
+         _services.AddScoped<ScopeServiceLocator>(serviceProvider => new ScopeServiceLocator(serviceProvider.GetRequiredService));
+         _services.AddScoped<IScopeServiceLocator>(serviceProvider => serviceProvider.GetRequiredService<ScopeServiceLocator>());
       });
 
       foreach(var registration in registrations)
@@ -40,19 +40,19 @@ public sealed class MicrosoftDependencyInjectionContainer(IComponentRegistrar? r
                } else
                {
                   _services.Add(new ServiceDescriptor(firstServiceType,
-                                                      _ => registration.InstantiationSpec.RunFactoryMethod(this),
+                                                      serviceProvider => registration.InstantiationSpec.RunFactoryMethod(new ServiceLocatorKernel(serviceProvider.GetRequiredService)),
                                                       lifetime));
                }
 
                break;
             case Lifestyle.Scoped:
                _services.Add(new ServiceDescriptor(firstServiceType,
-                                                   sp => registration.InstantiationSpec.RunFactoryMethod(sp.GetRequiredService<ScopedKernel>()),
+                                                   serviceProvider => registration.InstantiationSpec.RunFactoryMethod(serviceProvider.GetRequiredService<ScopeServiceLocator>()),
                                                    lifetime));
                break;
             case Lifestyle.TrackedTransient:
                _services.Add(new ServiceDescriptor(firstServiceType,
-                                                   _ => registration.InstantiationSpec.RunFactoryMethod(this),
+                                                   serviceProvider => registration.InstantiationSpec.RunFactoryMethod(new ServiceLocatorKernel(serviceProvider.GetRequiredService)),
                                                    lifetime));
                break;
             default:
@@ -61,7 +61,7 @@ public sealed class MicrosoftDependencyInjectionContainer(IComponentRegistrar? r
 
          foreach(var serviceType in registration.ServiceTypes.Skip(1))
          {
-            _services.Add(new ServiceDescriptor(serviceType, sp => sp.GetService(firstServiceType)!, lifetime));
+            _services.Add(new ServiceDescriptor(serviceType, serviceProvider => serviceProvider.GetService(firstServiceType)!, lifetime));
          }
       }
 
@@ -105,7 +105,7 @@ public sealed class MicrosoftDependencyInjectionContainer(IComponentRegistrar? r
       Contract.State.NotDisposed(_isDisposed, this);
 
       var scope = _serviceProvider._assert().NotNull().CreateAsyncScope();
-      var scopedKernel = scope.ServiceProvider.GetRequiredService<ScopedKernel>();
+      var scopedKernel = scope.ServiceProvider.GetRequiredService<ScopeServiceLocator>();
 
       return new ServiceLocatorScope(scopedKernel, scope.ServiceProvider, () => scope.DisposeAsync().AsTask().GetAwaiter().GetResult());
    }

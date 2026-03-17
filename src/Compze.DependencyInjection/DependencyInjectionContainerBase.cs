@@ -4,7 +4,7 @@ using Compze.Internals.SystemCE.LinqCE;
 
 namespace Compze.DependencyInjection;
 
-public abstract class DependencyInjectionContainerBase : IDependencyInjectionContainer
+public abstract partial class DependencyInjectionContainerBase : IDependencyInjectionContainer
 {
    static readonly ILogger Log = CompzeLogger.For<DependencyInjectionContainerBase>();
 
@@ -49,14 +49,6 @@ public abstract class DependencyInjectionContainerBase : IDependencyInjectionCon
       _registeredComponents.AddRange(registrations);
       RegisterInContainer(registrations);
       return this;
-   }
-
-   protected sealed class ScopedKernel(DependencyInjectionContainerBase _, Func<Type, object> nativeScopedResolver) : IScopeServiceLocator
-   {
-      readonly Func<Type, object> _nativeScopedResolver = nativeScopedResolver;
-
-      public TComponent Resolve<TComponent>() where TComponent : class =>
-         (TComponent)_nativeScopedResolver(typeof(TComponent));
    }
 
    public IComponentRegistrar Register() => _registrar;
@@ -104,9 +96,6 @@ public abstract class DependencyInjectionContainerBase : IDependencyInjectionCon
       if(consumer.Lifestyle == Lifestyle.Scoped)
          return dependency.Lifestyle is Lifestyle.TrackedTransient
                 && !dependency.AllowScopedDependent;
-
-      if(consumer.Lifestyle is Lifestyle.TrackedTransient)
-         return dependency.Lifestyle == Lifestyle.Scoped;
 
       return false;
    }

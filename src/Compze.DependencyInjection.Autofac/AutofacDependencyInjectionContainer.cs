@@ -19,12 +19,12 @@ public sealed class AutofacDependencyInjectionContainer(IComponentRegistrar? reg
    {
       _registerScopedKernel.RunIfFirstCall(() =>
       {
-         _containerBuilder.Register(ctx =>
+         _containerBuilder.Register(componentContext =>
          {
-            var scope = ctx.Resolve<ILifetimeScope>();
-            return new ScopedKernel(this, scope.Resolve);
+            var scope = componentContext.Resolve<ILifetimeScope>();
+            return new ScopeServiceLocator(scope.Resolve);
          }).InstancePerLifetimeScope();
-         _containerBuilder.Register(ctx => (IScopeServiceLocator)ctx.Resolve<ScopedKernel>())
+         _containerBuilder.Register(componentContext => (IScopeServiceLocator)componentContext.Resolve<ScopeServiceLocator>())
                           .As<IScopeServiceLocator>()
                           .InstancePerLifetimeScope();
       });
@@ -43,19 +43,19 @@ public sealed class AutofacDependencyInjectionContainer(IComponentRegistrar? reg
                                                                        .ExternallyOwned());
                } else
                {
-                  _containerBuilder.Register(_ => registration.InstantiationSpec.RunFactoryMethod(this))
+                  _containerBuilder.Register(componentContext => registration.InstantiationSpec.RunFactoryMethod(new ServiceLocatorKernel(componentContext.Resolve)))
                                    .As(serviceTypes)
                                    .SingleInstance();
                }
 
                break;
             case Lifestyle.Scoped:
-               _containerBuilder.Register(ctx => registration.InstantiationSpec.RunFactoryMethod(ctx.Resolve<ScopedKernel>()))
+               _containerBuilder.Register(componentContext => registration.InstantiationSpec.RunFactoryMethod(componentContext.Resolve<ScopeServiceLocator>()))
                                 .As(serviceTypes)
                                 .InstancePerLifetimeScope();
                break;
             case Lifestyle.TrackedTransient:
-               _containerBuilder.Register(_ => registration.InstantiationSpec.RunFactoryMethod(this))
+               _containerBuilder.Register(componentContext => registration.InstantiationSpec.RunFactoryMethod(new ServiceLocatorKernel(componentContext.Resolve)))
                                 .As(serviceTypes)
                                 .InstancePerDependency();
                break;
@@ -104,7 +104,7 @@ public sealed class AutofacDependencyInjectionContainer(IComponentRegistrar? reg
    IServiceLocatorScope IServiceLocator.BeginScope()
    {
       var lifetimeScope = _container._assert().NotNull().BeginLifetimeScope();
-      var scopedKernel = lifetimeScope.Resolve<ScopedKernel>();
+      var scopedKernel = lifetimeScope.Resolve<ScopeServiceLocator>();
       return new ServiceLocatorScope(scopedKernel, lifetimeScope);
    }
 

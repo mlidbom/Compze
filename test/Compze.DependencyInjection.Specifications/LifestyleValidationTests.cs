@@ -92,22 +92,17 @@ public class LifestyleValidationTests
    }
 
    [DependencyInjectionContainerMatrix]
-   public void Should_throw_when_transient_depends_on_scoped_service()
+   public void Should_allow_transient_depending_on_scoped_service()
    {
       using var container = DependencyInjectionContainerFactory.CreateContainer();
+      container.Register(
+         Scoped.For<IScopedService>().CreatedBy(() => new ScopedService()),
+         TrackedTransient.For<ITransientService>().CreatedBy((IScopedService scoped) => new TransientDependingOnScoped(scoped))
+      );
 
-      var exception = Invoking(() =>
-      {
-         // ReSharper disable once AccessToDisposedClosure
-         _ = container.Register(
-            Scoped.For<IScopedService>().CreatedBy(() => new ScopedService()),
-            TrackedTransient.For<ITransientService>().CreatedBy((IScopedService scoped) => new TransientDependingOnScoped(scoped))
-         ).ServiceLocator;
-      }).Must().Throw<InvalidLifeStyleCombinationException>().Which;
-
-      exception.Message.Must().Contain("Invalid lifestyle combination");
-      exception.Message.Must().Contain("Transient");
-      exception.Message.Must().Contain("Scoped");
+      var serviceLocator = container.ServiceLocator;
+      using var scope = serviceLocator.BeginScope();
+      scope.Resolve<ITransientService>().Must().NotBeNull();
    }
 
    interface IScopedService;

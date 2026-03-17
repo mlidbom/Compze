@@ -48,4 +48,7 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Unit)' != 'true'">
     <ProjectReference Include="..\Compze.Unit\Compze.Unit.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="DependencyInjectionContainerBase.Kernel.cs" />
+  </ItemGroup>
 </Project>
