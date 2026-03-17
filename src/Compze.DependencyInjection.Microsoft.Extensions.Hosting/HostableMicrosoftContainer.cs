@@ -19,53 +19,26 @@ class CompzeMicrosoftServiceProviderFactory(MicrosoftDependencyInjectionContaine
    public IServiceCollection CreateBuilder(IServiceCollection services)
    {
       var compzeServices = ((IMicrosoftContainerInternals)_compzeContainer).ServiceCollection;
-      foreach(var descriptor in compzeServices)
-         services.Add(descriptor);
-      return services;
+      foreach(var descriptor in services)
+         compzeServices.Add(descriptor);
+      return compzeServices;
    }
 
    public IServiceProvider CreateServiceProvider(IServiceCollection services)
    {
-      var innerProvider = services.BuildServiceProvider(new ServiceProviderOptions
-                                                        {
-                                                           ValidateOnBuild = true,
-                                                           ValidateScopes = true
-                                                        });
-
-      return new CompzeMicrosoftServiceProvider(_compzeContainer, innerProvider);
+      _ = _compzeContainer.ServiceLocator;
+      return new CompzeMicrosoftServiceProvider(_compzeContainer);
    }
 }
 
-class CompzeMicrosoftServiceProvider(MicrosoftDependencyInjectionContainer compzeContainer, ServiceProvider innerProvider) : IServiceProvider, IServiceScopeFactory, ISupportRequiredService, IDisposable, IAsyncDisposable
+class CompzeMicrosoftServiceProvider(MicrosoftDependencyInjectionContainer compzeContainer) : IServiceProvider, ISupportRequiredService, IDisposable, IAsyncDisposable
 {
    readonly MicrosoftDependencyInjectionContainer _compzeContainer = compzeContainer;
-   readonly ServiceProvider _innerProvider = innerProvider;
+   IServiceProvider Provider => ((IMicrosoftContainerInternals)_compzeContainer).ServiceProvider;
 
-   public object? GetService(Type serviceType)
-   {
-      if(serviceType == typeof(IServiceScopeFactory)) return this;
-      if(serviceType == typeof(IServiceProvider)) return this;
-      return _innerProvider.GetService(serviceType);
-   }
+   public object? GetService(Type serviceType) => Provider.GetService(serviceType);
+   public object GetRequiredService(Type serviceType) => Provider.GetRequiredService(serviceType);
 
-   public object GetRequiredService(Type serviceType)
-   {
-      if(serviceType == typeof(IServiceScopeFactory)) return this;
-      if(serviceType == typeof(IServiceProvider)) return this;
-      return _innerProvider.GetRequiredService(serviceType);
-   }
-
-   public IServiceScope CreateScope() => _innerProvider.CreateScope();
-
-   public void Dispose()
-   {
-      _innerProvider.Dispose();
-      _compzeContainer.Dispose();
-   }
-
-   public async ValueTask DisposeAsync()
-   {
-      await _innerProvider.DisposeAsync().ConfigureAwait(false);
-      await _compzeContainer.DisposeAsync().ConfigureAwait(false);
-   }
+   public void Dispose() => _compzeContainer.Dispose();
+   public ValueTask DisposeAsync() => _compzeContainer.DisposeAsync();
 }
