@@ -31,24 +31,30 @@ public sealed class AutofacDependencyInjectionContainer(IComponentRegistrar? reg
 
       foreach(var registration in registrations)
       {
-         if(registration.InstantiationSpec.SingletonInstance is {} instance)
+         var serviceTypes = registration.ServiceTypes.ToArray();
+
+         switch(registration.Lifestyle)
          {
-            registration.ServiceTypes.ForEach(serviceType => _containerBuilder.RegisterInstance(instance).As(serviceType).ExternallyOwned());
-         } else if(registration.Lifestyle == Lifestyle.Singleton)
-         {
-            _containerBuilder.Register(_ => registration.InstantiationSpec.RunFactoryMethod(this))
-                             .As(registration.ServiceTypes.ToArray())
-                             .WithCompzeLifestyle(registration.Lifestyle);
-         } else if(registration.Lifestyle == Lifestyle.Scoped)
-         {
-            _containerBuilder.Register(ctx => registration.InstantiationSpec.RunFactoryMethod(ctx.Resolve<ScopedKernel>()))
-                             .As(registration.ServiceTypes.ToArray())
-                             .WithCompzeLifestyle(registration.Lifestyle);
-         } else
-         {
-            _containerBuilder.Register(_ => registration.InstantiationSpec.RunFactoryMethod(this))
-                             .As(registration.ServiceTypes.ToArray())
-                             .WithCompzeLifestyle(registration.Lifestyle);
+            case Lifestyle.Singleton when registration.InstantiationSpec.SingletonInstance is {} instance:
+               serviceTypes.ForEach(serviceType => _containerBuilder.RegisterInstance(instance).As(serviceType).ExternallyOwned());
+               break;
+            case Lifestyle.Singleton:
+               _containerBuilder.Register(_ => registration.InstantiationSpec.RunFactoryMethod(this))
+                                .As(serviceTypes)
+                                .SingleInstance();
+               break;
+            case Lifestyle.Scoped:
+               _containerBuilder.Register(ctx => registration.InstantiationSpec.RunFactoryMethod(ctx.Resolve<ScopedKernel>()))
+                                .As(serviceTypes)
+                                .InstancePerLifetimeScope();
+               break;
+            case Lifestyle.TrackedTransient:
+               _containerBuilder.Register(_ => registration.InstantiationSpec.RunFactoryMethod(this))
+                                .As(serviceTypes)
+                                .InstancePerDependency();
+               break;
+            default:
+               throw new ArgumentOutOfRangeException(nameof(registration.Lifestyle), registration.Lifestyle, $"Unsupported lifestyle: {registration.Lifestyle}");
          }
       }
 
@@ -56,6 +62,7 @@ public sealed class AutofacDependencyInjectionContainer(IComponentRegistrar? reg
    }
 
    readonly RunOnce _runVerifications = new();
+
    public override IServiceLocator ServiceLocator
    {
       get
@@ -96,6 +103,7 @@ public sealed class AutofacDependencyInjectionContainer(IComponentRegistrar? reg
    }
 
    public override void Dispose() => _container?.Dispose();
+
    public override async ValueTask DisposeAsync()
    {
       if(_container != null)

@@ -30,28 +30,42 @@ public sealed class MicrosoftDependencyInjectionContainer(IComponentRegistrar? r
 
       foreach(var registration in registrations)
       {
+         var firstServiceType = registration.ServiceTypes.First();
          var lifetime = registration.Lifestyle.AsServiceLifetime();
 
-         if(registration.InstantiationSpec.SingletonInstance is {} instance)
+         switch(registration.Lifestyle)
          {
-            registration.ServiceTypes.ForEach(it => _services.AddSingleton(it, instance));
-         } else
-         {
-            var firstServiceType = registration.ServiceTypes.First();
-            var primaryDescriptor = registration.Lifestyle == Lifestyle.Scoped
-               ? new ServiceDescriptor(firstServiceType,
-                                       sp => registration.InstantiationSpec.RunFactoryMethod(sp.GetRequiredService<ScopedKernel>()),
-                                       lifetime)
-               : new ServiceDescriptor(firstServiceType,
-                                       _ => registration.InstantiationSpec.RunFactoryMethod(this),
-                                       lifetime);
-
-            _services.Add(primaryDescriptor);
-
-            foreach(var serviceType in registration.ServiceTypes.Skip(1))
+            case Lifestyle.Singleton when registration.InstantiationSpec.SingletonInstance is {} instance:
+               registration.ServiceTypes.ForEach(it => _services.AddSingleton(it, instance));
+               continue;
+            case Lifestyle.Singleton:
             {
-               _services.Add(new ServiceDescriptor(serviceType, sp => sp.GetService(firstServiceType)!, lifetime));
+               _services.Add(new ServiceDescriptor(firstServiceType,
+                                                   _ => registration.InstantiationSpec.RunFactoryMethod(this),
+                                                   lifetime));
+               break;
             }
+            case Lifestyle.Scoped:
+            {
+               _services.Add(new ServiceDescriptor(firstServiceType,
+                                                   sp => registration.InstantiationSpec.RunFactoryMethod(sp.GetRequiredService<ScopedKernel>()),
+                                                   lifetime));
+               break;
+            }
+            case Lifestyle.TrackedTransient:
+            {
+               _services.Add(new ServiceDescriptor(firstServiceType,
+                                                   _ => registration.InstantiationSpec.RunFactoryMethod(this),
+                                                   lifetime));
+               break;
+            }
+            default:
+               throw new ArgumentOutOfRangeException(nameof(registration.Lifestyle), registration.Lifestyle, $"Unsupported lifestyle: {registration.Lifestyle}");
+         }
+
+         foreach(var serviceType in registration.ServiceTypes.Skip(1))
+         {
+            _services.Add(new ServiceDescriptor(serviceType, sp => sp.GetService(firstServiceType)!, lifetime));
          }
       }
 
