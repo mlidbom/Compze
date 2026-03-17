@@ -1,4 +1,5 @@
 using Compze.DbPool.SystemCE;
+using Compze.DependencyInjection;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Must;
 using Compze.SystemCE;

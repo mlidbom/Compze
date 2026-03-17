@@ -7,31 +7,31 @@ namespace Compze.DependencyInjection;
 
 public static class ServiceLocatorTransactionRunner
 {
-   public static TResult ExecuteTransactionInIsolatedScope<TResult>(this IServiceLocator me, [InstantHandle]Func<IServiceLocatorScope, TResult> function)
+   public static TResult ExecuteTransactionInIsolatedScope<TResult>(this IServiceLocator me, [InstantHandle]Func<IServiceScope, TResult> function)
    {
       using var scope = me.BeginScope();
       return TransactionScopeCe.Execute(() => function(scope));
    }
 
-   public static void ExecuteTransactionInIsolatedScope(this IServiceLocator me, [InstantHandle]Action<IServiceLocatorScope> action)
+   public static void ExecuteTransactionInIsolatedScope(this IServiceLocator me, [InstantHandle]Action<IServiceScope> action)
    {
       using var scope = me.BeginScope();
       TransactionScopeCe.Execute(() => action(scope));
    }
 
-   public static TResult ExecuteInIsolatedScope<TResult>(this IServiceLocator me, [InstantHandle]Func<IServiceLocatorScope, TResult> function)
+   public static TResult ExecuteInIsolatedScope<TResult>(this IServiceLocator me, [InstantHandle]Func<IServiceScope, TResult> function)
    {
       using var scope = me.BeginScope();
       return function(scope);
    }
 
-   public static void ExecuteInIsolatedScope(this IServiceLocator me, [InstantHandle]Action<IServiceLocatorScope> action)
+   public static void ExecuteInIsolatedScope(this IServiceLocator me, [InstantHandle]Action<IServiceScope> action)
    {
       using var scope = me.BeginScope();
       action(scope);
    }
 
-   public static async Task ExecuteInIsolatedScopeAsync(this IServiceLocator me, [InstantHandle]Func<IServiceLocatorScope, Task> action)
+   public static async Task ExecuteInIsolatedScopeAsync(this IServiceLocator me, [InstantHandle]Func<IServiceScope, Task> action)
    {
       using var scope = me.BeginScope();
       await action(scope).caf();

@@ -1,10 +1,12 @@
+using Compze.DependencyInjection.Abstractions;
+
 namespace Compze.DependencyInjection;
 
 public static class ComponentRegistrationExtensions
 {
    class ComponentPromise<TService> where TService : class
    {
-      internal TService Resolve(IServiceLocatorKernel kernel) =>
+      internal TService Resolve(IServiceResolver kernel) =>
          kernel.Resolve<TService>();
    }
 

@@ -33,21 +33,60 @@ public interface IDependencyInjectionContainer : IDisposable, IAsyncDisposable
    bool IsRegistered<TComponent>() where TComponent : class => RegisteredComponents().Any(it => it.ServiceTypes.Contains(typeof(TComponent)));
 }
 
-public interface IServiceLocator : IDisposable, IAsyncDisposable
-{
-   TComponent Resolve<TComponent>() where TComponent : class;
-   object Resolve(Type serviceType);
-   IServiceLocatorScope BeginScope();
-}
-
-public interface IServiceLocatorScope : IScopeServiceLocator, IDisposable
+///<summary>Resolves instances of services registered in the container.</summary>
+public interface IServiceResolver
 {
    object Resolve(Type serviceType);
 }
 
+///<summary>
+/// An <see cref="IServiceResolver"/> capable only of resolving services registered as <see cref="Lifestyle.Singleton"/> and <see cref="Lifestyle.TrackedTransient"/>.
+/// <see cref="Lifestyle.Scoped"/> services cannot be resolved from an instance.
+/// </summary>
+public interface IRootResolver : IServiceResolver;
+
+///<summary>
+/// <para>Instances are owned by an <see cref="IServiceScope"/> and resolving components will only work within that scope.</para>
+/// <para>All resolved components registered as <see cref="Lifestyle.Scoped"/> will resolve to the same instance and that instance will be disposed when the <see cref="IServiceScope"/> is disposed</para>
+/// </summary>
+public interface IScopeResolver : IServiceResolver;
+
+///<summary>
+/// <para>>When resolved through <see cref="Resolver"/>> all services registered as <see cref="Lifestyle.Scoped"/> will resolve as the same exact instance, separate from the instance returned by any other <see cref="IScopeResolver"/></para>
+/// <para>Dispose will dispose All <see cref="Lifestyle.Scoped"/> or <see cref="Lifestyle.TrackedTransient"/> services resolved through <see cref="Resolver"/></para>
+///
+/// </summary>
+public interface IServiceScope : IDisposable
+{
+   IScopeResolver Resolver { get; }
+}
+
+///<summary>Creates instances of <see cref="IServiceScope"/>></summary>
+public interface IScopeFactory
+{
+   IServiceScope BeginScope();
+}
+
+public interface IServiceLocator : IRootResolver, IScopeFactory, IDisposable, IAsyncDisposable;
+
+
+///<summary>The supported service lifestyles</summary>
 public enum Lifestyle
 {
+   ///<summary>Every call to <see cref="IServiceResolver.Resolve"/> will return the same instance for a service registered as <see cref="Singleton"/></summary>
    Singleton,
+
+   ///<summary>
+   /// <see cref="Scoped"/> services can only be resolved within an <see cref="IServiceScope"/>, preferably through an <see cref="IScopeResolver"/>.
+   /// <para>While inside a scope, every call to <see cref="IServiceResolver.Resolve"/> will return the same instance.</para>
+   /// <para>Once the scope is disposed, all the <see cref="Scoped"/> instances are also disposed.</para>
+   /// </summary>
    Scoped,
+
+   ///<summary>
+   /// Every call to <see cref="IServiceResolver.Resolve"/> will return a new unique instance of the service for a service registered as <see cref="TrackedTransient"/>.
+   ///<para>If resolved within a scope, the instance will be disposed when the scope is disposed.</para>
+   /// ///<para>If resolved outside a scope, the instance will be disposed when the <see cref="IServiceLocator"/> is disposed.</para>
+   /// </summary>
    TrackedTransient
 }

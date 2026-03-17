@@ -4,10 +4,11 @@ using Compze.Internals.SystemCE.LinqCE;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Threading;
 using Microsoft.Extensions.DependencyInjection;
+using IServiceScope = Compze.DependencyInjection.Abstractions.IServiceScope;
 
 namespace Compze.DependencyInjection.Microsoft;
 
-public sealed class MicrosoftDependencyInjectionContainer(IComponentRegistrar? register = null) : DependencyInjectionContainer(register), IServiceLocator, IServiceLocatorKernel, IMicrosoftContainerInternals
+public sealed class MicrosoftDependencyInjectionContainer(IComponentRegistrar? register = null) : DependencyInjectionContainer(register), IServiceLocator, IMicrosoftContainerInternals
 {
    readonly IServiceCollection _services = new ServiceCollection();
    ServiceProvider? _serviceProvider;
@@ -22,8 +23,8 @@ public sealed class MicrosoftDependencyInjectionContainer(IComponentRegistrar? r
    {
       _registerScopedKernel.RunIfFirstCall(() =>
       {
-         _services.AddScoped<ScopeServiceLocator>(serviceProvider => new ScopeServiceLocator(serviceProvider.GetRequiredService));
-         _services.AddScoped<IScopeServiceLocator>(serviceProvider => serviceProvider.GetRequiredService<ScopeServiceLocator>());
+         _services.AddScoped<ScopeResolverWrapper>(serviceProvider => new ScopeResolverWrapper(serviceProvider.GetRequiredService));
+         _services.AddScoped<IScopeResolver>(serviceProvider => serviceProvider.GetRequiredService<ScopeResolverWrapper>());
       });
 
       foreach(var registration in registrations)
@@ -40,19 +41,19 @@ public sealed class MicrosoftDependencyInjectionContainer(IComponentRegistrar? r
                } else
                {
                   _services.Add(new ServiceDescriptor(firstServiceType,
-                                                      serviceProvider => registration.InstantiationSpec.RunFactoryMethod(new ServiceLocatorKernel(serviceProvider.GetRequiredService)),
+                                                      serviceProvider => registration.InstantiationSpec.RunFactoryMethod(new ServiceResolverWrapper(serviceProvider.GetRequiredService)),
                                                       lifetime));
                }
 
                break;
             case Lifestyle.Scoped:
                _services.Add(new ServiceDescriptor(firstServiceType,
-                                                   serviceProvider => registration.InstantiationSpec.RunFactoryMethod(serviceProvider.GetRequiredService<ScopeServiceLocator>()),
+                                                   serviceProvider => registration.InstantiationSpec.RunFactoryMethod(serviceProvider.GetRequiredService<ScopeResolverWrapper>()),
                                                    lifetime));
                break;
             case Lifestyle.TrackedTransient:
                _services.Add(new ServiceDescriptor(firstServiceType,
-                                                   serviceProvider => registration.InstantiationSpec.RunFactoryMethod(new ServiceLocatorKernel(serviceProvider.GetRequiredService)),
+                                                   serviceProvider => registration.InstantiationSpec.RunFactoryMethod(new ServiceResolverWrapper(serviceProvider.GetRequiredService)),
                                                    lifetime));
                break;
             default:
@@ -82,32 +83,20 @@ public sealed class MicrosoftDependencyInjectionContainer(IComponentRegistrar? r
       }
    }
 
-   public TComponent Resolve<TComponent>() where TComponent : class
-   {
-      Contract.State.NotDisposed(_isDisposed, this);
-      return _serviceProvider._assert().NotNull().GetRequiredService<TComponent>();
-   }
-
    public object Resolve(Type serviceType)
    {
       Contract.State.NotDisposed(_isDisposed, this);
       return _serviceProvider._assert().NotNull().GetRequiredService(serviceType);
    }
 
-   TComponent IServiceLocatorKernel.Resolve<TComponent>()
-   {
-      Contract.State.NotDisposed(_isDisposed, this);
-      return _serviceProvider._assert().NotNull().GetRequiredService<TComponent>();
-   }
-
-   IServiceLocatorScope IServiceLocator.BeginScope()
+   public IServiceScope BeginScope()
    {
       Contract.State.NotDisposed(_isDisposed, this);
 
       var scope = _serviceProvider._assert().NotNull().CreateAsyncScope();
-      var scopedKernel = scope.ServiceProvider.GetRequiredService<ScopeServiceLocator>();
+      var scopeResolver = scope.ServiceProvider.GetRequiredService<ScopeResolverWrapper>();
 
-      return new ServiceLocatorScope(scopedKernel, scope.ServiceProvider, () => scope.DisposeAsync().AsTask().GetAwaiter().GetResult());
+      return new ServiceLocatorScope(scopeResolver, () => scope.DisposeAsync().AsTask().GetAwaiter().GetResult());
    }
 
    IServiceCollection IMicrosoftContainerInternals.ServiceCollection => _services;
@@ -141,16 +130,10 @@ public sealed class MicrosoftDependencyInjectionContainer(IComponentRegistrar? r
       }
    }
 
-   sealed class ServiceLocatorScope(IScopeServiceLocator scopedKernel, IServiceProvider scopedProvider, Action onDispose) : IServiceLocatorScope
+   sealed class ServiceLocatorScope(IScopeResolver scopeResolver, Action onDispose) : IServiceScope
    {
-      readonly IScopeServiceLocator _scopedKernel = scopedKernel;
-      readonly IServiceProvider _scopedProvider = scopedProvider;
-      readonly Action _onDispose = onDispose;
+      public IScopeResolver Resolver { get; } = scopeResolver;
 
-      public TComponent Resolve<TComponent>() where TComponent : class => _scopedKernel.Resolve<TComponent>();
-
-      public object Resolve(Type serviceType) => _scopedProvider.GetRequiredService(serviceType);
-
-      public void Dispose() => _onDispose();
+      public void Dispose() => onDispose();
    }
 }

@@ -10,14 +10,14 @@ namespace Compze.Internals.Transport;
 public class InfrastructureQueryExecutor
 {
    readonly IServiceLocator _serviceLocator;
-   IReadOnlyDictionary<Type, Func<object, IServiceLocatorScope, object>> _queryHandlers = new Dictionary<Type, Func<object, IServiceLocatorScope, object>>();
+   IReadOnlyDictionary<Type, Func<object, IServiceScope, object>> _queryHandlers = new Dictionary<Type, Func<object, IServiceScope, object>>();
    readonly IMonitor _monitor = IMonitor.New();
 
    InfrastructureQueryExecutor(IServiceLocator serviceLocator) => _serviceLocator = serviceLocator;
 
-   public void RegisterQueryHandler<TQuery, TResult>(Func<TQuery, IServiceLocatorScope, TResult> handler) where TQuery : IQuery<TResult> => _monitor.Locked(() =>
+   public void RegisterQueryHandler<TQuery, TResult>(Func<TQuery, IServiceScope, TResult> handler) where TQuery : IQuery<TResult> => _monitor.Locked(() =>
    {
-      object Value(object query, IServiceLocatorScope scope) => handler((TQuery)query, scope)!;
+      object Value(object query, IServiceScope scope) => handler((TQuery)query, scope)!;
       Interlocked.Exchange(ref _queryHandlers, _queryHandlers.AddToCopy(typeof(TQuery), Value));
    });
 

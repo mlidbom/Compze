@@ -3,13 +3,14 @@ using Compze.DependencyInjection;
 using Compze.Internals.SystemCE.UsageGuards;
 using Compze.Typermedia.HandlerRegistration;
 using Compze.Abstractions.Tessaging.Validation;
+using Compze.DependencyInjection.Abstractions;
 
 namespace Compze.Typermedia;
 
-class InProcessTypermediaNavigator(ITypermediaHandlerRegistry typermediaHandlerRegistry, IScopeServiceLocator scopeServiceLocator) : IInProcessTypermediaNavigator
+class InProcessTypermediaNavigator(ITypermediaHandlerRegistry typermediaHandlerRegistry, IScopeResolver scopeServiceLocator) : IInProcessTypermediaNavigator
 {
    readonly ITypermediaHandlerRegistry _typermediaHandlerRegistry = typermediaHandlerRegistry;
-   readonly IScopeServiceLocator _scopeServiceLocator = scopeServiceLocator;
+   readonly IScopeResolver _scopeServiceLocator = scopeServiceLocator;
    readonly IUsageGuard _contextGuard = new CombinationUsageGuard(new SingleTransactionUsageGuard(typermediaHandlerRegistry));
 
    public TResult Execute<TResult>(IStrictlyLocalTommand<TResult> tommand)

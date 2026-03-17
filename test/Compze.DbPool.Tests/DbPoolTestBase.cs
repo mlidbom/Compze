@@ -1,4 +1,5 @@
 using Compze.Abstractions.Wiring.Testing.Internal;
+using Compze.DependencyInjection;
 using Compze.Internals.Sql.Common.Abstractions;
 using Compze.Internals.Sql.MicrosoftSql;
 using Compze.Internals.Sql.MySql;

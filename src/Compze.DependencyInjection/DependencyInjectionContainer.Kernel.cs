@@ -1,20 +1,16 @@
+using Compze.DependencyInjection.Abstractions;
+
 namespace Compze.DependencyInjection;
 
 public abstract partial class DependencyInjectionContainer
 {
-   protected sealed class ServiceLocatorKernel(Func<Type, object> resolve) : IServiceLocatorKernel
+   protected sealed class ServiceResolverWrapper(Func<Type, object> resolve) : IServiceResolver
    {
-      readonly Func<Type, object> _nativeResolver = resolve;
-
-      public TComponent Resolve<TComponent>() where TComponent : class =>
-         (TComponent)_nativeResolver(typeof(TComponent));
+      public object Resolve(Type serviceType) => resolve(serviceType);
    }
 
-   protected sealed class ScopeServiceLocator(Func<Type, object> resolve) : IScopeServiceLocator
+   protected sealed class ScopeResolverWrapper(Func<Type, object> resolve) : IScopeResolver
    {
-      readonly Func<Type, object> _nativeResolver = resolve;
-
-      public TComponent Resolve<TComponent>() where TComponent : class =>
-         (TComponent)_nativeResolver(typeof(TComponent));
+      public object Resolve(Type serviceType) => resolve(serviceType);
    }
 }

@@ -1,4 +1,5 @@
 using Compze.Abstractions.Tessaging.Public;
+using Compze.DependencyInjection;
 
 namespace Compze.Typermedia.HandlerRegistration;
 

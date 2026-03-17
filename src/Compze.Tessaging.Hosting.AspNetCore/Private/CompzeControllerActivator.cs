@@ -13,7 +13,7 @@ class CompzeControllerActivator : IControllerActivator
 
    public object Create(ControllerContext context)
    {
-      var scope = (IServiceLocatorScope)context.HttpContext.Items[CompzeScopeHttpContextItemKey]!;
+      var scope = (IServiceScope)context.HttpContext.Items[CompzeScopeHttpContextItemKey]!;
       var controllerType = context.ActionDescriptor.ControllerTypeInfo.AsType();
       return scope.Resolve(controllerType);
    }
