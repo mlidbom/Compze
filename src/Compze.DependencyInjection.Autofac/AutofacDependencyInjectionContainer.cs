@@ -8,7 +8,7 @@ using Compze.Threading;
 
 namespace Compze.DependencyInjection.Autofac;
 
-public sealed class AutofacDependencyInjectionContainer(IComponentRegistrar? register = null) : DependencyInjectionContainerBase(register), IServiceLocator, IServiceLocatorKernel, IAutofacContainerInternals
+public sealed class AutofacDependencyInjectionContainer(IComponentRegistrar? register = null) : DependencyInjectionContainer(register), IServiceLocator, IServiceLocatorKernel, IAutofacContainerInternals
 {
    readonly ContainerBuilder _containerBuilder = new();
    IContainer? _container;
@@ -83,7 +83,7 @@ public sealed class AutofacDependencyInjectionContainer(IComponentRegistrar? reg
       }
    }
 
-   protected override DependencyInjectionContainerBase CreateEmptyClone() =>
+   protected override DependencyInjectionContainer CreateEmptyClone() =>
       new AutofacDependencyInjectionContainer(Register().Clone());
 
    protected override IReadOnlyList<Type> ContainerFacadeServiceTypes { get; } =

@@ -1,6 +1,6 @@
 namespace Compze.DependencyInjection;
 
-public abstract partial class DependencyInjectionContainerBase
+public abstract partial class DependencyInjectionContainer
 {
    protected sealed class ServiceLocatorKernel(Func<Type, object> resolve) : IServiceLocatorKernel
    {

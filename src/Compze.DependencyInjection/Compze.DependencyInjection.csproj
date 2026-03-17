@@ -49,6 +49,6 @@
     <ProjectReference Include="..\Compze.Unit\Compze.Unit.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="DependencyInjectionContainerBase.Kernel.cs" />
+    <None Include="DependencyInjectionContainer.Kernel.cs" />
   </ItemGroup>
 </Project>

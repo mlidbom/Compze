@@ -4,16 +4,16 @@ using Compze.Internals.SystemCE.LinqCE;
 
 namespace Compze.DependencyInjection;
 
-public abstract partial class DependencyInjectionContainerBase : IDependencyInjectionContainer
+public abstract partial class DependencyInjectionContainer : IDependencyInjectionContainer
 {
-   static readonly ILogger Log = CompzeLogger.For<DependencyInjectionContainerBase>();
+   static readonly ILogger Log = CompzeLogger.For<DependencyInjectionContainer>();
 
    readonly List<ComponentRegistration> _registeredComponents = [];
    readonly IComponentRegistrar _registrar;
 
    public bool IsClone { get; private set; }
 
-   protected DependencyInjectionContainerBase(IComponentRegistrar? registrar)
+   protected DependencyInjectionContainer(IComponentRegistrar? registrar)
    {
       _registrar = registrar ?? new ComponentRegistrar();
       _registrar.SetContainer(this);
@@ -25,7 +25,7 @@ public abstract partial class DependencyInjectionContainerBase : IDependencyInje
    protected virtual IReadOnlyList<Type> ContainerFacadeServiceTypes { get; } =
       [typeof(IDependencyInjectionContainer), typeof(IServiceLocator)];
 
-   protected abstract DependencyInjectionContainerBase CreateEmptyClone();
+   protected abstract DependencyInjectionContainer CreateEmptyClone();
 
    public IDependencyInjectionContainer Clone()
    {

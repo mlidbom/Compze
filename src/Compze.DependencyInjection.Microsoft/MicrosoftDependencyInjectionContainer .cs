@@ -7,13 +7,13 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Compze.DependencyInjection.Microsoft;
 
-public sealed class MicrosoftDependencyInjectionContainer(IComponentRegistrar? register = null) : DependencyInjectionContainerBase(register), IServiceLocator, IServiceLocatorKernel, IMicrosoftContainerInternals
+public sealed class MicrosoftDependencyInjectionContainer(IComponentRegistrar? register = null) : DependencyInjectionContainer(register), IServiceLocator, IServiceLocatorKernel, IMicrosoftContainerInternals
 {
    readonly IServiceCollection _services = new ServiceCollection();
    ServiceProvider? _serviceProvider;
    bool _isDisposed;
 
-   protected override DependencyInjectionContainerBase CreateEmptyClone() =>
+   protected override DependencyInjectionContainer CreateEmptyClone() =>
       new MicrosoftDependencyInjectionContainer(Register().Clone());
 
    readonly RunOnce _registerScopedKernel = new();
