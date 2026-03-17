@@ -31,7 +31,7 @@ Compze is a .NET framework for building expressive domains through:
 - **Testing**: xUnit v3 (via `Compze.xUnit`, `Compze.xUnitBDD`, `Compze.xUnitMatrix`)
 - **Build System**: MSBuild (.NET SDK), solution file: `src/Compze.AllProjects.slnx`
 - **References**: FlexRef — auto-switches between `ProjectReference` and `PackageReference` depending on which projects are in the current solution (see `flexref.instructions.md`)
-- **Dependency Injection**: Pluggable (Microsoft DI, SimpleInjector)
+- **Dependency Injection**: Pluggable (Microsoft DI, Autofac)
 - **Persistence**: Pluggable (SQLite in-memory, SQL Server, PostgreSQL, MySQL)
 - **Serialization**: Pluggable (Newtonsoft)
 - **Transport**: Pluggable (Memory, AspNetCore)

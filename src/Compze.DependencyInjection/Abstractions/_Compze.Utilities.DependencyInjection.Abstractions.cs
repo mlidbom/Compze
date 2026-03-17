@@ -49,6 +49,5 @@ public enum Lifestyle
 {
    Singleton,
    Scoped,
-   TrackedTransient,
-   Transient
+   TrackedTransient
 }

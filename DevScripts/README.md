@@ -83,7 +83,7 @@ Then reload: `. $PROFILE`
 
 - **C-Set-PluggableComponents** - Configures which SQL layers and DI containers to test
   - Individual switches: `-MicrosoftSqlServer`, `-MySql`, `-PostgreSql`, `-Sqlite`, `-SqliteMemory`
-  - Container switches: `-Microsoft`, `-SimpleInjector`
+  - Container switches: `-Microsoft`, `-Autofac`
   - Convenience switches: `-AllSqlLayers`, `-AllContainers`, `-AllPermutations`
   - `-SetAsDefaults` - Save configuration as default
 

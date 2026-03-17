@@ -8,14 +8,12 @@ public static class DIContainerExtensions
    public static TValue ValueFor<TValue>(
       this DIContainer container,
       TValue autofac,
-      TValue microsoft,
-      TValue simpleInjector) where TValue : notnull
+      TValue microsoft) where TValue : notnull
    {
       return container switch
       {
          DIContainer.Autofac   => autofac,
          DIContainer.Microsoft => microsoft,
-         DIContainer.SimpleInjector   => simpleInjector,
          _                     => throw new ArgumentOutOfRangeException(nameof(container), container, $"Unsupported DI container: {container}")
       };
    }

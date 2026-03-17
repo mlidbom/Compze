@@ -32,35 +32,14 @@ class CompzeAutofacServiceProviderFactory(AutofacDependencyInjectionContainer co
    }
 }
 
-class CompzeAutofacServiceProvider(AutofacDependencyInjectionContainer container) : IServiceProvider, IServiceScopeFactory, ISupportRequiredService, IDisposable, IAsyncDisposable
+class CompzeAutofacServiceProvider(AutofacDependencyInjectionContainer compzeContainer) : IServiceProvider, ISupportRequiredService, IDisposable, IAsyncDisposable
 {
-   readonly AutofacDependencyInjectionContainer _container = container;
+   readonly AutofacDependencyInjectionContainer _compzeContainer = compzeContainer;
+   IContainer Container => ((IAutofacContainerInternals)_compzeContainer).Container;
 
-   public object? GetService(Type serviceType)
-   {
-      try { return _container.Resolve(serviceType); }
-#pragma warning disable CA1031
-      catch { return null; }
-#pragma warning restore CA1031
-   }
+   public object? GetService(Type serviceType) => Container.ResolveOptional(serviceType);
+   public object GetRequiredService(Type serviceType) => Container.Resolve(serviceType);
 
-   public object GetRequiredService(Type serviceType) => _container.Resolve(serviceType);
-
-   public IServiceScope CreateScope()
-   {
-      var rootScope = ((IAutofacContainerInternals)_container).LifetimeScope;
-      var childScope = rootScope.BeginLifetimeScope();
-      return new CompzeAutofacServiceScope(this, childScope);
-   }
-
-   public void Dispose() => _container.Dispose();
-   public ValueTask DisposeAsync() => _container.DisposeAsync();
-}
-
-class CompzeAutofacServiceScope(IServiceProvider serviceProvider, ILifetimeScope scope) : IServiceScope
-{
-   readonly ILifetimeScope _scope = scope;
-   public IServiceProvider ServiceProvider { get; } = serviceProvider;
-
-   public void Dispose() => _scope.Dispose();
+   public void Dispose() => _compzeContainer.Dispose();
+   public ValueTask DisposeAsync() => _compzeContainer.DisposeAsync();
 }

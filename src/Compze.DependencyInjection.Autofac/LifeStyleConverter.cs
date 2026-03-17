@@ -10,9 +10,10 @@ static class LifeStyleConverter
    {
       return lifestyle switch
       {
-         Lifestyle.Singleton => @this.SingleInstance(),
-         Lifestyle.Scoped    => @this.InstancePerLifetimeScope(),
-         _                   => throw new ArgumentOutOfRangeException(nameof(lifestyle), lifestyle, null)
+         Lifestyle.Singleton  => @this.SingleInstance(),
+         Lifestyle.Scoped     => @this.InstancePerLifetimeScope(),
+         Lifestyle.TrackedTransient  => @this.InstancePerDependency(),
+         _                    => throw new ArgumentOutOfRangeException(nameof(lifestyle), lifestyle, null)
       };
    }
 }

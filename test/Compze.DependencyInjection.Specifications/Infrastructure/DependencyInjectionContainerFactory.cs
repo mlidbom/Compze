@@ -5,7 +5,6 @@ using Compze.DependencyInjection.Autofac.Extensions.Hosting;
 using Compze.DependencyInjection.Extensions.Hosting;
 using Compze.DependencyInjection.Microsoft;
 using Compze.DependencyInjection.Microsoft.Extensions.Hosting;
-using Compze.DependencyInjection.SimpleInjector;
 using Compze.xUnitMatrix;
 
 namespace Compze.DependencyInjection.Specifications.Infrastructure;
@@ -17,7 +16,6 @@ static class DependencyInjectionContainerFactory
    public static IDependencyInjectionContainer CreateContainer() =>
       CurrentDIContainer switch
       {
-         DIContainer.SimpleInjector => new SimpleInjectorDependencyInjectionContainer(),
          DIContainer.Microsoft      => new MicrosoftDependencyInjectionContainer(),
          DIContainer.Autofac        => new AutofacDependencyInjectionContainer(),
          _                          => throw new ArgumentOutOfRangeException()

@@ -33,16 +33,20 @@ public sealed class AutofacDependencyInjectionContainer(IComponentRegistrar? reg
       {
          if(registration.InstantiationSpec.SingletonInstance is {} instance)
          {
-            registration.ServiceTypes.ForEach(serviceType =>
-               _containerBuilder.RegisterInstance(instance).As(serviceType).ExternallyOwned());
+            registration.ServiceTypes.ForEach(serviceType => _containerBuilder.RegisterInstance(instance).As(serviceType).ExternallyOwned());
          } else if(registration.Lifestyle == Lifestyle.Singleton)
          {
             _containerBuilder.Register(_ => registration.InstantiationSpec.RunFactoryMethod(this))
                              .As(registration.ServiceTypes.ToArray())
                              .WithCompzeLifestyle(registration.Lifestyle);
-         } else
+         } else if(registration.Lifestyle == Lifestyle.Scoped)
          {
             _containerBuilder.Register(ctx => registration.InstantiationSpec.RunFactoryMethod(ctx.Resolve<ScopedKernel>()))
+                             .As(registration.ServiceTypes.ToArray())
+                             .WithCompzeLifestyle(registration.Lifestyle);
+         } else
+         {
+            _containerBuilder.Register(_ => registration.InstantiationSpec.RunFactoryMethod(this))
                              .As(registration.ServiceTypes.ToArray())
                              .WithCompzeLifestyle(registration.Lifestyle);
          }
@@ -72,35 +76,23 @@ public sealed class AutofacDependencyInjectionContainer(IComponentRegistrar? reg
    protected override IReadOnlyList<Type> ContainerFacadeServiceTypes { get; } =
       [typeof(IDependencyInjectionContainer), typeof(IServiceLocator), typeof(AutofacDependencyInjectionContainer)];
 
-   ILifetimeScope IAutofacContainerInternals.LifetimeScope => _container._assert().NotNull();
+   IContainer IAutofacContainerInternals.Container => _container._assert().NotNull();
    ContainerBuilder IAutofacContainerInternals.ContainerBuilder => _containerBuilder;
 
-   public TComponent Resolve<TComponent>() where TComponent : class
-   {
-      if(TryCreateTransientInstance(typeof(TComponent), this, out var transientInstance))
-         return (TComponent)transientInstance;
-      return _container._assert().NotNull().Resolve<TComponent>();
-   }
+   public TComponent Resolve<TComponent>() where TComponent : class =>
+      _container._assert().NotNull().Resolve<TComponent>();
 
-   public object Resolve(Type serviceType)
-   {
-      if(TryCreateTransientInstance(serviceType, this, out var transientInstance))
-         return transientInstance;
-      return _container._assert().NotNull().Resolve(serviceType);
-   }
+   public object Resolve(Type serviceType) =>
+      _container._assert().NotNull().Resolve(serviceType);
 
-   TComponent IServiceLocatorKernel.Resolve<TComponent>()
-   {
-      if(TryCreateTransientInstance(typeof(TComponent), this, out var transientInstance))
-         return (TComponent)transientInstance;
-      return _container._assert().NotNull().Resolve<TComponent>();
-   }
+   TComponent IServiceLocatorKernel.Resolve<TComponent>() =>
+      _container._assert().NotNull().Resolve<TComponent>();
 
    IServiceLocatorScope IServiceLocator.BeginScope()
    {
       var lifetimeScope = _container._assert().NotNull().BeginLifetimeScope();
       var scopedKernel = lifetimeScope.Resolve<ScopedKernel>();
-      return new ServiceLocatorScope(this, scopedKernel, lifetimeScope);
+      return new ServiceLocatorScope(scopedKernel, lifetimeScope);
    }
 
    public override void Dispose() => _container?.Dispose();
@@ -110,20 +102,14 @@ public sealed class AutofacDependencyInjectionContainer(IComponentRegistrar? reg
          await _container.DisposeAsync().caf();
    }
 
-   sealed class ServiceLocatorScope(AutofacDependencyInjectionContainer container, IScopeServiceLocator scopedKernel, ILifetimeScope lifetimeScope) : IServiceLocatorScope
+   sealed class ServiceLocatorScope(IScopeServiceLocator scopedKernel, ILifetimeScope lifetimeScope) : IServiceLocatorScope
    {
-      readonly AutofacDependencyInjectionContainer _container = container;
       readonly IScopeServiceLocator _scopedKernel = scopedKernel;
       readonly ILifetimeScope _lifetimeScope = lifetimeScope;
 
       public TComponent Resolve<TComponent>() where TComponent : class => _scopedKernel.Resolve<TComponent>();
 
-      public object Resolve(Type serviceType)
-      {
-         if(_container.TryCreateTransientInstance(serviceType, _scopedKernel, out var transientInstance))
-            return transientInstance;
-         return _lifetimeScope.Resolve(serviceType);
-      }
+      public object Resolve(Type serviceType) => _lifetimeScope.Resolve(serviceType);
 
       public void Dispose() => _lifetimeScope.Dispose();
    }

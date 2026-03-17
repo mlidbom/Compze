@@ -124,7 +124,6 @@
     <Project Path="Compze.DependencyInjection.Extensions.Hosting/Compze.DependencyInjection.Extensions.Hosting.csproj" />
     <Project Path="Compze.DependencyInjection.Microsoft.Extensions.Hosting/Compze.DependencyInjection.Microsoft.Extensions.Hosting.csproj" />
     <Project Path="Compze.DependencyInjection.Microsoft/Compze.DependencyInjection.Microsoft.csproj" />
-    <Project Path="Compze.DependencyInjection.SimpleInjector/Compze.DependencyInjection.SimpleInjector.csproj" />
     <Project Path="Compze.DependencyInjection/Compze.DependencyInjection.csproj" />
   </Folder>
   <Folder Name="/Compze.DependencyInjection/Specifications/">

@@ -83,7 +83,7 @@ This environment variable lets you adjust the expectations for the performance t
 
 Edit `TestUsingPluggableComponentCombinations` to control:
 - Which persistence layers to test (SQLite in-memory by default, can enable SQL Server, PostgreSQL, MySQL, file-based SQLite)
-- Which dependency injection containers to test (Microsoft DI, SimpleInjector)
+- Which dependency injection containers to test (Microsoft DI, Autofac)
 - Other pluggable component combinations
 
 ## Common Issues

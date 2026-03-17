@@ -9,7 +9,6 @@ using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.DependencyInjection.Autofac;
 using Compze.DependencyInjection.Microsoft;
-using Compze.DependencyInjection.SimpleInjector;
 using Compze.Underscore;
 using Compze.Internals.Logging;
 using JetBrains.Annotations;
@@ -42,7 +41,6 @@ public static class DiContainerExtensions
    public static IDependencyInjectionContainer CreateEmpty(this DIContainer @this) =>
       @this switch
       {
-         DIContainer.SimpleInjector => new SimpleInjectorDependencyInjectionContainer(new TestingComponentRegistrar()),
          DIContainer.Microsoft      => new MicrosoftDependencyInjectionContainer(new TestingComponentRegistrar()),
          DIContainer.Autofac        => new AutofacDependencyInjectionContainer(new TestingComponentRegistrar()),
          _                          => throw new ArgumentOutOfRangeException()

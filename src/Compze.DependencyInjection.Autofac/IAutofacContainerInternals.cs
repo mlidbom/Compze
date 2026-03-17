@@ -4,6 +4,6 @@ namespace Compze.DependencyInjection.Autofac;
 
 public interface IAutofacContainerInternals
 {
-   ILifetimeScope LifetimeScope { get; }
+   IContainer Container { get; }
    ContainerBuilder ContainerBuilder { get; }
 }

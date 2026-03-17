@@ -1,4 +1,5 @@
 using Compze.DependencyInjection.Extensions.Hosting;
+using Compze.Internals.SystemCE.LinqCE;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -19,8 +20,7 @@ class CompzeMicrosoftServiceProviderFactory(MicrosoftDependencyInjectionContaine
    public IServiceCollection CreateBuilder(IServiceCollection services)
    {
       var compzeServices = ((IMicrosoftContainerInternals)_compzeContainer).ServiceCollection;
-      foreach(var descriptor in services)
-         compzeServices.Add(descriptor);
+      services.ForEach(compzeServices.Add);
       return compzeServices;
    }
 

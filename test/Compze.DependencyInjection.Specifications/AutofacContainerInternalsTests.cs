@@ -19,14 +19,14 @@ public class AutofacContainerInternalsTests
       using var container = new AutofacDependencyInjectionContainer();
       _ = container.ServiceLocator;
       var internals = (IAutofacContainerInternals)container;
-      internals.LifetimeScope.Must().NotBeNull();
+      internals.Container.Must().NotBeNull();
    }
 
    [XF]
    public void IAutofacContainerInternals_members_are_not_accessible_without_cast()
    {
       using var container = new AutofacDependencyInjectionContainer();
-      container.GetType().GetProperty(nameof(IAutofacContainerInternals.LifetimeScope))
+      container.GetType().GetProperty(nameof(IAutofacContainerInternals.Container))
                .Must().BeNull();
    }
 }
