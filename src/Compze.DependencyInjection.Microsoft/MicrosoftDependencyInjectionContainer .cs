@@ -1,7 +1,5 @@
 using Compze.Contracts;
-using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
-using Compze.Internals.SystemCE;
 using Compze.Internals.SystemCE.LinqCE;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Threading;
@@ -48,19 +46,15 @@ public sealed class MicrosoftDependencyInjectionContainer(IComponentRegistrar? r
 
                break;
             case Lifestyle.Scoped:
-            {
                _services.Add(new ServiceDescriptor(firstServiceType,
                                                    sp => registration.InstantiationSpec.RunFactoryMethod(sp.GetRequiredService<ScopedKernel>()),
                                                    lifetime));
                break;
-            }
             case Lifestyle.TrackedTransient:
-            {
                _services.Add(new ServiceDescriptor(firstServiceType,
                                                    _ => registration.InstantiationSpec.RunFactoryMethod(this),
                                                    lifetime));
                break;
-            }
             default:
                throw new ArgumentOutOfRangeException(nameof(registration.Lifestyle), registration.Lifestyle, $"Unsupported lifestyle: {registration.Lifestyle}");
          }
