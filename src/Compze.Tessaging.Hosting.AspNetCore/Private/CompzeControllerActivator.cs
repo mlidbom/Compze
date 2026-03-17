@@ -1,25 +1,21 @@
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
 
 namespace Compze.Tessaging.Hosting.AspNetCore.Private;
 
-/// <summary>Custom controller activator that creates controllers using Compze's DI container.</summary>
-class  CompzeControllerActivator : IControllerActivator
+/// <summary>Controller activator that resolves controllers from the Compze scope stored in HttpContext.Items by the request middleware.</summary>
+class CompzeControllerActivator : IControllerActivator
 {
-   public static void RegisterWith(IComponentRegistrar register)
-      => register.Register(Singleton.For<CompzeControllerActivator>()
-                                    .CreatedBy((IServiceLocator serviceLocator) => new CompzeControllerActivator(serviceLocator)));
-
-   readonly IServiceLocator _serviceLocator;
-
-   CompzeControllerActivator(IServiceLocator serviceLocator) => _serviceLocator = serviceLocator;
+   internal const string CompzeScopeHttpContextItemKey = "CompzeScope";
 
    public object Create(ControllerContext context)
    {
+      var scope = (IServiceLocatorScope)context.HttpContext.Items[CompzeScopeHttpContextItemKey]!;
       var controllerType = context.ActionDescriptor.ControllerTypeInfo.AsType();
-      return _serviceLocator.Resolve(controllerType);
+      return scope.Resolve(controllerType);
    }
 
    public void Release(ControllerContext context, object controller)

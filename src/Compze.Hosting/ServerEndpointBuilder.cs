@@ -62,8 +62,7 @@ class ServerEndpointBuilder : IEndpointBuilder, IAsyncDisposable, IDisposable
    void RegisterInfrastructureQueryHandlers()
    {
       var executor = Container.ServiceLocator.Resolve<InfrastructureQueryExecutor>();
-      var serviceLocator = new LazyCE<IServiceLocator>(() => Container.ServiceLocator);
-      var registrar = new InfrastructureQueryRegistrarWithDependencyInjectionSupport(executor, serviceLocator);
+      var registrar = new InfrastructureQueryRegistrarWithDependencyInjectionSupport(executor);
       TessageTypesInternal.RegisterInfrastructureQueryHandlers(registrar);
       TypermediaInfrastructureQueryRegistration.RegisterQueryHandlers(registrar);
    }

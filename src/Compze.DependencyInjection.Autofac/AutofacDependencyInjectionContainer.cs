@@ -1,5 +1,4 @@
 using Autofac;
-using Autofac.Core.Lifetime;
 using Compze.Contracts;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
@@ -13,8 +12,6 @@ public sealed class AutofacDependencyInjectionContainer(IComponentRegistrar? reg
 {
    readonly ContainerBuilder _containerBuilder = new();
    IContainer? _container;
-
-   readonly AsyncLocal<ILifetimeScope?> _currentScope = new();
 
    readonly RunOnce _registerScopedKernel = new();
 
@@ -63,24 +60,10 @@ public sealed class AutofacDependencyInjectionContainer(IComponentRegistrar? reg
          {
             _runVerifications.RunIfFirstCall(AssertLifeStyleCombinationsAreValid);
             _container = _containerBuilder.Build();
-            SubscribeToExternalScopeTracking(_container);
          }
 
          return this;
       }
-   }
-
-   void SubscribeToExternalScopeTracking(ILifetimeScope scope) =>
-      scope.ChildLifetimeScopeBeginning += OnChildLifetimeScopeBeginning;
-
-   void OnChildLifetimeScopeBeginning(object? sender, LifetimeScopeBeginningEventArgs eventArgs)
-   {
-      var childScope = eventArgs.LifetimeScope;
-      var previousScope = _currentScope.Value;
-      _currentScope.Value = childScope;
-
-      SubscribeToExternalScopeTracking(childScope);
-      childScope.CurrentScopeEnding += (_, _) => _currentScope.Value = previousScope;
    }
 
    protected override DependencyInjectionContainerBase CreateEmptyClone() =>
@@ -92,34 +75,30 @@ public sealed class AutofacDependencyInjectionContainer(IComponentRegistrar? reg
    ILifetimeScope IAutofacContainerInternals.LifetimeScope => _container._assert().NotNull();
    ContainerBuilder IAutofacContainerInternals.ContainerBuilder => _containerBuilder;
 
-   ILifetimeScope CurrentScope() => _currentScope.Value ?? _container._assert().NotNull();
-
-   protected override bool IsInScope() => _currentScope.Value != null;
-
    public TComponent Resolve<TComponent>() where TComponent : class
    {
       if(TryCreateTransientInstance(typeof(TComponent), this, out var transientInstance))
          return (TComponent)transientInstance;
-      return CurrentScope().Resolve<TComponent>();
+      return _container._assert().NotNull().Resolve<TComponent>();
    }
 
    public object Resolve(Type serviceType)
    {
       if(TryCreateTransientInstance(serviceType, this, out var transientInstance))
          return transientInstance;
-      return CurrentScope().Resolve(serviceType);
+      return _container._assert().NotNull().Resolve(serviceType);
    }
 
    TComponent IServiceLocatorKernel.Resolve<TComponent>()
    {
       if(TryCreateTransientInstance(typeof(TComponent), this, out var transientInstance))
          return (TComponent)transientInstance;
-      return CurrentScope().Resolve<TComponent>();
+      return _container._assert().NotNull().Resolve<TComponent>();
    }
 
    IServiceLocatorScope IServiceLocator.BeginScope()
    {
-      var lifetimeScope = CurrentScope().BeginLifetimeScope();
+      var lifetimeScope = _container._assert().NotNull().BeginLifetimeScope();
       var scopedKernel = lifetimeScope.Resolve<ScopedKernel>();
       return new ServiceLocatorScope(this, scopedKernel, lifetimeScope);
    }

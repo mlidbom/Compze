@@ -664,13 +664,14 @@ public class DocumentDbTests : DocumentDbTestsBase
         var user2 = new User(userid2);
         var dog = new Dog { Id = new EntityId(Guid.Parse("00000000-0000-0000-0000-000000000010")) };
 
-        UseInTransactionalScope((_, updater) =>
+        ServiceLocator.ExecuteTransactionInIsolatedScope(scope =>
         {
+            var updater = scope.DocumentDbUpdater();
             updater.Save(user1);
             updater.Save(user2);
             updater.Save(dog);
 
-            var ids = ServiceLocator.DocumentDbBulkReader()
+            var ids = scope.DocumentDbBulkReader()
                                   .GetAllIds<User>()
                                   .ToHashSet();
 

@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Compze.Contracts;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
@@ -15,8 +14,6 @@ public sealed class MicrosoftDependencyInjectionContainer(IComponentRegistrar? r
    readonly IServiceCollection _services = new ServiceCollection();
    ServiceProvider? _serviceProvider;
    bool _isDisposed;
-
-   readonly AsyncLocal<ImmutableStack<IServiceScope>> _scopeStack = new();
 
    protected override DependencyInjectionContainerBase CreateEmptyClone() =>
       new MicrosoftDependencyInjectionContainer(Register().Clone());
@@ -75,23 +72,12 @@ public sealed class MicrosoftDependencyInjectionContainer(IComponentRegistrar? r
       }
    }
 
-   ImmutableStack<IServiceScope> ScopeStack => _scopeStack.Value ?? ImmutableStack<IServiceScope>.Empty;
-
-   IServiceProvider CurrentProvider()
-   {
-      Contract.State.NotDisposed(_isDisposed, this);
-      var stack = ScopeStack;
-      return !stack.IsEmpty ? stack.Peek().ServiceProvider : _serviceProvider._assert().NotNull();
-   }
-
-   protected override bool IsInScope() => !ScopeStack.IsEmpty;
-
    public TComponent Resolve<TComponent>() where TComponent : class
    {
       Contract.State.NotDisposed(_isDisposed, this);
       if(TryCreateTransientInstance(typeof(TComponent), this, out var transientInstance))
          return (TComponent)transientInstance;
-      return CurrentProvider().GetRequiredService<TComponent>();
+      return _serviceProvider._assert().NotNull().GetRequiredService<TComponent>();
    }
 
    public object Resolve(Type serviceType)
@@ -99,7 +85,7 @@ public sealed class MicrosoftDependencyInjectionContainer(IComponentRegistrar? r
       Contract.State.NotDisposed(_isDisposed, this);
       if(TryCreateTransientInstance(serviceType, this, out var transientInstance))
          return transientInstance;
-      return CurrentProvider().GetRequiredService(serviceType);
+      return _serviceProvider._assert().NotNull().GetRequiredService(serviceType);
    }
 
    TComponent IServiceLocatorKernel.Resolve<TComponent>()
@@ -107,7 +93,7 @@ public sealed class MicrosoftDependencyInjectionContainer(IComponentRegistrar? r
       Contract.State.NotDisposed(_isDisposed, this);
       if(TryCreateTransientInstance(typeof(TComponent), this, out var transientInstance))
          return (TComponent)transientInstance;
-      return CurrentProvider().GetRequiredService<TComponent>();
+      return _serviceProvider._assert().NotNull().GetRequiredService<TComponent>();
    }
 
    IServiceLocatorScope IServiceLocator.BeginScope()
@@ -115,36 +101,18 @@ public sealed class MicrosoftDependencyInjectionContainer(IComponentRegistrar? r
       Contract.State.NotDisposed(_isDisposed, this);
 
       var scope = _serviceProvider._assert().NotNull().CreateAsyncScope();
-      _scopeStack.Value = ScopeStack.Push(scope);
       var scopedKernel = scope.ServiceProvider.GetRequiredService<ScopedKernel>();
 
-      return new ServiceLocatorScope(this, scopedKernel, scope.ServiceProvider, () =>
-      {
-         var stack = ScopeStack;
-         Contract.State.Assert(!stack.IsEmpty, () => "Attempt to dispose scope from a context that is not within the scope.");
-         stack.Peek().Dispose();
-         _scopeStack.Value = stack.Pop();
-      });
+      return new ServiceLocatorScope(this, scopedKernel, scope.ServiceProvider, () => scope.Dispose());
    }
 
    IServiceCollection IMicrosoftContainerInternals.ServiceCollection => _services;
    IServiceProvider IMicrosoftContainerInternals.ServiceProvider => _serviceProvider._assert().NotNull();
 
-   void IMicrosoftContainerInternals.PushExternalScope(IServiceScope scope) =>
-      _scopeStack.Value = ScopeStack.Push(scope);
-
-   void IMicrosoftContainerInternals.PopExternalScope()
-   {
-      var stack = ScopeStack;
-      Contract.State.Assert(!stack.IsEmpty, () => "Attempt to pop scope from a context that has no external scope.");
-      _scopeStack.Value = stack.Pop();
-   }
-
    public override void Dispose()
    {
       if(!_isDisposed)
       {
-         Contract.State.Assert(ScopeStack.IsEmpty, () => "Scopes must be disposed before the container");
          _isDisposed = true;
          _serviceProvider?.Dispose();
          _serviceProvider = null;
@@ -155,7 +123,6 @@ public sealed class MicrosoftDependencyInjectionContainer(IComponentRegistrar? r
    {
       if(!_isDisposed)
       {
-         Contract.State.Assert(ScopeStack.IsEmpty, () => "Scopes must be disposed before the container");
          _isDisposed = true;
          if(_serviceProvider != null)
          {

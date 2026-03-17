@@ -128,9 +128,9 @@ public class TeventStoreUpdaterTest : UniversalTestBase
 
       UseInTransactionalScope(session => session.Save(user));
 
-      UseInScope(_ =>
+      _serviceLocator.ExecuteInIsolatedScope(scope =>
       {
-         var reader = _serviceLocator.Resolve<ITeventStoreReader>();
+         var reader = scope.TeventStoreReader();
          var loadedUser = reader.GetReadonlyCopyOfVersion<User>(user.Id, 1);
          loadedUser.Id.Must().Be(user.Id);
          loadedUser.Email.Must().Be("email@email.se");
@@ -210,9 +210,9 @@ public class TeventStoreUpdaterTest : UniversalTestBase
 
       UseInTransactionalScope(session => session.Save(user));
 
-      UseInTransactionalScope(_ =>
+      _serviceLocator.ExecuteTransactionInIsolatedScope(scope =>
       {
-         var loadedUser = _serviceLocator.Resolve<ITeventStoreReader>().GetReadonlyCopyOfVersion<User>(user.Id, 1);
+         var loadedUser = scope.TeventStoreReader().GetReadonlyCopyOfVersion<User>(user.Id, 1);
          loadedUser.ChangeEmail("NewEmail");
       });
 
@@ -470,14 +470,14 @@ public class TeventStoreUpdaterTest : UniversalTestBase
          _teventSpy.DispatchedTessages.Count().Must().Be(18);
       });
 
-      UseInTransactionalScope(_ =>
+      _serviceLocator.ExecuteTransactionInIsolatedScope(scope =>
       {
          _teventSpy.DispatchedTessages.Count().Must().Be(18);
 
          var dispatchedTevents = _teventSpy.DispatchedTessages.OfType<ITaggregateTevent>().ToList();
          dispatchedTevents.Select(e => e.Id).Distinct().Count().Must().Be(18);
 
-         var allPersistedTevents = _serviceLocator.TeventStore().ListAllTeventsForTestingPurposesAbsolutelyNotUsableForARealTeventStoreOfAnySize();
+         var allPersistedTevents = scope.TeventStore().ListAllTeventsForTestingPurposesAbsolutelyNotUsableForARealTeventStoreOfAnySize();
          TeventStorageTestHelper.StripSteventhDecimalPointFromSecondFractionOnUtcUpdateTime(dispatchedTevents);
          TeventStorageTestHelper.StripSteventhDecimalPointFromSecondFractionOnUtcUpdateTime(allPersistedTevents);
 

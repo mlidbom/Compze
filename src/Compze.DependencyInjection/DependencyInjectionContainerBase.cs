@@ -79,7 +79,7 @@ public abstract class DependencyInjectionContainerBase : IDependencyInjectionCon
          instance = registration.InstantiationSpec.RunFactoryMethod(kernel);
          if(registration.Lifestyle == Lifestyle.TrackedTransient)
          {
-            TransientInstanceTracker tracker = IsInScope()
+            TransientInstanceTracker tracker = kernel is ScopedKernel
                ? kernel.Resolve<ScopedTransientInstanceTracker>()
                : kernel.Resolve<SingletonTransientInstanceTracker>();
             tracker.Track(instance);
@@ -102,8 +102,6 @@ public abstract class DependencyInjectionContainerBase : IDependencyInjectionCon
          return (TComponent)_nativeScopedResolver(typeof(TComponent));
       }
    }
-
-   protected abstract bool IsInScope();
 
    public IComponentRegistrar Register() => _registrar;
 

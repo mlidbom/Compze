@@ -6,12 +6,12 @@ Migrate from Ambient Composition Model (AsyncLocal scope tracking) to Closure Co
 
 ## Current State
 
-- `BeginScope()` returns `IServiceLocatorScope` with `Resolve<T>()` — Phase 1 complete
-- All test and `ExecuteInIsolatedScope` call sites resolve from the scope object — Phase 2 partially complete
-- AsyncLocal tracking still active in all three container adapters
-- Infrastructure messaging/middleware sites still use ambient resolution
+- Phases 1–3 complete. All AsyncLocal scope tracking removed.
+- Callers resolve from the scope object they hold, not from ambient context.
+- Container adapters are thin wrappers — no `AsyncLocal`, no scope tracking, no `PushExternalScope`/`PopExternalScope`.
+- `IsInScope()` abstract method eliminated — `TryCreateTransientInstance` checks `kernel is ScopedKernel` directly.
 
-## Target State
+## Target State — Achieved
 
 - Callers resolve from the scope object they hold, not from ambient context
 - Container adapters become thin wrappers — no `AsyncLocal`, no scope tracking
@@ -23,41 +23,41 @@ Migrate from Ambient Composition Model (AsyncLocal scope tracking) to Closure Co
 
 `BeginScope()` returns `IServiceLocatorScope` with `Resolve<T>()` and `IDisposable`.
 
-### Phase 2: Migrate callers to use explicit scope — IN PROGRESS
+### Phase 2: Migrate callers to use explicit scope — DONE
 
-**Done:**
-- `ExecuteInIsolatedScope` / `ExecuteTransactionInIsolatedScope` helpers — already used scope correctly in their lambdas (~70 call sites, no changes needed)
-- All test `BeginScope()` sites — 55 sites across 15 files migrated from `using(x.BeginScope()) { x.Resolve<T>(); }` to `using var scope = x.BeginScope(); scope.Resolve<T>();`
-
-**Remaining:**
-- `InfrastructureQueryExecutor` / `InfrastructureQueryRegistrarWithDependencyInjectionSupport` — handler signature is `Func<object, object>`, has no scope parameter. The registrar's `Resolve<T>()` calls the root locator relying on AsyncLocal. Need to thread scope through: change handler signature, pass scope from `ExecuteQuery`.
-- ASP.NET middleware (`AspNetInboxTransportServer`, `TypermediaTransportServer`) — both create a Compze scope in middleware but discard it (`_ => next.Invoke()`). Controller activators (`CompzeControllerActivator`, `ServiceLocatorControllerActivator`) resolve from root locator, relying on AsyncLocal. Interim fix: stash scope in `HttpContext.Items`, activators pull from there.
+**What was migrated:**
+- `ExecuteInIsolatedScope` / `ExecuteTransactionInIsolatedScope` helpers — already used scope correctly
+- All test `BeginScope()` sites — migrated from `using(x.BeginScope()) { x.Resolve<T>(); }` to `using var scope = x.BeginScope(); scope.Resolve<T>();`
+- `InfrastructureQueryExecutor` / `InfrastructureQueryRegistrarWithDependencyInjectionSupport` — threaded `IScopeServiceLocator` through handler signatures. The registrar passes the scope to factory methods, and the executor passes its scope to query handlers.
+- ASP.NET middleware (`AspNetInboxTransportServer`, `TypermediaTransportServer`) — stash `IServiceLocatorScope` in `HttpContext.Items["Compze.Scope"]`. `CompzeControllerActivator` reads scope from `HttpContext.Items` and resolves the controller from that scope.
+- Test code fixes: `Local_Tuery_Performance_tests`, `TeventStoreUpdaterTest`, `DocumentDbTests` — changed from `_serviceLocator.Resolve<T>()` (root) to `scope.Resolve<T>()` inside scope lambdas.
 
 **Already explicit (no changes needed):**
 - `TypermediaHandlerExecutor` — passes scope to handlers
 - `EndpointRequestExecutor` — calls `scope.Resolve<IServiceBusSession>()`
 - `Inbox.HandlerExecutionEngine.QueuedTessage` — passes scope to handlers
 
-### Phase 3: Remove AsyncLocal tracking
+### Phase 3: Remove AsyncLocal tracking — DONE
 
-Once all callers use explicit scopes, delete the `AsyncLocal` infrastructure from all three container adapters. Three files:
-- `MicrosoftDependencyInjectionContainer` — `_scopeStack` AsyncLocal + `ScopeStack` property + `PushExternalScope`/`PopExternalScope`
-- `AutofacDependencyInjectionContainer` — `_currentScope` AsyncLocal + `SubscribeToExternalScopeTracking` + event handlers
-- `SimpleInjectorDependencyInjectionContainer` — uses SimpleInjector's built-in `AsyncScopedLifestyle`
+Removed from all three container adapters:
+- `MicrosoftDependencyInjectionContainer` — removed `_scopeStack` AsyncLocal, `ScopeStack` property, `CurrentProvider()`, `PushExternalScope`/`PopExternalScope`. Root `Resolve()` always uses `_serviceProvider`. `BeginScope()` creates a native scope without pushing to any stack. Removed `IMicrosoftContainerInternals.PushExternalScope`/`PopExternalScope`.
+- `AutofacDependencyInjectionContainer` — removed `_currentScope` AsyncLocal, `SubscribeToExternalScopeTracking`, `OnChildLifetimeScopeBeginning` event handlers. Root `Resolve()` always uses `_container`. `BeginScope()` creates from the root container.
+- `SimpleInjectorDependencyInjectionContainer` — `IsInScope()` changed to `false`. SimpleInjector's own `AsyncScopedLifestyle` is internal to that library and doesn't affect our scope model.
+- Removed `IsInScope()` abstract method from `DependencyInjectionContainerBase` — replaced with `kernel is ScopedKernel` check in `TryCreateTransientInstance`.
+- Deleted `When_a_scope_is_created_externally_via_Autofac_BeginLifetimeScope` test class (tested removed ambient tracking behavior).
+- Simplified `HostableMicrosoftContainer.CompzeMicrosoftServiceProvider.CreateScope()` — delegates to native provider, no scope syncing.
 
 ## ASP.NET Integration — Future Direction
 
-The `Hostable*Container` projects (`Compze.DependencyInjection.Microsoft.Extensions.Hosting`, `Compze.DependencyInjection.Autofac.Extensions.Hosting`) currently exist to synchronize Compze's AsyncLocal scope tracking with ASP.NET's scoping. They implement custom `IServiceProviderFactory<T>`, custom `IServiceProvider`, custom `IServiceScope` — all to intercept scope creation.
+The `Hostable*Container` projects (`Compze.DependencyInjection.Microsoft.Extensions.Hosting`, `Compze.DependencyInjection.Autofac.Extensions.Hosting`) originally existed to synchronize Compze's AsyncLocal scope tracking with ASP.NET's scoping. They implement custom `IServiceProviderFactory<T>`, custom `IServiceProvider`, custom `IServiceScope` — all to intercept scope creation.
 
-Once AsyncLocal is removed, these custom wrappers lose their reason to exist. The bridge projects should be simplified to use each container's standard ASP.NET Core integration:
+Now that AsyncLocal is removed, these custom wrappers are simplified but still exist as integration points. The bridge projects should eventually be further simplified to use each container's standard ASP.NET Core integration:
 - **MS DI**: Merge Compze's `ServiceDescriptor`s into ASP.NET's `IServiceCollection`. Let ASP.NET build the `ServiceProvider` normally.
 - **Autofac**: Standard `AutofacServiceProviderFactory` + `Populate()`.
 - **SimpleInjector**: Standard `AddSimpleInjector()` / `UseSimpleInjector()` with cross-wiring.
 
-This eliminates the custom controller activators too — ASP.NET activates controllers from its own scopes, which contain the same registrations.
-
-This is separate work from the AsyncLocal removal — do it after Phase 3. The `HttpContext.Items` approach unblocks Phase 3 without requiring the bridge refactoring.
+This would eliminate the custom controller activators too — ASP.NET would activate controllers from its own scopes, which contain the same registrations. The `HttpContext.Items` approach currently handles the interim state.
 
 ## Key Insight
 
-Domain code never resolves directly — it gets dependencies injected by the infrastructure that created the scope. The ambient model is only used by infrastructure code that could just as easily hold a scope reference.
+Domain code never resolves directly — it gets dependencies injected by the infrastructure that created the scope. The ambient model was only used by infrastructure code that could just as easily hold a scope reference.

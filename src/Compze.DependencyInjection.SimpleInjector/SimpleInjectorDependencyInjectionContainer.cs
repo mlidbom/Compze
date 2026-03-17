@@ -98,8 +98,6 @@ public sealed class SimpleInjectorDependencyInjectionContainer : DependencyInjec
 
    Container ISimpleInjectorContainerInternals.Container => _container;
 
-   protected override bool IsInScope() => global::SimpleInjector.Lifestyle.Scoped.GetCurrentScope(_container) != null;
-
    public TComponent Resolve<TComponent>() where TComponent : class
    {
       if(TryCreateTransientInstance(typeof(TComponent), this, out var transientInstance))

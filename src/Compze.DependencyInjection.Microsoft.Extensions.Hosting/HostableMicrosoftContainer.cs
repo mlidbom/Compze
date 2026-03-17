@@ -55,15 +55,7 @@ class CompzeMicrosoftServiceProvider(MicrosoftDependencyInjectionContainer compz
       return _innerProvider.GetRequiredService(serviceType);
    }
 
-   public IServiceScope CreateScope()
-   {
-#pragma warning disable CA2000
-      var innerScope = _innerProvider.CreateScope();
-      var internals = (IMicrosoftContainerInternals)_compzeContainer;
-      internals.PushExternalScope(innerScope);
-      return new CompzeMicrosoftServiceScope(this, innerScope, internals);
-#pragma warning restore CA2000
-   }
+   public IServiceScope CreateScope() => _innerProvider.CreateScope();
 
    public void Dispose()
    {
@@ -75,22 +67,5 @@ class CompzeMicrosoftServiceProvider(MicrosoftDependencyInjectionContainer compz
    {
       await _innerProvider.DisposeAsync().ConfigureAwait(false);
       await _compzeContainer.DisposeAsync().ConfigureAwait(false);
-   }
-}
-
-class CompzeMicrosoftServiceScope(CompzeMicrosoftServiceProvider serviceProvider, IServiceScope innerScope, IMicrosoftContainerInternals compzeInternals) : IServiceScope
-{
-   readonly IServiceScope _innerScope = innerScope;
-   readonly IMicrosoftContainerInternals _compzeInternals = compzeInternals;
-#pragma warning disable CA2213
-   readonly CompzeMicrosoftServiceProvider _serviceProvider = serviceProvider;
-#pragma warning restore CA2213
-
-   public IServiceProvider ServiceProvider => _serviceProvider;
-
-   public void Dispose()
-   {
-      _compzeInternals.PopExternalScope();
-      _innerScope.Dispose();
    }
 }

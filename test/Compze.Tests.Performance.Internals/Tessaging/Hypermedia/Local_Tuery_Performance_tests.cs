@@ -5,6 +5,7 @@ using Compze.DependencyInjection;
 using Compze.Internals.SystemCE;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tests.Infrastructure.XUnit;
+using Compze.Typermedia;
 
 namespace Compze.Tests.Performance.Internals.Tessaging.Hypermedia;
 
@@ -42,9 +43,10 @@ public class Local_Tuery_performance_tests : PerformanceTestBase
       void RunRequest() =>
          ServerEndpoint.ServiceLocator.ExecuteInIsolatedScope(scope =>
          {
+            var navigator = scope.Resolve<IInProcessTypermediaNavigator>();
             for(var i = 0; i < tueriesPerRequest; i++)
             {
-               InProcessNavigator.Execute(new MyLocalStrictlyLocalTuery());
+               navigator.Execute(new MyLocalStrictlyLocalTuery());
             }
          });
    }

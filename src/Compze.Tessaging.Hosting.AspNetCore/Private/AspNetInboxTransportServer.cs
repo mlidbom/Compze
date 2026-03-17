@@ -16,19 +16,14 @@ class AspNetInboxTransportServer : IInboxTransportServer
 {
    readonly IServiceLocator _serviceLocator;
    WebApplication? _webApplication;
-   readonly CompzeControllerActivator _controllerActivator;
 
    public static void RegisterWith(IComponentRegistrar registrar) =>
       registrar.Register(
          Singleton.For<IInboxTransportServer>()
-                  .CreatedBy((IServiceLocator serviceLocator, CompzeControllerActivator activator)
-                                => new AspNetInboxTransportServer(serviceLocator, activator)));
+                  .CreatedBy((IServiceLocator serviceLocator)
+                                => new AspNetInboxTransportServer(serviceLocator)));
 
-   AspNetInboxTransportServer(IServiceLocator serviceLocator, CompzeControllerActivator controllerActivator)
-   {
-      _controllerActivator = controllerActivator;
-      _serviceLocator = serviceLocator;
-   }
+   AspNetInboxTransportServer(IServiceLocator serviceLocator) => _serviceLocator = serviceLocator;
 
    public Uri Address => new(_webApplication!.Urls.First());
 
@@ -64,16 +59,20 @@ class AspNetInboxTransportServer : IInboxTransportServer
       builder.Services.AddHttpClient();
       builder.Services.AddControllers();
 
-      //We need to use our container or things go haywire.
-      builder.Services.AddSingleton<IControllerActivator>(_controllerActivator);
+      builder.Services.AddSingleton<IControllerActivator>(new CompzeControllerActivator());
 
       var app = builder.Build();
 
       app.UseRouting();
       app.MapControllers();
 
-      // Create a scope in our container for each request
-      app.Use((_, next) => _serviceLocator.ExecuteInIsolatedScopeAsync(_ => next.Invoke()));
+      // Create a scope in our container for each request and store it in HttpContext.Items
+      app.Use(async (httpContext, next) =>
+      {
+         using var scope = _serviceLocator.BeginScope();
+         httpContext.Items[CompzeControllerActivator.CompzeScopeHttpContextItemKey] = scope;
+         await next.Invoke().caf();
+      });
 
       await app.StartAsync().caf();
 

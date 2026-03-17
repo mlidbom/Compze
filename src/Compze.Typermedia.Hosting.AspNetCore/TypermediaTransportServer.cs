@@ -4,6 +4,7 @@ using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.AspNetCore.Mvc.Controllers;
@@ -15,6 +16,8 @@ namespace Compze.Typermedia.Hosting.AspNetCore;
 
 public class TypermediaTransportServer : ITypermediaTransportServer
 {
+   const string CompzeScopeHttpContextItemKey = "CompzeScope";
+
    readonly IServiceLocator _serviceLocator;
    WebApplication? _webApplication;
 
@@ -56,25 +59,34 @@ public class TypermediaTransportServer : ITypermediaTransportServer
       builder.Services.AddHttpClient();
       builder.Services.AddControllers();
 
-      builder.Services.AddSingleton<IControllerActivator>(new ServiceLocatorControllerActivator(_serviceLocator));
+      builder.Services.AddSingleton<IControllerActivator>(new ScopeFromHttpContextControllerActivator());
 
       var app = builder.Build();
 
       app.UseRouting();
       app.MapControllers();
 
-      app.Use((_, next) => _serviceLocator.ExecuteInIsolatedScopeAsync(_ => next.Invoke()));
+      // Create a scope in our container for each request and store it in HttpContext.Items
+      app.Use(async (httpContext, next) =>
+      {
+         using var scope = _serviceLocator.BeginScope();
+         httpContext.Items[CompzeScopeHttpContextItemKey] = scope;
+         await next.Invoke().caf();
+      });
 
       await app.StartAsync().caf();
 
       return app;
    }
 
-   class ServiceLocatorControllerActivator(IServiceLocator serviceLocator) : IControllerActivator
+   class ScopeFromHttpContextControllerActivator : IControllerActivator
    {
-      readonly IServiceLocator _serviceLocator1 = serviceLocator;
+      public object Create(ControllerContext context)
+      {
+         var scope = (IServiceLocatorScope)context.HttpContext.Items[CompzeScopeHttpContextItemKey]!;
+         return scope.Resolve(context.ActionDescriptor.ControllerTypeInfo.AsType());
+      }
 
-      public object Create(ControllerContext context) => _serviceLocator1.Resolve(context.ActionDescriptor.ControllerTypeInfo.AsType());
       public void Release(ControllerContext context, object controller) {}
    }
 
