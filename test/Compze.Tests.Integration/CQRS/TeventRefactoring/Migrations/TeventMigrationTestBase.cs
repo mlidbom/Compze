@@ -113,7 +113,7 @@ public abstract class TeventMigrationTestBase : UniversalTestBase
 
             Log.Info("  Persisting migrations");
             using var persistScope = serviceLocator.BeginScope();
-            persistScope.TeventStore()
+            persistScope.Resolver.TeventStore()
                         .PersistMigrations();
 
             migratedHistory = serviceLocator.ExecuteTransactionInIsolatedScope(scope => scope.TeventStoreUpdater()

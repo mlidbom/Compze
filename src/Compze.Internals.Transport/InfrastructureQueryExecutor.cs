@@ -10,26 +10,26 @@ namespace Compze.Internals.Transport;
 public class InfrastructureQueryExecutor
 {
    readonly IServiceLocator _serviceLocator;
-   IReadOnlyDictionary<Type, Func<object, IServiceScope, object>> _queryHandlers = new Dictionary<Type, Func<object, IServiceScope, object>>();
+   IReadOnlyDictionary<Type, Func<object, IScopeResolver, object>> _queryHandlers = new Dictionary<Type, Func<object, IScopeResolver, object>>();
    readonly IMonitor _monitor = IMonitor.New();
 
    InfrastructureQueryExecutor(IServiceLocator serviceLocator) => _serviceLocator = serviceLocator;
 
-   public void RegisterQueryHandler<TQuery, TResult>(Func<TQuery, IServiceScope, TResult> handler) where TQuery : IQuery<TResult> => _monitor.Locked(() =>
+   public void RegisterQueryHandler<TQuery, TResult>(Func<TQuery, IScopeResolver, TResult> handler) where TQuery : IQuery<TResult> => _monitor.Locked(() =>
    {
-      object Value(object query, IServiceScope scope) => handler((TQuery)query, scope)!;
+      object Value(object query, IScopeResolver scopeResolver) => handler((TQuery)query, scopeResolver)!;
       Interlocked.Exchange(ref _queryHandlers, _queryHandlers.AddToCopy(typeof(TQuery), Value));
    });
 
    public object ExecuteQuery(IMessage query)
    {
       this.Log().Debug($"Executing infrastructure query {query.GetType().Name}");
-      return _serviceLocator.ExecuteInIsolatedScope(scope =>
+      return _serviceLocator.ExecuteInIsolatedScope(scopeResolver =>
       {
          if(!_queryHandlers.TryGetValue(query.GetType(), out var handler))
             throw new InvalidOperationException($"No infrastructure query handler registered for {query.GetType().FullName}");
 
-         return handler(query, scope);
+         return handler(query, scopeResolver);
       });
    }
 

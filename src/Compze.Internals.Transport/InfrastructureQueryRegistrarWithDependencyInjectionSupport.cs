@@ -19,7 +19,7 @@ public class InfrastructureQueryRegistrarWithDependencyInjectionSupport(Infrastr
       Func<TQuery, TDependency1, TResult> handler) where TQuery : IQuery<TResult>
                                                    where TDependency1 : class
    {
-      _executor.RegisterQueryHandler<TQuery, TResult>((query, scope) => handler(query, scope.Resolve<TDependency1>()));
+      _executor.RegisterQueryHandler<TQuery, TResult>((query, scopeResolver) => handler(query, scopeResolver.Resolve<TDependency1>()));
       return this;
    }
 
@@ -28,7 +28,7 @@ public class InfrastructureQueryRegistrarWithDependencyInjectionSupport(Infrastr
                                                                  where TDependency1 : class
                                                                  where TDependency2 : class
    {
-      _executor.RegisterQueryHandler<TQuery, TResult>((query, scope) => handler(query, scope.Resolve<TDependency1>(), scope.Resolve<TDependency2>()));
+      _executor.RegisterQueryHandler<TQuery, TResult>((query, scopeResolver) => handler(query, scopeResolver.Resolve<TDependency1>(), scopeResolver.Resolve<TDependency2>()));
       return this;
    }
 
@@ -39,7 +39,7 @@ public class InfrastructureQueryRegistrarWithDependencyInjectionSupport(Infrastr
                                                                                               where TDependency3 : class
                                                                                               where TDependency4 : class
    {
-      _executor.RegisterQueryHandler<TQuery, TResult>((query, scope) => handler(query, scope.Resolve<TDependency1>(), scope.Resolve<TDependency2>(), scope.Resolve<TDependency3>(), scope.Resolve<TDependency4>()));
+      _executor.RegisterQueryHandler<TQuery, TResult>((query, scopeResolver) => handler(query, scopeResolver.Resolve<TDependency1>(), scopeResolver.Resolve<TDependency2>(), scopeResolver.Resolve<TDependency3>(), scopeResolver.Resolve<TDependency4>()));
       return this;
    }
 }

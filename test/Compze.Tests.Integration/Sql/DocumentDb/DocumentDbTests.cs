@@ -530,8 +530,8 @@ public class DocumentDbTests : DocumentDbTestsBase
         });
 
         using var scope = ServiceLocator.BeginScope();
-        scope.DocumentDbBulkReader().GetAll<Dog>().ToList().Must().HaveCount(2);
-        scope.DocumentDbBulkReader().GetAll<User>().ToList().Must().HaveCount(2);
+        scope.Resolver.DocumentDbBulkReader().GetAll<Dog>().ToList().Must().HaveCount(2);
+        scope.Resolver.DocumentDbBulkReader().GetAll<User>().ToList().Must().HaveCount(2);
     }
 
     [PCT]
@@ -593,7 +593,7 @@ public class DocumentDbTests : DocumentDbTestsBase
         });
 
         using var scope = ServiceLocator.BeginScope();
-        var people = scope.DocumentDbBulkReader().GetAll<Person>().Select(it => it.Id).ToHashSet();
+        var people = scope.Resolver.DocumentDbBulkReader().GetAll<Person>().Select(it => it.Id).ToHashSet();
 
         people.Must().HaveCount(2);
         people.Must().Contain(user1.Id);
@@ -690,7 +690,7 @@ public class DocumentDbTests : DocumentDbTestsBase
     {
         {
             using var scope1 = ServiceLocator.BeginScope();
-            var store = scope1.DocumentDb();
+            var store = scope1.Resolver.DocumentDb();
 
             var dictionary = new Dictionary<Type, Dictionary<string, string>>();
 
@@ -709,7 +709,7 @@ public class DocumentDbTests : DocumentDbTestsBase
 
         {
             using var scope2 = ServiceLocator.BeginScope();
-            var store = scope2.DocumentDb();
+            var store = scope2.Resolver.DocumentDb();
             store.GetAll<User>().Must().HaveCount(4);
             store.GetAll<Person>().Must().HaveCount(8); //User inherits person
 
@@ -738,7 +738,7 @@ public class DocumentDbTests : DocumentDbTestsBase
         await InsertUsersInOtherDocumentDb(userId);
 
         using var scope3 = ServiceLocator.BeginScope();
-        scope3.DocumentDbSession().Get<User>(userId);
+        scope3.Resolver.DocumentDbSession().Get<User>(userId);
     }
 
     [PCT]
@@ -749,7 +749,7 @@ public class DocumentDbTests : DocumentDbTestsBase
         await InsertUsersInOtherDocumentDb(userId);
 
         using var scope4 = ServiceLocator.BeginScope();
-        scope4.DocumentDbSession().GetAll<User>().Count().Must().Be(1);
+        scope4.Resolver.DocumentDbSession().GetAll<User>().Count().Must().Be(1);
     }
 
     [PCT]

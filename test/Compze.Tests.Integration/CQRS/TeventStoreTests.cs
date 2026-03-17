@@ -169,7 +169,7 @@ public class TeventStoreTests : UniversalTestBase
       var user = new User();
       {
          using var scope = serviceLocator.BeginScope();
-         var teventStore = scope.TeventStore();
+         var teventStore = scope.Resolver.TeventStore();
 
          user.Register("email@email.se", "password", new TaggregateId());
 
