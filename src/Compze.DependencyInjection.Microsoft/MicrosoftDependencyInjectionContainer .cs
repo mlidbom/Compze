@@ -35,16 +35,18 @@ public sealed class MicrosoftDependencyInjectionContainer(IComponentRegistrar? r
 
          switch(registration.Lifestyle)
          {
-            case Lifestyle.Singleton when registration.InstantiationSpec.SingletonInstance is {} instance:
-               registration.ServiceTypes.ForEach(it => _services.AddSingleton(it, instance));
-               continue;
             case Lifestyle.Singleton:
-            {
-               _services.Add(new ServiceDescriptor(firstServiceType,
-                                                   _ => registration.InstantiationSpec.RunFactoryMethod(this),
-                                                   lifetime));
+               if(registration.InstantiationSpec.SingletonInstance is {} instance)
+               {
+                  registration.ServiceTypes.ForEach(it => _services.AddSingleton(it, instance));
+               } else
+               {
+                  _services.Add(new ServiceDescriptor(firstServiceType,
+                                                      _ => registration.InstantiationSpec.RunFactoryMethod(this),
+                                                      lifetime));
+               }
+
                break;
-            }
             case Lifestyle.Scoped:
             {
                _services.Add(new ServiceDescriptor(firstServiceType,

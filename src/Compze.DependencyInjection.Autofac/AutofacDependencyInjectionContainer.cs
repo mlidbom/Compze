@@ -35,13 +35,19 @@ public sealed class AutofacDependencyInjectionContainer(IComponentRegistrar? reg
 
          switch(registration.Lifestyle)
          {
-            case Lifestyle.Singleton when registration.InstantiationSpec.SingletonInstance is {} instance:
-               serviceTypes.ForEach(serviceType => _containerBuilder.RegisterInstance(instance).As(serviceType).ExternallyOwned());
-               break;
             case Lifestyle.Singleton:
-               _containerBuilder.Register(_ => registration.InstantiationSpec.RunFactoryMethod(this))
-                                .As(serviceTypes)
-                                .SingleInstance();
+               if(registration.InstantiationSpec.SingletonInstance is {} instance)
+               {
+                  serviceTypes.ForEach(serviceType => _containerBuilder.RegisterInstance(instance)
+                                                                       .As(serviceType)
+                                                                       .ExternallyOwned());
+               } else
+               {
+                  _containerBuilder.Register(_ => registration.InstantiationSpec.RunFactoryMethod(this))
+                                   .As(serviceTypes)
+                                   .SingleInstance();
+               }
+
                break;
             case Lifestyle.Scoped:
                _containerBuilder.Register(ctx => registration.InstantiationSpec.RunFactoryMethod(ctx.Resolve<ScopedKernel>()))
