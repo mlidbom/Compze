@@ -12,40 +12,54 @@ Compute TypeIds for closed generics deterministically from the TypeIds of their 
 
 ### How It Works
 
+All composition uses a single namespace GUID (`GenericCompositionNamespace`) and a single rule: hash the "definition" TypeId + ordered type argument TypeIds.
+
 1. **Leaf types** and **open generic definitions** get explicit GUIDs in generated files (as today)
-2. **Closed generics** get computed GUIDs: `DeterministicGuid(TypeId(IList<>), TypeId(MyType))`
-3. **Arrays** get computed GUIDs: `DeterministicGuid(ArrayNamespace, TypeId(MyType))`
-4. **Nested generics** compose recursively: `IDict<IList<MyType>>` → compute `TypeId(IList<MyType>)` first, then `DeterministicGuid(TypeId(IDict<>), that result)`
+2. **Closed generics** get computed GUIDs: `DeterministicGuid(GenericCompositionNamespace, TypeId(IList<>).Bytes ++ TypeId(MyType).Bytes)`
+3. **Arrays** use the same mechanism with a synthetic `ArrayMarkerTypeId` constant (since .NET arrays are not generic types — `typeof(int[]).IsGenericType` is `false` and there is no `Array<T>` open generic definition): `DeterministicGuid(GenericCompositionNamespace, ArrayMarkerTypeId.Bytes ++ TypeId(MyType).Bytes)`
+4. **Nested generics** compose recursively (bottom-up): `IDict<IList<MyType>>` → compute `TypeId(IList<MyType>)` first, then use that result as a type argument to compute `TypeId(IDict<IList<MyType>>)`
 
 ### Deterministic GUID Computation (UUID v5, RFC 4122)
 
-Hash a namespace GUID + payload bytes with SHA-1, format as a standard GUID with version/variant bits set:
+The public API takes the definition TypeId and type argument TypeIds — nothing else:
 
 ```csharp
-static Guid CreateDeterministicGuid(Guid namespaceId, byte[] payload)
-{
-   var namespaceBytes = namespaceId.ToByteArray();
-   SwapGuidBytesToNetworkOrder(namespaceBytes);
-
-   var hash = SHA1.HashData([.. namespaceBytes, .. payload]);
-
-   hash[6] = (byte)((hash[6] & 0x0F) | 0x50); // version 5
-   hash[8] = (byte)((hash[8] & 0x3F) | 0x80); // variant RFC 4122
-
-   var result = new byte[16];
-   Array.Copy(hash, result, 16);
-   SwapGuidBytesToNetworkOrder(result);
-   return new Guid(result);
-}
+static TypeId ComputeCompositeTypeId(TypeId definitionTypeId, params TypeId[] typeArgumentTypeIds)
 ```
 
-For a closed generic, the payload is the concatenated bytes of the component TypeId GUIDs:
+Internally this uses UUID v5: SHA-1 hash of a fixed namespace constant + the concatenated GUID bytes of all components, formatted as a standard GUID with version/variant bits set. The namespace constant is a hardcoded implementation detail — callers never see it.
+
+#### Examples
+
+Simple generic:
+```
+TypeId(IList<MyType>) = ComputeCompositeTypeId(TypeId(IList<>), TypeId(MyType))
+```
+
+Multi-param generic:
+```
+TypeId(IDict<string, int>) = ComputeCompositeTypeId(TypeId(IDict<,>), TypeId(string), TypeId(int))
+```
+
+Array:
+```
+TypeId(MyType[]) = ComputeCompositeTypeId(ArrayMarkerTypeId, TypeId(MyType))
+```
+
+#### Nested Generics
+
+Computation is bottom-up. Each level produces a single GUID before being used as input to the next:
 
 ```
-TypeId(IList<MyType>) = DeterministicGuid(
-   GenericCompositionNamespace,       // a fixed well-known GUID
-   TypeId(IList<>).Bytes ++ TypeId(MyType).Bytes
-)
+// Step 1: IList<MyType> → single GUID
+var innerTypeId = ComputeCompositeTypeId(TypeId(IList<>), TypeId(MyType))
+// innerTypeId is now just a Guid, e.g. "7a3f..."
+
+// Step 2: IDict<string, IList<MyType>> → uses that GUID as an argument
+var outerTypeId = ComputeCompositeTypeId(TypeId(IDict<,>), TypeId(string), innerTypeId)
+```
+
+No ambiguity — by the time a nested generic is used as a type argument, it's already been reduced to a single GUID. The payload for step 2 is exactly three 16-byte GUIDs concatenated, regardless of how `innerTypeId` was computed.
 ```
 
 ### Collision Risk
