@@ -14,11 +14,11 @@ public interface IComponentRegistrar
       => registrationMethods.ForEach(it => it(this))
                             .__(this);
 
-   ILegacyContainer Container();
+   bool IsClone { get; }
+   bool IsRegistered<TComponent>() where TComponent : class;
 
    TTestingRegistrar? TryGetTestingRegistrar<TTestingRegistrar>() where TTestingRegistrar : class;
 
-   void SetContainer(ILegacyContainer container);
    IComponentRegistrar Clone();
 }
 
@@ -27,10 +27,11 @@ public interface IComponentRegistrar
 /// Registration is performed through <see cref="Registrar"/>. The builder itself has no registration methods.
 /// After <see cref="Build"/> is called, the builder should not be used further.
 /// </summary>
-public interface IContainerBuilder
+public interface IContainerBuilder : IDisposable, IAsyncDisposable
 {
    IComponentRegistrar Registrar { get; }
    IDependencyInjectionContainer Build();
+   IContainerBuilder Clone();
 }
 
 /// <summary>
@@ -41,6 +42,7 @@ public interface IDependencyInjectionContainer : IDisposable, IAsyncDisposable
 {
    IRootResolver Resolver { get; }
    IScopeFactory ScopeFactory { get; }
+   IContainerBuilder Clone();
 }
 
 public interface ILegacyContainer : IDisposable, IAsyncDisposable

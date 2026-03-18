@@ -5,9 +5,9 @@ namespace Compze.DependencyInjection;
 
 public class ComponentRegistrar : IComponentRegistrar
 {
-   ILegacyContainer? _container = null;
+   DependencyInjectionContainer? _container = null;
 
-   public void SetContainer(ILegacyContainer container)
+   internal void SetContainer(DependencyInjectionContainer container)
    {
       Contract.State.Assert(_container == null, () => "Container has already been set");
       _container = container;
@@ -32,11 +32,10 @@ public class ComponentRegistrar : IComponentRegistrar
       return this;
    }
 
-   public ILegacyContainer Container()
-   {
-      if(_container == null) throw new InvalidOperationException("Container has not been set yet");
-      return _container;
-   }
+   public bool IsClone => _container?.IsClone ?? false;
+
+   public bool IsRegistered<TComponent>() where TComponent : class =>
+      _container?.RegisteredComponents().Any(it => it.ServiceTypes.Contains(typeof(TComponent))) ?? false;
 
    public virtual TTestingRegistrar? TryGetTestingRegistrar<TTestingRegistrar>() where TTestingRegistrar : class => null;
 }

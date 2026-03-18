@@ -13,7 +13,7 @@ class MsSqlSqlLayerSchemaManager(IMsSqlConnectionPool connectionPool)
 {
    public static IComponentRegistrar RegisterWith(IComponentRegistrar registrar)
    {
-      if(registrar.Container().IsRegistered<MsSqlSqlLayerSchemaManager>())
+      if(registrar.IsRegistered<MsSqlSqlLayerSchemaManager>())
          return registrar;
       return registrar.Register(Singleton.For<MsSqlSqlLayerSchemaManager>()
                                          .CreatedBy((IMsSqlConnectionPool connectionPool) => new MsSqlSqlLayerSchemaManager(connectionPool))

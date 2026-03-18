@@ -16,7 +16,7 @@ public abstract partial class DependencyInjectionContainer : ILegacyContainer, I
    protected DependencyInjectionContainer(IComponentRegistrar? registrar)
    {
       _registrar = registrar ?? new ComponentRegistrar();
-      _registrar.SetContainer(this);
+      ((ComponentRegistrar)_registrar).SetContainer(this);
    }
 
    IComponentRegistrar IContainerBuilder.Registrar => _registrar;
@@ -39,7 +39,7 @@ public abstract partial class DependencyInjectionContainer : ILegacyContainer, I
 
    protected abstract DependencyInjectionContainer CreateEmptyClone();
 
-   public ILegacyContainer Clone()
+   DependencyInjectionContainer CloneInternal()
    {
       Log.Info($"Cloning IDependencyInjectionContainer: {GetHashCode()}");
       IRootResolver sourceRootResolver = ServiceLocator;
@@ -54,6 +54,10 @@ public abstract partial class DependencyInjectionContainer : ILegacyContainer, I
 
       return cloneContainer;
    }
+
+   IContainerBuilder IDependencyInjectionContainer.Clone() => CloneInternal();
+   IContainerBuilder IContainerBuilder.Clone() => CloneInternal();
+   ILegacyContainer ILegacyContainer.Clone() => CloneInternal();
 
    public ILegacyContainer Register(params ComponentRegistration[] registrations)
    {

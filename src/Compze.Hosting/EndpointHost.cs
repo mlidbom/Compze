@@ -12,11 +12,11 @@ namespace Compze.Hosting;
 
 public class EndpointHost : IEndpointHost
 {
-   readonly Func<ILegacyContainer> _containerFactory;
+   readonly Func<IContainerBuilder> _containerFactory;
    protected IList<IEndpoint> Endpoints { get; } = [];
    internal ITessagesInFlightTracker TessagesInFlightTracker;
 
-   protected EndpointHost(Func<ILegacyContainer> containerFactory)
+   protected EndpointHost(Func<IContainerBuilder> containerFactory)
    {
       _containerFactory = containerFactory;
       TessagesInFlightTracker = new NullOpTessagesInFlightTracker();
@@ -24,7 +24,7 @@ public class EndpointHost : IEndpointHost
 
    public static class Production
    {
-      public static IEndpointHost Create(Func<ILegacyContainer> containerFactory) => new EndpointHost(containerFactory);
+      public static IEndpointHost Create(Func<IContainerBuilder> containerFactory) => new EndpointHost(containerFactory);
    }
 
    public virtual IEndpoint RegisterEndpoint(string name, EndpointId id, Action<IEndpointBuilder> setup) => InternalRegisterEndpoint(new EndpointConfiguration(name, id), setup);

@@ -35,8 +35,8 @@ class ServerEndpointBuilder : IEndpointBuilder, IAsyncDisposable, IDisposable
 {
    bool _builtSuccessfully;
 
-   internal ILegacyContainer Container { get; }
-   public IComponentRegistrar Registrar => Container.Register();
+   internal IContainerBuilder Builder { get; }
+   public IComponentRegistrar Registrar => Builder.Registrar;
 
    readonly ITessagesInFlightTracker _globalStateTracker;
    readonly TessageHandlerRegistry _tessagingRegistry;
@@ -51,7 +51,7 @@ class ServerEndpointBuilder : IEndpointBuilder, IAsyncDisposable, IDisposable
    {
       SetupContainer();
       RegisterInfrastructureQueryHandlers();
-      var container = ((IContainerBuilder)Container).Build();
+      var container = Builder.Build();
       var rootResolver = container.Resolver;
       var endpoint = new Endpoint(container,
                                   rootResolver.Resolve<ITessagingRouter>(),
@@ -63,17 +63,17 @@ class ServerEndpointBuilder : IEndpointBuilder, IAsyncDisposable, IDisposable
 
    void RegisterInfrastructureQueryHandlers()
    {
-      var rootResolver = ((IContainerBuilder)Container).Build().Resolver;
+      var rootResolver = Builder.Build().Resolver;
       var executor = rootResolver.Resolve<InfrastructureQueryExecutor>();
       var registrar = new InfrastructureQueryRegistrarWithDependencyInjectionSupport(executor);
       TessageTypesInternal.RegisterInfrastructureQueryHandlers(registrar);
       TypermediaInfrastructureQueryRegistration.RegisterQueryHandlers(registrar);
    }
 
-   public ServerEndpointBuilder(IEndpointHost host, ITessagesInFlightTracker globalStateTracker, ILegacyContainer container, EndpointConfiguration configuration)
+   public ServerEndpointBuilder(IEndpointHost host, ITessagesInFlightTracker globalStateTracker, IContainerBuilder builder, EndpointConfiguration configuration)
    {
       _host = host;
-      Container = container;
+      Builder = builder;
       _globalStateTracker = globalStateTracker;
 
       Configuration = configuration;
@@ -120,9 +120,8 @@ class ServerEndpointBuilder : IEndpointBuilder, IAsyncDisposable, IDisposable
 
       register.Register(
          Singleton.For<EndpointId>().Instance(Configuration.Id),
-         Singleton.For<ILegacyContainer>().Instance(Container),
-         Singleton.For<IContainerBuilder>().CreatedBy(() => (IContainerBuilder)Container),
-         Singleton.For<IDependencyInjectionContainer>().CreatedBy(() => ((IContainerBuilder)Container).Build()),
+         Singleton.For<IContainerBuilder>().Instance(Builder),
+         Singleton.For<IDependencyInjectionContainer>().CreatedBy(() => Builder.Build()),
          Singleton.For<IRootResolver>().CreatedBy((IDependencyInjectionContainer container) => container.Resolver),
          Singleton.For<IScopeFactory>().CreatedBy((IDependencyInjectionContainer container) => container.ScopeFactory),
          Singleton.For<EndpointConfiguration>().Instance(Configuration),
@@ -140,7 +139,7 @@ class ServerEndpointBuilder : IEndpointBuilder, IAsyncDisposable, IDisposable
          _disposed = true;
          if(!_builtSuccessfully)
          {
-            await Container.DisposeAsync().caf();
+            await Builder.DisposeAsync().caf();
          }
       }
    }

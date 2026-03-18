@@ -28,9 +28,9 @@ public class TestClient : IAsyncDisposable
    public static async Task<TestClient> ConnectTo(EndPointAddress typermediaAddress)
    {
 #pragma warning disable CA2000 // We are passing this disposable into a constructor of an object we don't own
-        var container = TestEnv.DIContainer.CreateWithServiceLocator();
+        var builder = TestEnv.DIContainer.CreateWithServiceLocator();
 #pragma warning restore CA2000
-        container.Register()
+        builder.Registrar
                .CurrentTestsSerializersIfNotClonedContainer()
                .CurrentTestsClientTransport()
                .JSonAppConfigFileConfigurationParameterProvider()
@@ -38,7 +38,7 @@ public class TestClient : IAsyncDisposable
                .TypermediaRouter()
                .SingletonRemoteTypermediaNavigator();
 
-      var client = new TestClient(container.ServiceLocator);
+      var client = new TestClient(((ILegacyContainer)builder).ServiceLocator);
       client._typermediaRouter.Start();
       await client._typermediaRouter.ConnectAsync(typermediaAddress).caf();
       return client;

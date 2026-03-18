@@ -22,9 +22,9 @@ public class SerializerTest : UniversalTestBase
    {
       var serializer = PCTSerializerAttribute.Serializer;
 #pragma warning disable CA2000 // We are disposing this disposable in DisposeInternal
-      _container = DIContainer.Microsoft
+      _container = (ILegacyContainer)DIContainer.Microsoft
                              .CreateEmpty()
-                             ._mutate(it => RegisterSerializer(it.Register(), serializer)
+                             ._mutate(it => RegisterSerializer(it.Registrar, serializer)
                                               .TypeMapper());
 #pragma warning restore CA2000
    }

@@ -12,22 +12,22 @@ namespace Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 
 public class TestingEndpointHost : TestingEndpointHostBase
 {
-   ILegacyContainer? _ownedContainer = null;
+   IContainerBuilder? _ownedBuilder = null;
 
-   TestingEndpointHost(ILegacyContainer rootContainer) : base(rootContainer.Clone) {}
+   TestingEndpointHost(IContainerBuilder rootBuilder) : base(rootBuilder.Clone) {}
 
-   public static ITestingEndpointHost Create(ILegacyContainer? rootContainer = null)
+   public static ITestingEndpointHost Create(IContainerBuilder? rootBuilder = null)
    {
 #pragma warning disable CA2000 // We are passing this disposable into a constructor of an object we don't own
-      var usedContainer = rootContainer ?? TestEnv.DIContainer.CreateWithServiceLocator()
-                                                  ._mutate(it => it.Register().CurrentTestsDbPoolIfNotCloneContainer());
+      var usedBuilder = rootBuilder ?? TestEnv.DIContainer.CreateWithServiceLocator()
+                                                  ._mutate(it => it.Registrar.CurrentTestsDbPoolIfNotCloneContainer());
 #pragma warning restore CA2000 // We are passing this disposable into a constructor of an object we don't own
 
-      var host = new TestingEndpointHost(usedContainer);
+      var host = new TestingEndpointHost(usedBuilder);
 
-      if(rootContainer == null)
+      if(rootBuilder == null)
       {
-         host._ownedContainer = usedContainer;
+         host._ownedBuilder = usedBuilder;
       }
 
       return host;
@@ -46,11 +46,11 @@ public class TestingEndpointHost : TestingEndpointHostBase
          exceptions.Add(e);
       }
 
-      if(_ownedContainer != null)
+      if(_ownedBuilder != null)
       {
          try
          {
-            await _ownedContainer.DisposeAsync();
+            await _ownedBuilder.DisposeAsync();
          }
          catch(Exception e)
          {
