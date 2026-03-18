@@ -6,14 +6,14 @@ using Compze.Internals.SystemCE.ReflectionCE;
 namespace Compze.Abstractions.Refactoring.Naming.Internal.Implementation;
 
 class ScannedAssemblyTypes(
-   IReadOnlyList<Type> typesRequiringExplicitMapping,
-   IReadOnlyList<Type> composableTypes)
+   IReadOnlyList<Type> explicitlyMappedTypes,
+   IReadOnlyList<Type> computedTypeIdTypes)
 {
    static readonly ScannedAssemblyTypes _empty = new([], []);
    internal static ScannedAssemblyTypes Empty => _empty;
 
-   internal IReadOnlyList<Type> TypesRequiringExplicitMapping { get; } = typesRequiringExplicitMapping;
-   internal IReadOnlyList<Type> ComposableTypes { get; } = composableTypes;
+   internal IReadOnlyList<Type> ExplicitlyMappedTypes { get; } = explicitlyMappedTypes;
+   internal IReadOnlyList<Type> ComputedTypeIdTypes { get; } = computedTypeIdTypes;
 }
 
 static class TypeMapperAssemblyScanner

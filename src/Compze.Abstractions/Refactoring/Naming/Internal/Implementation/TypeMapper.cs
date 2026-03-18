@@ -108,22 +108,20 @@ public class TypeMapper : ITypeMapper
 
    static void ProcessAssembly(System.Reflection.Assembly assembly, MappingState state)
    {
-      var assemblyMappings = AssemblyMappingReader.ReadMappings(assembly);
-      foreach(var (type, typeId) in assemblyMappings)
-         state.Map(type, typeId);
+      state.AddMappings(AssemblyMappingReader.ReadMappings(assembly));
 
       var scannedTypes = TypeMapperAssemblyScanner.Scan(assembly);
 
       TypeId? ResolveExplicitTypeId(Type type) => state.TypeToTypeIdMap.GetValueOrDefault(type);
 
-      foreach(var type in scannedTypes.TypesRequiringExplicitMapping.Concat(scannedTypes.ComposableTypes))
+      foreach(var type in scannedTypes.ExplicitlyMappedTypes.Concat(scannedTypes.ComputedTypeIdTypes))
       {
          var mapperType = TypeMapperType.GetOrCreate(type, ResolveExplicitTypeId, state.TypeMapperTypeCache);
          if(mapperType.TypeId != null && !state.TypeToTypeIdMap.ContainsKey(type))
-            state.Map(type, mapperType.TypeId);
+            state.AddMapping(type, mapperType.TypeId);
       }
 
-      var hasMissingExplicitMappings = scannedTypes.TypesRequiringExplicitMapping
+      var hasMissingExplicitMappings = scannedTypes.ExplicitlyMappedTypes
                                                    .Any(type => !state.TypeToTypeIdMap.ContainsKey(type));
 
       if(hasMissingExplicitMappings)
@@ -142,7 +140,7 @@ public class TypeMapper : ITypeMapper
       if(mapperType.TypeId != null)
       {
          typeId = mapperType.TypeId;
-         state.Map(type, typeId);
+         state.AddMapping(type, typeId);
          return true;
       }
 
@@ -158,7 +156,9 @@ public class TypeMapper : ITypeMapper
       internal readonly HashSet<System.Reflection.Assembly> CheckedAssemblies = [];
       internal readonly Dictionary<System.Reflection.Assembly, string> AssemblyMappingUpdateMessages = new();
 
-      internal void Map(Type type, TypeId typeId)
+      internal void AddMappings(IReadOnlyDictionary<Type, TypeId> ids) => ids.ForEach(keyValuePair => AddMapping(keyValuePair.Key, keyValuePair.Value));
+
+      internal void AddMapping(Type type, TypeId typeId)
       {
          if(TypeToTypeIdMap.TryGetValue(type, out var existingTypeId))
          {
