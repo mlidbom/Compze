@@ -69,10 +69,19 @@ public static partial class TypeCE
 
    public static string GetFullNameCompilable(this Type @this)
    {
+      if(@this.IsGenericTypeDefinition)
+      {
+         var baseName = @this.FullName!.ReplaceOrdinal("+", ".");
+         var arity = @this.GetGenericArguments().Length;
+         var commas = new string(',', arity - 1);
+         return baseName.ReplaceOrdinal($"`{arity}", $"<{commas}>");
+      }
+
       if(!@this.IsConstructedGenericType) return @this.FullName!.ReplaceOrdinal("+", ".");
 
       var typeArguments = @this.GenericTypeArguments;
-      var genericTypeName = @this.GetGenericTypeDefinition().GetFullNameCompilable().ReplaceOrdinal($"`{typeArguments.Length}", "");
+      var genericDefinitionFullName = @this.GetGenericTypeDefinition().FullName!.ReplaceOrdinal("+", ".");
+      var genericTypeName = genericDefinitionFullName.ReplaceOrdinal($"`{typeArguments.Length}", "");
 
       var name = $"{genericTypeName}<{typeArguments.Select(type => type.GetFullNameCompilable()).Join(",")}>";
 
