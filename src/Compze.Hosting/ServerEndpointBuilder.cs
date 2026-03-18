@@ -35,7 +35,8 @@ class ServerEndpointBuilder : IEndpointBuilder, IAsyncDisposable, IDisposable
 {
    bool _builtSuccessfully;
 
-   public ILegacyContainer Container { get; }
+   internal ILegacyContainer Container { get; }
+   public IComponentRegistrar Registrar => Container.Register();
 
    readonly ITessagesInFlightTracker _globalStateTracker;
    readonly TessageHandlerRegistry _tessagingRegistry;
@@ -50,10 +51,11 @@ class ServerEndpointBuilder : IEndpointBuilder, IAsyncDisposable, IDisposable
    {
       SetupContainer();
       RegisterInfrastructureQueryHandlers();
-      var serviceLocator = Container.ServiceLocator;
-      var endpoint = new Endpoint(serviceLocator,
-                                  serviceLocator.Resolve<ITessagingRouter>(),
-                                  serviceLocator.Resolve<IEndpointRegistry>(),
+      var container = ((IContainerBuilder)Container).Build();
+      var rootResolver = container.Resolver;
+      var endpoint = new Endpoint(container,
+                                  rootResolver.Resolve<ITessagingRouter>(),
+                                  rootResolver.Resolve<IEndpointRegistry>(),
                                   Configuration);
       _builtSuccessfully = true;
       return endpoint;
@@ -61,7 +63,8 @@ class ServerEndpointBuilder : IEndpointBuilder, IAsyncDisposable, IDisposable
 
    void RegisterInfrastructureQueryHandlers()
    {
-      var executor = Container.ServiceLocator.Resolve<InfrastructureQueryExecutor>();
+      var rootResolver = ((IContainerBuilder)Container).Build().Resolver;
+      var executor = rootResolver.Resolve<InfrastructureQueryExecutor>();
       var registrar = new InfrastructureQueryRegistrarWithDependencyInjectionSupport(executor);
       TessageTypesInternal.RegisterInfrastructureQueryHandlers(registrar);
       TypermediaInfrastructureQueryRegistration.RegisterQueryHandlers(registrar);
@@ -83,7 +86,7 @@ class ServerEndpointBuilder : IEndpointBuilder, IAsyncDisposable, IDisposable
 
    void SetupContainer()
    {
-      var register = Container.Register();
+      var register = Registrar;
       //Universal stuff here
       register.JSonAppConfigFileConfigurationParameterProvider()
               .TypeMapper();
@@ -92,16 +95,16 @@ class ServerEndpointBuilder : IEndpointBuilder, IAsyncDisposable, IDisposable
       //todo: Find cleaner way of doing this.
       if(_host is IEndpointRegistry endpointRegistry)
       {
-         Container.Register(Singleton.For<IEndpointRegistry>().Instance(endpointRegistry));
+         register.Register(Singleton.For<IEndpointRegistry>().Instance(endpointRegistry));
       } else
       {
-         Container.Register(Singleton.For<IEndpointRegistry>().CreatedBy((IConfigurationParameterProvider configurationParameterProvider) => new AppConfigEndpointRegistry(configurationParameterProvider)));
+         register.Register(Singleton.For<IEndpointRegistry>().CreatedBy((IConfigurationParameterProvider configurationParameterProvider) => new AppConfigEndpointRegistry(configurationParameterProvider)));
       }
 
       //Transport
       register.TessagingTransport();
 
-      Container.Register(Singleton.For<ITessagesInFlightTracker>().CreatedBy(() => _globalStateTracker));
+      register.Register(Singleton.For<ITessagesInFlightTracker>().CreatedBy(() => _globalStateTracker));
 
       register.BackgroundExceptionReporter()
               .TaskRunner()
@@ -112,14 +115,13 @@ class ServerEndpointBuilder : IEndpointBuilder, IAsyncDisposable, IDisposable
               .ServiceBusSession()
               .InProcessTypermediaNavigator();
 
-      TypermediaHandlerExecutor.RegisterWith(Container.Register());
-      InfrastructureQueryExecutor.RegisterWith(Container.Register());
+      TypermediaHandlerExecutor.RegisterWith(register);
+      InfrastructureQueryExecutor.RegisterWith(register);
 
-      Container.Register(
+      register.Register(
          Singleton.For<EndpointId>().Instance(Configuration.Id),
          Singleton.For<ILegacyContainer>().Instance(Container),
          Singleton.For<IContainerBuilder>().CreatedBy(() => (IContainerBuilder)Container),
-         //urgent:todo: Building here seems exceedingly strange. We create our own container by resolving it from the container? How does that even work?
          Singleton.For<IDependencyInjectionContainer>().CreatedBy(() => ((IContainerBuilder)Container).Build()),
          Singleton.For<IRootResolver>().CreatedBy((IDependencyInjectionContainer container) => container.Resolver),
          Singleton.For<IScopeFactory>().CreatedBy((IDependencyInjectionContainer container) => container.ScopeFactory),

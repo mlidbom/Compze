@@ -2,6 +2,7 @@ using Compze.Abstractions.Wiring.Testing.Internal;
 using Compze.Internals.Testing;
 using Compze.Internals.Testing.Performance;
 using Compze.DependencyInjection;
+using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tests.Infrastructure.XUnit;
@@ -41,7 +42,7 @@ public class Local_Tuery_performance_tests : PerformanceTestBase
 
       //ncrunch: no coverage start
       void RunRequest() =>
-         ServerEndpoint.ServiceLocator.ExecuteInIsolatedScope(scope =>
+         ServerEndpoint.ServiceLocator.Resolve<IScopeFactory>().ExecuteInIsolatedScope(scope =>
          {
             var navigator = scope.Resolve<IInProcessTypermediaNavigator>();
             for(var i = 0; i < tueriesPerRequest; i++)

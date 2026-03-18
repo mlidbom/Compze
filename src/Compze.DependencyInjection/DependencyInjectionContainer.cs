@@ -42,7 +42,7 @@ public abstract partial class DependencyInjectionContainer : ILegacyContainer, I
    public ILegacyContainer Clone()
    {
       Log.Info($"Cloning IDependencyInjectionContainer: {GetHashCode()}");
-      var sourceServiceLocator = ServiceLocator;
+      IRootResolver sourceRootResolver = ServiceLocator;
       var cloneContainer = CreateEmptyClone();
       cloneContainer.IsClone = true;
 
@@ -50,7 +50,7 @@ public abstract partial class DependencyInjectionContainer : ILegacyContainer, I
 
       RegisteredComponents()
         .Where(component => ContainerFacadeServiceTypes.None(facadeType => component.ServiceTypes.Contains(facadeType)))
-        .ForEach(action: registration => cloneContainer.Register(registration.CreateCloneRegistration(sourceServiceLocator)));
+        .ForEach(action: registration => cloneContainer.Register(registration.CreateCloneRegistration(sourceRootResolver)));
 
       return cloneContainer;
    }

@@ -34,7 +34,7 @@ public abstract class ComponentRegistration
       AllowScopedDependent = allowScopedDependent;
    }
 
-   internal abstract ComponentRegistration CreateCloneRegistration(IServiceLocator currentLocator);
+   internal abstract ComponentRegistration CreateCloneRegistration(IRootResolver currentRootResolver);
 }
 
 public class ComponentRegistration<TService> : ComponentRegistration where TService : class
@@ -50,7 +50,7 @@ public class ComponentRegistration<TService> : ComponentRegistration where TServ
       return this;
    }
 
-   internal override ComponentRegistration CreateCloneRegistration(IServiceLocator currentLocator)
+   internal override ComponentRegistration CreateCloneRegistration(IRootResolver currentRootResolver)
    {
       if(!ShouldDelegateToParentWhenCloning)
       {
@@ -61,7 +61,7 @@ public class ComponentRegistration<TService> : ComponentRegistration where TServ
       return new ComponentRegistration<TService>(////Instance registrations are not disposed.
          lifestyle: Lifestyle.Singleton,
          serviceTypes: ServiceTypes,
-         instantiationSpec: InstantiationSpec.FromInstance(currentLocator.Resolve<TService>()),
+         instantiationSpec: InstantiationSpec.FromInstance(currentRootResolver.Resolve<TService>()),
          dependencyTypes: DependencyTypes,
          allowSingletonDependent: AllowSingletonDependent,
          allowScopedDependent: AllowScopedDependent

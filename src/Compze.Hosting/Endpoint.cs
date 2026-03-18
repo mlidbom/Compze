@@ -28,23 +28,24 @@ class Endpoint : IEndpoint
    }
 
    readonly EndpointConfiguration _configuration;
+   readonly IDependencyInjectionContainer _container;
    readonly IRootResolver _rootResolver;
 
-   public Endpoint(IServiceLocator serviceLocator,
+   public Endpoint(IDependencyInjectionContainer container,
                    ITessagingRouter tessagingRouter,
                    IEndpointRegistry endpointRegistry,
                    EndpointConfiguration configuration)
    {
-      Argument.NotNull(serviceLocator).NotNull(configuration);
-      ServiceLocator = serviceLocator;
-      _rootResolver = serviceLocator;
+      Argument.NotNull(container).NotNull(configuration);
+      _container = container;
+      _rootResolver = container.Resolver;
       _tessagingRouter = tessagingRouter;
       _configuration = configuration;
       _endpointRegistry = endpointRegistry;
    }
 
    public EndpointId Id => _configuration.Id;
-   public IServiceLocator ServiceLocator { get; }
+   public IRootResolver ServiceLocator => _rootResolver;
 
    public EndPointAddress? Address => _serverComponents?.Inbox.Address;
    public EndPointAddress? TypermediaAddress => _typermediaTransportServer?.Address is { } uri ? new EndPointAddress(uri) : null;
@@ -133,8 +134,8 @@ class Endpoint : IEndpoint
       await StopListeningComponentsAsync().caf();
       if(_serverComponents != null)
       {
-         var exceptionReporter = ServiceLocator.Resolve<IBackgroundExceptionReporter>();
-         await ServiceLocator.DisposeAsync().caf();
+         var exceptionReporter = _rootResolver.Resolve<IBackgroundExceptionReporter>();
+         await _container.DisposeAsync().caf();
          _serverComponents.Dispose();
          exceptionReporter.ThrowIfAnyExceptions();
       }
