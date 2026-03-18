@@ -33,8 +33,8 @@ public class TypeMapper : ITypeMapper
       if(TryGetOrComputeTypeId(type, state, out var typeId))
          return typeId;
 
-      if(state.AssemblyMappingUpdateMessages.TryGetValue(type.Assembly, out var message))
-         throw new Exception($"Failed to find TypeId for type: {type.FullName}{Environment.NewLine}{message}");
+      if(state.AssemblyMappingUpdateMessages.TryGetValue(type.Assembly, out var assemblyMappingMessage))
+         throw new Exception($"Failed to find TypeId for type: {type.FullName}{Environment.NewLine}{assemblyMappingMessage}");
 
       throw MissingMappingReporter.BuildMissingTypesException([type]);
    });
@@ -53,29 +53,29 @@ public class TypeMapper : ITypeMapper
       return type != null;
    }
 
-   public IEnumerable<TypeId> GetIdForTypesAssignableTo(Type type) =>State.Locked(state =>
+   public IEnumerable<TypeId> GetIdForTypesAssignableTo(Type type) => State.Locked(state =>
+   {
+      EnsureAllCurrentlyLoadedAssembliesHaveBeenCheckedForRequiredMappings();
+
+      TryGetOrComputeTypeId(type, state, out _);
+
+      var found = state
+                 .TypeToTypeIdMap
+                 .Keys
+                 .Where(type.IsAssignableFrom)
+                 .Select(matchingType => state.TypeToTypeIdMap[matchingType])
+                 .ToArray();
+
+      if(!found.Any())
       {
-         EnsureAllCurrentlyLoadedAssembliesHaveBeenCheckedForRequiredMappings();
+         if(state.AssemblyMappingUpdateMessages.TryGetValue(type.Assembly, out var message))
+            throw new Exception($"Failed to find TypeIds for types assignable to: {type.FullName}{Environment.NewLine}{message}");
 
-         TryGetOrComputeTypeId(type, state, out _);
+         throw MissingMappingReporter.BuildMissingTypesException([type]);
+      }
 
-         var found = state
-                    .TypeToTypeIdMap
-                    .Keys
-                    .Where(type.IsAssignableFrom)
-                    .Select(matchingType => state.TypeToTypeIdMap[matchingType])
-                    .ToArray();
-
-         if(!found.Any())
-         {
-            if(state.AssemblyMappingUpdateMessages.TryGetValue(type.Assembly, out var message))
-               throw new Exception($"Failed to find TypeIds for types assignable to: {type.FullName}{Environment.NewLine}{message}");
-
-            throw MissingMappingReporter.BuildMissingTypesException([type]);
-         }
-
-         return found;
-      });
+      return found;
+   });
 
    public Unit AssertMappingsExistFor(IEnumerable<Type> typesThatRequireMappings) => State.Locked(state =>
    {
@@ -89,12 +89,8 @@ public class TypeMapper : ITypeMapper
    {
       State.Locked(state =>
       {
-         var unHandledAssemblies = AppDomain.CurrentDomain.GetAssemblies().Except(state.CheckedAssemblies);
-
-         foreach(var assembly in unHandledAssemblies)
+         foreach(var assembly in AppDomain.CurrentDomain.GetAssemblies().Except(state.CheckedAssemblies))
          {
-            if(state.CheckedAssemblies.Contains(assembly)) continue;
-
             try
             {
                ProcessAssembly(assembly, state);
