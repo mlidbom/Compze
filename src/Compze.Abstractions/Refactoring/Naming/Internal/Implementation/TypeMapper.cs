@@ -28,30 +28,24 @@ public class TypeMapper : ITypeMapper
       AppDomain.CurrentDomain.AssemblyLoad += (_, _) => EnsureAllCurrentlyLoadedAssembliesHaveBeenCheckedForRequiredMappings();
    }
 
-   public TypeId GetId(Type type)
+   public TypeId GetId(Type type) => State.Locked(state =>
    {
-      return State.Locked(state =>
-      {
-         if(TryGetOrComputeTypeId(type, state, out var typeId))
-            return typeId;
+      if(TryGetOrComputeTypeId(type, state, out var typeId))
+         return typeId;
 
-         if(state.AssemblyMappingUpdateTessages.TryGetValue(type.Assembly, out var tessage))
-            throw new Exception($"Failed to find TypeId for type: {type.FullName}{Environment.NewLine}{tessage}");
+      if(state.AssemblyMappingUpdateTessages.TryGetValue(type.Assembly, out var tessage))
+         throw new Exception($"Failed to find TypeId for type: {type.FullName}{Environment.NewLine}{tessage}");
 
-         throw MissingMappingReporter.BuildMissingTypesException([type]);
-      });
-   }
+      throw MissingMappingReporter.BuildMissingTypesException([type]);
+   });
 
-   public Type GetType(TypeId teventTypeId)
+   public Type GetType(TypeId teventTypeId) => State.Locked(state =>
    {
-      return State.Locked(state =>
-      {
-         if(state.TypeIdToTypeMap.TryGetValue(teventTypeId, out var type))
-            return type;
+      if(state.TypeIdToTypeMap.TryGetValue(teventTypeId, out var type))
+         return type;
 
-         throw new Exception($"Could not find type for {nameof(TypeId)}: {teventTypeId}");
-      });
-   }
+      throw new Exception($"Could not find type for {nameof(TypeId)}: {teventTypeId}");
+   });
 
    public bool TryGetType(TypeId typeId, [NotNullWhen(true)] out Type? type)
    {
@@ -59,9 +53,7 @@ public class TypeMapper : ITypeMapper
       return type != null;
    }
 
-   public IEnumerable<TypeId> GetIdForTypesAssignableTo(Type type)
-   {
-      return State.Locked(state =>
+   public IEnumerable<TypeId> GetIdForTypesAssignableTo(Type type) =>State.Locked(state =>
       {
          EnsureAllCurrentlyLoadedAssembliesHaveBeenCheckedForRequiredMappings();
 
@@ -84,7 +76,6 @@ public class TypeMapper : ITypeMapper
 
          return found;
       });
-   }
 
    public Unit AssertMappingsExistFor(IEnumerable<Type> typesThatRequireMappings) => State.Locked(state =>
    {
@@ -148,7 +139,7 @@ public class TypeMapper : ITypeMapper
       }
 
       var hasMissingExplicitMappings = scannedTypes.TypesRequiringExplicitMapping
-         .Any(type => !state.TypeToTypeIdMap.ContainsKey(type));
+                                                   .Any(type => !state.TypeToTypeIdMap.ContainsKey(type));
 
       if(hasMissingExplicitMappings)
       {
