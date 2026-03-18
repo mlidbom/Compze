@@ -20,8 +20,9 @@ No production code needs both root resolution and scope creation from the same i
 ## Target Interface Hierarchy
 
 ```
-IContainerBuilder              — Register(), Build() → IContainer
+IContainerBuilder              — IComponentRegistrar Registrar, Build() → IContainer
 IContainer                     — IRootResolver Resolver, IScopeFactory ScopeFactory, CreateChildContainerBuilder()
+IComponentRegistrar             — Register(), fluent API, testing strategy (unchanged role)
 IRootResolver                  — Resolve() at root (singletons, transients)
 IScopeFactory                  — BeginScope() → IServiceScope
 IServiceScope                  — IScopeResolver Resolver, Dispose()
@@ -31,7 +32,8 @@ IServiceResolver               — internal base, only used by factory method pi
 
 ### Design rationale
 
-- **`IContainerBuilder`**: Accepts registrations. Produces `IContainer` via `Build()`. Can't resolve. The type system prevents resolving from an incomplete container.
+- **`IContainerBuilder`**: Composes `IComponentRegistrar` and `Build()`. No `Register()` methods — registration is the registrar's job, building is the builder's job. Orchestration code holds the builder to finalize. Wiring code receives `builder.Registrar` or just `IComponentRegistrar` directly.
+- **`IComponentRegistrar`**: Unchanged role. Fluent registration API (44+ extension methods target it). Testing strategy via subtype polymorphism (`TestingComponentRegistrar`). Wiring code receives this — never needs `Build()`.
 - **`IContainer`**: The built container. Composes `IRootResolver`, `IScopeFactory`, and `CreateChildContainerBuilder()` — doesn't inherit from them. Only orchestration code (endpoint startup, container lifecycle) holds this.
 - **`IRootResolver`**: Root-level resolution (singletons, transients). Goes to code that only needs to resolve — `Endpoint`, registrars.
 - **`IScopeFactory`**: Creates scopes. Goes to code that only needs to create scopes — transport servers, executors.
@@ -39,10 +41,24 @@ IServiceResolver               — internal base, only used by factory method pi
 - **`IServiceScope`**: Lifetime boundary. Owns an `IScopeResolver`. Disposed by the code that created the scope.
 - **`IServiceResolver`**: Internal base. Only used by `InstantiationSpec.RunFactoryMethod()` so factory lambdas can accept either root or scoped resolvers.
 
+### Composition over inheritance in order to achieve Interface Segregation Principle
+
+Both `IContainerBuilder` and `IContainer` compose their capabilities via properties:
+- `IContainerBuilder` *has* an `IComponentRegistrar` (doesn't inherit registration)
+- `IContainer` *has* an `IRootResolver` and `IScopeFactory` (doesn't inherit resolution or scope creation)
+
+Each sub-interface stays independently injectable. Consumers receive exactly what they need:
+- Wiring code → `IComponentRegistrar`
+- Orchestration code → `IContainerBuilder` (registration + finalization)
+- Entry points → `IRootResolver`
+- Request handlers → `IScopeFactory`
+- In-scope code → `IScopeResolver`
+
 ### Key properties
 
 - Builder can't resolve. Built container can't register. Type system enforces phases.
-- `IContainer` doesn't inherit resolution or scope creation — it *has* them via properties. No "the container IS a resolver" confusion.
+- Builder doesn't register — the registrar does. Builder only finalizes.
+- `IContainer` doesn't inherit resolution or scope creation — it *has* them via properties.
 - Each consumer receives exactly the capability it needs. ISP at the foundation level.
 
 ## Child Container Builder
