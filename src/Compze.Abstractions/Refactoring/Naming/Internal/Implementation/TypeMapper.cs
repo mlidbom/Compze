@@ -33,7 +33,7 @@ public class TypeMapper : ITypeMapper
       if(TryGetOrComputeTypeId(type, state, out var typeId))
          return typeId;
 
-      if(state.AssemblyMappingUpdateTessages.TryGetValue(type.Assembly, out var tessage))
+      if(state.AssemblyMappingUpdateMessages.TryGetValue(type.Assembly, out var tessage))
          throw new Exception($"Failed to find TypeId for type: {type.FullName}{Environment.NewLine}{tessage}");
 
       throw MissingMappingReporter.BuildMissingTypesException([type]);
@@ -68,7 +68,7 @@ public class TypeMapper : ITypeMapper
 
          if(!found.Any())
          {
-            if(state.AssemblyMappingUpdateTessages.TryGetValue(type.Assembly, out var tessage))
+            if(state.AssemblyMappingUpdateMessages.TryGetValue(type.Assembly, out var tessage))
                throw new Exception($"Failed to find TypeIds for types assignable to: {type.FullName}{Environment.NewLine}{tessage}");
 
             throw MissingMappingReporter.BuildMissingTypesException([type]);
@@ -82,17 +82,6 @@ public class TypeMapper : ITypeMapper
       var missing = typesThatRequireMappings.Where(type => !TryGetOrComputeTypeId(type, state, out _)).ToList();
       if(missing.Any()) throw MissingMappingReporter.BuildMissingTypesException(missing);
    });
-
-   static void AssertTypeValidForMapping(Type type)
-   {
-      if(type.IsGenericTypeDefinition) return;
-
-      if(type.IsAbstract)
-      {
-         if(!typeof(IRemotableTevent).IsAssignableFrom(type))
-            throw new Exception($"Type: {type.FullName} is abstract and is not a {typeof(IRemotableTevent).FullName}. For other types you should only map concrete types.");
-      }
-   }
 
    static readonly ReentrancyGuard ReentrancyGuard = new();
 
@@ -143,8 +132,8 @@ public class TypeMapper : ITypeMapper
 
       if(hasMissingExplicitMappings)
       {
-         var tessage = MissingMappingReporter.BuildAssemblyMappingTessage(assembly, state.TypeToTypeIdMap);
-         state.AssemblyMappingUpdateTessages[assembly] = tessage;
+         var message = MissingMappingReporter.BuildAssemblyMappingTessage(assembly, state.TypeToTypeIdMap);
+         state.AssemblyMappingUpdateMessages[assembly] = message;
       }
    }
 
@@ -171,7 +160,7 @@ public class TypeMapper : ITypeMapper
       internal readonly Dictionary<TypeId, Type> TypeIdToTypeMap = new();
       internal readonly Dictionary<Type, TypeMapperType> TypeMapperTypeCache = new();
       internal readonly HashSet<System.Reflection.Assembly> CheckedAssemblies = [];
-      internal readonly Dictionary<System.Reflection.Assembly, string> AssemblyMappingUpdateTessages = new();
+      internal readonly Dictionary<System.Reflection.Assembly, string> AssemblyMappingUpdateMessages = new();
 
       internal void Map(Type type, TypeId typeId)
       {
@@ -191,6 +180,17 @@ public class TypeMapper : ITypeMapper
 
          TypeIdToTypeMap.Add(typeId, type);
          TypeToTypeIdMap.Add(type, typeId);
+      }
+   }
+
+   static void AssertTypeValidForMapping(Type type)
+   {
+      if(type.IsGenericTypeDefinition) return;
+
+      if(type.IsAbstract)
+      {
+         if(!typeof(IRemotableTevent).IsAssignableFrom(type))
+            throw new Exception($"Type: {type.FullName} is abstract and is not a {typeof(IRemotableTevent).FullName}. For other types you should only map concrete types.");
       }
    }
 }
