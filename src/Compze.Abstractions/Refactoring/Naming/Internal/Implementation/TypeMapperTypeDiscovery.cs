@@ -19,14 +19,6 @@ static class TypeMapperTypeDiscovery
       }
    }
 
-   public static ISet<Type> GetTypesRequiringMapping(Assembly assembly)
-   {
-      var discovered = DiscoverTypes(assembly);
-      var allTypes = new HashSet<Type>(discovered.RequiringExplicitMapping);
-      allTypes.UnionWith(discovered.Composable);
-      return allTypes;
-   }
-
    internal static DiscoveredTypes DiscoverTypes(Assembly assembly)
    {
       if(!IsAssemblyWeShouldExamine(assembly))
@@ -59,35 +51,35 @@ static class TypeMapperTypeDiscovery
          // Check properties
          foreach(var property in definedType.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static))
          {
-            CollectClosedGenericTypes(property.PropertyType, assembly, composableTypes);
+            CollectClosedGenericTypes(property.PropertyType, assembly, composableTypes, explicitTypes);
          }
 
          // Check fields
          foreach(var field in definedType.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static))
          {
-            CollectClosedGenericTypes(field.FieldType, assembly, composableTypes);
+            CollectClosedGenericTypes(field.FieldType, assembly, composableTypes, explicitTypes);
          }
 
          // Check methods (parameters and return types)
          foreach(var method in definedType.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static))
          {
-            CollectClosedGenericTypes(method.ReturnType, assembly, composableTypes);
+            CollectClosedGenericTypes(method.ReturnType, assembly, composableTypes, explicitTypes);
             foreach(var parameter in method.GetParameters())
             {
-               CollectClosedGenericTypes(parameter.ParameterType, assembly, composableTypes);
+               CollectClosedGenericTypes(parameter.ParameterType, assembly, composableTypes, explicitTypes);
             }
          }
 
          // Check base type
          if(definedType.BaseType != null)
          {
-            CollectClosedGenericTypes(definedType.BaseType, assembly, composableTypes);
+            CollectClosedGenericTypes(definedType.BaseType, assembly, composableTypes, explicitTypes);
          }
 
          // Check interfaces
          foreach(var interfaceType in definedType.GetInterfaces())
          {
-            CollectClosedGenericTypes(interfaceType, assembly, composableTypes);
+            CollectClosedGenericTypes(interfaceType, assembly, composableTypes, explicitTypes);
          }
       }
 
@@ -112,7 +104,7 @@ static class TypeMapperTypeDiscovery
       return false;
    }
 
-   static void CollectClosedGenericTypes(Type type, Assembly targetAssembly, HashSet<Type> collectedTypes)
+   static void CollectClosedGenericTypes(Type type, Assembly targetAssembly, HashSet<Type> composableTypes, HashSet<Type> explicitTypes)
    {
       // If this is a closed generic type (generic but not a generic type definition)
       if(type is { IsGenericType: true, IsGenericTypeDefinition: false })
@@ -124,7 +116,17 @@ static class TypeMapperTypeDiscovery
 
          if(hasTypeArgumentFromTargetAssembly && ShouldMapClosedGenericType(type))
          {
-            collectedTypes.Add(type);
+            composableTypes.Add(type);
+
+            // Type arguments from the target assembly need explicit mappings to survive renames
+            foreach(var typeArg in typeArguments)
+            {
+               if(!typeArg.IsGenericParameter && typeArg.Assembly == targetAssembly
+                  && !typeArg.IsGenericType && !typeArg.IsArray)
+               {
+                  explicitTypes.Add(typeArg);
+               }
+            }
          }
 
          // Recursively check type arguments for nested generics
@@ -132,7 +134,7 @@ static class TypeMapperTypeDiscovery
          {
             if(!typeArg.IsGenericParameter)
             {
-               CollectClosedGenericTypes(typeArg, targetAssembly, collectedTypes);
+               CollectClosedGenericTypes(typeArg, targetAssembly, composableTypes, explicitTypes);
             }
          }
       }
@@ -140,7 +142,7 @@ static class TypeMapperTypeDiscovery
       // Check if the type itself is generic and recurse
       if(type.IsArray)
       {
-         CollectClosedGenericTypes(type.GetElementType()!, targetAssembly, collectedTypes);
+         CollectClosedGenericTypes(type.GetElementType()!, targetAssembly, composableTypes, explicitTypes);
       }
    }
 
@@ -153,7 +155,8 @@ static class TypeMapperTypeDiscovery
          return false;
 
       return typeof(IRemotableTessage).IsAssignableFrom(type) ||
-             type.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IEntity<>));
+             type.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IEntity<>)) ||
+             InheritsFromOpenGenericBase(type, typeof(EntityId<>));
    }
 
    static bool ShouldMapClosedGenericType(Type type)
@@ -168,5 +171,16 @@ static class TypeMapperTypeDiscovery
              type.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IEntity<>));
    }
 
-   internal static bool IsComposableType(Type type) => type.IsArray || (type.IsGenericType && !type.IsGenericTypeDefinition);
+   static bool InheritsFromOpenGenericBase(Type type, Type openGenericBase)
+   {
+      var current = type.BaseType;
+      while(current != null)
+      {
+         if(current.IsGenericType && current.GetGenericTypeDefinition() == openGenericBase)
+            return true;
+         current = current.BaseType;
+      }
+      return false;
+   }
+
 }
