@@ -30,7 +30,7 @@ Each wraps a `System.Type` and exposes only what type-mapping needs. Constructio
 
 `TypeMapperAssemblyScanner` takes an `Assembly` and returns an `AssemblyTypeMap` (or similar) containing the collections:
 
-- `LeafTypes` `OpenGenericDefinitions`, `ClosedGenericTypes`, `ArrayTypes` found in that assembly
+- `LeafTypes` `OpenGenericTypes`, `ClosedGenericTypes`, `ArrayTypes` found in that assembly
 
 Classification is purely structural — determined by `System.Type` properties alone (`IsArray`, `IsGenericTypeDefinition`, etc.). No TypeIds, no mapping data. A `LeafType` is always an `ExplicitlyMappedType` because of what it *is*, not because of what's been registered.
 
