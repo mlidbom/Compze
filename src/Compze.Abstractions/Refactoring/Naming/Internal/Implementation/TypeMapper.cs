@@ -108,6 +108,8 @@ public class TypeMapper : ITypeMapper
 
    static void AssertTypeValidForMapping(Type type)
    {
+      if(type.IsGenericTypeDefinition) return;
+
       if(type.IsAbstract)
       {
          if(!typeof(IRemotableTevent).IsAssignableFrom(type))
@@ -252,15 +254,6 @@ public class TypeMapper : ITypeMapper
       if(state.TypeToTypeIdMap.TryGetValue(type, out typeId!))
          return true;
 
-      // For open generic definitions without explicit mappings, compute a stable TypeId from their name.
-      // This handles system types (List<>, HashSet<>, etc.) whose names are stable.
-      if(type.IsGenericTypeDefinition)
-      {
-         typeId = DeterministicTypeIdGenerator.ComputeTypeIdFromName(type.FullName!);
-         state.Map(type, typeId);
-         return true;
-      }
-
       // For composable types without explicit mappings, try to compute recursively
       var computed = TryComputeTypeId(type, state);
       if(computed != null)
@@ -286,7 +279,9 @@ public class TypeMapper : ITypeMapper
       var (existingMappings, allTypesToMap) = State.Locked(state =>
       {
          var existingAssemblyMappings = state.TypeToTypeIdMap
-                                             .Where(kvp => kvp.Key.Assembly == assembly && !kvp.Key.IsGenericType && !kvp.Key.IsArray)
+                                             .Where(kvp => kvp.Key.Assembly == assembly
+                                                        && !kvp.Key.IsArray
+                                                        && (!kvp.Key.IsGenericType || kvp.Key.IsGenericTypeDefinition))
                                              .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
          var combined = new HashSet<Type>(typesRequiringExplicitMapping);

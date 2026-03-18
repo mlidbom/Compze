@@ -118,6 +118,13 @@ static class TypeMapperTypeDiscovery
          {
             composableTypes.Add(type);
 
+            // The open generic definition needs an explicit mapping to survive renames
+            var genericDefinition = type.GetGenericTypeDefinition();
+            if(genericDefinition.Assembly == targetAssembly)
+            {
+               explicitTypes.Add(genericDefinition);
+            }
+
             // Type arguments from the target assembly need explicit mappings to survive renames
             foreach(var typeArg in typeArguments)
             {
