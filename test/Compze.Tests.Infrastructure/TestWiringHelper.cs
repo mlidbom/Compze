@@ -7,27 +7,28 @@ namespace Compze.Tests.Infrastructure;
 
 public static class TestWiringHelper
 {
-   public static ITeventStore TeventStore(this IServiceResolver @this) =>
+   public static ITeventStore TeventStore(this IScopeResolver @this) =>
       @this.Resolve<ITeventStore>();
 
-   public static ITeventStoreUpdater TeventStoreUpdater(this IServiceResolver @this) =>
-      @this.Resolve<ITeventStoreUpdater>();
 
-   public static ITeventStoreReader TeventStoreReader(this IServiceResolver @this) =>
-      @this.Resolve<ITeventStoreReader>();
-
-   public static IDocumentDb DocumentDb(this IServiceResolver @this) =>
+   public static IDocumentDb DocumentDb(this IScopeResolver @this) =>
       @this.Resolve<IDocumentDb>();
 
-   public static IDocumentDbReader DocumentDbReader(this IServiceResolver @this) =>
+   public static ITeventStoreUpdater TeventStoreUpdater(this IScopeResolver @this) =>
+      @this.Resolve<ITeventStoreUpdater>();
+
+   public static ITeventStoreReader TeventStoreReader(this IScopeResolver @this) =>
+      @this.Resolve<ITeventStoreReader>();
+
+   public static IDocumentDbReader DocumentDbReader(this IScopeResolver @this) =>
       @this.Resolve<IDocumentDbReader>();
 
-   public static IDocumentDbUpdater DocumentDbUpdater(this IServiceResolver @this) =>
+   public static IDocumentDbUpdater DocumentDbUpdater(this IScopeResolver @this) =>
       @this.Resolve<IDocumentDbUpdater>();
 
-   public static IDocumentDbBulkReader DocumentDbBulkReader(this IServiceResolver @this) =>
+   public static IDocumentDbBulkReader DocumentDbBulkReader(this IScopeResolver @this) =>
       @this.Resolve<IDocumentDbBulkReader>();
 
-   public static IDocumentDbSession DocumentDbSession(this IServiceResolver @this)
+   public static IDocumentDbSession DocumentDbSession(this IScopeResolver @this)
       => @this.Resolve<IDocumentDbSession>();
 }

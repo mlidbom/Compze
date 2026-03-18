@@ -10,13 +10,12 @@ using Xunit;
 
 namespace Compze.Tests.Common.Sql.DocumentDb;
 
-public abstract class DocumentDbTestsBase : UniversalTestBase, IAsyncLifetime
+public abstract class DocumentDbTestsBase : UniversalTestBase
 {
    protected IServiceLocator ServiceLocator { get; } = TestEnv.DIContainer.SetupTestingServiceLocator(_ => {});
 
    protected override async Task DisposeAsyncInternal() => await ServiceLocator.DisposeAsync();
 
-   protected IDocumentDb CreateStore() => ServiceLocator.DocumentDb();
 
    protected void UseInTransactionalScope([InstantHandle] Action<IDocumentDbReader, IDocumentDbUpdater> useSession) =>
       ServiceLocator.ExecuteTransactionInIsolatedScope(scope => useSession(scope.DocumentDbReader(), scope.DocumentDbUpdater()));

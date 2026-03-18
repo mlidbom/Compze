@@ -16,16 +16,14 @@ public class ComponentRegistrationWithoutInstantiationSpec<TService> where TServ
       ServiceTypes = serviceTypes.Concat([typeof(TService)]).ToList();
    }
 
-   internal ComponentRegistration<TService> CreatedBy<TImplementation>(Func<IServiceResolver, TImplementation> factoryMethod,
-                                                                       IEnumerable<Type> dependencyTypes)
+   internal ComponentRegistration<TService> CreatedBy<TImplementation>(Func<IServiceResolver, TImplementation> factoryMethod, IEnumerable<Type> dependencyTypes)
       where TImplementation : TService
    {
       var implementationType = typeof(TImplementation);
       AssertImplementsAllServices(implementationType);
       return new ComponentRegistration<TService>(_lifestyle,
                                                  ServiceTypes,
-                                                 InstantiationSpec.FromFactoryMethod(serviceLocator => factoryMethod(serviceLocator),
-                                                                                     implementationType),
+                                                 InstantiationSpec.FromFactoryMethod(serviceResolver => factoryMethod(serviceResolver), implementationType),
                                                  dependencyTypes,
                                                  SingletonDependentAllowed,
                                                  ScopedDependentAllowed);

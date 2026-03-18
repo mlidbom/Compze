@@ -78,7 +78,7 @@ class ServerEndpointBuilder : IEndpointBuilder, IAsyncDisposable, IDisposable
       _tessagingRegistry = new TessageHandlerRegistry(TypeMapper.Instance);
       _typermediaRegistry = new TypermediaHandlerRegistry(TypeMapper.Instance);
       var serviceLocator = new LazyCE<IServiceLocator>(() => Container.ServiceLocator);
-      RegisterTessagingHandlers = new TessageHandlerRegistrarWithDependencyInjectionSupport(_tessagingRegistry, serviceLocator);
+      RegisterTessagingHandlers = new TessageHandlerRegistrarWithDependencyInjectionSupport(_tessagingRegistry);
       RegisterTypermediaHandlers = new TypermediaHandlerRegistrarWithDependencyInjectionSupport(_typermediaRegistry, serviceLocator);
    }
 

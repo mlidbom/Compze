@@ -31,7 +31,6 @@ class SomeTevent : TaggregateTevent, ISomeTevent
 public class TeventStoreTests : UniversalTestBase
 {
    readonly IServiceLocator _serviceLocator = TestEnv.DIContainer.SetupTestingServiceLocator();
-   ITeventStore TeventStore => _serviceLocator.TeventStore();
 
    protected override void DisposeInternal() => _serviceLocator.Dispose();
 
