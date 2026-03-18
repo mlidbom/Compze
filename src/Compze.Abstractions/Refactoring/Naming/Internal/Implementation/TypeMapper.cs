@@ -1,7 +1,4 @@
 using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
-using System.Reflection;
-using System.Text;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
@@ -37,16 +34,12 @@ public class TypeMapper : ITypeMapper
       return State.Locked(state =>
       {
          if(TryGetOrComputeTypeId(type, state, out var typeId))
-         {
             return typeId;
-         }
 
          if(state.AssemblyMappingUpdateTessages.TryGetValue(type.Assembly, out var tessage))
-         {
             throw new Exception($"Failed to find TypeId for type: {type.FullName}{Environment.NewLine}{tessage}");
-         }
 
-         throw BuildExceptionDescribingHowToAddMissingMappings([type]);
+         throw MissingMappingReporter.BuildMissingTypesException([type]);
       });
    }
 
@@ -55,9 +48,7 @@ public class TypeMapper : ITypeMapper
       return State.Locked(state =>
       {
          if(state.TypeIdToTypeMap.TryGetValue(teventTypeId, out var type))
-         {
             return type;
-         }
 
          throw new Exception($"Could not find type for {nameof(TypeId)}: {teventTypeId}");
       });
@@ -75,7 +66,6 @@ public class TypeMapper : ITypeMapper
       {
          EnsureAllCurrentlyLoadedAssembliesHaveBeenCheckedForRequiredMappings();
 
-         // Ensure the type itself is computed if composable
          TryGetOrComputeTypeId(type, state, out _);
 
          var found = state
@@ -87,13 +77,10 @@ public class TypeMapper : ITypeMapper
 
          if(!found.Any())
          {
-            // Check if we have a stored tessage for this assembly
             if(state.AssemblyMappingUpdateTessages.TryGetValue(type.Assembly, out var tessage))
-            {
                throw new Exception($"Failed to find TypeIds for types assignable to: {type.FullName}{Environment.NewLine}{tessage}");
-            }
 
-            throw BuildExceptionDescribingHowToAddMissingMappings([type]);
+            throw MissingMappingReporter.BuildMissingTypesException([type]);
          }
 
          return found;
@@ -103,7 +90,7 @@ public class TypeMapper : ITypeMapper
    public Unit AssertMappingsExistFor(IEnumerable<Type> typesThatRequireMappings) => State.Locked(state =>
    {
       var missing = typesThatRequireMappings.Where(type => !TryGetOrComputeTypeId(type, state, out _)).ToList();
-      if(missing.Any()) throw BuildExceptionDescribingHowToAddMissingMappings(missing);
+      if(missing.Any()) throw MissingMappingReporter.BuildMissingTypesException(missing);
    });
 
    static void AssertTypeValidForMapping(Type type)
@@ -113,9 +100,7 @@ public class TypeMapper : ITypeMapper
       if(type.IsAbstract)
       {
          if(!typeof(IRemotableTevent).IsAssignableFrom(type))
-         {
             throw new Exception($"Type: {type.FullName} is abstract and is not a {typeof(IRemotableTevent).FullName}. For other types you should only map concrete types.");
-         }
       }
    }
 
@@ -129,89 +114,65 @@ public class TypeMapper : ITypeMapper
 
          foreach(var assembly in unHandledAssemblies)
          {
-            {
-               if(state.CheckedAssemblies.Contains(assembly))
-               {
-                  continue;
-               }
+            if(state.CheckedAssemblies.Contains(assembly)) continue;
 
-               try
-               {
-                  CheckAssemblyForRequiredMappings(assembly, state);
-               }
-               finally
-               {
-                  state.CheckedAssemblies.Add(assembly);
-               }
+            try
+            {
+               ProcessAssembly(assembly, state);
+            }
+            finally
+            {
+               state.CheckedAssemblies.Add(assembly);
             }
          }
 
          if(ReentrancyGuard.GetAndClearReentryWasAttempted())
-         {
             EnsureAllCurrentlyLoadedAssembliesHaveBeenCheckedForRequiredMappings();
-         }
       });
    });
 
-   static void CheckAssemblyForRequiredMappings(Assembly assembly, MappingState state)
+   static void ProcessAssembly(System.Reflection.Assembly assembly, MappingState state)
    {
-      var discovered = TypeMapperTypeDiscovery.DiscoverTypes(assembly);
-      var typesRequiringExplicitMapping = discovered.RequiringExplicitMapping;
-      var composableTypes = discovered.Composable;
+      var scannedTypes = TypeMapperAssemblyScanner.Scan(assembly);
+      var assemblyMappings = AssemblyMappingReader.ReadMappings(assembly);
 
-      var assemblyTypeMapperTypes = assembly.GetTypes()
-                                            .Where(t => t.Name == TypeMapperSourceCodeGenerator.MappingClassName)
-                                            .ToList();
-      if(assemblyTypeMapperTypes.Count > 1)
-         throw new Exception($"""
-                              Found multiple type mappers for assembly:{assembly.FullName}
-                              {assemblyTypeMapperTypes.Select(it => it.FullName!).Join(Environment.NewLine).Indent()}
-                              """);
+      // Register explicit mappings from the assembly's mapping file into global state
+      foreach(var (type, typeId) in assemblyMappings)
+         state.Map(type, typeId);
 
-      var assemblyTypeMapperType = assemblyTypeMapperTypes.SingleOrDefault();
+      // Correlate scanned types against all known mappings (this assembly + previously loaded assemblies)
+      var correlation = AssemblyMappingCorrelator.Correlate(
+         scannedTypes,
+         assemblyMappings,
+         type => state.TypeToTypeIdMap.GetValueOrDefault(type));
 
-      if(assemblyTypeMapperType == null)
+      // Register computed TypeIds into global state
+      foreach(var (computedType, computedId) in correlation.ResolvedComputedTypes)
+         state.Map(computedType.Type, computedId);
+
+      // Track missing mappings for error reporting
+      if(correlation.MissingExplicitTypes.Count > 0)
       {
-         if(typesRequiringExplicitMapping.Count > 0)
-         {
-            var tessage = BuildTessageDescribingHowToAddMissingMappings(assembly);
-            state.AssemblyMappingUpdateTessages[assembly] = tessage;
-         }
-
-         return;
-      }
-
-      var instance = Activator.CreateInstance(assemblyTypeMapperType);
-      var method = assemblyTypeMapperType.GetMethod("MapTypesForCurrentAssembly", BindingFlags.Public | BindingFlags.Instance);
-
-      if(method != null && instance != null)
-      {
-         void MapAction(string guid, Type type) => state.Map(type, new TypeId(new Guid(guid)));
-         method.Invoke(instance, [(Action<string, Type>)MapAction]);
-      }
-
-      ComputeDeterministicTypeIds(composableTypes, state);
-
-      var typesWithMissingMappings = typesRequiringExplicitMapping.Where(type => !state.TypeToTypeIdMap.ContainsKey(type)).ToList();
-      if(typesWithMissingMappings.Any())
-      {
-         var tessage = BuildTessageDescribingHowToAddMissingMappings(assembly);
+         var tessage = MissingMappingReporter.BuildAssemblyMappingTessage(assembly, state.TypeToTypeIdMap);
          state.AssemblyMappingUpdateTessages[assembly] = tessage;
       }
    }
 
-   static void ComputeDeterministicTypeIds(ISet<Type> composableTypes, MappingState state)
+   static bool TryGetOrComputeTypeId(Type type, MappingState state, out TypeId typeId)
    {
-      foreach(var type in composableTypes)
-      {
-         if(state.TypeToTypeIdMap.ContainsKey(type)) continue;
+      if(state.TypeToTypeIdMap.TryGetValue(type, out typeId!))
+         return true;
 
-         var computedId = TryComputeTypeId(type, state);
-         if(computedId != null)
-         {
-            state.Map(type, computedId);
-         }
+      var computed = TryComputeTypeId(type, state);
+      if(computed != null)
+      {
+         typeId = computed;
+         state.Map(type, typeId);
+         return true;
       }
+
+      typeId = null!;
+      return false;
    }
 
    static TypeId? TryComputeTypeId(Type type, MappingState state)
@@ -249,121 +210,12 @@ public class TypeMapper : ITypeMapper
       return null;
    }
 
-   static bool TryGetOrComputeTypeId(Type type, MappingState state, out TypeId typeId)
-   {
-      if(state.TypeToTypeIdMap.TryGetValue(type, out typeId!))
-         return true;
-
-      // For composable types without explicit mappings, try to compute recursively
-      var computed = TryComputeTypeId(type, state);
-      if(computed != null)
-      {
-         typeId = computed;
-         state.Map(type, typeId);
-         return true;
-      }
-
-      typeId = null!;
-      return false;
-   }
-
-   static string BuildTessageDescribingHowToAddMissingMappings(Assembly assembly)
-   {
-      var assemblyName = assembly.GetName().Name;
-      var rootNamespace = assemblyName;
-
-      var discovered = TypeMapperTypeDiscovery.DiscoverTypes(assembly);
-      var typesRequiringExplicitMapping = discovered.RequiringExplicitMapping;
-
-      // Preserve ALL types already mapped from this assembly, even manually-added ones not found by discovery
-      var (existingMappings, allTypesToMap) = State.Locked(state =>
-      {
-         var existingAssemblyMappings = state.TypeToTypeIdMap
-                                             .Where(kvp => kvp.Key.Assembly == assembly
-                                                        && !kvp.Key.IsArray
-                                                        && (!kvp.Key.IsGenericType || kvp.Key.IsGenericTypeDefinition))
-                                             .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
-
-         var combined = new HashSet<Type>(typesRequiringExplicitMapping);
-         foreach(var type in existingAssemblyMappings.Keys)
-            combined.Add(type);
-
-         return (existingAssemblyMappings, combined);
-      });
-
-      var generatedCode = TypeMapperSourceCodeGenerator.GenerateAutoGeneratedClassCode(rootNamespace, allTypesToMap, existingMappings);
-
-      // Try to automatically find the project file and create the mapping
-      var createdFilePath = TypeMapperSourceCodeGenerator.TryFindProjectFileAndCreateMapping(assembly, allTypesToMap, existingMappings);
-
-      var fixTessage = new StringBuilder();
-
-      if(createdFilePath != null)
-      {
-         // File was auto-generated, but might be in wrong location (e.g., NCrunch temp folder)
-         fixTessage.AppendLine(CultureInfo.InvariantCulture,
-                               $"""
-
-                                Type mappings were automatically generated for assembly: {assemblyName}
-                                File location: {createdFilePath}
-
-                                Please rebuild the project and try again.
-
-                                IMPORTANT: If you are using a test runner like NCrunch that builds in a temporary location,
-                                the generated file may not be in your source tree. In that case, please manually create
-                                or update the file '{TypeMapperSourceCodeGenerator.MappingFileName}' in the root folder of the project '{assemblyName}'
-                                with the following content:
-
-                                """);
-      } else
-      {
-         // Auto-generation failed, provide manual instructions
-         fixTessage.AppendLine(CultureInfo.InvariantCulture,
-                               $"""
-
-                                In order to allow you to freely rename and move your types without breaking your persisted data you are required to map your types to Guid values that are used in place of your type names in the persisted data.
-                                Some such required type mappings are missing for assembly: {assemblyName}
-
-                                Please create a file named '{TypeMapperSourceCodeGenerator.MappingFileName}' in the root folder of the project '{assemblyName}' with the following content:
-
-                                """);
-      }
-
-      fixTessage.AppendLine(generatedCode);
-
-      return fixTessage.ToString();
-   }
-
-   static Exception BuildExceptionDescribingHowToAddMissingMappings(IReadOnlyList<Type> missingTypes)
-   {
-      var fixTessage = new StringBuilder();
-
-      var firstType = missingTypes[0];
-      var missingInTheSameAssembly = missingTypes.TakeWhile(it => it.Assembly == firstType.Assembly).ToList();
-
-      fixTessage.AppendLine(CultureInfo.InvariantCulture,
-                            $"""
-
-                             In order to allow you to freely rename and move your types without breaking your persisted data you are required to map your types to Guid values that are used in place of your type names in the persisted data.
-                             Some such required type mappings are missing. For convenience you can simply paste in the code below into the file {TypeMapperSourceCodeGenerator.MappingFileName} in the root of the project defining the type:
-                             """);
-
-      foreach(var missingType in missingInTheSameAssembly)
-      {
-         fixTessage.Append(CultureInfo.InvariantCulture, $"{Environment.NewLine}      map(\"{Guid.NewGuid()}\", typeof({missingType.GetFullNameCompilable()}));");
-      }
-
-      fixTessage.Append(Environment.NewLine).AppendLine();
-
-      return new Exception(fixTessage.ToString());
-   }
-
    class MappingState
    {
       internal readonly Dictionary<Type, TypeId> TypeToTypeIdMap = new();
       internal readonly Dictionary<TypeId, Type> TypeIdToTypeMap = new();
-      internal readonly HashSet<Assembly> CheckedAssemblies = [];
-      internal readonly Dictionary<Assembly, string> AssemblyMappingUpdateTessages = new();
+      internal readonly HashSet<System.Reflection.Assembly> CheckedAssemblies = [];
+      internal readonly Dictionary<System.Reflection.Assembly, string> AssemblyMappingUpdateTessages = new();
 
       internal void Map(Type type, TypeId typeId)
       {
