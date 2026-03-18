@@ -7,9 +7,9 @@ public static class ContainerCloner
 {
    public static IServiceLocator Clone(this IServiceLocator @this)
    {
-      var cloneContainer = ((IDependencyInjectionContainer)@this).Clone();
+      var cloneContainer = ((ILegacyContainer)@this).Clone();
 
-      cloneContainer.Register(Singleton.For<IDependencyInjectionContainer>().Instance(cloneContainer));
+      cloneContainer.Register(Singleton.For<ILegacyContainer>().Instance(cloneContainer));
 
       return cloneContainer.ServiceLocator;
    }

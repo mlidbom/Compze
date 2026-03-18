@@ -14,22 +14,43 @@ public interface IComponentRegistrar
       => registrationMethods.ForEach(it => it(this))
                             .__(this);
 
-   IDependencyInjectionContainer Container();
+   ILegacyContainer Container();
 
    TTestingRegistrar? TryGetTestingRegistrar<TTestingRegistrar>() where TTestingRegistrar : class;
 
-   void SetContainer(IDependencyInjectionContainer container);
+   void SetContainer(ILegacyContainer container);
    IComponentRegistrar Clone();
 }
 
+/// <summary>
+/// Composes <see cref="IComponentRegistrar"/> (for registration) and <see cref="Build"/> (for finalization).
+/// Registration is performed through <see cref="Registrar"/>. The builder itself has no registration methods.
+/// After <see cref="Build"/> is called, the builder should not be used further.
+/// </summary>
+public interface IContainerBuilder
+{
+   IComponentRegistrar Registrar { get; }
+   IDependencyInjectionContainer Build();
+}
+
+/// <summary>
+/// A built container. Composes <see cref="IRootResolver"/>, <see cref="IScopeFactory"/>, and child container creation.
+/// Does not inherit resolution or scope creation — exposes them via properties.
+/// </summary>
 public interface IDependencyInjectionContainer : IDisposable, IAsyncDisposable
 {
+   IRootResolver Resolver { get; }
+   IScopeFactory ScopeFactory { get; }
+}
+
+public interface ILegacyContainer : IDisposable, IAsyncDisposable
+{
    IComponentRegistrar Register();
-   IDependencyInjectionContainer Register(params ComponentRegistration[] registrations);
+   ILegacyContainer Register(params ComponentRegistration[] registrations);
    IEnumerable<ComponentRegistration> RegisteredComponents();
    IServiceLocator ServiceLocator { get; }
    bool IsClone { get; }
-   IDependencyInjectionContainer Clone();
+   ILegacyContainer Clone();
    bool IsRegistered<TComponent>() where TComponent : class => RegisteredComponents().Any(it => it.ServiceTypes.Contains(typeof(TComponent)));
 }
 

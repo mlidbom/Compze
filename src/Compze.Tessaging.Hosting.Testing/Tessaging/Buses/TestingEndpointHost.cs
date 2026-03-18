@@ -12,11 +12,11 @@ namespace Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 
 public class TestingEndpointHost : TestingEndpointHostBase
 {
-   IDependencyInjectionContainer? _ownedContainer = null;
+   ILegacyContainer? _ownedContainer = null;
 
-   TestingEndpointHost(IDependencyInjectionContainer rootContainer) : base(rootContainer.Clone) {}
+   TestingEndpointHost(ILegacyContainer rootContainer) : base(rootContainer.Clone) {}
 
-   public static ITestingEndpointHost Create(IDependencyInjectionContainer? rootContainer = null)
+   public static ITestingEndpointHost Create(ILegacyContainer? rootContainer = null)
    {
 #pragma warning disable CA2000 // We are passing this disposable into a constructor of an object we don't own
       var usedContainer = rootContainer ?? TestEnv.DIContainer.CreateWithServiceLocator()

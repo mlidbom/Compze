@@ -4,7 +4,7 @@ using Compze.Internals.SystemCE.LinqCE;
 
 namespace Compze.DependencyInjection;
 
-public abstract partial class DependencyInjectionContainer : IDependencyInjectionContainer
+public abstract partial class DependencyInjectionContainer : ILegacyContainer, IContainerBuilder, IDependencyInjectionContainer
 {
    static readonly ILogger Log = CompzeLogger.For<DependencyInjectionContainer>();
 
@@ -19,15 +19,27 @@ public abstract partial class DependencyInjectionContainer : IDependencyInjectio
       _registrar.SetContainer(this);
    }
 
+   IComponentRegistrar IContainerBuilder.Registrar => _registrar;
+
+   IDependencyInjectionContainer IContainerBuilder.Build()
+   {
+      // Trigger the lazy build by accessing ServiceLocator
+      _ = ServiceLocator;
+      return this;
+   }
+
+   IRootResolver IDependencyInjectionContainer.Resolver => ServiceLocator;
+   IScopeFactory IDependencyInjectionContainer.ScopeFactory => ServiceLocator;
+
    public abstract void Dispose();
    public abstract ValueTask DisposeAsync();
 
    protected virtual IReadOnlyList<Type> ContainerFacadeServiceTypes { get; } =
-      [typeof(IDependencyInjectionContainer), typeof(IServiceLocator)];
+      [typeof(ILegacyContainer), typeof(IServiceLocator)];
 
    protected abstract DependencyInjectionContainer CreateEmptyClone();
 
-   public IDependencyInjectionContainer Clone()
+   public ILegacyContainer Clone()
    {
       Log.Info($"Cloning IDependencyInjectionContainer: {GetHashCode()}");
       var sourceServiceLocator = ServiceLocator;
@@ -43,7 +55,7 @@ public abstract partial class DependencyInjectionContainer : IDependencyInjectio
       return cloneContainer;
    }
 
-   public IDependencyInjectionContainer Register(params ComponentRegistration[] registrations)
+   public ILegacyContainer Register(params ComponentRegistration[] registrations)
    {
       ValidateNoDuplicateRegistrations(registrations);
       _registeredComponents.AddRange(registrations);
@@ -53,7 +65,7 @@ public abstract partial class DependencyInjectionContainer : IDependencyInjectio
 
    public IComponentRegistrar Register() => _registrar;
 
-   protected abstract IDependencyInjectionContainer RegisterInContainer(ComponentRegistration[] registrations);
+   protected abstract ILegacyContainer RegisterInContainer(ComponentRegistration[] registrations);
 
    public IEnumerable<ComponentRegistration> RegisteredComponents() => _registeredComponents;
 

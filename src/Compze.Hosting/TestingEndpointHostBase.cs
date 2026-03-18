@@ -11,7 +11,7 @@ namespace Compze.Hosting;
 
 public abstract class TestingEndpointHostBase : EndpointHost, ITestingEndpointHost, IEndpointRegistry
 {
-   protected TestingEndpointHostBase(Func<IDependencyInjectionContainer> containerFactory) : base(containerFactory) =>
+   protected TestingEndpointHostBase(Func<ILegacyContainer> containerFactory) : base(containerFactory) =>
       TessagesInFlightTracker = new TessagesInFlightTracker(TypeMapper.Instance);
 
    public IEnumerable<EndPointAddress> ServerEndpointAddresses => Endpoints.Where(it => it.Address is not null)

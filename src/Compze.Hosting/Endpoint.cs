@@ -28,6 +28,7 @@ class Endpoint : IEndpoint
    }
 
    readonly EndpointConfiguration _configuration;
+   readonly IRootResolver _rootResolver;
 
    public Endpoint(IServiceLocator serviceLocator,
                    ITessagingRouter tessagingRouter,
@@ -36,6 +37,7 @@ class Endpoint : IEndpoint
    {
       Argument.NotNull(serviceLocator).NotNull(configuration);
       ServiceLocator = serviceLocator;
+      _rootResolver = serviceLocator;
       _tessagingRouter = tessagingRouter;
       _configuration = configuration;
       _endpointRegistry = endpointRegistry;
@@ -66,8 +68,8 @@ class Endpoint : IEndpoint
 
       RunSanityChecks();
 
-      _serverComponents = new ServerComponents(ServiceLocator.Resolve<TommandScheduler>(), ServiceLocator.Resolve<IInbox>(), ServiceLocator.Resolve<IOutbox>());
-      _typermediaTransportServer = ServiceLocator.Resolve<ITypermediaTransportServer>();
+      _serverComponents = new ServerComponents(_rootResolver.Resolve<TommandScheduler>(), _rootResolver.Resolve<IInbox>(), _rootResolver.Resolve<IOutbox>());
+      _typermediaTransportServer = _rootResolver.Resolve<ITypermediaTransportServer>();
 
       await Task.WhenAll(_serverComponents.Inbox.StartAsync(), _serverComponents.TommandScheduler.StartAsync(), _typermediaTransportServer.StartAsync()).caf();
 

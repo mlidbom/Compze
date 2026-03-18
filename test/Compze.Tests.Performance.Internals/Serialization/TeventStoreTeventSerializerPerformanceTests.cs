@@ -18,7 +18,7 @@ namespace Compze.Tests.Performance.Internals.Serialization;
 
 public class TeventStoreTeventSerializerPerformanceTests : UniversalTestBase
 {
-   readonly IDependencyInjectionContainer _container;
+   readonly ILegacyContainer _container;
    readonly ITeventStoreSerializer _teventSerializer;
 
    public TeventStoreTeventSerializerPerformanceTests()

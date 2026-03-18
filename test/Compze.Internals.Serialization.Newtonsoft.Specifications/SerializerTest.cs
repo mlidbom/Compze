@@ -16,7 +16,7 @@ public class SerializerTest : UniversalTestBase
    internal ITeventStoreSerializer TeventSerializer => _container.ServiceLocator.Resolve<ITeventStoreSerializer>();
    internal IDocumentDbSerializer DocumentSerializer => _container.ServiceLocator.Resolve<IDocumentDbSerializer>();
 
-   readonly IDependencyInjectionContainer _container;
+   readonly ILegacyContainer _container;
 
    protected SerializerTest()
    {

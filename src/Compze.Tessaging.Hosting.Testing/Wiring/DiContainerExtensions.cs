@@ -17,28 +17,28 @@ namespace Compze.Tessaging.Hosting.Testing.Wiring;
 
 public static class DiContainerExtensions
 {
-   public static IDependencyInjectionContainer CreateWithServiceLocator(this DIContainer @this) =>
+   public static ILegacyContainer CreateWithServiceLocator(this DIContainer @this) =>
 #pragma warning disable CA2000//We are passing this disposable out of the method
       @this.CreateEmpty()
            ._mutate(it => it.Register(Singleton.For<IServiceLocator>()
                                               .CreatedBy(() => it.ServiceLocator)));
 #pragma warning restore CA2000
 
-   public static IDependencyInjectionContainer CreateWithServiceLocatorAndCurrentTestsPluggableComponents(this DIContainer @this) =>
+   public static ILegacyContainer CreateWithServiceLocatorAndCurrentTestsPluggableComponents(this DIContainer @this) =>
 #pragma warning disable CA2000//We are passing it out of the method
       @this.CreateWithCurrentTestsPluggableComponents()
            ._mutate(it => it.Register(Singleton.For<IServiceLocator>()
                                               .CreatedBy(() => it.ServiceLocator)));
 #pragma warning restore CA2000
 
-   public static IDependencyInjectionContainer CreateWithCurrentTestsPluggableComponents(this DIContainer @this) =>
+   public static ILegacyContainer CreateWithCurrentTestsPluggableComponents(this DIContainer @this) =>
 #pragma warning disable CA2000//We are passing this disposable out of the method
       @this.CreateEmpty()
            ._mutate(it => it.Register()
                            .CurrentTestsPluggableComponents());
 #pragma warning restore CA2000
 
-   public static IDependencyInjectionContainer CreateEmpty(this DIContainer @this) =>
+   public static ILegacyContainer CreateEmpty(this DIContainer @this) =>
       @this switch
       {
          DIContainer.Microsoft      => new MicrosoftDependencyInjectionContainer(new TestingComponentRegistrar()),

@@ -30,7 +30,7 @@ static class InboxRegistrar
                   .CreatedBy((ITessagesInFlightTracker globalStateTracker, ITessageHandlerRegistry tessagingHandlerRegistry, IServiceLocator serviceLocator, ITessageStorage storage, ITaskRunner taskRunner, EndpointConfiguration configuration)
                                 => new HandlerExecutionEngine(globalStateTracker, tessagingHandlerRegistry, serviceLocator, storage, taskRunner, configuration.Id)),
          Singleton.For<IInbox>()
-                  .CreatedBy((IServiceLocator serviceLocator, HandlerExecutionEngine handlerExecutionEngine, ITessageStorage tessageStorage, IDependencyInjectionContainer container, IInboxTransportServer transportServer)
+                  .CreatedBy((IServiceLocator serviceLocator, HandlerExecutionEngine handlerExecutionEngine, ITessageStorage tessageStorage, ILegacyContainer container, IInboxTransportServer transportServer)
                                 => new Inbox(serviceLocator, handlerExecutionEngine, tessageStorage, container, transportServer))
       );
 
@@ -39,7 +39,7 @@ static class InboxRegistrar
    readonly ITessageStorage _storage;
    readonly IInboxTransportServer _transportServer;
 
-   public Inbox(IServiceLocator serviceLocator, HandlerExecutionEngine handlerExecutionEngine, ITessageStorage tessageStorage, IDependencyInjectionContainer container, IInboxTransportServer transportServer)
+   public Inbox(IServiceLocator serviceLocator, HandlerExecutionEngine handlerExecutionEngine, ITessageStorage tessageStorage, ILegacyContainer container, IInboxTransportServer transportServer)
    {
       _handlerExecutionEngine = handlerExecutionEngine;
       _storage = tessageStorage;

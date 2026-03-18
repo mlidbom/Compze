@@ -19,7 +19,7 @@ public sealed class MicrosoftDependencyInjectionContainer(IComponentRegistrar? r
 
    readonly RunOnce _registerScopedKernel = new();
 
-   protected override IDependencyInjectionContainer RegisterInContainer(ComponentRegistration[] registrations)
+   protected override ILegacyContainer RegisterInContainer(ComponentRegistration[] registrations)
    {
       _registerScopedKernel.RunIfFirstCall(() =>
       {

@@ -20,8 +20,8 @@ No production code needs both root resolution and scope creation from the same i
 ## Target Interface Hierarchy
 
 ```
-IContainerBuilder              — IComponentRegistrar Registrar, Build() → IContainer
-IContainer                     — IRootResolver Resolver, IScopeFactory ScopeFactory, CreateChildContainerBuilder()
+IContainerBuilder              — IComponentRegistrar Registrar, Build() → IDependencyInjectionContainer
+IDependencyInjectionContainer  — IRootResolver Resolver, IScopeFactory ScopeFactory, CreateChildContainerBuilder()
 IComponentRegistrar             — Register(), fluent API, testing strategy (unchanged role)
 IRootResolver                  — Resolve() at root (singletons, transients)
 IScopeFactory                  — BeginScope() → IServiceScope
@@ -34,7 +34,7 @@ IServiceResolver               — internal base, only used by factory method pi
 
 - **`IContainerBuilder`**: Composes `IComponentRegistrar` and `Build()`. No `Register()` methods — registration is the registrar's job, building is the builder's job. Orchestration code holds the builder to finalize. Wiring code receives `builder.Registrar` or just `IComponentRegistrar` directly.
 - **`IComponentRegistrar`**: Unchanged role. Fluent registration API (44+ extension methods target it). Testing strategy via subtype polymorphism (`TestingComponentRegistrar`). Wiring code receives this — never needs `Build()`.
-- **`IContainer`**: The built container. Composes `IRootResolver`, `IScopeFactory`, and `CreateChildContainerBuilder()` — doesn't inherit from them. Only orchestration code (endpoint startup, container lifecycle) holds this.
+- **`IDependencyInjectionContainer`**: The built container. Composes `IRootResolver`, `IScopeFactory`, and `CreateChildContainerBuilder()` — doesn't inherit from them. Only orchestration code (endpoint startup, container lifecycle) holds this.
 - **`IRootResolver`**: Root-level resolution (singletons, transients). Goes to code that only needs to resolve — `Endpoint`, registrars.
 - **`IScopeFactory`**: Creates scopes. Goes to code that only needs to create scopes — transport servers, executors.
 - **`IScopeResolver`**: Resolution within a scope (all lifestyles). Goes to handler code, controller activators — anything operating inside a scope.
@@ -43,9 +43,9 @@ IServiceResolver               — internal base, only used by factory method pi
 
 ### Composition over inheritance in order to achieve Interface Segregation Principle
 
-Both `IContainerBuilder` and `IContainer` compose their capabilities via properties:
+Both `IContainerBuilder` and `IDependencyInjectionContainer` compose their capabilities via properties:
 - `IContainerBuilder` *has* an `IComponentRegistrar` (doesn't inherit registration)
-- `IContainer` *has* an `IRootResolver` and `IScopeFactory` (doesn't inherit resolution or scope creation)
+- `IDependencyInjectionContainer` *has* an `IRootResolver` and `IScopeFactory` (doesn't inherit resolution or scope creation)
 
 Each sub-interface stays independently injectable. Consumers receive exactly what they need:
 - Wiring code → `IComponentRegistrar`
@@ -58,17 +58,17 @@ Each sub-interface stays independently injectable. Consumers receive exactly wha
 
 - Builder can't resolve. Built container can't register. Type system enforces phases.
 - Builder doesn't register — the registrar does. Builder only finalizes.
-- `IContainer` doesn't inherit resolution or scope creation — it *has* them via properties.
+- `IDependencyInjectionContainer` doesn't inherit resolution or scope creation — it *has* them via properties.
 - Each consumer receives exactly the capability it needs. ISP at the foundation level.
 
 ## Child Container Builder
 
-`IContainer.CreateChildContainerBuilder()` returns an `IContainerBuilder` for a child container:
+`IDependencyInjectionContainer.CreateChildContainerBuilder()` returns an `IContainerBuilder` for a child container:
 - All parent registrations inherited
 - **Singletons delegate to parent** (same instance, not disposed by child)
 - Scoped/transient registrations copied (fresh instances in child's scopes)
 - Child builder accepts additional registrations (ASP.NET Core services)
-- Child builds into its own independent `IContainer`
+- Child builds into its own independent `IDependencyInjectionContainer`
 
 ### How this solves ASP.NET Core integration
 
@@ -86,4 +86,42 @@ The existing `CreateCloneRegistration()` already handles both paths:
 - Non-delegated: copy the factory (new instances in child)
 - Delegated: resolve from parent, register as instance in child
 
-Child container builder = same loop but all singletons take the delegated path. `ContainerFacadeServiceTypes` exclusion still applies — `IContainer` etc. get fresh registrations pointing to the child.
+Child container builder = same loop but all singletons take the delegated path. `ContainerFacadeServiceTypes` exclusion still applies — `IDependencyInjectionContainer` etc. get fresh registrations pointing to the child.
+
+## Implementation Plan
+
+Incremental migration — new interfaces alongside old ones, consumers migrated one by one, old interfaces deleted when empty. Compiles and tests pass at every step.
+
+### Phase 1: Define new interfaces + adapter implementation
+- Add `IContainerBuilder` and `IDependencyInjectionContainer` to the abstractions file
+- Have `DependencyInjectionContainer` implement both (adapter — `IDependencyInjectionContainer` wraps what `IServiceLocator` does today)
+- `IContainerBuilder.Registrar` returns the existing `IComponentRegistrar`
+- `IContainerBuilder.Build()` triggers the existing lazy build and returns `IDependencyInjectionContainer`
+- `IDependencyInjectionContainer.Resolver` returns an `IRootResolver` (adapter over existing resolution)
+- `IDependencyInjectionContainer.ScopeFactory` returns an `IScopeFactory` (adapter over existing `BeginScope()`)
+- Build + test
+
+### Phase 2: Migrate consumers to new interfaces
+- Switch `Endpoint` from `IServiceLocator` to `IRootResolver`
+- Switch transport servers from `IServiceLocator` to `IScopeFactory`
+- Switch executors from `IServiceLocator` to `IScopeFactory`
+- Update DI registrations to register the new interface types
+- Build + test after each batch
+
+### Phase 3: Remove old interfaces
+- Once all consumers are migrated, remove `IServiceLocator` inheritance from the container
+- Remove `ILegacyContainer` (replaced by `IContainerBuilder` + `IDependencyInjectionContainer`)
+- Clean up any remaining adapter code
+- Build + test
+
+### Phase 4: Child container builder
+- Add `CreateChildContainerBuilder()` to `IDependencyInjectionContainer`
+- Implement using the existing `Clone()` / `CreateCloneRegistration()` mechanism with flipped singleton default
+- Build + test
+
+### Phase 5: ASP.NET Core integration via child containers
+- Rework transport servers to use child containers
+- Each Kestrel gets `IContainerBuilder` from `CreateChildContainerBuilder()`
+- `UseAsServiceProviderFor` on the child builder
+- Remove custom `CompzeControllerActivator` and `HttpContext.Items` scope stashing
+- Build + test

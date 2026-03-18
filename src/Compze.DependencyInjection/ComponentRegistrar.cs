@@ -5,9 +5,9 @@ namespace Compze.DependencyInjection;
 
 public class ComponentRegistrar : IComponentRegistrar
 {
-   IDependencyInjectionContainer? _container = null;
+   ILegacyContainer? _container = null;
 
-   public void SetContainer(IDependencyInjectionContainer container)
+   public void SetContainer(ILegacyContainer container)
    {
       Contract.State.Assert(_container == null, () => "Container has already been set");
       _container = container;
@@ -32,7 +32,7 @@ public class ComponentRegistrar : IComponentRegistrar
       return this;
    }
 
-   public IDependencyInjectionContainer Container()
+   public ILegacyContainer Container()
    {
       if(_container == null) throw new InvalidOperationException("Container has not been set yet");
       return _container;

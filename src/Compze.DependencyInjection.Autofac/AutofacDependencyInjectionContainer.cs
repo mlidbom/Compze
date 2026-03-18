@@ -14,7 +14,7 @@ public sealed class AutofacDependencyInjectionContainer(IComponentRegistrar? reg
 
    readonly RunOnce _registerScopedKernel = new();
 
-   protected override IDependencyInjectionContainer RegisterInContainer(ComponentRegistration[] registrations)
+   protected override ILegacyContainer RegisterInContainer(ComponentRegistration[] registrations)
    {
       _registerScopedKernel.RunIfFirstCall(() =>
       {
@@ -86,7 +86,7 @@ public sealed class AutofacDependencyInjectionContainer(IComponentRegistrar? reg
       new AutofacDependencyInjectionContainer(Register().Clone());
 
    protected override IReadOnlyList<Type> ContainerFacadeServiceTypes { get; } =
-      [typeof(IDependencyInjectionContainer), typeof(IServiceLocator), typeof(AutofacDependencyInjectionContainer)];
+      [typeof(ILegacyContainer), typeof(IServiceLocator), typeof(AutofacDependencyInjectionContainer)];
 
    IContainer IAutofacContainerInternals.Container => _container._assert().NotNull();
    ContainerBuilder IAutofacContainerInternals.ContainerBuilder => _containerBuilder;

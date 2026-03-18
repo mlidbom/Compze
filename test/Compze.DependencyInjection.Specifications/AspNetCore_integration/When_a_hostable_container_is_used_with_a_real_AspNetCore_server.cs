@@ -31,11 +31,11 @@ class CompzeScopedService : ICompzeScopedService
 
 class HostableContainerTestServer : IAsyncDisposable
 {
-   readonly IDependencyInjectionContainer _container;
+   readonly ILegacyContainer _container;
    readonly WebApplication _app;
    readonly HttpClient _client;
 
-   HostableContainerTestServer(IDependencyInjectionContainer container, WebApplication app, HttpClient client)
+   HostableContainerTestServer(ILegacyContainer container, WebApplication app, HttpClient client)
    {
       _container = container;
       _app = app;

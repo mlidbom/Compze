@@ -46,7 +46,7 @@ public abstract class EndpointHostTestBase : UniversalTestBase
    protected IRemoteTypermediaNavigator Navigator => Client.Navigator;
    protected IEndpoint RemoteEndpoint { get; private set; } = null!;
 
-   readonly IDependencyInjectionContainer _rootContainer;
+   readonly ILegacyContainer _rootContainer;
 
    protected EndpointHostTestBase()
    {

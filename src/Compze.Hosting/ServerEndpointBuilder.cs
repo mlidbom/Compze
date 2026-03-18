@@ -35,7 +35,7 @@ class ServerEndpointBuilder : IEndpointBuilder, IAsyncDisposable, IDisposable
 {
    bool _builtSuccessfully;
 
-   public IDependencyInjectionContainer Container { get; }
+   public ILegacyContainer Container { get; }
 
    readonly ITessagesInFlightTracker _globalStateTracker;
    readonly TessageHandlerRegistry _tessagingRegistry;
@@ -67,7 +67,7 @@ class ServerEndpointBuilder : IEndpointBuilder, IAsyncDisposable, IDisposable
       TypermediaInfrastructureQueryRegistration.RegisterQueryHandlers(registrar);
    }
 
-   public ServerEndpointBuilder(IEndpointHost host, ITessagesInFlightTracker globalStateTracker, IDependencyInjectionContainer container, EndpointConfiguration configuration)
+   public ServerEndpointBuilder(IEndpointHost host, ITessagesInFlightTracker globalStateTracker, ILegacyContainer container, EndpointConfiguration configuration)
    {
       _host = host;
       Container = container;
@@ -118,7 +118,12 @@ class ServerEndpointBuilder : IEndpointBuilder, IAsyncDisposable, IDisposable
 
       Container.Register(
          Singleton.For<EndpointId>().Instance(Configuration.Id),
-         Singleton.For<IDependencyInjectionContainer>().Instance(Container),
+         Singleton.For<ILegacyContainer>().Instance(Container),
+         Singleton.For<IContainerBuilder>().CreatedBy(() => (IContainerBuilder)Container),
+         //urgent:todo: Building here seems exceedingly strange. We create our own container by resolving it from the container? How does that even work?
+         Singleton.For<IDependencyInjectionContainer>().CreatedBy(() => ((IContainerBuilder)Container).Build()),
+         Singleton.For<IRootResolver>().CreatedBy((IDependencyInjectionContainer container) => container.Resolver),
+         Singleton.For<IScopeFactory>().CreatedBy((IDependencyInjectionContainer container) => container.ScopeFactory),
          Singleton.For<EndpointConfiguration>().Instance(Configuration),
          Singleton.For<ITessageHandlerRegistry, ITessageHandlerRegistrar>().Instance(_tessagingRegistry),
          Singleton.For<ITypermediaHandlerRegistry, ITypermediaHandlerRegistrar>().Instance(_typermediaRegistry)
