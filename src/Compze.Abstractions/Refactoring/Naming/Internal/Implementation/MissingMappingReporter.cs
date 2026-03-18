@@ -16,9 +16,7 @@ static class MissingMappingReporter
 
       var scannedTypes = TypeMapperAssemblyScanner.Scan(assembly);
 
-      var allExplicitTypesForAssembly = scannedTypes.LeafTypes.Select(t => t.Type)
-                                                    .Concat(scannedTypes.OpenGenericDefinitions.Select(t => t.Type))
-                                                    .ToHashSet();
+      var allExplicitTypesForAssembly = scannedTypes.TypesRequiringExplicitMapping.ToHashSet();
 
       // Also include types already mapped from this assembly that weren't found by scanning
       // (manually-added entries the user put in the mapping file)

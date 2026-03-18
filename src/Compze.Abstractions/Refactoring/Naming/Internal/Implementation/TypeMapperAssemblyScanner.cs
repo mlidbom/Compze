@@ -2,23 +2,18 @@ using System.Reflection;
 using Compze.Abstractions.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Internals.SystemCE.ReflectionCE;
-using static Compze.Abstractions.Refactoring.Naming.Internal.Implementation.TypeMapperType;
 
 namespace Compze.Abstractions.Refactoring.Naming.Internal.Implementation;
 
 class ScannedAssemblyTypes(
-   IReadOnlyList<LeafType> leafTypes,
-   IReadOnlyList<OpenGenericDefinition> openGenericDefinitions,
-   IReadOnlyList<ClosedGenericType> closedGenericTypes,
-   IReadOnlyList<ArrayType> arrayTypes)
+   IReadOnlyList<Type> typesRequiringExplicitMapping,
+   IReadOnlyList<Type> composableTypes)
 {
-   static readonly ScannedAssemblyTypes _empty = new([], [], [], []);
+   static readonly ScannedAssemblyTypes _empty = new([], []);
    internal static ScannedAssemblyTypes Empty => _empty;
 
-   internal IReadOnlyList<LeafType> LeafTypes { get; } = leafTypes;
-   internal IReadOnlyList<OpenGenericDefinition> OpenGenericDefinitions { get; } = openGenericDefinitions;
-   internal IReadOnlyList<ClosedGenericType> ClosedGenericTypes { get; } = closedGenericTypes;
-   internal IReadOnlyList<ArrayType> ArrayTypes { get; } = arrayTypes;
+   internal IReadOnlyList<Type> TypesRequiringExplicitMapping { get; } = typesRequiringExplicitMapping;
+   internal IReadOnlyList<Type> ComposableTypes { get; } = composableTypes;
 }
 
 static class TypeMapperAssemblyScanner
@@ -28,10 +23,8 @@ static class TypeMapperAssemblyScanner
       if(!IsAssemblyWeShouldExamine(assembly))
          return ScannedAssemblyTypes.Empty;
 
-      var leafTypes = new HashSet<Type>();
-      var openGenericDefinitions = new HashSet<Type>();
-      var closedGenericTypes = new HashSet<Type>();
-      var arrayElementTypes = new HashSet<Type>();
+      var explicitTypes = new HashSet<Type>();
+      var composableTypes = new HashSet<Type>();
 
       var definedTypes = assembly.GetTypes()
                                  .Where(type => !type.IsGenericParameter)
@@ -43,8 +36,8 @@ static class TypeMapperAssemblyScanner
 
          if(ShouldMapConcreteType(type))
          {
-            leafTypes.Add(type);
-            arrayElementTypes.Add(type);
+            explicitTypes.Add(type);
+            composableTypes.Add(type.MakeArrayType());
          }
       }
 
@@ -52,30 +45,28 @@ static class TypeMapperAssemblyScanner
       foreach(var definedType in nonGenericParameterTypes)
       {
          foreach(var property in definedType.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static))
-            CollectClosedGenericTypes(property.PropertyType, assembly, closedGenericTypes, openGenericDefinitions, leafTypes);
+            CollectClosedGenericTypes(property.PropertyType, assembly, composableTypes, explicitTypes);
 
          foreach(var field in definedType.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static))
-            CollectClosedGenericTypes(field.FieldType, assembly, closedGenericTypes, openGenericDefinitions, leafTypes);
+            CollectClosedGenericTypes(field.FieldType, assembly, composableTypes, explicitTypes);
 
          foreach(var method in definedType.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static))
          {
-            CollectClosedGenericTypes(method.ReturnType, assembly, closedGenericTypes, openGenericDefinitions, leafTypes);
+            CollectClosedGenericTypes(method.ReturnType, assembly, composableTypes, explicitTypes);
             foreach(var parameter in method.GetParameters())
-               CollectClosedGenericTypes(parameter.ParameterType, assembly, closedGenericTypes, openGenericDefinitions, leafTypes);
+               CollectClosedGenericTypes(parameter.ParameterType, assembly, composableTypes, explicitTypes);
          }
 
          if(definedType.BaseType != null)
-            CollectClosedGenericTypes(definedType.BaseType, assembly, closedGenericTypes, openGenericDefinitions, leafTypes);
+            CollectClosedGenericTypes(definedType.BaseType, assembly, composableTypes, explicitTypes);
 
          foreach(var interfaceType in definedType.GetInterfaces())
-            CollectClosedGenericTypes(interfaceType, assembly, closedGenericTypes, openGenericDefinitions, leafTypes);
+            CollectClosedGenericTypes(interfaceType, assembly, composableTypes, explicitTypes);
       }
 
       return new ScannedAssemblyTypes(
-         leafTypes.OrderBy(t => t.GetFullNameCompilable()).Select(t => new LeafType(t)).ToList(),
-         openGenericDefinitions.OrderBy(t => t.GetFullNameCompilable()).Select(t => new OpenGenericDefinition(t)).ToList(),
-         closedGenericTypes.OrderBy(t => t.GetFullNameCompilable()).Select(t => new ClosedGenericType(t)).ToList(),
-         arrayElementTypes.OrderBy(t => t.GetFullNameCompilable()).Select(t => new ArrayType(t.MakeArrayType())).ToList());
+         explicitTypes.OrderBy(type => type.GetFullNameCompilable()).ToList(),
+         composableTypes.OrderBy(type => type.GetFullNameCompilable()).ToList());
    }
 
    static bool IsAssemblyWeShouldExamine(Assembly assembly)
@@ -94,7 +85,7 @@ static class TypeMapperAssemblyScanner
       return false;
    }
 
-   static void CollectClosedGenericTypes(Type type, Assembly targetAssembly, HashSet<Type> closedGenericTypes, HashSet<Type> openGenericDefinitions, HashSet<Type> leafTypes)
+   static void CollectClosedGenericTypes(Type type, Assembly targetAssembly, HashSet<Type> composableTypes, HashSet<Type> explicitTypes)
    {
       if(type is { IsGenericType: true, IsGenericTypeDefinition: false })
       {
@@ -104,29 +95,29 @@ static class TypeMapperAssemblyScanner
 
          if(hasTypeArgumentFromTargetAssembly && ShouldMapClosedGenericType(type))
          {
-            closedGenericTypes.Add(type);
+            composableTypes.Add(type);
 
             var genericDefinition = type.GetGenericTypeDefinition();
             if(genericDefinition.Assembly == targetAssembly)
-               openGenericDefinitions.Add(genericDefinition);
+               explicitTypes.Add(genericDefinition);
 
             foreach(var typeArg in typeArguments)
             {
                if(!typeArg.IsGenericParameter && typeArg.Assembly == targetAssembly
                   && !typeArg.IsGenericType && !typeArg.IsArray)
-                  leafTypes.Add(typeArg);
+                  explicitTypes.Add(typeArg);
             }
          }
 
          foreach(var typeArg in typeArguments)
          {
             if(!typeArg.IsGenericParameter)
-               CollectClosedGenericTypes(typeArg, targetAssembly, closedGenericTypes, openGenericDefinitions, leafTypes);
+               CollectClosedGenericTypes(typeArg, targetAssembly, composableTypes, explicitTypes);
          }
       }
 
       if(type.IsArray)
-         CollectClosedGenericTypes(type.GetElementType()!, targetAssembly, closedGenericTypes, openGenericDefinitions, leafTypes);
+         CollectClosedGenericTypes(type.GetElementType()!, targetAssembly, composableTypes, explicitTypes);
    }
 
    static bool ShouldMapConcreteType(Type type)

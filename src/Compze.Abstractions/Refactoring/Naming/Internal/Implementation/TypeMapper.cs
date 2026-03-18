@@ -2,7 +2,6 @@ using System.Diagnostics.CodeAnalysis;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
-using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Threading.ResourceAccess;
 
 namespace Compze.Abstractions.Refactoring.Naming.Internal.Implementation;
@@ -133,25 +132,25 @@ public class TypeMapper : ITypeMapper
 
    static void ProcessAssembly(System.Reflection.Assembly assembly, MappingState state)
    {
-      var scannedTypes = TypeMapperAssemblyScanner.Scan(assembly);
       var assemblyMappings = AssemblyMappingReader.ReadMappings(assembly);
-
-      // Register explicit mappings from the assembly's mapping file into global state
       foreach(var (type, typeId) in assemblyMappings)
          state.Map(type, typeId);
 
-      // Correlate scanned types against all known mappings (this assembly + previously loaded assemblies)
-      var correlation = AssemblyMappingCorrelator.Correlate(
-         scannedTypes,
-         assemblyMappings,
-         type => state.TypeToTypeIdMap.GetValueOrDefault(type));
+      var scannedTypes = TypeMapperAssemblyScanner.Scan(assembly);
 
-      // Register computed TypeIds into global state
-      foreach(var (computedType, computedId) in correlation.ResolvedComputedTypes)
-         state.Map(computedType.Type, computedId);
+      TypeId? ResolveExplicitTypeId(Type type) => state.TypeToTypeIdMap.GetValueOrDefault(type);
 
-      // Track missing mappings for error reporting
-      if(correlation.MissingExplicitTypes.Count > 0)
+      foreach(var type in scannedTypes.TypesRequiringExplicitMapping.Concat(scannedTypes.ComposableTypes))
+      {
+         var mapperType = TypeMapperType.GetOrCreate(type, ResolveExplicitTypeId, state.TypeMapperTypeCache);
+         if(mapperType.TypeId != null && !state.TypeToTypeIdMap.ContainsKey(type))
+            state.Map(type, mapperType.TypeId);
+      }
+
+      var hasMissingExplicitMappings = scannedTypes.TypesRequiringExplicitMapping
+         .Any(type => !state.TypeToTypeIdMap.ContainsKey(type));
+
+      if(hasMissingExplicitMappings)
       {
          var tessage = MissingMappingReporter.BuildAssemblyMappingTessage(assembly, state.TypeToTypeIdMap);
          state.AssemblyMappingUpdateTessages[assembly] = tessage;
@@ -163,10 +162,10 @@ public class TypeMapper : ITypeMapper
       if(state.TypeToTypeIdMap.TryGetValue(type, out typeId!))
          return true;
 
-      var computed = TryComputeTypeId(type, state);
-      if(computed != null)
+      var mapperType = TypeMapperType.GetOrCreate(type, t => state.TypeToTypeIdMap.GetValueOrDefault(t), state.TypeMapperTypeCache);
+      if(mapperType.TypeId != null)
       {
-         typeId = computed;
+         typeId = mapperType.TypeId;
          state.Map(type, typeId);
          return true;
       }
@@ -175,45 +174,11 @@ public class TypeMapper : ITypeMapper
       return false;
    }
 
-   static TypeId? TryComputeTypeId(Type type, MappingState state)
-   {
-      if(type.IsArray)
-      {
-         var elementType = type.GetElementType()!;
-         if(!TryGetOrComputeTypeId(elementType, state, out var elementTypeId))
-            return null;
-
-         return DeterministicTypeIdGenerator.ComputeCompositeTypeId(
-            DeterministicTypeIdGenerator.ArrayMarkerTypeId,
-            elementTypeId);
-      }
-
-      if(type is { IsGenericType: true, IsGenericTypeDefinition: false })
-      {
-         var genericDef = type.GetGenericTypeDefinition();
-         if(!TryGetOrComputeTypeId(genericDef, state, out var genericDefTypeId))
-            return null;
-
-         var typeArgs = type.GetGenericArguments();
-         var argTypeIds = new TypeId[typeArgs.Length];
-
-         for(var i = 0; i < typeArgs.Length; i++)
-         {
-            if(!TryGetOrComputeTypeId(typeArgs[i], state, out var argTypeId))
-               return null;
-            argTypeIds[i] = argTypeId;
-         }
-
-         return DeterministicTypeIdGenerator.ComputeCompositeTypeId(genericDefTypeId, argTypeIds);
-      }
-
-      return null;
-   }
-
    class MappingState
    {
       internal readonly Dictionary<Type, TypeId> TypeToTypeIdMap = new();
       internal readonly Dictionary<TypeId, Type> TypeIdToTypeMap = new();
+      internal readonly Dictionary<Type, TypeMapperType> TypeMapperTypeCache = new();
       internal readonly HashSet<System.Reflection.Assembly> CheckedAssemblies = [];
       internal readonly Dictionary<System.Reflection.Assembly, string> AssemblyMappingUpdateTessages = new();
 
