@@ -149,7 +149,9 @@ public class TypeMapper : ITypeMapper
 
    static void CheckAssemblyForRequiredMappings(Assembly assembly, MappingState state)
    {
-      var typesRequiringMapping = TypeMapperTypeDiscovery.GetTypesRequiringMapping(assembly);
+      var discovered = TypeMapperTypeDiscovery.DiscoverTypes(assembly);
+      var typesRequiringExplicitMapping = discovered.RequiringExplicitMapping;
+      var composableTypes = discovered.Composable;
 
       var assemblyTypeMapperTypes = assembly.GetTypes()
                                             .Where(t => t.Name == TypeMapperSourceCodeGenerator.MappingClassName)
@@ -164,9 +166,8 @@ public class TypeMapper : ITypeMapper
 
       if(assemblyTypeMapperType == null)
       {
-         if(typesRequiringMapping.Count > 0)
+         if(typesRequiringExplicitMapping.Count > 0)
          {
-            // Store the tessage for later use if type mapping fails
             var tessage = BuildTessageDescribingHowToAddMissingMappings(assembly);
             state.AssemblyMappingUpdateTessages[assembly] = tessage;
          }
@@ -183,13 +184,93 @@ public class TypeMapper : ITypeMapper
          method.Invoke(instance, [(Action<string, Type>)MapAction]);
       }
 
-      var typesWithMissingMappings = typesRequiringMapping.Where(type => !state.TypeToTypeIdMap.ContainsKey(type)).ToList();
+      // Compute deterministic TypeIds for composable types (closed generics and arrays)
+      // that don't already have explicit mappings
+      ComputeDeterministicTypeIds(composableTypes, state);
+
+      var typesWithMissingMappings = typesRequiringExplicitMapping.Where(type => !state.TypeToTypeIdMap.ContainsKey(type)).ToList();
       if(typesWithMissingMappings.Any())
       {
-         // Store the tessage for later use if type mapping fails
          var tessage = BuildTessageDescribingHowToAddMissingMappings(assembly);
          state.AssemblyMappingUpdateTessages[assembly] = tessage;
       }
+   }
+
+   static void ComputeDeterministicTypeIds(ISet<Type> composableTypes, MappingState state)
+   {
+      foreach(var type in composableTypes)
+      {
+         // Skip types that already have explicit mappings (backward compatibility)
+         if(state.TypeToTypeIdMap.ContainsKey(type)) continue;
+
+         var computedId = TryComputeTypeId(type, state);
+         if(computedId != null)
+         {
+            state.Map(type, computedId);
+         }
+      }
+   }
+
+   static TypeId? TryComputeTypeId(Type type, MappingState state)
+   {
+      if(type.IsArray)
+      {
+         var elementType = type.GetElementType()!;
+         if(!TryGetOrComputeTypeId(elementType, state, out var elementTypeId))
+            return null;
+
+         return DeterministicTypeIdGenerator.ComputeCompositeTypeId(
+            DeterministicTypeIdGenerator.ArrayMarkerTypeId,
+            elementTypeId);
+      }
+
+      if(type is { IsGenericType: true, IsGenericTypeDefinition: false })
+      {
+         var genericDef = type.GetGenericTypeDefinition();
+         if(!TryGetOrComputeTypeId(genericDef, state, out var genericDefTypeId))
+            return null;
+
+         var typeArgs = type.GetGenericArguments();
+         var argTypeIds = new TypeId[typeArgs.Length];
+
+         for(var i = 0; i < typeArgs.Length; i++)
+         {
+            if(!TryGetOrComputeTypeId(typeArgs[i], state, out var argTypeId))
+               return null;
+            argTypeIds[i] = argTypeId;
+         }
+
+         return DeterministicTypeIdGenerator.ComputeCompositeTypeId(genericDefTypeId, argTypeIds);
+      }
+
+      return null;
+   }
+
+   static bool TryGetOrComputeTypeId(Type type, MappingState state, out TypeId typeId)
+   {
+      if(state.TypeToTypeIdMap.TryGetValue(type, out typeId!))
+         return true;
+
+      // For open generic definitions without explicit mappings, compute a stable TypeId from their name.
+      // This handles system types (List<>, HashSet<>, etc.) whose names are stable.
+      if(type.IsGenericTypeDefinition)
+      {
+         typeId = DeterministicTypeIdGenerator.ComputeTypeIdFromName(type.FullName!);
+         state.Map(type, typeId);
+         return true;
+      }
+
+      // For composable types without explicit mappings, try to compute recursively
+      var computed = TryComputeTypeId(type, state);
+      if(computed != null)
+      {
+         typeId = computed;
+         state.Map(type, typeId);
+         return true;
+      }
+
+      typeId = null!;
+      return false;
    }
 
    static string BuildTessageDescribingHowToAddMissingMappings(Assembly assembly)
@@ -197,17 +278,18 @@ public class TypeMapper : ITypeMapper
       var assemblyName = assembly.GetName().Name;
       var rootNamespace = assemblyName;
 
-      var allTypesRequiringMapping = TypeMapperTypeDiscovery.GetTypesRequiringMapping(assembly);
+      var discovered = TypeMapperTypeDiscovery.DiscoverTypes(assembly);
+      var typesRequiringExplicitMapping = discovered.RequiringExplicitMapping;
 
       // Get existing mappings for types in this assembly from the current TypeMapper state
-      var existingMappings = State.Locked(state => allTypesRequiringMapping
+      var existingMappings = State.Locked(state => typesRequiringExplicitMapping
                                                 .Where(type => state.TypeToTypeIdMap.ContainsKey(type))
                                                 .ToDictionary(type => type, type => state.TypeToTypeIdMap[type]));
 
-      var generatedCode = TypeMapperSourceCodeGenerator.GenerateAutoGeneratedClassCode(rootNamespace, allTypesRequiringMapping, existingMappings);
+      var generatedCode = TypeMapperSourceCodeGenerator.GenerateAutoGeneratedClassCode(rootNamespace, typesRequiringExplicitMapping, existingMappings);
 
       // Try to automatically find the project file and create the mapping
-      var createdFilePath = TypeMapperSourceCodeGenerator.TryFindProjectFileAndCreateMapping(assembly, allTypesRequiringMapping, existingMappings);
+      var createdFilePath = TypeMapperSourceCodeGenerator.TryFindProjectFileAndCreateMapping(assembly, typesRequiringExplicitMapping, existingMappings);
 
       var fixTessage = new StringBuilder();
 
