@@ -27,11 +27,11 @@ static class InboxRegistrar
                   .CreatedBy((IServiceBusSqlLayer.IInboxSqlLayer sqlLayer)
                                 => new InboxTessageStorage(sqlLayer)),
          Singleton.For<HandlerExecutionEngine>()
-                  .CreatedBy((ITessagesInFlightTracker globalStateTracker, ITessageHandlerRegistry tessagingHandlerRegistry, IServiceLocator serviceLocator, ITessageStorage storage, ITaskRunner taskRunner, EndpointConfiguration configuration)
-                                => new HandlerExecutionEngine(globalStateTracker, tessagingHandlerRegistry, serviceLocator, storage, taskRunner, configuration.Id)),
+                  .CreatedBy((ITessagesInFlightTracker globalStateTracker, ITessageHandlerRegistry tessagingHandlerRegistry, IScopeFactory scopeFactory, ITessageStorage storage, ITaskRunner taskRunner, EndpointConfiguration configuration)
+                                => new HandlerExecutionEngine(globalStateTracker, tessagingHandlerRegistry, scopeFactory, storage, taskRunner, configuration.Id)),
          Singleton.For<IInbox>()
-                  .CreatedBy((IServiceLocator serviceLocator, HandlerExecutionEngine handlerExecutionEngine, ITessageStorage tessageStorage, ILegacyContainer container, IInboxTransportServer transportServer)
-                                => new Inbox(serviceLocator, handlerExecutionEngine, tessageStorage, container, transportServer))
+                  .CreatedBy((HandlerExecutionEngine handlerExecutionEngine, ITessageStorage tessageStorage, ILegacyContainer container, IInboxTransportServer transportServer)
+                                => new Inbox(handlerExecutionEngine, tessageStorage, container, transportServer))
       );
 
    readonly HandlerExecutionEngine _handlerExecutionEngine;
@@ -39,7 +39,7 @@ static class InboxRegistrar
    readonly ITessageStorage _storage;
    readonly IInboxTransportServer _transportServer;
 
-   public Inbox(IServiceLocator serviceLocator, HandlerExecutionEngine handlerExecutionEngine, ITessageStorage tessageStorage, ILegacyContainer container, IInboxTransportServer transportServer)
+   public Inbox(HandlerExecutionEngine handlerExecutionEngine, ITessageStorage tessageStorage, ILegacyContainer container, IInboxTransportServer transportServer)
    {
       _handlerExecutionEngine = handlerExecutionEngine;
       _storage = tessageStorage;

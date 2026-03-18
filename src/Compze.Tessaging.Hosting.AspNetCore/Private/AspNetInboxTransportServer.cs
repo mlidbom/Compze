@@ -14,16 +14,16 @@ namespace Compze.Tessaging.Hosting.AspNetCore.Private;
 
 class AspNetInboxTransportServer : IInboxTransportServer
 {
-   readonly IServiceLocator _serviceLocator;
+   readonly IScopeFactory _scopeFactory;
    WebApplication? _webApplication;
 
    public static void RegisterWith(IComponentRegistrar registrar) =>
       registrar.Register(
          Singleton.For<IInboxTransportServer>()
-                  .CreatedBy((IServiceLocator serviceLocator)
-                                => new AspNetInboxTransportServer(serviceLocator)));
+                  .CreatedBy((IScopeFactory scopeFactory)
+                                => new AspNetInboxTransportServer(scopeFactory)));
 
-   AspNetInboxTransportServer(IServiceLocator serviceLocator) => _serviceLocator = serviceLocator;
+   AspNetInboxTransportServer(IScopeFactory scopeFactory) => _scopeFactory = scopeFactory;
 
    public Uri Address => new(_webApplication!.Urls.First());
 
@@ -69,7 +69,7 @@ class AspNetInboxTransportServer : IInboxTransportServer
       // Create a scope in our container for each request and store it in HttpContext.Items
       app.Use(async (httpContext, next) =>
       {
-         using var scope = _serviceLocator.BeginScope();
+         using var scope = _scopeFactory.BeginScope();
          httpContext.Items[CompzeControllerActivator.CompzeScopeResolverHttpContextItemKey] = scope.Resolver;
          await next.Invoke().caf();
       });

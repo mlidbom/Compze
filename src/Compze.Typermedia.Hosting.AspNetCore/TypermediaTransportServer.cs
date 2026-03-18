@@ -19,15 +19,15 @@ public class TypermediaTransportServer : ITypermediaTransportServer
 {
    const string CompzeScopeHttpContextItemKey = "CompzeScope";
 
-   readonly IServiceLocator _serviceLocator;
+   readonly IScopeFactory _scopeFactory;
    WebApplication? _webApplication;
 
    public static void RegisterWith(IComponentRegistrar registrar) =>
       registrar.Register(
          Singleton.For<ITypermediaTransportServer>()
-                  .CreatedBy((IServiceLocator serviceLocator) => new TypermediaTransportServer(serviceLocator)));
+                  .CreatedBy((IScopeFactory scopeFactory) => new TypermediaTransportServer(scopeFactory)));
 
-   TypermediaTransportServer(IServiceLocator serviceLocator) => _serviceLocator = serviceLocator;
+   TypermediaTransportServer(IScopeFactory scopeFactory) => _scopeFactory = scopeFactory;
 
    public Uri Address => new(_webApplication!.Urls.First());
 
@@ -70,7 +70,7 @@ public class TypermediaTransportServer : ITypermediaTransportServer
       // Create a scope in our container for each request and store it in HttpContext.Items
       app.Use(async (httpContext, next) =>
       {
-         using var scope = _serviceLocator.BeginScope();
+         using var scope = _scopeFactory.BeginScope();
          httpContext.Items[CompzeScopeHttpContextItemKey] = scope;
          await next.Invoke().caf();
       });

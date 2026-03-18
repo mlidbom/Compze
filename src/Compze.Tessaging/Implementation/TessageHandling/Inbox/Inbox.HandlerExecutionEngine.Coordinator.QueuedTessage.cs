@@ -26,7 +26,7 @@ public partial class Inbox
             readonly Func<object, IScopeResolver, object?> _tessageTask;
             readonly ITaskRunner _taskRunner;
             readonly ITessageStorage _tessageStorage;
-            readonly IServiceLocator _serviceLocator;
+            readonly IScopeFactory _scopeFactory;
             readonly ITessageHandlerRegistry _tessagingHandlerRegistry;
 
             internal Task<object?> Task => _taskCompletionSource.Task;
@@ -64,7 +64,7 @@ public partial class Inbox
                   object? result = null;
                   try
                   {
-                     using var scope = _serviceLocator.BeginScope();
+                     using var scope = _scopeFactory.BeginScope();
                      result = TransactionScopeCe.Execute(() =>
                      {
                         var innerResult = _tessageTask(tessage, scope.Resolver);
@@ -106,14 +106,14 @@ public partial class Inbox
                }
             }
 
-            internal HandlerExecutionTask(TransportTessage.InComing transportTessage, Coordinator coordinator, ITaskRunner taskRunner, ITessageStorage tessageStorage, IServiceLocator serviceLocator, ITessageHandlerRegistry tessagingHandlerRegistry)
+            internal HandlerExecutionTask(TransportTessage.InComing transportTessage, Coordinator coordinator, ITaskRunner taskRunner, ITessageStorage tessageStorage, IScopeFactory scopeFactory, ITessageHandlerRegistry tessagingHandlerRegistry)
             {
                TessageId = transportTessage.TessageId;
                TransportTessage = transportTessage;
                _coordinator = coordinator;
                _taskRunner = taskRunner;
                _tessageStorage = tessageStorage;
-               _serviceLocator = serviceLocator;
+               _scopeFactory = scopeFactory;
                _tessagingHandlerRegistry = tessagingHandlerRegistry;
                _tessageTask = CreateTessageTask();
             }

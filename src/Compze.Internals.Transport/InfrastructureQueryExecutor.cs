@@ -9,11 +9,11 @@ namespace Compze.Internals.Transport;
 
 public class InfrastructureQueryExecutor
 {
-   readonly IServiceLocator _serviceLocator;
+   readonly IScopeFactory _scopeFactory;
    IReadOnlyDictionary<Type, Func<object, IScopeResolver, object>> _queryHandlers = new Dictionary<Type, Func<object, IScopeResolver, object>>();
    readonly IMonitor _monitor = IMonitor.New();
 
-   InfrastructureQueryExecutor(IServiceLocator serviceLocator) => _serviceLocator = serviceLocator;
+   InfrastructureQueryExecutor(IScopeFactory scopeFactory) => _scopeFactory = scopeFactory;
 
    public void RegisterQueryHandler<TQuery, TResult>(Func<TQuery, IScopeResolver, TResult> handler) where TQuery : IQuery<TResult> => _monitor.Locked(() =>
    {
@@ -24,7 +24,7 @@ public class InfrastructureQueryExecutor
    public object ExecuteQuery(IMessage query)
    {
       this.Log().Debug($"Executing infrastructure query {query.GetType().Name}");
-      return _serviceLocator.ExecuteInIsolatedScope(scopeResolver =>
+      return _scopeFactory.ExecuteInIsolatedScope(scopeResolver =>
       {
          if(!_queryHandlers.TryGetValue(query.GetType(), out var handler))
             throw new InvalidOperationException($"No infrastructure query handler registered for {query.GetType().FullName}");
@@ -36,6 +36,6 @@ public class InfrastructureQueryExecutor
    public static void RegisterWith(IComponentRegistrar registrar) =>
       registrar.Register(
          Singleton.For<InfrastructureQueryExecutor>()
-                  .CreatedBy((IServiceLocator serviceLocator)
-                                => new InfrastructureQueryExecutor(serviceLocator)));
+                  .CreatedBy((IScopeFactory scopeFactory)
+                                => new InfrastructureQueryExecutor(scopeFactory)));
 }

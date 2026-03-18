@@ -6,15 +6,15 @@ using Compze.Typermedia.HandlerRegistration;
 
 namespace Compze.Typermedia.Hosting;
 
-public class TypermediaHandlerExecutor(IServiceLocator serviceLocator, ITypermediaHandlerRegistry handlerRegistry)
+public class TypermediaHandlerExecutor(IScopeFactory scopeFactory, ITypermediaHandlerRegistry handlerRegistry)
 {
-   readonly IServiceLocator _serviceLocator = serviceLocator;
+   readonly IScopeFactory _scopeFactory = scopeFactory;
    readonly ITypermediaHandlerRegistry _handlerRegistry = handlerRegistry;
 
    public object ExecuteTuery(ITessage tuery)
    {
       this.Log().Debug($"Executing tuery {tuery.GetType().Name}");
-      return _serviceLocator.ExecuteInIsolatedScope(scopeResolver =>
+      return _scopeFactory.ExecuteInIsolatedScope(scopeResolver =>
       {
          var handler = _handlerRegistry.GetTueryHandler(tuery.GetType());
          return handler((ITuery<object>)tuery, scopeResolver);
@@ -24,7 +24,7 @@ public class TypermediaHandlerExecutor(IServiceLocator serviceLocator, ITypermed
    public object ExecuteTommandWithResult(ITessage tommand)
    {
       this.Log().Debug($"Executing tommand with result {tommand.GetType().Name}");
-      return ExecuteWithRetry(() => _serviceLocator.ExecuteTransactionInIsolatedScope(scopeResolver =>
+      return ExecuteWithRetry(() => _scopeFactory.ExecuteTransactionInIsolatedScope(scopeResolver =>
       {
          var handler = _handlerRegistry.GetTommandHandlerWithReturnValue(tommand.GetType());
          return handler((IAtMostOnceTypermediaTommand)tommand, scopeResolver);
@@ -36,7 +36,7 @@ public class TypermediaHandlerExecutor(IServiceLocator serviceLocator, ITypermed
       this.Log().Debug($"Executing void tommand {tommand.GetType().Name}");
       ExecuteWithRetry<object?>(() =>
       {
-         _serviceLocator.ExecuteTransactionInIsolatedScope(scopeResolver =>
+         _scopeFactory.ExecuteTransactionInIsolatedScope(scopeResolver =>
          {
             var handler = _handlerRegistry.GetVoidTommandHandler(tommand);
             handler(tommand, scopeResolver);
@@ -69,6 +69,6 @@ public class TypermediaHandlerExecutor(IServiceLocator serviceLocator, ITypermed
    public static void RegisterWith(IComponentRegistrar registrar) =>
       registrar.Register(
          Singleton.For<TypermediaHandlerExecutor>()
-                  .CreatedBy((IServiceLocator serviceLocator, ITypermediaHandlerRegistry handlerRegistry)
-                                => new TypermediaHandlerExecutor(serviceLocator, handlerRegistry)));
+                  .CreatedBy((IScopeFactory scopeFactory, ITypermediaHandlerRegistry handlerRegistry)
+                                => new TypermediaHandlerExecutor(scopeFactory, handlerRegistry)));
 }

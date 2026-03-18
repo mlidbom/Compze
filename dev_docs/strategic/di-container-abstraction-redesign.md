@@ -92,21 +92,36 @@ Child container builder = same loop but all singletons take the delegated path. 
 
 Incremental migration — new interfaces alongside old ones, consumers migrated one by one, old interfaces deleted when empty. Compiles and tests pass at every step.
 
-### Phase 1: Define new interfaces + adapter implementation
-- Add `IContainerBuilder` and `IDependencyInjectionContainer` to the abstractions file
-- Have `DependencyInjectionContainer` implement both (adapter — `IDependencyInjectionContainer` wraps what `IServiceLocator` does today)
+### Phase 1: Define new interfaces + adapter implementation — DONE
+- `IContainerBuilder` and `IDependencyInjectionContainer` defined in the abstractions file
+- `DependencyInjectionContainer` implements both (adapter — delegates to existing `IServiceLocator`)
 - `IContainerBuilder.Registrar` returns the existing `IComponentRegistrar`
 - `IContainerBuilder.Build()` triggers the existing lazy build and returns `IDependencyInjectionContainer`
-- `IDependencyInjectionContainer.Resolver` returns an `IRootResolver` (adapter over existing resolution)
-- `IDependencyInjectionContainer.ScopeFactory` returns an `IScopeFactory` (adapter over existing `BeginScope()`)
-- Build + test
+- `IDependencyInjectionContainer.Resolver` returns the `IServiceLocator` as `IRootResolver`
+- `IDependencyInjectionContainer.ScopeFactory` returns the `IServiceLocator` as `IScopeFactory`
+- Old `IDependencyInjectionContainer` renamed to `ILegacyContainer` (temporary, removed in Phase 3)
+- New types registered in `ServerEndpointBuilder`: `IContainerBuilder`, `IDependencyInjectionContainer`, `IRootResolver`, `IScopeFactory`
+- `Endpoint` internal resolution switched from `IServiceLocator` to `IRootResolver`
+- All 2231 tests pass
 
-### Phase 2: Migrate consumers to new interfaces
-- Switch `Endpoint` from `IServiceLocator` to `IRootResolver`
-- Switch transport servers from `IServiceLocator` to `IScopeFactory`
-- Switch executors from `IServiceLocator` to `IScopeFactory`
-- Update DI registrations to register the new interface types
-- Build + test after each batch
+### Phase 2: Migrate remaining consumers to new interfaces — DONE
+- Extension methods (`ExecuteInIsolatedScope`, `ExecuteTransactionInIsolatedScope`, etc.) moved from `IServiceLocator` to `IScopeFactory`
+- `TypermediaHandlerRegistrarWithDependencyInjectionSupport` → `IRootResolver` (resolve only)
+- `TypermediaHandlerExecutor` → `IScopeFactory` (scope + transaction)
+- `InfrastructureQueryExecutor` → `IScopeFactory` (scope only)
+- `TypermediaTransportServer` → `IScopeFactory` (scope per request)
+- `AspNetInboxTransportServer` → `IScopeFactory` (scope per request)
+- Inbox chain (`HandlerExecutionEngine` → `Coordinator` → `HandlerExecutionTask`) → `IScopeFactory`
+- `Inbox` constructor: removed unused `IServiceLocator` parameter
+- All factory registrations (`RegisterWith`, `CreatedBy`) updated to resolve `IScopeFactory`
+- All tests pass
+
+### Remaining `IServiceLocator` references (src/ only)
+- Container implementations: `MicrosoftDependencyInjectionContainer`, `AutofacDependencyInjectionContainer`, `DependencyInjectionContainer` — implement the interface
+- `IEndpoint.ServiceLocator`, `Endpoint.ServiceLocator` — public API surface
+- `ServerEndpointBuilder` — builds/passes `IServiceLocator` to `Endpoint`
+- `ComponentRegistration.CreateCloneRegistration()` — uses `IServiceLocator.Resolve()` for cloning
+- Test wiring: `DiContainerExtensions`, `ContainerCloner`, `TestClient` — test infrastructure
 
 ### Phase 3: Remove old interfaces
 - Once all consumers are migrated, remove `IServiceLocator` inheritance from the container
