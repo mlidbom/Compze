@@ -1,21 +1,20 @@
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
 
 namespace Compze.Tessaging.Hosting.AspNetCore.Private;
 
-/// <summary>Controller activator that resolves controllers from the Compze scope stored in HttpContext.Items by the request middleware.</summary>
+/// <summary>Controller activator that resolves controllers from the Compze scope resolver stored in HttpContext.Items by the request middleware.</summary>
 class CompzeControllerActivator : IControllerActivator
 {
-   internal const string CompzeScopeHttpContextItemKey = "CompzeScope";
+   internal const string CompzeScopeResolverHttpContextItemKey = "CompzeScopeResolver";
 
    public object Create(ControllerContext context)
    {
-      var scope = (IServiceScope)context.HttpContext.Items[CompzeScopeHttpContextItemKey]!;
+      var scopeResolver = (IScopeResolver)context.HttpContext.Items[CompzeScopeResolverHttpContextItemKey]!;
       var controllerType = context.ActionDescriptor.ControllerTypeInfo.AsType();
-      return scope.Resolve(controllerType);
+      return scopeResolver.Resolve(controllerType);
    }
 
    public void Release(ControllerContext context, object controller)

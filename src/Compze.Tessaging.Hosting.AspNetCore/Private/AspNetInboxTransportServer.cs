@@ -70,7 +70,7 @@ class AspNetInboxTransportServer : IInboxTransportServer
       app.Use(async (httpContext, next) =>
       {
          using var scope = _serviceLocator.BeginScope();
-         httpContext.Items[CompzeControllerActivator.CompzeScopeHttpContextItemKey] = scope;
+         httpContext.Items[CompzeControllerActivator.CompzeScopeResolverHttpContextItemKey] = scope.Resolver;
          await next.Invoke().caf();
       });
 
