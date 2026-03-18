@@ -9,7 +9,7 @@ namespace Compze.Abstractions.Refactoring.Naming.Internal.Implementation;
 /// and optionally triggers auto-generation of mapping files.</summary>
 static class MissingMappingReporter
 {
-   internal static string BuildAssemblyMappingTessage(Assembly assembly, IReadOnlyDictionary<Type, TypeId> allResolvedMappings)
+   internal static string BuildAssemblyMappingMessage(Assembly assembly, IReadOnlyDictionary<Type, TypeId> allResolvedMappings)
    {
       var assemblyName = assembly.GetName().Name;
       var rootNamespace = assemblyName;
@@ -33,11 +33,11 @@ static class MissingMappingReporter
 
       var createdFilePath = TypeMapperSourceCodeGenerator.TryFindProjectFileAndCreateMapping(assembly, allExplicitTypesForAssembly, existingAssemblyMappings);
 
-      var fixTessage = new StringBuilder();
+      var fixMessage = new StringBuilder();
 
       if(createdFilePath != null)
       {
-         fixTessage.AppendLine(CultureInfo.InvariantCulture,
+         fixMessage.AppendLine(CultureInfo.InvariantCulture,
                                $"""
 
                                 Type mappings were automatically generated for assembly: {assemblyName}
@@ -53,7 +53,7 @@ static class MissingMappingReporter
                                 """);
       } else
       {
-         fixTessage.AppendLine(CultureInfo.InvariantCulture,
+         fixMessage.AppendLine(CultureInfo.InvariantCulture,
                                $"""
 
                                 In order to allow you to freely rename and move your types without breaking your persisted data you are required to map your types to Guid values that are used in place of your type names in the persisted data.
@@ -64,18 +64,18 @@ static class MissingMappingReporter
                                 """);
       }
 
-      fixTessage.AppendLine(generatedCode);
-      return fixTessage.ToString();
+      fixMessage.AppendLine(generatedCode);
+      return fixMessage.ToString();
    }
 
    internal static Exception BuildMissingTypesException(IReadOnlyList<Type> missingTypes)
    {
-      var fixTessage = new StringBuilder();
+      var fixMessage = new StringBuilder();
 
       var firstType = missingTypes[0];
       var missingInTheSameAssembly = missingTypes.TakeWhile(it => it.Assembly == firstType.Assembly).ToList();
 
-      fixTessage.AppendLine(CultureInfo.InvariantCulture,
+      fixMessage.AppendLine(CultureInfo.InvariantCulture,
                             $"""
 
                              In order to allow you to freely rename and move your types without breaking your persisted data you are required to map your types to Guid values that are used in place of your type names in the persisted data.
@@ -83,10 +83,10 @@ static class MissingMappingReporter
                              """);
 
       foreach(var missingType in missingInTheSameAssembly)
-         fixTessage.Append(CultureInfo.InvariantCulture, $"{Environment.NewLine}      map(\"{Guid.NewGuid()}\", typeof({missingType.GetFullNameCompilable()}));");
+         fixMessage.Append(CultureInfo.InvariantCulture, $"{Environment.NewLine}      map(\"{Guid.NewGuid()}\", typeof({missingType.GetFullNameCompilable()}));");
 
-      fixTessage.Append(Environment.NewLine).AppendLine();
+      fixMessage.Append(Environment.NewLine).AppendLine();
 
-      return new Exception(fixTessage.ToString());
+      return new Exception(fixMessage.ToString());
    }
 }

@@ -33,8 +33,8 @@ public class TypeMapper : ITypeMapper
       if(TryGetOrComputeTypeId(type, state, out var typeId))
          return typeId;
 
-      if(state.AssemblyMappingUpdateMessages.TryGetValue(type.Assembly, out var tessage))
-         throw new Exception($"Failed to find TypeId for type: {type.FullName}{Environment.NewLine}{tessage}");
+      if(state.AssemblyMappingUpdateMessages.TryGetValue(type.Assembly, out var message))
+         throw new Exception($"Failed to find TypeId for type: {type.FullName}{Environment.NewLine}{message}");
 
       throw MissingMappingReporter.BuildMissingTypesException([type]);
    });
@@ -68,8 +68,8 @@ public class TypeMapper : ITypeMapper
 
          if(!found.Any())
          {
-            if(state.AssemblyMappingUpdateMessages.TryGetValue(type.Assembly, out var tessage))
-               throw new Exception($"Failed to find TypeIds for types assignable to: {type.FullName}{Environment.NewLine}{tessage}");
+            if(state.AssemblyMappingUpdateMessages.TryGetValue(type.Assembly, out var message))
+               throw new Exception($"Failed to find TypeIds for types assignable to: {type.FullName}{Environment.NewLine}{message}");
 
             throw MissingMappingReporter.BuildMissingTypesException([type]);
          }
@@ -132,7 +132,7 @@ public class TypeMapper : ITypeMapper
 
       if(hasMissingExplicitMappings)
       {
-         var message = MissingMappingReporter.BuildAssemblyMappingTessage(assembly, state.TypeToTypeIdMap);
+         var message = MissingMappingReporter.BuildAssemblyMappingMessage(assembly, state.TypeToTypeIdMap);
          state.AssemblyMappingUpdateMessages[assembly] = message;
       }
    }
