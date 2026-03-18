@@ -57,12 +57,10 @@ public class TypermediaHandlerExecutor(IServiceLocator serviceLocator, ITypermed
          {
             return action();
          }
+         //Todo: Should we have some sort of retryable exception test here perhaps? And/or a backoff delay? Rather than hammering away instantly regardless of the error?
          catch(Exception ex) when(--remainingAttempts > 0)
          {
-#pragma warning disable CS0219 // Variable is assigned but its value is never used
-            int instrumentationPoint = 0;
             this.Log().Warning(ex, "Command execution failed. Retrying.");
-#pragma warning restore CS0219 // Variable is assigned but its value is never used
          }
       }
    }
