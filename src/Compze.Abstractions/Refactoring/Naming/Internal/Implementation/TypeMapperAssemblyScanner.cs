@@ -99,8 +99,7 @@ static class TypeMapperAssemblyScanner
       if(type is { IsGenericType: true, IsGenericTypeDefinition: false })
       {
          var typeArguments = type.GetGenericArguments();
-         var hasTypeArgumentFromTargetAssembly = typeArguments.Any(arg =>
-                                                                      !arg.IsGenericParameter && arg.Assembly == targetAssembly);
+         var hasTypeArgumentFromTargetAssembly = typeArguments.Any(arg => !arg.IsGenericParameter && arg.Assembly == targetAssembly);
 
          if(hasTypeArgumentFromTargetAssembly && ShouldMapClosedGenericType(type))
          {
@@ -113,7 +112,7 @@ static class TypeMapperAssemblyScanner
             foreach(var typeArg in typeArguments)
             {
                if(!typeArg.IsGenericParameter && typeArg.Assembly == targetAssembly
-                  && !typeArg.IsGenericType && !typeArg.IsArray)
+                                              && !typeArg.IsGenericType && !typeArg.IsArray)
                   explicitRawTypes.Add(typeArg);
             }
          }
@@ -156,6 +155,7 @@ static class TypeMapperAssemblyScanner
          if(current.IsGenericType && current.GetGenericTypeDefinition() == openGenericBase) return true;
          current = current.BaseType;
       }
+
       return false;
    }
 }
