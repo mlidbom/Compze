@@ -4,14 +4,14 @@ using Compze.Internals.SystemCE.LinqCE;
 
 namespace Compze.DependencyInjection;
 
-public abstract class BuiltContainerBase : IDependencyInjectionContainer
+public abstract class DependencyInjectionContainer : IDependencyInjectionContainer
 {
-   static readonly ILogger Log = CompzeLogger.For<BuiltContainerBase>();
+   static readonly ILogger Log = CompzeLogger.For<DependencyInjectionContainer>();
 
    readonly IReadOnlyList<ComponentRegistration> _registrations;
    readonly IComponentRegistrar _sourceRegistrar;
 
-   protected BuiltContainerBase(IReadOnlyList<ComponentRegistration> registrations, IComponentRegistrar sourceRegistrar)
+   protected DependencyInjectionContainer(IReadOnlyList<ComponentRegistration> registrations, IComponentRegistrar sourceRegistrar)
    {
       _registrations = registrations;
       _sourceRegistrar = sourceRegistrar;

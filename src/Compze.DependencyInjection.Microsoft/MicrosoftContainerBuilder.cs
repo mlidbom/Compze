@@ -58,18 +58,18 @@ public sealed class MicrosoftContainerBuilder(IComponentRegistrar? registrar = n
       }
    }
 
-   protected override BuiltContainerBase BuildContainer()
+   protected override DependencyInjectionContainer BuildContainer()
    {
       AssertLifeStyleCombinationsAreValid();
 
       // Auto-register intrinsic container types via closures that will be filled after build
-      MicrosoftBuiltContainer? builtContainer = null;
+      MicrosoftContainer? builtContainer = null;
       _services.AddSingleton<IDependencyInjectionContainer>(_ => builtContainer!);
       _services.AddSingleton<IRootResolver>(_ => builtContainer!);
       _services.AddSingleton<IScopeFactory>(_ => builtContainer!);
 
       var serviceProvider = _services.BuildServiceProvider(new ServiceProviderOptions { ValidateOnBuild = true, ValidateScopes = true });
-      builtContainer = new MicrosoftBuiltContainer(serviceProvider, RegisteredComponents(), Registrar);
+      builtContainer = new MicrosoftContainer(serviceProvider, RegisteredComponents(), Registrar);
       return builtContainer;
    }
 

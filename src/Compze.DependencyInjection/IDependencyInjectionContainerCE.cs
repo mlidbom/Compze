@@ -10,7 +10,7 @@ public static class IDependencyInjectionContainerCE
       public TComponent Resolve<TComponent>() where TComponent : class =>
          @this.RootResolver.Resolve<TComponent>();
 
-      public IServiceScope BeginScope() =>
+      public IScope BeginScope() =>
          @this.ScopeFactory.BeginScope();
 
       public TResult ExecuteTransactionInIsolatedScope<TResult>([InstantHandle] Func<IScopeResolver, TResult> function) =>

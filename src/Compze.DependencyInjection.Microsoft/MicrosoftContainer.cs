@@ -2,20 +2,17 @@ using Compze.Contracts;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Microsoft.Extensions.DependencyInjection;
-using IServiceScope = Compze.DependencyInjection.Abstractions.IServiceScope;
 
 namespace Compze.DependencyInjection.Microsoft;
 
-public sealed class MicrosoftBuiltContainer : BuiltContainerBase, IRootResolver, IScopeFactory, IMicrosoftContainerInternals
+public sealed class MicrosoftContainer : DependencyInjectionContainer, IRootResolver, IScopeFactory, IMicrosoftContainerInternals
 {
    readonly ServiceProvider _serviceProvider;
    bool _isDisposed;
 
-   internal MicrosoftBuiltContainer(ServiceProvider serviceProvider, IReadOnlyList<ComponentRegistration> registrations, IComponentRegistrar sourceRegistrar)
-      : base(registrations, sourceRegistrar)
-   {
+   internal MicrosoftContainer(ServiceProvider serviceProvider, IReadOnlyList<ComponentRegistration> registrations, IComponentRegistrar sourceRegistrar)
+      : base(registrations, sourceRegistrar) =>
       _serviceProvider = serviceProvider;
-   }
 
    protected override ContainerBuilderBase CreateBuilderForClone(IComponentRegistrar clonedRegistrar) =>
       new MicrosoftContainerBuilder(clonedRegistrar);
@@ -26,14 +23,14 @@ public sealed class MicrosoftBuiltContainer : BuiltContainerBase, IRootResolver,
       return _serviceProvider.GetRequiredService(serviceType);
    }
 
-   public IServiceScope BeginScope()
+   public IScope BeginScope()
    {
       Contract.State.NotDisposed(_isDisposed, this);
 
       var scope = _serviceProvider.CreateAsyncScope();
       var scopeResolver = scope.ServiceProvider.GetRequiredService<ScopeResolverWrapper>();
 
-      return new ServiceLocatorScope(scopeResolver, () => scope.DisposeAsync().AsTask().GetAwaiter().GetResult());
+      return new Scope(scopeResolver, () => scope.DisposeAsync().AsTask().GetAwaiter().GetResult());
    }
 
    IServiceProvider IMicrosoftContainerInternals.ServiceProvider => _serviceProvider;
@@ -56,10 +53,11 @@ public sealed class MicrosoftBuiltContainer : BuiltContainerBase, IRootResolver,
       }
    }
 
-   sealed class ServiceLocatorScope(IScopeResolver scopeResolver, Action onDispose) : IServiceScope
+   sealed class Scope(IScopeResolver scopeResolver, Action onDispose) : IScope
    {
+      readonly Action _onDispose = onDispose;
       public IScopeResolver Resolver { get; } = scopeResolver;
 
-      public void Dispose() => onDispose();
+      public void Dispose() => _onDispose();
    }
 }

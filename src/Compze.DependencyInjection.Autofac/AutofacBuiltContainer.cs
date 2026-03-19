@@ -4,11 +4,11 @@ using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.DependencyInjection.Autofac;
 
-public sealed class AutofacBuiltContainer : BuiltContainerBase, IRootResolver, IScopeFactory, IAutofacContainerInternals
+public sealed class AutofacContainer : DependencyInjectionContainer, IRootResolver, IScopeFactory, IAutofacContainerInternals
 {
    readonly IContainer _container;
 
-   internal AutofacBuiltContainer(IContainer container, IReadOnlyList<ComponentRegistration> registrations, IComponentRegistrar sourceRegistrar)
+   internal AutofacContainer(IContainer container, IReadOnlyList<ComponentRegistration> registrations, IComponentRegistrar sourceRegistrar)
       : base(registrations, sourceRegistrar)
    {
       _container = container;
@@ -20,11 +20,11 @@ public sealed class AutofacBuiltContainer : BuiltContainerBase, IRootResolver, I
    public object Resolve(Type serviceType) =>
       _container.Resolve(serviceType);
 
-   public IServiceScope BeginScope()
+   public IScope BeginScope()
    {
       var lifetimeScope = _container.BeginLifetimeScope();
       var scopeResolver = lifetimeScope.Resolve<ScopeResolverWrapper>();
-      return new ServiceLocatorScope(scopeResolver, lifetimeScope);
+      return new Scope(scopeResolver, lifetimeScope);
    }
 
    IContainer IAutofacContainerInternals.Container => _container;
@@ -33,7 +33,7 @@ public sealed class AutofacBuiltContainer : BuiltContainerBase, IRootResolver, I
 
    public override async ValueTask DisposeAsync() => await _container.DisposeAsync().caf();
 
-   sealed class ServiceLocatorScope(IScopeResolver scopeResolver, ILifetimeScope lifetimeScope) : IServiceScope
+   sealed class Scope(IScopeResolver scopeResolver, ILifetimeScope lifetimeScope) : IScope
    {
       readonly ILifetimeScope _lifetimeScope = lifetimeScope;
       public IScopeResolver Resolver { get; } = scopeResolver;

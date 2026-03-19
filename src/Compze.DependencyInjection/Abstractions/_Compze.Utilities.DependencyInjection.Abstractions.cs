@@ -58,8 +58,8 @@ public interface IServiceResolver
 public interface IRootResolver : IServiceResolver;
 
 ///<summary>
-/// <para>Instances are owned by an <see cref="IServiceScope"/> and resolving components will only work within that scope.</para>
-/// <para>All resolved components registered as <see cref="Lifestyle.Scoped"/> will resolve to the same instance and that instance will be disposed when the <see cref="IServiceScope"/> is disposed</para>
+/// <para>Instances are owned by an <see cref="IScope"/> and resolving components will only work within that scope.</para>
+/// <para>All resolved components registered as <see cref="Lifestyle.Scoped"/> will resolve to the same instance and that instance will be disposed when the <see cref="IScope"/> is disposed</para>
 /// </summary>
 public interface IScopeResolver : IServiceResolver;
 
@@ -68,15 +68,15 @@ public interface IScopeResolver : IServiceResolver;
 /// <para>Dispose will dispose All <see cref="Lifestyle.Scoped"/> or <see cref="Lifestyle.TrackedTransient"/> services resolved through <see cref="Resolver"/></para>
 ///
 /// </summary>
-public interface IServiceScope : IDisposable
+public interface IScope : IDisposable
 {
    IScopeResolver Resolver { get; }
 }
 
-///<summary>Creates instances of <see cref="IServiceScope"/>></summary>
+///<summary>Creates instances of <see cref="IScope"/>></summary>
 public interface IScopeFactory
 {
-   IServiceScope BeginScope();
+   IScope BeginScope();
 }
 
 
@@ -87,7 +87,7 @@ public enum Lifestyle
    Singleton,
 
    ///<summary>
-   /// <see cref="Scoped"/> services can only be resolved within an <see cref="IServiceScope"/>, preferably through an <see cref="IScopeResolver"/>.
+   /// <see cref="Scoped"/> services can only be resolved within an <see cref="IScope"/>, preferably through an <see cref="IScopeResolver"/>.
    /// <para>While inside a scope, every call to <see cref="IServiceResolver.Resolve"/> will return the same instance.</para>
    /// <para>Once the scope is disposed, all the <see cref="Scoped"/> instances are also disposed.</para>
    /// </summary>

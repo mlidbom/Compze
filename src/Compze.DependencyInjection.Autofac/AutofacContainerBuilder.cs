@@ -61,18 +61,18 @@ public sealed class AutofacContainerBuilder(IComponentRegistrar? registrar = nul
       }
    }
 
-   protected override BuiltContainerBase BuildContainer()
+   protected override DependencyInjectionContainer BuildContainer()
    {
       _runVerifications.RunIfFirstCall(AssertLifeStyleCombinationsAreValid);
 
       // Auto-register intrinsic container types via closures that will be filled after build
-      AutofacBuiltContainer? builtContainer = null;
+      AutofacContainer? builtContainer = null;
       _containerBuilder.Register(_ => (IDependencyInjectionContainer)builtContainer!).As<IDependencyInjectionContainer>().SingleInstance().ExternallyOwned();
       _containerBuilder.Register(_ => (IRootResolver)builtContainer!).As<IRootResolver>().SingleInstance().ExternallyOwned();
       _containerBuilder.Register(_ => (IScopeFactory)builtContainer!).As<IScopeFactory>().SingleInstance().ExternallyOwned();
 
       var container = _containerBuilder.Build();
-      builtContainer = new AutofacBuiltContainer(container, RegisteredComponents(), Registrar);
+      builtContainer = new AutofacContainer(container, RegisteredComponents(), Registrar);
       return builtContainer;
    }
 

@@ -18,7 +18,7 @@ public class HostableAutofacContainer(AutofacContainerBuilder compzeBuilder) : I
 class CompzeAutofacServiceProviderFactory(AutofacContainerBuilder compzeBuilder) : IServiceProviderFactory<ContainerBuilder>
 {
    readonly AutofacContainerBuilder _compzeBuilder = compzeBuilder;
-   AutofacBuiltContainer? _builtContainer;
+   AutofacContainer? _builtContainer;
 
    public ContainerBuilder CreateBuilder(IServiceCollection services)
    {
@@ -29,19 +29,19 @@ class CompzeAutofacServiceProviderFactory(AutofacContainerBuilder compzeBuilder)
 
    public IServiceProvider CreateServiceProvider(ContainerBuilder containerBuilder)
    {
-      _builtContainer = (AutofacBuiltContainer)((IContainerBuilder)_compzeBuilder).Build();
+      _builtContainer = (AutofacContainer)((IContainerBuilder)_compzeBuilder).Build();
       return new CompzeAutofacServiceProvider(_builtContainer);
    }
 }
 
-class CompzeAutofacServiceProvider(AutofacBuiltContainer builtContainer) : IServiceProvider, ISupportRequiredService, IDisposable, IAsyncDisposable
+class CompzeAutofacServiceProvider(AutofacContainer container) : IServiceProvider, ISupportRequiredService, IDisposable, IAsyncDisposable
 {
-   readonly AutofacBuiltContainer _builtContainer = builtContainer;
-   IContainer Container => ((IAutofacContainerInternals)_builtContainer).Container;
+   readonly AutofacContainer _container = container;
+   IContainer Container => ((IAutofacContainerInternals)_container).Container;
 
    public object? GetService(Type serviceType) => Container.ResolveOptional(serviceType);
    public object GetRequiredService(Type serviceType) => Container.Resolve(serviceType);
 
-   public void Dispose() => _builtContainer.Dispose();
-   public ValueTask DisposeAsync() => _builtContainer.DisposeAsync();
+   public void Dispose() => _container.Dispose();
+   public ValueTask DisposeAsync() => _container.DisposeAsync();
 }

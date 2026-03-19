@@ -17,7 +17,7 @@ public class HostableMicrosoftContainer(MicrosoftContainerBuilder compzeBuilder)
 class CompzeMicrosoftServiceProviderFactory(MicrosoftContainerBuilder compzeBuilder) : IServiceProviderFactory<IServiceCollection>
 {
    readonly MicrosoftContainerBuilder _compzeBuilder = compzeBuilder;
-   MicrosoftBuiltContainer? _builtContainer;
+   MicrosoftContainer? _builtContainer;
 
    public IServiceCollection CreateBuilder(IServiceCollection services)
    {
@@ -28,19 +28,19 @@ class CompzeMicrosoftServiceProviderFactory(MicrosoftContainerBuilder compzeBuil
 
    public IServiceProvider CreateServiceProvider(IServiceCollection services)
    {
-      _builtContainer = (MicrosoftBuiltContainer)((IContainerBuilder)_compzeBuilder).Build();
+      _builtContainer = (MicrosoftContainer)((IContainerBuilder)_compzeBuilder).Build();
       return new CompzeMicrosoftServiceProvider(_builtContainer);
    }
 }
 
-class CompzeMicrosoftServiceProvider(MicrosoftBuiltContainer builtContainer) : IServiceProvider, ISupportRequiredService, IDisposable, IAsyncDisposable
+class CompzeMicrosoftServiceProvider(MicrosoftContainer container) : IServiceProvider, ISupportRequiredService, IDisposable, IAsyncDisposable
 {
-   readonly MicrosoftBuiltContainer _builtContainer = builtContainer;
-   IServiceProvider Provider => ((IMicrosoftContainerInternals)_builtContainer).ServiceProvider;
+   readonly MicrosoftContainer _container = container;
+   IServiceProvider Provider => ((IMicrosoftContainerInternals)_container).ServiceProvider;
 
    public object? GetService(Type serviceType) => Provider.GetService(serviceType);
    public object GetRequiredService(Type serviceType) => Provider.GetRequiredService(serviceType);
 
-   public void Dispose() => _builtContainer.Dispose();
-   public ValueTask DisposeAsync() => _builtContainer.DisposeAsync();
+   public void Dispose() => _container.Dispose();
+   public ValueTask DisposeAsync() => _container.DisposeAsync();
 }

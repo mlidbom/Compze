@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using IServiceScope = Compze.DependencyInjection.Abstractions.IServiceScope;
 using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
 namespace Compze.Typermedia.Hosting.AspNetCore;
@@ -84,7 +83,7 @@ public class TypermediaTransportServer : ITypermediaTransportServer
    {
       public object Create(ControllerContext context)
       {
-         var scope = (IServiceScope)context.HttpContext.Items[CompzeScopeHttpContextItemKey]!;
+         var scope = (IScope)context.HttpContext.Items[CompzeScopeHttpContextItemKey]!;
          return scope.Resolve(context.ActionDescriptor.ControllerTypeInfo.AsType());
       }
 

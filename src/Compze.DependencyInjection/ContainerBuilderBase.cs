@@ -26,7 +26,7 @@ public abstract class ContainerBuilderBase : IContainerBuilder
       return BuildContainer();
    }
 
-   protected abstract BuiltContainerBase BuildContainer();
+   protected abstract DependencyInjectionContainer BuildContainer();
 
    internal void Register(params ComponentRegistration[] registrations)
    {
