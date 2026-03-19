@@ -11,7 +11,7 @@ static class AssemblyMappingReader
       var mappings = new Dictionary<Type, TypeId>();
 
       var mapperTypes = assembly.GetTypes()
-                                .Where(t => t.Name == TypeMapperSourceCodeGenerator.MappingClassName)
+                                .Where(it => it.Name == TypeMapperSourceCodeGenerator.MappingClassName)
                                 .ToList();
 
       if(mapperTypes.Count > 1)
