@@ -92,4 +92,34 @@ public class GuidCE_CreateUuidV5_ : UniversalTestBase
       var result2 = Guid.NewUUIDv5(namespaceId: UrlNamespace, name: "same-name");
       result1.Must().NotBe(result2);
    }
+
+   [XF] public void components_overload_matches_manually_serialized_bytes()
+   {
+      var guid1 = Guid.NewGuid();
+      var guid2 = Guid.NewGuid();
+      var namespaceId = new Guid("e4a8c9f2-7b3d-4f1a-9c6e-2d8b5a0f3e7c");
+
+      Span<byte> manualPayload = stackalloc byte[32];
+      guid1.TryWriteBytes(manualPayload);
+      guid2.TryWriteBytes(manualPayload[16..]);
+      var fromBytes = Guid.NewUUIDv5(namespaceId: namespaceId, payload: manualPayload);
+
+      var fromComponents = Guid.NewUUIDv5(namespaceId: namespaceId, components: [guid1, guid2]);
+
+      fromComponents.Must().Be(fromBytes);
+   }
+
+   [XF] public void components_overload_with_single_guid_matches_bytes()
+   {
+      var guid = Guid.NewGuid();
+      var namespaceId = new Guid("c3d2e1f0-9a8b-4c7d-6e5f-0a1b2c3d4e5f");
+
+      Span<byte> manualPayload = stackalloc byte[16];
+      guid.TryWriteBytes(manualPayload);
+      var fromBytes = Guid.NewUUIDv5(namespaceId: namespaceId, payload: manualPayload);
+
+      var fromComponents = Guid.NewUUIDv5(namespaceId: namespaceId, components: [guid]);
+
+      fromComponents.Must().Be(fromBytes);
+   }
 }

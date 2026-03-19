@@ -156,12 +156,12 @@ public class TypeMapper : ITypeMapper
             if(openGenericTypeId == null)
                return null;
 
-            var argTypeIds = closedGeneric.TypeArguments.Select(it => TryResolveTypeId(it, state))
-                                          .WhereNotNull()
-                                          .ToArray();
-            return argTypeIds.Length != closedGeneric.TypeArguments.Count
+            var argumentTypeIds = closedGeneric.TypeArguments.Select(it => TryResolveTypeId(it, state))
+                                               .WhereNotNull()
+                                               .ToArray();
+            return argumentTypeIds.Length != closedGeneric.TypeArguments.Count
                       ? null
-                      : DeterministicTypeIdGenerator.Generate(openGenericTypeId, argTypeIds);
+                      : DeterministicTypeId.ForClosedGenericType(openGenericTypeId: openGenericTypeId, typeArgumentTypeIds: argumentTypeIds);
          }
 
          case TypeMapperType.ArrayType arrayType:
@@ -169,7 +169,7 @@ public class TypeMapper : ITypeMapper
             var elementId = TryResolveTypeId(arrayType.ElementType, state);
             return elementId == null
                       ? null
-                      : DeterministicTypeIdGenerator.GenerateArrayTypeId(elementId);
+                      : DeterministicTypeId.ForArrayType(typeArgumentTypeIds: elementId);
          }
 
          default:

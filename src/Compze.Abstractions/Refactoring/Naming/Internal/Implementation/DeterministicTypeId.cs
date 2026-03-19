@@ -1,9 +1,6 @@
-using Compze.Contracts;
-using Compze.Internals.SystemCE;
-
 namespace Compze.Abstractions.Refactoring.Naming.Internal.Implementation;
 
-static class DeterministicTypeIdGenerator
+static class DeterministicTypeId
 {
     // Fixed namespace GUID for all composite TypeId computations (generics + arrays).
     // This value must NEVER change — persisted data depends on it.
@@ -18,19 +15,11 @@ static class DeterministicTypeIdGenerator
     // This value must NEVER change — persisted data depends on it.
     static readonly TypeId ArrayMarkerTypeId = new(new Guid("b7e3d8f1-6a2c-4e0b-8d5f-1c9a4b3e2d6f"));
 
-    internal static TypeId GenerateArrayTypeId(params TypeId[] typeArgumentTypeIds) => Generate(ArrayMarkerTypeId, typeArgumentTypeIds);
-    internal static TypeId Generate(TypeId definitionTypeId, params TypeId[] typeArgumentTypeIds)
+    internal static TypeId ForArrayType(params TypeId[] typeArgumentTypeIds) => ForClosedGenericType(ArrayMarkerTypeId, typeArgumentTypeIds);
+    internal static TypeId ForClosedGenericType(TypeId openGenericTypeId, params TypeId[] typeArgumentTypeIds)
     {
-        var payloadSize = 16 * (1 + typeArgumentTypeIds.Length);
-        Span<byte> payload = stackalloc byte[payloadSize];
-
-        definitionTypeId.Value.TryWriteBytes(payload)._assert().True();
-        for (var i = 0; i < typeArgumentTypeIds.Length; i++)
-        {
-            typeArgumentTypeIds[i].Value.TryWriteBytes(payload.Slice(16 * (1 + i)))._assert().True();
-        }
-
-        return new TypeId(Guid.NewUUIDv5(namespaceId: CompositionNamespaceId, payload: payload));
+        var componentGuids = typeArgumentTypeIds.Prepend(openGenericTypeId).Select(it => it.Value).ToList();
+        return new TypeId(Guid.NewUUIDv5(namespaceId: CompositionNamespaceId, components: componentGuids));
     }
 
     /// <summary>Computes a stable TypeId from a type's fully qualified name.
