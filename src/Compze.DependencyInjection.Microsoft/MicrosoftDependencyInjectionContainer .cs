@@ -8,7 +8,7 @@ using IServiceScope = Compze.DependencyInjection.Abstractions.IServiceScope;
 
 namespace Compze.DependencyInjection.Microsoft;
 
-public sealed class MicrosoftDependencyInjectionContainer(IComponentRegistrar? register = null) : DependencyInjectionContainer(register), IServiceLocator, IMicrosoftContainerInternals
+public sealed class MicrosoftDependencyInjectionContainer(IComponentRegistrar? register = null) : DependencyInjectionContainer(register), IRootResolver, IScopeFactory, IMicrosoftContainerInternals
 {
    readonly IServiceCollection _services = new ServiceCollection();
    ServiceProvider? _serviceProvider;
@@ -19,7 +19,7 @@ public sealed class MicrosoftDependencyInjectionContainer(IComponentRegistrar? r
 
    readonly RunOnce _registerScopedKernel = new();
 
-   protected override ILegacyContainer RegisterInContainer(ComponentRegistration[] registrations)
+   protected override void RegisterInContainer(ComponentRegistration[] registrations)
    {
       _registerScopedKernel.RunIfFirstCall(() =>
       {
@@ -65,21 +65,14 @@ public sealed class MicrosoftDependencyInjectionContainer(IComponentRegistrar? r
             _services.Add(new ServiceDescriptor(serviceType, serviceProvider => serviceProvider.GetService(firstServiceType)!, lifetime));
          }
       }
-
-      return this;
    }
 
-   public override IServiceLocator ServiceLocator
+   protected override void EnsureContainerBuilt()
    {
-      get
+      if(_serviceProvider == null)
       {
-         if(_serviceProvider == null)
-         {
-            AssertLifeStyleCombinationsAreValid();
-            _serviceProvider = _services.BuildServiceProvider(new ServiceProviderOptions { ValidateOnBuild = true, ValidateScopes = true });
-         }
-
-         return this;
+         AssertLifeStyleCombinationsAreValid();
+         _serviceProvider = _services.BuildServiceProvider(new ServiceProviderOptions { ValidateOnBuild = true, ValidateScopes = true });
       }
    }
 

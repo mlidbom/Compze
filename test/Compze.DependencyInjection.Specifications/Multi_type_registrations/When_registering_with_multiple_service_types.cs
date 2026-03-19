@@ -12,15 +12,15 @@ public class When_registering_with_multiple_service_types
    [DependencyInjectionContainerMatrix]
    public void Singleton_resolved_by_different_types_returns_same_instance()
    {
-      using var container = DependencyInjectionContainerFactory.CreateContainer();
-      container.Register(
+      using var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
+      builder.Registrar.Register(
          Singleton.For<IServiceA, IServiceB>()
                   .CreatedBy(() => new MultiTypeService()));
 
-      var serviceLocator = container.ServiceLocator;
+      var container = builder.Build();
 
-      var resolvedAsA = serviceLocator.Resolve<IServiceA>();
-      var resolvedAsB = serviceLocator.Resolve<IServiceB>();
+      var resolvedAsA = container.Resolve<IServiceA>();
+      var resolvedAsB = container.Resolve<IServiceB>();
 
       resolvedAsA.Must().Be(resolvedAsB);
    }
@@ -28,14 +28,14 @@ public class When_registering_with_multiple_service_types
    [DependencyInjectionContainerMatrix]
    public void Scoped_resolved_by_different_types_within_same_scope_returns_same_instance()
    {
-      using var container = DependencyInjectionContainerFactory.CreateContainer();
-      container.Register(
+      using var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
+      builder.Registrar.Register(
          Scoped.For<IServiceA, IServiceB>()
                .CreatedBy(() => new MultiTypeService()));
 
-      var serviceLocator = container.ServiceLocator;
+      var container = builder.Build();
 
-      using var scope = serviceLocator.BeginScope();
+      using var scope = container.BeginScope();
       var resolvedAsA = scope.Resolve<IServiceA>();
       var resolvedAsB = scope.Resolve<IServiceB>();
 
@@ -45,21 +45,21 @@ public class When_registering_with_multiple_service_types
    [DependencyInjectionContainerMatrix]
    public void Scoped_resolved_by_different_types_in_different_scopes_returns_different_instances()
    {
-      using var container = DependencyInjectionContainerFactory.CreateContainer();
-      container.Register(
+      using var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
+      builder.Registrar.Register(
          Scoped.For<IServiceA, IServiceB>()
                .CreatedBy(() => new MultiTypeService()));
 
-      var serviceLocator = container.ServiceLocator;
+      var container = builder.Build();
 
       IServiceA fromScope1;
       {
-         using var scope1 = serviceLocator.BeginScope();
+         using var scope1 = container.BeginScope();
          fromScope1 = scope1.Resolve<IServiceA>();
       }
 
       {
-         using var scope2 = serviceLocator.BeginScope();
+         using var scope2 = container.BeginScope();
          var fromScope2 = scope2.Resolve<IServiceA>();
          fromScope2.Must().NotBe(fromScope1);
       }
@@ -68,17 +68,17 @@ public class When_registering_with_multiple_service_types
    [DependencyInjectionContainerMatrix]
    public void Singleton_with_dependency_resolved_by_different_types_returns_same_instance()
    {
-      using var container = DependencyInjectionContainerFactory.CreateContainer();
-      container.Register(
+      using var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
+      builder.Registrar.Register(
          Singleton.For<IServiceA, IServiceB>()
                   .CreatedBy((IDependency dep) => new MultiTypeServiceWithDep(dep)),
          Singleton.For<IDependency>()
                   .CreatedBy(() => new Dependency()));
 
-      var serviceLocator = container.ServiceLocator;
+      var container = builder.Build();
 
-      var resolvedAsA = serviceLocator.Resolve<IServiceA>();
-      var resolvedAsB = serviceLocator.Resolve<IServiceB>();
+      var resolvedAsA = container.Resolve<IServiceA>();
+      var resolvedAsB = container.Resolve<IServiceB>();
 
       resolvedAsA.Must().Be(resolvedAsB);
    }
@@ -86,21 +86,21 @@ public class When_registering_with_multiple_service_types
    [DependencyInjectionContainerMatrix]
    public void Singleton_resolved_by_different_types_across_scopes_returns_same_instance()
    {
-      using var container = DependencyInjectionContainerFactory.CreateContainer();
-      container.Register(
+      using var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
+      builder.Registrar.Register(
          Singleton.For<IServiceA, IServiceB>()
                   .CreatedBy(() => new MultiTypeService()));
 
-      var serviceLocator = container.ServiceLocator;
+      var container = builder.Build();
 
       IServiceA resolvedAsA;
       {
-         using var scope1 = serviceLocator.BeginScope();
+         using var scope1 = container.BeginScope();
          resolvedAsA = scope1.Resolve<IServiceA>();
       }
 
       {
-         using var scope2 = serviceLocator.BeginScope();
+         using var scope2 = container.BeginScope();
          var resolvedAsB = scope2.Resolve<IServiceB>();
          resolvedAsB.Must().Be(resolvedAsA);
       }

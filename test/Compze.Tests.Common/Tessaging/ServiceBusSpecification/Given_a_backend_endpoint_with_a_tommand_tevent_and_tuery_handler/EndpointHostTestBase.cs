@@ -51,7 +51,7 @@ public abstract class EndpointHostTestBase : UniversalTestBase
    protected EndpointHostTestBase()
    {
 #pragma warning disable CA2000 // We are passing this disposable into a constructor of an object we don't own
-      _rootBuilder = TestEnv.DIContainer.CreateWithServiceLocator()
+      _rootBuilder = TestEnv.DIContainer.CreateWithContainerRegistrations()
                               ._mutate(it => it.Registrar.CurrentTestsDbPoolIfNotCloneContainer());
 #pragma warning restore CA2000 // We are passing this disposable into a constructor of an object we don't own
 

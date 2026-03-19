@@ -1,3 +1,4 @@
+using Compze.DependencyInjection.Abstractions;
 using Compze.DependencyInjection.Autofac;
 using Compze.Must;
 using Compze.xUnitBDD;
@@ -14,10 +15,10 @@ public class AutofacContainerInternalsTests
    }
 
    [XF]
-   public void LifetimeScope_is_accessible_after_ServiceLocator_is_accessed()
+   public void LifetimeScope_is_accessible_after_Build_is_called()
    {
       using var container = new AutofacDependencyInjectionContainer();
-      _ = container.ServiceLocator;
+      _ = ((IContainerBuilder)container).Build();
       var internals = (IAutofacContainerInternals)container;
       internals.Container.Must().NotBeNull();
    }

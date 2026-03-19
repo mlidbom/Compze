@@ -4,7 +4,7 @@ using Compze.Internals.SystemCE.LinqCE;
 
 namespace Compze.DependencyInjection;
 
-public abstract partial class DependencyInjectionContainer : ILegacyContainer, IContainerBuilder, IDependencyInjectionContainer
+public abstract partial class DependencyInjectionContainer : IContainerBuilder, IDependencyInjectionContainer
 {
    static readonly ILogger Log = CompzeLogger.For<DependencyInjectionContainer>();
 
@@ -23,30 +23,42 @@ public abstract partial class DependencyInjectionContainer : ILegacyContainer, I
 
    IDependencyInjectionContainer IContainerBuilder.Build()
    {
-      // Trigger the lazy build by accessing ServiceLocator
-      _ = ServiceLocator;
+      EnsureContainerBuilt();
       return this;
    }
 
-   IRootResolver IDependencyInjectionContainer.Resolver => ServiceLocator;
-   IScopeFactory IDependencyInjectionContainer.ScopeFactory => ServiceLocator;
+   IRootResolver IDependencyInjectionContainer.RootResolver
+   {
+      get
+      {
+         EnsureContainerBuilt();
+         return (IRootResolver)this;
+      }
+   }
+
+   IScopeFactory IDependencyInjectionContainer.ScopeFactory
+   {
+      get
+      {
+         EnsureContainerBuilt();
+         return (IScopeFactory)this;
+      }
+   }
 
    public abstract void Dispose();
    public abstract ValueTask DisposeAsync();
 
-   protected virtual IReadOnlyList<Type> ContainerFacadeServiceTypes { get; } =
-      [typeof(ILegacyContainer), typeof(IServiceLocator)];
+   protected virtual IReadOnlyList<Type> ContainerFacadeServiceTypes { get; } = [];
 
    protected abstract DependencyInjectionContainer CreateEmptyClone();
 
    DependencyInjectionContainer CloneInternal()
    {
       Log.Info($"Cloning IDependencyInjectionContainer: {GetHashCode()}");
-      IRootResolver sourceRootResolver = ServiceLocator;
+      EnsureContainerBuilt();
+      IRootResolver sourceRootResolver = (IRootResolver)this;
       var cloneContainer = CreateEmptyClone();
       cloneContainer.IsClone = true;
-
-      cloneContainer.Register(Singleton.For<IServiceLocator>().CreatedBy(() => cloneContainer.ServiceLocator));
 
       RegisteredComponents()
         .Where(component => ContainerFacadeServiceTypes.None(facadeType => component.ServiceTypes.Contains(facadeType)))
@@ -57,23 +69,21 @@ public abstract partial class DependencyInjectionContainer : ILegacyContainer, I
 
    IContainerBuilder IDependencyInjectionContainer.Clone() => CloneInternal();
    IContainerBuilder IContainerBuilder.Clone() => CloneInternal();
-   ILegacyContainer ILegacyContainer.Clone() => CloneInternal();
 
-   public ILegacyContainer Register(params ComponentRegistration[] registrations)
+   internal void Register(params ComponentRegistration[] registrations)
    {
       ValidateNoDuplicateRegistrations(registrations);
       _registeredComponents.AddRange(registrations);
       RegisterInContainer(registrations);
-      return this;
    }
 
    public IComponentRegistrar Register() => _registrar;
 
-   protected abstract ILegacyContainer RegisterInContainer(ComponentRegistration[] registrations);
+   protected abstract void RegisterInContainer(ComponentRegistration[] registrations);
 
    public IEnumerable<ComponentRegistration> RegisteredComponents() => _registeredComponents;
 
-   public abstract IServiceLocator ServiceLocator { get; }
+   protected abstract void EnsureContainerBuilt();
 
    void ValidateNoDuplicateRegistrations(ComponentRegistration[] newRegistrations)
    {

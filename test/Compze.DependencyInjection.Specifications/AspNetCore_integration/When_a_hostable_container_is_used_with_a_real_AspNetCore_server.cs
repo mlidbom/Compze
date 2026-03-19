@@ -31,22 +31,22 @@ class CompzeScopedService : ICompzeScopedService
 
 class HostableContainerTestServer : IAsyncDisposable
 {
-   readonly ILegacyContainer _container;
+   readonly IContainerBuilder _builder;
    readonly WebApplication _app;
    readonly HttpClient _client;
 
-   HostableContainerTestServer(ILegacyContainer container, WebApplication app, HttpClient client)
+   HostableContainerTestServer(IContainerBuilder builder, WebApplication app, HttpClient client)
    {
-      _container = container;
+      _builder = builder;
       _app = app;
       _client = client;
    }
 
    public static async Task<HostableContainerTestServer> StartAsync()
    {
-      var (container, hostable) = DependencyInjectionContainerFactory.CreateHostableContainer();
+      var (compzeBuilder, hostable) = DependencyInjectionContainerFactory.CreateHostableContainerBuilder();
 
-      container.Register(
+      compzeBuilder.Registrar.Register(
          Singleton.For<ICompzeSingletonService>().CreatedBy(() => new CompzeSingletonService()),
          Scoped.For<ICompzeScopedService>().CreatedBy(() => new CompzeScopedService()));
 
@@ -69,7 +69,7 @@ class HostableContainerTestServer : IAsyncDisposable
 
       var url = app.Urls.First();
       var client = new HttpClient { BaseAddress = new Uri(url) };
-      return new HostableContainerTestServer(container, app, client);
+      return new HostableContainerTestServer(compzeBuilder, app, client);
    }
 
    public Task<string> GetStringAsync(string requestUri) => _client.GetStringAsync(requestUri);
@@ -79,7 +79,7 @@ class HostableContainerTestServer : IAsyncDisposable
    {
       _client.Dispose();
       await _app.DisposeAsync();
-      await _container.DisposeAsync();
+      await _builder.DisposeAsync();
    }
 }
 

@@ -13,19 +13,20 @@ namespace Compze.Internals.Serialization.Newtonsoft.Specifications;
 
 public class SerializerTest : UniversalTestBase
 {
-   internal ITeventStoreSerializer TeventSerializer => _container.ServiceLocator.Resolve<ITeventStoreSerializer>();
-   internal IDocumentDbSerializer DocumentSerializer => _container.ServiceLocator.Resolve<IDocumentDbSerializer>();
+   internal ITeventStoreSerializer TeventSerializer => _container.RootResolver.Resolve<ITeventStoreSerializer>();
+   internal IDocumentDbSerializer DocumentSerializer => _container.RootResolver.Resolve<IDocumentDbSerializer>();
 
-   readonly ILegacyContainer _container;
+   readonly IDependencyInjectionContainer _container;
 
    protected SerializerTest()
    {
       var serializer = PCTSerializerAttribute.Serializer;
 #pragma warning disable CA2000 // We are disposing this disposable in DisposeInternal
-      _container = (ILegacyContainer)DIContainer.Microsoft
+      _container = DIContainer.Microsoft
                              .CreateEmpty()
                              ._mutate(it => RegisterSerializer(it.Registrar, serializer)
-                                              .TypeMapper());
+                                              .TypeMapper())
+                             .Build();
 #pragma warning restore CA2000
    }
 

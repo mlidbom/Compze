@@ -1,3 +1,4 @@
+using Compze.DependencyInjection.Abstractions;
 using Compze.DependencyInjection.Microsoft;
 using Compze.Must;
 using Compze.xUnitBDD;
@@ -22,10 +23,10 @@ public class MicrosoftContainerInternalsTests
    }
 
    [XF]
-   public void ServiceProvider_is_accessible_after_ServiceLocator_is_accessed()
+   public void ServiceProvider_is_accessible_after_Build_is_called()
    {
       using var container = new MicrosoftDependencyInjectionContainer();
-      _ = container.ServiceLocator;
+      _ = ((IContainerBuilder)container).Build();
       var internals = (IMicrosoftContainerInternals)container;
       internals.ServiceProvider.Must().NotBeNull();
    }

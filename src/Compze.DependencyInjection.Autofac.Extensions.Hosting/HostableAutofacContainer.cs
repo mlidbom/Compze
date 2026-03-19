@@ -1,5 +1,6 @@
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using Compze.DependencyInjection.Abstractions;
 using Compze.DependencyInjection.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -27,7 +28,7 @@ class CompzeAutofacServiceProviderFactory(AutofacDependencyInjectionContainer co
 
    public IServiceProvider CreateServiceProvider(ContainerBuilder containerBuilder)
    {
-      _ = _compzeContainer.ServiceLocator;
+      _ = ((IContainerBuilder)_compzeContainer).Build();
       return new CompzeAutofacServiceProvider(_compzeContainer);
    }
 }

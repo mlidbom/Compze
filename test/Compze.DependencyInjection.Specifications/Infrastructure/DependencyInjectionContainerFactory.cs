@@ -13,7 +13,7 @@ static class DependencyInjectionContainerFactory
 {
    static DIContainer CurrentDIContainer => (DIContainer)MatrixCombination.Current.Components[0];
 
-   public static ILegacyContainer CreateContainer() =>
+   public static IContainerBuilder CreateContainerBuilder() =>
       CurrentDIContainer switch
       {
          DIContainer.Microsoft      => new MicrosoftDependencyInjectionContainer(),
@@ -21,7 +21,7 @@ static class DependencyInjectionContainerFactory
          _                          => throw new ArgumentOutOfRangeException()
       };
 
-   public static (ILegacyContainer Container, IHostableContainer Hostable) CreateHostableContainer() =>
+   public static (IContainerBuilder Builder, IHostableContainer Hostable) CreateHostableContainerBuilder() =>
       CurrentDIContainer switch
       {
 #pragma warning disable CA2000
@@ -31,9 +31,9 @@ static class DependencyInjectionContainerFactory
 #pragma warning restore CA2000
       };
 
-   static (ILegacyContainer, IHostableContainer) CreateHostablePair(MicrosoftDependencyInjectionContainer container) =>
+   static (IContainerBuilder, IHostableContainer) CreateHostablePair(MicrosoftDependencyInjectionContainer container) =>
       (container, new HostableMicrosoftContainer(container));
 
-   static (ILegacyContainer, IHostableContainer) CreateHostablePair(AutofacDependencyInjectionContainer container) =>
+   static (IContainerBuilder, IHostableContainer) CreateHostablePair(AutofacDependencyInjectionContainer container) =>
       (container, new HostableAutofacContainer(container));
 }

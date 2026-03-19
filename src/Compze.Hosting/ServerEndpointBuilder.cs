@@ -52,7 +52,7 @@ class ServerEndpointBuilder : IEndpointBuilder, IAsyncDisposable, IDisposable
       SetupContainer();
       RegisterInfrastructureQueryHandlers();
       var container = Builder.Build();
-      var rootResolver = container.Resolver;
+      var rootResolver = container.RootResolver;
       var endpoint = new Endpoint(container,
                                   rootResolver.Resolve<ITessagingRouter>(),
                                   rootResolver.Resolve<IEndpointRegistry>(),
@@ -63,7 +63,7 @@ class ServerEndpointBuilder : IEndpointBuilder, IAsyncDisposable, IDisposable
 
    void RegisterInfrastructureQueryHandlers()
    {
-      var rootResolver = Builder.Build().Resolver;
+      var rootResolver = Builder.Build().RootResolver;
       var executor = rootResolver.Resolve<InfrastructureQueryExecutor>();
       var registrar = new InfrastructureQueryRegistrarWithDependencyInjectionSupport(executor);
       TessageTypesInternal.RegisterInfrastructureQueryHandlers(registrar);
@@ -122,7 +122,7 @@ class ServerEndpointBuilder : IEndpointBuilder, IAsyncDisposable, IDisposable
          Singleton.For<EndpointId>().Instance(Configuration.Id),
          Singleton.For<IContainerBuilder>().Instance(Builder),
          Singleton.For<IDependencyInjectionContainer>().CreatedBy(() => Builder.Build()),
-         Singleton.For<IRootResolver>().CreatedBy((IDependencyInjectionContainer container) => container.Resolver),
+         Singleton.For<IRootResolver>().CreatedBy((IDependencyInjectionContainer container) => container.RootResolver),
          Singleton.For<IScopeFactory>().CreatedBy((IDependencyInjectionContainer container) => container.ScopeFactory),
          Singleton.For<EndpointConfiguration>().Instance(Configuration),
          Singleton.For<ITessageHandlerRegistry, ITessageHandlerRegistrar>().Instance(_tessagingRegistry),

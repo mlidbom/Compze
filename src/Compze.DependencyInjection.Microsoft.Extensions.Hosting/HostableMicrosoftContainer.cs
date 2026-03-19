@@ -1,3 +1,4 @@
+using Compze.DependencyInjection.Abstractions;
 using Compze.DependencyInjection.Extensions.Hosting;
 using Compze.Internals.SystemCE.LinqCE;
 using Microsoft.Extensions.DependencyInjection;
@@ -26,7 +27,7 @@ class CompzeMicrosoftServiceProviderFactory(MicrosoftDependencyInjectionContaine
 
    public IServiceProvider CreateServiceProvider(IServiceCollection services)
    {
-      _ = _compzeContainer.ServiceLocator;
+      _ = ((IContainerBuilder)_compzeContainer).Build();
       return new CompzeMicrosoftServiceProvider(_compzeContainer);
    }
 }

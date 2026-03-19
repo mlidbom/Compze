@@ -30,12 +30,12 @@ class SomeTevent : TaggregateTevent, ISomeTevent
 
 public class TeventStoreTests : UniversalTestBase
 {
-   readonly IServiceLocator _serviceLocator = TestEnv.DIContainer.SetupTestingServiceLocator();
+   readonly IDependencyInjectionContainer _container = TestEnv.DIContainer.SetupTestingContainer();
 
-   protected override void DisposeInternal() => _serviceLocator.Dispose();
+   protected override void DisposeInternal() => _container.Dispose();
 
    [PCT]
-   public void StreamTeventsSinceReturnsWholeTeventLogWhenFromTeventIdIsNull() => _serviceLocator.ExecuteInIsolatedScope(scope =>
+   public void StreamTeventsSinceReturnsWholeTeventLogWhenFromTeventIdIsNull() => _container.ExecuteInIsolatedScope(scope =>
    {
       var taggregateId = new TaggregateId();
       var savedEvents = 1.Through(10)
@@ -53,7 +53,7 @@ public class TeventStoreTests : UniversalTestBase
    });
 
    [PCT]
-   public void StreamTeventsSinceReturnsWholeTeventLogWhenFetchingALargeNumberOfTevents_EnsureBatchingDoesNotBreakThings() => _serviceLocator.ExecuteInIsolatedScope(scope =>
+   public void StreamTeventsSinceReturnsWholeTeventLogWhenFetchingALargeNumberOfTevents_EnsureBatchingDoesNotBreakThings() => _container.ExecuteInIsolatedScope(scope =>
    {
       const int batchSize = 100;
       const int moreTeventsThanTheBatchSizeForStreamingTevents = batchSize + 10;
@@ -71,7 +71,7 @@ public class TeventStoreTests : UniversalTestBase
    });
 
    [PCT]
-   public void DeleteTeventsDeletesTheTeventsForOnlyTheSpecifiedTaggregate() => _serviceLocator.ExecuteInIsolatedScope(scope =>
+   public void DeleteTeventsDeletesTheTeventsForOnlyTheSpecifiedTaggregate() => _container.ExecuteInIsolatedScope(scope =>
    {
       var taggregatesWithTevents = 1.Through(10)
                                     .ToDictionary(i => i,
@@ -98,7 +98,7 @@ public class TeventStoreTests : UniversalTestBase
    });
 
    [PCT]
-   public void GetListOfTaggregateIds() => _serviceLocator.ExecuteInIsolatedScope(scope =>
+   public void GetListOfTaggregateIds() => _container.ExecuteInIsolatedScope(scope =>
    {
       var taggregateIds = 1.Through(10).Select(_ => new TaggregateId()).ToList();
       var taggregatesWithTevents = taggregateIds
@@ -119,7 +119,7 @@ public class TeventStoreTests : UniversalTestBase
 
    //Todo: This does not check that only taggregates of the correct type are returned since there are only tevents of type SomeTevent in the store..
    [PCT]
-   public void GetListOfTaggregateIdsUsingTeventType() => _serviceLocator.ExecuteInIsolatedScope(scope =>
+   public void GetListOfTaggregateIdsUsingTeventType() => _container.ExecuteInIsolatedScope(scope =>
    {
       var taggregateIds = 1.Through(10).Select(_ => new TaggregateId()).ToList();
 
@@ -140,10 +140,10 @@ public class TeventStoreTests : UniversalTestBase
    });
 
    [PCT]
-   public void Does_not_call_db_in_constructor() => _serviceLocator.ExecuteInIsolatedScope(scope => scope.TeventStoreUpdater());
+   public void Does_not_call_db_in_constructor() => _container.ExecuteInIsolatedScope(scope => scope.TeventStoreUpdater());
 
    [PCT]
-   public void ShouldNotCacheTeventsSavedDuringFailedTransactionEvenIfReadDuringSameTransaction() => _serviceLocator.ExecuteInIsolatedScope(scope =>
+   public void ShouldNotCacheTeventsSavedDuringFailedTransactionEvenIfReadDuringSameTransaction() => _container.ExecuteInIsolatedScope(scope =>
    {
       var teventStore = scope.TeventStore();
 
@@ -163,11 +163,11 @@ public class TeventStoreTests : UniversalTestBase
    [PCT]
    public void ShouldCacheTeventsBetweenInstancesTransaction()
    {
-      using var serviceLocator = TestEnv.DIContainer.SetupTestingServiceLocator();
+      using var container = TestEnv.DIContainer.SetupTestingContainer();
 
       var user = new User();
       {
-         using var scope = serviceLocator.BeginScope();
+         using var scope = container.BeginScope();
          var teventStore = scope.Resolver.TeventStore();
 
          user.Register("email@email.se", "password", new TaggregateId());
@@ -180,9 +180,9 @@ public class TeventStoreTests : UniversalTestBase
          });
       }
 
-      var firstRead = serviceLocator.ExecuteInIsolatedScope(scope => scope.TeventStore().GetTaggregateHistory(user.Id).Single());
+      var firstRead = container.ExecuteInIsolatedScope(scope => scope.TeventStore().GetTaggregateHistory(user.Id).Single());
 
-      var secondRead = serviceLocator.ExecuteInIsolatedScope(scope => scope.TeventStore().GetTaggregateHistory(user.Id).Single());
+      var secondRead = container.ExecuteInIsolatedScope(scope => scope.TeventStore().GetTaggregateHistory(user.Id).Single());
 
       firstRead.Must().ReferenceEqual(secondRead);
    }

@@ -18,14 +18,15 @@ namespace Compze.Tests.Performance.Internals.Serialization;
 
 public class TeventStoreTeventSerializerPerformanceTests : UniversalTestBase
 {
-   readonly ILegacyContainer _container;
+   readonly IDependencyInjectionContainer _container;
    readonly ITeventStoreSerializer _teventSerializer;
 
    public TeventStoreTeventSerializerPerformanceTests()
    {
-      _container = (ILegacyContainer)TestEnv.DIContainer.CreateWithServiceLocatorAndCurrentTestsPluggableComponents();
-      _container.Register().TypeMapper();
-      _teventSerializer = _container.ServiceLocator.Resolve<ITeventStoreSerializer>();
+      var builder = TestEnv.DIContainer.CreateWithContainerRegistrationsAndCurrentTestsPluggableComponents();
+      builder.Registrar.TypeMapper();
+      _container = builder.Build();
+      _teventSerializer = _container.Resolve<ITeventStoreSerializer>();
    }
 
    protected override void DisposeInternal() => _container.Dispose();

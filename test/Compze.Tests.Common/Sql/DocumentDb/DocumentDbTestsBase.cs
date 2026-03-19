@@ -12,13 +12,13 @@ namespace Compze.Tests.Common.Sql.DocumentDb;
 
 public abstract class DocumentDbTestsBase : UniversalTestBase
 {
-   protected IServiceLocator ServiceLocator { get; } = TestEnv.DIContainer.SetupTestingServiceLocator(_ => {});
+   protected IDependencyInjectionContainer Container { get; } = TestEnv.DIContainer.SetupTestingContainer(_ => {});
 
-   protected override async Task DisposeAsyncInternal() => await ServiceLocator.DisposeAsync();
+   protected override async Task DisposeAsyncInternal() => await Container.DisposeAsync();
 
 
    protected void UseInTransactionalScope([InstantHandle] Action<IDocumentDbReader, IDocumentDbUpdater> useSession) =>
-      ServiceLocator.ExecuteTransactionInIsolatedScope(scope => useSession(scope.DocumentDbReader(), scope.DocumentDbUpdater()));
+      Container.ExecuteTransactionInIsolatedScope(scope => useSession(scope.DocumentDbReader(), scope.DocumentDbUpdater()));
 
-   protected void UseInScope([InstantHandle] Action<IDocumentDbReader> useSession) => ServiceLocator.ExecuteInIsolatedScope(scope => useSession(scope.DocumentDbReader()));
+   protected void UseInScope([InstantHandle] Action<IDocumentDbReader> useSession) => Container.ExecuteInIsolatedScope(scope => useSession(scope.DocumentDbReader()));
 }

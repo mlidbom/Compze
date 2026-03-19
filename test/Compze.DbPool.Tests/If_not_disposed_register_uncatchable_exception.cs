@@ -18,7 +18,7 @@ public class If_not_disposed_ : DbPoolTestBase
                                                                 {
                                                                    Unit.Invoke(() =>
                                                                    {
-                                                                      _ = CreateServiceLocator().Resolve<DbPool>();
+                                                                      _ = CreateContainer().Resolve<DbPool>();
                                                                    });
 
                                                                    Invoking(UncatchableExceptionsGatherer.ForceFullGcAllGenerationsAndWaitForFinalizersConsumeAndThrowAnyGatheredExceptions)
@@ -27,3 +27,4 @@ public class If_not_disposed_ : DbPoolTestBase
                                                                 }));
    }
 }
+

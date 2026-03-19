@@ -7,14 +7,14 @@ using Compze.Threading;
 
 namespace Compze.DependencyInjection.Autofac;
 
-public sealed class AutofacDependencyInjectionContainer(IComponentRegistrar? register = null) : DependencyInjectionContainer(register), IServiceLocator, IAutofacContainerInternals
+public sealed class AutofacDependencyInjectionContainer(IComponentRegistrar? register = null) : DependencyInjectionContainer(register), IRootResolver, IScopeFactory, IAutofacContainerInternals
 {
    readonly ContainerBuilder _containerBuilder = new();
    IContainer? _container;
 
    readonly RunOnce _registerScopedKernel = new();
 
-   protected override ILegacyContainer RegisterInContainer(ComponentRegistration[] registrations)
+   protected override void RegisterInContainer(ComponentRegistration[] registrations)
    {
       _registerScopedKernel.RunIfFirstCall(() =>
       {
@@ -62,23 +62,16 @@ public sealed class AutofacDependencyInjectionContainer(IComponentRegistrar? reg
                throw new ArgumentOutOfRangeException(nameof(registration.Lifestyle), registration.Lifestyle, $"Unsupported lifestyle: {registration.Lifestyle}");
          }
       }
-
-      return this;
    }
 
    readonly RunOnce _runVerifications = new();
 
-   public override IServiceLocator ServiceLocator
+   protected override void EnsureContainerBuilt()
    {
-      get
+      if(_container == null)
       {
-         if(_container == null)
-         {
-            _runVerifications.RunIfFirstCall(AssertLifeStyleCombinationsAreValid);
-            _container = _containerBuilder.Build();
-         }
-
-         return this;
+         _runVerifications.RunIfFirstCall(AssertLifeStyleCombinationsAreValid);
+         _container = _containerBuilder.Build();
       }
    }
 
@@ -86,7 +79,7 @@ public sealed class AutofacDependencyInjectionContainer(IComponentRegistrar? reg
       new AutofacDependencyInjectionContainer(Register().Clone());
 
    protected override IReadOnlyList<Type> ContainerFacadeServiceTypes { get; } =
-      [typeof(ILegacyContainer), typeof(IServiceLocator), typeof(AutofacDependencyInjectionContainer)];
+      [typeof(AutofacDependencyInjectionContainer)];
 
    IContainer IAutofacContainerInternals.Container => _container._assert().NotNull();
    ContainerBuilder IAutofacContainerInternals.ContainerBuilder => _containerBuilder;

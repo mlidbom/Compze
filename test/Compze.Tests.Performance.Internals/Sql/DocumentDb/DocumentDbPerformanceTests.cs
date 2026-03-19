@@ -16,7 +16,7 @@ public class DocumentDbPerformanceTests : DocumentDbTestsBase
 {
    [PCT] public void Saves_XX_documents_in_100_milliseconds()
    {
-      ServiceLocator.ExecuteInIsolatedScope(scope =>
+      Container.ExecuteInIsolatedScope(scope =>
       {
          var updater = scope.DocumentDbUpdater();
 

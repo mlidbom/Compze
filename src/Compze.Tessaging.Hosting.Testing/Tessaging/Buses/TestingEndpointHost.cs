@@ -19,7 +19,7 @@ public class TestingEndpointHost : TestingEndpointHostBase
    public static ITestingEndpointHost Create(IContainerBuilder? rootBuilder = null)
    {
 #pragma warning disable CA2000 // We are passing this disposable into a constructor of an object we don't own
-      var usedBuilder = rootBuilder ?? TestEnv.DIContainer.CreateWithServiceLocator()
+      var usedBuilder = rootBuilder ?? TestEnv.DIContainer.CreateWithContainerRegistrations()
                                                   ._mutate(it => it.Registrar.CurrentTestsDbPoolIfNotCloneContainer());
 #pragma warning restore CA2000 // We are passing this disposable into a constructor of an object we don't own
 

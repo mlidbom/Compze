@@ -40,20 +40,9 @@ public interface IContainerBuilder : IDisposable, IAsyncDisposable
 /// </summary>
 public interface IDependencyInjectionContainer : IDisposable, IAsyncDisposable
 {
-   IRootResolver Resolver { get; }
+   IRootResolver RootResolver { get; }
    IScopeFactory ScopeFactory { get; }
    IContainerBuilder Clone();
-}
-
-public interface ILegacyContainer : IDisposable, IAsyncDisposable
-{
-   IComponentRegistrar Register();
-   ILegacyContainer Register(params ComponentRegistration[] registrations);
-   IEnumerable<ComponentRegistration> RegisteredComponents();
-   IServiceLocator ServiceLocator { get; }
-   bool IsClone { get; }
-   ILegacyContainer Clone();
-   bool IsRegistered<TComponent>() where TComponent : class => RegisteredComponents().Any(it => it.ServiceTypes.Contains(typeof(TComponent)));
 }
 
 ///<summary>Resolves instances of services registered in the container.</summary>
@@ -90,8 +79,6 @@ public interface IScopeFactory
    IServiceScope BeginScope();
 }
 
-public interface IServiceLocator : IRootResolver, IScopeFactory, IDisposable, IAsyncDisposable;
-
 
 ///<summary>The supported service lifestyles</summary>
 public enum Lifestyle
@@ -109,7 +96,7 @@ public enum Lifestyle
    ///<summary>
    /// Every call to <see cref="IServiceResolver.Resolve"/> will return a new unique instance of the service for a service registered as <see cref="TrackedTransient"/>.
    ///<para>If resolved within a scope, the instance will be disposed when the scope is disposed.</para>
-   /// ///<para>If resolved outside a scope, the instance will be disposed when the <see cref="IServiceLocator"/> is disposed.</para>
+   ///<para>If resolved outside a scope, the instance will be disposed when the container is disposed.</para>
    /// </summary>
    TrackedTransient
 }

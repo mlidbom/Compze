@@ -38,7 +38,7 @@ class Endpoint : IEndpoint
    {
       Argument.NotNull(container).NotNull(configuration);
       _container = container;
-      _rootResolver = container.Resolver;
+      _rootResolver = container.RootResolver;
       _tessagingRouter = tessagingRouter;
       _configuration = configuration;
       _endpointRegistry = endpointRegistry;

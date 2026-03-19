@@ -42,28 +42,28 @@ public class TeventStoreUpdaterTest : UniversalTestBase
    }
 
    readonly TeventSpy _teventSpy;
-   readonly IServiceLocator _serviceLocator;
+   readonly IDependencyInjectionContainer _container;
 
    public TeventStoreUpdaterTest()
    {
-      _serviceLocator = TestEnv.DIContainer.SetupTestingServiceLocator(null);
+      _container = TestEnv.DIContainer.SetupTestingContainer(null);
 
       _teventSpy = new TeventSpy();
 
-      _serviceLocator.Resolve<ITessageHandlerRegistrar>()
+      _container.Resolve<ITessageHandlerRegistrar>()
                      .ForTevent<IExactlyOnceTevent>((tevent, _) => _teventSpy.Receive(tevent));
    }
 
-   protected override async Task DisposeAsyncInternal() => await _serviceLocator.DisposeAsync().AsTask();
+   protected override async Task DisposeAsyncInternal() => await _container.DisposeAsync().AsTask();
 
    protected void UseInTransactionalScope([InstantHandle] Action<ITeventStoreUpdater> useSession)
-      => _serviceLocator.ExecuteTransactionInIsolatedScope(scope => useSession(scope.TeventStoreUpdater()));
+      => _container.ExecuteTransactionInIsolatedScope(scope => useSession(scope.TeventStoreUpdater()));
 
    protected TResult UseInTransactionalScope<TResult>([InstantHandle] Func<ITeventStoreUpdater, TResult> useSession)
-      => _serviceLocator.ExecuteTransactionInIsolatedScope(scope => useSession(scope.TeventStoreUpdater()));
+      => _container.ExecuteTransactionInIsolatedScope(scope => useSession(scope.TeventStoreUpdater()));
 
    public void UseInScope([InstantHandle] Action<ITeventStoreUpdater> useSession)
-      => _serviceLocator.ExecuteInIsolatedScope(scope => useSession(scope.TeventStoreUpdater()));
+      => _container.ExecuteInIsolatedScope(scope => useSession(scope.TeventStoreUpdater()));
 
    [PCT]
    public void WhenFetchingTaggregateThatDoesNotExistNoSuchAggregateExceptionIsThrown()
@@ -100,7 +100,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
       using var wait = new ManualResetEventSlim();
       TaskCE.Run(() =>
       {
-         _serviceLocator.ExecuteInIsolatedScope(scope =>
+         _container.ExecuteInIsolatedScope(scope =>
          {
             updater = scope.TeventStoreUpdater();
             reader = scope.TeventStoreReader();
@@ -128,7 +128,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
 
       UseInTransactionalScope(session => session.Save(user));
 
-      _serviceLocator.ExecuteInIsolatedScope(scope =>
+      _container.ExecuteInIsolatedScope(scope =>
       {
          var reader = scope.TeventStoreReader();
          var loadedUser = reader.GetReadonlyCopyOfVersion<User>(user.Id, 1);
@@ -210,7 +210,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
 
       UseInTransactionalScope(session => session.Save(user));
 
-      _serviceLocator.ExecuteTransactionInIsolatedScope(scope =>
+      _container.ExecuteTransactionInIsolatedScope(scope =>
       {
          var loadedUser = scope.TeventStoreReader().GetReadonlyCopyOfVersion<User>(user.Id, 1);
          loadedUser.ChangeEmail("NewEmail");
@@ -470,7 +470,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
          _teventSpy.DispatchedTessages.Count().Must().Be(18);
       });
 
-      _serviceLocator.ExecuteTransactionInIsolatedScope(scope =>
+      _container.ExecuteTransactionInIsolatedScope(scope =>
       {
          _teventSpy.DispatchedTessages.Count().Must().Be(18);
 
@@ -498,9 +498,9 @@ public class TeventStoreUpdaterTest : UniversalTestBase
 
       async Task<User> ChangeAnotherUsersEmailInOtherInstance()
       {
-         var clonedServiceLocator = _serviceLocator.Clone();
-         await using var serviceLocator = clonedServiceLocator;
-         return clonedServiceLocator.ExecuteTransactionInIsolatedScope(scope =>
+         var clonedContainer = _container.CloneAndBuild();
+         await using var container = clonedContainer;
+         return clonedContainer.ExecuteTransactionInIsolatedScope(scope =>
          {
             // ReSharper disable once AccessToDisposedClosure
             var session = scope.TeventStoreUpdater();
@@ -650,7 +650,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
    [PCT]
    public void If_an_updater_is_used_in_two_transactions_an_exception_is_thrown()
    {
-      using var scope = _serviceLocator.BeginScope();
+      using var scope = _container.BeginScope();
       using var updater = scope.Resolve<ITeventStoreUpdater>();
       var user = new User();
       user.Register("email@email.se", "password", new TaggregateId());
