@@ -10,6 +10,9 @@ class ScannedAssemblyTypes(
    IReadOnlyList<ExplicitlyMappedType> explicitlyMappedTypes,
    IReadOnlyList<ComputedTypeIdType> computedTypeIdTypes)
 {
+   static readonly ScannedAssemblyTypes _empty = new([], []);
+   internal static ScannedAssemblyTypes Empty => _empty;
+
    internal IReadOnlyList<ExplicitlyMappedType> ExplicitlyMappedTypes { get; } = explicitlyMappedTypes;
    internal IReadOnlyList<ComputedTypeIdType> ComputedTypeIdTypes { get; } = computedTypeIdTypes;
 }
@@ -18,6 +21,9 @@ static class TypeMapperAssemblyScanner
 {
    internal static ScannedAssemblyTypes Scan(Assembly assembly)
    {
+      if(!IsAssemblyWeShouldExamine(assembly))
+         return ScannedAssemblyTypes.Empty;
+
       var explicitRawTypes = new HashSet<Type>();
       var computedRawTypes = new HashSet<Type>();
 

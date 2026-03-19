@@ -1,6 +1,6 @@
-using System.Security.Cryptography;
 using System.Text;
 using Compze.Contracts;
+using Compze.Internals.SystemCE;
 
 namespace Compze.Abstractions.Refactoring.Naming.Internal.Implementation;
 
@@ -31,8 +31,7 @@ static class DeterministicTypeIdGenerator
             typeArgumentTypeIds[i].Value.TryWriteBytes(payload.Slice(16 * (1 + i)))._assert().True();
         }
 
-        var compositeGuid = CreateUuidV5(CompositionNamespaceId, payload);
-        return new TypeId(compositeGuid);
+        return new TypeId(CompositionNamespaceId.CreateUuidV5(payload));
     }
 
     /// <summary>Computes a stable TypeId from a type's fully qualified name.
@@ -40,45 +39,6 @@ static class DeterministicTypeIdGenerator
     internal static TypeId ComputeTypeIdFromName(string fullyQualifiedTypeName)
     {
         var nameBytes = Encoding.UTF8.GetBytes(fullyQualifiedTypeName);
-        var guid = CreateUuidV5(TypeNameNamespaceId, nameBytes);
-        return new TypeId(guid);
-    }
-
-    // UUID v5 uses SHA1 by specification (RFC 4122), not for cryptographic security.
-    // The hash is truncated to 122 bits and used for deterministic GUID generation.
-#pragma warning disable CA5350
-    static Guid CreateUuidV5(Guid namespaceId, ReadOnlySpan<byte> payload)
-    {
-        Span<byte> namespaceBytes = stackalloc byte[16];
-        namespaceId.TryWriteBytes(namespaceBytes);
-        SwapToNetworkOrder(namespaceBytes);
-
-        Span<byte> hashInput = stackalloc byte[16 + payload.Length];
-        namespaceBytes.CopyTo(hashInput);
-        payload.CopyTo(hashInput[16..]);
-
-        Span<byte> hash = stackalloc byte[20];
-        SHA1.HashData(hashInput, hash);
-
-        hash[6] = (byte)((hash[6] & 0x0F) | 0x50); // version 5
-        hash[8] = (byte)((hash[8] & 0x3F) | 0x80); // variant RFC 4122
-
-        Span<byte> result = hash[..16];
-        SwapToNetworkOrder(result);
-        return new Guid(result);
-    }
-#pragma warning restore CA5350
-
-    // .NET Guid stores the first three components in little-endian order,
-    // but UUID v5 (RFC 4122) requires network (big-endian) order for hashing.
-    static void SwapToNetworkOrder(Span<byte> guidBytes)
-    {
-        // Swap bytes of first DWORD (bytes 0-3)
-        (guidBytes[0], guidBytes[3]) = (guidBytes[3], guidBytes[0]);
-        (guidBytes[1], guidBytes[2]) = (guidBytes[2], guidBytes[1]);
-        // Swap bytes of second WORD (bytes 4-5)
-        (guidBytes[4], guidBytes[5]) = (guidBytes[5], guidBytes[4]);
-        // Swap bytes of third WORD (bytes 6-7)
-        (guidBytes[6], guidBytes[7]) = (guidBytes[7], guidBytes[6]);
+        return new TypeId(TypeNameNamespaceId.CreateUuidV5(nameBytes));
     }
 }
