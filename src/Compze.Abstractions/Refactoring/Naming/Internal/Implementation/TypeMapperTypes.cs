@@ -2,10 +2,10 @@ using Compze.Internals.SystemCE.ReflectionCE;
 
 namespace Compze.Abstractions.Refactoring.Naming.Internal.Implementation;
 
-/// <summary>Structural classification of a <see cref="System.Type"/> for the type mapper.
+/// <summary>
 /// Subclass hierarchy encodes what kind of type this is — leaf, open generic, closed generic, or array.
 /// Each subclass exposes its structural components as typed references (not raw <see cref="System.Type"/>).
-/// Use <see cref="FromType"/> to classify a type. Has no knowledge of TypeIds — that's a separate concern.</summary>
+/// </summary>
 abstract class TypeMapperType
 {
    internal Type Type { get; }
