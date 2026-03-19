@@ -10,6 +10,14 @@ public static class TAssertions
 {
    ///<summary>Throws <see cref="AssertionFailedException"/> if the value is null. Returns the value as non-nullable on success.</summary>
    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+   [return: NotNull] public static bool True(this PipeAssertTarget<bool> @this)
+   {
+      if(!@this.Value) @this.ThrowAssertionFailed();
+      return @this.Value;
+   }
+
+   ///<summary>Throws <see cref="AssertionFailedException"/> if the value is null. Returns the value as non-nullable on success.</summary>
+   [MethodImpl(MethodImplOptions.AggressiveInlining)]
    [return: NotNull] public static T NotNull<T>(this PipeAssertTarget<T> @this)
    {
       if(@this.Value is null) @this.ThrowAssertionFailed();

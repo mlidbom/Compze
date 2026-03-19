@@ -2,6 +2,8 @@ using System.Diagnostics.CodeAnalysis;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
+using Compze.Internals.SystemCE.CollectionsCE.GenericCE;
+using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Threading.ResourceAccess;
 
 namespace Compze.Abstractions.Refactoring.Naming.Internal.Implementation;
@@ -119,7 +121,7 @@ public class TypeMapper : ITypeMapper
 
          foreach(var classifiedType in scannedTypes.ExplicitlyMappedTypes.Concat<TypeMapperType>(scannedTypes.ComputedTypeIdTypes))
          {
-            var typeId = ResolveTypeId(classifiedType, state);
+            var typeId = TryResolveTypeId(classifiedType, state);
             if(typeId != null && !state.TypeToTypeIdMap.ContainsKey(classifiedType.Type))
                state.AddMapping(classifiedType.Type, typeId);
          }
@@ -139,40 +141,39 @@ public class TypeMapper : ITypeMapper
    /// <see cref="TypeMapperType.ExplicitlyMappedType"/>: looked up in the mapping dictionary.
    /// <see cref="TypeMapperType.ClosedGenericType"/>: computed from definition + argument TypeIds.
    /// <see cref="TypeMapperType.ArrayType"/>: computed from element TypeId.</summary>
-   static TypeId? ResolveTypeId(TypeMapperType classifiedType, MappingState state)
+   static TypeId? TryResolveTypeId(TypeMapperType classifiedType, MappingState state)
    {
       switch(classifiedType)
       {
+         case TypeMapperType.OpenGeneric:
+         case TypeMapperType.LeafType:
          case TypeMapperType.ExplicitlyMappedType:
             return state.TypeToTypeIdMap.GetValueOrDefault(classifiedType.Type);
 
          case TypeMapperType.ClosedGenericType closedGeneric:
          {
-            var definitionId = ResolveTypeId(closedGeneric.OpenGenericType, state);
-            if(definitionId == null)
+            var openGenericTypeId = TryResolveTypeId(closedGeneric.OpenGenericType, state);
+            if(openGenericTypeId == null)
                return null;
 
-            var argumentIds = new TypeId[closedGeneric.TypeArguments.Count];
-            for(var i = 0; i < closedGeneric.TypeArguments.Count; i++)
-            {
-               var argId = ResolveTypeId(closedGeneric.TypeArguments[i], state);
-               if(argId == null)
-                  return null;
-               argumentIds[i] = argId;
-            }
-
-            return DeterministicTypeIdGenerator.Generate(definitionId, argumentIds);
+            var argTypeIds = closedGeneric.TypeArguments.Select(it => TryResolveTypeId(it, state))
+                                          .WhereNotNull()
+                                          .ToArray();
+            return argTypeIds.Length != closedGeneric.TypeArguments.Count
+                      ? null
+                      : DeterministicTypeIdGenerator.Generate(openGenericTypeId, argTypeIds);
          }
 
          case TypeMapperType.ArrayType arrayType:
          {
-            var elementId = ResolveTypeId(arrayType.ElementType, state);
-            if(elementId == null) return null;
-            return DeterministicTypeIdGenerator.Generate(DeterministicTypeIdGenerator.ArrayMarkerTypeId, elementId);
+            var elementId = TryResolveTypeId(arrayType.ElementType, state);
+            return elementId == null
+                      ? null
+                      : DeterministicTypeIdGenerator.GenerateArrayTypeId(elementId);
          }
 
          default:
-            return null;
+            throw new ArgumentOutOfRangeException($"Don't know how to handle {classifiedType.GetType().GetFullNameCompilable()}");
       }
    }
 
@@ -184,7 +185,7 @@ public class TypeMapper : ITypeMapper
          return true;
 
       var classifiedType = TypeMapperType.FromType(type);
-      var resolved = ResolveTypeId(classifiedType, state);
+      var resolved = TryResolveTypeId(classifiedType, state);
       if(resolved != null)
       {
          typeId = resolved;

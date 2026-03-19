@@ -1,5 +1,6 @@
 using System.Security.Cryptography;
 using System.Text;
+using Compze.Contracts;
 
 namespace Compze.Abstractions.Refactoring.Naming.Internal.Implementation;
 
@@ -16,17 +17,18 @@ static class DeterministicTypeIdGenerator
     // Synthetic marker used as the "definition" TypeId for array types,
     // since .NET arrays are not generic types (typeof(int[]).IsGenericType == false).
     // This value must NEVER change — persisted data depends on it.
-    internal static readonly TypeId ArrayMarkerTypeId = new(new Guid("b7e3d8f1-6a2c-4e0b-8d5f-1c9a4b3e2d6f"));
+    static readonly TypeId ArrayMarkerTypeId = new(new Guid("b7e3d8f1-6a2c-4e0b-8d5f-1c9a4b3e2d6f"));
 
+    internal static TypeId GenerateArrayTypeId(params TypeId[] typeArgumentTypeIds) => Generate(ArrayMarkerTypeId, typeArgumentTypeIds);
     internal static TypeId Generate(TypeId definitionTypeId, params TypeId[] typeArgumentTypeIds)
     {
         var payloadSize = 16 * (1 + typeArgumentTypeIds.Length);
         Span<byte> payload = stackalloc byte[payloadSize];
 
-        definitionTypeId.Value.TryWriteBytes(payload);
+        definitionTypeId.Value.TryWriteBytes(payload)._assert().True();
         for (var i = 0; i < typeArgumentTypeIds.Length; i++)
         {
-            typeArgumentTypeIds[i].Value.TryWriteBytes(payload.Slice(16 * (1 + i)));
+            typeArgumentTypeIds[i].Value.TryWriteBytes(payload.Slice(16 * (1 + i)))._assert().True();
         }
 
         var compositeGuid = CreateUuidV5(CompositionNamespaceId, payload);
