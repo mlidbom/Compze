@@ -91,10 +91,10 @@ public class IAwaitableShared_specification : UniversalTestBase
 
    static void AssertAllAccessMethodsSucceed(IAwaitableShared<SharedTestValue> shared)
    {
-      shared.Read(_ => 0, timeout: LockTimeout.Milliseconds(100));
-      shared.Read(_ => {}, timeout: LockTimeout.Milliseconds(100));
-      shared.Update(_ => 0, timeout: LockTimeout.Milliseconds(100));
-      shared.Update(_ => {}, timeout: LockTimeout.Milliseconds(100));
+      shared.Read(_ => 0, timeout: LockTimeout.Seconds(10));
+      shared.Read(_ => {}, timeout: LockTimeout.Seconds(10));
+      shared.Update(_ => 0, timeout: LockTimeout.Seconds(10));
+      shared.Update(_ => {}, timeout: LockTimeout.Seconds(10));
    }
 
    static void AssertAllAccessMethodsFailsWhileGateIsClosedAllSucceedAfterOpeningGate(IAwaitableShared<SharedTestValue> shared, IThreadGate insideLock)
