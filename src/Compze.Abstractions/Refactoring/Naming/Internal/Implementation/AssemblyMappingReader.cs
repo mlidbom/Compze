@@ -1,4 +1,5 @@
 using System.Reflection;
+using Compze.Internals.SystemCE.ReflectionCE;
 
 namespace Compze.Abstractions.Refactoring.Naming.Internal.Implementation;
 
@@ -8,8 +9,6 @@ static class AssemblyMappingReader
 {
    internal static IReadOnlyDictionary<Type, TypeId> ReadMappings(Assembly assembly)
    {
-      var mappings = new Dictionary<Type, TypeId>();
-
       var mapperTypes = assembly.GetTypes()
                                 .Where(it => it.Name == TypeMapperSourceCodeGenerator.MappingClassName)
                                 .ToList();
@@ -21,17 +20,23 @@ static class AssemblyMappingReader
                               """);
 
       var mapperType = mapperTypes.SingleOrDefault();
-      if(mapperType == null) return mappings;
+      if(mapperType == null) return new Dictionary<Type, TypeId>();
 
       var instance = Activator.CreateInstance(mapperType);
-      var method = mapperType.GetMethod("MapTypesForCurrentAssembly", BindingFlags.Public | BindingFlags.Instance);
-
-      if(method != null && instance != null)
+      if(instance == null)
       {
-         void MapAction(string guid, Type type) => mappings[type] = new TypeId(new Guid(guid));
-         method.Invoke(instance, [(Action<string, Type>)MapAction]);
+         throw new Exception($"Could not instantiate {mapperType.GetFullNameCompilable()}");
       }
 
+      var method = mapperType.GetMethod(TypeMapperSourceCodeGenerator.MappingMethodName, BindingFlags.Public | BindingFlags.Instance);
+      if(method == null)
+      {
+         throw new Exception($"{mapperType.GetFullNameCompilable()} has no usable {TypeMapperSourceCodeGenerator.MappingMethodName} method");
+      }
+
+      var mappings = new Dictionary<Type, TypeId>();
+      void MapAction(string guidString, Type type) => mappings[type] = new TypeId(new Guid(guidString));
+      method.Invoke(instance, [(Action<string, Type>)MapAction]);
       return mappings;
    }
 }
