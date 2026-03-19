@@ -30,7 +30,7 @@ public class TypeMapper : ITypeMapper
 
    public TypeId GetId(Type type) => State.Locked(state =>
    {
-      if(TryGetOrComputeTypeId(type, state, out var typeId))
+      if(TryResolveTypeId(type, state, out var typeId))
          return typeId;
 
       if(state.AssemblyMappingUpdateMessages.TryGetValue(type.Assembly, out var assemblyMappingMessage))
@@ -57,7 +57,7 @@ public class TypeMapper : ITypeMapper
    {
       EnsureAllCurrentlyLoadedAssembliesHaveBeenCheckedForRequiredMappings();
 
-      TryGetOrComputeTypeId(type, state, out _);
+      TryResolveTypeId(type, state, out _);
 
       var found = state
                  .TypeToTypeIdMap
@@ -79,7 +79,7 @@ public class TypeMapper : ITypeMapper
 
    public Unit AssertMappingsExistFor(IEnumerable<Type> typesThatRequireMappings) => State.Locked(state =>
    {
-      var missing = typesThatRequireMappings.Where(type => !TryGetOrComputeTypeId(type, state, out _)).ToList();
+      var missing = typesThatRequireMappings.Where(type => !TryResolveTypeId(type, state, out _)).ToList();
       if(missing.Any()) throw MissingMappingReporter.BuildMissingTypesException(missing);
    });
 
@@ -112,17 +112,15 @@ public class TypeMapper : ITypeMapper
 
       var scannedTypes = TypeMapperAssemblyScanner.Scan(assembly);
 
-      TypeId? ResolveExplicitTypeId(Type type) => state.TypeToTypeIdMap.GetValueOrDefault(type);
-
-      foreach(var type in scannedTypes.ExplicitlyMappedTypes.Concat(scannedTypes.ComputedTypeIdTypes))
+      foreach(var classifiedType in scannedTypes.ExplicitlyMappedTypes.Concat<TypeMapperType>(scannedTypes.ComputedTypeIdTypes))
       {
-         var mapperType = TypeMapperType.GetOrCreate(type, ResolveExplicitTypeId, state.TypeMapperTypeCache);
-         if(mapperType.TypeId != null && !state.TypeToTypeIdMap.ContainsKey(type))
-            state.AddMapping(type, mapperType.TypeId);
+         var typeId = ResolveTypeId(classifiedType, state);
+         if(typeId != null && !state.TypeToTypeIdMap.ContainsKey(classifiedType.Type))
+            state.AddMapping(classifiedType.Type, typeId);
       }
 
       var hasMissingExplicitMappings = scannedTypes.ExplicitlyMappedTypes
-                                                   .Any(type => !state.TypeToTypeIdMap.ContainsKey(type));
+                                                   .Any(explicitType => !state.TypeToTypeIdMap.ContainsKey(explicitType.Type));
 
       if(hasMissingExplicitMappings)
       {
@@ -131,15 +129,57 @@ public class TypeMapper : ITypeMapper
       }
    }
 
-   static bool TryGetOrComputeTypeId(Type type, MappingState state, out TypeId typeId)
+   /// <summary>Resolves a TypeId for a classified type by walking the structural hierarchy.
+   /// <see cref="TypeMapperType.ExplicitlyMappedType"/>: looked up in the mapping dictionary.
+   /// <see cref="TypeMapperType.ClosedGenericType"/>: computed from definition + argument TypeIds.
+   /// <see cref="TypeMapperType.ArrayType"/>: computed from element TypeId.</summary>
+   static TypeId? ResolveTypeId(TypeMapperType classifiedType, MappingState state)
+   {
+      switch(classifiedType)
+      {
+         case TypeMapperType.ExplicitlyMappedType:
+            return state.TypeToTypeIdMap.GetValueOrDefault(classifiedType.Type);
+
+         case TypeMapperType.ClosedGenericType closedGeneric:
+         {
+            var definitionId = ResolveTypeId(closedGeneric.Definition, state);
+            if(definitionId == null) return null;
+
+            var argumentIds = new TypeId[closedGeneric.TypeArguments.Count];
+            for(var i = 0; i < closedGeneric.TypeArguments.Count; i++)
+            {
+               var argId = ResolveTypeId(closedGeneric.TypeArguments[i], state);
+               if(argId == null) return null;
+               argumentIds[i] = argId;
+            }
+
+            return DeterministicTypeIdGenerator.ComputeCompositeTypeId(definitionId, argumentIds);
+         }
+
+         case TypeMapperType.ArrayType arrayType:
+         {
+            var elementId = ResolveTypeId(arrayType.ElementType, state);
+            if(elementId == null) return null;
+            return DeterministicTypeIdGenerator.ComputeCompositeTypeId(DeterministicTypeIdGenerator.ArrayMarkerTypeId, elementId);
+         }
+
+         default:
+            return null;
+      }
+   }
+
+   /// <summary>Tries to resolve a TypeId for a raw <see cref="Type"/> at runtime (e.g. types not seen during assembly scanning).
+   /// Classifies the type structurally, then walks the hierarchy to resolve.</summary>
+   static bool TryResolveTypeId(Type type, MappingState state, out TypeId typeId)
    {
       if(state.TypeToTypeIdMap.TryGetValue(type, out typeId!))
          return true;
 
-      var mapperType = TypeMapperType.GetOrCreate(type, t => state.TypeToTypeIdMap.GetValueOrDefault(t), state.TypeMapperTypeCache);
-      if(mapperType.TypeId != null)
+      var classifiedType = TypeMapperType.FromType(type);
+      var resolved = ResolveTypeId(classifiedType, state);
+      if(resolved != null)
       {
-         typeId = mapperType.TypeId;
+         typeId = resolved;
          state.AddMapping(type, typeId);
          return true;
       }
@@ -152,7 +192,6 @@ public class TypeMapper : ITypeMapper
    {
       internal readonly Dictionary<Type, TypeId> TypeToTypeIdMap = new();
       internal readonly Dictionary<TypeId, Type> TypeIdToTypeMap = new();
-      internal readonly Dictionary<Type, TypeMapperType> TypeMapperTypeCache = new();
       internal readonly HashSet<System.Reflection.Assembly> CheckedAssemblies = [];
       internal readonly Dictionary<System.Reflection.Assembly, string> AssemblyMappingUpdateMessages = new();
 
