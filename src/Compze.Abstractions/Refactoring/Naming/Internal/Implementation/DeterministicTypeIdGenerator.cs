@@ -18,7 +18,7 @@ static class DeterministicTypeIdGenerator
     // This value must NEVER change — persisted data depends on it.
     internal static readonly TypeId ArrayMarkerTypeId = new(new Guid("b7e3d8f1-6a2c-4e0b-8d5f-1c9a4b3e2d6f"));
 
-    internal static TypeId ComputeCompositeTypeId(TypeId definitionTypeId, params TypeId[] typeArgumentTypeIds)
+    internal static TypeId Generate(TypeId definitionTypeId, params TypeId[] typeArgumentTypeIds)
     {
         var payloadSize = 16 * (1 + typeArgumentTypeIds.Length);
         Span<byte> payload = stackalloc byte[payloadSize];

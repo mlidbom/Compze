@@ -142,25 +142,27 @@ public class TypeMapper : ITypeMapper
 
          case TypeMapperType.ClosedGenericType closedGeneric:
          {
-            var definitionId = ResolveTypeId(closedGeneric.Definition, state);
-            if(definitionId == null) return null;
+            var definitionId = ResolveTypeId(closedGeneric.OpenGenericType, state);
+            if(definitionId == null)
+               return null;
 
             var argumentIds = new TypeId[closedGeneric.TypeArguments.Count];
             for(var i = 0; i < closedGeneric.TypeArguments.Count; i++)
             {
                var argId = ResolveTypeId(closedGeneric.TypeArguments[i], state);
-               if(argId == null) return null;
+               if(argId == null)
+                  return null;
                argumentIds[i] = argId;
             }
 
-            return DeterministicTypeIdGenerator.ComputeCompositeTypeId(definitionId, argumentIds);
+            return DeterministicTypeIdGenerator.Generate(definitionId, argumentIds);
          }
 
          case TypeMapperType.ArrayType arrayType:
          {
             var elementId = ResolveTypeId(arrayType.ElementType, state);
             if(elementId == null) return null;
-            return DeterministicTypeIdGenerator.ComputeCompositeTypeId(DeterministicTypeIdGenerator.ArrayMarkerTypeId, elementId);
+            return DeterministicTypeIdGenerator.Generate(DeterministicTypeIdGenerator.ArrayMarkerTypeId, elementId);
          }
 
          default:

@@ -1,5 +1,3 @@
-using Compze.Internals.SystemCE.ReflectionCE;
-
 namespace Compze.Abstractions.Refactoring.Naming.Internal.Implementation;
 
 /// <summary>
@@ -9,7 +7,6 @@ namespace Compze.Abstractions.Refactoring.Naming.Internal.Implementation;
 abstract class TypeMapperType
 {
    internal Type Type { get; }
-   internal string FullNameCompilable => Type.GetFullNameCompilable();
 
    TypeMapperType(Type type) => Type = type;
 
@@ -23,12 +20,12 @@ abstract class TypeMapperType
       if(type is { IsGenericType: true, IsGenericTypeDefinition: false })
       {
          return new ClosedGenericType(type,
-                                      genericTypeDefinition: new OpenGenericDefinition(type.GetGenericTypeDefinition()),
+                                      openGeneric: new OpenGeneric(type.GetGenericTypeDefinition()),
                                       typeArguments: type.GetGenericArguments().Select(FromType).ToArray());
       }
 
       if(type.IsGenericTypeDefinition)
-         return new OpenGenericDefinition(type);
+         return new OpenGeneric(type);
 
       return new LeafType(type);
    }
@@ -40,22 +37,22 @@ abstract class TypeMapperType
    internal sealed class LeafType(Type type) : ExplicitlyMappedType(type);
 
    /// <summary>An open generic definition such as <c>List&lt;&gt;</c> or <c>Dictionary&lt;,&gt;</c>.</summary>
-   internal sealed class OpenGenericDefinition(Type type) : ExplicitlyMappedType(type);
+   internal sealed class OpenGeneric(Type type) : ExplicitlyMappedType(type);
 
    /// <summary>TypeId is computed deterministically from component TypeIds — not stored here.</summary>
    internal abstract class ComputedTypeIdType(Type type) : TypeMapperType(type);
 
    /// <summary>A closed generic such as <c>List&lt;MyEntity&gt;</c>.
-   /// <see cref="Definition"/> is the <see cref="OpenGenericDefinition"/>,
+   /// <see cref="OpenGenericType"/> is the <see cref="OpenGenericDefinition"/>,
    /// <see cref="TypeArguments"/> are the fully classified component types.</summary>
    internal sealed class ClosedGenericType : ComputedTypeIdType
    {
-      internal OpenGenericDefinition Definition { get; }
+      internal OpenGeneric OpenGenericType { get; }
       internal IReadOnlyList<TypeMapperType> TypeArguments { get; }
 
-      internal ClosedGenericType(Type type, OpenGenericDefinition genericTypeDefinition, IReadOnlyList<TypeMapperType> typeArguments) : base(type)
+      internal ClosedGenericType(Type type, OpenGeneric openGeneric, IReadOnlyList<TypeMapperType> typeArguments) : base(type)
       {
-         Definition = genericTypeDefinition;
+         OpenGenericType = openGeneric;
          TypeArguments = typeArguments;
       }
    }
