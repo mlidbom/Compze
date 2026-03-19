@@ -15,7 +15,7 @@ abstract class TypeMapperType
    internal static TypeMapperType FromType(Type type)
    {
       if(type.IsArray)
-         return new ArrayType(type, FromType(type.GetElementType()!));
+         return new ArrayType(type, FromType(type.GetElementType()!), type.GetArrayRank());
 
       if(type is { IsGenericType: true, IsGenericTypeDefinition: false })
       {
@@ -57,12 +57,18 @@ abstract class TypeMapperType
       }
    }
 
-   /// <summary>An array type such as <c>MyEntity[]</c>.
-   /// <see cref="ElementType"/> is the fully classified element type.</summary>
+   /// <summary>An array type such as <c>MyEntity[]</c> or <c>MyEntity[,]</c>.
+   /// <see cref="ElementType"/> is the fully classified element type.
+   /// <see cref="Rank"/> is the number of dimensions (1 for <c>T[]</c>, 2 for <c>T[,]</c>, etc.).</summary>
    internal sealed class ArrayType : ComputedTypeIdType
    {
       internal TypeMapperType ElementType { get; }
+      internal int Rank { get; }
 
-      internal ArrayType(Type type, TypeMapperType elementType) : base(type) => ElementType = elementType;
+      internal ArrayType(Type type, TypeMapperType elementType, int rank) : base(type)
+      {
+         ElementType = elementType;
+         Rank = rank;
+      }
    }
 }

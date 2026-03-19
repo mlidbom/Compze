@@ -169,7 +169,7 @@ public class TypeMapper : ITypeMapper
             var elementId = TryResolveTypeId(arrayType.ElementType, state);
             return elementId == null
                       ? null
-                      : DeterministicTypeId.ForArrayType(typeArgumentTypeIds: elementId);
+                      : DeterministicTypeId.ForArrayType(elementTypeId: elementId, rank: arrayType.Rank);
          }
 
          default:

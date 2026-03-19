@@ -15,7 +15,11 @@ static class DeterministicTypeId
     // This value must NEVER change — persisted data depends on it.
     static readonly TypeId ArrayMarkerTypeId = new(new Guid("b7e3d8f1-6a2c-4e0b-8d5f-1c9a4b3e2d6f"));
 
-    internal static TypeId ForArrayType(params TypeId[] typeArgumentTypeIds) => ForClosedGenericType(ArrayMarkerTypeId, typeArgumentTypeIds);
+    internal static TypeId ForArrayType(TypeId elementTypeId, int rank)
+    {
+        return new TypeId(Guid.NewUUIDv5(namespaceId: ArrayMarkerTypeId.Value,
+                                         components: [elementTypeId.Value, Guid.NewUUIDv5(namespaceId: ArrayMarkerTypeId.Value, name: rank.ToStringInvariant())]));
+    }
     internal static TypeId ForClosedGenericType(TypeId openGenericTypeId, params TypeId[] typeArgumentTypeIds)
     {
         var componentGuids = typeArgumentTypeIds.Prepend(openGenericTypeId).Select(it => it.Value).ToList();
