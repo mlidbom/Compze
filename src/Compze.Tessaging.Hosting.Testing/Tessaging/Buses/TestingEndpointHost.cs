@@ -12,26 +12,26 @@ namespace Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 
 public class TestingEndpointHost : TestingEndpointHostBase
 {
-   IContainerBuilder? _ownedBuilder = null;
+   readonly IDependencyInjectionContainer _rootContainer;
+   readonly bool _ownsRootContainer;
 
-   TestingEndpointHost(IContainerBuilder rootBuilder) : base(rootBuilder.Clone) {}
+   TestingEndpointHost(IDependencyInjectionContainer rootContainer, bool ownsRootContainer) : base(rootContainer.Clone)
+   {
+      _rootContainer = rootContainer;
+      _ownsRootContainer = ownsRootContainer;
+   }
 
    public static ITestingEndpointHost Create(IContainerBuilder? rootBuilder = null)
    {
-#pragma warning disable CA2000 // We are passing this disposable into a constructor of an object we don't own
       var usedBuilder = rootBuilder ?? TestEnv.DIContainer.CreateWithContainerRegistrations()
                                                   ._mutate(it => it.Registrar.CurrentTestsDbPoolIfNotCloneContainer());
-#pragma warning restore CA2000 // We are passing this disposable into a constructor of an object we don't own
 
-      var host = new TestingEndpointHost(usedBuilder);
-
-      if(rootBuilder == null)
-      {
-         host._ownedBuilder = usedBuilder;
-      }
-
-      return host;
+      var rootContainer = usedBuilder.Build();
+      return new TestingEndpointHost(rootContainer, ownsRootContainer: true);
    }
+
+   public static ITestingEndpointHost Create(IDependencyInjectionContainer rootContainer) =>
+      new TestingEndpointHost(rootContainer, ownsRootContainer: false);
 
 #pragma warning disable CA1031 // We want to catch all exceptions and throw an aggregate if there are multiple
    protected override async ValueTask DisposeAsync(bool disposing)
@@ -46,11 +46,11 @@ public class TestingEndpointHost : TestingEndpointHostBase
          exceptions.Add(e);
       }
 
-      if(_ownedBuilder != null)
+      if(_ownsRootContainer)
       {
          try
          {
-            await _ownedBuilder.DisposeAsync();
+            await _rootContainer.DisposeAsync();
          }
          catch(Exception e)
          {

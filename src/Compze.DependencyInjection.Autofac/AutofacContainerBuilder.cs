@@ -1,18 +1,15 @@
 using Autofac;
-using Compze.Contracts;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.LinqCE;
-using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Threading;
 
 namespace Compze.DependencyInjection.Autofac;
 
-public sealed class AutofacDependencyInjectionContainer(IComponentRegistrar? register = null) : DependencyInjectionContainer(register), IRootResolver, IScopeFactory, IAutofacContainerInternals
+public sealed class AutofacContainerBuilder(IComponentRegistrar? registrar = null) : ContainerBuilderBase(registrar), IAutofacBuilderInternals
 {
    readonly ContainerBuilder _containerBuilder = new();
-   IContainer? _container;
-
    readonly RunOnce _registerScopedKernel = new();
+   readonly RunOnce _runVerifications = new();
 
    protected override void RegisterInContainer(ComponentRegistration[] registrations)
    {
@@ -64,49 +61,20 @@ public sealed class AutofacDependencyInjectionContainer(IComponentRegistrar? reg
       }
    }
 
-   readonly RunOnce _runVerifications = new();
-
-   protected override void EnsureContainerBuilt()
+   protected override BuiltContainerBase BuildContainer()
    {
-      if(_container == null)
-      {
-         _runVerifications.RunIfFirstCall(AssertLifeStyleCombinationsAreValid);
-         _container = _containerBuilder.Build();
-      }
+      _runVerifications.RunIfFirstCall(AssertLifeStyleCombinationsAreValid);
+
+      // Auto-register intrinsic container types via closures that will be filled after build
+      AutofacBuiltContainer? builtContainer = null;
+      _containerBuilder.Register(_ => (IDependencyInjectionContainer)builtContainer!).As<IDependencyInjectionContainer>().SingleInstance().ExternallyOwned();
+      _containerBuilder.Register(_ => (IRootResolver)builtContainer!).As<IRootResolver>().SingleInstance().ExternallyOwned();
+      _containerBuilder.Register(_ => (IScopeFactory)builtContainer!).As<IScopeFactory>().SingleInstance().ExternallyOwned();
+
+      var container = _containerBuilder.Build();
+      builtContainer = new AutofacBuiltContainer(container, RegisteredComponents(), Registrar);
+      return builtContainer;
    }
 
-   protected override DependencyInjectionContainer CreateEmptyClone() =>
-      new AutofacDependencyInjectionContainer(Register().Clone());
-
-   protected override IReadOnlyList<Type> ContainerFacadeServiceTypes { get; } =
-      [typeof(AutofacDependencyInjectionContainer)];
-
-   IContainer IAutofacContainerInternals.Container => _container._assert().NotNull();
-   ContainerBuilder IAutofacContainerInternals.ContainerBuilder => _containerBuilder;
-
-   public object Resolve(Type serviceType) =>
-      _container._assert().NotNull().Resolve(serviceType);
-
-   public IServiceScope BeginScope()
-   {
-      var lifetimeScope = _container._assert().NotNull().BeginLifetimeScope();
-      var scopeResolver = lifetimeScope.Resolve<ScopeResolverWrapper>();
-      return new ServiceLocatorScope(scopeResolver, lifetimeScope);
-   }
-
-   public override void Dispose() => _container?.Dispose();
-
-   public override async ValueTask DisposeAsync()
-   {
-      if(_container != null)
-         await _container.DisposeAsync().caf();
-   }
-
-   sealed class ServiceLocatorScope(IScopeResolver scopeResolver, ILifetimeScope lifetimeScope) : IServiceScope
-   {
-      readonly ILifetimeScope _lifetimeScope = lifetimeScope;
-      public IScopeResolver Resolver { get; } = scopeResolver;
-
-      public void Dispose() => _lifetimeScope.Dispose();
-   }
+   ContainerBuilder IAutofacBuilderInternals.ContainerBuilder => _containerBuilder;
 }

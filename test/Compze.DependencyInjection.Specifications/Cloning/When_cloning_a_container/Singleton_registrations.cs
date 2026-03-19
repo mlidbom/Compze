@@ -8,13 +8,14 @@ public class Singleton_registrations
    [DependencyInjectionContainerMatrix]
    public void clone_resolves_a_different_singleton_instance_than_source()
    {
-      using var source = DependencyInjectionContainerFactory.CreateContainerBuilder();
-      source.Registrar.Register(Singleton.For<ISingletonService>().CreatedBy(() => new SingletonService()));
+      var sourceBuilder = DependencyInjectionContainerFactory.CreateContainerBuilder();
+      sourceBuilder.Registrar.Register(Singleton.For<ISingletonService>().CreatedBy(() => new SingletonService()));
 
-      using var clone = source.Clone();
+      using var source = sourceBuilder.Build();
+      using var clone = source.Clone().Build();
 
-      var sourceInstance = source.Build().Resolve<ISingletonService>();
-      var cloneInstance = clone.Build().Resolve<ISingletonService>();
+      var sourceInstance = source.Resolve<ISingletonService>();
+      var cloneInstance = clone.Resolve<ISingletonService>();
 
       sourceInstance.Must().NotBe(cloneInstance);
    }
@@ -22,13 +23,14 @@ public class Singleton_registrations
    [DependencyInjectionContainerMatrix]
    public void clone_returns_same_instance_on_repeated_resolves()
    {
-      using var source = DependencyInjectionContainerFactory.CreateContainerBuilder();
-      source.Registrar.Register(Singleton.For<ISingletonService>().CreatedBy(() => new SingletonService()));
+      var sourceBuilder = DependencyInjectionContainerFactory.CreateContainerBuilder();
+      sourceBuilder.Registrar.Register(Singleton.For<ISingletonService>().CreatedBy(() => new SingletonService()));
 
-      using var clone = source.Clone();
+      using var source = sourceBuilder.Build();
+      using var clone = source.Clone().Build();
 
-      var first = clone.Build().Resolve<ISingletonService>();
-      var second = clone.Build().Resolve<ISingletonService>();
+      var first = clone.Resolve<ISingletonService>();
+      var second = clone.Resolve<ISingletonService>();
 
       first.Must().Be(second);
    }
@@ -36,16 +38,16 @@ public class Singleton_registrations
    [DependencyInjectionContainerMatrix]
    public void delegated_singleton_resolves_to_same_instance_as_source()
    {
-      using var source = DependencyInjectionContainerFactory.CreateContainerBuilder();
-      source.Registrar.Register(
+      var sourceBuilder = DependencyInjectionContainerFactory.CreateContainerBuilder();
+      sourceBuilder.Registrar.Register(
          Singleton.For<ISingletonService>().CreatedBy(() => new SingletonService()).DelegateToParentServiceLocatorWhenCloning()
       );
 
-      var sourceInstance = source.Build().Resolve<ISingletonService>();
+      using var source = sourceBuilder.Build();
+      var sourceInstance = source.Resolve<ISingletonService>();
 
-      using var clone = source.Clone();
-
-      var cloneInstance = clone.Build().Resolve<ISingletonService>();
+      using var clone = source.Clone().Build();
+      var cloneInstance = clone.Resolve<ISingletonService>();
 
       sourceInstance.Must().Be(cloneInstance);
    }

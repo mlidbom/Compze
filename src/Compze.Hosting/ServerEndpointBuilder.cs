@@ -31,10 +31,8 @@ using Compze.Typermedia.HandlerRegistration;
 
 namespace Compze.Hosting;
 
-class ServerEndpointBuilder : IEndpointBuilder, IAsyncDisposable, IDisposable
+class ServerEndpointBuilder : IEndpointBuilder
 {
-   bool _builtSuccessfully;
-
    internal IContainerBuilder Builder { get; }
    public IComponentRegistrar Registrar => Builder.Registrar;
 
@@ -50,20 +48,18 @@ class ServerEndpointBuilder : IEndpointBuilder, IAsyncDisposable, IDisposable
    public IEndpoint Build()
    {
       SetupContainer();
-      RegisterInfrastructureQueryHandlers();
       var container = Builder.Build();
       var rootResolver = container.RootResolver;
+      RegisterInfrastructureQueryHandlers(rootResolver);
       var endpoint = new Endpoint(container,
                                   rootResolver.Resolve<ITessagingRouter>(),
                                   rootResolver.Resolve<IEndpointRegistry>(),
                                   Configuration);
-      _builtSuccessfully = true;
       return endpoint;
    }
 
-   void RegisterInfrastructureQueryHandlers()
+   void RegisterInfrastructureQueryHandlers(IRootResolver rootResolver)
    {
-      var rootResolver = Builder.Build().RootResolver;
       var executor = rootResolver.Resolve<InfrastructureQueryExecutor>();
       var registrar = new InfrastructureQueryRegistrarWithDependencyInjectionSupport(executor);
       TessageTypesInternal.RegisterInfrastructureQueryHandlers(registrar);
@@ -120,29 +116,10 @@ class ServerEndpointBuilder : IEndpointBuilder, IAsyncDisposable, IDisposable
 
       register.Register(
          Singleton.For<EndpointId>().Instance(Configuration.Id),
-         Singleton.For<IContainerBuilder>().Instance(Builder),
-         Singleton.For<IDependencyInjectionContainer>().CreatedBy(() => Builder.Build()),
-         Singleton.For<IRootResolver>().CreatedBy((IDependencyInjectionContainer container) => container.RootResolver),
-         Singleton.For<IScopeFactory>().CreatedBy((IDependencyInjectionContainer container) => container.ScopeFactory),
          Singleton.For<EndpointConfiguration>().Instance(Configuration),
          Singleton.For<ITessageHandlerRegistry, ITessageHandlerRegistrar>().Instance(_tessagingRegistry),
          Singleton.For<ITypermediaHandlerRegistry, ITypermediaHandlerRegistrar>().Instance(_typermediaRegistry)
       );
    }
 
-   bool _disposed;
-
-   public async ValueTask DisposeAsync()
-   {
-      if(!_disposed)
-      {
-         _disposed = true;
-         if(!_builtSuccessfully)
-         {
-            await Builder.DisposeAsync().caf();
-         }
-      }
-   }
-
-   public void Dispose() => DisposeAsync().WaitUnwrappingException();
 }

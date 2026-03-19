@@ -8,27 +8,29 @@ public class Lifestyle_validation
    [DependencyInjectionContainerMatrix]
    public void clone_preserves_AllowSingletonDependent_flag()
    {
-      using var source = DependencyInjectionContainerFactory.CreateContainerBuilder();
-      source.Registrar.Register(
+      var sourceBuilder = DependencyInjectionContainerFactory.CreateContainerBuilder();
+      sourceBuilder.Registrar.Register(
          TrackedTransient.For<ITransientService>().AllowSingletonDependent().CreatedBy(() => new TransientService()),
          Singleton.For<ISingletonService>().CreatedBy((ITransientService t) => new SingletonServiceDependingOnTransient(t))
       );
 
-      using var clone = source.Clone();
-      clone.Build().Resolve<ISingletonService>().Must().NotBeNull();
+      using var source = sourceBuilder.Build();
+      using var clone = source.Clone().Build();
+      clone.Resolve<ISingletonService>().Must().NotBeNull();
    }
 
    [DependencyInjectionContainerMatrix]
    public void clone_preserves_AllowScopedDependent_flag()
    {
-      using var source = DependencyInjectionContainerFactory.CreateContainerBuilder();
-      source.Registrar.Register(
+      var sourceBuilder = DependencyInjectionContainerFactory.CreateContainerBuilder();
+      sourceBuilder.Registrar.Register(
          TrackedTransient.For<ITransientService>().AllowScopedDependent().CreatedBy(() => new TransientService()),
          Scoped.For<IScopedService>().CreatedBy((ITransientService t) => new ScopedServiceDependingOnTransient(t))
       );
 
-      using var clone = source.Clone();
-      using var scope = clone.Build().BeginScope();
+      using var source = sourceBuilder.Build();
+      using var clone = source.Clone().Build();
+      using var scope = clone.BeginScope();
       scope.Resolve<IScopedService>().Must().NotBeNull();
    }
 }

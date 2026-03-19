@@ -6,40 +6,41 @@ using Microsoft.Extensions.Hosting;
 
 namespace Compze.DependencyInjection.Microsoft.Extensions.Hosting;
 
-public class HostableMicrosoftContainer(MicrosoftDependencyInjectionContainer compzeContainer) : IHostableContainer
+public class HostableMicrosoftContainer(MicrosoftContainerBuilder compzeBuilder) : IHostableContainer
 {
-   readonly MicrosoftDependencyInjectionContainer _compzeContainer = compzeContainer;
+   readonly MicrosoftContainerBuilder _compzeBuilder = compzeBuilder;
 
    public void UseAsServiceProviderFor(IHostBuilder hostBuilder) =>
-      hostBuilder.UseServiceProviderFactory(new CompzeMicrosoftServiceProviderFactory(_compzeContainer));
+      hostBuilder.UseServiceProviderFactory(new CompzeMicrosoftServiceProviderFactory(_compzeBuilder));
 }
 
-class CompzeMicrosoftServiceProviderFactory(MicrosoftDependencyInjectionContainer compzeContainer) : IServiceProviderFactory<IServiceCollection>
+class CompzeMicrosoftServiceProviderFactory(MicrosoftContainerBuilder compzeBuilder) : IServiceProviderFactory<IServiceCollection>
 {
-   readonly MicrosoftDependencyInjectionContainer _compzeContainer = compzeContainer;
+   readonly MicrosoftContainerBuilder _compzeBuilder = compzeBuilder;
+   MicrosoftBuiltContainer? _builtContainer;
 
    public IServiceCollection CreateBuilder(IServiceCollection services)
    {
-      var compzeServices = ((IMicrosoftContainerInternals)_compzeContainer).ServiceCollection;
+      var compzeServices = ((IMicrosoftBuilderInternals)_compzeBuilder).ServiceCollection;
       services.ForEach(compzeServices.Add);
       return compzeServices;
    }
 
    public IServiceProvider CreateServiceProvider(IServiceCollection services)
    {
-      _ = ((IContainerBuilder)_compzeContainer).Build();
-      return new CompzeMicrosoftServiceProvider(_compzeContainer);
+      _builtContainer = (MicrosoftBuiltContainer)((IContainerBuilder)_compzeBuilder).Build();
+      return new CompzeMicrosoftServiceProvider(_builtContainer);
    }
 }
 
-class CompzeMicrosoftServiceProvider(MicrosoftDependencyInjectionContainer compzeContainer) : IServiceProvider, ISupportRequiredService, IDisposable, IAsyncDisposable
+class CompzeMicrosoftServiceProvider(MicrosoftBuiltContainer builtContainer) : IServiceProvider, ISupportRequiredService, IDisposable, IAsyncDisposable
 {
-   readonly MicrosoftDependencyInjectionContainer _compzeContainer = compzeContainer;
-   IServiceProvider Provider => ((IMicrosoftContainerInternals)_compzeContainer).ServiceProvider;
+   readonly MicrosoftBuiltContainer _builtContainer = builtContainer;
+   IServiceProvider Provider => ((IMicrosoftContainerInternals)_builtContainer).ServiceProvider;
 
    public object? GetService(Type serviceType) => Provider.GetService(serviceType);
    public object GetRequiredService(Type serviceType) => Provider.GetRequiredService(serviceType);
 
-   public void Dispose() => _compzeContainer.Dispose();
-   public ValueTask DisposeAsync() => _compzeContainer.DisposeAsync();
+   public void Dispose() => _builtContainer.Dispose();
+   public ValueTask DisposeAsync() => _builtContainer.DisposeAsync();
 }

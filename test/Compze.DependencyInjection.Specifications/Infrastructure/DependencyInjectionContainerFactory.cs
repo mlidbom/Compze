@@ -16,24 +16,22 @@ static class DependencyInjectionContainerFactory
    public static IContainerBuilder CreateContainerBuilder() =>
       CurrentDIContainer switch
       {
-         DIContainer.Microsoft      => new MicrosoftDependencyInjectionContainer(),
-         DIContainer.Autofac        => new AutofacDependencyInjectionContainer(),
+         DIContainer.Microsoft      => new MicrosoftContainerBuilder(),
+         DIContainer.Autofac        => new AutofacContainerBuilder(),
          _                          => throw new ArgumentOutOfRangeException()
       };
 
    public static (IContainerBuilder Builder, IHostableContainer Hostable) CreateHostableContainerBuilder() =>
       CurrentDIContainer switch
       {
-#pragma warning disable CA2000
-         DIContainer.Microsoft => CreateHostablePair(new MicrosoftDependencyInjectionContainer()),
-         DIContainer.Autofac   => CreateHostablePair(new AutofacDependencyInjectionContainer()),
+         DIContainer.Microsoft => CreateHostablePair(new MicrosoftContainerBuilder()),
+         DIContainer.Autofac   => CreateHostablePair(new AutofacContainerBuilder()),
          _                     => throw new ArgumentOutOfRangeException()
-#pragma warning restore CA2000
       };
 
-   static (IContainerBuilder, IHostableContainer) CreateHostablePair(MicrosoftDependencyInjectionContainer container) =>
-      (container, new HostableMicrosoftContainer(container));
+   static (IContainerBuilder, IHostableContainer) CreateHostablePair(MicrosoftContainerBuilder builder) =>
+      (builder, new HostableMicrosoftContainer(builder));
 
-   static (IContainerBuilder, IHostableContainer) CreateHostablePair(AutofacDependencyInjectionContainer container) =>
-      (container, new HostableAutofacContainer(container));
+   static (IContainerBuilder, IHostableContainer) CreateHostablePair(AutofacContainerBuilder builder) =>
+      (builder, new HostableAutofacContainer(builder));
 }

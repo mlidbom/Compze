@@ -1,89 +1,46 @@
 using Compze.DependencyInjection.Abstractions;
-using Compze.Internals.Logging;
 using Compze.Internals.SystemCE.LinqCE;
 
 namespace Compze.DependencyInjection;
 
-public abstract partial class DependencyInjectionContainer : IContainerBuilder, IDependencyInjectionContainer
+public abstract class ContainerBuilderBase : IContainerBuilder
 {
-   static readonly ILogger Log = CompzeLogger.For<DependencyInjectionContainer>();
-
    readonly List<ComponentRegistration> _registeredComponents = [];
    readonly IComponentRegistrar _registrar;
+   bool _built;
 
-   public bool IsClone { get; private set; }
+   public bool IsClone { get; internal set; }
 
-   protected DependencyInjectionContainer(IComponentRegistrar? registrar)
+   protected ContainerBuilderBase(IComponentRegistrar? registrar)
    {
       _registrar = registrar ?? new ComponentRegistrar();
-      ((ComponentRegistrar)_registrar).SetContainer(this);
+      ((ComponentRegistrar)_registrar).SetBuilder(this);
    }
 
    IComponentRegistrar IContainerBuilder.Registrar => _registrar;
 
-   IDependencyInjectionContainer IContainerBuilder.Build()
+   public IDependencyInjectionContainer Build()
    {
-      EnsureContainerBuilt();
-      return this;
+      if(_built) throw new InvalidOperationException("Build() has already been called on this builder. A builder can only be built once.");
+      _built = true;
+      return BuildContainer();
    }
 
-   IRootResolver IDependencyInjectionContainer.RootResolver
-   {
-      get
-      {
-         EnsureContainerBuilt();
-         return (IRootResolver)this;
-      }
-   }
-
-   IScopeFactory IDependencyInjectionContainer.ScopeFactory
-   {
-      get
-      {
-         EnsureContainerBuilt();
-         return (IScopeFactory)this;
-      }
-   }
-
-   public abstract void Dispose();
-   public abstract ValueTask DisposeAsync();
-
-   protected virtual IReadOnlyList<Type> ContainerFacadeServiceTypes { get; } = [];
-
-   protected abstract DependencyInjectionContainer CreateEmptyClone();
-
-   DependencyInjectionContainer CloneInternal()
-   {
-      Log.Info($"Cloning IDependencyInjectionContainer: {GetHashCode()}");
-      EnsureContainerBuilt();
-      IRootResolver sourceRootResolver = (IRootResolver)this;
-      var cloneContainer = CreateEmptyClone();
-      cloneContainer.IsClone = true;
-
-      RegisteredComponents()
-        .Where(component => ContainerFacadeServiceTypes.None(facadeType => component.ServiceTypes.Contains(facadeType)))
-        .ForEach(action: registration => cloneContainer.Register(registration.CreateCloneRegistration(sourceRootResolver)));
-
-      return cloneContainer;
-   }
-
-   IContainerBuilder IDependencyInjectionContainer.Clone() => CloneInternal();
-   IContainerBuilder IContainerBuilder.Clone() => CloneInternal();
+   protected abstract BuiltContainerBase BuildContainer();
 
    internal void Register(params ComponentRegistration[] registrations)
    {
+      if(_built) throw new InvalidOperationException("Cannot register components after the container has been built.");
       ValidateNoDuplicateRegistrations(registrations);
       _registeredComponents.AddRange(registrations);
       RegisterInContainer(registrations);
    }
 
-   public IComponentRegistrar Register() => _registrar;
+   public IComponentRegistrar Registrar => _registrar;
 
    protected abstract void RegisterInContainer(ComponentRegistration[] registrations);
 
-   public IEnumerable<ComponentRegistration> RegisteredComponents() => _registeredComponents;
-
-   protected abstract void EnsureContainerBuilt();
+   public IReadOnlyList<ComponentRegistration> RegisteredComponents() => _registeredComponents;
 
    void ValidateNoDuplicateRegistrations(ComponentRegistration[] newRegistrations)
    {

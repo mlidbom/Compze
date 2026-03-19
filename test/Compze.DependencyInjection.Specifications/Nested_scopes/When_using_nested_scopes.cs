@@ -19,10 +19,10 @@ public class When_using_nested_scopes
    [DependencyInjectionContainerMatrix]
    public void inner_scope_can_resolve_scoped_services()
    {
-      using var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
+      var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
       builder.Registrar.Register(Scoped.For<IScopedService>().CreatedBy(() => new ScopedService()));
 
-      var container = builder.Build();
+      using var container = builder.Build();
 
       using var outerScope = container.BeginScope();
       using var innerScope = container.BeginScope();
@@ -32,10 +32,10 @@ public class When_using_nested_scopes
    [DependencyInjectionContainerMatrix]
    public void inner_scope_resolves_different_scoped_instance_than_outer_scope()
    {
-      using var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
+      var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
       builder.Registrar.Register(Scoped.For<IScopedCounter>().CreatedBy(() => new ScopedCounter()));
 
-      var container = builder.Build();
+      using var container = builder.Build();
 
       using var outerScope = container.BeginScope();
       var outerInstance = outerScope.Resolve<IScopedCounter>();
@@ -48,10 +48,10 @@ public class When_using_nested_scopes
    [DependencyInjectionContainerMatrix]
    public void after_inner_scope_is_disposed_outer_scope_instance_is_still_resolvable()
    {
-      using var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
+      var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
       builder.Registrar.Register(Scoped.For<IScopedCounter>().CreatedBy(() => new ScopedCounter()));
 
-      var container = builder.Build();
+      using var container = builder.Build();
 
       using var outerScope = container.BeginScope();
       var outerInstance = outerScope.Resolve<IScopedCounter>();
@@ -68,10 +68,10 @@ public class When_using_nested_scopes
    [DependencyInjectionContainerMatrix]
    public void three_levels_of_nesting_each_resolve_independent_scoped_instances()
    {
-      using var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
+      var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
       builder.Registrar.Register(Scoped.For<IScopedCounter>().CreatedBy(() => new ScopedCounter()));
 
-      var container = builder.Build();
+      using var container = builder.Build();
 
       using var level1Scope = container.BeginScope();
       var level1 = level1Scope.Resolve<IScopedCounter>();
@@ -90,12 +90,12 @@ public class When_using_nested_scopes
    [DependencyInjectionContainerMatrix]
    public void singletons_are_same_instance_across_nested_scopes()
    {
-      using var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
+      var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
       builder.Registrar.Register(
          Singleton.For<IScopedService>().CreatedBy(() => new ScopedService()),
          Scoped.For<IScopedCounter>().CreatedBy(() => new ScopedCounter()));
 
-      var container = builder.Build();
+      using var container = builder.Build();
 
       using var outerScope = container.BeginScope();
       var outerSingleton = outerScope.Resolve<IScopedService>();
@@ -108,10 +108,10 @@ public class When_using_nested_scopes
    [DependencyInjectionContainerMatrix]
    public void disposing_inner_scope_disposes_inner_scoped_instances_but_not_outer()
    {
-      using var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
+      var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
       builder.Registrar.Register(Scoped.For<IDisposableScopedService>().CreatedBy(() => new DisposableScopedService()));
 
-      var container = builder.Build();
+      using var container = builder.Build();
 
       using var outerScope = container.BeginScope();
       var outerInstance = (DisposableScopedService)outerScope.Resolve<IDisposableScopedService>();
@@ -130,10 +130,10 @@ public class When_using_nested_scopes
    [DependencyInjectionContainerMatrix]
    public void ExecuteInIsolatedScope_works_when_already_in_a_scope()
    {
-      using var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
+      var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
       builder.Registrar.Register(Scoped.For<IScopedCounter>().CreatedBy(() => new ScopedCounter()));
 
-      var container = builder.Build();
+      using var container = builder.Build();
 
       using var outerScope = container.BeginScope();
       var outerInstance = outerScope.Resolve<IScopedCounter>();

@@ -12,12 +12,12 @@ public class When_registering_with_multiple_service_types
    [DependencyInjectionContainerMatrix]
    public void Singleton_resolved_by_different_types_returns_same_instance()
    {
-      using var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
+      var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
       builder.Registrar.Register(
          Singleton.For<IServiceA, IServiceB>()
                   .CreatedBy(() => new MultiTypeService()));
 
-      var container = builder.Build();
+      using var container = builder.Build();
 
       var resolvedAsA = container.Resolve<IServiceA>();
       var resolvedAsB = container.Resolve<IServiceB>();
@@ -28,12 +28,12 @@ public class When_registering_with_multiple_service_types
    [DependencyInjectionContainerMatrix]
    public void Scoped_resolved_by_different_types_within_same_scope_returns_same_instance()
    {
-      using var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
+      var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
       builder.Registrar.Register(
          Scoped.For<IServiceA, IServiceB>()
                .CreatedBy(() => new MultiTypeService()));
 
-      var container = builder.Build();
+      using var container = builder.Build();
 
       using var scope = container.BeginScope();
       var resolvedAsA = scope.Resolve<IServiceA>();
@@ -45,12 +45,12 @@ public class When_registering_with_multiple_service_types
    [DependencyInjectionContainerMatrix]
    public void Scoped_resolved_by_different_types_in_different_scopes_returns_different_instances()
    {
-      using var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
+      var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
       builder.Registrar.Register(
          Scoped.For<IServiceA, IServiceB>()
                .CreatedBy(() => new MultiTypeService()));
 
-      var container = builder.Build();
+      using var container = builder.Build();
 
       IServiceA fromScope1;
       {
@@ -68,14 +68,14 @@ public class When_registering_with_multiple_service_types
    [DependencyInjectionContainerMatrix]
    public void Singleton_with_dependency_resolved_by_different_types_returns_same_instance()
    {
-      using var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
+      var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
       builder.Registrar.Register(
          Singleton.For<IServiceA, IServiceB>()
                   .CreatedBy((IDependency dep) => new MultiTypeServiceWithDep(dep)),
          Singleton.For<IDependency>()
                   .CreatedBy(() => new Dependency()));
 
-      var container = builder.Build();
+      using var container = builder.Build();
 
       var resolvedAsA = container.Resolve<IServiceA>();
       var resolvedAsB = container.Resolve<IServiceB>();
@@ -86,12 +86,12 @@ public class When_registering_with_multiple_service_types
    [DependencyInjectionContainerMatrix]
    public void Singleton_resolved_by_different_types_across_scopes_returns_same_instance()
    {
-      using var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
+      var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
       builder.Registrar.Register(
          Singleton.For<IServiceA, IServiceB>()
                   .CreatedBy(() => new MultiTypeService()));
 
-      var container = builder.Build();
+      using var container = builder.Build();
 
       IServiceA resolvedAsA;
       {

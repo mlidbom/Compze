@@ -31,13 +31,11 @@ class CompzeScopedService : ICompzeScopedService
 
 class HostableContainerTestServer : IAsyncDisposable
 {
-   readonly IContainerBuilder _builder;
    readonly WebApplication _app;
    readonly HttpClient _client;
 
-   HostableContainerTestServer(IContainerBuilder builder, WebApplication app, HttpClient client)
+   HostableContainerTestServer(WebApplication app, HttpClient client)
    {
-      _builder = builder;
       _app = app;
       _client = client;
    }
@@ -69,7 +67,7 @@ class HostableContainerTestServer : IAsyncDisposable
 
       var url = app.Urls.First();
       var client = new HttpClient { BaseAddress = new Uri(url) };
-      return new HostableContainerTestServer(compzeBuilder, app, client);
+      return new HostableContainerTestServer(app, client);
    }
 
    public Task<string> GetStringAsync(string requestUri) => _client.GetStringAsync(requestUri);
@@ -79,7 +77,6 @@ class HostableContainerTestServer : IAsyncDisposable
    {
       _client.Dispose();
       await _app.DisposeAsync();
-      await _builder.DisposeAsync();
    }
 }
 

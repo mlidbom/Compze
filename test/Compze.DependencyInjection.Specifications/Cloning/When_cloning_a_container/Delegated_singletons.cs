@@ -8,17 +8,16 @@ public class Delegated_singletons
    [DependencyInjectionContainerMatrix]
    public void Delegated_singleton_is_same_instance_in_source_and_clone()
    {
-      using var source = DependencyInjectionContainerFactory.CreateContainerBuilder();
-      source.Registrar.Register(
+      var sourceBuilder = DependencyInjectionContainerFactory.CreateContainerBuilder();
+      sourceBuilder.Registrar.Register(
          Singleton.For<ISingletonService>().CreatedBy(() => new SingletonService())
                   .DelegateToParentServiceLocatorWhenCloning());
 
-      _ = source.Build();
+      using var source = sourceBuilder.Build();
+      using var clone = source.Clone().Build();
 
-      using var clone = source.Clone();
-
-      var sourceInstance = source.Build().Resolve<ISingletonService>();
-      var cloneInstance = clone.Build().Resolve<ISingletonService>();
+      var sourceInstance = source.Resolve<ISingletonService>();
+      var cloneInstance = clone.Resolve<ISingletonService>();
 
       cloneInstance.Must().Be(sourceInstance);
    }
@@ -26,32 +25,32 @@ public class Delegated_singletons
    [DependencyInjectionContainerMatrix]
    public void Delegated_singleton_is_available_in_clone_scope()
    {
-      using var source = DependencyInjectionContainerFactory.CreateContainerBuilder();
-      source.Registrar.Register(
+      var sourceBuilder = DependencyInjectionContainerFactory.CreateContainerBuilder();
+      sourceBuilder.Registrar.Register(
          Singleton.For<ISingletonService>().CreatedBy(() => new SingletonService())
                   .DelegateToParentServiceLocatorWhenCloning());
 
-      using var clone = source.Clone();
-      using var scope1 = clone.Build().BeginScope();
+      using var source = sourceBuilder.Build();
+      using var clone = source.Clone().Build();
+      using var scope1 = clone.BeginScope();
       scope1.Resolve<ISingletonService>().Must().NotBeNull();
    }
 
    [DependencyInjectionContainerMatrix]
    public void Non_delegated_singleton_depending_on_delegated_singleton_resolves_correctly_in_clone()
    {
-      using var source = DependencyInjectionContainerFactory.CreateContainerBuilder();
-      source.Registrar.Register(
+      var sourceBuilder = DependencyInjectionContainerFactory.CreateContainerBuilder();
+      sourceBuilder.Registrar.Register(
          Singleton.For<IDelegatedDependency>().CreatedBy(() => new DelegatedDependency())
                   .DelegateToParentServiceLocatorWhenCloning(),
          Singleton.For<ISingletonService>()
                   .CreatedBy((IDelegatedDependency dep) => new SingletonWithDelegatedDep(dep)));
 
-      _ = source.Build();
+      using var source = sourceBuilder.Build();
+      using var clone = source.Clone().Build();
 
-      using var clone = source.Clone();
-
-      var sourceDepInstance = source.Build().Resolve<IDelegatedDependency>();
-      using var scope2 = clone.Build().BeginScope();
+      var sourceDepInstance = source.Resolve<IDelegatedDependency>();
+      using var scope2 = clone.BeginScope();
       var cloneService = scope2.Resolve<ISingletonService>();
       cloneService.Must().NotBeNull();
 
@@ -64,20 +63,21 @@ public class Delegated_singletons
    {
       var factoryCallCount = 0;
 
-      using var source = DependencyInjectionContainerFactory.CreateContainerBuilder();
-      source.Registrar.Register(
+      var sourceBuilder = DependencyInjectionContainerFactory.CreateContainerBuilder();
+      sourceBuilder.Registrar.Register(
          Singleton.For<ISingletonService>().CreatedBy(() =>
          {
             Interlocked.Increment(ref factoryCallCount);
             return new SingletonService();
          }));
 
-      using var clone = source.Clone();
+      using var source = sourceBuilder.Build();
+      using var clone = source.Clone().Build();
 
-      clone.Build().Resolve<ISingletonService>();
-      clone.Build().Resolve<ISingletonService>();
+      clone.Resolve<ISingletonService>();
+      clone.Resolve<ISingletonService>();
 
-      using var scope3 = clone.Build().BeginScope();
+      using var scope3 = clone.BeginScope();
       scope3.Resolve<ISingletonService>();
 
       factoryCallCount.Must().Be(1);

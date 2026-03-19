@@ -8,16 +8,16 @@ public class Instance_disposal
    [DependencyInjectionContainerMatrix]
    public void Disposing_clone_does_not_dispose_delegated_singleton_instances()
    {
-      using var source = DependencyInjectionContainerFactory.CreateContainerBuilder();
-      source.Registrar.Register(
+      var sourceBuilder = DependencyInjectionContainerFactory.CreateContainerBuilder();
+      sourceBuilder.Registrar.Register(
          Singleton.For<IDisposableTracking>().CreatedBy(() => new DisposableTracking())
                   .DelegateToParentServiceLocatorWhenCloning());
 
-      var sourceContainer = source.Build();
-      var instance = sourceContainer.Resolve<IDisposableTracking>();
+      using var source = sourceBuilder.Build();
+      var instance = source.Resolve<IDisposableTracking>();
 
-      var clone = source.Clone();
-      var cloneInstance = clone.Build().Resolve<IDisposableTracking>();
+      var clone = source.Clone().Build();
+      var cloneInstance = clone.Resolve<IDisposableTracking>();
 
       cloneInstance.Must().Be(instance);
 
@@ -27,22 +27,22 @@ public class Instance_disposal
       ((DisposableTracking)instance).IsDisposed.Must().BeFalse();
 
       // Source should still be able to resolve it
-      sourceContainer.Resolve<IDisposableTracking>().Must().Be(instance);
+      source.Resolve<IDisposableTracking>().Must().Be(instance);
    }
 
    [DependencyInjectionContainerMatrix]
    public void Disposing_clone_does_not_dispose_delegated_singleton_instance_that_is_async_disposable()
    {
-      using var source = DependencyInjectionContainerFactory.CreateContainerBuilder();
-      source.Registrar.Register(
+      var sourceBuilder = DependencyInjectionContainerFactory.CreateContainerBuilder();
+      sourceBuilder.Registrar.Register(
          Singleton.For<IAsyncDisposableTracking>().CreatedBy(() => new AsyncDisposableTracking())
                   .DelegateToParentServiceLocatorWhenCloning());
 
-      var sourceContainer = source.Build();
-      var instance = sourceContainer.Resolve<IAsyncDisposableTracking>();
+      using var source = sourceBuilder.Build();
+      var instance = source.Resolve<IAsyncDisposableTracking>();
 
-      var clone = source.Clone();
-      var cloneInstance = clone.Build().Resolve<IAsyncDisposableTracking>();
+      var clone = source.Clone().Build();
+      var cloneInstance = clone.Resolve<IAsyncDisposableTracking>();
 
       cloneInstance.Must().Be(instance);
 

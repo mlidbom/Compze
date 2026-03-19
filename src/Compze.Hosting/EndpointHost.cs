@@ -31,7 +31,7 @@ public class EndpointHost : IEndpointHost
 
    IEndpoint InternalRegisterEndpoint(EndpointConfiguration configuration, Action<IEndpointBuilder> setup)
    {
-      using var builder = new ServerEndpointBuilder(this, TessagesInFlightTracker, _containerFactory(), configuration);
+      var builder = new ServerEndpointBuilder(this, TessagesInFlightTracker, _containerFactory(), configuration);
       setup(builder);
 
       var endpoint = builder.Build();

@@ -1,22 +1,13 @@
-using Compze.Contracts;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.LinqCE;
-using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Threading;
 using Microsoft.Extensions.DependencyInjection;
-using IServiceScope = Compze.DependencyInjection.Abstractions.IServiceScope;
 
 namespace Compze.DependencyInjection.Microsoft;
 
-public sealed class MicrosoftDependencyInjectionContainer(IComponentRegistrar? register = null) : DependencyInjectionContainer(register), IRootResolver, IScopeFactory, IMicrosoftContainerInternals
+public sealed class MicrosoftContainerBuilder(IComponentRegistrar? registrar = null) : ContainerBuilderBase(registrar), IMicrosoftBuilderInternals
 {
    readonly IServiceCollection _services = new ServiceCollection();
-   ServiceProvider? _serviceProvider;
-   bool _isDisposed;
-
-   protected override DependencyInjectionContainer CreateEmptyClone() =>
-      new MicrosoftDependencyInjectionContainer(Register().Clone());
-
    readonly RunOnce _registerScopedKernel = new();
 
    protected override void RegisterInContainer(ComponentRegistration[] registrations)
@@ -67,66 +58,20 @@ public sealed class MicrosoftDependencyInjectionContainer(IComponentRegistrar? r
       }
    }
 
-   protected override void EnsureContainerBuilt()
+   protected override BuiltContainerBase BuildContainer()
    {
-      if(_serviceProvider == null)
-      {
-         AssertLifeStyleCombinationsAreValid();
-         _serviceProvider = _services.BuildServiceProvider(new ServiceProviderOptions { ValidateOnBuild = true, ValidateScopes = true });
-      }
+      AssertLifeStyleCombinationsAreValid();
+
+      // Auto-register intrinsic container types via closures that will be filled after build
+      MicrosoftBuiltContainer? builtContainer = null;
+      _services.AddSingleton<IDependencyInjectionContainer>(_ => builtContainer!);
+      _services.AddSingleton<IRootResolver>(_ => builtContainer!);
+      _services.AddSingleton<IScopeFactory>(_ => builtContainer!);
+
+      var serviceProvider = _services.BuildServiceProvider(new ServiceProviderOptions { ValidateOnBuild = true, ValidateScopes = true });
+      builtContainer = new MicrosoftBuiltContainer(serviceProvider, RegisteredComponents(), Registrar);
+      return builtContainer;
    }
 
-   public object Resolve(Type serviceType)
-   {
-      Contract.State.NotDisposed(_isDisposed, this);
-      return _serviceProvider._assert().NotNull().GetRequiredService(serviceType);
-   }
-
-   public IServiceScope BeginScope()
-   {
-      Contract.State.NotDisposed(_isDisposed, this);
-
-      var scope = _serviceProvider._assert().NotNull().CreateAsyncScope();
-      var scopeResolver = scope.ServiceProvider.GetRequiredService<ScopeResolverWrapper>();
-
-      return new ServiceLocatorScope(scopeResolver, () => scope.DisposeAsync().AsTask().GetAwaiter().GetResult());
-   }
-
-   IServiceCollection IMicrosoftContainerInternals.ServiceCollection => _services;
-   IServiceProvider IMicrosoftContainerInternals.ServiceProvider => _serviceProvider._assert().NotNull();
-
-   public override void Dispose()
-   {
-      if(!_isDisposed)
-      {
-         _isDisposed = true;
-         if(_serviceProvider != null)
-         {
-            _serviceProvider.DisposeAsync().AsTask().GetAwaiter().GetResult();
-         }
-
-         _serviceProvider = null;
-      }
-   }
-
-   public override async ValueTask DisposeAsync()
-   {
-      if(!_isDisposed)
-      {
-         _isDisposed = true;
-         if(_serviceProvider != null)
-         {
-            await _serviceProvider.DisposeAsync().caf();
-         }
-
-         _serviceProvider = null;
-      }
-   }
-
-   sealed class ServiceLocatorScope(IScopeResolver scopeResolver, Action onDispose) : IServiceScope
-   {
-      public IScopeResolver Resolver { get; } = scopeResolver;
-
-      public void Dispose() => onDispose();
-   }
+   IServiceCollection IMicrosoftBuilderInternals.ServiceCollection => _services;
 }

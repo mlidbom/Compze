@@ -9,7 +9,7 @@ public class LifestyleValidationTests
    [DependencyInjectionContainerMatrix]
    public void Should_throw_when_singleton_depends_on_scoped_service()
    {
-      using var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
+      var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
 
       var exception = Invoking(() =>
       {
@@ -30,7 +30,7 @@ public class LifestyleValidationTests
    [DependencyInjectionContainerMatrix]
    public void Should_throw_when_singleton_depends_on_transient_service()
    {
-      using var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
+      var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
 
       var exception = Invoking(() =>
       {
@@ -50,20 +50,20 @@ public class LifestyleValidationTests
    [DependencyInjectionContainerMatrix]
    public void Should_allow_singleton_depending_on_transient_with_AllowSingletonDependent()
    {
-      using var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
+      var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
       builder.Registrar.Register(
          TrackedTransient.For<ITransientService>().AllowSingletonDependent().CreatedBy(() => new TransientService()),
          Singleton.For<ISingletonService>().CreatedBy((ITransientService t) => new SingletonServiceDependingOnTransient(t))
       );
 
-      var container = builder.Build();
+      using var container = builder.Build();
       container.Resolve<ISingletonService>().Must().NotBeNull();
    }
 
    [DependencyInjectionContainerMatrix]
    public void Should_throw_when_scoped_depends_on_transient()
    {
-      using var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
+      var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
 
       var exception = Invoking(() =>
       {
@@ -83,13 +83,13 @@ public class LifestyleValidationTests
    [DependencyInjectionContainerMatrix]
    public void Should_allow_scoped_depending_on_transient_with_AllowScopedDependent()
    {
-      using var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
+      var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
       builder.Registrar.Register(
          TrackedTransient.For<ITransientService>().AllowScopedDependent().CreatedBy(() => new TransientService()),
          Scoped.For<IScopedService>().CreatedBy((ITransientService t) => new ScopedServiceDependingOnTransient(t))
       );
 
-      var container = builder.Build();
+      using var container = builder.Build();
       using var scope = container.BeginScope();
       scope.Resolve<IScopedService>().Must().NotBeNull();
    }
@@ -97,13 +97,13 @@ public class LifestyleValidationTests
    [DependencyInjectionContainerMatrix]
    public void Should_allow_transient_depending_on_scoped_service()
    {
-      using var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
+      var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
       builder.Registrar.Register(
          Scoped.For<IScopedService>().CreatedBy(() => new ScopedService()),
          TrackedTransient.For<ITransientService>().CreatedBy((IScopedService scoped) => new TransientDependingOnScoped(scoped))
       );
 
-      var container = builder.Build();
+      using var container = builder.Build();
       using var scope = container.BeginScope();
       scope.Resolve<ITransientService>().Must().NotBeNull();
    }

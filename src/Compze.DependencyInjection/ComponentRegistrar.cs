@@ -5,20 +5,20 @@ namespace Compze.DependencyInjection;
 
 public class ComponentRegistrar : IComponentRegistrar
 {
-   DependencyInjectionContainer? _container = null;
+   ContainerBuilderBase? _builder = null;
 
-   internal void SetContainer(DependencyInjectionContainer container)
+   internal void SetBuilder(ContainerBuilderBase builder)
    {
-      Contract.State.Assert(_container == null, () => "Container has already been set");
-      _container = container;
+      Contract.State.Assert(_builder == null, () => "Builder has already been set");
+      _builder = builder;
    }
 
    public virtual IComponentRegistrar Clone() => new ComponentRegistrar();
 
    public IComponentRegistrar Register(params ComponentRegistration[] registrations)
    {
-      if(_container == null) throw new InvalidOperationException("Container has not been set yet");
-      _container.Register(registrations);
+      if(_builder == null) throw new InvalidOperationException("Builder has not been set yet");
+      _builder.Register(registrations);
       return this;
    }
 
@@ -32,10 +32,10 @@ public class ComponentRegistrar : IComponentRegistrar
       return this;
    }
 
-   public bool IsClone => _container?.IsClone ?? false;
+   public bool IsClone => _builder?.IsClone ?? false;
 
    public bool IsRegistered<TComponent>() where TComponent : class =>
-      _container?.RegisteredComponents().Any(it => it.ServiceTypes.Contains(typeof(TComponent))) ?? false;
+      _builder?.RegisteredComponents().Any(it => it.ServiceTypes.Contains(typeof(TComponent))) ?? false;
 
    public virtual TTestingRegistrar? TryGetTestingRegistrar<TTestingRegistrar>() where TTestingRegistrar : class => null;
 }

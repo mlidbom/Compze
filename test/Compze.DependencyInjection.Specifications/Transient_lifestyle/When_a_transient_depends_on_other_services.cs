@@ -8,13 +8,13 @@ public class When_a_transient_depends_on_other_services
    [DependencyInjectionContainerMatrix]
    public void transient_can_depend_on_a_singleton()
    {
-      using var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
+      var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
       builder.Registrar.Register(
          Singleton.For<ISingletonDependency>().CreatedBy(() => new SingletonDependency()),
          TrackedTransient.For<IServiceWithDependency>().CreatedBy((ISingletonDependency dep) => new ServiceWithDependency(dep))
       );
 
-      var container = builder.Build();
+      using var container = builder.Build();
       var first = container.Resolve<IServiceWithDependency>();
       var second = container.Resolve<IServiceWithDependency>();
 
@@ -25,13 +25,13 @@ public class When_a_transient_depends_on_other_services
    [DependencyInjectionContainerMatrix]
    public void transient_can_depend_on_another_transient()
    {
-      using var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
+      var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
       builder.Registrar.Register(
          TrackedTransient.For<ITransientDependency>().CreatedBy(() => new TransientDependency()),
          TrackedTransient.For<IServiceWithTransientDependency>().CreatedBy((ITransientDependency dep) => new ServiceWithTransientDependency(dep))
       );
 
-      var container = builder.Build();
+      using var container = builder.Build();
       var first = (ServiceWithTransientDependency)container.Resolve<IServiceWithTransientDependency>();
       var second = (ServiceWithTransientDependency)container.Resolve<IServiceWithTransientDependency>();
 

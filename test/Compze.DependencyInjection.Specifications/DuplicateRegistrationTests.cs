@@ -13,7 +13,7 @@ public class DuplicateRegistrationTests
    [DependencyInjectionContainerMatrix]
    public void Registering_same_singleton_service_twice_throws_InvalidOperationException()
    {
-      using var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
+      var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
 
       builder.Registrar.Register(Singleton.For<ITestService>().CreatedBy(() => new TestService()));
 
@@ -28,7 +28,7 @@ public class DuplicateRegistrationTests
    [DependencyInjectionContainerMatrix]
    public void Registering_same_scoped_service_twice_throws_InvalidOperationException()
    {
-      using var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
+      var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
 
       builder.Registrar.Register(Scoped.For<ITestService>().CreatedBy(() => new TestService()));
 
@@ -42,7 +42,7 @@ public class DuplicateRegistrationTests
    [DependencyInjectionContainerMatrix]
    public void Registering_same_transient_service_twice_throws_InvalidOperationException()
    {
-      using var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
+      var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
 
       builder.Registrar.Register(TrackedTransient.For<ITestService>().CreatedBy(() => new TestService()));
 
@@ -57,7 +57,7 @@ public class DuplicateRegistrationTests
    [DependencyInjectionContainerMatrix]
    public void Registering_service_with_multiple_service_types_then_reregistering_one_throws_InvalidOperationException()
    {
-      using var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
+      var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
 
       builder.Registrar.Register(
          Singleton.For<ITestService, ITestService2>()

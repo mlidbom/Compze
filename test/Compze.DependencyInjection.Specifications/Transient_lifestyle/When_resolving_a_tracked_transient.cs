@@ -11,10 +11,10 @@ public class When_resolving_a_tracked_transient
       [DependencyInjectionContainerMatrix]
       public void each_resolve_returns_a_new_instance()
       {
-         using var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
+         var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
          builder.Registrar.Register(TrackedTransient.For<IMyService>().CreatedBy(() => new MyService()));
 
-         var container = builder.Build();
+         using var container = builder.Build();
          var first = container.Resolve<IMyService>();
          var second = container.Resolve<IMyService>();
 
@@ -38,7 +38,7 @@ public class When_resolving_a_tracked_transient
             instance1.IsDisposed.Must().BeFalse();
             instance2.IsDisposed.Must().BeFalse();
 
-            builder.Dispose();
+            container.Dispose();
          }
 
          instance1.IsDisposed.Must().BeTrue();
@@ -62,7 +62,7 @@ public class When_resolving_a_tracked_transient
             instance1.IsDisposed.Must().BeFalse();
             instance2.IsDisposed.Must().BeFalse();
 
-            builder.Dispose();
+            container.Dispose();
          }
 
          instance1.IsDisposed.Must().BeTrue();
@@ -86,7 +86,7 @@ public class When_resolving_a_tracked_transient
             instance1.IsDisposed.Must().BeFalse();
             instance2.IsDisposed.Must().BeFalse();
 
-            await builder.DisposeAsync();
+            await container.DisposeAsync();
          }
 
          instance1.IsDisposed.Must().BeTrue();
@@ -110,7 +110,7 @@ public class When_resolving_a_tracked_transient
             instance1.IsDisposed.Must().BeFalse();
             instance2.IsDisposed.Must().BeFalse();
 
-            await builder.DisposeAsync();
+            await container.DisposeAsync();
          }
 
          instance1.IsDisposed.Must().BeTrue();
@@ -123,10 +123,10 @@ public class When_resolving_a_tracked_transient
       [DependencyInjectionContainerMatrix]
       public void each_resolve_returns_a_new_instance()
       {
-         using var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
+         var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
          builder.Registrar.Register(TrackedTransient.For<IMyService>().CreatedBy(() => new MyService()));
 
-         var container = builder.Build();
+         using var container = builder.Build();
          using var scope = container.BeginScope();
          var first = scope.Resolve<IMyService>();
          var second = scope.Resolve<IMyService>();
@@ -137,10 +137,10 @@ public class When_resolving_a_tracked_transient
       [DependencyInjectionContainerMatrix]
       public void disposable_instances_are_disposed_when_scope_is_disposed()
       {
-         using var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
+         var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
          builder.Registrar.Register(TrackedTransient.For<IDisposableService>().CreatedBy(() => new DisposableService()));
 
-         var container = builder.Build();
+         using var container = builder.Build();
 
          DisposableService instance1;
          DisposableService instance2;
@@ -161,10 +161,10 @@ public class When_resolving_a_tracked_transient
       [DependencyInjectionContainerMatrix]
       public void async_disposable_only_instances_are_disposed_when_scope_is_disposed()
       {
-         using var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
+         var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
          builder.Registrar.Register(TrackedTransient.For<IAsyncOnlyDisposableService>().CreatedBy(() => new AsyncOnlyDisposableService()));
 
-         var container = builder.Build();
+         using var container = builder.Build();
 
          AsyncOnlyDisposableService instance1;
          AsyncOnlyDisposableService instance2;

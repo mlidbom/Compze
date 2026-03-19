@@ -7,40 +7,41 @@ using Microsoft.Extensions.Hosting;
 
 namespace Compze.DependencyInjection.Autofac.Extensions.Hosting;
 
-public class HostableAutofacContainer(AutofacDependencyInjectionContainer compzeContainer) : IHostableContainer
+public class HostableAutofacContainer(AutofacContainerBuilder compzeBuilder) : IHostableContainer
 {
-   readonly AutofacDependencyInjectionContainer _compzeContainer = compzeContainer;
+   readonly AutofacContainerBuilder _compzeBuilder = compzeBuilder;
 
    public void UseAsServiceProviderFor(IHostBuilder hostBuilder) =>
-      hostBuilder.UseServiceProviderFactory(new CompzeAutofacServiceProviderFactory(_compzeContainer));
+      hostBuilder.UseServiceProviderFactory(new CompzeAutofacServiceProviderFactory(_compzeBuilder));
 }
 
-class CompzeAutofacServiceProviderFactory(AutofacDependencyInjectionContainer compzeContainer) : IServiceProviderFactory<ContainerBuilder>
+class CompzeAutofacServiceProviderFactory(AutofacContainerBuilder compzeBuilder) : IServiceProviderFactory<ContainerBuilder>
 {
-   readonly AutofacDependencyInjectionContainer _compzeContainer = compzeContainer;
+   readonly AutofacContainerBuilder _compzeBuilder = compzeBuilder;
+   AutofacBuiltContainer? _builtContainer;
 
    public ContainerBuilder CreateBuilder(IServiceCollection services)
    {
-      var builder = ((IAutofacContainerInternals)_compzeContainer).ContainerBuilder;
+      var builder = ((IAutofacBuilderInternals)_compzeBuilder).ContainerBuilder;
       builder.Populate(services);
       return builder;
    }
 
    public IServiceProvider CreateServiceProvider(ContainerBuilder containerBuilder)
    {
-      _ = ((IContainerBuilder)_compzeContainer).Build();
-      return new CompzeAutofacServiceProvider(_compzeContainer);
+      _builtContainer = (AutofacBuiltContainer)((IContainerBuilder)_compzeBuilder).Build();
+      return new CompzeAutofacServiceProvider(_builtContainer);
    }
 }
 
-class CompzeAutofacServiceProvider(AutofacDependencyInjectionContainer compzeContainer) : IServiceProvider, ISupportRequiredService, IDisposable, IAsyncDisposable
+class CompzeAutofacServiceProvider(AutofacBuiltContainer builtContainer) : IServiceProvider, ISupportRequiredService, IDisposable, IAsyncDisposable
 {
-   readonly AutofacDependencyInjectionContainer _compzeContainer = compzeContainer;
-   IContainer Container => ((IAutofacContainerInternals)_compzeContainer).Container;
+   readonly AutofacBuiltContainer _builtContainer = builtContainer;
+   IContainer Container => ((IAutofacContainerInternals)_builtContainer).Container;
 
    public object? GetService(Type serviceType) => Container.ResolveOptional(serviceType);
    public object GetRequiredService(Type serviceType) => Container.Resolve(serviceType);
 
-   public void Dispose() => _compzeContainer.Dispose();
-   public ValueTask DisposeAsync() => _compzeContainer.DisposeAsync();
+   public void Dispose() => _builtContainer.Dispose();
+   public ValueTask DisposeAsync() => _builtContainer.DisposeAsync();
 }

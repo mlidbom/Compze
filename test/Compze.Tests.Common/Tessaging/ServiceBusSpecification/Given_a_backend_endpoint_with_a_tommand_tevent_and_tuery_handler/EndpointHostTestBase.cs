@@ -45,15 +45,10 @@ public abstract class EndpointHostTestBase : UniversalTestBase
    TestClient Client { get; set; } = null!;
    protected IRemoteTypermediaNavigator Navigator => Client.Navigator;
    protected IEndpoint RemoteEndpoint { get; private set; } = null!;
-
-   readonly IContainerBuilder _rootBuilder;
+   IDependencyInjectionContainer? _rootContainer;
 
    protected EndpointHostTestBase()
    {
-#pragma warning disable CA2000 // We are passing this disposable into a constructor of an object we don't own
-      _rootBuilder = TestEnv.DIContainer.CreateWithContainerRegistrations()
-                              ._mutate(it => it.Registrar.CurrentTestsDbPoolIfNotCloneContainer());
-#pragma warning restore CA2000 // We are passing this disposable into a constructor of an object we don't own
 
       AllGates =
       [
@@ -75,12 +70,21 @@ public abstract class EndpointHostTestBase : UniversalTestBase
       OpenGates();
       await Client.DisposeAsync();
       await Host.DisposeAsync();
-      _rootBuilder.Dispose();
+      if(_rootContainer != null)
+      {
+         await _rootContainer.DisposeAsync();
+         _rootContainer = null;
+      }
    }
+
+   static IContainerBuilder CreateRootBuilder() =>
+      TestEnv.DIContainer.CreateWithContainerRegistrations()
+             ._mutate(it => it.Registrar.CurrentTestsDbPoolIfNotCloneContainer());
 
    void InitializeHost()
    {
-      Host = TestingEndpointHost.Create(_rootBuilder);
+      _rootContainer ??= CreateRootBuilder().Build();
+      Host = TestingEndpointHost.Create(_rootContainer);
 
       BackendEndPoint = Host.RegisterEndpoint(
          "Backend",
