@@ -78,7 +78,7 @@ static class TypeMapperAssemblyScanner
       return new ScannedAssemblyTypes(classifiedExplicit, classifiedComputed);
    }
 
-   static bool IsAssemblyWeShouldExamine(Assembly assembly)
+   internal static bool IsAssemblyWeShouldExamine(Assembly assembly)
    {
       if(assembly.IsDynamic || assembly.FullName == null)
          return false;

@@ -108,24 +108,27 @@ public class TypeMapper : ITypeMapper
 
    static void ProcessAssembly(System.Reflection.Assembly assembly, MappingState state)
    {
-      state.AddMappings(AssemblyMappingReader.ReadMappings(assembly));
-
-      var scannedTypes = TypeMapperAssemblyScanner.Scan(assembly);
-
-      foreach(var classifiedType in scannedTypes.ExplicitlyMappedTypes.Concat<TypeMapperType>(scannedTypes.ComputedTypeIdTypes))
+      if(TypeMapperAssemblyScanner.IsAssemblyWeShouldExamine(assembly))
       {
-         var typeId = ResolveTypeId(classifiedType, state);
-         if(typeId != null && !state.TypeToTypeIdMap.ContainsKey(classifiedType.Type))
-            state.AddMapping(classifiedType.Type, typeId);
-      }
+         state.AddMappings(AssemblyMappingReader.ReadMappings(assembly));
 
-      var hasMissingExplicitMappings = scannedTypes.ExplicitlyMappedTypes
-                                                   .Any(explicitType => !state.TypeToTypeIdMap.ContainsKey(explicitType.Type));
+         var scannedTypes = TypeMapperAssemblyScanner.Scan(assembly);
 
-      if(hasMissingExplicitMappings)
-      {
-         var message = MissingMappingReporter.BuildAssemblyMappingMessage(assembly, state.TypeToTypeIdMap);
-         state.AssemblyMappingUpdateMessages[assembly] = message;
+         foreach(var classifiedType in scannedTypes.ExplicitlyMappedTypes.Concat<TypeMapperType>(scannedTypes.ComputedTypeIdTypes))
+         {
+            var typeId = ResolveTypeId(classifiedType, state);
+            if(typeId != null && !state.TypeToTypeIdMap.ContainsKey(classifiedType.Type))
+               state.AddMapping(classifiedType.Type, typeId);
+         }
+
+         var hasMissingExplicitMappings = scannedTypes.ExplicitlyMappedTypes
+                                                      .Any(explicitType => !state.TypeToTypeIdMap.ContainsKey(explicitType.Type));
+
+         if(hasMissingExplicitMappings)
+         {
+            var message = MissingMappingReporter.BuildAssemblyMappingMessage(assembly, state.TypeToTypeIdMap);
+            state.AssemblyMappingUpdateMessages[assembly] = message;
+         }
       }
    }
 
