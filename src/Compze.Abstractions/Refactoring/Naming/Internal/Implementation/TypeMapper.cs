@@ -25,7 +25,10 @@ public class TypeMapper : ITypeMapper
    static TypeMapper()
    {
       EnsureAllCurrentlyLoadedAssembliesHaveBeenCheckedForRequiredMappings();
-      AppDomain.CurrentDomain.AssemblyLoad += (_, _) => EnsureAllCurrentlyLoadedAssembliesHaveBeenCheckedForRequiredMappings();
+      AppDomain.CurrentDomain.AssemblyLoad += (_, _) =>
+      {
+         EnsureAllCurrentlyLoadedAssembliesHaveBeenCheckedForRequiredMappings();
+      };
    }
 
    public TypeId GetId(Type type) => State.Locked(state =>
