@@ -1,4 +1,3 @@
-using System.Text;
 using Compze.Contracts;
 using Compze.Internals.SystemCE;
 
@@ -31,14 +30,13 @@ static class DeterministicTypeIdGenerator
             typeArgumentTypeIds[i].Value.TryWriteBytes(payload.Slice(16 * (1 + i)))._assert().True();
         }
 
-        return new TypeId(CompositionNamespaceId.CreateUuidV5(payload));
+        return new TypeId(Guid.NewUUIDv5(namespaceId: CompositionNamespaceId, payload: payload));
     }
 
     /// <summary>Computes a stable TypeId from a type's fully qualified name.
     /// Used for external types (e.g. System.Collections.Generic.List`1) whose names are stable.</summary>
     internal static TypeId ComputeTypeIdFromName(string fullyQualifiedTypeName)
     {
-        var nameBytes = Encoding.UTF8.GetBytes(fullyQualifiedTypeName);
-        return new TypeId(TypeNameNamespaceId.CreateUuidV5(nameBytes));
+        return new TypeId(Guid.NewUUIDv5(namespaceId: TypeNameNamespaceId, name: fullyQualifiedTypeName));
     }
 }
