@@ -29,7 +29,7 @@ public sealed class MicrosoftContainer : DependencyInjectionContainer, IRootReso
       Contract.State.NotDisposed(_isDisposed, this);
 
       var scope = _serviceProvider.CreateAsyncScope();
-      var scopeResolver = scope.ServiceProvider.GetRequiredService<ScopeResolverWrapper>();
+      var scopeResolver = scope.ServiceProvider.GetRequiredService<ScopeResolver>();
 
       return new Scope(scopeResolver, () => scope.DisposeAsync().AsTask().GetAwaiter().GetResult());
    }

@@ -16,8 +16,8 @@ public sealed class MicrosoftContainerBuilder(IComponentRegistrar? registrar = n
    {
       _registerScopedKernel.RunIfFirstCall(() =>
       {
-         _services.AddScoped<ScopeResolverWrapper>(serviceProvider => new ScopeResolverWrapper(serviceProvider.GetRequiredService));
-         _services.AddScoped<IScopeResolver>(serviceProvider => serviceProvider.GetRequiredService<ScopeResolverWrapper>());
+         _services.AddScoped<ScopeResolver>(serviceProvider => new ScopeResolver(serviceProvider.GetRequiredService));
+         _services.AddScoped<IScopeResolver>(serviceProvider => serviceProvider.GetRequiredService<ScopeResolver>());
       });
 
       foreach(var registration in registrations)
@@ -34,19 +34,19 @@ public sealed class MicrosoftContainerBuilder(IComponentRegistrar? registrar = n
                } else
                {
                   _services.Add(new ServiceDescriptor(firstServiceType,
-                                                      serviceProvider => registration.InstantiationSpec.RunFactoryMethod(new ServiceResolverWrapper(serviceProvider.GetRequiredService)),
+                                                      serviceProvider => registration.InstantiationSpec.RunFactoryMethod(new ServiceResolver(serviceProvider.GetRequiredService)),
                                                       lifetime));
                }
 
                break;
             case Lifestyle.Scoped:
                _services.Add(new ServiceDescriptor(firstServiceType,
-                                                   serviceProvider => registration.InstantiationSpec.RunFactoryMethod(serviceProvider.GetRequiredService<ScopeResolverWrapper>()),
+                                                   serviceProvider => registration.InstantiationSpec.RunFactoryMethod(serviceProvider.GetRequiredService<ScopeResolver>()),
                                                    lifetime));
                break;
             case Lifestyle.TrackedTransient:
                _services.Add(new ServiceDescriptor(firstServiceType,
-                                                   serviceProvider => registration.InstantiationSpec.RunFactoryMethod(new ServiceResolverWrapper(serviceProvider.GetRequiredService)),
+                                                   serviceProvider => registration.InstantiationSpec.RunFactoryMethod(new ServiceResolver(serviceProvider.GetRequiredService)),
                                                    lifetime));
                break;
             default:

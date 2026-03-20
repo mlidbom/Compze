@@ -21,7 +21,7 @@ public sealed class AutofacContainer : DependencyInjectionContainer, IRootResolv
    public IScope BeginScope()
    {
       var lifetimeScope = _container.BeginLifetimeScope();
-      var scopeResolver = lifetimeScope.Resolve<ScopeResolverWrapper>();
+      var scopeResolver = lifetimeScope.Resolve<ScopeResolver>();
       return new Scope(scopeResolver, lifetimeScope);
    }
 

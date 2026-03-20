@@ -19,9 +19,9 @@ public sealed class AutofacContainerBuilder(IComponentRegistrar? registrar = nul
          _containerBuilder.Register(componentContext =>
          {
             var scope = componentContext.Resolve<ILifetimeScope>();
-            return new ScopeResolverWrapper(scope.Resolve);
+            return new ScopeResolver(scope.Resolve);
          }).InstancePerLifetimeScope();
-         _containerBuilder.Register(componentContext => (IScopeResolver)componentContext.Resolve<ScopeResolverWrapper>())
+         _containerBuilder.Register(componentContext => (IScopeResolver)componentContext.Resolve<ScopeResolver>())
                           .As<IScopeResolver>()
                           .InstancePerLifetimeScope();
       });
@@ -40,19 +40,19 @@ public sealed class AutofacContainerBuilder(IComponentRegistrar? registrar = nul
                                                                        .ExternallyOwned());
                } else
                {
-                  _containerBuilder.Register(componentContext => registration.InstantiationSpec.RunFactoryMethod(new ServiceResolverWrapper(componentContext.Resolve)))
+                  _containerBuilder.Register(componentContext => registration.InstantiationSpec.RunFactoryMethod(new ServiceResolver(componentContext.Resolve)))
                                    .As(serviceTypes)
                                    .SingleInstance();
                }
 
                break;
             case Lifestyle.Scoped:
-               _containerBuilder.Register(componentContext => registration.InstantiationSpec.RunFactoryMethod(componentContext.Resolve<ScopeResolverWrapper>()))
+               _containerBuilder.Register(componentContext => registration.InstantiationSpec.RunFactoryMethod(componentContext.Resolve<ScopeResolver>()))
                                 .As(serviceTypes)
                                 .InstancePerLifetimeScope();
                break;
             case Lifestyle.TrackedTransient:
-               _containerBuilder.Register(componentContext => registration.InstantiationSpec.RunFactoryMethod(new ServiceResolverWrapper(componentContext.Resolve)))
+               _containerBuilder.Register(componentContext => registration.InstantiationSpec.RunFactoryMethod(new ServiceResolver(componentContext.Resolve)))
                                 .As(serviceTypes)
                                 .InstancePerDependency();
                break;
