@@ -2,10 +2,10 @@ using Compze.Abstractions.Wiring.Testing.Internal;
 using Compze.DependencyInjection.Abstractions;
 using Compze.DependencyInjection.Autofac;
 using Compze.DependencyInjection.Autofac.Extensions.Hosting;
-using Compze.DependencyInjection.Extensions.Hosting;
 using Compze.DependencyInjection.Microsoft;
 using Compze.DependencyInjection.Microsoft.Extensions.Hosting;
 using Compze.xUnitMatrix;
+using Microsoft.Extensions.Hosting;
 
 namespace Compze.DependencyInjection.Specifications.Infrastructure;
 
@@ -21,17 +21,18 @@ static class DependencyInjectionContainerFactory
          _                          => throw new ArgumentOutOfRangeException()
       };
 
-   public static (IContainerBuilder Builder, IHostableContainer Hostable) CreateHostableContainerBuilder() =>
-      CurrentDIContainer switch
+   public static void UseAsServiceProviderFor(IContainerBuilder builder, IHostBuilder hostBuilder)
+   {
+      switch(builder)
       {
-         DIContainer.Microsoft => CreateHostablePair(new MicrosoftContainerBuilder()),
-         DIContainer.Autofac   => CreateHostablePair(new AutofacContainerBuilder()),
-         _                     => throw new ArgumentOutOfRangeException()
-      };
-
-   static (IContainerBuilder, IHostableContainer) CreateHostablePair(MicrosoftContainerBuilder builder) =>
-      (builder, new HostableMicrosoftContainer(builder));
-
-   static (IContainerBuilder, IHostableContainer) CreateHostablePair(AutofacContainerBuilder builder) =>
-      (builder, new HostableAutofacContainer(builder));
+         case MicrosoftContainerBuilder microsoftBuilder:
+            hostBuilder.UseServiceProviderFactory(new MicrosoftServiceProviderFactory(microsoftBuilder));
+            break;
+         case AutofacContainerBuilder autofacBuilder:
+            hostBuilder.UseServiceProviderFactory(new CompzeAutofacServiceProviderFactory(autofacBuilder));
+            break;
+         default:
+            throw new ArgumentOutOfRangeException(nameof(builder));
+      }
+   }
 }

@@ -1,6 +1,6 @@
 # Compze.DependencyInjection.Extensions.Hosting
 
-Hosting integration interface for Compze dependency injection containers. Defines `IHostableContainer` — a single-method abstraction that lets any Compze DI container plug into `Microsoft.Extensions.Hosting`'s `IHostBuilder`.
+Shared hosting integration abstractions for Compze dependency injection containers.
 
 ## Related packages
 
