@@ -1,5 +1,7 @@
 # TypeMapper Refactoring Design
 
+> **No backward compatibility constraints.** There are zero deployed applications using this system. No persisted data exists. Any format, ID, or behavior can change freely.
+
 > **Draft.** This is a direction, not a specification. Adjust as we go — the goal is clean separation of concerns, not rigid adherence to this exact shape.
 
 ## Problem

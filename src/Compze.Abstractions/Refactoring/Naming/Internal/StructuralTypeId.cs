@@ -8,7 +8,7 @@ namespace Compze.Abstractions.Refactoring.Naming.Internal;
 ///   <item><see cref="ConstructedTypeId"/> — mixed: AssemblyQualifiedName with some GUID, 0 components.</item>
 /// </list>
 /// </summary>
-abstract class StructuralTypeId : IEquatable<StructuralTypeId>
+public abstract class StructuralTypeId : IEquatable<StructuralTypeId>
 {
    /// <summary>The string representation used in serialized <c>$type</c> fields.</summary>
    public abstract string StringRepresentation { get; }
@@ -26,7 +26,7 @@ abstract class StructuralTypeId : IEquatable<StructuralTypeId>
 /// A leaf type from a mapped assembly. Has an explicitly assigned GUID.
 /// This is the only <see cref="StructuralTypeId"/> subtype storable in SQL GUID columns.
 /// </summary>
-sealed class MappedTypeId : StructuralTypeId
+public sealed class MappedTypeId : StructuralTypeId
 {
    public Guid GuidValue { get; }
    public override string StringRepresentation { get; }

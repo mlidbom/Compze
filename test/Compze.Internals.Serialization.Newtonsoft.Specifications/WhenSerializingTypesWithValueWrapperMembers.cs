@@ -28,7 +28,7 @@ namespace Compze.Internals.Serialization.Newtonsoft.Specifications
                      }
                    },
                    "UserHolderProperty": {
-                     "$type": "fc967965-cab8-466c-b090-b0d9b3555708, 0",
+                     "$type": "fc967965-cab8-466c-b090-b0d9b3555708",
                      "Id": {
                        "Value": "cf99c283-f5ee-48dd-9c19-98221be5fe9a"
                      }
@@ -40,7 +40,7 @@ namespace Compze.Internals.Serialization.Newtonsoft.Specifications
                        }
                      },
                      {
-                       "$type": "fc967965-cab8-466c-b090-b0d9b3555708, 0",
+                       "$type": "fc967965-cab8-466c-b090-b0d9b3555708",
                        "Id": {
                          "Value": "4c05d71d-41df-45ca-8a50-26e6456bc62f"
                        }

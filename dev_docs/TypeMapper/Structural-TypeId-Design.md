@@ -1,5 +1,7 @@
 # Structural TypeId Design
 
+> **No backward compatibility constraints.** There are zero deployed applications using this system. No persisted data exists. Any format, ID, or behavior can change freely.
+
 > **Draft.** Direction, not specification. The goal is a simpler, more transparent system — adjust as we go.
 
 ## Context
