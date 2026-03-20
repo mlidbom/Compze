@@ -35,6 +35,7 @@ public abstract class ComponentRegistration
    }
 
    internal abstract ComponentRegistration CreateCloneRegistration(IRootResolver currentRootResolver);
+   internal abstract ComponentRegistration CreateChildRegistration(IRootResolver parentRootResolver);
 }
 
 public class ComponentRegistration<TService> : ComponentRegistration where TService : class
@@ -66,6 +67,25 @@ public class ComponentRegistration<TService> : ComponentRegistration where TServ
          allowSingletonDependent: AllowSingletonDependent,
          allowScopedDependent: AllowScopedDependent
       );
+   }
+
+   internal override ComponentRegistration CreateChildRegistration(IRootResolver parentRootResolver)
+   {
+      if(Lifestyle == Lifestyle.Singleton)
+      {
+         // Child containers delegate ALL singletons to the parent — same instance, not disposed by child.
+         return new ComponentRegistration<TService>(
+            lifestyle: Lifestyle.Singleton,
+            serviceTypes: ServiceTypes,
+            instantiationSpec: InstantiationSpec.FromInstance(parentRootResolver.Resolve<TService>()),
+            dependencyTypes: DependencyTypes,
+            allowSingletonDependent: AllowSingletonDependent,
+            allowScopedDependent: AllowScopedDependent
+         );
+      }
+
+      // Scoped and transient registrations are copied — fresh instances in child scopes.
+      return new ComponentRegistration<TService>(Lifestyle, ServiceTypes, InstantiationSpec, DependencyTypes, AllowSingletonDependent, AllowScopedDependent);
    }
 
    internal ComponentRegistration(Lifestyle lifestyle,

@@ -33,6 +33,18 @@ public abstract class DependencyInjectionContainer : IDependencyInjectionContain
       return cloneBuilder;
    }
 
+   IContainerBuilder IDependencyInjectionContainer.CreateChildContainerBuilder()
+   {
+      Log.Info($"Creating child container builder from IDependencyInjectionContainer: {GetHashCode()}");
+      IRootResolver parentRootResolver = (IRootResolver)this;
+      var childBuilder = CreateBuilderForClone(_sourceRegistrar.Clone());
+
+      _registrations
+        .ForEach(action: registration => childBuilder.Register(registration.CreateChildRegistration(parentRootResolver)));
+
+      return childBuilder;
+   }
+
    protected abstract ContainerBuilderBase CreateBuilderForClone(IComponentRegistrar clonedRegistrar);
 
    public abstract void Dispose();
