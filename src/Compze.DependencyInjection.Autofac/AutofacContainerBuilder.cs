@@ -9,7 +9,6 @@ public sealed class AutofacContainerBuilder(IComponentRegistrar? registrar = nul
 {
    readonly global::Autofac.ContainerBuilder _containerBuilder = new();
    readonly RunOnce _registerScopedKernel = new();
-   readonly RunOnce _runVerifications = new();
 
    public override AutofacContainer Build() => (AutofacContainer)base.Build();
 
@@ -65,8 +64,6 @@ public sealed class AutofacContainerBuilder(IComponentRegistrar? registrar = nul
 
    protected override DependencyInjectionContainer BuildInternal()
    {
-      _runVerifications.RunIfFirstCall(AssertLifeStyleCombinationsAreValid);
-
       // Auto-register intrinsic container types via closures that will be filled after build
       AutofacContainer builtContainer = null!;
       // ReSharper disable AccessToModifiedClosure

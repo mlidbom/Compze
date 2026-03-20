@@ -62,8 +62,6 @@ public sealed class MicrosoftContainerBuilder(IComponentRegistrar? registrar = n
 
    protected override DependencyInjectionContainer BuildInternal()
    {
-      AssertLifeStyleCombinationsAreValid();
-
       // Auto-register intrinsic container types via closures that will be filled after build
       MicrosoftContainer? builtContainer = null;
       // ReSharper disable AccessToModifiedClosure

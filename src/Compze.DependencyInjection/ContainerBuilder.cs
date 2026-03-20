@@ -26,6 +26,7 @@ public abstract class ContainerBuilder : IContainerBuilder
    {
       Contract.State.Assert(!_built, () => "Build() has already been called on this builder. A Container can only be built once.");
       _built = true;
+      AssertLifeStyleCombinationsAreValid();
       return BuildInternal();
    }
 
@@ -55,7 +56,7 @@ public abstract class ContainerBuilder : IContainerBuilder
       }
    }
 
-   protected void AssertLifeStyleCombinationsAreValid() =>
+   void AssertLifeStyleCombinationsAreValid() =>
       _registeredComponents.ForEach(consumer =>
       {
          foreach(var dependencyType in consumer.DependencyTypes)
