@@ -2,60 +2,36 @@
 
 Incremental build. Each phase is testable in isolation before moving to the next.
 
-## Phase 1 — New types, testable in isolation
+## Phase 1 — New types, testable in isolation ✅ COMPLETE (111 tests)
 
-### 1.1 TypeId hierarchy + OpenGenericId
-- `TypeId` (abstract base) — string representation property
-- `MappedTypeId : TypeId` — GUID + string representation (`"GUID, 0"`)
-- `StableNameTypeId : TypeId` — unmodified `AssemblyQualifiedName`
-- `ConstructedTypeId : TypeId` — mixed `AssemblyQualifiedName` with `GUID, 0` components
-- `OpenGenericId` — GUID-backed struct, not a `TypeId`
-- Equality, `GetHashCode`, `ToString`
-- Tests: construction, equality, string representation
+All Phase 1 code is additive — nothing existing was changed (except `InternalsVisibleTo` in csproj).
 
-### 1.2 TypeNameParser
-Parse `AssemblyQualifiedName`-format strings into a component tree.
+### 1.1 TypeId hierarchy + OpenGenericId ✅ (21 tests)
+- `StructuralTypeId` (abstract base) — `StringRepresentation` property, equality by string
+- `MappedTypeId` — GUID + string `"GUID, 0"`. Equality by GUID (faster).
+- `StableNameTypeId` — unmodified `AssemblyQualifiedName`
+- `ConstructedTypeId` — mixed AQN with `GUID, 0` components
+- `OpenGenericId` — GUID-backed struct, NOT a `StructuralTypeId`
+- Files: `src/.../StructuralTypeId.cs`, `src/.../OpenGenericId.cs`
 
-**Input**: a string like `"System.Collections.Generic.List`1[[MyNs.MyType, MyAsm]], System.Private.CoreLib"`
+### 1.2 TypeNameParser ✅ (57 tests)
+Parses `AssemblyQualifiedName`-format strings into `ParsedTypeName` tree. Round-trips all formats.
 
-**Output**: a tree of `TypeNameComponent` nodes, each holding:
-- Type name
-- Assembly name
-- Optional type arguments (each a `TypeNameComponent`)
-- Array rank (if array)
+Key design detail: `ArraySuffix` is stored separately from `TypeName` so reconstruction puts `[]` in the correct position (after generic args for `List`1[[...]][]`).
 
-**Edge cases to test**:
-- Leaf type: `"MyNs.MyType, MyAssembly"`
-- Simple generic: `"System.Collections.Generic.List`1[[MyNs.MyType, MyAsm]], System.Private.CoreLib"`
-- Multi-argument generic: `"System.Collections.Generic.Dictionary`2[[System.String, System.Private.CoreLib],[MyNs.MyType, MyAsm]], System.Private.CoreLib"`
-- Nested generics: `"Dict`2[[System.String, mscorlib],[List`1[[MyType, MyAsm]], mscorlib]], mscorlib"`
-- Arrays: `"MyNs.MyType[], MyAsm"`, `"MyNs.MyType[,], MyAsm"`
-- Array of generic: `"List`1[[MyType, MyAsm]][], System.Private.CoreLib"`
-- Generic with array argument: `"List`1[[MyType[], MyAsm]], System.Private.CoreLib"`
-- Mapped leaf (GUID): `"e4a8c9f2-7b3d-4f1a-9c6e-2d8b5a0f3e7c, 0"`
-- Mapped in generic: `"List`1[[e4a8c9f2-7b3d-4f1a-9c6e-2d8b5a0f3e7c, 0]], System.Private.CoreLib"`
-- Round-trip: parse → reconstruct string → should equal original
+- File: `src/.../Implementation/TypeNameParser.cs`
+- Tests: `test/.../Refactoring/Naming/TypeNameParser_specification.cs`
 
-No mapping knowledge. No dependencies. Independently testable.
+### 1.3 TypeNameMapper ✅ (33 tests)
+Transforms `Type` ↔ `StructuralTypeId` using parser + mapping dictionaries. Both directions cached.
 
-### 1.3 TypeNameMapper
-Uses the parser + mapping dictionaries to transform in both directions.
+Key detail: stable assembly lookup uses `SimpleAssemblyName()` extraction since parsed AQN assembly strings may include `Version=..., Culture=..., PublicKeyToken=...`.
 
-**Serialize direction** (`Type` → `TypeId`):
-- Given a .NET `Type`, walk its structure
-- For each leaf component: check if its assembly is mapped or stable
-- Mapped → replace with GUID + `0`
-- Stable → keep as-is
-- Produce the correct `TypeId` subtype (`MappedTypeId`, `StableNameTypeId`, or `ConstructedTypeId`)
-- Cache `Type` → `TypeId`
+- File: `src/.../Implementation/TypeNameMapper.cs`
+- Tests: `test/.../Refactoring/Naming/TypeNameMapper_specification.cs`
 
-**Deserialize direction** (`TypeId` → `Type`):
-- `MappedTypeId` → dictionary lookup
-- `StableNameTypeId` → `Type.GetType()`
-- `ConstructedTypeId` → parse the string, resolve each component recursively, `MakeGenericType()` / `MakeArrayType()`
-- Cache string → `Type`
-
-Test with hand-built mapping dictionaries — no container, no assembly scanning.
+### Design doc fix found during implementation
+The mapped generic definition format in the design doc was `"GUID, 0[[args]]"` — wrong. Fixed to `"GUID[[args]], 0"` to match standard AQN structure (type arguments come before the comma separator).
 
 ## Phase 2 — Registration API
 
