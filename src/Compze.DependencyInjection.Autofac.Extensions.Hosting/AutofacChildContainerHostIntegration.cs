@@ -1,5 +1,6 @@
 using Compze.DependencyInjection.Abstractions;
 using Compze.DependencyInjection.Extensions.Hosting;
+using Compze.Underscore;
 using Microsoft.Extensions.Hosting;
 
 namespace Compze.DependencyInjection.Autofac.Extensions.Hosting;
@@ -13,9 +14,8 @@ public class AutofacChildContainerHostIntegration(AutofacContainer parentContain
          Singleton.For<IChildContainerHostIntegration>()
                   .CreatedBy((AutofacContainer container) => new AutofacChildContainerHostIntegration(container)));
 
-   public void UseChildContainerAsServiceProviderFor(IHostBuilder hostBuilder)
-   {
-      var childBuilder = _parentContainer.CreateChildContainerBuilder();
-      hostBuilder.UseServiceProviderFactory(new CompzeAutofacServiceProviderFactory(childBuilder));
-   }
+   public void UseChildContainerAsServiceProviderFor(IHostBuilder hostBuilder) =>
+      _parentContainer.CreateChildContainerBuilder()
+                      ._(it => new CompzeAutofacServiceProviderFactory(it))
+                      ._(hostBuilder.UseServiceProviderFactory);
 }
