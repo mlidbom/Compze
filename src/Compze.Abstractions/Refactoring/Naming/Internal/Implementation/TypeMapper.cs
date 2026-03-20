@@ -97,19 +97,6 @@ public class TypeMapper : ITypeMapper
    public Type FromPersistedTypeString(string persistedTypeString)
    {
       EnsureAllCurrentlyLoadedAssembliesHaveBeenCheckedForRequiredMappings();
-
-      // Backward compat: old format is a plain GUID (no comma, no brackets)
-      if(Guid.TryParse(persistedTypeString, out var oldFormatGuid))
-      {
-         var oldTypeId = new TypeId(oldFormatGuid);
-         return State.Locked(state =>
-         {
-            if(state.TypeIdToTypeMap.TryGetValue(oldTypeId, out var type))
-               return type;
-            throw new InvalidOperationException($"No type found for old-format GUID: {persistedTypeString}");
-         });
-      }
-
       return GetOrBuildTypeNameMapper().GetTypeFromPersistedString(persistedTypeString);
    }
 

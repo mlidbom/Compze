@@ -58,16 +58,15 @@ All Phase 2 code is additive — no existing code changed.
 ## Phase 3 — Swap ✅ PARTIAL (Phase 3.1 complete, 2,291 tests pass)
 
 ### 3.1 Replace internals ✅
-Changes to existing code (all backward-compatible):
+Changes to existing code:
 - **`ITypeMapper`** — added `ToPersistedTypeString(Type)` and `FromPersistedTypeString(string)` methods
 - **`TypeMapper`** — implements new methods by lazily building a `TypeNameMapper` from existing `MappingState`
   - Separates leaf types from open generics automatically
   - Auto-detects Microsoft assemblies by public key token for stable assembly set
   - Caches the `TypeNameMapper` and rebuilds only when `MappingState.MappingVersion` changes
-  - `FromPersistedTypeString` handles old bare-GUID format for backward compat
 - **`RenamingDecorator`** — now uses `ToPersistedTypeString`/`FromPersistedTypeString` instead of `GetId`/`GetType`
   - Serialize: AQN → structural string (mapped leaf = `GUID, 0`, stable = AQN, composite = mixed)
-  - Deserialize: structural string → AQN (with backward compat for old bare GUIDs)
+  - Deserialize: structural string → AQN
 - **`TypeNameMapper`** — made thread-safe with `ConcurrentDictionary` caches
 - **Serialization test expected values** — updated from bare `GUID` to `GUID, 0` format
 - Full test suite: 2,291 passed, 0 failed, 26 skipped
