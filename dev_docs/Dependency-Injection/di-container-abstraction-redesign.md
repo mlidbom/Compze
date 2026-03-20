@@ -1,10 +1,10 @@
 # DI Container Abstraction Redesign
 
-## Problem
+## Problem (solved)
 
-`IServiceLocator` merges root resolution, scope creation, and container identity into one interface. `IDependencyInjectionContainer` hides the build/use boundary behind a `ServiceLocator` property getter that silently transitions from "still configuring" to "built and locked." No type-level distinction between build phase and use phase.
+The old `IServiceLocator` merged root resolution, scope creation, and container identity into one interface. `IDependencyInjectionContainer` hid the build/use boundary behind a `ServiceLocator` property getter that silently transitioned from "still configuring" to "built and locked." No type-level distinction between build phase and use phase.
 
-This blocks ASP.NET Core integration: `UseAsServiceProviderFor(builder.Host)` must be called during wiring, but transport servers are resolved from the already-built container. Two Kestrel instances share one container — `UseAsServiceProviderFor` ties finalization to one specific `WebApplicationBuilder.Build()` call.
+This blocked ASP.NET Core integration: two Kestrel instances sharing one container couldn't both finalize it. The solution was the builder/container type split (Phase 4) plus child containers (Phase 5) that each get their own `IServiceProviderFactory` lifecycle.
 
 ## Interface Hierarchy (implemented)
 
@@ -78,20 +78,14 @@ This is **distinct from child containers** (future). Child containers delegate *
 - Migration/integration tests: `container.CloneAndBuild()` → execute transactions
 - Goes through `IDependencyInjectionContainer.Clone()` → `Build()` or the convenience `CloneAndBuild()` extension
 
-## Child Container Builder (future)
+## Child Container Builder (complete)
 
-`IDependencyInjectionContainer.CreateChildContainerBuilder()` will return an `IContainerBuilder` for a child container:
+`IDependencyInjectionContainer.CreateChildContainerBuilder()` returns an `IContainerBuilder` for a child container:
 - All parent registrations inherited
 - **Singletons delegate to parent** (same instance, not disposed by child)
 - Scoped/transient registrations copied (fresh instances in child's scopes)
 - Child builder accepts additional registrations (ASP.NET Core services)
 - Child builds into its own independent `IDependencyInjectionContainer`
-
-### How this solves ASP.NET Core integration
-
-Each Kestrel gets its own child container. `UseAsServiceProviderFor` is called on the child builder. ASP.NET Core finalizes the child, not the parent.
-
-### Implementation approach
 
 Reuses the existing `Clone()` / `CreateCloneRegistration()` mechanism but flips the singleton default:
 - `Clone()` creates new singleton instances by default (opt-in delegation via `DelegateToParentServiceLocatorWhenCloning()`)
@@ -99,7 +93,24 @@ Reuses the existing `Clone()` / `CreateCloneRegistration()` mechanism but flips 
 
 Intrinsic container types (`IDependencyInjectionContainer`, `IRootResolver`, `IScopeFactory`) are auto-registered via closures during `Build()`, so clones and child containers automatically get fresh registrations pointing to themselves.
 
+## ASP.NET Core Hosting Integration (complete)
+
+Each transport server (`TypermediaTransportServer`, `AspNetInboxTransportServer`) receives `IChildContainerHostIntegration` via DI. On startup, it creates a child container and hooks it into the host's `IServiceProviderFactory` pipeline. ASP.NET Core's standard `ServiceBasedControllerActivator` handles controller activation — no custom activator or `HttpContext.Items` scope stashing needed.
+
+### Hosting architecture
+
+**Published public API** (in `Compze.DependencyInjection.*.Extensions.Hosting` packages):
+- `CompzeMicrosoftServiceProviderFactory` / `CompzeAutofacServiceProviderFactory` — `IServiceProviderFactory<T>` implementations that merge host services into a Compze builder and build it
+- `IChildContainerHostIntegration` — DI-agnostic abstraction for transport servers that need to host a child container
+- `MicrosoftChildContainerHostIntegration` / `AutofacChildContainerHostIntegration` — concrete implementations
+
+The factory classes are the only real logic: `CreateBuilder()` merges the host's `IServiceCollection` into the Compze builder's service collection, then `CreateServiceProvider()` builds the Compze container and returns the native `IServiceProvider` directly (no wrapper classes).
+
+`IHostableContainer` and its implementations were removed — they were single-line wrappers over the factory constructors with no production consumers. `CompzeMicrosoftServiceProvider` and `CompzeAutofacServiceProvider` wrapper classes were also eliminated since the underlying providers already implement the required interfaces.
+
 ## Remaining work
+
+None. All phases complete.
 
 ## Phase 4: Remove `ILegacyContainer` and `IServiceLocator` + Builder/Container split (complete)
 
@@ -132,13 +143,13 @@ Both legacy interfaces have been deleted. The single `DependencyInjectionContain
 - Convenience extensions on `IDependencyInjectionContainer`: `Resolve<T>()`, `BeginScope()`, `ExecuteInIsolatedScope(...)`, `ExecuteTransactionInIsolatedScope(...)`
 
 ### Phase 5: Child container builder (complete)
-- Add `CreateChildContainerBuilder()` to `IDependencyInjectionContainer`
+- `CreateChildContainerBuilder()` added to `IDependencyInjectionContainer`
 - Reuses `CreateCloneRegistration()` mechanism with flipped singleton default
-- Build + test
 
-### Phase 6: ASP.NET Core integration via child containers
-- Rework transport servers to use child containers
-- Each Kestrel gets `IContainerBuilder` from `CreateChildContainerBuilder()`
-- `UseAsServiceProviderFor` on the child builder
-- Remove custom `CompzeControllerActivator` and `HttpContext.Items` scope stashing
-- Build + test
+### Phase 6: ASP.NET Core integration via child containers (complete)
+- Transport servers use `IChildContainerHostIntegration` to create child containers
+- Each Kestrel gets its own child container via `UseChildContainerAsServiceProviderFor`
+- `CompzeControllerActivator` and `HttpContext.Items` scope stashing removed
+- ASP.NET Core's standard `ServiceBasedControllerActivator` handles activation
+- `IHostableContainer`, `CompzeMicrosoftServiceProvider`, `CompzeAutofacServiceProvider` removed (unnecessary wrappers)
+- `CompzeMicrosoftServiceProviderFactory` / `CompzeAutofacServiceProviderFactory` made public

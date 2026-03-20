@@ -42,26 +42,22 @@ Production code that resolves within a scope now receives `IScopeResolver` (reso
 
 Interface hierarchy: `IServiceResolver` (resolve by type) ← `IScopeResolver` (scoped resolution) and `IRootResolver` (root resolution). `IDependencyInjectionContainer` exposes `IRootResolver` and `IScopeFactory` via properties.
 
-## ASP.NET Integration — Current Problem
+## ASP.NET Integration — Complete
 
-### What exists now (interim)
+Each transport server (`TypermediaTransportServer`, `AspNetInboxTransportServer`) receives `IChildContainerHostIntegration` via DI. On startup, it creates a child container from the parent and hooks it into ASP.NET Core's `IServiceProviderFactory` pipeline via `CompzeMicrosoftServiceProviderFactory` / `CompzeAutofacServiceProviderFactory`. ASP.NET Core's standard `ServiceBasedControllerActivator` handles controller activation.
 
-Each endpoint runs two separate Kestrel instances (`AspNetInboxTransportServer` + `TypermediaTransportServer`), each with its own `WebApplication`. Both share one Compze container. Custom `CompzeControllerActivator` + per-request middleware manually creates Compze scopes and stashes `IScopeResolver` in `HttpContext.Items`. This only works for MVC controller activation — SignalR, minimal APIs, health checks, hosted services etc. all go through ASP.NET's standard `IServiceProvider` pipeline, which knows nothing about the Compze container.
+The old architecture (custom `CompzeControllerActivator`, `HttpContext.Items` scope stashing, two Kestrel instances sharing one container) has been replaced.
 
-### Why naive `UseAsServiceProviderFor` doesn't work
+### Hosting public API
 
-`UseAsServiceProviderFor(builder.Host)` hooks into `IServiceProviderFactory<T>`, which finalizes the container when `builder.Build()` is called. Two problems:
+- `CompzeMicrosoftServiceProviderFactory` / `CompzeAutofacServiceProviderFactory` — merge host services into Compze builder, return native `IServiceProvider` directly
+- `IChildContainerHostIntegration` — DI-agnostic abstraction for transport servers
 
-1. **One container, two hosts**: Two Kestrel instances share one Compze container. `UseAsServiceProviderFor` ties container finalization to one specific `WebApplicationBuilder.Build()` call. The second server can't also finalize the same container.
-2. **Chicken-and-egg**: The transport servers are currently resolved *from* the built container as singletons. But `UseAsServiceProviderFor` must be called *before* the container is built. The server can't participate in wiring if it doesn't exist until after wiring is complete.
-
-### Why `UseAsServiceProviderFor` can't work with the current architecture
-
-See [di-container-abstraction-redesign.md](di-container-abstraction-redesign.md) for the builder/built type split and child container solution.
+`IHostableContainer` and the `Compze*ServiceProvider` wrapper classes were removed — pure delegation with no production consumers.
 
 ## Next Steps
 
-See [di-container-abstraction-redesign.md](di-container-abstraction-redesign.md) for the interface redesign (builder/built type split, ISP for container abstractions, child container builder, ASP.NET Core integration).
+See [di-container-abstraction-redesign.md](di-container-abstraction-redesign.md) for the complete interface hierarchy and design rationale.
 
 ## Key Insight
 
