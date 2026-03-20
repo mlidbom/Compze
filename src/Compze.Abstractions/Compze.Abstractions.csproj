@@ -7,6 +7,9 @@
     <NoWarn>CS1591</NoWarn>
     <Description>Core abstractions for the Compze framework: entity IDs, message type contracts, time sources, serialization interfaces, and type mapping infrastructure.</Description>
   </PropertyGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Compze.Abstractions.Specifications" />
+  </ItemGroup>
   <!-- Compze.Contracts — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' == 'true'">
     <PackageReference Include="Compze.Contracts" Version="*-*" />
