@@ -14,7 +14,7 @@ public class Delegated_singletons
                   .DelegateToParentServiceLocatorWhenCloning());
 
       using var source = sourceBuilder.Build();
-      using var clone = source.Clone().Build();
+      using var clone = source.CreateCloneContainerBuilder().Build();
 
       var sourceInstance = source.Resolve<ISingletonService>();
       var cloneInstance = clone.Resolve<ISingletonService>();
@@ -31,7 +31,7 @@ public class Delegated_singletons
                   .DelegateToParentServiceLocatorWhenCloning());
 
       using var source = sourceBuilder.Build();
-      using var clone = source.Clone().Build();
+      using var clone = source.CreateCloneContainerBuilder().Build();
       using var scope1 = clone.BeginScope();
       scope1.Resolve<ISingletonService>().Must().NotBeNull();
    }
@@ -47,7 +47,7 @@ public class Delegated_singletons
                   .CreatedBy((IDelegatedDependency dep) => new SingletonWithDelegatedDep(dep)));
 
       using var source = sourceBuilder.Build();
-      using var clone = source.Clone().Build();
+      using var clone = source.CreateCloneContainerBuilder().Build();
 
       var sourceDepInstance = source.Resolve<IDelegatedDependency>();
       using var scope2 = clone.BeginScope();
@@ -72,7 +72,7 @@ public class Delegated_singletons
          }));
 
       using var source = sourceBuilder.Build();
-      using var clone = source.Clone().Build();
+      using var clone = source.CreateCloneContainerBuilder().Build();
 
       clone.Resolve<ISingletonService>();
       clone.Resolve<ISingletonService>();

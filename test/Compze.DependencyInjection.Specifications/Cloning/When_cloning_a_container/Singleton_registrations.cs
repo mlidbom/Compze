@@ -12,7 +12,7 @@ public class Singleton_registrations
       sourceBuilder.Registrar.Register(Singleton.For<ISingletonService>().CreatedBy(() => new SingletonService()));
 
       using var source = sourceBuilder.Build();
-      using var clone = source.Clone().Build();
+      using var clone = source.CreateCloneContainerBuilder().Build();
 
       var sourceInstance = source.Resolve<ISingletonService>();
       var cloneInstance = clone.Resolve<ISingletonService>();
@@ -27,7 +27,7 @@ public class Singleton_registrations
       sourceBuilder.Registrar.Register(Singleton.For<ISingletonService>().CreatedBy(() => new SingletonService()));
 
       using var source = sourceBuilder.Build();
-      using var clone = source.Clone().Build();
+      using var clone = source.CreateCloneContainerBuilder().Build();
 
       var first = clone.Resolve<ISingletonService>();
       var second = clone.Resolve<ISingletonService>();
@@ -46,7 +46,7 @@ public class Singleton_registrations
       using var source = sourceBuilder.Build();
       var sourceInstance = source.Resolve<ISingletonService>();
 
-      using var clone = source.Clone().Build();
+      using var clone = source.CreateCloneContainerBuilder().Build();
       var cloneInstance = clone.Resolve<ISingletonService>();
 
       sourceInstance.Must().Be(cloneInstance);

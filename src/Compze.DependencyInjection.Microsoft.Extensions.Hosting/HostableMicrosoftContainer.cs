@@ -14,10 +14,26 @@ public class HostableMicrosoftContainer(MicrosoftContainerBuilder compzeBuilder)
       hostBuilder.UseServiceProviderFactory(new CompzeMicrosoftServiceProviderFactory(_compzeBuilder));
 }
 
+public class MicrosoftChildContainerHostIntegration(MicrosoftContainer parentContainer) : IChildContainerHostIntegration
+{
+   readonly MicrosoftContainer _parentContainer = parentContainer;
+
+   public static void RegisterWith(IComponentRegistrar registrar) =>
+      registrar.Register(
+         Singleton.For<IChildContainerHostIntegration>()
+                  .CreatedBy((MicrosoftContainer container) => new MicrosoftChildContainerHostIntegration(container)));
+
+   public void UseChildContainerAsServiceProviderFor(IHostBuilder hostBuilder)
+   {
+      var childBuilder = _parentContainer.CreateChildContainerBuilder();
+      hostBuilder.UseServiceProviderFactory(new CompzeMicrosoftServiceProviderFactory(childBuilder));
+   }
+}
+
 class CompzeMicrosoftServiceProviderFactory(MicrosoftContainerBuilder compzeBuilder) : IServiceProviderFactory<IServiceCollection>
 {
    readonly MicrosoftContainerBuilder _compzeBuilder = compzeBuilder;
-   MicrosoftContainer? _builtContainer;
+   MicrosoftContainer? _container;
 
    public IServiceCollection CreateBuilder(IServiceCollection services)
    {
@@ -28,8 +44,8 @@ class CompzeMicrosoftServiceProviderFactory(MicrosoftContainerBuilder compzeBuil
 
    public IServiceProvider CreateServiceProvider(IServiceCollection services)
    {
-      _builtContainer = (MicrosoftContainer)((IContainerBuilder)_compzeBuilder).Build();
-      return new CompzeMicrosoftServiceProvider(_builtContainer);
+      _container = (MicrosoftContainer)((IContainerBuilder)_compzeBuilder).Build();
+      return new CompzeMicrosoftServiceProvider(_container);
    }
 }
 

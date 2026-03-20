@@ -12,7 +12,7 @@ public class Tracked_transients
       sourceBuilder.Registrar.Register(TrackedTransient.For<ITransientService>().CreatedBy(() => new TransientService()));
 
       using var source = sourceBuilder.Build();
-      using var clone = source.Clone().Build();
+      using var clone = source.CreateCloneContainerBuilder().Build();
 
       var first = clone.Resolve<ITransientService>();
       var second = clone.Resolve<ITransientService>();
@@ -27,7 +27,7 @@ public class Tracked_transients
       sourceBuilder.Registrar.Register(TrackedTransient.For<IDisposableService>().CreatedBy(() => new DisposableService()));
 
       using var source = sourceBuilder.Build();
-      var clone = source.Clone().Build();
+      var clone = source.CreateCloneContainerBuilder().Build();
       var cloneInstance = (DisposableService)clone.Resolve<IDisposableService>();
 
       cloneInstance.IsDisposed.Must().BeFalse();

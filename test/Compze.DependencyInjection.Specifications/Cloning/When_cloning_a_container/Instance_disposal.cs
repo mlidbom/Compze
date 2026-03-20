@@ -16,7 +16,7 @@ public class Instance_disposal
       using var source = sourceBuilder.Build();
       var instance = source.Resolve<IDisposableTracking>();
 
-      var clone = source.Clone().Build();
+      var clone = source.CreateCloneContainerBuilder().Build();
       var cloneInstance = clone.Resolve<IDisposableTracking>();
 
       cloneInstance.Must().Be(instance);
@@ -41,7 +41,7 @@ public class Instance_disposal
       using var source = sourceBuilder.Build();
       var instance = source.Resolve<IAsyncDisposableTracking>();
 
-      var clone = source.Clone().Build();
+      var clone = source.CreateCloneContainerBuilder().Build();
       var cloneInstance = clone.Resolve<IAsyncDisposableTracking>();
 
       cloneInstance.Must().Be(instance);

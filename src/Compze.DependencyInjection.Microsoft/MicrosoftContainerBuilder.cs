@@ -67,6 +67,7 @@ public sealed class MicrosoftContainerBuilder(IComponentRegistrar? registrar = n
       _services.AddSingleton<IDependencyInjectionContainer>(_ => builtContainer!);
       _services.AddSingleton<IRootResolver>(_ => builtContainer!);
       _services.AddSingleton<IScopeFactory>(_ => builtContainer!);
+      _services.AddSingleton(_ => builtContainer!);
 
       var serviceProvider = _services.BuildServiceProvider(new ServiceProviderOptions { ValidateOnBuild = true, ValidateScopes = true });
       builtContainer = new MicrosoftContainer(serviceProvider, RegisteredComponents(), Registrar);

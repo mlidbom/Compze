@@ -15,7 +15,7 @@ public class Cross_lifestyle_dependencies
       );
 
       using var source = sourceBuilder.Build();
-      using var clone = source.Clone().Build();
+      using var clone = source.CreateCloneContainerBuilder().Build();
       using var scope = clone.BeginScope();
       scope.Resolve<IScopedService>().Must().NotBeNull();
    }

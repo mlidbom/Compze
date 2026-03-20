@@ -14,7 +14,7 @@ public class IsClone_flag
       sourceBuilder.Registrar.IsClone.Must().BeFalse();
 
       using var source = sourceBuilder.Build();
-      var cloneBuilder = source.Clone();
+      var cloneBuilder = source.CreateCloneContainerBuilder();
 
       cloneBuilder.Registrar.IsClone.Must().BeTrue();
    }
@@ -26,7 +26,7 @@ public class IsClone_flag
       sourceBuilder.Registrar.Register(Singleton.For<ISingletonService>().CreatedBy(() => new SingletonService()));
 
       using var source = sourceBuilder.Build();
-      _ = source.Clone();
+      _ = source.CreateCloneContainerBuilder();
 
       sourceBuilder.Registrar.IsClone.Must().BeFalse();
    }

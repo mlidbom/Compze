@@ -5,5 +5,5 @@ namespace Compze.Tessaging.Hosting.Testing.Wiring;
 public static class ContainerCloner
 {
    public static IDependencyInjectionContainer CloneAndBuild(this IDependencyInjectionContainer @this) =>
-      @this.Clone().Build();
+      @this.CreateCloneContainerBuilder().Build();
 }

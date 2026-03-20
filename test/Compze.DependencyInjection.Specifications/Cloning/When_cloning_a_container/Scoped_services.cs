@@ -12,7 +12,7 @@ public class Scoped_services
       sourceBuilder.Registrar.Register(Scoped.For<IScopedService>().CreatedBy(() => new ScopedService()));
 
       using var source = sourceBuilder.Build();
-      using var clone = source.Clone().Build();
+      using var clone = source.CreateCloneContainerBuilder().Build();
 
       using var scope = clone.BeginScope();
       scope.Resolve<IScopedService>().Must().NotBeNull();
@@ -25,7 +25,7 @@ public class Scoped_services
       sourceBuilder.Registrar.Register(Scoped.For<IScopedService>().CreatedBy(() => new ScopedService()));
 
       using var source = sourceBuilder.Build();
-      using var clone = source.Clone().Build();
+      using var clone = source.CreateCloneContainerBuilder().Build();
 
       IScopedService sourceInstance;
       IScopedService cloneInstance;

@@ -8,7 +8,9 @@ using Compze.Typermedia.HandlerRegistration;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.DependencyInjection.Autofac;
+using Compze.DependencyInjection.Autofac.Extensions.Hosting;
 using Compze.DependencyInjection.Microsoft;
+using Compze.DependencyInjection.Microsoft.Extensions.Hosting;
 using Compze.Underscore;
 using Compze.Internals.Logging;
 using JetBrains.Annotations;
@@ -31,8 +33,8 @@ public static class DiContainerExtensions
    public static IContainerBuilder CreateEmpty(this DIContainer @this) =>
       @this switch
       {
-         DIContainer.Microsoft      => new MicrosoftContainerBuilder(new TestingComponentRegistrar()),
-         DIContainer.Autofac        => new AutofacContainerBuilder(new TestingComponentRegistrar()),
+         DIContainer.Microsoft      => new MicrosoftContainerBuilder(new TestingComponentRegistrar())._mutate(it => MicrosoftChildContainerHostIntegration.RegisterWith(it.Registrar)),
+         DIContainer.Autofac        => new AutofacContainerBuilder(new TestingComponentRegistrar())._mutate(it => AutofacChildContainerHostIntegration.RegisterWith(it.Registrar)),
          _                          => throw new ArgumentOutOfRangeException()
       };
 

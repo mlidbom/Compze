@@ -20,7 +20,9 @@ public abstract class DependencyInjectionContainer : IDependencyInjectionContain
    IRootResolver IDependencyInjectionContainer.RootResolver => (IRootResolver)this;
    IScopeFactory IDependencyInjectionContainer.ScopeFactory => (IScopeFactory)this;
 
-   IContainerBuilder IDependencyInjectionContainer.Clone()
+   IContainerBuilder IDependencyInjectionContainer.CreateCloneContainerBuilder() => CloneBuilder();
+
+   protected ContainerBuilderBase CloneBuilder()
    {
       Log.Info($"Cloning IDependencyInjectionContainer: {GetHashCode()}");
       IRootResolver sourceRootResolver = (IRootResolver)this;
@@ -33,7 +35,9 @@ public abstract class DependencyInjectionContainer : IDependencyInjectionContain
       return cloneBuilder;
    }
 
-   IContainerBuilder IDependencyInjectionContainer.CreateChildContainerBuilder()
+   IContainerBuilder IDependencyInjectionContainer.CreateChildContainerBuilder() => CreateChildBuilder();
+
+   protected ContainerBuilderBase CreateChildBuilder()
    {
       Log.Info($"Creating child container builder from IDependencyInjectionContainer: {GetHashCode()}");
       IRootResolver parentRootResolver = (IRootResolver)this;

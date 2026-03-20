@@ -12,8 +12,8 @@ public class Multiple_clones
       sourceBuilder.Registrar.Register(Singleton.For<ISingletonService>().CreatedBy(() => new SingletonService()));
 
       using var source = sourceBuilder.Build();
-      using var clone1 = source.Clone().Build();
-      using var clone2 = source.Clone().Build();
+      using var clone1 = source.CreateCloneContainerBuilder().Build();
+      using var clone2 = source.CreateCloneContainerBuilder().Build();
 
       var instance1 = clone1.Resolve<ISingletonService>();
       var instance2 = clone2.Resolve<ISingletonService>();

@@ -15,6 +15,20 @@ public class HostableAutofacContainer(AutofacContainerBuilder compzeBuilder) : I
       hostBuilder.UseServiceProviderFactory(new CompzeAutofacServiceProviderFactory(_compzeBuilder));
 }
 
+public class AutofacChildContainerHostIntegration(AutofacContainer parentContainer) : IChildContainerHostIntegration
+{
+   public static void RegisterWith(IComponentRegistrar registrar) =>
+      registrar.Register(
+         Singleton.For<IChildContainerHostIntegration>()
+                  .CreatedBy((AutofacContainer container) => new AutofacChildContainerHostIntegration(container)));
+
+   public void UseChildContainerAsServiceProviderFor(IHostBuilder hostBuilder)
+   {
+      var childBuilder = parentContainer.CreateChildContainerBuilder();
+      hostBuilder.UseServiceProviderFactory(new CompzeAutofacServiceProviderFactory(childBuilder));
+   }
+}
+
 class CompzeAutofacServiceProviderFactory(AutofacContainerBuilder compzeBuilder) : IServiceProviderFactory<ContainerBuilder>
 {
    readonly AutofacContainerBuilder _compzeBuilder = compzeBuilder;

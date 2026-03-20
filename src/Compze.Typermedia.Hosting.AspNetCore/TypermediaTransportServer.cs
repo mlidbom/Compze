@@ -1,10 +1,10 @@
 using System.Reflection;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
+using Compze.DependencyInjection.Extensions.Hosting;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.AspNetCore.Mvc.Controllers;
@@ -16,17 +16,15 @@ namespace Compze.Typermedia.Hosting.AspNetCore;
 
 public class TypermediaTransportServer : ITypermediaTransportServer
 {
-   const string CompzeScopeHttpContextItemKey = "CompzeScope";
-
-   readonly IScopeFactory _scopeFactory;
+   readonly IChildContainerHostIntegration _hostIntegration;
    WebApplication? _webApplication;
 
    public static void RegisterWith(IComponentRegistrar registrar) =>
       registrar.Register(
          Singleton.For<ITypermediaTransportServer>()
-                  .CreatedBy((IScopeFactory scopeFactory) => new TypermediaTransportServer(scopeFactory)));
+                  .CreatedBy((IChildContainerHostIntegration hostIntegration) => new TypermediaTransportServer(hostIntegration)));
 
-   TypermediaTransportServer(IScopeFactory scopeFactory) => _scopeFactory = scopeFactory;
+   TypermediaTransportServer(IChildContainerHostIntegration hostIntegration) => _hostIntegration = hostIntegration;
 
    public Uri Address => new(_webApplication!.Urls.First());
 
@@ -36,6 +34,7 @@ public class TypermediaTransportServer : ITypermediaTransportServer
    {
       if(_webApplication is null) return;
       await _webApplication.StopAsync().caf();
+      await _webApplication.DisposeAsync().caf();
       _webApplication = null;
    }
 
@@ -59,35 +58,18 @@ public class TypermediaTransportServer : ITypermediaTransportServer
       builder.Services.AddHttpClient();
       builder.Services.AddControllers();
 
-      builder.Services.AddSingleton<IControllerActivator>(new ScopeFromHttpContextControllerActivator());
+      builder.Services.AddSingleton<IControllerActivator, ServiceBasedControllerActivator>();
+
+      _hostIntegration.UseChildContainerAsServiceProviderFor(builder.Host);
 
       var app = builder.Build();
 
       app.UseRouting();
       app.MapControllers();
 
-      // Create a scope in our container for each request and store it in HttpContext.Items
-      app.Use(async (httpContext, next) =>
-      {
-         using var scope = _scopeFactory.BeginScope();
-         httpContext.Items[CompzeScopeHttpContextItemKey] = scope;
-         await next.Invoke().caf();
-      });
-
       await app.StartAsync().caf();
 
       return app;
-   }
-
-   class ScopeFromHttpContextControllerActivator : IControllerActivator
-   {
-      public object Create(ControllerContext context)
-      {
-         var scope = (IScope)context.HttpContext.Items[CompzeScopeHttpContextItemKey]!;
-         return scope.Resolve(context.ActionDescriptor.ControllerTypeInfo.AsType());
-      }
-
-      public void Release(ControllerContext context, object controller) {}
    }
 
    class InternalControllerFeatureProvider : ControllerFeatureProvider

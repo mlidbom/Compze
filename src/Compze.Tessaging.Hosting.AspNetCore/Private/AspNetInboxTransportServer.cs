@@ -1,6 +1,7 @@
 using Compze.Core.Tessaging.Transport.Internal;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
+using Compze.DependencyInjection.Extensions.Hosting;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -14,16 +15,16 @@ namespace Compze.Tessaging.Hosting.AspNetCore.Private;
 
 class AspNetInboxTransportServer : IInboxTransportServer
 {
-   readonly IScopeFactory _scopeFactory;
+   readonly IChildContainerHostIntegration _hostIntegration;
    WebApplication? _webApplication;
 
    public static void RegisterWith(IComponentRegistrar registrar) =>
       registrar.Register(
          Singleton.For<IInboxTransportServer>()
-                  .CreatedBy((IScopeFactory scopeFactory)
-                                => new AspNetInboxTransportServer(scopeFactory)));
+                  .CreatedBy((IChildContainerHostIntegration hostIntegration)
+                                => new AspNetInboxTransportServer(hostIntegration)));
 
-   AspNetInboxTransportServer(IScopeFactory scopeFactory) => _scopeFactory = scopeFactory;
+   AspNetInboxTransportServer(IChildContainerHostIntegration hostIntegration) => _hostIntegration = hostIntegration;
 
    public Uri Address => new(_webApplication!.Urls.First());
 
@@ -33,6 +34,7 @@ class AspNetInboxTransportServer : IInboxTransportServer
    {
       if(_webApplication is null) return;
       await _webApplication.StopAsync().caf();
+      await _webApplication.DisposeAsync().caf();
       _webApplication = null;
    }
 
@@ -59,20 +61,14 @@ class AspNetInboxTransportServer : IInboxTransportServer
       builder.Services.AddHttpClient();
       builder.Services.AddControllers();
 
-      builder.Services.AddSingleton<IControllerActivator>(new CompzeControllerActivator());
+      builder.Services.AddSingleton<IControllerActivator, ServiceBasedControllerActivator>();
+
+      _hostIntegration.UseChildContainerAsServiceProviderFor(builder.Host);
 
       var app = builder.Build();
 
       app.UseRouting();
       app.MapControllers();
-
-      // Create a scope in our container for each request and store it in HttpContext.Items
-      app.Use(async (httpContext, next) =>
-      {
-         using var scope = _scopeFactory.BeginScope();
-         httpContext.Items[CompzeControllerActivator.CompzeScopeResolverHttpContextItemKey] = scope.Resolver;
-         await next.Invoke().caf();
-      });
 
       await app.StartAsync().caf();
 

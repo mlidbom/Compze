@@ -15,7 +15,7 @@ public class TestingEndpointHost : TestingEndpointHostBase
    readonly IDependencyInjectionContainer _rootContainer;
    readonly bool _ownsRootContainer;
 
-   TestingEndpointHost(IDependencyInjectionContainer rootContainer, bool ownsRootContainer) : base(rootContainer.Clone)
+   TestingEndpointHost(IDependencyInjectionContainer rootContainer, bool ownsRootContainer) : base(rootContainer.CreateCloneContainerBuilder)
    {
       _rootContainer = rootContainer;
       _ownsRootContainer = ownsRootContainer;
