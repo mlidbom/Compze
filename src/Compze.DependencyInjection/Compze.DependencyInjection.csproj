@@ -6,9 +6,6 @@
     <!-- TODO: Remove once all public API members have XML documentation comments -->
     <NoWarn>CS1591</NoWarn>
   </PropertyGroup>
-  <ItemGroup>
-    <None Include="DependencyInjectionContainer.Kernel.cs" />
-  </ItemGroup>
   <!-- Compze.Contracts — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' == 'true'">
     <PackageReference Include="Compze.Contracts" Version="*-*" />
