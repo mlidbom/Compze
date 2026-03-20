@@ -43,7 +43,7 @@ class CompzeAutofacServiceProviderFactory(AutofacContainerBuilder compzeBuilder)
 
    public IServiceProvider CreateServiceProvider(ContainerBuilder containerBuilder)
    {
-      _builtContainer = (AutofacContainer)((IContainerBuilder)_compzeBuilder).Build();
+      _builtContainer = (AutofacContainer)_compzeBuilder.Build();
       return new CompzeAutofacServiceProvider(_builtContainer);
    }
 }
