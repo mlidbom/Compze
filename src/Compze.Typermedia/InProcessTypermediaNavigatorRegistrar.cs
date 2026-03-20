@@ -8,6 +8,6 @@ public static class InProcessTypermediaNavigatorRegistrar
 {
    public static IComponentRegistrar InProcessTypermediaNavigator(this IComponentRegistrar registrar)
       => registrar.Register(Scoped.For<IInProcessTypermediaNavigator>()
-                                  .CreatedBy((ITypermediaHandlerRegistry typermediaHandlerRegistry, IScopeResolver scopeServiceLocator)
-                                                => new InProcessTypermediaNavigator(typermediaHandlerRegistry, scopeServiceLocator)));
+                                  .CreatedBy((ITypermediaHandlerRegistry typermediaHandlerRegistry, IScopeResolver scopeResolver)
+                                                => new InProcessTypermediaNavigator(typermediaHandlerRegistry, scopeResolver)));
 }

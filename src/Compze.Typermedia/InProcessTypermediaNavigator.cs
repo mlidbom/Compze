@@ -7,10 +7,10 @@ using Compze.DependencyInjection.Abstractions;
 
 namespace Compze.Typermedia;
 
-class InProcessTypermediaNavigator(ITypermediaHandlerRegistry typermediaHandlerRegistry, IScopeResolver scopeServiceLocator) : IInProcessTypermediaNavigator
+class InProcessTypermediaNavigator(ITypermediaHandlerRegistry typermediaHandlerRegistry, IScopeResolver scopeResolver) : IInProcessTypermediaNavigator
 {
    readonly ITypermediaHandlerRegistry _typermediaHandlerRegistry = typermediaHandlerRegistry;
-   readonly IScopeResolver _scopeServiceLocator = scopeServiceLocator;
+   readonly IScopeResolver _scopeResolver = scopeResolver;
    readonly IUsageGuard _contextGuard = new CombinationUsageGuard(new SingleTransactionUsageGuard(typermediaHandlerRegistry));
 
    public TResult Execute<TResult>(IStrictlyLocalTommand<TResult> tommand)
@@ -18,7 +18,7 @@ class InProcessTypermediaNavigator(ITypermediaHandlerRegistry typermediaHandlerR
       CommonAssertion(tommand);
 
       var tommandHandler = _typermediaHandlerRegistry.GetTommandHandler(tommand);
-      return tommandHandler.Invoke(tommand, _scopeServiceLocator);
+      return tommandHandler.Invoke(tommand, _scopeResolver);
    }
 
    public void Execute(IStrictlyLocalTommand tommand)
@@ -26,7 +26,7 @@ class InProcessTypermediaNavigator(ITypermediaHandlerRegistry typermediaHandlerR
       CommonAssertion(tommand);
 
       var tommandHandler = _typermediaHandlerRegistry.GetVoidTommandHandler(tommand);
-      tommandHandler.Invoke(tommand, _scopeServiceLocator);
+      tommandHandler.Invoke(tommand, _scopeResolver);
    }
 
    public TResult Execute<TTuery, TResult>(IStrictlyLocalTuery<TTuery, TResult> tuery) where TTuery : IStrictlyLocalTuery<TTuery, TResult>
@@ -39,7 +39,7 @@ class InProcessTypermediaNavigator(ITypermediaHandlerRegistry typermediaHandlerR
          return selfCreating.CreateResult();
 
       var tueryHandler = _typermediaHandlerRegistry.GetTueryHandler(tuery);
-      return tueryHandler.Invoke(tuery, _scopeServiceLocator);
+      return tueryHandler.Invoke(tuery, _scopeResolver);
    }
 
    void CommonAssertion(ITessage tessage)

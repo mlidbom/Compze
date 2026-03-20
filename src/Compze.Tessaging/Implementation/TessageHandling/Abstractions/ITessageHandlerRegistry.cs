@@ -13,7 +13,7 @@ public interface ITessageHandlerRegistry
     Action<ITommand, IScopeResolver> GetTommandHandler(Type tommandType);
     IReadOnlyList<Action<ITevent, IScopeResolver>> GetTeventHandlers(Type teventType);
 
-    void DispatchTevent(ITevent tevent, IScopeResolver scopeServiceLocator);
+    void DispatchTevent(ITevent tevent, IScopeResolver scopeResolver);
 
     ISet<TypeId> HandledRemoteTessageTypeIds();
 }
