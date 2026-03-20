@@ -131,7 +131,7 @@ Both legacy interfaces have been deleted. The single `DependencyInjectionContain
 - `TestingEndpointHost.Create()`: accepts `IContainerBuilder` (builds it) or `IDependencyInjectionContainer` (uses it directly for restart scenarios)
 - Convenience extensions on `IDependencyInjectionContainer`: `Resolve<T>()`, `BeginScope()`, `ExecuteInIsolatedScope(...)`, `ExecuteTransactionInIsolatedScope(...)`
 
-### Phase 5: Child container builder
+### Phase 5: Child container builder (complete)
 - Add `CreateChildContainerBuilder()` to `IDependencyInjectionContainer`
 - Reuses `CreateCloneRegistration()` mechanism with flipped singleton default
 - Build + test
