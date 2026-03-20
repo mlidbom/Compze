@@ -24,7 +24,7 @@ All interfaces defined in `Compze.DependencyInjection/Abstractions/_Compze.Utili
 ### Design rationale
 
 - **`IContainerBuilder`**: Composes `IComponentRegistrar` and `Build()`. No `Register()` methods — registration is the registrar's job, building is the builder's job. Not disposable — the built container owns all resources. Orchestration code holds the builder to finalize. Wiring code receives `builder.Registrar` or just `IComponentRegistrar` directly.
-- **`IComponentRegistrar`**: Unchanged role. 70+ extension methods target it across the codebase. Testing strategy via subtype polymorphism (`TestingComponentRegistrar`). Wiring code receives this — never needs `Build()`. Owns `Clone()` for cloning the registrar with its registrations.
+- **`IComponentRegistrar`**: Unchanged role. 71 extension methods target it across the codebase. Testing strategy via subtype polymorphism (`TestingComponentRegistrar`). Wiring code receives this — never needs `Build()`. Owns `Clone()` for cloning the registrar with its registrations.
 - **`IDependencyInjectionContainer`**: The built container. Composes `IRootResolver`, `IScopeFactory`, and `Clone()` — doesn't inherit from them. Only orchestration code (endpoint startup, container lifecycle) holds this.
 - **`IRootResolver`**: Root-level resolution. Goes to code that only needs to resolve — `Endpoint`.
 - **`IScopeFactory`**: Creates scopes. Goes to transport servers, executors, extension methods (`ExecuteInIsolatedScope`, etc.).

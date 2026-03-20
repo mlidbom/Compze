@@ -9,7 +9,7 @@ Migrate from Ambient Composition Model (AsyncLocal scope tracking) to Closure Co
 - Phases 1–3 complete. All AsyncLocal scope tracking removed.
 - Callers resolve from the scope object they hold, not from ambient context.
 - Container adapters are thin wrappers — no `AsyncLocal`, no scope tracking, no `PushExternalScope`/`PopExternalScope`.
-- `IsInScope()` abstract method eliminated — `TryCreateTransientInstance` checks `kernel is ScopedKernel` directly.
+- Phase 4 complete (see [di-container-abstraction-redesign.md](di-container-abstraction-redesign.md)): `ILegacyContainer` and `IServiceLocator` deleted, builder/container split done, all code uses new interface hierarchy.
 
 ## Target State — Achieved
 
@@ -21,7 +21,7 @@ Migrate from Ambient Composition Model (AsyncLocal scope tracking) to Closure Co
 
 ### Phase 1: Add explicit resolution to scope objects — DONE
 
-`BeginScope()` returns `IServiceLocatorScope` with `Resolve<T>()` and `IDisposable`.
+`BeginScope()` returns `IScope` with `IScopeResolver Resolver` and `IDisposable`.
 
 ### Phase 2: Migrate callers to use explicit scope — DONE
 
@@ -33,14 +33,14 @@ Removed from both container adapters (Microsoft DI and Autofac). `AsyncLocal` sc
 
 ## Scope/Resolver Separation — DONE
 
-Production code that resolves within a scope now receives `IScopeResolver` (resolution capability only), never `IServiceScope` (lifetime management). `IServiceScope` is held only by the code that owns the scope's lifetime.
+Production code that resolves within a scope now receives `IScopeResolver` (resolution capability only), never `IScope` (lifetime management). `IScope` is held only by the code that owns the scope's lifetime.
 
 - `TransactionalExtensions` (`ExecuteInIsolatedScope` etc.) pass `scope.Resolver` to lambdas
 - `TypermediaHandlerExecutor`, `EndpointRequestExecutor`, `InfrastructureQueryExecutor` — handler delegates take `IScopeResolver`
 - ASP.NET middleware stores `scope.Resolver` in `HttpContext.Items`; `CompzeControllerActivator` retrieves `IScopeResolver`
 - Test code that manages scopes directly uses `scope.Resolver.X()` for resolution
 
-Interface hierarchy: `IServiceResolver` (resolve by type) ← `IScopeResolver` (scoped resolution) and `IRootResolver` (root resolution). `IServiceLocator` implements both `IRootResolver` and `IScopeFactory`.
+Interface hierarchy: `IServiceResolver` (resolve by type) ← `IScopeResolver` (scoped resolution) and `IRootResolver` (root resolution). `IDependencyInjectionContainer` exposes `IRootResolver` and `IScopeFactory` via properties.
 
 ## ASP.NET Integration — Current Problem
 

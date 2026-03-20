@@ -11,9 +11,9 @@ interface IComponentRegistrar
 {
    IComponentRegistrar Register(params ComponentRegistration[] registrations);
    IComponentRegistrar Register(params Action<IComponentRegistrar>[] registrationMethods);  // default impl
-   IDependencyInjectionContainer Container();
+   bool IsClone { get; }
+   bool IsRegistered<TComponent>() where TComponent : class;
    TTestingRegistrar? TryGetTestingRegistrar<TTestingRegistrar>() where TTestingRegistrar : class;
-   void SetContainer(IDependencyInjectionContainer container);
    IComponentRegistrar Clone();
 }
 ```
@@ -31,7 +31,7 @@ container.Register()
    .HttpTypermediaTransport();
 ```
 
-44+ extension methods across subsystems follow this pattern. Each extends `IComponentRegistrar`, calls `registrar.Register(...)` internally, returns the registrar.
+71 extension methods across subsystems follow this pattern. Each extends `IComponentRegistrar`, calls `registrar.Register(...)` internally, returns the registrar.
 
 ### 2. Wiring delegation pattern
 
@@ -89,10 +89,11 @@ public static IComponentRegistrar SqliteMemoryConnectionPool(this IComponentRegi
 
 Design comment from the code: *"Rather than passing an untyped IRunMode around and using it to make decisions, subtypes of IComponentRegistrar should be making the decisions."*
 
-### 4. Container reference & clone support
+### 4. Builder reference & clone support
 
-- `Container()` — gives wiring code access to the container (used by the `RegisteredComponents()` query, `IsClone` check, etc.)
-- `SetContainer()` — called during container construction to wire the registrar to its owning container
+- The concrete `ComponentRegistrar` holds a `ContainerBuilderBase` reference set via internal `SetBuilder()`. This is how `Register()` calls flow through to the builder.
+- `IsClone` — delegates to `_builder.IsClone`
+- `IsRegistered<T>()` — queries the builder's `RegisteredComponents()` list
 - `Clone()` — creates an empty registrar instance for container cloning. `TestingComponentRegistrar` overrides to return its own subtype.
 
 ## Registration Flow
@@ -101,28 +102,25 @@ Design comment from the code: *"Rather than passing an untyped IRunMode around a
 Extension method call (fluent API)
   → static RegisterWith() (internal wiring)
     → registrar.Register(ComponentRegistration[])
-      → container.Register(ComponentRegistration[])
+      → _builder.Register(ComponentRegistration[])     // ContainerBuilderBase
         → _registeredComponents.Add(...)
-        → RegisterInContainer(...)  // abstract, per DI backend
+        → RegisterInContainer(...)                     // abstract, per DI backend
           → Autofac/Microsoft DI actual registration
 ```
 
-## Relationship to IContainerBuilder
+## Relationship to IContainerBuilder (implemented)
 
-`IComponentRegistrar` currently does two things:
-1. **Holds the fluent registration API** (extension methods, chaining)
-2. **Encapsulates registration policy** (testing vs production via subtype)
-
-In the new model, `IContainerBuilder` would need to compose the registrar (not replace it), because:
-- The 44+ extension methods target `IComponentRegistrar`, not the container
-- The testing strategy polymorphism is on the registrar, not the container
-- `Clone()` is needed for container cloning / child container creation
+`IContainerBuilder` composes the registrar — it doesn't replace it:
+- `IContainerBuilder.Registrar` exposes `IComponentRegistrar` for wiring code
+- 71 extension methods target `IComponentRegistrar`, not the builder
+- The testing strategy polymorphism is on the registrar, not the builder
+- `Clone()` on the registrar is used internally by `DependencyInjectionContainer.Clone()`
 - Wiring code takes `IComponentRegistrar` as parameter — it doesn't need `Build()` or any builder-level concept
 
-The registrar is a **registration-phase concern** that the builder would own, just as the container currently owns it.
+The registrar is a **registration-phase concern** that the builder owns.
 
-## Open Questions
+## Resolved Design Questions
 
-- Should `Container()` exist on the registrar? It's a back-reference that couples the registrar to its owner. In the new model, would wiring code ever need to reach the builder from the registrar?
-- The `Action<IComponentRegistrar>[]` overload enables passing `RegisterWith` methods as delegates. This is convenient but could also work as `Action<IContainerBuilder>` if the builder exposed registration.
-- `SetContainer()` is a mutable init pattern. Could be replaced by constructor injection if the registrar is always created with its owner.
+- `Container()` was removed from the interface. The registrar now holds a `ContainerBuilderBase` reference instead (internal `SetBuilder()` on the concrete class). Wiring code doesn't need to reach the builder from the interface.
+- `SetContainer()` was replaced by `SetBuilder()` on the concrete `ComponentRegistrar`. Still a mutable init pattern — the builder sets itself on the registrar during construction.
+- The `Action<IComponentRegistrar>[]` overload remains — wiring code targets `IComponentRegistrar`, not the builder.
