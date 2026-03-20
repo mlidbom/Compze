@@ -20,7 +20,9 @@ public abstract class ContainerBuilder : IContainerBuilder
 
    IComponentRegistrar IContainerBuilder.Registrar => _registrar;
 
-   public IDependencyInjectionContainer Build()
+   IDependencyInjectionContainer IContainerBuilder.Build() => Build();
+
+   public virtual DependencyInjectionContainer Build()
    {
       Contract.State.Assert(!_built, () => "Build() has already been called on this builder. A Container can only be built once.");
       _built = true;

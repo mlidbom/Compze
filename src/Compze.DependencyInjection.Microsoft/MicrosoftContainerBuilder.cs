@@ -10,6 +10,8 @@ public sealed class MicrosoftContainerBuilder(IComponentRegistrar? registrar = n
    readonly IServiceCollection _services = new ServiceCollection();
    readonly RunOnce _registerScopedKernel = new();
 
+   public override MicrosoftContainer Build() => (MicrosoftContainer)base.Build();
+
    protected override void RegisterInContainer(ComponentRegistration[] registrations)
    {
       _registerScopedKernel.RunIfFirstCall(() =>
@@ -75,6 +77,5 @@ public sealed class MicrosoftContainerBuilder(IComponentRegistrar? registrar = n
       builtContainer = new MicrosoftContainer(serviceProvider, RegisteredComponents(), Registrar);
       return builtContainer;
    }
-
    IServiceCollection IMicrosoftBuilderInternals.ServiceCollection => _services;
 }

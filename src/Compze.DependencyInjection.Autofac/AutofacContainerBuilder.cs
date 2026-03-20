@@ -11,6 +11,8 @@ public sealed class AutofacContainerBuilder(IComponentRegistrar? registrar = nul
    readonly RunOnce _registerScopedKernel = new();
    readonly RunOnce _runVerifications = new();
 
+   public override AutofacContainer Build() => (AutofacContainer)base.Build();
+
    protected override void RegisterInContainer(ComponentRegistration[] registrations)
    {
       _registerScopedKernel.RunIfFirstCall(() =>
@@ -77,6 +79,5 @@ public sealed class AutofacContainerBuilder(IComponentRegistrar? registrar = nul
       builtContainer = new AutofacContainer(container, RegisteredComponents(), Registrar);
       return builtContainer;
    }
-
    global::Autofac.ContainerBuilder IAutofacBuilderInternals.ContainerBuilder => _containerBuilder;
 }
