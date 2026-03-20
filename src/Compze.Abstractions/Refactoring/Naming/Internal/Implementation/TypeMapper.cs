@@ -88,6 +88,80 @@ public class TypeMapper : ITypeMapper
       if(missing.Any()) throw MissingMappingReporter.BuildMissingTypesException(missing);
    });
 
+   public string ToPersistedTypeString(Type type)
+   {
+      EnsureAllCurrentlyLoadedAssembliesHaveBeenCheckedForRequiredMappings();
+      return GetOrBuildTypeNameMapper().GetPersistedStringFromAssemblyQualifiedName(type.AssemblyQualifiedName!);
+   }
+
+   public Type FromPersistedTypeString(string persistedTypeString)
+   {
+      EnsureAllCurrentlyLoadedAssembliesHaveBeenCheckedForRequiredMappings();
+
+      // Backward compat: old format is a plain GUID (no comma, no brackets)
+      if(Guid.TryParse(persistedTypeString, out var oldFormatGuid))
+      {
+         var oldTypeId = new TypeId(oldFormatGuid);
+         return State.Locked(state =>
+         {
+            if(state.TypeIdToTypeMap.TryGetValue(oldTypeId, out var type))
+               return type;
+            throw new InvalidOperationException($"No type found for old-format GUID: {persistedTypeString}");
+         });
+      }
+
+      return GetOrBuildTypeNameMapper().GetTypeFromPersistedString(persistedTypeString);
+   }
+
+   TypeNameMapper? _typeNameMapper;
+   long _typeNameMapperVersion = -1;
+
+   TypeNameMapper GetOrBuildTypeNameMapper() => State.Locked(state =>
+   {
+      if(_typeNameMapper != null && _typeNameMapperVersion == state.MappingVersion)
+         return _typeNameMapper;
+
+      var leafMappings = new Dictionary<Type, Guid>();
+      var openGenericMappings = new Dictionary<Type, Guid>();
+
+      foreach(var kvp in state.TypeToTypeIdMap)
+      {
+         if(kvp.Key.IsGenericTypeDefinition)
+            openGenericMappings[kvp.Key] = kvp.Value.Value;
+         else
+            leafMappings[kvp.Key] = kvp.Value.Value;
+      }
+
+      // Stable assemblies: all assemblies with Microsoft public key tokens
+      var stableAssemblyNames = new HashSet<string>();
+      foreach(var assembly in AppDomain.CurrentDomain.GetAssemblies())
+      {
+         var tokenBytes = assembly.GetName().GetPublicKeyToken();
+         if(tokenBytes is { Length: > 0 })
+         {
+            var token = Convert.ToHexStringLower(tokenBytes);
+            if(MicrosoftPublicKeyTokens.Contains(token))
+            {
+               var name = assembly.GetName().Name;
+               if(name != null) stableAssemblyNames.Add(name);
+            }
+         }
+      }
+
+      _typeNameMapper = new TypeNameMapper(leafMappings, openGenericMappings, stableAssemblyNames);
+      _typeNameMapperVersion = state.MappingVersion;
+      return _typeNameMapper;
+   });
+
+   static readonly HashSet<string> MicrosoftPublicKeyTokens =
+   [
+      "7cec85d7bea7798e", // System.Private.CoreLib
+      "b03f5f7f11d50a3a", // most System.* runtime libraries
+      "b77a5c561934e089", // legacy (mscorlib, System, System.Core)
+      "cc7b13ffcd2ddd51", // System.Private.Xml, netstandard, etc.
+      "31bf3856ad364e35"  // Microsoft.* libraries
+   ];
+
    static readonly ReentrancyGuard ReentrancyGuard = new();
 
    static void EnsureAllCurrentlyLoadedAssembliesHaveBeenCheckedForRequiredMappings() => ReentrancyGuard.ExecuteIfNotReEntering(() =>
@@ -203,6 +277,7 @@ public class TypeMapper : ITypeMapper
       internal readonly Dictionary<TypeId, Type> TypeIdToTypeMap = new();
       internal readonly HashSet<System.Reflection.Assembly> CheckedAssemblies = [];
       internal readonly Dictionary<System.Reflection.Assembly, string> AssemblyMappingUpdateMessages = new();
+      internal long MappingVersion { get; private set; }
 
       internal void AddMappings(IReadOnlyDictionary<Type, TypeId> ids) => ids.ForEach(keyValuePair => AddMapping(keyValuePair.Key, keyValuePair.Value));
 
@@ -224,6 +299,7 @@ public class TypeMapper : ITypeMapper
 
          TypeIdToTypeMap.Add(typeId, type);
          TypeToTypeIdMap.Add(type, typeId);
+         MappingVersion++;
       }
    }
 

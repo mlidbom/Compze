@@ -19,28 +19,28 @@ namespace Compze.Internals.Serialization.Newtonsoft.Specifications
              .Be("""
                     {
                       "ATypeProperty": {
-                        "$type": "645544b7-e56c-4e3c-81cd-149e9be90bd7",
+                        "$type": "645544b7-e56c-4e3c-81cd-149e9be90bd7, 0",
                         "Value": "Compze.Internals.Serialization.Newtonsoft.Specifications.OriginalTypes.TypeA"
                       },
                       "BTypeProperty": {
-                        "$type": "acd2c07a-d3d1-4217-9e71-b13c2775e86d",
+                        "$type": "acd2c07a-d3d1-4217-9e71-b13c2775e86d, 0",
                         "Value": "Compze.Internals.Serialization.Newtonsoft.Specifications.OriginalTypes.TypeB"
                       },
                       "ListOfAType": [
                         {
-                          "$type": "645544b7-e56c-4e3c-81cd-149e9be90bd7",
+                          "$type": "645544b7-e56c-4e3c-81cd-149e9be90bd7, 0",
                           "Value": "Compze.Internals.Serialization.Newtonsoft.Specifications.OriginalTypes.TypeA"
                         },
                         {
-                          "$type": "acd2c07a-d3d1-4217-9e71-b13c2775e86d",
+                          "$type": "acd2c07a-d3d1-4217-9e71-b13c2775e86d, 0",
                           "Value": "Compze.Internals.Serialization.Newtonsoft.Specifications.OriginalTypes.TypeB"
                         },
                         {
-                          "$type": "f583784b-29d2-499b-a205-59ea6ef57cb3",
+                          "$type": "f583784b-29d2-499b-a205-59ea6ef57cb3, 0",
                           "Value": "Compze.Internals.Serialization.Newtonsoft.Specifications.OriginalTypes.TypeA+TypeAA"
                         },
                         {
-                          "$type": "d65a7c6a-eeb5-485a-a86a-cd4ac8ca99cf",
+                          "$type": "d65a7c6a-eeb5-485a-a86a-cd4ac8ca99cf, 0",
                           "Value": "Compze.Internals.Serialization.Newtonsoft.Specifications.OriginalTypes.TypeB+TypeBB"
                         }
                       ]

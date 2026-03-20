@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Collections.Frozen;
 
 namespace Compze.Abstractions.Refactoring.Naming.Internal.Implementation;
@@ -5,7 +6,7 @@ namespace Compze.Abstractions.Refactoring.Naming.Internal.Implementation;
 /// <summary>
 /// Transforms between .NET <see cref="Type"/> objects and <see cref="StructuralTypeId"/> values.
 /// Uses <see cref="TypeNameParser"/> for string manipulation and mapping dictionaries for GUID↔Type lookups.
-/// Caches results in both directions.
+/// Caches results in both directions. Thread-safe.
 /// </summary>
 class TypeNameMapper
 {
@@ -20,9 +21,9 @@ class TypeNameMapper
    // Stable assembly names
    readonly FrozenSet<string> _stableAssemblyNames;
 
-   // Caches (populated on demand)
-   readonly Dictionary<Type, StructuralTypeId> _typeToIdCache = new();
-   readonly Dictionary<string, Type> _stringToTypeCache = new();
+   // Caches (populated on demand, thread-safe)
+   readonly ConcurrentDictionary<Type, StructuralTypeId> _typeToIdCache = new();
+   readonly ConcurrentDictionary<string, Type> _stringToTypeCache = new();
 
    internal TypeNameMapper(
       IReadOnlyDictionary<Type, Guid> leafTypeMappings,
@@ -39,44 +40,22 @@ class TypeNameMapper
    /// <summary>
    /// Given a .NET <see cref="Type"/>, produce the correct <see cref="StructuralTypeId"/> subtype.
    /// </summary>
-   internal StructuralTypeId GetId(Type type)
-   {
-      if(_typeToIdCache.TryGetValue(type, out var cached))
-         return cached;
-
-      var result = ComputeId(type);
-      _typeToIdCache[type] = result;
-      return result;
-   }
+   internal StructuralTypeId GetId(Type type) => _typeToIdCache.GetOrAdd(type, ComputeId);
 
    /// <summary>
    /// Given a <see cref="StructuralTypeId"/>, resolve it back to a .NET <see cref="Type"/>.
    /// </summary>
-   internal Type GetType(StructuralTypeId typeId)
-   {
-      var stringRep = typeId.StringRepresentation;
-      if(_stringToTypeCache.TryGetValue(stringRep, out var cached))
-         return cached;
-
-      var result = ResolveType(typeId);
-      _stringToTypeCache[stringRep] = result;
-      return result;
-   }
+   internal Type GetType(StructuralTypeId typeId) => _stringToTypeCache.GetOrAdd(typeId.StringRepresentation, _ => ResolveType(typeId));
 
    /// <summary>
    /// Given a string from a persisted <c>$type</c> field, resolve it to a .NET <see cref="Type"/>.
    /// This is the deserialization entry point — the string is parsed, then resolved.
    /// </summary>
-   internal Type GetTypeFromPersistedString(string persistedTypeString)
+   internal Type GetTypeFromPersistedString(string persistedTypeString) => _stringToTypeCache.GetOrAdd(persistedTypeString, key =>
    {
-      if(_stringToTypeCache.TryGetValue(persistedTypeString, out var cached))
-         return cached;
-
-      var parsed = TypeNameParser.Parse(persistedTypeString);
-      var type = ResolveFromParsed(parsed);
-      _stringToTypeCache[persistedTypeString] = type;
-      return type;
-   }
+      var parsed = TypeNameParser.Parse(key);
+      return ResolveFromParsed(parsed);
+   });
 
    /// <summary>
    /// Given a raw <c>AssemblyQualifiedName</c> from Newtonsoft (serialize direction),
@@ -197,7 +176,7 @@ class TypeNameMapper
    /// </summary>
    static string SimpleAssemblyName(string assemblyString)
    {
-      var commaIndex = assemblyString.IndexOf(',');
+      var commaIndex = assemblyString.IndexOf(',', StringComparison.Ordinal);
       return commaIndex >= 0 ? assemblyString[..commaIndex].Trim() : assemblyString.Trim();
    }
 
