@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Compze.DependencyInjection.Microsoft;
 
-public sealed class MicrosoftContainerBuilder(IComponentRegistrar? registrar = null) : ContainerBuilderBase(registrar), IMicrosoftBuilderInternals
+public sealed class MicrosoftContainerBuilder(IComponentRegistrar? registrar = null) : ContainerBuilder(registrar), IMicrosoftBuilderInternals
 {
    readonly IServiceCollection _services = new ServiceCollection();
    readonly RunOnce _registerScopedKernel = new();
@@ -58,16 +58,18 @@ public sealed class MicrosoftContainerBuilder(IComponentRegistrar? registrar = n
       }
    }
 
-   protected override DependencyInjectionContainer BuildContainer()
+   protected override DependencyInjectionContainer BuildInternal()
    {
       AssertLifeStyleCombinationsAreValid();
 
       // Auto-register intrinsic container types via closures that will be filled after build
       MicrosoftContainer? builtContainer = null;
+      // ReSharper disable AccessToModifiedClosure
       _services.AddSingleton<IDependencyInjectionContainer>(_ => builtContainer!);
       _services.AddSingleton<IRootResolver>(_ => builtContainer!);
       _services.AddSingleton<IScopeFactory>(_ => builtContainer!);
       _services.AddSingleton(_ => builtContainer!);
+      // ReSharper restore AccessToModifiedClosure
 
       var serviceProvider = _services.BuildServiceProvider(new ServiceProviderOptions { ValidateOnBuild = true, ValidateScopes = true });
       builtContainer = new MicrosoftContainer(serviceProvider, RegisteredComponents(), Registrar);

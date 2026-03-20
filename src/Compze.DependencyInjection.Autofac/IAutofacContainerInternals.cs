@@ -4,7 +4,7 @@ namespace Compze.DependencyInjection.Autofac;
 
 public interface IAutofacBuilderInternals
 {
-   ContainerBuilder ContainerBuilder { get; }
+   global::Autofac.ContainerBuilder ContainerBuilder { get; }
 }
 
 public interface IAutofacContainerInternals

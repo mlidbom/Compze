@@ -20,13 +20,13 @@ public abstract class DependencyInjectionContainer : IDependencyInjectionContain
    IRootResolver IDependencyInjectionContainer.RootResolver => (IRootResolver)this;
    IScopeFactory IDependencyInjectionContainer.ScopeFactory => (IScopeFactory)this;
 
-   IContainerBuilder IDependencyInjectionContainer.CreateCloneContainerBuilder() => CloneBuilder();
+   IContainerBuilder IDependencyInjectionContainer.CreateCloneContainerBuilder() => CreateCloneContainerBuilder();
 
-   protected ContainerBuilderBase CloneBuilder()
+   public virtual ContainerBuilder CreateCloneContainerBuilder()
    {
       Log.Info($"Cloning IDependencyInjectionContainer: {GetHashCode()}");
       IRootResolver sourceRootResolver = (IRootResolver)this;
-      var cloneBuilder = CreateBuilderForClone(_sourceRegistrar.Clone());
+      var cloneBuilder = CreateConcreteBuilder(_sourceRegistrar.Clone());
       cloneBuilder.IsClone = true;
 
       _registrations
@@ -35,13 +35,13 @@ public abstract class DependencyInjectionContainer : IDependencyInjectionContain
       return cloneBuilder;
    }
 
-   IContainerBuilder IDependencyInjectionContainer.CreateChildContainerBuilder() => CreateChildBuilder();
+   IContainerBuilder IDependencyInjectionContainer.CreateChildContainerBuilder() => CreateChildContainerBuilder();
 
-   protected ContainerBuilderBase CreateChildBuilder()
+   public virtual ContainerBuilder CreateChildContainerBuilder()
    {
       Log.Info($"Creating child container builder from IDependencyInjectionContainer: {GetHashCode()}");
       IRootResolver parentRootResolver = (IRootResolver)this;
-      var childBuilder = CreateBuilderForClone(_sourceRegistrar.Clone());
+      var childBuilder = CreateConcreteBuilder(_sourceRegistrar.Clone());
 
       _registrations
         .ForEach(action: registration => childBuilder.Register(registration.CreateChildRegistration(parentRootResolver)));
@@ -49,7 +49,7 @@ public abstract class DependencyInjectionContainer : IDependencyInjectionContain
       return childBuilder;
    }
 
-   protected abstract ContainerBuilderBase CreateBuilderForClone(IComponentRegistrar clonedRegistrar);
+   protected abstract ContainerBuilder CreateConcreteBuilder(IComponentRegistrar registrar);
 
    public abstract void Dispose();
    public abstract ValueTask DisposeAsync();

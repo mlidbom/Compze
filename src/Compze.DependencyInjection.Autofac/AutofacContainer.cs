@@ -9,22 +9,14 @@ public sealed class AutofacContainer : DependencyInjectionContainer, IRootResolv
    readonly IContainer _container;
 
    internal AutofacContainer(IContainer container, IReadOnlyList<ComponentRegistration> registrations, IComponentRegistrar sourceRegistrar)
-      : base(registrations, sourceRegistrar)
-   {
+      : base(registrations, sourceRegistrar) =>
       _container = container;
-   }
 
-   public new AutofacContainerBuilder CreateChildContainerBuilder() =>
-      (AutofacContainerBuilder)CreateChildBuilder();
+   public override AutofacContainerBuilder CreateCloneContainerBuilder() => (AutofacContainerBuilder)base.CreateCloneContainerBuilder();
 
-   public new AutofacContainerBuilder Clone() =>
-      (AutofacContainerBuilder)CloneBuilder();
+   public override AutofacContainerBuilder CreateChildContainerBuilder() => (AutofacContainerBuilder)base.CreateChildContainerBuilder();
 
-   protected override ContainerBuilderBase CreateBuilderForClone(IComponentRegistrar clonedRegistrar) =>
-      new AutofacContainerBuilder(clonedRegistrar);
-
-   public object Resolve(Type serviceType) =>
-      _container.Resolve(serviceType);
+   public object Resolve(Type serviceType) => _container.Resolve(serviceType);
 
    public IScope BeginScope()
    {
@@ -38,6 +30,8 @@ public sealed class AutofacContainer : DependencyInjectionContainer, IRootResolv
    public override void Dispose() => _container.Dispose();
 
    public override async ValueTask DisposeAsync() => await _container.DisposeAsync().caf();
+
+   protected override ContainerBuilder CreateConcreteBuilder(IComponentRegistrar registrar) => new AutofacContainerBuilder(registrar);
 
    sealed class Scope(IScopeResolver scopeResolver, ILifetimeScope lifetimeScope) : IScope
    {

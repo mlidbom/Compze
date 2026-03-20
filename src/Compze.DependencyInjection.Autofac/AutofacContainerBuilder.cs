@@ -5,9 +5,9 @@ using Compze.Threading;
 
 namespace Compze.DependencyInjection.Autofac;
 
-public sealed class AutofacContainerBuilder(IComponentRegistrar? registrar = null) : ContainerBuilderBase(registrar), IAutofacBuilderInternals
+public sealed class AutofacContainerBuilder(IComponentRegistrar? registrar = null) : ContainerBuilder(registrar), IAutofacBuilderInternals
 {
-   readonly ContainerBuilder _containerBuilder = new();
+   readonly global::Autofac.ContainerBuilder _containerBuilder = new();
    readonly RunOnce _registerScopedKernel = new();
    readonly RunOnce _runVerifications = new();
 
@@ -61,7 +61,7 @@ public sealed class AutofacContainerBuilder(IComponentRegistrar? registrar = nul
       }
    }
 
-   protected override DependencyInjectionContainer BuildContainer()
+   protected override DependencyInjectionContainer BuildInternal()
    {
       _runVerifications.RunIfFirstCall(AssertLifeStyleCombinationsAreValid);
 
@@ -78,5 +78,5 @@ public sealed class AutofacContainerBuilder(IComponentRegistrar? registrar = nul
       return builtContainer;
    }
 
-   ContainerBuilder IAutofacBuilderInternals.ContainerBuilder => _containerBuilder;
+   global::Autofac.ContainerBuilder IAutofacBuilderInternals.ContainerBuilder => _containerBuilder;
 }

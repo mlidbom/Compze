@@ -5,9 +5,9 @@ namespace Compze.DependencyInjection;
 
 public class ComponentRegistrar : IComponentRegistrar
 {
-   ContainerBuilderBase? _builder = null;
+   ContainerBuilder? _builder = null;
 
-   internal void SetBuilder(ContainerBuilderBase builder)
+   internal void SetBuilder(ContainerBuilder builder)
    {
       Contract.State.Assert(_builder == null, () => "Builder has already been set");
       _builder = builder;

@@ -14,14 +14,9 @@ public sealed class MicrosoftContainer : DependencyInjectionContainer, IRootReso
       : base(registrations, sourceRegistrar) =>
       _serviceProvider = serviceProvider;
 
-   public new MicrosoftContainerBuilder CreateChildContainerBuilder() =>
-      (MicrosoftContainerBuilder)CreateChildBuilder();
+   public override MicrosoftContainerBuilder CreateCloneContainerBuilder() => (MicrosoftContainerBuilder)base.CreateCloneContainerBuilder();
 
-   public new MicrosoftContainerBuilder Clone() =>
-      (MicrosoftContainerBuilder)CloneBuilder();
-
-   protected override ContainerBuilderBase CreateBuilderForClone(IComponentRegistrar clonedRegistrar) =>
-      new MicrosoftContainerBuilder(clonedRegistrar);
+   public override MicrosoftContainerBuilder CreateChildContainerBuilder() => (MicrosoftContainerBuilder)base.CreateChildContainerBuilder();
 
    public object Resolve(Type serviceType)
    {
@@ -58,6 +53,8 @@ public sealed class MicrosoftContainer : DependencyInjectionContainer, IRootReso
          await _serviceProvider.DisposeAsync().caf();
       }
    }
+
+   protected override ContainerBuilder CreateConcreteBuilder(IComponentRegistrar registrar) => new MicrosoftContainerBuilder(registrar);
 
    sealed class Scope(IScopeResolver scopeResolver, Action onDispose) : IScope
    {

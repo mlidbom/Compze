@@ -17,6 +17,8 @@ public class HostableAutofacContainer(AutofacContainerBuilder compzeBuilder) : I
 
 public class AutofacChildContainerHostIntegration(AutofacContainer parentContainer) : IChildContainerHostIntegration
 {
+   readonly AutofacContainer _parentContainer = parentContainer;
+
    public static void RegisterWith(IComponentRegistrar registrar) =>
       registrar.Register(
          Singleton.For<IChildContainerHostIntegration>()
@@ -24,24 +26,24 @@ public class AutofacChildContainerHostIntegration(AutofacContainer parentContain
 
    public void UseChildContainerAsServiceProviderFor(IHostBuilder hostBuilder)
    {
-      var childBuilder = parentContainer.CreateChildContainerBuilder();
+      var childBuilder = _parentContainer.CreateChildContainerBuilder();
       hostBuilder.UseServiceProviderFactory(new CompzeAutofacServiceProviderFactory(childBuilder));
    }
 }
 
-class CompzeAutofacServiceProviderFactory(AutofacContainerBuilder compzeBuilder) : IServiceProviderFactory<ContainerBuilder>
+class CompzeAutofacServiceProviderFactory(AutofacContainerBuilder compzeBuilder) : IServiceProviderFactory<global::Autofac.ContainerBuilder>
 {
    readonly AutofacContainerBuilder _compzeBuilder = compzeBuilder;
    AutofacContainer? _builtContainer;
 
-   public ContainerBuilder CreateBuilder(IServiceCollection services)
+   public global::Autofac.ContainerBuilder CreateBuilder(IServiceCollection services)
    {
       var builder = ((IAutofacBuilderInternals)_compzeBuilder).ContainerBuilder;
       builder.Populate(services);
       return builder;
    }
 
-   public IServiceProvider CreateServiceProvider(ContainerBuilder containerBuilder)
+   public IServiceProvider CreateServiceProvider(global::Autofac.ContainerBuilder containerBuilder)
    {
       _builtContainer = (AutofacContainer)_compzeBuilder.Build();
       return new CompzeAutofacServiceProvider(_builtContainer);
