@@ -9,12 +9,12 @@ This blocks ASP.NET Core integration: `UseAsServiceProviderFor(builder.Host)` mu
 ## Interface Hierarchy (implemented)
 
 ```
-IContainerBuilder              — IComponentRegistrar Registrar, Build() → IDependencyInjectionContainer, Clone()
-IDependencyInjectionContainer  — IRootResolver Resolver, IScopeFactory ScopeFactory, Clone()
-IComponentRegistrar             — Register(), fluent API, testing strategy
+IContainerBuilder              — IComponentRegistrar Registrar, Build() → IDependencyInjectionContainer
+IDependencyInjectionContainer  — IRootResolver RootResolver, IScopeFactory ScopeFactory, Clone() → IContainerBuilder
+IComponentRegistrar             — Register(), fluent API, testing strategy, Clone()
 IRootResolver                  — Resolve() at root (singletons, transients)
-IScopeFactory                  — BeginScope() → IServiceScope
-IServiceScope                  — IScopeResolver Resolver, Dispose()
+IScopeFactory                  — BeginScope() → IScope
+IScope                         — IScopeResolver Resolver, Dispose()
 IScopeResolver                 — Resolve() within a scope (all lifestyles)
 IServiceResolver               — internal base, only used by factory method pipeline
 ```
@@ -23,13 +23,13 @@ All interfaces defined in `Compze.DependencyInjection/Abstractions/_Compze.Utili
 
 ### Design rationale
 
-- **`IContainerBuilder`**: Composes `IComponentRegistrar` and `Build()`. No `Register()` methods — registration is the registrar's job, building is the builder's job. Orchestration code holds the builder to finalize. Wiring code receives `builder.Registrar` or just `IComponentRegistrar` directly.
-- **`IComponentRegistrar`**: Unchanged role. 70+ extension methods target it across the codebase. Testing strategy via subtype polymorphism (`TestingComponentRegistrar`). Wiring code receives this — never needs `Build()`.
+- **`IContainerBuilder`**: Composes `IComponentRegistrar` and `Build()`. No `Register()` methods — registration is the registrar's job, building is the builder's job. Not disposable — the built container owns all resources. Orchestration code holds the builder to finalize. Wiring code receives `builder.Registrar` or just `IComponentRegistrar` directly.
+- **`IComponentRegistrar`**: Unchanged role. 70+ extension methods target it across the codebase. Testing strategy via subtype polymorphism (`TestingComponentRegistrar`). Wiring code receives this — never needs `Build()`. Owns `Clone()` for cloning the registrar with its registrations.
 - **`IDependencyInjectionContainer`**: The built container. Composes `IRootResolver`, `IScopeFactory`, and `Clone()` — doesn't inherit from them. Only orchestration code (endpoint startup, container lifecycle) holds this.
 - **`IRootResolver`**: Root-level resolution. Goes to code that only needs to resolve — `Endpoint`.
 - **`IScopeFactory`**: Creates scopes. Goes to transport servers, executors, extension methods (`ExecuteInIsolatedScope`, etc.).
 - **`IScopeResolver`**: Resolution within a scope. Goes to handler code, controller activators.
-- **`IServiceScope`**: Lifetime boundary. Owns an `IScopeResolver`. Disposed by the code that created the scope.
+- **`IScope`**: Lifetime boundary. Owns an `IScopeResolver`. Disposed by the code that created the scope.
 - **`IServiceResolver`**: Internal base. Only used by `InstantiationSpec.RunFactoryMethod()` so factory lambdas can accept either root or scoped resolvers.
 
 ### Key properties
@@ -64,7 +64,7 @@ Cloning is **permanent** infrastructure (not being removed). It creates a new co
 
 This is **distinct from child containers** (future). Child containers delegate **all** singletons to the parent. Cloning delegates **only** opted-in singletons.
 
-`Clone()` lives on both `IDependencyInjectionContainer` and `IContainerBuilder`, returning `IContainerBuilder`.
+`Clone()` lives on `IDependencyInjectionContainer`, returning `IContainerBuilder`. `IComponentRegistrar` also has `Clone()` for cloning the registrar with its registrations (used internally by the container clone implementation).
 
 ### Clone usage patterns
 
@@ -97,35 +97,39 @@ Reuses the existing `Clone()` / `CreateCloneRegistration()` mechanism but flips 
 - `Clone()` creates new singleton instances by default (opt-in delegation via `DelegateToParentServiceLocatorWhenCloning()`)
 - `CreateChildContainerBuilder()` delegates all singletons by default
 
-`ContainerFacadeServiceTypes` exclusion still applies — `IDependencyInjectionContainer` etc. get fresh registrations pointing to the child.
+Intrinsic container types (`IDependencyInjectionContainer`, `IRootResolver`, `IScopeFactory`) are auto-registered via closures during `Build()`, so clones and child containers automatically get fresh registrations pointing to themselves.
 
 ## Remaining work
 
-## Phase 4: Remove `ILegacyContainer` and `IServiceLocator` (complete)
+## Phase 4: Remove `ILegacyContainer` and `IServiceLocator` + Builder/Container split (complete)
 
-Both legacy interfaces have been deleted. All code now uses the new interface hierarchy exclusively.
+Both legacy interfaces have been deleted. The single `DependencyInjectionContainer` class has been split into separate builder and container types. All code now uses the new interface hierarchy exclusively.
+
+**Builder/Container split:**
+- `ContainerBuilderBase` — abstract builder. Holds registrations, `IComponentRegistrar`, `Register()`, `Build()`. Not disposable. `Build()` throws on second call.
+- `DependencyInjectionContainer` — abstract built container. Holds registration list copy, `Clone()`, `Dispose()`. Concrete types implement `IRootResolver` + `IScopeFactory`.
+- `MicrosoftContainerBuilder` + `MicrosoftContainer` — replaced `MicrosoftDependencyInjectionContainer`
+- `AutofacContainerBuilder` + `AutofacContainer` — replaced `AutofacDependencyInjectionContainer`
+
+**Intrinsic type registration:**
+- `IDependencyInjectionContainer`, `IRootResolver`, `IScopeFactory` are auto-registered into the underlying DI engine during `Build()` via closures — no `ContainerFacadeServiceTypes` needed.
+
+**Interface renames:**
+- `IServiceScope` → `IScope`
 
 **Container infrastructure changes:**
-- `DependencyInjectionContainer` base class: removed `ILegacyContainer`, now implements only `IContainerBuilder` + `IDependencyInjectionContainer`
-- `ServiceLocator` property replaced with `protected abstract void EnsureContainerBuilt()` — concrete containers override this for their lazy initialization
-- `Register()` changed from `public ILegacyContainer Register(...)` to `internal void Register(...)` — external callers use `IComponentRegistrar`
-- `RegisterInContainer()` changed from returning `ILegacyContainer` to `void`
-- `CloneInternal()` no longer self-registers `IServiceLocator` in clones
-- `ContainerFacadeServiceTypes` emptied in base (Autofac keeps only `typeof(AutofacDependencyInjectionContainer)`, Microsoft keeps only `typeof(MicrosoftDependencyInjectionContainer)`)
-- Microsoft/Autofac containers: removed `IServiceLocator`, now implement `IRootResolver` + `IScopeFactory` directly
+- `Register()` is `internal void` on `ContainerBuilderBase` — external callers use `IComponentRegistrar`
+- `RegisterInContainer()` is `protected abstract void` on `ContainerBuilderBase`
+- `Clone()` on `DependencyInjectionContainer` creates a new builder via `CreateBuilderForClone()`, replays registrations with `CreateCloneRegistration()`
+- No lazy initialization — `Build()` is explicit and one-shot
 
 **Test wiring changes:**
-- `DiContainerExtensions`: casts replaced with `builder.Build()` returning `IDependencyInjectionContainer`; method names: `CreateContainerForTesting`, `SetupTestingContainer`, `CreateWithContainerRegistrations`, `CreateWithContainerRegistrationsAndCurrentTestsPluggableComponents`
-- `ContainerCloner`: now uses `IDependencyInjectionContainer.Clone()` + `Build()`; new `CloneAndBuild()` convenience extension
+- `DiContainerExtensions`: method names: `CreateContainerForTesting`, `SetupTestingContainer`, `CreateWithContainerRegistrations`, `CreateWithContainerRegistrationsAndCurrentTestsPluggableComponents`
+- `ContainerCloner`: uses `IDependencyInjectionContainer.Clone()` + `Build()`; `CloneAndBuild()` convenience extension
 - `TestClient`: takes `IDependencyInjectionContainer` instead of `IServiceLocator`
-- `DependencyInjectionContainerFactory`: returns `IContainerBuilder` (renamed `CreateContainerBuilder`)
-- Convenience extensions added to `IDependencyInjectionContainer`: `Resolve<T>()`, `BeginScope()`, `ExecuteInIsolatedScope(...)`, `ExecuteTransactionInIsolatedScope(...)`
-
-**Test file changes (~20 files):**
-- All `IServiceLocator` fields/params → `IDependencyInjectionContainer`
-- All `ILegacyContainer` fields → `IContainerBuilder`
-- `.ServiceLocator` property access → `.Build()` or removed
-- `.Clone()` for immediate use → `.CloneAndBuild()`
+- `DependencyInjectionContainerFactory`: returns `IContainerBuilder` (named `CreateContainerBuilder`)
+- `TestingEndpointHost.Create()`: accepts `IContainerBuilder` (builds it) or `IDependencyInjectionContainer` (uses it directly for restart scenarios)
+- Convenience extensions on `IDependencyInjectionContainer`: `Resolve<T>()`, `BeginScope()`, `ExecuteInIsolatedScope(...)`, `ExecuteTransactionInIsolatedScope(...)`
 
 ### Phase 5: Child container builder
 - Add `CreateChildContainerBuilder()` to `IDependencyInjectionContainer`
