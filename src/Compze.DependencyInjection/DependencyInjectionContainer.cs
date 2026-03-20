@@ -30,7 +30,7 @@ public abstract class DependencyInjectionContainer : IDependencyInjectionContain
       cloneBuilder.IsClone = true;
 
       _registrations
-        .ForEach(action: registration => cloneBuilder.Register(registration.CreateCloneRegistration(sourceRootResolver)));
+        .ForEach(action: registration => cloneBuilder.Registrar.Register(registration.CreateCloneRegistration(sourceRootResolver)));
 
       return cloneBuilder;
    }
@@ -44,7 +44,7 @@ public abstract class DependencyInjectionContainer : IDependencyInjectionContain
       var childBuilder = CreateConcreteBuilder(_sourceRegistrar.Clone());
 
       _registrations
-        .ForEach(action: registration => childBuilder.Register(registration.CreateChildRegistration(parentRootResolver)));
+        .ForEach(action: registration => childBuilder.Registrar.Register(registration.CreateChildRegistration(parentRootResolver)));
 
       return childBuilder;
    }
