@@ -5,6 +5,7 @@ using Compze.Contracts;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Internals.SystemCE.TransactionsCE;
 using Microsoft.Data.Sqlite;
+using IsolationLevel = System.Data.IsolationLevel;
 
 namespace Compze.Internals.Sql.Sqlite;
 
@@ -24,7 +25,7 @@ public interface ICompzeSqliteConnection : IPoolableConnection, ICompzeDbConnect
 
          _transactionParticipant = new VolatileLambdaTransactionParticipant(
             enlistmentOptions: EnlistmentOptions.None,
-            onEnlist: () => _transaction = Connection.BeginTransaction(deferred: true),
+            onEnlist: () => _transaction = Connection.BeginTransaction(IsolationLevel.ReadCommitted),
             onPrepare: () => {}, // Nothing to do in prepare - SQLite doesn't support two-phase commit
             onCommit: () =>
             {
