@@ -19,29 +19,41 @@ public static class StructuralTypeMapperRegistrar
 /// <summary>
 /// Standalone implementation of <see cref="IStructuralTypeMapper"/> that gets all mapping data
 /// from <see cref="TypeMappingsAttribute"/> declarations on assemblies.
-/// Does not depend on the old <see cref="TypeMapper"/> infrastructure at all.
+/// Automatically incorporates newly loaded assemblies on demand when a lookup misses.
 /// </summary>
 class StructuralTypeMapper : IStructuralTypeMapper
 {
-   readonly TypeNameMapper _typeNameMapper;
-   readonly Dictionary<Type, MappedTypeId> _typeToId;
-   readonly Dictionary<MappedTypeId, Type> _idToType;
-   readonly Dictionary<Type, MappedTypeId> _openGenericMappings;
+   volatile TypeNameMapper _typeNameMapper;
+   readonly ConcurrentDictionary<Type, MappedTypeId> _typeToId;
+   readonly ConcurrentDictionary<MappedTypeId, Type> _idToType;
+   readonly ConcurrentDictionary<Type, MappedTypeId> _openGenericMappings;
    readonly ConcurrentDictionary<Type, MappedTypeId> _constructedTypeCache = new();
    readonly ConcurrentDictionary<MappedTypeId, Type> _constructedReverseCache = new();
    readonly ConcurrentDictionary<Type, IReadOnlySet<MappedTypeId>> _assignableTypeCache = new();
+   readonly HashSet<Assembly> _processedAssemblies = [];
+   readonly object _incorporateLock = new();
+   volatile bool _incorporating;
 
-   StructuralTypeMapper(TypeNameMapper typeNameMapper, Dictionary<Type, MappedTypeId> typeToId, Dictionary<MappedTypeId, Type> idToType, Dictionary<Type, MappedTypeId> openGenericMappings)
+   StructuralTypeMapper(TypeNameMapper typeNameMapper, ConcurrentDictionary<Type, MappedTypeId> typeToId, ConcurrentDictionary<MappedTypeId, Type> idToType, ConcurrentDictionary<Type, MappedTypeId> openGenericMappings, HashSet<Assembly> processedAssemblies)
    {
       _typeNameMapper = typeNameMapper;
       _typeToId = typeToId;
       _idToType = idToType;
       _openGenericMappings = openGenericMappings;
+      _processedAssemblies = processedAssemblies;
    }
 
    public MappedTypeId GetId(Type type)
    {
       if(_typeToId.TryGetValue(type, out var id))
+         return id;
+
+      if(_constructedTypeCache.TryGetValue(type, out id))
+         return id;
+
+      IncorporateNewlyLoadedAssemblies();
+
+      if(_typeToId.TryGetValue(type, out id))
          return id;
 
       return _constructedTypeCache.GetOrAdd(type, ResolveConstructedTypeId);
@@ -92,11 +104,26 @@ class StructuralTypeMapper : IStructuralTypeMapper
          return type;
       if(_constructedReverseCache.TryGetValue(id, out type))
          return type;
+
+      IncorporateNewlyLoadedAssemblies();
+
+      if(_idToType.TryGetValue(id, out type))
+         return type;
+      if(_constructedReverseCache.TryGetValue(id, out type))
+         return type;
+
       throw new InvalidOperationException($"No type found for MappedTypeId: {id}");
    }
 
    public bool TryGetType(MappedTypeId id, [NotNullWhen(true)] out Type? type)
    {
+      if(_idToType.TryGetValue(id, out type))
+         return true;
+      if(_constructedReverseCache.TryGetValue(id, out type))
+         return true;
+
+      IncorporateNewlyLoadedAssemblies();
+
       if(_idToType.TryGetValue(id, out type))
          return true;
       return _constructedReverseCache.TryGetValue(id, out type);
@@ -165,18 +192,97 @@ class StructuralTypeMapper : IStructuralTypeMapper
    /// <summary>
    /// Creates a <see cref="StructuralTypeMapper"/> from all currently loaded assemblies
    /// that have <see cref="TypeMappingsAttribute"/> declarations.
+   /// Automatically incorporates newly loaded assemblies on demand when a lookup misses.
    /// </summary>
    internal static StructuralTypeMapper BuildFromLoadedAssemblies()
+      => BuildFromAssemblies(
+         AppDomain.CurrentDomain.GetAssemblies()
+                  .Where(assembly => assembly.GetCustomAttribute<TypeMappingsAttribute>() != null)
+                  .ToArray(),
+         AppDomain.CurrentDomain.GetAssemblies()
+                  .Where(TypeMapperAssemblyScanner.IsAssemblyWeShouldExamine)
+                  .ToArray());
+
+   void IncorporateNewlyLoadedAssemblies()
    {
-      var assembliesWithMappings = AppDomain.CurrentDomain.GetAssemblies()
-                                            .Where(assembly => assembly.GetCustomAttribute<TypeMappingsAttribute>() != null)
-                                            .ToArray();
+      if(_incorporating) return;
 
-      var allAssembliesToScan = AppDomain.CurrentDomain.GetAssemblies()
-                                         .Where(TypeMapperAssemblyScanner.IsAssemblyWeShouldExamine)
-                                         .ToArray();
+      var currentAssemblies = AppDomain.CurrentDomain.GetAssemblies();
+      var hasNew = currentAssemblies.Any(assembly => !_processedAssemblies.Contains(assembly));
+      if(!hasNew) return;
 
-      return BuildFromAssemblies(assembliesWithMappings, allAssembliesToScan);
+      lock(_incorporateLock)
+      {
+         _incorporating = true;
+         try
+         {
+         currentAssemblies = AppDomain.CurrentDomain.GetAssemblies();
+         var newAssembliesWithMappings = currentAssemblies
+            .Where(assembly => !_processedAssemblies.Contains(assembly) && assembly.GetCustomAttribute<TypeMappingsAttribute>() != null)
+            .ToArray();
+
+         var newAssembliesToScan = currentAssemblies
+            .Where(assembly => !_processedAssemblies.Contains(assembly) && TypeMapperAssemblyScanner.IsAssemblyWeShouldExamine(assembly))
+            .ToArray();
+
+         if(newAssembliesWithMappings.Length == 0 && newAssembliesToScan.Length == 0)
+         {
+            foreach(var assembly in currentAssemblies)
+               _processedAssemblies.Add(assembly);
+            return;
+         }
+
+         foreach(var assembly in newAssembliesWithMappings)
+         {
+            var attribute = assembly.GetCustomAttribute<TypeMappingsAttribute>()!;
+            var declaration = (ITypeMappingDeclaration)Activator.CreateInstance(attribute.DeclarationType)!;
+            var registrar = new TypeMappingRegistrar(assembly);
+            declaration.DeclareMappings(registrar);
+
+            foreach(var kvp in registrar.LeafTypeMappings)
+            {
+               var mappedId = new MappedTypeId(kvp.Value);
+               _typeToId.TryAdd(kvp.Key, mappedId);
+               _idToType.TryAdd(mappedId, kvp.Key);
+            }
+
+            foreach(var kvp in registrar.OpenGenericMappings)
+               _openGenericMappings.TryAdd(kvp.Key, new MappedTypeId(kvp.Value));
+         }
+
+         if(newAssembliesWithMappings.Length > 0)
+         {
+            var builder = new TypeNameMapperBuilder();
+            foreach(var assembly in _processedAssemblies.Concat(newAssembliesWithMappings)
+                                                        .Where(a => a.GetCustomAttribute<TypeMappingsAttribute>() != null))
+               builder.MapTypesFromAssembly(assembly);
+            _typeNameMapper = builder.Build();
+         }
+
+         foreach(var assembly in newAssembliesToScan)
+         {
+            var scannedTypes = TypeMapperAssemblyScanner.Scan(assembly);
+            foreach(var computedType in scannedTypes.ComputedTypeIdTypes)
+            {
+               if(CanResolve(computedType.Type) && !_typeToId.ContainsKey(computedType.Type))
+               {
+                  var id = GetId(computedType.Type);
+                  _typeToId.TryAdd(computedType.Type, id);
+                  _idToType.TryAdd(id, computedType.Type);
+               }
+            }
+         }
+
+         foreach(var assembly in currentAssemblies)
+            _processedAssemblies.Add(assembly);
+
+         _assignableTypeCache.Clear();
+         }
+         finally
+         {
+            _incorporating = false;
+         }
+      }
    }
 
    internal static StructuralTypeMapper BuildFromAssemblies(Assembly[] assembliesWithMappings, Assembly[]? assembliesToScanForConstructedTypes = null)
@@ -189,9 +295,9 @@ class StructuralTypeMapper : IStructuralTypeMapper
 
       // Build the leaf-type GUID dictionaries from the builder's registrar data.
       // Re-collect from the assemblies to get the leaf mappings.
-      var typeToId = new Dictionary<Type, MappedTypeId>();
-      var idToType = new Dictionary<MappedTypeId, Type>();
-      var openGenericMappings = new Dictionary<Type, MappedTypeId>();
+      var typeToId = new ConcurrentDictionary<Type, MappedTypeId>();
+      var idToType = new ConcurrentDictionary<MappedTypeId, Type>();
+      var openGenericMappings = new ConcurrentDictionary<Type, MappedTypeId>();
 
       foreach(var assembly in assembliesWithMappings)
       {
@@ -213,13 +319,16 @@ class StructuralTypeMapper : IStructuralTypeMapper
          }
       }
 
-      var mapper = new StructuralTypeMapper(typeNameMapper, typeToId, idToType, openGenericMappings);
+      var processedAssemblies = new HashSet<Assembly>(assembliesWithMappings);
+      var mapper = new StructuralTypeMapper(typeNameMapper, typeToId, idToType, openGenericMappings, processedAssemblies);
 
       // Pre-scan assemblies for constructed generic types so their IDs are in the reverse cache.
       // This is needed so that remote endpoints can resolve MappedTypeIds back to Types.
       var scanAssemblies = assembliesToScanForConstructedTypes ?? assembliesWithMappings;
       foreach(var assembly in scanAssemblies)
       {
+         processedAssemblies.Add(assembly);
+
          if(!TypeMapperAssemblyScanner.IsAssemblyWeShouldExamine(assembly))
             continue;
 
