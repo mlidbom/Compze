@@ -4,9 +4,9 @@ using Compze.Internals.SystemCE;
 
 namespace Compze.Internals.Serialization.Newtonsoft.Private;
 
-class RenamingDecorator(ITypeMapper typeMapper)
+class RenamingDecorator(IStructuralTypeMapper typeMapper)
 {
-   readonly ITypeMapper _typeMapper = typeMapper;
+   readonly IStructuralTypeMapper _typeMapper = typeMapper;
 
    static readonly LazyCE<Regex> FindTypeNames = new(() => new Regex("""
                                                                      "\$type"\: "([^"]*)"
@@ -20,7 +20,7 @@ class RenamingDecorator(ITypeMapper typeMapper)
       var type = Type.GetType(match.Groups[1].Value);
       var typeId = _typeMapper.GetId(type!);
       return $"""
-              "$type": "{typeId}"
+              "$type": "{typeId.GuidValue}"
               """;
    }
 
@@ -28,7 +28,7 @@ class RenamingDecorator(ITypeMapper typeMapper)
 
    string ReplaceTypeIdsWithTypeNames(Match match)
    {
-      var typeId = new TypeId(Guid.Parse(match.Groups[1].Value));
+      var typeId = new MappedTypeId(Guid.Parse(match.Groups[1].Value));
       var type = _typeMapper.GetType(typeId);
       return $"""
               "$type": "{type.AssemblyQualifiedName}"

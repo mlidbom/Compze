@@ -19,7 +19,7 @@ public class TypermediaEndpointInformation
 #pragma warning restore CS8618
    // ReSharper restore MemberCanBeInternal
 
-   internal TypermediaEndpointInformation(IEnumerable<TypeId> handledTypermediaTypeIds, EndpointConfiguration configuration)
+   internal TypermediaEndpointInformation(IEnumerable<MappedTypeId> handledTypermediaTypeIds, EndpointConfiguration configuration)
    {
       Id = configuration.Id;
       Name = configuration.Name;
@@ -29,7 +29,7 @@ public class TypermediaEndpointInformation
    // ReSharper disable MemberCanBeInternal — Serialized across assemblies via Newtonsoft reflection
    public string Name { get; private set; }
    public EndpointId Id { get; private set; }
-   public HashSet<TypeId> HandledTypermediaTypes { get; private set; }
+   public HashSet<MappedTypeId> HandledTypermediaTypes { get; private set; }
    // ReSharper restore MemberCanBeInternal
 }
 

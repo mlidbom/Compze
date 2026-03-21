@@ -39,14 +39,14 @@ partial class MsSqlDocumentDbSqlLayer : IDocumentDbSqlLayer
             connection.UseCommand(command => command.SetCommandText($"UPDATE {Schema.TableName} SET {Schema.Value} = @{Schema.Value}, {Schema.Updated} = @{Schema.Updated} WHERE {Schema.Id} = @{Schema.Id} AND {Schema.ValueTypeId} = @{Schema.ValueTypeId}")
                                                     .AddNVarcharParameter(Schema.Id, 500, writeRow.Id)
                                                     .AddDateTime2Parameter(Schema.Updated, writeRow.UpdateTime)
-                                                    .AddParameter(Schema.ValueTypeId, writeRow.TypeId.Value)
+                                                    .AddParameter(Schema.ValueTypeId, writeRow.TypeId.GuidValue)
                                                     .AddNVarcharMaxParameter(Schema.Value, writeRow.SerializedDocument)
                                                     .ExecuteNonQuery());
          }
       });
    }
 
-   public bool TryGet(string idString, IReadOnlySet<TypeId> acceptableTypeIds, bool useUpdateLock, [NotNullWhen(true)] out IDocumentDbSqlLayer.ReadRow? document)
+   public bool TryGet(string idString, IReadOnlySet<MappedTypeId> acceptableTypeIds, bool useUpdateLock, [NotNullWhen(true)] out IDocumentDbSqlLayer.ReadRow? document)
    {
       EnsureInitialized();
 
@@ -77,7 +77,7 @@ partial class MsSqlDocumentDbSqlLayer : IDocumentDbSqlLayer
          {
             command.SetCommandText($"INSERT INTO {Schema.TableName}({Schema.Id}, {Schema.ValueTypeId}, {Schema.Value}, {Schema.Created}, {Schema.Updated}) VALUES(@{Schema.Id}, @{Schema.ValueTypeId}, @{Schema.Value}, @{Schema.Created}, @{Schema.Updated})")
                    .AddNVarcharParameter(Schema.Id, 500, row.Id)
-                   .AddParameter(Schema.ValueTypeId, row.TypeId.Value)
+                   .AddParameter(Schema.ValueTypeId, row.TypeId.GuidValue)
                    .AddDateTime2Parameter(Schema.Created, row.UpdateTime)
                    .AddDateTime2Parameter(Schema.Updated, row.UpdateTime)
                    .AddNVarcharMaxParameter(Schema.Value, row.SerializedDocument)
@@ -90,7 +90,7 @@ partial class MsSqlDocumentDbSqlLayer : IDocumentDbSqlLayer
       }
    }
 
-   public int Remove(string idString, IReadOnlySet<TypeId> acceptableTypes)
+   public int Remove(string idString, IReadOnlySet<MappedTypeId> acceptableTypes)
    {
       EnsureInitialized();
       return _connectionPool.UseCommand(command =>
@@ -99,14 +99,14 @@ partial class MsSqlDocumentDbSqlLayer : IDocumentDbSqlLayer
                                                   .ExecuteNonQuery());
    }
 
-   public IEnumerable<Guid> GetAllIds(IReadOnlySet<TypeId> acceptableTypes)
+   public IEnumerable<Guid> GetAllIds(IReadOnlySet<MappedTypeId> acceptableTypes)
    {
       EnsureInitialized();
       return _connectionPool.UseCommand(command => command.SetCommandText($"SELECT {Schema.Id} FROM {Schema.TableName} WHERE {Schema.ValueTypeId} {TypeInClause(acceptableTypes)}")
                                                           .ExecuteReaderAndSelect(reader => reader.GetGuidFromString(0))); //urgent: Huh, we store string but require them to be Guid!?
    }
 
-   public IReadOnlyList<IDocumentDbSqlLayer.ReadRow> GetAll(IEnumerable<Guid> ids, IReadOnlySet<TypeId> acceptableTypes)
+   public IReadOnlyList<IDocumentDbSqlLayer.ReadRow> GetAll(IEnumerable<Guid> ids, IReadOnlySet<MappedTypeId> acceptableTypes)
    {
       EnsureInitialized();
       return _connectionPool.UseCommand(command => command.SetCommandText($"""
@@ -116,14 +116,14 @@ partial class MsSqlDocumentDbSqlLayer : IDocumentDbSqlLayer
                                                           .ExecuteReaderAndSelect(reader => new IDocumentDbSqlLayer.ReadRow(reader.GetGuid(2), reader.GetString(1))));
    }
 
-   public IReadOnlyList<IDocumentDbSqlLayer.ReadRow> GetAll(IReadOnlySet<TypeId> acceptableTypes)
+   public IReadOnlyList<IDocumentDbSqlLayer.ReadRow> GetAll(IReadOnlySet<MappedTypeId> acceptableTypes)
    {
       EnsureInitialized();
       return _connectionPool.UseCommand(command => command.SetCommandText($"SELECT {Schema.Id}, {Schema.Value}, {Schema.ValueTypeId} FROM {Schema.TableName} WHERE {Schema.ValueTypeId} {TypeInClause(acceptableTypes)}")
                                                           .ExecuteReaderAndSelect(reader => new IDocumentDbSqlLayer.ReadRow(reader.GetGuid(2), reader.GetString(1))));
    }
 
-   static string TypeInClause(IReadOnlySet<TypeId> acceptableTypeIds) => Contract.Argument.Assert(acceptableTypeIds.Any()).__("IN( '" + acceptableTypeIds.Select(guid => guid.ToString()).Join("', '") + "')\n");
+   static string TypeInClause(IReadOnlySet<MappedTypeId> acceptableTypeIds) => Contract.Argument.Assert(acceptableTypeIds.Any()).__("IN( '" + acceptableTypeIds.Select(id => id.GuidValue.ToString()).Join("', '") + "')\n");
 
    static string UseUpdateLock(bool useUpdateLock) => useUpdateLock ? "With(UPDLOCK, ROWLOCK)" : "";
 

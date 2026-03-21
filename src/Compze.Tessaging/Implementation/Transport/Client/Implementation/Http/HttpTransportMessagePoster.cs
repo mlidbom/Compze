@@ -45,7 +45,7 @@ class HttpTransportMessagePoster : ITransportMessagePoster
 
       using var content = new StringContent(tessage.Body);
       content.Headers.Add(HttpConstants.Headers.TessageId, tessage.TessageId.ToString());
-      content.Headers.Add(HttpConstants.Headers.PayLoadTypeId, tessage.Type.ToString());
+      content.Headers.Add(HttpConstants.Headers.PayLoadTypeId, tessage.Type.GuidValue.ToString());
       var response = await httpClient.PostAsync(requestUri, content).caf();
       if(!response.IsSuccessStatusCode)
       {

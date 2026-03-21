@@ -21,7 +21,7 @@ namespace Compze.Tessaging.Teventive.TeventStore;
 #pragma warning disable CA1724 // Type name intentionally matches namespace concept
 [UsedImplicitly] partial class TeventStore : ITeventStore
 {
-   readonly ITypeMapper _typeMapper;
+   readonly IStructuralTypeMapper _typeMapper;
    readonly ITeventStoreSerializer _serializer;
    static readonly ILogger Log = CompzeLogger.For<TeventStore>();
 
@@ -34,10 +34,10 @@ namespace Compze.Tessaging.Teventive.TeventStore;
 
    internal static void RegisterWith(IComponentRegistrar registrar, Func<IReadOnlyList<ITeventMigration>> migrations)
       => registrar.Register(Scoped.For<ITeventStore>()
-                                  .CreatedBy((ITeventStoreSqlLayer sqlLayer, ITypeMapper typeMapper, ITeventStoreSerializer serializer, TeventCache cache) =>
+                                  .CreatedBy((ITeventStoreSqlLayer sqlLayer, IStructuralTypeMapper typeMapper, ITeventStoreSerializer serializer, TeventCache cache) =>
                                                 new TeventStore(sqlLayer, typeMapper, serializer, cache, migrations())));
 
-   public TeventStore(ITeventStoreSqlLayer sqlLayer, ITypeMapper typeMapper, ITeventStoreSerializer serializer, TeventCache cache, IEnumerable<ITeventMigration> migrations)
+   public TeventStore(ITeventStoreSqlLayer sqlLayer, IStructuralTypeMapper typeMapper, ITeventStoreSerializer serializer, TeventCache cache, IEnumerable<ITeventMigration> migrations)
    {
       _typeMapper = typeMapper;
       _serializer = serializer;
@@ -193,7 +193,7 @@ namespace Compze.Tessaging.Teventive.TeventStore;
 
       _sqlLayer.SetupSchemaIfDatabaseUnInitialized();
       return _sqlLayer.ListTaggregateIdsInCreationOrder()
-                              .Where(it => teventType == null || teventType.IsAssignableFrom(_typeMapper.GetType(new TypeId(it.TypeId))))
+                              .Where(it => teventType == null || teventType.IsAssignableFrom(_typeMapper.GetType(new MappedTypeId(it.TypeId))))
                               .Select(it => it.TaggregateId);
    }
 

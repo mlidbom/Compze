@@ -33,7 +33,7 @@ public class TestClient : IAsyncDisposable
                .CurrentTestsSerializersIfNotClonedContainer()
                .CurrentTestsClientTransport()
                .JSonAppConfigFileConfigurationParameterProvider()
-               .TypeMapper()
+               .StructuralTypeMapper()
                .TypermediaRouter()
                .SingletonRemoteTypermediaNavigator();
 

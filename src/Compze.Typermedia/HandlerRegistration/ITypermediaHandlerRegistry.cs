@@ -12,5 +12,5 @@ public interface ITypermediaHandlerRegistry
    Func<IStrictlyLocalTuery<TTuery, TResult>, TResult> GetTueryHandler<TTuery, TResult>(IStrictlyLocalTuery<TTuery, TResult> tuery) where TTuery : IStrictlyLocalTuery<TTuery, TResult>;
    Func<ITommand<TResult>, TResult> GetTommandHandler<TResult>(ITommand<TResult> tommand);
 
-   ISet<TypeId> HandledRemoteTypermediaTypeIds();
+   ISet<MappedTypeId> HandledRemoteTypermediaTypeIds();
 }

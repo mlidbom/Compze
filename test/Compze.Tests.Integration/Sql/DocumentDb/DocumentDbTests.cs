@@ -356,17 +356,17 @@ public class DocumentDbTests : DocumentDbTestsBase
     }
 
     [PCT]
-    public void HandlesHashSets()
+    public void HandlesNestedHashSets()
     {
         var user = new User();
-        var userSet = new HashSet<User> { user };
+        var userSet = new UserSet { Users = [user] };
 
         UseInTransactionalScope((_, updater) => updater.Save(user.Id, userSet));
 
         UseInScope(reader =>
         {
-            var loadedUser = reader.Get<HashSet<User>>(user.Id);
-            loadedUser.Count.Must().Be(1);
+            var loadedUser = reader.Get<UserSet>(user.Id);
+            loadedUser.Users.Count.Must().Be(1);
         });
     }
 

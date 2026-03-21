@@ -24,17 +24,17 @@ class TypermediaRouter : ITypermediaRouter, IDisposable
    public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(
             Singleton.For<ITypermediaRouter, ITypermediaRouting>().CreatedBy(
-               (ITypeMapper typeMapper, ITypermediaTransport transport, IInfrastructureQueryTransport infrastructureQueryTransport)
+               (IStructuralTypeMapper typeMapper, ITypermediaTransport transport, IInfrastructureQueryTransport infrastructureQueryTransport)
                   => new TypermediaRouter(typeMapper, transport, infrastructureQueryTransport)));
 
-   TypermediaRouter(ITypeMapper typeMapper, ITypermediaTransport transport, IInfrastructureQueryTransport infrastructureQueryTransport)
+   TypermediaRouter(IStructuralTypeMapper typeMapper, ITypermediaTransport transport, IInfrastructureQueryTransport infrastructureQueryTransport)
    {
       _typeMapper = typeMapper;
       _transport = transport;
       _infrastructureQueryTransport = infrastructureQueryTransport;
    }
 
-   readonly ITypeMapper _typeMapper;
+   readonly IStructuralTypeMapper _typeMapper;
    readonly ITypermediaTransport _transport;
    readonly IInfrastructureQueryTransport _infrastructureQueryTransport;
    readonly IMonitor _monitor = IMonitor.New();
@@ -59,7 +59,7 @@ class TypermediaRouter : ITypermediaRouter, IDisposable
       } 
    }
 
-   void RegisterRoutes(TypermediaConnection connection, ISet<TypeId> handledTypeIds)
+   void RegisterRoutes(TypermediaConnection connection, ISet<MappedTypeId> handledTypeIds)
    {
       var tommandHandlerRoutes = new Dictionary<Type, TypermediaConnection>();
       var tueryHandlerRoutes = new Dictionary<Type, TypermediaConnection>();

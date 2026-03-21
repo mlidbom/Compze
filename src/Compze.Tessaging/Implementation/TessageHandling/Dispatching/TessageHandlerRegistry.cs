@@ -19,12 +19,12 @@ public static class TessageHandlerRegistryRegistrar
 {
    public static IComponentRegistrar TessageHandlerRegistry(this IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<ITessageHandlerRegistrar, ITessageHandlerRegistry, TessageHandlerRegistry>()
-                                     .CreatedBy((ITypeMapper typeMapper) => new TessageHandlerRegistry(typeMapper)));
+                                     .CreatedBy((IStructuralTypeMapper typeMapper) => new TessageHandlerRegistry(typeMapper)));
 }
 
-sealed class TessageHandlerRegistry(ITypeMapper typeMapper) : ITessageHandlerRegistrar, ITessageHandlerRegistry
+sealed class TessageHandlerRegistry(IStructuralTypeMapper typeMapper) : ITessageHandlerRegistrar, ITessageHandlerRegistry
 {
-   readonly ITypeMapper _typeMapper = typeMapper;
+   readonly IStructuralTypeMapper _typeMapper = typeMapper;
    IReadOnlyDictionary<Type, Action<object>> _tommandHandlers = new Dictionary<Type, Action<object>>();
    IReadOnlyDictionary<Type, IReadOnlyList<Action<ITevent>>> _teventHandlers = new Dictionary<Type, IReadOnlyList<Action<ITevent>>>();
    IReadOnlyList<TeventHandlerRegistration> _teventHandlerRegistrations = new List<TeventHandlerRegistration>();
@@ -83,7 +83,7 @@ sealed class TessageHandlerRegistry(ITypeMapper typeMapper) : ITessageHandlerReg
       return dispatcher;
    }
 
-   public ISet<TypeId> HandledRemoteTessageTypeIds()
+   public ISet<MappedTypeId> HandledRemoteTessageTypeIds()
    {
       var handledTypes = _tommandHandlers.Keys
                                          .Concat(_teventHandlerRegistrations.Select(reg => reg.Type))

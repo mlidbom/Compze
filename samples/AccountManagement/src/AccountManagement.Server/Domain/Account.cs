@@ -4,6 +4,7 @@ using AccountManagement.Domain.Registration;
 using AccountManagement.Domain.Tevents;
 using CommunityToolkit.Diagnostics;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public;
+using Compze.Internals.Logging;
 using Compze.Typermedia;
 
 namespace AccountManagement.Domain;
@@ -11,6 +12,7 @@ namespace AccountManagement.Domain;
 ///Completely encapsulates all the business logic for an account.  Should make it impossible for clients to use the class incorrectly.
 class Account : Taggregate<Account, IAccountTevent, AccountTevent, IAccountTevent<IAccountTevent>, AccountTevent<AccountTevent>>, IAccountResourceData
 {
+   static readonly ILogger Log = CompzeLogger.For<Account>();
    public Email Email { get; private set; } = null!;       //Never public setters on an taggregate. AssertInvariantsAreMet guarantees not null status.
    public Password Password { get; private set; } = null!; //Never public setters on an taggregate. AssertInvariantsAreMet guarantees not null status.
 
@@ -55,6 +57,7 @@ class Account : Taggregate<Account, IAccountTevent, AccountTevent, IAccountTeven
       //The email is the unique identifier for logging into the account so duplicates are forbidden.
       if(navigator.Execute(InternalApi.Tueries.TryGetByEmail(email)) is not null)
       {
+         Log.Warning($"Registration Failed. Email {email} is already registered.");
          return (RegistrationAttemptStatus.EmailAlreadyRegistered, null);
       }
 

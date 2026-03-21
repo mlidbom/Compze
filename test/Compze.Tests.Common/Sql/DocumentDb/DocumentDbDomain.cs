@@ -41,3 +41,8 @@ public record Email(string TheEmail)
 {
    public string TheEmail { get; private set; } = TheEmail;
 }
+
+public class UserSet
+{
+   public HashSet<User> Users { get; set; } = new();
+}

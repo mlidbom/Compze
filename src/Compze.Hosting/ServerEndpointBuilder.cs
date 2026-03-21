@@ -76,8 +76,8 @@ class ServerEndpointBuilder : IEndpointBuilder, IAsyncDisposable, IDisposable
 
       Configuration = configuration;
 
-      _tessagingRegistry = new TessageHandlerRegistry(TypeMapper.Instance);
-      _typermediaRegistry = new TypermediaHandlerRegistry(TypeMapper.Instance);
+      _tessagingRegistry = new TessageHandlerRegistry(StructuralTypeMapperRegistrar.CreateFromLoadedAssemblies());
+      _typermediaRegistry = new TypermediaHandlerRegistry(StructuralTypeMapperRegistrar.CreateFromLoadedAssemblies());
       var serviceLocator = new LazyCE<IServiceLocator>(() => Container.ServiceLocator);
       RegisterTessagingHandlers = new TessageHandlerRegistrarWithDependencyInjectionSupport(_tessagingRegistry, serviceLocator);
       RegisterTypermediaHandlers = new TypermediaHandlerRegistrarWithDependencyInjectionSupport(_typermediaRegistry, serviceLocator);
@@ -88,7 +88,7 @@ class ServerEndpointBuilder : IEndpointBuilder, IAsyncDisposable, IDisposable
       var register = Container.Register();
       //Universal stuff here
       register.JSonAppConfigFileConfigurationParameterProvider()
-              .TypeMapper();
+              .StructuralTypeMapper();
 
       //Only endpoint stuff after here
       //todo: Find cleaner way of doing this.

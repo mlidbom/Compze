@@ -15,19 +15,19 @@ namespace Compze.Internals.Transport.AspNet;
 public class InfrastructureQueryController : Controller
 {
    readonly IRemotableTessageSerializer _serializer;
-   readonly ITypeMapper _typeMapper;
+   readonly IStructuralTypeMapper _typeMapper;
    readonly InfrastructureQueryExecutor _executor;
 
    public static void RegisterWith(IComponentRegistrar registrar) =>
       registrar.Register(
          Scoped.For<InfrastructureQueryController>()
                .CreatedBy((IRemotableTessageSerializer serializer,
-                           ITypeMapper typeMapper,
+                           IStructuralTypeMapper typeMapper,
                            InfrastructureQueryExecutor executor)
                              => new InfrastructureQueryController(serializer, typeMapper, executor)));
 
    InfrastructureQueryController(IRemotableTessageSerializer serializer,
-                                 ITypeMapper typeMapper,
+                                 IStructuralTypeMapper typeMapper,
                                  InfrastructureQueryExecutor executor)
    {
       _serializer = serializer;
@@ -39,7 +39,7 @@ public class InfrastructureQueryController : Controller
    public async Task<IActionResult> Query()
    {
       var typeIdStr = Request.Headers[HttpConstants.Headers.PayLoadTypeId][0]._assert().NotNull();
-      var typeId = new TypeId(Guid.Parse(typeIdStr));
+      var typeId = new MappedTypeId(Guid.Parse(typeIdStr));
       var queryType = _typeMapper.GetType(typeId);
 
       using var reader = new StreamReader(HttpContext.Request.Body);

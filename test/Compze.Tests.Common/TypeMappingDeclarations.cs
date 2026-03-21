@@ -29,6 +29,7 @@ class TypeMappingDeclarations : ITypeMappingDeclaration
          .Map<Sql.DocumentDb.Email>("b0c1d2e3-f4a5-6789-0abc-def012345678")
          .Map<Sql.DocumentDb.Person>("95204c89-46f6-4dac-af3e-957fb547cc3a")
          .Map<Sql.DocumentDb.User>("d40010d2-912a-4496-b7c8-2b1cec7297d2")
+         .Map<Sql.DocumentDb.UserSet>("A4F4E620-1889-4C0C-90F1-772B16C65075")
          .Map<Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler.IMyExactlyOnceTevent>("91db1fa3-d379-4485-9904-0e8a7a21566f")
          .Map<Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler.IMyTaggregateTevent>("919c31dd-596e-4b80-a5fd-13af2319ee16")
          .Map<Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler.IMyTaggregateTevent.Created>("7b4dbf40-39c6-4403-b622-482e98c73601")

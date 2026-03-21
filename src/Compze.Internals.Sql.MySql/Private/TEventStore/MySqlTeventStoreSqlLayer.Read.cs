@@ -33,7 +33,7 @@ partial class MySqlTeventStoreSqlLayer(MySqlTeventStoreConnectionManager connect
    static TeventDataRow ReadDataRow(MySqlDataReader teventReader)
    {
       return new TeventDataRow(
-         teventType: new TypeId(teventReader.GetGuid(0)),
+         teventType: new MappedTypeId(teventReader.GetGuid(0)),
          teventJson: teventReader.GetString(1),
          teventId: new TessageId(teventReader.GetGuid(4)),
          taggregateVersion: teventReader.GetInt32(3),

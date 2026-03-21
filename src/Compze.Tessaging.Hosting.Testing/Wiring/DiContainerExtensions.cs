@@ -54,7 +54,7 @@ public static class DiContainerExtensions
       var container = @this.CreateWithServiceLocatorAndCurrentTestsPluggableComponents();
 #pragma warning restore CA2000
       container.Register()
-               .TypeMapper()
+               .StructuralTypeMapper()
                .DummyConfigurationParameterProvider()
                .TessageHandlerRegistry()
                .TypermediaHandlerRegistry()

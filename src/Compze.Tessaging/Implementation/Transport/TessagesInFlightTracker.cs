@@ -10,7 +10,7 @@ using Compze.Threading.ResourceAccess;
 
 namespace Compze.Tessaging.Implementation.Transport;
 
-public class TessagesInFlightTracker(ITypeMapper typeMapper) : ITessagesInFlightTracker
+public class TessagesInFlightTracker(IStructuralTypeMapper typeMapper) : ITessagesInFlightTracker
 {
    readonly IAwaitableThreadShared<NonThreadSafeImplementation> _implementation = IAwaitableThreadShared.New(new NonThreadSafeImplementation(typeMapper));
 
@@ -43,9 +43,9 @@ public class TessagesInFlightTracker(ITypeMapper typeMapper) : ITessagesInFlight
       internal Dictionary<EndpointId, bool> EndpointDeliveryStatus { get; } = [];
    }
 
-   class NonThreadSafeImplementation(ITypeMapper typeMapper)
+   class NonThreadSafeImplementation(IStructuralTypeMapper typeMapper)
    {
-      readonly ITypeMapper _typeMapper = typeMapper;
+      readonly IStructuralTypeMapper _typeMapper = typeMapper;
       readonly Dictionary<TessageId, InFlightTessage> _trackedTessages = [];
 
       readonly List<Exception> _busExceptions = [];
@@ -58,7 +58,7 @@ public class TessagesInFlightTracker(ITypeMapper typeMapper) : ITessagesInFlight
                                                          () => new InFlightTessage
                                                                {
                                                                   TessageId = transportTessage.TessageId,
-                                                                  TypeName = _typeMapper.GetType(transportTessage.Type).FullName ?? transportTessage.Type.ToString(),
+                                                                  TypeName = _typeMapper.GetType(transportTessage.Type).FullName ?? transportTessage.Type.GuidValue.ToString(),
                                                                   Body = transportTessage.Body
                                                                });
 

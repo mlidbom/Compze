@@ -20,13 +20,13 @@ class HttpTypermediaTransport : ITypermediaTransport
 {
    public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<ITypermediaTransport>()
-                                     .CreatedBy((IHttpClientFactoryCE factory, IRemotableTessageSerializer serializer, ITypeMapper typeMapper) => new HttpTypermediaTransport(factory, serializer, typeMapper)));
+                                     .CreatedBy((IHttpClientFactoryCE factory, IRemotableTessageSerializer serializer, IStructuralTypeMapper typeMapper) => new HttpTypermediaTransport(factory, serializer, typeMapper)));
 
    readonly IHttpClientFactoryCE _httpClientFactory;
    readonly IRemotableTessageSerializer _serializer;
-   readonly ITypeMapper _typeMapper;
+   readonly IStructuralTypeMapper _typeMapper;
 
-   HttpTypermediaTransport(IHttpClientFactoryCE httpClientFactory, IRemotableTessageSerializer serializer, ITypeMapper typeMapper)
+   HttpTypermediaTransport(IHttpClientFactoryCE httpClientFactory, IRemotableTessageSerializer serializer, IStructuralTypeMapper typeMapper)
    {
       _httpClientFactory = httpClientFactory;
       _serializer = serializer;
@@ -61,7 +61,7 @@ class HttpTypermediaTransport : ITypermediaTransport
       using var httpClient = _httpClientFactory.CreateClient();
       using var content = new StringContent(body);
       content.Headers.Add(HttpConstants.Headers.TessageId, ((tessage as IAtMostOnceTessage)?.Id ?? new TessageId()).ToString());
-      content.Headers.Add(HttpConstants.Headers.PayLoadTypeId, typeId.ToString());
+      content.Headers.Add(HttpConstants.Headers.PayLoadTypeId, typeId.GuidValue.ToString());
 
       var response = await httpClient.PostAsync(requestUri, content).caf();
       if(!response.IsSuccessStatusCode)

@@ -27,14 +27,14 @@ partial class SqliteDocumentDbSqlLayer(ISqliteConnectionPool connectionPool, Sql
                command => command.SetCommandText($"UPDATE {Schema.TableName} SET {Schema.Value} = @{Schema.Value}, {Schema.Updated} = @{Schema.Updated} WHERE {Schema.Id} = @{Schema.Id} AND {Schema.ValueTypeId} = @{Schema.ValueTypeId}")
                                  .AddMediumTextParameter(Schema.Id, writeRow.Id)
                                  .AddDateTime2Parameter(Schema.Updated, writeRow.UpdateTime)
-                                 .AddMediumTextParameter(Schema.ValueTypeId, writeRow.TypeId.ToString())
+                                 .AddMediumTextParameter(Schema.ValueTypeId, writeRow.TypeId.GuidValue.ToString())
                                  .AddMediumTextParameter(Schema.Value, writeRow.SerializedDocument)
                                  .ExecuteNonQuery());
          }
       });
    }
 
-   public bool TryGet(string idString, IReadOnlySet<TypeId> acceptableTypeIds, bool useUpdateLock, [NotNullWhen(true)] out IDocumentDbSqlLayer.ReadRow? document)
+   public bool TryGet(string idString, IReadOnlySet<MappedTypeId> acceptableTypeIds, bool useUpdateLock, [NotNullWhen(true)] out IDocumentDbSqlLayer.ReadRow? document)
    {
       EnsureInitialized();
 
@@ -67,7 +67,7 @@ partial class SqliteDocumentDbSqlLayer(ISqliteConnectionPool connectionPool, Sql
 
             command.SetCommandText($"INSERT INTO {Schema.TableName}({Schema.Id}, {Schema.ValueTypeId}, {Schema.Value}, {Schema.Created}, {Schema.Updated}) VALUES(@{Schema.Id}, @{Schema.ValueTypeId}, @{Schema.Value}, @{Schema.Created}, @{Schema.Updated})")
                    .AddMediumTextParameter(Schema.Id, row.Id)
-                   .AddMediumTextParameter(Schema.ValueTypeId, row.TypeId.ToString())
+                   .AddMediumTextParameter(Schema.ValueTypeId, row.TypeId.GuidValue.ToString())
                    .AddDateTime2Parameter(Schema.Created, row.UpdateTime)
                    .AddDateTime2Parameter(Schema.Updated, row.UpdateTime)
                    .AddMediumTextParameter(Schema.Value, row.SerializedDocument)
@@ -80,7 +80,7 @@ partial class SqliteDocumentDbSqlLayer(ISqliteConnectionPool connectionPool, Sql
       }
    }
 
-   public int Remove(string idString, IReadOnlySet<TypeId> acceptableTypes)
+   public int Remove(string idString, IReadOnlySet<MappedTypeId> acceptableTypes)
    {
       EnsureInitialized();
       return _connectionPool.UseCommand(
@@ -90,7 +90,7 @@ partial class SqliteDocumentDbSqlLayer(ISqliteConnectionPool connectionPool, Sql
                    .ExecuteNonQuery());
    }
 
-   public IEnumerable<Guid> GetAllIds(IReadOnlySet<TypeId> acceptableTypes)
+   public IEnumerable<Guid> GetAllIds(IReadOnlySet<MappedTypeId> acceptableTypes)
    {
       EnsureInitialized();
       return _connectionPool.UseCommand(
@@ -98,7 +98,7 @@ partial class SqliteDocumentDbSqlLayer(ISqliteConnectionPool connectionPool, Sql
                            .ExecuteReaderAndSelect(reader => reader.GetGuidFromString(0)));
    }
 
-   public IReadOnlyList<IDocumentDbSqlLayer.ReadRow> GetAll(IEnumerable<Guid> ids, IReadOnlySet<TypeId> acceptableTypes)
+   public IReadOnlyList<IDocumentDbSqlLayer.ReadRow> GetAll(IEnumerable<Guid> ids, IReadOnlySet<MappedTypeId> acceptableTypes)
    {
       EnsureInitialized();
       return _connectionPool.UseCommand(
@@ -109,7 +109,7 @@ partial class SqliteDocumentDbSqlLayer(ISqliteConnectionPool connectionPool, Sql
                            .ExecuteReaderAndSelect(reader => new IDocumentDbSqlLayer.ReadRow(reader.GetGuidFromString(2), reader.GetString(1))));
    }
 
-   public IReadOnlyList<IDocumentDbSqlLayer.ReadRow> GetAll(IReadOnlySet<TypeId> acceptableTypes)
+   public IReadOnlyList<IDocumentDbSqlLayer.ReadRow> GetAll(IReadOnlySet<MappedTypeId> acceptableTypes)
    {
       EnsureInitialized();
       return _connectionPool.UseCommand(
@@ -117,7 +117,7 @@ partial class SqliteDocumentDbSqlLayer(ISqliteConnectionPool connectionPool, Sql
                            .ExecuteReaderAndSelect(reader => new IDocumentDbSqlLayer.ReadRow(Guid.Parse(reader.GetString(2)), reader.GetString(1))));
    }
 
-   static string TypeInClause(IReadOnlySet<TypeId> acceptableTypeIds) => Contract.Argument.Assert(acceptableTypeIds.Any()).__("IN( '" + acceptableTypeIds.Select(guid => guid.ToString()).Join("', '") + "')\n");
+   static string TypeInClause(IReadOnlySet<MappedTypeId> acceptableTypeIds) => Contract.Argument.Assert(acceptableTypeIds.Any()).__("IN( '" + acceptableTypeIds.Select(id => id.GuidValue.ToString()).Join("', '") + "')\n");
 
    void EnsureInitialized() => _schemaManager.EnsureSchemaInitialized();
 }

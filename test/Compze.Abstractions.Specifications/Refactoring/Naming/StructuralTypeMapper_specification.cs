@@ -17,7 +17,7 @@ namespace Compze.Abstractions.Specifications.Refactoring.Naming;
 public class StructuralTypeMapper_specification
 {
    static StructuralTypeMapper BuildMapper()
-      => StructuralTypeMapper.BuildFromAssemblies(typeof(Compze.Abstractions.TypeMappingDeclarations).Assembly);
+      => StructuralTypeMapper.BuildFromAssemblies([typeof(Compze.Abstractions.TypeMappingDeclarations).Assembly]);
 
    public class When_built_from_assembly_with_TypeMappings_attribute : StructuralTypeMapper_specification
    {

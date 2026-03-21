@@ -10,17 +10,17 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Compze.Tessaging.Hosting.AspNetCore.Private;
 
-public abstract class ControllerBase(IRemotableTessageSerializer serializer, ITypeMapper typeMapper, IInbox inbox) : Controller
+public abstract class ControllerBase(IRemotableTessageSerializer serializer, IStructuralTypeMapper typeMapper, IInbox inbox) : Controller
 {
    readonly IRemotableTessageSerializer _serializer = serializer;
-   readonly ITypeMapper _typeMapper = typeMapper;
+   readonly IStructuralTypeMapper _typeMapper = typeMapper;
    protected IInbox Inbox { get; } = inbox;
 
    protected async Task<TransportTessage.InComing> CreateIncomingTessage()
    {
       var tessageId = new TessageId(Guid.Parse(Request.Headers[HttpConstants.Headers.TessageId][0]._assert().NotNull()));
       var typeIdStr = Request.Headers[HttpConstants.Headers.PayLoadTypeId][0]._assert().NotNull();
-      var typeId = new TypeId(Guid.Parse(typeIdStr));
+      var typeId = new MappedTypeId(Guid.Parse(typeIdStr));
 
       using var reader = new StreamReader(HttpContext.Request.Body);
       var tueryJson = await reader.ReadToEndAsync().caf();

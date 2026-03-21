@@ -14,7 +14,8 @@ public class _041_After_a_user_changes_their_email : UserStoryTest
    {
       await base.InitializeAsyncInternal();
       _registerAccountScenario = Scenario.Register;
-      var (_, account) = _registerAccountScenario.Execute();
+      var (result, account) = _registerAccountScenario.Execute();
+      if(result.Status != RegistrationAttemptStatus.Successful) throw new Exception($"Registration failed. Status: {result.Status.ToString()}");
       _changeEmailScenario = Scenario.ChangeEmail(account!);
       _changeEmailScenario.Execute();
    }

@@ -12,7 +12,7 @@ partial class PgSqlInboxSqlLayer(IPgSqlConnectionPool connectionFactory, PgSqlSq
    readonly IPgSqlConnectionPool _connectionFactory = connectionFactory;
    readonly PgSqlSqlLayerSchemaManager _schemaManager = schemaManager;
 
-   public IServiceBusSqlLayer.SaveTessageResult SaveTessage(TessageId tessageId, TypeId typeId, string serializedTessage)
+   public IServiceBusSqlLayer.SaveTessageResult SaveTessage(TessageId tessageId, MappedTypeId typeId, string serializedTessage)
    {
       return _connectionFactory.UseCommand(
          command =>
@@ -28,7 +28,7 @@ partial class PgSqlInboxSqlLayer(IPgSqlConnectionPool connectionFactory, PgSqlSq
 
                    """)
               .AddParameter(TessageTable.TessageId, tessageId.Value)
-              .AddParameter(TessageTable.TypeId, typeId.Value)
+              .AddParameter(TessageTable.TypeId, typeId.GuidValue)
                //performance: Like with the tevent store, keep all framework properties out of the JSON and put it into separate columns instead. For tevents. Reuse a pre-serialized instance from the persisting to the tevent store.
               .AddMediumTextParameter(TessageTable.Body, serializedTessage)
               .PrepareStatement()

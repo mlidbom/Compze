@@ -18,13 +18,13 @@ class HttpInfrastructureQueryTransportImplementation : IInfrastructureQueryTrans
 {
    public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<IInfrastructureQueryTransport>()
-                                     .CreatedBy((IHttpClientFactoryCE factory, IRemotableTessageSerializer serializer, ITypeMapper typeMapper) => new HttpInfrastructureQueryTransportImplementation(factory, serializer, typeMapper)));
+                                     .CreatedBy((IHttpClientFactoryCE factory, IRemotableTessageSerializer serializer, IStructuralTypeMapper typeMapper) => new HttpInfrastructureQueryTransportImplementation(factory, serializer, typeMapper)));
 
    readonly IHttpClientFactoryCE _httpClientFactory;
    readonly IRemotableTessageSerializer _serializer;
-   readonly ITypeMapper _typeMapper;
+   readonly IStructuralTypeMapper _typeMapper;
 
-   HttpInfrastructureQueryTransportImplementation(IHttpClientFactoryCE httpClientFactory, IRemotableTessageSerializer serializer, ITypeMapper typeMapper)
+   HttpInfrastructureQueryTransportImplementation(IHttpClientFactoryCE httpClientFactory, IRemotableTessageSerializer serializer, IStructuralTypeMapper typeMapper)
    {
       _httpClientFactory = httpClientFactory;
       _serializer = serializer;
@@ -39,7 +39,7 @@ class HttpInfrastructureQueryTransportImplementation : IInfrastructureQueryTrans
 
       using var httpClient = _httpClientFactory.CreateClient();
       using var content = new StringContent(body);
-      content.Headers.Add(HttpConstants.Headers.PayLoadTypeId, typeId.ToString());
+      content.Headers.Add(HttpConstants.Headers.PayLoadTypeId, typeId.GuidValue.ToString());
 
       var response = await httpClient.PostAsync(requestUri, content).caf();
       if(!response.IsSuccessStatusCode)

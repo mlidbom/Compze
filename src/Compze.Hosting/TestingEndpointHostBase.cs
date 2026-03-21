@@ -12,7 +12,7 @@ namespace Compze.Hosting;
 public abstract class TestingEndpointHostBase : EndpointHost, ITestingEndpointHost, IEndpointRegistry
 {
    protected TestingEndpointHostBase(Func<IDependencyInjectionContainer> containerFactory) : base(containerFactory) =>
-      TessagesInFlightTracker = new TessagesInFlightTracker(TypeMapper.Instance);
+      TessagesInFlightTracker = new TessagesInFlightTracker(StructuralTypeMapperRegistrar.CreateFromLoadedAssemblies());
 
    public IEnumerable<EndPointAddress> ServerEndpointAddresses => Endpoints.Where(it => it.Address is not null)
                                                                            .Select(it => it.Address!)

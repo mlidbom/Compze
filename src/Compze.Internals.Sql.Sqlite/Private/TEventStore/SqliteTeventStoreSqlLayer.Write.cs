@@ -41,7 +41,7 @@ partial class SqliteTeventStoreSqlLayer
                                          """)
                                     .AddMediumTextParameter(Tevent.TaggregateId, data.TaggregateId.ToString())
                                     .AddParameter(Tevent.InsertedVersion, data.StorageInformation.InsertedVersion)
-                                    .AddMediumTextParameter(Tevent.TeventType, data.TeventType.ToString())
+                                    .AddMediumTextParameter(Tevent.TeventType, data.TeventType.GuidValue.ToString())
                                     .AddMediumTextParameter(Tevent.TeventId, data.TeventId.ToString())
                                     .AddDateTime2Parameter(Tevent.UtcTimeStamp, data.UtcTimeStamp)
                                     .AddMediumTextParameter(Tevent.Tevent, data.TeventJson)
