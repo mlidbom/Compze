@@ -1,6 +1,5 @@
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.LinqCE;
-using Compze.Threading;
 using DryIoc;
 
 namespace Compze.DependencyInjection.DryIoc;
@@ -10,27 +9,25 @@ public sealed class DryIocContainerBuilder(IComponentRegistrar? registrar = null
    readonly IContainer _container = new Container(rules => rules
       .WithTrackingDisposableTransients()
       .With(FactoryMethod.ConstructorWithResolvableArguments));
-   readonly RunOnce _registerScopedKernel = new();
 
-   public override DryIocContainer Build() => (DryIocContainer)base.Build();
+   public override DryIocContainer Build(ContainerOptions? options = null) => (DryIocContainer)base.Build(options);
 
    protected override void RegisterInContainer(ComponentRegistration[] registrations)
    {
-      _registerScopedKernel.RunIfFirstCall(() =>
-      {
-         _container.RegisterDelegate<DisposableTracker>(
-            _ => new DisposableTracker(),
-            Reuse.ScopedOrSingleton,
-            ifAlreadyRegistered: IfAlreadyRegistered.Replace);
-         _container.RegisterDelegate<ScopeResolver>(
-            resolver => new ScopeResolver(serviceType => resolver.Resolve(serviceType)),
-            Reuse.Scoped,
-            ifAlreadyRegistered: IfAlreadyRegistered.Replace);
-         _container.RegisterDelegate<IScopeResolver>(
-            resolver => resolver.Resolve<ScopeResolver>(),
-            Reuse.Scoped,
-            ifAlreadyRegistered: IfAlreadyRegistered.Replace);
-      });
+      var scopedReuse = Options.AllowScopedResolutionFromRoot ? Reuse.ScopedOrSingleton : Reuse.Scoped;
+
+      _container.RegisterDelegate<DisposableTracker>(
+         _ => new DisposableTracker(),
+         Reuse.ScopedOrSingleton,
+         ifAlreadyRegistered: IfAlreadyRegistered.Replace);
+      _container.RegisterDelegate<ScopeResolver>(
+         resolver => new ScopeResolver(serviceType => resolver.Resolve(serviceType)),
+         scopedReuse,
+         ifAlreadyRegistered: IfAlreadyRegistered.Replace);
+      _container.RegisterDelegate<IScopeResolver>(
+         resolver => resolver.Resolve<ScopeResolver>(),
+         scopedReuse,
+         ifAlreadyRegistered: IfAlreadyRegistered.Replace);
 
       foreach(var registration in registrations)
       {
@@ -59,10 +56,10 @@ public sealed class DryIocContainerBuilder(IComponentRegistrar? registrar = null
             case Lifestyle.Scoped:
                _container.RegisterDelegate(firstServiceType,
                   resolver => registration.InstantiationSpec.RunFactoryMethod(resolver.Resolve<ScopeResolver>()),
-                  Reuse.Scoped,
+                  scopedReuse,
                   ifAlreadyRegistered: IfAlreadyRegistered.Throw);
 
-               RegisterForwardingTypes(serviceTypes, firstServiceType, Reuse.Scoped);
+               RegisterForwardingTypes(serviceTypes, firstServiceType, scopedReuse);
                break;
             case Lifestyle.TrackedTransient:
                _container.RegisterDelegate(firstServiceType,

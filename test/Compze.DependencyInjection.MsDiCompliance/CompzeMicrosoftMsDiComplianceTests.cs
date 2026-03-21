@@ -1,3 +1,4 @@
+using Compze.DependencyInjection.Abstractions;
 using Compze.DependencyInjection.Microsoft;
 using Compze.DependencyInjection.Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -7,10 +8,12 @@ namespace Compze.DependencyInjection.MsDiCompliance;
 
 public class CompzeMicrosoftMsDiComplianceTests : DependencyInjectionSpecificationTests
 {
+   static readonly ContainerOptions ComplianceOptions = new() { AllowScopedResolutionFromRoot = true };
+
    protected override IServiceProvider CreateServiceProvider(IServiceCollection serviceCollection)
    {
       var builder = new MicrosoftContainerBuilder();
-      var factory = new MicrosoftServiceProviderFactory(builder);
+      var factory = new MicrosoftServiceProviderFactory(builder, ComplianceOptions);
       var mergedCollection = factory.CreateBuilder(serviceCollection);
       return factory.CreateServiceProvider(mergedCollection);
    }

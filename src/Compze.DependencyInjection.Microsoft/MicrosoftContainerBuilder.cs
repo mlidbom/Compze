@@ -1,6 +1,5 @@
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.LinqCE;
-using Compze.Threading;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Compze.DependencyInjection.Microsoft;
@@ -8,17 +7,13 @@ namespace Compze.DependencyInjection.Microsoft;
 public sealed class MicrosoftContainerBuilder(IComponentRegistrar? registrar = null) : ContainerBuilder(registrar), IMicrosoftBuilderInternals
 {
    readonly IServiceCollection _services = new ServiceCollection();
-   readonly RunOnce _registerScopedKernel = new();
 
-   public override MicrosoftContainer Build() => (MicrosoftContainer)base.Build();
+   public override MicrosoftContainer Build(ContainerOptions? options = null) => (MicrosoftContainer)base.Build(options);
 
    protected override void RegisterInContainer(ComponentRegistration[] registrations)
    {
-      _registerScopedKernel.RunIfFirstCall(() =>
-      {
-         _services.AddScoped<ScopeResolver>(serviceProvider => new ScopeResolver(serviceProvider.GetRequiredService));
-         _services.AddScoped<IScopeResolver>(serviceProvider => serviceProvider.GetRequiredService<ScopeResolver>());
-      });
+      _services.AddScoped<ScopeResolver>(serviceProvider => new ScopeResolver(serviceProvider.GetRequiredService));
+      _services.AddScoped<IScopeResolver>(serviceProvider => serviceProvider.GetRequiredService<ScopeResolver>());
 
       foreach(var registration in registrations)
       {
@@ -71,7 +66,10 @@ public sealed class MicrosoftContainerBuilder(IComponentRegistrar? registrar = n
       _services.AddSingleton(_ => builtContainer!);
       // ReSharper restore AccessToModifiedClosure
 
-      var serviceProvider = _services.BuildServiceProvider();
+      var serviceProvider = _services.BuildServiceProvider(new ServiceProviderOptions
+      {
+         ValidateScopes = !Options.AllowScopedResolutionFromRoot
+      });
       builtContainer = new MicrosoftContainer(serviceProvider, RegisteredComponents(), Registrar);
       return builtContainer;
    }

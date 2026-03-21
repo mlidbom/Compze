@@ -31,7 +31,7 @@ public interface IComponentRegistrar
 public interface IContainerBuilder
 {
    IComponentRegistrar Registrar { get; }
-   IDependencyInjectionContainer Build();
+   IDependencyInjectionContainer Build(ContainerOptions? options = null);
 }
 
 /// <summary>

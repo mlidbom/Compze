@@ -20,15 +20,19 @@ public abstract class ContainerBuilder : IContainerBuilder
 
    IComponentRegistrar IContainerBuilder.Registrar => _registrar;
 
-   IDependencyInjectionContainer IContainerBuilder.Build() => Build();
+   IDependencyInjectionContainer IContainerBuilder.Build(ContainerOptions? options) => Build(options);
 
-   public virtual DependencyInjectionContainer Build()
+   public virtual DependencyInjectionContainer Build(ContainerOptions? options = null)
    {
       Contract.State.Assert(!_built, () => "Build() has already been called on this builder. A Container can only be built once.");
       _built = true;
+      Options = options ?? ContainerOptions.Default;
       AssertLifeStyleCombinationsAreValid();
+      RegisterInContainer(_registeredComponents.ToArray());
       return BuildInternal();
    }
+
+   protected ContainerOptions Options { get; set; } = ContainerOptions.Default;
 
    protected abstract DependencyInjectionContainer BuildInternal();
 
@@ -37,7 +41,6 @@ public abstract class ContainerBuilder : IContainerBuilder
       Contract.State.Assert(!_built, () => "Cannot register components after the container has been built.");   
       ValidateNoDuplicateRegistrations(registrations);
       _registeredComponents.AddRange(registrations);
-      RegisterInContainer(registrations);
    }
 
    public IComponentRegistrar Registrar => _registrar;

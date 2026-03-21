@@ -1,30 +1,25 @@
 using Autofac;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.LinqCE;
-using Compze.Threading;
 
 namespace Compze.DependencyInjection.Autofac;
 
 public sealed class AutofacContainerBuilder(IComponentRegistrar? registrar = null) : ContainerBuilder(registrar), IAutofacBuilderInternals
 {
    readonly global::Autofac.ContainerBuilder _containerBuilder = new();
-   readonly RunOnce _registerScopedKernel = new();
 
-   public override AutofacContainer Build() => (AutofacContainer)base.Build();
+   public override AutofacContainer Build(ContainerOptions? options = null) => (AutofacContainer)base.Build(options);
 
    protected override void RegisterInContainer(ComponentRegistration[] registrations)
    {
-      _registerScopedKernel.RunIfFirstCall(() =>
+      _containerBuilder.Register(componentContext =>
       {
-         _containerBuilder.Register(componentContext =>
-         {
-            var scope = componentContext.Resolve<ILifetimeScope>();
-            return new ScopeResolver(scope.Resolve);
-         }).InstancePerLifetimeScope();
-         _containerBuilder.Register(componentContext => (IScopeResolver)componentContext.Resolve<ScopeResolver>())
-                          .As<IScopeResolver>()
-                          .InstancePerLifetimeScope();
-      });
+         var scope = componentContext.Resolve<ILifetimeScope>();
+         return new ScopeResolver(scope.Resolve);
+      }).InstancePerLifetimeScope();
+      _containerBuilder.Register(componentContext => (IScopeResolver)componentContext.Resolve<ScopeResolver>())
+                       .As<IScopeResolver>()
+                       .InstancePerLifetimeScope();
 
       foreach(var registration in registrations)
       {
@@ -47,7 +42,20 @@ public sealed class AutofacContainerBuilder(IComponentRegistrar? registrar = nul
 
                break;
             case Lifestyle.Scoped:
-               _containerBuilder.Register(componentContext => registration.InstantiationSpec.RunFactoryMethod(componentContext.Resolve<ScopeResolver>()))
+               _containerBuilder.Register(componentContext =>
+                                {
+                                   if(!Options.AllowScopedResolutionFromRoot)
+                                   {
+                                      var currentScope = componentContext.Resolve<ILifetimeScope>();
+                                      if(currentScope.Tag is "root")
+                                         throw new InvalidOperationException(
+                                            $"Cannot resolve scoped service '{serviceTypes[0].FullName}' from the root container. "
+                                            + "Scoped services must be resolved within a scope. Call BeginScope() first, or set "
+                                            + "ContainerOptions.AllowScopedResolutionFromRoot to opt into the broken-by-design behavior.");
+                                   }
+
+                                   return registration.InstantiationSpec.RunFactoryMethod(componentContext.Resolve<ScopeResolver>());
+                                })
                                 .As(serviceTypes)
                                 .InstancePerLifetimeScope();
                break;
