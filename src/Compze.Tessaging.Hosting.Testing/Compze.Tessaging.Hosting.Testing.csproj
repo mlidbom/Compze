@@ -84,6 +84,20 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection_Autofac_Extensions_Hosting)' != 'true'">
     <ProjectReference Include="..\Compze.DependencyInjection.Autofac.Extensions.Hosting\Compze.DependencyInjection.Autofac.Extensions.Hosting.csproj" />
   </ItemGroup>
+  <!-- Compze.DependencyInjection.DryIoc — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection_DryIoc)' == 'true'">
+    <PackageReference Include="Compze.DependencyInjection.DryIoc" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection_DryIoc)' != 'true'">
+    <ProjectReference Include="..\Compze.DependencyInjection.DryIoc\Compze.DependencyInjection.DryIoc.csproj" />
+  </ItemGroup>
+  <!-- Compze.DependencyInjection.DryIoc.Extensions.Hosting — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection_DryIoc_Extensions_Hosting)' == 'true'">
+    <PackageReference Include="Compze.DependencyInjection.DryIoc.Extensions.Hosting" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection_DryIoc_Extensions_Hosting)' != 'true'">
+    <ProjectReference Include="..\Compze.DependencyInjection.DryIoc.Extensions.Hosting\Compze.DependencyInjection.DryIoc.Extensions.Hosting.csproj" />
+  </ItemGroup>
   <!-- Compze.DependencyInjection.Microsoft — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection_Microsoft)' == 'true'">
     <PackageReference Include="Compze.DependencyInjection.Microsoft" Version="*-*" />

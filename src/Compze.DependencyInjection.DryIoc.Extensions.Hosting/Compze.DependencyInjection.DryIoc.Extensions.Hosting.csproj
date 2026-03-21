@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <Version>0.1.0-alpha.1</Version>
+    <!-- TODO: Remove once all public API members have XML documentation comments -->
+    <NoWarn>CS1591</NoWarn>
+    <Description>DryIoc hosting integration for the Compze framework.</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="DryIoc.Microsoft.DependencyInjection" Version="8.0.0-preview-04" />
+  </ItemGroup>
+  <!-- Compze.DependencyInjection.DryIoc — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection_DryIoc)' == 'true'">
+    <PackageReference Include="Compze.DependencyInjection.DryIoc" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection_DryIoc)' != 'true'">
+    <ProjectReference Include="..\Compze.DependencyInjection.DryIoc\Compze.DependencyInjection.DryIoc.csproj" />
+  </ItemGroup>
+  <!-- Compze.DependencyInjection.Extensions.Hosting — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection_Extensions_Hosting)' == 'true'">
+    <PackageReference Include="Compze.DependencyInjection.Extensions.Hosting" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection_Extensions_Hosting)' != 'true'">
+    <ProjectReference Include="..\Compze.DependencyInjection.Extensions.Hosting\Compze.DependencyInjection.Extensions.Hosting.csproj" />
+  </ItemGroup>
+</Project>

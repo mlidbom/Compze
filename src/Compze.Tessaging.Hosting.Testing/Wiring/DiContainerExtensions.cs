@@ -9,6 +9,8 @@ using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.DependencyInjection.Autofac;
 using Compze.DependencyInjection.Autofac.Extensions.Hosting;
+using Compze.DependencyInjection.DryIoc;
+using Compze.DependencyInjection.DryIoc.Extensions.Hosting;
 using Compze.DependencyInjection.Microsoft;
 using Compze.DependencyInjection.Microsoft.Extensions.Hosting;
 using Compze.Underscore;
@@ -35,6 +37,7 @@ public static class DiContainerExtensions
       {
          DIContainer.Microsoft      => new MicrosoftContainerBuilder(new TestingComponentRegistrar())._mutate(it => MicrosoftChildContainerHostIntegration.RegisterWith(it.Registrar)),
          DIContainer.Autofac        => new AutofacContainerBuilder(new TestingComponentRegistrar())._mutate(it => AutofacChildContainerHostIntegration.RegisterWith(it.Registrar)),
+         DIContainer.DryIoc         => new DryIocContainerBuilder(new TestingComponentRegistrar())._mutate(it => DryIocChildContainerHostIntegration.RegisterWith(it.Registrar)),
          _                          => throw new ArgumentOutOfRangeException()
       };
 

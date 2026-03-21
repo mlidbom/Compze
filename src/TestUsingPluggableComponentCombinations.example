@@ -9,7 +9,10 @@
 #MySql:Autofac:Newtonsoft:AspNetCore
 #Sqlite:Autofac:Newtonsoft:AspNetCore
 SqliteMemory:Autofac:Newtonsoft:AspNetCore
-
+#MsSql:DryIoc:Newtonsoft:AspNetCore
+#PgSql:DryIoc:Newtonsoft:AspNetCore
+#MySql:DryIoc:Newtonsoft:AspNetCore
+SqliteMemory:DryIoc:Newtonsoft:AspNetCore
 #MsSql:Microsoft:Newtonsoft:AspNetCore
 #PgSql:Microsoft:Newtonsoft:AspNetCore
 #MySql:Microsoft:Newtonsoft:AspNetCore

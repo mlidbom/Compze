@@ -40,6 +40,10 @@
     <UsePackageReference_Compze_DependencyInjection_Autofac Condition="'$(UsePackageReference_Compze_DependencyInjection_Autofac)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.DependencyInjection.Autofac.csproj|'))">true</UsePackageReference_Compze_DependencyInjection_Autofac>
     <!-- Compze.DependencyInjection.Autofac.Extensions.Hosting -->
     <UsePackageReference_Compze_DependencyInjection_Autofac_Extensions_Hosting Condition="'$(UsePackageReference_Compze_DependencyInjection_Autofac_Extensions_Hosting)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.DependencyInjection.Autofac.Extensions.Hosting.csproj|'))">true</UsePackageReference_Compze_DependencyInjection_Autofac_Extensions_Hosting>
+    <!-- Compze.DependencyInjection.DryIoc -->
+    <UsePackageReference_Compze_DependencyInjection_DryIoc Condition="'$(UsePackageReference_Compze_DependencyInjection_DryIoc)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.DependencyInjection.DryIoc.csproj|'))">true</UsePackageReference_Compze_DependencyInjection_DryIoc>
+    <!-- Compze.DependencyInjection.DryIoc.Extensions.Hosting -->
+    <UsePackageReference_Compze_DependencyInjection_DryIoc_Extensions_Hosting Condition="'$(UsePackageReference_Compze_DependencyInjection_DryIoc_Extensions_Hosting)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.DependencyInjection.DryIoc.Extensions.Hosting.csproj|'))">true</UsePackageReference_Compze_DependencyInjection_DryIoc_Extensions_Hosting>
     <!-- Compze.DependencyInjection.Extensions.Hosting -->
     <UsePackageReference_Compze_DependencyInjection_Extensions_Hosting Condition="'$(UsePackageReference_Compze_DependencyInjection_Extensions_Hosting)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.DependencyInjection.Extensions.Hosting.csproj|'))">true</UsePackageReference_Compze_DependencyInjection_Extensions_Hosting>
     <!-- Compze.DependencyInjection.Microsoft -->

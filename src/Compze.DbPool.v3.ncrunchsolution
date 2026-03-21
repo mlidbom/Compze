@@ -8,6 +8,8 @@
       <Value>UsePackageReference_Compze_DependencyInjection = true</Value>
       <Value>UsePackageReference_Compze_DependencyInjection_Autofac = true</Value>
       <Value>UsePackageReference_Compze_DependencyInjection_Autofac_Extensions_Hosting = true</Value>
+      <Value>UsePackageReference_Compze_DependencyInjection_DryIoc = true</Value>
+      <Value>UsePackageReference_Compze_DependencyInjection_DryIoc_Extensions_Hosting = true</Value>
       <Value>UsePackageReference_Compze_DependencyInjection_Extensions_Hosting = true</Value>
       <Value>UsePackageReference_Compze_DependencyInjection_Microsoft = true</Value>
       <Value>UsePackageReference_Compze_DependencyInjection_Microsoft_Extensions_Hosting = true</Value>

@@ -2,6 +2,8 @@ using Compze.Abstractions.Wiring.Testing.Internal;
 using Compze.DependencyInjection.Abstractions;
 using Compze.DependencyInjection.Autofac;
 using Compze.DependencyInjection.Autofac.Extensions.Hosting;
+using Compze.DependencyInjection.DryIoc;
+using Compze.DependencyInjection.DryIoc.Extensions.Hosting;
 using Compze.DependencyInjection.Microsoft;
 using Compze.DependencyInjection.Microsoft.Extensions.Hosting;
 using Compze.xUnitMatrix;
@@ -18,6 +20,7 @@ static class DependencyInjectionContainerFactory
       {
          DIContainer.Microsoft      => new MicrosoftContainerBuilder(),
          DIContainer.Autofac        => new AutofacContainerBuilder(),
+         DIContainer.DryIoc         => new DryIocContainerBuilder(),
          _                          => throw new ArgumentOutOfRangeException()
       };
 
@@ -30,6 +33,9 @@ static class DependencyInjectionContainerFactory
             break;
          case AutofacContainerBuilder autofacBuilder:
             hostBuilder.UseServiceProviderFactory(new CompzeAutofacServiceProviderFactory(autofacBuilder));
+            break;
+         case DryIocContainerBuilder dryIocBuilder:
+            hostBuilder.UseServiceProviderFactory(new CompzeDryIocServiceProviderFactory(dryIocBuilder));
             break;
          default:
             throw new ArgumentOutOfRangeException(nameof(builder));
