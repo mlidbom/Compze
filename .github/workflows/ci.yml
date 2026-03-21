@@ -17,7 +17,7 @@ jobs:
       fail-fast: false
       matrix:
         persistence: [SqliteMemory, Sqlite, PgSql, MySql, MsSql]
-        di: [Microsoft, Autofac]
+        di: [Microsoft, Autofac, DryIoc, LightInject]
         serializer: [Newtonsoft]
         transport: [AspNetCore]
 
