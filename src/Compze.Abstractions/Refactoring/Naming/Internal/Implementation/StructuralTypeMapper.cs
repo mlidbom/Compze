@@ -94,7 +94,7 @@ class StructuralTypeMapper : IStructuralTypeMapper
       return result;
    }
 
-   // Must match DeterministicTypeId.CompositionNamespaceId exactly — persisted data depends on it.
+   // Namespace GUID for deterministic UUID v5 composition of generic/array type IDs.
    static readonly Guid CompositionNamespaceId = new("e4a8c9f2-7b3d-4f1a-9c6e-2d8b5a0f3e7c");
    static readonly Guid ArrayMarkerGuid = new("b7e3d8f1-6a2c-4e0b-8d5f-1c9a4b3e2d6f");
 
