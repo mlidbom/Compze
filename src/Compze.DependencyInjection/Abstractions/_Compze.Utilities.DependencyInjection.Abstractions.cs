@@ -52,7 +52,14 @@ public interface IDependencyInjectionContainer : IDisposable, IAsyncDisposable
    IContainerBuilder CreateChildContainerBuilder();
 }
 
-///<summary>Resolves instances of services registered in the container.</summary>
+///<summary>
+/// Resolves instances of services registered in the container.
+///<para>
+/// Unlike <see cref="IScopeResolver"/> and <see cref="IRootResolver"/> this type provides you with no hint as to the context you are running in, whether there is a <see cref="IScope"/> or not<br/>
+/// Prefer using <see cref="IScopeResolver"/> or <see cref="IRootResolver"/> whenever possible so you are not hiding this vital information from the next person to read the code.
+/// When using this interface the reader will have to either know the context by heart, or go researching the call stack to trying and figure it out.
+/// </para>
+/// </summary>
 public interface IServiceResolver
 {
    object Resolve(Type serviceType);
