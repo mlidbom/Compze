@@ -27,6 +27,13 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection_DryIoc_Extensions_Hosting)' != 'true'">
     <ProjectReference Include="..\..\src\Compze.DependencyInjection.DryIoc.Extensions.Hosting\Compze.DependencyInjection.DryIoc.Extensions.Hosting.csproj" />
   </ItemGroup>
+  <!-- Compze.DependencyInjection.LightInject.Extensions.Hosting — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection_LightInject_Extensions_Hosting)' == 'true'">
+    <PackageReference Include="Compze.DependencyInjection.LightInject.Extensions.Hosting" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection_LightInject_Extensions_Hosting)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.DependencyInjection.LightInject.Extensions.Hosting\Compze.DependencyInjection.LightInject.Extensions.Hosting.csproj" />
+  </ItemGroup>
   <!-- Compze.DependencyInjection.Microsoft.Extensions.Hosting — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection_Microsoft_Extensions_Hosting)' == 'true'">
     <PackageReference Include="Compze.DependencyInjection.Microsoft.Extensions.Hosting" Version="*-*" />
