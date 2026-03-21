@@ -7,6 +7,7 @@ using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
 using Compze.Tessaging.Implementation.Transport.Client.Internal;
 using Compze.Tessaging.Implementation.Transport.Client.Routing.Abstractions;
 using Compze.Tessaging.SystemCE.ThreadingCE;
+using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
 using Compze.Contracts;
@@ -27,21 +28,24 @@ class Endpoint : IEndpoint
    }
 
    readonly EndpointConfiguration _configuration;
+   readonly IDependencyInjectionContainer _container;
+   readonly IRootResolver _rootResolver;
 
-   public Endpoint(IServiceLocator serviceLocator,
+   public Endpoint(IDependencyInjectionContainer container,
                    ITessagingRouter tessagingRouter,
                    IEndpointRegistry endpointRegistry,
                    EndpointConfiguration configuration)
    {
-      Argument.NotNull(serviceLocator).NotNull(configuration);
-      ServiceLocator = serviceLocator;
+      Argument.NotNull(container).NotNull(configuration);
+      _container = container;
+      _rootResolver = container.RootResolver;
       _tessagingRouter = tessagingRouter;
       _configuration = configuration;
       _endpointRegistry = endpointRegistry;
    }
 
    public EndpointId Id => _configuration.Id;
-   public IServiceLocator ServiceLocator { get; }
+   public IRootResolver ServiceLocator => _rootResolver;
 
    public EndPointAddress? Address => _serverComponents?.Inbox.Address;
    public EndPointAddress? TypermediaAddress => _typermediaTransportServer?.Address is { } uri ? new EndPointAddress(uri) : null;
@@ -65,8 +69,8 @@ class Endpoint : IEndpoint
 
       RunSanityChecks();
 
-      _serverComponents = new ServerComponents(ServiceLocator.Resolve<TommandScheduler>(), ServiceLocator.Resolve<IInbox>(), ServiceLocator.Resolve<IOutbox>());
-      _typermediaTransportServer = ServiceLocator.Resolve<ITypermediaTransportServer>();
+      _serverComponents = new ServerComponents(_rootResolver.Resolve<TommandScheduler>(), _rootResolver.Resolve<IInbox>(), _rootResolver.Resolve<IOutbox>());
+      _typermediaTransportServer = _rootResolver.Resolve<ITypermediaTransportServer>();
 
       await Task.WhenAll(_serverComponents.Inbox.StartAsync(), _serverComponents.TommandScheduler.StartAsync(), _typermediaTransportServer.StartAsync()).caf();
 
@@ -130,8 +134,8 @@ class Endpoint : IEndpoint
       await StopListeningComponentsAsync().caf();
       if(_serverComponents != null)
       {
-         var exceptionReporter = ServiceLocator.Resolve<IBackgroundExceptionReporter>();
-         await ServiceLocator.DisposeAsync().caf();
+         var exceptionReporter = _rootResolver.Resolve<IBackgroundExceptionReporter>();
+         await _container.DisposeAsync().caf();
          _serverComponents.Dispose();
          exceptionReporter.ThrowIfAnyExceptions();
       }

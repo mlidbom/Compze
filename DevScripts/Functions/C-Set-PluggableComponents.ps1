@@ -32,8 +32,8 @@ function C-Set-PluggableComponents {
     .PARAMETER Microsoft
     Include Microsoft DI container
     
-    .PARAMETER SimpleInjector
-    Include SimpleInjector DI container
+    .PARAMETER Autofac
+    Include Autofac DI container
     
     .PARAMETER AllContainers
     Include all DI containers. Mutually exclusive with individual container switches.
@@ -99,7 +99,7 @@ function C-Set-PluggableComponents {
         
         # Container switches
         [switch]$Microsoft,
-        [switch]$SimpleInjector,
+        [switch]$Autofac,
         [switch]$AllContainers,
         
         # Convenience switch for all combinations
@@ -120,7 +120,7 @@ function C-Set-PluggableComponents {
     if ($EnsureValid) {
         # Check if any other switches are specified
         $sqlLayerSwitches = @($MicrosoftSqlServer, $MySql, $PostgreSql, $Sqlite, $SqliteMemory, $AllSqlLayers)
-        $containerSwitches = @($Microsoft, $SimpleInjector, $AllContainers)
+        $containerSwitches = @($Microsoft, $Autofac, $AllContainers)
         $otherSwitches = @($AllPermutations, $SetAsDefaults)
         
         if (($sqlLayerSwitches -contains $true) -or ($containerSwitches -contains $true) -or ($otherSwitches -contains $true)) {
@@ -165,7 +165,7 @@ function C-Set-PluggableComponents {
     
     # Check if any parameters were specified
     $sqlLayerSwitches = @($MicrosoftSqlServer, $MySql, $PostgreSql, $Sqlite, $SqliteMemory)
-    $containerSwitches = @($Microsoft, $SimpleInjector)
+    $containerSwitches = @($Microsoft, $Autofac)
     $anySqlLayerSpecified = $sqlLayerSwitches -contains $true
     $anyContainerSpecified = $containerSwitches -contains $true
     $sqlLayerSpecifiedOrAll = $AllSqlLayers -or $anySqlLayerSpecified
@@ -232,7 +232,7 @@ function C-Set-PluggableComponents {
         foreach ($container in $defaultContainers) {
             switch ($container) {
                 'Microsoft' { $Microsoft = $true }
-                'SimpleInjector' { $SimpleInjector = $true }
+                'Autofac' { $Autofac = $true }
             }
         }
         $anyContainerSpecified = $true
@@ -290,11 +290,11 @@ function C-Set-PluggableComponents {
     if ($AllContainers) {
         $containers = @(
             'Microsoft',
-            'SimpleInjector'
+            'Autofac'
         )
     } else {
         if ($Microsoft) { $containers += 'Microsoft' }
-        if ($SimpleInjector) { $containers += 'SimpleInjector' }
+        if ($Autofac) { $containers += 'Autofac' }
     }
     
     # Generate cross join of all combinations

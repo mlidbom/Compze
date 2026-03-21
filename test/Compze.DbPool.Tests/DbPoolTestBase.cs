@@ -1,4 +1,5 @@
 using Compze.Abstractions.Wiring.Testing.Internal;
+using Compze.DependencyInjection;
 using Compze.Internals.Sql.Common.Abstractions;
 using Compze.Internals.Sql.MicrosoftSql;
 using Compze.Internals.Sql.MySql;
@@ -16,25 +17,25 @@ public abstract class DbPoolTestBase : UniversalTestBase
 {
    protected DbPool Pool  { get; }
    protected override void DisposeInternal() => Pool.Dispose();
-   readonly IServiceLocator _serviceLocator;
+   readonly IDependencyInjectionContainer _container;
 
    protected DbPoolTestBase()
    {
-      _serviceLocator = CreateServiceLocator();
+      _container = CreateContainer();
       Pool = ResolvePool();
    }
 
 #pragma warning disable CA2000// We are passing this disposable into a constructor of an object we don't own
-   protected static IServiceLocator CreateServiceLocator() => TestEnv.DIContainer.CreateEmpty()
-                                                                     ._mutate(it => it.Register()
+   protected static IDependencyInjectionContainer CreateContainer() => TestEnv.DIContainer.CreateEmpty()
+                                                                     ._mutate(it => it.Registrar
                                                                                      .CurrentTestsDbPoolIfNotCloneContainer())
-                                                                     .ServiceLocator;
+                                                                     .Build();
 #pragma warning restore CA2000// We are passing this disposable into a constructor of an object we don't own
 
-   protected override async Task DisposeAsyncInternal() => await _serviceLocator.DisposeAsync();
+   protected override async Task DisposeAsyncInternal() => await _container.DisposeAsync();
 
    protected DbPool ResolvePool() =>
-      _serviceLocator.Resolve<DbPool>();
+      _container.Resolve<DbPool>();
 
    protected static void UseConnection(string connectionString, DbPool pool, Action<ICompzeDbConnection> func)
    {

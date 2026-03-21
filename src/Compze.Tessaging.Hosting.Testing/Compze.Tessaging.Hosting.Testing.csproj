@@ -77,6 +77,13 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection_Autofac)' != 'true'">
     <ProjectReference Include="..\Compze.DependencyInjection.Autofac\Compze.DependencyInjection.Autofac.csproj" />
   </ItemGroup>
+  <!-- Compze.DependencyInjection.Autofac.Extensions.Hosting — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection_Autofac_Extensions_Hosting)' == 'true'">
+    <PackageReference Include="Compze.DependencyInjection.Autofac.Extensions.Hosting" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection_Autofac_Extensions_Hosting)' != 'true'">
+    <ProjectReference Include="..\Compze.DependencyInjection.Autofac.Extensions.Hosting\Compze.DependencyInjection.Autofac.Extensions.Hosting.csproj" />
+  </ItemGroup>
   <!-- Compze.DependencyInjection.Microsoft — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection_Microsoft)' == 'true'">
     <PackageReference Include="Compze.DependencyInjection.Microsoft" Version="*-*" />
@@ -84,12 +91,12 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection_Microsoft)' != 'true'">
     <ProjectReference Include="..\Compze.DependencyInjection.Microsoft\Compze.DependencyInjection.Microsoft.csproj" />
   </ItemGroup>
-  <!-- Compze.DependencyInjection.SimpleInjector — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection_SimpleInjector)' == 'true'">
-    <PackageReference Include="Compze.DependencyInjection.SimpleInjector" Version="*-*" />
+  <!-- Compze.DependencyInjection.Microsoft.Extensions.Hosting — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection_Microsoft_Extensions_Hosting)' == 'true'">
+    <PackageReference Include="Compze.DependencyInjection.Microsoft.Extensions.Hosting" Version="*-*" />
   </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection_SimpleInjector)' != 'true'">
-    <ProjectReference Include="..\Compze.DependencyInjection.SimpleInjector\Compze.DependencyInjection.SimpleInjector.csproj" />
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection_Microsoft_Extensions_Hosting)' != 'true'">
+    <ProjectReference Include="..\Compze.DependencyInjection.Microsoft.Extensions.Hosting\Compze.DependencyInjection.Microsoft.Extensions.Hosting.csproj" />
   </ItemGroup>
   <!-- Compze.Hosting — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Hosting)' == 'true'">

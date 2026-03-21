@@ -529,11 +529,9 @@ public class DocumentDbTests : DocumentDbTestsBase
             updater.Save(new Dog { Id = new EntityId() });
         });
 
-        using (ServiceLocator.BeginScope())
-        {
-            ServiceLocator.DocumentDbBulkReader().GetAll<Dog>().ToList().Must().HaveCount(2);
-            ServiceLocator.DocumentDbBulkReader().GetAll<User>().ToList().Must().HaveCount(2);
-        }
+        using var scope = Container.BeginScope();
+        scope.Resolver.DocumentDbBulkReader().GetAll<Dog>().ToList().Must().HaveCount(2);
+        scope.Resolver.DocumentDbBulkReader().GetAll<User>().ToList().Must().HaveCount(2);
     }
 
     [PCT]
@@ -543,7 +541,7 @@ public class DocumentDbTests : DocumentDbTestsBase
         using var wait = new ManualResetEventSlim();
         var task = TaskCE.Run(() =>
         {
-            ServiceLocator.ExecuteInIsolatedScope(() => session = ServiceLocator.DocumentDbSession());
+            Container.ExecuteInIsolatedScope(scope => session = scope.DocumentDbSession());
             wait.Set();
         });
         wait.Wait();
@@ -594,14 +592,12 @@ public class DocumentDbTests : DocumentDbTestsBase
             updater.Save(person1);
         });
 
-        using (ServiceLocator.BeginScope())
-        {
-            var people = ServiceLocator.DocumentDbBulkReader().GetAll<Person>().Select(it => it.Id).ToHashSet();
+        using var scope = Container.BeginScope();
+        var people = scope.Resolver.DocumentDbBulkReader().GetAll<Person>().Select(it => it.Id).ToHashSet();
 
-            people.Must().HaveCount(2);
-            people.Must().Contain(user1.Id);
-            people.Must().Contain(person1.Id);
-        }
+        people.Must().HaveCount(2);
+        people.Must().Contain(user1.Id);
+        people.Must().Contain(person1.Id);
     }
 
     [PCT]
@@ -644,9 +640,9 @@ public class DocumentDbTests : DocumentDbTestsBase
             updater.Save(dog);
         });
 
-        ServiceLocator.ExecuteInIsolatedScope(() =>
+        Container.ExecuteInIsolatedScope(scope =>
         {
-            var ids = ServiceLocator.DocumentDbBulkReader()
+            var ids = scope.DocumentDbBulkReader()
                                   .GetAllIds<User>()
                                   .ToHashSet();
 
@@ -668,13 +664,14 @@ public class DocumentDbTests : DocumentDbTestsBase
         var user2 = new User(userid2);
         var dog = new Dog { Id = new EntityId(Guid.Parse("00000000-0000-0000-0000-000000000010")) };
 
-        UseInTransactionalScope((_, updater) =>
+        Container.ExecuteTransactionInIsolatedScope(scope =>
         {
+            var updater = scope.DocumentDbUpdater();
             updater.Save(user1);
             updater.Save(user2);
             updater.Save(dog);
 
-            var ids = ServiceLocator.DocumentDbBulkReader()
+            var ids = scope.DocumentDbBulkReader()
                                   .GetAllIds<User>()
                                   .ToHashSet();
 
@@ -691,9 +688,9 @@ public class DocumentDbTests : DocumentDbTestsBase
     [PCT]
     public void DeletingAllObjectsOfATypeLeavesNoSuchObjectsInTheDbButLeavesOtherObjectsInPlaceAndReturnsTheNumberOfDeletedObjects()
     {
-        using (ServiceLocator.BeginScope())
         {
-            var store = CreateStore();
+            using var scope1 = Container.BeginScope();
+            var store = scope1.Resolver.DocumentDb();
 
             var dictionary = new Dictionary<Type, Dictionary<string, string>>();
 
@@ -710,9 +707,9 @@ public class DocumentDbTests : DocumentDbTestsBase
             });
         }
 
-        using (ServiceLocator.BeginScope())
         {
-            var store = CreateStore();
+            using var scope2 = Container.BeginScope();
+            var store = scope2.Resolver.DocumentDb();
             store.GetAll<User>().Must().HaveCount(4);
             store.GetAll<Person>().Must().HaveCount(8); //User inherits person
 
@@ -727,9 +724,8 @@ public class DocumentDbTests : DocumentDbTestsBase
 
     async Task InsertUsersInOtherDocumentDb(Guid userId)
     {
-        var cloneServiceLocator = ServiceLocator.Clone();
-        await using var serviceLocator = cloneServiceLocator;
-        cloneServiceLocator.ExecuteTransactionInIsolatedScope(() => cloneServiceLocator.DocumentDbUpdater()
+        await using var clonedContainer = Container.CloneAndBuild();
+        clonedContainer.ExecuteTransactionInIsolatedScope(scope => scope.DocumentDbUpdater()
                                                                                        .Save(new User(userId)));
     }
 
@@ -740,10 +736,8 @@ public class DocumentDbTests : DocumentDbTestsBase
 
         await InsertUsersInOtherDocumentDb(userId);
 
-        using (ServiceLocator.BeginScope())
-        {
-            ServiceLocator.DocumentDbSession().Get<User>(userId);
-        }
+        using var scope3 = Container.BeginScope();
+        scope3.Resolver.DocumentDbSession().Get<User>(userId);
     }
 
     [PCT]
@@ -753,10 +747,8 @@ public class DocumentDbTests : DocumentDbTestsBase
 
         await InsertUsersInOtherDocumentDb(userId);
 
-        using (ServiceLocator.BeginScope())
-        {
-            ServiceLocator.DocumentDbSession().GetAll<User>().Count().Must().Be(1);
-        }
+        using var scope4 = Container.BeginScope();
+        scope4.Resolver.DocumentDbSession().GetAll<User>().Count().Must().Be(1);
     }
 
     [PCT]
@@ -772,3 +764,4 @@ public class DocumentDbTests : DocumentDbTestsBase
                                    .Be(1));
     }
 }
+

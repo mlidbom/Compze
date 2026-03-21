@@ -1,4 +1,5 @@
 using Compze.Abstractions.Tessaging.Public;
+using Compze.DependencyInjection;
 
 namespace Compze.Typermedia.HandlerRegistration;
 
@@ -8,7 +9,7 @@ public static partial class TypermediaHandlerRegistrarWithDependencyInjectionSup
       this TypermediaHandlerRegistrarWithDependencyInjectionSupport @this,
       Func<TTommand, TResult> handler) where TTommand : ITommand<TResult>
    {
-      @this.Registrar.ForTommand(handler);
+      @this.Registrar.ForTommand<TTommand, TResult>((tommand, _) => handler(tommand));
       return @this;
    }
 
@@ -17,7 +18,7 @@ public static partial class TypermediaHandlerRegistrarWithDependencyInjectionSup
       Func<TTommand, TDependency1, TResult> handler) where TTommand : ITommand<TResult>
                                                      where TDependency1 : class
    {
-      @this.Registrar.ForTommand<TTommand, TResult>(tommand => handler(tommand, @this.Resolve<TDependency1>()));
+      @this.Registrar.ForTommand<TTommand, TResult>((tommand, kernel) => handler(tommand, kernel.Resolve<TDependency1>()));
       return @this;
    }
 }

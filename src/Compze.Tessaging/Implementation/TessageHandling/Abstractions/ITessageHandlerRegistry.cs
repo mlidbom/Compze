@@ -1,17 +1,19 @@
 using Compze.Abstractions.Refactoring.Naming.Internal;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Core.Tessaging.Teventive.Public;
+using Compze.DependencyInjection;
+using Compze.DependencyInjection.Abstractions;
 
 namespace Compze.Tessaging.Implementation.TessageHandling.Abstractions;
 
 public interface ITessageHandlerRegistry
 {
-    Action<object> GetTommandHandler(ITommand tessage);
+    Action<object, IScopeResolver> GetTommandHandler(ITommand tessage);
 
-    Action<ITommand> GetTommandHandler(Type tommandType);
-    IReadOnlyList<Action<ITevent>> GetTeventHandlers(Type teventType);
+    Action<ITommand, IScopeResolver> GetTommandHandler(Type tommandType);
+    IReadOnlyList<Action<ITevent, IScopeResolver>> GetTeventHandlers(Type teventType);
 
-    ITeventDispatcher<ITevent> CreateTeventDispatcher();
+    void DispatchTevent(ITevent tevent, IScopeResolver scopeResolver);
 
     ISet<TypeId> HandledRemoteTessageTypeIds();
 }

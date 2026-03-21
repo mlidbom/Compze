@@ -1,6 +1,7 @@
 using Compze.Abstractions.Public;
 using Compze.Abstractions.Refactoring.Naming.Internal.Implementation;
 using Compze.Core.Serialization.Internal;
+using Compze.DependencyInjection;
 using Compze.Internals.Serialization.Newtonsoft.Private.TeventStore;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Internals.Testing;
@@ -22,9 +23,10 @@ public class TeventStoreTeventSerializerPerformanceTests : UniversalTestBase
 
    public TeventStoreTeventSerializerPerformanceTests()
    {
-      _container = TestEnv.DIContainer.CreateWithServiceLocatorAndCurrentTestsPluggableComponents();
-      _container.Register().TypeMapper();
-      _teventSerializer = _container.ServiceLocator.Resolve<ITeventStoreSerializer>();
+      var builder = TestEnv.DIContainer.CreateWithContainerRegistrationsAndCurrentTestsPluggableComponents();
+      builder.Registrar.TypeMapper();
+      _container = builder.Build();
+      _teventSerializer = _container.Resolve<ITeventStoreSerializer>();
    }
 
    protected override void DisposeInternal() => _container.Dispose();

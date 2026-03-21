@@ -14,7 +14,7 @@ public partial class Inbox
    public partial class HandlerExecutionEngine(
       ITessagesInFlightTracker globalStateTracker,
       ITessageHandlerRegistry tessagingHandlerRegistry,
-      IServiceLocator serviceLocator,
+      IScopeFactory scopeFactory,
       ITessageStorage storage,
       ITaskRunner taskRunner,
       EndpointId endpointId)
@@ -26,7 +26,7 @@ public partial class Inbox
          new TommandsAndTeventHandlersDoNotRunInParallelWithEachOtherInTheSameEndpoint()
       ];
 
-      readonly Coordinator _coordinator = new(globalStateTracker, taskRunner, storage, serviceLocator, tessagingHandlerRegistry, endpointId);
+      readonly Coordinator _coordinator = new(globalStateTracker, taskRunner, storage, scopeFactory, tessagingHandlerRegistry, endpointId);
       readonly ITaskRunner _taskRunner = taskRunner;
 
       internal void Enqueue(TransportTessage.InComing transportTessage)

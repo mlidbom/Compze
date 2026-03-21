@@ -11,7 +11,7 @@ public static class TeventStoreTypermediaRegistrar
 {
    public static TeventStoreRegistrationBuilder RegisterTeventStore(this IEndpointBuilder @this)
    {
-      @this.Container.Register().TeventStore(@this.Configuration.ConnectionStringName);
+      @this.Registrar.TeventStore(@this.Configuration.ConnectionStringName);
       return new TeventStoreRegistrationBuilder(@this.RegisterTypermediaHandlers());
    }
 }

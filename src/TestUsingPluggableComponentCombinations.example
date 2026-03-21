@@ -15,9 +15,3 @@ SqliteMemory:Autofac:Newtonsoft:AspNetCore
 #MySql:Microsoft:Newtonsoft:AspNetCore
 #Sqlite:Microsoft:Newtonsoft:AspNetCore
 #SqliteMemory:Microsoft:Newtonsoft:AspNetCore
-
-#MsSql:SimpleInjector:Newtonsoft:AspNetCore
-#PgSql:SimpleInjector:Newtonsoft:AspNetCore
-#MySql:SimpleInjector:Newtonsoft:AspNetCore
-#Sqlite:SimpleInjector:Newtonsoft:AspNetCore
-#SqliteMemory:SimpleInjector:Newtonsoft:AspNetCore

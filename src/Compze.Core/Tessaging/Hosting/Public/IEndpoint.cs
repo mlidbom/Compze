@@ -5,7 +5,7 @@ namespace Compze.Core.Tessaging.Hosting.Public;
 
 public interface IEndpoint : IAsyncDisposable
 {
-   IServiceLocator ServiceLocator { get; }
+   IRootResolver ServiceLocator { get; }
    EndPointAddress? Address { get; }
    EndPointAddress? TypermediaAddress { get; }
    bool IsRunning { get; }

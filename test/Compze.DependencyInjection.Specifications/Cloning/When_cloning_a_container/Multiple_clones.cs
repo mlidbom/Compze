@@ -8,14 +8,15 @@ public class Multiple_clones
    [DependencyInjectionContainerMatrix]
    public void source_can_be_cloned_multiple_times()
    {
-      using var source = DependencyInjectionContainerFactory.CreateContainer();
-      source.Register(Singleton.For<ISingletonService>().CreatedBy(() => new SingletonService()));
+      var sourceBuilder = DependencyInjectionContainerFactory.CreateContainerBuilder();
+      sourceBuilder.Registrar.Register(Singleton.For<ISingletonService>().CreatedBy(() => new SingletonService()));
 
-      using var clone1 = source.Clone();
-      using var clone2 = source.Clone();
+      using var source = sourceBuilder.Build();
+      using var clone1 = source.CreateCloneContainerBuilder().Build();
+      using var clone2 = source.CreateCloneContainerBuilder().Build();
 
-      var instance1 = clone1.ServiceLocator.Resolve<ISingletonService>();
-      var instance2 = clone2.ServiceLocator.Resolve<ISingletonService>();
+      var instance1 = clone1.Resolve<ISingletonService>();
+      var instance2 = clone2.Resolve<ISingletonService>();
 
       instance1.Must().NotBe(instance2);
    }

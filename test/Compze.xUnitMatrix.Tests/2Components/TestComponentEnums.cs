@@ -27,7 +27,7 @@ enum SqlLayer
 enum DIContainer
 {
    Microsoft,
-   SimpleInjector
+   Autofac
 }
 
 enum TeventStore

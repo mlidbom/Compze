@@ -15,8 +15,7 @@ public static class AspNetCoreTransportRegistrar
                .HttpApiTransportClient()
                .HttpTypermediaTransport()
                .HttpInfrastructureQueryTransport()
-               .Register(CompzeControllerActivator.RegisterWith,
-                         AspNetInboxTransportServer.RegisterWith,
+               .Register(AspNetInboxTransportServer.RegisterWith,
                          InfrastructureQueryController.RegisterWith,
                          TessagingController.RegisterWith,
                          TypermediaController.RegisterWith,

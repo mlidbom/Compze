@@ -1,6 +1,7 @@
 using Compze.Core.Tessaging.Transport.Internal;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
+using Compze.DependencyInjection.Extensions.Hosting;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -14,21 +15,16 @@ namespace Compze.Tessaging.Hosting.AspNetCore.Private;
 
 class AspNetInboxTransportServer : IInboxTransportServer
 {
-   readonly IServiceLocator _serviceLocator;
+   readonly IChildContainerHostIntegration _hostIntegration;
    WebApplication? _webApplication;
-   readonly CompzeControllerActivator _controllerActivator;
 
    public static void RegisterWith(IComponentRegistrar registrar) =>
       registrar.Register(
          Singleton.For<IInboxTransportServer>()
-                  .CreatedBy((IServiceLocator serviceLocator, CompzeControllerActivator activator)
-                                => new AspNetInboxTransportServer(serviceLocator, activator)));
+                  .CreatedBy((IChildContainerHostIntegration hostIntegration)
+                                => new AspNetInboxTransportServer(hostIntegration)));
 
-   AspNetInboxTransportServer(IServiceLocator serviceLocator, CompzeControllerActivator controllerActivator)
-   {
-      _controllerActivator = controllerActivator;
-      _serviceLocator = serviceLocator;
-   }
+   AspNetInboxTransportServer(IChildContainerHostIntegration hostIntegration) => _hostIntegration = hostIntegration;
 
    public Uri Address => new(_webApplication!.Urls.First());
 
@@ -38,6 +34,7 @@ class AspNetInboxTransportServer : IInboxTransportServer
    {
       if(_webApplication is null) return;
       await _webApplication.StopAsync().caf();
+      await _webApplication.DisposeAsync().caf();
       _webApplication = null;
    }
 
@@ -64,16 +61,14 @@ class AspNetInboxTransportServer : IInboxTransportServer
       builder.Services.AddHttpClient();
       builder.Services.AddControllers();
 
-      //We need to use our container or things go haywire.
-      builder.Services.AddSingleton<IControllerActivator>(_controllerActivator);
+      builder.Services.AddSingleton<IControllerActivator, ServiceBasedControllerActivator>();
+
+      _hostIntegration.UseChildContainerAsServiceProviderFor(builder.Host);
 
       var app = builder.Build();
 
       app.UseRouting();
       app.MapControllers();
-
-      // Create a scope in our container for each request
-      app.Use((_, next) => _serviceLocator.ExecuteInIsolatedScopeAsync(next.Invoke));
 
       await app.StartAsync().caf();
 

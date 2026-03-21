@@ -2,11 +2,10 @@ using Compze.Abstractions.Wiring.Testing.Internal;
 using Compze.DependencyInjection.Abstractions;
 using Compze.DependencyInjection.Autofac;
 using Compze.DependencyInjection.Autofac.Extensions.Hosting;
-using Compze.DependencyInjection.Extensions.Hosting;
 using Compze.DependencyInjection.Microsoft;
 using Compze.DependencyInjection.Microsoft.Extensions.Hosting;
-using Compze.DependencyInjection.SimpleInjector;
 using Compze.xUnitMatrix;
+using Microsoft.Extensions.Hosting;
 
 namespace Compze.DependencyInjection.Specifications.Infrastructure;
 
@@ -14,28 +13,26 @@ static class DependencyInjectionContainerFactory
 {
    static DIContainer CurrentDIContainer => (DIContainer)MatrixCombination.Current.Components[0];
 
-   public static IDependencyInjectionContainer CreateContainer() =>
+   public static IContainerBuilder CreateContainerBuilder() =>
       CurrentDIContainer switch
       {
-         DIContainer.SimpleInjector => new SimpleInjectorDependencyInjectionContainer(),
-         DIContainer.Microsoft      => new MicrosoftDependencyInjectionContainer(),
-         DIContainer.Autofac        => new AutofacDependencyInjectionContainer(),
+         DIContainer.Microsoft      => new MicrosoftContainerBuilder(),
+         DIContainer.Autofac        => new AutofacContainerBuilder(),
          _                          => throw new ArgumentOutOfRangeException()
       };
 
-   public static (IDependencyInjectionContainer Container, IHostableContainer Hostable) CreateHostableContainer() =>
-      CurrentDIContainer switch
+   public static void UseAsServiceProviderFor(IContainerBuilder builder, IHostBuilder hostBuilder)
+   {
+      switch(builder)
       {
-#pragma warning disable CA2000
-         DIContainer.Microsoft => CreateHostablePair(new MicrosoftDependencyInjectionContainer()),
-         DIContainer.Autofac   => CreateHostablePair(new AutofacDependencyInjectionContainer()),
-         _                     => throw new ArgumentOutOfRangeException()
-#pragma warning restore CA2000
-      };
-
-   static (IDependencyInjectionContainer, IHostableContainer) CreateHostablePair(MicrosoftDependencyInjectionContainer container) =>
-      (container, new HostableMicrosoftContainer(container));
-
-   static (IDependencyInjectionContainer, IHostableContainer) CreateHostablePair(AutofacDependencyInjectionContainer container) =>
-      (container, new HostableAutofacContainer(container));
+         case MicrosoftContainerBuilder microsoftBuilder:
+            hostBuilder.UseServiceProviderFactory(new MicrosoftServiceProviderFactory(microsoftBuilder));
+            break;
+         case AutofacContainerBuilder autofacBuilder:
+            hostBuilder.UseServiceProviderFactory(new CompzeAutofacServiceProviderFactory(autofacBuilder));
+            break;
+         default:
+            throw new ArgumentOutOfRangeException(nameof(builder));
+      }
+   }
 }

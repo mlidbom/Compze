@@ -6,7 +6,6 @@
     <Project Path="Compze.DependencyInjection/Compze.DependencyInjection.csproj" />
     <Project Path="Compze.DependencyInjection.Autofac/Compze.DependencyInjection.Autofac.csproj" />
     <Project Path="Compze.DependencyInjection.Microsoft/Compze.DependencyInjection.Microsoft.csproj" />
-    <Project Path="Compze.DependencyInjection.SimpleInjector/Compze.DependencyInjection.SimpleInjector.csproj" />
     <Project Path="Compze.Internals.Logging.Serilog/Compze.Internals.Logging.Serilog.csproj" />
     <Project Path="Compze.Utilities.Testing.DbPool/Compze.Utilities.Testing.DbPool.csproj" />
   </Folder>

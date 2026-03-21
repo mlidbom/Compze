@@ -8,8 +8,9 @@ using Compze.Typermedia.HandlerRegistration;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.DependencyInjection.Autofac;
+using Compze.DependencyInjection.Autofac.Extensions.Hosting;
 using Compze.DependencyInjection.Microsoft;
-using Compze.DependencyInjection.SimpleInjector;
+using Compze.DependencyInjection.Microsoft.Extensions.Hosting;
 using Compze.Underscore;
 using Compze.Internals.Logging;
 using JetBrains.Annotations;
@@ -18,57 +19,44 @@ namespace Compze.Tessaging.Hosting.Testing.Wiring;
 
 public static class DiContainerExtensions
 {
-   public static IDependencyInjectionContainer CreateWithServiceLocator(this DIContainer @this) =>
-#pragma warning disable CA2000//We are passing this disposable out of the method
-      @this.CreateEmpty()
-           ._mutate(it => it.Register(Singleton.For<IServiceLocator>()
-                                              .CreatedBy(() => it.ServiceLocator)));
-#pragma warning restore CA2000
+   public static IContainerBuilder CreateWithContainerRegistrations(this DIContainer @this) =>
+      @this.CreateEmpty();
 
-   public static IDependencyInjectionContainer CreateWithServiceLocatorAndCurrentTestsPluggableComponents(this DIContainer @this) =>
-#pragma warning disable CA2000//We are passing it out of the method
-      @this.CreateWithCurrentTestsPluggableComponents()
-           ._mutate(it => it.Register(Singleton.For<IServiceLocator>()
-                                              .CreatedBy(() => it.ServiceLocator)));
-#pragma warning restore CA2000
+   public static IContainerBuilder CreateWithContainerRegistrationsAndCurrentTestsPluggableComponents(this DIContainer @this) =>
+      @this.CreateWithCurrentTestsPluggableComponents();
 
-   public static IDependencyInjectionContainer CreateWithCurrentTestsPluggableComponents(this DIContainer @this) =>
-#pragma warning disable CA2000//We are passing this disposable out of the method
+   public static IContainerBuilder CreateWithCurrentTestsPluggableComponents(this DIContainer @this) =>
       @this.CreateEmpty()
-           ._mutate(it => it.Register()
+           ._mutate(it => it.Registrar
                            .CurrentTestsPluggableComponents());
-#pragma warning restore CA2000
 
-   public static IDependencyInjectionContainer CreateEmpty(this DIContainer @this) =>
+   public static IContainerBuilder CreateEmpty(this DIContainer @this) =>
       @this switch
       {
-         DIContainer.SimpleInjector => new SimpleInjectorDependencyInjectionContainer(new TestingComponentRegistrar()),
-         DIContainer.Microsoft      => new MicrosoftDependencyInjectionContainer(new TestingComponentRegistrar()),
-         DIContainer.Autofac        => new AutofacDependencyInjectionContainer(new TestingComponentRegistrar()),
+         DIContainer.Microsoft      => new MicrosoftContainerBuilder(new TestingComponentRegistrar())._mutate(it => MicrosoftChildContainerHostIntegration.RegisterWith(it.Registrar)),
+         DIContainer.Autofac        => new AutofacContainerBuilder(new TestingComponentRegistrar())._mutate(it => AutofacChildContainerHostIntegration.RegisterWith(it.Registrar)),
          _                          => throw new ArgumentOutOfRangeException()
       };
 
-   public static IServiceLocator CreateServiceLocatorForTesting(this DIContainer @this, [InstantHandle] Action<IComponentRegistrar> setup)
+   public static IDependencyInjectionContainer CreateContainerForTesting(this DIContainer @this, [InstantHandle] Action<IComponentRegistrar> setup)
    {
-#pragma warning disable CA2000//it is disposed with the service locator
-      var container = @this.CreateWithServiceLocatorAndCurrentTestsPluggableComponents();
-#pragma warning restore CA2000
-      container.Register()
+      var builder = @this.CreateWithContainerRegistrationsAndCurrentTestsPluggableComponents();
+      builder.Registrar
                .TypeMapper()
                .DummyConfigurationParameterProvider()
                .TessageHandlerRegistry()
                .TypermediaHandlerRegistry()
                .InMemoryTeventStoreTeventPublisher();
-      setup(container.Register());
+      setup(builder.Registrar);
 
-      return container.ServiceLocator;
+      return builder.Build();
    }
 
    public const string TeventStoreConnectionStringName = "Fake_connectionstring_for_database_testing";
 
-   public static IServiceLocator SetupTestingServiceLocator(this DIContainer @this, [InstantHandle] Action<IComponentRegistrar>? configureContainer = null) =>
+   public static IDependencyInjectionContainer SetupTestingContainer(this DIContainer @this, [InstantHandle] Action<IComponentRegistrar>? configureContainer = null) =>
       CompzeLogger.For(typeof(DiContainerExtensions)).ExceptionsAndRethrow(() =>
-                                                                              @this.CreateServiceLocatorForTesting(register =>
+                                                                              @this.CreateContainerForTesting(register =>
                                                                               {
                                                                                  register.DocumentDb();
                                                                                  register.TeventStore(TeventStoreConnectionStringName);

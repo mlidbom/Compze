@@ -36,13 +36,6 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection)' != 'true'">
     <ProjectReference Include="..\..\..\..\src\Compze.DependencyInjection\Compze.DependencyInjection.csproj" />
   </ItemGroup>
-  <!-- Compze.DependencyInjection.SimpleInjector — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection_SimpleInjector)' == 'true'">
-    <PackageReference Include="Compze.DependencyInjection.SimpleInjector" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection_SimpleInjector)' != 'true'">
-    <ProjectReference Include="..\..\..\..\src\Compze.DependencyInjection.SimpleInjector\Compze.DependencyInjection.SimpleInjector.csproj" />
-  </ItemGroup>
   <!-- Compze.Hosting — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Hosting)' == 'true'">
     <PackageReference Include="Compze.Hosting" Version="*-*" />

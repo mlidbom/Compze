@@ -13,7 +13,7 @@ class PgSqlSqlLayerSchemaManager(IPgSqlConnectionPool connectionPool)
 {
    public static IComponentRegistrar RegisterWith(IComponentRegistrar registrar)
    {
-      if(registrar.Container().IsRegistered<PgSqlSqlLayerSchemaManager>())
+      if(registrar.IsRegistered<PgSqlSqlLayerSchemaManager>())
          return registrar;
       return registrar.Register(Singleton.For<PgSqlSqlLayerSchemaManager>()
                                          .CreatedBy((IPgSqlConnectionPool connectionPool) => new PgSqlSqlLayerSchemaManager(connectionPool))
