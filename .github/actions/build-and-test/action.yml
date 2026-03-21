@@ -7,7 +7,7 @@ inputs:
     required: false
     default: Debug
   pluggable-components:
-    description: "Pluggable component combination to test (e.g. SqliteMemory:Microsoft:Newtonsoft:Memory). When not specified, uses the .github-ci config file."
+    description: "Pluggable component combination to test (e.g. SqliteMemory:Microsoft:Newtonsoft:AspNetCore). When not specified, uses the .github-ci config file."
     required: false
     default: ""
 

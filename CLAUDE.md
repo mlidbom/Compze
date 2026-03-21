@@ -29,7 +29,7 @@ Compze is a .NET framework for building expressive domains through:
 - **Dependency Injection**: Pluggable (Microsoft DI, SimpleInjector)
 - **Persistence**: Pluggable (SQLite in-memory, SQL Server, PostgreSQL, MySQL)
 - **Serialization**: Pluggable (Newtonsoft)
-- **Transport**: Pluggable (Memory, AspNetCore)
+- **Transport**: Pluggable (AspNetCore)
 - **Documentation**: DocFX (site in `src/Websites/Website/`)
 - **Development Tools**: PowerShell module (`DevScripts/Compze.psm1`)
 
@@ -63,7 +63,7 @@ dotnet test src/Compze.AllProjects.slnx --no-build --filter "FullyQualifiedName~
 ### Test Configuration
 - Config file: `src/TestUsingPluggableComponentCombinations` (auto-created from `.defaults` on first build)
 - Format: `PersistenceLayer:DIContainer:Serializer:Transport` (one combination per line, `#` to comment out)
-- Default active combination: `SqliteMemory:Microsoft:Newtonsoft:Memory`
+- Default active combination: `SqliteMemory:Microsoft:Newtonsoft:AspNetCore`
 
 ## Project Structure
 
