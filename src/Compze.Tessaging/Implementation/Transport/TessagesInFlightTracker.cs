@@ -58,7 +58,7 @@ public class TessagesInFlightTracker(IStructuralTypeMapper typeMapper) : ITessag
                                                          () => new InFlightTessage
                                                                {
                                                                   TessageId = transportTessage.TessageId,
-                                                                  TypeName = _typeMapper.GetType(transportTessage.Type).FullName ?? transportTessage.Type.GuidValue.ToString(),
+                                                                  TypeName = transportTessage.Type.StringRepresentation,
                                                                   Body = transportTessage.Body
                                                                });
 
@@ -67,8 +67,7 @@ public class TessagesInFlightTracker(IStructuralTypeMapper typeMapper) : ITessag
 
       internal void DoneWith(TransportTessage.InComing tessage, EndpointId handlingEndpointId, Exception? exception)
       {
-         var tessageType = _typeMapper.GetType(tessage.TessageTypeId);
-         if(tessageType == typeof(EndpointInformationQuery))
+         if(_typeMapper.TryGetType(tessage.TessageTypeId, out var tessageType) && tessageType == typeof(EndpointInformationQuery))
             return; //this is an initial endpoint information request though which the endpoint IDs we use to track tessages is first established.
          if(exception != null)
          {

@@ -61,7 +61,7 @@ class HttpTypermediaTransport : ITypermediaTransport
       using var httpClient = _httpClientFactory.CreateClient();
       using var content = new StringContent(body);
       content.Headers.Add(HttpConstants.Headers.TessageId, ((tessage as IAtMostOnceTessage)?.Id ?? new TessageId()).ToString());
-      content.Headers.Add(HttpConstants.Headers.PayLoadTypeId, typeId.GuidValue.ToString());
+      content.Headers.Add(HttpConstants.Headers.PayLoadTypeId, typeId.StringRepresentation);
 
       var response = await httpClient.PostAsync(requestUri, content).caf();
       if(!response.IsSuccessStatusCode)

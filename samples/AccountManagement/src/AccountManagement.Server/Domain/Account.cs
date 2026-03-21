@@ -55,7 +55,8 @@ class Account : Taggregate<Account, IAccountTevent, AccountTevent, IAccountTeven
       Guard.IsNotNull(email);Guard.IsNotNull(password);
 
       //The email is the unique identifier for logging into the account so duplicates are forbidden.
-      if(navigator.Execute(InternalApi.Tueries.TryGetByEmail(email)) is not null)
+      var existingAccount = navigator.Execute(InternalApi.Tueries.TryGetByEmail(email));
+      if(existingAccount is not null)
       {
          Log.Warning($"Registration Failed. Email {email} is already registered.");
          return (RegistrationAttemptStatus.EmailAlreadyRegistered, null);

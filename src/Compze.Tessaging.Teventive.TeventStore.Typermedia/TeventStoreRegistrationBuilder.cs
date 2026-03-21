@@ -11,6 +11,8 @@ public static class TeventStoreTypermediaRegistrar
 {
    public static TeventStoreRegistrationBuilder RegisterTeventStore(this IEndpointBuilder @this)
    {
+      @this.TypeMapper.MapTypesFromAssemblyContaining<TeventStoreApi>();
+      @this.TypeMapper.MapTypesFromAssemblyContaining<Compze.Tessaging.Teventive.TeventStore.TeventCache>();
       @this.Container.Register().TeventStore(@this.Configuration.ConnectionStringName);
       return new TeventStoreRegistrationBuilder(@this.RegisterTypermediaHandlers());
    }

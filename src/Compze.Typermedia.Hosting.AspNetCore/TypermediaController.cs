@@ -93,8 +93,7 @@ public class TypermediaController : Controller
    async Task<ITessage> DeserializeTessageFromRequest()
    {
       var typeIdStr = Request.Headers[HttpConstants.Headers.PayLoadTypeId][0]._assert().NotNull();
-      var typeId = new MappedTypeId(Guid.Parse(typeIdStr));
-      var tessageType = _typeMapper.GetType(typeId);
+      var tessageType = _typeMapper.FromPersistedTypeString(typeIdStr);
 
       using var reader = new StreamReader(HttpContext.Request.Body);
       var json = await reader.ReadToEndAsync().caf();

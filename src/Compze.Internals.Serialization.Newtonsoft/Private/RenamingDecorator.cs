@@ -13,23 +13,22 @@ class RenamingDecorator(IStructuralTypeMapper typeMapper)
                                                                      """,
                                                                      RegexOptions.Compiled));
 
-   public string ReplaceTypeNames(string json) => FindTypeNames.Value.Replace(json, ReplaceTypeNamesWithTypeIds);
+   public string ReplaceTypeNames(string json) => FindTypeNames.Value.Replace(json, ReplaceTypeNamesWithPersistedStrings);
 
-   string ReplaceTypeNamesWithTypeIds(Match match)
+   string ReplaceTypeNamesWithPersistedStrings(Match match)
    {
       var type = Type.GetType(match.Groups[1].Value);
-      var typeId = _typeMapper.GetId(type!);
+      var persistedString = _typeMapper.ToPersistedTypeString(type!);
       return $"""
-              "$type": "{typeId.GuidValue}"
+              "$type": "{persistedString}"
               """;
    }
 
-   public string RestoreTypeNames(string json) => FindTypeNames.Value.Replace(json, ReplaceTypeIdsWithTypeNames);
+   public string RestoreTypeNames(string json) => FindTypeNames.Value.Replace(json, ReplacePersistedStringsWithTypeNames);
 
-   string ReplaceTypeIdsWithTypeNames(Match match)
+   string ReplacePersistedStringsWithTypeNames(Match match)
    {
-      var typeId = new MappedTypeId(Guid.Parse(match.Groups[1].Value));
-      var type = _typeMapper.GetType(typeId);
+      var type = _typeMapper.FromPersistedTypeString(match.Groups[1].Value);
       return $"""
               "$type": "{type.AssemblyQualifiedName}"
               """;

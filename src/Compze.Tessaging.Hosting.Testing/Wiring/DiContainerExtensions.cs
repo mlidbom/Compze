@@ -1,5 +1,4 @@
 using Compze.DocumentDb.Wiring;
-using Compze.Abstractions.Refactoring.Naming.Internal.Implementation;
 using Compze.Abstractions.Wiring.Testing.Internal;
 using Compze.Tessaging.Implementation;
 using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
@@ -54,7 +53,7 @@ public static class DiContainerExtensions
       var container = @this.CreateWithServiceLocatorAndCurrentTestsPluggableComponents();
 #pragma warning restore CA2000
       container.Register()
-               .StructuralTypeMapper()
+               .StructuralTypeMapperFromLoadedAssemblies()
                .DummyConfigurationParameterProvider()
                .TessageHandlerRegistry()
                .TypermediaHandlerRegistry()

@@ -160,7 +160,7 @@ namespace Compze.Tessaging.Teventive.TeventStore;
       var specifications = tevents.Select(tevent => cacheEntry.CreateInsertionSpecificationForNewTevent(tevent)).ToArray();
 
       var teventRows = tevents
-                     .Select(tevent => new TeventDataRow(specification: cacheEntry.CreateInsertionSpecificationForNewTevent(tevent), _typeMapper.GetId(tevent.GetType()), teventAsJson: _serializer.Serialize((TaggregateTevent)tevent)))
+                     .Select(tevent => new TeventDataRow(specification: cacheEntry.CreateInsertionSpecificationForNewTevent(tevent), _typeMapper.GetMappedId(tevent.GetType()), teventAsJson: _serializer.Serialize((TaggregateTevent)tevent)))
                      .ToList();
 
       teventRows.ForEach(it => it.StorageInformation.EffectiveVersion = it.TaggregateVersion);

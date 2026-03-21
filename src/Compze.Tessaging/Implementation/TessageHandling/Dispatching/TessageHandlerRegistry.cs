@@ -83,7 +83,7 @@ sealed class TessageHandlerRegistry(IStructuralTypeMapper typeMapper) : ITessage
       return dispatcher;
    }
 
-   public ISet<MappedTypeId> HandledRemoteTessageTypeIds()
+   public ISet<StructuralTypeId> HandledRemoteTessageTypeIds()
    {
       var handledTypes = _tommandHandlers.Keys
                                          .Concat(_teventHandlerRegistrations.Select(reg => reg.Type))

@@ -13,5 +13,5 @@ public interface ITessageHandlerRegistry
 
     ITeventDispatcher<ITevent> CreateTeventDispatcher();
 
-    ISet<MappedTypeId> HandledRemoteTessageTypeIds();
+    ISet<StructuralTypeId> HandledRemoteTessageTypeIds();
 }

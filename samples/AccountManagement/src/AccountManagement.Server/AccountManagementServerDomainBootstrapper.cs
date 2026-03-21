@@ -1,3 +1,4 @@
+using AccountManagement.API;
 using AccountManagement.Domain;
 using AccountManagement.Domain.Tevents;
 using AccountManagement.UI;
@@ -19,6 +20,7 @@ public static class AccountManagementServerDomainBootstrapper
                                    id: new EndpointId(Guid.Parse(input: "1A1BE9C8-C8F6-4E38-ABFB-F101E5EDB00D")),
                                    setup: builder =>
                                    {
+                                      RegisterTypeMappings(builder);
                                       RegisterDomainComponents(builder);
                                       RegisterHandlers(builder);
                                    });
@@ -33,11 +35,20 @@ public static class AccountManagementServerDomainBootstrapper
                             id: new EndpointId(Guid.Parse(input: "B16250DE-4321-4FBD-A0CC-E42C7A1B0B34")),
                             setup: builder =>
                             {
+                               RegisterTypeMappings(builder);
+
                                builder.RegisterDocumentDb()
                                       .HandleDocumentType<AccountStatistics.SingletonStatisticsQueryModel>(builder.RegisterTypermediaHandlers());
 
                                AccountStatistics.Register(builder);
                             });
+
+   static void RegisterTypeMappings(IEndpointBuilder builder)
+   {
+      builder.TypeMapper.MapTypesFromAssemblyContaining<Account>();
+      builder.TypeMapper.MapTypesFromAssemblyContaining<IAccountTevent>();
+      builder.TypeMapper.MapTypesFromAssemblyContaining<AccountResource>();
+   }
 
    static void RegisterDomainComponents(IEndpointBuilder builder)
    {

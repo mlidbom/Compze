@@ -59,23 +59,22 @@ class TypermediaRouter : ITypermediaRouter, IDisposable
       } 
    }
 
-   void RegisterRoutes(TypermediaConnection connection, ISet<MappedTypeId> handledTypeIds)
+   void RegisterRoutes(TypermediaConnection connection, ISet<string> handledTypeIdStrings)
    {
       var tommandHandlerRoutes = new Dictionary<Type, TypermediaConnection>();
       var tueryHandlerRoutes = new Dictionary<Type, TypermediaConnection>();
-      foreach(var typeId in handledTypeIds)
+      foreach(var typeIdString in handledTypeIdStrings)
       {
-         if(_typeMapper.TryGetType(typeId, out var tessageType))
+         var tessageType = _typeMapper.FromPersistedTypeString(typeIdString);
+
+         if(tessageType.Is<IAtMostOnceTypermediaTommand>())
          {
-            if(tessageType.Is<IAtMostOnceTypermediaTommand>())
-            {
-               tommandHandlerRoutes.Add(tessageType, connection);
-            } else if(tessageType.Is<IRemotableTuery<object>>())
-            {
-               tueryHandlerRoutes.Add(tessageType, connection);
-            }
-            //Silently skip exactly-once types — those are handled by TessagingRouter
+            tommandHandlerRoutes.Add(tessageType, connection);
+         } else if(tessageType.Is<IRemotableTuery<object>>())
+         {
+            tueryHandlerRoutes.Add(tessageType, connection);
          }
+         //Silently skip exactly-once types — those are handled by TessagingRouter
       }
 
       if(tommandHandlerRoutes.Count > 0)

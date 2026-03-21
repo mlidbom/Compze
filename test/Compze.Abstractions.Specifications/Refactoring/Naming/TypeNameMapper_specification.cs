@@ -41,7 +41,18 @@ public class TypeNameMapper_specification
 
       stableAssemblies ??= ["System.Private.CoreLib"];
 
-      return new TypeNameMapper(leafMappings, openGenericMappings, stableAssemblies);
+      var mapper = new TypeNameMapper();
+
+      foreach(var kvp in leafMappings)
+         mapper.AddLeafTypeMapping(kvp.Key, kvp.Value);
+
+      foreach(var kvp in openGenericMappings)
+         mapper.AddOpenGenericMapping(kvp.Key, kvp.Value);
+
+      foreach(var name in stableAssemblies)
+         mapper.AddStableAssemblyName(name);
+
+      return mapper;
    }
 
    public class GetId_for_mapped_leaf_type : TypeNameMapper_specification

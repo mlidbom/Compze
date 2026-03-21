@@ -63,7 +63,7 @@ sealed class DocumentDb : IDocumentDb
       var idString = GetIdString(id);
       var serializedDocument = _serializer.Serialize(value);
 
-      _sqlLayer.Add(new IDocumentDbSqlLayer.WriteRow(id: idString, serializedDocument: serializedDocument, updateTime: UtcTimeSource.UtcNow, typeId: _typeMapper.GetId(value.GetType())));
+      _sqlLayer.Add(new IDocumentDbSqlLayer.WriteRow(id: idString, serializedDocument: serializedDocument, updateTime: UtcTimeSource.UtcNow, typeId: _typeMapper.GetMappedId(value.GetType())));
 
       persistentValues.GetOrAddDefault(value.GetType())[idString] = serializedDocument;
    }
@@ -97,7 +97,7 @@ sealed class DocumentDb : IDocumentDb
          if(needsUpdate)
          {
             persistentValues.GetOrAddDefault(item.Value.GetType())[item.Key] = serializedDocument;
-            toUpdate.Add(new IDocumentDbSqlLayer.WriteRow(item.Key, serializedDocument, now, _typeMapper.GetId(item.Value.GetType())));
+            toUpdate.Add(new IDocumentDbSqlLayer.WriteRow(item.Key, serializedDocument, now, _typeMapper.GetMappedId(item.Value.GetType())));
          }
       }
 

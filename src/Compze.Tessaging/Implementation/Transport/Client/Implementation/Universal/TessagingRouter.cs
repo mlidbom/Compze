@@ -88,19 +88,18 @@ class TessagingRouter : ITessagingRouter, IDisposable
          connection.StopDelivery();
    });
 
-   void RegisterRoutes(TessagingConnection connection, ISet<MappedTypeId> handledTypeIds)
+   void RegisterRoutes(TessagingConnection connection, ISet<string> handledTypeIdStrings)
    {
-      foreach(var typeId in handledTypeIds)
+      foreach(var typeIdString in handledTypeIdStrings)
       {
-         if(_typeMapper.TryGetType(typeId, out var tessageType))
+         var tessageType = _typeMapper.FromPersistedTypeString(typeIdString);
+
+         if(tessageType.Is<IExactlyOnceTevent>())
          {
-            if(tessageType.Is<IExactlyOnceTevent>())
-            {
-               _teventSubscriberRoutes.Add((tessageType, connection));
-            } else if(tessageType.Is<IExactlyOnceTommand>())
-            {
-               _tommandHandlerRoutes.Add(tessageType, connection);
-            }
+            _teventSubscriberRoutes.Add((tessageType, connection));
+         } else if(tessageType.Is<IExactlyOnceTommand>())
+         {
+            _tommandHandlerRoutes.Add(tessageType, connection);
          }
       }
 

@@ -18,17 +18,17 @@ public class EndpointInformation
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
    // ReSharper restore MemberCanBeInternal
 
-   public EndpointInformation(IEnumerable<MappedTypeId> handledRemoteTessageTypeIds, EndpointConfiguration configuration)
+   public EndpointInformation(IEnumerable<StructuralTypeId> handledRemoteTessageTypeIds, EndpointConfiguration configuration)
    {
       Id = configuration.Id;
       Name = configuration.Name;
-      HandledTessageTypes = [..handledRemoteTessageTypeIds];
+      HandledTessageTypes = handledRemoteTessageTypeIds.Select(id => id.StringRepresentation).ToHashSet();
    }
 
    // ReSharper disable MemberCanBeInternal — Serialized across assemblies via Newtonsoft reflection
    public string Name { get; private set; }
    public EndpointId Id { get; private set; }
-   public HashSet<MappedTypeId> HandledTessageTypes { get; private set; }
+   public HashSet<string> HandledTessageTypes { get; private set; }
    // ReSharper restore MemberCanBeInternal
 }
 

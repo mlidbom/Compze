@@ -1,40 +1,84 @@
 using System.Collections.Concurrent;
-using System.Collections.Frozen;
+using Compze.Abstractions.Refactoring.Naming.Internal;
 
 namespace Compze.Abstractions.Refactoring.Naming.Internal.Implementation;
 
 /// <summary>
 /// Transforms between .NET <see cref="Type"/> objects and <see cref="StructuralTypeId"/> values.
 /// Uses <see cref="TypeNameParser"/> for string manipulation and mapping dictionaries for GUID↔Type lookups.
-/// Caches results in both directions. Thread-safe.
+/// Supports incremental registration of assemblies. Caches results in both directions. Thread-safe.
 /// </summary>
 class TypeNameMapper
 {
    // Leaf type mappings: Type ↔ Guid
-   readonly FrozenDictionary<Guid, Type> _guidToLeafType;
-   readonly FrozenDictionary<Type, Guid> _leafTypeToGuid;
+   readonly ConcurrentDictionary<Guid, Type> _guidToLeafType = new();
+   readonly ConcurrentDictionary<Type, Guid> _leafTypeToGuid = new();
 
    // Open generic mappings: Type ↔ Guid
-   readonly FrozenDictionary<Guid, Type> _guidToOpenGeneric;
-   readonly FrozenDictionary<Type, Guid> _openGenericToGuid;
+   readonly ConcurrentDictionary<Guid, Type> _guidToOpenGeneric = new();
+   readonly ConcurrentDictionary<Type, Guid> _openGenericToGuid = new();
 
    // Stable assembly names
-   readonly FrozenSet<string> _stableAssemblyNames;
+   readonly HashSet<string> _stableAssemblyNames = [];
+   readonly object _stableAssemblyNamesLock = new();
 
    // Caches (populated on demand, thread-safe)
    readonly ConcurrentDictionary<Type, StructuralTypeId> _typeToIdCache = new();
    readonly ConcurrentDictionary<string, Type> _stringToTypeCache = new();
 
-   internal TypeNameMapper(
-      IReadOnlyDictionary<Type, Guid> leafTypeMappings,
-      IReadOnlyDictionary<Type, Guid> openGenericMappings,
-      IReadOnlySet<string> stableAssemblyNames)
+   internal TypeNameMapper() { }
+
+   internal void AddLeafTypeMapping(Type type, Guid guid)
    {
-      _leafTypeToGuid = leafTypeMappings.ToFrozenDictionary();
-      _guidToLeafType = leafTypeMappings.ToFrozenDictionary(kvp => kvp.Value, kvp => kvp.Key);
-      _openGenericToGuid = openGenericMappings.ToFrozenDictionary();
-      _guidToOpenGeneric = openGenericMappings.ToFrozenDictionary(kvp => kvp.Value, kvp => kvp.Key);
-      _stableAssemblyNames = stableAssemblyNames.ToFrozenSet();
+      _leafTypeToGuid[type] = guid;
+      _guidToLeafType[guid] = type;
+      ClearCaches();
+   }
+
+   internal void AddOpenGenericMapping(Type openGenericType, Guid guid)
+   {
+      _openGenericToGuid[openGenericType] = guid;
+      _guidToOpenGeneric[guid] = openGenericType;
+      ClearCaches();
+   }
+
+   internal bool TryGetOpenGenericMapping(Type openGenericType, out MappedTypeId id)
+   {
+      if(_openGenericToGuid.TryGetValue(openGenericType, out var guid))
+      {
+         id = new MappedTypeId(guid);
+         return true;
+      }
+      id = default!;
+      return false;
+   }
+
+   internal void AddStableAssemblyName(string assemblyName)
+   {
+      lock(_stableAssemblyNamesLock)
+      {
+         _stableAssemblyNames.Add(assemblyName);
+      }
+
+      ClearCaches();
+   }
+
+   void ClearCaches()
+   {
+      _typeToIdCache.Clear();
+      _stringToTypeCache.Clear();
+   }
+
+   internal bool HasMappingForOpenGeneric(Type openGenericType)
+      => _openGenericToGuid.ContainsKey(openGenericType) || _leafTypeToGuid.ContainsKey(openGenericType);
+
+   internal bool IsStableType(Type type)
+   {
+      var assemblyName = type.Assembly.GetName().Name;
+      lock(_stableAssemblyNamesLock)
+      {
+         return assemblyName != null && _stableAssemblyNames.Contains(assemblyName);
+      }
    }
 
    /// <summary>
@@ -180,7 +224,13 @@ class TypeNameMapper
       return commaIndex >= 0 ? assemblyString[..commaIndex].Trim() : assemblyString.Trim();
    }
 
-   bool IsStableAssembly(string assemblyString) => _stableAssemblyNames.Contains(SimpleAssemblyName(assemblyString));
+   bool IsStableAssembly(string assemblyString)
+   {
+      lock(_stableAssemblyNamesLock)
+      {
+         return _stableAssemblyNames.Contains(SimpleAssemblyName(assemblyString));
+      }
+   }
 
    TypeNameParser.ParsedTypeName TransformToPersisted(TypeNameParser.ParsedTypeName parsed)
    {

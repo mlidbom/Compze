@@ -74,7 +74,7 @@ public sealed class TypermediaHandlerRegistry(IStructuralTypeMapper typeMapper) 
       throw new NoHandlerException(tommand.GetType());
    }
 
-   public ISet<MappedTypeId> HandledRemoteTypermediaTypeIds()
+   public ISet<StructuralTypeId> HandledRemoteTypermediaTypeIds()
    {
       var handledTypes = _tommandHandlersReturningResults.Keys
                                                          .Concat(_tueryHandlers.Keys)

@@ -1,4 +1,5 @@
 using Compze.Abstractions.Configuration.Internal;
+using Compze.Abstractions.Refactoring.Naming.Internal;
 using Compze.Abstractions.Refactoring.Naming.Internal.Implementation;
 using Compze.Abstractions.Tessaging.Hosting.Public;
 using Compze.Core.Tessaging.Hosting.Public;
@@ -42,6 +43,7 @@ class ServerEndpointBuilder : IEndpointBuilder, IAsyncDisposable, IDisposable
    readonly TypermediaHandlerRegistry _typermediaRegistry;
    readonly IEndpointHost _host;
    public EndpointConfiguration Configuration { get; }
+   public IStructuralTypeMapper TypeMapper { get; }
 
    public TessageHandlerRegistrarWithDependencyInjectionSupport RegisterTessagingHandlers { get; }
    public TypermediaHandlerRegistrarWithDependencyInjectionSupport RegisterTypermediaHandlers { get; }
@@ -76,8 +78,9 @@ class ServerEndpointBuilder : IEndpointBuilder, IAsyncDisposable, IDisposable
 
       Configuration = configuration;
 
-      _tessagingRegistry = new TessageHandlerRegistry(StructuralTypeMapperRegistrar.CreateFromLoadedAssemblies());
-      _typermediaRegistry = new TypermediaHandlerRegistry(StructuralTypeMapperRegistrar.CreateFromLoadedAssemblies());
+      TypeMapper = new StructuralTypeMapper();
+      _tessagingRegistry = new TessageHandlerRegistry(TypeMapper);
+      _typermediaRegistry = new TypermediaHandlerRegistry(TypeMapper);
       var serviceLocator = new LazyCE<IServiceLocator>(() => Container.ServiceLocator);
       RegisterTessagingHandlers = new TessageHandlerRegistrarWithDependencyInjectionSupport(_tessagingRegistry, serviceLocator);
       RegisterTypermediaHandlers = new TypermediaHandlerRegistrarWithDependencyInjectionSupport(_typermediaRegistry, serviceLocator);
@@ -85,10 +88,12 @@ class ServerEndpointBuilder : IEndpointBuilder, IAsyncDisposable, IDisposable
 
    void SetupContainer()
    {
+      ((StructuralTypeMapper)TypeMapper).MapTypesFromAllLoadedAssembliesWithTypeMappingsAttribute();
+
       var register = Container.Register();
       //Universal stuff here
-      register.JSonAppConfigFileConfigurationParameterProvider()
-              .StructuralTypeMapper();
+      register.JSonAppConfigFileConfigurationParameterProvider();
+      Container.Register(Singleton.For<IStructuralTypeMapper>().Instance(TypeMapper));
 
       //Only endpoint stuff after here
       //todo: Find cleaner way of doing this.

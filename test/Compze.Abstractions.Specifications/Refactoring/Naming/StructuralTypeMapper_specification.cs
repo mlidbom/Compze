@@ -17,14 +17,18 @@ namespace Compze.Abstractions.Specifications.Refactoring.Naming;
 public class StructuralTypeMapper_specification
 {
    static StructuralTypeMapper BuildMapper()
-      => StructuralTypeMapper.BuildFromAssemblies([typeof(Compze.Abstractions.TypeMappingDeclarations).Assembly]);
+   {
+      var mapper = new StructuralTypeMapper();
+      mapper.MapTypesFromAssembly(typeof(Compze.Abstractions.TypeMappingDeclarations).Assembly);
+      return mapper;
+   }
 
    public class When_built_from_assembly_with_TypeMappings_attribute : StructuralTypeMapper_specification
    {
       [XF] public void GetId_returns_correct_MappedTypeId_for_leaf_type()
       {
          var mapper = BuildMapper();
-         var id = mapper.GetId(typeof(TentityId));
+         var id = (MappedTypeId)mapper.GetId(typeof(TentityId));
          id.GuidValue.Must().Be(Guid.Parse("a1d63763-f934-493b-ae92-aeb2f15368b7"));
       }
 
@@ -64,7 +68,8 @@ public class StructuralTypeMapper_specification
       [XF] public void AssertMappingsExistFor_throws_for_unmapped_types()
       {
          var mapper = BuildMapper();
-         Assert.Throws<InvalidOperationException>(() => mapper.AssertMappingsExistFor([typeof(string)]));
+         // Use a type from a non-stable assembly that has no mapping declared
+         Assert.Throws<InvalidOperationException>(() => mapper.AssertMappingsExistFor([typeof(StructuralTypeMapper_specification)]));
       }
 
       [XF] public void ToPersistedTypeString_returns_guid_comma_zero_for_leaf_type()

@@ -1,4 +1,3 @@
-using Compze.Abstractions.Refactoring.Naming.Internal.Implementation;
 using Compze.Abstractions.Serialization.Internal;
 using Compze.Abstractions.Wiring.Testing.Internal;
 using Compze.Core.Serialization.Internal;
@@ -24,7 +23,7 @@ public class SerializerTest : UniversalTestBase
       _container = DIContainer.Microsoft
                              .CreateEmpty()
                              ._mutate(it => RegisterSerializer(it.Register(), serializer)
-                                              .StructuralTypeMapper());
+                                              .StructuralTypeMapperFromLoadedAssemblies());
 #pragma warning restore CA2000
    }
 

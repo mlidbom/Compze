@@ -20,11 +20,10 @@ public abstract class ControllerBase(IRemotableTessageSerializer serializer, ISt
    {
       var tessageId = new TessageId(Guid.Parse(Request.Headers[HttpConstants.Headers.TessageId][0]._assert().NotNull()));
       var typeIdStr = Request.Headers[HttpConstants.Headers.PayLoadTypeId][0]._assert().NotNull();
-      var typeId = new MappedTypeId(Guid.Parse(typeIdStr));
 
       using var reader = new StreamReader(HttpContext.Request.Body);
       var tueryJson = await reader.ReadToEndAsync().caf();
 
-      return new TransportTessage.InComing(tueryJson, typeId, tessageId, _typeMapper, _serializer);
+      return new TransportTessage.InComing(tueryJson, typeIdStr, tessageId, _typeMapper, _serializer);
    }
 }

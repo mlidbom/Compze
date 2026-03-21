@@ -63,7 +63,7 @@ public partial class TeventStore
                         refactorings.Add(newTevents
                                         .Select(it => new TeventDataRow(tevent: it.NewTevent.ToTaggregateTeventData(),
                                                                           it.StorageInformation,
-                                                                          _typeMapper.GetId(it.NewTevent.GetType()),
+                                                                          _typeMapper.GetMappedId(it.NewTevent.GetType()),
                                                                           teventAsJson: _serializer.Serialize(it.NewTevent)))
                                         .ToList());
 
