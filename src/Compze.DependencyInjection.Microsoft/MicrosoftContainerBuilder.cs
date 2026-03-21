@@ -71,7 +71,7 @@ public sealed class MicrosoftContainerBuilder(IComponentRegistrar? registrar = n
       _services.AddSingleton(_ => builtContainer!);
       // ReSharper restore AccessToModifiedClosure
 
-      var serviceProvider = _services.BuildServiceProvider(new ServiceProviderOptions { ValidateOnBuild = true, ValidateScopes = true });
+      var serviceProvider = _services.BuildServiceProvider();
       builtContainer = new MicrosoftContainer(serviceProvider, RegisteredComponents(), Registrar);
       return builtContainer;
    }

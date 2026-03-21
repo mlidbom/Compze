@@ -129,6 +129,9 @@
     <Project Path="Compze.DependencyInjection/Compze.DependencyInjection.csproj" />
   </Folder>
   <Folder Name="/Compze.DependencyInjection/Specifications/">
+    <Project Path="../test/Compze.DependencyInjection.MsDiCompliance/Compze.DependencyInjection.MsDiCompliance.csproj">
+      <BuildType Solution="docs|*" Project="Release" />
+    </Project>
     <Project Path="../test/Compze.DependencyInjection.Specifications/Compze.DependencyInjection.Specifications.csproj" />
   </Folder>
   <Folder Name="/Compze.Internals/">
