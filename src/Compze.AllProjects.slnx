@@ -124,6 +124,8 @@
     <Project Path="Compze.DependencyInjection.DryIoc.Extensions.Hosting/Compze.DependencyInjection.DryIoc.Extensions.Hosting.csproj" />
     <Project Path="Compze.DependencyInjection.DryIoc/Compze.DependencyInjection.DryIoc.csproj" />
     <Project Path="Compze.DependencyInjection.Extensions.Hosting/Compze.DependencyInjection.Extensions.Hosting.csproj" />
+    <Project Path="Compze.DependencyInjection.LightInject.Extensions.Hosting/Compze.DependencyInjection.LightInject.Extensions.Hosting.csproj" />
+    <Project Path="Compze.DependencyInjection.LightInject/Compze.DependencyInjection.LightInject.csproj" />
     <Project Path="Compze.DependencyInjection.Microsoft.Extensions.Hosting/Compze.DependencyInjection.Microsoft.Extensions.Hosting.csproj" />
     <Project Path="Compze.DependencyInjection.Microsoft/Compze.DependencyInjection.Microsoft.csproj" />
     <Project Path="Compze.DependencyInjection/Compze.DependencyInjection.csproj" />

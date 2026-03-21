@@ -14,6 +14,8 @@
       <Value>UsePackageReference_Compze_DependencyInjection_DryIoc = true</Value>
       <Value>UsePackageReference_Compze_DependencyInjection_DryIoc_Extensions_Hosting = true</Value>
       <Value>UsePackageReference_Compze_DependencyInjection_Extensions_Hosting = true</Value>
+      <Value>UsePackageReference_Compze_DependencyInjection_LightInject = true</Value>
+      <Value>UsePackageReference_Compze_DependencyInjection_LightInject_Extensions_Hosting = true</Value>
       <Value>UsePackageReference_Compze_DependencyInjection_Microsoft = true</Value>
       <Value>UsePackageReference_Compze_DependencyInjection_Microsoft_Extensions_Hosting = true</Value>
       <Value>UsePackageReference_Compze_DocumentDb = true</Value>

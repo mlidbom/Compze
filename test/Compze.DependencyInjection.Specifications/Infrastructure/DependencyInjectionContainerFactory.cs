@@ -4,6 +4,8 @@ using Compze.DependencyInjection.Autofac;
 using Compze.DependencyInjection.Autofac.Extensions.Hosting;
 using Compze.DependencyInjection.DryIoc;
 using Compze.DependencyInjection.DryIoc.Extensions.Hosting;
+using Compze.DependencyInjection.LightInject;
+using Compze.DependencyInjection.LightInject.Extensions.Hosting;
 using Compze.DependencyInjection.Microsoft;
 using Compze.DependencyInjection.Microsoft.Extensions.Hosting;
 using Compze.xUnitMatrix;
@@ -21,6 +23,7 @@ static class DependencyInjectionContainerFactory
          DIContainer.Microsoft      => new MicrosoftContainerBuilder(),
          DIContainer.Autofac        => new AutofacContainerBuilder(),
          DIContainer.DryIoc         => new DryIocContainerBuilder(),
+         DIContainer.LightInject    => new LightInjectContainerBuilder(),
          _                          => throw new ArgumentOutOfRangeException()
       };
 
@@ -36,6 +39,9 @@ static class DependencyInjectionContainerFactory
             break;
          case DryIocContainerBuilder dryIocBuilder:
             hostBuilder.UseServiceProviderFactory(new CompzeDryIocServiceProviderFactory(dryIocBuilder));
+            break;
+         case LightInjectContainerBuilder lightInjectBuilder:
+            hostBuilder.UseServiceProviderFactory(new CompzeLightInjectServiceProviderFactory(lightInjectBuilder));
             break;
          default:
             throw new ArgumentOutOfRangeException(nameof(builder));

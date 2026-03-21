@@ -13,9 +13,25 @@
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Specification.Tests" Version="10.0.5" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\src\Compze.DependencyInjection.Microsoft.Extensions.Hosting\Compze.DependencyInjection.Microsoft.Extensions.Hosting.csproj" />
+  <!-- Compze.DependencyInjection.Autofac.Extensions.Hosting — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection_Autofac_Extensions_Hosting)' == 'true'">
+    <PackageReference Include="Compze.DependencyInjection.Autofac.Extensions.Hosting" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection_Autofac_Extensions_Hosting)' != 'true'">
     <ProjectReference Include="..\..\src\Compze.DependencyInjection.Autofac.Extensions.Hosting\Compze.DependencyInjection.Autofac.Extensions.Hosting.csproj" />
+  </ItemGroup>
+  <!-- Compze.DependencyInjection.DryIoc.Extensions.Hosting — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection_DryIoc_Extensions_Hosting)' == 'true'">
+    <PackageReference Include="Compze.DependencyInjection.DryIoc.Extensions.Hosting" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection_DryIoc_Extensions_Hosting)' != 'true'">
     <ProjectReference Include="..\..\src\Compze.DependencyInjection.DryIoc.Extensions.Hosting\Compze.DependencyInjection.DryIoc.Extensions.Hosting.csproj" />
+  </ItemGroup>
+  <!-- Compze.DependencyInjection.Microsoft.Extensions.Hosting — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection_Microsoft_Extensions_Hosting)' == 'true'">
+    <PackageReference Include="Compze.DependencyInjection.Microsoft.Extensions.Hosting" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection_Microsoft_Extensions_Hosting)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.DependencyInjection.Microsoft.Extensions.Hosting\Compze.DependencyInjection.Microsoft.Extensions.Hosting.csproj" />
   </ItemGroup>
 </Project>

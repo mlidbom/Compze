@@ -9,14 +9,23 @@ public static class DIContainerExtensions
       this DIContainer container,
       TValue autofac,
       TValue microsoft,
-      TValue dryIoc) where TValue : notnull
+      TValue dryIoc) where TValue : notnull =>
+      container.ValueFor(autofac, microsoft, dryIoc, dryIoc);
+
+   public static TValue ValueFor<TValue>(
+      this DIContainer container,
+      TValue autofac,
+      TValue microsoft,
+      TValue dryIoc,
+      TValue lightInject) where TValue : notnull
    {
       return container switch
       {
-         DIContainer.Autofac   => autofac,
-         DIContainer.Microsoft => microsoft,
-         DIContainer.DryIoc    => dryIoc,
-         _                     => throw new ArgumentOutOfRangeException(nameof(container), container, $"Unsupported DI container: {container}")
+         DIContainer.Autofac      => autofac,
+         DIContainer.Microsoft    => microsoft,
+         DIContainer.DryIoc       => dryIoc,
+         DIContainer.LightInject  => lightInject,
+         _                        => throw new ArgumentOutOfRangeException(nameof(container), container, $"Unsupported DI container: {container}")
       };
    }
 }
