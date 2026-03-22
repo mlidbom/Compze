@@ -1,172 +1,214 @@
 namespace Compze.TypeIdentifiers;
 
 /// <summary>
-/// Parses .NET <c>AssemblyQualifiedName</c>-format strings into a tree of components.
-/// Handles generics, arrays, nested generics, and the mapped format where
-/// type names are GUIDs and assembly names are "0".
+/// Parses .NET <c>AssemblyQualifiedName</c>-format strings into a typed tree of components.
+/// Each subtype of <see cref="ParsedTypeName"/> owns parsing for its own grammar production.
 /// </summary>
 static class TypeNameParser
 {
    /// <summary>
-   /// Represents a parsed component of an <c>AssemblyQualifiedName</c>-format string.
-   /// For a simple type: TypeName + AssemblyName.
-   /// For a generic type: TypeName (with arity suffix) + AssemblyName + TypeArguments.
-   /// For an array type: the element type is parsed, and array suffix (e.g. "[]", "[,]") is part of the TypeName.
+   /// A parsed component of an <c>AssemblyQualifiedName</c>-format string.
+   /// Subtypes distinguish leaf components from generic components.
    /// </summary>
-   internal sealed class ParsedTypeName(string typeName, string assemblyName, ParsedTypeName[]? typeArguments = null, string? arraySuffix = null)
+   internal abstract class ParsedTypeName
    {
-      /// <summary>The type name portion (namespace-qualified). For generics, includes the arity suffix (e.g. "`1"). Does NOT include array brackets.</summary>
-      public string TypeName { get; } = typeName;
+      /// <summary>The type name portion (namespace-qualified). For generics, includes the arity suffix (e.g. "`1").</summary>
+      public string TypeName { get; }
 
       /// <summary>The assembly name. "0" for mapped types.</summary>
-      public string AssemblyName { get; } = assemblyName;
-
-      /// <summary>Type arguments for generic types. Null for non-generic types.</summary>
-      public ParsedTypeName[]? TypeArguments { get; } = typeArguments;
+      public string AssemblyName { get; }
 
       /// <summary>Array suffix (e.g. "[]", "[,]"). Null for non-array types.</summary>
-      public string? ArraySuffix { get; } = arraySuffix;
+      public string? ArraySuffix { get; }
 
-      /// <summary>Reconstructs the <c>AssemblyQualifiedName</c>-format string from this parsed tree.</summary>
-      public string ToAssemblyQualifiedNameString()
+      protected ParsedTypeName(string typeName, string assemblyName, string? arraySuffix)
       {
-         if(TypeArguments is { Length: > 0 })
-         {
-            var argsString = string.Join(",", TypeArguments.Select(arg => $"[{arg.ToAssemblyQualifiedNameString()}]"));
-            return $"{TypeName}[{argsString}]{ArraySuffix}, {AssemblyName}";
-         }
-
-         return $"{TypeName}{ArraySuffix}, {AssemblyName}";
+         TypeName = typeName;
+         AssemblyName = assemblyName;
+         ArraySuffix = arraySuffix;
       }
 
+      /// <summary>Reconstructs the <c>AssemblyQualifiedName</c>-format string from this parsed tree.</summary>
+      public abstract string ToAssemblyQualifiedNameString();
       public override string ToString() => ToAssemblyQualifiedNameString();
+
+      /// <summary>
+      /// Parses an <c>AssemblyQualifiedName</c>-format string into the correct <see cref="ParsedTypeName"/> subtype.
+      /// This is the dispatch point: splits the component from its assembly name, determines whether it's
+      /// a leaf or generic, and delegates to the appropriate subtype.
+      /// </summary>
+      internal static ParsedTypeName Parse(string assemblyQualifiedName)
+      {
+         var (typePartWithArraySuffix, assemblyName) = SplitFirstTopLevelComma(assemblyQualifiedName);
+
+         var typePart = typePartWithArraySuffix;
+         string? arraySuffix = null;
+
+         // Check for trailing array suffix (e.g. "List`1[[...]][]" or "MyType[]")
+         if(typePart.EndsWith(']'))
+         {
+            var trailingSuffixStart = FindTrailingArraySuffixStart(typePart);
+            if(trailingSuffixStart >= 0)
+            {
+               arraySuffix = typePart[trailingSuffixStart..];
+               typePart = typePart[..trailingSuffixStart];
+            }
+         }
+
+         // If the remaining type part contains a generic argument block, it's a generic type
+         var firstBracket = typePart.IndexOf('[');
+         if(firstBracket >= 0 && firstBracket + 1 < typePart.Length && typePart[firstBracket + 1] == '[')
+            return ParsedGenericTypeName.ParseFromParts(typePart, assemblyName, arraySuffix);
+
+         // Otherwise it's a leaf (possibly with an array suffix already extracted above)
+         return new ParsedLeafTypeName(typePart.Trim(), assemblyName, arraySuffix);
+      }
+   }
+
+   /// <summary>A non-generic component: <c>TypeName ArraySuffix?, AssemblyName</c>.</summary>
+   internal sealed class ParsedLeafTypeName(string typeName, string assemblyName, string? arraySuffix = null)
+      : ParsedTypeName(typeName, assemblyName, arraySuffix)
+   {
+      public override string ToAssemblyQualifiedNameString() => $"{TypeName}{ArraySuffix}, {AssemblyName}";
+   }
+
+   /// <summary>A generic component: <c>TypeName[[ arg1 ],[ arg2 ]] ArraySuffix?, AssemblyName</c>.</summary>
+   internal sealed class ParsedGenericTypeName : ParsedTypeName
+   {
+      public ParsedTypeName[] TypeArguments { get; }
+
+      internal ParsedGenericTypeName(string typeName, string assemblyName, ParsedTypeName[] typeArguments, string? arraySuffix = null)
+         : base(typeName, assemblyName, arraySuffix) => TypeArguments = typeArguments;
+
+      public override string ToAssemblyQualifiedNameString()
+      {
+         var argsString = string.Join(",", TypeArguments.Select(arg => $"[{arg.ToAssemblyQualifiedNameString()}]"));
+         return $"{TypeName}[{argsString}]{ArraySuffix}, {AssemblyName}";
+      }
+
+      /// <summary>
+      /// Parses a generic type from its already-split parts: the type portion (e.g. "List`1[[MyType, Asm]]"),
+      /// the assembly name, and any trailing array suffix.
+      /// </summary>
+      internal static ParsedGenericTypeName ParseFromParts(string typePart, string assemblyName, string? arraySuffix)
+      {
+         // TypeName is everything before the first '['
+         var firstBracket = typePart.IndexOf('[');
+         var typeName = typePart[..firstBracket].Trim();
+
+         // The argument block is the rest: "[[arg1],[arg2]]"
+         var argumentBlock = typePart[firstBracket..];
+
+         var arguments = SplitGenericArguments(argumentBlock);
+         var parsedArguments = arguments.Select(ParsedTypeName.Parse).ToArray();
+
+         return new ParsedGenericTypeName(typeName, assemblyName, parsedArguments, arraySuffix);
+      }
    }
 
    /// <summary>
-   /// Parses an <c>AssemblyQualifiedName</c>-format string into a <see cref="ParsedTypeName"/> tree.
+   /// Splits a generic argument block like <c>[[arg1],[arg2]]</c> into individual argument strings.
+   /// Each argument is the content between matched <c>[</c>...<c>]</c> pairs inside the outer brackets.
    /// </summary>
-   internal static ParsedTypeName Parse(string assemblyQualifiedName)
+   static string[] SplitGenericArguments(string argumentBlock)
    {
-      var index = 0;
-      return ParseComponent(assemblyQualifiedName, ref index);
-   }
+      // Strip the outer [ and ]
+      var inner = argumentBlock[1..^1];
 
-   static ParsedTypeName ParseComponent(string input, ref int index)
-   {
-      var typeName = ParseTypeName(input, ref index);
-
-      // Array suffix before generic args (non-generic arrays like MyType[])
-      var arraySuffix = TryParseArraySuffix(input, ref index);
-
-      ParsedTypeName[]? typeArguments = null;
-      if(index < input.Length && input[index] == '[' && !IsArraySuffix(input, index))
+      var arguments = new List<string>();
+      var position = 0;
+      while(position < inner.Length)
       {
-         typeArguments = ParseTypeArguments(input, ref index);
-      }
+         // Skip whitespace and commas between arguments
+         while(position < inner.Length && (inner[position] == ',' || char.IsWhiteSpace(inner[position])))
+            position++;
 
-      // Array suffix after generic args (generic arrays like List`1[[...]][])
-      arraySuffix ??= TryParseArraySuffix(input, ref index);
-
-      SkipWhitespace(input, ref index);
-      ExpectChar(input, ref index, ',');
-      SkipWhitespace(input, ref index);
-
-      var assemblyName = ParseAssemblyName(input, ref index);
-
-      return new ParsedTypeName(typeName, assemblyName, typeArguments, arraySuffix);
-   }
-
-   static string ParseTypeName(string input, ref int index)
-   {
-      var start = index;
-      // Type name continues until we hit '[' (generic args or array), ',' (assembly separator), or ']' (end of nested type arg)
-      while(index < input.Length)
-      {
-         var c = input[index];
-         if(c is '[' or ',' or ']')
+         if(position >= inner.Length)
             break;
-         index++;
+
+         // Expect '[' starting an argument
+         if(inner[position] != '[')
+            throw new FormatException($"Expected '[' at position {position} in argument block: \"{argumentBlock}\"");
+
+         // Find the matching ']' for this argument
+         var matchingClose = FindMatchingBracket(inner, position);
+         // The argument content is between the brackets (exclusive)
+         arguments.Add(inner[(position + 1)..matchingClose]);
+         position = matchingClose + 1;
       }
 
-      return input[start..index].Trim();
-   }
-
-   static bool IsArraySuffix(string input, int index)
-   {
-      // An array suffix is "[" followed by "," or "]" (e.g. "[]", "[,]", "[,,]").
-      // Generic type arguments start with "[[" — the double bracket distinguishes them.
-      if(index + 1 >= input.Length) return false;
-      var next = input[index + 1];
-      return next is ']' or ',';
-   }
-
-   static string? TryParseArraySuffix(string input, ref int index)
-   {
-      if(index >= input.Length || input[index] != '[') return null;
-      if(!IsArraySuffix(input, index)) return null;
-
-      var start = index;
-      index++; // skip '['
-      while(index < input.Length && input[index] != ']')
-         index++;
-
-      if(index < input.Length)
-         index++; // skip ']'
-
-      return input[start..index];
-   }
-
-   static ParsedTypeName[] ParseTypeArguments(string input, ref int index)
-   {
-      ExpectChar(input, ref index, '[');
-
-      var arguments = new List<ParsedTypeName>();
-      while(true)
-      {
-         SkipWhitespace(input, ref index);
-         ExpectChar(input, ref index, '[');
-         arguments.Add(ParseComponent(input, ref index));
-         SkipWhitespace(input, ref index);
-         ExpectChar(input, ref index, ']');
-         SkipWhitespace(input, ref index);
-
-         if(index < input.Length && input[index] == ',')
-         {
-            index++; // skip ',' between arguments
-            continue;
-         }
-
-         break;
-      }
-
-      ExpectChar(input, ref index, ']');
       return [.. arguments];
    }
 
-   static string ParseAssemblyName(string input, ref int index)
+   /// <summary>
+   /// Splits an <c>AssemblyQualifiedName</c>-format string at the first top-level comma
+   /// (i.e. the first comma not inside any brackets). Returns (typePart, assemblyName).
+   /// The assembly name portion may include version, culture, and public key token.
+   /// </summary>
+   static (string TypePart, string AssemblyName) SplitFirstTopLevelComma(string input)
    {
-      var start = index;
-      // Assembly name continues until end of string or ']' (end of nested type arg)
-      while(index < input.Length && input[index] != ']')
-         index++;
-
-      return input[start..index].Trim();
-   }
-
-   static void SkipWhitespace(string input, ref int index)
-   {
-      while(index < input.Length && char.IsWhiteSpace(input[index]))
-         index++;
-   }
-
-   static void ExpectChar(string input, ref int index, char expected)
-   {
-      if(index >= input.Length || input[index] != expected)
+      var depth = 0;
+      for(var i = 0; i < input.Length; i++)
       {
-         var actual = index < input.Length ? $"'{input[index]}'" : "end of string";
-         throw new FormatException($"Expected '{expected}' at position {index} but found {actual} in: \"{input}\"");
+         switch(input[i])
+         {
+            case '[': depth++; break;
+            case ']': depth--; break;
+            case ',' when depth == 0:
+               return (input[..i].Trim(), input[(i + 1)..].Trim());
+         }
       }
 
-      index++;
+      throw new FormatException($"No top-level comma found in: \"{input}\"");
+   }
+
+   /// <summary>
+   /// Given a string and the position of an opening '[', returns the position of the matching ']'.
+   /// </summary>
+   static int FindMatchingBracket(string input, int openPosition)
+   {
+      var depth = 0;
+      for(var i = openPosition; i < input.Length; i++)
+      {
+         switch(input[i])
+         {
+            case '[': depth++; break;
+            case ']':
+               depth--;
+               if(depth == 0)
+                  return i;
+               break;
+         }
+      }
+
+      throw new FormatException($"Unmatched '[' at position {openPosition} in: \"{input}\"");
+   }
+
+   /// <summary>
+   /// Finds the start of a trailing array suffix (e.g. "[]", "[,]") at the end of a type part.
+   /// Returns the index where the suffix starts, or -1 if no trailing array suffix.
+   /// An array suffix is distinguished from generic args by containing only commas between brackets.
+   /// </summary>
+   static int FindTrailingArraySuffixStart(string typePart)
+   {
+      // Walk backwards from the end. The suffix is the last [...] where the content is only commas.
+      if(!typePart.EndsWith(']'))
+         return -1;
+
+      var closePos = typePart.Length - 1;
+      // Find the matching '['
+      var openPos = closePos;
+      while(openPos > 0 && typePart[openPos] != '[')
+         openPos--;
+
+      if(openPos == 0)
+         return -1;
+
+      // Check if the content between brackets is only commas (array suffix) vs containing actual types
+      var content = typePart[(openPos + 1)..closePos];
+      if(content.Length == 0 || content.All(c => c == ','))
+         return openPos;
+
+      return -1;
    }
 }
