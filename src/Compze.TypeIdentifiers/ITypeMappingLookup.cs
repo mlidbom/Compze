@@ -1,8 +1,8 @@
-namespace Compze.TypeIdentifiers.Parsing;
+namespace Compze.TypeIdentifiers;
 
 /// <summary>
-/// Provides the lookup operations that parsed type nodes need to resolve themselves to .NET <see cref="Type"/>
-/// instances and to transform themselves into persisted form.
+/// Provides the lookup operations that <see cref="TypeIdentifier"/> subtypes need to resolve themselves
+/// to .NET <see cref="Type"/> instances and to transform themselves into persisted form.
 /// </summary>
 interface ITypeMappingLookup
 {

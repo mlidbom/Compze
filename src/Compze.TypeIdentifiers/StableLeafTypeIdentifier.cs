@@ -1,7 +1,7 @@
-namespace Compze.TypeIdentifiers.Parsing;
+namespace Compze.TypeIdentifiers;
 
 /// <summary>A stable non-generic type: <c>TypeName, AssemblyName</c>.</summary>
-sealed class ParsedLeafTypeName(string typeName, string assemblyName) : ParsedTypeName
+sealed class StableLeafTypeIdentifier(string typeName, string assemblyName) : TypeIdentifier
 {
    public string TypeName { get; } = typeName;
    public string AssemblyName { get; } = assemblyName;
@@ -10,15 +10,15 @@ sealed class ParsedLeafTypeName(string typeName, string assemblyName) : ParsedTy
    internal override string AssemblyPart => AssemblyName;
 
    internal override Type ResolveToType(ITypeMappingLookup lookup) =>
-      Type.GetType(ToAssemblyQualifiedNameString())
-      ?? throw new InvalidOperationException($"Could not resolve stable type: {ToAssemblyQualifiedNameString()}");
+      Type.GetType(StringRepresentation)
+      ?? throw new InvalidOperationException($"Could not resolve stable type: {StringRepresentation}");
 
-   internal override ParsedTypeName TransformToPersisted(ITypeMappingLookup lookup)
+   internal override TypeIdentifier TransformToPersisted(ITypeMappingLookup lookup)
    {
-      var leafType = Type.GetType(ToAssemblyQualifiedNameString());
+      var leafType = Type.GetType(StringRepresentation);
 
       if(leafType != null && lookup.TryGetLeafTypeGuid(leafType, out var guid))
-         return new ParsedMappedLeafTypeName(guid);
+         return new MappedTypeIdentifier(guid);
 
       if(lookup.IsStableAssembly(AssemblyName))
          return this;

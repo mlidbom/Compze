@@ -1,9 +1,9 @@
-namespace Compze.TypeIdentifiers.Parsing;
+namespace Compze.TypeIdentifiers;
 
-/// <summary>An array type wrapping an element type: <c>Element[], AssemblyName</c> or <c>Element[,], AssemblyName</c>.</summary>
-sealed class ParsedArrayTypeName(ParsedTypeName element, int rank) : ParsedTypeName
+/// <summary>An array type wrapping an element type identifier: <c>Element[], AssemblyName</c> or <c>Element[,], AssemblyName</c>.</summary>
+sealed class ArrayTypeIdentifier(TypeIdentifier element, int rank) : TypeIdentifier
 {
-   public ParsedTypeName Element { get; } = element;
+   public TypeIdentifier Element { get; } = element;
    public int Rank { get; } = rank;
 
    string ArraySuffix => Rank == 1 ? "[]" : $"[{new string(',', Rank - 1)}]";
@@ -17,6 +17,6 @@ sealed class ParsedArrayTypeName(ParsedTypeName element, int rank) : ParsedTypeN
       return Rank == 1 ? elementType.MakeArrayType() : elementType.MakeArrayType(Rank);
    }
 
-   internal override ParsedTypeName TransformToPersisted(ITypeMappingLookup lookup) =>
-      new ParsedArrayTypeName(Element.TransformToPersisted(lookup), Rank);
+   internal override TypeIdentifier TransformToPersisted(ITypeMappingLookup lookup) =>
+      new ArrayTypeIdentifier(Element.TransformToPersisted(lookup), Rank);
 }

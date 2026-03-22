@@ -1,11 +1,9 @@
 using System.Collections.Concurrent;
-using Compze.TypeIdentifiers.Parsing;
 
 namespace Compze.TypeIdentifiers;
 
 /// <summary>
 /// Transforms between .NET <see cref="Type"/> objects and <see cref="TypeIdentifier"/> values.
-/// Uses <see cref="Parsing.ParsedTypeName"/> for string manipulation and mapping dictionaries for GUID↔Type lookups.
 /// Supports incremental registration of assemblies. Caches results in both directions. Thread-safe.
 /// </summary>
 class TypeNameMapper : ITypeMappingLookup
@@ -94,8 +92,8 @@ class TypeNameMapper : ITypeMappingLookup
    /// </summary>
    internal Type GetTypeFromPersistedString(string persistedTypeString) => _stringToType.GetOrAdd(persistedTypeString, key =>
    {
-      var parsed = ParsedTypeName.Parse(key);
-      return ResolveFromParsed(parsed);
+      var parsed = TypeIdentifier.Parse(key);
+      return parsed.ResolveToType(this);
    });
 
    /// <summary>
@@ -104,9 +102,9 @@ class TypeNameMapper : ITypeMappingLookup
    /// </summary>
    internal string GetPersistedStringFromAssemblyQualifiedName(string assemblyQualifiedName)
    {
-      var parsed = ParsedTypeName.Parse(assemblyQualifiedName);
-      var transformed = TransformToPersisted(parsed);
-      return transformed.ToAssemblyQualifiedNameString();
+      var parsed = TypeIdentifier.Parse(assemblyQualifiedName);
+      var transformed = parsed.TransformToPersisted(this);
+      return transformed.StringRepresentation;
    }
 
    TypeIdentifier ComputeId(Type type)
@@ -115,45 +113,27 @@ class TypeNameMapper : ITypeMappingLookup
       if(_leafTypeToGuid.TryGetValue(type, out var guid))
          return new MappedTypeIdentifier(guid);
 
-      // For composite types (generics, arrays), build the structural string
+      // For composite types (generics, arrays), parse and transform to persisted form
       if(type.IsArray || type is { IsGenericType: true, IsGenericTypeDefinition: false })
       {
          var aqn = type.AssemblyQualifiedName!;
-         var parsed = ParsedTypeName.Parse(aqn);
-         var transformed = TransformToPersisted(parsed);
-         var resultString = transformed.ToAssemblyQualifiedNameString();
-
-         // If nothing was transformed (all stable), it's a StableNameTypeId
-         if(resultString == aqn)
-            return new StableNameTypeIdentifier(aqn);
-
-         return new ConstructedTypeIdentifier(resultString);
+         var parsed = TypeIdentifier.Parse(aqn);
+         return parsed.TransformToPersisted(this);
       }
 
       // Non-mapped, non-composite leaf type — must be from a stable assembly
       var assemblyName = type.Assembly.GetName().Name!;
       if(_stableAssemblyNames.Contains(assemblyName))
-         return new StableNameTypeIdentifier(type.AssemblyQualifiedName!);
+      {
+         var aqn = type.AssemblyQualifiedName!;
+         return TypeIdentifier.Parse(aqn);
+      }
 
       throw new InvalidOperationException(
          $"Type '{type.FullName}' from assembly '{assemblyName}' is not mapped and its assembly is not registered as stable.");
    }
 
-   Type ResolveType(TypeIdentifier typeId) => typeId switch
-   {
-      MappedTypeIdentifier mapped => _guidToLeafType.TryGetValue(mapped.GuidValue, out var type)
-         ? type
-         : throw new InvalidOperationException($"No type mapping found for GUID: {mapped.GuidValue}"),
-
-      StableNameTypeIdentifier stable => Type.GetType(stable.StringRepresentation)
-         ?? throw new InvalidOperationException($"Could not resolve stable type: {stable.StringRepresentation}"),
-
-      ConstructedTypeIdentifier constructed => GetTypeFromPersistedString(constructed.StringRepresentation),
-
-      _ => throw new ArgumentOutOfRangeException(nameof(typeId), $"Unknown TypeId subtype: {typeId.GetType().Name}")
-   };
-
-   Type ResolveFromParsed(ParsedTypeName parsed) => parsed.ResolveToType(this);
+   Type ResolveType(TypeIdentifier typeId) => typeId.ResolveToType(this);
 
    /// <summary>
    /// Extracts the simple assembly name from a full or simple assembly string.
@@ -165,8 +145,6 @@ class TypeNameMapper : ITypeMappingLookup
       var commaIndex = assemblyString.IndexOf(',', StringComparison.Ordinal);
       return commaIndex >= 0 ? assemblyString[..commaIndex].Trim() : assemblyString.Trim();
    }
-
-   ParsedTypeName TransformToPersisted(ParsedTypeName parsed) => parsed.TransformToPersisted(this);
 
    Type ITypeMappingLookup.GetLeafType(Guid guid) =>
       _guidToLeafType.TryGetValue(guid, out var type)

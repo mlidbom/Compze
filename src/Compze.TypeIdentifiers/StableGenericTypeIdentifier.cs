@@ -1,17 +1,17 @@
-namespace Compze.TypeIdentifiers.Parsing;
+namespace Compze.TypeIdentifiers;
 
 /// <summary>A stable generic type: <c>TypeName[[ arg1 ],[ arg2 ]], AssemblyName</c>.</summary>
-sealed class ParsedGenericTypeName(string typeName, string assemblyName, ParsedTypeName[] typeArguments) : ParsedTypeName
+sealed class StableGenericTypeIdentifier(string typeName, string assemblyName, TypeIdentifier[] typeArguments) : TypeIdentifier
 {
    public string TypeName { get; } = typeName;
    public string AssemblyName { get; } = assemblyName;
-   public ParsedTypeName[] TypeArguments { get; } = typeArguments;
+   public TypeIdentifier[] TypeArguments { get; } = typeArguments;
 
    internal override string TypePart
    {
       get
       {
-         var argsString = string.Join(",", TypeArguments.Select(arg => $"[{arg.ToAssemblyQualifiedNameString()}]"));
+         var argsString = string.Join(",", TypeArguments.Select(arg => $"[{arg.StringRepresentation}]"));
          return $"{TypeName}[{argsString}]";
       }
    }
@@ -28,7 +28,7 @@ sealed class ParsedGenericTypeName(string typeName, string assemblyName, ParsedT
       return openGenericType.MakeGenericType(typeArgs);
    }
 
-   internal override ParsedTypeName TransformToPersisted(ITypeMappingLookup lookup)
+   internal override TypeIdentifier TransformToPersisted(ITypeMappingLookup lookup)
    {
       var transformedArgs = TypeArguments.Select(arg => arg.TransformToPersisted(lookup)).ToArray();
 
@@ -36,10 +36,10 @@ sealed class ParsedGenericTypeName(string typeName, string assemblyName, ParsedT
       var openGenericType = Type.GetType(openGenericAqn);
 
       if(openGenericType != null && lookup.TryGetOpenGenericGuid(openGenericType, out var guid))
-         return new ParsedMappedGenericTypeName(guid, transformedArgs);
+         return new MappedGenericTypeIdentifier(guid, transformedArgs);
 
       if(lookup.IsStableAssembly(AssemblyName))
-         return new ParsedGenericTypeName(TypeName, AssemblyName, transformedArgs);
+         return new StableGenericTypeIdentifier(TypeName, AssemblyName, transformedArgs);
 
       throw new InvalidOperationException(
          $"Open generic type '{TypeName}' from assembly '{AssemblyName}' is not mapped and its assembly is not registered as stable.");
