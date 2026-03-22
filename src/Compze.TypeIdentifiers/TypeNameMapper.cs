@@ -127,15 +127,15 @@ class TypeNameMapper
 
          // If nothing was transformed (all stable), it's a StableNameTypeId
          if(resultString == aqn)
-            return new StableNameTypeId(aqn);
+            return new StableNameTypeIdentifier(aqn);
 
-         return new ConstructedTypeId(resultString);
+         return new ConstructedTypeIdentifier(resultString);
       }
 
       // Non-mapped, non-composite leaf type — must be from a stable assembly
       var assemblyName = type.Assembly.GetName().Name!;
       if(_stableAssemblyNames.Contains(assemblyName))
-         return new StableNameTypeId(type.AssemblyQualifiedName!);
+         return new StableNameTypeIdentifier(type.AssemblyQualifiedName!);
 
       throw new InvalidOperationException(
          $"Type '{type.FullName}' from assembly '{assemblyName}' is not mapped and its assembly is not registered as stable.");
@@ -147,10 +147,10 @@ class TypeNameMapper
          ? type
          : throw new InvalidOperationException($"No type mapping found for GUID: {mapped.GuidValue}"),
 
-      StableNameTypeId stable => Type.GetType(stable.StringRepresentation)
+      StableNameTypeIdentifier stable => Type.GetType(stable.StringRepresentation)
          ?? throw new InvalidOperationException($"Could not resolve stable type: {stable.StringRepresentation}"),
 
-      ConstructedTypeId constructed => GetTypeFromPersistedString(constructed.StringRepresentation),
+      ConstructedTypeIdentifier constructed => GetTypeFromPersistedString(constructed.StringRepresentation),
 
       _ => throw new ArgumentOutOfRangeException(nameof(typeId), $"Unknown TypeId subtype: {typeId.GetType().Name}")
    };

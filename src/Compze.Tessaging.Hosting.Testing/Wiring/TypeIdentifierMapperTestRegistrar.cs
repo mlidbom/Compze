@@ -7,15 +7,15 @@ namespace Compze.Tessaging.Hosting.Testing.Wiring;
 public static class TypeIdentifierMapperTestRegistrar
 {
    /// <summary>
-   /// Creates a <see cref="TypeIdentifierMapper"/> pre-populated from all loaded assemblies
+   /// Creates a <see cref="TypeMapper"/> pre-populated from all loaded assemblies
    /// with <c>[TypeMappings]</c> and registers it in DI. Test-only convenience.
-   /// Production code should use <see cref="ITypeIdentifierMapper.MapTypesFromAssemblyContaining{T}"/>
+   /// Production code should use <see cref="ITypeMapper.MapTypesFromAssemblyContaining{T}"/>
    /// on the endpoint builder's <c>TypeMapper</c>.
    /// </summary>
    public static IComponentRegistrar TypeIdentifierMapperFromLoadedAssemblies(this IComponentRegistrar @this)
    {
-      var mapper = new TypeIdentifierMapper();
+      var mapper = new TypeMapper();
       mapper.MapTypesFromAllLoadedAssembliesWithTypeMappingsAttribute();
-      return @this.Register(Singleton.For<ITypeIdentifierMapper>().Instance(mapper));
+      return @this.Register(Singleton.For<ITypeMapper>().Instance(mapper));
    }
 }

@@ -104,14 +104,14 @@ public class TypeIdentifierMapper_assembly_registration_specification
    {
       [XF] public void System_Private_CoreLib_is_stable()
       {
-         var mapper = new TypeIdentifierMapper();
+         var mapper = new TypeMapper();
          // Stable types keep their AssemblyQualifiedName (no ", 0" GUID format)
          IsStableTypeString(mapper.ToPersistedTypeString(typeof(string))).Must().BeTrue();
       }
 
       [XF] public void System_Collections_Generic_types_are_stable()
       {
-         var mapper = new TypeIdentifierMapper();
+         var mapper = new TypeMapper();
          IsStableTypeString(mapper.ToPersistedTypeString(typeof(List<string>))).Must().BeTrue();
       }
    }
@@ -120,7 +120,7 @@ public class TypeIdentifierMapper_assembly_registration_specification
    {
       [XF] public void makes_assembly_stable()
       {
-         var mapper = new TypeIdentifierMapper();
+         var mapper = new TypeMapper();
          mapper.UseStableNameStrategyForAssemblyContaining<RegistrationTestEntity>();
          IsStableTypeString(mapper.ToPersistedTypeString(typeof(RegistrationTestEntity))).Must().BeTrue();
       }
@@ -130,7 +130,7 @@ public class TypeIdentifierMapper_assembly_registration_specification
    {
       [XF] public void loads_mappings_from_attributed_assembly()
       {
-         var mapper = new TypeIdentifierMapper();
+         var mapper = new TypeMapper();
          mapper.MapTypesFromAssembly(typeof(EndToEndTestMappings).Assembly);
 
          // Mapped types produce a GUID-based persisted string
@@ -139,7 +139,7 @@ public class TypeIdentifierMapper_assembly_registration_specification
 
       [XF] public void round_trips_mapped_type()
       {
-         var mapper = new TypeIdentifierMapper();
+         var mapper = new TypeMapper();
          mapper.MapTypesFromAssembly(typeof(EndToEndTestMappings).Assembly);
 
          var persisted = mapper.ToPersistedTypeString(typeof(RegistrationTestEntity));
@@ -148,7 +148,7 @@ public class TypeIdentifierMapper_assembly_registration_specification
 
       [XF] public void round_trips_generic_with_mapped_argument()
       {
-         var mapper = new TypeIdentifierMapper();
+         var mapper = new TypeMapper();
          mapper.MapTypesFromAssembly(typeof(EndToEndTestMappings).Assembly);
 
          var persisted = mapper.ToPersistedTypeString(typeof(List<RegistrationTestEntity>));
@@ -157,7 +157,7 @@ public class TypeIdentifierMapper_assembly_registration_specification
 
       [XF] public void round_trips_mapped_open_generic()
       {
-         var mapper = new TypeIdentifierMapper();
+         var mapper = new TypeMapper();
          mapper.MapTypesFromAssembly(typeof(EndToEndTestMappings).Assembly);
 
          var persisted = mapper.ToPersistedTypeString(typeof(RegistrationTestGeneric<RegistrationTestEntity>));
@@ -170,7 +170,7 @@ public class TypeIdentifierMapper_assembly_registration_specification
       [XF] public void throws_for_assembly_without_TypeMappingsAttribute()
       {
          // System.Private.CoreLib doesn't have our attribute
-         var mapper = new TypeIdentifierMapper();
+         var mapper = new TypeMapper();
          var threw = false;
          try { mapper.MapTypesFromAssembly(typeof(object).Assembly); }
          catch(InvalidOperationException ex) when(ex.Message.Contains(nameof(TypeMappingsAttribute)))

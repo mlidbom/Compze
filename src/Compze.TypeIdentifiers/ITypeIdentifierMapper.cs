@@ -9,7 +9,7 @@ namespace Compze.TypeIdentifiers;
 /// get structural string representations that combine mapped GUIDs with stable assembly-qualified names.
 /// Supports incremental assembly registration.
 /// </summary>
-public interface ITypeIdentifierMapper
+public interface ITypeMapper
 {
    /// <summary>
    /// Register type mappings from the assembly containing <typeparamref name="T"/>.

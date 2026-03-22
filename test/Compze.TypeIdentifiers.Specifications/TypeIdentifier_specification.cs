@@ -47,36 +47,36 @@ public class TypeIdentifier_specification
    public class StableNameTypeId_ : TypeIdentifier_specification
    {
       const string StableAqn = "System.String, System.Private.CoreLib";
-      readonly StableNameTypeId _typeId = new(StableAqn);
+      readonly StableNameTypeIdentifier _typeIdentifier = new(StableAqn);
 
       [XF] public void string_representation_is_the_assembly_qualified_name()
-         => _typeId.StringRepresentation.Must().Be(StableAqn);
+         => _typeIdentifier.StringRepresentation.Must().Be(StableAqn);
 
       public class equality : StableNameTypeId_
       {
          [XF] public void equal_when_same_string()
-            => new StableNameTypeId(StableAqn).Equals(new StableNameTypeId(StableAqn)).Must().BeTrue();
+            => new StableNameTypeIdentifier(StableAqn).Equals(new StableNameTypeIdentifier(StableAqn)).Must().BeTrue();
 
          [XF] public void not_equal_when_different_string()
-            => new StableNameTypeId(StableAqn).Equals(new StableNameTypeId("System.Int32, System.Private.CoreLib")).Must().BeFalse();
+            => new StableNameTypeIdentifier(StableAqn).Equals(new StableNameTypeIdentifier("System.Int32, System.Private.CoreLib")).Must().BeFalse();
       }
    }
 
    public class ConstructedTypeId_ : TypeIdentifier_specification
    {
       const string ConstructedString = "System.Collections.Generic.List`1[[e4a8c9f2-7b3d-4f1a-9c6e-2d8b5a0f3e7c, 0]], System.Private.CoreLib";
-      readonly ConstructedTypeId _typeId = new(ConstructedString);
+      readonly ConstructedTypeIdentifier _typeIdentifier = new(ConstructedString);
 
       [XF] public void string_representation_is_the_structural_string()
-         => _typeId.StringRepresentation.Must().Be(ConstructedString);
+         => _typeIdentifier.StringRepresentation.Must().Be(ConstructedString);
 
       public class equality : ConstructedTypeId_
       {
          [XF] public void equal_when_same_string()
-            => new ConstructedTypeId(ConstructedString).Equals(new ConstructedTypeId(ConstructedString)).Must().BeTrue();
+            => new ConstructedTypeIdentifier(ConstructedString).Equals(new ConstructedTypeIdentifier(ConstructedString)).Must().BeTrue();
 
          [XF] public void not_equal_when_different_string()
-            => new ConstructedTypeId(ConstructedString).Equals(new ConstructedTypeId("other, 0")).Must().BeFalse();
+            => new ConstructedTypeIdentifier(ConstructedString).Equals(new ConstructedTypeIdentifier("other, 0")).Must().BeFalse();
       }
    }
 
@@ -85,7 +85,7 @@ public class TypeIdentifier_specification
       [XF] public void MappedTypeIdentifier_not_equal_to_StableNameTypeId_even_with_same_string_representation()
       {
          TypeIdentifier mapped = new MappedTypeIdentifier(SampleGuid);
-         TypeIdentifier stable = new StableNameTypeId(mapped.StringRepresentation);
+         TypeIdentifier stable = new StableNameTypeIdentifier(mapped.StringRepresentation);
          // Different concrete types, but string representation equality means they are considered equal
          // This is by design — the string representation IS the identity
          mapped.Equals(stable).Must().BeTrue();

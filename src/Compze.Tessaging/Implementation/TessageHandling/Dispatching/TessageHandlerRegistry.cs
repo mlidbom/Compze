@@ -18,12 +18,12 @@ public static class TessageHandlerRegistryRegistrar
 {
    public static IComponentRegistrar TessageHandlerRegistry(this IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<ITessageHandlerRegistrar, ITessageHandlerRegistry, TessageHandlerRegistry>()
-                                     .CreatedBy((ITypeIdentifierMapper typeMapper) => new TessageHandlerRegistry(typeMapper)));
+                                     .CreatedBy((ITypeMapper typeMapper) => new TessageHandlerRegistry(typeMapper)));
 }
 
-sealed class TessageHandlerRegistry(ITypeIdentifierMapper typeMapper) : ITessageHandlerRegistrar, ITessageHandlerRegistry
+sealed class TessageHandlerRegistry(ITypeMapper typeMapper) : ITessageHandlerRegistrar, ITessageHandlerRegistry
 {
-   readonly ITypeIdentifierMapper _typeMapper = typeMapper;
+   readonly ITypeMapper _typeMapper = typeMapper;
    IReadOnlyDictionary<Type, Action<object, IScopeResolver>> _tommandHandlers = new Dictionary<Type, Action<object, IScopeResolver>>();
    IReadOnlyDictionary<Type, IReadOnlyList<Action<ITevent, IScopeResolver>>> _teventHandlers = new Dictionary<Type, IReadOnlyList<Action<ITevent, IScopeResolver>>>();
    IReadOnlyList<Type> _registeredTeventTypes = new List<Type>();

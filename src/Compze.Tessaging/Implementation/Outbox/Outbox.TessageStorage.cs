@@ -18,14 +18,14 @@ partial class Outbox
       // ReSharper disable once MemberHidesStaticFromOuterClass
       internal static void RegisterWith(IComponentRegistrar registrar)
          => registrar.Register(Singleton.For<ITessageStorage>()
-                                        .CreatedBy((IServiceBusSqlLayer.IOutboxSqlLayer sqlLayer, ITypeIdentifierMapper typeMapper, IRemotableTessageSerializer serializer)
+                                        .CreatedBy((IServiceBusSqlLayer.IOutboxSqlLayer sqlLayer, ITypeMapper typeMapper, IRemotableTessageSerializer serializer)
                                                       => new TessageStorage(sqlLayer, typeMapper, serializer)));
 
       readonly IServiceBusSqlLayer.IOutboxSqlLayer _sqlLayer;
-      readonly ITypeIdentifierMapper _typeMapper;
+      readonly ITypeMapper _typeMapper;
       readonly IRemotableTessageSerializer _serializer;
 
-      TessageStorage(IServiceBusSqlLayer.IOutboxSqlLayer sqlLayer, ITypeIdentifierMapper typeMapper, IRemotableTessageSerializer serializer)
+      TessageStorage(IServiceBusSqlLayer.IOutboxSqlLayer sqlLayer, ITypeMapper typeMapper, IRemotableTessageSerializer serializer)
       {
          _sqlLayer = sqlLayer;
          _typeMapper = typeMapper;

@@ -17,19 +17,19 @@ namespace Compze.Typermedia.Hosting.AspNetCore;
 public class TypermediaController : Controller
 {
    readonly IRemotableTessageSerializer _serializer;
-   readonly ITypeIdentifierMapper _typeMapper;
+   readonly ITypeMapper _typeMapper;
    readonly TypermediaHandlerExecutor _executor;
 
    public static void RegisterWith(IComponentRegistrar registrar) =>
       registrar.Register(
          Scoped.For<TypermediaController>()
                .CreatedBy((IRemotableTessageSerializer serializer,
-                           ITypeIdentifierMapper typeMapper,
+                           ITypeMapper typeMapper,
                            TypermediaHandlerExecutor executor)
                              => new TypermediaController(serializer, typeMapper, executor)));
 
    TypermediaController(IRemotableTessageSerializer serializer,
-                 ITypeIdentifierMapper typeMapper,
+                 ITypeMapper typeMapper,
                  TypermediaHandlerExecutor executor)
    {
       _serializer = serializer;

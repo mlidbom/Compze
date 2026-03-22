@@ -67,10 +67,10 @@ static class TaggregateTypeValidator<TDomainClass, TTeventImplementation, TTeven
 {
    public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<ITaggregateTypeValidator>()
-                                     .CreatedBy((ITypeIdentifierMapper typeMapper) => new TaggregateTypeValidator(typeMapper)));
+                                     .CreatedBy((ITypeMapper typeMapper) => new TaggregateTypeValidator(typeMapper)));
 
-   readonly ITypeIdentifierMapper _typeMapper;
-   TaggregateTypeValidator(ITypeIdentifierMapper typeMapper) => _typeMapper = typeMapper;
+   readonly ITypeMapper _typeMapper;
+   TaggregateTypeValidator(ITypeMapper typeMapper) => _typeMapper = typeMapper;
 
    public void AssertIsValid<TTaggregate>() => ValidatorFor<TTaggregate>.AssertValid(_typeMapper);
 
@@ -79,7 +79,7 @@ static class TaggregateTypeValidator<TDomainClass, TTeventImplementation, TTeven
       // ReSharper disable once StaticMemberInGenericType (This is exactly the effect we are after...)
       static bool _validated;
 
-      internal static void AssertValid(ITypeIdentifierMapper typeMapper)
+      internal static void AssertValid(ITypeMapper typeMapper)
       {
          if(_validated) return;
 
@@ -88,7 +88,7 @@ static class TaggregateTypeValidator<TDomainClass, TTeventImplementation, TTeven
          _validated = true;
       }
 
-      static void AssertValidInternal(ITypeIdentifierMapper typeMapper)
+      static void AssertValidInternal(ITypeMapper typeMapper)
       {
          var classInheritanceChain = typeof(TTaggregate).ClassInheritanceChain().ToList();
          var inheritedTaggregateType = classInheritanceChain.Single(baseClass => baseClass.IsConstructedGenericType && baseClass.GetGenericTypeDefinition() == typeof(Taggregate<,,,,>));

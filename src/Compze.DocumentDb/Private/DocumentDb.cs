@@ -19,15 +19,15 @@ sealed class DocumentDb : IDocumentDb
 {
    public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Scoped.For<IDocumentDb>()
-                                  .CreatedBy((IDocumentDbSqlLayer sqlLayer, ITypeIdentifierMapper typeMapper, IDocumentDbSerializer serializer)
+                                  .CreatedBy((IDocumentDbSqlLayer sqlLayer, ITypeMapper typeMapper, IDocumentDbSerializer serializer)
                                                 => new DocumentDb(serializer, typeMapper, sqlLayer)));
 
    readonly IDocumentDbSerializer _serializer;
 
-   readonly ITypeIdentifierMapper _typeMapper;
+   readonly ITypeMapper _typeMapper;
    readonly IDocumentDbSqlLayer _sqlLayer;
 
-   DocumentDb(IDocumentDbSerializer serializer, ITypeIdentifierMapper typeMapper, IDocumentDbSqlLayer sqlLayer)
+   DocumentDb(IDocumentDbSerializer serializer, ITypeMapper typeMapper, IDocumentDbSqlLayer sqlLayer)
    {
       _sqlLayer = sqlLayer;
       _serializer = serializer;

@@ -10,14 +10,14 @@ using Xunit;
 namespace Compze.TypeIdentifiers.Specifications;
 
 /// <summary>
-/// Tests that <see cref="TypeIdentifierMapper"/> can be built from assemblies
+/// Tests that <see cref="TypeMapper"/> can be built from assemblies
 /// using [TypeMappings] attribute declarations and produce correct mappings.
 /// </summary>
 public class TypeIdentifierMapper_specification
 {
-   static TypeIdentifierMapper BuildMapper()
+   static TypeMapper BuildMapper()
    {
-      var mapper = new TypeIdentifierMapper();
+      var mapper = new TypeMapper();
       mapper.MapTypesFromAssembly(typeof(TentityId).Assembly);
       return mapper;
    }

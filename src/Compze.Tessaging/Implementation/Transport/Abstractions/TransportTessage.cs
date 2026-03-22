@@ -31,7 +31,7 @@ public static class TransportTessage
          return _tessage;
       }
 
-      public InComing(string body, TypeIdentifier tessageTypeId, TessageId tessageId, ITypeIdentifierMapper typeMapper, IRemotableTessageSerializer serializer)
+      public InComing(string body, TypeIdentifier tessageTypeId, TessageId tessageId, ITypeMapper typeMapper, IRemotableTessageSerializer serializer)
       {
          _serializer = serializer;
          Body = body;
@@ -41,7 +41,7 @@ public static class TransportTessage
          TessageId = tessageId;
       }
 
-      public InComing(string body, string persistedTypeString, TessageId tessageId, ITypeIdentifierMapper typeMapper, IRemotableTessageSerializer serializer)
+      public InComing(string body, string persistedTypeString, TessageId tessageId, ITypeMapper typeMapper, IRemotableTessageSerializer serializer)
       {
          _serializer = serializer;
          Body = body;
@@ -61,7 +61,7 @@ public static class TransportTessage
       internal readonly string Body;
       internal readonly TransportTessageType TessageTypeEnum;
 
-      internal static OutGoing Create(IRemotableTessage tessage, ITypeIdentifierMapper typeMapper, IRemotableTessageSerializer serializer)
+      internal static OutGoing Create(IRemotableTessage tessage, ITypeMapper typeMapper, IRemotableTessageSerializer serializer)
       {
          var body = serializer.SerializeTessage(tessage);
          return new OutGoing(typeMapper.GetId(tessage.GetType()), tessage.GetType(), body, tessage);

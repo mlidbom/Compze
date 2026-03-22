@@ -4,8 +4,8 @@ namespace Compze.TypeIdentifiers;
 /// Identity of a fully constructed type. Subtypes represent different kinds of identity:
 /// <list type="bullet">
 ///   <item><see cref="MappedTypeIdentifier"/> — leaf type from a mapped assembly. Has a GUID. SQL-storable.</item>
-///   <item><see cref="StableNameTypeId"/> — type(s) entirely from stable assemblies. Untouched AssemblyQualifiedName.</item>
-///   <item><see cref="ConstructedTypeId"/> — mixed: AssemblyQualifiedName with some GUID, 0 components.</item>
+///   <item><see cref="StableNameTypeIdentifier"/> — type(s) entirely from stable assemblies. Untouched AssemblyQualifiedName.</item>
+///   <item><see cref="ConstructedTypeIdentifier"/> — mixed: AssemblyQualifiedName with some GUID, 0 components.</item>
 /// </list>
 /// </summary>
 public abstract class TypeIdentifier : IEquatable<TypeIdentifier>
@@ -47,14 +47,11 @@ public sealed class MappedTypeIdentifier : TypeIdentifier
 /// The string representation is the unmodified <c>AssemblyQualifiedName</c>.
 /// Resolution: pass directly to <c>Type.GetType()</c>.
 /// </summary>
-sealed class StableNameTypeId : TypeIdentifier
+sealed class StableNameTypeIdentifier : TypeIdentifier
 {
    public override string StringRepresentation { get; }
 
-   public StableNameTypeId(string assemblyQualifiedName)
-   {
-      StringRepresentation = assemblyQualifiedName;
-   }
+   public StableNameTypeIdentifier(string assemblyQualifiedName) => StringRepresentation = assemblyQualifiedName;
 }
 
 /// <summary>
@@ -62,12 +59,9 @@ sealed class StableNameTypeId : TypeIdentifier
 /// The string representation is an <c>AssemblyQualifiedName</c>-format string
 /// with <c>GUID, 0</c> in place of mapped components.
 /// </summary>
-sealed class ConstructedTypeId : TypeIdentifier
+sealed class ConstructedTypeIdentifier : TypeIdentifier
 {
    public override string StringRepresentation { get; }
 
-   public ConstructedTypeId(string structuralString)
-   {
-      StringRepresentation = structuralString;
-   }
+   public ConstructedTypeIdentifier(string structuralString) => StringRepresentation = structuralString;
 }

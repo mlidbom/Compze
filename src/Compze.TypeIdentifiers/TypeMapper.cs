@@ -5,11 +5,11 @@ using System.Reflection;
 namespace Compze.TypeIdentifiers;
 
 /// <summary>
-/// Mutable implementation of <see cref="ITypeIdentifierMapper"/> that supports incremental assembly registration.
+/// Mutable implementation of <see cref="ITypeMapper"/> that supports incremental assembly registration.
 /// Leaf types get <see cref="MappedTypeIdentifier"/> (GUID-backed).
 /// Constructed types use structural string representations via <see cref="TypeNameMapper"/>.
 /// </summary>
-public class TypeIdentifierMapper : ITypeIdentifierMapper
+public class TypeMapper : ITypeMapper
 {
    readonly TypeNameMapper _typeNameMapper = new();
    readonly ConcurrentDictionary<Type, MappedTypeIdentifier> _typeToId = new();
@@ -28,7 +28,7 @@ public class TypeIdentifierMapper : ITypeIdentifierMapper
       "31bf3856ad364e35"  // Microsoft.* libraries
    ];
 
-   public TypeIdentifierMapper()
+   public TypeMapper()
    {
       // Auto-detect and register all currently-loaded Microsoft assemblies as stable
       foreach(var assembly in AppDomain.CurrentDomain.GetAssemblies())
