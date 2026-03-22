@@ -1,5 +1,5 @@
 using Compze.Abstractions.Public;
-using Compze.Abstractions.Refactoring.Naming.Internal;
+using Compze.TypeIdentifiers;
 using Compze.Core.Tessaging.Internal.SqlLayer;
 using Compze.Internals.Sql.Common;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;

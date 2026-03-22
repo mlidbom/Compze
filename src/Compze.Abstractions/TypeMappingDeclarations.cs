@@ -1,5 +1,5 @@
-using Compze.Abstractions.Refactoring.Naming;
 using Compze.Abstractions.Tessaging.Public;
+using Compze.TypeIdentifiers;
 
 [assembly: TypeMappings(typeof(Compze.Abstractions.TypeMappingDeclarations))]
 

@@ -2,7 +2,7 @@ using Compze.Core.Tessaging.Transport.Internal;
 using Compze.Tessaging.Configuration;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Typermedia.Client;
-using Compze.Abstractions.Refactoring.Naming.Internal.Implementation;
+using Compze.TypeIdentifiers;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;

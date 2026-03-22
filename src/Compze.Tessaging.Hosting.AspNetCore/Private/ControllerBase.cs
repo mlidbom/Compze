@@ -1,6 +1,6 @@
 using Compze.Contracts;
 using Compze.Abstractions.Public;
-using Compze.Abstractions.Refactoring.Naming.Internal;
+using Compze.TypeIdentifiers;
 using Compze.Abstractions.Serialization.Internal;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Implementation.TessageHandling.Abstractions;

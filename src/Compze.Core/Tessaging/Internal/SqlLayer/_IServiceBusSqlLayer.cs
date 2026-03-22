@@ -1,5 +1,5 @@
 using Compze.Abstractions.Public;
-using Compze.Abstractions.Refactoring.Naming.Internal;
+using Compze.TypeIdentifiers;
 using Compze.Abstractions.Tessaging.Hosting.Public;
 
 namespace Compze.Core.Tessaging.Internal.SqlLayer;

@@ -1,4 +1,4 @@
-using Compze.Abstractions.Refactoring.Naming.Internal;
+using Compze.TypeIdentifiers;
 using Compze.Core.Tessaging.Internal.SqlLayer;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Contracts;

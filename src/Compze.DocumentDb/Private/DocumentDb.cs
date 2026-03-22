@@ -3,7 +3,7 @@ using Compze.DocumentDb.Internal.SqlLayer;
 using Compze.DocumentDb.Internal.SqlLayer.Exceptions;
 using Compze.DocumentDb.Public;
 using Compze.Abstractions.Public;
-using Compze.Abstractions.Refactoring.Naming.Internal;
+using Compze.TypeIdentifiers;
 using Compze.Abstractions.Serialization.Internal;
 using Compze.Abstractions.Time.Public;
 using Compze.Contracts;

@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to Compze.Internals.SystemCE.ThreadingCE will be documented in this file.
+All notable changes to Compze.Underscore will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 

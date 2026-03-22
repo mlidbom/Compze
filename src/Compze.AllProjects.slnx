@@ -13,6 +13,12 @@
   <Folder Name="/Compze.Abstractions/Specifications/">
     <Project Path="../test/Compze.Abstractions.Specifications/Compze.Abstractions.Specifications.csproj" />
   </Folder>
+  <Folder Name="/Compze.TypeIdentifiers/">
+    <Project Path="Compze.TypeIdentifiers/Compze.TypeIdentifiers.csproj" />
+  </Folder>
+  <Folder Name="/Compze.TypeIdentifiers/Specifications/">
+    <Project Path="../test/Compze.TypeIdentifiers.Specifications/Compze.TypeIdentifiers.Specifications.csproj" />
+  </Folder>
   <Folder Name="/Utilities/" />
   <Folder Name="/Utilities/Compze.Contracts/">
     <Project Path="Compze.Contracts/Compze.Contracts.csproj" />
