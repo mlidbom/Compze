@@ -116,7 +116,7 @@ class TypeNameMapper
          return new MappedTypeIdentifier(guid);
 
       // For composite types (generics, arrays), build the structural string
-      if(type.IsArray || (type.IsGenericType && !type.IsGenericTypeDefinition))
+      if(type.IsArray || type is { IsGenericType: true, IsGenericTypeDefinition: false })
       {
          var aqn = type.AssemblyQualifiedName!;
          var parsed = ParsedTypeName.Parse(aqn);
