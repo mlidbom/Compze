@@ -10,4 +10,13 @@ sealed class ParsedArrayTypeName(ParsedTypeName element, int rank) : ParsedTypeN
 
    internal override string TypePart => $"{Element.TypePart}{ArraySuffix}";
    internal override string AssemblyPart => Element.AssemblyPart;
+
+   internal override Type ResolveToType(ITypeMappingLookup lookup)
+   {
+      var elementType = Element.ResolveToType(lookup);
+      return Rank == 1 ? elementType.MakeArrayType() : elementType.MakeArrayType(Rank);
+   }
+
+   internal override ParsedTypeName TransformToPersisted(ITypeMappingLookup lookup) =>
+      new ParsedArrayTypeName(Element.TransformToPersisted(lookup), Rank);
 }

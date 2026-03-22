@@ -19,6 +19,12 @@ abstract partial class ParsedTypeName
 
    public override string ToString() => ToAssemblyQualifiedNameString();
 
+   /// <summary>Resolves this parsed type to a .NET <see cref="Type"/> using the provided mapping lookup.</summary>
+   internal abstract Type ResolveToType(ITypeMappingLookup lookup);
+
+   /// <summary>Transforms this parsed type into persisted form, replacing mapped components with GUIDs.</summary>
+   internal abstract ParsedTypeName TransformToPersisted(ITypeMappingLookup lookup);
+
    /// <summary>
    /// Parses an <c>AssemblyQualifiedName</c>-format string into the correct <see cref="ParsedTypeName"/> subtype.
    /// Detects mapped types by recognizing GUID type names, and wraps array types as <see cref="ParsedArrayTypeName"/>.

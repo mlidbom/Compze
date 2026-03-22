@@ -8,4 +8,22 @@ sealed class ParsedLeafTypeName(string typeName, string assemblyName) : ParsedTy
 
    internal override string TypePart => TypeName;
    internal override string AssemblyPart => AssemblyName;
+
+   internal override Type ResolveToType(ITypeMappingLookup lookup) =>
+      Type.GetType(ToAssemblyQualifiedNameString())
+      ?? throw new InvalidOperationException($"Could not resolve stable type: {ToAssemblyQualifiedNameString()}");
+
+   internal override ParsedTypeName TransformToPersisted(ITypeMappingLookup lookup)
+   {
+      var leafType = Type.GetType(ToAssemblyQualifiedNameString());
+
+      if(leafType != null && lookup.TryGetLeafTypeGuid(leafType, out var guid))
+         return new ParsedMappedLeafTypeName(guid);
+
+      if(lookup.IsStableAssembly(AssemblyName))
+         return this;
+
+      throw new InvalidOperationException(
+         $"Type '{TypeName}' from assembly '{AssemblyName}' is not mapped and its assembly is not registered as stable.");
+   }
 }

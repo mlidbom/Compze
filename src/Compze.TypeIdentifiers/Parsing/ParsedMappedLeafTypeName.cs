@@ -7,4 +7,7 @@ sealed class ParsedMappedLeafTypeName(Guid guid) : ParsedTypeName
 
    internal override string TypePart => Guid.ToString();
    internal override string AssemblyPart => "0";
+
+   internal override Type ResolveToType(ITypeMappingLookup lookup) => lookup.GetLeafType(Guid);
+   internal override ParsedTypeName TransformToPersisted(ITypeMappingLookup lookup) => this;
 }

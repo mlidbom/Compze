@@ -16,4 +16,13 @@ sealed class ParsedMappedGenericTypeName(Guid guid, ParsedTypeName[] typeArgumen
    }
 
    internal override string AssemblyPart => "0";
+
+   internal override Type ResolveToType(ITypeMappingLookup lookup)
+   {
+      var openGenericType = lookup.GetOpenGenericType(Guid);
+      var typeArgs = TypeArguments.Select(arg => arg.ResolveToType(lookup)).ToArray();
+      return openGenericType.MakeGenericType(typeArgs);
+   }
+
+   internal override ParsedTypeName TransformToPersisted(ITypeMappingLookup lookup) => this;
 }
