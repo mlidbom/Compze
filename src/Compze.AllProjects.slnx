@@ -121,13 +121,19 @@
   <Folder Name="/Compze.DependencyInjection/">
     <Project Path="Compze.DependencyInjection.Autofac.Extensions.Hosting/Compze.DependencyInjection.Autofac.Extensions.Hosting.csproj" />
     <Project Path="Compze.DependencyInjection.Autofac/Compze.DependencyInjection.Autofac.csproj" />
+    <Project Path="Compze.DependencyInjection.DryIoc.Extensions.Hosting/Compze.DependencyInjection.DryIoc.Extensions.Hosting.csproj" />
+    <Project Path="Compze.DependencyInjection.DryIoc/Compze.DependencyInjection.DryIoc.csproj" />
     <Project Path="Compze.DependencyInjection.Extensions.Hosting/Compze.DependencyInjection.Extensions.Hosting.csproj" />
+    <Project Path="Compze.DependencyInjection.LightInject.Extensions.Hosting/Compze.DependencyInjection.LightInject.Extensions.Hosting.csproj" />
+    <Project Path="Compze.DependencyInjection.LightInject/Compze.DependencyInjection.LightInject.csproj" />
     <Project Path="Compze.DependencyInjection.Microsoft.Extensions.Hosting/Compze.DependencyInjection.Microsoft.Extensions.Hosting.csproj" />
     <Project Path="Compze.DependencyInjection.Microsoft/Compze.DependencyInjection.Microsoft.csproj" />
-    <Project Path="Compze.DependencyInjection.SimpleInjector/Compze.DependencyInjection.SimpleInjector.csproj" />
     <Project Path="Compze.DependencyInjection/Compze.DependencyInjection.csproj" />
   </Folder>
   <Folder Name="/Compze.DependencyInjection/Specifications/">
+    <Project Path="../test/Compze.DependencyInjection.MsDiCompliance/Compze.DependencyInjection.MsDiCompliance.csproj">
+      <BuildType Solution="docs|*" Project="Release" />
+    </Project>
     <Project Path="../test/Compze.DependencyInjection.Specifications/Compze.DependencyInjection.Specifications.csproj" />
   </Folder>
   <Folder Name="/Compze.Internals/">
@@ -194,6 +200,5 @@
   <Project Path="../DevScripts/Scripts.csproj" />
   <Project Path="Compze.Internals.Transport/Compze.Internals.Transport.csproj" />
   <Project Path="Compze.Internals.Transport.AspNet/Compze.Internals.Transport.AspNet.csproj" />
-
   <Project Path="Compze.Hosting/Compze.Hosting.csproj" />
 </Solution>

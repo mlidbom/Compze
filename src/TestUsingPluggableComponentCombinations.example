@@ -1,23 +1,28 @@
-#When running tests, all tests that uses dependency injection and persistence will 
-#be executed once for every configured combination of components in this file.
-#Format is PersistenceLayer:DIContainer. Comment out the ones you do not want with #. 
-#Empty/Whitespace lines are ignored
-
-
-#MsSql:Autofac:Newtonsoft:AspNetCore
-#PgSql:Autofac:Newtonsoft:AspNetCore
-#MySql:Autofac:Newtonsoft:AspNetCore
-#Sqlite:Autofac:Newtonsoft:AspNetCore
-SqliteMemory:Autofac:Newtonsoft:AspNetCore
+//When running tests, all tests that uses dependency injection and persistence will 
+//be executed once for every configured combination of components in this file.
+//Format is PersistenceLayer:DIContainer. Comment out the ones you do not want with #. 
+//Empty/Whitespace lines are ignored
 
 #MsSql:Microsoft:Newtonsoft:AspNetCore
 #PgSql:Microsoft:Newtonsoft:AspNetCore
 #MySql:Microsoft:Newtonsoft:AspNetCore
 #Sqlite:Microsoft:Newtonsoft:AspNetCore
-#SqliteMemory:Microsoft:Newtonsoft:AspNetCore
+SqliteMemory:Microsoft:Newtonsoft:AspNetCore
 
-#MsSql:SimpleInjector:Newtonsoft:AspNetCore
-#PgSql:SimpleInjector:Newtonsoft:AspNetCore
-#MySql:SimpleInjector:Newtonsoft:AspNetCore
-#Sqlite:SimpleInjector:Newtonsoft:AspNetCore
-#SqliteMemory:SimpleInjector:Newtonsoft:AspNetCore
+#MsSql:Autofac:Newtonsoft:AspNetCore
+#PgSql:Autofac:Newtonsoft:AspNetCore
+#MySql:Autofac:Newtonsoft:AspNetCore
+#Sqlite:Autofac:Newtonsoft:AspNetCore
+#SqliteMemory:Autofac:Newtonsoft:AspNetCore
+
+#MsSql:DryIoc:Newtonsoft:AspNetCore
+#PgSql:DryIoc:Newtonsoft:AspNetCore
+#MySql:DryIoc:Newtonsoft:AspNetCore
+#Sqlite:DryIoc:Newtonsoft:AspNetCore
+#SqliteMemory:DryIoc:Newtonsoft:AspNetCore
+
+#MsSql:LightInject:Newtonsoft:AspNetCore
+#PgSql:LightInject:Newtonsoft:AspNetCore
+#MySql:LightInject:Newtonsoft:AspNetCore
+#Sqlite:LightInject:Newtonsoft:AspNetCore
+#SqliteMemory:LightInject:Newtonsoft:AspNetCore

@@ -2,6 +2,8 @@ using Compze.Core.Tessaging.Transport.Internal;
 using Compze.Tessaging.Configuration;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Typermedia.Client;
+using Compze.Abstractions.Refactoring.Naming.Internal.Implementation;
+using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Typermedia;
@@ -11,24 +13,24 @@ namespace Compze.Tessaging.Hosting.Testing.Tessaging;
 
 public class TestClient : IAsyncDisposable
 {
-   readonly IServiceLocator _serviceLocator;
+   readonly IDependencyInjectionContainer _container;
    readonly ITypermediaRouter _typermediaRouter;
 
    public IRemoteTypermediaNavigator Navigator { get; }
 
-   TestClient(IServiceLocator serviceLocator)
+   TestClient(IDependencyInjectionContainer container)
    {
-      _serviceLocator = serviceLocator;
-      _typermediaRouter = serviceLocator.Resolve<ITypermediaRouter>();
-      Navigator = serviceLocator.Resolve<IRemoteTypermediaNavigator>();
+      _container = container;
+      _typermediaRouter = container.Resolve<ITypermediaRouter>();
+      Navigator = container.Resolve<IRemoteTypermediaNavigator>();
    }
 
    public static async Task<TestClient> ConnectTo(EndPointAddress typermediaAddress)
    {
 #pragma warning disable CA2000 // We are passing this disposable into a constructor of an object we don't own
-        var container = TestEnv.DIContainer.CreateWithServiceLocator();
+        var builder = TestEnv.DIContainer.CreateWithContainerRegistrations();
 #pragma warning restore CA2000
-        container.Register()
+        builder.Registrar
                .CurrentTestsSerializersIfNotClonedContainer()
                .CurrentTestsClientTransport()
                .JSonAppConfigFileConfigurationParameterProvider()
@@ -36,7 +38,7 @@ public class TestClient : IAsyncDisposable
                .TypermediaRouter()
                .SingletonRemoteTypermediaNavigator();
 
-      var client = new TestClient(container.ServiceLocator);
+      var client = new TestClient(builder.Build());
       client._typermediaRouter.Start();
       await client._typermediaRouter.ConnectAsync(typermediaAddress).caf();
       return client;
@@ -45,6 +47,6 @@ public class TestClient : IAsyncDisposable
    public async ValueTask DisposeAsync()
    {
       _typermediaRouter.Stop();
-      await _serviceLocator.DisposeAsync().caf();
+      await _container.DisposeAsync().caf();
    }
 }

@@ -11,7 +11,7 @@ namespace Compze.Hosting;
 
 public abstract class TestingEndpointHostBase : EndpointHost, ITestingEndpointHost, IEndpointRegistry
 {
-   protected TestingEndpointHostBase(Func<IDependencyInjectionContainer> containerFactory) : base(containerFactory)
+   protected TestingEndpointHostBase(Func<IContainerBuilder> containerFactory) : base(containerFactory)
    {
       var mapper = new StructuralTypeMapper();
       mapper.MapTypesFromAllLoadedAssembliesWithTypeMappingsAttribute();

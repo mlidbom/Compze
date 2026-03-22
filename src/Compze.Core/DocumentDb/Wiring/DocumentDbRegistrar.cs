@@ -6,5 +6,5 @@ namespace Compze.Core.DocumentDb.Wiring;
 public static class EndpointBuilderDocumentDbExtensions
 {
    public static DocumentDbRegistrationBuilder RegisterDocumentDb(this IEndpointBuilder @this)
-      => @this.Container.Register().DocumentDb();
+      => @this.Registrar.DocumentDb();
 }

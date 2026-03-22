@@ -8,16 +8,15 @@ public class Cross_lifestyle_dependencies
    [DependencyInjectionContainerMatrix]
    public void clone_resolves_services_with_dependencies()
    {
-      using var source = DependencyInjectionContainerFactory.CreateContainer();
-      source.Register(
+      var sourceBuilder = DependencyInjectionContainerFactory.CreateContainerBuilder();
+      sourceBuilder.Registrar.Register(
          Singleton.For<ISingletonService>().CreatedBy(() => new SingletonService()),
          Scoped.For<IScopedService>().CreatedBy((ISingletonService s) => new ScopedServiceDependingOnSingleton(s))
       );
 
-      using var clone = source.Clone();
-      using(clone.ServiceLocator.BeginScope())
-      {
-         clone.ServiceLocator.Resolve<IScopedService>().Must().NotBeNull();
-      }
+      using var source = sourceBuilder.Build();
+      using var clone = source.CreateCloneContainerBuilder().Build();
+      using var scope = clone.BeginScope();
+      scope.Resolve<IScopedService>().Must().NotBeNull();
    }
 }

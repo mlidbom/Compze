@@ -1,6 +1,7 @@
 using Compze.Contracts;
 using Compze.Abstractions.Public;
 using Compze.Abstractions.Tessaging.Public;
+using Compze.DependencyInjection;
 using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Tessaging.SystemCE.ThreadingCE;
@@ -22,10 +23,10 @@ public partial class Inbox
             readonly TaskCompletionSource<object?> _taskCompletionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
             internal readonly TransportTessage.InComing TransportTessage;
             readonly Coordinator _coordinator;
-            readonly Func<object, object?> _tessageTask;
+            readonly Func<object, IScopeResolver, object?> _tessageTask;
             readonly ITaskRunner _taskRunner;
             readonly ITessageStorage _tessageStorage;
-            readonly IServiceLocator _serviceLocator;
+            readonly IScopeFactory _scopeFactory;
             readonly ITessageHandlerRegistry _tessagingHandlerRegistry;
 
             internal Task<object?> Task => _taskCompletionSource.Task;
@@ -63,16 +64,14 @@ public partial class Inbox
                   object? result = null;
                   try
                   {
-                     using(_serviceLocator.BeginScope())
+                     using var scope = _scopeFactory.BeginScope();
+                     result = TransactionScopeCe.Execute(() =>
                      {
-                        result = TransactionScopeCe.Execute(() =>
-                        {
-                           var innerResult = _tessageTask(tessage);
-                           _tessageStorage.MarkAsSucceeded(TransportTessage);
-                           return innerResult;
-                        });
-                        tessageHandlerSucceeded = true;
-                     }
+                        var innerResult = _tessageTask(tessage, scope.Resolver);
+                        _tessageStorage.MarkAsSucceeded(TransportTessage);
+                        return innerResult;
+                     });
+                     tessageHandlerSucceeded = true;
 
                      this.Log().Debug($"Transactional tessage {TessageId} completed successfully");
                      _taskCompletionSource.SetResult(result);
@@ -107,32 +106,32 @@ public partial class Inbox
                }
             }
 
-            internal HandlerExecutionTask(TransportTessage.InComing transportTessage, Coordinator coordinator, ITaskRunner taskRunner, ITessageStorage tessageStorage, IServiceLocator serviceLocator, ITessageHandlerRegistry tessagingHandlerRegistry)
+            internal HandlerExecutionTask(TransportTessage.InComing transportTessage, Coordinator coordinator, ITaskRunner taskRunner, ITessageStorage tessageStorage, IScopeFactory scopeFactory, ITessageHandlerRegistry tessagingHandlerRegistry)
             {
                TessageId = transportTessage.TessageId;
                TransportTessage = transportTessage;
                _coordinator = coordinator;
                _taskRunner = taskRunner;
                _tessageStorage = tessageStorage;
-               _serviceLocator = serviceLocator;
+               _scopeFactory = scopeFactory;
                _tessagingHandlerRegistry = tessagingHandlerRegistry;
                _tessageTask = CreateTessageTask();
             }
 
             //Refactor: Switching should not be necessary. See also inbox.
-            Func<object, object?> CreateTessageTask() =>
+            Func<object, IScopeResolver, object?> CreateTessageTask() =>
                TransportTessage.TessageTypeEnum switch
                {
-                  TransportTessageType.ExactlyOnceTevent => tessage =>
+                  TransportTessageType.ExactlyOnceTevent => (tessage, kernel) =>
                   {
                      var teventHandlers = _tessagingHandlerRegistry.GetTeventHandlers(tessage.GetType());
-                     teventHandlers.ForEach(handler => handler((IExactlyOnceTevent)tessage));
+                     teventHandlers.ForEach(handler => handler((IExactlyOnceTevent)tessage, kernel));
                      return null;
                   },
-                  TransportTessageType.ExactlyOnceTommand => tessage =>
+                  TransportTessageType.ExactlyOnceTommand => (tessage, kernel) =>
                   {
                      var tommandHandler = _tessagingHandlerRegistry.GetTommandHandler(tessage.GetType());
-                     tommandHandler((IExactlyOnceTommand)tessage);
+                     tommandHandler((IExactlyOnceTommand)tessage, kernel);
                      return unit; //Todo:Properly handle tommands with and without return values
                   },
                   _ => throw new ArgumentOutOfRangeException()

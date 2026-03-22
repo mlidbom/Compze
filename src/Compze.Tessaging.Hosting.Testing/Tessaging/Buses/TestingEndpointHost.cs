@@ -12,26 +12,26 @@ namespace Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 
 public class TestingEndpointHost : TestingEndpointHostBase
 {
-   IDependencyInjectionContainer? _ownedContainer = null;
+   readonly IDependencyInjectionContainer _rootContainer;
+   readonly bool _ownsRootContainer;
 
-   TestingEndpointHost(IDependencyInjectionContainer rootContainer) : base(rootContainer.Clone) {}
-
-   public static ITestingEndpointHost Create(IDependencyInjectionContainer? rootContainer = null)
+   TestingEndpointHost(IDependencyInjectionContainer rootContainer, bool ownsRootContainer) : base(rootContainer.CreateCloneContainerBuilder)
    {
-#pragma warning disable CA2000 // We are passing this disposable into a constructor of an object we don't own
-      var usedContainer = rootContainer ?? TestEnv.DIContainer.CreateWithServiceLocator()
-                                                  ._mutate(it => it.Register().CurrentTestsDbPoolIfNotCloneContainer());
-#pragma warning restore CA2000 // We are passing this disposable into a constructor of an object we don't own
-
-      var host = new TestingEndpointHost(usedContainer);
-
-      if(rootContainer == null)
-      {
-         host._ownedContainer = usedContainer;
-      }
-
-      return host;
+      _rootContainer = rootContainer;
+      _ownsRootContainer = ownsRootContainer;
    }
+
+   public static ITestingEndpointHost Create(IContainerBuilder? rootBuilder = null)
+   {
+      var usedBuilder = rootBuilder ?? TestEnv.DIContainer.CreateWithContainerRegistrations()
+                                                  ._mutate(it => it.Registrar.CurrentTestsDbPoolIfNotCloneContainer());
+
+      var rootContainer = usedBuilder.Build();
+      return new TestingEndpointHost(rootContainer, ownsRootContainer: true);
+   }
+
+   public static ITestingEndpointHost Create(IDependencyInjectionContainer rootContainer) =>
+      new TestingEndpointHost(rootContainer, ownsRootContainer: false);
 
 #pragma warning disable CA1031 // We want to catch all exceptions and throw an aggregate if there are multiple
    protected override async ValueTask DisposeAsync(bool disposing)
@@ -46,11 +46,11 @@ public class TestingEndpointHost : TestingEndpointHostBase
          exceptions.Add(e);
       }
 
-      if(_ownedContainer != null)
+      if(_ownsRootContainer)
       {
          try
          {
-            await _ownedContainer.DisposeAsync();
+            await _rootContainer.DisposeAsync();
          }
          catch(Exception e)
          {
@@ -71,7 +71,7 @@ public class TestingEndpointHost : TestingEndpointHostBase
                                builder =>
                                {
                                   //Endpoints need a consistent connection string or things go belly up when creating a new host with a new container.
-                                  builder.Container.Register()
+                                  builder.Registrar
                                          .CurrentTestsPluggableComponents(connectionStringName: id.ToString());
 
                                   setup(builder);

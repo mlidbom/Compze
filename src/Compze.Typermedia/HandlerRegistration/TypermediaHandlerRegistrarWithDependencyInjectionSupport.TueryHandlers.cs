@@ -1,4 +1,5 @@
 using Compze.Abstractions.Tessaging.Public;
+using Compze.DependencyInjection;
 
 namespace Compze.Typermedia.HandlerRegistration;
 
@@ -8,7 +9,7 @@ public static partial class TypermediaHandlerRegistrarWithDependencyInjectionSup
       this TypermediaHandlerRegistrarWithDependencyInjectionSupport @this,
       Func<TTuery, TResult> handler) where TTuery : ITuery<TResult>
    {
-      @this.Registrar.ForTuery(handler);
+      @this.Registrar.ForTuery<TTuery, TResult>((tuery, _) => handler(tuery));
       return @this;
    }
 
@@ -17,7 +18,7 @@ public static partial class TypermediaHandlerRegistrarWithDependencyInjectionSup
       Func<TTuery, TDependency1, TResult> handler) where TTuery : ITuery<TResult>
                                                    where TDependency1 : class
    {
-      @this.Registrar.ForTuery<TTuery, TResult>(tuery => handler(tuery, @this.Resolve<TDependency1>()));
+      @this.Registrar.ForTuery<TTuery, TResult>((tuery, kernel) => handler(tuery, kernel.Resolve<TDependency1>()));
       return @this;
    }
 
@@ -27,7 +28,7 @@ public static partial class TypermediaHandlerRegistrarWithDependencyInjectionSup
                                                                  where TDependency1 : class
                                                                  where TDependency2 : class
    {
-      @this.Registrar.ForTuery<TTuery, TResult>(tuery => handler(tuery, @this.Resolve<TDependency1>(), @this.Resolve<TDependency2>()));
+      @this.Registrar.ForTuery<TTuery, TResult>((tuery, kernel) => handler(tuery, kernel.Resolve<TDependency1>(), kernel.Resolve<TDependency2>()));
       return @this;
    }
 
@@ -38,7 +39,7 @@ public static partial class TypermediaHandlerRegistrarWithDependencyInjectionSup
                                                                                where TDependency2 : class
                                                                                where TDependency3 : class
    {
-      @this.Registrar.ForTuery<TTuery, TResult>(tuery => handler(tuery, @this.Resolve<TDependency1>(), @this.Resolve<TDependency2>(), @this.Resolve<TDependency3>()));
+      @this.Registrar.ForTuery<TTuery, TResult>((tuery, kernel) => handler(tuery, kernel.Resolve<TDependency1>(), kernel.Resolve<TDependency2>(), kernel.Resolve<TDependency3>()));
       return @this;
    }
 
@@ -50,7 +51,7 @@ public static partial class TypermediaHandlerRegistrarWithDependencyInjectionSup
                                                                                               where TDependency3 : class
                                                                                               where TDependency4 : class
    {
-      @this.Registrar.ForTuery<TTuery, TResult>(tuery => handler(tuery, @this.Resolve<TDependency1>(), @this.Resolve<TDependency2>(), @this.Resolve<TDependency3>(), @this.Resolve<TDependency4>()));
+      @this.Registrar.ForTuery<TTuery, TResult>((tuery, kernel) => handler(tuery, kernel.Resolve<TDependency1>(), kernel.Resolve<TDependency2>(), kernel.Resolve<TDependency3>(), kernel.Resolve<TDependency4>()));
       return @this;
    }
 }

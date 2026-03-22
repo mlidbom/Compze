@@ -9,7 +9,7 @@ namespace Compze.Tessaging.Abstractions.Tessaging.Hosting.Public;
 public interface IEndpointBuilder
 {
     IStructuralTypeMapper TypeMapper { get; }
-    IDependencyInjectionContainer Container { get; }
+    IComponentRegistrar Registrar { get; }
     EndpointConfiguration Configuration { get; }
     TessageHandlerRegistrarWithDependencyInjectionSupport RegisterTessagingHandlers { get; }
 }

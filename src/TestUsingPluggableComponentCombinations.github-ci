@@ -5,3 +5,4 @@
 
 
 SqliteMemory:Microsoft:Newtonsoft:AspNetCore
+SqliteMemory:DryIoc:Newtonsoft:AspNetCore

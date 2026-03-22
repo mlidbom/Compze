@@ -13,7 +13,7 @@ class SqliteSqlLayerSchemaManager(ISqliteConnectionPool connectionPool)
 {
    public static IComponentRegistrar RegisterWith(IComponentRegistrar registrar)
    {
-      if(registrar.Container().IsRegistered<SqliteSqlLayerSchemaManager>())
+      if(registrar.IsRegistered<SqliteSqlLayerSchemaManager>())
          return registrar;
       return registrar.Register(Singleton.For<SqliteSqlLayerSchemaManager>()
                                          .CreatedBy((ISqliteConnectionPool connectionPool) => new SqliteSqlLayerSchemaManager(connectionPool))

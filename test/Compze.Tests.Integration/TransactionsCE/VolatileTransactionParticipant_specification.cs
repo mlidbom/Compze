@@ -24,9 +24,9 @@ public class VolatileTransactionParticipant_specification : DocumentDbTestsBase
          Exception? caughtException = null;
          try
          {
-            ServiceLocator.ExecuteTransactionInIsolatedScope(() =>
+            Container.ExecuteTransactionInIsolatedScope(scope =>
             {
-               ServiceLocator.DocumentDbUpdater().Save(user.Id, user);
+               scope.DocumentDbUpdater().Save(user.Id, user);
                failingParticipant.EnsureEnlistedInAnyAmbientTransaction();
             });
          }
@@ -54,9 +54,9 @@ public class VolatileTransactionParticipant_specification : DocumentDbTestsBase
          Exception? caughtException = null;
          try
          {
-            ServiceLocator.ExecuteTransactionInIsolatedScope(() =>
+            Container.ExecuteTransactionInIsolatedScope(scope =>
             {
-               ServiceLocator.DocumentDbUpdater().Save(user.Id, user);
+               scope.DocumentDbUpdater().Save(user.Id, user);
                Transaction.Current!.OnCommittedSuccessfully(
                   () => throw new InvalidOperationException("Callback failure after commit"));
             });
@@ -80,9 +80,9 @@ public class VolatileTransactionParticipant_specification : DocumentDbTestsBase
 
          try
          {
-            ServiceLocator.ExecuteTransactionInIsolatedScope(() =>
+            Container.ExecuteTransactionInIsolatedScope(scope =>
             {
-               ServiceLocator.DocumentDbUpdater().Save(user.Id, user);
+               scope.DocumentDbUpdater().Save(user.Id, user);
                Transaction.Current!.OnCommittedSuccessfully(
                   () => throw new InvalidOperationException("Callback failure after commit"));
             });

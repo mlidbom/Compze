@@ -1,4 +1,5 @@
 using Compze.Abstractions.Tessaging.Public;
+using Compze.DependencyInjection;
 
 namespace Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 
@@ -8,7 +9,7 @@ public static partial class TessageHandlerRegistrarWithDependencyInjectionSuppor
       this TessageHandlerRegistrarWithDependencyInjectionSupport @this,
       Action<TTevent> handler) where TTevent : ITevent
    {
-      @this.Registrar.ForTevent(handler);
+      @this.Registrar.ForTevent<TTevent>((tevent, _) => handler(tevent));
       return @this;
    }
 
@@ -17,7 +18,7 @@ public static partial class TessageHandlerRegistrarWithDependencyInjectionSuppor
       Action<TTevent, TDependency1> handler) where TTevent : ITevent
                                              where TDependency1 : class
    {
-      @this.Registrar.ForTevent<TTevent>(tevent => handler(tevent, @this.Resolve<TDependency1>()));
+      @this.Registrar.ForTevent<TTevent>((tevent, kernel) => handler(tevent, kernel.Resolve<TDependency1>()));
       return @this;
    }
 
@@ -27,7 +28,7 @@ public static partial class TessageHandlerRegistrarWithDependencyInjectionSuppor
                                                            where TDependency1 : class
                                                            where TDependency2 : class
    {
-      @this.Registrar.ForTevent<TTevent>(tevent => handler(tevent, @this.Resolve<TDependency1>(), @this.Resolve<TDependency2>()));
+      @this.Registrar.ForTevent<TTevent>((tevent, kernel) => handler(tevent, kernel.Resolve<TDependency1>(), kernel.Resolve<TDependency2>()));
       return @this;
    }
 }

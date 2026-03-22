@@ -50,7 +50,7 @@ static class AccountStatistics
 
    internal static void Register(IEndpointBuilder builder)
    {
-      builder.Container.Register(Singleton.For<StatisticsSingletonInitializer>().CreatedBy(() => new StatisticsSingletonInitializer()));
+      builder.Registrar.Register(Singleton.For<StatisticsSingletonInitializer>().CreatedBy(() => new StatisticsSingletonInitializer()));
       MaintainStatisticsWhenRelevantTeventsAreReceived(builder.RegisterTessagingHandlers);
    }
 

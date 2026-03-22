@@ -1,4 +1,5 @@
 using Compze.Abstractions.Wiring.Testing.Internal;
+using Compze.DependencyInjection;
 using Compze.Internals.Sql.MicrosoftSql;
 using Compze.Internals.Sql.MySql;
 using Compze.Internals.Sql.PostgreSql;
@@ -29,8 +30,8 @@ public class DbPoolPerformanceTests : DbPoolTestBase
          action:
          () =>
          {
-            using var serviceLocator = CreateServiceLocator();
-            using var dbPool = serviceLocator.Resolve<DbPool>();
+            using var container = CreateContainer();
+            using var dbPool = container.Resolve<DbPool>();
             dbPool.SetLogLevel(LogLevel.Warning);
             dbPool.ConnectionStringFor(dbName);
          },
@@ -46,8 +47,8 @@ public class DbPoolPerformanceTests : DbPoolTestBase
          action:
          () =>
          {
-            using var serviceLocator = CreateServiceLocator();
-            using var dbPool = serviceLocator.Resolve<DbPool>();
+            using var container = CreateContainer();
+            using var dbPool = container.Resolve<DbPool>();
             dbPool.SetLogLevel(LogLevel.Warning);
             dbPool.ConnectionStringFor(dbName);
          },
@@ -61,8 +62,8 @@ public class DbPoolPerformanceTests : DbPoolTestBase
       TimeAsserter.ExecuteThreaded(
          action: () =>
          {
-            using var serviceLocator = CreateServiceLocator();
-            using var dbPool = serviceLocator.Resolve<DbPool>();
+            using var container = CreateContainer();
+            using var dbPool = container.Resolve<DbPool>();
             dbPool.SetLogLevel(LogLevel.Warning);
             dbPool.ConnectionStringFor(Guid.NewGuid().ToString());
          },
@@ -75,8 +76,8 @@ public class DbPoolPerformanceTests : DbPoolTestBase
       TimeAsserter.Execute(
          action: () =>
          {
-            using var serviceLocator = CreateServiceLocator();
-            using var dbPool = serviceLocator.Resolve<DbPool>();
+            using var container = CreateContainer();
+            using var dbPool = container.Resolve<DbPool>();
             dbPool.SetLogLevel(LogLevel.Warning);
             dbPool.ConnectionStringFor(Guid.NewGuid().ToString());
          },
@@ -87,8 +88,8 @@ public class DbPoolPerformanceTests : DbPoolTestBase
    [PCT(Skip = SkipReason)] public void Repeated_fetching_of_same_connection_runs_20_times_in_1_milliseconds()
    {
       var dbName = Guid.NewGuid().ToString();
-      using var serviceLocator = CreateServiceLocator();
-      using var pool = serviceLocator.Resolve<DbPool>();
+      using var container = CreateContainer();
+      using var pool = container.Resolve<DbPool>();
       pool.SetLogLevel(LogLevel.Warning);
       pool.ConnectionStringFor(dbName);
 
@@ -103,8 +104,8 @@ public class DbPoolPerformanceTests : DbPoolTestBase
       var allowedTime = 10.Milliseconds().EnvMultiply(instrumented: 2);
       var iterations = TestEnv.SqlLayer.ValueFor(msSql: 180, mySql: 24, pgSql: 300, sqlite: 180, sqliteMemory: 180);
 
-      using var serviceLocator = CreateServiceLocator();
-      using var pool = serviceLocator.Resolve<DbPool>();
+      using var container = CreateContainer();
+      using var pool = container.Resolve<DbPool>();
       pool.SetLogLevel(LogLevel.Warning);
       var reservationName = Guid.NewGuid().ToString();
 
@@ -142,3 +143,4 @@ public class DbPoolPerformanceTests : DbPoolTestBase
       );
    }
 }
+

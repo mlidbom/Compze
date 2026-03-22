@@ -1,4 +1,5 @@
 using Compze.DbPool.SystemCE;
+using Compze.DependencyInjection;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Must;
 using Compze.SystemCE;
@@ -17,7 +18,7 @@ public class If_not_disposed_ : DbPoolTestBase
                                                                 {
                                                                    Unit.Invoke(() =>
                                                                    {
-                                                                      _ = CreateServiceLocator().Resolve<DbPool>();
+                                                                      _ = CreateContainer().Resolve<DbPool>();
                                                                    });
 
                                                                    Invoking(UncatchableExceptionsGatherer.ForceFullGcAllGenerationsAndWaitForFinalizersConsumeAndThrowAnyGatheredExceptions)
@@ -26,3 +27,4 @@ public class If_not_disposed_ : DbPoolTestBase
                                                                 }));
    }
 }
+

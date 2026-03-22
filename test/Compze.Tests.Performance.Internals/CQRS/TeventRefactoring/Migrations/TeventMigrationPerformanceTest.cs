@@ -10,6 +10,7 @@ using Compze.Internals.Testing.Performance;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tests.Common.CQRS.TeventRefactoring.Migrations;
 using Compze.Tests.Common.CQRS.TeventRefactoring.Migrations.Tevents;
+using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Tests.Integration.CQRS.TeventRefactoring.Migrations;
 using Compze.DependencyInjection;
@@ -24,7 +25,7 @@ namespace Compze.Tests.Performance.Internals.CQRS.TeventRefactoring.Migrations;
 public class TeventMigrationPerformanceTest : TeventMigrationTestBase
 {
    readonly TestTaggregate _taggregate;
-   readonly IServiceLocator? _container;
+   readonly IDependencyInjectionContainer? _container;
    IReadOnlyList<ITeventMigration> _currentMigrations;
    public TeventMigrationPerformanceTest()
    {
@@ -42,9 +43,9 @@ public class TeventMigrationPerformanceTest : TeventMigrationTestBase
       var history = _taggregate.History.Cast<TaggregateTevent>().ToList();
 
       _currentMigrations = Enumerable.Empty<ITeventMigration>().ToList();
-      _container = CreateServiceLocatorForTeventStoreType(migrationsFactory: () => _currentMigrations);
+      _container = CreateContainerForTeventStoreType(migrationsFactory: () => _currentMigrations);
 
-      _container.ExecuteTransactionInIsolatedScope(() => _container.Resolve<ITeventStore>().SaveSingleTaggregateTevents(history));
+      _container.ExecuteTransactionInIsolatedScope(scope => scope.TeventStore().SaveSingleTaggregateTevents(history));
    }
 
    protected override async Task DisposeAsyncInternal()
@@ -57,32 +58,32 @@ public class TeventMigrationPerformanceTest : TeventMigrationTestBase
    {
       _currentMigrations = migrations;
 
-      IServiceLocator? clonedLocator = null;
+      IDependencyInjectionContainer? clonedContainer = null;
 
       await TimeAsserter.ExecuteAsync(
          description: "Uncached loading",
          maxTotal: maxUncachedLoadTime,
-         setup: () => clonedLocator = _container!.Clone(),
-         tearDownAsync: async Task () => await clonedLocator._assert().NotNull().DisposeAsync(),
+         setup: () => clonedContainer = _container!.CloneAndBuild(),
+         tearDownAsync: async Task () => await clonedContainer._assert().NotNull().DisposeAsync(),
          action: () =>
          {
-            LoadWithCloneLocator(clonedLocator!);
+            LoadWithClonedContainer(clonedContainer!);
             return Task.CompletedTask;
          });
 
-      await using(clonedLocator = _container!.Clone())
+      await using(clonedContainer = _container!.CloneAndBuild())
       {
-         LoadWithCloneLocator(clonedLocator); //Warm up cache
+         LoadWithClonedContainer(clonedContainer); //Warm up cache
 
          TimeAsserter.Execute(
             description: "Cached loading",
             maxTotal: maxCachedLoadTime,
-            action: () => LoadWithCloneLocator(clonedLocator));
+            action: () => LoadWithClonedContainer(clonedContainer));
       }
 
       return;
 
-      void LoadWithCloneLocator(IServiceLocator locator) => locator.ExecuteTransactionInIsolatedScope(() => locator.Resolve<ITeventStoreUpdater>()
+      void LoadWithClonedContainer(IDependencyInjectionContainer container) => container.ExecuteTransactionInIsolatedScope(scope => scope.TeventStoreUpdater()
                                                                                                                    .Get<TestTaggregate>(_taggregate.Id));
    }
 

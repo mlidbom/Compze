@@ -1,6 +1,7 @@
 using System.Reflection;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
+using Compze.DependencyInjection.Extensions.Hosting;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -15,15 +16,15 @@ namespace Compze.Typermedia.Hosting.AspNetCore;
 
 public class TypermediaTransportServer : ITypermediaTransportServer
 {
-   readonly IServiceLocator _serviceLocator;
+   readonly IChildContainerHostIntegration _hostIntegration;
    WebApplication? _webApplication;
 
    public static void RegisterWith(IComponentRegistrar registrar) =>
       registrar.Register(
          Singleton.For<ITypermediaTransportServer>()
-                  .CreatedBy((IServiceLocator serviceLocator) => new TypermediaTransportServer(serviceLocator)));
+                  .CreatedBy((IChildContainerHostIntegration hostIntegration) => new TypermediaTransportServer(hostIntegration)));
 
-   TypermediaTransportServer(IServiceLocator serviceLocator) => _serviceLocator = serviceLocator;
+   TypermediaTransportServer(IChildContainerHostIntegration hostIntegration) => _hostIntegration = hostIntegration;
 
    public Uri Address => new(_webApplication!.Urls.First());
 
@@ -33,6 +34,7 @@ public class TypermediaTransportServer : ITypermediaTransportServer
    {
       if(_webApplication is null) return;
       await _webApplication.StopAsync().caf();
+      await _webApplication.DisposeAsync().caf();
       _webApplication = null;
    }
 
@@ -56,26 +58,18 @@ public class TypermediaTransportServer : ITypermediaTransportServer
       builder.Services.AddHttpClient();
       builder.Services.AddControllers();
 
-      builder.Services.AddSingleton<IControllerActivator>(new ServiceLocatorControllerActivator(_serviceLocator));
+      builder.Services.AddSingleton<IControllerActivator, ServiceBasedControllerActivator>();
+
+      _hostIntegration.UseChildContainerAsServiceProviderFor(builder.Host);
 
       var app = builder.Build();
 
       app.UseRouting();
       app.MapControllers();
 
-      app.Use((_, next) => _serviceLocator.ExecuteInIsolatedScopeAsync(next.Invoke));
-
       await app.StartAsync().caf();
 
       return app;
-   }
-
-   class ServiceLocatorControllerActivator(IServiceLocator serviceLocator) : IControllerActivator
-   {
-      readonly IServiceLocator _serviceLocator1 = serviceLocator;
-
-      public object Create(ControllerContext context) => _serviceLocator1.Resolve(context.ActionDescriptor.ControllerTypeInfo.AsType());
-      public void Release(ControllerContext context, object controller) {}
    }
 
    class InternalControllerFeatureProvider : ControllerFeatureProvider
