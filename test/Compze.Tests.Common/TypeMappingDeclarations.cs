@@ -1,12 +1,12 @@
 using Compze.TypeIdentifiers;
 
-[assembly: TypeMappings(typeof(Compze.Tests.Common.TypeMappingDeclarations))]
+[assembly: AssemblyTypeMapper(typeof(Compze.Tests.Common.AssemblyTypeMapper))]
 
 namespace Compze.Tests.Common;
 
-class TypeMappingDeclarations : ITypeMappingDeclaration
+class AssemblyTypeMapper : IAssemblyTypeMapper
 {
-   public void DeclareMappings(ITypeMappingRegistrar map)
+   public void Map(ITypeMappingRegistrar map)
    {
       map.Map<CQRS.TeventRefactoring.Migrations.ITestTaggregateTevent>("11e69911-38c6-4dd9-9798-0ac8014e52fe")
          .Map<CQRS.TeventRefactoring.Migrations.TestTaggregate>("858998a5-20d9-474a-9ec9-595d60cf2a3f")

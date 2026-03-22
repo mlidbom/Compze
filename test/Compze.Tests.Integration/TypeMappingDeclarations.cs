@@ -1,13 +1,13 @@
 using Compze.TypeIdentifiers;
 using Compze.Tests.Common.Sql.DocumentDb;
 
-[assembly: TypeMappings(typeof(Compze.Tests.Integration.TypeMappingDeclarations))]
+[assembly: AssemblyTypeMapper(typeof(Compze.Tests.Integration.AssemblyTypeMapper))]
 
 namespace Compze.Tests.Integration;
 
-class TypeMappingDeclarations : ITypeMappingDeclaration
+class AssemblyTypeMapper : IAssemblyTypeMapper
 {
-   public void DeclareMappings(ITypeMappingRegistrar map)
+   public void Map(ITypeMappingRegistrar map)
    {
       map.Map<CQRS.IMigratedAfterUserChangedEmailTevent>("99302c63-3bfc-4e81-a678-16e73ff982c5")
          .Map<CQRS.IMigratedBeforeUserRegisteredTevent>("3cd859f1-a710-46a6-b3e2-e6b251db6467")

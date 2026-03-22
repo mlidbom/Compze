@@ -3,7 +3,7 @@ using System.Reflection;
 namespace Compze.TypeIdentifiers;
 
 /// <summary>
-/// Collects type mappings from an <see cref="ITypeMappingDeclaration"/> and validates
+/// Collects type mappings from an <see cref="IAssemblyTypeMapper"/> and validates
 /// that only types from the declaring assembly are mapped.
 /// </summary>
 sealed class TypeMappingRegistrar(Assembly declaringAssembly) : ITypeMappingRegistrar

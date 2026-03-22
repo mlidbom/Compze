@@ -1,12 +1,12 @@
 using Compze.TypeIdentifiers;
 
-[assembly: TypeMappings(typeof(Compze.Typermedia.Client.TypeMappingDeclarations))]
+[assembly: AssemblyTypeMapper(typeof(Compze.Typermedia.Client.AssemblyTypeMapper))]
 
 namespace Compze.Typermedia.Client;
 
-class TypeMappingDeclarations : ITypeMappingDeclaration
+class AssemblyTypeMapper : IAssemblyTypeMapper
 {
-   public void DeclareMappings(ITypeMappingRegistrar map)
+   public void Map(ITypeMappingRegistrar map)
    {
       map.Map<TypermediaEndpointInformationQuery>("9c3286ba-6a33-4448-aec0-b33b3d59300a")
          .Map<TypermediaEndpointInformation>("23d82352-7274-4389-b145-09d70c305147");

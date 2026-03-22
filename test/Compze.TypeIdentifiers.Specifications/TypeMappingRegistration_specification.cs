@@ -173,7 +173,7 @@ public class TypeIdentifierMapper_assembly_registration_specification
          var mapper = new TypeMapper();
          var threw = false;
          try { mapper.MapTypesFromAssembly(typeof(object).Assembly); }
-         catch(InvalidOperationException ex) when(ex.Message.Contains(nameof(TypeMappingsAttribute)))
+         catch(InvalidOperationException ex) when(ex.Message.Contains(nameof(AssemblyTypeMapperAttribute)))
          { threw = true; }
          threw.Must().BeTrue();
       }

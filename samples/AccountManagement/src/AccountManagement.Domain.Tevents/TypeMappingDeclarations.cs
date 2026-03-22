@@ -1,12 +1,12 @@
 using Compze.TypeIdentifiers;
 
-[assembly: TypeMappings(typeof(AccountManagement.Domain.Tevents.TypeMappingDeclarations))]
+[assembly: AssemblyTypeMapper(typeof(AccountManagement.Domain.Tevents.AssemblyTypeMapper))]
 
 namespace AccountManagement.Domain.Tevents;
 
-class TypeMappingDeclarations : ITypeMappingDeclaration
+class AssemblyTypeMapper : IAssemblyTypeMapper
 {
-   public void DeclareMappings(ITypeMappingRegistrar map)
+   public void Map(ITypeMappingRegistrar map)
    {
       map.Map<IAccountTevent.Created>("ae1684ff-a150-4840-ac08-1b9d21806da6")
          .Map<AccountTevent.LoggedIn>("37079b83-103e-4832-a718-3ad4c71700a7")

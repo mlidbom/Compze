@@ -2,13 +2,13 @@ using Compze.TypeIdentifiers;
 using Compze.Core.Tessaging.Teventive.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 
-[assembly: TypeMappings(typeof(Compze.Core.TypeMappingDeclarations))]
+[assembly: AssemblyTypeMapper(typeof(Compze.Core.AssemblyTypeMapper))]
 
 namespace Compze.Core;
 
-class TypeMappingDeclarations : ITypeMappingDeclaration
+class AssemblyTypeMapper : IAssemblyTypeMapper
 {
-   public void DeclareMappings(ITypeMappingRegistrar map)
+   public void Map(ITypeMappingRegistrar map)
    {
       map.Map<TaggregateTevent>("32bbb393-64ab-42af-8edd-630d73d697a5")
          .Map<ITaggregateCreatedTevent>("af07f49c-12c6-4ea9-abf1-45fa2088515b")

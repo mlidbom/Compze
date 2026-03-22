@@ -1,12 +1,12 @@
 using Compze.TypeIdentifiers;
 
-[assembly: TypeMappings(typeof(Compze.Tessaging.Teventive.TeventStore.TypeMappingDeclarations))]
+[assembly: AssemblyTypeMapper(typeof(Compze.Tessaging.Teventive.TeventStore.AssemblyTypeMapper))]
 
 namespace Compze.Tessaging.Teventive.TeventStore;
 
-class TypeMappingDeclarations : ITypeMappingDeclaration
+class AssemblyTypeMapper : IAssemblyTypeMapper
 {
-   public void DeclareMappings(ITypeMappingRegistrar map)
+   public void Map(ITypeMappingRegistrar map)
    {
       map.Map<Refactoring.Migrations.EndOfTaggregateHistoryTeventPlaceHolder>("fa4197d0-747c-4c60-afbc-f978d7ce2487");
    }

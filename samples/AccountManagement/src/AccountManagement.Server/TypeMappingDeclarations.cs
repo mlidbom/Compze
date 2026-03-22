@@ -1,12 +1,12 @@
 using Compze.TypeIdentifiers;
 
-[assembly: TypeMappings(typeof(AccountManagement.TypeMappingDeclarations))]
+[assembly: AssemblyTypeMapper(typeof(AccountManagement.AssemblyTypeMapper))]
 
 namespace AccountManagement;
 
-class TypeMappingDeclarations : ITypeMappingDeclaration
+class AssemblyTypeMapper : IAssemblyTypeMapper
 {
-   public void DeclareMappings(ITypeMappingRegistrar map)
+   public void Map(ITypeMappingRegistrar map)
    {
       map.Map<Domain.Account>("57fc716d-d8ca-4224-9f78-4d3b5a7f9ebd")
          .Map<UI.QueryModels.AccountQueryModel>("aee890be-6bb0-4301-90d5-492b0b42a4a8")
