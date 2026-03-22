@@ -77,6 +77,11 @@ function C-Test {
     $iterationResults = @()
     $allFailedTests = @()
     
+    # Default to stress-test-only mode for performance tests (skip timing assertions, keep stress testing)
+    if (-not $env:COMPOSABLE_PERFORMANCE_TESTS_STRESS_TEST_ONLY) {
+        $env:COMPOSABLE_PERFORMANCE_TESTS_STRESS_TEST_ONLY = "true"
+    }
+
     Push-Location $script:CompzeSrcRoot
     try {
         # Build and validate

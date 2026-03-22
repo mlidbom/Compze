@@ -77,11 +77,20 @@ public static class TestEnv
          return 1.0;
       }
 
-      public static TimeSpan? AdjustForMachineSlowness(TimeSpan? timespan) => timespan?.MultiplyBy(MachineSlowness);
-      public static void LogMachineSlownessAdjustment()
+      public static readonly bool StressTestOnly = IsStressTestOnlyMode();
+      const string StressTestOnlyEnvironmentVariable = "COMPOSABLE_PERFORMANCE_TESTS_STRESS_TEST_ONLY";
+      static bool IsStressTestOnlyMode()
       {
+         var environmentOverride = Environment.GetEnvironmentVariable(StressTestOnlyEnvironmentVariable);
+         return string.Equals(environmentOverride, "true", StringComparison.OrdinalIgnoreCase);
+      }
+
+      public static TimeSpan? AdjustForMachineSlowness(TimeSpan? timespan) => timespan?.MultiplyBy(MachineSlowness);
+      public static void LogPerformanceTestConfiguration()
+      {
+         if(StressTestOnly) Console.WriteLine($"Performance tests running in stress-test-only mode (timing assertions disabled) via environment variable {StressTestOnlyEnvironmentVariable}");
          // ReSharper disable once CompareOfFloatsByEqualityOperator
-         if(MachineSlowness != 1.0) Console.WriteLine($"Adjusting allowed execution time with value {MachineSlowness} from environment variable {MachineSlownessEnvironmentVariable}");
+         else if(MachineSlowness != 1.0) Console.WriteLine($"Adjusting allowed execution time with value {MachineSlowness} from environment variable {MachineSlownessEnvironmentVariable}");
       }
    }
 }

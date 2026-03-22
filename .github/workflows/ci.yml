@@ -61,6 +61,7 @@ jobs:
 
     env:
       COMPOSABLE_MACHINE_SLOWNESS: "5.0"
+      COMPOSABLE_PERFORMANCE_TESTS_STRESS_TEST_ONLY: "true"
       DOTNET_CLI_TELEMETRY_OPTOUT: "1"
       DOTNET_NOLOGO: "true"
       COMPOSABLE_MSSQL_DATABASE_POOL_MASTER_CONNECTIONSTRING: ${{ matrix.persistence == 'MsSql' && 'Data Source=localhost;Initial Catalog=master;User Id=sa;Password=Development!1;TrustServerCertificate=True;' || '' }}

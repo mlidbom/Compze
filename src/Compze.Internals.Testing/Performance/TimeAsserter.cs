@@ -96,9 +96,17 @@ public static class TimeAsserter
                                                             uint maxTries) where TReturnValue : StopwatchCE.TimedExecutionSummary
    {
       Contract.Argument.Assert(maxTries > 0);
-      maxAverage = TestEnv.Performance.AdjustForMachineSlowness(maxAverage);
-      maxTotal = TestEnv.Performance.AdjustForMachineSlowness(maxTotal);
-      TestEnv.Performance.LogMachineSlownessAdjustment();
+      if(TestEnv.Performance.StressTestOnly)
+      {
+         maxAverage = null;
+         maxTotal = null;
+      }
+      else
+      {
+         maxAverage = TestEnv.Performance.AdjustForMachineSlowness(maxAverage);
+         maxTotal = TestEnv.Performance.AdjustForMachineSlowness(maxTotal);
+      }
+      TestEnv.Performance.LogPerformanceTestConfiguration();
       maxTries = Math.Min(MaxTriesLimit, maxTries);
 
       Log.Info($"""

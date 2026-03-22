@@ -5,7 +5,8 @@
 - **Don't code until instructed to**. Standard workflow is questions back and forth coming up with what to do. Then I give the go ahead to code. Questions are not instructions to start coding, they are questions to be answered.
 - **Test thoroughly**: Always run the full test suite before finalizing.
 - **Performance tests**: If they fail, rerun. Repeated failures are NOT acceptable — do not report success.
-- **`COMPOSABLE_MACHINE_SLOWNESS`**: Set this environment variable (e.g., `5.0`) to adjust performance test timing expectations on slow machines.
+- **`COMPOSABLE_PERFORMANCE_TESTS_STRESS_TEST_ONLY`**: Set to `true` (the default in CI and `C-Test`) to run performance tests as stress tests only, disabling timing assertions. Set to `false` to re-enable timing checks.
+- **`COMPOSABLE_MACHINE_SLOWNESS`**: Set this environment variable (e.g., `5.0`) to adjust performance test timing expectations on slow machines. Only applies when stress-test-only mode is off.
 
 ### Honesty About Blockers — MANDATORY
 - **REFUSE to start work when you lack what you need to succeed.** If the target design is unclear, if you don't know what the end state should look like, if the instructions leave a fundamental gap — SAY SO immediately. Do not guess. Do not substitute a cosmetic change for a structural one. Do not defer the real problem to a later phase.
