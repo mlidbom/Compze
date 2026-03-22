@@ -48,8 +48,7 @@ static class TypeNameParser
    internal static ParsedTypeName Parse(string assemblyQualifiedName)
    {
       var index = 0;
-      var result = ParseComponent(assemblyQualifiedName, ref index);
-      return result;
+      return ParseComponent(assemblyQualifiedName, ref index);
    }
 
    static ParsedTypeName ParseComponent(string input, ref int index)
