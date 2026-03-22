@@ -49,7 +49,7 @@ public class VolatileTransactionParticipant_specification : DocumentDbTestsBase
    public class When_an_OnCommittedSuccessfully_callback_throws : VolatileTransactionParticipant_specification
    {
       [PCT]
-      [Skip<SqlLayer>(SqlLayer.PgSql, "PgSql has a bug where it swallows exceptions thrown by callbacks registered to TransactionCompleted")]
+      [Skip<SqlLayer>(SqlLayer.PgSql, "Npgsql has a bug where it swallows exceptions thrown by callbacks registered to TransactionCompleted")]
       public void the_original_exception_propagates_not_a_ForceRollback_error()
       {
          var user = new User { Email = "test@test.com", Password = "password" };
