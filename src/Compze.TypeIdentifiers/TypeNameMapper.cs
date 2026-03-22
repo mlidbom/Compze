@@ -1,10 +1,11 @@
 using System.Collections.Concurrent;
+using Compze.TypeIdentifiers.Parsing;
 
 namespace Compze.TypeIdentifiers;
 
 /// <summary>
 /// Transforms between .NET <see cref="Type"/> objects and <see cref="TypeIdentifier"/> values.
-/// Uses <see cref="TypeNameParser"/> for string manipulation and mapping dictionaries for GUID↔Type lookups.
+/// Uses <see cref="Parsing.TypeNameParser"/> for string manipulation and mapping dictionaries for GUID↔Type lookups.
 /// Supports incremental registration of assemblies. Caches results in both directions. Thread-safe.
 /// </summary>
 class TypeNameMapper
@@ -93,7 +94,7 @@ class TypeNameMapper
    /// </summary>
    internal Type GetTypeFromPersistedString(string persistedTypeString) => _stringToType.GetOrAdd(persistedTypeString, key =>
    {
-      var parsed = TypeNameParser.ParsedTypeName.Parse(key);
+      var parsed = Parsing.TypeNameParser.ParsedTypeName.Parse(key);
       return ResolveFromParsed(parsed);
    });
 
@@ -103,7 +104,7 @@ class TypeNameMapper
    /// </summary>
    internal string GetPersistedStringFromAssemblyQualifiedName(string assemblyQualifiedName)
    {
-      var parsed = TypeNameParser.ParsedTypeName.Parse(assemblyQualifiedName);
+      var parsed = Parsing.TypeNameParser.ParsedTypeName.Parse(assemblyQualifiedName);
       var transformed = TransformToPersisted(parsed);
       return transformed.ToAssemblyQualifiedNameString();
    }
@@ -118,7 +119,7 @@ class TypeNameMapper
       if(type.IsArray || (type.IsGenericType && !type.IsGenericTypeDefinition))
       {
          var aqn = type.AssemblyQualifiedName!;
-         var parsed = TypeNameParser.ParsedTypeName.Parse(aqn);
+         var parsed = Parsing.TypeNameParser.ParsedTypeName.Parse(aqn);
          var transformed = TransformToPersisted(parsed);
          var resultString = transformed.ToAssemblyQualifiedNameString();
 
@@ -152,7 +153,7 @@ class TypeNameMapper
       _ => throw new ArgumentOutOfRangeException(nameof(typeId), $"Unknown TypeId subtype: {typeId.GetType().Name}")
    };
 
-   Type ResolveFromParsed(TypeNameParser.ParsedTypeName parsed)
+   Type ResolveFromParsed(Parsing.TypeNameParser.ParsedTypeName parsed)
    {
       var assemblyName = parsed.AssemblyName.Trim();
 
@@ -161,7 +162,7 @@ class TypeNameMapper
       {
          // Mapped component — type name is a GUID
          var guid = Guid.Parse(parsed.TypeName);
-         if(parsed is TypeNameParser.ParsedGenericTypeName mappedGeneric)
+         if(parsed is Parsing.TypeNameParser.ParsedGenericTypeName mappedGeneric)
          {
             // Mapped open generic definition
             if(!_guidToOpenGeneric.TryGetValue(guid, out var openGenericType))
@@ -180,7 +181,7 @@ class TypeNameMapper
       else
       {
          // Stable component — real type name, real assembly name
-         if(parsed is TypeNameParser.ParsedGenericTypeName stableGeneric)
+         if(parsed is Parsing.TypeNameParser.ParsedGenericTypeName stableGeneric)
          {
             // Stable open generic — strip the type arguments to get the open generic definition
             var openGenericAqn = $"{parsed.TypeName}, {assemblyName}";
@@ -228,7 +229,7 @@ class TypeNameMapper
       }
    }
 
-   TypeNameParser.ParsedTypeName TransformToPersisted(TypeNameParser.ParsedTypeName parsed)
+   Parsing.TypeNameParser.ParsedTypeName TransformToPersisted(Parsing.TypeNameParser.ParsedTypeName parsed)
    {
       var assemblyName = parsed.AssemblyName.Trim();
 
@@ -239,7 +240,7 @@ class TypeNameMapper
       var baseTypeName = parsed.TypeName;
 
       // Generic type — transform arguments recursively, then check if the open generic definition is mapped
-      if(parsed is TypeNameParser.ParsedGenericTypeName generic)
+      if(parsed is Parsing.TypeNameParser.ParsedGenericTypeName generic)
       {
          var transformedArgs = generic.TypeArguments.Select(TransformToPersisted).ToArray();
 
@@ -247,14 +248,14 @@ class TypeNameMapper
          var openGenericType = Type.GetType(openGenericAqn);
 
          if(openGenericType != null && _openGenericToGuid.TryGetValue(openGenericType, out var openGenericGuid))
-            return new TypeNameParser.ParsedGenericTypeName(
+            return new Parsing.TypeNameParser.ParsedGenericTypeName(
                openGenericGuid.ToString(),
                "0",
                transformedArgs,
                parsed.ArraySuffix);
 
          if(IsStableAssembly(assemblyName))
-            return new TypeNameParser.ParsedGenericTypeName(baseTypeName, assemblyName, transformedArgs, parsed.ArraySuffix);
+            return new Parsing.TypeNameParser.ParsedGenericTypeName(baseTypeName, assemblyName, transformedArgs, parsed.ArraySuffix);
 
          throw new InvalidOperationException(
             $"Open generic type '{baseTypeName}' from assembly '{assemblyName}' is not mapped and its assembly is not registered as stable.");
@@ -269,20 +270,20 @@ class TypeNameMapper
       {
          var elementType = leafType.GetElementType()!;
          if(_leafTypeToGuid.TryGetValue(elementType, out var elementGuid))
-            return new TypeNameParser.ParsedLeafTypeName(
+            return new Parsing.TypeNameParser.ParsedLeafTypeName(
                elementGuid.ToString(),
                "0",
                parsed.ArraySuffix);
 
          if(IsStableAssembly(assemblyName))
-            return new TypeNameParser.ParsedLeafTypeName(baseTypeName, assemblyName, parsed.ArraySuffix);
+            return new Parsing.TypeNameParser.ParsedLeafTypeName(baseTypeName, assemblyName, parsed.ArraySuffix);
 
          throw new InvalidOperationException(
             $"Array element type '{elementType.FullName}' from assembly '{assemblyName}' is not mapped and its assembly is not registered as stable.");
       }
 
       if(leafType != null && _leafTypeToGuid.TryGetValue(leafType, out var leafGuid))
-         return new TypeNameParser.ParsedLeafTypeName(
+         return new Parsing.TypeNameParser.ParsedLeafTypeName(
             leafGuid.ToString(),
             "0",
             parsed.ArraySuffix);

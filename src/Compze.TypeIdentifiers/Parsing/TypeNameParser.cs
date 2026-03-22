@@ -1,7 +1,6 @@
-using System.Reflection.Metadata;
 using System.Text.RegularExpressions;
 
-namespace Compze.TypeIdentifiers;
+namespace Compze.TypeIdentifiers.Parsing;
 
 /// <summary>
 /// Parses .NET <c>AssemblyQualifiedName</c>-format strings into a typed tree of components.

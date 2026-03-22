@@ -9,8 +9,8 @@ namespace Compze.TypeIdentifiers.Specifications;
 
 public class TypeNameParser_specification
 {
-   static TypeNameParser.ParsedTypeName Parse(string input) => TypeNameParser.ParsedTypeName.Parse(input);
-   static TypeNameParser.ParsedGenericTypeName ParseGeneric(string input) => (TypeNameParser.ParsedGenericTypeName)TypeNameParser.ParsedTypeName.Parse(input);
+   static Parsing.TypeNameParser.ParsedTypeName Parse(string input) => Parsing.TypeNameParser.ParsedTypeName.Parse(input);
+   static Parsing.TypeNameParser.ParsedGenericTypeName ParseGeneric(string input) => (Parsing.TypeNameParser.ParsedGenericTypeName)Parsing.TypeNameParser.ParsedTypeName.Parse(input);
 
    public class parsing_a_leaf_type : TypeNameParser_specification
    {
@@ -21,7 +21,7 @@ public class TypeNameParser_specification
          => Parse("MyNamespace.MyType, MyAssembly").AssemblyName.Must().Be("MyAssembly");
 
       [XF] public void parses_as_leaf_type()
-         => (Parse("MyNamespace.MyType, MyAssembly") is TypeNameParser.ParsedLeafTypeName).Must().Be(true);
+         => (Parse("MyNamespace.MyType, MyAssembly") is Parsing.TypeNameParser.ParsedLeafTypeName).Must().Be(true);
 
       [XF] public void round_trips_to_original_string()
          => Parse("MyNamespace.MyType, MyAssembly").ToAssemblyQualifiedNameString()
@@ -114,13 +114,13 @@ public class TypeNameParser_specification
          => ParseGeneric(NestedString).TypeArguments[0].TypeName.Must().Be("System.String");
 
       [XF] public void second_argument_is_a_generic()
-         => ((TypeNameParser.ParsedGenericTypeName)ParseGeneric(NestedString).TypeArguments[1]).TypeArguments.Length.Must().Be(1);
+         => ((Parsing.TypeNameParser.ParsedGenericTypeName)ParseGeneric(NestedString).TypeArguments[1]).TypeArguments.Length.Must().Be(1);
 
       [XF] public void second_argument_is_List()
          => ParseGeneric(NestedString).TypeArguments[1].TypeName.Must().Be("System.Collections.Generic.List`1");
 
       [XF] public void nested_argument_is_mapped()
-         => ((TypeNameParser.ParsedGenericTypeName)ParseGeneric(NestedString).TypeArguments[1]).TypeArguments[0].AssemblyName.Must().Be("0");
+         => ((Parsing.TypeNameParser.ParsedGenericTypeName)ParseGeneric(NestedString).TypeArguments[1]).TypeArguments[0].AssemblyName.Must().Be("0");
 
       [XF] public void round_trips()
          => Parse(NestedString).ToAssemblyQualifiedNameString()
