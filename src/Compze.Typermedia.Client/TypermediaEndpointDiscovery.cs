@@ -19,7 +19,7 @@ public class TypermediaEndpointInformation
 #pragma warning restore CS8618
    // ReSharper restore MemberCanBeInternal
 
-   internal TypermediaEndpointInformation(IEnumerable<StructuralTypeId> handledTypermediaTypeIds, EndpointConfiguration configuration)
+   internal TypermediaEndpointInformation(IEnumerable<TypeIdentifier> handledTypermediaTypeIds, EndpointConfiguration configuration)
    {
       Id = configuration.Id;
       Name = configuration.Name;

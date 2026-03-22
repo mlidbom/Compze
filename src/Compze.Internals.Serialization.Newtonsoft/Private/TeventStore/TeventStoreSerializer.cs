@@ -22,9 +22,9 @@ public class NewtonsoftTeventStoreSerializer : ITeventStoreSerializer
    internal static IComponentRegistrar RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(
          Singleton.For<ITeventStoreSerializer>()
-                  .CreatedBy((IStructuralTypeMapper typeMapper) => new NewtonsoftTeventStoreSerializer(typeMapper)));
+                  .CreatedBy((ITypeIdentifierMapper typeMapper) => new NewtonsoftTeventStoreSerializer(typeMapper)));
 
-   NewtonsoftTeventStoreSerializer(IStructuralTypeMapper typeMapper) => _serializer = new RenamingSupportingJsonSerializer(JsonSettings, typeMapper);
+   NewtonsoftTeventStoreSerializer(ITypeIdentifierMapper typeMapper) => _serializer = new RenamingSupportingJsonSerializer(JsonSettings, typeMapper);
 
    public string Serialize(TaggregateTevent tevent) => _serializer.Serialize(tevent);
    public ITaggregateTevent Deserialize(Type teventType, string json) => (ITaggregateTevent)_serializer.Deserialize(teventType, json);

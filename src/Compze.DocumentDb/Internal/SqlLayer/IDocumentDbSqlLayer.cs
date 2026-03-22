@@ -6,13 +6,13 @@ namespace Compze.DocumentDb.Internal.SqlLayer;
 public interface IDocumentDbSqlLayer
 {
    void Update(IReadOnlyList<WriteRow> toUpdate);
-   bool TryGet(string idString, IReadOnlySet<MappedTypeId> acceptableTypeIds, bool useUpdateLock, [NotNullWhen(true)] out ReadRow? document);
+   bool TryGet(string idString, IReadOnlySet<MappedTypeIdentifier> acceptableTypeIds, bool useUpdateLock, [NotNullWhen(true)] out ReadRow? document);
    void Add(WriteRow row);
-   int Remove(string idString, IReadOnlySet<MappedTypeId> acceptableTypes);
+   int Remove(string idString, IReadOnlySet<MappedTypeIdentifier> acceptableTypes);
    //Urgent: This whole Guid vs string thing must be fixed.
-   IEnumerable<Guid> GetAllIds(IReadOnlySet<MappedTypeId> acceptableTypes);
-   IReadOnlyList<ReadRow> GetAll(IEnumerable<Guid> ids, IReadOnlySet<MappedTypeId> acceptableTypes);
-   IReadOnlyList<ReadRow> GetAll(IReadOnlySet<MappedTypeId> acceptableTypes);
+   IEnumerable<Guid> GetAllIds(IReadOnlySet<MappedTypeIdentifier> acceptableTypes);
+   IReadOnlyList<ReadRow> GetAll(IEnumerable<Guid> ids, IReadOnlySet<MappedTypeIdentifier> acceptableTypes);
+   IReadOnlyList<ReadRow> GetAll(IReadOnlySet<MappedTypeIdentifier> acceptableTypes);
 
    public class ReadRow(Guid typeId, string serializedDocument)
    {
@@ -21,12 +21,12 @@ public interface IDocumentDbSqlLayer
       internal string SerializedDocument { get; } = serializedDocument;
    }
 
-   public class WriteRow(string id, string serializedDocument, DateTime updateTime, MappedTypeId typeId)
+   public class WriteRow(string id, string serializedDocument, DateTime updateTime, MappedTypeIdentifier typeId)
    {
       public string Id { get; } = id;
       public string SerializedDocument { get; } = serializedDocument;
       public DateTime UpdateTime { get; } = updateTime;
-      public MappedTypeId TypeId { get; } = typeId;
+      public MappedTypeIdentifier TypeId { get; } = typeId;
    }
 
    public static class DocumentTableSchemaStrings

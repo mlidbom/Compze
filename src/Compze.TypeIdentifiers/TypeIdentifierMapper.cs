@@ -5,17 +5,17 @@ using System.Reflection;
 namespace Compze.TypeIdentifiers;
 
 /// <summary>
-/// Mutable implementation of <see cref="IStructuralTypeMapper"/> that supports incremental assembly registration.
-/// Leaf types get <see cref="MappedTypeId"/> (GUID-backed).
+/// Mutable implementation of <see cref="ITypeIdentifierMapper"/> that supports incremental assembly registration.
+/// Leaf types get <see cref="MappedTypeIdentifier"/> (GUID-backed).
 /// Constructed types use structural string representations via <see cref="TypeNameMapper"/>.
 /// </summary>
-public class StructuralTypeMapper : IStructuralTypeMapper
+public class TypeIdentifierMapper : ITypeIdentifierMapper
 {
    readonly TypeNameMapper _typeNameMapper = new();
-   readonly ConcurrentDictionary<Type, MappedTypeId> _typeToId = new();
-   readonly ConcurrentDictionary<MappedTypeId, Type> _idToType = new();
-   readonly ConcurrentDictionary<Type, MappedTypeId> _constructedTypeToMappedId = new();
-   readonly ConcurrentDictionary<Type, IReadOnlySet<MappedTypeId>> _assignableTypeCache = new();
+   readonly ConcurrentDictionary<Type, MappedTypeIdentifier> _typeToId = new();
+   readonly ConcurrentDictionary<MappedTypeIdentifier, Type> _idToType = new();
+   readonly ConcurrentDictionary<Type, MappedTypeIdentifier> _constructedTypeToMappedId = new();
+   readonly ConcurrentDictionary<Type, IReadOnlySet<MappedTypeIdentifier>> _assignableTypeCache = new();
    readonly HashSet<Assembly> _processedAssemblies = [];
 
    /// <summary>Well-known Microsoft public key tokens. All assemblies signed with these are stable by default.</summary>
@@ -28,7 +28,7 @@ public class StructuralTypeMapper : IStructuralTypeMapper
       "31bf3856ad364e35"  // Microsoft.* libraries
    ];
 
-   public StructuralTypeMapper()
+   public TypeIdentifierMapper()
    {
       // Auto-detect and register all currently-loaded Microsoft assemblies as stable
       foreach(var assembly in AppDomain.CurrentDomain.GetAssemblies())
@@ -60,7 +60,7 @@ public class StructuralTypeMapper : IStructuralTypeMapper
 
       foreach(var kvp in registrar.LeafTypeMappings)
       {
-         var mappedId = new MappedTypeId(kvp.Value);
+         var mappedId = new MappedTypeIdentifier(kvp.Value);
          _typeToId[kvp.Key] = mappedId;
          _idToType[mappedId] = kvp.Key;
          _typeNameMapper.AddLeafTypeMapping(kvp.Key, kvp.Value);
@@ -68,7 +68,7 @@ public class StructuralTypeMapper : IStructuralTypeMapper
 
       foreach(var kvp in registrar.OpenGenericMappings)
       {
-         var mappedId = new MappedTypeId(kvp.Value);
+         var mappedId = new MappedTypeIdentifier(kvp.Value);
          _typeToId[kvp.Key] = mappedId;
          _idToType[mappedId] = kvp.Key;
          _typeNameMapper.AddOpenGenericMapping(kvp.Key, kvp.Value);
@@ -88,11 +88,11 @@ public class StructuralTypeMapper : IStructuralTypeMapper
       _constructedTypeToMappedId.Clear();
    }
 
-   public StructuralTypeId GetId(Type type) => _typeNameMapper.GetId(type);
+   public TypeIdentifier GetId(Type type) => _typeNameMapper.GetId(type);
 
-   public Type GetType(StructuralTypeId id) => _typeNameMapper.GetType(id);
+   public Type GetType(TypeIdentifier id) => _typeNameMapper.GetType(id);
 
-   public bool TryGetType(StructuralTypeId id, [NotNullWhen(true)] out Type? type)
+   public bool TryGetType(TypeIdentifier id, [NotNullWhen(true)] out Type? type)
    {
       try
       {
@@ -106,7 +106,7 @@ public class StructuralTypeMapper : IStructuralTypeMapper
       }
    }
 
-   public MappedTypeId GetMappedId(Type type)
+   public MappedTypeIdentifier GetMappedId(Type type)
    {
       if(_typeToId.TryGetValue(type, out var id))
          return id;
@@ -118,27 +118,27 @@ public class StructuralTypeMapper : IStructuralTypeMapper
       throw new InvalidOperationException($"No mapping found for type: {type.FullName}. Ensure the assembly declaring this type has been registered.");
    }
 
-   MappedTypeId ComputeDeterministicMappedId(Type type)
+   MappedTypeIdentifier ComputeDeterministicMappedId(Type type)
    {
       var structuralId = _typeNameMapper.GetId(type);
       var hash = System.Security.Cryptography.SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(structuralId.StringRepresentation));
       var guidBytes = hash.AsSpan(0, 16).ToArray();
       // Set version nibble to 0x80 (custom/private) to distinguish from leaf-mapped GUIDs
       guidBytes[7] = (byte)((guidBytes[7] & 0x0F) | 0x80);
-      var mappedId = new MappedTypeId(new Guid(guidBytes));
+      var mappedId = new MappedTypeIdentifier(new Guid(guidBytes));
       _idToType[mappedId] = type;
       return mappedId;
    }
 
-   public Type GetType(MappedTypeId id)
+   public Type GetType(MappedTypeIdentifier id)
    {
       if(_idToType.TryGetValue(id, out var type))
          return type;
 
-      throw new InvalidOperationException($"No type found for MappedTypeId: {id}");
+      throw new InvalidOperationException($"No type found for MappedTypeIdentifier: {id}");
    }
 
-   public IEnumerable<MappedTypeId> GetIdForTypesAssignableTo(Type type)
+   public IEnumerable<MappedTypeIdentifier> GetIdForTypesAssignableTo(Type type)
       => _assignableTypeCache.GetOrAdd(type, ComputeAssignableTypeIds);
 
    public void AssertMappingsExistFor(IEnumerable<Type> types)
@@ -170,9 +170,9 @@ public class StructuralTypeMapper : IStructuralTypeMapper
    public Type FromPersistedTypeString(string persistedTypeString)
       => _typeNameMapper.GetTypeFromPersistedString(persistedTypeString);
 
-   IReadOnlySet<MappedTypeId> ComputeAssignableTypeIds(Type baseType)
+   IReadOnlySet<MappedTypeIdentifier> ComputeAssignableTypeIds(Type baseType)
    {
-      var result = new HashSet<MappedTypeId>();
+      var result = new HashSet<MappedTypeIdentifier>();
 
       foreach(var kvp in _typeToId)
       {

@@ -13,7 +13,7 @@ public static class TransportTessage
       internal readonly TessageId TessageId;
       readonly IRemotableTessageSerializer _serializer;
       internal readonly string Body;
-      internal readonly StructuralTypeId TessageTypeId;
+      internal readonly TypeIdentifier TessageTypeId;
       readonly Type _tessageType;
       internal readonly TransportTessageType TessageTypeEnum;
 
@@ -31,7 +31,7 @@ public static class TransportTessage
          return _tessage;
       }
 
-      public InComing(string body, StructuralTypeId tessageTypeId, TessageId tessageId, IStructuralTypeMapper typeMapper, IRemotableTessageSerializer serializer)
+      public InComing(string body, TypeIdentifier tessageTypeId, TessageId tessageId, ITypeIdentifierMapper typeMapper, IRemotableTessageSerializer serializer)
       {
          _serializer = serializer;
          Body = body;
@@ -41,7 +41,7 @@ public static class TransportTessage
          TessageId = tessageId;
       }
 
-      public InComing(string body, string persistedTypeString, TessageId tessageId, IStructuralTypeMapper typeMapper, IRemotableTessageSerializer serializer)
+      public InComing(string body, string persistedTypeString, TessageId tessageId, ITypeIdentifierMapper typeMapper, IRemotableTessageSerializer serializer)
       {
          _serializer = serializer;
          Body = body;
@@ -57,17 +57,17 @@ public static class TransportTessage
       internal IRemotableTessage Tessage { get; }
       internal readonly TessageId TessageId;
 
-      internal readonly StructuralTypeId Type;
+      internal readonly TypeIdentifier Type;
       internal readonly string Body;
       internal readonly TransportTessageType TessageTypeEnum;
 
-      internal static OutGoing Create(IRemotableTessage tessage, IStructuralTypeMapper typeMapper, IRemotableTessageSerializer serializer)
+      internal static OutGoing Create(IRemotableTessage tessage, ITypeIdentifierMapper typeMapper, IRemotableTessageSerializer serializer)
       {
          var body = serializer.SerializeTessage(tessage);
          return new OutGoing(typeMapper.GetId(tessage.GetType()), tessage.GetType(), body, tessage);
       }
 
-      OutGoing(StructuralTypeId typeId, Type type, string body, IRemotableTessage tessage)
+      OutGoing(TypeIdentifier typeId, Type type, string body, IRemotableTessage tessage)
       {
          Tessage = tessage;
          Type = typeId;

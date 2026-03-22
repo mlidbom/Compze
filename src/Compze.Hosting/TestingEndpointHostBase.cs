@@ -13,7 +13,7 @@ public abstract class TestingEndpointHostBase : EndpointHost, ITestingEndpointHo
 {
    protected TestingEndpointHostBase(Func<IContainerBuilder> containerFactory) : base(containerFactory)
    {
-      var mapper = new StructuralTypeMapper();
+      var mapper = new TypeIdentifierMapper();
       mapper.MapTypesFromAllLoadedAssembliesWithTypeMappingsAttribute();
       TessagesInFlightTracker = new TessagesInFlightTracker(mapper);
    }

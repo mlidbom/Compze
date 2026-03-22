@@ -24,17 +24,17 @@ class TypermediaRouter : ITypermediaRouter, IDisposable
    public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(
             Singleton.For<ITypermediaRouter, ITypermediaRouting>().CreatedBy(
-               (IStructuralTypeMapper typeMapper, ITypermediaTransport transport, IInfrastructureQueryTransport infrastructureQueryTransport)
+               (ITypeIdentifierMapper typeMapper, ITypermediaTransport transport, IInfrastructureQueryTransport infrastructureQueryTransport)
                   => new TypermediaRouter(typeMapper, transport, infrastructureQueryTransport)));
 
-   TypermediaRouter(IStructuralTypeMapper typeMapper, ITypermediaTransport transport, IInfrastructureQueryTransport infrastructureQueryTransport)
+   TypermediaRouter(ITypeIdentifierMapper typeMapper, ITypermediaTransport transport, IInfrastructureQueryTransport infrastructureQueryTransport)
    {
       _typeMapper = typeMapper;
       _transport = transport;
       _infrastructureQueryTransport = infrastructureQueryTransport;
    }
 
-   readonly IStructuralTypeMapper _typeMapper;
+   readonly ITypeIdentifierMapper _typeMapper;
    readonly ITypermediaTransport _transport;
    readonly IInfrastructureQueryTransport _infrastructureQueryTransport;
    readonly IMonitor _monitor = IMonitor.New();

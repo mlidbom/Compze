@@ -18,9 +18,9 @@ class NewtonsoftRemotableTessageSerializer : IRemotableTessageSerializer
 
    public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<IRemotableTessageSerializer>()
-                                     .CreatedBy((IStructuralTypeMapper typeMapper) => new NewtonsoftRemotableTessageSerializer(typeMapper)));
+                                     .CreatedBy((ITypeIdentifierMapper typeMapper) => new NewtonsoftRemotableTessageSerializer(typeMapper)));
 
-   NewtonsoftRemotableTessageSerializer(IStructuralTypeMapper typeMapper) => _serializer = new RenamingSupportingJsonSerializer(RenamingAndNonPublicMembersSupportingJsonSettings.Tessaging, typeMapper);
+   NewtonsoftRemotableTessageSerializer(ITypeIdentifierMapper typeMapper) => _serializer = new RenamingSupportingJsonSerializer(RenamingAndNonPublicMembersSupportingJsonSettings.Tessaging, typeMapper);
 
    public string SerializeResponse(object response) => _serializer.Serialize(response);
    public TResponse DeserializeResponse<TResponse>(string json) => (TResponse)_serializer.Deserialize(typeof(TResponse), json);

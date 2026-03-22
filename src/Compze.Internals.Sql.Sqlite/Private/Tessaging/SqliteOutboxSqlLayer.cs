@@ -125,7 +125,7 @@ partial class SqliteOutboxSqlLayer(ISqliteConnectionPool connectionFactory, Sqli
             {
                tessages.Add(new IServiceBusSqlLayer.UndeliveredTessage(
                   tessageId: new TessageId(reader.GetGuidFromString(0)),
-                  typeId: new MappedTypeId(reader.GetGuidFromString(1)),
+                  typeId: new MappedTypeIdentifier(reader.GetGuidFromString(1)),
                   serializedTessage: reader.GetString(2),
                   targetEndpointId: new EndpointId(reader.GetGuidFromString(3)),
                   retryCount: reader.GetInt32(4),

@@ -9,9 +9,9 @@ using Compze.Internals.SystemCE.CollectionsCE.GenericCE;
 
 namespace Compze.Typermedia.HandlerRegistration;
 
-public sealed class TypermediaHandlerRegistry(IStructuralTypeMapper typeMapper) : ITypermediaHandlerRegistrar, ITypermediaHandlerRegistry
+public sealed class TypermediaHandlerRegistry(ITypeIdentifierMapper typeMapper) : ITypermediaHandlerRegistrar, ITypermediaHandlerRegistry
 {
-   readonly IStructuralTypeMapper _typeMapper = typeMapper;
+   readonly ITypeIdentifierMapper _typeMapper = typeMapper;
    IReadOnlyDictionary<Type, HandlerWithResultRegistration> _tueryHandlers = new Dictionary<Type, HandlerWithResultRegistration>();
    IReadOnlyDictionary<Type, HandlerWithResultRegistration> _tommandHandlersReturningResults = new Dictionary<Type, HandlerWithResultRegistration>();
    IReadOnlyDictionary<Type, Action<object, IScopeResolver>> _voidTommandHandlers = new Dictionary<Type, Action<object, IScopeResolver>>();
@@ -76,7 +76,7 @@ public sealed class TypermediaHandlerRegistry(IStructuralTypeMapper typeMapper) 
       throw new NoHandlerException(tommand.GetType());
    }
 
-   public ISet<StructuralTypeId> HandledRemoteTypermediaTypeIds()
+   public ISet<TypeIdentifier> HandledRemoteTypermediaTypeIds()
    {
       var handledTypes = _tommandHandlersReturningResults.Keys
                                                          .Concat(_tueryHandlers.Keys)

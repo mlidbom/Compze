@@ -3,7 +3,7 @@ using System.Collections.Concurrent;
 namespace Compze.TypeIdentifiers;
 
 /// <summary>
-/// Transforms between .NET <see cref="Type"/> objects and <see cref="StructuralTypeId"/> values.
+/// Transforms between .NET <see cref="Type"/> objects and <see cref="TypeIdentifier"/> values.
 /// Uses <see cref="TypeNameParser"/> for string manipulation and mapping dictionaries for GUID↔Type lookups.
 /// Supports incremental registration of assemblies. Caches results in both directions. Thread-safe.
 /// </summary>
@@ -22,7 +22,7 @@ class TypeNameMapper
    readonly object _stableAssemblyNamesLock = new();
 
    // Caches (populated on demand, thread-safe)
-   readonly ConcurrentDictionary<Type, StructuralTypeId> _typeToIdCache = new();
+   readonly ConcurrentDictionary<Type, TypeIdentifier> _typeToIdCache = new();
    readonly ConcurrentDictionary<string, Type> _stringToTypeCache = new();
 
    internal TypeNameMapper() { }
@@ -41,11 +41,11 @@ class TypeNameMapper
       ClearCaches();
    }
 
-   internal bool TryGetOpenGenericMapping(Type openGenericType, out MappedTypeId id)
+   internal bool TryGetOpenGenericMapping(Type openGenericType, out MappedTypeIdentifier id)
    {
       if(_openGenericToGuid.TryGetValue(openGenericType, out var guid))
       {
-         id = new MappedTypeId(guid);
+         id = new MappedTypeIdentifier(guid);
          return true;
       }
       id = default!;
@@ -81,14 +81,14 @@ class TypeNameMapper
    }
 
    /// <summary>
-   /// Given a .NET <see cref="Type"/>, produce the correct <see cref="StructuralTypeId"/> subtype.
+   /// Given a .NET <see cref="Type"/>, produce the correct <see cref="TypeIdentifier"/> subtype.
    /// </summary>
-   internal StructuralTypeId GetId(Type type) => _typeToIdCache.GetOrAdd(type, ComputeId);
+   internal TypeIdentifier GetId(Type type) => _typeToIdCache.GetOrAdd(type, ComputeId);
 
    /// <summary>
-   /// Given a <see cref="StructuralTypeId"/>, resolve it back to a .NET <see cref="Type"/>.
+   /// Given a <see cref="TypeIdentifier"/>, resolve it back to a .NET <see cref="Type"/>.
    /// </summary>
-   internal Type GetType(StructuralTypeId typeId) => _stringToTypeCache.GetOrAdd(typeId.StringRepresentation, _ => ResolveType(typeId));
+   internal Type GetType(TypeIdentifier typeId) => _stringToTypeCache.GetOrAdd(typeId.StringRepresentation, _ => ResolveType(typeId));
 
    /// <summary>
    /// Given a string from a persisted <c>$type</c> field, resolve it to a .NET <see cref="Type"/>.
@@ -111,11 +111,11 @@ class TypeNameMapper
       return transformed.ToAssemblyQualifiedNameString();
    }
 
-   StructuralTypeId ComputeId(Type type)
+   TypeIdentifier ComputeId(Type type)
    {
       // Leaf type with explicit mapping?
       if(_leafTypeToGuid.TryGetValue(type, out var guid))
-         return new MappedTypeId(guid);
+         return new MappedTypeIdentifier(guid);
 
       // For composite types (generics, arrays), build the structural string
       if(type.IsArray || (type.IsGenericType && !type.IsGenericTypeDefinition))
@@ -141,9 +141,9 @@ class TypeNameMapper
          $"Type '{type.FullName}' from assembly '{assemblyName}' is not mapped and its assembly is not registered as stable.");
    }
 
-   Type ResolveType(StructuralTypeId typeId) => typeId switch
+   Type ResolveType(TypeIdentifier typeId) => typeId switch
    {
-      MappedTypeId mapped => _guidToLeafType.TryGetValue(mapped.GuidValue, out var type)
+      MappedTypeIdentifier mapped => _guidToLeafType.TryGetValue(mapped.GuidValue, out var type)
          ? type
          : throw new InvalidOperationException($"No type mapping found for GUID: {mapped.GuidValue}"),
 

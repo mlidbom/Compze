@@ -2,7 +2,7 @@ namespace Compze.TypeIdentifiers;
 
 /// <summary>
 /// GUID-backed identity for an open generic definition (e.g. <c>List&lt;&gt;</c>, <c>Dictionary&lt;,&gt;</c>).
-/// This is NOT a <see cref="StructuralTypeId"/> — open generics are templates, not fully constructed types.
+/// This is NOT a <see cref="TypeIdentifier"/> — open generics are templates, not fully constructed types.
 /// <c>OpenGenericId</c> exists solely as a building block for constructing and parsing
 /// <see cref="ConstructedTypeId"/> strings.
 /// </summary>

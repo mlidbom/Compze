@@ -12,7 +12,7 @@ partial class MsSqlInboxSqlLayer(IMsSqlConnectionPool connectionFactory, MsSqlSq
    readonly IMsSqlConnectionPool _connectionFactory = connectionFactory;
    readonly MsSqlSqlLayerSchemaManager _schemaManager = schemaManager;
 
-   public IServiceBusSqlLayer.SaveTessageResult SaveTessage(TessageId tessageId, MappedTypeId typeId, string serializedTessage)
+   public IServiceBusSqlLayer.SaveTessageResult SaveTessage(TessageId tessageId, MappedTypeIdentifier typeId, string serializedTessage)
    {
       return _connectionFactory.UseCommand(command =>
       {

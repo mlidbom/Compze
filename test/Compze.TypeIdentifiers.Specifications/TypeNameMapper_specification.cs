@@ -57,11 +57,11 @@ public class TypeNameMapper_specification
    {
       readonly TypeNameMapper _mapper = CreateMapper();
 
-      [XF] public void returns_MappedTypeId()
-         => (_mapper.GetId(typeof(TestEntity)) is MappedTypeId).Must().BeTrue();
+      [XF] public void returns_MappedTypeIdentifier()
+         => (_mapper.GetId(typeof(TestEntity)) is MappedTypeIdentifier).Must().BeTrue();
 
       [XF] public void has_correct_guid()
-         => ((MappedTypeId)_mapper.GetId(typeof(TestEntity))).GuidValue.Must().Be(TestEntityGuid);
+         => ((MappedTypeIdentifier)_mapper.GetId(typeof(TestEntity))).GuidValue.Must().Be(TestEntityGuid);
 
       [XF] public void string_representation_is_guid_comma_zero()
          => _mapper.GetId(typeof(TestEntity)).StringRepresentation.Must().Be($"{TestEntityGuid}, 0");

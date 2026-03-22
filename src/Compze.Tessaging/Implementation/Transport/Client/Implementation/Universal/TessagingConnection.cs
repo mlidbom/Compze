@@ -15,7 +15,7 @@ namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Univer
 class TessagingConnection(
    ITessagesInFlightTracker tessagesInFlightTracker,
    EndPointAddress remoteAddress,
-   IStructuralTypeMapper typeMapper,
+   ITypeIdentifierMapper typeMapper,
    IRemotableTessageSerializer serializer,
    ITransportMessagePoster transportMessagePoster,
    IInfrastructureQueryTransport infrastructureQueryTransport,
@@ -27,7 +27,7 @@ class TessagingConnection(
 
    readonly ITessagesInFlightTracker _tessagesInFlightTracker = tessagesInFlightTracker;
    readonly EndPointAddress _remoteAddress = remoteAddress;
-   readonly IStructuralTypeMapper _typeMapper = typeMapper;
+   readonly ITypeIdentifierMapper _typeMapper = typeMapper;
    readonly IRemotableTessageSerializer _serializer = serializer;
    readonly ITransportMessagePoster _transportMessagePoster = transportMessagePoster;
    readonly IInfrastructureQueryTransport _infrastructureQueryTransport = infrastructureQueryTransport;

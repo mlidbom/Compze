@@ -46,7 +46,7 @@ partial class MsSqlDocumentDbSqlLayer : IDocumentDbSqlLayer
       });
    }
 
-   public bool TryGet(string idString, IReadOnlySet<MappedTypeId> acceptableTypeIds, bool useUpdateLock, [NotNullWhen(true)] out IDocumentDbSqlLayer.ReadRow? document)
+   public bool TryGet(string idString, IReadOnlySet<MappedTypeIdentifier> acceptableTypeIds, bool useUpdateLock, [NotNullWhen(true)] out IDocumentDbSqlLayer.ReadRow? document)
    {
       EnsureInitialized();
 
@@ -90,7 +90,7 @@ partial class MsSqlDocumentDbSqlLayer : IDocumentDbSqlLayer
       }
    }
 
-   public int Remove(string idString, IReadOnlySet<MappedTypeId> acceptableTypes)
+   public int Remove(string idString, IReadOnlySet<MappedTypeIdentifier> acceptableTypes)
    {
       EnsureInitialized();
       return _connectionPool.UseCommand(command =>
@@ -99,14 +99,14 @@ partial class MsSqlDocumentDbSqlLayer : IDocumentDbSqlLayer
                                                   .ExecuteNonQuery());
    }
 
-   public IEnumerable<Guid> GetAllIds(IReadOnlySet<MappedTypeId> acceptableTypes)
+   public IEnumerable<Guid> GetAllIds(IReadOnlySet<MappedTypeIdentifier> acceptableTypes)
    {
       EnsureInitialized();
       return _connectionPool.UseCommand(command => command.SetCommandText($"SELECT {Schema.Id} FROM {Schema.TableName} WHERE {Schema.ValueTypeId} {TypeInClause(acceptableTypes)}")
                                                           .ExecuteReaderAndSelect(reader => reader.GetGuidFromString(0))); //urgent: Huh, we store string but require them to be Guid!?
    }
 
-   public IReadOnlyList<IDocumentDbSqlLayer.ReadRow> GetAll(IEnumerable<Guid> ids, IReadOnlySet<MappedTypeId> acceptableTypes)
+   public IReadOnlyList<IDocumentDbSqlLayer.ReadRow> GetAll(IEnumerable<Guid> ids, IReadOnlySet<MappedTypeIdentifier> acceptableTypes)
    {
       EnsureInitialized();
       return _connectionPool.UseCommand(command => command.SetCommandText($"""
@@ -116,14 +116,14 @@ partial class MsSqlDocumentDbSqlLayer : IDocumentDbSqlLayer
                                                           .ExecuteReaderAndSelect(reader => new IDocumentDbSqlLayer.ReadRow(reader.GetGuid(2), reader.GetString(1))));
    }
 
-   public IReadOnlyList<IDocumentDbSqlLayer.ReadRow> GetAll(IReadOnlySet<MappedTypeId> acceptableTypes)
+   public IReadOnlyList<IDocumentDbSqlLayer.ReadRow> GetAll(IReadOnlySet<MappedTypeIdentifier> acceptableTypes)
    {
       EnsureInitialized();
       return _connectionPool.UseCommand(command => command.SetCommandText($"SELECT {Schema.Id}, {Schema.Value}, {Schema.ValueTypeId} FROM {Schema.TableName} WHERE {Schema.ValueTypeId} {TypeInClause(acceptableTypes)}")
                                                           .ExecuteReaderAndSelect(reader => new IDocumentDbSqlLayer.ReadRow(reader.GetGuid(2), reader.GetString(1))));
    }
 
-   static string TypeInClause(IReadOnlySet<MappedTypeId> acceptableTypeIds) => Contract.Argument.Assert(acceptableTypeIds.Any()).__("IN( '" + acceptableTypeIds.Select(id => id.GuidValue.ToString()).Join("', '") + "')\n");
+   static string TypeInClause(IReadOnlySet<MappedTypeIdentifier> acceptableTypeIds) => Contract.Argument.Assert(acceptableTypeIds.Any()).__("IN( '" + acceptableTypeIds.Select(id => id.GuidValue.ToString()).Join("', '") + "')\n");
 
    static string UseUpdateLock(bool useUpdateLock) => useUpdateLock ? "With(UPDLOCK, ROWLOCK)" : "";
 

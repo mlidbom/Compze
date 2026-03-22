@@ -20,13 +20,13 @@ class HttpTypermediaTransport : ITypermediaTransport
 {
    public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<ITypermediaTransport>()
-                                     .CreatedBy((IHttpClientFactoryCE factory, IRemotableTessageSerializer serializer, IStructuralTypeMapper typeMapper) => new HttpTypermediaTransport(factory, serializer, typeMapper)));
+                                     .CreatedBy((IHttpClientFactoryCE factory, IRemotableTessageSerializer serializer, ITypeIdentifierMapper typeMapper) => new HttpTypermediaTransport(factory, serializer, typeMapper)));
 
    readonly IHttpClientFactoryCE _httpClientFactory;
    readonly IRemotableTessageSerializer _serializer;
-   readonly IStructuralTypeMapper _typeMapper;
+   readonly ITypeIdentifierMapper _typeMapper;
 
-   HttpTypermediaTransport(IHttpClientFactoryCE httpClientFactory, IRemotableTessageSerializer serializer, IStructuralTypeMapper typeMapper)
+   HttpTypermediaTransport(IHttpClientFactoryCE httpClientFactory, IRemotableTessageSerializer serializer, ITypeIdentifierMapper typeMapper)
    {
       _httpClientFactory = httpClientFactory;
       _serializer = serializer;

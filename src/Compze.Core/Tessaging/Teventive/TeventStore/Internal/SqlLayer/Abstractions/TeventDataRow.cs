@@ -5,7 +5,7 @@ namespace Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstract
 
 public class TeventDataRow
 {
-   public TeventDataRow(TaggregateTeventData tevent, TaggregateTeventStorageInformation storageInformation, MappedTypeId teventType, string teventAsJson)
+   public TeventDataRow(TaggregateTeventData tevent, TaggregateTeventStorageInformation storageInformation, MappedTypeIdentifier teventType, string teventAsJson)
    {
       TeventJson = teventAsJson;
       TeventType = teventType;
@@ -18,7 +18,7 @@ public class TeventDataRow
       StorageInformation = storageInformation;
    }
 
-   public TeventDataRow(TeventInsertionSpecification specification, MappedTypeId typeId, string teventAsJson)
+   public TeventDataRow(TeventInsertionSpecification specification, MappedTypeIdentifier typeId, string teventAsJson)
    {
       var tevent = specification.Tevent;
       TeventJson = teventAsJson;
@@ -36,7 +36,7 @@ public class TeventDataRow
                            };
    }
 
-   public TeventDataRow(MappedTypeId teventType, string teventJson, TessageId teventId, int taggregateVersion, TaggregateId taggregateId, DateTime utcTimeStamp, TaggregateTeventStorageInformation storageInformation)
+   public TeventDataRow(MappedTypeIdentifier teventType, string teventJson, TessageId teventId, int taggregateVersion, TaggregateId taggregateId, DateTime utcTimeStamp, TaggregateTeventStorageInformation storageInformation)
    {
       TeventType = teventType;
       TeventJson = teventJson;
@@ -48,7 +48,7 @@ public class TeventDataRow
       StorageInformation = storageInformation;
    }
 
-   public MappedTypeId TeventType { get; private set; }
+   public MappedTypeIdentifier TeventType { get; private set; }
    public string TeventJson { get; private set; }
    public TessageId TeventId { get; private set; }
    public int TaggregateVersion { get; private set; }

@@ -225,7 +225,7 @@ TypeIdentifier columns in the event store, document DB, tessaging, and Typermedi
 
 - Leaf types get explicit GUID assignments
 - SQL schema stays GUID-based
-- `GetType(MappedTypeId)` / `GetId(Type)` for leaf types — same dictionary lookup
+- `GetType(MappedTypeIdentifier)` / `GetId(Type)` for leaf types — same dictionary lookup
 
 ## Resolved questions
 

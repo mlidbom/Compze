@@ -12,7 +12,7 @@ partial class PgSqlInboxSqlLayer(IPgSqlConnectionPool connectionFactory, PgSqlSq
    readonly IPgSqlConnectionPool _connectionFactory = connectionFactory;
    readonly PgSqlSqlLayerSchemaManager _schemaManager = schemaManager;
 
-   public IServiceBusSqlLayer.SaveTessageResult SaveTessage(TessageId tessageId, MappedTypeId typeId, string serializedTessage)
+   public IServiceBusSqlLayer.SaveTessageResult SaveTessage(TessageId tessageId, MappedTypeIdentifier typeId, string serializedTessage)
    {
       return _connectionFactory.UseCommand(
          command =>

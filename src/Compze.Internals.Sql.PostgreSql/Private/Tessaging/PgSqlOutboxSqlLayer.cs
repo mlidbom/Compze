@@ -131,7 +131,7 @@ partial class PgSqlOutboxSqlLayer(IPgSqlConnectionPool connectionFactory, PgSqlS
             {
                tessages.Add(new IServiceBusSqlLayer.UndeliveredTessage(
                   tessageId: new TessageId(reader.GetGuid(0)),
-                  typeId: new MappedTypeId(reader.GetGuid(1)),
+                  typeId: new MappedTypeIdentifier(reader.GetGuid(1)),
                   serializedTessage: reader.GetString(2),
                   targetEndpointId: new EndpointId(reader.GetGuid(3)),
                   retryCount: reader.GetInt32(4),

@@ -3,42 +3,42 @@ namespace Compze.TypeIdentifiers;
 /// <summary>
 /// Identity of a fully constructed type. Subtypes represent different kinds of identity:
 /// <list type="bullet">
-///   <item><see cref="MappedTypeId"/> — leaf type from a mapped assembly. Has a GUID. SQL-storable.</item>
+///   <item><see cref="MappedTypeIdentifier"/> — leaf type from a mapped assembly. Has a GUID. SQL-storable.</item>
 ///   <item><see cref="StableNameTypeId"/> — type(s) entirely from stable assemblies. Untouched AssemblyQualifiedName.</item>
 ///   <item><see cref="ConstructedTypeId"/> — mixed: AssemblyQualifiedName with some GUID, 0 components.</item>
 /// </list>
 /// </summary>
-public abstract class StructuralTypeId : IEquatable<StructuralTypeId>
+public abstract class TypeIdentifier : IEquatable<TypeIdentifier>
 {
    /// <summary>The string representation used in serialized <c>$type</c> fields.</summary>
    public abstract string StringRepresentation { get; }
 
-   public bool Equals(StructuralTypeId? other) => other is not null && StringRepresentation == other.StringRepresentation;
-   public override bool Equals(object? obj) => Equals(obj as StructuralTypeId);
+   public bool Equals(TypeIdentifier? other) => other is not null && StringRepresentation == other.StringRepresentation;
+   public override bool Equals(object? obj) => Equals(obj as TypeIdentifier);
    public override int GetHashCode() => StringRepresentation.GetHashCode(StringComparison.Ordinal);
    public override string ToString() => StringRepresentation;
 
-   public static bool operator ==(StructuralTypeId? left, StructuralTypeId? right) => Equals(left, right);
-   public static bool operator !=(StructuralTypeId? left, StructuralTypeId? right) => !Equals(left, right);
+   public static bool operator ==(TypeIdentifier? left, TypeIdentifier? right) => Equals(left, right);
+   public static bool operator !=(TypeIdentifier? left, TypeIdentifier? right) => !Equals(left, right);
 }
 
 /// <summary>
 /// A leaf type from a mapped assembly. Has an explicitly assigned GUID.
-/// This is the only <see cref="StructuralTypeId"/> subtype storable in SQL GUID columns.
+/// This is the only <see cref="TypeIdentifier"/> subtype storable in SQL GUID columns.
 /// </summary>
-public sealed class MappedTypeId : StructuralTypeId
+public sealed class MappedTypeIdentifier : TypeIdentifier
 {
    public Guid GuidValue { get; }
    public override string StringRepresentation { get; }
 
-   public MappedTypeId(Guid guidValue)
+   public MappedTypeIdentifier(Guid guidValue)
    {
       GuidValue = guidValue;
       StringRepresentation = $"{guidValue}, 0";
    }
 
    // Override equality to use GUID directly — faster than string comparison
-   public override bool Equals(object? obj) => obj is MappedTypeId other && GuidValue == other.GuidValue;
+   public override bool Equals(object? obj) => obj is MappedTypeIdentifier other && GuidValue == other.GuidValue;
    public override int GetHashCode() => GuidValue.GetHashCode();
 }
 
@@ -47,7 +47,7 @@ public sealed class MappedTypeId : StructuralTypeId
 /// The string representation is the unmodified <c>AssemblyQualifiedName</c>.
 /// Resolution: pass directly to <c>Type.GetType()</c>.
 /// </summary>
-sealed class StableNameTypeId : StructuralTypeId
+sealed class StableNameTypeId : TypeIdentifier
 {
    public override string StringRepresentation { get; }
 
@@ -62,7 +62,7 @@ sealed class StableNameTypeId : StructuralTypeId
 /// The string representation is an <c>AssemblyQualifiedName</c>-format string
 /// with <c>GUID, 0</c> in place of mapped components.
 /// </summary>
-sealed class ConstructedTypeId : StructuralTypeId
+sealed class ConstructedTypeId : TypeIdentifier
 {
    public override string StringRepresentation { get; }
 

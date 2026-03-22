@@ -10,10 +10,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Compze.Tessaging.Hosting.AspNetCore.Private;
 
-public abstract class ControllerBase(IRemotableTessageSerializer serializer, IStructuralTypeMapper typeMapper, IInbox inbox) : Controller
+public abstract class ControllerBase(IRemotableTessageSerializer serializer, ITypeIdentifierMapper typeMapper, IInbox inbox) : Controller
 {
    readonly IRemotableTessageSerializer _serializer = serializer;
-   readonly IStructuralTypeMapper _typeMapper = typeMapper;
+   readonly ITypeIdentifierMapper _typeMapper = typeMapper;
    protected IInbox Inbox { get; } = inbox;
 
    protected async Task<TransportTessage.InComing> CreateIncomingTessage()
