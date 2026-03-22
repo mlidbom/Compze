@@ -5,7 +5,7 @@ namespace Compze.TypeIdentifiers;
 
 /// <summary>
 /// Transforms between .NET <see cref="Type"/> objects and <see cref="TypeIdentifier"/> values.
-/// Uses <see cref="Parsing.TypeNameParser"/> for string manipulation and mapping dictionaries for GUID↔Type lookups.
+/// Uses <see cref="Parsing.ParsedTypeName"/> for string manipulation and mapping dictionaries for GUID↔Type lookups.
 /// Supports incremental registration of assemblies. Caches results in both directions. Thread-safe.
 /// </summary>
 class TypeNameMapper
@@ -153,61 +153,42 @@ class TypeNameMapper
       _ => throw new ArgumentOutOfRangeException(nameof(typeId), $"Unknown TypeId subtype: {typeId.GetType().Name}")
    };
 
-   Type ResolveFromParsed(ParsedTypeName parsed)
+   Type ResolveFromParsed(ParsedTypeName parsed) => parsed switch
    {
-      var assemblyName = parsed.AssemblyName.Trim();
+      ParsedArrayTypeName array => ResolveArrayType(array),
+      ParsedMappedLeafTypeName mapped => _guidToLeafType.TryGetValue(mapped.Guid, out var type)
+         ? type
+         : throw new InvalidOperationException($"No type mapping found for GUID: {mapped.Guid}"),
+      ParsedMappedGenericTypeName mapped => ResolveMappedGenericType(mapped),
+      ParsedGenericTypeName generic => ResolveStableGenericType(generic),
+      ParsedLeafTypeName leaf => Type.GetType(leaf.ToAssemblyQualifiedNameString())
+         ?? throw new InvalidOperationException($"Could not resolve stable type: {leaf.ToAssemblyQualifiedNameString()}"),
+      _ => throw new ArgumentOutOfRangeException(nameof(parsed))
+   };
 
-      Type baseType;
-      if(assemblyName == "0")
-      {
-         // Mapped component — type name is a GUID
-         var guid = Guid.Parse(parsed.TypeName);
-         if(parsed is ParsedGenericTypeName mappedGeneric)
-         {
-            // Mapped open generic definition
-            if(!_guidToOpenGeneric.TryGetValue(guid, out var openGenericType))
-               throw new InvalidOperationException($"No open generic mapping found for GUID: {guid}");
+   Type ResolveArrayType(ParsedArrayTypeName array)
+   {
+      var elementType = ResolveFromParsed(array.Element);
+      return array.Rank == 1 ? elementType.MakeArrayType() : elementType.MakeArrayType(array.Rank);
+   }
 
-            var typeArgs = mappedGeneric.TypeArguments.Select(ResolveFromParsed).ToArray();
-            baseType = openGenericType.MakeGenericType(typeArgs);
-         }
-         else
-         {
-            // Mapped leaf type
-            if(!_guidToLeafType.TryGetValue(guid, out baseType!))
-               throw new InvalidOperationException($"No type mapping found for GUID: {guid}");
-         }
-      }
-      else
-      {
-         // Stable component — real type name, real assembly name
-         if(parsed is ParsedGenericTypeName stableGeneric)
-         {
-            // Stable open generic — strip the type arguments to get the open generic definition
-            var openGenericAqn = $"{parsed.TypeName}, {assemblyName}";
-            var openGenericType = Type.GetType(openGenericAqn)
-               ?? throw new InvalidOperationException($"Could not resolve stable open generic type: {openGenericAqn}");
+   Type ResolveMappedGenericType(ParsedMappedGenericTypeName mapped)
+   {
+      if(!_guidToOpenGeneric.TryGetValue(mapped.Guid, out var openGenericType))
+         throw new InvalidOperationException($"No open generic mapping found for GUID: {mapped.Guid}");
 
-            var typeArgs = stableGeneric.TypeArguments.Select(ResolveFromParsed).ToArray();
-            baseType = openGenericType.MakeGenericType(typeArgs);
-         }
-         else
-         {
-            // Stable leaf type
-            var fullAqn = parsed.ToAssemblyQualifiedNameString();
-            baseType = Type.GetType(fullAqn)
-               ?? throw new InvalidOperationException($"Could not resolve stable type: {fullAqn}");
-         }
-      }
+      var typeArgs = mapped.TypeArguments.Select(ResolveFromParsed).ToArray();
+      return openGenericType.MakeGenericType(typeArgs);
+   }
 
-      // Handle array suffix
-      if(parsed.ArraySuffix != null)
-      {
-         var rank = parsed.ArraySuffix.Count(c => c == ',') + 1;
-         baseType = rank == 1 ? baseType.MakeArrayType() : baseType.MakeArrayType(rank);
-      }
+   Type ResolveStableGenericType(ParsedGenericTypeName generic)
+   {
+      var openGenericAqn = $"{generic.TypeName}, {generic.AssemblyName}";
+      var openGenericType = Type.GetType(openGenericAqn)
+         ?? throw new InvalidOperationException($"Could not resolve stable open generic type: {openGenericAqn}");
 
-      return baseType;
+      var typeArgs = generic.TypeArguments.Select(ResolveFromParsed).ToArray();
+      return openGenericType.MakeGenericType(typeArgs);
    }
 
    /// <summary>
@@ -229,70 +210,43 @@ class TypeNameMapper
       }
    }
 
-   ParsedTypeName TransformToPersisted(ParsedTypeName parsed)
+   ParsedTypeName TransformToPersisted(ParsedTypeName parsed) => parsed switch
    {
-      var assemblyName = parsed.AssemblyName.Trim();
+      ParsedArrayTypeName array => new ParsedArrayTypeName(TransformToPersisted(array.Element), array.Rank),
+      ParsedMappedLeafTypeName or ParsedMappedGenericTypeName => parsed,
+      ParsedGenericTypeName generic => TransformStableGenericToPersisted(generic),
+      ParsedLeafTypeName leaf => TransformStableLeafToPersisted(leaf),
+      _ => throw new ArgumentOutOfRangeException(nameof(parsed))
+   };
 
-      // Already in persisted form (assembly is "0") — pass through
-      if(assemblyName == "0")
-         return parsed;
+   ParsedTypeName TransformStableLeafToPersisted(ParsedLeafTypeName leaf)
+   {
+      var leafType = Type.GetType(leaf.ToAssemblyQualifiedNameString());
 
-      var baseTypeName = parsed.TypeName;
+      if(leafType != null && _leafTypeToGuid.TryGetValue(leafType, out var guid))
+         return new ParsedMappedLeafTypeName(guid);
 
-      // Generic type — transform arguments recursively, then check if the open generic definition is mapped
-      if(parsed is ParsedGenericTypeName generic)
-      {
-         var transformedArgs = generic.TypeArguments.Select(TransformToPersisted).ToArray();
-
-         var openGenericAqn = $"{baseTypeName}, {assemblyName}";
-         var openGenericType = Type.GetType(openGenericAqn);
-
-         if(openGenericType != null && _openGenericToGuid.TryGetValue(openGenericType, out var openGenericGuid))
-            return new ParsedGenericTypeName(
-               openGenericGuid.ToString(),
-               "0",
-               transformedArgs,
-               parsed.ArraySuffix);
-
-         if(IsStableAssembly(assemblyName))
-            return new ParsedGenericTypeName(baseTypeName, assemblyName, transformedArgs, parsed.ArraySuffix);
-
-         throw new InvalidOperationException(
-            $"Open generic type '{baseTypeName}' from assembly '{assemblyName}' is not mapped and its assembly is not registered as stable.");
-      }
-
-      // Leaf type — check if it's mapped
-      var leafAqn = $"{baseTypeName}{parsed.ArraySuffix}, {assemblyName}";
-      var leafType = Type.GetType(leafAqn);
-
-      // Strip array suffix for leaf type lookup — we want the element type's mapping
-      if(parsed.ArraySuffix != null && leafType != null)
-      {
-         var elementType = leafType.GetElementType()!;
-         if(_leafTypeToGuid.TryGetValue(elementType, out var elementGuid))
-            return new ParsedLeafTypeName(
-               elementGuid.ToString(),
-               "0",
-               parsed.ArraySuffix);
-
-         if(IsStableAssembly(assemblyName))
-            return new ParsedLeafTypeName(baseTypeName, assemblyName, parsed.ArraySuffix);
-
-         throw new InvalidOperationException(
-            $"Array element type '{elementType.FullName}' from assembly '{assemblyName}' is not mapped and its assembly is not registered as stable.");
-      }
-
-      if(leafType != null && _leafTypeToGuid.TryGetValue(leafType, out var leafGuid))
-         return new ParsedLeafTypeName(
-            leafGuid.ToString(),
-            "0",
-            parsed.ArraySuffix);
-
-      // Stable leaf type — check if assembly is stable
-      if(IsStableAssembly(assemblyName))
-         return parsed;
+      if(IsStableAssembly(leaf.AssemblyName))
+         return leaf;
 
       throw new InvalidOperationException(
-         $"Type '{baseTypeName}' from assembly '{assemblyName}' is not mapped and its assembly is not registered as stable.");
+         $"Type '{leaf.TypeName}' from assembly '{leaf.AssemblyName}' is not mapped and its assembly is not registered as stable.");
+   }
+
+   ParsedTypeName TransformStableGenericToPersisted(ParsedGenericTypeName generic)
+   {
+      var transformedArgs = generic.TypeArguments.Select(TransformToPersisted).ToArray();
+
+      var openGenericAqn = $"{generic.TypeName}, {generic.AssemblyName}";
+      var openGenericType = Type.GetType(openGenericAqn);
+
+      if(openGenericType != null && _openGenericToGuid.TryGetValue(openGenericType, out var openGenericGuid))
+         return new ParsedMappedGenericTypeName(openGenericGuid, transformedArgs);
+
+      if(IsStableAssembly(generic.AssemblyName))
+         return new ParsedGenericTypeName(generic.TypeName, generic.AssemblyName, transformedArgs);
+
+      throw new InvalidOperationException(
+         $"Open generic type '{generic.TypeName}' from assembly '{generic.AssemblyName}' is not mapped and its assembly is not registered as stable.");
    }
 }

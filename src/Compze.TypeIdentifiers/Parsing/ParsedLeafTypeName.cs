@@ -1,7 +1,11 @@
 namespace Compze.TypeIdentifiers.Parsing;
 
-/// <summary>A non-generic component: <c>TypeName ArraySuffix?, AssemblyName</c>.</summary>
-sealed class ParsedLeafTypeName(string typeName, string assemblyName, string? arraySuffix = null) : ParsedTypeName(typeName, assemblyName, arraySuffix)
+/// <summary>A stable non-generic type: <c>TypeName, AssemblyName</c>.</summary>
+sealed class ParsedLeafTypeName(string typeName, string assemblyName) : ParsedTypeName
 {
-   public override string ToAssemblyQualifiedNameString() => $"{TypeName}{ArraySuffix}, {AssemblyName}";
+   public string TypeName { get; } = typeName;
+   public string AssemblyName { get; } = assemblyName;
+
+   internal override string TypePart => TypeName;
+   internal override string AssemblyPart => AssemblyName;
 }

@@ -4,69 +4,91 @@ namespace Compze.TypeIdentifiers.Parsing;
 
 /// <summary>
 /// A parsed component of an <c>AssemblyQualifiedName</c>-format string.
-/// Subtypes distinguish leaf components from generic components.
+/// Subtypes represent distinct grammar productions: leaf, mapped leaf, generic, mapped generic, and array.
 /// </summary>
 abstract partial class ParsedTypeName
 {
-   /// <summary>The type name portion (namespace-qualified). For generics, includes the arity suffix (e.g. "`1").</summary>
-   public string TypeName { get; }
+   /// <summary>The type portion of the AQN, before ", AssemblyName".</summary>
+   internal abstract string TypePart { get; }
 
-   /// <summary>The assembly name. "0" for mapped types.</summary>
-   public string AssemblyName { get; }
-
-   /// <summary>Array suffix (e.g. "[]", "[,]"). Null for non-array types.</summary>
-   public string? ArraySuffix { get; }
-
-   protected ParsedTypeName(string typeName, string assemblyName, string? arraySuffix)
-   {
-      TypeName = typeName;
-      AssemblyName = assemblyName;
-      ArraySuffix = arraySuffix;
-   }
+   /// <summary>The assembly name portion of the AQN.</summary>
+   internal abstract string AssemblyPart { get; }
 
    /// <summary>Reconstructs the <c>AssemblyQualifiedName</c>-format string from this parsed tree.</summary>
-   public abstract string ToAssemblyQualifiedNameString();
+   public string ToAssemblyQualifiedNameString() => $"{TypePart}, {AssemblyPart}";
 
    public override string ToString() => ToAssemblyQualifiedNameString();
 
    /// <summary>
    /// Parses an <c>AssemblyQualifiedName</c>-format string into the correct <see cref="ParsedTypeName"/> subtype.
-   /// Splits the component from its assembly name, extracts any array suffix, determines whether it's
-   /// a leaf or generic, and delegates to the appropriate subtype.
+   /// Detects mapped types by recognizing GUID type names, and wraps array types as <see cref="ParsedArrayTypeName"/>.
    /// </summary>
    internal static ParsedTypeName Parse(string assemblyQualifiedName)
    {
-      var (type, assembly) = TypeAndAssemblyParts(assemblyQualifiedName);
+      var (typePart, assemblyPart) = SplitTypeAndAssembly(assemblyQualifiedName);
 
       // Extract trailing array suffix if present (e.g. "[]", "[,]")
       string? arraySuffix = null;
-      var arraySuffixMatch = TrailingArraySuffixPattern().Match(type);
+      var arraySuffixMatch = TrailingArraySuffixPattern().Match(typePart);
       if(arraySuffixMatch.Success)
       {
          arraySuffix = arraySuffixMatch.Groups[1].Value;
-         type = type[..arraySuffixMatch.Index];
+         typePart = typePart[..arraySuffixMatch.Index];
       }
 
-      // Check if the remaining type part is a generic (contains "[[")
-      var genericMatch = GenericTypePartPattern().Match(type);
+      // Parse the inner type (without array suffix)
+      ParsedTypeName inner;
+      var genericMatch = GenericTypePartPattern().Match(typePart);
       if(genericMatch.Success)
-         return ParsedGenericTypeName.ParseFromParts(genericMatch, assembly, arraySuffix);
+         inner = ParseGenericFromParts(genericMatch, assemblyPart);
+      else
+         inner = ParseLeafFromParts(typePart.Trim(), assemblyPart);
 
-      return new ParsedLeafTypeName(type.Trim(), assembly, arraySuffix);
+      // Wrap in array if needed
+      if(arraySuffix != null)
+      {
+         var rank = arraySuffix.Count(c => c == ',') + 1;
+         inner = new ParsedArrayTypeName(inner, rank);
+      }
+
+      return inner;
    }
 
-   static (string typePart, string assemblyPart) TypeAndAssemblyParts(string assemblyQualifiedName)
+   static ParsedTypeName ParseLeafFromParts(string typeName, string assemblyName)
    {
-      var typeAndAssemblyPart = TypeAndAssemblyPartsPattern().Match(assemblyQualifiedName);
-      if(!typeAndAssemblyPart.Success)
+      if(Guid.TryParse(typeName, out var guid))
+         return new ParsedMappedLeafTypeName(guid);
+
+      return new ParsedLeafTypeName(typeName, assemblyName);
+   }
+
+   static ParsedTypeName ParseGenericFromParts(Match genericMatch, string assemblyName)
+   {
+      var typeName = genericMatch.Groups[1].Value.Trim();
+      var argumentBlock = genericMatch.Groups[2].Value;
+      var innerBlock = argumentBlock[1..^1];
+
+      var parsedArguments = GenericArgumentPattern()
+         .Matches(innerBlock)
+         .Select(m => Parse(m.Groups[1].Value))
+         .ToArray();
+
+      if(Guid.TryParse(typeName, out var guid))
+         return new ParsedMappedGenericTypeName(guid, parsedArguments);
+
+      return new ParsedGenericTypeName(typeName, assemblyName, parsedArguments);
+   }
+
+   static (string typePart, string assemblyPart) SplitTypeAndAssembly(string assemblyQualifiedName)
+   {
+      var match = TypeAndAssemblyPartsPattern().Match(assemblyQualifiedName);
+      if(!match.Success)
          throw new FormatException($"Invalid AssemblyQualifiedName format: \"{assemblyQualifiedName}\"");
 
-      return (typePart: typeAndAssemblyPart.Groups[1].Value.Trim(),
-              assemblyPart: typeAndAssemblyPart.Groups[2].Value.Trim());
+      return (match.Groups[1].Value.Trim(), match.Groups[2].Value.Trim());
    }
 
    // Splits "TypePart, AssemblyName" at the first comma not inside brackets.
-   // Group 1 = type part (may contain balanced bracket groups), Group 2 = assembly name.
    // Uses (?(D),|(?!)) to allow commas inside brackets but not at bracket depth 0.
    [GeneratedRegex(@"^\s*((?:[^\[\],]|\[(?<D>)|\](?<-D>)|(?(D),|(?!)))*(?(D)(?!)))\s*,\s*(.+)$")]
    private static partial Regex TypeAndAssemblyPartsPattern();
@@ -76,7 +98,11 @@ abstract partial class ParsedTypeName
    private static partial Regex TrailingArraySuffixPattern();
 
    // Splits a type part into the type name and the generic argument block.
-   // Group 1 = type name (everything before "[["), Group 2 = the argument block "[[...]]".
    [GeneratedRegex(@"^(.+?)(\[\[.+\]\])$")]
    private static partial Regex GenericTypePartPattern();
+
+   // Matches each individual "[argument]" inside a generic argument block.
+   // Uses balancing groups to handle nested brackets within each argument.
+   [GeneratedRegex(@"\[((?:[^\[\]]|\[(?<D>)|\](?<-D>))*(?(D)(?!)))\]")]
+   private static partial Regex GenericArgumentPattern();
 }
