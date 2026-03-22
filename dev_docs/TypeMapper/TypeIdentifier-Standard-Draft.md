@@ -211,9 +211,10 @@ LeafComponent      ::= MappedComponent | NamedComponent
 MappedComponent    ::= GUID ", 0"
 NamedComponent     ::= TypeName ", " AssemblyName
 
-GenericComponent   ::= TypeName "`" Arity "[[" ArgList "]], " Assembly
+GenericComponent   ::= GenericDef "[[" ArgList "]], " Assembly
+GenericDef         ::= TypeName "`" Arity | GUID
 ArgList            ::= Component | Component "],[" ArgList
-ArrayComponent     ::= TypeName "[], " Assembly
+ArrayComponent     ::= (TypeName | GUID) "[], " Assembly
 
 GUID               ::= <RFC 4122 lowercase hex with dashes>
 TypeName           ::= <CLR Type.FullName without assembly qualification>
