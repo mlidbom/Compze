@@ -39,37 +39,26 @@ public abstract class VolatileTransactionParticipant(EnlistmentOptions enlistmen
 
    void IEnlistmentNotification.Prepare(PreparingEnlistment preparingEnlistment)
    {
-      // Capture before Prepared() can trigger Commit (which nulls _enlistedIn via Done()).
-      var enlistedTransaction = _enlistedIn!;
-
       try
       {
          if(_enlistmentOptions.HasFlag(EnlistmentOptions.EnlistDuringPrepareRequired))
          {
-            using var transactionScope = new TransactionScope(enlistedTransaction);
+            using var transactionScope = new TransactionScope(_enlistedIn!);
             OnPrepare();
             transactionScope.Complete();
          } else
          {
             OnPrepare();
          }
-
-         preparingEnlistment.Prepared();
       }
 #pragma warning disable CA1031 //This is the proper handling of exceptions in the context of IEnlistmentNotification
       catch(Exception exception)
       {
 #pragma warning restore CA1031 //This is the proper handling of exceptions in the context of IEnlistmentNotification
-         // On a local (non-promoted) transaction, Prepared() is synchronous: when the last
-         // participant calls Prepared(), the transaction manager commits all participants and
-         // fires TransactionCompleted — within the same call stack. If a TransactionCompleted
-         // handler throws, the exception propagates back through Prepared(). The transaction
-         // is already committed — ForceRollback would throw since it is not a valid operation
-         // on a committed transaction.
-         if(enlistedTransaction.TransactionInformation.Status == TransactionStatus.Committed) throw;
-
          preparingEnlistment.ForceRollback(exception);
+         return;
       }
+      preparingEnlistment.Prepared();
    }
 
    void IEnlistmentNotification.Commit(Enlistment enlistment)
