@@ -22,10 +22,8 @@ class TypeNameMapper
    readonly object _stableAssemblyNamesLock = new();
 
    // Caches (populated on demand, thread-safe)
-   readonly ConcurrentDictionary<Type, TypeIdentifier> _typeToIdCache = new();
-   readonly ConcurrentDictionary<string, Type> _stringToTypeCache = new();
-
-   internal TypeNameMapper() { }
+   readonly ConcurrentDictionary<Type, TypeIdentifier> _typeToIdentifier = new();
+   readonly ConcurrentDictionary<string, Type> _stringToType = new();
 
    internal void AddLeafTypeMapping(Type type, Guid guid)
    {
@@ -64,8 +62,8 @@ class TypeNameMapper
 
    void ClearCaches()
    {
-      _typeToIdCache.Clear();
-      _stringToTypeCache.Clear();
+      _typeToIdentifier.Clear();
+      _stringToType.Clear();
    }
 
    internal bool HasMappingForOpenGeneric(Type openGenericType)
@@ -83,18 +81,18 @@ class TypeNameMapper
    /// <summary>
    /// Given a .NET <see cref="Type"/>, produce the correct <see cref="TypeIdentifier"/> subtype.
    /// </summary>
-   internal TypeIdentifier GetId(Type type) => _typeToIdCache.GetOrAdd(type, ComputeId);
+   internal TypeIdentifier GetId(Type type) => _typeToIdentifier.GetOrAdd(type, ComputeId);
 
    /// <summary>
    /// Given a <see cref="TypeIdentifier"/>, resolve it back to a .NET <see cref="Type"/>.
    /// </summary>
-   internal Type GetType(TypeIdentifier typeId) => _stringToTypeCache.GetOrAdd(typeId.StringRepresentation, _ => ResolveType(typeId));
+   internal Type GetType(TypeIdentifier typeId) => _stringToType.GetOrAdd(typeId.StringRepresentation, _ => ResolveType(typeId));
 
    /// <summary>
    /// Given a string from a persisted <c>$type</c> field, resolve it to a .NET <see cref="Type"/>.
    /// This is the deserialization entry point — the string is parsed, then resolved.
    /// </summary>
-   internal Type GetTypeFromPersistedString(string persistedTypeString) => _stringToTypeCache.GetOrAdd(persistedTypeString, key =>
+   internal Type GetTypeFromPersistedString(string persistedTypeString) => _stringToType.GetOrAdd(persistedTypeString, key =>
    {
       var parsed = TypeNameParser.Parse(key);
       return ResolveFromParsed(parsed);
