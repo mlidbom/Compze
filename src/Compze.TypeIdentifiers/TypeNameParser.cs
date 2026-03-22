@@ -1,11 +1,35 @@
+using System.Reflection.Metadata;
+using System.Text.RegularExpressions;
+
 namespace Compze.TypeIdentifiers;
 
 /// <summary>
 /// Parses .NET <c>AssemblyQualifiedName</c>-format strings into a typed tree of components.
 /// Each subtype of <see cref="ParsedTypeName"/> owns parsing for its own grammar production.
+/// Uses compiled regular expressions with .NET balancing groups for bracket matching.
 /// </summary>
-static class TypeNameParser
+static partial class TypeNameParser
 {
+   // Splits "TypePart, AssemblyName" at the first comma not inside brackets.
+   // Group 1 = type part (may contain balanced bracket groups), Group 2 = assembly name.
+   // Uses (?(D),|(?!)) to allow commas inside brackets but not at bracket depth 0.
+   [GeneratedRegex(@"^\s*((?:[^\[\],]|\[(?<D>)|\](?<-D>)|(?(D),|(?!)))*(?(D)(?!)))\s*,\s*(.+)$")]
+   private static partial Regex TypeAndAssemblyPartsPattern();
+
+   // Matches a trailing array suffix like [], [,], [,,] at the end of a type part.
+   [GeneratedRegex(@"(\[,*\])$")]
+   private static partial Regex TrailingArraySuffixPattern();
+
+   // Splits a type part into the type name and the generic argument block.
+   // Group 1 = type name (everything before "[["), Group 2 = the argument block "[[...]]".
+   [GeneratedRegex(@"^(.+?)(\[\[.+\]\])$")]
+   private static partial Regex GenericTypePartPattern();
+
+   // Matches each individual "[argument]" inside a generic argument block.
+   // Uses balancing groups to handle nested brackets within each argument.
+   [GeneratedRegex(@"\[((?:[^\[\]]|\[(?<D>)|\](?<-D>))*(?(D)(?!)))\]")]
+   private static partial Regex GenericArgumentPattern();
+
    /// <summary>
    /// A parsed component of an <c>AssemblyQualifiedName</c>-format string.
    /// Subtypes distinguish leaf components from generic components.
@@ -34,34 +58,39 @@ static class TypeNameParser
 
       /// <summary>
       /// Parses an <c>AssemblyQualifiedName</c>-format string into the correct <see cref="ParsedTypeName"/> subtype.
-      /// This is the dispatch point: splits the component from its assembly name, determines whether it's
+      /// Splits the component from its assembly name, extracts any array suffix, determines whether it's
       /// a leaf or generic, and delegates to the appropriate subtype.
       /// </summary>
       internal static ParsedTypeName Parse(string assemblyQualifiedName)
       {
-         var (typePartWithArraySuffix, assemblyName) = SplitFirstTopLevelComma(assemblyQualifiedName);
+         var (typePart, assemblyName) = TypeAndAssemblyParts(assemblyQualifiedName);
 
-         var typePart = typePartWithArraySuffix;
+         // Extract trailing array suffix if present (e.g. "[]", "[,]")
          string? arraySuffix = null;
-
-         // Check for trailing array suffix (e.g. "List`1[[...]][]" or "MyType[]")
-         if(typePart.EndsWith(']'))
+         var arraySuffixMatch = TrailingArraySuffixPattern().Match(typePart);
+         if(arraySuffixMatch.Success)
          {
-            var trailingSuffixStart = FindTrailingArraySuffixStart(typePart);
-            if(trailingSuffixStart >= 0)
-            {
-               arraySuffix = typePart[trailingSuffixStart..];
-               typePart = typePart[..trailingSuffixStart];
-            }
+            arraySuffix = arraySuffixMatch.Groups[1].Value;
+            typePart = typePart[..arraySuffixMatch.Index];
          }
 
-         // If the remaining type part contains a generic argument block, it's a generic type
-         var firstBracket = typePart.IndexOf('[');
-         if(firstBracket >= 0 && firstBracket + 1 < typePart.Length && typePart[firstBracket + 1] == '[')
-            return ParsedGenericTypeName.ParseFromParts(typePart, assemblyName, arraySuffix);
+         // Check if the remaining type part is a generic (contains "[[")
+         var genericMatch = GenericTypePartPattern().Match(typePart);
+         if(genericMatch.Success)
+            return ParsedGenericTypeName.ParseFromParts(genericMatch, assemblyName, arraySuffix);
 
-         // Otherwise it's a leaf (possibly with an array suffix already extracted above)
          return new ParsedLeafTypeName(typePart.Trim(), assemblyName, arraySuffix);
+      }
+
+      static (string typePart, string assemblyName) TypeAndAssemblyParts(string assemblyQualifiedName)
+      {
+         var typeAndAssemblyPart = TypeAndAssemblyPartsPattern().Match(assemblyQualifiedName);
+         if(!typeAndAssemblyPart.Success)
+            throw new FormatException($"Invalid AssemblyQualifiedName format: \"{assemblyQualifiedName}\"");
+
+         var typePart = typeAndAssemblyPart.Groups[1].Value.Trim();
+         var assemblyName = typeAndAssemblyPart.Groups[2].Value.Trim();
+         return (typePart, assemblyName);
       }
    }
 
@@ -87,128 +116,22 @@ static class TypeNameParser
       }
 
       /// <summary>
-      /// Parses a generic type from its already-split parts: the type portion (e.g. "List`1[[MyType, Asm]]"),
-      /// the assembly name, and any trailing array suffix.
+      /// Parses a generic type from a regex match that already split the type name from the argument block.
       /// </summary>
-      internal static ParsedGenericTypeName ParseFromParts(string typePart, string assemblyName, string? arraySuffix)
+      internal static ParsedGenericTypeName ParseFromParts(Match genericMatch, string assemblyName, string? arraySuffix)
       {
-         // TypeName is everything before the first '['
-         var firstBracket = typePart.IndexOf('[');
-         var typeName = typePart[..firstBracket].Trim();
+         var typeName = genericMatch.Groups[1].Value.Trim();
+         var argumentBlock = genericMatch.Groups[2].Value;
 
-         // The argument block is the rest: "[[arg1],[arg2]]"
-         var argumentBlock = typePart[firstBracket..];
+         // Strip the outer brackets: "[[arg1],[arg2]]" -> "[arg1],[arg2]"
+         var innerBlock = argumentBlock[1..^1];
 
-         var arguments = SplitGenericArguments(argumentBlock);
-         var parsedArguments = arguments.Select(ParsedTypeName.Parse).ToArray();
+         var parsedArguments = GenericArgumentPattern()
+            .Matches(innerBlock)
+            .Select(m => ParsedTypeName.Parse(m.Groups[1].Value))
+            .ToArray();
 
          return new ParsedGenericTypeName(typeName, assemblyName, parsedArguments, arraySuffix);
       }
-   }
-
-   /// <summary>
-   /// Splits a generic argument block like <c>[[arg1],[arg2]]</c> into individual argument strings.
-   /// Each argument is the content between matched <c>[</c>...<c>]</c> pairs inside the outer brackets.
-   /// </summary>
-   static string[] SplitGenericArguments(string argumentBlock)
-   {
-      // Strip the outer [ and ]
-      var inner = argumentBlock[1..^1];
-
-      var arguments = new List<string>();
-      var position = 0;
-      while(position < inner.Length)
-      {
-         // Skip whitespace and commas between arguments
-         while(position < inner.Length && (inner[position] == ',' || char.IsWhiteSpace(inner[position])))
-            position++;
-
-         if(position >= inner.Length)
-            break;
-
-         // Expect '[' starting an argument
-         if(inner[position] != '[')
-            throw new FormatException($"Expected '[' at position {position} in argument block: \"{argumentBlock}\"");
-
-         // Find the matching ']' for this argument
-         var matchingClose = FindMatchingBracket(inner, position);
-         // The argument content is between the brackets (exclusive)
-         arguments.Add(inner[(position + 1)..matchingClose]);
-         position = matchingClose + 1;
-      }
-
-      return [.. arguments];
-   }
-
-   /// <summary>
-   /// Splits an <c>AssemblyQualifiedName</c>-format string at the first top-level comma
-   /// (i.e. the first comma not inside any brackets). Returns (typePart, assemblyName).
-   /// The assembly name portion may include version, culture, and public key token.
-   /// </summary>
-   static (string TypePart, string AssemblyName) SplitFirstTopLevelComma(string input)
-   {
-      var depth = 0;
-      for(var i = 0; i < input.Length; i++)
-      {
-         switch(input[i])
-         {
-            case '[': depth++; break;
-            case ']': depth--; break;
-            case ',' when depth == 0:
-               return (input[..i].Trim(), input[(i + 1)..].Trim());
-         }
-      }
-
-      throw new FormatException($"No top-level comma found in: \"{input}\"");
-   }
-
-   /// <summary>
-   /// Given a string and the position of an opening '[', returns the position of the matching ']'.
-   /// </summary>
-   static int FindMatchingBracket(string input, int openPosition)
-   {
-      var depth = 0;
-      for(var i = openPosition; i < input.Length; i++)
-      {
-         switch(input[i])
-         {
-            case '[': depth++; break;
-            case ']':
-               depth--;
-               if(depth == 0)
-                  return i;
-               break;
-         }
-      }
-
-      throw new FormatException($"Unmatched '[' at position {openPosition} in: \"{input}\"");
-   }
-
-   /// <summary>
-   /// Finds the start of a trailing array suffix (e.g. "[]", "[,]") at the end of a type part.
-   /// Returns the index where the suffix starts, or -1 if no trailing array suffix.
-   /// An array suffix is distinguished from generic args by containing only commas between brackets.
-   /// </summary>
-   static int FindTrailingArraySuffixStart(string typePart)
-   {
-      // Walk backwards from the end. The suffix is the last [...] where the content is only commas.
-      if(!typePart.EndsWith(']'))
-         return -1;
-
-      var closePos = typePart.Length - 1;
-      // Find the matching '['
-      var openPos = closePos;
-      while(openPos > 0 && typePart[openPos] != '[')
-         openPos--;
-
-      if(openPos == 0)
-         return -1;
-
-      // Check if the content between brackets is only commas (array suffix) vs containing actual types
-      var content = typePart[(openPos + 1)..closePos];
-      if(content.Length == 0 || content.All(c => c == ','))
-         return openPos;
-
-      return -1;
    }
 }
