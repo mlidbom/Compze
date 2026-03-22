@@ -1,4 +1,4 @@
-# Structural TypeId Design
+# TypeIdentifier Design
 
 > **No backward compatibility constraints.** There are zero deployed applications using this system. No persisted data exists. Any format, ID, or behavior can change freely.
 
@@ -6,13 +6,7 @@
 
 ## Context
 
-The current TypeMapper replaces entire `$type` strings (e.g. `"System.Collections.Generic.List`1[[MyApp.MyEntity, MyApp]], System.Private.CoreLib"`) with opaque GUIDs. This requires:
-- Scanning every loaded assembly to discover all closed generic instantiations
-- Computing deterministic GUIDs for every closed generic and array type
-- Maintaining a global bidirectional dictionary of every type ever seen
-- A static singleton with assembly-load hooks
-
-All of this exists because the system flattens the *structurally recursive* type name into a *single opaque GUID*, then needs to reconstruct the full type from that GUID on deserialization.
+The previous TypeMapper replaced entire `$type` strings (e.g. `"System.Collections.Generic.List`1[[MyApp.MyEntity, MyApp]], System.Private.CoreLib"`) with opaque GUIDs. This required scanning every loaded assembly to discover all closed generic instantiations, computing deterministic GUIDs for every closed generic and array type, maintaining a global bidirectional dictionary of every type ever seen, and a static singleton with assembly-load hooks — all because the system flattened the *structurally recursive* type name into a *single opaque GUID*.
 
 ## Insight
 
@@ -74,32 +68,32 @@ For each `TypeName, Assembly` component:
 
 ### Caching
 
-Both directions are cached on the `ITypeMapper` instance:
-- **Serialize**: `Type` → `TypeId`. Once computed, subsequent serializations of the same type are a dictionary lookup.
-- **Deserialize**: `TypeId` string → `Type`. Once resolved, subsequent deserializations of the same string are a dictionary lookup.
+Both directions are cached on the `ITypeIdentifierMapper` instance:
+- **Serialize**: `Type` → `TypeIdentifier`. Once computed, subsequent serializations of the same type are a dictionary lookup.
+- **Deserialize**: `TypeIdentifier` string → `Type`. Once resolved, subsequent deserializations of the same string are a dictionary lookup.
 
 Parsing and tree-walking happen only on first encounter. Container-scoped caches are naturally garbage-collected with the container.
 
 ---
 
-## TypeId hierarchy
+## TypeIdentifier hierarchy
 
-`TypeId` is the identity of a fully constructed type. It is an abstract base with three concrete subtypes, each representing a different kind of identity:
+`TypeIdentifier` is the identity of a fully constructed type. It is an abstract base with three concrete subtypes, each representing a different kind of identity:
 
 ```
-TypeId (abstract)
-├── MappedTypeId      — leaf type from a mapped assembly. Has a GUID. SQL-storable.
-├── StableNameTypeId  — type(s) entirely from stable assemblies. Untouched AssemblyQualifiedName.
-└── ConstructedTypeId — mixed: AssemblyQualifiedName with some GUID, 0 components.
+TypeIdentifier (abstract)
+├── MappedTypeIdentifier   — leaf type from a mapped assembly. Has a GUID. SQL-storable.
+├── StableNameTypeId       — type(s) entirely from stable assemblies. Untouched AssemblyQualifiedName.
+└── ConstructedTypeId      — mixed: AssemblyQualifiedName with some GUID, 0 components.
 ```
 
-All three expose a **string representation** — the `AssemblyQualifiedName`-format string used by serialization. Only `MappedTypeId` additionally exposes a **GUID** for SQL storage.
+All three expose a **string representation** — the `AssemblyQualifiedName`-format string used by serialization. Only `MappedTypeIdentifier` additionally exposes a **GUID** for SQL storage.
 
-### MappedTypeId
+### MappedTypeIdentifier
 
 A leaf type from a mapped assembly. Has an explicitly assigned GUID. String representation is `"GUID, 0"`.
 
-This is the only subtype that can be stored in SQL GUID columns. The event store, document DB, tessaging outbox/inbox, and Typermedia routing all deal in `MappedTypeId`.
+This is the only subtype that can be stored in SQL GUID columns. The event store, document DB, tessaging outbox/inbox, and Typermedia routing all deal in `MappedTypeIdentifier`.
 
 ### StableNameTypeId
 
@@ -115,15 +109,15 @@ Examples: `List<MyEntity>` → `"System.Collections.Generic.List`1[[e4a8c9f2-...
 
 Resolution requires walking the string, resolving GUID components via the mapping dictionary, and reconstructing with `Type.MakeGenericType()` / `Type.MakeArrayType()`.
 
-### TypeId is a pure identity value
+### TypeIdentifier is a pure identity value
 
-`TypeId` subtypes are dumb value objects — they hold only the string representation (and GUID for `MappedTypeId`). They do not participate in parsing or resolution. That logic lives in the `TypeNameMapper`.
+`TypeIdentifier` subtypes are dumb value objects — they hold only the string representation (and GUID for `MappedTypeIdentifier`). They do not participate in parsing or resolution. That logic lives in the `TypeNameMapper`.
 
-### Open generic mappings are NOT TypeIds
+### Open generic mappings are NOT TypeIdentifiers
 
 An open generic like `List<>` is not a type — it's a template. It never exists at runtime, never gets serialized, never gets stored, never crosses the wire. Its GUID mapping exists solely as a building block for constructing and parsing `ConstructedTypeId` strings.
 
-This mapping is represented by `OpenGenericId` — a GUID-backed struct, distinct from `TypeId`. The `ITypeMapper` may handle the `OpenGenericId` ↔ open generic `Type` mapping internally, but `OpenGenericId` is never returned where a `TypeId` is expected. TypeIds name fully constructed types; `OpenGenericId` names a template.
+This mapping is represented by `OpenGenericId` — a GUID-backed struct, distinct from `TypeIdentifier`. The `ITypeIdentifierMapper` may handle the `OpenGenericId` ↔ open generic `Type` mapping internally, but `OpenGenericId` is never returned where a `TypeIdentifier` is expected. TypeIdentifiers name fully constructed types; `OpenGenericId` names a template.
 
 ---
 
@@ -136,7 +130,7 @@ This mapping is represented by `OpenGenericId` — a GUID-backed struct, distinc
      mapper.UseStableNameStrategyForAssembliesContaining<NodaTime.Instant, SomeOtherLib.Foo>();
      ```
 
-2. **Mapped assemblies** — types that need rename-safety. Leaf types get GUID assignments (`MappedTypeId`). Open generic definitions get GUID assignments (not TypeIds — building blocks only). Registered explicitly per-container:
+2. **Mapped assemblies** — types that need rename-safety. Leaf types get GUID assignments (`MappedTypeIdentifier`). Open generic definitions get GUID assignments (not TypeIdentifiers — building blocks only). Registered explicitly per-container:
    ```csharp
    mapper.MapTypesFromAssemblyContaining<MyEntity>();
    ```
@@ -162,7 +156,7 @@ static class MyAssemblyTypeMappings : ITypeMappingDeclaration
 }
 ```
 
-`MapOpenGeneric` is a separate method from `Map` to make it explicit that open generics are not types — they are templates. This mapping produces an `OpenGenericId`, not a `TypeId`. In practice, `MapOpenGeneric` is rarely needed — most generics used in serialized data come from stable assemblies (BCL collections, etc.).
+`MapOpenGeneric` is a separate method from `Map` to make it explicit that open generics are not types — they are templates. This mapping produces an `OpenGenericId`, not a `TypeIdentifier`. In practice, `MapOpenGeneric` is rarely needed — most generics used in serialized data come from stable assemblies (BCL collections, etc.).
 
 The framework enforces that a mapping class only maps types from its own assembly. Mapping a type from another assembly is an error at registration time.
 
@@ -171,7 +165,7 @@ The framework enforces that a mapping class only maps types from its own assembl
 ## Per-container registration (no global state)
 
 ```csharp
-container.RegisterTypeMapper(mapper =>
+container.RegisterTypeIdentifierMapper(mapper =>
 {
    mapper
       .MapTypesFromAssemblyContaining<MyEntity>()
@@ -183,7 +177,7 @@ container.RegisterTypeMapper(mapper =>
 - No `AppDomain.AssemblyLoad` hook
 - No static singleton
 - No auto-discovery
-- Each container owns its `ITypeMapper` instance with its own mappings
+- Each container owns its `ITypeIdentifierMapper` instance with its own mappings
 - If a container didn't register an assembly's mappings, serializing those types is an error
 
 ---
@@ -195,8 +189,8 @@ Three separate classes, each with one job:
 1. **`TypeNameParser`** — parses a standard `AssemblyQualifiedName`-format string into a tree of `TypeName, Assembly` components with nested type arguments. Works on both Newtonsoft's raw output and our persisted form (same structure). Independently testable, separate class, no mapping knowledge.
 
 2. **`TypeNameMapper`** — walks a parsed tree and transforms it:
-   - **Serialize direction**: Given a .NET `Type`, produces a `TypeId` (choosing the correct subtype). For mapped types: replaces type name with GUID, assembly with `0`. For stable types: passes through unchanged. For composites: walks components recursively.
-   - **Deserialize direction**: Given a `TypeId`, resolves it back to a .NET `Type`. `MappedTypeId` → dictionary lookup. `StableNameTypeId` → `Type.GetType()`. `ConstructedTypeId` → parse, resolve components recursively, `MakeGenericType()` / `MakeArrayType()`.
+   - **Serialize direction**: Given a .NET `Type`, produces a `TypeIdentifier` (choosing the correct subtype). For mapped types: replaces type name with GUID, assembly with `0`. For stable types: passes through unchanged. For composites: walks components recursively.
+   - **Deserialize direction**: Given a `TypeIdentifier`, resolves it back to a .NET `Type`. `MappedTypeIdentifier` → dictionary lookup. `StableNameTypeId` → `Type.GetType()`. `ConstructedTypeId` → parse, resolve components recursively, `MakeGenericType()` / `MakeArrayType()`.
    - Caches results in both directions.
 
 3. **`RenamingDecorator`** — finds `$type` values in JSON, delegates to `TypeNameMapper`, puts the result back. Stays trivial (~20 lines).
@@ -205,7 +199,7 @@ Three separate classes, each with one job:
 
 ## SQL storage
 
-TypeId columns in the event store, document DB, tessaging, and Typermedia remain GUID columns. These accept only `MappedTypeId` — enforced at the type level. This is not a limitation in practice: events and documents are concrete leaf domain types, not generic collections.
+TypeIdentifier columns in the event store, document DB, tessaging, and Typermedia remain GUID columns. These accept only `MappedTypeIdentifier` — enforced at the type level. This is not a limitation in practice: events and documents are concrete leaf domain types, not generic collections.
 
 ---
 
@@ -220,9 +214,9 @@ TypeId columns in the event store, document DB, tessaging, and Typermedia remain
 
 ## What changes
 
-- `TypeId` — from a single GUID-backed type to an abstract base with three subtypes
-- `ITypeMapper` — becomes container-scoped, explicitly configured. Produces `MappedTypeId` for leaf types. May handle `OpenGenericId` ↔ `Type` mappings internally, but `OpenGenericId` is not a `TypeId`.
-- `TypeMapper` — no longer a static singleton
+- `TypeIdentifier` — from a single GUID-backed type to an abstract base with three subtypes
+- `ITypeIdentifierMapper` — becomes container-scoped, explicitly configured. Produces `MappedTypeIdentifier` for leaf types. May handle `OpenGenericId` ↔ `Type` mappings internally, but `OpenGenericId` is not a `TypeIdentifier`.
+- `TypeIdentifierMapper` — no longer a static singleton
 - `RenamingDecorator` — delegates structural work to `TypeNameParser` + `TypeNameMapper`
 - Generated mapping files — only contain leaf types and open generic definitions
 - Persisted `$type` strings — structural `AssemblyQualifiedName` format with GUIDs for mapped components

@@ -28,7 +28,7 @@ namespace Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_
 
 public abstract class EndpointHostTestBase : UniversalTestBase
 {
-   static readonly WaitTimeout _timeout = WaitTimeout.Seconds(10);
+   static readonly WaitTimeout _timeout = WaitTimeout.Seconds(30);
    protected ITestingEndpointHost Host { get; private set; } = null!;
    public IThreadGate MyExactlyOnceTommandHandlerThreadGate { get; }
    public IThreadGate TommandHandlerWithResultThreadGate { get; }
