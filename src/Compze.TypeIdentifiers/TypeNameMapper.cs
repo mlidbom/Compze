@@ -66,8 +66,7 @@ class TypeNameMapper
       _stringToType.Clear();
    }
 
-   internal bool HasMappingForOpenGeneric(Type openGenericType)
-      => _openGenericToGuid.ContainsKey(openGenericType) || _leafTypeToGuid.ContainsKey(openGenericType);
+   internal bool HasMappingForOpenGeneric(Type openGenericType) => _openGenericToGuid.ContainsKey(openGenericType);
 
    internal bool IsStableType(Type type)
    {
