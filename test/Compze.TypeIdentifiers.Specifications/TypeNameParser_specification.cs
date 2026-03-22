@@ -37,7 +37,7 @@ public class TypeNameParser_specification
       [XF] public void parses_zero_as_assembly_name()
          => Parse(MappedTypeString).AssemblyName.Must().Be("0");
 
-      [XF] public void round_trips()
+      [XF] public void round_trips()    
          => Parse(MappedTypeString).ToAssemblyQualifiedNameString()
                .Must().Be(MappedTypeString);
    }
