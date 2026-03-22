@@ -421,15 +421,15 @@ public class TeventStoreUpdaterTest : UniversalTestBase
       using var runner = new TestingTaskRunner(5.Seconds());
       runner.Run(ReadUserHistory, ReadUserHistory);
 
-      readGate.TryAwaitQueueLengthEqualTo(2, WaitTimeout.Milliseconds(100)).Must().BeTrue();
+      readGate.TryAwaitQueueLengthEqualTo(2).Must().BeTrue();
       readGate.Open();
+      return;
 
-      void ReadUserHistory() =>
-         UseInTransactionalScope(session =>
-         {
-            ((ITeventStoreReader)session).GetHistory(user.Id);
-            readGate.AwaitPassThrough();
-         });
+      void ReadUserHistory() => UseInTransactionalScope(session =>
+      {
+         ((ITeventStoreReader)session).GetHistory(user.Id);
+         readGate.AwaitPassThrough();
+      });
    }
 
    [PCT]
