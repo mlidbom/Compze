@@ -1,4 +1,4 @@
-using Compze.Abstractions.Refactoring.Naming;
+using Compze.TypeIdentifiers;
 using Compze.Tests.Common.Sql.DocumentDb;
 
 [assembly: TypeMappings(typeof(Compze.Tests.Integration.TypeMappingDeclarations))]

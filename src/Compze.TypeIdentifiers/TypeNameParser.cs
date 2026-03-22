@@ -1,4 +1,4 @@
-namespace Compze.Abstractions.Refactoring.Naming.Internal.Implementation;
+namespace Compze.TypeIdentifiers;
 
 /// <summary>
 /// Parses .NET <c>AssemblyQualifiedName</c>-format strings into a tree of components.

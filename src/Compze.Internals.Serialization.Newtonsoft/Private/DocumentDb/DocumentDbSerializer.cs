@@ -1,4 +1,4 @@
-using Compze.Abstractions.Refactoring.Naming.Internal;
+using Compze.TypeIdentifiers;
 using Compze.Abstractions.Serialization.Internal;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;

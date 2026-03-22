@@ -1,11 +1,11 @@
-using Compze.Abstractions.Refactoring.Naming.Internal;
+using Compze.TypeIdentifiers;
 using Compze.Must;
 using Compze.xUnitBDD;
 
 // ReSharper disable InconsistentNaming
 #pragma warning disable CA1052
 
-namespace Compze.Abstractions.Specifications.Refactoring.Naming;
+namespace Compze.TypeIdentifiers.Specifications;
 
 public class StructuralTypeId_specification
 {

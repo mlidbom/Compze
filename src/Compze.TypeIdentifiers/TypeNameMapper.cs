@@ -1,7 +1,6 @@
 using System.Collections.Concurrent;
-using Compze.Abstractions.Refactoring.Naming.Internal;
 
-namespace Compze.Abstractions.Refactoring.Naming.Internal.Implementation;
+namespace Compze.TypeIdentifiers;
 
 /// <summary>
 /// Transforms between .NET <see cref="Type"/> objects and <see cref="StructuralTypeId"/> values.

@@ -1,4 +1,4 @@
-namespace Compze.Abstractions.Refactoring.Naming.Internal;
+namespace Compze.TypeIdentifiers;
 
 /// <summary>
 /// Identity of a fully constructed type. Subtypes represent different kinds of identity:

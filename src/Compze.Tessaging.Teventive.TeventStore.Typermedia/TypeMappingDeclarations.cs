@@ -1,4 +1,4 @@
-using Compze.Abstractions.Refactoring.Naming;
+using Compze.TypeIdentifiers;
 
 [assembly: TypeMappings(typeof(Compze.Tessaging.Teventive.TeventStore.Typermedia.TypeMappingDeclarations))]
 

@@ -1,4 +1,4 @@
-using Compze.Abstractions.Refactoring.Naming.Internal;
+using Compze.TypeIdentifiers;
 using Compze.Core.Serialization.Internal;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.DependencyInjection;

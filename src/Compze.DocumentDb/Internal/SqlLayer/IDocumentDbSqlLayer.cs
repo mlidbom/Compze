@@ -1,5 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
-using Compze.Abstractions.Refactoring.Naming.Internal;
+using Compze.TypeIdentifiers;
 
 namespace Compze.DocumentDb.Internal.SqlLayer;
 

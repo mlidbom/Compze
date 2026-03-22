@@ -1,7 +1,6 @@
 using System.Reflection;
-using Compze.Abstractions.Refactoring.Naming;
 
-namespace Compze.Abstractions.Refactoring.Naming.Internal.Implementation;
+namespace Compze.TypeIdentifiers;
 
 /// <summary>
 /// Collects type mappings from an <see cref="ITypeMappingDeclaration"/> and validates

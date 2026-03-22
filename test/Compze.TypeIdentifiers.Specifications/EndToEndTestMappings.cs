@@ -1,8 +1,8 @@
-using Compze.Abstractions.Refactoring.Naming;
+using Compze.TypeIdentifiers;
 
-[assembly: TypeMappings(typeof(Compze.Abstractions.Specifications.Refactoring.Naming.EndToEndTestMappings))]
+[assembly: TypeMappings(typeof(Compze.TypeIdentifiers.Specifications.EndToEndTestMappings))]
 
-namespace Compze.Abstractions.Specifications.Refactoring.Naming;
+namespace Compze.TypeIdentifiers.Specifications;
 
 public class EndToEndTestMappings : ITypeMappingDeclaration
 {

@@ -1,6 +1,6 @@
 using Compze.DocumentDb.Internal.SqlLayer;
 using Compze.DocumentDb.Internal.SqlLayer.Exceptions;
-using Compze.Abstractions.Refactoring.Naming.Internal;
+using Compze.TypeIdentifiers;
 using Compze.Internals.Sql.Common;
 using Compze.Internals.SystemCE;
 using Npgsql;

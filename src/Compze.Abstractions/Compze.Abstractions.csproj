@@ -38,4 +38,11 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Threading)' != 'true'">
     <ProjectReference Include="..\Compze.Threading\Compze.Threading.csproj" />
   </ItemGroup>
+  <!-- Compze.TypeIdentifiers — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_TypeIdentifiers)' == 'true'">
+    <PackageReference Include="Compze.TypeIdentifiers" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_TypeIdentifiers)' != 'true'">
+    <ProjectReference Include="..\Compze.TypeIdentifiers\Compze.TypeIdentifiers.csproj" />
+  </ItemGroup>
 </Project>

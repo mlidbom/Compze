@@ -1,11 +1,8 @@
 using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
-using Compze.Abstractions.Refactoring.Naming;
-using Compze.DependencyInjection;
-using Compze.DependencyInjection.Abstractions;
 
-namespace Compze.Abstractions.Refactoring.Naming.Internal.Implementation;
+namespace Compze.TypeIdentifiers;
 
 /// <summary>
 /// Mutable implementation of <see cref="IStructuralTypeMapper"/> that supports incremental assembly registration.

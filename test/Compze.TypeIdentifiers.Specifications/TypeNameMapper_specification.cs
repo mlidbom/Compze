@@ -1,13 +1,11 @@
-using System.Reflection;
-using Compze.Abstractions.Refactoring.Naming.Internal;
-using Compze.Abstractions.Refactoring.Naming.Internal.Implementation;
+using Compze.TypeIdentifiers;
 using Compze.Must;
 using Compze.xUnitBDD;
 
 // ReSharper disable InconsistentNaming
 #pragma warning disable CA1052
 
-namespace Compze.Abstractions.Specifications.Refactoring.Naming;
+namespace Compze.TypeIdentifiers.Specifications;
 
 // Test types used in mapping tests
 public class TestEntity;

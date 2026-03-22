@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <Version>0.1.0-alpha.1</Version>
+    <!-- TODO: Remove once all public API members have XML documentation comments -->
+    <NoWarn>CS1591</NoWarn>
+    <Description>Stable, structural type identity for .NET: maps types to GUIDs via assembly-level declarations, produces persistence-safe identifiers that survive renames and moves, and handles generics, arrays, and mixed composite types. Zero-dependency core with pluggable assembly registration.</Description>
+    <PackageTags>type-identity;type-mapping;serialization;persistence;refactoring-safe</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Compze.TypeIdentifiers.Specifications" />
+  </ItemGroup>
+  <!-- Compze.Contracts — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' == 'true'">
+    <PackageReference Include="Compze.Contracts" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' != 'true'">
+    <ProjectReference Include="..\Compze.Contracts\Compze.Contracts.csproj" />
+  </ItemGroup>
+</Project>

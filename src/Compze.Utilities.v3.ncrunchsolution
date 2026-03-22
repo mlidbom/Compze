@@ -40,6 +40,7 @@
       <Value>UsePackageReference_Compze_Tests_Infrastructure = true</Value>
       <Value>UsePackageReference_Compze_Threading = true</Value>
       <Value>UsePackageReference_Compze_Threading_Testing = true</Value>
+      <Value>UsePackageReference_Compze_TypeIdentifiers = true</Value>
       <Value>UsePackageReference_Compze_Typermedia = true</Value>
       <Value>UsePackageReference_Compze_Typermedia_Client = true</Value>
       <Value>UsePackageReference_Compze_Typermedia_Hosting = true</Value>

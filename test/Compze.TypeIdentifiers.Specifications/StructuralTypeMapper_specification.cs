@@ -1,6 +1,5 @@
 using Compze.Abstractions.Public;
-using Compze.Abstractions.Refactoring.Naming.Internal;
-using Compze.Abstractions.Refactoring.Naming.Internal.Implementation;
+using Compze.TypeIdentifiers;
 using Compze.Must;
 using Compze.xUnitBDD;
 using Xunit;
@@ -8,7 +7,7 @@ using Xunit;
 // ReSharper disable InconsistentNaming
 #pragma warning disable CA1052
 
-namespace Compze.Abstractions.Specifications.Refactoring.Naming;
+namespace Compze.TypeIdentifiers.Specifications;
 
 /// <summary>
 /// Tests that <see cref="StructuralTypeMapper"/> can be built from assemblies
@@ -19,7 +18,7 @@ public class StructuralTypeMapper_specification
    static StructuralTypeMapper BuildMapper()
    {
       var mapper = new StructuralTypeMapper();
-      mapper.MapTypesFromAssembly(typeof(Compze.Abstractions.TypeMappingDeclarations).Assembly);
+      mapper.MapTypesFromAssembly(typeof(TentityId).Assembly);
       return mapper;
    }
 

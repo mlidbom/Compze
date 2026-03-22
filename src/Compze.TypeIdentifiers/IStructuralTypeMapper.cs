@@ -1,7 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
-namespace Compze.Abstractions.Refactoring.Naming.Internal;
+namespace Compze.TypeIdentifiers;
 
 /// <summary>
 /// Maps .NET types to stable identifiers for persistence and serialization.

@@ -1,4 +1,4 @@
-namespace Compze.Abstractions.Refactoring.Naming.Internal;
+namespace Compze.TypeIdentifiers;
 
 /// <summary>
 /// GUID-backed identity for an open generic definition (e.g. <c>List&lt;&gt;</c>, <c>Dictionary&lt;,&gt;</c>).

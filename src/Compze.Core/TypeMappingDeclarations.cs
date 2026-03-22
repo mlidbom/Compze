@@ -1,4 +1,4 @@
-using Compze.Abstractions.Refactoring.Naming;
+using Compze.TypeIdentifiers;
 using Compze.Core.Tessaging.Teventive.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 

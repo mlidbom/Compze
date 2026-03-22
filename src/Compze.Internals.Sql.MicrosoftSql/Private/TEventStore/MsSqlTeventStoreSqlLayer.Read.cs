@@ -1,7 +1,7 @@
 using System.Data;
 using System.Data.SqlTypes;
 using Compze.Abstractions.Public;
-using Compze.Abstractions.Refactoring.Naming.Internal;
+using Compze.TypeIdentifiers;
 using Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions;
 using Compze.Internals.Sql.Common;
 using Microsoft.Data.SqlClient;

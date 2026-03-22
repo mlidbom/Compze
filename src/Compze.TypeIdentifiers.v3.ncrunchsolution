@@ -1,6 +1,5 @@
 <SolutionConfiguration>
   <Settings>
-    <AllowParallelTestExecution>True</AllowParallelTestExecution>
     <CustomBuildProperties>
       <Value>UsePackageReference_Compze_Abstractions = true</Value>
       <Value>UsePackageReference_Compze_Contracts = true</Value>
@@ -46,7 +45,6 @@
       <Value>UsePackageReference_Compze_Tests_Infrastructure = true</Value>
       <Value>UsePackageReference_Compze_Threading = true</Value>
       <Value>UsePackageReference_Compze_Threading_Testing = true</Value>
-      <Value>UsePackageReference_Compze_TypeIdentifiers = true</Value>
       <Value>UsePackageReference_Compze_Typermedia = true</Value>
       <Value>UsePackageReference_Compze_Typermedia_Client = true</Value>
       <Value>UsePackageReference_Compze_Typermedia_Hosting = true</Value>
@@ -55,10 +53,9 @@
       <Value>UsePackageReference_Compze_Underscore = true</Value>
       <Value>UsePackageReference_Compze_Unit = true</Value>
       <Value>UsePackageReference_Compze_Utilities = true</Value>
+      <Value>UsePackageReference_Compze_xUnit = true</Value>
       <Value>UsePackageReference_Compze_xUnitBDD = true</Value>
+      <Value>UsePackageReference_Compze_xUnitMatrix = true</Value>
     </CustomBuildProperties>
-    <EnableRDI>False</EnableRDI>
-    <RdiConfigured>True</RdiConfigured>
-    <SolutionConfigured>True</SolutionConfigured>
   </Settings>
 </SolutionConfiguration>

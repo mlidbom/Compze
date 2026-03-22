@@ -1,4 +1,4 @@
-namespace Compze.Abstractions.Refactoring.Naming;
+namespace Compze.TypeIdentifiers;
 
 /// <summary>
 /// Assembly-level attribute that points to a class implementing <see cref="ITypeMappingDeclaration"/>.
