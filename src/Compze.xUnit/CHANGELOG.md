@@ -1,7 +1,9 @@
 # Changelog
 
-All notable changes to Compze.xUnitMatrix will be documented in this file.
+All notable changes to Compze.xUnit will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
-## TODO
+## 0.1.0-alpha.1
+
+- Initial pre-release
