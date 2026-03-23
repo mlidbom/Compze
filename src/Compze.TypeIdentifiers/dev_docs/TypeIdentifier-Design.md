@@ -201,43 +201,7 @@ Three separate classes, each with one job:
 
 TypeIdentifier columns in the event store, document DB, tessaging, and Typermedia remain GUID columns. These accept only `MappedTypeIdentifier` — enforced at the type level. This is not a limitation in practice: events and documents are concrete leaf domain types, not generic collections.
 
----
-
-## What goes away
-
-- `DeterministicTypeId` / UUID v5 composition entirely
-- `ComputedTypeIdType` branch of the old `TypeMapperType` hierarchy
-- `TypeMapperAssemblyScanner.CollectClosedGenericTypes`
-- The `AppDomain.AssemblyLoad` hook and `ReentrancyGuard`
-- The static singleton `TypeMapper.Instance`
-- The geometric explosion problem — it ceases to exist
-
-## What changes
-
-- `TypeIdentifier` — from a single GUID-backed type to an abstract base with three subtypes
-- `ITypeIdentifierMapper` — becomes container-scoped, explicitly configured. Produces `MappedTypeIdentifier` for leaf types. May handle `OpenGenericId` ↔ `Type` mappings internally, but `OpenGenericId` is not a `TypeIdentifier`.
-- `TypeIdentifierMapper` — no longer a static singleton
-- `RenamingDecorator` — delegates structural work to `TypeNameParser` + `TypeNameMapper`
-- Generated mapping files — only contain leaf types and open generic definitions
-- Persisted `$type` strings — structural `AssemblyQualifiedName` format with GUIDs for mapped components
-
-## What stays
-
-- Leaf types get explicit GUID assignments
-- SQL schema stays GUID-based
-- `GetType(MappedTypeIdentifier)` / `GetId(Type)` for leaf types — same dictionary lookup
-
-## Resolved questions
-
-- **Open generic mapping name**: `OpenGenericId` — a GUID-backed struct, separate from `TypeId`.
-- **Stable assembly detection**: At **setup time**, assemblies are checked by public key token to determine stability. At **parse time**, the `$type` string only contains assembly names (no tokens), so stable assembly lookup is by name against the pre-built set. Microsoft uses a small, known set of public key tokens:
-  - `7cec85d7bea7798e` — `System.Private.CoreLib`
-  - `b03f5f7f11d50a3a` — most `System.*` runtime libraries
-  - `b77a5c561934e089` — legacy (`mscorlib`, `System`, `System.Core`)
-  - `cc7b13ffcd2ddd51` — `System.Private.Xml`, `netstandard`, etc.
-  - `31bf3856ad364e35` — `Microsoft.*` libraries
-
-  These are hardcoded as stable by default. Users can also register additional stable assemblies by public key token:
+---- **Stable assembly detection**: At **setup time**, assemblies are checked by public key token to determine stability. At **parse time**, the `$type` string only contains assembly names (no tokens), so stable assembly lookup is by name against the pre-built set. Microsoft uses a small, known set of public key tokens.  These are hardcoded as stable by default. Users can also register additional stable assemblies by public key token:
   ```csharp
   mapper.UseStableNameStrategyForPublicKeyToken("xxxxxxxxxxxx"); // all assemblies signed with this token
   mapper.UseStableNameStrategyForAssembliesContaining<NodaTime.Instant>(); // or by marker type
