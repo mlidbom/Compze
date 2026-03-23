@@ -416,26 +416,21 @@ public class TeventStoreUpdaterTest : UniversalTestBase
 
       UseInTransactionalScope(session => session.Save(user));
 
-      const int threadedIterations = 20;
-      var delayEachTransactionBy = 1.Milliseconds();
+      var withinTransactionAfterReadGate = IThreadGate.NewClosed(WaitTimeout.Seconds(30));
+      using var runner = new TestingTaskRunner(30.Seconds());
 
-      var singleThreadedExecutionTime = StopwatchCE.TimeExecution(ReadUserHistory, iterations: threadedIterations).Total;
 
-      var timingsSummary = TimeAsserter.ExecuteThreaded(
-         action: ReadUserHistory,
-         iterations: threadedIterations,
-         maxTotal: singleThreadedExecutionTime / 2,
-         maxDegreeOfParallelism: 5,
-         description: $"If access is serialized the time will be approximately {singleThreadedExecutionTime} milliseconds. If parallelized it should be far below this value.");
+      runner.Run(ReadUserHistory, ReadUserHistory);
+      withinTransactionAfterReadGate.TryAwaitQueueLengthEqualTo(2).Must().BeTrue();
+      withinTransactionAfterReadGate.Open();
 
-      timingsSummary.IndividualExecutionTimes.Aggregate(TimeSpan.Zero, (t1, t2) => t1 + t2).Must().BeGreaterThan(timingsSummary.Total, "If the sum elapsed time of the parts that run in parallel is not greater than the clock time passed parallelism is not taking place.");
       return;
 
       void ReadUserHistory() =>
          UseInTransactionalScope(session =>
          {
             ((ITeventStoreReader)session).GetHistory(user.Id);
-            Thread.Sleep(delayEachTransactionBy);
+            withinTransactionAfterReadGate.AwaitPassThrough();
          });
    }
 
