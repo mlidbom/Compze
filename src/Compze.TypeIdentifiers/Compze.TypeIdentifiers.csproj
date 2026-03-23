@@ -18,4 +18,7 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' != 'true'">
     <ProjectReference Include="..\Compze.Contracts\Compze.Contracts.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Compze.Internals.SystemCE\Compze.Internals.SystemCE.csproj" />
+  </ItemGroup>
 </Project>

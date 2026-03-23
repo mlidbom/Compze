@@ -57,11 +57,11 @@ public class TypeNameMapper_specification
    {
       readonly TypeNameMapper _mapper = CreateMapper();
 
-      [XF] public void returns_MappedTypeId()
-         => (_mapper.GetId(typeof(TestEntity)) is MappedTypeId).Must().BeTrue();
+      [XF] public void returns_MappedTypeIdentifier()
+         => (_mapper.GetId(typeof(TestEntity)) is MappedTypeIdentifier).Must().BeTrue();
 
       [XF] public void has_correct_guid()
-         => ((MappedTypeId)_mapper.GetId(typeof(TestEntity))).GuidValue.Must().Be(TestEntityGuid);
+         => ((MappedTypeIdentifier)_mapper.GetId(typeof(TestEntity))).GuidValue.Must().Be(TestEntityGuid);
 
       [XF] public void string_representation_is_guid_comma_zero()
          => _mapper.GetId(typeof(TestEntity)).StringRepresentation.Must().Be($"{TestEntityGuid}, 0");
@@ -71,8 +71,8 @@ public class TypeNameMapper_specification
    {
       readonly TypeNameMapper _mapper = CreateMapper();
 
-      [XF] public void returns_StableNameTypeId()
-         => (_mapper.GetId(typeof(string)) is StableNameTypeId).Must().BeTrue();
+      [XF] public void returns_StableLeafTypeIdentifier()
+         => (_mapper.GetId(typeof(string)) is StableLeafTypeIdentifier).Must().BeTrue();
 
       [XF] public void string_representation_is_assembly_qualified_name()
          => _mapper.GetId(typeof(string)).StringRepresentation.Must().Be(typeof(string).AssemblyQualifiedName!);
@@ -82,8 +82,8 @@ public class TypeNameMapper_specification
    {
       readonly TypeNameMapper _mapper = CreateMapper();
 
-      [XF] public void returns_StableNameTypeId_for_List_of_string()
-         => (_mapper.GetId(typeof(List<string>)) is StableNameTypeId).Must().BeTrue();
+      [XF] public void returns_StableGenericTypeIdentifier_for_List_of_string()
+         => (_mapper.GetId(typeof(List<string>)) is StableGenericTypeIdentifier).Must().BeTrue();
 
       [XF] public void string_representation_matches_assembly_qualified_name()
          => _mapper.GetId(typeof(List<string>)).StringRepresentation.Must().Be(typeof(List<string>).AssemblyQualifiedName!);
@@ -93,8 +93,8 @@ public class TypeNameMapper_specification
    {
       readonly TypeNameMapper _mapper = CreateMapper();
 
-      [XF] public void returns_ConstructedTypeId()
-         => (_mapper.GetId(typeof(List<TestEntity>)) is ConstructedTypeId).Must().BeTrue();
+      [XF] public void returns_StableGenericTypeIdentifier()
+         => (_mapper.GetId(typeof(List<TestEntity>)) is StableGenericTypeIdentifier).Must().BeTrue();
 
       [XF] public void string_representation_contains_guid()
          => _mapper.GetId(typeof(List<TestEntity>)).StringRepresentation.Must().Contain(TestEntityGuid.ToString());
@@ -110,8 +110,8 @@ public class TypeNameMapper_specification
    {
       readonly TypeNameMapper _mapper = CreateMapper();
 
-      [XF] public void returns_ConstructedTypeId()
-         => (_mapper.GetId(typeof(TestGenericEntity<TestEntity>)) is ConstructedTypeId).Must().BeTrue();
+      [XF] public void returns_MappedGenericTypeIdentifier()
+         => (_mapper.GetId(typeof(TestGenericEntity<TestEntity>)) is MappedGenericTypeIdentifier).Must().BeTrue();
 
       [XF] public void string_representation_contains_definition_guid()
          => _mapper.GetId(typeof(TestGenericEntity<TestEntity>)).StringRepresentation.Must().Contain(TestGenericEntityGuid.ToString());
@@ -124,8 +124,8 @@ public class TypeNameMapper_specification
    {
       readonly TypeNameMapper _mapper = CreateMapper();
 
-      [XF] public void returns_ConstructedTypeId()
-         => (_mapper.GetId(typeof(TestEntity[])) is ConstructedTypeId).Must().BeTrue();
+      [XF] public void returns_ArrayTypeIdentifier()
+         => (_mapper.GetId(typeof(TestEntity[])) is ArrayTypeIdentifier).Must().BeTrue();
 
       [XF] public void string_representation_has_array_brackets()
          => _mapper.GetId(typeof(TestEntity[])).StringRepresentation.Must().Contain("[]");

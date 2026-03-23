@@ -7,14 +7,14 @@ using Compze.xUnitBDD;
 
 namespace Compze.TypeIdentifiers.Specifications;
 
-public class StructuralTypeId_specification
+public class TypeIdentifier_specification
 {
    static readonly Guid SampleGuid = Guid.Parse("e4a8c9f2-7b3d-4f1a-9c6e-2d8b5a0f3e7c");
    static readonly Guid DifferentGuid = Guid.Parse("f5a9d1b3-8c4e-4a2f-b7d6-3e1c9f0a5b8d");
 
-   public class MappedTypeId_ : StructuralTypeId_specification
+   public class MappedTypeIdentifier_ : TypeIdentifier_specification
    {
-      readonly MappedTypeId _typeId = new(SampleGuid);
+      readonly MappedTypeIdentifier _typeId = new(SampleGuid);
 
       [XF] public void exposes_guid_value()
          => _typeId.GuidValue.Must().Be(SampleGuid);
@@ -25,70 +25,67 @@ public class StructuralTypeId_specification
       [XF] public void ToString_returns_string_representation()
          => _typeId.ToString().Must().Be(_typeId.StringRepresentation);
 
-      public class equality : MappedTypeId_
+      public class equality : MappedTypeIdentifier_
       {
          [XF] public void equal_when_same_guid()
-            => new MappedTypeId(SampleGuid).Equals(new MappedTypeId(SampleGuid)).Must().BeTrue();
+            => new MappedTypeIdentifier(SampleGuid).Equals(new MappedTypeIdentifier(SampleGuid)).Must().BeTrue();
 
          [XF] public void not_equal_when_different_guid()
-            => new MappedTypeId(SampleGuid).Equals(new MappedTypeId(DifferentGuid)).Must().BeFalse();
+            => new MappedTypeIdentifier(SampleGuid).Equals(new MappedTypeIdentifier(DifferentGuid)).Must().BeFalse();
 
          [XF] public void operator_equals_works()
-            => (new MappedTypeId(SampleGuid) == new MappedTypeId(SampleGuid)).Must().BeTrue();
+            => (new MappedTypeIdentifier(SampleGuid) == new MappedTypeIdentifier(SampleGuid)).Must().BeTrue();
 
          [XF] public void operator_not_equals_works()
-            => (new MappedTypeId(SampleGuid) != new MappedTypeId(DifferentGuid)).Must().BeTrue();
+            => (new MappedTypeIdentifier(SampleGuid) != new MappedTypeIdentifier(DifferentGuid)).Must().BeTrue();
 
          [XF] public void same_hash_code_for_same_guid()
-            => new MappedTypeId(SampleGuid).GetHashCode().Must().Be(new MappedTypeId(SampleGuid).GetHashCode());
+            => new MappedTypeIdentifier(SampleGuid).GetHashCode().Must().Be(new MappedTypeIdentifier(SampleGuid).GetHashCode());
       }
    }
 
-   public class StableNameTypeId_ : StructuralTypeId_specification
+   public class StableLeafTypeIdentifier_ : TypeIdentifier_specification
    {
       const string StableAqn = "System.String, System.Private.CoreLib";
-      readonly StableNameTypeId _typeId = new(StableAqn);
 
       [XF] public void string_representation_is_the_assembly_qualified_name()
-         => _typeId.StringRepresentation.Must().Be(StableAqn);
+         => TypeIdentifier.Parse(StableAqn).StringRepresentation.Must().Be(StableAqn);
 
-      public class equality : StableNameTypeId_
+      public class equality : StableLeafTypeIdentifier_
       {
          [XF] public void equal_when_same_string()
-            => new StableNameTypeId(StableAqn).Equals(new StableNameTypeId(StableAqn)).Must().BeTrue();
+            => TypeIdentifier.Parse(StableAqn).Equals(TypeIdentifier.Parse(StableAqn)).Must().BeTrue();
 
          [XF] public void not_equal_when_different_string()
-            => new StableNameTypeId(StableAqn).Equals(new StableNameTypeId("System.Int32, System.Private.CoreLib")).Must().BeFalse();
+            => TypeIdentifier.Parse(StableAqn).Equals(TypeIdentifier.Parse("System.Int32, System.Private.CoreLib")).Must().BeFalse();
       }
    }
 
-   public class ConstructedTypeId_ : StructuralTypeId_specification
+   public class StableGenericTypeIdentifier_ : TypeIdentifier_specification
    {
       const string ConstructedString = "System.Collections.Generic.List`1[[e4a8c9f2-7b3d-4f1a-9c6e-2d8b5a0f3e7c, 0]], System.Private.CoreLib";
-      readonly ConstructedTypeId _typeId = new(ConstructedString);
 
       [XF] public void string_representation_is_the_structural_string()
-         => _typeId.StringRepresentation.Must().Be(ConstructedString);
+         => TypeIdentifier.Parse(ConstructedString).StringRepresentation.Must().Be(ConstructedString);
 
-      public class equality : ConstructedTypeId_
+      public class equality : StableGenericTypeIdentifier_
       {
          [XF] public void equal_when_same_string()
-            => new ConstructedTypeId(ConstructedString).Equals(new ConstructedTypeId(ConstructedString)).Must().BeTrue();
+            => TypeIdentifier.Parse(ConstructedString).Equals(TypeIdentifier.Parse(ConstructedString)).Must().BeTrue();
 
          [XF] public void not_equal_when_different_string()
-            => new ConstructedTypeId(ConstructedString).Equals(new ConstructedTypeId("other, 0")).Must().BeFalse();
+            => TypeIdentifier.Parse(ConstructedString).Equals(TypeIdentifier.Parse("System.Int32, System.Private.CoreLib")).Must().BeFalse();
       }
    }
 
-   public class cross_type_equality : StructuralTypeId_specification
+   public class cross_type_equality : TypeIdentifier_specification
    {
-      [XF] public void MappedTypeId_not_equal_to_StableNameTypeId_even_with_same_string_representation()
+      [XF] public void MappedTypeIdentifier_equals_parsed_equivalent_with_same_string_representation()
       {
-         StructuralTypeId mapped = new MappedTypeId(SampleGuid);
-         StructuralTypeId stable = new StableNameTypeId(mapped.StringRepresentation);
-         // Different concrete types, but string representation equality means they are considered equal
-         // This is by design — the string representation IS the identity
-         mapped.Equals(stable).Must().BeTrue();
+         TypeIdentifier mapped = new MappedTypeIdentifier(SampleGuid);
+         TypeIdentifier parsed = TypeIdentifier.Parse(mapped.StringRepresentation);
+         // Both produce the same string representation — equality is by string
+         mapped.Equals(parsed).Must().BeTrue();
       }
    }
 }

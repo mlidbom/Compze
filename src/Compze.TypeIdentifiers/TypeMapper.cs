@@ -1,39 +1,30 @@
 using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
+using Compze.Internals.SystemCE.CollectionsCE.GenericCE;
+using Compze.Internals.SystemCE.LinqCE;
+using Compze.Underscore;
 
 namespace Compze.TypeIdentifiers;
 
 /// <summary>
-/// Mutable implementation of <see cref="IStructuralTypeMapper"/> that supports incremental assembly registration.
-/// Leaf types get <see cref="MappedTypeId"/> (GUID-backed).
+/// Mutable implementation of <see cref="ITypeMapper"/> that supports incremental assembly registration.
+/// Leaf types get <see cref="MappedTypeIdentifier"/> (GUID-backed).
 /// Constructed types use structural string representations via <see cref="TypeNameMapper"/>.
 /// </summary>
-public class StructuralTypeMapper : IStructuralTypeMapper
+public class TypeMapper : ITypeMapper
 {
    readonly TypeNameMapper _typeNameMapper = new();
-   readonly ConcurrentDictionary<Type, MappedTypeId> _typeToId = new();
-   readonly ConcurrentDictionary<MappedTypeId, Type> _idToType = new();
-   readonly ConcurrentDictionary<Type, MappedTypeId> _constructedTypeToMappedId = new();
-   readonly ConcurrentDictionary<Type, IReadOnlySet<MappedTypeId>> _assignableTypeCache = new();
+   readonly ConcurrentDictionary<Type, MappedTypeIdentifier> _typeToId = new();
+   readonly ConcurrentDictionary<MappedTypeIdentifier, Type> _idToType = new();
+   readonly ConcurrentDictionary<Type, MappedTypeIdentifier> _constructedTypeToMappedId = new();
+   readonly ConcurrentDictionary<Type, IReadOnlySet<MappedTypeIdentifier>> _assignableTypeCache = new();
    readonly HashSet<Assembly> _processedAssemblies = [];
 
    /// <summary>Well-known Microsoft public key tokens. All assemblies signed with these are stable by default.</summary>
-   static readonly HashSet<string> MicrosoftPublicKeyTokenSet =
-   [
-      "7cec85d7bea7798e", // System.Private.CoreLib
-      "b03f5f7f11d50a3a", // most System.* runtime libraries
-      "b77a5c561934e089", // legacy (mscorlib, System, System.Core)
-      "cc7b13ffcd2ddd51", // System.Private.Xml, netstandard, etc.
-      "31bf3856ad364e35"  // Microsoft.* libraries
-   ];
+   static readonly HashSet<string> MicrosoftPublicKeyTokens = ["7cec85d7bea7798e", "b03f5f7f11d50a3a", "b77a5c561934e089", "cc7b13ffcd2ddd51", "31bf3856ad364e35"];
 
-   public StructuralTypeMapper()
-   {
-      // Auto-detect and register all currently-loaded Microsoft assemblies as stable
-      foreach(var assembly in AppDomain.CurrentDomain.GetAssemblies())
-         TryRegisterMicrosoftAssemblyAsStable(assembly);
-   }
+   public TypeMapper() => RegisterMicrosoftAssembliesAsStableNameAssemblies();
 
    public void MapTypesFromAssemblyContaining<T>() => MapTypesFromAssembly(typeof(T).Assembly);
 
@@ -42,25 +33,25 @@ public class StructuralTypeMapper : IStructuralTypeMapper
       if(!_processedAssemblies.Add(assembly))
          return; // already processed
 
-      var attribute = assembly.GetCustomAttribute<TypeMappingsAttribute>();
+      var attribute = assembly.GetCustomAttribute<AssemblyTypeMapperAttribute>();
       if(attribute == null)
          throw new InvalidOperationException(
-            $"Assembly '{assembly.GetName().Name}' does not have a [{nameof(TypeMappingsAttribute)}]. " +
-            $"Add [assembly: {nameof(TypeMappingsAttribute)}(typeof(YourMappingClass))] to the assembly.");
+            $"Assembly '{assembly.GetName().Name}' does not have a [{nameof(AssemblyTypeMapperAttribute)}]. " +
+            $"Add [assembly: {nameof(AssemblyTypeMapperAttribute)}(typeof(YourMapper))] to the assembly.");
 
-      var declarationType = attribute.DeclarationType;
-      if(!typeof(ITypeMappingDeclaration).IsAssignableFrom(declarationType))
+      var mapperType = attribute.Mapper;
+      if(!typeof(IAssemblyTypeMapper).IsAssignableFrom(mapperType))
          throw new InvalidOperationException(
-            $"Type '{declarationType.FullName}' specified in [{nameof(TypeMappingsAttribute)}] " +
-            $"does not implement {nameof(ITypeMappingDeclaration)}.");
+            $"Type '{mapperType.FullName}' specified in [{nameof(AssemblyTypeMapperAttribute)}] " +
+            $"does not implement {nameof(IAssemblyTypeMapper)}.");
 
-      var declaration = (ITypeMappingDeclaration)Activator.CreateInstance(declarationType)!;
+      var mapper = (IAssemblyTypeMapper)Activator.CreateInstance(mapperType)!;
       var registrar = new TypeMappingRegistrar(assembly);
-      declaration.DeclareMappings(registrar);
+      mapper.Map(registrar);
 
       foreach(var kvp in registrar.LeafTypeMappings)
       {
-         var mappedId = new MappedTypeId(kvp.Value);
+         var mappedId = new MappedTypeIdentifier(kvp.Value);
          _typeToId[kvp.Key] = mappedId;
          _idToType[mappedId] = kvp.Key;
          _typeNameMapper.AddLeafTypeMapping(kvp.Key, kvp.Value);
@@ -68,7 +59,7 @@ public class StructuralTypeMapper : IStructuralTypeMapper
 
       foreach(var kvp in registrar.OpenGenericMappings)
       {
-         var mappedId = new MappedTypeId(kvp.Value);
+         var mappedId = new MappedTypeIdentifier(kvp.Value);
          _typeToId[kvp.Key] = mappedId;
          _idToType[mappedId] = kvp.Key;
          _typeNameMapper.AddOpenGenericMapping(kvp.Key, kvp.Value);
@@ -88,11 +79,11 @@ public class StructuralTypeMapper : IStructuralTypeMapper
       _constructedTypeToMappedId.Clear();
    }
 
-   public StructuralTypeId GetId(Type type) => _typeNameMapper.GetId(type);
+   public TypeIdentifier GetId(Type type) => _typeNameMapper.GetId(type);
 
-   public Type GetType(StructuralTypeId id) => _typeNameMapper.GetType(id);
+   public Type GetType(TypeIdentifier id) => _typeNameMapper.GetType(id);
 
-   public bool TryGetType(StructuralTypeId id, [NotNullWhen(true)] out Type? type)
+   public bool TryGetType(TypeIdentifier id, [NotNullWhen(true)] out Type? type)
    {
       try
       {
@@ -106,7 +97,7 @@ public class StructuralTypeMapper : IStructuralTypeMapper
       }
    }
 
-   public MappedTypeId GetMappedId(Type type)
+   public MappedTypeIdentifier GetMappedId(Type type)
    {
       if(_typeToId.TryGetValue(type, out var id))
          return id;
@@ -118,27 +109,27 @@ public class StructuralTypeMapper : IStructuralTypeMapper
       throw new InvalidOperationException($"No mapping found for type: {type.FullName}. Ensure the assembly declaring this type has been registered.");
    }
 
-   MappedTypeId ComputeDeterministicMappedId(Type type)
+   MappedTypeIdentifier ComputeDeterministicMappedId(Type type)
    {
       var structuralId = _typeNameMapper.GetId(type);
       var hash = System.Security.Cryptography.SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(structuralId.StringRepresentation));
       var guidBytes = hash.AsSpan(0, 16).ToArray();
       // Set version nibble to 0x80 (custom/private) to distinguish from leaf-mapped GUIDs
       guidBytes[7] = (byte)((guidBytes[7] & 0x0F) | 0x80);
-      var mappedId = new MappedTypeId(new Guid(guidBytes));
+      var mappedId = new MappedTypeIdentifier(new Guid(guidBytes));
       _idToType[mappedId] = type;
       return mappedId;
    }
 
-   public Type GetType(MappedTypeId id)
+   public Type GetType(MappedTypeIdentifier id)
    {
       if(_idToType.TryGetValue(id, out var type))
          return type;
 
-      throw new InvalidOperationException($"No type found for MappedTypeId: {id}");
+      throw new InvalidOperationException($"No type found for MappedTypeIdentifier: {id}");
    }
 
-   public IEnumerable<MappedTypeId> GetIdForTypesAssignableTo(Type type)
+   public IEnumerable<MappedTypeIdentifier> GetIdForTypesAssignableTo(Type type)
       => _assignableTypeCache.GetOrAdd(type, ComputeAssignableTypeIds);
 
    public void AssertMappingsExistFor(IEnumerable<Type> types)
@@ -156,7 +147,7 @@ public class StructuralTypeMapper : IStructuralTypeMapper
 
       if(type.IsConstructedGenericType)
          return _typeNameMapper.HasMappingForOpenGeneric(type.GetGenericTypeDefinition())
-                && type.GetGenericArguments().All(CanResolve);
+             && type.GetGenericArguments().All(CanResolve);
 
       if(type.IsArray)
          return CanResolve(type.GetElementType()!);
@@ -170,9 +161,9 @@ public class StructuralTypeMapper : IStructuralTypeMapper
    public Type FromPersistedTypeString(string persistedTypeString)
       => _typeNameMapper.GetTypeFromPersistedString(persistedTypeString);
 
-   IReadOnlySet<MappedTypeId> ComputeAssignableTypeIds(Type baseType)
+   IReadOnlySet<MappedTypeIdentifier> ComputeAssignableTypeIds(Type baseType)
    {
-      var result = new HashSet<MappedTypeId>();
+      var result = new HashSet<MappedTypeIdentifier>();
 
       foreach(var kvp in _typeToId)
       {
@@ -194,29 +185,19 @@ public class StructuralTypeMapper : IStructuralTypeMapper
       return result;
    }
 
-   void TryRegisterMicrosoftAssemblyAsStable(Assembly assembly)
-   {
-      var tokenBytes = assembly.GetName().GetPublicKeyToken();
-      if(tokenBytes == null || tokenBytes.Length == 0)
-         return;
-
-      var token = Convert.ToHexStringLower(tokenBytes);
-      if(MicrosoftPublicKeyTokenSet.Contains(token))
-      {
-         var name = assembly.GetName().Name;
-         if(name != null)
-            _typeNameMapper.AddStableAssemblyName(name);
-      }
-   }
-
    ///<summary>Temporary bridge: auto-discovers all loaded assemblies with [TypeMappings].
    /// Will be replaced with explicit per-endpoint registration.</summary>
-   public void MapTypesFromAllLoadedAssembliesWithTypeMappingsAttribute()
+   public void MapTypesFromAllLoadedAssembliesWithTypeMappingsAttribute() =>
+      AppDomain.CurrentDomain.GetAssemblies()
+               .Where(it => it.GetCustomAttribute<AssemblyTypeMapperAttribute>() != null)
+               .ForEach(MapTypesFromAssembly);
+
+   void RegisterMicrosoftAssembliesAsStableNameAssemblies()
    {
-      foreach(var assembly in AppDomain.CurrentDomain.GetAssemblies())
-      {
-         if(assembly.GetCustomAttribute<TypeMappingsAttribute>() != null)
-            MapTypesFromAssembly(assembly);
-      }
+      AppDomain.CurrentDomain.GetAssemblies()
+               .Where(it => it.PublicKeyTokenString._(MicrosoftPublicKeyTokens.Contains))
+               .Select(it => it.SimpleName)
+               .WhereNotNull()
+               .ForEach(it => _typeNameMapper.AddStableAssemblyName(it));
    }
 }

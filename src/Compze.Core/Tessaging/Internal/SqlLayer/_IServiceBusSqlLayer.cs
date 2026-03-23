@@ -30,25 +30,25 @@ public interface IServiceBusSqlLayer
 
    public interface IInboxSqlLayer
    {
-      SaveTessageResult SaveTessage(TessageId tessageId, MappedTypeId typeId, string serializedTessage);
+      SaveTessageResult SaveTessage(TessageId tessageId, MappedTypeIdentifier typeId, string serializedTessage);
       int MarkAsSucceeded(TessageId tessageId);
       int RecordException(TessageId tessageId, string exceptionStackTrace, string exceptionTessage, string exceptionType);
       int MarkAsFailed(TessageId tessageId);
       Task InitAsync();
    }
 
-   public class OutboxTessageWithReceivers(string serializedTessage, MappedTypeId typeId, TessageId tessageId, IEnumerable<EndpointId> receiverEndpointIds)
+   public class OutboxTessageWithReceivers(string serializedTessage, MappedTypeIdentifier typeId, TessageId tessageId, IEnumerable<EndpointId> receiverEndpointIds)
    {
       public string SerializedTessage { get; } = serializedTessage;
-      public MappedTypeId TypeId { get; } = typeId;
+      public MappedTypeIdentifier TypeId { get; } = typeId;
       public TessageId TessageId { get; } = tessageId;
       public IEnumerable<EndpointId> ReceiverEndpointIds { get; } = receiverEndpointIds.ToList();
    }
 
-   public class UndeliveredTessage(TessageId tessageId, MappedTypeId typeId, string serializedTessage, EndpointId targetEndpointId, int retryCount, DateTime? lastAttemptTime)
+   public class UndeliveredTessage(TessageId tessageId, MappedTypeIdentifier typeId, string serializedTessage, EndpointId targetEndpointId, int retryCount, DateTime? lastAttemptTime)
    {
       public TessageId TessageId { get; } = tessageId;
-      public MappedTypeId TypeId { get; } = typeId;
+      public MappedTypeIdentifier TypeId { get; } = typeId;
       public string SerializedTessage { get; } = serializedTessage;
       public EndpointId TargetEndpointId { get; } = targetEndpointId;
       public int RetryCount { get; } = retryCount;

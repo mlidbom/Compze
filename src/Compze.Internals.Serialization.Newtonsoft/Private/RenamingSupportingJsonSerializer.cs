@@ -9,7 +9,7 @@ class RenamingSupportingJsonSerializer : IJsonSerializer
    readonly JsonSerializerSettings _jsonSettings;
    readonly RenamingDecorator _renamingDecorator;
 
-   protected internal RenamingSupportingJsonSerializer(JsonSerializerSettings jsonSettings, IStructuralTypeMapper typeMapper)
+   protected internal RenamingSupportingJsonSerializer(JsonSerializerSettings jsonSettings, ITypeMapper typeMapper)
    {
       _jsonSettings = jsonSettings;
       _renamingDecorator = new RenamingDecorator(typeMapper);

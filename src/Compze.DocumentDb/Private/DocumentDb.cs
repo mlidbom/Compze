@@ -19,15 +19,15 @@ sealed class DocumentDb : IDocumentDb
 {
    public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Scoped.For<IDocumentDb>()
-                                  .CreatedBy((IDocumentDbSqlLayer sqlLayer, IStructuralTypeMapper typeMapper, IDocumentDbSerializer serializer)
+                                  .CreatedBy((IDocumentDbSqlLayer sqlLayer, ITypeMapper typeMapper, IDocumentDbSerializer serializer)
                                                 => new DocumentDb(serializer, typeMapper, sqlLayer)));
 
    readonly IDocumentDbSerializer _serializer;
 
-   readonly IStructuralTypeMapper _typeMapper;
+   readonly ITypeMapper _typeMapper;
    readonly IDocumentDbSqlLayer _sqlLayer;
 
-   DocumentDb(IDocumentDbSerializer serializer, IStructuralTypeMapper typeMapper, IDocumentDbSqlLayer sqlLayer)
+   DocumentDb(IDocumentDbSerializer serializer, ITypeMapper typeMapper, IDocumentDbSqlLayer sqlLayer)
    {
       _sqlLayer = sqlLayer;
       _serializer = serializer;
@@ -123,13 +123,13 @@ sealed class DocumentDb : IDocumentDb
    public IEnumerable<Guid> GetAllIds<T>() where T : IEntity<Guid> => _sqlLayer.GetAllIds(AcceptableTypeIds<T>());
 
    [return: NotNull] TDocument Deserialize<TDocument>(IDocumentDbSqlLayer.ReadRow stored) =>
-      (TDocument)_serializer.Deserialize(GetTypeFromId(new MappedTypeId(stored.TypeId)), stored.SerializedDocument)._assert().NotNull();
+      (TDocument)_serializer.Deserialize(GetTypeFromId(new MappedTypeIdentifier(stored.TypeId)), stored.SerializedDocument)._assert().NotNull();
 
-   IReadOnlySet<MappedTypeId> AcceptableTypeIds<T>() => AcceptableTypeIds(typeof(T));
+   IReadOnlySet<MappedTypeIdentifier> AcceptableTypeIds<T>() => AcceptableTypeIds(typeof(T));
 
-   IReadOnlySet<MappedTypeId> AcceptableTypeIds(Type type) => _typeMapper.GetIdForTypesAssignableTo(type)
+   IReadOnlySet<MappedTypeIdentifier> AcceptableTypeIds(Type type) => _typeMapper.GetIdForTypesAssignableTo(type)
                                                                    .ToHashSet()
                                                                    ._assert(ids => ids.Any(), _ => $"Found no TypeIds for {type.GetFullNameCompilable()}");
 
-   Type GetTypeFromId(MappedTypeId id) => _typeMapper.GetType(id);
+   Type GetTypeFromId(MappedTypeIdentifier id) => _typeMapper.GetType(id);
 }

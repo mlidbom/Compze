@@ -9,21 +9,26 @@ namespace Compze.TypeIdentifiers.Specifications;
 
 public class TypeNameParser_specification
 {
-   static TypeNameParser.ParsedTypeName Parse(string input) => TypeNameParser.Parse(input);
+   static TypeIdentifier Parse(string input) => TypeIdentifier.Parse(input);
+   static StableLeafTypeIdentifier ParseLeaf(string input) => (StableLeafTypeIdentifier)Parse(input);
+   static MappedTypeIdentifier ParseMappedLeaf(string input) => (MappedTypeIdentifier)Parse(input);
+   static StableGenericTypeIdentifier ParseGeneric(string input) => (StableGenericTypeIdentifier)Parse(input);
+   static MappedGenericTypeIdentifier ParseMappedGeneric(string input) => (MappedGenericTypeIdentifier)Parse(input);
+   static ArrayTypeIdentifier ParseArray(string input) => (ArrayTypeIdentifier)Parse(input);
 
    public class parsing_a_leaf_type : TypeNameParser_specification
    {
       [XF] public void parses_type_name()
-         => Parse("MyNamespace.MyType, MyAssembly").TypeName.Must().Be("MyNamespace.MyType");
+         => ParseLeaf("MyNamespace.MyType, MyAssembly").TypeName.Must().Be("MyNamespace.MyType");
 
       [XF] public void parses_assembly_name()
-         => Parse("MyNamespace.MyType, MyAssembly").AssemblyName.Must().Be("MyAssembly");
+         => ParseLeaf("MyNamespace.MyType, MyAssembly").AssemblyName.Must().Be("MyAssembly");
 
-      [XF] public void has_no_type_arguments()
-         => Parse("MyNamespace.MyType, MyAssembly").TypeArguments.Must().BeNull();
+      [XF] public void parses_as_leaf_type()
+         => (Parse("MyNamespace.MyType, MyAssembly") is StableLeafTypeIdentifier).Must().Be(true);
 
       [XF] public void round_trips_to_original_string()
-         => Parse("MyNamespace.MyType, MyAssembly").ToAssemblyQualifiedNameString()
+         => Parse("MyNamespace.MyType, MyAssembly").StringRepresentation
                .Must().Be("MyNamespace.MyType, MyAssembly");
    }
 
@@ -31,14 +36,14 @@ public class TypeNameParser_specification
    {
       const string MappedTypeString = "e4a8c9f2-7b3d-4f1a-9c6e-2d8b5a0f3e7c, 0";
 
-      [XF] public void parses_guid_as_type_name()
-         => Parse(MappedTypeString).TypeName.Must().Be("e4a8c9f2-7b3d-4f1a-9c6e-2d8b5a0f3e7c");
+      [XF] public void parses_as_mapped_leaf()
+         => (Parse(MappedTypeString) is MappedTypeIdentifier).Must().Be(true);
 
-      [XF] public void parses_zero_as_assembly_name()
-         => Parse(MappedTypeString).AssemblyName.Must().Be("0");
+      [XF] public void parses_guid()
+         => ParseMappedLeaf(MappedTypeString).GuidValue.Must().Be(Guid.Parse("e4a8c9f2-7b3d-4f1a-9c6e-2d8b5a0f3e7c"));
 
-      [XF] public void round_trips()    
-         => Parse(MappedTypeString).ToAssemblyQualifiedNameString()
+      [XF] public void round_trips()
+         => Parse(MappedTypeString).StringRepresentation
                .Must().Be(MappedTypeString);
    }
 
@@ -47,22 +52,22 @@ public class TypeNameParser_specification
       const string GenericString = "System.Collections.Generic.List`1[[MyNamespace.MyType, MyAssembly]], System.Private.CoreLib";
 
       [XF] public void parses_generic_type_name_with_arity()
-         => Parse(GenericString).TypeName.Must().Be("System.Collections.Generic.List`1");
+         => ParseGeneric(GenericString).TypeName.Must().Be("System.Collections.Generic.List`1");
 
       [XF] public void parses_outer_assembly_name()
-         => Parse(GenericString).AssemblyName.Must().Be("System.Private.CoreLib");
+         => ParseGeneric(GenericString).AssemblyName.Must().Be("System.Private.CoreLib");
 
       [XF] public void has_one_type_argument()
-         => Parse(GenericString).TypeArguments!.Length.Must().Be(1);
+         => ParseGeneric(GenericString).TypeArguments.Length.Must().Be(1);
 
       [XF] public void type_argument_has_correct_type_name()
-         => Parse(GenericString).TypeArguments![0].TypeName.Must().Be("MyNamespace.MyType");
+         => ((StableLeafTypeIdentifier)ParseGeneric(GenericString).TypeArguments[0]).TypeName.Must().Be("MyNamespace.MyType");
 
       [XF] public void type_argument_has_correct_assembly_name()
-         => Parse(GenericString).TypeArguments![0].AssemblyName.Must().Be("MyAssembly");
+         => ((StableLeafTypeIdentifier)ParseGeneric(GenericString).TypeArguments[0]).AssemblyName.Must().Be("MyAssembly");
 
       [XF] public void round_trips()
-         => Parse(GenericString).ToAssemblyQualifiedNameString()
+         => Parse(GenericString).StringRepresentation
                .Must().Be(GenericString);
    }
 
@@ -71,16 +76,16 @@ public class TypeNameParser_specification
       const string DictionaryString = "System.Collections.Generic.Dictionary`2[[System.String, System.Private.CoreLib],[System.Int32, System.Private.CoreLib]], System.Private.CoreLib";
 
       [XF] public void has_two_type_arguments()
-         => Parse(DictionaryString).TypeArguments!.Length.Must().Be(2);
+         => ParseGeneric(DictionaryString).TypeArguments.Length.Must().Be(2);
 
       [XF] public void first_argument_is_String()
-         => Parse(DictionaryString).TypeArguments![0].TypeName.Must().Be("System.String");
+         => ((StableLeafTypeIdentifier)ParseGeneric(DictionaryString).TypeArguments[0]).TypeName.Must().Be("System.String");
 
       [XF] public void second_argument_is_Int32()
-         => Parse(DictionaryString).TypeArguments![1].TypeName.Must().Be("System.Int32");
+         => ((StableLeafTypeIdentifier)ParseGeneric(DictionaryString).TypeArguments[1]).TypeName.Must().Be("System.Int32");
 
       [XF] public void round_trips()
-         => Parse(DictionaryString).ToAssemblyQualifiedNameString()
+         => Parse(DictionaryString).StringRepresentation
                .Must().Be(DictionaryString);
    }
 
@@ -89,16 +94,16 @@ public class TypeNameParser_specification
       const string MixedGenericString = "System.Collections.Generic.List`1[[e4a8c9f2-7b3d-4f1a-9c6e-2d8b5a0f3e7c, 0]], System.Private.CoreLib";
 
       [XF] public void outer_type_is_stable()
-         => Parse(MixedGenericString).AssemblyName.Must().Be("System.Private.CoreLib");
+         => ParseGeneric(MixedGenericString).AssemblyName.Must().Be("System.Private.CoreLib");
 
-      [XF] public void argument_type_name_is_guid()
-         => Parse(MixedGenericString).TypeArguments![0].TypeName.Must().Be("e4a8c9f2-7b3d-4f1a-9c6e-2d8b5a0f3e7c");
+      [XF] public void argument_is_mapped_leaf()
+         => (ParseGeneric(MixedGenericString).TypeArguments[0] is MappedTypeIdentifier).Must().Be(true);
 
-      [XF] public void argument_assembly_is_zero()
-         => Parse(MixedGenericString).TypeArguments![0].AssemblyName.Must().Be("0");
+      [XF] public void argument_guid_is_correct()
+         => ((MappedTypeIdentifier)ParseGeneric(MixedGenericString).TypeArguments[0]).GuidValue.Must().Be(Guid.Parse("e4a8c9f2-7b3d-4f1a-9c6e-2d8b5a0f3e7c"));
 
       [XF] public void round_trips()
-         => Parse(MixedGenericString).ToAssemblyQualifiedNameString()
+         => Parse(MixedGenericString).StringRepresentation
                .Must().Be(MixedGenericString);
    }
 
@@ -107,22 +112,22 @@ public class TypeNameParser_specification
       const string NestedString = "System.Collections.Generic.Dictionary`2[[System.String, System.Private.CoreLib],[System.Collections.Generic.List`1[[e4a8c9f2-7b3d-4f1a-9c6e-2d8b5a0f3e7c, 0]], System.Private.CoreLib]], System.Private.CoreLib";
 
       [XF] public void outer_type_is_Dictionary()
-         => Parse(NestedString).TypeName.Must().Be("System.Collections.Generic.Dictionary`2");
+         => ParseGeneric(NestedString).TypeName.Must().Be("System.Collections.Generic.Dictionary`2");
 
       [XF] public void first_argument_is_String()
-         => Parse(NestedString).TypeArguments![0].TypeName.Must().Be("System.String");
+         => ((StableLeafTypeIdentifier)ParseGeneric(NestedString).TypeArguments[0]).TypeName.Must().Be("System.String");
 
       [XF] public void second_argument_is_a_generic()
-         => Parse(NestedString).TypeArguments![1].TypeArguments!.Length.Must().Be(1);
+         => ((StableGenericTypeIdentifier)ParseGeneric(NestedString).TypeArguments[1]).TypeArguments.Length.Must().Be(1);
 
       [XF] public void second_argument_is_List()
-         => Parse(NestedString).TypeArguments![1].TypeName.Must().Be("System.Collections.Generic.List`1");
+         => ((StableGenericTypeIdentifier)ParseGeneric(NestedString).TypeArguments[1]).TypeName.Must().Be("System.Collections.Generic.List`1");
 
-      [XF] public void nested_argument_is_mapped()
-         => Parse(NestedString).TypeArguments![1].TypeArguments![0].AssemblyName.Must().Be("0");
+      [XF] public void nested_argument_is_mapped_leaf()
+         => (((StableGenericTypeIdentifier)ParseGeneric(NestedString).TypeArguments[1]).TypeArguments[0] is MappedTypeIdentifier).Must().Be(true);
 
       [XF] public void round_trips()
-         => Parse(NestedString).ToAssemblyQualifiedNameString()
+         => Parse(NestedString).StringRepresentation
                .Must().Be(NestedString);
    }
 
@@ -130,17 +135,23 @@ public class TypeNameParser_specification
    {
       const string ArrayString = "MyNamespace.MyType[], MyAssembly";
 
-      [XF] public void type_name_does_not_include_array_suffix()
-         => Parse(ArrayString).TypeName.Must().Be("MyNamespace.MyType");
+      [XF] public void parses_as_array_type()
+         => (Parse(ArrayString) is ArrayTypeIdentifier).Must().Be(true);
 
-      [XF] public void array_suffix_is_parsed()
-         => Parse(ArrayString).ArraySuffix.Must().Be("[]");
+      [XF] public void rank_is_one()
+         => ParseArray(ArrayString).Rank.Must().Be(1);
 
-      [XF] public void parses_assembly_name()
-         => Parse(ArrayString).AssemblyName.Must().Be("MyAssembly");
+      [XF] public void element_is_leaf()
+         => (ParseArray(ArrayString).Element is StableLeafTypeIdentifier).Must().Be(true);
+
+      [XF] public void element_type_name()
+         => ((StableLeafTypeIdentifier)ParseArray(ArrayString).Element).TypeName.Must().Be("MyNamespace.MyType");
+
+      [XF] public void element_assembly_name()
+         => ((StableLeafTypeIdentifier)ParseArray(ArrayString).Element).AssemblyName.Must().Be("MyAssembly");
 
       [XF] public void round_trips()
-         => Parse(ArrayString).ToAssemblyQualifiedNameString()
+         => Parse(ArrayString).StringRepresentation
                .Must().Be(ArrayString);
    }
 
@@ -148,11 +159,11 @@ public class TypeNameParser_specification
    {
       const string MultiDimArrayString = "MyNamespace.MyType[,], MyAssembly";
 
-      [XF] public void array_suffix_includes_rank()
-         => Parse(MultiDimArrayString).ArraySuffix.Must().Be("[,]");
+      [XF] public void rank_is_two()
+         => ParseArray(MultiDimArrayString).Rank.Must().Be(2);
 
       [XF] public void round_trips()
-         => Parse(MultiDimArrayString).ToAssemblyQualifiedNameString()
+         => Parse(MultiDimArrayString).StringRepresentation
                .Must().Be(MultiDimArrayString);
    }
 
@@ -160,17 +171,20 @@ public class TypeNameParser_specification
    {
       const string MappedArrayString = "e4a8c9f2-7b3d-4f1a-9c6e-2d8b5a0f3e7c[], 0";
 
-      [XF] public void type_name_is_guid()
-         => Parse(MappedArrayString).TypeName.Must().Be("e4a8c9f2-7b3d-4f1a-9c6e-2d8b5a0f3e7c");
+      [XF] public void parses_as_array()
+         => (Parse(MappedArrayString) is ArrayTypeIdentifier).Must().Be(true);
 
-      [XF] public void array_suffix_is_parsed()
-         => Parse(MappedArrayString).ArraySuffix.Must().Be("[]");
+      [XF] public void element_is_mapped_leaf()
+         => (ParseArray(MappedArrayString).Element is MappedTypeIdentifier).Must().Be(true);
 
-      [XF] public void assembly_is_zero()
-         => Parse(MappedArrayString).AssemblyName.Must().Be("0");
+      [XF] public void element_guid()
+         => ((MappedTypeIdentifier)ParseArray(MappedArrayString).Element).GuidValue.Must().Be(Guid.Parse("e4a8c9f2-7b3d-4f1a-9c6e-2d8b5a0f3e7c"));
+
+      [XF] public void rank_is_one()
+         => ParseArray(MappedArrayString).Rank.Must().Be(1);
 
       [XF] public void round_trips()
-         => Parse(MappedArrayString).ToAssemblyQualifiedNameString()
+         => Parse(MappedArrayString).StringRepresentation
                .Must().Be(MappedArrayString);
    }
 
@@ -178,17 +192,20 @@ public class TypeNameParser_specification
    {
       const string ArrayOfGenericString = "System.Collections.Generic.List`1[[MyNamespace.MyType, MyAssembly]][], System.Private.CoreLib";
 
-      [XF] public void type_name_has_arity_without_array_suffix()
-         => Parse(ArrayOfGenericString).TypeName.Must().Be("System.Collections.Generic.List`1");
+      [XF] public void parses_as_array()
+         => (Parse(ArrayOfGenericString) is ArrayTypeIdentifier).Must().Be(true);
 
-      [XF] public void array_suffix_is_parsed()
-         => Parse(ArrayOfGenericString).ArraySuffix.Must().Be("[]");
+      [XF] public void element_is_generic()
+         => (ParseArray(ArrayOfGenericString).Element is StableGenericTypeIdentifier).Must().Be(true);
 
-      [XF] public void has_one_type_argument()
-         => Parse(ArrayOfGenericString).TypeArguments!.Length.Must().Be(1);
+      [XF] public void element_type_name_has_arity()
+         => ((StableGenericTypeIdentifier)ParseArray(ArrayOfGenericString).Element).TypeName.Must().Be("System.Collections.Generic.List`1");
+
+      [XF] public void element_has_one_type_argument()
+         => ((StableGenericTypeIdentifier)ParseArray(ArrayOfGenericString).Element).TypeArguments.Length.Must().Be(1);
 
       [XF] public void round_trips()
-         => Parse(ArrayOfGenericString).ToAssemblyQualifiedNameString()
+         => Parse(ArrayOfGenericString).StringRepresentation
                .Must().Be(ArrayOfGenericString);
    }
 
@@ -196,14 +213,17 @@ public class TypeNameParser_specification
    {
       const string GenericWithArrayArgString = "System.Collections.Generic.List`1[[MyNamespace.MyType[], MyAssembly]], System.Private.CoreLib";
 
-      [XF] public void argument_array_suffix_is_parsed()
-         => Parse(GenericWithArrayArgString).TypeArguments![0].ArraySuffix.Must().Be("[]");
+      [XF] public void argument_is_array()
+         => (ParseGeneric(GenericWithArrayArgString).TypeArguments[0] is ArrayTypeIdentifier).Must().Be(true);
 
-      [XF] public void argument_type_name_does_not_include_array_suffix()
-         => Parse(GenericWithArrayArgString).TypeArguments![0].TypeName.Must().Be("MyNamespace.MyType");
+      [XF] public void argument_array_rank_is_one()
+         => ((ArrayTypeIdentifier)ParseGeneric(GenericWithArrayArgString).TypeArguments[0]).Rank.Must().Be(1);
+
+      [XF] public void argument_element_type_name()
+         => ((StableLeafTypeIdentifier)((ArrayTypeIdentifier)ParseGeneric(GenericWithArrayArgString).TypeArguments[0]).Element).TypeName.Must().Be("MyNamespace.MyType");
 
       [XF] public void round_trips()
-         => Parse(GenericWithArrayArgString).ToAssemblyQualifiedNameString()
+         => Parse(GenericWithArrayArgString).StringRepresentation
                .Must().Be(GenericWithArrayArgString);
    }
 
@@ -211,20 +231,20 @@ public class TypeNameParser_specification
    {
       const string MappedGenericString = "a1b2c3d4-e5f6-7890-abcd-ef1234567890[[e4a8c9f2-7b3d-4f1a-9c6e-2d8b5a0f3e7c, 0]], 0";
 
-      [XF] public void type_name_is_guid()
-         => Parse(MappedGenericString).TypeName.Must().Be("a1b2c3d4-e5f6-7890-abcd-ef1234567890");
+      [XF] public void parses_as_mapped_generic()
+         => (Parse(MappedGenericString) is MappedGenericTypeIdentifier).Must().Be(true);
 
-      [XF] public void assembly_is_zero()
-         => Parse(MappedGenericString).AssemblyName.Must().Be("0");
+      [XF] public void guid_is_correct()
+         => ParseMappedGeneric(MappedGenericString).GuidValue.Must().Be(Guid.Parse("a1b2c3d4-e5f6-7890-abcd-ef1234567890"));
 
       [XF] public void has_one_type_argument()
-         => Parse(MappedGenericString).TypeArguments!.Length.Must().Be(1);
+         => ParseMappedGeneric(MappedGenericString).TypeArguments.Length.Must().Be(1);
 
-      [XF] public void argument_is_mapped()
-         => Parse(MappedGenericString).TypeArguments![0].AssemblyName.Must().Be("0");
+      [XF] public void argument_is_mapped_leaf()
+         => (ParseMappedGeneric(MappedGenericString).TypeArguments[0] is MappedTypeIdentifier).Must().Be(true);
 
       [XF] public void round_trips()
-         => Parse(MappedGenericString).ToAssemblyQualifiedNameString()
+         => Parse(MappedGenericString).StringRepresentation
                .Must().Be(MappedGenericString);
    }
 
@@ -233,49 +253,49 @@ public class TypeNameParser_specification
       [XF] public void round_trips_System_String()
       {
          var aqn = typeof(string).AssemblyQualifiedName!;
-         Parse(aqn).ToAssemblyQualifiedNameString().Must().Be(aqn);
+         Parse(aqn).StringRepresentation.Must().Be(aqn);
       }
 
       [XF] public void round_trips_List_of_string()
       {
          var aqn = typeof(List<string>).AssemblyQualifiedName!;
-         Parse(aqn).ToAssemblyQualifiedNameString().Must().Be(aqn);
+         Parse(aqn).StringRepresentation.Must().Be(aqn);
       }
 
       [XF] public void round_trips_Dictionary_of_string_int()
       {
          var aqn = typeof(Dictionary<string, int>).AssemblyQualifiedName!;
-         Parse(aqn).ToAssemblyQualifiedNameString().Must().Be(aqn);
+         Parse(aqn).StringRepresentation.Must().Be(aqn);
       }
 
       [XF] public void round_trips_array_of_int()
       {
          var aqn = typeof(int[]).AssemblyQualifiedName!;
-         Parse(aqn).ToAssemblyQualifiedNameString().Must().Be(aqn);
+         Parse(aqn).StringRepresentation.Must().Be(aqn);
       }
 
       [XF] public void round_trips_Dictionary_of_string_List_of_int()
       {
          var aqn = typeof(Dictionary<string, List<int>>).AssemblyQualifiedName!;
-         Parse(aqn).ToAssemblyQualifiedNameString().Must().Be(aqn);
+         Parse(aqn).StringRepresentation.Must().Be(aqn);
       }
 
       [XF] public void round_trips_array_of_List_of_string()
       {
          var aqn = typeof(List<string>[]).AssemblyQualifiedName!;
-         Parse(aqn).ToAssemblyQualifiedNameString().Must().Be(aqn);
+         Parse(aqn).StringRepresentation.Must().Be(aqn);
       }
 
       [XF] public void round_trips_List_of_int_array()
       {
          var aqn = typeof(List<int[]>).AssemblyQualifiedName!;
-         Parse(aqn).ToAssemblyQualifiedNameString().Must().Be(aqn);
+         Parse(aqn).StringRepresentation.Must().Be(aqn);
       }
 
       [XF] public void round_trips_multidimensional_array()
       {
          var aqn = typeof(int[,]).AssemblyQualifiedName!;
-         Parse(aqn).ToAssemblyQualifiedNameString().Must().Be(aqn);
+         Parse(aqn).StringRepresentation.Must().Be(aqn);
       }
    }
 }

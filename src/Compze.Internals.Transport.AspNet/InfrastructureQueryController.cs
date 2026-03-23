@@ -15,19 +15,19 @@ namespace Compze.Internals.Transport.AspNet;
 public class InfrastructureQueryController : Controller
 {
    readonly IRemotableTessageSerializer _serializer;
-   readonly IStructuralTypeMapper _typeMapper;
+   readonly ITypeMapper _typeMapper;
    readonly InfrastructureQueryExecutor _executor;
 
    public static void RegisterWith(IComponentRegistrar registrar) =>
       registrar.Register(
          Scoped.For<InfrastructureQueryController>()
                .CreatedBy((IRemotableTessageSerializer serializer,
-                           IStructuralTypeMapper typeMapper,
+                           ITypeMapper typeMapper,
                            InfrastructureQueryExecutor executor)
                              => new InfrastructureQueryController(serializer, typeMapper, executor)));
 
    InfrastructureQueryController(IRemotableTessageSerializer serializer,
-                                 IStructuralTypeMapper typeMapper,
+                                 ITypeMapper typeMapper,
                                  InfrastructureQueryExecutor executor)
    {
       _serializer = serializer;

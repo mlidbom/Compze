@@ -27,12 +27,12 @@ class TessagingRouter : ITessagingRouter, IDisposable
 {
    public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<ITessagingRouter>().CreatedBy(
-            (ITessagesInFlightTracker tessagesInFlightTracker, IStructuralTypeMapper typeMapper, IRemotableTessageSerializer serializer, ITransportMessagePoster transportMessagePoster, IInfrastructureQueryTransport infrastructureQueryTransport, Outbox.Outbox.ITessageStorage tessageStorage, ITaskRunner taskRunner, IBackgroundExceptionReporter exceptionReporter)
+            (ITessagesInFlightTracker tessagesInFlightTracker, ITypeMapper typeMapper, IRemotableTessageSerializer serializer, ITransportMessagePoster transportMessagePoster, IInfrastructureQueryTransport infrastructureQueryTransport, Outbox.Outbox.ITessageStorage tessageStorage, ITaskRunner taskRunner, IBackgroundExceptionReporter exceptionReporter)
                => new TessagingRouter(tessagesInFlightTracker, typeMapper, serializer, transportMessagePoster, infrastructureQueryTransport, tessageStorage, taskRunner, exceptionReporter)));
 
    readonly IMonitor _monitor = IMonitor.New();
    readonly ITessagesInFlightTracker _tessagesInFlightTracker;
-   readonly IStructuralTypeMapper _typeMapper;
+   readonly ITypeMapper _typeMapper;
    readonly IRemotableTessageSerializer _serializer;
    readonly ITransportMessagePoster _transportMessagePoster;
    readonly IInfrastructureQueryTransport _infrastructureQueryTransport;
@@ -48,7 +48,7 @@ class TessagingRouter : ITessagingRouter, IDisposable
    readonly List<(Type TeventType, TessagingConnection Connection)> _teventSubscriberRoutes = [];
    readonly Dictionary<Type, IReadOnlyList<TessagingConnection>> _teventSubscriberRouteCache = new();
 
-   TessagingRouter(ITessagesInFlightTracker tessagesInFlightTracker, IStructuralTypeMapper typeMapper, IRemotableTessageSerializer serializer, ITransportMessagePoster transportMessagePoster, IInfrastructureQueryTransport infrastructureQueryTransport, Outbox.Outbox.ITessageStorage tessageStorage, ITaskRunner taskRunner, IBackgroundExceptionReporter exceptionReporter)
+   TessagingRouter(ITessagesInFlightTracker tessagesInFlightTracker, ITypeMapper typeMapper, IRemotableTessageSerializer serializer, ITransportMessagePoster transportMessagePoster, IInfrastructureQueryTransport infrastructureQueryTransport, Outbox.Outbox.ITessageStorage tessageStorage, ITaskRunner taskRunner, IBackgroundExceptionReporter exceptionReporter)
    {
       _tessagesInFlightTracker = tessagesInFlightTracker;
       _typeMapper = typeMapper;

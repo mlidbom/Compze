@@ -1,0 +1,125 @@
+using System.Text.RegularExpressions;
+
+namespace Compze.TypeIdentifiers;
+
+/// <summary>
+/// Identity of a type in a type-mapped system. Subtypes represent distinct structural forms:
+/// <list type="bullet">
+///   <item><see cref="MappedTypeIdentifier"/> — leaf type with an assigned GUID. SQL-storable.</item>
+///   <item><see cref="MappedGenericTypeIdentifier"/> — generic type with a mapped open generic definition.</item>
+///   <item><see cref="StableLeafTypeIdentifier"/> — non-generic type from a stable assembly.</item>
+///   <item><see cref="StableGenericTypeIdentifier"/> — generic type from a stable assembly.</item>
+///   <item><see cref="ArrayTypeIdentifier"/> — array wrapping any element type identifier.</item>
+/// </list>
+/// </summary>
+public abstract partial class TypeIdentifier : IEquatable<TypeIdentifier>
+{
+   /// <summary>The type portion of the assembly-qualified name, before ", AssemblyName".</summary>
+   internal abstract string TypePart { get; }
+
+   /// <summary>The assembly name portion of the assembly-qualified name.</summary>
+   internal abstract string AssemblyPart { get; }
+
+   /// <summary>The string representation used in serialized <c>$type</c> fields.</summary>
+   public string StringRepresentation => $"{TypePart}, {AssemblyPart}";
+
+   public override string ToString() => StringRepresentation;
+
+   /// <summary>Resolves this type identifier to a .NET <see cref="Type"/> using the provided mapping lookup.</summary>
+   internal abstract Type ResolveToType(ITypeMappingLookup lookup);
+
+   /// <summary>Transforms this type identifier into persisted form, replacing mapped components with GUIDs.</summary>
+   internal abstract TypeIdentifier TransformToPersisted(ITypeMappingLookup lookup);
+
+   public bool Equals(TypeIdentifier? other) => other is not null && StringRepresentation == other.StringRepresentation;
+   public override bool Equals(object? obj) => Equals(obj as TypeIdentifier);
+   public override int GetHashCode() => StringRepresentation.GetHashCode(StringComparison.Ordinal);
+
+   public static bool operator ==(TypeIdentifier? left, TypeIdentifier? right) => Equals(left, right);
+   public static bool operator !=(TypeIdentifier? left, TypeIdentifier? right) => !Equals(left, right);
+
+   /// <summary>
+   /// Parses an <c>AssemblyQualifiedName</c>-format string into the correct <see cref="TypeIdentifier"/> subtype.
+   /// Detects mapped types by recognizing GUID type names, and wraps array types as <see cref="ArrayTypeIdentifier"/>.
+   /// </summary>
+   internal static TypeIdentifier Parse(string assemblyQualifiedName)
+   {
+      var (typePart, assemblyPart) = SplitTypeAndAssembly(assemblyQualifiedName);
+
+      // Extract trailing array suffix if present (e.g. "[]", "[,]")
+      string? arraySuffix = null;
+      var arraySuffixMatch = TrailingArraySuffixPattern().Match(typePart);
+      if(arraySuffixMatch.Success)
+      {
+         arraySuffix = arraySuffixMatch.Groups[1].Value;
+         typePart = typePart[..arraySuffixMatch.Index];
+      }
+
+      // Parse the inner type (without array suffix)
+      TypeIdentifier inner;
+      var genericMatch = GenericTypePartPattern().Match(typePart);
+      if(genericMatch.Success)
+         inner = ParseGenericFromParts(genericMatch, assemblyPart);
+      else
+         inner = ParseLeafFromParts(typePart.Trim(), assemblyPart);
+
+      // Wrap in array if needed
+      if(arraySuffix != null)
+      {
+         var rank = arraySuffix.Count(c => c == ',') + 1;
+         inner = new ArrayTypeIdentifier(inner, rank);
+      }
+
+      return inner;
+   }
+
+   static TypeIdentifier ParseLeafFromParts(string typeName, string assemblyName)
+   {
+      if(Guid.TryParse(typeName, out var guid))
+         return new MappedTypeIdentifier(guid);
+
+      return new StableLeafTypeIdentifier(typeName, assemblyName);
+   }
+
+   static TypeIdentifier ParseGenericFromParts(Match genericMatch, string assemblyName)
+   {
+      var typeName = genericMatch.Groups[1].Value.Trim();
+      var argumentBlock = genericMatch.Groups[2].Value;
+      var innerBlock = argumentBlock[1..^1];
+
+      var parsedArguments = GenericArgumentPattern()
+         .Matches(innerBlock)
+         .Select(m => Parse(m.Groups[1].Value))
+         .ToArray();
+
+      if(Guid.TryParse(typeName, out var guid))
+         return new MappedGenericTypeIdentifier(guid, parsedArguments);
+
+      return new StableGenericTypeIdentifier(typeName, assemblyName, parsedArguments);
+   }
+
+   static (string typePart, string assemblyPart) SplitTypeAndAssembly(string assemblyQualifiedName)
+   {
+      var match = TypeAndAssemblyPartsPattern().Match(assemblyQualifiedName);
+      if(!match.Success)
+         throw new FormatException($"Invalid AssemblyQualifiedName format: \"{assemblyQualifiedName}\"");
+
+      return (match.Groups[1].Value.Trim(), match.Groups[2].Value.Trim());
+   }
+
+   // Splits "TypePart, AssemblyName" at the first comma not inside brackets.
+   [GeneratedRegex(@"^\s*((?:[^\[\],]|\[(?<D>)|\](?<-D>)|(?(D),|(?!)))*(?(D)(?!)))\s*,\s*(.+)$")]
+   private static partial Regex TypeAndAssemblyPartsPattern();
+
+   // Matches a trailing array suffix like [], [,], [,,] at the end of a type part.
+   [GeneratedRegex(@"(\[,*\])$")]
+   private static partial Regex TrailingArraySuffixPattern();
+
+   // Splits a type part into the type name and the generic argument block.
+   [GeneratedRegex(@"^(.+?)(\[\[.+\]\])$")]
+   private static partial Regex GenericTypePartPattern();
+
+   // Matches each individual "[argument]" inside a generic argument block.
+   [GeneratedRegex(@"\[((?:[^\[\]]|\[(?<D>)|\](?<-D>))*(?(D)(?!)))\]")]
+   private static partial Regex GenericArgumentPattern();
+}

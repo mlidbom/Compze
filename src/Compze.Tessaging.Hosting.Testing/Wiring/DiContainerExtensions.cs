@@ -47,7 +47,7 @@ public static class DiContainerExtensions
    {
       var builder = @this.CreateWithContainerRegistrationsAndCurrentTestsPluggableComponents();
       builder.Registrar
-               .StructuralTypeMapperFromLoadedAssemblies()
+               .TypeIdentifierMapperFromLoadedAssemblies()
                .DummyConfigurationParameterProvider()
                .TessageHandlerRegistry()
                .TypermediaHandlerRegistry()

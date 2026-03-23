@@ -41,7 +41,7 @@ class ServerEndpointBuilder : IEndpointBuilder
    readonly TypermediaHandlerRegistry _typermediaRegistry;
    readonly IEndpointHost _host;
    public EndpointConfiguration Configuration { get; }
-   public IStructuralTypeMapper TypeMapper { get; }
+   public ITypeMapper TypeMapper { get; }
 
    public TessageHandlerRegistrarWithDependencyInjectionSupport RegisterTessagingHandlers { get; }
    public TypermediaHandlerRegistrarWithDependencyInjectionSupport RegisterTypermediaHandlers { get; }
@@ -75,7 +75,7 @@ class ServerEndpointBuilder : IEndpointBuilder
 
       Configuration = configuration;
 
-TypeMapper = new StructuralTypeMapper();
+TypeMapper = new TypeMapper();
       _tessagingRegistry = new TessageHandlerRegistry(TypeMapper);
       _typermediaRegistry = new TypermediaHandlerRegistry(TypeMapper);
       RegisterTessagingHandlers = new TessageHandlerRegistrarWithDependencyInjectionSupport(_tessagingRegistry);
@@ -84,12 +84,12 @@ TypeMapper = new StructuralTypeMapper();
 
    void SetupContainer()
    {
-((StructuralTypeMapper)TypeMapper).MapTypesFromAllLoadedAssembliesWithTypeMappingsAttribute();
+((TypeMapper)TypeMapper).MapTypesFromAllLoadedAssembliesWithTypeMappingsAttribute();
 
       var register = Registrar;
       //Universal stuff here
       register.JSonAppConfigFileConfigurationParameterProvider();
-      register.Register(Singleton.For<IStructuralTypeMapper>().Instance(TypeMapper));
+      register.Register(Singleton.For<ITypeMapper>().Instance(TypeMapper));
 
       //Only endpoint stuff after here
       //todo: Find cleaner way of doing this.

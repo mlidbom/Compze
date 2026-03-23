@@ -33,7 +33,7 @@ partial class PgSqlDocumentDbSqlLayer(IPgSqlConnectionPool connectionPool, PgSql
       });
    }
 
-   public bool TryGet(string idString, IReadOnlySet<MappedTypeId> acceptableTypeIds, bool useUpdateLock, [NotNullWhen(true)] out IDocumentDbSqlLayer.ReadRow? document)
+   public bool TryGet(string idString, IReadOnlySet<MappedTypeIdentifier> acceptableTypeIds, bool useUpdateLock, [NotNullWhen(true)] out IDocumentDbSqlLayer.ReadRow? document)
    {
       EnsureInitialized();
 
@@ -81,7 +81,7 @@ partial class PgSqlDocumentDbSqlLayer(IPgSqlConnectionPool connectionPool, PgSql
       }
    }
 
-   public int Remove(string idString, IReadOnlySet<MappedTypeId> acceptableTypes)
+   public int Remove(string idString, IReadOnlySet<MappedTypeIdentifier> acceptableTypes)
    {
       EnsureInitialized();
       return _connectionPool.UseCommand(
@@ -92,7 +92,7 @@ partial class PgSqlDocumentDbSqlLayer(IPgSqlConnectionPool connectionPool, PgSql
                    .ExecuteNonQuery());
    }
 
-   public IEnumerable<Guid> GetAllIds(IReadOnlySet<MappedTypeId> acceptableTypes)
+   public IEnumerable<Guid> GetAllIds(IReadOnlySet<MappedTypeIdentifier> acceptableTypes)
    {
       EnsureInitialized();
       return _connectionPool.UseCommand(
@@ -101,7 +101,7 @@ partial class PgSqlDocumentDbSqlLayer(IPgSqlConnectionPool connectionPool, PgSql
                            .ExecuteReaderAndSelect(reader => reader.GetGuidFromString(0)));
    }
 
-   public IReadOnlyList<IDocumentDbSqlLayer.ReadRow> GetAll(IEnumerable<Guid> ids, IReadOnlySet<MappedTypeId> acceptableTypes)
+   public IReadOnlyList<IDocumentDbSqlLayer.ReadRow> GetAll(IEnumerable<Guid> ids, IReadOnlySet<MappedTypeIdentifier> acceptableTypes)
    {
       EnsureInitialized();
       return _connectionPool.UseCommand(
@@ -113,7 +113,7 @@ partial class PgSqlDocumentDbSqlLayer(IPgSqlConnectionPool connectionPool, PgSql
                            .ExecuteReaderAndSelect(reader => new IDocumentDbSqlLayer.ReadRow(reader.GetGuid(2), reader.GetString(1))));
    }
 
-   public IReadOnlyList<IDocumentDbSqlLayer.ReadRow> GetAll(IReadOnlySet<MappedTypeId> acceptableTypes)
+   public IReadOnlyList<IDocumentDbSqlLayer.ReadRow> GetAll(IReadOnlySet<MappedTypeIdentifier> acceptableTypes)
    {
       EnsureInitialized();
       return _connectionPool.UseCommand(
@@ -122,7 +122,7 @@ partial class PgSqlDocumentDbSqlLayer(IPgSqlConnectionPool connectionPool, PgSql
                            .ExecuteReaderAndSelect(reader => new IDocumentDbSqlLayer.ReadRow(reader.GetGuid(2), reader.GetString(1))));
    }
 
-   static string TypeInClause(IEnumerable<MappedTypeId> acceptableTypeIds) => "IN( '" + acceptableTypeIds.Select(id => id.GuidValue.ToString()).Join("', '") + "')\n";
+   static string TypeInClause(IEnumerable<MappedTypeIdentifier> acceptableTypeIds) => "IN( '" + acceptableTypeIds.Select(id => id.GuidValue.ToString()).Join("', '") + "')\n";
 
    // ReSharper disable once UnusedParameter.Local
    static string UseUpdateLock(bool _) => "";// useUpdateLock ? "With(UPDLOCK, ROWLOCK)" : "";

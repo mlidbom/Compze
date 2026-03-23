@@ -4,9 +4,9 @@ using Compze.Internals.SystemCE;
 
 namespace Compze.Internals.Serialization.Newtonsoft.Private;
 
-class RenamingDecorator(IStructuralTypeMapper typeMapper)
+class RenamingDecorator(ITypeMapper typeMapper)
 {
-   readonly IStructuralTypeMapper _typeMapper = typeMapper;
+   readonly ITypeMapper _typeMapper = typeMapper;
 
    static readonly LazyCE<Regex> FindTypeNames = new(() => new Regex("""
                                                                      "\$type"\: "([^"]*)"

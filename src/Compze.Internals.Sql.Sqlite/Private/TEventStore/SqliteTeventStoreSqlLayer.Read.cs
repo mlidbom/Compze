@@ -28,7 +28,7 @@ partial class SqliteTeventStoreSqlLayer(SqliteTeventStoreConnectionManager conne
    }
 
    static TeventDataRow ReadDataRow(SqliteDataReader teventReader) => new(
-      teventType: new MappedTypeId(teventReader.GetGuidFromString(0)),
+      teventType: new MappedTypeIdentifier(teventReader.GetGuidFromString(0)),
       teventJson: teventReader.GetString(1),
       teventId: new TessageId(teventReader.GetGuidFromString(4)),
       taggregateVersion: teventReader.GetInt32(3),

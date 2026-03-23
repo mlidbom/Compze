@@ -18,13 +18,13 @@ class HttpInfrastructureQueryTransportImplementation : IInfrastructureQueryTrans
 {
    public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<IInfrastructureQueryTransport>()
-                                     .CreatedBy((IHttpClientFactoryCE factory, IRemotableTessageSerializer serializer, IStructuralTypeMapper typeMapper) => new HttpInfrastructureQueryTransportImplementation(factory, serializer, typeMapper)));
+                                     .CreatedBy((IHttpClientFactoryCE factory, IRemotableTessageSerializer serializer, ITypeMapper typeMapper) => new HttpInfrastructureQueryTransportImplementation(factory, serializer, typeMapper)));
 
    readonly IHttpClientFactoryCE _httpClientFactory;
    readonly IRemotableTessageSerializer _serializer;
-   readonly IStructuralTypeMapper _typeMapper;
+   readonly ITypeMapper _typeMapper;
 
-   HttpInfrastructureQueryTransportImplementation(IHttpClientFactoryCE httpClientFactory, IRemotableTessageSerializer serializer, IStructuralTypeMapper typeMapper)
+   HttpInfrastructureQueryTransportImplementation(IHttpClientFactoryCE httpClientFactory, IRemotableTessageSerializer serializer, ITypeMapper typeMapper)
    {
       _httpClientFactory = httpClientFactory;
       _serializer = serializer;

@@ -3,7 +3,7 @@ using System.Reflection;
 namespace Compze.TypeIdentifiers;
 
 /// <summary>
-/// Collects type mappings from an <see cref="ITypeMappingDeclaration"/> and validates
+/// Collects type mappings from an <see cref="IAssemblyTypeMapper"/> and validates
 /// that only types from the declaring assembly are mapped.
 /// </summary>
 sealed class TypeMappingRegistrar(Assembly declaringAssembly) : ITypeMappingRegistrar
@@ -15,7 +15,7 @@ sealed class TypeMappingRegistrar(Assembly declaringAssembly) : ITypeMappingRegi
    public ITypeMappingRegistrar Map<T>(string id)
    {
       var type = typeof(T);
-      ValidateTypeIsFromDeclaringAssembly(type);
+      AssertTypeIsFromDeclaringAssembly(type);
 
       if(type.IsGenericTypeDefinition)
          throw new InvalidOperationException(
@@ -27,7 +27,7 @@ sealed class TypeMappingRegistrar(Assembly declaringAssembly) : ITypeMappingRegi
 
    public ITypeMappingRegistrar MapOpenGeneric(Type openGenericType, string id)
    {
-      ValidateTypeIsFromDeclaringAssembly(openGenericType);
+      AssertTypeIsFromDeclaringAssembly(openGenericType);
 
       if(!openGenericType.IsGenericTypeDefinition)
          throw new InvalidOperationException(
@@ -37,7 +37,7 @@ sealed class TypeMappingRegistrar(Assembly declaringAssembly) : ITypeMappingRegi
       return this;
    }
 
-   void ValidateTypeIsFromDeclaringAssembly(Type type)
+   void AssertTypeIsFromDeclaringAssembly(Type type)
    {
       if(type.Assembly != _declaringAssembly)
          throw new InvalidOperationException(

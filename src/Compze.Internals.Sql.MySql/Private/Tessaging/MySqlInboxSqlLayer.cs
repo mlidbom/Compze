@@ -12,7 +12,7 @@ partial class MySqlInboxSqlLayer(IMySqlConnectionPool connectionFactory, MySqlSq
    readonly IMySqlConnectionPool _connectionFactory = connectionFactory;
    readonly MySqlSqlLayerSchemaManager _schemaManager = schemaManager;
 
-   public IServiceBusSqlLayer.SaveTessageResult SaveTessage(TessageId tessageId, MappedTypeId typeId, string serializedTessage)
+   public IServiceBusSqlLayer.SaveTessageResult SaveTessage(TessageId tessageId, MappedTypeIdentifier typeId, string serializedTessage)
    {
       return _connectionFactory.UseCommand(
          command =>
