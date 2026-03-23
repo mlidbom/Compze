@@ -3,12 +3,12 @@ using System.Reflection;
 namespace Compze.TypeIdentifiers;
 
 /// <summary>
-/// Maps .NET types to stable identifiers for persistence and serialization.
+/// Registers .NET type mappings from assemblies.
 /// Leaf types get <see cref="MappedTypeIdentifier"/> (GUID-backed). Generic and composite types
 /// get structural string representations that combine mapped GUIDs with stable assembly-qualified names.
 /// Supports incremental assembly registration.
 /// </summary>
-public interface ITypeMapper : ITypeMap
+public interface ITypeMapper
 {
    /// <summary>
    /// Register type mappings from the assembly containing <typeparamref name="T"/>.

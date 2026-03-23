@@ -10,10 +10,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Compze.Tessaging.Hosting.AspNetCore.Private;
 
-public abstract class ControllerBase(IRemotableTessageSerializer serializer, ITypeMapper typeMapper, IInbox inbox) : Controller
+public abstract class ControllerBase(IRemotableTessageSerializer serializer, ITypeMap typeMap, IInbox inbox) : Controller
 {
    readonly IRemotableTessageSerializer _serializer = serializer;
-   readonly ITypeMapper _typeMapper = typeMapper;
+   readonly ITypeMap _typeMap = typeMap;
    protected IInbox Inbox { get; } = inbox;
 
    protected async Task<TransportTessage.InComing> CreateIncomingTessage()
@@ -24,6 +24,6 @@ public abstract class ControllerBase(IRemotableTessageSerializer serializer, ITy
       using var reader = new StreamReader(HttpContext.Request.Body);
       var tueryJson = await reader.ReadToEndAsync().caf();
 
-      return new TransportTessage.InComing(tueryJson, typeIdStr, tessageId, _typeMapper, _serializer);
+      return new TransportTessage.InComing(tueryJson, typeIdStr, tessageId, _typeMap, _serializer);
    }
 }

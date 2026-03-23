@@ -31,22 +31,22 @@ public static class TransportTessage
          return _tessage;
       }
 
-      public InComing(string body, TypeIdentifier tessageTypeId, TessageId tessageId, ITypeMapper typeMapper, IRemotableTessageSerializer serializer)
+      public InComing(string body, TypeIdentifier tessageTypeId, TessageId tessageId, ITypeMap typeMap, IRemotableTessageSerializer serializer)
       {
          _serializer = serializer;
          Body = body;
          TessageTypeId = tessageTypeId;
-         _tessageType = typeMapper.GetType(tessageTypeId);
+         _tessageType = typeMap.GetType(tessageTypeId);
          TessageTypeEnum = _tessageType.TransportTessageType();
          TessageId = tessageId;
       }
 
-      public InComing(string body, string persistedTypeString, TessageId tessageId, ITypeMapper typeMapper, IRemotableTessageSerializer serializer)
+      public InComing(string body, string persistedTypeString, TessageId tessageId, ITypeMap typeMap, IRemotableTessageSerializer serializer)
       {
          _serializer = serializer;
          Body = body;
-         _tessageType = typeMapper.FromPersistedTypeString(persistedTypeString);
-         TessageTypeId = typeMapper.GetId(_tessageType);
+         _tessageType = typeMap.FromPersistedTypeString(persistedTypeString);
+         TessageTypeId = typeMap.GetId(_tessageType);
          TessageTypeEnum = _tessageType.TransportTessageType();
          TessageId = tessageId;
       }
@@ -61,10 +61,10 @@ public static class TransportTessage
       internal readonly string Body;
       internal readonly TransportTessageType TessageTypeEnum;
 
-      internal static OutGoing Create(IRemotableTessage tessage, ITypeMapper typeMapper, IRemotableTessageSerializer serializer)
+      internal static OutGoing Create(IRemotableTessage tessage, ITypeMap typeMap, IRemotableTessageSerializer serializer)
       {
          var body = serializer.SerializeTessage(tessage);
-         return new OutGoing(typeMapper.GetId(tessage.GetType()), tessage.GetType(), body, tessage);
+         return new OutGoing(typeMap.GetId(tessage.GetType()), tessage.GetType(), body, tessage);
       }
 
       OutGoing(TypeIdentifier typeId, Type type, string body, IRemotableTessage tessage)

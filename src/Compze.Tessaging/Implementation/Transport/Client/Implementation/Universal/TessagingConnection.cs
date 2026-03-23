@@ -15,7 +15,7 @@ namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Univer
 class TessagingConnection(
    ITessagesInFlightTracker tessagesInFlightTracker,
    EndPointAddress remoteAddress,
-   ITypeMapper typeMapper,
+   ITypeMap typeMap,
    IRemotableTessageSerializer serializer,
    ITransportMessagePoster transportMessagePoster,
    IInfrastructureQueryTransport infrastructureQueryTransport,
@@ -27,7 +27,7 @@ class TessagingConnection(
 
    readonly ITessagesInFlightTracker _tessagesInFlightTracker = tessagesInFlightTracker;
    readonly EndPointAddress _remoteAddress = remoteAddress;
-   readonly ITypeMapper _typeMapper = typeMapper;
+   readonly ITypeMap _typeMap = typeMap;
    readonly IRemotableTessageSerializer _serializer = serializer;
    readonly ITransportMessagePoster _transportMessagePoster = transportMessagePoster;
    readonly IInfrastructureQueryTransport _infrastructureQueryTransport = infrastructureQueryTransport;
@@ -54,7 +54,7 @@ class TessagingConnection(
    // Delivery management — enqueue for the send loop to process
    public void EnqueueForDelivery(IExactlyOnceTessage tessage)
    {
-      var transportTessage = TransportTessage.OutGoing.Create(tessage, _typeMapper, _serializer);
+      var transportTessage = TransportTessage.OutGoing.Create(tessage, _typeMap, _serializer);
       _tessagesInFlightTracker.SendingTessageOnTransport(transportTessage, EndpointInformation.Id);
 
       _queue.Locked(queue => queue.Enqueue(new PendingDelivery(transportTessage)));
@@ -77,7 +77,7 @@ class TessagingConnection(
       this.Log().Info($"Loading {undelivered.Count} undelivered tessage(s) for recovery to endpoint {EndpointInformation.Id}");
       foreach(var undeliveredTessage in undelivered)
       {
-         var tessageType = _typeMapper.GetType(undeliveredTessage.TypeId);
+         var tessageType = _typeMap.GetType(undeliveredTessage.TypeId);
          var tessage = (IExactlyOnceTessage)_serializer.DeserializeTessage(tessageType, undeliveredTessage.SerializedTessage);
          EnqueueForDelivery(tessage);
       }

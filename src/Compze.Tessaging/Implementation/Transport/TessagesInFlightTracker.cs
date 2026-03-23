@@ -10,9 +10,9 @@ using Compze.Threading.ResourceAccess;
 
 namespace Compze.Tessaging.Implementation.Transport;
 
-public class TessagesInFlightTracker(ITypeMapper typeMapper) : ITessagesInFlightTracker
+public class TessagesInFlightTracker(ITypeMap typeMap) : ITessagesInFlightTracker
 {
-   readonly IAwaitableThreadShared<NonThreadSafeImplementation> _implementation = IAwaitableThreadShared.New(new NonThreadSafeImplementation(typeMapper));
+   readonly IAwaitableThreadShared<NonThreadSafeImplementation> _implementation = IAwaitableThreadShared.New(new NonThreadSafeImplementation(typeMap));
 
    public IReadOnlyList<Exception> GetExceptions() => _implementation.Update(it => it.GetExceptions());
 
@@ -43,9 +43,9 @@ public class TessagesInFlightTracker(ITypeMapper typeMapper) : ITessagesInFlight
       internal Dictionary<EndpointId, bool> EndpointDeliveryStatus { get; } = [];
    }
 
-   class NonThreadSafeImplementation(ITypeMapper typeMapper)
+   class NonThreadSafeImplementation(ITypeMap typeMap)
    {
-      readonly ITypeMapper _typeMapper = typeMapper;
+      readonly ITypeMap _typeMap = typeMap;
       readonly Dictionary<TessageId, InFlightTessage> _trackedTessages = [];
 
       readonly List<Exception> _busExceptions = [];
@@ -67,7 +67,7 @@ public class TessagesInFlightTracker(ITypeMapper typeMapper) : ITessagesInFlight
 
       internal void DoneWith(TransportTessage.InComing tessage, EndpointId handlingEndpointId, Exception? exception)
       {
-         if(_typeMapper.TryGetType(tessage.TessageTypeId, out var tessageType) && tessageType == typeof(EndpointInformationQuery))
+         if(_typeMap.TryGetType(tessage.TessageTypeId, out var tessageType) && tessageType == typeof(EndpointInformationQuery))
             return; //this is an initial endpoint information request though which the endpoint IDs we use to track tessages is first established.
          if(exception != null)
          {
