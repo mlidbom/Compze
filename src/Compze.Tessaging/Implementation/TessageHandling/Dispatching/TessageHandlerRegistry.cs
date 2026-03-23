@@ -18,12 +18,12 @@ public static class TessageHandlerRegistryRegistrar
 {
    public static IComponentRegistrar TessageHandlerRegistry(this IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<ITessageHandlerRegistrar, ITessageHandlerRegistry, TessageHandlerRegistry>()
-                                     .CreatedBy((ITypeMapper typeMapper) => new TessageHandlerRegistry(typeMapper)));
+                                     .CreatedBy((ITypeMap typeMap) => new TessageHandlerRegistry(typeMap)));
 }
 
-sealed class TessageHandlerRegistry(ITypeMapper typeMapper) : ITessageHandlerRegistrar, ITessageHandlerRegistry
+sealed class TessageHandlerRegistry(ITypeMap typeMap) : ITessageHandlerRegistrar, ITessageHandlerRegistry
 {
-   readonly ITypeMapper _typeMapper = typeMapper;
+   readonly ITypeMap _typeMap = typeMap;
    IReadOnlyDictionary<Type, Action<object, IScopeResolver>> _tommandHandlers = new Dictionary<Type, Action<object, IScopeResolver>>();
    IReadOnlyDictionary<Type, IReadOnlyList<Action<ITevent, IScopeResolver>>> _teventHandlers = new Dictionary<Type, IReadOnlyList<Action<ITevent, IScopeResolver>>>();
    IReadOnlyList<Type> _registeredTeventTypes = new List<Type>();
@@ -88,9 +88,9 @@ sealed class TessageHandlerRegistry(ITypeMapper typeMapper) : ITessageHandlerReg
                                          .Where(tessageType => !tessageType.Implements<TessageTypesInternal.ITessage>())
                                          .ToHashSet();
 
-      _typeMapper.AssertMappingsExistFor(handledTypes);
+      _typeMap.AssertMappingsExistFor(handledTypes);
 
-      return handledTypes.Select(_typeMapper.GetId)
+      return handledTypes.Select(_typeMap.GetId)
                          .ToHashSet();
    }
 }

@@ -17,23 +17,23 @@ namespace Compze.Typermedia.Hosting.AspNetCore;
 public class TypermediaController : Controller
 {
    readonly IRemotableTessageSerializer _serializer;
-   readonly ITypeMapper _typeMapper;
+   readonly ITypeMap _typeMap;
    readonly TypermediaHandlerExecutor _executor;
 
    public static void RegisterWith(IComponentRegistrar registrar) =>
       registrar.Register(
          Scoped.For<TypermediaController>()
                .CreatedBy((IRemotableTessageSerializer serializer,
-                           ITypeMapper typeMapper,
+                           ITypeMap typeMap,
                            TypermediaHandlerExecutor executor)
-                             => new TypermediaController(serializer, typeMapper, executor)));
+                             => new TypermediaController(serializer, typeMap, executor)));
 
    TypermediaController(IRemotableTessageSerializer serializer,
-                 ITypeMapper typeMapper,
+                 ITypeMap typeMap,
                  TypermediaHandlerExecutor executor)
    {
       _serializer = serializer;
-      _typeMapper = typeMapper;
+      _typeMap = typeMap;
       _executor = executor;
    }
 
@@ -93,7 +93,7 @@ public class TypermediaController : Controller
    async Task<ITessage> DeserializeTessageFromRequest()
    {
       var typeIdStr = Request.Headers[HttpConstants.Headers.PayLoadTypeId][0]._assert().NotNull();
-      var tessageType = _typeMapper.FromPersistedTypeString(typeIdStr);
+      var tessageType = _typeMap.FromPersistedTypeString(typeIdStr);
 
       using var reader = new StreamReader(HttpContext.Request.Body);
       var json = await reader.ReadToEndAsync().caf();

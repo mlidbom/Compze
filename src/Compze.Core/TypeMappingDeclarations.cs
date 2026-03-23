@@ -8,7 +8,7 @@ namespace Compze.Core;
 
 class AssemblyTypeMapper : IAssemblyTypeMapper
 {
-   public void Map(ITypeMappingRegistrar map)
+   public void Map(IAssemblyTypeMappingRegistrar map)
    {
       map.Map<TaggregateTevent>("32bbb393-64ab-42af-8edd-630d73d697a5")
          .Map<ITaggregateCreatedTevent>("af07f49c-12c6-4ea9-abf1-45fa2088515b")

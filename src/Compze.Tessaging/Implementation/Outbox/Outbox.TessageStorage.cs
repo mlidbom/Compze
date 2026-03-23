@@ -18,24 +18,24 @@ partial class Outbox
       // ReSharper disable once MemberHidesStaticFromOuterClass
       internal static void RegisterWith(IComponentRegistrar registrar)
          => registrar.Register(Singleton.For<ITessageStorage>()
-                                        .CreatedBy((IServiceBusSqlLayer.IOutboxSqlLayer sqlLayer, ITypeMapper typeMapper, IRemotableTessageSerializer serializer)
-                                                      => new TessageStorage(sqlLayer, typeMapper, serializer)));
+                                        .CreatedBy((IServiceBusSqlLayer.IOutboxSqlLayer sqlLayer, ITypeMap typeMap, IRemotableTessageSerializer serializer)
+                                                      => new TessageStorage(sqlLayer, typeMap, serializer)));
 
       readonly IServiceBusSqlLayer.IOutboxSqlLayer _sqlLayer;
-      readonly ITypeMapper _typeMapper;
+      readonly ITypeMap _typeMap;
       readonly IRemotableTessageSerializer _serializer;
 
-      TessageStorage(IServiceBusSqlLayer.IOutboxSqlLayer sqlLayer, ITypeMapper typeMapper, IRemotableTessageSerializer serializer)
+      TessageStorage(IServiceBusSqlLayer.IOutboxSqlLayer sqlLayer, ITypeMap typeMap, IRemotableTessageSerializer serializer)
       {
          _sqlLayer = sqlLayer;
-         _typeMapper = typeMapper;
+         _typeMap = typeMap;
          _serializer = serializer;
       }
 
       public void SaveTessage(IExactlyOnceTessage tessage, params EndpointId[] receiverEndpointIds)
       {
          var outboxTessageWithReceivers = new IServiceBusSqlLayer.OutboxTessageWithReceivers(_serializer.SerializeTessage(tessage),
-                                                                                             _typeMapper.GetMappedId(tessage.GetType()),
+                                                                                             _typeMap.GetMappedId(tessage.GetType()),
                                                                                              tessage.Id,
                                                                                              receiverEndpointIds);
 

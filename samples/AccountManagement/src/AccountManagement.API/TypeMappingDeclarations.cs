@@ -6,7 +6,7 @@ namespace AccountManagement.API;
 
 class AssemblyTypeMapper : IAssemblyTypeMapper
 {
-   public void Map(ITypeMappingRegistrar map)
+   public void Map(IAssemblyTypeMappingRegistrar map)
    {
       map.Map<AccountResource>("84c1bfcd-a5dd-41e2-ade0-e25bbe0337c3")
          .Map<AccountResource.Tommand.ChangeEmail>("337af6fe-e645-49c7-9da1-b00dbc19cfa6")

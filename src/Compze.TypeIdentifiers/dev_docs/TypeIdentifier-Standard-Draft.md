@@ -4,27 +4,25 @@
 
 ## Problem
 
-Software systems that persist, transmit, or route by .NET type — event stores, document databases, message buses, JSON serializers — need a stable string representation of types. The standard approach (`AssemblyQualifiedName`) breaks when types are renamed, moved between assemblies, or when assemblies are versioned. Every system reinvents an incompatible workaround. None support migration from existing persisted type strings.
+Software systems that persist, transmit, or route by .NET type — event stores, document databases, message buses, JSON serializers — need a way to persist references to types. Using the standard approach (`AssemblyQualifiedName`), stored data breaks when types are renamed or moved between assemblies. Any number of custom solutions are extant, but we are not aware of any standardised reusable solution. This document details an approach that allows for free renaming of types, even if the persisted data is currently using only the standard approach.
 
 ## Scope
 
 This standard defines:
-- A **string format** for deterministic, reversible type identification
-- **Resolution rules** for reconstructing a .NET `Type` from a TypeIdentifier string
-- A **legacy migration mechanism** for transitioning from existing persisted type strings
-- An optional **UUIDv5 appendix** for deriving deterministic GUIDs from TypeIdentifier strings
+- `TypeIdentifier`: A **string format** for refering to .NET types
+- **Resolution rules** for reconstructing a .NET `Type` from a TypeIdentifier
+- **Mapping mechanisms** allowing 
+  - Old names, that no longer exist in code, to resolve to the current type.
+  - **Leaf types** or **open generics** to be mapped to a GUID, allowing for freely renaming those types
+- An optional **UUIDv5 appendix** for deriving deterministic GUIDs from TypeIdentifiers
 
-The standard targets languages with **reified generics** (.NET, and conceptually compatible runtimes). Languages with type erasure (Java) or monomorphization (Rust) are out of scope.
-
-## Core Principle
-
-**The string is the canonical identity.** All other representations (GUIDs, in-memory objects) are derived from or resolved via the string. Two TypeIdentifiers are equal if and only if their string representations are identical.
+The standard targets .NET laguanges, but could potentially by adapted to other languages with **reified generics**.
 
 ---
 
 ## 1. String Format
 
-A TypeIdentifier string uses **ECMA-335 `AssemblyQualifiedName` structure** — the same `TypeName, Assembly` pairing with `[[ ]]` nesting that .NET defines natively. The difference from a raw `AssemblyQualifiedName`: within that structure, individual type components may use mapped or legacy identifiers instead of current CLR names.
+A TypeIdentifier uses **ECMA-335 `AssemblyQualifiedName` structure** — the same `TypeName, Assembly` pairing with `[[ ]]` nesting that .NET defines natively. The difference from a raw `AssemblyQualifiedName`: within that structure, individual type components may use mapped GUIDs instead of CLR names.
 
 ### 1.1 Component Forms
 
@@ -36,21 +34,21 @@ Each `TypeName, Assembly` pair within a TypeIdentifier string is one of two form
 GUID, 0
 ```
 
-The type has an explicitly assigned GUID. The assembly portion is the literal string `0`, meaning "resolve via mapping dictionary." The GUID uses RFC 4122 format: lowercase hexadecimal with dashes (`xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx`).
+The type has an explicitly assigned GUID. The assembly portion is the literal string `0`. The GUID uses RFC 4122 format: lowercase hexadecimal with dashes (`xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx`).
 
 Example: `e4a8c9f2-7b3d-4f1a-9c6e-2d8b5a0f3e7c, 0`
 
-#### Named
+#### Standard
 
 ```
 TypeName, AssemblyName
 ```
 
-A CLR type name and assembly name. This form covers both current type names and historically persisted names (legacy). The string format is identical in both cases — the distinction is made at resolution time, not at the format level.
+A CLR type name and short assembly name.
 
 Examples:
-- Current: `System.String, System.Private.CoreLib`
-- Legacy: `MyApp.OldNamespace.CustomerCreated, MyApp.Events`
+- `System.String, System.Private.CoreLib`
+- `MyApp.CustomerCreated, MyApp.Events`
 
 ### 1.2 Composition
 
@@ -87,7 +85,7 @@ Open generic definitions (e.g., `List<>`, `Dictionary<,>`) are leaf types. They 
 
 ### 1.4 Reserved Field
 
-In the mapped component form `GUID, 0`, the `0` is a reserved string field. Its current value is the literal `0` with no semantic meaning. Implementations MUST write `0` and MUST accept `0`. Future versions of this standard may assign meaning to this field. Using a string (rather than an integer) ensures future values can carry arbitrary information without a format-breaking change.
+In the mapped component form `GUID, 0`, the `0` is a reserved string field. Its current value is the literal `0` with no semantic meaning. Implementations MUST write `0` and MUST accept `0`. Future versions of this standard may assign meaning to this field.
 
 ### 1.5 Canonicalization
 
@@ -108,7 +106,7 @@ Implementations MUST accept Named components with full assembly-qualified names 
 
 This ensures that persisted data written by other systems (e.g., Newtonsoft `$type` with full `AssemblyQualifiedName`) resolves correctly without requiring explicit legacy mappings for every framework type. It also ensures UUIDv5 derivation is stable across .NET version upgrades, since framework assembly versions change between releases.
 
-> **Out of scope:** Side-by-side assembly versions distinguished only by assembly qualifiers (Version, PublicKeyToken) are not supported. Normalization collapses them to the same identity. Types that share a fully qualified name across assembly versions MUST use the Mapped form (GUID) instead.
+> **Out of scope:** Side-by-side assembly versions distinguished only by assembly qualifiers (Version, PublicKeyToken) are not supported. Normalization collapses them to the same identity.
 
 ---
 

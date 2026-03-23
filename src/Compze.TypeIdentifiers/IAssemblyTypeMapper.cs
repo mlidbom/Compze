@@ -6,5 +6,5 @@ namespace Compze.TypeIdentifiers;
 /// </summary>
 public interface IAssemblyTypeMapper
 {
-   void Map(ITypeMappingRegistrar registrar);
+   void Map(IAssemblyTypeMappingRegistrar registrar);
 }

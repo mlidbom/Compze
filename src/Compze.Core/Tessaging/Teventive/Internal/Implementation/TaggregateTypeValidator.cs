@@ -67,28 +67,28 @@ static class TaggregateTypeValidator<TDomainClass, TTeventImplementation, TTeven
 {
    public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<ITaggregateTypeValidator>()
-                                     .CreatedBy((ITypeMapper typeMapper) => new TaggregateTypeValidator(typeMapper)));
+                                     .CreatedBy((ITypeMap typeMap) => new TaggregateTypeValidator(typeMap)));
 
-   readonly ITypeMapper _typeMapper;
-   TaggregateTypeValidator(ITypeMapper typeMapper) => _typeMapper = typeMapper;
+   readonly ITypeMap _typeMap;
+   TaggregateTypeValidator(ITypeMap typeMap) => _typeMap = typeMap;
 
-   public void AssertIsValid<TTaggregate>() => ValidatorFor<TTaggregate>.AssertValid(_typeMapper);
+   public void AssertIsValid<TTaggregate>() => ValidatorFor<TTaggregate>.AssertValid(_typeMap);
 
    static class ValidatorFor<TTaggregate>
    {
       // ReSharper disable once StaticMemberInGenericType (This is exactly the effect we are after...)
       static bool _validated;
 
-      internal static void AssertValid(ITypeMapper typeMapper)
+      internal static void AssertValid(ITypeMap typeMap)
       {
          if(_validated) return;
 
-         AssertValidInternal(typeMapper);
+         AssertValidInternal(typeMap);
 
          _validated = true;
       }
 
-      static void AssertValidInternal(ITypeMapper typeMapper)
+      static void AssertValidInternal(ITypeMap typeMap)
       {
          var classInheritanceChain = typeof(TTaggregate).ClassInheritanceChain().ToList();
          var inheritedTaggregateType = classInheritanceChain.Single(baseClass => baseClass.IsConstructedGenericType && baseClass.GetGenericTypeDefinition() == typeof(Taggregate<,,,,>));
@@ -103,7 +103,7 @@ static class TaggregateTypeValidator<TDomainClass, TTeventImplementation, TTeven
 
          teventTypesToInspect = teventTypesToInspect.Distinct().ToList();
 
-         typeMapper.AssertMappingsExistFor(teventTypesToInspect.Append(typeof(TTaggregate)));
+         typeMap.AssertMappingsExistFor(teventTypesToInspect.Append(typeof(TTaggregate)));
 
          foreach(var teventType in teventTypesToInspect) TessageTypeInspector.AssertValid(teventType);
       }

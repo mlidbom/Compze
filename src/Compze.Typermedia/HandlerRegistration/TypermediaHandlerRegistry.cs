@@ -9,9 +9,9 @@ using Compze.Internals.SystemCE.CollectionsCE.GenericCE;
 
 namespace Compze.Typermedia.HandlerRegistration;
 
-public sealed class TypermediaHandlerRegistry(ITypeMapper typeMapper) : ITypermediaHandlerRegistrar, ITypermediaHandlerRegistry
+public sealed class TypermediaHandlerRegistry(ITypeMap typeMap) : ITypermediaHandlerRegistrar, ITypermediaHandlerRegistry
 {
-   readonly ITypeMapper _typeMapper = typeMapper;
+   readonly ITypeMap _typeMap = typeMap;
    IReadOnlyDictionary<Type, HandlerWithResultRegistration> _tueryHandlers = new Dictionary<Type, HandlerWithResultRegistration>();
    IReadOnlyDictionary<Type, HandlerWithResultRegistration> _tommandHandlersReturningResults = new Dictionary<Type, HandlerWithResultRegistration>();
    IReadOnlyDictionary<Type, Action<object, IScopeResolver>> _voidTommandHandlers = new Dictionary<Type, Action<object, IScopeResolver>>();
@@ -93,9 +93,9 @@ public sealed class TypermediaHandlerRegistry(ITypeMapper typeMapper) : ITyperme
 
       var typesNeedingMappings = handledTypes.Concat(remoteResultTypes);
 
-      _typeMapper.AssertMappingsExistFor(typesNeedingMappings);
+      _typeMap.AssertMappingsExistFor(typesNeedingMappings);
 
-      return handledTypes.Select(_typeMapper.GetId)
+      return handledTypes.Select(_typeMap.GetId)
                          .ToHashSet();
    }
 

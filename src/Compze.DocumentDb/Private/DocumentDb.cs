@@ -19,19 +19,19 @@ sealed class DocumentDb : IDocumentDb
 {
    public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Scoped.For<IDocumentDb>()
-                                  .CreatedBy((IDocumentDbSqlLayer sqlLayer, ITypeMapper typeMapper, IDocumentDbSerializer serializer)
-                                                => new DocumentDb(serializer, typeMapper, sqlLayer)));
+                                  .CreatedBy((IDocumentDbSqlLayer sqlLayer, ITypeMap typeMap, IDocumentDbSerializer serializer)
+                                                => new DocumentDb(serializer, typeMap, sqlLayer)));
 
    readonly IDocumentDbSerializer _serializer;
 
-   readonly ITypeMapper _typeMapper;
+   readonly ITypeMap _typeMap;
    readonly IDocumentDbSqlLayer _sqlLayer;
 
-   DocumentDb(IDocumentDbSerializer serializer, ITypeMapper typeMapper, IDocumentDbSqlLayer sqlLayer)
+   DocumentDb(IDocumentDbSerializer serializer, ITypeMap typeMap, IDocumentDbSqlLayer sqlLayer)
    {
       _sqlLayer = sqlLayer;
       _serializer = serializer;
-      _typeMapper = typeMapper;
+      _typeMap = typeMap;
    }
 
    //todo:urgent:bug: The DocumentKey uses (id, type) as the key. But polymorphism queries by base type, while storage is by concrete type:
@@ -63,7 +63,7 @@ sealed class DocumentDb : IDocumentDb
       var idString = GetIdString(id);
       var serializedDocument = _serializer.Serialize(value);
 
-      _sqlLayer.Add(new IDocumentDbSqlLayer.WriteRow(id: idString, serializedDocument: serializedDocument, updateTime: UtcTimeSource.UtcNow, typeId: _typeMapper.GetMappedId(value.GetType())));
+      _sqlLayer.Add(new IDocumentDbSqlLayer.WriteRow(id: idString, serializedDocument: serializedDocument, updateTime: UtcTimeSource.UtcNow, typeId: _typeMap.GetMappedId(value.GetType())));
 
       persistentValues.GetOrAddDefault(value.GetType())[idString] = serializedDocument;
    }
@@ -97,7 +97,7 @@ sealed class DocumentDb : IDocumentDb
          if(needsUpdate)
          {
             persistentValues.GetOrAddDefault(item.Value.GetType())[item.Key] = serializedDocument;
-            toUpdate.Add(new IDocumentDbSqlLayer.WriteRow(item.Key, serializedDocument, now, _typeMapper.GetMappedId(item.Value.GetType())));
+            toUpdate.Add(new IDocumentDbSqlLayer.WriteRow(item.Key, serializedDocument, now, _typeMap.GetMappedId(item.Value.GetType())));
          }
       }
 
@@ -127,9 +127,9 @@ sealed class DocumentDb : IDocumentDb
 
    IReadOnlySet<MappedTypeIdentifier> AcceptableTypeIds<T>() => AcceptableTypeIds(typeof(T));
 
-   IReadOnlySet<MappedTypeIdentifier> AcceptableTypeIds(Type type) => _typeMapper.GetIdForTypesAssignableTo(type)
+   IReadOnlySet<MappedTypeIdentifier> AcceptableTypeIds(Type type) => _typeMap.GetIdForTypesAssignableTo(type)
                                                                    .ToHashSet()
                                                                    ._assert(ids => ids.Any(), _ => $"Found no TypeIds for {type.GetFullNameCompilable()}");
 
-   Type GetTypeFromId(MappedTypeIdentifier id) => _typeMapper.GetType(id);
+   Type GetTypeFromId(MappedTypeIdentifier id) => _typeMap.GetType(id);
 }

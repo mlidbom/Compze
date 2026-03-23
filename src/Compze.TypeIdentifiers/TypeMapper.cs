@@ -12,7 +12,7 @@ namespace Compze.TypeIdentifiers;
 /// Leaf types get <see cref="MappedTypeIdentifier"/> (GUID-backed).
 /// Constructed types use structural string representations via <see cref="TypeNameMapper"/>.
 /// </summary>
-public class TypeMapper : ITypeMapper
+public class TypeMapper : ITypeMapper, ITypeMap
 {
    readonly TypeNameMapper _typeNameMapper = new();
    readonly ConcurrentDictionary<Type, MappedTypeIdentifier> _typeToId = new();
@@ -46,7 +46,7 @@ public class TypeMapper : ITypeMapper
             $"does not implement {nameof(IAssemblyTypeMapper)}.");
 
       var mapper = (IAssemblyTypeMapper)Activator.CreateInstance(mapperType)!;
-      var registrar = new TypeMappingRegistrar(assembly);
+      var registrar = new AssemblyTypeMappingRegistrar(assembly);
       mapper.Map(registrar);
 
       foreach(var kvp in registrar.LeafTypeMappings)

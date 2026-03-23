@@ -16,6 +16,7 @@ public static class TypeIdentifierMapperTestRegistrar
    {
       var mapper = new TypeMapper();
       mapper.MapTypesFromAllLoadedAssembliesWithTypeMappingsAttribute();
-      return @this.Register(Singleton.For<ITypeMapper>().Instance(mapper));
+      return @this.Register(Singleton.For<ITypeMapper>().Instance(mapper))
+                  .Register(Singleton.For<ITypeMap>().Instance(mapper));
    }
 }
