@@ -6,7 +6,7 @@ namespace Compze.Internals.Serialization.Newtonsoft.Specifications;
 
 class AssemblyTypeMapper : IAssemblyTypeMapper
 {
-   public void Map(ITypeMappingRegistrar map)
+   public void Map(IAssemblyTypeMappingRegistrar map)
    {
       map.Map<NewtonSoftTeventStoreTeventSerializerTests.TestTevent>("60c5ec86-b6e5-45e2-828e-8c912b1d1090")
          .Map<When_serializing_polymorphic_wrapper_objects.specifically_entity_ids.PersonId>("27226150-359e-45c7-9881-35879724612b")

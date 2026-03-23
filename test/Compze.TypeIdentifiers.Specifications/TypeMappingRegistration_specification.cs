@@ -16,7 +16,7 @@ public class TypeMappingRegistrar_specification
 {
    static readonly Assembly TestAssembly = typeof(RegistrationTestEntity).Assembly;
 
-   static TypeMappingRegistrar CreateRegistrar() => new(TestAssembly);
+   static AssemblyTypeMappingRegistrar CreateRegistrar() => new(TestAssembly);
 
    public class Map_leaf_type : TypeMappingRegistrar_specification
    {

@@ -46,7 +46,7 @@ public class TypeMapper : ITypeMapper, ITypeMap
             $"does not implement {nameof(IAssemblyTypeMapper)}.");
 
       var mapper = (IAssemblyTypeMapper)Activator.CreateInstance(mapperType)!;
-      var registrar = new TypeMappingRegistrar(assembly);
+      var registrar = new AssemblyTypeMappingRegistrar(assembly);
       mapper.Map(registrar);
 
       foreach(var kvp in registrar.LeafTypeMappings)

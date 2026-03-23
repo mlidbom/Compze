@@ -6,13 +6,13 @@ namespace Compze.TypeIdentifiers;
 /// Collects type mappings from an <see cref="IAssemblyTypeMapper"/> and validates
 /// that only types from the declaring assembly are mapped.
 /// </summary>
-sealed class TypeMappingRegistrar(Assembly declaringAssembly) : ITypeMappingRegistrar
+sealed class AssemblyTypeMappingRegistrar(Assembly declaringAssembly) : IAssemblyTypeMappingRegistrar
 {
    readonly Assembly _declaringAssembly = declaringAssembly;
    internal readonly Dictionary<Type, Guid> LeafTypeMappings = new();
    internal readonly Dictionary<Type, Guid> OpenGenericMappings = new();
 
-   public ITypeMappingRegistrar Map<T>(string id)
+   public IAssemblyTypeMappingRegistrar Map<T>(string id)
    {
       var type = typeof(T);
       AssertTypeIsFromDeclaringAssembly(type);
@@ -25,7 +25,7 @@ sealed class TypeMappingRegistrar(Assembly declaringAssembly) : ITypeMappingRegi
       return this;
    }
 
-   public ITypeMappingRegistrar MapOpenGeneric(Type openGenericType, string id)
+   public IAssemblyTypeMappingRegistrar MapOpenGeneric(Type openGenericType, string id)
    {
       AssertTypeIsFromDeclaringAssembly(openGenericType);
 
