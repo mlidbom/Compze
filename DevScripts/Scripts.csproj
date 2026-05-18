@@ -1,4 +1,4 @@
-﻿<!-- ReSharper disable MarkupAttributeTypo -->
+<!-- ReSharper disable MarkupAttributeTypo -->
 <Project Sdk="Microsoft.NET.Sdk">
    <Import Project="../src/SolutionStructure/solutionstructure.minimal-build-involvement.props" />
    

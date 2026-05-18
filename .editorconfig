@@ -1,8 +1,13 @@
 root = true
 
-[*.cs]
+[*.{cs,csproj,axaml,slnx,xml,json,props,targets}]
+indent_style = space
+indent_size = 3
+insert_final_newline = true
 charset = utf-8
-#options: 
+
+[*.cs]
+#options:
 
 
 csharp_style_namespace_declarations = file_scoped
