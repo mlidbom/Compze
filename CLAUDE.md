@@ -3,6 +3,7 @@
 ## Rules — Follow These First
 
 - **Don't code until instructed to.** Standard workflow is questions back and forth coming up with what to do. Then the go-ahead to code is given. Questions are not instructions to start coding.
+- **No changes external to the repo without confirmation.** The repo working tree is free game; anything outside it is not. Pause and ask before editing files outside the repo (`~/.claude.json`, `~/.claude/settings.json`, `~/.bashrc`, OS configs, plugin caches, etc.) or running commands that mutate global state (`claude mcp add --scope user`, `dotnet tool install -g`, `npm i -g`, registry edits, claude.ai account state). Local repo edits, tests, builds, and local git operations don't require this gate.
 - **Test thoroughly**: Always run the full test suite before finalizing.
 - **Performance tests**: If they fail, rerun. Repeated failures are NOT acceptable — do not report success.
 - **`COMPOSABLE_PERFORMANCE_TESTS_STRESS_TEST_ONLY`**: Set to `true` (the default in CI and `C-Test`) to run performance tests as stress tests only, disabling timing assertions. Set to `false` to re-enable timing checks.
