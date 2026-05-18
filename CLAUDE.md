@@ -15,6 +15,10 @@
 - **Name what you don't know.** "I don't know how X should work after this change" is always preferable to silently preserving the old architecture and reporting success.
 - **Never hide behind "existing architecture."** Existing entanglement is the problem to be solved, not a constraint.
 
+## Workarounds for upstream bugs
+
+Active workarounds live in [CLAUDE.workarounds.md](CLAUDE.workarounds.md). Read it if C# LSP probes start returning "No symbols found" or symbols from the wrong `.slnx`, or if the **PowerShell tool returns `Exit code 1` with no output on every call** (use Bash with `pwsh -NoProfile -NonInteractive -Command "..."` instead). Currently covers: csharp-ls + Claude Code [#16360](https://github.com/anthropics/claude-code/issues/16360), and PowerShell tool failure in the VS Code extension UI mode ([#55671](https://github.com/anthropics/claude-code/issues/55671)).
+
 ## Repository Overview
 
 Compze is a .NET framework for building expressive domains through:
