@@ -1,0 +1,6 @@
+{
+  "env": { "CSHARP_LSP_SOLUTION_REL": "src/Compze.AllProjects.slnx" },
+  "enabledPlugins": {
+    "csharp-lsp@claude-plugins-official": true
+  }
+}
