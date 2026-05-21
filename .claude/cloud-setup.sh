@@ -12,12 +12,24 @@
 # (rebuilt roughly every 7 days or when the setup script changes).
 #
 # What this installs:
-#   - .NET SDK 10  (build, test, dotnet tool) — via apt (Noble main)
-#   - PowerShell   (DevScripts/Compze.psm1, C-Build, C-Test, etc.) — tarball,
-#                   because pwsh isn't in the default apt repos
-#   - csharp-ls    (C# language server — backs the csharp-lsp plugin and Serena)
-#   - gh           (GitHub CLI — read PR check runs, fetch Actions logs, etc.
-#                   Auth is provided out-of-band via GH_TOKEN in the env config.)
+#   - .NET SDK 10        (build, test, dotnet tool) — via apt (Noble main)
+#   - .NET SDK 8         (Compze.Build.FlexRef is pinned to net8.0 in
+#                         .config/dotnet-tools.json and needs MSBuild from
+#                         the matching SDK — runtime alone is not enough.
+#                         Without this, `flexref` and C-FlexRef-Sync fail)
+#   - PowerShell         (DevScripts/Compze.psm1, C-Build, C-Test, etc.) —
+#                         tarball, since pwsh isn't in the default apt repos
+#   - csharp-ls          (C# language server — backs the csharp-lsp plugin
+#                         and Serena)
+#   - jb                 (JetBrains ReSharper CLI — `jb inspectcode`, see
+#                         the ReSharper Inspections section of CLAUDE.md)
+#   - docfx              (DocFX — builds the docs site in
+#                         src/Websites/Website/)
+#   - gh                 (GitHub CLI — read PR check runs, fetch Actions
+#                         logs, etc. Auth is provided out-of-band via
+#                         GH_TOKEN in the env config.)
+#   - local dotnet tools (restored from .config/dotnet-tools.json — currently
+#                         just flexref, used by C-FlexRef-Sync)
 #
 # What this registers (in the cloud container's user-scope config only):
 #   - Serena MCP server (.serena/project.yml drives it; uvx fetches Serena)
@@ -48,9 +60,9 @@ log() { echo "[compze-cloud-setup] $*" >&2; }
 # Noble main ships dotnet-sdk-10.0; universe ships gh. Setup scripts run as
 # root on Ubuntu 24.04, so apt is the documented install path
 # (https://code.claude.com/docs/en/claude-code-on-the-web).
-log "Installing .NET SDK 10 + GitHub CLI via apt..."
+log "Installing .NET SDK 10 + SDK 8, GitHub CLI via apt..."
 apt-get update -qq >&2
-apt-get install -y -qq dotnet-sdk-10.0 gh >&2
+apt-get install -y -qq dotnet-sdk-10.0 dotnet-sdk-8.0 gh >&2
 
 # -- PowerShell --------------------------------------------------------------
 # pwsh isn't in the default apt repos; using Microsoft's third-party apt
@@ -64,21 +76,33 @@ chmod +x "$PWSH_DIR/pwsh"
 rm -f "$tmp_pwsh"
 ln -sf "$PWSH_DIR/pwsh" /usr/local/bin/pwsh
 
-# -- csharp-ls (depends on .NET) --------------------------------------------
-# .NET global tool — no apt package. Install into a shared location so every
-# session sees it.
-log "Installing csharp-ls global tool to $DOTNET_TOOLS_DIR..."
+# -- .NET global tools (csharp-ls, jb, docfx) -------------------------------
+# All three are .NET global tools — none have apt packages. Install into a
+# shared location so every session sees them.
+log "Installing .NET global tools (csharp-ls, jb, docfx) to $DOTNET_TOOLS_DIR..."
 export DOTNET_ROOT
 mkdir -p "$DOTNET_TOOLS_DIR"
 dotnet tool install --tool-path "$DOTNET_TOOLS_DIR" csharp-ls >&2
-# csharp-ls is a .NET host that requires DOTNET_ROOT at runtime — invoke via
-# a shim instead of a bare symlink so callers don't have to set it.
-cat > /usr/local/bin/csharp-ls <<EOF
+dotnet tool install --tool-path "$DOTNET_TOOLS_DIR" JetBrains.ReSharper.GlobalTools >&2
+dotnet tool install --tool-path "$DOTNET_TOOLS_DIR" docfx >&2
+# These tools are .NET hosts that require DOTNET_ROOT at runtime — invoke
+# via shims instead of bare symlinks so callers don't have to set it.
+# (PATH already includes $DOTNET_TOOLS_DIR, but the shims pin DOTNET_ROOT.)
+for tool in csharp-ls jb docfx; do
+   cat > "/usr/local/bin/$tool" <<EOF
 #!/bin/sh
 export DOTNET_ROOT="$DOTNET_ROOT"
-exec "$DOTNET_TOOLS_DIR/csharp-ls" "\$@"
+exec "$DOTNET_TOOLS_DIR/$tool" "\$@"
 EOF
-chmod +x /usr/local/bin/csharp-ls
+   chmod +x "/usr/local/bin/$tool"
+done
+
+# -- Restore repo-local .NET tools ------------------------------------------
+# .config/dotnet-tools.json pins flexref (used by C-FlexRef-Sync). Restoring
+# now warms the NuGet cache into the snapshot so first-session use is fast
+# and works offline if needed.
+log "Restoring repo-local .NET tools from .config/dotnet-tools.json..."
+(cd /home/user/Compze && dotnet tool restore >&2) || log "warning: dotnet tool restore failed"
 
 # -- Persist env for subsequent shells / Claude Code sessions ---------------
 # Two layers, because they cover different consumers:
@@ -157,4 +181,4 @@ else
    log "warning: claude CLI not found at $CLAUDE_BIN — skipping Serena + plugin setup"
 fi
 
-log "Setup complete: dotnet $(dotnet --version) | pwsh $($PWSH_DIR/pwsh --version 2>/dev/null) | csharp-ls $($DOTNET_TOOLS_DIR/csharp-ls --version 2>/dev/null) | $(gh --version 2>/dev/null | head -1)"
+log "Setup complete: dotnet $(dotnet --version) | pwsh $($PWSH_DIR/pwsh --version 2>/dev/null) | csharp-ls $($DOTNET_TOOLS_DIR/csharp-ls --version 2>/dev/null) | jb $($DOTNET_TOOLS_DIR/jb --version 2>/dev/null | head -1) | docfx $($DOTNET_TOOLS_DIR/docfx --version 2>/dev/null | head -1) | $(gh --version 2>/dev/null | head -1)"
