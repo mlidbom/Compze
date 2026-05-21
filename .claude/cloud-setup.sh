@@ -104,6 +104,15 @@ done
 log "Restoring repo-local .NET tools from .config/dotnet-tools.json..."
 (cd /home/user/Compze && dotnet tool restore >&2) || log "warning: dotnet tool restore failed"
 
+# -- Restore the solution ---------------------------------------------------
+# Without this, the snapshot has no project.assets.json files, so on first
+# session start csharp-ls reports phantom missing-reference errors on every
+# test file (FactAttribute, types from other projects, etc.) until the user
+# manually builds. Doing it here bakes assets + NuGet cache into the snapshot
+# so LSP works immediately and the first cold build is fast.
+log "Restoring src/Compze.AllProjects.slnx..."
+(cd /home/user/Compze && dotnet restore src/Compze.AllProjects.slnx >&2) || log "warning: dotnet restore failed"
+
 # -- Persist env for subsequent shells / Claude Code sessions ---------------
 # Two layers, because they cover different consumers:
 #
