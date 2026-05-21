@@ -86,9 +86,16 @@ EOF
 chmod +x /usr/local/bin/csharp-ls
 
 # -- Persist env for subsequent shells / Claude Code sessions ---------------
-# Matches the convention used by /etc/profile.d/nodejs.sh, java.sh, etc. in
-# the base image. Login shells source this; Claude Code's bash invocations
-# pick it up at session start.
+# Two layers, because they cover different consumers:
+#
+# 1. /etc/profile.d/*.sh — sourced by login shells only. Covers interactive
+#    SSH/tmux sessions a human opens in the container. Matches the convention
+#    used by the base image (nodejs.sh, java.sh, etc.).
+# 2. .claude/settings.local.json `env` block — applied by Claude Code to
+#    every Bash tool invocation. Claude Code's Bash shells are non-login,
+#    so the profile.d file alone does NOT reach them. settings.local.json
+#    is the canonical mechanism for per-machine env, and it's gitignored so
+#    these cloud-specific values never reach a contributor's laptop.
 cat > "$PROFILE_FILE" <<EOF
 export DOTNET_ROOT="$DOTNET_DIR"
 export PATH="$DOTNET_DIR:$DOTNET_TOOLS_DIR:\$PATH"
@@ -100,6 +107,20 @@ export COMPOSABLE_PERFORMANCE_TESTS_STRESS_TEST_ONLY=true
 export COMPOSABLE_MACHINE_SLOWNESS=5.0
 EOF
 chmod 0644 "$PROFILE_FILE"
+
+SETTINGS_LOCAL="/home/user/Compze/.claude/settings.local.json"
+log "Writing cloud-specific env to $SETTINGS_LOCAL..."
+cat > "$SETTINGS_LOCAL" <<EOF
+{
+  "env": {
+    "DOTNET_ROOT": "$DOTNET_DIR",
+    "DOTNET_CLI_TELEMETRY_OPTOUT": "1",
+    "DOTNET_NOLOGO": "true",
+    "COMPOSABLE_PERFORMANCE_TESTS_STRESS_TEST_ONLY": "true",
+    "COMPOSABLE_MACHINE_SLOWNESS": "5.0"
+  }
+}
+EOF
 
 # -- Serena MCP registration -------------------------------------------------
 # `claude mcp add --scope user` writes to $HOME/.claude.json inside the cloud

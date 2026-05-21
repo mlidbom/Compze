@@ -3,6 +3,8 @@
 obj
 test-results
 
+.claude/settings.local.json
+
 *.dll
 *.deps.json
 *.cache
