@@ -142,10 +142,17 @@ if [ -x "$CLAUDE_BIN" ]; then
    fi
 
    # csharp-lsp plugin. `enabledPlugins` in .claude/settings.json is supposed
-   # to auto-install on session start, but in cloud sessions the marketplace
-   # registration sometimes races with the auto-install and the plugin ends
-   # up missing. Install it explicitly here so the snapshot always carries it.
-   # The command is idempotent.
+   # to auto-install on session start, but in cloud sessions that path is
+   # unreliable (the marketplace registration races with the auto-install
+   # and the plugin ends up missing). Install it explicitly here so the
+   # snapshot always carries it.
+   #
+   # `plugin install <name>@<marketplace>` requires the marketplace to
+   # already be known — otherwise it fails with "Plugin not found in
+   # marketplace". So add the marketplace first; both commands are idempotent.
+   log "Adding claude-plugins-official marketplace (user scope)..."
+   "$CLAUDE_BIN" plugin marketplace add anthropics/claude-plugins-official >&2 \
+      || log "warning: marketplace add failed (may already be present)"
    log "Installing csharp-lsp plugin (user scope)..."
    "$CLAUDE_BIN" plugin install csharp-lsp@claude-plugins-official >&2 \
       || log "warning: csharp-lsp plugin install failed"
