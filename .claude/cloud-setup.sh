@@ -14,9 +14,17 @@
 # What this installs:
 #   - .NET SDK 10  (build, test, dotnet tool)
 #   - PowerShell   (DevScripts/Compze.psm1, C-Build, C-Test, etc.)
-#   - csharp-ls    (C# language server for Serena / Claude Code LSP probes)
+#   - csharp-ls    (C# language server — backs the csharp-lsp plugin and Serena)
 #
-# The script also drops a /etc/profile.d/ entry so DOTNET_ROOT and PATH are
+# What this registers (in the cloud container's user-scope config only):
+#   - Serena MCP server (.serena/project.yml drives it; uvx fetches Serena)
+#
+# The csharp-lsp plugin itself is declared in .claude/settings.json
+# (enabledPlugins) so it auto-installs on session start. That path applies
+# both locally and in cloud — but the binary it needs is only installed by
+# this script, so locally users follow CLAUDE.workarounds.md.
+#
+# This script also drops a /etc/profile.d/ entry so DOTNET_ROOT and PATH are
 # set for every shell in subsequent sessions (matching the pattern used by
 # the base image for Node, Java, etc.).
 #
@@ -92,5 +100,26 @@ export COMPOSABLE_PERFORMANCE_TESTS_STRESS_TEST_ONLY=true
 export COMPOSABLE_MACHINE_SLOWNESS=5.0
 EOF
 chmod 0644 "$PROFILE_FILE"
+
+# -- Serena MCP registration -------------------------------------------------
+# `claude mcp add --scope user` writes to $HOME/.claude.json inside the cloud
+# container only. The user's laptop is not touched. uv/uvx are pre-installed
+# in the base image. Serena reads .serena/project.yml from the repo on launch
+# (configured for csharp; csharp-ls above satisfies its LSP dependency).
+CLAUDE_BIN="${CLAUDE_CODE_EXECPATH:-/opt/claude-code/bin/claude}"
+if [ -x "$CLAUDE_BIN" ]; then
+   if ! "$CLAUDE_BIN" mcp list 2>/dev/null | grep -q "^serena"; then
+      log "Registering Serena MCP server (user scope)..."
+      "$CLAUDE_BIN" mcp add --scope user serena -- \
+         uvx --from git+https://github.com/oraios/serena \
+         serena start-mcp-server \
+         --context ide-assistant \
+         --project /home/user/Compze >&2 || log "warning: serena registration failed"
+   else
+      log "Serena MCP server already registered"
+   fi
+else
+   log "warning: claude CLI not found at $CLAUDE_BIN — skipping Serena registration"
+fi
 
 log "Setup complete: $($DOTNET_DIR/dotnet --version) | pwsh $($PWSH_DIR/pwsh --version 2>/dev/null) | csharp-ls $($DOTNET_TOOLS_DIR/csharp-ls --version 2>/dev/null)"
