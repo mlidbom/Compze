@@ -109,8 +109,12 @@ EOF
 chmod 0644 "$PROFILE_FILE"
 
 SETTINGS_LOCAL="/home/user/Compze/.claude/settings.local.json"
-log "Writing cloud-specific env to $SETTINGS_LOCAL..."
-cat > "$SETTINGS_LOCAL" <<EOF
+PERMISSIONS_FILE="/home/user/Compze/.claude/cloud-permissions.json"
+log "Writing cloud-specific env + permissions to $SETTINGS_LOCAL..."
+# Permissions live in a separate checked-in file so they're reviewable; env is
+# inlined here because it interpolates $DOTNET_DIR. jq merges the two into
+# the single settings.local.json that Claude Code reads.
+env_json=$(cat <<EOF
 {
   "env": {
     "DOTNET_ROOT": "$DOTNET_DIR",
@@ -121,6 +125,8 @@ cat > "$SETTINGS_LOCAL" <<EOF
   }
 }
 EOF
+)
+echo "$env_json" | jq -s '.[0] * .[1]' - "$PERMISSIONS_FILE" > "$SETTINGS_LOCAL"
 
 # -- Claude CLI integrations (Serena MCP + csharp-lsp plugin) ----------------
 # All `claude` writes here land in $HOME/.claude.json (and ~/.claude/plugins/)
