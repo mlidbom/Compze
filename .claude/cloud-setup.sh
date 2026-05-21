@@ -40,8 +40,6 @@ DOTNET_DIR="/opt/dotnet"
 DOTNET_TOOLS_DIR="/opt/dotnet-tools"
 PWSH_DIR="/opt/powershell"
 PWSH_VERSION="7.4.6"
-GH_DIR="/opt/gh"
-GH_VERSION="2.92.0"
 PROFILE_FILE="/etc/profile.d/compze-cloud-env.sh"
 
 log() { echo "[compze-cloud-setup] $*" >&2; }
@@ -76,15 +74,13 @@ ln -sf "$PWSH_DIR/pwsh" /usr/local/bin/pwsh
 # without going through the GitHub MCP server (which doesn't expose
 # Actions log contents). Auth is supplied by `GH_TOKEN` in the cloud env
 # config — this script doesn't touch credentials.
-if [ ! -x "$GH_DIR/bin/gh" ]; then
-   log "Installing GitHub CLI $GH_VERSION to $GH_DIR..."
-   mkdir -p "$GH_DIR"
-   tmp_gh="$(mktemp --suffix=.tar.gz)"
-   curl -fsSL "https://github.com/cli/cli/releases/download/v${GH_VERSION}/gh_${GH_VERSION}_linux_amd64.tar.gz" -o "$tmp_gh"
-   tar -xzf "$tmp_gh" -C "$GH_DIR" --strip-components=1
-   rm -f "$tmp_gh"
+# https://code.claude.com/docs/en/claude-code-on-the-web — Ubuntu 24.04
+# universe ships gh, so apt is the documented install path.
+if ! command -v gh >/dev/null 2>&1; then
+   log "Installing GitHub CLI via apt..."
+   apt-get update -qq >&2
+   apt-get install -y -qq gh >&2
 fi
-ln -sf "$GH_DIR/bin/gh" /usr/local/bin/gh
 
 # -- csharp-ls (depends on .NET) --------------------------------------------
 # Install as a global tool into a shared location so every session sees it.
@@ -185,4 +181,4 @@ else
    log "warning: claude CLI not found at $CLAUDE_BIN — skipping Serena + plugin setup"
 fi
 
-log "Setup complete: $($DOTNET_DIR/dotnet --version) | pwsh $($PWSH_DIR/pwsh --version 2>/dev/null) | csharp-ls $($DOTNET_TOOLS_DIR/csharp-ls --version 2>/dev/null) | $($GH_DIR/bin/gh --version 2>/dev/null | head -1)"
+log "Setup complete: $($DOTNET_DIR/dotnet --version) | pwsh $($PWSH_DIR/pwsh --version 2>/dev/null) | csharp-ls $($DOTNET_TOOLS_DIR/csharp-ls --version 2>/dev/null) | $(gh --version 2>/dev/null | head -1)"
