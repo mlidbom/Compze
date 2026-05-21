@@ -12,8 +12,9 @@
 # (rebuilt roughly every 7 days or when the setup script changes).
 #
 # What this installs:
-#   - .NET SDK 10  (build, test, dotnet tool)
-#   - PowerShell   (DevScripts/Compze.psm1, C-Build, C-Test, etc.)
+#   - .NET SDK 10  (build, test, dotnet tool) — via apt (Noble main)
+#   - PowerShell   (DevScripts/Compze.psm1, C-Build, C-Test, etc.) — tarball,
+#                   because pwsh isn't in the default apt repos
 #   - csharp-ls    (C# language server — backs the csharp-lsp plugin and Serena)
 #   - gh           (GitHub CLI — read PR check runs, fetch Actions logs, etc.
 #                   Auth is provided out-of-band via GH_TOKEN in the env config.)
@@ -35,8 +36,7 @@
 # calls it.
 set -euo pipefail
 
-DOTNET_CHANNEL="10.0"
-DOTNET_DIR="/opt/dotnet"
+DOTNET_ROOT="/usr/lib/dotnet"
 DOTNET_TOOLS_DIR="/opt/dotnet-tools"
 PWSH_DIR="/opt/powershell"
 PWSH_VERSION="7.4.6"
@@ -44,58 +44,38 @@ PROFILE_FILE="/etc/profile.d/compze-cloud-env.sh"
 
 log() { echo "[compze-cloud-setup] $*" >&2; }
 
-# -- .NET SDK ----------------------------------------------------------------
-if [ ! -x "$DOTNET_DIR/dotnet" ]; then
-   log "Installing .NET SDK (channel $DOTNET_CHANNEL) to $DOTNET_DIR..."
-   tmp_installer="$(mktemp)"
-   curl -fsSL https://dotnet.microsoft.com/download/dotnet/scripts/v1/dotnet-install.sh -o "$tmp_installer"
-   chmod +x "$tmp_installer"
-   "$tmp_installer" --channel "$DOTNET_CHANNEL" --install-dir "$DOTNET_DIR" --version latest >&2
-   rm -f "$tmp_installer"
-else
-   log ".NET SDK already present at $DOTNET_DIR"
-fi
-ln -sf "$DOTNET_DIR/dotnet" /usr/local/bin/dotnet
+# -- apt-installed tools (.NET SDK, GitHub CLI) ------------------------------
+# Noble main ships dotnet-sdk-10.0; universe ships gh. Setup scripts run as
+# root on Ubuntu 24.04, so apt is the documented install path
+# (https://code.claude.com/docs/en/claude-code-on-the-web).
+log "Installing .NET SDK 10 + GitHub CLI via apt..."
+apt-get update -qq >&2
+apt-get install -y -qq dotnet-sdk-10.0 gh >&2
 
 # -- PowerShell --------------------------------------------------------------
-if [ ! -x "$PWSH_DIR/pwsh" ]; then
-   log "Installing PowerShell $PWSH_VERSION to $PWSH_DIR..."
-   mkdir -p "$PWSH_DIR"
-   tmp_pwsh="$(mktemp --suffix=.tar.gz)"
-   curl -fsSL "https://github.com/PowerShell/PowerShell/releases/download/v${PWSH_VERSION}/powershell-${PWSH_VERSION}-linux-x64.tar.gz" -o "$tmp_pwsh"
-   tar -xzf "$tmp_pwsh" -C "$PWSH_DIR"
-   chmod +x "$PWSH_DIR/pwsh"
-   rm -f "$tmp_pwsh"
-fi
+# pwsh isn't in the default apt repos; using Microsoft's third-party apt
+# repo would be more code than a single tarball extract.
+log "Installing PowerShell $PWSH_VERSION to $PWSH_DIR..."
+mkdir -p "$PWSH_DIR"
+tmp_pwsh="$(mktemp --suffix=.tar.gz)"
+curl -fsSL "https://github.com/PowerShell/PowerShell/releases/download/v${PWSH_VERSION}/powershell-${PWSH_VERSION}-linux-x64.tar.gz" -o "$tmp_pwsh"
+tar -xzf "$tmp_pwsh" -C "$PWSH_DIR"
+chmod +x "$PWSH_DIR/pwsh"
+rm -f "$tmp_pwsh"
 ln -sf "$PWSH_DIR/pwsh" /usr/local/bin/pwsh
 
-# -- GitHub CLI --------------------------------------------------------------
-# Lets Claude read PR check runs, fetch workflow run logs, list PRs/issues
-# without going through the GitHub MCP server (which doesn't expose
-# Actions log contents). Auth is supplied by `GH_TOKEN` in the cloud env
-# config — this script doesn't touch credentials.
-# https://code.claude.com/docs/en/claude-code-on-the-web — Ubuntu 24.04
-# universe ships gh, so apt is the documented install path.
-if ! command -v gh >/dev/null 2>&1; then
-   log "Installing GitHub CLI via apt..."
-   apt-get update -qq >&2
-   apt-get install -y -qq gh >&2
-fi
-
 # -- csharp-ls (depends on .NET) --------------------------------------------
-# Install as a global tool into a shared location so every session sees it.
-export DOTNET_ROOT="$DOTNET_DIR"
-export PATH="$DOTNET_DIR:$DOTNET_TOOLS_DIR:$PATH"
+# .NET global tool — no apt package. Install into a shared location so every
+# session sees it.
+log "Installing csharp-ls global tool to $DOTNET_TOOLS_DIR..."
+export DOTNET_ROOT
 mkdir -p "$DOTNET_TOOLS_DIR"
-if [ ! -x "$DOTNET_TOOLS_DIR/csharp-ls" ]; then
-   log "Installing csharp-ls global tool to $DOTNET_TOOLS_DIR..."
-   "$DOTNET_DIR/dotnet" tool install --tool-path "$DOTNET_TOOLS_DIR" csharp-ls >&2
-fi
+dotnet tool install --tool-path "$DOTNET_TOOLS_DIR" csharp-ls >&2
 # csharp-ls is a .NET host that requires DOTNET_ROOT at runtime — invoke via
 # a shim instead of a bare symlink so callers don't have to set it.
 cat > /usr/local/bin/csharp-ls <<EOF
 #!/bin/sh
-export DOTNET_ROOT="$DOTNET_DIR"
+export DOTNET_ROOT="$DOTNET_ROOT"
 exec "$DOTNET_TOOLS_DIR/csharp-ls" "\$@"
 EOF
 chmod +x /usr/local/bin/csharp-ls
@@ -112,8 +92,8 @@ chmod +x /usr/local/bin/csharp-ls
 #    is the canonical mechanism for per-machine env, and it's gitignored so
 #    these cloud-specific values never reach a contributor's laptop.
 cat > "$PROFILE_FILE" <<EOF
-export DOTNET_ROOT="$DOTNET_DIR"
-export PATH="$DOTNET_DIR:$DOTNET_TOOLS_DIR:\$PATH"
+export DOTNET_ROOT="$DOTNET_ROOT"
+export PATH="$DOTNET_TOOLS_DIR:\$PATH"
 export DOTNET_CLI_TELEMETRY_OPTOUT=1
 export DOTNET_NOLOGO=true
 # Match CI defaults — disables wall-clock timing assertions in perf tests on
@@ -127,12 +107,12 @@ SETTINGS_LOCAL="/home/user/Compze/.claude/settings.local.json"
 PERMISSIONS_FILE="/home/user/Compze/.claude/cloud-permissions.json"
 log "Writing cloud-specific env + permissions to $SETTINGS_LOCAL..."
 # Permissions live in a separate checked-in file so they're reviewable; env is
-# inlined here because it interpolates $DOTNET_DIR. jq merges the two into
+# inlined here because it interpolates $DOTNET_ROOT. jq merges the two into
 # the single settings.local.json that Claude Code reads.
 env_json=$(cat <<EOF
 {
   "env": {
-    "DOTNET_ROOT": "$DOTNET_DIR",
+    "DOTNET_ROOT": "$DOTNET_ROOT",
     "DOTNET_CLI_TELEMETRY_OPTOUT": "1",
     "DOTNET_NOLOGO": "true",
     "COMPOSABLE_PERFORMANCE_TESTS_STRESS_TEST_ONLY": "true",
@@ -151,16 +131,12 @@ if [ -x "$CLAUDE_BIN" ]; then
    # Serena MCP server. uv/uvx come from the base image; Serena reads
    # .serena/project.yml from the repo on launch (csharp; csharp-ls above
    # satisfies the LSP dependency).
-   if ! "$CLAUDE_BIN" mcp list 2>/dev/null | grep -q "^serena"; then
-      log "Registering Serena MCP server (user scope)..."
-      "$CLAUDE_BIN" mcp add --scope user serena -- \
-         uvx --from git+https://github.com/oraios/serena \
-         serena start-mcp-server \
-         --context ide-assistant \
-         --project /home/user/Compze >&2 || log "warning: serena registration failed"
-   else
-      log "Serena MCP server already registered"
-   fi
+   log "Registering Serena MCP server (user scope)..."
+   "$CLAUDE_BIN" mcp add --scope user serena -- \
+      uvx --from git+https://github.com/oraios/serena \
+      serena start-mcp-server \
+      --context ide-assistant \
+      --project /home/user/Compze >&2 || log "warning: serena registration failed"
 
    # csharp-lsp plugin. `enabledPlugins` in .claude/settings.json is supposed
    # to auto-install on session start, but in cloud sessions that path is
@@ -181,4 +157,4 @@ else
    log "warning: claude CLI not found at $CLAUDE_BIN — skipping Serena + plugin setup"
 fi
 
-log "Setup complete: $($DOTNET_DIR/dotnet --version) | pwsh $($PWSH_DIR/pwsh --version 2>/dev/null) | csharp-ls $($DOTNET_TOOLS_DIR/csharp-ls --version 2>/dev/null) | $(gh --version 2>/dev/null | head -1)"
+log "Setup complete: dotnet $(dotnet --version) | pwsh $($PWSH_DIR/pwsh --version 2>/dev/null) | csharp-ls $($DOTNET_TOOLS_DIR/csharp-ls --version 2>/dev/null) | $(gh --version 2>/dev/null | head -1)"
