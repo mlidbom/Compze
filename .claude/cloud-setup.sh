@@ -122,13 +122,14 @@ cat > "$SETTINGS_LOCAL" <<EOF
 }
 EOF
 
-# -- Serena MCP registration -------------------------------------------------
-# `claude mcp add --scope user` writes to $HOME/.claude.json inside the cloud
-# container only. The user's laptop is not touched. uv/uvx are pre-installed
-# in the base image. Serena reads .serena/project.yml from the repo on launch
-# (configured for csharp; csharp-ls above satisfies its LSP dependency).
+# -- Claude CLI integrations (Serena MCP + csharp-lsp plugin) ----------------
+# All `claude` writes here land in $HOME/.claude.json (and ~/.claude/plugins/)
+# inside the cloud container only. The user's laptop is never touched.
 CLAUDE_BIN="${CLAUDE_CODE_EXECPATH:-/opt/claude-code/bin/claude}"
 if [ -x "$CLAUDE_BIN" ]; then
+   # Serena MCP server. uv/uvx come from the base image; Serena reads
+   # .serena/project.yml from the repo on launch (csharp; csharp-ls above
+   # satisfies the LSP dependency).
    if ! "$CLAUDE_BIN" mcp list 2>/dev/null | grep -q "^serena"; then
       log "Registering Serena MCP server (user scope)..."
       "$CLAUDE_BIN" mcp add --scope user serena -- \
@@ -139,8 +140,17 @@ if [ -x "$CLAUDE_BIN" ]; then
    else
       log "Serena MCP server already registered"
    fi
+
+   # csharp-lsp plugin. `enabledPlugins` in .claude/settings.json is supposed
+   # to auto-install on session start, but in cloud sessions the marketplace
+   # registration sometimes races with the auto-install and the plugin ends
+   # up missing. Install it explicitly here so the snapshot always carries it.
+   # The command is idempotent.
+   log "Installing csharp-lsp plugin (user scope)..."
+   "$CLAUDE_BIN" plugin install csharp-lsp@claude-plugins-official >&2 \
+      || log "warning: csharp-lsp plugin install failed"
 else
-   log "warning: claude CLI not found at $CLAUDE_BIN — skipping Serena registration"
+   log "warning: claude CLI not found at $CLAUDE_BIN — skipping Serena + plugin setup"
 fi
 
 log "Setup complete: $($DOTNET_DIR/dotnet --version) | pwsh $($PWSH_DIR/pwsh --version 2>/dev/null) | csharp-ls $($DOTNET_TOOLS_DIR/csharp-ls --version 2>/dev/null)"
