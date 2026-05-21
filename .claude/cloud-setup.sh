@@ -15,6 +15,8 @@
 #   - .NET SDK 10  (build, test, dotnet tool)
 #   - PowerShell   (DevScripts/Compze.psm1, C-Build, C-Test, etc.)
 #   - csharp-ls    (C# language server — backs the csharp-lsp plugin and Serena)
+#   - gh           (GitHub CLI — read PR check runs, fetch Actions logs, etc.
+#                   Auth is provided out-of-band via GH_TOKEN in the env config.)
 #
 # What this registers (in the cloud container's user-scope config only):
 #   - Serena MCP server (.serena/project.yml drives it; uvx fetches Serena)
@@ -38,6 +40,8 @@ DOTNET_DIR="/opt/dotnet"
 DOTNET_TOOLS_DIR="/opt/dotnet-tools"
 PWSH_DIR="/opt/powershell"
 PWSH_VERSION="7.4.6"
+GH_DIR="/opt/gh"
+GH_VERSION="2.92.0"
 PROFILE_FILE="/etc/profile.d/compze-cloud-env.sh"
 
 log() { echo "[compze-cloud-setup] $*" >&2; }
@@ -66,6 +70,21 @@ if [ ! -x "$PWSH_DIR/pwsh" ]; then
    rm -f "$tmp_pwsh"
 fi
 ln -sf "$PWSH_DIR/pwsh" /usr/local/bin/pwsh
+
+# -- GitHub CLI --------------------------------------------------------------
+# Lets Claude read PR check runs, fetch workflow run logs, list PRs/issues
+# without going through the GitHub MCP server (which doesn't expose
+# Actions log contents). Auth is supplied by `GH_TOKEN` in the cloud env
+# config — this script doesn't touch credentials.
+if [ ! -x "$GH_DIR/bin/gh" ]; then
+   log "Installing GitHub CLI $GH_VERSION to $GH_DIR..."
+   mkdir -p "$GH_DIR"
+   tmp_gh="$(mktemp --suffix=.tar.gz)"
+   curl -fsSL "https://github.com/cli/cli/releases/download/v${GH_VERSION}/gh_${GH_VERSION}_linux_amd64.tar.gz" -o "$tmp_gh"
+   tar -xzf "$tmp_gh" -C "$GH_DIR" --strip-components=1
+   rm -f "$tmp_gh"
+fi
+ln -sf "$GH_DIR/bin/gh" /usr/local/bin/gh
 
 # -- csharp-ls (depends on .NET) --------------------------------------------
 # Install as a global tool into a shared location so every session sees it.
@@ -166,4 +185,4 @@ else
    log "warning: claude CLI not found at $CLAUDE_BIN — skipping Serena + plugin setup"
 fi
 
-log "Setup complete: $($DOTNET_DIR/dotnet --version) | pwsh $($PWSH_DIR/pwsh --version 2>/dev/null) | csharp-ls $($DOTNET_TOOLS_DIR/csharp-ls --version 2>/dev/null)"
+log "Setup complete: $($DOTNET_DIR/dotnet --version) | pwsh $($PWSH_DIR/pwsh --version 2>/dev/null) | csharp-ls $($DOTNET_TOOLS_DIR/csharp-ls --version 2>/dev/null) | $($GH_DIR/bin/gh --version 2>/dev/null | head -1)"
