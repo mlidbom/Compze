@@ -177,6 +177,28 @@ if [ -x "$CLAUDE_BIN" ]; then
    log "Installing csharp-lsp plugin (user scope)..."
    "$CLAUDE_BIN" plugin install csharp-lsp@claude-plugins-official >&2 \
       || log "warning: csharp-lsp plugin install failed"
+
+   # csharp-lsp workaround per CLAUDE.workarounds.md: until claude-code#16360
+   # ships `workspace/configuration`, the plugin can't tell csharp-ls which
+   # solution to load via env alone. Drop a `.lsp.json` in the plugin cache
+   # that pins `--solution` to ${CLAUDE_PROJECT_DIR}/${CSHARP_LSP_SOLUTION_REL}
+   # (set in .claude/settings.json). Without this csharp-ls auto-discovers a
+   # subset solution and `test/` projects fail to resolve their references.
+   csharp_lsp_dir=$(find /root/.claude/plugins/cache/claude-plugins-official/csharp-lsp -mindepth 1 -maxdepth 1 -type d | head -n1)
+   if [ -n "$csharp_lsp_dir" ]; then
+      log "Writing csharp-lsp .lsp.json to $csharp_lsp_dir..."
+      cat > "$csharp_lsp_dir/.lsp.json" <<'EOF'
+{
+  "csharp": {
+    "command": "csharp-ls",
+    "args": ["--solution", "${CLAUDE_PROJECT_DIR}/${CSHARP_LSP_SOLUTION_REL}", "--loglevel", "info"],
+    "extensionToLanguage": { ".cs": "csharp", ".csx": "csharp" }
+  }
+}
+EOF
+   else
+      log "warning: csharp-lsp plugin cache dir not found — skipping .lsp.json write"
+   fi
 else
    log "warning: claude CLI not found at $CLAUDE_BIN — skipping Serena + plugin setup"
 fi
