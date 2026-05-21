@@ -1,0 +1,96 @@
+#!/bin/bash
+# Cloud environment setup script for Compze.
+#
+# This is intended to be invoked from the "Setup script" field of a Claude
+# Code on the web cloud environment (https://code.claude.com/docs/en/claude-code-on-the-web#setup-scripts).
+# Put this single line in that field:
+#
+#     bash /home/user/Compze/.claude/cloud-setup.sh
+#
+# Setup scripts run once as root, before Claude Code launches, and the
+# resulting filesystem state is snapshotted and reused for later sessions
+# (rebuilt roughly every 7 days or when the setup script changes).
+#
+# What this installs:
+#   - .NET SDK 10  (build, test, dotnet tool)
+#   - PowerShell   (DevScripts/Compze.psm1, C-Build, C-Test, etc.)
+#   - csharp-ls    (C# language server for Serena / Claude Code LSP probes)
+#
+# The script also drops a /etc/profile.d/ entry so DOTNET_ROOT and PATH are
+# set for every shell in subsequent sessions (matching the pattern used by
+# the base image for Node, Java, etc.).
+#
+# Local desktop CLI and GitHub Actions never invoke this — it lives in the
+# repo for visibility and version control, but only the cloud env config
+# calls it.
+set -euo pipefail
+
+DOTNET_CHANNEL="10.0"
+DOTNET_DIR="/opt/dotnet"
+DOTNET_TOOLS_DIR="/opt/dotnet-tools"
+PWSH_DIR="/opt/powershell"
+PWSH_VERSION="7.4.6"
+PROFILE_FILE="/etc/profile.d/compze-cloud-env.sh"
+
+log() { echo "[compze-cloud-setup] $*" >&2; }
+
+# -- .NET SDK ----------------------------------------------------------------
+if [ ! -x "$DOTNET_DIR/dotnet" ]; then
+   log "Installing .NET SDK (channel $DOTNET_CHANNEL) to $DOTNET_DIR..."
+   tmp_installer="$(mktemp)"
+   curl -fsSL https://dotnet.microsoft.com/download/dotnet/scripts/v1/dotnet-install.sh -o "$tmp_installer"
+   chmod +x "$tmp_installer"
+   "$tmp_installer" --channel "$DOTNET_CHANNEL" --install-dir "$DOTNET_DIR" --version latest >&2
+   rm -f "$tmp_installer"
+else
+   log ".NET SDK already present at $DOTNET_DIR"
+fi
+ln -sf "$DOTNET_DIR/dotnet" /usr/local/bin/dotnet
+
+# -- PowerShell --------------------------------------------------------------
+if [ ! -x "$PWSH_DIR/pwsh" ]; then
+   log "Installing PowerShell $PWSH_VERSION to $PWSH_DIR..."
+   mkdir -p "$PWSH_DIR"
+   tmp_pwsh="$(mktemp --suffix=.tar.gz)"
+   curl -fsSL "https://github.com/PowerShell/PowerShell/releases/download/v${PWSH_VERSION}/powershell-${PWSH_VERSION}-linux-x64.tar.gz" -o "$tmp_pwsh"
+   tar -xzf "$tmp_pwsh" -C "$PWSH_DIR"
+   chmod +x "$PWSH_DIR/pwsh"
+   rm -f "$tmp_pwsh"
+fi
+ln -sf "$PWSH_DIR/pwsh" /usr/local/bin/pwsh
+
+# -- csharp-ls (depends on .NET) --------------------------------------------
+# Install as a global tool into a shared location so every session sees it.
+export DOTNET_ROOT="$DOTNET_DIR"
+export PATH="$DOTNET_DIR:$DOTNET_TOOLS_DIR:$PATH"
+mkdir -p "$DOTNET_TOOLS_DIR"
+if [ ! -x "$DOTNET_TOOLS_DIR/csharp-ls" ]; then
+   log "Installing csharp-ls global tool to $DOTNET_TOOLS_DIR..."
+   "$DOTNET_DIR/dotnet" tool install --tool-path "$DOTNET_TOOLS_DIR" csharp-ls >&2
+fi
+# csharp-ls is a .NET host that requires DOTNET_ROOT at runtime — invoke via
+# a shim instead of a bare symlink so callers don't have to set it.
+cat > /usr/local/bin/csharp-ls <<EOF
+#!/bin/sh
+export DOTNET_ROOT="$DOTNET_DIR"
+exec "$DOTNET_TOOLS_DIR/csharp-ls" "\$@"
+EOF
+chmod +x /usr/local/bin/csharp-ls
+
+# -- Persist env for subsequent shells / Claude Code sessions ---------------
+# Matches the convention used by /etc/profile.d/nodejs.sh, java.sh, etc. in
+# the base image. Login shells source this; Claude Code's bash invocations
+# pick it up at session start.
+cat > "$PROFILE_FILE" <<EOF
+export DOTNET_ROOT="$DOTNET_DIR"
+export PATH="$DOTNET_DIR:$DOTNET_TOOLS_DIR:\$PATH"
+export DOTNET_CLI_TELEMETRY_OPTOUT=1
+export DOTNET_NOLOGO=true
+# Match CI defaults — disables wall-clock timing assertions in perf tests on
+# shared cloud infra. See CLAUDE.md.
+export COMPOSABLE_PERFORMANCE_TESTS_STRESS_TEST_ONLY=true
+export COMPOSABLE_MACHINE_SLOWNESS=5.0
+EOF
+chmod 0644 "$PROFILE_FILE"
+
+log "Setup complete: $($DOTNET_DIR/dotnet --version) | pwsh $($PWSH_DIR/pwsh --version 2>/dev/null) | csharp-ls $($DOTNET_TOOLS_DIR/csharp-ls --version 2>/dev/null)"

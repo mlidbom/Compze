@@ -1,15 +1,3 @@
 {
-  "env": { "CSHARP_LSP_SOLUTION_REL": "src/Compze.AllProjects.slnx" },
-  "hooks": {
-    "SessionStart": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/session-start.sh"
-          }
-        ]
-      }
-    ]
-  }
+  "env": { "CSHARP_LSP_SOLUTION_REL": "src/Compze.AllProjects.slnx" }
 }
