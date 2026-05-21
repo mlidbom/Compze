@@ -47,6 +47,10 @@
       "Bash(killall *)",
       "Bash(make *)",
       "Bash(flexref *)",
+      "Bash(jq *)",
+      "Bash(jq)",
+      "Bash(yq *)",
+      "Bash(yq)",
       "mcp__serena__*",
       "mcp__github__*",
       "mcp__79dbe962-a6f5-40d9-a9ae-23b86c00d447__*"
