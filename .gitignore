@@ -53,3 +53,4 @@ repomix*.xml
 /src/TestUsingPluggableComponentCombinations.defaults
 /inspection-results.sarif
 *.trx
+**/.idea/claudeCodeTabState.xml
