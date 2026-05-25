@@ -1,4 +1,4 @@
-<SolutionConfiguration>
+﻿<SolutionConfiguration>
   <Settings>
     <AllowParallelTestExecution>True</AllowParallelTestExecution>
     <CustomBuildProperties>
@@ -6,6 +6,7 @@
     </CustomBuildProperties>
     <HotSpotsExclusionList />
     <HotSpotsLineExclusionList />
+    <PipelineOptimisationPriority>Throughput</PipelineOptimisationPriority>
     <RdiConfigured>True</RdiConfigured>
     <SolutionConfigured>True</SolutionConfigured>
   </Settings>
