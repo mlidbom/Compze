@@ -1,10 +1,11 @@
 # Changelog
 
-All notable changes to Compze.Internals.SystemCE.ThreadingCE.Testing will be documented in this file.
+All notable changes to Compze.Threading.Testing will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## 0.5.0-alpha
+
 - Refactoring the public API
 - README updates
 - Doc comments on every public type and method

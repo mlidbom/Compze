@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to Compze.DependencyInjection.Autofac will be documented in this file.
+All notable changes to Compze.DependencyInjection.DryIoc.Extensions.Hosting will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 

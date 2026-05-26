@@ -4,6 +4,10 @@ All notable changes to Compze.DependencyInjection.Microsoft will be documented i
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.3.0-alpha
+
+- Version aligned with Compze.DependencyInjection 0.3.0-alpha.
+
 ## 0.2.0-alpha.1
 
 Refactoring.
