@@ -17,8 +17,10 @@ public abstract class DependencyInjectionContainer : IDependencyInjectionContain
       _sourceRegistrar = sourceRegistrar;
    }
 
+#pragma warning disable CA1033 // Concrete subclasses always implement IRootResolver and IScopeFactory themselves; these explicit-interface impls just downcast and there is nothing for subclasses to override.
    IRootResolver IDependencyInjectionContainer.RootResolver => (IRootResolver)this;
    IScopeFactory IDependencyInjectionContainer.ScopeFactory => (IScopeFactory)this;
+#pragma warning restore CA1033
 
    IContainerBuilder IDependencyInjectionContainer.CreateCloneContainerBuilder() => CreateCloneContainerBuilder();
 

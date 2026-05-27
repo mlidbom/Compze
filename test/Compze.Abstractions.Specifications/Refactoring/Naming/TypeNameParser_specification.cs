@@ -134,7 +134,7 @@ public class TypeNameParser_specification
          => Parse(ArrayString).TypeName.Must().Be("MyNamespace.MyType");
 
       [XF] public void array_suffix_is_parsed()
-         => Parse(ArrayString).ArraySuffix.Must().Be("[]");
+         => Parse(ArrayString).ArraySuffix.Must().NotBeNull().Be("[]");
 
       [XF] public void parses_assembly_name()
          => Parse(ArrayString).AssemblyName.Must().Be("MyAssembly");
@@ -149,7 +149,7 @@ public class TypeNameParser_specification
       const string MultiDimArrayString = "MyNamespace.MyType[,], MyAssembly";
 
       [XF] public void array_suffix_includes_rank()
-         => Parse(MultiDimArrayString).ArraySuffix.Must().Be("[,]");
+         => Parse(MultiDimArrayString).ArraySuffix.Must().NotBeNull().Be("[,]");
 
       [XF] public void round_trips()
          => Parse(MultiDimArrayString).ToAssemblyQualifiedNameString()
@@ -164,7 +164,7 @@ public class TypeNameParser_specification
          => Parse(MappedArrayString).TypeName.Must().Be("e4a8c9f2-7b3d-4f1a-9c6e-2d8b5a0f3e7c");
 
       [XF] public void array_suffix_is_parsed()
-         => Parse(MappedArrayString).ArraySuffix.Must().Be("[]");
+         => Parse(MappedArrayString).ArraySuffix.Must().NotBeNull().Be("[]");
 
       [XF] public void assembly_is_zero()
          => Parse(MappedArrayString).AssemblyName.Must().Be("0");
@@ -182,7 +182,7 @@ public class TypeNameParser_specification
          => Parse(ArrayOfGenericString).TypeName.Must().Be("System.Collections.Generic.List`1");
 
       [XF] public void array_suffix_is_parsed()
-         => Parse(ArrayOfGenericString).ArraySuffix.Must().Be("[]");
+         => Parse(ArrayOfGenericString).ArraySuffix.Must().NotBeNull().Be("[]");
 
       [XF] public void has_one_type_argument()
          => Parse(ArrayOfGenericString).TypeArguments!.Length.Must().Be(1);
@@ -197,7 +197,7 @@ public class TypeNameParser_specification
       const string GenericWithArrayArgString = "System.Collections.Generic.List`1[[MyNamespace.MyType[], MyAssembly]], System.Private.CoreLib";
 
       [XF] public void argument_array_suffix_is_parsed()
-         => Parse(GenericWithArrayArgString).TypeArguments![0].ArraySuffix.Must().Be("[]");
+         => Parse(GenericWithArrayArgString).TypeArguments![0].ArraySuffix.Must().NotBeNull().Be("[]");
 
       [XF] public void argument_type_name_does_not_include_array_suffix()
          => Parse(GenericWithArrayArgString).TypeArguments![0].TypeName.Must().Be("MyNamespace.MyType");

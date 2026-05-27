@@ -21,7 +21,9 @@ public sealed class SkipAttribute<TDimension> : Attribute
    public TDimension[] Values { get; }
    public string Reason { get; }
 
+#pragma warning disable CA1019 // Single-value constructor argument is absorbed into the Values array property; exposing a redundant Value property would duplicate Values[0].
    public SkipAttribute(TDimension value, string reason)
+#pragma warning restore CA1019
    {
       Values = [value];
       Reason = reason;
