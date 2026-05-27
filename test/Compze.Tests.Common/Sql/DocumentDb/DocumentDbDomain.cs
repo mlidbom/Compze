@@ -44,5 +44,7 @@ public record Email(string TheEmail)
 
 public class UserSet
 {
+#pragma warning disable CA2227 // Setter required for the collection-initializer syntax used at DocumentDbTests.cs:362 (`new UserSet { Users = [user] }`).
    public HashSet<User> Users { get; set; } = new();
+#pragma warning restore CA2227
 }
