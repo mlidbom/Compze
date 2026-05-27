@@ -5,7 +5,9 @@ using Compze.Tests.Common.Sql.DocumentDb;
 
 namespace Compze.Tests.Integration;
 
+#pragma warning disable CA1812 // Instantiated via reflection by StructuralTypeMapper, located via [assembly: TypeMappings]
 class TypeMappingDeclarations : ITypeMappingDeclaration
+#pragma warning restore CA1812
 {
    public void DeclareMappings(ITypeMappingRegistrar map)
    {

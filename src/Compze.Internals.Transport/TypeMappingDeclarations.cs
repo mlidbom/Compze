@@ -4,7 +4,9 @@ using Compze.Abstractions.Refactoring.Naming;
 
 namespace Compze.Internals.Transport;
 
+#pragma warning disable CA1812 // Instantiated via reflection by StructuralTypeMapper, located via [assembly: TypeMappings]
 class TypeMappingDeclarations : ITypeMappingDeclaration
+#pragma warning restore CA1812
 {
    public void DeclareMappings(ITypeMappingRegistrar map)
    {
