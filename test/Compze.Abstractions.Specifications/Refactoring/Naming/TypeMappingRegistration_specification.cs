@@ -67,7 +67,7 @@ public class TypeMappingRegistrar_specification
          var registrar = CreateRegistrar();
          var threw = false;
          try { registrar.Map<string>("e4a8c9f2-7b3d-4f1a-9c6e-2d8b5a0f3e7c"); }
-         catch(InvalidOperationException ex) when(ex.Message.Contains("only map its own types"))
+         catch(InvalidOperationException ex) when(ex.Message.ContainsOrdinal("only map its own types"))
          { threw = true; }
          threw.Must().BeTrue();
       }
@@ -80,7 +80,7 @@ public class TypeMappingRegistrar_specification
          var registrar = CreateRegistrar();
          var threw = false;
          try { registrar.MapOpenGeneric(typeof(RegistrationTestEntity), "e4a8c9f2-7b3d-4f1a-9c6e-2d8b5a0f3e7c"); }
-         catch(InvalidOperationException ex) when(ex.Message.Contains("open generic definition"))
+         catch(InvalidOperationException ex) when(ex.Message.ContainsOrdinal("open generic definition"))
          { threw = true; }
          threw.Must().BeTrue();
       }
@@ -90,7 +90,7 @@ public class TypeMappingRegistrar_specification
          var registrar = CreateRegistrar();
          var threw = false;
          try { registrar.MapOpenGeneric(typeof(List<>), "e4a8c9f2-7b3d-4f1a-9c6e-2d8b5a0f3e7c"); }
-         catch(InvalidOperationException ex) when(ex.Message.Contains("only map its own types"))
+         catch(InvalidOperationException ex) when(ex.Message.ContainsOrdinal("only map its own types"))
          { threw = true; }
          threw.Must().BeTrue();
       }
@@ -99,7 +99,7 @@ public class TypeMappingRegistrar_specification
 
 public class StructuralTypeMapper_assembly_registration_specification
 {
-   static bool IsStableTypeString(string persistedTypeString) => !persistedTypeString.Contains(", 0");
+   static bool IsStableTypeString(string persistedTypeString) => !persistedTypeString.ContainsOrdinal(", 0");
 
    public class auto_detects_microsoft_assemblies : StructuralTypeMapper_assembly_registration_specification
    {
@@ -174,7 +174,7 @@ public class StructuralTypeMapper_assembly_registration_specification
          var mapper = new StructuralTypeMapper();
          var threw = false;
          try { mapper.MapTypesFromAssembly(typeof(object).Assembly); }
-         catch(InvalidOperationException ex) when(ex.Message.Contains(nameof(TypeMappingsAttribute)))
+         catch(InvalidOperationException ex) when(ex.Message.ContainsOrdinal(nameof(TypeMappingsAttribute)))
          { threw = true; }
          threw.Must().BeTrue();
       }
