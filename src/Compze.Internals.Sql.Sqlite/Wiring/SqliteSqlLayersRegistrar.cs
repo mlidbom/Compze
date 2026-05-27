@@ -6,6 +6,7 @@ public static class SqliteSqlLayersRegistrar
 {
    public static IComponentRegistrar SqliteDSqliteSqlLayers(this IComponentRegistrar registrar) =>
       registrar.SqliteSqlLayerSchemaManager()
+               .SqliteTypeIdInterner()
                .SqliteDocumentDbSqlLayer()
                .SqliteTessagingSqlLayer()
                .SqliteTeventStoreSqlLayer();

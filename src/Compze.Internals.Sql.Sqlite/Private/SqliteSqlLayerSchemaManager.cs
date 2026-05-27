@@ -30,6 +30,8 @@ class SqliteSqlLayerSchemaManager(ISqliteConnectionPool connectionPool)
       {
          await _connectionPool.ExecuteNonQueryAsync($"""
 
+                                                     {TypeIdInterning.SqliteTypeIdInternerPersistence.SchemaCreationSql}
+
                                                      {SqliteDocumentDbSqlLayer.SchemaCreationSql}
 
                                                      {SqliteInboxSqlLayer.SchemaCreationSql}
