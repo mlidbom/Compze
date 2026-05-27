@@ -1,11 +1,15 @@
 using System.Collections.Concurrent;
 using Compze.Internals.Sql.Common.Abstractions;
+using Compze.TypeIdentifiers;
 
 namespace Compze.Internals.Sql.Common;
 
 /// <summary>
 /// Engine-agnostic <see cref="ITypeIdInterner"/>: an in-memory bidirectional cache over a per-database
-/// <c>TypeIds</c> table, loaded once on first use. The transaction strategy is fixed per provider by
+/// <c>TypeIds</c> table, loaded once on first use. <see cref="TypeId"/> is the public currency; the canonical
+/// string is its persistence form, so the table (and <see cref="ITypeIdInternerPersistence"/>) stay pure
+/// <c>string ↔ int</c> while this class bridges <c>TypeId ↔ int</c> via <see cref="ITypeMap"/>.
+/// The transaction strategy is fixed per provider by
 /// <see cref="ITypeIdInternerPersistence.SuppressAmbientTransactionBeforeAllCalls"/> and chosen once at
 /// construction via <see cref="For"/> — there are two concrete subclasses, one per strategy, so neither
 /// re-checks the flag on every call:
@@ -21,31 +25,40 @@ namespace Compze.Internals.Sql.Common;
 ///   row each time.</item>
 /// </list>
 /// </summary>
-public abstract class TypeIdInterner(ITypeIdInternerPersistence persistence) : ITypeIdInterner
+public abstract class TypeIdInterner(ITypeIdInternerPersistence persistence, ITypeMap typeMap) : ITypeIdInterner
 {
    protected ITypeIdInternerPersistence Persistence { get; } = persistence;
+   readonly ITypeMap _typeMap = typeMap;
    readonly ConcurrentDictionary<int, string> _idToString = new();
    readonly Lock _loadLock = new();
    bool _loaded;
 
-   public static ITypeIdInterner For(ITypeIdInternerPersistence persistence) =>
+   public static ITypeIdInterner For(ITypeIdInternerPersistence persistence, ITypeMap typeMap) =>
       persistence.SuppressAmbientTransactionBeforeAllCalls
-         ? new SuppressedTransactionTypeIdInterner(persistence)
-         : new AmbientTransactionTypeIdInterner(persistence);
+         ? new SuppressedTransactionTypeIdInterner(persistence, typeMap)
+         : new AmbientTransactionTypeIdInterner(persistence, typeMap);
 
-   public abstract int GetOrInternId(string canonicalTypeString);
+   public int GetOrInternId(TypeId typeId) => InternCanonical(typeId.CanonicalString);
 
-   public IReadOnlySet<int> GetExistingIds(IEnumerable<string> canonicalTypeStrings)
+   public IReadOnlySet<int> GetExistingIds(IEnumerable<TypeId> typeIds)
    {
       var result = new HashSet<int>();
-      foreach(var canonicalTypeString in canonicalTypeStrings)
-         if(TryGetId(canonicalTypeString, out var id))
+      foreach(var typeId in typeIds)
+         if(TryGetCanonical(typeId.CanonicalString, out var id))
             result.Add(id);
 
       return result;
    }
 
-   public string GetCanonicalString(int internedId)
+   public TypeId GetTypeId(int internedId) => _typeMap.GetIdFromPersistedString(ResolveCanonicalString(internedId));
+
+   /// <summary>Interns the canonical string, assigning and persisting a new id if it has never been seen.</summary>
+   protected abstract int InternCanonical(string canonicalTypeString);
+
+   /// <summary>Returns the id for an already-interned canonical string, or <c>false</c> if it was never interned.</summary>
+   protected abstract bool TryGetCanonical(string canonicalTypeString, out int id);
+
+   string ResolveCanonicalString(int internedId)
    {
       EnsureLoaded();
       if(_idToString.TryGetValue(internedId, out var typeString))
@@ -56,8 +69,6 @@ public abstract class TypeIdInterner(ITypeIdInternerPersistence persistence) : I
       CacheMapping(internedId, fromDb);
       return fromDb;
    }
-
-   protected abstract bool TryGetId(string canonicalTypeString, out int id);
 
    /// <summary>Runs every persistence operation in the strategy's transaction context.</summary>
    protected abstract T RunInPersistenceTransaction<T>(Func<T> persistenceOperation);

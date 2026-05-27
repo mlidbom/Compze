@@ -4,6 +4,7 @@ using Compze.Internals.Sql.PostgreSql.Private;
 using Compze.Internals.Sql.PostgreSql.Private.TypeIdInterning;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
+using Compze.TypeIdentifiers;
 
 namespace Compze.Internals.Sql.PostgreSql.Wiring;
 
@@ -18,7 +19,7 @@ static class PgSqlTypeIdInternerRegistrar
          Singleton.For<ITypeIdInternerPersistence>()
                   .CreatedBy((IPgSqlConnectionPool connectionPool, PgSqlSqlLayerSchemaManager schemaManager) => new PgSqlTypeIdInternerPersistence(connectionPool, schemaManager)),
          Singleton.For<ITypeIdInterner>()
-                  .CreatedBy((ITypeIdInternerPersistence persistence) => TypeIdInterner.For(persistence)))
+                  .CreatedBy((ITypeIdInternerPersistence persistence, ITypeMap typeMap) => TypeIdInterner.For(persistence, typeMap)))
                .PgSqlSqlLayerSchemaManager();
    }
 }

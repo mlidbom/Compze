@@ -4,6 +4,7 @@ using Compze.Internals.Sql.Sqlite.Private;
 using Compze.Internals.Sql.Sqlite.Private.TypeIdInterning;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
+using Compze.TypeIdentifiers;
 
 namespace Compze.Internals.Sql.Sqlite.Wiring;
 
@@ -18,7 +19,7 @@ static class SqliteTypeIdInternerRegistrar
          Singleton.For<ITypeIdInternerPersistence>()
                   .CreatedBy((ISqliteConnectionPool connectionPool, SqliteSqlLayerSchemaManager schemaManager) => new SqliteTypeIdInternerPersistence(connectionPool, schemaManager)),
          Singleton.For<ITypeIdInterner>()
-                  .CreatedBy((ITypeIdInternerPersistence persistence) => TypeIdInterner.For(persistence)))
+                  .CreatedBy((ITypeIdInternerPersistence persistence, ITypeMap typeMap) => TypeIdInterner.For(persistence, typeMap)))
                .SqliteSqlLayerSchemaManager();
    }
 }

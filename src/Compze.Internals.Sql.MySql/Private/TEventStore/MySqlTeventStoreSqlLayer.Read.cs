@@ -59,7 +59,7 @@ partial class MySqlTeventStoreSqlLayer(MySqlTeventStoreConnectionManager connect
    );
 
    TeventDataRow ToDataRow((int TeventTypeId, string Json, TessageId TeventId, int Version, TaggregateId TaggregateId, DateTime UtcTimeStamp, TaggregateTeventStorageInformation Storage) raw) =>
-      new(_typeIdInterner.GetCanonicalString(raw.TeventTypeId), raw.Json, raw.TeventId, raw.Version, raw.TaggregateId, raw.UtcTimeStamp, raw.Storage);
+      new(_typeIdInterner.GetTypeId(raw.TeventTypeId), raw.Json, raw.TeventId, raw.Version, raw.TaggregateId, raw.UtcTimeStamp, raw.Storage);
 
    public IReadOnlyList<TeventDataRow> GetTaggregateHistory(TaggregateId taggregateId, bool takeWriteLock, int startAfterInsertedVersion = 0)
    {
@@ -129,6 +129,6 @@ partial class MySqlTeventStoreSqlLayer(MySqlTeventStoreConnectionManager connect
                                                                                       ORDER BY {Tevent.ReadOrder} ASC
                                                                                       """)
                                                                      .ExecuteReaderAndSelect(reader => (TaggregateId: new TaggregateId(reader.GetGuid(0)), TeventTypeId: reader.GetInt32(1))));
-      return raw.Select(it => new CreationTeventRow(it.TaggregateId, _typeIdInterner.GetCanonicalString(it.TeventTypeId))).ToList();
+      return raw.Select(it => new CreationTeventRow(it.TaggregateId, _typeIdInterner.GetTypeId(it.TeventTypeId))).ToList();
    }
 }

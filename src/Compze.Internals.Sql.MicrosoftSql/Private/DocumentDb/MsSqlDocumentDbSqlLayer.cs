@@ -2,6 +2,7 @@ using Compze.DocumentDb.Internal.SqlLayer;
 using Compze.DocumentDb.Internal.SqlLayer.Exceptions;
 using Compze.Internals.Sql.Common;
 using Compze.Internals.Sql.Common.Abstractions;
+using Compze.TypeIdentifiers;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Underscore;
@@ -50,7 +51,7 @@ partial class MsSqlDocumentDbSqlLayer : IDocumentDbSqlLayer
       });
    }
 
-   public bool TryGet(string idString, IReadOnlySet<string> acceptableTypeIds, bool useUpdateLock, [NotNullWhen(true)] out IDocumentDbSqlLayer.ReadRow? document)
+   public bool TryGet(string idString, IReadOnlySet<TypeId> acceptableTypeIds, bool useUpdateLock, [NotNullWhen(true)] out IDocumentDbSqlLayer.ReadRow? document)
    {
       EnsureInitialized();
 
@@ -101,7 +102,7 @@ partial class MsSqlDocumentDbSqlLayer : IDocumentDbSqlLayer
       }
    }
 
-   public int Remove(string idString, IReadOnlySet<string> acceptableTypes)
+   public int Remove(string idString, IReadOnlySet<TypeId> acceptableTypes)
    {
       EnsureInitialized();
       var acceptableInternedTypeIds = _typeIdInterner.GetExistingIds(acceptableTypes);
@@ -114,7 +115,7 @@ partial class MsSqlDocumentDbSqlLayer : IDocumentDbSqlLayer
                                                   .ExecuteNonQuery());
    }
 
-   public IEnumerable<Guid> GetAllIds(IReadOnlySet<string> acceptableTypes)
+   public IEnumerable<Guid> GetAllIds(IReadOnlySet<TypeId> acceptableTypes)
    {
       EnsureInitialized();
       var acceptableInternedTypeIds = _typeIdInterner.GetExistingIds(acceptableTypes);
@@ -125,7 +126,7 @@ partial class MsSqlDocumentDbSqlLayer : IDocumentDbSqlLayer
                                                           .ExecuteReaderAndSelect(reader => reader.GetGuidFromString(0)));
    }
 
-   public IReadOnlyList<IDocumentDbSqlLayer.ReadRow> GetAll(IEnumerable<Guid> ids, IReadOnlySet<string> acceptableTypes)
+   public IReadOnlyList<IDocumentDbSqlLayer.ReadRow> GetAll(IEnumerable<Guid> ids, IReadOnlySet<TypeId> acceptableTypes)
    {
       EnsureInitialized();
       var acceptableInternedTypeIds = _typeIdInterner.GetExistingIds(acceptableTypes);
@@ -140,7 +141,7 @@ partial class MsSqlDocumentDbSqlLayer : IDocumentDbSqlLayer
       return rows.Select(ToReadRow).ToList();
    }
 
-   public IReadOnlyList<IDocumentDbSqlLayer.ReadRow> GetAll(IReadOnlySet<string> acceptableTypes)
+   public IReadOnlyList<IDocumentDbSqlLayer.ReadRow> GetAll(IReadOnlySet<TypeId> acceptableTypes)
    {
       EnsureInitialized();
       var acceptableInternedTypeIds = _typeIdInterner.GetExistingIds(acceptableTypes);
@@ -154,7 +155,7 @@ partial class MsSqlDocumentDbSqlLayer : IDocumentDbSqlLayer
 
    // Resolve the interned id back to its canonical type string after the reader has closed — never while a connection is held.
    IDocumentDbSqlLayer.ReadRow ToReadRow((string SerializedDocument, int InternedTypeId) row) =>
-      new(_typeIdInterner.GetCanonicalString(row.InternedTypeId), row.SerializedDocument);
+      new(_typeIdInterner.GetTypeId(row.InternedTypeId), row.SerializedDocument);
 
    static string TypeInClause(IReadOnlySet<int> acceptableInternedTypeIds) => $"IN ({string.Join(", ", acceptableInternedTypeIds)})\n";
 

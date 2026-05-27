@@ -1,4 +1,5 @@
 using Compze.Internals.Sql.Common.Abstractions;
+using Compze.TypeIdentifiers;
 
 namespace Compze.Internals.Sql.Common;
 
@@ -9,9 +10,9 @@ namespace Compze.Internals.Sql.Common;
 /// Because a write may roll back, the <c>string → id</c> direction is never cached — writes re-confirm the
 /// row each time — while the immutable <c>id → string</c> direction is cached.
 /// </summary>
-sealed class AmbientTransactionTypeIdInterner(ITypeIdInternerPersistence persistence) : TypeIdInterner(persistence)
+sealed class AmbientTransactionTypeIdInterner(ITypeIdInternerPersistence persistence, ITypeMap typeMap) : TypeIdInterner(persistence, typeMap)
 {
-   public override int GetOrInternId(string canonicalTypeString)
+   protected override int InternCanonical(string canonicalTypeString)
    {
       EnsureLoaded();
       var id = Persistence.InsertOrGet(canonicalTypeString);
@@ -19,7 +20,7 @@ sealed class AmbientTransactionTypeIdInterner(ITypeIdInternerPersistence persist
       return id;
    }
 
-   protected override bool TryGetId(string canonicalTypeString, out int id)
+   protected override bool TryGetCanonical(string canonicalTypeString, out int id)
    {
       EnsureLoaded();
       if(Persistence.TryGetId(canonicalTypeString) is { } dbId)

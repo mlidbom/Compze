@@ -3,6 +3,7 @@ using Compze.Core.Tessaging.Internal.SqlLayer;
 using Compze.Internals.Sql.Common;
 using Compze.Internals.Sql.Common.Abstractions;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
+using Compze.TypeIdentifiers;
 using TessageTable =  Compze.Core.Tessaging.Internal.SqlLayer.IServiceBusSqlLayer.InboxTessageDatabaseSchemaStrings;
 
 namespace Compze.Internals.Sql.MySql.Private.Tessaging;
@@ -13,7 +14,7 @@ partial class MySqlInboxSqlLayer(IMySqlConnectionPool connectionFactory, MySqlSq
    readonly MySqlSqlLayerSchemaManager _schemaManager = schemaManager;
    readonly ITypeIdInterner _typeIdInterner = typeIdInterner;
 
-   public IServiceBusSqlLayer.SaveTessageResult SaveTessage(TessageId tessageId, string typeId, string serializedTessage)
+   public IServiceBusSqlLayer.SaveTessageResult SaveTessage(TessageId tessageId, TypeId typeId, string serializedTessage)
    {
       // Intern before opening a connection: interning may hit the database, and nesting a second connection
       // inside a held one deadlocks the pool.

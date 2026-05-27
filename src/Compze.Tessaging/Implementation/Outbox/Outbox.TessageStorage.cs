@@ -35,7 +35,7 @@ partial class Outbox
       public void SaveTessage(IExactlyOnceTessage tessage, params EndpointId[] receiverEndpointIds)
       {
          var outboxTessageWithReceivers = new IServiceBusSqlLayer.OutboxTessageWithReceivers(_serializer.SerializeTessage(tessage),
-                                                                                             _typeMap.GetId(tessage.GetType()).CanonicalString,
+                                                                                             _typeMap.GetId(tessage.GetType()),
                                                                                              tessage.Id,
                                                                                              receiverEndpointIds);
 

@@ -2,6 +2,7 @@ using System.Collections.Concurrent;
 using System.Transactions;
 using Compze.Internals.Sql.Common.Abstractions;
 using Compze.Internals.SystemCE.TransactionsCE;
+using Compze.TypeIdentifiers;
 
 namespace Compze.Internals.Sql.Common;
 
@@ -10,11 +11,11 @@ namespace Compze.Internals.Sql.Common;
 /// transaction (MVCC engines). Persistence runs in a suppressed scope, so mappings are durable the moment
 /// they are written and can be cached permanently in both directions.
 /// </summary>
-sealed class SuppressedTransactionTypeIdInterner(ITypeIdInternerPersistence persistence) : TypeIdInterner(persistence)
+sealed class SuppressedTransactionTypeIdInterner(ITypeIdInternerPersistence persistence, ITypeMap typeMap) : TypeIdInterner(persistence, typeMap)
 {
    readonly ConcurrentDictionary<string, int> _stringToId = new(StringComparer.Ordinal);
 
-   public override int GetOrInternId(string canonicalTypeString)
+   protected override int InternCanonical(string canonicalTypeString)
    {
       EnsureLoaded();
       if(_stringToId.TryGetValue(canonicalTypeString, out var cached))
@@ -25,7 +26,7 @@ sealed class SuppressedTransactionTypeIdInterner(ITypeIdInternerPersistence pers
       return id;
    }
 
-   protected override bool TryGetId(string canonicalTypeString, out int id)
+   protected override bool TryGetCanonical(string canonicalTypeString, out int id)
    {
       EnsureLoaded();
       if(_stringToId.TryGetValue(canonicalTypeString, out id))

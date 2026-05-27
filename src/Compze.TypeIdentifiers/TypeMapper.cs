@@ -71,6 +71,8 @@ public class TypeMapper : ITypeMapper, ITypeMap
 
    public Type FromPersistedTypeString(string persistedTypeString) => _typeNameMapper.GetTypeFromPersistedString(persistedTypeString);
 
+   public TypeId GetIdFromPersistedString(string persistedTypeString) => GetId(FromPersistedTypeString(persistedTypeString));
+
    public IEnumerable<TypeId> GetIdsForTypesAssignableTo(Type type) => _assignableTypeCache.GetOrAdd(type, ComputeAssignableTypeIds);
 
    public void AssertMappingsExistFor(IEnumerable<Type> types)

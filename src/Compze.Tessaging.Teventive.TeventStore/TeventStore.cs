@@ -105,7 +105,7 @@ namespace Compze.Tessaging.Teventive.TeventStore;
 
    TaggregateTevent HydrateTevent(TeventDataRow teventDataRowRow)
    {
-      var tevent = (TaggregateTevent)_serializer.Deserialize(teventType: _typeMap.FromPersistedTypeString(teventDataRowRow.TeventType), json: teventDataRowRow.TeventJson);
+      var tevent = (TaggregateTevent)_serializer.Deserialize(teventType: teventDataRowRow.TeventType.Type, json: teventDataRowRow.TeventJson);
 #pragma warning disable CS0618 // Type or member is obsolete
       ((IMutableTaggregateTevent)tevent).SetTaggregateIdInternal(teventDataRowRow.TaggregateId);
       ((IMutableTaggregateTevent)tevent).SetTaggregateVersionInternal(teventDataRowRow.TaggregateVersion);
@@ -160,7 +160,7 @@ namespace Compze.Tessaging.Teventive.TeventStore;
       var specifications = tevents.Select(tevent => cacheEntry.CreateInsertionSpecificationForNewTevent(tevent)).ToArray();
 
       var teventRows = tevents
-                     .Select(tevent => new TeventDataRow(specification: cacheEntry.CreateInsertionSpecificationForNewTevent(tevent), _typeMap.GetId(tevent.GetType()).CanonicalString, teventAsJson: _serializer.Serialize((TaggregateTevent)tevent)))
+                     .Select(tevent => new TeventDataRow(specification: cacheEntry.CreateInsertionSpecificationForNewTevent(tevent), _typeMap.GetId(tevent.GetType()), teventAsJson: _serializer.Serialize((TaggregateTevent)tevent)))
                      .ToList();
 
       teventRows.ForEach(it => it.StorageInformation.EffectiveVersion = it.TaggregateVersion);
@@ -193,7 +193,7 @@ namespace Compze.Tessaging.Teventive.TeventStore;
 
       _sqlLayer.SetupSchemaIfDatabaseUnInitialized();
       return _sqlLayer.ListTaggregateIdsInCreationOrder()
-                              .Where(it => teventType == null || teventType.IsAssignableFrom(_typeMap.FromPersistedTypeString(it.TypeId)))
+                              .Where(it => teventType == null || teventType.IsAssignableFrom(it.TypeId.Type))
                               .Select(it => it.TaggregateId);
    }
 

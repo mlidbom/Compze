@@ -142,7 +142,7 @@ partial class MsSqlOutboxSqlLayer(IMsSqlConnectionPool connectionFactory, MsSqlS
 
       return raw.Select(row => new IServiceBusSqlLayer.UndeliveredTessage(
                            tessageId: row.TessageId,
-                           typeId: _typeIdInterner.GetCanonicalString(row.TypeId),
+                           typeId: _typeIdInterner.GetTypeId(row.TypeId),
                            serializedTessage: row.Body,
                            targetEndpointId: row.Endpoint,
                            retryCount: row.RetryCount,

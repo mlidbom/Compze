@@ -4,6 +4,7 @@ using Compze.Internals.Sql.MicrosoftSql.Private;
 using Compze.Internals.Sql.MicrosoftSql.Private.TypeIdInterning;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
+using Compze.TypeIdentifiers;
 
 namespace Compze.Internals.Sql.MicrosoftSql.Wiring;
 
@@ -18,7 +19,7 @@ static class MsSqlTypeIdInternerRegistrar
          Singleton.For<ITypeIdInternerPersistence>()
                   .CreatedBy((IMsSqlConnectionPool connectionPool, MsSqlSqlLayerSchemaManager schemaManager) => new MsSqlTypeIdInternerPersistence(connectionPool, schemaManager)),
          Singleton.For<ITypeIdInterner>()
-                  .CreatedBy((ITypeIdInternerPersistence persistence) => TypeIdInterner.For(persistence)))
+                  .CreatedBy((ITypeIdInternerPersistence persistence, ITypeMap typeMap) => TypeIdInterner.For(persistence, typeMap)))
                .MsSqlSqlLayerSchemaManager();
    }
 }

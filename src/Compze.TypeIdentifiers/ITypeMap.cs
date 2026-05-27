@@ -24,4 +24,7 @@ public interface ITypeMap
 
    /// <summary>Resolves a persisted canonical <c>$type</c> string back to a .NET <see cref="Type"/>.</summary>
    Type FromPersistedTypeString(string persistedTypeString);
+
+   /// <summary>Resolves a persisted canonical <c>$type</c> string back to its canonical <see cref="TypeId"/>.</summary>
+   TypeId GetIdFromPersistedString(string persistedTypeString);
 }
