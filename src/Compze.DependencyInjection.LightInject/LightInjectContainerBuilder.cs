@@ -5,7 +5,9 @@ using ContainerOptions = Compze.DependencyInjection.Abstractions.ContainerOption
 
 namespace Compze.DependencyInjection.LightInject;
 
+#pragma warning disable CA1001 // The underlying container holds no live resources until Build() is called (registrations live on the base class until then); on Build() ownership transfers to the LightInjectContainer wrapper which handles disposal.
 public sealed class LightInjectContainerBuilder(IComponentRegistrar? registrar = null) : ContainerBuilder(registrar), ILightInjectBuilderInternals
+#pragma warning restore CA1001
 {
    internal static readonly AsyncLocal<DisposableTracker?> CurrentTrackedTransientTracker = new();
 

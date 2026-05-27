@@ -4,6 +4,6 @@ All notable changes to Compze.Tessaging.Teventive.TeventStore.Typermedia will be
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
-## 0.1.0-alpha
+## 0.2.0-alpha.1
 
 - Initial pre-release

@@ -17,7 +17,8 @@
 
 param(
     [switch]$DryRun,
-    [switch]$Verbose
+    [switch]$Verbose,
+    [switch]$NoSummary
 )
 
 Set-StrictMode -Version Latest
@@ -29,6 +30,7 @@ $scriptDir = $PSScriptRoot
 . "$scriptDir/lib/ReleaseDetails.ps1"
 . "$scriptDir/lib/NuGetPublishing.ps1"
 . "$scriptDir/lib/GitHubReleases.ps1"
+. "$scriptDir/lib/SummaryReport.ps1"
 
 # ── Main ──
 
@@ -53,20 +55,27 @@ $newPackages = GetAllReleaseDetails $newPackages
 
 if ($newPackages.Count -eq 0) {
     Write-Host "`nNo new packages to release."
-    exit 0
-}
+} else {
+    Write-Host "`nNew packages to release:"
+    foreach ($pkg in $newPackages) {
+        Write-Host "  $($pkg.PackageName) v$($pkg.Version)"
+    }
 
-Write-Host "`nNew packages to release:"
-foreach ($pkg in $newPackages) {
-    Write-Host "  $($pkg.PackageName) v$($pkg.Version)"
-}
-
-Write-Host ""
-foreach ($pkg in $newPackages) {
-    Write-Host "── $($pkg.PackageName) v$($pkg.Version) ──"
-    PushToNuGet $pkg $nupkgsPath -DryRun:$DryRun -Verbose:$Verbose
-    CreateGitHubRelease $pkg $nupkgsPath -DryRun:$DryRun -Verbose:$Verbose
     Write-Host ""
+    foreach ($pkg in $newPackages) {
+        Write-Host "── $($pkg.PackageName) v$($pkg.Version) ──"
+        PushToNuGet $pkg $nupkgsPath -DryRun:$DryRun -Verbose:$Verbose
+        CreateGitHubRelease $pkg $nupkgsPath -DryRun:$DryRun -Verbose:$Verbose
+        Write-Host ""
+    }
+
+    Write-Host "Done! Published $($newPackages.Count) package(s)."
 }
 
-Write-Host "Done! Published $($newPackages.Count) package(s)."
+if (-not $NoSummary) {
+    $changelogMap = @{}
+    foreach ($pkg in $newPackages) {
+        $changelogMap[$pkg.PackageName] = $pkg.ChangelogContent
+    }
+    WriteSummaryReport $allPackages $changelogMap
+}

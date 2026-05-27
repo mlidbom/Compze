@@ -4,6 +4,7 @@ namespace Compze.Threading;
 
 public partial interface IAwaitableCriticalSection
 {
+#pragma warning disable CA1068 // Passing cancellation token around is standard practice in modern .NET while the timeout overrides are very rarely used. We don't want to force the common case to use named parameters.
    ///<summary>Acquires a read lock, executes <paramref name="func"/> and returns its result, then releases the lock.</summary>
    TReturn Read<TReturn>(Func<TReturn> func, CancellationToken cancellationToken = default, LockTimeout? timeout = null)
    {
@@ -25,7 +26,7 @@ public partial interface IAwaitableCriticalSection
       using(TakeUpdateLock(cancellationToken, timeout)) return func();
    }
 
-   ///<summary>Blocks until <paramref name="condition"/> returns true, then upgrades its read lock to an update lock, and executes <paramref name="func"/> within that lock, notifying all waiting threads that there are updates.</summary>
+   ///<summary>Blocks until <paramref name="condition"/> returns true, then upgrades its read lock to an update lock, and executes <paramref name="action"/> within that lock, notifying all waiting threads that there are updates.</summary>
    Unit UpdateWhen<TReturn>(Func<bool> condition, Action action, CancellationToken cancellationToken = default, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null) =>
       UpdateWhen(condition, action.ToFunc(), cancellationToken, waitTimeout, lockTimeout);
 
@@ -45,4 +46,5 @@ public partial interface IAwaitableCriticalSection
       action();
       return true;
    }
+#pragma warning restore CA1068
 }

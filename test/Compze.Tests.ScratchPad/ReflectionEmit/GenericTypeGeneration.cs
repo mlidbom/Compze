@@ -20,7 +20,9 @@ public interface IUserTevent : ITevent;
 #pragma warning restore CA1040 //avoid empty interfaces
 class UserTevent : IUserTevent;
 
+#pragma warning disable CA1724 // Scratch-pad sample class; namespace conflict is acceptable in exploratory code.
 public class Example
+#pragma warning restore CA1724
 {
    [XF] public void BuildWrapperTeventType()
    {

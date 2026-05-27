@@ -4,6 +4,6 @@ All notable changes to Compze.InterprocessObject.MemoryPack will be documented i
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
-## 0.1.0-alpha
+## 0.5.0-alpha
 
-- Initial pre-release
+- Initial pre-release. [MemoryPack](https://github.com/Cysharp/MemoryPack)-based implementation of `IInterprocessObjectSerializer<T>` for use with Compze.InterprocessObject.

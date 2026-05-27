@@ -10,7 +10,7 @@ static class IMutexAbandonedExtensions
       ///<summary>Takes the lock on a background thread that exits without releasing it, leaving the mutex in the "abandoned" state. After this method returns, the next acquisition attempt will receive an <see cref="AbandonedMutexException"/>.</summary>
       public void Abandon()
       {
-         var lockAcquired = new ManualResetEventSlim(false);
+         using var lockAcquired = new ManualResetEventSlim(false);
          var thread = new Thread(() =>
          {
             @this.TakeLock();
@@ -24,8 +24,10 @@ static class IMutexAbandonedExtensions
       ///<summary>Takes the lock on a background thread and holds it until the returned <see cref="Action"/> is invoked. Invoking the action causes the holding thread to exit without releasing the lock (abandoning the mutex) and blocks until the thread has fully terminated.</summary>
       public Action HoldLockUntilAbandoned()
       {
+#pragma warning disable CA2000 // Both signals are disposed inside the returned Action after thread.Join() completes; analyzer cannot trace disposal through the escaped lambda.
          var lockAcquired = new ManualResetEventSlim(false);
          var abandonSignal = new ManualResetEventSlim(false);
+#pragma warning restore CA2000
          var thread = new Thread(() =>
          {
             @this.TakeLock();
@@ -38,6 +40,8 @@ static class IMutexAbandonedExtensions
          {
             abandonSignal.Set();
             thread.Join();
+            lockAcquired.Dispose();
+            abandonSignal.Dispose();
          };
       }
    }

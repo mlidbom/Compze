@@ -6,11 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## 0.2.1-internal
 
--Refactoring.
+- Refactoring.
 
 ## 0.2.1-alpha
 
--Refactoring.
+- Refactoring.
 
 ## 0.2.0-alpha.1
 

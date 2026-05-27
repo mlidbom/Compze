@@ -4,6 +4,6 @@ All notable changes to Compze.Typermedia.Hosting will be documented in this file
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
-## 0.1.0-alpha
+## 0.1.0-alpha.1
 
 - Initial pre-release

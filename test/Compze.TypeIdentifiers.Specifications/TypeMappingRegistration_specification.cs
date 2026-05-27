@@ -5,6 +5,8 @@ using Compze.xUnitBDD;
 
 // ReSharper disable InconsistentNaming
 #pragma warning disable CA1052
+#pragma warning disable CS8981 // BDD-style specification class names describe context using lowercase ASCII (e.g. `validation`, `with_invalid_data`); the language-reserved-name risk is acceptable in test code.
+#pragma warning disable CA1724 // BDD-style spec class names like `validation` may incidentally clash with framework namespace names; the spec context is local to the test file and renaming would damage spec readability.
 
 namespace Compze.TypeIdentifiers.Specifications;
 
@@ -66,7 +68,7 @@ public class TypeMappingRegistrar_specification
          var registrar = CreateRegistrar();
          var threw = false;
          try { registrar.Map<string>("e4a8c9f2-7b3d-4f1a-9c6e-2d8b5a0f3e7c"); }
-         catch(InvalidOperationException ex) when(ex.Message.Contains("only map its own types"))
+         catch(InvalidOperationException ex) when(ex.Message.Contains("only map its own types", StringComparison.Ordinal))
          { threw = true; }
          threw.Must().BeTrue();
       }
@@ -79,7 +81,7 @@ public class TypeMappingRegistrar_specification
          var registrar = CreateRegistrar();
          var threw = false;
          try { registrar.MapOpenGeneric(typeof(RegistrationTestEntity), "e4a8c9f2-7b3d-4f1a-9c6e-2d8b5a0f3e7c"); }
-         catch(InvalidOperationException ex) when(ex.Message.Contains("open generic definition"))
+         catch(InvalidOperationException ex) when(ex.Message.Contains("open generic definition", StringComparison.Ordinal))
          { threw = true; }
          threw.Must().BeTrue();
       }
@@ -89,7 +91,7 @@ public class TypeMappingRegistrar_specification
          var registrar = CreateRegistrar();
          var threw = false;
          try { registrar.MapOpenGeneric(typeof(List<>), "e4a8c9f2-7b3d-4f1a-9c6e-2d8b5a0f3e7c"); }
-         catch(InvalidOperationException ex) when(ex.Message.Contains("only map its own types"))
+         catch(InvalidOperationException ex) when(ex.Message.Contains("only map its own types", StringComparison.Ordinal))
          { threw = true; }
          threw.Must().BeTrue();
       }
@@ -98,7 +100,7 @@ public class TypeMappingRegistrar_specification
 
 public class TypeIdentifierMapper_assembly_registration_specification
 {
-   static bool IsStableTypeString(string persistedTypeString) => !persistedTypeString.Contains(", 0");
+   static bool IsStableTypeString(string persistedTypeString) => !persistedTypeString.Contains(", 0", StringComparison.Ordinal);
 
    public class auto_detects_microsoft_assemblies : TypeIdentifierMapper_assembly_registration_specification
    {
@@ -173,7 +175,7 @@ public class TypeIdentifierMapper_assembly_registration_specification
          var mapper = new TypeMapper();
          var threw = false;
          try { mapper.MapTypesFromAssembly(typeof(object).Assembly); }
-         catch(InvalidOperationException ex) when(ex.Message.Contains(nameof(AssemblyTypeMapperAttribute)))
+         catch(InvalidOperationException ex) when(ex.Message.Contains(nameof(AssemblyTypeMapperAttribute), StringComparison.Ordinal))
          { threw = true; }
          threw.Must().BeTrue();
       }

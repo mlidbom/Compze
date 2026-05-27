@@ -164,6 +164,10 @@ public partial interface IMutex
          }
       }
 
-      public void Dispose() => _mutex.Dispose();
+      public void Dispose()
+      {
+         _mutex.Dispose();
+         _nestingDepth.Dispose();
+      }
    }
 }

@@ -2,6 +2,8 @@ using Compze.Must;
 using Compze.Tests.Infrastructure;
 using Compze.xUnitBDD;
 
+#pragma warning disable CA1711 // BDD spec context class names mirror the enum value being tested (e.g. `and_CorruptionAction_is_ThrowException`); the 'Exception' suffix is incidental, not a type-naming choice.
+
 namespace Compze.InterprocessObject.Specifications;
 
 public class When_deserialization_fails : UniversalTestBase
@@ -43,7 +45,7 @@ public class When_deserialization_fails : UniversalTestBase
       [XF] public void replaces_content_with_default_so_next_read_succeeds()
       {
          SetUpCorruptedObject();
-         try { _shared.Read(it => it.Name); } catch { /* expected */ }
+         MustActions.Invoking(() => _shared.Read(it => it.Name)).Must().Throw<Exception>();
          _serializer.FailOnDeserialize = false;
          _shared.Read(it => it.Name).Must().Be("Default");
       }
