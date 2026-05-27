@@ -47,18 +47,18 @@ public partial interface IAwaitableMutex
       }
 
       public IReadLock TakeReadLockWhen(Func<bool> condition, CancellationToken cancellationToken = default, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null) =>
-         (IReadLock?)TryTakeLockWhen(condition, cancellationToken, waitTimeout, lockTimeout, isUpdate: false) ?? throw new AwaitingConditionTimeoutException();
+         (IReadLock?)TryTakeLockWhen(condition, waitTimeout, lockTimeout, isUpdate: false, cancellationToken) ?? throw new AwaitingConditionTimeoutException();
 
       public IUpdateLock TakeUpdateLockWhen(Func<bool> condition, CancellationToken cancellationToken = default, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null) =>
-         (IUpdateLock?)TryTakeLockWhen(condition, cancellationToken, waitTimeout, lockTimeout, isUpdate: true) ?? throw new AwaitingConditionTimeoutException();
+         (IUpdateLock?)TryTakeLockWhen(condition, waitTimeout, lockTimeout, isUpdate: true, cancellationToken) ?? throw new AwaitingConditionTimeoutException();
 
       public IReadLock? TryTakeReadLockWhen(Func<bool> condition, CancellationToken cancellationToken = default, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null) =>
-         (IReadLock?)TryTakeLockWhen(condition, cancellationToken, waitTimeout, lockTimeout, isUpdate: false);
+         (IReadLock?)TryTakeLockWhen(condition, waitTimeout, lockTimeout, isUpdate: false, cancellationToken);
 
       public IUpdateLock? TryTakeUpdateLockWhen(Func<bool> condition, CancellationToken cancellationToken = default, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null) =>
-         (IUpdateLock?)TryTakeLockWhen(condition, cancellationToken, waitTimeout, lockTimeout, isUpdate: true);
+         (IUpdateLock?)TryTakeLockWhen(condition, waitTimeout, lockTimeout, isUpdate: true, cancellationToken);
 
-      IDisposable? TryTakeLockWhen(Func<bool> condition, CancellationToken cancellationToken, WaitTimeout? waitTimeout, LockTimeout? lockTimeout, bool isUpdate)
+      IDisposable? TryTakeLockWhen(Func<bool> condition, WaitTimeout? waitTimeout, LockTimeout? lockTimeout, bool isUpdate, CancellationToken cancellationToken)
       {
          var effectiveWaitTimeout = waitTimeout ?? WaitTimeout;
          var effectiveLockTimeout = lockTimeout ?? LockTimeout;

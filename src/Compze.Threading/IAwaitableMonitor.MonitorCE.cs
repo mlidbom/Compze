@@ -70,6 +70,7 @@ public partial interface IAwaitableMonitor
       LockDisposer TakeLock(LockType lockType, LockTimeout? lockTimeout = null, CancellationToken cancellationToken = default) =>
          TryTakeLock(lockType, lockTimeout, cancellationToken) ?? throw RegisterTimeoutException();
 
+#pragma warning disable CA1068 // Passing cancellation token around is standard practice in modern .NET while the timeout overrides are very rarely used. We don't want to force the common case to use named parameters.
       LockDisposer TakeLockWhen(Func<bool> condition, LockType lockType, CancellationToken cancellationToken = default, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null) =>
          TryTakeLockWhen(condition, lockType, cancellationToken, waitTimeout, lockTimeout) ?? throw new AwaitingConditionTimeoutException();
 
@@ -77,6 +78,7 @@ public partial interface IAwaitableMonitor
          _monitor.TryTakeLock(timeout ?? LockTimeout, cancellationToken) ? LockFor(lockType) : null;
 
       LockDisposer? TryTakeLockWhen(Func<bool> condition, LockType lockType, CancellationToken cancellationToken = default, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null)
+#pragma warning restore CA1068
       {
          var effectiveWaitTimeout = waitTimeout ?? WaitTimeout;
          var effectiveLockTimeout = lockTimeout ?? LockTimeout;

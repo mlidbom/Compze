@@ -4,6 +4,7 @@ namespace Compze.Threading;
 
 public partial interface ICriticalSection
 {
+#pragma warning disable CA1068 // Passing cancellation token around is standard practice in modern .NET while the timeout overrides are very rarely used. We don't want to force the common case to use named parameters.
    ///<summary>Acquires the lock, executes <paramref name="action"/>, then releases the lock.</summary>
    Unit Locked(Action action, CancellationToken cancellationToken = default, LockTimeout? timeout = null) => Locked(action.ToFunc(), cancellationToken, timeout);
 
@@ -12,4 +13,5 @@ public partial interface ICriticalSection
    {
       using(TakeLock(cancellationToken, timeout)) return func();
    }
+#pragma warning restore CA1068
 }

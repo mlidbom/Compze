@@ -42,6 +42,7 @@ public interface IAwaitableShared<out TShared>
    ///<summary>The underlying critical section used to protect access.</summary>
    IAwaitableCriticalSection CriticalSection { get; }
 
+#pragma warning disable CA1068 // Passing cancellation token around is standard practice in modern .NET while the timeout overrides are very rarely used. We don't want to force the common case to use named parameters.
    //core
    ///<summary>Acquires a read lock, passes the shared object to <paramref name="read"/>, returns the result, then releases the lock.</summary>
    TResult Read<TResult>(Func<TShared, TResult> read, CancellationToken cancellationToken = default, LockTimeout? timeout = null);
@@ -66,4 +67,5 @@ public interface IAwaitableShared<out TShared>
 
    ///<summary>Blocks until <paramref name="condition"/> returns true for the shared object, then acquires an update lock and executes <paramref name="update"/>. Returns false if the wait times out, else true.</summary>
    bool TryUpdateWhen(Func<TShared, bool> condition, Action<TShared> update, CancellationToken cancellationToken = default, WaitTimeout? timeout = null);
+#pragma warning restore CA1068
 }

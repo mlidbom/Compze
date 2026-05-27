@@ -8,6 +8,7 @@ namespace Compze.Threading;
 /// </summary>
 public partial interface IAwaitableCriticalSection : ICriticalSectionInfo
 {
+#pragma warning disable CA1068 // Passing cancellation token around is standard practice in modern .NET while the timeout overrides are very rarely used. We don't want to force the common case to use named parameters.
    ///<summary>Acquires a read lock, blocking until available or <paramref name="timeout"/> expires. Throws <exception cref="Exceptions.TakeLockTimeoutException"/> on timeout. Uses <see cref="ICriticalSectionInfo.LockTimeout"/> if <paramref name="timeout"/> is null.</summary>
    IReadLock TakeReadLock(CancellationToken cancellationToken = default, LockTimeout? timeout = null);
 
@@ -25,6 +26,7 @@ public partial interface IAwaitableCriticalSection : ICriticalSectionInfo
 
    ///<summary>Blocks until <paramref name="condition"/> returns true then acquires an update lock. Returns null if <paramref name="waitTimeout"/> expires. Uses <see cref="WaitTimeout"/> and <see cref="ICriticalSectionInfo.LockTimeout"/> for null parameters.</summary>
    IUpdateLock? TryTakeUpdateLockWhen(Func<bool> condition, CancellationToken cancellationToken = default, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null);
+#pragma warning restore CA1068
 
    ///<summary>The timeout used in condition-wait methods if no explicit wait timeout is provided.</summary>
    WaitTimeout WaitTimeout { get; }
