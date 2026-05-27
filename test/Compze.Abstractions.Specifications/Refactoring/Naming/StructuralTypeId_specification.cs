@@ -4,6 +4,7 @@ using Compze.xUnitBDD;
 
 // ReSharper disable InconsistentNaming
 #pragma warning disable CA1052
+#pragma warning disable CS8981 // BDD-style specification class names describe context using lowercase ASCII (e.g. `equality`, `with_invalid_data`); the language-reserved-name risk is acceptable in test code.
 
 namespace Compze.Abstractions.Specifications.Refactoring.Naming;
 
