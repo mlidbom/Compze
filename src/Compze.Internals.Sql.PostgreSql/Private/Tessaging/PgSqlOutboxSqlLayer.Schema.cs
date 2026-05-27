@@ -13,7 +13,7 @@ partial class PgSqlOutboxSqlLayer
        CREATE TABLE IF NOT EXISTS {Tessage.TableName}
        (
          {Tessage.GeneratedId}       bigint GENERATED ALWAYS AS IDENTITY NOT NULL,
-         {Tessage.TypeIdGuidValue}   {PgSqlGuidType}                     NOT NULL,
+         {Tessage.TypeId}            int                                 NOT NULL,
          {Tessage.TessageId}         {PgSqlGuidType}                     NOT NULL,
          {Tessage.SerializedTessage} TEXT                                NOT NULL,
 

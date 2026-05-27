@@ -12,7 +12,7 @@ partial class MySqlInboxSqlLayer
            CREATE TABLE IF NOT EXISTS {T.TableName}
            (
                {T.GeneratedId}         bigint          NOT NULL  AUTO_INCREMENT,
-               {T.TypeId}              {MySqlGuidType} NOT NULL,
+               {T.TypeId}              int             NOT NULL,
                {T.TessageId}           {MySqlGuidType} NOT NULL,
                {T.Status}              smallint        NOT NULL,
                {T.Body}                mediumtext      NOT NULL,

@@ -1,18 +1,23 @@
 using Compze.Abstractions.Public;
 using Compze.Core.Tessaging.Internal.SqlLayer;
 using Compze.Internals.Sql.Common;
+using Compze.Internals.Sql.Common.Abstractions;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using TessageTable = Compze.Core.Tessaging.Internal.SqlLayer.IServiceBusSqlLayer.InboxTessageDatabaseSchemaStrings;
 
 namespace Compze.Internals.Sql.MicrosoftSql.Private.Tessaging;
 
-partial class MsSqlInboxSqlLayer(IMsSqlConnectionPool connectionFactory, MsSqlSqlLayerSchemaManager schemaManager) : IServiceBusSqlLayer.IInboxSqlLayer
+partial class MsSqlInboxSqlLayer(IMsSqlConnectionPool connectionFactory, MsSqlSqlLayerSchemaManager schemaManager, ITypeIdInterner typeIdInterner) : IServiceBusSqlLayer.IInboxSqlLayer
 {
    readonly IMsSqlConnectionPool _connectionFactory = connectionFactory;
    readonly MsSqlSqlLayerSchemaManager _schemaManager = schemaManager;
+   readonly ITypeIdInterner _typeIdInterner = typeIdInterner;
 
-   public IServiceBusSqlLayer.SaveTessageResult SaveTessage(TessageId tessageId, Guid typeId, string serializedTessage)
+   public IServiceBusSqlLayer.SaveTessageResult SaveTessage(TessageId tessageId, string typeId, string serializedTessage)
    {
+      // Intern before opening a connection: interning may hit the database, and nesting a second connection
+      // inside a held one deadlocks the pool.
+      var internedTypeId = _typeIdInterner.GetOrInternId(typeId);
       return _connectionFactory.UseCommand(command =>
       {
          var affectedRows = command
@@ -29,7 +34,7 @@ partial class MsSqlInboxSqlLayer(IMsSqlConnectionPool connectionFactory, MsSqlSq
 
                                 """)
                            .AddParameter(TessageTable.TessageId, tessageId.Value)
-                           .AddParameter(TessageTable.TypeId, typeId)
+                           .AddParameter(TessageTable.TypeId, internedTypeId)
                             //performance: Like with the tevent store, keep all framework properties out of the JSON and put it into separate columns instead. For tevents. Reuse a pre-serialized instance from the persisting to the tevent store.
                            .AddNVarcharMaxParameter(TessageTable.Body, serializedTessage)
                            .ExecuteNonQuery();

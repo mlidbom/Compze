@@ -12,7 +12,7 @@ partial class SqliteTeventStoreSqlLayer
            {Tevent.InsertionOrder}          INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
            {Tevent.TaggregateId}            TEXT                              NOT NULL,  
            {Tevent.UtcTimeStamp}            INTEGER                           NOT NULL,   
-           {Tevent.TeventType}              TEXT                              NOT NULL,    
+           {Tevent.TeventType}              INTEGER                           NOT NULL,
            {Tevent.Tevent}                  TEXT                              NOT NULL,
            {Tevent.TeventId}                TEXT                              NOT NULL UNIQUE,
            {Tevent.InsertedVersion}         INTEGER                           NOT NULL,

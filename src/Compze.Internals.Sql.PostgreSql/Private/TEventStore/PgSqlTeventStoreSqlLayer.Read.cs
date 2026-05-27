@@ -2,16 +2,18 @@ using System.Transactions;
 using Compze.Abstractions.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions;
 using Compze.Internals.Sql.Common;
+using Compze.Internals.Sql.Common.Abstractions;
 using Npgsql;
 using NpgsqlTypes;
 using Tevent = Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.TeventTableSchemaStrings;
 
 namespace Compze.Internals.Sql.PostgreSql.Private.TEventStore;
 
-partial class PgSqlTeventStoreSqlLayer(PgSqlTeventStoreConnectionManager connectionManager,PgSqlSqlLayerSchemaManager schemaManager) : ITeventStoreSqlLayer
+partial class PgSqlTeventStoreSqlLayer(PgSqlTeventStoreConnectionManager connectionManager,PgSqlSqlLayerSchemaManager schemaManager, ITypeIdInterner typeIdInterner) : ITeventStoreSqlLayer
 {
    readonly PgSqlTeventStoreConnectionManager _connectionManager = connectionManager;
    readonly PgSqlSqlLayerSchemaManager _schemaManager = schemaManager;
+   readonly ITypeIdInterner _typeIdInterner = typeIdInterner;
 
    static string CreateSelectClause() => InternalSelect();
 
@@ -29,41 +31,45 @@ partial class PgSqlTeventStoreSqlLayer(PgSqlTeventStoreConnectionManager connect
               """;
    }
 
-   static TeventDataRow ReadDataRow(NpgsqlDataReader teventReader)
-   {
-      return new TeventDataRow(
-         teventType: teventReader.GetGuid(0),
-         teventJson: teventReader.GetString(1),
-         teventId: new TessageId(teventReader.GetGuid(4)),
-         taggregateVersion: teventReader.GetInt32(3),
-         taggregateId: new TaggregateId(teventReader.GetGuid(2)),
-         //Without this the datetime will be DateTimeKind.Unspecified and will not convert correctly into Local time....
-         utcTimeStamp: DateTime.SpecifyKind(teventReader.GetDateTime(5), DateTimeKind.Utc),
-         storageInformation: new TaggregateTeventStorageInformation
-                             {
-                                ReadOrder = ReadOrder.Parse(teventReader.GetString(10)),
-                                InsertedVersion = teventReader.GetInt32(9),
-                                EffectiveVersion = teventReader.GetInt32(3),
-                                RefactoringInformation = (teventReader.IsDBNull(7) ? (Guid?)null : teventReader.GetGuid(7), teventReader[8] as short?)switch
-                                {
-                                   (null, null) => null,
-                                   // ReSharper disable PatternAlwaysOfType
-                                   (Guid targetTevent, short type) => new TaggregateTeventRefactoringInformation(new TessageId(targetTevent), (TaggregateTeventRefactoringType)type),
-                                   // ReSharper restore PatternAlwaysOfType
-                                   (_, _) => throw new Exception("Should not be possible to get here")
-                                }
-                             }
-      );
-   }
+   // The TeventType column holds an interned int. We read it raw here and resolve it to the canonical type string
+   // in ToDataRow AFTER the reader has closed — resolving during the read could open a second connection on a
+   // cache miss while this reader is held.
+   static (int TeventTypeId, string Json, TessageId TeventId, int Version, TaggregateId TaggregateId, DateTime UtcTimeStamp, TaggregateTeventStorageInformation Storage) ReadRawDataRow(NpgsqlDataReader teventReader) => (
+      TeventTypeId: teventReader.GetInt32(0),
+      Json: teventReader.GetString(1),
+      TeventId: new TessageId(teventReader.GetGuid(4)),
+      Version: teventReader.GetInt32(3),
+      TaggregateId: new TaggregateId(teventReader.GetGuid(2)),
+      //Without this the datetime will be DateTimeKind.Unspecified and will not convert correctly into Local time....
+      UtcTimeStamp: DateTime.SpecifyKind(teventReader.GetDateTime(5), DateTimeKind.Utc),
+      Storage: new TaggregateTeventStorageInformation
+               {
+                  ReadOrder = ReadOrder.Parse(teventReader.GetString(10)),
+                  InsertedVersion = teventReader.GetInt32(9),
+                  EffectiveVersion = teventReader.GetInt32(3),
+                  RefactoringInformation = (teventReader.IsDBNull(7) ? (Guid?)null : teventReader.GetGuid(7), teventReader[8] as short?)switch
+                  {
+                     (null, null) => null,
+                     // ReSharper disable PatternAlwaysOfType
+                     (Guid targetTevent, short type) => new TaggregateTeventRefactoringInformation(new TessageId(targetTevent), (TaggregateTeventRefactoringType)type),
+                     // ReSharper restore PatternAlwaysOfType
+                     (_, _) => throw new Exception("Should not be possible to get here")
+                  }
+               }
+   );
+
+   TeventDataRow ToDataRow((int TeventTypeId, string Json, TessageId TeventId, int Version, TaggregateId TaggregateId, DateTime UtcTimeStamp, TaggregateTeventStorageInformation Storage) raw) =>
+      new(_typeIdInterner.GetCanonicalString(raw.TeventTypeId), raw.Json, raw.TeventId, raw.Version, raw.TaggregateId, raw.UtcTimeStamp, raw.Storage);
 
    public IReadOnlyList<TeventDataRow> GetTaggregateHistory(TaggregateId taggregateId, bool takeWriteLock, int startAfterInsertedVersion = 0)
    {
-      IReadOnlyList<TeventDataRow> GetHistory() =>
-         _connectionManager.UseCommand(suppressTransactionWarning: true,
+      IReadOnlyList<TeventDataRow> GetHistory()
+      {
+         var raw = _connectionManager.UseCommand(suppressTransactionWarning: true,
                                        command => command.SetCommandText($"""
 
 
-                                                                          {CreateSelectClause()} 
+                                                                          {CreateSelectClause()}
                                                                           WHERE {Tevent.TaggregateId} = @{Tevent.TaggregateId}
                                                                               AND {Tevent.InsertedVersion} >= @CachedVersion
                                                                               AND {Tevent.EffectiveVersion} > 0
@@ -73,9 +79,11 @@ partial class PgSqlTeventStoreSqlLayer(PgSqlTeventStoreConnectionManager connect
                                                          .AddParameter(Tevent.TaggregateId, taggregateId.Value)
                                                          .AddParameter("CachedVersion", startAfterInsertedVersion)
                                                          .PrepareStatement()
-                                                         .ExecuteReaderAndSelect(ReadDataRow)
-                                                         .SkipWhile(it => it.StorageInformation.InsertedVersion <= startAfterInsertedVersion)
+                                                         .ExecuteReaderAndSelect(ReadRawDataRow)
+                                                         .SkipWhile(it => it.Storage.InsertedVersion <= startAfterInsertedVersion)
                                                          .ToList());
+         return raw.Select(ToDataRow).ToList();
+      }
 
       if(takeWriteLock)
       {
@@ -113,9 +121,9 @@ partial class PgSqlTeventStoreSqlLayer(PgSqlTeventStoreConnectionManager connect
                                                             return command.SetCommandText(commandText)
                                                                           .AddParameter(Tevent.ReadOrder, NpgsqlDbType.Varchar, lastReadTeventReadOrder.ToString())
                                                                           .PrepareStatement()
-                                                                          .ExecuteReaderAndSelect(ReadDataRow)
+                                                                          .ExecuteReaderAndSelect(ReadRawDataRow)
                                                                           .ToList();
-                                                         });
+                                                         }).Select(ToDataRow).ToList();
          if(historyData.Any())
          {
             lastReadTeventReadOrder = historyData[^1].StorageInformation.ReadOrder!.Value;
@@ -133,15 +141,16 @@ partial class PgSqlTeventStoreSqlLayer(PgSqlTeventStoreConnectionManager connect
 
    public IReadOnlyList<CreationTeventRow> ListTaggregateIdsInCreationOrder()
    {
-      return _connectionManager.UseCommand(suppressTransactionWarning: true,
+      var raw = _connectionManager.UseCommand(suppressTransactionWarning: true,
                                            action: command => command.SetCommandText($"""
 
-                                                                                      SELECT {Tevent.TaggregateId}, {Tevent.TeventType} 
-                                                                                      FROM {Tevent.TableName} 
-                                                                                      WHERE {Tevent.EffectiveVersion} = 1 
+                                                                                      SELECT {Tevent.TaggregateId}, {Tevent.TeventType}
+                                                                                      FROM {Tevent.TableName}
+                                                                                      WHERE {Tevent.EffectiveVersion} = 1
                                                                                       ORDER BY {Tevent.ReadOrder} ASC
                                                                                       """)
                                                                      .PrepareStatement()
-                                                                     .ExecuteReaderAndSelect(reader => new CreationTeventRow(taggregateId: new TaggregateId(reader.GetGuid(0)), typeId: reader.GetGuid(1))));
+                                                                     .ExecuteReaderAndSelect(reader => (TaggregateId: new TaggregateId(reader.GetGuid(0)), TeventTypeId: reader.GetInt32(1))));
+      return raw.Select(it => new CreationTeventRow(it.TaggregateId, _typeIdInterner.GetCanonicalString(it.TeventTypeId))).ToList();
    }
 }

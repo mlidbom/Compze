@@ -29,25 +29,25 @@ public interface IServiceBusSqlLayer
 
    public interface IInboxSqlLayer
    {
-      SaveTessageResult SaveTessage(TessageId tessageId, Guid typeId, string serializedTessage);
+      SaveTessageResult SaveTessage(TessageId tessageId, string typeId, string serializedTessage);
       int MarkAsSucceeded(TessageId tessageId);
       int RecordException(TessageId tessageId, string exceptionStackTrace, string exceptionTessage, string exceptionType);
       int MarkAsFailed(TessageId tessageId);
       Task InitAsync();
    }
 
-   public class OutboxTessageWithReceivers(string serializedTessage, Guid typeId, TessageId tessageId, IEnumerable<EndpointId> receiverEndpointIds)
+   public class OutboxTessageWithReceivers(string serializedTessage, string typeId, TessageId tessageId, IEnumerable<EndpointId> receiverEndpointIds)
    {
       public string SerializedTessage { get; } = serializedTessage;
-      public Guid TypeId { get; } = typeId;
+      public string TypeId { get; } = typeId;
       public TessageId TessageId { get; } = tessageId;
       public IEnumerable<EndpointId> ReceiverEndpointIds { get; } = receiverEndpointIds.ToList();
    }
 
-   public class UndeliveredTessage(TessageId tessageId, Guid typeId, string serializedTessage, EndpointId targetEndpointId, int retryCount, DateTime? lastAttemptTime)
+   public class UndeliveredTessage(TessageId tessageId, string typeId, string serializedTessage, EndpointId targetEndpointId, int retryCount, DateTime? lastAttemptTime)
    {
       public TessageId TessageId { get; } = tessageId;
-      public Guid TypeId { get; } = typeId;
+      public string TypeId { get; } = typeId;
       public string SerializedTessage { get; } = serializedTessage;
       public EndpointId TargetEndpointId { get; } = targetEndpointId;
       public int RetryCount { get; } = retryCount;
@@ -74,7 +74,7 @@ public interface IServiceBusSqlLayer
       public const string TableName = "OutboxTessages";
 
       public const string GeneratedId = nameof(GeneratedId);
-      public const string TypeIdGuidValue = nameof(TypeIdGuidValue);
+      public const string TypeId = nameof(TypeId);
       public const string TessageId = nameof(TessageId);
       public const string SerializedTessage = nameof(SerializedTessage);
    }

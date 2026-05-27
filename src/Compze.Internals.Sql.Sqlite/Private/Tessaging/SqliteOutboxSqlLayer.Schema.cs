@@ -11,7 +11,7 @@ partial class SqliteOutboxSqlLayer
        CREATE TABLE IF NOT EXISTS {Tessage.TableName}
        (
            {Tessage.GeneratedId}       INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-           {Tessage.TypeIdGuidValue}   TEXT                              NOT NULL,
+           {Tessage.TypeId}            INTEGER                           NOT NULL,
            {Tessage.TessageId}         TEXT                              NOT NULL UNIQUE,
            {Tessage.SerializedTessage} TEXT                              NOT NULL
        );

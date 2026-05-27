@@ -1,18 +1,23 @@
 using Compze.Abstractions.Public;
 using Compze.Core.Tessaging.Internal.SqlLayer;
 using Compze.Internals.Sql.Common;
+using Compze.Internals.Sql.Common.Abstractions;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using TessageTable =  Compze.Core.Tessaging.Internal.SqlLayer.IServiceBusSqlLayer.InboxTessageDatabaseSchemaStrings;
 
 namespace Compze.Internals.Sql.PostgreSql.Private.Tessaging;
 
-partial class PgSqlInboxSqlLayer(IPgSqlConnectionPool connectionFactory, PgSqlSqlLayerSchemaManager schemaManager) : IServiceBusSqlLayer.IInboxSqlLayer
+partial class PgSqlInboxSqlLayer(IPgSqlConnectionPool connectionFactory, PgSqlSqlLayerSchemaManager schemaManager, ITypeIdInterner typeIdInterner) : IServiceBusSqlLayer.IInboxSqlLayer
 {
    readonly IPgSqlConnectionPool _connectionFactory = connectionFactory;
    readonly PgSqlSqlLayerSchemaManager _schemaManager = schemaManager;
+   readonly ITypeIdInterner _typeIdInterner = typeIdInterner;
 
-   public IServiceBusSqlLayer.SaveTessageResult SaveTessage(TessageId tessageId, Guid typeId, string serializedTessage)
+   public IServiceBusSqlLayer.SaveTessageResult SaveTessage(TessageId tessageId, string typeId, string serializedTessage)
    {
+      // Intern before opening a connection: interning may hit the database, and nesting a second connection
+      // inside a held one deadlocks the pool.
+      var internedTypeId = _typeIdInterner.GetOrInternId(typeId);
       return _connectionFactory.UseCommand(
          command =>
          {
@@ -27,7 +32,7 @@ partial class PgSqlInboxSqlLayer(IPgSqlConnectionPool connectionFactory, PgSqlSq
 
                    """)
               .AddParameter(TessageTable.TessageId, tessageId.Value)
-              .AddParameter(TessageTable.TypeId, typeId)
+              .AddParameter(TessageTable.TypeId, internedTypeId)
                //performance: Like with the tevent store, keep all framework properties out of the JSON and put it into separate columns instead. For tevents. Reuse a pre-serialized instance from the persisting to the tevent store.
               .AddMediumTextParameter(TessageTable.Body, serializedTessage)
               .PrepareStatement()

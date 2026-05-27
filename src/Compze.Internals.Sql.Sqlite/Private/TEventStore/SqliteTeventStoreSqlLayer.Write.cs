@@ -13,9 +13,12 @@ partial class SqliteTeventStoreSqlLayer
 {
    public void InsertSingleTaggregateTevents(IReadOnlyList<TeventDataRow> tevents)
    {
+      // Intern before opening a connection: interning may hit the database, and nesting a second connection
+      // inside a held one deadlocks the pool.
+      var rows = tevents.Select(data => (data, internedTypeId: _typeIdInterner.GetOrInternId(data.TeventType))).ToList();
       _connectionManager.UseConnection(connection =>
       {
-         foreach(var data in tevents)
+         foreach(var (data, internedTypeId) in rows)
          {
             try
             {
@@ -41,7 +44,7 @@ partial class SqliteTeventStoreSqlLayer
                                          """)
                                     .AddMediumTextParameter(Tevent.TaggregateId, data.TaggregateId.ToString())
                                     .AddParameter(Tevent.InsertedVersion, data.StorageInformation.InsertedVersion)
-                                    .AddMediumTextParameter(Tevent.TeventType, data.TeventType.ToString())
+                                    .AddParameter(Tevent.TeventType, internedTypeId)
                                     .AddMediumTextParameter(Tevent.TeventId, data.TeventId.ToString())
                                     .AddDateTime2Parameter(Tevent.UtcTimeStamp, data.UtcTimeStamp)
                                     .AddMediumTextParameter(Tevent.Tevent, data.TeventJson)

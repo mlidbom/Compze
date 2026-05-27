@@ -14,9 +14,12 @@ partial class MySqlTeventStoreSqlLayer
 {
    public void InsertSingleTaggregateTevents(IReadOnlyList<TeventDataRow> tevents)
    {
+      // Intern before opening a connection: interning may hit the database, and nesting a second connection
+      // inside a held one deadlocks the pool.
+      var rows = tevents.Select(data => (data, internedTypeId: _typeIdInterner.GetOrInternId(data.TeventType))).ToList();
       _connectionManager.UseConnection(connection =>
       {
-         foreach(var data in tevents)
+         foreach(var (data, internedTypeId) in rows)
          {
             try
             {
@@ -39,7 +42,7 @@ partial class MySqlTeventStoreSqlLayer
                                          """)
                                     .AddParameter(Tevent.TaggregateId, data.TaggregateId.Value)
                                     .AddParameter(Tevent.InsertedVersion, data.StorageInformation.InsertedVersion)
-                                    .AddParameter(Tevent.TeventType, data.TeventType)
+                                    .AddParameter(Tevent.TeventType, internedTypeId)
                                     .AddParameter(Tevent.TeventId, data.TeventId.Value)
                                     .AddDateTime2Parameter(Tevent.UtcTimeStamp, data.UtcTimeStamp)
                                     .AddMediumTextParameter(Tevent.Tevent, data.TeventJson)

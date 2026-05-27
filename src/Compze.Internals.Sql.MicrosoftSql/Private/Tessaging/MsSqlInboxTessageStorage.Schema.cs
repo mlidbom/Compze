@@ -12,7 +12,7 @@ partial class MsSqlInboxSqlLayer
            CREATE TABLE {Tessage.TableName}
            (
                {Tessage.GeneratedId}         bigint IDENTITY(1,1) NOT NULL,
-               {Tessage.TypeId}              uniqueidentifier     NOT NULL,
+               {Tessage.TypeId}              int                  NOT NULL,
                {Tessage.TessageId}           uniqueidentifier     NOT NULL,
                {Tessage.Status}              smallint             NOT NULL,
                {Tessage.Body}                nvarchar(MAX)        NOT NULL,

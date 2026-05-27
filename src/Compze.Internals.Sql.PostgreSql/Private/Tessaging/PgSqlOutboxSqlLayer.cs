@@ -2,6 +2,7 @@ using Compze.Abstractions.Public;
 using Compze.Abstractions.Tessaging.Hosting.Public;
 using Compze.Core.Tessaging.Internal.SqlLayer;
 using Compze.Internals.Sql.Common;
+using Compze.Internals.Sql.Common.Abstractions;
 using Compze.Internals.SystemCE.LinqCE;
 using NpgsqlTypes;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
@@ -10,13 +11,17 @@ using TessageTable = Compze.Core.Tessaging.Internal.SqlLayer.IServiceBusSqlLayer
 
 namespace Compze.Internals.Sql.PostgreSql.Private.Tessaging;
 
-partial class PgSqlOutboxSqlLayer(IPgSqlConnectionPool connectionFactory, PgSqlSqlLayerSchemaManager schemaManager) : IServiceBusSqlLayer.IOutboxSqlLayer
+partial class PgSqlOutboxSqlLayer(IPgSqlConnectionPool connectionFactory, PgSqlSqlLayerSchemaManager schemaManager, ITypeIdInterner typeIdInterner) : IServiceBusSqlLayer.IOutboxSqlLayer
 {
    readonly IPgSqlConnectionPool _connectionFactory = connectionFactory;
    readonly PgSqlSqlLayerSchemaManager _schemaManager = schemaManager;
+   readonly ITypeIdInterner _typeIdInterner = typeIdInterner;
 
    public void SaveTessage(IServiceBusSqlLayer.OutboxTessageWithReceivers tessageWithReceivers)
    {
+      // Intern before opening a connection: interning may hit the database, and nesting a second connection
+      // inside a held one deadlocks the pool.
+      var internedTypeId = _typeIdInterner.GetOrInternId(tessageWithReceivers.TypeId);
       _connectionFactory.UseCommand(
          command =>
          {
@@ -25,12 +30,12 @@ partial class PgSqlOutboxSqlLayer(IPgSqlConnectionPool connectionFactory, PgSqlS
                   $"""
 
                    INSERT INTO {TessageTable.TableName} 
-                               ({TessageTable.TessageId},  {TessageTable.TypeIdGuidValue}, {TessageTable.SerializedTessage}) 
-                       VALUES (@{TessageTable.TessageId}, @{TessageTable.TypeIdGuidValue}, @{TessageTable.SerializedTessage});
+                               ({TessageTable.TessageId},  {TessageTable.TypeId}, {TessageTable.SerializedTessage}) 
+                       VALUES (@{TessageTable.TessageId}, @{TessageTable.TypeId}, @{TessageTable.SerializedTessage});
 
                    """)
               .AddParameter(TessageTable.TessageId, tessageWithReceivers.TessageId.Value)
-              .AddParameter(TessageTable.TypeIdGuidValue, tessageWithReceivers.TypeId)
+              .AddParameter(TessageTable.TypeId, internedTypeId)
                //performance: Like with the tevent store, keep all framework properties out of the JSON and put it into separate columns instead. For tevents. Reuse a pre-serialized instance from the persisting to the tevent store.
               .AddMediumTextParameter(TessageTable.SerializedTessage, tessageWithReceivers.SerializedTessage)
               .AddParameter(DispatchingTable.IsReceived, NpgsqlDbType.Boolean, false);
@@ -100,17 +105,19 @@ partial class PgSqlOutboxSqlLayer(IPgSqlConnectionPool connectionFactory, PgSqlS
 
    public IReadOnlyList<IServiceBusSqlLayer.UndeliveredTessage> GetUndeliveredTessagesForEndpoint(EndpointId endpointId)
    {
-      return _connectionFactory.UseCommand(
+      // The TypeId column holds an interned int. Resolve it to the canonical type string AFTER the reader has
+      // closed — resolving during the read could open a second connection on a cache miss while the reader is held.
+      var raw = _connectionFactory.UseCommand(
          command =>
          {
-            var tessages = new List<IServiceBusSqlLayer.UndeliveredTessage>();
+            var rows = new List<(TessageId TessageId, int TypeId, string Body, EndpointId Endpoint, int RetryCount, DateTime? LastAttempt)>();
 
             command
                .SetCommandText(
                    $"""
 
-                    SELECT m.{TessageTable.TessageId}, 
-                           m.{TessageTable.TypeIdGuidValue}, 
+                    SELECT m.{TessageTable.TessageId},
+                           m.{TessageTable.TypeId},
                            m.{TessageTable.SerializedTessage},
                            d.{DispatchingTable.EndpointId},
                            d.{DispatchingTable.RetryCount},
@@ -128,17 +135,24 @@ partial class PgSqlOutboxSqlLayer(IPgSqlConnectionPool connectionFactory, PgSqlS
             using var reader = command.ExecuteReader();
             while(reader.Read())
             {
-               tessages.Add(new IServiceBusSqlLayer.UndeliveredTessage(
-                  tessageId: new TessageId(reader.GetGuid(0)),
-                  typeId: reader.GetGuid(1),
-                  serializedTessage: reader.GetString(2),
-                  targetEndpointId: new EndpointId(reader.GetGuid(3)),
-                  retryCount: reader.GetInt32(4),
-                  lastAttemptTime: reader.IsDBNull(5) ? null : reader.GetDateTime(5)));
+               rows.Add((new TessageId(reader.GetGuid(0)),
+                         reader.GetInt32(1),
+                         reader.GetString(2),
+                         new EndpointId(reader.GetGuid(3)),
+                         reader.GetInt32(4),
+                         reader.IsDBNull(5) ? null : reader.GetDateTime(5)));
             }
 
-            return tessages;
+            return rows;
          });
+
+      return raw.Select(row => new IServiceBusSqlLayer.UndeliveredTessage(
+                           tessageId: row.TessageId,
+                           typeId: _typeIdInterner.GetCanonicalString(row.TypeId),
+                           serializedTessage: row.Body,
+                           targetEndpointId: row.Endpoint,
+                           retryCount: row.RetryCount,
+                           lastAttemptTime: row.LastAttempt)).ToList();
    }
 
    public async Task InitAsync() => await _schemaManager.EnsureSchemaInitializedAsync().caf();

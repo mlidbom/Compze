@@ -14,7 +14,7 @@ partial class MsSqlTeventStoreSqlLayer
                {Tevent.InsertionOrder}       bigint IDENTITY(1,1)               NOT NULL,
                {Tevent.TaggregateId}          uniqueidentifier                   NOT NULL,  
                {Tevent.UtcTimeStamp}         datetime2                          NOT NULL,   
-               {Tevent.TeventType}            uniqueidentifier                   NOT NULL,    
+               {Tevent.TeventType}            int                                NOT NULL,
                {Tevent.Tevent}                nvarchar(max)                      NOT NULL,
                {Tevent.TeventId}              uniqueidentifier                   NOT NULL,
                {Tevent.InsertedVersion}      int                                NOT NULL,

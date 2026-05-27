@@ -16,7 +16,7 @@ partial class PgSqlTeventStoreSqlLayer
                {Tevent.InsertionOrder}          bigint GENERATED ALWAYS AS IDENTITY NOT NULL,
                {Tevent.TaggregateId}             {PgSqlGuidType}                     NOT NULL,  
                {Tevent.UtcTimeStamp}            timestamp with time zone            NOT NULL,   
-               {Tevent.TeventType}               {PgSqlGuidType}                     NOT NULL,    
+               {Tevent.TeventType}              int                                 NOT NULL,
                {Tevent.Tevent}                   TEXT                                NOT NULL,
                {Tevent.TeventId}                 {PgSqlGuidType}                     NOT NULL,
                {Tevent.InsertedVersion}         int                                 NOT NULL,

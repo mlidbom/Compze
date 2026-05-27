@@ -11,7 +11,7 @@ partial class PgSqlInboxSqlLayer
            CREATE TABLE IF NOT EXISTS {Tessage.TableName}
            (
                {Tessage.GeneratedId}           bigint GENERATED ALWAYS AS IDENTITY NOT NULL,
-               {Tessage.TypeId}                {PgSqlGuidType}                     NOT NULL,
+               {Tessage.TypeId}                int                                 NOT NULL,
                {Tessage.TessageId}             {PgSqlGuidType}                     NOT NULL,
                {Tessage.Status}                smallint                            NOT NULL,
                {Tessage.Body}                  text                                NOT NULL,

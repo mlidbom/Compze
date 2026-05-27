@@ -13,7 +13,7 @@ partial class MySqlTeventStoreSqlLayer
                                                 {Tevent.InsertionOrder}       bigint                     NOT NULL  AUTO_INCREMENT,
                                                 {Tevent.TaggregateId}          {MySqlGuidType}            NOT NULL,  
                                                 {Tevent.UtcTimeStamp}         datetime(6) NOT            NULL,   
-                                                {Tevent.TeventType}            {MySqlGuidType}            NOT NULL,    
+                                                {Tevent.TeventType}            int                       NOT NULL,
                                                 {Tevent.Tevent}                MEDIUMTEXT                 NOT NULL,
                                                 {Tevent.TeventId}              {MySqlGuidType}            NOT NULL,
                                                 {Tevent.InsertedVersion}      int                        NOT NULL,

@@ -13,7 +13,7 @@ partial class MySqlOutboxSqlLayer
         CREATE TABLE IF NOT EXISTS {M.TableName}
         (
             {M.GeneratedId}       bigint          NOT NULL  AUTO_INCREMENT,
-            {M.TypeIdGuidValue}   {MySqlGuidType} NOT NULL,
+            {M.TypeId}            int             NOT NULL,
             {M.TessageId}         {MySqlGuidType} NOT NULL,
             {M.SerializedTessage} MEDIUMTEXT      NOT NULL,
 

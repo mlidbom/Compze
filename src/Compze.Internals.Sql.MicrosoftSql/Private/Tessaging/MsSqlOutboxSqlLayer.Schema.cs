@@ -13,7 +13,7 @@ partial class MsSqlOutboxSqlLayer
            CREATE TABLE {Outbox.TableName}
            (
                {Outbox.GeneratedId}       bigint IDENTITY(1,1) NOT NULL,
-               {Outbox.TypeIdGuidValue}   uniqueidentifier     NOT NULL,
+               {Outbox.TypeId}            int                  NOT NULL,
                {Outbox.TessageId}         uniqueidentifier     NOT NULL,
                {Outbox.SerializedTessage} nvarchar(MAX)        NOT NULL,
 
