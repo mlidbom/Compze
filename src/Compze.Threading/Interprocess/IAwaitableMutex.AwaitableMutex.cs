@@ -98,7 +98,7 @@ public partial interface IAwaitableMutex
                      }
 
                      // Probe the mutex to detect abandoned-mutex scenarios (triggers AbandonedMutexException → callback raises signal)
-                     _mutex.TryTakeLock(LockTimeout.Zero)?.Dispose();
+                     _mutex.TryTakeLock(LockTimeout.Zero, cancellationToken)?.Dispose();
                   }
                }
                catch
