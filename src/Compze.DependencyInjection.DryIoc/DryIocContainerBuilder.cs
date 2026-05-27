@@ -4,7 +4,9 @@ using DryIoc;
 
 namespace Compze.DependencyInjection.DryIoc;
 
+#pragma warning disable CA1001 // The underlying container holds no live resources until Build() is called (registrations live on the base class until then); on Build() ownership transfers to the DryIocContainer wrapper which handles disposal.
 public sealed class DryIocContainerBuilder(IComponentRegistrar? registrar = null) : ContainerBuilder(registrar), IDryIocBuilderInternals
+#pragma warning restore CA1001
 {
    readonly IContainer _container = new Container(rules => rules
       .WithTrackingDisposableTransients()
