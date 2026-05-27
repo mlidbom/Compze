@@ -10,7 +10,7 @@ partial class MySqlDocumentDbSqlLayer
        CREATE TABLE IF NOT EXISTS {Document.TableName}
        (
        {Document.Id}          VARCHAR(500) NOT NULL,
-       {Document.ValueTypeId} VARCHAR(500) CHARACTER SET ascii NOT NULL,
+       {Document.ValueTypeId} INT          NOT NULL,
        {Document.Created}     DATETIME     NOT NULL,
        {Document.Updated}     DATETIME     NOT NULL,
        {Document.Value}       MEDIUMTEXT   NOT NULL,

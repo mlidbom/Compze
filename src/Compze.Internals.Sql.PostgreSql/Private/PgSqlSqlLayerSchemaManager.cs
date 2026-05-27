@@ -30,6 +30,8 @@ class PgSqlSqlLayerSchemaManager(IPgSqlConnectionPool connectionPool)
       {
          await _connectionPool.ExecuteNonQueryAsync($"""
 
+                                                     {TypeIdInterning.PgSqlTypeIdInternerPersistence.SchemaCreationSql}
+
                                                      {PgSqlDocumentDbSqlLayer.SchemaCreationSql}
 
                                                      {PgSqlInboxSqlLayer.SchemaCreationSql}

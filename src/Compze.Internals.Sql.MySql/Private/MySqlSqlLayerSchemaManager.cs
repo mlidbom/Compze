@@ -30,6 +30,8 @@ class MySqlSqlLayerSchemaManager(IMySqlConnectionPool connectionPool)
       {
          await _connectionPool.ExecuteNonQueryAsync($"""
 
+                                                     {TypeIdInterning.MySqlTypeIdInternerPersistence.SchemaCreationSql}
+
                                                      {MySqlDocumentDbSqlLayer.SchemaCreationSql}
 
                                                      {MySqlInboxSqlLayer.SchemaCreationSql}

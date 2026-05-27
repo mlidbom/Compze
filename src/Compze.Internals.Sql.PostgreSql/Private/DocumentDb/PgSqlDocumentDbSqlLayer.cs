@@ -1,6 +1,7 @@
 using Compze.DocumentDb.Internal.SqlLayer;
 using Compze.DocumentDb.Internal.SqlLayer.Exceptions;
 using Compze.Internals.Sql.Common;
+using Compze.Internals.Sql.Common.Abstractions;
 using Compze.Internals.SystemCE;
 using Npgsql;
 using System.Diagnostics.CodeAnalysis;
@@ -8,23 +9,27 @@ using Schema = Compze.DocumentDb.Internal.SqlLayer.IDocumentDbSqlLayer.DocumentT
 
 namespace Compze.Internals.Sql.PostgreSql.Private.DocumentDb;
 
-partial class PgSqlDocumentDbSqlLayer(IPgSqlConnectionPool connectionPool, PgSqlSqlLayerSchemaManager schemaManager) : IDocumentDbSqlLayer
+partial class PgSqlDocumentDbSqlLayer(IPgSqlConnectionPool connectionPool, PgSqlSqlLayerSchemaManager schemaManager, ITypeIdInterner typeIdInterner) : IDocumentDbSqlLayer
 {
    readonly IPgSqlConnectionPool _connectionPool = connectionPool;
    readonly PgSqlSqlLayerSchemaManager _schemaManager = schemaManager;
+   readonly ITypeIdInterner _typeIdInterner = typeIdInterner;
 
    public void Update(IReadOnlyList<IDocumentDbSqlLayer.WriteRow> toUpdate)
    {
       EnsureInitialized();
+      // Intern before opening a connection: interning may hit the database, and nesting a second connection
+      // inside a held one deadlocks the pool.
+      var rows = toUpdate.Select(writeRow => (writeRow, internedTypeId: _typeIdInterner.GetOrInternId(writeRow.TypeId))).ToList();
       _connectionPool.UseConnection(connection =>
       {
-         foreach(var writeRow in toUpdate)
+         foreach(var (writeRow, internedTypeId) in rows)
          {
             connection.UseCommand(
                command => command.SetCommandText($"UPDATE {Schema.TableName} SET {Schema.Value} = @{Schema.Value}, {Schema.Updated} = @{Schema.Updated} WHERE {Schema.Id} = @{Schema.Id} AND {Schema.ValueTypeId} = @{Schema.ValueTypeId}")
                                  .AddVarcharParameter(Schema.Id, 500, writeRow.Id)
                                  .AddTimestampWithTimeZone(Schema.Updated, writeRow.UpdateTime)
-                                 .AddVarcharParameter(Schema.ValueTypeId, 500, writeRow.TypeId)
+                                 .AddParameter(Schema.ValueTypeId, internedTypeId)
                                  .AddMediumTextParameter(Schema.Value, writeRow.SerializedDocument)
                                  .PrepareStatement()
                                  .ExecuteNonQuery());
@@ -36,29 +41,36 @@ partial class PgSqlDocumentDbSqlLayer(IPgSqlConnectionPool connectionPool, PgSql
    {
       EnsureInitialized();
 
-      var documents = _connectionPool.UseCommand(
-         command => command.SetCommandText($"""
-
-                                            SELECT {Schema.Value}, {Schema.ValueTypeId} FROM {Schema.TableName}  {UseUpdateLock(useUpdateLock)} 
-                                            WHERE {Schema.Id}=@{Schema.Id} AND {Schema.ValueTypeId} {TypeInClause(acceptableTypeIds)}
-                                            """)
-                           .AddVarcharParameter(Schema.Id, 500, idString)
-                           .PrepareStatement()
-                           .ExecuteReaderAndSelect(reader => new IDocumentDbSqlLayer.ReadRow(reader.GetString(1), reader.GetString(0))));
-      if(documents.Count < 1)
+      var acceptableInternedTypeIds = _typeIdInterner.GetExistingIds(acceptableTypeIds);
+      if(acceptableInternedTypeIds.Count == 0)
       {
          document = null;
          return false;
       }
 
-      document = documents[0];
+      var rows = _connectionPool.UseCommand(
+         command => command.SetCommandText($"""
 
+                                            SELECT {Schema.Value}, {Schema.ValueTypeId} FROM {Schema.TableName}  {UseUpdateLock(useUpdateLock)}
+                                            WHERE {Schema.Id}=@{Schema.Id} AND {Schema.ValueTypeId} {TypeInClause(acceptableInternedTypeIds)}
+                                            """)
+                           .AddVarcharParameter(Schema.Id, 500, idString)
+                           .PrepareStatement()
+                           .ExecuteReaderAndSelect(reader => (SerializedDocument: reader.GetString(0), InternedTypeId: reader.GetInt32(1))));
+      if(rows.Count < 1)
+      {
+         document = null;
+         return false;
+      }
+
+      document = ToReadRow(rows[0]);
       return true;
    }
 
    public void Add(IDocumentDbSqlLayer.WriteRow row)
    {
       EnsureInitialized();
+      var internedTypeId = _typeIdInterner.GetOrInternId(row.TypeId);
       try
       {
          _connectionPool.UseCommand(command =>
@@ -66,7 +78,7 @@ partial class PgSqlDocumentDbSqlLayer(IPgSqlConnectionPool connectionPool, PgSql
 
             command.SetCommandText($"INSERT INTO {Schema.TableName}({Schema.Id}, {Schema.ValueTypeId}, {Schema.Value}, {Schema.Created}, {Schema.Updated}) VALUES(@{Schema.Id}, @{Schema.ValueTypeId}, @{Schema.Value}, @{Schema.Created}, @{Schema.Updated})")
                    .AddVarcharParameter(Schema.Id, 500, row.Id)
-                   .AddVarcharParameter(Schema.ValueTypeId, 500, row.TypeId)
+                   .AddParameter(Schema.ValueTypeId, internedTypeId)
                    .AddTimestampWithTimeZone(Schema.Created, row.UpdateTime)
                    .AddTimestampWithTimeZone(Schema.Updated, row.UpdateTime)
                    .AddMediumTextParameter(Schema.Value, row.SerializedDocument)
@@ -83,9 +95,13 @@ partial class PgSqlDocumentDbSqlLayer(IPgSqlConnectionPool connectionPool, PgSql
    public int Remove(string idString, IReadOnlySet<string> acceptableTypes)
    {
       EnsureInitialized();
+      var acceptableInternedTypeIds = _typeIdInterner.GetExistingIds(acceptableTypes);
+      if(acceptableInternedTypeIds.Count == 0)
+         return 0;
+
       return _connectionPool.UseCommand(
          command =>
-            command.SetCommandText($"DELETE FROM {Schema.TableName} WHERE {Schema.Id} = @{Schema.Id} AND {Schema.ValueTypeId} {TypeInClause(acceptableTypes)}")
+            command.SetCommandText($"DELETE FROM {Schema.TableName} WHERE {Schema.Id} = @{Schema.Id} AND {Schema.ValueTypeId} {TypeInClause(acceptableInternedTypeIds)}")
                    .AddVarcharParameter(Schema.Id, 500, idString)
                    .PrepareStatement()
                    .ExecuteNonQuery());
@@ -94,8 +110,12 @@ partial class PgSqlDocumentDbSqlLayer(IPgSqlConnectionPool connectionPool, PgSql
    public IEnumerable<Guid> GetAllIds(IReadOnlySet<string> acceptableTypes)
    {
       EnsureInitialized();
+      var acceptableInternedTypeIds = _typeIdInterner.GetExistingIds(acceptableTypes);
+      if(acceptableInternedTypeIds.Count == 0)
+         return [];
+
       return _connectionPool.UseCommand(
-         command => command.SetCommandText($"SELECT {Schema.Id} FROM {Schema.TableName} WHERE {Schema.ValueTypeId} {TypeInClause(acceptableTypes)}")
+         command => command.SetCommandText($"SELECT {Schema.Id} FROM {Schema.TableName} WHERE {Schema.ValueTypeId} {TypeInClause(acceptableInternedTypeIds)}")
                            .PrepareStatement()//Performance: Does this work in Npgsql when there are no parameters? Should we have parameters?
                            .ExecuteReaderAndSelect(reader => reader.GetGuidFromString(0)));
    }
@@ -103,25 +123,39 @@ partial class PgSqlDocumentDbSqlLayer(IPgSqlConnectionPool connectionPool, PgSql
    public IReadOnlyList<IDocumentDbSqlLayer.ReadRow> GetAll(IEnumerable<Guid> ids, IReadOnlySet<string> acceptableTypes)
    {
       EnsureInitialized();
-      return _connectionPool.UseCommand(
+      var acceptableInternedTypeIds = _typeIdInterner.GetExistingIds(acceptableTypes);
+      if(acceptableInternedTypeIds.Count == 0)
+         return [];
+
+      var rows = _connectionPool.UseCommand(
          command => command.SetCommandText($"""
-                                            SELECT {Schema.Id}, {Schema.Value}, {Schema.ValueTypeId} FROM {Schema.TableName} WHERE {Schema.ValueTypeId} {TypeInClause(acceptableTypes)} 
+                                            SELECT {Schema.Id}, {Schema.Value}, {Schema.ValueTypeId} FROM {Schema.TableName} WHERE {Schema.ValueTypeId} {TypeInClause(acceptableInternedTypeIds)}
                                                                                AND {Schema.Id} IN('
                                             """ + ids.Select(id => id.ToString()).Join("','") + "')")
                            .PrepareStatement() //Performance: Does this work in Npgsql when there are no parameters? Should we have parameters?
-                           .ExecuteReaderAndSelect(reader => new IDocumentDbSqlLayer.ReadRow(reader.GetString(2), reader.GetString(1))));
+                           .ExecuteReaderAndSelect(reader => (SerializedDocument: reader.GetString(1), InternedTypeId: reader.GetInt32(2))));
+      return rows.Select(ToReadRow).ToList();
    }
 
    public IReadOnlyList<IDocumentDbSqlLayer.ReadRow> GetAll(IReadOnlySet<string> acceptableTypes)
    {
       EnsureInitialized();
-      return _connectionPool.UseCommand(
-         command => command.SetCommandText($"SELECT {Schema.Id}, {Schema.Value}, {Schema.ValueTypeId} FROM {Schema.TableName} WHERE {Schema.ValueTypeId} {TypeInClause(acceptableTypes)}")
+      var acceptableInternedTypeIds = _typeIdInterner.GetExistingIds(acceptableTypes);
+      if(acceptableInternedTypeIds.Count == 0)
+         return [];
+
+      var rows = _connectionPool.UseCommand(
+         command => command.SetCommandText($"SELECT {Schema.Id}, {Schema.Value}, {Schema.ValueTypeId} FROM {Schema.TableName} WHERE {Schema.ValueTypeId} {TypeInClause(acceptableInternedTypeIds)}")
                            .PrepareStatement() //Performance: Does this work in Npgsql when there are no parameters? Should we have parameters?
-                           .ExecuteReaderAndSelect(reader => new IDocumentDbSqlLayer.ReadRow(reader.GetString(2), reader.GetString(1))));
+                           .ExecuteReaderAndSelect(reader => (SerializedDocument: reader.GetString(1), InternedTypeId: reader.GetInt32(2))));
+      return rows.Select(ToReadRow).ToList();
    }
 
-   static string TypeInClause(IEnumerable<string> acceptableTypeIds) => "IN( '" + acceptableTypeIds.Join("', '") + "')\n";
+   // Resolve the interned id back to its canonical type string after the reader has closed — never while a connection is held.
+   IDocumentDbSqlLayer.ReadRow ToReadRow((string SerializedDocument, int InternedTypeId) row) =>
+      new(_typeIdInterner.GetCanonicalString(row.InternedTypeId), row.SerializedDocument);
+
+   static string TypeInClause(IReadOnlySet<int> acceptableInternedTypeIds) => $"IN ({string.Join(", ", acceptableInternedTypeIds)})\n";
 
    // ReSharper disable once UnusedParameter.Local
    static string UseUpdateLock(bool _) => "";// useUpdateLock ? "With(UPDLOCK, ROWLOCK)" : "";

@@ -6,6 +6,7 @@ public static class MySqlSqlLayersRegistrar
 {
    public static IComponentRegistrar MySqlSqlLayers(this IComponentRegistrar registrar) =>
       registrar.MySqlSqlLayerSchemaManager()
+               .MySqlTypeIdInterner()
                .MySqlDocumentDbSqlLayer().
                 MySqlTessagingSqlLayer().
                 MySqlTeventStoreSqlLayer();

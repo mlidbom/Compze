@@ -6,6 +6,7 @@ public static class PgSqlSqlLayersRegistrar
 {
    public static IComponentRegistrar PgSqlSqlLayers(this IComponentRegistrar registrar) =>
       registrar.PgSqlSqlLayerSchemaManager()
+               .PgSqlTypeIdInterner()
                .PgSqlDocumentDbSqlLayer()
                .PgSqlTessagingSqlLayer()
                .PgSqlTeventStoreSqlLayer();

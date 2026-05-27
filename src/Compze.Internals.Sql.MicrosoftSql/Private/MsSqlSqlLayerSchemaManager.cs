@@ -31,6 +31,8 @@ class MsSqlSqlLayerSchemaManager(IMsSqlConnectionPool connectionPool)
          await _connectionPool.ExecuteNonQueryAsync(
             $"""
 
+             {TypeIdInterning.MsSqlTypeIdInternerPersistence.SchemaCreationSql}
+
              {MsSqlDocumentDbSqlLayer.SchemaCreationSql}
 
              {MsSqlInboxSqlLayer.SchemaCreationSql}

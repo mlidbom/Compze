@@ -1,4 +1,5 @@
 using Compze.DocumentDb.Internal.SqlLayer;
+using Compze.Internals.Sql.Common.Abstractions;
 using Compze.Internals.Sql.PostgreSql.Private;
 using Compze.Internals.Sql.PostgreSql.Private.DocumentDb;
 using Compze.DependencyInjection;
@@ -11,6 +12,6 @@ static class PgSqlDocumentDbRegistrar
    public static IComponentRegistrar PgSqlDocumentDbSqlLayer(this IComponentRegistrar registrar) =>
       registrar.Register(
          Singleton.For<IDocumentDbSqlLayer>()
-                  .CreatedBy((IPgSqlConnectionPool connectionProvider, PgSqlSqlLayerSchemaManager schemaManager) => new PgSqlDocumentDbSqlLayer(connectionProvider, schemaManager)))
-               .PgSqlSqlLayerSchemaManager();
+                  .CreatedBy((IPgSqlConnectionPool connectionProvider, PgSqlSqlLayerSchemaManager schemaManager, ITypeIdInterner typeIdInterner) => new PgSqlDocumentDbSqlLayer(connectionProvider, schemaManager, typeIdInterner)))
+               .PgSqlTypeIdInterner();
 }
