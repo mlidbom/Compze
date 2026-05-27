@@ -63,7 +63,7 @@ sealed class DocumentDb : IDocumentDb
       var idString = GetIdString(id);
       var serializedDocument = _serializer.Serialize(value);
 
-      _sqlLayer.Add(new IDocumentDbSqlLayer.WriteRow(id: idString, serializedDocument: serializedDocument, updateTime: UtcTimeSource.UtcNow, typeId: _typeMap.GetMappedId(value.GetType())));
+      _sqlLayer.Add(new IDocumentDbSqlLayer.WriteRow(id: idString, serializedDocument: serializedDocument, updateTime: UtcTimeSource.UtcNow, typeId: _typeMap.GetId(value.GetType()).CanonicalString));
 
       persistentValues.GetOrAddDefault(value.GetType())[idString] = serializedDocument;
    }
@@ -97,7 +97,7 @@ sealed class DocumentDb : IDocumentDb
          if(needsUpdate)
          {
             persistentValues.GetOrAddDefault(item.Value.GetType())[item.Key] = serializedDocument;
-            toUpdate.Add(new IDocumentDbSqlLayer.WriteRow(item.Key, serializedDocument, now, _typeMap.GetMappedId(item.Value.GetType())));
+            toUpdate.Add(new IDocumentDbSqlLayer.WriteRow(item.Key, serializedDocument, now, _typeMap.GetId(item.Value.GetType()).CanonicalString));
          }
       }
 
@@ -123,13 +123,14 @@ sealed class DocumentDb : IDocumentDb
    public IEnumerable<Guid> GetAllIds<T>() where T : IEntity<Guid> => _sqlLayer.GetAllIds(AcceptableTypeIds<T>());
 
    [return: NotNull] TDocument Deserialize<TDocument>(IDocumentDbSqlLayer.ReadRow stored) =>
-      (TDocument)_serializer.Deserialize(GetTypeFromId(new MappedTypeIdentifier(stored.TypeId)), stored.SerializedDocument)._assert().NotNull();
+      (TDocument)_serializer.Deserialize(_typeMap.FromPersistedTypeString(stored.TypeId), stored.SerializedDocument)._assert().NotNull();
 
-   IReadOnlySet<MappedTypeIdentifier> AcceptableTypeIds<T>() => AcceptableTypeIds(typeof(T));
+   IReadOnlySet<string> AcceptableTypeIds<T>() => AcceptableTypeIds(typeof(T));
 
-   IReadOnlySet<MappedTypeIdentifier> AcceptableTypeIds(Type type) => _typeMap.GetIdForTypesAssignableTo(type)
-                                                                   .ToHashSet()
-                                                                   ._assert(ids => ids.Any(), _ => $"Found no TypeIds for {type.GetFullNameCompilable()}");
-
-   Type GetTypeFromId(MappedTypeIdentifier id) => _typeMap.GetType(id);
+   // The document type column stores the full canonical TypeId string, so constructed types (generics, arrays)
+   // are persisted and resolved structurally — no GUID-leaf restriction.
+   IReadOnlySet<string> AcceptableTypeIds(Type type) => _typeMap.GetIdsForTypesAssignableTo(type)
+                                                               .Select(id => id.CanonicalString)
+                                                               .ToHashSet()
+                                                               ._assert(ids => ids.Any(), _ => $"Found no TypeIds for {type.GetFullNameCompilable()}");
 }

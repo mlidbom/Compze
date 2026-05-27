@@ -105,7 +105,7 @@ namespace Compze.Tessaging.Teventive.TeventStore;
 
    TaggregateTevent HydrateTevent(TeventDataRow teventDataRowRow)
    {
-      var tevent = (TaggregateTevent)_serializer.Deserialize(teventType: _typeMap.GetType(teventDataRowRow.TeventType), json: teventDataRowRow.TeventJson);
+      var tevent = (TaggregateTevent)_serializer.Deserialize(teventType: TypeFromStorageGuid(teventDataRowRow.TeventType), json: teventDataRowRow.TeventJson);
 #pragma warning disable CS0618 // Type or member is obsolete
       ((IMutableTaggregateTevent)tevent).SetTaggregateIdInternal(teventDataRowRow.TaggregateId);
       ((IMutableTaggregateTevent)tevent).SetTaggregateVersionInternal(teventDataRowRow.TaggregateVersion);
@@ -160,7 +160,7 @@ namespace Compze.Tessaging.Teventive.TeventStore;
       var specifications = tevents.Select(tevent => cacheEntry.CreateInsertionSpecificationForNewTevent(tevent)).ToArray();
 
       var teventRows = tevents
-                     .Select(tevent => new TeventDataRow(specification: cacheEntry.CreateInsertionSpecificationForNewTevent(tevent), _typeMap.GetMappedId(tevent.GetType()), teventAsJson: _serializer.Serialize((TaggregateTevent)tevent)))
+                     .Select(tevent => new TeventDataRow(specification: cacheEntry.CreateInsertionSpecificationForNewTevent(tevent), LeafStorageGuid(_typeMap.GetId(tevent.GetType())), teventAsJson: _serializer.Serialize((TaggregateTevent)tevent)))
                      .ToList();
 
       teventRows.ForEach(it => it.StorageInformation.EffectiveVersion = it.TaggregateVersion);
@@ -193,7 +193,7 @@ namespace Compze.Tessaging.Teventive.TeventStore;
 
       _sqlLayer.SetupSchemaIfDatabaseUnInitialized();
       return _sqlLayer.ListTaggregateIdsInCreationOrder()
-                              .Where(it => teventType == null || teventType.IsAssignableFrom(_typeMap.GetType(new MappedTypeIdentifier(it.TypeId))))
+                              .Where(it => teventType == null || teventType.IsAssignableFrom(TypeFromStorageGuid(it.TypeId)))
                               .Select(it => it.TaggregateId);
    }
 
@@ -202,6 +202,18 @@ namespace Compze.Tessaging.Teventive.TeventStore;
       internal TaggregateTevent Tevent { get; } = tevent;
       internal TaggregateTeventStorageInformation StorageInformation { get; } = storageInformation;
    }
+
+   // A mapped leaf type's canonical id is "<guid>, 0"; that GUID is what the tevent store persists.
+   static Guid LeafStorageGuid(TypeId id)
+   {
+      var canonical = id.CanonicalString;
+      if(canonical.EndsWith(", 0", StringComparison.Ordinal) && Guid.TryParse(canonical[..^3], out var guid))
+         return guid;
+      throw new InvalidOperationException(
+         $"Tevent type '{id.Type.FullName}' is not a GUID-mapped leaf type (id '{canonical}'); only mapped leaf types can be persisted as tevents.");
+   }
+
+   Type TypeFromStorageGuid(Guid storedTypeId) => _typeMap.FromPersistedTypeString($"{storedTypeId}, 0");
 
    public void Dispose() {}
 }

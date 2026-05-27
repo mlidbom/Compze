@@ -1,4 +1,3 @@
-using Compze.TypeIdentifiers;
 using Compze.Core.Tessaging.Internal.SqlLayer;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Contracts;
@@ -11,7 +10,7 @@ class InboxTessageStorage(IServiceBusSqlLayer.IInboxSqlLayer sqlLayer) : Inbox.I
    readonly IServiceBusSqlLayer.IInboxSqlLayer _sqlLayer = sqlLayer;
 
    public IServiceBusSqlLayer.SaveTessageResult SaveIncomingTessage(TransportTessage.InComing tessage)
-      => _sqlLayer.SaveTessage(tessage.TessageId, (MappedTypeIdentifier)tessage.TessageTypeId, tessage.Body);
+      => _sqlLayer.SaveTessage(tessage.TessageId, tessage.TessageTypeId.LeafStorageGuid(), tessage.Body);
 
    public void MarkAsSucceeded(TransportTessage.InComing tessage)
       => _sqlLayer.MarkAsSucceeded(tessage.TessageId)

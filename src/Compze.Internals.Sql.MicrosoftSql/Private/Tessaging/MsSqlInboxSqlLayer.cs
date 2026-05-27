@@ -1,5 +1,4 @@
 using Compze.Abstractions.Public;
-using Compze.TypeIdentifiers;
 using Compze.Core.Tessaging.Internal.SqlLayer;
 using Compze.Internals.Sql.Common;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
@@ -12,7 +11,7 @@ partial class MsSqlInboxSqlLayer(IMsSqlConnectionPool connectionFactory, MsSqlSq
    readonly IMsSqlConnectionPool _connectionFactory = connectionFactory;
    readonly MsSqlSqlLayerSchemaManager _schemaManager = schemaManager;
 
-   public IServiceBusSqlLayer.SaveTessageResult SaveTessage(TessageId tessageId, MappedTypeIdentifier typeId, string serializedTessage)
+   public IServiceBusSqlLayer.SaveTessageResult SaveTessage(TessageId tessageId, Guid typeId, string serializedTessage)
    {
       return _connectionFactory.UseCommand(command =>
       {
@@ -30,7 +29,7 @@ partial class MsSqlInboxSqlLayer(IMsSqlConnectionPool connectionFactory, MsSqlSq
 
                                 """)
                            .AddParameter(TessageTable.TessageId, tessageId.Value)
-                           .AddParameter(TessageTable.TypeId, typeId.GuidValue)
+                           .AddParameter(TessageTable.TypeId, typeId)
                             //performance: Like with the tevent store, keep all framework properties out of the JSON and put it into separate columns instead. For tevents. Reuse a pre-serialized instance from the persisting to the tevent store.
                            .AddNVarcharMaxParameter(TessageTable.Body, serializedTessage)
                            .ExecuteNonQuery();

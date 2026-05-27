@@ -77,7 +77,7 @@ class TessagingConnection(
       this.Log().Info($"Loading {undelivered.Count} undelivered tessage(s) for recovery to endpoint {EndpointInformation.Id}");
       foreach(var undeliveredTessage in undelivered)
       {
-         var tessageType = _typeMap.GetType(undeliveredTessage.TypeId);
+         var tessageType = _typeMap.FromPersistedTypeString($"{undeliveredTessage.TypeId}, 0");
          var tessage = (IExactlyOnceTessage)_serializer.DeserializeTessage(tessageType, undeliveredTessage.SerializedTessage);
          EnqueueForDelivery(tessage);
       }

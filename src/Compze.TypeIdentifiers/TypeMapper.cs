@@ -1,5 +1,4 @@
 using System.Collections.Concurrent;
-using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using Compze.Internals.SystemCE.CollectionsCE.GenericCE;
 using Compze.Internals.SystemCE.LinqCE;
@@ -8,17 +7,16 @@ using Compze.Underscore;
 namespace Compze.TypeIdentifiers;
 
 /// <summary>
-/// Mutable implementation of <see cref="ITypeMapper"/> that supports incremental assembly registration.
-/// Leaf types get <see cref="MappedTypeIdentifier"/> (GUID-backed).
-/// Constructed types use structural string representations via <see cref="TypeNameMapper"/>.
+/// Mutable implementation of <see cref="ITypeMapper"/> and <see cref="ITypeMap"/> that supports incremental
+/// assembly registration. Leaf types and open generic definitions are mapped to GUIDs; constructed and
+/// stable types resolve structurally via <see cref="TypeNameMapper"/>. The produced <see cref="TypeId"/>
+/// is always canonical for its type.
 /// </summary>
 public class TypeMapper : ITypeMapper, ITypeMap
 {
    readonly TypeNameMapper _typeNameMapper = new();
-   readonly ConcurrentDictionary<Type, MappedTypeIdentifier> _typeToId = new();
-   readonly ConcurrentDictionary<MappedTypeIdentifier, Type> _idToType = new();
-   readonly ConcurrentDictionary<Type, MappedTypeIdentifier> _constructedTypeToMappedId = new();
-   readonly ConcurrentDictionary<Type, IReadOnlySet<MappedTypeIdentifier>> _assignableTypeCache = new();
+   readonly ConcurrentDictionary<Type, TypeId> _idCache = new();
+   readonly ConcurrentDictionary<Type, IReadOnlySet<TypeId>> _assignableTypeCache = new();
    readonly HashSet<Assembly> _processedAssemblies = [];
 
    /// <summary>Well-known Microsoft public key tokens. All assemblies signed with these are stable by default.</summary>
@@ -50,23 +48,12 @@ public class TypeMapper : ITypeMapper, ITypeMap
       mapper.Map(registrar);
 
       foreach(var kvp in registrar.LeafTypeMappings)
-      {
-         var mappedId = new MappedTypeIdentifier(kvp.Value);
-         _typeToId[kvp.Key] = mappedId;
-         _idToType[mappedId] = kvp.Key;
          _typeNameMapper.AddLeafTypeMapping(kvp.Key, kvp.Value);
-      }
 
       foreach(var kvp in registrar.OpenGenericMappings)
-      {
-         var mappedId = new MappedTypeIdentifier(kvp.Value);
-         _typeToId[kvp.Key] = mappedId;
-         _idToType[mappedId] = kvp.Key;
          _typeNameMapper.AddOpenGenericMapping(kvp.Key, kvp.Value);
-      }
 
-      _assignableTypeCache.Clear();
-      _constructedTypeToMappedId.Clear();
+      ClearCaches();
    }
 
    public void UseStableNameStrategyForAssemblyContaining<T>()
@@ -75,62 +62,16 @@ public class TypeMapper : ITypeMapper, ITypeMap
       if(name != null)
          _typeNameMapper.AddStableAssemblyName(name);
 
-      _assignableTypeCache.Clear();
-      _constructedTypeToMappedId.Clear();
+      ClearCaches();
    }
 
-   public TypeIdentifier GetId(Type type) => _typeNameMapper.GetId(type);
+   public TypeId GetId(Type type) => _idCache.GetOrAdd(type, t => new TypeId(t, _typeNameMapper.GetId(t).StringRepresentation));
 
-   public Type GetType(TypeIdentifier id) => _typeNameMapper.GetType(id);
+   public string ToPersistedTypeString(Type type) => GetId(type).CanonicalString;
 
-   public bool TryGetType(TypeIdentifier id, [NotNullWhen(true)] out Type? type)
-   {
-      try
-      {
-         type = _typeNameMapper.GetType(id);
-         return true;
-      }
-      catch(InvalidOperationException)
-      {
-         type = null;
-         return false;
-      }
-   }
+   public Type FromPersistedTypeString(string persistedTypeString) => _typeNameMapper.GetTypeFromPersistedString(persistedTypeString);
 
-   public MappedTypeIdentifier GetMappedId(Type type)
-   {
-      if(_typeToId.TryGetValue(type, out var id))
-         return id;
-
-      // For constructed types (generics, arrays), derive a deterministic GUID from the structural string
-      if(CanResolve(type))
-         return _constructedTypeToMappedId.GetOrAdd(type, ComputeDeterministicMappedId);
-
-      throw new InvalidOperationException($"No mapping found for type: {type.FullName}. Ensure the assembly declaring this type has been registered.");
-   }
-
-   MappedTypeIdentifier ComputeDeterministicMappedId(Type type)
-   {
-      var structuralId = _typeNameMapper.GetId(type);
-      var hash = System.Security.Cryptography.SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(structuralId.StringRepresentation));
-      var guidBytes = hash.AsSpan(0, 16).ToArray();
-      // Set version nibble to 0x80 (custom/private) to distinguish from leaf-mapped GUIDs
-      guidBytes[7] = (byte)((guidBytes[7] & 0x0F) | 0x80);
-      var mappedId = new MappedTypeIdentifier(new Guid(guidBytes));
-      _idToType[mappedId] = type;
-      return mappedId;
-   }
-
-   public Type GetType(MappedTypeIdentifier id)
-   {
-      if(_idToType.TryGetValue(id, out var type))
-         return type;
-
-      throw new InvalidOperationException($"No type found for MappedTypeIdentifier: {id}");
-   }
-
-   public IEnumerable<MappedTypeIdentifier> GetIdForTypesAssignableTo(Type type)
-      => _assignableTypeCache.GetOrAdd(type, ComputeAssignableTypeIds);
+   public IEnumerable<TypeId> GetIdsForTypesAssignableTo(Type type) => _assignableTypeCache.GetOrAdd(type, ComputeAssignableTypeIds);
 
    public void AssertMappingsExistFor(IEnumerable<Type> types)
    {
@@ -142,7 +83,7 @@ public class TypeMapper : ITypeMapper, ITypeMap
 
    bool CanResolve(Type type)
    {
-      if(_typeToId.ContainsKey(type))
+      if(_typeNameMapper.HasLeafMapping(type))
          return true;
 
       if(type.IsConstructedGenericType)
@@ -155,32 +96,19 @@ public class TypeMapper : ITypeMapper, ITypeMap
       return _typeNameMapper.IsStableType(type);
    }
 
-   public string ToPersistedTypeString(Type type)
-      => _typeNameMapper.GetPersistedStringFromAssemblyQualifiedName(type.AssemblyQualifiedName!);
-
-   public Type FromPersistedTypeString(string persistedTypeString)
-      => _typeNameMapper.GetTypeFromPersistedString(persistedTypeString);
-
-   IReadOnlySet<MappedTypeIdentifier> ComputeAssignableTypeIds(Type baseType)
+   IReadOnlySet<TypeId> ComputeAssignableTypeIds(Type baseType)
    {
-      var result = new HashSet<MappedTypeIdentifier>();
+      var result = new HashSet<TypeId>();
 
-      foreach(var kvp in _typeToId)
+      foreach(var type in _typeNameMapper.RegisteredLeafTypes)
       {
-         if(baseType.IsAssignableFrom(kvp.Key))
-            result.Add(kvp.Value);
+         if(baseType.IsAssignableFrom(type))
+            result.Add(GetId(type));
       }
 
-      // Also include constructed types that have been seen (via GetMappedId)
-      foreach(var kvp in _constructedTypeToMappedId)
-      {
-         if(baseType.IsAssignableFrom(kvp.Key))
-            result.Add(kvp.Value);
-      }
-
-      // If the queried type itself is resolvable but not yet in any cache, add it
+      // If the queried type itself is resolvable but no registered leaf matched, include it.
       if(result.Count == 0 && CanResolve(baseType))
-         result.Add(GetMappedId(baseType));
+         result.Add(GetId(baseType));
 
       return result;
    }
@@ -191,6 +119,12 @@ public class TypeMapper : ITypeMapper, ITypeMap
       AppDomain.CurrentDomain.GetAssemblies()
                .Where(it => it.GetCustomAttribute<AssemblyTypeMapperAttribute>() != null)
                .ForEach(MapTypesFromAssembly);
+
+   void ClearCaches()
+   {
+      _idCache.Clear();
+      _assignableTypeCache.Clear();
+   }
 
    void RegisterMicrosoftAssembliesAsStableNameAssemblies()
    {

@@ -39,7 +39,7 @@ class HttpInfrastructureQueryTransportImplementation : IInfrastructureQueryTrans
 
       using var httpClient = _httpClientFactory.CreateClient();
       using var content = new StringContent(body);
-      content.Headers.Add(HttpConstants.Headers.PayLoadTypeId, typeId.StringRepresentation);
+      content.Headers.Add(HttpConstants.Headers.PayLoadTypeId, typeId.CanonicalString);
 
       var response = await httpClient.PostAsync(requestUri, content).caf();
       if(!response.IsSuccessStatusCode)

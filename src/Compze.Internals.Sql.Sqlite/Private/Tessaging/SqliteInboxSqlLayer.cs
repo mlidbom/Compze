@@ -1,5 +1,4 @@
 using Compze.Abstractions.Public;
-using Compze.TypeIdentifiers;
 using Compze.Core.Tessaging.Internal.SqlLayer;
 using Compze.Internals.Sql.Common;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
@@ -12,7 +11,7 @@ partial class SqliteInboxSqlLayer(ISqliteConnectionPool connectionFactory, Sqlit
    readonly ISqliteConnectionPool _connectionFactory = connectionFactory;
    readonly SqliteSqlLayerSchemaManager _schemaManager = schemaManager;
 
-   public IServiceBusSqlLayer.SaveTessageResult SaveTessage(TessageId tessageId, MappedTypeIdentifier typeId, string serializedTessage)
+   public IServiceBusSqlLayer.SaveTessageResult SaveTessage(TessageId tessageId, Guid typeId, string serializedTessage)
    {
       return _connectionFactory.UseCommand(
          command =>
@@ -28,7 +27,7 @@ partial class SqliteInboxSqlLayer(ISqliteConnectionPool connectionFactory, Sqlit
 
                    """)
               .AddMediumTextParameter(TessageTable.TessageId, tessageId.ToString())
-              .AddMediumTextParameter(TessageTable.TypeId, typeId.GuidValue.ToString())
+              .AddMediumTextParameter(TessageTable.TypeId, typeId.ToString())
               .AddMediumTextParameter(TessageTable.Body, serializedTessage)
               .ExecuteNonQuery();
 

@@ -3,16 +3,20 @@ using System.Text.RegularExpressions;
 namespace Compze.TypeIdentifiers;
 
 /// <summary>
-/// Identity of a type in a type-mapped system. Subtypes represent distinct structural forms:
+/// Internal parse tree for an <c>AssemblyQualifiedName</c>-format string. Each subtype represents a
+/// distinct structural form and knows how to render its canonical string, resolve to a .NET
+/// <see cref="Type"/>, and transform mapped components into persisted (GUID-backed) form:
 /// <list type="bullet">
-///   <item><see cref="MappedTypeIdentifier"/> — leaf type with an assigned GUID. SQL-storable.</item>
+///   <item><see cref="MappedTypeIdentifier"/> — leaf type with an assigned GUID.</item>
 ///   <item><see cref="MappedGenericTypeIdentifier"/> — generic type with a mapped open generic definition.</item>
 ///   <item><see cref="StableLeafTypeIdentifier"/> — non-generic type from a stable assembly.</item>
 ///   <item><see cref="StableGenericTypeIdentifier"/> — generic type from a stable assembly.</item>
 ///   <item><see cref="ArrayTypeIdentifier"/> — array wrapping any element type identifier.</item>
 /// </list>
+/// This is implementation detail of <see cref="TypeMapper"/>/<see cref="TypeNameMapper"/>. The public
+/// type identity is <see cref="TypeId"/>.
 /// </summary>
-public abstract partial class TypeIdentifier : IEquatable<TypeIdentifier>
+abstract partial class TypeIdentifier : IEquatable<TypeIdentifier>
 {
    /// <summary>The type portion of the assembly-qualified name, before ", AssemblyName".</summary>
    internal abstract string TypePart { get; }

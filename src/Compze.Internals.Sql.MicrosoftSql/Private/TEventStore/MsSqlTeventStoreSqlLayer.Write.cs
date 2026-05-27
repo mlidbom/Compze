@@ -40,7 +40,7 @@ partial class MsSqlTeventStoreSqlLayer
                                          """)
                                     .AddParameter(Tevent.TaggregateId, SqlDbType.UniqueIdentifier, data.TaggregateId.Value)
                                     .AddParameter(Tevent.InsertedVersion, data.StorageInformation.InsertedVersion)
-                                    .AddParameter(Tevent.TeventType, data.TeventType.GuidValue)
+                                    .AddParameter(Tevent.TeventType, data.TeventType)
                                     .AddParameter(Tevent.TeventId, data.TeventId.Value)
                                     .AddDateTime2Parameter(Tevent.UtcTimeStamp, data.UtcTimeStamp)
                                     .AddNVarcharMaxParameter(Tevent.Tevent, data.TeventJson)

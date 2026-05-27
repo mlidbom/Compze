@@ -67,6 +67,11 @@ class TypeNameMapper : ITypeMappingLookup
 
    internal bool HasMappingForOpenGeneric(Type openGenericType) => _openGenericToGuid.ContainsKey(openGenericType);
 
+   /// <summary>All leaf types that have an explicit GUID mapping.</summary>
+   internal IEnumerable<Type> RegisteredLeafTypes => _leafTypeToGuid.Keys;
+
+   internal bool HasLeafMapping(Type type) => _leafTypeToGuid.ContainsKey(type);
+
    internal bool IsStableType(Type type)
    {
       var assemblyName = type.Assembly.GetName().Name;

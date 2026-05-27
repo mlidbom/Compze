@@ -1,5 +1,4 @@
 using Compze.Abstractions.Public;
-using Compze.TypeIdentifiers;
 using Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions;
 using Compze.Internals.Sql.Common;
 using Microsoft.Data.Sqlite;
@@ -28,7 +27,7 @@ partial class SqliteTeventStoreSqlLayer(SqliteTeventStoreConnectionManager conne
    }
 
    static TeventDataRow ReadDataRow(SqliteDataReader teventReader) => new(
-      teventType: new MappedTypeIdentifier(teventReader.GetGuidFromString(0)),
+      teventType: teventReader.GetGuidFromString(0),
       teventJson: teventReader.GetString(1),
       teventId: new TessageId(teventReader.GetGuidFromString(4)),
       taggregateVersion: teventReader.GetInt32(3),

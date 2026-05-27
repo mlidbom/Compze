@@ -4,7 +4,6 @@ using Compze.Core.Tessaging.Internal.SqlLayer;
 using Compze.Internals.Sql.Common;
 using Compze.Internals.SystemCE.LinqCE;
 using System.Globalization;
-using Compze.TypeIdentifiers;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using DispatchingTable = Compze.Core.Tessaging.Internal.SqlLayer.IServiceBusSqlLayer.OutboxTessageDispatchingTableSchemaStrings;
 using TessageTable = Compze.Core.Tessaging.Internal.SqlLayer.IServiceBusSqlLayer.OutboxTessagesDatabaseSchemaStrings;
@@ -31,7 +30,7 @@ partial class SqliteOutboxSqlLayer(ISqliteConnectionPool connectionFactory, Sqli
 
                    """)
               .AddMediumTextParameter(TessageTable.TessageId, tessageWithReceivers.TessageId.ToString())
-              .AddMediumTextParameter(TessageTable.TypeIdGuidValue, tessageWithReceivers.TypeId.GuidValue.ToString())
+              .AddMediumTextParameter(TessageTable.TypeIdGuidValue, tessageWithReceivers.TypeId.ToString())
               .AddMediumTextParameter(TessageTable.SerializedTessage, tessageWithReceivers.SerializedTessage)
               .AddParameter(DispatchingTable.IsReceived, 0);
 
@@ -125,7 +124,7 @@ partial class SqliteOutboxSqlLayer(ISqliteConnectionPool connectionFactory, Sqli
             {
                tessages.Add(new IServiceBusSqlLayer.UndeliveredTessage(
                   tessageId: new TessageId(reader.GetGuidFromString(0)),
-                  typeId: new MappedTypeIdentifier(reader.GetGuidFromString(1)),
+                  typeId: reader.GetGuidFromString(1),
                   serializedTessage: reader.GetString(2),
                   targetEndpointId: new EndpointId(reader.GetGuidFromString(3)),
                   retryCount: reader.GetInt32(4),

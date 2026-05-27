@@ -24,41 +24,37 @@ public class TypeIdentifierMapper_specification
 
    public class When_built_from_assembly_with_TypeMappings_attribute : TypeIdentifierMapper_specification
    {
-      [XF] public void GetId_returns_correct_MappedTypeIdentifier_for_leaf_type()
+      [XF] public void GetId_returns_canonical_guid_comma_zero_for_leaf_type()
       {
          var mapper = BuildMapper();
-         var id = (MappedTypeIdentifier)mapper.GetId(typeof(TentityId));
-         id.GuidValue.Must().Be(Guid.Parse("a1d63763-f934-493b-ae92-aeb2f15368b7"));
+         var id = mapper.GetId(typeof(TentityId));
+         id.CanonicalString.Must().Be("a1d63763-f934-493b-ae92-aeb2f15368b7, 0");
       }
 
-      [XF] public void GetType_resolves_MappedTypeIdentifier_back_to_leaf_type()
+      [XF] public void GetId_resolved_type_is_the_leaf_type()
       {
          var mapper = BuildMapper();
-         var id = new MappedTypeIdentifier(Guid.Parse("a1d63763-f934-493b-ae92-aeb2f15368b7"));
-         mapper.GetType(id).Must().Be(typeof(TentityId));
+         mapper.GetId(typeof(TentityId)).Type.Must().Be(typeof(TentityId));
       }
 
-      [XF] public void TryGetType_returns_true_for_known_id()
+      [XF] public void FromPersistedTypeString_resolves_leaf_guid_back_to_type()
       {
          var mapper = BuildMapper();
-         var id = new MappedTypeIdentifier(Guid.Parse("a1d63763-f934-493b-ae92-aeb2f15368b7"));
-         mapper.TryGetType(id, out var type).Must().BeTrue();
-         type.Must().Be(typeof(TentityId));
+         mapper.FromPersistedTypeString("a1d63763-f934-493b-ae92-aeb2f15368b7, 0").Must().Be(typeof(TentityId));
       }
 
-      [XF] public void TryGetType_returns_false_for_unknown_id()
+      [XF] public void FromPersistedTypeString_throws_for_unknown_guid()
       {
          var mapper = BuildMapper();
-         var id = new MappedTypeIdentifier(Guid.NewGuid());
-         mapper.TryGetType(id, out _).Must().BeFalse();
+         Assert.Throws<InvalidOperationException>(() => mapper.FromPersistedTypeString($"{Guid.NewGuid()}, 0"));
       }
 
-      [XF] public void GetIdForTypesAssignableTo_returns_matching_leaf_ids()
+      [XF] public void GetIdsForTypesAssignableTo_returns_matching_leaf_ids()
       {
          var mapper = BuildMapper();
-         var ids = mapper.GetIdForTypesAssignableTo(typeof(TentityId));
+         var ids = mapper.GetIdsForTypesAssignableTo(typeof(TentityId));
          // TentityId itself plus TaggregateId (extends TentityId) and TessageId
-         ids.Must().Contain(new MappedTypeIdentifier(Guid.Parse("a1d63763-f934-493b-ae92-aeb2f15368b7"))); // TentityId
+         ids.Any(id => id.Type == typeof(TentityId)).Must().BeTrue();
       }
 
       [XF] public void AssertMappingsExistFor_does_not_throw_for_mapped_types() =>

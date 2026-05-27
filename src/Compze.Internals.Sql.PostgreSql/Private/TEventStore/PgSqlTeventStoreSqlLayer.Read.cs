@@ -1,6 +1,5 @@
 using System.Transactions;
 using Compze.Abstractions.Public;
-using Compze.TypeIdentifiers;
 using Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions;
 using Compze.Internals.Sql.Common;
 using Npgsql;
@@ -33,7 +32,7 @@ partial class PgSqlTeventStoreSqlLayer(PgSqlTeventStoreConnectionManager connect
    static TeventDataRow ReadDataRow(NpgsqlDataReader teventReader)
    {
       return new TeventDataRow(
-         teventType: new MappedTypeIdentifier(teventReader.GetGuid(0)),
+         teventType: teventReader.GetGuid(0),
          teventJson: teventReader.GetString(1),
          teventId: new TessageId(teventReader.GetGuid(4)),
          taggregateVersion: teventReader.GetInt32(3),

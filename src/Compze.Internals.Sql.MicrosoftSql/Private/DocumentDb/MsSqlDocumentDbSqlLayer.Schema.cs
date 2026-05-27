@@ -12,7 +12,7 @@ partial class MsSqlDocumentDbSqlLayer
            CREATE TABLE {Document.TableName}
            (
                {Document.Id}          nvarchar(500)    NOT NULL,
-               {Document.ValueTypeId} uniqueidentifier NOT NULL,
+               {Document.ValueTypeId} nvarchar(500)    NOT NULL,
                {Document.Created}     datetime2        NOT NULL,
                {Document.Updated}     datetime2        NOT NULL,
                {Document.Value}       nvarchar(max)    NOT NULL,

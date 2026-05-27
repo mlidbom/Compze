@@ -4,7 +4,6 @@ using Compze.Core.Tessaging.Internal.SqlLayer;
 using Compze.Internals.Sql.Common;
 using Compze.Internals.SystemCE.LinqCE;
 using NpgsqlTypes;
-using Compze.TypeIdentifiers;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using DispatchingTable = Compze.Core.Tessaging.Internal.SqlLayer.IServiceBusSqlLayer.OutboxTessageDispatchingTableSchemaStrings;
 using TessageTable = Compze.Core.Tessaging.Internal.SqlLayer.IServiceBusSqlLayer.OutboxTessagesDatabaseSchemaStrings;
@@ -31,7 +30,7 @@ partial class PgSqlOutboxSqlLayer(IPgSqlConnectionPool connectionFactory, PgSqlS
 
                    """)
               .AddParameter(TessageTable.TessageId, tessageWithReceivers.TessageId.Value)
-              .AddParameter(TessageTable.TypeIdGuidValue, tessageWithReceivers.TypeId.GuidValue)
+              .AddParameter(TessageTable.TypeIdGuidValue, tessageWithReceivers.TypeId)
                //performance: Like with the tevent store, keep all framework properties out of the JSON and put it into separate columns instead. For tevents. Reuse a pre-serialized instance from the persisting to the tevent store.
               .AddMediumTextParameter(TessageTable.SerializedTessage, tessageWithReceivers.SerializedTessage)
               .AddParameter(DispatchingTable.IsReceived, NpgsqlDbType.Boolean, false);
@@ -131,7 +130,7 @@ partial class PgSqlOutboxSqlLayer(IPgSqlConnectionPool connectionFactory, PgSqlS
             {
                tessages.Add(new IServiceBusSqlLayer.UndeliveredTessage(
                   tessageId: new TessageId(reader.GetGuid(0)),
-                  typeId: new MappedTypeIdentifier(reader.GetGuid(1)),
+                  typeId: reader.GetGuid(1),
                   serializedTessage: reader.GetString(2),
                   targetEndpointId: new EndpointId(reader.GetGuid(3)),
                   retryCount: reader.GetInt32(4),

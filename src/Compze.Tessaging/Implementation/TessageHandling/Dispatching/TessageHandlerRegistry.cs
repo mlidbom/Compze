@@ -80,7 +80,7 @@ sealed class TessageHandlerRegistry(ITypeMap typeMap) : ITessageHandlerRegistrar
       }
    }
 
-   public ISet<TypeIdentifier> HandledRemoteTessageTypeIds()
+   public ISet<TypeId> HandledRemoteTessageTypeIds()
    {
       var handledTypes = _tommandHandlers.Keys
                                          .Concat(_registeredTeventTypes)

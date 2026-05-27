@@ -1,10 +1,10 @@
 namespace Compze.TypeIdentifiers;
 
 /// <summary>
-/// A leaf type with an explicitly assigned GUID: <c>Guid, 0</c>.
-/// This is the only <see cref="TypeIdentifier"/> subtype storable in SQL GUID columns.
+/// A leaf type with an explicitly assigned GUID: <c>Guid, 0</c>. Internal parse-tree node;
+/// the canonical leaf-mapped string it produces (<c>"GUID, 0"</c>) is what storage layers persist.
 /// </summary>
-public sealed class MappedTypeIdentifier(Guid guidValue) : TypeIdentifier
+sealed class MappedTypeIdentifier(Guid guidValue) : TypeIdentifier
 {
    public Guid GuidValue { get; } = guidValue;
 

@@ -1,4 +1,3 @@
-using Compze.TypeIdentifiers;
 using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Core.Tessaging.Transport.Internal;
 using Compze.Tessaging.Implementation.Transport;
@@ -11,12 +10,8 @@ namespace Compze.Hosting;
 
 public abstract class TestingEndpointHostBase : EndpointHost, ITestingEndpointHost, IEndpointRegistry
 {
-   protected TestingEndpointHostBase(Func<IContainerBuilder> containerFactory) : base(containerFactory)
-   {
-      var mapper = new TypeMapper();
-      mapper.MapTypesFromAllLoadedAssembliesWithTypeMappingsAttribute();
-      TessagesInFlightTracker = new TessagesInFlightTracker(mapper);
-   }
+   protected TestingEndpointHostBase(Func<IContainerBuilder> containerFactory) : base(containerFactory) =>
+      TessagesInFlightTracker = new TessagesInFlightTracker();
 
    public IEnumerable<EndPointAddress> ServerEndpointAddresses => Endpoints.Where(it => it.Address is not null)
                                                                            .Select(it => it.Address!)

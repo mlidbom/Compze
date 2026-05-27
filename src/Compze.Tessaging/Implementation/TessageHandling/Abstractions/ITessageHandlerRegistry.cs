@@ -15,5 +15,5 @@ public interface ITessageHandlerRegistry
 
     void DispatchTevent(ITevent tevent, IScopeResolver scopeResolver);
 
-    ISet<TypeIdentifier> HandledRemoteTessageTypeIds();
+    ISet<TypeId> HandledRemoteTessageTypeIds();
 }
