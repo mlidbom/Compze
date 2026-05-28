@@ -1,3 +1,4 @@
+using Compze.Internals.SystemCE;
 using Serilog;
 
 // We are a wrapper around Serilog. CA2254 ("message template must be constant") cannot be honored
@@ -67,7 +68,7 @@ public class SerilogLogger : Logger
    // For plain (non-handler) messages we treat the string as a literal, not a Serilog template.
    // Escape '{' / '}' so Serilog doesn't try to parse holes that aren't there.
    static string EscapeLiteral(string message) =>
-      message.Contains('{') || message.Contains('}')
+      message.ContainsOrdinal('{') || message.ContainsOrdinal('}')
          ? message.Replace("{", "{{", StringComparison.Ordinal).Replace("}", "}}", StringComparison.Ordinal)
          : message;
 }

@@ -11,5 +11,7 @@ public static partial class StringCE
       public bool StartsWithOrdinal(string ending) => @this.StartsWith(ending, StringComparison.Ordinal);
       public bool EndsWithOrdinal(string ending) => @this.EndsWith(ending, StringComparison.Ordinal);
       public int IndexOfOrdinal(char character) => @this.IndexOf(character, StringComparison.Ordinal);
+
+      public bool ContainsOrdinal(char value) => @this.Contains(value, StringComparison.Ordinal);
    }
 }

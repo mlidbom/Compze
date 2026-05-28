@@ -8,7 +8,7 @@ public class When_logging_to_the_ConsoleLogger_backend
 {
    static string Capture(Action<ILogger> log)
    {
-      var capturedConsoleOutput = new StringWriter();
+      using var capturedConsoleOutput = new StringWriter();
       var originalConsoleOut = Console.Out;
       Console.SetOut(capturedConsoleOutput);
       try
