@@ -12,16 +12,18 @@ public class When_logging_to_the_SerilogLogger_backend
 {
    public sealed class InMemorySerilogSink : ILogEventSink
    {
-      public List<LogEvent> Events { get; } = [];
-      public void Emit(LogEvent logEvent) => Events.Add(logEvent);
+      readonly List<LogEvent> _events = new();
+      internal IReadOnlyList<LogEvent> Events => _events;
+      public void Emit(LogEvent logEvent) => _events.Add(logEvent);
    }
 
-   protected readonly InMemorySerilogSink Sink = new();
-   protected readonly ILogger Logger;
+   protected InMemorySerilogSink Sink { get; } = new();
+   protected ILogger Logger1 { get; }
+
    protected When_logging_to_the_SerilogLogger_backend()
    {
       var serilog = new LoggerConfiguration().MinimumLevel.Verbose().WriteTo.Sink(Sink).CreateLogger();
-      Logger = SerilogLogger.Create(GetType(), serilog).WithLogLevel(LogLevel.Debug);
+      Logger1 = SerilogLogger.Create(GetType(), serilog).WithLogLevel(LogLevel.Debug);
    }
 
    public class an_interpolated_message_with_named_holes : When_logging_to_the_SerilogLogger_backend
@@ -30,7 +32,7 @@ public class When_logging_to_the_SerilogLogger_backend
       {
          var userId = 42;
          var action = "login";
-         Logger.Info($"user {userId} did {action}");
+         Logger1.Info($"user {userId} did {action}");
       }
 
       [XF] public void Serilog_receives_the_original_template_text_with_named_holes()
@@ -45,7 +47,7 @@ public class When_logging_to_the_SerilogLogger_backend
 
    public class a_plain_string_message_containing_braces : When_logging_to_the_SerilogLogger_backend
    {
-      public a_plain_string_message_containing_braces() => Logger.Info("literal {not a hole}");
+      public a_plain_string_message_containing_braces() => Logger1.Info("literal {not a hole}");
 
       [XF] public void Serilog_receives_the_braces_escaped_so_it_does_not_attempt_to_parse_a_hole()
          => Sink.Events[0].MessageTemplate.Text.Must().Be("literal {{not a hole}}");
@@ -58,11 +60,11 @@ public class When_logging_to_the_SerilogLogger_backend
    {
       public an_interpolated_message_at_each_level()
       {
-         var x = 1; Logger.Debug($"d {x}");
-         var y = 2; Logger.Info($"i {y}");
-         var z = 3; Logger.Warning($"w {z}");
-         var q = 4; Logger.Warning(new InvalidOperationException("warn-ex"), $"we {q}");
-         var r = 5; Logger.Error(new InvalidOperationException("err-ex"), $"e {r}");
+         var x = 1; Logger1.Debug($"d {x}");
+         var y = 2; Logger1.Info($"i {y}");
+         var z = 3; Logger1.Warning($"w {z}");
+         var q = 4; Logger1.Warning(new InvalidOperationException("warn-ex"), $"we {q}");
+         var r = 5; Logger1.Error(new InvalidOperationException("err-ex"), $"e {r}");
       }
 
       [XF] public void each_level_arrives_at_Serilog_with_its_own_level()
