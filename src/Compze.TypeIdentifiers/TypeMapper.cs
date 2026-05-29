@@ -15,8 +15,7 @@ namespace Compze.TypeIdentifiers;
 public class TypeMapper : ITypeMapper, ITypeMap
 {
    readonly TypeNameMapper _typeNameMapper = new();
-   readonly ConcurrentDictionary<Type, TypeId> _idCache = new();
-   readonly ConcurrentDictionary<Type, IReadOnlySet<TypeId>> _assignableTypeCache = new();
+   volatile Caches _caches = new();
    readonly HashSet<Assembly> _processedAssemblies = [];
 
    /// <summary>Well-known Microsoft public key tokens. All assemblies signed with these are stable by default.</summary>
@@ -65,7 +64,7 @@ public class TypeMapper : ITypeMapper, ITypeMap
       ClearCaches();
    }
 
-   public TypeId GetId(Type type) => _idCache.GetOrAdd(type, t => new TypeId(t, _typeNameMapper.GetId(t).StringRepresentation));
+   public TypeId GetId(Type type) => _caches.IdCache.GetOrAdd(type, t => new TypeId(t, _typeNameMapper.GetId(t).StringRepresentation));
 
    public string ToPersistedTypeString(Type type) => GetId(type).CanonicalString;
 
@@ -73,7 +72,7 @@ public class TypeMapper : ITypeMapper, ITypeMap
 
    public TypeId GetIdFromPersistedString(string persistedTypeString) => GetId(FromPersistedTypeString(persistedTypeString));
 
-   public IEnumerable<TypeId> GetIdsForTypesAssignableTo(Type type) => _assignableTypeCache.GetOrAdd(type, ComputeAssignableTypeIds);
+   public IEnumerable<TypeId> GetIdsForTypesAssignableTo(Type type) => _caches.AssignableTypeCache.GetOrAdd(type, ComputeAssignableTypeIds);
 
    public void AssertMappingsExistFor(IEnumerable<Type> types)
    {
@@ -122,10 +121,14 @@ public class TypeMapper : ITypeMapper, ITypeMap
                .Where(it => it.GetCustomAttribute<AssemblyTypeMapperAttribute>() != null)
                .ForEach(MapTypesFromAssembly);
 
-   void ClearCaches()
+   // Registration swaps in a fresh, empty cache set rather than clearing in place. A lookup that is mid-flight
+   // when this runs stores its result into the now-abandoned previous set, so it can never poison the current one.
+   void ClearCaches() => _caches = new Caches();
+
+   sealed class Caches
    {
-      _idCache.Clear();
-      _assignableTypeCache.Clear();
+      internal readonly ConcurrentDictionary<Type, TypeId> IdCache = new();
+      internal readonly ConcurrentDictionary<Type, IReadOnlySet<TypeId>> AssignableTypeCache = new();
    }
 
    void RegisterMicrosoftAssembliesAsStableNameAssemblies()

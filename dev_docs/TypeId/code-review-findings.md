@@ -35,7 +35,7 @@ tolerate a trailing array suffix. Add specs for jagged and nested arrays of mapp
 
 - [TypeIdentifier.cs:55-75](../../src/Compze.TypeIdentifiers/TypeIdentifier.cs#L55-L75)
 
-## 2. Cache lost-update race can permanently poison an identifier (correctness, startup-only)
+## 2. Cache lost-update race can permanently poison an identifier (correctness, startup-only) [FIXED]
 
 `GetId` uses `ConcurrentDictionary.GetOrAdd`, whose factory (`ComputeId`) runs outside any lock and reads
 the mapping dictionaries. `AddLeafTypeMapping`/`AddStableAssemblyName` mutate state then call
