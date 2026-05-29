@@ -285,4 +285,50 @@ public class TypeNameMapper_specification
          resolved.Must().Be(typeof(TestGenericEntity<TestEntity>));
       }
    }
+
+   // Rename-safety is the library's core promise: a persisted type string must encode mapped components by
+   // their stable GUID, never by their renameable assembly-qualified name. Otherwise renaming/moving the
+   // mapped type later makes the already-persisted string unresolvable. This must hold no matter how deeply
+   // the mapped component is nested — including inside a jagged array.
+   public class persisting_an_array_of_a_generic_that_has_a_mapped_type_argument : TypeNameMapper_specification
+   {
+      readonly TypeNameMapper _mapper = CreateMapper();
+      string Persist(Type type) => _mapper.GetPersistedStringFromAssemblyQualifiedName(type.AssemblyQualifiedName!);
+
+      public class that_is_single_dimensional : persisting_an_array_of_a_generic_that_has_a_mapped_type_argument
+      {
+         readonly string _persisted;
+         public that_is_single_dimensional() => _persisted = Persist(typeof(List<TestEntity>[]));
+
+         [XF] public void the_mapped_type_argument_is_persisted_as_its_guid()
+            => _persisted.Must().Contain(TestEntityGuid.ToString());
+
+         [XF] public void the_persisted_string_does_not_contain_the_mapped_types_renameable_name()
+            => _persisted.Must().NotContain(nameof(TestEntity));
+      }
+
+      public class that_is_jagged : persisting_an_array_of_a_generic_that_has_a_mapped_type_argument
+      {
+         readonly string _persisted;
+         public that_is_jagged() => _persisted = Persist(typeof(List<TestEntity>[][]));
+
+         [XF] public void the_mapped_type_argument_is_persisted_as_its_guid()
+            => _persisted.Must().Contain(TestEntityGuid.ToString());
+
+         [XF] public void the_persisted_string_does_not_contain_the_mapped_types_renameable_name()
+            => _persisted.Must().NotContain(nameof(TestEntity));
+      }
+
+      public class that_is_jagged_with_mixed_ranks : persisting_an_array_of_a_generic_that_has_a_mapped_type_argument
+      {
+         readonly string _persisted;
+         public that_is_jagged_with_mixed_ranks() => _persisted = Persist(typeof(List<TestEntity>[,][]));
+
+         [XF] public void the_mapped_type_argument_is_persisted_as_its_guid()
+            => _persisted.Must().Contain(TestEntityGuid.ToString());
+
+         [XF] public void the_persisted_string_does_not_contain_the_mapped_types_renameable_name()
+            => _persisted.Must().NotContain(nameof(TestEntity));
+      }
+   }
 }

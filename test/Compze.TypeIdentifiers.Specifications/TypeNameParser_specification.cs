@@ -209,6 +209,57 @@ public class TypeNameParser_specification
                .Must().Be(ArrayOfGenericString);
    }
 
+   public class parsing_a_jagged_array_of_a_generic : TypeNameParser_specification
+   {
+      // A jagged array T[][] is an array whose element type is itself an array (T[]). So the correct
+      // parse tree is ArrayTypeIdentifier -> ArrayTypeIdentifier -> the generic, with the generic's
+      // type argument preserved as its own identifier so it can be transformed/renamed independently.
+      const string JaggedArrayOfGenericString = "System.Collections.Generic.List`1[[MyNamespace.MyType, MyAssembly]][][], System.Private.CoreLib";
+
+      [XF] public void parses_as_an_array()
+         => (Parse(JaggedArrayOfGenericString) is ArrayTypeIdentifier).Must().BeTrue();
+
+      [XF] public void the_outer_array_has_rank_one()
+         => ParseArray(JaggedArrayOfGenericString).Rank.Must().Be(1);
+
+      [XF] public void the_outer_arrays_element_is_itself_an_array()
+         => (ParseArray(JaggedArrayOfGenericString).Element is ArrayTypeIdentifier).Must().BeTrue();
+
+      [XF] public void the_innermost_element_is_the_generic_type()
+         => (ParseArray(JaggedArrayOfGenericString).Element is ArrayTypeIdentifier { Element: StableGenericTypeIdentifier }).Must().BeTrue();
+
+      [XF] public void the_generics_type_argument_is_preserved_as_its_own_identifier()
+      {
+         var isPreserved = ParseArray(JaggedArrayOfGenericString).Element
+                              is ArrayTypeIdentifier { Element: StableGenericTypeIdentifier { TypeArguments: [StableLeafTypeIdentifier { TypeName: "MyNamespace.MyType" }] } };
+         isPreserved.Must().BeTrue();
+      }
+
+      [XF] public void round_trips()
+         => Parse(JaggedArrayOfGenericString).StringRepresentation
+               .Must().Be(JaggedArrayOfGenericString);
+   }
+
+   public class parsing_a_jagged_array_of_mixed_ranks : TypeNameParser_specification
+   {
+      // The CLR writes the outermost array rank last, so "...List`1[[...]][,][]" is a single-dimensional
+      // array (the trailing "[]") whose elements are two-dimensional arrays (the "[,]") of the generic.
+      const string MixedRankJaggedString = "System.Collections.Generic.List`1[[MyNamespace.MyType, MyAssembly]][,][], System.Private.CoreLib";
+
+      [XF] public void the_outer_array_has_rank_one()
+         => ParseArray(MixedRankJaggedString).Rank.Must().Be(1);
+
+      [XF] public void the_outer_arrays_element_is_a_rank_two_array()
+         => (ParseArray(MixedRankJaggedString).Element is ArrayTypeIdentifier { Rank: 2 }).Must().BeTrue();
+
+      [XF] public void the_innermost_element_is_the_generic_type()
+         => (ParseArray(MixedRankJaggedString).Element is ArrayTypeIdentifier { Element: StableGenericTypeIdentifier }).Must().BeTrue();
+
+      [XF] public void round_trips()
+         => Parse(MixedRankJaggedString).StringRepresentation
+               .Must().Be(MixedRankJaggedString);
+   }
+
    public class parsing_a_generic_with_array_argument : TypeNameParser_specification
    {
       const string GenericWithArrayArgString = "System.Collections.Generic.List`1[[MyNamespace.MyType[], MyAssembly]], System.Private.CoreLib";

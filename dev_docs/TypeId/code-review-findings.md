@@ -11,7 +11,7 @@ match across engines. Wiring is complete; the interner is a per-database singlet
 
 All open findings are in the new parser/mapper.
 
-## 1. Jagged arrays lose rename-safety (correctness)
+## 1. Jagged arrays lose rename-safety (correctness) [FIXED]
 
 `TypeIdentifier.Parse` strips only **one** trailing array suffix (no loop), and `GenericTypePartPattern`
 (`^(.+?)(\[\[.+\]\])$`) requires the type part to end in `]]`. So `List`1[[MappedLeaf, MappedAsm]][][]`

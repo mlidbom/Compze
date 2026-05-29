@@ -49,32 +49,28 @@ abstract partial class TypeIdentifier : IEquatable<TypeIdentifier>
    internal static TypeIdentifier Parse(string assemblyQualifiedName)
    {
       var (typePart, assemblyPart) = SplitTypeAndAssembly(assemblyQualifiedName);
+      return ParseTypePart(typePart, assemblyPart);
+   }
 
-      // Extract trailing array suffix if present (e.g. "[]", "[,]")
-      string? arraySuffix = null;
+   // The CLR writes the outermost array rank as the last bracket group (e.g. "Int32[,][]" is a 1-D array of
+   // 2-D arrays). So peel the trailing suffix as the outermost array and recurse on the remaining element
+   // type part — which may itself be another array, a generic, or a leaf. Recursing (rather than stripping a
+   // single suffix) is what makes jagged arrays like "List`1[[...]][][]" keep their nested structure, so a
+   // mapped component nested inside them is still transformed to its GUID.
+   static TypeIdentifier ParseTypePart(string typePart, string assemblyPart)
+   {
       var arraySuffixMatch = TrailingArraySuffixPattern().Match(typePart);
       if(arraySuffixMatch.Success)
       {
-         arraySuffix = arraySuffixMatch.Groups[1].Value;
-         typePart = typePart[..arraySuffixMatch.Index];
+         var rank = arraySuffixMatch.Groups[1].Value.Count(c => c == ',') + 1;
+         var elementTypePart = typePart[..arraySuffixMatch.Index];
+         return new ArrayTypeIdentifier(ParseTypePart(elementTypePart, assemblyPart), rank);
       }
 
-      // Parse the inner type (without array suffix)
-      TypeIdentifier inner;
       var genericMatch = GenericTypePartPattern().Match(typePart);
-      if(genericMatch.Success)
-         inner = ParseGenericFromParts(genericMatch, assemblyPart);
-      else
-         inner = ParseLeafFromParts(typePart.Trim(), assemblyPart);
-
-      // Wrap in array if needed
-      if(arraySuffix != null)
-      {
-         var rank = arraySuffix.Count(c => c == ',') + 1;
-         inner = new ArrayTypeIdentifier(inner, rank);
-      }
-
-      return inner;
+      return genericMatch.Success
+                ? ParseGenericFromParts(genericMatch, assemblyPart)
+                : ParseLeafFromParts(typePart.Trim(), assemblyPart);
    }
 
    static TypeIdentifier ParseLeafFromParts(string typeName, string assemblyName)
