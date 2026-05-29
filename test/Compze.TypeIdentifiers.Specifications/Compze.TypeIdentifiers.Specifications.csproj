@@ -26,6 +26,13 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Must)' != 'true'">
     <ProjectReference Include="..\..\src\Compze.Must\Compze.Must.csproj" />
   </ItemGroup>
+  <!-- Compze.Threading.Testing — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Threading_Testing)' == 'true'">
+    <PackageReference Include="Compze.Threading.Testing" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Threading_Testing)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.Threading.Testing\Compze.Threading.Testing.csproj" />
+  </ItemGroup>
   <!-- Compze.TypeIdentifiers — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_TypeIdentifiers)' == 'true'">
     <PackageReference Include="Compze.TypeIdentifiers" Version="*-*" />
@@ -39,8 +46,5 @@
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_xUnitBDD)' != 'true'">
     <ProjectReference Include="..\..\src\Compze.xUnitBDD\Compze.xUnitBDD.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\src\Compze.Threading.Testing\Compze.Threading.Testing.csproj" />
   </ItemGroup>
 </Project>
