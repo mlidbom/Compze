@@ -38,12 +38,11 @@ partial class SqliteDocumentDbSqlLayer(ISqliteConnectionPool connectionPool, Sql
       });
    }
 
-   public bool TryGet(string idString, IReadOnlySet<TypeId> acceptableTypeIds, bool useUpdateLock, [NotNullWhen(true)] out IDocumentDbSqlLayer.ReadRow? document)
+   public bool TryGet(string idString, TypeId typeId, bool useUpdateLock, [NotNullWhen(true)] out IDocumentDbSqlLayer.ReadRow? document)
    {
       EnsureInitialized();
 
-      var acceptableInternedTypeIds = _typeIdInterner.GetExistingIds(acceptableTypeIds);
-      if(acceptableInternedTypeIds.Count == 0)
+      if(!_typeIdInterner.TryGetInternedId(typeId, out var internedTypeId))
       {
          document = null;
          return false;
@@ -53,7 +52,7 @@ partial class SqliteDocumentDbSqlLayer(ISqliteConnectionPool connectionPool, Sql
          command => command.SetCommandText($"""
 
                                             SELECT {Schema.Value}, {Schema.ValueTypeId} FROM {Schema.TableName}
-                                            WHERE {Schema.Id}=@{Schema.Id} AND {Schema.ValueTypeId} {TypeInClause(acceptableInternedTypeIds)}
+                                            WHERE {Schema.Id}=@{Schema.Id} AND {Schema.ValueTypeId} = {internedTypeId}
                                             """)
                            .AddMediumTextParameter(Schema.Id, idString)
                            .ExecuteReaderAndSelect(reader => (SerializedDocument: reader.GetString(0), InternedTypeId: reader.GetInt32(1))));
@@ -91,57 +90,53 @@ partial class SqliteDocumentDbSqlLayer(ISqliteConnectionPool connectionPool, Sql
       }
    }
 
-   public int Remove(string idString, IReadOnlySet<TypeId> acceptableTypes)
+   public int Remove(string idString, TypeId typeId)
    {
       EnsureInitialized();
-      var acceptableInternedTypeIds = _typeIdInterner.GetExistingIds(acceptableTypes);
-      if(acceptableInternedTypeIds.Count == 0)
+      if(!_typeIdInterner.TryGetInternedId(typeId, out var internedTypeId))
          return 0;
 
       return _connectionPool.UseCommand(
          command =>
-            command.SetCommandText($"DELETE FROM {Schema.TableName} WHERE {Schema.Id} = @{Schema.Id} AND {Schema.ValueTypeId} {TypeInClause(acceptableInternedTypeIds)}")
+            command.SetCommandText($"DELETE FROM {Schema.TableName} WHERE {Schema.Id} = @{Schema.Id} AND {Schema.ValueTypeId} = {internedTypeId}")
                    .AddMediumTextParameter(Schema.Id, idString)
                    .ExecuteNonQuery());
    }
 
-   public IEnumerable<Guid> GetAllIds(IReadOnlySet<TypeId> acceptableTypes)
+   public IEnumerable<Guid> GetAllIds(TypeId typeId)
    {
       EnsureInitialized();
-      var acceptableInternedTypeIds = _typeIdInterner.GetExistingIds(acceptableTypes);
-      if(acceptableInternedTypeIds.Count == 0)
+      if(!_typeIdInterner.TryGetInternedId(typeId, out var internedTypeId))
          return [];
 
       return _connectionPool.UseCommand(
-         command => command.SetCommandText($"SELECT {Schema.Id} FROM {Schema.TableName} WHERE {Schema.ValueTypeId} {TypeInClause(acceptableInternedTypeIds)}")
+         command => command.SetCommandText($"SELECT {Schema.Id} FROM {Schema.TableName} WHERE {Schema.ValueTypeId} = {internedTypeId}")
                            .ExecuteReaderAndSelect(reader => reader.GetGuidFromString(0)));
    }
 
-   public IReadOnlyList<IDocumentDbSqlLayer.ReadRow> GetAll(IEnumerable<Guid> ids, IReadOnlySet<TypeId> acceptableTypes)
+   public IReadOnlyList<IDocumentDbSqlLayer.ReadRow> GetAll(IEnumerable<Guid> ids, TypeId typeId)
    {
       EnsureInitialized();
-      var acceptableInternedTypeIds = _typeIdInterner.GetExistingIds(acceptableTypes);
-      if(acceptableInternedTypeIds.Count == 0)
+      if(!_typeIdInterner.TryGetInternedId(typeId, out var internedTypeId))
          return [];
 
       var rows = _connectionPool.UseCommand(
          command => command.SetCommandText($"""
-                                            SELECT {Schema.Id}, {Schema.Value}, {Schema.ValueTypeId} FROM {Schema.TableName} WHERE {Schema.ValueTypeId} {TypeInClause(acceptableInternedTypeIds)}
+                                            SELECT {Schema.Id}, {Schema.Value}, {Schema.ValueTypeId} FROM {Schema.TableName} WHERE {Schema.ValueTypeId} = {internedTypeId}
                                                                                AND {Schema.Id} IN('
                                             """ + ids.Select(id => id.ToString()).Join("','") + "')")
                            .ExecuteReaderAndSelect(reader => (SerializedDocument: reader.GetString(1), InternedTypeId: reader.GetInt32(2))));
       return rows.Select(ToReadRow).ToList();
    }
 
-   public IReadOnlyList<IDocumentDbSqlLayer.ReadRow> GetAll(IReadOnlySet<TypeId> acceptableTypes)
+   public IReadOnlyList<IDocumentDbSqlLayer.ReadRow> GetAll(TypeId typeId)
    {
       EnsureInitialized();
-      var acceptableInternedTypeIds = _typeIdInterner.GetExistingIds(acceptableTypes);
-      if(acceptableInternedTypeIds.Count == 0)
+      if(!_typeIdInterner.TryGetInternedId(typeId, out var internedTypeId))
          return [];
 
       var rows = _connectionPool.UseCommand(
-         command => command.SetCommandText($"SELECT {Schema.Id}, {Schema.Value}, {Schema.ValueTypeId} FROM {Schema.TableName} WHERE {Schema.ValueTypeId} {TypeInClause(acceptableInternedTypeIds)}")
+         command => command.SetCommandText($"SELECT {Schema.Id}, {Schema.Value}, {Schema.ValueTypeId} FROM {Schema.TableName} WHERE {Schema.ValueTypeId} = {internedTypeId}")
                            .ExecuteReaderAndSelect(reader => (SerializedDocument: reader.GetString(1), InternedTypeId: reader.GetInt32(2))));
       return rows.Select(ToReadRow).ToList();
    }
@@ -149,8 +144,6 @@ partial class SqliteDocumentDbSqlLayer(ISqliteConnectionPool connectionPool, Sql
    // Resolve the interned id back to its canonical type string after the reader has closed — never while a connection is held.
    IDocumentDbSqlLayer.ReadRow ToReadRow((string SerializedDocument, int InternedTypeId) row) =>
       new(_typeIdInterner.GetTypeId(row.InternedTypeId), row.SerializedDocument);
-
-   static string TypeInClause(IReadOnlySet<int> acceptableInternedTypeIds) => $"IN ({string.Join(", ", acceptableInternedTypeIds)})\n";
 
    void EnsureInitialized() => _schemaManager.EnsureSchemaInitialized();
 }

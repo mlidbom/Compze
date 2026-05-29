@@ -37,9 +37,6 @@ class TypeNameMapper
    internal bool TryGetOpenGenericMapping(Type openGenericType, out MappedTypeIdentifier id) => _state.TryGetOpenGenericMapping(openGenericType, out id);
    internal bool HasMappingForOpenGeneric(Type openGenericType) => _state.HasMappingForOpenGeneric(openGenericType);
 
-   /// <summary>All leaf types that have an explicit GUID mapping.</summary>
-   internal IEnumerable<Type> RegisteredLeafTypes => _state.RegisteredLeafTypes;
-
    internal bool HasLeafMapping(Type type) => _state.HasLeafMapping(type);
    internal bool IsStableType(Type type) => _state.IsStableType(type);
 
@@ -145,7 +142,6 @@ class TypeNameMapper
       }
 
       internal bool HasMappingForOpenGeneric(Type openGenericType) => _openGenericToGuid.ContainsKey(openGenericType);
-      internal IEnumerable<Type> RegisteredLeafTypes => _leafTypeToGuid.Keys;
       internal bool HasLeafMapping(Type type) => _leafTypeToGuid.ContainsKey(type);
 
       internal bool IsStableType(Type type)

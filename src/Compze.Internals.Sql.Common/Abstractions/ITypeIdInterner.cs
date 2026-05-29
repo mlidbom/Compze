@@ -17,11 +17,11 @@ public interface ITypeIdInterner
    int GetOrInternId(TypeId typeId);
 
    /// <summary>
-   /// Returns the interned ids for those of <paramref name="typeIds"/> that have already been interned.
-   /// Types that were never interned are skipped — no document/event can reference an id that was never
-   /// assigned, so they cannot match anything stored.
+   /// Returns the interned id for <paramref name="typeId"/> if it has already been interned, otherwise <c>false</c>.
+   /// A type that was never interned cannot be referenced by any stored row, so callers treat a <c>false</c>
+   /// result as "nothing stored can match this type".
    /// </summary>
-   IReadOnlySet<int> GetExistingIds(IEnumerable<TypeId> typeIds);
+   bool TryGetInternedId(TypeId typeId, out int internedId);
 
    /// <summary>Resolves an interned id back to its canonical <see cref="TypeId"/>.</summary>
    TypeId GetTypeId(int internedId);

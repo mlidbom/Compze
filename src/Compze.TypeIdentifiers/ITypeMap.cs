@@ -9,9 +9,6 @@ public interface ITypeMap
    /// <summary>Returns the canonical <see cref="TypeId"/> for any type — leaf, constructed, or stable.</summary>
    TypeId GetId(Type type);
 
-   /// <summary>Returns the <see cref="TypeId"/> for every mapped leaf type assignable to <paramref name="type"/>.</summary>
-   IEnumerable<TypeId> GetIdsForTypesAssignableTo(Type type);
-
    /// <summary>Throws if any of the given types lack a mapping.</summary>
    void AssertMappingsExistFor(IEnumerable<Type> types);
 

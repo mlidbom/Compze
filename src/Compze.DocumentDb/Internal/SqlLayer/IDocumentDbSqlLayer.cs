@@ -6,12 +6,12 @@ namespace Compze.DocumentDb.Internal.SqlLayer;
 public interface IDocumentDbSqlLayer
 {
    void Update(IReadOnlyList<WriteRow> toUpdate);
-   bool TryGet(string idString, IReadOnlySet<TypeId> acceptableTypeIds, bool useUpdateLock, [NotNullWhen(true)] out ReadRow? document);
+   bool TryGet(string idString, TypeId typeId, bool useUpdateLock, [NotNullWhen(true)] out ReadRow? document);
    void Add(WriteRow row);
-   int Remove(string idString, IReadOnlySet<TypeId> acceptableTypes);
-   IEnumerable<Guid> GetAllIds(IReadOnlySet<TypeId> acceptableTypes);
-   IReadOnlyList<ReadRow> GetAll(IEnumerable<Guid> ids, IReadOnlySet<TypeId> acceptableTypes);
-   IReadOnlyList<ReadRow> GetAll(IReadOnlySet<TypeId> acceptableTypes);
+   int Remove(string idString, TypeId typeId);
+   IEnumerable<Guid> GetAllIds(TypeId typeId);
+   IReadOnlyList<ReadRow> GetAll(IEnumerable<Guid> ids, TypeId typeId);
+   IReadOnlyList<ReadRow> GetAll(TypeId typeId);
 
    public class ReadRow(TypeId typeId, string serializedDocument)
    {

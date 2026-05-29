@@ -40,15 +40,7 @@ public abstract class TypeIdInterner(ITypeIdInternerPersistence persistence, ITy
 
    public int GetOrInternId(TypeId typeId) => InternCanonical(typeId.CanonicalString);
 
-   public IReadOnlySet<int> GetExistingIds(IEnumerable<TypeId> typeIds)
-   {
-      var result = new HashSet<int>();
-      foreach(var typeId in typeIds)
-         if(TryGetCanonical(typeId.CanonicalString, out var id))
-            result.Add(id);
-
-      return result;
-   }
+   public bool TryGetInternedId(TypeId typeId, out int internedId) => TryGetCanonical(typeId.CanonicalString, out internedId);
 
    public TypeId GetTypeId(int internedId) => _typeMap.GetIdFromPersistedString(ResolveCanonicalString(internedId));
 

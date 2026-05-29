@@ -1,5 +1,4 @@
 using Compze.Abstractions.Public;
-using Compze.TypeIdentifiers;
 using Compze.Must;
 using Compze.xUnitBDD;
 using Xunit;
@@ -47,14 +46,6 @@ public class TypeIdentifierMapper_specification
       {
          var mapper = BuildMapper();
          Assert.Throws<InvalidOperationException>(() => mapper.FromPersistedTypeString($"{Guid.NewGuid()}, 0"));
-      }
-
-      [XF] public void GetIdsForTypesAssignableTo_returns_matching_leaf_ids()
-      {
-         var mapper = BuildMapper();
-         var ids = mapper.GetIdsForTypesAssignableTo(typeof(TentityId));
-         // TentityId itself plus TaggregateId (extends TentityId) and TessageId
-         ids.Any(id => id.Type == typeof(TentityId)).Must().BeTrue();
       }
 
       [XF] public void AssertMappingsExistFor_does_not_throw_for_mapped_types() =>

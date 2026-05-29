@@ -72,8 +72,6 @@ public class TypeMapper : ITypeMapper, ITypeMap
 
    public TypeId GetIdFromPersistedString(string persistedTypeString) => GetId(FromPersistedTypeString(persistedTypeString));
 
-   public IEnumerable<TypeId> GetIdsForTypesAssignableTo(Type type) => _caches.AssignableTypeCache.GetOrAdd(type, ComputeAssignableTypeIds);
-
    public void AssertMappingsExistFor(IEnumerable<Type> types)
    {
       var missing = types.Where(type => !CanResolve(type)).ToList();
@@ -97,23 +95,6 @@ public class TypeMapper : ITypeMapper, ITypeMap
       return _typeNameMapper.IsStableType(type);
    }
 
-   IReadOnlySet<TypeId> ComputeAssignableTypeIds(Type baseType)
-   {
-      var result = new HashSet<TypeId>();
-
-      foreach(var type in _typeNameMapper.RegisteredLeafTypes)
-      {
-         if(baseType.IsAssignableFrom(type))
-            result.Add(GetId(type));
-      }
-
-      // If the queried type itself is resolvable but no registered leaf matched, include it.
-      if(result.Count == 0 && CanResolve(baseType))
-         result.Add(GetId(baseType));
-
-      return result;
-   }
-
    ///<summary>Temporary bridge: auto-discovers all loaded assemblies with [TypeMappings].
    /// Will be replaced with explicit per-endpoint registration.</summary>
    public void MapTypesFromAllLoadedAssembliesWithTypeMappingsAttribute() =>
@@ -128,7 +109,6 @@ public class TypeMapper : ITypeMapper, ITypeMap
    sealed class Caches
    {
       internal readonly ConcurrentDictionary<Type, TypeId> IdCache = new();
-      internal readonly ConcurrentDictionary<Type, IReadOnlySet<TypeId>> AssignableTypeCache = new();
    }
 
    void RegisterMicrosoftAssembliesAsStableNameAssemblies()

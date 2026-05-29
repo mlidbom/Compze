@@ -14,20 +14,9 @@ public partial class DocumentDbSession
          Type = type;
       }
 
-      public bool Equals(DocumentKey? other)
-      {
-         if(other == null)
-         {
-            return false;
-         }
-
-         if(!Equals(Id, other.Id))
-         {
-            return false;
-         }
-
-         return Type.IsAssignableFrom(other.Type) || other.Type.IsAssignableFrom(Type);
-      }
+      // A document is identified by the exact (Id, concrete type) pair: the same id may hold one document per
+      // concrete type. Equality is therefore exact — no assignability/polymorphic matching across the hierarchy.
+      public bool Equals(DocumentKey? other) => other != null && Equals(Id, other.Id) && Type == other.Type;
 
       public override bool Equals(object? obj)
       {

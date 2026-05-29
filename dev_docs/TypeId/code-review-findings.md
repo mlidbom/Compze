@@ -49,16 +49,18 @@ requests flow there is no race. Consequence is a permanent wrong persisted ident
 - [TypeNameMapper.cs:87](../../src/Compze.TypeIdentifiers/TypeNameMapper.cs#L87)
 - [TypeMapper.cs:68](../../src/Compze.TypeIdentifiers/TypeMapper.cs#L68)
 
-## 3. `GetIdsForTypesAssignableTo` omits assignable generic/constructed types (latent)
+## 3. `GetIdsForTypesAssignableTo` omits assignable generic/constructed types [RESOLVED — polymorphism removed]
 
-`ComputeAssignableTypeIds` scans only `RegisteredLeafTypes` (explicitly `Map<T>()`-ed leaves), with a
-fallback that adds the queried type itself *only* when zero leaves match. A generic/constructed subtype
-assignable to the queried base is silently skipped whenever at least one leaf also matches. Via the sole
-consumer `DocumentDb.AcceptableTypeIds<TBase>`, `GetAll<TBase>()` would return leaf-typed documents but
-omit generic-typed ones — no error, just missing rows. Latent today (documents are concrete leaf types);
-confirm the dropped invariant is intentional.
-
-- [TypeMapper.cs:101-116](../../src/Compze.TypeIdentifiers/TypeMapper.cs#L101-L116)
+`ComputeAssignableTypeIds` scanned only `RegisteredLeafTypes`, silently skipping generic/constructed
+subtypes assignable to the queried base. The whole assignable-types mechanism existed solely to serve
+polymorphic document queries (`DocumentDb.GetAll<TBase>()` returning subtype-typed rows), which were
+already flagged for removal. Rather than patch the enumeration, polymorphism was dropped:
+`GetIdsForTypesAssignableTo` / `ComputeAssignableTypeIds` / `RegisteredLeafTypes` are gone, and
+`DocumentDb.AcceptableTypeIds` now matches documents stored under exactly the queried type
+(`_typeMap.GetId(type)`). The backing-store read filters by the concrete document type the session
+holds, never the declared generic — so the composite `(Id, type)` key (same id, different concrete
+types) still works, including `Save<TBase>(concreteInstance)`. Queries are no longer polymorphic by
+design.
 
 ## Lower-priority notes
 

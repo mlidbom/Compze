@@ -10,7 +10,6 @@ using Compze.Contracts;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.CollectionsCE.GenericCE;
-using Compze.Internals.SystemCE.ReflectionCE;
 
 namespace Compze.DocumentDb.Private;
 
@@ -34,17 +33,15 @@ sealed class DocumentDb : IDocumentDb
       _typeMap = typeMap;
    }
 
-   //todo:urgent:bug: The DocumentKey uses (id, type) as the key. But polymorphism queries by base type, while storage is by concrete type:
-   // Save<Animal>("1", new Dog());
-   // Save<Animal>("1", new Cat()); // Same ID, different concrete types
-   // This creates two documents with the same logical ID but different type GUIDs. Tuerying Get<Animal>("1") becomes ambiguous.
-   // I don't see any simple fix for this. I think we should just rip out the polymorphism support. It is too complex to manage and reason about, and the use cases are limited.
-   bool IDocumentDb.TryGet<TDocument>(object id, [NotNullWhen(true)] out TDocument? value, Dictionary<Type, Dictionary<string, string>> persistentTDocuments, bool useUpdateLock) where TDocument : class
+   // A document is identified by (id, concrete type): the same id may hold one document per concrete type. The query
+   // therefore filters by the concrete document type, never by the declared TDocument (which may be a base type the
+   // caller used at the call site). TDocument is only the type the result is returned as.
+   bool IDocumentDb.TryGet<TDocument>(object id, Type documentType, [NotNullWhen(true)] out TDocument? value, Dictionary<Type, Dictionary<string, string>> persistentTDocuments, bool useUpdateLock) where TDocument : class
    {
       value = null;
       var idString = GetIdString(id);
 
-      if(!_sqlLayer.TryGet(idString, AcceptableTypeIds<TDocument>(), useUpdateLock, out var readRow)) return false;
+      if(!_sqlLayer.TryGet(idString, _typeMap.GetId(documentType), useUpdateLock, out var readRow)) return false;
 
       var found = Deserialize<TDocument>(readRow);
 
@@ -72,7 +69,7 @@ sealed class DocumentDb : IDocumentDb
 
    public void Remove(object id, Type documentType)
    {
-      var rowsAffected = _sqlLayer.Remove(GetIdString(id), AcceptableTypeIds(documentType));
+      var rowsAffected = _sqlLayer.Remove(GetIdString(id), _typeMap.GetId(documentType));
 #pragma warning disable IDE0010
       switch(rowsAffected)
       {
@@ -106,29 +103,20 @@ sealed class DocumentDb : IDocumentDb
 
    IEnumerable<TDocument> IDocumentDb.GetAll<TDocument>()
    {
-      var acceptableTypeIds = AcceptableTypeIds<TDocument>();
-
-      var storedList = _sqlLayer.GetAll(acceptableTypeIds);
+      var storedList = _sqlLayer.GetAll(_typeMap.GetId(typeof(TDocument)));
 
       return storedList.Select(Deserialize<TDocument>);
    }
 
    public IEnumerable<TDocument> GetAll<TDocument>(IEnumerable<Guid> ids) where TDocument : IEntity<Guid>
    {
-      var storedList = _sqlLayer.GetAll(ids, AcceptableTypeIds<TDocument>());
+      var storedList = _sqlLayer.GetAll(ids, _typeMap.GetId(typeof(TDocument)));
 
       return storedList.Select(Deserialize<TDocument>);
    }
 
-   public IEnumerable<Guid> GetAllIds<T>() where T : IEntity<Guid> => _sqlLayer.GetAllIds(AcceptableTypeIds<T>());
+   public IEnumerable<Guid> GetAllIds<T>() where T : IEntity<Guid> => _sqlLayer.GetAllIds(_typeMap.GetId(typeof(T)));
 
    [return: NotNull] TDocument Deserialize<TDocument>(IDocumentDbSqlLayer.ReadRow stored) =>
       (TDocument)_serializer.Deserialize(stored.TypeId.Type, stored.SerializedDocument)._assert().NotNull();
-
-   IReadOnlySet<TypeId> AcceptableTypeIds<T>() => AcceptableTypeIds(typeof(T));
-
-   // Constructed types (generics, arrays) are persisted and resolved structurally — no GUID-leaf restriction.
-   IReadOnlySet<TypeId> AcceptableTypeIds(Type type) => _typeMap.GetIdsForTypesAssignableTo(type)
-                                                               .ToHashSet()
-                                                               ._assert(ids => ids.Any(), _ => $"Found no TypeIds for {type.GetFullNameCompilable()}");
 }
