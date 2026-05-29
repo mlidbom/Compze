@@ -40,4 +40,7 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_xUnitBDD)' != 'true'">
     <ProjectReference Include="..\..\src\Compze.xUnitBDD\Compze.xUnitBDD.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Compze.Threading.Testing\Compze.Threading.Testing.csproj" />
+  </ItemGroup>
 </Project>
