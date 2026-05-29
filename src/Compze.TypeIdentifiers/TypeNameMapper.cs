@@ -26,6 +26,7 @@ class TypeNameMapper : ITypeMappingLookup
 
    internal void AddLeafTypeMapping(Type type, Guid guid)
    {
+      AssertTypeAndGuidAreUnmapped(type, guid, _leafTypeToGuid, _guidToLeafType);
       _leafTypeToGuid[type] = guid;
       _guidToLeafType[guid] = type;
       ClearCaches();
@@ -33,9 +34,24 @@ class TypeNameMapper : ITypeMappingLookup
 
    internal void AddOpenGenericMapping(Type openGenericType, Guid guid)
    {
+      AssertTypeAndGuidAreUnmapped(openGenericType, guid, _openGenericToGuid, _guidToOpenGeneric);
       _openGenericToGuid[openGenericType] = guid;
       _guidToOpenGeneric[guid] = openGenericType;
       ClearCaches();
+   }
+
+   // A type↔GUID mapping is permanent identity. Re-mapping a type, or binding a GUID to a second type, silently
+   // corrupts the reverse lookup and makes already-persisted data resolve to the wrong type. This is the funnel
+   // every registration passes through — including across assemblies — so it is where both are rejected.
+   static void AssertTypeAndGuidAreUnmapped(Type type, Guid guid, ConcurrentDictionary<Type, Guid> typeToGuid, ConcurrentDictionary<Guid, Type> guidToType)
+   {
+      if(typeToGuid.TryGetValue(type, out var existingGuid))
+         throw new InvalidOperationException(
+            $"Type '{type.FullName}' is already mapped to GUID '{existingGuid}'. A type may be mapped only once.");
+
+      if(guidToType.TryGetValue(guid, out var existingType))
+         throw new InvalidOperationException(
+            $"GUID '{guid}' is already mapped to type '{existingType.FullName}' and cannot also be mapped to '{type.FullName}'. Each type must have its own GUID.");
    }
 
    internal bool TryGetOpenGenericMapping(Type openGenericType, out MappedTypeIdentifier id)
