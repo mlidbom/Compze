@@ -24,7 +24,7 @@ public class SerializerTest : UniversalTestBase
       _container = DIContainer.Microsoft
                              .CreateEmpty()
                              ._mutate(it => RegisterSerializer(it.Registrar, serializer)
-                                              .TypeIdentifierMapperFromLoadedAssemblies())
+                                              .TypeIdentifierMapper(mapper => mapper.MapTypesFromAssemblyContaining<AssemblyTypeMapper>()))
                              .Build();
 #pragma warning restore CA2000
    }

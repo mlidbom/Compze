@@ -23,7 +23,7 @@ public class TeventStoreTeventSerializerPerformanceTests : UniversalTestBase
    public TeventStoreTeventSerializerPerformanceTests()
    {
       var builder = TestEnv.DIContainer.CreateWithContainerRegistrationsAndCurrentTestsPluggableComponents();
-      builder.Registrar.TypeIdentifierMapperFromLoadedAssemblies();
+      builder.Registrar.TypeIdentifierMapper(mapper => mapper.RegisterPerformanceTestTypeMappings());
       _container = builder.Build();
       _teventSerializer = _container.Resolve<ITeventStoreSerializer>();
    }

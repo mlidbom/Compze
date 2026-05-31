@@ -23,7 +23,7 @@ public abstract class UserStoryTest : UniversalTestBase
    protected override async Task InitializeAsyncInternal()
    {
       await Host.StartAsync().caf();
-      _client = await TestClient.ConnectTo(_endpoint.TypermediaAddress!).caf();
+      _client = await TestClient.ConnectTo(_endpoint.TypermediaAddress!, mapper => mapper.RegisterAccountManagementTypeMappings()).caf();
    }
 
    protected override async Task DisposeAsyncInternal()

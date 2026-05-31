@@ -46,7 +46,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
 
    public TeventStoreUpdaterTest()
    {
-      _container = TestEnv.DIContainer.SetupTestingContainer(null);
+      _container = TestEnv.DIContainer.SetupTestingContainer(mapper => mapper.RegisterIntegrationTestTypeMappings());
 
       _teventSpy = new TeventSpy();
 

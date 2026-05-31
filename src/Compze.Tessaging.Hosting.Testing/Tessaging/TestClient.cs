@@ -25,7 +25,7 @@ public class TestClient : IAsyncDisposable
       Navigator = container.Resolve<IRemoteTypermediaNavigator>();
    }
 
-   public static async Task<TestClient> ConnectTo(EndPointAddress typermediaAddress)
+   public static async Task<TestClient> ConnectTo(EndPointAddress typermediaAddress, Action<ITypeMapper> registerDomainTypeMappings)
    {
 #pragma warning disable CA2000 // We are passing this disposable into a constructor of an object we don't own
         var builder = TestEnv.DIContainer.CreateWithContainerRegistrations();
@@ -34,7 +34,7 @@ public class TestClient : IAsyncDisposable
                .CurrentTestsSerializersIfNotClonedContainer()
                .CurrentTestsClientTransport()
                .JSonAppConfigFileConfigurationParameterProvider()
-               .TypeIdentifierMapperFromLoadedAssemblies()
+               .TypeIdentifierMapper(registerDomainTypeMappings)
                .TypermediaRouter()
                .SingletonRemoteTypermediaNavigator();
 

@@ -91,6 +91,8 @@ public abstract class EndpointHostTestBase : UniversalTestBase
          new EndpointId(Guid.Parse("DDD0A67C-D2A2-4197-9AF8-38B6AEDF8FA6")),
          builder =>
          {
+            builder.TypeMapper.RegisterCommonTestTypeMappings();
+
             builder.RegisterTeventStore()
                    .HandleTaggregate<MyTaggregate, IMyTaggregateTevent>();
 
@@ -126,6 +128,8 @@ public abstract class EndpointHostTestBase : UniversalTestBase
                                              new EndpointId(Guid.Parse("E72924D3-5279-44B5-B20D-D682E537672B")),
                                              builder =>
                                              {
+                                                builder.TypeMapper.RegisterCommonTestTypeMappings();
+
                                                 builder.RegisterTessagingHandlers.ForTevent((IMyTaggregateTevent _) => MyRemoteTaggregateTeventHandlerThreadGate.AwaitPassThrough());
                                              });
    }
@@ -134,7 +138,7 @@ public abstract class EndpointHostTestBase : UniversalTestBase
    {
       InitializeHost();
       await Host.StartAsync();
-      Client = await TestClient.ConnectTo(BackendEndPoint.TypermediaAddress!);
+      Client = await TestClient.ConnectTo(BackendEndPoint.TypermediaAddress!, mapper => mapper.RegisterCommonTestTypeMappings());
    }
 
    protected void CloseGates() => AllGates.ForEach(gate => gate.Close());
