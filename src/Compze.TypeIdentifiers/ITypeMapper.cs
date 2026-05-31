@@ -21,4 +21,7 @@ public interface ITypeMapper
 
    /// <summary>Register the assembly containing <typeparamref name="T"/> as stable (type names pass through unchanged).</summary>
    void UseStableNameStrategyForAssemblyContaining<T>();
+
+   /// <summary>Register every assembly signed with the given public key token as stable (type names pass through unchanged).</summary>
+   void UseStableNameStrategyForPublicKeyToken(string publicKeyToken);
 }

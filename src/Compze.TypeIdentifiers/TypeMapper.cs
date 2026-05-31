@@ -1,8 +1,5 @@
 using System.Collections.Concurrent;
 using System.Reflection;
-using Compze.Internals.SystemCE.CollectionsCE.GenericCE;
-using Compze.Internals.SystemCE.LinqCE;
-using Compze.Underscore;
 
 namespace Compze.TypeIdentifiers;
 
@@ -17,42 +14,48 @@ public class TypeMapper : ITypeMapper, ITypeMap
    readonly TypeNameMapper _typeNameMapper = new();
    volatile Caches _caches = new();
    readonly HashSet<Assembly> _processedAssemblies = [];
+   readonly object _registrationLock = new();
 
-   /// <summary>Well-known Microsoft public key tokens. All assemblies signed with these are stable by default.</summary>
-   static readonly HashSet<string> MicrosoftPublicKeyTokens = ["7cec85d7bea7798e", "b03f5f7f11d50a3a", "b77a5c561934e089", "cc7b13ffcd2ddd51", "31bf3856ad364e35"];
+   /// <summary>Well-known Microsoft public key tokens. All assemblies signed with these are stable by default.
+   /// <c>adb9793829ddae60</c> signs the out-of-band framework packages: <c>Microsoft.Extensions.*</c>,
+   /// <c>Microsoft.AspNetCore.*</c>, and most NuGet-delivered framework assemblies.</summary>
+   static readonly HashSet<string> MicrosoftPublicKeyTokens = ["7cec85d7bea7798e", "b03f5f7f11d50a3a", "b77a5c561934e089", "cc7b13ffcd2ddd51", "31bf3856ad364e35", "adb9793829ddae60"];
 
-   public TypeMapper() => RegisterMicrosoftAssembliesAsStableNameAssemblies();
+   public TypeMapper() => SeedMicrosoftPublicKeyTokensAsStable();
 
    public void MapTypesFromAssemblyContaining<T>() => MapTypesFromAssembly(typeof(T).Assembly);
 
    public void MapTypesFromAssembly(Assembly assembly)
    {
-      if(!_processedAssemblies.Add(assembly))
-         return; // already processed
+      lock(_registrationLock)
+      {
+         if(_processedAssemblies.Contains(assembly))
+            return;
 
-      var attribute = assembly.GetCustomAttribute<AssemblyTypeMapperAttribute>();
-      if(attribute == null)
-         throw new InvalidOperationException(
-            $"Assembly '{assembly.GetName().Name}' does not have a [{nameof(AssemblyTypeMapperAttribute)}]. " +
-            $"Add [assembly: {nameof(AssemblyTypeMapperAttribute)}(typeof(YourMapper))] to the assembly.");
+         var attribute = assembly.GetCustomAttribute<AssemblyTypeMapperAttribute>();
+         if(attribute == null)
+            throw new InvalidOperationException(
+               $"Assembly '{assembly.GetName().Name}' does not have a [{nameof(AssemblyTypeMapperAttribute)}]. " +
+               $"Add [assembly: {nameof(AssemblyTypeMapperAttribute)}(typeof(YourMapper))] to the assembly.");
 
-      var mapperType = attribute.Mapper;
-      if(!typeof(IAssemblyTypeMapper).IsAssignableFrom(mapperType))
-         throw new InvalidOperationException(
-            $"Type '{mapperType.FullName}' specified in [{nameof(AssemblyTypeMapperAttribute)}] " +
-            $"does not implement {nameof(IAssemblyTypeMapper)}.");
+         var mapperType = attribute.Mapper;
+         if(!typeof(IAssemblyTypeMapper).IsAssignableFrom(mapperType))
+            throw new InvalidOperationException(
+               $"Type '{mapperType.FullName}' specified in [{nameof(AssemblyTypeMapperAttribute)}] " +
+               $"does not implement {nameof(IAssemblyTypeMapper)}.");
 
-      var mapper = (IAssemblyTypeMapper)Activator.CreateInstance(mapperType)!;
-      var registrar = new AssemblyTypeMappingRegistrar(assembly);
-      mapper.Map(registrar);
+         var mapper = (IAssemblyTypeMapper)Activator.CreateInstance(mapperType)!;
+         var registrar = new AssemblyTypeMappingRegistrar(assembly);
+         mapper.Map(registrar);
 
-      foreach(var kvp in registrar.LeafTypeMappings)
-         _typeNameMapper.AddLeafTypeMapping(kvp.Key, kvp.Value);
+         // Publish all of this assembly's mappings atomically: a collision throws here, before the assembly is
+         // marked processed, so the live state is untouched and the attempt stays retryable rather than leaving a
+         // half-registered assembly that the early-return above would skip forever.
+         _typeNameMapper.AddAssemblyMappings(registrar.LeafTypeMappings, registrar.OpenGenericMappings);
 
-      foreach(var kvp in registrar.OpenGenericMappings)
-         _typeNameMapper.AddOpenGenericMapping(kvp.Key, kvp.Value);
-
-      ClearCaches();
+         _processedAssemblies.Add(assembly);
+         ClearCaches();
+      }
    }
 
    public void UseStableNameStrategyForAssemblyContaining<T>()
@@ -61,6 +64,12 @@ public class TypeMapper : ITypeMapper, ITypeMap
       if(name != null)
          _typeNameMapper.AddStableAssemblyName(name);
 
+      ClearCaches();
+   }
+
+   public void UseStableNameStrategyForPublicKeyToken(string publicKeyToken)
+   {
+      _typeNameMapper.AddStablePublicKeyToken(publicKeyToken.ToLowerInvariant());
       ClearCaches();
    }
 
@@ -95,13 +104,6 @@ public class TypeMapper : ITypeMapper, ITypeMap
       return _typeNameMapper.IsStableType(type);
    }
 
-   ///<summary>Temporary bridge: auto-discovers all loaded assemblies with [TypeMappings].
-   /// Will be replaced with explicit per-endpoint registration.</summary>
-   public void MapTypesFromAllLoadedAssembliesWithTypeMappingsAttribute() =>
-      AppDomain.CurrentDomain.GetAssemblies()
-               .Where(it => it.GetCustomAttribute<AssemblyTypeMapperAttribute>() != null)
-               .ForEach(MapTypesFromAssembly);
-
    // Registration swaps in a fresh, empty cache set rather than clearing in place. A lookup that is mid-flight
    // when this runs stores its result into the now-abandoned previous set, so it can never poison the current one.
    void ClearCaches() => _caches = new Caches();
@@ -111,12 +113,12 @@ public class TypeMapper : ITypeMapper, ITypeMap
       internal readonly ConcurrentDictionary<Type, TypeId> IdCache = new();
    }
 
-   void RegisterMicrosoftAssembliesAsStableNameAssemblies()
+   // Stability is decided from each type's own assembly public key token at lookup time (see TypeNameMapper.State),
+   // so we only need to seed the trusted tokens here — no scan of the currently-loaded assemblies, which would miss
+   // any framework assembly loaded later.
+   void SeedMicrosoftPublicKeyTokensAsStable()
    {
-      AppDomain.CurrentDomain.GetAssemblies()
-               .Where(it => it.PublicKeyTokenString._(MicrosoftPublicKeyTokens.Contains))
-               .Select(it => it.SimpleName)
-               .WhereNotNull()
-               .ForEach(it => _typeNameMapper.AddStableAssemblyName(it));
+      foreach(var token in MicrosoftPublicKeyTokens)
+         _typeNameMapper.AddStablePublicKeyToken(token);
    }
 }

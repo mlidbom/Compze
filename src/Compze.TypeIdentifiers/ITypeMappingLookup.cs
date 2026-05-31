@@ -10,5 +10,5 @@ interface ITypeMappingLookup
    Type GetOpenGenericType(Guid guid);
    bool TryGetLeafTypeGuid(Type type, out Guid guid);
    bool TryGetOpenGenericGuid(Type type, out Guid guid);
-   bool IsStableAssembly(string assemblyName);
+   bool IsStableType(Type type);
 }

@@ -85,7 +85,7 @@ class ServerEndpointBuilder : IEndpointBuilder
 
    void SetupContainer()
    {
-      _typeMapper.MapTypesFromAllLoadedAssembliesWithTypeMappingsAttribute();
+      _typeMapper.MapCompzeFrameworkTypes();
 
       var register = Registrar;
       //Universal stuff here

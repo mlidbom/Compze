@@ -74,8 +74,8 @@ public class TypeNameMapper_specification
       [XF] public void returns_StableLeafTypeIdentifier()
          => (_mapper.GetId(typeof(string)) is StableLeafTypeIdentifier).Must().BeTrue();
 
-      [XF] public void string_representation_is_assembly_qualified_name()
-         => _mapper.GetId(typeof(string)).StringRepresentation.Must().Be(typeof(string).AssemblyQualifiedName!);
+      [XF] public void string_representation_is_the_normalized_short_name()
+         => _mapper.GetId(typeof(string)).StringRepresentation.Must().Be("System.String, System.Private.CoreLib");
    }
 
    public class GetId_for_stable_generic : TypeNameMapper_specification
@@ -85,8 +85,8 @@ public class TypeNameMapper_specification
       [XF] public void returns_StableGenericTypeIdentifier_for_List_of_string()
          => (_mapper.GetId(typeof(List<string>)) is StableGenericTypeIdentifier).Must().BeTrue();
 
-      [XF] public void string_representation_matches_assembly_qualified_name()
-         => _mapper.GetId(typeof(List<string>)).StringRepresentation.Must().Be(typeof(List<string>).AssemblyQualifiedName!);
+      [XF] public void string_representation_is_the_normalized_short_name()
+         => _mapper.GetId(typeof(List<string>)).StringRepresentation.Must().Be("System.Collections.Generic.List`1[[System.String, System.Private.CoreLib]], System.Private.CoreLib");
    }
 
    public class GetId_for_generic_with_mapped_argument : TypeNameMapper_specification

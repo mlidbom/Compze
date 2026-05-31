@@ -16,12 +16,14 @@ sealed class StableLeafTypeIdentifier(string typeName, string assemblyName) : Ty
    internal override TypeIdentifier TransformToPersisted(ITypeMappingLookup lookup)
    {
       var leafType = Type.GetType(StringRepresentation);
+      if(leafType != null)
+      {
+         if(lookup.TryGetLeafTypeGuid(leafType, out var guid))
+            return new MappedTypeIdentifier(guid);
 
-      if(leafType != null && lookup.TryGetLeafTypeGuid(leafType, out var guid))
-         return new MappedTypeIdentifier(guid);
-
-      if(lookup.IsStableAssembly(AssemblyName))
-         return this;
+         if(lookup.IsStableType(leafType))
+            return this;
+      }
 
       throw new InvalidOperationException(
          $"Type '{TypeName}' from assembly '{AssemblyName}' is not mapped and its assembly is not registered as stable.");

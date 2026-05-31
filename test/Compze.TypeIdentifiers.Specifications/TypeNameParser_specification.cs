@@ -299,54 +299,40 @@ public class TypeNameParser_specification
                .Must().Be(MappedGenericString);
    }
 
-   public class round_tripping_real_dotnet_types : TypeNameParser_specification
+   // After normalization-on-read, a real .NET type's full AssemblyQualifiedName normalizes to its SHORT-name
+   // canonical string (Version/Culture/PublicKeyToken stripped), so it no longer round-trips byte-for-byte.
+   public class normalizing_real_dotnet_types : TypeNameParser_specification
    {
-      [XF] public void round_trips_System_String()
-      {
-         var aqn = typeof(string).AssemblyQualifiedName!;
-         Parse(aqn).StringRepresentation.Must().Be(aqn);
-      }
+      [XF] public void normalizes_System_String()
+         => Parse(typeof(string).AssemblyQualifiedName!).StringRepresentation
+               .Must().Be("System.String, System.Private.CoreLib");
 
-      [XF] public void round_trips_List_of_string()
-      {
-         var aqn = typeof(List<string>).AssemblyQualifiedName!;
-         Parse(aqn).StringRepresentation.Must().Be(aqn);
-      }
+      [XF] public void normalizes_List_of_string()
+         => Parse(typeof(List<string>).AssemblyQualifiedName!).StringRepresentation
+               .Must().Be("System.Collections.Generic.List`1[[System.String, System.Private.CoreLib]], System.Private.CoreLib");
 
-      [XF] public void round_trips_Dictionary_of_string_int()
-      {
-         var aqn = typeof(Dictionary<string, int>).AssemblyQualifiedName!;
-         Parse(aqn).StringRepresentation.Must().Be(aqn);
-      }
+      [XF] public void normalizes_Dictionary_of_string_int()
+         => Parse(typeof(Dictionary<string, int>).AssemblyQualifiedName!).StringRepresentation
+               .Must().Be("System.Collections.Generic.Dictionary`2[[System.String, System.Private.CoreLib],[System.Int32, System.Private.CoreLib]], System.Private.CoreLib");
 
-      [XF] public void round_trips_array_of_int()
-      {
-         var aqn = typeof(int[]).AssemblyQualifiedName!;
-         Parse(aqn).StringRepresentation.Must().Be(aqn);
-      }
+      [XF] public void normalizes_array_of_int()
+         => Parse(typeof(int[]).AssemblyQualifiedName!).StringRepresentation
+               .Must().Be("System.Int32[], System.Private.CoreLib");
 
-      [XF] public void round_trips_Dictionary_of_string_List_of_int()
-      {
-         var aqn = typeof(Dictionary<string, List<int>>).AssemblyQualifiedName!;
-         Parse(aqn).StringRepresentation.Must().Be(aqn);
-      }
+      [XF] public void normalizes_Dictionary_of_string_List_of_int()
+         => Parse(typeof(Dictionary<string, List<int>>).AssemblyQualifiedName!).StringRepresentation
+               .Must().Be("System.Collections.Generic.Dictionary`2[[System.String, System.Private.CoreLib],[System.Collections.Generic.List`1[[System.Int32, System.Private.CoreLib]], System.Private.CoreLib]], System.Private.CoreLib");
 
-      [XF] public void round_trips_array_of_List_of_string()
-      {
-         var aqn = typeof(List<string>[]).AssemblyQualifiedName!;
-         Parse(aqn).StringRepresentation.Must().Be(aqn);
-      }
+      [XF] public void normalizes_array_of_List_of_string()
+         => Parse(typeof(List<string>[]).AssemblyQualifiedName!).StringRepresentation
+               .Must().Be("System.Collections.Generic.List`1[[System.String, System.Private.CoreLib]][], System.Private.CoreLib");
 
-      [XF] public void round_trips_List_of_int_array()
-      {
-         var aqn = typeof(List<int[]>).AssemblyQualifiedName!;
-         Parse(aqn).StringRepresentation.Must().Be(aqn);
-      }
+      [XF] public void normalizes_List_of_int_array()
+         => Parse(typeof(List<int[]>).AssemblyQualifiedName!).StringRepresentation
+               .Must().Be("System.Collections.Generic.List`1[[System.Int32[], System.Private.CoreLib]], System.Private.CoreLib");
 
-      [XF] public void round_trips_multidimensional_array()
-      {
-         var aqn = typeof(int[,]).AssemblyQualifiedName!;
-         Parse(aqn).StringRepresentation.Must().Be(aqn);
-      }
+      [XF] public void normalizes_multidimensional_array()
+         => Parse(typeof(int[,]).AssemblyQualifiedName!).StringRepresentation
+               .Must().Be("System.Int32[,], System.Private.CoreLib");
    }
 }

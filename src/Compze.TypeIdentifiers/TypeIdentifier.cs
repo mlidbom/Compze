@@ -1,5 +1,3 @@
-using System.Text.RegularExpressions;
-
 namespace Compze.TypeIdentifiers;
 
 /// <summary>
@@ -16,7 +14,7 @@ namespace Compze.TypeIdentifiers;
 /// This is implementation detail of <see cref="TypeMapper"/>/<see cref="TypeNameMapper"/>. The public
 /// type identity is <see cref="TypeId"/>.
 /// </summary>
-abstract partial class TypeIdentifier : IEquatable<TypeIdentifier>
+abstract class TypeIdentifier : IEquatable<TypeIdentifier>
 {
    /// <summary>The type portion of the assembly-qualified name, before ", AssemblyName".</summary>
    internal abstract string TypePart { get; }
@@ -44,7 +42,8 @@ abstract partial class TypeIdentifier : IEquatable<TypeIdentifier>
 
    /// <summary>
    /// Parses an <c>AssemblyQualifiedName</c>-format string into the correct <see cref="TypeIdentifier"/> subtype.
-   /// Detects mapped types by recognizing GUID type names, and wraps array types as <see cref="ArrayTypeIdentifier"/>.
+   /// A component is classified as mapped by its reserved <c>"0"</c> assembly; named components are normalized to
+   /// their short assembly name (Version/Culture/PublicKeyToken stripped); array types wrap as <see cref="ArrayTypeIdentifier"/>.
    /// </summary>
    internal static TypeIdentifier Parse(string assemblyQualifiedName)
    {
@@ -59,67 +58,133 @@ abstract partial class TypeIdentifier : IEquatable<TypeIdentifier>
    // mapped component nested inside them is still transformed to its GUID.
    static TypeIdentifier ParseTypePart(string typePart, string assemblyPart)
    {
-      var arraySuffixMatch = TrailingArraySuffixPattern().Match(typePart);
-      if(arraySuffixMatch.Success)
-      {
-         var rank = arraySuffixMatch.Groups[1].Value.Count(c => c == ',') + 1;
-         var elementTypePart = typePart[..arraySuffixMatch.Index];
+      if(TryPeelTrailingArraySuffix(typePart, out var elementTypePart, out var rank))
          return new ArrayTypeIdentifier(ParseTypePart(elementTypePart, assemblyPart), rank);
-      }
 
-      var genericMatch = GenericTypePartPattern().Match(typePart);
-      return genericMatch.Success
-                ? ParseGenericFromParts(genericMatch, assemblyPart)
-                : ParseLeafFromParts(typePart.Trim(), assemblyPart);
+      // A type name never contains a bracket (generic arity is a backtick, nested types use '+'), and array
+      // suffixes have already been peeled — so a remaining '[' can only begin the generic argument block.
+      var genericBlockStart = typePart.IndexOf('[', StringComparison.Ordinal);
+      return genericBlockStart >= 0
+                ? ParseGeneric(typePart, genericBlockStart, assemblyPart)
+                : ParseLeaf(typePart.Trim(), assemblyPart);
    }
 
-   static TypeIdentifier ParseLeafFromParts(string typeName, string assemblyName)
+   static TypeIdentifier ParseLeaf(string typeName, string assemblyName)
    {
-      if(Guid.TryParse(typeName, out var guid))
-         return new MappedTypeIdentifier(guid);
+      if(IsReservedMappedAssembly(assemblyName))
+         return new MappedTypeIdentifier(ParseMappedGuid(typeName));
 
-      return new StableLeafTypeIdentifier(typeName, assemblyName);
+      return new StableLeafTypeIdentifier(typeName, ShortAssemblyName(assemblyName));
    }
 
-   static TypeIdentifier ParseGenericFromParts(Match genericMatch, string assemblyName)
+   static TypeIdentifier ParseGeneric(string typePart, int genericBlockStart, string assemblyName)
    {
-      var typeName = genericMatch.Groups[1].Value.Trim();
-      var argumentBlock = genericMatch.Groups[2].Value;
-      var innerBlock = argumentBlock[1..^1];
+      var typeName = typePart[..genericBlockStart].Trim();
+      var argumentBlock = typePart[genericBlockStart..];
+      var arguments = SplitGenericArguments(argumentBlock).Select(Parse).ToArray();
 
-      var parsedArguments = GenericArgumentPattern()
-         .Matches(innerBlock)
-         .Select(m => Parse(m.Groups[1].Value))
-         .ToArray();
+      if(IsReservedMappedAssembly(assemblyName))
+         return new MappedGenericTypeIdentifier(ParseMappedGuid(typeName), arguments);
 
-      if(Guid.TryParse(typeName, out var guid))
-         return new MappedGenericTypeIdentifier(guid, parsedArguments);
-
-      return new StableGenericTypeIdentifier(typeName, assemblyName, parsedArguments);
+      return new StableGenericTypeIdentifier(typeName, ShortAssemblyName(assemblyName), arguments);
    }
 
+   // The type and the assembly are separated by the first comma that is not nested inside a generic argument
+   // bracket group — every other comma (between generic arguments, or inside an assembly's ", Version=..."
+   // qualifiers) sits after it.
    static (string typePart, string assemblyPart) SplitTypeAndAssembly(string assemblyQualifiedName)
    {
-      var match = TypeAndAssemblyPartsPattern().Match(assemblyQualifiedName);
-      if(!match.Success)
-         throw new FormatException($"Invalid AssemblyQualifiedName format: \"{assemblyQualifiedName}\"");
+      var splitIndex = IndexOfTopLevelComma(assemblyQualifiedName);
+      if(splitIndex < 0)
+         throw new FormatException($"Invalid AssemblyQualifiedName format: \"{assemblyQualifiedName}\".");
 
-      return (match.Groups[1].Value.Trim(), match.Groups[2].Value.Trim());
+      return (assemblyQualifiedName[..splitIndex].Trim(), assemblyQualifiedName[(splitIndex + 1)..].Trim());
    }
 
-   // Splits "TypePart, AssemblyName" at the first comma not inside brackets.
-   [GeneratedRegex(@"^\s*((?:[^\[\],]|\[(?<D>)|\](?<-D>)|(?(D),|(?!)))*(?(D)(?!)))\s*,\s*(.+)$")]
-   private static partial Regex TypeAndAssemblyPartsPattern();
+   // A trailing "[]", "[,]", "[,,]"... is one array dimension. Returns false when the type part does not end in
+   // such a suffix — including the closing "]]" of a generic, whose final bracket group contains the argument
+   // text rather than only commas.
+   static bool TryPeelTrailingArraySuffix(string typePart, out string elementTypePart, out int rank)
+   {
+      elementTypePart = typePart;
+      rank = 0;
+      if(!typePart.EndsWith(']'))
+         return false;
 
-   // Matches a trailing array suffix like [], [,], [,,] at the end of a type part.
-   [GeneratedRegex(@"(\[,*\])$")]
-   private static partial Regex TrailingArraySuffixPattern();
+      var lastGroupStart = typePart.LastIndexOf('[');
+      var insideLastGroup = typePart[(lastGroupStart + 1)..^1];
+      if(insideLastGroup.Any(c => c != ','))
+         return false;
 
-   // Splits a type part into the type name and the generic argument block.
-   [GeneratedRegex(@"^(.+?)(\[\[.+\]\])$")]
-   private static partial Regex GenericTypePartPattern();
+      elementTypePart = typePart[..lastGroupStart];
+      rank = insideLastGroup.Length + 1;
+      return true;
+   }
 
-   // Matches each individual "[argument]" inside a generic argument block.
-   [GeneratedRegex(@"\[((?:[^\[\]]|\[(?<D>)|\](?<-D>))*(?(D)(?!)))\]")]
-   private static partial Regex GenericArgumentPattern();
+   // The generic argument block is "[[arg],[arg],...]". Drop the outer brackets, split the inside at its
+   // top-level commas, and unwrap each "[arg]" — leaving each argument as a full assembly-qualified name.
+   static IEnumerable<string> SplitGenericArguments(string argumentBlock)
+   {
+      var inside = argumentBlock[1..^1];
+      return SplitAtTopLevelCommas(inside).Select(argument => Unwrap(argument.Trim()));
+   }
+
+   static string Unwrap(string bracketedArgument) => bracketedArgument[1..^1];
+
+   // The first comma at bracket depth zero, or -1 if there is none.
+   static int IndexOfTopLevelComma(string s)
+   {
+      var depth = 0;
+      for(var i = 0; i < s.Length; i++)
+         switch(s[i])
+         {
+            case '[': depth++; break;
+            case ']': depth--; break;
+            case ',' when depth == 0: return i;
+         }
+
+      return -1;
+   }
+
+   // Splits at every comma at bracket depth zero, leaving nested generic arguments intact.
+   static IEnumerable<string> SplitAtTopLevelCommas(string s)
+   {
+      var parts = new List<string>();
+      var depth = 0;
+      var partStart = 0;
+      for(var i = 0; i < s.Length; i++)
+         switch(s[i])
+         {
+            case '[': depth++; break;
+            case ']': depth--; break;
+            case ',' when depth == 0:
+               parts.Add(s[partStart..i]);
+               partStart = i + 1;
+               break;
+         }
+
+      parts.Add(s[partStart..]);
+      return parts;
+   }
+
+   // The reserved literal "0" in the assembly position is the authoritative discriminator for a mapped component.
+   // A GUID-shaped type name in a real assembly is just a type that happens to look like a GUID — it stays named.
+   static bool IsReservedMappedAssembly(string assemblyName) => assemblyName == "0";
+
+   // In the reserved-"0" assembly the type name must be a canonical dashed RFC-4122 GUID. "D" is exactly the
+   // 8-4-4-4-12 dashed form, so a real type name or a dash-less 'N'-format GUID is rejected rather than silently
+   // accepted — the canonical mapped string is the only thing that classifies as mapped.
+   static Guid ParseMappedGuid(string typeName) =>
+      Guid.TryParseExact(typeName, "D", out var guid)
+         ? guid
+         : throw new FormatException($"The reserved assembly \"0\" requires a dashed RFC-4122 GUID type name, but got: \"{typeName}\".");
+
+   // Strips the Version/Culture/PublicKeyToken qualifiers, leaving only the short assembly name. Doing this on read
+   // makes identity stable across runtime upgrades, and collapses a full AssemblyQualifiedName and its short form
+   // to one canonical string.
+   static string ShortAssemblyName(string assemblyName)
+   {
+      var commaIndex = assemblyName.IndexOf(',', StringComparison.Ordinal);
+      return commaIndex >= 0 ? assemblyName[..commaIndex].Trim() : assemblyName;
+   }
 }

@@ -74,6 +74,10 @@ public class TestingEndpointHost : TestingEndpointHostBase
                                   builder.Registrar
                                          .CurrentTestsPluggableComponents(connectionStringName: id.ToString());
 
+                                  // Test endpoints auto-map every loaded assembly's type mappings (test-only convenience).
+                                  // Production endpoints register the framework's mappings and their own domain mappings explicitly.
+                                  builder.TypeMapper.MapAllLoadedAssembliesWithTypeMappings();
+
                                   setup(builder);
                                });
 }

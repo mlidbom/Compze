@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.Reflection;
 
 namespace Compze.TypeIdentifiers;
 
@@ -34,6 +35,31 @@ class TypeNameMapper
          _state = _state.WithStableAssembly(assemblyName);
    }
 
+   internal void AddStablePublicKeyToken(string publicKeyToken)
+   {
+      lock(_writeLock)
+         _state = _state.WithStablePublicKeyToken(publicKeyToken);
+   }
+
+   // Publishes a whole assembly's mappings as a SINGLE snapshot transition. The new snapshot is built up in a local;
+   // a collision (a reused GUID, or a type mapped twice) throws out of the loop before the volatile field is ever
+   // reassigned, so the live state is left exactly as it was — the registration is all-or-nothing.
+   internal void AddAssemblyMappings(
+      IEnumerable<KeyValuePair<Type, Guid>> leafMappings,
+      IEnumerable<KeyValuePair<Type, Guid>> openGenericMappings)
+   {
+      lock(_writeLock)
+      {
+         var newState = _state;
+         foreach(var (type, guid) in leafMappings)
+            newState = newState.WithLeafMapping(type, guid);
+         foreach(var (openGenericType, guid) in openGenericMappings)
+            newState = newState.WithOpenGenericMapping(openGenericType, guid);
+
+         _state = newState;
+      }
+   }
+
    internal bool TryGetOpenGenericMapping(Type openGenericType, out MappedTypeIdentifier id) => _state.TryGetOpenGenericMapping(openGenericType, out id);
    internal bool HasMappingForOpenGeneric(Type openGenericType) => _state.HasMappingForOpenGeneric(openGenericType);
 
@@ -64,7 +90,7 @@ class TypeNameMapper
    /// </summary>
    sealed class State : ITypeMappingLookup
    {
-      internal static readonly State Empty = new(new(), new(), new(), new(), new());
+      internal static readonly State Empty = new(new(), new(), new(), new(), new(), new());
 
       // Mapping data — fixed for the life of this snapshot.
       readonly Dictionary<Guid, Type> _guidToLeafType;
@@ -72,6 +98,7 @@ class TypeNameMapper
       readonly Dictionary<Guid, Type> _guidToOpenGeneric;
       readonly Dictionary<Type, Guid> _openGenericToGuid;
       readonly HashSet<string> _stableAssemblyNames;
+      readonly HashSet<string> _stablePublicKeyTokens;
 
       // Caches — lazily populated, and only ever hold values consistent with this snapshot's mappings.
       readonly ConcurrentDictionary<Type, TypeIdentifier> _typeToIdentifier = new();
@@ -81,13 +108,15 @@ class TypeNameMapper
             Dictionary<Type, Guid> leafTypeToGuid,
             Dictionary<Guid, Type> guidToOpenGeneric,
             Dictionary<Type, Guid> openGenericToGuid,
-            HashSet<string> stableAssemblyNames)
+            HashSet<string> stableAssemblyNames,
+            HashSet<string> stablePublicKeyTokens)
       {
          _guidToLeafType = guidToLeafType;
          _leafTypeToGuid = leafTypeToGuid;
          _guidToOpenGeneric = guidToOpenGeneric;
          _openGenericToGuid = openGenericToGuid;
          _stableAssemblyNames = stableAssemblyNames;
+         _stablePublicKeyTokens = stablePublicKeyTokens;
       }
 
       internal State WithLeafMapping(Type type, Guid guid)
@@ -98,7 +127,8 @@ class TypeNameMapper
             new Dictionary<Type, Guid>(_leafTypeToGuid) { [type] = guid },
             _guidToOpenGeneric,
             _openGenericToGuid,
-            _stableAssemblyNames);
+            _stableAssemblyNames,
+            _stablePublicKeyTokens);
       }
 
       internal State WithOpenGenericMapping(Type openGenericType, Guid guid)
@@ -109,12 +139,17 @@ class TypeNameMapper
             _leafTypeToGuid,
             new Dictionary<Guid, Type>(_guidToOpenGeneric) { [guid] = openGenericType },
             new Dictionary<Type, Guid>(_openGenericToGuid) { [openGenericType] = guid },
-            _stableAssemblyNames);
+            _stableAssemblyNames,
+            _stablePublicKeyTokens);
       }
 
       internal State WithStableAssembly(string assemblyName) =>
          new(_guidToLeafType, _leafTypeToGuid, _guidToOpenGeneric, _openGenericToGuid,
-             new HashSet<string>(_stableAssemblyNames) { assemblyName });
+             new HashSet<string>(_stableAssemblyNames) { assemblyName }, _stablePublicKeyTokens);
+
+      internal State WithStablePublicKeyToken(string publicKeyToken) =>
+         new(_guidToLeafType, _leafTypeToGuid, _guidToOpenGeneric, _openGenericToGuid,
+             _stableAssemblyNames, new HashSet<string>(_stablePublicKeyTokens) { publicKeyToken });
 
       // A type↔GUID mapping is permanent identity. Re-mapping a type, or binding a GUID to a second type, silently
       // corrupts the reverse lookup and makes already-persisted data resolve to the wrong type. This is the funnel
@@ -144,10 +179,22 @@ class TypeNameMapper
       internal bool HasMappingForOpenGeneric(Type openGenericType) => _openGenericToGuid.ContainsKey(openGenericType);
       internal bool HasLeafMapping(Type type) => _leafTypeToGuid.ContainsKey(type);
 
+      // A type is rename-safe ("stable") when its assembly is signed with a public key token we trust to keep its
+      // type names (the framework tokens, plus any the user registers), or when the user has explicitly declared the
+      // assembly stable by name. Both are read from the live type at lookup time, so an assembly loaded after
+      // construction is still recognised — there is no construction-time snapshot of loaded assemblies to go stale.
       internal bool IsStableType(Type type)
       {
-         var assemblyName = type.Assembly.GetName().Name;
-         return assemblyName != null && _stableAssemblyNames.Contains(assemblyName);
+         var name = type.Assembly.GetName();
+         var token = PublicKeyTokenString(name);
+         return (token != null && _stablePublicKeyTokens.Contains(token))
+             || (name.Name != null && _stableAssemblyNames.Contains(name.Name));
+      }
+
+      static string? PublicKeyTokenString(AssemblyName name)
+      {
+         var token = name.GetPublicKeyToken();
+         return token is { Length: > 0 } ? Convert.ToHexStringLower(token) : null;
       }
 
       internal TypeIdentifier GetId(Type type) => _typeToIdentifier.GetOrAdd(type, ComputeId);
@@ -174,26 +221,11 @@ class TypeNameMapper
          }
 
          // Non-mapped, non-composite leaf type — must be from a stable assembly
-         var assemblyName = type.Assembly.GetName().Name!;
-         if(_stableAssemblyNames.Contains(assemblyName))
-         {
-            var aqn = type.AssemblyQualifiedName!;
-            return TypeIdentifier.Parse(aqn);
-         }
+         if(IsStableType(type))
+            return TypeIdentifier.Parse(type.AssemblyQualifiedName!);
 
          throw new InvalidOperationException(
-            $"Type '{type.FullName}' from assembly '{assemblyName}' is not mapped and its assembly is not registered as stable.");
-      }
-
-      /// <summary>
-      /// Extracts the simple assembly name from a full or simple assembly string.
-      /// "System.Private.CoreLib, Version=10.0.0.0, ..." → "System.Private.CoreLib"
-      /// "System.Private.CoreLib" → "System.Private.CoreLib"
-      /// </summary>
-      static string SimpleAssemblyName(string assemblyString)
-      {
-         var commaIndex = assemblyString.IndexOf(',', StringComparison.Ordinal);
-         return commaIndex >= 0 ? assemblyString[..commaIndex].Trim() : assemblyString.Trim();
+            $"Type '{type.FullName}' from assembly '{type.Assembly.GetName().Name}' is not mapped and its assembly is not registered as stable.");
       }
 
       Type ITypeMappingLookup.GetLeafType(Guid guid) =>
@@ -208,6 +240,6 @@ class TypeNameMapper
 
       bool ITypeMappingLookup.TryGetLeafTypeGuid(Type type, out Guid guid) => _leafTypeToGuid.TryGetValue(type, out guid);
       bool ITypeMappingLookup.TryGetOpenGenericGuid(Type type, out Guid guid) => _openGenericToGuid.TryGetValue(type, out guid);
-      bool ITypeMappingLookup.IsStableAssembly(string assemblyName) => _stableAssemblyNames.Contains(SimpleAssemblyName(assemblyName));
+      bool ITypeMappingLookup.IsStableType(Type type) => IsStableType(type);
    }
 }

@@ -34,12 +34,14 @@ sealed class StableGenericTypeIdentifier(string typeName, string assemblyName, T
 
       var openGenericAqn = $"{TypeName}, {AssemblyName}";
       var openGenericType = Type.GetType(openGenericAqn);
+      if(openGenericType != null)
+      {
+         if(lookup.TryGetOpenGenericGuid(openGenericType, out var guid))
+            return new MappedGenericTypeIdentifier(guid, transformedArgs);
 
-      if(openGenericType != null && lookup.TryGetOpenGenericGuid(openGenericType, out var guid))
-         return new MappedGenericTypeIdentifier(guid, transformedArgs);
-
-      if(lookup.IsStableAssembly(AssemblyName))
-         return new StableGenericTypeIdentifier(TypeName, AssemblyName, transformedArgs);
+         if(lookup.IsStableType(openGenericType))
+            return new StableGenericTypeIdentifier(TypeName, AssemblyName, transformedArgs);
+      }
 
       throw new InvalidOperationException(
          $"Open generic type '{TypeName}' from assembly '{AssemblyName}' is not mapped and its assembly is not registered as stable.");

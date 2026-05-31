@@ -13,7 +13,8 @@
    - .NET runtime assemblies are stable by default (detected automatically via public key token or well-known names)
    - Users can declare additional assemblies stable:
      ```csharp
-     mapper.UseStableNameStrategyForAssembliesContaining<NodaTime.Instant, SomeOtherLib.Foo>();
+     mapper.UseStableNameStrategyForAssemblyContaining<NodaTime.Instant>();
+     mapper.UseStableNameStrategyForAssemblyContaining<SomeOtherLib.Foo>();
      ```
 
 2. **Mapped assemblies** — types that need rename-safety. Leaf types and Open generic definitions require GUID assignments:
@@ -34,14 +35,13 @@ The framework enforces that a mapping class only maps types from its own assembl
 ## Per-container registration (no static global mapping from TypeIdentifier to Type)
 
 ```csharp
-   mapper
-      .MapTypesFromAssemblyContaining<MyEntity>()
-      .MapTypesFromAssemblyContaining<AnotherDomainType>()
-      .UseStableNameStrategyForAssembliesContaining<SomeLibraryType>();
+   mapper.MapTypesFromAssemblyContaining<MyEntity>();
+   mapper.MapTypesFromAssemblyContaining<AnotherDomainType>();
+   mapper.UseStableNameStrategyForAssemblyContaining<SomeLibraryType>();
 ```
 
 ---- **Stable assembly detection**: At **setup time**, assemblies are checked by public key token to determine stability. At **parse time**, the `$type` string only contains assembly names (no tokens), so stable assembly lookup is by name against the pre-built set. Microsoft uses a small, known set of public key tokens.  These are hardcoded as stable by default. Users can also register additional stable assemblies by public key token:
   ```csharp
   mapper.UseStableNameStrategyForPublicKeyToken("xxxxxxxxxxxx"); // all assemblies signed with this token
-  mapper.UseStableNameStrategyForAssembliesContaining<NodaTime.Instant>(); // or by marker type
+  mapper.UseStableNameStrategyForAssemblyContaining<NodaTime.Instant>(); // or by marker type
   ```
