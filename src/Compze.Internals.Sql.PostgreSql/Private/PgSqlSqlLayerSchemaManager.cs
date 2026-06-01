@@ -1,48 +1,28 @@
-using Compze.Internals.Sql.PostgreSql.Private.DocumentDb;
-using Compze.Internals.Sql.PostgreSql.Private.Tessaging;
-using Compze.Internals.Sql.PostgreSql.Private.TEventStore;
-using Compze.DependencyInjection;
-using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
-using Compze.Threading;
 using Compze.Internals.SystemCE.TransactionsCE;
+using Compze.Threading;
 
 namespace Compze.Internals.Sql.PostgreSql.Private;
 
-class PgSqlSqlLayerSchemaManager(IPgSqlConnectionPool connectionPool)
+// Creates every configured feature backend's schema in a single suppressed-transaction batch on first touch.
+// The scripts are supplied by the composition that knows which backends are present, so the plumbing never
+// references a feature backend. Creating all tables together up front (before any business transaction takes a
+// lock) is what keeps schema creation off the hot path of a write/read-locked transaction.
+class PgSqlSqlLayerSchemaManager
 {
-   public static IComponentRegistrar RegisterWith(IComponentRegistrar registrar)
-   {
-      if(registrar.IsRegistered<PgSqlSqlLayerSchemaManager>())
-         return registrar;
-      return registrar.Register(Singleton.For<PgSqlSqlLayerSchemaManager>()
-                                         .CreatedBy((IPgSqlConnectionPool connectionPool) => new PgSqlSqlLayerSchemaManager(connectionPool))
-                                         .DelegateToParentServiceLocatorWhenCloning());
-   }
-
-   readonly IPgSqlConnectionPool _connectionPool = connectionPool;
-
+   readonly IPgSqlConnectionPool _connectionPool;
+   readonly string _schemaCreationSql;
    readonly RunOnceAsync _runOnce = new();
 
-   public async Task EnsureSchemaInitializedAsync() => await _runOnce.RunIfFirstCallAsync(async () =>
+   public PgSqlSqlLayerSchemaManager(IPgSqlConnectionPool connectionPool, IReadOnlyList<string> schemaCreationScripts)
    {
+      _connectionPool = connectionPool;
+      _schemaCreationSql = string.Join($"{Environment.NewLine}{Environment.NewLine}", schemaCreationScripts);
+   }
+
+   public async Task EnsureSchemaInitializedAsync() => await _runOnce.RunIfFirstCallAsync(async () =>
       await TransactionScopeCe.SuppressAmbientAsync(async () =>
-      {
-         await _connectionPool.ExecuteNonQueryAsync($"""
-
-                                                     {TypeIdInterning.PgSqlTypeIdInternerPersistence.SchemaCreationSql}
-
-                                                     {PgSqlDocumentDbSqlLayer.SchemaCreationSql}
-
-                                                     {PgSqlInboxSqlLayer.SchemaCreationSql}
-
-                                                     {PgSqlOutboxSqlLayer.SchemaCreationSql}
-
-                                                     {PgSqlTeventStoreSqlLayer.SchemaCreationSql}
-
-                                                     """).caf();
-      }).caf();
-   }).caf();
+         await _connectionPool.ExecuteNonQueryAsync(_schemaCreationSql).caf()).caf()).caf();
 
    public void EnsureSchemaInitialized() => EnsureSchemaInitializedAsync().Wait();
 }

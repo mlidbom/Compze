@@ -5,17 +5,23 @@
     <Version>0.2.1-alpha</Version>
     <!-- TODO: Remove once all public API members have XML documentation comments -->
     <NoWarn>CS1591</NoWarn>
-    <Description>For Compze internal use only. Do not take a direct dependency on this package</Description>
+    <Description>For Compze internal use only. Do not take a direct dependency on this package. MySQL connection, pool, and command plumbing shared by the Compze.*.MySql feature backends.</Description>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="MySql.Data" Version="9.4.0" />
   </ItemGroup>
-  <!-- Compze.Core — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Core)' == 'true'">
-    <PackageReference Include="Compze.Core" Version="*-*" />
+  <ItemGroup>
+    <InternalsVisibleTo Include="Compze.TypeIdentifiers.Interning.MySql" />
+    <InternalsVisibleTo Include="Compze.DocumentDb.MySql" />
+    <InternalsVisibleTo Include="Compze.Tessaging.MySql" />
+    <InternalsVisibleTo Include="Compze.Tessaging.Teventive.TeventStore.MySql" />
   </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Core)' != 'true'">
-    <ProjectReference Include="..\Compze.Core\Compze.Core.csproj" />
+  <!-- Compze.Abstractions — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Abstractions)' == 'true'">
+    <PackageReference Include="Compze.Abstractions" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Abstractions)' != 'true'">
+    <ProjectReference Include="..\Compze.Abstractions\Compze.Abstractions.csproj" />
   </ItemGroup>
   <!-- Compze.Internals.Sql.Common — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Sql_Common)' == 'true'">
@@ -23,12 +29,5 @@
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Sql_Common)' != 'true'">
     <ProjectReference Include="..\Compze.Internals.Sql.Common\Compze.Internals.Sql.Common.csproj" />
-  </ItemGroup>
-  <!-- Compze.TypeIdentifiers.Interning — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_TypeIdentifiers_Interning)' == 'true'">
-    <PackageReference Include="Compze.TypeIdentifiers.Interning" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_TypeIdentifiers_Interning)' != 'true'">
-    <ProjectReference Include="..\Compze.TypeIdentifiers.Interning\Compze.TypeIdentifiers.Interning.csproj" />
   </ItemGroup>
 </Project>

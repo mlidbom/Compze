@@ -1,48 +1,28 @@
-using Compze.Internals.Sql.MySql.Private.DocumentDb;
-using Compze.Internals.Sql.MySql.Private.Tessaging;
-using Compze.Internals.Sql.MySql.Private.TEventStore;
-using Compze.DependencyInjection;
-using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
-using Compze.Threading;
 using Compze.Internals.SystemCE.TransactionsCE;
+using Compze.Threading;
 
 namespace Compze.Internals.Sql.MySql.Private;
 
-class MySqlSqlLayerSchemaManager(IMySqlConnectionPool connectionPool)
+// Creates every configured feature backend's schema in a single suppressed-transaction batch on first touch.
+// The scripts are supplied by the composition that knows which backends are present, so the plumbing never
+// references a feature backend. Creating all tables together up front (before any business transaction takes a
+// lock) is what keeps schema creation off the hot path of a write/read-locked transaction.
+class MySqlSqlLayerSchemaManager
 {
-   public static IComponentRegistrar RegisterWith(IComponentRegistrar registrar)
-   {
-      if(registrar.IsRegistered<MySqlSqlLayerSchemaManager>())
-         return registrar;
-      return registrar.Register(Singleton.For<MySqlSqlLayerSchemaManager>()
-                                         .CreatedBy((IMySqlConnectionPool connectionPool) => new MySqlSqlLayerSchemaManager(connectionPool))
-                                         .DelegateToParentServiceLocatorWhenCloning());
-   }
-
-   readonly IMySqlConnectionPool _connectionPool = connectionPool;
-
+   readonly IMySqlConnectionPool _connectionPool;
+   readonly string _schemaCreationSql;
    readonly RunOnceAsync _runOnce = new();
 
-   public async Task EnsureSchemaInitializedAsync() => await _runOnce.RunIfFirstCallAsync(async () =>
+   public MySqlSqlLayerSchemaManager(IMySqlConnectionPool connectionPool, IReadOnlyList<string> schemaCreationScripts)
    {
+      _connectionPool = connectionPool;
+      _schemaCreationSql = string.Join($"{Environment.NewLine}{Environment.NewLine}", schemaCreationScripts);
+   }
+
+   public async Task EnsureSchemaInitializedAsync() => await _runOnce.RunIfFirstCallAsync(async () =>
       await TransactionScopeCe.SuppressAmbientAsync(async () =>
-      {
-         await _connectionPool.ExecuteNonQueryAsync($"""
-
-                                                     {TypeIdInterning.MySqlTypeIdInternerPersistence.SchemaCreationSql}
-
-                                                     {MySqlDocumentDbSqlLayer.SchemaCreationSql}
-
-                                                     {MySqlInboxSqlLayer.SchemaCreationSql}
-
-                                                     {MySqlOutboxSqlLayer.SchemaCreationSql}
-
-                                                     {MySqlTeventStoreSqlLayer.SchemaCreationSql}
-
-                                                     """).caf();
-      }).caf();
-   }).caf();
+         await _connectionPool.ExecuteNonQueryAsync(_schemaCreationSql).caf()).caf()).caf();
 
    public void EnsureSchemaInitialized() => EnsureSchemaInitializedAsync().Wait();
 }
