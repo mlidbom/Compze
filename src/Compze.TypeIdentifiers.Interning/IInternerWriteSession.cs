@@ -1,4 +1,4 @@
-namespace Compze.Internals.Sql.Common.Abstractions;
+namespace Compze.TypeIdentifiers.Interning;
 
 /// <summary>
 /// The write side of the interner, scoped to a single pinned connection that already holds the cross-process

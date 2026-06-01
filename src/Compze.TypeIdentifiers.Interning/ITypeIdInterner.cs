@@ -1,6 +1,4 @@
-using Compze.TypeIdentifiers;
-
-namespace Compze.Internals.Sql.Common.Abstractions;
+namespace Compze.TypeIdentifiers.Interning;
 
 /// <summary>
 /// Interns a <see cref="TypeId"/> to a small, database-local integer id and back, so storage tables can

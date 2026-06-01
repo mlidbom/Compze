@@ -137,9 +137,11 @@ The interned `int` is the type reference in `Tevent.TeventType`, `Store.ValueTyp
 ([Store schema](../../src/Compze.DocumentDb/Internal/SqlLayer/IDocumentDbSqlLayer.cs)), and the inbox/outbox
 `TypeId` columns. All are `int` referencing `TypeIds.Id`.
 
-The interner pieces — [`ITypeIdInternerPersistence`](../../src/Compze.Internals.Sql.Common/Abstractions/ITypeIdInternerPersistence.cs)
-and [`TypeIdInterner`](../../src/Compze.Internals.Sql.Common/TypeIdInterner.cs) — carry the three-table
-operations, the in-memory maps, and the reconciliation pass. A single `TypeIdInterner` serves every engine;
+The interner pieces — [`ITypeIdInternerPersistence`](../../src/Compze.TypeIdentifiers.Interning/ITypeIdInternerPersistence.cs)
+and [`TypeIdInterner`](../../src/Compze.TypeIdentifiers.Interning/TypeIdInterner.cs) — live in the standalone
+`Compze.TypeIdentifiers.Interning` package and carry the three-table operations, the in-memory maps, and the
+reconciliation pass. The engine-specific `ITypeIdInternerPersistence` implementations stay in each SQL engine
+project. A single `TypeIdInterner` serves every engine;
 its caching of the `Type -> id` direction is gated by the persistence's `MintsAreImmediatelyDurable` flag
 (true for the MVCC engines, false for single-writer SQLite, where a mint can roll back with the business
 transaction).

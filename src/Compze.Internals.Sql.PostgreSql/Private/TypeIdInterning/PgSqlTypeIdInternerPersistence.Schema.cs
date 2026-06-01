@@ -1,6 +1,6 @@
-using Types = Compze.Internals.Sql.Common.Abstractions.TypeIdsTableSchema.Types;
-using Strings = Compze.Internals.Sql.Common.Abstractions.TypeIdsTableSchema.Strings;
-using Names = Compze.Internals.Sql.Common.Abstractions.TypeIdsTableSchema.Names;
+using Types = Compze.TypeIdentifiers.Interning.TypeIdsTableSchema.Types;
+using Strings = Compze.TypeIdentifiers.Interning.TypeIdsTableSchema.Strings;
+using Names = Compze.TypeIdentifiers.Interning.TypeIdsTableSchema.Names;
 
 namespace Compze.Internals.Sql.PostgreSql.Private.TypeIdInterning;
 

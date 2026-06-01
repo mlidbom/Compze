@@ -108,6 +108,8 @@
     <UsePackageReference_Compze_Threading_Testing Condition="'$(UsePackageReference_Compze_Threading_Testing)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Threading.Testing.csproj|'))">true</UsePackageReference_Compze_Threading_Testing>
     <!-- Compze.TypeIdentifiers -->
     <UsePackageReference_Compze_TypeIdentifiers Condition="'$(UsePackageReference_Compze_TypeIdentifiers)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.TypeIdentifiers.csproj|'))">true</UsePackageReference_Compze_TypeIdentifiers>
+    <!-- Compze.TypeIdentifiers.Interning -->
+    <UsePackageReference_Compze_TypeIdentifiers_Interning Condition="'$(UsePackageReference_Compze_TypeIdentifiers_Interning)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.TypeIdentifiers.Interning.csproj|'))">true</UsePackageReference_Compze_TypeIdentifiers_Interning>
     <!-- Compze.Typermedia -->
     <UsePackageReference_Compze_Typermedia Condition="'$(UsePackageReference_Compze_Typermedia)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Typermedia.csproj|'))">true</UsePackageReference_Compze_Typermedia>
     <!-- Compze.Typermedia.Client -->

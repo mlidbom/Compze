@@ -1,7 +1,6 @@
 using System.Collections.Concurrent;
-using Compze.TypeIdentifiers;
 
-namespace Compze.Internals.Sql.Common;
+namespace Compze.TypeIdentifiers.Interning;
 
 /// <summary>
 /// Engine-agnostic <see cref="ITypeIdInterner"/>: an in-memory model over the per-database type-identity

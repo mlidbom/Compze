@@ -1,7 +1,7 @@
-namespace Compze.Internals.Sql.Common.Abstractions;
+namespace Compze.TypeIdentifiers.Interning;
 
 /// <summary>
-/// Engine-specific persistence backing a <see cref="ITypeIdInterner"/>: the operations over the
+/// Storage-specific persistence backing a <see cref="ITypeIdInterner"/>: the operations over the
 /// <c>TypeIds</c> / <c>TypeStrings</c> / <c>TypeNames</c> tables.
 /// </summary>
 public interface ITypeIdInternerPersistence

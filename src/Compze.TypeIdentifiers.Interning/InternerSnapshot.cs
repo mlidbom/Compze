@@ -1,4 +1,4 @@
-namespace Compze.Internals.Sql.Common.Abstractions;
+namespace Compze.TypeIdentifiers.Interning;
 
 /// <summary>
 /// A point-in-time read of the type-identity tables, used to warm the interner's in-memory model: the

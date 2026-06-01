@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace Compze.Internals.Sql.Common;
+namespace Compze.TypeIdentifiers.Interning;
 
 /// <summary>
 /// Produces the stable, human-readable fully-qualified name recorded in the type-name history. It is the

@@ -1,4 +1,4 @@
-namespace Compze.Internals.Sql.Common.Abstractions;
+namespace Compze.TypeIdentifiers.Interning;
 
 /// <summary>
 /// Table and column names for the per-database type-identity tables, shared by all engines.

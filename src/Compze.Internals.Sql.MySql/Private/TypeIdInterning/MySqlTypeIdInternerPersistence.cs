@@ -4,9 +4,9 @@ using Compze.Abstractions.Time.Public;
 using Compze.Internals.Sql.Common;
 using Compze.Internals.Sql.Common.Abstractions;
 using Compze.Internals.SystemCE.TransactionsCE;
-using Types = Compze.Internals.Sql.Common.Abstractions.TypeIdsTableSchema.Types;
-using Strings = Compze.Internals.Sql.Common.Abstractions.TypeIdsTableSchema.Strings;
-using Names = Compze.Internals.Sql.Common.Abstractions.TypeIdsTableSchema.Names;
+using Types = Compze.TypeIdentifiers.Interning.TypeIdsTableSchema.Types;
+using Strings = Compze.TypeIdentifiers.Interning.TypeIdsTableSchema.Strings;
+using Names = Compze.TypeIdentifiers.Interning.TypeIdsTableSchema.Names;
 
 namespace Compze.Internals.Sql.MySql.Private.TypeIdInterning;
 
