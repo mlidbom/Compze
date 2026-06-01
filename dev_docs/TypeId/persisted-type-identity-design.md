@@ -4,7 +4,8 @@ How the SQL layer represents a .NET type as a small, durable, database-local `in
 reclassification (stable ↔ mapped) and renaming — and keeps a full, durable history of every fully-qualified
 name each type has ever had, with the current name clearly marked.
 
-Status: **design agreed; one sub-decision open (indexing strategy, below).** No code yet.
+Status: **implemented across all SQL engines** (SQL Server, PostgreSQL, MySQL, SQLite). Indexing strategy A
+(below) is in use.
 
 ## Core idea: identity is separate from spelling
 
@@ -52,75 +53,83 @@ TypeNames    ( TypeId        <FK -> TypeIds.Id>,
 
 ## In-memory model
 
-Each process builds, once at startup from a full load of `TypeIds` + `TypeStrings`:
+Each process builds, once on first use, from a full load of `TypeIds` + `TypeStrings`:
 
 - `int -> Type` for resolution, and `Type -> int` for interning.
 
 Both are produced by resolving each `TypeStrings` spelling to a `Type` and collapsing by `TypeId`: every
 spelling of one concept resolves to the same `Type`, folding into a single entry. Stable spellings resolve by
 name ([StableLeafTypeIdentifier.cs:12-14](../../src/Compze.TypeIdentifiers/StableLeafTypeIdentifier.cs#L12-L14)); mapped spellings resolve by GUID
-([MappedTypeIdentifier.cs:14](../../src/Compze.TypeIdentifiers/MappedTypeIdentifier.cs#L14)). At runtime, interning and resolution are pure cache hits; the database is
-touched only by the startup load and by the reconciliation writes below.
+([MappedTypeIdentifier.cs:14](../../src/Compze.TypeIdentifiers/MappedTypeIdentifier.cs#L14)). A spelling that no longer resolves is skipped (see
+*Deleted and unresolvable types*).
 
-## Renaming and reclassification
+At runtime, interning and resolution are normally cache hits. The database is touched by the first-use load,
+the reconciliation writes below, minting a never-before-seen type, and a cache-miss re-check — an `int` or
+`Type` absent from the model triggers a fresh load, since another process may have interned it since.
+
+## Renaming and reconciliation
 
 Two spellings are known to denote the same concept when they resolve to the **same** `Type` at the same time.
 That equivalence is recordable only while both forms still resolve, which fixes the operational rule:
 
 > A type may be renamed safely only while it is **mapped** (the GUID is the rename-proof anchor). To switch a
 > type to mapped and then rename it, deploy the two steps separately: deploy the mapping with the type under
-> its existing name and let the application start once, then deploy the rename. The two cannot be combined in
-> a single deployment.
+> its existing name and let the application run once, then deploy the rename. The two cannot be combined in a
+> single deployment.
 
 The first deployment runs with both the old name form and the new GUID form resolving to the same `Type`, so
 the reconciliation pass links them under one id. From then on the GUID carries the identity, and the rename in
 the second deployment leaves every prior row resolving correctly through the shared id. (A type that stays
 stable has no rename-proof anchor and cannot be renamed safely — another reason to map before renaming.)
 
-## Reconciliation pass (startup)
+## Reconciliation (first use)
 
-On startup, after type registration and inside the interner's write serialization, the interner walks each
-distinct `Type` reachable from the existing `TypeStrings` rows (this is exactly "every type that has data",
-leaf and constructed alike — a finite set):
+On first use the interner reconciles every already-persisted type it can currently resolve, writing any
+corrections under its cross-process write lock, so the database records this deployment's current view:
 
-1. **Resolve** the type from its stored spelling.
-2. **Reconcile its spelling:** compute the type's current canonical persisted spelling; if it is not already
-   in `TypeStrings`, insert it (pointing at the same `TypeId`, stamped with `FirstSeenUtc` from the ambient
-   time source). A type that has no id yet (first time seen) gets a freshly minted `TypeIds` row.
-3. **Reconcile its name:** compute the type's current normalized fully-qualified name; if it differs from the
-   type's latest `TypeNames` entry, append a new entry (next `Seq`, `FirstSeenUtc` from the ambient time
-   source) and update `TypeIds.CurrentName`.
+1. **Link the current spelling.** Compute the type's current canonical spelling under this deployment's
+   mappings; if `TypeStrings` does not already hold it, insert it pointing at the same `TypeId` (stamped with
+   `FirstSeenUtc`). This is what links a reclassified type's new spelling — e.g. a type persisted as a stable
+   name that is now mapped — to its existing id.
+2. **Record a rename.** Compute the type's current normalized fully-qualified name; if it differs from the
+   recorded current name, append a `TypeNames` entry (next `Seq`, `FirstSeenUtc`) and update
+   `TypeIds.CurrentName`.
 
-The pass is idempotent and cheap (one resolve per distinct type, once at startup), and is a no-op once a
-deployment's spellings and names are all recorded. Runtime persistence of a never-before-seen type follows the
-same mint-id / record-spelling / record-name steps.
+The pass is idempotent and cheap, and a no-op once a deployment's spellings and names are recorded. A type
+seen for the very first time is minted on demand the first time it is interned — its `TypeIds` row, first
+spelling, and first name entry written together under the same lock.
 
-## Guardrail
+## Deleted and unresolvable types
 
-A stored spelling that fails to resolve at startup is the signature of a rename deployed without its mapping
-step first — which would otherwise strand the data referencing it. The reconciliation pass treats an
-unresolvable spelling as a hard startup failure with an actionable message that names the affected id and its
-last-known name (*"id 7, last known as `MyApp.Sales.PurchaseOrder`, no longer resolves…"*).
+A stored spelling that no longer resolves to a .NET type — a removed type, or one renamed in a deployment that
+skipped the map-first step — is simply skipped when the model loads. It contributes no `int -> Type` entry;
+its rows sit inert.
 
-The check is **scoped to types whose assemblies this process registers** (mapped or stable): an unresolvable
-spelling for a wholly-unregistered assembly is simply "not this process's type" and is ignored, keeping the
-check free of false positives in multi-context deployments. A deliberately decommissioned type — removed on
-purpose, its data abandonable — passes via an explicit acknowledgement escape hatch.
+Nothing fails at load. A failure surfaces only if something calls `GetTypeId(id)` for such an id, and the only
+callers are read paths resolving a stored row (`Tevent.TeventType`, `Store.ValueTypeId`, inbox/outbox
+`TypeId`). So a throw means surviving data still references the type — it is not truly dead — and failing
+loud, naming the id and its last-known name (*"interned type id 7, last known as
+`MyApp.Sales.PurchaseOrder`, no longer resolves…"*), is the correct response.
 
-## Indexing strategy (open: A vs B)
+This is why deleted types need no special handling: a genuinely dead type has no surviving rows pointing at
+its id, so it is never looked up; a type that is looked up has surviving rows, so it is not dead. There is no
+eager scan and no decommission flag to maintain.
 
-`TypeString` is not indexed for reads. Dedupe-on-insert — the guarantee that a spelling maps to exactly one
-`TypeId` — is provided one of two ways:
+## Indexing strategy
 
-- **A (working design):** all interner writes (the reconciliation pass and any runtime mint) run under a
-  cross-process lock — a DB advisory lock (`sp_getapplock` / `pg_advisory_lock` / `GET_LOCK`) or a
-  `Compze.Threading` interprocess primitive. Inside the lock the in-memory `string -> id` map is the dedupe
-  authority. The only indexes are the `TypeIds.Id` PK, the `TypeStrings.TypeId` FK index, and the
-  `TypeNames(TypeId, Seq)` key — none on any string. The string is genuinely unindexed payload on every
-  engine, and the serialization point the reconciliation pass needs already exists.
-- **B (alternative):** add `TypeStringHash binary(32)` with a UNIQUE index and dedupe on the bounded hash,
-  keeping a database-level uniqueness backstop. `TypeString` stays unindexed. Trades a derived index and
-  per-spelling round-trips for not relying on the lock.
+`TypeString` is not indexed for reads — resolution is by the `int` key. Dedupe-on-insert (one spelling maps to
+exactly one `TypeId`) is guaranteed by a cross-process lock rather than a unique index:
+
+All interner writes — the reconciliation pass and any runtime mint — run under a DB advisory lock
+(`sp_getapplock` on SQL Server, `pg_advisory_lock` on PostgreSQL, `GET_LOCK` on MySQL; SQLite is single-writer
+and joins the ambient transaction instead). Inside the lock the in-memory `string -> id` map is the dedupe
+authority. The only indexes are the `TypeIds.Id` PK, the `TypeStrings.TypeId` FK index, and the
+`TypeNames(TypeId, Seq)` key — none on any string, so the string is genuinely unindexed payload of any length
+on every engine.
+
+(The considered alternative — a `binary(32)` hash column with a unique index as a database-level dedupe
+backstop — was rejected: the lock the reconciliation pass already needs makes the extra index and its
+per-spelling round-trips redundant.)
 
 ## Referencing tables
 
@@ -128,14 +137,9 @@ The interned `int` is the type reference in `Tevent.TeventType`, `Store.ValueTyp
 ([Store schema](../../src/Compze.DocumentDb/Internal/SqlLayer/IDocumentDbSqlLayer.cs)), and the inbox/outbox
 `TypeId` columns. All are `int` referencing `TypeIds.Id`.
 
-The interner pieces — [`ITypeIdInternerPersistence`](../../src/Compze.Internals.Sql.Common/Abstractions/ITypeIdInternerPersistence.cs),
-[`TypeIdInterner`](../../src/Compze.Internals.Sql.Common/TypeIdInterner.cs), and its MVCC / single-writer split
-(`SuppressedTransactionTypeIdInterner` / `AmbientTransactionTypeIdInterner`) — carry the three-table
-operations, the in-memory maps, and the reconciliation pass.
-
-## Open questions
-
-1. **Indexing A vs B** — the one decision left.
-2. **Table / column names** — `TypeIds` / `TypeStrings` / `TypeNames` proposed.
-3. **Decommission acknowledgement** — the shape of the escape hatch that lets a deliberately-removed type's
-   unresolvable spelling pass the guardrail.
+The interner pieces — [`ITypeIdInternerPersistence`](../../src/Compze.Internals.Sql.Common/Abstractions/ITypeIdInternerPersistence.cs)
+and [`TypeIdInterner`](../../src/Compze.Internals.Sql.Common/TypeIdInterner.cs) — carry the three-table
+operations, the in-memory maps, and the reconciliation pass. A single `TypeIdInterner` serves every engine;
+its caching of the `Type -> id` direction is gated by the persistence's `MintsAreImmediatelyDurable` flag
+(true for the MVCC engines, false for single-writer SQLite, where a mint can roll back with the business
+transaction).
