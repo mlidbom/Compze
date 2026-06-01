@@ -14,6 +14,7 @@
     <Project Path="../test/Compze.Abstractions.Specifications/Compze.Abstractions.Specifications.csproj" />
   </Folder>
   <Folder Name="/Compze.TypeIdentifiers/">
+    <Project Path="Compze.TypeIdentifiers.Interning/Compze.TypeIdentifiers.Interning.csproj" />
     <Project Path="Compze.TypeIdentifiers/Compze.TypeIdentifiers.csproj" />
   </Folder>
   <Folder Name="/Compze.TypeIdentifiers/Specifications/">
@@ -210,5 +211,4 @@
   <Project Path="Compze.Internals.Transport/Compze.Internals.Transport.csproj" />
   <Project Path="Compze.Internals.Transport.AspNet/Compze.Internals.Transport.AspNet.csproj" />
   <Project Path="Compze.Hosting/Compze.Hosting.csproj" />
-  <Project Path="Compze.TypeIdentifiers.Interning/Compze.TypeIdentifiers.Interning.csproj" />
 </Solution>
