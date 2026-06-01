@@ -1,14 +1,12 @@
-using Compze.Abstractions.Refactoring.Naming;
+using Compze.TypeIdentifiers;
 
-[assembly: TypeMappings(typeof(AccountManagement.API.TypeMappingDeclarations))]
+[assembly: AssemblyTypeMapper(typeof(AccountManagement.API.AssemblyTypeMapper))]
 
 namespace AccountManagement.API;
 
-#pragma warning disable CA1812 // Instantiated via reflection by StructuralTypeMapper, located via [assembly: TypeMappings]
-class TypeMappingDeclarations : ITypeMappingDeclaration
-#pragma warning restore CA1812
+class AssemblyTypeMapper : IAssemblyTypeMapper
 {
-   public void DeclareMappings(ITypeMappingRegistrar map)
+   public void Map(IAssemblyTypeMappingRegistrar map)
    {
       map.Map<AccountResource>("84c1bfcd-a5dd-41e2-ade0-e25bbe0337c3")
          .Map<AccountResource.Tommand.ChangeEmail>("337af6fe-e645-49c7-9da1-b00dbc19cfa6")

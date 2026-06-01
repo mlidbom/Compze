@@ -1,14 +1,12 @@
-using Compze.Abstractions.Refactoring.Naming;
+using Compze.TypeIdentifiers;
 
-[assembly: TypeMappings(typeof(AccountManagement.Domain.Tevents.TypeMappingDeclarations))]
+[assembly: AssemblyTypeMapper(typeof(AccountManagement.Domain.Tevents.AssemblyTypeMapper))]
 
 namespace AccountManagement.Domain.Tevents;
 
-#pragma warning disable CA1812 // Instantiated via reflection by StructuralTypeMapper, located via [assembly: TypeMappings]
-class TypeMappingDeclarations : ITypeMappingDeclaration
-#pragma warning restore CA1812
+class AssemblyTypeMapper : IAssemblyTypeMapper
 {
-   public void DeclareMappings(ITypeMappingRegistrar map)
+   public void Map(IAssemblyTypeMappingRegistrar map)
    {
       map.Map<IAccountTevent.Created>("ae1684ff-a150-4840-ac08-1b9d21806da6")
          .Map<AccountTevent.LoggedIn>("37079b83-103e-4832-a718-3ad4c71700a7")

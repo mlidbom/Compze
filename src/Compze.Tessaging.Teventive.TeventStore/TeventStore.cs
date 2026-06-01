@@ -1,5 +1,5 @@
 using Compze.Abstractions.Public;
-using Compze.Abstractions.Refactoring.Naming.Internal;
+using Compze.TypeIdentifiers;
 using Compze.Core.Serialization.Internal;
 using Compze.Core.Tessaging.Teventive.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
@@ -21,7 +21,7 @@ namespace Compze.Tessaging.Teventive.TeventStore;
 #pragma warning disable CA1724 // Type name intentionally matches namespace concept
 [UsedImplicitly] partial class TeventStore : ITeventStore
 {
-   readonly IStructuralTypeMapper _typeMapper;
+   readonly ITypeMap _typeMap;
    readonly ITeventStoreSerializer _serializer;
    static readonly ILogger Log = CompzeLogger.For<TeventStore>();
 
@@ -34,12 +34,12 @@ namespace Compze.Tessaging.Teventive.TeventStore;
 
    internal static void RegisterWith(IComponentRegistrar registrar, Func<IReadOnlyList<ITeventMigration>> migrations)
       => registrar.Register(Scoped.For<ITeventStore>()
-                                  .CreatedBy((ITeventStoreSqlLayer sqlLayer, IStructuralTypeMapper typeMapper, ITeventStoreSerializer serializer, TeventCache cache) =>
-                                                new TeventStore(sqlLayer, typeMapper, serializer, cache, migrations())));
+                                  .CreatedBy((ITeventStoreSqlLayer sqlLayer, ITypeMap typeMap, ITeventStoreSerializer serializer, TeventCache cache) =>
+                                                new TeventStore(sqlLayer, typeMap, serializer, cache, migrations())));
 
-   public TeventStore(ITeventStoreSqlLayer sqlLayer, IStructuralTypeMapper typeMapper, ITeventStoreSerializer serializer, TeventCache cache, IEnumerable<ITeventMigration> migrations)
+   public TeventStore(ITeventStoreSqlLayer sqlLayer, ITypeMap typeMap, ITeventStoreSerializer serializer, TeventCache cache, IEnumerable<ITeventMigration> migrations)
    {
-      _typeMapper = typeMapper;
+      _typeMap = typeMap;
       _serializer = serializer;
       Log.Debug("Constructor called");
 
@@ -105,7 +105,7 @@ namespace Compze.Tessaging.Teventive.TeventStore;
 
    TaggregateTevent HydrateTevent(TeventDataRow teventDataRowRow)
    {
-      var tevent = (TaggregateTevent)_serializer.Deserialize(teventType: _typeMapper.GetType(teventDataRowRow.TeventType), json: teventDataRowRow.TeventJson);
+      var tevent = (TaggregateTevent)_serializer.Deserialize(teventType: teventDataRowRow.TeventType.Type, json: teventDataRowRow.TeventJson);
 #pragma warning disable CS0618 // Type or member is obsolete
       ((IMutableTaggregateTevent)tevent).SetTaggregateIdInternal(teventDataRowRow.TaggregateId);
       ((IMutableTaggregateTevent)tevent).SetTaggregateVersionInternal(teventDataRowRow.TaggregateVersion);
@@ -160,7 +160,7 @@ namespace Compze.Tessaging.Teventive.TeventStore;
       var specifications = tevents.Select(tevent => cacheEntry.CreateInsertionSpecificationForNewTevent(tevent)).ToArray();
 
       var teventRows = tevents
-                     .Select(tevent => new TeventDataRow(specification: cacheEntry.CreateInsertionSpecificationForNewTevent(tevent), _typeMapper.GetMappedId(tevent.GetType()), teventAsJson: _serializer.Serialize((TaggregateTevent)tevent)))
+                     .Select(tevent => new TeventDataRow(specification: cacheEntry.CreateInsertionSpecificationForNewTevent(tevent), _typeMap.GetId(tevent.GetType()), teventAsJson: _serializer.Serialize((TaggregateTevent)tevent)))
                      .ToList();
 
       teventRows.ForEach(it => it.StorageInformation.EffectiveVersion = it.TaggregateVersion);
@@ -193,7 +193,7 @@ namespace Compze.Tessaging.Teventive.TeventStore;
 
       _sqlLayer.SetupSchemaIfDatabaseUnInitialized();
       return _sqlLayer.ListTaggregateIdsInCreationOrder()
-                              .Where(it => teventType == null || teventType.IsAssignableFrom(_typeMapper.GetType(new MappedTypeId(it.TypeId))))
+                              .Where(it => teventType == null || teventType.IsAssignableFrom(it.TypeId.Type))
                               .Select(it => it.TaggregateId);
    }
 

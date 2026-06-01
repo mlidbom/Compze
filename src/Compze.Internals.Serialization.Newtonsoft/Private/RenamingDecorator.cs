@@ -1,12 +1,12 @@
 using System.Text.RegularExpressions;
-using Compze.Abstractions.Refactoring.Naming.Internal;
+using Compze.TypeIdentifiers;
 using Compze.Internals.SystemCE;
 
 namespace Compze.Internals.Serialization.Newtonsoft.Private;
 
-class RenamingDecorator(IStructuralTypeMapper typeMapper)
+class RenamingDecorator(ITypeMap typeMap)
 {
-   readonly IStructuralTypeMapper _typeMapper = typeMapper;
+   readonly ITypeMap _typeMap = typeMap;
 
    static readonly LazyCE<Regex> FindTypeNames = new(() => new Regex("""
                                                                      "\$type"\: "([^"]*)"
@@ -18,7 +18,7 @@ class RenamingDecorator(IStructuralTypeMapper typeMapper)
    string ReplaceTypeNamesWithPersistedStrings(Match match)
    {
       var type = Type.GetType(match.Groups[1].Value);
-      var persistedString = _typeMapper.ToPersistedTypeString(type!);
+      var persistedString = _typeMap.GetId(type!).CanonicalString;
       return $"""
               "$type": "{persistedString}"
               """;
@@ -28,7 +28,7 @@ class RenamingDecorator(IStructuralTypeMapper typeMapper)
 
    string ReplacePersistedStringsWithTypeNames(Match match)
    {
-      var type = _typeMapper.FromPersistedTypeString(match.Groups[1].Value);
+      var type = _typeMap.GetId(match.Groups[1].Value).Type;
       return $"""
               "$type": "{type.AssemblyQualifiedName}"
               """;

@@ -1,4 +1,4 @@
-using Compze.Abstractions.Refactoring.Naming.Internal;
+using Compze.TypeIdentifiers;
 using Compze.Abstractions.Serialization.Internal;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.DependencyInjection;
@@ -18,9 +18,9 @@ class NewtonsoftRemotableTessageSerializer : IRemotableTessageSerializer
 
    public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<IRemotableTessageSerializer>()
-                                     .CreatedBy((IStructuralTypeMapper typeMapper) => new NewtonsoftRemotableTessageSerializer(typeMapper)));
+                                     .CreatedBy((ITypeMap typeMap) => new NewtonsoftRemotableTessageSerializer(typeMap)));
 
-   NewtonsoftRemotableTessageSerializer(IStructuralTypeMapper typeMapper) => _serializer = new RenamingSupportingJsonSerializer(RenamingAndNonPublicMembersSupportingJsonSettings.Tessaging, typeMapper);
+   NewtonsoftRemotableTessageSerializer(ITypeMap typeMap) => _serializer = new RenamingSupportingJsonSerializer(RenamingAndNonPublicMembersSupportingJsonSettings.Tessaging, typeMap);
 
    public string SerializeResponse(object response) => _serializer.Serialize(response);
    public TResponse DeserializeResponse<TResponse>(string json) => (TResponse)_serializer.Deserialize(typeof(TResponse), json);

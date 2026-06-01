@@ -1,4 +1,4 @@
-using Compze.Abstractions.Refactoring.Naming.Internal;
+using Compze.TypeIdentifiers;
 using Compze.Abstractions.Serialization.Internal;
 using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
 using Compze.Internals.Transport;
@@ -12,15 +12,15 @@ using Microsoft.AspNetCore.Mvc;
 namespace Compze.Tessaging.Hosting.AspNetCore.Private;
 #pragma warning disable CA1031 //We catch all exceptions here to route them back to the client.
 
-class TessagingController(IRemotableTessageSerializer serializer, IStructuralTypeMapper typeMapper, IInbox inbox)
-   : ControllerBase(serializer, typeMapper, inbox)
+class TessagingController(IRemotableTessageSerializer serializer, ITypeMap typeMap, IInbox inbox)
+   : ControllerBase(serializer, typeMap, inbox)
 {
    internal static void RegisterWith(IComponentRegistrar registrar) =>
       registrar.Register(Scoped.For<TessagingController>()
                                .CreatedBy((IRemotableTessageSerializer serializer,
-                                           IStructuralTypeMapper typeMapper,
+                                           ITypeMap typeMap,
                                            IInbox inbox)
-                                             => new TessagingController(serializer, typeMapper, inbox)));
+                                             => new TessagingController(serializer, typeMap, inbox)));
 
    [HttpPost(HttpConstants.Routes.Tessaging.Tevent)]
    public async Task<IActionResult> Tevent()

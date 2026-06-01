@@ -13,7 +13,7 @@ public class SetupTest : UniversalTestBase
       var host = TestingEndpointHost.Create();
       var endpoint = AccountManagementServerDomainBootstrapper.RegisterWith(host);
       await host.StartAsync().caf();
-      await using var client = await TestClient.ConnectTo(endpoint.TypermediaAddress!).caf();
+      await using var client = await TestClient.ConnectTo(endpoint.TypermediaAddress!, mapper => mapper.RegisterAccountManagementTypeMappings()).caf();
       await host.DisposeAsync().caf();
    }
 }

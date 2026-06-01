@@ -31,7 +31,7 @@ public class Startup
 
       _host.Start();
 
-      _client = TestClient.ConnectTo(_endpoint.TypermediaAddress!).GetAwaiter().GetResult();
+      _client = TestClient.ConnectTo(_endpoint.TypermediaAddress!, mapper => mapper.RegisterAccountManagementTypeMappings()).GetAwaiter().GetResult();
       services.AddHttpContextAccessor();
       services.AddScoped(_ => _client.Navigator);
    }

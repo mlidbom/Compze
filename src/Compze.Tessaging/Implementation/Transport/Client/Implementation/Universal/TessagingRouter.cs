@@ -1,4 +1,4 @@
-using Compze.Abstractions.Refactoring.Naming.Internal;
+using Compze.TypeIdentifiers;
 using Compze.Abstractions.Serialization.Internal;
 using Compze.Abstractions.Tessaging.Hosting.Public;
 using Compze.Abstractions.Tessaging.Public;
@@ -27,12 +27,12 @@ class TessagingRouter : ITessagingRouter, IDisposable
 {
    public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<ITessagingRouter>().CreatedBy(
-            (ITessagesInFlightTracker tessagesInFlightTracker, IStructuralTypeMapper typeMapper, IRemotableTessageSerializer serializer, ITransportMessagePoster transportMessagePoster, IInfrastructureQueryTransport infrastructureQueryTransport, Outbox.Outbox.ITessageStorage tessageStorage, ITaskRunner taskRunner, IBackgroundExceptionReporter exceptionReporter)
-               => new TessagingRouter(tessagesInFlightTracker, typeMapper, serializer, transportMessagePoster, infrastructureQueryTransport, tessageStorage, taskRunner, exceptionReporter)));
+            (ITessagesInFlightTracker tessagesInFlightTracker, ITypeMap typeMap, IRemotableTessageSerializer serializer, ITransportMessagePoster transportMessagePoster, IInfrastructureQueryTransport infrastructureQueryTransport, Outbox.Outbox.ITessageStorage tessageStorage, ITaskRunner taskRunner, IBackgroundExceptionReporter exceptionReporter)
+               => new TessagingRouter(tessagesInFlightTracker, typeMap, serializer, transportMessagePoster, infrastructureQueryTransport, tessageStorage, taskRunner, exceptionReporter)));
 
    readonly IMonitor _monitor = IMonitor.New();
    readonly ITessagesInFlightTracker _tessagesInFlightTracker;
-   readonly IStructuralTypeMapper _typeMapper;
+   readonly ITypeMap _typeMap;
    readonly IRemotableTessageSerializer _serializer;
    readonly ITransportMessagePoster _transportMessagePoster;
    readonly IInfrastructureQueryTransport _infrastructureQueryTransport;
@@ -48,10 +48,10 @@ class TessagingRouter : ITessagingRouter, IDisposable
    readonly List<(Type TeventType, TessagingConnection Connection)> _teventSubscriberRoutes = [];
    readonly Dictionary<Type, IReadOnlyList<TessagingConnection>> _teventSubscriberRouteCache = new();
 
-   TessagingRouter(ITessagesInFlightTracker tessagesInFlightTracker, IStructuralTypeMapper typeMapper, IRemotableTessageSerializer serializer, ITransportMessagePoster transportMessagePoster, IInfrastructureQueryTransport infrastructureQueryTransport, Outbox.Outbox.ITessageStorage tessageStorage, ITaskRunner taskRunner, IBackgroundExceptionReporter exceptionReporter)
+   TessagingRouter(ITessagesInFlightTracker tessagesInFlightTracker, ITypeMap typeMap, IRemotableTessageSerializer serializer, ITransportMessagePoster transportMessagePoster, IInfrastructureQueryTransport infrastructureQueryTransport, Outbox.Outbox.ITessageStorage tessageStorage, ITaskRunner taskRunner, IBackgroundExceptionReporter exceptionReporter)
    {
       _tessagesInFlightTracker = tessagesInFlightTracker;
-      _typeMapper = typeMapper;
+      _typeMap = typeMap;
       _serializer = serializer;
       _transportMessagePoster = transportMessagePoster;
       _infrastructureQueryTransport = infrastructureQueryTransport;
@@ -63,7 +63,7 @@ class TessagingRouter : ITessagingRouter, IDisposable
    public async Task ConnectAsync(EndPointAddress remoteEndpointAddress)
    {
 #pragma warning disable CA2000//We are passing this disposable into a collection that we track disposal for
-      var connection = new TessagingConnection(_tessagesInFlightTracker, remoteEndpointAddress, _typeMapper, _serializer, _transportMessagePoster, _infrastructureQueryTransport, _tessageStorage, _taskRunner, _exceptionReporter);
+      var connection = new TessagingConnection(_tessagesInFlightTracker, remoteEndpointAddress, _typeMap, _serializer, _transportMessagePoster, _infrastructureQueryTransport, _tessageStorage, _taskRunner, _exceptionReporter);
 #pragma warning restore CA2000
 
       await connection.InitAsync().caf();
@@ -92,7 +92,7 @@ class TessagingRouter : ITessagingRouter, IDisposable
    {
       foreach(var typeIdString in handledTypeIdStrings)
       {
-         var tessageType = _typeMapper.FromPersistedTypeString(typeIdString);
+         var tessageType = _typeMap.GetId(typeIdString).Type;
 
          if(tessageType.Is<IExactlyOnceTevent>())
          {

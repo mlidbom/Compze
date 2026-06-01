@@ -1,5 +1,5 @@
 using Compze.Abstractions.Public;
-using Compze.Abstractions.Refactoring.Naming.Internal;
+using Compze.TypeIdentifiers;
 using Compze.Abstractions.Serialization.Internal;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Contracts;
@@ -13,7 +13,7 @@ public static class TransportTessage
       internal readonly TessageId TessageId;
       readonly IRemotableTessageSerializer _serializer;
       internal readonly string Body;
-      internal readonly StructuralTypeId TessageTypeId;
+      internal readonly TypeId TessageTypeId;
       readonly Type _tessageType;
       internal readonly TransportTessageType TessageTypeEnum;
 
@@ -31,22 +31,22 @@ public static class TransportTessage
          return _tessage;
       }
 
-      public InComing(string body, StructuralTypeId tessageTypeId, TessageId tessageId, IStructuralTypeMapper typeMapper, IRemotableTessageSerializer serializer)
+      public InComing(string body, TypeId tessageTypeId, TessageId tessageId, ITypeMap typeMap, IRemotableTessageSerializer serializer)
       {
          _serializer = serializer;
          Body = body;
          TessageTypeId = tessageTypeId;
-         _tessageType = typeMapper.GetType(tessageTypeId);
+         _tessageType = tessageTypeId.Type;
          TessageTypeEnum = _tessageType.TransportTessageType();
          TessageId = tessageId;
       }
 
-      public InComing(string body, string persistedTypeString, TessageId tessageId, IStructuralTypeMapper typeMapper, IRemotableTessageSerializer serializer)
+      public InComing(string body, string persistedTypeString, TessageId tessageId, ITypeMap typeMap, IRemotableTessageSerializer serializer)
       {
          _serializer = serializer;
          Body = body;
-         _tessageType = typeMapper.FromPersistedTypeString(persistedTypeString);
-         TessageTypeId = typeMapper.GetId(_tessageType);
+         TessageTypeId = typeMap.GetId(persistedTypeString);
+         _tessageType = TessageTypeId.Type;
          TessageTypeEnum = _tessageType.TransportTessageType();
          TessageId = tessageId;
       }
@@ -57,17 +57,17 @@ public static class TransportTessage
       internal IRemotableTessage Tessage { get; }
       internal readonly TessageId TessageId;
 
-      internal readonly StructuralTypeId Type;
+      internal readonly TypeId Type;
       internal readonly string Body;
       internal readonly TransportTessageType TessageTypeEnum;
 
-      internal static OutGoing Create(IRemotableTessage tessage, IStructuralTypeMapper typeMapper, IRemotableTessageSerializer serializer)
+      internal static OutGoing Create(IRemotableTessage tessage, ITypeMap typeMap, IRemotableTessageSerializer serializer)
       {
          var body = serializer.SerializeTessage(tessage);
-         return new OutGoing(typeMapper.GetId(tessage.GetType()), tessage.GetType(), body, tessage);
+         return new OutGoing(typeMap.GetId(tessage.GetType()), tessage.GetType(), body, tessage);
       }
 
-      OutGoing(StructuralTypeId typeId, Type type, string body, IRemotableTessage tessage)
+      OutGoing(TypeId typeId, Type type, string body, IRemotableTessage tessage)
       {
          Tessage = tessage;
          Type = typeId;

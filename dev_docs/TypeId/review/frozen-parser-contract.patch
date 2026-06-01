@@ -1,0 +1,218 @@
+diff --git a/test/Compze.TypeIdentifiers.Specifications/Parser_normalization_and_classification_contract.cs b/test/Compze.TypeIdentifiers.Specifications/Parser_normalization_and_classification_contract.cs
+new file mode 100644
+index 000000000..4898a40b1
+--- /dev/null
++++ b/test/Compze.TypeIdentifiers.Specifications/Parser_normalization_and_classification_contract.cs
+@@ -0,0 +1,87 @@
++using Compze.TypeIdentifiers;
++using Compze.Must;
++using Compze.xUnitBDD;
++using static Compze.Must.MustActions;
++
++// ReSharper disable InconsistentNaming
++#pragma warning disable CA1052
++
++namespace Compze.TypeIdentifiers.Specifications;
++
++/// <summary>
++/// The frozen behavioural contract for the parser rework: normalization-on-read and reserved-'0'-authoritative
++/// mapped/named classification. Any implementation (regex-evolved or tokenizer) must satisfy exactly these.
++/// </summary>
++public class Parser_normalization_and_classification_contract
++{
++   const string CoreLib = "System.Private.CoreLib";
++
++   // §1.6: assembly Version/Culture/PublicKeyToken qualifiers are stripped on read, so the canonical string is
++   // the short-name form. This makes identity stable across runtime upgrades (the Version changes, identity
++   // does not) and makes the same type — arriving as a full AQN or a short name — produce one canonical string.
++   public class Normalizing_assembly_qualifiers_on_read : Parser_normalization_and_classification_contract
++   {
++      [XF] public void a_full_assembly_qualified_name_becomes_the_short_name()
++         => TypeIdentifier.Parse(typeof(string).AssemblyQualifiedName!).StringRepresentation
++               .Must().Be($"System.String, {CoreLib}");
++
++      [XF] public void the_canonical_string_carries_no_version_qualifier()
++         => TypeIdentifier.Parse(typeof(List<string>).AssemblyQualifiedName!).StringRepresentation
++               .Must().NotContain("Version=");
++
++      [XF] public void a_different_runtime_version_yields_the_same_canonical_string()
++         => TypeIdentifier.Parse("System.String, System.Private.CoreLib, Version=99.9.9.9, Culture=neutral, PublicKeyToken=7cec85d7bea7798e").StringRepresentation
++               .Must().Be($"System.String, {CoreLib}");
++
++      [XF] public void the_short_form_and_the_full_form_collapse_to_one_canonical_string()
++         => TypeIdentifier.Parse($"System.String, {CoreLib}").StringRepresentation
++               .Must().Be(TypeIdentifier.Parse(typeof(string).AssemblyQualifiedName!).StringRepresentation);
++
++      [XF] public void qualifiers_are_stripped_from_nested_generic_arguments_too()
++         => TypeIdentifier.Parse(typeof(List<string>).AssemblyQualifiedName!).StringRepresentation
++               .Must().Be($"System.Collections.Generic.List`1[[System.String, {CoreLib}]], {CoreLib}");
++   }
++
++   // §1.4: the reserved literal '0' in the assembly position is THE discriminator for a mapped component —
++   // not "the type name happens to parse as a GUID". Keying on the GUID-shape alone silently discards a real
++   // assembly and corrupts data.
++   public class Classifying_a_component_by_the_reserved_zero_field : Parser_normalization_and_classification_contract
++   {
++      const string Guid1 = "e4a8c9f2-7b3d-4f1a-9c6e-2d8b5a0f3e7c";
++
++      [XF] public void a_dashed_guid_in_the_reserved_zero_assembly_is_mapped()
++         => (TypeIdentifier.Parse($"{Guid1}, 0") is MappedTypeIdentifier).Must().BeTrue();
++
++      [XF] public void a_guid_shaped_name_in_a_real_assembly_is_named_not_mapped()
++         => (TypeIdentifier.Parse($"{Guid1}, MyRealAssembly") is MappedTypeIdentifier).Must().BeFalse();
++
++      [XF] public void a_guid_shaped_name_in_a_real_assembly_keeps_its_assembly()
++         => TypeIdentifier.Parse($"{Guid1}, MyRealAssembly").StringRepresentation
++               .Must().Be($"{Guid1}, MyRealAssembly");
++
++      [XF] public void a_non_guid_name_in_the_reserved_zero_assembly_is_rejected()
++         => Invoking(() => TypeIdentifier.Parse("System.String, 0")).Must().Throw<FormatException>();
++
++      [XF] public void a_dashless_guid_in_the_reserved_zero_assembly_is_rejected_as_non_canonical()
++         => Invoking(() => TypeIdentifier.Parse("e4a8c9f27b3d4f1a9c6e2d8b5a0f3e7c, 0")).Must().Throw<FormatException>();
++   }
++
++   // Regression: a legal CLR type whose FullName is exactly 32 hex chars must survive the library's own
++   // serialize -> resolve round-trip. Under the old classification it self-corrupted into "GUID, 0".
++   public class A_type_whose_name_is_guid_shaped : Parser_normalization_and_classification_contract
++   {
++      readonly TypeMapper _mapper = new();
++      public A_type_whose_name_is_guid_shaped()
++         => _mapper.UseStableNameStrategyForAssemblyContaining<deadbeefdeadbeefdeadbeefdeadbeef>();
++
++      [XF] public void persists_as_a_named_component_keeping_its_assembly()
++         => _mapper.ToPersistedTypeString(typeof(deadbeefdeadbeefdeadbeefdeadbeef))
++               .Must().Contain(typeof(deadbeefdeadbeefdeadbeefdeadbeef).Assembly.GetName().Name!);
++
++      [XF] public void round_trips_back_to_the_same_type()
++      {
++         var persisted = _mapper.ToPersistedTypeString(typeof(deadbeefdeadbeefdeadbeefdeadbeef));
++         _mapper.FromPersistedTypeString(persisted).Must().Be(typeof(deadbeefdeadbeefdeadbeefdeadbeef));
++      }
++   }
++}
+diff --git a/test/Compze.TypeIdentifiers.Specifications/TypeNameMapper_specification.cs b/test/Compze.TypeIdentifiers.Specifications/TypeNameMapper_specification.cs
+index 76e15d4c5..5c34fcc77 100644
+--- a/test/Compze.TypeIdentifiers.Specifications/TypeNameMapper_specification.cs
++++ b/test/Compze.TypeIdentifiers.Specifications/TypeNameMapper_specification.cs
+@@ -74,8 +74,8 @@ public class TypeNameMapper_specification
+       [XF] public void returns_StableLeafTypeIdentifier()
+          => (_mapper.GetId(typeof(string)) is StableLeafTypeIdentifier).Must().BeTrue();
+ 
+-      [XF] public void string_representation_is_assembly_qualified_name()
+-         => _mapper.GetId(typeof(string)).StringRepresentation.Must().Be(typeof(string).AssemblyQualifiedName!);
++      [XF] public void string_representation_is_the_normalized_short_name()
++         => _mapper.GetId(typeof(string)).StringRepresentation.Must().Be("System.String, System.Private.CoreLib");
+    }
+ 
+    public class GetId_for_stable_generic : TypeNameMapper_specification
+@@ -85,8 +85,8 @@ public class TypeNameMapper_specification
+       [XF] public void returns_StableGenericTypeIdentifier_for_List_of_string()
+          => (_mapper.GetId(typeof(List<string>)) is StableGenericTypeIdentifier).Must().BeTrue();
+ 
+-      [XF] public void string_representation_matches_assembly_qualified_name()
+-         => _mapper.GetId(typeof(List<string>)).StringRepresentation.Must().Be(typeof(List<string>).AssemblyQualifiedName!);
++      [XF] public void string_representation_is_the_normalized_short_name()
++         => _mapper.GetId(typeof(List<string>)).StringRepresentation.Must().Be("System.Collections.Generic.List`1[[System.String, System.Private.CoreLib]], System.Private.CoreLib");
+    }
+ 
+    public class GetId_for_generic_with_mapped_argument : TypeNameMapper_specification
+diff --git a/test/Compze.TypeIdentifiers.Specifications/TypeNameParser_specification.cs b/test/Compze.TypeIdentifiers.Specifications/TypeNameParser_specification.cs
+index 883ac15c1..42c5a6d0c 100644
+--- a/test/Compze.TypeIdentifiers.Specifications/TypeNameParser_specification.cs
++++ b/test/Compze.TypeIdentifiers.Specifications/TypeNameParser_specification.cs
+@@ -299,54 +299,40 @@ public class TypeNameParser_specification
+                .Must().Be(MappedGenericString);
+    }
+ 
+-   public class round_tripping_real_dotnet_types : TypeNameParser_specification
++   // After normalization-on-read, a real .NET type's full AssemblyQualifiedName normalizes to its SHORT-name
++   // canonical string (Version/Culture/PublicKeyToken stripped), so it no longer round-trips byte-for-byte.
++   public class normalizing_real_dotnet_types : TypeNameParser_specification
+    {
+-      [XF] public void round_trips_System_String()
+-      {
+-         var aqn = typeof(string).AssemblyQualifiedName!;
+-         Parse(aqn).StringRepresentation.Must().Be(aqn);
+-      }
++      [XF] public void normalizes_System_String()
++         => Parse(typeof(string).AssemblyQualifiedName!).StringRepresentation
++               .Must().Be("System.String, System.Private.CoreLib");
+ 
+-      [XF] public void round_trips_List_of_string()
+-      {
+-         var aqn = typeof(List<string>).AssemblyQualifiedName!;
+-         Parse(aqn).StringRepresentation.Must().Be(aqn);
+-      }
++      [XF] public void normalizes_List_of_string()
++         => Parse(typeof(List<string>).AssemblyQualifiedName!).StringRepresentation
++               .Must().Be("System.Collections.Generic.List`1[[System.String, System.Private.CoreLib]], System.Private.CoreLib");
+ 
+-      [XF] public void round_trips_Dictionary_of_string_int()
+-      {
+-         var aqn = typeof(Dictionary<string, int>).AssemblyQualifiedName!;
+-         Parse(aqn).StringRepresentation.Must().Be(aqn);
+-      }
++      [XF] public void normalizes_Dictionary_of_string_int()
++         => Parse(typeof(Dictionary<string, int>).AssemblyQualifiedName!).StringRepresentation
++               .Must().Be("System.Collections.Generic.Dictionary`2[[System.String, System.Private.CoreLib],[System.Int32, System.Private.CoreLib]], System.Private.CoreLib");
+ 
+-      [XF] public void round_trips_array_of_int()
+-      {
+-         var aqn = typeof(int[]).AssemblyQualifiedName!;
+-         Parse(aqn).StringRepresentation.Must().Be(aqn);
+-      }
++      [XF] public void normalizes_array_of_int()
++         => Parse(typeof(int[]).AssemblyQualifiedName!).StringRepresentation
++               .Must().Be("System.Int32[], System.Private.CoreLib");
+ 
+-      [XF] public void round_trips_Dictionary_of_string_List_of_int()
+-      {
+-         var aqn = typeof(Dictionary<string, List<int>>).AssemblyQualifiedName!;
+-         Parse(aqn).StringRepresentation.Must().Be(aqn);
+-      }
++      [XF] public void normalizes_Dictionary_of_string_List_of_int()
++         => Parse(typeof(Dictionary<string, List<int>>).AssemblyQualifiedName!).StringRepresentation
++               .Must().Be("System.Collections.Generic.Dictionary`2[[System.String, System.Private.CoreLib],[System.Collections.Generic.List`1[[System.Int32, System.Private.CoreLib]], System.Private.CoreLib]], System.Private.CoreLib");
+ 
+-      [XF] public void round_trips_array_of_List_of_string()
+-      {
+-         var aqn = typeof(List<string>[]).AssemblyQualifiedName!;
+-         Parse(aqn).StringRepresentation.Must().Be(aqn);
+-      }
++      [XF] public void normalizes_array_of_List_of_string()
++         => Parse(typeof(List<string>[]).AssemblyQualifiedName!).StringRepresentation
++               .Must().Be("System.Collections.Generic.List`1[[System.String, System.Private.CoreLib]][], System.Private.CoreLib");
+ 
+-      [XF] public void round_trips_List_of_int_array()
+-      {
+-         var aqn = typeof(List<int[]>).AssemblyQualifiedName!;
+-         Parse(aqn).StringRepresentation.Must().Be(aqn);
+-      }
++      [XF] public void normalizes_List_of_int_array()
++         => Parse(typeof(List<int[]>).AssemblyQualifiedName!).StringRepresentation
++               .Must().Be("System.Collections.Generic.List`1[[System.Int32[], System.Private.CoreLib]], System.Private.CoreLib");
+ 
+-      [XF] public void round_trips_multidimensional_array()
+-      {
+-         var aqn = typeof(int[,]).AssemblyQualifiedName!;
+-         Parse(aqn).StringRepresentation.Must().Be(aqn);
+-      }
++      [XF] public void normalizes_multidimensional_array()
++         => Parse(typeof(int[,]).AssemblyQualifiedName!).StringRepresentation
++               .Must().Be("System.Int32[,], System.Private.CoreLib");
+    }
+ }
+diff --git a/test/Compze.TypeIdentifiers.Specifications/_ParserContractGlobalTypes.cs b/test/Compze.TypeIdentifiers.Specifications/_ParserContractGlobalTypes.cs
+new file mode 100644
+index 000000000..ec18d3015
+--- /dev/null
++++ b/test/Compze.TypeIdentifiers.Specifications/_ParserContractGlobalTypes.cs
+@@ -0,0 +1,7 @@
++// Global-namespace test type whose FullName is exactly 32 hex chars, so Guid.TryParse(FullName) succeeds.
++// Used to pin that a GUID-shaped CLR type name does NOT get misclassified as a mapped "GUID, 0" component.
++// Must live outside any namespace so its FullName has no dotted prefix.
++#pragma warning disable CA1050 // intentionally in the global namespace
++#pragma warning disable CS8981 // intentionally lowercase/hex identifier
++
++public class deadbeefdeadbeefdeadbeefdeadbeef;

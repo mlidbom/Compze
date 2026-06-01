@@ -26,6 +26,8 @@ public abstract class PerformanceTestBase : UniversalTestBase
          new EndpointId(Guid.Parse("DDD0A67C-D2A2-4197-9AF8-38B6AEDF8FA7")),
          builder =>
          {
+            builder.TypeMapper.RegisterPerformanceTestTypeMappings();
+
             builder.RegisterTypermediaHandlers()
                    .ForTuery((MyRemoteTuery _) => new MyTueryResult())
                    .ForTuery((MyLocalStrictlyLocalTuery _) => new MyTueryResult());
@@ -35,7 +37,7 @@ public abstract class PerformanceTestBase : UniversalTestBase
    protected override async Task InitializeAsyncInternal()
    {
       await Host.StartAsync().caf();
-      Client = await TestClient.ConnectTo(ServerEndpoint.TypermediaAddress!).caf();
+      Client = await TestClient.ConnectTo(ServerEndpoint.TypermediaAddress!, mapper => mapper.RegisterPerformanceTestTypeMappings()).caf();
    }
 
    protected override async Task DisposeAsyncInternal()

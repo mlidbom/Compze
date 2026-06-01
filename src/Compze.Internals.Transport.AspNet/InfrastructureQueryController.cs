@@ -1,5 +1,5 @@
 using Compze.Contracts;
-using Compze.Abstractions.Refactoring.Naming.Internal;
+using Compze.TypeIdentifiers;
 using Compze.Abstractions.Serialization.Internal;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
@@ -15,23 +15,23 @@ namespace Compze.Internals.Transport.AspNet;
 public class InfrastructureQueryController : Controller
 {
    readonly IRemotableTessageSerializer _serializer;
-   readonly IStructuralTypeMapper _typeMapper;
+   readonly ITypeMap _typeMap;
    readonly InfrastructureQueryExecutor _executor;
 
    public static void RegisterWith(IComponentRegistrar registrar) =>
       registrar.Register(
          Scoped.For<InfrastructureQueryController>()
                .CreatedBy((IRemotableTessageSerializer serializer,
-                           IStructuralTypeMapper typeMapper,
+                           ITypeMap typeMap,
                            InfrastructureQueryExecutor executor)
-                             => new InfrastructureQueryController(serializer, typeMapper, executor)));
+                             => new InfrastructureQueryController(serializer, typeMap, executor)));
 
    InfrastructureQueryController(IRemotableTessageSerializer serializer,
-                                 IStructuralTypeMapper typeMapper,
+                                 ITypeMap typeMap,
                                  InfrastructureQueryExecutor executor)
    {
       _serializer = serializer;
-      _typeMapper = typeMapper;
+      _typeMap = typeMap;
       _executor = executor;
    }
 
@@ -39,7 +39,7 @@ public class InfrastructureQueryController : Controller
    public async Task<IActionResult> Query()
    {
       var typeIdStr = Request.Headers[HttpConstants.Headers.PayLoadTypeId][0]._assert().NotNull();
-      var queryType = _typeMapper.FromPersistedTypeString(typeIdStr);
+      var queryType = _typeMap.GetId(typeIdStr).Type;
 
       using var reader = new StreamReader(HttpContext.Request.Body);
       var json = await reader.ReadToEndAsync().caf();

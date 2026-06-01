@@ -1,4 +1,4 @@
-using Compze.Abstractions.Refactoring.Naming.Internal;
+using Compze.TypeIdentifiers;
 using Compze.Abstractions.Tessaging.Hosting.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Internals.Transport;
@@ -19,11 +19,11 @@ public class TypermediaEndpointInformation
 #pragma warning restore CS8618
    // ReSharper restore MemberCanBeInternal
 
-   internal TypermediaEndpointInformation(IEnumerable<StructuralTypeId> handledTypermediaTypeIds, EndpointConfiguration configuration)
+   internal TypermediaEndpointInformation(IEnumerable<TypeId> handledTypermediaTypeIds, EndpointConfiguration configuration)
    {
       Id = configuration.Id;
       Name = configuration.Name;
-      HandledTypermediaTypes = handledTypermediaTypeIds.Select(id => id.StringRepresentation).ToHashSet();
+      HandledTypermediaTypes = handledTypermediaTypeIds.Select(id => id.CanonicalString).ToHashSet();
    }
 
    // ReSharper disable MemberCanBeInternal — Serialized across assemblies via Newtonsoft reflection

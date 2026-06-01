@@ -1,4 +1,4 @@
-using Compze.Abstractions.Refactoring.Naming.Internal;
+using Compze.TypeIdentifiers;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 
@@ -8,5 +8,5 @@ public static class TypermediaHandlerRegistryRegistrar
 {
    public static IComponentRegistrar TypermediaHandlerRegistry(this IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<ITypermediaHandlerRegistrar, ITypermediaHandlerRegistry, TypermediaHandlerRegistry>()
-                                     .CreatedBy((IStructuralTypeMapper typeMapper) => new TypermediaHandlerRegistry(typeMapper)));
+                                     .CreatedBy((ITypeMap typeMap) => new TypermediaHandlerRegistry(typeMap)));
 }

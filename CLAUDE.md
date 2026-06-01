@@ -1,5 +1,7 @@
 # Compze Repository — Claude Code Instructions
 
+> **Greenfield — there is no production.** Zero deployed applications, no persisted data, and **no backward-compatibility constraints**. Any format, identifier, schema, or behavior may change freely — optimize for the best long-term design, never hedge for migration safety. (Code must still build and the full test suite must still pass.)
+
 ## Rules — Follow These First
 
 - **Don't code until instructed to.** Standard workflow is questions back and forth coming up with what to do. Then the go-ahead to code is given. Questions are not instructions to start coding.

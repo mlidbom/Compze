@@ -30,7 +30,7 @@ class SomeTevent : TaggregateTevent, ISomeTevent
 
 public class TeventStoreTests : UniversalTestBase
 {
-   readonly IDependencyInjectionContainer _container = TestEnv.DIContainer.SetupTestingContainer();
+   readonly IDependencyInjectionContainer _container = TestEnv.DIContainer.SetupTestingContainer(mapper => mapper.RegisterIntegrationTestTypeMappings());
 
    protected override void DisposeInternal() => _container.Dispose();
 
@@ -163,7 +163,7 @@ public class TeventStoreTests : UniversalTestBase
    [PCT]
    public void ShouldCacheTeventsBetweenInstancesTransaction()
    {
-      using var container = TestEnv.DIContainer.SetupTestingContainer();
+      using var container = TestEnv.DIContainer.SetupTestingContainer(mapper => mapper.RegisterIntegrationTestTypeMappings());
 
       var user = new User();
       {

@@ -1,5 +1,5 @@
 using Compze.Abstractions.Public;
-using Compze.Abstractions.Refactoring.Naming.Internal;
+using Compze.TypeIdentifiers;
 using Compze.Abstractions.Serialization.Internal;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Core.Tessaging.Transport.Internal;
@@ -20,17 +20,17 @@ class HttpTypermediaTransport : ITypermediaTransport
 {
    public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<ITypermediaTransport>()
-                                     .CreatedBy((IHttpClientFactoryCE factory, IRemotableTessageSerializer serializer, IStructuralTypeMapper typeMapper) => new HttpTypermediaTransport(factory, serializer, typeMapper)));
+                                     .CreatedBy((IHttpClientFactoryCE factory, IRemotableTessageSerializer serializer, ITypeMap typeMap) => new HttpTypermediaTransport(factory, serializer, typeMap)));
 
    readonly IHttpClientFactoryCE _httpClientFactory;
    readonly IRemotableTessageSerializer _serializer;
-   readonly IStructuralTypeMapper _typeMapper;
+   readonly ITypeMap _typeMap;
 
-   HttpTypermediaTransport(IHttpClientFactoryCE httpClientFactory, IRemotableTessageSerializer serializer, IStructuralTypeMapper typeMapper)
+   HttpTypermediaTransport(IHttpClientFactoryCE httpClientFactory, IRemotableTessageSerializer serializer, ITypeMap typeMap)
    {
       _httpClientFactory = httpClientFactory;
       _serializer = serializer;
-      _typeMapper = typeMapper;
+      _typeMap = typeMap;
    }
 
    public async Task<TResult> GetAsync<TResult>(IRemotableTuery<TResult> tuery, EndPointAddress address)
@@ -56,12 +56,12 @@ class HttpTypermediaTransport : ITypermediaTransport
    {
       var requestUri = new Uri(address.Uri, route);
       var body = _serializer.SerializeTessage(tessage);
-      var typeId = _typeMapper.GetId(tessage.GetType());
+      var typeId = _typeMap.GetId(tessage.GetType());
 
       using var httpClient = _httpClientFactory.CreateClient();
       using var content = new StringContent(body);
       content.Headers.Add(HttpConstants.Headers.TessageId, ((tessage as IAtMostOnceTessage)?.Id ?? new TessageId()).ToString());
-      content.Headers.Add(HttpConstants.Headers.PayLoadTypeId, typeId.StringRepresentation);
+      content.Headers.Add(HttpConstants.Headers.PayLoadTypeId, typeId.CanonicalString);
 
       var response = await httpClient.PostAsync(requestUri, content).caf();
       if(!response.IsSuccessStatusCode)

@@ -1,4 +1,4 @@
-using Compze.Abstractions.Refactoring.Naming.Internal;
+using Compze.TypeIdentifiers;
 using Compze.Abstractions.Serialization.Internal;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
@@ -15,7 +15,7 @@ class NewtonsoftDocumentDbSerializer : RenamingSupportingJsonSerializer, IDocume
 {
    public static IComponentRegistrar RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<IDocumentDbSerializer>()
-                                     .CreatedBy((IStructuralTypeMapper typeMapper) => new NewtonsoftDocumentDbSerializer(typeMapper)));
+                                     .CreatedBy((ITypeMap typeMap) => new NewtonsoftDocumentDbSerializer(typeMap)));
 
-   NewtonsoftDocumentDbSerializer(IStructuralTypeMapper typeMapper) : base(RenamingAndNonPublicMembersSupportingJsonSettings.DocumentDb, typeMapper) {}
+   NewtonsoftDocumentDbSerializer(ITypeMap typeMap) : base(RenamingAndNonPublicMembersSupportingJsonSettings.DocumentDb, typeMap) {}
 }

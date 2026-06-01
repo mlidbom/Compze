@@ -1,4 +1,4 @@
-using Compze.Abstractions.Refactoring.Naming.Internal;
+using Compze.TypeIdentifiers;
 using Compze.Abstractions.Tessaging.Hosting.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Core.Tessaging.Transport.Internal;
@@ -18,11 +18,11 @@ public class EndpointInformation
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
    // ReSharper restore MemberCanBeInternal
 
-   public EndpointInformation(IEnumerable<StructuralTypeId> handledRemoteTessageTypeIds, EndpointConfiguration configuration)
+   public EndpointInformation(IEnumerable<TypeId> handledRemoteTessageTypeIds, EndpointConfiguration configuration)
    {
       Id = configuration.Id;
       Name = configuration.Name;
-      HandledTessageTypes = handledRemoteTessageTypeIds.Select(id => id.StringRepresentation).ToHashSet();
+      HandledTessageTypes = handledRemoteTessageTypeIds.Select(id => id.CanonicalString).ToHashSet();
    }
 
    // ReSharper disable MemberCanBeInternal — Serialized across assemblies via Newtonsoft reflection

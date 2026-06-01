@@ -1,4 +1,4 @@
-using Compze.Abstractions.Refactoring.Naming.Internal;
+using Compze.TypeIdentifiers;
 using Compze.Abstractions.Serialization.Internal;
 using Newtonsoft.Json;
 
@@ -9,10 +9,10 @@ class RenamingSupportingJsonSerializer : IJsonSerializer
    readonly JsonSerializerSettings _jsonSettings;
    readonly RenamingDecorator _renamingDecorator;
 
-   protected internal RenamingSupportingJsonSerializer(JsonSerializerSettings jsonSettings, IStructuralTypeMapper typeMapper)
+   protected internal RenamingSupportingJsonSerializer(JsonSerializerSettings jsonSettings, ITypeMap typeMap)
    {
       _jsonSettings = jsonSettings;
-      _renamingDecorator = new RenamingDecorator(typeMapper);
+      _renamingDecorator = new RenamingDecorator(typeMap);
    }
 
    public string Serialize(object instance)

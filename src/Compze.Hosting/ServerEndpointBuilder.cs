@@ -1,6 +1,5 @@
 using Compze.Abstractions.Configuration.Internal;
-using Compze.Abstractions.Refactoring.Naming.Internal;
-using Compze.Abstractions.Refactoring.Naming.Internal.Implementation;
+using Compze.TypeIdentifiers;
 using Compze.Abstractions.Tessaging.Hosting.Public;
 using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Tessaging.Abstractions.Tessaging.Hosting.Public;
@@ -42,7 +41,8 @@ class ServerEndpointBuilder : IEndpointBuilder
    readonly TypermediaHandlerRegistry _typermediaRegistry;
    readonly IEndpointHost _host;
    public EndpointConfiguration Configuration { get; }
-   public IStructuralTypeMapper TypeMapper { get; }
+   readonly TypeMapper _typeMapper;
+   public ITypeMapper TypeMapper => _typeMapper;
 
    public TessageHandlerRegistrarWithDependencyInjectionSupport RegisterTessagingHandlers { get; }
    public TypermediaHandlerRegistrarWithDependencyInjectionSupport RegisterTypermediaHandlers { get; }
@@ -76,21 +76,22 @@ class ServerEndpointBuilder : IEndpointBuilder
 
       Configuration = configuration;
 
-TypeMapper = new StructuralTypeMapper();
-      _tessagingRegistry = new TessageHandlerRegistry(TypeMapper);
-      _typermediaRegistry = new TypermediaHandlerRegistry(TypeMapper);
+      _typeMapper = new TypeMapper();
+      _tessagingRegistry = new TessageHandlerRegistry(_typeMapper);
+      _typermediaRegistry = new TypermediaHandlerRegistry(_typeMapper);
       RegisterTessagingHandlers = new TessageHandlerRegistrarWithDependencyInjectionSupport(_tessagingRegistry);
       RegisterTypermediaHandlers = new TypermediaHandlerRegistrarWithDependencyInjectionSupport(_typermediaRegistry);
    }
 
    void SetupContainer()
    {
-((StructuralTypeMapper)TypeMapper).MapTypesFromAllLoadedAssembliesWithTypeMappingsAttribute();
+      _typeMapper.MapCompzeFrameworkTypes();
 
       var register = Registrar;
       //Universal stuff here
       register.JSonAppConfigFileConfigurationParameterProvider();
-      register.Register(Singleton.For<IStructuralTypeMapper>().Instance(TypeMapper));
+      register.Register(Singleton.For<ITypeMapper>().Instance(_typeMapper));
+      register.Register(Singleton.For<ITypeMap>().Instance(_typeMapper));
 
       //Only endpoint stuff after here
       //todo: Find cleaner way of doing this.

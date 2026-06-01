@@ -1,4 +1,4 @@
-using Compze.Abstractions.Refactoring.Naming.Internal;
+using Compze.TypeIdentifiers;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Core.Tessaging.Teventive.Public;
 using Compze.DependencyInjection;
@@ -15,5 +15,5 @@ public interface ITessageHandlerRegistry
 
     void DispatchTevent(ITevent tevent, IScopeResolver scopeResolver);
 
-    ISet<StructuralTypeId> HandledRemoteTessageTypeIds();
+    ISet<TypeId> HandledRemoteTessageTypeIds();
 }

@@ -62,14 +62,15 @@ public class DocumentDBSession_DocumentKeyTests : UniversalTestBase
    }
 
    [XF]
-   public void TwoInstancesWithInheritingTypesAndTheSameIdAreEqual()
+   public void TwoInstancesWithInheritingTypesAndTheSameIdAreNotEqual()
    {
+      // A document is keyed by its exact concrete type, so a base-typed key and a derived-typed key with the
+      // same id identify two distinct documents.
       var lhs = new DocumentDbSession.DocumentKey<Base>("theId");
       var rhs = new DocumentDbSession.DocumentKey<Inheritor>("theId");
 
-      lhs.Must().Be(rhs);
-      rhs.Must().Be(lhs);
-      lhs.GetHashCode().Must().Be(rhs.GetHashCode());
+      lhs.Must().NotBe(rhs);
+      rhs.Must().NotBe(lhs);
    }
 
    [XF]

@@ -562,7 +562,7 @@ public class DocumentDbTests : DocumentDbTestsBase
 
 
     [PCT]
-    public void GetHandlesSubTyping()
+    public void GetReturnsOnlyDocumentsStoredAsTheExactQueriedTypeNotSubtypes()
     {
         var user1 = new User();
         var person1 = new Person();
@@ -575,13 +575,14 @@ public class DocumentDbTests : DocumentDbTestsBase
 
         UseInScope(reader =>
         {
-            reader.Get<Person>(user1.Id).Must().DeepEqual(user1);
             reader.Get<Person>(person1.Id).Must().DeepEqual(person1);
+            // user1 is stored under its concrete type User, not Person, so a Person query does not return it.
+            reader.TryGet<Person>(user1.Id, out _).Must().BeFalse();
         });
     }
 
     [PCT]
-    public void GetAllHandlesSubTyping()
+    public void GetAllReturnsOnlyDocumentsStoredAsTheExactQueriedTypeNotSubtypes()
     {
         var user1 = new User();
         var person1 = new Person();
@@ -595,8 +596,8 @@ public class DocumentDbTests : DocumentDbTestsBase
         using var scope = Container.BeginScope();
         var people = scope.Resolver.DocumentDbBulkReader().GetAll<Person>().Select(it => it.Id).ToHashSet();
 
-        people.Must().HaveCount(2);
-        people.Must().Contain(user1.Id);
+        // Only person1 comes back: user1 is stored as User, not Person. The exact count rules out the User being included.
+        people.Must().HaveCount(1);
         people.Must().Contain(person1.Id);
     }
 
@@ -711,7 +712,7 @@ public class DocumentDbTests : DocumentDbTestsBase
             using var scope2 = Container.BeginScope();
             var store = scope2.Resolver.DocumentDb();
             store.GetAll<User>().Must().HaveCount(4);
-            store.GetAll<Person>().Must().HaveCount(8); //User inherits person
+            store.GetAll<Person>().Must().HaveCount(4); //Users are stored as User, not Person, so only the 4 Persons match
 
             store.GetAllIds<User>().ForEach(userId => store.Remove(userId, typeof(User)));
 

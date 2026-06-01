@@ -1,5 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
-using Compze.Abstractions.Refactoring.Naming.Internal;
+using Compze.TypeIdentifiers;
 using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Core.Tessaging.Teventive.Infrastructure.Validation;
@@ -18,12 +18,12 @@ public static class TessageHandlerRegistryRegistrar
 {
    public static IComponentRegistrar TessageHandlerRegistry(this IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<ITessageHandlerRegistrar, ITessageHandlerRegistry, TessageHandlerRegistry>()
-                                     .CreatedBy((IStructuralTypeMapper typeMapper) => new TessageHandlerRegistry(typeMapper)));
+                                     .CreatedBy((ITypeMap typeMap) => new TessageHandlerRegistry(typeMap)));
 }
 
-sealed class TessageHandlerRegistry(IStructuralTypeMapper typeMapper) : ITessageHandlerRegistrar, ITessageHandlerRegistry
+sealed class TessageHandlerRegistry(ITypeMap typeMap) : ITessageHandlerRegistrar, ITessageHandlerRegistry
 {
-   readonly IStructuralTypeMapper _typeMapper = typeMapper;
+   readonly ITypeMap _typeMap = typeMap;
    IReadOnlyDictionary<Type, Action<object, IScopeResolver>> _tommandHandlers = new Dictionary<Type, Action<object, IScopeResolver>>();
    IReadOnlyDictionary<Type, IReadOnlyList<Action<ITevent, IScopeResolver>>> _teventHandlers = new Dictionary<Type, IReadOnlyList<Action<ITevent, IScopeResolver>>>();
    IReadOnlyList<Type> _registeredTeventTypes = new List<Type>();
@@ -80,7 +80,7 @@ sealed class TessageHandlerRegistry(IStructuralTypeMapper typeMapper) : ITessage
       }
    }
 
-   public ISet<StructuralTypeId> HandledRemoteTessageTypeIds()
+   public ISet<TypeId> HandledRemoteTessageTypeIds()
    {
       var handledTypes = _tommandHandlers.Keys
                                          .Concat(_registeredTeventTypes)
@@ -88,9 +88,9 @@ sealed class TessageHandlerRegistry(IStructuralTypeMapper typeMapper) : ITessage
                                          .Where(tessageType => !tessageType.Implements<TessageTypesInternal.ITessage>())
                                          .ToHashSet();
 
-      _typeMapper.AssertMappingsExistFor(handledTypes);
+      _typeMap.AssertMappingsExistFor(handledTypes);
 
-      return handledTypes.Select(_typeMapper.GetId)
+      return handledTypes.Select(_typeMap.GetId)
                          .ToHashSet();
    }
 }

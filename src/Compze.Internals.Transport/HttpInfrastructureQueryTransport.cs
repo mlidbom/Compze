@@ -1,4 +1,4 @@
-using Compze.Abstractions.Refactoring.Naming.Internal;
+using Compze.TypeIdentifiers;
 using Compze.Abstractions.Serialization.Internal;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Core.Tessaging.Transport.Internal;
@@ -18,28 +18,28 @@ class HttpInfrastructureQueryTransportImplementation : IInfrastructureQueryTrans
 {
    public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<IInfrastructureQueryTransport>()
-                                     .CreatedBy((IHttpClientFactoryCE factory, IRemotableTessageSerializer serializer, IStructuralTypeMapper typeMapper) => new HttpInfrastructureQueryTransportImplementation(factory, serializer, typeMapper)));
+                                     .CreatedBy((IHttpClientFactoryCE factory, IRemotableTessageSerializer serializer, ITypeMap typeMap) => new HttpInfrastructureQueryTransportImplementation(factory, serializer, typeMap)));
 
    readonly IHttpClientFactoryCE _httpClientFactory;
    readonly IRemotableTessageSerializer _serializer;
-   readonly IStructuralTypeMapper _typeMapper;
+   readonly ITypeMap _typeMap;
 
-   HttpInfrastructureQueryTransportImplementation(IHttpClientFactoryCE httpClientFactory, IRemotableTessageSerializer serializer, IStructuralTypeMapper typeMapper)
+   HttpInfrastructureQueryTransportImplementation(IHttpClientFactoryCE httpClientFactory, IRemotableTessageSerializer serializer, ITypeMap typeMap)
    {
       _httpClientFactory = httpClientFactory;
       _serializer = serializer;
-      _typeMapper = typeMapper;
+      _typeMap = typeMap;
    }
 
    public async Task<TResult> GetAsync<TResult>(IQuery<TResult> query, EndPointAddress address)
    {
       var requestUri = new Uri(address.Uri, HttpConstants.Routes.Infrastructure.Query);
       var body = _serializer.SerializeTessage(query);
-      var typeId = _typeMapper.GetId(query.GetType());
+      var typeId = _typeMap.GetId(query.GetType());
 
       using var httpClient = _httpClientFactory.CreateClient();
       using var content = new StringContent(body);
-      content.Headers.Add(HttpConstants.Headers.PayLoadTypeId, typeId.StringRepresentation);
+      content.Headers.Add(HttpConstants.Headers.PayLoadTypeId, typeId.CanonicalString);
 
       var response = await httpClient.PostAsync(requestUri, content).caf();
       if(!response.IsSuccessStatusCode)

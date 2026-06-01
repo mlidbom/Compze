@@ -6,6 +6,7 @@
     </CustomBuildProperties>
     <HotSpotsExclusionList />
     <HotSpotsLineExclusionList />
+    <PipelineOptimisationPriority>Throughput</PipelineOptimisationPriority>
     <RdiConfigured>True</RdiConfigured>
     <SolutionConfigured>True</SolutionConfigured>
   </Settings>

@@ -1,6 +1,6 @@
 # Compze.DependencyInjection.LightInject.Extensions.Hosting
 
-LightInject hosting integration for the Compze framework. Bridges a Compze `LightInjectDependencyInjectionContainer` into `IHostBuilder` via a custom `IServiceProviderFactory<IServiceContainer>`.
+LightInject hosting integration for the Compze framework. Bridges a Compze LightInject dependency injection container into `IHostBuilder`.
 
 ## Related packages
 

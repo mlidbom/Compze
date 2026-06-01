@@ -1,14 +1,12 @@
-using Compze.Abstractions.Refactoring.Naming;
+using Compze.TypeIdentifiers;
 
-[assembly: TypeMappings(typeof(AccountManagement.TypeMappingDeclarations))]
+[assembly: AssemblyTypeMapper(typeof(AccountManagement.AssemblyTypeMapper))]
 
 namespace AccountManagement;
 
-#pragma warning disable CA1812 // Instantiated via reflection by StructuralTypeMapper, located via [assembly: TypeMappings]
-class TypeMappingDeclarations : ITypeMappingDeclaration
-#pragma warning restore CA1812
+class AssemblyTypeMapper : IAssemblyTypeMapper
 {
-   public void DeclareMappings(ITypeMappingRegistrar map)
+   public void Map(IAssemblyTypeMappingRegistrar map)
    {
       map.Map<Domain.Account>("57fc716d-d8ca-4224-9f78-4d3b5a7f9ebd")
          .Map<UI.QueryModels.AccountQueryModel>("aee890be-6bb0-4301-90d5-492b0b42a4a8")

@@ -1,4 +1,4 @@
-using Compze.Abstractions.Refactoring.Naming.Internal;
+using Compze.TypeIdentifiers;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.DependencyInjection;
 using Compze.Internals.SystemCE.ReflectionCE;
@@ -9,9 +9,9 @@ using Compze.Internals.SystemCE.CollectionsCE.GenericCE;
 
 namespace Compze.Typermedia.HandlerRegistration;
 
-public sealed class TypermediaHandlerRegistry(IStructuralTypeMapper typeMapper) : ITypermediaHandlerRegistrar, ITypermediaHandlerRegistry
+public sealed class TypermediaHandlerRegistry(ITypeMap typeMap) : ITypermediaHandlerRegistrar, ITypermediaHandlerRegistry
 {
-   readonly IStructuralTypeMapper _typeMapper = typeMapper;
+   readonly ITypeMap _typeMap = typeMap;
    IReadOnlyDictionary<Type, HandlerWithResultRegistration> _tueryHandlers = new Dictionary<Type, HandlerWithResultRegistration>();
    IReadOnlyDictionary<Type, HandlerWithResultRegistration> _tommandHandlersReturningResults = new Dictionary<Type, HandlerWithResultRegistration>();
    IReadOnlyDictionary<Type, Action<object, IScopeResolver>> _voidTommandHandlers = new Dictionary<Type, Action<object, IScopeResolver>>();
@@ -76,7 +76,7 @@ public sealed class TypermediaHandlerRegistry(IStructuralTypeMapper typeMapper) 
       throw new NoHandlerException(tommand.GetType());
    }
 
-   public ISet<StructuralTypeId> HandledRemoteTypermediaTypeIds()
+   public ISet<TypeId> HandledRemoteTypermediaTypeIds()
    {
       var handledTypes = _tommandHandlersReturningResults.Keys
                                                          .Concat(_tueryHandlers.Keys)
@@ -93,9 +93,9 @@ public sealed class TypermediaHandlerRegistry(IStructuralTypeMapper typeMapper) 
 
       var typesNeedingMappings = handledTypes.Concat(remoteResultTypes);
 
-      _typeMapper.AssertMappingsExistFor(typesNeedingMappings);
+      _typeMap.AssertMappingsExistFor(typesNeedingMappings);
 
-      return handledTypes.Select(_typeMapper.GetId)
+      return handledTypes.Select(_typeMap.GetId)
                          .ToHashSet();
    }
 

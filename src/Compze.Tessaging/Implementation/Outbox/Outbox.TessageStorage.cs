@@ -1,5 +1,5 @@
 using Compze.Abstractions.Public;
-using Compze.Abstractions.Refactoring.Naming.Internal;
+using Compze.TypeIdentifiers;
 using Compze.Abstractions.Serialization.Internal;
 using Compze.Abstractions.Tessaging.Hosting.Public;
 using Compze.Core.Tessaging.Internal.SqlLayer;
@@ -18,24 +18,24 @@ partial class Outbox
       // ReSharper disable once MemberHidesStaticFromOuterClass
       internal static void RegisterWith(IComponentRegistrar registrar)
          => registrar.Register(Singleton.For<ITessageStorage>()
-                                        .CreatedBy((IServiceBusSqlLayer.IOutboxSqlLayer sqlLayer, IStructuralTypeMapper typeMapper, IRemotableTessageSerializer serializer)
-                                                      => new TessageStorage(sqlLayer, typeMapper, serializer)));
+                                        .CreatedBy((IServiceBusSqlLayer.IOutboxSqlLayer sqlLayer, ITypeMap typeMap, IRemotableTessageSerializer serializer)
+                                                      => new TessageStorage(sqlLayer, typeMap, serializer)));
 
       readonly IServiceBusSqlLayer.IOutboxSqlLayer _sqlLayer;
-      readonly IStructuralTypeMapper _typeMapper;
+      readonly ITypeMap _typeMap;
       readonly IRemotableTessageSerializer _serializer;
 
-      TessageStorage(IServiceBusSqlLayer.IOutboxSqlLayer sqlLayer, IStructuralTypeMapper typeMapper, IRemotableTessageSerializer serializer)
+      TessageStorage(IServiceBusSqlLayer.IOutboxSqlLayer sqlLayer, ITypeMap typeMap, IRemotableTessageSerializer serializer)
       {
          _sqlLayer = sqlLayer;
-         _typeMapper = typeMapper;
+         _typeMap = typeMap;
          _serializer = serializer;
       }
 
       public void SaveTessage(IExactlyOnceTessage tessage, params EndpointId[] receiverEndpointIds)
       {
          var outboxTessageWithReceivers = new IServiceBusSqlLayer.OutboxTessageWithReceivers(_serializer.SerializeTessage(tessage),
-                                                                                             _typeMapper.GetMappedId(tessage.GetType()),
+                                                                                             _typeMap.GetId(tessage.GetType()),
                                                                                              tessage.Id,
                                                                                              receiverEndpointIds);
 

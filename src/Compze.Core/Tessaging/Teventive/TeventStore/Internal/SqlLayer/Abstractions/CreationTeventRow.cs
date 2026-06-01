@@ -1,9 +1,10 @@
 using Compze.Abstractions.Public;
+using Compze.TypeIdentifiers;
 
 namespace Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions;
 
-public class CreationTeventRow(TaggregateId taggregateId, Guid typeId)
+public class CreationTeventRow(TaggregateId taggregateId, TypeId typeId)
 {
    public TaggregateId TaggregateId { get; } = taggregateId;
-   public Guid TypeId { get; } = typeId;
+   public TypeId TypeId { get; } = typeId;
 }

@@ -2,7 +2,7 @@ using Compze.Core.Tessaging.Transport.Internal;
 using Compze.Tessaging.Configuration;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Typermedia.Client;
-using Compze.Abstractions.Refactoring.Naming.Internal.Implementation;
+using Compze.TypeIdentifiers;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
@@ -25,7 +25,7 @@ public class TestClient : IAsyncDisposable
       Navigator = container.Resolve<IRemoteTypermediaNavigator>();
    }
 
-   public static async Task<TestClient> ConnectTo(EndPointAddress typermediaAddress)
+   public static async Task<TestClient> ConnectTo(EndPointAddress typermediaAddress, Action<ITypeMapper> registerDomainTypeMappings)
    {
 #pragma warning disable CA2000 // We are passing this disposable into a constructor of an object we don't own
         var builder = TestEnv.DIContainer.CreateWithContainerRegistrations();
@@ -34,7 +34,7 @@ public class TestClient : IAsyncDisposable
                .CurrentTestsSerializersIfNotClonedContainer()
                .CurrentTestsClientTransport()
                .JSonAppConfigFileConfigurationParameterProvider()
-               .StructuralTypeMapperFromLoadedAssemblies()
+               .TypeIdentifierMapper(registerDomainTypeMappings)
                .TypermediaRouter()
                .SingletonRemoteTypermediaNavigator();
 

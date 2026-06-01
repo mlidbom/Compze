@@ -6,7 +6,7 @@
 
 This package provides a DryIoc adapter for Compze's dependency injection abstractions:
 
-- **Container adapter** — `DryIocDependencyInjectionContainer` implementing Compze's DI contracts
+- **Container adapter** — Implementing Compze's DI contracts using DryIoc
 - **Lifestyle mapping** — Automatic translation between Compze and DryIoc service lifetimes
 - **Pluggable DI** — Use DryIoc as the backing implementation for Compze applications
 
@@ -20,7 +20,8 @@ dotnet add package Compze.DependencyInjection.DryIoc
 
 | Package | Description |
 |---------|-------------|
-| [Compze.DependencyInjection](https://www.nuget.org/packages/Compze.DependencyInjection) | Core DI abstractions |
+| [Compze.DependencyInjection](https://www.nuget.org/packages/Compze.DependencyInjection) | DI abstractions |
+| [Compze.DependencyInjection.DryIoc.Extensions.Hosting](https://www.nuget.org/packages/Compze.DependencyInjection.DryIoc.Extensions.Hosting) | DryIoc hosting integration |
 | [Compze.DependencyInjection.Microsoft](https://www.nuget.org/packages/Compze.DependencyInjection.Microsoft) | Microsoft DI integration |
 | [Compze.DependencyInjection.Autofac](https://www.nuget.org/packages/Compze.DependencyInjection.Autofac) | Autofac DI integration |
 

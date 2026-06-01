@@ -4,6 +4,7 @@ using Compze.Tessaging.Implementation;
 using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
 using Compze.Tessaging.Teventive.TeventStore.Wiring;
 using Compze.Typermedia.HandlerRegistration;
+using Compze.TypeIdentifiers;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.DependencyInjection.Autofac;
@@ -43,11 +44,11 @@ public static class DiContainerExtensions
          _                          => throw new ArgumentOutOfRangeException()
       };
 
-   public static IDependencyInjectionContainer CreateContainerForTesting(this DIContainer @this, [InstantHandle] Action<IComponentRegistrar> setup)
+   public static IDependencyInjectionContainer CreateContainerForTesting(this DIContainer @this, Action<ITypeMapper> registerDomainTypeMappings, [InstantHandle] Action<IComponentRegistrar> setup)
    {
       var builder = @this.CreateWithContainerRegistrationsAndCurrentTestsPluggableComponents();
       builder.Registrar
-               .StructuralTypeMapperFromLoadedAssemblies()
+               .TypeIdentifierMapper(registerDomainTypeMappings)
                .DummyConfigurationParameterProvider()
                .TessageHandlerRegistry()
                .TypermediaHandlerRegistry()
@@ -59,9 +60,9 @@ public static class DiContainerExtensions
 
    public const string TeventStoreConnectionStringName = "Fake_connectionstring_for_database_testing";
 
-   public static IDependencyInjectionContainer SetupTestingContainer(this DIContainer @this, [InstantHandle] Action<IComponentRegistrar>? configureContainer = null) =>
+   public static IDependencyInjectionContainer SetupTestingContainer(this DIContainer @this, Action<ITypeMapper> registerDomainTypeMappings, [InstantHandle] Action<IComponentRegistrar>? configureContainer = null) =>
       CompzeLogger.For(typeof(DiContainerExtensions)).ExceptionsAndRethrow(() =>
-                                                                              @this.CreateContainerForTesting(register =>
+                                                                              @this.CreateContainerForTesting(registerDomainTypeMappings, register =>
                                                                               {
                                                                                  register.DocumentDb();
                                                                                  register.TeventStore(TeventStoreConnectionStringName);

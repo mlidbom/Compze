@@ -1,5 +1,4 @@
 using Compze.Abstractions.Public;
-using Compze.Abstractions.Refactoring.Naming.Internal;
 using Compze.Abstractions.Tessaging.Hosting.Public;
 using Compze.Internals.Transport;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
@@ -10,9 +9,9 @@ using Compze.Threading.ResourceAccess;
 
 namespace Compze.Tessaging.Implementation.Transport;
 
-public class TessagesInFlightTracker(IStructuralTypeMapper typeMapper) : ITessagesInFlightTracker
+public class TessagesInFlightTracker : ITessagesInFlightTracker
 {
-   readonly IAwaitableThreadShared<NonThreadSafeImplementation> _implementation = IAwaitableThreadShared.New(new NonThreadSafeImplementation(typeMapper));
+   readonly IAwaitableThreadShared<NonThreadSafeImplementation> _implementation = IAwaitableThreadShared.New(new NonThreadSafeImplementation());
 
    public IReadOnlyList<Exception> GetExceptions() => _implementation.Update(it => it.GetExceptions());
 
@@ -43,9 +42,8 @@ public class TessagesInFlightTracker(IStructuralTypeMapper typeMapper) : ITessag
       internal Dictionary<EndpointId, bool> EndpointDeliveryStatus { get; } = [];
    }
 
-   class NonThreadSafeImplementation(IStructuralTypeMapper typeMapper)
+   class NonThreadSafeImplementation
    {
-      readonly IStructuralTypeMapper _typeMapper = typeMapper;
       readonly Dictionary<TessageId, InFlightTessage> _trackedTessages = [];
 
       readonly List<Exception> _busExceptions = [];
@@ -58,7 +56,7 @@ public class TessagesInFlightTracker(IStructuralTypeMapper typeMapper) : ITessag
                                                          () => new InFlightTessage
                                                                {
                                                                   TessageId = transportTessage.TessageId,
-                                                                  TypeName = transportTessage.Type.StringRepresentation,
+                                                                  TypeName = transportTessage.Type.CanonicalString,
                                                                   Body = transportTessage.Body
                                                                });
 
@@ -67,7 +65,7 @@ public class TessagesInFlightTracker(IStructuralTypeMapper typeMapper) : ITessag
 
       internal void DoneWith(TransportTessage.InComing tessage, EndpointId handlingEndpointId, Exception? exception)
       {
-         if(_typeMapper.TryGetType(tessage.TessageTypeId, out var tessageType) && tessageType == typeof(EndpointInformationQuery))
+         if(tessage.TessageTypeId.Type == typeof(EndpointInformationQuery))
             return; //this is an initial endpoint information request though which the endpoint IDs we use to track tessages is first established.
          if(exception != null)
          {

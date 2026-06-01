@@ -1,14 +1,12 @@
-using Compze.Abstractions.Refactoring.Naming;
+using Compze.TypeIdentifiers;
 
-[assembly: TypeMappings(typeof(Compze.Tessaging.Teventive.TeventStore.TypeMappingDeclarations))]
+[assembly: AssemblyTypeMapper(typeof(Compze.Tessaging.Teventive.TeventStore.AssemblyTypeMapper))]
 
 namespace Compze.Tessaging.Teventive.TeventStore;
 
-#pragma warning disable CA1812 // Instantiated via reflection by StructuralTypeMapper, located via [assembly: TypeMappings]
-class TypeMappingDeclarations : ITypeMappingDeclaration
-#pragma warning restore CA1812
+class AssemblyTypeMapper : IAssemblyTypeMapper
 {
-   public void DeclareMappings(ITypeMappingRegistrar map)
+   public void Map(IAssemblyTypeMappingRegistrar map)
    {
       map.Map<Refactoring.Migrations.EndOfTaggregateHistoryTeventPlaceHolder>("fa4197d0-747c-4c60-afbc-f978d7ce2487");
    }

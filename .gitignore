@@ -53,3 +53,5 @@ repomix*.xml
 /src/TestUsingPluggableComponentCombinations.defaults
 /inspection-results.sarif
 *.trx
+**/.idea/claudeCodeTabState.xml
+/.claude/scheduled_tasks.lock

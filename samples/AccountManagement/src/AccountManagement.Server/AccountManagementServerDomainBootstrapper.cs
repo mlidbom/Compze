@@ -45,9 +45,7 @@ public static class AccountManagementServerDomainBootstrapper
 
    static void RegisterTypeMappings(IEndpointBuilder builder)
    {
-      builder.TypeMapper.MapTypesFromAssemblyContaining<Account>();
-      builder.TypeMapper.MapTypesFromAssemblyContaining<IAccountTevent>();
-      builder.TypeMapper.MapTypesFromAssemblyContaining<AccountResource>();
+      builder.TypeMapper.RegisterAccountManagementTypeMappings();
    }
 
    static void RegisterDomainComponents(IEndpointBuilder builder)

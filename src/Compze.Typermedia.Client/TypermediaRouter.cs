@@ -1,4 +1,4 @@
-using Compze.Abstractions.Refactoring.Naming.Internal;
+using Compze.TypeIdentifiers;
 using Compze.Abstractions.Tessaging.Hosting.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Core.Tessaging.Transport.Internal;
@@ -24,17 +24,17 @@ class TypermediaRouter : ITypermediaRouter, IDisposable
    public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(
             Singleton.For<ITypermediaRouter, ITypermediaRouting>().CreatedBy(
-               (IStructuralTypeMapper typeMapper, ITypermediaTransport transport, IInfrastructureQueryTransport infrastructureQueryTransport)
-                  => new TypermediaRouter(typeMapper, transport, infrastructureQueryTransport)));
+               (ITypeMap typeMap, ITypermediaTransport transport, IInfrastructureQueryTransport infrastructureQueryTransport)
+                  => new TypermediaRouter(typeMap, transport, infrastructureQueryTransport)));
 
-   TypermediaRouter(IStructuralTypeMapper typeMapper, ITypermediaTransport transport, IInfrastructureQueryTransport infrastructureQueryTransport)
+   TypermediaRouter(ITypeMap typeMap, ITypermediaTransport transport, IInfrastructureQueryTransport infrastructureQueryTransport)
    {
-      _typeMapper = typeMapper;
+      _typeMap = typeMap;
       _transport = transport;
       _infrastructureQueryTransport = infrastructureQueryTransport;
    }
 
-   readonly IStructuralTypeMapper _typeMapper;
+   readonly ITypeMap _typeMap;
    readonly ITypermediaTransport _transport;
    readonly IInfrastructureQueryTransport _infrastructureQueryTransport;
    readonly IMonitor _monitor = IMonitor.New();
@@ -65,7 +65,7 @@ class TypermediaRouter : ITypermediaRouter, IDisposable
       var tueryHandlerRoutes = new Dictionary<Type, TypermediaConnection>();
       foreach(var typeIdString in handledTypeIdStrings)
       {
-         var tessageType = _typeMapper.FromPersistedTypeString(typeIdString);
+         var tessageType = _typeMap.GetId(typeIdString).Type;
 
          if(tessageType.Is<IAtMostOnceTypermediaTommand>())
          {

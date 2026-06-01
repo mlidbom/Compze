@@ -1,13 +1,13 @@
-using Compze.Abstractions.Refactoring.Naming;
 using Compze.Abstractions.Tessaging.Public;
+using Compze.TypeIdentifiers;
 
-[assembly: TypeMappings(typeof(Compze.Abstractions.TypeMappingDeclarations))]
+[assembly: AssemblyTypeMapper(typeof(Compze.Abstractions.AssemblyTypeMapper))]
 
 namespace Compze.Abstractions;
 
-class TypeMappingDeclarations : ITypeMappingDeclaration
+class AssemblyTypeMapper : IAssemblyTypeMapper
 {
-   public void DeclareMappings(ITypeMappingRegistrar map)
+   public void Map(IAssemblyTypeMappingRegistrar map)
    {
       map.Map<IExactlyOnceTevent>("0d68a831-87c0-4d05-8e52-bf063d51b56d")
          .Map<IRemotableTevent>("887aad71-52f3-46f8-a26a-e2886941758d")

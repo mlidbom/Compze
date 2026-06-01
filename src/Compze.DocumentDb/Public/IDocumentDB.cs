@@ -5,7 +5,7 @@ namespace Compze.DocumentDb.Public;
 
 public interface IDocumentDb
 {
-   bool TryGet<TDocument>(object id, [NotNullWhen(true)]out TDocument? value, Dictionary<Type,Dictionary<string,string>> persistentValues, bool useUpdateLock) where TDocument : class;
+   bool TryGet<TDocument>(object id, Type documentType, [NotNullWhen(true)]out TDocument? value, Dictionary<Type,Dictionary<string,string>> persistentValues, bool useUpdateLock) where TDocument : class;
    void Add<TDocument>(object id, TDocument value, Dictionary<Type, Dictionary<string, string>> persistentValues) where TDocument : class;
    void Update(IEnumerable<KeyValuePair<string, object>> values, Dictionary<Type, Dictionary<string, string>> persistentValues);
 

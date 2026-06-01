@@ -5,17 +5,23 @@
     <Version>0.2.1-alpha</Version>
     <!-- TODO: Remove once all public API members have XML documentation comments -->
     <NoWarn>CS1591</NoWarn>
-    <Description>For Compze internal use only. Do not take a direct dependency on this package</Description>
+    <Description>For Compze internal use only. Do not take a direct dependency on this package. SQLite connection, pool, and command plumbing shared by the Compze.*.Sqlite feature backends.</Description>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.1" />
   </ItemGroup>
-  <!-- Compze.Core — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Core)' == 'true'">
-    <PackageReference Include="Compze.Core" Version="*-*" />
+  <ItemGroup>
+    <InternalsVisibleTo Include="Compze.TypeIdentifiers.Interning.Sqlite" />
+    <InternalsVisibleTo Include="Compze.DocumentDb.Sqlite" />
+    <InternalsVisibleTo Include="Compze.Tessaging.Sqlite" />
+    <InternalsVisibleTo Include="Compze.Tessaging.Teventive.TeventStore.Sqlite" />
   </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Core)' != 'true'">
-    <ProjectReference Include="..\Compze.Core\Compze.Core.csproj" />
+  <!-- Compze.Abstractions — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Abstractions)' == 'true'">
+    <PackageReference Include="Compze.Abstractions" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Abstractions)' != 'true'">
+    <ProjectReference Include="..\Compze.Abstractions\Compze.Abstractions.csproj" />
   </ItemGroup>
   <!-- Compze.Internals.Sql.Common — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Sql_Common)' == 'true'">

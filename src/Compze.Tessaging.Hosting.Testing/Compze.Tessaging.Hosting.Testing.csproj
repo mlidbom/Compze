@@ -126,6 +126,34 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection_Microsoft_Extensions_Hosting)' != 'true'">
     <ProjectReference Include="..\Compze.DependencyInjection.Microsoft.Extensions.Hosting\Compze.DependencyInjection.Microsoft.Extensions.Hosting.csproj" />
   </ItemGroup>
+  <!-- Compze.DocumentDb.MicrosoftSql — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DocumentDb_MicrosoftSql)' == 'true'">
+    <PackageReference Include="Compze.DocumentDb.MicrosoftSql" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DocumentDb_MicrosoftSql)' != 'true'">
+    <ProjectReference Include="..\Compze.DocumentDb.MicrosoftSql\Compze.DocumentDb.MicrosoftSql.csproj" />
+  </ItemGroup>
+  <!-- Compze.DocumentDb.MySql — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DocumentDb_MySql)' == 'true'">
+    <PackageReference Include="Compze.DocumentDb.MySql" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DocumentDb_MySql)' != 'true'">
+    <ProjectReference Include="..\Compze.DocumentDb.MySql\Compze.DocumentDb.MySql.csproj" />
+  </ItemGroup>
+  <!-- Compze.DocumentDb.PostgreSql — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DocumentDb_PostgreSql)' == 'true'">
+    <PackageReference Include="Compze.DocumentDb.PostgreSql" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DocumentDb_PostgreSql)' != 'true'">
+    <ProjectReference Include="..\Compze.DocumentDb.PostgreSql\Compze.DocumentDb.PostgreSql.csproj" />
+  </ItemGroup>
+  <!-- Compze.DocumentDb.Sqlite — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DocumentDb_Sqlite)' == 'true'">
+    <PackageReference Include="Compze.DocumentDb.Sqlite" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DocumentDb_Sqlite)' != 'true'">
+    <ProjectReference Include="..\Compze.DocumentDb.Sqlite\Compze.DocumentDb.Sqlite.csproj" />
+  </ItemGroup>
   <!-- Compze.Hosting — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Hosting)' == 'true'">
     <PackageReference Include="Compze.Hosting" Version="*-*" />
@@ -210,6 +238,34 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_Hosting_AspNetCore)' != 'true'">
     <ProjectReference Include="..\Compze.Tessaging.Hosting.AspNetCore\Compze.Tessaging.Hosting.AspNetCore.csproj" />
   </ItemGroup>
+  <!-- Compze.Tessaging.MicrosoftSql — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_MicrosoftSql)' == 'true'">
+    <PackageReference Include="Compze.Tessaging.MicrosoftSql" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_MicrosoftSql)' != 'true'">
+    <ProjectReference Include="..\Compze.Tessaging.MicrosoftSql\Compze.Tessaging.MicrosoftSql.csproj" />
+  </ItemGroup>
+  <!-- Compze.Tessaging.MySql — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_MySql)' == 'true'">
+    <PackageReference Include="Compze.Tessaging.MySql" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_MySql)' != 'true'">
+    <ProjectReference Include="..\Compze.Tessaging.MySql\Compze.Tessaging.MySql.csproj" />
+  </ItemGroup>
+  <!-- Compze.Tessaging.PostgreSql — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_PostgreSql)' == 'true'">
+    <PackageReference Include="Compze.Tessaging.PostgreSql" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_PostgreSql)' != 'true'">
+    <ProjectReference Include="..\Compze.Tessaging.PostgreSql\Compze.Tessaging.PostgreSql.csproj" />
+  </ItemGroup>
+  <!-- Compze.Tessaging.Sqlite — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_Sqlite)' == 'true'">
+    <PackageReference Include="Compze.Tessaging.Sqlite" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_Sqlite)' != 'true'">
+    <ProjectReference Include="..\Compze.Tessaging.Sqlite\Compze.Tessaging.Sqlite.csproj" />
+  </ItemGroup>
   <!-- Compze.Tessaging.Teventive.TeventStore — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_Teventive_TeventStore)' == 'true'">
     <PackageReference Include="Compze.Tessaging.Teventive.TeventStore" Version="*-*" />
@@ -217,12 +273,68 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_Teventive_TeventStore)' != 'true'">
     <ProjectReference Include="..\Compze.Tessaging.Teventive.TeventStore\Compze.Tessaging.Teventive.TeventStore.csproj" />
   </ItemGroup>
+  <!-- Compze.Tessaging.Teventive.TeventStore.MicrosoftSql — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_Teventive_TeventStore_MicrosoftSql)' == 'true'">
+    <PackageReference Include="Compze.Tessaging.Teventive.TeventStore.MicrosoftSql" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_Teventive_TeventStore_MicrosoftSql)' != 'true'">
+    <ProjectReference Include="..\Compze.Tessaging.Teventive.TeventStore.MicrosoftSql\Compze.Tessaging.Teventive.TeventStore.MicrosoftSql.csproj" />
+  </ItemGroup>
+  <!-- Compze.Tessaging.Teventive.TeventStore.MySql — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_Teventive_TeventStore_MySql)' == 'true'">
+    <PackageReference Include="Compze.Tessaging.Teventive.TeventStore.MySql" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_Teventive_TeventStore_MySql)' != 'true'">
+    <ProjectReference Include="..\Compze.Tessaging.Teventive.TeventStore.MySql\Compze.Tessaging.Teventive.TeventStore.MySql.csproj" />
+  </ItemGroup>
+  <!-- Compze.Tessaging.Teventive.TeventStore.PostgreSql — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_Teventive_TeventStore_PostgreSql)' == 'true'">
+    <PackageReference Include="Compze.Tessaging.Teventive.TeventStore.PostgreSql" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_Teventive_TeventStore_PostgreSql)' != 'true'">
+    <ProjectReference Include="..\Compze.Tessaging.Teventive.TeventStore.PostgreSql\Compze.Tessaging.Teventive.TeventStore.PostgreSql.csproj" />
+  </ItemGroup>
+  <!-- Compze.Tessaging.Teventive.TeventStore.Sqlite — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_Teventive_TeventStore_Sqlite)' == 'true'">
+    <PackageReference Include="Compze.Tessaging.Teventive.TeventStore.Sqlite" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_Teventive_TeventStore_Sqlite)' != 'true'">
+    <ProjectReference Include="..\Compze.Tessaging.Teventive.TeventStore.Sqlite\Compze.Tessaging.Teventive.TeventStore.Sqlite.csproj" />
+  </ItemGroup>
   <!-- Compze.Threading — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Threading)' == 'true'">
     <PackageReference Include="Compze.Threading" Version="*-*" />
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_Threading)' != 'true'">
     <ProjectReference Include="..\Compze.Threading\Compze.Threading.csproj" />
+  </ItemGroup>
+  <!-- Compze.TypeIdentifiers.Interning.MicrosoftSql — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_TypeIdentifiers_Interning_MicrosoftSql)' == 'true'">
+    <PackageReference Include="Compze.TypeIdentifiers.Interning.MicrosoftSql" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_TypeIdentifiers_Interning_MicrosoftSql)' != 'true'">
+    <ProjectReference Include="..\Compze.TypeIdentifiers.Interning.MicrosoftSql\Compze.TypeIdentifiers.Interning.MicrosoftSql.csproj" />
+  </ItemGroup>
+  <!-- Compze.TypeIdentifiers.Interning.MySql — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_TypeIdentifiers_Interning_MySql)' == 'true'">
+    <PackageReference Include="Compze.TypeIdentifiers.Interning.MySql" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_TypeIdentifiers_Interning_MySql)' != 'true'">
+    <ProjectReference Include="..\Compze.TypeIdentifiers.Interning.MySql\Compze.TypeIdentifiers.Interning.MySql.csproj" />
+  </ItemGroup>
+  <!-- Compze.TypeIdentifiers.Interning.PostgreSql — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_TypeIdentifiers_Interning_PostgreSql)' == 'true'">
+    <PackageReference Include="Compze.TypeIdentifiers.Interning.PostgreSql" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_TypeIdentifiers_Interning_PostgreSql)' != 'true'">
+    <ProjectReference Include="..\Compze.TypeIdentifiers.Interning.PostgreSql\Compze.TypeIdentifiers.Interning.PostgreSql.csproj" />
+  </ItemGroup>
+  <!-- Compze.TypeIdentifiers.Interning.Sqlite — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_TypeIdentifiers_Interning_Sqlite)' == 'true'">
+    <PackageReference Include="Compze.TypeIdentifiers.Interning.Sqlite" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_TypeIdentifiers_Interning_Sqlite)' != 'true'">
+    <ProjectReference Include="..\Compze.TypeIdentifiers.Interning.Sqlite\Compze.TypeIdentifiers.Interning.Sqlite.csproj" />
   </ItemGroup>
   <!-- Compze.Typermedia — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Typermedia)' == 'true'">

@@ -1,6 +1,6 @@
 # Compze.DependencyInjection.DryIoc.Extensions.Hosting
 
-DryIoc hosting integration for the Compze framework. Bridges a Compze `DryIocDependencyInjectionContainer` into `IHostBuilder` via a custom `IServiceProviderFactory<IContainer>`.
+DryIoc hosting integration for the Compze framework. Bridges a Compze DryIoc dependency injection container into `IHostBuilder`.
 
 ## Related packages
 
