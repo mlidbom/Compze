@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace Compze.TypeIdentifiers;
 
 /// <summary>
@@ -8,6 +10,12 @@ public interface ITypeMap
 {
    /// <summary>Returns the canonical <see cref="TypeId"/> for any type — leaf, constructed, or stable.</summary>
    TypeId GetId(Type type);
+
+   /// <summary>
+   /// Returns the canonical <see cref="TypeId"/> for <paramref name="type"/>, or <c>false</c> if it is neither
+   /// mapped nor resolvable as a stable type — i.e. when <see cref="GetId"/> would throw.
+   /// </summary>
+   bool TryGetId(Type type, [NotNullWhen(true)] out TypeId? id);
 
    /// <summary>Throws if any of the given types lack a mapping.</summary>
    void AssertMappingsExistFor(IEnumerable<Type> types);

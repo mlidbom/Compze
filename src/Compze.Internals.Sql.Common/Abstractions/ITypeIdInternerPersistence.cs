@@ -1,27 +1,36 @@
 namespace Compze.Internals.Sql.Common.Abstractions;
 
 /// <summary>
-/// Engine-specific persistence backing a <see cref="ITypeIdInterner"/>: the <c>TypeIds</c> table operations.
-/// The interner invokes every method from inside a suppressed ambient transaction, so implementations must not
-/// open their own transactions or assume any ambient one.
+/// Engine-specific persistence backing a <see cref="ITypeIdInterner"/>: the operations over the
+/// <c>TypeIds</c> / <c>TypeStrings</c> / <c>TypeNames</c> tables.
 /// </summary>
 public interface ITypeIdInternerPersistence
 {
-   /// <summary>True if callers must suppress the ambient transaction before all calls.</summary>
-   bool SuppressAmbientTransactionBeforeAllCalls { get; }
+   /// <summary>
+   /// True when a minted type-id row commits independently of the business transaction and is durable the
+   /// moment it is written (MVCC engines). False for single-writer engines (SQLite), where a mint joins the
+   /// business transaction and can roll back — so the interner must not cache the <c>Type → id</c> direction.
+   /// </summary>
+   bool MintsAreImmediatelyDurable { get; }
 
-   /// <summary>Ensures the <c>TypeIds</c> table exists.</summary>
+   /// <summary>Ensures the type-identity tables exist.</summary>
    void EnsureInitialized();
 
-   /// <summary>All currently persisted mappings, for warming the in-memory cache.</summary>
-   IEnumerable<(int Id, string TypeString)> LoadAll();
+   /// <summary>A lock-free full load of all type identities, spellings, and name-history heads.</summary>
+   InternerSnapshot LoadAll();
 
-   /// <summary>Atomically inserts <paramref name="typeString"/> if absent and returns its id (existing or new).</summary>
-   int InsertOrGet(string typeString);
+   /// <summary>
+   /// The conceptual id this spelling is recorded under, or null if it has never been persisted — a lock-free
+   /// read used to answer "is this type interned?" without taking the write lock. On single-writer engines it
+   /// observes the ambient transaction (so a type interned earlier in the same transaction is visible).
+   /// </summary>
+   int? FindIdBySpelling(string spelling);
 
-   /// <summary>Returns the id for <paramref name="typeString"/> if it is already persisted, otherwise <c>null</c>. Does not insert.</summary>
-   int? TryGetId(string typeString);
-
-   /// <summary>Returns the type string for <paramref name="id"/> if present, otherwise <c>null</c>.</summary>
-   string? GetById(int id);
+   /// <summary>
+   /// Runs <paramref name="work"/> holding the cross-process interner write lock on a single pinned
+   /// connection (with the business transaction suppressed where the engine requires it). All reads and
+   /// writes that <paramref name="work"/> performs go through the supplied <see cref="IInternerWriteSession"/>,
+   /// which operates on that one connection.
+   /// </summary>
+   T MutateUnderWriteLock<T>(Func<IInternerWriteSession, T> work);
 }

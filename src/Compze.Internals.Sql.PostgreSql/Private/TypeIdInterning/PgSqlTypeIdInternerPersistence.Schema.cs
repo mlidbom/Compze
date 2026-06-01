@@ -1,23 +1,41 @@
-using Schema = Compze.Internals.Sql.Common.Abstractions.TypeIdsTableSchema;
+using Types = Compze.Internals.Sql.Common.Abstractions.TypeIdsTableSchema.Types;
+using Strings = Compze.Internals.Sql.Common.Abstractions.TypeIdsTableSchema.Strings;
+using Names = Compze.Internals.Sql.Common.Abstractions.TypeIdsTableSchema.Names;
 
 namespace Compze.Internals.Sql.PostgreSql.Private.TypeIdInterning;
 
 partial class PgSqlTypeIdInternerPersistence
 {
-   // PostgreSQL's btree index limit (~2704 bytes) is generous; 500 UTF-8 chars stay well within it even at
-   // 4 bytes/char. Type strings are NOT guaranteed ASCII, but Postgres is UTF-8 throughout so no charset opt-out is needed.
-   const int TypeStringMaxLength = 500;
-
+   // TypeString / CurrentName / FullyQualifiedName are TEXT: never indexed (resolution is by the int Id), so
+   // they carry no length ceiling.
    public static readonly string SchemaCreationSql =
       $"""
 
-       CREATE TABLE IF NOT EXISTS {Schema.TableName}
+       CREATE TABLE IF NOT EXISTS {Types.TableName}
        (
-           {Schema.Id}         INT GENERATED ALWAYS AS IDENTITY,
-           {Schema.TypeString} VARCHAR({TypeStringMaxLength}) NOT NULL,
+           {Types.Id}          INT GENERATED ALWAYS AS IDENTITY,
+           {Types.CurrentName} TEXT NOT NULL,
 
-           PRIMARY KEY ({Schema.Id}),
-           UNIQUE ({Schema.TypeString})
+           PRIMARY KEY ({Types.Id})
+       );
+
+       CREATE TABLE IF NOT EXISTS {Strings.TableName}
+       (
+           {Strings.TypeString}   TEXT        NOT NULL,
+           {Strings.TypeId}       INT         NOT NULL REFERENCES {Types.TableName} ({Types.Id}),
+           {Strings.FirstSeenUtc} TIMESTAMPTZ NOT NULL
+       );
+
+       CREATE INDEX IF NOT EXISTS IX_{Strings.TableName}_{Strings.TypeId} ON {Strings.TableName} ({Strings.TypeId});
+
+       CREATE TABLE IF NOT EXISTS {Names.TableName}
+       (
+           {Names.TypeId}             INT         NOT NULL REFERENCES {Types.TableName} ({Types.Id}),
+           {Names.Seq}                INT         NOT NULL,
+           {Names.FullyQualifiedName} TEXT        NOT NULL,
+           {Names.FirstSeenUtc}       TIMESTAMPTZ NOT NULL,
+
+           PRIMARY KEY ({Names.TypeId}, {Names.Seq})
        );
 
        """;

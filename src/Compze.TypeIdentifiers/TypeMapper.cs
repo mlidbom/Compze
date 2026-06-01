@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
 namespace Compze.TypeIdentifiers;
@@ -74,6 +75,18 @@ public class TypeMapper : ITypeMapper, ITypeMap
    }
 
    public TypeId GetId(Type type) => _caches.IdCache.GetOrAdd(type, t => new TypeId(t, _typeNameMapper.GetId(t).StringRepresentation));
+
+   public bool TryGetId(Type type, [NotNullWhen(true)] out TypeId? id)
+   {
+      if(!CanResolve(type))
+      {
+         id = null;
+         return false;
+      }
+
+      id = GetId(type);
+      return true;
+   }
 
    public string ToPersistedTypeString(Type type) => GetId(type).CanonicalString;
 
