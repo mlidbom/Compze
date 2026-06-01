@@ -45,8 +45,8 @@ public static class TransportTessage
       {
          _serializer = serializer;
          Body = body;
-         _tessageType = typeMap.FromPersistedTypeString(persistedTypeString);
-         TessageTypeId = typeMap.GetId(_tessageType);
+         TessageTypeId = typeMap.GetId(persistedTypeString);
+         _tessageType = TessageTypeId.Type;
          TessageTypeEnum = _tessageType.TransportTessageType();
          TessageId = tessageId;
       }

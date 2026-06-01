@@ -18,7 +18,7 @@ class RenamingDecorator(ITypeMap typeMap)
    string ReplaceTypeNamesWithPersistedStrings(Match match)
    {
       var type = Type.GetType(match.Groups[1].Value);
-      var persistedString = _typeMap.ToPersistedTypeString(type!);
+      var persistedString = _typeMap.GetId(type!).CanonicalString;
       return $"""
               "$type": "{persistedString}"
               """;
@@ -28,7 +28,7 @@ class RenamingDecorator(ITypeMap typeMap)
 
    string ReplacePersistedStringsWithTypeNames(Match match)
    {
-      var type = _typeMap.FromPersistedTypeString(match.Groups[1].Value);
+      var type = _typeMap.GetId(match.Groups[1].Value).Type;
       return $"""
               "$type": "{type.AssemblyQualifiedName}"
               """;

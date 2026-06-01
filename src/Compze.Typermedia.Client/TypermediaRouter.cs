@@ -65,7 +65,7 @@ class TypermediaRouter : ITypermediaRouter, IDisposable
       var tueryHandlerRoutes = new Dictionary<Type, TypermediaConnection>();
       foreach(var typeIdString in handledTypeIdStrings)
       {
-         var tessageType = _typeMap.FromPersistedTypeString(typeIdString);
+         var tessageType = _typeMap.GetId(typeIdString).Type;
 
          if(tessageType.Is<IAtMostOnceTypermediaTommand>())
          {

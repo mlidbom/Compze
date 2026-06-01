@@ -39,7 +39,7 @@ public class InfrastructureQueryController : Controller
    public async Task<IActionResult> Query()
    {
       var typeIdStr = Request.Headers[HttpConstants.Headers.PayLoadTypeId][0]._assert().NotNull();
-      var queryType = _typeMap.FromPersistedTypeString(typeIdStr);
+      var queryType = _typeMap.GetId(typeIdStr).Type;
 
       using var reader = new StreamReader(HttpContext.Request.Body);
       var json = await reader.ReadToEndAsync().caf();

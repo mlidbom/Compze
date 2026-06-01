@@ -1,5 +1,4 @@
 using System.Reflection;
-using Compze.TypeIdentifiers;
 using Compze.Must;
 using Compze.xUnitBDD;
 
@@ -108,13 +107,13 @@ public class TypeIdentifierMapper_assembly_registration_specification
       {
          var mapper = new TypeMapper();
          // Stable types keep their AssemblyQualifiedName (no ", 0" GUID format)
-         IsStableTypeString(mapper.ToPersistedTypeString(typeof(string))).Must().BeTrue();
+         IsStableTypeString(mapper.GetId(typeof(string)).CanonicalString).Must().BeTrue();
       }
 
       [XF] public void System_Collections_Generic_types_are_stable()
       {
          var mapper = new TypeMapper();
-         IsStableTypeString(mapper.ToPersistedTypeString(typeof(List<string>))).Must().BeTrue();
+         IsStableTypeString(mapper.GetId(typeof(List<string>)).CanonicalString).Must().BeTrue();
       }
    }
 
@@ -124,7 +123,7 @@ public class TypeIdentifierMapper_assembly_registration_specification
       {
          var mapper = new TypeMapper();
          mapper.UseStableNameStrategyForAssemblyContaining<RegistrationTestEntity>();
-         IsStableTypeString(mapper.ToPersistedTypeString(typeof(RegistrationTestEntity))).Must().BeTrue();
+         IsStableTypeString(mapper.GetId(typeof(RegistrationTestEntity)).CanonicalString).Must().BeTrue();
       }
    }
 
@@ -136,7 +135,7 @@ public class TypeIdentifierMapper_assembly_registration_specification
          mapper.MapTypesFromAssembly(typeof(EndToEndTestMappings).Assembly);
 
          // Mapped types produce a GUID-based persisted string
-         mapper.ToPersistedTypeString(typeof(RegistrationTestEntity)).Must().Contain(", 0");
+         mapper.GetId(typeof(RegistrationTestEntity)).CanonicalString.Must().Contain(", 0");
       }
 
       [XF] public void round_trips_mapped_type()
@@ -144,8 +143,8 @@ public class TypeIdentifierMapper_assembly_registration_specification
          var mapper = new TypeMapper();
          mapper.MapTypesFromAssembly(typeof(EndToEndTestMappings).Assembly);
 
-         var persisted = mapper.ToPersistedTypeString(typeof(RegistrationTestEntity));
-         mapper.FromPersistedTypeString(persisted).Must().Be(typeof(RegistrationTestEntity));
+         var persisted = mapper.GetId(typeof(RegistrationTestEntity)).CanonicalString;
+         mapper.GetId(persisted).Type.Must().Be(typeof(RegistrationTestEntity));
       }
 
       [XF] public void round_trips_generic_with_mapped_argument()
@@ -153,8 +152,8 @@ public class TypeIdentifierMapper_assembly_registration_specification
          var mapper = new TypeMapper();
          mapper.MapTypesFromAssembly(typeof(EndToEndTestMappings).Assembly);
 
-         var persisted = mapper.ToPersistedTypeString(typeof(List<RegistrationTestEntity>));
-         mapper.FromPersistedTypeString(persisted).Must().Be(typeof(List<RegistrationTestEntity>));
+         var persisted = mapper.GetId(typeof(List<RegistrationTestEntity>)).CanonicalString;
+         mapper.GetId(persisted).Type.Must().Be(typeof(List<RegistrationTestEntity>));
       }
 
       [XF] public void round_trips_mapped_open_generic()
@@ -162,8 +161,8 @@ public class TypeIdentifierMapper_assembly_registration_specification
          var mapper = new TypeMapper();
          mapper.MapTypesFromAssembly(typeof(EndToEndTestMappings).Assembly);
 
-         var persisted = mapper.ToPersistedTypeString(typeof(RegistrationTestGeneric<RegistrationTestEntity>));
-         mapper.FromPersistedTypeString(persisted).Must().Be(typeof(RegistrationTestGeneric<RegistrationTestEntity>));
+         var persisted = mapper.GetId(typeof(RegistrationTestGeneric<RegistrationTestEntity>)).CanonicalString;
+         mapper.GetId(persisted).Type.Must().Be(typeof(RegistrationTestGeneric<RegistrationTestEntity>));
       }
    }
 

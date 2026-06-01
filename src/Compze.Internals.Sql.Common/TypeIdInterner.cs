@@ -225,7 +225,7 @@ public sealed class TypeIdInterner : ITypeIdInterner
    {
       try
       {
-         return _typeMap.FromPersistedTypeString(spelling);
+         return _typeMap.GetId(spelling).Type;
       }
       catch(Exception exception)when(exception is FormatException or InvalidOperationException or ArgumentException or TypeLoadException or FileNotFoundException or FileLoadException)
       {

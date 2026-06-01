@@ -92,7 +92,7 @@ class TessagingRouter : ITessagingRouter, IDisposable
    {
       foreach(var typeIdString in handledTypeIdStrings)
       {
-         var tessageType = _typeMap.FromPersistedTypeString(typeIdString);
+         var tessageType = _typeMap.GetId(typeIdString).Type;
 
          if(tessageType.Is<IExactlyOnceTevent>())
          {

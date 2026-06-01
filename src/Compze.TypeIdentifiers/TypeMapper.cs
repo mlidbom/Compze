@@ -76,6 +76,12 @@ public class TypeMapper : ITypeMapper, ITypeMap
 
    public TypeId GetId(Type type) => _caches.IdCache.GetOrAdd(type, t => new TypeId(t, _typeNameMapper.GetId(t).StringRepresentation));
 
+   // Resolve the string to its .NET type first, then route through GetId(Type) so the same mapped-or-stable rule
+   // applies: a string that resolves to a runtime type with no registered identity is rejected, not silently
+   // handed back a type that could never be re-serialized. The resulting TypeId carries both the Type and the
+   // canonical string.
+   public TypeId GetId(string persistedTypeString) => GetId(_typeNameMapper.GetTypeFromPersistedString(persistedTypeString));
+
    public bool TryGetId(Type type, [NotNullWhen(true)] out TypeId? id)
    {
       if(!CanResolve(type))
@@ -87,12 +93,6 @@ public class TypeMapper : ITypeMapper, ITypeMap
       id = GetId(type);
       return true;
    }
-
-   public string ToPersistedTypeString(Type type) => GetId(type).CanonicalString;
-
-   public Type FromPersistedTypeString(string persistedTypeString) => _typeNameMapper.GetTypeFromPersistedString(persistedTypeString);
-
-   public TypeId GetIdFromPersistedString(string persistedTypeString) => GetId(FromPersistedTypeString(persistedTypeString));
 
    public void AssertMappingsExistFor(IEnumerable<Type> types)
    {

@@ -36,16 +36,16 @@ public class TypeIdentifierMapper_specification
          mapper.GetId(typeof(TentityId)).Type.Must().Be(typeof(TentityId));
       }
 
-      [XF] public void FromPersistedTypeString_resolves_leaf_guid_back_to_type()
+      [XF] public void GetId_from_persisted_string_resolves_leaf_guid_back_to_type()
       {
          var mapper = BuildMapper();
-         mapper.FromPersistedTypeString("a1d63763-f934-493b-ae92-aeb2f15368b7, 0").Must().Be(typeof(TentityId));
+         mapper.GetId("a1d63763-f934-493b-ae92-aeb2f15368b7, 0").Type.Must().Be(typeof(TentityId));
       }
 
-      [XF] public void FromPersistedTypeString_throws_for_unknown_guid()
+      [XF] public void GetId_from_persisted_string_throws_for_unknown_guid()
       {
          var mapper = BuildMapper();
-         Assert.Throws<InvalidOperationException>(() => mapper.FromPersistedTypeString($"{Guid.NewGuid()}, 0"));
+         Assert.Throws<InvalidOperationException>(() => mapper.GetId($"{Guid.NewGuid()}, 0"));
       }
 
       [XF] public void AssertMappingsExistFor_does_not_throw_for_mapped_types() =>
@@ -58,18 +58,18 @@ public class TypeIdentifierMapper_specification
          Assert.Throws<InvalidOperationException>(() => mapper.AssertMappingsExistFor([typeof(TypeIdentifierMapper_specification)]));
       }
 
-      [XF] public void ToPersistedTypeString_returns_guid_comma_zero_for_leaf_type()
+      [XF] public void GetId_CanonicalString_returns_guid_comma_zero_for_leaf_type()
       {
          var mapper = BuildMapper();
-         var result = mapper.ToPersistedTypeString(typeof(TentityId));
+         var result = mapper.GetId(typeof(TentityId)).CanonicalString;
          result.Must().Be("a1d63763-f934-493b-ae92-aeb2f15368b7, 0");
       }
 
-      [XF] public void FromPersistedTypeString_round_trips_leaf_type()
+      [XF] public void GetId_round_trips_leaf_type_through_persisted_string()
       {
          var mapper = BuildMapper();
-         var persisted = mapper.ToPersistedTypeString(typeof(TentityId));
-         mapper.FromPersistedTypeString(persisted).Must().Be(typeof(TentityId));
+         var persisted = mapper.GetId(typeof(TentityId)).CanonicalString;
+         mapper.GetId(persisted).Type.Must().Be(typeof(TentityId));
       }
    }
 }

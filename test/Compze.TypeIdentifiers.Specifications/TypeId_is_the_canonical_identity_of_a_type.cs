@@ -37,11 +37,11 @@ public class TypeId_is_the_canonical_identity_of_a_type
    public class For_the_full_and_the_short_form_of_one_stable_type : TypeId_is_the_canonical_identity_of_a_type
    {
       [XF] public void both_persisted_strings_resolve_to_equal_ids()
-         => _map.GetIdFromPersistedString(typeof(string).AssemblyQualifiedName!)
-               .Must().Be(_map.GetIdFromPersistedString("System.String, System.Private.CoreLib"));
+         => _map.GetId(typeof(string).AssemblyQualifiedName!)
+               .Must().Be(_map.GetId("System.String, System.Private.CoreLib"));
 
       [XF] public void the_id_carries_the_normalized_short_canonical_string()
-         => _map.GetIdFromPersistedString(typeof(string).AssemblyQualifiedName!).CanonicalString
+         => _map.GetId(typeof(string).AssemblyQualifiedName!).CanonicalString
                .Must().Be("System.String, System.Private.CoreLib");
    }
 }

@@ -1,4 +1,3 @@
-using Compze.TypeIdentifiers;
 using Compze.Must;
 using Compze.xUnitBDD;
 using static Compze.Must.MustActions;
@@ -75,13 +74,13 @@ public class Parser_normalization_and_classification_contract
          => _mapper.UseStableNameStrategyForAssemblyContaining<deadbeefdeadbeefdeadbeefdeadbeef>();
 
       [XF] public void persists_as_a_named_component_keeping_its_assembly()
-         => _mapper.ToPersistedTypeString(typeof(deadbeefdeadbeefdeadbeefdeadbeef))
+         => _mapper.GetId(typeof(deadbeefdeadbeefdeadbeefdeadbeef)).CanonicalString
                .Must().Contain(typeof(deadbeefdeadbeefdeadbeefdeadbeef).Assembly.GetName().Name!);
 
       [XF] public void round_trips_back_to_the_same_type()
       {
-         var persisted = _mapper.ToPersistedTypeString(typeof(deadbeefdeadbeefdeadbeefdeadbeef));
-         _mapper.FromPersistedTypeString(persisted).Must().Be(typeof(deadbeefdeadbeefdeadbeefdeadbeef));
+         var persisted = _mapper.GetId(typeof(deadbeefdeadbeefdeadbeefdeadbeef)).CanonicalString;
+         _mapper.GetId(persisted).Type.Must().Be(typeof(deadbeefdeadbeefdeadbeefdeadbeef));
       }
    }
 }
