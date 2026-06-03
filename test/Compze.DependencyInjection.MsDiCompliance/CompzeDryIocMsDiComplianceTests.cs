@@ -1,12 +1,13 @@
 using Compze.DependencyInjection.Abstractions;
 using Compze.DependencyInjection.DryIoc;
 using Compze.DependencyInjection.DryIoc.Extensions.Hosting;
+using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Specification;
 
 namespace Compze.DependencyInjection.MsDiCompliance;
 
-public class CompzeDryIocMsDiComplianceTests : DependencyInjectionSpecificationTests
+[UsedImplicitly] public class CompzeDryIocMsDiComplianceTests : DependencyInjectionSpecificationTests
 {
    static readonly ContainerOptions ComplianceOptions = new() { AllowScopedResolutionFromRoot = true };
 

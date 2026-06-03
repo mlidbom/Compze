@@ -1,3 +1,4 @@
+using Compze.Internals.SystemCE.ReflectionCE;
 using System.Collections.Concurrent;
 using System.Reflection;
 
@@ -185,17 +186,10 @@ class TypeNameMapper
       // construction is still recognised — there is no construction-time snapshot of loaded assemblies to go stale.
       internal bool IsStableType(Type type)
       {
-         var name = type.Assembly.GetName();
-         var token = PublicKeyTokenString(name);
-         return (token != null && _stablePublicKeyTokens.Contains(token))
-             || (name.Name != null && _stableAssemblyNames.Contains(name.Name));
+         return (_stablePublicKeyTokens.Contains(type.Assembly.PublicKeyTokenString))
+             || (_stableAssemblyNames.Contains(type.Assembly.SimpleName ?? ""));
       }
 
-      static string? PublicKeyTokenString(AssemblyName name)
-      {
-         var token = name.GetPublicKeyToken();
-         return token is { Length: > 0 } ? Convert.ToHexStringLower(token) : null;
-      }
 
       internal TypeIdentifier GetId(Type type) => _typeToIdentifier.GetOrAdd(type, ComputeId);
 
