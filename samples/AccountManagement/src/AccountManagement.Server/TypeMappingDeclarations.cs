@@ -4,6 +4,7 @@ using Compze.TypeIdentifiers;
 
 namespace AccountManagement;
 
+#pragma warning disable CA1812 // Instantiated via reflection through the [assembly: AssemblyTypeMapper(typeof(...))] attribute.
 class AssemblyTypeMapper : IAssemblyTypeMapper
 {
    public void Map(IAssemblyTypeMappingRegistrar map)

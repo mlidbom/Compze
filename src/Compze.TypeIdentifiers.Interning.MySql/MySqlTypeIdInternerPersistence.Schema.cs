@@ -8,7 +8,7 @@ partial class MySqlTypeIdInternerPersistence
 {
    // TypeString / CurrentName / FullyQualifiedName are MEDIUMTEXT: never indexed (resolution is by the int Id),
    // so they carry no length ceiling.
-   public static readonly string SchemaCreationSql =
+   public const string SchemaCreationSql =
       $"""
 
        CREATE TABLE IF NOT EXISTS {Types.TableName}

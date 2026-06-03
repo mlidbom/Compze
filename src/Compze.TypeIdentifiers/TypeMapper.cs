@@ -70,7 +70,9 @@ public class TypeMapper : ITypeMapper, ITypeMap
 
    public void UseStableNameStrategyForPublicKeyToken(string publicKeyToken)
    {
+#pragma warning disable CA1308 // .NET assembly-qualified-name public-key tokens are lowercase hex by convention; ToUpperInvariant would break type resolution.
       _typeNameMapper.AddStablePublicKeyToken(publicKeyToken.ToLowerInvariant());
+#pragma warning restore CA1308
       ClearCaches();
    }
 

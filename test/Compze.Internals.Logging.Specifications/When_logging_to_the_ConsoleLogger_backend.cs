@@ -47,6 +47,7 @@ public class When_logging_to_the_ConsoleLogger_backend
         .Must().Contain("literal {not a hole}");
 
    [XF] public void a_template_with_no_holes_renders_as_the_literal_text()
+      // ReSharper disable once RedundantStringInterpolation The $ is deliberate: this spec verifies that a no-holes interpolated template renders as literal text via the interpolated-handler overload.
       => Capture(log => log.Info($"just a literal"))
         .Must().Contain("just a literal");
 

@@ -107,10 +107,10 @@ public sealed class LightInjectContainerBuilder(IComponentRegistrar? registrar =
    {
       LightInjectContainer builtContainer = null!;
       // ReSharper disable AccessToModifiedClosure
-      _container.Register<IDependencyInjectionContainer>(_ => builtContainer!, new PerContainerLifetime());
-      _container.Register<IRootResolver>(_ => builtContainer!, new PerContainerLifetime());
-      _container.Register<IScopeFactory>(_ => builtContainer!, new PerContainerLifetime());
-      _container.Register(_ => builtContainer!, new PerContainerLifetime());
+      _container.Register<IDependencyInjectionContainer>(_ => builtContainer, new PerContainerLifetime());
+      _container.Register<IRootResolver>(_ => builtContainer, new PerContainerLifetime());
+      _container.Register<IScopeFactory>(_ => builtContainer, new PerContainerLifetime());
+      _container.Register(_ => builtContainer, new PerContainerLifetime());
       // ReSharper restore AccessToModifiedClosure
 
       builtContainer = new LightInjectContainer(_container, RegisteredComponents(), Registrar);

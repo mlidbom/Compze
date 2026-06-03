@@ -35,6 +35,7 @@ public class TypeIdentifier_specification
             => new MappedTypeIdentifier(SampleGuid).Equals(new MappedTypeIdentifier(DifferentGuid)).Must().BeFalse();
 
          [XF] public void operator_equals_works()
+            // ReSharper disable once EqualExpressionComparison Two equal-but-distinct instances — exercising the == operator is the point of this spec.
             => (new MappedTypeIdentifier(SampleGuid) == new MappedTypeIdentifier(SampleGuid)).Must().BeTrue();
 
          [XF] public void operator_not_equals_works()
@@ -109,6 +110,7 @@ public class OpenGenericId_specification
       => new OpenGenericId(SampleGuid).Equals(new OpenGenericId(DifferentGuid)).Must().BeFalse();
 
    [XF] public void operator_equals_works()
+      // ReSharper disable once EqualExpressionComparison Two equal-but-distinct instances — exercising the == operator is the point of this spec.
       => (new OpenGenericId(SampleGuid) == new OpenGenericId(SampleGuid)).Must().BeTrue();
 
    [XF] public void operator_not_equals_works()

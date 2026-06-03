@@ -8,7 +8,7 @@ partial class MsSqlTypeIdInternerPersistence
 {
    // TypeString / CurrentName / FullyQualifiedName are nvarchar(max): they are never indexed (resolution is by
    // the int Id), so they carry no length ceiling.
-   public static readonly string SchemaCreationSql =
+   public const string SchemaCreationSql =
       $"""
 
        IF NOT EXISTS(select name from sys.tables where name = '{Types.TableName}')

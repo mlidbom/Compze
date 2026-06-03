@@ -1,5 +1,7 @@
 using System.Reflection;
 
+namespace Compze.Internals.SystemCE.ReflectionCE;
+
 public static class AssemblyCE
 {
    extension(Assembly @this)

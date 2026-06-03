@@ -38,7 +38,7 @@ public abstract class ContainerBuilder : IContainerBuilder
 
    internal void Register(params ComponentRegistration[] registrations)
    {
-      Contract.State.Assert(!_built, () => "Cannot register components after the container has been built.");   
+      Contract.State.Assert(!_built, () => "Cannot register components after the container has been built.");
       ValidateNoDuplicateRegistrations(registrations);
       _registeredComponents.AddRange(registrations);
    }

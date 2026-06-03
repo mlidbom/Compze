@@ -56,7 +56,7 @@ class TypermediaRouter : ITypermediaRouter, IDisposable
 
          //urgent: we can't have routes be discovered at startup based on the assumption that all endpoints are up...
          RegisterRoutes(connection, connection.EndpointInformation.HandledTypermediaTypes);
-      } 
+      }
    }
 
    void RegisterRoutes(TypermediaConnection connection, ISet<string> handledTypeIdStrings)

@@ -60,7 +60,7 @@ class ServerEndpointBuilder : IEndpointBuilder
       return endpoint;
    }
 
-   void RegisterInfrastructureQueryHandlers(IRootResolver rootResolver)
+   static void RegisterInfrastructureQueryHandlers(IRootResolver rootResolver)
    {
       var executor = rootResolver.Resolve<InfrastructureQueryExecutor>();
       var registrar = new InfrastructureQueryRegistrarWithDependencyInjectionSupport(executor);

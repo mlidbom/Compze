@@ -8,7 +8,7 @@ namespace Compze.Threading.Interprocess.ResourceAccess;
 /// This is useful for protecting access to an external resource (file, port, database) rather than for sharing data between processes.
 /// For genuine cross-process shared state, use <c>Compze.InterprocessObject</c> instead.</para>
 ///</summary>
-public partial interface IAwaitableProcessShared
+public interface IAwaitableProcessShared
 {
 #pragma warning disable CA2000 // Mutex ownership transfers to AwaitableProcessShared which disposes it
    ///<summary>Returns a new <see cref="IAwaitableProcessShared{TShared}"/> using a global <see cref="IAwaitableMutex"/>.</summary>

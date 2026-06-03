@@ -46,6 +46,7 @@ public class LockTimeout_specification : UniversalTestBase
          LockTimeout.Seconds(5).Must().NotBe(LockTimeout.Seconds(10));
 
       [XF] public void equality_operator_returns_true_for_equal_values() =>
+         // ReSharper disable once EqualExpressionComparison Two equal-but-distinct instances — exercising the == operator is the point of this spec.
          (LockTimeout.Seconds(5) == LockTimeout.Seconds(5)).Must().BeTrue();
 
       [XF] public void inequality_operator_returns_true_for_different_values() =>
@@ -55,6 +56,7 @@ public class LockTimeout_specification : UniversalTestBase
          LockTimeout.Seconds(5).Equals((object)LockTimeout.Seconds(5)).Must().BeTrue();
 
       [XF] public void Equals_with_boxed_value_returns_false_for_different_type() =>
+         // ReSharper disable once SuspiciousTypeConversion.Global Deliberately comparing to a different type — verifying Equals returns false for a non-LockTimeout is the point of this spec.
          LockTimeout.Seconds(5).Equals("not a timeout").Must().BeFalse();
 
       [XF] public void equal_values_have_the_same_hash_code() =>

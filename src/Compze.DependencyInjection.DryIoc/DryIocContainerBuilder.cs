@@ -67,9 +67,9 @@ public sealed class DryIocContainerBuilder(IComponentRegistrar? registrar = null
                _container.RegisterDelegate(firstServiceType,
                   resolver =>
                   {
-                     var instance = registration.InstantiationSpec.RunFactoryMethod(new ServiceResolver(resolver.Resolve));
-                     resolver.Resolve<DisposableTracker>().Track(instance);
-                     return instance;
+                     var trackedInstance = registration.InstantiationSpec.RunFactoryMethod(new ServiceResolver(resolver.Resolve));
+                     resolver.Resolve<DisposableTracker>().Track(trackedInstance);
+                     return trackedInstance;
                   },
                   Reuse.Transient,
                   ifAlreadyRegistered: IfAlreadyRegistered.Throw);
@@ -98,10 +98,10 @@ public sealed class DryIocContainerBuilder(IComponentRegistrar? registrar = null
       // Auto-register intrinsic container types via closures that will be filled after build
       DryIocContainer builtContainer = null!;
       // ReSharper disable AccessToModifiedClosure
-      _container.RegisterDelegate<IDependencyInjectionContainer>(_ => builtContainer!, Reuse.Singleton, ifAlreadyRegistered: IfAlreadyRegistered.Replace);
-      _container.RegisterDelegate<IRootResolver>(_ => builtContainer!, Reuse.Singleton, ifAlreadyRegistered: IfAlreadyRegistered.Replace);
-      _container.RegisterDelegate<IScopeFactory>(_ => builtContainer!, Reuse.Singleton, ifAlreadyRegistered: IfAlreadyRegistered.Replace);
-      _container.RegisterDelegate(_ => builtContainer!, Reuse.Singleton, ifAlreadyRegistered: IfAlreadyRegistered.Replace);
+      _container.RegisterDelegate<IDependencyInjectionContainer>(_ => builtContainer, Reuse.Singleton, ifAlreadyRegistered: IfAlreadyRegistered.Replace);
+      _container.RegisterDelegate<IRootResolver>(_ => builtContainer, Reuse.Singleton, ifAlreadyRegistered: IfAlreadyRegistered.Replace);
+      _container.RegisterDelegate<IScopeFactory>(_ => builtContainer, Reuse.Singleton, ifAlreadyRegistered: IfAlreadyRegistered.Replace);
+      _container.RegisterDelegate(_ => builtContainer, Reuse.Singleton, ifAlreadyRegistered: IfAlreadyRegistered.Replace);
       // ReSharper restore AccessToModifiedClosure
 
       builtContainer = new DryIocContainer(_container, RegisteredComponents(), Registrar);

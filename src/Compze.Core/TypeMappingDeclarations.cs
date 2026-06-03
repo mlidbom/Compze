@@ -6,6 +6,7 @@ using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 
 namespace Compze.Core;
 
+#pragma warning disable CA1812 // Instantiated via reflection through the [assembly: AssemblyTypeMapper(typeof(...))] attribute.
 class AssemblyTypeMapper : IAssemblyTypeMapper
 {
    public void Map(IAssemblyTypeMappingRegistrar map)

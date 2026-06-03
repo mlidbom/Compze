@@ -10,6 +10,7 @@ using static Compze.Must.MustActions;
 
 // ReSharper disable InconsistentNaming
 // ReSharper disable AccessToDisposedClosure
+// ReSharper disable AccessToModifiedClosure These specs capture `field` in the tryRead/createUpdatedFieldValue lambdas while DoubleCheckedLocking exchanges it via ref — modifying the captured variable is precisely the mechanism under test.
 
 namespace Compze.Threading.Specifications;
 

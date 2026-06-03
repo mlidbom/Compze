@@ -8,13 +8,13 @@ public class TransientRegistrationWithoutInstantiationSpec<TService> : Component
 
    public TransientRegistrationWithoutInstantiationSpec<TService> AllowSingletonDependent()
    {
-      base.SingletonDependentAllowed = true;
+      SingletonDependentAllowed = true;
       return this;
    }
 
    public TransientRegistrationWithoutInstantiationSpec<TService> AllowScopedDependent()
    {
-      base.ScopedDependentAllowed = true;
+      ScopedDependentAllowed = true;
       return this;
    }
 }
