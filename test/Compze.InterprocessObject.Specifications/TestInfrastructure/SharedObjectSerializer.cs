@@ -1,7 +1,7 @@
 using Compze.Contracts;
 using MemoryPack;
 
-namespace Compze.InterprocessObject.Specifications;
+namespace Compze.InterprocessObject.Specifications.TestInfrastructure;
 
 class SharedObjectSerializer : IInterprocessObjectSerializer<SharedObject>
 {

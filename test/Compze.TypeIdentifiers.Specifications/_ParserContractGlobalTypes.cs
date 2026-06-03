@@ -4,4 +4,5 @@
 #pragma warning disable CA1050 // intentionally in the global namespace
 #pragma warning disable CS8981 // intentionally lowercase/hex identifier
 
+// ReSharper disable once CheckNamespace Must stay in the global namespace so its FullName has no dotted prefix (see comment above).
 public class deadbeefdeadbeefdeadbeefdeadbeef;

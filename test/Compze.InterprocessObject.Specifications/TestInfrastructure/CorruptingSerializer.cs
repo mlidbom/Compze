@@ -1,4 +1,4 @@
-namespace Compze.InterprocessObject.Specifications;
+namespace Compze.InterprocessObject.Specifications.TestInfrastructure;
 
 class CorruptingSerializer : IInterprocessObjectSerializer<SharedObject>
 {

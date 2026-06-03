@@ -1,3 +1,4 @@
+using Compze.InterprocessObject.Specifications.TestInfrastructure;
 using Compze.Must;
 using Compze.Tests.Infrastructure;
 using Compze.xUnitBDD;

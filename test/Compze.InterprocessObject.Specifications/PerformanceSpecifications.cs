@@ -1,4 +1,5 @@
 using Compze.Internals.Testing.Performance;
+using Compze.InterprocessObject.Specifications.TestInfrastructure;
 using Compze.Tests.Infrastructure;
 using Compze.xUnitBDD;
 

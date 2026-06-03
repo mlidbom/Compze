@@ -5,6 +5,7 @@ using Compze.xUnitBDD;
 
 #pragma warning disable CA1052 // BDD-style nested specification classes cannot be static
 
+// ReSharper disable once CheckNamespace Folder is 'Unit', but a '.Unit' namespace segment would collide with the Unit type under test (Unit.Value).
 namespace Compze.UnitSpecifications;
 
 public class unit_type
