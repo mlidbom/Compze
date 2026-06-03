@@ -19,12 +19,14 @@ public ref struct InfoLogInterpolatedStringHandler
    public void AppendFormatted<T>(T value, [CallerArgumentExpression(nameof(value))] string name = "")
       => _core.AppendFormatted(value, format: null, alignment: 0, name);
 
+   // ReSharper disable once MethodOverloadWithOptionalParameter Compiler-only: invoked by interpolated-string lowering, which binds the format overload correctly; never called directly.
    public void AppendFormatted<T>(T value, string format, [CallerArgumentExpression(nameof(value))] string name = "")
       => _core.AppendFormatted(value, format, alignment: 0, name);
 
    public void AppendFormatted<T>(T value, int alignment, [CallerArgumentExpression(nameof(value))] string name = "")
       => _core.AppendFormatted(value, format: null, alignment, name);
 
+   // ReSharper disable once MethodOverloadWithOptionalParameter Compiler-only: invoked by interpolated-string lowering, which binds the format overload correctly; never called directly.
    public void AppendFormatted<T>(T value, int alignment, string format, [CallerArgumentExpression(nameof(value))] string name = "")
       => _core.AppendFormatted(value, format, alignment, name);
 
