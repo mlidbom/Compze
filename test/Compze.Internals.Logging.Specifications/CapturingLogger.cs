@@ -15,7 +15,7 @@ class CapturingLogger : Logger
    public override ILogger WithLogLevel(LogLevel level) => new CapturingLogger(level) { _shared = this };
    CapturingLogger? _shared;
 
-   protected override void ErrorInternal(Exception exception, string? template, object?[]? values, string caller)
+   protected override void ErrorInternal(Exception exception, string template, object?[]? values, string caller)
       => Add(new(LogLevel.Error, template, values, caller, exception));
 
    protected override void WarningInternal(Exception? exception, string template, object?[]? values, string caller)

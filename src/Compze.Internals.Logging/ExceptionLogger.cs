@@ -10,7 +10,7 @@ public static class ExceptionLogger
       }
       catch(Exception e)
       {
-         log.Error(e);
+         log.Error(e, "");
          throw;
       }
    }

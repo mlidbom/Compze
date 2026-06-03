@@ -8,7 +8,6 @@ public interface ILogger
    ILogger WithLogLevel(LogLevel level);
    bool IsEnabled(LogLevel level);
 
-   Unit Error(Exception exception, [CallerMemberName] string caller = "");
    Unit Error(Exception exception, string message, [CallerMemberName] string caller = "");
    Unit Error(Exception exception, string template, object?[] values, [CallerMemberName] string caller = "");
    Unit Error(Exception exception, [InterpolatedStringHandlerArgument("")] ref ErrorLogInterpolatedStringHandler handler, [CallerMemberName] string caller = "");

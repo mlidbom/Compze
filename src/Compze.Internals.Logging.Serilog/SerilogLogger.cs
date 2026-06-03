@@ -22,13 +22,10 @@ public class SerilogLogger : Logger
 
    global::Serilog.ILogger CallerLogger(string caller) => _logger.ForContext("CallerMember", caller);
 
-   protected override void ErrorInternal(Exception exception, string? template, object?[]? values, string caller)
+   protected override void ErrorInternal(Exception exception, string template, object?[]? values, string caller)
    {
       var logger = CallerLogger(caller);
-      if(template == null)
-      {
-         logger.Error(exception, exception.GetType().FullName ?? "");
-      } else if(values == null)
+      if(values == null)
       {
          logger.Error(exception, EscapeLiteral(template));
       } else

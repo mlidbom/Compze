@@ -13,8 +13,8 @@ public class ConsoleLogger : Logger
    public static ILogger Create(Type type) => new ConsoleLogger(type);
    public override ILogger WithLogLevel(LogLevel level) => new ConsoleLogger(_type, level);
 
-   protected override void ErrorInternal(Exception exception, string? template, object?[]? values, string caller) =>
-      Console.WriteLine(ExceptionTessageBuilder.BuildExceptionLogTessage(exception, _type, caller, RenderOrNull(template, values)));
+   protected override void ErrorInternal(Exception exception, string template, object?[]? values, string caller) =>
+      Console.WriteLine(ExceptionTessageBuilder.BuildExceptionLogTessage(exception, _type, caller, Render(template, values)));
 
    protected override void WarningInternal(Exception? exception, string template, object?[]? values, string caller) =>
       Console.WriteLine(exception == null
@@ -26,8 +26,6 @@ public class ConsoleLogger : Logger
 
    protected override void DebugInternal(string template, object?[]? values, string caller) =>
       Console.WriteLine($"{DateTime.Now:HH:mm:ss.fff} DBG {LogSourceFormatter.Format(_type.Name, caller)} ### {Render(template, values)}");
-
-   static string? RenderOrNull(string? template, object?[]? values) => template == null ? null : Render(template, values);
 
    // Renders a Serilog-style template (with {Name} / {Name:format} / {Name,align} holes) by substituting positional values.
    // Values are bound to holes in left-to-right order, the same order the handler appended them.

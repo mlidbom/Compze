@@ -9,7 +9,7 @@ static class ExceptionTessageBuilder
    const string LineSeparator = "----------------------------------------------------";
    const string IndentWith = "   ";
    const int StartDepth = 1;
-   public static string BuildExceptionLogTessage(Exception exception, Type type, string caller, string? message)
+   public static string BuildExceptionLogTessage(Exception exception, Type type, string caller, string message)
    {
       var builder = new StringBuilder();
 

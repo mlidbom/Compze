@@ -16,19 +16,10 @@ public abstract class Logger : ILogger
 
    public bool IsEnabled(LogLevel level) => CurrentLevel >= level;
 
-   protected abstract void ErrorInternal(Exception exception, string? template, object?[]? values, string caller);
+   protected abstract void ErrorInternal(Exception exception, string template, object?[]? values, string caller);
    protected abstract void WarningInternal(Exception? exception, string template, object?[]? values, string caller);
    protected abstract void InfoInternal(string template, object?[]? values, string caller);
    protected abstract void DebugInternal(string template, object?[]? values, string caller);
-
-   public Unit Error(Exception exception, [CallerMemberName] string caller = "")
-   {
-      if(IsEnabled(LogLevel.Error) && !CompzeLogger.LoggingSuppressed)
-      {
-         ErrorInternal(exception, template: null, values: null, caller);
-      }
-      return unit;
-   }
 
    public Unit Error(Exception exception, string message, [CallerMemberName] string caller = "")
    {
