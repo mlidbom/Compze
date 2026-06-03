@@ -3,6 +3,7 @@ using Compze.Contracts;
 
 namespace Compze.DocumentDb.Private;
 
+// ReSharper disable once ClassCannotBeInstantiated rider is plain confused
 public partial class DocumentDbSession
 {
    public class DocumentItem

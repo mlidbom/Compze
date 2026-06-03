@@ -2,6 +2,7 @@ using Document = Compze.DocumentDb.Internal.SqlLayer.IDocumentDbSqlLayer.Documen
 
 namespace Compze.DocumentDb.MicrosoftSql;
 
+// ReSharper disable once ClassCannotBeInstantiated rider is plain confused
 partial class MsSqlDocumentDbSqlLayer
 {
    public const string SchemaCreationSql =

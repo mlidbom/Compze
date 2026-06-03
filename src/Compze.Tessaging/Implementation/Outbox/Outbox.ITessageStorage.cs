@@ -5,6 +5,7 @@ using Compze.Abstractions.Tessaging.Public;
 
 namespace Compze.Tessaging.Implementation.Outbox;
 
+// ReSharper disable once ClassCannotBeInstantiated rider is plain confused
 partial class Outbox
 {
    public interface ITessageStorage

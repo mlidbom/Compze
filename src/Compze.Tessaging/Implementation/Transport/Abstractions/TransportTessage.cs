@@ -31,16 +31,6 @@ public static class TransportTessage
          return _tessage;
       }
 
-      public InComing(string body, TypeId tessageTypeId, TessageId tessageId, ITypeMap typeMap, IRemotableTessageSerializer serializer)
-      {
-         _serializer = serializer;
-         Body = body;
-         TessageTypeId = tessageTypeId;
-         _tessageType = tessageTypeId.Type;
-         TessageTypeEnum = _tessageType.TransportTessageType();
-         TessageId = tessageId;
-      }
-
       public InComing(string body, string persistedTypeString, TessageId tessageId, ITypeMap typeMap, IRemotableTessageSerializer serializer)
       {
          _serializer = serializer;

@@ -11,6 +11,7 @@ using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Tessaging.Implementation.Outbox;
 
+// ReSharper disable once ClassCannotBeInstantiated rider is plain confused
 partial class Outbox
 {
    internal class TessageStorage : ITessageStorage

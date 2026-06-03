@@ -2,6 +2,7 @@ using Compze.TypeIdentifiers;
 
 [assembly: AssemblyTypeMapper(typeof(AccountManagement.API.AssemblyTypeMapper))]
 
+// ReSharper disable once CheckNamespace
 namespace AccountManagement.API;
 
 #pragma warning disable CA1812 // Instantiated via reflection through the [assembly: AssemblyTypeMapper(typeof(...))] attribute.
