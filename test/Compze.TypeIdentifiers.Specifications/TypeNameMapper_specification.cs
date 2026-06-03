@@ -10,6 +10,7 @@ namespace Compze.TypeIdentifiers.Specifications;
 // Test types used in mapping tests
 public class TestEntity;
 public class AnotherTestEntity;
+// ReSharper disable once UnusedTypeParameter Empty marker type, generic only so the specs can exercise generic-type handling via typeof(); the parameter is intentionally unused.
 public class TestGenericEntity<T>;
 
 public class TypeNameMapper_specification
@@ -18,8 +19,6 @@ public class TypeNameMapper_specification
    static readonly Guid TestEntityGuid = Guid.Parse("e4a8c9f2-7b3d-4f1a-9c6e-2d8b5a0f3e7c");
    static readonly Guid AnotherTestEntityGuid = Guid.Parse("f5a9d1b3-8c4e-4a2f-b7d6-3e1c9f0a5b8d");
    static readonly Guid TestGenericEntityGuid = Guid.Parse("a1b2c3d4-e5f6-7890-abcd-ef1234567890");
-
-   static string TestAssemblyName => typeof(TestEntity).Assembly.GetName().Name!;
 
    static TypeNameMapper CreateMapper(
       Dictionary<Type, Guid>? leafMappings = null,

@@ -12,8 +12,10 @@ namespace Compze.TypeIdentifiers.Specifications;
 // Test types — same assembly as the test project, so the registrar accepts them.
 public class FirstTypeSharingAGuid;
 public class SecondTypeSharingAGuid;
+// ReSharper disable UnusedTypeParameter Empty marker types, generic only so the specs can exercise generic-type handling via typeof(); the parameters are intentionally unused.
 public class FirstGenericSharingAGuid<T>;
 public class SecondGenericSharingAGuid<T>;
+// ReSharper restore UnusedTypeParameter
 
 /// <summary>
 /// A GUID is permanent, unique type identity. If two different types share a GUID, persisted <c>$type</c> data

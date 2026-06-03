@@ -5,11 +5,13 @@ namespace Compze.Internals.SystemCE.Tests.ReflectionCE;
 public class GetFullNameCompilable_
 {
    // ReSharper disable ClassNeverInstantiated.Local
+   // ReSharper disable UnusedTypeParameter Empty marker types, generic only so the specs can exercise open-generic name formatting via typeof(...<>); the parameters are intentionally unused.
 #pragma warning disable CA1812 // Test fixture types referenced only via typeof()
    class Nested;
    class GenericNested<T>;
    class TwoParameterGenericNested<T1, T2>;
 #pragma warning restore CA1812
+   // ReSharper restore UnusedTypeParameter
    // ReSharper restore ClassNeverInstantiated.Local
 
    public class Non_generic_types

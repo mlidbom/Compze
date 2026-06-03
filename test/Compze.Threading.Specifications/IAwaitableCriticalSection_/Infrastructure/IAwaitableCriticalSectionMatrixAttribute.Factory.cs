@@ -8,6 +8,7 @@ partial class IAwaitableCriticalSectionMatrixAttribute
 {
    public class Factory<TTest> : IDisposable
    {
+      // ReSharper disable once StaticMemberInGenericType The temp directory path is identical for every TTest, so one static copy per closed generic is harmless (same as _counter below).
       static readonly DirectoryInfo TestDirectory = new DirectoryInfo(Path.Combine(Path.GetTempPath(), "Compze", "Tests", "Signals"))._mutate(it => it.Create());
 
       // ReSharper disable once StaticMemberInGenericType

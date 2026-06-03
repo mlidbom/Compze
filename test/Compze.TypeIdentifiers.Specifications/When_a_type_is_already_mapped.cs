@@ -11,6 +11,7 @@ namespace Compze.TypeIdentifiers.Specifications;
 
 // Test types — same assembly as the test project, so the registrar accepts them.
 public class TypeRegisteredTwice;
+// ReSharper disable once UnusedTypeParameter Empty marker type, generic only so the specs can exercise generic-type handling via typeof(); the parameter is intentionally unused.
 public class GenericRegisteredTwice<T>;
 
 /// <summary>
