@@ -6,5 +6,6 @@ namespace Compze.TypeIdentifiers;
 /// </summary>
 public interface IAssemblyTypeMapper
 {
+   /// <summary>Declares this assembly's type↔GUID mappings into the supplied <paramref name="registrar"/>.</summary>
    void Map(IAssemblyTypeMappingRegistrar registrar);
 }

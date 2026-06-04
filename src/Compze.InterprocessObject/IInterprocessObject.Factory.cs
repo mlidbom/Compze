@@ -20,6 +20,6 @@ public partial interface IInterprocessObject
    public static IInterprocessObject<T> NewLocal<T>(string name, IInterprocessObjectSerializer<T> serializer, Func<T> createDefault, CorruptionAction corruptionAction, int maxBytes, DirectoryInfo directory, LockTimeout? lockTimeout = null, WaitTimeout? waitTimeout = null) where T : class
       => CreateInternal(name, isGlobal: false, serializer, createDefault, corruptionAction, maxBytes, directory, lockTimeout, waitTimeout);
 
-   static IInterprocessObject<T> CreateInternal<T>(string name, bool isGlobal, IInterprocessObjectSerializer<T> serializer, Func<T> createDefault, CorruptionAction corruptionAction, int maxBytes, DirectoryInfo directory, LockTimeout? lockTimeout, WaitTimeout? waitTimeout) where T : class
+   private static IInterprocessObject<T> CreateInternal<T>(string name, bool isGlobal, IInterprocessObjectSerializer<T> serializer, Func<T> createDefault, CorruptionAction corruptionAction, int maxBytes, DirectoryInfo directory, LockTimeout? lockTimeout, WaitTimeout? waitTimeout) where T : class
       => new Implementation<T>(name, isGlobal, directory, maxBytes, serializer, createDefault, corruptionAction, lockTimeout, waitTimeout);
 }

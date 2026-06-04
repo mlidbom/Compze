@@ -24,6 +24,7 @@ public sealed class TypeIdInterner : ITypeIdInterner
    readonly Lock _writeLock = new();
    volatile bool _loaded;
 
+   /// <summary>Creates an interner backed by <paramref name="persistence"/>, using <paramref name="typeMap"/> to resolve persisted spellings to .NET types.</summary>
    public TypeIdInterner(ITypeIdInternerPersistence persistence, ITypeMap typeMap)
    {
       _persistence = persistence;
@@ -31,8 +32,10 @@ public sealed class TypeIdInterner : ITypeIdInterner
       _cacheMints = persistence.MintsAreImmediatelyDurable;
    }
 
+   /// <summary>Creates an <see cref="ITypeIdInterner"/> backed by <paramref name="persistence"/> and <paramref name="typeMap"/>.</summary>
    public static ITypeIdInterner For(ITypeIdInternerPersistence persistence, ITypeMap typeMap) => new TypeIdInterner(persistence, typeMap);
 
+   /// <inheritdoc />
    public int GetOrInternId(TypeId typeId)
    {
       EnsureLoaded();
@@ -44,6 +47,7 @@ public sealed class TypeIdInterner : ITypeIdInterner
       return TryResolveExistingId(typeId, out var found) ? found : Mint(typeId);
    }
 
+   /// <inheritdoc />
    public bool TryGetInternedId(TypeId typeId, out int internedId)
    {
       EnsureLoaded();
@@ -74,6 +78,7 @@ public sealed class TypeIdInterner : ITypeIdInterner
          _typeToId.AddOrUpdate(type, id, (_, current) => Math.Min(current, id));
    }
 
+   /// <inheritdoc />
    public TypeId GetTypeId(int internedId)
    {
       EnsureLoaded();

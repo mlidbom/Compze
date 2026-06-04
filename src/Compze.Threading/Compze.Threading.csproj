@@ -4,8 +4,6 @@
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Version>0.5.0-alpha</Version>
-    <!-- TODO: Remove once all public API members have XML documentation comments -->
-    <NoWarn>CS1591</NoWarn>
     <Description>Pit of success threading primitives. Impossible to forget to lock. Automatically resolves and diagnoses deadlocks, including both the involved stack traces in the exception.</Description>
   </PropertyGroup>
   <ItemGroup>

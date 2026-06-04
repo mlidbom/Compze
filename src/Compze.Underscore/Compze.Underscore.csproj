@@ -4,8 +4,6 @@
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
     <Version>0.6.0-beta</Version>
-    <!-- TODO: Remove once all public API members have XML documentation comments -->
-    <NoWarn>CS1591</NoWarn>
     <Description>Code that reads the way you would describe the algorithm in words. Powered by the pipe forward operator and friends.</Description>
     <PackageTags>compze;functional;pipe;unit;extensions;csharp</PackageTags>
   </PropertyGroup>

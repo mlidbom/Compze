@@ -41,14 +41,22 @@ public readonly struct LockTimeout : IEquatable<LockTimeout>
    ///<summary>A <see cref="LockTimeout"/> of zero duration. Useful for non-blocking lock attempts.</summary>
    public static LockTimeout Zero => new(TimeSpan.Zero);
 
+   ///<inheritdoc/>
    public bool Equals(LockTimeout other) => Value.Equals(other.Value);
+   ///<inheritdoc/>
    public override bool Equals(object? obj) => obj is LockTimeout other && Equals(other);
+   ///<inheritdoc/>
    public override int GetHashCode() => Value.GetHashCode();
+   ///<summary>Determines whether two <see cref="LockTimeout"/>s represent the same duration.</summary>
    public static bool operator ==(LockTimeout left, LockTimeout right) => left.Equals(right);
+   ///<summary>Determines whether two <see cref="LockTimeout"/>s represent different durations.</summary>
    public static bool operator !=(LockTimeout left, LockTimeout right) => !left.Equals(right);
 
+   ///<summary>Implicitly converts to the underlying <see cref="TimeSpan"/> <see cref="Value"/>.</summary>
    public static implicit operator TimeSpan(LockTimeout value) => value.Value;
+   ///<summary>Returns the underlying <see cref="TimeSpan"/> <see cref="Value"/>.</summary>
    public TimeSpan ToTimeSpan() => this;
 
+   ///<inheritdoc/>
    public override string ToString() => Value.ToString();
 }

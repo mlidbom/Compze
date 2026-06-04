@@ -4,8 +4,6 @@
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Version>0.5.0-alpha</Version>
-    <!-- TODO: Remove once all public API members have XML documentation comments -->
-    <NoWarn>CS1591</NoWarn>
     <Description>Create an object shared between processes in a single line of code. Fully atomic modifications, await conditions becoming true, automatic corruption recovery, pluggable serialization.</Description>
   </PropertyGroup>
   <ItemGroup>

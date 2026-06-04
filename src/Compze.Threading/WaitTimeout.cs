@@ -42,14 +42,22 @@ public readonly struct WaitTimeout(TimeSpan value) : IEquatable<WaitTimeout>
       Argument.Assert(this != Infinite)
               .__(new WaitTimeout(TimeSpan.FromTicks(Math.Max(0, (Value - (DateTime.UtcNow - waitStarted)).Ticks))));
 
+   ///<inheritdoc/>
    public bool Equals(WaitTimeout other) => Value.Equals(other.Value);
+   ///<inheritdoc/>
    public override bool Equals(object? obj) => obj is WaitTimeout other && Equals(other);
+   ///<inheritdoc/>
    public override int GetHashCode() => Value.GetHashCode();
+   ///<summary>Determines whether two <see cref="WaitTimeout"/>s represent the same duration.</summary>
    public static bool operator ==(WaitTimeout left, WaitTimeout right) => left.Equals(right);
+   ///<summary>Determines whether two <see cref="WaitTimeout"/>s represent different durations.</summary>
    public static bool operator !=(WaitTimeout left, WaitTimeout right) => !left.Equals(right);
 
+   ///<summary>Implicitly converts to the underlying <see cref="TimeSpan"/> <see cref="Value"/>.</summary>
    public static implicit operator TimeSpan(WaitTimeout value) => value.Value;
+   ///<summary>Returns the underlying <see cref="TimeSpan"/> <see cref="Value"/>.</summary>
    public TimeSpan ToTimeSpan() => this;
 
+   ///<inheritdoc/>
    public override string ToString() => Value.ToString();
 }

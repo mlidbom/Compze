@@ -4,8 +4,6 @@
     <Nullable>enable</Nullable>
     <IsTestProject>false</IsTestProject>
     <Version>0.1.0-alpha</Version>
-    <!-- TODO: Remove once all public API members have XML documentation comments -->
-    <NoWarn>CS1591</NoWarn>
     <Description>Internal shared xUnit extensibility foundation for the Compze framework. Not intended for direct consumption — depend on Compze.xUnitBDD or Compze.xUnit.ComponentCombinations instead.</Description>
   </PropertyGroup>
   <ItemGroup>

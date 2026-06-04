@@ -22,10 +22,13 @@ public class TypeMapper : ITypeMapper, ITypeMap
    /// <c>Microsoft.AspNetCore.*</c>, and most NuGet-delivered framework assemblies.</summary>
    static readonly HashSet<string> MicrosoftPublicKeyTokens = ["7cec85d7bea7798e", "b03f5f7f11d50a3a", "b77a5c561934e089", "cc7b13ffcd2ddd51", "31bf3856ad364e35", "adb9793829ddae60"];
 
+   /// <summary>Creates a mapper with well-known Microsoft assemblies pre-registered as stable, so framework types resolve without explicit registration.</summary>
    public TypeMapper() => SeedMicrosoftPublicKeyTokensAsStable();
 
+   /// <inheritdoc />
    public void MapTypesFromAssemblyContaining<T>() => MapTypesFromAssembly(typeof(T).Assembly);
 
+   /// <inheritdoc />
    public void MapTypesFromAssembly(Assembly assembly)
    {
       lock(_registrationLock)
@@ -59,6 +62,7 @@ public class TypeMapper : ITypeMapper, ITypeMap
       }
    }
 
+   /// <inheritdoc />
    public void UseStableNameStrategyForAssemblyContaining<T>()
    {
       var name = typeof(T).Assembly.GetName().Name;
@@ -68,6 +72,7 @@ public class TypeMapper : ITypeMapper, ITypeMap
       ClearCaches();
    }
 
+   /// <inheritdoc />
    public void UseStableNameStrategyForPublicKeyToken(string publicKeyToken)
    {
 #pragma warning disable CA1308 // .NET assembly-qualified-name public-key tokens are lowercase hex by convention; ToUpperInvariant would break type resolution.
@@ -76,14 +81,17 @@ public class TypeMapper : ITypeMapper, ITypeMap
       ClearCaches();
    }
 
+   /// <inheritdoc />
    public TypeId GetId(Type type) => _caches.IdCache.GetOrAdd(type, t => new TypeId(t, _typeNameMapper.GetId(t).StringRepresentation));
 
    // Resolve the string to its .NET type first, then route through GetId(Type) so the same mapped-or-stable rule
    // applies: a string that resolves to a runtime type with no registered identity is rejected, not silently
    // handed back a type that could never be re-serialized. The resulting TypeId carries both the Type and the
    // canonical string.
+   /// <inheritdoc />
    public TypeId GetId(string persistedTypeString) => GetId(_typeNameMapper.GetTypeFromPersistedString(persistedTypeString));
 
+   /// <inheritdoc />
    public bool TryGetId(Type type, [NotNullWhen(true)] out TypeId? id)
    {
       if(!CanResolve(type))
@@ -96,6 +104,7 @@ public class TypeMapper : ITypeMapper, ITypeMap
       return true;
    }
 
+   /// <inheritdoc />
    public void AssertMappingsExistFor(IEnumerable<Type> types)
    {
       var missing = types.Where(type => !CanResolve(type)).ToList();

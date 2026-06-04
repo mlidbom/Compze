@@ -12,6 +12,7 @@ public class TakeLockTimeoutException : Exception
    internal TakeLockTimeoutException(string message, WaitTimeout stackTraceFetchTimeout) : base(message) =>
       _timeToWaitForOwningThreadStacktrace = stackTraceFetchTimeout;
 
+   ///<summary>The exception message, augmented with the blocking thread's lock-disposal stack trace (awaited briefly, then replaced with a timeout note if it cannot be obtained).</summary>
    public override string Message
    {
       get
