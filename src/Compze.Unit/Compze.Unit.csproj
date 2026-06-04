@@ -3,7 +3,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
-    <Version>0.5.0-beta</Version>
+    <Version>0.6.0-beta</Version>
     <Description>Plugs the hole in the BCL where Unit should be.</Description>
     <PackageTags>compze;functional;unit;void;csharp</PackageTags>
 	  <RootNamespace>Compze.SystemCE</RootNamespace>

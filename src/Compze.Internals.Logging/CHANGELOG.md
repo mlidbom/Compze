@@ -4,7 +4,7 @@ All notable changes to Compze.Internals.Logging will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
-## 0.2.0-alpha.1
+## 0.2.0-alpha
 
 ### Added
 - Structured logging via C# interpolated string handler overloads on `ILogger` and `ILevelLogger`. Existing call sites that use `$"..."` syntax now silently gain structured property capture — values inside holes become named properties (captured from the C# expression text via `CallerArgumentExpression`), and the original template text is preserved end-to-end.

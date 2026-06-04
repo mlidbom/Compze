@@ -4,7 +4,7 @@ All notable changes to Compze.Internals.Serialization.Newtonsoft will be documen
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
-## 0.2.0-alpha.1
+## 0.2.0-alpha
 
 Refactoring.
 
