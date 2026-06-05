@@ -1,4 +1,3 @@
-
 // ReSharper disable InconsistentNaming
 
 namespace Compze.Must;

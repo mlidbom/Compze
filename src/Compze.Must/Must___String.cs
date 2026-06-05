@@ -1,4 +1,5 @@
 using System.Runtime.CompilerServices;
+
 // ReSharper disable InconsistentNaming
 
 namespace Compze.Must;
@@ -20,7 +21,7 @@ public static class Must___String
 
    /// <summary>Asserts that the string ends with <paramref name="expected"/> (ordinal).</summary>
    public static IAssertionContext<string> EndWith(this IAssertionContext<string> context, string expected, [CallerArgumentExpression(nameof(expected))] string expectedExpression = null!) =>
-      context.RunAssertion(it => it.EndsWithOrdinal(expected),expressionValues: [new(expectedExpression, expected)]);
+      context.RunAssertion(it => it.EndsWithOrdinal(expected), expressionValues: [new(expectedExpression, expected)]);
 
    /// <summary>Asserts that the string is <see langword="null"/> or empty.</summary>
    public static IAssertionContext<string?> BeNullOrEmpty(this IAssertionContext<string?> context) =>

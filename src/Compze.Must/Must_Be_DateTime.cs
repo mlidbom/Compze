@@ -2,7 +2,6 @@ using System.Runtime.CompilerServices;
 
 namespace Compze.Must;
 // ReSharper disable InconsistentNaming
-
 /// <summary>DateTime equality assertion with a tolerance.</summary>
 public static class Must_Be_DateTime
 {

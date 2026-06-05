@@ -2,7 +2,6 @@ using System.Runtime.CompilerServices;
 
 namespace Compze.Must;
 // ReSharper disable InconsistentNaming
-
 /// <summary>Reference-identity assertions.</summary>
 public static class Must___ReferenceEqual
 {
