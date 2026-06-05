@@ -4,7 +4,7 @@
 namespace Compze.Must;
 
 /// <summary>Boolean assertions.</summary>
-public static class Must_BeTrue_BeFalse
+public static class BooleanAssertions
 {
    /// <summary>Asserts that the value is <see langword="true"/>.</summary>
    public static IAssertionContext<bool> BeTrue(this IAssertionContext<bool> context, string? message = null)

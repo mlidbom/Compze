@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 namespace Compze.Must;
 
 /// <summary>Assertions over <see cref="IComparable{T}"/> values.</summary>
-public static class Must___IComparableAssertions
+public static class ComparableAssertions
 {
    /// <summary>Asserts that the value is greater than <paramref name="expected"/>.</summary>
    public static IAssertionContext<TValue> BeGreaterThan<TValue>(this IAssertionContext<TValue> context, TValue expected, [CallerArgumentExpression(nameof(expected))] string expectedExpression = null!)

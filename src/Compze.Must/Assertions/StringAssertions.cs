@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 namespace Compze.Must;
 
 /// <summary>String content assertions (ordinal comparison).</summary>
-public static class Must___String
+public static class StringAssertions
 {
    /// <summary>Asserts that the string contains <paramref name="expected"/> (ordinal).</summary>
    public static IAssertionContext<string> Contain(this IAssertionContext<string> context, string expected, [CallerArgumentExpression(nameof(expected))] string expectedExpression = null!) =>

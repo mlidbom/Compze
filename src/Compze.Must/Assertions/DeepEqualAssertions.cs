@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 // ReSharper disable InconsistentNaming
 namespace Compze.Must;
 
-/// <summary>Configures a deep-equality comparison (<see cref="Must_DeepEqual"/>): which members to exclude and whether to ignore declared types.</summary>
+/// <summary>Configures a deep-equality comparison (<see cref="DeepEqualAssertions"/>): which members to exclude and whether to ignore declared types.</summary>
 public class EquivalencyConfig<TValue>
 {
    internal HashSet<MemberInfo> ExcludedMembers { get; } = [];
@@ -23,7 +23,7 @@ public class EquivalencyConfig<TValue>
 }
 
 /// <summary>Deep structural-equality assertions that compare two values by serializing them and diffing the results.</summary>
-public static class Must_DeepEqual
+public static class DeepEqualAssertions
 {
    /// <summary>Asserts deep structural equality with <paramref name="expected"/>, comparing all members (public, internal, and private). Equivalent to <see cref="DeepEqualPrivate{TValue}(IAssertionContext{TValue}, TValue, System.Func{EquivalencyConfig{TValue}, EquivalencyConfig{TValue}}, string)"/>.</summary>
    public static IAssertionContext<TValue> DeepEqual<TValue>(this IAssertionContext<TValue> context,

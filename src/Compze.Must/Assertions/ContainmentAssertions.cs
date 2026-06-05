@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 namespace Compze.Must;
 
 /// <summary>Assertions that a collection contains an item.</summary>
-public static class Must_Contain
+public static class ContainmentAssertions
 {
    /// <summary>Asserts that the set contains <paramref name="item"/>.</summary>
    public static IAssertionContext<IReadOnlySet<T>> Contain<T>(this IAssertionContext<IReadOnlySet<T>> context, T item, [CallerArgumentExpression(nameof(item))] string itemExpression = null!)

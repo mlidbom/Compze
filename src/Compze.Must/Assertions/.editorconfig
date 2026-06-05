@@ -1,0 +1,6 @@
+# These are extension-method containers. They intentionally stay in the flat Compze.Must
+# namespace (single-`using` ergonomics for consumers) regardless of folder, so the
+# "namespace must match folder" inspections do not apply here.
+[*.cs]
+resharper_check_namespace_highlighting = none
+dotnet_diagnostic.IDE0130.severity = none

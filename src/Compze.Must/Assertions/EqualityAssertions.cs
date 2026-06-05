@@ -8,7 +8,7 @@ namespace Compze.Must;
 
 // ReSharper disable InconsistentNaming
 /// <summary>Value-equality assertions, checked consistently across every comparison mechanism the type supports.</summary>
-public static class Must_Be_NotBe
+public static class EqualityAssertions
 {
    /// <summary>Asserts that the value equals <paramref name="expected"/> consistently across <see cref="object.Equals(object)"/>, <see cref="System.IEquatable{T}"/>, equality and comparison operators, <see cref="System.IComparable"/>, structural equality, and <see cref="object.GetHashCode"/>.</summary>
    public static IAssertionContext<TValue> Be<TValue, TExpected>(this IAssertionContext<TValue> context, TExpected expected, [CallerArgumentExpression(nameof(expected))] string expectedExpression = null!) =>

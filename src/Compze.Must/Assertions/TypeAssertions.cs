@@ -1,7 +1,7 @@
 namespace Compze.Must;
 // ReSharper disable InconsistentNaming
 /// <summary>Assertions about the runtime type of the value.</summary>
-public static class Must___TypeOfActual
+public static class TypeAssertions
 {
    /// <summary>Asserts that the value's runtime type is exactly <typeparamref name="TExpected"/>, narrowing the context to it.</summary>
    public static IAssertionContext<TExpected> BeExactType<TExpected>(this IAssertionContext context) =>

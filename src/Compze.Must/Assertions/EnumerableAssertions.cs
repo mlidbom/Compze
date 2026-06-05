@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 namespace Compze.Must;
 
 /// <summary>Assertions over enumerable sequences.</summary>
-public static class Must___Enumerable
+public static class EnumerableAssertions
 {
    /// <summary>Asserts that the sequence contains exactly <paramref name="count"/> elements.</summary>
    public static IAssertionContext<TCollection> HaveCount<TCollection>(this IAssertionContext<TCollection> context, int count, [CallerArgumentExpression(nameof(count))] string predicateExpression = null!)

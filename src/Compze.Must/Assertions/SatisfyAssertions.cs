@@ -14,7 +14,7 @@ public record SatisfyCallInfo<T>(string PredicateExpression, Func<T, string>? Fa
 // ReSharper restore NotAccessedPositionalProperty.Global
 
 /// <summary>Predicate-based assertions: the one-off <see cref="Satisfy{T}(IAssertionContext{T}, System.Func{T, bool}, System.Func{T, string}, string)"/>, and <see cref="RunAssertion{T}(IAssertionContext{T}, System.Func{T, bool}, string, System.Func{SatisfyCallInfo{T}, string}, System.Func{T, string}, ExpressionValue[], string)"/> — the primitive every other assertion is built on.</summary>
-public static class _Must_Satisfy
+public static class SatisfyAssertions
 {
    /// <summary>Asserts that the value satisfies <paramref name="predicate"/>.</summary>
    public static IAssertionContext Satisfy(this IAssertionContext context,

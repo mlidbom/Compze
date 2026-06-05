@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 namespace Compze.Must;
 // ReSharper disable InconsistentNaming
 /// <summary>Reference-identity assertions.</summary>
-public static class Must___ReferenceEqual
+public static class ReferenceEqualityAssertions
 {
    /// <summary>Asserts that the value is the same instance as <paramref name="expected"/>.</summary>
    public static IAssertionContext<TValue> ReferenceEqual<TValue>(this IAssertionContext<TValue> context, TValue expected, [CallerArgumentExpression(nameof(expected))] string expectedExpression = null!)

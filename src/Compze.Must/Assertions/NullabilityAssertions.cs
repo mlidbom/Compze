@@ -3,7 +3,7 @@
 namespace Compze.Must;
 
 /// <summary>Null assertions.</summary>
-public static class Must_NotBeNull
+public static class NullabilityAssertions
 {
    /// <summary>Asserts that the value is not <see langword="null"/>, narrowing the context to the non-nullable type.</summary>
    public static IAssertionContext<TValue> NotBeNull<TValue>(this IAssertionContext<TValue?> context) =>

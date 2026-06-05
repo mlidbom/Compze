@@ -1,6 +1,6 @@
 namespace Compze.Must;
 
-/// <summary>The non-generic context for a <see cref="__Must.Must{T}(T, string)"/> assertion chain: the captured expression text plus a way to narrow to a typed context.</summary>
+/// <summary>The non-generic context for a <see cref="MustExtensions.Must{T}(T, string)"/> assertion chain: the captured expression text plus a way to narrow to a typed context.</summary>
 public interface IAssertionContext
 {
    /// <summary>The source text of the expression under assertion, captured automatically from the call site by the compiler.</summary>
@@ -9,7 +9,7 @@ public interface IAssertionContext
    IAssertionContext<T> Cast<T>();
 }
 
-/// <summary>The context for a <see cref="__Must.Must{T}(T, string)"/> assertion chain over a value of type <typeparamref name="T"/>. Assertions are extension methods on this interface.</summary>
+/// <summary>The context for a <see cref="MustExtensions.Must{T}(T, string)"/> assertion chain over a value of type <typeparamref name="T"/>. Assertions are extension methods on this interface.</summary>
 public interface IAssertionContext<out T> : IAssertionContext
 {
    /// <summary>The value under assertion.</summary>
