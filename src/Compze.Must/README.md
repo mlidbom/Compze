@@ -23,9 +23,9 @@ JSON:
 }
 ```
 
-The predicate you wrote is **echoed back verbatim**, and the **entire object is serialized right there**.
-No re-running under the debugger to ask "well, what *was* the status?" — and because `Satisfy` reports the
-expression and the state for *any* predicate, you rarely need to write a purpose-built assertion at all.
+No re-running under the debugger to ask "well, what *was* the state of order?"
+
+`Satisfy` reports the expression and the state for *any* predicate
 
 ## Asserting on equality 
 
@@ -48,10 +48,11 @@ Diff:
 -  "Owner": "Ada"
 +  "Owner": "John"
  }
-```
-```The full json of actual here```
 
-```The full json of expected here here```
+ actual was: [Full details including full json here]
+ expected was: [Full details including full json here]
+```
+
 
 ## Deep comparison of arbitrary objects graphs, with unified diffs
 
@@ -83,9 +84,38 @@ Diff:
 +      "Product": "Sugar",
 +      "Quantity": 1
      }
+
+cart was: [Full details including full json here]
+expectedCart was: [Full details including full json here]
 ```
 
 **Bread's quantity changed**, **Eggs went missing**, **Sugar appeared**.
+
+## Pluging your own assertion method into the fluent API is two lines of code
+
+```csharp
+public static class MyCustomAssertions
+{
+   public static IAssertionContext<string> BeAValidEmailAddress(this IAssertionContext<string> @this) => 
+      @this.RunAssertion(it => it.Contains('@') && it.Contains('.'));
+}
+```
+
+Call your assertion: `userInput.Must().BeAValidEmailAddress();`
+```
+Failing assertion:
+userInput.Must().BeAValidEmailAddress()
+
+userInput was a string with the value:
+ada.example.com
+```
+
+Note the heading: the failure is automatically labelled **`BeAValidEmailAddress`** — your own method's name —
+because `RunAssertion` captures it for you. **Every built-in assertion in `Must` is written exactly this way**,
+so the assertions you add read just like the ones that ship with the library.
+
+Assertions can also take arguments and render them in the failure message; see
+[Custom assertions with arguments](#custom-assertions-with-arguments) for that.
 
 ---
 
@@ -216,38 +246,10 @@ await InvokingAsync(() => repository.SaveAsync(order))
 | Throwing | `Invoking(...).Must().Throw<T>()`, `InvokingAsync(...).Must().ThrowAsync<T>()` |
 | General | `Satisfy` |
 
-## Extending: write your own assertion in two lines
+## Custom assertions with arguments
 
-Custom assertions are just extension methods on `IAssertionContext<T>` that call **`RunAssertion`** — the same
-primitive every built-in is built on. Because `RunAssertion` captures the calling method's name and arguments
-for you, your assertion gets the full diagnostic treatment automatically, with **zero message-formatting code**:
-
-```csharp
-public static class MustAssertions
-{
-   public static IAssertionContext<string> BeAValidEmailAddress(this IAssertionContext<string> @this) =>
-      @this.RunAssertion(it => it.Contains('@') && it.Contains('.'));
-}
-```
-
-```csharp
-userInput.Must().BeAValidEmailAddress();
-```
-
-```
-Failing assertion:
-"ada.example.com".Must().BeAValidEmailAddress()
-
-"ada.example.com" was a string with the value:
-ada.example.com
-```
-
-Note the heading: the failure is labelled **`BeAValidEmailAddress`** — your method's own name, not "Satisfy".
-That's the difference between `RunAssertion` and `Satisfy`: `Satisfy` always reports itself as `Satisfy`,
-whereas `RunAssertion` surfaces the name of *your* assertion. (This is why the library uses `RunAssertion`
-internally rather than `Satisfy`, and it's why your custom assertions read just like the built-in ones.)
-
-Surface the arguments too, and they're rendered in the failure with their resolved values:
+An assertion can take arguments and surface them in the failure message with their resolved values: pass them
+as `expressionValues`, capturing each argument's source text with `[CallerArgumentExpression]`.
 
 ```csharp
 public static IAssertionContext<int> BeInRange(this IAssertionContext<int> @this, int min, int max,
@@ -269,6 +271,31 @@ age was a System.Int32 with the value: 17
 minimumAge was a System.Int32 with the value: 18
 maximumAge was a System.Int32 with the value: 65
 ```
+
+`RunAssertion` is the primitive every built-in assertion is built on, and it's why a custom assertion reports
+its *own* name rather than `Satisfy`: `Satisfy` always labels failures `Satisfy`, whereas `RunAssertion`
+surfaces the calling method's name and the `expressionValues` you pass — automatically.
+
+---
+
+## Tips & considerations
+
+### Property or object? A judgment call
+
+Every assertion is a choice of *subject*, and the subject decides how much you see when it fails:
+
+- **Assert on a property** — `order.Status.Must().Be("Shipped")` — less output to parse, pointed right at the
+  value that's wrong; but the state of the owning object is missing in action.
+- **Assert on the owning object** — `order.Must().Satisfy(it => it.Status == "Shipped")` — the full context of
+  the object's state, right there in the failure; but you have to dig out what the state was from a potentially
+  long bit of JSON.
+
+Two things worth knowing when you make that call:
+
+- It's about the *subject*, not about `Satisfy`. A **custom assertion built on `RunAssertion` keeps the same
+  full-object context** — so reaching for a reusable, named assertion never costs you the state.
+- For comparing whole objects, prefer `Be` / `DeepEqual`: their unified diff beats a `Satisfy` equality
+  predicate. (And the object is only serialized on failure — passing tests pay nothing.)
 
 ---
 
