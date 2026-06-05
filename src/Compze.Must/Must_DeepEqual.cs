@@ -29,32 +29,28 @@ public static class Must_DeepEqual
    public static IAssertionContext<TValue> DeepEqual<TValue>(this IAssertionContext<TValue> context,
                                                              TValue expected,
                                                              Func<EquivalencyConfig<TValue>, EquivalencyConfig<TValue>>? config = null,
-                                                             [CallerArgumentExpression(nameof(expected))]
-                                                             string expectedExpression = null!) =>
+                                                             [CallerArgumentExpression(nameof(expected))] string expectedExpression = null!) =>
       DeepEqualPrivate(context, expected, config, expectedExpression);
 
    /// <summary>Asserts deep structural equality with <paramref name="expected"/>, comparing all members including private ones.</summary>
    public static IAssertionContext<TValue> DeepEqualPrivate<TValue>(this IAssertionContext<TValue> context,
                                                                     TValue expected,
                                                                     Func<EquivalencyConfig<TValue>, EquivalencyConfig<TValue>>? config = null,
-                                                                    [CallerArgumentExpression(nameof(expected))]
-                                                                    string expectedExpression = null!) =>
+                                                                    [CallerArgumentExpression(nameof(expected))] string expectedExpression = null!) =>
       DeepEqualCore(context, expected, expectedExpression, TestingJsonSettings.AllMembers, config);
 
    /// <summary>Asserts deep structural equality with <paramref name="expected"/>, comparing internal and public members.</summary>
    public static IAssertionContext<TValue> DeepEqualInternal<TValue>(this IAssertionContext<TValue> context,
                                                                      TValue expected,
                                                                      Func<EquivalencyConfig<TValue>, EquivalencyConfig<TValue>>? config = null,
-                                                                     [CallerArgumentExpression(nameof(expected))]
-                                                                     string expectedExpression = null!)
+                                                                     [CallerArgumentExpression(nameof(expected))] string expectedExpression = null!)
       => DeepEqualCore(context, expected, expectedExpression, TestingJsonSettings.InternalAndPublicMembers, config);
 
    /// <summary>Asserts deep structural equality with <paramref name="expected"/>, comparing only public members.</summary>
    public static IAssertionContext<TValue> DeepEqualPublic<TValue>(this IAssertionContext<TValue> context,
                                                                    TValue expected,
                                                                    Func<EquivalencyConfig<TValue>, EquivalencyConfig<TValue>>? config = null,
-                                                                   [CallerArgumentExpression(nameof(expected))]
-                                                                   string expectedExpression = null!)
+                                                                   [CallerArgumentExpression(nameof(expected))] string expectedExpression = null!)
       => DeepEqualCore(context, expected, expectedExpression, TestingJsonSettings.PublicMembers, config);
 
    static IAssertionContext<TValue> DeepEqualCore<TValue>(IAssertionContext<TValue> context,
@@ -78,12 +74,12 @@ public static class Must_DeepEqual
       var expectedJson = JsonConvert.SerializeObject(expected, serializerSettings);
 
       return context.RunAssertion(_ => actualJson == expectedJson,
-                                     messageOverride: _ =>
-                                        $"""
-                                         {context.FailingAssertionHeading(nameof(DeepEqual), [new(expectedExpression, expected)])}
-                                         {context.Diff(expectedJson, actualJson)}
-                                         {context.ExpressionValue()}
-                                         {context.ExpressionValue(expectedExpression, expected)}
-                                         """);
+                                  messageOverride: _ =>
+                                     $"""
+                                      {context.FailingAssertionHeading(nameof(DeepEqual), [new(expectedExpression, expected)])}
+                                      {context.Diff(expectedJson, actualJson)}
+                                      {context.ExpressionValue()}
+                                      {context.ExpressionValue(expectedExpression, expected)}
+                                      """);
    }
 }
