@@ -17,7 +17,7 @@ static class TestingJsonSettings
    public static JsonSerializerSettings CreateSettingsWithExclusions(JsonSerializerSettings baseSettings, IReadOnlySet<MemberInfo> excludedMembers)
    {
       var baseResolver = baseSettings.ContractResolver as MemberFilteringContractResolver
-                      ?? throw new ArgumentException("Base settings IMust have a MemberFilteringContractResolver", nameof(baseSettings));
+                      ?? throw new ArgumentException("Base settings must have a MemberFilteringContractResolver", nameof(baseSettings));
       var excludingResolver = new ExcludingMembersContractResolver(baseResolver, excludedMembers);
 
       var settings = new JsonSerializerSettings(baseSettings)
