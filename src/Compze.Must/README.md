@@ -91,7 +91,7 @@ expectedCart was: [Full details including full json here]
 
 **Bread's quantity changed**, **Eggs went missing**, **Sugar appeared**.
 
-## Pluging your own assertion method into the fluent API is two lines of code
+## Plugging your own assertion method into the fluent API is two lines of code
 
 ```csharp
 public static class MyCustomAssertions
