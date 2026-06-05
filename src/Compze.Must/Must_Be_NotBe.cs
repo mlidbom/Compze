@@ -7,8 +7,10 @@ using Newtonsoft.Json;
 namespace Compze.Must;
 
 // ReSharper disable InconsistentNaming
+/// <summary>Value-equality assertions, checked consistently across every comparison mechanism the type supports.</summary>
 public static class Must_Be_NotBe
 {
+   /// <summary>Asserts that the value equals <paramref name="expected"/> consistently across <see cref="object.Equals(object)"/>, <see cref="System.IEquatable{T}"/>, equality and comparison operators, <see cref="System.IComparable"/>, structural equality, and <see cref="object.GetHashCode"/>.</summary>
    public static IAssertionContext<TValue> Be<TValue, TExpected>(this IAssertionContext<TValue> context, TExpected expected, [CallerArgumentExpression(nameof(expected))] string expectedExpression = null!) =>
       context.Be_transitively_equal_to_according_to_every_supported_comparison_method_and_hashcode(expected, expectedExpression);
 
@@ -113,6 +115,7 @@ public static class Must_Be_NotBe
       }
    }
 
+   /// <summary>Asserts that the value is not equal to <paramref name="unexpected"/> by any supported comparison mechanism.</summary>
    public static IAssertionContext<TValue> NotBe<TValue, TUnExpected>(this IAssertionContext<TValue> context, TUnExpected unexpected, [CallerArgumentExpression(nameof(unexpected))] string unexpectedExpression = null!) =>
       context.Not_be_equal_to_according_to_any_supported_comparison_method_in_any_direction(unexpected, unexpectedExpression);
 

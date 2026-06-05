@@ -6,17 +6,25 @@ namespace Compze.Must;
 
 
 // ReSharper disable NotAccessedPositionalProperty.Global
+/// <summary>Details of a failing assertion, passed to a custom failure-message builder.</summary>
+/// <param name="PredicateExpression">The source text of the predicate that failed.</param>
+/// <param name="FailureMessage">An optional function producing a custom failure message from the actual value.</param>
+/// <param name="CallingMethod">The name of the assertion method that performed the check.</param>
+/// <param name="UsedArguments">The expression/value pairs of the arguments involved, for rendering.</param>
 public record SatisfyCallInfo<T>(string PredicateExpression, Func<T, string>? FailureMessage, string CallingMethod, IReadOnlyList<ExpressionValue>? UsedArguments);
 // ReSharper restore NotAccessedPositionalProperty.Global
 
+/// <summary>The general-purpose <see cref="Satisfy{T}(IAssertionContext{T}, System.Func{T, bool}, System.Func{T, string}, string)"/> assertion: checks the value against an arbitrary predicate.</summary>
 public static class _Must_Satisfy
 {
+   /// <summary>Asserts that the value satisfies <paramref name="predicate"/>.</summary>
    public static IAssertionContext Satisfy(this IAssertionContext context,
                                            Func<object, bool> predicate,
                                            Func<object, string>? failureMessage = null,
                                            [CallerArgumentExpression(nameof(predicate))]
                                            string predicateExpression = null!) => context.Cast<object>().Satisfy(predicate, failureMessage: failureMessage, predicateExpression: predicateExpression);
 
+   /// <summary>Asserts that the value satisfies <paramref name="predicate"/>, with an optional custom <paramref name="failureMessage"/>.</summary>
    public static IAssertionContext<T> Satisfy<T>(this IAssertionContext<T> context,
                                                  Func<T, bool> predicate,
                                                  Func<T, string>? failureMessage = null,
@@ -54,7 +62,7 @@ public static class _Must_Satisfy
                                                    ExpressionValue[]? expressionValues = null,
                                                    [CallerMemberName] string caller = null!) => context.Cast<object>().SatisfyInternal(predicate, predicateExpression, messageOverride, failureMessage, expressionValues, caller);
 
-   public static IAssertionContext<T> SatisfyInternal<T>(this IAssertionContext<T> context,
+   internal static IAssertionContext<T> SatisfyInternal<T>(this IAssertionContext<T> context,
                                                          Func<T, bool> predicate,
                                                          [CallerArgumentExpression(nameof(predicate))]
                                                          string predicateExpression = null!,

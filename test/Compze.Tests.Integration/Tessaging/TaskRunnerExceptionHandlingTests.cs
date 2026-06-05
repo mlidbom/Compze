@@ -47,7 +47,7 @@ public class TaskRunnerExceptionHandlingTests : UniversalTestBase
          var taggregateException = await disposeAction.Must().ThrowAsync<AggregateException>();
 
          var flattened = taggregateException.Which.Flatten();
-         flattened.InnerExceptions.Must().SatisfyInternal(it => it.Any(e => e.InnerException is InvalidOperationException && e.InnerException.Message == "exception1"));
+         flattened.InnerExceptions.Must().Satisfy(it => it.Any(e => e.InnerException is InvalidOperationException && e.InnerException.Message == "exception1"));
       });
    }
 

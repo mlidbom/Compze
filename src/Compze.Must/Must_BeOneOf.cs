@@ -7,8 +7,10 @@ using System.Runtime.CompilerServices;
 
 namespace Compze.Must;
 
+/// <summary>Assertions that a value is among a set of allowed values.</summary>
 public static class Must_BeOneOf
 {
+   /// <summary>Asserts that the value equals one of <paramref name="validValues"/>.</summary>
    public static IAssertionContext<TValue> BeOneOf<TValue>(this IAssertionContext<TValue> context, TValue[] validValues, [CallerArgumentExpression(nameof(validValues))] string validValuesExpression = null!) =>
       context.SatisfyInternal(it => validValues.Contains(it),
                               expressionValues: [new(validValuesExpression, validValues)]);
