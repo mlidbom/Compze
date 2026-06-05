@@ -4,7 +4,6 @@ using System.Runtime.CompilerServices;
 
 namespace Compze.Must;
 
-
 // ReSharper disable NotAccessedPositionalProperty.Global
 /// <summary>Details of a failing assertion, passed to a custom failure-message builder.</summary>
 /// <param name="PredicateExpression">The source text of the predicate that failed.</param>
@@ -14,22 +13,20 @@ namespace Compze.Must;
 public record SatisfyCallInfo<T>(string PredicateExpression, Func<T, string>? FailureMessage, string CallingMethod, IReadOnlyList<ExpressionValue>? UsedArguments);
 // ReSharper restore NotAccessedPositionalProperty.Global
 
-/// <summary>The general-purpose <see cref="Satisfy{T}(IAssertionContext{T}, System.Func{T, bool}, System.Func{T, string}, string)"/> assertion: checks the value against an arbitrary predicate.</summary>
+/// <summary>Predicate-based assertions: the one-off <see cref="Satisfy{T}(IAssertionContext{T}, System.Func{T, bool}, System.Func{T, string}, string)"/>, and <see cref="RunAssertion{T}(IAssertionContext{T}, System.Func{T, bool}, string, System.Func{SatisfyCallInfo{T}, string}, System.Func{T, string}, ExpressionValue[], string)"/> — the primitive every other assertion is built on.</summary>
 public static class _Must_Satisfy
 {
    /// <summary>Asserts that the value satisfies <paramref name="predicate"/>.</summary>
    public static IAssertionContext Satisfy(this IAssertionContext context,
                                            Func<object, bool> predicate,
                                            Func<object, string>? failureMessage = null,
-                                           [CallerArgumentExpression(nameof(predicate))]
-                                           string predicateExpression = null!) => context.Cast<object>().Satisfy(predicate, failureMessage: failureMessage, predicateExpression: predicateExpression);
+                                           [CallerArgumentExpression(nameof(predicate))] string predicateExpression = null!) => context.Cast<object>().Satisfy(predicate, failureMessage: failureMessage, predicateExpression: predicateExpression);
 
    /// <summary>Asserts that the value satisfies <paramref name="predicate"/>, with an optional custom <paramref name="failureMessage"/>.</summary>
    public static IAssertionContext<T> Satisfy<T>(this IAssertionContext<T> context,
                                                  Func<T, bool> predicate,
                                                  Func<T, string>? failureMessage = null,
-                                                 [CallerArgumentExpression(nameof(predicate))]
-                                                 string predicateExpression = null!)
+                                                 [CallerArgumentExpression(nameof(predicate))] string predicateExpression = null!)
    {
       if(!predicate(context.Actual))
       {
@@ -53,23 +50,28 @@ public static class _Must_Satisfy
       return context;
    }
 
-   internal static IAssertionContext SatisfyInternal(this IAssertionContext context,
-                                                   Func<object, bool> predicate,
-                                                   [CallerArgumentExpression(nameof(predicate))]
-                                                   string predicateExpression = null!,
-                                                   Func<SatisfyCallInfo<object>, string>? messageOverride = null,
-                                                   Func<object, string>? failureMessage = null,
-                                                   ExpressionValue[]? expressionValues = null,
-                                                   [CallerMemberName] string caller = null!) => context.Cast<object>().SatisfyInternal(predicate, predicateExpression, messageOverride, failureMessage, expressionValues, caller);
+   internal static IAssertionContext RunAssertion(this IAssertionContext context,
+                                                  Func<object, bool> predicate,
+                                                  [CallerArgumentExpression(nameof(predicate))] string predicateExpression = null!,
+                                                  Func<SatisfyCallInfo<object>, string>? messageOverride = null,
+                                                  Func<object, string>? failureMessage = null,
+                                                  ExpressionValue[]? expressionValues = null,
+                                                  [CallerMemberName] string caller = null!) => context.Cast<object>().RunAssertion(predicate, predicateExpression, messageOverride, failureMessage, expressionValues, caller);
 
-   internal static IAssertionContext<T> SatisfyInternal<T>(this IAssertionContext<T> context,
-                                                         Func<T, bool> predicate,
-                                                         [CallerArgumentExpression(nameof(predicate))]
-                                                         string predicateExpression = null!,
-                                                         Func<SatisfyCallInfo<T>, string>? messageOverride = null,
-                                                         Func<T, string>? failureMessage = null,
-                                                         ExpressionValue[]? expressionValues = null,
-                                                         [CallerMemberName] string caller = null!)
+   /// <summary>
+   /// The extension point for authoring custom assertions: write an extension method on <see cref="IAssertionContext{T}"/> and
+   /// call this. It checks <paramref name="predicate"/> and, on failure, throws an <see cref="AssertionFailedException"/> whose
+   /// heading is automatically labelled with the calling assertion method's name (captured from the call site) and renders the
+   /// supplied <paramref name="expressionValues"/>. Unlike <see cref="Satisfy{T}(IAssertionContext{T}, System.Func{T, bool}, System.Func{T, string}, string)"/>,
+   /// which always labels failures "Satisfy", this surfaces your own assertion's name.
+   /// </summary>
+   public static IAssertionContext<T> RunAssertion<T>(this IAssertionContext<T> context,
+                                                      Func<T, bool> predicate,
+                                                      [CallerArgumentExpression(nameof(predicate))] string predicateExpression = null!,
+                                                      Func<SatisfyCallInfo<T>, string>? messageOverride = null,
+                                                      Func<T, string>? failureMessage = null,
+                                                      ExpressionValue[]? expressionValues = null,
+                                                      [CallerMemberName] string caller = null!)
    {
       if(!predicate(context.Actual))
       {

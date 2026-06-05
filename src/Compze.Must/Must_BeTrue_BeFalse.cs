@@ -9,7 +9,7 @@ public static class Must_BeTrue_BeFalse
 {
    /// <summary>Asserts that the value is <see langword="true"/>.</summary>
    public static IAssertionContext<bool> BeTrue(this IAssertionContext<bool> context, string? message = null)
-      => context.SatisfyInternal(it => it == true,
+      => context.RunAssertion(it => it == true,
                                           messageOverride: _ =>
                                              message ??
                                              $"""
@@ -22,7 +22,7 @@ public static class Must_BeTrue_BeFalse
 
    /// <summary>Asserts that the value is <see langword="false"/>.</summary>
    public static IAssertionContext<bool> BeFalse(this IAssertionContext<bool> context, string? message = null)
-      => context.SatisfyInternal(it => it == false,
+      => context.RunAssertion(it => it == false,
                                  messageOverride: _ =>
                                     message ??
                                     $"""
