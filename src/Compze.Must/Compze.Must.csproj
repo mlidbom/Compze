@@ -4,6 +4,7 @@
     <Nullable>enable</Nullable>
     <Version>0.2.1-alpha</Version>
     <Description>Assertions with failure messages that do the debugging for you, a trivially easy to extend fluent API and strict by default semantics.</Description>
+    <PackageTags>assertions;testing;tdd;bdd;fluent;unit-testing</PackageTags>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
@@ -15,20 +16,6 @@
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' != 'true'">
     <ProjectReference Include="..\Compze.Contracts\Compze.Contracts.csproj" />
-  </ItemGroup>
-  <!-- Compze.DependencyInjection — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection)' == 'true'">
-    <PackageReference Include="Compze.DependencyInjection" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection)' != 'true'">
-    <ProjectReference Include="..\Compze.DependencyInjection\Compze.DependencyInjection.csproj" />
-  </ItemGroup>
-  <!-- Compze.Internals.Logging — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Logging)' == 'true'">
-    <PackageReference Include="Compze.Internals.Logging" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Logging)' != 'true'">
-    <ProjectReference Include="..\Compze.Internals.Logging\Compze.Internals.Logging.csproj" />
   </ItemGroup>
   <!-- Compze.Internals.SystemCE — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_SystemCE)' == 'true'">
