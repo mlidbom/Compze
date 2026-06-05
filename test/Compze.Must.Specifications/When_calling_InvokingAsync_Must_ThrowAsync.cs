@@ -68,7 +68,7 @@ public class When_calling_InvokingAsync_Must_ThrowAsync : UniversalTestBase
                             {
                                await Task.Yield();
                                throw new InvalidOperationException("wrong");
-                            }).Must().Throw<ArgumentException>()
+                            }).Must().ThrowAsync<ArgumentException>()
                             --------------------------------------------------
                             Expected a System.ArgumentException
                             but got a System.InvalidOperationException
@@ -122,7 +122,7 @@ public class When_calling_InvokingAsync_Must_ThrowAsync : UniversalTestBase
                             {
                                await Task.Yield();
                                // do nothing
-                            }).Must().Throw<InvalidOperationException>()
+                            }).Must().ThrowAsync<InvalidOperationException>()
                             --------------------------------------------------
                             Expected a System.InvalidOperationException, but no exception was thrown
                             --------------------------------------------------

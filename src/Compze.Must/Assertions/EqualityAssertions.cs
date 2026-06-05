@@ -23,7 +23,7 @@ public static class EqualityAssertions
 
       if(context.Actual is TExpected)
       {
-         context.Cast<TExpected>().Be_transitively_equal_to_according_to_every_supported_comparison_method_and_hashcode_internal(expected, expectedExpression).Cast<TValue>();
+         return context.Cast<TExpected>().Be_transitively_equal_to_according_to_every_supported_comparison_method_and_hashcode_internal(expected, expectedExpression).Cast<TValue>();
       }
 
       return context.Cast<object>()
@@ -76,7 +76,7 @@ public static class EqualityAssertions
 
       return context;
 
-      string BuildFailureMessage(SatisfyCallInfo<TValue> info)
+      string BuildFailureMessage(AssertionCallInfo<TValue> info)
       {
          var actualJson = JsonConvert.SerializeObject(context.Actual, TestingJsonSettings.AllMembers);
          var expectedJson = JsonConvert.SerializeObject(expected, TestingJsonSettings.AllMembers);
@@ -128,8 +128,8 @@ public static class EqualityAssertions
 
       if(context.Actual is TUnExpected)
       {
-         context.Cast<TUnExpected>().Not_be_equal_to_according_to_any_supported_comparison_method_in_any_direction_internal(unexpected, unexpectedExpression)
-                .Cast<TValue>();
+         return context.Cast<TUnExpected>().Not_be_equal_to_according_to_any_supported_comparison_method_in_any_direction_internal(unexpected, unexpectedExpression)
+                       .Cast<TValue>();
       }
 
       return context.Cast<object>()
@@ -167,7 +167,7 @@ public static class EqualityAssertions
 
       return context;
 
-      string BuildFailureMessage(SatisfyCallInfo<TValue> info)
+      string BuildFailureMessage(AssertionCallInfo<TValue> info)
       {
          return $"""
                  {context.FailingAssertionHeading(nameof(NotBe), unexpectedExpression)}

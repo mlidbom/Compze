@@ -10,7 +10,7 @@ public static class EnumerableAssertions
    /// <summary>Asserts that the sequence contains exactly <paramref name="count"/> elements.</summary>
    public static IAssertionContext<TCollection> HaveCount<TCollection>(this IAssertionContext<TCollection> context, int count, [CallerArgumentExpression(nameof(count))] string predicateExpression = null!)
       where TCollection : System.Collections.IEnumerable
-      => context.RunAssertion(it => it.Cast<object>().Count() == count, failureMessage: it => $"Expected count to be {count} but it was {it.Cast<IEnumerable<object>>().Count()}", expressionValues: [new(predicateExpression, count)]);
+      => context.RunAssertion(it => it.Cast<object>().Count() == count, failureMessage: it => $"Expected count to be {count} but it was {it.Cast<object>().Count()}", expressionValues: [new(predicateExpression, count)]);
 
    /// <summary>Asserts that the sequence is empty.</summary>
    public static IAssertionContext<TCollection> BeEmpty<TCollection>(this IAssertionContext<TCollection> context)

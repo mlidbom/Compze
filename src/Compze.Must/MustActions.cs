@@ -135,7 +135,7 @@ static class InvokingMustThrowExtensions
               {AssertionContext.Separator}
               Failing assertion:
               {AssertionContext.Separator}
-              InvokingAsync({context.Expression}).Must().Throw<{expectedException.Name}>()
+              InvokingAsync({context.Expression}).Must().ThrowAsync<{expectedException.Name}>()
               {AssertionContext.Separator}
               """;
    }

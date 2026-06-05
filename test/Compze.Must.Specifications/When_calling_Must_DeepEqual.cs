@@ -136,7 +136,7 @@ public class When_calling_Must_DeepEqual : UniversalTestBase
          public class and_an_exclusion_of_the_Id_property : have_different_Ids
          {
             [XF] public void DeepEqual_does_not_throw_throws()
-               => _actual.Must().DeepEqualPrivate(_expected, config => config.ExcludeTypeMember(obj => obj.Id));
+               => _actual.Must().DeepEqualPrivate(_expected, config => config.ExcludeMember(obj => obj.Id));
          }
       }
 
@@ -156,13 +156,13 @@ public class When_calling_Must_DeepEqual : UniversalTestBase
          public class with_an_exclusion_via_the_first_method : are_collections_with_objects_having_different_Ids
          {
             [XF] public void DeepEqual_does_not_throw()
-               => _actual.Must().DeepEqualPrivate(_expected, config => config.ExcludeTypeMember(list => list.First().Id));
+               => _actual.Must().DeepEqualPrivate(_expected, config => config.ExcludeMember(list => list.First().Id));
          }
 
          public class with_an_exclusion_via_the_indexer : are_collections_with_objects_having_different_Ids
          {
             [XF] public void DeepEqual_does_not_throw()
-               => _actual.Must().DeepEqualPrivate(_expected, config => config.ExcludeTypeMember(list => list[0].Id));
+               => _actual.Must().DeepEqualPrivate(_expected, config => config.ExcludeMember(list => list[0].Id));
          }
       }
 
@@ -176,21 +176,21 @@ public class When_calling_Must_DeepEqual : UniversalTestBase
          public class And_an_exclusion_of_the_Id_property_in_the_Inner_class : contain_nested_objects_with_differing_Id_properties_in_both_the_Inner_and_Outer_type
          {
             [XF] public void DeepEqual_throws_()
-               => Invoking(() => _actual.Must().DeepEqualPrivate(_expected, config => config.ExcludeTypeMember(c => c.Outer.Id)))
+               => Invoking(() => _actual.Must().DeepEqualPrivate(_expected, config => config.ExcludeMember(c => c.Outer.Id)))
                  .Must().Throw<AssertionFailedException>();
          }
 
          public class And_an_exclusion_of_the_Id_property_in_the_Outer_class : contain_nested_objects_with_differing_Id_properties_in_both_the_Inner_and_Outer_type
          {
             [XF] public void DeepEqual_throws_()
-               => Invoking(() => _actual.Must().DeepEqualPrivate(_expected, config => config.ExcludeTypeMember(c => c.Inner.Id)))
+               => Invoking(() => _actual.Must().DeepEqualPrivate(_expected, config => config.ExcludeMember(c => c.Inner.Id)))
                  .Must().Throw<AssertionFailedException>();
          }
 
          public class and_an_exclusion_the_Id_property_in_both_the_Inner_class_and_Outer_class : contain_nested_objects_with_differing_Id_properties_in_both_the_Inner_and_Outer_type
          {
             [XF] public void DeepEqual_does_not_throw_throws()
-               => _actual.Must().DeepEqualPrivate(_expected, config => config.ExcludeTypeMember(it => it.Outer.Id).ExcludeTypeMember(it => it.Inner.Id));
+               => _actual.Must().DeepEqualPrivate(_expected, config => config.ExcludeMember(it => it.Outer.Id).ExcludeMember(it => it.Inner.Id));
          }
 
          class Container(Inner inner, Outer outer)

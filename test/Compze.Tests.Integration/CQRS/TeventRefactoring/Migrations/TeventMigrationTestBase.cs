@@ -183,7 +183,7 @@ public abstract class TeventMigrationTestBase : UniversalTestBase
    {
       Log.Info($"Comparing histories for : {descriptionOfHistory}");
       migratedHistory.ToList().Must()
-                     .DeepEqualPrivate(expected.ToList(), config => config.ExcludeTypeMember(it => it.First().Id));
+                     .DeepEqualPrivate(expected.ToList(), config => config.ExcludeMember(it => it.First().Id));
    }
 }
 

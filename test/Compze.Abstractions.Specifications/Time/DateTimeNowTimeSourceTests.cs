@@ -10,6 +10,6 @@ public class DateTimeNowTimeSourceTests : UniversalTestBase
    [XF] public void UtcNow_should_return_within_100_milliseconds_of_DateTimeNow()
    {
       var uut = new DateTimeNowTimeSource();
-      uut.UtcNow.Must().Be(DateTime.UtcNow, TimeSpan.FromMilliseconds(100));
+      uut.UtcNow.Must().BeCloseTo(DateTime.UtcNow, TimeSpan.FromMilliseconds(100));
    }
 }

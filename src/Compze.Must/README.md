@@ -200,7 +200,7 @@ And you can tune any comparison with a config callback:
 
 ```csharp
 // Ignore noisy identity fields:
-actual.Must().DeepEqual(expected, config => config.ExcludeTypeMember(it => it.Id));
+actual.Must().DeepEqual(expected, config => config.ExcludeMember(it => it.Id));
 
 // Compare structurally, ignoring declared types:
 actual.Must().DeepEqual(expected, config => config.IgnoreTypes());
