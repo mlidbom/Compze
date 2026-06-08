@@ -81,6 +81,24 @@ public class When_logging_within_an_activity
       [XF] public void the_failing_exception_type_is_captured() => _logger.Captured[1].Values![1].Must().Be("InvalidOperationException");
    }
 
+   public class on_a_path_that_lost_the_ambient_activity : When_logging_within_an_activity
+   {
+      readonly string? _whileLost;
+      readonly string? _afterMakeCurrent;
+      public on_a_path_that_lost_the_ambient_activity()
+      {
+         using var activity = _logger.StartActivity("overlay show");
+         System.Diagnostics.Activity.Current = null;   // a later dispatcher turn that did not inherit the activity
+         _logger.Debug().Log("on the lost path");
+         _whileLost = _logger.Captured[^1].ActivityName;
+         using(activity.MakeCurrent()) { _logger.Debug().Log("re-established"); }
+         _afterMakeCurrent = _logger.Captured[^1].ActivityName;
+      }
+
+      [XF] public void a_line_logged_after_the_context_was_lost_is_untagged() => (_whileLost is null).Must().Be(true);
+      [XF] public void make_current_re_establishes_the_activity_so_the_line_is_tagged_again() => _afterMakeCurrent.Must().NotBeNull().Be("overlay show");
+   }
+
    public class that_runs_twice_under_the_same_name : When_logging_within_an_activity
    {
       public that_runs_twice_under_the_same_name()

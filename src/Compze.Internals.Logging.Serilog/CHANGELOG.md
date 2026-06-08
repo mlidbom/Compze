@@ -4,7 +4,7 @@ All notable changes to Compze.Internals.Logging.Serilog will be documented in th
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
-## 0.3.0-alpha
+## 0.3.1-alpha
 
 ### Changed
 - `SerilogLogger` now enriches every log event with the ambient `System.Diagnostics.Activity.Current` (when one is set) as `Activity` (the operation name) and `ActivityId` properties, alongside the existing `CallerMember`. Logs emitted anywhere within a `StartActivity(...)` scope are correlated automatically; add `{Activity}` / `{ActivityId}` to your output template to render them.

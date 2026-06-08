@@ -27,6 +27,9 @@ public interface IActivityScope : IDisposable
    ///<summary>Marks the activity as failed because of <paramref name="exception"/>: disposing then logs that it failed rather than completed, and sets the underlying activity's status to error.</summary>
    void Fail(Exception exception);
 
+   ///<summary>Re-establishes this activity as the ambient <see cref="Activity.Current"/> for the duration of the returned scope, so lines logged on a path that did not inherit it — a later dispatcher turn, a timer tick, a fresh callback — are tagged with it. Dispose the returned scope to restore the previously current activity.</summary>
+   IDisposable MakeCurrent();
+
    internal static IActivityScope Start(ILogger parentLogger, string activityName, LogLevel level) => ActivityScope.Start(parentLogger, activityName, level);
 
    private sealed class ActivityScope : IActivityScope
@@ -71,6 +74,13 @@ public interface IActivityScope : IDisposable
       }
 
       public void Fail(Exception exception) => _failure = exception;
+
+      public IDisposable MakeCurrent()
+      {
+         var previous = Activity.Current;
+         Activity.Current = _activity;
+         return new Disposable(() => Activity.Current = previous);
+      }
 
       public void Dispose()
       {
