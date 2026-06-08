@@ -6,6 +6,7 @@ namespace Compze.Internals.Logging;
 public interface ILogger
 {
    ILogger WithLogLevel(LogLevel level);
+   ILogger WithProperty(string name, object? value);
    bool IsEnabled(LogLevel level);
 
    Unit Error(Exception exception, string message, [CallerMemberName] string caller = "");
