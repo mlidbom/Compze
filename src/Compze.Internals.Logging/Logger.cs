@@ -10,15 +10,9 @@ public abstract class Logger : ILogger
    LogLevel CurrentLevel => _configuredLogLevel ?? CompzeLogger.LogLevel;
 
    protected Logger() {}
-   protected Logger(LogLevel? configuredLogLevel) => _configuredLogLevel = configuredLogLevel;
-
-   ///<summary>The level this logger was pinned to via <see cref="WithLogLevel"/>, or null if it follows the global <see cref="CompzeLogger.LogLevel"/>. Subclasses preserve it when deriving a new instance (e.g. in <see cref="WithProperty"/>).</summary>
-   protected LogLevel? ConfiguredLogLevel => _configuredLogLevel;
+   protected Logger(LogLevel logLevel) => _configuredLogLevel = logLevel;
 
    public abstract ILogger WithLogLevel(LogLevel level);
-
-   ///<summary>Returns a logger that attaches the structured property <paramref name="name"/>=<paramref name="value"/> to everything it logs. Used to correlate output — e.g. all lines of one flow carry its name.</summary>
-   public abstract ILogger WithProperty(string name, object? value);
 
    public bool IsEnabled(LogLevel level) => CurrentLevel >= level;
 

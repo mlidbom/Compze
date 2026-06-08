@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Globalization;
 using System.Text;
 using Compze.Internals.Logging.Internal;
@@ -7,34 +8,28 @@ namespace Compze.Internals.Logging;
 public class ConsoleLogger : Logger
 {
    readonly Type _type;
-   readonly (string Name, object? Value)[] _properties;
+   ConsoleLogger(Type type) => _type = type;
+   ConsoleLogger(Type type, LogLevel level) : base(level) => _type = type;
 
-   ConsoleLogger(Type type, LogLevel? level, (string Name, object? Value)[] properties) : base(level)
-   {
-      _type = type;
-      _properties = properties;
-   }
+   public static ILogger Create(Type type) => new ConsoleLogger(type);
+   public override ILogger WithLogLevel(LogLevel level) => new ConsoleLogger(_type, level);
 
-   public static ILogger Create(Type type) => new ConsoleLogger(type, level: null, properties: []);
-   public override ILogger WithLogLevel(LogLevel level) => new ConsoleLogger(_type, level, _properties);
-   public override ILogger WithProperty(string name, object? value) => new ConsoleLogger(_type, ConfiguredLogLevel, [.._properties, (name, value)]);
-
-   ///<summary>Renders the structured properties added via <see cref="WithProperty"/> as a " {Name=Value}" suffix, so they are visible in console output (Serilog renders them through the output template instead).</summary>
-   string PropertiesSuffix() => _properties.Length == 0 ? "" : " " + string.Join(" ", _properties.Select(property => $"{{{property.Name}={property.Value}}}"));
+   ///<summary>Renders the ambient <see cref="Activity.Current"/> as a " {Activity=Name}" suffix so the activity is visible in console output (Serilog renders it through the output template instead).</summary>
+   static string ContextSuffix() => Activity.Current is {} activity ? $" {{Activity={activity.OperationName}}}" : "";
 
    protected override void ErrorInternal(Exception exception, string template, object?[]? values, string caller) =>
-      Console.WriteLine(ExceptionTessageBuilder.BuildExceptionLogTessage(exception, _type, caller, Render(template, values)) + PropertiesSuffix());
+      Console.WriteLine(ExceptionTessageBuilder.BuildExceptionLogTessage(exception, _type, caller, Render(template, values)) + ContextSuffix());
 
    protected override void WarningInternal(Exception? exception, string template, object?[]? values, string caller) =>
       Console.WriteLine(exception == null
-                           ? $"{DateTime.Now:HH:mm:ss.fff} WRN {LogSourceFormatter.Format(_type.Name, caller)} ### {Render(template, values)}{PropertiesSuffix()}"
-                           : $"{DateTime.Now:HH:mm:ss.fff} WRN {LogSourceFormatter.Format(_type.Name, caller)} ### {Render(template, values)}{PropertiesSuffix()}, \n: Exception: {exception}");
+                           ? $"{DateTime.Now:HH:mm:ss.fff} WRN {LogSourceFormatter.Format(_type.Name, caller)} ### {Render(template, values)}{ContextSuffix()}"
+                           : $"{DateTime.Now:HH:mm:ss.fff} WRN {LogSourceFormatter.Format(_type.Name, caller)} ### {Render(template, values)}{ContextSuffix()}, \n: Exception: {exception}");
 
    protected override void InfoInternal(string template, object?[]? values, string caller) =>
-      Console.WriteLine($"{DateTime.Now:HH:mm:ss.fff} INF {LogSourceFormatter.Format(_type.Name, caller)} ### {Render(template, values)}{PropertiesSuffix()}");
+      Console.WriteLine($"{DateTime.Now:HH:mm:ss.fff} INF {LogSourceFormatter.Format(_type.Name, caller)} ### {Render(template, values)}{ContextSuffix()}");
 
    protected override void DebugInternal(string template, object?[]? values, string caller) =>
-      Console.WriteLine($"{DateTime.Now:HH:mm:ss.fff} DBG {LogSourceFormatter.Format(_type.Name, caller)} ### {Render(template, values)}{PropertiesSuffix()}");
+      Console.WriteLine($"{DateTime.Now:HH:mm:ss.fff} DBG {LogSourceFormatter.Format(_type.Name, caller)} ### {Render(template, values)}{ContextSuffix()}");
 
    // Renders a Serilog-style template (with {Name} / {Name:format} / {Name,align} holes) by substituting positional values.
    // Values are bound to holes in left-to-right order, the same order the handler appended them.

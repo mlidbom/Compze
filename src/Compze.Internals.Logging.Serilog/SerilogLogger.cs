@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Compze.Internals.SystemCE;
 using Serilog;
 
@@ -20,12 +21,13 @@ public class SerilogLogger : Logger
 
    public override ILogger WithLogLevel(LogLevel level) => new SerilogLogger(_logger, level);
 
-   public override ILogger WithProperty(string name, object? value) =>
-      ConfiguredLogLevel is { } level
-         ? new SerilogLogger(_logger.ForContext(name, value), level)
-         : new SerilogLogger(_logger.ForContext(name, value));
-
-   global::Serilog.ILogger CallerLogger(string caller) => _logger.ForContext("CallerMember", caller);
+   global::Serilog.ILogger CallerLogger(string caller)
+   {
+      var logger = _logger.ForContext("CallerMember", caller);
+      return Activity.Current is {} activity
+                ? logger.ForContext("Activity", activity.OperationName).ForContext("ActivityId", activity.Id)
+                : logger;
+   }
 
    protected override void ErrorInternal(Exception exception, string template, object?[]? values, string caller)
    {
