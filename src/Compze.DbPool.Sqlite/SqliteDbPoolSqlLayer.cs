@@ -53,6 +53,17 @@ class SqliteDbPoolSqlLayer : IDbPoolSqlLayer
 
    FileInfo FileInfoFor(DbPoolDatabase db) => _baseDirectory.File($"{db.Name}_{_poolId}.db");
 
+   // Deletes the database file together with the WAL sidecar files. A leftover -wal/-shm from a deleted database
+   // would otherwise be recovered into the next database created with the same name, resurrecting stale data.
+   // FileInfo.Delete() is a no-op when the file is absent, so deleting sidecars that were never created is safe.
+   void DeleteDatabaseFiles(DbPoolDatabase db)
+   {
+      var databaseFile = FileInfoFor(db);
+      databaseFile.Delete();
+      _baseDirectory.File($"{databaseFile.Name}-wal").Delete();
+      _baseDirectory.File($"{databaseFile.Name}-shm").Delete();
+   }
+
    public void Dispose(IReadOnlyList<DbPoolDatabase> reservedDatabases) => reservedDatabases.ForEach(Delete);
 
    void Delete(DbPoolDatabase db)
@@ -65,7 +76,7 @@ class SqliteDbPoolSqlLayer : IDbPoolSqlLayer
          {
             using var connection = new SqliteConnection(ConnectionStringFor(db));
             SqliteConnection.ClearPool(connection);
-            FileInfoFor(db).Delete();
+            DeleteDatabaseFiles(db);
             return;
          }
          catch(Exception ex)

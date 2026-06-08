@@ -15,13 +15,20 @@ public interface ICompzeSqliteConnection : IPoolableConnection, ICompzeDbConnect
 
    public sealed class CompzeSqliteConnection : ICompzeSqliteConnection
    {
+      // Wait this long for a contended lock before giving up, instead of failing the instant the lock is unavailable.
+      // Turns transient writer contention into a short wait that almost always resolves. Has no effect on shared-cache
+      // in-memory table locks (SQLite does not invoke the busy handler for those); the connection pool retries those.
+      const int BusyTimeoutMilliseconds = 5000;
+
       SqliteConnection Connection { get; }
       SqliteTransaction? _transaction;
       readonly VolatileLambdaTransactionParticipant _transactionParticipant;
+      readonly bool _isFileDatabase;
 
       internal CompzeSqliteConnection(string connectionString)
       {
          Connection = new SqliteConnection(connectionString);
+         _isFileDatabase = new SqliteConnectionStringBuilder(connectionString).Mode != SqliteOpenMode.Memory;
 
          _transactionParticipant = new VolatileLambdaTransactionParticipant(
             enlistmentOptions: EnlistmentOptions.None,
@@ -45,6 +52,7 @@ public interface ICompzeSqliteConnection : IPoolableConnection, ICompzeDbConnect
       {
          Contract.State.NotDisposed(_disposed, this);
          Connection.Open();
+         ConfigureConnection();
          _transactionParticipant.EnsureEnlistedInAnyAmbientTransaction();
       }
 
@@ -52,8 +60,35 @@ public interface ICompzeSqliteConnection : IPoolableConnection, ICompzeDbConnect
       {
          Contract.State.NotDisposed(_disposed, this);
          await Connection.OpenAsync().caf();
+         await ConfigureConnectionAsync().caf();
          _transactionParticipant.EnsureEnlistedInAnyAmbientTransaction();
       }
+
+      // Run before enlisting in any transaction: journal_mode cannot be changed inside a transaction.
+      void ConfigureConnection()
+      {
+         using var command = Connection.CreateCommand();
+         command.CommandText = ConfigurationPragmas;
+         command.ExecuteNonQuery();
+      }
+
+      async Task ConfigureConnectionAsync()
+      {
+         var command = Connection.CreateCommand();
+         await using var _ = command.caf();
+         command.CommandText = ConfigurationPragmas;
+         await command.ExecuteNonQueryAsync().caf();
+      }
+
+      // WAL lets readers run concurrently with the single writer, so a read-then-write transaction never deadlocks a
+      // committing writer the way the default rollback journal does. synchronous=NORMAL is the safe companion to WAL:
+      // it stops fsync-ing on every commit (only checkpoints fsync), which under concurrent load is what otherwise
+      // makes a writer hold the single write lock across a slow disk flush and starve everyone else waiting for it.
+      // Both are unavailable/irrelevant for in-memory databases, which rely on the connection pool's transient-lock retry.
+      string ConfigurationPragmas =>
+         _isFileDatabase
+            ? $"PRAGMA busy_timeout={BusyTimeoutMilliseconds}; PRAGMA journal_mode=WAL; PRAGMA synchronous=NORMAL;"
+            : $"PRAGMA busy_timeout={BusyTimeoutMilliseconds};";
 
       DbCommand ICompzeDbConnection.CreateCommand() => CreateCommand();
 
