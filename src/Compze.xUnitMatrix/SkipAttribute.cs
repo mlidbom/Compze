@@ -14,6 +14,7 @@ namespace Compze.xUnitMatrix;
 /// [Skip&lt;SqlLayer&gt;([SqlLayer.Sqlite, SqlLayer.SqliteMemory], "SQLite doesn't support this feature")]
 /// </code>
 /// </example>
+/// <typeparam name="TDimension">The enum type of the dimension whose values are skipped.</typeparam>
 [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
 public sealed class SkipAttribute<TDimension> : Attribute
    where TDimension : struct, Enum
@@ -25,12 +26,18 @@ public sealed class SkipAttribute<TDimension> : Attribute
    internal TDimension[] SkippedDimensionValues { get; }
    internal string Reason { get; }
 
+   /// <summary>Skips every combination that includes <paramref name="value"/>.</summary>
+   /// <param name="value">The dimension value to skip.</param>
+   /// <param name="reason">Why the value is skipped; shown in the test runner. Must not be empty.</param>
    public SkipAttribute(TDimension value, string reason)
    {
       SkippedDimensionValues = [value];
       Reason = reason;
    }
 
+   /// <summary>Skips every combination that includes any of <paramref name="skippedDimensionValues"/>.</summary>
+   /// <param name="skippedDimensionValues">The dimension values to skip — all members of <typeparamref name="TDimension"/>.</param>
+   /// <param name="reason">Why the values are skipped; shown in the test runner. Must not be empty.</param>
    public SkipAttribute(TDimension[] skippedDimensionValues, string reason)
    {
       SkippedDimensionValues = skippedDimensionValues;
