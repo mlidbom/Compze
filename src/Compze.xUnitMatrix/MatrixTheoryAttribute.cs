@@ -20,26 +20,6 @@ public abstract class MatrixTheoryAttribute(
 {
    readonly Type[] _dimensionEnumTypes = dimensionEnumTypes;
    readonly string? _configurationFileName = configurationFileName;
-   readonly List<DimensionValueSkipSpecification> _subclassSkipSpecifications = [];
-
-   /// <summary>
-   /// Allows subclasses to skip dimension values in their constructors.
-   /// The enum type is preserved because it flows through a typed C# method call, not IL metadata.
-   /// </summary>
-   protected void SkipValues<TDimension>(TDimension value, string reason)
-      where TDimension : struct, Enum
-   {
-      _subclassSkipSpecifications.Add(new DimensionValueSkipSpecification(value, reason));
-   }
-
-   /// <inheritdoc cref="SkipValues{TDimension}(TDimension, string)"/>
-   protected void SkipValues<TDimension>(TDimension[] values, string reason)
-      where TDimension : struct, Enum
-   {
-      foreach(var value in values)
-         _subclassSkipSpecifications.Add(new DimensionValueSkipSpecification(value, reason));
-   }
-
    string? ValidateConfiguration()
    {
       if(_dimensionEnumTypes.Length == 0)
@@ -112,11 +92,9 @@ public abstract class MatrixTheoryAttribute(
 
       try
       {
-         var allSkipSpecifications = _subclassSkipSpecifications
-                                    .Concat(CollectSkipAttributesFromMethod(testMethod))
-                                    .ToList();
+         var skipSpecifications = CollectSkipAttributesFromMethod(testMethod);
 
-         var skipValidationError = ValidateSkipSpecifications(allSkipSpecifications);
+         var skipValidationError = ValidateSkipSpecifications(skipSpecifications);
          if(skipValidationError != null)
          {
             return new ValueTask<IReadOnlyCollection<ITheoryDataRow>>(
@@ -125,7 +103,7 @@ public abstract class MatrixTheoryAttribute(
                ]);
          }
 
-         var matrixSkipSpecification = new MatrixSkipSpecification(allSkipSpecifications);
+         var matrixSkipSpecification = new MatrixSkipSpecification(skipSpecifications);
          var combinations = GetCombinations()
                            .Select(ITheoryDataRow (combination) => new TheoryDataRow(combination) // Pass combination object as argument
                                                                    {
