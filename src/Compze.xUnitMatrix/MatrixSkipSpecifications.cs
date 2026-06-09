@@ -4,11 +4,11 @@ namespace Compze.xUnitMatrix;
 class MatrixSkipSpecification
 #pragma warning restore CA1711
 {
-   readonly IReadOnlyList<ComponentSkipSpecification> _skippedComponents;
+   readonly IReadOnlyList<DimensionValueSkipSpecification> _skippedDimensionValues;
 
-   internal MatrixSkipSpecification(IReadOnlyList<ComponentSkipSpecification> skippedComponents) => _skippedComponents = skippedComponents;
+   internal MatrixSkipSpecification(IReadOnlyList<DimensionValueSkipSpecification> skippedDimensionValues) => _skippedDimensionValues = skippedDimensionValues;
 
-   /// <summary>Finds the first skipped component that matches the given combination, if any.</summary>
-   internal ComponentSkipSpecification? SkippedComponentFor(MatrixCombination combination) =>
-      _skippedComponents.FirstOrDefault(exclusion => exclusion.Skips(combination));
+   /// <summary>Finds the first skipped dimension value that matches the given combination, if any.</summary>
+   internal DimensionValueSkipSpecification? SkippedDimensionValueFor(MatrixCombination combination) =>
+      _skippedDimensionValues.FirstOrDefault(skip => skip.Skips(combination));
 }

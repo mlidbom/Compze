@@ -8,26 +8,26 @@ static class MatrixConfigurationFileReader
 {
    static readonly ConcurrentDictionary<string, IReadOnlyList<MatrixCombination>> CombinationsCache = new();
 
-   public static IReadOnlyList<MatrixCombination> GetCombinations(string configurationFileName, Type[] componentEnumTypes)
+   public static IReadOnlyList<MatrixCombination> GetCombinations(string configurationFileName, Type[] dimensionEnumTypes)
    {
       return CombinationsCache.GetOrAdd(
          configurationFileName,
-         fileName => ReadFile(componentEnumTypes, fileName));
+         fileName => ReadFile(dimensionEnumTypes, fileName));
    }
 
    const char Comment = '#';
 
-   static IReadOnlyList<MatrixCombination> ReadFile(Type[] componentTypes, string fileName) =>
+   static IReadOnlyList<MatrixCombination> ReadFile(Type[] dimensionEnumTypes, string fileName) =>
       ReadFileLines(fileName)
         .Select(it => it.Trim())
         .Where(it => !it.IsNullEmptyOrWhiteSpace())
         .Where(it => !it.StartsWith(Comment))
-        .Select(it => new MatrixConfigurationFileLine(componentTypes, it))
+        .Select(it => new MatrixConfigurationFileLine(dimensionEnumTypes, it))
         .SelectMany(it => it.ExpandWildcardsIntoConcretePermutations())
         .OrderBy(it => it.ToString())
         .DistinctBy(it => it.ToString())
         .ToList()
-        ._assert(it => it.Any(), _ => "found no configured component combinations");
+        ._assert(it => it.Any(), _ => "found no configured combinations");
 
    static string[] ReadFileLines(string fileName)
    {

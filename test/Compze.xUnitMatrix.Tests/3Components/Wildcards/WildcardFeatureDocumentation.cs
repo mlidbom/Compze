@@ -6,9 +6,9 @@ public class WildcardFeatureDocumentation
 {
    [WildcardTest] public void WildcardConfigurationGeneratesCorrectPermutations(MatrixCombination combination)
    {
-      combination.Components.Must().HaveCount(3);
-      combination.Components[0].Must().BeExactType<Serializer>();
-      combination.Components[1].Must().BeExactType<SqlLayer>();
-      combination.Components[2].Must().BeExactType<DIContainer>();
+      combination.DimensionValues.Must().HaveCount(3);
+      combination.DimensionValues[0].Must().BeExactType<Serializer>();
+      combination.DimensionValues[1].Must().BeExactType<SqlLayer>();
+      combination.DimensionValues[2].Must().BeExactType<DIContainer>();
    }
 }

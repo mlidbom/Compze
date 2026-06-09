@@ -11,7 +11,7 @@ namespace Compze.xUnitMatrix;
 [XunitTestCaseDiscoverer(typeof(MatrixTheoryDiscoverer))]
 public abstract class MatrixTheoryAttribute(
    string? configurationFileName,
-   Type[] componentEnumTypes,
+   Type[] dimensionEnumTypes,
    bool useTestMethodArgument,
    string? sourceFilePath = null,
    int sourceLineNumber = -1)
@@ -21,9 +21,9 @@ public abstract class MatrixTheoryAttribute(
 {
    internal bool UseTestMethodArgument { get; } = useTestMethodArgument;
 
-   readonly Type[] _componentEnumTypes = componentEnumTypes;
+   readonly Type[] _dimensionEnumTypes = dimensionEnumTypes;
    readonly string? _configurationFileName = configurationFileName;
-   readonly List<ComponentSkipSpecification> _subclassSkipSpecifications = [];
+   readonly List<DimensionValueSkipSpecification> _subclassSkipSpecifications = [];
 
    /// <summary>
    /// Allows subclasses to skip dimension values in their constructors.
@@ -32,7 +32,7 @@ public abstract class MatrixTheoryAttribute(
    protected void SkipValues<TDimension>(TDimension value, string reason)
       where TDimension : struct, Enum
    {
-      _subclassSkipSpecifications.Add(new ComponentSkipSpecification(value, reason));
+      _subclassSkipSpecifications.Add(new DimensionValueSkipSpecification(value, reason));
    }
 
    /// <inheritdoc cref="SkipValues{TDimension}(TDimension, string)"/>
@@ -40,15 +40,15 @@ public abstract class MatrixTheoryAttribute(
       where TDimension : struct, Enum
    {
       foreach(var value in values)
-         _subclassSkipSpecifications.Add(new ComponentSkipSpecification(value, reason));
+         _subclassSkipSpecifications.Add(new DimensionValueSkipSpecification(value, reason));
    }
 
    string? ValidateConfiguration()
    {
-      if(_componentEnumTypes.Length == 0)
-         return "Component enum types may not be empty";
+      if(_dimensionEnumTypes.Length == 0)
+         return "Dimension enum types may not be empty";
 
-      foreach(var type in _componentEnumTypes)
+      foreach(var type in _dimensionEnumTypes)
       {
          if(!type.IsEnum)
             return $"Type {type.Name} must be an enum type";
@@ -57,16 +57,16 @@ public abstract class MatrixTheoryAttribute(
       return null;
    }
 
-   string? ValidateSkipSpecifications(IReadOnlyList<ComponentSkipSpecification> skipSpecifications)
+   string? ValidateSkipSpecifications(IReadOnlyList<DimensionValueSkipSpecification> skipSpecifications)
    {
-      var invalidComponent = skipSpecifications.FirstOrDefault(it => !_componentEnumTypes.Contains(it.ComponentType));
-      if(invalidComponent != null)
-         return $"Skipped component {invalidComponent.ComponentValue} (type {invalidComponent.ComponentType.Name}) is not one of the configured component types: {string.Join(", ", _componentEnumTypes.Select(t => t.Name))}";
+      var invalidSkip = skipSpecifications.FirstOrDefault(it => !_dimensionEnumTypes.Contains(it.DimensionEnumType));
+      if(invalidSkip != null)
+         return $"Skipped dimension value {invalidSkip.DimensionValue} (type {invalidSkip.DimensionEnumType.Name}) is not one of the configured dimension enum types: {string.Join(", ", _dimensionEnumTypes.Select(t => t.Name))}";
 
       return null;
    }
 
-   static IReadOnlyList<ComponentSkipSpecification> CollectSkipAttributesFromMethod(MethodInfo testMethod)
+   static IReadOnlyList<DimensionValueSkipSpecification> CollectSkipAttributesFromMethod(MethodInfo testMethod)
    {
       var skipAttributeType = typeof(SkipAttribute<>);
       return testMethod.GetCustomAttributes(inherit: true)
@@ -76,7 +76,7 @@ public abstract class MatrixTheoryAttribute(
                            var attrType = attr.GetType();
                            var values = (Array)attrType.GetProperty(nameof(SkipAttribute<>.Values))!.GetValue(attr)!;
                            var reason = (string)attrType.GetProperty(nameof(SkipAttribute<>.Reason))!.GetValue(attr)!;
-                           return values.Cast<Enum>().Select(value => new ComponentSkipSpecification(value, reason));
+                           return values.Cast<Enum>().Select(value => new DimensionValueSkipSpecification(value, reason));
                         })
                        .ToList();
    }
@@ -132,7 +132,7 @@ public abstract class MatrixTheoryAttribute(
          var combinations = GetCombinations()
                            .Select(ITheoryDataRow (combination) => new TheoryDataRow(combination) // Pass combination object as argument
                                                                    {
-                                                                      Skip = matrixSkipSpecification.SkippedComponentFor(combination)?.ToString()
+                                                                      Skip = matrixSkipSpecification.SkippedDimensionValueFor(combination)?.ToString()
                                                                    })
                            .ToArray();
          return new ValueTask<IReadOnlyCollection<ITheoryDataRow>>(combinations);
@@ -150,32 +150,32 @@ public abstract class MatrixTheoryAttribute(
 
    IReadOnlyList<MatrixCombination> GetCombinations() =>
       _configurationFileName != null
-         ? MatrixConfigurationFileReader.GetCombinations(_configurationFileName, _componentEnumTypes)
-         : AllCombinationsFromEnumTypes(_componentEnumTypes);
+         ? MatrixConfigurationFileReader.GetCombinations(_configurationFileName, _dimensionEnumTypes)
+         : AllCombinationsFromEnumTypes(_dimensionEnumTypes);
 
-   static IReadOnlyList<MatrixCombination> AllCombinationsFromEnumTypes(Type[] componentEnumTypes)
+   static IReadOnlyList<MatrixCombination> AllCombinationsFromEnumTypes(Type[] dimensionEnumTypes)
    {
-      var allEnumValues = componentEnumTypes
+      var allEnumValues = dimensionEnumTypes
                          .Select(type => Enum.GetValues(type).Cast<Enum>().ToArray() as IReadOnlyList<Enum>)
                          .ToList();
 
       return allEnumValues
             .CartesianProduct()
-            .Select(MatrixCombination.FromComponentEnumValues)
+            .Select(MatrixCombination.FromDimensionValues)
             .ToList();
    }
 
    public bool SupportsDiscoveryEnumeration() => true;
 
-   protected static TComponent GetCurrentComponent<TComponent>(int index) where TComponent : Enum
+   protected static TDimension GetCurrentDimensionValue<TDimension>(int dimensionIndex) where TDimension : Enum
    {
       var combination = MatrixCombination.Current;
-      if(index >= combination.Components.Count)
-         throw new InvalidOperationException($"The current test combination has {combination.Components.Count} component(s), but component at index {index} ({typeof(TComponent).Name}) was requested.");
+      if(dimensionIndex >= combination.DimensionValues.Count)
+         throw new InvalidOperationException($"The current test combination has {combination.DimensionValues.Count} dimension value(s), but the dimension value at index {dimensionIndex} ({typeof(TDimension).Name}) was requested.");
 
-      var component = combination.Components[index];
-      if(component is not TComponent typed)
-         throw new InvalidOperationException($"Expected component at index {index} to be {typeof(TComponent).Name}, but found {component.GetType().Name}.");
+      var dimensionValue = combination.DimensionValues[dimensionIndex];
+      if(dimensionValue is not TDimension typed)
+         throw new InvalidOperationException($"Expected the dimension value at index {dimensionIndex} to be {typeof(TDimension).Name}, but found {dimensionValue.GetType().Name}.");
 
       return typed;
    }

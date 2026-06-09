@@ -18,7 +18,7 @@ partial class IAwaitableSharedMatrixAttribute
       readonly List<IInterprocessObject<SharedTestValue>> _interprocessObjects = [];
 
       // ReSharper disable once MemberCanBeMadeStatic.Local
-      Implementation CurrentImplementation => (Implementation)MatrixCombination.Current.Components[0];
+      Implementation CurrentImplementation => (Implementation)MatrixCombination.Current.DimensionValues[0];
 
       public IAwaitableShared<SharedTestValue> Create(SharedTestValue shared, LockTimeout? lockTimeout = null, WaitTimeout? waitTimeout = null)
       {

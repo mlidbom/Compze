@@ -17,7 +17,7 @@ partial class IAwaitableProcessSharedMatrixAttribute
       readonly List<IInterprocessObject<SharedTestValue>> _interprocessObjects = [];
 
       // ReSharper disable once MemberCanBeMadeStatic.Local
-      Implementation CurrentImplementation => (Implementation)MatrixCombination.Current.Components[0];
+      Implementation CurrentImplementation => (Implementation)MatrixCombination.Current.DimensionValues[0];
 
       public bool CurrentImplementationIsGlobal => CurrentImplementation is Implementation.GlobalMutex
                                                                                                               or Implementation.GlobalInterprocessObject;

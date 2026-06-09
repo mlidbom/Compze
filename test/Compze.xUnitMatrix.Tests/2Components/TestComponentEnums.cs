@@ -4,8 +4,8 @@ namespace Compze.xUnitMatrix.Tests._2Components;
 #pragma warning disable CA1724 //I don't care that a namespace somewhere has the same name as one of these types
 
 /// <summary>
-/// Serializer component dimension for pluggable components testing.
-/// Each enum value corresponds to a component in the TestUsingPluggableComponentCombinations file.
+/// Example Serializer dimension for the matrix tests.
+/// Each enum value is one dimension value, matched by name against the TestUsingPluggableComponentCombinations file.
 /// </summary>
 enum Serializer
 {
@@ -14,8 +14,8 @@ enum Serializer
 }
 
 /// <summary>
-/// SQL layer component dimension for pluggable components testing.
-/// Each enum value corresponds to a component in the TestUsingPluggableComponentCombinations file.
+/// Example SQL layer dimension for the matrix tests.
+/// Each enum value is one dimension value, matched by name against the TestUsingPluggableComponentCombinations file.
 /// </summary>
 enum SqlLayer
 {

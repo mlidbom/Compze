@@ -4,19 +4,19 @@ using Compze.Internals.SystemCE.CollectionsCE.GenericCE;
 
 namespace Compze.xUnitMatrix;
 
-public abstract class MatrixTheoryAttribute<TComponent1, TComponent2>(
+public abstract class MatrixTheoryAttribute<TDimension1, TDimension2>(
    string? configurationFileName,
    bool useTestMethodArgument,
    string? sourceFilePath,
    int sourceLineNumber)
    : MatrixTheoryAttribute(configurationFileName: configurationFileName,
-                                          componentEnumTypes: EnumerableCE.OfTypes<TComponent1, TComponent2>().ToArray(),
+                                          dimensionEnumTypes: EnumerableCE.OfTypes<TDimension1, TDimension2>().ToArray(),
                                           useTestMethodArgument: useTestMethodArgument,
                                           sourceFilePath: sourceFilePath,
                                           sourceLineNumber: sourceLineNumber)
-   where TComponent1 : Enum
-   where TComponent2 : Enum
+   where TDimension1 : Enum
+   where TDimension2 : Enum
 {
-   public static TComponent1 CurrentComponent1 => GetCurrentComponent<TComponent1>(0);
-   public static TComponent2 CurrentComponent2 => GetCurrentComponent<TComponent2>(1);
+   public static TDimension1 CurrentDimensionValue1 => GetCurrentDimensionValue<TDimension1>(0);
+   public static TDimension2 CurrentDimensionValue2 => GetCurrentDimensionValue<TDimension2>(1);
 }

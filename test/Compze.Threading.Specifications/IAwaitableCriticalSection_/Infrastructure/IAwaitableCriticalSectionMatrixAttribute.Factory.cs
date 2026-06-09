@@ -16,7 +16,7 @@ partial class IAwaitableCriticalSectionMatrixAttribute
       readonly List<IDisposable> _disposables = [];
 
       // ReSharper disable once MemberCanBeMadeStatic.Local
-      Implementation CurrentImplementation => (Implementation)MatrixCombination.Current.Components[0];
+      Implementation CurrentImplementation => (Implementation)MatrixCombination.Current.DimensionValues[0];
 
       public IAwaitableCriticalSection Create(WaitTimeout waitTimeout) => Create(null, waitTimeout);
       public IAwaitableCriticalSection Create(LockTimeout lockTimeout) => Create(lockTimeout, null);

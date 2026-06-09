@@ -15,7 +15,7 @@ namespace Compze.DependencyInjection.Specifications.Infrastructure;
 
 static class DependencyInjectionContainerFactory
 {
-   static DIContainer CurrentDIContainer => (DIContainer)MatrixCombination.Current.Components[0];
+   static DIContainer CurrentDIContainer => (DIContainer)MatrixCombination.Current.DimensionValues[0];
 
    public static IContainerBuilder CreateContainerBuilder() =>
       CurrentDIContainer switch

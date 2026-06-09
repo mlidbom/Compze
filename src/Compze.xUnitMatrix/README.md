@@ -33,14 +33,14 @@ public class MyMatrixAttribute(
       sourceFilePath: sourceFilePath,
       sourceLineNumber: sourceLineNumber)
 {
-   public static PersistenceLayer PersistenceLayer => CurrentComponent1;
-   public static DIContainer DIContainer => CurrentComponent2;
+   public static PersistenceLayer PersistenceLayer => CurrentDimensionValue1;
+   public static DIContainer DIContainer => CurrentDimensionValue2;
 }
 ```
 
 The generic type parameters define the matrix dimensions. With `configurationFileName: null`, every combination of every enum value runs automatically — the full Cartesian product.
 
-`CurrentComponent1`, `CurrentComponent2`, etc. give type-safe access to the current combination's values. Expose them as named properties for readability.
+`CurrentDimensionValue1`, `CurrentDimensionValue2`, etc. give type-safe access to the current combination's value for each dimension. Expose them as named properties for readability.
 
 ### 3. Use it
 
@@ -91,7 +91,7 @@ The generic type parameter ensures the enum type is preserved through IL metadat
 
 ## Any number of dimensions
 
-Generic convenience base classes `MatrixTheoryAttribute<T1>` through `MatrixTheoryAttribute<T1, T2, T3, T4, T5>` cover the common cases — each exposes `CurrentComponent1` through `CurrentComponentN` for type-safe access.
+Generic convenience base classes `MatrixTheoryAttribute<T1>` through `MatrixTheoryAttribute<T1, T2, T3, T4, T5>` cover the common cases — each exposes `CurrentDimensionValue1` through `CurrentDimensionValueN` for type-safe access.
 
 For more than 5 dimensions, inherit directly from the non-generic `MatrixTheoryAttribute` and pass the component enum types manually.
 

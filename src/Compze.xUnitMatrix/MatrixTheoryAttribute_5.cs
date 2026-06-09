@@ -4,25 +4,25 @@ using Compze.Internals.SystemCE.CollectionsCE.GenericCE;
 
 namespace Compze.xUnitMatrix;
 
-public abstract class MatrixTheoryAttribute<TComponent1, TComponent2, TComponent3, TComponent4, TComponent5>(
+public abstract class MatrixTheoryAttribute<TDimension1, TDimension2, TDimension3, TDimension4, TDimension5>(
    string? configurationFileName,
    bool useTestMethodArgument,
    string? sourceFilePath,
    int sourceLineNumber)
    : MatrixTheoryAttribute(configurationFileName: configurationFileName,
-                                          componentEnumTypes: EnumerableCE.OfTypes<TComponent1, TComponent2, TComponent3, TComponent4, TComponent5>().ToArray(),
+                                          dimensionEnumTypes: EnumerableCE.OfTypes<TDimension1, TDimension2, TDimension3, TDimension4, TDimension5>().ToArray(),
                                           useTestMethodArgument: useTestMethodArgument,
                                           sourceFilePath: sourceFilePath,
                                           sourceLineNumber: sourceLineNumber)
-   where TComponent1 : Enum
-   where TComponent2 : Enum
-   where TComponent3 : Enum
-   where TComponent4 : Enum
-   where TComponent5 : Enum
+   where TDimension1 : Enum
+   where TDimension2 : Enum
+   where TDimension3 : Enum
+   where TDimension4 : Enum
+   where TDimension5 : Enum
 {
-   public static TComponent1 CurrentComponent1 => GetCurrentComponent<TComponent1>(0);
-   public static TComponent2 CurrentComponent2 => GetCurrentComponent<TComponent2>(1);
-   public static TComponent3 CurrentComponent3 => GetCurrentComponent<TComponent3>(2);
-   public static TComponent4 CurrentComponent4 => GetCurrentComponent<TComponent4>(3);
-   public static TComponent5 CurrentComponent5 => GetCurrentComponent<TComponent5>(4);
+   public static TDimension1 CurrentDimensionValue1 => GetCurrentDimensionValue<TDimension1>(0);
+   public static TDimension2 CurrentDimensionValue2 => GetCurrentDimensionValue<TDimension2>(1);
+   public static TDimension3 CurrentDimensionValue3 => GetCurrentDimensionValue<TDimension3>(2);
+   public static TDimension4 CurrentDimensionValue4 => GetCurrentDimensionValue<TDimension4>(3);
+   public static TDimension5 CurrentDimensionValue5 => GetCurrentDimensionValue<TDimension5>(4);
 }

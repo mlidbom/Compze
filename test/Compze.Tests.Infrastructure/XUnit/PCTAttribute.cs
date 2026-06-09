@@ -17,8 +17,8 @@ public class PCTAttribute(
       sourceFilePath: sourceFilePath,
       sourceLineNumber: sourceLineNumber)
 {
-   public static SqlLayer SqlLayer => CurrentComponent1;
-   public static DIContainer DIContainer => CurrentComponent2;
-   public static Serializer Serializer => CurrentComponent3;
-   public static Transport Transport => CurrentComponent4;
+   public static SqlLayer SqlLayer => CurrentDimensionValue1;
+   public static DIContainer DIContainer => CurrentDimensionValue2;
+   public static Serializer Serializer => CurrentDimensionValue3;
+   public static Transport Transport => CurrentDimensionValue4;
 }

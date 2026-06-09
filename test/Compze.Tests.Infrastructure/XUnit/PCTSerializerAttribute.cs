@@ -13,5 +13,5 @@ public sealed class PCTSerializerAttribute(
       sourceFilePath: sourceFilePath,
       sourceLineNumber: sourceLineNumber)
 {
-   public static Serializer Serializer => CurrentComponent1;
+   public static Serializer Serializer => CurrentDimensionValue1;
 }

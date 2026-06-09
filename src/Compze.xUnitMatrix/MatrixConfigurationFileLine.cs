@@ -6,57 +6,57 @@ namespace Compze.xUnitMatrix;
 class MatrixConfigurationFileLine
 {
    const string Wildcard = "*";
-   readonly IReadOnlyList<Type> _componentTypes;
-   readonly IReadOnlyList<string> _componentNamesOrWildCards;
-   readonly IReadOnlyList<WildcardComponent> _wildCardComponents;
+   readonly IReadOnlyList<Type> _dimensionEnumTypes;
+   readonly IReadOnlyList<string> _dimensionValueNamesOrWildCards;
+   readonly IReadOnlyList<WildcardDimension> _wildCardDimensionValues;
 
-   public MatrixConfigurationFileLine(IReadOnlyList<Type> componentTypes, string line)
+   public MatrixConfigurationFileLine(IReadOnlyList<Type> dimensionEnumTypes, string line)
    {
-      _componentTypes = componentTypes;
-      _componentNamesOrWildCards = line.Split(MatrixCombination.Separator);
-      _wildCardComponents = _componentNamesOrWildCards
-                           .Zip(_componentTypes, (componentName, componentType) => new { componentName, componentType })
-                           .Where(it => it.componentName == Wildcard)
-                           .Select(it => new WildcardComponent(it.componentType))
+      _dimensionEnumTypes = dimensionEnumTypes;
+      _dimensionValueNamesOrWildCards = line.Split(MatrixCombination.Separator);
+      _wildCardDimensionValues = _dimensionValueNamesOrWildCards
+                           .Zip(_dimensionEnumTypes, (dimensionValueName, dimensionEnumType) => new { dimensionValueName, dimensionEnumType })
+                           .Where(it => it.dimensionValueName == Wildcard)
+                           .Select(it => new WildcardDimension(it.dimensionEnumType))
                            .ToList();
    }
 
    public IReadOnlyList<MatrixCombination> ExpandWildcardsIntoConcretePermutations()
    {
-      if(!_wildCardComponents.Any())
+      if(!_wildCardDimensionValues.Any())
          return
          [
-            MatrixCombination.FromComponentEnumValues(_componentNamesOrWildCards
-                                                         .Zip(_componentTypes, (name, type) => (Enum)Enum.Parse(type, name))
+            MatrixCombination.FromDimensionValues(_dimensionValueNamesOrWildCards
+                                                         .Zip(_dimensionEnumTypes, (name, type) => (Enum)Enum.Parse(type, name))
                                                          .ToList())
          ];
 
-      return _wildCardComponents
-            .Select(it => it.AllComponents)
+      return _wildCardDimensionValues
+            .Select(it => it.AllDimensionValues)
             .CartesianProduct()
-            .Select(it => new WildCardMatrixCombination(it))
+            .Select(it => new ResolvedWildcardDimensionValues(it))
             .Select(CreateConcretePermutation)
             .ToList();
    }
 
-   MatrixCombination CreateConcretePermutation(WildCardMatrixCombination wildCardReplacementValues) =>
-      _componentNamesOrWildCards
-        .Select((componentName, componentIndex) =>
-                   componentName == Wildcard
-                      ? wildCardReplacementValues.ComponentFor(_componentTypes[componentIndex])
-                      : ComponentValue(componentIndex, componentName))
-        ._(MatrixCombination.FromComponentEnumValues);
+   MatrixCombination CreateConcretePermutation(ResolvedWildcardDimensionValues wildCardReplacementValues) =>
+      _dimensionValueNamesOrWildCards
+        .Select((dimensionValueName, dimensionIndex) =>
+                   dimensionValueName == Wildcard
+                      ? wildCardReplacementValues.DimensionValueFor(_dimensionEnumTypes[dimensionIndex])
+                      : ParseDimensionValue(dimensionIndex, dimensionValueName))
+        ._(MatrixCombination.FromDimensionValues);
 
-   Enum ComponentValue(int componentTypeIndex, string componentName) => (Enum)Enum.Parse(_componentTypes[componentTypeIndex], componentName);
+   Enum ParseDimensionValue(int dimensionIndex, string dimensionValueName) => (Enum)Enum.Parse(_dimensionEnumTypes[dimensionIndex], dimensionValueName);
 
-   readonly record struct WildcardComponent(Type ComponentType)
+   readonly record struct WildcardDimension(Type DimensionEnumType)
    {
-      public IReadOnlyList<Enum> AllComponents => Enum.GetValues(ComponentType).Cast<Enum>().ToReadOnlyList();
+      public IReadOnlyList<Enum> AllDimensionValues => Enum.GetValues(DimensionEnumType).Cast<Enum>().ToReadOnlyList();
    }
 
-   class WildCardMatrixCombination(IReadOnlyList<Enum> components)
+   class ResolvedWildcardDimensionValues(IReadOnlyList<Enum> dimensionValues)
    {
-      readonly IReadOnlyList<Enum> _components = components;
-      public Enum ComponentFor(Type componentType) => _components.Single(predicate: it => it.GetType() == componentType);
+      readonly IReadOnlyList<Enum> _dimensionValues = dimensionValues;
+      public Enum DimensionValueFor(Type dimensionEnumType) => _dimensionValues.Single(predicate: it => it.GetType() == dimensionEnumType);
    }
 }

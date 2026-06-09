@@ -13,54 +13,54 @@ public class MatrixCombination : IXunitSerializable
 
    public static MatrixCombination? TryGetCurrent() => CurrentInternal.Value?.Value;
 
-   public IReadOnlyList<Enum> Components { get; private set; }
+   public IReadOnlyList<Enum> DimensionValues { get; private set; }
 
-   public override string ToString() => string.Join(Separator, Components.Select(it => it.ToString()));
+   public override string ToString() => string.Join(Separator, DimensionValues.Select(it => it.ToString()));
 
    internal const string Separator = ":";
 
    [Obsolete("Called by xUnit deserializer", error: true)]
    // ReSharper disable once UnusedMember.Global
-   public MatrixCombination() => Components = [];
+   public MatrixCombination() => DimensionValues = [];
 
-   MatrixCombination(IEnumerable<Enum> components) => Components = components.ToList();
+   MatrixCombination(IEnumerable<Enum> dimensionValues) => DimensionValues = dimensionValues.ToList();
 
    public void Serialize(IXunitSerializationInfo info)
    {
-      info.AddValue("ComponentNames", Components.Select(it => it.ToString()).ToArray());
-      info.AddValue("ComponentTypes", Components.Select(it => it.GetType().AssemblyQualifiedName!).ToArray());
+      info.AddValue("DimensionValueNames", DimensionValues.Select(it => it.ToString()).ToArray());
+      info.AddValue("DimensionEnumTypes", DimensionValues.Select(it => it.GetType().AssemblyQualifiedName!).ToArray());
    }
 
    public void Deserialize(IXunitSerializationInfo info)
    {
-      var componentNames = info.GetValue<string[]>("ComponentNames") ?? throw new InvalidEnumArgumentException("Components string is null");
-      var componentTypes = (info.GetValue<string[]>("ComponentTypes") ?? throw new InvalidEnumArgumentException("ComponentTypes is null"))
+      var dimensionValueNames = info.GetValue<string[]>("DimensionValueNames") ?? throw new InvalidEnumArgumentException("DimensionValueNames is null");
+      var dimensionEnumTypes = (info.GetValue<string[]>("DimensionEnumTypes") ?? throw new InvalidEnumArgumentException("DimensionEnumTypes is null"))
                           .Select(it => Type.GetType(it, throwOnError: true)!)
                           .ToArray();
 
-      var combination = FromComponentNamesList(componentNames, componentTypes);
-      Components = combination.Components;
+      var combination = FromDimensionValueNames(dimensionValueNames, dimensionEnumTypes);
+      DimensionValues = combination.DimensionValues;
    }
 
-   internal static MatrixCombination FromComponentEnumValues(IEnumerable<Enum> componentEnumValues) => new(componentEnumValues);
+   internal static MatrixCombination FromDimensionValues(IEnumerable<Enum> dimensionValues) => new(dimensionValues);
 
-   static MatrixCombination FromComponentNamesList(IReadOnlyList<string> componentNames, Type[] componentEnumTypes)
+   static MatrixCombination FromDimensionValueNames(IReadOnlyList<string> dimensionValueNames, Type[] dimensionEnumTypes)
    {
-      if(componentNames.Count != componentEnumTypes.Length)
-         throw new ArgumentException($"Components: [{string.Join(", ", componentNames)}] do not match specified component types [{string.Join(", ", componentEnumTypes.Select(it => it.Name))}]");
+      if(dimensionValueNames.Count != dimensionEnumTypes.Length)
+         throw new ArgumentException($"Dimension values: [{string.Join(", ", dimensionValueNames)}] do not match the specified dimension enum types [{string.Join(", ", dimensionEnumTypes.Select(it => it.Name))}]");
 
-      return new MatrixCombination(componentNames.Zip(componentEnumTypes, NameToEnum).ToList());
+      return new MatrixCombination(dimensionValueNames.Zip(dimensionEnumTypes, NameToEnum).ToList());
    }
 
-   static Enum NameToEnum(string componentName, Type enumType)
+   static Enum NameToEnum(string dimensionValueName, Type dimensionEnumType)
    {
       try
       {
-         return (Enum)Enum.Parse(enumType, componentName);
+         return (Enum)Enum.Parse(dimensionEnumType, dimensionValueName);
       }
       catch(ArgumentException ex)
       {
-         throw new ArgumentException($"Invalid component value '{componentName}' for enum type {enumType}", ex);
+         throw new ArgumentException($"Invalid dimension value '{dimensionValueName}' for dimension enum type {dimensionEnumType}", ex);
       }
    }
 

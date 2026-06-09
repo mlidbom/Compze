@@ -11,7 +11,7 @@ partial class IAwaitableCriticalSectionCancellationMatrixAttribute
       readonly IAwaitableCriticalSectionMatrixAttribute.Factory<TTest> _innerFactory = new();
 
       // ReSharper disable once MemberCanBeMadeStatic.Local
-      public CancellationMechanism CurrentCancellationMechanism => (CancellationMechanism)MatrixCombination.Current.Components[1];
+      public CancellationMechanism CurrentCancellationMechanism => (CancellationMechanism)MatrixCombination.Current.DimensionValues[1];
 
       public Type ExpectedExceptionType => CurrentCancellationMechanism switch
       {

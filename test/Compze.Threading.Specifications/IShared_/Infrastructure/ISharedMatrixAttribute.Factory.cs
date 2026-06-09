@@ -14,7 +14,7 @@ partial class ISharedMatrixAttribute
       readonly List<IDisposable> _disposables = [];
 
       // ReSharper disable once MemberCanBeMadeStatic.Local
-      Implementation CurrentImplementation => (Implementation)MatrixCombination.Current.Components[0];
+      Implementation CurrentImplementation => (Implementation)MatrixCombination.Current.DimensionValues[0];
 
       public IShared<TShared> Create<TShared>(TShared shared, LockTimeout? timeout = null)
       {
