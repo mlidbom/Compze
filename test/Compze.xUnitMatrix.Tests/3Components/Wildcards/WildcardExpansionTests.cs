@@ -10,13 +10,9 @@ public class WildcardExpansionTests(ITestOutputHelper testOutputHelper)
       var combination = MatrixCombination.Current;
       _testOutputHelper.WriteLine($"combination: {combination}");
 
-      // The configuration has:
-      // Microsoft:*:*  -> Should expand to all combinations of SqlLayer and DIContainer with Microsoft
-      // Newtonsoft:*:Microsoft -> Should expand to all SqlLayers with Newtonsoft and Microsoft DIContainer
-
-      // Total expected:
-      // Microsoft:*:* = 2 serializers * 3 SqlLayers * 2 DIContainers = 6 for Microsoft
-      // Newtonsoft:*:Microsoft = 3 SqlLayers with Newtonsoft and Microsoft = 3
-      // Total = 9 combinations
+      // TestUsingWildcards contains a single line: Microsoft:*:Microsoft
+      // The * in the SqlLayer position expands to every SqlLayer value, so this test runs
+      // once per SqlLayer with Serializer and DIContainer fixed to Microsoft:
+      //   Microsoft:MsSql:Microsoft, Microsoft:Postgre:Microsoft, Microsoft:MySql:Microsoft
    }
 }

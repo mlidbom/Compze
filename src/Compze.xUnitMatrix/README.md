@@ -17,7 +17,7 @@ You have pluggable components — persistence layers, DI containers, serializers
 ### 1. Define your dimensions as enums
 
 ```csharp
-public enum PersistenceLayer { SqliteMemory, MicrosoftSql, PostgreSql, MySql }
+public enum PersistenceLayer { Sqlite, SqliteMemory, MicrosoftSql, PostgreSql, MySql }
 public enum DIContainer { Microsoft, SimpleInjector, Autofac }
 ```
 
@@ -29,7 +29,6 @@ public class MyMatrixAttribute(
    [CallerLineNumber] int sourceLineNumber = -1)
    : MatrixTheoryAttribute<PersistenceLayer, DIContainer>(
       configurationFileName: null,
-      useTestMethodArgument: false,
       sourceFilePath: sourceFilePath,
       sourceLineNumber: sourceLineNumber)
 {
@@ -106,9 +105,15 @@ SqliteMemory:SimpleInjector
 *:Microsoft
 ```
 
-The `*` on the third line expands to `MicrosoftSql:Microsoft`, `PostgreSql:Microsoft`, `MySql:Microsoft` — five combinations total from three lines. Lines starting with `#` are comments.
+The `*` on the third line expands to every `PersistenceLayer` value paired with `Microsoft` — `Sqlite:Microsoft`, `SqliteMemory:Microsoft`, `MicrosoftSql:Microsoft`, `PostgreSql:Microsoft`, `MySql:Microsoft` — for seven combinations total from three lines. Lines starting with `#` are comments.
 
-Pass the file name as `configurationFileName` in your attribute constructor instead of `null`.
+Pass the file name as `configurationFileName` in your attribute constructor instead of `null`. The file is located relative to the test assembly's output directory, so configure your test project to copy it there:
+
+```xml
+<None Update="MyCombinations">
+  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+</None>
+```
 
 ## Related packages
 
