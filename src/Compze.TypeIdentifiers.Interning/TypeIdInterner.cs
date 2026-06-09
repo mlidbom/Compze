@@ -17,11 +17,12 @@ public sealed class TypeIdInterner : ITypeIdInterner
    readonly ITypeMap _typeMap;
    readonly bool _cacheMints;
 
-   // Lock-free reads; mutated under _writeLock during load, reconcile, and mint.
+   // Thread-safe maps. The persistence serialises writers (its cross-process write lock, or — on SQLite — its
+   // single-writer gate), so the model is mutated without any additional in-process lock here: every update is
+   // either an idempotent merge or a thread-safe dictionary write.
    readonly ConcurrentDictionary<int, Type> _idToType = new();
    readonly ConcurrentDictionary<Type, int> _typeToId = new();
    readonly ConcurrentDictionary<int, string> _currentNameById = new();
-   readonly Lock _writeLock = new();
    volatile bool _loaded;
 
    /// <summary>Creates an interner backed by <paramref name="persistence"/>, using <paramref name="typeMap"/> to resolve persisted spellings to .NET types.</summary>
@@ -92,41 +93,31 @@ public sealed class TypeIdInterner : ITypeIdInterner
 
       // An id we have never seen: another process may have interned it since we loaded. Re-load and re-check;
       // if it still does not resolve, the spelling it was stored under no longer maps to a .NET type.
-      lock(_writeLock)
-      {
-         if(_idToType.TryGetValue(internedId, out var caughtUp))
-            return caughtUp;
+      MergeSnapshot(_persistence.LoadAll());
+      if(_idToType.TryGetValue(internedId, out var reloaded))
+         return reloaded;
 
-         MergeSnapshot(_persistence.LoadAll());
-         if(_idToType.TryGetValue(internedId, out var reloaded))
-            return reloaded;
-
-         throw UnresolvableId(internedId);
-      }
+      throw UnresolvableId(internedId);
    }
 
    int Mint(TypeId typeId)
    {
-      lock(_writeLock)
+      if(_typeToId.TryGetValue(typeId.Type, out var alreadyMinted))
+         return alreadyMinted;
+
+      return _persistence.MutateUnderWriteLock(session =>
       {
-         if(_typeToId.TryGetValue(typeId.Type, out var alreadyMinted))
-            return alreadyMinted;
+         var spelling = typeId.CanonicalString;
+         var name = NameOf(typeId.Type);
 
-         return _persistence.MutateUnderWriteLock(session =>
-         {
-            var spelling = typeId.CanonicalString;
-            var name = NameOf(typeId.Type);
+         // Idempotent: the persistence serialises writers, so a racing mint of the same type — or one from
+         // another process — is resolved by FindBySpelling here rather than inserting a duplicate.
+         var id = session.FindBySpelling(spelling) ?? session.InsertType(name, spelling);
 
-            // Idempotent: another process — or, on a single-writer engine, a prior mint whose business
-            // transaction has since committed — may already hold this spelling (the lock-free probe in
-            // GetOrInternId can race with another writer between releasing and re-acquiring).
-            var id = session.FindBySpelling(spelling) ?? session.InsertType(name, spelling);
-
-            _currentNameById.TryAdd(id, name);
-            CacheResolved(typeId.Type, id);
-            return id;
-         });
-      }
+         _currentNameById.TryAdd(id, name);
+         CacheResolved(typeId.Type, id);
+         return id;
+      });
    }
 
    void EnsureLoaded()
@@ -134,17 +125,13 @@ public sealed class TypeIdInterner : ITypeIdInterner
       if(_loaded)
          return;
 
-      lock(_writeLock)
-      {
-         if(_loaded)
-            return;
-
-         _persistence.EnsureInitialized();
-         var snapshot = _persistence.LoadAll();
-         MergeSnapshot(snapshot);
-         Reconcile(snapshot);
-         _loaded = true;
-      }
+      // No in-process lock: a concurrent first caller may also load, but every step is idempotent (and the
+      // persistence serialises the reconciliation writes), so the at-most-once redundant load is harmless.
+      _persistence.EnsureInitialized();
+      var snapshot = _persistence.LoadAll();
+      MergeSnapshot(snapshot);
+      Reconcile(snapshot);
+      _loaded = true;
    }
 
    // Folds a snapshot into the in-memory model: records current names, and resolves each id's spellings to a

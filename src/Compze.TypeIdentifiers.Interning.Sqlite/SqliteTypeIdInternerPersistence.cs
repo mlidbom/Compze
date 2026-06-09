@@ -1,9 +1,11 @@
 using System.Globalization;
+using System.Transactions;
 using Compze.Abstractions.Time.Public;
 using Compze.Internals.Sql.Common;
 using Compze.Internals.Sql.Common.Abstractions;
 using Compze.Internals.Sql.Sqlite;
 using Compze.Internals.Sql.Sqlite.Private;
+using Compze.Internals.SystemCE.TransactionsCE;
 using Types = Compze.TypeIdentifiers.Interning.TypeIdsTableSchema.Types;
 using Strings = Compze.TypeIdentifiers.Interning.TypeIdsTableSchema.Strings;
 using Names = Compze.TypeIdentifiers.Interning.TypeIdsTableSchema.Names;
@@ -43,8 +45,18 @@ partial class SqliteTypeIdInternerPersistence(ISqliteConnectionPool connectionPo
    static int? NullableInt(object? scalar) => scalar is null or DBNull ? null : Convert.ToInt32(scalar, CultureInfo.InvariantCulture);
    static int NonNullInt(object? scalar) => Convert.ToInt32(scalar, CultureInfo.InvariantCulture);
 
-   public T MutateUnderWriteLock<T>(Func<IInternerWriteSession, T> work) =>
-      _connectionPool.UseConnection(connection => work(new WriteSession(connection)));
+   public T MutateUnderWriteLock<T>(Func<IInternerWriteSession, T> work)
+   {
+      // Join the business transaction when there is one — its connection already holds the per-database write
+      // gate, so the mint is serialised and its read-then-insert is atomic. With no business transaction, run
+      // the mint in its own transaction so it, too, passes through the gate: that serialises it against every
+      // other writer (no duplicate, no engine-level lock contention).
+      if(Transaction.Current != null)
+         return _connectionPool.UseConnection(connection => work(new WriteSession(connection)));
+
+      return TransactionScopeCe.Execute(() =>
+         _connectionPool.UseConnection(connection => work(new WriteSession(connection))));
+   }
 
    sealed class WriteSession(ICompzeSqliteConnection connection) : IInternerWriteSession
    {

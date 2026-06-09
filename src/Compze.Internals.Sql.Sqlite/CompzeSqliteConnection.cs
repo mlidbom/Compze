@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Data.Common;
 using System.Transactions;
 using Compze.Internals.Sql.Common.Abstractions;
@@ -20,40 +21,83 @@ public interface ICompzeSqliteConnection : IPoolableConnection, ICompzeDbConnect
       // in-memory table locks (SQLite does not invoke the busy handler for those); the connection pool retries those.
       const int BusyTimeoutMilliseconds = 5000;
 
+      // SQLite permits one writer per database. We serialise whole write transactions in-process, per database,
+      // behind this gate so two threads never contend for the database's write lock at the engine level. That
+      // contention is what produced the residual deadlock (a writer holding the write lock while a second writer,
+      // mid-mint, waited for it). One gate per database (keyed by connection string), for the process lifetime —
+      // the same lifetime as the connection pools, which are likewise cached per connection string.
+      static readonly ConcurrentDictionary<string, SemaphoreSlim> WriteGatesByDatabase = new();
+
       SqliteConnection Connection { get; }
       SqliteTransaction? _transaction;
       readonly VolatileLambdaTransactionParticipant _transactionParticipant;
+#pragma warning disable CA2213 // Shared, per-database, process-lifetime semaphore owned by the static registry above — never disposed by an individual connection.
+      readonly SemaphoreSlim _writeGate;
+#pragma warning restore CA2213
       readonly bool _isFileDatabase;
 
       internal CompzeSqliteConnection(string connectionString)
       {
          Connection = new SqliteConnection(connectionString);
          _isFileDatabase = new SqliteConnectionStringBuilder(connectionString).Mode != SqliteOpenMode.Memory;
+         _writeGate = WriteGatesByDatabase.GetOrAdd(connectionString, _ => new SemaphoreSlim(1, 1));
 
          _transactionParticipant = new VolatileLambdaTransactionParticipant(
             enlistmentOptions: EnlistmentOptions.None,
-            onEnlist: () => _transaction = Connection.BeginTransaction(IsolationLevel.ReadCommitted),
+            // Hold the write gate for the whole transaction: acquired before the transaction can take any lock,
+            // released only once it has committed or rolled back. Reads outside a transaction are not gated and
+            // still run concurrently.
+            onEnlist: () =>
+            {
+               _writeGate.Wait();
+               try
+               {
+                  _transaction = Connection.BeginTransaction(IsolationLevel.ReadCommitted);
+               }
+               catch
+               {
+                  _writeGate.Release();
+                  throw;
+               }
+            },
             onPrepare: () => {}, // Nothing to do in prepare - SQLite doesn't support two-phase commit
             onCommit: () =>
             {
-               _transaction!.Commit();
-               _transaction.Dispose();
-               _transaction = null;
+               try
+               {
+                  _transaction!.Commit();
+                  _transaction.Dispose();
+                  _transaction = null;
+               }
+               finally
+               {
+                  _writeGate.Release();
+               }
             },
             onRollback: () =>
             {
-               _transaction!.Rollback();
-               _transaction.Dispose();
-               _transaction = null;
+               try
+               {
+                  _transaction!.Rollback();
+                  _transaction.Dispose();
+                  _transaction = null;
+               }
+               finally
+               {
+                  _writeGate.Release();
+               }
             });
       }
 
+      // Enlistment is deliberately NOT done here. The connection pool opens the connection while holding its
+      // per-transaction monitor, and enlistment acquires the write gate (above) — taking the gate under that
+      // monitor would invert against threads that hold the gate and then need the monitor. CreateCommand enlists
+      // instead (idempotently), and it runs after the pool has released the monitor.
       public void Open()
       {
          Contract.State.NotDisposed(_disposed, this);
          Connection.Open();
          ConfigureConnection();
-         _transactionParticipant.EnsureEnlistedInAnyAmbientTransaction();
       }
 
       public async Task OpenAsync()
@@ -61,7 +105,6 @@ public interface ICompzeSqliteConnection : IPoolableConnection, ICompzeDbConnect
          Contract.State.NotDisposed(_disposed, this);
          await Connection.OpenAsync().caf();
          await ConfigureConnectionAsync().caf();
-         _transactionParticipant.EnsureEnlistedInAnyAmbientTransaction();
       }
 
       // Run before enlisting in any transaction: journal_mode cannot be changed inside a transaction.
