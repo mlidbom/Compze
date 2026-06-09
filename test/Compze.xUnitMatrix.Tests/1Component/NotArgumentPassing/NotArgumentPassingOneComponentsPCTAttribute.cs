@@ -8,6 +8,5 @@ sealed class NotArgumentPassingOneComponentsPCTAttribute(
    [CallerLineNumber] int sourceLineNumber = -1)
    : MatrixTheoryAttribute<Serializer>(
       configurationFileName: "TestUsingNotArgumentPassingOneComponentsPCTAttribute",
-      useTestMethodArgument: false,
       sourceFilePath: sourceFilePath,
       sourceLineNumber: sourceLineNumber);

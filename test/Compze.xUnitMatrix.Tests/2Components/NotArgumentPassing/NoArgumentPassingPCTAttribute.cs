@@ -7,6 +7,5 @@ sealed class NotArgumentPassingTwoComponentsPCTAttribute(
    [CallerLineNumber] int sourceLineNumber = -1)
    : MatrixTheoryAttribute<Serializer, SqlLayer>(
       configurationFileName: "TestUsingNotArgumentPassingTwoComponentsPCTAttribute",
-      useTestMethodArgument: false,
       sourceFilePath: sourceFilePath,
       sourceLineNumber: sourceLineNumber);

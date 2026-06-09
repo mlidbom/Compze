@@ -13,7 +13,6 @@ public class PCTAttribute(
    [CallerLineNumber] int sourceLineNumber = -1)
    : MatrixTheoryAttribute<SqlLayer, DIContainer, Serializer, Transport>(
       configurationFileName: "TestUsingPluggableComponentCombinations",
-      useTestMethodArgument: false,
       sourceFilePath: sourceFilePath,
       sourceLineNumber: sourceLineNumber)
 {

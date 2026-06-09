@@ -5,26 +5,6 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
   <ItemGroup>
-    <None Update="TestUsingArgumentPassingFiveComponentsPCTAttribute">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <TargetPath>%(Filename)</TargetPath>
-    </None>
-    <None Update="TestUsingArgumentPassingFourComponentsPCTAttribute">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <TargetPath>%(Filename)</TargetPath>
-    </None>
-    <None Update="TestUsingArgumentPassingOneComponentsPCTAttribute">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <TargetPath>%(Filename)</TargetPath>
-    </None>
-    <None Update="TestUsingArgumentPassingThreeComponentsPCTAttribute">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <TargetPath>%(Filename)</TargetPath>
-    </None>
-    <None Update="TestUsingArgumentPassingTwoComponentsPCTAttribute">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <TargetPath>%(Filename)</TargetPath>
-    </None>
     <None Update="TestUsingNotArgumentPassingOneComponentsPCTAttribute">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <TargetPath>%(Filename)</TargetPath>

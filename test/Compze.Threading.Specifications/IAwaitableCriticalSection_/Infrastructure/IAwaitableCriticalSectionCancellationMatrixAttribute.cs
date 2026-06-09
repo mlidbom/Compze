@@ -15,7 +15,6 @@ partial class IAwaitableCriticalSectionCancellationMatrixAttribute
       [CallerLineNumber] int sourceLineNumber = -1)
       : base(
          configurationFileName: null,
-         useTestMethodArgument: false,
          sourceFilePath: sourceFilePath,
          sourceLineNumber: sourceLineNumber) { }
 }

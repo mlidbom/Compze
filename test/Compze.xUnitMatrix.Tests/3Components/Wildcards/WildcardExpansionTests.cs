@@ -5,8 +5,9 @@ public class WildcardExpansionTests(ITestOutputHelper testOutputHelper)
    readonly ITestOutputHelper _testOutputHelper = testOutputHelper;
 
    [WildcardTest]
-   public void WildcardsExpandCorrectly(MatrixCombination combination)
+   public void WildcardsExpandCorrectly()
    {
+      var combination = MatrixCombination.Current;
       _testOutputHelper.WriteLine($"combination: {combination}");
 
       // The configuration has:

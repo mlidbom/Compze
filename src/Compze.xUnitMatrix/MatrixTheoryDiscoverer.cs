@@ -17,18 +17,13 @@ class MatrixTheoryDiscoverer : TheoryDiscoverer
 
       var baseCases = await base.Discover(discoveryOptions, testMethod, factAttribute).caf();
 
-      var pctAttribute = (MatrixTheoryAttribute)factAttribute;
-
       var testCases = baseCases.Select(testCaseInterface =>
                                 {
                                    // This ensures ExecutionErrorTestCase and other special cases are preserved
                                    if(testCaseInterface is not XunitTestCase xunitTestCase)
                                       return testCaseInterface;
 
-                                   return new MatrixCombinationTestCase(
-                                      testCase: xunitTestCase,
-                                      useTestMethodArguments: pctAttribute.UseTestMethodArgument
-                                   );
+                                   return new MatrixCombinationTestCase(xunitTestCase);
                                 })
                                .ToArray();
 

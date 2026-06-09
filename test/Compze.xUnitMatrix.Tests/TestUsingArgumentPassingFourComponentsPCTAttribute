@@ -1,9 +1,0 @@
-# Test configuration file for pluggable component combinations
-# Lines starting with "#" are comments
-
-
-Microsoft:MsSql:Microsoft:InMemory
-Microsoft:Postgre:Microsoft:InMemory
-
-#Newtonsoft:MsSql:Microsoft:InMemory
-#Newtonsoft:Postgre:Microsoft:InMemory

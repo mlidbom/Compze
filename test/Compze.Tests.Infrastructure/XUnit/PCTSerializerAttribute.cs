@@ -9,7 +9,6 @@ public sealed class PCTSerializerAttribute(
    [CallerLineNumber] int sourceLineNumber = -1)
    : MatrixTheoryAttribute<Serializer>(
       configurationFileName: null,
-      useTestMethodArgument: false,
       sourceFilePath: sourceFilePath,
       sourceLineNumber: sourceLineNumber)
 {

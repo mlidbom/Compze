@@ -9,6 +9,5 @@ sealed class DependencyInjectionContainerMatrixAttribute(
    [CallerLineNumber] int sourceLineNumber = -1)
    : MatrixTheoryAttribute<DIContainer>(
       configurationFileName: null,
-      useTestMethodArgument: false,
       sourceFilePath: sourceFilePath,
       sourceLineNumber: sourceLineNumber);

@@ -11,6 +11,5 @@ partial class IAwaitableProcessSharedMatrixAttribute(
    [CallerLineNumber] int sourceLineNumber = -1)
    : MatrixTheoryAttribute<IAwaitableProcessSharedMatrixAttribute.Implementation>(
       configurationFileName: null,
-      useTestMethodArgument: false,
       sourceFilePath: sourceFilePath,
       sourceLineNumber: sourceLineNumber);

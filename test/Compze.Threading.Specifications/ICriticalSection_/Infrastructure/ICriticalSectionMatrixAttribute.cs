@@ -11,6 +11,5 @@ partial class ICriticalSectionMatrixAttribute(
    [CallerLineNumber] int sourceLineNumber = -1)
    : MatrixTheoryAttribute<ICriticalSectionMatrixAttribute.Implementation>(
       configurationFileName: null,
-      useTestMethodArgument: false,
       sourceFilePath: sourceFilePath,
       sourceLineNumber: sourceLineNumber);

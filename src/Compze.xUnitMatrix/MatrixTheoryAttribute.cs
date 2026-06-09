@@ -12,15 +12,12 @@ namespace Compze.xUnitMatrix;
 public abstract class MatrixTheoryAttribute(
    string? configurationFileName,
    Type[] dimensionEnumTypes,
-   bool useTestMethodArgument,
-   string? sourceFilePath = null,
-   int sourceLineNumber = -1)
+   string? sourceFilePath,
+   int sourceLineNumber)
    :
       TheoryAttribute(sourceFilePath, sourceLineNumber),
       IDataAttribute
 {
-   internal bool UseTestMethodArgument { get; } = useTestMethodArgument;
-
    readonly Type[] _dimensionEnumTypes = dimensionEnumTypes;
    readonly string? _configurationFileName = configurationFileName;
    readonly List<DimensionValueSkipSpecification> _subclassSkipSpecifications = [];

@@ -6,12 +6,10 @@ namespace Compze.xUnitMatrix;
 
 public abstract class MatrixTheoryAttribute<TDimension1>(
    string? configurationFileName,
-   bool useTestMethodArgument,
-   string? sourceFilePath = null,
-   int sourceLineNumber = -1)
+   string? sourceFilePath,
+   int sourceLineNumber)
    : MatrixTheoryAttribute(configurationFileName: configurationFileName,
                                           dimensionEnumTypes: EnumerableCE.OfTypes<TDimension1>().ToArray(),
-                                          useTestMethodArgument: useTestMethodArgument,
                                           sourceFilePath: sourceFilePath,
                                           sourceLineNumber: sourceLineNumber)
    where TDimension1 : Enum

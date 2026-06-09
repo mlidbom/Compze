@@ -11,6 +11,5 @@ partial class IAwaitableCriticalSectionMatrixAttribute(
    [CallerLineNumber] int sourceLineNumber = -1)
    : MatrixTheoryAttribute<IAwaitableCriticalSectionMatrixAttribute.Implementation>(
       configurationFileName: null,
-      useTestMethodArgument: false,
       sourceFilePath: sourceFilePath,
       sourceLineNumber: sourceLineNumber);
