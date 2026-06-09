@@ -79,7 +79,7 @@ public abstract class MatrixTheoryAttribute(
                        .ToList();
    }
 
-#pragma warning disable CA1033 // Interface methods should be callable by child types. We can't, that would hide the base class methods
+#pragma warning disable CA1033 // The explicit IDataAttribute implementation is deliberate: it keeps xUnit's discovery plumbing (GetData, SupportsDiscoveryEnumeration, Skip, ...) off the subclass-facing API surface, and members like Skip would otherwise collide with the inherited TheoryAttribute members.
    bool? IDataAttribute.Explicit => Explicit;
    string? IDataAttribute.Label => null;
    string? IDataAttribute.Skip => Skip;
@@ -89,7 +89,6 @@ public abstract class MatrixTheoryAttribute(
    string? IDataAttribute.TestDisplayName => DisplayName;
    int? IDataAttribute.Timeout => Timeout > 0 ? Timeout : null;
    string[]? IDataAttribute.Traits => null;
-#pragma warning restore CA1033 // Interface methods should be callable by child types. We can't, that would hide the base class methods
 
    ValueTask<IReadOnlyCollection<ITheoryDataRow>> IDataAttribute.GetData(MethodInfo testMethod, DisposalTracker disposalTracker)
    {
@@ -164,6 +163,7 @@ public abstract class MatrixTheoryAttribute(
    }
 
    bool IDataAttribute.SupportsDiscoveryEnumeration() => true;
+#pragma warning restore CA1033 // explicit IDataAttribute implementation is deliberate (see disable above)
 
    protected static TDimension GetCurrentDimensionValue<TDimension>(int dimensionIndex) where TDimension : Enum
    {

@@ -1,15 +1,15 @@
-namespace Compze.xUnitMatrix.Tests._2Components.NotArgumentPassing;
+namespace Compze.xUnitMatrix.Tests._2Components;
 
 public class WhenSomethingHappens(ITestOutputHelper testOutputHelper)
 {
    readonly ITestOutputHelper _testOutputHelper = testOutputHelper;
 
-   [NotArgumentPassingTwoComponentsPCT] public void ThisIsTheCase() =>
+   [TwoComponentMatrix] public void ThisIsTheCase() =>
       _testOutputHelper.WriteLine($"Serializer enum: {MatrixCombination.Current.Serializer()}, SqlLayer enum: {MatrixCombination.Current.SqlLayer()}");
 
    public class AndSomethingElseHappens(ITestOutputHelper testOutputHelper) : WhenSomethingHappens(testOutputHelper)
    {
-      [NotArgumentPassingTwoComponentsPCT] public void ThisIsAlsoTheCase() =>
+      [TwoComponentMatrix] public void ThisIsAlsoTheCase() =>
          _testOutputHelper.WriteLine($"Serializer enum: {MatrixCombination.Current.Serializer()}, SqlLayer enum: {MatrixCombination.Current.SqlLayer()}");
    }
 }

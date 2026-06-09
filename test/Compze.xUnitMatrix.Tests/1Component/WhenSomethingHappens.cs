@@ -1,6 +1,6 @@
 using Compze.xUnitMatrix.Tests._2Components;
 
-namespace Compze.xUnitMatrix.Tests._1Component.NotArgumentPassing;
+namespace Compze.xUnitMatrix.Tests._1Component;
 
 public class WhenSomethingHappens
 {
@@ -12,14 +12,14 @@ public class WhenSomethingHappens
       _testOutputHelper.WriteLine($"Serializer enum: {MatrixCombination.Current.Serializer()}");
    }
 
-   [NotArgumentPassingOneComponentsPCT] public void MatrixCombinationCurrentIsAvailableInConstructor() {}
+   [OneComponentMatrix] public void MatrixCombinationCurrentIsAvailableInConstructor() {}
 
-   [NotArgumentPassingOneComponentsPCT] public void ThisIsTheCase() =>
+   [OneComponentMatrix] public void ThisIsTheCase() =>
       _testOutputHelper.WriteLine($"Serializer enum: {MatrixCombination.Current.Serializer()}");
 
    public class AndSomethingElseHappens(ITestOutputHelper testOutputHelper) : WhenSomethingHappens(testOutputHelper)
    {
-      [NotArgumentPassingOneComponentsPCT] public void ThisIsAlsoTheCase() =>
+      [OneComponentMatrix] public void ThisIsAlsoTheCase() =>
          _testOutputHelper.WriteLine($"Serializer enum: {MatrixCombination.Current.Serializer()}");
    }
 }

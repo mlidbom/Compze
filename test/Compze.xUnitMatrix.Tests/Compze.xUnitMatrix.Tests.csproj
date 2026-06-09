@@ -5,11 +5,11 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
   <ItemGroup>
-    <None Update="TestUsingNotArgumentPassingOneComponentsPCTAttribute">
+    <None Update="TestUsingOneComponentMatrix">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <TargetPath>%(Filename)</TargetPath>
     </None>
-    <None Update="TestUsingNotArgumentPassingTwoComponentsPCTAttribute">
+    <None Update="TestUsingTwoComponentMatrix">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <TargetPath>%(Filename)</TargetPath>
     </None>

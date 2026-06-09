@@ -1,11 +1,11 @@
 using System.Runtime.CompilerServices;
 
-namespace Compze.xUnitMatrix.Tests._2Components.NotArgumentPassing;
+namespace Compze.xUnitMatrix.Tests._2Components;
 
-sealed class NotArgumentPassingTwoComponentsPCTAttribute(
+sealed class TwoComponentMatrixAttribute(
    [CallerFilePath] string? sourceFilePath = null,
    [CallerLineNumber] int sourceLineNumber = -1)
    : MatrixTheoryAttribute<Serializer, SqlLayer>(
-      configurationFileName: "TestUsingNotArgumentPassingTwoComponentsPCTAttribute",
+      configurationFileName: "TestUsingTwoComponentMatrix",
       sourceFilePath: sourceFilePath,
       sourceLineNumber: sourceLineNumber);
