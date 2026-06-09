@@ -11,7 +11,7 @@ public class MatrixCombination : IXunitSerializable
    public static MatrixCombination Current => TryGetCurrent() ?? throw new Exception("Found no current combination");
 #pragma warning restore CA1065
 
-   public static MatrixCombination? TryGetCurrent() => CurrentInternal.Value?.Value;
+   static MatrixCombination? TryGetCurrent() => CurrentInternal.Value?.Value;
 
    public IReadOnlyList<Enum> DimensionValues { get; private set; }
 
@@ -25,13 +25,13 @@ public class MatrixCombination : IXunitSerializable
 
    MatrixCombination(IEnumerable<Enum> dimensionValues) => DimensionValues = dimensionValues.ToList();
 
-   public void Serialize(IXunitSerializationInfo info)
+   void IXunitSerializable.Serialize(IXunitSerializationInfo info)
    {
       info.AddValue("DimensionValueNames", DimensionValues.Select(it => it.ToString()).ToArray());
       info.AddValue("DimensionEnumTypes", DimensionValues.Select(it => it.GetType().AssemblyQualifiedName!).ToArray());
    }
 
-   public void Deserialize(IXunitSerializationInfo info)
+   void IXunitSerializable.Deserialize(IXunitSerializationInfo info)
    {
       var dimensionValueNames = info.GetValue<string[]>("DimensionValueNames") ?? throw new InvalidEnumArgumentException("DimensionValueNames is null");
       var dimensionEnumTypes = (info.GetValue<string[]>("DimensionEnumTypes") ?? throw new InvalidEnumArgumentException("DimensionEnumTypes is null"))

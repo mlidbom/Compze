@@ -74,8 +74,9 @@ public abstract class MatrixTheoryAttribute(
                        .SelectMany(attr =>
                         {
                            var attrType = attr.GetType();
-                           var values = (Array)attrType.GetProperty(nameof(SkipAttribute<>.Values))!.GetValue(attr)!;
-                           var reason = (string)attrType.GetProperty(nameof(SkipAttribute<>.Reason))!.GetValue(attr)!;
+                           const BindingFlags skipPropertyFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
+                           var values = (Array)attrType.GetProperty(nameof(SkipAttribute<>.Values), skipPropertyFlags)!.GetValue(attr)!;
+                           var reason = (string)attrType.GetProperty(nameof(SkipAttribute<>.Reason), skipPropertyFlags)!.GetValue(attr)!;
                            return values.Cast<Enum>().Select(value => new DimensionValueSkipSpecification(value, reason));
                         })
                        .ToList();
@@ -93,7 +94,7 @@ public abstract class MatrixTheoryAttribute(
    string[]? IDataAttribute.Traits => null;
 #pragma warning restore CA1033 // Interface methods should be callable by child types. We can't, that would hide the base class methods
 
-   public ValueTask<IReadOnlyCollection<ITheoryDataRow>> GetData(MethodInfo testMethod, DisposalTracker disposalTracker)
+   ValueTask<IReadOnlyCollection<ITheoryDataRow>> IDataAttribute.GetData(MethodInfo testMethod, DisposalTracker disposalTracker)
    {
       if(testMethod.DeclaringType != testMethod.ReflectedType) //Only run for the class that declares the test method.
       {
@@ -165,7 +166,7 @@ public abstract class MatrixTheoryAttribute(
             .ToList();
    }
 
-   public bool SupportsDiscoveryEnumeration() => true;
+   bool IDataAttribute.SupportsDiscoveryEnumeration() => true;
 
    protected static TDimension GetCurrentDimensionValue<TDimension>(int dimensionIndex) where TDimension : Enum
    {

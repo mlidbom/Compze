@@ -18,12 +18,11 @@ namespace Compze.xUnitMatrix;
 public sealed class SkipAttribute<TDimension> : Attribute
    where TDimension : struct, Enum
 {
-   public TDimension[] Values { get; }
-   public string Reason { get; }
+   internal TDimension[] Values { get; }
+   internal string Reason { get; }
 
-#pragma warning disable CA1019 // Single-value constructor argument is absorbed into the Values array property; exposing a redundant Value property would duplicate Values[0].
+#pragma warning disable CA1019 // Attribute data is read only inside this library (Values/Reason are internal), so no public accessors are exposed.
    public SkipAttribute(TDimension value, string reason)
-#pragma warning restore CA1019
    {
       Values = [value];
       Reason = reason;
@@ -34,4 +33,5 @@ public sealed class SkipAttribute<TDimension> : Attribute
       Values = values;
       Reason = reason;
    }
+#pragma warning restore CA1019
 }

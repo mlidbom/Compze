@@ -17,6 +17,6 @@ public abstract class MatrixTheoryAttribute<TDimension1, TDimension2>(
    where TDimension1 : Enum
    where TDimension2 : Enum
 {
-   public static TDimension1 CurrentDimensionValue1 => GetCurrentDimensionValue<TDimension1>(0);
-   public static TDimension2 CurrentDimensionValue2 => GetCurrentDimensionValue<TDimension2>(1);
+   protected static TDimension1 CurrentDimensionValue1 => GetCurrentDimensionValue<TDimension1>(0);
+   protected static TDimension2 CurrentDimensionValue2 => GetCurrentDimensionValue<TDimension2>(1);
 }

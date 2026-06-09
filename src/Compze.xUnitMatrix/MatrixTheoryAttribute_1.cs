@@ -16,5 +16,5 @@ public abstract class MatrixTheoryAttribute<TDimension1>(
                                           sourceLineNumber: sourceLineNumber)
    where TDimension1 : Enum
 {
-   public static TDimension1 CurrentDimensionValue1 => GetCurrentDimensionValue<TDimension1>(0);
+   protected static TDimension1 CurrentDimensionValue1 => GetCurrentDimensionValue<TDimension1>(0);
 }

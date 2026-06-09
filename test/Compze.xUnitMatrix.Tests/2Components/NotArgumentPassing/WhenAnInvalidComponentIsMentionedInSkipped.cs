@@ -3,6 +3,7 @@ using Compze.Contracts;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.xUnitMatrix;
 using Xunit.Sdk;
+using Xunit.v3;
 
 namespace Compze.xUnitMatrix.Tests._2Components.NotArgumentPassing;
 
@@ -15,7 +16,7 @@ public class WhenAnInvalidComponentIsMentionedInSkipped
       await using var disposalTracker = new DisposalTracker();
 
       var attribute = new NotArgumentPassingTwoComponentsPCTAttribute();
-      var testData = await attribute.GetData(typeof(WhenAnInvalidComponentIsMentionedInSkipped)
+      var testData = await ((IDataAttribute)attribute).GetData(typeof(WhenAnInvalidComponentIsMentionedInSkipped)
                                             .GetMethod(nameof(TheTestIsSkippedWithAnErrorTessage))._assert().NotNull(), disposalTracker).caf();
 
       testData.Must().HaveCount(1);
