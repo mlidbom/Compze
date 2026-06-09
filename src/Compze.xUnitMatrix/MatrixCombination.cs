@@ -5,7 +5,7 @@ using Xunit.Sdk;
 
 namespace Compze.xUnitMatrix;
 
-public class MatrixCombination : IXunitSerializable
+public sealed class MatrixCombination : IXunitSerializable
 {
 #pragma warning disable CA1065 //throwing in a property.
    public static MatrixCombination Current => TryGetCurrent() ?? throw new NoCurrentMatrixCombinationException();

@@ -18,19 +18,22 @@ namespace Compze.xUnitMatrix;
 public sealed class SkipAttribute<TDimension> : Attribute
    where TDimension : struct, Enum
 {
-   internal TDimension[] Values { get; }
+   // CA1019 wants a public, one-per-argument property for every positional attribute argument. Neither fits here:
+   // the attribute data is read only inside this library (SkippedDimensionValues/Reason are internal), and the single-value
+   // constructor folds its argument into the SkippedDimensionValues collection, so there is intentionally no per-argument property.
+#pragma warning disable CA1019
+   internal TDimension[] SkippedDimensionValues { get; }
    internal string Reason { get; }
 
-#pragma warning disable CA1019 // Attribute data is read only inside this library (Values/Reason are internal), so no public accessors are exposed.
    public SkipAttribute(TDimension value, string reason)
    {
-      Values = [value];
+      SkippedDimensionValues = [value];
       Reason = reason;
    }
 
-   public SkipAttribute(TDimension[] values, string reason)
+   public SkipAttribute(TDimension[] skippedDimensionValues, string reason)
    {
-      Values = values;
+      SkippedDimensionValues = skippedDimensionValues;
       Reason = reason;
    }
 #pragma warning restore CA1019

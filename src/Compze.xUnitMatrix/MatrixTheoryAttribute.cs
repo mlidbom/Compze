@@ -75,7 +75,7 @@ public abstract class MatrixTheoryAttribute(
                         {
                            var attrType = attr.GetType();
                            const BindingFlags skipPropertyFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
-                           var values = (Array)attrType.GetProperty(nameof(SkipAttribute<>.Values), skipPropertyFlags)!.GetValue(attr)!;
+                           var values = (Array)attrType.GetProperty(nameof(SkipAttribute<>.SkippedDimensionValues), skipPropertyFlags)!.GetValue(attr)!;
                            var reason = (string)attrType.GetProperty(nameof(SkipAttribute<>.Reason), skipPropertyFlags)!.GetValue(attr)!;
                            return values.Cast<Enum>().Select(value => new DimensionValueSkipSpecification(value, reason));
                         })
