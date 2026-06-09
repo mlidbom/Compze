@@ -21,7 +21,7 @@ class MatrixConfigurationFileLine
                            .ToList();
    }
 
-   public IReadOnlyList<MatrixCombination> ExpandWildcardsIntoConcretePermutations()
+   public IReadOnlyList<MatrixCombination> ExpandWildcardsIntoConcreteCombinations()
    {
       if(!_wildCardDimensionValues.Any())
          return
@@ -35,11 +35,11 @@ class MatrixConfigurationFileLine
             .Select(it => it.AllDimensionValues)
             .CartesianProduct()
             .Select(it => new ResolvedWildcardDimensionValues(it))
-            .Select(CreateConcretePermutation)
+            .Select(CreateConcreteCombination)
             .ToList();
    }
 
-   MatrixCombination CreateConcretePermutation(ResolvedWildcardDimensionValues wildCardReplacementValues) =>
+   MatrixCombination CreateConcreteCombination(ResolvedWildcardDimensionValues wildCardReplacementValues) =>
       _dimensionValueNamesOrWildCards
         .Select((dimensionValueName, dimensionIndex) =>
                    dimensionValueName == Wildcard

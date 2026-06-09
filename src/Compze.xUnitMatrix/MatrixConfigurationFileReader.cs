@@ -23,7 +23,7 @@ static class MatrixConfigurationFileReader
         .Where(it => !it.IsNullEmptyOrWhiteSpace())
         .Where(it => !it.StartsWith(Comment))
         .Select(it => new MatrixConfigurationFileLine(dimensionEnumTypes, it))
-        .SelectMany(it => it.ExpandWildcardsIntoConcretePermutations())
+        .SelectMany(it => it.ExpandWildcardsIntoConcreteCombinations())
         .OrderBy(it => it.ToString())
         .DistinctBy(it => it.ToString())
         .ToList()

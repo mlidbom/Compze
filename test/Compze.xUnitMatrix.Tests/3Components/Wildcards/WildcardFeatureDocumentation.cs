@@ -4,7 +4,7 @@ namespace Compze.xUnitMatrix.Tests._3Components.Wildcards;
 
 public class WildcardFeatureDocumentation
 {
-   [WildcardTest] public void WildcardConfigurationGeneratesCorrectPermutations(MatrixCombination combination)
+   [WildcardTest] public void WildcardConfigurationGeneratesCorrectCombinations(MatrixCombination combination)
    {
       combination.DimensionValues.Must().HaveCount(3);
       combination.DimensionValues[0].Must().BeExactType<Serializer>();
