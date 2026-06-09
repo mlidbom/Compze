@@ -1,0 +1,2 @@
+# Multiple wildcards in one line expand to the Cartesian product of those dimensions.
+Microsoft:*:*

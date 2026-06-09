@@ -42,3 +42,9 @@ enum TessageBus
    InProcess,
    RabbitMQ
 }
+
+enum Transport
+{
+   AspNetCore,
+   InMemory
+}

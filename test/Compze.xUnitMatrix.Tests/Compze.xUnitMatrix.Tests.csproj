@@ -17,6 +17,22 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <TargetPath>%(Filename)</TargetPath>
     </None>
+    <None Update="TestUsingMultipleWildcards">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>%(Filename)</TargetPath>
+    </None>
+    <None Update="TestUsingWildcardDeduplication">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>%(Filename)</TargetPath>
+    </None>
+    <None Update="TestUsingAnInvalidDimensionValue">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>%(Filename)</TargetPath>
+    </None>
+    <None Update="TestUsingNoCombinations">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>%(Filename)</TargetPath>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />

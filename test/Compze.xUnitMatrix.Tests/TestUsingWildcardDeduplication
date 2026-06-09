@@ -1,0 +1,4 @@
+# Microsoft:MsSql:Microsoft is produced by all three lines; the result must contain it only once.
+Microsoft:*:Microsoft
+*:MsSql:Microsoft
+Microsoft:MsSql:Microsoft
