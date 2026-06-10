@@ -36,7 +36,7 @@ public class Navigator_specification : UniversalTestBase
          {
             builder.TypeMapper.RegisterIntegrationTestTypeMappings();
 
-            builder.RegisterTypermediaHandlers()
+            builder.RegisterTypermediaHandlers
                    .ForTuery((GetUserTuery tuery) => tueryResults.Single(result => result.Name == tuery.Name))
                    .ForTuery((UserApiStartPageTuery _) => new UserApiStartPage())
                    .ForTommandWithResult((RegisterUserTypermediaTommand typermediaTommand, IServiceBusSession _) =>

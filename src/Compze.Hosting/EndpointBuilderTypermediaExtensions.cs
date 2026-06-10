@@ -5,6 +5,8 @@ namespace Compze.Hosting;
 
 public static class EndpointBuilderTypermediaExtensions
 {
-   public static TypermediaHandlerRegistrarWithDependencyInjectionSupport RegisterTypermediaHandlers(this IEndpointBuilder @this)
-      => ((ServerEndpointBuilder)@this).RegisterTypermediaHandlers;
+   extension(IEndpointBuilder @this)
+   {
+      public TypermediaHandlerRegistrarWithDependencyInjectionSupport RegisterTypermediaHandlers => ((ServerEndpointBuilder)@this).RegisterTypermediaHandlers;
+   }
 }

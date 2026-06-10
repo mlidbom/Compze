@@ -28,7 +28,7 @@ public abstract class PerformanceTestBase : UniversalTestBase
          {
             builder.TypeMapper.RegisterPerformanceTestTypeMappings();
 
-            builder.RegisterTypermediaHandlers()
+            builder.RegisterTypermediaHandlers
                    .ForTuery((MyRemoteTuery _) => new MyTueryResult())
                    .ForTuery((MyLocalStrictlyLocalTuery _) => new MyTueryResult());
          });
