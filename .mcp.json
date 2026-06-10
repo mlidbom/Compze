@@ -1,0 +1,25 @@
+{
+  "mcpServers": {
+    "context7": {
+      "type": "http",
+      "url": "https://mcp.context7.com/mcp",
+      "headers": {
+        "CONTEXT7_API_KEY": "${CONTEXT7_API_KEY}"
+      }
+    },
+    "jetbrains-rider": {
+      "type": "streamable-http",
+      "url": "http://127.0.0.1:64482/stream"
+    },
+    "resharper-joshua": {
+      "type": "http",
+      "url": "http://127.0.0.1:23741/"
+    },
+    "sherlock": {
+      "type": "stdio",
+      "command": "cmd",
+      "args": ["/c", "sherlock-mcp"],
+      "env": {}
+    }
+  }
+}
