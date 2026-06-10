@@ -97,10 +97,30 @@ Noted for the seam conversation: `AspNetCoreTransport()` now under-describes its
 infrastructure-query transport); candidate rename `AspNetCoreTessagingTransport()` — held back because where
 infrastructure-query registration belongs is a seam-design question.
 
-### Remaining
+### The seam — design conversation needed before further code
 
-- Design the plug-in seam: uniform collection of transport servers (generalize `ISupplementalTransportServer`) +
-  per-paradigm registration modules. `ServerEndpointBuilder` stops naming paradigms.
+The remaining steps hang on one decision: how a paradigm plugs into an endpoint. Options:
+
+- **(a) Components collection + per-paradigm registration extensions (recommended).** An endpoint owns a
+  collection of lifecycle components (generalize what `ISupplementalTransportServer` started: `ITransportServer`
+  or `IEndpointComponent` with start-listening/start-sending/stop semantics). Each paradigm ships a registration
+  extension (`AddTessaging()` / `AddTypermedia()`-style, in its own hosting package) that registers its pipeline
+  plus its components into the container. `Endpoint` resolves the collection and runs lifecycle generically;
+  `ServerEndpointBuilder` stops naming paradigms. Addresses move off `IEndpoint`: a test asks the specific
+  component (or its feature's facade) for its address.
+- **(b) Contributor interface.** `IEndpointPipelineContributor.Configure(IComponentRegistrar)` discovered/listed
+  explicitly; otherwise like (a). Adds a named abstraction where (a) uses plain extensions — only worth it if
+  contributors need ordering or metadata.
+- **(c) Status quo shape, inverted ownership.** Keep a fused builder but move it (and `Endpoint`) so that only
+  `Compze.Hosting` knows both paradigms, with Tessaging exposing a designed public hosting SPI (kills
+  `InternalsVisibleTo`). Least change, but endpoints stay all-or-nothing: no Typermedia-only host.
+
+Open sub-questions: where infrastructure-query transport registration belongs (it is endpoint plumbing, not a
+paradigm); what the Tessaging hosting SPI looks like (today `Compze.Hosting` reaches into Tessaging internals
+for `TommandScheduler`/`IInbox`/`IOutbox`/router/in-flight tracker); whether `IInboxTransportServer` moves from
+`Compze.Core` into that SPI.
+
+### Remaining (after the seam decision)
 - Move `TestClient` + Typermedia test wiring into `Compze.Typermedia.Hosting.Testing`; build a minimal
   Typermedia-only testing host there. Give Tessaging its own testing host. (Not mechanical: `TestClient` leans on
   `TestEnv`/`TestingComponentRegistrar` machinery in the Tessaging testing project — part of the design
