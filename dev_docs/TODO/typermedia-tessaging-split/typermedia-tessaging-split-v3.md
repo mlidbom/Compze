@@ -17,36 +17,31 @@ and `Compze.Tessaging.Abstractions` no longer reference Typermedia — that coup
 - The TeventStore-over-Typermedia API lives in the explicit bridge project
   `Compze.Tessaging.Teventive.TeventStore.Typermedia` — a deliberate dependency on both. Correct; stays.
 
-### Open — the hosting layer is one fused concept instead of three
+### Open — one knot left: the testing infrastructure
 
-The entanglement was quarantined, not dissolved. Two knots remain (two others — hosting abstractions in lying
-Tessaging namespaces, and `Compze.Tessaging.Hosting.AspNetCore` composing Typermedia — were resolved by Phase A
-and step B1, below):
+Production code is fully disentangled (Phases A, B1, B2 below). What remains fused:
 
-1. **`Compze.Hosting` is a fused composition root.** `Endpoint` hard-codes both worlds (Tessaging inbox/outbox/
-   scheduler/router AND `ITypermediaTransportServer`); `ServerEndpointBuilder.SetupContainer()` wires both pipelines in
-   one method; it needs `InternalsVisibleTo` from `Compze.Tessaging` — the hosting SPI Tessaging should expose was
-   never designed. Anyone using the endpoint model gets both frameworks.
-2. **Testing is fused and one-sided.** `TestingEndpointHost` (in `Compze.Tessaging.Hosting.Testing`) wires both
-   paradigms; `TestClient` — a Typermedia client helper — lives in the Tessaging testing project;
-   `Compze.Typermedia.Hosting.Testing` and all three Typermedia spec projects are placeholders. Every real Typermedia
-   spec runs through the fused host in `Compze.Tests.Integration/Tessaging/`. Typermedia standalone is compile-time
-   truth only; neither paradigm can be hosted or tested alone. (`Compze.Tessaging.Hosting.Testing` referencing
-   Typermedia is part of this knot: it is currently the de-facto composition layer for tests.)
+**Testing is fused and one-sided.** `TestingEndpointHost` (in `Compze.Tessaging.Hosting.Testing`) composes both
+paradigms; `TestClient` — a Typermedia client helper — lives in the Tessaging testing project;
+`Compze.Typermedia.Hosting.Testing` and all three Typermedia spec projects are placeholders. Every real Typermedia
+spec runs through the fused host in `Compze.Tests.Integration/Tessaging/`. Neither paradigm can yet be *tested*
+alone. (`Compze.Tessaging.Hosting.Testing` referencing Typermedia is this knot: it is the de-facto composition
+layer for tests.) See Phase B3.
 
 Adjacent debt (not blocking, decide alongside): `Compze.Core` is not a shared core — its content is
 DocumentDb + serialization + the Teventive/Tessaging domain, yet Typermedia transitively depends on it (via
-`Compze.Internals.Transport`) — since Phase A only for infrastructure queries, no longer for the endpoint address
-type.
+`Compze.Internals.Transport`) for infrastructure queries.
 
 ## Target: three concepts, three homes
 
 1. **Parent domain** (`Compze.Abstractions`): message-type hierarchy + endpoint identity/address/configuration +
-   paradigm-neutral hosting contracts. No `Tessaging.*` namespaces for paradigm-neutral concepts.
+   paradigm-neutral hosting contracts. No `Tessaging.*` namespaces for paradigm-neutral concepts. ✓ (Phase A)
 2. **Two complete paradigm verticals**: each with its own wiring registrar, transport server, and testing host.
-   Neither references the other.
-3. **`Compze.Hosting` as an honest composition root** for apps wanting both paradigms: legitimately references both,
-   composes them through a neutral plug-in seam, no `InternalsVisibleTo` back-doors.
+   Neither references the other. ✓ for production code (B1, B2); testing host pending (B3).
+3. **A paradigm-blind hosting mechanism** (`Compze.Hosting`): endpoints, hosts, and a builder that paradigm
+   pipelines plug into as features — referencing no paradigm. Composition happens at the application/test layer.
+   ✓ (B2 — this landed stronger than the original "honest composition root" target: the mechanism needs neither
+   paradigm, so a future Typermedia-only or Tessaging-only host reuses it as-is.)
 
 ## Phase A — give the shared hosting concepts their truthful home — DONE (2026-06-10)
 
@@ -97,48 +92,75 @@ Noted for the seam conversation: `AspNetCoreTransport()` now under-describes its
 infrastructure-query transport); candidate rename `AspNetCoreTessagingTransport()` — held back because where
 infrastructure-query registration belongs is a seam-design question.
 
-### The seam — design conversation needed before further code
+### B2 — DONE (2026-06-10): the seam; `Compze.Hosting` is paradigm-blind
 
-The remaining steps hang on one decision: how a paradigm plugs into an endpoint. Options:
+How a paradigm plugs into an endpoint, as built:
 
-- **(a) Components collection + per-paradigm registration extensions (recommended).** An endpoint owns a
-  collection of lifecycle components (generalize what `ISupplementalTransportServer` started: `ITransportServer`
-  or `IEndpointComponent` with start-listening/start-sending/stop semantics). Each paradigm ships a registration
-  extension (`AddTessaging()` / `AddTypermedia()`-style, in its own hosting package) that registers its pipeline
-  plus its components into the container. `Endpoint` resolves the collection and runs lifecycle generically;
-  `ServerEndpointBuilder` stops naming paradigms. Addresses move off `IEndpoint`: a test asks the specific
-  component (or its feature's facade) for its address.
-- **(b) Contributor interface.** `IEndpointPipelineContributor.Configure(IComponentRegistrar)` discovered/listed
-  explicitly; otherwise like (a). Adds a named abstraction where (a) uses plain extensions — only worth it if
-  contributors need ordering or metadata.
-- **(c) Status quo shape, inverted ownership.** Keep a fused builder but move it (and `Endpoint`) so that only
-  `Compze.Hosting` knows both paradigms, with Tessaging exposing a designed public hosting SPI (kills
-  `InternalsVisibleTo`). Least change, but endpoints stay all-or-nothing: no Typermedia-only host.
+- **`IEndpointComponent`** (`Compze.Abstractions.Hosting.Public`) — the neutral lifecycle contract: listening
+  starts before sending, host-wide; default no-ops for the sending phase (Typermedia only listens).
+- **`IEndpointBuilder` gained the seam:** `GetOrAddFeature<TFeature>()` (idempotent feature creation),
+  `AddComponent()` (lifecycle components), `OnContainerBuilt()` (post-build hooks, used for discovery handler
+  registration). A feature wires one capability into the endpoint being built; the builder does not know which
+  capabilities exist.
+- **`TessagingEndpointFeature` / `TessagingEndpointComponent`** (`Compze.Tessaging.Hosting`): inbox, outbox,
+  tommand scheduler, router connect-to-all, service bus session, Teventive type mappings, discovery handlers,
+  in-flight-tracker default (NullOp unless the host pre-registered one), endpoint-registry fallback,
+  background-exception throw at dispose. Added via `AddTessaging()` / touched via `RegisterTessagingHandlers`.
+- **`TypermediaEndpointFeature` / `TypermediaEndpointComponent`** (`Compze.Typermedia.Client`): handler registry
+  and executor, in-process navigator, transport-server lifecycle, discovery handler, type mappings. Added via
+  `AddTypermedia()` / `RegisterTypermediaHandlers`.
+- **`IEndpoint` lost the paradigm-named address properties.** `TessagingAddress` / `TypermediaAddress` are now
+  extension properties contributed by each paradigm, reading its own component — call sites unchanged.
+- **`Compze.Hosting` references no paradigm.** The `InternalsVisibleTo` back-door is gone — features live inside
+  their own assemblies where internal access is natural. `TestingEndpointHost` absorbed `TestingEndpointHostBase`,
+  owns the in-flight tracker and endpoint registry, and adds both features to every test endpoint (mirrors prior
+  behavior). `AppSettingsJsonConfigurationParameterProvider` moved to `Compze.Hosting.Configuration` — it is
+  neutral config infrastructure consumed by the SQL pools, not a Tessaging concept. The dead
+  `DocumentDb → Tessaging.Abstractions` edge is removed; `Compze.Tessaging → Tessaging.Abstractions` is now an
+  explicit reference instead of a fragile transitive chain.
 
-Open sub-questions: where infrastructure-query transport registration belongs (it is endpoint plumbing, not a
-paradigm); what the Tessaging hosting SPI looks like (today `Compze.Hosting` reaches into Tessaging internals
-for `TommandScheduler`/`IInbox`/`IOutbox`/router/in-flight tracker); whether `IInboxTransportServer` moves from
-`Compze.Core` into that SPI.
+Verified: build 0 warnings, full suite green (3151 tests, 0 failed), solution-structure validation clean.
 
-### Remaining (after the seam decision)
-- Move `TestClient` + Typermedia test wiring into `Compze.Typermedia.Hosting.Testing`; build a minimal
-  Typermedia-only testing host there. Give Tessaging its own testing host. (Not mechanical: `TestClient` leans on
-  `TestEnv`/`TestingComponentRegistrar` machinery in the Tessaging testing project — part of the design
-  conversation.)
-- **Proof of done:** real specs in the three Typermedia placeholder spec projects, runnable from
-  `Compze.Typermedia.slnx`; a new `Compze.Tessaging.slnx` that builds and tests with no Typermedia project on disk.
+**Production-code isolation is complete: outside the deliberate TeventStore bridge, no Tessaging project
+references Typermedia or vice versa, and the hosting mechanism references neither.**
 
-## Phase C — `Compze.Hosting` becomes an honest composition root
+### B3 — remaining: the testing-infrastructure split
 
-- Composes both paradigms through the Phase B seam; whatever it needs from Tessaging internals becomes a designed,
-  public hosting SPI in Tessaging; remove `InternalsVisibleTo Compze.Hosting`.
-- Combined integration tests and samples keep using it — that is its purpose.
-- Revisit the name (`Compze.Hosting` vs something that states "composes Compze endpoints from both paradigms").
-- Follow-up candidates: rename/split `Compze.Core` (content is Teventive/Tessaging domain, not a shared core);
-  decide whether the "Tessage" parent-domain naming vs "Tessaging" framework naming overload should be teased apart.
+The last fused area. `Compze.Tessaging.Hosting.Testing` is the de-facto test-composition layer: it owns the
+pluggable-component wiring (`TestingComponentRegistrar` and its DbPool/serializer/SQL-layer/transport extensions,
+`DiContainerExtensions`, `ContainerCloner`, the dummy config provider), the fused `TestingEndpointHost`, and
+`TestClient` (a Typermedia client helper). `TestEnv` itself is already neutral (`Compze.Internals.Testing`), as
+are the pluggable-component enums (`Compze.Abstractions.Wiring.Testing.Internal`).
+
+Plan (needs a decision on package naming/granularity before coding):
+1. Move the paradigm-neutral pluggable-component test wiring to a neutral testing package (candidate:
+   `Compze.Hosting.Testing`). The transport wiring splits per paradigm like production did in B1/B2.
+2. `Compze.Typermedia.Hosting.Testing` (currently a placeholder) gets `TestClient` and a Typermedia-only testing
+   host; `Compze.Tessaging.Hosting.Testing` keeps a Tessaging-only one. A combined host remains for the
+   integration suite.
+3. **Proof of done:** real specs in the three Typermedia placeholder spec projects, runnable from
+   `Compze.Typermedia.slnx`; a new `Compze.Tessaging.slnx` that builds and tests with no Typermedia project.
+
+## Follow-ups (taste and naming, after the structure settles)
+
+- `TypermediaEndpointFeature` lives in `Compze.Typermedia.Client` because that package already mixes client and
+  endpoint concerns (discovery registration lives there). Consider a dedicated endpoint package or renaming Client.
+- `AspNetCoreTransport()` under-describes itself (Tessaging + infrastructure-query transport); candidate
+  `AspNetCoreTessagingTransport()`. Where infrastructure-query registration belongs is part of the same question.
+- `IEndpointRegistry` is namespaced as neutral but is consumed only by Tessaging routing; decide its true owner.
+- `ServerEndpointBuilder` — "Server" claims a distinction (vs client endpoints?) that no longer exists.
+- Rename/split `Compze.Core` (content is Teventive/Tessaging domain plus DocumentDb glue, not a shared core);
+  `IInboxTransportServer` still sits in `Compze.Core.Tessaging.Transport.Internal` and belongs in Tessaging.
+- Decide whether the "Tessage" parent-domain naming vs "Tessaging" framework naming overload should be teased
+  apart.
+- Production `EndpointHost` endpoints fall back to `AppConfigEndpointRegistry`, whose address lookup is a
+  `NotSupportedException` stub — production multi-endpoint hosting has never actually worked; pre-existing,
+  unchanged by this work.
 
 ## Status
 
 - [x] Phase A — completed 2026-06-10 (commits 25797d10e, 1e1412b8a, 45a1ffbaf)
-- [ ] Phase B — B1 done 2026-06-10; remaining steps need the seam-design conversation first
-- [ ] Phase C
+- [x] Phase B1 (ASP.NET transport split) — completed 2026-06-10 (commit cd729f19a)
+- [x] Phase B2 (the seam; paradigm-blind hosting) — completed 2026-06-10 (commit 9a6a82746)
+- [ ] Phase B3 (testing-infrastructure split) — needs package-naming decision, then mechanical
+- [ ] Follow-ups (taste and naming)
