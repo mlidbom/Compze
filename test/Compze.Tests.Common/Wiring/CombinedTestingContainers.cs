@@ -15,14 +15,14 @@ using JetBrains.Annotations;
 
 namespace Compze.Tests.Common.Wiring;
 
-///<summary>Container wiring for the combined test suite, whose endpoints and containers use both paradigms and the full persistence stack.</summary>
+///<summary>Container wiring for the combined test suite, whose endpoints and containers use both Tessaging and Typermedia and the full persistence stack.</summary>
 public static class CombinedTestingContainers
 {
-   ///<summary>Registers everything a combined Tessaging+Typermedia test endpoint needs of the current test's pluggable components: both paradigm transports and the full SQL persistence stack, against a unique throwaway database.</summary>
+   ///<summary>Registers everything a combined Tessaging+Typermedia test endpoint needs of the current test's pluggable components: both transports and the full SQL persistence stack, against a unique throwaway database.</summary>
    public static IComponentRegistrar CurrentTestsPluggableComponents(this IComponentRegistrar register) =>
       register.CurrentTestsPluggableComponents(Guid.NewGuid().ToString());
 
-   ///<summary>Registers everything a combined Tessaging+Typermedia test endpoint needs of the current test's pluggable components: both paradigm transports and the full SQL persistence stack.</summary>
+   ///<summary>Registers everything a combined Tessaging+Typermedia test endpoint needs of the current test's pluggable components: both transports and the full SQL persistence stack.</summary>
    public static IComponentRegistrar CurrentTestsPluggableComponents(this IComponentRegistrar register, string connectionStringName) =>
       register.CurrentTestsTessagingTransport()
               .CurrentTestsTypermediaTransport()

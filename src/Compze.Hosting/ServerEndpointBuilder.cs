@@ -8,8 +8,8 @@ using Compze.DependencyInjection.Abstractions;
 namespace Compze.Hosting;
 
 ///<summary>
-/// The <see cref="IEndpointBuilder"/> mechanism. It registers only what every endpoint needs regardless of
-/// paradigm — the type mapper (pre-mapped with the shared message hierarchy and discovery types), the
+/// The <see cref="IEndpointBuilder"/> mechanism. It registers only what every endpoint needs no matter what
+/// it speaks — the type mapper (pre-mapped with the shared message hierarchy and discovery types), the
 /// endpoint's identity, the configuration provider, and the infrastructure-query executor — and collects what
 /// features contribute: container registrations, <see cref="IEndpointComponent"/> factories, and
 /// post-container-build actions. <see cref="Build"/> then assembles the <see cref="Endpoint"/>.

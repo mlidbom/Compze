@@ -6,8 +6,8 @@ namespace Compze.Abstractions.Hosting.Public;
 /// in flight) and rethrows any exceptions background work produced that no assertion observed — so a test
 /// cannot pass while having silently dropped work or swallowed failures.
 ///
-/// Created via <c>TestingEndpointHost.Create</c> (in Compze.Hosting.Testing), passing the testing features of
-/// the paradigms the test uses.
+/// Created via <c>TestingEndpointHost.Create</c> (in Compze.Hosting.Testing), passing the testing features
+/// the test needs — Tessaging's, Typermedia's, or both.
 ///</summary>
 public interface ITestingEndpointHost : IEndpointHost
 {

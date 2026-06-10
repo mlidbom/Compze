@@ -1,8 +1,8 @@
 namespace Compze.Abstractions.Hosting.Public;
 
 ///<summary>
-/// A part of an endpoint with a listening/sending lifecycle — typically a paradigm's transport pipeline,
-/// added while the endpoint is built via <see cref="IEndpointBuilder.AddComponent"/>.
+/// A part of an endpoint with a listening/sending lifecycle — typically a transport pipeline such as
+/// Tessaging's or Typermedia's, added while the endpoint is built via <see cref="IEndpointBuilder.AddComponent"/>.
 ///
 /// The two-phase lifecycle exists for one reason: an <see cref="IEndpointHost"/> starts every component's
 /// listening phase host-wide before any component's sending phase, so nothing can send to an endpoint that is

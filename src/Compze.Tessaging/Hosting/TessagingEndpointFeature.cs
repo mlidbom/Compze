@@ -23,8 +23,8 @@ namespace Compze.Tessaging.Hosting;
 /// Wires the Tessaging pipeline — inbox, outbox, tommand scheduler, router, service bus session — into an
 /// endpoint. Created idempotently through
 /// <see cref="EndpointBuilderTessagingExtensions.AddTessaging"/> /
-/// <see cref="IEndpointBuilder.GetOrAddFeature{TFeature}"/>: this is how a paradigm plugs into the
-/// paradigm-blind hosting mechanism, and the feature instance is the handle through which the endpoint's
+/// <see cref="IEndpointBuilder.GetOrAddFeature{TFeature}"/>: this is how Tessaging plugs into a hosting
+/// mechanism that knows nothing of it, and the feature instance is the handle through which the endpoint's
 /// tessaging handlers are registered (<see cref="RegisterHandlers"/>).
 ///
 /// Two registrations are guarded with <c>IsRegistered</c> so a hosting layer can pre-register its own before

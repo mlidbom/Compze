@@ -11,8 +11,8 @@ namespace Compze.Typermedia.Client;
 /// Wires the Typermedia pipeline — handler registry and executor, in-process navigator, transport server,
 /// discovery — into an endpoint. Created idempotently through
 /// <see cref="EndpointBuilderTypermediaExtensions.AddTypermedia"/> /
-/// <see cref="IEndpointBuilder.GetOrAddFeature{TFeature}"/>: this is how a paradigm plugs into the
-/// paradigm-blind hosting mechanism, and the feature instance is the handle through which the endpoint's
+/// <see cref="IEndpointBuilder.GetOrAddFeature{TFeature}"/>: this is how Typermedia plugs into a hosting
+/// mechanism that knows nothing of it, and the feature instance is the handle through which the endpoint's
 /// typermedia handlers are registered (<see cref="RegisterHandlers"/>).
 ///
 /// The runtime lifecycle lives in <see cref="TypermediaEndpointComponent"/> (the transport server listens;

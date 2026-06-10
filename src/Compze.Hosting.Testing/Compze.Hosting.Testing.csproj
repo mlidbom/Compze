@@ -5,7 +5,7 @@
     <Version>0.1.0-alpha.1</Version>
     <!-- TODO: Remove once all public API members have XML documentation comments -->
     <NoWarn>CS1591</NoWarn>
-    <Description>Paradigm-neutral testing support for Compze endpoint hosting: the testing endpoint host that paradigm testing features plug into, and the pluggable-component test wiring (DI containers, serializers, database pools) driven by the current test configuration.</Description>
+    <Description>Testing support for Compze endpoint hosting: the testing endpoint host that capability testing features (Tessaging, Typermedia) plug into, and the pluggable-component test wiring (DI containers, serializers, database pools) driven by the current test configuration.</Description>
   </PropertyGroup>
   <!-- Compze.Abstractions — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Abstractions)' == 'true'">

@@ -1,8 +1,7 @@
 # Compze.Hosting
 
-Paradigm-neutral endpoint hosting for the Compze framework. This package knows nothing about any particular
-message paradigm — paradigm pipelines (Tessaging, Typermedia) plug themselves into the endpoint builder as
-features, each from its own package.
+Endpoint hosting for the Compze framework. This package knows nothing of Tessaging, Typermedia, or any other
+capability — each plugs its pipeline into the endpoint builder as a feature, from its own package.
 
 ## What's in this package?
 

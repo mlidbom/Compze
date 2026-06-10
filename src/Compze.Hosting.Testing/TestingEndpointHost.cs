@@ -1,5 +1,4 @@
 using Compze.Abstractions.Hosting.Public;
-using Compze.Hosting;
 using Compze.Hosting.Testing.Wiring;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.LinqCE;
@@ -10,10 +9,11 @@ using Compze.Underscore;
 namespace Compze.Hosting.Testing;
 
 ///<summary>
-/// The endpoint host tests use. Paradigm-blind: the <see cref="ITestingEndpointHostFeature"/>s it is created with
-/// decide what every test endpoint is wired with — create it with the Tessaging feature, the Typermedia feature,
-/// or both, and every endpoint registered with the host gets those pipelines plus the current test's pluggable
-/// components, without each test repeating the wiring.
+/// The endpoint host tests use. It knows nothing of Tessaging, Typermedia, or any other capability: the
+/// <see cref="ITestingEndpointHostFeature"/>s it is created with decide what every test endpoint is wired
+/// with — create it with the Tessaging feature, the Typermedia feature, or both, and every endpoint registered
+/// with the host gets those pipelines plus the current test's pluggable components, without each test
+/// repeating the wiring.
 ///
 /// All endpoints are built from clones of one root container, so they share the test database pool and
 /// serializers. On dispose the host waits for the features' background work to come to rest and rethrows any

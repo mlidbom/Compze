@@ -8,7 +8,7 @@ Compze is a .NET framework for building expressive domains through **Teventive p
 
 ## What's in this package?
 
-The Typermedia paradigm's plug-in for the testing endpoint host in `Compze.Hosting.Testing`, plus a remote test client:
+Typermedia's plug-in for the testing endpoint host in `Compze.Hosting.Testing`, plus a remote test client:
 
 - **`TypermediaTestingEndpointHostFeature`** — wires the Typermedia pipeline and transport into every endpoint a `TestingEndpointHost` registers.
 - **`TypermediaTestClient`** — a remote Typermedia client running in its own container, connecting to an endpoint's typermedia address over HTTP exactly as an external client application would.
@@ -38,7 +38,7 @@ dotnet add package Compze.Typermedia.Hosting.Testing
 
 | Package | Description |
 |---------|-------------|
-| [Compze.Hosting.Testing](https://www.nuget.org/packages/Compze.Hosting.Testing) | The paradigm-neutral testing endpoint host this feature plugs into |
+| [Compze.Hosting.Testing](https://www.nuget.org/packages/Compze.Hosting.Testing) | The testing endpoint host this feature plugs into |
 | [Compze.Typermedia](https://www.nuget.org/packages/Compze.Typermedia) | The Typermedia navigation model |
 | [Compze.Typermedia.Hosting.AspNetCore](https://www.nuget.org/packages/Compze.Typermedia.Hosting.AspNetCore) | ASP.NET Core hosting |
 

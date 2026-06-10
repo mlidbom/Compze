@@ -3,13 +3,14 @@ using Compze.Abstractions.Hosting.Public;
 namespace Compze.Hosting.Testing;
 
 ///<summary>
-/// What a capability — typically a paradigm such as Tessaging or Typermedia — contributes to a
+/// What a capability — typically a communication style such as Tessaging or Typermedia — contributes to a
 /// <see cref="TestingEndpointHost"/>: standard test wiring added to every endpoint the host registers, and
 /// participation in the host's dispose-time quiescence wait and background-failure reporting.
 ///
-/// This mirrors, one level up, how paradigms plug their pipelines into individual endpoints via
-/// <see cref="IEndpointBuilder.GetOrAddFeature{TFeature}"/>: the testing host knows no paradigm; whichever
-/// features it is created with decide what every test endpoint is wired with.
+/// This mirrors, one level up, how capabilities plug their pipelines into individual endpoints via
+/// <see cref="IEndpointBuilder.GetOrAddFeature{TFeature}"/>: the testing host knows nothing of Tessaging,
+/// Typermedia, or any other capability; whichever features it is created with decide what every test
+/// endpoint is wired with.
 ///</summary>
 public interface ITestingEndpointHostFeature
 {

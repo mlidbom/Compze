@@ -13,14 +13,14 @@ using Compze.Typermedia.Hosting.Testing;
 
 namespace Compze.Typermedia.Hosting.Specifications;
 
-///<summary>The end-to-end proof that the Typermedia paradigm stands alone: a host with only the Typermedia testing feature serves a remote client over HTTP, with no Tessaging assembly anywhere in the process.</summary>
-public class Given_an_endpoint_hosting_only_the_typermedia_paradigm : UniversalTestBase
+///<summary>The end-to-end proof that Typermedia stands alone: a host with only the Typermedia testing feature serves a remote client over HTTP, with no Tessaging assembly anywhere in the process.</summary>
+public class Given_an_endpoint_hosting_only_typermedia : UniversalTestBase
 {
    readonly ITestingEndpointHost _host;
    readonly IEndpoint _endpoint;
    TypermediaTestClient _client = null!;
 
-   public Given_an_endpoint_hosting_only_the_typermedia_paradigm()
+   public Given_an_endpoint_hosting_only_typermedia()
    {
       _host = TestingEndpointHost.Create(new TypermediaTestingEndpointHostFeature());
 

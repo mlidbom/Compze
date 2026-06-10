@@ -8,7 +8,7 @@ Compze is a .NET framework for building expressive domains through **Teventive p
 
 ## What's in this package?
 
-The Tessaging paradigm's plug-in for the testing endpoint host in `Compze.Hosting.Testing`:
+Tessaging's plug-in for the testing endpoint host in `Compze.Hosting.Testing`:
 
 - **`TessagingTestingEndpointHostFeature`** — wires the Tessaging pipeline, transport, and persistence into every endpoint a `TestingEndpointHost` registers, tracks tessages in flight host-wide, and makes the host wait until everything is at rest before disposing — so tests cannot silently drop in-flight work.
 - **Transport test wiring** — `CurrentTestsTessagingTransport()` registers the ASP.NET Core Tessaging transport for the current test configuration.
@@ -35,7 +35,7 @@ dotnet add package Compze.Tessaging.Hosting.Testing
 
 | Package | Description |
 |---------|-------------|
-| [Compze.Hosting.Testing](https://www.nuget.org/packages/Compze.Hosting.Testing) | The paradigm-neutral testing endpoint host this feature plugs into |
+| [Compze.Hosting.Testing](https://www.nuget.org/packages/Compze.Hosting.Testing) | The testing endpoint host this feature plugs into |
 | [Compze.Tessaging](https://www.nuget.org/packages/Compze.Tessaging) | Messaging infrastructure |
 | [Compze.Tessaging.Hosting.AspNetCore](https://www.nuget.org/packages/Compze.Tessaging.Hosting.AspNetCore) | ASP.NET Core hosting |
 

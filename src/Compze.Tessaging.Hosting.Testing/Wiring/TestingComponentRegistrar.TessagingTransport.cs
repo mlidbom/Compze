@@ -6,7 +6,7 @@ namespace Compze.Tessaging.Hosting.Testing.Wiring;
 
 public static class TestingComponentRegistrarTessagingTransport
 {
-   ///<summary>Registers the Tessaging transport — inbox server, controller and transport client — plus the shared infrastructure transport if no other paradigm registered it yet.</summary>
+   ///<summary>Registers the Tessaging transport — inbox server, controller and transport client — plus the shared infrastructure transport if nothing else registered it yet.</summary>
    public static IComponentRegistrar CurrentTestsTessagingTransport(this IComponentRegistrar register) =>
       register.CurrentTestsInfrastructureTransportIfNotRegistered()
               .AspNetCoreTessagingTransport();

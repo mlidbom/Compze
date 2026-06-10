@@ -7,7 +7,7 @@ namespace Compze.Abstractions.Hosting.Public;
 /// addresses, while production endpoints fall back to reading addresses from application configuration.
 ///
 /// Today its only consumer is Tessaging routing (the router connects to every address listed); whether the
-/// concept stays paradigm-neutral or moves to Tessaging is an open design question.
+/// concept stays neutral or moves to Tessaging is an open design question.
 ///</summary>
 public interface IEndpointRegistry
 {

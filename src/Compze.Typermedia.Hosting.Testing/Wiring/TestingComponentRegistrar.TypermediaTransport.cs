@@ -9,7 +9,7 @@ namespace Compze.Typermedia.Hosting.Testing.Wiring;
 
 public static class TestingComponentRegistrarTypermediaTransport
 {
-   ///<summary>Registers the Typermedia transport for an endpoint — the ASP.NET Core transport server plus the HTTP client transport — and the shared infrastructure transport if no other paradigm registered it yet.</summary>
+   ///<summary>Registers the Typermedia transport for an endpoint — the ASP.NET Core transport server plus the HTTP client transport — and the shared infrastructure transport if nothing else registered it yet.</summary>
    public static IComponentRegistrar CurrentTestsTypermediaTransport(this IComponentRegistrar register) =>
       register.CurrentTestsInfrastructureTransportIfNotRegistered()
               .HttpTypermediaTransport()

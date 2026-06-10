@@ -8,13 +8,14 @@ namespace Compze.Abstractions.Hosting.Public;
 ///
 /// Endpoints are declared against an <see cref="IEndpointHost"/> via
 /// <see cref="IEndpointHost.RegisterEndpoint"/>, and configured through an <see cref="IEndpointBuilder"/> —
-/// which paradigm pipelines (Tessaging, Typermedia) plug into as features. The endpoint itself is
-/// paradigm-blind: what it can do is decided entirely by which features were added while it was built.
+/// which capabilities such as the Tessaging and Typermedia pipelines plug into as features. The endpoint
+/// itself knows none of them: what it can do is decided entirely by which features were added while it was
+/// built.
 ///
-/// An endpoint's addresses are likewise paradigm-specific and therefore not members of this interface: each
-/// paradigm contributes an extension property (such as <c>TessagingAddress</c> and <c>TypermediaAddress</c>)
-/// that reads the address from that paradigm's component in <see cref="Components"/>. Such addresses are null
-/// until the endpoint is listening, and for endpoints without that paradigm's pipeline.
+/// An endpoint's addresses likewise belong to the individual transports and are therefore not members of this
+/// interface: each communication style contributes an extension property (such as <c>TessagingAddress</c> and
+/// <c>TypermediaAddress</c>) that reads the address from its own component in <see cref="Components"/>. Such
+/// addresses are null until the endpoint is listening, and for endpoints without that style's pipeline.
 ///</summary>
 public interface IEndpoint : IAsyncDisposable
 {

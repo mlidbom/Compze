@@ -8,10 +8,10 @@ namespace Compze.Hosting.Testing.Wiring;
 public static class TestingComponentRegistrarInfrastructureTransport
 {
    ///<summary>
-   /// Registers the transport infrastructure every Compze endpoint needs regardless of paradigm: the shared
+   /// Registers the transport infrastructure every Compze endpoint needs no matter what it speaks: the shared
    /// <see cref="IHttpClientFactoryCE"/>, and the client and server sides of the infrastructure-query transport
-   /// that endpoint discovery runs on. Guarded so that paradigm transport registrations can each demand it
-   /// without conflicting when an endpoint hosts more than one paradigm.
+   /// that endpoint discovery runs on. Guarded so that the Tessaging and Typermedia transport registrations can
+   /// each demand it without conflicting when an endpoint hosts both.
    ///</summary>
    public static IComponentRegistrar CurrentTestsInfrastructureTransportIfNotRegistered(this IComponentRegistrar register)
    {

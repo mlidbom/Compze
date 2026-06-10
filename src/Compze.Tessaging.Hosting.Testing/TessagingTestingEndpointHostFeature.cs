@@ -11,7 +11,7 @@ using Compze.Contracts;
 namespace Compze.Tessaging.Hosting.Testing;
 
 ///<summary>
-/// Plugs the Tessaging paradigm into a <see cref="TestingEndpointHost"/>. Every endpoint the host registers gets
+/// Plugs Tessaging into a <see cref="TestingEndpointHost"/>. Every endpoint the host registers gets
 /// the Tessaging pipeline (via <see cref="EndpointBuilderTessagingExtensions.AddTessaging"/>), the current test's
 /// Tessaging transport and persistence, an <see cref="IEndpointRegistry"/> listing the host's tessaging inbox
 /// addresses (so routers connect to every endpoint in the host), and a host-wide
