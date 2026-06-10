@@ -12,6 +12,62 @@
     </PackageReference>
     <PackageReference Include="xunit.v3" Version="3.1.0" />
   </ItemGroup>
+  <!-- Compze.Abstractions — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Abstractions)' == 'true'">
+    <PackageReference Include="Compze.Abstractions" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Abstractions)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.Abstractions\Compze.Abstractions.csproj" />
+  </ItemGroup>
+  <!-- Compze.Hosting.Testing — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Hosting_Testing)' == 'true'">
+    <PackageReference Include="Compze.Hosting.Testing" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Hosting_Testing)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.Hosting.Testing\Compze.Hosting.Testing.csproj" />
+  </ItemGroup>
+  <!-- Compze.Internals.SystemCE — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_SystemCE)' == 'true'">
+    <PackageReference Include="Compze.Internals.SystemCE" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_SystemCE)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.Internals.SystemCE\Compze.Internals.SystemCE.csproj" />
+  </ItemGroup>
+  <!-- Compze.Must — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Must)' == 'true'">
+    <PackageReference Include="Compze.Must" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Must)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.Must\Compze.Must.csproj" />
+  </ItemGroup>
+  <!-- Compze.Tests.Infrastructure — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Tests_Infrastructure)' == 'true'">
+    <PackageReference Include="Compze.Tests.Infrastructure" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Tests_Infrastructure)' != 'true'">
+    <ProjectReference Include="..\Compze.Tests.Infrastructure\Compze.Tests.Infrastructure.csproj" />
+  </ItemGroup>
+  <!-- Compze.TypeIdentifiers — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_TypeIdentifiers)' == 'true'">
+    <PackageReference Include="Compze.TypeIdentifiers" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_TypeIdentifiers)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.TypeIdentifiers\Compze.TypeIdentifiers.csproj" />
+  </ItemGroup>
+  <!-- Compze.Typermedia — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Typermedia)' == 'true'">
+    <PackageReference Include="Compze.Typermedia" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Typermedia)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.Typermedia\Compze.Typermedia.csproj" />
+  </ItemGroup>
+  <!-- Compze.Typermedia.Client — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Typermedia_Client)' == 'true'">
+    <PackageReference Include="Compze.Typermedia.Client" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Typermedia_Client)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.Typermedia.Client\Compze.Typermedia.Client.csproj" />
+  </ItemGroup>
   <!-- Compze.Typermedia.Hosting — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Typermedia_Hosting)' == 'true'">
     <PackageReference Include="Compze.Typermedia.Hosting" Version="*-*" />

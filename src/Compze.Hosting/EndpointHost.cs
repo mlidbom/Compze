@@ -6,6 +6,16 @@ using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Hosting;
 
+///<summary>
+/// The <see cref="IEndpointHost"/> mechanism. Paradigm-blind: it builds each endpoint from a fresh container
+/// (via the factory it was created with) and a <see cref="ServerEndpointBuilder"/>, and guarantees the
+/// host-wide phase ordering — every endpoint's listening components start before any endpoint's sending
+/// components (see <see cref="IEndpointComponent"/> for why). What an endpoint can actually do is decided by
+/// the features its setup callback adds; the host never knows.
+///
+/// Production hosts are created via <see cref="Production.Create"/>; tests use
+/// <c>TestingEndpointHost.Create</c> (Compze.Hosting.Testing), which subclasses this mechanism.
+///</summary>
 public class EndpointHost : IEndpointHost
 {
    readonly Func<IContainerBuilder> _containerFactory;

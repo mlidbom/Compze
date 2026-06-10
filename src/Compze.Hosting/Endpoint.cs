@@ -6,6 +6,12 @@ using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Hosting;
 
+///<summary>
+/// The <see cref="IEndpoint"/> mechanism: owns the endpoint's container and drives its
+/// <see cref="IEndpointComponent"/>s through the listening/sending phases. Components are created lazily when
+/// listening starts — by then the container is built, so component factories can resolve whatever they need.
+/// On dispose the container goes first, then any components that implement <see cref="IAsyncDisposable"/>.
+///</summary>
 class Endpoint : IEndpoint
 {
    readonly EndpointConfiguration _configuration;

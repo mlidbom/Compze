@@ -19,7 +19,21 @@ using Compze.Tessaging.SystemCE.ThreadingCE;
 
 namespace Compze.Tessaging.Hosting;
 
-///<summary>Wires the Tessaging pipeline — inbox, outbox, tommand scheduler, router, service bus session — into an endpoint.</summary>
+///<summary>
+/// Wires the Tessaging pipeline — inbox, outbox, tommand scheduler, router, service bus session — into an
+/// endpoint. Created idempotently through
+/// <see cref="EndpointBuilderTessagingExtensions.AddTessaging"/> /
+/// <see cref="IEndpointBuilder.GetOrAddFeature{TFeature}"/>: this is how a paradigm plugs into the
+/// paradigm-blind hosting mechanism, and the feature instance is the handle through which the endpoint's
+/// tessaging handlers are registered (<see cref="RegisterHandlers"/>).
+///
+/// Two registrations are guarded with <c>IsRegistered</c> so a hosting layer can pre-register its own before
+/// the feature is added: the in-flight tracker (a testing host supplies a real one to await quiescence; the
+/// default does nothing) and the <see cref="IEndpointRegistry"/> (a testing host lists its own endpoints; the
+/// default reads application configuration). The runtime lifecycle lives in
+/// <see cref="TessagingEndpointComponent"/>, and the endpoint's inbox address is exposed as the
+/// <c>TessagingAddress</c> extension property (<see cref="EndpointTessagingExtensions"/>).
+///</summary>
 public class TessagingEndpointFeature
 {
    public TessageHandlerRegistrarWithDependencyInjectionSupport RegisterHandlers { get; }

@@ -17,16 +17,10 @@ and `Compze.Tessaging.Abstractions` no longer reference Typermedia — that coup
 - The TeventStore-over-Typermedia API lives in the explicit bridge project
   `Compze.Tessaging.Teventive.TeventStore.Typermedia` — a deliberate dependency on both. Correct; stays.
 
-### Open — one knot left: the testing infrastructure
+### Done — the testing infrastructure is split (B3)
 
-Production code is fully disentangled (Phases A, B1, B2 below). What remains fused:
-
-**Testing is fused and one-sided.** `TestingEndpointHost` (in `Compze.Tessaging.Hosting.Testing`) composes both
-paradigms; `TestClient` — a Typermedia client helper — lives in the Tessaging testing project;
-`Compze.Typermedia.Hosting.Testing` and all three Typermedia spec projects are placeholders. Every real Typermedia
-spec runs through the fused host in `Compze.Tests.Integration/Tessaging/`. Neither paradigm can yet be *tested*
-alone. (`Compze.Tessaging.Hosting.Testing` referencing Typermedia is this knot: it is the de-facto composition
-layer for tests.) See Phase B3.
+Neither testing package references the other paradigm; each paradigm is tested alone in its own spec projects;
+the combined suite composes both explicitly.
 
 Adjacent debt (not blocking, decide alongside): `Compze.Core` is not a shared core — its content is
 DocumentDb + serialization + the Teventive/Tessaging domain, yet Typermedia transitively depends on it (via
@@ -124,29 +118,44 @@ Verified: build 0 warnings, full suite green (3151 tests, 0 failed), solution-st
 **Production-code isolation is complete: outside the deliberate TeventStore bridge, no Tessaging project
 references Typermedia or vice versa, and the hosting mechanism references neither.**
 
-### B3 — remaining: the testing-infrastructure split
+### B3 — DONE (2026-06-10): the testing-infrastructure split
 
-The last fused area. `Compze.Tessaging.Hosting.Testing` is the de-facto test-composition layer: it owns the
-pluggable-component wiring (`TestingComponentRegistrar` and its DbPool/serializer/SQL-layer/transport extensions,
-`DiContainerExtensions`, `ContainerCloner`, the dummy config provider), the fused `TestingEndpointHost`, and
-`TestClient` (a Typermedia client helper). `TestEnv` itself is already neutral (`Compze.Internals.Testing`), as
-are the pluggable-component enums (`Compze.Abstractions.Wiring.Testing.Internal`).
+The testing host repeats the B2 seam one level up — there is no combined host type anywhere:
 
-Plan (needs a decision on package naming/granularity before coding):
-1. Move the paradigm-neutral pluggable-component test wiring to a neutral testing package (candidate:
-   `Compze.Hosting.Testing`). The transport wiring splits per paradigm like production did in B1/B2.
-2. `Compze.Typermedia.Hosting.Testing` (currently a placeholder) gets `TestClient` and a Typermedia-only testing
-   host; `Compze.Tessaging.Hosting.Testing` keeps a Tessaging-only one. A combined host remains for the
-   integration suite.
-3. **Proof of done:** real specs in the three Typermedia placeholder spec projects, runnable from
-   `Compze.Typermedia.slnx`; a new `Compze.Tessaging.slnx` that builds and tests with no Typermedia project.
+- **`Compze.Hosting.Testing`** (new package): the paradigm-blind `TestingEndpointHost` plus the
+  `ITestingEndpointHostFeature` seam (per-endpoint test wiring + dispose-time quiescence/background-exception
+  participation). Also owns the neutral pluggable-component wiring: `TestingComponentRegistrar`
+  (+DbPool/serializer extensions), `TestingContainerBuilderFactory.CreateTestingContainerBuilder`,
+  `ContainerCloner`, the dummy config provider, `PluggableComponents`/`TestEnv` extensions, and the guarded
+  shared transport infrastructure (`CurrentTestsInfrastructureTransportIfNotRegistered`: HTTP client factory +
+  infrastructure-query client/server — both paradigm transports demand it; first one wins).
+- **`Compze.Tessaging.Hosting.Testing`**: `TessagingTestingEndpointHostFeature` (owns the in-flight tracker and
+  the host's `IEndpointRegistry`; hosts no longer implement `IEndpointRegistry` themselves),
+  `CurrentTestsTessagingTransport`, `CurrentTestsConfiguredSqlLayer` (the Tessaging vertical's storage stack:
+  interner + DocumentDb + tessaging + tevent store). References no Typermedia project.
+- **`Compze.Typermedia.Hosting.Testing`**: `TypermediaTestingEndpointHostFeature`,
+  `TypermediaTestClient` (renamed from `TestClient`; maps the client-side mirror of a Typermedia endpoint's
+  server mappings — Abstractions + Internals.Transport + Typermedia.Client — no Core), and the Typermedia
+  endpoint/client transport wiring.
+- **Combined composition** is just `TestingEndpointHost.Create(new TessagingTestingEndpointHostFeature(), new
+  TypermediaTestingEndpointHostFeature())` at call sites; the combined container helpers
+  (`CombinedTestingContainers`: `SetupTestingContainer`, `CurrentTestsPluggableComponents`, the four-assembly
+  `TypeIdentifierMapper`) live in `Compze.Tests.Common.Wiring`. Samples compose the same way the suite does.
+- `AspNetCoreTransport()` → `AspNetCoreTessagingTransport()` (Tessaging-only; the shared plumbing it used to
+  register is the guarded neutral registrar above — this answers B1's open seam question).
+- `Compze.Tests.Infrastructure` is paradigm-neutral (`TestWiringHelper` moved to `Compze.Tests.Common`), so
+  paradigm spec projects use `[PCT]`/`UniversalTestBase` without the other paradigm in their closure.
+
+**Proofs of done, all green:** real specs in the three Typermedia spec projects —
+`Given_an_endpoint_hosting_only_the_typermedia_paradigm` runs host + `TypermediaTestClient` over HTTP and
+asserts no `Compze.Tessaging*` assembly is loaded; `NavigationSpecification_specification`;
+`TypermediaRouter_specification`. `Compze.Tessaging.slnx` exists with no Typermedia project. Tessaging-only
+tests in the suite now create Tessaging-only hosts.
 
 ## Follow-ups (taste and naming, after the structure settles)
 
 - `TypermediaEndpointFeature` lives in `Compze.Typermedia.Client` because that package already mixes client and
   endpoint concerns (discovery registration lives there). Consider a dedicated endpoint package or renaming Client.
-- `AspNetCoreTransport()` under-describes itself (Tessaging + infrastructure-query transport); candidate
-  `AspNetCoreTessagingTransport()`. Where infrastructure-query registration belongs is part of the same question.
 - `IEndpointRegistry` is namespaced as neutral but is consumed only by Tessaging routing; decide its true owner.
 - `ServerEndpointBuilder` — "Server" claims a distinction (vs client endpoints?) that no longer exists.
 - Rename/split `Compze.Core` (content is Teventive/Tessaging domain plus DocumentDb glue, not a shared core);
@@ -156,11 +165,18 @@ Plan (needs a decision on package naming/granularity before coding):
 - Production `EndpointHost` endpoints fall back to `AppConfigEndpointRegistry`, whose address lookup is a
   `NotSupportedException` stub — production multi-endpoint hosting has never actually worked; pre-existing,
   unchanged by this work.
+- `CurrentTestsDbPoolIfNotCloneContainer` also registers serializers — a hidden coupling its name doesn't admit;
+  either rename or split the serializer registration out of it.
+- `PluggableComponents` is a `record struct`, against the no-records convention (pre-existing shape, moved as-is).
+- `Compze.Hosting.Testing` hard-codes the AspNet/HTTP transport infrastructure even though a `Transport` test
+  dimension exists; fine while AspNetCore is the only transport, revisit if another appears.
+- Serializer specs (`SerializerTest`) now declare their own type mappings (Abstractions + Core) instead of the
+  framework-wide helper; review whether that is the mapping set they should mean.
 
 ## Status
 
 - [x] Phase A — completed 2026-06-10 (commits 25797d10e, 1e1412b8a, 45a1ffbaf)
 - [x] Phase B1 (ASP.NET transport split) — completed 2026-06-10 (commit cd729f19a)
 - [x] Phase B2 (the seam; paradigm-blind hosting) — completed 2026-06-10 (commit 9a6a82746)
-- [ ] Phase B3 (testing-infrastructure split) — needs package-naming decision, then mechanical
+- [x] Phase B3 (testing-infrastructure split) — completed 2026-06-10 (commit 4ef531656 + spec/doc commits)
 - [ ] Follow-ups (taste and naming)
