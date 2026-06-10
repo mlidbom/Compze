@@ -1,5 +1,6 @@
 using Compze.Abstractions.Hosting.Public;
 using Compze.Hosting;
+using Compze.Typermedia.Client;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Internals.Testing;
 using Compze.Tessaging.Hosting.Testing.Tessaging;

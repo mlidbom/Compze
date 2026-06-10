@@ -2,6 +2,7 @@ using AccountManagement.UserStories.Scenarios;
 using Compze.Abstractions.Hosting.Public;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Hosting.Testing.Tessaging;
+using Compze.Typermedia.Client;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.Tests.Infrastructure;
 

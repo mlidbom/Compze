@@ -1,5 +1,5 @@
 using Compze.Abstractions.Hosting.Public;
-using Compze.Tessaging.Configuration;
+using Compze.Hosting.Configuration;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Typermedia.Client;
 using Compze.TypeIdentifiers;

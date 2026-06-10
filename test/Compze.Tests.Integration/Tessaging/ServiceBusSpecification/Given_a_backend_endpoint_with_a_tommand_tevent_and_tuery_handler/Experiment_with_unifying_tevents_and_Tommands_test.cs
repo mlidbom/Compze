@@ -1,5 +1,6 @@
 using Compze.Abstractions.Hosting.Public;
-using Compze.Hosting;
+using Compze.Tessaging.Hosting;
+using Compze.Typermedia.Client;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public;
