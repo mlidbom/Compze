@@ -1,52 +1,40 @@
 using Compze.DocumentDb.Wiring;
 using Compze.Abstractions.Wiring.Testing.Internal;
+using Compze.Hosting.Testing.Wiring;
+using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tessaging.Implementation;
 using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
 using Compze.Tessaging.Teventive.TeventStore.Wiring;
 using Compze.Typermedia.HandlerRegistration;
+using Compze.Typermedia.Hosting.Testing.Wiring;
 using Compze.TypeIdentifiers;
-using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
-using Compze.DependencyInjection.Autofac;
-using Compze.DependencyInjection.Autofac.Extensions.Hosting;
-using Compze.DependencyInjection.DryIoc;
-using Compze.DependencyInjection.DryIoc.Extensions.Hosting;
-using Compze.DependencyInjection.LightInject;
-using Compze.DependencyInjection.LightInject.Extensions.Hosting;
-using Compze.DependencyInjection.Microsoft;
-using Compze.DependencyInjection.Microsoft.Extensions.Hosting;
 using Compze.Underscore;
 using Compze.Internals.Logging;
 using JetBrains.Annotations;
 
-namespace Compze.Tessaging.Hosting.Testing.Wiring;
+namespace Compze.Tests.Common.Wiring;
 
-public static class DiContainerExtensions
+///<summary>Container wiring for the combined test suite, whose endpoints and containers use both paradigms and the full persistence stack.</summary>
+public static class CombinedTestingContainers
 {
-   public static IContainerBuilder CreateWithContainerRegistrations(this DIContainer @this) =>
-      @this.CreateEmpty();
+   ///<summary>Registers everything a combined Tessaging+Typermedia test endpoint needs of the current test's pluggable components: both paradigm transports and the full SQL persistence stack, against a unique throwaway database.</summary>
+   public static IComponentRegistrar CurrentTestsPluggableComponents(this IComponentRegistrar register) =>
+      register.CurrentTestsPluggableComponents(Guid.NewGuid().ToString());
 
-   public static IContainerBuilder CreateWithContainerRegistrationsAndCurrentTestsPluggableComponents(this DIContainer @this) =>
-      @this.CreateWithCurrentTestsPluggableComponents();
+   ///<summary>Registers everything a combined Tessaging+Typermedia test endpoint needs of the current test's pluggable components: both paradigm transports and the full SQL persistence stack.</summary>
+   public static IComponentRegistrar CurrentTestsPluggableComponents(this IComponentRegistrar register, string connectionStringName) =>
+      register.CurrentTestsTessagingTransport()
+              .CurrentTestsTypermediaTransport()
+              .CurrentTestsConfiguredSqlLayer(connectionStringName);
 
    public static IContainerBuilder CreateWithCurrentTestsPluggableComponents(this DIContainer @this) =>
-      @this.CreateEmpty()
-           ._mutate(it => it.Registrar
-                           .CurrentTestsPluggableComponents());
-
-   public static IContainerBuilder CreateEmpty(this DIContainer @this) =>
-      @this switch
-      {
-         DIContainer.Microsoft      => new MicrosoftContainerBuilder(new TestingComponentRegistrar())._mutate(it => MicrosoftChildContainerHostIntegration.RegisterWith(it.Registrar)),
-         DIContainer.Autofac        => new AutofacContainerBuilder(new TestingComponentRegistrar())._mutate(it => AutofacChildContainerHostIntegration.RegisterWith(it.Registrar)),
-         DIContainer.DryIoc         => new DryIocContainerBuilder(new TestingComponentRegistrar())._mutate(it => DryIocChildContainerHostIntegration.RegisterWith(it.Registrar)),
-         DIContainer.LightInject    => new LightInjectContainerBuilder(new TestingComponentRegistrar())._mutate(it => LightInjectChildContainerHostIntegration.RegisterWith(it.Registrar)),
-         _                          => throw new ArgumentOutOfRangeException()
-      };
+      @this.CreateTestingContainerBuilder()
+           ._mutate(it => it.Registrar.CurrentTestsPluggableComponents());
 
    public static IDependencyInjectionContainer CreateContainerForTesting(this DIContainer @this, Action<ITypeMapper> registerDomainTypeMappings, [InstantHandle] Action<IComponentRegistrar> setup)
    {
-      var builder = @this.CreateWithContainerRegistrationsAndCurrentTestsPluggableComponents();
+      var builder = @this.CreateWithCurrentTestsPluggableComponents();
       builder.Registrar
                .TypeIdentifierMapper(registerDomainTypeMappings)
                .DummyConfigurationParameterProvider()
@@ -61,7 +49,7 @@ public static class DiContainerExtensions
    public const string TeventStoreConnectionStringName = "Fake_connectionstring_for_database_testing";
 
    public static IDependencyInjectionContainer SetupTestingContainer(this DIContainer @this, Action<ITypeMapper> registerDomainTypeMappings, [InstantHandle] Action<IComponentRegistrar>? configureContainer = null) =>
-      CompzeLogger.For(typeof(DiContainerExtensions)).ExceptionsAndRethrow(() =>
+      CompzeLogger.For(typeof(CombinedTestingContainers)).ExceptionsAndRethrow(() =>
                                                                               @this.CreateContainerForTesting(registerDomainTypeMappings, register =>
                                                                               {
                                                                                  register.DocumentDb();

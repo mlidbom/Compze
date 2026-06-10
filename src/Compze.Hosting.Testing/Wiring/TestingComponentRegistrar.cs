@@ -9,9 +9,15 @@ using Compze.Internals.Sql.Sqlite.Wiring;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 
-namespace Compze.Tessaging.Hosting.Testing.Wiring;
+namespace Compze.Hosting.Testing.Wiring;
 
-class TestingComponentRegistrar : ComponentRegistrar
+///<summary>
+/// The component registrar all test containers are built with. It is what lets production wiring transparently use
+/// pooled test databases: when a production registrar such as <c>MsSqlConnectionPool(connectionStringName)</c> asks
+/// <see cref="TryGetTestingRegistrar{TTestingRegistrar}"/> for a testing override, this registrar supplies one that
+/// resolves connection strings through the test database pool instead of application configuration.
+///</summary>
+public class TestingComponentRegistrar : ComponentRegistrar
 {
    readonly IDictionary<Type, object> _testingRegistrars;
 

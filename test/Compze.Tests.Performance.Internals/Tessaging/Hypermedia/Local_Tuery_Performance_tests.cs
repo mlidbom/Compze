@@ -4,7 +4,7 @@ using Compze.Internals.Testing.Performance;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE;
-using Compze.Tessaging.Hosting.Testing;
+using Compze.Hosting.Testing;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Typermedia;
 

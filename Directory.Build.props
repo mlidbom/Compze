@@ -66,6 +66,8 @@
     <UsePackageReference_Compze_DocumentDb_Sqlite Condition="'$(UsePackageReference_Compze_DocumentDb_Sqlite)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.DocumentDb.Sqlite.csproj|'))">true</UsePackageReference_Compze_DocumentDb_Sqlite>
     <!-- Compze.Hosting -->
     <UsePackageReference_Compze_Hosting Condition="'$(UsePackageReference_Compze_Hosting)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Hosting.csproj|'))">true</UsePackageReference_Compze_Hosting>
+    <!-- Compze.Hosting.Testing -->
+    <UsePackageReference_Compze_Hosting_Testing Condition="'$(UsePackageReference_Compze_Hosting_Testing)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Hosting.Testing.csproj|'))">true</UsePackageReference_Compze_Hosting_Testing>
     <!-- Compze.Internals.Logging -->
     <UsePackageReference_Compze_Internals_Logging Condition="'$(UsePackageReference_Compze_Internals_Logging)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Internals.Logging.csproj|'))">true</UsePackageReference_Compze_Internals_Logging>
     <!-- Compze.Internals.Logging.Serilog -->

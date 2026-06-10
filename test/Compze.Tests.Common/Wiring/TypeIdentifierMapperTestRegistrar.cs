@@ -6,7 +6,7 @@ using Compze.Typermedia.Client;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 
-namespace Compze.Tessaging.Hosting.Testing.Wiring;
+namespace Compze.Tests.Common.Wiring;
 
 public static class TypeIdentifierMapperTestRegistrar
 {

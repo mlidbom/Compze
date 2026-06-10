@@ -4,10 +4,11 @@ using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE;
 using Compze.Internals.Testing;
 
-namespace Compze.Tessaging.Hosting.Testing.Wiring;
+namespace Compze.Hosting.Testing.Wiring;
 
-static class TestingComponentRegistrarSerializer
+public static class TestingComponentRegistrarSerializer
 {
+   ///<summary>Registers the serializers selected by the current test's pluggable-component configuration, unless this is a cloned container (clones inherit them from the root container).</summary>
    public static IComponentRegistrar CurrentTestsSerializersIfNotClonedContainer(this IComponentRegistrar register) =>
       register.CastTo<TestingComponentRegistrar>().CurrentTestsSerializersIfNotClonedContainer();
 

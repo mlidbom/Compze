@@ -7,6 +7,8 @@ using Compze.DocumentDb.MicrosoftSql.Wiring;
 using Compze.DocumentDb.MySql.Wiring;
 using Compze.DocumentDb.PostgreSql.Wiring;
 using Compze.DocumentDb.Sqlite.Wiring;
+using Compze.Hosting.Testing;
+using Compze.Hosting.Testing.Wiring;
 using Compze.Tessaging.MicrosoftSql.Wiring;
 using Compze.Tessaging.MySql.Wiring;
 using Compze.Tessaging.PostgreSql.Wiring;
@@ -25,8 +27,13 @@ using Compze.Internals.Testing;
 
 namespace Compze.Tessaging.Hosting.Testing.Wiring;
 
-static class TestingComponentRegistrarTestingSqlLayerRegistrar
+public static class TestingComponentRegistrarSqlLayer
 {
+   ///<summary>
+   /// Registers, for the SQL backend the current test runs against, the persistence the Tessaging vertical's
+   /// storage stack uses: the type-id interner, the document db, the tessaging inbox/outbox, and the tevent store —
+   /// including one schema manager that creates all of their schemas.
+   ///</summary>
    public static IComponentRegistrar CurrentTestsConfiguredSqlLayer(this IComponentRegistrar register, string connectionStringName) =>
       register.CastTo<TestingComponentRegistrar>()
               .CurrentTestsConfiguredSqlLayer(connectionStringName);

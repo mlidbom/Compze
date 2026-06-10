@@ -3,7 +3,7 @@ using Compze.Core.Tessaging.Teventive.TeventStore.Public;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 
-namespace Compze.Tests.Infrastructure;
+namespace Compze.Tests.Common;
 
 public static class TestWiringHelper
 {

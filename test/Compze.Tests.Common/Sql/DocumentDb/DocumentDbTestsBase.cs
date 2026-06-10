@@ -1,7 +1,7 @@
 using Compze.DocumentDb.Public;
-using Compze.Tessaging.Hosting.Testing;
+using Compze.Hosting.Testing;
 using Compze.Internals.Testing;
-using Compze.Tessaging.Hosting.Testing.Wiring;
+using Compze.Tests.Common.Wiring;
 using Compze.Tests.Infrastructure;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;

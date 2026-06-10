@@ -1,6 +1,5 @@
 using Compze.Abstractions.Hosting.Public;
 using Compze.Contracts;
-using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
@@ -10,7 +9,8 @@ namespace Compze.Hosting;
 public class EndpointHost : IEndpointHost
 {
    readonly Func<IContainerBuilder> _containerFactory;
-   protected IList<IEndpoint> Endpoints { get; } = [];
+   readonly List<IEndpoint> _endpoints = [];
+   public IReadOnlyList<IEndpoint> Endpoints => _endpoints;
 
    protected EndpointHost(Func<IContainerBuilder> containerFactory) => _containerFactory = containerFactory;
 
@@ -24,16 +24,11 @@ public class EndpointHost : IEndpointHost
    IEndpoint InternalRegisterEndpoint(EndpointConfiguration configuration, Action<IEndpointBuilder> setup)
    {
       var builder = new ServerEndpointBuilder(_containerFactory(), configuration);
-      if(this is IEndpointRegistry endpointRegistry)
-      {
-         builder.Registrar.Register(Singleton.For<IEndpointRegistry>().Instance(endpointRegistry));
-      }
-
       setup(builder);
 
       var endpoint = builder.Build();
 
-      Endpoints.Add(endpoint);
+      _endpoints.Add(endpoint);
       return endpoint;
    }
 

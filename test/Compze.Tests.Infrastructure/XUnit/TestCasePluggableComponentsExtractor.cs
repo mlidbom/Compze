@@ -1,4 +1,4 @@
-using Compze.Tessaging.Hosting.Testing;
+using Compze.Hosting.Testing;
 
 namespace Compze.Tests.Infrastructure.XUnit;
 

@@ -2,9 +2,11 @@ using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.Refactoring.Migrations.Public;
 using Compze.Abstractions.Time.Public;
-using Compze.Tessaging.Hosting.Testing;
+using Compze.Hosting.Testing;
+using Compze.Hosting.Testing.Wiring;
 using Compze.Internals.Testing;
-using Compze.Tessaging.Hosting.Testing.Wiring;
+using Compze.Tests.Common;
+using Compze.Tests.Common.Wiring;
 using Compze.Tessaging.Teventive.TeventStore;
 using Compze.Tessaging.Teventive.TeventStore.Wiring;
 using Compze.Tests.Common.CQRS.TeventRefactoring.Migrations;
@@ -174,7 +176,7 @@ public abstract class TeventMigrationTestBase : UniversalTestBase
 
    protected static IDependencyInjectionContainer CreateContainerForTeventStoreType(Func<IReadOnlyList<ITeventMigration>> migrationsFactory)
    {
-      var container = TestEnv.DIContainer.CreateContainerForTesting(mapper => mapper.RegisterIntegrationTestTypeMappings(), register => register.TeventStoreForFlexibleTesting(DiContainerExtensions.TeventStoreConnectionStringName, migrationsFactory));
+      var container = TestEnv.DIContainer.CreateContainerForTesting(mapper => mapper.RegisterIntegrationTestTypeMappings(), register => register.TeventStoreForFlexibleTesting(CombinedTestingContainers.TeventStoreConnectionStringName, migrationsFactory));
 
       return container;
    }

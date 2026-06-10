@@ -8,10 +8,11 @@ using Compze.Internals.SystemCE;
 using Compze.Internals.Testing;
 using Compze.DbPool;
 
-namespace Compze.Tessaging.Hosting.Testing.Wiring;
+namespace Compze.Hosting.Testing.Wiring;
 
 public static class TestingComponentRegistrarDbPool
 {
+   ///<summary>Registers the test database pool and the current test's serializers, unless this is a cloned container (clones inherit them from the root container).</summary>
    public static IComponentRegistrar CurrentTestsDbPoolIfNotCloneContainer(this IComponentRegistrar register) =>
       register.CastTo<TestingComponentRegistrar>().CurrentTestsDbPoolIfNotCloneContainer();
 

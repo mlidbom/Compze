@@ -1,8 +1,9 @@
 using Compze.Abstractions.Hosting.Public;
 using Compze.Typermedia.Client;
 using Compze.Abstractions.Tessaging.Public;
-using Compze.Tessaging.Hosting.Testing.Tessaging;
-using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
+using Compze.Hosting.Testing;
+using Compze.Tessaging.Hosting.Testing;
+using Compze.Typermedia.Hosting.Testing;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Abstractions.Public;
@@ -20,13 +21,13 @@ public class Navigator_specification : UniversalTestBase
 {
    readonly ITestingEndpointHost _host;
    readonly IEndpoint _endpoint;
-   TestClient _client = null!;
+   TypermediaTestClient _client = null!;
 
    public Navigator_specification()
    {
       var tueryResults = new List<UserResource>();
 
-      _host = TestingEndpointHost.Create();
+      _host = TestingEndpointHost.Create(new TessagingTestingEndpointHostFeature(), new TypermediaTestingEndpointHostFeature());
 
       _endpoint = _host.RegisterEndpoint(
          "Backend",
@@ -49,7 +50,7 @@ public class Navigator_specification : UniversalTestBase
    protected override async Task InitializeAsyncInternal()
    {
       await _host.StartAsync().caf();
-      _client = await TestClient.ConnectTo(_endpoint.TypermediaAddress!, mapper => mapper.RegisterIntegrationTestTypeMappings()).caf();
+      _client = await TypermediaTestClient.ConnectTo(_endpoint.TypermediaAddress!, mapper => mapper.RegisterIntegrationTestTypeMappings()).caf();
    }
 
    protected override async Task DisposeAsyncInternal()

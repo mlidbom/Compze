@@ -1,15 +1,16 @@
 using Compze.Abstractions.Wiring.Testing.Internal;
 using Compze.Internals.Testing;
 
-namespace Compze.Tessaging.Hosting.Testing;
+namespace Compze.Hosting.Testing;
 
-///<summary>Extends <see cref="TestEnv"/> with pluggable component members for Tessaging testing.</summary>
+///<summary>Extends <see cref="TestEnv"/> with the <see cref="PluggableComponents"/> the currently executing test runs against.</summary>
 public static class TestEnvPluggableComponents
 {
    static Func<PluggableComponents?>? _xunitDiscoverer;
 
    extension(TestEnv)
    {
+      ///<summary>Set by the xunit test infrastructure to expose the pluggable-component combination of the currently executing test case.</summary>
       public static Func<PluggableComponents?>? XunitDiscoverer
       {
          get => _xunitDiscoverer;
@@ -20,9 +21,9 @@ public static class TestEnvPluggableComponents
 
       public static DIContainer DIContainer => GetComponents().DiContainer;
 
-      internal static Serializer Serializer => GetComponents().Serializer;
+      public static Serializer Serializer => GetComponents().Serializer;
 
-      internal static Transport Transport => GetComponents().Transport;
+      public static Transport Transport => GetComponents().Transport;
    }
 
    static PluggableComponents GetComponents()
@@ -33,4 +34,3 @@ public static class TestEnvPluggableComponents
       throw new Exception("No components provider found any components");
    }
 }
-

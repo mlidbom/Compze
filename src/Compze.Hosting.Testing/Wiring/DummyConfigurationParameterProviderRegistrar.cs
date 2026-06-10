@@ -2,10 +2,11 @@ using Compze.Abstractions.Configuration.Internal;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 
-namespace Compze.Tessaging.Hosting.Testing.Wiring;
+namespace Compze.Hosting.Testing.Wiring;
 
-static class DummyConfigurationParameterProviderRegistrar
+public static class DummyConfigurationParameterProviderRegistrar
 {
+   ///<summary>Registers an <see cref="IConfigurationParameterProvider"/> that throws on every lookup — for tests whose components must never actually read configuration.</summary>
    public static IComponentRegistrar DummyConfigurationParameterProvider(this IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<IConfigurationParameterProvider>()
                                      .CreatedBy(() => new DummyConfigurationParameterProviderCore()));

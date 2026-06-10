@@ -1,7 +1,8 @@
 using Compze.Contracts;
 using Compze.DocumentDb.Public;
 using Compze.Abstractions.Public;
-using Compze.Tessaging.Hosting.Testing.Wiring;
+using Compze.Hosting.Testing.Wiring;
+using Compze.Tests.Common;
 using Compze.Tests.Common.Sql.DocumentDb;
 using Compze.Tests.Infrastructure;
 using Compze.DependencyInjection;

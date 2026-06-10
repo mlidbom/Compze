@@ -6,9 +6,11 @@ using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registrati
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Core.Tessaging.Teventive.TeventStore.Public;
-using Compze.Tessaging.Hosting.Testing.Tessaging;
-using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
+using Compze.Hosting.Testing;
+using Compze.Tessaging.Hosting.Testing;
+using Compze.Typermedia.Hosting.Testing;
 using Compze.Tessaging.Teventive.TeventStore.Wiring;
+using Compze.Tests.Common;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.DependencyInjection;
@@ -30,12 +32,12 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
    readonly ITestingEndpointHost _host;
 
    IScopeFactory _userDomainScopeFactory = null!;
-   TestClient _client = null!;
+   TypermediaTestClient _client = null!;
    readonly IEndpoint _userManagementDomainEndpoint;
 
    public Experiment_with_unifying_tevents_and_tommands_test()
    {
-      _host = TestingEndpointHost.Create();
+      _host = TestingEndpointHost.Create(new TessagingTestingEndpointHostFeature(), new TypermediaTestingEndpointHostFeature());
 
       _userManagementDomainEndpoint = _host.RegisterEndpoint(
          "UserManagement.Domain",
@@ -63,7 +65,12 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
    {
       await _host.StartAsync();
 
-      _client = await TestClient.ConnectTo(_userManagementDomainEndpoint.TypermediaAddress!, mapper => mapper.RegisterIntegrationTestTypeMappings());
+      _client = await TypermediaTestClient.ConnectTo(_userManagementDomainEndpoint.TypermediaAddress!,
+                                                     mapper =>
+                                                     {
+                                                        mapper.RegisterIntegrationTestTypeMappings();
+                                                        mapper.MapTypesFromAssemblyContaining<ITaggregateTevent>(); // Compze.Core — the UserResource this client fetches carries raw tevent history
+                                                     });
 
       _userDomainScopeFactory = _userManagementDomainEndpoint.ServiceLocator.Resolve<IScopeFactory>();
 

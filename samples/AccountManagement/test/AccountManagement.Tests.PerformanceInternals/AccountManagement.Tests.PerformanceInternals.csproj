@@ -32,6 +32,13 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection)' != 'true'">
     <ProjectReference Include="..\..\..\..\src\Compze.DependencyInjection\Compze.DependencyInjection.csproj" />
   </ItemGroup>
+  <!-- Compze.Hosting.Testing — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Hosting_Testing)' == 'true'">
+    <PackageReference Include="Compze.Hosting.Testing" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Hosting_Testing)' != 'true'">
+    <ProjectReference Include="..\..\..\..\src\Compze.Hosting.Testing\Compze.Hosting.Testing.csproj" />
+  </ItemGroup>
   <!-- Compze.Internals.Logging — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Logging)' == 'true'">
     <PackageReference Include="Compze.Internals.Logging" Version="*-*" />
@@ -46,6 +53,13 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_SystemCE)' != 'true'">
     <ProjectReference Include="..\..\..\..\src\Compze.Internals.SystemCE\Compze.Internals.SystemCE.csproj" />
   </ItemGroup>
+  <!-- Compze.Tessaging.Hosting.Testing — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_Hosting_Testing)' == 'true'">
+    <PackageReference Include="Compze.Tessaging.Hosting.Testing" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_Hosting_Testing)' != 'true'">
+    <ProjectReference Include="..\..\..\..\src\Compze.Tessaging.Hosting.Testing\Compze.Tessaging.Hosting.Testing.csproj" />
+  </ItemGroup>
   <!-- Compze.Threading — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Threading)' == 'true'">
     <PackageReference Include="Compze.Threading" Version="*-*" />
@@ -59,5 +73,12 @@
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_Typermedia)' != 'true'">
     <ProjectReference Include="..\..\..\..\src\Compze.Typermedia\Compze.Typermedia.csproj" />
+  </ItemGroup>
+  <!-- Compze.Typermedia.Hosting.Testing — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Typermedia_Hosting_Testing)' == 'true'">
+    <PackageReference Include="Compze.Typermedia.Hosting.Testing" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Typermedia_Hosting_Testing)' != 'true'">
+    <ProjectReference Include="..\..\..\..\src\Compze.Typermedia.Hosting.Testing\Compze.Typermedia.Hosting.Testing.csproj" />
   </ItemGroup>
 </Project>

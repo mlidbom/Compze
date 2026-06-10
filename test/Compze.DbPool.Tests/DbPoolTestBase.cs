@@ -5,9 +5,9 @@ using Compze.Internals.Sql.MicrosoftSql;
 using Compze.Internals.Sql.MySql;
 using Compze.Internals.Sql.PostgreSql;
 using Compze.Internals.Sql.Sqlite;
-using Compze.Tessaging.Hosting.Testing;
+using Compze.Hosting.Testing;
 using Compze.Internals.Testing;
-using Compze.Tessaging.Hosting.Testing.Wiring;
+using Compze.Hosting.Testing.Wiring;
 using Compze.Tests.Infrastructure;
 using Compze.DependencyInjection.Abstractions;
 
@@ -26,7 +26,7 @@ public abstract class DbPoolTestBase : UniversalTestBase
    }
 
 #pragma warning disable CA2000// We are passing this disposable into a constructor of an object we don't own
-   protected static IDependencyInjectionContainer CreateContainer() => TestEnv.DIContainer.CreateEmpty()
+   protected static IDependencyInjectionContainer CreateContainer() => TestEnv.DIContainer.CreateTestingContainerBuilder()
                                                                      ._mutate(it => it.Registrar
                                                                                      .CurrentTestsDbPoolIfNotCloneContainer())
                                                                      .Build();

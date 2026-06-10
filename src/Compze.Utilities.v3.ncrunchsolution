@@ -23,6 +23,7 @@
       <Value>UsePackageReference_Compze_DocumentDb_PostgreSql = true</Value>
       <Value>UsePackageReference_Compze_DocumentDb_Sqlite = true</Value>
       <Value>UsePackageReference_Compze_Hosting = true</Value>
+      <Value>UsePackageReference_Compze_Hosting_Testing = true</Value>
       <Value>UsePackageReference_Compze_Internals_Serialization_Newtonsoft = true</Value>
       <Value>UsePackageReference_Compze_Internals_Sql_Common = true</Value>
       <Value>UsePackageReference_Compze_Internals_Sql_MicrosoftSql = true</Value>
