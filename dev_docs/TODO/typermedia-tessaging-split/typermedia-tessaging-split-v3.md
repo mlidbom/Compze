@@ -19,21 +19,20 @@ and `Compze.Tessaging.Abstractions` no longer reference Typermedia — that coup
 
 ### Open — the hosting layer is one fused concept instead of three
 
-The entanglement was quarantined, not dissolved. Three knots remain (a fourth — hosting abstractions living in
-lying Tessaging namespaces — was resolved by Phase A, below):
+The entanglement was quarantined, not dissolved. Two knots remain (two others — hosting abstractions in lying
+Tessaging namespaces, and `Compze.Tessaging.Hosting.AspNetCore` composing Typermedia — were resolved by Phase A
+and step B1, below):
 
 1. **`Compze.Hosting` is a fused composition root.** `Endpoint` hard-codes both worlds (Tessaging inbox/outbox/
    scheduler/router AND `ITypermediaTransportServer`); `ServerEndpointBuilder.SetupContainer()` wires both pipelines in
    one method; it needs `InternalsVisibleTo` from `Compze.Tessaging` — the hosting SPI Tessaging should expose was
    never designed. Anyone using the endpoint model gets both frameworks.
-2. **`Compze.Tessaging.Hosting.AspNetCore` still composes Typermedia.** `AspNetCoreTransport()` registers the
-   Typermedia client transport, `TypermediaController`, and `TypermediaTransportServer`. Last production-code
-   Tessaging → Typermedia reference.
-3. **Testing is fused and one-sided.** `TestingEndpointHost` (in `Compze.Tessaging.Hosting.Testing`) wires both
+2. **Testing is fused and one-sided.** `TestingEndpointHost` (in `Compze.Tessaging.Hosting.Testing`) wires both
    paradigms; `TestClient` — a Typermedia client helper — lives in the Tessaging testing project;
    `Compze.Typermedia.Hosting.Testing` and all three Typermedia spec projects are placeholders. Every real Typermedia
    spec runs through the fused host in `Compze.Tests.Integration/Tessaging/`. Typermedia standalone is compile-time
-   truth only; neither paradigm can be hosted or tested alone.
+   truth only; neither paradigm can be hosted or tested alone. (`Compze.Tessaging.Hosting.Testing` referencing
+   Typermedia is part of this knot: it is currently the de-facto composition layer for tests.)
 
 Adjacent debt (not blocking, decide alongside): `Compze.Core` is not a shared core — its content is
 DocumentDb + serialization + the Teventive/Tessaging domain, yet Typermedia transitively depends on it (via
@@ -81,12 +80,31 @@ Explicitly deferred to Phase B (seam design, needs a design conversation):
 
 ## Phase B — make each paradigm a complete standalone vertical
 
+### B1 — DONE (2026-06-10): `Compze.Tessaging.Hosting.AspNetCore` no longer knows Typermedia
+
+`AspNetCoreTransport()` now registers only Tessaging + infrastructure queries. Typermedia's ASP.NET server pieces
+(`TypermediaController`, `TypermediaTransportServer`) are registered by a new
+`AspNetCoreTypermediaTransportServer()` extension in `Compze.Typermedia.Hosting.AspNetCore.Wiring`. The
+composition (Tessaging transport + Typermedia client transport + Typermedia server) moved to the one caller,
+`CurrentTestsTransport()` in `Compze.Tessaging.Hosting.Testing` — the de-facto composition layer until the
+testing split. All three Typermedia project references were removed from `Compze.Tessaging.Hosting.AspNetCore`.
+
+**Dependency state after B1: no Tessaging production project references Typermedia.** The only remaining
+Tessaging → Typermedia references sit in the composition/testing layer (`Compze.Hosting`,
+`Compze.Tessaging.Hosting.Testing`) and the deliberate TeventStore bridge.
+
+Noted for the seam conversation: `AspNetCoreTransport()` now under-describes itself (it registers Tessaging +
+infrastructure-query transport); candidate rename `AspNetCoreTessagingTransport()` — held back because where
+infrastructure-query registration belongs is a seam-design question.
+
+### Remaining
+
 - Design the plug-in seam: uniform collection of transport servers (generalize `ISupplementalTransportServer`) +
   per-paradigm registration modules. `ServerEndpointBuilder` stops naming paradigms.
-- `AspNetCoreTransport()` in Tessaging registers only Tessaging + infrastructure queries; Typermedia gets its own
-  registration extension in `Compze.Typermedia.Hosting.AspNetCore`.
 - Move `TestClient` + Typermedia test wiring into `Compze.Typermedia.Hosting.Testing`; build a minimal
-  Typermedia-only testing host there. Give Tessaging its own testing host.
+  Typermedia-only testing host there. Give Tessaging its own testing host. (Not mechanical: `TestClient` leans on
+  `TestEnv`/`TestingComponentRegistrar` machinery in the Tessaging testing project — part of the design
+  conversation.)
 - **Proof of done:** real specs in the three Typermedia placeholder spec projects, runnable from
   `Compze.Typermedia.slnx`; a new `Compze.Tessaging.slnx` that builds and tests with no Typermedia project on disk.
 
@@ -102,5 +120,5 @@ Explicitly deferred to Phase B (seam design, needs a design conversation):
 ## Status
 
 - [x] Phase A — completed 2026-06-10 (commits 25797d10e, 1e1412b8a, 45a1ffbaf)
-- [ ] Phase B
+- [ ] Phase B — B1 done 2026-06-10; remaining steps need the seam-design conversation first
 - [ ] Phase C
