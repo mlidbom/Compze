@@ -16,7 +16,6 @@ class AssemblyTypeMapper : IAssemblyTypeMapper
          .Map<ITaggregateDeletedTevent>("bc662519-21b4-41b8-bce6-3714da82b1cc")
          .Map<ITaggregateTevent>("a1503d7d-51c0-4fff-ad3b-c7090f1e4905")
          .Map<IMutableTaggregateTevent>("befc4021-9e9c-4d40-842c-9878ce2c9ee3")
-         .MapOpenGeneric(typeof(Compze.Core.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public.Taggregate<,,,,>), "e1f2a3b4-c5d6-4e7f-8091-a2b3c4d5e6f7")
-         .Map<Compze.Core.Tessaging.Transport.Internal.EndPointAddress>("f2a3b4c5-d6e7-4f80-91a2-b3c4d5e6f7a8");
+         .MapOpenGeneric(typeof(Compze.Core.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public.Taggregate<,,,,>), "e1f2a3b4-c5d6-4e7f-8091-a2b3c4d5e6f7");
    }
 }

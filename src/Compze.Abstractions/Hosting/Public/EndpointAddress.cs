@@ -1,11 +1,11 @@
 using Compze.Contracts;
 
-namespace Compze.Core.Tessaging.Transport.Internal;
+namespace Compze.Abstractions.Hosting.Public;
 
-public record EndPointAddress
+public record EndpointAddress
 {
    public Uri Uri { get; }
-   public EndPointAddress(Uri uri)
+   public EndpointAddress(Uri uri)
    {
       Argument.NotNullEmptyOrWhitespace(uri.AbsoluteUri);
       Uri = uri;

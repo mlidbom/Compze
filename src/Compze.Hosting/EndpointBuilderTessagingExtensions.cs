@@ -1,4 +1,4 @@
-using Compze.Tessaging.Abstractions.Tessaging.Hosting.Public;
+using Compze.Abstractions.Hosting.Public;
 using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 
 namespace Compze.Hosting;

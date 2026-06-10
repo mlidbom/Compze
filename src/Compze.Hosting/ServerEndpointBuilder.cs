@@ -1,8 +1,6 @@
 using Compze.Abstractions.Configuration.Internal;
 using Compze.TypeIdentifiers;
-using Compze.Abstractions.Tessaging.Hosting.Public;
-using Compze.Core.Tessaging.Hosting.Public;
-using Compze.Tessaging.Abstractions.Tessaging.Hosting.Public;
+using Compze.Abstractions.Hosting.Public;
 using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Typermedia;
 using Compze.Typermedia.Client;
@@ -19,7 +17,6 @@ using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Tessaging.Implementation.Transport.Client.Implementation.Universal;
 using Compze.Tessaging.Implementation.Transport.Client.Internal;
 using Compze.Tessaging.Implementation.Transport.Client.Routing;
-using Compze.Tessaging.Implementation.Transport.Client.Routing.Abstractions;
 using Compze.Internals.Transport;
 using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.DependencyInjection;

@@ -1,7 +1,6 @@
 using Compze.TypeIdentifiers;
-using Compze.Abstractions.Tessaging.Hosting.Public;
+using Compze.Abstractions.Hosting.Public;
 using Compze.Abstractions.Tessaging.Public;
-using Compze.Core.Tessaging.Transport.Internal;
 
 namespace Compze.Internals.Transport;
 
@@ -42,7 +41,7 @@ public class NetworkTopology
    public NetworkTopology() {}
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 
-   public NetworkTopology(IEnumerable<EndPointAddress> endpointAddresses) => EndpointAddresses = endpointAddresses.ToList();
+   public NetworkTopology(IEnumerable<EndpointAddress> endpointAddresses) => EndpointAddresses = endpointAddresses.ToList();
 
-   public IReadOnlyList<EndPointAddress> EndpointAddresses { get; private set; }
+   public IReadOnlyList<EndpointAddress> EndpointAddresses { get; private set; }
 }

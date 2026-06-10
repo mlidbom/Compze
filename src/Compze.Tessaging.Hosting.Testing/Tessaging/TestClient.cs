@@ -1,4 +1,4 @@
-using Compze.Core.Tessaging.Transport.Internal;
+using Compze.Abstractions.Hosting.Public;
 using Compze.Tessaging.Configuration;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Typermedia.Client;
@@ -25,7 +25,7 @@ public class TestClient : IAsyncDisposable
       Navigator = container.Resolve<IRemoteTypermediaNavigator>();
    }
 
-   public static async Task<TestClient> ConnectTo(EndPointAddress typermediaAddress, Action<ITypeMapper> registerDomainTypeMappings)
+   public static async Task<TestClient> ConnectTo(EndpointAddress typermediaAddress, Action<ITypeMapper> registerDomainTypeMappings)
    {
 #pragma warning disable CA2000 // We are passing this disposable into a constructor of an object we don't own
         var builder = TestEnv.DIContainer.CreateWithContainerRegistrations();

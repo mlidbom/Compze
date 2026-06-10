@@ -1,11 +1,8 @@
-using Compze.Abstractions.Tessaging.Hosting.Public;
-using Compze.Core.Tessaging.Hosting.Public;
-using Compze.Core.Tessaging.Transport.Internal;
+using Compze.Abstractions.Hosting.Public;
 using Compze.Tessaging.Implementation;
 using Compze.Tessaging.Implementation.Abstractions;
 using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
 using Compze.Tessaging.Implementation.Transport.Client.Internal;
-using Compze.Tessaging.Implementation.Transport.Client.Routing.Abstractions;
 using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
@@ -47,8 +44,8 @@ class Endpoint : IEndpoint
    public EndpointId Id => _configuration.Id;
    public IRootResolver ServiceLocator => _rootResolver;
 
-   public EndPointAddress? Address => _serverComponents?.Inbox.Address;
-   public EndPointAddress? TypermediaAddress => _typermediaTransportServer?.Address is { } uri ? new EndPointAddress(uri) : null;
+   public EndpointAddress? TessagingAddress => _serverComponents?.Inbox.Address;
+   public EndpointAddress? TypermediaAddress => _typermediaTransportServer?.Address is { } uri ? new EndpointAddress(uri) : null;
    readonly ITessagingRouter _tessagingRouter;
    readonly IEndpointRegistry _endpointRegistry;
 
@@ -74,7 +71,7 @@ class Endpoint : IEndpoint
 
       await Task.WhenAll(_serverComponents.Inbox.StartAsync(), _serverComponents.TommandScheduler.StartAsync(), _typermediaTransportServer.StartAsync()).caf();
 
-      this.Log().Info($"Endpoint '{_configuration.Name}' ({Id}) listening at {Address} (tessaging) and {TypermediaAddress} (typermedia)");
+      this.Log().Info($"Endpoint '{_configuration.Name}' ({Id}) listening at {TessagingAddress} (tessaging) and {TypermediaAddress} (typermedia)");
    }
 
    public async Task StartSendingComponentsAsync()

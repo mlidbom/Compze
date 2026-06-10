@@ -1,5 +1,5 @@
 using Compze.TypeIdentifiers;
-using Compze.Abstractions.Tessaging.Hosting.Public;
+using Compze.Abstractions.Hosting.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Internals.Transport;
 using Compze.Typermedia.HandlerRegistration;

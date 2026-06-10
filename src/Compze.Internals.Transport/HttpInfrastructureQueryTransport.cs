@@ -1,7 +1,7 @@
 using Compze.TypeIdentifiers;
 using Compze.Abstractions.Serialization.Internal;
 using Compze.Abstractions.Tessaging.Public;
-using Compze.Core.Tessaging.Transport.Internal;
+using Compze.Abstractions.Hosting.Public;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
@@ -31,7 +31,7 @@ class HttpInfrastructureQueryTransportImplementation : IInfrastructureQueryTrans
       _typeMap = typeMap;
    }
 
-   public async Task<TResult> GetAsync<TResult>(IQuery<TResult> query, EndPointAddress address)
+   public async Task<TResult> GetAsync<TResult>(IQuery<TResult> query, EndpointAddress address)
    {
       var requestUri = new Uri(address.Uri, HttpConstants.Routes.Infrastructure.Query);
       var body = _serializer.SerializeTessage(query);

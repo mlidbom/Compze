@@ -1,7 +1,7 @@
 using Compze.TypeIdentifiers;
 using Compze.Abstractions.Serialization.Internal;
 using Compze.Abstractions.Tessaging.Public;
-using Compze.Core.Tessaging.Transport.Internal;
+using Compze.Abstractions.Hosting.Public;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Internals.Transport;
 using Compze.Tessaging.Implementation.Transport.Client.Internal;
@@ -14,7 +14,7 @@ namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Univer
 
 class TessagingConnection(
    ITessagesInFlightTracker tessagesInFlightTracker,
-   EndPointAddress remoteAddress,
+   EndpointAddress remoteAddress,
    ITypeMap typeMap,
    IRemotableTessageSerializer serializer,
    ITransportMessagePoster transportMessagePoster,
@@ -26,7 +26,7 @@ class TessagingConnection(
    public EndpointInformation EndpointInformation { get; private set; } = null!;
 
    readonly ITessagesInFlightTracker _tessagesInFlightTracker = tessagesInFlightTracker;
-   readonly EndPointAddress _remoteAddress = remoteAddress;
+   readonly EndpointAddress _remoteAddress = remoteAddress;
    readonly ITypeMap _typeMap = typeMap;
    readonly IRemotableTessageSerializer _serializer = serializer;
    readonly ITransportMessagePoster _transportMessagePoster = transportMessagePoster;

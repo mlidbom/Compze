@@ -1,7 +1,5 @@
-using Compze.Core.Tessaging.Hosting.Public;
-using Compze.Core.Tessaging.Transport.Internal;
+using Compze.Abstractions.Hosting.Public;
 using Compze.Tessaging.Implementation.Transport;
-using Compze.Tessaging.Implementation.Transport.Client.Routing.Abstractions;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Threading;
@@ -13,8 +11,8 @@ public abstract class TestingEndpointHostBase : EndpointHost, ITestingEndpointHo
    protected TestingEndpointHostBase(Func<IContainerBuilder> containerFactory) : base(containerFactory) =>
       TessagesInFlightTracker = new TessagesInFlightTracker();
 
-   public IEnumerable<EndPointAddress> ServerEndpointAddresses => Endpoints.Where(it => it.Address is not null)
-                                                                           .Select(it => it.Address!)
+   public IEnumerable<EndpointAddress> ServerEndpointAddresses => Endpoints.Where(it => it.TessagingAddress is not null)
+                                                                           .Select(it => it.TessagingAddress!)
                                                                            .ToList();
 
    void WaitForEndpointsToBeAtRest(WaitTimeout? timeoutOverride = null) => TessagesInFlightTracker.AwaitNoTessagesInFlight(timeoutOverride);

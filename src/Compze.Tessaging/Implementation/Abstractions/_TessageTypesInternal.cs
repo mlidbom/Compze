@@ -2,10 +2,9 @@
 // ReSharper disable UnusedTypeParameter
 // ReSharper disable MemberHidesStaticFromOuterClass
 
-using Compze.Abstractions.Tessaging.Hosting.Public;
+using Compze.Abstractions.Hosting.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
-using Compze.Tessaging.Implementation.Transport.Client.Routing.Abstractions;
 using Compze.Internals.Transport;
 
 // ReSharper disable UnusedAutoPropertyAccessor.Global

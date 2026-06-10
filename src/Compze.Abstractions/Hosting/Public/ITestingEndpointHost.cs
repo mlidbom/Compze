@@ -1,4 +1,4 @@
-namespace Compze.Core.Tessaging.Hosting.Public;
+namespace Compze.Abstractions.Hosting.Public;
 
 public interface ITestingEndpointHost : IEndpointHost
 {

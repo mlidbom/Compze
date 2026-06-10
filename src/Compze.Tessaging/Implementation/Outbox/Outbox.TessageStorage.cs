@@ -1,7 +1,7 @@
 using Compze.Abstractions.Public;
 using Compze.TypeIdentifiers;
 using Compze.Abstractions.Serialization.Internal;
-using Compze.Abstractions.Tessaging.Hosting.Public;
+using Compze.Abstractions.Hosting.Public;
 using Compze.Core.Tessaging.Internal.SqlLayer;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.DependencyInjection;

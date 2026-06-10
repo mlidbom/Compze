@@ -1,7 +1,5 @@
-using Compze.Abstractions.Tessaging.Hosting.Public;
-using Compze.Tessaging.Abstractions.Tessaging.Hosting.Public;
 
-namespace Compze.Core.Tessaging.Hosting.Public;
+namespace Compze.Abstractions.Hosting.Public;
 
 public interface IEndpointHost : IAsyncDisposable
 {

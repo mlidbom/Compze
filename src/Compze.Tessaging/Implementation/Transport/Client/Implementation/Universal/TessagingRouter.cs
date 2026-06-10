@@ -1,8 +1,7 @@
 using Compze.TypeIdentifiers;
 using Compze.Abstractions.Serialization.Internal;
-using Compze.Abstractions.Tessaging.Hosting.Public;
+using Compze.Abstractions.Hosting.Public;
 using Compze.Abstractions.Tessaging.Public;
-using Compze.Core.Tessaging.Transport.Internal;
 using Compze.Internals.Transport;
 using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
@@ -60,7 +59,7 @@ class TessagingRouter : ITessagingRouter, IDisposable
       _exceptionReporter = exceptionReporter;
    }
 
-   public async Task ConnectAsync(EndPointAddress remoteEndpointAddress)
+   public async Task ConnectAsync(EndpointAddress remoteEndpointAddress)
    {
 #pragma warning disable CA2000//We are passing this disposable into a collection that we track disposal for
       var connection = new TessagingConnection(_tessagesInFlightTracker, remoteEndpointAddress, _typeMap, _serializer, _transportMessagePoster, _infrastructureQueryTransport, _tessageStorage, _taskRunner, _exceptionReporter);

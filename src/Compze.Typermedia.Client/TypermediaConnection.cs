@@ -1,9 +1,9 @@
-using Compze.Core.Tessaging.Transport.Internal;
+using Compze.Abstractions.Hosting.Public;
 
 namespace Compze.Typermedia.Client;
 
-class TypermediaConnection(EndPointAddress address, TypermediaEndpointInformation endpointInformation)
+class TypermediaConnection(EndpointAddress address, TypermediaEndpointInformation endpointInformation)
 {
-   public EndPointAddress Address { get; } = address;
+   public EndpointAddress Address { get; } = address;
    public TypermediaEndpointInformation EndpointInformation { get; } = endpointInformation;
 }

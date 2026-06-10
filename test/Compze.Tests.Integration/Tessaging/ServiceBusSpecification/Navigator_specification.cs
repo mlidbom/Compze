@@ -1,6 +1,5 @@
-using Compze.Abstractions.Tessaging.Hosting.Public;
+using Compze.Abstractions.Hosting.Public;
 using Compze.Hosting;
-using Compze.Core.Tessaging.Hosting.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Tessaging.Hosting.Testing.Tessaging;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;

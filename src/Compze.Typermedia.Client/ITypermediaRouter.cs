@@ -1,10 +1,10 @@
-using Compze.Core.Tessaging.Transport.Internal;
+using Compze.Abstractions.Hosting.Public;
 
 namespace Compze.Typermedia.Client;
 
 public interface ITypermediaRouter : ITypermediaRouting
 {
-    Task ConnectAsync(EndPointAddress endpointAddress);
+    Task ConnectAsync(EndpointAddress endpointAddress);
     void Start();
     void Stop();
 }

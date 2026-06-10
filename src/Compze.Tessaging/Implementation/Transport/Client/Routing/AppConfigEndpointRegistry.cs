@@ -1,6 +1,5 @@
 using Compze.Abstractions.Configuration.Internal;
-using Compze.Core.Tessaging.Transport.Internal;
-using Compze.Tessaging.Implementation.Transport.Client.Routing.Abstractions;
+using Compze.Abstractions.Hosting.Public;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Routing;
 
@@ -11,11 +10,11 @@ class AppConfigEndpointRegistry(IConfigurationParameterProvider settingsProvider
    readonly IConfigurationParameterProvider _settingsProvider = settingsProvider;
 #pragma warning restore CA1823
 
-   public IEnumerable<EndPointAddress> ServerEndpointAddresses => throw new NotSupportedException();
+   public IEnumerable<EndpointAddress> ServerEndpointAddresses => throw new NotSupportedException();
    // var configurationValue = _settingsProvider.GetString("ServerEndpoints");
    // var addresses = configurationValue.Split(';')
    //                                   .Select(stringValue => stringValue.Trim())
    //                                   .Where(stringValue => !string.IsNullOrEmpty(stringValue))
-   //                                   .Select(stringValue => new EndPointAddress(stringValue)).ToList();
+   //                                   .Select(stringValue => new EndpointAddress(stringValue)).ToList();
    // return addresses;
 }

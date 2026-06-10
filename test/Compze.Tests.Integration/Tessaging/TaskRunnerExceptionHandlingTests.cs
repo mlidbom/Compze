@@ -1,5 +1,4 @@
-using Compze.Abstractions.Tessaging.Hosting.Public;
-using Compze.Core.Tessaging.Hosting.Public;
+using Compze.Abstractions.Hosting.Public;
 using Compze.DependencyInjection;
 using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.Tessaging.SystemCE.ThreadingCE;
