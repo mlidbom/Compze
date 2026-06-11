@@ -25,7 +25,7 @@ public class When_logging_within_an_activity
 
    public class within_which_an_operation_is_timed : When_logging_within_an_activity
    {
-      public within_which_an_operation_is_timed() { using(_logger.StartActivity("overlay show")) { _logger.Debug().Time(() => 42); } }
+      public within_which_an_operation_is_timed() { using(_logger.StartActivity("overlay show")) { _logger.Debug().ExecutionTime(() => 42); } }
 
       [XF] public void the_span_start_line_is_tagged_with_the_activity() => _logger.Captured[1].ActivityName.Must().NotBeNull().Be("overlay show");
       [XF] public void the_span_completion_line_is_tagged_with_the_activity() => _logger.Captured[2].ActivityName.Must().NotBeNull().Be("overlay show");
