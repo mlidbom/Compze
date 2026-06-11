@@ -9,7 +9,7 @@ public class When_timing_an_operation_with_an_ILevelLogger
    public class that_returns_a_value : When_timing_an_operation_with_an_ILevelLogger
    {
       readonly int _result;
-      public that_returns_a_value() => _result = _logger.Debug().Time(() => 42);
+      public that_returns_a_value() => _result = _logger.Debug().ExecutionTime(() => 42);
 
       [XF] public void the_operations_result_is_returned() => _result.Must().Be(42);
       [XF] public void two_lines_are_logged() => _logger.Captured.Count.Must().Be(2);
@@ -22,14 +22,14 @@ public class When_timing_an_operation_with_an_ILevelLogger
 
    public class that_is_described_by_an_explicit_label : When_timing_an_operation_with_an_ILevelLogger
    {
-      public that_is_described_by_an_explicit_label() => _logger.Debug().Time("decode wallpaper", () => 42);
+      public that_is_described_by_an_explicit_label() => _logger.Debug().ExecutionTime("decode wallpaper", () => 42);
 
       [XF] public void the_explicit_label_is_used_not_the_source_text() => _logger.Captured[0].Values![1].Must().Be("decode wallpaper");
    }
 
    public class that_is_timed_with_a_using_scope : When_timing_an_operation_with_an_ILevelLogger
    {
-      public that_is_timed_with_a_using_scope() { using(_logger.Debug().Time("rendering")) {} }
+      public that_is_timed_with_a_using_scope() { using(_logger.Debug().ExecutionTime("rendering")) {} }
 
       [XF] public void two_lines_are_logged() => _logger.Captured.Count.Must().Be(2);
       [XF] public void the_given_label_is_used() => _logger.Captured[0].Values![1].Must().Be("rendering");
@@ -39,7 +39,7 @@ public class When_timing_an_operation_with_an_ILevelLogger
    public class that_throws : When_timing_an_operation_with_an_ILevelLogger
    {
       readonly Exception _thrown;
-      public that_throws() => _thrown = Invoking(() => _logger.Debug().Time(ThrowingOperation)).Must().Throw<InvalidOperationException>().Which;
+      public that_throws() => _thrown = Invoking(() => _logger.Debug().ExecutionTime(ThrowingOperation)).Must().Throw<InvalidOperationException>().Which;
       static int ThrowingOperation() => throw new InvalidOperationException("boom");
 
       [XF] public void the_exception_propagates() => _thrown.Message.Must().Be("boom");
@@ -52,7 +52,7 @@ public class When_timing_an_operation_with_an_ILevelLogger
    {
       readonly int _result;
       public that_is_asynchronous() => _result = AwaitTimedOperation().GetAwaiter().GetResult();
-      async Task<int> AwaitTimedOperation() => await _logger.Debug().TimeAsync(async () => { await Task.Yield(); return 7; });
+      async Task<int> AwaitTimedOperation() => await _logger.Debug().ExecutionTimeAsync(async () => { await Task.Yield(); return 7; });
 
       [XF] public void the_operations_result_is_returned() => _result.Must().Be(7);
       [XF] public void two_lines_are_logged() => _logger.Captured.Count.Must().Be(2);
@@ -61,7 +61,7 @@ public class When_timing_an_operation_with_an_ILevelLogger
 
    public class that_contains_a_nested_timed_operation : When_timing_an_operation_with_an_ILevelLogger
    {
-      public that_contains_a_nested_timed_operation() => _logger.Debug().Time("outer", () => _logger.Debug().Time("inner", () => 0));
+      public that_contains_a_nested_timed_operation() => _logger.Debug().ExecutionTime("outer", () => _logger.Debug().ExecutionTime("inner", () => 0));
 
       [XF] public void all_four_lines_are_logged() => _logger.Captured.Count.Must().Be(4);
       [XF] public void the_outer_span_path_has_no_parent() => ((string)_logger.Captured[0].Values![0]!).Contains('/', StringComparison.Ordinal).Must().Be(false);
@@ -73,7 +73,7 @@ public class When_timing_an_operation_with_an_ILevelLogger
       readonly CapturingLogger _recorder = new();
       int _operationRunCount;
       readonly int _result;
-      public when_the_level_is_disabled() => _result = _recorder.WithLogLevel(LogLevel.Warning).Debug().Time(() => { _operationRunCount++; return 5; });
+      public when_the_level_is_disabled() => _result = _recorder.WithLogLevel(LogLevel.Warning).Debug().ExecutionTime(() => { _operationRunCount++; return 5; });
 
       [XF] public void no_lines_are_logged() => _recorder.Captured.Must().BeEmpty();
       [XF] public void the_operation_still_runs_exactly_once() => _operationRunCount.Must().Be(1);
