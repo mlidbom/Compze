@@ -1,0 +1,15 @@
+Run both commands from the repository root to add the shared Claude config subtree:
+
+git subtree add --prefix .claude-shared https://github.com/mlidbom/copilot-code-standards-and-instructions.git main
+git subtree split --prefix .claude-shared --rejoin
+
+Do NOT use --squash — it discards commit objects that split/push need later.
+
+The second command creates a rejoin marker so that future pushes don't have to
+walk the entire repo history. Do this immediately after the add — it's instant
+at this point since only one commit touches the prefix.
+
+Then enable symlinks (one-time per machine):
+  - Turn on Windows Developer Mode (symlink creation without elevation)
+  - git config --global core.symlinks true
+and symlink the parts the project adopts from .claude-shared/ into .claude/ — see README.md.
