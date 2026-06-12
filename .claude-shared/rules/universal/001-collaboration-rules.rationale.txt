@@ -2,9 +2,11 @@
 
 Assembled from three sources:
 
-- The core sections (don't code until instructed, no external changes, honesty about blockers) began as
-  Compze's project-local rules and were promoted to the catalog 2026-06-12 — they were project-agnostic, and
-  VDGS would have duplicated them on migration.
+- The core sections (don't code until instructed, honesty about blockers) began as Compze's project-local
+  rules and were promoted to the catalog 2026-06-12 — they were project-agnostic, and VDGS would have
+  duplicated them on migration. A "no changes external to the repo without confirmation" gate was promoted
+  alongside them and removed 2026-06-13 at the user's direction: no agent had ever made external changes
+  uninstructed, so the rule only added friction ("pure paranoia rule"). Don't re-add it.
 - "Questions are just questions" and "the codebase must improve over time" were recovered the same day from
   the pre-rules-folder user-level CLAUDE.md (found unmigrated in a backup file when the user-level config was
   reconciled with the catalog).
