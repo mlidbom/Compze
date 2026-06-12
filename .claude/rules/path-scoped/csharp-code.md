@@ -3,15 +3,11 @@ paths:
   - "**/*.cs"
 ---
 
-# C# Code Conventions for all repositories
+# C# code conventions for Compze
 
-## Design & Refactoring
-
-- When implementing new functionality, if a missing abstraction makes the implementation inconsistent, awkward, or poorly structured — **introduce that abstraction**. Refactoring existing code to better accommodate new changes is expected and encouraged.
-- Do not bolt new behavior onto an ill-fitting structure just to avoid creating classes. If the right design calls for a new class, record, interface, or helper — create it.
-- The goal is a codebase where each change leaves the design **more** coherent, not less. Treat every feature as an opportunity to improve the surrounding code.
-- **Behavior belongs with data.** If a static method's first parameter is an object it primarily operates on, that method should probably be an instance method on that type instead. `StaticHelper.DoSomething(object, ...)` is C-style procedural code — prefer `object.DoSomething(...)`. Static utility classes are for genuinely cross-cutting operations that don't belong to any specific type. And those should usually be extension methods for discoverability.
-- **Logic belongs where it fits, not where it's first needed.** If a method operates on a type it doesn't belong to — move it to that type as an instance method, or make it an extension method on that type or interface. Don't let helper logic accumulate in unrelated classes just because that's where the need first arose.
+The design principles — OO, everything-in-its-place, naming, comments — live in the universal rules
+(`01-universal-shared`); this file is the C# and Compze mechanics: formatting, idiom, and the Compze
+helper-library conventions.
 
 ## Formatting
 
@@ -28,10 +24,7 @@ paths:
 - **Access modifiers**: Omit default access modifiers. No explicit `private` on fields or methods; no explicit `internal` on classes. Only write modifiers that change the default.
 - **`readonly`**: Use on fields for immutable state. Use `readonly struct` for value types.
 
-## Naming
-
- - **Make them however long they need to be** By far the most common problem with code we see is that trying to keep names short means they do NOT describe what they do. Names should be as long as they need to be to clearly convey their purpose. If you find yourself needing to add a comment to explain what a method or variable does, it's a strong sign the name should be improved instead.
-
+## Naming conventions
 
 | Element          | Convention                                                                 |
 | ---------------- | -------------------------------------------------------------------------- |
@@ -52,7 +45,7 @@ paths:
 - Place at file top, outside namespace.
 - Prefer `using static Compze.Contracts.Assert;` to call `Argument.NotNull()`, `State.Is()` etc. without the `Assert.` prefix.
 
-## Null Handling
+## Contracts & null handling
 
 - **Nullable reference types enabled** in all projects.
 - Use Compze.Contracts:
@@ -60,10 +53,13 @@ paths:
   - `Assert.State.Is(condition)` — `InvalidOperationException`
   - `Assert.Result.NotNull(result)` — `InvalidResultException`
   - `Assert.Invariant.Is(condition)` — `InvariantViolatedException`
+- Prefer `Assert.*` or `._assert` over manual if clauses and throwing.
 - Use `.NotNull()` extension for quick null-dereferencing.
 
 ## Extension Methods
 
+- Cross-cutting helpers, and logic that operates on a type it doesn't own, become extension methods —
+  usually on that type or its interface — for discoverability.
 - **Use extension blocks, not the old syntax `@this`**
 - **Always name the receiver parameter `@this`** — making it instantly recognizable.
   ```csharp
@@ -116,24 +112,6 @@ TReturn Read<TReturn>(Func<TReturn> func, TimeSpan? timeout = null)
 - String interpolation `$"..."` everywhere — no concatenation.
 - Raw string literals `$"""..."""` for multi-line strings.
 - `nameof()` in exception messages and debug displays.
-
-## Exceptions
-
-- **CRITICAL**: Never swallow exceptions in a catch block without rethrowing.
-  - Only catch an exception at all if you have a specific recovery strategy or need to add context before re-throwing.
-- Prefer `Assert.*` or `._assert` from Compze.Contracts over manual if clauses and throwing.
-
-## Comments & Documentation
-
-- Prefer self-documenting code over comments
-    - Extract a well named method that explains what is happening instead of writing a comment
-    - Rename a method to explain what it does rather than add a documentation comment
-
-## XML doc comments
-
-- Follow [documentation-comments](../universal/code-standards/060-documentation-comments.md): a
-  plain-language `<summary>` floor, why-first `<remarks>`, build-validated `<see cref>`s, and a comment on
-  every member whose name alone doesn't tell a codebase-newcomer what it's for.
 
 ## File Organization
 
