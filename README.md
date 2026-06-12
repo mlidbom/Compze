@@ -43,15 +43,18 @@ links for the adopted path-scoped rules. Rules discovery is recursive and frontm
 grouping folders are pure organization. Project-local rules live alongside as regular files and folders, so
 the split is obvious at a glance.
 
-**Skills cannot be grouped or renamed** (verified empirically): discovery is one folder level deep, so a
-link inside `skills/01-shared/` is not found at session start — and the *folder* name, not the SKILL.md
-frontmatter `name:`, becomes the skill's name, so a `shared-…` prefix would rename the skill. Link each
-adopted skill flat, under its canonical name; its being a symlink is the shared marker.
+**Skills cannot be grouped, and the link folder's name IS the skill's name** (verified empirically):
+discovery is one folder level deep, so a link inside `skills/01-shared/` is not found at session start —
+and the *folder* name, not the SKILL.md frontmatter `name:`, becomes the name the skill registers and is
+invoked under. So link each adopted skill flat, with a **`shared-` prefix on the link name**: the prefix is
+the visible marker in the tree (IDEs don't reliably show symlink-ness) and deliberately becomes part of the
+skill's name, marking it as shared at invocation time too. The catalog keeps canonical, unprefixed folder
+names.
 
 ```powershell
 New-Item -ItemType SymbolicLink .claude\rules\01-universal-shared -Target ..\..\.claude-shared\rules\universal
 New-Item -ItemType SymbolicLink .claude\rules\path-scoped\01-shared\csharp-code.md -Target ..\..\..\..\.claude-shared\rules\path-scoped\csharp-code.md
-New-Item -ItemType SymbolicLink .claude\skills\team-review-and-fix-code-standard-issues -Target ..\..\.claude-shared\skills\team-review-and-fix-code-standard-issues
+New-Item -ItemType SymbolicLink .claude\skills\shared-team-review-and-fix-code-standard-issues -Target ..\..\.claude-shared\skills\team-review-and-fix-code-standard-issues
 ```
 
 In the consuming repo's `.gitattributes`, mark committed **directory** symlinks with `symlink=dir` so Git
