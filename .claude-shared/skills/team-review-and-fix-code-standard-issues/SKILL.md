@@ -57,8 +57,8 @@ countermeasures in:
   that is a problem with the distillation, not the rule.
 - **Convention is not a validity defense.** Skeptics must reject "it's the conventional purpose of such a
   file", "a framework/analyzer endorses it" (e.g. CA1060 blessing one `NativeMethods` bag), and "it's by
-  design". The test is responsibility-cohesion, not idiom. (See `010-everything-in-its-place.rationale.txt`
-  and `030-anti-corruption-layers.rationale.txt`.)
+  design". The test is responsibility-cohesion, not idiom. (See `031-everything-in-its-place.rationale.txt`
+  and `050-anti-corruption-layers.rationale.txt`.)
 - **Validity gates surfacing; risk gates application.** Validity + improvement decide whether a finding is
   real and worth doing (→ `confirmed`); the risk lens decides only whether the *proposed fix* is safe to
   apply as-written (`readyToApply`) or needs design first (`needsDesign`, carrying the blocker). Never let a

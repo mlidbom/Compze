@@ -173,7 +173,7 @@ cref pointing at something that no longer exists.
 
 - Nothing about the solution's details is fixed. Never write a comment that implies something is proven,
   settled, or must-not-change — that argues against the refactoring these standards encourage
-  ([conceptual coherence](../010-conceptual-coherence-and-naming.md)).
+  ([conceptual coherence](010-conceptual-coherence-and-naming.md)).
 - State what we **define** (a type's responsibility, an API's contract) in plain present tense — not hedged,
   not crowned.
 - State what we **observed** (a measurement, an external API's behaviour) as provisional — "in our tests",

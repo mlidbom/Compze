@@ -1,0 +1,14 @@
+# Provenance — collaboration rules
+
+Assembled from three sources:
+
+- The core sections (don't code until instructed, no external changes, honesty about blockers) began as
+  Compze's project-local rules and were promoted to the catalog 2026-06-12 — they were project-agnostic, and
+  VDGS would have duplicated them on migration.
+- "Questions are just questions" and "the codebase must improve over time" were recovered the same day from
+  the pre-rules-folder user-level CLAUDE.md (found unmigrated in a backup file when the user-level config was
+  reconciled with the catalog).
+- "When given full delegation" was confirmed during the Compze typermedia–tessaging disentanglement
+  (2026-06-10); the full case study is in
+  `code-standards/014-rehome-concepts-before-restructuring.rationale.txt` — the working mode emerged
+  alongside that code-standards rule but is collaboration conduct, so it lives here.
