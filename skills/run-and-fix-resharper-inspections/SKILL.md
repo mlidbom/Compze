@@ -46,6 +46,10 @@ Key flags:
 - `--include` / `--exclude` use glob patterns to scope which files are analyzed
 - `--output` writes SARIF (JSON) results
 
+Deeper engine detail — flag gotchas (values need `=`, `--no-build`, `--project` prefix matching), XML-format
+parsing, the live-MCP fast path, and non-.NET engines — lives in the companion `jetbrains-inspect` skill
+(same catalog; linked as `shared-jetbrains-inspect` in consuming repos).
+
 ## Parsing the output
 
 ```powershell
