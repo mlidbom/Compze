@@ -37,9 +37,20 @@ Symlink the parts you want into the project's `.claude/`. Directory links by def
 project-local, so each project slots shared folders into its own numeric ordering scheme. A project that
 adopts the code standards but not, say, the specification style simply doesn't create that link.
 
+**For rules, make shared vs local visible in the names**: put the links behind `…-shared` entries — a
+single `01-universal-shared` directory link for the universal rules, and a `01-shared/` folder of per-file
+links for the adopted path-scoped rules. Rules discovery is recursive and frontmatter-gated, so such
+grouping folders are pure organization. Project-local rules live alongside as regular files and folders, so
+the split is obvious at a glance.
+
+**Skills cannot be grouped or renamed** (verified empirically): discovery is one folder level deep, so a
+link inside `skills/01-shared/` is not found at session start — and the *folder* name, not the SKILL.md
+frontmatter `name:`, becomes the skill's name, so a `shared-…` prefix would rename the skill. Link each
+adopted skill flat, under its canonical name; its being a symlink is the shared marker.
+
 ```powershell
-New-Item -ItemType SymbolicLink .claude\rules\universal\03-code-standards -Target ..\..\..\.claude-shared\rules\universal\03-code-standards
-New-Item -ItemType SymbolicLink .claude\rules\path-scoped\csharp-code.md -Target ..\..\..\.claude-shared\rules\path-scoped\csharp-code.md
+New-Item -ItemType SymbolicLink .claude\rules\01-universal-shared -Target ..\..\.claude-shared\rules\universal
+New-Item -ItemType SymbolicLink .claude\rules\path-scoped\01-shared\csharp-code.md -Target ..\..\..\..\.claude-shared\rules\path-scoped\csharp-code.md
 New-Item -ItemType SymbolicLink .claude\skills\team-review-and-fix-code-standard-issues -Target ..\..\.claude-shared\skills\team-review-and-fix-code-standard-issues
 ```
 

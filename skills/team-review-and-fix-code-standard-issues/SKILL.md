@@ -72,8 +72,11 @@ countermeasures in:
 
 ## How to run
 
-1. **Run the workflow.** Invoke `Workflow({ scriptPath: ".claude/skills/team-review-and-fix-code-standard-issues/review-workflow.js",
-   args: { target, exclude, checksOverride, gate, includeJudgmentCalls } })` — every arg is optional:
+1. **Run the workflow.** Invoke `Workflow({ scriptPath: "<this skill's directory>/review-workflow.js",
+   args: { target, exclude, checksOverride, gate, includeJudgmentCalls } })` — the script sits beside this
+   SKILL.md (e.g. `.claude/skills/team-review-and-fix-code-standard-issues/review-workflow.js`; in a
+   consumer that links the skill from a `.claude-shared/` catalog, the link resolves there). Every arg is
+   optional:
    - **The rules are not hardcoded anywhere.** Every agent already has the project standards in context; the
      Distill agent finds the rule files from the paths shown to it and reads their rationale sidecars. Nothing
      about where the rules live is baked into the skill — it keeps working after the rules move, split, or
