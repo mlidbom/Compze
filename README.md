@@ -52,7 +52,7 @@ names.
 
 ```powershell
 New-Item -ItemType SymbolicLink .claude\rules\01-universal-shared -Target ..\..\.claude-shared\rules\universal
-New-Item -ItemType SymbolicLink .claude\rules\path-scoped\01-shared\csharp-code.md -Target ..\..\..\..\.claude-shared\rules\path-scoped\csharp-code.md
+New-Item -ItemType SymbolicLink .claude\rules\path-scoped\01-shared\csharp-bdd-specifications.md -Target ..\..\..\..\.claude-shared\rules\path-scoped\csharp-bdd-specifications.md
 New-Item -ItemType SymbolicLink .claude\skills\shared-team-review-and-fix-code-standard-issues -Target ..\..\.claude-shared\skills\team-review-and-fix-code-standard-issues
 ```
 
