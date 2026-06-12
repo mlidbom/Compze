@@ -7,8 +7,8 @@ that "shouldn't happen," stop and ask the deciding question: **could we guarante
 effort?**
 
 - **Yes — so do it.** If a correct state is achievable by us (a precondition our code can honor, an
-  invariant we can maintain), then make it true and `Contract.*.Assert` it, so a violation fails loud and
-  immediately. A *guard* here is bug-hiding — it turns our own bug into silent wrong behavior. Don't reach
+  invariant we can maintain), then make it true and assert it with the project's contracts facility, so a
+  violation fails loud and immediately. A *guard* here is bug-hiding — it turns our own bug into silent wrong behavior. Don't reach
   for the guard just because guaranteeing the invariant would take work; do the work.
 - **No — genuinely intractable.** Only when guaranteeing the state is truly out of reach — the API doesn't
   expose what we'd need, the cost is absurd — is it a real runtime condition. Then handle it deliberately, 
