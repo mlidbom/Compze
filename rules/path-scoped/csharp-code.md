@@ -36,7 +36,7 @@ paths:
 | Element          | Convention                                                                 |
 | ---------------- | -------------------------------------------------------------------------- |
 | Classes          | `PascalCase`                                                               |
-| Interfaces       | `I` prefix: `IEndpoint`, `ITessage`                                        |
+| Interfaces       | `I` prefix: `IEndpoint`, `IRepository`                                     |
 | Methods          | `PascalCase`                                                               |
 | Fields           | `_camelCase` (no explicit `private`)                                       |
 | Properties       | `PascalCase`                                                               |
@@ -131,15 +131,15 @@ TReturn Read<TReturn>(Func<TReturn> func, TimeSpan? timeout = null)
 
 ## XML doc comments
 
-- Be brief and concise. A single line is often sufficient.
-- Unless non-obvious, do not document parameters or return values.
-- omit on obvious/internal code.
+- Follow [documentation-comments](../universal/03-code-standards/040-documentation-comments.md): a
+  plain-language `<summary>` floor, why-first `<remarks>`, build-validated `<see cref>`s, and a comment on
+  every member whose name alone doesn't tell a codebase-newcomer what it's for.
 
 ## File Organization
 
 - Generally one primary type per file; nested classes and related small types in the same file are fine.
 - Partial classes split across files using `ClassName.Aspect.cs` naming.
-- Underscore-prefix filenames (`_TessageTypes..Interfaces.cs`) for grouped/supporting types.
+- Underscore-prefix filenames (`_MessageTypes..Interfaces.cs`) for grouped/supporting types.
 - `_docs/` subdirectories for co-located documentation.
 
 ## Generic Constraints

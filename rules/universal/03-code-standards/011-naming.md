@@ -1,8 +1,7 @@
 # Renaming is the most important refactoring there is.
-A name is the interface to a concept — read at every callsite, far more than the body — so a name that lies or
-blurs miscalibrates every reader continuously, and the rename that fixes it is the highest-leverage change
-there is. The moment a truer name appears, rename; never defer it as cosmetic, and never keep a poor name
-because it is "everywhere" — that ubiquity is the cost, not a reason to keep it.
+The full principle lives in
+[012-renaming-is-the-most-important-refactoring](../012-renaming-is-the-most-important-refactoring.md);
+this file is the naming how-to.
 
 # Avoid abbreviations
 Abbreviations assume the reader knows them and that they are obvious in context.

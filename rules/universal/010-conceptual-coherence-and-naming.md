@@ -6,7 +6,7 @@ A `User` must be a user; a value object holding a user's registration details is
 
 Because a name *is* the abstraction's interface, **renaming is the most important refactoring there is** — the
 primary act that restores coherence, and a truer name is a fix to make now, never cosmetic
-([naming](03-code-standards/011-naming.md)).
+([renaming](012-renaming-is-the-most-important-refactoring.md)).
 
 The operational test — you understand the code by reading names, never by decoding implementations:
 

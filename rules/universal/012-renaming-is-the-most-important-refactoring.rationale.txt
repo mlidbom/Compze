@@ -1,0 +1,12 @@
+# Provenance
+
+Written 2026-06-05 in the vdgs-live-view project. The user stated, verbatim, that he "100% seriously
+consider[s] renaming to be the most important refactoring that exists" — captured here because it is a
+standing, cross-project conviction, not a one-off remark.
+
+It crystallised from the `Monitor` case. A type named `Monitor` (which implies the physical-display entity)
+actually held only a `ScreenRect` and was used purely geometrically. Two wrong fixes were weighed first: keep
+the struct and defend the name by its usage (defending a lie with implementation), and convert it to an entity
+class (building a concept the app does not have). The right fix was the rename — it *is* a value (a region),
+so name it as one. The rename resolved the design error; nothing else had to change. That is the pattern the
+rule generalises: a name carries the abstraction, so fixing the name is usually the fix itself.

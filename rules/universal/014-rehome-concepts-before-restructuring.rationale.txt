@@ -1,0 +1,32 @@
+Provenance: Compze typermedia–tessaging disentanglement, 2026-06-10, session on branch
+separate-typermedia-and-tessaging (commits 25797d10e..8a60ffd69). Confirmed emphatically by Magnus.
+
+The case: Typermedia (sync request-response API paradigm) and Tessaging (async exactly-once service bus) shared
+a fused hosting layer. A month of prior effort (Magnus + Opus) had split the pipelines (transports, routing,
+handler execution, discovery) but stalled on the hosting/wiring split and was shelved in frustration.
+
+Diagnosis that unlocked it: the hosting abstractions (IEndpoint, IEndpointHost, IEndpointBuilder,
+EndpointConfiguration, EndpointId, EndPointAddress, IEndpointRegistry) lived scattered across three assemblies in
+Tessaging-named namespaces (e.g. Compze.Core.Tessaging.Hosting.Public), with Tessaging privileged in the builder
+API (first-class property) while Typermedia was bolted on via a downcast extension, plus an InternalsVisibleTo
+back-door. The wiring could never be split because the shared concepts had no truthful home to be split into.
+
+Sequence that worked:
+- Phase A (a few hours, mechanical): move all endpoint contracts to Compze.Abstractions.Hosting.Public; fix the
+  lying names (EndPointAddress -> EndpointAddress; IEndpoint.Address -> TessagingAddress); make the builder API
+  symmetric via C#14 extension properties (zero call-site changes).
+- Phase B (same night): with truthful homes in place, the "impossible" seam became obvious and mechanical:
+  IEndpointComponent lifecycle contract + GetOrAddFeature/AddComponent/OnContainerBuilt on the builder; each
+  paradigm ships its own feature from its own package (internal access natural -> InternalsVisibleTo deleted);
+  the hosting package ended up referencing NO paradigm at all.
+- Full test suite (3151 tests) green after every increment; zero behavior changes needed in test assertions.
+
+The delegation-protocol half: Magnus gave "go with your recommendations and keep going as far as you can...
+use your own judgement when questions come up" and later confirmed the resulting working pattern was exactly
+right: autonomous design calls, green-suite incremental commits with why-commit-messages, decisions recorded in
+dev_docs as work proceeded, taste questions collected into a follow-ups list rather than blocking, and a
+handover doc + memory pointer when context budget argued for a fresh session.
+
+His framing of what he values (verbatim gist): a design that is "intuitive and maintainable to a human" who needs
+"object orientation to divide and conquer mentally" — as opposed to something that works and is understandable
+only to an omniscient reader.
