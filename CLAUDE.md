@@ -28,7 +28,6 @@ The C# code conventions, BDD specification style, universal code standards, and 
 
 - Sync: `.claude-shared/git-scripts/pull.ps1` / `push.ps1` (run from anywhere).
 - The symlinks require Windows Developer Mode and `git config core.symlinks true`. `C-Build` runs `C-Verify-ClaudeConfigSymlinks` and fails loudly if a checkout has degraded them into plain text files.
-- The ReSharper inspection workflow reference lives at [.claude-shared/reference/resharper-inspections/](.claude-shared/reference/resharper-inspections/).
 
 ## Repository Overview
 
