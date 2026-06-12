@@ -1,1 +1,0 @@
-../../../.claude-shared/rules/path-scoped/csharp-bdd-specifications.md

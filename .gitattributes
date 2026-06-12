@@ -8,7 +8,7 @@
 # symlink=dir hint so Git for Windows creates them correctly regardless of
 # checkout order.
 ###############################################################################
-.claude/rules/universal/03-code-standards symlink=dir
+.claude/rules/01-universal-shared symlink=dir
 .claude/skills/team-review-and-fix-code-standard-issues symlink=dir
 
 ###############################################################################

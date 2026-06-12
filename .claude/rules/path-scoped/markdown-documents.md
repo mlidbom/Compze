@@ -1,1 +1,0 @@
-../../../.claude-shared/rules/path-scoped/markdown-documents.md

@@ -1,1 +1,0 @@
-../../../.claude-shared/rules/universal/010-conceptual-coherence-and-naming.md
