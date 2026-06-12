@@ -9,7 +9,7 @@
 # checkout order.
 ###############################################################################
 .claude/rules/01-universal-shared symlink=dir
-.claude/skills/team-review-and-fix-code-standard-issues symlink=dir
+.claude/skills/shared-team-review-and-fix-code-standard-issues symlink=dir
 
 ###############################################################################
 # Set default behavior for command prompt diff.
