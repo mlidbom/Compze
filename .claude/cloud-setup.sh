@@ -20,9 +20,11 @@
 #   - PowerShell         (DevScripts/Compze.psm1, C-Build, C-Test, etc.) —
 #                         tarball, since pwsh isn't in the default apt repos
 #   - csharp-ls          (C# language server — backs the csharp-lsp plugin
-#                         and Serena)
-#   - jb                 (JetBrains ReSharper CLI — `jb inspectcode`, see
-#                         the ReSharper Inspections section of CLAUDE.md)
+#                         and Serena. Cloud-only: locally Rider's
+#                         ReSharper-backed MCPs are the C# intelligence path)
+#   - jb                 (JetBrains ReSharper CLI — `jb inspectcode`, used by
+#                         the shared-jetbrains-inspect and
+#                         shared-run-and-fix-resharper-inspections skills)
 #   - docfx              (DocFX — builds the docs site in
 #                         src/Websites/Website/)
 #   - gh                 (GitHub CLI — read PR check runs, fetch Actions
@@ -34,10 +36,11 @@
 # What this registers (in the cloud container's user-scope config only):
 #   - Serena MCP server (.serena/project.yml drives it; uvx fetches Serena)
 #
-# The csharp-lsp plugin itself is declared in .claude/settings.json
-# (enabledPlugins) so it auto-installs on session start. That path applies
-# both locally and in cloud — but the binary it needs is only installed by
-# this script, so locally users follow CLAUDE.workarounds.md.
+# The csharp-lsp plugin is a cloud-only facility: locally Rider's
+# ReSharper-backed MCPs are the C# intelligence path and the plugin stays
+# disabled, so this script enables it — and sets CSHARP_LSP_SOLUTION_REL —
+# in the cloud container's gitignored .claude/settings.local.json rather
+# than in any git-tracked settings. See .claude/upstream-bug-workarounds.md.
 #
 # This script also drops a /etc/profile.d/ entry so DOTNET_ROOT and PATH are
 # set for every shell in subsequent sessions (matching the pattern used by
@@ -130,7 +133,7 @@ export PATH="$DOTNET_TOOLS_DIR:\$PATH"
 export DOTNET_CLI_TELEMETRY_OPTOUT=1
 export DOTNET_NOLOGO=true
 # Match CI defaults — disables wall-clock timing assertions in perf tests on
-# shared cloud infra. See CLAUDE.md.
+# shared cloud infra. See .claude/rules/02-universal-local/040-build-and-test.md.
 export COMPOSABLE_PERFORMANCE_TESTS_STRESS_TEST_ONLY=true
 export COMPOSABLE_MACHINE_SLOWNESS=5.0
 EOF
@@ -149,7 +152,11 @@ env_json=$(cat <<EOF
     "DOTNET_CLI_TELEMETRY_OPTOUT": "1",
     "DOTNET_NOLOGO": "true",
     "COMPOSABLE_PERFORMANCE_TESTS_STRESS_TEST_ONLY": "true",
-    "COMPOSABLE_MACHINE_SLOWNESS": "5.0"
+    "COMPOSABLE_MACHINE_SLOWNESS": "5.0",
+    "CSHARP_LSP_SOLUTION_REL": "src/Compze.AllProjects.slnx"
+  },
+  "enabledPlugins": {
+    "csharp-lsp@claude-plugins-official": true
   }
 }
 EOF
@@ -171,11 +178,11 @@ if [ -x "$CLAUDE_BIN" ]; then
       --context ide-assistant \
       --project /home/user/Compze >&2 || log "warning: serena registration failed"
 
-   # csharp-lsp plugin. `enabledPlugins` in .claude/settings.json is supposed
-   # to auto-install on session start, but in cloud sessions that path is
-   # unreliable (the marketplace registration races with the auto-install
-   # and the plugin ends up missing). Install it explicitly here so the
-   # snapshot always carries it.
+   # csharp-lsp plugin. `enabledPlugins` in settings.local.json (written
+   # above) is supposed to auto-install on session start, but in cloud
+   # sessions that path is unreliable (the marketplace registration races
+   # with the auto-install and the plugin ends up missing). Install it
+   # explicitly here so the snapshot always carries it.
    #
    # `plugin install <name>@<marketplace>` requires the marketplace to
    # already be known — otherwise it fails with "Plugin not found in
@@ -187,12 +194,12 @@ if [ -x "$CLAUDE_BIN" ]; then
    "$CLAUDE_BIN" plugin install csharp-lsp@claude-plugins-official >&2 \
       || log "warning: csharp-lsp plugin install failed"
 
-   # csharp-lsp workaround per CLAUDE.workarounds.md: until claude-code#16360
+   # csharp-lsp workaround per .claude/upstream-bug-workarounds.md: until claude-code#16360
    # ships `workspace/configuration`, the plugin can't tell csharp-ls which
    # solution to load via env alone. Drop a `.lsp.json` in the plugin cache
    # that pins `--solution` to ${CLAUDE_PROJECT_DIR}/${CSHARP_LSP_SOLUTION_REL}
-   # (set in .claude/settings.json). Without this csharp-ls auto-discovers a
-   # subset solution and `test/` projects fail to resolve their references.
+   # (set in settings.local.json above). Without this csharp-ls auto-discovers
+   # a subset solution and `test/` projects fail to resolve their references.
    csharp_lsp_dir=$(find /root/.claude/plugins/cache/claude-plugins-official/csharp-lsp -mindepth 1 -maxdepth 1 -type d | head -n1)
    if [ -n "$csharp_lsp_dir" ]; then
       log "Writing csharp-lsp .lsp.json to $csharp_lsp_dir..."

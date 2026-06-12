@@ -1,0 +1,24 @@
+# Provenance
+
+Written 2026-06-05 in the vdgs-live-view project; supersedes the earlier
+understand-code-by-names-not-implementations rule, renamed so the rule's own name tells the truth about its
+now-broader scope — the very principle it states.
+
+Origin: the project's top-priority rule led with "Simple, maintainable code is the most important thing."
+Asked whether a `record struct Monitor` was the right model, the agent collapsed "simple/maintainable" to the
+*median* meaning — minimalism / YAGNI / "don't abstract until reused" — and argued to keep the value type on
+implementation-usage grounds. The opposite of what the user means.
+
+The fix dropped the word "simple" entirely (redefining a common word just re-collapses to the median every
+time the definition isn't in front of the reader) and stated the standard operationally: code is understood
+by reading names, never by decoding implementations. The user then raised that *type* names matter as much as
+member names — a class/interface name that implies something untrue is a fatal design error, not polish — and
+that this is really about conceptual coherence, of which naming is a large part. Hence the rule's scope and
+name broadened to conceptual coherence.
+
+Much of the read-by-names content already lived in the everything-in-its-place / naming rules; what was
+missing at the priority level was naming the standard without the misleading word, enumerating
+minimalism/YAGNI and short-names as traps, and putting type-name truthfulness up front.
+
+Standing standard for every project, hence user-level despite duplicating the project's. The user explicitly
+accepted that duplication for something this vital.

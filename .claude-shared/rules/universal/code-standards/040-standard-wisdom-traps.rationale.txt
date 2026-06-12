@@ -1,0 +1,21 @@
+# Provenance
+
+Covers the YAGNI section. (Originally the standalone user-level rule
+030-yagni-cuts-behavior-not-abstractions; that file's content lives here in the YAGNI section now.
+"understand-code-by-names-not-implementations" below is the earlier name of what is now
+010-conceptual-coherence-and-naming.)
+
+Written 2026-06-05, same session as understand-code-by-names-not-implementations. A `record struct Monitor`
+case exposed a conflation of two independent axes:
+
+- *Nature* — what kind of thing it is (entity vs value, class vs struct). A monitor is an entity: it has
+  identity independent of its bounds (move it in the layout and the bounds change but it is the same monitor;
+  two monitors are never interchangeable by sharing geometry). That nature is a present truth — model it now.
+- *Behavior* — the members it carries (DPI, refresh rate, reposition). Those nothing yet calls, so they wait.
+
+The agent used YAGNI ("nothing reads DPI today") to argue against the entity *nature*, which is wrong: YAGNI
+withholds speculative behavior only. It never licenses the wrong kind of type, and never blocks an extraction
+that makes code read clearer regardless of reuse count.
+
+The user mostly rejects YAGNI as commonly practiced — the "rule of three" / don't-extract-until-reused
+version. The only kernel he keeps: don't add behavior/features nothing uses yet.

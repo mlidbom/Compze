@@ -4,6 +4,10 @@ All notable changes to Compze.Internals.Logging.Serilog will be documented in th
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.3.2-alpha
+
+- Version bumped in lockstep with `Compze.Internals.Logging` 0.3.2-alpha. No changes to the Serilog integration itself.
+
 ## 0.3.1-alpha
 
 ### Changed

@@ -1,0 +1,26 @@
+# Provenance
+
+Written 2026-06-08 in the Virtual-Desktop-Grid-Switcher (Vantage) project, during a naming-harmonization pass
+that renamed the hotkey subsystem (`Hotkeys` -> `GlobalHotkeys`, `_hotkeys` -> `_globalHotkeys`,
+`GlobalShortcutGroup` -> `GlobalHotkeyGroup`, and so on). Unprompted, the user named the two forces this rule
+generalises:
+
+  1. "You are trained on heaps and heaps of code of a type that I utterly hate that optimizes for characters
+     typed and just loves variable names like a,b,c,d and ad-hoc abbreviations and acronyms."
+
+  2. "You know everything (compared to me). When you see a symbol, you know so much about what it is ... that it
+     could probably be named anything and the code would not become THAT much harder to understand to you. To
+     me, without a great name, I need to go looking things up CONSTANTLY to be sure what I'm looking at."
+
+Why this earns its own rule rather than folding into 010-012: those assert that naming and conceptual fit are
+the top concern and that renaming is the highest-leverage refactoring — the *importance*. This one diagnoses
+the *mechanism* behind the agent's repeated under-naming, which is the actionable part: the agent's own
+comprehension never degrades on a bad name, so it is a broken gauge, and the agent must (a) switch the quality
+test to the human-who-does-not-already-know and (b) treat the pull toward brevity as a training artifact, not
+taste.
+
+Immediate trigger: the agent had shortened the field to `_hotkeys` and the class to `Hotkeys`; the user
+insisted on the fully-qualified `_globalHotkeys` / `GlobalHotkeys`, with: "make the naming universal. not
+hotkeys, globalHotkeys. Do not fear typing. Readability and being unambiguous is king." The agent had also
+initially argued *for* dropping the "Global" qualifier as redundant (because "hotkey" already implies global)
+— a textbook instance of force #2: redundant to the agent, load-bearing for the human.
