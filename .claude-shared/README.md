@@ -8,7 +8,7 @@ it adopts from `.claude-shared/` into its own `.claude/`; the catalog itself aut
 
 | Path | Contents |
 | --- | --- |
-| `rules/universal/` | Always-on rules (no `paths:` frontmatter) — the code standards, with `.rationale.txt` sidecars |
+| `rules/universal/` | Always-on rules (no `paths:` frontmatter) — collaboration rules and the code standards, with `.rationale.txt` sidecars |
 | `rules/path-scoped/` | Rules with `paths:` frontmatter — injected only when matching files are touched |
 | `skills/` | Skills, one folder per skill |
 | `git-scripts/` | Subtree sync + symlink verification scripts |

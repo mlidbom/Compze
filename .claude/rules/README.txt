@@ -3,7 +3,7 @@
 Replaces CLAUDE.md — project rules, read by both humans and the agent.
 
 - `01-universal-shared` — always-on shared standards (a directory symlink into the `.claude-shared/` catalog)
-- `02-universal-local/` — always-on Compze rules: collaboration, orientation, structure, build/test, DevScripts, workarounds
+- `02-universal-local/` — always-on Compze rules: orientation, structure, build/test, DevScripts, workarounds, C# MCP bindings
 - `path-scoped/` — rules that load only when touching matching files; `01-shared/` links + local files
 
 **Start here:** [`path-scoped/01-shared/rules-folder.md`](path-scoped/01-shared/rules-folder.md) — how the

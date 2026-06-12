@@ -1,0 +1,47 @@
+Provenance
+==========
+vdgs-live-view (Vantage), 2026-06-05. Vantage.Geometry/Monitor.cs:
+`public readonly record struct Monitor(ScreenRect Bounds)`.
+
+The user asked whether `record struct` / the name `Monitor` was a good conceptual fit: a monitor is
+an entity (identity, DPI, refresh rate, mutable config, behavior), not a value object — does it even
+belong in Geometry?
+
+The failure (committed twice in a row), then the broader correction
+===================================================================
+Both first replies rebutted the CONCEPTUAL critique with IMPLEMENTATION facts: "it's read fresh as a
+snapshot, value-equality is load-bearing (`MonitorOf(window) == monitor`), so the record/value
+design is correct and the name is fine." The user called this out: looking at deep implementation
+details and concluding "X invalidates your question," when the question was about conceptual design
+and naming. "If the name it is given is messed up given what it is used as, that does NOT mean it is
+OK — it means we have a fundamental modeling error to fix."
+
+Then he generalized it into a standing value ranking (this is the heart of the rule):
+- "The pre-eminence of naming and conceptual fit."
+- "Implementation details are a distant, also-ran, in importance to me, while clear intuitive mental
+  models are the absolute world champion of importance."
+- "When I'm pointing out something about code, unless I'm specifically pointing at a bug, the odds
+  are 90%+ that what I'm talking about is questionable design in this sense, not implementation."
+- My tendency to focus ~99% on implementation and treat naming/mental-model coherence as not
+  terribly important is "a major constant source of misunderstandings."
+
+So the rule is a PRIOR on interpretation + a value ranking, not just a "don't do X" — read his
+remarks as design/coherence first; rank conceptual fit above implementation by default.
+
+The actual answer once engaged correctly (kept for the worked example)
+======================================================================
+`Monitor` the name promises a physical display device (entity); the thing is the rectangular AREA a
+monitor covers (a geometric value, compared interchangeably). Name says entity, thing is a region —
+that dissonance IS the defect. Coherent fixes: (1) name it for the value it is — `MonitorArea`,
+stays in Geometry; (2) make it a real device entity in Domain (identity, DPI, refresh, behavior);
+(3) split the conflation — a `Monitor` entity (Domain) that HAS a `MonitorArea` value (Geometry),
+reserving the name `Monitor` for the device. Which one is the user's call (depends on whether
+monitors should grow behavior), not something to settle on implementation grounds.
+
+Why a user-level rule, not a project memory
+===========================================
+Per ~/.claude/rules/where-to-store-lessons-learned.md: this is a cross-project value ranking and
+interpretation prior (how the user thinks and what he weights in ANY codebase), not a
+vdgs-live-view fact. Lean always-on .md + this sidecar. Renamed from the narrower
+engage-conceptual-critique-not-implementation.* because the user broadened it from a reactive
+"don't explain away" rule to the general preeminence of naming/mental models.

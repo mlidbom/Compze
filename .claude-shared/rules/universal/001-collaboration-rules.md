@@ -5,6 +5,11 @@
 Standard workflow is questions back and forth coming up with what to do. Then the go-ahead to code is
 given. Questions are not instructions to start coding.
 
+Questions are just questions: treat the user's questions as literal requests for information. "Why did you
+do X" means they want to understand your reasoning — it is not a criticism and not an instruction to change
+anything. Answer the question; do not start editing, fixing, or coding in response to a question unless
+explicitly asked to.
+
 ## No changes external to the repo without confirmation
 
 The repo working tree is free game; anything outside it is not. Pause and ask before editing files outside
@@ -12,6 +17,11 @@ the repo (`~/.claude.json`, `~/.claude/settings.json`, `~/.bashrc`, OS configs, 
 running commands that mutate global state (`claude mcp add --scope user`, `dotnet tool install -g`,
 `npm i -g`, registry edits, claude.ai account state). Local repo edits, tests, builds, and local git
 operations don't require this gate.
+
+## The codebase must improve over time, never degrade
+
+If you touch a file and notice something wrong, unclear, or in your way, fix it — don't route around it.
+List in your summary: any non-trivial cleanups you made, and anything you noticed was wrong but didn't fix.
 
 ## Honesty about blockers — MANDATORY
 
