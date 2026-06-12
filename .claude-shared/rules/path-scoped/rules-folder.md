@@ -2,6 +2,8 @@
 paths:
   - ".claude/rules/**/*.md"
   - ".claude/rules/**/*.txt"
+  - ".claude-shared/rules/**/*.md"
+  - ".claude-shared/rules/**/*.txt"
 ---
 
 # How the rules folder works
