@@ -1,7 +1,9 @@
-# git-scripts/ → shared-instructions/ → instructions/ → .github/ → repo root
-$repoRoot = $PSScriptRoot | Split-Path | Split-Path | Split-Path | Split-Path
+# Mount-agnostic: derives the repo root from git and the subtree prefix from this script's location
+# (git-scripts/ sits directly under the subtree mount).
+$repoRoot = git -C $PSScriptRoot rev-parse --show-toplevel
+$mount = Split-Path $PSScriptRoot -Parent
+$prefix = [IO.Path]::GetRelativePath($repoRoot, $mount).Replace('\', '/')
 $remote = 'https://github.com/mlidbom/copilot-code-standards-and-instructions.git'
-$prefix = '.github/instructions/shared-instructions'
 
 Push-Location $repoRoot
 try {

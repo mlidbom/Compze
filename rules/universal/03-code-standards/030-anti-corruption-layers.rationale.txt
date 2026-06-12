@@ -1,0 +1,71 @@
+# Rationale — anti-corruption layers
+
+## The "boundary / introduce the type" paragraph (provenance)
+
+Added 2026-05-31 after the same multi-agent review let naked `IntPtr` window handles flow freely through
+domain code (`DesktopWindow.Handle`, `SurfaceHost._child`, `DesktopSwitcher.Pin(IntPtr)`, …). What the
+original reactive wording ("when a domain type exists, take that") could not catch:
+
+- The one flagged instance, `Pin(IntPtr)`, was raised at only **0.3 confidence** and dropped by the judge as
+  a "judgment call."
+- `IntPtr` in the extern signatures was — correctly — cleared as forced by the ABI; but the agent then
+  generalized that to *"No rich-types violation,"* reasoning *"Forcing `DesktopWindow` there would be
+  circular (DesktopWindow is built from these)."* The reactive rule gave it no reason to demand a thin
+  handle type instead.
+
+The new paragraph closes the two escapes the review used, so do not reintroduce them:
+- **"No domain type exists yet"** → that's the work, not an exemption (introduce a one-field wrapper).
+- **"It would be circular"** → it isn't: the boundary returns the thin handle, the richer type wraps it.
+
+## Keep it GENERAL — no IntPtr special case
+
+Explicit owner instruction: the rule must **not** special-case `IntPtr`. The principle is *any* naked
+primitive standing in for a domain concept; `IntPtr`/`nint` (essentially `void*`) is merely the **worst-case
+example** in an open list alongside `Guid` ids, bare `int`s, magic `string`s. If you extend this rule, add
+examples to the list — never branch the logic on a single type.
+
+## The boundary, precisely
+
+A bare primitive is acceptable *only* in the exact signature an external API / ABI / serialization format
+dictates. One line inside our code from that edge, it should already be wrapped.
+
+## 2026-06-02 — the "directly calls code we do not control" phrasing was read inverted
+
+The taskbar-capture review flagged `IntPtr` flowing through a domain method (`Taskbar.Locations()` ran an
+`EnumWindows` callback and forwarded the raw `hwnd` to `Native.*`). It was defended with the old wording —
+"the only code that should deal in IntPtr is the code that directly calls code we do not control." But
+`Native.X(hwnd)` *is our own wrapper*, so "the code that calls it" got read as licensed to hold `IntPtr`, and
+then justified with the inversion "an ACL's job is to hide the type, so it's allowed to expose it." Both are
+the trap. Fix: replaced "directly calls code we do not control" (ambiguous — our wrappers qualify) with the
+sidecar's precise "the exact signature the ABI dictates; one line in, already wrapped," and added the explicit
+refutation of the inversion. `Taskbar`'s `Native` now exposes `WindowHandle`-typed methods; `IntPtr` lives
+only at its externs + the `.Value`/`new WindowHandle(...)` conversions. Do not restore the old phrasing.
+(`WindowEnumerator` in `WindowSnapshot.cs` still has the same leak — a known follow-up, like the handles the
+2026-05-31 note lists.)
+
+## 2026-06-04 — the `WindowHandle` wrapper was dropped; `HWND` is the handle currency now
+
+The `WindowHandle` one-field `IntPtr` wrapper this sidecar keeps citing as its worked example was deleted at
+the owner's request; Domain / Overlay / Composition / Windowing / tests now speak Vanara's `HWND` directly.
+This is **not** a reversal of the rule — and the distinction is the whole point of the rule, so read it
+precisely:
+
+- The rule wraps a primitive that is **meaningless** as a stand-in for a concept. `IntPtr`/`nint` is a bare
+  `void*` — it earns a wrapper because it denotes *nothing*. `HWND` is not that: it already IS "a window
+  handle," typed, with value equality and `HWND.NULL`. So `WindowHandle` denoted nothing `HWND` didn't and
+  bought only `HWND→IntPtr→WindowHandle` mapping noise (it wrapped `IntPtr`, not `HWND` — the relationship
+  had even decayed into a parallel re-wrap).
+- Owner's framing: the concern was never "a library type appears in our code" — taken seriously that forces
+  wrapping countless things — it is **conceptual corruption**, and `HWND` does not corrupt.
+
+So the wrapper test is sharper than "is it a bare primitive / library type": **does the wrapper denote
+something the existing type does not?** For `IntPtr` → yes (any concept at all, vs none). For `HWND` → no. A
+domain handle type becomes warranted again ONLY if it carries a narrower **enforced invariant** (e.g. "a
+top-level window we manage," minted solely by the `Window` enumerators) or real behavior — neither of which
+the old `WindowHandle` had. Do not "fix" `HWND` flowing through Domain by re-introducing a wrapper; that is
+the thing this change removed.
+
+The boundary itself still holds — only the type crossing it changed. `IntPtr` lives solely at the dictated
+ABI edges (WPF `HandleRef`, `SafeHWND.DangerousGetHandle()`, Slions `VirtualDesktop.*(IntPtr)`, Vortice
+`CreateTargetForHwnd(IntPtr)`), each with an explicit `HWND→IntPtr` cast. The `WindowHandle` mentions in the
+sections above are now historical; the `WindowEnumerator` follow-up is moot (that type no longer exists).

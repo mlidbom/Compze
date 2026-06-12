@@ -1,5 +1,9 @@
 ---
-applyTo: "specifications/**/*.cs,**/*.Specifications/**/*.cs,test/**/*.cs,**/*.Tests/**/*.cs"
+paths:
+  - "specifications/**/*.cs"
+  - "**/*.Specifications/**/*.cs"
+  - "test/**/*.cs"
+  - "**/*.Tests/**/*.cs"
 ---
 
 # C# Specifications (Test) Code Conventions for all repositories

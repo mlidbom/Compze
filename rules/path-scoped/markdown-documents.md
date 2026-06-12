@@ -1,5 +1,6 @@
 ---
-applyTo: "*.md"
+paths:
+  - "**/*.md"
 ---
 
 # Markdown Document Rules

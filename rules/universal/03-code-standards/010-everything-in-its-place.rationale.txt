@@ -1,0 +1,35 @@
+# Rationale — everything in its proper place
+
+## The junk-drawer / technical-trait test (provenance)
+
+Added 2026-05-31 after a multi-agent style review of `Vantage/` let `NativeMethods` — an unbounded bag of
+unrelated P/Invokes (windowing, DWM, foreground-lock, keyboard hook, GDI, …) — pass completely clean. This
+is the evidence, because it shows *how a careful adversarial review still missed it*, which is what the
+wording is built to defeat:
+
+- The Interop inventory agent **explicitly saw it** and cleared it anyway. Verbatim: *"`NativeMethods` is a
+  single grouped bag of P/Invoke declarations — but that is precisely the recognized, conventional purpose of
+  a `NativeMethods` interop file … It is cohesive as the native ABI surface. Not a bag of unrelated
+  abstractions in the rule's sense."* Final verdict: *"The file is clean."*
+- Two escapes did the damage:
+  1. **Naming the drawer.** "The native ABI surface" reframes a shared *trait* ("these are all P/Invokes") as
+     a single *abstraction*, so the single-abstraction test passes vacuously. The rule's test — *if the only
+     honest one-line summary of a type is the trait its members share, it fails* — is the antidote. Do not
+     weaken it.
+  2. **Convention as authority.** The agent deferred to the `NativeMethods` idiom (Microsoft analyzer CA1060
+     literally tells you to consolidate P/Invokes into one `NativeMethods` class). That escape is rebutted by
+     `01-priorities` `## Convention`, not here — see `01-priorities.rationale.txt`.
+
+## A third contributor (not in the rule body, but the lesson for any review *harness*)
+
+The review's own area description fed the blind spot: agents were told *"Interop — P/Invoke confined here,"*
+and quoted that back as justification. A reusable review harness must describe each area by its
+**responsibility**, never assert that a technical grouping *is* its abstraction. (Encoded in the
+team-review-and-fix-code-standard-issues skill, not here.)
+
+## Rejected alternative
+
+A carve-out exempting `NativeMethods` / CA1060. **Rejected.** The owner chose split-by-domain: native calls
+live with or behind the domain type they serve. Grouping-by-technical-property has **no** exception in this
+codebase. Pairs with a deferred code refactor (split `NativeMethods`; stop framing Interop as a confinement
+bucket).
