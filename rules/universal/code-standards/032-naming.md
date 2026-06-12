@@ -1,6 +1,6 @@
 # Renaming is the most important refactoring there is.
 The full principle lives in
-[012-renaming-is-the-most-important-refactoring](../012-renaming-is-the-most-important-refactoring.md);
+[012-renaming-is-the-most-important-refactoring](012-renaming-is-the-most-important-refactoring.md);
 this file is the naming how-to.
 
 # Avoid abbreviations

@@ -14,13 +14,6 @@ re-creates the coupling somewhere else. Invert the order:
 
 This is conceptual-coherence-first (010–013) applied as an operational *sequence*, not just a review lens.
 
-## When given full delegation ("use your own judgment, keep going until it is actually good")
-
-Take it literally: make the design calls; work in increments that each build clean and pass the full suite;
-commit each increment with a commit message that records the *why*; record decisions and the as-built design in
-the repo's docs as you go; and collect taste/naming questions into a follow-ups list to surface at the end
-instead of stopping to ask. Optimize for a design a human can divide and conquer mentally — intuitive
-object-oriented units — never merely for "works".
-
 Pairs with [renaming-is-the-most-important-refactoring](012-renaming-is-the-most-important-refactoring.md).
-Provenance and the full case study: see the .rationale.txt sidecar.
+Provenance and the full case study: see the .rationale.txt sidecar. (The "when given full delegation"
+working mode that emerged from the same case lives in the collaboration rules — it is not a code standard.)

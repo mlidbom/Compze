@@ -131,7 +131,7 @@ TReturn Read<TReturn>(Func<TReturn> func, TimeSpan? timeout = null)
 
 ## XML doc comments
 
-- Follow [documentation-comments](../universal/03-code-standards/040-documentation-comments.md): a
+- Follow [documentation-comments](../universal/code-standards/060-documentation-comments.md): a
   plain-language `<summary>` floor, why-first `<remarks>`, build-validated `<see cref>`s, and a comment on
   every member whose name alone doesn't tell a codebase-newcomer what it's for.
 

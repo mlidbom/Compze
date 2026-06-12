@@ -35,7 +35,7 @@ Keep each rule `.md` lean — only what helps you **follow** the rule (the instr
 *why* that lets you generalize it to cases the wording didn't enumerate). Anything needed only when
 **changing** the rule — provenance, the evidence behind it, rejected alternatives, "don't undo this
 because…" — goes in a sidecar named `<rule>.rationale.txt` (the rule's base name with the `.md` dropped and
-`.rationale.txt` appended — e.g. `030-defensive-coding.md` → `030-defensive-coding.rationale.txt`).
+`.rationale.txt` appended — e.g. `051-defensive-coding.md` → `051-defensive-coding.rationale.txt`).
 
 - **Self-documenting and co-located.** "rationale" in the name says what it is at a glance, and the shared
   prefix sorts it directly beneath its rule, so humans see it in the tree. The `.txt` extension keeps it out
@@ -47,4 +47,4 @@ because…" — goes in a sidecar named `<rule>.rationale.txt` (the rule's base 
   signal to drop to plain prose. The agent and humans still read it as Markdown — as with every `.txt` doc in
   this folder (the `README.txt` too).
 
-Worked example: `universal/03-code-standards/030-defensive-coding.rationale.txt`.
+Worked example: `universal/code-standards/051-defensive-coding.rationale.txt`.

@@ -15,8 +15,8 @@ The operational test — you understand the code by reading names, never by deco
 - **A method:** you never stop to work out what a line or section does. Anything not obvious as it stands is
   extracted behind a name that makes the caller read as plain truth — recursively, all the way down.
 
-The how-to lives in [everything-in-its-place](03-code-standards/010-everything-in-its-place.md) and
-[naming](03-code-standards/011-naming.md). This file only ranks it: it outranks everything below.
+The how-to lives in [everything-in-its-place](031-everything-in-its-place.md) and
+[naming](032-naming.md). This file only ranks it: it outranks everything below.
 
 ## Traps. Never trade the above for these.
 
@@ -24,7 +24,7 @@ The how-to lives in [everything-in-its-place](03-code-standards/010-everything-i
 The default failure mode, and the one that most fights the goal. Extract every time it reads clearer — reuse
 count is irrelevant, "used once" is no reason to inline. YAGNI withholds only speculative *behavior nothing
 calls*, never an extraction-for-clarity or the right kind of type — see
-[standard-wisdom-traps](03-code-standards/025-standard-wisdom-traps.md).
+[standard-wisdom-traps](040-standard-wisdom-traps.md).
 
 ### Keeping a name short
 A name is as long as it needs to be for instant understanding and full conceptual clarity — never shorter.
