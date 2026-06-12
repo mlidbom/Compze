@@ -30,9 +30,6 @@ calls*, never an extraction-for-clarity or the right kind of type — see
 A name is as long as it needs to be for instant understanding and full conceptual clarity — never shorter.
 Brevity is a tie-breaker between equally clear names, never a reason to sacrifice clarity.
 
-### Performance
-Performance does not even enter the picture until an actual user notices that something feels slow.
-
 ### Avoiding large refactorings
 Total restructurings are not just fine, but encouraged, as long as the resulting code reads clearer.
 
