@@ -36,8 +36,6 @@ object-oriented units — never merely for "works".
 - **REFUSE to start work when you lack what you need to succeed.** If the target design is unclear, if you
   don't know what the end state should look like, if the instructions leave a fundamental gap — SAY SO
   immediately. Do not guess.
-- **Moving files is not separating concerns.** If you would need to add a cross-reference back to make it
-  compile, the dependency hasn't changed — call this out.
 - **Ask the design question upfront.** When structural work requires a design decision you cannot make
   alone — stop and ask.
 - **Name what you don't know.** "I don't know how X should work after this change" is always preferable to
