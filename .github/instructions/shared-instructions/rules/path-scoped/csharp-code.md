@@ -1,5 +1,6 @@
 ---
-applyTo: "**/*.cs"
+paths:
+  - "**/*.cs"
 ---
 
 # C# Code Conventions for all repositories
@@ -25,8 +26,7 @@ applyTo: "**/*.cs"
 - **Expression bodies (`=>`)**: Prefer for single-expression methods, properties, constructors, and operators.
 - **Primary constructors**: Use when appropriate but create explicit fields for the arguments.  Do **NOT** use primary constructor argument capturing
 - **Access modifiers**: Omit default access modifiers. No explicit `private` on fields or methods; no explicit `internal` on classes. Only write modifiers that change the default.
-- **`readonly`**: Use on fields for immutable state. Use `readonly struct` and `readonly record struct` for value types.
-- **Records**: Use for true value objects. Prefer `record` or `readonly record struct` with positional syntax.
+- **`readonly`**: Use on fields for immutable state. Use `readonly struct` for value types.
 
 ## Naming
 
@@ -74,7 +74,7 @@ applyTo: "**/*.cs"
   ```
 
 
-### No Records
+## No Records
 - **Do not use `record` or `record struct`.**
 - Records encourage treating types as dumb data bags, discouraging proper OO design with encapsulation and behavior.
 - If value equality is genuinely needed, implement `IEquatable<T>` explicitly.

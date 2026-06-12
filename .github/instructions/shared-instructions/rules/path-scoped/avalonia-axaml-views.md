@@ -1,5 +1,7 @@
 ---
-applyTo: "**/*.axaml,**/*.axaml.cs"
+paths:
+  - "**/*.axaml"
+  - "**/*.axaml.cs"
 ---
 
 # Avalonia AXAML View Guidelines
