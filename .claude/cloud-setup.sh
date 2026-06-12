@@ -37,7 +37,7 @@
 # The csharp-lsp plugin itself is declared in .claude/settings.json
 # (enabledPlugins) so it auto-installs on session start. That path applies
 # both locally and in cloud — but the binary it needs is only installed by
-# this script, so locally users follow CLAUDE.workarounds.md.
+# this script, so locally users follow .claude/upstream-bug-workarounds.md.
 #
 # This script also drops a /etc/profile.d/ entry so DOTNET_ROOT and PATH are
 # set for every shell in subsequent sessions (matching the pattern used by
@@ -187,7 +187,7 @@ if [ -x "$CLAUDE_BIN" ]; then
    "$CLAUDE_BIN" plugin install csharp-lsp@claude-plugins-official >&2 \
       || log "warning: csharp-lsp plugin install failed"
 
-   # csharp-lsp workaround per CLAUDE.workarounds.md: until claude-code#16360
+   # csharp-lsp workaround per .claude/upstream-bug-workarounds.md: until claude-code#16360
    # ships `workspace/configuration`, the plugin can't tell csharp-ls which
    # solution to load via env alone. Drop a `.lsp.json` in the plugin cache
    # that pins `--solution` to ${CLAUDE_PROJECT_DIR}/${CSHARP_LSP_SOLUTION_REL}
