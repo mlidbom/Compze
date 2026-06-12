@@ -8,7 +8,7 @@ description: >-
   needs no temp files, so don't reach for this slower tool just for warnings. Use this skill when you need
   severities BELOW warning, the whole solution at once, no running IDE, or a non-.NET language (Python /
   JS-TS / Java-Kotlin / Go / SQL via that IDE's `inspect` CLI; .NET via `jb inspectcode`). Not for:
-  navigation (LSP tool) or refactor/build (IDE MCP).
+  navigation or refactor/build (use the code-intelligence MCPs).
 ---
 
 # JetBrains code inspection (headless, all severities)
