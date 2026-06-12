@@ -1,10 +1,11 @@
 ---
-applyTo: "**/*.csproj,**/Directory.Build.props,**/FlexRef.config.xml"
+paths:
+  - "**/*.csproj"
+  - "**/Directory.Build.props"
+  - "**/FlexRef.config.xml"
 ---
 
 # FlexRef — Flexible Project/Package References
-
-Applies to: `**/*.csproj`, `**/Directory.Build.props`, `**/FlexRef.config.xml`
 
 ## What It Is
 

@@ -1,6 +1,6 @@
 # BDD-Style Test Migration Plan
 
-Track the migration of flat-style tests to BDD-style nested specification classes per [csharp-tests.instructions.md](../.github/instructions/shared-instructions/csharp-tests.instructions.md).
+Track the migration of flat-style tests to BDD-style nested specification classes per [csharp-bdd-specifications.md](../../.claude-shared/rules/path-scoped/csharp-bdd-specifications.md).
 
 ## Current State Summary
 
