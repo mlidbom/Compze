@@ -59,6 +59,9 @@ function C-Build {
     
     # Ensure pluggable component configuration files exist before building
     C-Set-PluggableComponents -EnsureValid
+
+    # Fail loudly if the .claude/ symlinks into .claude-shared/ have degraded into plain files
+    C-Verify-ClaudeConfigSymlinks
     
     Push-Location $script:CompzeSrcRoot
     try {

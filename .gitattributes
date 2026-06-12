@@ -4,6 +4,14 @@
 * text=auto
 
 ###############################################################################
+# Symlinks into the .claude-shared catalog. Directory links need the
+# symlink=dir hint so Git for Windows creates them correctly regardless of
+# checkout order.
+###############################################################################
+.claude/rules/universal/03-code-standards symlink=dir
+.claude/skills/team-review-and-fix-code-standard-issues symlink=dir
+
+###############################################################################
 # Set default behavior for command prompt diff.
 #
 # This is need for earlier builds of msysgit that does not have it on by

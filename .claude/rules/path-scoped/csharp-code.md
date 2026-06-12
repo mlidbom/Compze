@@ -1,0 +1,1 @@
+../../../.claude-shared/rules/path-scoped/csharp-code.md
