@@ -11,7 +11,6 @@ it adopts from `.claude-shared/` into its own `.claude/`; the catalog itself aut
 | `rules/universal/` | Always-on rules (no `paths:` frontmatter) — the code standards, with `.rationale.txt` sidecars |
 | `rules/path-scoped/` | Rules with `paths:` frontmatter — injected only when matching files are touched |
 | `skills/` | Skills, one folder per skill |
-| `reference/` | Docs that are deliberately not rules (ReSharper inspection workflow, …) |
 | `git-scripts/` | Subtree sync + symlink verification scripts |
 
 How the rules loader works — include order, the sidecar convention, what loads when — is documented in
