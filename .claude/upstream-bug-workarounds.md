@@ -4,48 +4,31 @@ Active workarounds for upstream-tool bugs that affect this repo. Each section: t
 
 ---
 
-## C# language server (csharp-ls)
+## C# language server (csharp-ls) — cloud sessions only
 
-[anthropics/claude-code#16360](https://github.com/anthropics/claude-code/issues/16360) — Claude Code's LSP client doesn't implement `workspace/configuration`, so csharp-ls can't learn which solution to load and falls back to heuristics. It may index the wrong `.slnx` (this repo ships many — `Compze.Abstractions.slnx`, `Compze.Contracts.slnx`, etc.), causing `documentSymbol`, `findReferences`, or `hover` to miss symbols or report from the wrong subset.
+**Locally this path is retired.** Rider's ReSharper-backed MCPs (`resharper-joshua`, plus the built-in
+`jetbrains-rider` MCP) out-resolve csharp-ls in every dimension, so on dev machines the `csharp-lsp` plugin
+stays disabled and no csharp-ls runs. Cloud sessions have no Rider, so there — and only there — csharp-ls
+is provisioned as the C# intelligence fallback by [.claude/cloud-setup.sh](cloud-setup.sh).
 
-### The ideal config (once #16360 is fixed)
-
-`.claude/settings.json` declares the solution path; Claude Code forwards it via the standard LSP `workspace/configuration` channel. `lspSettings.csharp.solutionPathOverride` is already present as a forward-compatible no-op.
-
-### The workaround that does the work today
-
-Two files, both required:
-
-**1. Project-level `.claude/settings.json`** (git-tracked):
-```json
-{
-  "env": { "CSHARP_LSP_SOLUTION_REL": "src/Compze.AllProjects.slnx" }
-}
-```
-For a focused subset (e.g., `Compze.Contracts.slnx`), change the value.
-
-**2. User-global `~/.claude/plugins/cache/claude-plugins-official/csharp-lsp/<version>/.lsp.json`** (per-machine, not in any repo):
-```json
-{
-  "csharp": {
-    "command": "csharp-ls",
-    "args": ["--solution", "${CLAUDE_PROJECT_DIR}/${CSHARP_LSP_SOLUTION_REL}", "--loglevel", "info"],
-    "extensionToLanguage": { ".cs": "csharp", ".csx": "csharp" }
-  }
-}
-```
-
-**No comments in these JSON files** — Claude Code uses strict JSON. Use `"_comment"` keys if needed.
+The upstream bug still applies in cloud: [anthropics/claude-code#16360](https://github.com/anthropics/claude-code/issues/16360)
+— Claude Code's LSP client doesn't implement `workspace/configuration`, so csharp-ls can't learn which
+solution to load and falls back to heuristics, potentially indexing the wrong `.slnx` (this repo ships many
+— `Compze.Abstractions.slnx`, `Compze.Contracts.slnx`, etc.). The workaround lives entirely in
+`cloud-setup.sh`: it enables the plugin and sets `CSHARP_LSP_SOLUTION_REL` in the cloud container's
+gitignored `.claude/settings.local.json`, and drops a `.lsp.json` into the plugin cache that pins
+`--solution` to `${CLAUDE_PROJECT_DIR}/${CSHARP_LSP_SOLUTION_REL}`.
 
 ### When #16360 is fixed
 
-1. Delete the user-global `.lsp.json` from step 2.
-2. Delete the `env` block from `.claude/settings.json`.
-3. Verify `lspSettings.csharp.solutionPathOverride` takes over.
+Replace the `.lsp.json` write in `cloud-setup.sh` with `lspSettings.csharp.solutionPathOverride` in the
+cloud-written settings, and verify a cloud session resolves symbols from `Compze.AllProjects.slnx`.
 
-### Recognizing regression
+### Recognizing regression (cloud sessions)
 
-If C# semantic probes return "No symbols found" or symbols from the wrong subset, the user-global `.lsp.json` is missing or malformed. Claude Code's auto-managed plugin cache may clobber it on csharp-lsp plugin updates — recreate it.
+C# semantic probes return "No symbols found" or symbols from the wrong subset → the plugin-cache
+`.lsp.json` is missing or malformed (the auto-managed cache may clobber it on plugin updates — rebuild the
+environment snapshot so the setup script rewrites it).
 
 ---
 
