@@ -205,6 +205,7 @@ Attribute on the same line as the method:
 ## Setup & Teardown
 
 - Set up state in the **constructor** — not in a `[SetUp]` or separate method. In specifications, each nesting level's constructor adds its own context.
+- Async setup is the exception: tests that need it (e.g. `await Host.StartAsync()`) use the async lifecycle override the base class provides (`InitializeAsyncInternal()` in Compze's `UniversalTestBase`, or xUnit's `IAsyncLifetime`) — constructors cannot await.
 
 ## Async Specifications
 
