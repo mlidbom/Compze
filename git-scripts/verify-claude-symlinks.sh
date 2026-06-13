@@ -1,22 +1,28 @@
 #!/bin/sh
-# Verifies that every symlink git tracks under .claude/ is a real symlink in the working tree that resolves
-# to an existing target.
+# Verifies that every symlink the committed tree (HEAD) carries under .claude/ is a real symlink in the
+# working tree that resolves to an existing target.
 #
 # Guards against the silent failure mode where a checkout with core.symlinks=false (or no Developer Mode on
 # Windows) materializes committed symlinks as plain text files containing the target path — which Claude Code
 # would then load as garbage rules/skills without complaint.
 #
-# POSIX sh + git only, no PowerShell dependency, so it runs as a SessionStart hook on Windows (Git Bash),
-# Linux, and macOS. Mount-agnostic: derives the repo root from git via this script's own location. Silent on
-# success; exits non-zero with fix instructions on stderr on failure. (PowerShell twin for build scripts:
-# verify-claude-symlinks.ps1.)
+# POSIX sh + git only, no PowerShell dependency. Mount-agnostic: derives the repo root from git via this
+# script's own location. Silent on success; on failure exits non-zero with fix instructions on stderr — the
+# right contract for a build/CI gate. NOTE for SessionStart hooks: a SessionStart hook reaches the agent ONLY
+# via stdout on exit 0 (stderr on a non-zero exit goes to the user, never the agent, and cannot block the
+# session), so the hook is wired through the adapter verify-claude-symlinks.sessionstart-hook.sh, which
+# re-emits this failure on stdout. (PowerShell twin for build scripts: verify-claude-symlinks.ps1.)
 set -eu
 
 script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 repo=$(git -C "$script_dir" rev-parse --show-toplevel)
 
-# git ls-files -s prints: "<mode> <sha> <stage>\t<path>" — symlinks are mode 120000; the path follows a TAB.
-symlinks=$(git -C "$repo" ls-files -s -- .claude | grep '^120000 ' | cut -f2-)
+# The committed tree (HEAD) — not the index — is the source of truth for which paths are symlinks. A degraded
+# checkout can leave the index ALSO recording a path as a plain file (mode 100644, once the materialized plain
+# file is staged); reading the index would then drop that path from the checklist and miss the very corruption
+# we exist to catch. git ls-tree -r HEAD prints "<mode> <type> <sha>\t<path>" — symlinks are mode 120000; the
+# path follows a TAB.
+symlinks=$(git -C "$repo" ls-tree -r HEAD -- .claude | grep '^120000 ' | cut -f2-)
 
 broken=''
 while IFS= read -r path; do
@@ -41,7 +47,7 @@ $broken
 Fix:
   1. Turn on Windows Developer Mode (Settings > System > For developers) so symlinks can be created without elevation.
   2. git config core.symlinks true     (add --global to cover future clones)
-  3. Restore the links: git checkout -- .claude
+  3. Restore the links: git restore --source=HEAD --staged --worktree -- .claude
 EOF
 # Exit 2 so a SessionStart hook surfaces the stderr message instead of failing silently.
 exit 2

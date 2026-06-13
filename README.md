@@ -67,13 +67,21 @@ for Windows creates them correctly regardless of checkout order.
 
 ### Verifying
 
-Two equivalent verifiers check that every git-tracked symlink under `.claude/` is a real, resolving symlink
-and fail with fix instructions otherwise — silent on success:
+The verifier checks that every symlink the committed tree (HEAD) carries under `.claude/` is a real, resolving
+symlink and reports the broken ones otherwise — silent on success. Two implementations of the same check:
 
 - [git-scripts/verify-claude-symlinks.ps1](git-scripts/verify-claude-symlinks.ps1) — PowerShell, for Windows
-  build/setup scripts.
+  build/setup scripts (throws on failure).
 - [git-scripts/verify-claude-symlinks.sh](git-scripts/verify-claude-symlinks.sh) — POSIX sh + git, no
-  PowerShell dependency, for a cross-platform Claude Code `SessionStart` hook.
+  PowerShell dependency (exits non-zero with its message on stderr on failure).
+
+Both report failures the build/CI way: non-zero exit + stderr. That is the wrong shape for a `SessionStart`
+hook, which reaches the agent ONLY via stdout on exit 0 — stderr on a non-zero exit goes to the user, never
+the agent, and cannot block the session. So the hook is wired through an adapter:
+
+- [git-scripts/verify-claude-symlinks.sessionstart-hook.sh](git-scripts/verify-claude-symlinks.sessionstart-hook.sh)
+  — runs the `.sh` verifier and, on failure, re-emits its message on stdout (exit 0) so the warning actually
+  lands in the agent's context at session start.
 
 Wire one into the consuming repo so a degraded checkout fails loudly:
 
@@ -89,15 +97,15 @@ Wire one into the consuming repo so a degraded checkout fails loudly:
     "SessionStart": [
       { "hooks": [
           { "type": "command",
-            "command": "bash \"${CLAUDE_PROJECT_DIR}/.claude-shared/git-scripts/verify-claude-symlinks.sh\"" }
+            "command": "bash \"${CLAUDE_PROJECT_DIR}/.claude-shared/git-scripts/verify-claude-symlinks.sessionstart-hook.sh\"" }
       ] }
     ]
   }
   ```
 
-  The `.sh` exits 2 with its message on stderr, which Claude Code surfaces at session start. `bash` runs the
-  hook via Git Bash on Windows and natively on Linux/macOS; the quoted `${CLAUDE_PROJECT_DIR}` path resolves
-  in both (Claude Code expands the variable before spawning the shell).
+  The adapter injects its warning into the agent's context via stdout on exit 0 — the only `SessionStart`
+  channel the agent sees. `bash` runs the hook via Git Bash on Windows and natively on Linux/macOS; the quoted
+  `${CLAUDE_PROJECT_DIR}` path resolves in both (Claude Code expands the variable before spawning the shell).
 
 ## Syncing
 
