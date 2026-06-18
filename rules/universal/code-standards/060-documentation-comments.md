@@ -159,7 +159,7 @@ stating the purpose in plain words.** A fully-crefed comment can still be useles
 - **Make sure to use the semantic XML tags** — they carry meaning the tooling acts on: `<summary>`, `<remarks>`,
   `<see cref>` / `<seealso>`, `<param>` / `<paramref>`, `<typeparam>` / `<typeparamref>`, `<returns>`,
   `<exception>`, `<inheritdoc>`.
-- A long single-line summary is hard to read — break it across lines with <br/>.
+- A long single-line is hard to read — break it across lines with <br/>.
 
 ## 6. Crefs are build-validated — keep them green
 
@@ -190,9 +190,7 @@ tie-breaker, never a goal that overrides being understood.
 
 ## 9. Which members get a comment — and why the length is free
 
-The IDE collapses every doc comment to its **first line** until you hover or expand it. So the cost you'd
-normally weigh — "is a comment here worth the vertical space?" — isn't real: folded, it's one line no matter
-how long the comment is, and the rest is opt-in. That flips the default toward documenting more, not less.
+The IDE collapses every doc comment to its **first line** until you hover or expand it. That flips the default toward documenting more, not less.
 
 - **Document every member unless it is trivial *by its name, to the readers in §0*** — not to a C# expert.
   `Commit()`, `Pin()`, `Cloak()`, `CreateTarget()`, `DefaultProcessing()` look trivial to anyone who knows the
