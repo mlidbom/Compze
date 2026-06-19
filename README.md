@@ -1,5 +1,7 @@
 ## Compze: Expressive domains through Teventive programming and Typermedia APIs
 
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/mlidbom)
+
 ### Teventive programming
 
 Leveraging .NET type compatibility enables an event modeling paradigm which:
