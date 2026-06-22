@@ -1,6 +1,6 @@
 using Compze.Abstractions.Public;
-using Compze.Core.Tessaging.Teventive.Public;
-using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
+using Compze.Tessaging.Teventive.Public;
+using Compze.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Tests.Infrastructure.XUnit;
 using JetBrains.Annotations;
 using Newtonsoft.Json;

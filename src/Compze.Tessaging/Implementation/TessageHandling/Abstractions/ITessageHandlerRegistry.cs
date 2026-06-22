@@ -1,6 +1,6 @@
 using Compze.TypeIdentifiers;
 using Compze.Abstractions.Tessaging.Public;
-using Compze.Core.Tessaging.Teventive.Public;
+using Compze.Tessaging.Teventive.Public;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 

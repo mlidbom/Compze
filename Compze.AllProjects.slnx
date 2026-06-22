@@ -230,4 +230,6 @@
   <Project Path="src/Compze.Internals.Transport.AspNet/Compze.Internals.Transport.AspNet.csproj" />
   <Project Path="src/Compze.Hosting/Compze.Hosting.csproj" />
   <Project Path="src/Compze.Hosting.Testing/Compze.Hosting.Testing.csproj" />
+  <Project Path="src/Compze.Teventive/Compze.Teventive.csproj" />
+  <Project Path="src/Compze.Teventive.TeventStore.Abstractions/Compze.Teventive.TeventStore.Abstractions.csproj" />
 </Solution>

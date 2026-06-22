@@ -8,9 +8,9 @@ using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.TransactionsCE;
 using System.Transactions;
-using Compze.Core.Tessaging.Teventive.Public;
-using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
-using Compze.Core.Tessaging.Teventive.TeventStore.Public;
+using Compze.Tessaging.Teventive.Public;
+using Compze.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
+using Compze.Tessaging.Teventive.TeventStore.Public;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Must;
 

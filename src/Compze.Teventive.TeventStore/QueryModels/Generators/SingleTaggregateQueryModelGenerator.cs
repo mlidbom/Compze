@@ -1,9 +1,9 @@
 using Compze.Abstractions.Public;
-using Compze.Core.Tessaging.Teventive.Public;
-using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
-using Compze.Core.Tessaging.Teventive.TeventStore.Public;
-using Compze.Core.Tessaging.Teventive.TeventStore.QueryModels;
-using Compze.Core.Tessaging.Teventive.TeventStore.QueryModels.Generators.Public;
+using Compze.Tessaging.Teventive.Public;
+using Compze.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
+using Compze.Tessaging.Teventive.TeventStore.Public;
+using Compze.Tessaging.Teventive.TeventStore.QueryModels;
+using Compze.Tessaging.Teventive.TeventStore.QueryModels.Generators.Public;
 using Compze.Internals.SystemCE.LinqCE;
 using Compze.Internals.SystemCE.ReflectionCE;
 using JetBrains.Annotations;

@@ -1,6 +1,6 @@
-using Compze.Core.Tessaging.Teventive.Internal.Implementation;
-using Compze.Core.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public;
-using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
+using Compze.Tessaging.Teventive.Internal.Implementation;
+using Compze.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public;
+using Compze.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Tests.Infrastructure;
 using Compze.Must;
 using Compze.xUnitBDD;

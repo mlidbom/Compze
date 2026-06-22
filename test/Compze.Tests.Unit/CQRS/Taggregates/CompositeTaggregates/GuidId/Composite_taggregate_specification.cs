@@ -1,5 +1,5 @@
 using Compze.Abstractions.Public;
-using Compze.Core.Tessaging.Teventive.Public;
+using Compze.Tessaging.Teventive.Public;
 using Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId.Domain;
 using Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId.Domain.Tevents;
 using Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId.QueryModels;

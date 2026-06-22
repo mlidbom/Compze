@@ -1,6 +1,6 @@
 using Compze.TypeIdentifiers;
-using Compze.Core.Serialization.Internal;
-using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
+using Compze.Tessaging.Teventive.TeventStore.Internal;
+using Compze.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Newtonsoft.Json;

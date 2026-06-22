@@ -1,5 +1,5 @@
-using Compze.Core.Tessaging.Teventive.Public;
-using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
+using Compze.Tessaging.Teventive.Public;
+using Compze.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Typermedia.Client;
 using Compze.Abstractions.Hosting.Public;
 using Compze.Tessaging.Teventive.TeventStore.Wiring;

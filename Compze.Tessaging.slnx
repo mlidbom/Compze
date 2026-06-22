@@ -7,6 +7,8 @@
   <Project Path="src/Compze.Tessaging.MySql/Compze.Tessaging.MySql.csproj" />
   <Project Path="src/Compze.Tessaging.PostgreSql/Compze.Tessaging.PostgreSql.csproj" />
   <Project Path="src/Compze.Tessaging.Sqlite/Compze.Tessaging.Sqlite.csproj" />
+  <Project Path="src/Compze.Teventive/Compze.Teventive.csproj" />
+  <Project Path="src/Compze.Teventive.TeventStore.Abstractions/Compze.Teventive.TeventStore.Abstractions.csproj" />
   <Project Path="src/Compze.Teventive.TeventStore/Compze.Teventive.TeventStore.csproj" />
   <Project Path="src/Compze.Teventive.TeventStore.MicrosoftSql/Compze.Teventive.TeventStore.MicrosoftSql.csproj" />
   <Project Path="src/Compze.Teventive.TeventStore.MySql/Compze.Teventive.TeventStore.MySql.csproj" />

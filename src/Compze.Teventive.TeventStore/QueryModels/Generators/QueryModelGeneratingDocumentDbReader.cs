@@ -1,7 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Compze.DocumentDb.Infrastructure;
 using Compze.Abstractions.Public;
-using Compze.Core.Tessaging.Teventive.TeventStore.QueryModels.Generators.Public;
+using Compze.Tessaging.Teventive.TeventStore.QueryModels.Generators.Public;
 using Compze.Internals.SystemCE.UsageGuards;
 using Compze.Contracts;
 

@@ -1,7 +1,7 @@
 using Compze.Abstractions.Public;
-using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
+using Compze.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using JetBrains.Annotations;
-using Compze.Core.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public;
+using Compze.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public;
 // ReSharper disable ClassNeverInstantiated.Global
 
 // ReSharper disable MemberHidesStaticFromOuterClass

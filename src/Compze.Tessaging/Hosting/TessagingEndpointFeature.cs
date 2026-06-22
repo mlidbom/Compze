@@ -1,6 +1,6 @@
 using Compze.Abstractions.Configuration.Internal;
 using Compze.Abstractions.Hosting.Public;
-using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
+using Compze.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Transport;

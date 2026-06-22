@@ -116,8 +116,12 @@
     <UsePackageReference_Compze_Tessaging_Sqlite Condition="'$(UsePackageReference_Compze_Tessaging_Sqlite)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Tessaging.Sqlite.csproj|'))">true</UsePackageReference_Compze_Tessaging_Sqlite>
     <!-- Compze.Tests.Infrastructure -->
     <UsePackageReference_Compze_Tests_Infrastructure Condition="'$(UsePackageReference_Compze_Tests_Infrastructure)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Tests.Infrastructure.csproj|'))">true</UsePackageReference_Compze_Tests_Infrastructure>
+    <!-- Compze.Teventive -->
+    <UsePackageReference_Compze_Teventive Condition="'$(UsePackageReference_Compze_Teventive)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Teventive.csproj|'))">true</UsePackageReference_Compze_Teventive>
     <!-- Compze.Teventive.TeventStore -->
     <UsePackageReference_Compze_Teventive_TeventStore Condition="'$(UsePackageReference_Compze_Teventive_TeventStore)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Teventive.TeventStore.csproj|'))">true</UsePackageReference_Compze_Teventive_TeventStore>
+    <!-- Compze.Teventive.TeventStore.Abstractions -->
+    <UsePackageReference_Compze_Teventive_TeventStore_Abstractions Condition="'$(UsePackageReference_Compze_Teventive_TeventStore_Abstractions)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Teventive.TeventStore.Abstractions.csproj|'))">true</UsePackageReference_Compze_Teventive_TeventStore_Abstractions>
     <!-- Compze.Teventive.TeventStore.MicrosoftSql -->
     <UsePackageReference_Compze_Teventive_TeventStore_MicrosoftSql Condition="'$(UsePackageReference_Compze_Teventive_TeventStore_MicrosoftSql)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Teventive.TeventStore.MicrosoftSql.csproj|'))">true</UsePackageReference_Compze_Teventive_TeventStore_MicrosoftSql>
     <!-- Compze.Teventive.TeventStore.MySql -->

@@ -1,5 +1,5 @@
 using Compze.Abstractions.Tessaging.Public;
-using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
+using Compze.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Internals.Transport;
 using Compze.TypeIdentifiers;
 using Compze.Typermedia.Client;

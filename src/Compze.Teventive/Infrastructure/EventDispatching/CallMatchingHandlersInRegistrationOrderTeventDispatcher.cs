@@ -1,0 +1,92 @@
+// ReSharper disable ForCanBeConvertedToForeach this file needs these optimizations...
+
+using Compze.Abstractions.Tessaging.Public;
+using Compze.Tessaging.Teventive.Public;
+using Compze.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
+
+// ReSharper disable StaticMemberInGenericType
+
+namespace Compze.Tessaging.Teventive.Infrastructure.EventDispatching;
+
+/// <summary>
+/// Calls all matching handlers in the order they were registered when an tevent is Dispatched.
+/// Handlers should be registered using the RegisterHandlers method in the constructor of the inheritor.
+/// </summary>
+public partial class CallMatchingHandlersInRegistrationOrderTeventDispatcher<TTevent> : IMutableTeventDispatcher<TTevent>
+   where TTevent : class, ITevent
+{
+   readonly List<RegisteredHandler> _handlers = [];
+   readonly List<Action<object>> _runBeforeHandlers = [];
+   readonly List<Action<object>> _runAfterHandlers = [];
+   readonly HashSet<Type> _ignoredTevents = [];
+   int _totalHandlers;
+   Dictionary<Type, Action<ITevent>[]> _typeToHandlerCache = new();
+   int _cachedTotalHandlers;
+   // ReSharper disable once StaticMemberInGenericType
+   static readonly Action<ITevent>[] NullHandlerList = [];
+
+   public ITeventHandlerRegistrar<TTevent> Register() => new RegistrationBuilder(this);
+
+
+   //Urgent: Wrapping here seems arguable at best.
+   public void Dispatch(TTevent evt) => Dispatch((IPublisherIdentifyingTevent<TTevent>)PublisherTypeIdentifyingTevent.WrapTevent(evt));
+
+   public void Dispatch(IPublisherIdentifyingTevent<TTevent> wrapped)
+   {
+      var handlers = GetHandlers(wrapped.GetType());
+      for(var i = 0; i < handlers.Length; i++)
+      {
+         handlers[i](wrapped);
+      }
+   }
+
+   public bool Handles(TTevent tevent) => GetHandlers(tevent.GetType(), validateHandlerExists: false).Any();
+
+   Action<ITevent>[] GetHandlers(Type type, bool validateHandlerExists = true)
+   {
+      if(_cachedTotalHandlers != _totalHandlers)
+      {
+         _cachedTotalHandlers = _totalHandlers;
+         _typeToHandlerCache = new Dictionary<Type, Action<ITevent>[]>();
+      }
+
+      if(_typeToHandlerCache.TryGetValue(type, out var arrayResult))
+      {
+         return arrayResult;
+      }
+
+      var result = new List<Action<ITevent>>();
+      var hasFoundHandler = false;
+
+      // ReSharper disable once ForeachCanBePartlyConvertedToTueryUsingAnotherGetEnumerator
+      foreach(var registeredHandler in _handlers)
+      {
+         var handler = registeredHandler.TryCreateHandlerFor(type);
+         if(handler != null)
+         {
+            if(!hasFoundHandler)
+            {
+               result.AddRange(_runBeforeHandlers);
+               hasFoundHandler = true;
+            }
+
+            result.Add(handler);
+         }
+      }
+
+      if(hasFoundHandler)
+      {
+         result.AddRange(_runAfterHandlers);
+      } else
+      {
+         if(validateHandlerExists && !_ignoredTevents.Any(ignoredTeventType => ignoredTeventType.IsAssignableFrom(type)))
+         {
+            throw new TeventUnhandledException(GetType(), type);
+         }
+
+         return _typeToHandlerCache[type] = NullHandlerList;
+      }
+
+      return _typeToHandlerCache[type] = result.ToArray();
+   }
+}

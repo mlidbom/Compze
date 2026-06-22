@@ -51,7 +51,9 @@
       <Value>UsePackageReference_Compze_Tessaging_PostgreSql = true</Value>
       <Value>UsePackageReference_Compze_Tessaging_Sqlite = true</Value>
       <Value>UsePackageReference_Compze_Tests_Infrastructure = true</Value>
+      <Value>UsePackageReference_Compze_Teventive = true</Value>
       <Value>UsePackageReference_Compze_Teventive_TeventStore = true</Value>
+      <Value>UsePackageReference_Compze_Teventive_TeventStore_Abstractions = true</Value>
       <Value>UsePackageReference_Compze_Teventive_TeventStore_MicrosoftSql = true</Value>
       <Value>UsePackageReference_Compze_Teventive_TeventStore_MySql = true</Value>
       <Value>UsePackageReference_Compze_Teventive_TeventStore_PostgreSql = true</Value>

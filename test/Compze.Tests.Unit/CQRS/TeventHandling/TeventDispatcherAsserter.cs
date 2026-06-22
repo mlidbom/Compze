@@ -1,5 +1,5 @@
 using Compze.Abstractions.Tessaging.Public;
-using Compze.Core.Tessaging.Teventive.Public;
+using Compze.Tessaging.Teventive.Public;
 using Compze.Must;
 
 namespace Compze.Tests.Unit.CQRS.TeventHandling;
