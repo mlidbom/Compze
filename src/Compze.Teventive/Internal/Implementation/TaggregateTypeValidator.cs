@@ -9,9 +9,6 @@ using JetBrains.Annotations;
 
 namespace Compze.Teventive.Internal.Implementation;
 
-[AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface)]
-public sealed class AllowPublicSettersAttribute : Attribute;
-
 static class TaggregateTypeValidator<TDomainClass, TTeventImplementation, TTevent>
 {
    public static void AssertStaticStructureIsValid()
@@ -63,7 +60,7 @@ static class TaggregateTypeValidator<TDomainClass, TTeventImplementation, TTeven
                                                                                     .ToList();
 }
 
-[UsedImplicitly] public class TaggregateTypeValidator : ITaggregateTypeValidator
+[UsedImplicitly] class TaggregateTypeValidator : ITaggregateTypeValidator
 {
    public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<ITaggregateTypeValidator>()

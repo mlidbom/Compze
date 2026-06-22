@@ -7,6 +7,11 @@
     <NoWarn>CS1591</NoWarn>
     <Description>The Teventive programming model for the Compze framework: taggregates, tevents and tevent dispatching.</Description>
   </PropertyGroup>
+   
+   <ItemGroup>
+      <InternalsVisibleTo Include="Compze.Teventive.TeventStore" />
+   </ItemGroup>
+   
   <!-- Compze.Abstractions — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Abstractions)' == 'true'">
     <PackageReference Include="Compze.Abstractions" Version="*-*" />

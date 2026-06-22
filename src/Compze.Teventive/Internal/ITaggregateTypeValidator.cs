@@ -1,6 +1,6 @@
 namespace Compze.Teventive.Internal;
 
-public interface ITaggregateTypeValidator
+interface ITaggregateTypeValidator
 {
    void AssertIsValid<TTaggregate>();
 }
