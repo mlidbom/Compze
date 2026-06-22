@@ -1,11 +1,11 @@
-using Compze.Core.Tessaging.Transport.Internal;
+using Compze.Abstractions.Hosting.Public;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
 
 namespace Compze.Tessaging.Implementation.TessageHandling.Abstractions;
 
 public interface IInbox
 {
-   EndPointAddress Address { get; }
+   EndpointAddress Address { get; }
    Task StartAsync();
    Task StopAsync();
 

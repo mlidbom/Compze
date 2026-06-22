@@ -1,19 +1,21 @@
 # Compze.Hosting
 
-Combined hosting for Tessaging and Typermedia endpoints — shared DI container, separate transports.
+Endpoint hosting for the Compze framework. This package knows nothing of Tessaging, Typermedia, or any other
+capability — each plugs its pipeline into the endpoint builder as a feature, from its own package.
 
 ## What's in this package?
 
-- **`EndpointHost`** — Manages endpoint lifecycle (start/stop listening and sending)
-- **`Endpoint`** — A running endpoint with both tessaging and typermedia capabilities
-- **`ServerEndpointBuilder`** — Fluent builder for configuring endpoints with DI, message handlers, and typermedia handlers
+- **`EndpointHost`** — Manages endpoint lifecycle: all endpoints start listening before any starts sending
+- **`Endpoint`** — A running endpoint that drives the lifecycle of whatever components its features registered
+- **`ServerEndpointBuilder`** — The `IEndpointBuilder` implementation: container, type mapper, features, components
+- **`AppSettingsJsonConfigurationParameterProvider`** — Configuration parameters from `appsettings.json`
 
 ## Related packages
 
 | Package | Description |
 |---------|-------------|
-| [Compze.Tessaging](https://www.nuget.org/packages/Compze.Tessaging) | Messaging infrastructure |
-| [Compze.Typermedia](https://www.nuget.org/packages/Compze.Typermedia) | Typermedia API infrastructure |
+| [Compze.Tessaging](https://www.nuget.org/packages/Compze.Tessaging) | Messaging pipeline; plugs in via `AddTessaging()` / `RegisterTessagingHandlers` |
+| [Compze.Typermedia.Client](https://www.nuget.org/packages/Compze.Typermedia.Client) | Typermedia pipeline; plugs in via `AddTypermedia()` / `RegisterTypermediaHandlers` |
 
 ## License
 

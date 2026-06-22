@@ -1,9 +1,9 @@
 using Compze.Abstractions.Tessaging.Public;
-using Compze.Core.Tessaging.Transport.Internal;
+using Compze.Abstractions.Hosting.Public;
 
 namespace Compze.Internals.Transport;
 
 public interface IInfrastructureQueryTransport
 {
-   Task<TResult> GetAsync<TResult>(IQuery<TResult> query, EndPointAddress address);
+   Task<TResult> GetAsync<TResult>(IQuery<TResult> query, EndpointAddress address);
 }

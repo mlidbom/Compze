@@ -1,8 +1,8 @@
 using Compze.Internals.Sql.Common;
 using Compze.Internals.Sql.Common.Abstractions;
-using Compze.Tessaging.Hosting.Testing;
+using Compze.Hosting.Testing;
 using Compze.Internals.Testing;
-using Compze.Tessaging.Hosting.Testing.Wiring;
+using Compze.Tests.Common.Wiring;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.TypeIdentifiers;

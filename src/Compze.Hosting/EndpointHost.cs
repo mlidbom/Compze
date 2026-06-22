@@ -1,8 +1,4 @@
-using Compze.Abstractions.Tessaging.Hosting.Public;
-using Compze.Core.Tessaging.Hosting.Public;
-using Compze.Tessaging.Abstractions.Tessaging.Hosting.Public;
-using Compze.Tessaging.Implementation.Transport;
-using Compze.Tessaging.Implementation.Transport.Abstractions;
+using Compze.Abstractions.Hosting.Public;
 using Compze.Contracts;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
@@ -10,17 +6,23 @@ using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Hosting;
 
+///<summary>
+/// The <see cref="IEndpointHost"/> mechanism. It builds each endpoint from a fresh container (via the factory
+/// it was created with) and a <see cref="ServerEndpointBuilder"/>, and guarantees the host-wide phase
+/// ordering — every endpoint's listening components start before any endpoint's sending components (see
+/// <see cref="IEndpointComponent"/> for why). What an endpoint can actually do is decided by the features its
+/// setup callback adds; the host never knows.
+///
+/// Production hosts are created via <see cref="Production.Create"/>; tests use
+/// <c>TestingEndpointHost.Create</c> (Compze.Hosting.Testing), which subclasses this mechanism.
+///</summary>
 public class EndpointHost : IEndpointHost
 {
    readonly Func<IContainerBuilder> _containerFactory;
-   protected IList<IEndpoint> Endpoints { get; } = [];
-   internal ITessagesInFlightTracker TessagesInFlightTracker;
+   readonly List<IEndpoint> _endpoints = [];
+   public IReadOnlyList<IEndpoint> Endpoints => _endpoints;
 
-   protected EndpointHost(Func<IContainerBuilder> containerFactory)
-   {
-      _containerFactory = containerFactory;
-      TessagesInFlightTracker = new NullOpTessagesInFlightTracker();
-   }
+   protected EndpointHost(Func<IContainerBuilder> containerFactory) => _containerFactory = containerFactory;
 
    public static class Production
    {
@@ -31,12 +33,12 @@ public class EndpointHost : IEndpointHost
 
    IEndpoint InternalRegisterEndpoint(EndpointConfiguration configuration, Action<IEndpointBuilder> setup)
    {
-      var builder = new ServerEndpointBuilder(this, TessagesInFlightTracker, _containerFactory(), configuration);
+      var builder = new ServerEndpointBuilder(_containerFactory(), configuration);
       setup(builder);
 
       var endpoint = builder.Build();
 
-      Endpoints.Add(endpoint);
+      _endpoints.Add(endpoint);
       return endpoint;
    }
 

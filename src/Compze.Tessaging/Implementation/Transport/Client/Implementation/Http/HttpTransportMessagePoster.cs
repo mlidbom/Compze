@@ -1,4 +1,4 @@
-using Compze.Core.Tessaging.Transport.Internal;
+using Compze.Abstractions.Hosting.Public;
 using Compze.Internals.Transport;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.DependencyInjection;
@@ -36,7 +36,7 @@ class HttpTransportMessagePoster : ITransportMessagePoster
       }
    }
 
-   public async Task PostAsync(TransportTessage.OutGoing tessage, EndPointAddress endPointAddress) =>
+   public async Task PostAsync(TransportTessage.OutGoing tessage, EndpointAddress endPointAddress) =>
       await PostAsyncInternal(tessage, new Uri(endPointAddress.Uri, GetRelativeUriForTessage(tessage))).caf();
 
    async Task<HttpResponseMessage> PostAsyncInternal(TransportTessage.OutGoing tessage, Uri requestUri)

@@ -17,6 +17,7 @@ class AssemblyTypeMapper : IAssemblyTypeMapper
          .Map<Public.TaggregateId>("5d87bfa3-5f88-4d3b-8971-c994757286ce")
          .Map<Public.TessageId>("0469d68b-776e-4844-8766-1cec0a563e9c")
          .MapOpenGeneric(typeof(TessageTypes.Remotable.NonTransactional.Tueries.TaggregateLink<>), "e0f1a2b3-c4d5-4e6f-7a8b-9c0d1e2f3a4b")
-         .MapOpenGeneric(typeof(TessageTypes.Remotable.AtMostOnce.AtMostOnceTypermediaTommand<>), "f1a2b3c4-d5e6-4f7a-8b9c-0d1e2f3a4b5c");
+         .MapOpenGeneric(typeof(TessageTypes.Remotable.AtMostOnce.AtMostOnceTypermediaTommand<>), "f1a2b3c4-d5e6-4f7a-8b9c-0d1e2f3a4b5c")
+         .Map<Hosting.Public.EndpointAddress>("f2a3b4c5-d6e7-4f80-91a2-b3c4d5e6f7a8");
    }
 }

@@ -1,7 +1,7 @@
-using Compze.Abstractions.Tessaging.Hosting.Public;
-using Compze.Core.Tessaging.Hosting.Public;
+using Compze.Abstractions.Hosting.Public;
 using Compze.DependencyInjection;
-using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
+using Compze.Hosting.Testing;
+using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
@@ -23,7 +23,7 @@ public class TaskRunnerExceptionHandlingTests : UniversalTestBase
 
    public TaskRunnerExceptionHandlingTests()
    {
-      _host = TestingEndpointHost.Create();
+      _host = TestingEndpointHost.Create(new TessagingTestingEndpointHostFeature());
       var endpoint = _host.RegisterEndpoint("endpoint", new EndpointId(Guid.Parse("A1B2C3D4-E5F6-4748-9ABC-DEF012345678")), builder => builder.TypeMapper.RegisterIntegrationTestTypeMappings());
 
       _taskRunner = endpoint.ServiceLocator.Resolve<ITaskRunner>();

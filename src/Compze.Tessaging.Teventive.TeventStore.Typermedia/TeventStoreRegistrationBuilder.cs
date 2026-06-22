@@ -1,7 +1,7 @@
 using Compze.Core.Tessaging.Teventive.Public;
 using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
-using Compze.Hosting;
-using Compze.Tessaging.Abstractions.Tessaging.Hosting.Public;
+using Compze.Typermedia.Client;
+using Compze.Abstractions.Hosting.Public;
 using Compze.Tessaging.Teventive.TeventStore.Wiring;
 using Compze.Typermedia.HandlerRegistration;
 
@@ -14,7 +14,7 @@ public static class TeventStoreTypermediaRegistrar
       @this.TypeMapper.MapTypesFromAssemblyContaining<TeventStoreApi>();
       @this.TypeMapper.MapTypesFromAssemblyContaining<Compze.Tessaging.Teventive.TeventStore.TeventCache>();
       @this.Registrar.TeventStore(@this.Configuration.ConnectionStringName);
-      return new TeventStoreRegistrationBuilder(@this.RegisterTypermediaHandlers());
+      return new TeventStoreRegistrationBuilder(@this.RegisterTypermediaHandlers);
    }
 }
 

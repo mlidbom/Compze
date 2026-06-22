@@ -1,5 +1,5 @@
 using Compze.Abstractions.Configuration.Internal;
-using Compze.Tessaging.Configuration;
+using Compze.Hosting.Configuration;
 using Compze.Tests.Infrastructure;
 using Compze.Must;
 using Compze.xUnitBDD;

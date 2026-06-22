@@ -1,14 +1,14 @@
-using Compze.Tessaging.Hosting.Testing;
+using Compze.Hosting.Testing;
+using Compze.Hosting.Testing.Wiring;
 using Compze.Internals.Testing;
-using Compze.Tessaging.Hosting.Testing.Tessaging;
-using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
+using Compze.Tessaging.Hosting.Testing;
+using Compze.Typermedia.Hosting.Testing;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.LinqCE;
-using Compze.Abstractions.Tessaging.Hosting.Public;
-using Compze.Hosting;
-using Compze.Core.Tessaging.Hosting.Public;
+using Compze.Abstractions.Hosting.Public;
+using Compze.Tessaging.Hosting;
+using Compze.Typermedia.Client;
 using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
-using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tessaging.Teventive.TeventStore.Typermedia;
 using Compze.Tests.Infrastructure;
 using Compze.Underscore;
@@ -42,7 +42,7 @@ public abstract class EndpointHostTestBase : UniversalTestBase
    IReadOnlyList<IThreadGate> AllGates  { get; }
 
    protected IEndpoint BackendEndPoint { get; private set; } = null!;
-   TestClient Client { get; set; } = null!;
+   TypermediaTestClient Client { get; set; } = null!;
    protected IRemoteTypermediaNavigator Navigator => Client.Navigator;
    protected IEndpoint RemoteEndpoint { get; private set; } = null!;
    IDependencyInjectionContainer? _rootContainer;
@@ -78,13 +78,13 @@ public abstract class EndpointHostTestBase : UniversalTestBase
    }
 
    static IContainerBuilder CreateRootBuilder() =>
-      TestEnv.DIContainer.CreateWithContainerRegistrations()
+      TestEnv.DIContainer.CreateTestingContainerBuilder()
              ._mutate(it => it.Registrar.CurrentTestsDbPoolIfNotCloneContainer());
 
    void InitializeHost()
    {
       _rootContainer ??= CreateRootBuilder().Build();
-      Host = TestingEndpointHost.Create(_rootContainer);
+      Host = TestingEndpointHost.Create(_rootContainer, new TessagingTestingEndpointHostFeature(), new TypermediaTestingEndpointHostFeature());
 
       BackendEndPoint = Host.RegisterEndpoint(
          "Backend",
@@ -101,7 +101,7 @@ public abstract class EndpointHostTestBase : UniversalTestBase
                    .ForTevent((IMyExactlyOnceTevent _) => TeventHandlerThreadGate.AwaitPassThrough())
                    .ForTevent((IMyTaggregateTevent _) => MyLocalTaggregateTeventHandlerThreadGate.AwaitPassThrough());
 
-            builder.RegisterTypermediaHandlers()
+            builder.RegisterTypermediaHandlers
                    .ForTommand((MyCreateTaggregateTommand tommand, IInProcessTypermediaNavigator navigator) =>
                     {
                        MyCreateTaggregateTommandHandlerThreadGate.AwaitPassThrough();
@@ -138,7 +138,7 @@ public abstract class EndpointHostTestBase : UniversalTestBase
    {
       InitializeHost();
       await Host.StartAsync();
-      Client = await TestClient.ConnectTo(BackendEndPoint.TypermediaAddress!, mapper => mapper.RegisterCommonTestTypeMappings());
+      Client = await TypermediaTestClient.ConnectTo(BackendEndPoint.TypermediaAddress!, mapper => mapper.RegisterCommonTestTypeMappings());
    }
 
    protected void CloseGates() => AllGates.ForEach(gate => gate.Close());

@@ -1,11 +1,10 @@
-using Compze.Abstractions.Tessaging.Hosting.Public;
-using Compze.Hosting;
-using Compze.Core.Tessaging.Hosting.Public;
+using Compze.Abstractions.Hosting.Public;
+using Compze.Typermedia.Client;
 using Compze.Abstractions.Tessaging.Public;
+using Compze.Hosting.Testing;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
-using Compze.Tessaging.Hosting.Testing.Tessaging;
-using Compze.Tessaging.Hosting.Testing.Tessaging.Buses;
 using Compze.Tests.Infrastructure;
+using Compze.Typermedia.Hosting.Testing;
 using Compze.Typermedia;
 using Compze.Typermedia.HandlerRegistration;
 
@@ -15,12 +14,12 @@ public abstract class PerformanceTestBase : UniversalTestBase
 {
    ITestingEndpointHost Host { get; set; }
    protected IEndpoint ServerEndpoint { get; set; }
-   TestClient Client { get; set; } = null!;
+   TypermediaTestClient Client { get; set; } = null!;
    protected IRemoteTypermediaNavigator Navigator => Client.Navigator;
 
    protected PerformanceTestBase()
    {
-      Host = TestingEndpointHost.Create();
+      Host = TestingEndpointHost.Create(new TypermediaTestingEndpointHostFeature());
       ServerEndpoint = Host.RegisterEndpoint(
          "Backend",
          new EndpointId(Guid.Parse("DDD0A67C-D2A2-4197-9AF8-38B6AEDF8FA7")),
@@ -28,7 +27,7 @@ public abstract class PerformanceTestBase : UniversalTestBase
          {
             builder.TypeMapper.RegisterPerformanceTestTypeMappings();
 
-            builder.RegisterTypermediaHandlers()
+            builder.RegisterTypermediaHandlers
                    .ForTuery((MyRemoteTuery _) => new MyTueryResult())
                    .ForTuery((MyLocalStrictlyLocalTuery _) => new MyTueryResult());
          });
@@ -37,7 +36,7 @@ public abstract class PerformanceTestBase : UniversalTestBase
    protected override async Task InitializeAsyncInternal()
    {
       await Host.StartAsync().caf();
-      Client = await TestClient.ConnectTo(ServerEndpoint.TypermediaAddress!, mapper => mapper.RegisterPerformanceTestTypeMappings()).caf();
+      Client = await TypermediaTestClient.ConnectTo(ServerEndpoint.TypermediaAddress!, mapper => mapper.RegisterPerformanceTestTypeMappings()).caf();
    }
 
    protected override async Task DisposeAsyncInternal()

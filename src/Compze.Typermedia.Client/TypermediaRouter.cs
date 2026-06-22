@@ -1,7 +1,6 @@
 using Compze.TypeIdentifiers;
-using Compze.Abstractions.Tessaging.Hosting.Public;
+using Compze.Abstractions.Hosting.Public;
 using Compze.Abstractions.Tessaging.Public;
-using Compze.Core.Tessaging.Transport.Internal;
 using Compze.Contracts;
 using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Internals.Transport;
@@ -44,7 +43,7 @@ class TypermediaRouter : ITypermediaRouter, IDisposable
    IReadOnlyDictionary<Type, TypermediaConnection> _tommandHandlerRoutes = new Dictionary<Type, TypermediaConnection>();
    IReadOnlyDictionary<Type, TypermediaConnection> _tueryHandlerRoutes = new Dictionary<Type, TypermediaConnection>();
 
-   public async Task ConnectAsync(EndPointAddress endpointAddress)
+   public async Task ConnectAsync(EndpointAddress endpointAddress)
    {
       AssertRunning();
       var endpointInformation = await _infrastructureQueryTransport.GetAsync(new TypermediaEndpointInformationQuery(), endpointAddress).caf();

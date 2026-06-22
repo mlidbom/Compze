@@ -1,10 +1,12 @@
 using AccountManagement.Domain.Tevents;
 using Compze.DocumentDb;
 using Compze.Abstractions.Public;
-using Compze.Tessaging.Abstractions.Tessaging.Hosting.Public;
+using Compze.Abstractions.Hosting.Public;
 using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Tessaging.Teventive.TeventStore.QueryModels.SelfGeneratingQueryModels;
 using Compze.DependencyInjection;
+using Compze.Tessaging.Hosting;
+using Compze.Typermedia.Client;
 using Compze.Typermedia;
 
 namespace AccountManagement.UI.QueryModels;

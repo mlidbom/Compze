@@ -9,6 +9,11 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+    <PackageReference Include="Serilog" Version="4.3.0" />
+    <PackageReference Include="Serilog.Enrichers.Environment" Version="3.0.1" />
+    <PackageReference Include="Serilog.Exceptions" Version="8.4.0" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
+    <PackageReference Include="Serilog.Sinks.Seq" Version="9.0.0" />
     <PackageReference Include="xunit.v3" Version="3.1.0" />
     <PackageReference Include="xunit.v3.extensibility.core" Version="3.1.0" />
   </ItemGroup>
@@ -61,6 +66,13 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection)' != 'true'">
     <ProjectReference Include="..\..\src\Compze.DependencyInjection\Compze.DependencyInjection.csproj" />
   </ItemGroup>
+  <!-- Compze.Hosting.Testing — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Hosting_Testing)' == 'true'">
+    <PackageReference Include="Compze.Hosting.Testing" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Hosting_Testing)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.Hosting.Testing\Compze.Hosting.Testing.csproj" />
+  </ItemGroup>
   <!-- Compze.Internals.Logging — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Logging)' == 'true'">
     <PackageReference Include="Compze.Internals.Logging" Version="*-*" />
@@ -81,13 +93,6 @@
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_SystemCE)' != 'true'">
     <ProjectReference Include="..\..\src\Compze.Internals.SystemCE\Compze.Internals.SystemCE.csproj" />
-  </ItemGroup>
-  <!-- Compze.Tessaging.Hosting.Testing — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_Hosting_Testing)' == 'true'">
-    <PackageReference Include="Compze.Tessaging.Hosting.Testing" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_Hosting_Testing)' != 'true'">
-    <ProjectReference Include="..\..\src\Compze.Tessaging.Hosting.Testing\Compze.Tessaging.Hosting.Testing.csproj" />
   </ItemGroup>
   <!-- Compze.Threading — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Threading)' == 'true'">

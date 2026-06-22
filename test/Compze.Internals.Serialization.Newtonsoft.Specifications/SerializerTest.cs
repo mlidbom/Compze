@@ -1,12 +1,14 @@
+using Compze.Abstractions.Public;
 using Compze.Abstractions.Serialization.Internal;
 using Compze.Abstractions.Wiring.Testing.Internal;
 using Compze.Core.Serialization.Internal;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Serialization.Newtonsoft.Wiring;
-using Compze.Tessaging.Hosting.Testing.Wiring;
+using Compze.Hosting.Testing.Wiring;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
+using Compze.TypeIdentifiers;
 
 namespace Compze.Internals.Serialization.Newtonsoft.Specifications;
 
@@ -20,11 +22,15 @@ public class SerializerTest : UniversalTestBase
    protected SerializerTest()
    {
       var serializer = PCTSerializerAttribute.Serializer;
+      var typeMapper = new TypeMapper();
+      typeMapper.MapTypesFromAssemblyContaining<TentityId>();          // Compze.Abstractions — entity ids and the shared message types these specs serialize
+      typeMapper.MapTypesFromAssemblyContaining<AssemblyTypeMapper>(); // Compze.Core — the tevent and document types these specs serialize
 #pragma warning disable CA2000 // We are disposing this disposable in DisposeInternal
       _container = DIContainer.Microsoft
-                             .CreateEmpty()
+                             .CreateTestingContainerBuilder()
                              ._mutate(it => RegisterSerializer(it.Registrar, serializer)
-                                              .TypeIdentifierMapper(mapper => mapper.MapTypesFromAssemblyContaining<AssemblyTypeMapper>()))
+                                              .Register(Singleton.For<ITypeMapper>().Instance(typeMapper))
+                                              .Register(Singleton.For<ITypeMap>().Instance(typeMapper)))
                              .Build();
 #pragma warning restore CA2000
    }

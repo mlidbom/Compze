@@ -1,4 +1,4 @@
-using Compze.Abstractions.Tessaging.Hosting.Public;
+using Compze.Abstractions.Hosting.Public;
 using Compze.Core.Tessaging.Internal.SqlLayer;
 using Compze.Core.Tessaging.Transport.Internal;
 using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
@@ -46,7 +46,7 @@ static class InboxRegistrar
       _transportServer = transportServer;
    }
 
-   public EndPointAddress Address => new(uri: _transportServer.Address);
+   public EndpointAddress Address => new(uri: _transportServer.Address);
 
    public async Task StartAsync()
    {

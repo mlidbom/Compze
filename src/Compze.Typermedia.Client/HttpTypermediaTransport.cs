@@ -2,7 +2,7 @@ using Compze.Abstractions.Public;
 using Compze.TypeIdentifiers;
 using Compze.Abstractions.Serialization.Internal;
 using Compze.Abstractions.Tessaging.Public;
-using Compze.Core.Tessaging.Transport.Internal;
+using Compze.Abstractions.Hosting.Public;
 using Compze.Internals.Transport;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
@@ -33,26 +33,26 @@ class HttpTypermediaTransport : ITypermediaTransport
       _typeMap = typeMap;
    }
 
-   public async Task<TResult> GetAsync<TResult>(IRemotableTuery<TResult> tuery, EndPointAddress address)
+   public async Task<TResult> GetAsync<TResult>(IRemotableTuery<TResult> tuery, EndpointAddress address)
       => await PostInternalWithResult<TResult>(tuery, address, HttpConstants.Routes.Typermedia.Tuery).caf();
 
-   public async Task<TResult> PostAsync<TResult>(IAtMostOnceTommand<TResult> command, EndPointAddress address)
+   public async Task<TResult> PostAsync<TResult>(IAtMostOnceTommand<TResult> command, EndpointAddress address)
       => await PostInternalWithResult<TResult>(command, address, HttpConstants.Routes.Typermedia.TommandWithResult).caf();
 
-   public async Task PostAsync(IAtMostOnceTypermediaTommand command, EndPointAddress address)
+   public async Task PostAsync(IAtMostOnceTypermediaTommand command, EndpointAddress address)
       => await PostInternalNoResult(command, address, HttpConstants.Routes.Typermedia.TommandNoResult).caf();
 
-   async Task<TResult> PostInternalWithResult<TResult>(IRemotableTessage tessage, EndPointAddress address, string route)
+   async Task<TResult> PostInternalWithResult<TResult>(IRemotableTessage tessage, EndpointAddress address, string route)
    {
       var response = await PostToEndpoint(tessage, address, route).caf();
       var resultJson = await response.Content.ReadAsStringAsync().caf();
       return _serializer.DeserializeResponse<TResult>(resultJson);
    }
 
-   async Task PostInternalNoResult(IRemotableTessage tessage, EndPointAddress address, string route)
+   async Task PostInternalNoResult(IRemotableTessage tessage, EndpointAddress address, string route)
       => await PostToEndpoint(tessage, address, route).caf();
 
-   async Task<HttpResponseMessage> PostToEndpoint(IRemotableTessage tessage, EndPointAddress address, string route)
+   async Task<HttpResponseMessage> PostToEndpoint(IRemotableTessage tessage, EndpointAddress address, string route)
    {
       var requestUri = new Uri(address.Uri, route);
       var body = _serializer.SerializeTessage(tessage);
