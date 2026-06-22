@@ -1,28 +1,4 @@
 <FlexRef>
   <AutoDiscover />
-  <!-- Alternatively, list packages explicitly instead of using AutoDiscover:
-  <Package Name="Compze.Core" />
-  <Package Name="Compze.Internals.Serialization.Newtonsoft" />
-  <Package Name="Compze.Internals.Sql.Common" />
-  <Package Name="Compze.Internals.Sql.MicrosoftSql" />
-  <Package Name="Compze.Internals.Sql.MySql" />
-  <Package Name="Compze.Internals.Sql.PostgreSql" />
-  <Package Name="Compze.Internals.Sql.Sqlite" />
-  <Package Name="Compze.Tessaging" />
-  <Package Name="Compze.Tessaging.Hosting.AspNetCore" />
-  <Package Name="Compze.Tessaging.Hosting.Testing" />
-  <Package Name="Compze.Tessaging.Teventive.TeventStore" />
-  <Package Name="Compze.Utilities" />
-  <Package Name="Compze.Contracts" />
-  <Package Name="Compze.DependencyInjection" />
-  <Package Name="Compze.DependencyInjection.Microsoft" />
-  <Package Name="Compze.Underscore" />
-  <Package Name="Compze.Internals.Logging" />
-  <Package Name="Compze.Internals.Logging.Serilog" />
-  <Package Name="Compze.Internals.SystemCE" />
-  <Package Name="Compze.Internals.SystemCE.ThreadingCE" />
-  <Package Name="Compze.Utilities.Testing.DbPool" />
-  <Package Name="Compze.Must" />
-  <Package Name="Compze.Utilities.Testing.XUnit" />
-  -->
+  <!-- Alternatively, list packages explicitly instead of using AutoDiscover:-->
 </FlexRef>

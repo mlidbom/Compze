@@ -55,19 +55,19 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Must)' != 'true'">
     <ProjectReference Include="..\..\src\Compze.Must\Compze.Must.csproj" />
   </ItemGroup>
-  <!-- Compze.Tessaging.Teventive.TeventStore — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_Teventive_TeventStore)' == 'true'">
-    <PackageReference Include="Compze.Tessaging.Teventive.TeventStore" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_Teventive_TeventStore)' != 'true'">
-    <ProjectReference Include="..\..\src\Compze.Tessaging.Teventive.TeventStore\Compze.Tessaging.Teventive.TeventStore.csproj" />
-  </ItemGroup>
   <!-- Compze.Tests.Infrastructure — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Tests_Infrastructure)' == 'true'">
     <PackageReference Include="Compze.Tests.Infrastructure" Version="*-*" />
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_Tests_Infrastructure)' != 'true'">
     <ProjectReference Include="..\Compze.Tests.Infrastructure\Compze.Tests.Infrastructure.csproj" />
+  </ItemGroup>
+  <!-- Compze.Teventive.TeventStore — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive_TeventStore)' == 'true'">
+    <PackageReference Include="Compze.Teventive.TeventStore" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive_TeventStore)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.Teventive.TeventStore\Compze.Teventive.TeventStore.csproj" />
   </ItemGroup>
   <!-- Compze.Threading — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Threading)' == 'true'">

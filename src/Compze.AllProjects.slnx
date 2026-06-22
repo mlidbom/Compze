@@ -14,12 +14,12 @@
     <Project Path="../test/Compze.Abstractions.Specifications/Compze.Abstractions.Specifications.csproj" />
   </Folder>
   <Folder Name="/Compze.Teventive/">
-    <Project Path="Compze.Tessaging.Teventive.TeventStore.MicrosoftSql/Compze.Tessaging.Teventive.TeventStore.MicrosoftSql.csproj" />
-    <Project Path="Compze.Tessaging.Teventive.TeventStore.MySql/Compze.Tessaging.Teventive.TeventStore.MySql.csproj" />
-    <Project Path="Compze.Tessaging.Teventive.TeventStore.PostgreSql/Compze.Tessaging.Teventive.TeventStore.PostgreSql.csproj" />
-    <Project Path="Compze.Tessaging.Teventive.TeventStore.Sqlite/Compze.Tessaging.Teventive.TeventStore.Sqlite.csproj" />
-    <Project Path="Compze.Tessaging.Teventive.TeventStore.Typermedia/Compze.Tessaging.Teventive.TeventStore.Typermedia.csproj" />
-    <Project Path="Compze.Tessaging.Teventive.TeventStore/Compze.Tessaging.Teventive.TeventStore.csproj" />
+    <Project Path="Compze.Teventive.TeventStore.MicrosoftSql/Compze.Teventive.TeventStore.MicrosoftSql.csproj" />
+    <Project Path="Compze.Teventive.TeventStore.MySql/Compze.Teventive.TeventStore.MySql.csproj" />
+    <Project Path="Compze.Teventive.TeventStore.PostgreSql/Compze.Teventive.TeventStore.PostgreSql.csproj" />
+    <Project Path="Compze.Teventive.TeventStore.Sqlite/Compze.Teventive.TeventStore.Sqlite.csproj" />
+    <Project Path="Compze.Teventive.TeventStore.Typermedia/Compze.Teventive.TeventStore.Typermedia.csproj" />
+    <Project Path="Compze.Teventive.TeventStore/Compze.Teventive.TeventStore.csproj" />
   </Folder>
   <Folder Name="/Compze.TypeIdentifiers/">
     <Project Path="Compze.TypeIdentifiers.Interning.MicrosoftSql/Compze.TypeIdentifiers.Interning.MicrosoftSql.csproj" />

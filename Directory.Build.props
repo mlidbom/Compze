@@ -114,20 +114,20 @@
     <UsePackageReference_Compze_Tessaging_PostgreSql Condition="'$(UsePackageReference_Compze_Tessaging_PostgreSql)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Tessaging.PostgreSql.csproj|'))">true</UsePackageReference_Compze_Tessaging_PostgreSql>
     <!-- Compze.Tessaging.Sqlite -->
     <UsePackageReference_Compze_Tessaging_Sqlite Condition="'$(UsePackageReference_Compze_Tessaging_Sqlite)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Tessaging.Sqlite.csproj|'))">true</UsePackageReference_Compze_Tessaging_Sqlite>
-    <!-- Compze.Tessaging.Teventive.TeventStore -->
-    <UsePackageReference_Compze_Tessaging_Teventive_TeventStore Condition="'$(UsePackageReference_Compze_Tessaging_Teventive_TeventStore)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Tessaging.Teventive.TeventStore.csproj|'))">true</UsePackageReference_Compze_Tessaging_Teventive_TeventStore>
-    <!-- Compze.Tessaging.Teventive.TeventStore.MicrosoftSql -->
-    <UsePackageReference_Compze_Tessaging_Teventive_TeventStore_MicrosoftSql Condition="'$(UsePackageReference_Compze_Tessaging_Teventive_TeventStore_MicrosoftSql)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Tessaging.Teventive.TeventStore.MicrosoftSql.csproj|'))">true</UsePackageReference_Compze_Tessaging_Teventive_TeventStore_MicrosoftSql>
-    <!-- Compze.Tessaging.Teventive.TeventStore.MySql -->
-    <UsePackageReference_Compze_Tessaging_Teventive_TeventStore_MySql Condition="'$(UsePackageReference_Compze_Tessaging_Teventive_TeventStore_MySql)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Tessaging.Teventive.TeventStore.MySql.csproj|'))">true</UsePackageReference_Compze_Tessaging_Teventive_TeventStore_MySql>
-    <!-- Compze.Tessaging.Teventive.TeventStore.PostgreSql -->
-    <UsePackageReference_Compze_Tessaging_Teventive_TeventStore_PostgreSql Condition="'$(UsePackageReference_Compze_Tessaging_Teventive_TeventStore_PostgreSql)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Tessaging.Teventive.TeventStore.PostgreSql.csproj|'))">true</UsePackageReference_Compze_Tessaging_Teventive_TeventStore_PostgreSql>
-    <!-- Compze.Tessaging.Teventive.TeventStore.Sqlite -->
-    <UsePackageReference_Compze_Tessaging_Teventive_TeventStore_Sqlite Condition="'$(UsePackageReference_Compze_Tessaging_Teventive_TeventStore_Sqlite)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Tessaging.Teventive.TeventStore.Sqlite.csproj|'))">true</UsePackageReference_Compze_Tessaging_Teventive_TeventStore_Sqlite>
-    <!-- Compze.Tessaging.Teventive.TeventStore.Typermedia -->
-    <UsePackageReference_Compze_Tessaging_Teventive_TeventStore_Typermedia Condition="'$(UsePackageReference_Compze_Tessaging_Teventive_TeventStore_Typermedia)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Tessaging.Teventive.TeventStore.Typermedia.csproj|'))">true</UsePackageReference_Compze_Tessaging_Teventive_TeventStore_Typermedia>
     <!-- Compze.Tests.Infrastructure -->
     <UsePackageReference_Compze_Tests_Infrastructure Condition="'$(UsePackageReference_Compze_Tests_Infrastructure)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Tests.Infrastructure.csproj|'))">true</UsePackageReference_Compze_Tests_Infrastructure>
+    <!-- Compze.Teventive.TeventStore -->
+    <UsePackageReference_Compze_Teventive_TeventStore Condition="'$(UsePackageReference_Compze_Teventive_TeventStore)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Teventive.TeventStore.csproj|'))">true</UsePackageReference_Compze_Teventive_TeventStore>
+    <!-- Compze.Teventive.TeventStore.MicrosoftSql -->
+    <UsePackageReference_Compze_Teventive_TeventStore_MicrosoftSql Condition="'$(UsePackageReference_Compze_Teventive_TeventStore_MicrosoftSql)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Teventive.TeventStore.MicrosoftSql.csproj|'))">true</UsePackageReference_Compze_Teventive_TeventStore_MicrosoftSql>
+    <!-- Compze.Teventive.TeventStore.MySql -->
+    <UsePackageReference_Compze_Teventive_TeventStore_MySql Condition="'$(UsePackageReference_Compze_Teventive_TeventStore_MySql)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Teventive.TeventStore.MySql.csproj|'))">true</UsePackageReference_Compze_Teventive_TeventStore_MySql>
+    <!-- Compze.Teventive.TeventStore.PostgreSql -->
+    <UsePackageReference_Compze_Teventive_TeventStore_PostgreSql Condition="'$(UsePackageReference_Compze_Teventive_TeventStore_PostgreSql)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Teventive.TeventStore.PostgreSql.csproj|'))">true</UsePackageReference_Compze_Teventive_TeventStore_PostgreSql>
+    <!-- Compze.Teventive.TeventStore.Sqlite -->
+    <UsePackageReference_Compze_Teventive_TeventStore_Sqlite Condition="'$(UsePackageReference_Compze_Teventive_TeventStore_Sqlite)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Teventive.TeventStore.Sqlite.csproj|'))">true</UsePackageReference_Compze_Teventive_TeventStore_Sqlite>
+    <!-- Compze.Teventive.TeventStore.Typermedia -->
+    <UsePackageReference_Compze_Teventive_TeventStore_Typermedia Condition="'$(UsePackageReference_Compze_Teventive_TeventStore_Typermedia)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Teventive.TeventStore.Typermedia.csproj|'))">true</UsePackageReference_Compze_Teventive_TeventStore_Typermedia>
     <!-- Compze.Threading -->
     <UsePackageReference_Compze_Threading Condition="'$(UsePackageReference_Compze_Threading)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Threading.csproj|'))">true</UsePackageReference_Compze_Threading>
     <!-- Compze.Threading.Testing -->

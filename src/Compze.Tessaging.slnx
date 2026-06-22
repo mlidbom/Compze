@@ -7,9 +7,9 @@
   <Project Path="Compze.Tessaging.MySql/Compze.Tessaging.MySql.csproj" />
   <Project Path="Compze.Tessaging.PostgreSql/Compze.Tessaging.PostgreSql.csproj" />
   <Project Path="Compze.Tessaging.Sqlite/Compze.Tessaging.Sqlite.csproj" />
-  <Project Path="Compze.Tessaging.Teventive.TeventStore/Compze.Tessaging.Teventive.TeventStore.csproj" />
-  <Project Path="Compze.Tessaging.Teventive.TeventStore.MicrosoftSql/Compze.Tessaging.Teventive.TeventStore.MicrosoftSql.csproj" />
-  <Project Path="Compze.Tessaging.Teventive.TeventStore.MySql/Compze.Tessaging.Teventive.TeventStore.MySql.csproj" />
-  <Project Path="Compze.Tessaging.Teventive.TeventStore.PostgreSql/Compze.Tessaging.Teventive.TeventStore.PostgreSql.csproj" />
-  <Project Path="Compze.Tessaging.Teventive.TeventStore.Sqlite/Compze.Tessaging.Teventive.TeventStore.Sqlite.csproj" />
+  <Project Path="Compze.Teventive.TeventStore/Compze.Teventive.TeventStore.csproj" />
+  <Project Path="Compze.Teventive.TeventStore.MicrosoftSql/Compze.Teventive.TeventStore.MicrosoftSql.csproj" />
+  <Project Path="Compze.Teventive.TeventStore.MySql/Compze.Teventive.TeventStore.MySql.csproj" />
+  <Project Path="Compze.Teventive.TeventStore.PostgreSql/Compze.Teventive.TeventStore.PostgreSql.csproj" />
+  <Project Path="Compze.Teventive.TeventStore.Sqlite/Compze.Teventive.TeventStore.Sqlite.csproj" />
 </Solution>

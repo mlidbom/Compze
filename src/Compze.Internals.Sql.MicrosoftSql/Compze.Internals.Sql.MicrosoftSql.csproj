@@ -14,7 +14,7 @@
     <InternalsVisibleTo Include="Compze.TypeIdentifiers.Interning.MicrosoftSql" />
     <InternalsVisibleTo Include="Compze.DocumentDb.MicrosoftSql" />
     <InternalsVisibleTo Include="Compze.Tessaging.MicrosoftSql" />
-    <InternalsVisibleTo Include="Compze.Tessaging.Teventive.TeventStore.MicrosoftSql" />
+    <InternalsVisibleTo Include="Compze.Teventive.TeventStore.MicrosoftSql" />
   </ItemGroup>
   <!-- Compze.Abstractions — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Abstractions)' == 'true'">

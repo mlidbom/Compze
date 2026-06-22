@@ -147,33 +147,33 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_Sqlite)' != 'true'">
     <ProjectReference Include="..\Compze.Tessaging.Sqlite\Compze.Tessaging.Sqlite.csproj" />
   </ItemGroup>
-  <!-- Compze.Tessaging.Teventive.TeventStore.MicrosoftSql — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_Teventive_TeventStore_MicrosoftSql)' == 'true'">
-    <PackageReference Include="Compze.Tessaging.Teventive.TeventStore.MicrosoftSql" Version="*-*" />
+  <!-- Compze.Teventive.TeventStore.MicrosoftSql — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive_TeventStore_MicrosoftSql)' == 'true'">
+    <PackageReference Include="Compze.Teventive.TeventStore.MicrosoftSql" Version="*-*" />
   </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_Teventive_TeventStore_MicrosoftSql)' != 'true'">
-    <ProjectReference Include="..\Compze.Tessaging.Teventive.TeventStore.MicrosoftSql\Compze.Tessaging.Teventive.TeventStore.MicrosoftSql.csproj" />
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive_TeventStore_MicrosoftSql)' != 'true'">
+    <ProjectReference Include="..\Compze.Teventive.TeventStore.MicrosoftSql\Compze.Teventive.TeventStore.MicrosoftSql.csproj" />
   </ItemGroup>
-  <!-- Compze.Tessaging.Teventive.TeventStore.MySql — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_Teventive_TeventStore_MySql)' == 'true'">
-    <PackageReference Include="Compze.Tessaging.Teventive.TeventStore.MySql" Version="*-*" />
+  <!-- Compze.Teventive.TeventStore.MySql — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive_TeventStore_MySql)' == 'true'">
+    <PackageReference Include="Compze.Teventive.TeventStore.MySql" Version="*-*" />
   </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_Teventive_TeventStore_MySql)' != 'true'">
-    <ProjectReference Include="..\Compze.Tessaging.Teventive.TeventStore.MySql\Compze.Tessaging.Teventive.TeventStore.MySql.csproj" />
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive_TeventStore_MySql)' != 'true'">
+    <ProjectReference Include="..\Compze.Teventive.TeventStore.MySql\Compze.Teventive.TeventStore.MySql.csproj" />
   </ItemGroup>
-  <!-- Compze.Tessaging.Teventive.TeventStore.PostgreSql — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_Teventive_TeventStore_PostgreSql)' == 'true'">
-    <PackageReference Include="Compze.Tessaging.Teventive.TeventStore.PostgreSql" Version="*-*" />
+  <!-- Compze.Teventive.TeventStore.PostgreSql — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive_TeventStore_PostgreSql)' == 'true'">
+    <PackageReference Include="Compze.Teventive.TeventStore.PostgreSql" Version="*-*" />
   </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_Teventive_TeventStore_PostgreSql)' != 'true'">
-    <ProjectReference Include="..\Compze.Tessaging.Teventive.TeventStore.PostgreSql\Compze.Tessaging.Teventive.TeventStore.PostgreSql.csproj" />
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive_TeventStore_PostgreSql)' != 'true'">
+    <ProjectReference Include="..\Compze.Teventive.TeventStore.PostgreSql\Compze.Teventive.TeventStore.PostgreSql.csproj" />
   </ItemGroup>
-  <!-- Compze.Tessaging.Teventive.TeventStore.Sqlite — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_Teventive_TeventStore_Sqlite)' == 'true'">
-    <PackageReference Include="Compze.Tessaging.Teventive.TeventStore.Sqlite" Version="*-*" />
+  <!-- Compze.Teventive.TeventStore.Sqlite — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive_TeventStore_Sqlite)' == 'true'">
+    <PackageReference Include="Compze.Teventive.TeventStore.Sqlite" Version="*-*" />
   </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_Teventive_TeventStore_Sqlite)' != 'true'">
-    <ProjectReference Include="..\Compze.Tessaging.Teventive.TeventStore.Sqlite\Compze.Tessaging.Teventive.TeventStore.Sqlite.csproj" />
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive_TeventStore_Sqlite)' != 'true'">
+    <ProjectReference Include="..\Compze.Teventive.TeventStore.Sqlite\Compze.Teventive.TeventStore.Sqlite.csproj" />
   </ItemGroup>
   <!-- Compze.Threading — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Threading)' == 'true'">

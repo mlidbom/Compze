@@ -14,7 +14,7 @@
     <InternalsVisibleTo Include="Compze.TypeIdentifiers.Interning.PostgreSql" />
     <InternalsVisibleTo Include="Compze.DocumentDb.PostgreSql" />
     <InternalsVisibleTo Include="Compze.Tessaging.PostgreSql" />
-    <InternalsVisibleTo Include="Compze.Tessaging.Teventive.TeventStore.PostgreSql" />
+    <InternalsVisibleTo Include="Compze.Teventive.TeventStore.PostgreSql" />
   </ItemGroup>
   <!-- Compze.Abstractions — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Abstractions)' == 'true'">
