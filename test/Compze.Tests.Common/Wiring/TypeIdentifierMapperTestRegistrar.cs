@@ -4,7 +4,7 @@ using Compze.TypeIdentifiers;
 using Compze.Typermedia.Client;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
-using Compze.Teventive.Public.Taggregates.Tevents.Public;
+using Compze.Teventive.Taggregates.Tevents.Public;
 
 namespace Compze.Tests.Common.Wiring;
 

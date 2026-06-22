@@ -1,4 +1,4 @@
-using Compze.Teventive.Public.Taggregates.Tevents.Public;
+using Compze.Teventive.Taggregates.Tevents.Public;
 
 // ReSharper disable PossibleInterfaceMemberAmbiguity
 

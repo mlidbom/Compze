@@ -1,7 +1,7 @@
 using Compze.Abstractions.Public;
-using Compze.Teventive.Public.Taggregates.Tevents.Public;
+using Compze.Teventive.Taggregates.Tevents.Public;
 
-namespace Compze.Teventive.Public;
+namespace Compze.Teventive;
 
 public interface ITaggregate : ITentity
 {

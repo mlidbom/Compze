@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 
-namespace Compze.Teventive.Public.Taggregates.BaseClasses.Public;
+namespace Compze.Teventive.Taggregates.BaseClasses;
 
 public interface IReadOnlyEntityCollection<TEntity, in TEntityId> : IEnumerable<TEntity> where TEntity : class
 {

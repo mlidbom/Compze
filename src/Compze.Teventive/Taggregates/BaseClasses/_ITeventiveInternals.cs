@@ -1,7 +1,7 @@
 using Compze.Abstractions.Public;
-using Compze.Teventive.Public.Taggregates.Tevents.Public;
+using Compze.Teventive.Taggregates.Tevents.Public;
 
-namespace Compze.Teventive.Public.Taggregates.BaseClasses.Public;
+namespace Compze.Teventive.Taggregates.BaseClasses;
 
 public interface ITeventiveInternals<in TTevent, in TTeventImplementation>
     where TTeventImplementation : TaggregateTevent, TTevent

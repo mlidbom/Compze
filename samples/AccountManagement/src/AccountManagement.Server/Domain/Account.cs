@@ -4,7 +4,7 @@ using AccountManagement.Domain.Registration;
 using AccountManagement.Domain.Tevents;
 using CommunityToolkit.Diagnostics;
 using Compze.Internals.Logging;
-using Compze.Teventive.Public.Taggregates.BaseClasses.Public;
+using Compze.Teventive.Taggregates.BaseClasses;
 using Compze.Typermedia;
 
 namespace AccountManagement.Domain;

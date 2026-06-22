@@ -12,8 +12,8 @@ using Compze.Internals.SystemCE.LinqCE;
 using Compze.Internals.SystemCE.UsageGuards;
 using JetBrains.Annotations;
 using Compze.Contracts;
-using Compze.Teventive.Public;
-using Compze.Teventive.Public.Taggregates.Tevents.Public;
+using Compze.Teventive;
+using Compze.Teventive.Taggregates.Tevents.Public;
 using static Compze.Contracts.Contract;
 
 namespace Compze.Tessaging.Teventive.TeventStore;

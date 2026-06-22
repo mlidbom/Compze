@@ -15,7 +15,7 @@ using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Tessaging.Implementation.Transport.Client.Implementation.Universal;
 using Compze.Tessaging.Implementation.Transport.Client.Routing;
 using Compze.Tessaging.SystemCE.ThreadingCE;
-using Compze.Teventive.Public.Taggregates.Tevents.Public;
+using Compze.Teventive.Taggregates.Tevents.Public;
 
 namespace Compze.Tessaging.Hosting;
 

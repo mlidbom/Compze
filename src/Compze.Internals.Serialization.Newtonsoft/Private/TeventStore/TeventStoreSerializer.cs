@@ -2,7 +2,7 @@ using Compze.TypeIdentifiers;
 using Compze.Tessaging.Teventive.TeventStore.Internal;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
-using Compze.Teventive.Public.Taggregates.Tevents.Public;
+using Compze.Teventive.Taggregates.Tevents.Public;
 using Newtonsoft.Json;
 
 namespace Compze.Internals.Serialization.Newtonsoft.Private.TeventStore;

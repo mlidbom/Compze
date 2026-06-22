@@ -10,9 +10,9 @@ using Compze.Tessaging.Teventive.TeventStore.Public;
 using Compze.Tessaging.Teventive.TeventStore.Public.Exceptions;
 using Compze.Internals.SystemCE.UsageGuards;
 using Compze.Contracts;
+using Compze.Teventive;
 using Compze.Teventive.Internal;
-using Compze.Teventive.Public;
-using Compze.Teventive.Public.Taggregates.Tevents.Public;
+using Compze.Teventive.Taggregates.Tevents.Public;
 using static Compze.Contracts.Contract;
 
 namespace Compze.Tessaging.Teventive.TeventStore;

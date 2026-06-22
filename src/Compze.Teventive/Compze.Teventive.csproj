@@ -59,8 +59,8 @@
   <!-- Exclude _docs files from compilation but keep them visible.
        This section is automatically maintained by DevScripts\C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders.ps1 -->
   <ItemGroup>
-    <Compile Remove="Public\Taggregates\_docs\**\*.cs" />
-    <None Include="Public\Taggregates\_docs\**\*.cs" />
-    <Content Include="Public\Taggregates\_docs\**\*.md" />
+    <Compile Remove="Taggregates\_docs\**\*.cs" />
+    <None Include="Taggregates\_docs\**\*.cs" />
+    <Content Include="Taggregates\_docs\**\*.md" />
   </ItemGroup>
 </Project>

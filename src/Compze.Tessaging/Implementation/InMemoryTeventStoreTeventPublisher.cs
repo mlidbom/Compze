@@ -3,7 +3,7 @@ using Compze.Tessaging.Teventive.TeventStore.Internal;
 using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
-using Compze.Teventive.Public.Taggregates.Tevents.Public;
+using Compze.Teventive.Taggregates.Tevents.Public;
 using JetBrains.Annotations;
 
 namespace Compze.Tessaging.Implementation;

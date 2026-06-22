@@ -1,8 +1,7 @@
 // ReSharper disable ForCanBeConvertedToForeach this file needs these optimizations...
 
 using Compze.Abstractions.Tessaging.Public;
-using Compze.Teventive.Public;
-using Compze.Teventive.Public.Taggregates.Tevents.Public;
+using Compze.Teventive.Taggregates.Tevents.Public;
 
 // ReSharper disable StaticMemberInGenericType
 

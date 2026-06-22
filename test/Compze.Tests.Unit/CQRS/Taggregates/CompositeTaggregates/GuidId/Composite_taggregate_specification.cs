@@ -4,7 +4,7 @@ using Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId.Domain.Teve
 using Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId.QueryModels;
 using Compze.Internals.SystemCE.ReactiveCE;
 using Compze.Must;
-using Compze.Teventive.Public;
+using Compze.Teventive;
 using Compze.xUnitBDD;
 
 // ReSharper disable InconsistentNaming

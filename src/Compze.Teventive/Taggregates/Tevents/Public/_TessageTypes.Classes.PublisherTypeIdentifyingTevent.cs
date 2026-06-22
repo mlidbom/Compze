@@ -1,7 +1,7 @@
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Teventive.Infrastructure;
 
-namespace Compze.Teventive.Public.Taggregates.Tevents.Public;
+namespace Compze.Teventive.Taggregates.Tevents.Public;
 
 static class PublisherTypeIdentifyingTevent
 {

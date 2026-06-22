@@ -8,7 +8,7 @@ using Compze.Internals.SystemCE.TransactionsCE;
 using Microsoft.Extensions.Caching.Memory;
 using System.Diagnostics.CodeAnalysis;
 using System.Transactions;
-using Compze.Teventive.Public.Taggregates.Tevents.Public;
+using Compze.Teventive.Taggregates.Tevents.Public;
 using Compze.Threading;
 using Compze.Threading.ResourceAccess;
 

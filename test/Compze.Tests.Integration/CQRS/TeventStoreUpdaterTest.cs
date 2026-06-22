@@ -26,8 +26,8 @@ using Compze.Threading;
 using Compze.Threading.Testing;
 using Compze.Internals.SystemCE.UsageGuards;
 using Compze.Must;
-using Compze.Teventive.Public;
-using Compze.Teventive.Public.Taggregates.Tevents.Public;
+using Compze.Teventive;
+using Compze.Teventive.Taggregates.Tevents.Public;
 using EnumerableCE = Compze.Internals.SystemCE.LinqCE.EnumerableCE;
 
 // ReSharper disable AccessToDisposedClosure

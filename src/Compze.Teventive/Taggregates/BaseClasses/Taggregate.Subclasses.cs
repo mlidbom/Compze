@@ -1,7 +1,7 @@
-using Compze.Teventive.Public.Taggregates.Tevents.Public;
+using Compze.Teventive.Taggregates.Tevents.Public;
 using JetBrains.Annotations;
 
-namespace Compze.Teventive.Public.Taggregates.BaseClasses.Public;
+namespace Compze.Teventive.Taggregates.BaseClasses;
 
 public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeventImplementation, TWrapperTeventInterface, TWrapperTeventImplementation>
     where TWrapperTeventImplementation : TWrapperTeventInterface

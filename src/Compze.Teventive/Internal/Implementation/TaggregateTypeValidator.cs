@@ -3,7 +3,7 @@ using Compze.Abstractions.Tessaging.Validation;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.ReflectionCE;
-using Compze.Teventive.Public.Taggregates.BaseClasses.Public;
+using Compze.Teventive.Taggregates.BaseClasses;
 using Compze.TypeIdentifiers;
 using JetBrains.Annotations;
 

@@ -3,7 +3,6 @@
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Abstractions.Tessaging.Validation;
 using Compze.Internals.SystemCE.ReflectionCE;
-using Compze.Teventive.Public;
 
 // ReSharper disable StaticMemberInGenericType
 

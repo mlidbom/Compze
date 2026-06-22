@@ -16,8 +16,8 @@ using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.TransactionsCE;
 using Compze.Must;
-using Compze.Teventive.Public.Taggregates.BaseClasses.Public;
-using Compze.Teventive.Public.Taggregates.Tevents.Public;
+using Compze.Teventive.Taggregates.BaseClasses;
+using Compze.Teventive.Taggregates.Tevents.Public;
 using JetBrains.Annotations;
 
 // ReSharper disable InconsistentNaming

@@ -1,3 +1,3 @@
-namespace Compze.Teventive.Public.Taggregates.Tevents.Public;
+namespace Compze.Teventive.Taggregates.Tevents.Public;
 
 public interface ITaggregateDeletedTevent : ITaggregateTevent;

@@ -1,10 +1,10 @@
 using Compze.Contracts;
 using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Teventive.Internal.Implementation;
-using Compze.Teventive.Public.Taggregates.Tevents.Public;
+using Compze.Teventive.Taggregates.Tevents.Public;
 using JetBrains.Annotations;
 
-namespace Compze.Teventive.Public.Taggregates.BaseClasses.Public;
+namespace Compze.Teventive.Taggregates.BaseClasses;
 
 [UsedImplicitly(ImplicitUseKindFlags.InstantiatedWithFixedConstructorSignature)]
 public abstract class Tentity<TParent,

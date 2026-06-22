@@ -18,7 +18,7 @@ using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE;
 using Compze.Internals.SystemCE.LinqCE;
 using Compze.Contracts;
-using Compze.Teventive.Public.Taggregates.Tevents.Public;
+using Compze.Teventive.Taggregates.Tevents.Public;
 
 namespace Compze.Tests.Performance.Internals.CQRS.TeventRefactoring.Migrations;
 

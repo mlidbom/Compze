@@ -1,6 +1,6 @@
-using Compze.Teventive.Public.Taggregates.Tevents.Public;
+using Compze.Teventive.Taggregates.Tevents.Public;
 
-namespace Compze.Teventive.Public.Taggregates.BaseClasses.Public;
+namespace Compze.Teventive.Taggregates.BaseClasses;
 
 // ReSharper disable once ClassNeverInstantiated.Global
 public class TaggregateIdentifyingTevent<TBaseTeventInterface>(TBaseTeventInterface tevent) : PublisherIdentifyingTevent<TBaseTeventInterface>(tevent), ITaggregateIdentifyingTevent<TBaseTeventInterface>
