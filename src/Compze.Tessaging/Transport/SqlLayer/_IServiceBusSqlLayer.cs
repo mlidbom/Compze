@@ -1,8 +1,8 @@
-using Compze.Abstractions.Public;
 using Compze.Abstractions.Hosting.Public;
+using Compze.Abstractions.Public;
 using Compze.TypeIdentifiers;
 
-namespace Compze.Core.Tessaging.Internal.SqlLayer;
+namespace Compze.Tessaging.Transport.SqlLayer;
 
 public interface IServiceBusSqlLayer
 {

@@ -7,9 +7,6 @@
     <NoWarn>CS1591</NoWarn>
     <Description>Internal plumbing for the Compze framework: the messaging SQL-layer and transport internals, plus document-database wiring.</Description>
   </PropertyGroup>
-  <ItemGroup>
-    <Folder Include="Serialization\Internal\DbPool\" />
-  </ItemGroup>
   <!-- Compze.Abstractions — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Abstractions)' == 'true'">
     <PackageReference Include="Compze.Abstractions" Version="*-*" />
@@ -58,12 +55,5 @@
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_Threading)' != 'true'">
     <ProjectReference Include="..\Compze.Threading\Compze.Threading.csproj" />
-  </ItemGroup>
-  <!-- Exclude _docs files from compilation but keep them visible.
-       This section is automatically maintained by DevScripts\C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders.ps1 -->
-  <ItemGroup>
-    <Compile Remove="Tessaging\_docs\**\*.cs" />
-    <None Include="Tessaging\_docs\**\*.cs" />
-    <Content Include="Tessaging\_docs\**\*.md" />
   </ItemGroup>
 </Project>

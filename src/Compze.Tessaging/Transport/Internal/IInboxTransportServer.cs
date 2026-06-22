@@ -1,4 +1,4 @@
-namespace Compze.Core.Tessaging.Transport.Internal;
+namespace Compze.Tessaging.Transport.Internal;
 
 public interface IInboxTransportServer : IAsyncDisposable
 {

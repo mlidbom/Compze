@@ -1,4 +1,4 @@
-namespace Compze.Core.Tessaging.Internal.SqlLayer;
+namespace Compze.Tessaging.Transport.SqlLayer;
 
 public enum InboxTessageStatus
 {

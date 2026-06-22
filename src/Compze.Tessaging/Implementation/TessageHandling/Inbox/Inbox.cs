@@ -1,6 +1,4 @@
 using Compze.Abstractions.Hosting.Public;
-using Compze.Core.Tessaging.Internal.SqlLayer;
-using Compze.Core.Tessaging.Transport.Internal;
 using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Tessaging.SystemCE.ThreadingCE;
@@ -8,6 +6,8 @@ using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
+using Compze.Tessaging.Transport.Internal;
+using Compze.Tessaging.Transport.SqlLayer;
 using JetBrains.Annotations;
 
 namespace Compze.Tessaging.Implementation.TessageHandling.Inbox;

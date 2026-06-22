@@ -2,12 +2,12 @@ using Compze.Abstractions.Public;
 using Compze.TypeIdentifiers;
 using Compze.Abstractions.Serialization.Internal;
 using Compze.Abstractions.Hosting.Public;
-using Compze.Core.Tessaging.Internal.SqlLayer;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
+using Compze.Tessaging.Transport.SqlLayer;
 
 namespace Compze.Tessaging.Implementation.Outbox;
 

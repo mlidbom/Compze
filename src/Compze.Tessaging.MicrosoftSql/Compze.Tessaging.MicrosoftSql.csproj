@@ -25,6 +25,13 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Sql_MicrosoftSql)' != 'true'">
     <ProjectReference Include="..\Compze.Internals.Sql.MicrosoftSql\Compze.Internals.Sql.MicrosoftSql.csproj" />
   </ItemGroup>
+  <!-- Compze.Tessaging — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging)' == 'true'">
+    <PackageReference Include="Compze.Tessaging" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging)' != 'true'">
+    <ProjectReference Include="..\Compze.Tessaging\Compze.Tessaging.csproj" />
+  </ItemGroup>
   <!-- Compze.TypeIdentifiers.Interning — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_TypeIdentifiers_Interning)' == 'true'">
     <PackageReference Include="Compze.TypeIdentifiers.Interning" Version="*-*" />

@@ -97,6 +97,9 @@
   <!-- Exclude _docs files from compilation but keep them visible.
        This section is automatically maintained by DevScripts\C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders.ps1 -->
   <ItemGroup>
+    <Compile Remove="_docs\**\*.cs" />
+    <None Include="_docs\**\*.cs" />
+    <Content Include="_docs\**\*.md" />
     <Compile Remove="Typermedia\_docs\**\*.cs" />
     <None Include="Typermedia\_docs\**\*.cs" />
     <Content Include="Typermedia\_docs\**\*.md" />
