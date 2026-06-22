@@ -70,4 +70,7 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Underscore)' != 'true'">
     <ProjectReference Include="..\Compze.Underscore\Compze.Underscore.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Compze.DocumentDb\Compze.DocumentDb.csproj" />
+  </ItemGroup>
 </Project>

@@ -216,9 +216,6 @@
     <Project Path="test/Compze.Tests.ScratchPad/Compze.Tests.ScratchPad.csproj" />
     <Project Path="test/Compze.Tests.Unit/Compze.Tests.Unit.csproj" />
   </Folder>
-  <Folder Name="/Compze.Core/">
-    <Project Path="src/Compze.Core/Compze.Core.csproj" />
-  </Folder>
   <Folder Name="/Compze.DocumentDb/">
     <Project Path="src/Compze.DocumentDb.MicrosoftSql/Compze.DocumentDb.MicrosoftSql.csproj" />
     <Project Path="src/Compze.DocumentDb.MySql/Compze.DocumentDb.MySql.csproj" />

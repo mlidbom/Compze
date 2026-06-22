@@ -2,7 +2,6 @@
   <Settings>
     <CustomBuildProperties>
       <Value>UsePackageReference_Compze_Contracts = true</Value>
-      <Value>UsePackageReference_Compze_Core = true</Value>
       <Value>UsePackageReference_Compze_DbPool = true</Value>
       <Value>UsePackageReference_Compze_DbPool_MicrosoftSql = true</Value>
       <Value>UsePackageReference_Compze_DbPool_MySql = true</Value>
