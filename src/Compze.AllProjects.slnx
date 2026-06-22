@@ -13,7 +13,7 @@
   <Folder Name="/Compze.Abstractions/Specifications/">
     <Project Path="../test/Compze.Abstractions.Specifications/Compze.Abstractions.Specifications.csproj" />
   </Folder>
-  <Folder Name="/Compze.Tessaging/Teventive/">
+  <Folder Name="/Compze.Teventive/">
     <Project Path="Compze.Tessaging.Teventive.TeventStore.MicrosoftSql/Compze.Tessaging.Teventive.TeventStore.MicrosoftSql.csproj" />
     <Project Path="Compze.Tessaging.Teventive.TeventStore.MySql/Compze.Tessaging.Teventive.TeventStore.MySql.csproj" />
     <Project Path="Compze.Tessaging.Teventive.TeventStore.PostgreSql/Compze.Tessaging.Teventive.TeventStore.PostgreSql.csproj" />
