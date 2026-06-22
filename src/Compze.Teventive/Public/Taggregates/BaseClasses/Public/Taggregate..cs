@@ -1,12 +1,12 @@
 using Compze.Abstractions.Public;
-using Compze.Tessaging.Teventive.Internal.Implementation;
-using Compze.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Abstractions.Time.Public;
 using Compze.Contracts;
 using Compze.Internals.SystemCE.ReactiveCE;
 using Compze.Internals.SystemCE.ReflectionCE;
+using Compze.Teventive.Internal.Implementation;
+using Compze.Teventive.Public.Taggregates.Tevents.Public;
 
-namespace Compze.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public;
+namespace Compze.Teventive.Public.Taggregates.BaseClasses.Public;
 
 public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeventImplementation, TWrapperTeventInterface, TWrapperTeventImplementation> :
    VersionedEntity<TTaggregate>,

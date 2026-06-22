@@ -1,10 +1,12 @@
+using Compze.Teventive;
+using Compze.Teventive.Public;
+using Compze.Teventive.Public.Taggregates.BaseClasses.Public;
+using Compze.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.TypeIdentifiers;
-using Compze.Tessaging.Teventive.Public;
-using Compze.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 
-[assembly: AssemblyTypeMapper(typeof(Compze.Tessaging.Teventive.AssemblyTypeMapper))]
+[assembly: AssemblyTypeMapper(typeof(AssemblyTypeMapper))]
 
-namespace Compze.Tessaging.Teventive;
+namespace Compze.Teventive;
 
 #pragma warning disable CA1812 // Instantiated via reflection through the [assembly: AssemblyTypeMapper(typeof(...))] attribute.
 class AssemblyTypeMapper : IAssemblyTypeMapper
@@ -16,6 +18,6 @@ class AssemblyTypeMapper : IAssemblyTypeMapper
          .Map<ITaggregateDeletedTevent>("bc662519-21b4-41b8-bce6-3714da82b1cc")
          .Map<ITaggregateTevent>("a1503d7d-51c0-4fff-ad3b-c7090f1e4905")
          .Map<IMutableTaggregateTevent>("befc4021-9e9c-4d40-842c-9878ce2c9ee3")
-         .MapOpenGeneric(typeof(Compze.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public.Taggregate<,,,,>), "e1f2a3b4-c5d6-4e7f-8091-a2b3c4d5e6f7");
+         .MapOpenGeneric(typeof(Taggregate<,,,,>), "e1f2a3b4-c5d6-4e7f-8091-a2b3c4d5e6f7");
    }
 }

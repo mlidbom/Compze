@@ -1,7 +1,7 @@
-using Compze.Tessaging.Teventive.Internal.Implementation;
-using Compze.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
+using Compze.Teventive.Internal.Implementation;
+using Compze.Teventive.Public.Taggregates.Tevents.Public;
 
-namespace Compze.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public;
+namespace Compze.Teventive.Public.Taggregates.BaseClasses.Public;
 
 public abstract class TeventiveRemovableEntity<TParent,
                                               TParentTevent,

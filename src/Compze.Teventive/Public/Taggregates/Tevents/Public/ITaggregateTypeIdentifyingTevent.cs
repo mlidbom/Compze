@@ -1,7 +1,7 @@
 using Compze.Abstractions.Public;
 using Compze.Abstractions.Tessaging.Public;
 
-namespace Compze.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
+namespace Compze.Teventive.Public.Taggregates.Tevents.Public;
 
 public interface ITaggregateIdentifyingTevent<out TTeventInterface> : IExactlyOncePublisherIdentifyingTevent<TTeventInterface>
    where TTeventInterface : ITaggregateTevent;

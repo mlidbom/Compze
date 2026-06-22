@@ -1,6 +1,6 @@
 using Compze.Abstractions.Public;
-using Compze.Tessaging.Teventive.Public;
-using Compze.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
+using Compze.Teventive.Public;
+using Compze.Teventive.Public.Taggregates.Tevents.Public;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 

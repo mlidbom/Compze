@@ -1,13 +1,13 @@
 using System.Reflection;
-using Compze.TypeIdentifiers;
 using Compze.Abstractions.Tessaging.Validation;
-using Compze.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.ReflectionCE;
+using Compze.Teventive.Public.Taggregates.BaseClasses.Public;
+using Compze.TypeIdentifiers;
 using JetBrains.Annotations;
 
-namespace Compze.Tessaging.Teventive.Internal.Implementation;
+namespace Compze.Teventive.Internal.Implementation;
 
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface)]
 public sealed class AllowPublicSettersAttribute : Attribute;

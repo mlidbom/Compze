@@ -1,6 +1,6 @@
 using Compze.Abstractions.Public;
-using Compze.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Tessaging.Teventive.TeventStore.Public.Exceptions;
+using Compze.Teventive.Public.Taggregates.Tevents.Public;
 
 // ReSharper disable LoopCanBeConvertedToTuery
 

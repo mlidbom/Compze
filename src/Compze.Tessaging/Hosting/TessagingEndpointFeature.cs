@@ -1,6 +1,5 @@
 using Compze.Abstractions.Configuration.Internal;
 using Compze.Abstractions.Hosting.Public;
-using Compze.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Transport;
@@ -16,6 +15,7 @@ using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Tessaging.Implementation.Transport.Client.Implementation.Universal;
 using Compze.Tessaging.Implementation.Transport.Client.Routing;
 using Compze.Tessaging.SystemCE.ThreadingCE;
+using Compze.Teventive.Public.Taggregates.Tevents.Public;
 
 namespace Compze.Tessaging.Hosting;
 

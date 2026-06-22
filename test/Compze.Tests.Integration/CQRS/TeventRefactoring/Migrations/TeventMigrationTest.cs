@@ -1,5 +1,4 @@
 using Compze.Abstractions.Public;
-using Compze.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Tessaging.Teventive.TeventStore.Public;
 using Compze.Tessaging.Teventive.TeventStore.Refactoring.Migrations.Public;
 using Compze.Abstractions.Time.Public;
@@ -12,6 +11,7 @@ using Compze.Tests.Infrastructure;
 using Compze.Internals.SystemCE.TransactionsCE;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Must;
+using Compze.Teventive.Public.Taggregates.Tevents.Public;
 
 // ReSharper disable AccessToDisposedClosure
 // ReSharper disable AccessToModifiedClosure

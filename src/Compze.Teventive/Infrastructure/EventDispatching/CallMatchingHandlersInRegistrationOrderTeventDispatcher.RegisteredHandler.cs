@@ -5,7 +5,7 @@ using Compze.Internals.SystemCE.ReflectionCE;
 
 // ReSharper disable StaticMemberInGenericType
 
-namespace Compze.Tessaging.Teventive.Infrastructure.EventDispatching;
+namespace Compze.Teventive.Infrastructure.EventDispatching;
 
 /// <summary>
 /// Calls all matching handlers in the order they were registered when an tevent is Dispatched.

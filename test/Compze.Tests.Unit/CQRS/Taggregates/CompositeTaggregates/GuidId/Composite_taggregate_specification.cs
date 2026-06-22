@@ -1,10 +1,10 @@
 using Compze.Abstractions.Public;
-using Compze.Tessaging.Teventive.Public;
 using Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId.Domain;
 using Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId.Domain.Tevents;
 using Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId.QueryModels;
 using Compze.Internals.SystemCE.ReactiveCE;
 using Compze.Must;
+using Compze.Teventive.Public;
 using Compze.xUnitBDD;
 
 // ReSharper disable InconsistentNaming

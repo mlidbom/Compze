@@ -5,14 +5,14 @@ using Compze.Internals.SystemCE.ReactiveCE;
 using Compze.Internals.SystemCE.ReflectionCE;
 using System.Diagnostics.CodeAnalysis;
 using Compze.Abstractions.Public;
-using Compze.Tessaging.Teventive.Internal;
-using Compze.Tessaging.Teventive.Public;
-using Compze.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Tessaging.Teventive.TeventStore.Internal;
 using Compze.Tessaging.Teventive.TeventStore.Public;
 using Compze.Tessaging.Teventive.TeventStore.Public.Exceptions;
 using Compze.Internals.SystemCE.UsageGuards;
 using Compze.Contracts;
+using Compze.Teventive.Internal;
+using Compze.Teventive.Public;
+using Compze.Teventive.Public.Taggregates.Tevents.Public;
 using static Compze.Contracts.Contract;
 
 namespace Compze.Tessaging.Teventive.TeventStore;

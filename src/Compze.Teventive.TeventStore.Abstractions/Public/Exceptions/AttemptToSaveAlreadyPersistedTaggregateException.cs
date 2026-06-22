@@ -1,4 +1,4 @@
-using Compze.Tessaging.Teventive.Public;
+using Compze.Teventive.Public;
 
 namespace Compze.Tessaging.Teventive.TeventStore.Public.Exceptions;
 

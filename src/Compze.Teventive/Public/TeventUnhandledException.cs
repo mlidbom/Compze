@@ -1,3 +1,3 @@
-namespace Compze.Tessaging.Teventive.Public;
+namespace Compze.Teventive.Public;
 
 public class TeventUnhandledException(Type handlerType, Type teventType) : Exception($"{handlerType} does not handle nor ignore incoming tevent {teventType}");

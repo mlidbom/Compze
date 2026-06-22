@@ -20,6 +20,7 @@
     <Project Path="src/Compze.Teventive.TeventStore.Sqlite/Compze.Teventive.TeventStore.Sqlite.csproj" />
     <Project Path="src/Compze.Teventive.TeventStore.Typermedia/Compze.Teventive.TeventStore.Typermedia.csproj" />
     <Project Path="src/Compze.Teventive.TeventStore/Compze.Teventive.TeventStore.csproj" />
+    <Project Path="src/Compze.Teventive/Compze.Teventive.csproj" />
   </Folder>
   <Folder Name="/Compze.TypeIdentifiers/">
     <Project Path="src/Compze.TypeIdentifiers.Interning.MicrosoftSql/Compze.TypeIdentifiers.Interning.MicrosoftSql.csproj" />
@@ -230,6 +231,5 @@
   <Project Path="src/Compze.Internals.Transport.AspNet/Compze.Internals.Transport.AspNet.csproj" />
   <Project Path="src/Compze.Hosting/Compze.Hosting.csproj" />
   <Project Path="src/Compze.Hosting.Testing/Compze.Hosting.Testing.csproj" />
-  <Project Path="src/Compze.Teventive/Compze.Teventive.csproj" />
   <Project Path="src/Compze.Teventive.TeventStore.Abstractions/Compze.Teventive.TeventStore.Abstractions.csproj" />
 </Solution>

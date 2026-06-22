@@ -1,4 +1,4 @@
-using Compze.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
+using Compze.Teventive.Public.Taggregates.Tevents.Public;
 
 namespace Compze.Tessaging.Teventive.TeventStore.Internal;
 

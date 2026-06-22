@@ -5,8 +5,6 @@ using Compze.Abstractions.Public;
 using Compze.xUnitMatrix;
 using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Abstractions.Tessaging.Public;
-using Compze.Tessaging.Teventive.Public;
-using Compze.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Tessaging.Teventive.TeventStore.Public;
 using Compze.Abstractions.Wiring.Testing.Internal;
 using JetBrains.Annotations;
@@ -28,6 +26,8 @@ using Compze.Threading;
 using Compze.Threading.Testing;
 using Compze.Internals.SystemCE.UsageGuards;
 using Compze.Must;
+using Compze.Teventive.Public;
+using Compze.Teventive.Public.Taggregates.Tevents.Public;
 using EnumerableCE = Compze.Internals.SystemCE.LinqCE.EnumerableCE;
 
 // ReSharper disable AccessToDisposedClosure

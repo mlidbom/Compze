@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Compze.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public;
+namespace Compze.Teventive.Public.Taggregates.BaseClasses.Public;
 
 class EntityCollection<TEntity, TEntityId> : IReadOnlyEntityCollection<TEntity, TEntityId> where TEntity : class where TEntityId : notnull
 {

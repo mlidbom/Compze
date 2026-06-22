@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using Compze.Abstractions.Public;
-using Compze.Tessaging.Teventive.Public;
+using Compze.Teventive.Public;
 
 namespace Compze.Tessaging.Teventive.TeventStore.Public;
 

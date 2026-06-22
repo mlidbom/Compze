@@ -1,7 +1,7 @@
 using Compze.Abstractions.Public;
 using Compze.Abstractions.Time.Public;
 
-namespace Compze.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
+namespace Compze.Teventive.Public.Taggregates.Tevents.Public;
 
 public abstract class TaggregateTevent() : IMutableTaggregateTevent
 {

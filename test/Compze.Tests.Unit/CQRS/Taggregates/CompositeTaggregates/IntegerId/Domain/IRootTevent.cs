@@ -1,4 +1,5 @@
-using Compze.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
+using Compze.Teventive.Public.Taggregates.Tevents.Public;
+
 // ReSharper disable PossibleInterfaceMemberAmbiguity
 
 #pragma warning disable CS0108 //Hides inherited member.

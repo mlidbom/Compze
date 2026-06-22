@@ -1,5 +1,5 @@
 using Compze.Abstractions.Public;
-using Compze.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public;
+using Compze.Teventive.Public.Taggregates.BaseClasses.Public;
 using JetBrains.Annotations;
 
 namespace Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.IntegerId.Domain;

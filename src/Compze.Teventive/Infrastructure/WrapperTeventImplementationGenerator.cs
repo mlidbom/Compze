@@ -1,7 +1,7 @@
 using System.Linq.Expressions;
 using System.Reflection;
-using Compze.Contracts;
 using Compze.Abstractions.Tessaging.Public;
+using Compze.Contracts;
 using Compze.Internals.SystemCE.CollectionsCE.GenericCE;
 using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Internals.SystemCE.ReflectionCE.EmitCE;
@@ -10,7 +10,7 @@ using Compze.Threading;
 // ReSharper disable UnusedTypeParameter : todo: We'll keep the unused stuff for reference for now. If it is not used during the refactoring of wrapped tevent dispatching, ditch it.
 // ReSharper disable UnusedMember.Global
 
-namespace Compze.Tessaging.Teventive.Infrastructure;
+namespace Compze.Teventive.Infrastructure;
 
 static class WrapperTeventImplementationGenerator
 {

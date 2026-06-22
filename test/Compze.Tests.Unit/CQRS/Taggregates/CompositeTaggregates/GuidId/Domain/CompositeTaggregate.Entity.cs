@@ -1,5 +1,5 @@
-using Compze.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public;
 using Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId.Domain.Tevents;
+using Compze.Teventive.Public.Taggregates.BaseClasses.Public;
 
 namespace Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId.Domain;
 
