@@ -61,7 +61,7 @@ precisely:
 So the wrapper test is sharper than "is it a bare primitive / library type": **does the wrapper denote
 something the existing type does not?** For `IntPtr` → yes (any concept at all, vs none). For `HWND` → no. A
 domain handle type becomes warranted again ONLY if it carries a narrower **enforced invariant** (e.g. "a
-top-level window we manage," minted solely by the `Window` enumerators) or real behavior — neither of which
+top-level window we manage," wrapped solely by the `Window` enumerators) or real behavior — neither of which
 the old `WindowHandle` had. Do not "fix" `HWND` flowing through Domain by re-introducing a wrapper; that is
 the thing this change removed.
 
