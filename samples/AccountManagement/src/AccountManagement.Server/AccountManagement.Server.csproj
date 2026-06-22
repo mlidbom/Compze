@@ -15,19 +15,16 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+  <!-- Compze.Core — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Core)' == 'true'">
+    <PackageReference Include="Compze.Core" Version="*-*" />
+  </ItemGroup>
   <!-- Compze.Contracts — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' == 'true'">
     <PackageReference Include="Compze.Contracts" Version="*-*" />
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' != 'true'">
     <ProjectReference Include="..\..\..\..\src\Compze.Contracts\Compze.Contracts.csproj" />
-  </ItemGroup>
-  <!-- Compze.Core — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Core)' == 'true'">
-    <PackageReference Include="Compze.Core" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Core)' != 'true'">
-    <ProjectReference Include="..\..\..\..\src\Compze.Core\Compze.Core.csproj" />
   </ItemGroup>
   <!-- Compze.DependencyInjection — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection)' == 'true'">
@@ -78,12 +75,26 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_Hosting_AspNetCore)' != 'true'">
     <ProjectReference Include="..\..\..\..\src\Compze.Tessaging.Hosting.AspNetCore\Compze.Tessaging.Hosting.AspNetCore.csproj" />
   </ItemGroup>
+  <!-- Compze.Teventive — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive)' == 'true'">
+    <PackageReference Include="Compze.Teventive" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive)' != 'true'">
+    <ProjectReference Include="..\..\..\..\src\Compze.Teventive\Compze.Teventive.csproj" />
+  </ItemGroup>
   <!-- Compze.Teventive.TeventStore — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive_TeventStore)' == 'true'">
     <PackageReference Include="Compze.Teventive.TeventStore" Version="*-*" />
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive_TeventStore)' != 'true'">
     <ProjectReference Include="..\..\..\..\src\Compze.Teventive.TeventStore\Compze.Teventive.TeventStore.csproj" />
+  </ItemGroup>
+  <!-- Compze.Teventive.TeventStore.Abstractions — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive_TeventStore_Abstractions)' == 'true'">
+    <PackageReference Include="Compze.Teventive.TeventStore.Abstractions" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive_TeventStore_Abstractions)' != 'true'">
+    <ProjectReference Include="..\..\..\..\src\Compze.Teventive.TeventStore.Abstractions\Compze.Teventive.TeventStore.Abstractions.csproj" />
   </ItemGroup>
   <!-- Compze.Teventive.TeventStore.Typermedia — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive_TeventStore_Typermedia)' == 'true'">

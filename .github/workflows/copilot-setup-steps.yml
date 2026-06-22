@@ -36,4 +36,4 @@ jobs:
         run: cp src/TestUsingPluggableComponentCombinations.github-ci src/TestUsingPluggableComponentCombinations
 
       - name: Build
-        run: dotnet build src/Compze.AllProjects.slnx
+        run: dotnet build Compze.AllProjects.slnx

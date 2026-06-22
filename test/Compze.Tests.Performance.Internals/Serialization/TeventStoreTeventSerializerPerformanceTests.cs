@@ -1,5 +1,5 @@
 using Compze.Abstractions.Public;
-using Compze.Core.Serialization.Internal;
+using Compze.Tessaging.Teventive.TeventStore.Internal;
 using Compze.DependencyInjection;
 using Compze.Internals.Serialization.Newtonsoft.Private.TeventStore;
 using Compze.Hosting.Testing;

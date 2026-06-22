@@ -1,4 +1,4 @@
-using Tessage = Compze.Core.Tessaging.Internal.SqlLayer.IServiceBusSqlLayer.InboxTessageDatabaseSchemaStrings;
+using Tessage = Compze.Tessaging.Transport.SqlLayer.IServiceBusSqlLayer.InboxTessageDatabaseSchemaStrings;
 
 namespace Compze.Tessaging.MicrosoftSql;
 

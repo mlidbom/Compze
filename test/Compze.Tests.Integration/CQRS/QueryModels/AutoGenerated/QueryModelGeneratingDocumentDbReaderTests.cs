@@ -1,9 +1,7 @@
 using Compze.Abstractions.Public;
-using Compze.Core.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public;
-using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
-using Compze.Core.Tessaging.Teventive.TeventStore.Public;
-using Compze.Core.Tessaging.Teventive.TeventStore.QueryModels;
-using Compze.Core.Tessaging.Teventive.TeventStore.QueryModels.Generators.Public;
+using Compze.Tessaging.Teventive.TeventStore.Public;
+using Compze.Tessaging.Teventive.TeventStore.QueryModels;
+using Compze.Tessaging.Teventive.TeventStore.QueryModels.Generators.Public;
 using Compze.Hosting.Testing;
 using Compze.Internals.Testing;
 using Compze.Tests.Common;
@@ -18,6 +16,8 @@ using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.TransactionsCE;
 using Compze.Must;
+using Compze.Teventive.Taggregates.BaseClasses;
+using Compze.Teventive.Taggregates.Tevents.Public;
 using JetBrains.Annotations;
 
 // ReSharper disable InconsistentNaming

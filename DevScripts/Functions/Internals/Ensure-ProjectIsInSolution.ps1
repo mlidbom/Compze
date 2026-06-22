@@ -27,15 +27,16 @@ function Ensure-ProjectIsInSolution {
     [xml]$xml = Get-Content $SolutionPath
     $solutionDir = Split-Path -Parent $SolutionPath
     
-    # Find the actual project file on disk to determine the correct path
-    $projectFile = Get-CsprojFiles -Path (Split-Path -Parent (Split-Path -Parent $SolutionPath)) -Filter "$ProjectName.csproj" | Select-Object -First 1
+    # Find the actual project file on disk to determine the correct path.
+    # The solution lives at the repository root, so $solutionDir is the repo root to search under.
+    $projectFile = Get-CsprojFiles -Path $solutionDir -Filter "$ProjectName.csproj" | Select-Object -First 1
     
     if ($projectFile) {
         # Use the actual location on disk
         $solutionProjectPath = [System.IO.Path]::GetRelativePath($solutionDir, $projectFile.FullName) -replace '\\', '/'
     } else {
-        # Project doesn't exist yet — use flat convention: ProjectName/ProjectName.csproj
-        $solutionProjectPath = "$ProjectName/$ProjectName.csproj"
+        # Project doesn't exist yet — use flat convention: src/ProjectName/ProjectName.csproj
+        $solutionProjectPath = "src/$ProjectName/$ProjectName.csproj"
     }
     
     # Try to find the project

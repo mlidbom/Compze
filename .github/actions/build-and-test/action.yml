@@ -30,8 +30,8 @@ runs:
 
     - name: Build
       shell: bash
-      run: dotnet build src/Compze.AllProjects.slnx --configuration ${{ inputs.configuration }}
+      run: dotnet build Compze.AllProjects.slnx --configuration ${{ inputs.configuration }}
 
     - name: Test
       shell: bash
-      run: dotnet test src/Compze.AllProjects.slnx --configuration ${{ inputs.configuration }} --no-build -m:1
+      run: dotnet test Compze.AllProjects.slnx --configuration ${{ inputs.configuration }} --no-build -m:1

@@ -10,9 +10,16 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="9.0.9" />
   </ItemGroup>
+  <!-- Compze.Core — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Core)' == 'true'">
+    <PackageReference Include="Compze.Core" Version="*-*" />
+  </ItemGroup>
   <!-- Exclude _docs files from compilation but keep them visible.
        This section is automatically maintained by DevScripts\C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders.ps1 -->
   <ItemGroup>
+    <Compile Remove="_docs\**\*.cs" />
+    <None Include="_docs\**\*.cs" />
+    <Content Include="_docs\**\*.md" />
     <Compile Remove="Typermedia\_docs\**\*.cs" />
     <None Include="Typermedia\_docs\**\*.cs" />
     <Content Include="Typermedia\_docs\**\*.md" />
@@ -23,13 +30,6 @@
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' != 'true'">
     <ProjectReference Include="..\Compze.Contracts\Compze.Contracts.csproj" />
-  </ItemGroup>
-  <!-- Compze.Core — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Core)' == 'true'">
-    <PackageReference Include="Compze.Core" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Core)' != 'true'">
-    <ProjectReference Include="..\Compze.Core\Compze.Core.csproj" />
   </ItemGroup>
   <!-- Compze.DependencyInjection — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection)' == 'true'">
@@ -72,6 +72,20 @@
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_Abstractions)' != 'true'">
     <ProjectReference Include="..\Compze.Tessaging.Abstractions\Compze.Tessaging.Abstractions.csproj" />
+  </ItemGroup>
+  <!-- Compze.Teventive — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive)' == 'true'">
+    <PackageReference Include="Compze.Teventive" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive)' != 'true'">
+    <ProjectReference Include="..\Compze.Teventive\Compze.Teventive.csproj" />
+  </ItemGroup>
+  <!-- Compze.Teventive.TeventStore.Abstractions — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive_TeventStore_Abstractions)' == 'true'">
+    <PackageReference Include="Compze.Teventive.TeventStore.Abstractions" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive_TeventStore_Abstractions)' != 'true'">
+    <ProjectReference Include="..\Compze.Teventive.TeventStore.Abstractions\Compze.Teventive.TeventStore.Abstractions.csproj" />
   </ItemGroup>
   <!-- Compze.Threading — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Threading)' == 'true'">

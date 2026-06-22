@@ -31,7 +31,7 @@ function C-Split-Project {
     Use when the remaining code depends on what was extracted.
 
     .PARAMETER SolutionPath
-    Path to the solution file (defaults to src\Compze.AllProjects.slnx)
+    Path to the solution file (defaults to Compze.AllProjects.slnx)
 
     .EXAMPLE
     C-Split-Project -SourceProject Compze.Wiring -SplitProject Compze.Wiring.Testing

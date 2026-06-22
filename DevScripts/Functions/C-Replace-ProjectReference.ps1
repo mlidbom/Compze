@@ -17,7 +17,7 @@ function C-Replace-ProjectReference {
     The name of the project to reference instead (e.g., "Compze.Wiring")
     
     .PARAMETER SolutionPath
-    Path to the main solution file (defaults to src\Compze.AllProjects.slnx)
+    Path to the main solution file (defaults to Compze.AllProjects.slnx)
     
     .EXAMPLE
     C-Replace-ProjectReference -Old Compze.Wiring.Testing -New Compze.Wiring

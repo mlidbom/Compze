@@ -61,18 +61,18 @@ Then reload: `. $PROFILE`
 - **C-Rename-Project** - Renames a project and updates all references
   - `-Old` - Current project name (e.g., "Compze.Tessaging.Hosting.Configuration")
   - `-New` - New project name (e.g., "Compze.Common.Configuration")
-  - `-SolutionPath` - Path to solution file (defaults to src\Compze.AllProjects.slnx)
+  - `-SolutionPath` - Path to solution file (defaults to Compze.AllProjects.slnx)
   - Updates project file name, ProjectReferences, and all solution files (.slnx and .sln)
 
 - **C-Relocate-Project** - Moves a project to match solution structure conventions
   - `-ProjectName` - Name of the project to relocate (e.g., "Compze.Common.Configuration")
-  - `-SolutionPath` - Path to solution file (defaults to src\Compze.AllProjects.slnx)
+  - `-SolutionPath` - Path to solution file (defaults to Compze.AllProjects.slnx)
   - Moves project directory to match name (Compze.A.B.C -> Compze/A/B/C)
   - Updates all ProjectReferences, solution paths, and solution folder structure
 
 - **C-Place-ProjectInSolution** - Places a project in the correct solution folder structure
   - `-ProjectName` - Name of the project (e.g., "Compze.Common.Configuration")
-  - `-SolutionPath` - Path to solution file (defaults to src\Compze.AllProjects.slnx)
+  - `-SolutionPath` - Path to solution file (defaults to Compze.AllProjects.slnx)
   - Adds project to solution if it doesn't exist
   - Moves project to correct folder based on its path
   - Only updates the solution file folder structure, doesn't move any files

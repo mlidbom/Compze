@@ -11,19 +11,19 @@
   <ItemGroup>
     <PackageReference Include="MySql.Data" Version="9.4.0" />
   </ItemGroup>
-  <!-- Compze.Core — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Core)' == 'true'">
-    <PackageReference Include="Compze.Core" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Core)' != 'true'">
-    <ProjectReference Include="..\Compze.Core\Compze.Core.csproj" />
-  </ItemGroup>
   <!-- Compze.Internals.Sql.MySql — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Sql_MySql)' == 'true'">
     <PackageReference Include="Compze.Internals.Sql.MySql" Version="*-*" />
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Sql_MySql)' != 'true'">
     <ProjectReference Include="..\Compze.Internals.Sql.MySql\Compze.Internals.Sql.MySql.csproj" />
+  </ItemGroup>
+  <!-- Compze.Teventive.TeventStore.Abstractions — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive_TeventStore_Abstractions)' == 'true'">
+    <PackageReference Include="Compze.Teventive.TeventStore.Abstractions" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive_TeventStore_Abstractions)' != 'true'">
+    <ProjectReference Include="..\Compze.Teventive.TeventStore.Abstractions\Compze.Teventive.TeventStore.Abstractions.csproj" />
   </ItemGroup>
   <!-- Compze.TypeIdentifiers.Interning — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_TypeIdentifiers_Interning)' == 'true'">

@@ -1,10 +1,10 @@
 using Compze.Abstractions.Tessaging.Public;
-using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Internals.Transport;
 using Compze.TypeIdentifiers;
 using Compze.Typermedia.Client;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
+using Compze.Teventive.Taggregates.Tevents.Public;
 
 namespace Compze.Tests.Common.Wiring;
 

@@ -30,7 +30,7 @@ Compze is a .NET framework for building expressive domains through:
 
 - **Language**: C# (.NET 10, see `src/global.json`)
 - **Testing**: xUnit v3 (via `Compze.xUnit`, `Compze.xUnitBDD`, `Compze.xUnitMatrix`)
-- **Build System**: MSBuild (.NET SDK), solution file: `src/Compze.AllProjects.slnx`
+- **Build System**: MSBuild (.NET SDK), solution file: `Compze.AllProjects.slnx`
 - **References**: FlexRef — auto-switches between `ProjectReference` and `PackageReference` depending on which projects are in the current solution (see `flexref.instructions.md`)
 - **Dependency Injection**: Pluggable (Microsoft DI, Autofac)
 - **Persistence**: Pluggable (SQLite in-memory, SQL Server, PostgreSQL, MySQL)
@@ -49,7 +49,7 @@ Compze is a .NET framework for building expressive domains through:
 ```powershell
 C-Build                  # Build the solution (preferred)
 C-Build -Clean           # Deep clean then build
-dotnet build src/Compze.AllProjects.slnx  # Alternative: direct .NET CLI
+dotnet build Compze.AllProjects.slnx  # Alternative: direct .NET CLI
 ```
 
 ### Running Tests
@@ -63,7 +63,7 @@ C-Test -Clean                  # Deep clean + build + test
 C-Test -FullGitReset           # Full git clean + build + test
 
 # Running a subset of tests (no DevScripts support, use dotnet directly)
-dotnet test src/Compze.AllProjects.slnx --no-build --filter "FullyQualifiedName~MyTestClass"
+dotnet test Compze.AllProjects.slnx --no-build --filter "FullyQualifiedName~MyTestClass"
 ```
 
 ### Test Configuration

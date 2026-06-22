@@ -21,19 +21,19 @@ Runs ReSharper's code inspections without opening the IDE. Produces a report of 
 
 ```powershell
 # Full solution — SARIF is the default format, integrates with VS Code SARIF Viewer extension
-jb inspectcode src/Compze.AllProjects.slnx --output=inspect-report.sarif --severity=WARNING
+jb inspectcode Compze.AllProjects.slnx --output=inspect-report.sarif --severity=WARNING
 
 # Specific project only
-jb inspectcode src/Compze.AllProjects.slnx --project=Compze.Core --output=core-report.sarif
+jb inspectcode Compze.AllProjects.slnx --project=Compze.Core --output=core-report.sarif
 
 # Include suggestions (more verbose)
-jb inspectcode src/Compze.AllProjects.slnx --severity=SUGGESTION --output=inspect-report.sarif
+jb inspectcode Compze.AllProjects.slnx --severity=SUGGESTION --output=inspect-report.sarif
 
 # XML format — useful for PowerShell analysis (see below)
-jb inspectcode src/Compze.AllProjects.slnx --output=inspect-report.xml --format=Xml --severity=WARNING
+jb inspectcode Compze.AllProjects.slnx --output=inspect-report.xml --format=Xml --severity=WARNING
 
 # Multiple output formats in one run
-jb inspectcode src/Compze.AllProjects.slnx --format=Sarif;Html --output=reports/
+jb inspectcode Compze.AllProjects.slnx --format=Sarif;Html --output=reports/
 ```
 
 **Key parameters:**
@@ -57,19 +57,19 @@ Applies code cleanup (formatting, syntax style, redundancy removal) across a sol
 
 ```powershell
 # Full cleanup using default profile
-jb cleanupcode src/Compze.AllProjects.slnx
+jb cleanupcode Compze.AllProjects.slnx
 
 # Reformat only (no semantic changes)
-jb cleanupcode src/Compze.AllProjects.slnx --profile="Built-in: Reformat Code"
+jb cleanupcode Compze.AllProjects.slnx --profile="Built-in: Reformat Code"
 
 # Reformat + syntax style
-jb cleanupcode src/Compze.AllProjects.slnx --profile="Built-in: Reformat & Apply Syntax Style"
+jb cleanupcode Compze.AllProjects.slnx --profile="Built-in: Reformat & Apply Syntax Style"
 
 # Use the custom profile from DotSettings
-jb cleanupcode src/Compze.AllProjects.slnx --profile="ManpowerSilentCleanup"
+jb cleanupcode Compze.AllProjects.slnx --profile="ManpowerSilentCleanup"
 
 # Only specific files/paths
-jb cleanupcode src/Compze.AllProjects.slnx --include="src/Compze.Core/**/*.cs"
+jb cleanupcode Compze.AllProjects.slnx --include="src/Compze.Core/**/*.cs"
 
 # Clean up individual files without a solution (reformat only)
 jb cleanupcode src/Compze.Core/SomeFile.cs
@@ -99,7 +99,7 @@ Both tools automatically pick up settings from:
 
 ## Inspection Results (March 2026 Baseline)
 
-Run against `src/Compze.AllProjects.slnx` at WARNING severity: **1,398 issues across 36 issue types**.
+Run against `Compze.AllProjects.slnx` at WARNING severity: **1,398 issues across 36 issue types**.
 
 ### Issues by Category
 
@@ -146,11 +146,11 @@ Run against `src/Compze.AllProjects.slnx` at WARNING severity: **1,398 issues ac
 ## Practical Workflow
 
 1. **Commit** your current work
-2. **Inspect**: `jb inspectcode src/Compze.AllProjects.slnx --output=inspect-report.sarif --severity=WARNING`
+2. **Inspect**: `jb inspectcode Compze.AllProjects.slnx --output=inspect-report.sarif --severity=WARNING`
 3. **Analyze** the report in VS Code with the [SARIF Viewer extension](https://marketplace.visualstudio.com/items?itemName=MS-SARIFVscode.sarif-viewer), or use XML format for PowerShell analysis (see below)
 4. **Fix** either manually or with CleanupCode for style issues
 5. **Review** changes with `git diff`
-6. **Test**: `dotnet test src/Compze.AllProjects.slnx --no-build`
+6. **Test**: `dotnet test Compze.AllProjects.slnx --no-build`
 7. **Commit** the cleanup
 
 For visibility reduction specifically, InspectCode identifies the targets but CleanupCode doesn't auto-fix them — those changes need to be made manually or with IDE refactoring.

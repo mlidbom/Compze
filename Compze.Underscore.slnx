@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="src/Compze.Unit/Compze.Unit.csproj" />
+  <Project Path="src/Compze.Underscore/Compze.Underscore.csproj" />
+  <Folder Name="/Specifications/">
+    <Project Path="test/Compze.Underscore.Specifications/Compze.Underscore.Specifications.csproj" />
+  </Folder>
+</Solution>

@@ -1,6 +1,5 @@
 using Compze.Abstractions.Public;
-using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
-using Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions;
+using Compze.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions;
 using Compze.Contracts;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
@@ -9,6 +8,7 @@ using Compze.Internals.SystemCE.TransactionsCE;
 using Microsoft.Extensions.Caching.Memory;
 using System.Diagnostics.CodeAnalysis;
 using System.Transactions;
+using Compze.Teventive.Taggregates.Tevents.Public;
 using Compze.Threading;
 using Compze.Threading.ResourceAccess;
 

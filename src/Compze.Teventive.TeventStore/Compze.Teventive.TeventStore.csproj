@@ -14,13 +14,6 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' != 'true'">
     <ProjectReference Include="..\Compze.Contracts\Compze.Contracts.csproj" />
   </ItemGroup>
-  <!-- Compze.Core — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Core)' == 'true'">
-    <PackageReference Include="Compze.Core" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Core)' != 'true'">
-    <ProjectReference Include="..\Compze.Core\Compze.Core.csproj" />
-  </ItemGroup>
   <!-- Compze.DependencyInjection — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection)' == 'true'">
     <PackageReference Include="Compze.DependencyInjection" Version="*-*" />
@@ -49,6 +42,20 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging)' != 'true'">
     <ProjectReference Include="..\Compze.Tessaging\Compze.Tessaging.csproj" />
   </ItemGroup>
+  <!-- Compze.Teventive — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive)' == 'true'">
+    <PackageReference Include="Compze.Teventive" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive)' != 'true'">
+    <ProjectReference Include="..\Compze.Teventive\Compze.Teventive.csproj" />
+  </ItemGroup>
+  <!-- Compze.Teventive.TeventStore.Abstractions — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive_TeventStore_Abstractions)' == 'true'">
+    <PackageReference Include="Compze.Teventive.TeventStore.Abstractions" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive_TeventStore_Abstractions)' != 'true'">
+    <ProjectReference Include="..\Compze.Teventive.TeventStore.Abstractions\Compze.Teventive.TeventStore.Abstractions.csproj" />
+  </ItemGroup>
   <!-- Compze.Threading — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Threading)' == 'true'">
     <PackageReference Include="Compze.Threading" Version="*-*" />
@@ -62,5 +69,8 @@
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_Underscore)' != 'true'">
     <ProjectReference Include="..\Compze.Underscore\Compze.Underscore.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Compze.DocumentDb\Compze.DocumentDb.csproj" />
   </ItemGroup>
 </Project>

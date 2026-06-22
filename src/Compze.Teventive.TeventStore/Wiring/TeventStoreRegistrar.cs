@@ -1,7 +1,7 @@
-using Compze.Core.Tessaging.Teventive.Internal.Implementation;
-using Compze.Core.Tessaging.Teventive.TeventStore.Refactoring.Migrations.Public;
+using Compze.Tessaging.Teventive.TeventStore.Refactoring.Migrations.Public;
 using Compze.Contracts;
 using Compze.DependencyInjection.Abstractions;
+using Compze.Teventive.Internal.Implementation;
 
 namespace Compze.Tessaging.Teventive.TeventStore.Wiring;
 

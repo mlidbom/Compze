@@ -1,0 +1,11 @@
+<Solution>
+  <Project Path="src/Compze.DbPool/Compze.DbPool.csproj" />
+  <Project Path="src/Compze.DbPool.MicrosoftSql/Compze.DbPool.MicrosoftSql.csproj" />
+  <Project Path="src/Compze.DbPool.MySql/Compze.DbPool.MySql.csproj" />
+  <Project Path="src/Compze.DbPool.PostgreSql/Compze.DbPool.PostgreSql.csproj" />
+  <Project Path="src/Compze.DbPool.Sqlite/Compze.DbPool.Sqlite.csproj" />
+  <Folder Name="/Tests/">
+    <Project Path="test/Compze.Tests.Infrastructure/Compze.Tests.Infrastructure.csproj" />
+    <Project Path="test/Compze.DbPool.Tests/Compze.DbPool.Tests.csproj" />
+  </Folder>
+</Solution>

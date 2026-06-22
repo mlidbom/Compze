@@ -1,7 +1,7 @@
 using Compze.Abstractions.Public;
 using Compze.Abstractions.Serialization.Internal;
 using Compze.Abstractions.Wiring.Testing.Internal;
-using Compze.Core.Serialization.Internal;
+using Compze.Tessaging.Teventive.TeventStore.Internal;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Serialization.Newtonsoft.Wiring;

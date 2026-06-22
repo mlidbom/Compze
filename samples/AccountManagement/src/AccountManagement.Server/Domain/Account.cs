@@ -3,8 +3,8 @@ using AccountManagement.Domain.Passwords;
 using AccountManagement.Domain.Registration;
 using AccountManagement.Domain.Tevents;
 using CommunityToolkit.Diagnostics;
-using Compze.Core.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public;
 using Compze.Internals.Logging;
+using Compze.Teventive.Taggregates.BaseClasses;
 using Compze.Typermedia;
 
 namespace AccountManagement.Domain;

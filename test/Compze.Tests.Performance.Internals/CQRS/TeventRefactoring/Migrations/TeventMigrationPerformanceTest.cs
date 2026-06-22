@@ -1,7 +1,6 @@
 using Compze.Abstractions.Public;
-using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
-using Compze.Core.Tessaging.Teventive.TeventStore.Public;
-using Compze.Core.Tessaging.Teventive.TeventStore.Refactoring.Migrations.Public;
+using Compze.Tessaging.Teventive.TeventStore.Public;
+using Compze.Tessaging.Teventive.TeventStore.Refactoring.Migrations.Public;
 using Compze.Abstractions.Time.Public;
 using Compze.Abstractions.Wiring.Testing.Internal;
 using Compze.Hosting.Testing;
@@ -19,6 +18,7 @@ using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE;
 using Compze.Internals.SystemCE.LinqCE;
 using Compze.Contracts;
+using Compze.Teventive.Taggregates.Tevents.Public;
 
 namespace Compze.Tests.Performance.Internals.CQRS.TeventRefactoring.Migrations;
 

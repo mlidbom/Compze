@@ -19,9 +19,6 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Core)' == 'true'">
     <PackageReference Include="Compze.Core" Version="*-*" />
   </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Core)' != 'true'">
-    <ProjectReference Include="..\..\src\Compze.Core\Compze.Core.csproj" />
-  </ItemGroup>
   <!-- Compze.DependencyInjection — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection)' == 'true'">
     <PackageReference Include="Compze.DependencyInjection" Version="*-*" />
@@ -112,5 +109,8 @@
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_xUnitMatrix)' != 'true'">
     <ProjectReference Include="..\..\src\Compze.xUnitMatrix\Compze.xUnitMatrix.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Compze.Abstractions\Compze.Abstractions.csproj" />
   </ItemGroup>
 </Project>

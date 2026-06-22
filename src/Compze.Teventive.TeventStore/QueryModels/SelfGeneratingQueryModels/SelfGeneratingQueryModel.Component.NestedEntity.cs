@@ -1,7 +1,7 @@
-using Compze.Core.Tessaging.Teventive.Public;
-using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Contracts;
 using Compze.Internals.SystemCE.ReflectionCE;
+using Compze.Teventive;
+using Compze.Teventive.Taggregates.Tevents.Public;
 
 namespace Compze.Tessaging.Teventive.TeventStore.QueryModels.SelfGeneratingQueryModels;
 

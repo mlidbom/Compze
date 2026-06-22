@@ -1,11 +1,11 @@
 using Compze.Abstractions.Public;
-using Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions;
+using Compze.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions;
 using Compze.Internals.Sql.Common;
 using Compze.Internals.Sql.Common.Abstractions;
 using Compze.Internals.Sql.Sqlite.Private;
 using Compze.TypeIdentifiers.Interning;
 using Microsoft.Data.Sqlite;
-using Tevent = Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.TeventTableSchemaStrings;
+using Tevent = Compze.Tessaging.Teventive.TeventStore.Internal.SqlLayer.TeventTableSchemaStrings;
 
 namespace Compze.Tessaging.Teventive.TeventStore.Sqlite;
 

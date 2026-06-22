@@ -1,8 +1,8 @@
-using Compze.Core.Tessaging.Teventive.Public;
-using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Typermedia.Client;
 using Compze.Abstractions.Hosting.Public;
 using Compze.Tessaging.Teventive.TeventStore.Wiring;
+using Compze.Teventive;
+using Compze.Teventive.Taggregates.Tevents.Public;
 using Compze.Typermedia.HandlerRegistration;
 
 namespace Compze.Tessaging.Teventive.TeventStore.Typermedia;

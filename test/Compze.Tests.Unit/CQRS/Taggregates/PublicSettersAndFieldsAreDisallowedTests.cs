@@ -1,8 +1,8 @@
-using Compze.Core.Tessaging.Teventive.Internal.Implementation;
-using Compze.Core.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public;
-using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Tests.Infrastructure;
 using Compze.Must;
+using Compze.Teventive.Internal.Implementation;
+using Compze.Teventive.Taggregates.BaseClasses;
+using Compze.Teventive.Taggregates.Tevents.Public;
 using Compze.xUnitBDD;
 using JetBrains.Annotations;
 using static Compze.Must.MustActions;

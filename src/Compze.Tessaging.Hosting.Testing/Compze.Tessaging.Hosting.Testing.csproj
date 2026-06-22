@@ -147,6 +147,13 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_Sqlite)' != 'true'">
     <ProjectReference Include="..\Compze.Tessaging.Sqlite\Compze.Tessaging.Sqlite.csproj" />
   </ItemGroup>
+  <!-- Compze.Teventive.TeventStore.Abstractions — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive_TeventStore_Abstractions)' == 'true'">
+    <PackageReference Include="Compze.Teventive.TeventStore.Abstractions" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive_TeventStore_Abstractions)' != 'true'">
+    <ProjectReference Include="..\Compze.Teventive.TeventStore.Abstractions\Compze.Teventive.TeventStore.Abstractions.csproj" />
+  </ItemGroup>
   <!-- Compze.Teventive.TeventStore.MicrosoftSql — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive_TeventStore_MicrosoftSql)' == 'true'">
     <PackageReference Include="Compze.Teventive.TeventStore.MicrosoftSql" Version="*-*" />

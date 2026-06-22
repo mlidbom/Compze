@@ -1,11 +1,9 @@
 using Compze.Abstractions.Public;
 using Compze.TypeIdentifiers;
-using Compze.Core.Serialization.Internal;
-using Compze.Core.Tessaging.Teventive.Public;
-using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
-using Compze.Core.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions;
-using Compze.Core.Tessaging.Teventive.TeventStore.Public;
-using Compze.Core.Tessaging.Teventive.TeventStore.Refactoring.Migrations.Public;
+using Compze.Tessaging.Teventive.TeventStore.Internal;
+using Compze.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions;
+using Compze.Tessaging.Teventive.TeventStore.Public;
+using Compze.Tessaging.Teventive.TeventStore.Refactoring.Migrations.Public;
 using Compze.Tessaging.Teventive.TeventStore.Refactoring.Migrations;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
@@ -14,6 +12,8 @@ using Compze.Internals.SystemCE.LinqCE;
 using Compze.Internals.SystemCE.UsageGuards;
 using JetBrains.Annotations;
 using Compze.Contracts;
+using Compze.Teventive;
+using Compze.Teventive.Taggregates.Tevents.Public;
 using static Compze.Contracts.Contract;
 
 namespace Compze.Tessaging.Teventive.TeventStore;

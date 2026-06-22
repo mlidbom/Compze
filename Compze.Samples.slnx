@@ -1,0 +1,17 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="src/Compze.Samples.v3.ncrunchsolution" />
+  </Folder>
+  <Folder Name="/Tests/">
+    <Project Path="samples/AccountManagement/test/AccountManagement.Tests.PerformanceInternals/AccountManagement.Tests.PerformanceInternals.csproj" />
+    <Project Path="samples/AccountManagement/test/AccountManagement.Tests.Unit/AccountManagement.Tests.Unit.csproj" />
+    <Project Path="samples/AccountManagement/test/AccountManagement.Tests/AccountManagement.Tests.csproj" />
+  </Folder>
+  <Folder Name="/_Test Infrastructure/">
+    <Project Path="test/Compze.Tests.Infrastructure/Compze.Tests.Infrastructure.csproj" />
+  </Folder>
+  <Project Path="samples/AccountManagement/src/AccountManagement.API/AccountManagement.API.csproj" />
+  <Project Path="samples/AccountManagement/src/AccountManagement.Domain.Tevents/AccountManagement.Domain.Tevents.csproj" />
+  <Project Path="samples/AccountManagement/src/AccountManagement.Server/AccountManagement.Server.csproj" />
+  <Project Path="samples/AccountManagement/src/AccountManagement.UI.MVC/AccountManagement.UI.MVC.csproj" />
+</Solution>

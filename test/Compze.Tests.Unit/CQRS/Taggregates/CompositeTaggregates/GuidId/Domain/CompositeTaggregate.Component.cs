@@ -1,5 +1,6 @@
-using Compze.Core.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public;
 using Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId.Domain.Tevents;
+using Compze.Teventive.Taggregates.BaseClasses;
+
 // ReSharper disable RedundantNameQualifier
 
 namespace Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId.Domain;

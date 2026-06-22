@@ -15,15 +15,19 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Core)' == 'true'">
     <PackageReference Include="Compze.Core" Version="*-*" />
   </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Core)' != 'true'">
-    <ProjectReference Include="..\Compze.Core\Compze.Core.csproj" />
-  </ItemGroup>
   <!-- Compze.Internals.Sql.Sqlite — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Sql_Sqlite)' == 'true'">
     <PackageReference Include="Compze.Internals.Sql.Sqlite" Version="*-*" />
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Sql_Sqlite)' != 'true'">
     <ProjectReference Include="..\Compze.Internals.Sql.Sqlite\Compze.Internals.Sql.Sqlite.csproj" />
+  </ItemGroup>
+  <!-- Compze.Tessaging — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging)' == 'true'">
+    <PackageReference Include="Compze.Tessaging" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging)' != 'true'">
+    <ProjectReference Include="..\Compze.Tessaging\Compze.Tessaging.csproj" />
   </ItemGroup>
   <!-- Compze.TypeIdentifiers.Interning — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_TypeIdentifiers_Interning)' == 'true'">

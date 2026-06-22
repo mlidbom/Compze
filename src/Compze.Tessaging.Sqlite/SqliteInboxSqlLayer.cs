@@ -1,13 +1,13 @@
 using Compze.Abstractions.Public;
-using Compze.Core.Tessaging.Internal.SqlLayer;
 using Compze.Internals.Sql.Common;
 using Compze.Internals.Sql.Common.Abstractions;
 using Compze.Internals.Sql.Sqlite;
 using Compze.Internals.Sql.Sqlite.Private;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
+using Compze.Tessaging.Transport.SqlLayer;
 using Compze.TypeIdentifiers;
 using Compze.TypeIdentifiers.Interning;
-using TessageTable =  Compze.Core.Tessaging.Internal.SqlLayer.IServiceBusSqlLayer.InboxTessageDatabaseSchemaStrings;
+using TessageTable =  Compze.Tessaging.Transport.SqlLayer.IServiceBusSqlLayer.InboxTessageDatabaseSchemaStrings;
 
 namespace Compze.Tessaging.Sqlite;
 

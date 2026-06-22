@@ -1,0 +1,13 @@
+<Solution>
+  <Folder Name="/Compze.Utilities/">
+    <Project Path="src/Compze.Utilities/Compze.Utilities.csproj" />
+    <Project Path="src/Compze.Internals.SystemCE/Compze.Internals.SystemCE.csproj" />
+    <Project Path="src/Compze.Internals.Logging/Compze.Internals.Logging.csproj" />
+    <Project Path="src/Compze.DependencyInjection/Compze.DependencyInjection.csproj" />
+    <Project Path="src/Compze.DependencyInjection.Autofac/Compze.DependencyInjection.Autofac.csproj" />
+    <Project Path="src/Compze.DependencyInjection.Microsoft/Compze.DependencyInjection.Microsoft.csproj" />
+    <Project Path="src/Compze.Internals.Logging.Serilog/Compze.Internals.Logging.Serilog.csproj" />
+    <Project Path="src/Compze.Utilities.Testing.DbPool/Compze.Utilities.Testing.DbPool.csproj" />
+  </Folder>
+
+</Solution>

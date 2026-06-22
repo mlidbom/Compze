@@ -1,5 +1,5 @@
-using Compze.Core.Tessaging.Teventive.Public;
-using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
+using Compze.Teventive;
+using Compze.Teventive.Taggregates.Tevents.Public;
 
 namespace Compze.Tests.Integration.CQRS;
 

@@ -1,7 +1,0 @@
-<Solution>
-  <Project Path="Compze.xUnitMatrix/Compze.xUnitMatrix.csproj" />
-  <Project Path="Compze.xUnit/Compze.xUnit.csproj" />
-  <Folder Name="/_Tests/">
-    <Project Path="../test/Compze.xUnitMatrix.Tests/Compze.xUnitMatrix.Tests.csproj" />
-  </Folder>
-</Solution>

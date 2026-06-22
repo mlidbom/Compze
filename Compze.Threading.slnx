@@ -1,0 +1,10 @@
+<Solution>
+  <Project Path="src/Compze.Threading/Compze.Threading.csproj" />
+  <Project Path="src/Compze.Internals.Threading/Compze.Internals.Threading.csproj" />
+  <Project Path="src/Compze.Threading.Testing/Compze.Threading.Testing.csproj" />
+  <Folder Name="/Specifications/">
+    <Project Path="test/Compze.Threading.Specifications/Compze.Threading.Specifications.csproj" />
+    <Project Path="test/Compze.Threading.Testing.Specifications/Compze.Threading.Testing.Specifications.csproj" />
+    <Project Path="test/Compze.Threading.Tests/Compze.Threading.Tests.csproj" />
+  </Folder>
+</Solution>

@@ -1,6 +1,6 @@
-using Compze.Core.Tessaging.Teventive.Public;
-using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Must;
+using Compze.Teventive;
+using Compze.Teventive.Taggregates.Tevents.Public;
 using Compze.xUnitBDD;
 
 // ReSharper disable InconsistentNaming

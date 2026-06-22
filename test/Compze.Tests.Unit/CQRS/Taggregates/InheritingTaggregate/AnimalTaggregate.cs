@@ -1,6 +1,7 @@
 using Compze.Abstractions.Public;
-using Compze.Core.Tessaging.Teventive.Public.Taggregates.BaseClasses.Public;
-using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
+using Compze.Teventive.Taggregates.BaseClasses;
+using Compze.Teventive.Taggregates.Tevents.Public;
+
 // ReSharper disable ClassNeverInstantiated.Global
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 #pragma warning  disable CA1812 // Avoid uninstantiated internal classes # used via reflection

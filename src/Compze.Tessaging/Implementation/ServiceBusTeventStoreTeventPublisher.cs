@@ -1,10 +1,10 @@
-using Compze.Core.Tessaging.Teventive.Infrastructure.Validation;
-using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
-using Compze.Core.Tessaging.Teventive.TeventStore.Internal;
+using Compze.Abstractions.Tessaging.Validation;
+using Compze.Tessaging.Teventive.TeventStore.Internal;
 using Compze.Tessaging.Implementation.Abstractions;
 using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
+using Compze.Teventive.Taggregates.Tevents.Public;
 using JetBrains.Annotations;
 
 namespace Compze.Tessaging.Implementation;

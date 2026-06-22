@@ -29,9 +29,6 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Core)' == 'true'">
     <PackageReference Include="Compze.Core" Version="*-*" />
   </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Core)' != 'true'">
-    <ProjectReference Include="..\..\..\..\src\Compze.Core\Compze.Core.csproj" />
-  </ItemGroup>
   <!-- Compze.Tessaging — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging)' == 'true'">
     <PackageReference Include="Compze.Tessaging" Version="*-*" />

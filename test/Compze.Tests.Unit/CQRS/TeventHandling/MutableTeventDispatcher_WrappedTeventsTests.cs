@@ -1,7 +1,7 @@
 using Compze.Abstractions.Tessaging.Public;
-using Compze.Core.Tessaging.Teventive.Public;
-using Compze.Core.Tessaging.Teventive.Public.Taggregates.Tevents.Public;
 using Compze.Tests.Infrastructure;
+using Compze.Teventive;
+using Compze.Teventive.Taggregates.Tevents.Public;
 using Compze.xUnitBDD;
 
 namespace Compze.Tests.Unit.CQRS.TeventHandling;

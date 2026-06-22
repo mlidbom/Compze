@@ -13,19 +13,16 @@
     </PackageReference>
     <PackageReference Include="xunit.v3" Version="3.1.0" />
   </ItemGroup>
+  <!-- Compze.Core — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Core)' == 'true'">
+    <PackageReference Include="Compze.Core" Version="*-*" />
+  </ItemGroup>
   <!-- Compze.Contracts — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' == 'true'">
     <PackageReference Include="Compze.Contracts" Version="*-*" />
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' != 'true'">
     <ProjectReference Include="..\..\src\Compze.Contracts\Compze.Contracts.csproj" />
-  </ItemGroup>
-  <!-- Compze.Core — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Core)' == 'true'">
-    <PackageReference Include="Compze.Core" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Core)' != 'true'">
-    <ProjectReference Include="..\..\src\Compze.Core\Compze.Core.csproj" />
   </ItemGroup>
   <!-- Compze.Internals.SystemCE — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_SystemCE)' == 'true'">
@@ -61,5 +58,8 @@
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_xUnitBDD)' != 'true'">
     <ProjectReference Include="..\..\src\Compze.xUnitBDD\Compze.xUnitBDD.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Compze.Abstractions\Compze.Abstractions.csproj" />
   </ItemGroup>
 </Project>

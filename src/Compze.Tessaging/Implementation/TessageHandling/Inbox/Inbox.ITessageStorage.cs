@@ -1,5 +1,5 @@
-using Compze.Core.Tessaging.Internal.SqlLayer;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
+using Compze.Tessaging.Transport.SqlLayer;
 
 namespace Compze.Tessaging.Implementation.TessageHandling.Inbox;
 
