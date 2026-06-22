@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="src/Compze.TypeIdentifiers/Compze.TypeIdentifiers.csproj" />
+  <Project Path="test/Compze.TypeIdentifiers.Specifications/Compze.TypeIdentifiers.Specifications.csproj" />
+</Solution>

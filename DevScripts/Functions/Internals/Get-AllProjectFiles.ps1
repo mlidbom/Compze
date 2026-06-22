@@ -25,7 +25,7 @@ function Get-AllProjectFiles {
         return @()
     }
     
-    $solutionDir = Split-Path -Parent $SolutionPath
-    $repoRoot = Split-Path -Parent $solutionDir
+    # The solution lives at the repository root, so its directory is the repo root.
+    $repoRoot = Split-Path -Parent $SolutionPath
     return Get-CsprojFiles -Path $repoRoot
 }

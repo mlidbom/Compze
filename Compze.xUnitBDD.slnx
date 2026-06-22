@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="src/Compze.xUnitBDD/Compze.xUnitBDD.csproj" />
+  <Project Path="src/Compze.xUnit/Compze.xUnit.csproj" />
+  <Folder Name="/Specifications/">
+    <Project Path="test/Compze.xUnitBDD.Tests/Compze.xUnitBDD.Tests.csproj" />
+  </Folder>
+</Solution>

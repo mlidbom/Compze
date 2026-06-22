@@ -10,7 +10,7 @@
 ```powershell
 C-Build                  # Build the solution (preferred)
 C-Build -Clean           # Deep clean then build
-dotnet build src/Compze.AllProjects.slnx  # Alternative: direct .NET CLI
+dotnet build Compze.AllProjects.slnx  # Alternative: direct .NET CLI
 ```
 
 ## Running tests
@@ -25,7 +25,7 @@ C-Test -Clean                  # Deep clean + build + test
 C-Test -FullGitReset           # Full git clean + build + test
 
 # Running a subset of tests (no DevScripts support, use dotnet directly)
-dotnet test src/Compze.AllProjects.slnx --no-build --filter "FullyQualifiedName~MyTestClass"
+dotnet test Compze.AllProjects.slnx --no-build --filter "FullyQualifiedName~MyTestClass"
 ```
 
 ## Test configuration

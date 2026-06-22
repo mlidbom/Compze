@@ -1,6 +1,0 @@
-<Solution>
-  <Project Path="Compze.Abstractions/Compze.Abstractions.csproj" />
-  <Folder Name="/Specifications/">
-    <Project Path="../test/Compze.Abstractions.Specifications/Compze.Abstractions.Specifications.csproj" />
-  </Folder>
-</Solution>

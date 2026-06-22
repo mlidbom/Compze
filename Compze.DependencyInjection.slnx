@@ -1,0 +1,8 @@
+<Solution>
+  <Project Path="src/Compze.DependencyInjection/Compze.DependencyInjection.csproj" />
+  <Project Path="src/Compze.DependencyInjection.Autofac/Compze.DependencyInjection.Autofac.csproj" />
+  <Project Path="src/Compze.DependencyInjection.Microsoft/Compze.DependencyInjection.Microsoft.csproj" />
+  <Folder Name="/Specifications/">
+    <Project Path="test/Compze.DependencyInjection.Specifications/Compze.DependencyInjection.Specifications.csproj" />
+  </Folder>
+</Solution>

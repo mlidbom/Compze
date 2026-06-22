@@ -21,7 +21,7 @@ function C-Delete-Project {
     Optional: Instead of removing references, replace them with references to this project
     
     .PARAMETER SolutionPath
-    Path to the main solution file (defaults to src\Compze.AllProjects.slnx)
+    Path to the main solution file (defaults to Compze.AllProjects.slnx)
     
     .EXAMPLE
     C-Delete-Project -Project Compze.Wiring.Testing

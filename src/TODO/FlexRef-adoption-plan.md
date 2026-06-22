@@ -153,9 +153,9 @@ Ensure local package workflow works smoothly:
 - [x] Each subset solution builds with correct PackageReferences
 - [x] NCrunch works in full solution
 - [x] NCrunch works in subset solutions
-- [x] `dotnet build src/Compze.AllProjects.slnx` (CLI, no solution context) still works
+- [x] `dotnet build Compze.AllProjects.slnx` (CLI, no solution context) still works
   (falls through to ProjectReference — the safe default)
-- [x] CI (`dotnet build src/Compze.AllProjects.slnx`) passes
+- [x] CI (`dotnet build Compze.AllProjects.slnx`) passes
 
 ### Phase 8: Consider Moving Scripts to FlexRef Project
 

@@ -113,8 +113,8 @@ log "Restoring repo-local .NET tools from .config/dotnet-tools.json..."
 # test file (FactAttribute, types from other projects, etc.) until the user
 # manually builds. Doing it here bakes assets + NuGet cache into the snapshot
 # so LSP works immediately and the first cold build is fast.
-log "Restoring src/Compze.AllProjects.slnx..."
-(cd /home/user/Compze && dotnet restore src/Compze.AllProjects.slnx >&2) || log "warning: dotnet restore failed"
+log "Restoring Compze.AllProjects.slnx..."
+(cd /home/user/Compze && dotnet restore Compze.AllProjects.slnx >&2) || log "warning: dotnet restore failed"
 
 # -- Persist env for subsequent shells / Claude Code sessions ---------------
 # Two layers, because they cover different consumers:
@@ -153,7 +153,7 @@ env_json=$(cat <<EOF
     "DOTNET_NOLOGO": "true",
     "COMPOSABLE_PERFORMANCE_TESTS_STRESS_TEST_ONLY": "true",
     "COMPOSABLE_MACHINE_SLOWNESS": "5.0",
-    "CSHARP_LSP_SOLUTION_REL": "src/Compze.AllProjects.slnx"
+    "CSHARP_LSP_SOLUTION_REL": "Compze.AllProjects.slnx"
   },
   "enabledPlugins": {
     "csharp-lsp@claude-plugins-official": true

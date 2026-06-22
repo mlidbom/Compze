@@ -32,8 +32,8 @@ function Find-ProjectFile {
         return $null
     }
     
-    $solutionDir = Split-Path -Parent $SolutionPath
-    $repoRoot = Split-Path -Parent $solutionDir
+    # The solution lives at the repository root, so its directory is the repo root.
+    $repoRoot = Split-Path -Parent $SolutionPath
     $projectFileName = "$ProjectName.csproj"
     
     return Get-CsprojFiles -Path $repoRoot -Filter $projectFileName | 

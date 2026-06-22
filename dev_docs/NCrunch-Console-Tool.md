@@ -32,7 +32,7 @@ In both cases the `UsePackageReference_*` flags remain unset, which *should* def
 ### Workaround: Restore via `.slnx` first
 
 ```powershell
-dotnet restore src/Compze.slnx
+dotnet restore Compze.AllProjects.slnx
 ```
 
 This regenerates valid `project.assets.json` files with FlexRef evaluated correctly. After that, the NCrunch console tool run succeeds.
@@ -41,7 +41,7 @@ This regenerates valid `project.assets.json` files with FlexRef evaluated correc
 
 ```powershell
 # Step 1: Ensure valid NuGet restore state
-dotnet restore src/Compze.slnx
+dotnet restore Compze.AllProjects.slnx
 
 # Step 2: Run NCrunch
 NCrunch.exe C:\Dev\Compze\src\CompzeForNCrunch.sln /VS dotnet /O C:\NCrunch\ConsoleResults -LogVerbosity Summary -MaxNumberOfProcessingThreads 4

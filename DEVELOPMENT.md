@@ -24,7 +24,7 @@ In the root of the project:
 
 ### 2. Open the Solution
 
-Open `src/Compze.AllProjects.slnx` in Visual Studio 2022 or Rider.
+Open `Compze.AllProjects.slnx` in Visual Studio 2022 or Rider.
 
 
 ### Optional: External Database Servers

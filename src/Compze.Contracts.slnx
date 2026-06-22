@@ -1,7 +1,0 @@
-<Solution>
-  <Folder Name="/Solution Items/">
-    <File Path="Compze.Contracts.v3.ncrunchsolution" />
-  </Folder>
-  <Project Path="../test/Compze.Contracts.Specifications/Compze.Contracts.Specifications.csproj" />
-  <Project Path="Compze.Contracts/Compze.Contracts.csproj" />
-</Solution>
