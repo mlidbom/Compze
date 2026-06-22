@@ -5,7 +5,7 @@
     <Version>0.3.0-alpha</Version>
     <!-- TODO: Remove once all public API members have XML documentation comments -->
     <NoWarn>CS1591</NoWarn>
-    <Description>Core abstractions for the Compze framework including entity IDs, messaging contracts, and event sourcing interfaces.</Description>
+    <Description>Internal plumbing for the Compze framework: the messaging SQL-layer and transport internals, plus document-database wiring.</Description>
   </PropertyGroup>
   <ItemGroup>
     <Folder Include="Serialization\Internal\DbPool\" />
