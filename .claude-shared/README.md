@@ -67,9 +67,45 @@ for Windows creates them correctly regardless of checkout order.
 
 ### Verifying
 
-[git-scripts/verify-claude-symlinks.ps1](git-scripts/verify-claude-symlinks.ps1) checks that every
-git-tracked symlink under `.claude/` is a real, resolving symlink, and throws with fix instructions
-otherwise. Wire it into the consuming repo's build so a degraded checkout fails loudly.
+The verifier checks that every symlink the committed tree (HEAD) carries under `.claude/` is a real, resolving
+symlink and reports the broken ones otherwise — silent on success. Two implementations of the same check:
+
+- [git-scripts/verify-claude-symlinks.ps1](git-scripts/verify-claude-symlinks.ps1) — PowerShell, for Windows
+  build/setup scripts (throws on failure).
+- [git-scripts/verify-claude-symlinks.sh](git-scripts/verify-claude-symlinks.sh) — POSIX sh + git, no
+  PowerShell dependency (exits non-zero with its message on stderr on failure).
+
+Both report failures the build/CI way: non-zero exit + stderr. That is the wrong shape for a `SessionStart`
+hook, which reaches the agent ONLY via stdout on exit 0 — stderr on a non-zero exit goes to the user, never
+the agent, and cannot block the session. So the hook is wired through an adapter:
+
+- [git-scripts/verify-claude-symlinks.sessionstart-hook.sh](git-scripts/verify-claude-symlinks.sessionstart-hook.sh)
+  — runs the `.sh` verifier and, on failure, re-emits its message on stdout (exit 0) so the warning actually
+  lands in the agent's context at session start.
+
+Wire one into the consuming repo so a degraded checkout fails loudly:
+
+- **Build/setup script** — call the `.ps1` (it throws on failure).
+- **`SessionStart` hook** — catches a degraded checkout the moment a session starts, before the agent acts on
+  garbage rules. Claude Code only merges settings from a project's own `.claude/settings.json` (never from
+  `.claude-shared/`), so the activation is per-project — add it to each repo's `.claude/settings.json`. Keep
+  it project-level, not user-level: a degraded checkout happens on fresh clones, cloud agents, and teammates,
+  which user settings don't reach.
+
+  ```json
+  "hooks": {
+    "SessionStart": [
+      { "hooks": [
+          { "type": "command",
+            "command": "bash \"${CLAUDE_PROJECT_DIR}/.claude-shared/git-scripts/verify-claude-symlinks.sessionstart-hook.sh\"" }
+      ] }
+    ]
+  }
+  ```
+
+  The adapter injects its warning into the agent's context via stdout on exit 0 — the only `SessionStart`
+  channel the agent sees. `bash` runs the hook via Git Bash on Windows and natively on Linux/macOS; the quoted
+  `${CLAUDE_PROJECT_DIR}` path resolves in both (Claude Code expands the variable before spawning the shell).
 
 ## Syncing
 

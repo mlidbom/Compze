@@ -47,11 +47,14 @@ if (-not $DryRun) {
 
 $nupkgsPath = "nupkgs"
 
-$allPackages = GetPackagesFromNupkgFiles $nupkgsPath
+# @(...) keeps each result a collection: PowerShell unwraps an empty array to $null on assignment,
+# and under Set-StrictMode the later `.Count` access throws on $null. Forcing array context keeps
+# `.Count` valid whether 0, 1, or many packages match.
+$allPackages = @(GetPackagesFromNupkgFiles $nupkgsPath)
 # Convention: packages with version 0.0.0-not-published-to-nuget are packable for local consumption only — never publish to NuGet
-$allPackages = $allPackages | Where-Object { $_.Version -ne '0.0.0-not-published-to-nuget' }
-$newPackages = PackagesWithNoMatchingReleaseTag $allPackages
-$newPackages = GetAllReleaseDetails $newPackages
+$allPackages = @($allPackages | Where-Object { $_.Version -ne '0.0.0-not-published-to-nuget' })
+$newPackages = @(PackagesWithNoMatchingReleaseTag $allPackages)
+$newPackages = @(GetAllReleaseDetails $newPackages)
 
 if ($newPackages.Count -eq 0) {
     Write-Host "`nNo new packages to release."

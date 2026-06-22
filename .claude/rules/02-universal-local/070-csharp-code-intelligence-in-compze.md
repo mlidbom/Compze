@@ -9,6 +9,7 @@ user-level rule on the dev machine — these MCPs require Rider running locally.
 - **jetbrains-rider MCP: pass `rootFolder` = `C:/Dev/Compze/src`** (the `.slnx`'s parent folder, not the
   repo root) when multiple solutions are open.
 - **`test/` projects sit outside the `.slnx`'s folder** (siblings of `src/`), so rider's per-file diagnostic
-  tools (`get_file_problems`, `lint_files`) reject them with "outside the project directory". For warnings
-  in test files — or whole-solution sweeps — `jb inspectcode` (the `shared-jetbrains-inspect` skill) is the
-  only path.
+  tools (`get_file_problems`, `lint_files`) reject them with "outside the project directory" — but resharper
+  `get_diagnostics` resolves them fine (verified on `test/Compze.Must.Specifications`). Per-file diagnostics
+  are therefore always live; only **whole-solution sweeps** need `jb inspectcode` (the
+  `shared-jetbrains-inspect` skill).

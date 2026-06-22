@@ -1,0 +1,3 @@
+# Shell scripts must stay LF even on Windows checkouts — they are invoked via `bash` (e.g. the
+# verify-claude-symlinks SessionStart hook), and CRLF breaks the shebang, heredocs, and numeric tokens.
+*.sh text eol=lf
