@@ -14,6 +14,7 @@
     <Project Path="test/Compze.Abstractions.Specifications/Compze.Abstractions.Specifications.csproj" />
   </Folder>
   <Folder Name="/Compze.Teventive/">
+    <Project Path="src/Compze.Teventive.TeventStore.Abstractions/Compze.Teventive.TeventStore.Abstractions.csproj" />
     <Project Path="src/Compze.Teventive.TeventStore.MicrosoftSql/Compze.Teventive.TeventStore.MicrosoftSql.csproj" />
     <Project Path="src/Compze.Teventive.TeventStore.MySql/Compze.Teventive.TeventStore.MySql.csproj" />
     <Project Path="src/Compze.Teventive.TeventStore.PostgreSql/Compze.Teventive.TeventStore.PostgreSql.csproj" />
@@ -228,5 +229,4 @@
   <Project Path="src/Compze.Internals.Transport.AspNet/Compze.Internals.Transport.AspNet.csproj" />
   <Project Path="src/Compze.Hosting/Compze.Hosting.csproj" />
   <Project Path="src/Compze.Hosting.Testing/Compze.Hosting.Testing.csproj" />
-  <Project Path="src/Compze.Teventive.TeventStore.Abstractions/Compze.Teventive.TeventStore.Abstractions.csproj" />
 </Solution>
