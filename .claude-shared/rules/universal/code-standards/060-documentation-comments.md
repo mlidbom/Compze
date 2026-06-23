@@ -31,6 +31,11 @@ caveat. They are there for "what is this thing."
 
 Forget this and you will write comments that are useless to every reader they will ever have.
 
+And whatever word you use, use the project's *one* word for it: a doc comment speaks the
+[ubiquitous language](007-ubiquitous-language.md) (DDD) — the same term the code uses for a concept, never a
+comment-only synonym. A comment that calls the `preview` a "tile" makes the reader stop and ask whether the
+two names are two things; that is the friction this section exists to prevent.
+
 ## 1. The failure you keep committing. This section is about you, the agent.
 
 You know everything. The basic purpose of any type or member is so obvious to you that it never registers as

@@ -16,7 +16,9 @@ The operational test — you understand the code by reading names, never by deco
   extracted behind a name that makes the caller read as plain truth — recursively, all the way down.
 
 The how-to lives in [everything-in-its-place](031-everything-in-its-place.md) and
-[naming](032-naming.md). This file only ranks it: it outranks everything below.
+[naming](032-naming.md). The one truthful name a concept earns is then the project's single word for it — its
+[ubiquitous language](007-ubiquitous-language.md) (DDD) term, spoken identically in every artifact: code,
+comments, tests, docs, and on screen, never a synonym. This file only ranks it: it outranks everything below.
 
 ## Traps. Never trade the above for these.
 

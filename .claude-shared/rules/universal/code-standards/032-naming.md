@@ -20,6 +20,9 @@ implies something untrue is not polish — it is a fatal design error: a `User` 
 holding a user's registration details is `UserRegistrationData`, never `User`. A documentation comment briefly
 explains what the abstraction is.
 
+The name you choose becomes the concept's word in the project's [ubiquitous language](007-ubiquitous-language.md) (DDD):
+write that *same* word everywhere the concept appears — comments, tests, docs, user-facing text — never a synonym.
+
 # Default to naming the "flowing" lambda variable in fluent code "it"
 
 It means exactly the right thing in english, "the thing we are already talking about".
