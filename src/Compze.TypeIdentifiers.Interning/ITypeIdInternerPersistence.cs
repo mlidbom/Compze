@@ -6,13 +6,6 @@ namespace Compze.TypeIdentifiers.Interning;
 /// </summary>
 public interface ITypeIdInternerPersistence
 {
-   /// <summary>
-   /// True when a minted type-id row commits independently of the business transaction and is durable the
-   /// moment it is written (MVCC engines). False for single-writer engines (SQLite), where a mint joins the
-   /// business transaction and can roll back — so the interner must not cache the <c>Type → id</c> direction.
-   /// </summary>
-   bool MintsAreImmediatelyDurable { get; }
-
    /// <summary>Ensures the type-identity tables exist.</summary>
    void EnsureInitialized();
 

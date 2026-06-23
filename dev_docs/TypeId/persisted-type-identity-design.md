@@ -85,7 +85,8 @@ stable has no rename-proof anchor and cannot be renamed safely — another reaso
 ## Reconciliation (first use)
 
 On first use the interner reconciles every already-persisted type it can currently resolve, writing any
-corrections under its cross-process write lock, so the database records this deployment's current view:
+corrections under its write lock (see *Independence from the business transaction*), so the database records
+this deployment's current view:
 
 1. **Link the current spelling.** Compute the type's current canonical spelling under this deployment's
    mappings; if `TypeStrings` does not already hold it, insert it pointing at the same `TypeId` (stamped with
@@ -115,21 +116,44 @@ This is why deleted types need no special handling: a genuinely dead type has no
 its id, so it is never looked up; a type that is looked up has surviving rows, so it is not dead. There is no
 eager scan and no decommission flag to maintain.
 
+## Independence from the business transaction
+
+Interning a type-id is reference-data bookkeeping, **not** part of a domain change's consistency boundary: a
+minted id that ends up unused (because the business transaction that triggered the mint later rolled back) is
+harmless. So a mint is deliberately committed *independently* of any business transaction, on every engine.
+The MVCC engines do this by suppressing the ambient transaction and running the mint in its own, serialised by
+a cross-process advisory lock (`sp_getapplock` on SQL Server, `pg_advisory_lock` on PostgreSQL, `GET_LOCK` on
+MySQL).
+
+SQLite gets the same independence a different way, because it allows only one writer per database and does not
+tolerate a second connection writing a database while a transaction holds its write lock. **On SQLite the
+interner is given its own database**, separate from the business data
+([`ISqliteTypeIdInternerConnectionPool`](../../src/Compze.Internals.Sql.Sqlite/ISqliteTypeIdInternerConnectionPool.cs)).
+A mint suspends any business transaction and runs in its own (`RequiresNew`) transaction on the interner
+database: the connection's per-database write gate serialises minters in-process, and the single transaction
+makes the find-then-insert atomic. Because the interner never opens a second connection to the business
+database, the lock-ordering inversion that a shared database created (a business transaction holding the write
+lock while reaching to mint) is structurally impossible. Two domains may share one interner database or keep
+separate ones, by pointing at the same or different connection-string names.
+
 ## Indexing strategy
 
-`TypeString` is not indexed for reads — resolution is by the `int` key. Dedupe-on-insert (one spelling maps to
-exactly one `TypeId`) is guaranteed by a cross-process lock rather than a unique index:
+`TypeString` is not indexed for reads on any engine — resolution is by the `int` key. Dedupe-on-insert (one
+spelling maps to exactly one `TypeId`) is guaranteed by a lock, and the indexes differ by engine accordingly:
 
-All interner writes — the reconciliation pass and any runtime mint — run under a DB advisory lock
-(`sp_getapplock` on SQL Server, `pg_advisory_lock` on PostgreSQL, `GET_LOCK` on MySQL; SQLite is single-writer
-and joins the ambient transaction instead). Inside the lock the in-memory `string -> id` map is the dedupe
-authority. The only indexes are the `TypeIds.Id` PK, the `TypeStrings.TypeId` FK index, and the
-`TypeNames(TypeId, Seq)` key — none on any string, so the string is genuinely unindexed payload of any length
-on every engine.
+- **MVCC engines** hold the cross-process advisory lock above across the whole mint, with the in-memory
+  `string -> id` map as the dedupe authority. `TypeString` carries no index — it is genuinely unindexed
+  payload of any length. The only indexes are the `TypeIds.Id` PK, the `TypeStrings.TypeId` FK index, and the
+  `TypeNames(TypeId, Seq)` key.
+- **SQLite** holds no cross-process advisory lock (it relies on its single-writer database), so it adds a
+  **UNIQUE index on `TypeStrings.TypeString`** as the cross-process backstop: if two processes mint the same
+  spelling at once, the loser's insert fails and its whole `RequiresNew` mint transaction rolls back, so a
+  type's identity can never fork. SQLite imposes no key-length limit on a text index, so the unbounded string
+  indexes cleanly.
 
-(The considered alternative — a `binary(32)` hash column with a unique index as a database-level dedupe
-backstop — was rejected: the lock the reconciliation pass already needs makes the extra index and its
-per-spelling round-trips redundant.)
+(The considered alternative for the MVCC engines — a `binary(32)` hash column with a unique index as a
+database-level dedupe backstop — was rejected: the advisory lock the reconciliation pass already needs makes
+the extra index and its per-spelling round-trips redundant.)
 
 ## Referencing tables
 
@@ -141,7 +165,6 @@ The interner pieces — [`ITypeIdInternerPersistence`](../../src/Compze.TypeIden
 and [`TypeIdInterner`](../../src/Compze.TypeIdentifiers.Interning/TypeIdInterner.cs) — live in the standalone
 `Compze.TypeIdentifiers.Interning` package and carry the three-table operations, the in-memory maps, and the
 reconciliation pass. The engine-specific `ITypeIdInternerPersistence` implementations stay in each SQL engine
-project. A single `TypeIdInterner` serves every engine;
-its caching of the `Type -> id` direction is gated by the persistence's `MintsAreImmediatelyDurable` flag
-(true for the MVCC engines, false for single-writer SQLite, where a mint can roll back with the business
-transaction).
+project. A single `TypeIdInterner` serves every engine, and its caching is uniform: because a mint commits
+independently of the business transaction on every engine (durable the moment it is written), both the
+`id -> Type` and `Type -> id` directions are always safe to cache.

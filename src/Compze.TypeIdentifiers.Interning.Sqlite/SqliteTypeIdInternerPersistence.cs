@@ -2,7 +2,6 @@ using System.Globalization;
 using System.Transactions;
 using Compze.Abstractions.Time.Public;
 using Compze.Internals.Sql.Common;
-using Compze.Internals.Sql.Common.Abstractions;
 using Compze.Internals.Sql.Sqlite;
 using Compze.Internals.Sql.Sqlite.Private;
 using Compze.Internals.SystemCE.TransactionsCE;
@@ -17,14 +16,9 @@ partial class SqliteTypeIdInternerPersistence(ISqliteConnectionPool connectionPo
    readonly ISqliteConnectionPool _connectionPool = connectionPool;
    readonly SqliteSqlLayerSchemaManager _schemaManager = schemaManager;
 
-   // SQLite is single-writer: a mint joins the business transaction (the file's writer lock already serialises
-   // writers, so there is no cross-process lock to take) and can roll back with it — so the Type -> id direction
-   // is not cached and is re-confirmed by FindBySpelling on each call.
-   public bool MintsAreImmediatelyDurable => false;
-
    public void EnsureInitialized() => _schemaManager.EnsureSchemaInitialized();
 
-   public InternerSnapshot LoadAll()
+   public InternerSnapshot LoadAll() => TransactionScopeCe.Execute(() =>
    {
       var types = _connectionPool.UseCommand(command =>
          command.SetCommandText($"SELECT {Types.Id}, {Types.CurrentName} FROM {Types.TableName}")
@@ -35,28 +29,26 @@ partial class SqliteTypeIdInternerPersistence(ISqliteConnectionPool connectionPo
                 .ExecuteReaderAndSelect(reader => (reader.GetInt32(0), reader.GetString(1))));
 
       return new InternerSnapshot(types, spellings);
-   }
+   }, TransactionScopeOption.Suppress);
 
-   public int? FindIdBySpelling(string spelling) => _connectionPool.UseCommand(command =>
-      NullableInt(command.SetCommandText($"SELECT {Strings.TypeId} FROM {Strings.TableName} WHERE {Strings.TypeString} = @{Strings.TypeString} LIMIT 1")
-                         .AddMediumTextParameter(Strings.TypeString, spelling)
-                         .ExecuteScalar()));
+   public int? FindIdBySpelling(string spelling) => TransactionScopeCe.Execute(() =>
+      _connectionPool.UseCommand(command =>
+         NullableInt(command.SetCommandText($"SELECT {Strings.TypeId} FROM {Strings.TableName} WHERE {Strings.TypeString} = @{Strings.TypeString} LIMIT 1")
+                            .AddMediumTextParameter(Strings.TypeString, spelling)
+                            .ExecuteScalar())), TransactionScopeOption.Suppress);
 
    static int? NullableInt(object? scalar) => scalar is null or DBNull ? null : Convert.ToInt32(scalar, CultureInfo.InvariantCulture);
    static int NonNullInt(object? scalar) => Convert.ToInt32(scalar, CultureInfo.InvariantCulture);
 
-   public T MutateUnderWriteLock<T>(Func<IInternerWriteSession, T> work)
-   {
-      // Join the business transaction when there is one — its connection already holds the per-database write
-      // gate, so the mint is serialised and its read-then-insert is atomic. With no business transaction, run
-      // the mint in its own transaction so it, too, passes through the gate: that serialises it against every
-      // other writer (no duplicate, no engine-level lock contention).
-      if(Transaction.Current != null)
-         return _connectionPool.UseConnection(connection => work(new WriteSession(connection)));
-
-      return TransactionScopeCe.Execute(() =>
-         _connectionPool.UseConnection(connection => work(new WriteSession(connection))));
-   }
+   public T MutateUnderWriteLock<T>(Func<IInternerWriteSession, T> work) =>
+      // The interner owns its database, so a mint must never join a business transaction — that would pull two
+      // SQLite databases into one System.Transactions transaction. RequiresNew suspends any ambient business
+      // transaction and runs the mint in its own: the connection's per-database write gate serialises minters in
+      // this process, and the single transaction makes the find-then-insert atomic. The UNIQUE index on the
+      // spelling is the cross-process backstop (see the schema), so a mint can never fork a type's identity.
+      TransactionScopeCe.Execute(
+         () => _connectionPool.UseConnection(connection => work(new WriteSession(connection))),
+         TransactionScopeOption.RequiresNew);
 
    sealed class WriteSession(ICompzeSqliteConnection connection) : IInternerWriteSession
    {

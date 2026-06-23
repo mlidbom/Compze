@@ -15,7 +15,6 @@ public sealed class TypeIdInterner : ITypeIdInterner
 {
    readonly ITypeIdInternerPersistence _persistence;
    readonly ITypeMap _typeMap;
-   readonly bool _cacheMints;
 
    // Thread-safe maps. The persistence serialises writers (its cross-process write lock, or — on SQLite — its
    // single-writer gate), so the model is mutated without any additional in-process lock here: every update is
@@ -30,7 +29,6 @@ public sealed class TypeIdInterner : ITypeIdInterner
    {
       _persistence = persistence;
       _typeMap = typeMap;
-      _cacheMints = persistence.MintsAreImmediatelyDurable;
    }
 
    /// <summary>Creates an <see cref="ITypeIdInterner"/> backed by <paramref name="persistence"/> and <paramref name="typeMap"/>.</summary>
@@ -43,8 +41,8 @@ public sealed class TypeIdInterner : ITypeIdInterner
       if(_typeToId.TryGetValue(typeId.Type, out var existing))
          return existing;
 
-      // Not in the cache. Another process may already have interned it, or a single-writer mint earlier in this
-      // transaction may not be cached — so probe the database before minting.
+      // Not in the cache. Another process may already have interned it since we loaded — so probe the database
+      // before minting.
       return TryResolveExistingId(typeId, out var found) ? found : Mint(typeId);
    }
 
@@ -68,15 +66,13 @@ public sealed class TypeIdInterner : ITypeIdInterner
       return false;
    }
 
-   // Records a id<->type resolution discovered from the database. The id -> Type direction is always safe to
-   // cache (a row that does not survive commit is never referenced by surviving data). The Type -> id direction
-   // is cached only on engines where a mint is immediately durable; on single-writer engines it is re-confirmed
-   // against the database each time, so a rolled-back mint cannot leave a stale forward mapping.
+   // Records an id<->type resolution discovered from the database. Both directions are safe to cache: every
+   // engine commits a mint independently of the business transaction, durable the moment it is written, so a
+   // resolved id and its type are never undone under the cache.
    void CacheResolved(Type type, int id)
    {
       _idToType[id] = type;
-      if(_cacheMints)
-         _typeToId.AddOrUpdate(type, id, (_, current) => Math.Min(current, id));
+      _typeToId.AddOrUpdate(type, id, (_, current) => Math.Min(current, id));
    }
 
    /// <inheritdoc />

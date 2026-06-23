@@ -65,15 +65,15 @@ public static class TestingComponentRegistrarSqlLayer
                         .PgSqlTeventStoreSqlLayer();
          case SqlLayer.Sqlite:
             return @this.SqliteConnectionPool(connectionStringName)
-                        .SqliteSqlLayerSchemaManager([SqliteTypeIdInternerRegistrar.SchemaCreationSql, SqliteDocumentDbRegistrar.SchemaCreationSql, SqliteTessagingRegistrar.SchemaCreationSql, SqliteTeventStoreRegistrar.SchemaCreationSql])
-                        .SqliteTypeIdInterner()
+                        .SqliteSqlLayerSchemaManager([SqliteDocumentDbRegistrar.SchemaCreationSql, SqliteTessagingRegistrar.SchemaCreationSql, SqliteTeventStoreRegistrar.SchemaCreationSql])
+                        .SqliteTypeIdInterner($"{connectionStringName}.TypeIdInterner")
                         .SqliteDocumentDbSqlLayer()
                         .SqliteTessagingSqlLayer()
                         .SqliteTeventStoreSqlLayer();
          case SqlLayer.SqliteMemory:
             return @this.SqliteMemoryConnectionPool(connectionStringName)
-                        .SqliteSqlLayerSchemaManager([SqliteTypeIdInternerRegistrar.SchemaCreationSql, SqliteDocumentDbRegistrar.SchemaCreationSql, SqliteTessagingRegistrar.SchemaCreationSql, SqliteTeventStoreRegistrar.SchemaCreationSql])
-                        .SqliteTypeIdInterner()
+                        .SqliteSqlLayerSchemaManager([SqliteDocumentDbRegistrar.SchemaCreationSql, SqliteTessagingRegistrar.SchemaCreationSql, SqliteTeventStoreRegistrar.SchemaCreationSql])
+                        .SqliteTypeIdInterner($"{connectionStringName}.TypeIdInterner")
                         .SqliteDocumentDbSqlLayer()
                         .SqliteTessagingSqlLayer()
                         .SqliteTeventStoreSqlLayer();

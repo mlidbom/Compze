@@ -23,13 +23,14 @@ public class TestingComponentRegistrar : ComponentRegistrar
 
    public TestingComponentRegistrar()
    {
-      _testingRegistrars = new Dictionary<Type, object>()
+      _testingRegistrars = new Dictionary<Type, object>
                            {
                               { typeof(MsSqlSqlConnectionPoolRegistrar.ITestingRegistrar), new MsSqlDbPoolRegistrar(this) },
                               { typeof(MySqlConnectionPoolRegistrar.ITestingRegistrar), new MySqlDbPoolRegistrar(this) },
                               { typeof(PgSqlConnectionPoolRegistrar.ITestingRegistrar), new PostgreSqlSqlDbPoolRegistrar(this) },
                               { typeof(SqliteConnectionPoolRegistrar.ITestingRegistrar), new SqliteSqlDbPoolRegistrar(this) },
-                              { typeof(SqliteMemoryConnectionPoolRegistrar.ITestingRegistrar), new SqliteMemoryDbPoolRegistrar(this) }
+                              { typeof(SqliteMemoryConnectionPoolRegistrar.ITestingRegistrar), new SqliteMemoryDbPoolRegistrar(this) },
+                              { typeof(SqliteTypeIdInternerConnectionPoolRegistrar.ITestingRegistrar), new SqliteTypeIdInternerDbPoolRegistrar(this) }
                            };
    }
 
@@ -95,5 +96,15 @@ public class TestingComponentRegistrar : ComponentRegistrar
                                                                                     .Register(
                                                                                         Singleton.For<ISqliteConnectionPool>()
                                                                                                  .CreatedBy((global::Compze.DbPool.DbPool pool) => ISqliteConnectionPool.CreateInstance(() => pool.ConnectionStringFor(connectionStringName))));
+   }
+
+   class SqliteTypeIdInternerDbPoolRegistrar(IComponentRegistrar registrar) : SqliteTypeIdInternerConnectionPoolRegistrar.ITestingRegistrar
+   {
+      readonly IComponentRegistrar _registrar = registrar;
+
+      public IComponentRegistrar Register(string connectionStringName) => _registrar.CurrentTestsDbPoolIfNotCloneContainer()
+                                                                                    .Register(
+                                                                                        Singleton.For<ISqliteTypeIdInternerConnectionPool>()
+                                                                                                 .CreatedBy((global::Compze.DbPool.DbPool pool) => new ISqliteTypeIdInternerConnectionPool.Pool(() => pool.ConnectionStringFor(connectionStringName))));
    }
 }

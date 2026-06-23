@@ -26,6 +26,12 @@ public static class TestingComponentRegistrarDbPool
          return @this;
       }
 
+      // Idempotent: a container can register more than one pooled database (e.g. business data plus the type-id
+      // interner's own database), and each pool registrar calls this to ensure the shared DbPool exists. Only the
+      // first call sets up the serializers, the DbPool, and its SQL layer; later calls find it already registered.
+      if(@this.IsRegistered<global::Compze.DbPool.DbPool>())
+         return @this;
+
       @this.CurrentTestsSerializersIfNotClonedContainer();
 
       @this.DbPool();

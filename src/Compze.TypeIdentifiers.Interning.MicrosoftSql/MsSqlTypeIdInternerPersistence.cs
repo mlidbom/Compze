@@ -20,10 +20,6 @@ partial class MsSqlTypeIdInternerPersistence(IMsSqlConnectionPool connectionPool
    // The application-lock resource serialising interner writes across every process pointed at this database.
    const string LockResource = "Compze.TypeIdInterner.Write";
 
-   // SQL Server is MVCC: a suppressed mint commits independently of the business transaction, so it is durable
-   // immediately and the Type -> id direction is safe to cache.
-   public bool MintsAreImmediatelyDurable => true;
-
    public void EnsureInitialized() => _schemaManager.EnsureSchemaInitialized();
 
    public InternerSnapshot LoadAll() => TransactionScopeCe.Execute(() =>

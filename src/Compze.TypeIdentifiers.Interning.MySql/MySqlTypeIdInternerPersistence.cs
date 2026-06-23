@@ -19,9 +19,6 @@ partial class MySqlTypeIdInternerPersistence(IMySqlConnectionPool connectionPool
 
    const string LockResource = "Compze.TypeIdInterner.Write";
 
-   // MySQL/InnoDB is MVCC: a suppressed mint commits independently of the business transaction.
-   public bool MintsAreImmediatelyDurable => true;
-
    public void EnsureInitialized() => _schemaManager.EnsureSchemaInitialized();
 
    public InternerSnapshot LoadAll() => TransactionScopeCe.Execute(() =>
