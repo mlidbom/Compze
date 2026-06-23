@@ -10,6 +10,9 @@ These are NOT examples of a valid abstraction
 * All methods: doing dll imports, making database calls, making network calls.
 No class is cohesive if it contains logic belonging to many different abstractions that only share such technical details.
 
+These abstractions are the application's domain model (DDD). Each is one concept with one name — its
+[ubiquitous language](007-ubiquitous-language.md) word — used identically wherever it appears, in code and prose alike.
+
 ## Interfaces and classes
 Each member, regardless of accessibility modifier, should clearly be part of the responsibility of this abstraction.
 

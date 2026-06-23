@@ -37,6 +37,8 @@ Specifications should verify that things **actually work correctly together**. T
 
 **The single most important rule:** Reading *only* the full specification names — from namespace through nested classes to the method name — must be enough to correctly implement the specified behavior. No one should need to read the test code to understand what is being specified. If you cannot implement the behavior from the name alone, the name is wrong.
 
+Those names are written in the project's [ubiquitous language](../universal/code-standards/007-ubiquitous-language.md) (DDD) — the *same* words the production code and domain use for each concept, never a test-only synonym. A spec that calls a `preview` a "tile" fractures the language exactly as a mis-named type does, and a renamed concept is not done until its specs speak the new word too (names, folders, and locals).
+
 This means every name must be **precise and concrete**, not vague or generic:
 - Bad: `returns_value_when_predicate_is_true` — What value? True about what? You can't implement anything from this.
 - Good: `returns_the_piped_value_when_the_predicate_passes` — Now you know exactly what to return and when.

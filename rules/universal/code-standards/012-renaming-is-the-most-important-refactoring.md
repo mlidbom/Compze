@@ -9,6 +9,8 @@ afterward: when a name claims a concept the type is not, correcting the name is 
 - The moment a truer name occurs to you, rename — do not defer it as polish or "later".
 - In review and design, lead with the naming/renaming issue; a rename proposal is a substantive fix, not bikeshedding.
 - Never keep a poor name because it is "everywhere", "just a name", or "works fine" — that ubiquity is the cost, since every use inherits the wrong model.
+- A rename is not finished until *every* artifact speaks the new word — comments, tests, docs, user-facing text, even lab code — because all of them carry the concept's one [ubiquitous language](007-ubiquitous-language.md) (DDD) word; renaming the type and leaving a comment calling it the old name just relocates the lie.
 
-Pairs with [conceptual coherence](010-conceptual-coherence-and-naming.md) and
-[naming-and-conceptual-fit-are-preeminent](011-naming-and-conceptual-fit-are-preeminent.md).
+Pairs with [conceptual coherence](010-conceptual-coherence-and-naming.md),
+[naming-and-conceptual-fit-are-preeminent](011-naming-and-conceptual-fit-are-preeminent.md), and
+[ubiquitous-language](007-ubiquitous-language.md).

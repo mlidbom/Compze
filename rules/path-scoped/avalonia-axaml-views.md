@@ -8,6 +8,13 @@ paths:
 
 **Scope:** All `.axaml` and `.axaml.cs` files  — Views, Controls, Dialogs, and their code-behind.
 
+## User-facing text speaks the ubiquitous language
+
+The labels, dialog copy, and error messages in these views are part of the project's
+[ubiquitous language](../universal/code-standards/007-ubiquitous-language.md) (DDD): use the *same* word the
+code and domain use for a concept, never a UI-only synonym. When a concept is renamed, its on-screen text is
+renamed with it.
+
 ## When a view gets a ViewModel — and when honest code-behind is right
 
 A ViewModel earns its place where the view **owns editable state**: a working copy / edit session, computed
