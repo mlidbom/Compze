@@ -12,13 +12,17 @@ They Are written for someone that
 
 The reader is not there for your clever caveats. They are there for "what is this thing."
 
-## Always use linking tags 
+## Use linking tags for every instance of a word that refers to something in our code
 
-This becomes real links that the developer can follow to explore the code. This is invaluable.
+Anything that refers to a symbol that can be referenced by `<see cref="…"/>`, `<paramref name="…"/>`, `<typeparamref name="…"/>` etc. MUST be. Fall back to `<c>…</c>` if the symbol is in a non-referenced assembly but NEVER leave it as just a word.
 
-* Anything that refers to a symbol that can be referenced by `<see cref="…"/>`, `<paramref name="…"/>`, `<typeparamref name="…"/>` etc. MUST be. Fall back to `<c>…</c>` if the symbol is in a non-referenced assembly.
-* Words that describe something in our code's domain that cannot be linked are a serious code smell. It implies that we have an important concept that has no code representation. This is a serious problem in DDD. Report it, don't ignore it
-* Never ignore warnings about <see> tags etc pointing at something unresolvable. Always fix it.
+Why: 
+- Each tag becomes a real link that the developer can follow to explore the code. This is invaluable to me.
+- Renaming symbols using the MCP tools automatically renames every reference, making renaming incomparably easier
+
+Note: Words that describe something in our code's domain that cannot be linked are a serious code smell. It implies that we have an important concept that has no code representation. This is a serious problem in DDD. Report it, don't ignore it
+
+**Never ignore warnings about <see> tags etc. pointing at something unresolvable. Always fix it.**
 
 ## Structure:
 
