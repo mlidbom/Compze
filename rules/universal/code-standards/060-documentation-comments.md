@@ -17,7 +17,7 @@ The reader is not there for your clever caveats. They are there for "what is thi
 This becomes real links that the developer can follow to explore the code. This is invaluable.
 
 * Anything that refers to a symbol that can be referenced by `<see cref="…"/>`, `<paramref name="…"/>`, `<typeparamref name="…"/>` etc. MUST be. Fall back to `<c>…</c>` if the symbol is in a non-referenced assembly.
-* Words that cannot be linked are a serious code smell. It implies that we have an important concept that has no code representation. This is a serious problem in DDD. Report it, don't ignore it
+* Words describe something in our code's domain that cannot be linked are a serious code smell. It implies that we have an important concept that has no code representation. This is a serious problem in DDD. Report it, don't ignore it
 * Never ignore warnings about <see> tags etc pointing at something unresolvable. Always fix it.
 
 ## Structure:
