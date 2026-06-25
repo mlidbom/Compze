@@ -7,7 +7,7 @@ that returns control to you while it keeps driving the screen.
 
 This covers (non-exhaustively): the **focus-restore regression gate**
 (`labs/FocusRestoreLab/run-focus-restore-regression-tests.ps1`), anything using **windows-mcp**, **FlaUI** /
-visual GUI tests, the Vantage focus/switch harnesses, the Hyper-V-matrix drivers run locally — any run that
+visual GUI tests, the Deskmancer focus/switch harnesses, the Hyper-V-matrix drivers run locally — any run that
 hijacks input or jumps between desktops.
 
 ## Why this is non-negotiable (it has gone wrong ~10 times)
