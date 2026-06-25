@@ -6,7 +6,7 @@ input, switches virtual desktops, takes the foreground, drives windows — MUST 
 that returns control to you while it keeps driving the screen.
 
 This covers (non-exhaustively): the **focus-restore regression gate**
-(`labs/FocusRestoreLab/run-focus-restore-regression-tests.ps1`), anything using **windows-mcp**, **FlaUI** /
+(`labs/FocusRestoreLab/D-Lab-RunRegression.ps1`), anything using **windows-mcp**, **FlaUI** /
 visual GUI tests, the Deskmancer focus/switch harnesses, the Hyper-V-matrix drivers run locally — any run that
 hijacks input or jumps between desktops.
 
