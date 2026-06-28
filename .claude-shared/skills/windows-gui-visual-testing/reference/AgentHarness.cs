@@ -1,6 +1,6 @@
-// Reference implementation — copied from Virtual-Desktop-Grid-Switcher (Vantage/Dev/AgentHarness.cs) on 2026-06-12.
+// Reference implementation — copied from Virtual-Desktop-Grid-Switcher (Deskmancer/Dev/AgentHarness.cs) on 2026-06-12.
 // Copy into the app you are instrumenting and adapt: the namespace, the UI-framework types (this copy is
-// Avalonia + SkiaSharp — swap the window/bitmap APIs for your framework), and the Vantage.Geometry dependency.
+// Avalonia + SkiaSharp — swap the window/bitmap APIs for your framework), and the Deskmancer.Geometry dependency.
 
 using System.Diagnostics;
 using System.IO;
@@ -8,10 +8,10 @@ using System.Runtime.InteropServices;
 using Avalonia.Controls;
 using Avalonia.Threading;
 using SkiaSharp;
-using Vantage.Geometry;
+using Deskmancer.Geometry;
 using Vanara.PInvoke;
 
-namespace Vantage.Dev;
+namespace Deskmancer.Dev;
 
 ///<summary>
 /// Development-only visual-test harness — NOT part of the product. Lets an agent verify rendered output
