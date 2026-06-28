@@ -1,10 +1,6 @@
 # Documentation comments `///` comments
 
-This file is long on purpose. Doc comments are the one thing agents fail at over and over, every time for
-the same reason. Read all of it. The *why* is in here, not just the letter — if you only follow the letter
-you will regress to the failure the moment a case isn't spelled out.
-
-## Audience Write for someone that does NOT know the context
+## Audience: Write for someone that does NOT know the context
 Doc comments are written for those that do NOT already know what the thing is.
 They Are written for someone that 
 - **They do NOT know this codebase**
