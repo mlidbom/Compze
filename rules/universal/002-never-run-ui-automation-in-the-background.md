@@ -5,9 +5,9 @@ input, switches virtual desktops, takes the foreground, drives windows — MUST 
 (a blocking call you wait on). **NEVER** start one with `run_in_background`, a detached process, or anything
 that returns control to you while it keeps driving the screen.
 
-This covers (non-exhaustively): the **focus-restore regression gate**
-(`labs/FocusRestoreLab/D-Lab-RunRegression.ps1`), anything using **windows-mcp**, **FlaUI** /
-visual GUI tests, the Deskmancer focus/switch harnesses, the Hyper-V-matrix drivers run locally — any run that
+This covers (non-exhaustively): the **foreground-restore regression gate**
+(`labs/ForegroundRestoreLab/D-Lab-RunRegression.ps1`), anything using **windows-mcp**, **FlaUI** /
+visual GUI tests, the Deskmancer foreground/switch harnesses, the Hyper-V-matrix drivers run locally — any run that
 hijacks input or jumps between desktops.
 
 ## Why this is non-negotiable (it has gone wrong ~10 times)
