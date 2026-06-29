@@ -107,7 +107,7 @@ the whole window looks similar.
 - **Capture the top-level window**, even if rendering happens in a child HWND (e.g. a DirectComposition
   child). The composited result lands on screen at the top-level window's rectangle; that's what BitBlt
   reads.
-- **Two-phase capture latency:** the harness raises the window on the tick it sees the trigger, then grabs
+- **Two-phase capture latency:** the harness pins the window topmost-and-foreground on the tick it sees the trigger, then grabs
   on the *next* tick, giving DWM a frame to composite it on top. So a capture takes ~250 ms, not instant.
 - **Diff false positives** from your own UI: a clock/spinner/caret in the app will show up as "change."
   Look at *where* the change is (the bbox), not just the count.
@@ -117,7 +117,7 @@ the whole window looks similar.
 ## Files
 
 - `reference/AgentHarness.cs` — reference implementation of the harness: file log, single-instance guard,
-  force-to-top, and the trigger-driven self-capture (BitBlt → PNG). Copy it into the app you are
+  topmost-and-foreground pinning, and the trigger-driven self-capture (BitBlt → PNG). Copy it into the app you are
   instrumenting and adapt its UI-framework types; the copy living inside each project is the one its app
   actually runs (the project's `dev_docs/agent-harness.md` says where).
 - `scripts/capture.ps1` — drive one capture against an already-running app.

@@ -64,11 +64,11 @@ public static class AgentHarness
 
    static bool _armed;
 
-   ///<summary>Capture <paramref name="area"/> (whole <see cref="VirtualScreen"/>) — the overlay window spans it, so one <see cref="Gdi32.BitBlt"/> gets the whole grid. On trigger, raise the Avalonia overlay <paramref name="window"/> topmost, then <see cref="Gdi32.BitBlt"/> the area on the next tick.</summary>
+   ///<summary>Capture <paramref name="area"/> (whole <see cref="VirtualScreen"/>) — the overlay window spans it, so one <see cref="Gdi32.BitBlt"/> gets the whole grid. On trigger, pin the Avalonia overlay <paramref name="window"/> topmost and foreground, then <see cref="Gdi32.BitBlt"/> the area on the next tick.</summary>
    public static void StartCapturePump(Window window, ScreenRect area) =>
       StartCapturePump(() => new HWND(window.TryGetPlatformHandle()!.Handle), area); // the HWND exists from construction in Avalonia, so this never creates one
 
-   ///<summary>Capture pump for a plain native window (one not hosted in Avalonia) — e.g. the switch-slide render window. Same as the Avalonia overload, but raises the given <paramref name="hwnd"/> directly.</summary>
+   ///<summary>Capture pump for a plain native window (one not hosted in Avalonia) — e.g. the switch-slide render window. Same as the Avalonia overload, but pins the given <paramref name="hwnd"/> topmost and foreground directly.</summary>
    public static void StartCapturePump(HWND hwnd, ScreenRect area) => StartCapturePump(() => hwnd, area);
 
    static void StartCapturePump(Func<HWND> hwnd, ScreenRect area)
