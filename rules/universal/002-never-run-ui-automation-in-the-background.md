@@ -24,6 +24,10 @@ So a backgrounded UI run is worse than useless: it can't produce a trustworthy r
 
 ## What to do instead
 
+- Run it through the **`desktop-takeover-gate` skill** — the standing procedure for any foreground
+  desktop-takeover run. It pops a topmost confirm prompt (5s auto-proceed), runs the command foreground and
+  blocking, then a "done" notice so the user knows their machine is free. A `[Cancel]` returns exit code 64 —
+  the unique "user cancelled" signal: stop and report it, never silently re-run.
 - Run it **foreground, blocking**, and wait for it to finish before doing anything else.
 - If a single foreground call would exceed the tool's timeout, **split the slow build out**: run the build as
   its own foreground step, then run the test itself with its skip-build flag (e.g. `-SkipBuild`) so the
