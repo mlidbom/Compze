@@ -25,7 +25,7 @@ done by hand).
 
 Do NOT manufacture a ViewModel for:
 
-- **Window-mechanics views** (flyouts, splash, positioning/force-to-front/dismiss-on-deactivate chrome with
+- **Window-mechanics views** (flyouts, splash, positioning/bring-to-front/dismiss-on-deactivate chrome with
   a couple of actions) — the VM would be an anemic command bag; honest code-behind is the truthful model.
 - **Views editing live external state they don't own** (OS settings applied immediately, device state) — a
   stateful VM there is a mirror of external state with sync/staleness hazards. Read live, refresh in place;

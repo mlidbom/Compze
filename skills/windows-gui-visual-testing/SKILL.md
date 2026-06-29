@@ -3,7 +3,7 @@ name: windows-gui-visual-testing
 description: >-
   Autonomously verify what a Windows desktop GUI app you are developing (WPF, WinForms, Win32) actually
   RENDERS — without Computer Use. Instrument the app itself with a self-capture channel (a trigger file
-  makes the app screenshot its OWN window to a PNG you read), plus a file log, force-to-top, a
+  makes the app screenshot its OWN window to a PNG you read), plus a file log, topmost-and-foreground pinning, a
   single-instance guard, and a tight edit→build→launch→capture→read loop. Use this whenever you are
   iterating on a Windows desktop app and need to SEE its rendered output — a window's pixels, layout, a
   visual bug, animation or liveness, or DWM/DirectComposition/Direct3D/GPU-composited content such as live
@@ -84,9 +84,9 @@ appearance is the "done" signal. Don't read the png before then or you'll get a 
 deliberate: DWM/DirectComposition/Direct3D/video content (live thumbnails, GPU overlays, hardware video) is
 **not** part of the window's own GDI paint or WPF visual tree — `PrintWindow` and `RenderTargetBitmap` would
 return a blank or wrong frame for exactly the content you most want to verify. Only a screen-region grab
-sees the real composited result. Because that grab is occlusion-prone, the harness first calls `ForceToTop`
+sees the real composited result. Because that grab is occlusion-prone, the harness first calls `PinTopmostAndBringToForeground`
 (`AttachThreadInput` + `SetWindowPos(HWND_TOPMOST)` + `BringWindowToTop` + `SetForegroundWindow`) so nothing
-covers the window at capture time. (Trade-off: this briefly steals focus — fine for tests, just expect it.)
+covers the window at capture time. (Trade-off: this briefly steals the foreground — fine for tests, just expect it.)
 
 ## Checking liveness / animation
 
@@ -111,7 +111,7 @@ the whole window looks similar.
   on the *next* tick, giving DWM a frame to composite it on top. So a capture takes ~250 ms, not instant.
 - **Diff false positives** from your own UI: a clock/spinner/caret in the app will show up as "change."
   Look at *where* the change is (the bbox), not just the count.
-- If a capture unexpectedly shows a *different* app, it's occlusion that `ForceToTop` didn't win (e.g. the
+- If a capture unexpectedly shows a *different* app, it's occlusion that `PinTopmostAndBringToForeground` didn't win (e.g. the
   target wasn't the foreground process's owner). Re-check the window handle you're capturing.
 
 ## Files

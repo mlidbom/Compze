@@ -89,7 +89,7 @@ public static class AgentHarness
          { /* the shell writer still holds the handle open; harmless */
          }
 
-         ForceToTop(hwnd());
+         PinTopmostAndBringToForeground(hwnd());
          _armed = true;
       };
       timer.Start();
@@ -168,7 +168,7 @@ public static class AgentHarness
    }
 
    ///<summary>Force <paramref name="hwnd"/> topmost and foreground, so the capture sees it unobscured.</summary>
-   public static void ForceToTop(HWND hwnd)
+   public static void PinTopmostAndBringToForeground(HWND hwnd)
    {
       var foregroundThread = User32.GetWindowThreadProcessId(User32.GetForegroundWindow(), out _);
       var thisThread = Kernel32.GetCurrentThreadId();
