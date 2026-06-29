@@ -35,7 +35,7 @@ param(
    [Parameter(Mandatory)][string]$Description,
    [Parameter(Mandatory)][string]$FilePath,
    [string[]]$ArgumentList = @(),
-   [int]$CountdownSeconds = 5
+   [int]$CountdownSeconds = 10
 )
 
 Set-StrictMode -Version Latest
