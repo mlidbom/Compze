@@ -28,14 +28,21 @@ any throwaway desktop-driving thing you invent you run through it too.
 
 ## How to run it
 
-Call the attached script in the **foreground** (a normal blocking Bash/PowerShell call — **never** `run_in_background`):
+Invoke the attached script **inline, with the `&` call operator, from a PowerShell context** (your PowerShell
+tool), in the **foreground** — a normal blocking call, **never** `run_in_background`:
 
+```powershell
+& '<this-skill>\scripts\Invoke-DesktopTakeover.ps1' `
+    -Description '<human description of the task>' `
+    -FilePath    '<exe or command to run>' `
+    -ArgumentList <args>
+if ($LASTEXITCODE -eq 64) { <the user cancelled — stop and report it> }
 ```
-pwsh -File <this-skill>/scripts/Invoke-DesktopTakeover.ps1 `
-     -Description "<human description of the task>" `
-     -FilePath    "<exe or command to run>" `
-     -ArgumentList <args...>
-```
+
+**Invoke it inline (`&`), NOT `pwsh -File` / `powershell.exe -File`** — passing a multi-element `-ArgumentList`
+array through `-File` flattens it and breaks the run. (The script shows its dialogs on an STA runspace, so the host
+PowerShell's apartment doesn't matter; and `exit` from a `&`-invoked script just sets `$LASTEXITCODE` and returns,
+so you can check it for the 64 cancel code.)
 
 The script: shows the confirm prompt (topmost, on every desktop, 5-second auto-proceed countdown) → on OK runs the
 command with `Start-Process -Wait` (ShellExecute, so it correctly launches **uiAccess** lab exes and gives them
@@ -52,11 +59,11 @@ their own console) → shows the "done" notice (auto-closes), even if the comman
 
 A lab's desktop-driving mode is never launched bare — it goes through the gate. For example the Z-order battery:
 
-```
-pwsh -File <this-skill>/scripts/Invoke-DesktopTakeover.ps1 `
-     -Description "the Deskmancer.ZOrderLab Z-order battery" `
-     -FilePath    "C:\Program Files\DeskmancerDevelopmentVersion\<worktree>\ZOrderLab\Deskmancer.ZOrderLab.exe" `
-     -ArgumentList experiment
+```powershell
+& '<this-skill>\scripts\Invoke-DesktopTakeover.ps1' `
+    -Description 'the Deskmancer.ZOrderLab Z-order battery' `
+    -FilePath    'C:\Program Files\DeskmancerDevelopmentVersion\<worktree>\ZOrderLab\Deskmancer.ZOrderLab.exe' `
+    -ArgumentList experiment
 ```
 
 ## Gotchas
