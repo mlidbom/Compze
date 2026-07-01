@@ -5,9 +5,9 @@ input, switches virtual desktops, takes the foreground, drives windows — MUST 
 (a blocking call you wait on). **NEVER** start one with `run_in_background`, a detached process, or anything
 that returns control to you while it keeps driving the screen.
 
-This covers (non-exhaustively): the **focus-restore regression gate**
-(`labs/FocusRestoreLab/D-Lab-RunRegression.ps1`), anything using **windows-mcp**, **FlaUI** /
-visual GUI tests, the Deskmancer focus/switch harnesses, the Hyper-V-matrix drivers run locally — any run that
+This covers (non-exhaustively): the **foreground-restore regression gate**
+(`labs/ForegroundRestoreLab/D-Lab-RunRegression.ps1`), anything using **windows-mcp**, **FlaUI** /
+visual GUI tests, the Deskmancer foreground/switch harnesses, the Hyper-V-matrix drivers run locally — any run that
 hijacks input or jumps between desktops.
 
 ## Why this is non-negotiable (it has gone wrong ~10 times)
@@ -24,6 +24,10 @@ So a backgrounded UI run is worse than useless: it can't produce a trustworthy r
 
 ## What to do instead
 
+- Run it through the **`desktop-takeover-gate` skill** — the standing procedure for any foreground
+  desktop-takeover run. It pops a topmost confirm prompt (5s auto-proceed), runs the command foreground and
+  blocking, then a "done" notice so the user knows their machine is free. A `[Cancel]` returns exit code 64 —
+  the unique "user cancelled" signal: stop and report it, never silently re-run.
 - Run it **foreground, blocking**, and wait for it to finish before doing anything else.
 - If a single foreground call would exceed the tool's timeout, **split the slow build out**: run the build as
   its own foreground step, then run the test itself with its skip-build flag (e.g. `-SkipBuild`) so the

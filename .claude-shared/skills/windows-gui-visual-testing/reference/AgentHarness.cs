@@ -64,11 +64,11 @@ public static class AgentHarness
 
    static bool _armed;
 
-   ///<summary>Capture <paramref name="area"/> (whole <see cref="VirtualScreen"/>) — the overlay window spans it, so one <see cref="Gdi32.BitBlt"/> gets the whole grid. On trigger, raise the Avalonia overlay <paramref name="window"/> topmost, then <see cref="Gdi32.BitBlt"/> the area on the next tick.</summary>
+   ///<summary>Capture <paramref name="area"/> (whole <see cref="VirtualScreen"/>) — the overlay window spans it, so one <see cref="Gdi32.BitBlt"/> gets the whole grid. On trigger, pin the Avalonia overlay <paramref name="window"/> topmost and foreground, then <see cref="Gdi32.BitBlt"/> the area on the next tick.</summary>
    public static void StartCapturePump(Window window, ScreenRect area) =>
       StartCapturePump(() => new HWND(window.TryGetPlatformHandle()!.Handle), area); // the HWND exists from construction in Avalonia, so this never creates one
 
-   ///<summary>Capture pump for a plain native window (one not hosted in Avalonia) — e.g. the switch-slide render window. Same as the Avalonia overload, but raises the given <paramref name="hwnd"/> directly.</summary>
+   ///<summary>Capture pump for a plain native window (one not hosted in Avalonia) — e.g. the switch-slide render window. Same as the Avalonia overload, but pins the given <paramref name="hwnd"/> topmost and foreground directly.</summary>
    public static void StartCapturePump(HWND hwnd, ScreenRect area) => StartCapturePump(() => hwnd, area);
 
    static void StartCapturePump(Func<HWND> hwnd, ScreenRect area)
@@ -89,7 +89,7 @@ public static class AgentHarness
          { /* the shell writer still holds the handle open; harmless */
          }
 
-         ForceToTop(hwnd());
+         PinTopmostAndBringToForeground(hwnd());
          _armed = true;
       };
       timer.Start();
@@ -168,7 +168,7 @@ public static class AgentHarness
    }
 
    ///<summary>Force <paramref name="hwnd"/> topmost and foreground, so the capture sees it unobscured.</summary>
-   public static void ForceToTop(HWND hwnd)
+   public static void PinTopmostAndBringToForeground(HWND hwnd)
    {
       var foregroundThread = User32.GetWindowThreadProcessId(User32.GetForegroundWindow(), out _);
       var thisThread = Kernel32.GetCurrentThreadId();

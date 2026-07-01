@@ -1,0 +1,911 @@
+diff --git a/Deskmancer.Core/CompzeStaging/UnderscoreEX/PipeEX.cs b/Deskmancer.Core/CompzeStaging/UnderscoreEX/PipeEX.cs
+new file mode 100644
+index 00000000..bc64370a
+--- /dev/null
++++ b/Deskmancer.Core/CompzeStaging/UnderscoreEX/PipeEX.cs
+@@ -0,0 +1,10 @@
++﻿using Compze.SystemCE;
++
++namespace Deskmancer.Core.CompzeStaging.UnderscoreEX;
++
++static class PipeEX
++{
++   //todo: Compze. Get this into Compze
++   /// <summary>The pipe forward operator. Passes <paramref name="it" /> to <paramref name="func" /> and returns the result.</summary>
++   public static Unit _<TThis>(this TThis it, Action<TThis> func) => Unit.Invoke(() => func(it));
++}
+diff --git a/Deskmancer.Core/Deskmancer.Core.csproj b/Deskmancer.Core/Deskmancer.Core.csproj
+index ab3491fa..80974197 100644
+--- a/Deskmancer.Core/Deskmancer.Core.csproj
++++ b/Deskmancer.Core/Deskmancer.Core.csproj
+@@ -4,6 +4,8 @@
+    </PropertyGroup>
+    
+    <ItemGroup>
++      <PackageReference Include="Compze.Internals.SystemCE" Version="0.2.1-internal" />
++      <PackageReference Include="Compze.Threading" Version="0.5.0-alpha" />
+       <PackageReference Include="Vanara.PInvoke.DwmApi" Version="5.0.5" />
+       <PackageReference Include="Vanara.PInvoke.User32" Version="5.0.5" />
+       <PackageReference Include="Vanara.PInvoke.Shell32" Version="5.0.5" />
+diff --git a/Deskmancer.Core/Desktops/CacheExpirationHelper.cs b/Deskmancer.Core/Desktops/CacheExpirationHelper.cs
+new file mode 100644
+index 00000000..517dfbbb
+--- /dev/null
++++ b/Deskmancer.Core/Desktops/CacheExpirationHelper.cs
+@@ -0,0 +1,26 @@
++﻿using System.Diagnostics;
++
++namespace Deskmancer.Core.Desktops;
++
++class CacheExpirationHelper
++{
++   readonly TimeSpan _stalenessLimit;
++   readonly Stopwatch _sinceStart = Stopwatch.StartNew();
++   TimeSpan? _valuesRefreshedAt; // when Of last re-resolved the whole set; null = never/invalidated, so the next Of refreshes
++   public CacheExpirationHelper(TimeSpan stalenessLimit) => _stalenessLimit = stalenessLimit;
++
++   ///<summary>Whether cached values were last refreshed within the last <see cref="_stalenessLimit"/>.</summary>
++   bool ValuesFresh => _valuesRefreshedAt is {} at && _sinceStart.Elapsed - at <= _stalenessLimit;
++
++   public void MarkExpired() => _valuesRefreshedAt = null;
++   void MarkRefreshed() => _valuesRefreshedAt = _sinceStart.Elapsed;
++
++   public void RefreshIfStale(Action refresh)
++   {
++      if(!ValuesFresh)
++      {
++         refresh();
++         MarkRefreshed();
++      }
++   }
++}
+diff --git a/Deskmancer.Core/Desktops/DesktopAffinity.cs b/Deskmancer.Core/Desktops/DesktopAffinity.cs
+index 607959b5..64f37b4c 100644
+--- a/Deskmancer.Core/Desktops/DesktopAffinity.cs
++++ b/Deskmancer.Core/Desktops/DesktopAffinity.cs
+@@ -1,3 +1,5 @@
++using Deskmancer.Core.Windows.Registry.Managed;
++
+ namespace Deskmancer.Core.Desktops;
+ 
+ ///<summary>
+@@ -56,4 +58,6 @@ public abstract record DesktopAffinity
+       ///<summary>Always false — this window lives on one desktop, not all.</summary>
+       public override bool IsAllDesktops => false;
+    }
++
++   public static DesktopAffinity Of(ManagedWindow window) => WindowDesktopAffinityCache.Of(window) ?? throw new InvalidOperationException("A ManagedWindow always has a desktop affinity; the registry mints one only when an affinity resolves.");
+ }
+diff --git a/Deskmancer.Core/Desktops/WindowDesktopAffinityCache.cs b/Deskmancer.Core/Desktops/WindowDesktopAffinityCache.cs
+index b4e95a76..6fd8f8ae 100644
+--- a/Deskmancer.Core/Desktops/WindowDesktopAffinityCache.cs
++++ b/Deskmancer.Core/Desktops/WindowDesktopAffinityCache.cs
+@@ -1,25 +1,17 @@
+-using System.Diagnostics;
+-using System.Runtime.InteropServices;
++using Compze.Internals.SystemCE.CollectionsCE.GenericCE;
++using Compze.Threading;
++using Compze.Underscore;
++using Deskmancer.Core.CompzeStaging.UnderscoreEX;
++using Deskmancer.Core.SystemEX.CollectionsEX.GenericEX;
++using Deskmancer.Core.SystemEX.ThreadingEX.TasksEX;
++using Deskmancer.Core.VanaraEX.PInvokeEX.User32EX;
+ using Deskmancer.Core.Windows.Registry;
+-using Deskmancer.Core.Windows.Registry.Managed;
+ using Deskmancer.Core.Windows.Universal.Observed;
+-using Deskmancer.UndocumentedDependencies.User32;
+ using Vanara.PInvoke;
+ 
+ namespace Deskmancer.Core.Desktops;
+ 
+-///<summary>
+-/// Resolves and caches each window's <see cref="DesktopAffinity"/> — which virtual desktops it appears on. It answers two
+-/// different questions, with two different freshness policies:
+-/// <list type="bullet">
+-///   <item><see cref="HasAffinity"/> — is this a window we manage at all? A window's <em>membership</em> does not change
+-///   over its life, so once resolved it is served from the cache at any age. This is what the registry mints a
+-///   <see cref="ManagedWindow"/> by.</item>
+-///   <item><see cref="Of"/> — which desktops, exactly? The <em>value</em> can change (a window gets pinned, or is moved
+-///   between desktops by another app), so it is never served stale: once past <see cref="StalenessLimit"/> the whole
+-///   known set is re-resolved. This is the answer behind <see cref="ManagedWindow.DesktopAffinity"/>.</item>
+-/// </list>
+-///</summary>
++///<summary>Resolves and caches each window's <see cref="DesktopAffinity"/>: Which virtual desktops it appears on.</summary>
+ ///<remarks>
+ /// <b>Resolved in one hop, primed by the registry.</b> The registry, each time it re-enumerates the live windows, calls
+ /// <see cref="RegisterCurrentlyLiveWindows"/> once with the whole live set: that forgets every window no longer live and
+@@ -46,220 +38,41 @@ namespace Deskmancer.Core.Desktops;
+ ///</remarks>
+ public static class WindowDesktopAffinityCache
+ {
+-   ///<summary>The longest a resolved affinity <em>value</em> is served by <see cref="Of"/> before the known set is re-resolved — so the longest a purely external pin/unpin or window move can go unseen. Our own moves <see cref="Invalidate"/> at once. Membership (<see cref="HasAffinity"/>) is unaffected — it never goes stale.</summary>
+-   static readonly TimeSpan StalenessLimit = TimeSpan.FromMilliseconds(50);
++   static readonly CacheExpirationHelper CacheExpirationHelper = new CacheExpirationHelper(TimeSpan.FromMilliseconds(50));
+ 
+-   ///<summary>
+-   /// The HRESULT <c>GetWindowDesktopId</c> fails with for a window that has no application view of its own (an owned/tool
+-   /// window — a dialog, a palette): the shell has no desktop to report, so the call throws. This is one of the two "no
+-   /// view of its own" signals <see cref="AffinityFromOwnView"/> turns into "try the owner"; the other is the empty GUID.
+-   ///</summary>
+-   const int TYPE_E_ELEMENTNOTFOUND = unchecked((int)0x8002802B);
+-
+-   ///<summary>The fixed sentinel id <c>GetWindowDesktopId</c> returns for a window pinned to every desktop through Task View ("Show this window on all desktops") — distinct from <see cref="Guid.Empty"/> and from every real desktop. Verified against the live shell (see the ManagedWindowLab findings).</summary>
+-   static readonly Guid WindowOnAllDesktops = new("C2DDEA68-66F2-4CF9-8264-1BFD00FBBBAC");
+-
+-   static readonly Lock Gate = new();
++   static readonly IMonitor Monitor = IMonitor.New();
+    static readonly Dictionary<HWND, DesktopAffinity?> AffinityByHandle = new();
+-   static readonly Stopwatch SinceStart = Stopwatch.StartNew();
+-   static TimeSpan? _valuesRefreshedAt; // when Of last re-resolved the whole set; null = never/invalidated, so the next Of refreshes
+-   static Shell32.IVirtualDesktopManager? _desktopManager;
+-
+-   ///<summary>The agile public desktop-manager COM, created on first use and held for the life of the process (no thread affinity to tear down — the OS releases it at exit).</summary>
+-   static Shell32.IVirtualDesktopManager DesktopManager => _desktopManager ??= new Shell32.IVirtualDesktopManager();
+-
+-   ///<summary>Whether <see cref="Of"/>'s cached values were last refreshed within the last <see cref="StalenessLimit"/>. Read only under <see cref="Gate"/>.</summary>
+-   static bool ValuesFresh => _valuesRefreshedAt is {} at && SinceStart.Elapsed - at <= StalenessLimit;
+ 
+-   ///<summary>
+-   /// Bring the cache into line with the complete set of currently-live top-level windows <paramref name="live"/>, in a
+-   /// single thread hop: forget every cached window no longer in the set, and resolve the affinity of every not-yet-known
+-   /// application-kind window in it (the only kind we might manage — see <see cref="IsApplicationCandidate"/>). The
+-   /// registry calls this once per enumeration, so the per-window mint reads that follow are cache hits — the whole set is
+-   /// resolved in one hop rather than one hop per window.
+-   ///</summary>
++   ///<summary>Bring the cache into line with the complete set of currently-live top-level windows <paramref name="liveHandles"/></summary>
+    ///<remarks>
+    /// Forgetting the no-longer-live windows here is also what keeps a recycled HWND honest: once its old window is gone it
+    /// leaves the set, so the next time the same handle appears (its new window) it is unknown again and resolved afresh,
+    /// rather than answering with the previous window's affinity.
+    ///</remarks>
+-   public static void RegisterCurrentlyLiveWindows(IReadOnlyCollection<HWND> live)
++   internal static void RegisterCurrentlyLiveWindows(IReadOnlyCollection<HWND> liveHandles) => Monitor.Locked(() =>
+    {
+-      lock(Gate)
+-      {
+-         AffinityByHandle.Keys
+-                         .Where(it => !live.Contains(it))
+-                         .ToList()
+-                         .ForEach(it => AffinityByHandle.Remove(it));
++      AffinityByHandle.RemoveAllBut(liveHandles.ToHashSet());
+ 
+-         var newWindows = live.Where(it => !AffinityByHandle.ContainsKey(it) && IsApplicationCandidate(it)).ToList();
+-         foreach(var (handle, affinity) in Resolve(newWindows))
+-         {
+-            AffinityByHandle[handle] = affinity;
+-         }
+-      }
+-   }
++      liveHandles.Where(it => !AffinityByHandle.ContainsKey(it))
++                 .Where(it => it.Kind == WindowKind.UnknownPotentiallyApplication)
++                 .ToList()
++                 ._(it => Task.RunSync(it.GetDesktopAffinities)) //When called from an input hook, throws if executed on the same thread.
++                 ._(it => AffinityByHandle.Merge(it));
++   });
+ 
+-   ///<summary>
+-   /// Whether <paramref name="handle"/> is an application-kind window — a candidate we might manage — read COM-free from
+-   /// its Win32 class. Only these are worth resolving: it keeps the band + shell reads off the taskbar and shell chrome
+-   /// (the bulk of the ~600 live top-level windows), which we never grid and which those undocumented / shell APIs are not
+-   /// meant for — the windows over which <c>GetWindowBand</c> was seen to fail.
+-   ///</summary>
+-   static bool IsApplicationCandidate(HWND handle) => new RegistryWindow(handle).Kind == WindowKind.Application;
++   ///<summary>The <see cref="DesktopAffinity"/> of <paramref name="window"/></summary>
++   internal static DesktopAffinity? Of(IRegistryWindow window) => OfHandle(window.Handle);
+ 
+-   ///<summary>
+-   /// Whether <paramref name="window"/> is one we manage — i.e. it has a <see cref="DesktopAffinity"/>. Served from the
+-   /// cache at <em>any</em> age once the window has been resolved, because membership never changes over a window's life;
+-   /// only a never-before-seen window (one the last <see cref="RegisterCurrentlyLiveWindows"/> has not covered yet) costs
+-   /// a resolution. This is the registry's mint test.
+-   ///</summary>
+-   internal static bool HasAffinity(IRegistryWindow window)
++   ///<summary>The <see cref="DesktopAffinity"/> of <paramref name="windowHandle"/></summary>
++   internal static DesktopAffinity? OfHandle(HWND windowHandle) => Monitor.Locked(() =>
+    {
+-      lock(Gate)
+-      {
+-         if(!AffinityByHandle.TryGetValue(window.Handle, out var known))
+-         {
+-            AffinityByHandle[window.Handle] = known = ResolveOne(window.Handle);
+-         }
+-
+-         return known is not null;
+-      }
+-   }
+-
+-   ///<summary>The <see cref="DesktopAffinity"/> of <paramref name="window"/>, or null when it has none — never served stale: once the cached values age past <see cref="StalenessLimit"/>, the whole known set is re-resolved in one hop.</summary>
+-   internal static DesktopAffinity? Of(IRegistryWindow window)
+-   {
+-      lock(Gate)
+-      {
+-         if(!ValuesFresh)
+-         {
+-            foreach(var (handle, affinity) in Resolve(AffinityByHandle.Keys.ToList()))
+-            {
+-               AffinityByHandle[handle] = affinity;
+-            }
+-
+-            _valuesRefreshedAt = SinceStart.Elapsed;
+-         }
++      CacheExpirationHelper.RefreshIfStale(() => AffinityByHandle.Keys.ToList()
++                                                                 ._(it => Task.RunSync(it.GetDesktopAffinities)) //When called from an input hook, throws if executed on the same thread.
++                                                                 ._(AffinityByHandle.Merge));
+ 
+-         if(!AffinityByHandle.TryGetValue(window.Handle, out var value))
+-         {
+-            AffinityByHandle[window.Handle] = value = ResolveOne(window.Handle);
+-         }
+-
+-         return value;
+-      }
+-   }
++      return AffinityByHandle.GetOrAdd(windowHandle, () => Task.RunSync(() => windowHandle.GetEffectiveAffinity())); //When called from an input hook, throws if executed on the same thread.
++   });
+ 
+    ///<summary>Drop the cached <em>values</em> so the next <see cref="Of"/> re-resolves the known set — called when Deskmancer itself relocates windows (a window move, a desktop removal); a purely external change is caught by the staleness drop instead. Membership is untouched: our moves change which desktop a window is on, not whether we manage it.</summary>
+-   public static void Invalidate()
+-   {
+-      lock(Gate) _valuesRefreshedAt = null;
+-   }
+-
+-   ///<summary>The affinity of one window, by handle (band COM-free, else the shell off the input thread). Caller holds <see cref="Gate"/>.</summary>
+-   static DesktopAffinity? ResolveOne(HWND handle) => Resolve([handle]).GetValueOrDefault(handle);
+-
+-   ///<summary>
+-   /// Resolve a batch of windows by handle in a single thread hop. The band is COM-free, so it is read inline first and a
+-   /// band-follow window is settled with no hop at all; only the windows still needing the shell's desktop COM are carried
+-   /// into the one worker-thread hop (off the input-synchronous calling thread, where the COM would throw). Caller holds
+-   /// <see cref="Gate"/> — the hop touches no cache state, so holding it across the hop is safe.
+-   ///</summary>
+-   static Dictionary<HWND, DesktopAffinity?> Resolve(IReadOnlyCollection<HWND> handles)
+-   {
+-      var resolved = new Dictionary<HWND, DesktopAffinity?>(handles.Count);
+-      var needShell = new List<HWND>();
+-      foreach(var handle in handles)
+-      {
+-         if(FollowsEveryDesktopByBand(handle)) resolved[handle] = DesktopAffinity.All; // an all-desktops "follow" window — COM-free
+-         else needShell.Add(handle);
+-      }
+-
+-      if(needShell.Count > 0)
+-      {
+-         foreach(var (handle, affinity) in DesktopsFromShell(needShell))
+-         {
+-            resolved[handle] = affinity;
+-         }
+-      }
+-
+-      return resolved;
+-   }
+-
+-   ///<summary>The desktop affinity of each handle straight from the shell COM, run in one hop on a worker thread so it is safe even when the caller is on the input-synchronous hook thread (where the call would throw <c>RPC_E_CANTCALLOUT_ININPUTSYNCCALL</c> — the restriction is on the calling thread, not the object).</summary>
+-   static IReadOnlyList<(HWND Handle, DesktopAffinity? Affinity)> DesktopsFromShell(IReadOnlyList<HWND> handles) =>
+-      Task.Run(() => handles.Select(it => (it, EffectiveAffinityOf(it)))
+-                            .ToList())
+-          .GetAwaiter().GetResult();
+-
+-   ///<summary>
+-   /// Whether the window follows every virtual desktop by its z-order band — it sits in <see cref="WindowBand.SystemTools"/>,
+-   /// the band an always-on-top Task Manager places itself in. Read COM-free from the undocumented <c>GetWindowBand</c>.
+-   ///</summary>
+-   ///<remarks>
+-   /// False when the band can't be read. This runs over <em>every</em> live top-level window, many of them exotic system
+-   /// windows the undocumented export was never meant for, and — during teardown — windows already closing; over those the
+-   /// call does fail (observed). A window whose band we can't read is simply not treated as a follower; the shell then has
+-   /// the say on its desktop. This is a genuine runtime condition (an undocumented call over arbitrary/dying windows we
+-   /// cannot guarantee succeeds), not a guessed-at guard.
+-   ///</remarks>
+-   static bool FollowsEveryDesktopByBand(HWND handle) =>
+-      User32Undocumented.GetWindowBand(handle, out var band) && (WindowBand)band == WindowBand.SystemTools;
+-
+-   ///<summary>The affinity accounting for ownership: the window's own view's desktop, or — when it has no view of its own — its root owner's, where the OS keeps it. Null when neither has a stable desktop. Runs on the worker thread.</summary>
+-   static DesktopAffinity? EffectiveAffinityOf(HWND window)
+-   {
+-      if(AffinityFromOwnView(window) is {} own)
+-      {
+-         return own;
+-      }
+-
+-      var owner = RootOwnerOf(window);
+-      return owner == window ? null : AffinityFromOwnView(owner);
+-   }
+-
+-   ///<summary>
+-   /// One window's own affinity straight from the shell: the all-desktops sentinel → <see cref="DesktopAffinity.All"/>, a
+-   /// real desktop id → <see cref="DesktopAffinity.Specific"/>. Null in the two "no view of its own" cases — the empty
+-   /// GUID (a cloaked UWP frame, a hidden helper) and the <see cref="TYPE_E_ELEMENTNOTFOUND"/> throw (an owned/tool
+-   /// window) — which the caller answers with owner-fallback.
+-   ///</summary>
+-   static DesktopAffinity? AffinityFromOwnView(HWND window)
+-   {
+-      try
+-      {
+-         var id = DesktopManager.GetWindowDesktopId(window);
+-         if(id == Guid.Empty) return null;
+-         if(id == WindowOnAllDesktops)
+-         {
+-            return DesktopAffinity.All;
+-         }
+-
+-         return DesktopAffinity.Specific(new DesktopId(id));
+-      }
+-      catch(COMException viewNotRegistered) when(viewNotRegistered.HResult == TYPE_E_ELEMENTNOTFOUND)
+-      {
+-         return null;
+-      }
+-   }
+-
+-   ///<summary>
+-   /// The handle at the top of this window's owner chain, walked by raw owner link (<c>GW_OWNER</c>); a window with no
+-   /// owner is its own root owner. Done by raw handle rather than through <see cref="RegistryWindow.RootOwner"/> on
+-   /// purpose: this can run while the registry holds its mint lock, so re-entering the registry here would be a
+-   /// lock-ordering hazard — the owner's handle is all the COM call needs.
+-   ///</summary>
+-   static HWND RootOwnerOf(HWND window)
+-   {
+-      var rootOwner = window;
+-      for(var owner = OwnerOf(rootOwner); owner != HWND.NULL; owner = OwnerOf(rootOwner))
+-      {
+-         rootOwner = owner;
+-      }
+-
+-      return rootOwner;
+-
+-      static HWND OwnerOf(HWND it) => User32.GetWindow(it, User32.GetWindowCmd.GW_OWNER);
+-   }
++   public static void Invalidate() => Monitor.Locked(() => CacheExpirationHelper.MarkExpired());
+ }
+diff --git a/Deskmancer.Core/SystemEX/CollectionsEX/GenericEX/DictionaryEX.cs b/Deskmancer.Core/SystemEX/CollectionsEX/GenericEX/DictionaryEX.cs
+new file mode 100644
+index 00000000..dda088b1
+--- /dev/null
++++ b/Deskmancer.Core/SystemEX/CollectionsEX/GenericEX/DictionaryEX.cs
+@@ -0,0 +1,16 @@
++﻿using Compze.Internals.SystemCE.CollectionsCE.GenericCE;
++using Compze.Internals.SystemCE.LinqCE;
++
++namespace Deskmancer.Core.SystemEX.CollectionsEX.GenericEX;
++
++static class DictionaryEX
++{
++   extension<TKey, TValue>(Dictionary<TKey, TValue> @this) where TKey : notnull
++   {
++      ///<summary>For each <see cref="KeyValuePair"/> in <paramref name="source"/> inster those values into <see cref="@this"/></summary>
++      public void Merge(IDictionary<TKey, TValue> source) => source.ForEach(it => @this[it.Key] = it.Value);
++
++      ///<summary>Remove all entries whose keys are not in <paramref name="keep"/></summary>
++      public void RemoveAllBut(ISet<TKey> keep) => @this.RemoveWhere(it => !keep.Contains(it.Key));
++   }
++}
+diff --git a/Deskmancer.Core/SystemEX/ThreadingEX/TasksEX/TaskEX.cs b/Deskmancer.Core/SystemEX/ThreadingEX/TasksEX/TaskEX.cs
+new file mode 100644
+index 00000000..b80471ad
+--- /dev/null
++++ b/Deskmancer.Core/SystemEX/ThreadingEX/TasksEX/TaskEX.cs
+@@ -0,0 +1,9 @@
++﻿namespace Deskmancer.Core.SystemEX.ThreadingEX.TasksEX;
++
++static class TaskEX
++{
++   extension(Task @this)
++   {
++      internal static T RunSync<T>(Func<T> func) => Task.Run(func).GetAwaiter().GetResult();
++   }
++}
+diff --git a/Deskmancer.Core/VanaraEX/PInvokeEX/User32EX/HWNDEX.cs b/Deskmancer.Core/VanaraEX/PInvokeEX/User32EX/HWNDEX.cs
+new file mode 100644
+index 00000000..373d0556
+--- /dev/null
++++ b/Deskmancer.Core/VanaraEX/PInvokeEX/User32EX/HWNDEX.cs
+@@ -0,0 +1,30 @@
++using Deskmancer.Core.Windows.Registry;
++using Vanara.PInvoke;
++
++namespace Deskmancer.Core.VanaraEX.PInvokeEX.User32EX;
++
++///<summary>Bridges a bare window handle into the form that carries the window operations.</summary>
++public static class HwndEX
++{
++   extension(HWND @this)
++   {
++      ///<summary>
++      /// Wrap a bare window handle so the things you can do to that window become ordinary methods you can reach by typing
++      /// <c>.</c> on it — <see cref="User32.SafeHWND.GetText"/>, <see cref="User32.SafeHWND.GetRect"/>, <see cref="User32.SafeHWND.Show"/> and the rest — instead of free functions you
++      /// have to already know exist and hand the handle to. The window stays owned by whoever created it; this only borrows
++      /// the handle to operate through it.
++      ///</summary>
++      ///<remarks>
++      /// A bare <see cref="HWND"/> is just a number; to act on the window you must hunt down the matching user32 function
++      /// and pass it the handle. Vanara's <see cref="User32.SafeHWND"/> turns that around: it auto-generates an instance
++      /// method for (almost) every user32 function whose first argument is a window handle, so the whole operation set is
++      /// discoverable from the object itself. That discoverability is the entire point of going through it.<br/>
++      /// <br/>
++      /// We pass <c>ownsHandle: false</c> because we did not create this window and must never destroy it. <see cref="User32.SafeHWND"/>
++      /// is a <see cref="System.Runtime.InteropServices.SafeHandle"/> whose job is normally to release what it holds; a
++      /// non-owning one skips that release entirely, so disposing it — or letting the finalizer reach it — leaves the real
++      /// window untouched. An implicit conversion back to <see cref="HWND"/> keeps the handle usable as identity.
++      ///</remarks>
++      public User32.SafeHWND ToSafeHandle() => new(@this, ownsHandle: false);
++   }
++}
+diff --git a/Deskmancer.Core/VanaraEX/PInvokeEX/User32EX/HWNDEX_DesktopAffinity.cs b/Deskmancer.Core/VanaraEX/PInvokeEX/User32EX/HWNDEX_DesktopAffinity.cs
+new file mode 100644
+index 00000000..7717b5fc
+--- /dev/null
++++ b/Deskmancer.Core/VanaraEX/PInvokeEX/User32EX/HWNDEX_DesktopAffinity.cs
+@@ -0,0 +1,113 @@
++using System.Runtime.InteropServices;
++using Deskmancer.Core.Desktops;
++using Deskmancer.Core.Windows.Registry;
++using Deskmancer.Core.Windows.Universal.Observed;
++using Deskmancer.UndocumentedDependencies.User32;
++using Vanara.PInvoke;
++
++namespace Deskmancer.Core.VanaraEX.PInvokeEX.User32EX;
++
++///<summary>Bridges a bare window handle into the form that carries the window operations.</summary>
++// ReSharper disable once InconsistentNaming
++public static class HwndEX_DesktopAffinity
++{
++   ///<summary>The desktop-manager COM, held for the life of the process.</summary>
++   static readonly Shell32.IVirtualDesktopManager DesktopManager = new();
++
++   ///<summary>The HRESULT <c>GetWindowDesktopId</c> fails with for a window that has no application view of its own</summary>
++   // ReSharper disable once InconsistentNaming
++   const int TYPE_E_ELEMENTNOTFOUND = unchecked((int)0x8002802B);
++
++   ///<summary>The fixed sentinel id <c>GetWindowDesktopId</c> returns for a window pinned to every desktop through Task View ("Show this window on all desktops") — distinct from <see cref="Guid.Empty"/> and from every real desktop. Verified against the live shell (see the ManagedWindowLab findings).</summary>
++   static readonly Guid WindowOnAllDesktops = new("C2DDEA68-66F2-4CF9-8264-1BFD00FBBBAC");
++
++   extension(IReadOnlyList<HWND> @this)
++   {
++      public Dictionary<HWND, DesktopAffinity?> GetDesktopAffinities()
++      {
++         var affinities = new Dictionary<HWND, DesktopAffinity?>();
++         foreach(var handle in @this)
++         {
++            affinities[handle] = handle.GetEffectiveAffinity();
++         }
++
++         return affinities;
++      }
++   }
++
++   extension(HWND @this)
++   {
++      ///<summary>The role this window plays, recognized from its registered Win32 class — the magic class atoms stay confined here.</summary>
++      internal WindowKind Kind => @this.ToSafeHandle().Kind;
++
++      ///<summary>The affinity accounting for ownership: the window's own view's desktop, or — when it has no view of its own — its root owner's, where the OS keeps it. Null when neither has a stable desktop. Runs on the worker thread.</summary>
++      internal DesktopAffinity? GetEffectiveAffinity()
++      {
++         if(@this.GetDesktopAffinity() is {} own)
++         {
++            return own;
++         }
++
++         var rootOwner = @this.RootOwner();
++         return rootOwner == @this ? null : rootOwner.GetDesktopAffinity();
++      }
++
++      DesktopAffinity? GetDesktopAffinity()
++      {
++         if(@this.FollowsEveryDesktopByBand())
++         {
++            return DesktopAffinity.All; // an all-desktops "follow" window — COM-free
++         }
++
++         var id = @this.GetDesktopId();
++         if(id == null) return null;
++         if(id.Value.Value == WindowOnAllDesktops) return DesktopAffinity.All;
++         return DesktopAffinity.Specific(id.Value);
++      }
++
++      ///<summary>
++      /// Whether the window follows every virtual desktop by its z-order band — it sits in <see cref="WindowBand.SystemTools"/>,
++      /// the band an always-on-top Task Manager places itself in. Read COM-free from the undocumented <c>GetWindowBand</c>.
++      ///</summary>
++      ///<remarks>
++      /// False when the band can't be read. This runs over <em>every</em> live top-level window, many of them exotic system
++      /// windows the undocumented export was never meant for, and — during teardown — windows already closing; over those the
++      /// call does fail (observed). A window whose band we can't read is simply not treated as a follower; the shell then has
++      /// the say on its desktop. This is a genuine runtime condition (an undocumented call over arbitrary/dying windows we
++      /// cannot guarantee succeeds), not a guessed-at guard.
++      ///</remarks>
++      internal bool FollowsEveryDesktopByBand() => @this.Band == WindowBand.SystemTools;
++
++      ///<summary>The handle at the top of this window's owner chain. a window with no owner is its own root owner.</summary>
++      HWND RootOwner()
++      {
++         var rootOwner = @this;
++         for(var owner = rootOwner.ToSafeHandle().GetOwner(); owner != HWND.NULL; owner = rootOwner.ToSafeHandle().GetOwner())
++         {
++            rootOwner = owner;
++         }
++
++         return rootOwner;
++      }
++
++      WindowBand? Band => User32Undocumented.GetWindowBand(@this, out var band) ? (WindowBand)band : null;
++
++      DesktopId? GetDesktopId()
++      {
++         try
++         {
++            var id = DesktopManager.GetWindowDesktopId(@this);
++            if(id == Guid.Empty)
++            {
++               return null;
++            }
++
++            return new DesktopId(id);
++         }
++         catch(COMException viewNotRegistered) when(viewNotRegistered.HResult == TYPE_E_ELEMENTNOTFOUND)
++         {
++            return null;
++         }
++      }
++   }
++}
+diff --git a/Deskmancer.Core/VanaraEX/PInvokeEX/User32EX/SafeHwndEX.cs b/Deskmancer.Core/VanaraEX/PInvokeEX/User32EX/SafeHwndEX.cs
+new file mode 100644
+index 00000000..479995e2
+--- /dev/null
++++ b/Deskmancer.Core/VanaraEX/PInvokeEX/User32EX/SafeHwndEX.cs
+@@ -0,0 +1,23 @@
++﻿using Compze.Underscore;
++using Deskmancer.Core.Windows.Registry;
++using Vanara.PInvoke;
++
++namespace Deskmancer.Core.VanaraEX.PInvokeEX.User32EX;
++
++public static class SafeHwndEX
++{
++   extension(User32.SafeHWND @this)
++   {
++      ///<summary>This window's registered Win32 class name (<c>Progman</c>, <c>WorkerW</c>, <c>Shell_TrayWnd</c>, …) — what its role is recognized from.</summary>
++      public string ClassName => @this.GetClassName(out var className)
++                                      .__(className);
++
++      ///<summary>The role this window plays, recognized from its registered Win32 class — the magic class atoms stay confined here.</summary>
++      public WindowKind Kind => @this.ClassName switch
++      {
++         "Shell_TrayWnd" or "Shell_SecondaryTrayWnd"            => WindowKind.Taskbar,
++         "Progman" or "WorkerW" or "Windows.UI.Core.CoreWindow" => WindowKind.ShellChrome,
++         _                                                      => WindowKind.UnknownPotentiallyApplication,
++      };
++   }
++}
+diff --git a/Deskmancer.Core/Windows/Owned/IOwnedWindow.cs b/Deskmancer.Core/Windows/Owned/IOwnedWindow.cs
+index 049ca29c..e537f008 100644
+--- a/Deskmancer.Core/Windows/Owned/IOwnedWindow.cs
++++ b/Deskmancer.Core/Windows/Owned/IOwnedWindow.cs
+@@ -1,7 +1,6 @@
+ using Deskmancer.Core.Windows.Registry;
+ using Deskmancer.Core.Windows.Registry.Managed;
+ using Deskmancer.Core.Windows.Universal;
+-using Deskmancer.Core.Windows.Universal.Observed;
+ using Deskmancer.Core.Windows.Universal.Positionable;
+ using Deskmancer.Core.Windows.Universal.Resizable;
+ 
+diff --git a/Deskmancer.Core/Windows/Registry/IRegistryWindow.cs b/Deskmancer.Core/Windows/Registry/IRegistryWindow.cs
+index 9f5a95b2..72a654f4 100644
+--- a/Deskmancer.Core/Windows/Registry/IRegistryWindow.cs
++++ b/Deskmancer.Core/Windows/Registry/IRegistryWindow.cs
+@@ -2,7 +2,6 @@ using Deskmancer.Core.Windows.Owned;
+ using Deskmancer.Core.Windows.Registry.Managed;
+ using Deskmancer.Core.Windows.Registry.WindowsShellChrome;
+ using Deskmancer.Core.Windows.Universal;
+-using Deskmancer.Core.Windows.Universal.Observed;
+ using Deskmancer.Core.Windows.Universal.Positionable;
+ using Deskmancer.Core.Windows.Universal.Resizable;
+ 
+diff --git a/Deskmancer.Core/Windows/Registry/Managed/IManagedWindow.cs b/Deskmancer.Core/Windows/Registry/Managed/IManagedWindow.cs
+index b610dd61..4899dff3 100644
+--- a/Deskmancer.Core/Windows/Registry/Managed/IManagedWindow.cs
++++ b/Deskmancer.Core/Windows/Registry/Managed/IManagedWindow.cs
+@@ -2,7 +2,6 @@ using Deskmancer.Core.Desktops;
+ using Deskmancer.Core.Windows.Owned;
+ using Deskmancer.Core.Windows.Universal;
+ using Deskmancer.Core.Windows.Universal.Closable;
+-using Deskmancer.Core.Windows.Universal.Observed;
+ using Deskmancer.Core.Windows.Universal.Positionable;
+ using Deskmancer.Core.Windows.Universal.Resizable;
+ 
+diff --git a/Deskmancer.Core/Windows/Registry/Managed/ManagedWindow.cs b/Deskmancer.Core/Windows/Registry/Managed/ManagedWindow.cs
+index 0f5405ba..83f2b667 100644
+--- a/Deskmancer.Core/Windows/Registry/Managed/ManagedWindow.cs
++++ b/Deskmancer.Core/Windows/Registry/Managed/ManagedWindow.cs
+@@ -1,8 +1,5 @@
+ using Deskmancer.Core.Desktops;
+ using Deskmancer.Core.Windows.Registry.WindowsShellChrome;
+-using Deskmancer.Core.Windows.Universal.Closable;
+-using Deskmancer.Core.Windows.Universal.Positionable;
+-using Deskmancer.Core.Windows.Universal.Resizable;
+ using Deskmancer.Geometry.VirtualScreenSpace;
+ using Vanara.PInvoke;
+ 
+@@ -30,9 +27,7 @@ public sealed class ManagedWindow : RegistryWindow, IManagedWindow
+    /// Never null: the registry mints a <see cref="ManagedWindow"/> only for a window that has an affinity, and a window's
+    /// managed-ness does not change over its life — so a null here would be a broken invariant, not a state to cope with.
+    ///</summary>
+-   public DesktopAffinity DesktopAffinity =>
+-      WindowDesktopAffinityCache.Of(this)
+-         ?? throw new InvalidOperationException("A ManagedWindow always has a desktop affinity; the registry mints one only when an affinity resolves.");
++   public DesktopAffinity DesktopAffinity => DesktopAffinity.Of(this);
+ 
+    ///<summary>The foreground window when it is one we manage, or null when the desktop is empty (no foreground window) or the foreground is shell chrome we do not manage (the taskbar, the desktop) — the canonical instance, straight from the registry.</summary>
+    public static ManagedWindow? Foreground() => ForegroundWindow as ManagedWindow;
+diff --git a/Deskmancer.Core/Windows/Registry/WindowKind.cs b/Deskmancer.Core/Windows/Registry/WindowKind.cs
+index 23cbe61c..a6f9dc8b 100644
+--- a/Deskmancer.Core/Windows/Registry/WindowKind.cs
++++ b/Deskmancer.Core/Windows/Registry/WindowKind.cs
+@@ -7,4 +7,12 @@ namespace Deskmancer.Core.Windows.Registry;
+ /// registered Win32 class (the <c>Kind</c> read in <see cref="WindowReadOperations"/>). A top-level type so the magic
+ /// class atoms that drive the classification stay confined to the read operations.
+ ///</summary>
+-public enum WindowKind { Application, Taskbar, ShellChrome }
++public enum WindowKind
++{
++   ///<summary>Anything that is not <see cref="ShellChrome"/> or <see cref="Taskbar"/>. Could be pretty much anything.</summary>
++   UnknownPotentiallyApplication,
++
++   ///<summary>The Windows Taskbar window</summary>
++   Taskbar,
++   ShellChrome
++}
+diff --git a/Deskmancer.Core/Windows/Registry/WindowRegistry.cs b/Deskmancer.Core/Windows/Registry/WindowRegistry.cs
+index 36b095bd..d1e1dbbb 100644
+--- a/Deskmancer.Core/Windows/Registry/WindowRegistry.cs
++++ b/Deskmancer.Core/Windows/Registry/WindowRegistry.cs
+@@ -1,10 +1,10 @@
+ using System.Diagnostics;
+ using Deskmancer.Core.Desktops;
++using Deskmancer.Core.VanaraEX.PInvokeEX.User32EX;
+ using Deskmancer.Core.Windows.Owned;
+ using Deskmancer.Core.Windows.Registry.Managed;
+ using Deskmancer.Core.Windows.Registry.NonManaged;
+ using Deskmancer.Core.Windows.Registry.WindowsShellChrome;
+-using Deskmancer.Core.Windows.Universal.Observed;
+ using Vanara.PInvoke;
+ 
+ namespace Deskmancer.Core.Windows.Registry;
+@@ -111,9 +111,6 @@ static class WindowRegistry
+    /// from its registered Win32 class. A window's class only makes it an application <em>candidate</em>, though — the Win32
+    /// class cannot tell a real application window from the far more numerous plumbing windows that share that class (frame
+    /// shells with no view, hidden helpers). The truthful test is whether it has a <see cref="DesktopAffinity"/>
+-   /// (<see cref="MintManagedOrChrome"/> → <see cref="WindowDesktopAffinityCache"/>), a COM read run off the input thread;
+-   /// so minting an application candidate is the one path here that touches COM (cached, and COM-free for a band-follow
+-   /// window). The base instance read for the kind is reused when no subtype applies.
+    ///</remarks>
+    static RegistryWindow Mint(HWND handle)
+    {
+@@ -121,19 +118,15 @@ static class WindowRegistry
+       {
+          return new NonManagedDeskmancerWindow(handle);
+       }
+-      var window = new RegistryWindow(handle);
+-      return window.Kind switch
++
++      return handle.Kind switch
+       {
+          WindowKind.Taskbar     => new Taskbar(handle),
+-         WindowKind.Application => MintManagedOrChrome(window),
+-         _                      => window,
++         WindowKind.UnknownPotentiallyApplication => WindowDesktopAffinityCache.OfHandle(handle) is not null ? new ManagedWindow(handle) : new RegistryWindow(handle),
++         _                      => new RegistryWindow(handle),
+       };
+    }
+ 
+-   ///<summary>An application-class window is a <see cref="ManagedWindow"/> exactly when it has a <see cref="DesktopAffinity"/> — a view of its own, an owner's view, or an all-desktops band. One with none is plumbing sharing the application class (a frame shell with no view, a hidden helper); it stays the plain <see cref="RegistryWindow"/> already read for its kind, off the grid by construction.</summary>
+-   static RegistryWindow MintManagedOrChrome(RegistryWindow window) =>
+-      WindowDesktopAffinityCache.Of(window) is not null ? new ManagedWindow(window.Handle) : window;
+-
+    static IReadOnlyList<HWND> EnumerateTopLevelHandles()
+    {
+       var handles = new List<HWND>();
+diff --git a/Deskmancer.Core/Windows/Universal/HwndExtensions.cs b/Deskmancer.Core/Windows/Universal/HwndExtensions.cs
+deleted file mode 100644
+index 05b20a10..00000000
+--- a/Deskmancer.Core/Windows/Universal/HwndExtensions.cs
++++ /dev/null
+@@ -1,26 +0,0 @@
+-using Vanara.PInvoke;
+-
+-namespace Deskmancer.Core.Windows.Universal;
+-
+-///<summary>Bridges a bare window handle into the form that carries the window operations.</summary>
+-public static class HwndExtensions
+-{
+-   ///<summary>
+-   /// Wrap a bare window handle so the things you can do to that window become ordinary methods you can reach by typing
+-   /// <c>.</c> on it — <see cref="User32.SafeHWND.GetText"/>, <see cref="User32.SafeHWND.GetRect"/>, <see cref="User32.SafeHWND.Show"/> and the rest — instead of free functions you
+-   /// have to already know exist and hand the handle to. The window stays owned by whoever created it; this only borrows
+-   /// the handle to operate through it.
+-   ///</summary>
+-   ///<remarks>
+-   /// A bare <see cref="HWND"/> is just a number; to act on the window you must hunt down the matching user32 function
+-   /// and pass it the handle. Vanara's <see cref="User32.SafeHWND"/> turns that around: it auto-generates an instance
+-   /// method for (almost) every user32 function whose first argument is a window handle, so the whole operation set is
+-   /// discoverable from the object itself. That discoverability is the entire point of going through it.<br/>
+-   /// <br/>
+-   /// We pass <c>ownsHandle: false</c> because we did not create this window and must never destroy it. <see cref="User32.SafeHWND"/>
+-   /// is a <see cref="System.Runtime.InteropServices.SafeHandle"/> whose job is normally to release what it holds; a
+-   /// non-owning one skips that release entirely, so disposing it — or letting the finalizer reach it — leaves the real
+-   /// window untouched. An implicit conversion back to <see cref="HWND"/> keeps the handle usable as identity.
+-   ///</remarks>
+-   public static User32.SafeHWND ToSafeHandle(this HWND it) => new(it, ownsHandle: false);
+-}
+diff --git a/Deskmancer.Core/Windows/Universal/IWindow.ReadOperations.cs b/Deskmancer.Core/Windows/Universal/IWindow.ReadOperations.cs
+index a47bebc0..189c0038 100644
+--- a/Deskmancer.Core/Windows/Universal/IWindow.ReadOperations.cs
++++ b/Deskmancer.Core/Windows/Universal/IWindow.ReadOperations.cs
+@@ -1,6 +1,7 @@
+ using System.Runtime.InteropServices;
+ using Compze.Contracts;
+ using Compze.Underscore;
++using Deskmancer.Core.VanaraEX.PInvokeEX.User32EX;
+ using Deskmancer.Core.Windows.Owned;
+ using Deskmancer.Core.Windows.Owned.Infrastructure;
+ using Deskmancer.Core.Windows.Registry;
+@@ -64,15 +65,10 @@ public static class WindowReadOperations
+       public bool IsMaximized => @this.SafeHandle.IsMaximized();
+ 
+       ///<summary>This window's registered Win32 class name (<c>Progman</c>, <c>WorkerW</c>, <c>Shell_TrayWnd</c>, …) — what its role is recognized from.</summary>
+-      public string ClassName => @this.SafeHandle.GetClassName(out var className).__(className);
++      public string ClassName => @this.SafeHandle.ClassName;
+ 
+       ///<summary>The role this window plays, recognized from its registered Win32 class — the magic class atoms stay confined here.</summary>
+-      public WindowKind Kind => @this.ClassName switch
+-                                {
+-                                   "Shell_TrayWnd" or "Shell_SecondaryTrayWnd"            => WindowKind.Taskbar,
+-                                   "Progman" or "WorkerW" or "Windows.UI.Core.CoreWindow" => WindowKind.ShellChrome,
+-                                   _                                                      => WindowKind.Application,
+-                                };
++      public WindowKind Kind => @this.Handle.Kind;
+ 
+       ///<summary>Whether DWM is currently hiding this window from the screen — true for a window sitting on another virtual desktop (the shell cloaks those) and for our own cloaked render hosts.</summary>
+       ///<remarks>Reads <c>DWMWA_CLOAKED</c> through the raw pointer+size overload of <c>DwmGetWindowAttribute</c>, because Vanara's generic getter rejects this particular attribute. The value is a DWORD that reads non-zero while the window is cloaked.</remarks>
+diff --git a/Deskmancer.Core/Windows/Universal/IWindow.cs b/Deskmancer.Core/Windows/Universal/IWindow.cs
+index 5e958119..50f976d9 100644
+--- a/Deskmancer.Core/Windows/Universal/IWindow.cs
++++ b/Deskmancer.Core/Windows/Universal/IWindow.cs
+@@ -1,6 +1,6 @@
++using Deskmancer.Core.VanaraEX.PInvokeEX.User32EX;
+ using Deskmancer.Core.Windows.Owned;
+ using Deskmancer.Core.Windows.Registry;
+-using Deskmancer.Core.Windows.Universal.Observed;
+ using Deskmancer.Core.Windows.Universal.Positionable;
+ using Deskmancer.Core.Windows.Universal.Resizable;
+ using Vanara.PInvoke;
+@@ -34,7 +34,7 @@ public interface IWindow
+    /// wrap.
+    ///</summary>
+    ///<remarks>
+-   /// Wrapped <b>non-owning</b> (<see cref="HwndExtensions.ToSafeHandle"/>, <c>ownsHandle:false</c>): it releases
++   /// Wrapped <b>non-owning</b> (<see cref="HwndEX.ToSafeHandle"/>, <c>ownsHandle:false</c>): it releases
+    /// nothing, so disposing it — or never disposing it — leaves the real window untouched. The returned type being
+    /// <see cref="IDisposable"/> is therefore a cosmetic smell only; there is no lifetime to manage. <see cref="Handle"/>
+    /// stays the identity (equality, hashing, and the dictated externs that need the raw handle); this is the functional
+diff --git a/Deskmancer.Core/Windows/Universal/Positionable/IPositionableWindow.cs b/Deskmancer.Core/Windows/Universal/Positionable/IPositionableWindow.cs
+index dcca50bb..ff60bf18 100644
+--- a/Deskmancer.Core/Windows/Universal/Positionable/IPositionableWindow.cs
++++ b/Deskmancer.Core/Windows/Universal/Positionable/IPositionableWindow.cs
+@@ -1,7 +1,6 @@
+ using Deskmancer.Core.Windows.Owned;
+ using Deskmancer.Core.Windows.Registry.Managed;
+ using Deskmancer.Core.Windows.Registry.WindowsShellChrome;
+-using Deskmancer.Core.Windows.Universal.Observed;
+ 
+ namespace Deskmancer.Core.Windows.Universal.Positionable;
+ 
+diff --git a/Deskmancer.Core/Windows/Universal/Resizable/IResizableWindow.cs b/Deskmancer.Core/Windows/Universal/Resizable/IResizableWindow.cs
+index 57dd45fc..a1d3e0dc 100644
+--- a/Deskmancer.Core/Windows/Universal/Resizable/IResizableWindow.cs
++++ b/Deskmancer.Core/Windows/Universal/Resizable/IResizableWindow.cs
+@@ -1,5 +1,4 @@
+ using Deskmancer.Core.Windows.Registry.Managed;
+-using Deskmancer.Core.Windows.Universal.Observed;
+ using Deskmancer.Core.Windows.Universal.Positionable;
+ 
+ namespace Deskmancer.Core.Windows.Universal.Resizable;
+diff --git a/Deskmancer.sln.DotSettings b/Deskmancer.sln.DotSettings
+index 67b3a71b..3bdb4391 100644
+--- a/Deskmancer.sln.DotSettings
++++ b/Deskmancer.sln.DotSettings
+@@ -1,3 +1,4 @@
+ ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
++	<s:String x:Key="/Default/CodeStyle/Naming/CSharpNaming/Abbreviations/=EX/@EntryIndexedValue">EX</s:String>
+ 	<s:Boolean x:Key="/Default/UserDictionary/Words/=Deskmancer/@EntryIndexedValue">True</s:Boolean>
+ 	<s:Boolean x:Key="/Default/UserDictionary/Words/=Lidbom/@EntryIndexedValue">True</s:Boolean></wpf:ResourceDictionary>
+\ No newline at end of file
+diff --git a/labs/DwmLab/Deskmancer.UndocumentedDependencies.DwmLab/Program.cs b/labs/DwmLab/Deskmancer.UndocumentedDependencies.DwmLab/Program.cs
+index f5374c98..02e16225 100644
+--- a/labs/DwmLab/Deskmancer.UndocumentedDependencies.DwmLab/Program.cs
++++ b/labs/DwmLab/Deskmancer.UndocumentedDependencies.DwmLab/Program.cs
+@@ -1372,7 +1372,7 @@ sealed class Lab : IDisposable
+       {
+          if(Array.IndexOf(exclude, w.Handle) >= 0) continue;
+          if(!w.IsVisible || w.IsMinimized) continue;
+-         if(w.Kind != WindowKind.Application) continue;
++         if(w.Kind != WindowKind.UnknownPotentiallyApplication) continue;
+          if(string.IsNullOrWhiteSpace(w.Title)) continue;
+          result.Add(w.Handle);
+       }
+diff --git a/labs/ManagedWindowLab/Deskmancer.ManagedWindowLab/CpuLoadExperiment.cs b/labs/ManagedWindowLab/Deskmancer.ManagedWindowLab/CpuLoadExperiment.cs
+index 51ac341b..f20b9420 100644
+--- a/labs/ManagedWindowLab/Deskmancer.ManagedWindowLab/CpuLoadExperiment.cs
++++ b/labs/ManagedWindowLab/Deskmancer.ManagedWindowLab/CpuLoadExperiment.cs
+@@ -29,7 +29,7 @@ internal static class CpuLoadExperiment
+       WarmUp();
+       Console.WriteLine($"Processor count: {Environment.ProcessorCount}   (resolution mode: {mode})");
+ 
+-      var candidates = RegistryWindow.AllTopLevel().Where(it => it.Kind == WindowKind.Application && it.IsVisible).ToList();
++      var candidates = RegistryWindow.AllTopLevel().Where(it => it.Kind == WindowKind.UnknownPotentiallyApplication && it.IsVisible).ToList();
+       var managed = ManagedResolvingHandles(candidates, out var viaOwner, out var nonManaged);
+       var allHandles = candidates.Select(it => it.Handle).ToList();
+       Console.WriteLine($"Candidates (Application && Visible) : {candidates.Count}");
+diff --git a/labs/ManagedWindowLab/Deskmancer.ManagedWindowLab/ParallelResolutionExperiment.cs b/labs/ManagedWindowLab/Deskmancer.ManagedWindowLab/ParallelResolutionExperiment.cs
+index 3663d4fa..7f02bc29 100644
+--- a/labs/ManagedWindowLab/Deskmancer.ManagedWindowLab/ParallelResolutionExperiment.cs
++++ b/labs/ManagedWindowLab/Deskmancer.ManagedWindowLab/ParallelResolutionExperiment.cs
+@@ -20,7 +20,7 @@ internal static class ParallelResolutionExperiment
+       WarmUp();
+       Console.WriteLine($"Processor count: {Environment.ProcessorCount}");
+       Compare("All top-level windows", _ => true);
+-      Compare("Application && Visible (grid candidate set)", it => it.Kind == WindowKind.Application && it.IsVisible);
++      Compare("Application && Visible (grid candidate set)", it => it.Kind == WindowKind.UnknownPotentiallyApplication && it.IsVisible);
+    }
+ 
+    static void WarmUp()
+diff --git a/labs/ManagedWindowLab/Deskmancer.ManagedWindowLab/Program.cs b/labs/ManagedWindowLab/Deskmancer.ManagedWindowLab/Program.cs
+index 92cad79c..95817736 100644
+--- a/labs/ManagedWindowLab/Deskmancer.ManagedWindowLab/Program.cs
++++ b/labs/ManagedWindowLab/Deskmancer.ManagedWindowLab/Program.cs
+@@ -246,7 +246,7 @@ internal readonly record struct WindowObservation(
+    DesktopClass Desktop)
+ {
+    ///<summary>A COM-free comparator: a real top-level application window the user can see. Minimized is deliberately NOT a factor — a minimized window is still a managed window — so this is just application-kind and visible. Compared against <see cref="HasDesktopAffinity"/> to see how close a COM-free signal gets to the real membership.</summary>
+-   public bool LooksManaged => Kind == WindowKind.Application && Visible;
++   public bool LooksManaged => Kind == WindowKind.UnknownPotentiallyApplication && Visible;
+ 
+    ///<summary>The membership signal that matters: the shell gave this window a desktop id at all — a real desktop or an all-desktops sentinel — as opposed to no view / empty / a COM error. This is "is it a window we manage", independent of WHICH desktop, and the survey treats it as ground truth.</summary>
+    public bool HasDesktopAffinity => Desktop is not (DesktopClass.EmptyGuid or DesktopClass.NoView or DesktopClass.ComError);
+diff --git a/labs/ManagedWindowLab/Deskmancer.ManagedWindowLab/RefreshTimingExperiment.cs b/labs/ManagedWindowLab/Deskmancer.ManagedWindowLab/RefreshTimingExperiment.cs
+index 00f163e6..02e66a4d 100644
+--- a/labs/ManagedWindowLab/Deskmancer.ManagedWindowLab/RefreshTimingExperiment.cs
++++ b/labs/ManagedWindowLab/Deskmancer.ManagedWindowLab/RefreshTimingExperiment.cs
+@@ -25,8 +25,8 @@ internal static class RefreshTimingExperiment
+       Console.WriteLine();
+       Console.WriteLine("Desktop-id resolution (COM, sequential, in one thread hop):");
+       MeasureSweep("   all top-level windows", _ => true);
+-      MeasureSweep("   application-kind only", it => it.Kind == WindowKind.Application);
+-      MeasureSweep("   application && visible (grid candidate set)", it => it.Kind == WindowKind.Application && it.IsVisible);
++      MeasureSweep("   application-kind only", it => it.Kind == WindowKind.UnknownPotentiallyApplication);
++      MeasureSweep("   application && visible (grid candidate set)", it => it.Kind == WindowKind.UnknownPotentiallyApplication && it.IsVisible);
+    }
+ 
+    static void WarmUp()
+@@ -69,7 +69,7 @@ internal static class RefreshTimingExperiment
+          var windows = RegistryWindow.AllTopLevel();
+          count = windows.Count;
+          var start = Stopwatch.GetTimestamp();
+-         candidates = windows.Count(it => it.Kind == WindowKind.Application && it.IsVisible);
++         candidates = windows.Count(it => it.Kind == WindowKind.UnknownPotentiallyApplication && it.IsVisible);
+          samples.Add(Stopwatch.GetElapsedTime(start).TotalMilliseconds);
+       }
+       Console.WriteLine();
+diff --git a/labs/ZOrderLab/Deskmancer.ZOrderLab/ZOrderSnapshot.cs b/labs/ZOrderLab/Deskmancer.ZOrderLab/ZOrderSnapshot.cs
+index 32e68c0a..7f967cb7 100644
+--- a/labs/ZOrderLab/Deskmancer.ZOrderLab/ZOrderSnapshot.cs
++++ b/labs/ZOrderLab/Deskmancer.ZOrderLab/ZOrderSnapshot.cs
+@@ -52,7 +52,7 @@ sealed class ZOrderSnapshot
+ 
+    ///<summary>The windows a dropped group must get in front of: real application windows (visible or merely cloaked on another desktop), excluding the always-on-top band (<c>WS_EX_TOPMOST</c>) the group cannot and should not beat.</summary>
+    static bool CompetesForTheFront(RegistryWindow window) =>
+-      window.Kind == WindowKind.Application
++      window.Kind == WindowKind.UnknownPotentiallyApplication
+       && (window.IsVisible || window.IsCloaked)
+       && !window.Styles.Extended.HasFlag(User32.WindowStylesEx.WS_EX_TOPMOST);
+ }
