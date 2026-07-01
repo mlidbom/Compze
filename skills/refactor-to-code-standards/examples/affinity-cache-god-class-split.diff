@@ -4,7 +4,6 @@ index 00000000..bc64370a
 --- /dev/null
 +++ b/Deskmancer.Core/CompzeStaging/UnderscoreEX/PipeEX.cs
 @@ -0,0 +1,10 @@
-+﻿using Compze.SystemCE;
 +
 +namespace Deskmancer.Core.CompzeStaging.UnderscoreEX;
 +
@@ -14,26 +13,12 @@ index 00000000..bc64370a
 +   /// <summary>The pipe forward operator. Passes <paramref name="it" /> to <paramref name="func" /> and returns the result.</summary>
 +   public static Unit _<TThis>(this TThis it, Action<TThis> func) => Unit.Invoke(() => func(it));
 +}
-diff --git a/Deskmancer.Core/Deskmancer.Core.csproj b/Deskmancer.Core/Deskmancer.Core.csproj
-index ab3491fa..80974197 100644
---- a/Deskmancer.Core/Deskmancer.Core.csproj
-+++ b/Deskmancer.Core/Deskmancer.Core.csproj
-@@ -4,6 +4,8 @@
-    </PropertyGroup>
-    
-    <ItemGroup>
-+      <PackageReference Include="Compze.Internals.SystemCE" Version="0.2.1-internal" />
-+      <PackageReference Include="Compze.Threading" Version="0.5.0-alpha" />
-       <PackageReference Include="Vanara.PInvoke.DwmApi" Version="5.0.5" />
-       <PackageReference Include="Vanara.PInvoke.User32" Version="5.0.5" />
-       <PackageReference Include="Vanara.PInvoke.Shell32" Version="5.0.5" />
 diff --git a/Deskmancer.Core/Desktops/CacheExpirationHelper.cs b/Deskmancer.Core/Desktops/CacheExpirationHelper.cs
 new file mode 100644
 index 00000000..517dfbbb
 --- /dev/null
 +++ b/Deskmancer.Core/Desktops/CacheExpirationHelper.cs
 @@ -0,0 +1,26 @@
-+﻿using System.Diagnostics;
 +
 +namespace Deskmancer.Core.Desktops;
 +
@@ -64,7 +49,6 @@ index 607959b5..64f37b4c 100644
 --- a/Deskmancer.Core/Desktops/DesktopAffinity.cs
 +++ b/Deskmancer.Core/Desktops/DesktopAffinity.cs
 @@ -1,3 +1,5 @@
-+using Deskmancer.Core.Windows.Registry.Managed;
 +
  namespace Deskmancer.Core.Desktops;
  
@@ -81,20 +65,6 @@ index b4e95a76..6fd8f8ae 100644
 --- a/Deskmancer.Core/Desktops/WindowDesktopAffinityCache.cs
 +++ b/Deskmancer.Core/Desktops/WindowDesktopAffinityCache.cs
 @@ -1,25 +1,17 @@
--using System.Diagnostics;
--using System.Runtime.InteropServices;
-+using Compze.Internals.SystemCE.CollectionsCE.GenericCE;
-+using Compze.Threading;
-+using Compze.Underscore;
-+using Deskmancer.Core.CompzeStaging.UnderscoreEX;
-+using Deskmancer.Core.SystemEX.CollectionsEX.GenericEX;
-+using Deskmancer.Core.SystemEX.ThreadingEX.TasksEX;
-+using Deskmancer.Core.VanaraEX.PInvokeEX.User32EX;
- using Deskmancer.Core.Windows.Registry;
--using Deskmancer.Core.Windows.Registry.Managed;
- using Deskmancer.Core.Windows.Universal.Observed;
--using Deskmancer.UndocumentedDependencies.User32;
- using Vanara.PInvoke;
  
  namespace Deskmancer.Core.Desktops;
  
@@ -362,8 +332,6 @@ index 00000000..dda088b1
 --- /dev/null
 +++ b/Deskmancer.Core/SystemEX/CollectionsEX/GenericEX/DictionaryEX.cs
 @@ -0,0 +1,16 @@
-+﻿using Compze.Internals.SystemCE.CollectionsCE.GenericCE;
-+using Compze.Internals.SystemCE.LinqCE;
 +
 +namespace Deskmancer.Core.SystemEX.CollectionsEX.GenericEX;
 +
@@ -399,8 +367,6 @@ index 00000000..373d0556
 --- /dev/null
 +++ b/Deskmancer.Core/VanaraEX/PInvokeEX/User32EX/HWNDEX.cs
 @@ -0,0 +1,30 @@
-+using Deskmancer.Core.Windows.Registry;
-+using Vanara.PInvoke;
 +
 +namespace Deskmancer.Core.VanaraEX.PInvokeEX.User32EX;
 +
@@ -435,12 +401,6 @@ index 00000000..7717b5fc
 --- /dev/null
 +++ b/Deskmancer.Core/VanaraEX/PInvokeEX/User32EX/HWNDEX_DesktopAffinity.cs
 @@ -0,0 +1,113 @@
-+using System.Runtime.InteropServices;
-+using Deskmancer.Core.Desktops;
-+using Deskmancer.Core.Windows.Registry;
-+using Deskmancer.Core.Windows.Universal.Observed;
-+using Deskmancer.UndocumentedDependencies.User32;
-+using Vanara.PInvoke;
 +
 +namespace Deskmancer.Core.VanaraEX.PInvokeEX.User32EX;
 +
@@ -554,9 +514,6 @@ index 00000000..479995e2
 --- /dev/null
 +++ b/Deskmancer.Core/VanaraEX/PInvokeEX/User32EX/SafeHwndEX.cs
 @@ -0,0 +1,23 @@
-+﻿using Compze.Underscore;
-+using Deskmancer.Core.Windows.Registry;
-+using Vanara.PInvoke;
 +
 +namespace Deskmancer.Core.VanaraEX.PInvokeEX.User32EX;
 +
@@ -577,54 +534,11 @@ index 00000000..479995e2
 +      };
 +   }
 +}
-diff --git a/Deskmancer.Core/Windows/Owned/IOwnedWindow.cs b/Deskmancer.Core/Windows/Owned/IOwnedWindow.cs
-index 049ca29c..e537f008 100644
---- a/Deskmancer.Core/Windows/Owned/IOwnedWindow.cs
-+++ b/Deskmancer.Core/Windows/Owned/IOwnedWindow.cs
-@@ -1,7 +1,6 @@
- using Deskmancer.Core.Windows.Registry;
- using Deskmancer.Core.Windows.Registry.Managed;
- using Deskmancer.Core.Windows.Universal;
--using Deskmancer.Core.Windows.Universal.Observed;
- using Deskmancer.Core.Windows.Universal.Positionable;
- using Deskmancer.Core.Windows.Universal.Resizable;
- 
-diff --git a/Deskmancer.Core/Windows/Registry/IRegistryWindow.cs b/Deskmancer.Core/Windows/Registry/IRegistryWindow.cs
-index 9f5a95b2..72a654f4 100644
---- a/Deskmancer.Core/Windows/Registry/IRegistryWindow.cs
-+++ b/Deskmancer.Core/Windows/Registry/IRegistryWindow.cs
-@@ -2,7 +2,6 @@ using Deskmancer.Core.Windows.Owned;
- using Deskmancer.Core.Windows.Registry.Managed;
- using Deskmancer.Core.Windows.Registry.WindowsShellChrome;
- using Deskmancer.Core.Windows.Universal;
--using Deskmancer.Core.Windows.Universal.Observed;
- using Deskmancer.Core.Windows.Universal.Positionable;
- using Deskmancer.Core.Windows.Universal.Resizable;
- 
-diff --git a/Deskmancer.Core/Windows/Registry/Managed/IManagedWindow.cs b/Deskmancer.Core/Windows/Registry/Managed/IManagedWindow.cs
-index b610dd61..4899dff3 100644
---- a/Deskmancer.Core/Windows/Registry/Managed/IManagedWindow.cs
-+++ b/Deskmancer.Core/Windows/Registry/Managed/IManagedWindow.cs
-@@ -2,7 +2,6 @@ using Deskmancer.Core.Desktops;
- using Deskmancer.Core.Windows.Owned;
- using Deskmancer.Core.Windows.Universal;
- using Deskmancer.Core.Windows.Universal.Closable;
--using Deskmancer.Core.Windows.Universal.Observed;
- using Deskmancer.Core.Windows.Universal.Positionable;
- using Deskmancer.Core.Windows.Universal.Resizable;
- 
 diff --git a/Deskmancer.Core/Windows/Registry/Managed/ManagedWindow.cs b/Deskmancer.Core/Windows/Registry/Managed/ManagedWindow.cs
 index 0f5405ba..83f2b667 100644
 --- a/Deskmancer.Core/Windows/Registry/Managed/ManagedWindow.cs
 +++ b/Deskmancer.Core/Windows/Registry/Managed/ManagedWindow.cs
 @@ -1,8 +1,5 @@
- using Deskmancer.Core.Desktops;
- using Deskmancer.Core.Windows.Registry.WindowsShellChrome;
--using Deskmancer.Core.Windows.Universal.Closable;
--using Deskmancer.Core.Windows.Universal.Positionable;
--using Deskmancer.Core.Windows.Universal.Resizable;
- using Deskmancer.Geometry.VirtualScreenSpace;
- using Vanara.PInvoke;
  
 @@ -30,9 +27,7 @@ public sealed class ManagedWindow : RegistryWindow, IManagedWindow
     /// Never null: the registry mints a <see cref="ManagedWindow"/> only for a window that has an affinity, and a window's
@@ -660,15 +574,6 @@ index 36b095bd..d1e1dbbb 100644
 --- a/Deskmancer.Core/Windows/Registry/WindowRegistry.cs
 +++ b/Deskmancer.Core/Windows/Registry/WindowRegistry.cs
 @@ -1,10 +1,10 @@
- using System.Diagnostics;
- using Deskmancer.Core.Desktops;
-+using Deskmancer.Core.VanaraEX.PInvokeEX.User32EX;
- using Deskmancer.Core.Windows.Owned;
- using Deskmancer.Core.Windows.Registry.Managed;
- using Deskmancer.Core.Windows.Registry.NonManaged;
- using Deskmancer.Core.Windows.Registry.WindowsShellChrome;
--using Deskmancer.Core.Windows.Universal.Observed;
- using Vanara.PInvoke;
  
  namespace Deskmancer.Core.Windows.Registry;
 @@ -111,9 +111,6 @@ static class WindowRegistry
@@ -711,7 +616,6 @@ index 05b20a10..00000000
 --- a/Deskmancer.Core/Windows/Universal/HwndExtensions.cs
 +++ /dev/null
 @@ -1,26 +0,0 @@
--using Vanara.PInvoke;
 -
 -namespace Deskmancer.Core.Windows.Universal;
 -
@@ -742,13 +646,6 @@ index a47bebc0..189c0038 100644
 --- a/Deskmancer.Core/Windows/Universal/IWindow.ReadOperations.cs
 +++ b/Deskmancer.Core/Windows/Universal/IWindow.ReadOperations.cs
 @@ -1,6 +1,7 @@
- using System.Runtime.InteropServices;
- using Compze.Contracts;
- using Compze.Underscore;
-+using Deskmancer.Core.VanaraEX.PInvokeEX.User32EX;
- using Deskmancer.Core.Windows.Owned;
- using Deskmancer.Core.Windows.Owned.Infrastructure;
- using Deskmancer.Core.Windows.Registry;
 @@ -64,15 +65,10 @@ public static class WindowReadOperations
        public bool IsMaximized => @this.SafeHandle.IsMaximized();
  
@@ -767,145 +664,3 @@ index a47bebc0..189c0038 100644
  
        ///<summary>Whether DWM is currently hiding this window from the screen — true for a window sitting on another virtual desktop (the shell cloaks those) and for our own cloaked render hosts.</summary>
        ///<remarks>Reads <c>DWMWA_CLOAKED</c> through the raw pointer+size overload of <c>DwmGetWindowAttribute</c>, because Vanara's generic getter rejects this particular attribute. The value is a DWORD that reads non-zero while the window is cloaked.</remarks>
-diff --git a/Deskmancer.Core/Windows/Universal/IWindow.cs b/Deskmancer.Core/Windows/Universal/IWindow.cs
-index 5e958119..50f976d9 100644
---- a/Deskmancer.Core/Windows/Universal/IWindow.cs
-+++ b/Deskmancer.Core/Windows/Universal/IWindow.cs
-@@ -1,6 +1,6 @@
-+using Deskmancer.Core.VanaraEX.PInvokeEX.User32EX;
- using Deskmancer.Core.Windows.Owned;
- using Deskmancer.Core.Windows.Registry;
--using Deskmancer.Core.Windows.Universal.Observed;
- using Deskmancer.Core.Windows.Universal.Positionable;
- using Deskmancer.Core.Windows.Universal.Resizable;
- using Vanara.PInvoke;
-@@ -34,7 +34,7 @@ public interface IWindow
-    /// wrap.
-    ///</summary>
-    ///<remarks>
--   /// Wrapped <b>non-owning</b> (<see cref="HwndExtensions.ToSafeHandle"/>, <c>ownsHandle:false</c>): it releases
-+   /// Wrapped <b>non-owning</b> (<see cref="HwndEX.ToSafeHandle"/>, <c>ownsHandle:false</c>): it releases
-    /// nothing, so disposing it — or never disposing it — leaves the real window untouched. The returned type being
-    /// <see cref="IDisposable"/> is therefore a cosmetic smell only; there is no lifetime to manage. <see cref="Handle"/>
-    /// stays the identity (equality, hashing, and the dictated externs that need the raw handle); this is the functional
-diff --git a/Deskmancer.Core/Windows/Universal/Positionable/IPositionableWindow.cs b/Deskmancer.Core/Windows/Universal/Positionable/IPositionableWindow.cs
-index dcca50bb..ff60bf18 100644
---- a/Deskmancer.Core/Windows/Universal/Positionable/IPositionableWindow.cs
-+++ b/Deskmancer.Core/Windows/Universal/Positionable/IPositionableWindow.cs
-@@ -1,7 +1,6 @@
- using Deskmancer.Core.Windows.Owned;
- using Deskmancer.Core.Windows.Registry.Managed;
- using Deskmancer.Core.Windows.Registry.WindowsShellChrome;
--using Deskmancer.Core.Windows.Universal.Observed;
- 
- namespace Deskmancer.Core.Windows.Universal.Positionable;
- 
-diff --git a/Deskmancer.Core/Windows/Universal/Resizable/IResizableWindow.cs b/Deskmancer.Core/Windows/Universal/Resizable/IResizableWindow.cs
-index 57dd45fc..a1d3e0dc 100644
---- a/Deskmancer.Core/Windows/Universal/Resizable/IResizableWindow.cs
-+++ b/Deskmancer.Core/Windows/Universal/Resizable/IResizableWindow.cs
-@@ -1,5 +1,4 @@
- using Deskmancer.Core.Windows.Registry.Managed;
--using Deskmancer.Core.Windows.Universal.Observed;
- using Deskmancer.Core.Windows.Universal.Positionable;
- 
- namespace Deskmancer.Core.Windows.Universal.Resizable;
-diff --git a/Deskmancer.sln.DotSettings b/Deskmancer.sln.DotSettings
-index 67b3a71b..3bdb4391 100644
---- a/Deskmancer.sln.DotSettings
-+++ b/Deskmancer.sln.DotSettings
-@@ -1,3 +1,4 @@
- ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
-+	<s:String x:Key="/Default/CodeStyle/Naming/CSharpNaming/Abbreviations/=EX/@EntryIndexedValue">EX</s:String>
- 	<s:Boolean x:Key="/Default/UserDictionary/Words/=Deskmancer/@EntryIndexedValue">True</s:Boolean>
- 	<s:Boolean x:Key="/Default/UserDictionary/Words/=Lidbom/@EntryIndexedValue">True</s:Boolean></wpf:ResourceDictionary>
-\ No newline at end of file
-diff --git a/labs/DwmLab/Deskmancer.UndocumentedDependencies.DwmLab/Program.cs b/labs/DwmLab/Deskmancer.UndocumentedDependencies.DwmLab/Program.cs
-index f5374c98..02e16225 100644
---- a/labs/DwmLab/Deskmancer.UndocumentedDependencies.DwmLab/Program.cs
-+++ b/labs/DwmLab/Deskmancer.UndocumentedDependencies.DwmLab/Program.cs
-@@ -1372,7 +1372,7 @@ sealed class Lab : IDisposable
-       {
-          if(Array.IndexOf(exclude, w.Handle) >= 0) continue;
-          if(!w.IsVisible || w.IsMinimized) continue;
--         if(w.Kind != WindowKind.Application) continue;
-+         if(w.Kind != WindowKind.UnknownPotentiallyApplication) continue;
-          if(string.IsNullOrWhiteSpace(w.Title)) continue;
-          result.Add(w.Handle);
-       }
-diff --git a/labs/ManagedWindowLab/Deskmancer.ManagedWindowLab/CpuLoadExperiment.cs b/labs/ManagedWindowLab/Deskmancer.ManagedWindowLab/CpuLoadExperiment.cs
-index 51ac341b..f20b9420 100644
---- a/labs/ManagedWindowLab/Deskmancer.ManagedWindowLab/CpuLoadExperiment.cs
-+++ b/labs/ManagedWindowLab/Deskmancer.ManagedWindowLab/CpuLoadExperiment.cs
-@@ -29,7 +29,7 @@ internal static class CpuLoadExperiment
-       WarmUp();
-       Console.WriteLine($"Processor count: {Environment.ProcessorCount}   (resolution mode: {mode})");
- 
--      var candidates = RegistryWindow.AllTopLevel().Where(it => it.Kind == WindowKind.Application && it.IsVisible).ToList();
-+      var candidates = RegistryWindow.AllTopLevel().Where(it => it.Kind == WindowKind.UnknownPotentiallyApplication && it.IsVisible).ToList();
-       var managed = ManagedResolvingHandles(candidates, out var viaOwner, out var nonManaged);
-       var allHandles = candidates.Select(it => it.Handle).ToList();
-       Console.WriteLine($"Candidates (Application && Visible) : {candidates.Count}");
-diff --git a/labs/ManagedWindowLab/Deskmancer.ManagedWindowLab/ParallelResolutionExperiment.cs b/labs/ManagedWindowLab/Deskmancer.ManagedWindowLab/ParallelResolutionExperiment.cs
-index 3663d4fa..7f02bc29 100644
---- a/labs/ManagedWindowLab/Deskmancer.ManagedWindowLab/ParallelResolutionExperiment.cs
-+++ b/labs/ManagedWindowLab/Deskmancer.ManagedWindowLab/ParallelResolutionExperiment.cs
-@@ -20,7 +20,7 @@ internal static class ParallelResolutionExperiment
-       WarmUp();
-       Console.WriteLine($"Processor count: {Environment.ProcessorCount}");
-       Compare("All top-level windows", _ => true);
--      Compare("Application && Visible (grid candidate set)", it => it.Kind == WindowKind.Application && it.IsVisible);
-+      Compare("Application && Visible (grid candidate set)", it => it.Kind == WindowKind.UnknownPotentiallyApplication && it.IsVisible);
-    }
- 
-    static void WarmUp()
-diff --git a/labs/ManagedWindowLab/Deskmancer.ManagedWindowLab/Program.cs b/labs/ManagedWindowLab/Deskmancer.ManagedWindowLab/Program.cs
-index 92cad79c..95817736 100644
---- a/labs/ManagedWindowLab/Deskmancer.ManagedWindowLab/Program.cs
-+++ b/labs/ManagedWindowLab/Deskmancer.ManagedWindowLab/Program.cs
-@@ -246,7 +246,7 @@ internal readonly record struct WindowObservation(
-    DesktopClass Desktop)
- {
-    ///<summary>A COM-free comparator: a real top-level application window the user can see. Minimized is deliberately NOT a factor — a minimized window is still a managed window — so this is just application-kind and visible. Compared against <see cref="HasDesktopAffinity"/> to see how close a COM-free signal gets to the real membership.</summary>
--   public bool LooksManaged => Kind == WindowKind.Application && Visible;
-+   public bool LooksManaged => Kind == WindowKind.UnknownPotentiallyApplication && Visible;
- 
-    ///<summary>The membership signal that matters: the shell gave this window a desktop id at all — a real desktop or an all-desktops sentinel — as opposed to no view / empty / a COM error. This is "is it a window we manage", independent of WHICH desktop, and the survey treats it as ground truth.</summary>
-    public bool HasDesktopAffinity => Desktop is not (DesktopClass.EmptyGuid or DesktopClass.NoView or DesktopClass.ComError);
-diff --git a/labs/ManagedWindowLab/Deskmancer.ManagedWindowLab/RefreshTimingExperiment.cs b/labs/ManagedWindowLab/Deskmancer.ManagedWindowLab/RefreshTimingExperiment.cs
-index 00f163e6..02e66a4d 100644
---- a/labs/ManagedWindowLab/Deskmancer.ManagedWindowLab/RefreshTimingExperiment.cs
-+++ b/labs/ManagedWindowLab/Deskmancer.ManagedWindowLab/RefreshTimingExperiment.cs
-@@ -25,8 +25,8 @@ internal static class RefreshTimingExperiment
-       Console.WriteLine();
-       Console.WriteLine("Desktop-id resolution (COM, sequential, in one thread hop):");
-       MeasureSweep("   all top-level windows", _ => true);
--      MeasureSweep("   application-kind only", it => it.Kind == WindowKind.Application);
--      MeasureSweep("   application && visible (grid candidate set)", it => it.Kind == WindowKind.Application && it.IsVisible);
-+      MeasureSweep("   application-kind only", it => it.Kind == WindowKind.UnknownPotentiallyApplication);
-+      MeasureSweep("   application && visible (grid candidate set)", it => it.Kind == WindowKind.UnknownPotentiallyApplication && it.IsVisible);
-    }
- 
-    static void WarmUp()
-@@ -69,7 +69,7 @@ internal static class RefreshTimingExperiment
-          var windows = RegistryWindow.AllTopLevel();
-          count = windows.Count;
-          var start = Stopwatch.GetTimestamp();
--         candidates = windows.Count(it => it.Kind == WindowKind.Application && it.IsVisible);
-+         candidates = windows.Count(it => it.Kind == WindowKind.UnknownPotentiallyApplication && it.IsVisible);
-          samples.Add(Stopwatch.GetElapsedTime(start).TotalMilliseconds);
-       }
-       Console.WriteLine();
-diff --git a/labs/ZOrderLab/Deskmancer.ZOrderLab/ZOrderSnapshot.cs b/labs/ZOrderLab/Deskmancer.ZOrderLab/ZOrderSnapshot.cs
-index 32e68c0a..7f967cb7 100644
---- a/labs/ZOrderLab/Deskmancer.ZOrderLab/ZOrderSnapshot.cs
-+++ b/labs/ZOrderLab/Deskmancer.ZOrderLab/ZOrderSnapshot.cs
-@@ -52,7 +52,7 @@ sealed class ZOrderSnapshot
- 
-    ///<summary>The windows a dropped group must get in front of: real application windows (visible or merely cloaked on another desktop), excluding the always-on-top band (<c>WS_EX_TOPMOST</c>) the group cannot and should not beat.</summary>
-    static bool CompetesForTheFront(RegistryWindow window) =>
--      window.Kind == WindowKind.Application
-+      window.Kind == WindowKind.UnknownPotentiallyApplication
-       && (window.IsVisible || window.IsCloaked)
-       && !window.Styles.Extended.HasFlag(User32.WindowStylesEx.WS_EX_TOPMOST);
- }
