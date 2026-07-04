@@ -4,6 +4,12 @@ All notable changes to Compze.Threading will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.6.0-alpha
+
+### Fixed
+
+- Removed spurious type parameter causing ambiguous method errors.
+
 ## 0.5.0-alpha
 
 ### Added

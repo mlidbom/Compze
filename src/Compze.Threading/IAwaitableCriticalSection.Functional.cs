@@ -27,7 +27,7 @@ public partial interface IAwaitableCriticalSection
    }
 
    ///<summary>Blocks until <paramref name="condition"/> returns true, then upgrades its read lock to an update lock, and executes <paramref name="action"/> within that lock, notifying all waiting threads that there are updates.</summary>
-   Unit UpdateWhen<TReturn>(Func<bool> condition, Action action, CancellationToken cancellationToken = default, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null) =>
+   Unit UpdateWhen(Func<bool> condition, Action action, CancellationToken cancellationToken = default, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null) =>
       UpdateWhen(condition, action.ToFunc(), cancellationToken, waitTimeout, lockTimeout);
 
    ///<summary>Blocks until <paramref name="condition"/> returns true, then upgrades its read lock to an update lock, and executes <paramref name="func"/> within that lock, notifying all waiting threads that there are updates.</summary>
