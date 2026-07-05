@@ -7,12 +7,9 @@
     <NoWarn>CS1591</NoWarn>
     <Description>Testing support for Compze endpoint hosting: the testing endpoint host that capability testing features (Tessaging, Typermedia) plug into, and the pluggable-component test wiring (DI containers, serializers, database pools) driven by the current test configuration.</Description>
   </PropertyGroup>
-
-   <ItemGroup>
-      <FrameworkReference Include="Microsoft.AspNetCore.App" />
-   </ItemGroup>
-   
-   
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
   <!-- Compze.Abstractions — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Abstractions)' == 'true'">
     <PackageReference Include="Compze.Abstractions" Version="*-*" />

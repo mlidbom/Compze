@@ -1,4 +1,4 @@
-using Compze.Threading.Exceptions;
+using Compze.Threading.Interprocess.Exceptions;
 using Compze.Threading.Utilities;
 using System.Diagnostics;
 using System.Runtime.InteropServices;

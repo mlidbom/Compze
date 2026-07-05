@@ -67,6 +67,7 @@
   <Folder Name="/Utilities/Compze.Threading/">
     <Project Path="src/Compze.Threading.Testing/Compze.Threading.Testing.csproj" />
     <Project Path="src/Compze.Threading/Compze.Threading.csproj" />
+    <Project Path="src/Compze.Threading.Interprocess/Compze.Threading.Interprocess.csproj" />
   </Folder>
   <Folder Name="/Utilities/Compze.Threading/Specifications/">
     <Project Path="test/Compze.Threading.InternalSpecifications/Compze.Threading.InternalSpecifications.csproj" />

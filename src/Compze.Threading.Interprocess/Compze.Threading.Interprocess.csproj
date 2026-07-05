@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Version>0.5.0-alpha</Version>
+    <Description>Cross-process synchronization for Compze.Threading. A system-mutex-backed IAwaitableMutex that offers the full Monitor.Wait condition-wait model across process boundaries, plus IProcessShared/IAwaitableProcessShared and the file-based InterprocessSignal. Extracted from Compze.Threading 0.7.0-alpha.</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Compze.Threading.InternalSpecifications" />
+  </ItemGroup>
+  <!-- Compze.Contracts — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' == 'true'">
+    <PackageReference Include="Compze.Contracts" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' != 'true'">
+    <ProjectReference Include="..\Compze.Contracts\Compze.Contracts.csproj" />
+  </ItemGroup>
+  <!-- Compze.Threading — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Threading)' == 'true'">
+    <PackageReference Include="Compze.Threading" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Threading)' != 'true'">
+    <ProjectReference Include="..\Compze.Threading\Compze.Threading.csproj" />
+  </ItemGroup>
+</Project>

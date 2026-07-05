@@ -10,7 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 - **`signalPollingPolicy` parameter on `NewGlobal`/`NewLocal`.** Passes an `ISignalPollingPolicy` (Compze.Threading) through to the backing `IAwaitableMutex`, letting consumers tune the cross-process condition-wait poll cadence — the latency-versus-CPU-power trade-off. Defaults to the adaptive backoff, so existing calls need no change and get lower idle power for free.
 
-Built on Compze.Threading 0.7.0-alpha.
+Built on Compze.Threading.Interprocess 0.5.0-alpha (extracted from Compze.Threading 0.7.0-alpha).
 
 ## 0.5.0-alpha
 

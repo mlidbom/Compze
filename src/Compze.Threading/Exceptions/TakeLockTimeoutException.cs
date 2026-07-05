@@ -40,6 +40,3 @@ public class TakeLockTimeoutException : Exception
 class TakeMonitorLockTimeoutException(LockTimeout timeout, WaitTimeout stackTraceFetchTimeout)
    : TakeLockTimeoutException($"Timed out awaiting monitor lock after {timeout}. This likely indicates an in-memory deadlock.", stackTraceFetchTimeout);
 
-///<summary>Thrown when a cross-process mutex lock acquisition times out after <see cref="LockTimeout"/>.</summary>
-class TakeMutexLockTimeoutException(LockTimeout timeout, WaitTimeout stackTraceFetchTimeout)
-   : TakeLockTimeoutException($"Timed out awaiting interprocess mutex lock after {timeout}. This likely indicates a cross-process deadlock.", stackTraceFetchTimeout);

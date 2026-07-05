@@ -6,16 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## 0.7.0-alpha
 
-### Added
-
-- **`ISignalPollingPolicy` — pluggable poll scheduling for cross-process condition-waits.** Decides how long a thread awaiting an `InterprocessSignal` sleeps between polls of the signal, trading signal-detection latency against CPU power draw. `ISignalPollingPolicy.Default` uses an adaptive backoff capped at 50 ms; `ISignalPollingPolicy.WithMaxSignalLatency(TimeSpan)` chooses a different cap; implement the interface to plug in any schedule. Accepted as an optional argument by `IAwaitableMutex.Global`/`Local` and `IAwaitableProcessShared.Global`/`Local`.
-
 ### Changed
 
-- **Awaiting a cross-process condition no longer polls at a fixed ~1 ms interval.** The old fixed poll woke the CPU as often as ~1000 times per second for the entire wait (whenever any process on the machine had raised the system timer resolution), preventing it from reaching deep low-power idle states — a real, if invisible, battery cost on laptops. Waiters now back off adaptively via `ISignalPollingPolicy` (poll eagerly at first, then stretch toward the cap), cutting steady-state wakeups on a long wait by ~98% while keeping short waits fast.
-- Poll sleeps are now interruptible — cancellation wakes a waiter immediately instead of at the next poll boundary.
-- Abandoned-mutex detection interval raised from 50 ms to 1 s. It is a rare crash-recovery probe; the frequent probe was another needless wakeup source.
-- Renamed the `onAbandonedMutexException` parameter to `onAbandonedMutex` on `IProcessShared.Global`/`Local` and `IAwaitableProcessShared.Global`/`Local`, matching the name already used by `IMutex`.
+- **Moved the cross-process primitives to a new package, Compze.Threading.Interprocess.** `IMutex`, `IAwaitableMutex`, `IProcessShared`/`IAwaitableProcessShared`, the new adaptive-backoff `ISignalPollingPolicy`, and the file-based `InterprocessSignal` now live there, so the young cross-process tier can version independently of the mature in-process one. This package now holds only the in-process primitives (`IMonitor`, `IAwaitableMonitor`, `IThreadShared`, `IAwaitableThreadShared`, double-checked locking, `RunOnce`) and the shared `ICriticalSection`/`IAwaitableCriticalSection`/`IShared` abstractions that both tiers implement. Namespaces are unchanged, so cross-process consumers only add a reference to the new package.
 
 ## 0.6.0-alpha
 
