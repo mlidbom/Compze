@@ -21,6 +21,13 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection)' != 'true'">
     <ProjectReference Include="..\Compze.DependencyInjection\Compze.DependencyInjection.csproj" />
   </ItemGroup>
+  <!-- Compze.DocumentDb — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DocumentDb)' == 'true'">
+    <PackageReference Include="Compze.DocumentDb" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DocumentDb)' != 'true'">
+    <ProjectReference Include="..\Compze.DocumentDb\Compze.DocumentDb.csproj" />
+  </ItemGroup>
   <!-- Compze.Internals.Logging — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Logging)' == 'true'">
     <PackageReference Include="Compze.Internals.Logging" Version="*-*" />
@@ -69,8 +76,5 @@
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_Underscore)' != 'true'">
     <ProjectReference Include="..\Compze.Underscore\Compze.Underscore.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Compze.DocumentDb\Compze.DocumentDb.csproj" />
   </ItemGroup>
 </Project>
