@@ -10,6 +10,11 @@ function C-SimulateRelease {
     which packages are new, their changelog entries, NuGet pushes, GitHub releases,
     and git tags — without actually doing any of it.
 
+    Release detection and the summary table are driven entirely by local git tags, so the
+    run first fetches every remote's tags (git fetch --all --tags). Without this, a clone
+    whose tags lag behind the remote reports already-released packages as pending. If the
+    fetch fails (e.g. offline) the run continues with a warning that tags may be stale.
+
     Use -NoBuild to skip building when only iterating on changelogs or versions.
     Use -NoPack to skip both building and packing, using existing nupkg files.
     Use -NoSummary to skip the end-of-run summary table (which queries nuget.org).
@@ -47,6 +52,17 @@ function C-SimulateRelease {
         [switch]$NoPack,
         [switch]$NoSummary
     )
+
+    # Release detection (PackagesWithNoMatchingReleaseTag) and the summary table
+    # (GetLatestTagVersion) read only local tags, so a clone that lags the remote reports
+    # already-released packages as pending. Refresh every remote's tags first so the run
+    # reflects the true published state. No --prune-tags: it would delete a local-only tag
+    # left by a real release that crashed before pushing — exactly the drift the summary
+    # report is meant to surface. A failed fetch (e.g. offline) warns but does not abort.
+    $fetchResult = git fetch --all --tags --quiet 2>&1
+    if ($LASTEXITCODE -ne 0) {
+        Write-Warning "Could not fetch the latest tags — the release simulation may be based on stale tags.`n$fetchResult"
+    }
 
     if (-not $NoPack) {
         C-Pack -CI -NoBuild:$NoBuild
