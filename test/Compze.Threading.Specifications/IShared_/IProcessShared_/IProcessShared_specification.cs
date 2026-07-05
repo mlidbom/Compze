@@ -14,19 +14,19 @@ public class IProcessShared_specification : UniversalTestBase
    {
       [XF] public void Mutex_IsGlobal_is_true()
       {
-         var shared = IProcessShared.Global("IProcessShared_specification.Global.Mutex_IsGlobal", 0, timeout: null, onAbandonedMutexException: null);
+         var shared = IProcessShared.Global("IProcessShared_specification.Global.Mutex_IsGlobal", 0, timeout: null, onAbandonedMutex: null);
          shared.Mutex.IsGlobal.Must().BeTrue();
       }
 
       [XF] public void Mutex_Name_is_prefixed_with_Global()
       {
-         var shared = IProcessShared.Global("IProcessShared_specification.Global.Mutex_Name", 0, timeout: null, onAbandonedMutexException: null);
+         var shared = IProcessShared.Global("IProcessShared_specification.Global.Mutex_Name", 0, timeout: null, onAbandonedMutex: null);
          shared.Mutex.Name.Must().Be(@"Global\IProcessShared_specification.Global.Mutex_Name");
       }
 
       [XF] public void Mutex_LockTimeout_matches_specified_timeout()
       {
-         var shared = IProcessShared.Global("IProcessShared_specification.Global.Mutex_LockTimeout", 0, timeout: LockTimeout.Seconds(7), onAbandonedMutexException: null);
+         var shared = IProcessShared.Global("IProcessShared_specification.Global.Mutex_LockTimeout", 0, timeout: LockTimeout.Seconds(7), onAbandonedMutex: null);
          shared.Mutex.LockTimeout.Must().Be(LockTimeout.Seconds(7));
       }
    }
@@ -35,19 +35,19 @@ public class IProcessShared_specification : UniversalTestBase
    {
       [XF] public void Mutex_IsGlobal_is_false()
       {
-         var shared = IProcessShared.Local("IProcessShared_specification.Local.Mutex_IsGlobal", 0, timeout: null, onAbandonedMutexException: null);
+         var shared = IProcessShared.Local("IProcessShared_specification.Local.Mutex_IsGlobal", 0, timeout: null, onAbandonedMutex: null);
          shared.Mutex.IsGlobal.Must().BeFalse();
       }
 
       [XF] public void Mutex_Name_is_prefixed_with_Local()
       {
-         var shared = IProcessShared.Local("IProcessShared_specification.Local.Mutex_Name", 0, timeout: null, onAbandonedMutexException: null);
+         var shared = IProcessShared.Local("IProcessShared_specification.Local.Mutex_Name", 0, timeout: null, onAbandonedMutex: null);
          shared.Mutex.Name.Must().Be(@"Local\IProcessShared_specification.Local.Mutex_Name");
       }
 
       [XF] public void Mutex_LockTimeout_matches_specified_timeout()
       {
-         var shared = IProcessShared.Local("IProcessShared_specification.Local.Mutex_LockTimeout", 0, timeout: LockTimeout.Seconds(7), onAbandonedMutexException: null);
+         var shared = IProcessShared.Local("IProcessShared_specification.Local.Mutex_LockTimeout", 0, timeout: LockTimeout.Seconds(7), onAbandonedMutex: null);
          shared.Mutex.LockTimeout.Must().Be(LockTimeout.Seconds(7));
       }
    }

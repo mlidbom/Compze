@@ -14,15 +14,15 @@ public partial interface IInterprocessObject
       readonly Func<TObject> _createDefault;
       readonly CorruptionAction _corruptionAction;
 
-      public Implementation(string name, bool isGlobal, DirectoryInfo directory, int maxBytes, IInterprocessObjectSerializer<TObject> serializer, Func<TObject> createDefault, CorruptionAction corruptionAction, LockTimeout? lockTimeout = null, WaitTimeout? waitTimeout = null)
+      public Implementation(string name, bool isGlobal, DirectoryInfo directory, int maxBytes, IInterprocessObjectSerializer<TObject> serializer, Func<TObject> createDefault, CorruptionAction corruptionAction, LockTimeout? lockTimeout = null, WaitTimeout? waitTimeout = null, ISignalPollingPolicy? signalPollingPolicy = null)
       {
          _serializer = serializer;
          _createDefault = createDefault;
          _corruptionAction = corruptionAction;
          var fileName = PathCE.ReplaceInvalidCharactersWith(name, '_');
          _synchronizer = isGlobal
-            ? IAwaitableMutex.Global(fileName, directory, lockTimeout, waitTimeout)
-            : IAwaitableMutex.Local(fileName, directory, lockTimeout, waitTimeout);
+            ? IAwaitableMutex.Global(fileName, directory, lockTimeout, waitTimeout, signalPollingPolicy)
+            : IAwaitableMutex.Local(fileName, directory, lockTimeout, waitTimeout, signalPollingPolicy);
 
          _file = _synchronizer.Update(() =>
          {
@@ -105,7 +105,7 @@ public partial interface IInterprocessObject
          catch(Exception exception)
          {
             if(_corruptionAction != CorruptionAction.ReplaceContentWithDefaultAndThrow)
-               throw new Exception($"""Failed to deserialize object from file {_file}""",
+               throw new Exception($"Failed to deserialize object from file {_file}",
                                    exception);
 
             _file.Delete();

@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Compze.Internals.SystemCE;
 using Compze.Must;
 using Compze.Tests.Infrastructure;
@@ -101,6 +102,58 @@ public class InterprocessSignal_specification : UniversalTestBase
          _signal.Raise();
 
          _signal.TryAwait(TimeSpan.FromMilliseconds(100), ref _baseline).Must().BeTrue();
+      }
+   }
+
+   public class With_a_custom_polling_policy : InterprocessSignal_specification
+   {
+      [XF] public void a_poll_interval_longer_than_the_timeout_does_not_delay_the_timeout()
+      {
+         using var slowPollingSignal = new InterprocessSignal(Guid.NewGuid().ToString(), TestDirectory, new FixedPollIntervalPolicy(TimeSpan.FromSeconds(10)));
+         var baseline = slowPollingSignal.Snapshot();
+
+         var stopwatch = Stopwatch.StartNew();
+         slowPollingSignal.TryAwait(TimeSpan.FromMilliseconds(100), ref baseline).Must().BeFalse();
+         (stopwatch.Elapsed < TimeSpan.FromSeconds(5)).Must().BeTrue("The poll interval must be clamped to the timeout deadline");
+      }
+
+      [XF] public void cancellation_interrupts_a_poll_sleep_mid_interval()
+      {
+         using var slowPollingSignal = new InterprocessSignal(Guid.NewGuid().ToString(), TestDirectory, new FixedPollIntervalPolicy(TimeSpan.FromSeconds(10)));
+         var localBaseline = slowPollingSignal.Snapshot();
+         using var cancellation = new CancellationTokenSource(TimeSpan.FromMilliseconds(100));
+
+         var stopwatch = Stopwatch.StartNew();
+         Invoking(() => slowPollingSignal.TryAwait(TimeSpan.FromSeconds(30), ref localBaseline, cancellation.Token)).Must().Throw<OperationCanceledException>();
+         (stopwatch.Elapsed < TimeSpan.FromSeconds(5)).Must().BeTrue("Cancellation must wake the waiter instead of waiting out the 10 second poll interval");
+      }
+
+      [XF] public void elapsed_time_is_measured_from_waitStartedAt_so_backoff_spans_chunked_TryAwait_calls()
+      {
+         var recordingPolicy = new ElapsedWaitTimeRecordingPolicy();
+         using var signal = new InterprocessSignal(Guid.NewGuid().ToString(), TestDirectory, recordingPolicy);
+         var baseline = signal.Snapshot();
+
+         signal.TryAwait(TimeSpan.FromMilliseconds(20), ref baseline, waitStartedAt: DateTime.UtcNow - TimeSpan.FromMinutes(10)).Must().BeFalse();
+         (recordingPolicy.LargestElapsedWaitTimeSeen >= TimeSpan.FromMinutes(10)).Must().BeTrue("The policy must see the logical wait's full elapsed time, not the time since this TryAwait call");
+      }
+
+      class FixedPollIntervalPolicy : ISignalPollingPolicy
+      {
+         readonly TimeSpan _interval;
+         public FixedPollIntervalPolicy(TimeSpan interval) => _interval = interval;
+         public TimeSpan NextPollInterval(TimeSpan elapsedWaitTime) => _interval;
+      }
+
+      class ElapsedWaitTimeRecordingPolicy : ISignalPollingPolicy
+      {
+         internal TimeSpan LargestElapsedWaitTimeSeen;
+
+         public TimeSpan NextPollInterval(TimeSpan elapsedWaitTime)
+         {
+            if(elapsedWaitTime > LargestElapsedWaitTimeSeen) LargestElapsedWaitTimeSeen = elapsedWaitTime;
+            return TimeSpan.FromMilliseconds(1);
+         }
       }
    }
 

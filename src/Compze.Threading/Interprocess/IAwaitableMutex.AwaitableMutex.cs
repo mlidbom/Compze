@@ -8,18 +8,22 @@ public partial interface IAwaitableMutex
    private class AwaitableMutex : IAwaitableMutex, ILockInternals
 #pragma warning restore CS0618 // Type or member is obsolete
    {
-      static readonly TimeSpan AbandonedMutexCheckInterval = TimeSpan.FromMilliseconds(50);
+      ///<summary>Bounds each <see cref="InterprocessSignal.TryAwait(TimeSpan, ref long, DateTime, CancellationToken)"/> chunk while awaiting a condition:
+      /// whenever a chunk times out without a signal, the waiter probes the mutex to detect abandonment.<br/>
+      /// The interval is thus both the worst-case abandoned-mutex detection latency and a once-per-interval wakeup floor on the
+      /// power cost of a long wait — keep it long; abandonment is a rare crash scenario.</summary>
+      static readonly TimeSpan AbandonedMutexCheckInterval = TimeSpan.FromSeconds(1);
 
       readonly IMutex _mutex;
       readonly InterprocessSignal _signal;
 
-      internal AwaitableMutex(string name, bool global, DirectoryInfo directory, LockTimeout? lockTimeout, WaitTimeout? waitTimeout, Action? onAbandonedMutex)
+      internal AwaitableMutex(string name, bool global, DirectoryInfo directory, LockTimeout? lockTimeout, WaitTimeout? waitTimeout, ISignalPollingPolicy? signalPollingPolicy, Action? onAbandonedMutex)
       {
-         _signal = new InterprocessSignal(name, directory);
+         _signal = new InterprocessSignal(name, directory, signalPollingPolicy);
 
          // Wrap the user's callback so abandoned-mutex detection also raises the signal,
          // waking any thread stuck waiting for a signal.
-         Action wrappedOnAbandonedMutex = () =>
+         var wrappedOnAbandonedMutex = () =>
          {
             _signal.Raise();
             onAbandonedMutex?.Invoke();
@@ -66,7 +70,7 @@ public partial interface IAwaitableMutex
          var waitStartedAt = DateTime.UtcNow;
 
          // Take the lock (reentrant if caller already holds it)
-         ILock mutexLock = _mutex.TakeLock(cancellationToken, effectiveLockTimeout);
+         var mutexLock = _mutex.TakeLock(cancellationToken, effectiveLockTimeout);
          try
          {
             while(!condition())
@@ -89,7 +93,7 @@ public partial interface IAwaitableMutex
                      return null;
                   }
 
-                  while(!_signal.TryAwait(AbandonedMutexCheckInterval, ref baseline, cancellationToken))
+                  while(!_signal.TryAwait(NextAwaitChunkTimeout(), ref baseline, waitStartedAt, cancellationToken))
                   {
                      if(!effectiveWaitTimeout.IsInfinite && effectiveWaitTimeout.IsExpired(waitStartedAt))
                      {
@@ -121,6 +125,14 @@ public partial interface IAwaitableMutex
 
          // Condition is true while holding the lock
          return isUpdate ? new UpdateLockDisposer(_signal, mutexLock) : (IReadLock)mutexLock;
+
+         // Clamp each chunk to the remaining wait time so a finite wait timeout is honored precisely instead of overshooting by up to a whole AbandonedMutexCheckInterval.
+         TimeSpan NextAwaitChunkTimeout()
+         {
+            if(effectiveWaitTimeout.IsInfinite) return AbandonedMutexCheckInterval;
+            TimeSpan remainingWaitTime = effectiveWaitTimeout.TimeRemaining(waitStartedAt);
+            return remainingWaitTime < AbandonedMutexCheckInterval ? remainingWaitTime : AbandonedMutexCheckInterval;
+         }
       }
 
       public void SetTimeToWaitForStackTrace(WaitTimeout timeToWaitForStackTrace) =>

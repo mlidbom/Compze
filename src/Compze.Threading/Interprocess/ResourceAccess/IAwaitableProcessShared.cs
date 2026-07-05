@@ -12,12 +12,12 @@ public interface IAwaitableProcessShared
 {
 #pragma warning disable CA2000 // Mutex ownership transfers to AwaitableProcessShared which disposes it
    ///<summary>Returns a new <see cref="IAwaitableProcessShared{TShared}"/> using a global <see cref="IAwaitableMutex"/>.</summary>
-   public static IAwaitableProcessShared<TShared> Global<TShared>(string name, DirectoryInfo directory, TShared shared, LockTimeout? lockTimeout = null, WaitTimeout? waitTimeout = null, Action? onAbandonedMutexException = null) =>
-      new AwaitableProcessShared<TShared>(shared, IAwaitableMutex.Global(name, directory, lockTimeout, waitTimeout, onAbandonedMutexException));
+   public static IAwaitableProcessShared<TShared> Global<TShared>(string name, DirectoryInfo directory, TShared shared, LockTimeout? lockTimeout = null, WaitTimeout? waitTimeout = null, ISignalPollingPolicy? signalPollingPolicy = null, Action? onAbandonedMutex = null) =>
+      new AwaitableProcessShared<TShared>(shared, IAwaitableMutex.Global(name, directory, lockTimeout, waitTimeout, signalPollingPolicy, onAbandonedMutex));
 
    ///<summary>Returns a new <see cref="IAwaitableProcessShared{TShared}"/> using a local <see cref="IAwaitableMutex"/>.</summary>
-   public static IAwaitableProcessShared<TShared> Local<TShared>(string name, DirectoryInfo directory, TShared shared, LockTimeout? lockTimeout = null, WaitTimeout? waitTimeout = null, Action? onAbandonedMutexException = null) =>
-      new AwaitableProcessShared<TShared>(shared, IAwaitableMutex.Local(name, directory, lockTimeout, waitTimeout, onAbandonedMutexException));
+   public static IAwaitableProcessShared<TShared> Local<TShared>(string name, DirectoryInfo directory, TShared shared, LockTimeout? lockTimeout = null, WaitTimeout? waitTimeout = null, ISignalPollingPolicy? signalPollingPolicy = null, Action? onAbandonedMutex = null) =>
+      new AwaitableProcessShared<TShared>(shared, IAwaitableMutex.Local(name, directory, lockTimeout, waitTimeout, signalPollingPolicy, onAbandonedMutex));
 #pragma warning restore CA2000
 
    internal class AwaitableProcessShared<TShared>(TShared shared, IAwaitableMutex mutex) : IAwaitableShared.AwaitableShared<TShared>(shared, mutex), IAwaitableProcessShared<TShared>
