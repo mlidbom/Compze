@@ -13,6 +13,18 @@
   <Folder Name="/Compze.Abstractions/Specifications/">
     <Project Path="test/Compze.Abstractions.Specifications/Compze.Abstractions.Specifications.csproj" />
   </Folder>
+  <Folder Name="/Compze.Servicebus/">
+    <Project Path="src/Compze.ServiceBus.Hosting.AspNetCore/Compze.ServiceBus.Hosting.AspNetCore.csproj" />
+    <Project Path="src/Compze.ServiceBus.Hosting.Testing/Compze.ServiceBus.Hosting.Testing.csproj" />
+    <Project Path="src/Compze.ServiceBus.MicrosoftSql/Compze.ServiceBus.MicrosoftSql.csproj" />
+    <Project Path="src/Compze.ServiceBus.MySql/Compze.ServiceBus.MySql.csproj" />
+    <Project Path="src/Compze.ServiceBus.PostgreSql/Compze.ServiceBus.PostgreSql.csproj" />
+    <Project Path="src/Compze.ServiceBus.Sqlite/Compze.ServiceBus.Sqlite.csproj" />
+  </Folder>
+  <Folder Name="/Compze.Tessaging/">
+    <Project Path="src/Compze.Tessaging.Abstractions/Compze.Tessaging.Abstractions.csproj" />
+    <Project Path="src/Compze.Tessaging/Compze.Tessaging.csproj" />
+  </Folder>
   <Folder Name="/Compze.Teventive/">
     <Project Path="src/Compze.Teventive.TeventStore.Abstractions/Compze.Teventive.TeventStore.Abstractions.csproj" />
     <Project Path="src/Compze.Teventive.TeventStore.MicrosoftSql/Compze.Teventive.TeventStore.MicrosoftSql.csproj" />
@@ -186,16 +198,6 @@
   </Folder>
   <Folder Name="/Compze.Internals/Compze.Internals.SystemCE/Tests/">
     <Project Path="test/Compze.Internals.SystemCE.Tests/Compze.Internals.SystemCE.Tests.csproj" />
-  </Folder>
-  <Folder Name="/Compze.Tessaging/">
-    <Project Path="src/Compze.Tessaging.Abstractions/Compze.Tessaging.Abstractions.csproj" />
-    <Project Path="src/Compze.ServiceBus.Hosting.AspNetCore/Compze.ServiceBus.Hosting.AspNetCore.csproj" />
-    <Project Path="src/Compze.ServiceBus.Hosting.Testing/Compze.ServiceBus.Hosting.Testing.csproj" />
-    <Project Path="src/Compze.ServiceBus.MicrosoftSql/Compze.ServiceBus.MicrosoftSql.csproj" />
-    <Project Path="src/Compze.ServiceBus.MySql/Compze.ServiceBus.MySql.csproj" />
-    <Project Path="src/Compze.ServiceBus.PostgreSql/Compze.ServiceBus.PostgreSql.csproj" />
-    <Project Path="src/Compze.ServiceBus.Sqlite/Compze.ServiceBus.Sqlite.csproj" />
-    <Project Path="src/Compze.Tessaging/Compze.Tessaging.csproj" />
   </Folder>
   <Folder Name="/Compze.Typermedia/">
     <Project Path="src/Compze.Typermedia.Client/Compze.Typermedia.Client.csproj" />
